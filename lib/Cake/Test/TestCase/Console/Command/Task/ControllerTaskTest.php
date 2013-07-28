@@ -215,7 +215,7 @@ class ControllerTaskTest extends TestCase {
 	public function testDoComponentsNo() {
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->doComponents();
-		$this->assertSame(array(), $result);
+		$this->assertSame(array('Paginator'), $result);
 	}
 
 /**
@@ -228,7 +228,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security  '));
 
 		$result = $this->Task->doComponents();
-		$expected = array('RequestHandler', 'Security');
+		$expected = array('Paginator', 'RequestHandler', 'Security');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -242,7 +242,7 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security, , '));
 
 		$result = $this->Task->doComponents();
-		$expected = array('RequestHandler', 'Security');
+		$expected = array('Paginator', 'RequestHandler', 'Security');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -277,8 +277,9 @@ class ControllerTaskTest extends TestCase {
 		$this->assertContains(' * @property Article $Article', $result);
 		$this->assertContains(' * @property AclComponent $Acl', $result);
 		$this->assertContains(' * @property AuthComponent $Auth', $result);
+		$this->assertContains(' * @property PaginatorComponent $Paginator', $result);
 		$this->assertContains('class ArticlesController extends AppController', $result);
-		$this->assertContains("public \$components = array('Acl', 'Auth')", $result);
+		$this->assertContains("public \$components = array('Acl', 'Auth', 'Paginator')", $result);
 		$this->assertContains("public \$helpers = array('Js', 'Time')", $result);
 		$this->assertContains("--actions--", $result);
 
@@ -291,8 +292,8 @@ class ControllerTaskTest extends TestCase {
 
 		$result = $this->Task->bake('Articles', '--actions--', array(), array());
 		$this->assertContains('class ArticlesController extends AppController', $result);
-		$this->assertSame(substr_count($result, '@property'), 1);
-		$this->assertNotContains('components', $result);
+		$this->assertSame(substr_count($result, '@property'), 2);
+		$this->assertContains("public \$components = array('Paginator')", $result);
 		$this->assertNotContains('helpers', $result);
 		$this->assertContains('--actions--', $result);
 	}
@@ -341,7 +342,7 @@ class ControllerTaskTest extends TestCase {
 
 		$this->assertContains('function index() {', $result);
 		$this->assertContains('$this->BakeArticle->recursive = 0;', $result);
-		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
+		$this->assertContains("\$this->set('bakeArticles', \$this->Paginator->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
 		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);
@@ -379,7 +380,7 @@ class ControllerTaskTest extends TestCase {
 
 		$this->assertContains('function index() {', $result);
 		$this->assertContains('$this->BakeArticle->recursive = 0;', $result);
-		$this->assertContains("\$this->set('bakeArticles', \$this->paginate());", $result);
+		$this->assertContains("\$this->set('bakeArticles', \$this->Paginator->paginate());", $result);
 
 		$this->assertContains('function view($id = null)', $result);
 		$this->assertContains("throw new NotFoundException(__('Invalid bake article'));", $result);

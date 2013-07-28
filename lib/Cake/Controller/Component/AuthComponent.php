@@ -353,7 +353,7 @@ class AuthComponent extends Component {
 
 		if (!$controller->request->is('ajax')) {
 			$this->flash($this->authError);
-			$this->Session->write('Auth.redirect', $controller->request->here());
+			$this->Session->write('Auth.redirect', $controller->request->here(false));
 			$controller->redirect($this->loginAction);
 			return false;
 		}
@@ -732,7 +732,7 @@ class AuthComponent extends Component {
 			$redir = '/';
 		}
 		if (is_array($redir)) {
-			return Router::url($redir);
+			return Router::url($redir + array('base' => false));
 		}
 		return $redir;
 	}

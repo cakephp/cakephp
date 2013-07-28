@@ -378,7 +378,7 @@ class PaginatorHelper extends Helper {
 			$url = array_merge($url, compact('sort', 'direction'));
 		}
 		if (!empty($url['page']) && $url['page'] == 1) {
-			unset($url['page']);
+			$url['page'] = null;
 		}
 		if ($asArray) {
 			return $url;

@@ -330,6 +330,11 @@ class ControllerTask extends BakeTask {
 			'plugin' => $this->plugin,
 			'pluginPath' => empty($this->plugin) ? '' : $this->plugin . '.'
 		));
+
+		if (!in_array('Paginator', (array)$components)) {
+			$components[] = 'Paginator';
+		}
+
 		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'isScaffold'));
 		$contents = $this->Template->generate('classes', 'controller');
 
@@ -372,10 +377,11 @@ class ControllerTask extends BakeTask {
  * @return array Components the user wants to use.
  */
 	public function doComponents() {
-		return $this->_doPropertyChoices(
-			__d('cake_console', "Would you like this controller to use any components?"),
+		$components = array('Paginator');
+		return array_merge($components, $this->_doPropertyChoices(
+			__d('cake_console', "Would you like this controller to use other components\nbesides PaginatorComponent?"),
 			__d('cake_console', "Please provide a comma separated list of the component names you'd like to use.\nExample: 'Acl, Security, RequestHandler'")
-		);
+		));
 	}
 
 /**
@@ -479,6 +485,9 @@ class ControllerTask extends BakeTask {
 			))->addOption('theme', array(
 				'short' => 't',
 				'help' => __d('cake_console', 'Theme to use when baking code.')
+			))->addOption('force', array(
+				'short' => 'f',
+				'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 			))->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));

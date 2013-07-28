@@ -32,6 +32,7 @@ class ResponseTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		ob_start();
 	}
 
@@ -41,6 +42,7 @@ class ResponseTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		ob_end_clean();
 	}
 
@@ -1385,6 +1387,76 @@ class ResponseTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$response->file(CAKE . 'Test/TestApp/vendor/img/test_2.JPG');
+	}
+
+/**
+ * A data provider for testing various ranges
+ *
+ * @return array
+ */
+	public static function rangeProvider() {
+		return array(
+			// suffix-byte-range
+			array(
+				'bytes=-25', 25, 'bytes 13-37/38'
+			),
+
+			array(
+				'bytes=0-', 38, 'bytes 0-37/38'
+			),
+			array(
+				'bytes=10-', 28, 'bytes 10-37/38'
+			),
+			array(
+				'bytes=10-20', 11, 'bytes 10-20/38'
+			),
+		);
+	}
+
+/**
+ * Test the various range offset types.
+ *
+ * @dataProvider rangeProvider
+ * @return void
+ */
+	public function testFileRangeOffsets($range, $length, $offsetResponse) {
+		$_SERVER['HTTP_RANGE'] = $range;
+		$response = $this->getMock('Cake\Network\Response', array(
+			'header',
+			'type',
+			'_sendHeader',
+			'_isActive',
+			'_clearBuffer',
+			'_flushBuffer'
+		));
+
+		$response->expects($this->at(1))
+			->method('header')
+			->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+
+		$response->expects($this->at(2))
+			->method('header')
+			->with('Accept-Ranges', 'bytes');
+
+		$response->expects($this->at(3))
+			->method('header')
+			->with(array(
+				'Content-Length' => $length,
+				'Content-Range' => $offsetResponse,
+			));
+
+		$response->expects($this->any())
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$response->file(
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+			array('download' => true)
+		);
+
+		ob_start();
+		$result = $response->send();
+		ob_get_clean();
 	}
 
 /**

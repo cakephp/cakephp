@@ -593,7 +593,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Paginator->url();
-		$this->assertEquals('/', $result);
+		$this->assertEquals('/index', $result);
 
 		$this->Paginator->request->params['paging']['Article']['options']['page'] = 2;
 		$result = $this->Paginator->url();
@@ -820,7 +820,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->prev('<< Previous', null, null, array('class' => 'disabled'));
 		$expected = array(
 			'span' => array('class' => 'prev'),
-			'a' => array('href' => '/', 'rel' => 'prev'),
+			'a' => array('href' => '/index', 'rel' => 'prev'),
 			'&lt;&lt; Previous',
 			'/a',
 			'/span'
@@ -829,7 +829,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->prev('<< Previous', array('tag' => false), null, array('class' => 'disabled'));
 		$expected = array(
-			'a' => array('href' => '/', 'rel' => 'prev', 'class' => 'prev'),
+			'a' => array('href' => '/index', 'rel' => 'prev', 'class' => 'prev'),
 			'&lt;&lt; Previous',
 			'/a'
 		);
@@ -843,7 +843,7 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$expected = array(
 			'span' => array('class' => 'prev'),
-			'a' => array('href' => '/', 'rel' => 'prev'),
+			'a' => array('href' => '/index', 'rel' => 'prev'),
 			'&lt;&lt; Previous',
 			'/a',
 			'/span'
@@ -881,7 +881,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->prev('<< Previous', array('escape' => true));
 		$expected = array(
 			'span' => array('class' => 'prev'),
-			'a' => array('href' => '/', 'rel' => 'prev'),
+			'a' => array('href' => '/index', 'rel' => 'prev'),
 			'&lt;&lt; Previous',
 			'/a',
 			'/span'
@@ -891,7 +891,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->prev('<< Previous', array('escape' => false));
 		$expected = array(
 			'span' => array('class' => 'prev'),
-			'a' => array('href' => '/', 'rel' => 'prev'),
+			'a' => array('href' => '/index', 'rel' => 'prev'),
 			'preg:/<< Previous/',
 			'/a',
 			'/span'
@@ -1200,13 +1200,13 @@ class PaginatorHelperTest extends TestCase {
  */
 	public function testGenericLinksWithPresetOptions() {
 		$result = $this->Paginator->link('Foo!', array('page' => 1));
-		$this->assertTags($result, array('a' => array('href' => '/'), 'Foo!', '/a'));
+		$this->assertTags($result, array('a' => array('href' => '/index'), 'Foo!', '/a'));
 
 		$this->Paginator->options(array('sort' => 'title', 'direction' => 'desc'));
 		$result = $this->Paginator->link('Foo!', array('page' => 1));
 		$this->assertTags($result, array(
 			'a' => array(
-				'href' => '/',
+				'href' => '/index',
 				'sort' => 'title',
 				'direction' => 'desc'
 			),
@@ -1216,7 +1216,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$this->Paginator->options(array('sort' => null, 'direction' => null));
 		$result = $this->Paginator->link('Foo!', array('page' => 1));
-		$this->assertTags($result, array('a' => array('href' => '/'), 'Foo!', '/a'));
+		$this->assertTags($result, array('a' => array('href' => '/index'), 'Foo!', '/a'));
 
 		$this->Paginator->options(array('url' => array(
 			'sort' => 'title',
@@ -1309,7 +1309,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(true);
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/', 'rel' => 'first')), 'first', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index', 'rel' => 'first')), 'first', '/a', '/span',
 			' | ',
 			array('span' => array()), array('a' => array('href' => '/index?page=4')), '4', '/a', '/span',
 			' | ',
@@ -1419,7 +1419,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1, 'class' => 'page-link'));
 		$expected = array(
-			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' | ',
 			array('span' => array('class' => 'current page-link')), '2', '/span',
 			' | ',
@@ -1441,7 +1441,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1, 'currentClass' => 'active'));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' | ',
 			array('span' => array('class' => 'active')), '2', '/span',
 			' | ',
@@ -1463,7 +1463,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1, 'tag' => 'li', 'currentClass' => 'active', 'currentTag' => 'a'));
 		$expected = array(
-			array('li' => array()), array('a' => array('href' => '/')), '1', '/a', '/li',
+			array('li' => array()), array('a' => array('href' => '/index')), '1', '/a', '/li',
 			' | ',
 			array('li' => array('class' => 'active')), array('a' => array()), '2', '/a', '/li',
 			' | ',
@@ -1485,7 +1485,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1, 'class' => 'page-link', 'currentClass' => 'active'));
 		$expected = array(
-			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array('class' => 'page-link')), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' | ',
 			array('span' => array('class' => 'active page-link')), '2', '/span',
 			' | ',
@@ -1507,7 +1507,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('last' => 1));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' | ',
 			array('span' => array('class' => 'current')), '2', '/span',
 			' | ',
@@ -1543,7 +1543,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			'...',
 			array('span' => array()), array('a' => array('href' => '/index?page=7')), '7', '/a', '/span',
 			' | ',
@@ -1582,7 +1582,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1, 'last' => 1));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			'...',
 			array('span' => array()), array('a' => array('href' => '/index?page=6')), '6', '/a', '/span',
 			' | ',
@@ -1622,7 +1622,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1, 'last' => 1));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' | ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			' | ',
@@ -1662,7 +1662,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 1, 'last' => 1));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			'...',
 			array('span' => array()), array('a' => array('href' => '/index?page=33')), '33', '/a', '/span',
 			' | ',
@@ -1762,7 +1762,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 2, 'modulus' => 2, 'last' => 2));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' | ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			'...',
@@ -1780,7 +1780,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 2, 'modulus' => 2, 'last' => 2));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' | ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			' | ',
@@ -1796,7 +1796,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 2, 'modulus' => 2, 'last' => 2, 'separator' => ' - '));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' - ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			' - ',
@@ -1812,7 +1812,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(array('first' => 5, 'modulus' => 5, 'last' => 5, 'separator' => ' - '));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' - ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			' - ',
@@ -1839,7 +1839,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Client']['page'] = 4893;
 		$result = $this->Paginator->numbers(array('first' => 5, 'modulus' => 4, 'last' => 5, 'separator' => ' - '));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' - ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			' - ',
@@ -1868,7 +1868,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Client']['page'] = 58;
 		$result = $this->Paginator->numbers(array('first' => 5, 'modulus' => 4, 'last' => 5, 'separator' => ' - '));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' - ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			' - ',
@@ -1903,7 +1903,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Client']['page'] = 5;
 		$result = $this->Paginator->numbers(array('first' => 5, 'modulus' => 4, 'last' => 5, 'separator' => ' - '));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' - ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			' - ',
@@ -1932,7 +1932,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Client']['page'] = 3;
 		$result = $this->Paginator->numbers(array('first' => 2, 'modulus' => 2, 'last' => 2, 'separator' => ' - ', 'ellipsis' => ' ~~~ '));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' - ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			' - ',
@@ -1949,7 +1949,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Client']['page'] = 3;
 		$result = $this->Paginator->numbers(array('first' => 2, 'modulus' => 2, 'last' => 2, 'separator' => ' - ', 'ellipsis' => '<span class="ellipsis">...</span>'));
 		$expected = array(
-			array('span' => array()), array('a' => array('href' => '/')), '1', '/a', '/span',
+			array('span' => array()), array('a' => array('href' => '/index')), '1', '/a', '/span',
 			' - ',
 			array('span' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/span',
 			' - ',
@@ -1960,6 +1960,40 @@ class PaginatorHelperTest extends TestCase {
 			array('span' => array()), array('a' => array('href' => '/index?page=4896')), '4896', '/a', '/span',
 			' - ',
 			array('span' => array()), array('a' => array('href' => '/index?page=4897')), '4897', '/a', '/span',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Paginator->request->params['paging'] = array(
+			'Client' => array(
+				'page' => 2,
+				'current' => 2,
+				'count' => 30,
+				'prevPage' => false,
+				'nextPage' => 3,
+				'pageCount' => 3,
+				'options' => array(
+					'page' => 1,
+				)
+			)
+		);
+
+		$request = new Request();
+		$request->addParams(array(
+			'controller' => 'clients', 'action' => 'index', 'plugin' => null
+		));
+		$request->base = '';
+		$request->here = '/clients/index?page=2';
+		$request->webroot = '/';
+
+		Router::setRequestInfo($request);
+
+		$result = $this->Paginator->numbers();
+		$expected = array(
+			array('span' => array()), array('a' => array('href' => '/clients/index')), '1', '/a', '/span',
+			' | ',
+			array('span' => array('class' => 'current')), '2', '/span',
+			' | ',
+			array('span' => array()), array('a' => array('href' => '/clients/index?page=3')), '3', '/a', '/span',
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -1973,7 +2007,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->first('<<', array('tag' => 'li', 'class' => 'first'));
 		$expected = array(
 			'li' => array('class' => 'first'),
-			'a' => array('href' => '/', 'rel' => 'first'),
+			'a' => array('href' => '/index', 'rel' => 'first'),
 			'&lt;&lt;',
 			'/a',
 			'/li'
@@ -2053,7 +2087,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->first();
 		$expected = array(
 			'<span',
-			'a' => array('href' => '/', 'rel' => 'first'),
+			'a' => array('href' => '/index', 'rel' => 'first'),
 			'&lt;&lt; first',
 			'/a',
 			'/span'
@@ -2063,7 +2097,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->first(2);
 		$expected = array(
 			'<span',
-			array('a' => array('href' => '/')), '1', '/a',
+			array('a' => array('href' => '/index')), '1', '/a',
 			'/span',
 			' | ',
 			'<span',

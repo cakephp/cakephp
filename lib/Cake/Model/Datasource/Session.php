@@ -127,7 +127,7 @@ class Session {
 		static::$time = time();
 
 		$checkAgent = Configure::read('Session.checkAgent');
-		if (($checkAgent === true || $checkAgent === null) && env('HTTP_USER_AGENT')) {
+		if (env('HTTP_USER_AGENT')) {
 			static::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
 		static::_setPath($base);

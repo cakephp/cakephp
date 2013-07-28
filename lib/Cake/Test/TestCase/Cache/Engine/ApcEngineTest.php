@@ -38,6 +38,10 @@ class ApcEngineTest extends TestCase {
 		parent::setUp();
 		$this->skipIf(!function_exists('apc_store'), 'Apc is not installed or configured properly.');
 
+		if (php_sapi_name() === 'cli') {
+			$this->skipIf(!ini_get('apc.enable_cli'), 'APC is not enabled for the CLI.');
+		}
+
 		Configure::write('Cache.disable', false);
 		Configure::write('Cache.apc', ['engine' => 'Apc', 'prefix' => 'cake_']);
 	}
