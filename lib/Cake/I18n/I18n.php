@@ -124,12 +124,14 @@ class I18n {
  *
  * @param string $singular String to translate
  * @param string $plural Plural string (if any)
- * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations
+ * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations.
+ *    If null, the default domain will be used.
  * @param string $category Category The integer value of the category to use.
  * @param integer $count Count Count is used with $plural to choose the correct plural form.
  * @param string $language Language to translate string to.
- * 	If null it checks for language in session followed by Config.language configuration variable.
+ *    If null it checks for language in session followed by Config.language configuration variable.
  * @return string translated string.
+ * @throws CakeException When '' is provided as a domain.
  */
 	public static function translate($singular, $plural = null, $domain = null, $category = 6, $count = null, $language = null) {
 		$_this = I18n::getInstance();
@@ -161,6 +163,9 @@ class I18n {
 
 		if (is_null($domain)) {
 			$domain = self::$defaultDomain;
+		}
+		if ($domain === '') {
+			throw new CakeException(__d('cake_dev', 'You cannot use "" as a domain.'));
 		}
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
