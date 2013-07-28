@@ -62,6 +62,7 @@ class MysqlTest extends CakeTestCase {
  *
  */
 	public function setUp() {
+		parent::setUp();
 		$this->Dbo = ConnectionManager::getDataSource('test');
 		if (!($this->Dbo instanceof Mysql)) {
 			$this->markTestSkipped('The MySQL extension is not available.');
@@ -76,6 +77,7 @@ class MysqlTest extends CakeTestCase {
  *
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->model);
 		ClassRegistry::flush();
 		Configure::write('debug', $this->_debug);

@@ -52,6 +52,7 @@ class CakeTimeTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->Time);
 		$this->_restoreSystemTimezone();
 	}

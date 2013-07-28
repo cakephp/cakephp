@@ -511,6 +511,7 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->_get = $_GET;
 		$_GET = array();
 		$this->_post = $_POST;
@@ -538,6 +539,7 @@ class DispatcherTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		$_GET = $this->_get;
 		$_POST = $this->_post;
 		$_FILES = $this->_files;

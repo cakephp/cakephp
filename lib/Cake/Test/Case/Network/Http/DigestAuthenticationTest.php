@@ -73,6 +73,7 @@ class DigestAuthenticationTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->HttpSocket = new DigestHttpSocket();
 		$this->HttpSocket->request['method'] = 'GET';
 		$this->HttpSocket->request['uri']['path'] = '/';
@@ -84,6 +85,7 @@ class DigestAuthenticationTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->HttpSocket);
 	}
 
