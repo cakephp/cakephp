@@ -387,12 +387,12 @@ class View extends Object {
  * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
  * - `ignoreMissing` - Used to allow missing elements. Set to true to not trigger notices.
- * @return string Rendered Element
+ * @return string The rendered element, false if the element is missing
  * @deprecated The `$options['plugin']` is deprecated and will be removed in CakePHP 3.0. Use
  *   `Plugin.element_name` instead.
  */
 	public function element($name, $data = array(), $options = array()) {
-		$file = $plugin = null;
+		$plugin = null;
 
 		if (isset($options['plugin'])) {
 			$name = Inflector::camelize($options['plugin']) . '.' . $name;
@@ -420,6 +420,7 @@ class View extends Object {
 			$file = $plugin . 'Elements' . DS . $name . $this->ext;
 			trigger_error(__d('cake_dev', 'Element Not Found: %s', $file), E_USER_NOTICE);
 		}
+		return false;
 	}
 
 /**
@@ -567,6 +568,7 @@ class View extends Object {
 			}
 			return substr($out, strlen($match[0]));
 		}
+		return false;
 	}
 
 /**
@@ -660,7 +662,7 @@ class View extends Object {
  * @see ViewBlock::concat()
  */
 	public function prepend($name, $value = null) {
-		return $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
+		$this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 	}
 
 /**
@@ -674,7 +676,7 @@ class View extends Object {
  * @see ViewBlock::set()
  */
 	public function assign($name, $value) {
-		return $this->Blocks->set($name, $value);
+		$this->Blocks->set($name, $value);
 	}
 
 /**
@@ -697,7 +699,7 @@ class View extends Object {
  * @see ViewBlock::end()
  */
 	public function end() {
-		return $this->Blocks->end();
+		$this->Blocks->end();
 	}
 
 /**
@@ -804,10 +806,9 @@ class View extends Object {
 		} else {
 			$data = array($one => $two);
 		}
-		if (!$data) {
-			return false;
+		if ($data) {
+			$this->viewVars = $data + $this->viewVars;
 		}
-		$this->viewVars = $data + $this->viewVars;
 	}
 
 /**
@@ -842,12 +843,13 @@ class View extends Object {
  *
  * @param string $name Name of the attribute to set.
  * @param string $value Value of the attribute to set.
- * @return mixed
+ * @return void
  */
 	public function __set($name, $value) {
 		switch ($name) {
 			case 'output':
-				return $this->Blocks->set('content', $value);
+				$this->Blocks->set('content', $value);
+				break;
 			default:
 				$this->{$name} = $value;
 		}
@@ -932,7 +934,7 @@ class View extends Object {
 /**
  * Sandbox method to evaluate a template / view script in.
  *
- * @param string $viewFn Filename of the view
+ * @param string $viewFile Filename of the view
  * @param array $dataForView Data to include in rendered view.
  *    If empty the current View::$viewVars will be used.
  * @return string Rendered output
