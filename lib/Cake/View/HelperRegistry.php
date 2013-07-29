@@ -1,8 +1,5 @@
 <?php
 /**
- * Helpers collection is used as a registry for loaded helpers and handles loading
- * and constructing helper class objects.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -12,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -21,22 +17,14 @@ namespace Cake\View;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Event\EventManager;
+use Cake\Utility\ObjectRegistry;
 use Cake\View\View;
 
 /**
  * Helpers collection is used as a registry for loaded helpers and handles loading
  * and constructing helper class objects.
- *
- * @package       Cake.View
  */
-class HelperCollection {
-
-/**
- * Hash of already loaded helpers.
- *
- * @var array
- */
-	protected $_loaded = [];
+class HelperRegistry extends ObjectRegistry {
 
 /**
  * View object to use when making helpers.
@@ -105,77 +93,75 @@ class HelperCollection {
 		if (isset($this->_loaded[$name])) {
 			return $this->_loaded[$name];
 		}
-		if ($this->__isset($name)) {
+		if (isset($this->$name)) {
 			return $this->_loaded[$name];
 		}
 		return null;
 	}
 
 /**
- * Loads/constructs a helper. Will return the instance in the registry if it already exists.
- * By setting `$enable` to false you can disable callbacks for a helper. Alternatively you
- * can set `$settings['enabled'] = false` to disable callbacks. This alias is provided so that when
- * declaring $helpers arrays you can disable callbacks on helpers.
+ * Resolve a helper classname.
  *
- * You can alias your helper as an existing helper by setting the 'className' key, i.e.,
- * {{{
- * public $helpers = array(
- *   'Html' => array(
- *     'className' => '\App\View\Helper\AliasedHtmlHelper'
- *   );
- * );
- * }}}
- * All calls to the `Html` helper would use `AliasedHtml` instead.
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
  *
- * @param string $helper Helper name to load
- * @param array $settings Settings for the helper.
- * @return Helper A helper object, Either the existing loaded helper or a new one.
- * @throws Cake\Error\MissingHelperException when the helper could not be found
+ * @param string $class Partial classname to resolve.
+ * @return string|false Either the correct classname or false.
  */
-	public function load($helper, $settings = array()) {
-		list($plugin, $name) = pluginSplit($helper);
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
-		}
-		if (is_array($settings) && isset($settings['className'])) {
-			$helperClass = App::classname($settings['className'], 'View/Helper', 'Helper');
-		}
-		if (!isset($helperClass)) {
-			$helperClass = App::classname($helper, 'View/Helper', 'Helper');
-		}
-		if (!$helperClass) {
-			throw new Error\MissingHelperException(array(
-				'class' => $helper,
-				'plugin' => substr($plugin, 0, -1)
-			));
-		}
-		$helperObject = new $helperClass($this->_View, $settings);
-
-		$vars = array('request', 'theme', 'plugin');
-		foreach ($vars as $var) {
-			$helperObject->{$var} = $this->_View->{$var};
-		}
-
-		$this->_loaded[$name] = $helperObject;
-
-		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
-		if ($enable) {
-			$this->_eventManager->attach($helperObject);
-		}
-		return $helperObject;
+	protected function _resolveClassName($class) {
+		return App::classname($class, 'View/Helper', 'Helper');
 	}
 
 /**
- * Get the loaded helpers list, or get the helper instance at a given name.
+ * Throws an exception when a helper is missing.
  *
- * @param null|string $name The helper name to get or null.
- * @return array|Helper Either a list of helper names, or a loaded helper.
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
+ * @param string $class The classname that is missing.
+ * @param string $plugin The plugin the helper is missing in.
+ * @throws Cake\Error\MissingHelperException
  */
-	public function loaded($name = null) {
-		if (!empty($name)) {
-			return isset($this->_loaded[$name]);
+	protected function _throwMissingClassError($class, $plugin) {
+		throw new Error\MissingHelperException([
+			'class' => $class,
+			'plugin' => $plugin
+		]);
+	}
+
+/**
+ * Create the helper instance.
+ *
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * Enabled helpers will be registered with the event manager.
+ *
+ * @param string $class The classname that is missing.
+ * @param array $settings An array of settings to use for the helper.
+ * @return Component The constructed helper class.
+ */
+	protected function _create($class, $settings) {
+		$instance = new $class($this->_View, $settings);
+		$vars = array('request', 'theme', 'plugin');
+		foreach ($vars as $var) {
+			$instance->{$var} = $this->_View->{$var};
 		}
-		return array_keys($this->_loaded);
+		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
+		if ($enable) {
+			$this->_eventManager->attach($instance);
+		}
+		return $instance;
+	}
+
+/**
+ * Destroys all objects in the registry.
+ *
+ * Removes all attached listeners and destroys all stored instances.
+ *
+ * @return void
+ */
+	public function reset() {
+		foreach ($this->_loaded as $helper) {
+			$this->_eventManager->detach($helper);
+		}
+		parent::reset();
 	}
 
 }

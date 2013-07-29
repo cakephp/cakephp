@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\Component\CookieComponent;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Plugin;
@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 class CookieAliasComponent extends CookieComponent {
 }
 
-class ComponentCollectionTest extends TestCase {
+class ComponentRegistryTest extends TestCase {
 
 /**
  * setUp
@@ -37,7 +37,7 @@ class ComponentCollectionTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$controller = new Controller();
-		$this->Components = new ComponentCollection($controller);
+		$this->Components = new ComponentRegistry($controller);
 	}
 
 /**
@@ -129,15 +129,31 @@ class ComponentCollectionTest extends TestCase {
  * @return void
  */
 	public function testLoadPluginComponent() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-		));
+		App::build([
+			'Plugin' => [CAKE . 'Test/TestApp/Plugin/'],
+		]);
 		Plugin::load('TestPlugin');
 		$result = $this->Components->load('TestPlugin.Other');
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result, 'Component class is wrong.');
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->Other, 'Class is wrong');
 		App::build();
 		Plugin::unload();
+	}
+
+/**
+ * Test loading components with aliases and plugins.
+ *
+ * @return void
+ */
+	public function testLoadWithAliasAndPlugin() {
+		App::build(['Plugin' => [CAKE . 'Test/TestApp/Plugin/']]);
+		Plugin::load('TestPlugin');
+		$result = $this->Components->load('AliasedOther', ['className' => 'TestPlugin.Other']);
+		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
+		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->AliasedOther);
+
+		$result = $this->Components->loaded();
+		$this->assertEquals(['AliasedOther'], $result, 'loaded() results are wrong.');
 	}
 
 /**
@@ -149,4 +165,26 @@ class ComponentCollectionTest extends TestCase {
 		$result = $this->Components->getController();
 		$this->assertInstanceOf('Cake\Controller\Controller', $result);
 	}
+
+/**
+ * Test reset.
+ *
+ * @return void
+ */
+	public function testReset() {
+		$eventManager = $this->Components->getController()->getEventManager();
+		$instance = $this->Components->load('Auth');
+		$this->assertSame(
+			$instance,
+			$this->Components->Auth,
+			'Instance in registry should be the same as previously loaded'
+		);
+		$this->assertCount(1, $eventManager->listeners('Controller.startup'));
+
+		$this->assertNull($this->Components->reset(), 'No return expected');
+		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
+
+		$this->assertNotSame($instance, $this->Components->load('Auth'));
+	}
+
 }

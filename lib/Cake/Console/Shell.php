@@ -137,7 +137,7 @@ class Shell extends Object {
 /**
  * Task Collection for the command, used to create Tasks.
  *
- * @var TaskCollection
+ * @var TaskRegistry
  */
 	public $Tasks;
 
@@ -182,7 +182,7 @@ class Shell extends Object {
 			list(, $class) = namespaceSplit(get_class($this));
 			$this->name = str_replace(array('Shell', 'Task'), '', $class);
 		}
-		$this->Tasks = new TaskCollection($this);
+		$this->Tasks = new TaskRegistry($this);
 
 		$this->stdout = $stdout ? $stdout : new ConsoleOutput('php://stdout');
 		$this->stderr = $stderr ? $stderr : new ConsoleOutput('php://stderr');
@@ -314,7 +314,7 @@ class Shell extends Object {
 		if ($this->tasks === true || empty($this->tasks) || empty($this->Tasks)) {
 			return true;
 		}
-		$this->_taskMap = TaskCollection::normalizeObjectArray((array)$this->tasks);
+		$this->_taskMap = $this->Tasks->normalizeArray((array)$this->tasks);
 		$this->taskNames = array_merge($this->taskNames, array_keys($this->_taskMap));
 		return true;
 	}

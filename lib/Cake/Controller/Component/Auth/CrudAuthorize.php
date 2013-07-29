@@ -15,7 +15,7 @@
  */
 namespace Cake\Controller\Component\Auth;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 
@@ -39,11 +39,11 @@ class CrudAuthorize extends BaseAuthorize {
 /**
  * Sets up additional actionMap values that match the configured `Routing.prefixes`.
  *
- * @param ComponentCollection $collection The component collection from the controller.
+ * @param ComponentRegistry $registry The component registry from the controller.
  * @param string $settings An array of settings. This class does not use any settings.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
-		parent::__construct($collection, $settings);
+	public function __construct(ComponentRegistry $registry, $settings = array()) {
+		parent::__construct($registry, $settings);
 		$this->_setPrefixMappings();
 	}
 
@@ -94,7 +94,7 @@ class CrudAuthorize extends BaseAuthorize {
 			return false;
 		}
 		$user = array($this->settings['userModel'] => $user);
-		$Acl = $this->_Collection->load('Acl');
+		$Acl = $this->_registry->load('Acl');
 		return $Acl->check(
 			$user,
 			$this->action($request, ':controller'),

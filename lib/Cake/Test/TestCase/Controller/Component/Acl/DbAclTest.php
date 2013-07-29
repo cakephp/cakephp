@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Controller\Component\Acl;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AclComponent;
 use Cake\Controller\Component\Acl\DbAcl;
 use Cake\Core\Configure;
@@ -212,7 +212,7 @@ class DbAclTest extends TestCase {
 		$this->markTestIncomplete('DbAcl will not work until models do.');
 		Configure::write('Acl.classname', __NAMESPACE__ . '\DbAclTwoTest');
 		Configure::write('Acl.database', 'test');
-		$Collection = new ComponentCollection();
+		$Collection = new ComponentRegistry();
 		$this->Acl = new AclComponent($Collection);
 	}
 

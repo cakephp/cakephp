@@ -172,7 +172,7 @@ class XmlViewTest extends TestCase {
 		$expected = Xml::build($expected)->asXML();
 		$this->assertSame($expected, $output);
 		$this->assertSame('application/xml', $Response->type());
-		$this->assertInstanceOf('Cake\View\HelperCollection', $View->Helpers);
+		$this->assertInstanceOf('Cake\View\HelperRegistry', $View->Helpers);
 	}
 
 }

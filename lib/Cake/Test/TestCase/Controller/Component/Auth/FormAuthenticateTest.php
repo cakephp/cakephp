@@ -53,7 +53,7 @@ class FormAuthenticateTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Collection = $this->getMock('Cake\Controller\ComponentCollection');
+		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
 		$this->auth = new FormAuthenticate($this->Collection, array(
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'userModel' => 'User'

@@ -15,7 +15,7 @@
  */
 namespace Cake\Controller\Component\Auth;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -58,11 +58,11 @@ abstract class BaseAuthenticate {
 	);
 
 /**
- * A Component collection, used to get more components.
+ * A Component registry, used to get more components.
  *
- * @var ComponentCollection
+ * @var ComponentRegistry
  */
-	protected $_Collection;
+	protected $_registry;
 
 /**
  * Password hasher instance.
@@ -74,11 +74,11 @@ abstract class BaseAuthenticate {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection The Component collection used on this request.
+ * @param ComponentRegistry $registry The Component registry used on this request.
  * @param array $settings Array of settings to use.
  */
-	public function __construct(ComponentCollection $collection, $settings) {
-		$this->_Collection = $collection;
+	public function __construct(ComponentRegistry $registry, $settings) {
+		$this->_registry = $registry;
 		$this->settings = Hash::merge($this->settings, $settings);
 	}
 

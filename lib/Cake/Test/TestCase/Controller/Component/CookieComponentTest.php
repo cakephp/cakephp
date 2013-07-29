@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
 use Cake\Event\Event;
@@ -92,7 +92,7 @@ class CookieComponentTest extends TestCase {
 			'time' => '5 days',
 			'path' => '/'
 		);
-		$Cookie = new CookieComponent(new ComponentCollection(), $settings);
+		$Cookie = new CookieComponent(new ComponentRegistry(), $settings);
 		$this->assertEquals($Cookie->time, $settings['time']);
 		$this->assertEquals($Cookie->path, $settings['path']);
 	}

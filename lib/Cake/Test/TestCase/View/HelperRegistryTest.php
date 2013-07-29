@@ -1,9 +1,5 @@
 <?php
 /**
- * HelperCollectionTest file
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -22,7 +17,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
-use Cake\View\HelperCollection;
+use Cake\View\HelperRegistry;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
@@ -37,11 +32,10 @@ class HtmlAliasHelper extends HtmlHelper {
 }
 
 /**
- * Class HelperCollectionTest
+ * Class HelperRegistryTest
  *
- * @package       Cake.Test.Case.View
  */
-class HelperCollectionTest extends TestCase {
+class HelperRegistryTest extends TestCase {
 
 /**
  * setUp
@@ -52,7 +46,7 @@ class HelperCollectionTest extends TestCase {
 		parent::setUp();
 		$this->View = new View(null);
 		$this->Events = $this->View->getEventManager();
-		$this->Helpers = new HelperCollection($this->View);
+		$this->Helpers = new HelperRegistry($this->View);
 	}
 
 /**
@@ -194,4 +188,23 @@ class HelperCollectionTest extends TestCase {
 		App::build();
 	}
 
+/**
+ * Test reset.
+ *
+ * @return void
+ */
+	public function testReset() {
+		$instance = $this->Helpers->load('Paginator');
+		$this->assertSame(
+			$instance,
+			$this->Helpers->Paginator,
+			'Instance in registry should be the same as previously loaded'
+		);
+		$this->assertCount(1, $this->Events->listeners('View.beforeRender'));
+
+		$this->assertNull($this->Helpers->reset(), 'No return expected');
+		$this->assertCount(0, $this->Events->listeners('View.beforeRender'));
+
+		$this->assertNotSame($instance, $this->Helpers->load('Paginator'));
+	}
 }

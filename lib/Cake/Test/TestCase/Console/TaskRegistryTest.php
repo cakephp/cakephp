@@ -1,9 +1,5 @@
 <?php
 /**
- * TaskCollectionTest file
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,23 +9,21 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Console
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Console;
 
-use Cake\Console\TaskCollection;
+use Cake\Console\TaskRegistry;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class TaskCollectionTest
+ * Class TaskRegistryTest
  *
- * @package       Cake.Test.Case.Console
  */
-class TaskCollectionTest extends TestCase {
+class TaskRegistryTest extends TestCase {
 
 /**
  * setUp
@@ -39,8 +33,7 @@ class TaskCollectionTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$shell = $this->getMock('Cake\Console\Shell', array(), array(), '', false);
-		$dispatcher = $this->getMock('Cake\Console\ShellDispatcher', array(), array(), '', false);
-		$this->Tasks = new TaskCollection($shell, $dispatcher);
+		$this->Tasks = new TaskRegistry($shell);
 	}
 
 /**
@@ -68,19 +61,6 @@ class TaskCollectionTest extends TestCase {
 	}
 
 /**
- * test load and enable = false
- *
- * @return void
- */
-	public function testLoadWithEnableFalse() {
-		$result = $this->Tasks->load('DbConfig', array('enabled' => false));
-		$this->assertInstanceOf('Cake\Console\Command\Task\DbConfigTask', $result);
-		$this->assertInstanceOf('Cake\Console\Command\Task\DbConfigTask', $this->Tasks->DbConfig);
-
-		$this->assertFalse($this->Tasks->enabled('DbConfig'), 'DbConfigTask should be disabled');
-	}
-
-/**
  * test missingtask exception
  *
  * @expectedException Cake\Error\MissingTaskException
@@ -102,32 +82,12 @@ class TaskCollectionTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		));
 		Plugin::load('TestPlugin');
-		$this->Tasks = new TaskCollection($shell, $dispatcher);
+		$this->Tasks = new TaskRegistry($shell, $dispatcher);
 
 		$result = $this->Tasks->load('TestPlugin.OtherTask');
 		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $result, 'Task class is wrong.');
 		$this->assertInstanceOf('TestPlugin\Console\Command\Task\OtherTaskTask', $this->Tasks->OtherTask, 'Class is wrong');
 		Plugin::unload();
-	}
-
-/**
- * test unload()
- *
- * @return void
- */
-	public function testUnload() {
-		$this->Tasks->load('Extract');
-		$this->Tasks->load('DbConfig');
-
-		$result = $this->Tasks->loaded();
-		$this->assertEquals(array('Extract', 'DbConfig'), $result, 'loaded tasks is wrong');
-
-		$this->Tasks->unload('DbConfig');
-		$this->assertFalse(isset($this->Tasks->DbConfig));
-		$this->assertTrue(isset($this->Tasks->Extract));
-
-		$result = $this->Tasks->loaded();
-		$this->assertEquals(array('Extract'), $result, 'loaded tasks is wrong');
 	}
 
 /**

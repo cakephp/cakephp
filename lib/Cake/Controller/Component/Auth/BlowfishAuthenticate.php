@@ -15,7 +15,7 @@
  */
 namespace Cake\Controller\Component\Auth;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Security;
@@ -48,12 +48,12 @@ class BlowfishAuthenticate extends FormAuthenticate {
 /**
  * Constructor. Sets default passwordHasher to Blowfish
  *
- * @param ComponentCollection $collection The Component collection used on this request.
+ * @param ComponentRegistry $registry The Component registry used on this request.
  * @param array $settings Array of settings to use.
  */
-	public function __construct(ComponentCollection $collection, $settings) {
+	public function __construct(ComponentRegistry $registry, $settings) {
 		$this->settings['passwordHasher'] = 'Blowfish';
-		parent::__construct($collection, $settings);
+		parent::__construct($registry, $settings);
 	}
 
 }

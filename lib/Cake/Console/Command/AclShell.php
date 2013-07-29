@@ -19,7 +19,7 @@
 namespace Cake\Console\Command;
 
 use Cake\Console\Shell;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AclComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
@@ -97,8 +97,8 @@ class AclShell extends Shell {
 			}
 
 			if (!in_array($this->command, array('initdb'))) {
-				$collection = new ComponentCollection();
-				$this->Acl = new AclComponent($collection);
+				$registry = new ComponentRegistry();
+				$this->Acl = new AclComponent($registry);
 				$controller = new Controller();
 				$this->Acl->startup($controller);
 			}

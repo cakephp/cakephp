@@ -20,7 +20,7 @@
 namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\Command\AclShell;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AclComponent;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
@@ -60,7 +60,7 @@ class AclShellTest extends TestCase {
 			array('in', 'out', 'hr', 'createFile', 'error', 'err', 'clear', 'dispatchShell'),
 			array($out, $out, $in)
 		);
-		$collection = new ComponentCollection();
+		$collection = new ComponentRegistry();
 		$this->Task->Acl = new AclComponent($collection);
 		$this->Task->params['datasource'] = 'test';
 	}
