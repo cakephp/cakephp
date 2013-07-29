@@ -621,7 +621,7 @@ class View extends Object {
  * @see ViewBlock::start()
  */
 	public function start($name) {
-		return $this->Blocks->start($name);
+		$this->Blocks->start($name);
 	}
 
 /**
@@ -632,7 +632,7 @@ class View extends Object {
  * @see ViewBlock::startIfEmpty()
  */
 	public function startIfEmpty($name) {
-		return $this->Blocks->startIfEmpty($name);
+		$this->Blocks->startIfEmpty($name);
 	}
 
 /**
@@ -646,7 +646,7 @@ class View extends Object {
  * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
-		return $this->Blocks->concat($name, $value);
+		$this->Blocks->concat($name, $value);
 	}
 
 /**
