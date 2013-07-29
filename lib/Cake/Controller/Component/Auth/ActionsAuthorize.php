@@ -19,9 +19,8 @@ use Cake\Network\Request;
 
 /**
  * An authorization adapter for AuthComponent. Provides the ability to authorize using the AclComponent,
- * If AclComponent is not already loaded it will be loaded using the Controller's ComponentCollection.
+ * If AclComponent is not already loaded it will be loaded using the Controller's ComponentRegistry.
  *
- * @package       Cake.Controller.Component.Auth
  * @since 2.0
  * @see AuthComponent::$authenticate
  * @see AclComponent::check()
@@ -36,7 +35,7 @@ class ActionsAuthorize extends BaseAuthorize {
  * @return boolean
  */
 	public function authorize($user, Request $request) {
-		$Acl = $this->_Collection->load('Acl');
+		$Acl = $this->_registry->load('Acl');
 		$user = array($this->settings['userModel'] => $user);
 		return $Acl->check($user, $this->action($request));
 	}

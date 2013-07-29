@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\RequestHandlerComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
@@ -95,7 +95,7 @@ class RequestHandlerComponentTest extends TestCase {
 			'viewClassMap' => array('json' => 'MyPlugin.MyJson')
 		);
 		$controller = $this->getMock('Cake\Controller\Controller');
-		$collection = new ComponentCollection($controller);
+		$collection = new ComponentRegistry($controller);
 		$requestHandler = new RequestHandlerComponent($collection, $settings);
 		$this->assertEquals('test_ajax', $requestHandler->ajaxLayout);
 		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $requestHandler->settings['viewClassMap']);

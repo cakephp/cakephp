@@ -15,7 +15,7 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -497,7 +497,7 @@ class AuthComponent extends Component {
 				throw new Error\Exception(__d('cake_dev', 'Authorization objects must implement an authorize method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
-			$this->_authorizeObjects[] = new $className($this->_Collection, $settings);
+			$this->_authorizeObjects[] = new $className($this->_registry, $settings);
 		}
 		return $this->_authorizeObjects;
 	}
@@ -784,7 +784,7 @@ class AuthComponent extends Component {
 				throw new Error\Exception(__d('cake_dev', 'Authentication objects must implement an authenticate method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
-			$this->_authenticateObjects[] = new $className($this->_Collection, $settings);
+			$this->_authenticateObjects[] = new $className($this->_registry, $settings);
 		}
 		return $this->_authenticateObjects;
 	}

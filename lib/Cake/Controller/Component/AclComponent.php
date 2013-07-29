@@ -16,7 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Configure\IniReader;
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\Acl\AclInterface;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -61,11 +61,11 @@ class AclComponent extends Component {
 /**
  * Constructor. Will return an instance of the correct ACL class as defined in `Configure::read('Acl.classname')`
  *
- * @param ComponentCollection $collection
+ * @param ComponentRegistry $collection
  * @param array $settings
  * @throws Cake\Error\Exception when Acl.classname could not be loaded.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
+	public function __construct(ComponentRegistry $collection, $settings = array()) {
 		parent::__construct($collection, $settings);
 		$classname = $name = Configure::read('Acl.classname');
 		if (!class_exists($classname)) {

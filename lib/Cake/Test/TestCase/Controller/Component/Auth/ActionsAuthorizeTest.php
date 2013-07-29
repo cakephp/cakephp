@@ -39,7 +39,7 @@ class ActionsAuthorizeTest extends TestCase {
 		parent::setUp();
 		$this->controller = $this->getMock('Cake\Controller\Controller', array(), array(), '', false);
 		$this->Acl = $this->getMock('Cake\Controller\Component\AclComponent', array(), array(), '', false);
-		$this->Collection = $this->getMock('Cake\Controller\ComponentCollection');
+		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
 
 		$this->auth = new ActionsAuthorize($this->Collection);
 		$this->auth->settings['actionPath'] = '/controllers';

@@ -39,7 +39,7 @@ class ControllerAuthorizeTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->controller = $this->getMock('Cake\Controller\Controller', array('isAuthorized'), array(), '', false);
-		$this->components = $this->getMock('Cake\Controller\ComponentCollection');
+		$this->components = $this->getMock('Cake\Controller\ComponentRegistry');
 		$this->components->expects($this->any())
 			->method('getController')
 			->will($this->returnValue($this->controller));

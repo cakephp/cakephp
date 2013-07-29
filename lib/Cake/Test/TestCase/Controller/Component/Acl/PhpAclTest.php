@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Controller\Component\Acl;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AclComponent;
 use Cake\Controller\Component\Acl\PhpAcl;
 use Cake\Controller\Component\Acl\PhpAro;
@@ -34,7 +34,7 @@ class PhpAclTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Acl.classname', 'PhpAcl');
-		$Collection = new ComponentCollection();
+		$Collection = new ComponentRegistry();
 		$this->PhpAcl = new PhpAcl();
 		$this->Acl = new AclComponent($Collection, array(
 			'adapter' => array(

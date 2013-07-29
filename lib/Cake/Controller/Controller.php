@@ -28,7 +28,6 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
-use Cake\Utility\ObjectCollection;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
@@ -194,9 +193,9 @@ class Controller extends Object implements EventListener {
 	public $autoLayout = true;
 
 /**
- * Instance of ComponentCollection used to create Components
+ * Instance of ComponentRegistry used to create Components
  *
- * @var ComponentCollection
+ * @var ComponentRegistry
  */
 	public $Components = null;
 
@@ -354,7 +353,7 @@ class Controller extends Object implements EventListener {
 		if ($response instanceof Response) {
 			$this->response = $response;
 		}
-		$this->Components = new ComponentCollection($this);
+		$this->Components = new ComponentRegistry($this);
 	}
 
 /**
@@ -617,7 +616,7 @@ class Controller extends Object implements EventListener {
 		if (empty($this->components)) {
 			return;
 		}
-		$components = ObjectCollection::normalizeObjectArray($this->components);
+		$components = $this->Components->normalizeArray($this->components);
 		foreach ($components as $properties) {
 			list(, $class) = pluginSplit($properties['class']);
 			$this->{$class} = $this->Components->load($properties['class'], $properties['settings']);

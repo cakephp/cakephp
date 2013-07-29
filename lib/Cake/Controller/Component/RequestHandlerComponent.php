@@ -15,7 +15,7 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -105,10 +105,10 @@ class RequestHandlerComponent extends Component {
 /**
  * Constructor. Parses the accepted content types accepted by the client using HTTP_ACCEPT
  *
- * @param ComponentCollection $collection ComponentCollection object.
+ * @param ComponentRegistry $collection ComponentRegistry object.
  * @param array $settings Array of settings.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
+	public function __construct(ComponentRegistry $collection, $settings = array()) {
 		parent::__construct($collection, $settings + array('checkHttpCache' => true));
 		$this->addInputType('xml', array(array($this, 'convertXml')));
 
