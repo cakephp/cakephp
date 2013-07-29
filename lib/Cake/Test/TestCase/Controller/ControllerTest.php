@@ -802,7 +802,7 @@ class ControllerTest extends TestCase {
 		$Post->set('title', '');
 		$result = $TestController->validateErrors($Post);
 
-		$expected = array('title' => array('This field cannot be left blank'));
+		$expected = array('title' => array('The value you have provided is invalid'));
 		$this->assertEquals($expected, $result);
 	}
 

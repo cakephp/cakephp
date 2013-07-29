@@ -425,7 +425,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 				$message = __d($this->_validationDomain, $name);
 			}
 		} else {
-			$message = __d('cake', 'This field cannot be left blank');
+			$message = __d('cake', 'The value you have provided is invalid');
 		}
 
 		return $message;
