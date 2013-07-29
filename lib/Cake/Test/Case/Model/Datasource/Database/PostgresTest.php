@@ -215,6 +215,7 @@ class PostgresTest extends CakeTestCase {
  *
  */
 	public function setUp() {
+		parent::setUp();
 		Configure::write('Cache.disable', true);
 		$this->Dbo = ConnectionManager::getDataSource('test');
 		$this->skipIf(!($this->Dbo instanceof Postgres));
@@ -227,6 +228,7 @@ class PostgresTest extends CakeTestCase {
  *
  */
 	public function tearDown() {
+		parent::tearDown();
 		Configure::write('Cache.disable', false);
 		unset($this->Dbo2);
 	}
