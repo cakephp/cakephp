@@ -223,7 +223,7 @@ class Helper extends Object {
  *
  * @param string $name Name of the property being accessed.
  * @param mixed $value
- * @return mixed Return the $value
+ * @return void
  */
 	public function __set($name, $value) {
 		switch ($name) {
@@ -231,11 +231,14 @@ class Helper extends Object {
 			case 'here':
 			case 'webroot':
 			case 'data':
-				return $this->request->{$name} = $value;
+				$this->request->{$name} = $value;
+				break;
 			case 'action':
-				return $this->request->params['action'] = $value;
+				$this->request->params['action'] = $value;
+				break;
+			default:
+				$this->{$name} = $value;
 		}
-		return $this->{$name} = $value;
 	}
 
 /**
@@ -834,7 +837,7 @@ class Helper extends Object {
  * @param string $viewFile The file about to be rendered.
  * @return void
  */
-	public function beforeRenderFile($viewfile) {
+	public function beforeRenderFile($viewFile) {
 	}
 
 /**
@@ -847,7 +850,7 @@ class Helper extends Object {
  * @param string $content The content that was rendered.
  * @return void
  */
-	public function afterRenderFile($viewfile, $content) {
+	public function afterRenderFile($viewFile, $content) {
 	}
 
 /**
