@@ -20,6 +20,7 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
+use Cake\Error;
 
 /**
  * Security Library contains utility methods related to security
@@ -169,39 +170,14 @@ class Security {
 	}
 
 /**
- * Runs $text through a XOR cipher.
- *
- * *Note* This is not a cryptographically strong method and should not be used
- * for sensitive data. Additionally this method does *not* work in environments
- * where suhosin is enabled.
- *
- * Instead you should use Security::rijndael() when you need strong
- * encryption.
- *
+ * Deprecated method. Does nothing.
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use
- * @return string Encrypted/Decrypted string
+ * @throws Cake\Error\Exception
  * @deprecated This method will be removed in 3.x
  */
 	public static function cipher($text, $key) {
-		if (empty($key)) {
-			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::cipher()'), E_USER_WARNING);
-			return '';
-		}
-
-		srand(Configure::read('Security.cipherSeed'));
-		$out = '';
-		$keyLength = strlen($key);
-		for ($i = 0, $textLength = strlen($text); $i < $textLength; $i++) {
-			$j = ord(substr($key, $i % $keyLength, 1));
-			while ($j--) {
-				rand(0, 255);
-			}
-			$mask = rand(0, 255);
-			$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
-		}
-		srand();
-		return $out;
+		throw new Error\Exception(__d('cake_dev', 'Security::cipher() has been removed. Use Security::rijndael() to encrypt data'));
 	}
 
 /**

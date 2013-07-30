@@ -199,49 +199,6 @@ class SecurityTest extends TestCase {
 	}
 
 /**
- * testCipher method
- *
- * @return void
- */
-	public function testCipher() {
-		$length = 10;
-		$txt = '';
-		for ($i = 0; $i < $length; $i++) {
-			$txt .= mt_rand(0, 255);
-		}
-		$key = 'my_key';
-		$result = Security::cipher($txt, $key);
-		$this->assertEquals($txt, Security::cipher($result, $key));
-
-		$txt = '';
-		$key = 'my_key';
-		$result = Security::cipher($txt, $key);
-		$this->assertEquals($txt, Security::cipher($result, $key));
-
-		$txt = 123456;
-		$key = 'my_key';
-		$result = Security::cipher($txt, $key);
-		$this->assertEquals($txt, Security::cipher($result, $key));
-
-		$txt = '123456';
-		$key = 'my_key';
-		$result = Security::cipher($txt, $key);
-		$this->assertEquals($txt, Security::cipher($result, $key));
-	}
-
-/**
- * testCipherEmptyKey method
- *
- * @expectedException PHPUnit_Framework_Error
- * @return void
- */
-	public function testCipherEmptyKey() {
-		$txt = 'some_text';
-		$key = '';
-		Security::cipher($txt, $key);
-	}
-
-/**
  * testRijndael method
  *
  * @return void
