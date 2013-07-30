@@ -295,6 +295,38 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that beforeFind events can mutate the query.
+ *
+ * @return void
+ */
+	public function testFindBeforeFindEventMutateQuery() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table->getEventManager()->attach(function ($event, $query, $options) {
+			$query->limit(1);
+		}, 'Model.beforeFind');
+
+		$result = $table->find('all')->execute();
+		$this->assertCount(1, $result, 'Should only have 1 record, limit 1 applied.');
+	}
+
+/**
+ * Test that beforeFind events are fired and can stop the find and
+ * return custom results.
+ *
+ * @return void
+ */
+	public function testFindBeforeFindEventOverrideReturn() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table->getEventManager()->attach(function ($event, $query, $options) {
+			$event->stopPropagation();
+			return 'Something else';
+		}, 'Model.beforeFind');
+
+		$result = $table->find('all');
+		$this->assertEquals('Something else', $result);
+	}
+
+/**
  * Tests that belongsTo() creates and configures correctly the association
  *
  * @return void

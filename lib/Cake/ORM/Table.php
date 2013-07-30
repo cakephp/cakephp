@@ -16,6 +16,8 @@
  */
 namespace Cake\ORM;
 
+use Cake\Event\Event;
+use Cake\Event\EventManager;
 use Cake\Database\Schema\Table as Schema;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
@@ -29,6 +31,16 @@ use Cake\Utility\Inflector;
  * instances of this class can be created for the same database table with
  * different aliases, this allows you to address your database structure in a
  * richer and more expressive way.
+ *
+ * ### Callbacks/events
+ *
+ * Table objects provide a few callbacks/events you can hook into to augment/replace
+ * find operations. Each event uses the standard Event subsystem in CakePHP
+ *
+ * - beforeFind($event, $query, $options) - Fired before each find operation. By stopping
+ *   the event and supplying a return value you can bypass the find operation entirely. Any
+ *   changes done to the $query instance will be retained for the rest of the find.
+ *
  */
 class Table {
 
@@ -93,6 +105,15 @@ class Table {
 	protected $_associations = [];
 
 /**
+ * EventManager for this model.
+ *
+ * All model/behavior callbacks will be dispatched on this manager.
+ *
+ * @var Cake\Event\EventManager
+ */
+	protected $_eventManager;
+
+/**
  * Initializes a new instance
  *
  * The $config array understands the following keys:
@@ -106,7 +127,7 @@ class Table {
  * @param array config Lsit of options for this table
  * @return void
  */
-	public function __construct($config = array()) {
+	public function __construct($config = []) {
 		if (!empty($config['table'])) {
 			$this->table($config['table']);
 		}
@@ -126,6 +147,11 @@ class Table {
 		if (!empty($config['schema'])) {
 			$this->schema($config['schema']);
 		}
+		$eventManager = null;
+		if (!empty($config['eventManager'])) {
+			$eventManager = $config['eventManager'];
+		}
+		$this->_eventManager = $eventManager ?: new EventManager();
 	}
 
 /**
@@ -262,6 +288,15 @@ class Table {
 			return $this->_connection;
 		}
 		return $this->_connection = $conn;
+	}
+
+/**
+ * Get the event manager for this Table.
+ *
+ * @return Cake\Event\EventManager
+ */
+	public function getEventManager() {
+		return $this->_eventManager;
 	}
 
 /**
@@ -461,6 +496,12 @@ class Table {
 	public function find($type, $options = []) {
 		$query = $this->_buildQuery();
 		$query->select();
+
+		$event = new Event('Model.beforeFind', $this, [$query, $options]);
+		$this->_eventManager->dispatch($event);
+		if ($event->isStopped()) {
+			return $event->result;
+		}
 		return $this->{'find' . ucfirst($type)}($query, $options);
 	}
 
