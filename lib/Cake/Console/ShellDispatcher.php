@@ -81,9 +81,6 @@ class ShellDispatcher {
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 0);
 		}
-		if (!defined('CAKEPHP_SHELL')) {
-			define('CAKEPHP_SHELL', true);
-		}
 	}
 
 /**
