@@ -450,7 +450,7 @@ class UpgradeShell extends Shell {
 			];
 			$this->_updateFile($filePath, $patterns);
 		}
-		$this->out(__d('cake_console', '<success>Collection class uses rename successfully</success>'));
+		$this->out(__d('cake_console', '<success>Collection class uses rename successfully.</success>'));
 	}
 
 /**
@@ -640,7 +640,7 @@ class UpgradeShell extends Shell {
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')],
 			])
 			->addSubcommand('rename_collections', [
-				'help' => __d('cake_console', "Rename HelperCollection, ComponentCollection, and TaskCollection."),
+				'help' => __d('cake_console', "Rename HelperCollection, ComponentCollection, and TaskCollection. Will also rename component constructor arguments and _Collection properties on all objects."),
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			])
 			->addSubcommand('cache_config', [
