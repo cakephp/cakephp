@@ -55,6 +55,16 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 	}
 
 /**
+ * Set the controller associated with the collection.
+ *
+ * @param Controller $Controller Controller to set
+ * @return void
+ */
+	public function setController(Controller $Controller) {
+		$this->_Controller = $Controller;
+	}
+
+/**
  * Get the controller associated with the collection.
  *
  * @return Controller Controller instance
