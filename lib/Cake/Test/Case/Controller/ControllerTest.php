@@ -1088,7 +1088,7 @@ class ControllerTest extends CakeTestCase {
 		$Post->set('title', '');
 		$result = $TestController->validateErrors($Post);
 
-		$expected = array('title' => array('This field is invalid'));
+		$expected = array('title' => array('The provided value is invalid'));
 		$this->assertEquals($expected, $result);
 	}
 

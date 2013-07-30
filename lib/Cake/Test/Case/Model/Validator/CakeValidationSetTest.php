@@ -50,7 +50,7 @@ class CakeValidationSetTest extends CakeTestCase {
 		);
 
 		$result = $Field->validate($data);
-		$expected = array('This field is invalid');
+		$expected = array('The provided value is invalid');
 		$this->assertEquals($expected, $result);
 
 		$Field = new CakeValidationSet('body', 'notEmpty');

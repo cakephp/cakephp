@@ -285,7 +285,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
 				$message = __d($this->_validationDomain, $name);
 			}
 		} else {
-			$message = __d('cake', 'This field is invalid');
+			$message = __d('cake', 'The provided value is invalid');
 		}
 
 		return $message;
