@@ -8007,7 +8007,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-	
+
 /**
  * Test that required fields are created when only using ModelValidator::add().
  *
@@ -8015,7 +8015,7 @@ class FormHelperTest extends CakeTestCase {
  */
 	public function testFormInputRequiredDetectionModelValidator() {
 		ClassRegistry::getObject('ContactTag')->validator()->add('iwillberequired', 'required', array('rule' => 'notEmpty'));
-		
+
 		$this->Form->create('ContactTag');
 		$result = $this->Form->input('ContactTag.iwillberequired');
 		$expected = array(
