@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class UserFixture
  *
  * @package       Cake.Test.Fixture
  */
-class UserFixture extends CakeTestFixture {
+class UserFixture extends TestFixture {
 
 /**
  * name property
@@ -38,11 +41,12 @@ class UserFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'user' => array('type' => 'string', 'null' => true),
-		'password' => array('type' => 'string', 'null' => true),
+		'id' => ['type' => 'integer'],
+		'user' => ['type' => 'string', 'null' => true],
+		'password' => ['type' => 'string', 'null' => true],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**
@@ -52,8 +56,8 @@ class UserFixture extends CakeTestFixture {
  */
 	public $records = array(
 		array('user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
-		array('user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
-		array('user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'),
+		array('user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2008-03-17 01:18:23', 'updated' => '2008-03-17 01:20:31'),
+		array('user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2010-05-10 01:20:23', 'updated' => '2010-05-10 01:22:31'),
+		array('user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2012-06-10 01:22:23', 'updated' => '2012-06-12 01:24:31'),
 	);
 }

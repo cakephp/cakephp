@@ -16,15 +16,17 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Model;
 
-App::uses('AppModel', 'Model');
+use Cake\Core\Configure;
+use Cake\Utility\Hash;
 
 /**
  * Permissions linking AROs with ACOs
  *
  * @package       Cake.Model
  */
-class Permission extends AppModel {
+class Permission extends Model {
 
 /**
  * Model name

@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class ProductFixture
  *
  * @package       Cake.Test.Fixture
  */
-class ProductFixture extends CakeTestFixture {
+class ProductFixture extends TestFixture {
 
 /**
  * name property
@@ -38,10 +41,11 @@ class ProductFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'length' => 255, 'null' => false),
-		'type' => array('type' => 'string', 'length' => 255, 'null' => false),
-		'price' => array('type' => 'integer', 'null' => false)
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'type' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'price' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

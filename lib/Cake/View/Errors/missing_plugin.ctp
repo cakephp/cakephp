@@ -24,11 +24,11 @@
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Make sure your plugin %s is in the ' . APP_DIR . DS . 'Plugin directory and was loaded', $plugin); ?>
+	<?php echo __d('cake_dev', 'Make sure your plugin %s is in the ' . APP_DIR . DS . 'Plugin directory and was loaded', h($plugin)); ?>
 </p>
 <pre>
 &lt;?php
-CakePlugin::load('<?php echo h($plugin); ?>');
+Plugin::load('<?php echo h($plugin)?>');
 
 </pre>
 <p class="notice">
@@ -36,7 +36,7 @@ CakePlugin::load('<?php echo h($plugin); ?>');
 	<?php echo __d('cake_dev', 'If you wish to load all plugins at once, use the following line in your ' . APP_DIR . DS . 'Config' . DS . 'bootstrap.php file'); ?>
 </p>
 <pre>
-CakePlugin::loadAll();
+Plugin::loadAll();
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>

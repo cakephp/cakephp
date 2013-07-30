@@ -16,6 +16,7 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Utility\Inflector;
 ?>
 <div class="<?php echo $pluralVar; ?> view">
 <h2><?php echo __d('cake', 'View %s', $singularHumanName); ?></h2>
@@ -26,6 +27,7 @@ foreach ($scaffoldFields as $_field) {
 	$isKey = false;
 	if (!empty($associations['belongsTo'])) {
 		foreach ($associations['belongsTo'] as $_alias => $_details) {
+			list(, $_details['controller']) = namespaceSplit($_details['controller']);
 			if ($_field === $_details['foreignKey']) {
 				$isKey = true;
 				echo "\t\t<dt>" . Inflector::humanize($_alias) . "</dt>\n";
@@ -70,6 +72,7 @@ foreach ($scaffoldFields as $_field) {
 	$done = array();
 	foreach ($associations as $_type => $_data) {
 		foreach ($_data as $_alias => $_details) {
+			list(, $_details['controller']) = namespaceSplit($_details['controller']);
 			if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
 				echo "\t\t<li>";
 				echo $this->Html->link(
@@ -132,6 +135,7 @@ if (empty($associations['hasAndBelongsToMany'])) {
 $relations = array_merge($associations['hasMany'], $associations['hasAndBelongsToMany']);
 $i = 0;
 foreach ($relations as $_alias => $_details):
+list(, $_details['controller']) = namespaceSplit($_details['controller']);
 $otherSingularVar = Inflector::variable($_alias);
 ?>
 <div class="related">

@@ -10,22 +10,82 @@
  *
  * PHP 5
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config
  * @since         CakePHP(tm) v 0.10.8.2117
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace App\Config;
 
-// Setup a 'default' cache configuration for use in the application.
-Cache::config('default', array('engine' => 'File'));
+/**
+ * Configure paths required to find CakePHP + general filepath
+ * constants
+ */
+require __DIR__ . '/paths.php';
+
+/**
+ * Bootstrap CakePHP.
+ *
+ * Does the various bits of setup that CakePHP needs to do.
+ * This includes:
+ *
+ * - Registering the CakePHP autoloader.
+ * - Setting the default application paths.
+ */
+require CORE_PATH . 'Cake/bootstrap.php';
+
+/**
+ * Configure the App and debug values.
+ *
+ * You won't be able to load application classes
+ * until after the autoloader is configured in app.php
+ */
+require __DIR__ . '/app.php';
+
+/**
+ * Load caching configuration.
+ */
+require __DIR__ . '/cache.php';
+
+/**
+ * Load error handler configuration.
+ */
+require __DIR__ . '/error.php';
+
+/**
+ * Load email configuration.
+ *
+ * Create and uncomment this file to use pre-configured
+ * email defaults.
+ *
+ * See App/Config/email.default.php for a template
+ */
+// require __DIR__ . '/email.php';
+
+/**
+ * Load datasource connections.
+ *
+ * Create and uncomment this file to use datasource
+ * connections.
+ *
+ * See App/Config/datasources.default.php for a template.
+ */
+// require __DIR__ . '/datasources.php';
+
+/**
+ * Load logging configuration.
+ */
+require __DIR__ . '/logging.php';
+
+/**
+ * Load session configuration.
+ */
+require __DIR__ . '/session.php';
+
+
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
 
 /**
  * The settings below can be used to set additional paths to models, views and controllers.
@@ -64,13 +124,14 @@ Cache::config('default', array('engine' => 'File'));
 
 /**
  * Plugins need to be loaded manually, you can either load them one by one or all of them in a single call
- * Uncomment one of the lines below, as you need. make sure you read the documentation on CakePlugin to use more
+ * Uncomment one of the lines below, as you need. make sure you read the documentation on Plugin to use more
  * advanced ways of loading plugins
  *
- * CakePlugin::loadAll(); // Loads all plugins at once
- * CakePlugin::load('DebugKit'); //Loads a single plugin named DebugKit
+ * Plugin::loadAll(); // Loads all plugins at once
+ * Plugin::load('DebugKit'); //Loads a single plugin named DebugKit
  *
  */
+
 
 /**
  * You can attach event listeners to the request lifecycle as Dispatcher Filter . By Default CakePHP bundles two filters:
@@ -91,19 +152,4 @@ Cache::config('default', array('engine' => 'File'));
 Configure::write('Dispatcher.filters', array(
 	'AssetDispatcher',
 	'CacheDispatcher'
-));
-
-/**
- * Configures default file logging options
- */
-App::uses('CakeLog', 'Log');
-CakeLog::config('debug', array(
-	'engine' => 'FileLog',
-	'types' => array('notice', 'info', 'debug'),
-	'file' => 'debug',
-));
-CakeLog::config('error', array(
-	'engine' => 'FileLog',
-	'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
-	'file' => 'error',
 ));

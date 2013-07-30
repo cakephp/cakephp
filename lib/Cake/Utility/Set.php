@@ -17,9 +17,10 @@
  * @since         CakePHP(tm) v 1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Utility;
 
-App::uses('String', 'Utility');
-App::uses('Hash', 'Utility');
+use Cake\Utility\Hash;
+use Cake\Utility\String;
 
 /**
  * Class used for manipulation of arrays.
@@ -52,7 +53,7 @@ class Set {
 		if (!is_array($args[0])) {
 			$args[0] = (array)$args[0];
 		}
-		return call_user_func_array('Hash::merge', $args);
+		return call_user_func_array(__NAMESPACE__ . '\Hash::merge', $args);
 	}
 
 /**
@@ -128,7 +129,7 @@ class Set {
  */
 	protected static function _map(&$array, $class, $primary = false) {
 		if ($class === true) {
-			$out = new stdClass;
+			$out = new \stdClass;
 		} else {
 			$out = new $class;
 		}
@@ -542,7 +543,7 @@ class Set {
 			return $data;
 		}
 		if (is_object($data)) {
-			if (!($data instanceof ArrayAccess || $data instanceof Traversable)) {
+			if (!($data instanceof \ArrayAccess || $data instanceof \Traversable)) {
 				$data = get_object_vars($data);
 			}
 		}
@@ -801,7 +802,7 @@ class Set {
 		}
 
 		if (is_object($data)) {
-			if (!($data instanceof ArrayAccess || $data instanceof Traversable)) {
+			if (!($data instanceof \ArrayAccess || $data instanceof \Traversable)) {
 				$data = get_object_vars($data);
 			}
 		}
@@ -858,7 +859,7 @@ class Set {
  */
 	public static function reverse($object) {
 		$out = array();
-		if ($object instanceof SimpleXMLElement) {
+		if ($object instanceof \SimpleXMLElement) {
 			return Xml::toArray($object);
 		} elseif (is_object($object)) {
 			$keys = get_object_vars($object);

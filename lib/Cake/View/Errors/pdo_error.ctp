@@ -16,6 +16,7 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Utility\Debugger;
 ?>
 <h2><?php echo __d('cake_dev', 'Database Error'); ?></h2>
 <p class="error">

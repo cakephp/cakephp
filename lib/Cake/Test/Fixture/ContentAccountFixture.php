@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Fixture
  */
-class ContentAccountFixture extends CakeTestFixture {
+class ContentAccountFixture extends TestFixture {
 
 /**
  * name property
@@ -40,9 +43,10 @@ class ContentAccountFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'iContentAccountsId' => array('type' => 'integer', 'key' => 'primary'),
-		'iContentId' => array('type' => 'integer'),
-		'iAccountId' => array('type' => 'integer')
+		'iContentAccountsId' => ['type' => 'integer'],
+		'iContentId' => ['type' => 'integer'],
+		'iAccountId' => ['type' => 'integer'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['iContentAccountsId']]]
 	);
 
 /**

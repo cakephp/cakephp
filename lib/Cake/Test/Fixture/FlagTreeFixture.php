@@ -19,6 +19,9 @@
  * @since         CakePHP(tm) v 1.2.0.5331
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Flag Tree Test Fixture
@@ -27,7 +30,7 @@
  *
  * @package       Cake.Test.Fixture
  */
-class FlagTreeFixture extends CakeTestFixture {
+class FlagTreeFixture extends TestFixture {
 
 /**
  * name property
@@ -42,11 +45,12 @@ class FlagTreeFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer','key' => 'primary'),
-		'name' => array('type' => 'string','null' => false),
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'null' => false],
 		'parent_id' => 'integer',
-		'lft' => array('type' => 'integer','null' => false),
-		'rght' => array('type' => 'integer','null' => false),
-		'flag' => array('type' => 'integer','null' => false, 'length' => 1, 'default' => 0)
+		'lft' => ['type' => 'integer', 'null' => false],
+		'rght' => ['type' => 'integer', 'null' => false],
+		'flag' => ['type' => 'integer', 'null' => false, 'length' => 1, 'default' => 0],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 }

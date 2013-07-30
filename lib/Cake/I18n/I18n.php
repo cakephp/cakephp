@@ -17,11 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4116
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\I18n;
 
-App::uses('CakePlugin', 'Core');
-App::uses('L10n', 'I18n');
-App::uses('Multibyte', 'I18n');
-App::uses('CakeSession', 'Model/Datasource');
+use Cake\Cache\Cache;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Model\Datasource\Session;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use Cake\Utility\String;
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -146,8 +151,8 @@ class I18n {
 		}
 
 		if (empty($language)) {
-			if (CakeSession::started()) {
-				$language = CakeSession::read('Config.language');
+			if (Session::started()) {
+				$language = Session::read('Config.language');
 			}
 			if (empty($language)) {
 				$language = Configure::read('Config.language');
@@ -160,12 +165,13 @@ class I18n {
 		}
 
 		if (is_null($domain)) {
-			$domain = self::$defaultDomain;
+			$domain = static::$defaultDomain;
 		}
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
 
 		if (!isset($_this->_domains[$domain][$_this->_lang])) {
+			$_this->_domains[$domain][$_this->_lang] = [];
 			$_this->_domains[$domain][$_this->_lang] = Cache::read($_this->domain, '_cake_core_');
 		}
 
@@ -301,14 +307,14 @@ class I18n {
 		$this->_noLocale = true;
 		$core = true;
 		$merge = array();
-		$searchPaths = App::path('locales');
-		$plugins = CakePlugin::loaded();
+		$searchPaths = App::path('Locale');
+		$plugins = Plugin::loaded();
 
 		if (!empty($plugins)) {
 			foreach ($plugins as $plugin) {
 				$pluginDomain = Inflector::underscore($plugin);
 				if ($pluginDomain === $domain) {
-					$searchPaths[] = CakePlugin::path($plugin) . 'Locale' . DS;
+					$searchPaths[] = Plugin::path($plugin) . 'Locale/';
 					$searchPaths = array_reverse($searchPaths);
 					break;
 				}
@@ -319,9 +325,9 @@ class I18n {
 			foreach ($this->l10n->languagePath as $lang) {
 				$localeDef = $directory . $lang . DS . $this->category;
 				if (is_file($localeDef)) {
-					$definitions = self::loadLocaleDefinition($localeDef);
+					$definitions = static::loadLocaleDefinition($localeDef);
 					if ($definitions !== false) {
-						$this->_domains[$domain][$this->_lang][$this->category] = self::loadLocaleDefinition($localeDef);
+						$this->_domains[$domain][$this->_lang][$this->category] = static::loadLocaleDefinition($localeDef);
 						$this->_noLocale = false;
 						return $domain;
 					}
@@ -332,10 +338,10 @@ class I18n {
 					$translations = false;
 
 					if (is_file($app . '.mo')) {
-						$translations = self::loadMo($app . '.mo');
+						$translations = static::loadMo($app . '.mo');
 					}
 					if ($translations === false && is_file($app . '.po')) {
-						$translations = self::loadPo($app . '.po');
+						$translations = static::loadPo($app . '.po');
 					}
 
 					if ($translations !== false) {
@@ -350,10 +356,10 @@ class I18n {
 				$translations = false;
 
 				if (is_file($file . '.mo')) {
-					$translations = self::loadMo($file . '.mo');
+					$translations = static::loadMo($file . '.mo');
 				}
 				if ($translations === false && is_file($file . '.po')) {
-					$translations = self::loadPo($file . '.po');
+					$translations = static::loadPo($file . '.po');
 				}
 
 				if ($translations !== false) {
@@ -605,7 +611,7 @@ class I18n {
 			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		if (preg_match('/U([0-9a-fA-F]{4})/', $string, $match)) {
-			return Multibyte::ascii(array(hexdec($match[1])));
+			return String::ascii(array(hexdec($match[1])));
 		}
 		return $string;
 	}

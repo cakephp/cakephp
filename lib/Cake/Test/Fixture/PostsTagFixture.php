@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class PostsTagFixture
  *
  * @package       Cake.Test.Fixture
  */
-class PostsTagFixture extends CakeTestFixture {
+class PostsTagFixture extends TestFixture {
 
 /**
  * name property
@@ -38,9 +41,9 @@ class PostsTagFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'post_id' => array('type' => 'integer', 'null' => false),
-		'tag_id' => array('type' => 'string', 'null' => false),
-		'indexes' => array('posts_tag' => array('column' => array('tag_id', 'post_id'), 'unique' => 1))
+		'post_id' => ['type' => 'integer', 'null' => false],
+		'tag_id' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['posts_tag' => ['type' => 'unique', 'columns' => ['tag_id', 'post_id']]]
 	);
 
 /**

@@ -13,10 +13,15 @@
  * @since         CakePHP(tm) v 1.2.0.4525
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Model\Behavior;
 
-App::uses('ModelBehavior', 'Model');
-App::uses('I18n', 'I18n');
-App::uses('I18nModel', 'Model');
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\I18n\I18n;
+use Cake\Model\ConnectionManager;
+use Cake\Model\Model;
+use Cake\Model\ModelBehavior;
+use Cake\Utility\ClassRegistry;
 
 /**
  * Translate behavior
@@ -113,7 +118,7 @@ class TranslateBehavior extends ModelBehavior {
 		} else {
 			$tablePrefix = $db->config['prefix'];
 		}
-		$joinTable = new StdClass();
+		$joinTable = new \StdClass();
 		$joinTable->tablePrefix = $tablePrefix;
 		$joinTable->table = $RuntimeModel->table;
 		$joinTable->schemaName = $RuntimeModel->getDataSource()->getSchemaName();
@@ -561,7 +566,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param boolean $reset Leave true to have the fields only modified for the next operation.
  *   if false the field will be added for all future queries.
  * @return boolean
- * @throws CakeException when attempting to bind a translating called name. This is not allowed
+ * @throws Cake\Error\Exception when attempting to bind a translating called name. This is not allowed
  *   as it shadows Model::$name.
  */
 	public function bindTranslation(Model $Model, $fields, $reset = true) {
@@ -581,7 +586,7 @@ class TranslateBehavior extends ModelBehavior {
 				$association = $value;
 			}
 			if ($association === 'name') {
-				throw new CakeException(
+				throw new Error\Exception(
 					__d('cake_dev', 'You cannot bind a translation named "name".')
 				);
 			}

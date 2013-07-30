@@ -1,9 +1,5 @@
 <?php
 /**
- * Registry of loaded log engines
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,12 +9,15 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Log
  * @since         CakePHP(tm) v 2.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Log;
 
-App::uses('ObjectCollection', 'Utility');
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Log\LogInterface;
+use Cake\Utility\ObjectCollection;
 
 /**
  * Registry of loaded log engines
@@ -31,19 +30,25 @@ class LogEngineCollection extends ObjectCollection {
  * Loads/constructs a Log engine.
  *
  * @param string $name instance identifier
- * @param array $options Setting for the Log Engine
+ * @param LogInterface|array $options Setting for the Log Engine, or the log engine
+ *   If a log engine is used, the adapter will be enabled.
  * @return BaseLog BaseLog engine instance
- * @throws CakeLogException when logger class does not implement a write method
+ * @throws Cake\Error\Exception when logger class does not implement a write method
  */
 	public function load($name, $options = array()) {
-		$enable = isset($options['enabled']) ? $options['enabled'] : true;
-		$loggerName = $options['engine'];
-		unset($options['engine']);
-		$className = $this->_getLogger($loggerName);
-		$logger = new $className($options);
-		if (!$logger instanceof CakeLogInterface) {
-			throw new CakeLogException(sprintf(
-				__d('cake_dev', 'logger class %s does not implement a write method.'), $loggerName
+		$logger = false;
+		if ($options instanceof LogInterface) {
+			$enable = true;
+			$logger = $options;
+			$options = null;
+		}
+		if (is_array($options)) {
+			$enable = isset($options['enabled']) ? $options['enabled'] : true;
+			$logger = $this->_getLogger($options);
+		}
+		if (!$logger instanceof LogInterface) {
+			throw new Error\Exception(sprintf(
+				__d('cake_dev', 'logger class %s is not an instance of Cake\Log\LogInterface.'), $name
 			));
 		}
 		$this->_loaded[$name] = $logger;
@@ -57,18 +62,19 @@ class LogEngineCollection extends ObjectCollection {
  * Attempts to import a logger class from the various paths it could be on.
  * Checks that the logger class implements a write method as well.
  *
- * @param string $loggerName the plugin.className of the logger class you want to build.
- * @return mixed boolean false on any failures, string of classname to use if search was successful.
- * @throws CakeLogException
+ * @param array $options The configuration options to load a logger with.
+ * @return false|LogInterface boolean false on any failures, log adapter interface on success
+ * @throws Cake\Error\Exception
  */
-	protected static function _getLogger($loggerName) {
-		list($plugin, $loggerName) = pluginSplit($loggerName, true);
-
-		App::uses($loggerName, $plugin . 'Log/Engine');
-		if (!class_exists($loggerName)) {
-			throw new CakeLogException(__d('cake_dev', 'Could not load class %s', $loggerName));
+	protected static function _getLogger($options) {
+		$name = isset($options['engine']) ? $options['engine'] : null;
+		unset($options['engine']);
+		$class = App::classname($name, 'Log/Engine');
+		if (!$class) {
+			throw new Error\Exception(__d('cake_dev', 'Could not load class %s', $name));
 		}
-		return $loggerName;
+		$logger = new $class($options);
+		return $logger;
 	}
 
 }

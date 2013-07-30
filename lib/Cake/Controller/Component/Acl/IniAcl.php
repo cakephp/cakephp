@@ -13,8 +13,12 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Controller\Component\Acl;
 
-App::uses('AclInterface', 'Controller/Component/Acl');
+use Cake\Configure\IniReader;
+use Cake\Controller\Component;
+use Cake\Core\Object;
+use Cake\Utility\Hash;
 
 /**
  * IniAcl implements an access control system using an INI file. An example
@@ -94,7 +98,7 @@ class IniAcl extends Object implements AclInterface {
  */
 	public function check($aro, $aco, $action = null) {
 		if (!$this->config) {
-			$this->config = $this->readConfigFile(APP . 'Config' . DS . 'acl.ini.php');
+			$this->config = $this->readConfigFile(APP . 'Config/acl.ini.php');
 		}
 		$aclConfig = $this->config;
 
@@ -152,7 +156,6 @@ class IniAcl extends Object implements AclInterface {
  * @return array INI section structure
  */
 	public function readConfigFile($filename) {
-		App::uses('IniReader', 'Configure');
 		$iniFile = new IniReader(dirname($filename) . DS);
 		return $iniFile->read(basename($filename));
 	}

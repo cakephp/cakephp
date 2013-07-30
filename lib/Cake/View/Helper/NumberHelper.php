@@ -19,10 +19,13 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View\Helper;
 
-App::uses('CakeNumber', 'Utility');
-App::uses('AppHelper', 'View/Helper');
-App::uses('Hash', 'Utility');
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Utility\Hash;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Number helper library.
@@ -31,14 +34,14 @@ App::uses('Hash', 'Utility');
  *
  * @package       Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html
- * @see CakeNumber
+ * @see Cake\Utility\Number
  */
-class NumberHelper extends AppHelper {
+class NumberHelper extends Helper {
 
 /**
- * CakeNumber instance
+ * Cake\Utility\Number instance
  *
- * @var CakeNumber
+ * @var Cake\Utility\Number
  */
 	protected $_engine = null;
 
@@ -47,34 +50,33 @@ class NumberHelper extends AppHelper {
  *
  * ### Settings:
  *
- * - `engine` Class name to use to replace CakeNumber functionality
+ * - `engine` Class name to use to replace Cake\Utility\Number functionality
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper
- * @throws CakeException When the engine class could not be found.
+ * @throws Cake\Error\Exception When the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'CakeNumber'), $settings);
+		$settings = Hash::merge(array('engine' => 'Cake\Utility\Number'), $settings);
 		parent::__construct($View, $settings);
-		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
-		App::uses($engineClass, $plugin . 'Utility');
-		if (class_exists($engineClass)) {
+		$engineClass = App::classname($settings['engine'], 'Utility');
+		if ($engineClass) {
 			$this->_engine = new $engineClass($settings);
 		} else {
-			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
+			throw new Error\Exception(__d('cake_dev', 'Class for %s could not be found', $settings['engine']));
 		}
 	}
 
 /**
- * Call methods from CakeNumber utility class
+ * Call methods from Cake\Utility\Number utility class
  */
 	public function __call($method, $params) {
 		return call_user_func_array(array($this->_engine, $method), $params);
 	}
 
 /**
- * @see CakeNumber::precision()
+ * @see: Cake\Utility\Number::precision()
  *
  * @param float $number	A floating point number.
  * @param integer $precision The precision of the returned number.
@@ -86,7 +88,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::toReadableSize()
+ * @see: Cake\Utility\Number::toReadableSize()
  *
  * @param integer $size Size in bytes
  * @return string Human readable size
@@ -97,7 +99,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::toPercentage()
+ * @see: Cake\Utility\Number::toPercentage()
  *
  * @param float $number A floating point number
  * @param integer $precision The precision of the returned number
@@ -109,7 +111,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::format()
+ * @see: Cake\Utility\Number::format()
  *
  * @param float $number A floating point number
  * @param integer $options if int then places, if string then before, if (,.-) then use it
@@ -122,7 +124,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::currency()
+ * @see: Cake\Utility\Number::currency()
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
@@ -137,7 +139,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::addFormat()
+ * @see: Cake\Utility\Number::addFormat()
  *
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.

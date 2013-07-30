@@ -19,9 +19,13 @@
  * @since         CakePHP(tm) v 1.2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Model;
 
-App::uses('ObjectCollection', 'Utility');
-App::uses('CakeEventListener', 'Event');
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Event\EventListener;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\ObjectCollection;
 
 /**
  * Model behavior collection class.
@@ -30,7 +34,7 @@ App::uses('CakeEventListener', 'Event');
  *
  * @package       Cake.Model
  */
-class BehaviorCollection extends ObjectCollection implements CakeEventListener {
+class BehaviorCollection extends ObjectCollection implements EventListener {
 
 /**
  * Stores a reference to the attached name
@@ -100,7 +104,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  * @param string $behavior CamelCased name of the behavior to load
  * @param array $config Behavior configuration parameters
  * @return boolean True on success, false on failure
- * @throws MissingBehaviorException when a behavior could not be found.
+ * @throws Cake\Error\MissingBehaviorException when a behavior could not be found.
  */
 	public function load($behavior, $config = array()) {
 		if (is_array($config) && isset($config['className'])) {
@@ -115,13 +119,10 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 		if (!isset($alias)) {
 			$alias = $name;
 		}
-
-		$class = $name . 'Behavior';
-
-		App::uses($class, $plugin . 'Model/Behavior');
-		if (!class_exists($class)) {
-			throw new MissingBehaviorException(array(
-				'class' => $class,
+		$class = App::classname($behavior, 'Model/Behavior', 'Behavior');
+		if (!$class) {
+			throw new Error\MissingBehaviorException(array(
+				'class' => $name . 'Behavior',
 				'plugin' => substr($plugin, 0, -1)
 			));
 		}
@@ -153,7 +154,8 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			$this->_mappedMethods[$method] = array($alias, $methodAlias);
 		}
 		$methods = get_class_methods($this->_loaded[$alias]);
-		$parentMethods = array_flip(get_class_methods('ModelBehavior'));
+		$x = new \Cake\Model\ModelBehavior();
+		$parentMethods = array_flip(get_class_methods('Cake\Model\ModelBehavior'));
 		$callbacks = array(
 			'setup', 'cleanup', 'beforeFind', 'afterFind', 'beforeSave', 'afterSave',
 			'beforeDelete', 'afterDelete', 'onError'

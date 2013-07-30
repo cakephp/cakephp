@@ -17,7 +17,10 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::uses('CakeEventListener', 'Event');
+namespace Cake\Routing;
+
+use Cake\Event\Event;
+use Cake\Event\EventListener;
 
 /**
  * This abstract class represents a filter to be applied to a dispatcher cycle. It acts as as
@@ -26,7 +29,7 @@ App::uses('CakeEventListener', 'Event');
  *
  * @package Cake.Routing
  */
-abstract class DispatcherFilter implements CakeEventListener {
+abstract class DispatcherFilter implements EventListener {
 
 /**
  * Default priority for all methods in this filter
@@ -56,18 +59,18 @@ abstract class DispatcherFilter implements CakeEventListener {
  * If used with default priority, it will be called after the Router has parsed the
  * URL and set the routing params into the request object.
  *
- * If a CakeResponse object instance is returned, it will be served at the end of the
+ * If a Cake\Network\Response object instance is returned, it will be served at the end of the
  * event cycle, not calling any controller as a result. This will also have the effect of
  * not calling the after event in the dispatcher.
  *
  * If false is returned, the event will be stopped and no more listeners will be notified.
  * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
  *
- * @param CakeEvent $event container object having the `request`, `response` and `additionalParams`
- *	keys in the data property.
- * @return CakeResponse|boolean
+ * @param Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
+ *    keys in the data property.
+ * @return Cake\Network\Response|boolean
  */
-	public function beforeDispatch(CakeEvent $event) {
+	public function beforeDispatch(Event $event) {
 	}
 
 /**
@@ -78,10 +81,10 @@ abstract class DispatcherFilter implements CakeEventListener {
  * If false is returned, the event will be stopped and no more listeners will be notified.
  * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
  *
- * @param CakeEvent $event container object having the `request` and  `response`
- *	keys in the data property.
+ * @param Cake\Event\Event $event container object having the `request` and  `response`
+ *    keys in the data property.
  * @return mixed boolean to stop the event dispatching or null to continue
  */
-	public function afterDispatch(CakeEvent $event) {
+	public function afterDispatch(Event $event) {
 	}
 }

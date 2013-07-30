@@ -19,6 +19,7 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Utility\Inflector;
 
 echo "<?php\n";
 echo "App::uses('{$plugin}AppModel', '{$pluginPath}Model');\n";
@@ -71,6 +72,16 @@ if ($displayField): ?>
  * @var string
  */
 	public $displayField = '<?php echo $displayField; ?>';
+
+<?php endif;
+
+if (!empty($actsAs)): ?>
+/**
+ * Behaviors
+ *
+ * @var array
+ */
+	public $actsAs = array(<?php echo "\n\t"; foreach ($actsAs as $behavior): echo "\t"; var_export($behavior); echo ",\n\t"; endforeach; ?>);
 
 <?php endif;
 

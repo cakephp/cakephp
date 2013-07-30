@@ -16,20 +16,24 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/opengroup.php Open Group Test Suite License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * PrefixTestFixture
  *
  * @package       Cake.Test.Fixture
  */
-class PrefixTestFixture extends CakeTestFixture {
+class PrefixTestFixture extends TestFixture {
 
 	public $name = 'PrefixTest';
 
 	public $table = 'prefix_prefix_tests';
 
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => ['type' => 'integer'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 }

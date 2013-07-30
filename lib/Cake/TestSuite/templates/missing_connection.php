@@ -18,11 +18,11 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<?php include dirname(__FILE__) . DS . 'header.php'; ?>
+<?php include __DIR__ . DS . 'header.php'; ?>
 <div id="content">
 	<h2>Missing Test Database Connection</h2>
 	<h3><?php echo $exception->getMessage(); ?></h3>
 	<pre><?php echo $exception->getTraceAsString(); ?></pre>
 </div>
 <?php
-include dirname(__FILE__) . DS . 'footer.php';
+include __DIR__ . DS . 'footer.php';

@@ -17,20 +17,24 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Fixture
  */
-class CounterCachePostNonstandardPrimaryKeyFixture extends CakeTestFixture {
+class CounterCachePostNonstandardPrimaryKeyFixture extends TestFixture {
 
 	public $name = 'CounterCachePostNonstandardPrimaryKey';
 
 	public $fields = array(
-		'pid' => array('type' => 'integer', 'key' => 'primary'),
-		'title' => array('type' => 'string', 'length' => 255, 'null' => false),
-		'uid' => array('type' => 'integer', 'null' => true),
+		'pid' => ['type' => 'integer'],
+		'title' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'uid' => ['type' => 'integer', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['pid']]]
 	);
 
 	public $records = array(

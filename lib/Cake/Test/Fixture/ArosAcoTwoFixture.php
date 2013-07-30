@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Fixture
  */
-class ArosAcoTwoFixture extends CakeTestFixture {
+class ArosAcoTwoFixture extends TestFixture {
 
 /**
  * name property
@@ -38,13 +41,14 @@ class ArosAcoTwoFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'aro_id' => array('type' => 'integer', 'length' => 10, 'null' => false),
-		'aco_id' => array('type' => 'integer', 'length' => 10, 'null' => false),
-		'_create' => array('type' => 'string', 'length' => 2, 'default' => 0),
-		'_read' => array('type' => 'string', 'length' => 2, 'default' => 0),
-		'_update' => array('type' => 'string', 'length' => 2, 'default' => 0),
-		'_delete' => array('type' => 'string', 'length' => 2, 'default' => 0)
+		'id' => ['type' => 'integer'],
+		'aro_id' => ['type' => 'integer', 'length' => 10, 'null' => false],
+		'aco_id' => ['type' => 'integer', 'length' => 10, 'null' => false],
+		'_create' => ['type' => 'string', 'length' => 2, 'default' => 0],
+		'_read' => ['type' => 'string', 'length' => 2, 'default' => 0],
+		'_update' => ['type' => 'string', 'length' => 2, 'default' => 0],
+		'_delete' => ['type' => 'string', 'length' => 2, 'default' => 0],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

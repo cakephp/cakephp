@@ -1,9 +1,5 @@
 <?php
 /**
- * PHP configuration based AclInterface implementation
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,10 +9,17 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component.Acl
  * @since         CakePHP(tm) v 2.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Controller\Component\Acl;
+
+use Cake\Configure\PhpReader;
+use Cake\Controller\Component;
+use Cake\Core\Object;
+use Cake\Error;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 /**
  * PhpAcl implements an access control system using a plain PHP configuration file.
@@ -66,8 +69,8 @@ class PhpAcl extends Object implements AclInterface {
  */
 	public function __construct() {
 		$this->options = array(
-			'policy' => self::DENY,
-			'config' => APP . 'Config' . DS . 'acl.php',
+			'policy' => static::DENY,
+			'config' => APP . 'Config/acl.php',
 		);
 	}
 
@@ -82,7 +85,6 @@ class PhpAcl extends Object implements AclInterface {
 			$this->options = array_merge($this->options, $Component->settings['adapter']);
 		}
 
-		App::uses('PhpReader', 'Configure');
 		$Reader = new PhpReader(dirname($this->options['config']) . DS);
 		$config = $Reader->read(basename($this->options['config']));
 		$this->build($config);
@@ -95,15 +97,15 @@ class PhpAcl extends Object implements AclInterface {
  *
  * @param array $config configuration array, see docs
  * @return void
- * @throws AclException When required keys are missing.
+ * @throws Cake\Error\AclException When required keys are missing.
  */
 	public function build(array $config) {
 		if (empty($config['roles'])) {
-			throw new AclException(__d('cake_dev', '"roles" section not found in configuration.'));
+			throw new Error\AclException(__d('cake_dev','"roles" section not found in configuration.'));
 		}
 
 		if (empty($config['rules']['allow']) && empty($config['rules']['deny'])) {
-			throw new AclException(__d('cake_dev', 'Neither "allow" nor "deny" rules were provided in configuration.'));
+			throw new Error\AclException(__d('cake_dev','Neither "allow" nor "deny" rules were provided in configuration.'));
 		}
 
 		$rules['allow'] = !empty($config['rules']['allow']) ? $config['rules']['allow'] : array();
@@ -250,7 +252,7 @@ class PhpAco {
 			}
 
 			foreach ($root as $node => $elements) {
-				$pattern = '/^' . str_replace(array_keys(self::$modifiers), array_values(self::$modifiers), $node) . '$/';
+				$pattern = '/^' . str_replace(array_keys(static::$modifiers), array_values(static::$modifiers), $node) . '$/';
 
 				if ($node == $aco[$level] || preg_match($pattern, $aco[$level])) {
 					// merge allow/denies with $path of current level
@@ -490,7 +492,7 @@ class PhpAro {
 				return $this->aliases[$mapped];
 			}
 		}
-		return self::DEFAULT_ROLE;
+		return static::DEFAULT_ROLE;
 	}
 
 /**

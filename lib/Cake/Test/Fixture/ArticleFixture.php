@@ -17,20 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Fixture
  */
-class ArticleFixture extends CakeTestFixture {
-
-/**
- * name property
- *
- * @var string 'Article'
- */
-	public $name = 'Article';
+class ArticleFixture extends TestFixture {
 
 /**
  * fields property
@@ -38,13 +34,12 @@ class ArticleFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'user_id' => array('type' => 'integer', 'null' => true),
-		'title' => array('type' => 'string', 'null' => true),
+		'id' => ['type' => 'integer'],
+		'author_id' => ['type' => 'integer', 'null' => true],
+		'title' => ['type' => 'string', 'null' => true],
 		'body' => 'text',
-		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
-		'created' => 'datetime',
-		'updated' => 'datetime'
+		'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**
@@ -53,9 +48,9 @@ class ArticleFixture extends CakeTestFixture {
  * @var array
  */
 	public $records = array(
-		array('user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'),
-		array('user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'),
-		array('user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31')
+		array('author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'),
+		array('author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'),
+		array('author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y')
 	);
 
 }

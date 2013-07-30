@@ -1,10 +1,5 @@
 <?php
 /**
- * Memcache storage engine for cache
- *
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,10 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Cache.Engine
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Cache\Engine;
+
+use Cake\Cache\CacheEngine;
+use Cake\Error;
+use Cake\Utility\Inflector;
 
 /**
  * Memcache storage engine for cache. Memcache has some limitations in the amount of
@@ -64,14 +63,14 @@ class MemcacheEngine extends CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($settings = array()) {
-		if (!class_exists('Memcache')) {
+		if (!class_exists('\Memcache')) {
 			return false;
 		}
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
 		$settings += array(
-			'engine' => 'Memcache',
+			'engine' => __CLASS__,
 			'servers' => array('127.0.0.1'),
 			'compress' => false,
 			'persistent' => true
@@ -86,7 +85,7 @@ class MemcacheEngine extends CacheEngine {
 		}
 		if (!isset($this->_Memcache)) {
 			$return = false;
-			$this->_Memcache = new Memcache();
+			$this->_Memcache = new \Memcache();
 			foreach ($this->settings['servers'] as $server) {
 				list($host, $port) = $this->_parseServerString($server);
 				if ($this->_Memcache->addServer($host, $port, $this->settings['persistent'])) {
@@ -160,11 +159,11 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
  * @return New incremented value, false otherwise
- * @throws CacheException when you try to increment with compress = true
+ * @throws Cake\Error\CacheException when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new CacheException(
+			throw new Error\CacheException(
 				__d('cake_dev', 'Method increment() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}
@@ -177,11 +176,11 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
  * @return New decremented value, false otherwise
- * @throws CacheException when you try to decrement with compress = true
+ * @throws Cake\Error\CacheException when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new CacheException(
+			throw new Error\CacheException(
 				__d('cake_dev', 'Method decrement() not implemented for compressed cache in %s', __CLASS__)
 			);
 		}

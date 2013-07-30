@@ -17,14 +17,17 @@
  * @since         CakePHP(tm) v 1.2.0.7984
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * UuidTreeFixture class
  *
- * @uses          CakeTestFixture
+ * @uses          TestFixture
  * @package       Cake.Test.Fixture
  */
-class UuidTreeFixture extends CakeTestFixture {
+class UuidTreeFixture extends TestFixture {
 
 /**
  * name property
@@ -39,10 +42,11 @@ class UuidTreeFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id'	=> array('type' => 'string', 'length' => 36, 'key' => 'primary'),
-		'name'	=> array('type' => 'string', 'null' => false),
-		'parent_id' => array('type' => 'string', 'length' => 36, 'null' => true),
-		'lft'	=> array('type' => 'integer', 'null' => false),
-		'rght'	=> array('type' => 'integer', 'null' => false)
+		'id' => ['type' => 'string', 'length' => 36],
+		'name' => ['type' => 'string', 'null' => false],
+		'parent_id' => ['type' => 'string', 'length' => 36, 'null' => true],
+		'lft' => ['type' => 'integer', 'null' => false],
+		'rght' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 }

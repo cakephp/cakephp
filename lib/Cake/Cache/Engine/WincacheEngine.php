@@ -1,11 +1,5 @@
 <?php
 /**
- * Wincache storage engine for cache.
- *
- * Supports wincache 1.1.0 and higher.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,13 +9,17 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Cache.Engine
- * @since         CakePHP(tm) v 1.2.0.4933
+ * @since         CakePHP(tm) v 2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Cache\Engine;
+
+use Cake\Cache\CacheEngine;
 
 /**
  * Wincache storage engine for cache
+ *
+ * Supports wincache 1.1.0 and higher.
  *
  * @package       Cake.Cache.Engine
  */
@@ -49,7 +47,7 @@ class WincacheEngine extends CacheEngine {
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
-		$settings += array('engine' => 'Wincache');
+		$settings += array('engine' => __CLASS__);
 		parent::init($settings);
 		return function_exists('wincache_ucache_info');
 	}

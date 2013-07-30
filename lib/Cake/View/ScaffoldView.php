@@ -19,8 +19,11 @@
  * @since         Cake v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View;
 
-App::uses('ThemeView', 'View');
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Utility\Inflector;
 
 /**
  * ScaffoldView provides specific view file loading features for scaffolded views.
@@ -34,7 +37,7 @@ class ScaffoldView extends ThemeView {
  *
  * @param string $name name of the view file to get.
  * @return string action
- * @throws MissingViewException
+ * @throws Cake\Error\MissingViewException
  */
 	protected function _getViewFileName($name = null) {
 		if ($name === null) {
@@ -54,6 +57,8 @@ class ScaffoldView extends ThemeView {
 
 		if ($name === 'add' || $name === 'edit') {
 			$name = 'form';
+		} else {
+			$name = str_replace('/', DS, $name);
 		}
 
 		$scaffoldAction = 'scaffold.' . $name;
@@ -86,7 +91,7 @@ class ScaffoldView extends ThemeView {
 			return CAKE . 'View' . DS . 'Errors' . DS . 'scaffold_error.ctp';
 		}
 
-		throw new MissingViewException($paths[0] . $name . $this->ext);
+		throw new Error\MissingViewException($paths[0] . $name . $this->ext);
 	}
 
 }

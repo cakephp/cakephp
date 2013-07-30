@@ -19,9 +19,11 @@
  * @since         CakePHP(tm) v 1.2.4560
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Utility;
 
-App::uses('CakeLog', 'Log');
-App::uses('String', 'Utility');
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Log\Log;
 
 /**
  * Provide custom logging and error handling.
@@ -177,7 +179,7 @@ class Debugger {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::dump
  */
 	public static function dump($var) {
-		pr(self::exportVar($var));
+		pr(static::exportVar($var));
 	}
 
 /**
@@ -190,8 +192,8 @@ class Debugger {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::log
  */
 	public static function log($var, $level = LOG_DEBUG) {
-		$source = self::trace(array('start' => 1)) . "\n";
-		CakeLog::write($level, "\n" . $source . self::exportVar($var));
+		$source = static::trace(array('start' => 1)) . "\n";
+		Log::write($level, "\n" . $source . static::exportVar($var));
 	}
 
 /**
@@ -336,7 +338,7 @@ class Debugger {
 				} else {
 					$tpl = $self->_templates['base']['traceLine'];
 				}
-				$trace['path'] = self::trimPath($trace['file']);
+				$trace['path'] = static::trimPath($trace['file']);
 				$trace['reference'] = $reference;
 				unset($trace['object'], $trace['args']);
 				$back[] = String::insert($tpl, $trace, array('before' => '{:', 'after' => '}'));
@@ -362,7 +364,7 @@ class Debugger {
 		}
 
 		if (strpos($path, APP) === 0) {
-			return str_replace(APP, 'APP' . DS, $path);
+			return str_replace(APP, 'APP/', $path);
 		} elseif (strpos($path, CAKE_CORE_INCLUDE_PATH) === 0) {
 			return str_replace(CAKE_CORE_INCLUDE_PATH, 'CORE', $path);
 		} elseif (strpos($path, ROOT) === 0) {
@@ -410,7 +412,7 @@ class Debugger {
 			if (!isset($data[$i])) {
 				continue;
 			}
-			$string = str_replace(array("\r\n", "\n"), "", self::_highlight($data[$i]));
+			$string = str_replace(array("\r\n", "\n"), "", static::_highlight($data[$i]));
 			if ($i == $line) {
 				$lines[] = '<span class="code-highlight">' . $string . '</span>';
 			} else {
@@ -470,7 +472,7 @@ class Debugger {
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::exportVar
  */
 	public static function exportVar($var, $depth = 3) {
-		return self::_export($var, $depth, 0);
+		return static::_export($var, $depth, 0);
 	}
 
 /**
@@ -482,7 +484,7 @@ class Debugger {
  * @return string The dumped variable.
  */
 	protected static function _export($var, $depth, $indent) {
-		switch (self::getType($var)) {
+		switch (static::getType($var)) {
 			case 'boolean':
 				return ($var) ? 'true' : 'false';
 			case 'integer':
@@ -495,13 +497,13 @@ class Debugger {
 				}
 				return "'" . $var . "'";
 			case 'array':
-				return self::_array($var, $depth - 1, $indent + 1);
+				return static::_array($var, $depth - 1, $indent + 1);
 			case 'resource':
 				return strtolower(gettype($var));
 			case 'null':
 				return 'null';
 			default:
-				return self::_object($var, $depth - 1, $indent + 1);
+				return static::_object($var, $depth - 1, $indent + 1);
 		}
 	}
 
@@ -551,9 +553,9 @@ class Debugger {
 				if ($key === 'GLOBALS' && is_array($val) && isset($val['GLOBALS'])) {
 					$val = '[recursion]';
 				} elseif ($val !== $var) {
-					$val = self::_export($val, $depth, $indent);
+					$val = static::_export($val, $depth, $indent);
 				}
-				$vars[] = $break . self::exportVar($key) .
+				$vars[] = $break . static::exportVar($key) .
 					' => ' .
 					$val;
 			}
@@ -584,32 +586,30 @@ class Debugger {
 			$break = "\n" . str_repeat("\t", $indent);
 			$objectVars = get_object_vars($var);
 			foreach ($objectVars as $key => $value) {
-				$value = self::_export($value, $depth - 1, $indent);
+				$value = static::_export($value, $depth - 1, $indent);
 				$props[] = "$key => " . $value;
 			}
 
-			if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-				$ref = new ReflectionObject($var);
+			$ref = new \ReflectionObject($var);
 
-				$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PROTECTED);
-				foreach ($reflectionProperties as $reflectionProperty) {
-					$reflectionProperty->setAccessible(true);
-					$property = $reflectionProperty->getValue($var);
+			$reflectionProperties = $ref->getProperties(\ReflectionProperty::IS_PROTECTED);
+			foreach ($reflectionProperties as $reflectionProperty) {
+				$reflectionProperty->setAccessible(true);
+				$property = $reflectionProperty->getValue($var);
 
-					$value = self::_export($property, $depth - 1, $indent);
-					$key = $reflectionProperty->name;
-					$props[] = "[protected] $key => " . $value;
-				}
+				$value = static::_export($property, $depth - 1, $indent);
+				$key = $reflectionProperty->name;
+				$props[] = "[protected] $key => " . $value;
+			}
 
-				$reflectionProperties = $ref->getProperties(ReflectionProperty::IS_PRIVATE);
-				foreach ($reflectionProperties as $reflectionProperty) {
-					$reflectionProperty->setAccessible(true);
-					$property = $reflectionProperty->getValue($var);
+			$reflectionProperties = $ref->getProperties(\ReflectionProperty::IS_PRIVATE);
+			foreach ($reflectionProperties as $reflectionProperty) {
+				$reflectionProperty->setAccessible(true);
+				$property = $reflectionProperty->getValue($var);
 
-					$value = self::_export($property, $depth - 1, $indent);
-					$key = $reflectionProperty->name;
-					$props[] = "[private] $key => " . $value;
-				}
+				$value = static::_export($property, $depth - 1, $indent);
+				$key = $reflectionProperty->name;
+				$props[] = "[private] $key => " . $value;
 			}
 
 			$out .= $break . implode($break, $props) . $end;
@@ -624,7 +624,7 @@ class Debugger {
  * @param string $format The format you want errors to be output as.
  *   Leave null to get the current format.
  * @return mixed Returns null when setting. Returns the current format when getting.
- * @throws CakeException when choosing a format that doesn't exist.
+ * @throws Cake\Error\Exception when choosing a format that doesn't exist.
  */
 	public static function outputAs($format = null) {
 		$self = Debugger::getInstance();
@@ -632,7 +632,7 @@ class Debugger {
 			return $self->_outputFormat;
 		}
 		if ($format !== false && !isset($self->_templates[$format])) {
-			throw new CakeException(__d('cake_dev', 'Invalid Debugger output format.'));
+			throw new Error\Exception(__d('cake_dev', 'Invalid Debugger output format.'));
 		}
 		$self->_outputFormat = $format;
 	}
@@ -848,11 +848,11 @@ class Debugger {
  */
 	public static function checkSecurityKeys() {
 		if (Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
-			trigger_error(__d('cake_dev', 'Please change the value of \'Security.salt\' in app/Config/core.php to a salt value specific to your application'), E_USER_NOTICE);
+			trigger_error(__d('cake_dev', 'Please change the value of \'Security.salt\' in App/Config/app.php to a salt value specific to your application'), E_USER_NOTICE);
 		}
 
 		if (Configure::read('Security.cipherSeed') === '76859309657453542496749683645') {
-			trigger_error(__d('cake_dev', 'Please change the value of \'Security.cipherSeed\' in app/Config/core.php to a numeric (digits only) seed value specific to your application'), E_USER_NOTICE);
+			trigger_error(__d('cake_dev', 'Please change the value of \'Security.cipherSeed\' in app/Config/app.php to a numeric (digits only) seed value specific to your application'), E_USER_NOTICE);
 		}
 	}
 

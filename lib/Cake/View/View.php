@@ -17,14 +17,24 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View;
 
-App::uses('HelperCollection', 'View');
-App::uses('AppHelper', 'View/Helper');
-App::uses('Router', 'Routing');
-App::uses('ViewBlock', 'View');
-App::uses('CakeEvent', 'Event');
-App::uses('CakeEventManager', 'Event');
-App::uses('CakeResponse', 'Network');
+use Cake\Cache\Cache;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Core\Plugin;
+use Cake\Error;
+use Cake\Event\Event;
+use Cake\Event\EventManager;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Routing\RequestActionTrait;
+use Cake\Routing\Router;
+use Cake\Utility\Inflector;
+use Cake\Utility\ObjectCollection;
+use Cake\Utility\ViewVarsTrait;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -46,7 +56,6 @@ App::uses('CakeResponse', 'Network');
  * @property      CacheHelper $Cache
  * @property      FormHelper $Form
  * @property      HtmlHelper $Html
- * @property      JsHelper $Js
  * @property      NumberHelper $Number
  * @property      PaginatorHelper $Paginator
  * @property      RssHelper $Rss
@@ -56,6 +65,9 @@ App::uses('CakeResponse', 'Network');
  * @property      ViewBlock $Blocks
  */
 class View extends Object {
+
+	use RequestActionTrait;
+	use ViewVarsTrait;
 
 /**
  * Helpers collection
@@ -106,13 +118,6 @@ class View extends Object {
  * @var string Path to View
  */
 	public $viewPath = null;
-
-/**
- * Variables for the view
- *
- * @var array
- */
-	public $viewVars = array();
 
 /**
  * Name of view to use with this View.
@@ -195,18 +200,18 @@ class View extends Object {
 	public $uuids = array();
 
 /**
- * An instance of a CakeRequest object that contains information about the current request.
+ * An instance of a Cake\Network\Request object that contains information about the current request.
  * This object contains all the information about a request and several methods for reading
  * additional information about the request.
  *
- * @var CakeRequest
+ * @var Cake\Network\Request
  */
 	public $request;
 
 /**
  * Reference to the Response object
  *
- * @var CakeResponse
+ * @var Cake\Network\Response
  */
 	public $response;
 
@@ -290,12 +295,12 @@ class View extends Object {
 	protected $_stack = array();
 
 /**
- * Instance of the CakeEventManager this View object is using
+ * Instance of the Cake\Event\EventManager this View object is using
  * to dispatch inner events. Usually the manager is shared with
  * the controller, so it it possible to register view events in
  * the controller layer.
  *
- * @var CakeEventManager
+ * @var Cake\Event\EventManager
  */
 	protected $_eventManager = null;
 
@@ -336,14 +341,14 @@ class View extends Object {
 			$this->_eventManager = $controller->getEventManager();
 		}
 		if (empty($this->request) && !($this->request = Router::getRequest(true))) {
-			$this->request = new CakeRequest(null, false);
+			$this->request = new Request();
 			$this->request->base = '';
 			$this->request->here = $this->request->webroot = '/';
 		}
 		if (is_object($controller) && isset($controller->response)) {
 			$this->response = $controller->response;
 		} else {
-			$this->response = new CakeResponse();
+			$this->response = new Response();
 		}
 		$this->Helpers = new HelperCollection($this);
 		$this->Blocks = new ViewBlock();
@@ -351,15 +356,15 @@ class View extends Object {
 	}
 
 /**
- * Returns the CakeEventManager manager instance that is handling any callbacks.
+ * Returns the Cake\Event\EventManager manager instance that is handling any callbacks.
  * You can use this instance to register any new listeners or callbacks to the
  * controller events, or create your own events and trigger them at will.
  *
- * @return CakeEventManager
+ * @return Cake\Event\EventManager
  */
 	public function getEventManager() {
 		if (empty($this->_eventManager)) {
-			$this->_eventManager = new CakeEventManager();
+			$this->_eventManager = new EventManager();
 		}
 		if (!$this->_eventManagerConfigured) {
 			$this->_eventManager->attach($this->Helpers);
@@ -454,7 +459,7 @@ class View extends Object {
  * @param string $view Name of view file to use
  * @param string $layout Layout to use.
  * @return string Rendered Element
- * @throws CakeException if there is an error in the view.
+ * @throws Cake\Error\Exception if there is an error in the view.
  */
 	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
@@ -466,10 +471,10 @@ class View extends Object {
 		$this->Blocks->set('content', '');
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
-			$this->_currentType = self::TYPE_VIEW;
-			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($viewFileName)));
+			$this->_currentType = static::TYPE_VIEW;
+			$this->getEventManager()->dispatch(new Event('View.beforeRender', $this, array($viewFileName)));
 			$this->Blocks->set('content', $this->_render($viewFileName));
-			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($viewFileName)));
+			$this->getEventManager()->dispatch(new Event('View.afterRender', $this, array($viewFileName)));
 		}
 
 		if ($layout === null) {
@@ -503,7 +508,7 @@ class View extends Object {
  * @param string $content Content to render in a view, wrapped by the surrounding layout.
  * @param string $layout Layout name
  * @return mixed Rendered output, or false on error
- * @throws CakeException if there is an error in the view.
+ * @throws Cake\Error\Exception if there is an error in the view.
  */
 	public function renderLayout($content, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
@@ -517,7 +522,7 @@ class View extends Object {
 		if (empty($content)) {
 			$content = $this->Blocks->get('content');
 		}
-		$this->getEventManager()->dispatch(new CakeEvent('View.beforeLayout', $this, array($layoutFileName)));
+		$this->getEventManager()->dispatch(new Event('View.beforeLayout', $this, array($layoutFileName)));
 
 		$scripts = implode("\n\t", $this->_scripts);
 		$scripts .= $this->Blocks->get('meta') . $this->Blocks->get('css') . $this->Blocks->get('script');
@@ -531,10 +536,10 @@ class View extends Object {
 			$this->viewVars['title_for_layout'] = Inflector::humanize($this->viewPath);
 		}
 
-		$this->_currentType = self::TYPE_LAYOUT;
+		$this->_currentType = static::TYPE_LAYOUT;
 		$this->Blocks->set('content', $this->_render($layoutFileName));
 
-		$this->getEventManager()->dispatch(new CakeEvent('View.afterLayout', $this, array($layoutFileName)));
+		$this->getEventManager()->dispatch(new Event('View.afterLayout', $this, array($layoutFileName)));
 		return $this->Blocks->get('content');
 	}
 
@@ -643,7 +648,7 @@ class View extends Object {
  * @param string $name Name of the block
  * @param string $value The content for the block.
  * @return void
- * @throws CakeException when you use non-string values.
+ * @throws Cake\Error\Exception when you use non-string values.
  * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
@@ -671,7 +676,7 @@ class View extends Object {
  * @param string $name Name of the block
  * @param string $value The content for the block.
  * @return void
- * @throws CakeException when you use non-string values.
+ * @throws Cake\Error\Exception when you use non-string values.
  * @see ViewBlock::set()
  */
 	public function assign($name, $value) {
@@ -711,24 +716,24 @@ class View extends Object {
  * @throws LogicException when you extend an element which doesn't exist
  */
 	public function extend($name) {
-		if ($name[0] === '/' || $this->_currentType === self::TYPE_VIEW) {
+		if ($name[0] === '/' || $this->_currentType === static::TYPE_VIEW) {
 			$parent = $this->_getViewFileName($name);
 		} else {
 			switch ($this->_currentType) {
-				case self::TYPE_ELEMENT:
+				case static::TYPE_ELEMENT:
 					$parent = $this->_getElementFileName($name);
 					if (!$parent) {
 						list($plugin, $name) = $this->pluginSplit($name);
 						$paths = $this->_paths($plugin);
 						$defaultPath = $paths[0] . 'Elements' . DS;
-						throw new LogicException(__d(
+						throw new \LogicException(__d(
 							'cake_dev',
 							'You cannot extend an element which does not exist (%s).',
 							$defaultPath . $name . $this->ext
 						));
 					}
 					break;
-				case self::TYPE_LAYOUT:
+				case static::TYPE_LAYOUT:
 					$parent = $this->_getLayoutFileName($name);
 					break;
 				default:
@@ -737,10 +742,10 @@ class View extends Object {
 		}
 
 		if ($parent == $this->_current) {
-			throw new LogicException(__d('cake_dev', 'You cannot have views extend themselves.'));
+			throw new \LogicException(__d('cake_dev', 'You cannot have views extend themselves.'));
 		}
 		if (isset($this->_parents[$parent]) && $this->_parents[$parent] == $this->_current) {
-			throw new LogicException(__d('cake_dev', 'You cannot have views extend in a loop.'));
+			throw new \LogicException(__d('cake_dev', 'You cannot have views extend in a loop.'));
 		}
 		$this->_parents[$this->_current] = $parent;
 	}
@@ -786,51 +791,12 @@ class View extends Object {
 	}
 
 /**
- * Allows a template or element to set a variable that will be available in
- * a layout or other element. Analogous to Controller::set().
- *
- * @param string|array $one A string or an array of data.
- * @param string|array $two Value in case $one is a string (which then works as the key).
- *    Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return void
- */
-	public function set($one, $two = null) {
-		$data = null;
-		if (is_array($one)) {
-			if (is_array($two)) {
-				$data = array_combine($one, $two);
-			} else {
-				$data = $one;
-			}
-		} else {
-			$data = array($one => $two);
-		}
-		if (!$data) {
-			return false;
-		}
-		$this->viewVars = $data + $this->viewVars;
-	}
-
-/**
- * Magic accessor for helpers. Provides access to attributes that were deprecated.
+ * Magic accessor for helpers.
  *
  * @param string $name Name of the attribute to get.
  * @return mixed
  */
 	public function __get($name) {
-		switch ($name) {
-			case 'base':
-			case 'here':
-			case 'webroot':
-			case 'data':
-				return $this->request->{$name};
-			case 'action':
-				return $this->request->params['action'];
-			case 'params':
-				return $this->request;
-			case 'output':
-				return $this->Blocks->get('content');
-		}
 		if (isset($this->Helpers->{$name})) {
 			$this->{$name} = $this->Helpers->{$name};
 			return $this->Helpers->{$name};
@@ -846,12 +812,7 @@ class View extends Object {
  * @return mixed
  */
 	public function __set($name, $value) {
-		switch ($name) {
-			case 'output':
-				return $this->Blocks->set('content', $value);
-			default:
-				$this->{$name} = $value;
-		}
+		$this->{$name} = $value;
 	}
 
 /**
@@ -863,10 +824,6 @@ class View extends Object {
 	public function __isset($name) {
 		if (isset($this->{$name})) {
 			return true;
-		}
-		$magicGet = array('base', 'here', 'webroot', 'data', 'action', 'params', 'output');
-		if (in_array($name, $magicGet)) {
-			return $this->__get($name) !== null;
 		}
 		return false;
 	}
@@ -892,7 +849,7 @@ class View extends Object {
  * @param string $viewFile Filename of the view
  * @param array $data Data to include in rendered view. If empty the current View::$viewVars will be used.
  * @return string Rendered output
- * @throws CakeException when a block is left open.
+ * @throws Cake\Error\Exception when a block is left open.
  */
 	protected function _render($viewFile, $data = array()) {
 		if (empty($data)) {
@@ -902,13 +859,12 @@ class View extends Object {
 		$initialBlocks = count($this->Blocks->unclosed());
 
 		$eventManager = $this->getEventManager();
-		$beforeEvent = new CakeEvent('View.beforeRenderFile', $this, array($viewFile));
+		$beforeEvent = new Event('View.beforeRenderFile', $this, array($viewFile));
 
 		$eventManager->dispatch($beforeEvent);
 		$content = $this->_evaluate($viewFile, $data);
 
-		$afterEvent = new CakeEvent('View.afterRenderFile', $this, array($viewFile, $content));
-
+		$afterEvent = new Event('View.afterRenderFile', $this, array($viewFile, $content));
 		$afterEvent->modParams = 1;
 		$eventManager->dispatch($afterEvent);
 		$content = $afterEvent->data[1];
@@ -924,9 +880,8 @@ class View extends Object {
 		$remainingBlocks = count($this->Blocks->unclosed());
 
 		if ($initialBlocks !== $remainingBlocks) {
-			throw new CakeException(__d('cake_dev', 'The "%s" block was left open. Blocks are not allowed to cross files.', $this->Blocks->active()));
+			throw new Error\Exception(__d('cake_dev', 'The "%s" block was left open. Blocks are not allowed to cross files.', $this->Blocks->active()));
 		}
-
 		return $content;
 	}
 
@@ -968,7 +923,7 @@ class View extends Object {
  *
  * @param string $name Controller action to find template filename for
  * @return string Template filename
- * @throws MissingViewException when a view file could not be found.
+ * @throws Cake\Error\MissingViewException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
 		$subDir = null;
@@ -1009,7 +964,7 @@ class View extends Object {
 		$defaultPath = $paths[0];
 
 		if ($this->plugin) {
-			$pluginPaths = App::path('plugins');
+			$pluginPaths = App::path('Plugin');
 			foreach ($paths as $path) {
 				if (strpos($path, $pluginPaths[0]) === 0) {
 					$defaultPath = $path;
@@ -1017,7 +972,7 @@ class View extends Object {
 				}
 			}
 		}
-		throw new MissingViewException(array('file' => $defaultPath . $name . $this->ext));
+		throw new Error\MissingViewException(array('file' => $defaultPath . $name . $this->ext));
 	}
 
 /**
@@ -1026,13 +981,13 @@ class View extends Object {
  * It checks if the plugin is loaded, else filename will stay unchanged for filenames containing dot
  *
  * @param string $name The name you want to plugin split.
- * @param boolean $fallback If true uses the plugin set in the current CakeRequest when parsed plugin is not loaded
+ * @param boolean $fallback If true uses the plugin set in the current Request when parsed plugin is not loaded
  * @return array Array with 2 indexes. 0 => plugin name, 1 => filename
  */
 	public function pluginSplit($name, $fallback = true) {
 		$plugin = null;
 		list($first, $second) = pluginSplit($name);
-		if (CakePlugin::loaded($first) === true) {
+		if (Plugin::loaded($first) === true) {
 			$name = $second;
 			$plugin = $first;
 		}
@@ -1047,7 +1002,7 @@ class View extends Object {
  *
  * @param string $name The name of the layout to find.
  * @return string Filename for layout file (.ctp).
- * @throws MissingLayoutException when a layout cannot be located
+ * @throws Cake\Error\MissingLayoutException when a layout cannot be located
  */
 	protected function _getLayoutFileName($name = null) {
 		if ($name === null) {
@@ -1070,7 +1025,7 @@ class View extends Object {
 				}
 			}
 		}
-		throw new MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
+		throw new Error\MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
 	}
 
 /**
@@ -1199,20 +1154,20 @@ class View extends Object {
 			$this->loadHelpers();
 		}
 		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
+			$this->getEventManager()->dispatch(new Event('View.beforeRender', $this, array($file)));
 		}
 
 		$current = $this->_current;
 		$restore = $this->_currentType;
 
-		$this->_currentType = self::TYPE_ELEMENT;
+		$this->_currentType = static::TYPE_ELEMENT;
 		$element = $this->_render($file, array_merge($this->viewVars, $data));
 
 		$this->_currentType = $restore;
 		$this->_current = $current;
 
 		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
+			$this->getEventManager()->dispatch(new Event('View.afterRender', $this, array($file, $element)));
 		}
 		if (isset($options['cache'])) {
 			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);

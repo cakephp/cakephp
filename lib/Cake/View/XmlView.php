@@ -11,9 +11,12 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View;
 
-App::uses('View', 'View');
-App::uses('Xml', 'Utility');
+use Cake\Controller\Controller;
+use Cake\Network\Response;
+use Cake\Utility\Set;
+use Cake\Utility\Xml;
 
 /**
  * A view class that is used for creating XML responses.
@@ -67,7 +70,7 @@ class XmlView extends View {
 	public function __construct(Controller $controller = null) {
 		parent::__construct($controller);
 
-		if (isset($controller->response) && $controller->response instanceof CakeResponse) {
+		if (isset($controller->response) && $controller->response instanceof Response) {
 			$controller->response->type('xml');
 		}
 	}

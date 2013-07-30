@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.1.8013
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Fixture
  */
-class AuthUserCustomFieldFixture extends CakeTestFixture {
+class AuthUserCustomFieldFixture extends TestFixture {
 
 /**
  * name property
@@ -38,11 +41,12 @@ class AuthUserCustomFieldFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'email' => array('type' => 'string', 'null' => false),
-		'password' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'email' => ['type' => 'string', 'null' => false],
+		'password' => ['type' => 'string', 'null' => false],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

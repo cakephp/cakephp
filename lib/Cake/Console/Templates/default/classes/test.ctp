@@ -1,10 +1,5 @@
 <?php
 /**
- * Test Case bake template
- *
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,21 +13,30 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Utility\Inflector;
 
 echo "<?php\n";
 ?>
+namespace <?php echo $baseNamespace; ?>\TestCase\<?php echo $subNamespace ?>;
+
 <?php foreach ($uses as $dependency): ?>
-App::uses('<?php echo $dependency[0]; ?>', '<?php echo $dependency[1]; ?>');
+use <?php echo $dependency; ?>;
 <?php endforeach; ?>
+<?php if ($type === 'Controller'): ?>
+use Cake\TestSuite\ControllerTestCase;
+<?php else: ?>
+use Cake\TestSuite\TestCase;
+<?php endif; ?>
 
 /**
  * <?php echo $fullClassName; ?> Test Case
  *
+ * @package <?php echo str_replace('\\', '.', $namespace) . "\n"; ?>
  */
 <?php if ($type === 'Controller'): ?>
-class <?php echo $fullClassName; ?>Test extends ControllerTestCase {
+class <?php echo $className; ?>Test extends ControllerTestCase {
 <?php else: ?>
-class <?php echo $fullClassName; ?>Test extends CakeTestCase {
+class <?php echo $className; ?>Test extends TestCase {
 <?php endif; ?>
 
 <?php if (!empty($fixtures)): ?>
@@ -55,7 +59,7 @@ class <?php echo $fullClassName; ?>Test extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 <?php echo $preConstruct ? "\t\t" . $preConstruct : ''; ?>
-		$this-><?php echo $className . ' = ' . $construction; ?>
+		$this-><?php echo $subject . ' = ' . $construction; ?>
 <?php echo $postConstruct ? "\t\t" . $postConstruct : ''; ?>
 	}
 
@@ -65,7 +69,7 @@ class <?php echo $fullClassName; ?>Test extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
-		unset($this-><?php echo $className; ?>);
+		unset($this-><?php echo $subject; ?>);
 
 		parent::tearDown();
 	}

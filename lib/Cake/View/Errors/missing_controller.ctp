@@ -1,8 +1,5 @@
 <?php
 /**
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,21 +13,47 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Core\Plugin;
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
+$namespace = Configure::read('App.namespace');
+$prefixNs = '';
+$prefixPath = '';
+
+if (!empty($prefix)) {
+	$prefix = Inflector::camelize($prefix);
+	$prefixNs = '\\' . $prefix;
+	$prefixPath = $prefix . DS;
+}
+
+if (!empty($plugin)) {
+	$namespace = $plugin;
+}
+if (empty($plugin)) {
+	$path = APP_DIR . DS . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php' ;
+} else {
+	$path = Plugin::path($plugin) . 'Controller' . DS . $prefixPath . h($class) . 'Controller.php';
+}
+
 ?>
 <h2><?php echo __d('cake_dev', 'Missing Controller'); ?></h2>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . h($pluginDot . $class) . '</em>'); ?>
+	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . h($pluginDot . $class) . 'Controller</em>'); ?>
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . h($class) . '</em>', (empty($plugin) ? APP_DIR . DS : CakePlugin::path($plugin)) . 'Controller' . DS . h($class) . '.php'); ?>
+	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . h($class) . 'Controller</em>', $path); ?>
 </p>
 <pre>
 &lt;?php
-class <?php echo h($class . ' extends ' . $plugin); ?>AppController {
+namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
+
+use <?= h($namespace); ?>\Controller\AppController;
+
+class <?php echo h($class) . 'Controller extends ' . h($plugin); ?>AppController {
 
 }
 </pre>

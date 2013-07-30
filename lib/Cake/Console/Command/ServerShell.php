@@ -17,14 +17,17 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::uses('AppShell', 'Console/Command');
+namespace Cake\Console\Command;
+
+use Cake\Console\Shell;
+use Cake\Core\Configure;
 
 /**
  * built-in Server Shell
  *
  * @package       Cake.Console.Command
  */
-class ServerShell extends AppShell {
+class ServerShell extends Shell {
 
 /**
  * Default ServerHost
@@ -121,11 +124,6 @@ class ServerShell extends AppShell {
  * @return void
  */
 	public function main() {
-		if (version_compare(PHP_VERSION, '5.4.0') < 0) {
-			$this->out(__d('cake_console', '<warning>This command is available on PHP5.4 or above</warning>'));
-			return;
-		}
-
 		$command = sprintf("php -S %s:%d -t %s %s",
 			$this->_host,
 			$this->_port,
@@ -133,7 +131,7 @@ class ServerShell extends AppShell {
 			WWW_ROOT . '/index.php'
 		);
 
-		$port = ($this->_port == self::DEFAULT_PORT) ? '' : ':' . $this->_port;
+		$port = ($this->_port == static::DEFAULT_PORT) ? '' : ':' . $this->_port;
 		$this->out(__d('cake_console', 'built-in server is running in http://%s%s/', $this->_host, $port));
 		system($command);
 	}

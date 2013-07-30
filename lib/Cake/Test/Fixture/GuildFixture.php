@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 2.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class GuildFixture
  *
  * @package       Cake.Test.Fixture
  */
-class GuildFixture extends CakeTestFixture {
+class GuildFixture extends TestFixture {
 
 /**
  * name property
@@ -38,8 +41,9 @@ class GuildFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

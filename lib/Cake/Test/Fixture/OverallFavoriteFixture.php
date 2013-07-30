@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.7198
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class OverallFavoriteFixture
  *
  * @package       Cake.Test.Fixture
  */
-class OverallFavoriteFixture extends CakeTestFixture {
+class OverallFavoriteFixture extends TestFixture {
 
 /**
  * name property
@@ -38,10 +41,11 @@ class OverallFavoriteFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'model_type' => array('type' => 'string', 'length' => 255),
-		'model_id' => array('type' => 'integer'),
-		'priority' => array('type' => 'integer')
+		'id' => ['type' => 'integer'],
+		'model_type' => ['type' => 'string', 'length' => 255],
+		'model_id' => ['type' => 'integer'],
+		'priority' => ['type' => 'integer'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

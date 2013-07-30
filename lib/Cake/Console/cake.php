@@ -19,33 +19,33 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$ds = DIRECTORY_SEPARATOR;
-$dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
-$found = false;
-$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
+$root = dirname(dirname(dirname(__DIR__)));
+$loaded = false;
 
-foreach ($paths as $path) {
-	if (file_exists($path . $ds . $dispatcher)) {
-		$found = $path;
+$appIndex = array_search('-app', $argv);
+if ($appIndex !== false) {
+	$loaded = true;
+	$dir = $argv[$appIndex + 1];
+	require $dir . '/Config/bootstrap.php';
+}
+
+$locations = [
+	// Default repository layout.
+	$root . '/App/Config/bootstrap.php',
+	// Composer vendor directory
+	$root . '/../../Config/bootstrap.php',
+];
+
+foreach ($locations as $path) {
+	if (file_exists($path)) {
+		$loaded = true;
+		require $path;
 		break;
 	}
 }
-
-if (!$found) {
-	$rootInstall = dirname(dirname(dirname(__FILE__))) . $ds . $dispatcher;
-	$composerInstall = dirname(dirname(__FILE__)) . $ds . $dispatcher;
-
-	if (file_exists($composerInstall)) {
-		include $composerInstall;
-	} elseif (file_exists($rootInstall)) {
-		include $rootInstall;
-	} else {
-		trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
-	}
-} else {
-	include $found . $ds . $dispatcher;
+if (!$loaded) {
+	fwrite(STDERR, "Unable to load CakePHP libraries, check your configuration/installation.\n");
+	exit(10);
 }
-
-unset($paths, $path, $found, $dispatcher, $root, $ds);
-
-return ShellDispatcher::run($argv);
+unset($root, $loaded, $appIndex, $dir, $path, $locations);
+exit(Cake\Console\ShellDispatcher::run($argv));

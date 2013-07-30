@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class InnoFixture
  *
  * @package       Cake.Test.Fixture
  */
-class InnoFixture extends CakeTestFixture {
+class InnoFixture extends TestFixture {
 
 /**
  * name property
@@ -38,11 +41,10 @@ class InnoFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => true),
-		'tableParameters' => array(
-			'engine' => 'InnoDB'
-		)
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]],
+		'_options' => ['engine' => 'InnoDB']
 	);
 
 /**

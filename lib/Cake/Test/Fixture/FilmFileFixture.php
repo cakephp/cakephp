@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class FilmFileFixture
  *
  * @package       Cake.Test.Fixture
  */
-class FilmFileFixture extends CakeTestFixture {
+class FilmFileFixture extends TestFixture {
 
 /**
  * name property
@@ -38,8 +41,9 @@ class FilmFileFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'length' => 255)
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'length' => 255],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

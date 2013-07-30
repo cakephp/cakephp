@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * UnderscoreFieldFixture class
  *
  * @package       Cake.Test.Fixture
  */
-class UnderscoreFieldFixture extends CakeTestFixture {
+class UnderscoreFieldFixture extends TestFixture {
 
 /**
  * name property
@@ -38,12 +41,13 @@ class UnderscoreFieldFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'user_id' => array('type' => 'integer', 'null' => false),
-		'my_model_has_a_field' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'user_id' => ['type' => 'integer', 'null' => false],
+		'my_model_has_a_field' => ['type' => 'string', 'null' => false],
 		'body_field' => 'text',
-		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
-		'another_field' => array('type' => 'integer', 'length' => 3),
+		'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
+		'another_field' => ['type' => 'integer', 'length' => 3],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

@@ -16,18 +16,22 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('File', 'Utility');
-App::uses('Folder', 'Utility');
-App::uses('Hash', 'Utility');
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 /**
  * Language string extractor
  *
  * @package       Cake.Console.Command.Task
  */
-class ExtractTask extends AppShell {
+class ExtractTask extends Shell {
 
 /**
  * Paths to use when looking for strings
@@ -162,10 +166,10 @@ class ExtractTask extends AppShell {
 			$this->_paths = explode(',', $this->params['paths']);
 		} elseif (isset($this->params['plugin'])) {
 			$plugin = Inflector::camelize($this->params['plugin']);
-			if (!CakePlugin::loaded($plugin)) {
-				CakePlugin::load($plugin);
+			if (!Plugin::loaded($plugin)) {
+				Plugin::load($plugin);
 			}
-			$this->_paths = array(CakePlugin::path($plugin));
+			$this->_paths = array(Plugin::path($plugin));
 			$this->params['plugin'] = $plugin;
 		} else {
 			$this->_getPaths();
@@ -179,7 +183,7 @@ class ExtractTask extends AppShell {
 		}
 
 		if (!empty($this->params['exclude-plugins']) && $this->_isExtractingApp()) {
-			$this->_exclude = array_merge($this->_exclude, App::path('plugins'));
+			$this->_exclude = array_merge($this->_exclude, App::path('Plugin'));
 		}
 
 		if (!empty($this->params['ignore-model-validation']) || (!$this->_isExtractingApp() && empty($plugin))) {
@@ -440,18 +444,16 @@ class ExtractTask extends AppShell {
 			return;
 		}
 
-		App::uses('AppModel', 'Model');
 		$plugin = null;
 		if (!empty($this->params['plugin'])) {
-			App::uses($this->params['plugin'] . 'AppModel', $this->params['plugin'] . '.Model');
 			$plugin = $this->params['plugin'] . '.';
 		}
 		$models = App::objects($plugin . 'Model', null, false);
 
 		foreach ($models as $model) {
-			App::uses($model, $plugin . 'Model');
-			$reflection = new ReflectionClass($model);
-			if (!$reflection->isSubClassOf('Model')) {
+			$modelClass = App::classname($plugin . $model, 'Model');
+			$reflection = new \ReflectionClass($modelClass);
+			if (!$reflection->isSubClassOf('Cake\Model\Model')) {
 				continue;
 			}
 			$properties = $reflection->getDefaultProperties();

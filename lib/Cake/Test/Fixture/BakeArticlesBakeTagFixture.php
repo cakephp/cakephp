@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Fixture
  */
-class BakeArticlesBakeTagFixture extends CakeTestFixture {
+class BakeArticlesBakeTagFixture extends TestFixture {
 
 /**
  * name property
@@ -38,9 +41,9 @@ class BakeArticlesBakeTagFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'bake_article_id' => array('type' => 'integer', 'null' => false),
-		'bake_tag_id' => array('type' => 'integer', 'null' => false),
-		'indexes' => array('UNIQUE_TAG' => array('column' => array('bake_article_id', 'bake_tag_id'), 'unique' => 1))
+		'bake_article_id' => ['type' => 'integer', 'null' => false],
+		'bake_tag_id' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['UNIQUE_TAG' => ['type' => 'unique', 'columns' => ['bake_article_id', 'bake_tag_id']]]
 	);
 
 /**

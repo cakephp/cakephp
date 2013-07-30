@@ -15,8 +15,9 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console;
 
-App::uses('String', 'Utility');
+use Cake\Utility\String;
 
 /**
  * HelpFormatter formats help for console shells. Can format to either
@@ -180,7 +181,7 @@ class HelpFormatter {
  */
 	public function xml($string = true) {
 		$parser = $this->_parser;
-		$xml = new SimpleXmlElement('<shell></shell>');
+		$xml = new \SimpleXmlElement('<shell></shell>');
 		$xml->addChild('command', $parser->command());
 		$xml->addChild('description', $parser->description());
 

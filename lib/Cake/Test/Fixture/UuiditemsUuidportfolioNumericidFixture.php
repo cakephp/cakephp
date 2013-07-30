@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class UuiditemsUuidportfolioNumericidFixture
  *
  * @package       Cake.Test.Fixture
  */
-class UuiditemsUuidportfolioNumericidFixture extends CakeTestFixture {
+class UuiditemsUuidportfolioNumericidFixture extends TestFixture {
 
 /**
  * name property
@@ -38,9 +41,10 @@ class UuiditemsUuidportfolioNumericidFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'length' => 10, 'key' => 'primary'),
-		'uuiditem_id' => array('type' => 'string', 'length' => 36, 'null' => false),
-		'uuidportfolio_id' => array('type' => 'string', 'length' => 36, 'null' => false)
+		'id' => ['type' => 'integer', 'length' => 10],
+		'uuiditem_id' => ['type' => 'string', 'length' => 36, 'null' => false],
+		'uuidportfolio_id' => ['type' => 'string', 'length' => 36, 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

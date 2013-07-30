@@ -16,6 +16,10 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Configure;
+
+use Cake\Core\App;
+use Cake\Error;
 
 /**
  * PHP Reader allows Configure to load configuration values from
@@ -38,11 +42,11 @@ class PhpReader implements ConfigReaderInterface {
 /**
  * Constructor for PHP Config file reading.
  *
- * @param string $path The path to read config files from. Defaults to APP . 'Config' . DS
+ * @param string $path The path to read config files from. Defaults to APP . 'Config/'
  */
 	public function __construct($path = null) {
 		if (!$path) {
-			$path = APP . 'Config' . DS;
+			$path = APP . 'Config/';
 		}
 		$this->_path = $path;
 	}
@@ -56,22 +60,24 @@ class PhpReader implements ConfigReaderInterface {
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix.
  * @return array Parsed configuration values.
- * @throws ConfigureException when files don't exist or they don't contain `$config`.
+ * @throws Cake\Error\ConfigureException when files don't exist or they don't contain `$config`.
  *  Or when files contain '..' as this could lead to abusive reads.
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new ConfigureException(__d('cake_dev', 'Cannot load configuration files with ../ in them.'));
+			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load configuration files with ../ in them.'));
 		}
 
 		$file = $this->_getFilePath($key);
 		if (!is_file($file)) {
-			throw new ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
+			throw new Error\ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
 		}
 
 		include $file;
 		if (!isset($config)) {
-			throw new ConfigureException(__d('cake_dev', 'No variable $config found in %s', $file));
+			throw new Error\ConfigureException(
+				__d('cake_dev', 'No variable $config found in %s', $file)
+			);
 		}
 		return $config;
 	}

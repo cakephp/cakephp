@@ -13,9 +13,17 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View;
 
-App::uses('Router', 'Routing');
-App::uses('Hash', 'Utility');
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Core\Plugin;
+use Cake\Routing\Router;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use Cake\Utility\ObjectCollection;
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
@@ -56,7 +64,7 @@ class Helper extends Object {
 /**
  * Request object
  *
- * @var CakeRequest
+ * @var Cake\Network\Request
  */
 	public $request = null;
 
@@ -274,11 +282,11 @@ class Helper extends Object {
 				$file = str_replace('/', '\\', $file);
 			}
 
-			if (file_exists(Configure::read('App.www_root') . 'theme' . DS . $this->theme . DS . $file)) {
+			if (file_exists(Configure::read('App.www_root') . 'theme/' . $this->theme . DS . $file)) {
 				$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 			} else {
 				$themePath = App::themePath($this->theme);
-				$path = $themePath . 'webroot' . DS . $file;
+				$path = $themePath . 'webroot/' . $file;
 				if (file_exists($path)) {
 					$webPath = "{$this->request->webroot}theme/" . $theme . $asset[0];
 				}
@@ -328,7 +336,7 @@ class Helper extends Object {
 		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
 		if (!empty($options['fullBase'])) {
-			$path = rtrim(FULL_BASE_URL, '/') . '/' . ltrim($path, '/');
+			$path = rtrim(Router::baseURL(), '/') . '/' . ltrim($path, '/');
 		}
 		return $path;
 	}
@@ -380,9 +388,9 @@ class Helper extends Object {
 				//@codingStandardsIgnoreEnd
 			} else {
 				$plugin = Inflector::camelize($segments[0]);
-				if (CakePlugin::loaded($plugin)) {
+				if (Plugin::loaded($plugin)) {
 					unset($segments[0]);
-					$pluginPath = CakePlugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
+					$pluginPath = Plugin::path($plugin) . 'webroot' . DS . implode(DS, $segments);
 					//@codingStandardsIgnoreStart
 					return $path . '?' . @filemtime($pluginPath);
 					//@codingStandardsIgnoreEnd
@@ -622,7 +630,7 @@ class Helper extends Object {
 
 		$entity = $this->entity();
 		$model = array_shift($entity);
-		$dom = $model . implode('', array_map(array('Inflector', 'camelize'), $entity));
+		$dom = $model . implode('', array_map(array('Cake\Utility\Inflector', 'camelize'), $entity));
 
 		if (is_array($options) && !array_key_exists($id, $options)) {
 			$options[$id] = $dom;
@@ -634,7 +642,7 @@ class Helper extends Object {
 
 /**
  * Gets the input field name for the current tag. Creates input name attributes
- * using CakePHP's data[Model][field] formatting.
+ * using CakePHP's `Model[field]` formatting.
  *
  * @param array|string $options If an array, should be an array of attributes that $key needs to be added to.
  *   If a string or null, will be used as the View entity.
@@ -664,7 +672,9 @@ class Helper extends Object {
 				$name = $field;
 			break;
 			default:
-				$name = 'data[' . implode('][', $this->entity()) . ']';
+				$entity = $this->entity();
+				$first = array_shift($entity);
+				$name = $first . ($entity ? '[' . implode('][', $entity) . ']' : '');
 			break;
 		}
 
@@ -898,12 +908,7 @@ class Helper extends Object {
  * @return void
  */
 	protected function _clean() {
-		if (get_magic_quotes_gpc()) {
-			$this->_cleaned = stripslashes($this->_tainted);
-		} else {
-			$this->_cleaned = $this->_tainted;
-		}
-
+		$this->_cleaned = $this->_tainted;
 		$this->_cleaned = str_replace(array("&amp;", "&lt;", "&gt;"), array("&amp;amp;", "&amp;lt;", "&amp;gt;"), $this->_cleaned);
 		$this->_cleaned = preg_replace('#(&\#*\w+)[\x00-\x20]+;#u', "$1;", $this->_cleaned);
 		$this->_cleaned = preg_replace('#(&\#x*)([0-9A-F]+);*#iu', "$1$2;", $this->_cleaned);

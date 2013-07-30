@@ -13,14 +13,13 @@
  * @since         CakePHP(tm) v 1.0.0.2363
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Core;
 
-App::uses('Hash', 'Utility');
-App::uses('ConfigReaderInterface', 'Configure');
-
-/**
- * Compatibility with 2.1, which expects Configure to load Set.
- */
-App::uses('Set', 'Utility');
+use Cake\Cache\Cache;
+use Cake\Configure\ConfigReaderInterface;
+use Cake\Configure\PhpReader;
+use Cake\Error;
+use Cake\Utility\Hash;
 
 /**
  * Configuration class. Used for managing runtime configuration information.
@@ -52,64 +51,6 @@ class Configure {
 	protected static $_readers = array();
 
 /**
- * Initializes configure and runs the bootstrap process.
- * Bootstrapping includes the following steps:
- *
- * - Setup App array in Configure.
- * - Include app/Config/core.php.
- * - Configure core cache configurations.
- * - Load App cache files.
- * - Include app/Config/bootstrap.php.
- * - Setup error/exception handlers.
- *
- * @param boolean $boot
- * @return void
- */
-	public static function bootstrap($boot = true) {
-		if ($boot) {
-			self::write('App', array(
-				'base' => false,
-				'baseUrl' => false,
-				'dir' => APP_DIR,
-				'webroot' => WEBROOT_DIR,
-				'www_root' => WWW_ROOT
-			));
-
-			if (!include APP . 'Config' . DS . 'core.php') {
-				trigger_error(__d('cake_dev', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
-			}
-			App::$bootstrapping = false;
-			App::init();
-			App::build();
-
-			$exception = array(
-				'handler' => 'ErrorHandler::handleException',
-			);
-			$error = array(
-				'handler' => 'ErrorHandler::handleError',
-				'level' => E_ALL & ~E_DEPRECATED,
-			);
-			self::_setErrorHandlers($error, $exception);
-
-			if (!include APP . 'Config' . DS . 'bootstrap.php') {
-				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
-			}
-			restore_error_handler();
-
-			self::_setErrorHandlers(
-				self::$_values['Error'],
-				self::$_values['Exception']
-			);
-
-			// Preload Debugger + String in case of E_STRICT errors when loading files.
-			if (self::$_values['debug'] > 0) {
-				class_exists('Debugger');
-				class_exists('String');
-			}
-		}
-	}
-
-/**
  * Used to store a dynamic variable in Configure.
  *
  * Usage:
@@ -138,11 +79,11 @@ class Configure {
 		}
 
 		foreach ($config as $name => $value) {
-			self::$_values = Hash::insert(self::$_values, $name, $value);
+			static::$_values = Hash::insert(static::$_values, $name, $value);
 		}
 
 		if (isset($config['debug']) && function_exists('ini_set')) {
-			if (self::$_values['debug']) {
+			if (static::$_values['debug']) {
 				ini_set('display_errors', 1);
 			} else {
 				ini_set('display_errors', 0);
@@ -167,9 +108,9 @@ class Configure {
  */
 	public static function read($var = null) {
 		if ($var === null) {
-			return self::$_values;
+			return static::$_values;
 		}
-		return Hash::get(self::$_values, $var);
+		return Hash::get(static::$_values, $var);
 	}
 
 /**
@@ -182,7 +123,7 @@ class Configure {
 		if (empty($var)) {
 			return false;
 		}
-		return Hash::get(self::$_values, $var) !== null;
+		return Hash::get(static::$_values, $var) !== null;
 	}
 
 /**
@@ -199,7 +140,7 @@ class Configure {
  * @return void
  */
 	public static function delete($var = null) {
-		self::$_values = Hash::remove(self::$_values, $var);
+		static::$_values = Hash::remove(static::$_values, $var);
 	}
 
 /**
@@ -217,7 +158,7 @@ class Configure {
  * @return void
  */
 	public static function config($name, ConfigReaderInterface $reader) {
-		self::$_readers[$name] = $reader;
+		static::$_readers[$name] = $reader;
 	}
 
 /**
@@ -228,9 +169,9 @@ class Configure {
  */
 	public static function configured($name = null) {
 		if ($name) {
-			return isset(self::$_readers[$name]);
+			return isset(static::$_readers[$name]);
 		}
-		return array_keys(self::$_readers);
+		return array_keys(static::$_readers);
 	}
 
 /**
@@ -241,10 +182,10 @@ class Configure {
  * @return boolean Success
  */
 	public static function drop($name) {
-		if (!isset(self::$_readers[$name])) {
+		if (!isset(static::$_readers[$name])) {
 			return false;
 		}
-		unset(self::$_readers[$name]);
+		unset(static::$_readers[$name]);
 		return true;
 	}
 
@@ -271,10 +212,10 @@ class Configure {
  * @param string $config Name of the configured reader to use to read the resource identified by $key.
  * @param boolean $merge if config files should be merged instead of simply overridden
  * @return mixed false if file not found, void if load successful.
- * @throws ConfigureException Will throw any exceptions the reader raises.
+ * @throws Cake\Error\ConfigureException Will throw any exceptions the reader raises.
  */
 	public static function load($key, $config = 'default', $merge = true) {
-		$reader = self::_getReader($config);
+		$reader = static::_getReader($config);
 		if (!$reader) {
 			return false;
 		}
@@ -283,13 +224,13 @@ class Configure {
 		if ($merge) {
 			$keys = array_keys($values);
 			foreach ($keys as $key) {
-				if (($c = self::read($key)) && is_array($values[$key]) && is_array($c)) {
+				if (($c = static::read($key)) && is_array($values[$key]) && is_array($c)) {
 					$values[$key] = Hash::merge($c, $values[$key]);
 				}
 			}
 		}
 
-		return self::write($values);
+		return static::write($values);
 	}
 
 /**
@@ -315,17 +256,17 @@ class Configure {
  * @param array $keys The name of the top-level keys you want to dump.
  *   This allows you save only some data stored in Configure.
  * @return boolean success
- * @throws ConfigureException if the adapter does not implement a `dump` method.
+ * @throws Cake\Error\ConfigureException if the adapter does not implement a `dump` method.
  */
 	public static function dump($key, $config = 'default', $keys = array()) {
-		$reader = self::_getReader($config);
+		$reader = static::_getReader($config);
 		if (!$reader) {
-			throw new ConfigureException(__d('cake_dev', 'There is no "%s" adapter.', $config));
+			throw new Error\ConfigureException(__d('cake_dev', 'There is no "%s" adapter.', $config));
 		}
 		if (!method_exists($reader, 'dump')) {
-			throw new ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a dump() method.', $config));
+			throw new Error\ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a dump() method.', $config));
 		}
-		$values = self::$_values;
+		$values = static::$_values;
 		if (!empty($keys) && is_array($keys)) {
 			$values = array_intersect_key($values, array_flip($keys));
 		}
@@ -340,14 +281,13 @@ class Configure {
  * @return mixed Reader instance or false
  */
 	protected static function _getReader($config) {
-		if (!isset(self::$_readers[$config])) {
+		if (!isset(static::$_readers[$config])) {
 			if ($config !== 'default') {
 				return false;
 			}
-			App::uses('PhpReader', 'Configure');
-			self::config($config, new PhpReader());
+			static::config($config, new PhpReader());
 		}
-		return self::$_readers[$config];
+		return static::$_readers[$config];
 	}
 
 /**
@@ -358,11 +298,11 @@ class Configure {
  * @return string Current version of CakePHP
  */
 	public static function version() {
-		if (!isset(self::$_values['Cake']['version'])) {
-			require CAKE . 'Config' . DS . 'config.php';
-			self::write($config);
+		if (!isset(static::$_values['Cake']['version'])) {
+			require CAKE . 'Config/config.php';
+			static::write($config);
 		}
-		return self::$_values['Cake']['version'];
+		return static::$_values['Cake']['version'];
 	}
 
 /**
@@ -377,7 +317,7 @@ class Configure {
  */
 	public static function store($name, $cacheConfig = 'default', $data = null) {
 		if ($data === null) {
-			$data = self::$_values;
+			$data = static::$_values;
 		}
 		return Cache::write($name, $data, $cacheConfig);
 	}
@@ -393,7 +333,7 @@ class Configure {
 	public static function restore($name, $cacheConfig = 'default') {
 		$values = Cache::read($name, $cacheConfig);
 		if ($values) {
-			return self::write($values);
+			return static::write($values);
 		}
 		return false;
 	}
@@ -404,18 +344,20 @@ class Configure {
  * @return boolean success.
  */
 	public static function clear() {
-		self::$_values = array();
+		static::$_values = array();
 		return true;
 	}
+
 /**
- * Set the error and exception handlers.
+ * Set the error and exception handlers using the native default handlers.
  *
- * @param array $error The Error handling configuration.
- * @param array $exception The exception handling configuration.
+ * Uses data already stored in Configure.
+ *
  * @return void
  */
-	protected static function _setErrorHandlers($error, $exception) {
+	public static function setErrorHandlers() {
 		$level = -1;
+		$error = static::read('Error');
 		if (isset($error['level'])) {
 			error_reporting($error['level']);
 			$level = $error['level'];
@@ -423,8 +365,10 @@ class Configure {
 		if (!empty($error['handler'])) {
 			set_error_handler($error['handler'], $level);
 		}
+		$exception = static::read('Exception');
 		if (!empty($exception['handler'])) {
 			set_exception_handler($exception['handler']);
 		}
 	}
+
 }

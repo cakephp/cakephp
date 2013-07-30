@@ -13,16 +13,25 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Controller\Component;
 
-App::uses('Component', 'Controller');
-App::uses('AclInterface', 'Controller/Component/Acl');
+use Cake\Configure\IniReader;
+use Cake\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\Acl\AclInterface;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Error;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * Access Control List factory class.
  *
  * Uses a strategy pattern to allow custom ACL implementations to be used with the same component interface.
- * You can define by changing `Configure::write('Acl.classname', 'DbAcl');` in your core.php. Concrete ACL
- * implementations should extend `AclBase` and implement the methods it defines.
+ * You can define by changing `Configure::write('Acl.classname', 'DbAcl');` in your App/Config/acl.php.
+ * Concrete ACL implementations should extend `AclBase` and implement the methods it defines.
  *
  * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html
@@ -55,19 +64,18 @@ class AclComponent extends Component {
  *
  * @param ComponentCollection $collection
  * @param array $settings
- * @throws CakeException when Acl.classname could not be loaded.
+ * @throws Cake\Error\Exception when Acl.classname could not be loaded.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		parent::__construct($collection, $settings);
-		$name = Configure::read('Acl.classname');
-		if (!class_exists($name)) {
-			list($plugin, $name) = pluginSplit($name, true);
-			App::uses($name, $plugin . 'Controller/Component/Acl');
-			if (!class_exists($name)) {
-				throw new CakeException(__d('cake_dev', 'Could not find %s.', $name));
+		$classname = $name = Configure::read('Acl.classname');
+		if (!class_exists($classname)) {
+			$classname = App::classname($name, 'Controller/Component/Acl');
+			if (!$classname) {
+				throw new Error\Exception(__d('cake_dev', 'Could not find %s.', $name));
 			}
 		}
-		$this->adapter($name);
+		$this->adapter($classname);
 	}
 
 /**
@@ -80,7 +88,7 @@ class AclComponent extends Component {
  *
  * @param AclInterface|string $adapter Instance of AclInterface or a string name of the class to use. (optional)
  * @return AclInterface|void either null, or the adapter implementation.
- * @throws CakeException when the given class is not an instance of AclInterface
+ * @throws Cake\Error\Exception when the given class is not an instance of AclInterface
  */
 	public function adapter($adapter = null) {
 		if ($adapter) {
@@ -88,7 +96,7 @@ class AclComponent extends Component {
 				$adapter = new $adapter();
 			}
 			if (!$adapter instanceof AclInterface) {
-				throw new CakeException(__d('cake_dev', 'AclComponent adapters must implement AclInterface'));
+				throw new Error\Exception(__d('cake_dev', 'AclComponent adapters must implement AclInterface'));
 			}
 			$this->_Instance = $adapter;
 			$this->_Instance->initialize($this);

@@ -17,8 +17,7 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
-App::uses('Folder', 'Utility');
+namespace Cake\Utility;
 
 /**
  * Convenience class for reading, writing and appending to files.
@@ -408,11 +407,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::exists
  */
 	public function exists() {
-		if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-			clearstatcache(true, $this->path);
-		} else {
-			clearstatcache();
-		}
+		$this->clearStatCache();
 		return (file_exists($this->path) && is_file($this->path));
 	}
 
@@ -567,6 +562,21 @@ class File {
 			return mime_content_type($this->pwd());
 		}
 		return false;
+	}
+
+/**
+ * Clear PHP's internal stat cache
+ *
+ * @param boolean $all Clear all cache or not. Passing false will clear
+ *   the stat cache for the current path only.
+ * @return void
+ */
+	public function clearStatCache($all = false) {
+		if ($all === false) {
+			return clearstatcache(true, $this->path);
+		}
+
+		return clearstatcache();
 	}
 
 }

@@ -17,20 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Short description for class.
  *
  * @package       Cake.Test.Fixture
  */
-class AuthorFixture extends CakeTestFixture {
-
-/**
- * name property
- *
- * @var string 'Author'
- */
-	public $name = 'Author';
+class AuthorFixture extends TestFixture {
 
 /**
  * fields property
@@ -38,11 +34,9 @@ class AuthorFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'user' => array('type' => 'string', 'default' => null),
-		'password' => array('type' => 'string', 'default' => null),
-		'created' => 'datetime',
-		'updated' => 'datetime'
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'default' => null],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**
@@ -51,9 +45,9 @@ class AuthorFixture extends CakeTestFixture {
  * @var array
  */
 	public $records = array(
-		array('user' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('user' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:18:23', 'updated' => '2007-03-17 01:20:31'),
-		array('user' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:20:23', 'updated' => '2007-03-17 01:22:31'),
-		array('user' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99', 'created' => '2007-03-17 01:22:23', 'updated' => '2007-03-17 01:24:31'),
+		array('name' => 'mariano'),
+		array('name' => 'nate'),
+		array('name' => 'larry'),
+		array('name' => 'garrett'),
 	);
 }

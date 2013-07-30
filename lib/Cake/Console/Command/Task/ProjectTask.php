@@ -1,10 +1,5 @@
 <?php
 /**
- * The Project Task handles creating the base application
- *
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -17,19 +12,22 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('File', 'Utility');
-App::uses('Folder', 'Utility');
-App::uses('String', 'Utility');
-App::uses('Security', 'Utility');
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
+use Cake\Utility\Security;
+use Cake\Utility\String;
 
 /**
  * Task class for creating new project apps and plugins
  *
  * @package       Cake.Console.Command.Task
  */
-class ProjectTask extends AppShell {
+class ProjectTask extends Shell {
 
 /**
  * configs path (used in testing).
@@ -53,7 +51,7 @@ class ProjectTask extends AppShell {
 			if (empty($appContents)) {
 				$suggestedPath = rtrim(APP, DS);
 			} else {
-				$suggestedPath = APP . 'myapp';
+				$suggestedPath = APP . 'MyApp';
 			}
 		}
 
@@ -62,12 +60,19 @@ class ProjectTask extends AppShell {
 			$project = $this->in($prompt, null, $suggestedPath);
 		}
 
+		$namespace = basename($project);
+		if (!preg_match('/^\w[\w\d_]+$/', $namespace)) {
+			$this->err(__d('cake_console', 'Project Name/Namespace needs to start with a letter and can only contain letters, digits and underscore'));
+			$this->args = array();
+			return $this->execute();
+		}
+
 		if ($project && !Folder::isAbsolute($project) && isset($_SERVER['PWD'])) {
 			$project = $_SERVER['PWD'] . DS . $project;
 		}
 
 		$response = false;
-		while (!$response && is_dir($project) === true && file_exists($project . 'Config' . 'core.php')) {
+		while (!$response && is_dir($project) === true && file_exists($project . 'Config' . 'boostrap.php')) {
 			$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
 			$response = $this->in($prompt, array('y', 'n'), 'n');
 			if (strtolower($response) === 'n') {
@@ -79,17 +84,24 @@ class ProjectTask extends AppShell {
 		if ($this->bake($project)) {
 			$path = Folder::slashTerm($project);
 
+			if ($this->appNamespace($path) === true) {
+				$this->out(__d('cake_console', ' * Namespace set for \'App.namespace\' and namespace declarations'));
+			} else {
+				$this->err(__d('cake_console', 'The namespace was <error>NOT</error> set'));
+				$success = false;
+			}
+
 			if ($this->securitySalt($path) === true) {
 				$this->out(__d('cake_console', ' * Random hash key created for \'Security.salt\''));
 			} else {
-				$this->err(__d('cake_console', 'Unable to generate random hash for \'Security.salt\', you should change it in %s', APP . 'Config' . DS . 'core.php'));
+				$this->err(__d('cake_console', 'Unable to generate random hash for \'Security.salt\', you should change it in %s', APP . 'Config' . DS . 'app.php'));
 				$success = false;
 			}
 
 			if ($this->securityCipherSeed($path) === true) {
 				$this->out(__d('cake_console', ' * Random seed created for \'Security.cipherSeed\''));
 			} else {
-				$this->err(__d('cake_console', 'Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', APP . 'Config' . DS . 'core.php'));
+				$this->err(__d('cake_console', 'Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', APP . 'Config' . DS . 'app.php'));
 				$success = false;
 			}
 
@@ -97,13 +109,6 @@ class ProjectTask extends AppShell {
 				$this->out(__d('cake_console', ' * Cache prefix set'));
 			} else {
 				$this->err(__d('cake_console', 'The cache prefix was <error>NOT</error> set'));
-				$success = false;
-			}
-
-			if ($this->consolePath($path) === true) {
-				$this->out(__d('cake_console', ' * app/Console/cake.php path set.'));
-			} else {
-				$this->err(__d('cake_console', 'Unable to set console path for app/Console.'));
 				$success = false;
 			}
 
@@ -117,10 +122,9 @@ class ProjectTask extends AppShell {
 			}
 			$success = $this->corePath($path, $hardCode) === true;
 			if ($success) {
-				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/index.php', CAKE_CORE_INCLUDE_PATH));
-				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in webroot/test.php', CAKE_CORE_INCLUDE_PATH));
+				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in Config/paths.php', CAKE_CORE_INCLUDE_PATH));
 			} else {
-				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'webroot' . DS . 'index.php'));
+				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'Config' . DS . 'paths.php'));
 				$success = false;
 			}
 			if ($success && $hardCode) {
@@ -150,7 +154,7 @@ class ProjectTask extends AppShell {
 	public function cakeOnIncludePath() {
 		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
 		foreach ($paths as $path) {
-			if (file_exists($path . DS . 'Cake' . DS . 'bootstrap.php')) {
+			if (file_exists($path . DS . 'Cake/bootstrap.php')) {
 				return true;
 			}
 		}
@@ -194,6 +198,7 @@ class ProjectTask extends AppShell {
 
 		$this->out(__d('cake_console', '<info>Skel Directory</info>: ') . $skel);
 		$this->out(__d('cake_console', '<info>Will be copied to</info>: ') . $path);
+		$this->out(__d('cake_console', '<info>With namespace</info>: ') . $app);
 		$this->hr();
 
 		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
@@ -230,25 +235,45 @@ class ProjectTask extends AppShell {
 	}
 
 /**
- * Generates the correct path to the CakePHP libs that are generating the project
- * and points app/console/cake.php to the right place
+ * Writes 'App.namespace' to App/Config/app.php and fixes namespace declarations
  *
- * @param string $path Project path.
- * @return boolean success
+ * @param string $path Project path
+ * @return boolean Success
  */
-	public function consolePath($path) {
-		$File = new File($path . 'Console' . DS . 'cake.php');
+	public function appNamespace($path) {
+		$namespace = basename($path);
+
+		$File = new File($path . 'Config/app.php');
 		$contents = $File->read();
-		if (preg_match('/(__CAKE_PATH__)/', $contents, $match)) {
-			$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " \$ds . '" : "'";
-			$replacement = $root . str_replace(DS, "' . \$ds . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "'";
-			$result = str_replace($match[0], $replacement, $contents);
-			if ($File->write($result)) {
-				return true;
-			}
+		$contents = preg_replace(
+			"/namespace = 'App'/",
+			"namespace = '" . $namespace . "'",
+			$contents,
+			-1,
+			$count
+		);
+		if (!$count || !$File->write($contents)) {
 			return false;
 		}
-		return false;
+
+		$Folder = new Folder($path);
+		$files = $Folder->findRecursive('.*\.php');
+		foreach ($files as $filename) {
+			$File = new File($filename);
+			$contents = $File->read();
+			$contents = preg_replace(
+				'/namespace App\\\/',
+				'namespace ' . $namespace . '\\',
+				$contents,
+				-1,
+				$count
+			);
+			if ($count && !$File->write($contents)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 /**
@@ -258,15 +283,18 @@ class ProjectTask extends AppShell {
  * @return boolean Success
  */
 	public function securitySalt($path) {
-		$File = new File($path . 'Config' . DS . 'core.php');
+		$File = new File($path . 'Config/app.php');
 		$contents = $File->read();
-		if (preg_match('/([\s]*Configure::write\(\'Security.salt\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
-			$string = Security::generateAuthKey();
-			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.salt\', \'' . $string . '\');', $contents);
-			if ($File->write($result)) {
-				return true;
-			}
-			return false;
+		$newSalt = Security::generateAuthKey();
+		$contents = preg_replace(
+			"/^(\s+'salt'\s+\=\>\s+')([^']+)(',)/m",
+			'${1}' . $newSalt . '\\3',
+			$contents,
+			-1,
+			$count
+		);
+		if ($count && $File->write($contents)) {
+			return true;
 		}
 		return false;
 	}
@@ -278,16 +306,18 @@ class ProjectTask extends AppShell {
  * @return boolean Success
  */
 	public function securityCipherSeed($path) {
-		$File = new File($path . 'Config' . DS . 'core.php');
+		$File = new File($path . 'Config/app.php');
 		$contents = $File->read();
-		if (preg_match('/([\s]*Configure::write\(\'Security.cipherSeed\',[\s\'A-z0-9]*\);)/', $contents, $match)) {
-			App::uses('Security', 'Utility');
-			$string = substr(bin2hex(Security::generateAuthKey()), 0, 30);
-			$result = str_replace($match[0], "\t" . 'Configure::write(\'Security.cipherSeed\', \'' . $string . '\');', $contents);
-			if ($File->write($result)) {
-				return true;
-			}
-			return false;
+		$newCipher = substr(bin2hex(Security::generateAuthKey()), 0, 30);
+		$contents = preg_replace(
+			"/^(\s+'cipherSeed'\s+\=\>\s+')([^']+)(',)/m",
+			'${1}' . $newCipher . '\\3',
+			$contents,
+			-1,
+			$count
+		);
+		if ($count && $File->write($contents)) {
+			return true;
 		}
 		return false;
 	}
@@ -300,7 +330,7 @@ class ProjectTask extends AppShell {
  */
 	public function cachePrefix($dir) {
 		$app = basename($dir);
-		$File = new File($dir . 'Config' . DS . 'core.php');
+		$File = new File($dir . 'Config/cache.php');
 		$contents = $File->read();
 		if (preg_match('/(\$prefix = \'myapp_\';)/', $contents, $match)) {
 			$result = str_replace($match[0], '$prefix = \'' . $app . '_\';', $contents);
@@ -318,11 +348,7 @@ class ProjectTask extends AppShell {
  */
 	public function corePath($path, $hardCode = true) {
 		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
-			$filename = $path . 'webroot' . DS . 'index.php';
-			if (!$this->_replaceCorePath($filename, $hardCode)) {
-				return false;
-			}
-			$filename = $path . 'webroot' . DS . 'test.php';
+			$filename = $path . 'Config/paths.php';
 			if (!$this->_replaceCorePath($filename, $hardCode)) {
 				return false;
 			}
@@ -354,14 +380,14 @@ class ProjectTask extends AppShell {
 	}
 
 /**
- * Enables Configure::read('Routing.prefixes') in /app/Config/core.php
+ * Enables Configure::read('Routing.prefixes') in /app/Config/routes.php
  *
  * @param string $name Name to use as admin routing
  * @return boolean Success
  */
 	public function cakeAdmin($name) {
-		$path = (empty($this->configPath)) ? APP . 'Config' . DS : $this->configPath;
-		$File = new File($path . 'core.php');
+		$path = (empty($this->configPath)) ? APP . 'Config/' : $this->configPath;
+		$File = new File($path . 'routes.php');
 		$contents = $File->read();
 		if (preg_match('%(\s*[/]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(]*\);)%', $contents, $match)) {
 			$result = str_replace($match[0], "\n" . 'Configure::write(\'Routing.prefixes\', array(\'' . $name . '\'));', $contents);
@@ -438,6 +464,9 @@ class ProjectTask extends AppShell {
 			))->addOption('empty', array(
 				'boolean' => true,
 				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addOption('skel', array(
 				'default' => current(App::core('Console')) . 'Templates' . DS . 'skel',
 				'help' => __d('cake_console', 'The directory layout to use for the new application skeleton. Defaults to cake/Console/Templates/skel of CakePHP used to create the project.')

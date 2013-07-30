@@ -1,9 +1,5 @@
 <?php
 /**
- * CacheHelper helps create full page view caching.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,12 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.0.0.2277
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View\Helper;
 
-App::uses('AppHelper', 'View/Helper');
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
+use Cake\View\Helper;
 
 /**
  * CacheHelper helps create full page view caching.
@@ -26,10 +24,10 @@ App::uses('AppHelper', 'View/Helper');
  * When using CacheHelper you don't call any of its methods, they are all automatically
  * called by View, and use the $cacheAction settings set in the controller.
  *
- * @package       Cake.View.Helper
+ * @package Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  */
-class CacheHelper extends AppHelper {
+class CacheHelper extends Helper {
 
 /**
  * Array of strings replaced in cached views.
@@ -83,9 +81,15 @@ class CacheHelper extends AppHelper {
  */
 	public function afterLayout($layoutFile) {
 		if ($this->_enabled()) {
-			$this->_View->output = $this->cache($layoutFile, $this->_View->output);
+			$this->_View->assign(
+				'content',
+				$this->cache($layoutFile, $this->_View->fetch('content'))
+			);
 		}
-		$this->_View->output = preg_replace('/<!--\/?nocache-->/', '', $this->_View->output);
+		$this->_View->assign(
+			'content',
+			preg_replace('/<!--\/?nocache-->/', '', $this->_View->fetch('content'))
+		);
 	}
 
 /**
@@ -180,8 +184,18 @@ class CacheHelper extends AppHelper {
 		} elseif ($file = fileExistsInPath($file)) {
 			$file = file_get_contents($file);
 		}
-		preg_match_all('/(<!--nocache:\d{3}-->(?<=<!--nocache:\d{3}-->)[\\s\\S]*?(?=<!--\/nocache-->)<!--\/nocache-->)/i', $cache, $outputResult, PREG_PATTERN_ORDER);
-		preg_match_all('/(?<=<!--nocache-->)([\\s\\S]*?)(?=<!--\/nocache-->)/i', $file, $fileResult, PREG_PATTERN_ORDER);
+		preg_match_all(
+			'/(<!--nocache:\d{3}-->(?<=<!--nocache:\d{3}-->)[\\s\\S]*?(?=<!--\/nocache-->)<!--\/nocache-->)/i',
+			$cache,
+			$outputResult,
+			PREG_PATTERN_ORDER
+		);
+		preg_match_all(
+			'/(?<=<!--nocache-->)([\\s\\S]*?)(?=<!--\/nocache-->)/i',
+			$file,
+			$fileResult,
+			PREG_PATTERN_ORDER
+		);
 		$fileResult = $fileResult[0];
 		$outputResult = $outputResult[0];
 
@@ -293,15 +307,19 @@ class CacheHelper extends AppHelper {
 		}
 		$cache = $cache . '.php';
 		$file = '<!--cachetime:' . $cacheTime . '--><?php';
+		$file .= "
+			use Cake\\Core\\Configure;
+			use Cake\\Routing\\Router;
+		";
+		$namespace = Configure::read('App.namespace');
 
 		if (empty($this->_View->plugin)) {
 			$file .= "
-			App::uses('{$this->_View->name}Controller', 'Controller');
+			use $namespace\\Controller\\{$this->_View->name}Controller;
 			";
 		} else {
 			$file .= "
-			App::uses('{$this->_View->plugin}AppController', '{$this->_View->plugin}.Controller');
-			App::uses('{$this->_View->name}Controller', '{$this->_View->plugin}.Controller');
+			use {$this->_View->plugin}\\Controller\\{$this->_View->name}Controller;
 			";
 		}
 
@@ -330,7 +348,7 @@ class CacheHelper extends AppHelper {
 		?>';
 		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1'; ?>", $content);
 		$file .= $content;
-		return cache('views' . DS . $cache, $file, $timestamp);
+		return cache('views/' . $cache, $file, $timestamp);
 	}
 
 }

@@ -1,10 +1,5 @@
 <?php
 /**
- * APC storage engine for cache.
- *
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,6 +13,10 @@
  * @since         CakePHP(tm) v 1.2.0.4933
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Cache\Engine;
+
+use Cake\Cache\CacheEngine;
+use Cake\Utility\Inflector;
 
 /**
  * APC storage engine for cache
@@ -38,17 +37,15 @@ class ApcEngine extends CacheEngine {
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
- * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
- * @see CacheEngine::__defaults
  */
 	public function init($settings = array()) {
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
-		$settings += array('engine' => 'Apc');
+		$settings += array('engine' => __CLASS__);
 		parent::init($settings);
 		return function_exists('apc_dec');
 	}

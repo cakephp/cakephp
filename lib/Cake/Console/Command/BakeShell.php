@@ -1,13 +1,5 @@
 <?php
 /**
- * Command-line code generation utility to automate programmer chores.
- *
- * Bake is CakePHP's code generation script, which can help you kickstart
- * application development by writing fully functional skeleton controllers,
- * models, and views. Going further, Bake can also write Unit Tests for you.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -20,9 +12,13 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('Model', 'Model');
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Model\Model;
+use Cake\Utility\Inflector;
 
 /**
  * Command-line code generation utility to automate programmer chores.
@@ -34,7 +30,7 @@ App::uses('Model', 'Model');
  * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/code-generation-with-bake.html
  */
-class BakeShell extends AppShell {
+class BakeShell extends Shell {
 
 /**
  * Contains tasks to load and instantiate
@@ -77,7 +73,7 @@ class BakeShell extends AppShell {
 		if (!is_dir($this->DbConfig->path)) {
 			$path = $this->Project->execute();
 			if (!empty($path)) {
-				$this->DbConfig->path = $path . 'Config' . DS;
+				$this->DbConfig->path = $path . 'Config/';
 			} else {
 				return false;
 			}
@@ -162,8 +158,7 @@ class BakeShell extends AppShell {
 		$modelExists = false;
 		$model = $this->_modelName($name);
 
-		App::uses('AppModel', 'Model');
-		App::uses($model, 'Model');
+		$model = App::classname($model, 'Model');
 		if (class_exists($model)) {
 			$object = new $model();
 			$modelExists = true;
@@ -188,8 +183,8 @@ class BakeShell extends AppShell {
 					$this->Controller->bakeTest($controller);
 				}
 			}
-			App::uses($controller . 'Controller', 'Controller');
-			if (class_exists($controller . 'Controller')) {
+			$controller = App::classname($controller, 'Controller', 'Controller');
+			if ($controller) {
 				$this->View->args = array($name);
 				$this->View->execute();
 			}
@@ -222,7 +217,7 @@ class BakeShell extends AppShell {
 			'help' => __d('cake_console', 'Bake a new plugin folder in the path supplied or in current directory if no path is specified.'),
 			'parser' => $this->Plugin->getOptionParser()
 		))->addSubcommand('db_config', array(
-			'help' => __d('cake_console', 'Bake a database.php file in config directory.'),
+			'help' => __d('cake_console', 'Bake a datasources.php file in config directory.'),
 			'parser' => $this->DbConfig->getOptionParser()
 		))->addSubcommand('model', array(
 			'help' => __d('cake_console', 'Bake a model.'),
@@ -243,6 +238,9 @@ class BakeShell extends AppShell {
 			'help' => __d('cake_console', 'Database connection to use in conjunction with `bake all`.'),
 			'short' => 'c',
 			'default' => 'default'
+		))->addOption('theme', array(
+			'short' => 't',
+			'help' => __d('cake_console', 'Theme to use when baking code.')
 		));
 	}
 

@@ -16,13 +16,16 @@
  * @since         CakePHP(tm) v 2.1
  * @license       http://www.opensource.org/licenses/opengroup.php Open Group Test Suite License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class SiteFixture
  *
  * @package       Cake.Test.Fixture
  */
-class SiteFixture extends CakeTestFixture {
+class SiteFixture extends TestFixture {
 
 /**
  * name property
@@ -39,10 +42,11 @@ class SiteFixture extends CakeTestFixture {
  * @access public
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'name' => array('type' => 'string', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'null' => false],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

@@ -18,11 +18,14 @@
  * @since         CakePHP(tm) v 1.2.0.4433
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command;
 
-App::uses('Shell', 'Console');
-App::uses('CakeTestSuiteDispatcher', 'TestSuite');
-App::uses('CakeTestSuiteCommand', 'TestSuite');
-App::uses('CakeTestLoader', 'TestSuite');
+use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Shell;
+use Cake\TestSuite\TestLoader;
+use Cake\TestSuite\TestSuiteCommand;
+use Cake\TestSuite\TestSuiteDispatcher;
+use Cake\Utility\Inflector;
 
 /**
  * Provides a CakePHP wrapper around PHPUnit.
@@ -170,17 +173,17 @@ class TestShell extends Shell {
  * @throws Exception
  */
 	public function initialize() {
-		$this->_dispatcher = new CakeTestSuiteDispatcher();
-		$success = $this->_dispatcher->loadTestFramework();
-		if (!$success) {
-			throw new Exception(__d('cake_dev', 'Please install PHPUnit framework <info>(http://www.phpunit.de)</info>'));
+		$this->_dispatcher = new TestSuiteDispatcher();
+		$sucess = $this->_dispatcher->loadTestFramework();
+		if (!$sucess) {
+			throw new \Exception(__d('cake_dev', 'Please install PHPUnit framework <info>(http://www.phpunit.de)</info>'));
 		}
 	}
 
 /**
- * Parse the CLI options into an array CakeTestDispatcher can use.
+ * Parse the CLI options into an array Cake\TestSuite\TestDispatcher can use.
  *
- * @return array Array of params for CakeTestDispatcher
+ * @return array Array of params for Cake\TestSuite\TestDispatcher
  */
 	protected function _parseArgs() {
 		if (empty($this->args)) {
@@ -217,7 +220,7 @@ class TestShell extends Shell {
 /**
  * Converts the options passed to the shell as options for the PHPUnit cli runner
  *
- * @return array Array of params for CakeTestDispatcher
+ * @return array Array of params for Cake\TestSuite\TestDispatcher
  */
 	protected function _runnerOptions() {
 		$options = array();
@@ -271,7 +274,7 @@ class TestShell extends Shell {
 		restore_error_handler();
 		restore_error_handler();
 
-		$testCli = new CakeTestSuiteCommand('CakeTestLoader', $runnerArgs);
+		$testCli = new TestSuiteCommand('Cake\TestSuite\TestLoader', $runnerArgs);
 		$testCli->run($options);
 	}
 
@@ -282,7 +285,7 @@ class TestShell extends Shell {
  */
 	public function available() {
 		$params = $this->_parseArgs();
-		$testCases = CakeTestLoader::generateTestList($params);
+		$testCases = TestLoader::generateTestList($params);
 		$app = $params['app'];
 		$plugin = $params['plugin'];
 
@@ -361,7 +364,7 @@ class TestShell extends Shell {
 				$testCase = substr($file, 0, -8);
 				$testCase = str_replace(DS, '/', $testCase);
 
-				if ($testCase = preg_replace('@.*Test\/Case\/@', '', $testCase)) {
+				if ($testCase = preg_replace('@.*Test\/TestCase\/@', '', $testCase)) {
 
 					if ($category === 'core') {
 						$testCase = str_replace('lib/Cake', '', $testCase);
@@ -370,7 +373,7 @@ class TestShell extends Shell {
 					return $testCase;
 				}
 
-				throw new Exception(__d('cake_dev', 'Test case %s cannot be run via this shell', $testFile));
+				throw new \Exception(__d('cake_dev', 'Test case %s cannot be run via this shell', $testFile));
 			}
 		}
 
@@ -380,32 +383,32 @@ class TestShell extends Shell {
 			$testCase = str_replace(DS, '/', $file);
 			$testCase = preg_replace('@.*lib/Cake/@', '', $file);
 			$testCase[0] = strtoupper($testCase[0]);
-			$testFile = CAKE . 'Test/Case/' . $testCase . 'Test.php';
+			$testFile = CAKE . 'Test/TestCase/' . $testCase . 'Test.php';
 
 			if (!file_exists($testFile) && $throwOnMissingFile) {
-				throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
+				throw new \Exception(__d('cake_dev', 'Test case %s not found', $testFile));
 			}
 
 			return $testCase;
 		}
 
 		if ($category === 'app') {
-			$testFile = str_replace(APP, APP . 'Test/Case/', $file) . 'Test.php';
+			$testFile = str_replace(APP, APP . 'Test/TestCase/', $file) . 'Test.php';
 		} else {
 			$testFile = preg_replace(
 				"@((?:plugins|Plugin)[\\/]{$category}[\\/])(.*)$@",
-				'\1Test/Case/\2Test.php',
+				'\1Test/TestCase/\2Test.php',
 				$file
 			);
 		}
 
 		if (!file_exists($testFile) && $throwOnMissingFile) {
-			throw new Exception(__d('cake_dev', 'Test case %s not found', $testFile));
+			throw new \Exception(__d('cake_dev', 'Test case %s not found', $testFile));
 		}
 
 		$testCase = substr($testFile, 0, -8);
 		$testCase = str_replace(DS, '/', $testCase);
-		$testCase = preg_replace('@.*Test/Case/@', '', $testCase);
+		$testCase = preg_replace('@.*Test/TestCase/@', '', $testCase);
 
 		return $testCase;
 	}

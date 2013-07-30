@@ -1,10 +1,5 @@
 <?php
 /**
- * Redis storage engine for cache
- *
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,10 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Cache.Engine
  * @since         CakePHP(tm) v 2.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
+namespace Cake\Cache\Engine;
+
+use Cake\Cache\CacheEngine;
 
 /**
  * Redis storage engine for cache.
@@ -59,7 +57,7 @@ class RedisEngine extends CacheEngine {
 			return false;
 		}
 		parent::init(array_merge(array(
-			'engine' => 'Redis',
+			'engine' => __CLASS__,
 			'prefix' => null,
 			'server' => '127.0.0.1',
 			'port' => 6379,
@@ -80,7 +78,7 @@ class RedisEngine extends CacheEngine {
 	protected function _connect() {
 		$return = false;
 		try {
-			$this->_Redis = new Redis();
+			$this->_Redis = new \Redis();
 			if (empty($this->settings['persistent'])) {
 				$return = $this->_Redis->connect($this->settings['server'], $this->settings['port'], $this->settings['timeout']);
 			} else {

@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class SecondaryModelFixture
  *
  * @package       Cake.Test.Fixture
  */
-class SecondaryModelFixture extends CakeTestFixture {
+class SecondaryModelFixture extends TestFixture {
 
 /**
  * name property
@@ -38,8 +41,9 @@ class SecondaryModelFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'secondary_name' => array('type' => 'string', 'null' => false)
+		'id' => ['type' => 'integer'],
+		'secondary_name' => ['type' => 'string', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

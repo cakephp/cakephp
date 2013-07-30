@@ -17,8 +17,7 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-
-App::uses('BaseCoverageReport', 'TestSuite/Coverage');
+namespace Cake\TestSuite\Coverage;
 
 /**
  * Generates code coverage reports in HTML from data obtained from PHPUnit
@@ -81,7 +80,7 @@ HTML;
 				$coveringTests = array();
 				foreach ($coverageData[$lineno] as $test) {
 					$class = (is_array($test) && isset($test['id'])) ? $test['id'] : $test;
-					$testReflection = new ReflectionClass(current(explode('::', $class)));
+					$testReflection = new \ReflectionClass(current(explode('::', $class)));
 					$this->_testNames[] = $this->_guessSubjectName($testReflection);
 					$coveringTests[] = $class;
 				}

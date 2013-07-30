@@ -17,6 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.4947
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Cache\Engine;
+
+use Cake\Cache\CacheEngine;
 
 /**
  * Xcache storage engine for cache
@@ -48,7 +51,7 @@ class XcacheEngine extends CacheEngine {
 	public function init($settings = array()) {
 		if (php_sapi_name() !== 'cli') {
 			parent::init(array_merge(array(
-				'engine' => 'Xcache',
+				'engine' => __CLASS__,
 				'prefix' => Inflector::slug(APP_DIR) . '_',
 				'PHP_AUTH_USER' => 'user',
 				'PHP_AUTH_PW' => 'password'

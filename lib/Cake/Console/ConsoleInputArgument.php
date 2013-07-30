@@ -16,6 +16,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console;
+
+use Cake\Error;
 
 /**
  * An object to represent a single argument used in the command line.
@@ -136,14 +139,14 @@ class ConsoleInputArgument {
  *
  * @param string $value
  * @return boolean
- * @throws ConsoleException
+ * @throws Cake\Error\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {
 			return true;
 		}
 		if (!in_array($value, $this->_choices)) {
-			throw new ConsoleException(
+			throw new Error\ConsoleException(
 				__d('cake_console', '"%s" is not a valid value for %s. Please use one of "%s"',
 				$value, $this->_name, implode(', ', $this->_choices)
 			));
@@ -157,7 +160,7 @@ class ConsoleInputArgument {
  * @param SimpleXmlElement $parent The parent element.
  * @return SimpleXmlElement The parent with this argument appended.
  */
-	public function xml(SimpleXmlElement $parent) {
+	public function xml(\SimpleXmlElement $parent) {
 		$option = $parent->addChild('argument');
 		$option->addAttribute('name', $this->_name);
 		$option->addAttribute('help', $this->_help);

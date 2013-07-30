@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.7953
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class UuidTagFixture
  *
  * @package       Cake.Test.Fixture
  */
-class UuidTagFixture extends CakeTestFixture {
+class UuidTagFixture extends TestFixture {
 
 /**
  * name property
@@ -38,9 +41,10 @@ class UuidTagFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'string', 'length' => 36, 'key' => 'primary'),
-		'name' => array('type' => 'string', 'length' => 255),
-		'created' => array('type' => 'datetime')
+		'id' => ['type' => 'string', 'length' => 36],
+		'name' => ['type' => 'string', 'length' => 255],
+		'created' => ['type' => 'datetime'],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

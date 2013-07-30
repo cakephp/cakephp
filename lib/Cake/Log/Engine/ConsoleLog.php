@@ -1,9 +1,5 @@
 <?php
 /**
- * Console Logging
- *
- * PHP 5
- *
  * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -17,9 +13,11 @@
  * @since         CakePHP(tm) v 2.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Log\Engine;
 
-App::uses('BaseLog', 'Log/Engine');
-App::uses('ConsoleOutput', 'Console');
+use Cake\Console\ConsoleOutput;
+use Cake\Error;
+use Cake\Utility\Hash;
 
 /**
  * Console logging. Writes logs to console output.
@@ -31,7 +29,7 @@ class ConsoleLog extends BaseLog {
 /**
  * Output stream
  *
- * @var ConsoleOutput
+ * @var Cake\Console\ConsoleOutput
  */
 	protected $_output = null;
 
@@ -46,7 +44,7 @@ class ConsoleLog extends BaseLog {
  * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
  *
  * @param array $config Options for the FileLog, see above.
- * @throws CakeLogException
+ * @throws Cake\Error\Exception
  */
 	public function __construct($config = array()) {
 		parent::__construct($config);
@@ -67,7 +65,7 @@ class ConsoleLog extends BaseLog {
 		} elseif (is_string($config['stream'])) {
 			$this->_output = new ConsoleOutput($config['stream']);
 		} else {
-			throw new CakeLogException('`stream` not a ConsoleOutput nor string');
+			throw new Error\Exception('`stream` not a ConsoleOutput nor string');
 		}
 		$this->_output->outputAs($config['outputAs']);
 	}

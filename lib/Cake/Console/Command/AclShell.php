@@ -16,13 +16,15 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('Controller', 'Controller');
-App::uses('ComponentCollection', 'Controller');
-App::uses('AclComponent', 'Controller/Component');
-App::uses('DbAcl', 'Model');
-App::uses('Hash', 'Utility');
+use Cake\Console\Shell;
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Component\AclComponent;
+use Cake\Controller\Controller;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Utility\Hash;
 
 /**
  * Shell for ACL management. This console is known to have issues with zend.ze1_compatibility_mode
@@ -30,7 +32,7 @@ App::uses('Hash', 'Utility');
  *
  * @package       Cake.Console.Command
  */
-class AclShell extends AppShell {
+class AclShell extends Shell {
 
 /**
  * Contains instance of AclComponent
@@ -72,9 +74,11 @@ class AclShell extends AppShell {
 		}
 
 		$class = Configure::read('Acl.classname');
-		list($plugin, $class) = pluginSplit($class, true);
-		App::uses($class, $plugin . 'Controller/Component/Acl');
-		if (!in_array($class, array('DbAcl', 'DB_ACL')) && !is_subclass_of($class, 'DbAcl')) {
+		$className = App::classname($class, 'Controller/Component/Acl');
+		if (
+			$class !== 'Cake\Controller\Component\Acl\DbAcl' &&
+			!is_subclass_of($className, 'Cake\Controller\Component\Acl\DbAcl')
+		) {
 			$out = "--------------------------------------------------\n";
 			$out .= __d('cake_console', 'Error: Your current Cake configuration is set to an ACL implementation other than DB.') . "\n";
 			$out .= __d('cake_console', 'Please change your core config to reflect your decision to use DbAcl before attempting to use this script') . "\n";
@@ -86,12 +90,11 @@ class AclShell extends AppShell {
 		}
 
 		if ($this->command) {
-			if (!config('database')) {
+			if (Configure::check('Datasource') === null) {
 				$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'));
 				$this->args = null;
 				return $this->DbConfig->execute();
 			}
-			require_once (APP . 'Config' . DS . 'database.php');
 
 			if (!in_array($this->command, array('initdb'))) {
 				$collection = new ComponentCollection();

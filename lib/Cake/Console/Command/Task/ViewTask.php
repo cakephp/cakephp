@@ -16,10 +16,12 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('Controller', 'Controller');
-App::uses('BakeTask', 'Console/Command/Task');
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating view files.
@@ -177,7 +179,6 @@ class ViewTask extends BakeTask {
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
 			$this->controllerName = $this->_controllerName($model);
-			App::uses($model, 'Model');
 			if (class_exists($model)) {
 				$vars = $this->_loadController();
 				if (!$actions) {
@@ -263,7 +264,8 @@ class ViewTask extends BakeTask {
 		}
 
 		$controllerClassName = $this->controllerName . 'Controller';
-		App::uses($controllerClassName, $plugin . 'Controller');
+		$controllerClassName = App::className($plugin . $controllerClassName, 'Controller');
+
 		if (!class_exists($controllerClassName)) {
 			$file = $controllerClassName . '.php';
 			$this->err(__d('cake_console', "The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", $file));
@@ -396,7 +398,7 @@ class ViewTask extends BakeTask {
 			return $this->template;
 		}
 		$themePath = $this->Template->getThemePath();
-		if (file_exists($themePath . 'views' . DS . $action . '.ctp')) {
+		if (file_exists($themePath . 'views/' . $action . '.ctp')) {
 			return $action;
 		}
 		$template = $action;
@@ -435,6 +437,9 @@ class ViewTask extends BakeTask {
 		))->addOption('admin', array(
 			'help' => __d('cake_console', 'Set to only bake views for a prefix in Routing.prefixes'),
 			'boolean' => true
+		))->addOption('theme', array(
+			'short' => 't',
+			'help' => __d('cake_console', 'Theme to use when baking code.')
 		))->addOption('connection', array(
 			'short' => 'c',
 			'help' => __d('cake_console', 'The connection the connected model is on.')

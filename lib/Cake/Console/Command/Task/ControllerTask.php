@@ -16,10 +16,12 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('BakeTask', 'Console/Command/Task');
-App::uses('AppModel', 'Model');
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating controller files.
@@ -115,8 +117,8 @@ class ControllerTask extends BakeTask {
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
-			App::uses($model, 'Model');
-			if (class_exists($model)) {
+			$classname = App::classname($model, 'Model');
+			if ($classname) {
 				$actions = $this->bakeActions($controller);
 				if ($admin) {
 					$this->out(__d('cake_console', 'Adding %s methods', $admin));
@@ -286,7 +288,7 @@ class ControllerTask extends BakeTask {
 		if ($plugin) {
 			$plugin .= '.';
 		}
-		App::uses($modelImport, $plugin . 'Model');
+		$classname = App::classname($plugin . $modelImport, 'Model');
 		if (!class_exists($modelImport)) {
 			$this->err(__d('cake_console', 'You must have a model for this class to build basic methods. Please try again.'));
 			$this->_stop();
@@ -474,6 +476,9 @@ class ControllerTask extends BakeTask {
 			))->addOption('connection', array(
 				'short' => 'c',
 				'help' => __d('cake_console', 'The connection the controller\'s model is on.')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));

@@ -16,15 +16,16 @@
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command;
 
-App::uses('AppShell', 'Console/Command');
+use Cake\Console\Shell;
 
 /**
  * Shell for I18N management.
  *
  * @package       Cake.Console.Command
  */
-class I18nShell extends AppShell {
+class I18nShell extends Shell {
 
 /**
  * Contains database source to use

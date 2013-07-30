@@ -16,17 +16,20 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('File', 'Utility');
-App::uses('Folder', 'Utility');
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
+use Cake\Utility\Inflector;
 
 /**
  * The Plugin Task handles creating an empty plugin, ready to be used
  *
  * @package       Cake.Console.Command.Task
  */
-class PluginTask extends AppShell {
+class PluginTask extends Shell {
 
 /**
  * path to plugins directory
@@ -48,8 +51,8 @@ class PluginTask extends AppShell {
  * @return void
  */
 	public function initialize() {
-		$this->path = current(App::path('plugins'));
-		$this->bootstrap = APP . 'Config' . DS . 'bootstrap.php';
+		$this->path = current(App::path('Plugin'));
+		$this->bootstrap = APP . 'Config/bootstrap.php';
 	}
 
 /**
@@ -96,7 +99,7 @@ class PluginTask extends AppShell {
  * @return boolean
  */
 	public function bake($plugin) {
-		$pathOptions = App::path('plugins');
+		$pathOptions = App::path('Plugin');
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
@@ -110,18 +113,18 @@ class PluginTask extends AppShell {
 		if (strtolower($looksGood) === 'y') {
 			$Folder = new Folder($this->path . $plugin);
 			$directories = array(
-				'Config' . DS . 'Schema',
-				'Model' . DS . 'Behavior',
-				'Model' . DS . 'Datasource',
-				'Console' . DS . 'Command' . DS . 'Task',
-				'Controller' . DS . 'Component',
+				'Config/Schema',
+				'Model/Behavior',
+				'Model/Datasource',
+				'Console/Command/Task',
+				'Controller/Component',
 				'Lib',
-				'View' . DS . 'Helper',
-				'Test' . DS . 'Case' . DS . 'Controller' . DS . 'Component',
-				'Test' . DS . 'Case' . DS . 'View' . DS . 'Helper',
-				'Test' . DS . 'Case' . DS . 'Model' . DS . 'Behavior',
-				'Test' . DS . 'Fixture',
-				'Vendor',
+				'View/Helper',
+				'Test/Case/Controller/Component',
+				'Test/Case/View/Helper',
+				'Test/Case/Model/Behavior',
+				'Test/Fixture',
+				'vendor',
 				'webroot'
 			);
 
@@ -149,7 +152,7 @@ class PluginTask extends AppShell {
 			$out .= "App::uses('AppController', 'Controller');\n\n";
 			$out .= "class {$plugin}AppController extends AppController {\n\n";
 			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Controller' . DS . $controllerFileName, $out);
+			$this->createFile($this->path . $plugin . DS . 'Controller/' . $controllerFileName, $out);
 
 			$modelFileName = $plugin . 'AppModel.php';
 
@@ -157,7 +160,7 @@ class PluginTask extends AppShell {
 			$out .= "App::uses('AppModel', 'Model');\n\n";
 			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
 			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Model' . DS . $modelFileName, $out);
+			$this->createFile($this->path . $plugin . DS . 'Model/' . $modelFileName, $out);
 
 			$this->_modifyBootstrap($plugin);
 

@@ -17,16 +17,19 @@
  * @since         CakePHP(tm) v 1.2.0.7879
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * UnconventionalTreeFixture class
  *
  * Like Number tree, but doesn't use the default values for lft and rght or parent_id
  *
- * @uses          CakeTestFixture
+ * @uses          TestFixture
  * @package       Cake.Test.Fixture
  */
-class UnconventionalTreeFixture extends CakeTestFixture {
+class UnconventionalTreeFixture extends TestFixture {
 
 /**
  * name property
@@ -41,10 +44,11 @@ class UnconventionalTreeFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id'	=> array('type' => 'integer','key' => 'primary'),
-		'name'	=> array('type' => 'string','null' => false),
+		'id' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'null' => false],
 		'join' => 'integer',
-		'left'	=> array('type' => 'integer','null' => false),
-		'right'	=> array('type' => 'integer','null' => false),
+		'left' => ['type' => 'integer', 'null' => false],
+		'right' => ['type' => 'integer', 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 }

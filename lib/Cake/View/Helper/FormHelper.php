@@ -13,10 +13,17 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View\Helper;
 
-App::uses('ClassRegistry', 'Utility');
-App::uses('AppHelper', 'View/Helper');
-App::uses('Hash', 'Utility');
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
+use Cake\Utility\Security;
+use Cake\View\Helper;
+use Cake\View\View;
+use \DateTime;
 
 /**
  * Form helper library.
@@ -27,7 +34,7 @@ App::uses('Hash', 'Utility');
  * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html
  */
-class FormHelper extends AppHelper {
+class FormHelper extends Helper {
 
 /**
  * Other helpers used by FormHelper
@@ -242,22 +249,19 @@ class FormHelper extends AppHelper {
 /**
  * Returns if a field is required to be filled based on validation properties from the validating object.
  *
- * @param CakeValidationSet $validationRules
+ * @param Cake\Model\Validator\ValidationSet $validationRules
  * @return boolean true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validationRules) {
 		if (empty($validationRules) || count($validationRules) === 0) {
 			return false;
 		}
-
-		$isUpdate = $this->requestType === 'put';
+		$validationRules->isUpdate($this->requestType === 'put');
 		foreach ($validationRules as $rule) {
-			$rule->isUpdate($isUpdate);
 			if ($rule->skip()) {
 				continue;
 			}
-
-			return !$rule->allowEmpty;
+			return !$validationRules->isEmptyAllowed();
 		}
 		return false;
 	}
@@ -416,7 +420,7 @@ class FormHelper extends AppHelper {
 			case 'delete':
 				$append .= $this->hidden('_method', array(
 					'name' => '_method', 'value' => strtoupper($options['type']), 'id' => null,
-					'secure' => self::SECURE_SKIP
+					'secure' => static::SECURE_SKIP
 				));
 			default:
 				$htmlAttributes['method'] = 'post';
@@ -475,7 +479,7 @@ class FormHelper extends AppHelper {
 		}
 		return $this->hidden('_Token.key', array(
 			'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand(),
-			'secure' => self::SECURE_SKIP
+			'secure' => static::SECURE_SKIP
 		));
 	}
 
@@ -1569,7 +1573,7 @@ class FormHelper extends AppHelper {
  *
  * Will make an input like:
  *
- * `<input type="search" id="UserQuery" name="data[User][query]" value="test" />`
+ * `<input type="search" id="UserQuery" name="User[query]" value="test" />`
  *
  * The first argument to an input type should always be the fieldname, in `Model.field` format.
  * The second argument should always be an array of attributes for the input.
@@ -1577,12 +1581,12 @@ class FormHelper extends AppHelper {
  * @param string $method Method name / input type to make.
  * @param array $params Parameters for the method call
  * @return string Formatted input method.
- * @throws CakeException When there are no params for the method call.
+ * @throws Cake\Error\Exception When there are no params for the method call.
  */
 	public function __call($method, $params) {
 		$options = array();
 		if (empty($params)) {
-			throw new CakeException(__d('cake_dev', 'Missing field name for FormHelper::%s', $method));
+			throw new Error\Exception(__d('cake_dev', 'Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];
@@ -1636,10 +1640,10 @@ class FormHelper extends AppHelper {
 			unset($options['secure']);
 		}
 		$options = $this->_initInputField($fieldName, array_merge(
-			$options, array('secure' => self::SECURE_SKIP)
+			$options, array('secure' => static::SECURE_SKIP)
 		));
 
-		if ($secure && $secure !== self::SECURE_SKIP) {
+		if ($secure && $secure !== static::SECURE_SKIP) {
 			$this->_secure(true, null, '' . $options['value']);
 		}
 
@@ -1657,7 +1661,7 @@ class FormHelper extends AppHelper {
 	public function file($fieldName, $options = array()) {
 		$options += array('secure' => true);
 		$secure = $options['secure'];
-		$options['secure'] = self::SECURE_SKIP;
+		$options['secure'] = static::SECURE_SKIP;
 
 		$options = $this->_initInputField($fieldName, $options);
 		$field = $this->entity();
@@ -1988,7 +1992,7 @@ class FormHelper extends AppHelper {
 		$id = $this->_extractOption('id', $attributes);
 
 		$attributes = $this->_initInputField($fieldName, array_merge(
-			(array)$attributes, array('secure' => self::SECURE_SKIP)
+			(array)$attributes, array('secure' => static::SECURE_SKIP)
 		));
 
 		if (is_string($options) && isset($this->_options[$options])) {
@@ -2015,6 +2019,14 @@ class FormHelper extends AppHelper {
 			}
 		} else {
 			$tag = 'selectstart';
+		}
+
+		if ($tag !== 'checkboxmultiplestart' &&
+			!isset($attributes['required']) &&
+			empty($attributes['disabled']) &&
+			$this->_introspectModel($this->model(), 'validates', $this->field())
+		) {
+			$attributes['required'] = true;
 		}
 
 		if (!empty($tag) || isset($template)) {
@@ -2390,7 +2402,7 @@ class FormHelper extends AppHelper {
 		}
 
 		if (!empty($interval) && $interval > 1 && !empty($min)) {
-			$current = new DateTime();
+			$current = new \DateTime();
 			if ($year !== null) {
 				$current->setDate($year, $month, $day);
 			}
@@ -2827,7 +2839,7 @@ class FormHelper extends AppHelper {
 		if ($this->tagIsInvalid() !== false) {
 			$result = $this->addClass($result, 'form-error');
 		}
-		if (!empty($result['disabled']) || $secure === self::SECURE_SKIP) {
+		if (!empty($result['disabled']) || $secure === static::SECURE_SKIP) {
 			return $result;
 		}
 		if (!isset($result['required']) &&

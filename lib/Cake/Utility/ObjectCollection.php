@@ -11,6 +11,10 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Utility;
+
+use Cake\Error;
+use Cake\Event\Event;
 
 /**
  * Deals with Collections of objects. Keeping registries of those objects,
@@ -83,20 +87,20 @@ abstract class ObjectCollection {
  *    Defaults to false.
  *
  *
- * @param string $callback|CakeEvent Method to fire on all the objects. Its assumed all the objects implement
- *   the method you are calling. If an instance of CakeEvent is provided, then then Event name will parsed to
+ * @param string $callback|Cake\Event\Event Method to fire on all the objects. Its assumed all the objects implement
+ *   the method you are calling. If an instance of Cake\Event\Event is provided, then then Event name will parsed to
  *   get the callback name. This is done by getting the last word after any dot in the event name
  *   (eg. `Model.afterSave` event will trigger the `afterSave` callback)
  * @param array $params Array of parameters for the triggered callback.
  * @param array $options Array of options.
  * @return mixed Either the last result or all results if collectReturn is on.
- * @throws CakeException when modParams is used with an index that does not exist.
+ * @throws Cake\Error\Exception when modParams is used with an index that does not exist.
  */
 	public function trigger($callback, $params = array(), $options = array()) {
 		if (empty($this->_enabled)) {
 			return true;
 		}
-		if ($callback instanceof CakeEvent) {
+		if ($callback instanceof Event) {
 			$event = $callback;
 			if (is_array($event->data)) {
 				$params =& $event->data;
@@ -104,7 +108,6 @@ abstract class ObjectCollection {
 			if (empty($event->omitSubject)) {
 				$subject = $event->subject();
 			}
-
 			foreach (array('break', 'breakOn', 'collectReturn', 'modParams') as $opt) {
 				if (isset($event->{$opt})) {
 					$options[$opt] = $event->{$opt};
@@ -125,7 +128,7 @@ abstract class ObjectCollection {
 		$collected = array();
 		$list = array_keys($this->_enabled);
 		if ($options['modParams'] !== false && !isset($params[$options['modParams']])) {
-			throw new CakeException(__d('cake_dev', 'Cannot use modParams with indexes that do not exist.'));
+			throw new Error\Exception(__d('cake_dev', 'Cannot use modParams with indexes that do not exist.'));
 		}
 		$result = null;
 		foreach ($list as $name) {

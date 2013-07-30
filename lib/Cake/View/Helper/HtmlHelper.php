@@ -17,9 +17,15 @@
  * @since         CakePHP(tm) v 0.9.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View\Helper;
 
-App::uses('AppHelper', 'View/Helper');
-App::uses('CakeResponse', 'Network');
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Network\Response;
+use Cake\Utility\Inflector;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Html Helper class for easy use of HTML widgets.
@@ -29,12 +35,12 @@ App::uses('CakeResponse', 'Network');
  * @package       Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html
  */
-class HtmlHelper extends AppHelper {
+class HtmlHelper extends Helper {
 
 /**
  * Reference to the Response object
  *
- * @var CakeResponse
+ * @var Cake\Network\Response
  */
 	public $response;
 
@@ -161,7 +167,7 @@ class HtmlHelper extends AppHelper {
 		if (is_object($this->_View->response)) {
 			$this->response = $this->_View->response;
 		} else {
-			$this->response = new CakeResponse();
+			$this->response = new Response();
 		}
 		if (!empty($settings['configFile'])) {
 			$this->loadConfig($settings['configFile']);
@@ -385,31 +391,43 @@ class HtmlHelper extends AppHelper {
  *
  * Add the stylesheet to the `$scripts_for_layout` layout var:
  *
- * `$this->Html->css('styles.css', null, array('inline' => false));`
+ * `$this->Html->css('styles.css', array('inline' => false));`
  *
  * Add the stylesheet to a custom block:
  *
- * `$this->Html->css('styles.css', null, array('block' => 'layoutCss'));`
+ * `$this->Html->css('styles.css', array('block' => 'layoutCss'));`
  *
  * ### Options
  *
  * - `inline` If set to false, the generated tag will be appended to the 'css' block,
  *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
- * - `block` Set the name of the block link/style tag will be appended to. This overrides the `inline`
- *   option.
+ * - `block` Set the name of the block link/style tag will be appended to.
+ *   This overrides the `inline` option.
  * - `plugin` False value will prevent parsing path as a plugin
+ * - `rel` Defaults to 'stylesheet'. If equal to 'import' the stylesheet will be imported.
  * - `fullBase` If true the url will get a full address for the css file.
  *
  * @param string|array $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
  *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
- * @param string $rel Rel attribute. Defaults to "stylesheet". If equal to 'import' the stylesheet will be imported.
- * @param array $options Array of HTML attributes.
+ * @param array $options Array of options and HTML arguments.
  * @return string CSS <link /> or <style /> tag, depending on the type of link.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::css
  */
-	public function css($path, $rel = null, $options = array()) {
-		$options += array('block' => null, 'inline' => true);
+	public function css($path, $options = array()) {
+		if (!is_array($options)) {
+			$rel = $options;
+			$options = array();
+			if ($rel) {
+				$options['rel'] = $rel;
+			}
+			if (func_num_args() > 2) {
+				$options = func_get_arg(2) + $options;
+			}
+			unset($rel);
+		}
+
+		$options += array('block' => null, 'inline' => true, 'rel' => 'stylesheet');
 		if (!$options['inline'] && empty($options['block'])) {
 			$options['block'] = __FUNCTION__;
 		}
@@ -418,7 +436,7 @@ class HtmlHelper extends AppHelper {
 		if (is_array($path)) {
 			$out = '';
 			foreach ($path as $i) {
-				$out .= "\n\t" . $this->css($i, $rel, $options);
+				$out .= "\n\t" . $this->css($i, $options);
 			}
 			if (empty($options['block'])) {
 				return $out . "\n";
@@ -440,13 +458,19 @@ class HtmlHelper extends AppHelper {
 			}
 		}
 
-		if ($rel === 'import') {
-			$out = sprintf($this->_tags['style'], $this->_parseAttributes($options, array('inline', 'block'), '', ' '), '@import url(' . $url . ');');
+		if ($options['rel'] == 'import') {
+			$out = sprintf(
+				$this->_tags['style'],
+				$this->_parseAttributes($options, array('rel', 'block'), '', ' '),
+				'@import url(' . $url . ');'
+			);
 		} else {
-			if (!$rel) {
-				$rel = 'stylesheet';
-			}
-			$out = sprintf($this->_tags['css'], $rel, $url, $this->_parseAttributes($options, array('inline', 'block'), '', ' '));
+			$out = sprintf(
+				$this->_tags['css'],
+				$options['rel'],
+				$url,
+				$this->_parseAttributes($options, array('rel', 'block'), '', ' ')
+			);
 		}
 
 		if (empty($options['block'])) {
@@ -1173,7 +1197,7 @@ class HtmlHelper extends AppHelper {
  * You can also specify the path to read the configuration file from, if APP/Config is not
  * where the file is.
  *
- * `$this->Html->loadConfig('tags.php', APP . 'Lib' . DS);`
+ * `$this->Html->loadConfig('tags.php', APP . 'Lib/');`
  *
  * Configuration files can define the following sections:
  *
@@ -1186,12 +1210,12 @@ class HtmlHelper extends AppHelper {
  * @param string|array $configFile String with the config file (load using PhpReader) or an array with file and reader name
  * @param string $path Path with config file
  * @return mixed False to error or loaded configs
- * @throws ConfigureException
+ * @throws Cake\Error\ConfigureException
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#changing-the-tags-output-by-htmlhelper
  */
 	public function loadConfig($configFile, $path = null) {
 		if (!$path) {
-			$path = APP . 'Config' . DS;
+			$path = APP . 'Config/';
 		}
 		$file = null;
 		$reader = 'php';
@@ -1204,13 +1228,12 @@ class HtmlHelper extends AppHelper {
 				$reader = $configFile[1];
 			}
 		} else {
-			throw new ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Wrong "configFile" configuration.'));
+			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Wrong "configFile" configuration.'));
 		}
 
-		$readerClass = Inflector::camelize($reader) . 'Reader';
-		App::uses($readerClass, 'Configure');
-		if (!class_exists($readerClass)) {
-			throw new ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Unknown reader.'));
+		$readerClass = App::classname(Inflector::camelize($reader), 'Configure', 'Reader');
+		if (!$readerClass) {
+			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Unknown reader.'));
 		}
 
 		$readerObj = new $readerClass($path);

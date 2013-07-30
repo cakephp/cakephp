@@ -18,13 +18,16 @@
  * @since         1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * AdFixture class
  *
  * @package       Cake.Test.Fixture
  */
-class AfterTreeFixture extends CakeTestFixture {
+class AfterTreeFixture extends TestFixture {
 
 /**
  * name property
@@ -39,11 +42,12 @@ class AfterTreeFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'parent_id' => array('type' => 'integer'),
-		'lft' => array('type' => 'integer'),
-		'rght' => array('type' => 'integer'),
-		'name' => array('type' => 'string', 'length' => 255, 'null' => false)
+		'id' => ['type' => 'integer'],
+		'parent_id' => ['type' => 'integer'],
+		'lft' => ['type' => 'integer'],
+		'rght' => ['type' => 'integer'],
+		'name' => ['type' => 'string', 'length' => 255, 'null' => false],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

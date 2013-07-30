@@ -17,6 +17,9 @@
  * @since         CakePHP(tm) v 1.2.0.6879 //Correct version number as needed**
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class NodeFixture
@@ -24,7 +27,7 @@
  * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.6879 //Correct version number as needed**
  */
-class NodeFixture extends CakeTestFixture {
+class NodeFixture extends TestFixture {
 
 /**
  * name property
@@ -39,9 +42,10 @@ class NodeFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'id' => ['type' => 'integer'],
 		'name' => 'string',
-		'state' => 'integer'
+		'state' => 'integer',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

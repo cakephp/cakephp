@@ -19,6 +19,10 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Core\Configure;
+use Cake\I18n\I18n;
+use Cake\Log\Log;
+use Cake\Utility\Debugger;
 
 /**
  * Basic defines for timing functions.
@@ -48,8 +52,8 @@ if (!function_exists('config')) {
 		$count = count($args);
 		$included = 0;
 		foreach ($args as $arg) {
-			if (file_exists(APP . 'Config' . DS . $arg . '.php')) {
-				include_once APP . 'Config' . DS . $arg . '.php';
+			if (file_exists(APP . 'Config/' . $arg . '.php')) {
+				include_once APP . 'Config/' . $arg . '.php';
 				$included++;
 			}
 		}
@@ -73,7 +77,6 @@ if (!function_exists('debug')) {
  */
 	function debug($var, $showHtml = null, $showFrom = true) {
 		if (Configure::read('debug') > 0) {
-			App::uses('Debugger', 'Utility');
 			$file = '';
 			$line = '';
 			$lineInfo = '';
@@ -95,6 +98,7 @@ HTML;
 ########## DEBUG ##########
 %s
 ###########################
+
 TEXT;
 			$template = $html;
 			if (php_sapi_name() === 'cli' || $showHtml === false) {
@@ -195,7 +199,7 @@ if (!function_exists('h')) {
 		if (is_string($double)) {
 			$charset = $double;
 		}
-		return htmlspecialchars($text, ENT_QUOTES, ($charset) ? $charset : $defaultCharset, $double);
+		return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, ($charset) ? $charset : $defaultCharset, $double);
 	}
 
 }
@@ -227,11 +231,33 @@ if (!function_exists('pluginSplit')) {
 
 }
 
+if (!function_exists('namespaceSplit')) {
+
+/**
+ * Split the namespace from the classname.
+ *
+ * Commonly used like `list($namespace, $classname) = namespaceSplit($class);`
+ *
+ * @param string $class The full class name, ie `Cake\Core\App`
+ * @return array Array with 2 indexes. 0 => namespace, 1 => classname
+ */
+	function namespaceSplit($class) {
+		$pos = strrpos($class, '\\');
+		if ($pos === false) {
+			return array('', $class);
+		}
+		return array(substr($class, 0, $pos), substr($class, $pos + 1));
+	}
+
+}
+
 if (!function_exists('pr')) {
 
 /**
- * Print_r convenience function, which prints out <PRE> tags around
- * the output of given array. Similar to debug().
+ * print_r() convenience function
+ *
+ * In terminals this will act the same as using print_r() directly, when not run on cli
+ * print_r() will wrap <PRE> tags around the output of given array. Similar to debug().
  *
  * @see	debug()
  * @param array $var Variable to print out
@@ -239,9 +265,8 @@ if (!function_exists('pr')) {
  */
 	function pr($var) {
 		if (Configure::read('debug') > 0) {
-			echo '<pre>';
-			print_r($var);
-			echo '</pre>';
+			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
+			echo sprintf($template, print_r($var, true));
 		}
 	}
 
@@ -513,28 +538,6 @@ if (!function_exists('clearCache')) {
 
 }
 
-if (!function_exists('stripslashes_deep')) {
-
-/**
- * Recursively strips slashes from all values in an array
- *
- * @param array $values Array of values to strip slashes
- * @return mixed What is returned from calling stripslashes
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#stripslashes_deep
- */
-	function stripslashes_deep($values) {
-		if (is_array($values)) {
-			foreach ($values as $key => $value) {
-				$values[$key] = stripslashes_deep($value);
-			}
-		} else {
-			$values = stripslashes($values);
-		}
-		return $values;
-	}
-
-}
-
 if (!function_exists('__')) {
 
 /**
@@ -550,7 +553,6 @@ if (!function_exists('__')) {
 			return;
 		}
 
-		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular);
 		if ($args === null) {
 			return $translated;
@@ -580,7 +582,6 @@ if (!function_exists('__n')) {
 			return;
 		}
 
-		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular, $plural, null, 6, $count);
 		if ($args === null) {
 			return $translated;
@@ -607,7 +608,6 @@ if (!function_exists('__d')) {
 		if (!$msg) {
 			return;
 		}
-		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($msg, null, $domain);
 		if ($args === null) {
 			return $translated;
@@ -638,7 +638,6 @@ if (!function_exists('__dn')) {
 		if (!$singular) {
 			return;
 		}
-		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular, $plural, $domain, 6, $count);
 		if ($args === null) {
 			return $translated;
@@ -680,7 +679,6 @@ if (!function_exists('__dc')) {
 		if (!$msg) {
 			return;
 		}
-		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($msg, null, $domain, $category);
 		if ($args === null) {
 			return $translated;
@@ -726,7 +724,6 @@ if (!function_exists('__dcn')) {
 		if (!$singular) {
 			return;
 		}
-		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($singular, $plural, $domain, $category, $count);
 		if ($args === null) {
 			return $translated;
@@ -764,7 +761,6 @@ if (!function_exists('__c')) {
 		if (!$msg) {
 			return;
 		}
-		App::uses('I18n', 'I18n');
 		$translated = I18n::translate($msg, null, null, $category);
 		if ($args === null) {
 			return $translated;
@@ -772,24 +768,6 @@ if (!function_exists('__c')) {
 			$args = array_slice(func_get_args(), 2);
 		}
 		return vsprintf($translated, $args);
-	}
-
-}
-
-if (!function_exists('LogError')) {
-
-/**
- * Shortcut to Log::write.
- *
- * @param string $message Message to write to log
- * @return void
- * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#LogError
- */
-	function LogError($message) {
-		App::uses('CakeLog', 'Log');
-		$bad = array("\n", "\r", "\t");
-		$good = ' ';
-		CakeLog::write('error', str_replace($bad, $good, $message));
 	}
 
 }

@@ -16,14 +16,20 @@
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console;
 
-App::uses('TaskCollection', 'Console');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('ConsoleInputSubcommand', 'Console');
-App::uses('ConsoleOptionParser', 'Console');
-App::uses('ClassRegistry', 'Utility');
-App::uses('File', 'Utility');
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Core\Object;
+use Cake\Core\Plugin;
+use Cake\Error;
+use Cake\Log\Engine\ConsoleLog;
+use Cake\Log\Log;
+use Cake\Utility\ClassRegistry;
+use Cake\Utility\File;
+use Cake\Utility\Inflector;
+use Cake\Utility\MergeVariablesTrait;
+use Cake\Utility\String;
 
 /**
  * Base class for command-line utilities for automating programmer chores.
@@ -32,6 +38,7 @@ App::uses('File', 'Utility');
  */
 class Shell extends Object {
 
+	use MergeVariablesTrait;
 /**
  * Output constant making verbose shells.
  */
@@ -121,6 +128,13 @@ class Shell extends Object {
 	public $uses = array();
 
 /**
+ * This shell's primary model class name, the first model in the $uses property
+ *
+ * @var string
+ */
+	public $modelClass = null;
+
+/**
  * Task Collection for the command, used to create Tasks.
  *
  * @var TaskCollection
@@ -165,7 +179,8 @@ class Shell extends Object {
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		if (!$this->name) {
-			$this->name = Inflector::camelize(str_replace(array('Shell', 'Task'), '', get_class($this)));
+			list(, $class) = namespaceSplit(get_class($this));
+			$this->name = str_replace(array('Shell', 'Task'), '', $class);
 		}
 		$this->Tasks = new TaskCollection($this);
 
@@ -174,13 +189,10 @@ class Shell extends Object {
 		$this->stdin = $stdin ? $stdin : new ConsoleInput('php://stdin');
 
 		$this->_useLogger();
-		$parent = get_parent_class($this);
-		if ($this->tasks !== null && $this->tasks !== false) {
-			$this->_mergeVars(array('tasks'), $parent, true);
-		}
-		if ($this->uses !== null && $this->uses !== false) {
-			$this->_mergeVars(array('uses'), $parent, false);
-		}
+		$this->_mergeVars(
+			['tasks', 'uses'],
+			['associative' => ['tasks']]
+		);
 	}
 
 /**
@@ -224,31 +236,72 @@ class Shell extends Object {
 	}
 
 /**
- * If $uses = true
- * Loads AppModel file and constructs AppModel class
- * makes $this->AppModel available to subclasses
- * If public $uses is an array of models will load those models
+ * If $uses is an array load each of the models in the array
  *
  * @return boolean
  */
 	protected function _loadModels() {
-		if (empty($this->uses)) {
-			return false;
+		if (is_array($this->uses)) {
+			list(, $this->modelClass) = pluginSplit(current($this->uses));
+			foreach ($this->uses as $modelClass) {
+				$this->loadModel($modelClass);
+			}
+		}
+		return true;
+	}
+
+/**
+ * Lazy loads models using the loadModel() method if declared in $uses
+ *
+ * @param string $name
+ * @return void
+ */
+	public function __isset($name) {
+		if (is_array($this->uses)) {
+			foreach ($this->uses as $modelClass) {
+				list(, $class) = pluginSplit($modelClass);
+				if ($name === $class) {
+					return $this->loadModel($modelClass);
+				}
+				list(, $class) = namespaceSplit($modelClass);
+				if ($name === $class) {
+					return $this->loadModel($class);
+				}
+			}
+		}
+	}
+
+/**
+ * Loads and instantiates models required by this shell.
+ *
+ * @param string $modelClass Name of model class to load
+ * @param mixed $id Initial ID the instanced model class should have
+ * @return mixed true when single model found and instance created, error returned if model not found.
+ * @throws Cake\Error\MissingModelException if the model class cannot be found.
+ */
+	public function loadModel($modelClass = null, $id = null) {
+		if ($modelClass === null) {
+			$modelClass = $this->modelClass;
 		}
 
-		$uses = is_array($this->uses) ? $this->uses : array($this->uses);
-
-		$modelClassName = $uses[0];
-		if (strpos($uses[0], '.') !== false) {
-			list($plugin, $modelClassName) = explode('.', $uses[0]);
-		}
-		$this->modelClass = $modelClassName;
-
-		foreach ($uses as $modelClass) {
-			list($plugin, $modelClass) = pluginSplit($modelClass, true);
-			$this->{$modelClass} = ClassRegistry::init($plugin . $modelClass);
+		$this->uses = ($this->uses) ? (array)$this->uses : [];
+		if (!in_array($modelClass, $this->uses)) {
+			$this->uses[] = $modelClass;
 		}
 
+		list($plugin, $modelClass) = pluginSplit($modelClass, true);
+		if (!isset($this->modelClass)) {
+			$this->modelClass = $modelClass;
+		}
+
+		$this->{$modelClass} = ClassRegistry::init(array(
+			'class' => $plugin . $modelClass,
+			'alias' => $modelClass,
+			'id' => $id
+		));
+		if (!$this->{$modelClass}) {
+			throw new Error\MissingModelException($modelClass);
+		}
 		return true;
 	}
 
@@ -286,15 +339,15 @@ class Shell extends Object {
  */
 	public function hasMethod($name) {
 		try {
-			$method = new ReflectionMethod($this, $name);
+			$method = new \ReflectionMethod($this, $name);
 			if (!$method->isPublic() || substr($name, 0, 1) === '_') {
 				return false;
 			}
-			if ($method->getDeclaringClass()->name === 'Shell') {
+			if ($method->getDeclaringClass()->name === 'Cake\Console\Shell') {
 				return false;
 			}
 			return true;
-		} catch (ReflectionException $e) {
+		} catch (\ReflectionException $e) {
 			return false;
 		}
 	}
@@ -361,7 +414,7 @@ class Shell extends Object {
 		$this->OptionParser = $this->getOptionParser();
 		try {
 			list($this->params, $this->args) = $this->OptionParser->parse($argv, $command);
-		} catch (ConsoleException $e) {
+		} catch (Error\ConsoleException $e) {
 			$this->out($this->OptionParser->help($command));
 			return false;
 		}
@@ -370,7 +423,7 @@ class Shell extends Object {
 			$this->_useLogger(false);
 		}
 		if (!empty($this->params['plugin'])) {
-			CakePlugin::load($this->params['plugin']);
+			Plugin::load($this->params['plugin']);
 		}
 		$this->command = $command;
 		if (!empty($this->params['help'])) {
@@ -686,10 +739,8 @@ class Shell extends Object {
 		if (class_exists('PHPUnit_Framework_TestCase')) {
 			return true;
 			//@codingStandardsIgnoreStart
-		} elseif (@include 'PHPUnit' . DS . 'Autoload.php') {
+		} elseif (@include 'PHPUnit/Autoload.php') {
 			//@codingStandardsIgnoreEnd
-			return true;
-		} elseif (App::import('Vendor', 'phpunit', array('file' => 'PHPUnit' . DS . 'Autoload.php'))) {
 			return true;
 		}
 
@@ -814,35 +865,35 @@ class Shell extends Object {
  * @return string $path path to the correct plugin.
  */
 	protected function _pluginPath($pluginName) {
-		if (CakePlugin::loaded($pluginName)) {
-			return CakePlugin::path($pluginName);
+		if (Plugin::loaded($pluginName)) {
+			return Plugin::path($pluginName);
 		}
-		return current(App::path('plugins')) . $pluginName . DS;
+		return current(App::path('Plugin')) . $pluginName . DS;
 	}
 
 /**
  * Used to enable or disable logging stream output to stdout and stderr
  * If you don't wish to see in your stdout or stderr everything that is logged
- * through CakeLog, call this function with first param as false
+ * through Cake Log, call this function with first param as false
  *
- * @param boolean $enable whether to enable CakeLog output or not
+ * @param boolean $enable wheter to enable Cake Log output or not
  * @return void
  */
 	protected function _useLogger($enable = true) {
 		if (!$enable) {
-			CakeLog::drop('stdout');
-			CakeLog::drop('stderr');
+			Log::drop('stdout');
+			Log::drop('stderr');
 			return;
 		}
-		CakeLog::config('stdout', array(
-			'engine' => 'ConsoleLog',
-			'types' => array('notice', 'info'),
-			'stream' => $this->stdout,
-		));
-		CakeLog::config('stderr', array(
-			'engine' => 'ConsoleLog',
-			'types' => array('emergency', 'alert', 'critical', 'error', 'warning', 'debug'),
+		$stdout = new ConsoleLog([
+			'types' => ['notice', 'info', 'debug'],
+			'stream' => $this->stdout
+		]);
+		$stderr = new ConsoleLog([
+			'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
 			'stream' => $this->stderr,
-		));
+		]);
+		Log::engine('stdout', $stdout);
+		Log::engine('stderr', $stderr);
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 /**
- * The DbConfig Task handles creating and updating the database.php
+ * The DbConfig Task handles creating and updating the datasources.php
  *
  * PHP 5
  *
@@ -16,15 +16,18 @@
  * @since         CakePHP(tm) v 1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
+use Cake\Console\Shell;
+use Cake\Core\Configure;
+use Cake\Model\ConnectionManager;
 
 /**
  * Task class for creating and updating the database configuration file.
  *
  * @package       Cake.Console.Command.Task
  */
-class DbConfigTask extends AppShell {
+class DbConfigTask extends Shell {
 
 /**
  * path to CONFIG directory
@@ -53,20 +56,12 @@ class DbConfigTask extends AppShell {
 	);
 
 /**
- * String name of the database config class name.
- * Used for testing.
- *
- * @var string
- */
-	public $databaseClassName = 'DATABASE_CONFIG';
-
-/**
  * initialization callback
  *
  * @return void
  */
 	public function initialize() {
-		$this->path = APP . 'Config' . DS;
+		$this->path = APP . 'Config/';
 	}
 
 /**
@@ -246,7 +241,7 @@ class DbConfigTask extends AppShell {
 	}
 
 /**
- * Assembles and writes database.php
+ * Assembles and writes datasources.php
  *
  * @param array $configs Configuration settings to use
  * @return boolean Success
@@ -257,15 +252,12 @@ class DbConfigTask extends AppShell {
 			return false;
 		}
 
-		$filename = $this->path . 'database.php';
-		$oldConfigs = array();
-
+		$filename = $this->path . 'datasources.php';
+		$oldConfigs = [];
 		if (file_exists($filename)) {
-			config('database');
-			$db = new $this->databaseClassName;
-			$temp = get_class_vars(get_class($db));
+			$oldConfigs = Configure::read('Datasource');
 
-			foreach ($temp as $configName => $info) {
+			foreach ($oldConfigs as $configName => $info) {
 				$info = array_merge($this->_defaultConfig, $info);
 
 				if (!isset($info['schema'])) {
@@ -280,7 +272,7 @@ class DbConfigTask extends AppShell {
 
 				$info['persistent'] = var_export((bool)$info['persistent'], true);
 
-				$oldConfigs[] = array(
+				$oldConfigs[$configName] = array(
 					'name' => $configName,
 					'datasource' => $info['datasource'],
 					'persistent' => $info['persistent'],
@@ -306,7 +298,8 @@ class DbConfigTask extends AppShell {
 
 		$configs = array_merge($oldConfigs, $configs);
 		$out = "<?php\n";
-		$out .= "class DATABASE_CONFIG {\n\n";
+		$out .= "namespace " . Configure::read('App.namespace') . "\Config;\n";
+		$out .= "use Cake\Core\Configure;\n\n";
 
 		foreach ($configs as $config) {
 			$config = array_merge($this->_defaultConfig, $config);
@@ -315,36 +308,35 @@ class DbConfigTask extends AppShell {
 			if (strpos($datasource, 'Database/') === false) {
 				$datasource = "Database/{$datasource}";
 			}
-			$out .= "\tpublic \${$name} = array(\n";
-			$out .= "\t\t'datasource' => '{$datasource}',\n";
-			$out .= "\t\t'persistent' => {$persistent},\n";
-			$out .= "\t\t'host' => '{$host}',\n";
+			$out .= "Configure::write('Datasource.{$name}', [\n";
+			$out .= "\t'datasource' => '{$datasource}',\n";
+			$out .= "\t'persistent' => {$persistent},\n";
+			$out .= "\t'host' => '{$host}',\n";
 
 			if ($port) {
-				$out .= "\t\t'port' => {$port},\n";
+				$out .= "\t'port' => {$port},\n";
 			}
 
-			$out .= "\t\t'login' => '{$login}',\n";
-			$out .= "\t\t'password' => '{$password}',\n";
-			$out .= "\t\t'database' => '{$database}',\n";
+			$out .= "\t'login' => '{$login}',\n";
+			$out .= "\t'password' => '{$password}',\n";
+			$out .= "\t'database' => '{$database}',\n";
 
 			if ($schema) {
-				$out .= "\t\t'schema' => '{$schema}',\n";
+				$out .= "\t'schema' => '{$schema}',\n";
 			}
 
 			if ($prefix) {
-				$out .= "\t\t'prefix' => '{$prefix}',\n";
+				$out .= "\t'prefix' => '{$prefix}',\n";
 			}
 
 			if ($encoding) {
-				$out .= "\t\t'encoding' => '{$encoding}'\n";
+				$out .= "\t'encoding' => '{$encoding}'\n";
 			}
 
-			$out .= "\t);\n";
+			$out .= "]);\n";
 		}
 
-		$out .= "}\n";
-		$filename = $this->path . 'database.php';
+		$filename = $this->path . 'datasources.php';
 		return $this->createFile($filename, $out);
 	}
 
@@ -354,7 +346,6 @@ class DbConfigTask extends AppShell {
  * @return void
  */
 	public function getConfig() {
-		App::uses('ConnectionManager', 'Model');
 		$configs = ConnectionManager::enumConnectionObjects();
 
 		$useDbConfig = key($configs);

@@ -13,8 +13,15 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Controller\Component\Auth;
 
-App::uses('Hash', 'Utility');
+use Cake\Controller\ComponentCollection;
+use Cake\Controller\Controller;
+use Cake\Error;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Utility\Hash;
+use Cake\Utility\Inflector;
 
 /**
  * Abstract base authorization adapter for AuthComponent.
@@ -79,22 +86,22 @@ abstract class BaseAuthorize {
  * Checks user authorization.
  *
  * @param array $user Active user data
- * @param CakeRequest $request
+ * @param Cake\Network\Request $request
  * @return boolean
  */
-	abstract public function authorize($user, CakeRequest $request);
+	abstract public function authorize($user, Request $request);
 
 /**
  * Accessor to the controller object.
  *
  * @param Controller $controller null to get, a controller to set.
  * @return mixed
- * @throws CakeException
+ * @throws Cake\Error\Exception
  */
 	public function controller(Controller $controller = null) {
 		if ($controller) {
 			if (!$controller instanceof Controller) {
-				throw new CakeException(__d('cake_dev', '$controller needs to be an instance of Controller'));
+				throw new Error\Exception(__d('cake_dev', '$controller needs to be an instance of Controller'));
 			}
 			$this->_Controller = $controller;
 			return true;
@@ -106,11 +113,11 @@ abstract class BaseAuthorize {
  * Get the action path for a given request. Primarily used by authorize objects
  * that need to get information about the plugin, controller, and action being invoked.
  *
- * @param CakeRequest $request The request a path is needed for.
+ * @param Cake\Network\Request $request The request a path is needed for.
  * @param string $path
  * @return string the action path for the given request.
  */
-	public function action(CakeRequest $request, $path = '/:plugin/:controller/:action') {
+	public function action(Request $request, $path = '/:plugin/:controller/:action') {
 		$plugin = empty($request['plugin']) ? null : Inflector::camelize($request['plugin']) . '/';
 		$path = str_replace(
 			array(':controller', ':action', ':plugin/'),

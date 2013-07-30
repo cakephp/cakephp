@@ -12,8 +12,13 @@
  * @since         CakePHP(tm) v 2.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Routing\Filter;
 
-App::uses('DispatcherFilter', 'Routing');
+use Cake\Core\Configure;
+use Cake\Event\Event;
+use Cake\Routing\DispatcherFilter;
+use Cake\Utility\Inflector;
+use Cake\View\View;
 
 /**
  * This filter will check whether the response was previously cached in the file system
@@ -34,10 +39,10 @@ class CacheDispatcher extends DispatcherFilter {
 /**
  * Checks whether the response was cached and set the body accordingly.
  *
- * @param CakeEvent $event containing the request and response object
- * @return CakeResponse with cached content if found, null otherwise
+ * @param Cake\Event\Event $event containing the request and response object
+ * @return Cake\NetworkResponse with cached content if found, null otherwise
  */
-	public function beforeDispatch(CakeEvent $event) {
+	public function beforeDispatch(Event $event) {
 		if (Configure::read('Cache.check') !== true) {
 			return;
 		}
@@ -52,10 +57,10 @@ class CacheDispatcher extends DispatcherFilter {
 		}
 		$path = strtolower(Inflector::slug($path));
 
-		$filename = CACHE . 'views' . DS . $path . '.php';
+		$filename = CACHE . 'views/' . $path . '.php';
 
 		if (!file_exists($filename)) {
-			$filename = CACHE . 'views' . DS . $path . '_index.php';
+			$filename = CACHE . 'views/' . $path . '_index.php';
 		}
 		if (file_exists($filename)) {
 			$controller = null;

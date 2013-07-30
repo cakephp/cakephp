@@ -16,9 +16,12 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('Folder', 'Utility');
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Utility\Folder;
+use Cake\Utility\ViewVarsTrait;
 
 /**
  * Template Task can generate templated output Used in other Tasks.
@@ -26,14 +29,9 @@ App::uses('Folder', 'Utility');
  *
  * @package       Cake.Console.Command.Task
  */
-class TemplateTask extends AppShell {
+class TemplateTask extends Shell {
 
-/**
- * variables to add to template scope
- *
- * @var array
- */
-	public $templateVars = array();
+	use ViewVarsTrait;
 
 /**
  * Paths to look for templates on.
@@ -65,14 +63,14 @@ class TemplateTask extends AppShell {
 
 		$plugins = App::objects('plugin');
 		foreach ($plugins as $plugin) {
-			$paths[] = $this->_pluginPath($plugin) . 'Console' . DS;
+			$paths[] = $this->_pluginPath($plugin) . 'Console/';
 		}
 
 		$core = current(App::core('Console'));
 		$separator = DS === '/' ? '/' : '\\\\';
 		$core = preg_replace('#shells' . $separator . '$#', '', $core);
 
-		$Folder = new Folder($core . 'Templates' . DS . 'default');
+		$Folder = new Folder($core . 'Templates/default');
 
 		$contents = $Folder->read();
 		$themeFolders = $contents[0];
@@ -92,41 +90,16 @@ class TemplateTask extends AppShell {
 				if (empty($dir) || preg_match('@^skel$|_skel$@', $dir)) {
 					continue;
 				}
-				$Folder = new Folder($path . 'Templates' . DS . $dir);
+				$Folder = new Folder($path . 'Templates/' . $dir);
 				$contents = $Folder->read();
 				$subDirs = $contents[0];
 				if (array_intersect($contents[0], $themeFolders)) {
-					$templateDir = $path . 'Templates' . DS . $dir . DS;
+					$templateDir = $path . 'Templates/' . $dir . DS;
 					$themes[$dir] = $templateDir;
 				}
 			}
 		}
 		return $themes;
-	}
-
-/**
- * Set variable values to the template scope
- *
- * @param string|array $one A string or an array of data.
- * @param string|array $two Value in case $one is a string (which then works as the key).
- *   Unused if $one is an associative array, otherwise serves as the values to $one's keys.
- * @return void
- */
-	public function set($one, $two = null) {
-		if (is_array($one)) {
-			if (is_array($two)) {
-				$data = array_combine($one, $two);
-			} else {
-				$data = $one;
-			}
-		} else {
-			$data = array($one => $two);
-		}
-
-		if (!$data) {
-			return false;
-		}
-		$this->templateVars = $data + $this->templateVars;
 	}
 
 /**
@@ -147,7 +120,7 @@ class TemplateTask extends AppShell {
 		$themePath = $this->getThemePath();
 		$templateFile = $this->_findTemplate($themePath, $directory, $filename);
 		if ($templateFile) {
-			extract($this->templateVars);
+			extract($this->viewVars);
 			ob_start();
 			ob_implicit_flush(0);
 			include $templateFile;

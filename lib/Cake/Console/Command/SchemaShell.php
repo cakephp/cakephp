@@ -12,11 +12,16 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('File', 'Utility');
-App::uses('Folder', 'Utility');
-App::uses('CakeSchema', 'Model');
+use Cake\Console\Shell;
+use Cake\Core\Configure;
+use Cake\Model\ConnectionManager;
+use Cake\Model\Schema;
+use Cake\Utility\File;
+use Cake\Utility\Folder;
+use Cake\Utility\Inflector;
+use Cake\Utility\String;
 
 /**
  * Schema is a command-line database management utility for automating programmer chores.
@@ -27,12 +32,12 @@ App::uses('CakeSchema', 'Model');
  * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
  */
-class SchemaShell extends AppShell {
+class SchemaShell extends Shell {
 
 /**
  * Schema class being used.
  *
- * @var CakeSchema
+ * @var Cake\Model\Schema
  */
 	public $Schema;
 
@@ -52,6 +57,8 @@ class SchemaShell extends AppShell {
 		$this->_welcome();
 		$this->out('Cake Schema Shell');
 		$this->hr();
+
+		throw new \Cake\Error\Exception('Schema shell is not working at this time.');
 
 		Configure::write('Cache.disable', 1);
 
@@ -93,7 +100,7 @@ class SchemaShell extends AppShell {
 			}
 		}
 		$name = Inflector::classify($name);
-		$this->Schema = new CakeSchema(compact('name', 'path', 'file', 'connection', 'plugin'));
+		$this->Schema = new Schema(compact('name', 'path', 'file', 'connection', 'plugin'));
 	}
 
 /**
@@ -153,6 +160,13 @@ class SchemaShell extends AppShell {
 		$content['file'] = $this->params['file'];
 
 		Configure::write('Cache.disable', $cacheDisable);
+
+		if (!empty($this->params['exclude']) && !empty($content)) {
+			$excluded = String::tokenize($this->params['exclude']);
+			foreach ($excluded as $table) {
+				unset($content['tables'][$table]);
+			}
+		}
 
 		if ($snapshot === true) {
 			$fileName = rtrim($this->params['file'], '.php');
@@ -303,7 +317,7 @@ class SchemaShell extends AppShell {
  * Create database from Schema object
  * Should be called via the run method
  *
- * @param CakeSchema $Schema
+ * @param Cake\Model\Schema $Schema
  * @param string $table
  * @return void
  */
@@ -348,7 +362,7 @@ class SchemaShell extends AppShell {
  * Update database with Schema object
  * Should be called via the run method
  *
- * @param CakeSchema $Schema
+ * @param Cake\Model\Schema $Schema
  * @param string $table
  * @return void
  */
@@ -367,10 +381,18 @@ class SchemaShell extends AppShell {
 
 		if (empty($table)) {
 			foreach ($compare as $table => $changes) {
-				$contents[$table] = $db->alterSchema(array($table => $changes), $table);
+				if (isset($compare[$table]['create'])) {
+					$contents[$table] = $db->createSchema($Schema, $table);
+				} else {
+					$contents[$table] = $db->alterSchema(array($table => $compare[$table]), $table);
+				}
 			}
 		} elseif (isset($compare[$table])) {
-			$contents[$table] = $db->alterSchema(array($table => $compare[$table]), $table);
+			if (isset($compare[$table]['create'])) {
+				$contents[$table] = $db->createSchema($Schema, $table);
+			} else {
+				$contents[$table] = $db->alterSchema(array($table => $compare[$table]), $table);
+			}
 		}
 
 		if (empty($contents)) {
@@ -394,7 +416,7 @@ class SchemaShell extends AppShell {
  *
  * @param array $contents
  * @param string $event
- * @param CakeSchema $Schema
+ * @param Cake\Model\Schema $Schema
  * @return void
  */
 	protected function _run($contents, $event, CakeSchema $Schema) {
@@ -452,7 +474,7 @@ class SchemaShell extends AppShell {
 		);
 		$path = array(
 			'help' => __d('cake_console', 'Path to read and write schema.php'),
-			'default' => APP . 'Config' . DS . 'Schema'
+			'default' => APP . 'Config/Schema'
 		);
 		$file = array(
 			'help' => __d('cake_console', 'File name to read and write.'),
@@ -481,6 +503,9 @@ class SchemaShell extends AppShell {
 		$write = array(
 			'help' => __d('cake_console', 'Write the dumped SQL to a file.')
 		);
+		$exclude = array(
+			'help' => __d('cake_console', 'Tables to exclude as comma separated list.')
+		);
 
 		$parser = parent::getOptionParser();
 		$parser->description(
@@ -494,7 +519,7 @@ class SchemaShell extends AppShell {
 		))->addSubcommand('generate', array(
 			'help' => __d('cake_console', 'Reads from --connection and writes to --path. Generate snapshots with -s'),
 			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force', 'models'),
+				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force', 'models', 'exclude'),
 				'arguments' => array(
 					'snapshot' => array('help' => __d('cake_console', 'Generate a snapshot.'))
 				)

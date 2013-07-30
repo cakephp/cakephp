@@ -1,9 +1,5 @@
 <?php
 /**
- * The FixtureTask handles creating and updating fixture files.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,10 +12,13 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
-App::uses('BakeTask', 'Console/Command/Task');
-App::uses('Model', 'Model');
+use Cake\Console\Shell;
+use Cake\Core\Configure;
+use Cake\Model\Model;
+use Cake\Model\Schema;
+use Cake\Utility\Inflector;
 
 /**
  * Task class for creating and updating fixtures files.
@@ -45,7 +44,7 @@ class FixtureTask extends BakeTask {
 /**
  * Schema instance
  *
- * @var CakeSchema
+ * @var Cake\Model\Schema
  */
 	protected $_Schema = null;
 
@@ -58,7 +57,7 @@ class FixtureTask extends BakeTask {
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		parent::__construct($stdout, $stderr, $stdin);
-		$this->path = APP . 'Test' . DS . 'Fixture' . DS;
+		$this->path = APP . 'Test/Fixture/';
 	}
 
 /**
@@ -83,8 +82,15 @@ class FixtureTask extends BakeTask {
 		))->addOption('plugin', array(
 			'help' => __d('cake_console', 'CamelCased name of the plugin to bake fixtures for.'),
 			'short' => 'p',
+		))->addOption('schema', array(
+			'help' => __d('cake_console', 'Importing schema for fixtures rather than hardcoding it.'),
+			'short' => 's',
+			'boolean' => true
+		))->addOption('theme', array(
+			'short' => 't',
+			'help' => __d('cake_console', 'Theme to use when baking code.')
 		))->addOption('records', array(
-			'help' => __d('cake_console', 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10'),
+			'help' => __d('cake_console', 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10.'),
 			'short' => 'r',
 			'boolean' => true
 		))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
@@ -124,9 +130,14 @@ class FixtureTask extends BakeTask {
 		$this->interactive = false;
 		$this->Model->interactive = false;
 		$tables = $this->Model->listAll($this->connection, false);
+
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
-			$this->bake($model);
+			$importOptions = array();
+			if (!empty($this->params['schema'])) {
+				$importOptions['schema'] = $model;
+			}
+			$this->bake($model, false, $importOptions);
 		}
 	}
 
@@ -158,11 +169,20 @@ class FixtureTask extends BakeTask {
  */
 	public function importOptions($modelName) {
 		$options = array();
-		$doSchema = $this->in(__d('cake_console', 'Would you like to import schema for this fixture?'), array('y', 'n'), 'n');
-		if ($doSchema === 'y') {
+
+		if (!empty($this->params['schema'])) {
 			$options['schema'] = $modelName;
+		} else {
+			$doSchema = $this->in(__d('cake_console', 'Would you like to import schema for this fixture?'), array('y', 'n'), 'n');
+			if ($doSchema === 'y') {
+				$options['schema'] = $modelName;
+			}
 		}
-		$doRecords = $this->in(__d('cake_console', 'Would you like to use record importing for this fixture?'), array('y', 'n'), 'n');
+		if (!empty($this->params['records'])) {
+			$doRecords = 'y';
+		} else {
+			$doRecords = $this->in(__d('cake_console', 'Would you like to use record importing for this fixture?'), array('y', 'n'), 'n');
+		}
 		if ($doRecords === 'y') {
 			$options['records'] = true;
 		}
@@ -185,7 +205,6 @@ class FixtureTask extends BakeTask {
  * @return string Baked fixture content
  */
 	public function bake($model, $useTable = false, $importOptions = array()) {
-		App::uses('CakeSchema', 'Model');
 		$table = $schema = $records = $import = $modelImport = null;
 		$importBits = array();
 
@@ -211,7 +230,7 @@ class FixtureTask extends BakeTask {
 			}
 		}
 
-		$this->_Schema = new CakeSchema();
+		$this->_Schema = new Schema();
 		$data = $this->_Schema->read(array('models' => false, 'connection' => $this->connection));
 		if (!isset($data['tables'][$useTable])) {
 			$this->error('Could not find your selected table ' . $useTable);
@@ -245,7 +264,17 @@ class FixtureTask extends BakeTask {
  * @return string Content saved into fixture file.
  */
 	public function generateFixtureFile($model, $otherVars) {
-		$defaults = array('table' => null, 'schema' => null, 'records' => null, 'import' => null, 'fields' => null);
+		$defaults = [
+			'table' => null,
+			'schema' => null,
+			'records' => null,
+			'import' => null,
+			'fields' => null,
+			'namespace' => Configure::read('App.namespace')
+		];
+		if ($this->plugin) {
+			$defaults['namespace'] = $this->plugin;
+		}
 		$vars = array_merge($defaults, $otherVars);
 
 		$path = $this->getPath();
@@ -268,7 +297,7 @@ class FixtureTask extends BakeTask {
 	public function getPath() {
 		$path = $this->path;
 		if (isset($this->plugin)) {
-			$path = $this->_pluginPath($this->plugin) . 'Test' . DS . 'Fixture' . DS;
+			$path = $this->_pluginPath($this->plugin) . 'Test/Fixture/';
 		}
 		return $path;
 	}

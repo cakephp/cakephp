@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.6317
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class JoinACFixture
  *
  * @package       Cake.Test.Fixture
  */
-class JoinACFixture extends CakeTestFixture {
+class JoinACFixture extends TestFixture {
 
 /**
  * name property
@@ -38,12 +41,13 @@ class JoinACFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'join_a_id' => array('type' => 'integer', 'length' => 10, 'null' => true),
-		'join_c_id' => array('type' => 'integer', 'default' => null),
-		'other' => array('type' => 'string', 'default' => ''),
-		'created' => array('type' => 'datetime', 'null' => true),
-		'updated' => array('type' => 'datetime', 'null' => true)
+		'id' => ['type' => 'integer'],
+		'join_a_id' => ['type' => 'integer', 'length' => 10, 'null' => true],
+		'join_c_id' => ['type' => 'integer', 'default' => null],
+		'other' => ['type' => 'string', 'default' => ''],
+		'created' => ['type' => 'datetime', 'null' => true],
+		'updated' => ['type' => 'datetime', 'null' => true],
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

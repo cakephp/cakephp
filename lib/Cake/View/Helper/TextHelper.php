@@ -19,9 +19,13 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View\Helper;
 
-App::uses('AppHelper', 'View/Helper');
-App::uses('Hash', 'Utility');
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Utility\Hash;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Text helper library.
@@ -33,7 +37,7 @@ App::uses('Hash', 'Utility');
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html
  * @see String
  */
-class TextHelper extends AppHelper {
+class TextHelper extends Helper {
 
 /**
  * helpers
@@ -67,17 +71,16 @@ class TextHelper extends AppHelper {
  *
  * @param View $View the view object the helper is attached to.
  * @param array $settings Settings array Settings array
- * @throws CakeException when the engine class could not be found.
+ * @throws Cake\Error\Exception when the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'String'), $settings);
+		$settings = Hash::merge(array('engine' => 'Cake\Utility\String'), $settings);
 		parent::__construct($View, $settings);
-		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
-		App::uses($engineClass, $plugin . 'Utility');
-		if (class_exists($engineClass)) {
+		$engineClass = App::classname($settings['engine'], 'Utility');
+		if ($engineClass) {
 			$this->_engine = new $engineClass($settings);
 		} else {
-			throw new CakeException(__d('cake_dev', '%s could not be found', $engineClass));
+			throw new Error\Exception(__d('cake_dev', 'Class for %s could not be found', $settings['engine']));
 		}
 	}
 
@@ -226,6 +229,29 @@ class TextHelper extends AppHelper {
  */
 	public function highlight($text, $phrase, $options = array()) {
 		return $this->_engine->highlight($text, $phrase, $options);
+	}
+
+/**
+ * Formats paragraphs around given text for all line breaks
+ *  <br /> added for single line return
+ *  <p> added for double line return
+ *
+ * @param string $text Text
+ * @return string The text with proper <p> and <br /> tags
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoParagraph
+ */
+	public function autoParagraph($text) {
+		if (trim($text) !== '') {
+			$text = preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
+			$text = preg_replace("/\n\n+/", "\n\n", str_replace(array("\r\n", "\r"), "\n", $text));
+			$texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
+			$text = '';
+			foreach ($texts as $txt) {
+				$text .= '<p>' . nl2br(trim($txt, "\n")) . "</p>\n";
+			}
+			$text = preg_replace('|<p>\s*</p>|', '', $text);
+		}
+		return $text;
 	}
 
 /**

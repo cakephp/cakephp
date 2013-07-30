@@ -12,8 +12,9 @@
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Routing\Route;
 
-App::uses('CakeRoute', 'Routing/Route');
+use Cake\Routing\Route\Route;
 
 /**
  * Plugin short route, that copies the plugin param to the controller parameters
@@ -21,7 +22,7 @@ App::uses('CakeRoute', 'Routing/Route');
  *
  * @package Cake.Routing.Route
  */
-class PluginShortRoute extends CakeRoute {
+class PluginShortRoute extends Route {
 
 /**
  * Parses a string URL into an array. If a plugin key is found, it will be copied to the
@@ -46,12 +47,12 @@ class PluginShortRoute extends CakeRoute {
  * @param array $url Array of parameters to convert to a string.
  * @return mixed either false or a string URL.
  */
-	public function match($url) {
+	public function match($url, $context = array()) {
 		if (isset($url['controller']) && isset($url['plugin']) && $url['plugin'] != $url['controller']) {
 			return false;
 		}
 		$this->defaults['controller'] = $url['controller'];
-		$result = parent::match($url);
+		$result = parent::match($url, $context);
 		unset($this->defaults['controller']);
 		return $result;
 	}

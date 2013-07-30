@@ -1,9 +1,5 @@
 <?php
 /**
- * ShellDispatcher file
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,6 +12,12 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console;
+
+use Cake\Core\App;
+use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Utility\Inflector;
 
 /**
  * Shell dispatcher handles dispatching cli commands.
@@ -61,11 +63,11 @@ class ShellDispatcher {
  * Run the dispatcher
  *
  * @param array $argv The argv from PHP
- * @return void
+ * @return integer The exit code of the shell process.
  */
 	public static function run($argv) {
 		$dispatcher = new ShellDispatcher($argv);
-		$dispatcher->_stop($dispatcher->dispatch() === false ? 1 : 0);
+		return $dispatcher->dispatch();
 	}
 
 /**
@@ -79,14 +81,8 @@ class ShellDispatcher {
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 0);
 		}
-
-		if (!defined('CAKE_CORE_INCLUDE_PATH')) {
-			define('DS', DIRECTORY_SEPARATOR);
-			define('CAKE_CORE_INCLUDE_PATH', dirname(dirname(dirname(__FILE__))));
+		if (!defined('CAKEPHP_SHELL')) {
 			define('CAKEPHP_SHELL', true);
-			if (!defined('CORE_PATH')) {
-				define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-			}
 		}
 	}
 
@@ -94,12 +90,12 @@ class ShellDispatcher {
  * Defines current working environment.
  *
  * @return void
- * @throws CakeException
+ * @throws Cake\Error\Exception
  */
 	protected function _initEnvironment() {
 		if (!$this->_bootstrap()) {
 			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'Cake exists in ' . CAKE_CORE_INCLUDE_PATH;
-			throw new CakeException($message);
+			throw new Error\Exception($message);
 		}
 
 		if (!isset($this->args[0]) || !isset($this->params['working'])) {
@@ -107,7 +103,7 @@ class ShellDispatcher {
 				"Please make sure that " . DS . 'lib' . DS . 'Cake' . DS . "Console is in your system path,\n" .
 				"and check the cookbook for the correct usage of this command.\n" .
 				"(http://book.cakephp.org/)";
-			throw new CakeException($message);
+			throw new Error\Exception($message);
 		}
 
 		$this->shiftArgs();
@@ -119,25 +115,12 @@ class ShellDispatcher {
  * @return boolean Success.
  */
 	protected function _bootstrap() {
-		define('ROOT', $this->params['root']);
-		define('APP_DIR', $this->params['app']);
-		define('APP', $this->params['working'] . DS);
-		define('WWW_ROOT', APP . $this->params['webroot'] . DS);
-		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp')) {
-			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'tmp' . DS);
-		}
-		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'Config' . DS . 'bootstrap.php');
-		require CORE_PATH . 'Cake' . DS . 'bootstrap.php';
-
-		if (!file_exists(APP . 'Config' . DS . 'core.php')) {
-			include_once CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'Config' . DS . 'core.php';
-			App::build();
-		}
-
 		$this->setErrorHandlers();
 
 		if (!defined('FULL_BASE_URL')) {
-			define('FULL_BASE_URL', 'http://localhost');
+			$url = Configure::read('App.fullBaseURL');
+			define('FULL_BASE_URL', $url ? $url : 'http://localhost');
+			Configure::write('App.fullBaseURL', FULL_BASE_URL);
 		}
 
 		return true;
@@ -145,14 +128,10 @@ class ShellDispatcher {
 
 /**
  * Set the error/exception handlers for the console
- * based on the `Error.consoleHandler`, and `Exception.consoleHandler` values
- * if they are set. If they are not set, the default ConsoleErrorHandler will be
- * used.
  *
  * @return void
  */
 	public function setErrorHandlers() {
-		App::uses('ConsoleErrorHandler', 'Console');
 		$error = Configure::read('Error');
 		$exception = Configure::read('Exception');
 
@@ -165,17 +144,39 @@ class ShellDispatcher {
 			$exception['consoleHandler'] = array($errorHandler, 'handleException');
 			Configure::write('Exception', $exception);
 		}
-		set_exception_handler($exception['consoleHandler']);
 		set_error_handler($error['consoleHandler'], Configure::read('Error.level'));
 	}
 
 /**
  * Dispatches a CLI request
  *
- * @return boolean
- * @throws MissingShellMethodException
+ * @return integer The cli command exit code. 0 is success.
  */
 	public function dispatch() {
+		try {
+			$exit = 0;
+			$this->_dispatch();
+		} catch (\Exception $e) {
+			$handler = Configure::read('Exception.consoleHandler');
+			if (is_callable($handler)) {
+				$exit = call_user_func($handler, $e);
+			} else {
+				echo __d('cake_console', "An exception occured\n");
+				echo __d('cake_console', "But the configured Exception.consoleHandler is not callable\n");
+				echo $e->getMessage() . "\n";
+				echo $e->getTraceAsString() . "\n";
+			}
+		}
+		return $exit;
+	}
+
+/**
+ * Dispatch a request.
+ *
+ * @return boolean
+ * @throws Cake\Error\MissingShellMethodException
+ */
+	protected function _dispatch() {
 		$shell = $this->shiftArgs();
 
 		if (!$shell) {
@@ -199,7 +200,7 @@ class ShellDispatcher {
 			$Shell->loadTasks();
 			return $Shell->runCommand($command, $this->args);
 		}
-		$methods = array_diff(get_class_methods($Shell), get_class_methods('Shell'));
+		$methods = array_diff(get_class_methods($Shell), get_class_methods('Cake\Console\Shell'));
 		$added = in_array($command, $methods);
 		$private = $command[0] === '_' && method_exists($Shell, $command);
 
@@ -215,7 +216,7 @@ class ShellDispatcher {
 			}
 		}
 
-		throw new MissingShellMethodException(array('shell' => $shell, 'method' => $command));
+		throw new Error\MissingShellMethodException(array('shell' => $shell, 'method' => $command));
 	}
 
 /**
@@ -225,20 +226,20 @@ class ShellDispatcher {
  *
  * @param string $shell Optionally the name of a plugin
  * @return mixed An object
- * @throws MissingShellException when errors are encountered.
+ * @throws Cake\Error\MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
-		list($plugin, $shell) = pluginSplit($shell, true);
+		list($plugin, $shell) = pluginSplit($shell);
 
 		$plugin = Inflector::camelize($plugin);
-		$class = Inflector::camelize($shell) . 'Shell';
-
-		App::uses('Shell', 'Console');
-		App::uses('AppShell', 'Console/Command');
-		App::uses($class, $plugin . 'Console/Command');
+		$class = Inflector::camelize($shell);
+		if ($plugin) {
+			$class = $plugin . '.' . $class;
+		}
+		$class = App::classname($class, 'Console/Command', 'Shell');
 
 		if (!class_exists($class)) {
-			throw new MissingShellException(array(
+			throw new Error\MissingShellException(array(
 				'class' => $class
 			));
 		}
@@ -257,8 +258,8 @@ class ShellDispatcher {
 		$this->_parsePaths($args);
 
 		$defaults = array(
-			'app' => 'app',
-			'root' => dirname(dirname(dirname(dirname(__FILE__)))),
+			'app' => 'App',
+			'root' => dirname(dirname(dirname(__DIR__))),
 			'working' => null,
 			'webroot' => 'webroot'
 		);

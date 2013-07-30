@@ -16,10 +16,12 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Controller;
 
-App::uses('ObjectCollection', 'Utility');
-App::uses('Component', 'Controller');
-App::uses('CakeEventListener', 'Event');
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Event\EventListener;
+use Cake\Utility\ObjectCollection;
 
 /**
  * Components collection is used as a registry for loaded components and handles loading
@@ -27,7 +29,7 @@ App::uses('CakeEventListener', 'Event');
  *
  * @package       Cake.Controller
  */
-class ComponentCollection extends ObjectCollection implements CakeEventListener {
+class ComponentCollection extends ObjectCollection implements EventListener {
 
 /**
  * The controller that this collection was initialized with.
@@ -48,7 +50,7 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 			return;
 		}
 		$this->_Controller = $Controller;
-		$components = ComponentCollection::normalizeObjectArray($Controller->components);
+		$components = static::normalizeObjectArray($Controller->components);
 		foreach ($components as $name => $properties) {
 			$Controller->{$name} = $this->load($properties['class'], $properties['settings']);
 		}
@@ -72,7 +74,7 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
  * {{{
  * public $components = array(
  *   'Email' => array(
- *     'className' => 'AliasedEmail'
+ *     'className' => '\App\Controller\Component\AliasedEmailComponent'
  *   );
  * );
  * }}}
@@ -81,7 +83,7 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
  * @param string $component Component name to load
  * @param array $settings Settings for the component.
  * @return Component A component object, Either the existing loaded component or a new one.
- * @throws MissingComponentException when the component could not be found
+ * @throws Cake\Error\MissingComponentException when the component could not be found
  */
 	public function load($component, $settings = array()) {
 		if (is_array($settings) && isset($settings['className'])) {
@@ -95,11 +97,10 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
 		if (isset($this->_loaded[$alias])) {
 			return $this->_loaded[$alias];
 		}
-		$componentClass = $name . 'Component';
-		App::uses($componentClass, $plugin . 'Controller/Component');
-		if (!class_exists($componentClass)) {
-			throw new MissingComponentException(array(
-				'class' => $componentClass,
+		$componentClass = App::classname($plugin . $name, 'Controller/Component', 'Component');
+		if (!$componentClass) {
+			throw new Error\MissingComponentException(array(
+				'class' => $component,
 				'plugin' => substr($plugin, 0, -1)
 			));
 		}

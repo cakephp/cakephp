@@ -13,9 +13,11 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Routing\Route;
 
-App::uses('CakeResponse', 'Network');
-App::uses('CakeRoute', 'Routing/Route');
+use Cake\Network\Response;
+use Cake\Routing\Router;
+use Cake\Routing\Route\Route;
 
 /**
  * Redirect route will perform an immediate redirect. Redirect routes
@@ -24,12 +26,12 @@ App::uses('CakeRoute', 'Routing/Route');
  *
  * @package Cake.Routing.Route
  */
-class RedirectRoute extends CakeRoute {
+class RedirectRoute extends Route {
 
 /**
- * A CakeResponse object
+ * A Response object
  *
- * @var CakeResponse
+ * @var Cake\Network\Response
  */
 	public $response = null;
 
@@ -72,21 +74,23 @@ class RedirectRoute extends CakeRoute {
 			return false;
 		}
 		if (!$this->response) {
-			$this->response = new CakeResponse();
+			$this->response = new Response();
 		}
 		$redirect = $this->redirect;
 		if (count($this->redirect) === 1 && !isset($this->redirect['controller'])) {
 			$redirect = $this->redirect[0];
 		}
 		if (isset($this->options['persist']) && is_array($redirect)) {
-			$redirect += array('named' => $params['named'], 'pass' => $params['pass'], 'url' => array());
+			$redirect += array('pass' => $params['pass'], 'url' => array());
 			$redirect = Router::reverse($redirect);
 		}
 		$status = 301;
 		if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
 			$status = $this->options['status'];
 		}
-		$this->response->header(array('Location' => Router::url($redirect, true)));
+		$this->response->header(array(
+			'Location' => Router::url($redirect, true)
+		));
 		$this->response->statusCode($status);
 		$this->response->send();
 		$this->_stop();
@@ -96,9 +100,10 @@ class RedirectRoute extends CakeRoute {
  * There is no reverse routing redirection routes
  *
  * @param array $url Array of parameters to convert to a string.
- * @return mixed either false or a string URL.
+ * @param array $context Array of request context parameters.
+ * @return mixed either false or a string url.
  */
-	public function match($url) {
+	public function match($url, $context = array()) {
 		return false;
 	}
 

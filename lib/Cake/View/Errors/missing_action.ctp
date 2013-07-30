@@ -1,8 +1,5 @@
 <?php
 /**
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -16,7 +13,24 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Core\Configure;
+use Cake\Utility\Inflector;
+use Cake\Core\Plugin;
 
+$namespace = Configure::read('App.namespace');
+if (!empty($plugin)) {
+	$namespace = $plugin;
+}
+$prefixNs = '';
+if (!empty($prefix)) {
+	$prefix = Inflector::camelize($prefix);
+	$prefixNs = '\\' . $prefix;
+}
+if (empty($plugin)) {
+	$path = APP_DIR . DS . 'Controller' . DS . $prefix . DS . h($controller) . '.php' ;
+} else {
+	$path = Plugin::path($plugin) . 'Controller' . DS . $prefix . DS . h($class) . '.php';
+}
 ?>
 <h2><?php echo __d('cake_dev', 'Missing Method in %s', h($controller)); ?></h2> <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
@@ -24,10 +38,14 @@
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create %1$s%2$s in file: %3$s.', '<em>' . h($controller) . '::</em>', '<em>' . h($action) . '()</em>', APP_DIR . DS . 'Controller' . DS . h($controller) . '.php'); ?>
+	<?php echo __d('cake_dev', 'Create %1$s%2$s in file: %3$s.', '<em>' . h($controller) . '::</em>', '<em>' . h($action) . '()</em>', $path); ?>
 </p>
 <pre>
 &lt;?php
+namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
+
+use <?= h($namespace); ?>\Controller\AppController;
+
 class <?php echo h($controller); ?> extends AppController {
 
 <strong>

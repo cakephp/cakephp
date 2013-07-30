@@ -16,6 +16,7 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Utility\Inflector;
 ?>
 <div class="<?php echo $pluralVar; ?> index">
 <h2><?php echo $pluralHumanName; ?></h2>
@@ -33,6 +34,7 @@ foreach (${$pluralVar} as ${$singularVar}):
 			$isKey = false;
 			if (!empty($associations['belongsTo'])) {
 				foreach ($associations['belongsTo'] as $_alias => $_details) {
+					list(, $_details['controller']) = namespaceSplit($_details['controller']);
 					if ($_field === $_details['foreignKey']) {
 						$isKey = true;
 						echo '<td>' . $this->Html->link(${$singularVar}[$_alias][$_details['displayField']], array('controller' => $_details['controller'], 'action' => 'view', ${$singularVar}[$_alias][$_details['primaryKey']])) . '</td>';
@@ -82,6 +84,7 @@ endforeach;
 		$done = array();
 		foreach ($associations as $_type => $_data) {
 			foreach ($_data as $_alias => $_details) {
+				list(, $_details['controller']) = namespaceSplit($_details['controller']);
 				if ($_details['controller'] != $this->name && !in_array($_details['controller'], $done)) {
 					echo '<li>';
 					echo $this->Html->link(

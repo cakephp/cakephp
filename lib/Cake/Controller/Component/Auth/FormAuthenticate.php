@@ -13,8 +13,11 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Controller\Component\Auth;
 
-App::uses('BaseAuthenticate', 'Controller/Component/Auth');
+use Cake\Controller\ComponentCollection;
+use Cake\Network\Request;
+use Cake\Network\Response;
 
 /**
  * An authentication adapter for AuthComponent. Provides the ability to authenticate using POST
@@ -40,12 +43,12 @@ class FormAuthenticate extends BaseAuthenticate {
 /**
  * Checks the fields to ensure they are supplied.
  *
- * @param CakeRequest $request The request that contains login information.
+ * @param Cake\Network\Request $request The request that contains login information.
  * @param string $model The model used for login verification.
  * @param array $fields The fields to be checked.
  * @return boolean False if the fields have not been supplied. True if they exist.
  */
-	protected function _checkFields(CakeRequest $request, $model, $fields) {
+	protected function _checkFields(Request $request, $model, $fields) {
 		if (empty($request->data[$model])) {
 			return false;
 		}
@@ -63,11 +66,11 @@ class FormAuthenticate extends BaseAuthenticate {
  * to find POST data that is used to find a matching record in the `settings.userModel`. Will return false if
  * there is no post data, either username or password is missing, of if the scope conditions have not been met.
  *
- * @param CakeRequest $request The request that contains login information.
- * @param CakeResponse $response Unused response object.
- * @return mixed False on login failure. An array of User data on success.
+ * @param Cake\Network\Request $request The request that contains login information.
+ * @param Cake\Network\Response $response Unused response object.
+ * @return mixed False on login failure.  An array of User data on success.
  */
-	public function authenticate(CakeRequest $request, CakeResponse $response) {
+	public function authenticate(Request $request, Response $response) {
 		$userModel = $this->settings['userModel'];
 		list(, $model) = pluginSplit($userModel);
 

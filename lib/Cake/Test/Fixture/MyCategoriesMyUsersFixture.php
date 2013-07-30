@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class MyCategoriesMyUsersFixture
  *
  * @package       Cake.Test.Fixture
  */
-class MyCategoriesMyUsersFixture extends CakeTestFixture {
+class MyCategoriesMyUsersFixture extends TestFixture {
 
 /**
  * name property
@@ -38,8 +41,8 @@ class MyCategoriesMyUsersFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'my_category_id' => array('type' => 'integer'),
-		'my_user_id' => array('type' => 'integer'),
+		'my_category_id' => ['type' => 'integer'],
+		'my_user_id' => ['type' => 'integer']
 	);
 
 /**

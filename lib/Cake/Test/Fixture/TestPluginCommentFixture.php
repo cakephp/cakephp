@@ -17,13 +17,16 @@
  * @since         CakePHP(tm) v 7660
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\Fixture;
+
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
  * Class TestPluginCommentFixture
  *
  * @package       Cake.Test.Fixture
  */
-class TestPluginCommentFixture extends CakeTestFixture {
+class TestPluginCommentFixture extends TestFixture {
 
 /**
  * name property
@@ -38,13 +41,14 @@ class TestPluginCommentFixture extends CakeTestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => array('type' => 'integer', 'key' => 'primary'),
-		'article_id' => array('type' => 'integer', 'null' => false),
-		'user_id' => array('type' => 'integer', 'null' => false),
+		'id' => ['type' => 'integer'],
+		'article_id' => ['type' => 'integer', 'null' => false],
+		'user_id' => ['type' => 'integer', 'null' => false],
 		'comment' => 'text',
-		'published' => array('type' => 'string', 'length' => 1, 'default' => 'N'),
+		'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
 		'created' => 'datetime',
-		'updated' => 'datetime'
+		'updated' => 'datetime',
+		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
 /**

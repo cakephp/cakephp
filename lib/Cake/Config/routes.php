@@ -17,6 +17,9 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Core\Plugin;
+use Cake\Routing\Router;
+use Cake\Utility\Inflector;
 
 /**
  * Connects the default, built-in routes, including prefix and plugin routes. The following routes are created
@@ -48,17 +51,20 @@
  */
 $prefixes = Router::prefixes();
 
-if ($plugins = CakePlugin::loaded()) {
-	App::uses('PluginShortRoute', 'Routing/Route');
+if ($plugins = Plugin::loaded()) {
 	foreach ($plugins as $key => $value) {
 		$plugins[$key] = Inflector::underscore($value);
 	}
 	$pluginPattern = implode('|', $plugins);
 	$match = array('plugin' => $pluginPattern);
-	$shortParams = array('routeClass' => 'PluginShortRoute', 'plugin' => $pluginPattern);
+	$shortParams = array(
+		'routeClass' => 'Cake\Routing\Route\PluginShortRoute',
+		'plugin' => $pluginPattern,
+		'_name' => '_plugin._controller:index',
+	);
 
 	foreach ($prefixes as $prefix) {
-		$params = array('prefix' => $prefix, $prefix => true);
+		$params = array('prefix' => $prefix);
 		$indexParams = $params + array('action' => 'index');
 		Router::connect("/{$prefix}/:plugin", $indexParams, $shortParams);
 		Router::connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
@@ -70,7 +76,7 @@ if ($plugins = CakePlugin::loaded()) {
 }
 
 foreach ($prefixes as $prefix) {
-	$params = array('prefix' => $prefix, $prefix => true);
+	$params = array('prefix' => $prefix);
 	$indexParams = $params + array('action' => 'index');
 	Router::connect("/{$prefix}/:controller", $indexParams);
 	Router::connect("/{$prefix}/:controller/:action/*", $params);
@@ -78,10 +84,5 @@ foreach ($prefixes as $prefix) {
 Router::connect('/:controller', array('action' => 'index'));
 Router::connect('/:controller/:action/*');
 
-$namedConfig = Router::namedConfig();
-if ($namedConfig['rules'] === false) {
-	Router::connectNamed(true);
-}
-
-unset($namedConfig, $params, $indexParams, $prefix, $prefixes, $shortParams, $match,
+unset($params, $indexParams, $prefix, $prefixes, $shortParams, $match,
 	$pluginPattern, $plugins, $key, $value);

@@ -17,9 +17,13 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Controller\Component;
 
-App::uses('Component', 'Controller');
-App::uses('Hash', 'Utility');
+use Cake\Controller\Component;
+use Cake\Controller\ComponentCollection;
+use Cake\Error;
+use Cake\Model\Model;
+use Cake\Utility\Hash;
 
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this
@@ -79,9 +83,6 @@ class PaginatorComponent extends Component {
  * - `maxLimit` The maximum limit users can choose to view. Defaults to 100
  * - `limit` The initial number of items per page. Defaults to 20.
  * - `page` The starting page, defaults to 1.
- * - `paramType` What type of parameters you want pagination to use?
- *      - `named` Use named parameters / routed parameters.
- *      - `querystring` Use query string parameters.
  *
  * @var array
  */
@@ -89,7 +90,6 @@ class PaginatorComponent extends Component {
 		'page' => 1,
 		'limit' => 20,
 		'maxLimit' => 100,
-		'paramType' => 'named'
 	);
 
 /**
@@ -123,8 +123,8 @@ class PaginatorComponent extends Component {
  * @param array $whitelist List of allowed fields for ordering. This allows you to prevent ordering
  *   on non-indexed, or undesirable columns.
  * @return array Model query results
- * @throws MissingModelException
- * @throws NotFoundException
+ * @throws Cake\Error\MissingModelException
+ * @throws Cake\Error\NotFoundException
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
 		if (is_array($object)) {
@@ -136,7 +136,7 @@ class PaginatorComponent extends Component {
 		$object = $this->_getObject($object);
 
 		if (!is_object($object)) {
-			throw new MissingModelException($object);
+			throw new Error\MissingModelException($object);
 		}
 
 		$options = $this->mergeOptions($object->alias);
@@ -214,7 +214,7 @@ class PaginatorComponent extends Component {
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
 		if ($requestedPage > $page) {
-			throw new NotFoundException();
+			throw new Error\NotFoundException();
 		}
 
 		$paging = array(
@@ -227,7 +227,6 @@ class PaginatorComponent extends Component {
 			'order' => $order,
 			'limit' => $limit,
 			'options' => Hash::diff($options, $defaults),
-			'paramType' => $options['paramType']
 		);
 
 		if (!isset($this->Controller->request['paging'])) {
@@ -308,14 +307,7 @@ class PaginatorComponent extends Component {
  */
 	public function mergeOptions($alias) {
 		$defaults = $this->getDefaults($alias);
-		switch ($defaults['paramType']) {
-			case 'named':
-				$request = $this->Controller->request->params['named'];
-				break;
-			case 'querystring':
-				$request = $this->Controller->request->query;
-				break;
-		}
+		$request = $this->Controller->request->query;
 		$request = array_intersect_key($request, array_flip($this->whitelist));
 		return array_merge($defaults, $request);
 	}
@@ -338,7 +330,7 @@ class PaginatorComponent extends Component {
 			$defaults['maxLimit'] = $defaults['limit'];
 		}
 		return array_merge(
-			array('page' => 1, 'limit' => 20, 'maxLimit' => 100, 'paramType' => 'named'),
+			array('page' => 1, 'limit' => 20, 'maxLimit' => 100),
 			$defaults
 		);
 	}

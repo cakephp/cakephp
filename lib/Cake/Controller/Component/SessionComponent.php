@@ -17,9 +17,10 @@
  * @since         CakePHP(tm) v 0.10.0.1232
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Controller\Component;
 
-App::uses('Component', 'Controller');
-App::uses('CakeSession', 'Model/Datasource');
+use Cake\Controller\Component;
+use Cake\Model\Datasource\Session;
 
 /**
  * The CakePHP SessionComponent provides a way to persist client data between
@@ -39,7 +40,7 @@ class SessionComponent extends Component {
  * @return void
  */
 	public function userAgent($userAgent = null) {
-		return CakeSession::userAgent($userAgent);
+		return Session::userAgent($userAgent);
 	}
 
 /**
@@ -54,7 +55,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::write
  */
 	public function write($name, $value = null) {
-		return CakeSession::write($name, $value);
+		return Session::write($name, $value);
 	}
 
 /**
@@ -68,7 +69,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::read
  */
 	public function read($name = null) {
-		return CakeSession::read($name);
+		return Session::read($name);
 	}
 
 /**
@@ -81,7 +82,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::delete
  */
 	public function delete($name) {
-		return CakeSession::delete($name);
+		return Session::delete($name);
 	}
 
 /**
@@ -94,7 +95,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::check
  */
 	public function check($name) {
-		return CakeSession::check($name);
+		return Session::check($name);
 	}
 
 /**
@@ -105,7 +106,7 @@ class SessionComponent extends Component {
  * @return string Last session error
  */
 	public function error() {
-		return CakeSession::error();
+		return Session::error();
 	}
 
 /**
@@ -125,7 +126,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#creating-notification-messages
  */
 	public function setFlash($message, $element = 'default', $params = array(), $key = 'flash') {
-		CakeSession::write('Message.' . $key, compact('message', 'element', 'params'));
+		Session::write('Message.' . $key, compact('message', 'element', 'params'));
 	}
 
 /**
@@ -136,7 +137,7 @@ class SessionComponent extends Component {
  * @return void
  */
 	public function renew() {
-		return CakeSession::renew();
+		return Session::renew();
 	}
 
 /**
@@ -147,7 +148,7 @@ class SessionComponent extends Component {
  * @return boolean true is session is valid, false is session is invalid
  */
 	public function valid() {
-		return CakeSession::valid();
+		return Session::valid();
 	}
 
 /**
@@ -159,7 +160,7 @@ class SessionComponent extends Component {
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/sessions.html#SessionComponent::destroy
  */
 	public function destroy() {
-		return CakeSession::destroy();
+		return Session::destroy();
 	}
 
 /**
@@ -174,9 +175,9 @@ class SessionComponent extends Component {
  */
 	public function id($id = null) {
 		if (empty($id)) {
-			CakeSession::start();
+			Session::start();
 		}
-		return CakeSession::id($id);
+		return Session::id($id);
 	}
 
 /**
@@ -185,7 +186,7 @@ class SessionComponent extends Component {
  * @return boolean
  */
 	public function started() {
-		return CakeSession::started();
+		return Session::started();
 	}
 
 }

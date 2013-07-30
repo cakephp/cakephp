@@ -3,25 +3,21 @@
  *
  * PHP 5
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.View.Pages
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Cache\Cache;
+use Cake\Core\Configure;
+use Cake\Core\Plugin;
+use Cake\Model\ConnectionManager;
+use Cake\Error;
+use Cake\Utility\Debugger;
+use Cake\Utility\Validation;
 
-if (!Configure::read('debug')):
-	throw new NotFoundException();
+if (Configure::read('debug') == 0):
+	throw new Error\NotFoundException();
 endif;
-
-App::uses('Debugger', 'Utility');
 ?>
 <h2><?php echo __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <p>
@@ -39,13 +35,26 @@ endif;
 </p>
 <p>
 <?php
-	if (version_compare(PHP_VERSION, '5.2.8', '>=')):
+	if (version_compare(PHP_VERSION, '5.4.3', '>=')):
 		echo '<span class="notice success">';
-			echo __d('cake_dev', 'Your version of PHP is 5.2.8 or higher.');
+			echo __d('cake_dev', 'Your version of PHP is 5.4.3 or higher.');
 		echo '</span>';
 	else:
 		echo '<span class="notice">';
-			echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.2.8 or higher to use CakePHP.');
+			echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.4.3 or higher to use CakePHP.');
+		echo '</span>';
+	endif;
+?>
+</p>
+<p>
+<?php
+	if (extension_loaded('mbstring')):
+		echo '<span class="notice success">';
+			echo __d('cake_dev', 'Your version of PHP has mbstring extension loaded.');
+		echo '</span>';
+	else:
+		echo '<span class="notice">';
+			echo __d('cake_dev', 'Your version of PHP does NOT have the mbstring extension loaded.');
 		echo '</span>';
 	endif;
 ?>
@@ -65,14 +74,14 @@ endif;
 </p>
 <p>
 	<?php
-		$settings = Cache::settings();
+		$settings = Cache::settings('_cake_model_');
 		if (!empty($settings)):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/core.php ', '<em>'. $settings['engine'] . 'Engine</em>');
+				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/cache.php', '<em>'. $settings['engine'] . 'Engine</em>');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/Config/core.php');
+				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/Config/cache.php');
 			echo '</span>';
 		endif;
 	?>
@@ -80,25 +89,25 @@ endif;
 <p>
 	<?php
 		$filePresent = null;
-		if (file_exists(APP . 'Config' . DS . 'database.php')):
+		if (file_exists(APP . 'Config/datasources.php')):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your database configuration file is present.');
+				echo __d('cake_dev', 'Your datasources configuration file is present.');
 				$filePresent = true;
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your database configuration file is NOT present.');
+				echo __d('cake_dev', 'Your datasources configuration file is NOT present.');
 				echo '<br/>';
-				echo __d('cake_dev', 'Rename APP/Config/database.php.default to APP/Config/database.php');
+				echo __d('cake_dev', 'Rename APP/Config/datasources.default.php to APP/Config/datasources.php');
 			echo '</span>';
 		endif;
 	?>
 </p>
 <?php
 if (isset($filePresent)):
-	App::uses('ConnectionManager', 'Model');
 	try {
 		$connected = ConnectionManager::getDataSource('default');
+		$connected = $connection->connect();
 	} catch (Exception $connectionError) {
 		$connected = false;
 		$errorMsg = $connectionError->getMessage();
@@ -127,7 +136,6 @@ if (isset($filePresent)):
 </p>
 <?php endif; ?>
 <?php
-	App::uses('Validation', 'Utility');
 	if (!Validation::alphaNumeric('cakephp')) {
 		echo '<p><span class="notice">';
 			echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');

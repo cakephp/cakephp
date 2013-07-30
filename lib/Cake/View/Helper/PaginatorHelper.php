@@ -1,9 +1,5 @@
 <?php
 /**
- * Pagination Helper class file.
- *
- * Generates pagination links
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,23 +9,27 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\View\Helper;
 
-App::uses('AppHelper', 'View/Helper');
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Utility\Inflector;
+use Cake\View\Helper;
+use Cake\View\View;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
  *
  * PaginationHelper encloses all methods needed when working with pagination.
  *
- * @package       Cake.View.Helper
- * @property      HtmlHelper $Html
+ * @package Cake.View.Helper
+ * @property HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html
  */
-class PaginatorHelper extends AppHelper {
+class PaginatorHelper extends Helper {
 
 /**
  * Helper dependencies
@@ -37,14 +37,6 @@ class PaginatorHelper extends AppHelper {
  * @var array
  */
 	public $helpers = array('Html');
-
-/**
- * The class used for 'Ajax' pagination links. Defaults to JsHelper. You should make sure
- * that JsHelper is defined as a helper before PaginatorHelper, if you want to customize the JsHelper.
- *
- * @var string
- */
-	protected $_ajaxHelperClass = 'Js';
 
 /**
  * Holds the default options for pagination links
@@ -62,12 +54,6 @@ class PaginatorHelper extends AppHelper {
  * - `url['page']` Page number to use in links.
  * - `model` The name of the model.
  * - `escape` Defines if the title field for the link should be escaped (default: true).
- * - `update` DOM id of the element updated with the results of the AJAX call.
- *     If this key isn't specified Paginator will use plain HTML links.
- * - `paging['paramType']` The type of parameters to use when creating links. Valid options are
- *     'querystring' and 'named'. See PaginatorComponent::$settings for more information.
- * - `convertKeys` - A list of keys in url arrays that should be converted to querysting params
- *    if paramType == 'querystring'.
  *
  * @var array
  */
@@ -76,40 +62,13 @@ class PaginatorHelper extends AppHelper {
 	);
 
 /**
- * Constructor for the helper. Sets up the helper that is used for creating 'AJAX' links.
- *
- * Use `public $helpers = array('Paginator' => array('ajax' => 'CustomHelper'));` to set a custom Helper
- * or choose a non JsHelper Helper. If you want to use a specific library with JsHelper declare JsHelper and its
- * adapter before including PaginatorHelper in your helpers array.
- *
- * The chosen custom helper must implement a `link()` method.
- *
- * @param View $View the view object the helper is attached to.
- * @param array $settings Array of settings.
- * @throws CakeException When the AjaxProvider helper does not implement a link method.
- */
-	public function __construct(View $View, $settings = array()) {
-		$ajaxProvider = isset($settings['ajax']) ? $settings['ajax'] : 'Js';
-		$this->helpers[] = $ajaxProvider;
-		$this->_ajaxHelperClass = $ajaxProvider;
-		App::uses($ajaxProvider . 'Helper', 'View/Helper');
-		$classname = $ajaxProvider . 'Helper';
-		if (!class_exists($classname) || !method_exists($classname, 'link')) {
-			throw new CakeException(sprintf(
-				__d('cake_dev', '%s does not implement a link() method, it is incompatible with PaginatorHelper'), $classname
-			));
-		}
-		parent::__construct($View, $settings);
-	}
-
-/**
  * Before render callback. Overridden to merge passed args with url options.
  *
  * @param string $viewFile
  * @return void
  */
 	public function beforeRender($viewFile) {
-		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->params['named']);
+		$this->options['url'] = array_merge($this->request->params['pass']);
 		if (!empty($this->request->query)) {
 			$this->options['url']['?'] = $this->request->query;
 		}
@@ -136,16 +95,12 @@ class PaginatorHelper extends AppHelper {
 /**
  * Sets default options for all pagination links
  *
- * @param array|string $options Default options for pagination links. If a string is supplied - it
- *   is used as the DOM id element to update. See PaginatorHelper::$options for list of keys.
+ * @param array $options Default options for pagination links.
+ *   See PaginatorHelper::$options for list of keys.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::options
  */
 	public function options($options = array()) {
-		if (is_string($options)) {
-			$options = array('update' => $options);
-		}
-
 		if (!empty($options['paging'])) {
 			if (!isset($this->request->params['paging'])) {
 				$this->request->params['paging'] = array();
@@ -354,12 +309,10 @@ class PaginatorHelper extends AppHelper {
 	}
 
 /**
- * Generates a plain or Ajax link with pagination parameters
+ * Generates a link with pagination parameters
  *
  * ### Options
  *
- * - `update` The Id of the DOM element you wish to update. Creates Ajax enabled links
- *    with the AjaxHelper.
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
  *
@@ -384,9 +337,7 @@ class PaginatorHelper extends AppHelper {
 		unset($options['convertKeys']);
 
 		$url = $this->url($url, true, $model);
-
-		$obj = isset($options['update']) ? $this->_ajaxHelperClass : 'Html';
-		return $this->{$obj}->link($title, $url, $options);
+		return $this->Html->link($title, $url, $options);
 	}
 
 /**
@@ -410,35 +361,11 @@ class PaginatorHelper extends AppHelper {
 			unset($url['order']);
 			$url = array_merge($url, compact('sort', 'direction'));
 		}
-		$url = $this->_convertUrlKeys($url, $paging['paramType']);
 
 		if ($asArray) {
 			return $url;
 		}
 		return parent::url($url);
-	}
-
-/**
- * Converts the keys being used into the format set by options.paramType
- *
- * @param array $url Array of url params to convert
- * @param string $type
- * @return array converted url params.
- */
-	protected function _convertUrlKeys($url, $type) {
-		if ($type === 'named') {
-			return $url;
-		}
-		if (!isset($url['?'])) {
-			$url['?'] = array();
-		}
-		foreach ($this->options['convertKeys'] as $key) {
-			if (isset($url[$key])) {
-				$url['?'][$key] = $url[$key];
-				unset($url[$key]);
-			}
-		}
-		return $url;
 	}
 
 /**
