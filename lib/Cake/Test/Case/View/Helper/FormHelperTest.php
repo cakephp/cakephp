@@ -5975,7 +5975,7 @@ class FormHelperTest extends CakeTestCase {
 	public function testFormDateTimeMulti() {
 		extract($this->dateRegex);
 
-		$result = $this->Form->dateTime('Contact.1.updated');
+		$result = $this->Form->dateTime('Contact.1.updated', 'DMY', '12');
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][1][updated][day]', 'id' => 'Contact1UpdatedDay')),
 			$daysRegex,
@@ -6014,7 +6014,7 @@ class FormHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->dateTime('Contact.2.updated');
+		$result = $this->Form->dateTime('Contact.2.updated', 'DMY', '12');
 		$expected = array(
 			array('select' => array('name' => 'data[Contact][2][updated][day]', 'id' => 'Contact2UpdatedDay')),
 			$daysRegex,
@@ -7794,7 +7794,7 @@ class FormHelperTest extends CakeTestCase {
 	public function testDateTimeWithGetForms() {
 		extract($this->dateRegex);
 		$this->Form->create('Contact', array('type' => 'get'));
-		$result = $this->Form->datetime('created');
+		$result = $this->Form->datetime('created', 'DMY', '12');
 
 		$this->assertRegExp('/name="created\[year\]"/', $result, 'year name attribute is wrong.');
 		$this->assertRegExp('/name="created\[month\]"/', $result, 'month name attribute is wrong.');

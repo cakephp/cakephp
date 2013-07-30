@@ -2355,7 +2355,7 @@ class FormHelper extends AppHelper {
  * @return string Generated set of select boxes for the date and time formats chosen.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::dateTime
  */
-	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $attributes = array()) {
+	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '24', $attributes = array()) {
 		$attributes += array('empty' => true, 'value' => null);
 		$year = $month = $day = $hour = $min = $meridian = null;
 
