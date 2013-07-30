@@ -266,22 +266,6 @@ class SecurityTest extends TestCase {
 	}
 
 /**
- * Test that rijndael() can still decrypt values with a fixed iv.
- *
- * @return void
- */
-	public function testRijndaelBackwardCompatibility() {
-		$this->skipIf(!function_exists('mcrypt_encrypt'));
-
-		$txt = 'The quick brown fox jumped over the lazy dog.';
-		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
-
-		// Encrypted before random iv
-		$value = base64_decode('1WPjnq96LMzLGwNgmudHF+cAIqVUN5DaUZEpf5tm1EzSgt5iYY9o3d66iRI/fKJLTlTVGsa8HzW0jDNitmVXoQ==');
-		$this->assertEquals($txt, Security::rijndael($value, $key, 'decrypt'));
-	}
-
-/**
  * testRijndaelInvalidOperation method
  *
  * @expectedException PHPUnit_Framework_Error
