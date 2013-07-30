@@ -232,7 +232,7 @@ class Security {
 		$cryptKey = substr($key, 0, 32);
 
 		if ($operation === 'encrypt') {
-			$iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
+			$iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
 			return $iv . '$$' . mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
 		}
 		$iv = substr($text, 0, $ivSize);
