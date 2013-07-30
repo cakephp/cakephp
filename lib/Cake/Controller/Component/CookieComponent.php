@@ -132,12 +132,11 @@ class CookieComponent extends Component {
 /**
  * Type of encryption to use.
  *
- * Currently two methods are available: cipher and rijndael
- * Defaults to Security::cipher();
+ * Defaults to Security::rijndael();
  *
  * @var string
  */
-	protected $_type = 'cipher';
+	protected $_type = 'rijndael';
 
 /**
  * Used to reset cookie time if $expire is passed to CookieComponent::write()
@@ -376,14 +375,12 @@ class CookieComponent extends Component {
  * @param string $type Encryption method
  * @return void
  */
-	public function type($type = 'cipher') {
+	public function type($type = 'rijndael') {
 		$availableTypes = array(
-			'cipher',
 			'rijndael'
 		);
 		if (!in_array($type, $availableTypes)) {
-			trigger_error(__d('cake_dev', 'You must use cipher or rijndael for cookie encryption type'), E_USER_WARNING);
-			$type = 'cipher';
+			trigger_error(__d('cake_dev', 'You must use rijndael for cookie encryption type'), E_USER_WARNING);
 		}
 		$this->_type = $type;
 	}
