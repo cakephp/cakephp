@@ -159,12 +159,11 @@ class Security {
  */
 	public static function setCost($cost) {
 		if ($cost < 4 || $cost > 31) {
-			trigger_error(__d(
+			throw new Error\Exception(__d(
 				'cake_dev',
 				'Invalid value, cost must be between %s and %s',
 				array(4, 31)
-			), E_USER_WARNING);
-			return null;
+			));
 		}
 		static::$hashCost = $cost;
 	}
@@ -186,20 +185,18 @@ class Security {
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
+ * @throws Cake\Error\Exception When there are errors.
  * @return string Encrypted/Decrypted string
  */
 	public static function rijndael($text, $key, $operation) {
 		if (empty($key)) {
-			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::rijndael()'), E_USER_WARNING);
-			return '';
+			throw new Error\Exception(__d('cake_dev', 'You cannot use an empty key for Security::rijndael()'));
 		}
 		if (empty($operation) || !in_array($operation, array('encrypt', 'decrypt'))) {
-			trigger_error(__d('cake_dev', 'You must specify the operation for Security::rijndael(), either encrypt or decrypt'), E_USER_WARNING);
-			return '';
+			throw new Error\Exception(__d('cake_dev', 'You must specify the operation for Security::rijndael(), either encrypt or decrypt'));
 		}
 		if (strlen($key) < 32) {
-			trigger_error(__d('cake_dev', 'You must use a key larger than 32 bytes for Security::rijndael()'), E_USER_WARNING);
-			return '';
+			throw new Error\Exception(__d('cake_dev', 'You must use a key larger than 32 bytes for Security::rijndael()'));
 		}
 		$algorithm = MCRYPT_RIJNDAEL_256;
 		$mode = MCRYPT_MODE_CBC;
@@ -239,6 +236,7 @@ class Security {
  * @param string $password The string to be encrypted.
  * @param mixed $salt false to generate a new salt or an existing salt.
  * @return string The hashed string or an empty string on error.
+ * @throws Cake\Error\Exception on invalid salt values.
  */
 	protected static function _crypt($password, $salt = false) {
 		if ($salt === false) {
@@ -247,12 +245,11 @@ class Security {
 		}
 
 		if ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 29) {
-			trigger_error(__d(
+			throw new Error\Exception(__d(
 				'cake_dev',
 				'Invalid salt: %s for %s Please visit http://www.php.net/crypt and read the appropriate section for building %s salts.',
 				array($salt, 'blowfish', 'blowfish')
-			), E_USER_WARNING);
-			return '';
+			));
 		}
 		return crypt($password, $salt);
 	}

@@ -70,7 +70,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashInvalidSalt method
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHashInvalidSalt() {
@@ -80,7 +80,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashAnotherInvalidSalt
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHashAnotherInvalidSalt() {
@@ -90,7 +90,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashYetAnotherInvalidSalt
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHashYetAnotherInvalidSalt() {
@@ -100,7 +100,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashInvalidCost method
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHashInvalidCost() {
@@ -225,7 +225,7 @@ class SecurityTest extends TestCase {
 /**
  * testRijndaelInvalidOperation method
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testRijndaelInvalidOperation() {
@@ -237,7 +237,7 @@ class SecurityTest extends TestCase {
 /**
  * testRijndaelInvalidKey method
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testRijndaelInvalidKey() {
