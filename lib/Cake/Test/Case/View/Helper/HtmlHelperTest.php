@@ -210,7 +210,7 @@ class HtmlHelperTest extends CakeTestCase {
 		Router::reload();
 
 		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', 'full_base' => true));
-		$expected = array('a' => array('href' => Router::baseURL() . '/posts'), 'Posts', '/a');
+		$expected = array('a' => array('href' => Router::fullBaseUrl() . '/posts'), 'Posts', '/a');
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));
@@ -1877,7 +1877,7 @@ class HtmlHelperTest extends CakeTestCase {
 			array('pathPrefix' => 'videos/', 'poster' => 'poster.jpg', 'text' => 'Your browser does not support the HTML5 Video element.')
 		);
 		$expected = array(
-			'video' => array('poster' => IMAGES_URL . 'poster.jpg'),
+			'video' => array('poster' => Configure::read('App.imageBaseUrl') . 'poster.jpg'),
 				array('source' => array('src' => 'videos/video.webm', 'type' => 'video/webm')),
 				array('source' => array('src' => 'videos/video.ogv', 'type' => 'video/ogg; codecs=&#039;theora, vorbis&#039;')),
 				'Your browser does not support the HTML5 Video element.',

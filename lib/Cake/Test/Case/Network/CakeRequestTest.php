@@ -157,7 +157,7 @@ class CakeRequestTest extends CakeTestCase {
 		$request = new CakeRequest();
 		$this->assertEquals('some/path', $request->url);
 
-		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseURL') . '/other/path?url=http://cakephp.org';
+		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
 		$request = new CakeRequest();
 		$this->assertEquals('other/path', $request->url);
 	}
@@ -689,19 +689,19 @@ class CakeRequestTest extends CakeTestCase {
 		$result = $request->referer();
 		$this->assertSame($result, '/');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(false);
-		$this->assertSame($result, Configure::read('App.fullBaseURL') . '/some/path');
+		$this->assertSame($result, Configure::read('App.fullBaseUrl') . '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/recipes/add';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/recipes/add';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/recipes/add');
 
