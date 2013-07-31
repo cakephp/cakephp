@@ -98,6 +98,8 @@ class L10nTest extends CakeTestCase {
  * @return void
  */
 	public function testGetWithDeprecatedConstant() {
+		$this->skipIf(defined('DEFAULT_LANGUAGE'), 'Cannot re-define already defined constant.');
+
 		define('DEFAULT_LANGUAGE', 'en-us');
 		$localize = new L10n();
 
