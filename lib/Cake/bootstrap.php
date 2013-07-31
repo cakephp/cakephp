@@ -168,6 +168,10 @@ if (!defined('FULL_BASE_URL')) {
 	unset($httpHost, $s);
 }
 
+Configure::write('App.imagesURL', IMAGES_URL);
+Configure::write('App.cssURL', CSS_URL);
+Configure::write('App.jsURL', JS_URL);
+
 App::$bootstrapping = true;
 
 Configure::bootstrap(isset($boot) ? $boot : true);

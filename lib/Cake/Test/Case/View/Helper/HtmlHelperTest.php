@@ -1877,7 +1877,7 @@ class HtmlHelperTest extends CakeTestCase {
 			array('pathPrefix' => 'videos/', 'poster' => 'poster.jpg', 'text' => 'Your browser does not support the HTML5 Video element.')
 		);
 		$expected = array(
-			'video' => array('poster' => IMAGES_URL . 'poster.jpg'),
+			'video' => array('poster' => Configure::read('App.imagesURL') . 'poster.jpg'),
 				array('source' => array('src' => 'videos/video.webm', 'type' => 'video/webm')),
 				array('source' => array('src' => 'videos/video.ogv', 'type' => 'video/ogg; codecs=&#039;theora, vorbis&#039;')),
 				'Your browser does not support the HTML5 Video element.',

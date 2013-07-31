@@ -118,6 +118,24 @@
 	//Configure::write('App.fullBaseURL', 'http://example.com');
 
 /**
+ * Web path to the public images directory under webroot.
+ * If not set defaults to 'img/'
+ */
+	//Configure::write('App.imagesURL', 'img/');
+
+/**
+ * Web path to the CSS files directory under webroot.
+ * If not set defaults to 'css/'
+ */
+	//Configure::write('App.cssURL', 'css/');
+
+/**
+ * Web path to the js files directory under webroot.
+ * If not set defaults to 'js/'
+ */
+	//Configure::write('App.jsURL', 'js/');
+
+/**
  * Uncomment the define below to use CakePHP prefix routes.
  *
  * The value of the define determines the names of the routes
