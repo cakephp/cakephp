@@ -18,6 +18,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -374,13 +375,14 @@ class CookieComponent extends Component {
  *
  * @param string $type Encryption method
  * @return void
+ * @throws Cake\Error\Exception When an unknown type is used.
  */
 	public function type($type = 'rijndael') {
-		$availableTypes = array(
+		$availableTypes = [
 			'rijndael'
-		);
+		];
 		if (!in_array($type, $availableTypes)) {
-			trigger_error(__d('cake_dev', 'You must use rijndael for cookie encryption type'), E_USER_WARNING);
+			throw new Error\Exception(__d('cake_dev', 'You must use rijndael for cookie encryption type'));
 		}
 		$this->_type = $type;
 	}
