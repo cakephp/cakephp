@@ -238,7 +238,7 @@ class CakeRequest implements ArrayAccess {
 			if ($qPosition !== false && strpos($_SERVER['REQUEST_URI'], '://') > $qPosition) {
 				$uri = $_SERVER['REQUEST_URI'];
 			} else {
-				$uri = substr($_SERVER['REQUEST_URI'], strlen(Configure::read('App.fullBaseURL')));
+				$uri = substr($_SERVER['REQUEST_URI'], strlen(Configure::read('App.fullBaseUrl')));
 			}
 		} elseif (isset($_SERVER['PHP_SELF']) && isset($_SERVER['SCRIPT_NAME'])) {
 			$uri = str_replace($_SERVER['SCRIPT_NAME'], '', $_SERVER['PHP_SELF']);
@@ -424,7 +424,7 @@ class CakeRequest implements ArrayAccess {
 			$ref = $forwarded;
 		}
 
-		$base = Configure::read('App.fullBaseURL') . $this->webroot;
+		$base = Configure::read('App.fullBaseUrl') . $this->webroot;
 		if (!empty($ref) && !empty($base)) {
 			if ($local && strpos($ref, $base) === 0) {
 				$ref = substr($ref, strlen($base));

@@ -444,13 +444,13 @@ class HtmlHelper extends AppHelper {
 		if (strpos($path, '//') !== false) {
 			$url = $path;
 		} else {
-			$url = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.cssURL'), 'ext' => '.css'));
+			$url = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css'));
 			$options = array_diff_key($options, array('fullBase' => null));
 
 			if (Configure::read('Asset.filter.css')) {
-				$pos = strpos($url, Configure::read('App.cssURL'));
+				$pos = strpos($url, Configure::read('App.cssBaseUrl'));
 				if ($pos !== false) {
-					$url = substr($url, 0, $pos) . 'ccss/' . substr($url, $pos + strlen(Configure::read('App.cssURL')));
+					$url = substr($url, 0, $pos) . 'ccss/' . substr($url, $pos + strlen(Configure::read('App.cssBaseUrl')));
 				}
 			}
 		}
@@ -545,11 +545,11 @@ class HtmlHelper extends AppHelper {
 		$this->_includedScripts[$url] = true;
 
 		if (strpos($url, '//') === false) {
-			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsURL'), 'ext' => '.js'));
+			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
 			$options = array_diff_key($options, array('fullBase' => null));
 
 			if (Configure::read('Asset.filter.js')) {
-				$url = str_replace(Configure::read('App.jsURL'), 'cjs/', $url);
+				$url = str_replace(Configure::read('App.jsBaseUrl'), 'cjs/', $url);
 			}
 		}
 		$attributes = $this->_parseAttributes($options, array('block', 'once'), ' ');
@@ -803,7 +803,7 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::image
  */
 	public function image($path, $options = array()) {
-		$path = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.imagesURL')));
+		$path = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.imageBaseUrl')));
 		$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 
 		if (!isset($options['alt'])) {
@@ -1106,7 +1106,7 @@ class HtmlHelper extends AppHelper {
 		}
 
 		if (isset($options['poster'])) {
-			$options['poster'] = $this->assetUrl($options['poster'], array('pathPrefix' => Configure::read('App.imagesURL')) + $options);
+			$options['poster'] = $this->assetUrl($options['poster'], array('pathPrefix' => Configure::read('App.imageBaseUrl')) + $options);
 		}
 		$text = $options['text'];
 

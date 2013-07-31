@@ -115,25 +115,25 @@
  * will override the automatic detection of full base URL and can be
  * useful when generating links from the CLI (e.g. sending emails)
  */
-	//Configure::write('App.fullBaseURL', 'http://example.com');
+	//Configure::write('App.fullBaseUrl', 'http://example.com');
 
 /**
  * Web path to the public images directory under webroot.
  * If not set defaults to 'img/'
  */
-	//Configure::write('App.imagesURL', 'img/');
+	//Configure::write('App.imageBaseUrl', 'img/');
 
 /**
  * Web path to the CSS files directory under webroot.
  * If not set defaults to 'css/'
  */
-	//Configure::write('App.cssURL', 'css/');
+	//Configure::write('App.cssBaseUrl', 'css/');
 
 /**
  * Web path to the js files directory under webroot.
  * If not set defaults to 'js/'
  */
-	//Configure::write('App.jsURL', 'js/');
+	//Configure::write('App.jsBaseUrl', 'js/');
 
 /**
  * Uncomment the define below to use CakePHP prefix routes.

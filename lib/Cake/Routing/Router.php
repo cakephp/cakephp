@@ -62,7 +62,7 @@ class Router {
  *
  * @var string
  */
-	protected static $_baseURL;
+	protected static $_fullBaseUrl;
 
 /**
  * List of action prefixes used in connected routes.
@@ -767,7 +767,7 @@ class Router {
  *   cake relative URLs are required when using requestAction.
  * - `?` - Takes an array of query string parameters
  * - `#` - Allows you to set URL hash fragments.
- * - `full_base` - If true the `Router::baseURL()` value will be prepended to generated URLs.
+ * - `full_base` - If true the `Router::fullBaseUrl()` value will be prepended to generated URLs.
  *
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action',
@@ -805,7 +805,7 @@ class Router {
 		if (empty($url)) {
 			$output = isset($path['here']) ? $path['here'] : '/';
 			if ($full) {
-				$output = self::baseURL() . $output;
+				$output = self::fullBaseUrl() . $output;
 			}
 			return $output;
 		} elseif (is_array($url)) {
@@ -893,7 +893,7 @@ class Router {
 			$output = str_replace('//', '/', $base . '/' . $output);
 
 			if ($full) {
-				$output = self::baseURL() . $output;
+				$output = self::fullBaseUrl() . $output;
 			}
 			if (!empty($extension)) {
 				$output = rtrim($output, '/');
@@ -917,15 +917,15 @@ class Router {
  * For example: ``http://example.com``
  * @return string
  */
-	public static function baseURL($base = null) {
+	public static function fullBaseUrl($base = null) {
 		if ($base !== null) {
-			self::$_baseURL = $base;
-			Configure::write('App.fullBaseURL', $base);
+			self::$_fullBaseUrl = $base;
+			Configure::write('App.fullBaseUrl', $base);
 		}
-		if (empty(self::$_baseURL)) {
-			self::$_baseURL = Configure::read('App.fullBaseURL');
+		if (empty(self::$_fullBaseUrl)) {
+			self::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
 		}
-		return self::$_baseURL;
+		return self::$_fullBaseUrl;
 	}
 
 /**
