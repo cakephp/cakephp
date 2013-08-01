@@ -570,6 +570,7 @@ class ModelDeleteTest extends BaseModelTest {
 			'Tag' => array('with' => 'TestPlugin.ArticlesTag')
 		)), false);
 
+		$Article->ArticlesTag->order = null;
 		$this->assertTrue($Article->delete(1));
 	}
 

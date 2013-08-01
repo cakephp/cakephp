@@ -32,27 +32,15 @@ class CakeTestModel extends Model {
  * incorrect order when no order has been defined in the finds.
  * Postgres can return the results in any order it considers appropriate if none is specified
  *
- * @param array $queryData
- * @return array $queryData
+ * @param integer|string|array $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param string $table Name of database table to use.
+ * @param string $ds DataSource connection name.
  */
-	public function beforeFind($queryData) {
-		$pk = $this->primaryKey;
-		$aliasedPk = $this->alias . '.' . $this->primaryKey;
-		switch (true) {
-			case !$pk:
-			case !$this->useTable:
-			case !$this->schema('id'):
-			case !empty($queryData['order'][0]):
-			case !empty($queryData['group']):
-			case
-				(is_string($queryData['fields']) && !($queryData['fields'] == $pk || $queryData['fields'] == $aliasedPk)) ||
-				(is_array($queryData['fields']) && !(array_key_exists($pk, $queryData['fields']) || array_key_exists($aliasedPk, $queryData['fields']))):
-				break;
-			default:
-				$queryData['order'] = array($this->alias . '.' . $this->primaryKey => 'ASC');
-		}
-		return $queryData;
+	public function __construct($id = false, $table = null, $ds = null) {
+		parent::__construct($id, $table, $ds);
+		$this->order = array($this->alias . '.' . $this->primaryKey => 'ASC');
 	}
+
 /**
  * Overriding save() to set CakeTestSuiteDispatcher::date() as formatter for created, modified and updated fields
  *

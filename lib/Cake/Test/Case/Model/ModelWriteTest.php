@@ -2498,6 +2498,7 @@ class ModelWriteTest extends BaseModelTest {
 	public function testHabtmSavingWithNoPrimaryKeyUuidJoinTable() {
 		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
 		$Fruit = new Fruit();
+		$Fruit->FruitsUuidTag->order = null;
 		$data = array(
 			'Fruit' => array(
 				'color' => 'Red',
