@@ -84,7 +84,6 @@ class ConsoleShell extends AppShell {
 
 		foreach ($this->models as $model) {
 			$class = $model;
-			$this->models[$model] = $class;
 			App::uses($class, 'Model');
 			$this->{$class} = new $class();
 		}
