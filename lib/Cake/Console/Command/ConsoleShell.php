@@ -167,15 +167,14 @@ class ConsoleShell extends AppShell {
 			if (empty($command)) {
 				$command = trim($this->in(''));
 			}
-
-			switch ($command) {
-				case 'help':
+			switch (true) {
+				case $command == 'help':
 					$this->help();
 					break;
-				case 'quit':
-				case 'exit':
+				case $command == 'quit':
+				case $command == 'exit':
 					return true;
-				case 'models':
+				case $command == 'models':
 					$this->out(__d('cake_console', 'Model classes:'));
 					$this->hr();
 					foreach ($this->models as $model) {
