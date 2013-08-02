@@ -137,9 +137,9 @@ class ShellDispatcher {
 		$this->setErrorHandlers();
 
 		if (!defined('FULL_BASE_URL')) {
-			$url = Configure::read('App.fullBaseURL');
+			$url = Configure::read('App.fullBaseUrl');
 			define('FULL_BASE_URL', $url ? $url : 'http://localhost');
-			Configure::write('App.fullBaseURL', FULL_BASE_URL);
+			Configure::write('App.fullBaseUrl', FULL_BASE_URL);
 		}
 
 		return true;
