@@ -228,9 +228,16 @@ class FileEngine extends CacheEngine {
 			$now = time();
 			$threshold = $now - $this->settings['duration'];
 		}
+
 		$this->_clearDirectory($this->settings['path'], $now, $threshold);
-		foreach ($this->settings['groups'] as $group) {
-			$this->_clearDirectory($this->settings['path'] . $group . DS, $now, $threshold);
+
+		$directory = new RecursiveDirectoryIterator($this->settings['path']);
+		$contents = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+		foreach ($contents as $path) {
+			if ($path->isFile()) {
+				continue;
+			}
+			$this->_clearDirectory($path->getRealPath() . DS, $now, $threshold);
 		}
 		return true;
 	}
@@ -244,35 +251,36 @@ class FileEngine extends CacheEngine {
  * @return void
  */
 	protected function _clearDirectory($path, $now, $threshold) {
-		$dir = dir($path);
 		$prefixLength = strlen($this->settings['prefix']);
+
+		if (!is_dir($path)) {
+			return;
+		}
+
+		$dir = dir($path);
 		while (($entry = $dir->read()) !== false) {
 			if (substr($entry, 0, $prefixLength) !== $this->settings['prefix']) {
 				continue;
 			}
-			if ($this->_setKey($entry) === false) {
-				continue;
-			}
+			$filePath = $path . $entry;
+			$file = new SplFileObject($path . $entry, 'r');
+
 			if ($threshold) {
-				$mtime = $this->_File->getMTime();
+				$mtime = $file->getMTime();
 
 				if ($mtime > $threshold) {
 					continue;
 				}
-
-				$expires = (int)$this->_File->current();
+				$expires = (int)$file->current();
 
 				if ($expires > $now) {
 					continue;
 				}
 			}
-			$path = $this->_File->getRealPath();
-			$this->_File = null;
-			if (file_exists($path)) {
-				unlink($path);
+			if ($file->isFile()) {
+				unlink($file);
 			}
 		}
-		$dir->close();
 	}
 
 /**
