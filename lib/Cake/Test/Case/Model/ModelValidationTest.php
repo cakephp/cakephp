@@ -1522,7 +1522,7 @@ class ModelValidationTest extends BaseModelTest {
  * @return void
  */
 	public function testValidateAssociated() {
-		$this->loadFixtures('Comment', 'Attachment');
+		$this->loadFixtures('Comment', 'Attachment', 'Article', 'User');
 		$TestModel = new Comment();
 		$TestModel->Attachment->validate = array('attachment' => 'notEmpty');
 
@@ -1538,6 +1538,18 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse($result);
 		$result = $TestModel->validateAssociated($data);
 		$this->assertFalse($result);
+
+		$fieldList = array(
+			'Attachment' => array('comment_id')
+		);
+		$result = $TestModel->saveAll($data, array(
+			'fieldList' => $fieldList, 'validate' => 'only'
+		));
+		$this->assertTrue($result);
+		$this->assertEmpty($TestModel->validationErrors);
+		$result = $TestModel->validateAssociated($data, array('fieldList' => $fieldList));
+		$this->assertTrue($result);
+		$this->assertEmpty($TestModel->validationErrors);
 
 		$TestModel->validate = array('comment' => 'notEmpty');
 		$record = array(
