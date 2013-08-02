@@ -233,7 +233,7 @@ class SecurityComponent extends Component {
 		);
 
 		if ($this->_action == $this->blackHoleCallback) {
-			return $this->blackhole($controller, 'auth');
+			return $this->blackHole($controller, 'auth');
 		}
 
 		if (!in_array($this->_action, (array)$this->unlockedActions) && $isPost && $isNotRequestAction) {
