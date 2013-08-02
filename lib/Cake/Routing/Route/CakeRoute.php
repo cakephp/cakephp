@@ -378,6 +378,9 @@ class CakeRoute {
  * @return array An array with persistent parameters applied.
  */
 	public function persistParams($url, $params) {
+		if (empty($this->options['persist']) || !is_array($this->options['persist'])) {
+			return $url;
+		}
 		foreach ($this->options['persist'] as $persistKey) {
 			if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
 				$url[$persistKey] = $params[$persistKey];
