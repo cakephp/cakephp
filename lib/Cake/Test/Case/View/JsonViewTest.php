@@ -30,6 +30,11 @@ App::uses('JsonView', 'View');
  */
 class JsonViewTest extends CakeTestCase {
 
+	public function setUp() {
+		parent::setUp();
+		Configure::write('debug', 0);
+	}
+
 /**
  * testRenderWithoutView method
  *
