@@ -76,13 +76,10 @@ use Cake\Core\Configure;
  * The level of CakePHP security.
  *
  * - salt - A random string used in security hashing methods.
- * - cipherSeed - A random numeric string (digits only) used to seed 
- *   the xor cipher functions in Security.
+ *   The salt value is also used as the encryption key. You should treat it
+ *   as extremely sensitive data.
  */
-	Configure::write('Security', [
-		'salt' => 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi',
-		'cipherSeed' => '76859309657453542496749683645',
-	]);
+	Configure::write('Security.salt', 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi');
 
 /**
  * Apply timestamps with the last modified time to static assets (js, css, images).

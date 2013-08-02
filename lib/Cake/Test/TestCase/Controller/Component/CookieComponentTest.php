@@ -50,7 +50,7 @@ class CookieComponentTest extends TestCase {
 		$this->Cookie->path = '/';
 		$this->Cookie->domain = '';
 		$this->Cookie->secure = false;
-		$this->Cookie->key = 'somerandomhaskey';
+		$this->Cookie->key = 'somerandomhaskeysomerandomhaskey';
 
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Cookie->startup($event);
@@ -647,7 +647,7 @@ class CookieComponentTest extends TestCase {
 		if (is_array($value)) {
 			$value = $this->_implode($value);
 		}
-		return "Q2FrZQ==." . base64_encode(Security::cipher($value, $this->Cookie->key));
+		return "Q2FrZQ==." . base64_encode(Security::rijndael($value, $this->Cookie->key, 'encrypt'));
 	}
 
 }
