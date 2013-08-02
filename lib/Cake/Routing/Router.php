@@ -848,9 +848,7 @@ class Router {
 			for ($i = 0, $len = count(self::$routes); $i < $len; $i++) {
 				$originalUrl = $url;
 
-				if (isset(self::$routes[$i]->options['persist'], $params)) {
-					$url = self::$routes[$i]->persistParams($url, $params);
-				}
+				$url = self::$routes[$i]->persistParams($url, $params);
 
 				if ($match = self::$routes[$i]->match($url)) {
 					$output = trim($match, '/');
