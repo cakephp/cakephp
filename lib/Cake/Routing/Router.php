@@ -800,11 +800,7 @@ class Router {
 			if ($plainString) {
 				return $url;
 			}
-			$output = $url;
-			if ($hasLeadingSlash && strlen($output) > 1) {
-				$output = substr($output, 1);
-			}
-			$output = $base . $output;
+			$output = $base . $url;
 		}
 		$protocol = preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
 		if ($protocol === 0) {
