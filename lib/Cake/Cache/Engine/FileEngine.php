@@ -263,6 +263,9 @@ class FileEngine extends CacheEngine {
 				continue;
 			}
 			$filePath = $path . $entry;
+			if (is_dir($filePath)) {
+				continue;
+			}
 			$file = new SplFileObject($path . $entry, 'r');
 
 			if ($threshold) {
