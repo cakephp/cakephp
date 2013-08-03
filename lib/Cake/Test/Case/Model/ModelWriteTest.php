@@ -6559,6 +6559,66 @@ class ModelWriteTest extends BaseModelTest {
 		$this->assertEquals('', $result[3]['Post']['body']);
 		$this->assertEquals('working', $result[3]['Author']['test']);
 
+		$fieldList = array(
+			'Post' => array('title')
+		);
+		$data = array(
+			'Post' => array(
+				'title' => 'Post without body 2',
+				'body' => 'This will not be saved'
+			),
+			'Author' => array(
+				'user' => 'jack'
+			)
+		);
+		$TestModel->saveAll($data, array('fieldList' => $fieldList));
+		$result = $TestModel->find('all', array(
+			'order' => 'Post.id ASC',
+		));
+		$this->assertNull($result[4]['Post']['body']);
+
+		$fieldList = array(
+			'Author' => array('password')
+		);
+		$data = array(
+			'Post' => array(
+				'id' => '5',
+				'title' => 'Post title',
+				'body' => 'Post body'
+			),
+			'Author' => array(
+				'id' => '6',
+				'user' => 'will not change',
+				'password' => 'foobar'
+			)
+		);
+		$result = $TestModel->saveAll($data, array('fieldList' => $fieldList));
+		$this->assertTrue($result);
+
+		$result = $TestModel->find('all', array(
+			'order' => 'Post.id ASC',
+		));
+		$expected = array(
+			'Post' => array(
+				'id' => '5',
+				'author_id' => '6',
+				'title' => 'Post title',
+				'body' => 'Post body',
+				'published' => 'N',
+				'created' => self::date(),
+				'updated' => self::date()
+			),
+			'Author' => array(
+				'id' => '6',
+				'user' => 'jack',
+				'password' => 'foobar',
+				'created' => self::date(),
+				'updated' => self::date(),
+				'test' => 'working'
+			),
+		);
+		$this->assertEquals($expected, $result[4]);
+
 		// test multirecord
 		$this->db->truncate($TestModel);
 
