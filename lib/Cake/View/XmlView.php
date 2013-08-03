@@ -116,7 +116,13 @@ class XmlView extends View {
 				$data = array($rootNode => array($serialize => $data));
 			}
 		}
-		return Xml::fromArray($data)->asXML();
+
+		$options = array();
+		if (Configure::read('debug')) {
+			$options['pretty'] = true;
+		}
+
+		return Xml::fromArray($data, $options)->asXML();
 	}
 
 }
