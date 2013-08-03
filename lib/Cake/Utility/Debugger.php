@@ -850,10 +850,6 @@ class Debugger {
 		if (Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
 			trigger_error(__d('cake_dev', 'Please change the value of \'Security.salt\' in App/Config/app.php to a salt value specific to your application'), E_USER_NOTICE);
 		}
-
-		if (Configure::read('Security.cipherSeed') === '76859309657453542496749683645') {
-			trigger_error(__d('cake_dev', 'Please change the value of \'Security.cipherSeed\' in app/Config/app.php to a numeric (digits only) seed value specific to your application'), E_USER_NOTICE);
-		}
 	}
 
 }

@@ -20,6 +20,7 @@
 namespace Cake\Utility;
 
 use Cake\Core\Configure;
+use Cake\Error;
 
 /**
  * Security Library contains utility methods related to security
@@ -158,76 +159,44 @@ class Security {
  */
 	public static function setCost($cost) {
 		if ($cost < 4 || $cost > 31) {
-			trigger_error(__d(
+			throw new Error\Exception(__d(
 				'cake_dev',
 				'Invalid value, cost must be between %s and %s',
 				array(4, 31)
-			), E_USER_WARNING);
-			return null;
+			));
 		}
 		static::$hashCost = $cost;
 	}
 
 /**
- * Runs $text through a XOR cipher.
- *
- * *Note* This is not a cryptographically strong method and should not be used
- * for sensitive data. Additionally this method does *not* work in environments
- * where suhosin is enabled.
- *
- * Instead you should use Security::rijndael() when you need strong
- * encryption.
- *
+ * Deprecated method. Does nothing.
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use
- * @return string Encrypted/Decrypted string
+ * @throws Cake\Error\Exception
  * @deprecated This method will be removed in 3.x
  */
 	public static function cipher($text, $key) {
-		if (empty($key)) {
-			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::cipher()'), E_USER_WARNING);
-			return '';
-		}
-
-		srand(Configure::read('Security.cipherSeed'));
-		$out = '';
-		$keyLength = strlen($key);
-		for ($i = 0, $textLength = strlen($text); $i < $textLength; $i++) {
-			$j = ord(substr($key, $i % $keyLength, 1));
-			while ($j--) {
-				rand(0, 255);
-			}
-			$mask = rand(0, 255);
-			$out .= chr(ord(substr($text, $i, 1)) ^ $mask);
-		}
-		srand();
-		return $out;
+		throw new Error\Exception(__d('cake_dev', 'Security::cipher() has been removed. Use Security::rijndael() to encrypt data'));
 	}
 
 /**
  * Encrypts/Decrypts a text using the given key using rijndael method.
  *
- * Prior to 2.3.1, a fixed initialization vector was used. This was not
- * secure. This method now uses a random iv, and will silently upgrade values when
- * they are re-encrypted.
- *
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use as the encryption key for encrypted data.
  * @param string $operation Operation to perform, encrypt or decrypt
+ * @throws Cake\Error\Exception When there are errors.
  * @return string Encrypted/Decrypted string
  */
 	public static function rijndael($text, $key, $operation) {
 		if (empty($key)) {
-			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::rijndael()'), E_USER_WARNING);
-			return '';
+			throw new Error\Exception(__d('cake_dev', 'You cannot use an empty key for Security::rijndael()'));
 		}
 		if (empty($operation) || !in_array($operation, array('encrypt', 'decrypt'))) {
-			trigger_error(__d('cake_dev', 'You must specify the operation for Security::rijndael(), either encrypt or decrypt'), E_USER_WARNING);
-			return '';
+			throw new Error\Exception(__d('cake_dev', 'You must specify the operation for Security::rijndael(), either encrypt or decrypt'));
 		}
 		if (strlen($key) < 32) {
-			trigger_error(__d('cake_dev', 'You must use a key larger than 32 bytes for Security::rijndael()'), E_USER_WARNING);
-			return '';
+			throw new Error\Exception(__d('cake_dev', 'You must use a key larger than 32 bytes for Security::rijndael()'));
 		}
 		$algorithm = MCRYPT_RIJNDAEL_256;
 		$mode = MCRYPT_MODE_CBC;
@@ -236,13 +205,8 @@ class Security {
 		$cryptKey = substr($key, 0, 32);
 
 		if ($operation === 'encrypt') {
-			$iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
+			$iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
 			return $iv . '$$' . mcrypt_encrypt($algorithm, $cryptKey, $text, $mode, $iv);
-		}
-		// Backwards compatible decrypt with fixed iv
-		if (substr($text, $ivSize, 2) !== '$$') {
-			$iv = substr($key, strlen($key) - 32, 32);
-			return rtrim(mcrypt_decrypt($algorithm, $cryptKey, $text, $mode, $iv), "\0");
 		}
 		$iv = substr($text, 0, $ivSize);
 		$text = substr($text, $ivSize + 2);
@@ -272,6 +236,7 @@ class Security {
  * @param string $password The string to be encrypted.
  * @param mixed $salt false to generate a new salt or an existing salt.
  * @return string The hashed string or an empty string on error.
+ * @throws Cake\Error\Exception on invalid salt values.
  */
 	protected static function _crypt($password, $salt = false) {
 		if ($salt === false) {
@@ -280,12 +245,11 @@ class Security {
 		}
 
 		if ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 29) {
-			trigger_error(__d(
+			throw new Error\Exception(__d(
 				'cake_dev',
 				'Invalid salt: %s for %s Please visit http://www.php.net/crypt and read the appropriate section for building %s salts.',
 				array($salt, 'blowfish', 'blowfish')
-			), E_USER_WARNING);
-			return '';
+			));
 		}
 		return crypt($password, $salt);
 	}
