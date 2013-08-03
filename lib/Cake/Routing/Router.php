@@ -905,11 +905,11 @@ class Router {
 /**
  * Sets the full base url that will be used as a prefix for generating
  * fully qualified URLs for this application. If not parameters are passed,
- * the currently configured value is returned
+ * the currently configured value is returned.
  *
  * ## Note:
  *
- * If you change during runtime the configuration value ``App.fullBaseURL``
+ * If you change the configuration value ``App.fullBaseUrl`` during runtime
  * and expect the router to produce links using the new setting, you are
  * required to call this method passing such value again.
  *

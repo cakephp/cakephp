@@ -49,16 +49,16 @@ class RouterTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		CakePlugin::unload();
-		Router::fullbaseURL('');
+		Router::fullBaseUrl('');
 		Configure::write('App.fullBaseUrl', 'http://localhost');
 	}
 
 /**
- * testFullBaseURL method
+ * testFullBaseUrl method
  *
  * @return void
  */
-	public function testFullBaseURL() {
+	public function testFullBaseUrl() {
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('full_base' => true)));
@@ -66,16 +66,16 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * Tests that the base URL can be changed at runtime
+ * Tests that the base URL can be changed at runtime.
  *
  * @return void
  */
-	public function testBaseURL() {
+	public function testBaseUrl() {
 		$this->assertEquals(FULL_BASE_URL, Router::fullBaseUrl());
-		Router::fullbaseURL('http://example.com');
+		Router::fullBaseUrl('http://example.com');
 		$this->assertEquals('http://example.com/', Router::url('/', true));
 		$this->assertEquals('http://example.com', Configure::read('App.fullBaseUrl'));
-		Router::fullbaseURL('https://example.com');
+		Router::fullBaseUrl('https://example.com');
 		$this->assertEquals('https://example.com/', Router::url('/', true));
 		$this->assertEquals('https://example.com', Configure::read('App.fullBaseUrl'));
 	}
