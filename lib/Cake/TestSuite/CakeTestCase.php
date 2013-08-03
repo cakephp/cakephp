@@ -690,6 +690,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @param string $model
  * @param mixed $methods
  * @param array $config
+ * @throws MissingModelException
  * @return Model
  */
 	public function getMockForModel($model, $methods = array(), $config = array()) {
@@ -698,6 +699,11 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		list($plugin, $name) = pluginSplit($model, true);
 		App::uses($name, $plugin . 'Model');
 		$config = array_merge((array)$config, array('name' => $name));
+
+		if (!class_exists($name)) {
+			throw new MissingModelException(array($model));
+		}
+
 		$mock = $this->getMock($name, $methods, array($config));
 		ClassRegistry::removeObject($name);
 		ClassRegistry::addObject($name, $mock);
