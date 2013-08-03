@@ -6536,7 +6536,7 @@ class ModelWriteTest extends BaseModelTest {
 			'order' => 'Post.id ASC',
 		));
 		$expected = array(
-			'Post' => array (
+			'Post' => array(
 				'id' => '4',
 				'author_id' => '5',
 				'title' => 'Post without body',
@@ -6545,7 +6545,7 @@ class ModelWriteTest extends BaseModelTest {
 				'created' => self::date(),
 				'updated' => self::date(),
 			),
-			'Author' => array (
+			'Author' => array(
 				'id' => '5',
 				'user' => 'bob',
 				'password' => null,

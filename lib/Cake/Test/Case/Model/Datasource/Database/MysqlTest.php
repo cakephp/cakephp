@@ -986,7 +986,7 @@ class MysqlTest extends CakeTestCase {
 			'primary_flag_has_index' => array(
 				'id' => array('type' => 'integer', 'null' => false, 'key' => 'primary'),
 				'data' => array('type' => 'integer', 'null' => false),
-				'indexes' => array (
+				'indexes' => array(
 					'some_index' => array('column' => 'data', 'unique' => 1)
 				),
 			)
