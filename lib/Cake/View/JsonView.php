@@ -132,7 +132,7 @@ class JsonView extends View {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 		}
 
-		if (version_compare(PHP_VERSION, '5.4.0', '>=') && Configure::read('debug')) {
+		if (Configure::read('debug')) {
 			return json_encode($data, JSON_PRETTY_PRINT);
 		}
 

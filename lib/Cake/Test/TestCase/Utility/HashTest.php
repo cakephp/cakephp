@@ -1144,10 +1144,6 @@ class HashTest extends TestCase {
  * @return void
  */
 	public function testSortNaturalFallbackToRegular() {
-		if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
-			$this->markTestSkipped('Skipping SORT_NATURAL fallback test on PHP >= 5.4');
-		}
-
 		$a = array(
 			0 => array('Person' => array('name' => 'Jeff')),
 			1 => array('Shirt' => array('color' => 'black'))
