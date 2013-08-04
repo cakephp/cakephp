@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\Model\ConnectionManager;
 use Cake\ORM\Query;
+use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 
 /**
@@ -810,6 +811,19 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			]
 		];
 		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Test setResult()
+ *
+ * @return void
+ */
+	public function testSetResult() {
+		$query = new Query($this->connection);
+		$stmt = $this->getMock('Cake\Database\StatementInterface');
+		$results = new ResultSet($query, $stmt);
+		$query->setResult($results);
+		$this->assertSame($results, $query->execute());
 	}
 
 }
