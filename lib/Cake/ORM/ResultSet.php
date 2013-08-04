@@ -71,13 +71,6 @@ class ResultSet implements Iterator {
 	protected $_defaultTable;
 
 /**
- * Default table alias
- *
- * @var string
- */
-	protected $_defaultAlias;
-
-/**
  * List of associations that should be eager loaded
  *
  * @var array
@@ -103,7 +96,6 @@ class ResultSet implements Iterator {
 		$this->_query = $query;
 		$this->_statement = $statement;
 		$this->_defaultTable = $this->_query->repository();
-		$this->_defaultAlias = $this->_defaultTable->alias();
 		$this->_calculateAssociationMap();
 	}
 
@@ -207,9 +199,10 @@ class ResultSet implements Iterator {
  * @return array
  */
 	protected function _groupResult() {
+		$defaultAlias = $this->_defaultTable->alias();
 		$results = [];
 		foreach ($this->_current as $key => $value) {
-			$table = $this->_defaultAlias;
+			$table = $defaultAlias;
 			$field = $key;
 
 			if (empty($this->_map[$key])) {
@@ -226,9 +219,9 @@ class ResultSet implements Iterator {
 			$results[$table][$field] = $value;
 		}
 
-		$results[$this->_defaultAlias] = $this->_castValues(
+		$results[$defaultAlias] = $this->_castValues(
 			$this->_defaultTable,
-			$results[$this->_defaultAlias]
+			$results[$defaultAlias]
 		);
 
 		foreach (array_reverse($this->_associationMap) as $alias => $assoc) {
@@ -239,7 +232,7 @@ class ResultSet implements Iterator {
 			$results = $assoc->transformRow($results);
 		}
 
-		return $results[$this->_defaultAlias];
+		return $results[$defaultAlias];
 	}
 
 /**
@@ -269,4 +262,5 @@ class ResultSet implements Iterator {
 
 		return $values;
 	}
+
 }
