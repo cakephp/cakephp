@@ -361,7 +361,7 @@ class Controller extends Object implements EventListener {
  * Lazy loads models using the loadModel() method if declared in $uses
  *
  * @param string $name
- * @return void
+ * @return boolean
  */
 	public function __isset($name) {
 		switch ($name) {
@@ -398,8 +398,8 @@ class Controller extends Object implements EventListener {
  * Provides backwards compatibility access to the request object properties.
  * Also provides the params alias.
  *
- * @param string $name
- * @return void
+ * @param string $name The name of the requested value
+ * @return mixed The requested value for valid variables/aliases else null
  */
 	public function __get($name) {
 		switch ($name) {
@@ -424,9 +424,10 @@ class Controller extends Object implements EventListener {
 	public function __set($name, $value) {
 		switch ($name) {
 			case 'paginate':
-				return $this->Components->load('Paginator')->settings = $value;
+				$this->Components->load('Paginator')->settings = $value;
+				return;
 		}
-		return $this->{$name} = $value;
+		$this->{$name} = $value;
 	}
 
 /**

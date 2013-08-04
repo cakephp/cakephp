@@ -23,6 +23,7 @@ use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Error;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 
@@ -1860,6 +1861,16 @@ class I18nTest extends TestCase {
 		$result = I18n::translate('Plural Rule 1', null, null, 6, null, 'rule_1_po');
 		$expected = 'Plural Rule 1 (translated)';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that the '' domain causes exceptions.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testTranslateEmptyDomain() {
+		I18n::translate('Plural Rule 1', null, '');
 	}
 
 /**

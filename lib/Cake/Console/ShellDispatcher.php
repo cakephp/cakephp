@@ -114,10 +114,8 @@ class ShellDispatcher {
 	protected function _bootstrap() {
 		$this->setErrorHandlers();
 
-		if (!defined('FULL_BASE_URL')) {
-			$url = Configure::read('App.fullBaseURL');
-			define('FULL_BASE_URL', $url ? $url : 'http://localhost');
-			Configure::write('App.fullBaseURL', FULL_BASE_URL);
+		if (!Configure::read('App.fullBaseUrl')) {
+			Configure::write('App.fullBaseUrl', 'http://localhost');
 		}
 
 		return true;

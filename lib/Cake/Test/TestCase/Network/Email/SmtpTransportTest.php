@@ -84,6 +84,7 @@ class SmtpTransportTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		if (!class_exists('MockSocket')) {
 			$this->getMock('Cake\Network\Socket', array('read', 'write', 'connect', 'enableCrypto'), array(), 'MockSocket');
 		}

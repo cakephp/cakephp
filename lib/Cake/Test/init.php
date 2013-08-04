@@ -27,13 +27,9 @@ define('TESTS', APP . 'Test' . DS);
 define('TMP', APP . 'tmp' . DS);
 define('LOGS', TMP . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
-define('IMAGES_URL', 'img/');
-define('CSS_URL', 'css/');
-define('JS_URL', 'js/');
 define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'Cake' . DS);
-define('FULL_BASE_URL', 'http://localhost');
 define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'TestCase');
 define('LOG_ERROR', LOG_ERR);
 
@@ -53,7 +49,10 @@ Configure::write('App', [
 	'dir' => APP_DIR,
 	'webroot' => WEBROOT_DIR,
 	'www_root' => WWW_ROOT,
-	'fullBaseURL' => 'http://localhost'
+	'fullBaseUrl' => 'http://localhost',
+	'imageBaseUrl' => 'img/',
+	'jsBaseUrl' => 'js/',
+	'cssBaseUrl' => 'css/',
 ]);
 
 Configure::write('Cache._cake_core_', [

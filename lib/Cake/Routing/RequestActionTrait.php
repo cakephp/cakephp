@@ -13,6 +13,7 @@
  */
 namespace Cake\Routing;
 
+use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Dispatcher;
@@ -95,8 +96,8 @@ trait RequestActionTrait {
 		}
 		unset($extra['post'], $extra['query']);
 
-		if (is_string($url) && strpos($url, FULL_BASE_URL) === 0) {
-			$url = Router::normalize(str_replace(FULL_BASE_URL, '', $url));
+		if (is_string($url) && strpos($url, Configure::read('App.fullBaseUrl')) === 0) {
+			$url = Router::normalize(str_replace(Configure::read('App.fullBaseUrl'), '', $url));
 		}
 		if (is_string($url)) {
 			$params = [

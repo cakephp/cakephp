@@ -119,7 +119,7 @@ class RequestTest extends TestCase {
 		$request = Request::createFromGlobals();
 		$this->assertEquals('some/path', $request->url);
 
-		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseURL') . '/other/path?url=http://cakephp.org';
+		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
 		$request = Request::createFromGlobals();
 		$this->assertEquals('other/path', $request->url);
 	}
@@ -585,25 +585,25 @@ class RequestTest extends TestCase {
 		$result = $request->referer();
 		$this->assertSame($result, '/');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(false);
-		$this->assertSame($result, Configure::read('App.fullBaseURL') . '/some/path');
+		$this->assertSame($result, Configure::read('App.fullBaseUrl') . '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/recipes/add';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/recipes/add';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/recipes/add');
 
 		$_SERVER['HTTP_X_FORWARDED_HOST'] = 'cakephp.org';
 		$result = $request->referer();
-		$this->assertSame(Configure::read('App.fullBaseURL') . '/recipes/add', $result);
+		$this->assertSame(Configure::read('App.fullBaseUrl') . '/recipes/add', $result);
 
 		$request->trustProxy = true;
 		$result = $request->referer();
@@ -623,7 +623,7 @@ class RequestTest extends TestCase {
 		$request->base = '/waves';
 		$request->here = '/waves/users/login';
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/waves/waves/add';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/waves/waves/add';
 
 		$result = $request->referer(true);
 		$this->assertSame($result, '/waves/add');

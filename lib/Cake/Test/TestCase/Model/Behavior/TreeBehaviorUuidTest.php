@@ -72,6 +72,7 @@ class TreeBehaviorUuidTest extends TestCase {
 	public function testAddWithPreSpecifiedId() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find('first', array(
@@ -103,6 +104,7 @@ class TreeBehaviorUuidTest extends TestCase {
 	public function testMovePromote() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -129,6 +131,7 @@ class TreeBehaviorUuidTest extends TestCase {
 	public function testMoveWithWhitelist() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 		$this->Tree->id = null;
 
@@ -156,6 +159,7 @@ class TreeBehaviorUuidTest extends TestCase {
 	public function testRemoveNoChildren() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 		$initialCount = $this->Tree->find('count');
 
@@ -190,6 +194,7 @@ class TreeBehaviorUuidTest extends TestCase {
 	public function testRemoveAndDeleteNoChildren() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 		$initialCount = $this->Tree->find('count');
 
@@ -222,6 +227,7 @@ class TreeBehaviorUuidTest extends TestCase {
 	public function testChildren() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 
 		$data = $this->Tree->find('first', array('conditions' => array($modelClass . '.name' => '1. Root')));
@@ -250,6 +256,7 @@ class TreeBehaviorUuidTest extends TestCase {
 	public function testNoAmbiguousColumn() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
@@ -286,6 +293,7 @@ class TreeBehaviorUuidTest extends TestCase {
 	public function testGenerateTreeListWithSelfJoin() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
 		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
 			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
 		$this->Tree->initialize(2, 2);

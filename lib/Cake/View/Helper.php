@@ -249,7 +249,7 @@ class Helper extends Object implements EventListener {
  *
  * @param string $name Name of the property being accessed.
  * @param mixed $value
- * @return mixed Return the $value
+ * @return void
  */
 	public function __set($name, $value) {
 		switch ($name) {
@@ -257,11 +257,13 @@ class Helper extends Object implements EventListener {
 			case 'here':
 			case 'webroot':
 			case 'data':
-				return $this->request->{$name} = $value;
+				$this->request->{$name} = $value;
+				return;
 			case 'action':
-				return $this->request->params['action'] = $value;
+				$this->request->params['action'] = $value;
+				return;
 		}
-		return $this->{$name} = $value;
+		$this->{$name} = $value;
 	}
 
 /**
@@ -354,7 +356,7 @@ class Helper extends Object implements EventListener {
 		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
 		if (!empty($options['fullBase'])) {
-			$path = rtrim(Router::baseURL(), '/') . '/' . ltrim($path, '/');
+			$path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
 		}
 		return $path;
 	}

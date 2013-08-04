@@ -34,10 +34,6 @@ use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
-if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', 'http://cakephp.org');
-}
-
 class TestHtmlHelper extends HtmlHelper {
 
 /**
@@ -199,7 +195,7 @@ class HtmlHelperTest extends TestCase {
 		Router::connect('/:controller/:action/*');
 
 		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', '_full' => true));
-		$expected = array('a' => array('href' => Router::baseURL() . '/posts'), 'Posts', '/a');
+		$expected = array('a' => array('href' => Router::fullBaseUrl() . '/posts'), 'Posts', '/a');
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));
@@ -1850,7 +1846,7 @@ class HtmlHelperTest extends TestCase {
 			array('pathPrefix' => 'videos/', 'poster' => 'poster.jpg', 'text' => 'Your browser does not support the HTML5 Video element.')
 		);
 		$expected = array(
-			'video' => array('poster' => IMAGES_URL . 'poster.jpg'),
+			'video' => array('poster' => Configure::read('App.imageBaseUrl') . 'poster.jpg'),
 				array('source' => array('src' => 'videos/video.webm', 'type' => 'video/webm')),
 				array('source' => array('src' => 'videos/video.ogv', 'type' => 'video/ogg; codecs=&#039;theora, vorbis&#039;')),
 				'Your browser does not support the HTML5 Video element.',

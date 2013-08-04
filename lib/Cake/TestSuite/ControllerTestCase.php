@@ -340,6 +340,7 @@ abstract class ControllerTestCase extends TestCase {
 		);
 		list(, $controllerName) = namespaceSplit($classname);
 		$controller->name = substr($controllerName, 0, -10);
+		$controller->Components->setController($controllerObj);
 
 		$config = ClassRegistry::config('Model');
 		foreach ($mocks['models'] as $model => $methods) {

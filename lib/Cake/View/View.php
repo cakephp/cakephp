@@ -626,7 +626,7 @@ class View extends Object {
  * @see ViewBlock::start()
  */
 	public function start($name) {
-		return $this->Blocks->start($name);
+		$this->Blocks->start($name);
 	}
 
 /**
@@ -637,7 +637,7 @@ class View extends Object {
  * @see ViewBlock::startIfEmpty()
  */
 	public function startIfEmpty($name) {
-		return $this->Blocks->startIfEmpty($name);
+		$this->Blocks->startIfEmpty($name);
 	}
 
 /**
@@ -651,7 +651,7 @@ class View extends Object {
  * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
-		return $this->Blocks->concat($name, $value);
+		$this->Blocks->concat($name, $value);
 	}
 
 /**
@@ -665,7 +665,7 @@ class View extends Object {
  * @see ViewBlock::concat()
  */
 	public function prepend($name, $value = null) {
-		return $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
+		$this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 	}
 
 /**
@@ -679,7 +679,7 @@ class View extends Object {
  * @see ViewBlock::set()
  */
 	public function assign($name, $value) {
-		return $this->Blocks->set($name, $value);
+		$this->Blocks->set($name, $value);
 	}
 
 /**
@@ -702,7 +702,7 @@ class View extends Object {
  * @see ViewBlock::end()
  */
 	public function end() {
-		return $this->Blocks->end();
+		$this->Blocks->end();
 	}
 
 /**

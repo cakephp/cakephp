@@ -492,8 +492,11 @@ class ControllerTest extends TestCase {
 			'test' => 'value',
 			'_serialize' => ['test']
 		]);
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
 		$result = $Controller->render('index');
-		$this->assertEquals('{"test":"value"}', $result);
+		$this->assertEquals('{"test":"value"}', $result->body());
+		Configure::write('debug', $debug);
 	}
 
 /**

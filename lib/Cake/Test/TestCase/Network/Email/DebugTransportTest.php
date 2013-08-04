@@ -35,6 +35,7 @@ class DebugTransportTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->DebugTransport = new DebugTransport();
 	}
 

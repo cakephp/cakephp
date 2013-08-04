@@ -450,13 +450,13 @@ class HtmlHelper extends Helper {
 		if (strpos($path, '//') !== false) {
 			$url = $path;
 		} else {
-			$url = $this->assetUrl($path, $options + array('pathPrefix' => CSS_URL, 'ext' => '.css'));
+			$url = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css'));
 			$options = array_diff_key($options, array('fullBase' => null));
 
 			if (Configure::read('Asset.filter.css')) {
-				$pos = strpos($url, CSS_URL);
+				$pos = strpos($url, Configure::read('App.cssBaseUrl'));
 				if ($pos !== false) {
-					$url = substr($url, 0, $pos) . 'ccss/' . substr($url, $pos + strlen(CSS_URL));
+					$url = substr($url, 0, $pos) . 'ccss/' . substr($url, $pos + strlen(Configure::read('App.cssBaseUrl')));
 				}
 			}
 		}
@@ -551,11 +551,11 @@ class HtmlHelper extends Helper {
 		$this->_includedScripts[$url] = true;
 
 		if (strpos($url, '//') === false) {
-			$url = $this->assetUrl($url, $options + array('pathPrefix' => JS_URL, 'ext' => '.js'));
+			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
 			$options = array_diff_key($options, array('fullBase' => null));
 
 			if (Configure::read('Asset.filter.js')) {
-				$url = str_replace(JS_URL, 'cjs/', $url);
+				$url = str_replace(Configure::read('App.jsBaseUrl'), 'cjs/', $url);
 			}
 		}
 		$attributes = $this->_parseAttributes($options, array('block', 'once'), ' ');
@@ -809,7 +809,7 @@ class HtmlHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::image
  */
 	public function image($path, $options = array()) {
-		$path = $this->assetUrl($path, $options + array('pathPrefix' => IMAGES_URL));
+		$path = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.imageBaseUrl')));
 		$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 
 		if (!isset($options['alt'])) {
@@ -1112,7 +1112,7 @@ class HtmlHelper extends Helper {
 		}
 
 		if (isset($options['poster'])) {
-			$options['poster'] = $this->assetUrl($options['poster'], array('pathPrefix' => IMAGES_URL) + $options);
+			$options['poster'] = $this->assetUrl($options['poster'], array('pathPrefix' => Configure::read('App.imageBaseUrl')) + $options);
 		}
 		$text = $options['text'];
 

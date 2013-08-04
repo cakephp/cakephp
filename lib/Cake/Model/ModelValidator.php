@@ -23,6 +23,7 @@ namespace Cake\Model;
 
 use Cake\Event\Event;
 use Cake\Model\Validator\ValidationSet;
+use Cake\Utility\Hash;
 
 /**
  * ModelValidator object encapsulates all methods related to data validations for a model
@@ -396,11 +397,11 @@ class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
 		}
 		unset($fieldList);
 
-		$validateList = array();
-		if (empty($whitelist)) {
+		if (empty($whitelist) || Hash::dimensions($whitelist) > 1) {
 			return $this->_fields;
 		}
 
+		$validateList = array();
 		$this->validationErrors = array();
 		foreach ((array)$whitelist as $f) {
 			if (!empty($this->_fields[$f])) {

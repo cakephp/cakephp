@@ -14,6 +14,7 @@
 namespace Cake\View;
 
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 use Cake\Network\Response;
 use Cake\Utility\Set;
 use Cake\Utility\Xml;
@@ -119,7 +120,13 @@ class XmlView extends View {
 				$data = array($rootNode => array($serialize => $data));
 			}
 		}
-		return Xml::fromArray($data)->asXML();
+
+		$options = array();
+		if (Configure::read('debug')) {
+			$options['pretty'] = true;
+		}
+
+		return Xml::fromArray($data, $options)->asXML();
 	}
 
 }

@@ -6307,6 +6307,7 @@ class ModelReadTest extends ModelTestBase {
 		$this->loadFixtures('User');
 		$TestModel = new User();
 		$TestModel->cacheQueries = false;
+		$TestModel->order = null;
 
 		$expected = array(
 			'conditions' => array(
@@ -6854,6 +6855,8 @@ class ModelReadTest extends ModelTestBase {
 		));
 		$this->assertEquals('mariano', $result);
 
+		$TestModel->order = null;
+
 		$result = $TestModel->field('COUNT(*) AS count', true);
 		$this->assertEquals(4, $result);
 
@@ -6909,7 +6912,9 @@ class ModelReadTest extends ModelTestBase {
 		$this->assertNotRegExp('/ORDER\s+BY/', $log['log'][0]['query']);
 
 		$Article = new Article();
+		$Article->order = null;
 		$Article->recursive = -1;
+
 		$expected = count($Article->find('all', array(
 			'fields' => array('Article.user_id'),
 			'group' => 'Article.user_id')
@@ -7765,6 +7770,8 @@ class ModelReadTest extends ModelTestBase {
 			'limit' => 1
 		));
 		$this->assertEquals(2, $result['Post']['id']);
+
+		$Post->order = null;
 
 		$Post->virtualFields = array('other_field' => 'Post.id + 1');
 		$result = $Post->find('all', array(

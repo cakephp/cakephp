@@ -57,6 +57,7 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->Time);
 		$this->_restoreSystemTimezone();
 	}

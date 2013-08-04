@@ -21,6 +21,7 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -33,6 +34,11 @@ use Cake\View\XmlView;
  * @package       Cake.Test.Case.View
  */
 class XmlViewTest extends TestCase {
+
+	public function setUp() {
+		parent::setUp();
+		Configure::write('debug', 0);
+	}
 
 /**
  * testRenderWithoutView method

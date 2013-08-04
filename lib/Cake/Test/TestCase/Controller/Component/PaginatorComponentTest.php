@@ -89,6 +89,8 @@ class PaginatorComponentTest extends TestCase {
 		$Controller->request->query = array();
 		$Controller->constructClasses();
 
+		$Controller->PaginatorControllerPost->order = null;
+
 		$Controller->Paginator->settings = array(
 			'order' => array('PaginatorControllerComment.id' => 'ASC')
 		);

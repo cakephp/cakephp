@@ -34,6 +34,7 @@ class CookieComponentTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$controller = $this->getMock(
 			'Cake\Controller\Controller',
 			array('redirect'),
@@ -62,6 +63,7 @@ class CookieComponentTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		$this->Cookie->destroy();
 	}
 

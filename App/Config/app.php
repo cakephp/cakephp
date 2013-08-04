@@ -42,6 +42,10 @@ use Cake\Core\Configure;
  *
  * - namespace - The namespace to find app classes under.
  * - encoding - The encoding used for HTML + database connections.
+ * - base - The base directory the app resides in. If false this
+ *   will be auto detected.
+ * - webroot - The webroot directory.
+ * - www_root - The file path to webroot.
  * - baseUrl - To configure CakePHP *not* to use mod_rewrite and to
  *   use CakePHP pretty URLs, remove these .htaccess
  *   files:
@@ -49,24 +53,44 @@ use Cake\Core\Configure;
  *      /app/.htaccess
  *      /app/webroot/.htaccess
  *   And uncomment the baseUrl key below.
- * - base - The base directory the app resides in. If false this
- *   will be auto detected.
- * - webroot - The webroot directory.
- * - www_root - The file path to webroot.
+ * - imageBaseUrl - Web path to the public images directory under webroot.
+ * - cssBaseUrl - Web path to the public css directory under webroot.
+ * - jsBaseUrl - Web path to the public js directory under webroot.
  */
 	Configure::write('App', [
 		'namespace' => $namespace,
 		'encoding' => 'UTF-8',
 		'base' => false,
-		'baseUrl' => false,
-		//'baseUrl' => env('SCRIPT_NAME'),
 		'dir' => APP_DIR,
 		'webroot' => WEBROOT_DIR,
 		'www_root' => WWW_ROOT,
+		'baseUrl' => false,
+		//'baseUrl' => env('SCRIPT_NAME'),
+		'imageBaseUrl' => 'img/',
+		'cssBaseUrl' => 'css/',
+		'jsBaseUrl' => 'js/'
 	]);
 
 /**
- * Uncomment this line and correct your server timezone to fix 
+ * To configure CakePHP to use a particular domain URL
+ * for any URL generation inside the application, set the following
+ * configuration variable to the http(s) address to your domain.
+ * In most cases the code below will generate the correct hostname.
+ * However, you can manually define the hostname to resolve any issues.
+ */
+$s = null;
+if (env('HTTPS')) {
+	$s = 's';
+}
+
+$httpHost = env('HTTP_HOST');
+if (isset($httpHost)) {
+	Configure::write('App.fullBaseUrl', 'http' . $s . '://' . $httpHost);
+}
+unset($httpHost, $s);
+
+/**
+ * Uncomment this line and correct your server timezone to fix
  * any date & time related errors.
  */
 	//date_default_timezone_set('UTC');
@@ -108,21 +132,6 @@ use Cake\Core\Configure;
  */
 if (!class_exists('App\Controller\AppController')) {
 	(new \Cake\Core\ClassLoader($namespace, dirname(APP)))->register();
-}
-
-/**
- * Define the FULL_BASE_URL used for link generation.
- * In most cases the code below will generate the correct hostname.
- * However, you can manually define the hostname to resolve any issues.
- */
-$s = null;
-if (env('HTTPS')) {
-	$s = 's';
-}
-
-$httpHost = env('HTTP_HOST');
-if (isset($httpHost)) {
-	define('FULL_BASE_URL', 'http' . $s . '://' . $httpHost);
 }
 
 /**

@@ -66,7 +66,8 @@ class CacheHelper extends Helper {
  *
  * @param Cake\Event\Event $event The event instance.
  * @param string $viewFile
- * @return void
+ * @param string $output The output for the file.
+ * @return string Updated content.
  */
 	public function afterRenderFile($event, $viewFile, $output) {
 		if ($this->_enabled()) {

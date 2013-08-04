@@ -29,10 +29,6 @@ use Cake\View\Helper\JsHelper;
 use Cake\View\Helper\PaginatorHelper;
 use Cake\View\View;
 
-if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', 'http://cakephp.org');
-}
-
 /**
  * PaginatorHelperTest class
  *
@@ -85,6 +81,7 @@ class PaginatorHelperTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->View, $this->Paginator);
 	}
 
@@ -2069,7 +2066,7 @@ class PaginatorHelperTest extends TestCase {
 		$expected = array(
 			'<span',
 			array('a' => array(
-				'href' => FULL_BASE_URL . '/index?sort=Article.title&amp;direction=DESC', 'rel' => 'first'
+				'href' => Configure::read('App.fullBaseUrl') . '/index?sort=Article.title&amp;direction=DESC', 'rel' => 'first'
 			)),
 			'&lt;&lt; first',
 			'/a',

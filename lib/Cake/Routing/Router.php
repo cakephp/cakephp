@@ -61,7 +61,7 @@ class Router {
  *
  * @var string
  */
-	protected static $_baseURL;
+	protected static $_fullBaseUrl;
 
 /**
  * List of action prefixes used in connected routes.
@@ -669,7 +669,7 @@ class Router {
  *   to the current scheme.
  * - `_host` - Set the host to use for the link.  Defaults to the current host.
  * - `_port` - Set the port if you need to create links on non-standard ports.
- * - `_full` - If true the `Router::baseURL()` constant will be prepended to generated urls.
+ * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated urls.
  * - `#` - Allows you to set url hash fragments.
  * - `ssl` - Set to true to convert the generated url to https, or false to force http.
  *
@@ -726,7 +726,7 @@ class Router {
 		if (empty($url)) {
 			$output = isset($here) ? $here : '/';
 			if ($full) {
-				$output = static::baseURL() . $base . $output;
+				$output = static::fullBaseUrl() . $base . $output;
 			}
 			return $output;
 		} elseif ($urlType === 'array') {
@@ -806,7 +806,7 @@ class Router {
 		if ($protocol === 0) {
 			$output = str_replace('//', '/', '/' . $output);
 			if ($full) {
-				$output = static::baseURL() . $output;
+				$output = static::fullBaseUrl() . $output;
 			}
 		}
 		return $output . $frag;
@@ -815,11 +815,11 @@ class Router {
 /**
  * Sets the full base url that will be used as a prefix for generating
  * fully qualified URLs for this application. If not parameters are passed,
- * the currently configured value is returned
+ * the currently configured value is returned.
  *
  * ## Note:
  *
- * If you change during runtime the configuration value ``App.fullBaseURL``
+ * If you change the configuration value ``App.fullBaseUrl`` during runtime
  * and expect the router to produce links using the new setting, you are
  * required to call this method passing such value again.
  *
@@ -827,15 +827,15 @@ class Router {
  * For example: ``http://example.com``
  * @return string
  */
-	public static function baseURL($base = null) {
+	public static function fullBaseUrl($base = null) {
 		if ($base !== null) {
-			static::$_baseURL = $base;
-			Configure::write('App.fullBaseURL', $base);
+			static::$_fullBaseUrl = $base;
+			Configure::write('App.fullBaseUrl', $base);
 		}
-		if (empty(static::$_baseURL)) {
-			static::$_baseURL = Configure::read('App.fullBaseURL');
+		if (empty(static::$_fullBaseUrl)) {
+			static::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
 		}
-		return static::$_baseURL;
+		return static::$_fullBaseUrl;
 	}
 
 /**
