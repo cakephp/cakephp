@@ -41,6 +41,11 @@ class AllDbRelatedTest extends PHPUnit_Framework_TestSuite {
 		$suite->addTestFile($path . 'Controller' . DS . 'Component' . DS . 'PaginatorComponentTest.php');
 		$suite->addTestFile($path . 'AllDatabaseTest.php');
 		$suite->addTestFile($path . 'Model' . DS . 'ModelTest.php');
+		$suite->addTestFile($path . 'View' . DS . 'ViewTest.php');
+		$suite->addTestFile($path . 'View' . DS . 'ScaffoldViewTest.php');
+		$suite->addTestFile($path . 'View' . DS . 'HelperTest.php');
+		$suite->addTestFile($path . 'View' . DS . 'Helper' . DS . 'FormHelperTest.php');
+		$suite->addTestFile($path . 'View' . DS . 'Helper' . DS . 'PaginatorHelperTest.php');
 		return $suite;
 	}
 }
