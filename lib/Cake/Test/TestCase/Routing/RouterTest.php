@@ -411,6 +411,12 @@ class RouterTest extends TestCase {
 		$result = Router::url('/');
 		$this->assertEquals('/magazine/', $result);
 
+		$result = Router::url('/articles/');
+		$this->assertEquals('/magazine/articles/', $result);
+
+		$result = Router::url('/articles/view');
+		$this->assertEquals('/magazine/articles/view', $result);
+
 		$result = Router::url(['controller' => 'articles', 'action' => 'view', 1]);
 		$this->assertEquals('/magazine/articles/view/1', $result);
 	}
