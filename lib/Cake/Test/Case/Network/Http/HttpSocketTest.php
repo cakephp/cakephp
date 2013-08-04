@@ -193,6 +193,7 @@ class HttpSocketTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		if (!class_exists('MockHttpSocket')) {
 			$this->getMock('TestHttpSocket', array('read', 'write', 'connect'), array(), 'MockHttpSocket');
 			$this->getMock('TestHttpSocket', array('read', 'write', 'connect', 'request'), array(), 'MockHttpSocketRequests');
@@ -208,6 +209,7 @@ class HttpSocketTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->Socket, $this->RequestSocket);
 	}
 

@@ -79,6 +79,7 @@ class PaginatorHelperTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		unset($this->View, $this->Paginator);
 	}
 

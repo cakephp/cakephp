@@ -1078,13 +1078,13 @@ class RouterTest extends CakeTestCase {
 		Router::connect(
 			'/:lang/:color/posts/view/*',
 			array('controller' => 'posts', 'action' => 'view'),
-			array('persist' => array('lang', 'color')
-		));
+			array('persist' => array('lang', 'color'))
+		);
 		Router::connect(
 			'/:lang/:color/posts/index',
 			array('controller' => 'posts', 'action' => 'index'),
-			array('persist' => array('lang')
-		));
+			array('persist' => array('lang'))
+		);
 		Router::connect('/:lang/:color/posts/edit/*', array('controller' => 'posts', 'action' => 'edit'));
 		Router::connect('/about', array('controller' => 'pages', 'action' => 'view', 'about'));
 		Router::parse('/en/red/posts/view/5');

@@ -1855,6 +1855,16 @@ class I18nTest extends CakeTestCase {
 	}
 
 /**
+ * Test that the '' domain causes exceptions.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testTranslateEmptyDomain() {
+		I18n::translate('Plural Rule 1', null, '');
+	}
+
+/**
  * Singular method
  *
  * @return void

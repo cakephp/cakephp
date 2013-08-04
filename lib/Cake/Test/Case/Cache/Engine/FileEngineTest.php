@@ -52,7 +52,7 @@ class FileEngineTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Cache::clear(false, 'file_test');
+		// Cache::clear(false, 'file_test');
 		Cache::drop('file_test');
 		Cache::drop('file_groups');
 		Cache::drop('file_groups2');
@@ -253,6 +253,41 @@ class FileEngineTest extends CakeTestCase {
 		$FileOne->clear(false);
 		$this->assertEquals($expected, $FileTwo->read('prefix_two_key_two'), 'secondary config was cleared by accident.');
 		$FileTwo->clear(false);
+	}
+
+/**
+ * Test that clear() also removes files with group tags.
+ *
+ * @return void
+ */
+	public function testClearWithGroups() {
+		$engine = new FileEngine();
+		$engine->init(array(
+			'prefix' => 'cake_test_',
+			'duration' => DAY,
+			'groups' => array('short', 'round')
+		));
+		$key = 'cake_test_test_key';
+		$engine->write($key, 'it works', DAY);
+		$engine->clear(false);
+		$this->assertFalse($engine->read($key), 'Key should have been removed');
+	}
+
+/**
+ * Test that clear() also removes files with group tags.
+ *
+ * @return void
+ */
+	public function testClearWithNoKeys() {
+		$engine = new FileEngine();
+		$engine->init(array(
+			'prefix' => 'cake_test_',
+			'duration' => DAY,
+			'groups' => array('one', 'two')
+		));
+		$key = 'cake_test_test_key';
+		$engine->clear(false);
+		$this->assertFalse($engine->read($key), 'No errors should be found');
 	}
 
 /**

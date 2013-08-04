@@ -79,8 +79,7 @@ if (!defined('WWW_ROOT')) {
 
 // for built-in server
 if (php_sapi_name() == 'cli-server') {
-	$uri = str_replace($_SERVER['SCRIPT_FILENAME'], WWW_ROOT, '');
-	if ($_SERVER['REQUEST_URI'] !== '/' && file_exists(WWW_ROOT . $uri)) {
+	if ($_SERVER['REQUEST_URI'] !== '/' && file_exists(WWW_ROOT . $_SERVER['PHP_SELF'])) {
 		return false;
 	}
 	$_SERVER['PHP_SELF'] = '/' . basename(__FILE__);

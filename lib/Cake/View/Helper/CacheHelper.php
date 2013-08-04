@@ -67,7 +67,8 @@ class CacheHelper extends AppHelper {
  * Parses the view file and stores content for cache file building.
  *
  * @param string $viewFile
- * @return void
+ * @param string $output The output for the file.
+ * @return string Updated content.
  */
 	public function afterRenderFile($viewFile, $output) {
 		if ($this->_enabled()) {
