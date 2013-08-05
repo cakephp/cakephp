@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Database\Type;
 use \Iterator;
+use \Serializable;
 
 /**
  * Represents the results obtained after executing a query for an specific table
@@ -26,7 +27,7 @@ use \Iterator;
  * queries required for eager loading external associations.
  *
  */
-class ResultSet implements Iterator {
+class ResultSet implements Iterator, Serializable {
 
 /**
  * Original query from where results where generated
@@ -284,6 +285,31 @@ class ResultSet implements Iterator {
 		}
 
 		return $values;
+	}
+
+/**
+ * Serialize a resultset.
+ *
+ * Part of Serializable Interface
+ *
+ * @return string Serialized object
+ */
+	public function serialize() {
+		iterator_to_array($this);
+		return serialize($this->_results);
+	}
+
+/**
+ * Unserialize a resultset.
+ *
+ * Part of Serializable Interface
+ *
+ * @param string Serialized object
+ * @return ResultSet The hydrated result set.
+ */
+	public function unserialize($serialized) {
+		$this->_results = unserialize($serialized);
+		return $this;
 	}
 
 }

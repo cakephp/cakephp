@@ -54,4 +54,44 @@ class ResultSetTest extends TestCase {
 		$this->assertEquals($first, $second);
 	}
 
+/**
+ * An integration test for testing serialize and unserialize features.
+ *
+ * Compare the results of a query with the results iterated, with
+ * those of a different query that have been serialized/unserialized.
+ *
+ * @return void
+ */
+	public function testSerialization() {
+		$query = $this->table->find('all');
+		$results = $query->execute();
+		$expected = $results->toArray();
+
+		$query2 = $this->table->find('all');
+		$results2 = $query2->execute();
+		$serialized = serialize($results2);
+		$outcome = unserialize($serialized);
+		$this->assertEquals($expected, $outcome->toArray());
+	}
+
+/**
+ * Test iteration after serialization
+ *
+ * @return void
+ */
+	public function testIteratorAfterSerialization() {
+		$query = $this->table->find('all');
+		$results = unserialize(serialize($query->execute()));
+
+		$expected = [
+			['id' => 1, 'author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'],
+			['id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+			['id' => 3, 'author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y']
+		];
+		// Use a loop to test Iterator implementation
+		foreach ($results as $i => $row) {
+			$this->assertEquals($expected[$i], $row, "Row $i does not match");
+		}
+	}
+
 }
