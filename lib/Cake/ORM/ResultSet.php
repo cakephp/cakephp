@@ -144,11 +144,16 @@ class ResultSet implements Iterator {
 	}
 
 /**
- * Not implemented
+ * Rewind a ResultSet.
+ *
+ * Once rewound results will not be refetched from
+ * the database.
  *
  * @return void
  */
 	public function rewind() {
+		$this->_index = 0;
+		$this->_lastIndex = -1;
 	}
 
 /**
@@ -194,14 +199,21 @@ class ResultSet implements Iterator {
  * @return void
  */
 	protected function _fetchResult() {
-		if ($this->_lastIndex < $this->_index) {
-			$row = $this->_statement->fetch('assoc');
-			if ($row !== false) {
-				$row = $this->_groupResult($row);
-			}
-			$this->_current = $row;
-			$this->_lastIndex = $this->_index;
+		$advance = ($this->_lastIndex < $this->_index);
+		if (!$advance) {
+			return;
 		}
+		if (isset($this->_results[$this->_index])) {
+			$this->_current = $this->_results[$this->_index];
+			return;
+		}
+		$row = $this->_statement->fetch('assoc');
+		if ($row !== false) {
+			$row = $this->_groupResult($row);
+		}
+		$this->_current = $row;
+		$this->_results[] = $row;
+		$this->_lastIndex = $this->_index;
 	}
 
 /**
