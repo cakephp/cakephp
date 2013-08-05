@@ -437,7 +437,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['_buildQuery'],
 			['table' => 'users', 'connection' => $this->connection]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection]);
+		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
 			->method('_buildQuery')
 			->will($this->returnValue($query));
@@ -473,7 +473,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['_buildQuery'],
 			['table' => 'users', 'connection' => $this->connection]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection]);
+		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
 			->method('_buildQuery')
 			->will($this->returnValue($query));

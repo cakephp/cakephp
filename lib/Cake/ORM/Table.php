@@ -523,8 +523,7 @@ class Table {
  * @return \Cake\ORM\Query
  */
 	protected function _buildQuery() {
-		$query = new Query($this->connection());
-		return $query->repository($this);
+		return new Query($this->connection(), $this);
 	}
 
 /**

@@ -75,7 +75,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachTo() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
 		$config = [
 			'foreignKey' => 'user_id',
 			'sourceTable' => $this->user,
@@ -107,7 +107,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToConfigOverride() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
 		$config = [
 			'foreignKey' => 'user_id',
 			'sourceTable' => $this->user,
@@ -142,7 +142,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToNoFields() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
 		$config = [
 			'sourceTable' => $this->user,
 			'targetTable' => $this->profile,

@@ -91,6 +91,15 @@ class Query extends DatabaseQuery {
 	protected $_results;
 
 /**
+ * @param Cake\Database\Connection $connection
+ * @param Cake\ORM\Table $table
+ */
+	public function __construct($connection, $table) {
+		$this->connection($connection);
+		$this->repository($table);
+	}
+
+/**
  * Returns the default table object that will be used by this query,
  * that is, the table that will appear in the from clause.
  *
