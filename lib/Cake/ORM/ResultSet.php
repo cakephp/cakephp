@@ -86,6 +86,13 @@ class ResultSet implements Iterator {
 	protected $_map;
 
 /**
+ * Results that have been fetched or hydrated into the results.
+ *
+ * @var array
+ */
+	protected $_results = [];
+
+/**
  * Constructor
  *
  * @param Query from where results come
@@ -114,7 +121,7 @@ class ResultSet implements Iterator {
  * @return array|object
  */
 	public function current() {
-		return $this->_groupResult($this->_current);
+		return $this->_current;
 	}
 
 /**
@@ -188,7 +195,11 @@ class ResultSet implements Iterator {
  */
 	protected function _fetchResult() {
 		if ($this->_lastIndex < $this->_index) {
-			$this->_current = $this->_statement->fetch('assoc');
+			$row = $this->_statement->fetch('assoc');
+			if ($row !== false) {
+				$row = $this->_groupResult($row);
+			}
+			$this->_current = $row;
 			$this->_lastIndex = $this->_index;
 		}
 	}
@@ -198,10 +209,10 @@ class ResultSet implements Iterator {
  *
  * @return array
  */
-	protected function _groupResult() {
+	protected function _groupResult($row) {
 		$defaultAlias = $this->_defaultTable->alias();
 		$results = [];
-		foreach ($this->_current as $key => $value) {
+		foreach ($row as $key => $value) {
 			$table = $defaultAlias;
 			$field = $key;
 
