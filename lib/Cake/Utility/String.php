@@ -189,6 +189,7 @@ class String {
  * - format: A regex to use for matching variable placeholders. Default is: `/(?<!\\)\:%s/`
  *   (Overwrites before, after, breaks escape / clean)
  * - clean: A boolean or array with instructions for String::cleanInsert
+ * - default: The default value to use in String::cleanInsert. Defaults to empty string.
  *
  * @param string $str A string containing variable placeholders
  * @param array $data A key => val array where each key stands for a placeholder variable name
@@ -198,7 +199,7 @@ class String {
  */
 	public static function insert($str, $data, $options = array()) {
 		$defaults = array(
-			'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false
+			'before' => ':', 'after' => null, 'escape' => '\\', 'format' => null, 'clean' => false, 'default' => ''
 		);
 		$options += $defaults;
 		$format = $options['format'];
@@ -271,12 +272,13 @@ class String {
 		if (!is_array($clean)) {
 			$clean = array('method' => $options['clean']);
 		}
+		$replacement = isset($options['default']) ? $options['default']: '';
 		switch ($clean['method']) {
 			case 'html':
 				$clean = array_merge(array(
 					'word' => '[\w,.]+',
 					'andText' => true,
-					'replacement' => '',
+					'replacement' => $replacement,
 				), $clean);
 				$kleenex = sprintf(
 					'/[\s]*[a-z]+=(")(%s%s%s[\s]*)+\\1/i',
@@ -293,8 +295,8 @@ class String {
 			case 'text':
 				$clean = array_merge(array(
 					'word' => '[\w,.]+',
-					'gap' => '[\s]*(?:(?:and|or)[\s]*)?',
-					'replacement' => '',
+					'gap' => $replacement === '' ? '[\s]*(?:(?:and|or)[\s]*)?' : '(?:(?:and|or)[\s]*)?',
+					'replacement' => $replacement,
 				), $clean);
 
 				$kleenex = sprintf(

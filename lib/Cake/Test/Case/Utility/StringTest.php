@@ -269,6 +269,18 @@ class StringTest extends CakeTestCase {
 	}
 
 /**
+ * test Clean Insert with custom default value
+ *
+ * @return void
+ */
+	public function testCleanInsertWithDefault() {
+		$string = 'switching :foo by :bar now';
+		$expected = 'switching 5 by - now';
+		$result = String::insert($string, array('foo' => 5), array('clean' => true, 'default' => '-'));
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Tests that non-insertable variables (i.e. arrays) are skipped when used as values in
  * String::insert().
  *
