@@ -111,7 +111,7 @@ before_script:
     }" > app/Config/database.php
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; elif [ '$DB' = 'mysql' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./lib/Cake/Console/cake test core AllDbRelated --stderr; fi"
 
 notifications:
   email: false
