@@ -1784,8 +1784,7 @@ class FormHelper extends AppHelper {
 		$url = '#';
 		$onClick = 'document.' . $formName . '.submit();';
 		if ($confirmMessage) {
-			$confirmMessage = str_replace(array("'", '"'), array("\'", '\"'), $confirmMessage);
-			$options['onclick'] = "if (confirm('{$confirmMessage}')) { {$onClick} }";
+			$options['onclick'] = $this->_confirmHandler($confirmMessage, $onClick);
 		} else {
 			$options['onclick'] = $onClick;
 		}
@@ -1794,6 +1793,18 @@ class FormHelper extends AppHelper {
 		$out .= $this->Html->link($title, $url, $options);
 		return $out;
 	}
+
+/**
+ * Returns a string to be used as onclick handler for confirm dialogs.
+ *
+ * @param string $message Message to be displayed
+ * @param string $action Code to execute if user chooses 'OK'.
+ */
+	protected function _confirmHandler($message, $action) {
+		$message = str_replace(array("'", '"'), array("\'", '\"'), $message);
+		return "if (confirm('{$message}')) { {$action} }";
+	}
+
 
 /**
  * Creates a submit button element. This method will generate `<input />` elements that
