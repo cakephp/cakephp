@@ -47,14 +47,14 @@ class ResultSet implements Iterator {
  *
  * @var integer
  */
-	protected $_count = 0;
+	protected $_index = 0;
 
 /**
  * Points to the last record number that was fetched
  *
  * @var integer
  */
-	protected $_counter = -1;
+	protected $_lastIndex = -1;
 
 /**
  * Last record fetched from the statement
@@ -123,7 +123,7 @@ class ResultSet implements Iterator {
  * @return integer
  */
 	public function key() {
-		return $this->_count;
+		return $this->_index;
 	}
 
 /**
@@ -132,7 +132,7 @@ class ResultSet implements Iterator {
  * @return void
  */
 	public function next() {
-		$this->_count++;
+		$this->_index++;
 		$this->_fetchResult();
 	}
 
@@ -187,9 +187,9 @@ class ResultSet implements Iterator {
  * @return void
  */
 	protected function _fetchResult() {
-		if ($this->_counter < $this->_count) {
+		if ($this->_lastIndex < $this->_index) {
 			$this->_current = $this->_statement->fetch('assoc');
-			$this->_counter = $this->_count;
+			$this->_lastIndex = $this->_index;
 		}
 	}
 
