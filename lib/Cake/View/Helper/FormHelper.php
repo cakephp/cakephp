@@ -1784,12 +1784,11 @@ class FormHelper extends AppHelper {
 		$url = '#';
 		$onClick = 'document.' . $formName . '.submit();';
 		if ($confirmMessage) {
-			$confirmMessage = str_replace(array("'", '"'), array("\'", '\"'), $confirmMessage);
-			$options['onclick'] = "if (confirm('{$confirmMessage}')) { {$onClick} }";
+			$options['onclick'] = $this->_confirm($confirmMessage, $onClick);
 		} else {
-			$options['onclick'] = $onClick;
+			$options['onclick'] = $onClick . ' ';
 		}
-		$options['onclick'] .= ' event.returnValue = false; return false;';
+		$options['onclick'] .= 'event.returnValue = false; return false;';
 
 		$out .= $this->Html->link($title, $url, $options);
 		return $out;
