@@ -17,6 +17,9 @@
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\ExpressionInterface;
+use Cake\Database\ValueBinder;
+
 class OrderByExpression extends QueryExpression {
 
 /**
@@ -33,11 +36,15 @@ class OrderByExpression extends QueryExpression {
 /**
  * Convert the expression into a SQL fragment.
  *
+ * @param Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
-	public function sql() {
+	public function sql(ValueBinder $generator) {
 		$order = [];
 		foreach ($this->_conditions as $k => $direction) {
+			if ($direction instanceof ExpressionInterface) {
+				$direction = $direction->sql($generator);
+			}
 			$order[] = is_numeric($k) ? $direction : sprintf('%s %s', $k, $direction);
 		}
 		return sprintf('ORDER BY %s', implode(', ', $order));

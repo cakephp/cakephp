@@ -17,11 +17,25 @@
  */
 namespace Cake\Database\Expression;
 
+use Cake\Database\ExpressionInterface;
+use Cake\Database\ValueBinder;
+
 class UnaryExpression extends QueryExpression {
 
-	public function sql() {
-		reset($this->_conditions);
-		return $this->_conjunction . ' (' . ((string)current($this->_conditions)) . ')';
+/*
+ * Converts the expression to its string representation
+ *
+ * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @return string
+ */
+	public function sql(ValueBinder $generator) {
+		foreach ($this->_conditions as $condition) {
+			if ($condition instanceof ExpressionInterface) {
+				$condition = $condition->sql($generator);
+			}
+			// We only use the first (and only) condition
+			return $this->_conjunction . ' (' . ((string)$condition) . ')';
+		}
 	}
 
 }

@@ -17,6 +17,7 @@
 namespace Cake\Database;
 
 use Cake\Database\Exception;
+use Cake\Database\ValueBinder;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\OrderByExpression;
@@ -138,6 +139,14 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected $_defaultTypes = [];
 
 /**
+ * The object responsible for generating query placeholders and temporarily store values
+ * associated to each of those.
+ *
+ * @var ValueBinder
+ */
+	protected $_valueBinder;
+
+/**
  * Constructor
  *
  * @param Cake\Database\Connection $connection The connection
@@ -203,21 +212,29 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * values when the query is executed, hence it is most suitable to use with
  * prepared statements.
  *
+ * @param ValueBinder $generator A placeholder a value binder object that will hold
+ * associated values for expressions
  * @return string
  */
-	public function sql() {
+	public function sql(ValueBinder $generator = null) {
 		$sql = '';
-		$visitor = function($parts, $name) use (&$sql) {
+		if (!$generator) {
+			$generator = $this->valueBinder();
+			$generator->resetCount();
+		}
+
+		$visitor = function($parts, $name) use (&$sql, $generator) {
 			if (!count($parts)) {
 				return;
 			}
 			if ($parts instanceof ExpressionInterface) {
-				$parts = [$parts->sql()];
+				$parts = [$parts->sql($generator)];
 			}
 			if (isset($this->_templates[$name])) {
-				return $sql .= sprintf($this->_templates[$name], implode(', ', (array)$parts));
+				$parts = $this->_stringifyExpressions((array)$parts, $generator);
+				return $sql .= sprintf($this->_templates[$name], implode(', ', $parts));
 			}
-			return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $sql);
+			return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $generator);
 		};
 
 		$query = $this->_transformQuery();
@@ -409,11 +426,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $parts list of fields to be transformed to string
  * @return string
  */
-	protected function _buildSelectPart($parts) {
+	protected function _buildSelectPart($parts, $generator) {
 		$driver = $this->_connection->driver();
 		$select = 'SELECT %s%s';
 		$distinct = null;
 		$normalized = [];
+		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
 				$p = $p . ' AS ' . $driver->quoteIdentifier($k);
@@ -426,7 +444,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		}
 
 		if (is_array($this->_parts['distinct'])) {
-			$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $this->_parts['distinct']));
+			$distinct = $this->_stringifyExpressions($this->_parts['distinct']);
+			$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
 		}
 
 		return sprintf($select, $distinct, implode(', ', $normalized));
@@ -486,9 +505,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $parts list of tables to be transformed to string
  * @return string
  */
-	protected function _buildFromPart($parts) {
+	protected function _buildFromPart($parts, $generator) {
 		$select = ' FROM %s';
 		$normalized = [];
+		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
 				$p = $p . ' ' . $k;
@@ -618,12 +638,15 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $parts list of joins to be transformed to string
  * @return string
  */
-	protected function _buildJoinPart($parts) {
+	protected function _buildJoinPart($parts, $generator) {
 		$joins = '';
 		foreach ($parts as $join) {
+			if ($join['table'] instanceof ExpressionInterface) {
+				$join['table'] = '(' . $join['table']->sql($generator) . ')';
+			}
 			$joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
 			if (isset($join['conditions']) && count($join['conditions'])) {
-				$joins .= sprintf(' ON %s', $join['conditions']);
+				$joins .= sprintf(' ON %s', $join['conditions']->sql($generator));
 			} else {
 				$joins .= ' ON 1 = 1';
 			}
@@ -637,10 +660,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $parts List of keys & values to set.
  * @return string
  */
-	protected function _buildSetPart($parts) {
+	protected function _buildSetPart($parts, $generator) {
 		$set = [];
 		foreach ($parts as $part) {
-			// TODO Hacking around with string values is a bit dirty.
+			if ($part instanceof ExpressionInterface) {
+				$part = $part->sql($generator);
+			}
 			if ($part[0] === '(') {
 				$part = substr($part, 1, -1);
 			}
@@ -1130,9 +1155,9 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $parts list of queries to be operated with UNION
  * @return string
  */
-	protected function _buildUnionPart($parts) {
-		$parts = array_map(function($p) {
-			$p['query'] = (string)$p['query'];
+	protected function _buildUnionPart($parts, $generator) {
+		$parts = array_map(function($p) use ($generator) {
+			$p['query'] = $p['query']->sql($generator);
 			$p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
 			return $p['all'] ? 'ALL ' . $p['query'] : $p['query'];
 		}, $parts);
@@ -1145,9 +1170,9 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $parts
  * @return string SQL fragment.
  */
-	protected function _buildInsertPart($parts) {
+	protected function _buildInsertPart($parts, $generator) {
 		$table = $parts[0];
-		$columns = $parts[1];
+		$columns = $this->_stringifyExpressions($parts[1], $generator);
 		return sprintf('INSERT INTO %s (%s)', $table, implode(', ', $columns));
 	}
 
@@ -1157,8 +1182,27 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $parts
  * @return string SQL fragment.
  */
-	protected function _buildValuesPart($parts) {
-		return implode('', $parts);
+	protected function _buildValuesPart($parts, $generator) {
+		return implode('', $this->_stringifyExpressions($parts, $generator));
+	}
+
+/**
+ * Helper function used to covert ExpressionInterface objects inside an array
+ * into their string representation
+ *
+ * @param array $expression list of strings and ExpressionInterface objects
+ * @param ValueBinder $generator the placeholder generator to be used in expressions
+ * @return array
+ */
+	protected function _stringifyExpressions(array $expressions, ValueBinder $generator) {
+		$result = [];
+		foreach ($expressions as $k => $expression) {
+			if ($expression instanceof ExpressionInterface) {
+				$expression = '(' . $expression->sql($generator) . ')';
+			}
+			$result[$k] = $expression;
+		}
+		return $result;
 	}
 
 /**
@@ -1453,6 +1497,48 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
+ * Associates a query placeholder to a value and a type.
+ *
+ * If type is expressed as "atype[]" (note braces) then it will cause the
+ * placeholder to be re-written dynamically so if the value is an array, it
+ * will create as many placeholders as values are in it. For example "string[]"
+ * will create several placeholders of type string.
+ *
+ * @param string|integer $token placeholder to be replaced with quoted version
+ * of $value
+ * @param mixed $value the value to be bound
+ * @param string|integer $type the mapped type name, used for casting when sending
+ * to database
+ * @return Query
+ */
+	public function bind($param, $value, $type) {
+		$this->valueBinder()->bind($param, $value, $type);
+		return $this;
+	}
+
+/**
+ * Returns the currently used ValueBinder instance. If a value is passed,
+ * it will be set as the new instance to be used.
+ * A ValueBinder is responsible for generating query placeholders and temporarily
+ * associate values to those placeholders so that they can be passed correctly
+ * statement object.
+ *
+ * @param ValueBinder $binder new instance to be set. If no value is passed the
+ * default one will be returned
+ * @return Query|ValueBinder
+ */
+	public function valuebinder($binder = null) {
+		if ($binder === null) {
+			if ($this->_valueBinder === null) {
+				$this->_valueBinder = new ValueBinder;
+			}
+			return $this->_valueBinder;
+		}
+		$this->_valueBinder = $binder;
+		return $this;
+	}
+
+/**
  * Auxiliary function used to wrap the original statement from the driver with
  * any registered callbacks.
  *
@@ -1502,23 +1588,16 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _bindStatement($statement) {
-		$binder = function($expression) use ($statement) {
-			$params = $types = [];
-
-			if ($expression instanceof Comparison) {
-				if ($expression->getValue() instanceof self) {
-					$expression->getValue()->_bindStatement($statement);
-				}
-			}
-
-			foreach ($expression->bindings() as $b) {
-				$params[$b['placeholder']] = $b['value'];
-				$types[$b['placeholder']] = $b['type'];
-			}
-			$statement->bind($params, $types);
-		};
-
-		$this->traverseExpressions($binder);
+		$bindings = $this->valueBinder()->bindings();
+		if (empty($bindings)) {
+			return;
+		}
+		$params = $types = [];
+		foreach ($bindings as $b) {
+			$params[$b['placeholder']] = $b['value'];
+			$types[$b['placeholder']] = $b['type'];
+		}
+		$statement->bind($params, $types);
 	}
 
 /**
@@ -1549,6 +1628,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _dirty() {
 		$this->_dirty = true;
 		$this->_transformedQuery = null;
+		$this->valueBinder()->reset();
 	}
 
 /**

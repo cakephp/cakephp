@@ -18,6 +18,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\ValueBinder;
 
 class Comparison extends QueryExpression {
 
@@ -39,7 +40,6 @@ class Comparison extends QueryExpression {
 			$this->_type = current($types);
 		}
 
-		$this->_identifier = substr(spl_object_hash($this), 7, 9);
 		$this->_conditions[$field] = $value;
 	}
 
@@ -59,18 +59,44 @@ class Comparison extends QueryExpression {
 		return $this->_value;
 	}
 
-	public function placeholder($token) {
-		return sprintf(':c%s', $this->_identifier);
-	}
-
-	public function sql() {
+/**
+ * Convert the expression into a SQL fragment.
+ *
+ * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @return string
+ */
+	public function sql(ValueBinder $generator) {
 		$value = $this->_value;
-		$template = '%s %s %s';
+		$template = '%s %s (%s)';
+
 		if (!($this->_value instanceof ExpressionInterface)) {
-			$value = $this->_bindValue($this->_field, $value, $this->_type);
+			$type = $this->_type;
+			if (strpos($this->_type, '[]') !== false) {
+				$value = $this->_flattenValue($generator);
+			} else {
+				$template = '%s %s %s';
+				$value = $this->_bindValue($generator, $value,  $this->_type);
+			}
+		} else {
+			$value = $value->sql($generator);
 		}
 
 		return sprintf($template, $this->_field, $this->_conjunction, $value);
+	}
+
+	protected function _bindValue($generator, $value, $type) {
+		$placeholder = $generator->placeholder($this->_field);
+		$generator->bind($placeholder, $value, $type);
+		return $placeholder;
+	}
+
+	protected function _flattenValue($generator) {
+		$parts = [];
+		$type = str_replace('[]', '', $this->_type);
+		foreach ($this->_value as $value) {
+			$parts[] = $this->_bindValue($generator, $value, $type);
+		}
+		return implode(',', $parts);
 	}
 
 	public function count() {

@@ -25,9 +25,10 @@ interface ExpressionInterface {
 /**
  * Converts the Node into a SQL string fragment.
  *
+ * @param Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
-	public function sql();
+	public function sql(ValueBinder $generator);
 
 /**
  * Iterates over each part of the expression recursively for every

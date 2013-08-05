@@ -998,14 +998,20 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
 		$expression = $query->newExpr()
-			->add(['(id + :offset) % 2 = 0'])
-			->bind(':offset', 1, null);
-		$result = $query->order([$expression, 'id' => 'desc'], true)->execute();
+			->add(['(id + :offset) % 2 = 0']);
+		$result = $query
+			->order([$expression, 'id' => 'desc'], true)
+			->bind(':offset', 1, null)
+			->execute();
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
-		$result = $query->order($expression, true)->order(['id' => 'asc'])->execute();
+		$result = $query
+			->order($expression, true)
+			->order(['id' => 'asc'])
+			->bind(':offset', 1, null)
+			->execute();
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
@@ -1575,11 +1581,10 @@ class QueryTest extends TestCase {
 			->where(['id' => 1]);
 		$result = $query->sql();
 
-		$this->assertRegExp(
-			'/UPDATE articles SET title = :[0-9a-z]+ , body = :[0-9a-z]+/',
+		$this->assertEquals(
+			'UPDATE articles SET title = :c0 , body = :c1 WHERE id = :c2',
 			$result
 		);
-		$this->assertContains('WHERE id = :', $result);
 
 		$result = $query->execute();
 		$this->assertCount(1, $result);
