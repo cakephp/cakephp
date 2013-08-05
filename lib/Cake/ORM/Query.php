@@ -334,7 +334,7 @@ class Query extends DatabaseQuery {
  * @param Cake\ORM\ResultSet $results The results this query should return.
  * @return Query The query instance.
  */
-	public function setResult(ResultSet $results) {
+	public function setResult($results) {
 		$this->_results = $results;
 		return $this;
 	}

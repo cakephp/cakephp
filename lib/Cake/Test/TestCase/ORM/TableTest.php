@@ -317,13 +317,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testFindBeforeFindEventOverrideReturn() {
 		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
-		$table->getEventManager()->attach(function ($event, $query, $options) {
+		$expected = ['One', 'Two', 'Three'];
+		$table->getEventManager()->attach(function ($event, $query, $options) use ($expected) {
+			$query->setResult($expected);
 			$event->stopPropagation();
-			return 'Something else';
+			return $query;
 		}, 'Model.beforeFind');
 
 		$result = $table->find('all');
-		$this->assertEquals('Something else', $result);
+		$this->assertEquals($expected, $result->execute());
 	}
 
 /**
