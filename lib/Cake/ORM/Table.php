@@ -487,7 +487,14 @@ class Table {
 
 /**
  * Creates a new Query for this table and applies some defaults based on the
- * type of search that was selected
+ * type of search that was selected.
+ *
+ * ### Model.beforeFind event
+ *
+ * Each find() will trigger a `Model.beforeFind` event for all attached
+ * listeners. Any listener can stop the event to prevent the default
+ * find handler from being called. When a find() is stopped the Query
+ * object will still be returned.
  *
  * @param string $type the type of query to perform
  * @param array $options
@@ -500,7 +507,7 @@ class Table {
 		$event = new Event('Model.beforeFind', $this, [$query, $options]);
 		$this->_eventManager->dispatch($event);
 		if ($event->isStopped()) {
-			return $event->result;
+			return $query;
 		}
 		return $this->{'find' . ucfirst($type)}($query, $options);
 	}

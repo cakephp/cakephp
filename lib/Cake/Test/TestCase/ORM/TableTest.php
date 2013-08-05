@@ -321,11 +321,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->getEventManager()->attach(function ($event, $query, $options) use ($expected) {
 			$query->setResult($expected);
 			$event->stopPropagation();
-			return $query;
 		}, 'Model.beforeFind');
 
-		$result = $table->find('all');
-		$this->assertEquals($expected, $result->execute());
+		$query = $table->find('all');
+		$query->limit(1);
+		$this->assertEquals($expected, $query->execute());
 	}
 
 /**
