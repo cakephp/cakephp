@@ -34,7 +34,7 @@ class UnaryExpression extends QueryExpression {
 				$condition = $condition->sql($generator);
 			}
 			// We only use the first (and only) condition
-			return $this->_conjunction . ' (' . ((string)$condition) . ')';
+			return $this->_conjunction . ' (' . $condition . ')';
 		}
 	}
 

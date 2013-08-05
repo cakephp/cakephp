@@ -117,7 +117,7 @@ class FunctionExpression extends QueryExpression {
 		foreach ($this->_conditions as $condition) {
 			if ($condition instanceof ExpressionInterface) {
 				$condition = $condition->sql($generator);
-			} else if (is_array($condition)){
+			} elseif (is_array($condition)) {
 				$p = $generator->placeholder('param');
 				$generator->bind($p, $condition['value'], $condition['type']);
 				$condition = $p;

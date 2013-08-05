@@ -75,7 +75,7 @@ class Comparison extends QueryExpression {
 				$value = $this->_flattenValue($generator);
 			} else {
 				$template = '%s %s %s';
-				$value = $this->_bindValue($generator, $value,  $this->_type);
+				$value = $this->_bindValue($generator, $value, $this->_type);
 			}
 		} else {
 			$value = $value->sql($generator);
