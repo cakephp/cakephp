@@ -34,6 +34,12 @@ class ResultSetTest extends TestCase {
 		parent::setUp();
 		$this->connection = ConnectionManager::getDataSource('test');
 		$this->table = new Table(['table' => 'articles', 'connection' => $this->connection]);
+
+		$this->fixtureData = [
+			['id' => 1, 'author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'],
+			['id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
+			['id' => 3, 'author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y']
+		];
 	}
 
 /**
@@ -83,15 +89,23 @@ class ResultSetTest extends TestCase {
 		$query = $this->table->find('all');
 		$results = unserialize(serialize($query->execute()));
 
-		$expected = [
-			['id' => 1, 'author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'],
-			['id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
-			['id' => 3, 'author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y']
-		];
 		// Use a loop to test Iterator implementation
 		foreach ($results as $i => $row) {
-			$this->assertEquals($expected[$i], $row, "Row $i does not match");
+			$this->assertEquals($this->fixtureData[$i], $row, "Row $i does not match");
 		}
+	}
+
+/**
+ * Test converting resultsets into json
+ *
+ * @return void
+ */
+	public function testJsonSerialize() {
+		$query = $this->table->find('all');
+		$results = $query->execute();
+
+		$expected = json_encode($this->fixtureData);
+		$this->assertEquals(json_encode($results), $expected);
 	}
 
 }

@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Database\Type;
 use \Iterator;
+use \JsonSerializable;
 use \Serializable;
 
 /**
@@ -27,7 +28,7 @@ use \Serializable;
  * queries required for eager loading external associations.
  *
  */
-class ResultSet implements Iterator, Serializable {
+class ResultSet implements Iterator, Serializable, JsonSerializable {
 
 /**
  * Original query from where results where generated
@@ -200,20 +201,21 @@ class ResultSet implements Iterator, Serializable {
  * @return void
  */
 	protected function _fetchResult() {
-		$advance = ($this->_lastIndex < $this->_index);
-		if (!$advance) {
-			return;
-		}
 		if (isset($this->_results[$this->_index])) {
 			$this->_current = $this->_results[$this->_index];
+			$this->_lastIndex = $this->_index;
+			return;
+		}
+		if (!$this->_statement) {
+			$this->_current = false;
 			return;
 		}
 		$row = $this->_statement->fetch('assoc');
 		if ($row !== false) {
 			$row = $this->_groupResult($row);
+			$this->_results[] = $row;
 		}
 		$this->_current = $row;
-		$this->_results[] = $row;
 		$this->_lastIndex = $this->_index;
 	}
 
@@ -290,26 +292,37 @@ class ResultSet implements Iterator, Serializable {
 /**
  * Serialize a resultset.
  *
- * Part of Serializable Interface
+ * Part of Serializable interface.
  *
  * @return string Serialized object
  */
 	public function serialize() {
-		iterator_to_array($this);
+		$this->toArray();
 		return serialize($this->_results);
 	}
 
 /**
  * Unserialize a resultset.
  *
- * Part of Serializable Interface
+ * Part of Serializable interface.
  *
  * @param string Serialized object
  * @return ResultSet The hydrated result set.
  */
 	public function unserialize($serialized) {
 		$this->_results = unserialize($serialized);
-		return $this;
+	}
+
+/**
+ * Convert a result set into JSON.
+ *
+ * Part of JsonSerializable interface.
+ *
+ * @return array The data to convert to JSON
+ */
+	public function jsonSerialize() {
+		$this->toArray();
+		return $this->_results;
 	}
 
 }
