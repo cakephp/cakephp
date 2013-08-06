@@ -20,7 +20,7 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 
 /**
- * A Comparisson is a type of query expression that represents an operation
+ * A Comparison is a type of query expression that represents an operation
  * involving a field an operator and a value. In its most common form the
  * string representation of a comparison is `field = value`
  *
@@ -145,7 +145,7 @@ class Comparison extends QueryExpression {
 	}
 
 /**
- * Register a value in the placeholder generator and returns the generated placeholder
+ * Registers a value in the placeholder generator and returns the generated placeholder
  *
  * @param ValueBinder $generator
  * @param mixed $value

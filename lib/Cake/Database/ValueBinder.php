@@ -81,7 +81,7 @@ class ValueBinder {
 	}
 
 /**
- * Clears any bindings taht were previously registered
+ * Clears any bindings that were previously registered
  *
  * @return void
  */
