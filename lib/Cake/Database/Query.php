@@ -424,6 +424,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * DISTINCT clause for the query.
  *
  * @param array $parts list of fields to be transformed to string
+ * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildSelectPart($parts, $generator) {
@@ -503,6 +504,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * converting expression objects to string.
  *
  * @param array $parts list of tables to be transformed to string
+ * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildFromPart($parts, $generator) {
@@ -636,6 +638,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * to be used
  *
  * @param array $parts list of joins to be transformed to string
+ * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildJoinPart($parts, $generator) {
@@ -658,6 +661,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Helper function to generate SQL for SET expressions.
  *
  * @param array $parts List of keys & values to set.
+ * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildSetPart($parts, $generator) {
@@ -1153,6 +1157,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * dialect.
  *
  * @param array $parts list of queries to be operated with UNION
+ * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildUnionPart($parts, $generator) {
@@ -1168,6 +1173,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Builds the SQL fragment for INSERT INTO.
  *
  * @param array $parts
+ * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string SQL fragment.
  */
 	protected function _buildInsertPart($parts, $generator) {
@@ -1180,6 +1186,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Builds the SQL fragment for INSERT INTO.
  *
  * @param array $parts
+ * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string SQL fragment.
  */
 	protected function _buildValuesPart($parts, $generator) {
@@ -1191,7 +1198,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * into their string representation
  *
  * @param array $expression list of strings and ExpressionInterface objects
- * @param ValueBinder $generator the placeholder generator to be used in expressions
+ * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return array
  */
 	protected function _stringifyExpressions(array $expressions, ValueBinder $generator) {
@@ -1525,7 +1532,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param ValueBinder $binder new instance to be set. If no value is passed the
  * default one will be returned
- * @return Query|ValueBinder
+ * @return Query|Cake\Database\ValueBinder
  */
 	public function valueBinder($binder = null) {
 		if ($binder === null) {
