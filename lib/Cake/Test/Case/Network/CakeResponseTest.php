@@ -137,45 +137,45 @@ class CakeResponseTest extends CakeTestCase {
 	public function testHeader() {
 		$response = new CakeResponse();
 		$headers = array();
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header('Location', 'http://example.com');
 		$headers += array('Location' => 'http://example.com');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		//Headers with the same name are overwritten
 		$response->header('Location', 'http://example2.com');
 		$headers = array('Location' => 'http://example2.com');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('WWW-Authenticate' => 'Negotiate'));
 		$headers += array('WWW-Authenticate' => 'Negotiate');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('WWW-Authenticate' => 'Not-Negotiate'));
 		$headers['WWW-Authenticate'] = 'Not-Negotiate';
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('Age' => 12, 'Allow' => 'GET, HEAD'));
 		$headers += array('Age' => 12, 'Allow' => 'GET, HEAD');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		// String headers are allowed
 		$response->header('Content-Language: da');
 		$headers += array('Content-Language' => 'da');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header('Content-Language: da');
 		$headers += array('Content-Language' => 'da');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache'));
 		$headers += array('Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header('Access-Control-Allow-Origin', array('domain1', 'domain2'));
 		$headers += array('Access-Control-Allow-Origin' => array('domain1', 'domain2'));
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 	}
 
 /**
