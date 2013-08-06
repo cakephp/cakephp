@@ -18,6 +18,8 @@ namespace Cake\ORM;
 
 use Cake\Database\Type;
 use \Iterator;
+use \JsonSerializable;
+use \Serializable;
 
 /**
  * Represents the results obtained after executing a query for an specific table
@@ -26,7 +28,7 @@ use \Iterator;
  * queries required for eager loading external associations.
  *
  */
-class ResultSet implements Iterator {
+class ResultSet implements Iterator, Serializable, JsonSerializable {
 
 /**
  * Original query from where results where generated
@@ -47,14 +49,14 @@ class ResultSet implements Iterator {
  *
  * @var integer
  */
-	protected $_count = 0;
+	protected $_index = 0;
 
 /**
  * Points to the last record number that was fetched
  *
  * @var integer
  */
-	protected $_counter = -1;
+	protected $_lastIndex = -1;
 
 /**
  * Last record fetched from the statement
@@ -69,13 +71,6 @@ class ResultSet implements Iterator {
  * @var \Cake\ORM\Table
  */
 	protected $_defaultTable;
-
-/**
- * Default table alias
- *
- * @var string
- */
-	protected $_defaultAlias;
 
 /**
  * List of associations that should be eager loaded
@@ -93,6 +88,13 @@ class ResultSet implements Iterator {
 	protected $_map;
 
 /**
+ * Results that have been fetched or hydrated into the results.
+ *
+ * @var array
+ */
+	protected $_results = [];
+
+/**
  * Constructor
  *
  * @param Query from where results come
@@ -103,7 +105,6 @@ class ResultSet implements Iterator {
 		$this->_query = $query;
 		$this->_statement = $statement;
 		$this->_defaultTable = $this->_query->repository();
-		$this->_defaultAlias = $this->_defaultTable->alias();
 		$this->_calculateAssociationMap();
 	}
 
@@ -122,7 +123,7 @@ class ResultSet implements Iterator {
  * @return array|object
  */
 	public function current() {
-		return $this->_groupResult($this->_current);
+		return $this->_current;
 	}
 
 /**
@@ -131,7 +132,7 @@ class ResultSet implements Iterator {
  * @return integer
  */
 	public function key() {
-		return $this->_count;
+		return $this->_index;
 	}
 
 /**
@@ -140,16 +141,21 @@ class ResultSet implements Iterator {
  * @return void
  */
 	public function next() {
-		$this->_count++;
+		$this->_index++;
 		$this->_fetchResult();
 	}
 
 /**
- * Not implemented
+ * Rewind a ResultSet.
+ *
+ * Once rewound results will not be refetched from
+ * the database.
  *
  * @return void
  */
 	public function rewind() {
+		$this->_index = 0;
+		$this->_lastIndex = -1;
 	}
 
 /**
@@ -195,10 +201,22 @@ class ResultSet implements Iterator {
  * @return void
  */
 	protected function _fetchResult() {
-		if ($this->_counter < $this->_count) {
-			$this->_current = $this->_statement->fetch('assoc');
-			$this->_counter = $this->_count;
+		if (isset($this->_results[$this->_index])) {
+			$this->_current = $this->_results[$this->_index];
+			$this->_lastIndex = $this->_index;
+			return;
 		}
+		if (!$this->_statement) {
+			$this->_current = false;
+			return;
+		}
+		$row = $this->_statement->fetch('assoc');
+		if ($row !== false) {
+			$row = $this->_groupResult($row);
+			$this->_results[] = $row;
+		}
+		$this->_current = $row;
+		$this->_lastIndex = $this->_index;
 	}
 
 /**
@@ -206,10 +224,11 @@ class ResultSet implements Iterator {
  *
  * @return array
  */
-	protected function _groupResult() {
+	protected function _groupResult($row) {
+		$defaultAlias = $this->_defaultTable->alias();
 		$results = [];
-		foreach ($this->_current as $key => $value) {
-			$table = $this->_defaultAlias;
+		foreach ($row as $key => $value) {
+			$table = $defaultAlias;
 			$field = $key;
 
 			if (empty($this->_map[$key])) {
@@ -226,9 +245,9 @@ class ResultSet implements Iterator {
 			$results[$table][$field] = $value;
 		}
 
-		$results[$this->_defaultAlias] = $this->_castValues(
+		$results[$defaultAlias] = $this->_castValues(
 			$this->_defaultTable,
-			$results[$this->_defaultAlias]
+			$results[$defaultAlias]
 		);
 
 		foreach (array_reverse($this->_associationMap) as $alias => $assoc) {
@@ -239,7 +258,7 @@ class ResultSet implements Iterator {
 			$results = $assoc->transformRow($results);
 		}
 
-		return $results[$this->_defaultAlias];
+		return $results[$defaultAlias];
 	}
 
 /**
@@ -269,4 +288,41 @@ class ResultSet implements Iterator {
 
 		return $values;
 	}
+
+/**
+ * Serialize a resultset.
+ *
+ * Part of Serializable interface.
+ *
+ * @return string Serialized object
+ */
+	public function serialize() {
+		$this->toArray();
+		return serialize($this->_results);
+	}
+
+/**
+ * Unserialize a resultset.
+ *
+ * Part of Serializable interface.
+ *
+ * @param string Serialized object
+ * @return ResultSet The hydrated result set.
+ */
+	public function unserialize($serialized) {
+		$this->_results = unserialize($serialized);
+	}
+
+/**
+ * Convert a result set into JSON.
+ *
+ * Part of JsonSerializable interface.
+ *
+ * @return array The data to convert to JSON
+ */
+	public function jsonSerialize() {
+		$this->toArray();
+		return $this->_results;
+	}
+
 }

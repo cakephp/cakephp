@@ -19,13 +19,15 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\Model\ConnectionManager;
 use Cake\ORM\Query;
+use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests Query class
  *
  */
-class QueryTest extends \Cake\TestSuite\TestCase {
+class QueryTest extends TestCase {
 
 	public $fixtures = ['core.article', 'core.author', 'core.tag',
 		'core.articles_tag', 'core.post'];
@@ -100,7 +102,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			]
 		];
 
-		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
 
 		$query->expects($this->at(0))->method('join')
 			->with(['client' => [
@@ -180,9 +182,9 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		];
 
 		$table = Table::build('foo', ['schema' => ['id' => ['type' => 'integer']]]);
-		$query = new Query($this->connection);
+		$query = new Query($this->connection, $table);
 
-		$query->select('foo.id')->repository($table)->contain($contains)->sql();
+		$query->select('foo.id')->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
 			'foo__id' => 'foo.id', 'client__name' => 'client.name',
@@ -202,8 +204,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testContainToFieldsDefault() {
 		$contains = ['client' => ['order']];
 
-		$query = new Query($this->connection);
-		$query->select()->repository($this->table)->contain($contains)->sql();
+		$query = new Query($this->connection, $this->table);
+		$query->select()->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
 			'foo__id' => 'foo.id', 'client__name' => 'client.name',
@@ -214,16 +216,16 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $select);
 
 		$contains['client']['fields'] = ['name'];
-		$query = new Query($this->connection);
-		$query->select('foo.id')->repository($this->table)->contain($contains)->sql();
+		$query = new Query($this->connection, $this->table);
+		$query->select('foo.id')->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = ['foo__id' => 'foo.id', 'client__name' => 'client.name'];
 		$this->assertEquals($expected, $select);
 
 		$contains['client']['fields'] = [];
 		$contains['client']['order']['fields'] = false;
-		$query = new Query($this->connection);
-		$query->select()->repository($this->table)->contain($contains)->sql();
+		$query = new Query($this->connection, $this->table);
+		$query->select()->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
 			'foo__id' => 'foo.id',
@@ -242,12 +244,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testContainResultFetchingOneLevel() {
 		$this->_createTables();
 
-		$query = new Query($this->connection);
 		$table = Table::build('article', ['table' => 'articles']);
 		Table::build('author', ['connection' => $this->connection]);
 		$table->belongsTo('author');
-		$results = $query->repository($table)
-			->select()
+
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
 			->contain('author')
 			->order(['article.id' => 'asc'])
 			->toArray();
@@ -309,7 +311,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testHasManyEagerLoading($strategy) {
 		$this->_createTables();
 
-		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
 		$table->hasMany('article', [
@@ -317,8 +318,9 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			'strategy' => $strategy,
 			'sort' => ['article.id' => 'asc']
 		]);
+		$query = new Query($this->connection, $table);
 
-		$results = $query->repository($table)->select()->contain('article')->toArray();
+		$results = $query->select()->contain('article')->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -382,13 +384,12 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testHasManyEagerLoadingFieldsAndOrder($strategy) {
 		$this->_createTables();
 
-		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
 		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
 
-		$results = $query->repository($table)
-			->select()
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
 			->contain([
 				'article' => [
 					'fields' => ['title', 'author_id'],
@@ -433,7 +434,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testHasManyEagerLoadingDeep($strategy) {
 		$this->_createTables();
 
-		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
 		$table->hasMany('article', [
@@ -442,9 +442,9 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			'sort' => ['article.id' => 'asc']
 		]);
 		$article->belongsTo('author');
+		$query = new Query($this->connection, $table);
 
-		$results = $query->repository($table)
-			->select()
+		$results = $query->select()
 			->contain(['article' => ['author']])
 			->toArray();
 		$expected = [
@@ -512,7 +512,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testHasManyEagerLoadingFromSecondaryTable($strategy) {
 		$this->_createTables();
 
-		$query = new Query($this->connection);
 		$author = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
 		$post = Table::build('post', ['connection' => $this->connection]);
@@ -520,8 +519,9 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		$author->hasMany('post', ['property' => 'posts'] + compact('strategy'));
 		$article->belongsTo('author');
 
-		$results = $query->repository($article)
-			->select()
+		$query = new Query($this->connection, $article);
+
+		$results = $query->select()
 			->contain(['author' => ['post']])
 			->order(['article.id' => 'ASC'])
 			->toArray();
@@ -615,7 +615,6 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testBelongsToManyEagerLoading($strategy) {
 		$this->_createTables();
 
-		$query = new Query($this->connection);
 		$table = Table::build('Article', ['connection' => $this->connection]);
 		Table::build('Tag', ['connection' => $this->connection]);
 		Table::build('ArticleTag', [
@@ -623,8 +622,9 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			'table' => 'articles_tags'
 		]);
 		$table->belongsToMany('Tag', ['property' => 'tags', 'strategy' => $strategy]);
+		$query = new Query($this->connection, $table);
 
-		$results = $query->repository($table)->select()->contain('Tag')->toArray();
+		$results = $query->select()->contain('Tag')->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -674,8 +674,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertEquals($expected, $results);
 
-		$results = $query->repository($table)
-			->select()
+		$results = $query->select()
 			->contain(['Tag' => ['conditions' => ['id' => 3]]])
 			->toArray();
 		$expected = [
@@ -720,7 +719,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testFilteringByHasMany() {
 		$this->_createTables();
 
-		$query = new Query($this->connection);
+		$query = new Query($this->connection, $this->table);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
 		$table->hasMany('article', ['property' => 'articles']);
@@ -758,7 +757,7 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 	public function testFilteringByBelongsToMany() {
 		$this->_createTables();
 
-		$query = new Query($this->connection);
+		$query = new Query($this->connection, $this->table);
 		$table = Table::build('Article', ['connection' => $this->connection]);
 		Table::build('Tag', ['connection' => $this->connection]);
 		Table::build('ArticleTag', [
@@ -788,9 +787,8 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertEquals($expected, $results);
 
-		$query = new Query($this->connection);
-		$results = $query->repository($table)
-			->select()
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
 			->contain(['Tag' => [
 				'matching' => true,
 				'conditions' => ['Tag.name' => 'tag2']]
@@ -810,6 +808,19 @@ class QueryTest extends \Cake\TestSuite\TestCase {
 			]
 		];
 		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Test setResult()
+ *
+ * @return void
+ */
+	public function testSetResult() {
+		$query = new Query($this->connection, $this->table);
+		$stmt = $this->getMock('Cake\Database\StatementInterface');
+		$results = new ResultSet($query, $stmt);
+		$query->setResult($results);
+		$this->assertSame($results, $query->execute());
 	}
 
 }

@@ -108,7 +108,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new HasMany('Article', $config);
 		$keys = [1, 2, 3, 4];
-		$query = $this->getMock('Cake\ORM\Query', ['execute'], [null]);
+		$query = $this->getMock('Cake\ORM\Query', ['execute'], [null, null]);
 		$this->article->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
@@ -152,7 +152,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query = $this->getMock(
 			'Cake\ORM\Query',
 			['execute', 'where', 'andWhere', 'order'],
-			[null]
+			[null, null]
 		);
 		$this->article->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
@@ -197,7 +197,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query = $this->getMock(
 			'Cake\ORM\Query',
 			['execute', 'where', 'andWhere', 'order', 'select', 'contain'],
-			[null]
+			[null, null]
 		);
 		$this->article->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
@@ -262,7 +262,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query = $this->getMock(
 			'Cake\ORM\Query',
 			['execute'],
-			[null]
+			[null, null]
 		);
 		$this->article->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
@@ -281,14 +281,14 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->article,
 		];
 		$association = new HasMany('Article', $config);
-		$parent = (new Query(null))
+		$parent = (new Query(null, null))
 			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
 			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
 
 		$query = $this->getMock(
 			'Cake\ORM\Query',
 			['execute', 'where', 'andWhere', 'order', 'select', 'contain'],
-			[null]
+			[null, null]
 		);
 
 		$this->article->expects($this->once())->method('find')->with('all')
@@ -340,7 +340,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachTo() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
 		$config = [
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
@@ -371,7 +371,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToConfigOverride() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
 		$config = [
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
@@ -405,7 +405,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToNoFields() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
 		$config = [
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
