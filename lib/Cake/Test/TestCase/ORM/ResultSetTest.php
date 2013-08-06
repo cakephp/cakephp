@@ -105,7 +105,7 @@ class ResultSetTest extends TestCase {
 		$results = $query->execute();
 
 		$expected = json_encode($this->fixtureData);
-		$this->assertEquals(json_encode($results), $expected);
+		$this->assertEquals($expected, json_encode($results));
 	}
 
 }
