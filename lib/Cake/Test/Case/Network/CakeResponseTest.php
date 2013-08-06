@@ -172,6 +172,10 @@ class CakeResponseTest extends CakeTestCase {
 		$response->header(array('Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache'));
 		$headers += array('Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache');
 		$this->assertEquals($response->header(), $headers);
+
+		$response->header('Access-Control-Allow-Origin', array('domain1', 'domain2'));
+		$headers += array('Access-Control-Allow-Origin' => array('domain1', 'domain2'));
+		$this->assertEquals($response->header(), $headers);
 	}
 
 /**
@@ -182,7 +186,8 @@ class CakeResponseTest extends CakeTestCase {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->header(array(
 			'Content-Language' => 'es',
-			'WWW-Authenticate' => 'Negotiate'
+			'WWW-Authenticate' => 'Negotiate',
+			'Access-Control-Allow-Origin' => array('domain1', 'domain2'),
 		));
 		$response->body('the response body');
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
@@ -194,8 +199,12 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(3))
 			->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
 		$response->expects($this->at(4))
-			->method('_sendHeader')->with('Content-Length', 17);
+			->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain1');
 		$response->expects($this->at(5))
+			->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain2');
+		$response->expects($this->at(6))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(7))
 			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->send();
 	}

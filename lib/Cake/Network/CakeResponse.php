@@ -416,8 +416,10 @@ class CakeResponse {
 		$this->_setContent();
 		$this->_setContentLength();
 		$this->_setContentType();
-		foreach ($this->_headers as $header => $value) {
-			$this->_sendHeader($header, $value);
+		foreach ($this->_headers as $header => $values) {
+			foreach((array)$values as $value) {
+				$this->_sendHeader($header, $value);
+			}
 		}
 		if ($this->_file) {
 			$this->_sendFile($this->_file, $this->_fileRange);
@@ -556,31 +558,25 @@ class CakeResponse {
  * @param string|array $header. An array of header strings or a single header string
  *	- an associative array of "header name" => "header value" is also accepted
  *	- an array of string headers is also accepted
- * @param string $value. The header value.
+ * @param string|array $value. The header value(s)
  * @return array list of headers to be sent
  */
 	public function header($header = null, $value = null) {
 		if (is_null($header)) {
 			return $this->_headers;
 		}
-		if (is_array($header)) {
-			foreach ($header as $h => $v) {
-				if (is_numeric($h)) {
-					$this->header($v);
-					continue;
-				}
-				$this->_headers[$h] = trim($v);
+		if (!is_array($header)) {
+			$header = array($header => $value);
+		}
+		foreach ($header as $h => $v) {
+			if (is_numeric($h)) {
+				list($h, $v) = array($v, null);
 			}
-			return $this->_headers;
+			if (is_null($v)) {
+				list($h, $v) = explode(':', $h, 2);
+			}
+			$this->_headers[$h] = (is_array($v)) ? array_map('trim', $v) : trim($v);
 		}
-
-		if (!is_null($value)) {
-			$this->_headers[$header] = $value;
-			return $this->_headers;
-		}
-
-		list($header, $value) = explode(':', $header, 2);
-		$this->_headers[$header] = trim($value);
 		return $this->_headers;
 	}
 
