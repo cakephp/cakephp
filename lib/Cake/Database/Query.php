@@ -1527,7 +1527,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * default one will be returned
  * @return Query|ValueBinder
  */
-	public function valuebinder($binder = null) {
+	public function valueBinder($binder = null) {
 		if ($binder === null) {
 			if ($this->_valueBinder === null) {
 				$this->_valueBinder = new ValueBinder;
