@@ -39,27 +39,33 @@ class CakeNumber {
 	protected static $_currencies = array(
 		'AUD' => array(
 			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
+			'fractionExponent' => 2
 		),
 		'CAD' => array(
 			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
+			'fractionExponent' => 2
 		),
 		'USD' => array(
 			'wholeSymbol' => '$', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
+			'fractionExponent' => 2
 		),
 		'EUR' => array(
 			'wholeSymbol' => '€', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => '.', 'decimals' => ',', 'negative' => '()', 'escape' => true
+			'zero' => 0, 'places' => 2, 'thousands' => '.', 'decimals' => ',', 'negative' => '()', 'escape' => true,
+			'fractionExponent' => 0
 		),
 		'GBP' => array(
 			'wholeSymbol' => '£', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()','escape' => true
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()','escape' => true,
+			'fractionExponent' => 2
 		),
 		'JPY' => array(
-			'wholeSymbol' => '¥', 'wholePosition' => 'before', 'fractionSymbol' => 'c', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true
+			'wholeSymbol' => '¥', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
+			'fractionExponent' => 0
 		),
 	);
 
@@ -71,6 +77,7 @@ class CakeNumber {
 	protected static $_currencyDefaults = array(
 		'wholeSymbol' => '', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
 		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true,
+		'fractionExponent' => 2
 	);
 
 /**
@@ -230,6 +237,7 @@ class CakeNumber {
  * ### Options
  *
  * - `places` - Number of decimal places to use. ie. 2
+ * - `fractionExponent` - Fraction exponent of this specific currency. Defaults to 2.
  * - `before` - The string to place before whole numbers. ie. '['
  * - `after` - The string to place after decimal numbers. ie. ']'
  * - `thousands` - Thousands separator ie. ','
@@ -297,6 +305,7 @@ class CakeNumber {
  * - `zero` - The text to use for zero values, can be a
  *   string or a number. ie. 0, 'Free!'
  * - `places` - Number of decimal places to use. ie. 2
+ * - `fractionExponent` - Fraction exponent of this specific currency. Defaults to 2.
  * - `thousands` - Thousands separator ie. ','
  * - `decimals` - Decimal separator symbol ie. '.'
  * - `negative` - Symbol for negative numbers. If equal to '()',
@@ -344,7 +353,7 @@ class CakeNumber {
 			}
 		} elseif ($value < 1 && $value > -1) {
 			if ($options['fractionSymbol'] !== false) {
-				$multiply = intval('1' . str_pad('', $options['places'], '0'));
+				$multiply = pow(10, $options['fractionExponent']);
 				$value = $value * $multiply;
 				$options['places'] = null;
 				$symbolKey = 'fraction';
