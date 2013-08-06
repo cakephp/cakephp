@@ -157,7 +157,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachTo() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
@@ -207,7 +207,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAttachToNoFields() {
-		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
@@ -263,7 +263,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		]);
 		$association = new BelongsToMany('Tag', $config);
 		$keys = [1, 2, 3, 4];
-		$query = $this->getMock('Cake\ORM\Query', ['execute', 'contain'], [null]);
+		$query = $this->getMock('Cake\ORM\Query', ['execute', 'contain'], [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
@@ -320,7 +320,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$association = new BelongsToMany('Tag', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['execute', 'contain', 'where', 'order'];
-		$query = $this->getMock('Cake\ORM\Query', $methods, [null]);
+		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
@@ -372,7 +372,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$association = new BelongsToMany('Tag', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['execute', 'contain', 'where', 'order', 'select'];
-		$query = $this->getMock('Cake\ORM\Query', $methods, [null]);
+		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
@@ -441,7 +441,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$association = new BelongsToMany('Tag', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['execute', 'contain', 'where', 'order', 'select'];
-		$query = $this->getMock('Cake\ORM\Query', $methods, [null]);
+		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$query->expects($this->any())->method('contain')->will($this->returnSelf());
@@ -474,14 +474,14 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			]
 		]);
 		$association = new BelongsToMany('Tag', $config);
-		$parent = (new Query(null))
+		$parent = (new Query(null, null))
 			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
 			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
 
 		$query = $this->getMock(
 			'Cake\ORM\Query',
 			['execute', 'where', 'andWhere', 'order', 'select', 'contain'],
-			[null]
+			[null, null]
 		);
 
 		$this->tag->expects($this->once())->method('find')->with('all')

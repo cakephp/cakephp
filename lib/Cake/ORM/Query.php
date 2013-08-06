@@ -83,6 +83,23 @@ class Query extends DatabaseQuery {
 	];
 
 /**
+ * A hydrated ResultSet.
+ *
+ * @var Cake\ORM\ResultSet
+ * @see setResult()
+ */
+	protected $_results;
+
+/**
+ * @param Cake\Database\Connection $connection
+ * @param Cake\ORM\Table $table
+ */
+	public function __construct($connection, $table) {
+		$this->connection($connection);
+		$this->repository($table);
+	}
+
+/**
  * Returns the default table object that will be used by this query,
  * that is, the table that will appear in the from clause.
  *
@@ -306,8 +323,27 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * Set the result set for a query.
+ *
+ * Setting the resultset of a query will make execute() a no-op. Instead
+ * of executing the SQL query and fetching results, the ResultSet provided to this
+ * method will be returned.
+ *
+ * This method is most useful when combined with results stored in a persistent cache.
+ *
+ * @param Cake\ORM\ResultSet $results The results this query should return.
+ * @return Query The query instance.
+ */
+	public function setResult($results) {
+		$this->_results = $results;
+		return $this;
+	}
+
+/**
  * Compiles the SQL representation of this query and executes it using the
- * provided connection object. Returns a ResultSet iterator object
+ * provided connection object. Returns a ResultSet iterator object.
+ *
+ * If a result set was set using setResult() that ResultSet will be returned.
  *
  * Resulting object is traversable, so it can be used in any loop as you would
  * with an array.
@@ -315,6 +351,9 @@ class Query extends DatabaseQuery {
  * @return Cake\ORM\ResultSet
  */
 	public function execute() {
+		if (isset($this->_results)) {
+			return $this->_results;
+		}
 		return new ResultSet($this, parent::execute());
 	}
 

@@ -295,6 +295,40 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that beforeFind events can mutate the query.
+ *
+ * @return void
+ */
+	public function testFindBeforeFindEventMutateQuery() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table->getEventManager()->attach(function ($event, $query, $options) {
+			$query->limit(1);
+		}, 'Model.beforeFind');
+
+		$result = $table->find('all')->execute();
+		$this->assertCount(1, $result, 'Should only have 1 record, limit 1 applied.');
+	}
+
+/**
+ * Test that beforeFind events are fired and can stop the find and
+ * return custom results.
+ *
+ * @return void
+ */
+	public function testFindBeforeFindEventOverrideReturn() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$expected = ['One', 'Two', 'Three'];
+		$table->getEventManager()->attach(function ($event, $query, $options) use ($expected) {
+			$query->setResult($expected);
+			$event->stopPropagation();
+		}, 'Model.beforeFind');
+
+		$query = $table->find('all');
+		$query->limit(1);
+		$this->assertEquals($expected, $query->execute());
+	}
+
+/**
  * Tests that belongsTo() creates and configures correctly the association
  *
  * @return void
@@ -405,7 +439,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['_buildQuery'],
 			['table' => 'users', 'connection' => $this->connection]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection]);
+		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
 			->method('_buildQuery')
 			->will($this->returnValue($query));
@@ -441,7 +475,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['_buildQuery'],
 			['table' => 'users', 'connection' => $this->connection]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection]);
+		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
 			->method('_buildQuery')
 			->will($this->returnValue($query));
