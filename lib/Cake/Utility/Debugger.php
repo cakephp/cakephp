@@ -500,6 +500,8 @@ class Debugger {
 				return strtolower(gettype($var));
 			case 'null':
 				return 'null';
+			case 'unknown':
+				return 'unknown';
 			default:
 				return self::_object($var, $depth - 1, $indent + 1);
 		}
