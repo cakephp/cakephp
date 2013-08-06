@@ -63,7 +63,7 @@ class L10n {
  *
  * @var string
  */
-	public $default = 'en';
+	public $default = null;
 
 /**
  * Encoding used for current locale
