@@ -50,8 +50,17 @@ class TaskCollection extends ObjectCollection {
 	}
 
 /**
- * Loads/constructs a task. Will return the instance in the collection
- * if it already exists.
+ * Loads/constructs a task. Will return the instance in the registry if it already exists.
+ *
+ * You can alias your task as an existing task by setting the 'className' key, i.e.,
+ * {{{
+ * public $tasks = array(
+ * 'DbConfig' => array(
+ * 'className' => 'Bakeplus.DbConfigure'
+ * );
+ * );
+ * }}}
+ * All calls to the `DbConfig` task would use `DbConfigure` found in the `Bakeplus` plugin instead.
  *
  * @param string $task Task name to load
  * @param array $settings Settings for the task.
@@ -59,26 +68,33 @@ class TaskCollection extends ObjectCollection {
  * @throws MissingTaskException when the task could not be found
  */
 	public function load($task, $settings = array()) {
+		if (is_array($settings) && isset($settings['className'])) {
+			$alias = $task;
+			$task = $settings['className'];
+		}
 		list($plugin, $name) = pluginSplit($task, true);
-
-		if (isset($this->_loaded[$name])) {
-			return $this->_loaded[$name];
+		if (!isset($alias)) {
+			$alias = $name;
 		}
 
+		if (isset($this->_loaded[$alias])) {
+			return $this->_loaded[$alias];
+		}
 		$taskClass = $name . 'Task';
 		App::uses($taskClass, $plugin . 'Console/Command/Task');
 
 		$exists = class_exists($taskClass);
 		if (!$exists) {
 			throw new MissingTaskException(array(
-				'class' => $taskClass
+				'class' => $taskClass,
+				'plugin' => substr($plugin, 0, -1)
 			));
 		}
 
-		$this->_loaded[$name] = new $taskClass(
+		$this->_loaded[$alias] = new $taskClass(
 			$this->_Shell->stdout, $this->_Shell->stderr, $this->_Shell->stdin
 		);
-		return $this->_loaded[$name];
+		return $this->_loaded[$alias];
 	}
 
 }

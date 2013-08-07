@@ -408,11 +408,7 @@ class File {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::exists
  */
 	public function exists() {
-		if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-			clearstatcache(true, $this->path);
-		} else {
-			clearstatcache();
-		}
+		$this->clearStatCache();
 		return (file_exists($this->path) && is_file($this->path));
 	}
 
@@ -561,12 +557,34 @@ class File {
 		}
 		if (function_exists('finfo_open')) {
 			$finfo = finfo_open(FILEINFO_MIME);
-			list($type, $charset) = explode(';', finfo_file($finfo, $this->pwd()));
+			$finfo = finfo_file($finfo, $this->pwd());
+			if (!$finfo) {
+				return false;
+			}
+			list($type, $charset) = explode(';', $finfo);
 			return $type;
-		} elseif (function_exists('mime_content_type')) {
+		}
+		if (function_exists('mime_content_type')) {
 			return mime_content_type($this->pwd());
 		}
 		return false;
+	}
+
+/**
+ * Clear PHP's internal stat cache
+ *
+ * For 5.3 onwards its possible to clear cache for just a single file. Passing true
+ * will clear all the stat cache.
+ *
+ * @param boolean $all Clear all cache or not
+ * @return void
+ */
+	public function clearStatCache($all = false) {
+		if ($all === false && version_compare(PHP_VERSION, '5.3.0') >= 0) {
+			return clearstatcache(true, $this->path);
+		}
+
+		return clearstatcache();
 	}
 
 }

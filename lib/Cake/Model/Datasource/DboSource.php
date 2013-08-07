@@ -898,7 +898,7 @@ class DboSource extends DataSource {
 		if (PHP_SAPI !== 'cli') {
 			$controller = null;
 			$View = new View($controller, false);
-			$View->set('logs', array($this->configKeyName => $log));
+			$View->set('sqlLogs', array($this->configKeyName => $log));
 			echo $View->element('sql_dump', array('_forced_from_dbo_' => true));
 		} else {
 			foreach ($log['log'] as $k => $i) {
@@ -2489,7 +2489,7 @@ class DboSource extends DataSource {
 					$keys = array_keys($value);
 					if ($keys === array_values($keys)) {
 						$count = count($value);
-						if ($count === 1 && !preg_match("/\s+NOT$/", $key)) {
+						if ($count === 1 && !preg_match('/\s+(?:NOT|\!=)$/', $key)) {
 							$data = $this->_quoteFields($key) . ' = (';
 							if ($quoteValues) {
 								if (is_object($model)) {

@@ -4218,6 +4218,32 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select('Contact.required_one', array('option A'));
+		$expected = array(
+			'select' => array(
+				'name' => 'data[Contact][required_one]',
+				'id' => 'ContactRequiredOne',
+				'required' => 'required'
+			),
+			array('option' => array('value' => '')), '/option',
+			array('option' => array('value' => '0')), 'option A', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select('Contact.required_one', array('option A'), array('disabled' => true));
+		$expected = array(
+			'select' => array(
+				'name' => 'data[Contact][required_one]',
+				'id' => 'ContactRequiredOne',
+				'disabled' => 'disabled'
+			),
+			array('option' => array('value' => '')), '/option',
+			array('option' => array('value' => '0')), 'option A', '/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -4468,6 +4494,26 @@ class FormHelperTest extends CakeTestCase {
 			array('option' => array('value' => '3x', 'selected' => 'selected')),
 			'Stringy',
 			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select('Contact.required_one', array(
+			'1' => 'option A',
+			'2' => 'option B'
+		), array('multiple' => true));
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Contact][required_one]', 'value' => '', 'id' => 'ContactRequiredOne_'
+			),
+			'select' => array(
+				'name' => 'data[Contact][required_one][]',
+				'id' => 'ContactRequiredOne',
+				'required' => 'required',
+				'multiple' => 'multiple'
+			),
+			array('option' => array('value' => '1')), 'option A', '/option',
+			array('option' => array('value' => '2')), 'option B', '/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
@@ -5829,6 +5875,33 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertRegExp('/<option[^<>]+value="03"[^<>]+selected="selected"[^>]*>3<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="13"[^<>]+selected="selected"[^>]*>13<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="35"[^<>]+selected="selected"[^>]*>35<\/option>/', $result);
+	}
+
+/**
+ * Test dateTime with rounding
+ *
+ * @return void
+ */
+	public function testDateTimeRounding() {
+		$this->Form->request->data['Contact'] = array(
+			'date' => array(
+				'day' => '13',
+				'month' => '12',
+				'year' => '2010',
+				'hour' => '04',
+				'min' => '19',
+				'meridian' => 'AM'
+			)
+		);
+
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 15));
+		$this->assertTextContains('<option value="15" selected="selected">15</option>', $result);
+
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 15, 'round' => 'up'));
+		$this->assertTextContains('<option value="30" selected="selected">30</option>', $result);
+
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 5, 'round' => 'down'));
+		$this->assertTextContains('<option value="15" selected="selected">15</option>', $result);
 	}
 
 /**

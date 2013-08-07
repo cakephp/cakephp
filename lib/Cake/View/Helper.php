@@ -324,13 +324,16 @@ class Helper extends Object {
 		) {
 			$path .= $options['ext'];
 		}
+		if (preg_match('|^([a-z0-9]+:)?//|', $path)) {
+			return $path;
+		}
 		if (isset($plugin)) {
 			$path = Inflector::underscore($plugin) . '/' . $path;
 		}
 		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
 		if (!empty($options['fullBase'])) {
-			$path = rtrim(FULL_BASE_URL, '/') . '/' . ltrim($path, '/');
+			$path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
 		}
 		return $path;
 	}
@@ -343,7 +346,7 @@ class Helper extends Object {
  */
 	protected function _encodeUrl($url) {
 		$path = parse_url($url, PHP_URL_PATH);
-		$parts = array_map('urldecode', explode('/', $path));
+		$parts = array_map('rawurldecode', explode('/', $path));
 		$parts = array_map('rawurlencode', $parts);
 		$encoded = implode('/', $parts);
 		return h(str_replace($path, $encoded, $url));

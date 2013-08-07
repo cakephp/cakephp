@@ -434,9 +434,15 @@ class ViewTask extends BakeTask {
 		))->addOption('admin', array(
 			'help' => __d('cake_console', 'Set to only bake views for a prefix in Routing.prefixes'),
 			'boolean' => true
+		))->addOption('theme', array(
+			'short' => 't',
+			'help' => __d('cake_console', 'Theme to use when baking code.')
 		))->addOption('connection', array(
 			'short' => 'c',
 			'help' => __d('cake_console', 'The connection the connected model is on.')
+		))->addOption('force', array(
+			'short' => 'f',
+			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		))->addSubcommand('all', array(
 			'help' => __d('cake_console', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
 		))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));

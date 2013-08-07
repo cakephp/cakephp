@@ -48,6 +48,9 @@ class CacheTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		Cache::drop('latest');
+		Cache::drop('page');
+		Cache::drop('archive');
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default', $this->_defaultCacheConfig['settings']);
 	}
@@ -129,6 +132,10 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidConfig() {
+		// In debug mode it would auto create the folder.
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+
 		Cache::config('invalid', array(
 			'engine' => 'File',
 			'duration' => '+1 year',
@@ -138,6 +145,8 @@ class CacheTest extends CakeTestCase {
 			'random' => 'wii'
 		));
 		Cache::read('Test', 'invalid');
+
+		Configure::write('debug', $debug);
 	}
 
 /**
@@ -235,6 +244,67 @@ class CacheTest extends CakeTestCase {
 		$this->assertEquals($expected, Cache::settings('sessions'));
 
 		Cache::config('sessions', $_cacheConfigSessions['settings']);
+	}
+
+/**
+ * testGroupConfigs method
+ */
+	public function testGroupConfigs() {
+		Cache::config('latest', array(
+			'duration' => 300,
+			'engine' => 'File',
+			'groups' => array(
+				'posts', 'comments',
+			),
+		));
+
+		$expected = array(
+			'posts' => array('latest'),
+			'comments' => array('latest'),
+		);
+		$result = Cache::groupConfigs();
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::groupConfigs('posts');
+		$this->assertEquals(array('posts' => array('latest')), $result);
+
+		Cache::config('page', array(
+			'duration' => 86400,
+			'engine' => 'File',
+			'groups' => array(
+				'posts', 'archive'
+			),
+		));
+
+		$result = Cache::groupConfigs();
+		$expected = array(
+			'posts' => array('latest', 'page'),
+			'comments' => array('latest'),
+			'archive' => array('page'),
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::groupConfigs('archive');
+		$this->assertEquals(array('archive' => array('page')), $result);
+
+		Cache::config('archive', array(
+			'duration' => 86400 * 30,
+			'engine' => 'File',
+			'groups' => array(
+				'posts', 'archive', 'comments',
+			),
+		));
+
+		$result = Cache::groupConfigs('archive');
+		$this->assertEquals(array('archive' => array('archive', 'page')), $result);
+	}
+
+/**
+ * testGroupConfigsThrowsException method
+ * @expectedException CacheException
+ */
+	public function testGroupConfigsThrowsException() {
+		Cache::groupConfigs('bogus');
 	}
 
 /**

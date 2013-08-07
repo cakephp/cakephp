@@ -141,6 +141,7 @@ class ConsoleOutput {
 		'success' => array('text' => 'green'),
 		'comment' => array('text' => 'blue'),
 		'question' => array('text' => 'magenta'),
+		'notice' => array('text' => 'cyan')
 	);
 
 /**

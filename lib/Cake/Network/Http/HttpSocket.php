@@ -96,6 +96,7 @@ class HttpSocket extends CakeSocket {
 		'port' => 80,
 		'timeout' => 30,
 		'ssl_verify_peer' => true,
+		'ssl_allow_self_signed' => false,
 		'ssl_verify_depth' => 5,
 		'ssl_verify_host' => true,
 		'request' => array(
@@ -492,6 +493,19 @@ class HttpSocket extends CakeSocket {
  */
 	public function put($uri = null, $data = array(), $request = array()) {
 		$request = Hash::merge(array('method' => 'PUT', 'uri' => $uri, 'body' => $data), $request);
+		return $this->request($request);
+	}
+
+/**
+ * Issues a PATCH request to the specified URI, query, and request.
+ *
+ * @param string|array $uri URI to request, See HttpSocket::_parseUri()
+ * @param array $data Array of PATCH data keys and values.
+ * @param array $request An indexed array with indexes such as 'method' or uri
+ * @return mixed Result of request
+ */
+	public function patch($uri = null, $data = array(), $request = array()) {
+		$request = Hash::merge(array('method' => 'PATCH', 'uri' => $uri, 'body' => $data), $request);
 		return $this->request($request);
 	}
 

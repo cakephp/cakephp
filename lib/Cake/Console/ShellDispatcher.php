@@ -123,7 +123,7 @@ class ShellDispatcher {
 		define('APP_DIR', $this->params['app']);
 		define('APP', $this->params['working'] . DS);
 		define('WWW_ROOT', APP . $this->params['webroot'] . DS);
-		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp')) {
+		if (!is_dir(ROOT . DS . APP_DIR . DS . 'tmp') && !defined('TMP')) {
 			define('TMP', CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'Console' . DS . 'Templates' . DS . 'skel' . DS . 'tmp' . DS);
 		}
 		$boot = file_exists(ROOT . DS . APP_DIR . DS . 'Config' . DS . 'bootstrap.php');
@@ -137,7 +137,9 @@ class ShellDispatcher {
 		$this->setErrorHandlers();
 
 		if (!defined('FULL_BASE_URL')) {
-			define('FULL_BASE_URL', 'http://localhost');
+			$url = Configure::read('App.fullBaseUrl');
+			define('FULL_BASE_URL', $url ? $url : 'http://localhost');
+			Configure::write('App.fullBaseUrl', FULL_BASE_URL);
 		}
 
 		return true;

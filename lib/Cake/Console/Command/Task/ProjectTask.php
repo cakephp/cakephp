@@ -435,6 +435,9 @@ class ProjectTask extends AppShell {
 			))->addOption('empty', array(
 				'boolean' => true,
 				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addOption('skel', array(
 				'default' => current(App::core('Console')) . 'Templates' . DS . 'skel',
 				'help' => __d('cake_console', 'The directory layout to use for the new application skeleton. Defaults to cake/Console/Templates/skel of CakePHP used to create the project.')

@@ -6,18 +6,9 @@
  *
  * PHP 5
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config
  * @since         CakePHP(tm) v 0.2.9
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -70,6 +61,9 @@
  * - `renderer` - string - The class responsible for rendering uncaught exceptions. If you choose a custom class you
  *   should place the file for that class in app/Lib/Error. This class needs to implement a render method.
  * - `log` - boolean - Should Exceptions be logged?
+  * - `skipLog` - array - list of exceptions to skip for logging. Exceptions that
+ *   extend one of the listed exceptions will also be skipped for logging.
+ *   Example: `'skipLog' => array('NotFoundException', 'UnauthorizedException')`
  *
  * @see ErrorHandler for more information on exception handling and configuration.
  */
@@ -104,6 +98,33 @@
  * thus not recommended for production applications.
  */
 	//Configure::write('App.baseUrl', env('SCRIPT_NAME'));
+
+/**
+ * To configure CakePHP to use a particular domain URL
+ * for any URL generation inside the application, set the following
+ * configuration variable to the http(s) address to your domain. This
+ * will override the automatic detection of full base URL and can be
+ * useful when generating links from the CLI (e.g. sending emails)
+ */
+	//Configure::write('App.fullBaseUrl', 'http://example.com');
+
+/**
+ * Web path to the public images directory under webroot.
+ * If not set defaults to 'img/'
+ */
+	//Configure::write('App.imageBaseUrl', 'img/');
+
+/**
+ * Web path to the CSS files directory under webroot.
+ * If not set defaults to 'css/'
+ */
+	//Configure::write('App.cssBaseUrl', 'css/');
+
+/**
+ * Web path to the js files directory under webroot.
+ * If not set defaults to 'js/'
+ */
+	//Configure::write('App.jsBaseUrl', 'js/');
 
 /**
  * Uncomment the define below to use CakePHP prefix routes.

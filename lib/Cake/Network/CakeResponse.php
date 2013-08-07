@@ -585,6 +585,22 @@ class CakeResponse {
 	}
 
 /**
+ * Acccessor for the location header.
+ *
+ * Get/Set the Location header value.
+ * @param null|string $url Either null to get the current location, or a string to set one.
+ * @return string|null When setting the location null will be returned. When reading the location
+ *    a string of the current location header value (if any) will be returned.
+ */
+	public function location($url = null) {
+		if ($url === null) {
+			$headers = $this->header();
+			return isset($headers['Location']) ? $headers['Location'] : null;
+		}
+		$this->header('Location', $url);
+	}
+
+/**
  * Buffers the response message to be sent
  * if $content is null the current buffer is returned
  *
@@ -724,9 +740,7 @@ class CakeResponse {
 		}
 
 		foreach ($this->_mimeTypes as $alias => $types) {
-			if (is_array($types) && in_array($ctype, $types)) {
-				return $alias;
-			} elseif (is_string($types) && $types == $ctype) {
+			if (in_array($ctype, (array)$types)) {
 				return $alias;
 			}
 		}

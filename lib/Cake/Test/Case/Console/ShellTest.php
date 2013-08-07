@@ -213,6 +213,32 @@ class ShellTest extends CakeTestCase {
 	}
 
 /**
+ * testLoadModel method
+ *
+ * @return void
+ */
+	public function testLoadModel() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS)
+		), App::RESET);
+
+		$Shell = new TestMergeShell();
+		$this->assertEquals('Comment', $Shell->Comment->alias);
+		$this->assertInstanceOf('Comment', $Shell->Comment);
+		$this->assertEquals('Comment', $Shell->modelClass);
+
+		CakePlugin::load('TestPlugin');
+		$this->Shell->loadModel('TestPlugin.TestPluginPost');
+		$this->assertTrue(isset($this->Shell->TestPluginPost));
+		$this->assertInstanceOf('TestPluginPost', $this->Shell->TestPluginPost);
+		$this->assertEquals('TestPluginPost', $this->Shell->modelClass);
+		CakePlugin::unload('TestPlugin');
+
+		App::build();
+	}
+
+/**
  * testIn method
  *
  * @return void
@@ -829,7 +855,7 @@ TEXT;
 			array('types' => 'error'),
 		));
 		TestCakeLog::config('console', array(
-			'engine' => 'ConsoleLog',
+			'engine' => 'Console',
 			'stream' => 'php://stderr',
 			));
 		TestCakeLog::replace('console', $mock);
