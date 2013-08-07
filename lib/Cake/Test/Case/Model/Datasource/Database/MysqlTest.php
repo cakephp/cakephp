@@ -2407,7 +2407,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->conditions(array(
-			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912,999)),
+			'NOT' => array('Course.id' => null, 'Course.vet' => 'N', 'level_of_education_id' => array(912, 999)),
 			'Enrollment.yearcompleted >' => '0')
 		);
 		$this->assertRegExp('/^\s*WHERE\s+\(NOT\s+\(`Course`\.`id` IS NULL\)\s+AND NOT\s+\(`Course`\.`vet`\s+=\s+\'N\'\)\s+AND NOT\s+\(`level_of_education_id` IN \(912, 999\)\)\)\s+AND\s+`Enrollment`\.`yearcompleted`\s+>\s+\'0\'\s*$/', $result);
@@ -3267,7 +3267,7 @@ class MysqlTest extends CakeTestCase {
 		$expected = '(1 + 1) = 2';
 		$this->assertEquals($expected, $result);
 
-		$conditions = array('this_moment BETWEEN ? AND ?' => array(1,2));
+		$conditions = array('this_moment BETWEEN ? AND ?' => array(1, 2));
 		$expected = 'NOW() BETWEEN 1 AND 2';
 		$result = $this->Dbo->conditions($conditions, true, false, $Article);
 		$this->assertEquals($expected, $result);
