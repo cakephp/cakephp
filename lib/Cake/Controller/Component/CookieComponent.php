@@ -421,7 +421,7 @@ class CookieComponent extends Component {
 			'httpOnly' => $this->httpOnly
 		));
 
-		if (!is_null($this->_reset)) {
+		if (!empty($this->_reset)) {
 			$this->_expires = $this->_reset;
 			$this->_reset = null;
 		}
