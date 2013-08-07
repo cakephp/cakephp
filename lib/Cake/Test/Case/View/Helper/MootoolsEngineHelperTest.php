@@ -266,7 +266,7 @@ class MootoolsEngineHelperTest extends CakeTestCase {
 			'start' => 'onStart',
 			'drag' => 'onDrag',
 			'stop' => 'onStop',
-			'snapGrid' => array(10,10),
+			'snapGrid' => array(10, 10),
 			'wrapCallbacks' => false
 		));
 		$expected = '$("drag-me").makeDraggable({onComplete:onStop, onDrag:onDrag, onStart:onStart, snap:[10,10]});';
