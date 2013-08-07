@@ -330,14 +330,12 @@ TEXT;
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 
 		$result = String::wrap($text, array('width' => 20, 'wordWrap' => false));
-		$expected = <<<TEXT
-This is the song th
-at never ends. This
- is the song that n
-ever ends. This is
-the song that never
- ends.
-TEXT;
+		$expected = 'This is the song th' . "\n" .
+			'at never ends. This' . "\n" .
+			' is the song that n' . "\n" .
+			'ever ends. This is ' . "\n" .
+			'the song that never' . "\n" .
+			' ends.';
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 	}
 
