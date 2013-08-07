@@ -58,19 +58,27 @@ if ($noLogs || isset($_forced_from_dbo_)):
 				}
 				foreach ($i['params'] as $bindKey => $bindVal) {
 					if ($bindType === true) {
-						$bindParam .= h($bindKey) ." => " . h($bindVal) . ", ";
+						$bindParam .= h($bindKey) . " => " . h($bindVal) . ", ";
 					} else {
 						$bindParam .= h($bindVal) . ", ";
 					}
 				}
 				$i['query'] .= " , params[ " . rtrim($bindParam, ', ') . " ]";
 			}
-			echo "<tr><td>" . ($k + 1) . "</td><td>" . h($i['query']) . "</td><td>{$i['error']}</td><td style = \"text-align: right\">{$i['affected']}</td><td style = \"text-align: right\">{$i['numRows']}</td><td style = \"text-align: right\">{$i['took']}</td></tr>\n";
+			printf('<tr><td>%d</td><td>%s</td><td>%s</td><td style="text-align: right">%d</td><td style="text-align: right">%d</td><td style="text-align: right">%d</td></tr>%s',
+				$k + 1,
+				h($i['query']),
+				$i['error'],
+				$i['affected'],
+				$i['numRows'],
+				$i['took'],
+				"\n"
+			);
 		endforeach;
 	?>
 	</tbody></table>
 	<?php
 	endforeach;
 else:
-	echo '<p>Encountered unexpected $logs cannot generate SQL log</p>';
+	printf('<p>%s</p>', __d('cake_dev', 'Encountered unexpected %s. Cannot generate SQL log.', '$logs'));
 endif;
