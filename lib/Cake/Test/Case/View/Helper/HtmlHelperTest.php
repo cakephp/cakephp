@@ -400,6 +400,9 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->image('http://google.com/logo.gif');
 		$this->assertTags($result, array('img' => array('src' => 'http://google.com/logo.gif', 'alt' => '')));
 
+		$result = $this->Html->image('//google.com/logo.gif');
+		$this->assertTags($result, array('img' => array('src' => '//google.com/logo.gif', 'alt' => '')));
+
 		$result = $this->Html->image(array('controller' => 'test', 'action' => 'view', 1, 'ext' => 'gif'));
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
 
@@ -408,6 +411,21 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('test.gif?one=two&three=four');
 		$this->assertTags($result, array('img' => array('src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '')));
+
+		$result = $this->Html->image('test.gif', array('pathPrefix' => '/my/custom/path/'));
+		$this->assertTags($result, array('img' => array('src' => '/my/custom/path/test.gif', 'alt' => '')));
+
+		$result = $this->Html->image('test.gif', array('pathPrefix' => 'http://cakephp.org/assets/img/'));
+		$this->assertTags($result, array('img' => array('src' => 'http://cakephp.org/assets/img/test.gif', 'alt' => '')));
+
+		$result = $this->Html->image('test.gif', array('pathPrefix' => '//cakephp.org/assets/img/'));
+		$this->assertTags($result, array('img' => array('src' => '//cakephp.org/assets/img/test.gif', 'alt' => '')));
+
+		$previousConfig = Configure::read('App.imageBaseUrl');
+		Configure::write('App.imageBaseUrl', '//cdn.cakephp.org/img/');
+		$result = $this->Html->image('test.gif');
+		$this->assertTags($result, array('img' => array('src' => '//cdn.cakephp.org/img/test.gif', 'alt' => '')));
+		Configure::write('App.imageBaseUrl', $previousConfig);
 	}
 
 /**
@@ -592,6 +610,21 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->css('http://whatever.com/screen.css?1234');
 		$expected['link']['href'] = 'preg:/http:\/\/.*\/screen\.css\?1234/';
 		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('cake.generic', array('pathPrefix' => '/my/custom/path/'));
+		$expected['link']['href'] = '/my/custom/path/cake.generic.css';
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('cake.generic', array('pathPrefix' => 'http://cakephp.org/assets/css/'));
+		$expected['link']['href'] = 'http://cakephp.org/assets/css/cake.generic.css';
+		$this->assertTags($result, $expected);
+
+		$previousConfig = Configure::read('App.cssBaseUrl');
+		Configure::write('App.cssBaseUrl', '//cdn.cakephp.org/css/');
+		$result = $this->Html->css('cake.generic');
+		$expected['link']['href'] = '//cdn.cakephp.org/css/cake.generic.css';
+		$this->assertTags($result, $expected);
+		Configure::write('App.cssBaseUrl', $previousConfig);
 
 		Configure::write('Asset.filter.css', 'css.php');
 		$result = $this->Html->css('cake.generic');
@@ -925,6 +958,27 @@ class HtmlHelperTest extends CakeTestCase {
 			'script' => array('type' => 'text/javascript', 'src' => 'js/test.json.js?foo=bar&amp;other=test')
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('foo2', array('pathPrefix' => '/my/custom/path/'));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => '/my/custom/path/foo2.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->script('foo3', array('pathPrefix' => 'http://cakephp.org/assets/js/'));
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => 'http://cakephp.org/assets/js/foo3.js')
+		);
+		$this->assertTags($result, $expected);
+
+		$previousConfig = Configure::read('App.jsBaseUrl');
+		Configure::write('App.jsBaseUrl', '//cdn.cakephp.org/js/');
+		$result = $this->Html->script('foo4');
+		$expected = array(
+			'script' => array('type' => 'text/javascript', 'src' => '//cdn.cakephp.org/js/foo4.js')
+		);
+		$this->assertTags($result, $expected);
+		Configure::write('App.jsBaseUrl', $previousConfig);
 
 		$result = $this->Html->script('foo');
 		$this->assertNull($result, 'Script returned upon duplicate inclusion %s');
