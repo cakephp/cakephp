@@ -132,6 +132,10 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidConfig() {
+		// In debug mode it would auto create the folder.
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+
 		Cache::config('invalid', array(
 			'engine' => 'File',
 			'duration' => '+1 year',
@@ -141,6 +145,8 @@ class CacheTest extends CakeTestCase {
 			'random' => 'wii'
 		));
 		Cache::read('Test', 'invalid');
+
+		Configure::write('debug', $debug);
 	}
 
 /**
