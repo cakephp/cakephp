@@ -408,6 +408,11 @@ TEXT;
 false
 TEXT;
 		$this->assertTextEquals($expected, $result);
+
+		$file = fopen('php://output', 'w');
+		fclose($file);
+		$result = Debugger::exportVar($file);
+		$this->assertTextEquals('unknown', $result);
 	}
 
 /**
