@@ -39,7 +39,7 @@ class Sanitize {
  * @param array $allowed An array of additional characters that are not to be removed.
  * @return string Sanitized string
  */
-	public static function paranoid($string, $allowed = array()) {
+	public static function removeNonAlphanumerics($string, $allowed = array()) {
 		$allow = null;
 		if (!empty($allowed)) {
 			foreach ($allowed as $value) {

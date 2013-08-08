@@ -241,14 +241,14 @@ class SanitizeTest extends CakeTestCase {
 	}
 
 /**
- * testParanoid method
+ * testRemoveNonAlphanumerics method
  *
  * @return void
  */
-	public function testParanoid() {
+	public function testRemoveNonAlphanumerics() {
 		$string = 'I would like to !%@#% & dance & sing ^$&*()-+';
 		$expected = 'Iwouldliketodancesing';
-		$result = Sanitize::paranoid($string);
+		$result = Sanitize::removeNonAlphanumerics($string);
 		$this->assertEquals($expected, $result);
 
 		$string = array('This |s th% s0ng that never ends it g*es',
@@ -257,27 +257,27 @@ class SanitizeTest extends CakeTestCase {
 		$expected = array('This s th% s0ng that never ends it g*es',
 						'on and on my friends bcause it is the',
 						'sog tht never ends.');
-		$result = Sanitize::paranoid($string, array('%', '*', '.', ' '));
+		$result = Sanitize::removeNonAlphanumerics($string, array('%', '*', '.', ' '));
 		$this->assertEquals($expected, $result);
 
 		$string = "anything' OR 1 = 1";
 		$expected = 'anythingOR11';
-		$result = Sanitize::paranoid($string);
+		$result = Sanitize::removeNonAlphanumerics($string);
 		$this->assertEquals($expected, $result);
 
 		$string = "x' AND email IS NULL; --";
 		$expected = 'xANDemailISNULL';
-		$result = Sanitize::paranoid($string);
+		$result = Sanitize::removeNonAlphanumerics($string);
 		$this->assertEquals($expected, $result);
 
 		$string = "x' AND 1=(SELECT COUNT(*) FROM users); --";
 		$expected = 'xAND1SELECTCOUNTFROMusers';
-		$result = Sanitize::paranoid($string);
+		$result = Sanitize::removeNonAlphanumerics($string);
 		$this->assertEquals($expected, $result);
 
 		$string = "x'; DROP TABLE members; --";
 		$expected = 'xDROPTABLEmembers';
-		$result = Sanitize::paranoid($string);
+		$result = Sanitize::removeNonAlphanumerics($string);
 		$this->assertEquals($expected, $result);
 	}
 
