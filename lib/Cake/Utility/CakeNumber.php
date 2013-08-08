@@ -43,7 +43,7 @@ class CakeNumber {
 		),
 		'GBP' => array(
 			'wholeSymbol' => '&#163;', 'wholePosition' => 'before', 'fractionSymbol' => 'p', 'fractionPosition' => 'after',
-			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()','escape' => false
+			'zero' => 0, 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => false
 		),
 		'EUR' => array(
 			'wholeSymbol' => '&#8364;', 'wholePosition' => 'before', 'fractionSymbol' => false, 'fractionPosition' => 'after',
@@ -58,7 +58,7 @@ class CakeNumber {
  */
 	protected static $_currencyDefaults = array(
 		'wholeSymbol' => '', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
-		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true,
+		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
 	);
 
 /**
@@ -317,7 +317,7 @@ class CakeNumber {
 		$symbolKey = 'whole';
 		$value = (float)$value;
 		if (!$value) {
-			if ($options['zero'] !== 0 ) {
+			if ($options['zero'] !== 0) {
 				return $options['zero'];
 			}
 		} elseif ($value < 1 && $value > -1) {

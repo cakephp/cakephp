@@ -598,7 +598,7 @@ class ObjectTest extends CakeTestCase {
 		$this->assertEquals(null, $result['plugin']);
 
 		$result = $this->object->requestAction('/request_action/params_pass/sort:desc/limit:5');
-		$expected = array('sort' => 'desc', 'limit' => 5,);
+		$expected = array('sort' => 'desc', 'limit' => 5);
 		$this->assertEquals($expected, $result['named']);
 
 		$result = $this->object->requestAction(

@@ -1388,7 +1388,7 @@ class FormHelperTest extends CakeTestCase {
 		$this->Form->input('Addresses.first_name', array('secure' => false));
 		$this->Form->input('Addresses.city', array('type' => 'textarea', 'secure' => false));
 		$this->Form->input('Addresses.zip', array(
-			'type' => 'select', 'options' => array(1,2), 'secure' => false
+			'type' => 'select', 'options' => array(1, 2), 'secure' => false
 		));
 
 		$result = $this->Form->fields;
@@ -1719,7 +1719,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id','accept-charset' => $encoding),
+			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
@@ -2267,8 +2267,8 @@ class FormHelperTest extends CakeTestCase {
 		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result[1]);
 
 		$result = $this->Form->input('prueba', array(
-			'type' => 'time', 'timeFormat' => 24 , 'dateFormat' => 'DMY' , 'minYear' => 2008,
-			'maxYear' => date('Y') + 1 , 'interval' => 15
+			'type' => 'time', 'timeFormat' => 24, 'dateFormat' => 'DMY', 'minYear' => 2008,
+			'maxYear' => date('Y') + 1, 'interval' => 15
 		));
 		$result = explode(':', $result);
 		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
