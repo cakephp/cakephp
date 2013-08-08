@@ -60,6 +60,19 @@ class Sanitize {
 	}
 
 /**
+ * Removes any non-alphanumeric characters.
+ * Alternate name of the function
+ *
+ * @deprecated
+ * @param string $string String to sanitize
+ * @param array $allowed An array of additional characters that are not to be removed.
+ * @return string Sanitized string
+ */
+  public static function paranoid($string, $allowed = array()) {
+    return $this->removeNonAlphanumerics($string, $allowed);
+  }
+
+/**
  * Makes a string SQL-safe.
  *
  * @param string $string String to sanitize
