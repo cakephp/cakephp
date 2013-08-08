@@ -83,12 +83,22 @@ class Query extends DatabaseQuery {
 	];
 
 /**
- * A hydrated ResultSet.
+ * A ResultSet.
+ *
+ * When set, query execution will be bypassed.
  *
  * @var Cake\ORM\ResultSet
  * @see setResult()
  */
 	protected $_results;
+
+/**
+ * Boolean for tracking whether or not buffered results
+ * are enabled.
+ *
+ * @var boolean
+ */
+	protected $_useBufferedResults = false;
 
 /**
  * @param Cake\Database\Connection $connection
@@ -323,6 +333,23 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * Enable buffered results.
+ *
+ * When enabled the ResultSet returned by this Query will be
+ * buffered. This enables you to iterate a ResultSet multiple times, or
+ * both cache and iterate the ResultSet.
+ *
+ * This mode will consume more memory as the result set will stay in memory
+ * until the ResultSet if freed.
+ *
+ * @return Query The query instance;
+ */
+	public function bufferResults() {
+		$this->_useBufferedResults = true;
+		return $this;
+	}
+
+/**
  * Set the result set for a query.
  *
  * Setting the resultset of a query will make execute() a no-op. Instead
@@ -353,6 +380,9 @@ class Query extends DatabaseQuery {
 	public function execute() {
 		if (isset($this->_results)) {
 			return $this->_results;
+		}
+		if ($this->_useBufferedResults) {
+			return new BufferedResultSet($this, parent::execute());
 		}
 		return new ResultSet($this, parent::execute());
 	}

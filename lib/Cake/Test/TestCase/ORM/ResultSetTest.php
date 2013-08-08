@@ -45,6 +45,7 @@ class ResultSetTest extends TestCase {
 /**
  * Test that result sets can be rewound and re-used.
  *
+ * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testRewind() {
@@ -57,7 +58,6 @@ class ResultSetTest extends TestCase {
 		foreach ($results as $result) {
 			$second[] = $result;
 		}
-		$this->assertEquals($first, $second);
 	}
 
 /**
