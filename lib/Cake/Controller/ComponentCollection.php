@@ -94,7 +94,7 @@ class ComponentCollection extends ObjectCollection implements CakeEventListener 
  * @throws MissingComponentException when the component could not be found
  */
 	public function load($component, $settings = array()) {
-		if (is_array($settings) && isset($settings['className'])) {
+		if (isset($settings['className'])) {
 			$alias = $component;
 			$component = $settings['className'];
 		}

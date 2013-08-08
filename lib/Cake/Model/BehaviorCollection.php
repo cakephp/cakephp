@@ -103,7 +103,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  * @throws MissingBehaviorException when a behavior could not be found.
  */
 	public function load($behavior, $config = array()) {
-		if (is_array($config) && isset($config['className'])) {
+		if (isset($config['className'])) {
 			$alias = $behavior;
 			$behavior = $config['className'];
 		}
