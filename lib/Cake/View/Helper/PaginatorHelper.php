@@ -400,7 +400,8 @@ class PaginatorHelper extends AppHelper {
  */
 	public function url($options = array(), $asArray = false, $model = null) {
 		$paging = $this->params($model);
-		$url = array_merge(array_filter($paging['options']), $options);
+		$defaults = !empty($paging['options']) ? array_filter($paging['options']) : array();
+		$url = array_merge($defaults, $options);
 
 		if (isset($url['order'])) {
 			$sort = $direction = null;
