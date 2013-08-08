@@ -69,7 +69,7 @@ class Sanitize {
  * @return string Sanitized string
  */
   public static function paranoid($string, $allowed = array()) {
-    return $this->removeNonAlphanumerics($string, $allowed);
+    return self::removeNonAlphanumerics($string, $allowed);
   }
 
 /**
