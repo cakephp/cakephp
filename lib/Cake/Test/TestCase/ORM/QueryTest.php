@@ -823,4 +823,19 @@ class QueryTest extends TestCase {
 		$this->assertSame($results, $query->execute());
 	}
 
+/**
+ * Test enabling buffering of results.
+ *
+ * @return void
+ */
+	public function testBufferResults() {
+		$table = Table::build('article', ['connection' => $this->connection, 'table' => 'articles']);
+		$query = new Query($this->connection, $table);
+
+		$result = $query->select()->bufferResults();
+		$this->assertSame($query, $result, 'Query should be the same');
+		$result = $query->execute();
+		$this->assertInstanceOf('Cake\ORM\BufferedResultSet', $result);
+	}
+
 }
