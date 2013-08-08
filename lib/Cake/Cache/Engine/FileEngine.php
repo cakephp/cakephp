@@ -281,7 +281,9 @@ class FileEngine extends CacheEngine {
 				}
 			}
 			if ($file->isFile()) {
-				unlink($file->getRealPath());
+				$_path = $file->getRealPath();
+				unset($file);
+				unlink($_path);
 			}
 		}
 	}
