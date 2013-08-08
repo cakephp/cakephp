@@ -17,6 +17,7 @@
 namespace Cake\ORM;
 
 use Cake\Database\Type;
+use Cake\Database\Exception;
 use \Iterator;
 use \JsonSerializable;
 use \Serializable;
@@ -142,20 +143,26 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
  */
 	public function next() {
 		$this->_index++;
-		$this->_fetchResult();
+		$this->_lastIndex = $this->_index;
 	}
 
 /**
  * Rewind a ResultSet.
  *
- * Once rewound results will not be refetched from
- * the database.
+ * Not implemented, Use a BufferedResultSet for a rewindable
+ * ResultSet.
  *
- * @return void
+ * @throws Cake\Database\Exception
  */
 	public function rewind() {
-		$this->_index = 0;
-		$this->_lastIndex = -1;
+		if ($this->_index == 0) {
+			return;
+		}
+		$msg = __d(
+			'cake_dev',
+			'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.'
+		);
+		throw new Exception($msg);
 	}
 
 /**
@@ -164,7 +171,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
  * @return boolean
  */
 	public function valid() {
-		$this->_fetchResult();
+		$this->_current = $this->_fetchResult();
 		return $this->_current !== false;
 	}
 
@@ -195,28 +202,23 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 	}
 
 /**
- * Helper function to fetch the next result from the statement and update all
- * internal counters.
+ * Helper function to fetch the next result from the statement or
+ * seeded results.
  *
- * @return void
+ * @return mixed
  */
 	protected function _fetchResult() {
-		if (isset($this->_results[$this->_index])) {
-			$this->_current = $this->_results[$this->_index];
-			$this->_lastIndex = $this->_index;
-			return;
+		if (!empty($this->_results) && isset($this->_results[$this->_index])) {
+			return $this->_results[$this->_index];
 		}
-		if (!$this->_statement) {
-			$this->_current = false;
-			return;
+		if (!empty($this->_results)) {
+			return false;
 		}
 		$row = $this->_statement->fetch('assoc');
-		if ($row !== false) {
-			$row = $this->_groupResult($row);
-			$this->_results[] = $row;
+		if ($row === false) {
+			return $row;
 		}
-		$this->_current = $row;
-		$this->_lastIndex = $this->_index;
+		return $this->_groupResult($row);
 	}
 
 /**
@@ -297,8 +299,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
  * @return string Serialized object
  */
 	public function serialize() {
-		$this->toArray();
-		return serialize($this->_results);
+		return serialize($this->toArray());
 	}
 
 /**
@@ -321,8 +322,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
  * @return array The data to convert to JSON
  */
 	public function jsonSerialize() {
-		$this->toArray();
-		return $this->_results;
+		return $this->toArray();
 	}
 
 }
