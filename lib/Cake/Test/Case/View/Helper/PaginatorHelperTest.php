@@ -580,6 +580,10 @@ class PaginatorHelperTest extends CakeTestCase {
 		$options = array('order' => array('Article.name' => 'desc'));
 		$result = $this->Paginator->url($options);
 		$this->assertEquals('/index/page:3/sort:Article.name/direction:desc', $result);
+
+		$this->Paginator->request->params['paging']['Article']['options'] = null;
+		$result = $this->Paginator->url();
+		$this->assertEquals('/', $result);
 	}
 
 /**
