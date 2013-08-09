@@ -1139,9 +1139,9 @@ class DboSource extends DataSource {
  */
 	protected function _filterResults(&$results, Model $model, $filtered = array()) {
 		if (!is_array($results)) {
-            return array();
-        }
-        $current = reset($results);
+            		return array();
+        	}
+        	$current = reset($results);
 		if (!is_array($current)) {
 			return array();
 		}
@@ -1255,7 +1255,7 @@ class DboSource extends DataSource {
 				} else {
 					$fetch = null;
 				}
-                if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
+                		if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
 					$this->_filterResults($fetch, $model);
 				}
 			}
