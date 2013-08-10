@@ -46,7 +46,7 @@ class ValueBinder {
  */
 	public function bind($param, $value, $type = 'string') {
 		$this->_bindings[$param] = compact('value', 'type') + [
-			'placeholder' => is_numeric($param) ? $param : substr($param, 1)
+			'placeholder' => is_int($param) ? $param : substr($param, 1)
 		];
 	}
 
