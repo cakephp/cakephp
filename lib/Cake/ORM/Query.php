@@ -494,7 +494,7 @@ class Query extends DatabaseQuery {
  * - having: Maps to the having method
  * - contain: Maps to the contain options for eager loading
  * - join: Maps to the join method
- * @return Query
+ * @return Cake\ORM\Query
  */
 	public function applyOptions(array $options) {
 		$valid = [
