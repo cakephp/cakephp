@@ -361,6 +361,7 @@ class CakeResponseTest extends CakeTestCase {
 /**
  * Tests the httpCodes method
  *
+ * @expectedException CakeException
  */
 	public function testHttpCodes() {
 		$response = new CakeResponse();
@@ -372,16 +373,16 @@ class CakeResponseTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$codes = array(
-			1337 => 'Undefined Unicorn',
-			1729 => 'Hardy-Ramanujan Located'
+			381 => 'Unicorn Moved',
+			555 => 'Unexpected Minotaur'
 		);
 
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
 		$this->assertEquals(42, count($response->httpCodes()));
 
-		$result = $response->httpCodes(1337);
-		$expected = array(1337 => 'Undefined Unicorn');
+		$result = $response->httpCodes(381);
+		$expected = array(381 => 'Unicorn Moved');
 		$this->assertEquals($expected, $result);
 
 		$codes = array(404 => 'Sorry Bro');
@@ -392,6 +393,14 @@ class CakeResponseTest extends CakeTestCase {
 		$result = $response->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');
 		$this->assertEquals($expected, $result);
+
+		//Throws exception
+		$response->httpCodes(array(
+			0 => 'Nothing Here',
+			-1 => 'Reverse Infinity',
+			12345 => 'Universal Password',
+			'Hello' => 'World'
+		));
 	}
 
 /**
