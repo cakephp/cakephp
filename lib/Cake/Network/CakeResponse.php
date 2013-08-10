@@ -417,7 +417,7 @@ class CakeResponse {
 		$this->_setContentLength();
 		$this->_setContentType();
 		foreach ($this->_headers as $header => $values) {
-			foreach((array)$values as $value) {
+			foreach ((array)$values as $value) {
 				$this->_sendHeader($header, $value);
 			}
 		}
