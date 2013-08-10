@@ -1518,7 +1518,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * to database
  * @return Query
  */
-	public function bind($param, $value, $type) {
+	public function bind($param, $value, $type = 'string') {
 		$this->valueBinder()->bind($param, $value, $type);
 		return $this;
 	}

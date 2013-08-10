@@ -1094,7 +1094,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$result = $query->having(function($e) {
-			return $e->add('count(author_id) = 1 + 1'); 
+			return $e->add('count(author_id) = 1 + 1');
 		}, [], true)
 			->execute();
 		$expected = [['total' => 2, 'author_id' => 1]];
@@ -1905,6 +1905,32 @@ class QueryTest extends TestCase {
 			->where(['created >=' => new \DateTime('2007-03-18 10:50:00')], $types, true)
 			->execute();
 		$this->assertCount(6, $results, 'All 6 rows should match.');
+	}
+
+/**
+ * Tests parameter binding
+ *
+ * @return void
+ */
+	public function testBind() {
+		$query = new Query($this->connection);
+		$results = $query->select(['id', 'comment'])
+			->from('comments')
+			->where(['created BETWEEN :foo AND :bar'])
+			->bind(':foo', new \DateTime('2007-03-18 10:50:00'), 'datetime')
+			->bind(':bar', new \DateTime('2007-03-18 10:52:00'), 'datetime')
+			->execute();
+		$expected = [['id' => '4', 'comment' => 'Fourth Comment for First Article']];
+		$this->assertEquals($expected, $results->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$results = $query->select(['id', 'comment'])
+			->from('comments')
+			->where(['created BETWEEN :foo AND :bar'])
+			->bind(':foo', '2007-03-18 10:50:00')
+			->bind(':bar','2007-03-18 10:52:00')
+			->execute();
+		$this->assertEquals($expected, $results->fetchAll('assoc'));
 	}
 
 /**
