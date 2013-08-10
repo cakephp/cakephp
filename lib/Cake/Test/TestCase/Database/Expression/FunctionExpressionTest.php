@@ -18,6 +18,7 @@
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\ValueBinder;
 
 /**
  * Tests FunctionExpression class
@@ -32,7 +33,7 @@ class FunctionExpressionTest extends \Cake\TestSuite\TestCase {
  */
 	public function testArityZero() {
 		$f = new FunctionExpression('MyFunction');
-		$this->assertEquals('MyFunction()', $f->sql());
+		$this->assertEquals('MyFunction()', $f->sql(new ValueBinder));
 	}
 
 /**
@@ -43,17 +44,16 @@ class FunctionExpressionTest extends \Cake\TestSuite\TestCase {
  */
 	public function testArityMultiplePlainValues() {
 		$f = new FunctionExpression('MyFunction', ['foo', 'bar']);
-		$foo = $f->id() . '0';
-		$bar = $f->id() . '1';
-		$this->assertEquals("MyFunction(:c$foo, :c$bar)", $f->sql());
+		$binder = new ValueBinder;
+		$this->assertEquals("MyFunction(:c0, :c1)", $f->sql($binder));
 
-		$this->assertEquals('foo', $f->bindings()[1]['value']);
-		$this->assertEquals('bar', $f->bindings()[2]['value']);
+		$this->assertEquals('foo', $binder->bindings()[':c0']['value']);
+		$this->assertEquals('bar', $binder->bindings()[':c1']['value']);
 
+		$binder = new ValueBinder;
 		$f = new FunctionExpression('MyFunction', ['bar']);
-		$bar = $f->id() . '0';
-		$this->assertEquals("MyFunction(:c$bar)", $f->sql());
-		$this->assertEquals('bar', $f->bindings()[1]['value']);
+		$this->assertEquals("MyFunction(:c0)", $f->sql($binder));
+		$this->assertEquals('bar', $binder->bindings()[':c0']['value']);
 	}
 
 /**
@@ -62,9 +62,9 @@ class FunctionExpressionTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testLiteralParams() {
+		$binder = new ValueBinder;
 		$f = new FunctionExpression('MyFunction', ['foo' => 'literal', 'bar']);
-		$bar = $f->id() . '0';
-		$this->assertEquals("MyFunction(foo, :c$bar)", $f->sql());
+		$this->assertEquals("MyFunction(foo, :c0)", $f->sql($binder));
 	}
 
 /**
@@ -74,10 +74,9 @@ class FunctionExpressionTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFunctionNesting() {
+		$binder = new ValueBinder;
 		$f = new FunctionExpression('MyFunction', ['foo', 'bar']);
-		$foo = ':c' . $f->id() . '0';
-		$bar = ':c' . $f->id() . '1';
 		$g = new FunctionExpression('Wrapper', ['bar' => 'literal', $f]);
-		$this->assertEquals("Wrapper(bar, MyFunction($foo, $bar))", $g->sql());
+		$this->assertEquals("Wrapper(bar, MyFunction(:c0, :c1))", $g->sql($binder));
 	}
 }

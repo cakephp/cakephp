@@ -18,6 +18,7 @@
 namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
+use Cake\Database\ValueBinder;
 
 /**
  * This class represents a function call string in a SQL statement. Calls can be
@@ -95,7 +96,7 @@ class FunctionExpression extends QueryExpression {
 			}
 
 			$type = isset($types[$k]) ? $types[$k] : null;
-			$this->_conditions[] = $this->_bindValue('param', $p, $type);
+			$this->_conditions[] = ['value' => $p, 'type' => $type];
 		}
 
 		return $this;
@@ -107,12 +108,25 @@ class FunctionExpression extends QueryExpression {
  * in their place placeholders are put and can be replaced by the quoted values
  * accordingly.
  *
+ * @param Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
-	public function sql() {
+	public function sql(ValueBinder $generator) {
+
+		$parts = [];
+		foreach ($this->_conditions as $condition) {
+			if ($condition instanceof ExpressionInterface) {
+				$condition = $condition->sql($generator);
+			} elseif (is_array($condition)) {
+				$p = $generator->placeholder('param');
+				$generator->bind($p, $condition['value'], $condition['type']);
+				$condition = $p;
+			}
+			$parts[] = $condition;
+		}
 		return $this->_name . sprintf('(%s)', implode(
 			$this->_conjunction . ' ',
-			$this->_conditions
+			$parts
 		));
 	}
 
