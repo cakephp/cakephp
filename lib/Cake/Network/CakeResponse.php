@@ -565,17 +565,15 @@ class CakeResponse {
 		if (is_null($header)) {
 			return $this->_headers;
 		}
-		if (!is_array($header)) {
-			$header = array($header => $value);
-		}
-		foreach ($header as $h => $v) {
-			if (is_numeric($h)) {
-				list($h, $v) = array($v, null);
+		$headers = is_array($header) ? $header : array($header => $value);
+		foreach ($headers as $header => $value) {
+			if (is_numeric($header)) {
+				list($header, $value) = array($value, null);
 			}
-			if (is_null($v)) {
-				list($h, $v) = explode(':', $h, 2);
+			if (is_null($value)) {
+				list($header, $value) = explode(':', $header, 2);
 			}
-			$this->_headers[$h] = (is_array($v)) ? array_map('trim', $v) : trim($v);
+			$this->_headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);
 		}
 		return $this->_headers;
 	}
