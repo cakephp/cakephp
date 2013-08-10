@@ -17,6 +17,8 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
+use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Model\ConnectionManager;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;

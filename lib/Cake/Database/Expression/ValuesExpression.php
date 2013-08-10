@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\ValueBinder;
 use Cake\Error;
 use \Countable;
 
@@ -124,47 +125,29 @@ class ValuesExpression implements ExpressionInterface {
 	}
 
 /**
- * Convert the rows of data into a format that works with Query::_bindParams()
- *
- * @return array
- */
-	public function bindings() {
-		$bindings = [];
-		$i = 0;
-		$defaults = array_fill_keys($this->_columns, null);
-		foreach ($this->_values as $row) {
-			if (is_array($row)) {
-				$row = array_merge($defaults, $row);
-				foreach ($row as $column => $value) {
-					$type = isset($this->_types[$column]) ? $this->_types[$column] : null;
-					$bindings[] = [
-						'type' => $type,
-						'placeholder' => $i,
-						'value' => $value
-					];
-					$i++;
-				}
-			}
-		}
-		return $bindings;
-	}
-
-/**
  * Convert the values into a SQL string with placeholders.
  *
+ * @param Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
-	public function sql() {
+	public function sql(ValueBinder $generator) {
 		if (empty($this->_values)) {
 			return '';
 		}
 		if ($this->_values[0] instanceof Query) {
-			return ' ' . $this->_values[0]->sql();
+			return ' ' . $this->_values[0]->sql($generator);
 		}
 		$placeholders = [];
 		$numColumns = count($this->_columns);
 
+		$i = 0;
+		$defaults = array_fill_keys($this->_columns, null);
 		foreach ($this->_values as $row) {
+			$row = array_merge($defaults, $row);
+			foreach ($row as $column => $value) {
+				$type = isset($this->_types[$column]) ? $this->_types[$column] : null;
+				$generator->bind($i++, $value, $type);
+			}
 			$placeholders[] = implode(', ', array_fill(0, $numColumns, '?'));
 		}
 		return sprintf(' VALUES (%s)', implode('), (', $placeholders));

@@ -998,14 +998,20 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 
 		$expression = $query->newExpr()
-			->add(['(id + :offset) % 2 = 0'])
-			->bind(':offset', 1, null);
-		$result = $query->order([$expression, 'id' => 'desc'], true)->execute();
+			->add(['(id + :offset) % 2 = 0']);
+		$result = $query
+			->order([$expression, 'id' => 'desc'], true)
+			->bind(':offset', 1, null)
+			->execute();
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
-		$result = $query->order($expression, true)->order(['id' => 'asc'])->execute();
+		$result = $query
+			->order($expression, true)
+			->order(['id' => 'asc'])
+			->bind(':offset', 1, null)
+			->execute();
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
@@ -1575,11 +1581,10 @@ class QueryTest extends TestCase {
 			->where(['id' => 1]);
 		$result = $query->sql();
 
-		$this->assertRegExp(
-			'/UPDATE articles SET title = :[0-9a-z]+ , body = :[0-9a-z]+/',
+		$this->assertEquals(
+			'UPDATE articles SET title = :c0 , body = :c1 WHERE id = :c2',
 			$result
 		);
-		$this->assertContains('WHERE id = :', $result);
 
 		$result = $query->execute();
 		$this->assertCount(1, $result);
@@ -1904,6 +1909,32 @@ class QueryTest extends TestCase {
 			->where(['created >=' => new \DateTime('2007-03-18 10:50:00')], $types, true)
 			->execute();
 		$this->assertCount(6, $results, 'All 6 rows should match.');
+	}
+
+/**
+ * Tests parameter binding
+ *
+ * @return void
+ */
+	public function testBind() {
+		$query = new Query($this->connection);
+		$results = $query->select(['id', 'comment'])
+			->from('comments')
+			->where(['created BETWEEN :foo AND :bar'])
+			->bind(':foo', new \DateTime('2007-03-18 10:50:00'), 'datetime')
+			->bind(':bar', new \DateTime('2007-03-18 10:52:00'), 'datetime')
+			->execute();
+		$expected = [['id' => '4', 'comment' => 'Fourth Comment for First Article']];
+		$this->assertEquals($expected, $results->fetchAll('assoc'));
+
+		$query = new Query($this->connection);
+		$results = $query->select(['id', 'comment'])
+			->from('comments')
+			->where(['created BETWEEN :foo AND :bar'])
+			->bind(':foo', '2007-03-18 10:50:00')
+			->bind(':bar','2007-03-18 10:52:00')
+			->execute();
+		$this->assertEquals($expected, $results->fetchAll('assoc'));
 	}
 
 /**
