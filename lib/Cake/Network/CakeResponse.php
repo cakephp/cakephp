@@ -655,7 +655,7 @@ class CakeResponse {
  *            -1 => 'Reverse Infinity',
  *            12345 => 'Universal Password',
  *            'Hello' => 'World'
- *        )); // throws an error due to invalid codes
+ *        )); // throws an exception due to invalid codes
  *
  *        For more on HTTP status codes see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
  *
