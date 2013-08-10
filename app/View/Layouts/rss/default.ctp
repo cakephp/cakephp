@@ -1,10 +1,10 @@
 <?php
-if (!isset($channel)) {
+if (!isset($channel)):
 	$channel = array();
-}
-if (!isset($channel['title'])) {
+endif;
+if (!isset($channel['title'])):
 	$channel['title'] = $title_for_layout;
-}
+endif;
 
 echo $this->Rss->document(
 	$this->Rss->channel(
