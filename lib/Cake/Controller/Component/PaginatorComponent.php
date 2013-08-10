@@ -1,9 +1,5 @@
 <?php
 /**
- * Paginator Component
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,14 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Error;
 use Cake\Model\Model;
 use Cake\Utility\Hash;
@@ -71,7 +66,6 @@ use Cake\Utility\Hash;
  *
  * Would paginate using the `find('popular')` method.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/pagination.html
  */
 class PaginatorComponent extends Component {
@@ -106,10 +100,10 @@ class PaginatorComponent extends Component {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
+ * @param ComponentRegistry $collection A ComponentRegistry this component can use to lazy load its components
  * @param array $settings Array of configuration settings.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
+	public function __construct(ComponentRegistry $collection, $settings = array()) {
 		$settings = array_merge($this->settings, (array)$settings);
 		$this->Controller = $collection->getController();
 		parent::__construct($collection, $settings);
@@ -121,7 +115,8 @@ class PaginatorComponent extends Component {
  * @param Model|string $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
  * @param string|array $scope Additional find conditions to use while paginating
  * @param array $whitelist List of allowed fields for ordering. This allows you to prevent ordering
- *   on non-indexed, or undesirable columns.
+ *   on non-indexed, or undesirable columns. See PaginatorComponent::validateSort() for additional details
+ *   on how the whitelisting and sort field validation works.
  * @return array Model query results
  * @throws Cake\Error\MissingModelException
  * @throws Cake\Error\NotFoundException
@@ -343,6 +338,9 @@ class PaginatorComponent extends Component {
  * You can use the whitelist parameter to control which columns/fields are available for sorting.
  * This helps prevent users from ordering large result sets on un-indexed values.
  *
+ * Any columns listed in the sort whitelist will be implicitly trusted. You can use this to sort
+ * on synthetic columns, or columns added in custom find operations that may not exist in the schema.
+ *
  * @param Model $object The model being paginated.
  * @param array $options The pagination options being used for this request.
  * @param array $whitelist The list of columns that can be used for sorting. If empty all keys are allowed.
@@ -362,10 +360,11 @@ class PaginatorComponent extends Component {
 
 		if (!empty($whitelist) && isset($options['order']) && is_array($options['order'])) {
 			$field = key($options['order']);
-			if (!in_array($field, $whitelist)) {
+			$inWhitelist = in_array($field, $whitelist, true);
+			if (!$inWhitelist) {
 				$options['order'] = null;
-				return $options;
 			}
+			return $options;
 		}
 
 		if (!empty($options['order']) && is_array($options['order'])) {
@@ -388,7 +387,9 @@ class PaginatorComponent extends Component {
 			}
 			$options['order'] = $order;
 		}
-
+		if (empty($options['order']) && !empty($object->order)) {
+			$options['order'] = $object->order;
+		}
 		return $options;
 	}
 

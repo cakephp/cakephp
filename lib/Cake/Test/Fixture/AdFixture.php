@@ -30,13 +30,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AdFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Ad'
- */
-	public $name = 'Ad';
-
-/**
  * fields property
  *
  * @var array

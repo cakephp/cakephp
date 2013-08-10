@@ -109,7 +109,7 @@ class TreeBehavior extends ModelBehavior {
 /**
  * Runs before a find() operation
  *
- * @param Model $Model	Model using the behavior
+ * @param Model $Model Model using the behavior
  * @param array $query Query parameters as set by cake
  * @return array
  */
@@ -826,17 +826,16 @@ class TreeBehavior extends ModelBehavior {
 				array($Model->escapeField() => $id)
 			);
 			return $Model->delete($id);
-		} else {
-			$edge = $this->_getMax($Model, $scope, $right, $recursive);
-			if ($node[$right] == $edge) {
-				$edge = $edge - 2;
-			}
-			$Model->id = $id;
-			return $Model->save(
-				array($left => $edge + 1, $right => $edge + 2, $parent => null),
-				array('callbacks' => false, 'validate' => false)
-			);
 		}
+		$edge = $this->_getMax($Model, $scope, $right, $recursive);
+		if ($node[$right] == $edge) {
+			$edge = $edge - 2;
+		}
+		$Model->id = $id;
+		return $Model->save(
+			array($left => $edge + 1, $right => $edge + 2, $parent => null),
+			array('callbacks' => false, 'validate' => false)
+		);
 	}
 
 /**

@@ -1,9 +1,5 @@
 <?php
 /**
- * CookieComponentTest file
- *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,15 +9,15 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.5435
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -29,8 +25,6 @@ use Cake\Utility\Security;
 
 /**
  * CookieComponentTest class
- *
- * @package       Cake.Test.Case.Controller.Component
  */
 class CookieComponentTest extends TestCase {
 
@@ -40,6 +34,7 @@ class CookieComponentTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$controller = $this->getMock(
 			'Cake\Controller\Controller',
 			array('redirect'),
@@ -56,9 +51,10 @@ class CookieComponentTest extends TestCase {
 		$this->Cookie->path = '/';
 		$this->Cookie->domain = '';
 		$this->Cookie->secure = false;
-		$this->Cookie->key = 'somerandomhaskey';
+		$this->Cookie->key = 'somerandomhaskeysomerandomhaskey';
 
-		$this->Cookie->startup($this->Controller);
+		$event = new Event('Controller.startup', $this->Controller);
+		$this->Cookie->startup($event);
 	}
 
 /**
@@ -67,6 +63,7 @@ class CookieComponentTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		$this->Cookie->destroy();
 	}
 
@@ -97,7 +94,7 @@ class CookieComponentTest extends TestCase {
 			'time' => '5 days',
 			'path' => '/'
 		);
-		$Cookie = new CookieComponent(new ComponentCollection(), $settings);
+		$Cookie = new CookieComponent(new ComponentRegistry(), $settings);
 		$this->assertEquals($Cookie->time, $settings['time']);
 		$this->assertEquals($Cookie->path, $settings['path']);
 	}
@@ -652,7 +649,7 @@ class CookieComponentTest extends TestCase {
 		if (is_array($value)) {
 			$value = $this->_implode($value);
 		}
-		return "Q2FrZQ==." . base64_encode(Security::cipher($value, $this->Cookie->key));
+		return "Q2FrZQ==." . base64_encode(Security::rijndael($value, $this->Cookie->key, 'encrypt'));
 	}
 
 }

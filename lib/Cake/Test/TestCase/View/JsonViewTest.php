@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -27,6 +28,11 @@ use Cake\View\JsonView;
  * @package Cake.Test.Case.View
  */
 class JsonViewTest extends TestCase {
+
+	public function setUp() {
+		parent::setUp();
+		Configure::write('debug', 0);
+	}
 
 /**
  * testRenderWithoutView method
@@ -62,6 +68,25 @@ class JsonViewTest extends TestCase {
 		$output = $View->render(false);
 
 		$this->assertSame(json_encode(array('no' => $data['no'], 'user' => $data['user'])), $output);
+		$this->assertSame('application/json', $Response->type());
+	}
+
+/**
+ * Test render with an array in _serialize and alias
+ *
+ * @return void
+ */
+	public function testRenderWithoutViewMultipleAndAlias() {
+		$Request = new Request();
+		$Response = new Response();
+		$Controller = new Controller($Request, $Response);
+		$data = array('original_name' => 'my epic name', 'user' => 'fake', 'list' => array('item1', 'item2'));
+		$Controller->set($data);
+		$Controller->set('_serialize', array('new_name' => 'original_name', 'user'));
+		$View = new JsonView($Controller);
+		$output = $View->render(false);
+
+		$this->assertSame(json_encode(array('new_name' => $data['original_name'], 'user' => $data['user'])), $output);
 		$this->assertSame('application/json', $Response->type());
 	}
 

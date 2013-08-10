@@ -81,9 +81,6 @@ class ShellDispatcher {
 			ini_set('implicit_flush', true);
 			ini_set('max_execution_time', 0);
 		}
-		if (!defined('CAKEPHP_SHELL')) {
-			define('CAKEPHP_SHELL', true);
-		}
 	}
 
 /**
@@ -117,10 +114,8 @@ class ShellDispatcher {
 	protected function _bootstrap() {
 		$this->setErrorHandlers();
 
-		if (!defined('FULL_BASE_URL')) {
-			$url = Configure::read('App.fullBaseURL');
-			define('FULL_BASE_URL', $url ? $url : 'http://localhost');
-			Configure::write('App.fullBaseURL', FULL_BASE_URL);
+		if (!Configure::read('App.fullBaseUrl')) {
+			Configure::write('App.fullBaseUrl', 'http://localhost');
 		}
 
 		return true;

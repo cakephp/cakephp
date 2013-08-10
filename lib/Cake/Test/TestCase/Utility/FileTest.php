@@ -545,7 +545,7 @@ class FileTest extends TestCase {
 /**
  * getTmpFile method
  *
- * @param bool $paintSkip
+ * @param boolean $paintSkip
  * @return void
  */
 	protected function _getTmpFile($paintSkip = true) {

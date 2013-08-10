@@ -19,7 +19,7 @@
 namespace Cake\Test\TestCase\Controller;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -57,7 +57,7 @@ class ComponentTest extends TestCase {
  * @return void
  */
 	public function testInnerComponentConstruction() {
-		$Collection = new ComponentCollection();
+		$Collection = new ComponentRegistry();
 		$Component = new AppleComponent($Collection);
 
 		$this->assertInstanceOf('TestApp\Controller\Component\OrangeComponent', $Component->Orange, 'class is wrong');
@@ -69,7 +69,7 @@ class ComponentTest extends TestCase {
  * @return void
  */
 	public function testNestedComponentLoading() {
-		$Collection = new ComponentCollection();
+		$Collection = new ComponentRegistry();
 		$Apple = new AppleComponent($Collection);
 
 		$this->assertInstanceOf('TestApp\Controller\Component\OrangeComponent', $Apple->Orange, 'class is wrong');
@@ -84,12 +84,18 @@ class ComponentTest extends TestCase {
  * @return void
  */
 	public function testInnerComponentsAreNotEnabled() {
-		$Collection = new ComponentCollection();
+		$mock = $this->getMock('Cake\Event\EventManager');
+		$controller = new Controller();
+		$controller->setEventManager($mock);
+
+		$mock->expects($this->once())
+			->method('attach')
+			->with($this->isInstanceOf('TestApp\Controller\Component\AppleComponent'));
+
+		$Collection = new ComponentRegistry($controller);
 		$Apple = $Collection->load('Apple');
 
 		$this->assertInstanceOf('TestApp\Controller\Component\OrangeComponent', $Apple->Orange, 'class is wrong');
-		$result = $Collection->enabled();
-		$this->assertEquals(array('Apple'), $result, 'Too many components enabled.');
 	}
 
 /**
@@ -98,7 +104,7 @@ class ComponentTest extends TestCase {
  * @return void
  */
 	public function testMultipleComponentInitialize() {
-		$Collection = new ComponentCollection();
+		$Collection = new ComponentRegistry();
 		$Banana = $Collection->load('Banana');
 		$Orange = $Collection->load('Orange');
 
@@ -118,9 +124,7 @@ class ComponentTest extends TestCase {
 		$Controller->components = array('SomethingWithCookie');
 		$Controller->uses = false;
 		$Controller->constructClasses();
-		$Controller->Components->trigger('initialize', array(&$Controller));
-		$Controller->beforeFilter();
-		$Controller->Components->trigger('startup', array(&$Controller));
+		$Controller->startupProcess();
 
 		$this->assertInstanceOf('TestApp\Controller\Component\SomethingWithCookieComponent', $Controller->SomethingWithCookie);
 		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $Controller->SomethingWithCookie->Cookie);

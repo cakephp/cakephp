@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class DeviceTypeCategoryFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'DeviceTypeCategory'
- */
-	public $name = 'DeviceTypeCategory';
-
-/**
  * fields property
  *
  * @var array

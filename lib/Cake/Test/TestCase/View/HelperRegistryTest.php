@@ -1,9 +1,5 @@
 <?php
 /**
- * HelperCollectionTest file
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -22,7 +17,7 @@ namespace Cake\Test\TestCase\View;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
-use Cake\View\HelperCollection;
+use Cake\View\HelperRegistry;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
@@ -30,14 +25,17 @@ use Cake\View\View;
  * Extended HtmlHelper
  */
 class HtmlAliasHelper extends HtmlHelper {
+
+	public function afterRender($viewFile) {
+	}
+
 }
 
 /**
- * Class HelperCollectionTest
+ * Class HelperRegistryTest
  *
- * @package       Cake.Test.Case.View
  */
-class HelperCollectionTest extends TestCase {
+class HelperRegistryTest extends TestCase {
 
 /**
  * setUp
@@ -46,8 +44,9 @@ class HelperCollectionTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->View = $this->getMock('Cake\View\View', array(), array(null));
-		$this->Helpers = new HelperCollection($this->View);
+		$this->View = new View(null);
+		$this->Events = $this->View->getEventManager();
+		$this->Helpers = new HelperRegistry($this->View);
 	}
 
 /**
@@ -73,8 +72,6 @@ class HelperCollectionTest extends TestCase {
 
 		$result = $this->Helpers->loaded();
 		$this->assertEquals(array('Html'), $result, 'loaded() results are wrong.');
-
-		$this->assertTrue($this->Helpers->enabled('Html'));
 	}
 
 /**
@@ -107,6 +104,17 @@ class HelperCollectionTest extends TestCase {
 	}
 
 /**
+ * Test that loading helpers subscribes to events.
+ *
+ * @return void
+ */
+	public function testLoadSubscribeEvents() {
+		$this->Helpers->load('Html', array('className' => __NAMESPACE__ . '\HtmlAliasHelper'));
+		$result = $this->Events->listeners('View.afterRender');
+		$this->assertCount(1, $result);
+	}
+
+/**
  * Tests loading as an alias
  *
  * @return void
@@ -119,20 +127,24 @@ class HelperCollectionTest extends TestCase {
 		$result = $this->Helpers->loaded();
 		$this->assertEquals(array('Html'), $result, 'loaded() results are wrong.');
 
-		$this->assertTrue($this->Helpers->enabled('Html'));
-
 		$result = $this->Helpers->load('Html');
 		$this->assertInstanceOf(__NAMESPACE__ . '\HtmlAliasHelper', $result);
+	}
 
-		App::build(array('Plugin' => array(CAKE . 'Test/TestApp/Plugin/')));
-		Plugin::load(array('TestPlugin'));
+/**
+ * Test loading helpers with aliases and plugins.
+ *
+ * @return void
+ */
+	public function testLoadWithAliasAndPlugin() {
+		App::build(['Plugin' => [CAKE . 'Test/TestApp/Plugin/']]);
+		Plugin::load('TestPlugin');
 		$result = $this->Helpers->load('SomeOther', array('className' => 'TestPlugin.OtherHelper'));
 		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
 		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->SomeOther);
 
 		$result = $this->Helpers->loaded();
-		$this->assertEquals(array('Html', 'SomeOther'), $result, 'loaded() results are wrong.');
-		App::build();
+		$this->assertEquals(['SomeOther'], $result, 'loaded() results are wrong.');
 	}
 
 /**
@@ -145,7 +157,7 @@ class HelperCollectionTest extends TestCase {
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $result);
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $this->Helpers->Html);
 
-		$this->assertFalse($this->Helpers->enabled('Html'), 'Html should be disabled');
+		$this->assertEmpty($this->Events->listeners('View.beforeRender'));
 	}
 
 /**
@@ -177,23 +189,22 @@ class HelperCollectionTest extends TestCase {
 	}
 
 /**
- * test unload()
+ * Test reset.
  *
  * @return void
  */
-	public function testUnload() {
-		$this->Helpers->load('Form');
-		$this->Helpers->load('Html');
+	public function testReset() {
+		$instance = $this->Helpers->load('Paginator');
+		$this->assertSame(
+			$instance,
+			$this->Helpers->Paginator,
+			'Instance in registry should be the same as previously loaded'
+		);
+		$this->assertCount(1, $this->Events->listeners('View.beforeRender'));
 
-		$result = $this->Helpers->loaded();
-		$this->assertEquals(array('Form', 'Html'), $result, 'loaded helpers is wrong');
+		$this->assertNull($this->Helpers->reset(), 'No return expected');
+		$this->assertCount(0, $this->Events->listeners('View.beforeRender'));
 
-		$this->Helpers->unload('Html');
-		$this->assertNotContains('Html', $this->Helpers->loaded());
-		$this->assertContains('Form', $this->Helpers->loaded());
-
-		$result = $this->Helpers->loaded();
-		$this->assertEquals(array('Form'), $result, 'loaded helpers is wrong');
+		$this->assertNotSame($instance, $this->Helpers->load('Paginator'));
 	}
-
 }

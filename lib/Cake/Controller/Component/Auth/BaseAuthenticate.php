@@ -15,7 +15,7 @@
  */
 namespace Cake\Controller\Component\Auth;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -58,11 +58,11 @@ abstract class BaseAuthenticate {
 	);
 
 /**
- * A Component collection, used to get more components.
+ * A Component registry, used to get more components.
  *
- * @var ComponentCollection
+ * @var ComponentRegistry
  */
-	protected $_Collection;
+	protected $_registry;
 
 /**
  * Password hasher instance.
@@ -74,11 +74,11 @@ abstract class BaseAuthenticate {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection The Component collection used on this request.
+ * @param ComponentRegistry $registry The Component registry used on this request.
  * @param array $settings Array of settings to use.
  */
-	public function __construct(ComponentCollection $collection, $settings) {
-		$this->_Collection = $collection;
+	public function __construct(ComponentRegistry $registry, $settings) {
+		$this->_registry = $registry;
 		$this->settings = Hash::merge($this->settings, $settings);
 	}
 
@@ -88,6 +88,9 @@ abstract class BaseAuthenticate {
  * The $username parameter can be a (string)username or an array containing
  * conditions for Model::find('first'). If the $password param is not provided
  * the password field will be present in returned array.
+ *
+ * Input passwords will be hashed even when a user doesn't exist. This
+ * helps mitigate timing attacks that are attempting to find valid usernames.
  *
  * @param string|array $username The username/identifier, or an array of find conditions.
  * @param string $password The password, only used if $username param is string.
@@ -101,9 +104,6 @@ abstract class BaseAuthenticate {
 		if (is_array($username)) {
 			$conditions = $username;
 		} else {
-			if (!$password) {
-				return false;
-			}
 			$conditions = array(
 				$model . '.' . $fields['username'] => $username
 			);
@@ -119,6 +119,7 @@ abstract class BaseAuthenticate {
 			'contain' => $this->settings['contain'],
 		));
 		if (empty($result[$model])) {
+			$this->passwordHasher()->hash($password);
 			return false;
 		}
 

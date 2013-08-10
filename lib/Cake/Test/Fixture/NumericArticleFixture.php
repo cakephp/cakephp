@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class NumericArticleFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'NumericArticle'
- */
-	public $name = 'NumericArticle';
-
-/**
  * fields property
  *
  * @var array

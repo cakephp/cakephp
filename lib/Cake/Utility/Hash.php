@@ -53,7 +53,6 @@ class Hash {
 			} else {
 				return null;
 			}
-
 		}
 		return $data;
 	}

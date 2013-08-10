@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class JoinThingFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'JoinThing'
- */
-	public $name = 'JoinThing';
-
-/**
  * fields property
  *
  * @var array

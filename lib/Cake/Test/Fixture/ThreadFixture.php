@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ThreadFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Thread'
- */
-	public $name = 'Thread';
-
-/**
  * fields property
  *
  * @var array

@@ -14,6 +14,7 @@
 namespace Cake\View;
 
 use Cake\Controller\Controller;
+use Cake\Core\Configure;
 use Cake\Network\Response;
 use Cake\Utility\Set;
 use Cake\Utility\Xml;
@@ -97,9 +98,9 @@ class XmlView extends View {
 	}
 
 /**
- * Serialize view vars
+ * Serialize view vars.
  *
- * @param array $serialize The viewVars that need to be serialized
+ * @param array $serialize The viewVars that need to be serialized.
  * @return string The serialized data
  */
 	protected function _serialize($serialize) {
@@ -107,8 +108,11 @@ class XmlView extends View {
 
 		if (is_array($serialize)) {
 			$data = array($rootNode => array());
-			foreach ($serialize as $key) {
-				$data[$rootNode][$key] = $this->viewVars[$key];
+			foreach ($serialize as $alias => $key) {
+				if (is_numeric($alias)) {
+					$alias = $key;
+				}
+				$data[$rootNode][$alias] = $this->viewVars[$key];
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
@@ -116,7 +120,13 @@ class XmlView extends View {
 				$data = array($rootNode => array($serialize => $data));
 			}
 		}
-		return Xml::fromArray($data)->asXML();
+
+		$options = array();
+		if (Configure::read('debug')) {
+			$options['pretty'] = true;
+		}
+
+		return Xml::fromArray($data, $options)->asXML();
 	}
 
 }

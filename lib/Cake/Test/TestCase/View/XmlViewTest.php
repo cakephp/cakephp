@@ -21,6 +21,7 @@ namespace Cake\Test\TestCase\View;
 
 use Cake\Controller\Controller;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -33,6 +34,11 @@ use Cake\View\XmlView;
  * @package       Cake.Test.Case.View
  */
 class XmlViewTest extends TestCase {
+
+	public function setUp() {
+		parent::setUp();
+		Configure::write('debug', 0);
+	}
 
 /**
  * testRenderWithoutView method
@@ -108,6 +114,35 @@ class XmlViewTest extends TestCase {
 	}
 
 /**
+ * Test render with an array in _serialize and alias
+ *
+ * @return void
+ */
+	public function testRenderWithoutViewMultipleAndAlias() {
+		$Request = new Request();
+		$Response = new Response();
+		$Controller = new Controller($Request, $Response);
+		$data = array('original_name' => 'my epic name', 'user' => 'fake', 'list' => array('item1', 'item2'));
+		$Controller->set($data);
+		$Controller->set('_serialize', array('new_name' => 'original_name', 'user'));
+		$View = new XmlView($Controller);
+		$this->assertSame('application/xml', $Response->type());
+		$output = $View->render(false);
+		$expected = array(
+			'response' => array('new_name' => $data['original_name'], 'user' => $data['user'])
+		);
+		$this->assertSame(Xml::build($expected)->asXML(), $output);
+
+		$Controller->set('_rootNode', 'custom_name');
+		$View = new XmlView($Controller);
+		$output = $View->render(false);
+		$expected = array(
+			'custom_name' => array('new_name' => $data['original_name'], 'user' => $data['user'])
+		);
+		$this->assertSame(Xml::build($expected)->asXML(), $output);
+	}
+
+/**
  * testRenderWithView method
  *
  * @return void
@@ -143,7 +178,7 @@ class XmlViewTest extends TestCase {
 		$expected = Xml::build($expected)->asXML();
 		$this->assertSame($expected, $output);
 		$this->assertSame('application/xml', $Response->type());
-		$this->assertInstanceOf('Cake\View\HelperCollection', $View->Helpers);
+		$this->assertInstanceOf('Cake\View\HelperRegistry', $View->Helpers);
 	}
 
 }

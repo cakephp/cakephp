@@ -1,9 +1,5 @@
 <?php
 /**
- * Cookie Component
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,16 +9,17 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.4213
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Error;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Hash;
@@ -33,7 +30,6 @@ use Cake\Utility\Security;
  *
  * Cookie handling for the controller.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html
  *
  */
@@ -68,7 +64,7 @@ class CookieComponent extends Component {
  * $this->Cookie->path = '/';
  *
  * The path on the server in which the cookie will be available on.
- * If  public $cookiePath is set to '/foo/', the cookie will only be available
+ * If public $cookiePath is set to '/foo/', the cookie will only be available
  * within the /foo/ directory and all sub-directories such as /foo/bar/ of domain.
  * The default value is the entire domain.
  *
@@ -137,12 +133,11 @@ class CookieComponent extends Component {
 /**
  * Type of encryption to use.
  *
- * Currently two methods are available: cipher and rijndael
- * Defaults to Security::cipher();
+ * Defaults to Security::rijndael();
  *
  * @var string
  */
-	protected $_type = 'cipher';
+	protected $_type = 'rijndael';
 
 /**
  * Used to reset cookie time if $expire is passed to CookieComponent::write()
@@ -177,10 +172,10 @@ class CookieComponent extends Component {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection A ComponentCollection for this component
+ * @param ComponentRegistry $collection A ComponentRegistry for this component
  * @param array $settings Array of settings.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
+	public function __construct(ComponentRegistry $collection, $settings = array()) {
 		$this->key = Configure::read('Security.salt');
 		parent::__construct($collection, $settings);
 		if (isset($this->time)) {
@@ -204,10 +199,10 @@ class CookieComponent extends Component {
 /**
  * Start CookieComponent for use in the controller
  *
- * @param Controller $controller
+ * @param Event $event An Event instance
  * @return void
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event) {
 		$this->_expire($this->time);
 
 		$this->_values[$this->name] = array();
@@ -380,15 +375,14 @@ class CookieComponent extends Component {
  *
  * @param string $type Encryption method
  * @return void
+ * @throws Cake\Error\Exception When an unknown type is used.
  */
-	public function type($type = 'cipher') {
-		$availableTypes = array(
-			'cipher',
+	public function type($type = 'rijndael') {
+		$availableTypes = [
 			'rijndael'
-		);
+		];
 		if (!in_array($type, $availableTypes)) {
-			trigger_error(__d('cake_dev', 'You must use cipher or rijndael for cookie encryption type'), E_USER_WARNING);
-			$type = 'cipher';
+			throw new Error\Exception(__d('cake_dev', 'You must use rijndael for cookie encryption type'));
 		}
 		$this->_type = $type;
 	}

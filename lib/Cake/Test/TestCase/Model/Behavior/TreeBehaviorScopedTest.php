@@ -70,6 +70,7 @@ class TreeBehaviorScopedTest extends TestCase {
  */
 	public function testStringScope() {
 		$this->Tree = new FlagTree();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 3);
 
 		$this->Tree->id = 1;
@@ -106,6 +107,7 @@ class TreeBehaviorScopedTest extends TestCase {
  */
 	public function testArrayScope() {
 		$this->Tree = new FlagTree();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 3);
 
 		$this->Tree->id = 1;
@@ -142,6 +144,7 @@ class TreeBehaviorScopedTest extends TestCase {
  */
 	public function testMoveUpWithScope() {
 		$this->Ad = new Ad();
+		$this->Ad->order = null;
 		$this->Ad->Behaviors->attach('Tree', array('scope' => 'Campaign'));
 		$this->Ad->moveUp(6);
 
@@ -158,6 +161,7 @@ class TreeBehaviorScopedTest extends TestCase {
  */
 	public function testMoveDownWithScope() {
 		$this->Ad = new Ad();
+		$this->Ad->order = null;
 		$this->Ad->Behaviors->attach('Tree', array('scope' => 'Campaign'));
 		$this->Ad->moveDown(6);
 
@@ -175,6 +179,7 @@ class TreeBehaviorScopedTest extends TestCase {
  */
 	public function testTranslatingTree() {
 		$this->Tree = new FlagTree();
+		$this->Tree->order = null;
 		$this->Tree->cacheQueries = false;
 		$this->Tree->Behaviors->attach('Translate', array('title'));
 
@@ -292,9 +297,11 @@ class TreeBehaviorScopedTest extends TestCase {
 	public function testAliasesWithScopeInTwoTreeAssociations() {
 		extract($this->settings);
 		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 
 		$this->TreeTwo = new NumberTreeTwo();
+		$this->TreeTwo->order = null;
 
 		$record = $this->Tree->find('first');
 

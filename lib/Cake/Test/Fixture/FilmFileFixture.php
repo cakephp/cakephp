@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class FilmFileFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'FilmFile'
- */
-	public $name = 'FilmFile';
-
-/**
  * fields property
  *
  * @var array

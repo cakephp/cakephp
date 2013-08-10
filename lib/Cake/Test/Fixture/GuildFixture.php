@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class GuildFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Guild'
- */
-	public $name = 'Guild';
-
-/**
  * fields property
  *
  * @var array

@@ -147,15 +147,15 @@ class TestBehavior extends ModelBehavior {
 		switch ($settings['afterSave']) {
 			case 'on':
 				$model->data[$model->alias]['aftersave'] = $string;
-			break;
+				break;
 			case 'test':
 				unset($model->data[$model->alias]['name']);
-			break;
+				break;
 			case 'test2':
 				return false;
 			case 'modify':
 				$model->data[$model->alias]['name'] .= ' ' . $string;
-			break;
+				break;
 		}
 	}
 
@@ -189,7 +189,7 @@ class TestBehavior extends ModelBehavior {
  * afterValidate method
  *
  * @param Model $model
- * @param bool $cascade
+ * @param boolean $cascade
  * @return void
  */
 	public function afterValidate(Model $model) {
@@ -210,7 +210,7 @@ class TestBehavior extends ModelBehavior {
  * beforeDelete method
  *
  * @param Model $model
- * @param bool $cascade
+ * @param boolean $cascade
  * @return void
  */
 	public function beforeDelete(Model $model, $cascade = true) {
@@ -246,7 +246,7 @@ class TestBehavior extends ModelBehavior {
 		switch ($settings['afterDelete']) {
 			case 'on':
 				echo 'afterDelete success';
-			break;
+				break;
 		}
 	}
 
@@ -282,7 +282,7 @@ class TestBehavior extends ModelBehavior {
  * testMethod method
  *
  * @param Model $model
- * @param bool $param
+ * @param boolean $param
  * @return void
  */
 	public function testMethod(Model $model, $param = true) {

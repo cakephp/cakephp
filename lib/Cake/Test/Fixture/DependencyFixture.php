@@ -30,13 +30,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class DependencyFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Dependency'
- */
-	public $name = 'Dependency';
-
-/**
  * fields property
  *
  * @var array

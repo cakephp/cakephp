@@ -23,14 +23,14 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
 
 /**
- * Class TestCakeRequest
+ * Class TestRequest
  *
  * @package       Cake.Test.Case.Network
  */
 class RequestTest extends TestCase {
 
 /**
- * setup callback
+ * Setup callback
  *
  * @return void
  */
@@ -46,7 +46,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * tearDown
+ * TearDown
  *
  * @return void
  */
@@ -58,7 +58,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test that the autoparse = false constructor works.
+ * Test that the autoparse = false constructor works.
  *
  * @return void
  */
@@ -71,7 +71,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test construction
+ * Test construction
  *
  * @return void
  */
@@ -119,13 +119,13 @@ class RequestTest extends TestCase {
 		$request = Request::createFromGlobals();
 		$this->assertEquals('some/path', $request->url);
 
-		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseURL') . '/other/path?url=http://cakephp.org';
+		$_SERVER['REQUEST_URI'] = Configure::read('App.fullBaseUrl') . '/other/path?url=http://cakephp.org';
 		$request = Request::createFromGlobals();
 		$this->assertEquals('other/path', $request->url);
 	}
 
 /**
- * test addParams() method
+ * Test addParams() method
  *
  * @return void
  */
@@ -142,7 +142,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test splicing in paths.
+ * Test splicing in paths.
  *
  * @return void
  */
@@ -162,7 +162,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test parsing POST data into the object.
+ * Test parsing POST data into the object.
  *
  * @return void
  */
@@ -186,7 +186,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test parsing PUT data into the object.
+ * Test parsing PUT data into the object.
  *
  * @return void
  */
@@ -230,7 +230,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test parsing json PUT data into the object.
+ * Test parsing json PUT data into the object.
  *
  * @return void
  */
@@ -248,7 +248,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test parsing of FILES array
+ * Test parsing of FILES array
  *
  * @return void
  */
@@ -523,7 +523,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test method overrides coming in from POST data.
+ * Test method overrides coming in from POST data.
  *
  * @return void
  */
@@ -542,7 +542,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test the clientIp method.
+ * Test the clientIp method.
  *
  * @return void
  */
@@ -569,7 +569,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test the referer function.
+ * Test the referrer function.
  *
  * @return void
  */
@@ -585,29 +585,48 @@ class RequestTest extends TestCase {
 		$result = $request->referer();
 		$this->assertSame($result, '/');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(false);
-		$this->assertSame($result, Configure::read('App.fullBaseURL') . '/some/path');
+		$this->assertSame($result, Configure::read('App.fullBaseUrl') . '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/some/path';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseURL') . '/recipes/add';
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/recipes/add';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/recipes/add');
 
 		$_SERVER['HTTP_X_FORWARDED_HOST'] = 'cakephp.org';
 		$result = $request->referer();
-		$this->assertSame(FULL_BASE_URL . '/recipes/add', $result);
+		$this->assertSame(Configure::read('App.fullBaseUrl') . '/recipes/add', $result);
 
 		$request->trustProxy = true;
 		$result = $request->referer();
 		$this->assertSame('cakephp.org', $result);
+	}
+
+/**
+ * Test referer() with a base path that duplicates the
+ * first segment.
+ *
+ * @return void
+ */
+	public function testRefererBasePath() {
+		$request = new Request('some/path');
+		$request->url = 'users/login';
+		$request->webroot = '/waves/';
+		$request->base = '/waves';
+		$request->here = '/waves/users/login';
+
+		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/waves/waves/add';
+
+		$result = $request->referer(true);
+		$this->assertSame($result, '/waves/add');
 	}
 
 /**
@@ -673,7 +692,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test the method() method.
+ * Test the method() method.
  *
  * @return void
  */
@@ -685,7 +704,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test host retrieval.
+ * Test host retrieval.
  *
  * @return void
  */
@@ -770,7 +789,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test ajax, flash and friends
+ * Test ajax, flash and friends
  *
  * @return void
  */
@@ -804,7 +823,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test __call expcetions
+ * Test __call exceptions
  *
  * @expectedException Cake\Error\Exception
  * @return void
@@ -815,7 +834,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test is(ssl)
+ * Test is(ssl)
  *
  * @return void
  */
@@ -848,7 +867,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test getting request params with object properties.
+ * Test getting request params with object properties.
  *
  * @return void
  */
@@ -881,7 +900,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test the array access implementation
+ * Test the array access implementation
  *
  * @return void
  */
@@ -912,7 +931,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test adding detectors and having them work.
+ * Test adding detectors and having them work.
  *
  * @return void
  */
@@ -969,16 +988,17 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * helper function for testing callbacks.
+ * Helper function for testing callbacks.
  *
- * @return void
+ * @param $request
+ * @return bool
  */
 	public function detectCallback($request) {
 		return (bool)$request->return;
 	}
 
 /**
- * test getting headers
+ * Test getting headers
  *
  * @return void
  */
@@ -992,7 +1012,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test accepts() with and without parameters
+ * Test accepts() with and without parameters
  *
  * @return void
  */
@@ -1077,7 +1097,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * testBaseUrlAndWebrootWithModRewrite method
+ * Test baseUrl and webroot with ModRewrite
  *
  * @return void
  */
@@ -1146,7 +1166,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * testBaseUrlwithModRewriteAlias method
+ * Test baseUrl with ModRewrite alias
  *
  * @return void
  */
@@ -1174,7 +1194,71 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test base, webroot, and url parsing when there is no url rewriting
+ * Test base, webroot, url and here parsing when there is url rewriting but
+ * CakePHP gets called with index.php in url nonetheless.
+ *
+ * Tests uri with
+ * - index.php/
+ * - index.php/
+ * - index.php/apples/
+ * - index.php/bananas/eat/tasty_banana
+ *
+ * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
+ */
+	public function testBaseUrlWithModRewriteAndIndexPhp() {
+		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php';
+		unset($_SERVER['PATH_INFO']);
+		$request = Request::createFromGlobals();
+
+		$this->assertEquals('/cakephp', $request->base);
+		$this->assertEquals('/cakephp/', $request->webroot);
+		$this->assertEquals('', $request->url);
+		$this->assertEquals('/cakephp/', $request->here);
+
+		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php/';
+		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php/';
+		$_SERVER['PATH_INFO'] = '/';
+		$request = Request::createFromGlobals();
+
+		$this->assertEquals('/cakephp', $request->base);
+		$this->assertEquals('/cakephp/', $request->webroot);
+		$this->assertEquals('', $request->url);
+		$this->assertEquals('/cakephp/', $request->here);
+
+		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php/apples';
+		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php/apples';
+		$_SERVER['PATH_INFO'] = '/apples';
+		$request = Request::createFromGlobals();
+
+		$this->assertEquals('/cakephp', $request->base);
+		$this->assertEquals('/cakephp/', $request->webroot);
+		$this->assertEquals('apples', $request->url);
+		$this->assertEquals('/cakephp/apples', $request->here);
+
+		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php/melons/share/';
+		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php/melons/share/';
+		$_SERVER['PATH_INFO'] = '/melons/share/';
+		$request = Request::createFromGlobals();
+
+		$this->assertEquals('/cakephp', $request->base);
+		$this->assertEquals('/cakephp/', $request->webroot);
+		$this->assertEquals('melons/share/', $request->url);
+		$this->assertEquals('/cakephp/melons/share/', $request->here);
+
+		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php/bananas/eat/tasty_banana';
+		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php/bananas/eat/tasty_banana';
+		$_SERVER['PATH_INFO'] = '/bananas/eat/tasty_banana';
+		$request = Request::createFromGlobals();
+
+		$this->assertEquals('/cakephp', $request->base);
+		$this->assertEquals('/cakephp/', $request->webroot);
+		$this->assertEquals('bananas/eat/tasty_banana', $request->url);
+		$this->assertEquals('/cakephp/bananas/eat/tasty_banana', $request->here);
+	}
+
+/**
+ * Test base, webroot, and url parsing when there is no url rewriting
  *
  * @return void
  */
@@ -1198,7 +1282,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * testBaseUrlAndWebrootWithBaseUrl method
+ * Test baseUrl and webroot with baseUrl
  *
  * @return void
  */
@@ -1247,7 +1331,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test baseUrl with no rewrite and using the top level index.php.
+ * Test baseUrl with no rewrite and using the top level index.php.
  *
  * @return void
  */
@@ -1285,7 +1369,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test baseUrl with no rewrite, and using the app/webroot/index.php file as is normal with virtual hosts.
+ * Test baseUrl with no rewrite, and using the app/webroot/index.php file as is normal with virtual hosts.
  *
  * @return void
  */
@@ -1326,14 +1410,14 @@ class RequestTest extends TestCase {
 		$_SERVER['PHP_SELF'] = '/cake_dev/App/webroot/index.php';
 		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
 
-		$request = new Request();
+		$request = Request::createFromGlobals();
 		$this->assertEquals(array(), $request->query);
 	}
 
 /**
- * generator for environment configurations
+ * Generator for environment configurations
  *
- * @return void
+ * @return array Environment array
  */
 	public static function environmentGenerator() {
 		return array(
@@ -1705,9 +1789,12 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * testEnvironmentDetection method
+ * Test environment detection
  *
  * @dataProvider environmentGenerator
+ * @param $name
+ * @param $env
+ * @param $expected
  * @return void
  */
 	public function testEnvironmentDetection($name, $env, $expected) {
@@ -1724,7 +1811,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test the query() method
+ * Test the query() method
  *
  * @return void
  */
@@ -1741,7 +1828,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test the query() method with arrays passed via $_GET
+ * Test the query() method with arrays passed via $_GET
  *
  * @return void
  */
@@ -1783,7 +1870,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test the data() method reading
+ * Test the data() method reading
  *
  * @return void
  */
@@ -1802,7 +1889,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test writing with data()
+ * Test writing with data()
  *
  * @return void
  */
@@ -1824,7 +1911,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test writing falsey values.
+ * Test writing falsey values.
  *
  * @return void
  */
@@ -1845,7 +1932,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test accept language
+ * Test accept language
  *
  * @return void
  */
@@ -1888,7 +1975,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * test the here() method
+ * Test the here() method
  *
  * @return void
  */
@@ -2032,7 +2119,7 @@ XML;
 	}
 
 /**
- * TestOnlyAllow throwing exception
+ * Test onlyAllow throwing exception
  *
  * @return void
  */

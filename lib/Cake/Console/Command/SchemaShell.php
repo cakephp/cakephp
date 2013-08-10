@@ -113,12 +113,11 @@ class SchemaShell extends Shell {
 		$File = new File($this->Schema->path . DS . $this->params['file']);
 		if ($File->exists()) {
 			$this->out($File->read());
-			$this->_stop();
-		} else {
-			$file = $this->Schema->path . DS . $this->params['file'];
-			$this->err(__d('cake_console', 'Schema file (%s) could not be found.', $file));
-			$this->_stop();
+			return $this->_stop();
 		}
+		$file = $this->Schema->path . DS . $this->params['file'];
+		$this->err(__d('cake_console', 'Schema file (%s) could not be found.', $file));
+		return $this->_stop();
 	}
 
 /**
@@ -198,11 +197,10 @@ class SchemaShell extends Shell {
 
 		if ($this->Schema->write($content)) {
 			$this->out(__d('cake_console', 'Schema file: %s generated', $content['file']));
-			$this->_stop();
-		} else {
-			$this->err(__d('cake_console', 'Schema file: %s generated'));
-			$this->_stop();
+			return $this->_stop();
 		}
+		$this->err(__d('cake_console', 'Schema file: %s generated'));
+		return $this->_stop();
 	}
 
 /**
@@ -219,7 +217,7 @@ class SchemaShell extends Shell {
 		$Schema = $this->Schema->load();
 		if (!$Schema) {
 			$this->err(__d('cake_console', 'Schema could not be loaded'));
-			$this->_stop();
+			return $this->_stop();
 		}
 		if (!empty($this->params['write'])) {
 			if ($this->params['write'] == 1) {
@@ -243,10 +241,10 @@ class SchemaShell extends Shell {
 
 			if ($File->write($contents)) {
 				$this->out(__d('cake_console', 'SQL dump file created in %s', $File->pwd()));
-				$this->_stop();
+				return $this->_stop();
 			} else {
 				$this->err(__d('cake_console', 'SQL dump could not be created'));
-				$this->_stop();
+				return $this->_stop();
 			}
 		}
 		$this->out($contents);
@@ -304,7 +302,7 @@ class SchemaShell extends Shell {
 			$this->err(__d('cake_console', 'The chosen schema could not be loaded. Attempted to load:'));
 			$this->err(__d('cake_console', 'File: %s', $this->Schema->path . DS . $this->Schema->file));
 			$this->err(__d('cake_console', 'Name: %s', $this->Schema->name));
-			$this->_stop();
+			return $this->_stop();
 		}
 		$table = null;
 		if (isset($this->args[1])) {
@@ -337,13 +335,13 @@ class SchemaShell extends Shell {
 		}
 		if (empty($drop) || empty($create)) {
 			$this->out(__d('cake_console', 'Schema is up to date.'));
-			$this->_stop();
+			return $this->_stop();
 		}
 
 		$this->out("\n" . __d('cake_console', 'The following table(s) will be dropped.'));
 		$this->out(array_keys($drop));
 
-		if ('y' == $this->in(__d('cake_console', 'Are you sure you want to drop the table(s)?'), array('y', 'n'), 'n')) {
+		if ($this->in(__d('cake_console', 'Are you sure you want to drop the table(s)?'), array('y', 'n'), 'n') === 'y') {
 			$this->out(__d('cake_console', 'Dropping table(s).'));
 			$this->_run($drop, 'drop', $Schema);
 		}
@@ -351,7 +349,7 @@ class SchemaShell extends Shell {
 		$this->out("\n" . __d('cake_console', 'The following table(s) will be created.'));
 		$this->out(array_keys($create));
 
-		if ('y' == $this->in(__d('cake_console', 'Are you sure you want to create the table(s)?'), array('y', 'n'), 'y')) {
+		if ($this->in(__d('cake_console', 'Are you sure you want to create the table(s)?'), array('y', 'n'), 'y') === 'y') {
 			$this->out(__d('cake_console', 'Creating table(s).'));
 			$this->_run($create, 'create', $Schema);
 		}
@@ -397,12 +395,12 @@ class SchemaShell extends Shell {
 
 		if (empty($contents)) {
 			$this->out(__d('cake_console', 'Schema is up to date.'));
-			$this->_stop();
+			return $this->_stop();
 		}
 
 		$this->out("\n" . __d('cake_console', 'The following statements will run.'));
 		$this->out(array_map('trim', $contents));
-		if ('y' == $this->in(__d('cake_console', 'Are you sure you want to alter the tables?'), array('y', 'n'), 'n')) {
+		if ($this->in(__d('cake_console', 'Are you sure you want to alter the tables?'), array('y', 'n'), 'n') === 'y') {
 			$this->out();
 			$this->out(__d('cake_console', 'Updating Database...'));
 			$this->_run($contents, 'update', $Schema);

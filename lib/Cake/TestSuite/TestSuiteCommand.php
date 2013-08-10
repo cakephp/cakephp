@@ -72,24 +72,6 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
 			);
 		}
 
-		if (!count($suite)) {
-			$skeleton = new \PHPUnit_Util_Skeleton_Test(
-				$suite->getName(),
-				$this->arguments['testFile']
-			);
-
-			$result = $skeleton->generate(true);
-
-			if (!$result['incomplete']) {
-				//@codingStandardsIgnoreStart
-				eval(str_replace(array('<?php', '?>'), '', $result['code']));
-				//@codingStandardsIgnoreEnd
-				$suite = new \PHPUnit_Framework_TestSuite(
-					$this->arguments['test'] . 'Test'
-				);
-			}
-		}
-
 		if ($this->arguments['listGroups']) {
 			\PHPUnit_TextUI_TestRunner::printVersionString();
 
@@ -122,6 +104,7 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
 			} else {
 				exit(\PHPUnit_TextUI_TestRunner::FAILURE_EXIT);
 			}
+			exit(PHPUnit_TextUI_TestRunner::FAILURE_EXIT);
 		}
 	}
 

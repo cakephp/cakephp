@@ -249,23 +249,6 @@ class ProjectTaskTest extends TestCase {
 	}
 
 /**
- * test generation of Security.cipherSeed
- *
- * @return void
- */
-	public function testSecurityCipherSeedGeneration() {
-		$this->_setupTestProject();
-
-		$path = $this->Task->path . 'BakeTestApp/';
-		$result = $this->Task->securityCipherSeed($path);
-		$this->assertTrue($result);
-
-		$File = new File($path . 'Config/app.php');
-		$contents = $File->read();
-		$this->assertNotRegExp('/76859309657453542496749683645/', $contents, 'Default CipherSeed left behind. %s');
-	}
-
-/**
  * test generation of cache prefix
  *
  * @return void

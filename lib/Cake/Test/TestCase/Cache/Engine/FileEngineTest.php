@@ -242,6 +242,41 @@ class FileEngineTest extends TestCase {
 	}
 
 /**
+ * Test that clear() also removes files with group tags.
+ *
+ * @return void
+ */
+	public function testClearWithGroups() {
+		$engine = new FileEngine();
+		$engine->init(array(
+			'prefix' => 'cake_test_',
+			'duration' => DAY,
+			'groups' => array('short', 'round')
+		));
+		$key = 'cake_test_test_key';
+		$engine->write($key, 'it works', DAY);
+		$engine->clear(false);
+		$this->assertFalse($engine->read($key), 'Key should have been removed');
+	}
+
+/**
+ * Test that clear() also removes files with group tags.
+ *
+ * @return void
+ */
+	public function testClearWithNoKeys() {
+		$engine = new FileEngine();
+		$engine->init(array(
+			'prefix' => 'cake_test_',
+			'duration' => DAY,
+			'groups' => array('one', 'two')
+		));
+		$key = 'cake_test_test_key';
+		$engine->clear(false);
+		$this->assertFalse($engine->read($key), 'No errors should be found');
+	}
+
+/**
  * testKeyPath method
  *
  * @return void

@@ -15,6 +15,8 @@
 namespace Cake\Controller;
 
 use Cake\Core\Object;
+use Cake\Event\Event;
+use Cake\Event\EventListener;
 
 /**
  * Base class for an individual Component. Components provide reusable bits of
@@ -26,25 +28,47 @@ use Cake\Core\Object;
  * Components can provide several callbacks that are fired at various stages of the request
  * cycle. The available callbacks are:
  *
- * - `initialize()` - Fired before the controller's beforeFilter method.
- * - `startup()` - Fired after the controller's beforeFilter method.
- * - `beforeRender()` - Fired before the view + layout are rendered.
- * - `shutdown()` - Fired after the action is complete and the view has been rendered
+ * - `initialize()` - Called before the controller's beforeFilter method.
+ * - `startup()` - Called after the controller's beforeFilter method,
+ *   and before the controller action is called.
+ * - `beforeRender()` - Called before the Controller beforeRender, and
+ *   before the view class is loaded.
+ * - `shutdown()` - Called after the action is complete and the view has been rendered.
  *    but before Controller::afterFilter().
- * - `beforeRedirect()` - Fired before a redirect() is done.
+ * - `beforeRedirect()` - Called before Controller::redirect(), and
+ *   before a redirect() is done. Allows you to replace the URL that will
+ *   be redirected to with a new URL. The return of this method can either be an
+ *   array or a string. If the return is an array and contains a 'url' key.
+ *   You may also supply the following:
  *
- * @package       Cake.Controller
- * @link          http://book.cakephp.org/2.0/en/controllers/components.html
+ *   - `status` The status code for the redirect
+ *   - `exit` Whether or not the redirect should exit.
+ *
+ *   If your response is a string or an array that does not contain a 'url' key it will
+ *   be used as the new URL to redirect to.
+ *
+ * Each callback has a slightly different signature:
+ *
+ * - `intitalize(Event $event)`
+ * - `startup(Event $event)`
+ * - `beforeRender(Event $event)`
+ * - `beforeRedirect(Event $event $url, Response $response)`
+ * - `shutdown(Event $event)`
+ *
+ * While the controller is not an explicit argument it is the subject of each event
+ * and can be fetched using Event::subject().
+ *
+ * @link http://book.cakephp.org/2.0/en/controllers/components.html
  * @see Controller::$components
  */
-class Component extends Object {
+class Component extends Object implements EventListener {
 
 /**
- * Component collection class used to lazy load components.
+ * Component registry class used to lazy load components.
  *
- * @var ComponentCollection
+ * @var ComponentRegistry
  */
-	protected $_Collection;
+	protected $_registry;
 
 /**
  * Settings for this Component
@@ -70,15 +94,15 @@ class Component extends Object {
 /**
  * Constructor
  *
- * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
+ * @param ComponentRegistry $registry A ComponentRegistry this component can use to lazy load its components
  * @param array $settings Array of configuration settings.
  */
-	public function __construct(ComponentCollection $collection, $settings = array()) {
-		$this->_Collection = $collection;
+	public function __construct(ComponentRegistry $registry, $settings = []) {
+		$this->_registry = $registry;
 		$this->settings = $settings;
 		$this->_set($settings);
 		if (!empty($this->components)) {
-			$this->_componentMap = ComponentCollection::normalizeObjectArray($this->components);
+			$this->_componentMap = $registry->normalizeArray($this->components);
 		}
 	}
 
@@ -91,7 +115,7 @@ class Component extends Object {
 	public function __get($name) {
 		if (isset($this->_componentMap[$name]) && !isset($this->{$name})) {
 			$settings = array_merge((array)$this->_componentMap[$name]['settings'], array('enabled' => false));
-			$this->{$name} = $this->_Collection->load($this->_componentMap[$name]['class'], $settings);
+			$this->{$name} = $this->_registry->load($this->_componentMap[$name]['class'], $settings);
 		}
 		if (isset($this->{$name})) {
 			return $this->{$name};
@@ -99,66 +123,32 @@ class Component extends Object {
 	}
 
 /**
- * Called before the Controller::beforeFilter().
+ * Get the Controller callbacks this Component is interested in.
  *
- * @param Controller $controller Controller with components to initialize
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::initialize
+ * Uses Conventions to map controller events to standard component
+ * callback method names. By defining one of the callback methods a 
+ * component is assumed to be interested in the related event.
+ *
+ * Override this method if you need to add non-conventional event listeners.
+ * Or if you want components to listen to non-standard events.
+ *
+ * @return array
  */
-	public function initialize(Controller $controller) {
-	}
-
-/**
- * Called after the Controller::beforeFilter() and before the controller action
- *
- * @param Controller $controller Controller with components to startup
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::startup
- */
-	public function startup(Controller $controller) {
-	}
-
-/**
- * Called before the Controller::beforeRender(), and before
- * the view class is loaded, and before Controller::render()
- *
- * @param Controller $controller Controller with components to beforeRender
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::beforeRender
- */
-	public function beforeRender(Controller $controller) {
-	}
-
-/**
- * Called after Controller::render() and before the output is printed to the browser.
- *
- * @param Controller $controller Controller with components to shutdown
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::shutdown
- */
-	public function shutdown(Controller $controller) {
-	}
-
-/**
- * Called before Controller::redirect(). Allows you to replace the URL that will
- * be redirected to with a new URL. The return of this method can either be an array or a string.
- *
- * If the return is an array and contains a 'url' key. You may also supply the following:
- *
- * - `status` The status code for the redirect
- * - `exit` Whether or not the redirect should exit.
- *
- * If your response is a string or an array that does not contain a 'url' key it will
- * be used as the new URL to redirect to.
- *
- * @param Controller $controller Controller with components to beforeRedirect
- * @param string|array $url Either the string or URL array that is being redirected to.
- * @param integer $status The status code of the redirect
- * @param boolean $exit Will the script exit.
- * @return array|void Either an array or null.
- * @link http://book.cakephp.org/2.0/en/controllers/components.html#Component::beforeRedirect
- */
-	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
+	public function implementedEvents() {
+		$eventMap = [
+			'Controller.initialize' => 'initialize',
+			'Controller.startup' => 'startup',
+			'Controller.beforeRender' => 'beforeRender',
+			'Controller.beforeRedirect' => 'beforeRedirect',
+			'Controller.shutdown' => 'shutdown',
+		];
+		$events = [];
+		foreach ($eventMap as $event => $method) {
+			if (method_exists($this, $method)) {
+				$events[$event] = $method;
+			}
+		}
+		return $events;
 	}
 
 }

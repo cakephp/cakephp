@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class TranslatedArticleFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'TranslatedItem'
- */
-	public $name = 'TranslatedArticle';
-
-/**
  * fields property
  *
  * @var array

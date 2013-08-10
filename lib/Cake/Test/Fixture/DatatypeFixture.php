@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class DatatypeFixture extends TestFixture {
 
 /**
- * Name property
- *
- * @var string 'Datatype'
- */
-	public $name = 'Datatype';
-
-/**
  * Fields property
  *
  * @var array

@@ -120,16 +120,16 @@ class CacheHelperTest extends TestCase {
 
 		$View = new View($this->Controller);
 		$result = $View->render('index');
-		$this->assertNotRegExp('/cake:nocache/', $result);
-		$this->assertNotRegExp('/php echo/', $result);
+		$this->assertNotContains('cake:nocache', $result);
+		$this->assertNotContains('<?php echo', $result);
 
 		$filename = CACHE . 'views/cachetest_cache_parsing.php';
 		$this->assertTrue(file_exists($filename));
 
 		$contents = file_get_contents($filename);
-		$this->assertRegExp('/php echo \$variable/', $contents);
-		$this->assertRegExp('/php echo microtime()/', $contents);
-		$this->assertRegExp('/clark kent/', $result);
+		$this->assertContains('<?php echo $variable', $contents);
+		$this->assertContains('<?php echo microtime()', $contents);
+		$this->assertContains('clark kent', $result);
 
 		unlink($filename);
 	}
@@ -547,14 +547,8 @@ class CacheHelperTest extends TestCase {
 			->with('posts/index', 'content')
 			->will($this->returnValue(''));
 
-		$Cache->afterRenderFile('posts/index', 'content');
-
-		Configure::write('Cache.check', false);
-		$Cache->afterRender('posts/index');
-
-		Configure::write('Cache.check', true);
-		$View->cacheAction = false;
-		$Cache->afterRender('posts/index');
+		$event = $this->getMock('Cake\Event\Event', [], ['View.afterRenderFile']);
+		$Cache->afterRenderFile($event, 'posts/index', 'content');
 	}
 
 /**
@@ -574,14 +568,15 @@ class CacheHelperTest extends TestCase {
 			->with('posts/index', $View->fetch('content'))
 			->will($this->returnValue(''));
 
-		$Cache->afterLayout('posts/index');
+		$event = $this->getMock('Cake\Event\Event', [], ['View.afterLayout']);
+		$Cache->afterLayout($event, 'posts/index');
 
 		Configure::write('Cache.check', false);
-		$Cache->afterLayout('posts/index');
+		$Cache->afterLayout($event, 'posts/index');
 
 		Configure::write('Cache.check', true);
 		$View->cacheAction = false;
-		$Cache->afterLayout('posts/index');
+		$Cache->afterLayout($event, 'posts/index');
 	}
 
 /**

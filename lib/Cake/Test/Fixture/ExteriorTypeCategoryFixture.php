@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ExteriorTypeCategoryFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'ExteriorTypeCategory'
- */
-	public $name = 'ExteriorTypeCategory';
-
-/**
  * fields property
  *
  * @var array

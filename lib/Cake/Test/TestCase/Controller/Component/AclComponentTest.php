@@ -19,7 +19,7 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AclComponent;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
@@ -42,7 +42,7 @@ class AclComponentTest extends TestCase {
 			$this->getMock('Cake\Controller\Component\Acl\AclInterface', array(), array(), 'MockAclImplementation');
 		}
 		Configure::write('Acl.classname', '\MockAclImplementation');
-		$Collection = new ComponentCollection();
+		$Collection = new ComponentRegistry();
 		$this->Acl = new AclComponent($Collection);
 	}
 
@@ -65,7 +65,7 @@ class AclComponentTest extends TestCase {
  */
 	public function testConstrutorException() {
 		Configure::write('Acl.classname', 'AclClassNameThatDoesNotExist');
-		$Collection = new ComponentCollection();
+		$Collection = new ComponentRegistry();
 		new AclComponent($Collection);
 	}
 

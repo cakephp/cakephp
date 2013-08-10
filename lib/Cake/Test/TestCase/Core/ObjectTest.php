@@ -198,7 +198,6 @@ class ObjectTest extends TestCase {
 		$this->object = new TestObject();
 		Configure::write('App.namespace', 'TestApp');
 		Configure::write('Security.salt', 'not-the-default');
-		Configure::write('Security.cipherSeed', '123456');
 		Log::disable('stdout');
 		Log::disable('stderr');
 	}

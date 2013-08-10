@@ -72,7 +72,7 @@ class DbConfigTask extends Shell {
 	public function execute() {
 		if (empty($this->args)) {
 			$this->_interactive();
-			$this->_stop();
+			return $this->_stop();
 		}
 	}
 

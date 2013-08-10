@@ -15,6 +15,7 @@
 namespace App\Config;
 
 use Cake\Core\Configure;
+
 /**
  * Email configuration.
  *

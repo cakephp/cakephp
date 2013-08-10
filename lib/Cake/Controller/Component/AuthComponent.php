@@ -1,11 +1,5 @@
 <?php
 /**
- * Authentication component
- *
- * Manages user logins and permissions.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,18 +9,18 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Event\Event;
 use Cake\Model\Datasource\Session;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -40,7 +34,6 @@ use Cake\Utility\Security;
  *
  * Binds access control with user authentication and session management.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html
  */
 class AuthComponent extends Component {
@@ -265,10 +258,11 @@ class AuthComponent extends Component {
 /**
  * Initializes AuthComponent for use in the controller
  *
- * @param Controller $controller A reference to the instantiating controller object
+ * @param Event $event The initialize event.
  * @return void
  */
-	public function initialize(Controller $controller) {
+	public function initialize(Event $event) {
+		$controller = $event->subject();
 		$this->request = $controller->request;
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
@@ -282,10 +276,11 @@ class AuthComponent extends Component {
  * Main execution method. Handles redirecting of invalid users, and processing
  * of login form data.
  *
- * @param Controller $controller A reference to the instantiating controller object
+ * @param Event $event The startup event.
  * @return boolean
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event) {
+		$controller = $event->subject();
 		$methods = array_flip(array_map('strtolower', $controller->methods));
 		$action = strtolower($controller->request->params['action']);
 
@@ -358,7 +353,7 @@ class AuthComponent extends Component {
 
 		if (!$controller->request->is('ajax')) {
 			$this->flash($this->authError);
-			$this->Session->write('Auth.redirect', $controller->request->here());
+			$this->Session->write('Auth.redirect', $controller->request->here(false));
 			$controller->redirect($this->loginAction);
 			return false;
 		}
@@ -502,7 +497,7 @@ class AuthComponent extends Component {
 				throw new Error\Exception(__d('cake_dev', 'Authorization objects must implement an authorize method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
-			$this->_authorizeObjects[] = new $className($this->_Collection, $settings);
+			$this->_authorizeObjects[] = new $className($this->_registry, $settings);
 		}
 		return $this->_authorizeObjects;
 	}
@@ -711,8 +706,8 @@ class AuthComponent extends Component {
  * If no parameter is passed, gets the authentication redirect URL. The URL
  * returned is as per following rules:
  *
- *  - Returns the session Auth.redirect value if it is present and for the same
- *    domain the current app is running on.
+ *  - Returns the normalized URL from session Auth.redirect value if it is
+ *    present and for the same domain the current app is running on.
  *  - If there is no session value and there is a $loginRedirect, the $loginRedirect
  *    value is returned.
  *  - If there is no session and no $loginRedirect, / is returned.
@@ -736,7 +731,10 @@ class AuthComponent extends Component {
 		} else {
 			$redir = '/';
 		}
-		return Router::normalize($redir);
+		if (is_array($redir)) {
+			return Router::url($redir + array('base' => false));
+		}
+		return $redir;
 	}
 
 /**
@@ -786,7 +784,7 @@ class AuthComponent extends Component {
 				throw new Error\Exception(__d('cake_dev', 'Authentication objects must implement an authenticate method.'));
 			}
 			$settings = array_merge($global, (array)$settings);
-			$this->_authenticateObjects[] = new $className($this->_Collection, $settings);
+			$this->_authenticateObjects[] = new $className($this->_registry, $settings);
 		}
 		return $this->_authenticateObjects;
 	}

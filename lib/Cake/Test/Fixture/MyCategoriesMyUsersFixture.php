@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class MyCategoriesMyUsersFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'MyCategoriesMyUsers'
- */
-	public $name = 'MyCategoriesMyUsers';
-
-/**
  * fields property
  *
  * @var array

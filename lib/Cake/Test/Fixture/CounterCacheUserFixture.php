@@ -28,8 +28,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class CounterCacheUserFixture extends TestFixture {
 
-	public $name = 'CounterCacheUser';
-
 	public $fields = array(
 		'id' => ['type' => 'integer'],
 		'name' => ['type' => 'string', 'length' => 255, 'null' => false],

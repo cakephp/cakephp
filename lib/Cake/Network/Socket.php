@@ -188,6 +188,7 @@ class Socket {
  *
  * @param int $code
  * @param string $message
+ * @return void
  */
 	protected function _connectionErrorHandler($code, $message) {
 		$this->_connectionErrors[] = $message;
@@ -389,6 +390,9 @@ class Socket {
 			$this->setLastError(null, $errorMessage);
 			throw new Error\SocketException($errorMessage);
 		}
+		$errorMessage = __d('cake_dev', 'Unable to perform enableCrypto operation on CakeSocket');
+		$this->setLastError(null, $errorMessage);
+		throw new Error\SocketException($errorMessage);
 	}
 
 }

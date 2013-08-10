@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\SessionComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
@@ -70,7 +70,7 @@ class SessionComponentTest extends TestCase {
 		parent::setUp();
 		$_SESSION = null;
 		Configure::write('App.namespace', 'TestApp');
-		$this->ComponentCollection = new ComponentCollection();
+		$this->ComponentRegistry = new ComponentRegistry();
 	}
 
 /**
@@ -91,12 +91,12 @@ class SessionComponentTest extends TestCase {
 	public function testSessionIdConsistentAcrossRequestAction() {
 		Configure::write('App.namespace', 'TestApp');
 
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 		$Session->check('Test');
 		$this->assertTrue(isset($_SESSION));
 
 		$Controller = new Controller();
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 		$expected = $Session->id();
 
 		$result = $Controller->requestAction('/session_test/session_id');
@@ -112,7 +112,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public function testSessionValid() {
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 
 		$this->assertTrue($Session->valid());
 
@@ -120,7 +120,7 @@ class SessionComponentTest extends TestCase {
 		$Session->userAgent('rweerw');
 		$this->assertFalse($Session->valid());
 
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 		$Session->time = $Session->read('Config.time') + 1;
 		$this->assertFalse($Session->valid());
 	}
@@ -131,7 +131,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public function testSessionError() {
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 		$this->assertFalse($Session->error());
 	}
 
@@ -141,7 +141,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public function testSessionReadWrite() {
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 
 		$this->assertNull($Session->read('Test'));
 
@@ -173,7 +173,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public function testSessionDelete() {
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 
 		$this->assertFalse($Session->delete('Test'));
 
@@ -187,7 +187,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public function testSessionCheck() {
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 
 		$this->assertFalse($Session->check('Test'));
 
@@ -202,7 +202,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public function testSessionFlash() {
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 
 		$this->assertNull($Session->read('Message.flash'));
 
@@ -228,7 +228,7 @@ class SessionComponentTest extends TestCase {
  */
 	public function testSessionId() {
 		unset($_SESSION);
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 		$Session->check('test');
 		$this->assertEquals(session_id(), $Session->id());
 	}
@@ -239,7 +239,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public function testSessionDestroy() {
-		$Session = new SessionComponent($this->ComponentCollection);
+		$Session = new SessionComponent($this->ComponentRegistry);
 
 		$Session->write('Test', 'some value');
 		$this->assertEquals('some value', $Session->read('Test'));

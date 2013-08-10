@@ -15,10 +15,11 @@
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
@@ -33,7 +34,6 @@ use Cake\Utility\Security;
  * - Requiring that SSL be used.
  * - Limiting cross controller communication.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html
  */
 class SecurityComponent extends Component {
@@ -216,10 +216,11 @@ class SecurityComponent extends Component {
 /**
  * Component startup. All security checking happens here.
  *
- * @param Controller $controller Instantiating controller
+ * @param Event $event An Event instance
  * @return void
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event) {
+		$controller = $event->subject();
 		$this->request = $controller->request;
 		$this->_action = $this->request->params['action'];
 		$this->_methodsRequired($controller);
@@ -233,7 +234,7 @@ class SecurityComponent extends Component {
 		);
 
 		if ($this->_action == $this->blackHoleCallback) {
-			return $this->blackhole($controller, 'auth');
+			return $this->blackHole($controller, 'auth');
 		}
 
 		if (!in_array($this->_action, (array)$this->unlockedActions) && $isPost && $isNotRequestAction) {

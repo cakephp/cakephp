@@ -31,6 +31,7 @@ interface AclInterface {
  * @param string $aro ARO The requesting object identifier.
  * @param string $aco ACO The controlled object identifier.
  * @param string $action Action (defaults to *)
+ * @return boolean Success
  */
 	public function check($aro, $aco, $action = "*");
 
@@ -68,6 +69,7 @@ interface AclInterface {
  * Initialization method for the Acl implementation
  *
  * @param AclComponent $component
+ * @return void
  */
 	public function initialize(Component $component);
 

@@ -70,7 +70,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashInvalidSalt method
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHashInvalidSalt() {
@@ -80,7 +80,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashAnotherInvalidSalt
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHashAnotherInvalidSalt() {
@@ -90,7 +90,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashYetAnotherInvalidSalt
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHashYetAnotherInvalidSalt() {
@@ -100,7 +100,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashInvalidCost method
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHashInvalidCost() {
@@ -199,49 +199,6 @@ class SecurityTest extends TestCase {
 	}
 
 /**
- * testCipher method
- *
- * @return void
- */
-	public function testCipher() {
-		$length = 10;
-		$txt = '';
-		for ($i = 0; $i < $length; $i++) {
-			$txt .= mt_rand(0, 255);
-		}
-		$key = 'my_key';
-		$result = Security::cipher($txt, $key);
-		$this->assertEquals($txt, Security::cipher($result, $key));
-
-		$txt = '';
-		$key = 'my_key';
-		$result = Security::cipher($txt, $key);
-		$this->assertEquals($txt, Security::cipher($result, $key));
-
-		$txt = 123456;
-		$key = 'my_key';
-		$result = Security::cipher($txt, $key);
-		$this->assertEquals($txt, Security::cipher($result, $key));
-
-		$txt = '123456';
-		$key = 'my_key';
-		$result = Security::cipher($txt, $key);
-		$this->assertEquals($txt, Security::cipher($result, $key));
-	}
-
-/**
- * testCipherEmptyKey method
- *
- * @expectedException PHPUnit_Framework_Error
- * @return void
- */
-	public function testCipherEmptyKey() {
-		$txt = 'some_text';
-		$key = '';
-		Security::cipher($txt, $key);
-	}
-
-/**
  * testRijndael method
  *
  * @return void
@@ -266,25 +223,9 @@ class SecurityTest extends TestCase {
 	}
 
 /**
- * Test that rijndael() can still decrypt values with a fixed iv.
- *
- * @return
- */
-	public function testRijndaelBackwardCompatibility() {
-		$this->skipIf(!function_exists('mcrypt_encrypt'));
-
-		$txt = 'The quick brown fox jumped over the lazy dog.';
-		$key = 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi';
-
-		// Encrypted before random iv
-		$value = base64_decode('1WPjnq96LMzLGwNgmudHF+cAIqVUN5DaUZEpf5tm1EzSgt5iYY9o3d66iRI/fKJLTlTVGsa8HzW0jDNitmVXoQ==');
-		$this->assertEquals($txt, Security::rijndael($value, $key, 'decrypt'));
-	}
-
-/**
  * testRijndaelInvalidOperation method
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testRijndaelInvalidOperation() {
@@ -296,7 +237,7 @@ class SecurityTest extends TestCase {
 /**
  * testRijndaelInvalidKey method
  *
- * @expectedException PHPUnit_Framework_Error
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testRijndaelInvalidKey() {

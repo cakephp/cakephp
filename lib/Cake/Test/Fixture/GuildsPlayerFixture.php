@@ -28,13 +28,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class GuildsPlayerFixture extends TestFixture {
 
-/**
- * name property
- *
- * @var string 'GuildsPlayer'
- */
-	public $name = 'GuildsPlayer';
-
 	public $useDbConfig = 'test2';
 
 /**

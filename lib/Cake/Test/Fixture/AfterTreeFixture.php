@@ -30,13 +30,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AfterTreeFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'AfterTree'
- */
-	public $name = 'AfterTree';
-
-/**
  * fields property
  *
  * @var array

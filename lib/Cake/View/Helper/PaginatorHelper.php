@@ -64,15 +64,15 @@ class PaginatorHelper extends Helper {
 /**
  * Before render callback. Overridden to merge passed args with url options.
  *
+ * @param Cake\Event\Event $event The event instance.
  * @param string $viewFile
  * @return void
  */
-	public function beforeRender($viewFile) {
+	public function beforeRender($event, $viewFile) {
 		$this->options['url'] = array_merge($this->request->params['pass']);
 		if (!empty($this->request->query)) {
 			$this->options['url']['?'] = $this->request->query;
 		}
-		parent::beforeRender($viewFile);
 	}
 
 /**
@@ -90,6 +90,22 @@ class PaginatorHelper extends Helper {
 			return null;
 		}
 		return $this->request->params['paging'][$model];
+	}
+
+/**
+ * Convenience access to any of the paginator params.
+ *
+ * @param string $key Key of the paginator params array to retreive.
+ * @param string $model Optional model name. Uses the default if none is specified.
+ * @return mixed Content of the requested param.
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::params
+ */
+	public function param($key, $model = null) {
+		$params = $this->params($model);
+		if (!isset($params[$key])) {
+			return null;
+		}
+		return $params[$key];
 	}
 
 /**
@@ -361,7 +377,9 @@ class PaginatorHelper extends Helper {
 			unset($url['order']);
 			$url = array_merge($url, compact('sort', 'direction'));
 		}
-
+		if (!empty($url['page']) && $url['page'] == 1) {
+			$url['page'] = null;
+		}
 		if ($asArray) {
 			return $url;
 		}
@@ -418,22 +436,21 @@ class PaginatorHelper extends Helper {
 			}
 			$link = $this->link($title, $url, compact('escape', 'model') + $options);
 			return $this->Html->tag($tag, $link, compact('class'));
-		} else {
-			unset($options['rel']);
-			if (!$tag) {
-				if ($disabledTag) {
-					$tag = $disabledTag;
-					$disabledTag = null;
-				} else {
-					$tag = $_defaults['tag'];
-				}
-			}
-			if ($disabledTag) {
-				$title = $this->Html->tag($disabledTag, $title, compact('escape') + $options);
-				return $this->Html->tag($tag, $title, compact('class'));
-			}
-			return $this->Html->tag($tag, $title, compact('escape', 'class') + $options);
 		}
+		unset($options['rel']);
+		if (!$tag) {
+			if ($disabledTag) {
+				$tag = $disabledTag;
+				$disabledTag = null;
+			} else {
+				$tag = $_defaults['tag'];
+			}
+		}
+		if ($disabledTag) {
+			$title = $this->Html->tag($disabledTag, $title, compact('escape') + $options);
+			return $this->Html->tag($tag, $title, compact('class'));
+		}
+		return $this->Html->tag($tag, $title, compact('escape', 'class') + $options);
 	}
 
 /**
@@ -555,10 +572,10 @@ class PaginatorHelper extends Helper {
 				}
 				$out = $start . $options['separator'][0] . $end . $options['separator'][1];
 				$out .= $paging['count'];
-			break;
+				break;
 			case 'pages':
 				$out = $paging['page'] . $options['separator'] . $paging['pageCount'];
-			break;
+				break;
 			default:
 				$map = array(
 					'%page%' => $paging['page'],
@@ -575,7 +592,6 @@ class PaginatorHelper extends Helper {
 					'{:page}', '{:pages}', '{:current}', '{:count}', '{:start}', '{:end}', '{:model}'
 				);
 				$out = str_replace($newKeys, array_values($map), $out);
-			break;
 		}
 		return $out;
 	}

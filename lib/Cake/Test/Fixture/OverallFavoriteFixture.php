@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class OverallFavoriteFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'OverallFavorite'
- */
-	public $name = 'OverallFavorite';
-
-/**
  * fields property
  *
  * @var array

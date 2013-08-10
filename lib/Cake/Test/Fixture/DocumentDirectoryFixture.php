@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class DocumentDirectoryFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'DocumentDirectory'
- */
-	public $name = 'DocumentDirectory';
-
-/**
  * fields property
  *
  * @var array

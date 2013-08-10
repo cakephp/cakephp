@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class BidFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Bid'
- */
-	public $name = 'Bid';
-
-/**
  * fields property
  *
  * @var array

@@ -313,7 +313,7 @@ class DebuggerTest extends TestCase {
 		$result = Debugger::exportVar($View);
 		$expected = <<<TEXT
 object(Cake\View\View) {
-	Helpers => object(Cake\View\HelperCollection) {}
+	Helpers => object(Cake\View\HelperRegistry) {}
 	Blocks => object(Cake\View\ViewBlock) {}
 	plugin => null
 	name => ''
@@ -365,7 +365,6 @@ object(Cake\View\View) {
 	[protected] _currentType => ''
 	[protected] _stack => array()
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
-	[protected] _eventManagerConfigured => false
 }
 TEXT;
 

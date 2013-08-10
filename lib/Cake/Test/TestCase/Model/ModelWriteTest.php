@@ -22,8 +22,8 @@ namespace Cake\Test\TestCase\Model;
 use Cake\Model\Datasource\DboSource;
 use Cake\Model\Model;
 use Cake\Model\ModelBehavior;
-use Cake\Test\TestCase\Model\ModelTestBase;
 use Cake\TestSuite\TestCase;
+use Cake\Test\TestCase\Model\ModelTestBase;
 
 /**
  * ModelWriteTest
@@ -63,7 +63,6 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * testInsertAnotherHabtmRecordWithSameForeignKey method
  *
- * @access public
  * @return void
  */
 	public function testInsertAnotherHabtmRecordWithSameForeignKey() {
@@ -511,7 +510,6 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * Tests having multiple counter caches for an associated model
  *
- * @access public
  * @return void
  */
 	public function testCounterCacheMultipleCaches() {
@@ -2522,6 +2520,7 @@ class ModelWriteTest extends ModelTestBase {
 	public function testHabtmSavingWithNoPrimaryKeyUuidJoinTable() {
 		$this->loadFixtures('UuidTag', 'Fruit', 'FruitsUuidTag');
 		$Fruit = new Fruit();
+		$Fruit->FruitsUuidTag->order = null;
 		$data = array(
 			'Fruit' => array(
 				'color' => 'Red',
@@ -4595,7 +4594,7 @@ class ModelWriteTest extends ModelTestBase {
 		$result = $model->saveAll(array(
 			'Article' => array(
 				'title' => 'Post with Author',
-				'body' => 'This post will be saved  author'
+				'body' => 'This post will be saved author'
 			),
 			'Comment' => array(
 				array('comment' => 'First new comment'),
@@ -4824,7 +4823,7 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * test that saveAll behaves like plain save() when supplied empty data
  *
- * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
+ * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
  * @return void
  */
 	public function testSaveAllEmptyData() {
@@ -5999,7 +5998,7 @@ class ModelWriteTest extends ModelTestBase {
 		$result = $model->saveAssociated(array(
 			'Article' => array(
 				'title' => 'Post with Author',
-				'body' => 'This post will be saved  author'
+				'body' => 'This post will be saved author'
 			),
 			'Comment' => array(
 				array('comment' => 'First new comment'),
@@ -6212,7 +6211,7 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * test that saveMany behaves like plain save() when suplied empty data
  *
- * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
+ * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
  * @return void
  */
 	public function testSaveManyEmptyData() {
@@ -6231,7 +6230,7 @@ class ModelWriteTest extends ModelTestBase {
 /**
  * test that saveAssociated behaves like plain save() when supplied empty data
  *
- * @link http://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
+ * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/277-test-saveall-with-validation-returns-incorrect-boolean-when-saving-empty-data
  * @return void
  */
 	public function testSaveAssociatedEmptyData() {
@@ -6559,7 +6558,7 @@ class ModelWriteTest extends ModelTestBase {
 			'order' => 'Post.id ASC',
 		));
 		$expected = array(
-			'Post' => array (
+			'Post' => array(
 				'id' => '4',
 				'author_id' => '5',
 				'title' => 'Post without body',
@@ -6568,7 +6567,7 @@ class ModelWriteTest extends ModelTestBase {
 				'created' => static::date(),
 				'updated' => static::date(),
 			),
-			'Author' => array (
+			'Author' => array(
 				'id' => '5',
 				'user' => 'bob',
 				'password' => null,
@@ -6581,6 +6580,66 @@ class ModelWriteTest extends ModelTestBase {
 		$this->assertEquals(4, count($result));
 		$this->assertEquals('', $result[3]['Post']['body']);
 		$this->assertEquals('working', $result[3]['Author']['test']);
+
+		$fieldList = array(
+			'Post' => array('title')
+		);
+		$data = array(
+			'Post' => array(
+				'title' => 'Post without body 2',
+				'body' => 'This will not be saved'
+			),
+			'Author' => array(
+				'user' => 'jack'
+			)
+		);
+		$TestModel->saveAll($data, array('fieldList' => $fieldList));
+		$result = $TestModel->find('all', array(
+			'order' => 'Post.id ASC',
+		));
+		$this->assertNull($result[4]['Post']['body']);
+
+		$fieldList = array(
+			'Author' => array('password')
+		);
+		$data = array(
+			'Post' => array(
+				'id' => '5',
+				'title' => 'Post title',
+				'body' => 'Post body'
+			),
+			'Author' => array(
+				'id' => '6',
+				'user' => 'will not change',
+				'password' => 'foobar'
+			)
+		);
+		$result = $TestModel->saveAll($data, array('fieldList' => $fieldList));
+		$this->assertTrue($result);
+
+		$result = $TestModel->find('all', array(
+			'order' => 'Post.id ASC',
+		));
+		$expected = array(
+			'Post' => array(
+				'id' => '5',
+				'author_id' => '6',
+				'title' => 'Post title',
+				'body' => 'Post body',
+				'published' => 'N',
+				'created' => self::date(),
+				'updated' => self::date()
+			),
+			'Author' => array(
+				'id' => '6',
+				'user' => 'jack',
+				'password' => 'foobar',
+				'created' => self::date(),
+				'updated' => self::date(),
+				'test' => 'working'
+			),
+		);
+		$this->assertEquals($expected, $result[4]);
 
 		// test multirecord
 		$this->db->truncate($TestModel);

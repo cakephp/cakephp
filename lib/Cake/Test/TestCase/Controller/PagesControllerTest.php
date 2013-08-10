@@ -20,6 +20,7 @@
 namespace Cake\Test\TestCase\Controller;
 
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
@@ -55,5 +56,31 @@ class PagesControllerTest extends TestCase {
 		$this->assertRegExp('/posts index themed view/', $Pages->response->body());
 		$this->assertEquals('TestTheme', $Pages->viewVars['page']);
 		$this->assertEquals('Posts', $Pages->viewVars['subpage']);
+	}
+
+/**
+ * Test that missing view renders 404 page in production
+ *
+ * @expectedException Cake\Error\NotFoundException
+ * @expectedExceptionCode 404
+ * @return void
+ */
+	public function testMissingView() {
+		Configure::write('debug', 0);
+		$Pages = new PagesController(new Request(), new Response());
+		$Pages->display('non_existing_page');
+	}
+
+/**
+ * Test that missing view in debug mode renders missing_view error page
+ *
+ * @expectedException Cake\Error\MissingViewException
+ * @expectedExceptionCode 500
+ * @return void
+ */
+	public function testMissingViewInDebug() {
+		Configure::write('debug', 1);
+		$Pages = new PagesController(new Request(), new Response());
+		$Pages->display('non_existing_page');
 	}
 }

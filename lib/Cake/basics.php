@@ -72,6 +72,7 @@ if (!function_exists('debug')) {
  * @param boolean $var Variable to show debug information for.
  * @param boolean $showHtml If set to true, the method prints the debug data in a browser-friendly way.
  * @param boolean $showFrom If set to true, the method prints from where the function was called.
+ * @return void
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#basic-debugging
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#debug
  */
@@ -131,7 +132,7 @@ if (!function_exists('sortByKey')) {
  *
  * @param array $array Array to sort
  * @param string $sortby Sort by this key
- * @param string $order  Sort order asc/desc (ascending or descending).
+ * @param string $order Sort order asc/desc (ascending or descending).
  * @param integer $type Type of sorting to perform
  * @return mixed Sorted array
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#sortByKey
@@ -259,8 +260,9 @@ if (!function_exists('pr')) {
  * In terminals this will act the same as using print_r() directly, when not run on cli
  * print_r() will wrap <PRE> tags around the output of given array. Similar to debug().
  *
- * @see	debug()
+ * @see debug()
  * @param array $var Variable to print out
+ * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#pr
  */
 	function pr($var) {
@@ -306,7 +308,7 @@ if (!function_exists('env')) {
  * IIS, or SCRIPT_NAME in CGI mode). Also exposes some additional custom
  * environment information.
  *
- * @param  string $key Environment variable name.
+ * @param string $key Environment variable name.
  * @return string Environment variable setting.
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#env
  */
@@ -407,11 +409,11 @@ if (!function_exists('cache')) {
 /**
  * Reads/writes temporary data to cache files or session.
  *
- * @param  string $path	File path within /tmp to save the file.
- * @param  mixed  $data	The data to save to the temporary file.
- * @param  mixed  $expires A valid strtotime string when the data expires.
- * @param  string $target  The target of the cached data; either 'cache' or 'public'.
- * @return mixed  The contents of the temporary file.
+ * @param string $path File path within /tmp to save the file.
+ * @param mixed $data The data to save to the temporary file.
+ * @param mixed $expires A valid strtotime string when the data expires.
+ * @param string $target The target of the cached data; either 'cache' or 'public'.
+ * @return mixed The contents of the temporary file.
  * @deprecated Please use Cache::write() instead
  */
 	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
@@ -427,13 +429,13 @@ if (!function_exists('cache')) {
 		switch (strtolower($target)) {
 			case 'cache':
 				$filename = CACHE . $path;
-			break;
+				break;
 			case 'public':
 				$filename = WWW_ROOT . $path;
-			break;
+				break;
 			case 'tmp':
 				$filename = TMP . $path;
-			break;
+				break;
 		}
 		$timediff = $expires - $now;
 		$filetime = false;
@@ -503,30 +505,30 @@ if (!function_exists('clearCache')) {
 					}
 				}
 				return true;
-			} else {
-				$cache = array(
-					CACHE . $type . DS . '*' . $params . $ext,
-					CACHE . $type . DS . '*' . $params . '_*' . $ext
-				);
-				$files = array();
-				while ($search = array_shift($cache)) {
-					$results = glob($search);
-					if ($results !== false) {
-						$files = array_merge($files, $results);
-					}
-				}
-				if (empty($files)) {
-					return false;
-				}
-				foreach ($files as $file) {
-					if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
-						//@codingStandardsIgnoreStart
-						@unlink($file);
-						//@codingStandardsIgnoreEnd
-					}
-				}
-				return true;
 			}
+			$cache = array(
+				CACHE . $type . DS . '*' . $params . $ext,
+				CACHE . $type . DS . '*' . $params . '_*' . $ext
+			);
+			$files = array();
+			while ($search = array_shift($cache)) {
+				$results = glob($search);
+				if ($results !== false) {
+					$files = array_merge($files, $results);
+				}
+			}
+			if (empty($files)) {
+				return false;
+			}
+			foreach ($files as $file) {
+				if (is_file($file) && strrpos($file, DS . 'empty') !== strlen($file) - 6) {
+					//@codingStandardsIgnoreStart
+					@unlink($file);
+					//@codingStandardsIgnoreEnd
+				}
+			}
+			return true;
+
 		} elseif (is_array($params)) {
 			foreach ($params as $file) {
 				clearCache($file, $type, $ext);

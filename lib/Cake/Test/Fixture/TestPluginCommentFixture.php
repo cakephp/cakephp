@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class TestPluginCommentFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Comment'
- */
-	public $name = 'TestPluginComment';
-
-/**
  * fields property
  *
  * @var array

@@ -19,6 +19,7 @@
 namespace Cake\Model;
 
 use Cake\Core\Configure;
+use Cake\Error;
 use Cake\Utility\Hash;
 
 /**
@@ -125,33 +126,32 @@ class Permission extends Model {
 
 			if (empty($perms)) {
 				continue;
-			} else {
-				$perms = Hash::extract($perms, '{n}.' . $this->alias);
-				foreach ($perms as $perm) {
-					if ($action === '*') {
+			}
+			$perms = Hash::extract($perms, '{n}.' . $this->alias);
+			foreach ($perms as $perm) {
+				if ($action === '*') {
 
-						foreach ($permKeys as $key) {
-							if (!empty($perm)) {
-								if ($perm[$key] == -1) {
-									return false;
-								} elseif ($perm[$key] == 1) {
-									$inherited[$key] = 1;
-								}
+					foreach ($permKeys as $key) {
+						if (!empty($perm)) {
+							if ($perm[$key] == -1) {
+								return false;
+							} elseif ($perm[$key] == 1) {
+								$inherited[$key] = 1;
 							}
 						}
+					}
 
-						if (count($inherited) === count($permKeys)) {
+					if (count($inherited) === count($permKeys)) {
+						return true;
+					}
+				} else {
+					switch ($perm['_' . $action]) {
+						case -1:
+							return false;
+						case 0:
+							continue;
+						case 1:
 							return true;
-						}
-					} else {
-						switch ($perm['_' . $action]) {
-							case -1:
-								return false;
-							case 0:
-								continue;
-							case 1:
-								return true;
-						}
 					}
 				}
 			}
@@ -167,7 +167,7 @@ class Permission extends Model {
  * @param string $actions Action (defaults to *) Invalid permissions will result in an exception
  * @param integer $value Value to indicate access type (1 to give access, -1 to deny, 0 to inherit)
  * @return boolean Success
- * @throws AclException on Invalid permission key.
+ * @throws Cake\Error\AclException on Invalid permission key.
  */
 	public function allow($aro, $aco, $actions = "*", $value = 1) {
 		$perms = $this->getAclLink($aro, $aco);
@@ -193,7 +193,7 @@ class Permission extends Model {
 					$action = '_' . $action;
 				}
 				if (!in_array($action, $permKeys, true)) {
-					throw new AclException(__d('cake_dev', 'Invalid permission key "%s"', $action));
+					throw new Error\AclException(__d('cake_dev', 'Invalid permission key "%s"', $action));
 				}
 				$save[$action] = $value;
 			}

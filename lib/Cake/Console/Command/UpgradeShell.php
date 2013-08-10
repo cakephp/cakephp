@@ -410,6 +410,50 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Rename collection classes
+ *
+ * @return void
+ */
+	public function rename_collections() {
+		$path = $this->_getPath();
+
+		$Folder = new Folder($path);
+		$this->_paths = $Folder->tree(null, false, 'dir');
+		$this->_findFiles('php');
+		foreach ($this->_files as $filePath) {
+			$patterns = [
+				[
+					' Replace $this->_Collection with $this->_registry',
+					'#\$this->_Collection#',
+					'$this->_registry',
+				],
+				[
+					' Replace ComponentCollection arguments',
+					'#ComponentCollection\s+\$collection#',
+					'ComponentRegistry $registry',
+				],
+				[
+					' Rename ComponentCollection',
+					'#ComponentCollection#',
+					"ComponentRegistry",
+				],
+				[
+					' Rename HelperCollection',
+					'#HelperCollection#',
+					"HelperRegistry",
+				],
+				[
+					' Rename TaskCollection',
+					'#TaskCollection#',
+					"TaskRegistry",
+				],
+			];
+			$this->_updateFile($filePath, $patterns);
+		}
+		$this->out(__d('cake_console', '<success>Collection class uses rename successfully.</success>'));
+	}
+
+/**
  * Filter paths to remove webroot, Plugin, tmp directories
  *
  * @return array
@@ -594,6 +638,10 @@ class UpgradeShell extends Shell {
 			->addSubcommand('fixtures', [
 				'help' => __d('cake_console', 'Update fixtures to use new index/constraint features. This is necessary before running tests.'),
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')],
+			])
+			->addSubcommand('rename_collections', [
+				'help' => __d('cake_console', "Rename HelperCollection, ComponentCollection, and TaskCollection. Will also rename component constructor arguments and _Collection properties on all objects."),
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			])
 			->addSubcommand('cache_config', [
 				'help' => __d('cake_console', "Replace Cache::config() with Configure."),

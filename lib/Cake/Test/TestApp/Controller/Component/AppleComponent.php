@@ -20,6 +20,7 @@ namespace TestApp\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\Controller;
+use Cake\Event\Event;
 
 /**
  * AppleComponent class
@@ -45,10 +46,11 @@ class AppleComponent extends Component {
 /**
  * startup method
  *
+ * @param Event $event
  * @param mixed $controller
  * @return void
  */
-	public function startup(Controller $controller) {
+	public function startup(Event $event) {
 		$this->testName = $controller->name;
 	}
 }

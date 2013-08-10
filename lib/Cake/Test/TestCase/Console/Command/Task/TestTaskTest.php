@@ -449,13 +449,13 @@ class TestTaskTest extends TestCase {
 
 		$result = $this->Task->bake('Component', 'Example');
 
-		$this->assertContains('use Cake\Controller\ComponentCollection', $result);
+		$this->assertContains('use Cake\Controller\ComponentRegistry', $result);
 		$this->assertContains('use App\Controller\Component\ExampleComponent', $result);
 		$this->assertContains('class ExampleComponentTest extends TestCase', $result);
 
 		$this->assertContains('function setUp()', $result);
-		$this->assertContains("\$Collection = new ComponentCollection()", $result);
-		$this->assertContains("\$this->Example = new ExampleComponent(\$Collection)", $result);
+		$this->assertContains("\$registry = new ComponentRegistry()", $result);
+		$this->assertContains("\$this->Example = new ExampleComponent(\$registry)", $result);
 
 		$this->assertContains('function tearDown()', $result);
 		$this->assertContains('unset($this->Example)', $result);
@@ -547,7 +547,7 @@ class TestTaskTest extends TestCase {
 
 		$result = $this->Task->generateUses('component', 'Controller/Component', 'App\Controller\Component\AuthComponent');
 		$expected = array(
-			'Cake\Controller\ComponentCollection',
+			'Cake\Controller\ComponentRegistry',
 			'App\Controller\Component\AuthComponent',
 		);
 		$this->assertEquals($expected, $result);

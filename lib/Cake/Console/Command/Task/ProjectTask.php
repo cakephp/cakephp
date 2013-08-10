@@ -98,13 +98,6 @@ class ProjectTask extends Shell {
 				$success = false;
 			}
 
-			if ($this->securityCipherSeed($path) === true) {
-				$this->out(__d('cake_console', ' * Random seed created for \'Security.cipherSeed\''));
-			} else {
-				$this->err(__d('cake_console', 'Unable to generate random seed for \'Security.cipherSeed\', you should change it in %s', APP . 'Config' . DS . 'app.php'));
-				$success = false;
-			}
-
 			if ($this->cachePrefix($path)) {
 				$this->out(__d('cake_console', ' * Cache prefix set'));
 			} else {
@@ -287,31 +280,8 @@ class ProjectTask extends Shell {
 		$contents = $File->read();
 		$newSalt = Security::generateAuthKey();
 		$contents = preg_replace(
-			"/^(\s+'salt'\s+\=\>\s+')([^']+)(',)/m",
+			"/('Security.salt',\s+')([^']+)(')/m",
 			'${1}' . $newSalt . '\\3',
-			$contents,
-			-1,
-			$count
-		);
-		if ($count && $File->write($contents)) {
-			return true;
-		}
-		return false;
-	}
-
-/**
- * Generates and writes 'Security.cipherSeed'
- *
- * @param string $path Project path
- * @return boolean Success
- */
-	public function securityCipherSeed($path) {
-		$File = new File($path . 'Config/app.php');
-		$contents = $File->read();
-		$newCipher = substr(bin2hex(Security::generateAuthKey()), 0, 30);
-		$contents = preg_replace(
-			"/^(\s+'cipherSeed'\s+\=\>\s+')([^']+)(',)/m",
-			'${1}' . $newCipher . '\\3',
 			$contents,
 			-1,
 			$count
@@ -394,12 +364,9 @@ class ProjectTask extends Shell {
 			if ($File->write($result)) {
 				Configure::write('Routing.prefixes', array($name));
 				return true;
-			} else {
-				return false;
 			}
-		} else {
-			return false;
 		}
+		return false;
 	}
 
 /**
@@ -443,7 +410,7 @@ class ProjectTask extends Shell {
 				$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
 					'Configure::write(\'Routing.prefixes\', array(\'admin\'))',
 					'/app/Config/core.php'));
-				$this->_stop();
+				return $this->_stop();
 			}
 			return $admin . '_';
 		}

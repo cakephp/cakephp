@@ -43,8 +43,8 @@ class RouterTest extends TestCase {
 		parent::setUp();
 		Configure::write('Routing', array('admin' => null, 'prefixes' => array()));
 		Router::reload();
-		Router::baseURL('');
-		Configure::write('App.fullBaseURL', 'http://localhost');
+		Router::fullbaseUrl('');
+		Configure::write('App.fullBaseUrl', 'http://localhost');
 	}
 
 /**
@@ -55,33 +55,33 @@ class RouterTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload();
-		Router::baseURL('');
-		Configure::write('App.fullBaseURL', 'http://localhost');
+		Router::fullBaseUrl('');
+		Configure::write('App.fullBaseUrl', 'http://localhost');
 	}
 
 /**
- * testFullBaseURL method
+ * testFullBaseUrl method
  *
  * @return void
  */
-	public function testFullBaseURL() {
+	public function testbaseUrl() {
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('_full' => true)));
 	}
 
 /**
- * Tests that the base URL can be changed at runtime
+ * Tests that the base URL can be changed at runtime.
  *
  * @return void
  */
-	public function testBaseURL() {
-		Router::baseURL('http://example.com');
+	public function testfullBaseURL() {
+		Router::fullbaseUrl('http://example.com');
 		$this->assertEquals('http://example.com/', Router::url('/', true));
-		$this->assertEquals('http://example.com', Configure::read('App.fullBaseURL'));
-		Router::baseURL('https://example.com');
+		$this->assertEquals('http://example.com', Configure::read('App.fullBaseUrl'));
+		Router::fullBaseUrl('https://example.com');
 		$this->assertEquals('https://example.com/', Router::url('/', true));
-		$this->assertEquals('https://example.com', Configure::read('App.fullBaseURL'));
+		$this->assertEquals('https://example.com', Configure::read('App.fullBaseUrl'));
 	}
 
 /**
@@ -366,15 +366,15 @@ class RouterTest extends TestCase {
 		$this->assertEquals('/users/logout', $result);
 
 		Router::reload();
-		$_back = Configure::read('App.baseUrl');
-		Configure::write('App.baseUrl', '/');
+		$_back = Configure::read('App.fullBaseUrl');
+		Configure::write('App.fullBaseUrl', '/');
 
 		$request = new Request();
 		$request->base = '/';
 		Router::setRequestInfo($request);
 		$result = Router::normalize('users/login');
 		$this->assertEquals('/users/login', $result);
-		Configure::write('App.baseUrl', $_back);
+		Configure::write('App.fullBaseUrl', $_back);
 
 		Router::reload();
 		$request = new Request();
@@ -410,6 +410,12 @@ class RouterTest extends TestCase {
 
 		$result = Router::url('/');
 		$this->assertEquals('/magazine/', $result);
+
+		$result = Router::url('/articles/');
+		$this->assertEquals('/magazine/articles/', $result);
+
+		$result = Router::url('/articles/view');
+		$this->assertEquals('/magazine/articles/view', $result);
 
 		$result = Router::url(['controller' => 'articles', 'action' => 'view', 1]);
 		$this->assertEquals('/magazine/articles/view/1', $result);
@@ -2421,6 +2427,9 @@ class RouterTest extends TestCase {
 		$url = '://example.com';
 		$this->assertEquals($url, Router::url($url));
 
+		$url = '//example.com';
+		$this->assertEquals($url, Router::url($url));
+
 		$url = 'javascript:void(0)';
 		$this->assertEquals($url, Router::url($url));
 
@@ -2432,9 +2441,12 @@ class RouterTest extends TestCase {
 
 		$url = '#here';
 		$this->assertEquals($url, Router::url($url));
-		$url = '/posts/index#here';
 
-		$expected = Configure::read('App.fullBaseURL') . '/posts/index#here';
+		$url = '?param=0';
+		$this->assertEquals($url, Router::url($url));
+
+		$url = '/posts/index#here';
+		$expected = Configure::read('App.fullBaseUrl') . '/posts/index#here';
 		$this->assertEquals($expected, Router::url($url, true));
 	}
 

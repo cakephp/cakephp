@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Controller\Component\Acl;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\AclComponent;
 use Cake\Controller\Component\Acl\DbAcl;
 use Cake\Core\Configure;
@@ -212,7 +212,7 @@ class DbAclTest extends TestCase {
 		$this->markTestIncomplete('DbAcl will not work until models do.');
 		Configure::write('Acl.classname', __NAMESPACE__ . '\DbAclTwoTest');
 		Configure::write('Acl.database', 'test');
-		$Collection = new ComponentCollection();
+		$Collection = new ComponentRegistry();
 		$this->Acl = new AclComponent($Collection);
 	}
 
@@ -514,7 +514,7 @@ class DbAclTest extends TestCase {
  * Generates a list of the current aro and aco structures and a grid dump of the permissions that are defined
  * Only designed to work with the db based ACL
  *
- * @param bool $treesToo
+ * @param boolean $treesToo
  * @return void
  */
 	protected function _debug($printTreesToo = false) {

@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class ArmorFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Armor'
- */
-	public $name = 'Armor';
-
-/**
  * Datasource
  *
  * Used for Multi database fixture test

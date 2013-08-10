@@ -173,11 +173,7 @@ class FileLog extends BaseLog {
  */
 	protected function _rotateFile($filename) {
 		$filepath = $this->_path . $filename;
-		if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
-			clearstatcache(true, $filepath);
-		} else {
-			clearstatcache();
-		}
+		clearstatcache(true, $filepath);
 
 		if (!file_exists($filepath) ||
 			filesize($filepath) < $this->_size

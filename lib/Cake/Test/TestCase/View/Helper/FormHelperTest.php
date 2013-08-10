@@ -791,7 +791,6 @@ class FormHelperTest extends TestCase {
 /**
  * Tests correct generation of number fields for integer fields
  *
- * @access public
  * @return void
  */
 	public function testTextFieldTypeNumberGenerationForIntegers() {
@@ -1537,7 +1536,6 @@ class FormHelperTest extends TestCase {
 /**
  * Test validation errors, when validation message is an empty string.
  *
- * @access public
  * @return void
  */
 	public function testEmptyErrorValidation() {
@@ -1578,7 +1576,6 @@ class FormHelperTest extends TestCase {
 /**
  * Test validation errors, when calling input() overriding validation message by an empty string.
  *
- * @access public
  * @return void
  */
 	public function testEmptyInputErrorValidation() {
@@ -6698,6 +6695,70 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * testInputDate method
+ *
+ * Test various inputs with type date and different dateFormat values.
+ * Failing to provide a dateFormat key should not error.
+ * It should simply not pre-select any value then.
+ *
+ * @return void
+ */
+	public function testInputDate() {
+		$this->Form->request->data = array(
+			'User' => array(
+				'month_year' => array('month' => date('m')),
+				'just_year' => array('month' => date('m')),
+				'just_month' => array('year' => date('Y')),
+				'just_day' => array('month' => date('m')),
+			)
+		);
+		$this->Form->create('User');
+		$result = $this->Form->input('month_year',
+				array(
+					'label' => false,
+					'div' => false,
+					'type' => 'date',
+					'dateFormat' => 'MY',
+					'minYear' => 2006,
+					'maxYear' => 2008
+				)
+		);
+		$this->assertContains('value="' . date('m') . '" selected="selected"', $result);
+		$this->assertNotContains('value="2008" selected="selected"', $result);
+
+		$result = $this->Form->input('just_year',
+			array(
+				'type' => 'date',
+				'label' => false,
+				'dateFormat' => 'Y',
+				'minYear' => date('Y'),
+				'maxYear' => date('Y', strtotime('+20 years'))
+			)
+		);
+		$this->assertNotContains('value="' . date('Y') . '" selected="selected"', $result);
+
+		$result = $this->Form->input('just_month',
+			array(
+				'type' => 'date',
+				'label' => false,
+				'dateFormat' => 'M',
+				'empty' => false,
+			)
+		);
+		$this->assertNotContains('value="' . date('m') . '" selected="selected"', $result);
+
+		$result = $this->Form->input('just_day',
+			array(
+				'type' => 'date',
+				'label' => false,
+				'dateFormat' => 'D',
+				'empty' => false,
+			)
+		);
+		$this->assertNotContains('value="' . date('d') . '" selected="selected"', $result);
+	}
+
+/**
  * testInputDateMaxYear method
  *
  * Let's say we want to only allow users born from 2006 to 2008 to register
@@ -7996,6 +8057,32 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'ContactBooleanField'),
 			'Boolean Field',
 			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that required fields are created when only using ModelValidator::add().
+ *
+ * @return void
+ */
+	public function testFormInputRequiredDetectionModelValidator() {
+		ClassRegistry::getObject('ContactTag')->validator()->add('iwillberequired', 'required', array('rule' => 'notEmpty'));
+
+		$this->Form->create('ContactTag');
+		$result = $this->Form->input('ContactTag.iwillberequired');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'ContactTagIwillberequired'),
+			'Iwillberequired',
+			'/label',
+			'input' => array(
+				'name' => 'data[ContactTag][iwillberequired]',
+				'type' => 'text',
+				'id' => 'ContactTagIwillberequired',
+				'required' => 'required'
+			),
 			'/div'
 		);
 		$this->assertTags($result, $expected);

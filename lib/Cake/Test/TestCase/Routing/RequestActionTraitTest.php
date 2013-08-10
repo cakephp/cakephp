@@ -65,7 +65,7 @@ class RequestActionTraitTest extends TestCase {
 		$expected = 'This is a test';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->object->requestAction(FULL_BASE_URL . '/request_action/test_request_action');
+		$result = $this->object->requestAction(Configure::read('App.fullBaseUrl') . '/request_action/test_request_action');
 		$expected = 'This is a test';
 		$this->assertEquals($expected, $result);
 

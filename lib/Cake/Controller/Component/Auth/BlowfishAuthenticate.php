@@ -15,7 +15,7 @@
  */
 namespace Cake\Controller\Component\Auth;
 
-use Cake\Controller\ComponentCollection;
+use Cake\Controller\ComponentRegistry;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Utility\Security;
@@ -32,15 +32,15 @@ use Cake\Utility\Security;
  * 	)
  * }}}
  *
- * When  configuring BlowfishAuthenticate you can pass in settings to which fields, model and additional conditions
+ * When configuring BlowfishAuthenticate you can pass in settings to which fields, model and additional conditions
  * are used. See FormAuthenticate::$settings for more information.
  *
  * For initial password hashing/creation see Security::hash(). Other than how the password is initially hashed,
  * BlowfishAuthenticate works exactly the same way as FormAuthenticate.
  *
  * @package	Cake.Controller.Component.Auth
- * @since	CakePHP(tm) v 2.3
- * @see		AuthComponent::$authenticate
+ * @since CakePHP(tm) v 2.3
+ * @see	AuthComponent::$authenticate
  * @deprecated Since 2.4. Just use FormAuthenticate with 'passwordHasher' setting set to 'Blowfish'
  */
 class BlowfishAuthenticate extends FormAuthenticate {
@@ -48,12 +48,12 @@ class BlowfishAuthenticate extends FormAuthenticate {
 /**
  * Constructor. Sets default passwordHasher to Blowfish
  *
- * @param ComponentCollection $collection The Component collection used on this request.
+ * @param ComponentRegistry $registry The Component registry used on this request.
  * @param array $settings Array of settings to use.
  */
-	public function __construct(ComponentCollection $collection, $settings) {
+	public function __construct(ComponentRegistry $registry, $settings) {
 		$this->settings['passwordHasher'] = 'Blowfish';
-		parent::__construct($collection, $settings);
+		parent::__construct($registry, $settings);
 	}
 
 }

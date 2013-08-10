@@ -1,9 +1,5 @@
 <?php
 /**
- * ComponentCollectionTest file
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,14 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Controller\ComponentCollection;
 use Cake\Controller\Component\CookieComponent;
+use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -31,7 +27,7 @@ use Cake\TestSuite\TestCase;
 class CookieAliasComponent extends CookieComponent {
 }
 
-class ComponentCollectionTest extends TestCase {
+class ComponentRegistryTest extends TestCase {
 
 /**
  * setUp
@@ -40,7 +36,8 @@ class ComponentCollectionTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Components = new ComponentCollection();
+		$controller = new Controller();
+		$this->Components = new ComponentRegistry($controller);
 	}
 
 /**
@@ -66,8 +63,6 @@ class ComponentCollectionTest extends TestCase {
 		$result = $this->Components->loaded();
 		$this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
 
-		$this->assertTrue($this->Components->enabled('Cookie'));
-
 		$result = $this->Components->load('Cookie');
 		$this->assertSame($result, $this->Components->Cookie);
 	}
@@ -85,8 +80,6 @@ class ComponentCollectionTest extends TestCase {
 
 		$result = $this->Components->loaded();
 		$this->assertEquals(array('Cookie'), $result, 'loaded() results are wrong.');
-
-		$this->assertTrue($this->Components->enabled('Cookie'));
 
 		$result = $this->Components->load('Cookie');
 		$this->assertInstanceOf(__NAMESPACE__ . '\CookieAliasComponent', $result);
@@ -109,11 +102,15 @@ class ComponentCollectionTest extends TestCase {
  * @return void
  */
 	public function testLoadWithEnableFalse() {
+		$mock = $this->getMock('Cake\Event\EventManager');
+		$mock->expects($this->never())
+			->method('attach');
+
+		$this->Components->getController()->setEventManager($mock);
+
 		$result = $this->Components->load('Cookie', array('enabled' => false));
 		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $result);
 		$this->assertInstanceOf('Cake\Controller\Component\CookieComponent', $this->Components->Cookie);
-
-		$this->assertFalse($this->Components->enabled('Cookie'), 'Cookie should be disabled');
 	}
 
 /**
@@ -132,9 +129,9 @@ class ComponentCollectionTest extends TestCase {
  * @return void
  */
 	public function testLoadPluginComponent() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-		));
+		App::build([
+			'Plugin' => [CAKE . 'Test/TestApp/Plugin/'],
+		]);
 		Plugin::load('TestPlugin');
 		$result = $this->Components->load('TestPlugin.Other');
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result, 'Component class is wrong.');
@@ -144,26 +141,19 @@ class ComponentCollectionTest extends TestCase {
 	}
 
 /**
- * test unload()
+ * Test loading components with aliases and plugins.
  *
  * @return void
  */
-	public function testUnload() {
-		$this->Components->load('Cookie');
-		$this->Components->load('Security');
+	public function testLoadWithAliasAndPlugin() {
+		App::build(['Plugin' => [CAKE . 'Test/TestApp/Plugin/']]);
+		Plugin::load('TestPlugin');
+		$result = $this->Components->load('AliasedOther', ['className' => 'TestPlugin.Other']);
+		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $result);
+		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $this->Components->AliasedOther);
 
 		$result = $this->Components->loaded();
-		$this->assertEquals(array('Cookie', 'Security'), $result, 'loaded components is wrong');
-
-		$this->Components->unload('Cookie');
-		$this->assertFalse(isset($this->Components->Cookie));
-		$this->assertTrue(isset($this->Components->Security));
-
-		$result = $this->Components->loaded();
-		$this->assertEquals(array('Security'), $result, 'loaded components is wrong');
-
-		$result = $this->Components->enabled();
-		$this->assertEquals(array('Security'), $result, 'enabled components is wrong');
+		$this->assertEquals(['AliasedOther'], $result, 'loaded() results are wrong.');
 	}
 
 /**
@@ -172,11 +162,29 @@ class ComponentCollectionTest extends TestCase {
  * @return void
  */
 	public function testGetController() {
-		$controller = $this->getMock('Cake\Controller\Controller');
-		$controller->components = array('Security');
-		$this->Components->init($controller);
 		$result = $this->Components->getController();
-
-		$this->assertSame($controller, $result);
+		$this->assertInstanceOf('Cake\Controller\Controller', $result);
 	}
+
+/**
+ * Test reset.
+ *
+ * @return void
+ */
+	public function testReset() {
+		$eventManager = $this->Components->getController()->getEventManager();
+		$instance = $this->Components->load('Auth');
+		$this->assertSame(
+			$instance,
+			$this->Components->Auth,
+			'Instance in registry should be the same as previously loaded'
+		);
+		$this->assertCount(1, $eventManager->listeners('Controller.startup'));
+
+		$this->assertNull($this->Components->reset(), 'No return expected');
+		$this->assertCount(0, $eventManager->listeners('Controller.startup'));
+
+		$this->assertNotSame($instance, $this->Components->load('Auth'));
+	}
+
 }

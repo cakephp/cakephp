@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class CallbackFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Callback'
- */
-	public $name = 'Callback';
-
-/**
  * fields property
  *
  * @var array

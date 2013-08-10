@@ -90,9 +90,8 @@ class AclPerson extends TestModel {
 		}
 		if (!$motherId) {
 			return null;
-		} else {
-			return array('AclPerson' => array('id' => $motherId));
 		}
+		return array('AclPerson' => array('id' => $motherId));
 	}
 
 }
@@ -227,6 +226,7 @@ class AclBehaviorTest extends TestCase {
  * @return void
  */
 	public function testSetup() {
+		parent::setUp();
 		$User = new AclUser();
 		$this->assertTrue(isset($User->Behaviors->Acl->settings['User']));
 		$this->assertEquals('requester', $User->Behaviors->Acl->settings['User']['type']);

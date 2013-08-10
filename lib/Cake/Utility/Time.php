@@ -99,13 +99,12 @@ class Time {
  *
  * @param string $name Variable name
  * @param mixes $value Variable value
+ * @return void
  */
 	public function __set($name, $value) {
 		switch ($name) {
 			case 'niceFormat':
 				static::${$name} = $value;
-				break;
-			default:
 				break;
 		}
 	}
@@ -696,7 +695,7 @@ class Time {
 	}
 
 /**
- * Returns either a relative date or a formatted date depending
+ * Returns either a relative or a formatted absolute date depending
  * on the difference between the current time and given datetime.
  * $datetime should be in a *strtotime* - parsable format, like MySQL's datetime datatype.
  *
@@ -712,6 +711,8 @@ class Time {
  *    - minute => The format if minutes > 0 (default "minute")
  *    - second => The format if seconds > 0 (default "second")
  * - `end` => The end of relative time telling
+ * - `relativeString` => The printf compatible string when outputting relative time
+ * - `absoluteString` => The printf compatible string when outputting absolute time
  * - `userOffset` => Users offset from GMT (in hours) *Deprecated* use timezone intead.
  * - `timezone` => The user timezone the timestamp should be formatted in.
  *
@@ -736,6 +737,8 @@ class Time {
 		$timezone = null;
 		$format = static::$wordFormat;
 		$end = static::$wordEnd;
+		$relativeString = __d('cake', '%s ago');
+		$absoluteString = __d('cake', 'on %s');
 		$accuracy = static::$wordAccuracy;
 
 		if (is_array($options)) {
@@ -760,6 +763,14 @@ class Time {
 			}
 			if (isset($options['end'])) {
 				$end = $options['end'];
+			}
+			if (isset($options['relativeString'])) {
+				$relativeString = $options['relativeString'];
+				unset($options['relativeString']);
+			}
+			if (isset($options['absoluteString'])) {
+				$absoluteString = $options['absoluteString'];
+				unset($options['absoluteString']);
 			}
 			unset($options['end'], $options['format']);
 		} else {
@@ -847,7 +858,7 @@ class Time {
 		}
 
 		if ($diff > abs($now - static::fromString($end))) {
-			return __d('cake', 'on %s', date($format, $inSeconds));
+			return sprintf($absoluteString, date($format, $inSeconds));
 		}
 
 		$f = $accuracy['second'];
@@ -891,7 +902,7 @@ class Time {
 		}
 
 		if (!$backwards) {
-			return __d('cake', '%s ago', $relativeDate);
+			return sprintf($relativeString, $relativeDate);
 		}
 
 		return $relativeDate;

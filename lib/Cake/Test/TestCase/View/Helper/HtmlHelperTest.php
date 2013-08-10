@@ -34,10 +34,6 @@ use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
-if (!defined('FULL_BASE_URL')) {
-	define('FULL_BASE_URL', 'http://cakephp.org');
-}
-
 class TestHtmlHelper extends HtmlHelper {
 
 /**
@@ -199,7 +195,7 @@ class HtmlHelperTest extends TestCase {
 		Router::connect('/:controller/:action/*');
 
 		$result = $this->Html->link('Posts', array('controller' => 'posts', 'action' => 'index', '_full' => true));
-		$expected = array('a' => array('href' => Router::baseURL() . '/posts'), 'Posts', '/a');
+		$expected = array('a' => array('href' => Router::fullBaseUrl() . '/posts'), 'Posts', '/a');
 		$this->assertTags($result, $expected);
 
 		$result = $this->Html->link('Home', '/home', array('confirm' => 'Are you sure you want to do this?'));
@@ -280,6 +276,17 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->link('Next >', '#', array(
+			'title' => 'Next >',
+			'escapeTitle' => false
+		));
+		$expected = array(
+			'a' => array('href' => '#', 'title' => 'Next &gt;'),
+			'Next >',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Html->link('Original size', array(
 			'controller' => 'images', 'action' => 'view', 3, '?' => array('height' => 100, 'width' => 200)
 		));
@@ -295,6 +302,17 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->link($this->Html->image('test.gif'), '#', array('escape' => false));
 		$expected = array(
 			'a' => array('href' => '#'),
+			'img' => array('src' => 'img/test.gif', 'alt' => ''),
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->link($this->Html->image('test.gif'), '#', array(
+			'title' => 'hey "howdy"',
+			'escapeTitle' => false
+		));
+		$expected = array(
+			'a' => array('href' => '#', 'title' => 'hey &quot;howdy&quot;'),
 			'img' => array('src' => 'img/test.gif', 'alt' => ''),
 			'/a'
 		);
@@ -1828,7 +1846,7 @@ class HtmlHelperTest extends TestCase {
 			array('pathPrefix' => 'videos/', 'poster' => 'poster.jpg', 'text' => 'Your browser does not support the HTML5 Video element.')
 		);
 		$expected = array(
-			'video' => array('poster' => IMAGES_URL . 'poster.jpg'),
+			'video' => array('poster' => Configure::read('App.imageBaseUrl') . 'poster.jpg'),
 				array('source' => array('src' => 'videos/video.webm', 'type' => 'video/webm')),
 				array('source' => array('src' => 'videos/video.ogv', 'type' => 'video/ogg; codecs=&#039;theora, vorbis&#039;')),
 				'Your browser does not support the HTML5 Video element.',

@@ -1,9 +1,5 @@
 <?php
 /**
- * Response Test case file.
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -24,7 +20,7 @@ use Cake\Network\Response;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class CakeResponseTest
+ * Class ResponseTest
  *
  * @package       Cake.Test.Case.Network
  */
@@ -36,6 +32,7 @@ class ResponseTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		ob_start();
 	}
 
@@ -45,6 +42,7 @@ class ResponseTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		ob_end_clean();
 	}
 
@@ -1389,6 +1387,184 @@ class ResponseTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$response->file(CAKE . 'Test/TestApp/vendor/img/test_2.JPG');
+	}
+
+/**
+ * A data provider for testing various ranges
+ *
+ * @return array
+ */
+	public static function rangeProvider() {
+		return array(
+			// suffix-byte-range
+			array(
+				'bytes=-25', 25, 'bytes 13-37/38'
+			),
+
+			array(
+				'bytes=0-', 38, 'bytes 0-37/38'
+			),
+			array(
+				'bytes=10-', 28, 'bytes 10-37/38'
+			),
+			array(
+				'bytes=10-20', 11, 'bytes 10-20/38'
+			),
+		);
+	}
+
+/**
+ * Test the various range offset types.
+ *
+ * @dataProvider rangeProvider
+ * @return void
+ */
+	public function testFileRangeOffsets($range, $length, $offsetResponse) {
+		$_SERVER['HTTP_RANGE'] = $range;
+		$response = $this->getMock('Cake\Network\Response', array(
+			'header',
+			'type',
+			'_sendHeader',
+			'_isActive',
+			'_clearBuffer',
+			'_flushBuffer'
+		));
+
+		$response->expects($this->at(1))
+			->method('header')
+			->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+
+		$response->expects($this->at(2))
+			->method('header')
+			->with('Accept-Ranges', 'bytes');
+
+		$response->expects($this->at(3))
+			->method('header')
+			->with(array(
+				'Content-Length' => $length,
+				'Content-Range' => $offsetResponse,
+			));
+
+		$response->expects($this->any())
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$response->file(
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+			array('download' => true)
+		);
+
+		ob_start();
+		$result = $response->send();
+		ob_get_clean();
+	}
+
+/**
+ * Test fetching ranges from a file.
+ *
+ * @return void
+ */
+	public function testFileRange() {
+		$_SERVER['HTTP_RANGE'] = 'bytes=8-25';
+		$response = $this->getMock('Cake\Network\Response', array(
+			'header',
+			'type',
+			'_sendHeader',
+			'_setContentType',
+			'_isActive',
+			'_clearBuffer',
+			'_flushBuffer'
+		));
+
+		$response->expects($this->exactly(1))
+			->method('type')
+			->with('css')
+			->will($this->returnArgument(0));
+
+		$response->expects($this->at(1))
+			->method('header')
+			->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+
+		$response->expects($this->at(2))
+			->method('header')
+			->with('Accept-Ranges', 'bytes');
+
+		$response->expects($this->at(3))
+			->method('header')
+			->with(array(
+				'Content-Length' => 18,
+				'Content-Range' => 'bytes 8-25/38',
+			));
+
+		$response->expects($this->once())->method('_clearBuffer');
+
+		$response->expects($this->any())
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$response->file(
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+			array('download' => true)
+		);
+
+		ob_start();
+		$result = $response->send();
+		$output = ob_get_clean();
+		$this->assertEquals(206, $response->statusCode());
+		$this->assertEquals("is the test asset ", $output);
+		$this->assertTrue($result !== false);
+	}
+
+/**
+ * Test invalid file ranges.
+ *
+ * @return void
+ */
+	public function testFileRangeInvalid() {
+		$_SERVER['HTTP_RANGE'] = 'bytes=30-2';
+		$response = $this->getMock('Cake\Network\Response', array(
+			'header',
+			'type',
+			'_sendHeader',
+			'_setContentType',
+			'_isActive',
+			'_clearBuffer',
+			'_flushBuffer'
+		));
+
+		$response->expects($this->at(1))
+			->method('header')
+			->with('Content-Disposition', 'attachment; filename="test_asset.css"');
+
+		$response->expects($this->at(2))
+			->method('header')
+			->with('Accept-Ranges', 'bytes');
+
+		$response->expects($this->at(3))
+			->method('header')
+			->with(array(
+				'Content-Range' => 'bytes 0-37/38',
+			));
+
+		$response->file(
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+			array('download' => true)
+		);
+
+		$this->assertEquals(416, $response->statusCode());
+		$result = $response->send();
+	}
+
+/**
+ * Test the location method.
+ *
+ * @return void
+ */
+	public function testLocation() {
+		$response = new Response();
+		$this->assertNull($response->location(), 'No header should be set.');
+		$this->assertNull($response->location('http://example.org'), 'Setting a location should return null');
+		$this->assertEquals('http://example.org', $response->location(), 'Reading a location should return the value.');
 	}
 
 }

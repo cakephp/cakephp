@@ -33,7 +33,6 @@ use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
-use Cake\Utility\ObjectCollection;
 use Cake\Utility\ViewVarsTrait;
 
 /**
@@ -72,7 +71,7 @@ class View extends Object {
 /**
  * Helpers collection
  *
- * @var HelperCollection
+ * @var HelperRegistry
  */
 	public $Helpers;
 
@@ -305,13 +304,6 @@ class View extends Object {
 	protected $_eventManager = null;
 
 /**
- * Whether the event manager was already configured for this object
- *
- * @var boolean
- */
-	protected $_eventManagerConfigured = false;
-
-/**
  * Constant for view file type 'view'
  */
 	const TYPE_VIEW = 'view';
@@ -350,7 +342,7 @@ class View extends Object {
 		} else {
 			$this->response = new Response();
 		}
-		$this->Helpers = new HelperCollection($this);
+		$this->Helpers = new HelperRegistry($this);
 		$this->Blocks = new ViewBlock();
 		parent::__construct();
 	}
@@ -366,11 +358,19 @@ class View extends Object {
 		if (empty($this->_eventManager)) {
 			$this->_eventManager = new EventManager();
 		}
-		if (!$this->_eventManagerConfigured) {
-			$this->_eventManager->attach($this->Helpers);
-			$this->_eventManagerConfigured = true;
-		}
 		return $this->_eventManager;
+	}
+
+/**
+ * Set the Eventmanager used by View.
+ *
+ * Primarily useful for testing.
+ *
+ * @param Cake\Event\EventManager $eventManager.
+ * @return void
+ */
+	public function setEventManager(EventManager $eventManager) {
+		$this->_eventManager = $eventManager;
 	}
 
 /**
@@ -569,9 +569,8 @@ class View extends Object {
 				//@codingStandardsIgnoreEnd
 				unset($out);
 				return false;
-			} else {
-				return substr($out, strlen($match[0]));
 			}
+			return substr($out, strlen($match[0]));
 		}
 	}
 
@@ -589,7 +588,7 @@ class View extends Object {
  *
  * @param string $var The view var you want the contents of.
  * @return mixed The content of the named var if its set, otherwise null.
- * @deprecated Will be removed in 3.0  Use View::get() instead.
+ * @deprecated Will be removed in 3.0. Use View::get() instead.
  */
 	public function getVar($var) {
 		return $this->get($var);
@@ -627,7 +626,7 @@ class View extends Object {
  * @see ViewBlock::start()
  */
 	public function start($name) {
-		return $this->Blocks->start($name);
+		$this->Blocks->start($name);
 	}
 
 /**
@@ -638,7 +637,7 @@ class View extends Object {
  * @see ViewBlock::startIfEmpty()
  */
 	public function startIfEmpty($name) {
-		return $this->Blocks->startIfEmpty($name);
+		$this->Blocks->startIfEmpty($name);
 	}
 
 /**
@@ -652,7 +651,7 @@ class View extends Object {
  * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
-		return $this->Blocks->concat($name, $value);
+		$this->Blocks->concat($name, $value);
 	}
 
 /**
@@ -666,7 +665,7 @@ class View extends Object {
  * @see ViewBlock::concat()
  */
 	public function prepend($name, $value = null) {
-		return $this->Blocks->concat($name, $value, ViewBlock::PREPEND);
+		$this->Blocks->concat($name, $value, ViewBlock::PREPEND);
 	}
 
 /**
@@ -680,7 +679,7 @@ class View extends Object {
  * @see ViewBlock::set()
  */
 	public function assign($name, $value) {
-		return $this->Blocks->set($name, $value);
+		$this->Blocks->set($name, $value);
 	}
 
 /**
@@ -703,7 +702,7 @@ class View extends Object {
  * @see ViewBlock::end()
  */
 	public function end() {
-		return $this->Blocks->end();
+		$this->Blocks->end();
 	}
 
 /**
@@ -829,12 +828,12 @@ class View extends Object {
 	}
 
 /**
- * Interact with the HelperCollection to load all the helpers.
+ * Interact with the HelperRegistry to load all the helpers.
  *
  * @return void
  */
 	public function loadHelpers() {
-		$helpers = HelperCollection::normalizeObjectArray($this->helpers);
+		$helpers = $this->Helpers->normalizeArray($this->helpers);
 		foreach ($helpers as $properties) {
 			list(, $class) = pluginSplit($properties['class']);
 			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
@@ -865,9 +864,10 @@ class View extends Object {
 		$content = $this->_evaluate($viewFile, $data);
 
 		$afterEvent = new Event('View.afterRenderFile', $this, array($viewFile, $content));
-		$afterEvent->modParams = 1;
 		$eventManager->dispatch($afterEvent);
-		$content = $afterEvent->data[1];
+		if (isset($afterEvent->result)) {
+			$content = $afterEvent->result;
+		}
 
 		if (isset($this->_parents[$viewFile])) {
 			$this->_stack[] = $this->fetch('content');
@@ -905,12 +905,12 @@ class View extends Object {
 	}
 
 /**
- * Loads a helper. Delegates to the `HelperCollection::load()` to load the helper
+ * Loads a helper. Delegates to the `HelperRegistry::load()` to load the helper
  *
  * @param string $helperName Name of the helper to load.
  * @param array $settings Settings for the helper
  * @return Helper a constructed helper object.
- * @see HelperCollection::load()
+ * @see HelperRegistry::load()
  */
 	public function loadHelper($helperName, $settings = array()) {
 		return $this->Helpers->load($helperName, $settings);

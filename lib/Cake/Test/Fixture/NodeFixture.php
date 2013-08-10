@@ -30,13 +30,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class NodeFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'Node'
- */
-	public $name = 'Node';
-
-/**
  * fields property
  *
  * @var array

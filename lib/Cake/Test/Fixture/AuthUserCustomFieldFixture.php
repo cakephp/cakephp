@@ -29,13 +29,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 class AuthUserCustomFieldFixture extends TestFixture {
 
 /**
- * name property
- *
- * @var string 'AuthUser'
- */
-	public $name = 'AuthUserCustomField';
-
-/**
  * fields property
  *
  * @var array

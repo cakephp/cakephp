@@ -28,8 +28,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class GroupUpdateAllFixture extends TestFixture {
 
-	public $name = 'GroupUpdateAll';
-
 	public $table = 'group_update_all';
 
 	public $fields = array(

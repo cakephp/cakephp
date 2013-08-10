@@ -61,7 +61,7 @@ class PaginatorComponentTest extends TestCase {
 		$this->request = new Request('controller_posts/index');
 		$this->request->params['pass'] = array();
 		$this->Controller = new Controller($this->request);
-		$this->Paginator = new PaginatorComponent($this->getMock('Cake\Controller\ComponentCollection'), array());
+		$this->Paginator = new PaginatorComponent($this->getMock('Cake\Controller\ComponentRegistry'), array());
 		$this->Paginator->Controller = $this->Controller;
 		$this->Controller->Post = $this->getMock('Cake\Model\Model');
 		$this->Controller->Post->alias = 'Post';
@@ -88,6 +88,8 @@ class PaginatorComponentTest extends TestCase {
 		$Controller->request->params['pass'] = array('1');
 		$Controller->request->query = array();
 		$Controller->constructClasses();
+
+		$Controller->PaginatorControllerPost->order = null;
 
 		$Controller->Paginator->settings = array(
 			'order' => array('PaginatorControllerComment.id' => 'ASC')
@@ -335,6 +337,31 @@ class PaginatorComponentTest extends TestCase {
 		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerPost'), '{n}.PaginatorControllerPost.id');
 		$this->assertEquals('PaginatorControllerPost.id DESC', $Controller->request->params['paging']['PaginatorControllerPost']['order']);
 		$this->assertEquals(array(3, 2, 1), $results);
+	}
+
+/**
+ * test paginate() and model default order
+ *
+ * @return void
+ */
+	public function testPaginateOrderModelDefault() {
+		$Controller = new PaginatorTestController($this->request);
+		$Controller->uses = array('PaginatorControllerPost');
+		$Controller->params['url'] = array();
+		$Controller->constructClasses();
+		$Controller->PaginatorControllerPost->order = array(
+			$Controller->PaginatorControllerPost->alias . '.created' => 'desc'
+		);
+
+		$Controller->Paginator->settings = array(
+			'fields' => array('id', 'title', 'created'),
+			'maxLimit' => 10,
+			'paramType' => 'named'
+		);
+		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
+		$expected = array('2007-03-18 10:43:23', '2007-03-18 10:41:23', '2007-03-18 10:39:23');
+		$this->assertEquals($expected, Hash::extract($result, '{n}.PaginatorControllerPost.created'));
+		$this->assertEquals($Controller->PaginatorControllerPost->order, $this->Controller->request['paging']['PaginatorControllerPost']['order']);
 	}
 
 /**
@@ -644,6 +671,23 @@ class PaginatorComponentTest extends TestCase {
 		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
 
 		$this->assertNull($result['order']);
+	}
+
+/**
+ * test that fields in the whitelist are not validated
+ *
+ * @return void
+ */
+	public function testValidateSortWhitelistTrusted() {
+		$model = $this->getMock('Model');
+		$model->alias = 'model';
+		$model->expects($this->never())->method('hasField');
+
+		$options = array('sort' => 'body', 'direction' => 'asc');
+		$result = $this->Paginator->validateSort($model, $options, array('body'));
+
+		$expected = array('body' => 'asc');
+		$this->assertEquals($expected, $result['order']);
 	}
 
 /**
