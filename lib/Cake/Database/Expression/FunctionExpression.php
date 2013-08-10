@@ -112,7 +112,6 @@ class FunctionExpression extends QueryExpression {
  * @return string
  */
 	public function sql(ValueBinder $generator) {
-
 		$parts = [];
 		foreach ($this->_conditions as $condition) {
 			if ($condition instanceof ExpressionInterface) {

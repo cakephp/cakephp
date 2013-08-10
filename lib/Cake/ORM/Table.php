@@ -509,6 +509,7 @@ class Table {
 		if ($event->isStopped()) {
 			return $query;
 		}
+		$query->applyOptions($options);
 		return $this->{'find' . ucfirst($type)}($query, $options);
 	}
 

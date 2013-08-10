@@ -485,4 +485,22 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->deleteAll(['id >' => 4]);
 	}
 
+/**
+ * Tests that array options are passed to the query object using applyOptions
+ *
+ * @return void
+ */
+	public function testFindApplyOptions() {
+		$table = $this->getMock('Cake\ORM\Table', ['_buildQuery'], ['table' => 'users']);
+		$query = $this->getMock('Cake\ORM\Query', [], [$this->connection, $table]);
+		$table->expects($this->once())
+			->method('_buildQuery')
+			->will($this->returnValue($query));
+
+		$options = ['fields' => ['a', 'b'], 'connections' => ['a >' => 1]];
+		$query->expects($this->once())
+			->method('applyOptions')
+			->with($options);
+		$table->find('all', $options);
+	}
 }
