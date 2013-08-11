@@ -76,7 +76,7 @@ class CakeNumber {
  */
 	protected static $_currencyDefaults = array(
 		'wholeSymbol' => '', 'wholePosition' => 'before', 'fractionSymbol' => '', 'fractionPosition' => 'after',
-		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.','negative' => '()', 'escape' => true,
+		'zero' => '0', 'places' => 2, 'thousands' => ',', 'decimals' => '.', 'negative' => '()', 'escape' => true,
 		'fractionExponent' => 2
 	);
 
@@ -348,7 +348,7 @@ class CakeNumber {
 		$symbolKey = 'whole';
 		$value = (float)$value;
 		if (!$value) {
-			if ($options['zero'] !== 0 ) {
+			if ($options['zero'] !== 0) {
 				return $options['zero'];
 			}
 		} elseif ($value < 1 && $value > -1) {

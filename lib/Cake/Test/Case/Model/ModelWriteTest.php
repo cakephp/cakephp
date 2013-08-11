@@ -4963,7 +4963,7 @@ class ModelWriteTest extends BaseModelTest {
 		$expected = array(
 			'Comment' => array(
 				array(
-					'comment' => array( 'This field cannot be left blank' )
+					'comment' => array('This field cannot be left blank')
 				)
 			)
 		);

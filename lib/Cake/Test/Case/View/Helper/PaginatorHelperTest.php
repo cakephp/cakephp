@@ -290,7 +290,7 @@ class PaginatorHelperTest extends CakeTestCase {
 		Router::setRequestInfo(array(
 			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(),
 				'url' => array('url' => 'accounts/', 'mod_rewrite' => 'true')),
-			array('base' => '/', 'here' => '/accounts/', 'webroot' => '/',)
+			array('base' => '/', 'here' => '/accounts/', 'webroot' => '/')
 		));
 		$this->Paginator->options(array('url' => array('param')));
 

@@ -129,8 +129,8 @@ class ServerShell extends AppShell {
 		$command = sprintf("php -S %s:%d -t %s %s",
 			$this->_host,
 			$this->_port,
-			$this->_documentRoot,
-			$this->_documentRoot . '/index.php'
+			escapeshellarg($this->_documentRoot),
+			escapeshellarg($this->_documentRoot . '/index.php')
 		);
 
 		$port = ($this->_port == self::DEFAULT_PORT) ? '' : ':' . $this->_port;

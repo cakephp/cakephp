@@ -923,7 +923,7 @@ class CakeRouteTest extends CakeTestCase {
 	public function testUTF8PatternOnSection() {
 		$route = new CakeRoute(
 			'/:section',
-			array('plugin' => 'blogs', 'controller' => 'posts' , 'action' => 'index' ),
+			array('plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index'),
 			array(
 				'persist' => array('section'),
 				'section' => 'آموزش|weblog'

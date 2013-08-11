@@ -180,7 +180,7 @@ class StringTest extends CakeTestCase {
 		$expected = "this is a long string with a few? params you know";
 		$this->assertEquals($expected, $result);
 
-		$result = String::insert('update saved_urls set url = :url where id = :id', array('url' => 'http://www.testurl.com/param1:url/param2:id','id' => 1));
+		$result = String::insert('update saved_urls set url = :url where id = :id', array('url' => 'http://www.testurl.com/param1:url/param2:id', 'id' => 1));
 		$expected = "update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1";
 		$this->assertEquals($expected, $result);
 
@@ -330,14 +330,12 @@ TEXT;
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 
 		$result = String::wrap($text, array('width' => 20, 'wordWrap' => false));
-		$expected = <<<TEXT
-This is the song th
-at never ends. This
- is the song that n
-ever ends. This is 
-the song that never
- ends.
-TEXT;
+		$expected = 'This is the song th' . "\n" .
+			'at never ends. This' . "\n" .
+			' is the song that n' . "\n" .
+			'ever ends. This is ' . "\n" .
+			'the song that never' . "\n" .
+			' ends.';
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 	}
 

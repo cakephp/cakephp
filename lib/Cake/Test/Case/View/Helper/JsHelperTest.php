@@ -873,7 +873,7 @@ class JsBaseEngineTest extends CakeTestCase {
 
 		$object = new JsEncodingObject();
 		$object->title = 'New thing';
-		$object->indexes = array(5,6,7,8);
+		$object->indexes = array(5, 6, 7, 8);
 		$result = $this->JsEngine->object($object);
 		$this->assertEquals($expected, $result);
 

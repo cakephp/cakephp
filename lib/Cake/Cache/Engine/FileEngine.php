@@ -223,6 +223,8 @@ class FileEngine extends CacheEngine {
 		if (!$this->_init) {
 			return false;
 		}
+		$this->_File = null;
+
 		$threshold = $now = false;
 		if ($check) {
 			$now = time();
@@ -233,11 +235,17 @@ class FileEngine extends CacheEngine {
 
 		$directory = new RecursiveDirectoryIterator($this->settings['path']);
 		$contents = new RecursiveIteratorIterator($directory, RecursiveIteratorIterator::SELF_FIRST);
+		$cleared = array();
 		foreach ($contents as $path) {
 			if ($path->isFile()) {
 				continue;
 			}
-			$this->_clearDirectory($path->getRealPath() . DS, $now, $threshold);
+
+			$path = $path->getRealPath() . DS;
+			if (!in_array($path, $cleared)) {
+				$this->_clearDirectory($path, $now, $threshold);
+				$cleared[] = $path;
+			}
 		}
 		return true;
 	}
@@ -263,7 +271,7 @@ class FileEngine extends CacheEngine {
 				continue;
 			}
 			$filePath = $path . $entry;
-			if (is_dir($filePath)) {
+			if (!file_exists($filePath) || is_dir($filePath)) {
 				continue;
 			}
 			$file = new SplFileObject($path . $entry, 'r');
@@ -281,7 +289,9 @@ class FileEngine extends CacheEngine {
 				}
 			}
 			if ($file->isFile()) {
-				unlink($file->getRealPath());
+				$_path = $file->getRealPath();
+				$file = null;
+				unlink($_path);
 			}
 		}
 	}
@@ -394,6 +404,7 @@ class FileEngine extends CacheEngine {
  * @return boolean success
  */
 	public function clearGroup($group) {
+		$this->_File = null;
 		$directoryIterator = new RecursiveDirectoryIterator($this->settings['path']);
 		$contents = new RecursiveIteratorIterator($directoryIterator, RecursiveIteratorIterator::CHILD_FIRST);
 		foreach ($contents as $object) {
@@ -403,7 +414,6 @@ class FileEngine extends CacheEngine {
 				unlink($object->getPathName());
 			}
 		}
-		$this->_File = null;
 		return true;
 	}
 }

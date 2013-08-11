@@ -483,7 +483,7 @@ class Helper extends Object {
  */
 	protected function _formatAttribute($key, $value, $escape = true) {
 		if (is_array($value)) {
-			$value = implode(' ' , $value);
+			$value = implode(' ', $value);
 		}
 		if (is_numeric($key)) {
 			return sprintf($this->_minimizedAttributeFormat, $value, $value);

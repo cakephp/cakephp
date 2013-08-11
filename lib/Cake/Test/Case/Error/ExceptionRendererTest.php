@@ -528,7 +528,7 @@ class ExceptionRendererTest extends CakeTestCase {
 				404
 			),
 			array(
-				new PrivateActionException(array('controller' => 'PostsController' , 'action' => '_secretSauce')),
+				new PrivateActionException(array('controller' => 'PostsController', 'action' => '_secretSauce')),
 				array(
 					'/<h2>Private Method in PostsController<\/h2>/',
 					'/<em>PostsController::<\/em><em>_secretSauce\(\)<\/em>/'
