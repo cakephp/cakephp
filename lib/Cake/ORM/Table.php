@@ -502,14 +502,13 @@ class Table {
  */
 	public function find($type, $options = []) {
 		$query = $this->_buildQuery();
-		$query->select();
+		$query->select()->applyOptions($options);
 
 		$event = new Event('Model.beforeFind', $this, [$query, $options]);
 		$this->_eventManager->dispatch($event);
 		if ($event->isStopped()) {
 			return $query;
 		}
-		$query->applyOptions($options);
 		return $this->{'find' . ucfirst($type)}($query, $options);
 	}
 
