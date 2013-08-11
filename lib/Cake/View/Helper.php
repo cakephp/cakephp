@@ -500,6 +500,19 @@ class Helper extends Object {
 	}
 
 /**
+ * Returns a string to be used as onclick handler for confirm dialogs.
+ *
+ * @param string $message Message to be displayed
+ * @param string $okCode Code to be executed after user chose 'OK'
+ * @param string $cancelCode Code to be executed after user chose 'Cancel'
+ * @return string onclick JS code
+ */
+	protected function _confirm($message, $okCode, $cancelCode = '') {
+		$message = json_encode($message);
+		return "if (confirm({$message})) { {$okCode} } {$cancelCode}";
+	}
+
+/**
  * Sets this helper's model and field properties to the dot-separated value-pair in $entity.
  *
  * @param string $entity A field name, like "ModelName.fieldName" or "ModelName.ID.fieldName"

@@ -359,15 +359,14 @@ class HtmlHelper extends AppHelper {
 			unset($options['confirm']);
 		}
 		if ($confirmMessage) {
-			$confirmMessage = str_replace("'", "\'", $confirmMessage);
-			$confirmMessage = str_replace('"', '\"', $confirmMessage);
-			$options['onclick'] = "return confirm('{$confirmMessage}');";
+			$options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;');
 		} elseif (isset($options['default']) && !$options['default']) {
 			if (isset($options['onclick'])) {
-				$options['onclick'] .= ' event.returnValue = false; return false;';
+				$options['onclick'] .= ' ';
 			} else {
-				$options['onclick'] = 'event.returnValue = false; return false;';
+				$options['onclick'] = '';
 			}
+			$options['onclick'] .= 'event.returnValue = false; return false;';
 			unset($options['default']);
 		}
 		return sprintf($this->_tags['link'], $url, $this->_parseAttributes($options), $title);
