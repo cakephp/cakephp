@@ -918,12 +918,9 @@ class HtmlHelper extends AppHelper {
 		if (empty($name)) {
 			return $text;
 		}
-		if (is_array($options) && isset($options['escape']) && $options['escape']) {
+		if (isset($options['escape']) && $options['escape']) {
 			$text = h($text);
 			unset($options['escape']);
-		}
-		if (!is_array($options)) {
-			$options = array('class' => $options);
 		}
 		if ($text === null) {
 			$tag = 'tagstart';

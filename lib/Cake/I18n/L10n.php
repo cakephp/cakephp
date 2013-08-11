@@ -418,7 +418,8 @@ class L10n {
 			if (isset($this->_l10nCatalog[$langKey])) {
 				$this->_setLanguage($langKey);
 				return true;
-			} elseif (strpos($langKey, '-') !== false) {
+			}
+			if (strpos($langKey, '-') !== false) {
 				$langKey = substr($langKey, 0, 2);
 				if (isset($this->_l10nCatalog[$langKey])) {
 					$this->_setLanguage($langKey);
@@ -445,10 +446,12 @@ class L10n {
 				}
 			}
 			return $result;
-		} elseif (is_string($mixed)) {
+		}
+		if (is_string($mixed)) {
 			if (strlen($mixed) === 2 && in_array($mixed, $this->_l10nMap)) {
 				return array_search($mixed, $this->_l10nMap);
-			} elseif (isset($this->_l10nMap[$mixed])) {
+			}
+			if (isset($this->_l10nMap[$mixed])) {
 				return $this->_l10nMap[$mixed];
 			}
 			return false;
@@ -472,10 +475,12 @@ class L10n {
 				}
 			}
 			return $result;
-		} elseif (is_string($language)) {
+		}
+		if (is_string($language)) {
 			if (isset($this->_l10nCatalog[$language])) {
 				return $this->_l10nCatalog[$language];
-			} elseif (isset($this->_l10nMap[$language]) && isset($this->_l10nCatalog[$this->_l10nMap[$language]])) {
+			}
+			if (isset($this->_l10nMap[$language]) && isset($this->_l10nCatalog[$this->_l10nMap[$language]])) {
 				return $this->_l10nCatalog[$this->_l10nMap[$language]];
 			}
 			return false;
