@@ -137,41 +137,45 @@ class CakeResponseTest extends CakeTestCase {
 	public function testHeader() {
 		$response = new CakeResponse();
 		$headers = array();
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header('Location', 'http://example.com');
 		$headers += array('Location' => 'http://example.com');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		//Headers with the same name are overwritten
 		$response->header('Location', 'http://example2.com');
 		$headers = array('Location' => 'http://example2.com');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('WWW-Authenticate' => 'Negotiate'));
 		$headers += array('WWW-Authenticate' => 'Negotiate');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('WWW-Authenticate' => 'Not-Negotiate'));
 		$headers['WWW-Authenticate'] = 'Not-Negotiate';
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('Age' => 12, 'Allow' => 'GET, HEAD'));
 		$headers += array('Age' => 12, 'Allow' => 'GET, HEAD');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		// String headers are allowed
 		$response->header('Content-Language: da');
 		$headers += array('Content-Language' => 'da');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header('Content-Language: da');
 		$headers += array('Content-Language' => 'da');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache'));
 		$headers += array('Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
+
+		$response->header('Access-Control-Allow-Origin', array('domain1', 'domain2'));
+		$headers += array('Access-Control-Allow-Origin' => array('domain1', 'domain2'));
+		$this->assertEquals($headers, $response->header());
 	}
 
 /**
@@ -182,7 +186,8 @@ class CakeResponseTest extends CakeTestCase {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->header(array(
 			'Content-Language' => 'es',
-			'WWW-Authenticate' => 'Negotiate'
+			'WWW-Authenticate' => 'Negotiate',
+			'Access-Control-Allow-Origin' => array('domain1', 'domain2'),
 		));
 		$response->body('the response body');
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
@@ -194,8 +199,12 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(3))
 			->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
 		$response->expects($this->at(4))
-			->method('_sendHeader')->with('Content-Length', 17);
+			->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain1');
 		$response->expects($this->at(5))
+			->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain2');
+		$response->expects($this->at(6))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(7))
 			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->send();
 	}
