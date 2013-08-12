@@ -538,9 +538,8 @@ class Cache {
 		}
 		if (isset(self::$_groups[$group])) {
 			return array($group => self::$_groups[$group]);
-		} else {
-			throw new CacheException(__d('cake_dev', 'Invalid cache group %s', $group));
 		}
+		throw new CacheException(__d('cake_dev', 'Invalid cache group %s', $group));
 	}
 
 }
