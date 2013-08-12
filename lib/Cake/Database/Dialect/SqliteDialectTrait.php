@@ -97,15 +97,13 @@ trait SqliteDialectTrait {
  */
 	protected function _insertQueryTranslator($query) {
 		$v = $query->clause('values');
-		if (count($v->values()) === 1) {
+		if (count($v->values()) === 1 || $v->query()) {
 			return $query;
 		}
 
 		$newQuery = $query->connection()->newQuery();
 		$cols = $v->columns();
-		$values = [];
 		foreach ($v->values() as $k => $val) {
-			$values[] = $val;
 			$fillLength = count($cols) - count($val);
 			if ($fillLength > 0) {
 				$val = array_merge($val, array_fill(0, $fillLength, null));
@@ -116,7 +114,7 @@ trait SqliteDialectTrait {
 
 			$select = array_combine($cols, $val);
 			if ($k === 0) {
-				array_unshift($values, $newQuery->select($select));
+				$newQuery->select($select);
 				continue;
 			}
 
@@ -124,7 +122,7 @@ trait SqliteDialectTrait {
 			$newQuery->union($q->select($select), true);
 		}
 
-		$v->values($values);
+		$v->query($newQuery);
 		return $query;
 	}
 
