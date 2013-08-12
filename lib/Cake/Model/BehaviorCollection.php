@@ -76,7 +76,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  * @param string $behavior
  * @param array $config
  * @return void
- * @deprecated Replaced with load()
+ * @deprecated Will be removed in 3.0. Replaced with load().
  */
 	public function attach($behavior, $config = array()) {
 		return $this->load($behavior, $config);
@@ -206,7 +206,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
  *
  * @param string $name Name of behavior
  * @return void
- * @deprecated Use unload instead.
+ * @deprecated Will be removed in 3.0. Use unload instead.
  */
 	public function detach($name) {
 		return $this->unload($name);
