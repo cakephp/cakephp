@@ -696,7 +696,7 @@ class Controller extends Object implements EventListener {
  *
  * @return array Associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
- * @deprecated Use Cake\Network\Response::httpCodes();
+ * @deprecated Since 2.4. Will be removed in 3.0. Use Cake\Network\Response::httpCodes().
  */
 	public function httpCodes($code = null) {
 		return $this->response->httpCodes($code);
@@ -797,7 +797,7 @@ class Controller extends Object implements EventListener {
  *
  * @param string $status The header message that is being set.
  * @return void
- * @deprecated Use Cake\Network\Response::header()
+ * @deprecated Will be removed in 3.0. Use Cake\Network\Response::header().
  */
 	public function header($status) {
 		$this->response->header($status);
@@ -933,7 +933,7 @@ class Controller extends Object implements EventListener {
  *
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::disableCache
- * @deprecated Use Cake\Network\Response::disableCache()
+ * @deprecated Will be removed in 3.0. Use Cake\Network\Response::disableCache().
  */
 	public function disableCache() {
 		$this->response->disableCache();
@@ -950,6 +950,7 @@ class Controller extends Object implements EventListener {
  * @param string $layout Layout you want to use, defaults to 'flash'
  * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::flash
+ * @deprecated Will be removed in 3.0. Use Session::setFlash().
  */
 	public function flash($message, $url, $pause = 1, $layout = 'flash') {
 		$this->autoRender = false;
@@ -968,7 +969,7 @@ class Controller extends Object implements EventListener {
  * @param array $whitelist List of allowed options for paging
  * @return array Model query results
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::paginate
- * @deprecated Use PaginatorComponent instead
+ * @deprecated Will be removed in 3.0. Use PaginatorComponent instead.
  */
 	public function paginate($object = null, $scope = array(), $whitelist = array()) {
 		return $this->Components->load('Paginator', $this->paginate)->paginate($object, $scope, $whitelist);
@@ -1046,7 +1047,7 @@ class Controller extends Object implements EventListener {
  * @param string $method
  * @return boolean
  * @see Controller::beforeScaffold()
- * @deprecated
+ * @deprecated Will be removed in 3.0.
  */
 	protected function _beforeScaffold($method) {
 		return $this->beforeScaffold($method);
@@ -1069,7 +1070,7 @@ class Controller extends Object implements EventListener {
  * @param string $method
  * @return boolean
  * @see Controller::afterScaffoldSave()
- * @deprecated
+ * @deprecated Will be removed in 3.0.
  */
 	protected function _afterScaffoldSave($method) {
 		return $this->afterScaffoldSave($method);
@@ -1092,7 +1093,7 @@ class Controller extends Object implements EventListener {
  * @param string $method
  * @return boolean
  * @see Controller::afterScaffoldSaveError()
- * @deprecated
+ * @deprecated Will be removed in 3.0.
  */
 	protected function _afterScaffoldSaveError($method) {
 		return $this->afterScaffoldSaveError($method);
@@ -1117,7 +1118,7 @@ class Controller extends Object implements EventListener {
  * @param string $method
  * @return boolean
  * @see Controller::scaffoldError()
- * @deprecated
+ * @deprecated Will be removed in 3.0.
  */
 	protected function _scaffoldError($method) {
 		return $this->scaffoldError($method);

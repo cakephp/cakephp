@@ -554,11 +554,10 @@ class Cache {
 		if ($group == null) {
 			return static::$_groups;
 		}
-		if (isset(static::$_groups[$group])) {
-			return [$group => static::$_groups[$group]];
-		} else {
-			throw new Error\Exception(__d('cake_dev', 'Invalid cache group %s', $group));
+		if (isset(self::$_groups[$group])) {
+			return array($group => self::$_groups[$group]);
 		}
+		throw new Error\Exception(__d('cake_dev', 'Invalid cache group %s', $group));
 	}
 
 }

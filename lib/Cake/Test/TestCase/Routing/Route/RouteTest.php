@@ -859,7 +859,7 @@ class RouteTest extends TestCase {
 	public function testUTF8PatternOnSection() {
 		$route = new Route(
 			'/:section',
-			array('plugin' => 'blogs', 'controller' => 'posts' , 'action' => 'index' ),
+			array('plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index'),
 			array(
 				'persist' => array('section'),
 				'section' => 'آموزش|weblog'

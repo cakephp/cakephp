@@ -120,12 +120,12 @@ if (isset($filePresent)):
 	} catch (Exception $connectionError) {
 		$connected = false;
 		$errorMsg = $connectionError->getMessage();
-		if (method_exists($connectionError, 'getAttributes')) {
+		if (method_exists($connectionError, 'getAttributes')):
 			$attributes = $connectionError->getAttributes();
-			if (isset($errorMsg['message'])) {
+			if (isset($errorMsg['message'])):
 				$errorMsg .= '<br />' . $attributes['message'];
-			}
-		}
+			endif;
+		endif;
 	}
 ?>
 <p>
@@ -145,13 +145,13 @@ if (isset($filePresent)):
 </p>
 <?php endif; ?>
 <?php
-	if (!Validation::alphaNumeric('cakephp')) {
+	if (!Validation::alphaNumeric('cakephp')):
 		echo '<p><span class="notice">';
 			echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');
 			echo '<br/>';
 			echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
 		echo '</span></p>';
-	}
+	endif;
 ?>
 
 <p>

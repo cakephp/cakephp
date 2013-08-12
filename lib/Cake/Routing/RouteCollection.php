@@ -159,10 +159,16 @@ class RouteCollection implements \Countable {
  * @return array An array of request parameters parsed from the url.
  */
 	public function parse($url) {
+		$queryParameters = [];
+		if (strpos($url, '?') !== false) {
+			list($url, $queryParameters) = explode('?', $url, 2);
+			parse_str($queryParameters, $queryParameters);
+		}
 		$out = array();
 		for ($i = 0, $len = count($this); $i < $len; $i++) {
 			$r = $this->_routes[$i]->parse($url);
 			if ($r !== false) {
+				$r['?'] = isset($r['?']) ? $r['?'] : $queryParameters;
 				return $r;
 			}
 		}

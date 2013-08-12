@@ -23,6 +23,7 @@
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Utility\Inflector;
 
@@ -227,6 +228,8 @@ class FileEngine extends CacheEngine {
 		if (!$this->_init) {
 			return false;
 		}
+		$this->_File = null;
+
 		$threshold = $now = false;
 		if ($check) {
 			$now = time();
@@ -237,11 +240,17 @@ class FileEngine extends CacheEngine {
 
 		$directory = new \RecursiveDirectoryIterator($this->settings['path']);
 		$contents = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST);
+		$cleared = [];
 		foreach ($contents as $path) {
 			if ($path->isFile()) {
 				continue;
 			}
-			$this->_clearDirectory($path->getRealPath() . DS, $now, $threshold);
+
+			$path = $path->getRealPath() . DS;
+			if (!in_array($path, $cleared)) {
+				$this->_clearDirectory($path, $now, $threshold);
+				$cleared[] = $path;
+			}
 		}
 		return true;
 	}
@@ -267,7 +276,7 @@ class FileEngine extends CacheEngine {
 				continue;
 			}
 			$filePath = $path . $entry;
-			if (is_dir($filePath)) {
+			if (!file_exists($filePath) || is_dir($filePath)) {
 				continue;
 			}
 			$file = new \SplFileObject($path . $entry, 'r');
@@ -285,7 +294,9 @@ class FileEngine extends CacheEngine {
 				}
 			}
 			if ($file->isFile()) {
-				unlink($file->getRealPath());
+				$_path = $file->getRealPath();
+				$file = null;
+				unlink($_path);
 			}
 		}
 	}
@@ -330,7 +341,7 @@ class FileEngine extends CacheEngine {
 		$dir = $this->settings['path'] . $groups;
 
 		if (!is_dir($dir)) {
-			mkdir($dir, 0777, true);
+			mkdir($dir, 0775, true);
 		}
 		$path = new \SplFileInfo($dir . $key);
 
@@ -363,6 +374,12 @@ class FileEngine extends CacheEngine {
  */
 	protected function _active() {
 		$dir = new \SplFileInfo($this->settings['path']);
+		if (Configure::read('debug')) {
+			$path = $dir->getPathname();
+			if (!is_dir($path)) {
+				mkdir($path, 0775, true);
+			}
+		}
 		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
 			trigger_error(__d('cake_dev', '%s is not writable', $this->settings['path']), E_USER_WARNING);
@@ -392,6 +409,7 @@ class FileEngine extends CacheEngine {
  * @return boolean success
  */
 	public function clearGroup($group) {
+		$this->_File = null;
 		$directoryIterator = new \RecursiveDirectoryIterator($this->settings['path']);
 		$contents = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::CHILD_FIRST);
 		foreach ($contents as $object) {
@@ -401,7 +419,6 @@ class FileEngine extends CacheEngine {
 				unlink($object->getPathName());
 			}
 		}
-		$this->_File = null;
 		return true;
 	}
 }

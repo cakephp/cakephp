@@ -365,15 +365,14 @@ class HtmlHelper extends Helper {
 			unset($options['confirm']);
 		}
 		if ($confirmMessage) {
-			$confirmMessage = str_replace("'", "\'", $confirmMessage);
-			$confirmMessage = str_replace('"', '\"', $confirmMessage);
-			$options['onclick'] = "return confirm('{$confirmMessage}');";
+			$options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;');
 		} elseif (isset($options['default']) && !$options['default']) {
 			if (isset($options['onclick'])) {
-				$options['onclick'] .= ' event.returnValue = false; return false;';
+				$options['onclick'] .= ' ';
 			} else {
-				$options['onclick'] = 'event.returnValue = false; return false;';
+				$options['onclick'] = '';
 			}
+			$options['onclick'] .= 'event.returnValue = false; return false;';
 			unset($options['default']);
 		}
 		return sprintf($this->_tags['link'], $url, $this->_parseAttributes($options), $title);
@@ -451,7 +450,7 @@ class HtmlHelper extends Helper {
 			$url = $path;
 		} else {
 			$url = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css'));
-			$options = array_diff_key($options, array('fullBase' => null));
+			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 
 			if (Configure::read('Asset.filter.css')) {
 				$pos = strpos($url, Configure::read('App.cssBaseUrl'));
@@ -552,7 +551,7 @@ class HtmlHelper extends Helper {
 
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
-			$options = array_diff_key($options, array('fullBase' => null));
+			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 
 			if (Configure::read('Asset.filter.js')) {
 				$url = str_replace(Configure::read('App.jsBaseUrl'), 'cjs/', $url);
@@ -563,9 +562,8 @@ class HtmlHelper extends Helper {
 
 		if (empty($options['block'])) {
 			return $out;
-		} else {
-			$this->_View->append($options['block'], $out);
 		}
+		$this->_View->append($options['block'], $out);
 	}
 
 /**
@@ -600,9 +598,8 @@ class HtmlHelper extends Helper {
 
 		if (empty($options['block'])) {
 			return $out;
-		} else {
-			$this->_View->append($options['block'], $out);
 		}
+		$this->_View->append($options['block'], $out);
 	}
 
 /**
@@ -924,12 +921,9 @@ class HtmlHelper extends Helper {
 		if (empty($name)) {
 			return $text;
 		}
-		if (is_array($options) && isset($options['escape']) && $options['escape']) {
+		if (isset($options['escape']) && $options['escape']) {
 			$text = h($text);
 			unset($options['escape']);
-		}
-		if (!is_array($options)) {
-			$options = array('class' => $options);
 		}
 		if ($text === null) {
 			$tag = 'tagstart';

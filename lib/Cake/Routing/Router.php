@@ -475,9 +475,6 @@ class Router {
 		if (strlen($url) && strpos($url, '/') !== 0) {
 			$url = '/' . $url;
 		}
-		if (strpos($url, '?') !== false) {
-			$url = substr($url, 0, strpos($url, '?'));
-		}
 		return static::$_routes->parse($url);
 	}
 

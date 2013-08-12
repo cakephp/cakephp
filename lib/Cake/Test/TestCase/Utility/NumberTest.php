@@ -303,6 +303,40 @@ class NumberTest extends TestCase {
 	}
 
 /**
+ * Test currency format with places and fraction exponents.
+ * Places should only matter for non fraction values and vice versa.
+ *
+ * @return void
+ */
+	public function testCurrencyWithFractionAndPlaces() {
+		$result = $this->Number->currency('1.23', 'GBP', array('places' => 3));
+		$expected = '£1.230';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency('0.23', 'GBP', array('places' => 3));
+		$expected = '23p';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency('0.001', 'GBP', array('places' => 3));
+		$expected = '0p';
+		$this->assertEquals($expected, $result);
+
+		$this->Number->addFormat('BHD', array('before' => 'BD ', 'fractionSymbol' => ' fils',
+			'fractionExponent' => 3));
+		$result = $this->Number->currency('1.234', 'BHD', array('places' => 2));
+		$expected = 'BD 1.23';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency('0.234', 'BHD', array('places' => 2));
+		$expected = '234 fils';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Number->currency('0.001', 'BHD', array('places' => 2));
+		$expected = '1 fils';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test adding currency format options to the number helper
  *
  * @return void

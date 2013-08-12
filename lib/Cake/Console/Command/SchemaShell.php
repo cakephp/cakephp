@@ -242,10 +242,9 @@ class SchemaShell extends Shell {
 			if ($File->write($contents)) {
 				$this->out(__d('cake_console', 'SQL dump file created in %s', $File->pwd()));
 				return $this->_stop();
-			} else {
-				$this->err(__d('cake_console', 'SQL dump could not be created'));
-				return $this->_stop();
 			}
+			$this->err(__d('cake_console', 'SQL dump could not be created'));
+			return $this->_stop();
 		}
 		$this->out($contents);
 		return $contents;

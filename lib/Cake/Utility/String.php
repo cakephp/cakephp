@@ -519,7 +519,7 @@ class String {
 						}
 					}
 
-					$truncate .= mb_substr($tag[3], 0 , $left + $entitiesLength);
+					$truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
 					break;
 				} else {
 					$truncate .= $tag[3];
