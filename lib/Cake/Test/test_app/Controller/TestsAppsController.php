@@ -49,7 +49,7 @@ class TestsAppsController extends AppController {
 	}
 
 	public function redirect_to() {
-		$this->redirect('http://cakephp.org');
+		return $this->redirect('http://cakephp.org');
 	}
 
 }
