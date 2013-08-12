@@ -313,7 +313,7 @@ class DboSource extends DataSource {
  * Returns a quoted and escaped string of $data for use in an SQL statement.
  *
  * @param string $data String to be prepared for use in an SQL statement
- * @param string $column The column into which this data will be inserted
+ * @param string $column The column datatype into which this data will be inserted.
  * @return string Quoted and escaped data
  */
 	public function value($data, $column = null) {
