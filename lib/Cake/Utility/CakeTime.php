@@ -917,11 +917,10 @@ class CakeTime {
 		);
 
 		// When time has passed
+		if (!$backwards && $relativeDate) {
+			return sprintf($relativeString, $relativeDate);
+		}
 		if (!$backwards) {
-			if ($relativeDate) {
-				return __d('cake', '%s ago', $relativeDate);
-			}
-
 			return $aboutAgo[$fWord];
 		}
 
