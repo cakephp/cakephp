@@ -72,6 +72,7 @@ abstract class BaseModelTest extends CakeTestCase {
 		'core.fruits_uuid_tag', 'core.uuid_tag', 'core.product_update_all', 'core.group_update_all',
 		'core.player', 'core.guild', 'core.guilds_player', 'core.armor', 'core.armors_player',
 		'core.bidding', 'core.bidding_message', 'core.site', 'core.domain', 'core.domains_site',
+		'core.model_with_relations','core.model_related','core.model_habtm_relation',
 	);
 
 /**

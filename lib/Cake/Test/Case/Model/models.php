@@ -4993,3 +4993,34 @@ class CustomArticle extends AppModel {
 	}
 
 }
+
+/**
+ * ModelWithRelations class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class ModelWithRelations extends CakeTestModel {
+    
+}
+
+/**
+ * ModelRelated class
+ *
+ * @package       Cake.Test.Case.Model
+ */
+class ModelRelated extends CakeTestModel {
+
+	/**
+	* afterFind callback method
+	*
+	* @param array $results
+	* @param boolean $primary
+	* @return array Modified $results
+	*/
+	public function afterFind($results, $primary = false) {
+		foreach ($results as $key => $result) {
+			$results[$key][$this->alias]['name'] = 'Successfuly changed in AfterFind';
+		}
+		return $results;
+	}
+}

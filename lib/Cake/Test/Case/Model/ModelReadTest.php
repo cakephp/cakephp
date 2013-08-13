@@ -6302,7 +6302,6 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('User');
 		$TestModel = new User();
 		$TestModel->cacheQueries = false;
-		$TestModel->order = null;
 
 		$expected = array(
 			'conditions' => array(
@@ -6850,8 +6849,6 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEquals('mariano', $result);
 
-		$TestModel->order = null;
-
 		$result = $TestModel->field('COUNT(*) AS count', true);
 		$this->assertEquals(4, $result);
 
@@ -6907,9 +6904,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertNotRegExp('/ORDER\s+BY/', $log['log'][0]['query']);
 
 		$Article = new Article();
-		$Article->order = null;
 		$Article->recursive = -1;
-
 		$expected = count($Article->find('all', array(
 			'fields' => array('Article.user_id'),
 			'group' => 'Article.user_id')
@@ -7766,8 +7761,6 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEquals(2, $result['Post']['id']);
 
-		$Post->order = null;
-
 		$Post->virtualFields = array('other_field' => 'Post.id + 1');
 		$result = $Post->find('all', array(
 			'fields' => array($dbo->calculate($Post, 'max', array('other_field')))
@@ -7972,5 +7965,208 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->find('unPublished');
 		$this->assertEquals(1, count($result));
 	}
+    
+/**
+* test after find callback on related model
+* 
+* @return void 
+*/
+	public function testRelatedAfterFindCallback() {
+		$this->loadFixtures('ModelWithRelations', 'ModelRelated', 'ModelHabtmRelation');
+		$ModelWithRelations = new ModelWithRelations();
 
+		$ModelWithRelations->bindModel(array(
+			'belongsTo' => array(
+				'BelongsTo' => array(
+					'className' => 'ModelRelated',
+					'foreignKey' => 'related_id',
+				)
+			)
+				)
+		);
+		$results = $ModelWithRelations->find('all');
+		$expected = array(
+			array(
+				'ModelWithRelations' => array(
+					'id' => '1',
+					'name' => 'First record',
+					'related_id' => '1'
+				),
+				'BelongsTo' => array(
+					'id' => '1',
+					'name' => 'Successfuly changed in AfterFind',
+					'primary_id' => '1'
+				)
+			),
+			array(
+				'ModelWithRelations' => array(
+					'id' => '2',
+					'name' => 'Second record',
+					'related_id' => '2'
+				),
+				'BelongsTo' => array(
+					'id' => '2',
+					'name' => 'Successfuly changed in AfterFind',
+					'primary_id' => '2'
+				)
+			)
+		);
+		$this->assertEquals($expected, $results, 'Model related with belongsTo afterFind callback fail');
+	
+		$ModelWithRelations->bindModel(array(
+			'hasOne' => array(
+				'HasOne' => array(
+					'className' => 'ModelRelated',
+					'foreignKey' => 'primary_id',
+				)
+			)			
+				)
+		);
+		$results = $ModelWithRelations->find('all');
+		$expected = array(
+			array(
+				'ModelWithRelations' => array(
+					'id' => '1',
+					'name' => 'First record',
+					'related_id' => '1'
+				),
+				'HasOne' => array(
+					'id' => '1',
+					'name' => 'Successfuly changed in AfterFind',
+					'primary_id' => '1'
+				)
+			),
+			array(
+				'ModelWithRelations' => array(
+					'id' => '2',
+					'name' => 'Second record',
+					'related_id' => '2'
+				),
+				'HasOne' => array(
+					'id' => '2',
+					'name' => 'Successfuly changed in AfterFind',
+					'primary_id' => '2'
+				)
+			)
+		);
+		$this->assertEquals($expected, $results, 'Model related with hasOne afterFind callback fail');
+	
+		$ModelWithRelations->bindModel(array(
+			'hasMany' => array(
+				'HasMany' => array(
+					'className' => 'ModelRelated',
+					'foreignKey' => 'primary_id',
+				)
+			)
+				)
+		);
+		$results = $ModelWithRelations->find('all');
+
+		$expected = array(
+			array(
+				'ModelWithRelations' => array(
+					'id' => '1',
+					'name' => 'First record',
+					'related_id' => '1'
+				),
+				'HasMany' => array(
+					array(
+						'id' => '1',
+						'name' => 'Successfuly changed in AfterFind',
+						'primary_id' => '1'
+					)
+				)
+			),
+			array(
+				'ModelWithRelations' => array(
+					'id' => '2',
+					'name' => 'Second record',
+					'related_id' => '2'
+				),
+				'HasMany' => array(
+					array(
+						'id' => '2',
+						'name' => 'Successfuly changed in AfterFind',
+						'primary_id' => '2'
+					)
+				)
+			)
+		);
+		$this->assertEquals($expected, $results, 'Model related with hasMany afterFind callback fail');
+
+		$ModelWithRelations->bindModel(array(
+			'hasAndBelongsToMany' => array(
+				'HasAndBelongsToMany' => array(
+					'className' => 'ModelRelated',
+					'with' => 'ModelHabtmRelation',
+					'foreignKey' => 'primary_id',
+					'associationForeignKey' => 'related_id',
+				)
+			)
+				)
+		);
+		$results = $ModelWithRelations->find('all');
+
+		$expected = array(
+			array(
+				'ModelWithRelations' => array(
+					'id' => '1',
+					'name' => 'First record',
+					'related_id' => '1'
+				),
+				'HasAndBelongsToMany' => array(
+					array(
+						'id' => '1',
+						'name' => 'Successfuly changed in AfterFind',
+						'primary_id' => '1',
+						'ModelHabtmRelation' => array(
+							'id' => '1',
+							'primary_id' => '1',
+							'related_id' => '1'
+						)
+					),
+					array(
+						'id' => '2',
+						'name' => 'Successfuly changed in AfterFind',
+						'primary_id' => '2',
+						'ModelHabtmRelation' => array(
+							'id' => '2',
+							'primary_id' => '1',
+							'related_id' => '2'
+						)
+					)
+				)
+			),
+			array(
+				'ModelWithRelations' => array(
+					'id' => '2',
+					'name' => 'Second record',
+					'related_id' => '2'
+				),
+				'HasAndBelongsToMany' => array(
+					array(
+						'id' => '1',
+						'name' => 'Successfuly changed in AfterFind',
+						'primary_id' => '1',
+						'ModelHabtmRelation' => array(
+							'id' => '3',
+							'primary_id' => '2',
+							'related_id' => '1'
+						)
+					),
+					array(
+						'id' => '2',
+						'name' => 'Successfuly changed in AfterFind',
+						'primary_id' => '2',
+						'ModelHabtmRelation' => array(
+							'id' => '4',
+							'primary_id' => '2',
+							'related_id' => '2'
+						)
+					)
+				)
+			)
+		);
+		$this->assertEquals($expected, $results, 'Model related with hasAndBelongsToMany afterFind callback fail');
+	}
 }
