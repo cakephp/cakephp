@@ -1784,7 +1784,7 @@ class FormHelper extends AppHelper {
 		$url = '#';
 		$onClick = 'document.' . $formName . '.submit();';
 		if ($confirmMessage) {
-			$options['onclick'] = $this->_confirm($confirmMessage, $onClick);
+			$options['onclick'] = $this->_confirm($confirmMessage, $onClick, '', $options);
 		} else {
 			$options['onclick'] = $onClick . ' ';
 		}
