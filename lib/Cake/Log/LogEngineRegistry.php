@@ -24,7 +24,6 @@ use Cake\Utility\ObjectRegistry;
  */
 class LogEngineRegistry extends ObjectRegistry {
 
-
 /**
  * Resolve a logger classname.
  *
@@ -34,6 +33,9 @@ class LogEngineRegistry extends ObjectRegistry {
  * @return string|false Either the correct classname or false.
  */
 	protected function _resolveClassName($class) {
+		if (is_object($class)) {
+			return $class;
+		}
 		return App::classname($class, 'Log/Engine', 'Log');
 	}
 
@@ -54,43 +56,26 @@ class LogEngineRegistry extends ObjectRegistry {
  * Create the logger instance.
  *
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
- * @param string $class The classname that is missing.
+ * @param string|LogInterface $class The classname or object to make.
  * @param array $settings An array of settings to use for the logger.
  * @return LogEngine The constructed logger class.
- */
-	protected function _create($class, $settings) {
-		$instance = new $class($settings);
-		$this->_checkInstance($instance);
-		return $instance;
-	}
-
-/**
- * Check an instance to see if it implements the LogInterface.
- *
- * @param mixed $instance The instance to check.
- * @return void
- * @throws Cake\Error\Exception when an object doesn't implement 
+ * @throws Cake\Error\Exception when an object doesn't implement
  *    the correct interface.
  */
-	protected function _checkInstance($instance) {
+	protected function _create($class, $settings) {
+		if (is_object($class)) {
+			$instance = $class;
+		}
+		if (!isset($instance)) {
+			$instance = new $class($settings);
+		}
 		if ($instance instanceof LogInterface) {
-			return;
+			return $instance;
 		}
 		throw new Error\Exception(__d(
 			'cake_dev',
 			'Loggers must implement Cake\Log\LogInterface.'
 		));
-	}
-
-/**
- * Add a logger into a given name.
- *
- * @param string $name The name of the logger.
- * @param Cake\Log\LogInterface $instance A logger implementing LogInterface.
- */
-	public function add($name, $instance) {
-		$this->_checkInstance($instance);
-		$this->_loaded[$name] = $instance;
 	}
 
 /**

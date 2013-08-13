@@ -13,8 +13,6 @@
  */
 namespace Cake\Log;
 
-use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Log\Engine\BaseLog;
 
@@ -30,7 +28,7 @@ use Cake\Log\Engine\BaseLog;
  * A sample configuration would look like:
  *
  * {{{
- * Configure::write('Log.my_log', ['engine' => 'FileLog']);
+ * Log::config('my_log', ['engine' => 'FileLog']);
  * }}}
  *
  * You can define the engine as any fully namespaced classname or use a short hand
@@ -40,7 +38,7 @@ use Cake\Log\Engine\BaseLog;
  * Log adapters are required to implement `Cake\Log\LogInterface`, and there is a
  * built-in base class (`Cake\Log\Engine\BaseLog`) that can be used for custom loggers.
  *
- * Outside of the `engine` key, all other configuration values will be passed to the 
+ * Outside of the `engine` key, all other configuration values will be passed to the
  * logging adapter's constructor as an array.
  *
  * ### Logging levels
@@ -49,7 +47,7 @@ use Cake\Log\Engine\BaseLog;
  * This allows you to disable debug messages in production for example:
  *
  * {{{
- * Configure::write('default', [
+ * Log::config('default', [
  *     'engine' => 'File',
  *     'path' => LOGS,
  *     'levels' => ['error', 'critical', 'alert', 'emergency']
@@ -62,12 +60,12 @@ use Cake\Log\Engine\BaseLog;
  * ### Logging scopes
  *
  * When configuring loggers you can define the active scopes the logger
- * is for.  If defined, only the listed scopes will be handled by the
- * logger.  If you don't define any scopes an adapter will catch
+ * is for. If defined, only the listed scopes will be handled by the
+ * logger. If you don't define any scopes an adapter will catch
  * all scopes that match the handled levels.
  *
  * {{{
- * Configure::write('payments', [
+ * Log::config('payments', [
  *     'engine' => 'File',
  *     'scopes' => ['payment', 'order']
  * ]);
@@ -77,13 +75,6 @@ use Cake\Log\Engine\BaseLog;
  * `payment` and `order` scopes. All other scopes including the
  * undefined scope will be ignored.
  *
- * ### Loading loggers at runtime
- *
- * After an application's bootstrap phase is complete, or after
- * any log messages are written you cannot use Configure to create 
- * new loggers, without using Log::reset() first.  Instead you should
- * use Log::engine() to insert constructed loggers, when dynamically
- * adding loggers at runtime.
  *
  * ### Writing to the log
  *
@@ -109,10 +100,22 @@ use Cake\Log\Engine\BaseLog;
  * in the cart and ordering subsystems differently than the rest of the
  * application.  By using scopes you can control logging for each part
  * of your application and also use standard log levels.
- *
- * @package       Cake.Log
  */
 class Log {
+
+/**
+ * Internal flag for tracking whether or not configuration has been changed.
+ *
+ * @var boolean
+ */
+	protected static $_dirtyConfig = false;
+
+/**
+ * An array of configured loggers.
+ *
+ * @var array
+ */
+	protected static $_config = [];
 
 /**
  * LogEngineRegistry class
@@ -162,8 +165,11 @@ class Log {
 	protected static function _init() {
 		if (empty(static::$_registry)) {
 			static::$_registry = new LogEngineRegistry();
+		}
+		if (static::$_dirtyConfig) {
 			static::_loadConfig();
 		}
+		static::$_dirtyConfig = false;
 	}
 
 /**
@@ -173,8 +179,7 @@ class Log {
  * @return void
  */
 	protected static function _loadConfig() {
-		$loggers = Configure::read('Log');
-		foreach ((array)$loggers as $name => $properties) {
+		foreach (static::$_config as $name => $properties) {
 			if (isset($properties['engine'])) {
 				$properties['className'] = $properties['engine'];
 			}
@@ -188,11 +193,14 @@ class Log {
  * Log class.
  *
  * Resets the configured logging adapters, as well as any custom logging levels.
+ * This will also clear the configuration data.
  *
  * @return void
  */
 	public static function reset() {
 		static::$_registry = null;
+		static::$_config = [];
+		static::$_dirtyConfig = true;
 	}
 
 /**
@@ -218,15 +226,29 @@ class Log {
 	}
 
 /**
- * @deprecated Use Configure::write() to configure logging.
- * @see App/Config/logging.php
+ * Set configuration information for loggers.
+ *
+ * This method can be used to define loggers for an application
+ * during the bootstrapping process. You can use this method to add new loggers
+ * at runtime as well. New loggers will be constructed upon the next write.
+ *
+ * To change a logger's configuration at runtime, first drop the logger and then
+ * reconfigure it.
+ *
+ * Loggers will not be constructed until the first log message is written.
+ *
+ * @param string|array $key The name of the logger, or an array of multiple logger configs.
+ * @param array $config An array of name => config data for loggers.
  * @return void
+ * @see App/Config/logging.php
  */
-	public static function config($key, $config) {
-		trigger_error(
-			__d('cake_dev', 'You must use Configure::write() to define logging configuration. Or use engine() to inject new adapter.'),
-			E_USER_WARNING
-		);
+	public static function config($key, $config = null) {
+		static::$_dirtyConfig = true;
+		if ($config !== null && is_string($key)) {
+			static::$_config[$key] = (array) $config;
+			return;
+		}
+		static::$_config = array_merge(static::$_config, $key);
 	}
 
 /**
@@ -278,19 +300,13 @@ class Log {
 	}
 
 /**
- * Get/Set a logging engine.
+ * Get a logging engine.
  *
- * @see BaseLog
- * @param string $name Key name of a configured adapter to get/set
- * @param LogInterface $engine The logging instance to inject/add to Log.
+ * @param string $name Key name of a configured adapter to get.
  * @return $mixed instance of BaseLog or false if not found
  */
-	public static function engine($name, $engine = null) {
+	public static function engine($name) {
 		static::_init();
-		if ($engine) {
-			static::$_registry->add($name, $engine);
-			return;
-		}
 		if (static::$_registry->{$name}) {
 			return static::$_registry->{$name};
 		}
