@@ -23,16 +23,8 @@ use Cake\Log\Log;
 /**
  * Tests QueryLogger class
  *
- **/
-class QueryLoggerTest extends \Cake\TestSuite\TestCase {
-
-/**
- * Contains a list of disabled logging engines that will be re-enabled
- * on tearDown
- *
- * @var array
  */
-	protected $_disabledEngines = [];
+class QueryLoggerTest extends \Cake\TestSuite\TestCase {
 
 /**
  * Set up
@@ -40,12 +32,8 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function setUp() {
-		foreach (Log::configured() as $e) {
-			if (Log::enabled($e)) {
-				Log::disable($e);
-				$this->_disabledEngines[] = $e;
-			}
-		}
+		parent::setUp();
+		Log::reset();
 	}
 
 /**
@@ -54,11 +42,8 @@ class QueryLoggerTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function tearDown() {
-		Log::drop('queryLoggerTest');
-		Log::drop('queryLoggerTest2');
-		foreach ($this->_disabledEngines as $e) {
-			Log::enable($e);
-		}
+		parent::tearDown();
+		Log::reset();
 	}
 
 /**
