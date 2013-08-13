@@ -71,7 +71,7 @@ trait SqliteDialectTrait {
 					->name('ROUND')
 					->type('-')
 					->iterateParts(function($p) {
-						return new FunctionExpression('JULIANDAY', [$p => 'literal']);
+						return new FunctionExpression('JULIANDAY', [$p['value']], [$p['type']]);
 					});
 				break;
 			case 'NOW':
