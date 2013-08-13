@@ -5000,7 +5000,7 @@ class CustomArticle extends AppModel {
  * @package       Cake.Test.Case.Model
  */
 class ModelWithRelations extends CakeTestModel {
-    
+
 }
 
 /**
@@ -5010,13 +5010,13 @@ class ModelWithRelations extends CakeTestModel {
  */
 class ModelRelated extends CakeTestModel {
 
-	/**
-	* afterFind callback method
-	*
-	* @param array $results
-	* @param boolean $primary
-	* @return array Modified $results
-	*/
+/**
+ * afterFind callback method
+ *
+ * @param array $results
+ * @param boolean $primary
+ * @return array Modified $results
+ */
 	public function afterFind($results, $primary = false) {
 		foreach ($results as $key => $result) {
 			$results[$key][$this->alias]['name'] = 'Successfuly changed in AfterFind';
