@@ -337,6 +337,15 @@ TEXT;
 			'the song that never' . "\n" .
 			' ends.';
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
+
+		$text = 'Но вим омниюм факёльиси элыктрам, мюнырэ лэгыры векж ыт. Выльёт квюандо нюмквуам ты кюм. Зыд эю рыбюм.';
+		$result = String::wrap($text, 33);
+		$expected = <<<TEXT
+Но вим омниюм факёльиси элыктрам,
+мюнырэ лэгыры векж ыт. Выльёт квюа
+ндо нюмквуам ты кюм. Зыд эю рыбюм.
+TEXT;
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 	}
 
 /**

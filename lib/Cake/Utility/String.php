@@ -319,12 +319,12 @@ class String {
  *
  * ### Options
  *
- * - `width` The width to wrap to. Defaults to 72
+ * - `width` The width to wrap to. Defaults to 72.
  * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
  * - `indent` String to indent with. Defaults to null.
  * - `indentAt` 0 based index to start indenting at. Defaults to 0.
  *
- * @param string $text Text the text to format.
+ * @param string $text The text to format.
  * @param array|integer $options Array of options to use, or an integer to wrap the text to.
  * @return string Formatted text.
  */
@@ -334,7 +334,7 @@ class String {
 		}
 		$options += array('width' => 72, 'wordWrap' => true, 'indent' => null, 'indentAt' => 0);
 		if ($options['wordWrap']) {
-			$wrapped = wordwrap($text, $options['width'], "\n");
+			$wrapped = self::wordWrap($text, $options['width'], "\n");
 		} else {
 			$wrapped = trim(chunk_split($text, $options['width'] - 1, "\n"));
 		}
@@ -346,6 +346,39 @@ class String {
 			$wrapped = implode("\n", $chunks);
 		}
 		return $wrapped;
+	}
+
+/**
+ * Unicode aware version of wordwrap.
+ *
+ * @param string $text The text to format.
+ * @param integer $width The width to wrap to. Defaults to 72.
+ * @param string $break The line is broken using the optional break parameter. Defaults to '\n'.
+ * @param bool $cut If the cut is set to true, the string is always wrapped at the specified width.
+ * @return string Formatted text.
+ */
+	public static function wordWrap($text, $width = 72, $break = "\n", $cut = false) {
+		if (!$cut) {
+			$regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . ',}\b#U';
+		} else {
+			$regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . '}#';
+		}
+		$length = mb_strlen($text);
+		$whileWhat = ceil($length / $width);
+		$i = 1;
+		$return = '';
+		while ($i < $whileWhat) {
+			preg_match($regexp, $text, $matches);
+			if (!$matches) {
+				$i++;
+				continue;
+			}
+			$string = $matches[0];
+			$return .= trim($string) . $break;
+			$text = substr($text, strlen($string));
+			$i++;
+		}
+		return $return . $text;
 	}
 
 /**
