@@ -53,11 +53,11 @@ class ValuesExpression implements ExpressionInterface {
 	protected $_types = [];
 
 /**
- * Flag for tracking whether or not the values are an instance of Query
+ * The Query object to use as a values expression
  *
- * @var boolean
+ * @var Cake\Database\Query
  */
-	protected $_hasQuery = false;
+	protected $_query = false;
 
 /**
  * Constructor
@@ -81,15 +81,16 @@ class ValuesExpression implements ExpressionInterface {
  */
 	public function add($data) {
 		if (
-			count($this->_values) &&
-			($data instanceof Query || ($this->_hasQuery && is_array($data)))
+			(count($this->_values) && $data instanceof Query) ||
+			($this->_query && is_array($data))
 		) {
 			throw new Error\Exception(
 				__d('cake_dev', 'You cannot mix subqueries and array data in inserts.')
 			);
 		}
 		if ($data instanceof Query) {
-			$this->_hasQuery = true;
+			$this->query($data);
+			return;
 		}
 		$this->_values[] = $data;
 	}
@@ -125,20 +126,30 @@ class ValuesExpression implements ExpressionInterface {
 	}
 
 /**
+ * Sets the query object to be used as the values expression to be evaluated
+ * to insert records in the table. If no params are passed, then it returns
+ * the currently stored query
+ *
+ * @param Cake\Database\Query $query
+ * @return Cake\Database\Query
+ */
+	public function query(Query $query = null) {
+		if ($query === null) {
+			return $this->_query;
+		}
+		$this->_query = $query;
+	}
+
+/**
  * Convert the values into a SQL string with placeholders.
  *
  * @param Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {
-		if (empty($this->_values)) {
+		if (empty($this->_values) && empty($this->_query)) {
 			return '';
 		}
-		if ($this->_values[0] instanceof Query) {
-			return ' ' . $this->_values[0]->sql($generator);
-		}
-		$placeholders = [];
-		$numColumns = count($this->_columns);
 
 		$i = 0;
 		$defaults = array_fill_keys($this->_columns, null);
@@ -148,8 +159,16 @@ class ValuesExpression implements ExpressionInterface {
 				$type = isset($this->_types[$column]) ? $this->_types[$column] : null;
 				$generator->bind($i++, $value, $type);
 			}
-			$placeholders[] = implode(', ', array_fill(0, $numColumns, '?'));
 		}
+
+		if ($this->query()) {
+			return ' ' . $this->query()->sql($generator);
+		}
+
+		$placeholders = [];
+		$numColumns = count($this->_columns);
+		$rowPlaceholders = implode(', ', array_fill(0, $numColumns, '?'));
+		$placeholders = array_fill(0,count($this->_values), $rowPlaceholders);
 		return sprintf(' VALUES (%s)', implode('), (', $placeholders));
 	}
 
@@ -163,7 +182,7 @@ class ValuesExpression implements ExpressionInterface {
  * @return void
  */
 	public function traverse(callable $visitor) {
-		if (!$this->_hasQuery) {
+		if ($this->_query) {
 			return;
 		}
 
