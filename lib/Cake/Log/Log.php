@@ -193,18 +193,6 @@ class Log {
 	}
 
 /**
- * @deprecated Use Configure::write() to configure logging.
- * @see App/Config/logging.php
- * @return void
- */
-	public static function config($key, $config) {
-		trigger_error(
-			__d('cake_dev', 'You must use Configure::write() to define logging configuration. Or use engine() to inject new adapter.'),
-			E_USER_WARNING
-		);
-	}
-
-/**
  * Returns the keynames of the currently active streams
  *
  * @return array Array of configured log streams.
@@ -227,6 +215,18 @@ class Log {
 	}
 
 /**
+ * @deprecated Use Configure::write() to configure logging.
+ * @see App/Config/logging.php
+ * @return void
+ */
+	public static function config($key, $config) {
+		trigger_error(
+			__d('cake_dev', 'You must use Configure::write() to define logging configuration. Or use engine() to inject new adapter.'),
+			E_USER_WARNING
+		);
+	}
+
+/**
  * Removes a stream from the active streams.  Once a stream has been removed
  * it will no longer have messages sent to it.
  *
@@ -239,51 +239,39 @@ class Log {
 	}
 
 /**
- * Checks wether $streamName is enabled
+ * Checks whether $streamName is enabled
  *
  * @param string $streamName to check
  * @return bool
  * @throws Cake\Error\Exception
+ * @deprecated This method will be removed in 3.0 stable.
  */
 	public static function enabled($streamName) {
-		static::_init();
-		if (!isset(static::$_registry->{$streamName})) {
-			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
-		}
-		return static::$_registry->enabled($streamName);
+		throw new Error\Exception(__d('cake_dev', 'Log::enabled() is deprecated. Use Log::configured() instead.'));
 	}
 
 /**
- * Enable stream.  Streams that were previously disabled
- * can be re-enabled with this method.
+ * Enable stream.
  *
  * @param string $streamName to enable
  * @return void
  * @throws Cake\Error\Exception
+ * @deprecated This method will be removed in 3.0 stable.
  */
 	public static function enable($streamName) {
-		static::_init();
-		if (!isset(static::$_registry->{$streamName})) {
-			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
-		}
-		static::$_registry->enable($streamName);
+		throw new Error\Exception(__d('cake_dev', 'Log::enable() is deprecated. Use Log::engine() instead.'));
 	}
 
 /**
- * Disable stream.  Disabling a stream will
- * prevent that log stream from receiving any messages until
- * its re-enabled.
+ * Disable stream.
  *
  * @param string $streamName to disable
  * @return void
  * @throws Cake\Error\Exception
+ * @deprecated This method will be removed in 3.0 stable.
  */
 	public static function disable($streamName) {
-		static::_init();
-		if (!isset(static::$_registry->{$streamName})) {
-			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
-		}
-		static::$_registry->disable($streamName);
+		throw new Error\Exception(__d('cake_dev', 'Log::disable() is deprecated. Use Log::drop() instead.'));
 	}
 
 /**

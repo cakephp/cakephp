@@ -217,53 +217,30 @@ class LogTest extends TestCase {
 	}
 
 /**
- * test enable
+ * test enable() throws exceptions
  *
  * @expectedException Cake\Error\Exception
  */
 	public function testStreamEnable() {
-		Configure::write('Log.spam', array(
-			'engine' => 'File',
-			'file' => 'spam',
-		));
-		$this->assertTrue(Log::enabled('spam'));
-		Log::drop('spam');
-		Log::enable('bogus_stream');
+		Log::enable('debug');
 	}
 
 /**
- * test disable
+ * test enabled() throws exceptions
+ *
+ * @expectedException Cake\Error\Exception
+ */
+	public function testStreamEnabled() {
+		Log::enabled('debug');
+	}
+
+/**
+ * test disable() throws exceptions
  *
  * @expectedException Cake\Error\Exception
  */
 	public function testStreamDisable() {
-		Configure::write('Log.spam', array(
-			'engine' => 'File',
-			'file' => 'spam',
-		));
-		$this->assertTrue(Log::enabled('spam'));
-		Log::disable('spam');
-		$this->assertFalse(Log::enabled('spam'));
-		Log::drop('spam');
-		Log::enable('bogus_stream');
-	}
-
-/**
- * test enabled() invalid stream
- *
- * @expectedException Cake\Error\Exception
- */
-	public function testStreamEnabledInvalid() {
-		Log::enabled('bogus_stream');
-	}
-
-/**
- * test disable invalid stream
- *
- * @expectedException Cake\Error\Exception
- */
-	public function testStreamDisableInvalid() {
-		Log::disable('bogus_stream');
+		Log::disable('debug');
 	}
 
 	protected function _resetLogConfig() {
