@@ -7761,7 +7761,7 @@ class ModelReadTest extends BaseModelTest {
 			'limit' => 1
 		));
 		$this->assertEquals(2, $result['Post']['id']);
-		$Post->order = null; 
+		$Post->order = null;
 
 		$Post->virtualFields = array('other_field' => 'Post.id + 1');
 		$result = $Post->find('all', array(
@@ -7967,12 +7967,12 @@ class ModelReadTest extends BaseModelTest {
 		$result = $Article->find('unPublished');
 		$this->assertEquals(1, count($result));
 	}
-    
+
 /**
-* test after find callback on related model
-* 
-* @return void 
-*/
+ * test after find callback on related model
+ * 
+ * @return void 
+ */
 	public function testRelatedAfterFindCallback() {
 		$this->loadFixtures('ModelWithRelations', 'ModelRelated', 'ModelHabtmRelation');
 		$ModelWithRelations = new ModelWithRelations();
@@ -8014,14 +8014,14 @@ class ModelReadTest extends BaseModelTest {
 			)
 		);
 		$this->assertEquals($expected, $results, 'Model related with belongsTo afterFind callback fail');
-	
+
 		$ModelWithRelations->bindModel(array(
 			'hasOne' => array(
 				'HasOne' => array(
 					'className' => 'ModelRelated',
 					'foreignKey' => 'primary_id',
 				)
-			)			
+			)
 				)
 		);
 		$results = $ModelWithRelations->find('all');
@@ -8052,7 +8052,7 @@ class ModelReadTest extends BaseModelTest {
 			)
 		);
 		$this->assertEquals($expected, $results, 'Model related with hasOne afterFind callback fail');
-	
+
 		$ModelWithRelations->bindModel(array(
 			'hasMany' => array(
 				'HasMany' => array(
