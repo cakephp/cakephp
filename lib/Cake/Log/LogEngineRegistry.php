@@ -17,64 +17,90 @@ namespace Cake\Log;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Log\LogInterface;
-use Cake\Utility\ObjectCollection;
+use Cake\Utility\ObjectRegistry;
 
 /**
  * Registry of loaded log engines
- *
- * @package       Cake.Log
  */
-class LogEngineRegistry extends ObjectCollection {
+class LogEngineRegistry extends ObjectRegistry {
+
 
 /**
- * Loads/constructs a Log engine.
+ * Resolve a logger classname.
  *
- * @param string $name instance identifier
- * @param LogInterface|array $options Setting for the Log Engine, or the log engine
- *   If a log engine is used, the adapter will be enabled.
- * @return BaseLog BaseLog engine instance
- * @throws Cake\Error\Exception when logger class does not implement a write method
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
+ * @param string $class Partial classname to resolve.
+ * @return string|false Either the correct classname or false.
  */
-	public function load($name, $options = array()) {
-		$logger = false;
-		if ($options instanceof LogInterface) {
-			$enable = true;
-			$logger = $options;
-			$options = null;
-		}
-		if (is_array($options)) {
-			$enable = isset($options['enabled']) ? $options['enabled'] : true;
-			$logger = $this->_getLogger($options);
-		}
-		if (!$logger instanceof LogInterface) {
-			throw new Error\Exception(sprintf(
-				__d('cake_dev', 'logger class %s is not an instance of Cake\Log\LogInterface.'), $name
-			));
-		}
-		$this->_loaded[$name] = $logger;
-		if ($enable) {
-			$this->enable($name);
-		}
-		return $logger;
+	protected function _resolveClassName($class) {
+		return App::classname($class, 'Log/Engine', 'Log');
 	}
 
 /**
- * Attempts to import a logger class from the various paths it could be on.
- * Checks that the logger class implements a write method as well.
+ * Throws an exception when a logger is missing.
  *
- * @param array $options The configuration options to load a logger with.
- * @return false|LogInterface boolean false on any failures, log adapter interface on success
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
+ * @param string $class The classname that is missing.
+ * @param string $plugin The plugin the logger is missing in.
  * @throws Cake\Error\Exception
  */
-	protected static function _getLogger($options) {
-		$name = isset($options['engine']) ? $options['engine'] : null;
-		unset($options['engine']);
-		$class = App::classname($name, 'Log/Engine', 'Log');
-		if (!$class) {
-			throw new Error\Exception(__d('cake_dev', 'Could not load class %s', $name));
+	protected function _throwMissingClassError($class, $plugin) {
+		throw new Error\Exception(__d('cake_dev', 'Could not load class %s', $class));
+	}
+
+/**
+ * Create the logger instance.
+ *
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ * @param string $class The classname that is missing.
+ * @param array $settings An array of settings to use for the logger.
+ * @return LogEngine The constructed logger class.
+ */
+	protected function _create($class, $settings) {
+		$instance = new $class($settings);
+		$this->_checkInstance($instance);
+		return $instance;
+	}
+
+/**
+ * Check an instance to see if it implements the LogInterface.
+ *
+ * @param mixed $instance The instance to check.
+ * @return void
+ * @throws Cake\Error\Exception when an object doesn't implement 
+ *    the correct interface.
+ */
+	protected function _checkInstance($instance) {
+		if ($instance instanceof LogInterface) {
+			return;
 		}
-		$logger = new $class($options);
-		return $logger;
+		throw new Error\Exception(__d(
+			'cake_dev',
+			'Loggers must implement Cake\Log\LogInterface.'
+		));
+	}
+
+/**
+ * Add a logger into a given name.
+ *
+ * @param string $name The name of the logger.
+ * @param Cake\Log\LogInterface $instance A logger implementing LogInterface.
+ */
+	public function add($name, $instance) {
+		$this->_checkInstance($instance);
+		$this->_loaded[$name] = $instance;
+	}
+
+/**
+ * Remove a single logger from the registry.
+ *
+ * @param string $name The logger name.
+ * @return void
+ */
+	public function unload($name) {
+		unset($this->_loaded[$name]);
 	}
 
 }

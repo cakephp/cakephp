@@ -174,8 +174,11 @@ class Log {
  */
 	protected static function _loadConfig() {
 		$loggers = Configure::read('Log');
-		foreach ((array)$loggers as $key => $config) {
-			static::$_registry->load($key, $config);
+		foreach ((array)$loggers as $name => $properties) {
+			if (isset($properties['engine'])) {
+				$properties['className'] = $properties['engine'];
+			}
+			static::$_registry->load($name, $properties);
 		}
 	}
 
@@ -285,7 +288,7 @@ class Log {
 	public static function engine($name, $engine = null) {
 		static::_init();
 		if ($engine) {
-			static::$_registry->load($name, $engine);
+			static::$_registry->add($name, $engine);
 			return;
 		}
 		if (static::$_registry->{$name}) {
@@ -346,7 +349,7 @@ class Log {
 			$level = static::$_levels[$level];
 		}
 		$logged = false;
-		foreach (static::$_registry->enabled() as $streamName) {
+		foreach (static::$_registry->loaded() as $streamName) {
 			$logger = static::$_registry->{$streamName};
 			$levels = $scopes = null;
 			if ($logger instanceof BaseLog) {
