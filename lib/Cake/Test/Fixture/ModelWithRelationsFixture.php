@@ -26,25 +26,25 @@
  */
 class ModelWithRelationsFixture extends CakeTestFixture {
 
-    /**
-     * fields property
-     *
-     * @var array
-     */
-    public $fields = array(
-        'id' => array('type' => 'integer', 'key' => 'primary'),
-        'name' => array('type' => 'string'),
-        'related_id' => array('type' => 'integer'),
-    );
+	/**
+	* fields property
+	*
+	* @var array
+	*/
+	public $fields = array(
+		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'name' => array('type' => 'string'),
+		'related_id' => array('type' => 'integer'),
+	);
 
-    /**
-     * records property
-     *
-     * @var array
-     */
-    public $records = array(
-        array('id' => 1, 'name' => 'First record', 'related_id' => 1),
-        array('id' => 2, 'name' => 'Second record', 'related_id' => 2)
-    );
+	/**
+	* records property
+	*
+	* @var array
+	*/
+	public $records = array(
+		array('id' => 1, 'name' => 'First record', 'related_id' => 1),
+		array('id' => 2, 'name' => 'Second record', 'related_id' => 2)
+	);
 
 }

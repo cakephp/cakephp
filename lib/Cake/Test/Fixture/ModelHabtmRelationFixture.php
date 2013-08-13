@@ -26,27 +26,27 @@
  */
 class ModelHabtmRelationFixture extends CakeTestFixture {
 
-    /**
-     * fields property
-     *
-     * @var array
-     */
-    public $fields = array(
-	'id' => array('type' => 'integer', 'key' => 'primary'),
-	'primary_id' => array('type' => 'integer'),
-	'related_id' => array('type' => 'integer'),
-    );
+	/**
+	* fields property
+	*
+	* @var array
+	*/
+	public $fields = array(
+		'id' => array('type' => 'integer', 'key' => 'primary'),
+		'primary_id' => array('type' => 'integer'),
+		'related_id' => array('type' => 'integer'),
+	);
 
-    /**
-     * records property
-     *
-     * @var array
-     */
-    public $records = array(
-	array('id' => 1, 'primary_id' => 1, 'related_id' => 1),
-	array('id' => 2, 'primary_id' => 1, 'related_id' => 2),
-	array('id' => 3, 'primary_id' => 2, 'related_id' => 1),
-	array('id' => 4, 'primary_id' => 2, 'related_id' => 2),
-    );
+	/**
+	* records property
+	*
+	* @var array
+	*/
+	public $records = array(
+		array('id' => 1, 'primary_id' => 1, 'related_id' => 1),
+		array('id' => 2, 'primary_id' => 1, 'related_id' => 2),
+		array('id' => 3, 'primary_id' => 2, 'related_id' => 1),
+		array('id' => 4, 'primary_id' => 2, 'related_id' => 2),
+	);
 
 }
