@@ -115,11 +115,11 @@ use Cake\Log\Engine\BaseLog;
 class Log {
 
 /**
- * LogEngineCollection class
+ * LogEngineRegistry class
  *
- * @var LogEngineCollection
+ * @var LogEngineRegistry
  */
-	protected static $_Collection;
+	protected static $_registry;
 
 /**
  * Log levels as detailed in RFC 5424
@@ -160,8 +160,8 @@ class Log {
  * @return void
  */
 	protected static function _init() {
-		if (empty(static::$_Collection)) {
-			static::$_Collection = new LogEngineCollection();
+		if (empty(static::$_registry)) {
+			static::$_registry = new LogEngineRegistry();
 			static::_loadConfig();
 		}
 	}
@@ -175,7 +175,7 @@ class Log {
 	protected static function _loadConfig() {
 		$loggers = Configure::read('Log');
 		foreach ((array)$loggers as $key => $config) {
-			static::$_Collection->load($key, $config);
+			static::$_registry->load($key, $config);
 		}
 	}
 
@@ -189,7 +189,7 @@ class Log {
  * @return void
  */
 	public static function reset() {
-		static::$_Collection = null;
+		static::$_registry = null;
 	}
 
 /**
@@ -211,7 +211,7 @@ class Log {
  */
 	public static function configured() {
 		static::_init();
-		return static::$_Collection->attached();
+		return static::$_registry->loaded();
 	}
 
 /**
@@ -235,7 +235,7 @@ class Log {
  */
 	public static function drop($streamName) {
 		static::_init();
-		static::$_Collection->unload($streamName);
+		static::$_registry->unload($streamName);
 	}
 
 /**
@@ -247,10 +247,10 @@ class Log {
  */
 	public static function enabled($streamName) {
 		static::_init();
-		if (!isset(static::$_Collection->{$streamName})) {
+		if (!isset(static::$_registry->{$streamName})) {
 			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
-		return static::$_Collection->enabled($streamName);
+		return static::$_registry->enabled($streamName);
 	}
 
 /**
@@ -263,10 +263,10 @@ class Log {
  */
 	public static function enable($streamName) {
 		static::_init();
-		if (!isset(static::$_Collection->{$streamName})) {
+		if (!isset(static::$_registry->{$streamName})) {
 			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
-		static::$_Collection->enable($streamName);
+		static::$_registry->enable($streamName);
 	}
 
 /**
@@ -280,10 +280,10 @@ class Log {
  */
 	public static function disable($streamName) {
 		static::_init();
-		if (!isset(static::$_Collection->{$streamName})) {
+		if (!isset(static::$_registry->{$streamName})) {
 			throw new Error\Exception(__d('cake_dev', 'Stream %s not found', $streamName));
 		}
-		static::$_Collection->disable($streamName);
+		static::$_registry->disable($streamName);
 	}
 
 /**
@@ -297,11 +297,11 @@ class Log {
 	public static function engine($name, $engine = null) {
 		static::_init();
 		if ($engine) {
-			static::$_Collection->load($name, $engine);
+			static::$_registry->load($name, $engine);
 			return;
 		}
-		if (static::$_Collection->{$name}) {
-			return static::$_Collection->{$name};
+		if (static::$_registry->{$name}) {
+			return static::$_registry->{$name};
 		}
 		return false;
 	}
@@ -358,8 +358,8 @@ class Log {
 			$level = static::$_levels[$level];
 		}
 		$logged = false;
-		foreach (static::$_Collection->enabled() as $streamName) {
-			$logger = static::$_Collection->{$streamName};
+		foreach (static::$_registry->enabled() as $streamName) {
+			$logger = static::$_registry->{$streamName};
 			$levels = $scopes = null;
 			if ($logger instanceof BaseLog) {
 				$levels = $logger->levels();

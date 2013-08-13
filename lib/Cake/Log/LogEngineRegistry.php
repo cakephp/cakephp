@@ -24,7 +24,7 @@ use Cake\Utility\ObjectCollection;
  *
  * @package       Cake.Log
  */
-class LogEngineCollection extends ObjectCollection {
+class LogEngineRegistry extends ObjectCollection {
 
 /**
  * Loads/constructs a Log engine.
