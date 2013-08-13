@@ -100,14 +100,13 @@ class RouteCollection implements \Countable {
  * @return mixed Either false on failure, or a string on success.
  */
 	protected function _matchRoutes($routes, $url) {
-		$output = false;
 		for ($i = 0, $len = count($routes); $i < $len; $i++) {
-			if ($match = $routes[$i]->match($url, $this->_requestContext)) {
-				$output = trim($match, '/');
-				break;
+			$match = $routes[$i]->match($url, $this->_requestContext);
+			if ($match) {
+				return strlen($match) > 1 ? trim($match, '/') : $match;
 			}
 		}
-		return $output;
+		return false;
 	}
 
 /**
@@ -159,7 +158,7 @@ class RouteCollection implements \Countable {
  * @return array An array of request parameters parsed from the url.
  */
 	public function parse($url) {
-		$queryParameters = [];
+		$queryParameters = null;
 		if (strpos($url, '?') !== false) {
 			list($url, $queryParameters) = explode('?', $url, 2);
 			parse_str($queryParameters, $queryParameters);
@@ -167,8 +166,11 @@ class RouteCollection implements \Countable {
 		$out = array();
 		for ($i = 0, $len = count($this); $i < $len; $i++) {
 			$r = $this->_routes[$i]->parse($url);
+			if ($r !== false && $queryParameters) {
+				$r['?'] = $queryParameters;
+				return $r;
+			}
 			if ($r !== false) {
-				$r['?'] = isset($r['?']) ? $r['?'] : $queryParameters;
 				return $r;
 			}
 		}

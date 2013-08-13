@@ -658,7 +658,7 @@ class Response {
  *
  * @return mixed associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
- * @throws CakeException If an attempt is made to add an invalid status code
+ * @throws Cake\Error\Exception If an attempt is made to add an invalid status code
  */
 	public function httpCodes($code = null) {
 		if (empty($code)) {
@@ -668,7 +668,7 @@ class Response {
 			$codes = array_keys($code);
 			$min = min($codes);
 			if (!is_int($min) || $min < 100 || max($codes) > 999) {
-				throw new CakeException(__d('cake_dev', 'Invalid status code'));
+				throw new Error\Exception(__d('cake_dev', 'Invalid status code'));
 			}
 			$this->_statusCodes = $code + $this->_statusCodes;
 			return true;

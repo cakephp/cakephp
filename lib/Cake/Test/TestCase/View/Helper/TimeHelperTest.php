@@ -105,8 +105,8 @@ class TimeHelperTest extends TestCase {
 			$Time->{$method}('who', 'what', 'when', 'where', 'how');
 		}
 
-		$CakeTime = $this->getMock('CakeTimeMock', array('timeAgoInWords'));
-		$Time = new TimeHelperTestObject($this->View, array('engine' => 'CakeTimeMock'));
+		$CakeTime = $this->getMock(__NAMESPACE__ . '\TimeMock', array('timeAgoInWords'));
+		$Time = new TimeHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\TimeMock'));
 		$Time->attach($CakeTime);
 		$CakeTime->expects($this->at(0))->method('timeAgoInWords');
 		$Time->timeAgoInWords('who', array('what'), array('when'), array('where'), array('how'));

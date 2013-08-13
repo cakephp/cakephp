@@ -595,8 +595,8 @@ class Debugger {
 			$ref = new \ReflectionObject($var);
 
 			$filters = array(
-				ReflectionProperty::IS_PROTECTED => 'protected',
-				ReflectionProperty::IS_PRIVATE => 'private',
+				\ReflectionProperty::IS_PROTECTED => 'protected',
+				\ReflectionProperty::IS_PRIVATE => 'private',
 			);
 			foreach ($filters as $filter => $visibility) {
 				$reflectionProperties = $ref->getProperties($filter);

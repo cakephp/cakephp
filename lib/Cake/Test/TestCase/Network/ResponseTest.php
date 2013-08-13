@@ -372,7 +372,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the httpCodes method
  *
- * @expectedException CakeException
+ * @expectedException Cake\Error\Exception
  */
 	public function testHttpCodes() {
 		$response = new Response();

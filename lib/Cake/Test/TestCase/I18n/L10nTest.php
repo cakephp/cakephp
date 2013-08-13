@@ -19,6 +19,7 @@
  */
 namespace Cake\Test\TestCase\I18n;
 
+use Cake\Core\Configure;
 use Cake\I18n\L10n;
 use Cake\TestSuite\TestCase;
 

@@ -1376,8 +1376,6 @@ class RouterTest extends TestCase {
 			array('/controller/action/param'),
 			array('/controller/action?param1=value1&param2=value2'),
 			array('/controller/action/param?param1=value1'),
-			array('/controller/action/named1:nv1'),
-			array('/controller/action/named1:nv1?param1=value1')
 		);
 	}
 
@@ -1557,11 +1555,6 @@ class RouterTest extends TestCase {
 		$expected['?'] = array('query' => 'test');
 		$this->assertEquals($expected, $result);
 
-		$result = Router::parse('/posts/view/1.atom');
-		unset($expected['?']);
-		$expected['ext'] = 'atom';
-		$this->assertEquals($expected, $result);
-
 		Router::reload();
 		Router::parseExtensions('rss', 'xml');
 		require CAKE . 'Config/routes.php';
@@ -1587,9 +1580,9 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
-		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', 'ext' => 'rss'));
+		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', '_ext' => 'rss'));
 		$result = Router::parse('/controller/action');
-		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, 'ext' => 'rss', 'named' => array(), 'pass' => array());
+		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, '_ext' => 'rss', 'pass' => array());
 		$this->assertEquals($expected, $result);
 
 		Router::reload();

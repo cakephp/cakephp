@@ -409,7 +409,7 @@ class TestCaseTest extends TestCase {
 		$Mock = $this->getMockForModel('Model', array('save'), array('name' => 'Comment'));
 
 		$result = ClassRegistry::init('Comment');
-		$this->assertInstanceOf('Model', $result);
+		$this->assertInstanceOf('Cake\Model\Model', $result);
 
 		$Mock->expects($this->at(0))
 			->method('save')
@@ -425,7 +425,7 @@ class TestCaseTest extends TestCase {
 /**
  * testGetMockForModelDoesNotExist
  *
- * @expectedException MissingModelException
+ * @expectedException Cake\Error\MissingModelException
  * @expectedExceptionMessage Model IDoNotExist could not be found
  * @return void
  */
