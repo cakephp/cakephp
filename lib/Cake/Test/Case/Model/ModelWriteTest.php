@@ -6472,7 +6472,8 @@ class ModelWriteTest extends BaseModelTest {
  */
 	public function testWriteFloatAsGerman() {
 		$restore = setlocale(LC_NUMERIC, 0);
-		setlocale(LC_NUMERIC, 'de_DE');
+
+		$this->skipIf(setlocale(LC_NUMERIC, 'de_DE') === false, "The German locale isn't available.");
 
 		$model = new DataTest();
 		$result = $model->save(array(

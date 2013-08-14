@@ -152,7 +152,8 @@ class MysqlTest extends CakeTestCase {
 		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affect the others tests.');
 
 		$restore = setlocale(LC_NUMERIC, 0);
-		setlocale(LC_NUMERIC, 'de_DE');
+
+		$this->skipIf(setlocale(LC_NUMERIC, 'de_DE') === false, "The German locale isn't available.");
 
 		$result = $this->Dbo->value(3.141593);
 		$this->assertEquals('3.141593', $result);
