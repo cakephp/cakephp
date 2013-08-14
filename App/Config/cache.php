@@ -14,7 +14,7 @@
  */
 namespace App\Config;
 
-use Cake\Core\Configure;
+use Cake\Cache\Cache;
 
 /**
  * Turn off all caching application-wide.
@@ -33,6 +33,16 @@ use Cake\Core\Configure;
  */
 	//Configure::write('Cache.check', true);
 
+/**
+ * Enable cache view prefixes.
+ *
+ * If set it will be prepended to the cache name for view file caching. This is
+ * helpful if you deploy the same application via multiple subdomains and languages,
+ * for instance. Each version can then have its own view cache namespace.
+ * Note: The final cache file name will then be `prefix_cachefilename`.
+ */
+	//Configure::write('Cache.viewPrefix', 'prefix');
+
 // In development mode, caches should expire quickly.
 $duration = '+999 days';
 if (Configure::read('debug') >= 1) {
@@ -48,29 +58,33 @@ $engine = 'File';
 // Prefix each application on the same server with a different string, to avoid Memcache and APC conflicts.
 $prefix = 'myapp_';
 
+
+$cacheConfigs = [];
+
 /**
  * Configure the cache used for general framework caching.  Path information,
  * object listings, and translation cache files are stored with this configuration.
  */
-Configure::write('Cache._cake_core_', [
+$cacheConfigs['_cake_core_'] = [
 	'engine' => $engine,
 	'prefix' => $prefix . 'cake_core_',
 	'path' => CACHE . 'persistent' . DS,
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
-]);
+];
+
 
 /**
  * Configure the cache for model and datasource caches.  This cache configuration
  * is used to store schema descriptions, and table listings in connections.
  */
-Configure::write('Cache._cake_model_', [
+$cacheConfigs['_cake_model_'] = [
 	'engine' => $engine,
 	'prefix' => $prefix . 'cake_model_',
 	'path' => CACHE . 'models' . DS,
 	'serialize' => ($engine === 'File'),
 	'duration' => $duration
-]);
+];
 
 /**
  * Cache Engine Configuration
@@ -145,14 +159,8 @@ Configure::write('Cache._cake_model_', [
  *		'persistent' => true, // [optional] set this to false for non-persistent connections
  *	));
  */
-Configure::write('Cache.default', array('engine' => 'File'));
+$cacheConfigs['default'] = [
+	'engine' => 'File'
+];
 
-/**
- * Enable cache view prefixes.
- *
- * If set it will be prepended to the cache name for view file caching. This is
- * helpful if you deploy the same application via multiple subdomains and languages,
- * for instance. Each version can then have its own view cache namespace.
- * Note: The final cache file name will then be `prefix_cachefilename`.
- */
-	//Configure::write('Cache.viewPrefix', 'prefix');
+Cache::config($cacheConfigs);

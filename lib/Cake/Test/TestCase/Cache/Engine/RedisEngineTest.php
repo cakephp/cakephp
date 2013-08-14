@@ -36,7 +36,7 @@ class RedisEngineTest extends TestCase {
 		$this->skipIf(!class_exists('Redis'), 'Redis is not installed or configured properly.');
 
 		Configure::write('Cache.disable', false);
-		Configure::write('Cache.redis', array(
+		Cache::config('redis', array(
 			'engine' => 'Cake\Cache\Engine\RedisEngine',
 			'prefix' => 'cake_',
 			'duration' => 3600
@@ -223,7 +223,7 @@ class RedisEngineTest extends TestCase {
  * @return void
  */
 	public function testClear() {
-		Configure::write('Cache.redis2', array(
+		Cache::config('redis2', array(
 			'engine' => 'Redis',
 			'prefix' => 'cake2_',
 			'duration' => 3600
@@ -265,13 +265,13 @@ class RedisEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupReadWrite() {
-		Configure::write('Cache.redis_groups', [
+		Cache::config('redis_groups', [
 			'engine' => 'Redis',
 			'duration' => 3600,
 			'groups' => ['group_a', 'group_b'],
 			'prefix' => 'test_'
 		]);
-		Configure::write('Cache.redis_helper', [
+		Cache::config('redis_helper', [
 			'engine' => 'Redis',
 			'duration' => 3600,
 			'prefix' => 'test_'
@@ -296,7 +296,7 @@ class RedisEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Configure::write('Cache.redis_groups', [
+		Cache::config('redis_groups', [
 			'engine' => 'Redis',
 			'duration' => 3600,
 			'groups' => ['group_a', 'group_b']
@@ -314,7 +314,7 @@ class RedisEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupClear() {
-		Configure::write('Cache.redis_groups', [
+		Cache::config('redis_groups', [
 			'engine' => 'Redis',
 			'duration' => 3600,
 			'groups' => ['group_a', 'group_b']
