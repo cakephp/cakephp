@@ -99,5 +99,4 @@ class CacheRegistry extends ObjectRegistry {
 		unset($this->_loaded[$name]);
 	}
 
-	
 }
