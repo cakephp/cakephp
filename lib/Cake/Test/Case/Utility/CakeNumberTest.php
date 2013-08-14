@@ -597,6 +597,19 @@ class CakeNumberTest extends CakeTestCase {
 	}
 
 /**
+ * test precision() with locales
+ *
+ * @return void
+ */
+	public function testPrecisionLocalized() {
+		$restore = setlocale(LC_NUMERIC, 0);
+		setlocale(LC_NUMERIC, 'de_DE');
+		$result = $this->Number->precision(1.234);
+		$this->assertEquals('1,234', $result);
+		setlocale(LC_NUMERIC, $restore);
+	}
+
+/**
  * testToPercentage method
  *
  * @return void
