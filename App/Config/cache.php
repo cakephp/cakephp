@@ -15,6 +15,7 @@
 namespace App\Config;
 
 use Cake\Cache\Cache;
+use Cake\Core\Configure;
 
 /**
  * Turn off all caching application-wide.
