@@ -99,7 +99,7 @@ class CakeNumber {
 			case $size < 1024:
 				return __dn('cake', '%d Byte', '%d Bytes', $size, $size);
 			case round($size / 1024) < 1024:
-				return __d('cake', '%d KB', self::precision($size / 1024, 0));
+				return __d('cake', '%s KB', self::precision($size / 1024, 0));
 			case round($size / 1024 / 1024, 2) < 1024:
 				return __d('cake', '%s MB', self::precision($size / 1024 / 1024, 2));
 			case round($size / 1024 / 1024 / 1024, 2) < 1024:
