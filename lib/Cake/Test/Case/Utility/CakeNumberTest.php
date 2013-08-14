@@ -603,7 +603,9 @@ class CakeNumberTest extends CakeTestCase {
  */
 	public function testPrecisionLocalized() {
 		$restore = setlocale(LC_NUMERIC, 0);
-		setlocale(LC_NUMERIC, 'nl_NL');
+
+		$this->skipIf(setlocale(LC_NUMERIC, 'de_DE') === false, "The German locale isn't available.");
+
 		$result = $this->Number->precision(1.234);
 		$this->assertEquals('1,234', $result);
 		setlocale(LC_NUMERIC, $restore);
