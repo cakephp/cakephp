@@ -246,54 +246,6 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * Update log configs.
- *
- * @return void
- */
-	public function log_config() {
-		$path = $this->_getPath();
-
-		$Folder = new Folder($path);
-		$this->_paths = $Folder->tree(null, false, 'dir');
-		$this->_findFiles('php');
-		foreach ($this->_files as $filePath) {
-			$patterns = [
-				[
-					' Log::config to Configure::write',
-					'#(Log\:\:config\()(\s*[\'"])([^\'"]+)([\'"])#ms',
-					"Configure::write('Log.\\3'",
-				]
-			];
-			$this->_updateFile($filePath, $patterns);
-		}
-		$this->out(__d('cake_console', '<success>Log::config() replaced successfully</success>'));
-	}
-
-/**
- * Update cache configs.
- *
- * @return void
- */
-	public function cache_config() {
-		$path = $this->_getPath();
-
-		$Folder = new Folder($path);
-		$this->_paths = $Folder->tree(null, false, 'dir');
-		$this->_findFiles('php');
-		foreach ($this->_files as $filePath) {
-			$patterns = [
-				[
-					' Cache::config to Configure::write',
-					'#(Cache\:\:config\()(\s*[\'"])([^\'"]+)([\'"])#ms',
-					"Configure::write('Cache.\\3'",
-				]
-			];
-			$this->_updateFile($filePath, $patterns);
-		}
-		$this->out(__d('cake_console', '<success>Cache::config() replaced successfully</success>'));
-	}
-
-/**
  * Update fixtures
  *
  * @return void
@@ -641,14 +593,6 @@ class UpgradeShell extends Shell {
 			])
 			->addSubcommand('rename_collections', [
 				'help' => __d('cake_console', "Rename HelperCollection, ComponentCollection, and TaskCollection. Will also rename component constructor arguments and _Collection properties on all objects."),
-				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
-			])
-			->addSubcommand('cache_config', [
-				'help' => __d('cake_console', "Replace Cache::config() with Configure."),
-				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
-			])
-			->addSubcommand('log_config', [
-				'help' => __d('cake_console', "Replace CakeLog::config() with Configure."),
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			]);
 	}
