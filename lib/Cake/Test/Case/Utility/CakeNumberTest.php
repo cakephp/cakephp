@@ -603,9 +603,9 @@ class CakeNumberTest extends CakeTestCase {
  */
 	public function testPrecisionLocalized() {
 		$restore = setlocale(LC_NUMERIC, 0);
-		setlocale(LC_NUMERIC, 'de_DE');
+		setlocale(LC_NUMERIC, 'nl_NL');
 		$result = $this->Number->precision(1.234);
-		$this->assertRegExp('/1[,.]234/', $result);
+		$this->assertEquals('1,234', $result);
 		setlocale(LC_NUMERIC, $restore);
 	}
 
