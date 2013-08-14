@@ -248,6 +248,7 @@ class Log {
 			static::$_config[$key] = (array) $config;
 			return;
 		}
+
 		static::$_config = array_merge(static::$_config, $key);
 	}
 
@@ -310,6 +311,7 @@ class Log {
 		if (static::$_registry->{$name}) {
 			return static::$_registry->{$name};
 		}
+
 		return false;
 	}
 

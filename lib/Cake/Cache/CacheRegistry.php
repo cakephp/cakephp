@@ -68,21 +68,25 @@ class CacheRegistry extends ObjectRegistry {
 		if (is_object($class)) {
 			$instance = $class;
 		}
+
 		unset($settings['engine'], $settings['className']);
 		if (!isset($instance)) {
 			$instance = new $class($settings);
 		}
+
 		if (!($instance instanceof CacheEngine)) {
 			throw new Error\Exception(__d(
 				'cake_dev',
 				'Cache engines must use Cake\Cache\CacheEngine as a base class.'
 			));
 		}
+
 		if (!$instance->init($settings)) {
 			throw new Error\Exception(
 				__d('cake_dev', 'Cache engine %s is not properly configured.', $class)
 			);
 		}
+
 		if ($instance->settings['probability'] && time() % $instance->settings['probability'] === 0) {
 			$instance->gc();
 		}

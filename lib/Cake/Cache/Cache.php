@@ -142,6 +142,7 @@ class Cache {
 			static::$_config[$key] = $config;
 			return;
 		}
+
 		static::$_config = array_merge(static::$_config, $key);
 	}
 
@@ -159,6 +160,7 @@ class Cache {
 		if (empty(static::$_config[$name]['engine'])) {
 			return false;
 		}
+
 		$config = static::$_config[$name];
 		$config['className'] = $config['engine'];
 
@@ -197,6 +199,7 @@ class Cache {
 		if (!isset(static::$_registry->{$config})) {
 			return false;
 		}
+
 		static::$_registry->unload($config);
 		unset(static::$_config[$config], static::$_restore[$config]);
 		return true;
@@ -215,9 +218,11 @@ class Cache {
 		if (Configure::read('Cache.disable')) {
 			return false;
 		}
+
 		if (isset(static::$_registry->{$config})) {
 			return static::$_registry->{$config};
 		}
+
 		if (!static::_buildEngine($config)) {
 			$message = __d(
 				'cake_dev',
@@ -318,6 +323,7 @@ class Cache {
 		if (!$engine) {
 			return;
 		}
+
 		$engine->gc($expires);
 	}
 
@@ -390,10 +396,12 @@ class Cache {
 		if (!$engine) {
 			return false;
 		}
+
 		$key = $engine->key($key);
 		if (!$key) {
 			return false;
 		}
+
 		return $engine->read($settings['prefix'] . $key);
 	}
 
@@ -496,6 +504,7 @@ class Cache {
 		if (!$engine) {
 			return false;
 		}
+
 		$success = $engine->clear($check);
 		static::set(null, $config);
 		return $success;
@@ -513,6 +522,7 @@ class Cache {
 		if (!$engine) {
 			return false;
 		}
+
 		$success = $engine->clearGroup($group);
 		static::set(null, $config);
 		return $success;
@@ -530,6 +540,7 @@ class Cache {
 		if (!$engine) {
 			return [];
 		}
+
 		return $engine->settings();
 	}
 
@@ -552,9 +563,11 @@ class Cache {
 		if ($group == null) {
 			return static::$_groups;
 		}
+
 		if (isset(self::$_groups[$group])) {
 			return array($group => self::$_groups[$group]);
 		}
+
 		throw new Error\Exception(__d('cake_dev', 'Invalid cache group %s', $group));
 	}
 

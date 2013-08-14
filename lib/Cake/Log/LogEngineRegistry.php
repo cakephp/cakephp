@@ -36,6 +36,7 @@ class LogEngineRegistry extends ObjectRegistry {
 		if (is_object($class)) {
 			return $class;
 		}
+
 		return App::classname($class, 'Log/Engine', 'Log');
 	}
 
@@ -66,12 +67,15 @@ class LogEngineRegistry extends ObjectRegistry {
 		if (is_object($class)) {
 			$instance = $class;
 		}
+
 		if (!isset($instance)) {
 			$instance = new $class($settings);
 		}
+
 		if ($instance instanceof LogInterface) {
 			return $instance;
 		}
+
 		throw new Error\Exception(__d(
 			'cake_dev',
 			'Loggers must implement Cake\Log\LogInterface.'
