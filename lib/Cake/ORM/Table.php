@@ -502,7 +502,7 @@ class Table {
  */
 	public function find($type, $options = []) {
 		$query = $this->_buildQuery();
-		$query->select();
+		$query->select()->applyOptions($options);
 
 		$event = new Event('Model.beforeFind', $this, [$query, $options]);
 		$this->_eventManager->dispatch($event);

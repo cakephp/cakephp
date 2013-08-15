@@ -460,6 +460,65 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * Populates or adds parts to current query clauses using an array.
+ * This is handy for passing all query clauses at once.
+ *
+ * ## Example:
+ *
+ * {{{
+ *	$query->applyOptions([
+ *		'fields' => ['id', 'name'],
+ *		'conditions' => [
+ *			'created >=' => '2013-01-01'
+ *		],
+ *		'limit' => 10
+ *	]);
+ * }}}
+ *
+ * Is equivalent to:
+ *
+ * {{{
+ *	$query
+ *	->select(['id', 'name'])
+ *	->where(['created >=' => '2013-01-01'])
+ *	->limit(10)
+ * }}}
+ *
+ * @param array $options list of query clauses to apply new parts to. Accepts:
+ * - fields: Maps to the select method
+ * - conditions: Maps to the where method
+ * - limit: Maps to the limit method
+ * - order: Maps to the order method
+ * - offset: Maps to the offset method
+ * - group: Maps to the group method
+ * - having: Maps to the having method
+ * - contain: Maps to the contain options for eager loading
+ * - join: Maps to the join method
+ * @return Cake\ORM\Query
+ */
+	public function applyOptions(array $options) {
+		$valid = [
+			'fields' => 'select',
+			'conditions' => 'where',
+			'limit' => 'limit',
+			'order' => 'order',
+			'offset' => 'offset',
+			'group' => 'group',
+			'having' => 'having',
+			'contain' => 'contain',
+			'join' => 'join'
+		];
+
+		foreach ($options as $option => $values) {
+			if (isset($valid[$option])) {
+				$this->{$valid[$option]}($values);
+			}
+		}
+
+		return $this;
+	}
+
+/**
  * Auxiliary function used to wrap the original statement from the driver with
  * any registered callbacks. This will also setup the correct statement class
  * in order to eager load deep associations.
