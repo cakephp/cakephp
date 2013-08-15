@@ -445,7 +445,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		}
 
 		if (is_array($this->_parts['distinct'])) {
-			$distinct = $this->_stringifyExpressions($this->_parts['distinct']);
+			$distinct = $this->_stringifyExpressions($this->_parts['distinct'], $generator);
 			$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
 		}
 

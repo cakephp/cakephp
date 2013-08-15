@@ -17,6 +17,7 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
@@ -67,6 +68,10 @@ trait PostgresDialectTrait {
 			}
 			if ($limit) {
 				$outer->where(["$field <=" => (int)$offset + (int)$limit]);
+			}
+
+			if ($order === null) {
+				$order = new OrderByExpression('NULL');
 			}
 
 			$query
@@ -129,7 +134,7 @@ trait PostgresDialectTrait {
 					->name('')
 					->type('-')
 					->iterateParts(function($p) {
-						return new FunctionExpression('DATE', [$p => 'literal']);
+						return new FunctionExpression('DATE',  [$p['value']], [$p['type']]);
 					});
 				break;
 			case 'CURRENT_DATE':
