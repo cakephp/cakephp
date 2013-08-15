@@ -141,7 +141,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException PHPUnit_Framework_Error_Warning
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testWriteNonExistingConfig() {
@@ -151,7 +151,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException PHPUnit_Framework_Error_Warning
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testIncrementNonExistingConfig() {
@@ -161,7 +161,7 @@ class CacheTest extends TestCase {
 /**
  * Test write from a config that is undefined.
  *
- * @expectedException PHPUnit_Framework_Error_Warning
+ * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testDecrementNonExistingConfig() {

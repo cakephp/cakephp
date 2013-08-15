@@ -150,15 +150,14 @@ class Cache {
  * Finds and builds the instance of the required engine class.
  *
  * @param string $name Name of the config array that needs an engine instance built
- * @return boolean
- * @throws Cake\Error\Exception
+ * @throws Cake\Error\Exception When a cache engine cannot be created.
  */
 	protected static function _buildEngine($name) {
 		if (empty(static::$_registry)) {
 			static::$_registry = new CacheRegistry();
 		}
 		if (empty(static::$_config[$name]['engine'])) {
-			return false;
+			throw new Error\Exception(__d('cake_dev', 'The "%s" cache configuration does not exist.', $name));
 		}
 
 		$config = static::$_config[$name];
@@ -173,8 +172,6 @@ class Cache {
 				sort(static::$_groups[$group]);
 			}
 		}
-
-		return true;
 	}
 
 /**
@@ -223,14 +220,7 @@ class Cache {
 			return static::$_registry->{$config};
 		}
 
-		if (!static::_buildEngine($config)) {
-			$message = __d(
-				'cake_dev',
-				'The "%s" cache configuration does not exist.',
-				$config
-			);
-			trigger_error($message, E_USER_WARNING);
-		}
+		static::_buildEngine($config);
 		return static::$_registry->{$config};
 	}
 
