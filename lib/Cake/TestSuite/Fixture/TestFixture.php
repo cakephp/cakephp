@@ -282,7 +282,6 @@ class TestFixture {
 			foreach ($values as $row) {
 				$query->values($row);
 			}
-
 			return $query->execute();
 		}
 		return true;

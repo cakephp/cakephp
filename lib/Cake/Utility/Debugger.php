@@ -205,7 +205,7 @@ class Debugger {
  * @param integer $line Line that triggered the error
  * @param array $context Context
  * @return boolean true if error was handled
- * @deprecated This function is superseded by Debugger::outputError()
+ * @deprecated Will be removed in 3.0. This function is superseded by Debugger::outputError().
  */
 	public static function showError($code, $description, $file = null, $line = null, $context = null) {
 		$self = Debugger::getInstance();
@@ -502,6 +502,8 @@ class Debugger {
 				return strtolower(gettype($var));
 			case 'null':
 				return 'null';
+			case 'unknown':
+				return 'unknown';
 			default:
 				return static::_object($var, $depth - 1, $indent + 1);
 		}
@@ -592,24 +594,20 @@ class Debugger {
 
 			$ref = new \ReflectionObject($var);
 
-			$reflectionProperties = $ref->getProperties(\ReflectionProperty::IS_PROTECTED);
-			foreach ($reflectionProperties as $reflectionProperty) {
-				$reflectionProperty->setAccessible(true);
-				$property = $reflectionProperty->getValue($var);
+			$filters = array(
+				\ReflectionProperty::IS_PROTECTED => 'protected',
+				\ReflectionProperty::IS_PRIVATE => 'private',
+			);
+			foreach ($filters as $filter => $visibility) {
+				$reflectionProperties = $ref->getProperties($filter);
+				foreach ($reflectionProperties as $reflectionProperty) {
+					$reflectionProperty->setAccessible(true);
+					$property = $reflectionProperty->getValue($var);
 
-				$value = static::_export($property, $depth - 1, $indent);
-				$key = $reflectionProperty->name;
-				$props[] = "[protected] $key => " . $value;
-			}
-
-			$reflectionProperties = $ref->getProperties(\ReflectionProperty::IS_PRIVATE);
-			foreach ($reflectionProperties as $reflectionProperty) {
-				$reflectionProperty->setAccessible(true);
-				$property = $reflectionProperty->getValue($var);
-
-				$value = static::_export($property, $depth - 1, $indent);
-				$key = $reflectionProperty->name;
-				$props[] = "[private] $key => " . $value;
+					$value = static::_export($property, $depth - 1, $indent);
+					$key = $reflectionProperty->name;
+					$props[] = sprintf('[%s] %s => %s', $visibility, $key, $value);
+				}
 			}
 
 			$out .= $break . implode($break, $props) . $end;

@@ -350,6 +350,9 @@ class Helper extends Object implements EventListener {
 		) {
 			$path .= $options['ext'];
 		}
+		if (preg_match('|^([a-z0-9]+:)?//|', $path)) {
+			return $path;
+		}
 		if (isset($plugin)) {
 			$path = Inflector::underscore($plugin) . '/' . $path;
 		}
@@ -506,7 +509,7 @@ class Helper extends Object implements EventListener {
  */
 	protected function _formatAttribute($key, $value, $escape = true) {
 		if (is_array($value)) {
-			$value = implode(' ' , $value);
+			$value = implode(' ', $value);
 		}
 		if (is_numeric($key)) {
 			return sprintf($this->_minimizedAttributeFormat, $value, $value);
@@ -520,6 +523,19 @@ class Helper extends Object implements EventListener {
 			return '';
 		}
 		return sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
+	}
+
+/**
+ * Returns a string to be used as onclick handler for confirm dialogs.
+ *
+ * @param string $message Message to be displayed
+ * @param string $okCode Code to be executed after user chose 'OK'
+ * @param string $cancelCode Code to be executed after user chose 'Cancel'
+ * @return string onclick JS code
+ */
+	protected function _confirm($message, $okCode, $cancelCode = '') {
+		$message = json_encode($message);
+		return "if (confirm({$message})) { {$okCode} } {$cancelCode}";
 	}
 
 /**

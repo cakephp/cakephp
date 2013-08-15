@@ -31,6 +31,7 @@ use Cake\Model\ConnectionManager;
  * and all of the above on arrays.
  *
  * @package       Cake.Utility
+ * @deprecated    Deprecated since version 2.4
  */
 class Sanitize {
 

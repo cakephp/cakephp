@@ -101,7 +101,7 @@ class Security {
  *
  * @param string $string String to hash
  * @param string $type Method to use (sha1/sha256/md5/blowfish)
- * @param mixed $salt If true, automatically appends the application's salt
+ * @param mixed $salt If true, automatically prepends the application's salt
  *     value to $string (Security.salt). If you are using blowfish the salt
  *     must be false or a previously generated salt.
  * @return string Hash
@@ -156,6 +156,7 @@ class Security {
  *
  * @param integer $cost Valid values are 4-31
  * @return void
+ * @throws Cake\Error\Exception When cost is invalid.
  */
 	public static function setCost($cost) {
 		if ($cost < 4 || $cost > 31) {

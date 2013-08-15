@@ -23,6 +23,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Connection;
+use Cake\Error;
 use Cake\Model\ConnectionManager;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
@@ -183,6 +184,7 @@ class FixtureManager {
  *
  * @param Cake\TestSuite\TestCase $test the test to inspect for fixture loading
  * @return void
+ * @throws Cake\Error\Exception When fixture records cannot be inserted.
  */
 	public function load(TestCase $test) {
 		if (empty($test->fixtures)) {
@@ -201,15 +203,19 @@ class FixtureManager {
 				$dbs[$fixture->connection][$f] = $fixture;
 			}
 		}
-
-		foreach ($dbs as $db => $fixtures) {
-			$db = ConnectionManager::getDataSource($fixture->connection);
-			$db->begin();
-			foreach ($fixtures as $fixture) {
-				$this->_setupTable($fixture, $db, $test->dropTables);
-				$fixture->insert($db);
+		try {
+			foreach ($dbs as $db => $fixtures) {
+				$db = ConnectionManager::getDataSource($fixture->connection);
+				$db->begin();
+				foreach ($fixtures as $fixture) {
+					$this->_setupTable($fixture, $db, $test->dropTables);
+					$fixture->insert($db);
+				}
+				$db->commit();
 			}
-			$db->commit();
+		} catch (\PDOException $e) {
+			$msg = __d('cake_dev', 'Unable to insert fixtures for "%s" test case. %s', get_class($test), $e->getMessage());
+			throw new Error\Exception($msg);
 		}
 	}
 

@@ -1046,7 +1046,7 @@ class RouterTest extends TestCase {
 		Router::connect(
 			'/posts/:value/:somevalue/:othervalue/*',
 			array('controller' => 'posts', 'action' => 'view'),
-			array('value','somevalue', 'othervalue')
+			array('value', 'somevalue', 'othervalue')
 		);
 		$result = Router::parse('/posts/2007/08/01/title-of-post-here');
 		$expected = array(
@@ -1233,6 +1233,12 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
+		Router::connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'));
+		$result = Router::parse('/posts/view/10?id=123&tab=abc');
+		$expected = array('pass' => array(10), 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '?' => array('id' => '123', 'tab' => 'abc'));
+		$this->assertEquals($expected, $result);
+
+		Router::reload();
 		Router::connect(
 			'/posts/:url_title-(uuid::id)',
 			array('controller' => 'posts', 'action' => 'view'),
@@ -1346,6 +1352,31 @@ class RouterTest extends TestCase {
 		));
 		$expected = '/some_extra/page/this_is_the_slug';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test parse and reverse symmetry
+ *
+ * @return void
+ * @dataProvider parseReverseSymmetryData
+ */
+	public function testParseReverseSymmetry($url) {
+		$this->assertSame($url, Router::reverse(Router::parse($url) + array('url' => array())));
+	}
+
+/**
+ * Data for parse and reverse test
+ *
+ * @return array
+ */
+	public function parseReverseSymmetryData() {
+		return array(
+			array('/'),
+			array('/controller/action'),
+			array('/controller/action/param'),
+			array('/controller/action?param1=value1&param2=value2'),
+			array('/controller/action/param?param1=value1'),
+		);
 	}
 
 /**
@@ -1521,6 +1552,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/posts/view/1.rss?query=test');
+		$expected['?'] = array('query' => 'test');
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
@@ -1542,8 +1574,15 @@ class RouterTest extends TestCase {
 			'plugin' => null,
 			'controller' => 'posts.atom',
 			'action' => 'index',
-			'pass' => array()
+			'pass' => array(),
+			'?' => array('hello' => 'goodbye')
 		);
+		$this->assertEquals($expected, $result);
+
+		Router::reload();
+		Router::connect('/controller/action', array('controller' => 'controller', 'action' => 'action', '_ext' => 'rss'));
+		$result = Router::parse('/controller/action');
+		$expected = array('controller' => 'controller', 'action' => 'action', 'plugin' => null, '_ext' => 'rss', 'pass' => array());
 		$this->assertEquals($expected, $result);
 
 		Router::reload();

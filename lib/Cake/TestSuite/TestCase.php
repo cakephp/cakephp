@@ -21,6 +21,7 @@ namespace Cake\TestSuite;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Error;
 use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 
@@ -692,17 +693,20 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $model
  * @param mixed $methods
- * @param mixed $config
+ * @param array $config
+ * @throws Cake\Error\MissingModelException
  * @return Model
  */
-	public function getMockForModel($model, $methods = array(), $config = null) {
-		if (is_null($config)) {
-			$config = ClassRegistry::config('Model');
-		}
+	public function getMockForModel($model, $methods = array(), $config = array()) {
+		$config += ClassRegistry::config('Model');
 
 		$modelClass = App::className($model, 'Model');
 		list(, $name) = namespaceSplit($modelClass);
 		$config = array_merge((array)$config, array('name' => $name));
+		if (!$modelClass) {
+			throw new Error\MissingModelException(array($model));
+		}
+
 		$mock = $this->getMock($modelClass, $methods, array($config));
 		ClassRegistry::removeObject($name);
 		ClassRegistry::addObject($name, $mock);

@@ -15,6 +15,7 @@
  */
 namespace Cake\Log\Engine;
 
+use Cake\Core\Configure;
 use Cake\Log\Engine\BaseLog;
 use Cake\Utility\Hash;
 
@@ -93,6 +94,10 @@ class FileLog extends BaseLog {
 		if (!empty($config['path'])) {
 			$this->_path = $config['path'];
 		}
+		if (Configure::read('debug') && !is_dir($this->_path)) {
+			mkdir($this->_path, 0775, true);
+		}
+
 		if (!empty($config['file'])) {
 			$this->_file = $config['file'];
 			if (substr($this->_file, -4) !== '.log') {

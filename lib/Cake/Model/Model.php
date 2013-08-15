@@ -2730,7 +2730,7 @@ class Model extends Object implements EventListener {
  *
  * Model::_readDataSource() is used by all find() calls to read from the data source and can be overloaded to allow
  * caching of datasource calls.
- * 
+ *
  * {{{
  * protected function _readDataSource($type, $query) {
  * 		$cacheName = md5(json_encode($query));
@@ -2744,7 +2744,7 @@ class Model extends Object implements EventListener {
  * 		return $results;
  * }
  * }}}
- * 
+ *
  * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
  * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
  * @return array

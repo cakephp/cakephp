@@ -793,10 +793,9 @@ class TreeBehavior extends ModelBehavior {
 		if ($node[$right] == $node[$left] + 1) {
 			if ($delete) {
 				return $Model->delete($id);
-			} else {
-				$Model->id = $id;
-				return $Model->saveField($parent, null);
 			}
+			$Model->id = $id;
+			return $Model->saveField($parent, null);
 		} elseif ($node[$parent]) {
 			list($parentNode) = array_values($Model->find('first', array(
 				'conditions' => array($scope, $Model->escapeField() => $node[$parent]),

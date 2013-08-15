@@ -62,6 +62,9 @@ class BakeShell extends Shell {
 				$this->{$task}->connection = $this->params['connection'];
 			}
 		}
+		if (isset($this->params['connection'])) {
+			$this->connection = $this->params['connection'];
+		}
 	}
 
 /**

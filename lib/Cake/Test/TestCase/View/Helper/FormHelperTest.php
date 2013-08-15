@@ -1400,7 +1400,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->input('Addresses.first_name', array('secure' => false));
 		$this->Form->input('Addresses.city', array('type' => 'textarea', 'secure' => false));
 		$this->Form->input('Addresses.zip', array(
-			'type' => 'select', 'options' => array(1,2), 'secure' => false
+			'type' => 'select', 'options' => array(1, 2), 'secure' => false
 		));
 
 		$result = $this->Form->fields;
@@ -1731,7 +1731,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id','accept-charset' => $encoding),
+			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/div'
@@ -1772,7 +1772,7 @@ class FormHelperTest extends TestCase {
 	public function testFormValidationMultiRecord() {
 		$Contact = ClassRegistry::getObject('Contact');
 		$Contact->validationErrors[2] = array(
-			'name' => array('This field cannot be left blank')
+			'name' => array('The provided value is invalid')
 		);
 		$result = $this->Form->input('Contact.2.name');
 		$expected = array(
@@ -1785,7 +1785,7 @@ class FormHelperTest extends TestCase {
 				'class' => 'form-error', 'maxlength' => 255
 			),
 			array('div' => array('class' => 'error-message')),
-			'This field cannot be left blank',
+			'The provided value is invalid',
 			'/div',
 			'/div'
 		);
@@ -2279,8 +2279,8 @@ class FormHelperTest extends TestCase {
 		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result[1]);
 
 		$result = $this->Form->input('prueba', array(
-			'type' => 'time', 'timeFormat' => 24 , 'dateFormat' => 'DMY' , 'minYear' => 2008,
-			'maxYear' => date('Y') + 1 , 'interval' => 15
+			'type' => 'time', 'timeFormat' => 24, 'dateFormat' => 'DMY', 'minYear' => 2008,
+			'maxYear' => date('Y') + 1, 'interval' => 15
 		));
 		$result = explode(':', $result);
 		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
@@ -5901,6 +5901,33 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test dateTime with rounding
+ *
+ * @return void
+ */
+	public function testDateTimeRounding() {
+		$this->Form->request->data['Contact'] = array(
+			'date' => array(
+				'day' => '13',
+				'month' => '12',
+				'year' => '2010',
+				'hour' => '04',
+				'min' => '19',
+				'meridian' => 'AM'
+			)
+		);
+
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 15));
+		$this->assertTextContains('<option value="15" selected="selected">15</option>', $result);
+
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 15, 'round' => 'up'));
+		$this->assertTextContains('<option value="30" selected="selected">30</option>', $result);
+
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 5, 'round' => 'down'));
+		$this->assertTextContains('<option value="15" selected="selected">15</option>', $result);
+	}
+
+/**
  * Test that empty values don't trigger errors.
  *
  * @return void
@@ -7041,7 +7068,7 @@ class FormHelperTest extends TestCase {
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
-			'a' => array('href' => '#', 'onclick' => 'preg:/if \(confirm\(&#039;Confirm\?&#039;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
+			'a' => array('href' => '#', 'onclick' => 'preg:/if \(confirm\(&quot;Confirm\?&quot;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
 		));

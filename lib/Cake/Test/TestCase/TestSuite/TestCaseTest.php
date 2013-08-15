@@ -353,7 +353,11 @@ class TestCaseTest extends TestCase {
  */
 	public function testGetMockForModel() {
 		Configure::write('App.namespace', 'TestApp');
-
+		App::build(array(
+				'Model' => array(
+					CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS
+				)
+		), App::RESET);
 		$Post = $this->getMockForModel('Post');
 
 		$this->assertInstanceOf('TestApp\Model\Post', $Post);
@@ -378,7 +382,6 @@ class TestCaseTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load('TestPlugin');
-
 		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComment');
 
 		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
@@ -395,5 +398,38 @@ class TestCaseTest extends TestCase {
 			->will($this->returnValue(false));
 		$this->assertTrue($TestPluginComment->save(array()));
 		$this->assertFalse($TestPluginComment->save(array()));
+	}
+
+/**
+ * testGetMockForModelModel
+ *
+ * @return void
+ */
+	public function testGetMockForModelModel() {
+		$Mock = $this->getMockForModel('Model', array('save'), array('name' => 'Comment'));
+
+		$result = ClassRegistry::init('Comment');
+		$this->assertInstanceOf('Cake\Model\Model', $result);
+
+		$Mock->expects($this->at(0))
+			->method('save')
+			->will($this->returnValue(true));
+		$Mock->expects($this->at(1))
+			->method('save')
+			->will($this->returnValue(false));
+
+		$this->assertTrue($Mock->save(array()));
+		$this->assertFalse($Mock->save(array()));
+	}
+
+/**
+ * testGetMockForModelDoesNotExist
+ *
+ * @expectedException Cake\Error\MissingModelException
+ * @expectedExceptionMessage Model IDoNotExist could not be found
+ * @return void
+ */
+	public function testGetMockForModelDoesNotExist() {
+		$this->getMockForModel('IDoNotExist');
 	}
 }

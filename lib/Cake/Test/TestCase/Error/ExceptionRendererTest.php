@@ -540,7 +540,7 @@ class ExceptionRendererTest extends TestCase {
 				404
 			),
 			array(
-				new Error\PrivateActionException(array('controller' => 'PostsController' , 'action' => '_secretSauce')),
+				new Error\PrivateActionException(array('controller' => 'PostsController', 'action' => '_secretSauce')),
 				array(
 					'/<h2>Private Method in PostsController<\/h2>/',
 					'/<em>PostsController::<\/em><em>_secretSauce\(\)<\/em>/'

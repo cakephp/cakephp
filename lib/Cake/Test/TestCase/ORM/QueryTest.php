@@ -460,7 +460,7 @@ class QueryTest extends TestCase {
 						'author_id' => 1,
 						'body' => 'First Article Body',
 						'published' => 'Y',
-						'author' => ['id' => 1 , 'name' => 'mariano']
+						'author' => ['id' => 1, 'name' => 'mariano']
 					],
 					[
 						'id' => 3,
@@ -838,6 +838,54 @@ class QueryTest extends TestCase {
 		$this->assertSame($query, $result, 'Query should be the same');
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\ORM\BufferedResultSet', $result);
+	}
+
+/*
+ * Tests that applying array options to a query will convert them
+ * to equivalent function calls with the correspondent array values
+ *
+ * @return void
+ */
+	public function testApplyOptions() {
+		$options = [
+			'fields' => ['field_a', 'field_b'],
+			'conditions' => ['field_a' => 1, 'field_b' => 'something'],
+			'limit' => 1,
+			'order' => ['a' => 'ASC'],
+			'offset' => 5,
+			'group' => ['field_a'],
+			'having' => ['field_a >' => 100],
+			'contain' => ['table_a' => ['table_b']],
+			'join' => ['table_a' => ['conditions' => ['a > b']]]
+		];
+		$query = new Query($this->connection, $this->table);
+		$query->applyOptions($options);
+
+		$this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
+
+		$expected = new QueryExpression($options['conditions']);
+		$result = $query->clause('where');
+		$this->assertEquals($expected, $result);
+
+		$this->assertEquals(1, $query->clause('limit'));
+
+		$expected = new QueryExpression(['a > b']);
+		$result = $query->clause('join');
+		$this->assertEquals([
+			['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
+		], $result);
+
+		$expected = new OrderByExpression(['a' => 'ASC']);
+		$this->assertEquals($expected, $query->clause('order'));
+
+		$this->assertEquals(5, $query->clause('offset'));
+		$this->assertEquals(['field_a'], $query->clause('group'));
+
+		$expected = new QueryExpression($options['having']);
+		$this->assertEquals($expected, $query->clause('having'));
+
+		$expected = new \ArrayObject(['table_a' => ['table_b' => []]]);
+		$this->assertEquals($expected, $query->contain());
 	}
 
 }
