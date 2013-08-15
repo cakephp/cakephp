@@ -893,7 +893,7 @@ class Shell extends Object {
 			'types' => ['emergency', 'alert', 'critical', 'error', 'warning'],
 			'stream' => $this->stderr,
 		]);
-		Log::engine('stdout', $stdout);
-		Log::engine('stderr', $stderr);
+		Log::config('stdout', ['engine' => $stdout]);
+		Log::config('stderr', ['engine' => $stderr]);
 	}
 }
