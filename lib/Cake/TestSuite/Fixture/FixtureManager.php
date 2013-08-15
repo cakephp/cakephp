@@ -184,6 +184,7 @@ class FixtureManager {
  *
  * @param Cake\TestSuite\TestCase $test the test to inspect for fixture loading
  * @return void
+ * @throws Cake\Error\Exception When fixture records cannot be inserted.
  */
 	public function load(TestCase $test) {
 		if (empty($test->fixtures)) {

@@ -156,6 +156,7 @@ class Security {
  *
  * @param integer $cost Valid values are 4-31
  * @return void
+ * @throws Cake\Error\Exception When cost is invalid.
  */
 	public static function setCost($cost) {
 		if ($cost < 4 || $cost > 31) {
