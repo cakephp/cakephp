@@ -533,7 +533,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			],
 			1 => [
 				2 => 'nate',
-				4 => 'garret'
+				4 => 'garrett'
 			]
 		];
 		$this->assertSame($expected, $query->toArray());

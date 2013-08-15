@@ -530,16 +530,17 @@ class Table {
 				$columns = array_slice(array_keys($row), 0, 3);
 			}
 
-			$key = isset($columns[2]) ? $row[$columns[2]] : $key;
 			list($rowKey, $rowVal) = $columns;
+			if (!isset($columns[2])) {
+				$mr->emit($row[$rowVal], $row[$rowKey]);
+				return;
+			}
+
+			$key = $row[$columns[2]];
 			$mr->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
 		};
 
 		$reducer = function($key, $values, $mr) use (&$columns) {
-			if (!isset($columns[2])) {
-				$mr->emit(current(current($values)), key(current($values)));
-				return;
-			}
 			$result = [];
 			foreach ($values as $value) {
 				$result += $value;
