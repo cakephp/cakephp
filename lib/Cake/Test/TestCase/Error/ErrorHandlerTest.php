@@ -57,6 +57,11 @@ class ErrorHandlerTest extends TestCase {
 		$request->base = '';
 		Router::setRequestInfo($request);
 		Configure::write('debug', 2);
+
+		$this->_logger = $this->getMock('Cake\Log\LogInterface');
+		Log::config('error_test', [
+			'engine' => $this->_logger
+		]);
 	}
 
 /**
@@ -66,6 +71,7 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		Log::drop('error_test');
 		if ($this->_restoreError) {
 			restore_error_handler();
 		}
@@ -143,24 +149,15 @@ class ErrorHandlerTest extends TestCase {
 	public function testHandleErrorDebugOff() {
 		Configure::write('debug', 0);
 		Configure::write('Error.trace', false);
-		if (file_exists(LOGS . 'debug.log')) {
-			unlink(LOGS . 'debug.log');
-		}
+
+		$this->_logger->expects($this->once())
+			->method('write')
+			->with('notice', 'Notice (8): Undefined variable: out in [' . __FILE__ . ', line 160]');
 
 		set_error_handler('Cake\Error\ErrorHandler::handleError');
 		$this->_restoreError = true;
 
 		$out .= '';
-
-		$result = file(LOGS . 'debug.log');
-		$this->assertEquals(1, count($result));
-		$this->assertRegExp(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (Notice|Debug): Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
-			$result[0]
-		);
-		if (file_exists(LOGS . 'debug.log')) {
-			unlink(LOGS . 'debug.log');
-		}
 	}
 
 /**
@@ -171,25 +168,19 @@ class ErrorHandlerTest extends TestCase {
 	public function testHandleErrorLoggingTrace() {
 		Configure::write('debug', 0);
 		Configure::write('Error.trace', true);
-		if (file_exists(LOGS . 'debug.log')) {
-			unlink(LOGS . 'debug.log');
-		}
+
+		$this->_logger->expects($this->once())
+			->method('write')
+			->with('notice', $this->logicalAnd(
+				$this->stringContains('Notice (8): Undefined variable: out in '),
+				$this->stringContains('Trace:'),
+				$this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()')
+			));
 
 		set_error_handler('Cake\Error\ErrorHandler::handleError');
 		$this->_restoreError = true;
 
 		$out .= '';
-
-		$result = file(LOGS . 'debug.log');
-		$this->assertRegExp(
-			'/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2} (Notice|Debug): Notice \(8\): Undefined variable:\s+out in \[.+ line \d+\]$/',
-			$result[0]
-		);
-		$this->assertRegExp('/^Trace:/', $result[1]);
-		$this->assertRegExp('/^' . preg_quote(__NAMESPACE__, '/') . '\\\ErrorHandlerTest\:\:testHandleErrorLoggingTrace\(\)/', $result[2]);
-		if (file_exists(LOGS . 'debug.log')) {
-			unlink(LOGS . 'debug.log');
-		}
 	}
 
 /**
@@ -217,9 +208,6 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleExceptionLog() {
-		if (file_exists(LOGS . 'error.log')) {
-			unlink(LOGS . 'error.log');
-		}
 		Configure::write('Exception', [
 			'handler' => 'Cake\Error\ErrorHandler::handleException',
 			'renderer' => 'Cake\Error\ExceptionRenderer',
@@ -227,14 +215,17 @@ class ErrorHandlerTest extends TestCase {
 		]);
 		$error = new Error\NotFoundException('Kaboom!');
 
+		$this->_logger->expects($this->once())
+			->method('write')
+			->with('error', $this->logicalAnd(
+				$this->stringContains('[Cake\Error\NotFoundException] Kaboom!'),
+				$this->stringContains('ErrorHandlerTest->testHandleExceptionLog')
+			));
+
 		ob_start();
 		ErrorHandler::handleException($error);
 		$result = ob_get_clean();
 		$this->assertRegExp('/Kaboom!/', $result, 'message missing.');
-
-		$log = file(LOGS . 'error.log');
-		$this->assertContains('[Cake\Error\NotFoundException] Kaboom!', $log[0], 'message missing.');
-		$this->assertContains('ErrorHandlerTest->testHandleExceptionLog', $log[2], 'Stack trace missing.');
 	}
 
 /**
@@ -243,9 +234,6 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleExceptionLogSkipping() {
-		if (file_exists(LOGS . 'error.log')) {
-			unlink(LOGS . 'error.log');
-		}
 		Configure::write('Exception', [
 			'handler' => 'Cake\Error\ErrorHandler::handleException',
 			'renderer' => 'Cake\Error\ExceptionRenderer',
@@ -254,6 +242,13 @@ class ErrorHandlerTest extends TestCase {
 		]);
 		$notFound = new Error\NotFoundException('Kaboom!');
 		$forbidden = new Error\ForbiddenException('Fooled you!');
+
+		$this->_logger->expects($this->once())
+			->method('write')
+			->with(
+				'error',
+				$this->stringContains('[Cake\Error\ForbiddenException] Fooled you!')
+			);
 
 		ob_start();
 		ErrorHandler::handleException($notFound);
@@ -264,10 +259,6 @@ class ErrorHandlerTest extends TestCase {
 		ErrorHandler::handleException($forbidden);
 		$result = ob_get_clean();
 		$this->assertRegExp('/Fooled you!/', $result, 'message missing.');
-
-		$log = file(LOGS . 'error.log');
-		$this->assertNotContains('[Cake\Error\NotFoundException] Kaboom!', $log[0], 'message should not be logged.');
-		$this->assertContains('[Cake\Error\ForbiddenException] Fooled you!', $log[0], 'message missing.');
 	}
 
 /**
@@ -330,22 +321,25 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleFatalErrorLog() {
-		if (file_exists(LOGS . 'error.log')) {
-			unlink(LOGS . 'error.log');
-		}
 		Configure::write('Exception', [
 			'handler' => 'Cake\Error\ErrorHandler::handleException',
 			'renderer' => 'Cake\Error\ExceptionRenderer',
 			'log' => true
 		]);
+		$this->_logger->expects($this->at(0))
+			->method('write')
+			->with('error', $this->logicalAnd(
+				$this->stringContains(__FILE__ . ', line 341'),
+				$this->stringContains('Fatal Error (1)'),
+				$this->stringContains('Something wrong')
+			));
+		$this->_logger->expects($this->at(1))
+			->method('write')
+			->with('error', $this->stringContains('[Cake\Error\FatalErrorException] Something wrong'));
 
 		ob_start();
 		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
 		ob_clean();
-
-		$log = file(LOGS . 'error.log');
-		$this->assertContains(__FILE__, $log[0], 'missing filename');
-		$this->assertContains('[Cake\Error\FatalErrorException] Something wrong', $log[1], 'message missing.');
 	}
 
 }

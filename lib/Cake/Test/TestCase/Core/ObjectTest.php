@@ -198,8 +198,8 @@ class ObjectTest extends TestCase {
 		$this->object = new TestObject();
 		Configure::write('App.namespace', 'TestApp');
 		Configure::write('Security.salt', 'not-the-default');
-		Log::disable('stdout');
-		Log::disable('stderr');
+		Log::drop('stdout');
+		Log::drop('stderr');
 	}
 
 /**
@@ -210,6 +210,7 @@ class ObjectTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		Plugin::unload();
+		Log::reset();
 		unset($this->object);
 	}
 

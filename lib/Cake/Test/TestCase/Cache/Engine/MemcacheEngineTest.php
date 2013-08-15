@@ -63,7 +63,7 @@ class MemcacheEngineTest extends TestCase {
 		$this->skipIf(!class_exists('Memcache'), 'Memcache is not installed or configured properly.');
 
 		Configure::write('Cache.disable', false);
-		Configure::write('Cache.memcache', array(
+		Cache::config('memcache', array(
 			'engine' => 'Memcache',
 			'prefix' => 'cake_',
 			'duration' => 3600
@@ -97,7 +97,7 @@ class MemcacheEngineTest extends TestCase {
 			'servers' => array('127.0.0.1'),
 			'persistent' => true,
 			'compress' => false,
-			'engine' => 'Memcache',
+			'engine' => 'Cake\Cache\Engine\MemcacheEngine',
 			'groups' => array()
 		);
 		$this->assertEquals($expecting, $settings);
@@ -317,17 +317,17 @@ class MemcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testConfigurationConflict() {
-		Configure::write('Cache.long_memcache', [
+		Cache::config('long_memcache', [
 			'engine' => 'Memcache',
 			'duration' => '+2 seconds',
 			'servers' => ['127.0.0.1:11211'],
 		]);
-		Configure::write('Cache.short_memcache', [
+		Cache::config('short_memcache', [
 			'engine' => 'Memcache',
 			'duration' => '+1 seconds',
 			'servers' => ['127.0.0.1:11211'],
 		]);
-		Configure::write('Cache.some_file', ['engine' => 'File']);
+		Cache::config('some_file', ['engine' => 'File']);
 
 		$this->assertTrue(Cache::write('duration_test', 'yay', 'long_memcache'));
 		$this->assertTrue(Cache::write('short_duration_test', 'boo', 'short_memcache'));
@@ -352,7 +352,7 @@ class MemcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testClear() {
-		Configure::write('Cache.memcache2', [
+		Cache::config('memcache2', [
 			'engine' => 'Memcache',
 			'prefix' => 'cake2_',
 			'duration' => 3600
@@ -378,7 +378,7 @@ class MemcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testZeroDuration() {
-		Configure::write('Cache.memcache', [
+		Cache::config('memcache', [
 			'engine' => 'Memcache',
 			'prefix' => 'cake_',
 			'duration' => 0
@@ -417,13 +417,13 @@ class MemcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupReadWrite() {
-		Configure::write('Cache.memcache_groups', [
+		Cache::config('memcache_groups', [
 			'engine' => 'Memcache',
 			'duration' => 3600,
 			'groups' => ['group_a', 'group_b'],
 			'prefix' => 'test_'
 		]);
-		Configure::write('Cache.memcache_helper', [
+		Cache::config('memcache_helper', [
 			'engine' => 'Memcache',
 			'duration' => 3600,
 			'prefix' => 'test_'
@@ -448,7 +448,7 @@ class MemcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Configure::write('Cache.memcache_groups', [
+		Cache::config('memcache_groups', [
 			'engine' => 'Memcache',
 			'duration' => 3600,
 			'groups' => ['group_a', 'group_b']
@@ -466,7 +466,7 @@ class MemcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupClear() {
-		Configure::write('Cache.memcache_groups', [
+		Cache::config('memcache_groups', [
 			'engine' => 'Memcache',
 			'duration' => 3600,
 			'groups' => ['group_a', 'group_b']

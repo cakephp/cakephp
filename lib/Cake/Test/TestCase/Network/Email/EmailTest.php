@@ -19,7 +19,6 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
-use Cake\Log\LogInterface;
 use Cake\Network\Email\Email;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
@@ -133,6 +132,7 @@ class EmailTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		App::build();
+		Log::drop('email');
 	}
 
 /**
@@ -1113,7 +1113,6 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendWithLog() {
-		$path = CAKE . 'Test/TestApp/tmp/';
 		$log = $this->getMock('Cake\Log\Engine\BaseLog', ['write'], [['scopes' => 'email']]);
 
 		$message = 'Logging This';
@@ -1129,7 +1128,7 @@ class EmailTest extends TestCase {
 				)
 			);
 
-		Log::engine('email', $log);
+		Log::config('email', ['engine' => $log]);
 
 		$this->CakeEmail->transport('Debug');
 		$this->CakeEmail->to('me@cakephp.org');
@@ -1145,25 +1144,30 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendWithLogAndScope() {
-		Configure::write('Log.email', array(
-			'engine' => 'File',
-			'path' => TMP,
-			'file' => 'cake_test_emails',
-			'scopes' => array('email')
-		));
-		Log::reset();
+		$message = 'Logging This';
+
+		$log = $this->getMock('Cake\Log\Engine\BaseLog', ['write'], ['scopes' => ['email']]);
+		$log->expects($this->once())
+			->method('write')
+			->with(
+				'debug',
+				$this->logicalAnd(
+					$this->stringContains($message),
+					$this->stringContains('cake@cakephp.org'),
+					$this->stringContains('me@cakephp.org')
+				)
+			);
+
+		Log::config('email', [
+			'engine' => $log,
+		]);
+
 		$this->CakeEmail->transport('Debug');
 		$this->CakeEmail->to('me@cakephp.org');
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->config(array('log' => array('scope' => 'email')));
-		$result = $this->CakeEmail->send("Logging This");
-
-		$File = new File(TMP . 'cake_test_emails.log');
-		$log = $File->read();
-		$this->assertTrue(strpos($log, $result['headers']) !== false);
-		$this->assertTrue(strpos($log, $result['message']) !== false);
-		$File->delete();
+		$this->CakeEmail->send($message);
 	}
 
 /**
