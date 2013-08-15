@@ -963,7 +963,7 @@ class TranslateBehaviorTest extends TestCase {
 		);
 		$TestModel->create();
 		$this->assertFalse($TestModel->save($data));
-		$this->assertEquals(array('This field cannot be left blank'), $TestModel->validationErrors['title']);
+		$this->assertEquals(array('The provided value is invalid'), $TestModel->validationErrors['title']);
 
 		$TestModel->locale = 'eng';
 		$TestModel->validate['title'] = '/Only this title/';
