@@ -506,4 +506,37 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with($options);
 		$table->find('all', $options);
 	}
+
+/**
+ * Tests find('list')
+ *
+ * @return void
+ */
+	public function testFindList() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$query = $table->find('list', ['fields' => ['id', 'username']])->order('id');
+		$expected = [
+			1 => 'mariano',
+			2 => 'nate',
+			3 => 'larry',
+			4 => 'garrett'
+		];
+		$this->assertSame($expected, $query->toArray());
+
+		$query = $table->find('list')
+			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->order('id');
+		$expected = [
+			0 => [
+				1 => 'mariano',
+				3 => 'larry'
+			],
+			1 => [
+				2 => 'nate',
+				4 => 'garret'
+			]
+		];
+		$this->assertSame($expected, $query->toArray());
+	}
+
 }

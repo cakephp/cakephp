@@ -524,6 +524,32 @@ class Table {
 		return $query;
 	}
 
+	public function findList(Query $query, array $options = []) {
+		$mapper = function($key, $row, $mr) use ($query, &$columns) {
+			if (empty($columns)) {
+				$columns = array_slice(array_keys($row), 0, 3);
+			}
+
+			$key = isset($columns[2]) ? $row[$columns[2]] : $key;
+			list($rowKey, $rowVal) = $columns;
+			$mr->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
+		};
+
+		$reducer = function($key, $values, $mr) use (&$columns) {
+			if (!isset($columns[2])) {
+				$mr->emit(current(current($values)), key(current($values)));
+				return;
+			}
+			$result = [];
+			foreach ($values as $value) {
+				$result += $value;
+			}
+			$mr->emit($result, $key);
+		};
+
+		return $query->mapReduce($mapper, $reducer);
+	}
+
 /**
  * Creates a new Query instance for this table
  *

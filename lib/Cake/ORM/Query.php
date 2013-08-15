@@ -67,6 +67,10 @@ class Query extends DatabaseQuery {
  */
 	protected $_loadEagerly = [];
 
+	protected $_mapper;
+
+	protected $_reducer;
+
 /**
  * List of options accepted by associations in contain()
  * index by key for faster access
@@ -99,6 +103,8 @@ class Query extends DatabaseQuery {
  * @var boolean
  */
 	protected $_useBufferedResults = false;
+
+	protected $_formatters = [];
 
 /**
  * @param Cake\Database\Connection $connection
@@ -349,6 +355,11 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
+	public function formatResults($current = null, $key = null) {
+		$this->_formatters[] = compact('current', 'key');
+		return $this;
+	}
+
 /**
  * Set the result set for a query.
  *
@@ -382,9 +393,9 @@ class Query extends DatabaseQuery {
 			return $this->_results;
 		}
 		if ($this->_useBufferedResults) {
-			return new BufferedResultSet($this, parent::execute());
+			return $this->_applyFormatters(new BufferedResultSet($this, parent::execute()));
 		}
-		return new ResultSet($this, parent::execute());
+		return  $this->_applyFormatters(new ResultSet($this, parent::execute()));
 	}
 
 /**
@@ -516,6 +527,24 @@ class Query extends DatabaseQuery {
 		}
 
 		return $this;
+	}
+
+	public function mapReduce(callable $mapper, callable $reducer) {
+		$this->_mapper = $mapper;
+		$this->_reducer = $reducer;
+		return $this;
+	}
+
+	protected function _applyFormatters($result) {
+		foreach ($this->_formatters as $formatter) {
+			$result = new ResultSetDecorator($result, $formatter);
+		}
+		if (!empty($this->_mapper) && !empty($this->_reducer)) {
+			$result = new ResultSetDecorator(
+				new MapReduce($result, $this->_mapper, $this->_reducer)
+			);
+		}
+		return $result;
 	}
 
 /**
