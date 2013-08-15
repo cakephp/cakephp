@@ -48,7 +48,7 @@ abstract class AbstractTransport {
  */
 	public function config($config = null) {
 		if (is_array($config)) {
-			$this->_config = $config;
+			$this->_config = $config + $this->_config;
 		}
 		return $this->_config;
 	}
