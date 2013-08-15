@@ -13,6 +13,8 @@
  */
 
 use Cake\Core\Configure;
+use Cake\Cache\Cache;
+use Cake\Log\Log;
 
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(dirname(dirname(__DIR__))));
@@ -55,10 +57,12 @@ Configure::write('App', [
 	'cssBaseUrl' => 'css/',
 ]);
 
-Configure::write('Cache._cake_core_', [
-	'engine' => 'File',
-	'prefix' => 'cake_core_',
-	'serialize' => true
+Cache::config([
+	'_cake_core_' => [
+		'engine' => 'File',
+		'prefix' => 'cake_core_',
+		'serialize' => true
+	]
 ]);
 
 Configure::write('Datasource.test', [
@@ -73,16 +77,17 @@ Configure::write('Session', [
 	'defaults' => 'php'
 ]);
 
-Configure::write('Log.debug', [
-	'engine' => 'Cake\Log\Engine\FileLog',
-	'levels' => ['notice', 'info', 'debug'],
-	'file' => 'debug',
-]);
-
-Configure::write('Log.error', [
-	'engine' => 'Cake\Log\Engine\FileLog',
-	'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
-	'file' => 'error',
+Log::config([
+	'debug' => [
+		'engine' => 'Cake\Log\Engine\FileLog',
+		'levels' => ['notice', 'info', 'debug'],
+		'file' => 'debug',
+	],
+	'error' => [
+		'engine' => 'Cake\Log\Engine\FileLog',
+		'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
+		'file' => 'error',
+	]
 ]);
 
 $autoloader = new Cake\Core\ClassLoader('TestApp', dirname(__DIR__) . '/Test');

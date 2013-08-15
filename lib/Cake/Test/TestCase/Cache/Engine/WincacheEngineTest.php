@@ -39,7 +39,7 @@ class WincacheEngineTest extends TestCase {
 		parent::setUp();
 		$this->skipIf(!function_exists('wincache_ucache_set'), 'Wincache is not installed or configured properly.');
 		Configure::write('Cache.disable', false);
-		Configure::write('Cache.wincache', ['engine' => 'Wincache', 'prefix' => 'cake_']);
+		Cache::config('wincache', ['engine' => 'Wincache', 'prefix' => 'cake_']);
 	}
 
 /**
@@ -201,7 +201,7 @@ class WincacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupsReadWrite() {
-		Configure::write('Cache.wincache_groups', [
+		Cache::config('wincache_groups', [
 			'engine' => 'Wincache',
 			'duration' => 0,
 			'groups' => ['group_a', 'group_b'],
@@ -227,7 +227,7 @@ class WincacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Configure::write('Cache.wincache_groups', [
+		Cache::config('wincache_groups', [
 			'engine' => 'Wincache',
 			'duration' => 0,
 			'groups' => ['group_a', 'group_b'],
@@ -246,7 +246,7 @@ class WincacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupClear() {
-		Configure::write('Cache.wincache_groups', [
+		Cache::config('wincache_groups', [
 			'engine' => 'Wincache',
 			'duration' => 0,
 			'groups' => ['group_a', 'group_b'],

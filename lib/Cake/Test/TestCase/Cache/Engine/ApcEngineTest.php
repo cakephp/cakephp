@@ -43,7 +43,7 @@ class ApcEngineTest extends TestCase {
 		}
 
 		Configure::write('Cache.disable', false);
-		Configure::write('Cache.apc', ['engine' => 'Apc', 'prefix' => 'cake_']);
+		Cache::config('apc', ['engine' => 'Apc', 'prefix' => 'cake_']);
 	}
 
 /**
@@ -86,7 +86,7 @@ class ApcEngineTest extends TestCase {
  * @return void
  */
 	public function testReadWriteDurationZero() {
-		Configure::write('apc', ['engine' => 'Apc', 'duration' => 0, 'prefix' => 'cake_']);
+		Cache::config('apc', ['engine' => 'Apc', 'duration' => 0, 'prefix' => 'cake_']);
 		Cache::write('zero', 'Should save', 'apc');
 		sleep(1);
 
@@ -214,7 +214,7 @@ class ApcEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupsReadWrite() {
-		Configure::write('Cache.apc_groups', [
+		Cache::config('apc_groups', [
 			'engine' => 'Apc',
 			'duration' => 0,
 			'groups' => array('group_a', 'group_b'),
@@ -240,7 +240,7 @@ class ApcEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Configure::write('Cache.apc_groups', array(
+		Cache::config('apc_groups', array(
 			'engine' => 'Apc',
 			'duration' => 0,
 			'groups' => array('group_a', 'group_b'),
@@ -259,7 +259,7 @@ class ApcEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupClear() {
-		Configure::write('Cache.apc_groups', array(
+		Cache::config('apc_groups', array(
 			'engine' => 'Apc',
 			'duration' => 0,
 			'groups' => array('group_a', 'group_b'),

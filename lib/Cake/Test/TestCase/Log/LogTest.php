@@ -28,13 +28,8 @@ use Cake\TestSuite\TestCase;
  */
 class LogTest extends TestCase {
 
-/**
- * Start test callback, clears all streams enabled.
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
+	public function tearDown() {
+		parent::tearDown();
 		Log::reset();
 	}
 
@@ -51,12 +46,12 @@ class LogTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
-		Configure::write('Log.libtest', array(
+		Log::config('libtest', [
 			'engine' => 'TestApp'
-		));
-		Configure::write('Log.plugintest', array(
+		]);
+		Log::config('plugintest', [
 			'engine' => 'TestPlugin.TestPlugin'
-		));
+		]);
 
 		$result = Log::engine('libtest');
 		$this->assertInstanceOf('TestApp\Log\Engine\TestAppLog', $result);
@@ -80,7 +75,7 @@ class LogTest extends TestCase {
  * @return void
  */
 	public function testImportingLoggerFailure() {
-		Configure::write('Log.fail', array());
+		Log::config('fail', []);
 		Log::engine('fail');
 	}
 
@@ -90,7 +85,7 @@ class LogTest extends TestCase {
  * @return void
  */
 	public function testValidKeyName() {
-		Configure::write('Log.valid', array('engine' => 'File'));
+		Log::config('valid', array('engine' => 'File'));
 		$stream = Log::engine('valid');
 		$this->assertInstanceOf('Cake\Log\Engine\FileLog', $stream);
 	}
@@ -102,7 +97,7 @@ class LogTest extends TestCase {
  * @return void
  */
 	public function testNotImplementingInterface() {
-		Configure::write('Log.fail', array('engine' => '\stdClass'));
+		Log::config('fail', array('engine' => '\stdClass'));
 		Log::engine('fail');
 	}
 
@@ -112,14 +107,13 @@ class LogTest extends TestCase {
  * @return void
  **/
 	public function testDrop() {
-		Configure::write('Log.file', array(
+		Log::config('file', array(
 			'engine' => 'File',
 			'path' => LOGS
 		));
 		$result = Log::configured();
 		$this->assertContains('file', $result);
 
-		Configure::delete('Log.file');
 		Log::drop('file');
 
 		$result = Log::configured();
@@ -134,17 +128,18 @@ class LogTest extends TestCase {
  * @return void
  */
 	public function testEngineInjectErrorOnWrongType() {
-		Log::engine('test', new \StdClass);
+		Log::config('test', ['engine' => new \StdClass]);
+		Log::info('testing');
 	}
 
 /**
- * Test that engine() can add logger instances.
+ * Test that config() can inject instances
  *
  * @return void
  */
-	public function testEngineInjectInstance() {
+	public function testConfigInjectInstance() {
 		$logger = new FileLog();
-		Log::engine('test', $logger);
+		Log::config('test', ['engine' => $logger]);
 		$result = Log::engine('test');
 		$this->assertSame($logger, $result);
 	}
@@ -155,6 +150,7 @@ class LogTest extends TestCase {
  * @return void
  */
 	public function testLogFileWriting() {
+		$this->_resetLogConfig();
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
@@ -183,12 +179,12 @@ class LogTest extends TestCase {
 		if (file_exists(LOGS . 'eggs.log')) {
 			unlink(LOGS . 'eggs.log');
 		}
-		Configure::write('Log.spam', array(
+		Log::config('spam', array(
 			'engine' => 'File',
 			'types' => 'debug',
 			'file' => 'spam',
 		));
-		Configure::write('Log.eggs', array(
+		Log::config('eggs', array(
 			'engine' => 'File',
 			'types' => array('eggs', 'debug', 'error', 'warning'),
 			'file' => 'eggs',
@@ -217,62 +213,39 @@ class LogTest extends TestCase {
 	}
 
 /**
- * test enable
+ * test enable() throws exceptions
  *
  * @expectedException Cake\Error\Exception
  */
 	public function testStreamEnable() {
-		Configure::write('Log.spam', array(
-			'engine' => 'File',
-			'file' => 'spam',
-		));
-		$this->assertTrue(Log::enabled('spam'));
-		Log::drop('spam');
-		Log::enable('bogus_stream');
+		Log::enable('debug');
 	}
 
 /**
- * test disable
+ * test enabled() throws exceptions
+ *
+ * @expectedException Cake\Error\Exception
+ */
+	public function testStreamEnabled() {
+		Log::enabled('debug');
+	}
+
+/**
+ * test disable() throws exceptions
  *
  * @expectedException Cake\Error\Exception
  */
 	public function testStreamDisable() {
-		Configure::write('Log.spam', array(
-			'engine' => 'File',
-			'file' => 'spam',
-		));
-		$this->assertTrue(Log::enabled('spam'));
-		Log::disable('spam');
-		$this->assertFalse(Log::enabled('spam'));
-		Log::drop('spam');
-		Log::enable('bogus_stream');
-	}
-
-/**
- * test enabled() invalid stream
- *
- * @expectedException Cake\Error\Exception
- */
-	public function testStreamEnabledInvalid() {
-		Log::enabled('bogus_stream');
-	}
-
-/**
- * test disable invalid stream
- *
- * @expectedException Cake\Error\Exception
- */
-	public function testStreamDisableInvalid() {
-		Log::disable('bogus_stream');
+		Log::disable('debug');
 	}
 
 	protected function _resetLogConfig() {
-		Configure::write('Log.debug', array(
+		Log::config('debug', array(
 			'engine' => 'File',
 			'types' => array('notice', 'info', 'debug'),
 			'file' => 'debug',
 		));
-		Configure::write('Log.error', array(
+		Log::config('error', array(
 			'engine' => 'File',
 			'types' => array('warning', 'error', 'critical', 'alert', 'emergency'),
 			'file' => 'error',
@@ -308,7 +281,7 @@ class LogTest extends TestCase {
 	public function testScopedLogging() {
 		$this->_deleteLogs();
 		$this->_resetLogConfig();
-		Configure::write('Log.shops', array(
+		Log::config('shops', array(
 			'engine' => 'File',
 			'types' => array('info', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
@@ -354,7 +327,7 @@ class LogTest extends TestCase {
 		}
 
 		$this->_resetLogConfig();
-		Configure::write('Log.shops', array(
+		Log::config('shops', array(
 			'engine' => 'File',
 			'types' => array('info', 'debug', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
@@ -393,13 +366,13 @@ class LogTest extends TestCase {
 	public function testScopedLoggingExclusive() {
 		$this->_deleteLogs();
 
-		Configure::write('Log.shops', array(
+		Log::config('shops', array(
 			'engine' => 'File',
 			'types' => array('info', 'notice', 'warning'),
 			'scopes' => array('transactions', 'orders'),
 			'file' => 'shops.log',
 		));
-		Configure::write('Log.eggs', array(
+		Log::config('eggs', array(
 			'engine' => 'File',
 			'types' => array('info', 'notice', 'warning'),
 			'scopes' => array('eggs'),
@@ -423,12 +396,12 @@ class LogTest extends TestCase {
 	public function testConvenienceMethods() {
 		$this->_deleteLogs();
 
-		Configure::write('Log.debug', array(
+		Log::config('debug', array(
 			'engine' => 'File',
 			'types' => array('notice', 'info', 'debug'),
 			'file' => 'debug',
 		));
-		Configure::write('Log.error', array(
+		Log::config('error', array(
 			'engine' => 'File',
 			'types' => array('emergency', 'alert', 'critical', 'error', 'warning'),
 			'file' => 'error',

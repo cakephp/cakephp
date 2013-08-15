@@ -751,7 +751,7 @@ class ViewTest extends TestCase {
  */
 	public function testElementCache() {
 		Cache::drop('test_view');
-		Configure::write('Cache.test_view', [
+		Cache::config('test_view', [
 			'engine' => 'File',
 			'duration' => '+1 day',
 			'path' => CACHE . 'views/',

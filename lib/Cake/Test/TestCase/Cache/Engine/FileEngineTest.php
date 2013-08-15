@@ -45,7 +45,7 @@ class FileEngineTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Cache.disable', false);
-		Configure::write('Cache.file_test', [
+		Cache::config('file_test', [
 			'engine' => 'File',
 			'path' => CACHE
 		]);
@@ -162,7 +162,7 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testSerialize() {
-		Configure::write('Cache.file_test', ['engine' => 'File', 'serialize' => true]);
+		Cache::config('file_test', ['engine' => 'File', 'serialize' => true]);
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('serialize_test', $data, 'file_test');
 		$this->assertTrue($write);
@@ -181,7 +181,7 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testClear() {
-		Configure::write('Cache.file_test', ['engine' => 'File', 'duration' => 1]);
+		Cache::config('file_test', ['engine' => 'File', 'duration' => 1]);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('serialize_test1', $data, 'file_test');
@@ -299,7 +299,7 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testRemoveWindowsSlashesFromCache() {
-		Configure::write('Cache.windows_test', [
+		Cache::config('windows_test', [
 			'engine' => 'File',
 			'isWindows' => true,
 			'prefix' => null,
@@ -349,13 +349,13 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testWriteQuotedString() {
-		Configure::write('Cache.file_test', array('engine' => 'File', 'path' => TMP . 'tests'));
+		Cache::config('file_test', array('engine' => 'File', 'path' => TMP . 'tests'));
 		Cache::write('App.doubleQuoteTest', '"this is a quoted string"', 'file_test');
 		$this->assertSame(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'", 'file_test');
 		$this->assertSame(Cache::read('App.singleQuoteTest', 'file_test'), "'this is a quoted string'");
 
-		Configure::write('Cache.file_test', array('isWindows' => true, 'path' => TMP . 'tests'));
+		Cache::config('file_test', array('isWindows' => true, 'path' => TMP . 'tests'));
 		$this->assertSame(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'", 'file_test');
 		$this->assertSame(Cache::read('App.singleQuoteTest', 'file_test'), "'this is a quoted string'");
@@ -371,7 +371,7 @@ class FileEngineTest extends TestCase {
 	public function testPathDoesNotExist() {
 		$this->skipIf(is_dir(TMP . 'tests' . DS . 'autocreate'), 'Cannot run if test directory exists.');
 
-		Configure::write('Cache.autocreate', array(
+		Cache::config('autocreate', array(
 			'engine' => 'File',
 			'path' => TMP . 'tests' . DS . 'autocreate'
 		));
@@ -388,7 +388,7 @@ class FileEngineTest extends TestCase {
 		if (DS === '\\') {
 			$this->markTestSkipped('File permission testing does not work on Windows.');
 		}
-		Configure::write('Cache.mask_test', ['engine' => 'File', 'path' => TMP . 'tests']);
+		Cache::config('mask_test', ['engine' => 'File', 'path' => TMP . 'tests']);
 		$data = 'This is some test content';
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
@@ -397,7 +397,7 @@ class FileEngineTest extends TestCase {
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
-		Configure::write('Cache.mask_test', ['engine' => 'File', 'mask' => 0666, 'path' => TMP . 'tests']);
+		Cache::config('mask_test', ['engine' => 'File', 'mask' => 0666, 'path' => TMP . 'tests']);
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
 		$expected = '0666';
@@ -405,7 +405,7 @@ class FileEngineTest extends TestCase {
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
-		Configure::write('Cache.mask_test', ['engine' => 'File', 'mask' => 0644, 'path' => TMP . 'tests']);
+		Cache::config('mask_test', ['engine' => 'File', 'mask' => 0644, 'path' => TMP . 'tests']);
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
 		$expected = '0644';
@@ -413,7 +413,7 @@ class FileEngineTest extends TestCase {
 		Cache::delete('masking_test', 'mask_test');
 		Cache::drop('mask_test');
 
-		Configure::write('Cache.mask_test', ['engine' => 'File', 'mask' => 0640, 'path' => TMP . 'tests']);
+		Cache::config('mask_test', ['engine' => 'File', 'mask' => 0640, 'path' => TMP . 'tests']);
 		$write = Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
 		$expected = '0640';
@@ -428,7 +428,7 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupsReadWrite() {
-		Configure::write('Cache.file_groups', [
+		Cache::config('file_groups', [
 			'engine' => 'File',
 			'duration' => 3600,
 			'groups' => array('group_a', 'group_b')
@@ -444,7 +444,7 @@ class FileEngineTest extends TestCase {
  * Test that clearing with repeat writes works properly
  */
 	public function testClearingWithRepeatWrites() {
-		Configure::write('Cache.repeat', [
+		Cache::config('repeat', [
 			'engine' => 'File',
 			'groups' => array('users')
 		]);
@@ -473,7 +473,7 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Configure::write('Cache.file_groups', [
+		Cache::config('file_groups', [
 			'engine' => 'File',
 			'duration' => 3600,
 			'groups' => array('group_a', 'group_b')
@@ -491,17 +491,17 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupClear() {
-		Configure::write('Cache.file_groups', [
+		Cache::config('file_groups', [
 			'engine' => 'File',
 			'duration' => 3600,
 			'groups' => array('group_a', 'group_b')
 		]);
-		Configure::write('Cache.file_groups2', [
+		Cache::config('file_groups2', [
 			'engine' => 'File',
 			'duration' => 3600,
 			'groups' => array('group_b')
 		]);
-		Configure::write('Cache.file_groups3', [
+		Cache::config('file_groups3', [
 			'engine' => 'File',
 			'duration' => 3600,
 			'groups' => array('group_b'),

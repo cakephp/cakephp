@@ -444,7 +444,7 @@ TEXT;
  */
 	public function testLog() {
 		$mock = $this->getMock('Cake\Log\Engine\BaseLog', ['write']);
-		Log::engine('test', $mock);
+		Log::config('test', ['engine' => $mock]);
 
 		$mock->expects($this->at(0))
 			->method('write')

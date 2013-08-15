@@ -833,7 +833,7 @@ TEXT;
 			['write'],
 			[['types' => 'error']]
 		);
-		Log::engine('console', $mock);
+		Log::config('console', ['engine' => $mock]);
 		$mock->expects($this->once())
 			->method('write')
 			->with('error', $this->Shell->testMessage);
@@ -841,6 +841,8 @@ TEXT;
 		$this->assertTrue(file_exists(LOGS . 'error.log'));
 		$contents = file_get_contents(LOGS . 'error.log');
 		$this->assertContains($this->Shell->testMessage, $contents);
+
+		Log::drop('console');
 	}
 
 /**

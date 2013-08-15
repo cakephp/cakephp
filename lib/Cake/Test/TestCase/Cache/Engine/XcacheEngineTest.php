@@ -40,7 +40,7 @@ class XcacheEngineTest extends TestCase {
 			$this->markTestSkipped('Xcache is not installed or configured properly');
 		}
 		Configure::write('Cache.disable', false);
-		Configure::write('Cache.xcache', ['engine' => 'Xcache', 'prefix' => 'cake_']);
+		Cache::config('xcache', ['engine' => 'Xcache', 'prefix' => 'cake_']);
 	}
 
 /**
@@ -209,7 +209,7 @@ class XcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupsReadWrite() {
-		Configure::write('Cache.xcache_groups', [
+		Cache::config('xcache_groups', [
 			'engine' => 'Xcache',
 			'duration' => 0,
 			'groups' => ['group_a', 'group_b'],
@@ -235,7 +235,7 @@ class XcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupDelete() {
-		Configure::write('Cache.xcache_groups', [
+		Cache::config('xcache_groups', [
 			'engine' => 'Xcache',
 			'duration' => 0,
 			'groups' => ['group_a', 'group_b'],
@@ -254,7 +254,7 @@ class XcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testGroupClear() {
-		Configure::write('Cache.xcache_groups', [
+		Cache::config('xcache_groups', [
 			'engine' => 'Xcache',
 			'duration' => 0,
 			'groups' => ['group_a', 'group_b'],

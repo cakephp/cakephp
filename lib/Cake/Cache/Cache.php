@@ -32,7 +32,7 @@ use Cake\Utility\Inflector;
  * A sample configuration would be:
  *
  * {{{
- * Configure::write('Cache.shared', array(
+ * Cache::config('shared', array(
  *    'engine' => 'Cake\Cache\Engine\ApcEngine',
  *    'prefix' => 'my_app_'
  * ));
@@ -83,7 +83,18 @@ use Cake\Utility\Inflector;
 class Cache {
 
 /**
- * Cache configuration stack
+ * Configuraiton backup.
+ *
+ * Keeps the permanent/default settings for each cache engine.
+ * These settings are used to reset the engines after temporary modification.
+ *
+ * @var array
+ */
+	protected static $_restore = array();
+
+/**
+ * Cache configuration.
+ *
  * Keeps the permanent/default settings for each cache engine.
  * These settings are used to reset the engines after temporary modification.
  *
@@ -106,76 +117,70 @@ class Cache {
 	protected static $_reset = false;
 
 /**
- * Engine instances keyed by configuration name.
+ * Cache Registry used for creating and using cache adapters.
  *
- * @var array
+ * @var Cake\Cache\CacheRegistry
  */
-	protected static $_engines = array();
+	protected static $_registry;
 
 /**
- * Deprecated method. Will be removed in 3.0.0
+ * This method can be used to define cache adapters for an application
+ * during the bootstrapping process. You can use this method to add new cache adapters
+ * at runtime as well. New cache configurations will be constructed upon the next write.
  *
- * @deprecated
+ * To change an adapter's configuration at runtime, first drop the adapter and then
+ * reconfigure it.
+ *
+ * Adapters will not be constructed until the first operation is done.
+ *
+ * @param string|array $key The name of the cache config, or an array of multiple configs.
+ * @param array $config An array of name => config data for adapter.
+ * @return void
  */
-	public static function config($name = null, $settings = array()) {
-		trigger_error(
-			__d('cake_dev', 'You must use Configure::write() to define cache configuration. Or use engine() to inject new adapter.'),
-			E_USER_WARNING
-		);
+	public static function config($key, $config = null) {
+		if ($config !== null && is_string($key)) {
+			static::$_config[$key] = $config;
+			return;
+		}
+
+		static::$_config = array_merge(static::$_config, $key);
 	}
 
 /**
  * Finds and builds the instance of the required engine class.
  *
  * @param string $name Name of the config array that needs an engine instance built
- * @return boolean
- * @throws Cake\Error\Exception
+ * @throws Cake\Error\Exception When a cache engine cannot be created.
  */
 	protected static function _buildEngine($name) {
-		$config = Configure::read('Cache.' . $name);
-		if (empty($config['engine'])) {
-			return false;
+		if (empty(static::$_registry)) {
+			static::$_registry = new CacheRegistry();
 		}
-		$cacheClass = App::classname($config['engine'], 'Cache/Engine', 'Engine');
-		if (!$cacheClass) {
-			throw new Error\Exception(
-				__d('cake_dev', 'Cache engine %s is not available.', $name)
-			);
+		if (empty(static::$_config[$name]['engine'])) {
+			throw new Error\Exception(__d('cake_dev', 'The "%s" cache configuration does not exist.', $name));
 		}
-		if (!is_subclass_of($cacheClass, 'Cake\Cache\CacheEngine')) {
-			throw new Error\Exception(__d('cake_dev', 'Cache engines must use Cake\Cache\CacheEngine as a base class.'));
-		}
-		$engine = new $cacheClass();
-		if (!$engine->init($config)) {
-			throw new Error\Exception(
-				__d('cake_dev', 'Cache engine %s is not properly configured.', $name)
-			);
-		}
-		if ($engine->settings['probability'] && time() % $engine->settings['probability'] === 0) {
-			$engine->gc();
-		}
-		static::$_engines[$name] = $engine;
+
+		$config = static::$_config[$name];
+		$config['className'] = $config['engine'];
+
+		static::$_registry->load($name, $config);
 
 		if (!empty($config['groups'])) {
 			foreach ($config['groups'] as $group) {
 				static::$_groups[$group][] = $name;
-				sort(static::$_groups[$group]);
 				static::$_groups[$group] = array_unique(static::$_groups[$group]);
+				sort(static::$_groups[$group]);
 			}
 		}
-
-		return true;
 	}
 
 /**
- * Returns an array containing the connected Cache engines.
- * This will not return engines that are configured, but have not
- * been used yet.
+ * Returns an array containing the configured Cache engines.
  *
- * @return array Array of connected Cache config names.
+ * @return array Array of configured Cache config names.
  */
 	public static function configured() {
-		return array_keys(static::$_engines);
+		return array_keys(static::$_config);
 	}
 
 /**
@@ -188,47 +193,35 @@ class Cache {
  * @return boolean success of the removal, returns false when the config does not exist.
  */
 	public static function drop($config) {
-		if (isset(static::$_engines[$config])) {
-			unset(static::$_engines[$config]);
-			unset(static::$_config[$config]);
-			return true;
+		if (!isset(static::$_registry->{$config})) {
+			return false;
 		}
-		return false;
+
+		static::$_registry->unload($config);
+		unset(static::$_config[$config], static::$_restore[$config]);
+		return true;
 	}
 
 /**
  * Fetch the engine attached to a specific configuration name.
- * If the engine does not exist, configuration data will be read from
- * `Configure`.
  *
  * If the cache engine & configuration are missing an error will be
  * triggered.
  *
- * @param string $config The configuration name you want an engine.
- * @param Cake\Cache\CacheEngine $engine An engine instance if you are manually
- *   injecting a cache engine.
+ * @param string $config The configuration name you want an engine for.
  * @return Cake\Cache\Engine
  */
-	public static function engine($config, CacheEngine $engine = null) {
+	public static function engine($config) {
 		if (Configure::read('Cache.disable')) {
 			return false;
 		}
-		if (isset(static::$_engines[$config])) {
-			return static::$_engines[$config];
+
+		if (isset(static::$_registry->{$config})) {
+			return static::$_registry->{$config};
 		}
-		if (!$engine && !static::_buildEngine($config, $engine)) {
-			$message = __d(
-				'cake_dev',
-				'The "%s" cache configuration does not exist, nor could configuration be found at "Cache.%s".',
-				$config,
-				$config
-			);
-			trigger_error($message, E_USER_WARNING);
-		}
-		if ($engine) {
-			static::$_engines[$config] = $engine;
-		}
-		return static::$_engines[$config];
+
+		static::_buildEngine($config);
+		return static::$_registry->{$config};
 	}
 
 /**
@@ -269,8 +262,8 @@ class Cache {
 			return false;
 		}
 
-		if (empty(static::$_config[$config])) {
-			static::$_config[$config] = $engine->settings();
+		if (empty(static::$_restore[$config])) {
+			static::$_restore[$config] = $engine->settings();
 		}
 
 		if (!empty($settings)) {
@@ -292,11 +285,11 @@ class Cache {
  * @return void
  */
 	protected static function _modifySettings($engine, $config, $settings) {
-		$restore = static::$_config[$config];
+		$restore = static::$_restore[$config];
 		if (empty($settings)) {
 			static::$_reset = false;
 			$settings = $restore;
-			unset(static::$_config[$config]);
+			unset(static::$_restore[$config]);
 		} else {
 			$settings = array_merge($restore, $settings);
 			if (isset($settings['duration']) && !is_numeric($settings['duration'])) {
@@ -320,6 +313,7 @@ class Cache {
 		if (!$engine) {
 			return;
 		}
+
 		$engine->gc($expires);
 	}
 
@@ -392,10 +386,12 @@ class Cache {
 		if (!$engine) {
 			return false;
 		}
+
 		$key = $engine->key($key);
 		if (!$key) {
 			return false;
 		}
+
 		return $engine->read($settings['prefix'] . $key);
 	}
 
@@ -498,6 +494,7 @@ class Cache {
 		if (!$engine) {
 			return false;
 		}
+
 		$success = $engine->clear($check);
 		static::set(null, $config);
 		return $success;
@@ -515,6 +512,7 @@ class Cache {
 		if (!$engine) {
 			return false;
 		}
+
 		$success = $engine->clearGroup($group);
 		static::set(null, $config);
 		return $success;
@@ -532,6 +530,7 @@ class Cache {
 		if (!$engine) {
 			return [];
 		}
+
 		return $engine->settings();
 	}
 
@@ -554,9 +553,11 @@ class Cache {
 		if ($group == null) {
 			return static::$_groups;
 		}
+
 		if (isset(self::$_groups[$group])) {
 			return array($group => self::$_groups[$group]);
 		}
+
 		throw new Error\Exception(__d('cake_dev', 'Invalid cache group %s', $group));
 	}
 

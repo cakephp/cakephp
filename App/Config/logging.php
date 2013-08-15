@@ -14,25 +14,22 @@
  */
 namespace App\Config;
 
-use Cake\Core\Configure;
+use Cake\Log\Log;
 
-/**
- * Defines the default error type when using the log() function. Used for
- * differentiating error logging and debugging. Currently PHP supports LOG_DEBUG.
- */
-	define('LOG_ERROR', LOG_ERR);
+$logConfig = [];
 
 /**
  * Configures default file logging options
  */
-Configure::write('Log.debug', [
+$logConfig['debug'] = [
 	'engine' => 'Cake\Log\Engine\FileLog',
 	'levels' => ['notice', 'info', 'debug'],
 	'file' => 'debug',
-]);
-
-Configure::write('Log.error', [
+];
+$logConfig['error'] = [
 	'engine' => 'Cake\Log\Engine\FileLog',
 	'levels' => ['warning', 'error', 'critical', 'alert', 'emergency'],
 	'file' => 'error',
-]);
+];
+
+Log::config($logConfig);
