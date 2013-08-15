@@ -328,7 +328,12 @@ class CakeTime {
 		} elseif ($dateString instanceof DateTime) {
 			$date = (int)$dateString->format('U');
 		} else {
-			$date = strtotime($dateString);
+			// workaround for strtotime("0000-00-00 00:00:00") returning -62169955200 on a 64 bit system.
+			if (substr($dateString, 0, 10) === '0000-00-00') {
+				$date = false;
+			} else {
+				$date = strtotime($dateString);
+			}
 		}
 
 		if ($date === -1 || empty($date)) {
