@@ -70,7 +70,11 @@ class Configure {
 			self::_appDefaults();
 
 			if (!include APP . 'Config' . DS . 'core.php') {
-				trigger_error(__d('cake_dev', "Can't find application core file. Please create %s, and make sure it is readable by PHP.", APP . 'Config' . DS . 'core.php'), E_USER_ERROR);
+				trigger_error(__d('cake_dev',
+						"Can't find application core file. Please create %s, and make sure it is readable by PHP.",
+						APP . 'Config' . DS . 'core.php'),
+					E_USER_ERROR
+				);
 			}
 			App::init();
 			App::$bootstrapping = false;
@@ -86,7 +90,11 @@ class Configure {
 			self::_setErrorHandlers($error, $exception);
 
 			if (!include APP . 'Config' . DS . 'bootstrap.php') {
-				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %s, and make sure it is readable by PHP.", APP . 'Config' . DS . 'bootstrap.php'), E_USER_ERROR);
+				trigger_error(__d('cake_dev',
+						"Can't find application bootstrap file. Please create %s, and make sure it is readable by PHP.",
+						APP . 'Config' . DS . 'bootstrap.php'),
+					E_USER_ERROR
+				);
 			}
 			restore_error_handler();
 
@@ -136,7 +144,8 @@ class Configure {
  * }}}
  *
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::write
- * @param array $config Name of var to write
+ * @param string|array $config The key to write, can be a dot notation value.
+ * Alternatively can be an array containing key(s) and value(s).
  * @param mixed $value Value to set for var
  * @return boolean True if write was successful
  */
