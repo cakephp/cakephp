@@ -54,7 +54,7 @@ class ValidationSetTest extends TestCase {
 		);
 
 		$result = $Field->validate($data);
-		$expected = array('This field cannot be left blank');
+		$expected = array('The provided value is invalid');
 		$this->assertEquals($expected, $result);
 
 		$Field = new ValidationSet('body', 'notEmpty');
