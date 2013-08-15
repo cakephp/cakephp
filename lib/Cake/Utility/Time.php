@@ -554,7 +554,7 @@ class Time {
 	public static function wasYesterday($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
 		$yesterday = static::fromString('yesterday', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d',$yesterday);
+		return date('Y-m-d', $timestamp) == date('Y-m-d', $yesterday);
 	}
 
 /**

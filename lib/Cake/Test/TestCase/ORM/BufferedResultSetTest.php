@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Model\ConnectionManager;
-use Cake\ORM\Query;
 use Cake\ORM\BufferedResultSet;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 

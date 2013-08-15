@@ -168,7 +168,7 @@ class ValuesExpression implements ExpressionInterface {
 		$placeholders = [];
 		$numColumns = count($this->_columns);
 		$rowPlaceholders = implode(', ', array_fill(0, $numColumns, '?'));
-		$placeholders = array_fill(0,count($this->_values), $rowPlaceholders);
+		$placeholders = array_fill(0, count($this->_values), $rowPlaceholders);
 		return sprintf(' VALUES (%s)', implode('), (', $placeholders));
 	}
 

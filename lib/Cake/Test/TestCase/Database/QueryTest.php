@@ -1932,7 +1932,7 @@ class QueryTest extends TestCase {
 			->from('comments')
 			->where(['created BETWEEN :foo AND :bar'])
 			->bind(':foo', '2007-03-18 10:50:00')
-			->bind(':bar','2007-03-18 10:52:00')
+			->bind(':bar', '2007-03-18 10:52:00')
 			->execute();
 		$this->assertEquals($expected, $results->fetchAll('assoc'));
 	}

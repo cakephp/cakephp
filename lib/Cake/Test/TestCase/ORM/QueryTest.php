@@ -460,7 +460,7 @@ class QueryTest extends TestCase {
 						'author_id' => 1,
 						'body' => 'First Article Body',
 						'published' => 'Y',
-						'author' => ['id' => 1 , 'name' => 'mariano']
+						'author' => ['id' => 1, 'name' => 'mariano']
 					],
 					[
 						'id' => 3,

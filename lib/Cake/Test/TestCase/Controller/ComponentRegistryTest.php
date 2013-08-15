@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Controller;
 
-use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Component\CookieComponent;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Plugin;

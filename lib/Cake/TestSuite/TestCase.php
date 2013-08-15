@@ -694,7 +694,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $model
  * @param mixed $methods
  * @param array $config
- * @throws MissingModelException
+ * @throws Cake\Error\MissingModelException
  * @return Model
  */
 	public function getMockForModel($model, $methods = array(), $config = array()) {

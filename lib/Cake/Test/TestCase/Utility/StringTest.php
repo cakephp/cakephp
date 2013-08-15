@@ -182,7 +182,7 @@ class StringTest extends TestCase {
 		$expected = "this is a long string with a few? params you know";
 		$this->assertEquals($expected, $result);
 
-		$result = String::insert('update saved_urls set url = :url where id = :id', array('url' => 'http://www.testurl.com/param1:url/param2:id','id' => 1));
+		$result = String::insert('update saved_urls set url = :url where id = :id', array('url' => 'http://www.testurl.com/param1:url/param2:id', 'id' => 1));
 		$expected = "update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1";
 		$this->assertEquals($expected, $result);
 
