@@ -498,6 +498,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$options = ['fields' => ['a', 'b'], 'connections' => ['a >' => 1]];
+		$query->expects($this->any())
+			->method('select')
+			->will($this->returnSelf());
 		$query->expects($this->once())
 			->method('applyOptions')
 			->with($options);
