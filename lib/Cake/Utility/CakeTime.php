@@ -316,6 +316,11 @@ class CakeTime {
 			return false;
 		}
 
+		$containsDummyDate = (is_string($dateString) && substr($dateString, 0, 10) === '0000-00-00');
+		if ($containsDummyDate) {
+			return false;
+		}
+
 		if (is_int($dateString) || is_numeric($dateString)) {
 			$date = intval($dateString);
 		} elseif (
