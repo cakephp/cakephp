@@ -7976,7 +7976,7 @@ class ModelReadTest extends BaseModelTest {
 	public function testRelatedAfterFindCallback() {
 		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
 		$Something = new Something();
-		
+
 		$Something->bindModel(array(
 			'hasMany' => array(
 				'HasMany' => array(
