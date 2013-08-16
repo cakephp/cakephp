@@ -407,7 +407,7 @@ class ControllerTask extends BakeTask {
  * @return array Set of controllers
  */
 	public function listAll($useDbConfig = null) {
-		if (is_null($useDbConfig)) {
+		if ($useDbConfig === null) {
 			$useDbConfig = $this->connection;
 		}
 		$this->__tables = $this->Model->getAllTables($useDbConfig);

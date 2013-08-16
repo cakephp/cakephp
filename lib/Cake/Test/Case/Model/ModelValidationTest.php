@@ -692,7 +692,7 @@ class ModelValidationTest extends BaseModelTest {
 		$Author->create();
 		$result = $Author->saveAll($data, array('validate' => 'first'));
 		$this->assertTrue($result);
-		$this->assertFalse(is_null($Author->id));
+		$this->assertFalse($Author->id === null);
 
 		$id = $Author->id;
 		$count = $Author->find('count', array('conditions' => array('Author.id' => $id)));

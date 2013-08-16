@@ -513,7 +513,7 @@ class TranslateBehavior extends ModelBehavior {
  * @return mixed string or false
  */
 	protected function _getLocale(Model $Model) {
-		if (!isset($Model->locale) || is_null($Model->locale)) {
+		if (!isset($Model->locale) || $Model->locale === null) {
 			$I18n = I18n::getInstance();
 			$I18n->l10n->get(Configure::read('Config.language'));
 			$Model->locale = $I18n->l10n->locale;
@@ -588,7 +588,7 @@ class TranslateBehavior extends ModelBehavior {
 
 			$this->_removeField($Model, $field);
 
-			if (is_null($association)) {
+			if ($association === null) {
 				if ($reset) {
 					$this->runtime[$Model->alias]['fields'][] = $field;
 				} else {
@@ -677,7 +677,7 @@ class TranslateBehavior extends ModelBehavior {
 
 			$this->_removeField($Model, $field);
 
-			if (!is_null($association) && (isset($Model->hasMany[$association]) || isset($Model->__backAssociation['hasMany'][$association]))) {
+			if ($association !== null && (isset($Model->hasMany[$association]) || isset($Model->__backAssociation['hasMany'][$association]))) {
 				$associations[] = $association;
 			}
 		}

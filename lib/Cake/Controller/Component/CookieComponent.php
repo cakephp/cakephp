@@ -219,7 +219,7 @@ class CookieComponent extends Component {
 			$this->read();
 		}
 
-		if (is_null($encrypt)) {
+		if ($encrypt === null) {
 			$encrypt = true;
 		}
 		$this->_encrypted = $encrypt;
@@ -262,7 +262,7 @@ class CookieComponent extends Component {
 		if (empty($this->_values[$this->name])) {
 			$this->_values[$this->name] = array();
 		}
-		if (is_null($key)) {
+		if ($key === null) {
 			return $this->_values[$this->name];
 		}
 
@@ -387,7 +387,7 @@ class CookieComponent extends Component {
  * @return integer Unix timestamp
  */
 	protected function _expire($expires = null) {
-		if (is_null($expires)) {
+		if ($expires === null) {
 			return $this->_expires;
 		}
 		$this->_reset = $this->_expires;

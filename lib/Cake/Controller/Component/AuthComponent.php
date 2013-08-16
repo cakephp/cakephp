@@ -661,7 +661,7 @@ class AuthComponent extends Component {
  * @return string Redirect URL
  */
 	public function redirectUrl($url = null) {
-		if (!is_null($url)) {
+		if ($url !== null) {
 			$redir = $url;
 			$this->Session->write('Auth.redirect', $redir);
 		} elseif ($this->Session->check('Auth.redirect')) {

@@ -693,7 +693,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * @return Model
  */
 	public function getMockForModel($model, $methods = array(), $config = null) {
-		if (is_null($config)) {
+		if ($config === null) {
 			$config = ClassRegistry::config('Model');
 		}
 
