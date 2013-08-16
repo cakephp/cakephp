@@ -159,7 +159,7 @@ class AclComponent extends Component {
  * @deprecated Will be removed in 3.0.
  */
 	public function grant($aro, $aco, $action = "*") {
-		trigger_error(__d('cake_dev', 'AclComponent::grant() is deprecated, use allow() instead'), E_USER_WARNING);
+		trigger_error(__d('cake_dev', '%s is deprecated, use %s instead', 'AclComponent::grant()', 'allow()'), E_USER_WARNING);
 		return $this->_Instance->allow($aro, $aco, $action);
 	}
 
@@ -173,7 +173,7 @@ class AclComponent extends Component {
  * @deprecated Will be removed in 3.0.
  */
 	public function revoke($aro, $aco, $action = "*") {
-		trigger_error(__d('cake_dev', 'AclComponent::revoke() is deprecated, use deny() instead'), E_USER_WARNING);
+		trigger_error(__d('cake_dev', '%s is deprecated, use %s instead', 'AclComponent::revoke()', 'deny()'), E_USER_WARNING);
 		return $this->_Instance->deny($aro, $aco, $action);
 	}
 

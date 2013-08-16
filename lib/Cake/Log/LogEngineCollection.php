@@ -42,9 +42,9 @@ class LogEngineCollection extends ObjectCollection {
 		$className = $this->_getLogger($loggerName);
 		$logger = new $className($options);
 		if (!$logger instanceof CakeLogInterface) {
-			throw new CakeLogException(sprintf(
-				__d('cake_dev', 'logger class %s does not implement a write method.'), $loggerName
-			));
+			throw new CakeLogException(
+				__d('cake_dev', 'logger class %s does not implement a %s method.', $loggerName, 'write()')
+			);
 		}
 		$this->_loaded[$name] = $logger;
 		if ($enable) {
