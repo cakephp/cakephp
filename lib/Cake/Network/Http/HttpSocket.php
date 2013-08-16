@@ -604,7 +604,7 @@ class HttpSocket extends CakeSocket {
 			throw new SocketException(__d('cake_dev', 'Unknown authentication method.'));
 		}
 		if (!method_exists($authClass, 'authentication')) {
-			throw new SocketException(sprintf(__d('cake_dev', 'The %s do not support authentication.'), $authClass));
+			throw new SocketException(__d('cake_dev', 'The %s do not support authentication.', $authClass));
 		}
 		call_user_func_array("$authClass::authentication", array($this, &$this->_auth[$method]));
 	}
@@ -633,7 +633,7 @@ class HttpSocket extends CakeSocket {
 			throw new SocketException(__d('cake_dev', 'Unknown authentication method for proxy.'));
 		}
 		if (!method_exists($authClass, 'proxyAuthentication')) {
-			throw new SocketException(sprintf(__d('cake_dev', 'The %s do not support proxy authentication.'), $authClass));
+			throw new SocketException(__d('cake_dev', 'The %s do not support proxy authentication.', $authClass));
 		}
 		call_user_func_array("$authClass::proxyAuthentication", array($this, &$this->_proxy));
 	}
