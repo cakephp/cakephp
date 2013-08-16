@@ -7974,201 +7974,243 @@ class ModelReadTest extends BaseModelTest {
  * @return void 
  */
 	public function testRelatedAfterFindCallback() {
-		$this->loadFixtures('ModelWithRelations', 'ModelRelated', 'ModelHabtmRelation');
-		$ModelWithRelations = new ModelWithRelations();
-
-		$ModelWithRelations->bindModel(array(
-			'belongsTo' => array(
-				'BelongsTo' => array(
-					'className' => 'ModelRelated',
-					'foreignKey' => 'related_id',
+		$this->loadFixtures('Something', 'SomethingElse', 'JoinThing');
+		$Something = new Something();
+		
+		$Something->bindModel(array(
+			'hasMany' => array(
+				'HasMany' => array(
+					'className' => 'JoinThing',
+					'foreignKey' => 'something_id'
+				)
+			),
+			'hasOne'=>array(
+				'HasOne'=>array(
+					'className' => 'JoinThing',
+					'foreignKey' => 'something_id'
 				)
 			)
-				)
-		);
-		$results = $ModelWithRelations->find('all');
+		)
+			);
+		
+		$results = $Something->find('all');
+		
 		$expected = array(
 			array(
-				'ModelWithRelations' => array(
+				'Something' => array(
 					'id' => '1',
-					'name' => 'First record',
-					'related_id' => '1'
+					'title' => 'First Post',
+					'body' => 'First Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31'
 				),
-				'BelongsTo' => array(
+				'HasOne' => array(
 					'id' => '1',
-					'name' => 'Successfuly changed in AfterFind',
-					'primary_id' => '1'
+					'something_id' => '1',
+					'something_else_id' => '2',
+					'doomed' => true,
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'afterFind' => 'Successfuly added by AfterFind'
+				),
+				'HasMany' => array(
+					array(
+						'id' => '1',
+						'something_id' => '1',
+						'something_else_id' => '2',
+						'doomed' => true,
+						'created' => '2007-03-18 10:39:23',
+						'updated' => '2007-03-18 10:41:31',
+						'afterFind' => 'Successfuly added by AfterFind'
+					)
+				),
+				'SomethingElse' => array(
+					array(
+						'id' => '2',
+						'title' => 'Second Post',
+						'body' => 'Second Post Body',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:41:23',
+						'updated' => '2007-03-18 10:43:31',
+						'afterFind' => 'Successfuly added by AfterFind',
+						'JoinThing' => array(
+							'doomed' => true,
+							'something_id' => '1',
+							'something_else_id' => '2',
+							'afterFind' => 'Successfuly added by AfterFind'
+						)
+					)
 				)
 			),
 			array(
-				'ModelWithRelations' => array(
+				'Something' => array(
 					'id' => '2',
-					'name' => 'Second record',
-					'related_id' => '2'
+					'title' => 'Second Post',
+					'body' => 'Second Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31'
 				),
-				'BelongsTo' => array(
+				'HasOne' => array(
 					'id' => '2',
-					'name' => 'Successfuly changed in AfterFind',
-					'primary_id' => '2'
+					'something_id' => '2',
+					'something_else_id' => '3',
+					'doomed' => false,
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31',
+					'afterFind' => 'Successfuly added by AfterFind'
+				),
+				'HasMany' => array(
+					array(
+						'id' => '2',
+						'something_id' => '2',
+						'something_else_id' => '3',
+						'doomed' => false,
+						'created' => '2007-03-18 10:41:23',
+						'updated' => '2007-03-18 10:43:31',
+						'afterFind' => 'Successfuly added by AfterFind'
+					)
+				),
+				'SomethingElse' => array(
+					array(
+						'id' => '3',
+						'title' => 'Third Post',
+						'body' => 'Third Post Body',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:43:23',
+						'updated' => '2007-03-18 10:45:31',
+						'afterFind' => 'Successfuly added by AfterFind',
+						'JoinThing' => array(
+							'doomed' => false,
+							'something_id' => '2',
+							'something_else_id' => '3',
+							'afterFind' => 'Successfuly added by AfterFind'
+						)
+					)
+				)
+			),
+			array(
+				'Something' => array(
+					'id' => '3',
+					'title' => 'Third Post',
+					'body' => 'Third Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31'
+				),
+				'HasOne' => array(
+					'id' => '3',
+					'something_id' => '3',
+					'something_else_id' => '1',
+					'doomed' => true,
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31',
+					'afterFind' => 'Successfuly added by AfterFind'
+				),
+				'HasMany' => array(
+					array(
+						'id' => '3',
+						'something_id' => '3',
+						'something_else_id' => '1',
+						'doomed' => true,
+						'created' => '2007-03-18 10:43:23',
+						'updated' => '2007-03-18 10:45:31',
+						'afterFind' => 'Successfuly added by AfterFind'
+					)
+				),
+				'SomethingElse' => array(
+					array(
+						'id' => '1',
+						'title' => 'First Post',
+						'body' => 'First Post Body',
+						'published' => 'Y',
+						'created' => '2007-03-18 10:39:23',
+						'updated' => '2007-03-18 10:41:31',
+						'afterFind' => 'Successfuly added by AfterFind',
+						'JoinThing' => array(
+							'doomed' => true,
+							'something_id' => '3',
+							'something_else_id' => '1',
+							'afterFind' => 'Successfuly added by AfterFind'
+						)
+					)
+				)
+			)
+		);
+		$this->assertEquals($expected, $results, 'Model related with has* afterFind callback fail');
+
+		$JoinThing = new JoinThing();
+		$JoinThing->unbindModel(array(
+			'belongsTo'=>array(
+				'Something'
+			)
+		)
+			);
+		$results = $JoinThing->find('all');
+		
+		$expected = array(
+			array(
+				'JoinThing' => array(
+					'id' => '1',
+					'something_id' => '1',
+					'something_else_id' => '2',
+					'doomed' => true,
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'afterFind' => 'Successfuly added by AfterFind'
+				),
+				'SomethingElse' => array(
+					'id' => '2',
+					'title' => 'Second Post',
+					'body' => 'Second Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31',
+					'afterFind' => 'Successfuly added by AfterFind'
+				)
+			),
+			array(
+				'JoinThing' => array(
+					'id' => '2',
+					'something_id' => '2',
+					'something_else_id' => '3',
+					'doomed' => false,
+					'created' => '2007-03-18 10:41:23',
+					'updated' => '2007-03-18 10:43:31',
+					'afterFind' => 'Successfuly added by AfterFind'
+				),
+				'SomethingElse' => array(
+					'id' => '3',
+					'title' => 'Third Post',
+					'body' => 'Third Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31',
+					'afterFind' => 'Successfuly added by AfterFind'
+				)
+			),
+			array(
+				'JoinThing' => array(
+					'id' => '3',
+					'something_id' => '3',
+					'something_else_id' => '1',
+					'doomed' => true,
+					'created' => '2007-03-18 10:43:23',
+					'updated' => '2007-03-18 10:45:31',
+					'afterFind' => 'Successfuly added by AfterFind'
+				),
+				'SomethingElse' => array(
+					'id' => '1',
+					'title' => 'First Post',
+					'body' => 'First Post Body',
+					'published' => 'Y',
+					'created' => '2007-03-18 10:39:23',
+					'updated' => '2007-03-18 10:41:31',
+					'afterFind' => 'Successfuly added by AfterFind'
 				)
 			)
 		);
 		$this->assertEquals($expected, $results, 'Model related with belongsTo afterFind callback fail');
-
-		$ModelWithRelations->bindModel(array(
-			'hasOne' => array(
-				'HasOne' => array(
-					'className' => 'ModelRelated',
-					'foreignKey' => 'primary_id',
-				)
-			)
-				)
-		);
-		$results = $ModelWithRelations->find('all');
-		$expected = array(
-			array(
-				'ModelWithRelations' => array(
-					'id' => '1',
-					'name' => 'First record',
-					'related_id' => '1'
-				),
-				'HasOne' => array(
-					'id' => '1',
-					'name' => 'Successfuly changed in AfterFind',
-					'primary_id' => '1'
-				)
-			),
-			array(
-				'ModelWithRelations' => array(
-					'id' => '2',
-					'name' => 'Second record',
-					'related_id' => '2'
-				),
-				'HasOne' => array(
-					'id' => '2',
-					'name' => 'Successfuly changed in AfterFind',
-					'primary_id' => '2'
-				)
-			)
-		);
-		$this->assertEquals($expected, $results, 'Model related with hasOne afterFind callback fail');
-
-		$ModelWithRelations->bindModel(array(
-			'hasMany' => array(
-				'HasMany' => array(
-					'className' => 'ModelRelated',
-					'foreignKey' => 'primary_id',
-				)
-			)
-				)
-		);
-		$results = $ModelWithRelations->find('all');
-
-		$expected = array(
-			array(
-				'ModelWithRelations' => array(
-					'id' => '1',
-					'name' => 'First record',
-					'related_id' => '1'
-				),
-				'HasMany' => array(
-					array(
-						'id' => '1',
-						'name' => 'Successfuly changed in AfterFind',
-						'primary_id' => '1'
-					)
-				)
-			),
-			array(
-				'ModelWithRelations' => array(
-					'id' => '2',
-					'name' => 'Second record',
-					'related_id' => '2'
-				),
-				'HasMany' => array(
-					array(
-						'id' => '2',
-						'name' => 'Successfuly changed in AfterFind',
-						'primary_id' => '2'
-					)
-				)
-			)
-		);
-		$this->assertEquals($expected, $results, 'Model related with hasMany afterFind callback fail');
-
-		$ModelWithRelations->bindModel(array(
-			'hasAndBelongsToMany' => array(
-				'HasAndBelongsToMany' => array(
-					'className' => 'ModelRelated',
-					'with' => 'ModelHabtmRelation',
-					'foreignKey' => 'primary_id',
-					'associationForeignKey' => 'related_id',
-				)
-			)
-				)
-		);
-		$results = $ModelWithRelations->find('all');
-
-		$expected = array(
-			array(
-				'ModelWithRelations' => array(
-					'id' => '1',
-					'name' => 'First record',
-					'related_id' => '1'
-				),
-				'HasAndBelongsToMany' => array(
-					array(
-						'id' => '1',
-						'name' => 'Successfuly changed in AfterFind',
-						'primary_id' => '1',
-						'ModelHabtmRelation' => array(
-							'id' => '1',
-							'primary_id' => '1',
-							'related_id' => '1'
-						)
-					),
-					array(
-						'id' => '2',
-						'name' => 'Successfuly changed in AfterFind',
-						'primary_id' => '2',
-						'ModelHabtmRelation' => array(
-							'id' => '2',
-							'primary_id' => '1',
-							'related_id' => '2'
-						)
-					)
-				)
-			),
-			array(
-				'ModelWithRelations' => array(
-					'id' => '2',
-					'name' => 'Second record',
-					'related_id' => '2'
-				),
-				'HasAndBelongsToMany' => array(
-					array(
-						'id' => '1',
-						'name' => 'Successfuly changed in AfterFind',
-						'primary_id' => '1',
-						'ModelHabtmRelation' => array(
-							'id' => '3',
-							'primary_id' => '2',
-							'related_id' => '1'
-						)
-					),
-					array(
-						'id' => '2',
-						'name' => 'Successfuly changed in AfterFind',
-						'primary_id' => '2',
-						'ModelHabtmRelation' => array(
-							'id' => '4',
-							'primary_id' => '2',
-							'related_id' => '2'
-						)
-					)
-				)
-			)
-		);
-		$this->assertEquals($expected, $results, 'Model related with hasAndBelongsToMany afterFind callback fail');
 	}
 }
