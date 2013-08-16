@@ -7984,17 +7984,17 @@ class ModelReadTest extends BaseModelTest {
 					'foreignKey' => 'something_id'
 				)
 			),
-			'hasOne'=>array(
-				'HasOne'=>array(
+			'hasOne' => array(
+				'HasOne' => array(
 					'className' => 'JoinThing',
 					'foreignKey' => 'something_id'
 				)
 			)
 		)
 			);
-		
+
 		$results = $Something->find('all');
-		
+
 		$expected = array(
 			array(
 				'Something' => array(
@@ -8142,13 +8142,13 @@ class ModelReadTest extends BaseModelTest {
 
 		$JoinThing = new JoinThing();
 		$JoinThing->unbindModel(array(
-			'belongsTo'=>array(
+			'belongsTo' => array(
 				'Something'
 			)
 		)
 			);
 		$results = $JoinThing->find('all');
-		
+
 		$expected = array(
 			array(
 				'JoinThing' => array(
