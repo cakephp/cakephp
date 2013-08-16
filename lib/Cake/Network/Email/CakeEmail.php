@@ -1622,6 +1622,11 @@ class CakeEmail {
 		if ($this->_theme) {
 			$View->theme = $this->_theme;
 		}
+		// Convert null to false, as View needs false to disable
+		// the layout.
+		if ($layout === null) {
+			$layout = false;
+		}
 
 		foreach ($types as $type) {
 			$View->set('content', $content);

@@ -163,7 +163,7 @@ class AclNode extends Model {
 				'joins' => array(array(
 					'table' => $table,
 					'alias' => "{$type}0",
-					'type' => 'LEFT',
+					'type' => 'INNER',
 					'conditions' => array(
 						$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}0.lft"),
 						$db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght")
