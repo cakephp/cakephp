@@ -533,17 +533,17 @@ class Query extends DatabaseQuery {
 	}
 
 	protected function _applyFormatters($result) {
-		foreach ($this->_formatters as $formatter) {
-			$result = new ResultSetDecorator($result, $formatter);
-		}
-
 		foreach ($this->_mapReduce as $mappers) {
 			$result = new MapReduce($result, $mappers);
 		}
 
 		if (!empty($this->_mapReduce)) {
 			$result = new ResultSetDecorator($result);
-		}	
+		}
+
+		foreach ($this->_formatters as $formatter) {
+			$result = new ResultSetDecorator($result, $formatter);
+		}
 		return $result;
 	}
 

@@ -541,54 +541,54 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 	public function testFindThreaded() {
 		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
-		$expected = array(
-			new \ArrayObject(array(
+		$expected = [
+			[
 				'id' => 1,
 				'parent_id' => 0,
 				'name' => 'Category 1',
-				'children' => array(
-					new \ArrayObject(array(
+				'children' => [
+					[
 						'id' => 2,
 						'parent_id' => 1,
 						'name' => 'Category 1.1',
-						'children' => array(
-							new \ArrayObject(array(
+						'children' => [
+							[
 								'id' => 7,
 								'parent_id' => 2,
 								'name' => 'Category 1.1.1',
-							)),
-							new \ArrayObject(array(
+							],
+							[
 								'id' => 8,
 								'parent_id' => '2',
 								'name' => 'Category 1.1.2',
-							))
-						),
-					)),
-					new \ArrayObject(array(
+							]
+						],
+					],
+					[
 						'id' => 3,
 						'parent_id' => '1',
 						'name' => 'Category 1.2',
-					)),
-				)
-			)),
-			new \ArrayObject(array(
+					],
+				]
+			],
+			[
 				'id' => 4,
 				'parent_id' => 0,
 				'name' => 'Category 2',
-			)),
-			new \ArrayObject(array(
+			],
+			[
 				'id' => 5,
 				'parent_id' => 0,
 				'name' => 'Category 3',
-				'children' => array(
-					new \ArrayObject(array(
+				'children' => [
+					[
 						'id' => '6',
 						'parent_id' => '5',
 						'name' => 'Category 3.1',
-					))
-				)
-			))
-		);
+					]
+				]
+			]
+		];
 		$results = $table->find('threaded')
 			->select(['id', 'parent_id', 'name'])
 			->toArray();

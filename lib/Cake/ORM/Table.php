@@ -552,19 +552,28 @@ class Table {
 	}
 
 	public function findThreaded(Query $query, array $options = []) {
-		$parents = new \ArrayObject;
-		$mapper = function($key, $row, $mr) use ($parents) {
-			$parents[$row['id']] = new \ArrayObject($row);
-			if (empty($row['parent_id'])) {
-				return $mr->emit($parents[$row['id']]);
-			}
-			$mr->emitIntermediate($row['parent_id'], $parents[$row['id']]);
+		$parents = [];
+		$mapper = function($key, $row, $mr) use (&$parents) {
+			$parents[$row['id']] = &$row;
+			$mr->emitIntermediate($row['parent_id'], $row['id']);
 		};
 
-		$reducer = function($key, $values, $mr) use ($parents) {
-			$parents[$key]['children'] = $values;
+		$reducer = function($key, $values, $mr) use (&$parents) {
+			if (empty($key) || !isset($parents[$key])) {
+				foreach ($values as $id) {
+					$parents[$id] = new \ArrayObject($parents[$id]);
+					$mr->emit($parents[$id]);
+				}
+				return;
+			}
+			foreach ($values as $id) {
+				$parents[$key]['children'][] =& $parents[$id];
+			}
 		};
-		return $query->mapReduce($mapper, $reducer);
+
+		return $query->mapReduce($mapper, $reducer)->formatResults(function($row) {
+			return $row->getArrayCopy();
+		});
 	}
 
 /**
