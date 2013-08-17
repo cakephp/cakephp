@@ -260,12 +260,8 @@ class ModelWriteTest extends ModelTestBase {
  * @return void
  */
 	public function testCacheClearOnSave() {
-		$_back = array(
-			'check' => Configure::read('Cache.check'),
-			'disable' => Configure::read('Cache.disable'),
-		);
 		Configure::write('Cache.check', true);
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 
 		$this->loadFixtures('OverallFavorite');
 		$OverallFavorite = new OverallFavorite();
@@ -286,9 +282,6 @@ class ModelWriteTest extends ModelTestBase {
 
 		$this->assertFalse(file_exists(CACHE . 'views/some_dir_overallfavorites_index.php'));
 		$this->assertFalse(file_exists(CACHE . 'views/some_dir_overall_favorites_index.php'));
-
-		Configure::write('Cache.check', $_back['check']);
-		Configure::write('Cache.disable', $_back['disable']);
 	}
 
 /**

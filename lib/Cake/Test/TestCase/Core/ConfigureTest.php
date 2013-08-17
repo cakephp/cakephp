@@ -42,7 +42,7 @@ class ConfigureTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		Configure::write('Cache.disable', true);
+		Cache::disable();
 		App::build();
 		App::objects('Plugin', null, true);
 	}
@@ -339,7 +339,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testStoreAndRestore() {
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		Cache::config('configure', [
 			'className' => 'File',
 			'path' => TMP . 'tests'
@@ -364,7 +364,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testStoreAndRestoreWithData() {
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		Cache::config('configure', [
 			'className' => 'File',
 			'path' => TMP . 'tests'

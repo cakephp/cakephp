@@ -83,6 +83,13 @@ use Cake\Utility\Inflector;
 class Cache {
 
 /**
+ * Flag for tracking whether or not caching is enabled.
+ *
+ * @var boolean
+ */
+	protected static $_enabled = true;
+
+/**
  * Configuraiton backup.
  *
  * Keeps the permanent/default settings for each cache engine.
@@ -221,8 +228,8 @@ class Cache {
 /**
  * Drops a constructed cache engine.
  *
- * The engine's configuration will remain in Configure. If you wish to re-configure a
- * cache engine you should drop it, change configuration and then re-use it.
+ * If you wish to re-configure a cache engine you should drop it, 
+ * change configuration and then re-use it.
  *
  * @param string $config A currently configured cache config you wish to remove.
  * @return boolean success of the removal, returns false when the config does not exist.
@@ -245,7 +252,7 @@ class Cache {
  * @return Cake\Cache\Engine
  */
 	public static function engine($config) {
-		if (Configure::read('Cache.disable')) {
+		if (!static::$_enabled) {
 			return false;
 		}
 
@@ -592,6 +599,37 @@ class Cache {
 		}
 
 		throw new Error\Exception(__d('cake_dev', 'Invalid cache group %s', $group));
+	}
+
+/**
+ * Re-enable caching.
+ *
+ * If caching has been disabled with Cache::disable() this method will reverse that effect.
+ *
+ * @return void
+ */
+	public static function enable() {
+		static::$_enabled = true;
+	}
+
+/**
+ * Disable caching.
+ *
+ * When disabled all cache operations will return null.
+ *
+ * @return void
+ */
+	public static function disable() {
+		static::$_enabled = false;
+	}
+
+/**
+ * Check whether or not caching is enabled.
+ *
+ * @return boolean
+ */
+	public static function enabled() {
+		return static::$_enabled;
 	}
 
 }

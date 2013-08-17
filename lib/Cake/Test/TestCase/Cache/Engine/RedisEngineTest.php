@@ -35,7 +35,7 @@ class RedisEngineTest extends TestCase {
 		parent::setUp();
 		$this->skipIf(!class_exists('Redis'), 'Redis is not installed or configured properly.');
 
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		Cache::config('redis', array(
 			'engine' => 'Cake\Cache\Engine\RedisEngine',
 			'prefix' => 'cake_',

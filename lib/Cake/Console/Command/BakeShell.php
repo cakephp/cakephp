@@ -15,6 +15,7 @@
 namespace Cake\Console\Command;
 
 use Cake\Console\Shell;
+use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Model\Model;
@@ -54,7 +55,7 @@ class BakeShell extends Shell {
 	public function startup() {
 		parent::startup();
 		Configure::write('debug', 2);
-		Configure::write('Cache.disable', 1);
+		Cache::disable();
 
 		$task = Inflector::classify($this->command);
 		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {

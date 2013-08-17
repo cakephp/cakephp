@@ -44,7 +44,7 @@ class FileEngineTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		Cache::config('file_test', [
 			'engine' => 'File',
 			'path' => TMP . 'tests',

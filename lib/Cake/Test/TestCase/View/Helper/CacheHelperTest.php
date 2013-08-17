@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -85,7 +86,7 @@ class CacheHelperTest extends TestCase {
 		$View = new View($this->Controller);
 		$this->Cache = new CacheHelper($View);
 		Configure::write('Cache.check', true);
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		App::build([
 			'View' => [CAKE . 'Test/TestApp/View/']
 		], App::RESET);

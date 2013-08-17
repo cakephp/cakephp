@@ -19,6 +19,7 @@
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\I18n\I18n;
 use Cake\Log\Log;
@@ -417,7 +418,7 @@ if (!function_exists('cache')) {
  * @deprecated Will be removed in 3.0. Please use Cache::write() instead.
  */
 	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
-		if (Configure::read('Cache.disable')) {
+		if (!Cache::enabled()) {
 			return null;
 		}
 		$now = time();

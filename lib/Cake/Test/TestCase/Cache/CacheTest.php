@@ -35,7 +35,7 @@ class CacheTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 	}
 
 /**
@@ -62,7 +62,7 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testNonFatalErrorsWithCachedisable() {
-		Configure::write('Cache.disable', true);
+		Cache::disable();
 		$this->_configCache();
 
 		Cache::write('no_save', 'Noooo!', 'tests');
@@ -378,7 +378,7 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testCacheDisable() {
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		Cache::config('test_cache_disable_1', [
 			'engine' => 'File',
 			'path' => TMP . 'tests'
@@ -387,17 +387,17 @@ class CacheTest extends TestCase {
 		$this->assertTrue(Cache::write('key_1', 'hello', 'test_cache_disable_1'));
 		$this->assertSame(Cache::read('key_1', 'test_cache_disable_1'), 'hello');
 
-		Configure::write('Cache.disable', true);
+		Cache::disable();
 
 		$this->assertFalse(Cache::write('key_2', 'hello', 'test_cache_disable_1'));
 		$this->assertFalse(Cache::read('key_2', 'test_cache_disable_1'));
 
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 
 		$this->assertTrue(Cache::write('key_3', 'hello', 'test_cache_disable_1'));
 		$this->assertSame(Cache::read('key_3', 'test_cache_disable_1'), 'hello');
 
-		Configure::write('Cache.disable', true);
+		Cache::disable();
 		Cache::config('test_cache_disable_2', [
 			'engine' => 'File',
 			'path' => TMP . 'tests'
@@ -406,12 +406,12 @@ class CacheTest extends TestCase {
 		$this->assertFalse(Cache::write('key_4', 'hello', 'test_cache_disable_2'));
 		$this->assertFalse(Cache::read('key_4', 'test_cache_disable_2'));
 
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 
 		$this->assertTrue(Cache::write('key_5', 'hello', 'test_cache_disable_2'));
 		$this->assertSame(Cache::read('key_5', 'test_cache_disable_2'), 'hello');
 
-		Configure::write('Cache.disable', true);
+		Cache::disable();
 
 		$this->assertFalse(Cache::write('key_6', 'hello', 'test_cache_disable_2'));
 		$this->assertFalse(Cache::read('key_6', 'test_cache_disable_2'));
