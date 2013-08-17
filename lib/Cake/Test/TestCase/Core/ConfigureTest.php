@@ -340,17 +340,22 @@ class ConfigureTest extends TestCase {
  */
 	public function testStoreAndRestore() {
 		Configure::write('Cache.disable', false);
+		Cache::config('configure', [
+			'className' => 'File',
+			'path' => TMP . 'tests'
+		]);
 
 		Configure::write('Testing', 'yummy');
-		$this->assertTrue(Configure::store('store_test', 'default'));
+		$this->assertTrue(Configure::store('store_test', 'configure'));
 
 		Configure::delete('Testing');
 		$this->assertNull(Configure::read('Testing'));
 
-		Configure::restore('store_test', 'default');
+		Configure::restore('store_test', 'configure');
 		$this->assertEquals('yummy', Configure::read('Testing'));
 
-		Cache::delete('store_test', 'default');
+		Cache::delete('store_test', 'configure');
+		Cache::drop('configure');
 	}
 
 /**
@@ -360,17 +365,22 @@ class ConfigureTest extends TestCase {
  */
 	public function testStoreAndRestoreWithData() {
 		Configure::write('Cache.disable', false);
+		Cache::config('configure', [
+			'className' => 'File',
+			'path' => TMP . 'tests'
+		]);
 
 		Configure::write('testing', 'value');
-		Configure::store('store_test', 'default', array('store_test' => 'one'));
+		Configure::store('store_test', 'configure', array('store_test' => 'one'));
 		Configure::delete('testing');
 		$this->assertNull(Configure::read('store_test'), 'Calling store with data shouldn\'t modify runtime.');
 
-		Configure::restore('store_test', 'default');
+		Configure::restore('store_test', 'configure');
 		$this->assertEquals('one', Configure::read('store_test'));
 		$this->assertNull(Configure::read('testing'), 'Values that were not stored are not restored.');
 
-		Cache::delete('store_test', 'default');
+		Cache::delete('store_test', 'configure');
+		Cache::drop('configure');
 	}
 
 /**

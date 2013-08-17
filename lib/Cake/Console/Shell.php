@@ -880,9 +880,9 @@ class Shell extends Object {
  * @return void
  */
 	protected function _useLogger($enable = true) {
+		Log::drop('stdout');
+		Log::drop('stderr');
 		if (!$enable) {
-			Log::drop('stdout');
-			Log::drop('stderr');
 			return;
 		}
 		$stdout = new ConsoleLog([
