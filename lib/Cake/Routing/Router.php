@@ -500,6 +500,7 @@ class Router {
 	public static function mapResources($controller, $options = array()) {
 		$hasPrefix = isset($options['prefix']);
 		$options = array_merge(array(
+			'routeClass' => 'CakeRoute',
 			'prefix' => '/',
 			'id' => self::ID . '|' . self::UUID
 		), $options);
@@ -524,7 +525,11 @@ class Router {
 						'action' => $params['action'],
 						'[method]' => $params['method']
 					),
-					array('id' => $options['id'], 'pass' => array('id'))
+					array(
+						'id' => $options['id'],
+						'pass' => array('id'),
+						'routeClass' => $options['routeClass'],
+					)
 				);
 			}
 			self::$_resourceMapped[] = $urlName;
