@@ -67,9 +67,7 @@ class Query extends DatabaseQuery {
  */
 	protected $_loadEagerly = [];
 
-	protected $_mapper;
-
-	protected $_reducer;
+	protected $_mapReduce = [];
 
 /**
  * List of options accepted by associations in contain()
@@ -529,9 +527,8 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
-	public function mapReduce(callable $mapper, callable $reducer) {
-		$this->_mapper = $mapper;
-		$this->_reducer = $reducer;
+	public function mapReduce(callable $mapper, callable $reducer = null) {
+		$this->_mapReduce[] = compact('mapper', 'reducer');
 		return $this;
 	}
 
@@ -539,11 +536,14 @@ class Query extends DatabaseQuery {
 		foreach ($this->_formatters as $formatter) {
 			$result = new ResultSetDecorator($result, $formatter);
 		}
-		if (!empty($this->_mapper) && !empty($this->_reducer)) {
-			$result = new ResultSetDecorator(
-				new MapReduce($result, $this->_mapper, $this->_reducer)
-			);
+
+		foreach ($this->_mapReduce as $mappers) {
+			$result = new MapReduce($result, $mappers);
 		}
+
+		if (!empty($this->_mapReduce)) {
+			$result = new ResultSetDecorator($result);
+		}	
 		return $result;
 	}
 

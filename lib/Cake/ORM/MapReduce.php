@@ -35,10 +35,10 @@ class MapReduce implements IteratorAggregate {
 
 	protected $_counter = 0;
 
-	public function __construct($data, callable $mapper, callable $reducer) {
+	public function __construct($data, array $routines) {
 		$this->_data = $data;
-		$this->_mapper = $mapper;
-		$this->_reducer = $reducer;
+		$this->_mapper = $routines['mapper'];
+		$this->_reducer = isset($routines['reducer']) ? $routines['reducer'] : null;
 	}
 
 	public function getIterator() {
@@ -54,6 +54,7 @@ class MapReduce implements IteratorAggregate {
 
 	public function emit($value, $slot = null) {
 		$this->_result[$slot === null ? $this->_counter : $slot] = $value;
+		$this->_counter++;
 	}
 
 	protected function _execute() {
@@ -63,7 +64,6 @@ class MapReduce implements IteratorAggregate {
 
 		foreach ($this->_intermediate as $key => $list) {
 			$this->_reducer->__invoke($key, $list, $this);
-			$this->_counter++;
 		}
 		$this->_execute = true;
 	}

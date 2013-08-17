@@ -54,7 +54,7 @@ class MyUsersTable extends Table {
  */
 class TableTest extends \Cake\TestSuite\TestCase {
 
-	public $fixtures = ['core.user'];
+	public $fixtures = ['core.user', 'core.category'];
 
 	public function setUp() {
 		parent::setUp();
@@ -539,4 +539,59 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 	}
 
+	public function testFindThreaded() {
+		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
+		$expected = array(
+			new \ArrayObject(array(
+				'id' => 1,
+				'parent_id' => 0,
+				'name' => 'Category 1',
+				'children' => array(
+					new \ArrayObject(array(
+						'id' => 2,
+						'parent_id' => 1,
+						'name' => 'Category 1.1',
+						'children' => array(
+							new \ArrayObject(array(
+								'id' => 7,
+								'parent_id' => 2,
+								'name' => 'Category 1.1.1',
+							)),
+							new \ArrayObject(array(
+								'id' => 8,
+								'parent_id' => '2',
+								'name' => 'Category 1.1.2',
+							))
+						),
+					)),
+					new \ArrayObject(array(
+						'id' => 3,
+						'parent_id' => '1',
+						'name' => 'Category 1.2',
+					)),
+				)
+			)),
+			new \ArrayObject(array(
+				'id' => 4,
+				'parent_id' => 0,
+				'name' => 'Category 2',
+			)),
+			new \ArrayObject(array(
+				'id' => 5,
+				'parent_id' => 0,
+				'name' => 'Category 3',
+				'children' => array(
+					new \ArrayObject(array(
+						'id' => '6',
+						'parent_id' => '5',
+						'name' => 'Category 3.1',
+					))
+				)
+			))
+		);
+		$results = $table->find('threaded')
+			->select(['id', 'parent_id', 'name'])
+			->toArray();
+		$this->assertEquals($expected, $results);
+	}
 }

@@ -525,7 +525,7 @@ class Table {
 	}
 
 	public function findList(Query $query, array $options = []) {
-		$mapper = function($key, $row, $mr) use ($query, &$columns) {
+		$mapper = function($key, $row, $mr) use (&$columns) {
 			if (empty($columns)) {
 				$columns = array_slice(array_keys($row), 0, 3);
 			}
@@ -540,7 +540,7 @@ class Table {
 			$mr->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
 		};
 
-		$reducer = function($key, $values, $mr) use (&$columns) {
+		$reducer = function($key, $values, $mr) {
 			$result = [];
 			foreach ($values as $value) {
 				$result += $value;
@@ -548,6 +548,22 @@ class Table {
 			$mr->emit($result, $key);
 		};
 
+		return $query->mapReduce($mapper, $reducer);
+	}
+
+	public function findThreaded(Query $query, array $options = []) {
+		$parents = new \ArrayObject;
+		$mapper = function($key, $row, $mr) use ($parents) {
+			$parents[$row['id']] = new \ArrayObject($row);
+			if (empty($row['parent_id'])) {
+				return $mr->emit($parents[$row['id']]);
+			}
+			$mr->emitIntermediate($row['parent_id'], $parents[$row['id']]);
+		};
+
+		$reducer = function($key, $values, $mr) use ($parents) {
+			$parents[$key]['children'] = $values;
+		};
 		return $query->mapReduce($mapper, $reducer);
 	}
 
