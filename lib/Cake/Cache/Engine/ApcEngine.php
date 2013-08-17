@@ -45,7 +45,6 @@ class ApcEngine extends CacheEngine {
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
-		$settings += array('engine' => __CLASS__);
 		parent::init($settings);
 		return function_exists('apc_dec');
 	}

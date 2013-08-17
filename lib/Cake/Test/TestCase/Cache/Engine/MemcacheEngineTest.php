@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Class TestMemcacheEngine
  *
- * @package       Cake.Test.Case.Cache.Engine
  */
 class TestMemcacheEngine extends MemcacheEngine {
 
@@ -64,7 +63,7 @@ class MemcacheEngineTest extends TestCase {
 
 		Configure::write('Cache.disable', false);
 		Cache::config('memcache', array(
-			'engine' => 'Memcache',
+			'className' => 'Memcache',
 			'prefix' => 'cake_',
 			'duration' => 3600
 		));
@@ -97,7 +96,6 @@ class MemcacheEngineTest extends TestCase {
 			'servers' => array('127.0.0.1'),
 			'persistent' => true,
 			'compress' => false,
-			'engine' => 'Cake\Cache\Engine\MemcacheEngine',
 			'groups' => array()
 		);
 		$this->assertEquals($expecting, $settings);
@@ -378,6 +376,7 @@ class MemcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testZeroDuration() {
+		Cache::drop('memcache');
 		Cache::config('memcache', [
 			'engine' => 'Memcache',
 			'prefix' => 'cake_',

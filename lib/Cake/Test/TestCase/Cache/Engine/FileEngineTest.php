@@ -47,7 +47,7 @@ class FileEngineTest extends TestCase {
 		Configure::write('Cache.disable', false);
 		Cache::config('file_test', [
 			'engine' => 'File',
-			'path' => CACHE
+			'path' => TMP . 'tests',
 		]);
 	}
 
@@ -57,12 +57,12 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		Cache::clear(false, 'file_test');
 		Cache::drop('file_test');
 		Cache::drop('file_groups');
 		Cache::drop('file_groups2');
 		Cache::drop('file_groups3');
-		parent::tearDown();
 	}
 
 /**
@@ -82,7 +82,7 @@ class FileEngineTest extends TestCase {
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('test', $data, 'file_test');
-		$this->assertTrue(file_exists(CACHE . 'cake_test'));
+		$this->assertTrue(file_exists(TMP . 'tests/cake_test'));
 
 		$result = Cache::read('test', 'file_test');
 		$expecting = $data;
@@ -162,6 +162,7 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testSerialize() {
+		Cache::drop('file_test');
 		Cache::config('file_test', ['engine' => 'File', 'serialize' => true]);
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('serialize_test', $data, 'file_test');
@@ -181,6 +182,7 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testClear() {
+		Cache::drop('file_test');
 		Cache::config('file_test', ['engine' => 'File', 'duration' => 1]);
 
 		$data = 'this is a test of the emergency broadcasting system';
@@ -284,7 +286,7 @@ class FileEngineTest extends TestCase {
 	public function testKeyPath() {
 		$result = Cache::write('views.countries.something', 'here', 'file_test');
 		$this->assertTrue($result);
-		$this->assertTrue(file_exists(CACHE . 'cake_views_countries_something'));
+		$this->assertTrue(file_exists(TMP . 'tests/cake_views_countries_something'));
 
 		$result = Cache::read('views.countries.something', 'file_test');
 		$this->assertEquals('here', $result);
@@ -349,13 +351,18 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testWriteQuotedString() {
-		Cache::config('file_test', array('engine' => 'File', 'path' => TMP . 'tests'));
 		Cache::write('App.doubleQuoteTest', '"this is a quoted string"', 'file_test');
 		$this->assertSame(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'", 'file_test');
 		$this->assertSame(Cache::read('App.singleQuoteTest', 'file_test'), "'this is a quoted string'");
 
-		Cache::config('file_test', array('isWindows' => true, 'path' => TMP . 'tests'));
+		Cache::drop('file_test');
+		Cache::config('file_test', array(
+			'className' => 'File',
+			'isWindows' => true,
+			'path' => TMP . 'tests'
+		));
+
 		$this->assertSame(Cache::read('App.doubleQuoteTest', 'file_test'), '"this is a quoted string"');
 		Cache::write('App.singleQuoteTest', "'this is a quoted string'", 'file_test');
 		$this->assertSame(Cache::read('App.singleQuoteTest', 'file_test'), "'this is a quoted string'");
@@ -371,14 +378,15 @@ class FileEngineTest extends TestCase {
 	public function testPathDoesNotExist() {
 		$this->skipIf(is_dir(TMP . 'tests' . DS . 'autocreate'), 'Cannot run if test directory exists.');
 
-		Cache::config('test', array(
+		Cache::drop('file_test');
+		Cache::config('file_test', array(
 			'engine' => 'File',
-			'path' => TMP . 'tests' . DS . 'autocreate'
+			'path' => TMP . 'tests/autocreate'
 		));
-		Cache::read('Test', 'test');
+		Cache::read('Test', 'file_test');
 
-		Cache::drop('test');
-		unlink(TMP . 'tests' . DS . 'autocreate');
+		$this->assertTrue(file_exists(TMP . 'tests/autocreate'), 'Dir should exist.');
+		unlink(TMP . 'tests/autocreate');
 	}
 
 /**
@@ -391,7 +399,8 @@ class FileEngineTest extends TestCase {
 		$this->skipIf(is_dir(TMP . 'tests/autocreate'), 'Cannot run if test directory exists.');
 		Configure::write('debug', 0);
 
-		Cache::config('test', array(
+		Cache::drop('file_test');
+		Cache::config('file_test', array(
 			'engine' => 'File',
 			'duration' => '+1 year',
 			'prefix' => 'testing_invalid_',

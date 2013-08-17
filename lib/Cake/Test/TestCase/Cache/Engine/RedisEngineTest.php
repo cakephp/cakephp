@@ -67,7 +67,6 @@ class RedisEngineTest extends TestCase {
 			'duration' => 3600,
 			'probability' => 100,
 			'groups' => array(),
-			'engine' => 'Cake\Cache\Engine\RedisEngine',
 			'server' => '127.0.0.1',
 			'port' => 6379,
 			'timeout' => 0,

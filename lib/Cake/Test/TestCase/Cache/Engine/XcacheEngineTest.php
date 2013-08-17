@@ -65,7 +65,6 @@ class XcacheEngineTest extends TestCase {
 			'prefix' => 'cake_',
 			'duration' => 3600,
 			'probability' => 100,
-			'engine' => 'Xcache',
 		];
 		$this->assertTrue(isset($settings['PHP_AUTH_USER']));
 		$this->assertTrue(isset($settings['PHP_AUTH_PW']));
