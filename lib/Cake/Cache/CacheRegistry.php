@@ -65,11 +65,14 @@ class CacheRegistry extends ObjectRegistry {
  *    the correct interface.
  */
 	protected function _create($class, $settings) {
-		if (is_object($class)) {
+		$isObject = is_object($class);
+		if ($isObject && $class instanceof \Closure) {
+			$instance = $class();
+		} elseif ($isObject) {
 			$instance = $class;
 		}
 
-		unset($settings['engine'], $settings['className']);
+		unset($settings['className']);
 		if (!isset($instance)) {
 			$instance = new $class($settings);
 		}

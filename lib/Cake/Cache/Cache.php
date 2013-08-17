@@ -125,25 +125,61 @@ class Cache {
 
 /**
  * This method can be used to define cache adapters for an application
- * during the bootstrapping process. You can use this method to add new cache adapters
- * at runtime as well. New cache configurations will be constructed upon the next write.
+ * or read existing configuration.
  *
  * To change an adapter's configuration at runtime, first drop the adapter and then
  * reconfigure it.
  *
  * Adapters will not be constructed until the first operation is done.
  *
+ * ### Usage
+ *
+ * Reading config data back:
+ *
+ * `Cache::config('default');`
+ *
+ * Setting a cache engine up.
+ *
+ * `Cache::config('default', $settings);`
+ *
+ * Injecting a constructed adapter in:
+ *
+ * `Cache::config('default', $instance);`
+ *
+ * Using a factory function to get an adapter:
+ *
+ * `Cache::config('default', function () { return new FileEngine(); });`
+ *
+ * Configure multiple adapters at once:
+ *
+ * `Cache::config($arrayOfConfig);`
+ *
  * @param string|array $key The name of the cache config, or an array of multiple configs.
  * @param array $config An array of name => config data for adapter.
- * @return void
+ * @return mixed null when adding configuration and an array of configuration data when reading.
+ * @throws Cake\Error\Exception When trying to modify an existing config.
  */
 	public static function config($key, $config = null) {
-		if ($config !== null && is_string($key)) {
-			static::$_config[$key] = $config;
+		// Read config.
+		if ($config === null && is_string($key)) {
+			return isset(static::$_config[$key]) ? static::$_config[$key] : null;
+		}
+		if ($config === null && is_array($key)) {
+			foreach ($key as $name => $settings) {
+				static::config($name, $settings);
+			}
 			return;
 		}
-
-		static::$_config = array_merge(static::$_config, $key);
+		if (isset(static::$_config[$key])) {
+			throw new Error\Exception(__d('cake_dev', 'Cannot reconfigure existing adapter "%s"', $key));
+		}
+		if (is_object($config)) {
+			$config = ['className' => $config];
+		}
+		if (isset($config['engine']) && empty($config['className'])) {
+			$config['className'] = $config['engine'];
+		}
+		static::$_config[$key] = $config;
 	}
 
 /**
@@ -156,13 +192,11 @@ class Cache {
 		if (empty(static::$_registry)) {
 			static::$_registry = new CacheRegistry();
 		}
-		if (empty(static::$_config[$name]['engine'])) {
+		if (empty(static::$_config[$name]['className'])) {
 			throw new Error\Exception(__d('cake_dev', 'The "%s" cache configuration does not exist.', $name));
 		}
 
 		$config = static::$_config[$name];
-		$config['className'] = $config['engine'];
-
 		static::$_registry->load($name, $config);
 
 		if (!empty($config['groups'])) {
@@ -193,11 +227,9 @@ class Cache {
  * @return boolean success of the removal, returns false when the config does not exist.
  */
 	public static function drop($config) {
-		if (!isset(static::$_registry->{$config})) {
-			return false;
+		if (isset(static::$_registry->{$config})) {
+			static::$_registry->unload($config);
 		}
-
-		static::$_registry->unload($config);
 		unset(static::$_config[$config], static::$_restore[$config]);
 		return true;
 	}

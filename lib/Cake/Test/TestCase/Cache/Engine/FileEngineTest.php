@@ -371,12 +371,33 @@ class FileEngineTest extends TestCase {
 	public function testPathDoesNotExist() {
 		$this->skipIf(is_dir(TMP . 'tests' . DS . 'autocreate'), 'Cannot run if test directory exists.');
 
-		Cache::config('autocreate', array(
+		Cache::config('test', array(
 			'engine' => 'File',
 			'path' => TMP . 'tests' . DS . 'autocreate'
 		));
+		Cache::read('Test', 'test');
 
-		Cache::drop('autocreate');
+		Cache::drop('test');
+		unlink(TMP . 'tests' . DS . 'autocreate');
+	}
+
+/**
+ * Test that under debug 0 directories do not get made.
+ *
+ * @expectedException PHPUnit_Framework_Error_Warning
+ * @return void
+ */
+	public function testPathDoesNotExistDebugOff() {
+		$this->skipIf(is_dir(TMP . 'tests/autocreate'), 'Cannot run if test directory exists.');
+		Configure::write('debug', 0);
+
+		Cache::config('test', array(
+			'engine' => 'File',
+			'duration' => '+1 year',
+			'prefix' => 'testing_invalid_',
+			'path' => TMP . 'tests/autocreate',
+		));
+		Cache::read('Test', 'test');
 	}
 
 /**
