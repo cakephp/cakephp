@@ -21,7 +21,7 @@ use Cake\Core\Configure;
  * Turn off all caching application-wide.
  *
  */
-	//Configure::write('Cache.disable', true);
+	// Cache::disable();
 
 /**
  * Enable cache checking.

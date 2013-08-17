@@ -19,6 +19,7 @@
  */
 namespace Cake\Test\TestCase;
 
+use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Log\Log;
@@ -281,17 +282,14 @@ class BasicsTest extends TestCase {
  * @return void
  */
 	public function testCache() {
-		$_cacheDisable = Configure::read('Cache.disable');
-		$this->skipIf($_cacheDisable, 'Cache is disabled, skipping cache() tests.');
-
-		Configure::write('Cache.disable', true);
+		Cache::disable();
 		$result = cache('basics_test', 'simple cache write');
 		$this->assertNull($result);
 
 		$result = cache('basics_test');
 		$this->assertNull($result);
 
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		$result = cache('basics_test', 'simple cache write');
 		$this->assertTrue((boolean)$result);
 		$this->assertTrue(file_exists(CACHE . 'basics_test'));
@@ -306,8 +304,6 @@ class BasicsTest extends TestCase {
 		sleep(2);
 		$result = cache('basics_test', null, '+1 second');
 		$this->assertNull($result);
-
-		Configure::write('Cache.disable', $_cacheDisable);
 	}
 
 /**

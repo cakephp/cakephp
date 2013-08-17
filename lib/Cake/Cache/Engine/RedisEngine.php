@@ -57,7 +57,6 @@ class RedisEngine extends CacheEngine {
 			return false;
 		}
 		parent::init(array_merge(array(
-			'engine' => __CLASS__,
 			'prefix' => null,
 			'server' => '127.0.0.1',
 			'port' => 6379,

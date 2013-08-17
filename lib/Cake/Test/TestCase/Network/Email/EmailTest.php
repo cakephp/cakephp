@@ -1128,7 +1128,7 @@ class EmailTest extends TestCase {
 				)
 			);
 
-		Log::config('email', ['engine' => $log]);
+		Log::config('email', $log);
 
 		$this->CakeEmail->transport('Debug');
 		$this->CakeEmail->to('me@cakephp.org');
@@ -1158,9 +1158,7 @@ class EmailTest extends TestCase {
 				)
 			);
 
-		Log::config('email', [
-			'engine' => $log,
-		]);
+		Log::config('email', $log);
 
 		$this->CakeEmail->transport('Debug');
 		$this->CakeEmail->to('me@cakephp.org');

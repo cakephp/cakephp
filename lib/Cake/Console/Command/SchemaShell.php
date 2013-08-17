@@ -15,6 +15,7 @@
 namespace Cake\Console\Command;
 
 use Cake\Console\Shell;
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Model\ConnectionManager;
 use Cake\Model\Schema;
@@ -60,7 +61,7 @@ class SchemaShell extends Shell {
 
 		throw new \Cake\Error\Exception('Schema shell is not working at this time.');
 
-		Configure::write('Cache.disable', 1);
+		Cache::disable();
 
 		$name = $path = $connection = $plugin = null;
 		if (!empty($this->params['name'])) {
@@ -152,13 +153,12 @@ class SchemaShell extends Shell {
 			}
 		}
 
-		$cacheDisable = Configure::read('Cache.disable');
-		Configure::write('Cache.disable', true);
+		Cache::enable();
 
 		$content = $this->Schema->read($options);
 		$content['file'] = $this->params['file'];
 
-		Configure::write('Cache.disable', $cacheDisable);
+		Cache::disable();
 
 		if (!empty($this->params['exclude']) && !empty($content)) {
 			$excluded = String::tokenize($this->params['exclude']);

@@ -121,27 +121,79 @@ class LogTest extends TestCase {
 	}
 
 /**
- * Test that engine() throws an exception when adding an
+ * Provider for config() tests.
+ *
+ * @return array
+ */
+	public static function configProvider() {
+		return [
+			'Array of data using engine key.' => [[
+				'engine' => 'File',
+				'path' => TMP . 'tests',
+			]],
+			'Array of data using classname key.' => [[
+				'className' => 'File',
+				'path' => TMP . 'tests',
+			]],
+			'Direct instance' => [new FileLog()],
+			'Closure factory' => [function () {
+				return new FileLog();
+			}],
+		];
+	}
+
+/**
+ * Test the various config call signatures.
+ *
+ * @dataProvider configProvider
+ * @return void
+ */
+	public function testConfigVariants($settings) {
+		Log::config('test', $settings);
+		$this->assertContains('test', Log::configured());
+		$this->assertInstanceOf('Cake\Log\Engine\FileLog', Log::engine('test'));
+		Log::drop('test');
+	}
+
+/**
+ * Test that config() throws an exception when adding an
  * adapter with the wrong type.
  *
  * @expectedException Cake\Error\Exception
  * @return void
  */
-	public function testEngineInjectErrorOnWrongType() {
-		Log::config('test', ['engine' => new \StdClass]);
+	public function testConfigInjectErrorOnWrongType() {
+		Log::config('test', new \StdClass);
 		Log::info('testing');
 	}
 
 /**
- * Test that config() can inject instances
+ * Test that config() can read data back
  *
  * @return void
  */
-	public function testConfigInjectInstance() {
-		$logger = new FileLog();
-		Log::config('test', ['engine' => $logger]);
-		$result = Log::engine('test');
-		$this->assertSame($logger, $result);
+	public function testConfigRead() {
+		$config = [
+			'engine' => 'File',
+			'path' => LOGS
+		];
+		Log::config('tests', $config);
+
+		$expected = $config;
+		$expected['className'] = $config['engine'];
+		unset($expected['engine']);
+		$this->assertSame($expected, Log::config('tests'));
+	}
+
+/**
+ * Ensure you cannot reconfigure a log adapter.
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testConfigErrorOnReconfigure() {
+		Log::config('tests', ['engine' => 'File', 'path' => TMP]);
+		Log::config('tests', ['engine' => 'Apc']);
 	}
 
 /**

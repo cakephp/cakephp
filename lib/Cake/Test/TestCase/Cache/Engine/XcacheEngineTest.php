@@ -39,7 +39,7 @@ class XcacheEngineTest extends TestCase {
 		if (!function_exists('xcache_set')) {
 			$this->markTestSkipped('Xcache is not installed or configured properly');
 		}
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		Cache::config('xcache', ['engine' => 'Xcache', 'prefix' => 'cake_']);
 	}
 
@@ -65,7 +65,6 @@ class XcacheEngineTest extends TestCase {
 			'prefix' => 'cake_',
 			'duration' => 3600,
 			'probability' => 100,
-			'engine' => 'Xcache',
 		];
 		$this->assertTrue(isset($settings['PHP_AUTH_USER']));
 		$this->assertTrue(isset($settings['PHP_AUTH_PW']));

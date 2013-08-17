@@ -75,7 +75,6 @@ class FileEngine extends CacheEngine {
  */
 	public function init($settings = array()) {
 		$settings += array(
-			'engine' => __CLASS__,
 			'path' => CACHE,
 			'prefix' => 'cake_',
 			'lock' => true,
