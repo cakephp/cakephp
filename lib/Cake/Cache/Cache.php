@@ -178,6 +178,7 @@ class Cache {
 		}
 		if (isset($config['engine']) && empty($config['className'])) {
 			$config['className'] = $config['engine'];
+			unset($config['engine']);
 		}
 		static::$_config[$key] = $config;
 	}

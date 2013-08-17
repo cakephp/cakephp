@@ -219,7 +219,7 @@ class CacheTest extends TestCase {
 		Cache::config('tests', $settings);
 		$expected = $settings;
 		$expected['className'] = $settings['engine'];
-		unset($settings['engine']);
+		unset($expected['engine']);
 		$this->assertEquals($expected, Cache::config('tests'));
 	}
 
