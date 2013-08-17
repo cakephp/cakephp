@@ -1042,7 +1042,7 @@ class HashTest extends CakeTestCase {
 			1 => array('Person' => array('name' => 'Jeff')),
 		);
 		$a = Hash::sort($a, '{n}.Person.name', 'ASC', 'STRING');
-		$this->assertEquals($a, $b);
+		$this->assertSame($a, $b);
 
 		$names = array(
 			array('employees' => array(
@@ -1065,7 +1065,38 @@ class HashTest extends CakeTestCase {
 			array('employees' => array(array('name' => array()))),
 			array('employees' => array(array('name' => array())))
 		);
-		$this->assertEquals($expected, $result);
+		$this->assertSame($expected, $result);
+
+		$a = array(
+			'SU' => array(
+				'total_fulfillable' => (int) 2
+			),
+			'AA' => array(
+				'total_fulfillable' => (int) 1
+			),
+			'LX' => array(
+				'total_fulfillable' => (int) 0
+			),
+			'BL' => array(
+				'total_fulfillable' => (int) 3
+			),
+		);
+		$expected = array(
+			'LX' => array(
+				'total_fulfillable' => (int) 0
+			),
+			'AA' => array(
+				'total_fulfillable' => (int) 1
+			),
+			'SU' => array(
+				'total_fulfillable' => (int) 2
+			),
+			'BL' => array(
+				'total_fulfillable' => (int) 3
+			),
+		);
+		$result = Hash::sort($a, '{s}.total_fulfillable', 'asc');
+		$this->assertSame($expected, $result);
 	}
 
 /**
