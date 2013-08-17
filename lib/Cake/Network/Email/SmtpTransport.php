@@ -231,7 +231,7 @@ class SmtpTransport extends AbstractTransport {
  * @throws SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {
-		if (!is_null($data)) {
+		if ($data !== null) {
 			$this->_socket->write($data . "\r\n");
 		}
 		while ($checkCode !== false) {

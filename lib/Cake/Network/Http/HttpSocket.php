@@ -536,7 +536,7 @@ class HttpSocket extends CakeSocket {
  * @return mixed Either false on failure or a string containing the composed URL.
  */
 	public function url($url = null, $uriTemplate = null) {
-		if (is_null($url)) {
+		if ($url === null) {
 			$url = '/';
 		}
 		if (is_string($url)) {

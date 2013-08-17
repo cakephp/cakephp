@@ -657,7 +657,7 @@ class Mysql extends DboSource {
  * @return string Formatted length part of an index field
  */
 	protected function _buildIndexSubPart($lengths, $column) {
-		if (is_null($lengths)) {
+		if ($lengths === null) {
 			return '';
 		}
 		if (!isset($lengths[$column])) {
