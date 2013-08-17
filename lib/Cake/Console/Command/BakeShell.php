@@ -14,8 +14,8 @@
  */
 namespace Cake\Console\Command;
 
-use Cake\Console\Shell;
 use Cake\Cache\Cache;
+use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Model\Model;

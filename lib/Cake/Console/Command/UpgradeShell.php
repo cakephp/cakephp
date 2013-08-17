@@ -134,7 +134,7 @@ class UpgradeShell extends Shell {
 			$matches = $this->_mapClassName($matches);
 			if (count($matches) === 4) {
 				$use = $matches[3] . '\\' . $matches[2] . '\\' . $matches[1];
-			} else if ($matches[2] == 'Vendor') {
+			} elseif ($matches[2] == 'Vendor') {
 				$this->out(
 					__d('cake_console', '<info>Skip %s as it is a vendor library.</info>', $matches[1]),
 					1,
