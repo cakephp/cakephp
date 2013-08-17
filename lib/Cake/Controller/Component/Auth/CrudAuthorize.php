@@ -83,7 +83,7 @@ class CrudAuthorize extends BaseAuthorize {
 	public function authorize($user, CakeRequest $request) {
 		if (!isset($this->settings['actionMap'][$request->params['action']])) {
 			trigger_error(__d('cake_dev',
-				'CrudAuthorize::authorize() - Attempted access of un-mapped action "%1$s" in controller "%2$s"',
+				'CrudAuthorize::authorize() - Attempted access of un-mapped action "%s" in controller "%s"',
 				$request->action,
 				$request->controller
 				),
