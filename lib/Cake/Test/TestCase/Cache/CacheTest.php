@@ -496,4 +496,16 @@ class CacheTest extends TestCase {
 		$this->assertEquals(strtotime('+1 year') - time(), $settings['duration']);
 	}
 
+/**
+ * Test toggling enabled state of cache.
+ *
+ * @return void
+ */
+	public function testEnableDisableEnabled() {
+		$this->assertNull(Cache::enable());
+		$this->assertTrue(Cache::enabled(), 'Should be on');
+		$this->assertNull(Cache::disable());
+		$this->assertFalse(Cache::enabled(), 'Should be off');
+	}
+
 }
