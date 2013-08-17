@@ -45,10 +45,12 @@ class FileEngineTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Cache::enable();
+		Cache::drop('file_test');
 		Cache::config('file_test', [
 			'engine' => 'File',
 			'path' => TMP . 'tests',
 		]);
+		Cache::clear(false, 'file_test');
 	}
 
 /**
@@ -57,12 +59,11 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
-		parent::tearDown();
-		Cache::clear(false, 'file_test');
 		Cache::drop('file_test');
 		Cache::drop('file_groups');
 		Cache::drop('file_groups2');
 		Cache::drop('file_groups3');
+		parent::tearDown();
 	}
 
 /**
@@ -377,6 +378,7 @@ class FileEngineTest extends TestCase {
  */
 	public function testPathDoesNotExist() {
 		$this->skipIf(is_dir(TMP . 'tests' . DS . 'autocreate'), 'Cannot run if test directory exists.');
+		Configure::write('debug', 2);
 
 		Cache::drop('file_test');
 		Cache::config('file_test', array(
@@ -386,7 +388,9 @@ class FileEngineTest extends TestCase {
 		Cache::read('Test', 'file_test');
 
 		$this->assertTrue(file_exists(TMP . 'tests/autocreate'), 'Dir should exist.');
-		unlink(TMP . 'tests/autocreate');
+
+		// Cleanup
+		rmdir(TMP . 'tests/autocreate');
 	}
 
 /**
@@ -399,14 +403,15 @@ class FileEngineTest extends TestCase {
 		$this->skipIf(is_dir(TMP . 'tests/autocreate'), 'Cannot run if test directory exists.');
 		Configure::write('debug', 0);
 
-		Cache::drop('file_test');
-		Cache::config('file_test', array(
+		Cache::drop('file_groups');
+		Cache::config('file_groups', array(
 			'engine' => 'File',
 			'duration' => '+1 year',
 			'prefix' => 'testing_invalid_',
 			'path' => TMP . 'tests/autocreate',
 		));
-		Cache::read('Test', 'test');
+		Cache::read('Test', 'file_groups');
+		Cache::drop('file_groups');
 	}
 
 /**
