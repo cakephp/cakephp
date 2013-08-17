@@ -2209,7 +2209,7 @@ class HashTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$data = array('a.b.100.a' => null, 'a.b.200.a' => null);
 		$expected = array(

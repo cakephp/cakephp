@@ -217,19 +217,19 @@ class FileTest extends CakeTestCase {
 		$this->assertTrue(is_resource($this->File->handle));
 
 		$result = $this->File->offset();
-		$expecting = 0;
-		$this->assertSame($result, $expecting);
+		$expected = 0;
+		$this->assertSame($expected, $result);
 
 		$data = file_get_contents(__FILE__);
 		$success = $this->File->offset(5);
-		$expecting = substr($data, 5, 3);
+		$expected = substr($data, 5, 3);
 		$result = $this->File->read(3);
 		$this->assertTrue($success);
-		$this->assertEquals($expecting, $result);
+		$this->assertEquals($expected, $result);
 
 		$result = $this->File->offset();
-		$expecting = 5 + 3;
-		$this->assertSame($result, $expecting);
+		$expected = 5 + 3;
+		$this->assertSame($expected, $result);
 	}
 
 /**

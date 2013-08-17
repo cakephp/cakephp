@@ -175,7 +175,7 @@ class Router {
  * @throws RouterException
  */
 	public static function defaultRouteClass($routeClass = null) {
-		if (is_null($routeClass)) {
+		if ($routeClass === null) {
 			return self::$_routeClass;
 		}
 
