@@ -18,6 +18,7 @@
  */
 namespace Cake\Test\TestCase\Routing;
 
+use Cake\Cache\Cache;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -266,17 +267,13 @@ class DispatcherTest extends TestCase {
 		parent::setUp();
 		$_GET = array();
 
-		$this->_app = Configure::read('App');
 		Configure::write('App.base', false);
 		Configure::write('App.baseUrl', false);
 		Configure::write('App.dir', 'app');
 		Configure::write('App.webroot', 'webroot');
 		Configure::write('App.namespace', 'TestApp');
 
-		$this->_cache = Configure::read('Cache');
-		Configure::write('Cache.disable', true);
-
-		$this->_debug = Configure::read('debug');
+		Cache::disable();
 
 		App::build();
 		App::objects('Plugin', null, false);
@@ -944,6 +941,7 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testFullPageCachingDispatch($url) {
+		Cache::enable();
 		Configure::write('Cache.disable', false);
 		Configure::write('Cache.check', true);
 		Configure::write('debug', 2);

@@ -28,17 +28,17 @@ use Cake\Log\Engine\BaseLog;
  * A sample configuration would look like:
  *
  * {{{
- * Log::config('my_log', ['engine' => 'FileLog']);
+ * Log::config('my_log', ['className' => 'FileLog']);
  * }}}
  *
- * You can define the engine as any fully namespaced classname or use a short hand
+ * You can define the className as any fully namespaced classname or use a short hand
  * classname to use loggers in the `App\Log\Engine` & `Cake\Log\Engine` namespaces.
  * You can also use plugin short hand to use logging classes provided by plugins.
  *
  * Log adapters are required to implement `Cake\Log\LogInterface`, and there is a
  * built-in base class (`Cake\Log\Engine\BaseLog`) that can be used for custom loggers.
  *
- * Outside of the `engine` key, all other configuration values will be passed to the
+ * Outside of the `className` key, all other configuration values will be passed to the
  * logging adapter's constructor as an array.
  *
  * ### Logging levels
@@ -48,7 +48,7 @@ use Cake\Log\Engine\BaseLog;
  *
  * {{{
  * Log::config('default', [
- *     'engine' => 'File',
+ *     'className' => 'File',
  *     'path' => LOGS,
  *     'levels' => ['error', 'critical', 'alert', 'emergency']
  * ]);
@@ -66,7 +66,7 @@ use Cake\Log\Engine\BaseLog;
  *
  * {{{
  * Log::config('payments', [
- *     'engine' => 'File',
+ *     'className' => 'File',
  *     'scopes' => ['payment', 'order']
  * ]);
  * }}}
@@ -226,42 +226,81 @@ class Log {
 	}
 
 /**
- * Set configuration information for loggers.
+ * This method can be used to define logging adapters for an application
+ * or read existing configuration.
  *
- * This method can be used to define loggers for an application
- * during the bootstrapping process. You can use this method to add new loggers
- * at runtime as well. New loggers will be constructed upon the next write.
- *
- * To change a logger's configuration at runtime, first drop the logger and then
+ * To change an adapter's configuration at runtime, first drop the adapter and then
  * reconfigure it.
  *
  * Loggers will not be constructed until the first log message is written.
  *
- * @param string|array $key The name of the logger, or an array of multiple logger configs.
- * @param array $config An array of name => config data for loggers.
- * @return void
+ * ### Usage
+ *
+ * Reading config data back:
+ *
+ * `Log::config('default');`
+ *
+ * Setting a cache engine up.
+ *
+ * `Log::config('default', $settings);`
+ *
+ * Injecting a constructed adapter in:
+ *
+ * `Log::config('default', $instance);`
+ *
+ * Using a factory function to get an adapter:
+ *
+ * `Log::config('default', function () { return new FileLog(); });`
+ *
+ * Configure multiple adapters at once:
+ *
+ * `Log::config($arrayOfConfig);`
+ *
+ * @param string|array $key The name of the logger config, or an array of multiple configs.
+ * @param array $config An array of name => config data for adapter.
+ * @return mixed null when adding configuration and an array of configuration data when reading.
+ * @throws Cake\Error\Exception When trying to modify an existing config.
  * @see App/Config/logging.php
  */
 	public static function config($key, $config = null) {
-		static::$_dirtyConfig = true;
-		if ($config !== null && is_string($key)) {
-			static::$_config[$key] = (array) $config;
+		// Read config.
+		if ($config === null && is_string($key)) {
+			return isset(static::$_config[$key]) ? static::$_config[$key] : null;
+		}
+		if ($config === null && is_array($key)) {
+			foreach ($key as $name => $settings) {
+				static::config($name, $settings);
+			}
 			return;
 		}
-
-		static::$_config = array_merge(static::$_config, $key);
+		if (isset(static::$_config[$key])) {
+			throw new Error\Exception(__d('cake_dev', 'Cannot reconfigure existing adapter "%s"', $key));
+		}
+		static::$_dirtyConfig = true;
+		if (is_object($config)) {
+			$config = ['className' => $config];
+		}
+		if (isset($config['engine']) && empty($config['className'])) {
+			$config['className'] = $config['engine'];
+			unset($config['engine']);
+		}
+		static::$_config[$key] = $config;
 	}
 
 /**
- * Removes a stream from the active streams.  Once a stream has been removed
- * it will no longer have messages sent to it.
+ * Removes a stream from the active streams.
  *
- * @param string $streamName Key name of a configured stream to remove.
+ * Once a stream has been removed it will no longer have messages sent to it.
+ * The original configuration data will also be removed. You can use this method
+ * when reconfiguring a logger or when you want to remove a logger.
+ *
+ * @param string $streamName Key name of a configured logger to remove.
  * @return void
  */
 	public static function drop($streamName) {
 		static::_init();
 		static::$_registry->unload($streamName);
+		unset(static::$_config[$streamName]);
 	}
 
 /**
@@ -285,7 +324,7 @@ class Log {
  * @deprecated This method will be removed in 3.0 stable.
  */
 	public static function enable($streamName) {
-		throw new Error\Exception(__d('cake_dev', 'Log::enable() is deprecated. Use Log::engine() instead.'));
+		throw new Error\Exception(__d('cake_dev', 'Log::enable() is deprecated. Use Log::config() instead.'));
 	}
 
 /**

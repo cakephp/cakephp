@@ -42,7 +42,7 @@ class ApcEngineTest extends TestCase {
 			$this->skipIf(!ini_get('apc.enable_cli'), 'APC is not enabled for the CLI.');
 		}
 
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		Cache::config('apc', ['engine' => 'Apc', 'prefix' => 'cake_']);
 	}
 
@@ -86,6 +86,7 @@ class ApcEngineTest extends TestCase {
  * @return void
  */
 	public function testReadWriteDurationZero() {
+		Cache::drop('apc');
 		Cache::config('apc', ['engine' => 'Apc', 'duration' => 0, 'prefix' => 'cake_']);
 		Cache::write('zero', 'Should save', 'apc');
 		sleep(1);

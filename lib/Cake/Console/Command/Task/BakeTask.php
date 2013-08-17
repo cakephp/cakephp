@@ -19,6 +19,7 @@
 namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
 
 /**
@@ -57,7 +58,7 @@ class BakeTask extends Shell {
  */
 	public function startup() {
 		Configure::write('debug', 2);
-		Configure::write('Cache.disable', 1);
+		Cache::disable();
 		parent::startup();
 	}
 

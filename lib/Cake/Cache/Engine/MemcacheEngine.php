@@ -70,7 +70,6 @@ class MemcacheEngine extends CacheEngine {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
 		$settings += array(
-			'engine' => __CLASS__,
 			'servers' => array('127.0.0.1'),
 			'compress' => false,
 			'persistent' => true

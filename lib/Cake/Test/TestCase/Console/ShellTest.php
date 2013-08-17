@@ -833,7 +833,7 @@ TEXT;
 			['write'],
 			[['types' => 'error']]
 		);
-		Log::config('console', ['engine' => $mock]);
+		Log::config('console', $mock);
 		$mock->expects($this->once())
 			->method('write')
 			->with('error', $this->Shell->testMessage);

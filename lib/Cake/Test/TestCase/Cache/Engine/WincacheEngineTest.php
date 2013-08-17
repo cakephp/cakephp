@@ -38,7 +38,7 @@ class WincacheEngineTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->skipIf(!function_exists('wincache_ucache_set'), 'Wincache is not installed or configured properly.');
-		Configure::write('Cache.disable', false);
+		Cache::enable();
 		Cache::config('wincache', ['engine' => 'Wincache', 'prefix' => 'cake_']);
 	}
 
