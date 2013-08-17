@@ -65,7 +65,8 @@ class MapReduce implements IteratorAggregate {
 		foreach ($this->_intermediate as $key => $list) {
 			$this->_reducer->__invoke($key, $list, $this);
 		}
-		$this->_execute = true;
+		$this->_intermediate = [];
+		$this->_executed = true;
 	}
 
 }

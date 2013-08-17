@@ -554,7 +554,7 @@ class Table {
 	public function findThreaded(Query $query, array $options = []) {
 		$parents = [];
 		$mapper = function($key, $row, $mr) use (&$parents) {
-			$parents[$row['id']] = &$row;
+			$parents[$row['id']] =& $row;
 			$mr->emitIntermediate($row['parent_id'], $row['id']);
 		};
 
@@ -571,9 +571,10 @@ class Table {
 			}
 		};
 
-		return $query->mapReduce($mapper, $reducer)->formatResults(function($row) {
-			return $row->getArrayCopy();
-		});
+		$formatter = function($key, $row, $mr) {
+			$mr->emit($row->getArrayCopy());
+		};
+		return $query->mapReduce($mapper, $reducer)->mapReduce($formatter);
 	}
 
 /**

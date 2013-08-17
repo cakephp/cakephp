@@ -31,6 +31,8 @@ use \Serializable;
  */
 class ResultSet implements Iterator, Serializable, JsonSerializable {
 
+	use ResultCollectionTrait;
+
 /**
  * Original query from where results where generated
  *
@@ -107,15 +109,6 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 		$this->_statement = $statement;
 		$this->_defaultTable = $this->_query->repository();
 		$this->_calculateAssociationMap();
-	}
-
-/**
- * Returns an array representation of the results
- *
- * @return array
- */
-	public function toArray() {
-		return iterator_to_array($this);
 	}
 
 /**
@@ -289,40 +282,6 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 		}
 
 		return $values;
-	}
-
-/**
- * Serialize a resultset.
- *
- * Part of Serializable interface.
- *
- * @return string Serialized object
- */
-	public function serialize() {
-		return serialize($this->toArray());
-	}
-
-/**
- * Unserialize a resultset.
- *
- * Part of Serializable interface.
- *
- * @param string Serialized object
- * @return ResultSet The hydrated result set.
- */
-	public function unserialize($serialized) {
-		$this->_results = unserialize($serialized);
-	}
-
-/**
- * Convert a result set into JSON.
- *
- * Part of JsonSerializable interface.
- *
- * @return array The data to convert to JSON
- */
-	public function jsonSerialize() {
-		return $this->toArray();
 	}
 
 }

@@ -540,10 +540,6 @@ class Query extends DatabaseQuery {
 		if (!empty($this->_mapReduce)) {
 			$result = new ResultSetDecorator($result);
 		}
-
-		foreach ($this->_formatters as $formatter) {
-			$result = new ResultSetDecorator($result, $formatter);
-		}
 		return $result;
 	}
 

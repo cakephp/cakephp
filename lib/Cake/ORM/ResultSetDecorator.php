@@ -17,67 +17,36 @@
 namespace Cake\ORM;
 
 use \IteratorIterator;
-use \Iterator;
+use \JsonSerializable;
+use \Serializable;
 
-class ResultSetDecorator implements Iterator {
+/**
+ * Generic ResultSet decorator. This will make any traversable object appear to
+ * be a database result
+ *
+ * @return void
+ */
+class ResultSetDecorator extends IteratorIterator implements Serializable, JsonSerializable {
 
-	protected $_keyCallback;
+	use ResultCollectionTrait;
 
-	protected $_currentCallback;
-
+/**
+ * Holds the records after an instance of this object has been unserialized
+ *
+ * @var array
+ */
 	protected $_results;
 
-	protected $_current;
-
-	public function __construct(\Traversable $results, $callbacks = []) {
-		if (!empty($callbacks['key'])) {
-			$this->_keyCallback = $callbacks['key'];
+/**
+ * Returns the inner iterator this decorator is wrapping
+ *
+ * @return void
+ */
+	public function getInnerIterator() {
+		if ($this->_results) {
+			return new IteratorIterator($this->_results);
 		}
-		if (!empty($callbacks['current'])) {
-			$this->_currentCallback = $callbacks['current'];
-		}
-		$this->_results = $results;
-
-		if ($results instanceOf \IteratorAggregate) {
-			$this->_results = $results->getIterator();
-		}
+		return parent::getInnerIterator();
 	}
 
-	public function key() {
-		$key = $this->_results->key();
-		if ($this->_keyCallback) {
-			$current = $this->_results->current();
-			$key = $this->_keyCallback->__invoke($current, $key);
-		}
-		return $key;
-	}
-
-	public function current() {
-		if ($this->_current) {
-			return $this->_current;
-		}
-		$current = $this->_results->current();
-		if ($current && $this->_currentCallback) {
-			$current = $this->_currentCallback->__invoke($current);
-		}
-		return $current;
-	}
-
-	public function next() {
-		$this->_current = null;
-		$this->_results->next();
-	}
-
-	public function rewind() {
-		$this->_current = null;
-		$this->_results->rewind();
-	}
-
-	public function valid() {
-		return $this->_results->valid();
-	}
-
-	public function toArray() {
-		return iterator_to_array($this);
-	}
 }
