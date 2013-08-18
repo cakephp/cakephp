@@ -303,6 +303,13 @@ class Email {
 	protected static $_config = [];
 
 /**
+ * Configuration profiles for transports.
+ *
+ * @var array
+ */
+	protected static $_transportConfig = [];
+
+/**
  * A copy of the configuration profile for this
  * instance. This copy can be modified with Email::useConfig().
  *
@@ -1068,6 +1075,54 @@ class Email {
 	}
 
 /**
+ * Add or read transport configuration.
+ *
+ * Use this method to define transports to use in delivery profiles.
+ * Once defined you cannot edit the configurations, and must use
+ * Email::dropTransport() to flush the configuration first.
+ *
+ * When using an array of configuration data a new transport
+ * will be constructed for each message sent. When using a Closure, the
+ * closure will be evaluated for each message.
+ *
+ * The `className` is used to define the class to use for a transport.
+ * It can either be a short name, or a fully qualified classname
+ *
+ * @param string|array $key The configuration name to read/write. Or
+ *   an array of multiple transports to set.
+ * @param array|Closure|AbstractTransport Either an array of configuration
+ *   data, a Closure factory function, or a transport instance.
+ */
+	public static function configTransport($key, $config = null) {
+		if ($config === null && is_string($key)) {
+			return isset(static::$_transportConfig[$key]) ? static::$_transportConfig[$key] : null;
+		}
+		if ($config === null && is_array($key)) {
+			foreach ($key as $name => $settings) {
+				static::configTransport($name, $settings);
+			}
+			return;
+		}
+		if (isset(static::$_transportConfig[$key])) {
+			throw new Error\Exception(__d('cake_dev', 'Cannot modify an existing config "%s"', $key));
+		}
+		if (is_object($config)) {
+			$config = ['className' => $config];
+		}
+		static::$_transportConfig[$key] = $config;
+	}
+
+/**
+ * Delete transport configuration.
+ *
+ * @param string $key The transport name to remove.
+ * @return void
+ */
+	public static function dropTransport($key) {
+		unset(static::$_transportConfig[$key]);
+	}
+
+/**
  * Add or read a configuration profile for Email instances.
  *
  * This method is used to read or define configuration profiles for
@@ -1076,9 +1131,8 @@ class Email {
  *
  * @param string|array $key The name of the configuration profile to read/create
  *    or an array of multiple configuration profiles to set
- * @param null|array|Closure $config Null to read config data, an array or Closure
- *    to set data. Closures will be called the first time the profile is used.
- * @return array|Closure|void
+ * @param null|array $config Null to read config data, an array to set data.
+ * @return array|void
  */
 	public static function config($key, $config = null) {
 		// Read config.
@@ -1093,9 +1147,6 @@ class Email {
 		}
 		if (isset(static::$_config[$key])) {
 			throw new Error\Exception(__d('cake_dev', 'Cannot modify an existing config "%s"', $key));
-		}
-		if ($config instanceof \Closure) {
-			$config = ['factory' => $config];
 		}
 		static::$_config[$key] = $config;
 	}
@@ -1215,9 +1266,6 @@ class Email {
 		$config = static::config($name);
 		if (empty($config)) {
 			throw new Error\Exception(__d('cake_dev', 'Unknown email configuration "%s".', $name));
-		}
-		if (isset($config['factory']) && $config['factory'] instanceof \Closure) {
-			$config = $config['factory']();
 		}
 		return $config;
 	}

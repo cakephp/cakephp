@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Network\Email\Email;
+use Cake\Network\Email\DebugTransport;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
 
@@ -100,6 +101,10 @@ class EmailTest extends TestCase {
 		App::build(array(
 			'View' => array(CAKE . 'Test/TestApp/View/')
 		));
+
+		Email::configTransport('debug', [
+			'className' => 'Debug'
+		]);
 	}
 
 /**
@@ -112,6 +117,8 @@ class EmailTest extends TestCase {
 		App::build();
 		Log::drop('email');
 		Email::drop('test');
+		Email::dropTransport('debug');
+		Email::dropTransport('test_smtp');
 	}
 
 /**
@@ -741,24 +748,91 @@ class EmailTest extends TestCase {
 /**
  * testExtendTransport method
  *
+ * @expectedException Cake\Error\SocketException
  * @return void
  */
 	public function testExtendTransport() {
-		$this->setExpectedException('Cake\Error\SocketException');
 		$this->CakeEmail->transport('Extend');
 		$this->CakeEmail->transportClass();
 	}
 
+/**
+ * Test configuring a transport.
+ *
+ * @return void
+ */
 	public function testConfigTransport() {
-		$this->markTestIncomplete();
+		Email::dropTransport('debug');
+		$settings = [
+			'className' => 'Debug',
+			'log' => true
+		];
+		$result = Email::configTransport('debug', $settings);
+		$this->assertNull($result, 'No return.');
+
+		$result = Email::configTransport('debug');
+		$this->assertEquals($settings, $result);
 	}
 
+/**
+ * Test configuring multiple transports.
+ */
+	public function testConfigTransportMultiple() {
+		Email::dropTransport('debug');
+		$settings = [
+			'debug' => [
+				'className' => 'Debug',
+				'log' => true
+			],
+			'test_smtp' => [
+				'className' => 'Smtp',
+				'username' => 'mark',
+				'password' => 'password',
+				'host' => 'example.com'
+			]
+		];
+		Email::configTransport($settings);
+		$this->assertEquals($settings['debug'], Email::configTransport('debug'));
+		$this->assertEquals($settings['test_smtp'], Email::configTransport('test_smtp'));
+	}
+
+/**
+ * Test that exceptions are raised when duplicate transports are configured.
+ *
+ * @expectedException Cake\Error\Exception
+ */
 	public function testConfigTransportErrorOnDuplicate() {
-		$this->markTestIncomplete();
+		Email::dropTransport('debug');
+		$settings = [
+			'className' => 'Debug',
+			'log' => true
+		];
+		Email::configTransport('debug', $settings);
+		Email::configTransport('debug', $settings);
 	}
 
+/**
+ * Test configTransport with an instance.
+ *
+ * @return void
+ */
+	public function testConfigTransportInstance() {
+		Email::dropTransport('debug');
+		$instance = new DebugTransport();
+		Email::configTransport('debug', $instance);
+		$this->assertEquals(['className' => $instance], Email::configTransport('debug'));
+	}
+
+/**
+ * Test dropping a transport configuration
+ *
+ * @return void
+ */
 	public function testDropTransport() {
-		$this->markTestIncomplete();
+		$result = Email::configTransport('debug');
+		$this->assertInternalType('array', $result, 'Should have config data');
+		Email::dropTransport('debug');
+		$this->assertNull(Email::configTransport('debug'), 'Should not exist.');
 	}
 
 /**
@@ -776,25 +850,6 @@ class EmailTest extends TestCase {
 
 		$email = new Email('test');
 		$this->assertContains($settings['to'], $email->to());
-	}
-
-/**
- * Test reading/writing configuration profiles with a closure.
- *
- * @return void
- */
-	public function testConfigClosure() {
-		$settings = function () {
-			return [
-				'to' => 'mark@example.com',
-				'from' => 'noreply@example.com'
-			];
-		};
-		Email::config('test', $settings);
-		$this->assertEquals(['factory' => $settings], Email::config('test'), 'Should be the same.');
-
-		$email = new Email('test');
-		$this->assertContains('mark@example.com', $email->to());
 	}
 
 /**
