@@ -7990,8 +7990,7 @@ class ModelReadTest extends BaseModelTest {
 					'foreignKey' => 'something_id'
 				)
 			)
-		)
-			);
+		));
 
 		$results = $Something->find('all');
 
@@ -8012,7 +8011,7 @@ class ModelReadTest extends BaseModelTest {
 					'doomed' => true,
 					'created' => '2007-03-18 10:39:23',
 					'updated' => '2007-03-18 10:41:31',
-					'afterFind' => 'Successfuly added by AfterFind'
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'HasMany' => array(
 					array(
@@ -8022,7 +8021,7 @@ class ModelReadTest extends BaseModelTest {
 						'doomed' => true,
 						'created' => '2007-03-18 10:39:23',
 						'updated' => '2007-03-18 10:41:31',
-						'afterFind' => 'Successfuly added by AfterFind'
+						'afterFind' => 'Successfully added by AfterFind'
 					)
 				),
 				'SomethingElse' => array(
@@ -8033,12 +8032,12 @@ class ModelReadTest extends BaseModelTest {
 						'published' => 'Y',
 						'created' => '2007-03-18 10:41:23',
 						'updated' => '2007-03-18 10:43:31',
-						'afterFind' => 'Successfuly added by AfterFind',
+						'afterFind' => 'Successfully added by AfterFind',
 						'JoinThing' => array(
 							'doomed' => true,
 							'something_id' => '1',
 							'something_else_id' => '2',
-							'afterFind' => 'Successfuly added by AfterFind'
+							'afterFind' => 'Successfully added by AfterFind'
 						)
 					)
 				)
@@ -8059,7 +8058,7 @@ class ModelReadTest extends BaseModelTest {
 					'doomed' => false,
 					'created' => '2007-03-18 10:41:23',
 					'updated' => '2007-03-18 10:43:31',
-					'afterFind' => 'Successfuly added by AfterFind'
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'HasMany' => array(
 					array(
@@ -8069,7 +8068,7 @@ class ModelReadTest extends BaseModelTest {
 						'doomed' => false,
 						'created' => '2007-03-18 10:41:23',
 						'updated' => '2007-03-18 10:43:31',
-						'afterFind' => 'Successfuly added by AfterFind'
+						'afterFind' => 'Successfully added by AfterFind'
 					)
 				),
 				'SomethingElse' => array(
@@ -8080,12 +8079,12 @@ class ModelReadTest extends BaseModelTest {
 						'published' => 'Y',
 						'created' => '2007-03-18 10:43:23',
 						'updated' => '2007-03-18 10:45:31',
-						'afterFind' => 'Successfuly added by AfterFind',
+						'afterFind' => 'Successfully added by AfterFind',
 						'JoinThing' => array(
 							'doomed' => false,
 							'something_id' => '2',
 							'something_else_id' => '3',
-							'afterFind' => 'Successfuly added by AfterFind'
+							'afterFind' => 'Successfully added by AfterFind'
 						)
 					)
 				)
@@ -8106,7 +8105,7 @@ class ModelReadTest extends BaseModelTest {
 					'doomed' => true,
 					'created' => '2007-03-18 10:43:23',
 					'updated' => '2007-03-18 10:45:31',
-					'afterFind' => 'Successfuly added by AfterFind'
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'HasMany' => array(
 					array(
@@ -8116,7 +8115,7 @@ class ModelReadTest extends BaseModelTest {
 						'doomed' => true,
 						'created' => '2007-03-18 10:43:23',
 						'updated' => '2007-03-18 10:45:31',
-						'afterFind' => 'Successfuly added by AfterFind'
+						'afterFind' => 'Successfully added by AfterFind'
 					)
 				),
 				'SomethingElse' => array(
@@ -8127,26 +8126,25 @@ class ModelReadTest extends BaseModelTest {
 						'published' => 'Y',
 						'created' => '2007-03-18 10:39:23',
 						'updated' => '2007-03-18 10:41:31',
-						'afterFind' => 'Successfuly added by AfterFind',
+						'afterFind' => 'Successfully added by AfterFind',
 						'JoinThing' => array(
 							'doomed' => true,
 							'something_id' => '3',
 							'something_else_id' => '1',
-							'afterFind' => 'Successfuly added by AfterFind'
+							'afterFind' => 'Successfully added by AfterFind'
 						)
 					)
 				)
 			)
 		);
-		$this->assertEquals($expected, $results, 'Model related with has* afterFind callback fail');
+		$this->assertEquals($expected, $results, 'Model related with has* afterFind callback fails');
 
 		$JoinThing = new JoinThing();
 		$JoinThing->unbindModel(array(
 			'belongsTo' => array(
 				'Something'
 			)
-		)
-			);
+		));
 		$results = $JoinThing->find('all');
 
 		$expected = array(
@@ -8158,7 +8156,7 @@ class ModelReadTest extends BaseModelTest {
 					'doomed' => true,
 					'created' => '2007-03-18 10:39:23',
 					'updated' => '2007-03-18 10:41:31',
-					'afterFind' => 'Successfuly added by AfterFind'
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'SomethingElse' => array(
 					'id' => '2',
@@ -8167,7 +8165,7 @@ class ModelReadTest extends BaseModelTest {
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
 					'updated' => '2007-03-18 10:43:31',
-					'afterFind' => 'Successfuly added by AfterFind'
+					'afterFind' => 'Successfully added by AfterFind'
 				)
 			),
 			array(
@@ -8178,7 +8176,7 @@ class ModelReadTest extends BaseModelTest {
 					'doomed' => false,
 					'created' => '2007-03-18 10:41:23',
 					'updated' => '2007-03-18 10:43:31',
-					'afterFind' => 'Successfuly added by AfterFind'
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'SomethingElse' => array(
 					'id' => '3',
@@ -8187,7 +8185,7 @@ class ModelReadTest extends BaseModelTest {
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
 					'updated' => '2007-03-18 10:45:31',
-					'afterFind' => 'Successfuly added by AfterFind'
+					'afterFind' => 'Successfully added by AfterFind'
 				)
 			),
 			array(
@@ -8198,7 +8196,7 @@ class ModelReadTest extends BaseModelTest {
 					'doomed' => true,
 					'created' => '2007-03-18 10:43:23',
 					'updated' => '2007-03-18 10:45:31',
-					'afterFind' => 'Successfuly added by AfterFind'
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'SomethingElse' => array(
 					'id' => '1',
@@ -8207,10 +8205,10 @@ class ModelReadTest extends BaseModelTest {
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
 					'updated' => '2007-03-18 10:41:31',
-					'afterFind' => 'Successfuly added by AfterFind'
+					'afterFind' => 'Successfully added by AfterFind'
 				)
 			)
 		);
-		$this->assertEquals($expected, $results, 'Model related with belongsTo afterFind callback fail');
+		$this->assertEquals($expected, $results, 'Model related with belongsTo afterFind callback fails');
 	}
 }
