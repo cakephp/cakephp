@@ -244,18 +244,11 @@ class Email {
 	protected $_emailFormat = 'text';
 
 /**
- * What method should the email be sent
+ * The transport instance to use for sending mail.
  *
  * @var string
  */
-	protected $_transportName = 'Mail';
-
-/**
- * Instance of transport class
- *
- * @var AbstractTransport
- */
-	protected $_transportClass = null;
+	protected $_transport = null;
 
 /**
  * Charset the email body is sent in
@@ -891,38 +884,53 @@ class Email {
 	}
 
 /**
- * Transport name
+ * Get/set the transport.
  *
- * @param string $name
- * @return string|Cake\Network\Email\Email
+ * When setting the transport you can either use the name
+ * of a configured transport or supply a constructed transport.
+ *
+ * @param string|AbstractTransport $name Either the name of a configured
+ *   transport, or a transport instance.
+ * @return AbstractTransport|Cake\Network\Email\Email
  */
 	public function transport($name = null) {
 		if ($name === null) {
-			return $this->_transportName;
+			return $this->_transport;
 		}
-		$this->_transportName = (string)$name;
-		$this->_transportClass = null;
+
+		if (is_string($name)) {
+			$transport = $this->_constructTransport($name);
+		} elseif (is_object($name)) {
+			$transport = $name;
+		}
+		if (!method_exists($transport, 'send')) {
+			throw new Error\SocketException(__d('cake_dev', 'The "%s" do not have send method.', get_class($transport)));
+		}
+
+		$this->_transport = $transport;
 		return $this;
 	}
 
 /**
- * Return the transport class
+ * Build a transport instance from configuration data.
  *
- * @return Cake\Network\Email\Email
- * @throws Cake\Error\SocketException
+ * @param string $name The transport configuration name to build.
+ * @return AbstracTransport
+ * @throws Cake\Error\Exception When transport configuration is missing or invalid.
  */
-	public function transportClass() {
-		if ($this->_transportClass) {
-			return $this->_transportClass;
-		}
-		$transportClassname = App::classname($this->_transportName, 'Network/Email', 'Transport');
-		if (!$transportClassname) {
-			throw new Error\SocketException(__d('cake_dev', 'Class "%s" not found.', $this->_transportName));
-		} elseif (!method_exists($transportClassname, 'send')) {
-			throw new Error\SocketException(__d('cake_dev', 'The "%s" do not have send method.', $transportClassname));
+	protected function _constructTransport($name) {
+		if (!isset(static::$_transportConfig[$name]['className'])) {
+			throw new Error\Exception(__d('cake_dev', 'Transport config "%s" is missing.', $name));
 		}
 
-		return $this->_transportClass = new $transportClassname();
+		$config = static::$_transportConfig[$name];
+		$classname = App::classname($config['className'], 'Network/Email', 'Transport');
+		if (!$classname) {
+			throw new Error\Exception(__d('cake_dev', 'Transport class "%s" not found.', $name));
+		}
+
+		unset($config['className']);
+		return new $classname($config);
 	}
 
 /**
@@ -1200,7 +1208,7 @@ class Email {
 
 		$this->_message = $this->_render($this->_wrap($content));
 
-		$contents = $this->transportClass()->send($this);
+		$contents = $this->transport()->send($this);
 		if (!empty($this->_profile['log'])) {
 			$config = [
 				'level' => LOG_DEBUG,
@@ -1314,7 +1322,6 @@ class Email {
 			$this->template($config['template'], $layout);
 			unset($config['template']);
 		}
-		$this->transportClass()->config($config);
 	}
 
 /**
@@ -1344,8 +1351,7 @@ class Email {
 		$this->_htmlMessage = '';
 		$this->_message = '';
 		$this->_emailFormat = 'text';
-		$this->_transportName = 'Mail';
-		$this->_transportClass = null;
+		$this->_transport= 'default';
 		$this->charset = 'utf-8';
 		$this->headerCharset = null;
 		$this->_attachments = array();
