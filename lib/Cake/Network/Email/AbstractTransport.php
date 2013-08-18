@@ -42,6 +42,15 @@ abstract class AbstractTransport {
 	abstract public function send(Email $email);
 
 /**
+ * Constructor
+ *
+ * @param array $config The configuration data for the transport.
+ */
+	public function __construct($config = null) {
+		$this->config($config);
+	}
+
+/**
  * Set the config
  *
  * @param array $config
