@@ -1069,30 +1069,30 @@ class HashTest extends CakeTestCase {
 
 		$a = array(
 			'SU' => array(
-				'total_fulfillable' => (int) 2
+				'total_fulfillable' => 2
 			),
 			'AA' => array(
-				'total_fulfillable' => (int) 1
+				'total_fulfillable' => 1
 			),
 			'LX' => array(
-				'total_fulfillable' => (int) 0
+				'total_fulfillable' => 0
 			),
 			'BL' => array(
-				'total_fulfillable' => (int) 3
+				'total_fulfillable' => 3
 			),
 		);
 		$expected = array(
 			'LX' => array(
-				'total_fulfillable' => (int) 0
+				'total_fulfillable' => 0
 			),
 			'AA' => array(
-				'total_fulfillable' => (int) 1
+				'total_fulfillable' => 1
 			),
 			'SU' => array(
-				'total_fulfillable' => (int) 2
+				'total_fulfillable' => 2
 			),
 			'BL' => array(
-				'total_fulfillable' => (int) 3
+				'total_fulfillable' => 3
 			),
 		);
 		$result = Hash::sort($a, '{s}.total_fulfillable', 'asc');
