@@ -296,11 +296,19 @@ class Email {
 	protected $_boundary = null;
 
 /**
- * Configuration to transport
+ * Configuration profiles for use in instances.
  *
- * @var string|array
+ * @var array
  */
-	protected $_config = array();
+	protected static $_config = [];
+
+/**
+ * A copy of the configuration profile for this
+ * instance. This copy can be modified with Email::useConfig().
+ *
+ * @var array
+ */
+	protected $_profile = [];
 
 /**
  * 8Bit character sets
@@ -342,7 +350,7 @@ class Email {
 		}
 
 		if ($config) {
-			$this->config($config);
+			$this->useConfig($config);
 		}
 		if (empty($this->headerCharset)) {
 			$this->headerCharset = $this->charset;
@@ -1060,19 +1068,58 @@ class Email {
 	}
 
 /**
- * Sets the configuration for this Email instance.
+ * Add or read a configuration profile for Email instances.
  *
- * This can be used to load previously loaded configuration
- * data added via Email::config().  Additionally it can be
- * used to augment the existing configuration
+ * This method is used to read or define configuration profiles for
+ * Email. Once made configuration profiles can be used to re-use the same
+ * sets of configuration across multiple email messages.
  *
- * @param string|array $config String with configuration name, or
+ * @param string|array $key The name of the configuration profile to read/create
+ *    or an array of multiple configuration profiles to set
+ * @param null|array|Closure $config Null to read config data, an array or Closure
+ *    to set data. Closures will be called the first time the profile is used.
+ * @return array|Closure|void
+ */
+	public static function config($key, $config = null) {
+		// Read config.
+		if ($config === null && is_string($key)) {
+			return isset(static::$_config[$key]) ? static::$_config[$key] : null;
+		}
+		if ($config === null && is_array($key)) {
+			foreach ($key as $name => $settings) {
+				static::config($name, $settings);
+			}
+			return;
+		}
+		if (isset(static::$_config[$key])) {
+			throw new Error\Exception(__d('cake_dev', 'Cannot modify an existing config "%s"', $key));
+		}
+		if ($config instanceof \Closure) {
+			$config = ['factory' => $config];
+		}
+		static::$_config[$key] = $config;
+	}
+
+/**
+ * Drop a configured profile.
+ *
+ * @param string $key The profile to drop.
+ * @return void
+ */
+	public static function drop($key) {
+		unset(static::$_config[$key]);
+	}
+
+/**
+ * Get/Set the configuration profile to use for this instance.
+ *
+ * @param null|string|array $config String with configuration name, or
  *    an array with config or null to return current config.
  * @return string|array|Cake\Network\Email\Email
  */
-	public function config($config = null) {
+	public function useConfig($config = null) {
 		if ($config === null) {
-			return $this->_config;
+			return $this->_profile;
 		}
 		if (!is_array($config)) {
 			$config = (string)$config;
@@ -1103,16 +1150,16 @@ class Email {
 		$this->_message = $this->_render($this->_wrap($content));
 
 		$contents = $this->transportClass()->send($this);
-		if (!empty($this->_config['log'])) {
+		if (!empty($this->_profile['log'])) {
 			$config = [
 				'level' => LOG_DEBUG,
 				'scope' => 'email'
 			];
-			if ($this->_config['log'] !== true) {
-				if (!is_array($this->_config['log'])) {
-					$this->_config['log'] = ['level' => $this->_config['log']];
+			if ($this->_profile['log'] !== true) {
+				if (!is_array($this->_profile['log'])) {
+					$this->_profile['log'] = ['level' => $this->_profile['log']];
 				}
-				$config = array_merge($config, $this->_config['log']);
+				$config = array_merge($config, $this->_profile['log']);
 			}
 			Log::write(
 				$config['level'],
@@ -1146,7 +1193,7 @@ class Email {
 		if (is_array($message)) {
 			$instance->viewVars($message);
 			$message = null;
-		} elseif ($message === null && array_key_exists('message', $config = $instance->config())) {
+		} elseif ($message === null && array_key_exists('message', $config = $instance->useConfig())) {
 			$message = $config['message'];
 		}
 
@@ -1158,22 +1205,34 @@ class Email {
 	}
 
 /**
+ * Read the configuration profile for a given name.
+ *
+ * @param string $name The name to read.
+ * @return array
+ * @throws Cake\Error\Exception When using a configuration that doesn't exist.
+ */
+	protected function _getConfig($name) {
+		$config = static::config($name);
+		if (empty($config)) {
+			throw new Error\Exception(__d('cake_dev', 'Unknown email configuration "%s".', $name));
+		}
+		if (isset($config['factory']) && $config['factory'] instanceof \Closure) {
+			$config = $config['factory']();
+		}
+		return $config;
+	}
+
+/**
  * Apply the config to an instance
  *
- * @param array $config
+ * @param string|array $config
  * @return void
- * @throws Cake\Error\ConfigureException When configuration file cannot be found, or is missing
- *   the named config.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			$name = $config;
-			$config = Configure::read('Email.' . $name);
-			if (empty($config)) {
-				throw new Error\ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $name));
-			}
+			$config = $this->_getConfig($config);
 		}
-		$this->_config = array_merge($this->_config, $config);
+		$this->_profile = array_merge($this->_profile, $config);
 		if (!empty($config['charset'])) {
 			$this->charset = $config['charset'];
 		}
@@ -1242,7 +1301,7 @@ class Email {
 		$this->charset = 'utf-8';
 		$this->headerCharset = null;
 		$this->_attachments = array();
-		$this->_config = array();
+		$this->_profile = array();
 		$this->_emailPattern = null;
 		return $this;
 	}
