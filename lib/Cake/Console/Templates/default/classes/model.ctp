@@ -169,8 +169,6 @@ if (!empty($associations['hasAndBelongsToMany'])):
 		$out .= "\t\t\t'limit' => '',\n";
 		$out .= "\t\t\t'offset' => '',\n";
 		$out .= "\t\t\t'finderQuery' => '',\n";
-		$out .= "\t\t\t'deleteQuery' => '',\n";
-		$out .= "\t\t\t'insertQuery' => ''\n";
 		$out .= "\t\t)";
 		if ($i + 1 < $habtmCount) {
 			$out .= ",";
