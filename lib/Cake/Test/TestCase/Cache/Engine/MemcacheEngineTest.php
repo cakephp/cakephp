@@ -62,11 +62,7 @@ class MemcacheEngineTest extends TestCase {
 		$this->skipIf(!class_exists('Memcache'), 'Memcache is not installed or configured properly.');
 
 		Cache::enable();
-		Cache::config('memcache', array(
-			'className' => 'Memcache',
-			'prefix' => 'cake_',
-			'duration' => 3600
-		));
+		$this->_configCache();
 	}
 
 /**
@@ -80,6 +76,22 @@ class MemcacheEngineTest extends TestCase {
 		Cache::drop('memcache_groups');
 		Cache::drop('memcache_helper');
 	}
+
+/**
+ * Helper method for testing.
+ *
+ * @return void
+ */
+	protected function _configCache($settings = []) {
+		$defaults = [
+			'className' => 'Memcache',
+			'prefix' => 'cake_',
+			'duration' => 3600
+		];
+		Cache::drop('memcache');
+		Cache::config('memcache', array_merge($defaults, $settings));
+	}
+
 
 /**
  * testSettings method
@@ -212,7 +224,7 @@ class MemcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(['duration' => 1], 'memcache');
+		$this->_configCache(['duration' => 1]);
 
 		$result = Cache::read('test', 'memcache');
 		$this->assertFalse($result);
@@ -225,7 +237,7 @@ class MemcacheEngineTest extends TestCase {
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
-		Cache::set(['duration' => "+1 second"], 'memcache');
+		$this->_configCache(['duration' => '+1 second']);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'memcache');
@@ -235,12 +247,12 @@ class MemcacheEngineTest extends TestCase {
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
-		Cache::set(['duration' => '+1 second'], 'memcache');
+		$this->_configCache(['duration' => '+1 second']);
 
 		$result = Cache::read('other_test', 'memcache');
 		$this->assertFalse($result);
 
-		Cache::set(['duration' => '+29 days'], 'memcache');
+		$this->_configCache(['duration' => '+29 days']);
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('long_expiry_test', $data, 'memcache');
 		$this->assertTrue($result);
