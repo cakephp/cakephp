@@ -1551,7 +1551,7 @@ class JoinThing extends CakeTestModel {
 	public function afterFind($results, $primary = false) {
 		foreach ($results as $key => $result) {
 			if (!empty($result[$this->alias]) && is_array($result[$this->alias])) {
-				$results[$key][$this->alias]['afterFind'] = 'Successfuly added by AfterFind';
+				$results[$key][$this->alias]['afterFind'] = 'Successfully added by AfterFind';
 			}
 		}
 		return $results;
