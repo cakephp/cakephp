@@ -36,11 +36,7 @@ class RedisEngineTest extends TestCase {
 		$this->skipIf(!class_exists('Redis'), 'Redis is not installed or configured properly.');
 
 		Cache::enable();
-		Cache::config('redis', array(
-			'engine' => 'Cake\Cache\Engine\RedisEngine',
-			'prefix' => 'cake_',
-			'duration' => 3600
-		));
+		$this->_configCache();
 	}
 
 /**
@@ -53,6 +49,21 @@ class RedisEngineTest extends TestCase {
 		Cache::drop('redis');
 		Cache::drop('redis_groups');
 		Cache::drop('redis_helper');
+	}
+
+/**
+ * Helper method for testing.
+ *
+ * @return void
+ */
+	protected function _configCache($settings = []) {
+		$defaults = [
+			'className' => 'Redis',
+			'prefix' => 'cake_',
+			'duration' => 3600
+		];
+		Cache::drop('redis');
+		Cache::config('redis', array_merge($defaults, $settings));
 	}
 
 /**
@@ -92,7 +103,7 @@ class RedisEngineTest extends TestCase {
  * @return void
  */
 	public function testReadAndWriteCache() {
-		Cache::set(['duration' => 1], 'redis');
+		$this->_configCache(['duration' => 1]);
 
 		$result = Cache::read('test', 'redis');
 		$expecting = '';
@@ -119,7 +130,7 @@ class RedisEngineTest extends TestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(array('duration' => 1), 'redis');
+		$this->_configCache(['duration' => 1]);
 
 		$result = Cache::read('test', 'redis');
 		$this->assertFalse($result);
@@ -132,7 +143,7 @@ class RedisEngineTest extends TestCase {
 		$result = Cache::read('other_test', 'redis');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' => "+1 second"), 'redis');
+		$this->_configCache(['duration' => '+1 second']);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'redis');
@@ -142,13 +153,12 @@ class RedisEngineTest extends TestCase {
 		$result = Cache::read('other_test', 'redis');
 		$this->assertFalse($result);
 
-		Cache::set(['duration' => '+1 second'], 'redis');
 		sleep(2);
 
 		$result = Cache::read('other_test', 'redis');
 		$this->assertFalse($result);
 
-		Cache::set(['duration' => '+29 days'], 'redis');
+		$this->_configCache(['duration' => '+29 days']);
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('long_expiry_test', $data, 'redis');
 		$this->assertTrue($result);
@@ -248,7 +258,7 @@ class RedisEngineTest extends TestCase {
  * @return void
  */
 	public function testZeroDuration() {
-		Cache::set(['duration' => 0], 'redis');
+		$this->_configCache(['duration' => 0]);
 		$result = Cache::write('test_key', 'written!', 'redis');
 
 		$this->assertTrue($result);

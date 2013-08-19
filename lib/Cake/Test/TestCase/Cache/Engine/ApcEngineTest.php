@@ -43,7 +43,7 @@ class ApcEngineTest extends TestCase {
 		}
 
 		Cache::enable();
-		Cache::config('apc', ['engine' => 'Apc', 'prefix' => 'cake_']);
+		$this->_configCache();
 	}
 
 /**
@@ -58,12 +58,26 @@ class ApcEngineTest extends TestCase {
 	}
 
 /**
+ * Helper method for testing.
+ *
+ * @return void
+ */
+	protected function _configCache($settings = []) {
+		$defaults = [
+			'className' => 'Apc',
+			'prefix' => 'cake_',
+		];
+		Cache::drop('apc');
+		Cache::config('apc', array_merge($defaults, $settings));
+	}
+
+/**
  * testReadAndWriteCache method
  *
  * @return void
  */
 	public function testReadAndWriteCache() {
-		Cache::set(['duration' => 1], 'apc');
+		$this->_configCache(['duration' => 1]);
 
 		$result = Cache::read('test', 'apc');
 		$expecting = '';
@@ -101,7 +115,7 @@ class ApcEngineTest extends TestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(['duration' => 1], 'apc');
+		$this->_configCache(['duration' => 1]);
 
 		$result = Cache::read('test', 'apc');
 		$this->assertFalse($result);
@@ -114,7 +128,7 @@ class ApcEngineTest extends TestCase {
 		$result = Cache::read('other_test', 'apc');
 		$this->assertFalse($result);
 
-		Cache::set(['duration' => 1], 'apc');
+		$this->_configCache();
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'apc');

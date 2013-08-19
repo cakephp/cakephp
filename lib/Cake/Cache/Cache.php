@@ -90,16 +90,6 @@ class Cache {
 	protected static $_enabled = true;
 
 /**
- * Configuraiton backup.
- *
- * Keeps the permanent/default settings for each cache engine.
- * These settings are used to reset the engines after temporary modification.
- *
- * @var array
- */
-	protected static $_restore = array();
-
-/**
  * Cache configuration.
  *
  * Keeps the permanent/default settings for each cache engine.
@@ -238,7 +228,7 @@ class Cache {
 		if (isset(static::$_registry->{$config})) {
 			static::$_registry->unload($config);
 		}
-		unset(static::$_config[$config], static::$_restore[$config]);
+		unset(static::$_config[$config]);
 		return true;
 	}
 
@@ -262,81 +252,6 @@ class Cache {
 
 		static::_buildEngine($config);
 		return static::$_registry->{$config};
-	}
-
-/**
- * Temporarily change the settings on a cache config. The settings will persist for the next write
- * operation (write, decrement, increment, clear). Any reads that are done before the write, will
- * use the modified settings. If `$settings` is empty, the settings will be reset to the
- * original configuration.
- *
- * Can be called with 2 or 3 parameters. To set multiple values at once.
- *
- * `Cache::set(array('duration' => '+30 minutes'), 'my_config');`
- *
- * Or to set one value.
- *
- * `Cache::set('duration', '+30 minutes', 'my_config');`
- *
- * To reset a config back to the originally configured values.
- *
- * `Cache::set(null, 'my_config');`
- *
- * @param string|array $settings Optional string for simple name-value pair or array
- * @param string $value Optional for a simple name-value pair. Otherwise this param
- *   should be used for the cache config name.
- * @param string $config The configuration name you are changing. Defaults to 'default'
- * @return array Array of settings.
- */
-	public static function set($settings = array(), $value = null, $config = 'default') {
-		$args = func_num_args();
-		if ($args === 2) {
-			$config = $value;
-		}
-		if ($args === 3) {
-			$settings = array($settings => $value);
-		}
-
-		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
-		if (empty(static::$_restore[$config])) {
-			static::$_restore[$config] = $engine->settings();
-		}
-
-		if (!empty($settings)) {
-			static::$_reset = true;
-		}
-
-		if (static::$_reset === true) {
-			static::_modifySettings($engine, $config, $settings);
-		}
-		return static::settings($config);
-	}
-
-/**
- * Used to temporarily modify the settings of a caching engine.
- * If $settings is empty the previous settings values will be restored.
- *
- * @param Cake\Cache\CacheEngine $engine The engine to modify
- * @param array $settings The settings to temporarily set.
- * @return void
- */
-	protected static function _modifySettings($engine, $config, $settings) {
-		$restore = static::$_restore[$config];
-		if (empty($settings)) {
-			static::$_reset = false;
-			$settings = $restore;
-			unset(static::$_restore[$config]);
-		} else {
-			$settings = array_merge($restore, $settings);
-			if (isset($settings['duration']) && !is_numeric($settings['duration'])) {
-				$settings['duration'] = strtotime($settings['duration']) - time();
-			}
-		}
-		$engine->settings = $settings;
 	}
 
 /**
@@ -388,7 +303,6 @@ class Cache {
 			return false;
 		}
 		$success = $engine->write($settings['prefix'] . $key, $value, $settings['duration']);
-		static::set(null, $config);
 		if ($success === false && $value !== '') {
 			trigger_error(
 				__d('cake_dev',
@@ -456,9 +370,7 @@ class Cache {
 		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
-		$success = $engine->increment($settings['prefix'] . $key, $offset);
-		static::set(null, $config);
-		return $success;
+		return $engine->increment($settings['prefix'] . $key, $offset);
 	}
 
 /**
@@ -482,9 +394,7 @@ class Cache {
 		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
-		$success = $engine->decrement($settings['prefix'] . $key, $offset);
-		static::set(null, $config);
-		return $success;
+		return $engine->decrement($settings['prefix'] . $key, $offset);
 	}
 
 /**
@@ -518,7 +428,6 @@ class Cache {
 		}
 
 		$success = $engine->delete($settings['prefix'] . $key);
-		static::set(null, $config);
 		return $success;
 	}
 
@@ -536,7 +445,6 @@ class Cache {
 		}
 
 		$success = $engine->clear($check);
-		static::set(null, $config);
 		return $success;
 	}
 
@@ -554,7 +462,6 @@ class Cache {
 		}
 
 		$success = $engine->clearGroup($group);
-		static::set(null, $config);
 		return $success;
 	}
 
