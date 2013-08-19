@@ -366,7 +366,7 @@ class CakeSession {
 		if (!self::start()) {
 			return false;
 		}
-		if (is_null($name)) {
+		if ($name === null) {
 			return self::_returnSessionVars();
 		}
 		if (empty($name)) {

@@ -516,7 +516,7 @@ class CakeResponse {
  */
 	protected function _sendHeader($name, $value = null) {
 		if (!headers_sent()) {
-			if (is_null($value)) {
+			if ($value === null) {
 				header($name);
 			} else {
 				header("{$name}: {$value}");
@@ -562,7 +562,7 @@ class CakeResponse {
  * @return array list of headers to be sent
  */
 	public function header($header = null, $value = null) {
-		if (is_null($header)) {
+		if ($header === null) {
 			return $this->_headers;
 		}
 		$headers = is_array($header) ? $header : array($header => $value);
@@ -602,7 +602,7 @@ class CakeResponse {
  * @return string current message buffer if $content param is passed as null
  */
 	public function body($content = null) {
-		if (is_null($content)) {
+		if ($content === null) {
 			return $this->_body;
 		}
 		return $this->_body = $content;
@@ -617,7 +617,7 @@ class CakeResponse {
  * @throws CakeException When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
-		if (is_null($code)) {
+		if ($code === null) {
 			return $this->_status;
 		}
 		if (!isset($this->_statusCodes[$code])) {
@@ -702,7 +702,7 @@ class CakeResponse {
  * @return mixed current content type or false if supplied an invalid content type
  */
 	public function type($contentType = null) {
-		if (is_null($contentType)) {
+		if ($contentType === null) {
 			return $this->_contentType;
 		}
 		if (is_array($contentType)) {
@@ -765,7 +765,7 @@ class CakeResponse {
  * @return string current charset
  */
 	public function charset($charset = null) {
-		if (is_null($charset)) {
+		if ($charset === null) {
 			return $this->_charset;
 		}
 		return $this->_charset = $charset;
@@ -1272,7 +1272,7 @@ class CakeResponse {
 
 		$extension = strtolower($file->ext());
 		$download = $options['download'];
-		if ((!$extension || $this->type($extension) === false) && is_null($download)) {
+		if ((!$extension || $this->type($extension) === false) && $download === null) {
 			$download = true;
 		}
 
@@ -1289,7 +1289,7 @@ class CakeResponse {
 			if (!empty($contentType)) {
 				$this->type($contentType);
 			}
-			if (is_null($options['name'])) {
+			if ($options['name'] === null) {
 				$name = $file->name;
 			} else {
 				$name = $options['name'];

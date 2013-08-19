@@ -269,7 +269,7 @@ class ContainableBehavior extends ModelBehavior {
  * @return array Containments
  */
 	public function containments(Model $Model, $contain, $containments = array(), $throwErrors = null) {
-		$options = array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery');
+		$options = array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery');
 		$keep = array();
 		if ($throwErrors === null) {
 			$throwErrors = (empty($this->settings[$Model->alias]) ? true : $this->settings[$Model->alias]['notices']);

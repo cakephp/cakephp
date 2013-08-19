@@ -464,8 +464,8 @@ class Model extends Object implements CakeEventListener {
  * - `limit`: The maximum number of associated rows you want returned.
  * - `offset`: The number of associated rows to skip over (given the current
  *   conditions and order) before fetching and associating.
- * - `finderQuery`, `deleteQuery`, `insertQuery`: A complete SQL query CakePHP
- *   can use to fetch, delete, or create new associated model records. This should
+ * - `finderQuery`, A complete SQL query CakePHP
+ *   can use to fetch associated model records. This should
  *   be used in situations that require very custom results.
  *
  * @var array
@@ -555,7 +555,7 @@ class Model extends Object implements CakeEventListener {
 		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
 		'hasOne' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'dependent'),
 		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
-		'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery')
+		'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery')
 	);
 
 /**
@@ -2715,7 +2715,7 @@ class Model extends Object implements CakeEventListener {
 		$this->id = $this->getID();
 
 		$query = $this->buildQuery($type, $query);
-		if (is_null($query)) {
+		if ($query === null) {
 			return null;
 		}
 

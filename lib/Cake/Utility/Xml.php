@@ -315,7 +315,7 @@ class Xml {
 		}
 
 		$child = $dom->createElement($key);
-		if (!is_null($childValue)) {
+		if ($childValue !== null) {
 			$child->appendChild($dom->createTextNode($childValue));
 		}
 		if ($childNS) {

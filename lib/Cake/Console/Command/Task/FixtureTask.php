@@ -243,7 +243,7 @@ class FixtureTask extends BakeTask {
 		}
 
 		$tableInfo = $data['tables'][$useTable];
-		if (is_null($modelImport)) {
+		if ($modelImport === null) {
 			$schema = $this->_generateSchema($tableInfo);
 		}
 
