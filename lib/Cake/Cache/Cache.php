@@ -395,7 +395,7 @@ class Cache {
 					"%s cache was unable to write '%s' to %s cache",
 					$config,
 					$key,
-					$settings['engine']
+					get_class($engine)
 				),
 				E_USER_WARNING
 			);
