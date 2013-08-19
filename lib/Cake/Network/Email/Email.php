@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -29,10 +28,8 @@ use Cake\View\View;
 /**
  * Cake e-mail class.
  *
- * This class is used for handling Internet Message Format based
- * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
- *
- * @package       Cake.Network.Email
+ * This class is used for sending Internet Message Format based
+ * on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
  */
 class Email {
 
@@ -244,18 +241,11 @@ class Email {
 	protected $_emailFormat = 'text';
 
 /**
- * What method should the email be sent
+ * The transport instance to use for sending mail.
  *
  * @var string
  */
-	protected $_transportName = 'Mail';
-
-/**
- * Instance of transport class
- *
- * @var AbstractTransport
- */
-	protected $_transportClass = null;
+	protected $_transport = null;
 
 /**
  * Charset the email body is sent in
@@ -296,11 +286,26 @@ class Email {
 	protected $_boundary = null;
 
 /**
- * Configuration to transport
+ * Configuration profiles for use in instances.
  *
- * @var string|array
+ * @var array
  */
-	protected $_config = array();
+	protected static $_config = [];
+
+/**
+ * Configuration profiles for transports.
+ *
+ * @var array
+ */
+	protected static $_transportConfig = [];
+
+/**
+ * A copy of the configuration profile for this
+ * instance. This copy can be modified with Email::profile().
+ *
+ * @var array
+ */
+	protected $_profile = [];
 
 /**
  * 8Bit character sets
@@ -342,7 +347,7 @@ class Email {
 		}
 
 		if ($config) {
-			$this->config($config);
+			$this->profile($config);
 		}
 		if (empty($this->headerCharset)) {
 			$this->headerCharset = $this->charset;
@@ -876,38 +881,53 @@ class Email {
 	}
 
 /**
- * Transport name
+ * Get/set the transport.
  *
- * @param string $name
- * @return string|Cake\Network\Email\Email
+ * When setting the transport you can either use the name
+ * of a configured transport or supply a constructed transport.
+ *
+ * @param string|AbstractTransport $name Either the name of a configured
+ *   transport, or a transport instance.
+ * @return AbstractTransport|Cake\Network\Email\Email
  */
 	public function transport($name = null) {
 		if ($name === null) {
-			return $this->_transportName;
+			return $this->_transport;
 		}
-		$this->_transportName = (string)$name;
-		$this->_transportClass = null;
+
+		if (is_string($name)) {
+			$transport = $this->_constructTransport($name);
+		} elseif (is_object($name)) {
+			$transport = $name;
+		}
+		if (!method_exists($transport, 'send')) {
+			throw new Error\SocketException(__d('cake_dev', 'The "%s" do not have send method.', get_class($transport)));
+		}
+
+		$this->_transport = $transport;
 		return $this;
 	}
 
 /**
- * Return the transport class
+ * Build a transport instance from configuration data.
  *
- * @return Cake\Network\Email\Email
- * @throws Cake\Error\SocketException
+ * @param string $name The transport configuration name to build.
+ * @return AbstracTransport
+ * @throws Cake\Error\Exception When transport configuration is missing or invalid.
  */
-	public function transportClass() {
-		if ($this->_transportClass) {
-			return $this->_transportClass;
-		}
-		$transportClassname = App::classname($this->_transportName, 'Network/Email', 'Transport');
-		if (!$transportClassname) {
-			throw new Error\SocketException(__d('cake_dev', 'Class "%s" not found.', $this->_transportName));
-		} elseif (!method_exists($transportClassname, 'send')) {
-			throw new Error\SocketException(__d('cake_dev', 'The "%s" do not have send method.', $transportClassname));
+	protected function _constructTransport($name) {
+		if (!isset(static::$_transportConfig[$name]['className'])) {
+			throw new Error\Exception(__d('cake_dev', 'Transport config "%s" is missing.', $name));
 		}
 
-		return $this->_transportClass = new $transportClassname();
+		$config = static::$_transportConfig[$name];
+		$classname = App::classname($config['className'], 'Network/Email', 'Transport');
+		if (!$classname) {
+			throw new Error\Exception(__d('cake_dev', 'Transport class "%s" not found.', $name));
+		}
+
+		unset($config['className']);
+		return new $classname($config);
 	}
 
 /**
@@ -1060,19 +1080,102 @@ class Email {
 	}
 
 /**
- * Sets the configuration for this Email instance.
+ * Add or read transport configuration.
  *
- * This can be used to load previously loaded configuration
- * data added via Email::config().  Additionally it can be
- * used to augment the existing configuration
+ * Use this method to define transports to use in delivery profiles.
+ * Once defined you cannot edit the configurations, and must use
+ * Email::dropTransport() to flush the configuration first.
  *
- * @param string|array $config String with configuration name, or
+ * When using an array of configuration data a new transport
+ * will be constructed for each message sent. When using a Closure, the
+ * closure will be evaluated for each message.
+ *
+ * The `className` is used to define the class to use for a transport.
+ * It can either be a short name, or a fully qualified classname
+ *
+ * @param string|array $key The configuration name to read/write. Or
+ *   an array of multiple transports to set.
+ * @param array|Closure|AbstractTransport Either an array of configuration
+ *   data, a Closure factory function, or a transport instance.
+ */
+	public static function configTransport($key, $config = null) {
+		if ($config === null && is_string($key)) {
+			return isset(static::$_transportConfig[$key]) ? static::$_transportConfig[$key] : null;
+		}
+		if ($config === null && is_array($key)) {
+			foreach ($key as $name => $settings) {
+				static::configTransport($name, $settings);
+			}
+			return;
+		}
+		if (isset(static::$_transportConfig[$key])) {
+			throw new Error\Exception(__d('cake_dev', 'Cannot modify an existing config "%s"', $key));
+		}
+		if (is_object($config)) {
+			$config = ['className' => $config];
+		}
+		static::$_transportConfig[$key] = $config;
+	}
+
+/**
+ * Delete transport configuration.
+ *
+ * @param string $key The transport name to remove.
+ * @return void
+ */
+	public static function dropTransport($key) {
+		unset(static::$_transportConfig[$key]);
+	}
+
+/**
+ * Add or read a configuration profile for Email instances.
+ *
+ * This method is used to read or define configuration profiles for
+ * Email. Once made configuration profiles can be used to re-use the same
+ * sets of configuration across multiple email messages.
+ *
+ * @param string|array $key The name of the configuration profile to read/create
+ *    or an array of multiple configuration profiles to set
+ * @param null|array $config Null to read config data, an array to set data.
+ * @return array|void
+ */
+	public static function config($key, $config = null) {
+		// Read config.
+		if ($config === null && is_string($key)) {
+			return isset(static::$_config[$key]) ? static::$_config[$key] : null;
+		}
+		if ($config === null && is_array($key)) {
+			foreach ($key as $name => $settings) {
+				static::config($name, $settings);
+			}
+			return;
+		}
+		if (isset(static::$_config[$key])) {
+			throw new Error\Exception(__d('cake_dev', 'Cannot modify an existing config "%s"', $key));
+		}
+		static::$_config[$key] = $config;
+	}
+
+/**
+ * Drop a configured profile.
+ *
+ * @param string $key The profile to drop.
+ * @return void
+ */
+	public static function drop($key) {
+		unset(static::$_config[$key]);
+	}
+
+/**
+ * Get/Set the configuration profile to use for this instance.
+ *
+ * @param null|string|array $config String with configuration name, or
  *    an array with config or null to return current config.
  * @return string|array|Cake\Network\Email\Email
  */
-	public function config($config = null) {
+	public function profile($config = null) {
 		if ($config === null) {
-			return $this->_config;
+			return $this->_profile;
 		}
 		if (!is_array($config)) {
 			$config = (string)$config;
@@ -1102,17 +1205,17 @@ class Email {
 
 		$this->_message = $this->_render($this->_wrap($content));
 
-		$contents = $this->transportClass()->send($this);
-		if (!empty($this->_config['log'])) {
+		$contents = $this->transport()->send($this);
+		if (!empty($this->_profile['log'])) {
 			$config = [
 				'level' => LOG_DEBUG,
 				'scope' => 'email'
 			];
-			if ($this->_config['log'] !== true) {
-				if (!is_array($this->_config['log'])) {
-					$this->_config['log'] = ['level' => $this->_config['log']];
+			if ($this->_profile['log'] !== true) {
+				if (!is_array($this->_profile['log'])) {
+					$this->_profile['log'] = ['level' => $this->_profile['log']];
 				}
-				$config = array_merge($config, $this->_config['log']);
+				$config = array_merge($config, $this->_profile['log']);
 			}
 			Log::write(
 				$config['level'],
@@ -1146,7 +1249,7 @@ class Email {
 		if (is_array($message)) {
 			$instance->viewVars($message);
 			$message = null;
-		} elseif ($message === null && array_key_exists('message', $config = $instance->config())) {
+		} elseif ($message === null && array_key_exists('message', $config = $instance->profile())) {
 			$message = $config['message'];
 		}
 
@@ -1158,22 +1261,31 @@ class Email {
 	}
 
 /**
+ * Read the configuration profile for a given name.
+ *
+ * @param string $name The name to read.
+ * @return array
+ * @throws Cake\Error\Exception When using a configuration that doesn't exist.
+ */
+	protected function _getConfig($name) {
+		$config = static::config($name);
+		if (empty($config)) {
+			throw new Error\Exception(__d('cake_dev', 'Unknown email configuration "%s".', $name));
+		}
+		return $config;
+	}
+
+/**
  * Apply the config to an instance
  *
- * @param array $config
+ * @param string|array $config
  * @return void
- * @throws Cake\Error\ConfigureException When configuration file cannot be found, or is missing
- *   the named config.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			$name = $config;
-			$config = Configure::read('Email.' . $name);
-			if (empty($config)) {
-				throw new Error\ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $name));
-			}
+			$config = $this->_getConfig($config);
 		}
-		$this->_config = array_merge($this->_config, $config);
+		$this->_profile = array_merge($this->_profile, $config);
 		if (!empty($config['charset'])) {
 			$this->charset = $config['charset'];
 		}
@@ -1207,7 +1319,6 @@ class Email {
 			$this->template($config['template'], $layout);
 			unset($config['template']);
 		}
-		$this->transportClass()->config($config);
 	}
 
 /**
@@ -1237,12 +1348,11 @@ class Email {
 		$this->_htmlMessage = '';
 		$this->_message = '';
 		$this->_emailFormat = 'text';
-		$this->_transportName = 'Mail';
-		$this->_transportClass = null;
+		$this->_transport= 'default';
 		$this->charset = 'utf-8';
 		$this->headerCharset = null;
 		$this->_attachments = array();
-		$this->_config = array();
+		$this->_profile = array();
 		$this->_emailPattern = null;
 		return $this;
 	}
