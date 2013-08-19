@@ -301,7 +301,7 @@ class Email {
 
 /**
  * A copy of the configuration profile for this
- * instance. This copy can be modified with Email::useConfig().
+ * instance. This copy can be modified with Email::profile().
  *
  * @var array
  */
@@ -347,7 +347,7 @@ class Email {
 		}
 
 		if ($config) {
-			$this->useConfig($config);
+			$this->profile($config);
 		}
 		if (empty($this->headerCharset)) {
 			$this->headerCharset = $this->charset;
@@ -1173,7 +1173,7 @@ class Email {
  *    an array with config or null to return current config.
  * @return string|array|Cake\Network\Email\Email
  */
-	public function useConfig($config = null) {
+	public function profile($config = null) {
 		if ($config === null) {
 			return $this->_profile;
 		}
@@ -1249,7 +1249,7 @@ class Email {
 		if (is_array($message)) {
 			$instance->viewVars($message);
 			$message = null;
-		} elseif ($message === null && array_key_exists('message', $config = $instance->useConfig())) {
+		} elseif ($message === null && array_key_exists('message', $config = $instance->profile())) {
 			$message = $config['message'];
 		}
 
