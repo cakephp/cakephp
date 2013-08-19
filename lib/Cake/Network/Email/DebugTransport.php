@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -23,7 +22,6 @@ namespace Cake\Network\Email;
  * Debug Transport class, useful for emulate the email sending process and inspect the resulted
  * email message before actually send it during development
  *
- * @package       Cake.Network.Email
  */
 class DebugTransport extends AbstractTransport {
 

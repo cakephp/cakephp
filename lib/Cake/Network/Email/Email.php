@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -29,10 +28,8 @@ use Cake\View\View;
 /**
  * Cake e-mail class.
  *
- * This class is used for handling Internet Message Format based
- * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
- *
- * @package       Cake.Network.Email
+ * This class is used for sending Internet Message Format based
+ * on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
  */
 class Email {
 

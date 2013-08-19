@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Network.Email
  * @since         CakePHP(tm) v 2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -22,7 +21,6 @@ namespace Cake\Network\Email;
 /**
  * Abstract transport for sending email
  *
- * @package       Cake.Network.Email
  */
 abstract class AbstractTransport {
 
