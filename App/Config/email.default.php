@@ -14,13 +14,20 @@
  */
 namespace App\Config;
 
-use Cake\Core\Configure;
+use Cake\Network\Email\Email;
 /**
  * Email configuration.
  *
+ * You can configure email transports and email delivery profiles here.
+ *
+ * By defining transports separately from delivery profiles you can eaisly re-use transport
+ * configuration across multiple profiles.
+ *
  * You can specify multiple configurations for production, development and testing.
  *
- * transport => The name of a supported transport; valid options are as follows:
+ * ### Configuring transports
+ *
+ * Each transport needs a `className`. Valid options are as follows:
  *
  *  Mail   - Send using PHP mail function
  *  Smtp   - Send using SMTP
@@ -30,24 +37,29 @@ use Cake\Core\Configure;
  * appropriate file to app/Network/Email.  Transports should be named 'YourTransport.php',
  * where 'Your' is the name of the transport.
  *
- * from =>
- * The origin email. See Cake\Network\Email\Email::from() about the valid values
+ * ### Configuring delivery profiles
+ *
+ * Delivery profiles allow you to predefine various properties about email messages
+ * from your application and give the settings a name. This saves duplication across your
+ * application and makes maintenance and development easier. Each profile accepts a number of keys
+ * See Cake\Network\Email\Email for more information.
  */
-Configure::write('Email.default', [
-	'transport' => 'Mail',
-	'from' => 'you@localhost',
-	//'charset' => 'utf-8',
-	//'headerCharset' => 'utf-8',
-]);
-
-Configure::write('Email.smtp', [
-	'transport' => 'Smtp',
+Email::configTransport('default', [
+	'className' => 'Mail',
+	// The following keys are used in SMTP transports
 	'host' => 'localhost',
 	'port' => 25,
 	'timeout' => 30,
 	'username' => 'user',
 	'password' => 'secret',
 	'client' => null,
+	'tls' => null,
+]);
+
+Email::config('default', [
+	'transport' => 'default',
+	'charset' => 'utf-8',
+	'headerCharset' => 'utf-8',
 	'from' => ['site@localhost' => 'My Site'],
 	'sender' => null,
 	'to' => null,
@@ -67,6 +79,4 @@ Configure::write('Email.smtp', [
 	'attachments' => null,
 	'emailFormat' => null,
 	'log' => true,
-	//'charset' => 'utf-8',
-	//'headerCharset' => 'utf-8',
 ]);
