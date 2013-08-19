@@ -427,8 +427,7 @@ class Cache {
 			return false;
 		}
 
-		$success = $engine->delete($settings['prefix'] . $key);
-		return $success;
+		return $engine->delete($settings['prefix'] . $key);
 	}
 
 /**
@@ -444,8 +443,7 @@ class Cache {
 			return false;
 		}
 
-		$success = $engine->clear($check);
-		return $success;
+		return $engine->clear($check);
 	}
 
 /**
