@@ -83,11 +83,25 @@ class MapReduce implements IteratorAggregate {
  *
  * @param \Traversable $data the original data to be processed
  * @param array $routines containing the keys `mapper` and `reducer`
- * and callables as values
+ * and invokable objects as values
  * @return void
  */
 	public function __construct(\Traversable $data, array $routines) {
 		$this->_data = $data;
+
+		if (empty($routines['mapper'])) {
+			throw new \InvalidArgumentException(
+				__d('cake_dev', 'A mapper is required to run MapReduce')
+			);
+		}
+
+		foreach ($routines as $method) {
+			if (!method_exists($method, '__invoke')) {
+				throw new \InvalidArgumentException(
+					__d('cake_dev', 'Can only pass invokable objects to MapReduce')
+				);
+			}
+		}
 		$this->_mapper = $routines['mapper'];
 		$this->_reducer = isset($routines['reducer']) ? $routines['reducer'] : null;
 	}

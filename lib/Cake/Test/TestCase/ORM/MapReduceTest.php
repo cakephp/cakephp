@@ -85,4 +85,40 @@ class MapReduceTest extends TestCase {
 		$expected = ['one', 'two', 'three', 'four'];
 		$this->assertEquals($expected, iterator_to_array($results));
 	}
+
+/**
+ * Tests that a mapper function is required
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage A mapper is required to run MapReduce
+ * @return void
+ */
+	public function testMapReduceNoMapper() {
+		new MapReduce(new ArrayIterator([]), ['reducer' => function() {}]);
+	}
+
+/**
+ * Tests that the mapper should be invokable
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Can only pass invokable objects to MapReduce
+ * @return void
+ */
+	public function testMapperIsInvokable() {
+		new MapReduce(new ArrayIterator([]), ['mapper' => [$this, 'setUp']]);
+	}
+
+/**
+ * Tests that the mapper should be invokable
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Can only pass invokable objects to MapReduce
+ * @return void
+ */
+	public function testReducerIsInvokable() {
+		new MapReduce(new ArrayIterator([]), [
+			'mapper' => function() {},
+			'reducer' => 'strtolower'
+		]);
+	}
 }
