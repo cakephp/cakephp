@@ -643,7 +643,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 	
 		$result = $table->threaded(['order' => ['name' => 'ASC']])->list();
-		//$this->assertSame($query, $result);
+		$this->assertSame($query, $result);
 	}
 
 }
