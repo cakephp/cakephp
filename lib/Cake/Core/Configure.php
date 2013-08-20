@@ -340,7 +340,7 @@ class Configure {
 			throw new ConfigureException(__d('cake_dev', 'There is no "%s" adapter.', $config));
 		}
 		if (!method_exists($reader, 'dump')) {
-			throw new ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a dump() method.', $config));
+			throw new ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a %s method.', $config, 'dump()'));
 		}
 		$values = self::$_values;
 		if (!empty($keys) && is_array($keys)) {
