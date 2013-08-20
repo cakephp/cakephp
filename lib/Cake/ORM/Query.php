@@ -526,14 +526,42 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
+/**
+ * Register a new MapReduce routine to be executed on top of the database results
+ * Both the mapper and caller callable should be invokable objects.
+ *
+ * The MapReduce routing will only be ran when the query is executed and the first
+ * result is attempted to be fetched.
+ *
+ * If the first argument is set to null, it will return the list of previously
+ * registered map reduce routines.
+ *
+ * If the third argument is set to true, it will erase previous map reducers
+ * and replace it with the arguments passed.
+ *
+ * @param callable $mapper
+ * @param callable $reducer
+ * @param boolean $overwrite
+ * @return Cake\ORM\Query|array
+ */
 	public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false) {
 		if ($overwrite) {
 			$this->_mapReduce = [];
 		}
-		$this->_mapReduce[] = compact('mapper', 'reducer');
+		if ($mapper === null) {
+			return $this->_mapReduce;
+		}
+		$this->_mapReduce[] = array_filter(compact('mapper', 'reducer'));
 		return $this;
 	}
 
+
+/**
+ * Decorates the ResultSet iterator with MapReduce routines
+ *
+ * @param $results Cake\ORM\ResultCollectionTrait original results
+ * @return Cake\ORM\ResultCollectionTrait
+ */
 	protected function _applyFormatters($result) {
 		foreach ($this->_mapReduce as $mappers) {
 			$result = new MapReduce($result, $mappers);
