@@ -32,6 +32,7 @@ use Cake\Console\ConsoleErrorHandler;
  * - `errorLevel` - int - The level of errors you are interested in capturing.
  * - `trace` - boolean - Whether or not backtraces should be included in
  *   logged errors/exceptions.
+ * - `log` - boolean - Whether or not you want exceptions logged.
  * - `exceptionRenderer` - string - The class responsible for rendering
  *   uncaught exceptions.  If you choose a custom class you should place
  *   the file for that class in app/Lib/Error. This class needs to implement a render method.
