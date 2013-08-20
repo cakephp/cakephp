@@ -1,9 +1,5 @@
 <?php
 /**
- * Error handler
- *
- * Provides Error Capturing for Framework errors.
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -15,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Error
  * @since         CakePHP(tm) v 0.10.5.1732
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -42,28 +37,27 @@ use Cake\Utility\Debugger;
  * You can implement application specific exception handling in one of a few ways. Each approach
  * gives you different amounts of control over the exception handling process.
  *
- * - Set Configure::write('Exception.handler', 'YourClass::yourMethod');
+ * - Modify App/Config/error.php and setup custom exception handling.
  * - Create AppController::appError();
- * - Set Configure::write('Exception.renderer', 'YourClass');
+ * - Use the `exceptionRenderer` option to inject an Exception renderer. This will
+ *   let you keep the existing handling logic but override the rendering logic.
  *
- * #### Create your own Exception handler with `Exception.handler`
+ * #### Create your own Exception handler
  *
  * This gives you full control over the exception handling process. The class you choose should be
- * loaded in your app/Config/bootstrap.php, so its available to handle any exceptions. You can
- * define the handler as any callback type. Using Exception.handler overrides all other exception
- * handling settings and logic.
+ * loaded in your app/Config/error.php and registered as the default exception handler.
  *
  * #### Using `AppController::appError();`
  *
  * This controller method is called instead of the default exception rendering. It receives the
  * thrown exception as its only argument. You should implement your error handling in that method.
- * Using AppController::appError(), will supersede any configuration for Exception.renderer.
+ * Using AppController::appError(), will supersede any default exception handlers.
  *
- * #### Using a custom renderer with `Exception.renderer`
+ * #### Using a custom renderer with `exceptionRenderer`
  *
  * If you don't want to take control of the exception handling, but want to change how exceptions are
- * rendered you can use `Exception.renderer` to choose a class to render exception pages. By default
- * `ExceptionRenderer` is used. Your custom exception renderer class should be placed in app/Lib/Error.
+ * rendered you can use `exceptionRenderer` option to choose a class to render exception pages. By default
+ * `Cake\Error\ExceptionRenderer` is used. Your custom exception renderer class should be placed in app/Error.
  *
  * Your custom renderer should expect an exception in its constructor, and implement a render method.
  * Failing to do so will cause additional errors.
@@ -71,7 +65,7 @@ use Cake\Utility\Debugger;
  * #### Logging exceptions
  *
  * Using the built-in exception handling, you can log all the exceptions
- * that are dealt with by ErrorHandler by setting `Exception.log` to true in your App/Config/error.php.
+ * that are dealt with by ErrorHandler by setting `log` option to true in your App/Config/error.php.
  * Enabling this will log every exception to Log and the configured loggers.
  *
  * ### PHP errors
@@ -79,19 +73,19 @@ use Cake\Utility\Debugger;
  * Error handler also provides the built in features for handling php errors (trigger_error).
  * While in debug mode, errors will be output to the screen using debugger. While in production mode,
  * errors will be logged to Log.  You can control which errors are logged by setting
- * `Error.level` in your App/Config/error.php.
+ * `errorLevel` option in App/Config/error.php.
  *
  * #### Logging errors
  *
- * When ErrorHandler is used for handling errors, you can enable error logging by setting `Error.log` to true.
- * This will log all errors to the configured log handlers.
+ * When ErrorHandler is used for handling errors, you can enable error logging by setting the `log`
+ * option to true. This will log all errors to the configured log handlers.
  *
  * #### Controlling what errors are logged/displayed
  *
- * You can control which errors are logged / displayed by ErrorHandler by setting `Error.level`. Setting this
+ * You can control which errors are logged / displayed by ErrorHandler by setting `errorLevel`. Setting this
  * to one or a combination of a few of the E_* constants will only enable the specified errors.
  *
- * e.g. `Configure::write('Error.level', E_ALL & ~E_NOTICE);`
+ * $options['log'] = E_ALL & ~E_NOTICE;
  *
  * Would enable handling for all non Notice errors.
  *
