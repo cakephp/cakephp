@@ -599,4 +599,51 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->toArray();
 		$this->assertEquals($expected, $results);
 	}
+
+/**
+ * Tests that finders can be called directly
+ *
+ * @return void
+ */
+	public function testCallingFindersDirectly() {
+		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$query = $this->getMock('\Cake\ORM\Query', [], [$this->connection, $table]);
+		$table->expects($this->once())
+			->method('find')
+			->with('list', [])
+			->will($this->returnValue($query));
+		$this->assertSame($query, $table->list());
+
+		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$table->expects($this->once())
+			->method('find')
+			->with('threaded', ['order' => ['name' => 'ASC']])
+			->will($this->returnValue($query));
+		$this->assertSame($query, $table->threaded(['order' => ['name' => 'ASC']]));
+	}
+
+/**
+ * Tests that finders can be stacked
+ *
+ * @return void
+ */
+	public function testStackingFinders() {
+		$table = $this->getMock('\Cake\ORM\Table', ['find', 'findList']);
+		$params = [$this->connection, $table];
+		$query = $this->getMock('\Cake\ORM\Query', ['addDefaultTypes'], $params);
+
+		$table->expects($this->once())
+			->method('find')
+			->with('threaded', ['order' => ['name' => 'ASC']])
+			->will($this->returnValue($query));
+
+		$table->expects($this->once())
+			->method('findList')
+			->with($query)
+			->will($this->returnValue($query));
+	
+		$result = $table->threaded(['order' => ['name' => 'ASC']])->list();
+		//$this->assertSame($query, $result);
+	}
+
 }

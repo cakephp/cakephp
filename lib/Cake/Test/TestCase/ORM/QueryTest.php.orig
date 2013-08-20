@@ -17,33 +17,23 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
-use Cake\Database\Expression\OrderByExpression;
-use Cake\Database\Expression\QueryExpression;
+<<<<<<< HEAD
+use Cake\Database\Connection;
+=======
+>>>>>>> origin/3.0
 use Cake\Model\ConnectionManager;
 use Cake\ORM\Query;
-use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
-use Cake\TestSuite\TestCase;
 
 /**
  * Tests Query class
  *
  */
-class QueryTest extends TestCase {
+class QueryTest extends \Cake\TestSuite\TestCase {
 
-/**
- * Fixture to be used
- *
- * @var array
- */
 	public $fixtures = ['core.article', 'core.author', 'core.tag',
 		'core.articles_tag', 'core.post'];
 
-/**
- * setUp method
- *
- * @return void
- */
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::getDataSource('test');
@@ -77,11 +67,6 @@ class QueryTest extends TestCase {
 		$companies->belongsTo('category');
 	}
 
-/**
- * tearDown method
- *
- * @return void
- */
 	public function tearDown() {
 		parent::tearDown();
 		Table::clearRegistry();
@@ -119,7 +104,7 @@ class QueryTest extends TestCase {
 			]
 		];
 
-		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
+		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection]);
 
 		$query->expects($this->at(0))->method('join')
 			->with(['client' => [
@@ -199,9 +184,9 @@ class QueryTest extends TestCase {
 		];
 
 		$table = Table::build('foo', ['schema' => ['id' => ['type' => 'integer']]]);
-		$query = new Query($this->connection, $table);
+		$query = new Query($this->connection);
 
-		$query->select('foo.id')->contain($contains)->sql();
+		$query->select('foo.id')->repository($table)->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
 			'foo__id' => 'foo.id', 'client__name' => 'client.name',
@@ -221,8 +206,8 @@ class QueryTest extends TestCase {
 	public function testContainToFieldsDefault() {
 		$contains = ['client' => ['order']];
 
-		$query = new Query($this->connection, $this->table);
-		$query->select()->contain($contains)->sql();
+		$query = new Query($this->connection);
+		$query->select()->repository($this->table)->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
 			'foo__id' => 'foo.id', 'client__name' => 'client.name',
@@ -233,16 +218,16 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $select);
 
 		$contains['client']['fields'] = ['name'];
-		$query = new Query($this->connection, $this->table);
-		$query->select('foo.id')->contain($contains)->sql();
+		$query = new Query($this->connection);
+		$query->select('foo.id')->repository($this->table)->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = ['foo__id' => 'foo.id', 'client__name' => 'client.name'];
 		$this->assertEquals($expected, $select);
 
 		$contains['client']['fields'] = [];
 		$contains['client']['order']['fields'] = false;
-		$query = new Query($this->connection, $this->table);
-		$query->select()->contain($contains)->sql();
+		$query = new Query($this->connection);
+		$query->select()->repository($this->table)->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
 			'foo__id' => 'foo.id',
@@ -261,12 +246,12 @@ class QueryTest extends TestCase {
 	public function testContainResultFetchingOneLevel() {
 		$this->_createTables();
 
+		$query = new Query($this->connection);
 		$table = Table::build('article', ['table' => 'articles']);
 		Table::build('author', ['connection' => $this->connection]);
 		$table->belongsTo('author');
-
-		$query = new Query($this->connection, $table);
-		$results = $query->select()
+		$results = $query->repository($table)
+			->select()
 			->contain('author')
 			->order(['article.id' => 'asc'])
 			->toArray();
@@ -328,16 +313,12 @@ class QueryTest extends TestCase {
 	public function testHasManyEagerLoading($strategy) {
 		$this->_createTables();
 
+		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', [
-			'property' => 'articles',
-			'strategy' => $strategy,
-			'sort' => ['article.id' => 'asc']
-		]);
-		$query = new Query($this->connection, $table);
+		$table->hasMany('article', ['property' => 'articles', 'strategy' => $strategy]);
 
-		$results = $query->select()->contain('article')->toArray();
+		$results = $query->repository($table)->select()->contain('article')->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -401,12 +382,13 @@ class QueryTest extends TestCase {
 	public function testHasManyEagerLoadingFieldsAndOrder($strategy) {
 		$this->_createTables();
 
+		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
 		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
 
-		$query = new Query($this->connection, $table);
-		$results = $query->select()
+		$results = $query->repository($table)
+			->select()
 			->contain([
 				'article' => [
 					'fields' => ['title', 'author_id'],
@@ -451,17 +433,14 @@ class QueryTest extends TestCase {
 	public function testHasManyEagerLoadingDeep($strategy) {
 		$this->_createTables();
 
+		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
-		$table->hasMany('article', [
-			'property' => 'articles',
-			'stratgey' => $strategy,
-			'sort' => ['article.id' => 'asc']
-		]);
+		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
 		$article->belongsTo('author');
-		$query = new Query($this->connection, $table);
 
-		$results = $query->select()
+		$results = $query->repository($table)
+			->select()
 			->contain(['article' => ['author']])
 			->toArray();
 		$expected = [
@@ -475,7 +454,7 @@ class QueryTest extends TestCase {
 						'author_id' => 1,
 						'body' => 'First Article Body',
 						'published' => 'Y',
-						'author' => ['id' => 1, 'name' => 'mariano']
+						'author' => ['id' => 1 , 'name' => 'mariano']
 					],
 					[
 						'id' => 3,
@@ -529,6 +508,7 @@ class QueryTest extends TestCase {
 	public function testHasManyEagerLoadingFromSecondaryTable($strategy) {
 		$this->_createTables();
 
+		$query = new Query($this->connection);
 		$author = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
 		$post = Table::build('post', ['connection' => $this->connection]);
@@ -536,9 +516,8 @@ class QueryTest extends TestCase {
 		$author->hasMany('post', ['property' => 'posts'] + compact('strategy'));
 		$article->belongsTo('author');
 
-		$query = new Query($this->connection, $article);
-
-		$results = $query->select()
+		$results = $query->repository($article)
+			->select()
 			->contain(['author' => ['post']])
 			->order(['article.id' => 'ASC'])
 			->toArray();
@@ -632,6 +611,7 @@ class QueryTest extends TestCase {
 	public function testBelongsToManyEagerLoading($strategy) {
 		$this->_createTables();
 
+		$query = new Query($this->connection);
 		$table = Table::build('Article', ['connection' => $this->connection]);
 		Table::build('Tag', ['connection' => $this->connection]);
 		Table::build('ArticleTag', [
@@ -639,9 +619,8 @@ class QueryTest extends TestCase {
 			'table' => 'articles_tags'
 		]);
 		$table->belongsToMany('Tag', ['property' => 'tags', 'strategy' => $strategy]);
-		$query = new Query($this->connection, $table);
 
-		$results = $query->select()->contain('Tag')->toArray();
+		$results = $query->repository($table)->select()->contain('Tag')->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -691,7 +670,8 @@ class QueryTest extends TestCase {
 		];
 		$this->assertEquals($expected, $results);
 
-		$results = $query->select()
+		$results = $query->repository($table)
+			->select()
 			->contain(['Tag' => ['conditions' => ['id' => 3]]])
 			->toArray();
 		$expected = [
@@ -736,7 +716,7 @@ class QueryTest extends TestCase {
 	public function testFilteringByHasMany() {
 		$this->_createTables();
 
-		$query = new Query($this->connection, $this->table);
+		$query = new Query($this->connection);
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
 		$table->hasMany('article', ['property' => 'articles']);
@@ -774,7 +754,7 @@ class QueryTest extends TestCase {
 	public function testFilteringByBelongsToMany() {
 		$this->_createTables();
 
-		$query = new Query($this->connection, $this->table);
+		$query = new Query($this->connection);
 		$table = Table::build('Article', ['connection' => $this->connection]);
 		Table::build('Tag', ['connection' => $this->connection]);
 		Table::build('ArticleTag', [
@@ -804,8 +784,9 @@ class QueryTest extends TestCase {
 		];
 		$this->assertEquals($expected, $results);
 
-		$query = new Query($this->connection, $table);
-		$results = $query->select()
+		$query = new Query($this->connection);
+		$results = $query->repository($table)
+			->select()
 			->contain(['Tag' => [
 				'matching' => true,
 				'conditions' => ['Tag.name' => 'tag2']]
@@ -825,183 +806,6 @@ class QueryTest extends TestCase {
 			]
 		];
 		$this->assertEquals($expected, $results);
-	}
-
-/**
- * Test setResult()
- *
- * @return void
- */
-	public function testSetResult() {
-		$query = new Query($this->connection, $this->table);
-		$stmt = $this->getMock('Cake\Database\StatementInterface');
-		$results = new ResultSet($query, $stmt);
-		$query->setResult($results);
-		$this->assertSame($results, $query->execute());
-	}
-
-/**
- * Test enabling buffering of results.
- *
- * @return void
- */
-	public function testBufferResults() {
-		$table = Table::build('article', ['connection' => $this->connection, 'table' => 'articles']);
-		$query = new Query($this->connection, $table);
-
-		$result = $query->select()->bufferResults();
-		$this->assertSame($query, $result, 'Query should be the same');
-		$result = $query->execute();
-		$this->assertInstanceOf('Cake\ORM\BufferedResultSet', $result);
-	}
-
-/*
- * Tests that applying array options to a query will convert them
- * to equivalent function calls with the correspondent array values
- *
- * @return void
- */
-	public function testApplyOptions() {
-		$options = [
-			'fields' => ['field_a', 'field_b'],
-			'conditions' => ['field_a' => 1, 'field_b' => 'something'],
-			'limit' => 1,
-			'order' => ['a' => 'ASC'],
-			'offset' => 5,
-			'group' => ['field_a'],
-			'having' => ['field_a >' => 100],
-			'contain' => ['table_a' => ['table_b']],
-			'join' => ['table_a' => ['conditions' => ['a > b']]]
-		];
-		$query = new Query($this->connection, $this->table);
-		$query->applyOptions($options);
-
-		$this->assertEquals(['field_a', 'field_b'], $query->clause('select'));
-
-		$expected = new QueryExpression($options['conditions']);
-		$result = $query->clause('where');
-		$this->assertEquals($expected, $result);
-
-		$this->assertEquals(1, $query->clause('limit'));
-
-		$expected = new QueryExpression(['a > b']);
-		$result = $query->clause('join');
-		$this->assertEquals([
-			['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
-		], $result);
-
-		$expected = new OrderByExpression(['a' => 'ASC']);
-		$this->assertEquals($expected, $query->clause('order'));
-
-		$this->assertEquals(5, $query->clause('offset'));
-		$this->assertEquals(['field_a'], $query->clause('group'));
-
-		$expected = new QueryExpression($options['having']);
-		$this->assertEquals($expected, $query->clause('having'));
-
-		$expected = new \ArrayObject(['table_a' => ['table_b' => []]]);
-		$this->assertEquals($expected, $query->contain());
-	}
-
-/**
- * Tests registering mappers with mapReduce()
- *
- * @return void
- */
-	public function testMapReduceOnlyMapper() {
-		$mapper1 = function() {};
-		$mapper2 = function() {};
-		$query = new Query($this->connection, $this->table);
-		$this->assertSame($query, $query->mapReduce($mapper1));
-		$this->assertSame([['mapper' => $mapper1]], $query->mapReduce());
-
-		$this->assertSame($query, $query->mapReduce($mapper1));
-		$result = $query->mapReduce();
-		$this->assertEquals([['mapper' => $mapper1], ['mapper' => $mapper2]], $result);
-	}
-
-/**
- * Tests registering mappers and reducers with mapReduce()
- *
- * @return void
- */
-	public function testMapReduceBothMethods() {
-		$mapper1 = function() {};
-		$mapper2 = function() {};
-		$reducer1 = function() {};
-		$reducer2 = function() {};
-		$query = new Query($this->connection, $this->table);
-		$this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
-		$this->assertSame(
-			[['mapper' => $mapper1, 'reducer' => $reducer1]],
-			$query->mapReduce()
-		);
-
-		$this->assertSame($query, $query->mapReduce($mapper2, $reducer2));
-		$this->assertSame(
-			[
-				['mapper' => $mapper1, 'reducer' => $reducer1],
-				['mapper' => $mapper2, 'reducer' => $reducer2]
-			],
-			$query->mapReduce()
-		);
-	}
-
-/**
- * Tests that it is possible to overwrite previous map reducers
- *
- * @return void
- */
-	public function testOverwriteMapReduce() {
-		$mapper1 = function() {};
-		$mapper2 = function() {};
-		$reducer1 = function() {};
-		$reducer2 = function() {};
-		$query = new Query($this->connection, $this->table);
-		$this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
-		$this->assertSame(
-			[['mapper' => $mapper1, 'reducer' => $reducer1]],
-			$query->mapReduce()
-		);
-
-		$this->assertSame($query, $query->mapReduce($mapper2, $reducer2, true));
-		$this->assertSame(
-			[['mapper' => $mapper2, 'reducer' => $reducer2]],
-			$query->mapReduce()
-		);
-	}
-
-/**
- * Tests that multiple map reducers can be stacked
- *
- * @return void
- */
-	public function testResultsAreWrappedInMapReduce() {
-		$params = [$this->connection, $this->table];
-		$query = $this->getMock('\Cake\ORM\Query', ['executeStatement'], $params);
-
-		$statement = $this->getMock('\Database\StatementInterface', ['fetch']);
-		$statement->expects($this->at(0))
-			->method('fetch')
-			->will($this->returnValue(['a' => 1]));
-		$statement->expects($this->at(1))
-			->method('fetch')
-			->will($this->returnValue(['a' => 2]));
-		$statement->expects($this->at(2))
-			->method('fetch')
-			->will($this->returnValue(false));
-
-		$query->expects($this->once())
-			->method('executeStatement')
-			->will($this->returnValue($statement));
-
-		$query->mapReduce(function($k, $v, $mr) { $mr->emit($v['a']); });
-		$query->mapReduce(
-			function($k, $v, $mr) { $mr->emitIntermediate($k, $v); },
-			function($k, $v, $mr) { $mr->emit($v[0] + 1); }
-		);
-
-		$this->assertEquals([2, 3], iterator_to_array($query->execute()));
 	}
 
 }

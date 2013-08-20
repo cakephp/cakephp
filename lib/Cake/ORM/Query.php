@@ -776,4 +776,17 @@ class Query extends DatabaseQuery {
 		$this->select($aliased, true);
 	}
 
+/**
+ * Magic method to be able to call scoped finders in the default table
+ *
+ * @param string $method name of the method to be invoked
+ * @param array $args List of arguments passed to the function
+ * @return mixed
+ * @throws \BadMethodCallException
+ */
+	public function __call($method, $args) {
+		array_unshift($args, $this);
+		return $this->repository()->__call($method, $args);
+	}
+
 }

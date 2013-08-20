@@ -660,4 +660,26 @@ class Table {
 		return $statement->rowCount() > 0;
 	}
 
+/**
+ * Magic method to be able to call scoped finders without the
+ * find prefix
+ *
+ * @param string $method name of the method to be invoked
+ * @param array $args List of arguments passed to the function
+ * @return mixed
+ * @throws \BadMethodCallException
+ */
+	public function __call($method, $args) {
+		if (method_exists($this, 'find' . ucfirst($method))) {
+			if (current($args) instanceof Query) {
+				$query = array_shift($args);
+				$options = current($args) ?: [];
+				return $this->{'find' . ucfirst($method)}($query, $options);
+			}
+			$options = current($args) ?: [];
+			return $this->find($method, $options);
+		}
+		throw new \BadMethodCallException('Unknown table method ' . $method);
+	}
+
 }
