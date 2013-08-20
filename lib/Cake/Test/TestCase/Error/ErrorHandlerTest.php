@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Error
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -32,8 +31,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ErrorHandlerTest class
- *
- * @package       Cake.Test.Case.Error
  */
 class ErrorHandlerTest extends TestCase {
 
@@ -83,7 +80,8 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleErrorDebugOn() {
-		set_error_handler('Cake\Error\ErrorHandler::handleError');
+		$errorHandler = new ErrorHandler();
+		$errorHandler->register();
 		$this->_restoreError = true;
 
 		ob_start();
@@ -114,7 +112,8 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testErrorMapping($error, $expected) {
-		set_error_handler('Cake\Error\ErrorHandler::handleError');
+		$errorHandler = new ErrorHandler();
+		$errorHandler->register();
 		$this->_restoreError = true;
 
 		ob_start();
@@ -130,7 +129,8 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testErrorSuppressed() {
-		set_error_handler('Cake\Error\ErrorHandler::handleError');
+		$errorHandler = new ErrorHandler();
+		$errorHandler->register();
 		$this->_restoreError = true;
 
 		ob_start();
@@ -148,14 +148,13 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleErrorDebugOff() {
 		Configure::write('debug', 0);
-		Configure::write('Error.trace', false);
+		$errorHandler = new ErrorHandler();
+		$errorHandler->register();
+		$this->_restoreError = true;
 
 		$this->_logger->expects($this->once())
 			->method('write')
-			->with('notice', 'Notice (8): Undefined variable: out in [' . __FILE__ . ', line 160]');
-
-		set_error_handler('Cake\Error\ErrorHandler::handleError');
-		$this->_restoreError = true;
+			->with('notice', 'Notice (8): Undefined variable: out in [' . __FILE__ . ', line 159]');
 
 		$out .= '';
 	}
@@ -167,7 +166,8 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleErrorLoggingTrace() {
 		Configure::write('debug', 0);
-		Configure::write('Error.trace', true);
+		$errorHandler = new ErrorHandler(['trace' => true]);
+		$errorHandler->register();
 
 		$this->_logger->expects($this->once())
 			->method('write')
@@ -176,8 +176,6 @@ class ErrorHandlerTest extends TestCase {
 				$this->stringContains('Trace:'),
 				$this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()')
 			));
-
-		set_error_handler('Cake\Error\ErrorHandler::handleError');
 		$this->_restoreError = true;
 
 		$out .= '';
@@ -190,14 +188,10 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleException() {
 		$error = new Error\NotFoundException('Kaboom!');
-		Configure::write('Exception', [
-			'handler' => 'Cake\Error\ErrorHandler::handleException',
-			'renderer' => 'Cake\Error\ExceptionRenderer'
-		]);
+		$errorHandler = new ErrorHandler();
 
-		$this->_restoreError = true;
 		ob_start();
-		ErrorHandler::handleException($error);
+		$errorHandler->handleException($error);
 		$result = ob_get_clean();
 		$this->assertRegExp('/Kaboom!/', $result, 'message missing.');
 	}
@@ -208,11 +202,9 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleExceptionLog() {
-		Configure::write('Exception', [
-			'handler' => 'Cake\Error\ErrorHandler::handleException',
-			'renderer' => 'Cake\Error\ExceptionRenderer',
-			'log' => true
-		]);
+		$errorHandler = new ErrorHandler(['log' => true]);
+		$errorHandler->register();
+
 		$error = new Error\NotFoundException('Kaboom!');
 
 		$this->_logger->expects($this->once())
@@ -223,7 +215,7 @@ class ErrorHandlerTest extends TestCase {
 			));
 
 		ob_start();
-		ErrorHandler::handleException($error);
+		$errorHandler->handleException($error);
 		$result = ob_get_clean();
 		$this->assertRegExp('/Kaboom!/', $result, 'message missing.');
 	}
@@ -234,12 +226,6 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleExceptionLogSkipping() {
-		Configure::write('Exception', [
-			'handler' => 'Cake\Error\ErrorHandler::handleException',
-			'renderer' => 'Cake\Error\ExceptionRenderer',
-			'log' => true,
-			'skipLog' => ['Cake\Error\NotFoundException']
-		]);
 		$notFound = new Error\NotFoundException('Kaboom!');
 		$forbidden = new Error\ForbiddenException('Fooled you!');
 
@@ -250,13 +236,19 @@ class ErrorHandlerTest extends TestCase {
 				$this->stringContains('[Cake\Error\ForbiddenException] Fooled you!')
 			);
 
+		$errorHandler = new ErrorHandler([
+			'log' => true,
+			'skipLog' => ['Cake\Error\NotFoundException']
+		]);
+		$errorHandler->register();
+
 		ob_start();
-		ErrorHandler::handleException($notFound);
+		$errorHandler->handleException($notFound);
 		$result = ob_get_clean();
 		$this->assertRegExp('/Kaboom!/', $result, 'message missing.');
 
 		ob_start();
-		ErrorHandler::handleException($forbidden);
+		$errorHandler->handleException($forbidden);
 		$result = ob_get_clean();
 		$this->assertRegExp('/Fooled you!/', $result, 'message missing.');
 	}
@@ -273,10 +265,13 @@ class ErrorHandlerTest extends TestCase {
 			)
 		), App::RESET);
 		Plugin::load('TestPlugin');
-		Configure::write('Exception.renderer', 'TestPlugin.TestPluginExceptionRenderer');
+		$errorHandler = new ErrorHandler([
+			'exceptionRenderer' => 'TestPlugin.TestPluginExceptionRenderer',
+		]);
+
 		$error = new Error\NotFoundException('Kaboom!');
 		ob_start();
-		ErrorHandler::handleException($error);
+		$errorHandler->handleException($error);
 		$result = ob_get_clean();
 		$this->assertEquals('Rendered by test plugin', $result);
 		Plugin::unload();
@@ -291,15 +286,11 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleFatalErrorPage() {
 		$line = __LINE__;
-		Configure::write('Exception', [
-			'handler' => 'Cake\Error\ErrorHandler::handleException',
-			'renderer' => 'Cake\Error\ExceptionRenderer',
-		]);
-
-		ob_start();
-		ob_start();
+		$errorHandler = new ErrorHandler();
 		Configure::write('debug', 1);
-		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
+		ob_start();
+		ob_start();
+		$errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
 		$result = ob_get_clean();
 		$this->assertContains('Something wrong', $result, 'message missing.');
 		$this->assertContains(__FILE__, $result, 'filename missing.');
@@ -308,7 +299,7 @@ class ErrorHandlerTest extends TestCase {
 		ob_start();
 		ob_start();
 		Configure::write('debug', 0);
-		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
+		$errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
 		$result = ob_get_clean();
 		$this->assertNotContains('Something wrong', $result, 'message must not appear.');
 		$this->assertNotContains(__FILE__, $result, 'filename must not appear.');
@@ -321,15 +312,10 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleFatalErrorLog() {
-		Configure::write('Exception', [
-			'handler' => 'Cake\Error\ErrorHandler::handleException',
-			'renderer' => 'Cake\Error\ExceptionRenderer',
-			'log' => true
-		]);
 		$this->_logger->expects($this->at(0))
 			->method('write')
 			->with('error', $this->logicalAnd(
-				$this->stringContains(__FILE__ . ', line 341'),
+				$this->stringContains(__FILE__ . ', line 328'),
 				$this->stringContains('Fatal Error (1)'),
 				$this->stringContains('Something wrong')
 			));
@@ -337,8 +323,9 @@ class ErrorHandlerTest extends TestCase {
 			->method('write')
 			->with('error', $this->stringContains('[Cake\Error\FatalErrorException] Something wrong'));
 
+		$errorHandler = new ErrorHandler(['log' => true]);
 		ob_start();
-		ErrorHandler::handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
+		$errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, __LINE__);
 		ob_clean();
 	}
 

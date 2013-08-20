@@ -95,10 +95,45 @@ use Cake\Utility\Debugger;
  *
  * Would enable handling for all non Notice errors.
  *
- * @package       Cake.Error
  * @see ExceptionRenderer for more information on how to customize exception rendering.
  */
 class ErrorHandler {
+
+/**
+ * Options to use for the Error handling.
+ *
+ * @var array
+ */
+	protected $_options = [];
+
+/**
+ * Constructor
+ *
+ * @param array $options The options for error handling.
+ */
+	public function __construct($options = []) {
+		$defaults = [
+			'log' => true,
+			'trace' => false,
+			'exceptionRenderer' => 'Cake\Error\ExceptionRenderer',
+		];
+		$this->_options = array_merge($defaults, $options);
+	}
+
+/**
+ * Register the error and exception handlers.
+ *
+ * @return void
+ */
+	public function register() {
+		$level = -1;
+		if (isset($this->_options['errorLevel'])) {
+			$level = $this->_options['errorLevel'];
+		}
+		error_reporting($level);
+		set_error_handler([$this, 'handleError'], $level);
+		set_exception_handler([$this, 'handleException']);
+	}
 
 /**
  * Set as the default exception handler by the CakePHP bootstrap process.
@@ -111,21 +146,21 @@ class ErrorHandler {
  * @throws Exception When renderer class not found
  * @see http://php.net/manual/en/function.set-exception-handler.php
  */
-	public static function handleException(\Exception $exception) {
-		$config = Configure::read('Exception');
+	public function handleException(\Exception $exception) {
+		$config = $this->_options;
 		self::_log($exception, $config);
 
-		$renderer = isset($config['renderer']) ? $config['renderer'] : 'ExceptionRenderer';
-		$renderer = App::classname($config['renderer'], 'Error');
+		$renderer = isset($config['exceptionRenderer']) ? $config['exceptionRenderer'] : 'Cake\Error\ExceptionRenderer';
+		$renderer = App::classname($renderer, 'Error');
 		try {
 			if (!$renderer) {
-				throw new \Exception("{$config['renderer']} is an invalid class.");
+				throw new \Exception("$renderer is an invalid class.");
 			}
 			$error = new $renderer($exception);
 			$error->render();
 		} catch (\Exception $e) {
-			set_error_handler(Configure::read('Error.handler')); // Should be using configured ErrorHandler
-			Configure::write('Error.trace', false); // trace is useless here since it's internal
+			// Disable trace for internal errors.
+			$this->_options['trace'] = false;
 			$message = sprintf("[%s] %s\n%s", // Keeping same message format
 				get_class($e),
 				$e->getMessage(),
@@ -137,6 +172,7 @@ class ErrorHandler {
 
 /**
  * Generates a formatted error message
+ *
  * @param Exception $exception Exception instance
  * @return string Formatted message
  */
@@ -180,7 +216,7 @@ class ErrorHandler {
 				}
 			}
 		}
-		return Log::write(LOG_ERR, self::_getMessage($exception));
+		return Log::write('error', self::_getMessage($exception));
 	}
 
 /**
@@ -198,14 +234,13 @@ class ErrorHandler {
  * @param array $context Context
  * @return boolean true if error was handled
  */
-	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
+	public function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if (error_reporting() === 0) {
 			return false;
 		}
-		$errorConfig = Configure::read('Error');
 		list($error, $log) = static::mapErrorCode($code);
 		if ($log === LOG_ERR) {
-			return static::handleFatalError($code, $description, $file, $line);
+			return $this->handleFatalError($code, $description, $file, $line);
 		}
 
 		$debug = Configure::read('debug');
@@ -222,16 +257,9 @@ class ErrorHandler {
 				'path' => Debugger::trimPath($file)
 			);
 			return Debugger::getInstance()->outputError($data);
-		} else {
-			$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
-			if (!empty($errorConfig['trace'])) {
-				$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
-				$message .= "\nTrace:\n" . $trace . "\n";
-			}
-			return Log::write($log, $message);
 		}
 		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
-		if (!empty($errorConfig['trace'])) {
+		if (!empty($this->_options['trace'])) {
 			$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
 			$message .= "\nTrace:\n" . $trace . "\n";
 		}
@@ -247,23 +275,18 @@ class ErrorHandler {
  * @param integer $line Line that triggered the error
  * @return boolean
  */
-	public static function handleFatalError($code, $description, $file, $line) {
+	public function handleFatalError($code, $description, $file, $line) {
 		$logMessage = 'Fatal Error (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 		Log::write(LOG_ERR, $logMessage);
-
-		$exceptionHandler = Configure::read('Exception.handler');
-		if (!is_callable($exceptionHandler)) {
-			return false;
-		}
 
 		if (ob_get_level()) {
 			ob_end_clean();
 		}
 
 		if (Configure::read('debug')) {
-			call_user_func($exceptionHandler, new FatalErrorException($description, 500, $file, $line));
+			$this->handleException(new FatalErrorException($description, 500, $file, $line));
 		} else {
-			call_user_func($exceptionHandler, new InternalErrorException());
+			$this->handleException(new InternalErrorException());
 		}
 		return false;
 	}

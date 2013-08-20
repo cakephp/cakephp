@@ -51,7 +51,7 @@ class ConsoleErrorHandler {
 	}
 
 /**
- * Register the error and exception handlers
+ * Register the error and exception handlers.
  *
  * @return void
  */
