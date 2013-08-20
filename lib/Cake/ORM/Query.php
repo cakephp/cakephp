@@ -390,9 +390,11 @@ class Query extends DatabaseQuery {
 			return $this->_results;
 		}
 		if ($this->_useBufferedResults) {
-			return $this->_applyFormatters(new BufferedResultSet($this, parent::execute()));
+			return $this->_applyFormatters(
+				new BufferedResultSet($this, $this->executeStatement())
+			);
 		}
-		return $this->_applyFormatters(new ResultSet($this, parent::execute()));
+		return $this->_applyFormatters(new ResultSet($this, $this->executeStatement()));
 	}
 
 /**

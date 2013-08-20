@@ -16,7 +16,7 @@
  */
 namespace Cake\ORM;
 
-use \IteratorIterator;
+use \IteratorAggregate;
 use \JsonSerializable;
 use \Serializable;
 
@@ -26,7 +26,7 @@ use \Serializable;
  *
  * @return void
  */
-class ResultSetDecorator extends IteratorIterator implements Serializable, JsonSerializable {
+class ResultSetDecorator implements IteratorAggregate, Serializable, JsonSerializable {
 
 	use ResultCollectionTrait;
 
@@ -37,16 +37,20 @@ class ResultSetDecorator extends IteratorIterator implements Serializable, JsonS
  */
 	protected $_results;
 
+	public function __construct(\Traversable $results) {
+		$this->_results = $results;
+	}
+
 /**
  * Returns the inner iterator this decorator is wrapping
  *
- * @return void
+ * @return \Iterator
  */
-	public function getInnerIterator() {
-		if ($this->_results) {
-			return new IteratorIterator($this->_results);
+	public function getIterator() {
+		if (is_array($this->_results)) {
+			$this->_results = new \ArrayIterator($this->_results);
 		}
-		return parent::getInnerIterator();
+		return $this->_results;
 	}
 
 }
