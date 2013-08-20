@@ -122,7 +122,7 @@ class ServerShell extends AppShell {
  */
 	public function main() {
 		if (version_compare(PHP_VERSION, '5.4.0') < 0) {
-			$this->out(__d('cake_console', '<warning>This command is available on PHP5.4 or above</warning>'));
+			$this->out(__d('cake_console', '<warning>This command is available on %s or above</warning>', 'PHP5.4'));
 			return;
 		}
 
