@@ -439,7 +439,7 @@ class ConsoleShell extends AppShell {
  */
 	protected function _routesReload() {
 		if (!$this->_loadRoutes()) {
-			$this->err(__d('cake_console', "There was an error loading the routes config. Please check that the file exists and is free of parse errors."));
+			return $this->err(__d('cake_console', "There was an error loading the routes config. Please check that the file exists and is free of parse errors."));
 		}
 		$this->out(__d('cake_console', "Routes configuration reloaded, %d routes connected", count(Router::$routes)));
 	}
