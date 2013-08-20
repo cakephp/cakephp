@@ -112,8 +112,6 @@ class ShellDispatcher {
  * @return boolean Success.
  */
 	protected function _bootstrap() {
-		$this->setErrorHandlers();
-
 		if (!Configure::read('App.fullBaseUrl')) {
 			Configure::write('App.fullBaseUrl', 'http://localhost');
 		}
@@ -122,46 +120,13 @@ class ShellDispatcher {
 	}
 
 /**
- * Set the error/exception handlers for the console
- *
- * @return void
- */
-	public function setErrorHandlers() {
-		$error = Configure::read('Error');
-		$exception = Configure::read('Exception');
-
-		$errorHandler = new ConsoleErrorHandler();
-		if (empty($error['consoleHandler'])) {
-			$error['consoleHandler'] = array($errorHandler, 'handleError');
-			Configure::write('Error', $error);
-		}
-		if (empty($exception['consoleHandler'])) {
-			$exception['consoleHandler'] = array($errorHandler, 'handleException');
-			Configure::write('Exception', $exception);
-		}
-		set_error_handler($error['consoleHandler'], Configure::read('Error.level'));
-	}
-
-/**
  * Dispatches a CLI request
  *
  * @return integer The cli command exit code. 0 is success.
  */
 	public function dispatch() {
-		try {
-			$exit = 0;
-			$this->_dispatch();
-		} catch (\Exception $e) {
-			$handler = Configure::read('Exception.consoleHandler');
-			if (is_callable($handler)) {
-				$exit = call_user_func($handler, $e);
-			} else {
-				echo __d('cake_console', "An exception occured\n");
-				echo __d('cake_console', "But the configured Exception.consoleHandler is not callable\n");
-				echo $e->getMessage() . "\n";
-				echo $e->getTraceAsString() . "\n";
-			}
-		}
+		$exit = 0;
+		$this->_dispatch();
 		return $exit;
 	}
 
