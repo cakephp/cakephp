@@ -19,28 +19,85 @@ namespace Cake\ORM;
 use \IteratorAggregate;
 use \ArrayIterator;
 
+/**
+ * Implements a simplistic version of the popular Map-Reduce algorithm. Acts
+ * like an iterator for the original passed data after each result has been
+ * processed, thus offering a transparent wrapper for results coming from any
+ * source.
+ */
 class MapReduce implements IteratorAggregate {
 
+/**
+ * Holds the shuffled results that were emitted from the map
+ * phase
+ *
+ * @var array
+ */
 	protected $_intermediate = [];
 
+/**
+ * Holds the results as emitted during the reduce phase
+ *
+ * @var array
+ */
 	protected $_result = [];
 
+/**
+ * Whether the Map-Reduce routine has been executed already on the data
+ *
+ * @var boolean
+ */
 	protected $_executed = false;
 
+/**
+ * Holds the original data that needs to be processed
+ *
+ * @return \Traversable
+ */
 	protected $_data;
 
+/**
+ * A callable that will be executed for each record in the original data
+ *
+ * @var callable
+ */
 	protected $_mapper;
 
+/**
+ * A callable that will be executed for each intermediate record emitted during
+ * the Map phase
+ *
+ * @var callable
+ */
 	protected $_reducer;
 
+/**
+ * Count of elements emitted during the Reduce phase
+ *
+ * @var string
+ */
 	protected $_counter = 0;
 
-	public function __construct($data, array $routines) {
+/**
+ * Constructor
+ *
+ * @param \Traversable $data the original data to be processed
+ * @param array $routines containing the keys `mapper` and `reducer`
+ * and callables as values
+ * @return void
+ */
+	public function __construct(\Traversable $data, array $routines) {
 		$this->_data = $data;
 		$this->_mapper = $routines['mapper'];
 		$this->_reducer = isset($routines['reducer']) ? $routines['reducer'] : null;
 	}
 
+/**
+ * Returns an iterator with the end result of running the Map and Reduce
+ * phases on the original data
+ *
+ * @return \ArrayIterator
+ */
 	public function getIterator() {
 		if (!$this->_executed) {
 			$this->_execute();
@@ -48,19 +105,43 @@ class MapReduce implements IteratorAggregate {
 		return new ArrayIterator($this->_result);
 	}
 
-	public function emitIntermediate($key, $value) {
-		$this->_intermediate[$key][] = $value;
+/**
+ * Appends a new record to the bucket labelled with $key, usually as a result
+ * of mapping a single record from the original data.
+ *
+ * @param string $bucket the name of the bucket where to put the record
+ * @param mixed $value the record itself to store in the bucket
+ * @return void
+ */
+	public function emitIntermediate($bucket, $value) {
+		$this->_intermediate[$bucket][] = $value;
 	}
 
-	public function emit($value, $slot = null) {
-		$this->_result[$slot === null ? $this->_counter : $slot] = $value;
+/**
+ * Appends a new record to the final list of results an optionally assign a key
+ * for this record.
+ *
+ * @param mixed $value The value to be appended to the final list of results
+ * @param string $key and optional key to assign to the value
+ * @return void
+ */
+	public function emit($value, $key = null) {
+		$this->_result[$key === null ? $this->_counter : $key] = $value;
 		$this->_counter++;
 	}
 
+/**
+ * Runs the actual Map-Reduce algorithm. This is iterate the original data
+ * and call the mapper function for each , then for each intermediate
+ * bucket created during the Map phase call the reduce function.
+ *
+ * @return void
+ */
 	protected function _execute() {
 		foreach ($this->_data as $key => $value) {
 			$this->_mapper->__invoke($key, $value, $this);
 		}
+		$this->_data = null;
 
 		foreach ($this->_intermediate as $key => $list) {
 			$this->_reducer->__invoke($key, $list, $this);
