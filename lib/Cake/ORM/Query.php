@@ -67,8 +67,6 @@ class Query extends DatabaseQuery {
  */
 	protected $_loadEagerly = [];
 
-	protected $_mapReduce = [];
-
 /**
  * List of options accepted by associations in contain()
  * index by key for faster access
@@ -102,7 +100,13 @@ class Query extends DatabaseQuery {
  */
 	protected $_useBufferedResults = false;
 
-	protected $_formatters = [];
+/**
+ * List of map-reduce routines that should be applied over the query
+ * result
+ *
+ * @var array
+ */
+	protected $_mapReduce = [];
 
 /**
  * @param Cake\Database\Connection $connection
@@ -353,11 +357,6 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
-	public function formatResults($current = null, $key = null) {
-		$this->_formatters[] = compact('current', 'key');
-		return $this;
-	}
-
 /**
  * Set the result set for a query.
  *
@@ -384,7 +383,7 @@ class Query extends DatabaseQuery {
  * Resulting object is traversable, so it can be used in any loop as you would
  * with an array.
  *
- * @return Cake\ORM\ResultSet
+ * @return Cake\ORM\ResultCollectionTrait
  */
 	public function execute() {
 		if (isset($this->_results)) {
@@ -393,7 +392,7 @@ class Query extends DatabaseQuery {
 		if ($this->_useBufferedResults) {
 			return $this->_applyFormatters(new BufferedResultSet($this, parent::execute()));
 		}
-		return  $this->_applyFormatters(new ResultSet($this, parent::execute()));
+		return $this->_applyFormatters(new ResultSet($this, parent::execute()));
 	}
 
 /**
@@ -527,7 +526,10 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
-	public function mapReduce(callable $mapper, callable $reducer = null) {
+	public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false) {
+		if ($overwrite) {
+			$this->_mapReduce = [];
+		}
 		$this->_mapReduce[] = compact('mapper', 'reducer');
 		return $this;
 	}
