@@ -119,7 +119,6 @@ class MergePostsController extends MergeVarPluginAppController {
 	public $uses = array();
 }
 
-
 /**
  * Test Case for Controller Merging of Vars.
  *

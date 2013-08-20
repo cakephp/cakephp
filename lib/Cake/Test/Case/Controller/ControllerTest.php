@@ -50,7 +50,6 @@ class ControllerTestAppController extends Controller {
 	public $components = array('Cookie');
 }
 
-
 /**
  * ControllerPost class
  *
