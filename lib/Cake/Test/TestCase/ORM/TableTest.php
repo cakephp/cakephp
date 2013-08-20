@@ -539,6 +539,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 	}
 
+/**
+ * Tests find('threaded')
+ *
+ * @return void
+ */
 	public function testFindThreaded() {
 		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
 		$expected = [

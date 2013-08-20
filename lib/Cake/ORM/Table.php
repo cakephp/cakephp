@@ -513,8 +513,7 @@ class Table {
 	}
 
 /**
- * Applies the options required to find all records on this table based
- * on the passed options.
+ * Returns the query as passed
  *
  * @param \Cake\ORM\Query $query
  * @param array $options
@@ -524,6 +523,27 @@ class Table {
 		return $query;
 	}
 
+/**
+ * Sets up a query object so results appear as an indexed array, useful for any
+ * place where you would want a list such as for populating input select boxes.
+ *
+ * When calling this finder, the fields passed are used to determine what should
+ * be used as the array key, value and optionally what to group the results by.
+ * By default the primary key for the model is used for the key, and the display
+ * field.
+ *
+ * The results of this finder will be in the following form:
+ *
+ *	[
+ *		1 => 'value for id 1',
+ *		2 => 'value for id 2',
+ *		4 => 'value for id 4'
+ *	]
+ *
+ * @param \Cake\ORM\Query $query
+ * @param array $options
+ * @return \Cake\ORM\Query
+ */
 	public function findList(Query $query, array $options = []) {
 		$mapper = function($key, $row, $mr) use (&$columns) {
 			if (empty($columns)) {
@@ -551,6 +571,17 @@ class Table {
 		return $query->mapReduce($mapper, $reducer);
 	}
 
+/**
+ * Results for this finder will be a nested array, and is appropriate if you want
+ * to use the parent_id field of your model data to build nested results.
+ *
+ * Values belonging to a parent row based on their parent_id value will be
+ * recursively nested inside the parent row values using the `children` property
+ *
+ * @param \Cake\ORM\Query $query
+ * @param array $options
+ * @return \Cake\ORM\Query
+ */
 	public function findThreaded(Query $query, array $options = []) {
 		$parents = [];
 		$mapper = function($key, $row, $mr) use (&$parents) {
