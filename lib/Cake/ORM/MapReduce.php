@@ -24,6 +24,8 @@ use \ArrayIterator;
  * like an iterator for the original passed data after each result has been
  * processed, thus offering a transparent wrapper for results coming from any
  * source.
+ *
+ *
  */
 class MapReduce implements IteratorAggregate {
 
@@ -80,6 +82,23 @@ class MapReduce implements IteratorAggregate {
 
 /**
  * Constructor
+ *
+ * ## Example:
+ *
+ * Separate all unique odd and even number in an array
+ *
+ * {{{
+ *	$data = new \ArrayObject([1, 2, 3, 4, 5, 3]);
+ *	$mapper = function ($key, $value, $mr) {
+ *		$type = ($value % 2 === 0) ? 'even' : 'odd';
+ *		$mr->emitIntermediate($type, $value);
+ *	};
+ *
+ *	$reducer = function ($type, $numbers, $mr) {
+ *		$mr->emit(array_unique($numbers), $type);
+ *	};
+ *	$results = new MapReduce($data, compact('mapper', 'reducer'));
+ * }}}
  *
  * @param \Traversable $data the original data to be processed
  * @param array $routines containing the keys `mapper` and `reducer`
