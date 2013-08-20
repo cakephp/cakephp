@@ -36,8 +36,8 @@ class ConsoleErrorHandlerTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->Error = $this->getMock('Cake\Console\ConsoleErrorHandler', ['_stop']);
-		ConsoleErrorHandler::$stderr = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$this->stderr = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$this->Error = new ConsoleErrorHandler(['stderr' => $this->stderr]);
 	}
 
 /**
@@ -57,7 +57,7 @@ class ConsoleErrorHandlerTest extends TestCase {
  */
 	public function testHandleError() {
 		$content = "<error>Notice Error:</error> This is a notice error in [/some/file, line 275]\n";
-		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
+		$this->stderr->expects($this->once())->method('write')
 			->with($content);
 
 		$this->Error->handleError(E_NOTICE, 'This is a notice error', '/some/file', 275);
@@ -70,7 +70,7 @@ class ConsoleErrorHandlerTest extends TestCase {
  */
 	public function testHandleFatalError() {
 		$content = "<error>Fatal Error Error:</error> This is a fatal error in [/some/file, line 275]\n";
-		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
+		$this->stderr->expects($this->once())->method('write')
 			->with($content);
 
 		$this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
@@ -83,7 +83,7 @@ class ConsoleErrorHandlerTest extends TestCase {
  */
 	public function testCakeErrors() {
 		$exception = new Error\MissingActionException('Missing action');
-		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
+		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Missing action'));
 
 		$result = $this->Error->handleException($exception);
@@ -98,7 +98,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 	public function testNonCakeExceptions() {
 		$exception = new \InvalidArgumentException('Too many parameters.');
 
-		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
+		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Too many parameters.'));
 
 		$result = $this->Error->handleException($exception);
@@ -113,7 +113,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 	public function testError404Exception() {
 		$exception = new Error\NotFoundException('dont use me in cli.');
 
-		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
+		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
 		$result = $this->Error->handleException($exception);
@@ -128,7 +128,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 	public function testError500Exception() {
 		$exception = new Error\InternalErrorException('dont use me in cli.');
 
-		ConsoleErrorHandler::$stderr->expects($this->once())->method('write')
+		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
 		$result = $this->Error->handleException($exception);

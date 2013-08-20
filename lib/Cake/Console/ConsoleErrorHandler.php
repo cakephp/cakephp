@@ -20,8 +20,6 @@ use Cake\Error\ErrorHandler;
 /**
  * Error Handler for Cake console. Does simple printing of the
  * exception that occurred and the stack trace of the error.
- *
- * @package       Cake.Console
  */
 class ConsoleErrorHandler {
 
@@ -30,18 +28,41 @@ class ConsoleErrorHandler {
  *
  * @var ConsoleOutput
  */
-	public static $stderr;
+	protected $_stderr;
 
 /**
- * Get the stderr object for the console error handling.
+ * Options for this instance.
  *
- * @return ConsoleOutput
+ * @var array
  */
-	public static function getStderr() {
-		if (empty(static::$stderr)) {
-			static::$stderr = new ConsoleOutput('php://stderr');
+	protected $_options;
+
+/**
+ * Constructor
+ *
+ * @param array $options Options for the error handler.
+ */
+	public function __construct($options = []) {
+		if (empty($options['stderr'])) {
+			$options['stderr'] = new ConsoleOutput('php://stderr');
 		}
-		return static::$stderr;
+		$this->_stderr = $options['stderr'];
+		$this->_options = $options;
+	}
+
+/**
+ * Register the error and exception handlers
+ *
+ * @return void
+ */
+	public function register() {
+		$level = -1;
+		if (isset($this->_options['errorLevel'])) {
+			$level = $this->_options['errorLevel'];
+		}
+		error_reporting($level);
+		set_error_handler([$this, 'handleError'], $level);
+		set_exception_handler([$this, 'handleException']);
 	}
 
 /**
@@ -50,9 +71,8 @@ class ConsoleErrorHandler {
  * @param Exception $exception The exception to handle
  * @return integer Exit code from exception caught.
  */
-	public static function handleException(\Exception $exception) {
-		$stderr = static::getStderr();
-		$stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
+	public function handleException(\Exception $exception) {
+		$this->_stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
 			$exception->getMessage(),
 			$exception->getTraceAsString()
 		));
@@ -70,14 +90,13 @@ class ConsoleErrorHandler {
  * @param array $context The backtrace of the error.
  * @return void
  */
-	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
+	public function handleError($code, $description, $file = null, $line = null, $context = null) {
 		if (error_reporting() === 0) {
 			return;
 		}
-		$stderr = static::getStderr();
 		list($name, $log) = ErrorHandler::mapErrorCode($code);
 		$message = __d('cake_console', '%s in [%s, line %s]', $description, $file, $line);
-		$stderr->write(__d('cake_console', "<error>%s Error:</error> %s\n", $name, $message));
+		$this->_stderr->write(__d('cake_console', "<error>%s Error:</error> %s\n", $name, $message));
 
 		if (!Configure::read('debug')) {
 			Log::write($log, $message);
