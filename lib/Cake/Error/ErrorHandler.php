@@ -84,7 +84,7 @@ use Cake\Utility\Debugger;
  *
  * @see ExceptionRenderer for more information on how to customize exception rendering.
  */
-class ErrorHandler {
+class ErrorHandler extends BaseErrorHandler {
 
 /**
  * Options to use for the Error handling.
@@ -105,21 +105,6 @@ class ErrorHandler {
 			'exceptionRenderer' => 'Cake\Error\ExceptionRenderer',
 		];
 		$this->_options = array_merge($defaults, $options);
-	}
-
-/**
- * Register the error and exception handlers.
- *
- * @return void
- */
-	public function register() {
-		$level = -1;
-		if (isset($this->_options['errorLevel'])) {
-			$level = $this->_options['errorLevel'];
-		}
-		error_reporting($level);
-		set_error_handler([$this, 'handleError'], $level);
-		set_exception_handler([$this, 'handleException']);
 	}
 
 /**
@@ -207,50 +192,21 @@ class ErrorHandler {
 	}
 
 /**
- * Set as the default error handler by CakePHP. Use Configure::write('Error.handler', $callback), to use your own
- * error handling methods. This function will use Debugger to display errors when debug > 0. And
- * will log errors to Log, when debug == 0.
+ * Display an error.
  *
- * You can use Configure::write('Error.level', $value); to set what type of errors will be handled here.
- * Stack traces for errors can be enabled with Configure::write('Error.trace', true);
+ * Template method of BaseErrorHandler.
  *
- * @param integer $code Code of error
- * @param string $description Error description
- * @param string $file File on which error occurred
- * @param integer $line Line that triggered the error
- * @param array $context Context
- * @return boolean true if error was handled
+ * Only when debug > 2 will a formatted error be displayed.
+ *
+ * @param array $error An array of error data.
+ * @param boolean $debug Whether or not the app is in debug mode.
+ * @return void
  */
-	public function handleError($code, $description, $file = null, $line = null, $context = null) {
-		if (error_reporting() === 0) {
-			return false;
+	protected function _displayError($error, $debug) {
+		if (!$debug) {
+			return;
 		}
-		list($error, $log) = static::mapErrorCode($code);
-		if ($log === LOG_ERR) {
-			return $this->handleFatalError($code, $description, $file, $line);
-		}
-
-		$debug = Configure::read('debug');
-		if ($debug) {
-			$data = array(
-				'level' => $log,
-				'code' => $code,
-				'error' => $error,
-				'description' => $description,
-				'file' => $file,
-				'line' => $line,
-				'context' => $context,
-				'start' => 2,
-				'path' => Debugger::trimPath($file)
-			);
-			return Debugger::getInstance()->outputError($data);
-		}
-		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
-		if (!empty($this->_options['trace'])) {
-			$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
-			$message .= "\nTrace:\n" . $trace . "\n";
-		}
-		return Log::write($log, $message);
+		Debugger::getInstance()->outputError($error);
 	}
 
 /**
@@ -278,46 +234,7 @@ class ErrorHandler {
 		return false;
 	}
 
-/**
- * Map an error code into an Error word, and log location.
- *
- * @param integer $code Error code to map
- * @return array Array of error word, and log location.
- */
-	public static function mapErrorCode($code) {
-		$error = $log = null;
-		switch ($code) {
-			case E_PARSE:
-			case E_ERROR:
-			case E_CORE_ERROR:
-			case E_COMPILE_ERROR:
-			case E_USER_ERROR:
-				$error = 'Fatal Error';
-				$log = LOG_ERR;
-				break;
-			case E_WARNING:
-			case E_USER_WARNING:
-			case E_COMPILE_WARNING:
-			case E_RECOVERABLE_ERROR:
-				$error = 'Warning';
-				$log = LOG_WARNING;
-				break;
-			case E_NOTICE:
-			case E_USER_NOTICE:
-				$error = 'Notice';
-				$log = LOG_NOTICE;
-				break;
-			case E_STRICT:
-				$error = 'Strict';
-				$log = LOG_NOTICE;
-				break;
-			case E_DEPRECATED:
-			case E_USER_DEPRECATED:
-				$error = 'Deprecated';
-				$log = LOG_NOTICE;
-				break;
-		}
-		return array($error, $log);
+	protected function _displayException($exception) {
 	}
 
 }
