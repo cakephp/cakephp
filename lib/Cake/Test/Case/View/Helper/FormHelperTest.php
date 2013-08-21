@@ -6992,6 +6992,23 @@ class FormHelperTest extends CakeTestCase {
 			'Delete',
 			'/a'
 		));
+
+		$result = $this->Form->postLink(
+			'',
+			array('controller' => 'items', 'action' => 'delete', 10),
+			array('class' => 'btn btn-danger', 'escape' => false),
+			'Confirm thing'
+		);
+		$this->assertTags($result, array(
+			'form' => array(
+				'method' => 'post', 'action' => '/items/delete/10',
+				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+			),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/form',
+			'a' => array('class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/if \(confirm\(\'Confirm thing\'\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
+			'/a'
+		));
 	}
 
 /**
