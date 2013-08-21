@@ -16,6 +16,7 @@ namespace Cake\Error;
 
 use Cake\Core\Configure;
 use Cake\Log\Log;
+use Cake\Routing\Router;
 use Cake\Utility\Debugger;
 
 /**
@@ -84,12 +85,28 @@ abstract class BaseErrorHandler {
 		if ($debug) {
 			$data += [
 				'context' => $context,
-				'start' => 2,
+				'start' => 3,
 				'path' => Debugger::trimPath($file)
 			];
 		}
 		$this->_displayError($data, $debug);
 		$this->_logError($log, $data);
+	}
+
+/**
+ * Handle uncaught exceptions.
+ *
+ * Uses a template method provided by subclasses to display errors in an
+ * environment appropriate way.
+ *
+ * @param \Exception $exception
+ * @return void
+ * @throws Exception When renderer class not found
+ * @see http://php.net/manual/en/function.set-exception-handler.php
+ */
+	public function handleException($exception) {
+		$this->_displayException($exception);
+		$this->_logException($exception);
 	}
 
 /**
@@ -149,6 +166,55 @@ abstract class BaseErrorHandler {
 	}
 
 /**
+ * Handles exception logging
+ *
+ * @param Exception $exception
+ * @return boolean
+ */
+	protected function _logException($exception) {
+		$config = $this->_options;
+		if (empty($config['log'])) {
+			return false;
+		}
+
+		if (!empty($config['skipLog'])) {
+			foreach ((array)$config['skipLog'] as $class) {
+				if ($exception instanceof $class) {
+					return false;
+				}
+			}
+		}
+		return Log::error($this->_getMessage($exception));
+	}
+
+/**
+ * Generates a formatted error message
+ *
+ * @param Exception $exception Exception instance
+ * @return string Formatted message
+ */
+	protected function _getMessage($exception) {
+		$message = sprintf("[%s] %s",
+			get_class($exception),
+			$exception->getMessage()
+		);
+		if (method_exists($exception, 'getAttributes')) {
+			$attributes = $exception->getAttributes();
+			if ($attributes) {
+				$message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
+			}
+		}
+		if (php_sapi_name() !== 'cli') {
+			$request = Router::getRequest();
+			if ($request) {
+				$message .= "\nRequest URL: " . $request->here();
+			}
+		}
+		$message .= "\nStack Trace:\n" . $exception->getTraceAsString();
+		return $message;
+	}
+
+/**
  * Map an error code into an Error word, and log location.
  *
  * @param integer $code Error code to map
@@ -189,6 +255,5 @@ abstract class BaseErrorHandler {
 		}
 		return array($error, $log);
 	}
-
 
 }

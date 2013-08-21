@@ -21,8 +21,6 @@ use Cake\Utility\Inflector;
 
 /**
  * Shell dispatcher handles dispatching cli commands.
- *
- * @package       Cake.Console
  */
 class ShellDispatcher {
 

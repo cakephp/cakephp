@@ -14,10 +14,8 @@
  */
 namespace Cake\Console;
 
-use Cake\Core\Configure;
 use Cake\Error\FatalErrorException;
 use Cake\Error\BaseErrorHandler;
-use Cake\Error\ErrorHandler;
 
 /**
  * Error Handler for Cake console. Does simple printing of the
@@ -53,12 +51,12 @@ class ConsoleErrorHandler extends BaseErrorHandler {
 	}
 
 /**
- * Handle a exception in the console environment. Prints a message to stderr.
+ * Prints an exception to stderr.
  *
  * @param Exception $exception The exception to handle
- * @return integer Exit code from exception caught.
+ * @return void
  */
-	public function handleException(\Exception $exception) {
+	protected function _displayException($exception) {
 		$errorName = __d('cake_console', 'Error:');
 		if ($exception instanceof FatalErrorException) {
 			$errorName = __d('cake_console', 'Fatal Error:');
@@ -72,10 +70,6 @@ class ConsoleErrorHandler extends BaseErrorHandler {
 			$exception->getTraceAsString()
 		);
 		$this->_stderr->write($message);
-		return $exception->getCode() ?: 1;
-	}
-
-	protected function _displayException($exception) {
 	}
 
 /**

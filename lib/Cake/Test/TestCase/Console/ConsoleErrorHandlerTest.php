@@ -84,8 +84,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains($message));
 
-		$result = $this->Error->handleException($exception);
-		$this->assertEquals(404, $result);
+		$this->Error->handleException($exception);
 	}
 
 /**
@@ -99,8 +98,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('Too many parameters.'));
 
-		$result = $this->Error->handleException($exception);
-		$this->assertEquals(1, $result);
+		$this->Error->handleException($exception);
 	}
 
 /**
@@ -114,8 +112,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
-		$result = $this->Error->handleException($exception);
-		$this->assertEquals(404, $result);
+		$this->Error->handleException($exception);
 	}
 
 /**
@@ -129,8 +126,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains('dont use me in cli.'));
 
-		$result = $this->Error->handleException($exception);
-		$this->assertEquals(500, $result);
+		$this->Error->handleException($exception);
 	}
 
 }

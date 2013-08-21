@@ -17,9 +17,6 @@
 namespace Cake\Error;
 
 use Cake\Core\App;
-use Cake\Core\Configure;
-use Cake\Log\Log;
-use Cake\Routing\Router;
 use Cake\Utility\Debugger;
 
 /**
@@ -108,90 +105,6 @@ class ErrorHandler extends BaseErrorHandler {
 	}
 
 /**
- * Set as the default exception handler by the CakePHP bootstrap process.
- *
- * This will either use custom exception renderer class if configured,
- * or use the default ExceptionRenderer.
- *
- * @param \Exception $exception
- * @return void
- * @throws Exception When renderer class not found
- * @see http://php.net/manual/en/function.set-exception-handler.php
- */
-	public function handleException(\Exception $exception) {
-		$config = $this->_options;
-		self::_log($exception, $config);
-
-		$renderer = isset($config['exceptionRenderer']) ? $config['exceptionRenderer'] : 'Cake\Error\ExceptionRenderer';
-		$renderer = App::classname($renderer, 'Error');
-		try {
-			if (!$renderer) {
-				throw new \Exception("$renderer is an invalid class.");
-			}
-			$error = new $renderer($exception);
-			$error->render();
-		} catch (\Exception $e) {
-			// Disable trace for internal errors.
-			$this->_options['trace'] = false;
-			$message = sprintf("[%s] %s\n%s", // Keeping same message format
-				get_class($e),
-				$e->getMessage(),
-				$e->getTraceAsString()
-			);
-			trigger_error($message, E_USER_ERROR);
-		}
-	}
-
-/**
- * Generates a formatted error message
- *
- * @param Exception $exception Exception instance
- * @return string Formatted message
- */
-	protected static function _getMessage($exception) {
-		$message = sprintf("[%s] %s",
-			get_class($exception),
-			$exception->getMessage()
-		);
-		if (method_exists($exception, 'getAttributes')) {
-			$attributes = $exception->getAttributes();
-			if ($attributes) {
-				$message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
-			}
-		}
-		if (php_sapi_name() !== 'cli') {
-			$request = Router::getRequest();
-			if ($request) {
-				$message .= "\nRequest URL: " . $request->here();
-			}
-		}
-		$message .= "\nStack Trace:\n" . $exception->getTraceAsString();
-		return $message;
-	}
-
-/**
- * Handles exception logging
- *
- * @param Exception $exception
- * @param array $config
- * @return boolean
- */
-	protected static function _log(\Exception $exception, $config) {
-		if (empty($config['log'])) {
-			return false;
-		}
-
-		if (!empty($config['skipLog'])) {
-			foreach ((array)$config['skipLog'] as $class) {
-				if ($exception instanceof $class) {
-					return false;
-				}
-			}
-		}
-		return Log::write('error', self::_getMessage($exception));
-	}
-
-/**
  * Display an error.
  *
  * Template method of BaseErrorHandler.
@@ -210,31 +123,29 @@ class ErrorHandler extends BaseErrorHandler {
 	}
 
 /**
- * Generate an error page when some fatal error happens.
+ * Displays an exception response body.
  *
- * @param integer $code Code of error
- * @param string $description Error description
- * @param string $file File on which error occurred
- * @param integer $line Line that triggered the error
- * @return boolean
+ * @param \Exception $exception The exception to display
+ * @return void
  */
-	public function handleFatalError($code, $description, $file, $line) {
-		$logMessage = 'Fatal Error (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
-		Log::write(LOG_ERR, $logMessage);
-
-		if (ob_get_level()) {
-			ob_end_clean();
-		}
-
-		if (Configure::read('debug')) {
-			$this->handleException(new FatalErrorException($description, 500, $file, $line));
-		} else {
-			$this->handleException(new InternalErrorException());
-		}
-		return false;
-	}
-
 	protected function _displayException($exception) {
+		$renderer = App::classname($this->_options['exceptionRenderer'], 'Error');
+		try {
+			if (!$renderer) {
+				throw new \Exception("$renderer is an invalid class.");
+			}
+			$error = new $renderer($exception);
+			$error->render();
+		} catch (\Exception $e) {
+			// Disable trace for internal errors.
+			$this->_options['trace'] = false;
+			$message = sprintf("[%s] %s\n%s", // Keeping same message format
+				get_class($e),
+				$e->getMessage(),
+				$e->getTraceAsString()
+			);
+			trigger_error($message, E_USER_ERROR);
+		}
 	}
 
 }
