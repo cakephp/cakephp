@@ -125,9 +125,7 @@ class ShellDispatcher {
  * @return integer The cli command exit code. 0 is success.
  */
 	public function dispatch() {
-		$exit = 0;
-		$this->_dispatch();
-		return $exit;
+		return $this->_dispatch() === true ? 0 : 1;
 	}
 
 /**
@@ -160,6 +158,7 @@ class ShellDispatcher {
 			$Shell->loadTasks();
 			return $Shell->runCommand($command, $this->args);
 		}
+
 		$methods = array_diff(get_class_methods($Shell), get_class_methods('Cake\Console\Shell'));
 		$added = in_array($command, $methods);
 		$private = $command[0] === '_' && method_exists($Shell, $command);
