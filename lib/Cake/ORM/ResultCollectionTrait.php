@@ -21,7 +21,7 @@ use \JsonSerializable;
 use \Serializable;
 
 /**
- * Common set of methods that any specif ResultSet implementation
+ * Common set of methods that any specific ResultSet implementation
  * should contain
  */
 trait ResultCollectionTrait {

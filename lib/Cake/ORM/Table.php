@@ -530,7 +530,7 @@ class Table {
  * When calling this finder, the fields passed are used to determine what should
  * be used as the array key, value and optionally what to group the results by.
  * By default the primary key for the model is used for the key, and the display
- * field.
+ * field as value.
  *
  * The results of this finder will be in the following form:
  *

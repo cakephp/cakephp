@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 class MapReduceTest extends TestCase {
 
 /**
- * Tests the creating an inversed index of words to documents using
+ * Tests the creation of an inversed index of words to documents using
  * MapReduce
  *
  * @return void
@@ -109,7 +109,7 @@ class MapReduceTest extends TestCase {
 	}
 
 /**
- * Tests that the mapper should be invokable
+ * Tests that the reducer should be invokable
  *
  * @expectedException \InvalidArgumentException
  * @expectedExceptionMessage Can only pass invokable objects to MapReduce
