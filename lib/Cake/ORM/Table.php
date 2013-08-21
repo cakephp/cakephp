@@ -545,27 +545,27 @@ class Table {
  * @return \Cake\ORM\Query
  */
 	public function findList(Query $query, array $options = []) {
-		$mapper = function($key, $row, $mr) use (&$columns) {
+		$mapper = function($key, $row, $mapReduce) use (&$columns) {
 			if (empty($columns)) {
 				$columns = array_slice(array_keys($row), 0, 3);
 			}
 
 			list($rowKey, $rowVal) = $columns;
 			if (!isset($columns[2])) {
-				$mr->emit($row[$rowVal], $row[$rowKey]);
+				$mapReduce->emit($row[$rowVal], $row[$rowKey]);
 				return;
 			}
 
 			$key = $row[$columns[2]];
-			$mr->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
+			$mapReduce->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
 		};
 
-		$reducer = function($key, $values, $mr) {
+		$reducer = function($key, $values, $mapReduce) {
 			$result = [];
 			foreach ($values as $value) {
 				$result += $value;
 			}
-			$mr->emit($result, $key);
+			$mapReduce->emit($result, $key);
 		};
 
 		return $query->mapReduce($mapper, $reducer);
@@ -584,16 +584,16 @@ class Table {
  */
 	public function findThreaded(Query $query, array $options = []) {
 		$parents = [];
-		$mapper = function($key, $row, $mr) use (&$parents) {
+		$mapper = function($key, $row, $mapReduce) use (&$parents) {
 			$parents[$row['id']] =& $row;
-			$mr->emitIntermediate($row['parent_id'], $row['id']);
+			$mapReduce->emitIntermediate($row['parent_id'], $row['id']);
 		};
 
-		$reducer = function($key, $values, $mr) use (&$parents) {
+		$reducer = function($key, $values, $mapReduce) use (&$parents) {
 			if (empty($key) || !isset($parents[$key])) {
 				foreach ($values as $id) {
 					$parents[$id] = new \ArrayObject($parents[$id]);
-					$mr->emit($parents[$id]);
+					$mapReduce->emit($parents[$id]);
 				}
 				return;
 			}
@@ -602,8 +602,8 @@ class Table {
 			}
 		};
 
-		$formatter = function($key, $row, $mr) {
-			$mr->emit($row->getArrayCopy());
+		$formatter = function($key, $row, $mapReduce) {
+			$mapReduce->emit($row->getArrayCopy());
 		};
 		return $query->mapReduce($mapper, $reducer)->mapReduce($formatter);
 	}
