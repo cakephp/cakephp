@@ -785,8 +785,8 @@ class Query extends DatabaseQuery {
  * @throws \BadMethodCallException
  */
 	public function __call($method, $args) {
-		array_unshift($args, $this);
-		return $this->repository()->__call($method, $args);
+		$options = array_shift($args) ?: [];
+		return $this->repository()->callFinder($method, $this, $options);
 	}
 
 }

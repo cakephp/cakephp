@@ -661,6 +661,28 @@ class Table {
 	}
 
 /**
+ * Calls a finder method directly and applies it to the passed query,
+ * if no query is passed a new one will be created and returned
+ *
+ * @param string $type name of the finder to be called
+ * @param \Cake\ORM\Query $query The query object to apply the finder options to
+ * @param array $args List of options to pass to the finder
+ * @return \Cake\ORM\Query
+ * @throws \BadMethodCallException
+ */
+	public function callFinder($type, Query $query = null, $options = []) {
+		if (!method_exists($this, 'find' . ucfirst($type))) {
+			throw new \BadMethodCallException(
+				__d('cake_dev', 'Unknown table method %s', $type)
+			);
+		}
+		if ($query === null) {
+			return $this->find($type, $options);
+		}
+		return $this->{'find' . ucfirst($type)}($query, $options);
+	}
+
+/**
  * Magic method to be able to call scoped finders without the
  * find prefix
  *
@@ -670,16 +692,12 @@ class Table {
  * @throws \BadMethodCallException
  */
 	public function __call($method, $args) {
-		if (method_exists($this, 'find' . ucfirst($method))) {
-			if (current($args) instanceof Query) {
-				$query = array_shift($args);
-				$options = current($args) ?: [];
-				return $this->{'find' . ucfirst($method)}($query, $options);
-			}
-			$options = current($args) ?: [];
-			return $this->find($method, $options);
+		$query = null;
+		if (isset($args[0]) && $args[0] instanceof Query) {
+			$query = array_shift($args);
 		}
-		throw new \BadMethodCallException('Unknown table method ' . $method);
+		$options = array_shift($args) ?: [];
+		return $this->callFinder($method, $query, $options);
 	}
 
 }

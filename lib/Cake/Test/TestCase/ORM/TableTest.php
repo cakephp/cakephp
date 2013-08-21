@@ -639,10 +639,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table->expects($this->once())
 			->method('findList')
-			->with($query)
+			->with($query, ['keyPath' => 'id'])
 			->will($this->returnValue($query));
-	
-		$result = $table->threaded(['order' => ['name' => 'ASC']])->list();
+
+		$result = $table
+			->threaded(['order' => ['name' => 'ASC']])
+			->list(['keyPath' => 'id']);
 		$this->assertSame($query, $result);
 	}
 
