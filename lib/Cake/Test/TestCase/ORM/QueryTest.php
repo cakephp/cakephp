@@ -990,15 +990,9 @@ class QueryTest extends TestCase {
 		$query = $this->getMock('\Cake\ORM\Query', ['executeStatement'], $params);
 
 		$statement = $this->getMock('\Database\StatementInterface', ['fetch']);
-		$statement->expects($this->at(0))
+		$statement->expects($this->exactly(3))
 			->method('fetch')
-			->will($this->returnValue(['a' => 1]));
-		$statement->expects($this->at(1))
-			->method('fetch')
-			->will($this->returnValue(['a' => 2]));
-		$statement->expects($this->at(2))
-			->method('fetch')
-			->will($this->returnValue(false));
+			->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));
 
 		$query->expects($this->once())
 			->method('executeStatement')
