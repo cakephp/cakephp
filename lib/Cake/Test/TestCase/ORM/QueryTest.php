@@ -998,10 +998,16 @@ class QueryTest extends TestCase {
 			->method('executeStatement')
 			->will($this->returnValue($statement));
 
-		$query->mapReduce(function($k, $v, $mr) { $mr->emit($v['a']); });
+		$query->mapReduce(function($k, $v, $mr) {
+			$mr->emit($v['a']);
+		});
 		$query->mapReduce(
-			function($k, $v, $mr) { $mr->emitIntermediate($k, $v); },
-			function($k, $v, $mr) { $mr->emit($v[0] + 1); }
+			function($k, $v, $mr) {
+				$mr->emitIntermediate($k, $v);
+			},
+			function($k, $v, $mr) {
+				$mr->emit($v[0] + 1);
+			}
 		);
 
 		$this->assertEquals([2, 3], iterator_to_array($query->execute()));
