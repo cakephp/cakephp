@@ -38,7 +38,6 @@ use Cake\Utility\Debugger;
  * gives you different amounts of control over the exception handling process.
  *
  * - Modify App/Config/error.php and setup custom exception handling.
- * - Create AppController::appError();
  * - Use the `exceptionRenderer` option to inject an Exception renderer. This will
  *   let you keep the existing handling logic but override the rendering logic.
  *
@@ -46,12 +45,6 @@ use Cake\Utility\Debugger;
  *
  * This gives you full control over the exception handling process. The class you choose should be
  * loaded in your app/Config/error.php and registered as the default exception handler.
- *
- * #### Using `AppController::appError();`
- *
- * This controller method is called instead of the default exception rendering. It receives the
- * thrown exception as its only argument. You should implement your error handling in that method.
- * Using AppController::appError(), will supersede any default exception handlers.
  *
  * #### Using a custom renderer with `exceptionRenderer`
  *
