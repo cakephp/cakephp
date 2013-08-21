@@ -1,7 +1,5 @@
 <?php
 /**
- * ConsoleErrorHandler Test case
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -24,8 +22,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * ConsoleErrorHandler Test case.
- *
- * @package       Cake.Test.Case.Console
  */
 class ConsoleErrorHandlerTest extends TestCase {
 

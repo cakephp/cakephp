@@ -43,6 +43,7 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
+
 		App::build(array(
 			'View' => array(
 				CAKE . 'Test/TestApp/View/'
@@ -154,7 +155,7 @@ class ErrorHandlerTest extends TestCase {
 
 		$this->_logger->expects($this->once())
 			->method('write')
-			->with('notice', 'Notice (8): Undefined variable: out in [' . __FILE__ . ', line 159]');
+			->with('notice', 'Notice (8): Undefined variable: out in [' . __FILE__ . ', line ' . (__LINE__ + 2) . ']');
 
 		$out .= '';
 	}
@@ -168,6 +169,7 @@ class ErrorHandlerTest extends TestCase {
 		Configure::write('debug', 0);
 		$errorHandler = new ErrorHandler(['trace' => true]);
 		$errorHandler->register();
+		$this->_restoreError = true;
 
 		$this->_logger->expects($this->once())
 			->method('write')
@@ -176,7 +178,6 @@ class ErrorHandlerTest extends TestCase {
 				$this->stringContains('Trace:'),
 				$this->stringContains(__NAMESPACE__ . '\ErrorHandlerTest::testHandleErrorLoggingTrace()')
 			));
-		$this->_restoreError = true;
 
 		$out .= '';
 	}
@@ -203,7 +204,6 @@ class ErrorHandlerTest extends TestCase {
  */
 	public function testHandleExceptionLog() {
 		$errorHandler = new ErrorHandler(['log' => true]);
-		$errorHandler->register();
 
 		$error = new Error\NotFoundException('Kaboom!');
 
@@ -240,7 +240,6 @@ class ErrorHandlerTest extends TestCase {
 			'log' => true,
 			'skipLog' => ['Cake\Error\NotFoundException']
 		]);
-		$errorHandler->register();
 
 		ob_start();
 		$errorHandler->handleException($notFound);
@@ -315,7 +314,7 @@ class ErrorHandlerTest extends TestCase {
 		$this->_logger->expects($this->at(0))
 			->method('write')
 			->with('error', $this->logicalAnd(
-				$this->stringContains(__FILE__ . ', line 328'),
+				$this->stringContains(__FILE__ . ', line 327'),
 				$this->stringContains('Fatal Error (1)'),
 				$this->stringContains('Something wrong')
 			));
