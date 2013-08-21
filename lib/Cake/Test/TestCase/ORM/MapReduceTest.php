@@ -49,22 +49,22 @@ class MapReduceTest extends TestCase {
 		};
 		$results = new MapReduce(new ArrayIterator($data), $mapper, $reducer);
 		$expected = [
-			'dogs' => array('document_1', 'document_3'),
-			'are' => array('document_1'),
-			'the' => array('document_1'),
-			'most' => array('document_1'),
-			'amazing' => array('document_1', 'document_2'),
-			'animal' => array('document_1'),
-			'in' => array('document_1'),
-			'history' => array('document_1', 'document_2'),
-			'is' => array('document_2', 'document_3'),
-			'not' => array('document_2', 'document_3'),
-			'only' => array('document_2'),
-			'but' => array('document_2'),
-			'boring' => array('document_2', 'document_3'),
-			'one' => array('document_3'),
-			'thing' => array('document_3'),
-			'that' => array('document_3')
+			'dogs' => ['document_1', 'document_3'],
+			'are' => ['document_1'],
+			'the' => ['document_1'],
+			'most' => ['document_1'],
+			'amazing' => ['document_1', 'document_2'],
+			'animal' => ['document_1'],
+			'in' => ['document_1'],
+			'history' => ['document_1', 'document_2'],
+			'is' => ['document_2', 'document_3'],
+			'not' => ['document_2', 'document_3'],
+			'only' => ['document_2'],
+			'but' => ['document_2'],
+			'boring' => ['document_2', 'document_3'],
+			'one' => ['document_3'],
+			'thing' => ['document_3'],
+			'that' => ['document_3']
 		];
 		$this->assertEquals($expected, iterator_to_array($results));
 	}
