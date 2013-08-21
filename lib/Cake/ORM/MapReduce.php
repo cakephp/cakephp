@@ -105,28 +105,18 @@ class MapReduce implements IteratorAggregate {
  * }}}
  *
  * @param \Traversable $data the original data to be processed
- * @param array $routines containing the keys `mapper` and `reducer`
- * and invokable objects as values
+ * @param callable $mapper the mapper callback. This function will receive 3 arguments.
+ * The first one is the current results key, second the current value and third is
+ * this class instance so you can call the result emitters.
+ * @param callable $reducer the reducer callback. This function will receive 3 arguments.
+ * The first one is a bucket name that was mapped before, second one is the list
+ * of values inside the bucket and third one is an instance of this class.
  * @return void
  */
-	public function __construct(\Traversable $data, array $routines) {
+	public function __construct(\Traversable $data, callable $mapper, callable $reducer = null) {
 		$this->_data = $data;
-
-		if (empty($routines['mapper'])) {
-			throw new \InvalidArgumentException(
-				__d('cake_dev', 'A mapper is required to run MapReduce')
-			);
-		}
-
-		foreach ($routines as $method) {
-			if (!method_exists($method, '__invoke')) {
-				throw new \InvalidArgumentException(
-					__d('cake_dev', 'Can only pass invokable objects to MapReduce')
-				);
-			}
-		}
-		$this->_mapper = $routines['mapper'];
-		$this->_reducer = isset($routines['reducer']) ? $routines['reducer'] : null;
+		$this->_mapper = $mapper;
+		$this->_reducer = $reducer;
 	}
 
 /**
@@ -175,13 +165,15 @@ class MapReduce implements IteratorAggregate {
  * @return void
  */
 	protected function _execute() {
+		$mapper = $this->_mapper;
 		foreach ($this->_data as $key => $value) {
-			$this->_mapper->__invoke($key, $value, $this);
+			$mapper($key, $value, $this);
 		}
 		$this->_data = null;
 
+		$reducer = $this->_reducer;
 		foreach ($this->_intermediate as $key => $list) {
-			$this->_reducer->__invoke($key, $list, $this);
+			$reducer($key, $list, $this);
 		}
 		$this->_intermediate = [];
 		$this->_executed = true;

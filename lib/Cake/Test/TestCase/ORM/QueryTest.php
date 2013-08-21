@@ -913,11 +913,20 @@ class QueryTest extends TestCase {
 		$mapper2 = function() {};
 		$query = new Query($this->connection, $this->table);
 		$this->assertSame($query, $query->mapReduce($mapper1));
-		$this->assertSame([['mapper' => $mapper1]], $query->mapReduce());
+		$this->assertEquals(
+			[['mapper' => $mapper1, 'reducer' => null]],
+			$query->mapReduce()
+		);
 
-		$this->assertSame($query, $query->mapReduce($mapper1));
+		$this->assertEquals($query, $query->mapReduce($mapper1));
 		$result = $query->mapReduce();
-		$this->assertEquals([['mapper' => $mapper1], ['mapper' => $mapper2]], $result);
+		$this->assertEquals(
+			[
+				['mapper' => $mapper1, 'reducer' => null],
+				['mapper' => $mapper2, 'reducer' => null]
+			],
+			$result
+		);
 	}
 
 /**
@@ -932,13 +941,13 @@ class QueryTest extends TestCase {
 		$reducer2 = function() {};
 		$query = new Query($this->connection, $this->table);
 		$this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
-		$this->assertSame(
+		$this->assertEquals(
 			[['mapper' => $mapper1, 'reducer' => $reducer1]],
 			$query->mapReduce()
 		);
 
 		$this->assertSame($query, $query->mapReduce($mapper2, $reducer2));
-		$this->assertSame(
+		$this->assertEquals(
 			[
 				['mapper' => $mapper1, 'reducer' => $reducer1],
 				['mapper' => $mapper2, 'reducer' => $reducer2]
@@ -958,14 +967,14 @@ class QueryTest extends TestCase {
 		$reducer1 = function() {};
 		$reducer2 = function() {};
 		$query = new Query($this->connection, $this->table);
-		$this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
-		$this->assertSame(
+		$this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
+		$this->assertEquals(
 			[['mapper' => $mapper1, 'reducer' => $reducer1]],
 			$query->mapReduce()
 		);
 
-		$this->assertSame($query, $query->mapReduce($mapper2, $reducer2, true));
-		$this->assertSame(
+		$this->assertEquals($query, $query->mapReduce($mapper2, $reducer2, true));
+		$this->assertEquals(
 			[['mapper' => $mapper2, 'reducer' => $reducer2]],
 			$query->mapReduce()
 		);

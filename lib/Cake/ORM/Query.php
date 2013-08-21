@@ -532,7 +532,7 @@ class Query extends DatabaseQuery {
  * Register a new MapReduce routine to be executed on top of the database results
  * Both the mapper and caller callable should be invokable objects.
  *
- * The MapReduce routing will only be ran when the query is executed and the first
+ * The MapReduce routing will only be run when the query is executed and the first
  * result is attempted to be fetched.
  *
  * If the first argument is set to null, it will return the list of previously
@@ -553,7 +553,7 @@ class Query extends DatabaseQuery {
 		if ($mapper === null) {
 			return $this->_mapReduce;
 		}
-		$this->_mapReduce[] = array_filter(compact('mapper', 'reducer'));
+		$this->_mapReduce[] = compact('mapper', 'reducer');
 		return $this;
 	}
 
@@ -565,8 +565,8 @@ class Query extends DatabaseQuery {
  * @return Cake\ORM\ResultCollectionTrait
  */
 	protected function _applyFormatters($result) {
-		foreach ($this->_mapReduce as $mappers) {
-			$result = new MapReduce($result, $mappers);
+		foreach ($this->_mapReduce as $functions) {
+			$result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
 		}
 
 		if (!empty($this->_mapReduce)) {
