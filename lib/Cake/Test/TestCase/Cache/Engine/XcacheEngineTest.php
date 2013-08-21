@@ -44,6 +44,21 @@ class XcacheEngineTest extends TestCase {
 	}
 
 /**
+ * Helper method for testing.
+ *
+ * @return void
+ */
+	protected function _configCache($settings = []) {
+		$defaults = [
+			'className' => 'Xcache',
+			'prefix' => 'cake_',
+		];
+		Cache::drop('xcache');
+		Cache::config('xcache', array_merge($defaults, $settings));
+	}
+
+
+/**
  * tearDown method
  *
  * @return void
@@ -79,8 +94,6 @@ class XcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testReadAndWriteCache() {
-		Cache::set(['duration' => 1], 'xcache');
-
 		$result = Cache::read('test', 'xcache');
 		$expecting = '';
 		$this->assertEquals($expecting, $result);
@@ -102,7 +115,7 @@ class XcacheEngineTest extends TestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(['duration' => 1], 'xcache');
+		$this->_configCache(['duration' => 1]);
 		$result = Cache::read('test', 'xcache');
 		$this->assertFalse($result);
 
@@ -114,7 +127,7 @@ class XcacheEngineTest extends TestCase {
 		$result = Cache::read('other_test', 'xcache');
 		$this->assertFalse($result);
 
-		Cache::set(['duration' => "+1 second"], 'xcache');
+		$this->_configCache(['duration' => '+1 second']);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'xcache');

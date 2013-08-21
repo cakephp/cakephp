@@ -39,7 +39,7 @@ class WincacheEngineTest extends TestCase {
 		parent::setUp();
 		$this->skipIf(!function_exists('wincache_ucache_set'), 'Wincache is not installed or configured properly.');
 		Cache::enable();
-		Cache::config('wincache', ['engine' => 'Wincache', 'prefix' => 'cake_']);
+		$this->_configCache();
 	}
 
 /**
@@ -54,12 +54,27 @@ class WincacheEngineTest extends TestCase {
 	}
 
 /**
+ * Helper method for testing.
+ *
+ * @return void
+ */
+	protected function _configCache($settings = []) {
+		$defaults = [
+			'className' => 'Wincache',
+			'prefix' => 'cake_'
+		];
+		Cache::drop('wincache');
+		Cache::config('wincache', array_merge($defaults, $settings));
+	}
+
+
+/**
  * testReadAndWriteCache method
  *
  * @return void
  */
 	public function testReadAndWriteCache() {
-		Cache::set(['duration' => 1], 'wincache');
+		$this->_configCache(['duration' => 1]);
 
 		$result = Cache::read('test', 'wincache');
 		$expecting = '';
@@ -82,7 +97,7 @@ class WincacheEngineTest extends TestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(['duration' => 1], 'wincache');
+		$this->_configCache(['duration' => 1]);
 
 		$result = Cache::read('test', 'wincache');
 		$this->assertFalse($result);
@@ -95,15 +110,9 @@ class WincacheEngineTest extends TestCase {
 		$result = Cache::read('other_test', 'wincache');
 		$this->assertFalse($result);
 
-		Cache::set(['duration' => 1], 'wincache');
-
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'wincache');
 		$this->assertTrue($result);
-
-		sleep(2);
-		$result = Cache::read('other_test', 'wincache');
-		$this->assertFalse($result);
 
 		sleep(2);
 		$result = Cache::read('other_test', 'wincache');

@@ -45,11 +45,7 @@ class FileEngineTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Cache::enable();
-		Cache::drop('file_test');
-		Cache::config('file_test', [
-			'engine' => 'File',
-			'path' => TMP . 'tests',
-		]);
+		$this->_configCache();
 		Cache::clear(false, 'file_test');
 	}
 
@@ -67,16 +63,40 @@ class FileEngineTest extends TestCase {
 	}
 
 /**
+ * Helper method for testing.
+ *
+ * @return void
+ */
+	protected function _configCache($settings = []) {
+		$defaults = [
+			'className' => 'File',
+			'path' => TMP . 'tests',
+		];
+		Cache::drop('file_test');
+		Cache::config('file_test', array_merge($defaults, $settings));
+	}
+
+/**
  * testReadAndWriteCache method
  *
  * @return void
  */
-	public function testReadAndWriteCache() {
+	public function testReadAndWriteCacheExpired() {
+		$this->_configCache(['duration' => 1]);
 		$result = Cache::write(null, 'here', 'file_test');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' => 1), 'file_test');
+		$result = Cache::read('test', 'file_test');
+		$expecting = '';
+		$this->assertEquals($expecting, $result);
+	}
 
+/**
+ * Test reading and writing to the cache.
+ *
+ * @return void
+ */
+	public function testReadAndwrite() {
 		$result = Cache::read('test', 'file_test');
 		$expecting = '';
 		$this->assertEquals($expecting, $result);
@@ -115,7 +135,7 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(array('duration' => 1), 'file_test');
+		$this->_configCache(['duration' => 1]);
 
 		$result = Cache::read('test', 'file_test');
 		$this->assertFalse($result);
@@ -128,7 +148,7 @@ class FileEngineTest extends TestCase {
 		$result = Cache::read('other_test', 'file_test');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' => "+1 second"), 'file_test');
+		$this->_configCache(['duration' => '+1 second']);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'file_test');
@@ -163,13 +183,12 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testSerialize() {
-		Cache::drop('file_test');
-		Cache::config('file_test', ['engine' => 'File', 'serialize' => true]);
+		$this->_configCache(['serialize' => true]);
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('serialize_test', $data, 'file_test');
 		$this->assertTrue($write);
 
-		Cache::set(['serialize' => false], 'file_test');
+		$this->_configCache(['serialize' => false]);
 		$read = Cache::read('serialize_test', 'file_test');
 
 		$delete = Cache::delete('serialize_test', 'file_test');
@@ -183,30 +202,30 @@ class FileEngineTest extends TestCase {
  * @return void
  */
 	public function testClear() {
-		Cache::drop('file_test');
-		Cache::config('file_test', ['engine' => 'File', 'duration' => 1]);
+		$this->_configCache(['duration' => 1]);
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('serialize_test1', $data, 'file_test');
 		$write = Cache::write('serialize_test2', $data, 'file_test');
 		$write = Cache::write('serialize_test3', $data, 'file_test');
-		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test1'));
-		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test2'));
-		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test3'));
+		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test1'));
+		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test2'));
+		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test3'));
+
 		sleep(2);
 		$result = Cache::clear(true, 'file_test');
 		$this->assertTrue($result);
-		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test1'));
-		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test2'));
-		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test3'));
+		$this->assertFalse(file_exists(TMP . 'tests/cake_serialize_test1'));
+		$this->assertFalse(file_exists(TMP . 'tests/cake_serialize_test2'));
+		$this->assertFalse(file_exists(TMP . 'tests/cake_serialize_test3'));
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$write = Cache::write('serialize_test1', $data, 'file_test');
 		$write = Cache::write('serialize_test2', $data, 'file_test');
 		$write = Cache::write('serialize_test3', $data, 'file_test');
-		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test1'));
-		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test2'));
-		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test3'));
+		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test1'));
+		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test2'));
+		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test3'));
 
 		$result = Cache::clear(false, 'file_test');
 		$this->assertTrue($result);

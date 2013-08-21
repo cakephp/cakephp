@@ -68,7 +68,6 @@ class CacheTest extends TestCase {
 		Cache::write('no_save', 'Noooo!', 'tests');
 		Cache::read('no_save', 'tests');
 		Cache::delete('no_save', 'tests');
-		Cache::set('duration', '+10 minutes');
 	}
 
 /**
@@ -415,85 +414,6 @@ class CacheTest extends TestCase {
 
 		$this->assertFalse(Cache::write('key_6', 'hello', 'test_cache_disable_2'));
 		$this->assertFalse(Cache::read('key_6', 'test_cache_disable_2'));
-	}
-
-/**
- * testSet method
- *
- * @return void
- */
-	public function testSet() {
-		$this->_configCache();
-
-		Cache::set(array('duration' => '+1 year'), 'tests');
-		$data = Cache::read('test_cache', 'tests');
-		$this->assertFalse($data);
-
-		$data = 'this is just a simple test of the cache system';
-		$write = Cache::write('test_cache', $data, 'tests');
-		$this->assertTrue($write);
-
-		Cache::set(array('duration' => '+1 year'), 'tests');
-		$data = Cache::read('test_cache', 'tests');
-		$this->assertEquals('this is just a simple test of the cache system', $data);
-
-		Cache::delete('test_cache', 'tests');
-	}
-
-/**
- * Test that set() modifies settings, which can be read back with
- * settings().
- *
- * @return void
- */
-	public function testSetModifySettings() {
-		Cache::config('tests', [
-			'engine' => 'File',
-			'duration' => '+1 minute'
-		]);
-
-		$result = Cache::set(['duration' => '+1 year'], 'tests');
-		$this->assertEquals(strtotime('+1 year') - time(), $result['duration']);
-
-		$result = Cache::set('duration', '+1 month', 'tests');
-		$this->assertEquals(strtotime('+1 month') - time(), $result['duration']);
-
-		$settings = Cache::settings('tests');
-		$this->assertEquals($result, $settings, 'set() and settings() should be the same.');
-	}
-
-/**
- * Test that calling set() with null, config restores old settings.
- *
- * @return void
- */
-	public function testSetModifyAndResetSettings() {
-		Cache::config('tests', [
-			'engine' => 'File',
-			'duration' => '+1 minute'
-		]);
-		$result = Cache::set('duration', '+1 year', 'tests');
-		$this->assertEquals(strtotime('+1 year') - time(), $result['duration']);
-
-		$result = Cache::set(null, 'tests');
-		$this->assertEquals(strtotime('+1 minute') - time(), $result['duration']);
-	}
-
-/**
- * test set() parameter handling for user cache configs.
- *
- * @return void
- */
-	public function testSetOnAlternateConfigs() {
-		Cache::config('file_config', [
-			'engine' => 'File',
-			'prefix' => 'test_file_'
-		]);
-		Cache::set(['duration' => '+1 year'], 'file_config');
-		$settings = Cache::settings('file_config');
-
-		$this->assertEquals('test_file_', $settings['prefix']);
-		$this->assertEquals(strtotime('+1 year') - time(), $settings['duration']);
 	}
 
 /**
