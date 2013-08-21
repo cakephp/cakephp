@@ -93,6 +93,37 @@ abstract class BaseErrorHandler {
 	}
 
 /**
+ * Display/Log a fatal error.
+ *
+ * @param integer $code Code of error
+ * @param string $description Error description
+ * @param string $file File on which error occurred
+ * @param integer $line Line that triggered the error
+ * @return boolean
+ */
+	public function handleFatalError($code, $description, $file, $line) {
+		$data = [
+			'code' => $code,
+			'description' => $description,
+			'file' => $file,
+			'line' => $line,
+			'error' => 'Fatal Error',
+		];
+		$this->_logError(LOG_ERR, $data);
+
+		if (ob_get_level()) {
+			ob_end_clean();
+		}
+
+		if (Configure::read('debug')) {
+			$this->handleException(new FatalErrorException($description, 500, $file, $line));
+		} else {
+			$this->handleException(new InternalErrorException());
+		}
+		return false;
+	}
+
+/**
  * Log an error.
  *
  * @param string $level The level name of the log.

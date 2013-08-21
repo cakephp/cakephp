@@ -65,9 +65,10 @@ class ConsoleErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleFatalError() {
-		$content = "<error>Fatal Error Error:</error> This is a fatal error in [/some/file, line 275]\n";
+		ob_start();
+		$content = "<error>Fatal Error:</error> This is a fatal error in [/some/file, line 275]\n";
 		$this->stderr->expects($this->once())->method('write')
-			->with($content);
+			->with($this->stringContains($content));
 
 		$this->Error->handleError(E_USER_ERROR, 'This is a fatal error', '/some/file', 275);
 	}
@@ -79,8 +80,9 @@ class ConsoleErrorHandlerTest extends TestCase {
  */
 	public function testCakeErrors() {
 		$exception = new Error\MissingActionException('Missing action');
+		$message = sprintf('Missing action in [%s, line %s]', $exception->getFile(), $exception->getLine());
 		$this->stderr->expects($this->once())->method('write')
-			->with($this->stringContains('Missing action'));
+			->with($this->stringContains($message));
 
 		$result = $this->Error->handleException($exception);
 		$this->assertEquals(404, $result);
