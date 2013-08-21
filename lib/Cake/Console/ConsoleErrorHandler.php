@@ -94,4 +94,13 @@ class ConsoleErrorHandler extends BaseErrorHandler {
 		$this->_stderr->write($message);
 	}
 
+/**
+ * Stop the execution and set the exit code for the process.
+ *
+ * @param integer $code The exit code.
+ */
+	protected function _stop($code) {
+		exit($code);
+	}
+
 }

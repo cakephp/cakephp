@@ -25,6 +25,7 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
+use Cake\View\View;
 
 /**
  * Exception Renderer.

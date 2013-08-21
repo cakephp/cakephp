@@ -33,7 +33,7 @@ class ConsoleErrorHandlerTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->stderr = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
-		$this->Error = new ConsoleErrorHandler(['stderr' => $this->stderr]);
+		$this->Error = $this->getMock('Cake\Console\ConsoleErrorHandler', ['_stop'], [['stderr' => $this->stderr]]);
 	}
 
 /**
@@ -55,6 +55,8 @@ class ConsoleErrorHandlerTest extends TestCase {
 		$content = "<error>Notice Error:</error> This is a notice error in [/some/file, line 275]\n";
 		$this->stderr->expects($this->once())->method('write')
 			->with($content);
+		$this->Error->expects($this->never())
+			->method('_stop');
 
 		$this->Error->handleError(E_NOTICE, 'This is a notice error', '/some/file', 275);
 	}
@@ -83,6 +85,9 @@ class ConsoleErrorHandlerTest extends TestCase {
 		$message = sprintf('Missing action in [%s, line %s]', $exception->getFile(), $exception->getLine());
 		$this->stderr->expects($this->once())->method('write')
 			->with($this->stringContains($message));
+
+		$this->Error->expects($this->once())
+			->method('_stop');
 
 		$this->Error->handleException($exception);
 	}

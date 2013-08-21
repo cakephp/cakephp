@@ -107,6 +107,19 @@ abstract class BaseErrorHandler {
 	public function handleException($exception) {
 		$this->_displayException($exception);
 		$this->_logException($exception);
+		$this->_stop($exception->getCode() ?: 1);
+	}
+
+/**
+ * Stop the process.
+ *
+ * Implemented in subclasses that need it.
+ *
+ * @param integer $code Exit code.
+ * @return void
+ */
+	protected function _stop($code) {
+		// Do nothing.
 	}
 
 /**
