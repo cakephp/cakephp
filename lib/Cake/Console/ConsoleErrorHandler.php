@@ -14,8 +14,8 @@
  */
 namespace Cake\Console;
 
-use Cake\Error\FatalErrorException;
 use Cake\Error\BaseErrorHandler;
+use Cake\Error\FatalErrorException;
 
 /**
  * Error Handler for Cake console. Does simple printing of the
@@ -87,7 +87,7 @@ class ConsoleErrorHandler extends BaseErrorHandler {
 			$error['file'],
 			$error['line']
 		);
-		$message = __d('cake_console', "<error>%s Error:</error> %s\n", 
+		$message = __d('cake_console', "<error>%s Error:</error> %s\n",
 			$error['error'],
 			$message
 		);

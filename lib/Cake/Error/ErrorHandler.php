@@ -127,6 +127,7 @@ class ErrorHandler extends BaseErrorHandler {
  *
  * @param \Exception $exception The exception to display
  * @return void
+ * @throws \Exception When the chosen exception renderer is invalid.
  */
 	protected function _displayException($exception) {
 		$renderer = App::classname($this->_options['exceptionRenderer'], 'Error');
