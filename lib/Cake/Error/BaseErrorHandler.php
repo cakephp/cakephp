@@ -28,8 +28,27 @@ use Cake\Utility\Debugger;
  */
 abstract class BaseErrorHandler {
 
+/**
+ * Display an error message in an environment specific way.
+ *
+ * Subclasses should implement this method to display the error as
+ * desired for the runtime they operate in.
+ *
+ * @param array $error An array of error data.
+ * @param boolean $debug Whether or not the app is in debug mode.
+ * @return void
+ */
 	abstract protected function _displayError($error, $debug);
 
+/**
+ * Display an exception in an environment specific way.
+ *
+ * Subclasses should implement this method to display an uncaught exception as
+ * desired for the runtime they operate in.
+ *
+ * @param \Exceptino $exception The uncaught exception.
+ * @return void
+ */
 	abstract protected function _displayException($exception);
 
 /**
