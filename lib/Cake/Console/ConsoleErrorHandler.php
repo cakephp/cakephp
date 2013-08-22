@@ -57,17 +57,16 @@ class ConsoleErrorHandler extends BaseErrorHandler {
  * @return void
  */
 	protected function _displayException($exception) {
-		$errorName = __d('cake_console', 'Error:');
+		$errorName = __d('cake_console', 'Exception:');
 		if ($exception instanceof FatalErrorException) {
 			$errorName = __d('cake_console', 'Fatal Error:');
 		}
 		$message = sprintf(
-			"<error>%s</error> %s in [%s, line %s]\n%s",
+			"<error>%s</error> %s in [%s, line %s]",
 			$errorName,
 			$exception->getMessage(),
 			$exception->getFile(),
-			$exception->getLine(),
-			$exception->getTraceAsString()
+			$exception->getLine()
 		);
 		$this->_stderr->write($message);
 	}
