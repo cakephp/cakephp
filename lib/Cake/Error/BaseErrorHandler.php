@@ -110,6 +110,7 @@ abstract class BaseErrorHandler {
 		}
 		$this->_displayError($data, $debug);
 		$this->_logError($log, $data);
+		return false;
 	}
 
 /**
