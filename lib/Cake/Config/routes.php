@@ -57,10 +57,12 @@ if ($plugins = CakePlugin::loaded()) {
 		$params = array('prefix' => $prefix, $prefix => true);
 		$indexParams = $params + array('action' => 'index');
 		Router::connect("/{$prefix}/:plugin", $indexParams, $shortParams);
+		Router::connect("/{$prefix}/:plugin/:action/*", $params, $shortParams);
 		Router::connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
 		Router::connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
 	}
 	Router::connect('/:plugin', array('action' => 'index'), $shortParams);
+	Router::connect('/:plugin/:action/*', array(), $shortParams);
 	Router::connect('/:plugin/:controller', array('action' => 'index'), $match);
 	Router::connect('/:plugin/:controller/:action/*', array(), $match);
 }
