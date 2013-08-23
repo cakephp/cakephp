@@ -290,17 +290,37 @@ class Hash {
  * @return array The modified array.
  */
 	public static function remove(array $data, $path) {
-		$tokens = explode('.', $path);
-		if (strpos($path, '{') === false) {
+		if (strpos($path, '[') === false) {
+			$tokens = explode('.', $path);
+		} else {
+			$tokens = String::tokenize($path, '.', '[', ']');
+		}
+
+		if (strpos($path, '{') === false && strpos($path, '[') === false) {
 			return self::_simpleOp('remove', $data, $tokens);
 		}
 
 		$token = array_shift($tokens);
 		$nextPath = implode('.', $tokens);
+
+		$conditions = false;
+        $position = strpos($token, '[');
+        if ($position !== false) {
+            $conditions = substr($token, $position);
+            $token = substr($token, 0, $position);
+        }
+
 		foreach ($data as $k => $v) {
 			$match = self::_matchToken($k, $token);
 			if ($match && is_array($v)) {
+				if ($conditions && self::_matches($v, $conditions)) {
+					unset($data[$k]);
+					continue;
+				}
 				$data[$k] = self::remove($v, $nextPath);
+				if (empty($data[$k])) {
+					unset($data[$k]);
+				}
 			} elseif ($match) {
 				unset($data[$k]);
 			}
