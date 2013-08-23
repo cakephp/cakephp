@@ -254,39 +254,33 @@ abstract class BaseErrorHandler {
  * @return array Array of error word, and log location.
  */
 	public static function mapErrorCode($code) {
-		$error = $log = null;
-		switch ($code) {
-			case E_PARSE:
-			case E_ERROR:
-			case E_CORE_ERROR:
-			case E_COMPILE_ERROR:
-			case E_USER_ERROR:
-				$error = 'Fatal Error';
-				$log = LOG_ERR;
-				break;
-			case E_WARNING:
-			case E_USER_WARNING:
-			case E_COMPILE_WARNING:
-			case E_RECOVERABLE_ERROR:
-				$error = 'Warning';
-				$log = LOG_WARNING;
-				break;
-			case E_NOTICE:
-			case E_USER_NOTICE:
-				$error = 'Notice';
-				$log = LOG_NOTICE;
-				break;
-			case E_STRICT:
-				$error = 'Strict';
-				$log = LOG_NOTICE;
-				break;
-			case E_DEPRECATED:
-			case E_USER_DEPRECATED:
-				$error = 'Deprecated';
-				$log = LOG_NOTICE;
-				break;
-		}
-		return array($error, $log);
+		$levelMap = [
+			E_PARSE => 'error',
+			E_ERROR => 'error',
+			E_CORE_ERROR => 'error',
+			E_COMPILE_ERROR => 'error',
+			E_USER_ERROR => 'error',
+			E_WARNING => 'warning',
+			E_USER_WARNING => 'warning',
+			E_COMPILE_WARNING => 'warning',
+			E_RECOVERABLE_ERROR => 'warning',
+			E_NOTICE => 'notice',
+			E_USER_NOTICE => 'notice',
+			E_STRICT => 'strict',
+			E_DEPRECATED => 'deprecated',
+			E_USER_DEPRECATED => 'deprecated',
+		];
+		$logMap = [
+			'error' => LOG_ERR,
+			'warning' => LOG_WARNING,
+			'notice' => LOG_NOTICE,
+			'strict' => LOG_NOTICE,
+			'deprecated' => LOG_NOTICE,
+		];
+
+		$error = $levelMap[$code];
+		$log = $logMap[$error];
+		return [ucfirst($error), $log];
 	}
 
 }
