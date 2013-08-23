@@ -73,9 +73,9 @@ use Cake\Utility\Debugger;
  * #### Controlling what errors are logged/displayed
  *
  * You can control which errors are logged / displayed by ErrorHandler by setting `errorLevel`. Setting this
- * to one or a combination of a few of the E_* constants will only enable the specified errors.
+ * to one or a combination of a few of the E_* constants will only enable the specified errors:
  *
- * $options['log'] = E_ALL & ~E_NOTICE;
+ * `$options['errorLevel'] = E_ALL & ~E_NOTICE;`
  *
  * Would enable handling for all non Notice errors.
  *
