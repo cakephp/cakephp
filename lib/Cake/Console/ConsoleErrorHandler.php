@@ -14,79 +14,92 @@
  */
 namespace Cake\Console;
 
-use Cake\Core\Configure;
-use Cake\Error\ErrorHandler;
+use Cake\Error\BaseErrorHandler;
+use Cake\Error\FatalErrorException;
 
 /**
  * Error Handler for Cake console. Does simple printing of the
  * exception that occurred and the stack trace of the error.
- *
- * @package       Cake.Console
  */
-class ConsoleErrorHandler {
+class ConsoleErrorHandler extends BaseErrorHandler {
 
 /**
  * Standard error stream.
  *
  * @var ConsoleOutput
  */
-	public static $stderr;
+	protected $_stderr;
 
 /**
- * Get the stderr object for the console error handling.
+ * Options for this instance.
  *
- * @return ConsoleOutput
+ * @var array
  */
-	public static function getStderr() {
-		if (empty(static::$stderr)) {
-			static::$stderr = new ConsoleOutput('php://stderr');
+	protected $_options;
+
+/**
+ * Constructor
+ *
+ * @param array $options Options for the error handler.
+ */
+	public function __construct($options = []) {
+		if (empty($options['stderr'])) {
+			$options['stderr'] = new ConsoleOutput('php://stderr');
 		}
-		return static::$stderr;
+		$this->_stderr = $options['stderr'];
+		$this->_options = $options;
 	}
 
 /**
- * Handle a exception in the console environment. Prints a message to stderr.
+ * Prints an exception to stderr.
  *
  * @param Exception $exception The exception to handle
- * @return integer Exit code from exception caught.
+ * @return void
  */
-	public static function handleException(\Exception $exception) {
-		$stderr = static::getStderr();
-		$stderr->write(__d('cake_console', "<error>Error:</error> %s\n%s",
+	protected function _displayException($exception) {
+		$errorName = __d('cake_console', 'Exception:');
+		if ($exception instanceof FatalErrorException) {
+			$errorName = __d('cake_console', 'Fatal Error:');
+		}
+		$message = sprintf(
+			"<error>%s</error> %s in [%s, line %s]",
+			$errorName,
 			$exception->getMessage(),
-			$exception->getTraceAsString()
-		));
-		return $exception->getCode() ?: 1;
+			$exception->getFile(),
+			$exception->getLine()
+		);
+		$this->_stderr->write($message);
 	}
 
 /**
- * Handle errors in the console environment. Writes errors to stderr,
- * and logs messages if Configure::read('debug') is 0.
+ * Prints an error to stderr.
  *
- * @param integer $code Error code
- * @param string $description Description of the error.
- * @param string $file The file the error occurred in.
- * @param integer $line The line the error occurred on.
- * @param array $context The backtrace of the error.
+ * Template method of BaseErrorHandler.
+ *
+ * @param array $error An array of error data.
+ * @param boolean $debug Whether or not the app is in debug mode.
  * @return void
  */
-	public static function handleError($code, $description, $file = null, $line = null, $context = null) {
-		if (error_reporting() === 0) {
-			return;
-		}
-		$stderr = static::getStderr();
-		list($name, $log) = ErrorHandler::mapErrorCode($code);
-		$message = __d('cake_console', '%s in [%s, line %s]', $description, $file, $line);
-		$stderr->write(__d('cake_console', "<error>%s Error:</error> %s\n", $name, $message));
+	protected function _displayError($error, $debug) {
+		$message = __d('cake_console', '%s in [%s, line %s]',
+			$error['description'],
+			$error['file'],
+			$error['line']
+		);
+		$message = __d('cake_console', "<error>%s Error:</error> %s\n",
+			$error['error'],
+			$message
+		);
+		$this->_stderr->write($message);
+	}
 
-		if (!Configure::read('debug')) {
-			Log::write($log, $message);
-		}
-
-		if ($log === LOG_ERR) {
-			// @todo define how to handle exit
-			return 1;
-		}
+/**
+ * Stop the execution and set the exit code for the process.
+ *
+ * @param integer $code The exit code.
+ */
+	protected function _stop($code) {
+		exit($code);
 	}
 
 }

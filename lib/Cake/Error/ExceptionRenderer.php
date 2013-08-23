@@ -1,10 +1,5 @@
 <?php
 /**
- * Exception Renderer
- *
- * Provides Exception rendering features. Which allow exceptions to be rendered
- * as HTML pages.
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -16,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Error
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -31,7 +25,6 @@ use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
-use Cake\Utility\Sanitize;
 use Cake\View\View;
 
 /**
@@ -43,23 +36,13 @@ use Cake\View\View;
  *
  * ### Implementing application specific exception rendering
  *
- * You can implement application specific exception handling in one of a few ways:
- *
- * - Create a AppController::appError();
- * - Create a subclass of ExceptionRenderer and configure it to be the `Exception.renderer`
- *
- * #### Using AppController::appError();
- *
- * This controller method is called instead of the default exception handling. It receives the
- * thrown exception as its only argument. You should implement your error handling in that method.
+ * You can implement application specific exception handling by creating a subclass of
+ * ExceptionRenderer and configure it to be the `exceptionRenderer` in App/Config/error.php
  *
  * #### Using a subclass of ExceptionRenderer
  *
  * Using a subclass of ExceptionRenderer gives you full control over how Exceptions are rendered, you
- * can configure your class in your App/Config/error.php, with `Configure::write('Exception.renderer', 'MyClass');`
- * You should place any custom exception renderers in `app/Lib/Error`.
- *
- * @package       Cake.Error
+ * can configure your class in your App/Config/error.php.
  */
 class ExceptionRenderer {
 
@@ -97,14 +80,11 @@ class ExceptionRenderer {
  * code error depending on the code used to construct the error.
  *
  * @param \Exception $exception Exception
- * @return mixed Return void or value returned by controller's `appError()` function
+ * @return void
  */
 	public function __construct(\Exception $exception) {
 		$this->controller = $this->_getController($exception);
 
-		if (method_exists($this->controller, 'apperror')) {
-			return $this->controller->appError($exception);
-		}
 		list(, $baseClass) = namespaceSplit(get_class($exception));
 		$baseClass = substr($baseClass, 0, -9);
 		$method = $template = Inflector::variable($baseClass);
