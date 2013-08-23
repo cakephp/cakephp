@@ -193,7 +193,6 @@ class SomethingWithEmailComponent extends Component {
 	public $components = array('Email');
 }
 
-
 /**
  * ComponentTest class
  *

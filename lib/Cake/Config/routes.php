@@ -1,7 +1,5 @@
 <?php
 /**
- * Default routes that CakePHP provides as catch all routes.
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -26,7 +24,6 @@
  * created when your application has one or more plugins.
  *
  * - `/:prefix/:plugin` a plugin shortcut route.
- * - `/:prefix/:plugin/:action/*` a plugin shortcut route.
  * - `/:prefix/:plugin/:controller`
  * - `/:prefix/:plugin/:controller/:action/*`
  * - `/:prefix/:controller`
@@ -35,7 +32,6 @@
  * If plugins are found in your application the following routes are created:
  *
  * - `/:plugin` a plugin shortcut route.
- * - `/:plugin/:action/*` a plugin shortcut route.
  * - `/:plugin/:controller`
  * - `/:plugin/:controller/:action/*`
  *

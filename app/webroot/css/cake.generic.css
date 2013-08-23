@@ -109,6 +109,9 @@ p {
 	padding: 6px 10px;
 	text-align: right;
 }
+#header a, #footer a {
+	color: #fff;
+}
 
 /** containers **/
 div.form,
