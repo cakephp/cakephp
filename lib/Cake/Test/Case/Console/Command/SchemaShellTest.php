@@ -414,6 +414,7 @@ class SchemaShellTest extends CakeTestCase {
 			'overwrite' => true,
 			'exclude' => 'acos, aros',
 		);
+		$excludeModels = array('Aco', 'Aro');
 		$this->Shell->startup();
 		$this->Shell->Schema->path = TMP . 'tests' . DS;
 
@@ -421,6 +422,7 @@ class SchemaShellTest extends CakeTestCase {
 		$this->file = new File(TMP . 'tests' . DS . 'schema.php');
 		$contents = $this->file->read();
 
+		$this->assertEquals($excludeModels, $this->Shell->Schema->excludes);
 		$this->assertNotContains('public $acos = array(', $contents);
 		$this->assertNotContains('public $aros = array(', $contents);
 		$this->assertContains('public $aros_acos = array(', $contents);
