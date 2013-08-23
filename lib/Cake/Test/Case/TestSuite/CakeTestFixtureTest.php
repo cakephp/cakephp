@@ -111,7 +111,6 @@ class StringsTestFixture extends CakeTestFixture {
 	);
 }
 
-
 /**
  * CakeTestFixtureImportFixture class
  *
@@ -174,7 +173,6 @@ class FixturePrefixTest extends Model {
 
 	public $useDbConfig = 'test';
 }
-
 
 /**
  * Test case for CakeTestFixture

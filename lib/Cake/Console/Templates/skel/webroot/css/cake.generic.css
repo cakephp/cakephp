@@ -13,7 +13,6 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.webroot.css
- * @since         CakePHP(tm)
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -109,6 +108,9 @@ p {
 	clear: both;
 	padding: 6px 10px;
 	text-align: right;
+}
+#header a, #footer a {
+	color: #fff;
 }
 
 /** containers **/

@@ -149,7 +149,7 @@ class Validation {
 			return false;
 		}
 
-		if (!is_null($regex)) {
+		if ($regex !== null) {
 			if (self::_check($check, $regex)) {
 				return self::luhn($check, $deep);
 			}
@@ -254,7 +254,7 @@ class Validation {
 				}
 				break;
 			default:
-				self::$errors[] = __d('cake_dev', 'You must define the $operator parameter for Validation::comparison()');
+				self::$errors[] = __d('cake_dev', 'You must define the $operator parameter for %s', 'Validation::comparison()');
 		}
 		return false;
 	}
@@ -272,7 +272,7 @@ class Validation {
 			extract(self::_defaults($check));
 		}
 		if ($regex === null) {
-			self::$errors[] = __d('cake_dev', 'You must define a regular expression for Validation::custom()');
+			self::$errors[] = __d('cake_dev', 'You must define a regular expression for %s', 'Validation::custom()');
 			return false;
 		}
 		return self::_check($check, $regex);
@@ -297,7 +297,7 @@ class Validation {
  * @return boolean Success
  */
 	public static function date($check, $format = 'ymd', $regex = null) {
-		if (!is_null($regex)) {
+		if ($regex !== null) {
 			return self::_check($check, $regex);
 		}
 
@@ -390,7 +390,7 @@ class Validation {
  * @return boolean Success
  */
 	public static function decimal($check, $places = null, $regex = null) {
-		if (is_null($regex)) {
+		if ($regex === null) {
 			$lnum = '[0-9]+';
 			$dnum = "[0-9]*[\.]{$lnum}";
 			$sign = '[+-]?';
@@ -430,7 +430,7 @@ class Validation {
 			extract(self::_defaults($check));
 		}
 
-		if (is_null($regex)) {
+		if ($regex === null) {
 			$regex = '/^[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . self::$_pattern['hostname'] . '$/i';
 		}
 		$return = self::_check($check, $regex);
@@ -612,7 +612,7 @@ class Validation {
 			extract(self::_defaults($check));
 		}
 
-		if (is_null($regex)) {
+		if ($regex === null) {
 			switch ($country) {
 				case 'us':
 				case 'ca':
@@ -649,7 +649,7 @@ class Validation {
 			extract(self::_defaults($check));
 		}
 
-		if (is_null($regex)) {
+		if ($regex === null) {
 			switch ($country) {
 				case 'uk':
 					$regex = '/\\A\\b[A-Z]{1,2}[0-9][A-Z0-9]? [0-9][ABD-HJLNP-UW-Z]{2}\\b\\z/i';
@@ -710,7 +710,7 @@ class Validation {
 			extract(self::_defaults($check));
 		}
 
-		if (is_null($regex)) {
+		if ($regex === null) {
 			switch ($country) {
 				case 'dk':
 					$regex = '/\\A\\b[0-9]{6}-[0-9]{4}\\b\\z/i';

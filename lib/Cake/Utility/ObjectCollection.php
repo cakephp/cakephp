@@ -225,7 +225,7 @@ abstract class ObjectCollection {
 		}
 		foreach ($name as $object => $objectPriority) {
 			if (isset($this->_loaded[$object])) {
-				if (is_null($objectPriority)) {
+				if ($objectPriority === null) {
 					$objectPriority = $this->defaultPriority;
 				}
 				$this->_loaded[$object]->settings['priority'] = $objectPriority;

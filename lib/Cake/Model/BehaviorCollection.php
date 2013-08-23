@@ -228,7 +228,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 		$method = $this->hasMethod($method, true);
 
 		if ($strict && empty($method)) {
-			trigger_error(__d('cake_dev', "BehaviorCollection::dispatchMethod() - Method %s not found in any attached behavior", $method), E_USER_WARNING);
+			trigger_error(__d('cake_dev', '%s - Method %s not found in any attached behavior', 'BehaviorCollection::dispatchMethod()', $method), E_USER_WARNING);
 			return null;
 		}
 		if (empty($method)) {

@@ -119,9 +119,15 @@ class ShellDispatcher {
  * @return boolean Success.
  */
 	protected function _bootstrap() {
-		define('ROOT', $this->params['root']);
-		define('APP_DIR', $this->params['app']);
-		define('APP', $this->params['working'] . DS);
+		if (!defined('ROOT')) {
+			define('ROOT', $this->params['root']);
+		}
+		if (!defined('APP_DIR')) {
+			define('APP_DIR', $this->params['app']);
+		}
+		if (!defined('APP')) {
+			define('APP', $this->params['working'] . DS);
+		}
 		if (!defined('WWW_ROOT')) {
 			define('WWW_ROOT', APP . $this->params['webroot'] . DS);
 		}
