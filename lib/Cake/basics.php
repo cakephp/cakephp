@@ -292,6 +292,11 @@ if (!function_exists('env')) {
 			if (isset($_SERVER['HTTPS'])) {
 				return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
 			}
+
+			if(isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https') {
+				return true;
+			}
+
 			return (strpos(env('SCRIPT_URI'), 'https://') === 0);
 		}
 
