@@ -222,16 +222,36 @@ class Hash {
  * @return array The data with $values inserted.
  */
 	public static function insert(array $data, $path, $values = null) {
-		$tokens = explode('.', $path);
-		if (strpos($path, '{') === false) {
+		if (strpos($path, '[') === false) {
+			$tokens = explode('.', $path);
+		} else {
+			$tokens = String::tokenize($path, '.', '[', ']');
+		}
+
+		if (strpos($path, '{') === false && strpos($path, '[') === false) {
 			return self::_simpleOp('insert', $data, $tokens, $values);
 		}
 
 		$token = array_shift($tokens);
 		$nextPath = implode('.', $tokens);
+
+		$conditions = false;
+		$position = strpos($token, '[');
+		if ($position !== false) {
+			$conditions = substr($token, $position);
+			$token = substr($token, 0, $position);
+		}
+
 		foreach ($data as $k => $v) {
 			if (self::_matchToken($k, $token)) {
-				$data[$k] = self::insert($v, $nextPath, $values);
+				if ($conditions) {
+					if (self::_matches($v, $conditions)) {
+						$data[$k] = array_merge($v, $values);
+						continue;
+					}
+				} else {
+					$data[$k] = self::insert($v, $nextPath, $values);
+				}
 			}
 		}
 		return $data;
