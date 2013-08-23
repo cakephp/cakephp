@@ -889,6 +889,7 @@ class Email {
  * @param string|AbstractTransport $name Either the name of a configured
  *   transport, or a transport instance.
  * @return AbstractTransport|Cake\Network\Email\Email
+ * @throws Cake\Error\SocketException When the chosen transport lacks a send method.
  */
 	public function transport($name = null) {
 		if ($name === null) {
@@ -1097,6 +1098,8 @@ class Email {
  *   an array of multiple transports to set.
  * @param array|Closure|AbstractTransport Either an array of configuration
  *   data, a Closure factory function, or a transport instance.
+ * @return mixed Either null when setting or an array of data when reading.
+ * @throws Cake\Error\Exception When modifying an existing configuration.
  */
 	public static function configTransport($key, $config = null) {
 		if ($config === null && is_string($key)) {
@@ -1138,6 +1141,7 @@ class Email {
  *    or an array of multiple configuration profiles to set
  * @param null|array $config Null to read config data, an array to set data.
  * @return array|void
+ * @throws Cake\Error\Exception When modifying an existing configuration.
  */
 	public static function config($key, $config = null) {
 		// Read config.

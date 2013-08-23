@@ -840,7 +840,7 @@ class QueryTest extends TestCase {
 		$this->assertInstanceOf('Cake\ORM\BufferedResultSet', $result);
 	}
 
-/*
+/**
  * Tests that applying array options to a query will convert them
  * to equivalent function calls with the correspondent array values
  *

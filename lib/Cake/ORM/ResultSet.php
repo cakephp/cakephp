@@ -16,8 +16,8 @@
  */
 namespace Cake\ORM;
 
-use Cake\Database\Type;
 use Cake\Database\Exception;
+use Cake\Database\Type;
 use \Iterator;
 use \JsonSerializable;
 use \Serializable;

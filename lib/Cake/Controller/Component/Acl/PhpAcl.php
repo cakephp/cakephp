@@ -101,11 +101,11 @@ class PhpAcl extends Object implements AclInterface {
  */
 	public function build(array $config) {
 		if (empty($config['roles'])) {
-			throw new Error\AclException(__d('cake_dev','"roles" section not found in configuration.'));
+			throw new Error\AclException(__d('cake_dev', '"roles" section not found in configuration.'));
 		}
 
 		if (empty($config['rules']['allow']) && empty($config['rules']['deny'])) {
-			throw new Error\AclException(__d('cake_dev','Neither "allow" nor "deny" rules were provided in configuration.'));
+			throw new Error\AclException(__d('cake_dev', 'Neither "allow" nor "deny" rules were provided in configuration.'));
 		}
 
 		$rules['allow'] = !empty($config['rules']['allow']) ? $config['rules']['allow'] : array();

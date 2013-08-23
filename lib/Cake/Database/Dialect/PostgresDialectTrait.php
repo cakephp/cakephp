@@ -134,7 +134,7 @@ trait PostgresDialectTrait {
 					->name('')
 					->type('-')
 					->iterateParts(function($p) {
-						return new FunctionExpression('DATE',  [$p['value']], [$p['type']]);
+						return new FunctionExpression('DATE', [$p['value']], [$p['type']]);
 					});
 				break;
 			case 'CURRENT_DATE':

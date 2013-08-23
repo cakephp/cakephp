@@ -12,8 +12,8 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-use Cake\Core\Configure;
 use Cake\Cache\Cache;
+use Cake\Core\Configure;
 use Cake\Log\Log;
 
 define('DS', DIRECTORY_SEPARATOR);

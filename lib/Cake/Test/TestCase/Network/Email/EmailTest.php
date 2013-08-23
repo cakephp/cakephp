@@ -19,8 +19,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
-use Cake\Network\Email\Email;
 use Cake\Network\Email\DebugTransport;
+use Cake\Network\Email\Email;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
 

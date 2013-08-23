@@ -1197,7 +1197,7 @@ XML;
  * @return void
  */
 	public function testNoEntityLoading() {
-		$file = str_replace(' ' , '%20' , CAKE . 'VERSION.txt');
+		$file = str_replace(' ', '%20', CAKE . 'VERSION.txt');
 		$xml = <<<XML
 <!DOCTYPE cakephp [
   <!ENTITY payload SYSTEM "file://$file" >]>
