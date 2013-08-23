@@ -1266,6 +1266,23 @@ class HashTest extends CakeTestCase {
 		$result = Hash::insert($data, '{n}.Comment.{n}.insert', 'value');
 		$this->assertEquals('value', $result[0]['Comment'][0]['insert']);
 		$this->assertEquals('value', $result[0]['Comment'][1]['insert']);
+
+		$data = array(
+			0 => array('Item' => array('id' => 1, 'title' => 'first')),
+			1 => array('Item' => array('id' => 2, 'title' => 'second')),
+			2 => array('Item' => array('id' => 3, 'title' => 'third')),
+			3 => array('Item' => array('id' => 4, 'title' => 'fourth')),
+			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
+		);
+		$result = Hash::insert($data, '{n}.Item[id=/\b2|\b4/]', array('test' => 2));
+		$expected = array(
+			0 => array('Item' => array('id' => 1, 'title' => 'first')),
+			1 => array('Item' => array('id' => 2, 'title' => 'second', 'test' => 2)),
+			2 => array('Item' => array('id' => 3, 'title' => 'third')),
+			3 => array('Item' => array('id' => 4, 'title' => 'fourth', 'test' => 2)),
+			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
