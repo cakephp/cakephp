@@ -1,9 +1,6 @@
 <?php
 /**
- * Connection Manager tests
- *
  * PHP 5
- *
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
@@ -11,7 +8,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -19,13 +15,12 @@ namespace Cake\Test\TestCase\Model;
 
 use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
  * ConnectionManagerTest
  *
- * @package       Cake.Test.Case.Model
  */
 class ConnectionManagerTest extends TestCase {
 
