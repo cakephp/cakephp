@@ -361,7 +361,7 @@ class Session {
 		if (!static::start()) {
 			return false;
 		}
-		if (is_null($name)) {
+		if ($name === null) {
 			return static::_returnSessionVars();
 		}
 		if (empty($name)) {
@@ -553,7 +553,6 @@ class Session {
 					'session.serialize_handler' => 'php',
 					'session.use_cookies' => 1,
 					'session.cookie_path' => static::$path,
-					'session.auto_start' => 0,
 					'session.save_path' => TMP . 'sessions',
 					'session.save_handler' => 'files'
 				)
@@ -565,7 +564,6 @@ class Session {
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
-					'session.auto_start' => 0,
 					'session.use_cookies' => 1,
 					'session.cookie_path' => static::$path,
 					'session.save_handler' => 'user',
@@ -582,7 +580,6 @@ class Session {
 				'ini' => array(
 					'session.use_trans_sid' => 0,
 					'url_rewriter.tags' => '',
-					'session.auto_start' => 0,
 					'session.use_cookies' => 1,
 					'session.cookie_path' => static::$path,
 					'session.save_handler' => 'user',

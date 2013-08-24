@@ -115,7 +115,7 @@ class ProjectTask extends Shell {
 			}
 			$success = $this->corePath($path, $hardCode) === true;
 			if ($success) {
-				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in Config/paths.php', CAKE_CORE_INCLUDE_PATH));
+				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in %s', CAKE_CORE_INCLUDE_PATH, 'Config/paths.php'));
 			} else {
 				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'Config' . DS . 'paths.php'));
 				$success = false;

@@ -925,6 +925,8 @@ class Email {
 		$classname = App::classname($config['className'], 'Network/Email', 'Transport');
 		if (!$classname) {
 			throw new Error\Exception(__d('cake_dev', 'Transport class "%s" not found.', $name));
+		} elseif (!method_exists($classname, 'send')) {
+			throw new Error\Exception(__d('cake_dev', 'The "%s" does not have a %s method.', $classname, 'send()'));
 		}
 
 		unset($config['className']);
@@ -1723,6 +1725,11 @@ class Email {
 		}
 		if ($this->_theme) {
 			$View->theme = $this->_theme;
+		}
+		// Convert null to false, as View needs false to disable
+		// the layout.
+		if ($layout === null) {
+			$layout = false;
 		}
 
 		foreach ($types as $type) {

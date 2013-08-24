@@ -52,7 +52,7 @@ class ControllerAuthorize extends BaseAuthorize {
 	public function controller(Controller $controller = null) {
 		if ($controller) {
 			if (!method_exists($controller, 'isAuthorized')) {
-				throw new Error\Exception(__d('cake_dev', '$controller does not implement an isAuthorized() method.'));
+				throw new Error\Exception(__d('cake_dev', '$controller does not implement an %s method.', 'isAuthorized()'));
 			}
 		}
 		return parent::controller($controller);

@@ -24,7 +24,7 @@
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Make sure your plugin %s is in the ' . APP_DIR . DS . 'Plugin directory and was loaded', h($plugin)); ?>
+	<?php echo __d('cake_dev', 'Make sure your plugin %s is in the %s directory and was loaded', APP_DIR . DS . 'Plugin', h($plugin)); ?>
 </p>
 <pre>
 &lt;?php
@@ -33,7 +33,7 @@ Plugin::load('<?php echo h($plugin)?>');
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Loading all plugins'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you wish to load all plugins at once, use the following line in your ' . APP_DIR . DS . 'Config' . DS . 'bootstrap.php file'); ?>
+	<?php echo __d('cake_dev', 'If you wish to load all plugins at once, use the following line in your %s file', APP_DIR . DS . 'Config' . DS . 'bootstrap.php'); ?>
 </p>
 <pre>
 Plugin::loadAll();

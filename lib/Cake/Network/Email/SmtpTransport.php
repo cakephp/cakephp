@@ -85,7 +85,7 @@ class SmtpTransport extends AbstractTransport {
 			'client' => null,
 			'tls' => false
 		);
-		$this->_config = empty($config) ? $this->_config + $default : $config + $default;
+		$this->_config = array_merge($default, $this->_config, $config);
 		return $this->_config;
 	}
 
@@ -230,7 +230,7 @@ class SmtpTransport extends AbstractTransport {
  * @throws Cake\Error\SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {
-		if (!is_null($data)) {
+		if ($data !== null) {
 			$this->_socket->write($data . "\r\n");
 		}
 		while ($checkCode !== false) {

@@ -134,7 +134,6 @@ class MyCustomExceptionRenderer extends ExceptionRenderer {
 class MissingWidgetThingException extends Error\NotFoundException {
 }
 
-
 /**
  * ExceptionRendererTest class
  *

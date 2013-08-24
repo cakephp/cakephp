@@ -936,7 +936,7 @@ class Set {
 		$stack = array();
 		foreach ($results as $k => $r) {
 			$id = $k;
-			if (!is_null($key)) {
+			if ($key !== null) {
 				$id = $key;
 			}
 			if (is_array($r) && !empty($r)) {

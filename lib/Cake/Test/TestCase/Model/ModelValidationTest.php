@@ -593,7 +593,7 @@ class ModelValidationTest extends ModelTestBase {
 		$this->assertFalse($result, 'Save occurred even when with models failed. %s');
 		$this->assertEquals($expectedError, $JoinThing->validationErrors);
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
-		$this->assertSame($count, 0);
+		$this->assertSame(0, $count);
 
 		$data = array(
 			'Something' => array(
@@ -656,7 +656,7 @@ class ModelValidationTest extends ModelTestBase {
 		$this->assertEquals($expectedError, $JoinThing->validationErrors);
 
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
-		$this->assertSame($count, 0);
+		$this->assertSame(0, $count);
 
 		$joinRecords = $JoinThing->find('count', array(
 			'conditions' => array('JoinThing.something_id' => $data['Something']['id'])
@@ -697,11 +697,11 @@ class ModelValidationTest extends ModelTestBase {
 		$Author->create();
 		$result = $Author->saveAll($data, array('validate' => 'first'));
 		$this->assertTrue($result);
-		$this->assertFalse(is_null($Author->id));
+		$this->assertNotNull($Author->id);
 
 		$id = $Author->id;
 		$count = $Author->find('count', array('conditions' => array('Author.id' => $id)));
-		$this->assertSame($count, 1);
+		$this->assertSame(1, $count);
 
 		$count = $Post->find('count', array(
 			'conditions' => array('Post.author_id' => $id)
@@ -2320,7 +2320,7 @@ class ModelValidationTest extends ModelTestBase {
 				),
 			),
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -2381,7 +2381,7 @@ class ModelValidationTest extends ModelTestBase {
 				),
 			),
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 }

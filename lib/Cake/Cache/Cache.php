@@ -218,7 +218,7 @@ class Cache {
 /**
  * Drops a constructed cache engine.
  *
- * If you wish to re-configure a cache engine you should drop it, 
+ * If you wish to re-configure a cache engine you should drop it,
  * change configuration and then re-use it.
  *
  * @param string $config A currently configured cache config you wish to remove.

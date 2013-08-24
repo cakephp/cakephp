@@ -167,7 +167,7 @@ class I18n {
 			$_this->_lang = $lang;
 		}
 
-		if (is_null($domain)) {
+		if ($domain === null) {
 			$domain = static::$defaultDomain;
 		}
 		if ($domain === '') {

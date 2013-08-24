@@ -1044,7 +1044,7 @@ class HashTest extends TestCase {
 			1 => array('Person' => array('name' => 'Jeff')),
 		);
 		$a = Hash::sort($a, '{n}.Person.name', 'ASC', 'STRING');
-		$this->assertEquals($a, $b);
+		$this->assertSame($a, $b);
 
 		$names = array(
 			array('employees' => array(
@@ -1067,7 +1067,38 @@ class HashTest extends TestCase {
 			array('employees' => array(array('name' => array()))),
 			array('employees' => array(array('name' => array())))
 		);
-		$this->assertEquals($expected, $result);
+		$this->assertSame($expected, $result);
+
+		$a = array(
+			'SU' => array(
+				'total_fulfillable' => 2
+			),
+			'AA' => array(
+				'total_fulfillable' => 1
+			),
+			'LX' => array(
+				'total_fulfillable' => 0
+			),
+			'BL' => array(
+				'total_fulfillable' => 3
+			),
+		);
+		$expected = array(
+			'LX' => array(
+				'total_fulfillable' => 0
+			),
+			'AA' => array(
+				'total_fulfillable' => 1
+			),
+			'SU' => array(
+				'total_fulfillable' => 2
+			),
+			'BL' => array(
+				'total_fulfillable' => 3
+			),
+		);
+		$result = Hash::sort($a, '{s}.total_fulfillable', 'asc');
+		$this->assertSame($expected, $result);
 	}
 
 /**
@@ -2204,7 +2235,7 @@ class HashTest extends TestCase {
 				)
 			)
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$data = array('a.b.100.a' => null, 'a.b.200.a' => null);
 		$expected = array(

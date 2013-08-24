@@ -110,6 +110,22 @@ class RedirectRouteTest extends TestCase {
 		$result = $route->parse('/my_controllers/do_something/passme');
 		$header = $route->response->header();
 		$this->assertEquals(Router::url('/tags/add', true), $header['Location']);
+
+		$route = new RedirectRoute('/:lang/my_controllers', array('controller' => 'tags', 'action' => 'add'), array('lang' => '(nl|en)', 'persist' => array('lang')));
+		$route->stop = false;
+		$route->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
+		$result = $route->parse('/nl/my_controllers/');
+		$header = $route->response->header();
+		$this->assertEquals(Router::url('/tags/add?lang=nl', true), $header['Location']);
+
+		Router::reload(); // reset default routes
+		Router::connect('/:lang/preferred_controllers', array('controller' => 'tags', 'action' => 'add'), array('lang' => '(nl|en)', 'persist' => array('lang')));
+		$route = new RedirectRoute('/:lang/my_controllers', array('controller' => 'tags', 'action' => 'add'), array('lang' => '(nl|en)', 'persist' => array('lang')));
+		$route->stop = false;
+		$route->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
+		$result = $route->parse('/nl/my_controllers/');
+		$header = $route->response->header();
+		$this->assertEquals(Router::url('/nl/preferred_controllers', true), $header['Location']);
 	}
 
 }

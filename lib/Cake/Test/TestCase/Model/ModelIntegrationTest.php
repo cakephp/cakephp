@@ -1473,7 +1473,7 @@ class ModelIntegrationTest extends ModelTestBase {
 				'dynamicWith' => true,
 				'associationForeignKey' => 'join_b_id',
 				'conditions' => '', 'fields' => '', 'order' => '', 'limit' => '', 'offset' => '',
-				'finderQuery' => '', 'deleteQuery' => '', 'insertQuery' => ''
+				'finderQuery' => ''
 		));
 		$this->assertEquals($expected, $result);
 
@@ -1550,8 +1550,6 @@ class ModelIntegrationTest extends ModelTestBase {
 				'offset' => '',
 				'unique' => true,
 				'finderQuery' => '',
-				'deleteQuery' => '',
-				'insertQuery' => ''
 		));
 
 		$this->assertSame($TestModel->hasAndBelongsToMany, $expected);

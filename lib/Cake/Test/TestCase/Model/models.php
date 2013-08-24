@@ -2519,7 +2519,6 @@ class MyCategoriesMyProduct extends CakeTestModel {
 	public $name = 'MyCategoriesMyProduct';
 }
 
-
 /**
  * NumberTree class
  *

@@ -369,7 +369,8 @@ abstract class ControllerTestCase extends TestCase {
 					'class' => $name . 'Component'
 				));
 			}
-			$component = $this->getMock($componentClass, $methods, array($controller->Components));
+			$config = isset($controller->components[$component]) ? $controller->components[$component] : array();
+			$component = $this->getMock($componentClass, $methods, array($controller->Components, $config));
 			$controller->Components->set($name, $component);
 			$controller->Components->enable($name);
 		}

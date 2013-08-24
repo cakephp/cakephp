@@ -84,7 +84,7 @@ class Permission extends Model {
  * @param string $action Action (defaults to *)
  * @return boolean Success (true if ARO has access to action in ACO, false otherwise)
  */
-	public function check($aro, $aco, $action = "*") {
+	public function check($aro, $aco, $action = '*') {
 		if (!$aro || !$aco) {
 			return false;
 		}
@@ -94,17 +94,29 @@ class Permission extends Model {
 		$acoPath = $this->Aco->node($aco);
 
 		if (!$aroPath || !$acoPath) {
-			trigger_error(__d('cake_dev', "DbAcl::check() - Failed ARO/ACO node lookup in permissions check. Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			trigger_error(__d('cake_dev',
+					"%s - Failed ARO/ACO node lookup in permissions check. Node references:\nAro: %s\nAco: %s",
+					'DbAcl::check()',
+					print_r($aro, true),
+					print_r($aco, true)),
+				E_USER_WARNING
+			);
 			return false;
 		}
 
 		if (!$acoPath) {
-			trigger_error(__d('cake_dev', "DbAcl::check() - Failed ACO node lookup in permissions check. Node references:\nAro: ") . print_r($aro, true) . "\nAco: " . print_r($aco, true), E_USER_WARNING);
+			trigger_error(__d('cake_dev',
+					"%s - Failed ACO node lookup in permissions check. Node references:\nAro: %s\nAco: %s",
+					'DbAcl::check()',
+					print_r($aro, true),
+					print_r($aco, true)),
+				E_USER_WARNING
+			);
 			return false;
 		}
 
 		if ($action !== '*' && !in_array('_' . $action, $permKeys)) {
-			trigger_error(__d('cake_dev', "ACO permissions key %s does not exist in DbAcl::check()", $action), E_USER_NOTICE);
+			trigger_error(__d('cake_dev', "ACO permissions key %s does not exist in %s", $action, 'DbAcl::check()'), E_USER_NOTICE);
 			return false;
 		}
 
@@ -169,20 +181,20 @@ class Permission extends Model {
  * @return boolean Success
  * @throws Cake\Error\AclException on Invalid permission key.
  */
-	public function allow($aro, $aco, $actions = "*", $value = 1) {
+	public function allow($aro, $aco, $actions = '*', $value = 1) {
 		$perms = $this->getAclLink($aro, $aco);
 		$permKeys = $this->getAcoKeys($this->schema());
 		$save = array();
 
 		if (!$perms) {
-			trigger_error(__d('cake_dev', 'DbAcl::allow() - Invalid node'), E_USER_WARNING);
+			trigger_error(__d('cake_dev', '%s - Invalid node', 'DbAcl::allow()'), E_USER_WARNING);
 			return false;
 		}
 		if (isset($perms[0])) {
 			$save = $perms[0][$this->alias];
 		}
 
-		if ($actions === "*") {
+		if ($actions === '*') {
 			$save = array_combine($permKeys, array_pad(array(), count($permKeys), $value));
 		} else {
 			if (!is_array($actions)) {

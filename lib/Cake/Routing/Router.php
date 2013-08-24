@@ -164,7 +164,7 @@ class Router {
  * @throws Cake\Error\Exception
  */
 	public static function defaultRouteClass($routeClass = null) {
-		if (is_null($routeClass)) {
+		if ($routeClass === null) {
 			return static::$_routeClass;
 		}
 

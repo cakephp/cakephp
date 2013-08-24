@@ -706,7 +706,7 @@ class Debugger {
 		$self = Debugger::getInstance();
 		$data = null;
 
-		if (is_null($format)) {
+		if ($format === null) {
 			return Debugger::outputAs();
 		}
 
@@ -815,7 +815,7 @@ class Debugger {
 		if (is_object($var)) {
 			return get_class($var);
 		}
-		if (is_null($var)) {
+		if ($var === null) {
 			return 'null';
 		}
 		if (is_string($var)) {
@@ -846,7 +846,7 @@ class Debugger {
  */
 	public static function checkSecurityKeys() {
 		if (Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
-			trigger_error(__d('cake_dev', 'Please change the value of \'Security.salt\' in App/Config/app.php to a salt value specific to your application'), E_USER_NOTICE);
+			trigger_error(__d('cake_dev', 'Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'APP/Config/app.php'), E_USER_NOTICE);
 		}
 	}
 

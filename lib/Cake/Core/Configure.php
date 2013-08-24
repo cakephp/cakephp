@@ -69,7 +69,8 @@ class Configure {
  * }}}
  *
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::write
- * @param array $config Name of var to write
+ * @param string|array $config The key to write, can be a dot notation value.
+ * Alternatively can be an array containing key(s) and value(s).
  * @param mixed $value Value to set for var
  * @return boolean True if write was successful
  */
@@ -264,7 +265,7 @@ class Configure {
 			throw new Error\ConfigureException(__d('cake_dev', 'There is no "%s" adapter.', $config));
 		}
 		if (!method_exists($reader, 'dump')) {
-			throw new Error\ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a dump() method.', $config));
+			throw new Error\ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a %s method.', $config, 'dump()'));
 		}
 		$values = static::$_values;
 		if (!empty($keys) && is_array($keys)) {

@@ -225,7 +225,6 @@ class TestAfterHelper extends Helper {
 
 }
 
-
 /**
  * ViewTest class
  *

@@ -191,13 +191,13 @@ class Security {
  */
 	public static function rijndael($text, $key, $operation) {
 		if (empty($key)) {
-			throw new Error\Exception(__d('cake_dev', 'You cannot use an empty key for Security::rijndael()'));
+			throw new Error\Exception(__d('cake_dev', 'You cannot use an empty key for %s', 'Security::rijndael()'));
 		}
 		if (empty($operation) || !in_array($operation, array('encrypt', 'decrypt'))) {
-			throw new Error\Exception(__d('cake_dev', 'You must specify the operation for Security::rijndael(), either encrypt or decrypt'));
+			throw new Error\Exception(__d('cake_dev', 'You must specify the operation for %s, either encrypt or decrypt', 'Security::rijndael()'));
 		}
 		if (strlen($key) < 32) {
-			throw new Error\Exception(__d('cake_dev', 'You must use a key larger than 32 bytes for Security::rijndael()'));
+			throw new Error\Exception(__d('cake_dev', 'You must use a key larger than 32 bytes for %s', 'Security::rijndael()'));
 		}
 		$algorithm = MCRYPT_RIJNDAEL_256;
 		$mode = MCRYPT_MODE_CBC;

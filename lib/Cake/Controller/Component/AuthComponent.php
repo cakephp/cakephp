@@ -494,7 +494,7 @@ class AuthComponent extends Component {
 				throw new Error\Exception(__d('cake_dev', 'Authorization adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authorize')) {
-				throw new Error\Exception(__d('cake_dev', 'Authorization objects must implement an authorize method.'));
+				throw new Error\Exception(__d('cake_dev', 'Authorization objects must implement an %s method.', 'authorize()'));
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authorizeObjects[] = new $className($this->_registry, $settings);
@@ -716,7 +716,7 @@ class AuthComponent extends Component {
  * @return string Redirect URL
  */
 	public function redirectUrl($url = null) {
-		if (!is_null($url)) {
+		if ($url !== null) {
 			$redir = $url;
 			$this->Session->write('Auth.redirect', $redir);
 		} elseif ($this->Session->check('Auth.redirect')) {
@@ -781,7 +781,7 @@ class AuthComponent extends Component {
 				throw new Error\Exception(__d('cake_dev', 'Authentication adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authenticate')) {
-				throw new Error\Exception(__d('cake_dev', 'Authentication objects must implement an authenticate method.'));
+				throw new Error\Exception(__d('cake_dev', 'Authentication objects must implement an %s method.', 'authenticate()'));
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authenticateObjects[] = new $className($this->_registry, $settings);

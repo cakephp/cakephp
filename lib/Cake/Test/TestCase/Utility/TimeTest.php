@@ -609,6 +609,9 @@ class TimeTest extends TestCase {
 
 		$result = $this->Time->format('nonsense', '%d-%m-%Y', 'invalid', 'UTC');
 		$this->assertEquals('invalid', $result);
+
+		$result = $this->Time->format('0000-00-00', '%d-%m-%Y', 'invalid');
+		$this->assertEquals('invalid', $result);
 	}
 
 /**

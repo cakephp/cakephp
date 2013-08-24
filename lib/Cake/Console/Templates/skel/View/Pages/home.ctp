@@ -77,11 +77,11 @@ endif;
 		$settings = Cache::settings('_cake_model_');
 		if (!empty($settings)):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/cache.php', '<em>'. $settings['engine'] . 'Engine</em>');
+				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit %s', '<em>'. $settings['engine'] . 'Engine</em>', 'APP/Config/cache.php');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/Config/cache.php');
+				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in %s', 'APP/Config/cache.php');
 			echo '</span>';
 		endif;
 	?>
@@ -98,7 +98,7 @@ endif;
 			echo '<span class="notice">';
 				echo __d('cake_dev', 'Your datasources configuration file is NOT present.');
 				echo '<br/>';
-				echo __d('cake_dev', 'Rename APP/Config/datasources.default.php to APP/Config/datasources.php');
+				echo __d('cake_dev', 'Rename %s to %s', 'APP/Config/datasources.default.php', 'APP/Config/datasources.php');
 			echo '</span>';
 		endif;
 	?>
@@ -140,7 +140,7 @@ if (isset($filePresent)):
 		echo '<p><span class="notice">';
 			echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');
 			echo '<br/>';
-			echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
+			echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding %s when configuring', '<code>--enable-unicode-properties</code>');
 		echo '</span></p>';
 	}
 ?>
@@ -164,9 +164,10 @@ if (isset($filePresent)):
 <h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>
 <p>
 <?php
-echo __d('cake_dev', 'To change the content of this page, edit: APP/View/Pages/home.ctp.<br />
-To change its layout, edit: APP/View/Layouts/default.ctp.<br />
-You can also add some CSS styles for your pages at: APP/webroot/css.');
+echo __d('cake_dev', 'To change the content of this page, edit: %s.<br />
+To change its layout, edit: %s.<br />
+You can also add some CSS styles for your pages at: %s.',
+	'APP/View/Pages/home.ctp', 'APP/View/Layouts/default.ctp', 'APP/webroot/css');
 ?>
 </p>
 

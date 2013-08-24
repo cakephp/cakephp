@@ -247,7 +247,7 @@ class Plugin {
  * @return void
  */
 	public static function unload($plugin = null) {
-		if (is_null($plugin)) {
+		if ($plugin === null) {
 			static::$_plugins = array();
 		} else {
 			unset(static::$_plugins[$plugin]);

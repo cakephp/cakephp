@@ -97,6 +97,7 @@ class ConsoleErrorHandler extends BaseErrorHandler {
  * Stop the execution and set the exit code for the process.
  *
  * @param integer $code The exit code.
+ * @return void
  */
 	protected function _stop($code) {
 		exit($code);

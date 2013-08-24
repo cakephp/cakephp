@@ -365,7 +365,7 @@ class HtmlHelper extends Helper {
 			unset($options['confirm']);
 		}
 		if ($confirmMessage) {
-			$options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;');
+			$options['onclick'] = $this->_confirm($confirmMessage, 'return true;', 'return false;', $options);
 		} elseif (isset($options['default']) && !$options['default']) {
 			if (isset($options['onclick'])) {
 				$options['onclick'] .= ' ';

@@ -531,11 +531,16 @@ class Helper extends Object implements EventListener {
  * @param string $message Message to be displayed
  * @param string $okCode Code to be executed after user chose 'OK'
  * @param string $cancelCode Code to be executed after user chose 'Cancel'
+ * @param array $options Array of options
  * @return string onclick JS code
  */
-	protected function _confirm($message, $okCode, $cancelCode = '') {
+	protected function _confirm($message, $okCode, $cancelCode = '', $options = array()) {
 		$message = json_encode($message);
-		return "if (confirm({$message})) { {$okCode} } {$cancelCode}";
+		$confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
+		if (isset($options['escape']) && $options['escape'] === false) {
+			$confirm = h($confirm);
+		}
+		return $confirm;
 	}
 
 /**

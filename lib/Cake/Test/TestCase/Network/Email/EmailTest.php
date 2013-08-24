@@ -1272,6 +1272,26 @@ class EmailTest extends TestCase {
 	}
 
 /**
+ * test sending and rendering with no layout
+ *
+ * @return void
+ */
+	public function testSendRenderNoLayout() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('debug');
+
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to(array('you@cakephp.org' => 'You'));
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->config(array('empty'));
+		$this->CakeEmail->template('default', null);
+		$result = $this->CakeEmail->send('message body.');
+
+		$this->assertContains('message body.', $result['message']);
+		$this->assertNotContains('This email was sent using the CakePHP Framework', $result['message']);
+	}
+
+/**
  * testSendRender method for ISO-2022-JP
  *
  * @return void

@@ -251,7 +251,7 @@ class Time {
  */
 	public static function convert($serverTime, $timezone) {
 		static $serverTimezone = null;
-		if (is_null($serverTimezone) || (date_default_timezone_get() !== $serverTimezone->getName())) {
+		if ($serverTimezone === null || (date_default_timezone_get() !== $serverTimezone->getName())) {
 			$serverTimezone = new \DateTimeZone(date_default_timezone_get());
 		}
 		$serverOffset = $serverTimezone->getOffset(new \DateTime('@' . $serverTime));
@@ -316,6 +316,11 @@ class Time {
  */
 	public static function fromString($dateString, $timezone = null) {
 		if (empty($dateString)) {
+			return false;
+		}
+
+		$containsDummyDate = (is_string($dateString) && substr($dateString, 0, 10) === '0000-00-00');
+		if ($containsDummyDate) {
 			return false;
 		}
 
@@ -671,7 +676,7 @@ class Time {
 	public static function toRSS($dateString, $timezone = null) {
 		$date = static::fromString($dateString, $timezone);
 
-		if (is_null($timezone)) {
+		if ($timezone === null) {
 			return date("r", $date);
 		}
 

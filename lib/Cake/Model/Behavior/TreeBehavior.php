@@ -311,7 +311,7 @@ class TreeBehavior extends ModelBehavior {
 
 		extract($this->settings[$Model->alias]);
 
-		if (!is_null($overrideRecursive)) {
+		if ($overrideRecursive !== null) {
 			$recursive = $overrideRecursive;
 		}
 		if (!$order) {
@@ -357,7 +357,7 @@ class TreeBehavior extends ModelBehavior {
 	public function generateTreeList(Model $Model, $conditions = null, $keyPath = null, $valuePath = null, $spacer = '_', $recursive = null) {
 		$overrideRecursive = $recursive;
 		extract($this->settings[$Model->alias]);
-		if (!is_null($overrideRecursive)) {
+		if ($overrideRecursive !== null) {
 			$recursive = $overrideRecursive;
 		}
 
@@ -419,7 +419,7 @@ class TreeBehavior extends ModelBehavior {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
-		if (!is_null($overrideRecursive)) {
+		if ($overrideRecursive !== null) {
 			$recursive = $overrideRecursive;
 		}
 		$parentId = $Model->find('first', array('conditions' => array($Model->primaryKey => $id), 'fields' => array($parent), 'recursive' => -1));
@@ -452,7 +452,7 @@ class TreeBehavior extends ModelBehavior {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
-		if (!is_null($overrideRecursive)) {
+		if ($overrideRecursive !== null) {
 			$recursive = $overrideRecursive;
 		}
 		$result = $Model->find('first', array('conditions' => array($Model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => $recursive));
@@ -880,7 +880,7 @@ class TreeBehavior extends ModelBehavior {
 		))));
 
 		foreach ($Model->find('all', array('conditions' => $scope, 'recursive' => 0)) as $instance) {
-			if (is_null($instance[$Model->alias][$left]) || is_null($instance[$Model->alias][$right])) {
+			if ($instance[$Model->alias][$left] === null || $instance[$Model->alias][$right] === null) {
 				$errors[] = array('node', $instance[$Model->alias][$Model->primaryKey],
 					'has invalid left or right values');
 			} elseif ($instance[$Model->alias][$left] == $instance[$Model->alias][$right]) {

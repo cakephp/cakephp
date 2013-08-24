@@ -928,7 +928,7 @@ class View extends Object {
 	protected function _getViewFileName($name = null) {
 		$subDir = null;
 
-		if (!is_null($this->subDir)) {
+		if ($this->subDir !== null) {
 			$subDir = $this->subDir . DS;
 		}
 
@@ -1010,7 +1010,7 @@ class View extends Object {
 		}
 		$subDir = null;
 
-		if (!is_null($this->layoutPath)) {
+		if ($this->layoutPath !== null) {
 			$subDir = $this->layoutPath . DS;
 		}
 		list($plugin, $name) = $this->pluginSplit($name);
