@@ -305,6 +305,14 @@ class FileEngineTest extends CakeTestCase {
 
 		$result = Cache::clear(false, 'file_test');
 		$this->assertTrue($result);
+
+		$result = Cache::write('domain.test.com:8080', 'here', 'file_test');
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'cake_domain_test_com_8080'));
+
+		$result = Cache::write('command>dir|more', 'here', 'file_test');
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'cake_command_dir_more'));
 	}
 
 /**
