@@ -31,9 +31,19 @@ use Cake\TestSuite\TestCase;
  */
 class QueryTest extends TestCase {
 
+/**
+ * Fixture to be used
+ *
+ * @var array
+ */
 	public $fixtures = ['core.article', 'core.author', 'core.tag',
 		'core.articles_tag', 'core.post'];
 
+/**
+ * setUp method
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::getDataSource('test');
@@ -67,6 +77,11 @@ class QueryTest extends TestCase {
 		$companies->belongsTo('category');
 	}
 
+/**
+ * tearDown method
+ *
+ * @return void
+ */
 	public function tearDown() {
 		parent::tearDown();
 		Table::clearRegistry();
@@ -886,6 +901,116 @@ class QueryTest extends TestCase {
 
 		$expected = new \ArrayObject(['table_a' => ['table_b' => []]]);
 		$this->assertEquals($expected, $query->contain());
+	}
+
+/**
+ * Tests registering mappers with mapReduce()
+ *
+ * @return void
+ */
+	public function testMapReduceOnlyMapper() {
+		$mapper1 = function() {};
+		$mapper2 = function() {};
+		$query = new Query($this->connection, $this->table);
+		$this->assertSame($query, $query->mapReduce($mapper1));
+		$this->assertEquals(
+			[['mapper' => $mapper1, 'reducer' => null]],
+			$query->mapReduce()
+		);
+
+		$this->assertEquals($query, $query->mapReduce($mapper1));
+		$result = $query->mapReduce();
+		$this->assertEquals(
+			[
+				['mapper' => $mapper1, 'reducer' => null],
+				['mapper' => $mapper2, 'reducer' => null]
+			],
+			$result
+		);
+	}
+
+/**
+ * Tests registering mappers and reducers with mapReduce()
+ *
+ * @return void
+ */
+	public function testMapReduceBothMethods() {
+		$mapper1 = function() {};
+		$mapper2 = function() {};
+		$reducer1 = function() {};
+		$reducer2 = function() {};
+		$query = new Query($this->connection, $this->table);
+		$this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
+		$this->assertEquals(
+			[['mapper' => $mapper1, 'reducer' => $reducer1]],
+			$query->mapReduce()
+		);
+
+		$this->assertSame($query, $query->mapReduce($mapper2, $reducer2));
+		$this->assertEquals(
+			[
+				['mapper' => $mapper1, 'reducer' => $reducer1],
+				['mapper' => $mapper2, 'reducer' => $reducer2]
+			],
+			$query->mapReduce()
+		);
+	}
+
+/**
+ * Tests that it is possible to overwrite previous map reducers
+ *
+ * @return void
+ */
+	public function testOverwriteMapReduce() {
+		$mapper1 = function() {};
+		$mapper2 = function() {};
+		$reducer1 = function() {};
+		$reducer2 = function() {};
+		$query = new Query($this->connection, $this->table);
+		$this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
+		$this->assertEquals(
+			[['mapper' => $mapper1, 'reducer' => $reducer1]],
+			$query->mapReduce()
+		);
+
+		$this->assertEquals($query, $query->mapReduce($mapper2, $reducer2, true));
+		$this->assertEquals(
+			[['mapper' => $mapper2, 'reducer' => $reducer2]],
+			$query->mapReduce()
+		);
+	}
+
+/**
+ * Tests that multiple map reducers can be stacked
+ *
+ * @return void
+ */
+	public function testResultsAreWrappedInMapReduce() {
+		$params = [$this->connection, $this->table];
+		$query = $this->getMock('\Cake\ORM\Query', ['executeStatement'], $params);
+
+		$statement = $this->getMock('\Database\StatementInterface', ['fetch']);
+		$statement->expects($this->exactly(3))
+			->method('fetch')
+			->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));
+
+		$query->expects($this->once())
+			->method('executeStatement')
+			->will($this->returnValue($statement));
+
+		$query->mapReduce(function($k, $v, $mr) {
+			$mr->emit($v['a']);
+		});
+		$query->mapReduce(
+			function($k, $v, $mr) {
+				$mr->emitIntermediate($k, $v);
+			},
+			function($k, $v, $mr) {
+				$mr->emit($v[0] + 1);
+			}
+		);
+
+		$this->assertEquals([2, 3], iterator_to_array($query->execute()));
 	}
 
 }

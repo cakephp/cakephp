@@ -54,7 +54,7 @@ class MyUsersTable extends Table {
  */
 class TableTest extends \Cake\TestSuite\TestCase {
 
-	public $fixtures = ['core.user'];
+	public $fixtures = ['core.user', 'core.category'];
 
 	public function setUp() {
 		parent::setUp();
@@ -506,4 +506,146 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with($options);
 		$table->find('all', $options);
 	}
+
+/**
+ * Tests find('list')
+ *
+ * @return void
+ */
+	public function testFindList() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$query = $table->find('list', ['fields' => ['id', 'username']])->order('id');
+		$expected = [
+			1 => 'mariano',
+			2 => 'nate',
+			3 => 'larry',
+			4 => 'garrett'
+		];
+		$this->assertSame($expected, $query->toArray());
+
+		$query = $table->find('list')
+			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->order('id');
+		$expected = [
+			0 => [
+				1 => 'mariano',
+				3 => 'larry'
+			],
+			1 => [
+				2 => 'nate',
+				4 => 'garrett'
+			]
+		];
+		$this->assertSame($expected, $query->toArray());
+	}
+
+/**
+ * Tests find('threaded')
+ *
+ * @return void
+ */
+	public function testFindThreaded() {
+		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
+		$expected = [
+			[
+				'id' => 1,
+				'parent_id' => 0,
+				'name' => 'Category 1',
+				'children' => [
+					[
+						'id' => 2,
+						'parent_id' => 1,
+						'name' => 'Category 1.1',
+						'children' => [
+							[
+								'id' => 7,
+								'parent_id' => 2,
+								'name' => 'Category 1.1.1',
+							],
+							[
+								'id' => 8,
+								'parent_id' => '2',
+								'name' => 'Category 1.1.2',
+							]
+						],
+					],
+					[
+						'id' => 3,
+						'parent_id' => '1',
+						'name' => 'Category 1.2',
+					],
+				]
+			],
+			[
+				'id' => 4,
+				'parent_id' => 0,
+				'name' => 'Category 2',
+			],
+			[
+				'id' => 5,
+				'parent_id' => 0,
+				'name' => 'Category 3',
+				'children' => [
+					[
+						'id' => '6',
+						'parent_id' => '5',
+						'name' => 'Category 3.1',
+					]
+				]
+			]
+		];
+		$results = $table->find('threaded')
+			->select(['id', 'parent_id', 'name'])
+			->toArray();
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that finders can be called directly
+ *
+ * @return void
+ */
+	public function testCallingFindersDirectly() {
+		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$query = $this->getMock('\Cake\ORM\Query', [], [$this->connection, $table]);
+		$table->expects($this->once())
+			->method('find')
+			->with('list', [])
+			->will($this->returnValue($query));
+		$this->assertSame($query, $table->list());
+
+		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$table->expects($this->once())
+			->method('find')
+			->with('threaded', ['order' => ['name' => 'ASC']])
+			->will($this->returnValue($query));
+		$this->assertSame($query, $table->threaded(['order' => ['name' => 'ASC']]));
+	}
+
+/**
+ * Tests that finders can be stacked
+ *
+ * @return void
+ */
+	public function testStackingFinders() {
+		$table = $this->getMock('\Cake\ORM\Table', ['find', 'findList']);
+		$params = [$this->connection, $table];
+		$query = $this->getMock('\Cake\ORM\Query', ['addDefaultTypes'], $params);
+
+		$table->expects($this->once())
+			->method('find')
+			->with('threaded', ['order' => ['name' => 'ASC']])
+			->will($this->returnValue($query));
+
+		$table->expects($this->once())
+			->method('findList')
+			->with($query, ['keyPath' => 'id'])
+			->will($this->returnValue($query));
+
+		$result = $table
+			->threaded(['order' => ['name' => 'ASC']])
+			->list(['keyPath' => 'id']);
+		$this->assertSame($query, $result);
+	}
+
 }

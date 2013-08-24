@@ -513,8 +513,7 @@ class Table {
 	}
 
 /**
- * Applies the options required to find all records on this table based
- * on the passed options.
+ * Returns the query as passed
  *
  * @param \Cake\ORM\Query $query
  * @param array $options
@@ -522,6 +521,91 @@ class Table {
  */
 	public function findAll(Query $query, array $options = []) {
 		return $query;
+	}
+
+/**
+ * Sets up a query object so results appear as an indexed array, useful for any
+ * place where you would want a list such as for populating input select boxes.
+ *
+ * When calling this finder, the fields passed are used to determine what should
+ * be used as the array key, value and optionally what to group the results by.
+ * By default the primary key for the model is used for the key, and the display
+ * field as value.
+ *
+ * The results of this finder will be in the following form:
+ *
+ *	[
+ *		1 => 'value for id 1',
+ *		2 => 'value for id 2',
+ *		4 => 'value for id 4'
+ *	]
+ *
+ * @param \Cake\ORM\Query $query
+ * @param array $options
+ * @return \Cake\ORM\Query
+ */
+	public function findList(Query $query, array $options = []) {
+		$mapper = function($key, $row, $mapReduce) use (&$columns) {
+			if (empty($columns)) {
+				$columns = array_slice(array_keys($row), 0, 3);
+			}
+
+			list($rowKey, $rowVal) = $columns;
+			if (!isset($columns[2])) {
+				$mapReduce->emit($row[$rowVal], $row[$rowKey]);
+				return;
+			}
+
+			$key = $row[$columns[2]];
+			$mapReduce->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
+		};
+
+		$reducer = function($key, $values, $mapReduce) {
+			$result = [];
+			foreach ($values as $value) {
+				$result += $value;
+			}
+			$mapReduce->emit($result, $key);
+		};
+
+		return $query->mapReduce($mapper, $reducer);
+	}
+
+/**
+ * Results for this finder will be a nested array, and is appropriate if you want
+ * to use the parent_id field of your model data to build nested results.
+ *
+ * Values belonging to a parent row based on their parent_id value will be
+ * recursively nested inside the parent row values using the `children` property
+ *
+ * @param \Cake\ORM\Query $query
+ * @param array $options
+ * @return \Cake\ORM\Query
+ */
+	public function findThreaded(Query $query, array $options = []) {
+		$parents = [];
+		$mapper = function($key, $row, $mapReduce) use (&$parents) {
+			$parents[$row['id']] =& $row;
+			$mapReduce->emitIntermediate($row['parent_id'], $row['id']);
+		};
+
+		$reducer = function($key, $values, $mapReduce) use (&$parents) {
+			if (empty($key) || !isset($parents[$key])) {
+				foreach ($values as $id) {
+					$parents[$id] = new \ArrayObject($parents[$id]);
+					$mapReduce->emit($parents[$id]);
+				}
+				return;
+			}
+			foreach ($values as $id) {
+				$parents[$key]['children'][] =& $parents[$id];
+			}
+		};
+
+		$formatter = function($key, $row, $mapReduce) {
+			$mapReduce->emit($row->getArrayCopy());
+		};
+		return $query->mapReduce($mapper, $reducer)->mapReduce($formatter);
 	}
 
 /**
@@ -574,6 +658,46 @@ class Table {
 			->where($conditions);
 		$statement = $query->executeStatement();
 		return $statement->rowCount() > 0;
+	}
+
+/**
+ * Calls a finder method directly and applies it to the passed query,
+ * if no query is passed a new one will be created and returned
+ *
+ * @param string $type name of the finder to be called
+ * @param \Cake\ORM\Query $query The query object to apply the finder options to
+ * @param array $args List of options to pass to the finder
+ * @return \Cake\ORM\Query
+ * @throws \BadMethodCallException
+ */
+	public function callFinder($type, Query $query = null, $options = []) {
+		if (!method_exists($this, 'find' . ucfirst($type))) {
+			throw new \BadMethodCallException(
+				__d('cake_dev', 'Unknown table method %s', $type)
+			);
+		}
+		if ($query === null) {
+			return $this->find($type, $options);
+		}
+		return $this->{'find' . ucfirst($type)}($query, $options);
+	}
+
+/**
+ * Magic method to be able to call scoped finders without the
+ * find prefix
+ *
+ * @param string $method name of the method to be invoked
+ * @param array $args List of arguments passed to the function
+ * @return mixed
+ * @throws \BadMethodCallException
+ */
+	public function __call($method, $args) {
+		$query = null;
+		if (isset($args[0]) && $args[0] instanceof Query) {
+			$query = array_shift($args);
+		}
+		$options = array_shift($args) ?: [];
+		return $this->callFinder($method, $query, $options);
 	}
 
 }
