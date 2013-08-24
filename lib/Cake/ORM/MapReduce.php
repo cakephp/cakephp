@@ -163,6 +163,8 @@ class MapReduce implements IteratorAggregate {
  * bucket created during the Map phase call the reduce function.
  *
  * @return void
+ * @throws \LogicException if emitIntermediate was called but no reducer function
+ * was provided
  */
 	protected function _execute() {
 		$mapper = $this->_mapper;
@@ -170,6 +172,10 @@ class MapReduce implements IteratorAggregate {
 			$mapper($key, $value, $this);
 		}
 		$this->_data = null;
+
+		if (!empty($this->_intermediate) && empty($this->_reducer)) {
+			throw new \LogicException(__d('cake_dev', 'No reducer function was provided'));
+		}
 
 		$reducer = $this->_reducer;
 		foreach ($this->_intermediate as $key => $list) {

@@ -86,4 +86,21 @@ class MapReduceTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($results));
 	}
 
+/**
+ * Tests that a reducer is required when there are intermediate resutls
+ *
+ * @expectedException \LogicException
+ * @return void
+ */
+	public function testReducerRequired() {
+		$data = ['a' => ['one', 'two'], 'b' => ['three', 'four']];
+		$mapper = function ($key, $row, $mr) {
+			foreach ($row as $number) {
+				$mr->emitIntermediate('a', $number);
+			}
+		};
+		$results = new MapReduce(new ArrayIterator($data), $mapper);
+		iterator_to_array($results);
+	}
+
 }
