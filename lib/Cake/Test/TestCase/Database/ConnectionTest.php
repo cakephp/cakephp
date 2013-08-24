@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -60,13 +60,14 @@ class ConnectionTest extends TestCase {
 
 /**
  * Tests trying to use a disabled driver throws an exception
+ *
  * @expectedException Cake\Database\Exception\MissingExtensionException
  * @expectedExceptionMessage Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency
  * @return void
- **/
+ */
 	public function testDisabledDriver() {
 		$mock = $this->getMock('\Cake\Database\Connection\Driver', ['enabled'], [], 'DriverMock');
-		$connection = new Connection(['datasource' => get_class($mock)]);
+		$connection = new Connection(['datasource' => $mock]);
 	}
 
 /**
@@ -76,10 +77,10 @@ class ConnectionTest extends TestCase {
  * @return void
  **/
 	public function testWrongCredentials() {
-		$this->skipIf(Configure::read('Datasource.test.dsn'));
-		$connection = new Connection(['database' => 'foobar'] + Configure::read('Datasource.test'));
+		$config = ConnectionManager::config('test');
+		$this->skipIf(isset($config['dsn']), 'Datasource has dsn, skipping.');
+		$connection = new Connection(['database' => '_probably_not_there_'] + ConnectionManager::config('test'));
 		$connection->connect();
-		$this->skipIf($connection->driver() instanceof \Cake\Database\Driver\Sqlite);
 	}
 
 /**
@@ -546,10 +547,11 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testQuoteIdentifier() {
-		$connection = new Connection(Configure::read('Datasource.test'));
-
-		$driver = $this->getObjectForTrait('\Cake\Database\Dialect\SqliteDialectTrait');
-		$connection->driver($driver);
+		$driver = $this->getMock('Cake\Database\Driver\Sqlite', ['enabled']);
+		$driver->expects($this->once())
+			->method('enabled')
+			->will($this->returnValue(true));
+		$connection = new Connection(['datasource' => $driver]);
 
 		$result = $connection->quoteIdentifier('name');
 		$expected = '"name"';
@@ -676,8 +678,14 @@ class ConnectionTest extends TestCase {
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect'],
-			[Configure::read('Datasource.test')]
+			[['log' => true]]
 		);
+		$driver = $this->getMock('Cake\Database\Driver');
+		$driver->expects($this->once())
+			->method('enabled')
+			->will($this->returnValue(true));
+		$connection->driver($driver);
+
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
 		$connection->logger($logger);
 		$logger->expects($this->at(0))->method('log')
@@ -690,7 +698,7 @@ class ConnectionTest extends TestCase {
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),
 				$this->attributeEqualTo('query', 'ROLLBACK')
 			));
-		$connection->logQueries(true);
+
 		$connection->begin();
 		$connection->begin(); //This one will not be logged
 		$connection->rollback();
@@ -702,13 +710,19 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testLogCommitTransaction() {
-		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
+		$driver = $this->getMock('Cake\Database\Driver');
+		$driver->expects($this->once())
+			->method('enabled')
+			->will($this->returnValue(true));
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect'],
-			[Configure::read('Datasource.test')]
+			[['datasource' => $driver]]
 		);
+
+		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
 		$connection->logger($logger);
+
 		$logger->expects($this->at(1))->method('log')
 			->with($this->logicalAnd(
 				$this->isInstanceOf('\Cake\Database\Log\LoggedQuery'),

@@ -90,7 +90,10 @@ class Connection {
  */
 	public function __construct($config) {
 		$this->_config = $config;
-		$this->driver($config['datasource'], $config);
+
+		if (!empty($config['datasource'])) {
+			$this->driver($config['datasource'], $config);
+		}
 
 		if (!empty($config['log'])) {
 			$this->logQueries($config['log']);
@@ -152,7 +155,7 @@ class Connection {
 			$driver = new $driver($config);
 		}
 		if (!$driver->enabled()) {
-			throw new MissingExtensionException(['driver' => get_class($this->_driver)]);
+			throw new MissingExtensionException(['driver' => get_class($driver)]);
 		}
 		return $this->_driver = $driver;
 	}
