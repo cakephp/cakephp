@@ -101,6 +101,14 @@ class Query extends DatabaseQuery {
 	protected $_useBufferedResults = false;
 
 /**
+ * List of map-reduce routines that should be applied over the query
+ * result
+ *
+ * @var array
+ */
+	protected $_mapReduce = [];
+
+/**
  * @param Cake\Database\Connection $connection
  * @param Cake\ORM\Table $table
  */
@@ -375,16 +383,18 @@ class Query extends DatabaseQuery {
  * Resulting object is traversable, so it can be used in any loop as you would
  * with an array.
  *
- * @return Cake\ORM\ResultSet
+ * @return Cake\ORM\ResultCollectionTrait
  */
 	public function execute() {
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
 		if ($this->_useBufferedResults) {
-			return new BufferedResultSet($this, parent::execute());
+			return $this->_applyFormatters(
+				new BufferedResultSet($this, $this->executeStatement())
+			);
 		}
-		return new ResultSet($this, parent::execute());
+		return $this->_applyFormatters(new ResultSet($this, $this->executeStatement()));
 	}
 
 /**
@@ -516,6 +526,53 @@ class Query extends DatabaseQuery {
 		}
 
 		return $this;
+	}
+
+/**
+ * Register a new MapReduce routine to be executed on top of the database results
+ * Both the mapper and caller callable should be invokable objects.
+ *
+ * The MapReduce routing will only be run when the query is executed and the first
+ * result is attempted to be fetched.
+ *
+ * If the first argument is set to null, it will return the list of previously
+ * registered map reduce routines.
+ *
+ * If the third argument is set to true, it will erase previous map reducers
+ * and replace it with the arguments passed.
+ *
+ * @param callable $mapper
+ * @param callable $reducer
+ * @param boolean $overwrite
+ * @return Cake\ORM\Query|array
+ */
+	public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false) {
+		if ($overwrite) {
+			$this->_mapReduce = [];
+		}
+		if ($mapper === null) {
+			return $this->_mapReduce;
+		}
+		$this->_mapReduce[] = compact('mapper', 'reducer');
+		return $this;
+	}
+
+
+/**
+ * Decorates the ResultSet iterator with MapReduce routines
+ *
+ * @param $results Cake\ORM\ResultCollectionTrait original results
+ * @return Cake\ORM\ResultCollectionTrait
+ */
+	protected function _applyFormatters($result) {
+		foreach ($this->_mapReduce as $functions) {
+			$result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
+		}
+
+		if (!empty($this->_mapReduce)) {
+			$result = new ResultSetDecorator($result);
+		}
+		return $result;
 	}
 
 /**
@@ -717,6 +774,19 @@ class Query extends DatabaseQuery {
 
 		$aliased = $this->aliasFields($select, $this->repository()->alias());
 		$this->select($aliased, true);
+	}
+
+/**
+ * Magic method to be able to call scoped finders in the default table
+ *
+ * @param string $method name of the method to be invoked
+ * @param array $args List of arguments passed to the function
+ * @return mixed
+ * @throws \BadMethodCallException
+ */
+	public function __call($method, $args) {
+		$options = array_shift($args) ?: [];
+		return $this->repository()->callFinder($method, $this, $options);
 	}
 
 }
