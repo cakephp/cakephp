@@ -232,7 +232,7 @@ class FixtureManager {
 				$fixture = $this->_loaded[$f];
 				if (!empty($fixture->created)) {
 					foreach ($fixture->created as $ds) {
-						$db = ConnectionManager::getDataSource($ds);
+						$db = ConnectionManager::get($ds);
 						$fixture->truncate($db);
 					}
 				}
@@ -253,7 +253,7 @@ class FixtureManager {
 		if (isset($this->_fixtureMap[$name])) {
 			$fixture = $this->_fixtureMap[$name];
 			if (!$db) {
-				$db = ConnectionManager::getDataSource($fixture->connection);
+				$db = ConnectionManager::get($fixture->connection);
 			}
 			$this->_setupTable($fixture, $db, $dropTables);
 			$fixture->truncate($db);
@@ -278,7 +278,7 @@ class FixtureManager {
 		foreach ($this->_loaded as $fixture) {
 			if (!empty($fixture->created)) {
 				foreach ($fixture->created as $ds) {
-					$db = ConnectionManager::getDataSource($ds);
+					$db = ConnectionManager::get($ds);
 					$fixture->drop($db);
 				}
 			}

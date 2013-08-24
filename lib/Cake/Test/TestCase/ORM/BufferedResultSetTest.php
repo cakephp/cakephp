@@ -17,7 +17,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\ORM\BufferedResultSet;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
@@ -32,7 +32,7 @@ class BufferedResultSetTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->connection = ConnectionManager::getDataSource('test');
+		$this->connection = ConnectionManager::get('test');
 		$this->table = new Table(['table' => 'articles', 'connection' => $this->connection]);
 	}
 

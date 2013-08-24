@@ -17,11 +17,11 @@ namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\App;
 use Cake\Database\Connection;
+use Cake\Database\ConnectionManager;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\Table;
 use Cake\Error;
 use Cake\Log\Log;
-use Cake\Model\ConnectionManager;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -193,7 +193,7 @@ class TestFixture {
 			throw new Error\Exception(__d('cake_dev', 'Cannot import from undefined table.'));
 		}
 
-		$db = ConnectionManager::getDataSource($import['connection']);
+		$db = ConnectionManager::get($import['connection']);
 		$schemaCollection = $db->schemaCollection();
 		$table = $schemaCollection->describe($import['table']);
 		$this->_schema = $table;

@@ -17,7 +17,7 @@ namespace Cake\Utility;
 
 use Cake\Core\App;
 use Cake\Error;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\Model\Model;
 
 /**
@@ -151,7 +151,7 @@ class ClassRegistry {
 						if (isset($defaultProperties['useDbConfig'])) {
 							$useDbConfig = $defaultProperties['useDbConfig'];
 							if ($availableDs === null) {
-								$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
+								$availableDs = ConnectionManager::configured();
 							}
 							if (in_array('test_' . $useDbConfig, $availableDs)) {
 								$useDbConfig = 'test_' . $useDbConfig;
