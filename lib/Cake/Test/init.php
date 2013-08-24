@@ -14,6 +14,7 @@
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Database\ConnectionManager;
 use Cake\Log\Log;
 
 define('DS', DIRECTORY_SEPARATOR);
@@ -65,8 +66,8 @@ Cache::config([
 	]
 ]);
 
-Configure::write('Datasource.test', [
-	'datasource' => getenv('db_class'),
+ConnectionManager::config('test', [
+	'className' => getenv('db_class'),
 	'dsn' => getenv('db_dsn'),
 	'database' => getenv('db_database'),
 	'login' => getenv('db_login'),

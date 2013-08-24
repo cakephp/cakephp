@@ -19,10 +19,14 @@ namespace Cake\Database;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Database\Connection;
+use Cake\Database\ConnectionRegistry;
 use Cake\Error;
 
 /**
  * Manages loaded instances of DataSource objects
+ *
+ * Provides an interface to loading and creating connection objects. Acts as 
+ * a registry for the connections defined in an application.
  *
  * Provides an interface for loading and enumerating connections defined in
  * app/Config/datasources.php
@@ -30,43 +34,119 @@ use Cake\Error;
 class ConnectionManager {
 
 /**
- * Holds a list of datasource configurations
+ * Holds a list of connection configurations
  *
  * @var array
  */
-	public static $config = null;
+	protected static $_config = null;
 
 /**
- * Holds instances DataSource objects
+ * The ConnectionRegistry used by the manager.
  *
- * @var array
+ * @var Cake\Database\ConnectionRegistry
  */
-	protected static $_dataSources = array();
+	protected static $_registry = null;
 
 /**
- * Contains a list of all file and class names used in Connection settings
+ * Configure a new connection object.
  *
- * @var array
- */
-	protected static $_connectionsEnum = array();
-
-/**
- * Indicates if the init code for this class has already been executed
+ * The connection will not be constructed until it is first used.
  *
- * @var boolean
- */
-	protected static $_init = false;
-
-/**
- * Loads connections configuration.
+ * To change an adapter's configuration at runtime, first drop the adapter and then
+ * reconfigure it.
  *
- * @return void
+ * Adapters will not be constructed until the first operation is done.
+ *
+ * ### Usage
+ *
+ * Reading config data back:
+ *
+ * `ConnectionManager::config('default');`
+ *
+ * Setting a connection up.
+ *
+ * `ConnectionManager::config('default', $settings);`
+ *
+ * Injecting a constructed driver in:
+ *
+ * `ConnectionManager::config('default', $instance);`
+ *
+ * Configure multiple adapters at once:
+ *
+ * `ConnectionManager::config($arrayOfConfig);`
+ *
+ * @param string|array $key The name of the connection config, or an array of multiple configs.
+ * @param array $config An array of name => config data for adapter.
+ * @return mixed null when adding configuration and an array of configuration data when reading.
+ * @throws Cake\Error\Exception When trying to modify an existing config.
  */
-	protected static function _init() {
-		if (Configure::check('Datasource') !== null) {
-			static::$config = Configure::read('Datasource');
+	public static function config($key, $config = null) {
+		// Read config.
+		if ($config === null && is_string($key)) {
+			return isset(static::$_config[$key]) ? static::$_config[$key] : null;
 		}
-		static::$_init = true;
+		if ($config === null && is_array($key)) {
+			foreach ($key as $name => $settings) {
+				static::config($name, $settings);
+			}
+			return;
+		}
+		if (isset(static::$_config[$key])) {
+			throw new Error\Exception(__d('cake_dev', 'Cannot reconfigure existing adapter "%s"', $key));
+		}
+		if (is_object($config)) {
+			$config = ['className' => $config];
+		}
+		if (isset($config['datasource']) && empty($config['className'])) {
+			$config['className'] = $config['datasource'];
+			unset($config['datasource']);
+		}
+		$config['name'] = $key;
+		static::$_config[$key] = $config;
+	}
+
+/**
+ * Get a connection.
+ *
+ * If the connection has not been constructed an instance will be added
+ * to the registry.
+ *
+ * @param string $name The connection name.
+ * @return Connection A connection object.
+ * @throws Cake\Error\MissingDataSourceConfigException When config data is missing.
+ */
+	public static function get($name) {
+		if (empty(static::$_config[$name])){
+			throw new Error\MissingDataSourceConfigException(['name' => $name]);
+		}
+		if (empty(static::$_registry)) {
+			static::$_registry = new ConnectionRegistry();
+		}
+		if (isset(static::$_registry->{$name})) {
+			return static::$_registry->{$name};
+		}
+		return static::$_registry->load($name, static::$_config[$name]);
+	}
+
+/**
+ * Get the names of configured connections.
+ *
+ * @return array An array of connection names.
+ */
+	public static function configured() {
+		return array_keys(static::$_config);
+	}
+
+/**
+ * Drop a connection and its configuration.
+ *
+ * @param string $name The connection name to remove.
+ * @return boolean true
+ */
+	public static function drop($name) {
+		static::$_registry->unload($name);
+		unset(static::$_config[$name]);
+		return true;
 	}
 
 /**
@@ -75,130 +155,10 @@ class ConnectionManager {
  * @param string $name The name of the DataSource, as defined in app/Config/datasources.php
  * @return DataSource Instance
  * @throws Cake\Error\MissingDatasourceException
+ * @deprecated Will be removed in 3.0 stable.
  */
 	public static function getDataSource($name) {
-		if (empty(static::$_init)) {
-			static::_init();
-		}
-
-		if (!empty(static::$_dataSources[$name])) {
-			return static::$_dataSources[$name];
-		}
-
-		if (empty(static::$_connectionsEnum[$name])) {
-			static::_getConnectionObject($name);
-		}
-
-		$class = static::loadDataSource($name);
-
-		if (
-			strpos($class, '\Datasource') === false &&
-			strpos($class, '\Database') === false
-		) {
-			throw new Error\MissingDatasourceException(array(
-				'class' => $class,
-				'plugin' => null,
-				'message' => 'Datasource is not found in Model/Datasource package.'
-			));
-		}
-		// TODO fix this once the datasource interface &
-		// internals are solved.
-		if (strpos($class, '\Database') !== false) {
-			static::$_dataSources[$name] = new Connection(static::$config[$name]);
-		} else {
-			static::$_dataSources[$name] = new $class(static::$config[$name]);
-		}
-		static::$_dataSources[$name]->configKeyName = $name;
-
-		return static::$_dataSources[$name];
-	}
-
-/**
- * Gets the list of available DataSource connections
- * This will only return the datasources instantiated by this manager
- * It differs from enumConnectionObjects, since the latter will return all configured connections
- *
- * @return array List of available connections
- */
-	public static function sourceList() {
-		if (empty(static::$_init)) {
-			static::_init();
-		}
-		return array_keys(static::$_dataSources);
-	}
-
-/**
- * Gets a DataSource name from an object reference.
- *
- * @param DataSource $source DataSource object
- * @return string Datasource name, or null if source is not present
- *    in the ConnectionManager.
- */
-	public static function getSourceName($source) {
-		if (empty(static::$_init)) {
-			static::_init();
-		}
-		foreach (static::$_dataSources as $name => $ds) {
-			if ($ds === $source) {
-				return $name;
-			}
-		}
-		return null;
-	}
-
-/**
- * Loads the DataSource class for the given connection name
- *
- * @param string|array $connName A string name of the connection, as defined in app/Config/datasources.php,
- *                        or an array containing the filename (without extension) and class name of the object,
- *                        to be found in app/Model/Datasource/ or lib/Cake/Model/Datasource/.
- * @return string
- * @throws Cake\Error\MissingDatasourceException
- */
-	public static function loadDataSource($connName) {
-		if (empty(static::$_init)) {
-			static::_init();
-		}
-
-		if (is_array($connName)) {
-			$conn = $connName;
-		} else {
-			$conn = static::$_connectionsEnum[$connName];
-		}
-
-		if (class_exists($conn['classname'])) {
-			return $conn['classname'];
-		}
-
-		$plugin = $package = null;
-		if (!empty($conn['plugin'])) {
-			$plugin = $conn['plugin'] . '.';
-		}
-		if (!empty($conn['package'])) {
-			$package = '/' . $conn['package'];
-		}
-
-		$class = App::classname($plugin . $conn['classname'], 'Model/Datasource' . $package);
-		if (!class_exists($class)) {
-			throw new Error\MissingDatasourceException(array(
-				'class' => $conn['classname'],
-				'plugin' => substr($plugin, 0, -1)
-			));
-		}
-		return $class;
-	}
-
-/**
- * Return a list of connections
- *
- * @return array An associative array of elements where the key is the connection name
- *               (as defined in Connections), and the value is an array with keys 'filename' and 'classname'.
- */
-	public static function enumConnectionObjects() {
-		if (empty(static::$_init)) {
-			static::_init();
-		}
-		return (array)static::$config;
+		return static::get($name);
 	}
 
 /**
@@ -207,69 +167,11 @@ class ConnectionManager {
  * @param string $name The DataSource name
  * @param array $config The DataSource configuration settings
  * @return DataSource A reference to the DataSource object, or null if creation failed
+ * @deprecated Will be removed in 3.0 stable
  */
 	public static function create($name = '', $config = array()) {
-		if (empty(static::$_init)) {
-			static::_init();
-		}
-
-		if (empty($name) || empty($config) || array_key_exists($name, static::$_connectionsEnum)) {
-			return null;
-		}
-		static::$config[$name] = $config;
-		static::$_connectionsEnum[$name] = static::_connectionData($config);
-		$return = static::getDataSource($name);
-		return $return;
-	}
-
-/**
- * Removes a connection configuration at runtime given its name
- *
- * @param string $name the connection name as it was created
- * @return boolean success if connection was removed, false if it does not exist
- */
-	public static function drop($name) {
-		if (empty(static::$_init)) {
-			static::_init();
-		}
-
-		if (!isset(static::$config[$name])) {
-			return false;
-		}
-		unset(static::$_connectionsEnum[$name], static::$_dataSources[$name], static::$config[$name]);
-		return true;
-	}
-
-/**
- * Gets a list of class and file names associated with the user-defined DataSource connections
- *
- * @param string $name Connection name
- * @return void
- * @throws Cake\Error\MissingDatasourceConfigException
- */
-	protected static function _getConnectionObject($name) {
-		if (!empty(static::$config[$name])) {
-			static::$_connectionsEnum[$name] = static::_connectionData(static::$config[$name]);
-		} else {
-			throw new Error\MissingDatasourceConfigException(array('config' => $name));
-		}
-	}
-
-/**
- * Returns the file, class name, and parent for the given driver.
- *
- * @param array $config Array with connection configuration. Key 'datasource' is required
- * @return array An indexed array with: filename, classname, plugin and parent
- */
-	protected static function _connectionData($config) {
-		$package = $classname = $plugin = null;
-
-		list($plugin, $classname) = pluginSplit($config['datasource']);
-		if (strpos($classname, '/') !== false) {
-			$package = dirname($classname);
-			$classname = basename($classname);
-		}
-		return compact('package', 'classname', 'plugin');
+		static::config($name, $config);
+		return static::get($name);
 	}
 
 }
