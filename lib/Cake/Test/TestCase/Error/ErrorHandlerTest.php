@@ -1,7 +1,5 @@
 <?php
 /**
- * ErrorHandlerTest file
- *
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -306,7 +304,7 @@ class ErrorHandlerTest extends TestCase {
 	}
 
 /**
- * test handleException generating log.
+ * test handleFatalError generating log.
  *
  * @return void
  */
@@ -314,7 +312,7 @@ class ErrorHandlerTest extends TestCase {
 		$this->_logger->expects($this->at(0))
 			->method('write')
 			->with('error', $this->logicalAnd(
-				$this->stringContains(__FILE__ . ', line 327'),
+				$this->stringContains(__FILE__ . ', line ' . (__LINE__ + 10)),
 				$this->stringContains('Fatal Error (1)'),
 				$this->stringContains('Something wrong')
 			));

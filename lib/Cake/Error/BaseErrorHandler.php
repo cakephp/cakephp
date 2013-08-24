@@ -110,7 +110,7 @@ abstract class BaseErrorHandler {
 		}
 		$this->_displayError($data, $debug);
 		$this->_logError($log, $data);
-		return false;
+		return true;
 	}
 
 /**
@@ -170,7 +170,7 @@ abstract class BaseErrorHandler {
 		} else {
 			$this->handleException(new InternalErrorException());
 		}
-		return false;
+		return true;
 	}
 
 /**
