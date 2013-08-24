@@ -407,7 +407,7 @@ class Sqlite extends DboSource {
 			return null;
 		}
 
-		if (isset($column['key']) && $column['key'] === 'primary' && $type === 'integer') {
+		if (isset($column['key']) && $column['key'] === 'primary' && ($type === 'integer' || $type === 'biginteger')) {
 			return $this->name($name) . ' ' . $this->columns['primary_key']['name'];
 		}
 		return parent::buildColumn($column);
