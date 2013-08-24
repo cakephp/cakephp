@@ -229,7 +229,7 @@ class TestFixture {
 			foreach ($queries as $query) {
 				$db->execute($query);
 			}
-			$this->created[] = $db->configKeyName;
+			$this->created[] = $db->configName();
 		} catch (\Exception $e) {
 			$msg = __d(
 				'cake_dev',
@@ -259,7 +259,7 @@ class TestFixture {
 			foreach ($sql as $stmt) {
 				$db->execute($stmt);
 			}
-			$this->created = array_diff($this->created, [$db->configKeyName]);
+			$this->created = array_diff($this->created, [$db->configName()]);
 		} catch (\Exception $e) {
 			return false;
 		}

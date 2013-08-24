@@ -32,13 +32,6 @@ class Connection {
 	use TypeConverterTrait;
 
 /**
- * The configuration name used for this connection.
- *
- * @var string
- */
-	public $configKeyName = null;
-
-/**
  * Contains the configuration params for this connection
  *
  * @var array
@@ -97,7 +90,6 @@ class Connection {
  */
 	public function __construct($config) {
 		$this->_config = $config;
-
 		$this->driver($config['datasource'], $config);
 
 		if (!empty($config['log'])) {
@@ -123,6 +115,18 @@ class Connection {
  */
 	public function config() {
 		return $this->_config;
+	}
+
+/**
+ * Get the configuration name for this connection.
+ *
+ * @return string
+ */
+	public function configName() {
+		if (empty($this->_config['name'])) {
+			return null;
+		}
+		return $this->_config['name'];
 	}
 
 /**
