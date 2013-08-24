@@ -9,15 +9,14 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.9.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
 
 use Cake\Core\App;
-use Cake\Error;
 use Cake\Database\ConnectionManager;
+use Cake\Error;
 use Cake\Model\Model;
 
 /**
@@ -26,8 +25,6 @@ use Cake\Model\Model;
  * A repository for class objects, each registered with a key.
  * If you try to add an object with the same key twice, nothing will come of it.
  * If you need a second instance of an object, give it another key.
- *
- * @package       Cake.Utility
  */
 class ClassRegistry {
 

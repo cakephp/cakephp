@@ -116,7 +116,7 @@ class ConnectionManager {
  * @throws Cake\Error\MissingDataSourceConfigException When config data is missing.
  */
 	public static function get($name) {
-		if (empty(static::$_config[$name])){
+		if (empty(static::$_config[$name])) {
 			throw new Error\MissingDataSourceConfigException(['name' => $name]);
 		}
 		if (empty(static::$_registry)) {

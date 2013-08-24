@@ -11,7 +11,7 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Model;
+namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\App;
 use Cake\Core\Plugin;
