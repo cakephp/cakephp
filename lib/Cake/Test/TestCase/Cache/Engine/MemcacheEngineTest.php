@@ -92,7 +92,6 @@ class MemcacheEngineTest extends TestCase {
 		Cache::config('memcache', array_merge($defaults, $settings));
 	}
 
-
 /**
  * testSettings method
  *

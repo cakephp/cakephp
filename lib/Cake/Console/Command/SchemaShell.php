@@ -14,8 +14,8 @@
  */
 namespace Cake\Console\Command;
 
-use Cake\Console\Shell;
 use Cake\Cache\Cache;
+use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Model\ConnectionManager;
 use Cake\Model\Schema;
@@ -53,6 +53,7 @@ class SchemaShell extends Shell {
  * Override startup
  *
  * @return void
+ * @throws \Cake\Error\Exception
  */
 	public function startup() {
 		$this->_welcome();

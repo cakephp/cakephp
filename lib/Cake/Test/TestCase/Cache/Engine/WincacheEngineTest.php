@@ -67,7 +67,6 @@ class WincacheEngineTest extends TestCase {
 		Cache::config('wincache', array_merge($defaults, $settings));
 	}
 
-
 /**
  * testReadAndWriteCache method
  *

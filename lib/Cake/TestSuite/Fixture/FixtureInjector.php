@@ -21,8 +21,8 @@ use Cake\TestSuite\TestCase;
 use \Exception;
 use \PHPUnit_Framework_AssertionFailedError;
 use \PHPUnit_Framework_Test;
-use \PHPUnit_Framework_TestSuite;
 use \PHPUnit_Framework_TestListener;
+use \PHPUnit_Framework_TestSuite;
 
 /**
  * Test listener used to inject a fixture manager in all tests that

@@ -16,9 +16,9 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use \ArrayIterator;
 use Cake\ORM\MapReduce;
 use Cake\TestSuite\TestCase;
+use \ArrayIterator;
 
 /**
  * Tests MapReduce class

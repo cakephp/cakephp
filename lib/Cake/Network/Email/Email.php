@@ -1352,7 +1352,7 @@ class Email {
 		$this->_htmlMessage = '';
 		$this->_message = '';
 		$this->_emailFormat = 'text';
-		$this->_transport= 'default';
+		$this->_transport = 'default';
 		$this->charset = 'utf-8';
 		$this->headerCharset = null;
 		$this->_attachments = array();

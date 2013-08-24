@@ -557,7 +557,6 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
-
 /**
  * Decorates the ResultSet iterator with MapReduce routines
  *

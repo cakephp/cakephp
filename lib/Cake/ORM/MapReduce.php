@@ -16,8 +16,8 @@
  */
 namespace Cake\ORM;
 
-use \IteratorAggregate;
 use \ArrayIterator;
+use \IteratorAggregate;
 
 /**
  * Implements a simplistic version of the popular Map-Reduce algorithm. Acts

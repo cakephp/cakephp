@@ -57,7 +57,6 @@ class XcacheEngineTest extends TestCase {
 		Cache::config('xcache', array_merge($defaults, $settings));
 	}
 
-
 /**
  * tearDown method
  *

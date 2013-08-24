@@ -18,8 +18,8 @@
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Console\Shell;
 use Cake\Cache\Cache;
+use Cake\Console\Shell;
 use Cake\Core\Configure;
 
 /**
