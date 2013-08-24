@@ -11,7 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.10.x.1402
+ * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database;
@@ -50,15 +50,14 @@ class ConnectionRegistry extends ObjectRegistry {
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
  *
  * @param string $class The classname that is missing.
- * @param string $plugin The plugin the cache is missing in.
+ * @param string $plugin The plugin the driver is missing in.
  * @throws Cake\Database\Exception\MissingDriverException
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new MissingDriverException(array(
+		throw new MissingDriverException([
 			'class' => $class,
 			'plugin' => $plugin,
-			'message' => 'Driver "%s" was not found in.'
-		));
+		]);
 	}
 
 /**
@@ -67,11 +66,10 @@ class ConnectionRegistry extends ObjectRegistry {
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
  *
  * @param string|Driver $class The classname or object to make.
- * @param array $settings An array of settings to use for the driver engine.
+ * @param array $settings An array of settings to use for the driver.
  * @return Connection A connection with the correct driver.
  */
 	protected function _create($class, $settings) {
-		$isObject = is_object($class);
 		if (is_object($class)) {
 			$instance = $class;
 		}

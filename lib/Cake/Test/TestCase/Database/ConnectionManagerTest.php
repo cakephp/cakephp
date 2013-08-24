@@ -85,6 +85,7 @@ class ConnectionManagerTest extends TestCase {
  * Test for errors on duplicate config.
  *
  * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Cannot reconfigure existing adapter "test_variant"
  * @return void
  */
 	public function testConfigDuplicateConfig() {
@@ -100,6 +101,7 @@ class ConnectionManagerTest extends TestCase {
  * Test get() failing on missing config.
  *
  * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage The datasource configuration "test_variant" was not found.
  * @return void
  */
 	public function testGetFailOnMissingConfig() {
@@ -170,6 +172,8 @@ class ConnectionManagerTest extends TestCase {
 		$this->assertTrue(ConnectionManager::drop('test_variant'));
 		$result = ConnectionManager::configured();
 		$this->assertNotContains('test_variant', $result);
+
+		$this->assertTrue(ConnectionManager::drop('probably_does_not_exist'), 'Should always return true.');
 	}
 
 }

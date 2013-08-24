@@ -23,9 +23,9 @@ use Cake\Database\ConnectionRegistry;
 use Cake\Error;
 
 /**
- * Manages loaded instances of DataSource objects
+ * Manages and loads instances of Connection
  *
- * Provides an interface to loading and creating connection objects. Acts as 
+ * Provides an interface to loading and creating connection objects. Acts as
  * a registry for the connections defined in an application.
  *
  * Provides an interface for loading and enumerating connections defined in
@@ -144,7 +144,9 @@ class ConnectionManager {
  * @return boolean true
  */
 	public static function drop($name) {
-		static::$_registry->unload($name);
+		if (isset(static::$_registry)) {
+			static::$_registry->unload($name);
+		}
 		unset(static::$_config[$name]);
 		return true;
 	}
