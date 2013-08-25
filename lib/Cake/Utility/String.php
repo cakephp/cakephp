@@ -358,11 +358,9 @@ class String {
  * @return string Formatted text.
  */
 	public static function wordWrap($text, $width = 72, $break = "\n", $cut = false) {
-		if (!$cut) {
-			$regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . ',}\b#U';
-		} else {
-			$regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+){' . $width . '}#';
-		}
+		$widthAndBoundary = $cut ? '{' . $width . '}#' : '{' . $width . ',}\b#U';
+		$regexp = '#^(?:[\x00-\x7F]|[\xC0-\xFF][\x80-\xBF]+)' . $widthAndBoundary;
+
 		$length = mb_strlen($text);
 		$whileWhat = ceil($length / $width);
 		$i = 1;
@@ -375,7 +373,7 @@ class String {
 			}
 			$string = $matches[0];
 			$return .= trim($string) . $break;
-			$text = substr($text, strlen($string));
+			$text = trim(mb_substr($text, mb_strlen($string)));
 			$i++;
 		}
 		return $return . $text;

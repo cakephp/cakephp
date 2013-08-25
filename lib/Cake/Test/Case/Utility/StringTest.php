@@ -315,6 +315,33 @@ class StringTest extends CakeTestCase {
 	}
 
 /**
+ * test wordWrap() to handle unicode strings properly.
+ *
+ * @return void
+ */
+	public function testWordWrap() {
+		$text = 'Но вим омниюм факёльиси элыктрам, мюнырэ лэгыры векж ыт. Выльёт квюандо нюмквуам ты кюм. Зыд эю рыбюм.';
+		$result = String::wordWrap($text, 33, "\n", true);
+		$expected = <<<TEXT
+Но вим омниюм факёльиси элыктрам,
+мюнырэ лэгыры векж ыт. Выльёт квю
+андо нюмквуам ты кюм. Зыд эю рыбю
+м.
+TEXT;
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
+
+		$text = 'Но вим омниюм факёльиси элыктрам, мюнырэ лэгыры векж ыт. Выльёт квюандо нюмквуам ты кюм. Зыд эю рыбюм.';
+		$result = String::wordWrap($text, 33, "\n");
+		$expected = <<<TEXT
+Но вим омниюм факёльиси элыктрам,
+мюнырэ лэгыры векж ыт. Выльёт
+квюандо нюмквуам ты кюм. Зыд эю
+рыбюм.
+TEXT;
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
+	}
+
+/**
  * test wrap method.
  *
  * @return void
@@ -342,8 +369,9 @@ TEXT;
 		$result = String::wrap($text, 33);
 		$expected = <<<TEXT
 Но вим омниюм факёльиси элыктрам,
-мюнырэ лэгыры векж ыт. Выльёт квюа
-ндо нюмквуам ты кюм. Зыд эю рыбюм.
+мюнырэ лэгыры векж ыт. Выльёт
+квюандо нюмквуам ты кюм. Зыд эю
+рыбюм.
 TEXT;
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 	}
