@@ -152,6 +152,7 @@ class CacheTest extends TestCase {
 			}],
 		];
 	}
+
 /**
  * testConfig method
  *

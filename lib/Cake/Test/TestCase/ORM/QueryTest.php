@@ -19,7 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
@@ -46,7 +46,7 @@ class QueryTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->connection = ConnectionManager::getDataSource('test');
+		$this->connection = ConnectionManager::get('test');
 		$schema = ['id' => ['type' => 'integer']];
 		$schema1 = [
 			'id' => ['type' => 'integer'],

@@ -17,7 +17,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\ORM\Table;
 
 /**
@@ -58,7 +58,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->connection = ConnectionManager::getDataSource('test');
+		$this->connection = ConnectionManager::get('test');
 	}
 
 	public function tearDown() {

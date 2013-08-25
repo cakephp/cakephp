@@ -17,7 +17,7 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
+use Cake\Database\ConnectionManager;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\PostgresSchema;
 use Cake\Database\Schema\Table;
@@ -34,8 +34,8 @@ class PostgresSchemaTest extends TestCase {
  * @return void
  */
 	protected function _needsConnection() {
-		$config = Configure::read('Datasource.test');
-		$this->skipIf(strpos($config['datasource'], 'Postgres') === false, 'Not using Postgres for test config');
+		$config = ConnectionManager::config('test');
+		$this->skipIf(strpos($config['className'], 'Postgres') === false, 'Not using Postgres for test config');
 	}
 
 /**
@@ -202,7 +202,7 @@ SQL;
  * @return void
  */
 	public function testListTables() {
-		$connection = new Connection(Configure::read('Datasource.test'));
+		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
 		$schema = new SchemaCollection($connection);
@@ -219,7 +219,7 @@ SQL;
  * @return void
  */
 	public function testDescribeTable() {
-		$connection = new Connection(Configure::read('Datasource.test'));
+		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
 		$schema = new SchemaCollection($connection);
@@ -301,7 +301,7 @@ SQL;
  * @return void
  */
 	public function testDescribeTableIndexes() {
-		$connection = new Connection(Configure::read('Datasource.test'));
+		$connection = ConnectionManager::get('test');
 		$this->_createTables($connection);
 
 		$schema = new SchemaCollection($connection);
