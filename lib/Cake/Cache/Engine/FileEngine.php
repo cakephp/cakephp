@@ -394,7 +394,7 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 
-		$key = Inflector::underscore(str_replace(array(DS, '/', '.'), '_', strval($key)));
+		$key = Inflector::underscore(str_replace(array(DS, '/', '.', '<', '>', '?', ':', '|', '*', '"'), '_', strval($key)));
 		return $key;
 	}
 
