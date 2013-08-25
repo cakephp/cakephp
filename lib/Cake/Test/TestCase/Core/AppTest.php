@@ -353,7 +353,7 @@ class AppTest extends TestCase {
 		$this->assertTrue(in_array('AuthComponent', $result));
 
 		$result = App::objects('View', null, false);
-		$this->assertTrue(in_array('MediaView', $result));
+		$this->assertTrue(in_array('JsonView', $result));
 
 		$result = App::objects('View/Helper', null, false);
 		$this->assertTrue(in_array('HtmlHelper', $result));
