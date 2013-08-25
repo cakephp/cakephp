@@ -250,12 +250,11 @@ class Hash {
 
 		foreach ($data as $k => $v) {
 			if (self::_matchToken($k, $token)) {
-				if ($conditions) {
-					if (self::_matches($v, $conditions)) {
-						$data[$k] = array_merge($v, $values);
-						continue;
-					}
-				} else {
+				if ($conditions && self::_matches($v, $conditions)) {
+					$data[$k] = array_merge($v, $values);
+					continue;
+				}
+				if (!$conditions) {
 					$data[$k] = self::insert($v, $nextPath, $values);
 				}
 			}
