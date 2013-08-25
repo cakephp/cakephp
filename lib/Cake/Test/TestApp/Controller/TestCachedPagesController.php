@@ -98,7 +98,6 @@ class TestCachedPagesController extends Controller {
  */
 	public function themed() {
 		$this->cacheAction = 10;
-		$this->viewClass = 'Theme';
 		$this->theme = 'TestTheme';
 	}
 

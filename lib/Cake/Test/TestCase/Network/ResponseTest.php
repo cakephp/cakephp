@@ -1101,6 +1101,62 @@ class ResponseTest extends TestCase {
 	}
 
 /**
+ * testFileWithDownloadAndName
+ *
+ * @return void
+ */
+	public function testFileWithDownloadAndName() {
+		$response = $this->getMock('Cake\Network\Response', array(
+			'header',
+			'type',
+			'download',
+			'_sendHeader',
+			'_setContentType',
+			'_isActive',
+			'_clearBuffer',
+			'_flushBuffer'
+		));
+
+		$response->expects($this->exactly(1))
+			->method('type')
+			->with('css')
+			->will($this->returnArgument(0));
+
+		$response->expects($this->once())
+			->method('download')
+			->with('something_special.css');
+
+		$response->expects($this->at(2))
+			->method('header')
+			->with('Accept-Ranges', 'bytes');
+
+		$response->expects($this->at(3))
+			->method('header')
+			->with('Content-Length', 38);
+
+		$response->expects($this->once())->method('_clearBuffer');
+		$response->expects($this->once())->method('_flushBuffer');
+
+		$response->expects($this->exactly(1))
+			->method('_isActive')
+			->will($this->returnValue(true));
+
+		$response->file(
+			CAKE . 'Test' . DS . 'TestApp' . DS . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+			array(
+				'name' => 'something_special.css',
+				'download' => true,
+			)
+		);
+
+		ob_start();
+		$result = $response->send();
+		$output = ob_get_clean();
+		$this->assertEquals("/* this is the test asset css file */\n", $output);
+		$this->assertTrue($result !== false);
+	}
+
+/**
  * testFileWithUnknownFileTypeGeneric method
  *
  * @return void
