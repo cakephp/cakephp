@@ -32,13 +32,6 @@ class Connection {
 	use TypeConverterTrait;
 
 /**
- * The configuration name used for this connection.
- *
- * @var string
- */
-	public $configKeyName = null;
-
-/**
  * Contains the configuration params for this connection
  *
  * @var array
@@ -93,19 +86,13 @@ class Connection {
  * Constructor
  *
  * @param array $config configuration for connecting to database
- * @throws Cake\Database\Exception\MissingDriverException if driver class can not be found
- * @throws Cake\Database\Exception\MissingExtensionException if driver cannot be used
  * @return self
  */
 	public function __construct($config) {
 		$this->_config = $config;
-		if (!class_exists($config['datasource'])) {
-			throw new MissingDriverException(['driver' => $config['datasource']]);
-		}
 
-		$this->driver($config['datasource'], $config);
-		if (!$this->_driver->enabled()) {
-			throw new MissingExtensionException(['driver' => get_class($this->_driver)]);
+		if (!empty($config['datasource'])) {
+			$this->driver($config['datasource'], $config);
 		}
 
 		if (!empty($config['log'])) {
@@ -134,6 +121,18 @@ class Connection {
 	}
 
 /**
+ * Get the configuration name for this connection.
+ *
+ * @return string
+ */
+	public function configName() {
+		if (empty($this->_config['name'])) {
+			return null;
+		}
+		return $this->_config['name'];
+	}
+
+/**
  * Sets the driver instance. If an string is passed it will be treated
  * as a class name and will be instantiated.
  *
@@ -141,6 +140,8 @@ class Connection {
  *
  * @param string|Driver $driver
  * @param array|null $config Either config for a new driver or null.
+ * @throws Cake\Database\MissingDriverException When a driver class is missing.
+ * @throws Cake\Database\MissingExtensionException When a driver's PHP extension is missing.
  * @return Driver
  */
 	public function driver($driver = null, $config = null) {
@@ -148,7 +149,13 @@ class Connection {
 			return $this->_driver;
 		}
 		if (is_string($driver)) {
+			if (!class_exists($driver)) {
+				throw new MissingDriverException(['driver' => $driver]);
+			}
 			$driver = new $driver($config);
+		}
+		if (!$driver->enabled()) {
+			throw new MissingExtensionException(['driver' => get_class($driver)]);
 		}
 		return $this->_driver = $driver;
 	}

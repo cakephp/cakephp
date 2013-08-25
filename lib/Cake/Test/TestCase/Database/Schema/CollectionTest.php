@@ -17,7 +17,7 @@
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
-use Cake\Database\Connection;
+use Cake\Database\ConnectionManager;
 use Cake\Database\Schema\Collection;
 use Cake\Database\Schema\Table;
 use Cake\TestSuite\TestCase;
@@ -34,7 +34,7 @@ class CollectionTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->connection = new Connection(Configure::read('Datasource.test'));
+		$this->connection = ConnectionManager::get('test');
 	}
 
 /**

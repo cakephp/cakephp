@@ -9,13 +9,12 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.Config
  * @since         CakePHP(tm) v3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace App\Config;
 
-use Cake\Core\Configure;
+use Cake\Database\ConnectionManager;
 
 /**
  *
@@ -65,8 +64,8 @@ use Cake\Core\Configure;
  * Create the default connection, this is the conventional default connection used
  * by all models.
  */
-Configure::write('Datasource.default', [
-	'datasource' => 'Cake\Database\Driver\Mysql',
+ConnectionManager::config('default', [
+	'className' => 'Cake\Database\Driver\Mysql',
 	'persistent' => false,
 	'host' => 'localhost',
 	'login' => 'user',
@@ -80,8 +79,8 @@ Configure::write('Datasource.default', [
  * Create a test connection.  This connection is used
  * while running unit and integration tests.
  */
-Configure::write('Datasource.test', [
-	'datasource' => 'Cake\Database\Driver\Mysql',
+ConnectionManager::config('test', [
+	'className' => 'Cake\Database\Driver\Mysql',
 	'persistent' => false,
 	'host' => 'localhost',
 	'login' => 'user',

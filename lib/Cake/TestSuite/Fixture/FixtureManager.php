@@ -23,8 +23,8 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Connection;
+use Cake\Database\ConnectionManager;
 use Cake\Error;
-use Cake\Model\ConnectionManager;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
@@ -160,7 +160,7 @@ class FixtureManager {
 				$db = ConnectionManager::getDataSource($fixture->connection);
 			}
 		}
-		if (!empty($fixture->created) && in_array($db->configKeyName, $fixture->created)) {
+		if (!empty($fixture->created) && in_array($db->configName(), $fixture->created)) {
 			return;
 		}
 
@@ -175,7 +175,7 @@ class FixtureManager {
 		} elseif (!$exists) {
 			$fixture->create($db);
 		} else {
-			$fixture->created[] = $db->configKeyName;
+			$fixture->created[] = $db->configName();
 		}
 	}
 
@@ -232,7 +232,7 @@ class FixtureManager {
 				$fixture = $this->_loaded[$f];
 				if (!empty($fixture->created)) {
 					foreach ($fixture->created as $ds) {
-						$db = ConnectionManager::getDataSource($ds);
+						$db = ConnectionManager::get($ds);
 						$fixture->truncate($db);
 					}
 				}
@@ -253,7 +253,7 @@ class FixtureManager {
 		if (isset($this->_fixtureMap[$name])) {
 			$fixture = $this->_fixtureMap[$name];
 			if (!$db) {
-				$db = ConnectionManager::getDataSource($fixture->connection);
+				$db = ConnectionManager::get($fixture->connection);
 			}
 			$this->_setupTable($fixture, $db, $dropTables);
 			$fixture->truncate($db);
@@ -278,7 +278,7 @@ class FixtureManager {
 		foreach ($this->_loaded as $fixture) {
 			if (!empty($fixture->created)) {
 				foreach ($fixture->created as $ds) {
-					$db = ConnectionManager::getDataSource($ds);
+					$db = ConnectionManager::get($ds);
 					$fixture->drop($db);
 				}
 			}

@@ -20,7 +20,7 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\Configure;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 
 /**
  * Task class for creating and updating the database configuration file.
@@ -346,16 +346,15 @@ class DbConfigTask extends Shell {
  * @return void
  */
 	public function getConfig() {
-		$configs = ConnectionManager::enumConnectionObjects();
+		$configs = ConnectionManager::configured();
 
-		$useDbConfig = key($configs);
+		$useDbConfig = current($configs);
 		if (!is_array($configs) || empty($configs)) {
 			return $this->execute();
 		}
-		$connections = array_keys($configs);
 
-		if (count($connections) > 1) {
-			$useDbConfig = $this->in(__d('cake_console', 'Use Database Config') . ':', $connections, $useDbConfig);
+		if (count($configs) > 1) {
+			$useDbConfig = $this->in(__d('cake_console', 'Use Database Config') . ':', $configs, $useDbConfig);
 		}
 		return $useDbConfig;
 	}
