@@ -27,13 +27,6 @@ App::uses('AppModel', 'Model');
 class Permission extends AppModel {
 
 /**
- * Model name
- *
- * @var string
- */
-	public $name = 'Permission';
-
-/**
  * Explicitly disable in-memory query caching
  *
  * @var boolean
