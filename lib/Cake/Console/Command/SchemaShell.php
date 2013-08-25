@@ -148,6 +148,14 @@ class SchemaShell extends AppShell {
 		$cacheDisable = Configure::read('Cache.disable');
 		Configure::write('Cache.disable', true);
 
+		if (!empty($this->params['exclude'])) {
+			$excludeModels = array_map(
+				array('Inflector', 'classify'),
+				explode(',', $this->params['exclude'])
+			);
+			$this->Schema->excludes += $excludeModels;
+		}
+
 		$content = $this->Schema->read($options);
 		$content['file'] = $this->params['file'];
 

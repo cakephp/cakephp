@@ -73,6 +73,13 @@ class CakeSchema extends Object {
 	public $tables = array();
 
 /**
+ * Set of excluded models
+ *
+ * @var array
+ */
+	public $excludes = array();
+
+/**
  * Constructor
  *
  * @param array $options optional load object properties
@@ -227,7 +234,7 @@ class CakeSchema extends Object {
 			foreach ($models as $model) {
 				$importModel = $model;
 				$plugin = null;
-				if ($model === 'AppModel') {
+				if ($model === 'AppModel' || in_array($model, $this->excludes)) {
 					continue;
 				}
 
@@ -392,7 +399,7 @@ class CakeSchema extends Object {
 		$out .= "}\n";
 
 		$file = new File($path . DS . $file, true);
-		$content = "<?php \n{$out}";
+		$content = "<?php\n\n{$out}";
 		if ($file->write($content)) {
 			return $content;
 		}
