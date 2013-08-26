@@ -23,7 +23,6 @@ use Cake\Utility\Inflector;
 /**
  * A shell class to help developers upgrade applications to CakePHP 3.0
  *
- * @package       Cake.Console.Command
  */
 class UpgradeShell extends Shell {
 
@@ -103,6 +102,77 @@ class UpgradeShell extends Shell {
 	}
 
 /**
+ * Rename classes that have moved during 3.0
+ *
+ * @return void
+ */
+	public function rename_classes() {
+		$path = $this->_getPath();
+		$Folder = new Folder($path);
+		$this->_paths = $Folder->tree(null, false, 'dir');
+		$this->_findFiles('php');
+		foreach ($this->_files as $filePath) {
+			$this->_renameClasses($filePath, $this->params['dryRun']);
+		}
+		$this->out(__d('cake_console', '<success>Class names updated.</success>'));
+	}
+
+/**
+ * Rename the classes in a given file.
+ *
+ * @param string $path The path to operate on.
+ * @param boolean $dryRun Whether or not dry run is on.
+ * @return void
+ */
+	protected function _renameClasses($path, $dryRun) {
+		$replacements = [
+			'Cake\Network\Http\HttpSocket' => 'Cake\Network\Http\Client',
+			'HttpSocket' => 'Client',
+			'Cake\Model\ConnectionManager' => 'Cake\Database\ConnectionManager',
+		];
+		$contents = file_get_contents($path);
+		$contents = str_replace(
+			array_keys($replacements),
+			array_values($replacements),
+			$contents,
+			$count
+		);
+		if ($count == 0) {
+			$this->out(
+				__d('cake_console', '<info>Skip %s as there are no renames to do.</info>', $file),
+				1,
+				Shell::VERBOSE
+			);
+			return;
+		}
+		$this->_saveFile($path, $contents);
+	}
+
+/**
+ * Save a file conditionally depending on dryRun flag.
+ *
+ * @param string $path The path to update.
+ * @param string $contents The contents to put in the file.
+ * @return boolean
+ */
+	protected function _saveFile($path, $contents) {
+		$result = true;
+		if (!$this->params['dryRun']) {
+			$result = file_put_contents($file, $contents);
+		}
+		if ($result) {
+			$this->out(__d('cake_console', '<success>Done updating %s</success>', $path), 1);
+			return;
+		}
+		$this->err(__d(
+			'cake_console',
+			'<error>Error</error> Was unable to update %s',
+			$path
+		));
+		return $result;
+	}
+
+/**
  * Convert App::uses() to normal use statements.
  *
  * @return void
@@ -164,21 +234,7 @@ class UpgradeShell extends Shell {
 		}
 
 		$this->out(__d('cake_console', '<info> * Updating App::uses()</info>'), 1, Shell::VERBOSE);
-
-		$result = true;
-		if (!$this->params['dryRun']) {
-			$result = file_put_contents($file, $contents);
-		}
-
-		if ($result) {
-			$this->out(__d('cake_console', '<success>Done updating %s</success>', $file), 1);
-			return;
-		}
-		$this->err(__d(
-			'cake_console',
-			'<error>Error</error> Was unable to update %s',
-			$filePath
-		));
+		$this->_saveFile($file, $contents);
 	}
 
 /**
@@ -263,9 +319,7 @@ class UpgradeShell extends Shell {
 		foreach ($this->_files as $file) {
 			$this->out(__d('cake_console', 'Updating %s...', $file), 1, Shell::VERBOSE);
 			$content = $this->_processFixture(file_get_contents($file));
-			if (empty($this->params['dryRun'])) {
-				file_put_contents($file, $content);
-			}
+			$this->_saveFile($file, $content);
 		}
 	}
 
@@ -400,7 +454,7 @@ class UpgradeShell extends Shell {
 					"TaskRegistry",
 				],
 			];
-			$this->_updateFile($filePath, $patterns);
+			$this->_patternUpdateFile($filePath, $patterns);
 		}
 		$this->out(__d('cake_console', '<success>Collection class uses rename successfully.</success>'));
 	}
@@ -449,7 +503,7 @@ class UpgradeShell extends Shell {
 				"\\1namespace " . $namespace . ";\n",
 			]
 		];
-		$this->_updateFile($filePath, $patterns);
+		$this->_updateFileRegexp($filePath, $patterns);
 	}
 
 /**
@@ -462,7 +516,7 @@ class UpgradeShell extends Shell {
 		$this->_findFiles($this->params['ext']);
 		foreach ($this->_files as $file) {
 			$this->out(__d('cake_console', 'Updating %s...', $file), 1, Shell::VERBOSE);
-			$this->_updateFile($file, $patterns);
+			$this->_updateFileRegexp($file, $patterns);
 		}
 	}
 
@@ -492,34 +546,20 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * Update a single file.
+ * Update a single file with an number of pcre pattern replacements.
  *
  * @param string $file The file to update
  * @param array $patterns The replacement patterns to run.
  * @return void
  */
-	protected function _updateFile($file, $patterns) {
+	protected function _updateFileRegexp($file, $patterns) {
 		$contents = file_get_contents($file);
 
 		foreach ($patterns as $pattern) {
 			$this->out(__d('cake_console', '<info> * Updating %s</info>', $pattern[0]), 1, Shell::VERBOSE);
 			$contents = preg_replace($pattern[1], $pattern[2], $contents);
 		}
-
-		$result = true;
-
-		if (!$this->params['dryRun']) {
-			$result = file_put_contents($file, $contents);
-		}
-		if ($result) {
-			$this->out(__d('cake_console', '<success>Done updating %s</success>', $file), 1);
-			return;
-		}
-		$this->err(__d(
-			'cake_console',
-			'<error>Error</error> Was unable to update %s',
-			$filePath
-		));
+		$this->_saveFile($file, $contents);
 	}
 
 /**
@@ -580,12 +620,16 @@ class UpgradeShell extends Shell {
 				'parser' => ['options' => compact('plugin', 'dryRun', 'git'), 'arguments' => compact('path')]
 			])
 			->addSubcommand('namespaces', [
-				'help' => __d('cake_console', 'Add namespaces to files based on their file path. Only run this *after* you have moved files.'),
+				'help' => __d('cake_console', 'Add namespaces to files based on their file path. Only run this *after* you have moved files with locations.'),
 				'parser' => ['options' => compact('plugin', 'dryRun', 'namespace', 'exclude')]
 			])
 			->addSubcommand('app_uses', [
 				'help' => __d('cake_console', 'Replace App::uses() with use statements'),
 				'parser' => ['options' => compact('plugin', 'dryRun')]
+			])
+			->addSubcommand('rename_classes', [
+				'help' => __d('cake_console', 'Rename classes that have been moved/renamed. Run after replacing App::uses().'),
+				'parser' => ['options' => compact('plugin', 'dryRun', 'exclude')]
 			])
 			->addSubcommand('fixtures', [
 				'help' => __d('cake_console', 'Update fixtures to use new index/constraint features. This is necessary before running tests.'),
