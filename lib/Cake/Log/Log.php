@@ -13,6 +13,7 @@
  */
 namespace Cake\Log;
 
+use Cake\Core\StaticConfigTrait;
 use Cake\Error;
 use Cake\Log\Engine\BaseLog;
 
@@ -102,6 +103,10 @@ use Cake\Log\Engine\BaseLog;
  * of your application and also use standard log levels.
  */
 class Log {
+
+	use StaticConfigTrait {
+		config as protected _config;
+	}
 
 /**
  * Internal flag for tracking whether or not configuration has been changed.
@@ -204,16 +209,6 @@ class Log {
 	}
 
 /**
- * Returns the keynames of the currently active streams
- *
- * @return array Array of configured log streams.
- */
-	public static function configured() {
-		static::_init();
-		return static::$_registry->loaded();
-	}
-
-/**
  * Gets log levels
  *
  * Call this method to obtain current
@@ -263,44 +258,11 @@ class Log {
  * @see App/Config/logging.php
  */
 	public static function config($key, $config = null) {
-		// Read config.
-		if ($config === null && is_string($key)) {
-			return isset(static::$_config[$key]) ? static::$_config[$key] : null;
-		}
-		if ($config === null && is_array($key)) {
-			foreach ($key as $name => $settings) {
-				static::config($name, $settings);
-			}
-			return;
-		}
-		if (isset(static::$_config[$key])) {
-			throw new Error\Exception(__d('cake_dev', 'Cannot reconfigure existing adapter "%s"', $key));
+		$return = static::_config($key, $config);
+		if ($return !== null) {
+			return $return;
 		}
 		static::$_dirtyConfig = true;
-		if (is_object($config)) {
-			$config = ['className' => $config];
-		}
-		if (isset($config['engine']) && empty($config['className'])) {
-			$config['className'] = $config['engine'];
-			unset($config['engine']);
-		}
-		static::$_config[$key] = $config;
-	}
-
-/**
- * Removes a stream from the active streams.
- *
- * Once a stream has been removed it will no longer have messages sent to it.
- * The original configuration data will also be removed. You can use this method
- * when reconfiguring a logger or when you want to remove a logger.
- *
- * @param string $streamName Key name of a configured logger to remove.
- * @return void
- */
-	public static function drop($streamName) {
-		static::_init();
-		static::$_registry->unload($streamName);
-		unset(static::$_config[$streamName]);
 	}
 
 /**

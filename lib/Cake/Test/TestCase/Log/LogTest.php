@@ -136,9 +136,6 @@ class LogTest extends TestCase {
 				'path' => TMP . 'tests',
 			]],
 			'Direct instance' => [new FileLog()],
-			'Closure factory' => [function () {
-				return new FileLog();
-			}],
 		];
 	}
 
