@@ -139,7 +139,7 @@ class UpgradeShell extends Shell {
 		);
 		if ($count == 0) {
 			$this->out(
-				__d('cake_console', '<info>Skip %s as there are no renames to do.</info>', $file),
+				__d('cake_console', '<info>Skip %s as there are no renames to do.</info>', $path),
 				1,
 				Shell::VERBOSE
 			);
@@ -158,7 +158,7 @@ class UpgradeShell extends Shell {
 	protected function _saveFile($path, $contents) {
 		$result = true;
 		if (!$this->params['dryRun']) {
-			$result = file_put_contents($file, $contents);
+			$result = file_put_contents($path, $contents);
 		}
 		if ($result) {
 			$this->out(__d('cake_console', '<success>Done updating %s</success>', $path), 1);
@@ -454,7 +454,7 @@ class UpgradeShell extends Shell {
 					"TaskRegistry",
 				],
 			];
-			$this->_patternUpdateFile($filePath, $patterns);
+			$this->_updateFileRegexp($filePath, $patterns);
 		}
 		$this->out(__d('cake_console', '<success>Collection class uses rename successfully.</success>'));
 	}
