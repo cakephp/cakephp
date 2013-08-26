@@ -35,7 +35,7 @@ class QueryTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		$this->connection = ConnectionManager::getDataSource('test');
+		$this->connection = ConnectionManager::get('test');
 	}
 
 	public function tearDown() {
