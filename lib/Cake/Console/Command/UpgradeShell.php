@@ -74,7 +74,7 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	public function locations() {
-		$this->_getPath();
+		$path = $this->_getPath();
 
 		$moves = array(
 			'Test' . DS . 'Case' => 'Test' . DS . 'TestCase'
@@ -278,7 +278,7 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	public function namespaces() {
-		$path = isset($this->args[0]) ? $this->args[0] : APP;
+		$path = $this->_getPath();
 		$ns = $this->params['namespace'];
 
 		if ($ns === 'App' && isset($this->params['plugin'])) {
@@ -613,7 +613,7 @@ class UpgradeShell extends Shell {
 				"Be sure to have a backup of your application before running these commands."))
 			->addSubcommand('all', [
 				'help' => __d('cake_console', 'Run all upgrade commands.'),
-				'parser' => ['options' => compact('plugin', 'dryRun')]
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			])
 			->addSubcommand('locations', [
 				'help' => __d('cake_console', 'Move files/directories around. Run this *before* adding namespaces with the namespaces command.'),
@@ -621,15 +621,15 @@ class UpgradeShell extends Shell {
 			])
 			->addSubcommand('namespaces', [
 				'help' => __d('cake_console', 'Add namespaces to files based on their file path. Only run this *after* you have moved files with locations.'),
-				'parser' => ['options' => compact('plugin', 'dryRun', 'namespace', 'exclude')]
+				'parser' => ['options' => compact('plugin', 'dryRun', 'namespace', 'exclude'), 'arguments' => compact('path')]
 			])
 			->addSubcommand('app_uses', [
 				'help' => __d('cake_console', 'Replace App::uses() with use statements'),
-				'parser' => ['options' => compact('plugin', 'dryRun')]
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			])
 			->addSubcommand('rename_classes', [
 				'help' => __d('cake_console', 'Rename classes that have been moved/renamed. Run after replacing App::uses().'),
-				'parser' => ['options' => compact('plugin', 'dryRun', 'exclude')]
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			])
 			->addSubcommand('fixtures', [
 				'help' => __d('cake_console', 'Update fixtures to use new index/constraint features. This is necessary before running tests.'),
