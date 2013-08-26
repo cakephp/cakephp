@@ -58,17 +58,14 @@ class CacheRegistry extends ObjectRegistry {
  * Create the cache engine instance.
  *
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
- * @param string|CacheEngine|Closure $class The classname or object to make, or a closure factory.
+ * @param string|CacheEngine $class The classname or object to make, or a closure factory.
  * @param array $settings An array of settings to use for the cache engine.
  * @return CacheEngine The constructed CacheEngine class.
  * @throws Cake\Error\Exception when an object doesn't implement
  *    the correct interface.
  */
 	protected function _create($class, $settings) {
-		$isObject = is_object($class);
-		if ($isObject && $class instanceof \Closure) {
-			$instance = $class();
-		} elseif ($isObject) {
+		if (is_object($class)) {
 			$instance = $class;
 		}
 
