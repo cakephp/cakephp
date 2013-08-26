@@ -109,8 +109,7 @@ class MemcachedEngine extends CacheEngine {
  * Settings the memcached instance
  *
  */
-	protected function _setOptions()
-	{
+	protected function _setOptions() {
 		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 		//$this->_Memcached->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
 
@@ -225,7 +224,7 @@ class MemcachedEngine extends CacheEngine {
 
 		$keys = $this->_Memcached->getAllKeys();
 
-		foreach($keys as $key) {
+		foreach ($keys as $key) {
 			if (strpos($key, $this->settings['prefix']) === 0) {
 				$this->_Memcached->delete($key);
 			}
