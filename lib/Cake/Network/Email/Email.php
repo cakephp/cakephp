@@ -1238,29 +1238,20 @@ class Email {
 	}
 
 /**
- * Read the configuration profile for a given name.
- *
- * @param string $name The name to read.
- * @return array
- * @throws Cake\Error\Exception When using a configuration that doesn't exist.
- */
-	protected function _getConfig($name) {
-		$config = static::config($name);
-		if (empty($config)) {
-			throw new Error\Exception(__d('cake_dev', 'Unknown email configuration "%s".', $name));
-		}
-		return $config;
-	}
-
-/**
  * Apply the config to an instance
  *
  * @param string|array $config
  * @return void
+ * @throws Cake\Error\Exception When using a configuration that doesn't exist.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			$config = $this->_getConfig($config);
+			$name = $config;
+			$config = static::config($name);
+			if (empty($config)) {
+				throw new Error\Exception(__d('cake_dev', 'Unknown email configuration "%s".', $name));
+			}
+			unset($name);
 		}
 		$this->_profile = array_merge($this->_profile, $config);
 		if (!empty($config['charset'])) {
