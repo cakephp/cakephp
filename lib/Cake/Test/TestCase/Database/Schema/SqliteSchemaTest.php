@@ -456,6 +456,31 @@ SQL;
 	}
 
 /**
+ * Test generating a bigint column that is a primary key.
+ *
+ * @return void
+ */
+	public function testColumnSqlPrimaryKeyBigInt() {
+		$driver = $this->_getMockedDriver();
+		$schema = new SqliteSchema($driver);
+
+		$table = new Table('articles');
+		$table->addColumn('id', [
+				'type' => 'biginteger',
+				'null' => false
+			])
+			->addConstraint('primary', [
+				'type' => 'primary',
+				'columns' => ['id']
+			]);
+		$result = $schema->columnSql($table, 'id');
+		$this->assertEquals($result, '"id" BIGINT NOT NULL');
+
+		$result = $schema->constraintSql($table, 'primary');
+		$this->assertEquals('CONSTRAINT "primary" PRIMARY KEY ("id")', $result, 'Bigint primary keys are not special.');
+	}
+
+/**
  * Provide data for testing constraintSql
  *
  * @return array
