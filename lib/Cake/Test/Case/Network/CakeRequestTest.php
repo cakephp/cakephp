@@ -1050,6 +1050,13 @@ class CakeRequestTest extends CakeTestCase {
 
 		$request->return = false;
 		$this->assertFalse($request->isCallMe());
+
+		$request->addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'png', 'txt')));
+		$request->params['ext'] = 'pdf';
+		$this->assertTrue($request->is('extension'));
+
+		$request->params['ext'] = 'exe';
+		$this->assertFalse($request->isExtension());
 	}
 
 /**
