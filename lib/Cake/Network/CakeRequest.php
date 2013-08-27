@@ -521,7 +521,7 @@ class CakeRequest implements ArrayAccess {
 				return isset($this->params[$key]) ? $this->params[$key] == $value : false;
 			}
 			if (isset($detect['options'])) {
-				return isset($this->params[$key]) ? in_array($this->params[$key],$detect['options']) : false;
+				return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
 			}
 		}
 		if (isset($detect['callback']) && is_callable($detect['callback'])) {
