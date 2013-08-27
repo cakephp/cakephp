@@ -155,8 +155,8 @@ class MemcachedEngineTest extends CakeTestCase {
 		);
 
 		$this->setExpectedException(
-        	'CacheException', 'Memcached extension is not build with SASL support'
-        );
+			'CacheException', 'Memcached extension is not build with SASL support'
+		);
 		$Memcached->init($settings);
 	}
 

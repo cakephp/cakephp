@@ -59,6 +59,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
+ * @throws CacheException when you try use authentication without Memcached compiled with SASL support
  */
 	public function init($settings = array()) {
 		if (!class_exists('Memcached')) {
@@ -81,29 +82,34 @@ class MemcachedEngine extends CacheEngine {
 		if (!is_array($this->settings['servers'])) {
 			$this->settings['servers'] = array($this->settings['servers']);
 		}
-		if (!isset($this->_Memcached)) {
-			$this->_Memcached = new Memcached($this->settings['persistent'] ? $this->settings['persistent_id'] : null);
-			$this->_setOptions();
 
-			if (!count($this->_Memcached->getServerList())) {
-				$servers = array();
-				foreach ($this->settings['servers'] as $server) {
-					$servers[] = $this->_parseServerString($server);
-				}
+		if (isset($this->_Memcached)) {
+			return true;
+		}
 
-				if (!$this->_Memcached->addServers($servers)) {
-					return false;
-				}
+		$this->_Memcached = new Memcached($this->settings['persistent'] ? $this->settings['persistent_id'] : null);
+		$this->_setOptions();
 
-				if ($this->settings['login'] !== null && $this->settings['password'] !== null) {
-					if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
-						throw new CacheException(
-							__d('cake_dev', 'Memcached extension is not build with SASL support')
-						);
-					}
-					$this->_Memcached->setSaslAuthData($this->settings['login'], $this->settings['password']);
-				}
+		if (count($this->_Memcached->getServerList())) {
+			return true;
+		}
+
+		$servers = array();
+		foreach ($this->settings['servers'] as $server) {
+			$servers[] = $this->_parseServerString($server);
+		}
+
+		if (!$this->_Memcached->addServers($servers)) {
+			return false;
+		}
+
+		if ($this->settings['login'] !== null && $this->settings['password'] !== null) {
+			if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
+				throw new CacheException(
+					__d('cake_dev', 'Memcached extension is not build with SASL support')
+				);
 			}
+			$this->_Memcached->setSaslAuthData($this->settings['login'], $this->settings['password']);
 		}
 
 		return true;
@@ -136,10 +142,10 @@ class MemcachedEngine extends CacheEngine {
  * @return array Array containing host, port
  */
 	protected function _parseServerString($server) {
-		if ($server[0] == 'u') {
+		if ($server[0] === 'u') {
 			return array($server, 0);
 		}
-		if (substr($server, 0, 1) == '[') {
+		if (substr($server, 0, 1) === '[') {
 			$position = strpos($server, ']:');
 			if ($position !== false) {
 				$position++;
