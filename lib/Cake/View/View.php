@@ -345,6 +345,11 @@ class View extends Object {
 		} else {
 			$this->response = new CakeResponse();
 		}
+
+		if (isset($controller->helpers)) {
+			$this->helpers = $controller->helpers;
+		}
+
 		$this->Helpers = new HelperCollection($this);
 		$this->Blocks = new ViewBlock();
 		parent::__construct();
@@ -830,6 +835,13 @@ class View extends Object {
 			case 'output':
 				return $this->Blocks->get('content');
 		}
+
+		//  don't auto load aliased stock helpers
+		if (isset($this->helpers[$name])) {
+			$this->Helpers->load($name,$this->helpers[$name]);
+			return $this->Helpers->{$name};
+		}
+
 		if (isset($this->Helpers->{$name})) {
 			$this->{$name} = $this->Helpers->{$name};
 			return $this->Helpers->{$name};
