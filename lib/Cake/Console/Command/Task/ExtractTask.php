@@ -44,7 +44,7 @@ class ExtractTask extends AppShell {
 	protected $_files = array();
 
 /**
- * Merge all domains and categories string into the default.pot file
+ * Merge all domain and category string into the default.pot file
  *
  * @var boolean
  */
@@ -222,7 +222,7 @@ class ExtractTask extends AppShell {
 			$this->_merge = !(strtolower($this->params['merge']) === 'no');
 		} else {
 			$this->out();
-			$response = $this->in(__d('cake_console', 'Would you like to merge all domains and categories strings into the default.pot file?'), array('y', 'n'), 'n');
+			$response = $this->in(__d('cake_console', 'Would you like to merge all domain and category strings into the default.pot file?'), array('y', 'n'), 'n');
 			$this->_merge = strtolower($response) === 'y';
 		}
 
