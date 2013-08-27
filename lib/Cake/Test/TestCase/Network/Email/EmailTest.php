@@ -879,6 +879,17 @@ class EmailTest extends TestCase {
 	}
 
 /**
+ * Test that using an invalid profile fails.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Unknown email configuration "derp".
+ */
+	public function testProfileInvalid() {
+		$email = new Email();
+		$email->profile('derp');
+	}
+
+/**
  * testConfigString method
  *
  * @return void
