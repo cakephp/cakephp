@@ -28,4 +28,4 @@ __('Hot features!'
 		. ' Join us #cakephp on IRC. We\'d love to help you get started');
 
 // Category
-echo __c('You have a new message (category: LC_TIME).', 2);
+echo __c('You have a new message (category: LC_TIME).', 5);
