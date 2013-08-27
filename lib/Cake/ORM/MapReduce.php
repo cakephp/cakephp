@@ -95,13 +95,13 @@ class MapReduce implements IteratorAggregate {
  *	$reducer = function ($type, $numbers, $mr) {
  *		$mr->emit(array_unique($numbers), $type);
  *	};
- *	$results = new MapReduce($data, compact('mapper', 'reducer'));
+ *	$results = new MapReduce($data, $mapper, $reducer);
  * }}}
  *
  * Previous example will generate the following result:
  *
  * {{{
- *	['odd' => [1, 2, 5], 'even' => [2, 4]]
+ *	['odd' => [1, 3, 5], 'even' => [2, 4]]
  * }}}
  *
  * @param \Traversable $data the original data to be processed
