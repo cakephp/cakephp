@@ -385,7 +385,7 @@ class ExtractTask extends AppShell {
  */
 	protected function _parse($functionName, $map) {
 		$count = 0;
-		$allCategoryNames = array('LC_CTYPE', 'LC_NUMERIC', 'LC_TIME', 'LC_COLLATE', 'LC_MONETARY', 'LC_MESSAGES', 'LC_ALL', 'LC_MESSAGES');
+		$categories = array('LC_CTYPE', 'LC_NUMERIC', 'LC_TIME', 'LC_COLLATE', 'LC_MONETARY', 'LC_MESSAGES', 'LC_ALL');
 		$tokenCount = count($this->_tokens);
 
 		while (($tokenCount - $count) > 1) {
@@ -415,14 +415,9 @@ class ExtractTask extends AppShell {
 
 				if ($mapCount == count($strings)) {
 					extract(array_combine($map, $strings));
-					$category = isset($category) ? $category : LC_MESSAGES;
+					$category = isset($category) ? $category : 5;
 					$category = intval($category);
-					foreach ($allCategoryNames as $name) {
-						if ($category === constant($name)) {
-							$categoryName = $name;
-							break;
-						}
-					}
+					$categoryName = $categories[$category];
 					$domain = isset($domain) ? $domain : 'default';
 					$details = array(
 						'file' => $this->_file,
