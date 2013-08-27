@@ -92,8 +92,8 @@ class JsonViewTest extends CakeTestCase {
 			)
 		);
 		$Controller->set('user', $data);
+		$Controller->helpers = array('Paginator');
 		$View = new JsonView($Controller);
-		$View->helpers = array('Paginator');
 		$output = $View->render('index');
 
 		$expected = json_encode(array('user' => 'fake', 'list' => array('item1', 'item2'), 'paging' => array('page' => 2)));
