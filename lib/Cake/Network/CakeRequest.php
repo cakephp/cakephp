@@ -581,7 +581,13 @@ class CakeRequest implements ArrayAccess {
  *
  * Allows for custom detectors on the request parameters.
  *
- * e.g `addDetector('post', array('param' => 'requested', 'value' => 1)`
+ * e.g `addDetector('requested', array('param' => 'requested', 'value' => 1)`
+ *
+ * You can also make parameter detectors that accept multiple values
+ * using the `options` key. This is useful when you want to check
+ * if a request parameter is in a list of options.
+ *
+ * `addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'csv'))`
  *
  * @param string $name The name of the detector.
  * @param array $options The options for the detector definition. See above.
