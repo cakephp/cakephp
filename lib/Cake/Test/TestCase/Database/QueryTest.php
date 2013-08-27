@@ -17,8 +17,8 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
-use Cake\Database\Query;
 use Cake\Database\ConnectionManager;
+use Cake\Database\Query;
 use Cake\TestSuite\TestCase;
 
 /**

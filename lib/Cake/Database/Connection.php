@@ -140,8 +140,8 @@ class Connection {
  *
  * @param string|Driver $driver
  * @param array|null $config Either config for a new driver or null.
- * @throws Cake\Database\MissingDriverException When a driver class is missing.
- * @throws Cake\Database\MissingExtensionException When a driver's PHP extension is missing.
+ * @throws Cake\Database\Exception\MissingDriverException When a driver class is missing.
+ * @throws Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
  * @return Driver
  */
 	public function driver($driver = null, $config = null) {
