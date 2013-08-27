@@ -96,6 +96,11 @@ class MemcachedEngine extends CacheEngine {
 				}
 
 				if ($this->settings['login'] !== null && $this->settings['password'] !== null) {
+					if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
+						throw new CacheException(
+							__d('cake_dev', 'Memcached extension is not build with SASL support')
+						);
+					}
 					$this->_Memcached->setSaslAuthData($this->settings['login'], $this->settings['password']);
 				}
 			}
