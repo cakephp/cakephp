@@ -99,8 +99,6 @@ class MemcachedEngine extends CacheEngine {
 					$this->_Memcached->setSaslAuthData($this->settings['login'], $this->settings['password']);
 				}
 			}
-
-			return true;
 		}
 
 		return true;
