@@ -972,7 +972,7 @@ class HelperTest extends CakeTestCase {
 		$Helper->OtherHelper;
 
 		$result = $this->View->Helpers->enabled();
-		$expected = array();
+		$expected = array('Html');
 		$this->assertEquals($expected, $result, 'Helper helpers were attached to the collection.');
 	}
 

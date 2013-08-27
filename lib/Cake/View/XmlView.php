@@ -73,6 +73,18 @@ class XmlView extends View {
 	}
 
 /**
+ * Skip loading helpers if this is a _serialize based view.
+ *
+ * @return void
+ */
+	public function loadHelpers() {
+		if (isset($this->viewVars['_serialize'])) {
+			return;
+		}
+		parent::loadHelpers();
+	}
+
+/**
  * Render a XML view.
  *
  * Uses the special '_serialize' parameter to convert a set of
