@@ -14,7 +14,7 @@
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Cache.Engine
- * @since         CakePHP(tm) v 1.2.0.5434
+ * @since         CakePHP(tm) v 2.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
@@ -64,8 +64,6 @@ class MemcachedEngineTest extends CakeTestCase {
 		parent::setUp();
 		$this->skipIf(!class_exists('Memcached'), 'Memcached is not installed or configured properly.');
 
-		$this->_cacheDisable = Configure::read('Cache.disable');
-		Configure::write('Cache.disable', false);
 		Cache::config('memcached', array(
 			'engine' => 'Memcached',
 			'prefix' => 'cake_',
@@ -80,7 +78,6 @@ class MemcachedEngineTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('memcached');
 		Cache::drop('memcached_groups');
 		Cache::drop('memcached_helper');
