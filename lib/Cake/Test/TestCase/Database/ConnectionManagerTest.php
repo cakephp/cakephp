@@ -42,10 +42,6 @@ class ConnectionManagerTest extends TestCase {
  */
 	public static function configProvider() {
 		return [
-			'Array of data using datasource key.' => [[
-				'datasource' => 'Cake\Database\Driver\Sqlite',
-				'database' => ':memory:',
-			]],
 			'Array of data using classname key.' => [[
 				'className' => 'Sqlite',
 				'database' => ':memory:',
@@ -85,7 +81,7 @@ class ConnectionManagerTest extends TestCase {
  * Test for errors on duplicate config.
  *
  * @expectedException Cake\Error\Exception
- * @expectedExceptionMessage Cannot reconfigure existing adapter "test_variant"
+ * @expectedExceptionMessage Cannot reconfigure existing key "test_variant"
  * @return void
  */
 	public function testConfigDuplicateConfig() {
@@ -173,7 +169,7 @@ class ConnectionManagerTest extends TestCase {
 		$result = ConnectionManager::configured();
 		$this->assertNotContains('test_variant', $result);
 
-		$this->assertTrue(ConnectionManager::drop('probably_does_not_exist'), 'Should always return true.');
+		$this->assertFalse(ConnectionManager::drop('probably_does_not_exist'), 'Should return false on failure.');
 	}
 
 }

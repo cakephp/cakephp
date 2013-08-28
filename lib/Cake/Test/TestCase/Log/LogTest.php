@@ -114,7 +114,8 @@ class LogTest extends TestCase {
 		$result = Log::configured();
 		$this->assertContains('file', $result);
 
-		Log::drop('file');
+		$this->assertTrue(Log::drop('file'), 'Should be dropped');
+		$this->assertFalse(Log::drop('file'), 'Already gone');
 
 		$result = Log::configured();
 		$this->assertNotContains('file', $result);
@@ -136,9 +137,6 @@ class LogTest extends TestCase {
 				'path' => TMP . 'tests',
 			]],
 			'Direct instance' => [new FileLog()],
-			'Closure factory' => [function () {
-				return new FileLog();
-			}],
 		];
 	}
 

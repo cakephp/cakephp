@@ -16,6 +16,7 @@ namespace Cake\Network\Email;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\StaticConfigTrait;
 use Cake\Error;
 use Cake\Log\Log;
 use Cake\Network\Http\FormData\Part;
@@ -30,8 +31,18 @@ use Cake\View\View;
  *
  * This class is used for sending Internet Message Format based
  * on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
+ *
+ * ### Configuration
+ *
+ * Configuration for Email is managed by Email::config() and Email::configTransport().
+ * Email::config() can be used to add or read a configuration profile for Email instances.
+ * Once made configuration profiles can be used to re-use across various email messages your
+ * application sends.
+ *
  */
 class Email {
+
+	use StaticConfigTrait;
 
 /**
  * Default X-Mailer
@@ -1133,46 +1144,6 @@ class Email {
 	}
 
 /**
- * Add or read a configuration profile for Email instances.
- *
- * This method is used to read or define configuration profiles for
- * Email. Once made configuration profiles can be used to re-use the same
- * sets of configuration across multiple email messages.
- *
- * @param string|array $key The name of the configuration profile to read/create
- *    or an array of multiple configuration profiles to set
- * @param null|array $config Null to read config data, an array to set data.
- * @return array|void
- * @throws Cake\Error\Exception When modifying an existing configuration.
- */
-	public static function config($key, $config = null) {
-		// Read config.
-		if ($config === null && is_string($key)) {
-			return isset(static::$_config[$key]) ? static::$_config[$key] : null;
-		}
-		if ($config === null && is_array($key)) {
-			foreach ($key as $name => $settings) {
-				static::config($name, $settings);
-			}
-			return;
-		}
-		if (isset(static::$_config[$key])) {
-			throw new Error\Exception(__d('cake_dev', 'Cannot modify an existing config "%s"', $key));
-		}
-		static::$_config[$key] = $config;
-	}
-
-/**
- * Drop a configured profile.
- *
- * @param string $key The profile to drop.
- * @return void
- */
-	public static function drop($key) {
-		unset(static::$_config[$key]);
-	}
-
-/**
  * Get/Set the configuration profile to use for this instance.
  *
  * @param null|string|array $config String with configuration name, or
@@ -1267,29 +1238,20 @@ class Email {
 	}
 
 /**
- * Read the configuration profile for a given name.
- *
- * @param string $name The name to read.
- * @return array
- * @throws Cake\Error\Exception When using a configuration that doesn't exist.
- */
-	protected function _getConfig($name) {
-		$config = static::config($name);
-		if (empty($config)) {
-			throw new Error\Exception(__d('cake_dev', 'Unknown email configuration "%s".', $name));
-		}
-		return $config;
-	}
-
-/**
  * Apply the config to an instance
  *
  * @param string|array $config
  * @return void
+ * @throws Cake\Error\Exception When using a configuration that doesn't exist.
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			$config = $this->_getConfig($config);
+			$name = $config;
+			$config = static::config($name);
+			if (empty($config)) {
+				throw new Error\Exception(__d('cake_dev', 'Unknown email configuration "%s".', $name));
+			}
+			unset($name);
 		}
 		$this->_profile = array_merge($this->_profile, $config);
 		if (!empty($config['charset'])) {
