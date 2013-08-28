@@ -342,7 +342,6 @@ class SecurityTest extends CakeTestCase {
 		Security::encrypt($txt, $key);
 	}
 
-
 /**
  * Test that short keys cause errors
  *

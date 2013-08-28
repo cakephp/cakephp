@@ -302,7 +302,7 @@ class Security {
  * @throws CakeException On invalid data or key.
  */
 	public static function encrypt($plain, $key) {
-		static::_checkKey($key, 'encrypt()');
+		self::_checkKey($key, 'encrypt()');
 		if (empty($plain)) {
 			throw new CakeException(__d('cake_dev', 'The data to encrypt cannot be empty.'));
 		}
@@ -338,7 +338,7 @@ class Security {
  * @throws CakeException On invalid data or key.
  */
 	public static function decrypt($cipher, $key) {
-		static::_checkKey($key, 'decrypt()');
+		self::_checkKey($key, 'decrypt()');
 		if (empty($cipher)) {
 			throw new CakeException(__d('cake_dev', 'The data to decrypt cannot be empty.'));
 		}
