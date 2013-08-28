@@ -26,13 +26,6 @@ use Cake\Routing\Router;
 class ErrorController extends Controller {
 
 /**
- * Controller name
- *
- * @var string
- */
-	public $name = 'Error';
-
-/**
  * Uses Property
  *
  * @var array

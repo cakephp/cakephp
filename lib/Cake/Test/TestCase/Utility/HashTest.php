@@ -1292,6 +1292,23 @@ class HashTest extends TestCase {
 		$result = Hash::insert($data, '{n}.Comment.{n}.insert', 'value');
 		$this->assertEquals('value', $result[0]['Comment'][0]['insert']);
 		$this->assertEquals('value', $result[0]['Comment'][1]['insert']);
+
+		$data = array(
+			0 => array('Item' => array('id' => 1, 'title' => 'first')),
+			1 => array('Item' => array('id' => 2, 'title' => 'second')),
+			2 => array('Item' => array('id' => 3, 'title' => 'third')),
+			3 => array('Item' => array('id' => 4, 'title' => 'fourth')),
+			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
+		);
+		$result = Hash::insert($data, '{n}.Item[id=/\b2|\b4/]', array('test' => 2));
+		$expected = array(
+			0 => array('Item' => array('id' => 1, 'title' => 'first')),
+			1 => array('Item' => array('id' => 2, 'title' => 'second', 'test' => 2)),
+			2 => array('Item' => array('id' => 3, 'title' => 'third')),
+			3 => array('Item' => array('id' => 4, 'title' => 'fourth', 'test' => 2)),
+			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -1355,6 +1372,23 @@ class HashTest extends TestCase {
 		$result = Hash::remove($a, 'pages.2.vars');
 		$expected = $a;
 		$this->assertEquals($expected, $result);
+
+		$a = array(
+			0 => array(
+				'name' => 'pages'
+			),
+			1 => array(
+				'name' => 'files'
+			)
+		);
+
+		$result = Hash::remove($a, '{n}[name=files]');
+		$expected = array(
+			0 => array(
+				'name' => 'pages'
+			)
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -1374,6 +1408,22 @@ class HashTest extends TestCase {
 		$this->assertFalse(isset($result[0]['Article']['user_id']));
 		$this->assertFalse(isset($result[0]['Article']['title']));
 		$this->assertFalse(isset($result[0]['Article']['body']));
+
+		$data = array(
+			0 => array('Item' => array('id' => 1, 'title' => 'first')),
+			1 => array('Item' => array('id' => 2, 'title' => 'second')),
+			2 => array('Item' => array('id' => 3, 'title' => 'third')),
+			3 => array('Item' => array('id' => 4, 'title' => 'fourth')),
+			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
+		);
+
+		$result = Hash::remove($data, '{n}.Item[id=/\b2|\b4/]');
+		$expected = array(
+			0 => array('Item' => array('id' => 1, 'title' => 'first')),
+			2 => array('Item' => array('id' => 3, 'title' => 'third')),
+			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
+		);
+		$this->assertEquals($result, $expected);
 	}
 
 /**

@@ -26,6 +26,7 @@ use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\Routing\Route\Route;
 use Cake\TestSuite\TestCase;
+use TestPlugin\Routing\Route\TestRoute;
 
 /**
  * RouterTest class
@@ -212,6 +213,29 @@ class RouterTest extends TestCase {
 			'[method]' => 'GET',
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testMapResources with custom connectOptions
+ */
+	public function testMapResourcesConnectOptions() {
+		App::build(array(
+			'Plugin' => array(
+				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
+			)
+		));
+		Plugin::load('TestPlugin');
+		$collection = new RouteCollection();
+		Router::setRouteCollection($collection);
+		Router::mapResources('Posts', array(
+			'connectOptions' => array(
+				'routeClass' => 'TestPlugin.TestRoute',
+				'foo' => '^(bar)$',
+			),
+		));
+		$route = $collection->get(0);
+		$this->assertInstanceOf('TestPlugin\Routing\Route\TestRoute', $route);
+		$this->assertEquals('^(bar)$', $route->options['foo']);
 	}
 
 /**

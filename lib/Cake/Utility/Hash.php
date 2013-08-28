@@ -108,12 +108,7 @@ class Hash {
 		foreach ($tokens as $token) {
 			$next = array();
 
-			$conditions = false;
-			$position = strpos($token, '[');
-			if ($position !== false) {
-				$conditions = substr($token, $position);
-				$token = substr($token, 0, $position);
-			}
+			list($token, $conditions) = self::_splitConditions($token);
 
 			foreach ($context[$_key] as $item) {
 				foreach ((array)$item as $k => $v) {
@@ -137,6 +132,22 @@ class Hash {
 
 		}
 		return $context[$_key];
+	}
+/**
+ * Split token conditions
+ *
+ * @param string $token the token being splitted.
+ * @return array array(token, conditions) with token splitted
+ */
+	protected static function _splitConditions($token) {
+		$conditions = false;
+		$position = strpos($token, '[');
+		if ($position !== false) {
+			$conditions = substr($token, $position);
+			$token = substr($token, 0, $position);
+		}
+
+		return array($token, $conditions);
 	}
 
 /**
@@ -221,16 +232,30 @@ class Hash {
  * @return array The data with $values inserted.
  */
 	public static function insert(array $data, $path, $values = null) {
-		$tokens = explode('.', $path);
-		if (strpos($path, '{') === false) {
+		if (strpos($path, '[') === false) {
+			$tokens = explode('.', $path);
+		} else {
+			$tokens = String::tokenize($path, '.', '[', ']');
+		}
+
+		if (strpos($path, '{') === false && strpos($path, '[') === false) {
 			return static::_simpleOp('insert', $data, $tokens, $values);
 		}
 
 		$token = array_shift($tokens);
 		$nextPath = implode('.', $tokens);
+
+		list($token, $conditions) = static::_splitConditions($token);
+
 		foreach ($data as $k => $v) {
 			if (static::_matchToken($k, $token)) {
-				$data[$k] = static::insert($v, $nextPath, $values);
+				if ($conditions && static::_matches($v, $conditions)) {
+					$data[$k] = array_merge($v, $values);
+					continue;
+				}
+				if (!$conditions) {
+					$data[$k] = static::insert($v, $nextPath, $values);
+				}
 			}
 		}
 		return $data;
@@ -289,17 +314,32 @@ class Hash {
  * @return array The modified array.
  */
 	public static function remove(array $data, $path) {
-		$tokens = explode('.', $path);
-		if (strpos($path, '{') === false) {
+		if (strpos($path, '[') === false) {
+			$tokens = explode('.', $path);
+		} else {
+			$tokens = String::tokenize($path, '.', '[', ']');
+		}
+
+		if (strpos($path, '{') === false && strpos($path, '[') === false) {
 			return static::_simpleOp('remove', $data, $tokens);
 		}
 
 		$token = array_shift($tokens);
 		$nextPath = implode('.', $tokens);
+
+		list($token, $conditions) = self::_splitConditions($token);
+
 		foreach ($data as $k => $v) {
 			$match = static::_matchToken($k, $token);
 			if ($match && is_array($v)) {
+				if ($conditions && static::_matches($v, $conditions)) {
+					unset($data[$k]);
+					continue;
+				}
 				$data[$k] = static::remove($v, $nextPath);
+				if (empty($data[$k])) {
+					unset($data[$k]);
+				}
 			} elseif ($match) {
 				unset($data[$k]);
 			}

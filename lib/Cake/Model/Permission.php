@@ -30,13 +30,6 @@ use Cake\Utility\Hash;
 class Permission extends Model {
 
 /**
- * Model name
- *
- * @var string
- */
-	public $name = 'Permission';
-
-/**
  * Explicitly disable in-memory query caching
  *
  * @var boolean

@@ -30,8 +30,6 @@ use Cake\Model\Schema;
  */
 class DbAclSchema extends Schema {
 
-	public $name = 'DbAcl';
-
 	public function before($event = array()) {
 		return true;
 	}

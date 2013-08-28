@@ -411,8 +411,12 @@ class Router {
  */
 	public static function mapResources($controller, $options = array()) {
 		$options = array_merge(array(
+			'connectOptions' => [],
 			'id' => static::ID . '|' . static::UUID
 		), $options);
+
+		$connectOptions = $options['connectOptions'];
+		unset($options['connectOptions']);
 
 		foreach ((array)$controller as $name) {
 			list($plugin, $name) = pluginSplit($name);
@@ -442,6 +446,7 @@ class Router {
 					'id' => $options['id'],
 					'pass' => array('id')
 				);
+				$options = array_merge($options, $connectOptions);
 				Router::connect($url, $params, $options);
 			}
 			static::$_resourceMapped[] = $urlName;

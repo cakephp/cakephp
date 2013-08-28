@@ -333,7 +333,7 @@ class I18n {
 				if (is_file($localeDef)) {
 					$definitions = static::loadLocaleDefinition($localeDef);
 					if ($definitions !== false) {
-						$this->_domains[$domain][$this->_lang][$this->category] = static::loadLocaleDefinition($localeDef);
+						$this->_domains[$domain][$this->_lang][$this->category] = $definitions;
 						$this->_noLocale = false;
 						return $domain;
 					}
