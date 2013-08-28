@@ -44,7 +44,7 @@ class ExtractTask extends AppShell {
 	protected $_files = array();
 
 /**
- * Merge all domain and category string into the default.pot file
+ * Merge all domain and category strings into the default.pot file
  *
  * @var boolean
  */
