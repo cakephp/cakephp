@@ -245,6 +245,14 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Html->link('Next >', false);
+		$expected = array(
+			'a',
+			'Next &gt;',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+		
 		$result = $this->Html->link('Next >', '#', array('escape' => true));
 		$expected = array(
 			'a' => array('href' => '#'),
