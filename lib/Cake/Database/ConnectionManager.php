@@ -18,6 +18,7 @@ namespace Cake\Database;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Core\StaticConfigTrait;
 use Cake\Database\Connection;
 use Cake\Database\ConnectionRegistry;
 use Cake\Error;
@@ -33,12 +34,16 @@ use Cake\Error;
  */
 class ConnectionManager {
 
+	use StaticConfigTrait {
+		config as protected _config;
+	}
+
 /**
  * Holds a list of connection configurations
  *
  * @var array
  */
-	protected static $_config = null;
+	protected static $_config = [];
 
 /**
  * The ConnectionRegistry used by the manager.
@@ -52,28 +57,7 @@ class ConnectionManager {
  *
  * The connection will not be constructed until it is first used.
  *
- * To change an adapter's configuration at runtime, first drop the adapter and then
- * reconfigure it.
- *
- * Adapters will not be constructed until the first operation is done.
- *
- * ### Usage
- *
- * Reading config data back:
- *
- * `ConnectionManager::config('default');`
- *
- * Setting a connection up.
- *
- * `ConnectionManager::config('default', $settings);`
- *
- * Injecting a constructed driver in:
- *
- * `ConnectionManager::config('default', $instance);`
- *
- * Configure multiple adapters at once:
- *
- * `ConnectionManager::config($arrayOfConfig);`
+ * @see Cake\Core\StaticConfigTrait::config()
  *
  * @param string|array $key The name of the connection config, or an array of multiple configs.
  * @param array $config An array of name => config data for adapter.
@@ -81,28 +65,10 @@ class ConnectionManager {
  * @throws Cake\Error\Exception When trying to modify an existing config.
  */
 	public static function config($key, $config = null) {
-		// Read config.
-		if ($config === null && is_string($key)) {
-			return isset(static::$_config[$key]) ? static::$_config[$key] : null;
+		if (is_array($config)) {
+			$config['name'] = $key;
 		}
-		if ($config === null && is_array($key)) {
-			foreach ($key as $name => $settings) {
-				static::config($name, $settings);
-			}
-			return;
-		}
-		if (isset(static::$_config[$key])) {
-			throw new Error\Exception(__d('cake_dev', 'Cannot reconfigure existing adapter "%s"', $key));
-		}
-		if (is_object($config)) {
-			$config = ['className' => $config];
-		}
-		if (isset($config['datasource']) && empty($config['className'])) {
-			$config['className'] = $config['datasource'];
-			unset($config['datasource']);
-		}
-		$config['name'] = $key;
-		static::$_config[$key] = $config;
+		return static::_config($key, $config);
 	}
 
 /**
@@ -126,29 +92,6 @@ class ConnectionManager {
 			return static::$_registry->{$name};
 		}
 		return static::$_registry->load($name, static::$_config[$name]);
-	}
-
-/**
- * Get the names of configured connections.
- *
- * @return array An array of connection names.
- */
-	public static function configured() {
-		return array_keys(static::$_config);
-	}
-
-/**
- * Drop a connection and its configuration.
- *
- * @param string $name The connection name to remove.
- * @return boolean true
- */
-	public static function drop($name) {
-		if (isset(static::$_registry)) {
-			static::$_registry->unload($name);
-		}
-		unset(static::$_config[$name]);
-		return true;
 	}
 
 /**
