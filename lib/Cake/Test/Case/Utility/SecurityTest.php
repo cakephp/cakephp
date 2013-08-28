@@ -302,4 +302,71 @@ class SecurityTest extends CakeTestCase {
 		Security::rijndael($txt, $key, 'encrypt');
 	}
 
+/**
+ * Test encrypt/decrypt.
+ *
+ * @return void
+ */
+	public function testEncryptDecrypt() {
+		$txt = 'The quick brown fox';
+		$key = 'This key is longer than 32 bytes long.';
+		$result = Security::encrypt($txt, $key);
+		$this->assertNotEquals($txt, $result, 'Should be encrypted.');
+		$this->assertNotEquals($result, Security::encrypt($txt, $key), 'Each result is unique.');
+		$this->assertEquals($txt, Security::decrypt($result, $key));
+	}
+
+/**
+ * Test that short keys cause errors
+ *
+ * @expectedException CakeException
+ * @expectedExceptionMessage Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.
+ * @return void
+ */
+	public function testEncryptInvalidKey() {
+		$txt = 'The quick brown fox jumped over the lazy dog.';
+		$key = 'this is too short';
+		Security::encrypt($txt, $key);
+	}
+
+/**
+ * Test that empty data cause errors
+ *
+ * @expectedException CakeException
+ * @expectedExceptionMessage The data to encrypt cannot be empty.
+ * @return void
+ */
+	public function testEncryptInvalidData() {
+		$txt = '';
+		$key = 'This is a key that is long enough to be ok.';
+		Security::encrypt($txt, $key);
+	}
+
+
+/**
+ * Test that short keys cause errors
+ *
+ * @expectedException CakeException
+ * @expectedExceptionMessage Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.
+ * @return void
+ */
+	public function testDecryptInvalidKey() {
+		$txt = 'The quick brown fox jumped over the lazy dog.';
+		$key = 'this is too short';
+		Security::decrypt($txt, $key);
+	}
+
+/**
+ * Test that empty data cause errors
+ *
+ * @expectedException CakeException
+ * @expectedExceptionMessage The data to decrypt cannot be empty.
+ * @return void
+ */
+	public function testDecryptInvalidData() {
+		$txt = '';
+		$key = 'This is a key that is long enough to be ok.';
+		Security::decrypt($txt, $key);
+	}
+
 }

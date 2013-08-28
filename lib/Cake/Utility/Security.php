@@ -289,4 +289,69 @@ class Security {
 		return crypt($password, $salt);
 	}
 
+/**
+ * Encrypt a value using AES-256.
+ *
+ * *Caveat* You cannot properly encrypt/decrypt data with trailing null bytes.
+ * Any trailing null bytes will be removed on decryption due to how PHP pads messages
+ * with nulls prior to encryption.
+ *
+ * @param string $plain The value to encrypt.
+ * @param string $key The 256 bit/32 byte key to use as a cipher key.
+ * @return string Encrypted data.
+ * @throws CakeException On invalid data or key.
+ */
+	public static function encrypt($plain, $key) {
+		static::_checkKey($key, 'encrypt()');
+		if (empty($plain)) {
+			throw new CakeException(__d('cake_dev', 'The data to encrypt cannot be empty.'));
+		}
+		$key = substr($key, 0, 32);
+		$algorithm = MCRYPT_RIJNDAEL_128;
+		$mode = MCRYPT_MODE_CBC;
+
+		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
+		$iv = mcrypt_create_iv($ivSize, MCRYPT_RAND);
+		return $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
+	}
+
+/**
+ * Check the encryption key for proper length.
+ *
+ * @param string $key
+ * @param string $method The method the key is being checked for.
+ * @return void
+ * @throws CakeException When key length is not 256 bit/32 bytes
+ */
+	protected static function _checkKey($key, $method) {
+		if (strlen($key) < 32) {
+			throw new CakeException(__d('cake_dev', 'Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method));
+		}
+	}
+
+/**
+ * Decrypt a value using AES-256.
+ *
+ * @param string $cipher The ciphertext to decrypt.
+ * @param string $key The 256 bit/32 byte key to use as a cipher key.
+ * @return string Decrypted data. Any trailing null bytes will be removed.
+ * @throws CakeException On invalid data or key.
+ */
+	public static function decrypt($cipher, $key) {
+		static::_checkKey($key, 'decrypt()');
+		if (empty($cipher)) {
+			throw new CakeException(__d('cake_dev', 'The data to decrypt cannot be empty.'));
+		}
+		$key = substr($key, 0, 32);
+
+		$algorithm = MCRYPT_RIJNDAEL_128;
+		$mode = MCRYPT_MODE_CBC;
+		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
+
+		$iv = substr($cipher, 0, $ivSize);
+		$cipher = substr($cipher, $ivSize);
+		$plain = mcrypt_decrypt($algorithm, $key, $cipher, $mode, $iv);
+		return rtrim($plain, "\0");
+	}
+
 }
