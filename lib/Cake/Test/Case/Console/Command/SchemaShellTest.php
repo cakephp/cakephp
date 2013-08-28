@@ -391,6 +391,29 @@ class SchemaShellTest extends CakeTestCase {
 	}
 
 /**
+ * Test schema run create with no_confirm option
+ *
+ * @return void
+ */
+	public function testCreateNoConfirm() {
+		$this->Shell = $this->getMock(
+			'SchemaShell',
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '_run'),
+			array(&$this->Dispatcher)
+		);
+
+		$this->Shell->params = array(
+			'connection' => 'test',
+			'no_confirm' => true,
+		);
+		$this->Shell->args = array('i18n');
+		$this->Shell->expects($this->never())->method('in');
+		$this->Shell->expects($this->exactly(2))->method('_run');
+		$this->Shell->startup();
+		$this->Shell->create();
+	}
+
+/**
  * Test schema run create with no table args.
  *
  * @return void
@@ -474,6 +497,32 @@ class SchemaShellTest extends CakeTestCase {
 		$this->Shell->update();
 	}
 
+/**
+ * test run update with no_confirm option
+ *
+ * @return void
+ */
+	public function testUpdateWithNoConfirm() {
+		$this->Shell = $this->getMock(
+			'SchemaShell',
+			array('in', 'out', 'hr', 'createFile', 'error', 'err', '_stop', '_run'),
+			array(&$this->Dispatcher)
+		);
+
+		$this->Shell->params = array(
+			'connection' => 'test',
+			'force' => true,
+			'no_confirm' => true,
+		);
+		$this->Shell->args = array('SchemaShellTest', 'articles');
+		$this->Shell->startup();
+		$this->Shell->expects($this->never())->method('in');
+		$this->Shell->expects($this->once())
+			->method('_run')
+			->with($this->arrayHasKey('articles'), 'update', $this->isInstanceOf('CakeSchema'));
+
+		$this->Shell->update();
+	}
 /**
  * test that the plugin param creates the correct path in the schema object.
  *
