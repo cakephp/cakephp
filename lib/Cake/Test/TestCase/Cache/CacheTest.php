@@ -147,9 +147,6 @@ class CacheTest extends TestCase {
 				'prefix' => 'cake_test_'
 			]],
 			'Direct instance' => [new FileEngine()],
-			'Closure factory' => [function () {
-				return new FileEngine();
-			}],
 		];
 	}
 
@@ -308,7 +305,7 @@ class CacheTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 
 		$result = Cache::drop('some_config_that_does_not_exist');
-		$this->assertTrue($result, 'Drop should succeed.');
+		$this->assertFalse($result, 'Drop should not succeed when config is missing.');
 
 		Cache::config('unconfigTest', [
 			'engine' => 'TestAppCache'
