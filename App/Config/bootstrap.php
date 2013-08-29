@@ -40,6 +40,7 @@ use Cake\Cache\Cache;
 use Cake\Console\ConsoleErrorHandler;
 use Cake\Core\Configure;
 use Cake\Configure\IniReader;
+use Cake\Configure\PhpReader;
 use Cake\Core\Plugin;
 use Cake\Database\ConnectionManager;
 use Cake\Error\ErrorHandler;
@@ -51,9 +52,9 @@ use Cake\Utility\Inflector;
  * Read configuration file and inject configuration into various
  * CakePHP classes.
  */
-$reader = new IniReader();
+$reader = new PhpReader();
 Configure::config('default', $reader);
-Configure::load('app.ini.php', 'default', false);
+Configure::load('app.php', 'default', false);
 
 /**
  * Configure an autoloader for the App namespace.
