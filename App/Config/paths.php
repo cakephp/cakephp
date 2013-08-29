@@ -76,7 +76,7 @@ define('CACHE', TMP . 'cache' . DS);
  * assume the standard lib/Cake path.
  */
 if (file_exists(dirname(__DIR__) . '/vendor/autoload.php')) {
-	define('CAKE_CORE_INCLUDE_PATH', dirname(__DIR__) . '/vendor/cakephp/framework');
+	define('CAKE_CORE_INCLUDE_PATH', dirname(__DIR__) . '/vendor/cakephp/cakephp');
 } else {
 	define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 }

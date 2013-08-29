@@ -4,7 +4,7 @@
     "homepage": "http://cakephp.org",
     "license": "MIT",
     "require": {
-        "cakephp/framework": "dev-3.0",
+        "cakephp/cakephp": "dev-3.0",
         "php": ">=5.4"
     },
     "require-dev": {

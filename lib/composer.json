@@ -1,5 +1,5 @@
 {
-    "name": "cakephp/framework",
+    "name": "cakephp/cakephp",
     "description": "The CakePHP framework",
     "type": "library",
     "keywords": ["framework"],
@@ -13,7 +13,7 @@
     ],
     "support": {
         "issues": "http://cakephp.lighthouseapp.com/",
-        "forum": "http://ask.cakephp.org/",
+        "forum": "http://stackoverflow.com/tags/cakephp",
         "irc": "irc://irc.freenode.org/cakephp",
         "source": "https://github.com/cakephp/cakephp/"
     },
