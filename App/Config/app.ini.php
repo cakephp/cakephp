@@ -1,3 +1,4 @@
+;<?php exit(); ?>
 ;
 ; CakePHP Debug Level:
 ;
