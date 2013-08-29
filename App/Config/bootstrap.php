@@ -113,6 +113,15 @@ Email::configTransport(Configure::read('EmailTransport'));
 Email::config(Configure::read('Email'));
 Log::config(Configure::read('Log'));
 
+// Remove configuration data from Configure.
+// We don't want to give the impression that this data is mutable.
+Configure::delete('Cache');
+Configure::delete('Datasources');
+Configure::delete('EmailTransport');
+Configure::delete('Email');
+Configure::delete('Error');
+Configure::delete('Log');
+
 /**
  * Custom Inflector rules, can be set to correctly pluralize or singularize table, model, controller names or whatever other
  * string is passed to the inflection functions
