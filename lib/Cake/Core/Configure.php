@@ -145,6 +145,30 @@ class Configure {
 	}
 
 /**
+ * Used to read and delete a variable from Configure.
+ *
+ * This is primarily used during bootstrapping to move configuration data
+ * out of configure into the various other classes in CakePHP.
+ *
+ * @param string $var The key to read and remove.
+ * @return array|null
+ */
+	public static function consume($var) {
+		$simple = strpos($var, '.') === false;
+		if ($simple && !isset(static::$_values[$var])) {
+			return null;
+		}
+		if ($simple) {
+			$value = static::$_values[$var];
+			unset(static::$_values[$var]);
+			return $value;
+		}
+		$value = Hash::get(static::$_values, $var);
+		static::$_values = Hash::remove(static::$_values, $var);
+		return $value;
+	}
+
+/**
  * Add a new engine to Configure. Engines allow you to read configuration
  * files in various formats/storage locations. CakePHP comes with two built-in engines
  * PhpConfig and IniConfig. You can also implement your own engine classes in your application.
