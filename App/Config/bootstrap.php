@@ -53,7 +53,7 @@ use Cake\Utility\Inflector;
  */
 $reader = new IniReader();
 Configure::config('default', $reader);
-Configure::load('app.ini.php');
+Configure::load('app.ini.php', 'default', false);
 
 /**
  * Configure an autoloader for the App namespace.
@@ -80,9 +80,9 @@ mb_internal_encoding(Configure::read('App.encoding'));
  * Register application error and exception handlers.
  */
 if (php_sapi_name() == 'cli') {
-	$errorHandler = new ConsoleErrorHandler(Configure::read('Error'));
+	$errorHandler = new ConsoleErrorHandler(Configure::consume('Error'));
 } else {
-	$errorHandler = new ErrorHandler(Configure::read('Error'));
+	$errorHandler = new ErrorHandler(Configure::consume('Error'));
 }
 $errorHandler->register();
 unset($errorHandler);
@@ -107,20 +107,12 @@ if (!Configure::read('App.fullBaseUrl')) {
 	unset($httpHost, $s);
 }
 
-Cache::config(Configure::read('Cache'));
-ConnectionManager::config(Configure::read('Datasources'));
-Email::configTransport(Configure::read('EmailTransport'));
-Email::config(Configure::read('Email'));
-Log::config(Configure::read('Log'));
+Cache::config(Configure::consume('Cache'));
+ConnectionManager::config(Configure::consume('Datasources'));
+Email::configTransport(Configure::consume('EmailTransport'));
+Email::config(Configure::consume('Email'));
+Log::config(Configure::consume('Log'));
 
-// Remove configuration data from Configure.
-// We don't want to give the impression that this data is mutable.
-Configure::delete('Cache');
-Configure::delete('Datasources');
-Configure::delete('EmailTransport');
-Configure::delete('Email');
-Configure::delete('Error');
-Configure::delete('Log');
 
 /**
  * Custom Inflector rules, can be set to correctly pluralize or singularize table, model, controller names or whatever other
