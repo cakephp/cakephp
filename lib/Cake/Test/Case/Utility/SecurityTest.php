@@ -317,6 +317,51 @@ class SecurityTest extends CakeTestCase {
 	}
 
 /**
+ * Test that changing the key causes decryption to fail.
+ *
+ * @return void
+ */
+	public function testDecryptKeyFailure() {
+		$txt = 'The quick brown fox';
+		$key = 'This key is longer than 32 bytes long.';
+		$result = Security::encrypt($txt, $key);
+
+		$key = 'Not the same key. This one will fail';
+		$this->assertFalse(Security::decrypt($txt, $key), 'Modified key will fail.');
+	}
+
+/**
+ * Test that decrypt fails when there is an hmac error.
+ *
+ * @return void
+ */
+	public function testDecryptHmacFailure() {
+		$txt = 'The quick brown fox';
+		$key = 'This key is quite long and works well.';
+		$salt = 'this is a delicious salt!';
+		$result = Security::encrypt($txt, $key, $salt);
+
+		// Change one of the bytes in the hmac.
+		$result[10] = 'x';
+		$this->assertFalse(Security::decrypt($result, $key, $salt), 'Modified hmac causes failure.');
+	}
+
+/**
+ * Test that changing the hmac salt will cause failures.
+ *
+ * @return void
+ */
+	public function testDecryptHmacSaltFailure() {
+		$txt = 'The quick brown fox';
+		$key = 'This key is quite long and works well.';
+		$salt = 'this is a delicious salt!';
+		$result = Security::encrypt($txt, $key, $salt);
+
+		$salt = 'humpty dumpty had a great fall.';
+		$this->assertFalse(Security::decrypt($result, $key, $salt), 'Modified salt causes failure.');
+	}
+
+/**
  * Test that short keys cause errors
  *
  * @expectedException CakeException
