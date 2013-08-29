@@ -128,6 +128,13 @@ class Mysql extends DboSource {
 	protected $_charsets = array();
 
 /**
+ * Mapping of character set names to default collation names
+ *
+ * @var array
+ */
+	protected $_collations = array();
+
+/**
  * Connects to the database using options in the given configuration array.
  *
  * @return boolean True if the database could be connected, else false
@@ -292,6 +299,33 @@ class Mysql extends DboSource {
 			$this->_charsets[$name] = false;
 		}
 		return $this->_charsets[$name];
+	}
+
+/**
+ * Query default collation by charset
+ *
+ * @param string $charset Character set name
+ * @return string Collation name
+ */
+	public function getDefaultCollation($charset) {
+		if ((bool)version_compare($this->getVersion(), "5", "<")) {
+			return false;
+		}
+		if (isset($this->_collations[$charset])) {
+			return $this->_collations[$charset];
+		}
+		$r = $this->_execute(
+			'SELECT COLLATION_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE IS_DEFAULT = \'Yes\' AND CHARACTER_SET_NAME = ?',
+			array($charset)
+		);
+		$cols = $r->fetch(PDO::FETCH_ASSOC);
+
+		if (isset($cols['COLLATION_NAME'])) {
+			$this->_charsets[$charset] = $cols['COLLATION_NAME'];
+		} else {
+			$this->_charsets[$charset] = false;
+		}
+		return $this->_charsets[$charset];
 	}
 
 /**
