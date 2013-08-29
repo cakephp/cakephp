@@ -80,50 +80,14 @@ class ProjectTask extends Shell {
 			}
 		}
 
+		if ($project === false) {
+			$this->out(__d('cake_console', 'Aborting project creation.'));
+			return;
+		}
+
 		$success = true;
 		if ($this->bake($project)) {
 			$path = Folder::slashTerm($project);
-
-			if ($this->appNamespace($path) === true) {
-				$this->out(__d('cake_console', ' * Namespace set for \'App.namespace\' and namespace declarations'));
-			} else {
-				$this->err(__d('cake_console', 'The namespace was <error>NOT</error> set'));
-				$success = false;
-			}
-
-			if ($this->securitySalt($path) === true) {
-				$this->out(__d('cake_console', ' * Random hash key created for \'Security.salt\''));
-			} else {
-				$this->err(__d('cake_console', 'Unable to generate random hash for \'Security.salt\', you should change it in %s', APP . 'Config' . DS . 'app.php'));
-				$success = false;
-			}
-
-			if ($this->cachePrefix($path)) {
-				$this->out(__d('cake_console', ' * Cache prefix set'));
-			} else {
-				$this->err(__d('cake_console', 'The cache prefix was <error>NOT</error> set'));
-				$success = false;
-			}
-
-			$hardCode = false;
-			if ($this->cakeOnIncludePath()) {
-				$this->out(__d('cake_console', '<info>CakePHP is on your `include_path`. CAKE_CORE_INCLUDE_PATH will be set, but commented out.</info>'));
-			} else {
-				$this->out(__d('cake_console', '<warning>CakePHP is not on your `include_path`, CAKE_CORE_INCLUDE_PATH will be hard coded.</warning>'));
-				$this->out(__d('cake_console', 'You can fix this by adding CakePHP to your `include_path`.'));
-				$hardCode = true;
-			}
-			$success = $this->corePath($path, $hardCode) === true;
-			if ($success) {
-				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in %s', CAKE_CORE_INCLUDE_PATH, 'Config/paths.php'));
-			} else {
-				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'Config' . DS . 'paths.php'));
-				$success = false;
-			}
-			if ($success && $hardCode) {
-				$this->out(__d('cake_console', '   * <warning>Remember to check these values after moving to production server</warning>'));
-			}
-
 			$Folder = new Folder($path);
 			if (!$Folder->chmod($path . 'tmp', 0777)) {
 				$this->err(__d('cake_console', 'Could not set permissions on %s', $path . DS . 'tmp'));
@@ -164,67 +128,45 @@ class ProjectTask extends Shell {
  * @param string $skip array of directories to skip when copying
  * @return mixed
  */
-	public function bake($path, $skel = null, $skip = array('empty')) {
-		if (!$skel && !empty($this->params['skel'])) {
-			$skel = $this->params['skel'];
+	public function bake($path) {
+		$composer = APP . 'composer.phar';
+		if (!file_exists($composer)) {
+			$this->err(__d('cake_console', 'Cannot bake project. Could not find composer at "%s".', $composer));
+			return false;
 		}
-		while (!$skel) {
-			$skel = $this->in(
-				__d('cake_console', "What is the path to the directory layout you wish to copy?"),
-				null,
-				CAKE . 'Console' . DS . 'Templates' . DS . 'skel'
-			);
-			if (!$skel) {
-				$this->err(__d('cake_console', 'The directory path you supplied was empty. Please try again.'));
-			} else {
-				while (is_dir($skel) === false) {
-					$skel = $this->in(
-						__d('cake_console', 'Directory path does not exist please choose another:'),
-						null,
-						CAKE . 'Console' . DS . 'Templates' . DS . 'skel'
-					);
-				}
-			}
+		$command = 'php ' . escapeshellarg($composer) . ' create-project cakephp/cakephp-app --dev';
+
+		$descriptorSpec = array(
+			0 => array('pipe', 'r'),
+			1 => array('pipe', 'w'),
+			2 => array('pipe', 'w')
+		);
+		$process = proc_open(
+			$command,
+			$descriptorSpec,
+			$pipes
+		);
+		if (!is_resource($process)) {
+			$this->err(__d('cake_console', 'Could not start subprocess.'));
+			return false;
 		}
+		$output = $error = '';
+		fwrite($pipes[0], $input);
+		fclose($pipes[0]);
 
-		$app = basename($path);
+		$output = stream_get_contents($pipes[1]);
+		fclose($pipes[1]);
 
-		$this->out(__d('cake_console', '<info>Skel Directory</info>: ') . $skel);
-		$this->out(__d('cake_console', '<info>Will be copied to</info>: ') . $path);
-		$this->out(__d('cake_console', '<info>With namespace</info>: ') . $app);
-		$this->hr();
+		$error = stream_get_contents($pipes[2]);
+		fclose($pipes[2]);
+		proc_close($process);
 
-		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
-
-		switch (strtolower($looksGood)) {
-			case 'y':
-				$Folder = new Folder($skel);
-				if (!empty($this->params['empty'])) {
-					$skip = array();
-				}
-
-				if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
-					$this->hr();
-					$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $app, $path));
-					$this->hr();
-				} else {
-					$this->err(__d('cake_console', "<error>Could not create</error> '%s' properly.", $app));
-					return false;
-				}
-
-				foreach ($Folder->messages() as $message) {
-					$this->out(String::wrap(' * ' . $message), 1, Shell::VERBOSE);
-				}
-
-				return true;
-			case 'n':
-				unset($this->args[0]);
-				$this->execute();
-				return false;
-			case 'q':
-				$this->out(__d('cake_console', '<error>Bake Aborted.</error>'));
-				return false;
+		if ($error) {
+			$this->err($error);
+			return false;
 		}
+		$this->out($output);
+		return true;
 	}
 
 /**
