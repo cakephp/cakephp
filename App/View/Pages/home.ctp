@@ -19,7 +19,7 @@
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\Error;
 use Cake\Utility\Debugger;
 use Cake\Utility\Validation;
@@ -83,10 +83,10 @@ endif;
 </p>
 <p>
 	<?php
-		$settings = Cache::settings('_cake_model_');
+		$settings = Cache::config('_cake_model_');
 		if (!empty($settings)):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/cache.php', '<em>'. $settings['engine'] . 'Engine</em>');
+				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/cache.php', '<em>'. $settings['className'] . 'Engine</em>');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
