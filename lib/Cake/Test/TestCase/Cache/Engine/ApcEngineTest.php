@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Cache.Engine
  * @since         CakePHP(tm) v 1.2.0.5434
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -25,7 +24,6 @@ use Cake\TestSuite\TestCase;
 /**
  * ApcEngineTest class
  *
- * @package       Cake.Test.Case.Cache.Engine
  */
 class ApcEngineTest extends TestCase {
 
@@ -123,20 +121,6 @@ class ApcEngineTest extends TestCase {
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'apc');
 		$this->assertTrue($result);
-
-		sleep(2);
-		$result = Cache::read('other_test', 'apc');
-		$this->assertFalse($result);
-
-		$this->_configCache();
-
-		$data = 'this is a test of the emergency broadcasting system';
-		$result = Cache::write('other_test', $data, 'apc');
-		$this->assertTrue($result);
-
-		sleep(2);
-		$result = Cache::read('other_test', 'apc');
-		$this->assertFalse($result);
 
 		sleep(2);
 		$result = Cache::read('other_test', 'apc');
