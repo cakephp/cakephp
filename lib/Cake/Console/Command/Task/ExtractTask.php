@@ -620,7 +620,7 @@ class ExtractTask extends AppShell {
 				if ($category === 'LC_MESSAGES') {
 					$File = new File($this->_output . $filename);
 				} else {
-					$Folder = new Folder($this->_output . $category, true);
+					new Folder($this->_output . $category, true);
 					$File = new File($this->_output . $category . DS . $filename);
 				}
 				$response = '';
