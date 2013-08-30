@@ -18,7 +18,8 @@
         "source": "https://github.com/cakephp/cakephp/"
     },
     "require": {
-        "php": ">=5.4"
+        "php": ">=5.4",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
