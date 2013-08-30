@@ -477,6 +477,32 @@ class CakeTime {
 	}
 
 /**
+ * Returns true if given datetime string is in the future.
+ *
+ * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
+ * @return boolean True if datetime string is in the future
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
+ */
+	public static function isFuture($dateString, $timezone = null) {
+		$timestamp = self::fromString($dateString, $timezone);
+		return $timestamp > time();
+	}
+
+/**
+ * Returns true if given datetime string is in the past.
+ *
+ * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
+ * @return boolean True if datetime string is in the past
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#testing-time
+ */
+	public static function isPast($dateString, $timezone = null) {
+		$timestamp = self::fromString($dateString, $timezone);
+		return $timestamp < time();
+	}
+
+/**
  * Returns true if given datetime string is within this week.
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
@@ -671,7 +697,7 @@ class CakeTime {
 	}
 
 /**
- * Returns either a relative date or a formatted date depending
+ * Returns either a relative or a formatted absolute date depending
  * on the difference between the current time and given datetime.
  * $datetime should be in a *strtotime* - parsable format, like MySQL's datetime datatype.
  *
@@ -687,6 +713,8 @@ class CakeTime {
  *    - minute => The format if minutes > 0 (default "minute")
  *    - second => The format if seconds > 0 (default "second")
  * - `end` => The end of relative time telling
+ * - `relativeString` => The printf compatible string when outputting relative time
+ * - `absoluteString` => The printf compatible string when outputting absolute time
  * - `userOffset` => Users offset from GMT (in hours) *Deprecated* use timezone intead.
  * - `timezone` => The user timezone the timestamp should be formatted in.
  *
@@ -711,6 +739,8 @@ class CakeTime {
 		$timezone = null;
 		$format = self::$wordFormat;
 		$end = self::$wordEnd;
+		$relativeString = __d('cake', '%s ago');
+		$absoluteString = __d('cake', 'on %s');
 		$accuracy = self::$wordAccuracy;
 
 		if (is_array($options)) {
@@ -735,6 +765,14 @@ class CakeTime {
 			}
 			if (isset($options['end'])) {
 				$end = $options['end'];
+			}
+			if (isset($options['relativeString'])) {
+				$relativeString = $options['relativeString'];
+				unset($options['relativeString']);
+			}
+			if (isset($options['absoluteString'])) {
+				$absoluteString = $options['absoluteString'];
+				unset($options['absoluteString']);
 			}
 			unset($options['end'], $options['format']);
 		} else {
@@ -822,7 +860,7 @@ class CakeTime {
 		}
 
 		if ($diff > abs($now - self::fromString($end))) {
-			return __d('cake', 'on %s', date($format, $inSeconds));
+			return sprintf($absoluteString, date($format, $inSeconds));
 		}
 
 		$fWord = $accuracy['second'];
@@ -884,11 +922,10 @@ class CakeTime {
 		);
 
 		// When time has passed
+		if (!$backwards && $relativeDate) {
+			return sprintf($relativeString, $relativeDate);
+		}
 		if (!$backwards) {
-			if ($relativeDate) {
-				return __d('cake', '%s ago', $relativeDate);
-			}
-
 			return $aboutAgo[$fWord];
 		}
 

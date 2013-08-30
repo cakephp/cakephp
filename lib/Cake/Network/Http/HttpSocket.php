@@ -96,6 +96,7 @@ class HttpSocket extends CakeSocket {
 		'port' => 80,
 		'timeout' => 30,
 		'ssl_verify_peer' => true,
+		'ssl_allow_self_signed' => false,
 		'ssl_verify_depth' => 5,
 		'ssl_verify_host' => true,
 		'request' => array(
@@ -496,6 +497,19 @@ class HttpSocket extends CakeSocket {
 	}
 
 /**
+ * Issues a PATCH request to the specified URI, query, and request.
+ *
+ * @param string|array $uri URI to request, See HttpSocket::_parseUri()
+ * @param array $data Array of PATCH data keys and values.
+ * @param array $request An indexed array with indexes such as 'method' or uri
+ * @return mixed Result of request
+ */
+	public function patch($uri = null, $data = array(), $request = array()) {
+		$request = Hash::merge(array('method' => 'PATCH', 'uri' => $uri, 'body' => $data), $request);
+		return $this->request($request);
+	}
+
+/**
  * Issues a DELETE request to the specified URI, query, and request.
  *
  * @param string|array $uri URI to request (see {@link _parseUri()})
@@ -590,7 +604,7 @@ class HttpSocket extends CakeSocket {
 			throw new SocketException(__d('cake_dev', 'Unknown authentication method.'));
 		}
 		if (!method_exists($authClass, 'authentication')) {
-			throw new SocketException(sprintf(__d('cake_dev', 'The %s do not support authentication.'), $authClass));
+			throw new SocketException(__d('cake_dev', 'The %s does not support authentication.', $authClass));
 		}
 		call_user_func_array("$authClass::authentication", array($this, &$this->_auth[$method]));
 	}
@@ -619,7 +633,7 @@ class HttpSocket extends CakeSocket {
 			throw new SocketException(__d('cake_dev', 'Unknown authentication method for proxy.'));
 		}
 		if (!method_exists($authClass, 'proxyAuthentication')) {
-			throw new SocketException(sprintf(__d('cake_dev', 'The %s do not support proxy authentication.'), $authClass));
+			throw new SocketException(__d('cake_dev', 'The %s does not support proxy authentication.', $authClass));
 		}
 		call_user_func_array("$authClass::proxyAuthentication", array($this, &$this->_proxy));
 	}

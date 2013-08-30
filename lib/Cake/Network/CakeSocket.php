@@ -184,7 +184,7 @@ class CakeSocket {
  *
  * Instead we need to handle those errors manually.
  *
- * @param int $code
+ * @param integer $code
  * @param string $message
  * @return void
  */

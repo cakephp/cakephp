@@ -428,6 +428,87 @@ XML;
 	}
 
 /**
+ * testFromArrayPretty method
+ *
+ * @return void
+ */
+	public function testFromArrayPretty() {
+		$xml = array(
+			'tags' => array(
+				'tag' => array(
+					array(
+						'id' => '1',
+						'name' => 'defect'
+					),
+					array(
+						'id' => '2',
+						'name' => 'enhancement'
+					)
+				)
+			)
+		);
+
+		$expected = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<tags><tag><id>1</id><name>defect</name></tag><tag><id>2</id><name>enhancement</name></tag></tags>
+
+XML;
+		$xmlResponse = Xml::fromArray($xml, array('pretty' => false));
+		$this->assertEquals($expected, $xmlResponse->asXML());
+
+		$expected = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<tags>
+  <tag>
+    <id>1</id>
+    <name>defect</name>
+  </tag>
+  <tag>
+    <id>2</id>
+    <name>enhancement</name>
+  </tag>
+</tags>
+
+XML;
+		$xmlResponse = Xml::fromArray($xml, array('pretty' => true));
+		$this->assertEquals($expected, $xmlResponse->asXML());
+
+				$xml = array(
+			'tags' => array(
+				'tag' => array(
+					array(
+						'id' => '1',
+						'name' => 'defect'
+					),
+					array(
+						'id' => '2',
+						'name' => 'enhancement'
+					)
+				)
+			)
+		);
+
+		$expected = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<tags><tag id="1" name="defect"/><tag id="2" name="enhancement"/></tags>
+
+XML;
+		$xmlResponse = Xml::fromArray($xml, array('pretty' => false, 'format' => 'attributes'));
+		$this->assertEquals($expected, $xmlResponse->asXML());
+
+		$expected = <<<XML
+<?xml version="1.0" encoding="UTF-8"?>
+<tags>
+  <tag id="1" name="defect"/>
+  <tag id="2" name="enhancement"/>
+</tags>
+
+XML;
+		$xmlResponse = Xml::fromArray($xml, array('pretty' => true, 'format' => 'attributes'));
+		$this->assertEquals($expected, $xmlResponse->asXML());
+	}
+
+/**
  * data provider for fromArray() failures
  *
  * @return array

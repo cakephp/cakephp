@@ -52,6 +52,13 @@ class Cache {
 	protected static $_config = array();
 
 /**
+ * Group to Config mapping
+ *
+ * @var array
+ */
+	protected static $_groups = array();
+
+/**
  * Whether to reset the settings with the next call to Cache::set();
  *
  * @var array
@@ -130,6 +137,14 @@ class Cache {
 			return false;
 		}
 
+		if (!empty(self::$_config[$name]['groups'])) {
+			foreach (self::$_config[$name]['groups'] as $group) {
+				self::$_groups[$group][] = $name;
+				sort(self::$_groups[$group]);
+				self::$_groups[$group] = array_unique(self::$_groups[$group]);
+			}
+		}
+
 		$engine = self::$_config[$name]['engine'];
 
 		if (!isset(self::$_engines[$name])) {
@@ -159,7 +174,7 @@ class Cache {
 		}
 		$cacheClass = $class . 'Engine';
 		if (!is_subclass_of($cacheClass, 'CacheEngine')) {
-			throw new CacheException(__d('cake_dev', 'Cache engines must use CacheEngine as a base class.'));
+			throw new CacheException(__d('cake_dev', 'Cache engines must use %s as a base class.', 'CacheEngine'));
 		}
 		self::$_engines[$name] = new $cacheClass();
 		if (!self::$_engines[$name]->init($config)) {
@@ -496,6 +511,35 @@ class Cache {
 			return self::$_engines[$name]->settings();
 		}
 		return array();
+	}
+
+/**
+ * Retrieve group names to config mapping.
+ *
+ * {{{
+ *	Cache::config('daily', array(
+ *		'duration' => '1 day', 'groups' => array('posts')
+ *	));
+ *	Cache::config('weekly', array(
+ *		'duration' => '1 week', 'groups' => array('posts', 'archive')
+ *	));
+ *	$configs = Cache::groupConfigs('posts');
+ * }}}
+ *
+ * $config will equal to `array('posts' => array('daily', 'weekly'))`
+ *
+ * @param string $group group name or null to retrieve all group mappings
+ * @return array map of group and all configuration that has the same group
+ * @throws CacheException
+ */
+	public static function groupConfigs($group = null) {
+		if ($group == null) {
+			return self::$_groups;
+		}
+		if (isset(self::$_groups[$group])) {
+			return array($group => self::$_groups[$group]);
+		}
+		throw new CacheException(__d('cake_dev', 'Invalid cache group %s', $group));
 	}
 
 }

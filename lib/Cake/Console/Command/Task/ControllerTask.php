@@ -480,6 +480,12 @@ class ControllerTask extends BakeTask {
 			))->addOption('connection', array(
 				'short' => 'c',
 				'help' => __d('cake_console', 'The connection the controller\'s model is on.')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
+			))->addOption('force', array(
+				'short' => 'f',
+				'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 			))->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));

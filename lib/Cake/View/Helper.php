@@ -324,13 +324,16 @@ class Helper extends Object {
 		) {
 			$path .= $options['ext'];
 		}
+		if (preg_match('|^([a-z0-9]+:)?//|', $path)) {
+			return $path;
+		}
 		if (isset($plugin)) {
 			$path = Inflector::underscore($plugin) . '/' . $path;
 		}
 		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
 		if (!empty($options['fullBase'])) {
-			$path = rtrim(FULL_BASE_URL, '/') . '/' . ltrim($path, '/');
+			$path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
 		}
 		return $path;
 	}
@@ -343,7 +346,7 @@ class Helper extends Object {
  */
 	protected function _encodeUrl($url) {
 		$path = parse_url($url, PHP_URL_PATH);
-		$parts = array_map('urldecode', explode('/', $path));
+		$parts = array_map('rawurldecode', explode('/', $path));
 		$parts = array_map('rawurlencode', $parts);
 		$encoded = implode('/', $parts);
 		return h(str_replace($path, $encoded, $url));
@@ -494,6 +497,24 @@ class Helper extends Object {
 			return '';
 		}
 		return sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
+	}
+
+/**
+ * Returns a string to be used as onclick handler for confirm dialogs.
+ *
+ * @param string $message Message to be displayed
+ * @param string $okCode Code to be executed after user chose 'OK'
+ * @param string $cancelCode Code to be executed after user chose 'Cancel'
+ * @param array $options Array of options
+ * @return string onclick JS code
+ */
+	protected function _confirm($message, $okCode, $cancelCode = '', $options = array()) {
+		$message = json_encode($message);
+		$confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
+		if (isset($options['escape']) && $options['escape'] === false) {
+			$confirm = h($confirm);
+		}
+		return $confirm;
 	}
 
 /**

@@ -239,6 +239,8 @@ class ControllerMergeVarsTest extends CakeTestCase {
 /**
  * Ensure that $modelClass is correct even when Controller::$uses
  * has been iterated, eg: by a Component, or event handlers.
+ *
+ * @return void
  */
 	public function testMergeVarsModelClass() {
 		$Controller = new MergeVariablescontroller();

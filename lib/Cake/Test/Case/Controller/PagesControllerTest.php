@@ -51,4 +51,30 @@ class PagesControllerTest extends CakeTestCase {
 		$this->assertEquals('TestTheme', $Pages->viewVars['page']);
 		$this->assertEquals('Posts', $Pages->viewVars['subpage']);
 	}
+
+/**
+ * Test that missing view renders 404 page in production
+ *
+ * @expectedException NotFoundException
+ * @expectedExceptionCode 404
+ * @return void
+ */
+	public function testMissingView() {
+		Configure::write('debug', 0);
+		$Pages = new PagesController(new CakeRequest(null, false), new CakeResponse());
+		$Pages->display('non_existing_page');
+	}
+
+/**
+ * Test that missing view in debug mode renders missing_view error page
+ *
+ * @expectedException MissingViewException
+ * @expectedExceptionCode 500
+ * @return void
+ */
+	public function testMissingViewInDebug() {
+		Configure::write('debug', 1);
+		$Pages = new PagesController(new CakeRequest(null, false), new CakeResponse());
+		$Pages->display('non_existing_page');
+	}
 }

@@ -44,6 +44,9 @@ App::uses('View', 'View');
  * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.
  *
+ * You can also enable JSONP support by setting parameter `_jsonp` to true or a string to specify
+ * custom query string paramater name which will contain the callback function name.
+ *
  * @package       Cake.View
  * @since         CakePHP(tm) v 2.1.0
  */
@@ -70,24 +73,53 @@ class JsonView extends View {
 	}
 
 /**
+ * Skip loading helpers if this is a _serialize based view.
+ *
+ * @return void
+ */
+	public function loadHelpers() {
+		if (isset($this->viewVars['_serialize'])) {
+			return;
+		}
+		parent::loadHelpers();
+	}
+
+/**
  * Render a JSON view.
  *
- * Uses the special '_serialize' parameter to convert a set of
- * view variables into a JSON response. Makes generating simple
- * JSON responses very easy. You can omit the '_serialize' parameter,
- * and use a normal view + layout as well.
+ * ### Special parameters
+ * `_serialize` To convert a set of view variables into a JSON response.
+ *   It's value can be a string for single variable name or array for multiple names.
+ *   You can omit the`_serialize` parameter, and use a normal view + layout as well.
+ * `_jsonp` Enables JSONP support and wraps response in callback function provided in query string.
+ *   - Setting it to true enables the default query string parameter "callback".
+ *   - Setting it to a string value, uses the provided query string parameter for finding the
+ *     JSONP callback name.
  *
  * @param string $view The view being rendered.
  * @param string $layout The layout being rendered.
  * @return string The rendered view.
  */
 	public function render($view = null, $layout = null) {
+		$return = null;
 		if (isset($this->viewVars['_serialize'])) {
-			return $this->_serialize($this->viewVars['_serialize']);
+			$return = $this->_serialize($this->viewVars['_serialize']);
+		} elseif ($view !== false && $this->_getViewFileName($view)) {
+			$return = parent::render($view, false);
 		}
-		if ($view !== false && $this->_getViewFileName($view)) {
-			return parent::render($view, false);
+
+		if (!empty($this->viewVars['_jsonp'])) {
+			$jsonpParam = $this->viewVars['_jsonp'];
+			if ($this->viewVars['_jsonp'] === true) {
+				$jsonpParam = 'callback';
+			}
+			if (isset($this->request->query[$jsonpParam])) {
+				$return = sprintf('%s(%s)', h($this->request->query[$jsonpParam]), $return);
+				$this->response->type('js');
+			}
 		}
+
+		return $return;
 	}
 
 /**
@@ -99,12 +131,20 @@ class JsonView extends View {
 	protected function _serialize($serialize) {
 		if (is_array($serialize)) {
 			$data = array();
-			foreach ($serialize as $key) {
-				$data[$key] = $this->viewVars[$key];
+			foreach ($serialize as $alias => $key) {
+				if (is_numeric($alias)) {
+					$alias = $key;
+				}
+				$data[$alias] = $this->viewVars[$key];
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 		}
+
+		if (version_compare(PHP_VERSION, '5.4.0', '>=') && Configure::read('debug')) {
+			return json_encode($data, JSON_PRETTY_PRINT);
+		}
+
 		return json_encode($data);
 	}
 

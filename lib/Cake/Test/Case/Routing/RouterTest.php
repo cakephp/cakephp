@@ -49,22 +49,35 @@ class RouterTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		CakePlugin::unload();
+		Router::fullBaseUrl('');
+		Configure::write('App.fullBaseUrl', 'http://localhost');
 	}
 
 /**
- * testFullBaseURL method
+ * testFullBaseUrl method
  *
  * @return void
  */
-	public function testFullBaseURL() {
-		$skip = PHP_SAPI === 'cli';
-		if ($skip) {
-			$this->markTestSkipped('Cannot validate base URLs in CLI');
-		}
+	public function testFullBaseUrl() {
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('full_base' => true)));
 		$this->assertSame(FULL_BASE_URL . '/', Router::url(array('full_base' => true)));
+	}
+
+/**
+ * Tests that the base URL can be changed at runtime.
+ *
+ * @return void
+ */
+	public function testBaseUrl() {
+		$this->assertEquals(FULL_BASE_URL, Router::fullBaseUrl());
+		Router::fullBaseUrl('http://example.com');
+		$this->assertEquals('http://example.com/', Router::url('/', true));
+		$this->assertEquals('http://example.com', Configure::read('App.fullBaseUrl'));
+		Router::fullBaseUrl('https://example.com');
+		$this->assertEquals('https://example.com/', Router::url('/', true));
+		$this->assertEquals('https://example.com', Configure::read('App.fullBaseUrl'));
 	}
 
 /**
@@ -1053,6 +1066,12 @@ class RouterTest extends CakeTestCase {
 		$result = Router::parse('/posts/view/foo:bar/routing:fun/answer:42');
 		$expected = array('pass' => array(), 'named' => array('foo' => 'bar', 'routing' => 'fun', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
 		$this->assertEquals($expected, $result);
+
+		Router::reload();
+		Router::connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('named' => array('foo', 'answer'), 'greedyNamed' => true));
+		$result = Router::parse('/posts/view/foo:bar/routing:fun/answer:42?id=123&tab=abc');
+		$expected = array('pass' => array(), 'named' => array('foo' => 'bar', 'routing' => 'fun', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '?' => array('id' => '123', 'tab' => 'abc'));
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -1167,6 +1186,33 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('admin' => null, 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => 'some_extra'));
 		$expected = '/some_extra/page/this_is_the_slug';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test parse and reverse symmetry
+ *
+ * @return void
+ * @dataProvider parseReverseSymmetryData
+ */
+	public function testParseReverseSymmetry($url) {
+		$this->assertSame($url, Router::reverse(Router::parse($url) + array('url' => array())));
+	}
+
+/**
+ * Data for parse and reverse test
+ *
+ * @return array
+ */
+	public function parseReverseSymmetryData() {
+		return array(
+			array('/'),
+			array('/controller/action'),
+			array('/controller/action/param'),
+			array('/controller/action?param1=value1&param2=value2'),
+			array('/controller/action/param?param1=value1'),
+			array('/controller/action/named1:nv1'),
+			array('/controller/action/named1:nv1?param1=value1')
+		);
 	}
 
 /**
@@ -1319,9 +1365,11 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/posts/view/1.rss?query=test');
+		$expected['?'] = array('query' => 'test');
 		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/posts/view/1.atom');
+		unset($expected['?']);
 		$expected['ext'] = 'atom';
 		$this->assertEquals($expected, $result);
 
@@ -1335,7 +1383,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/posts.atom?hello=goodbye');
-		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array(), 'named' => array());
+		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array(), 'named' => array(), '?' => array('hello' => 'goodbye'));
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
@@ -2542,6 +2590,9 @@ class RouterTest extends CakeTestCase {
 		$url = '://example.com';
 		$this->assertEquals($url, Router::url($url));
 
+		$url = '//example.com';
+		$this->assertEquals($url, Router::url($url));
+
 		$url = 'javascript:void(0)';
 		$this->assertEquals($url, Router::url($url));
 
@@ -2553,6 +2604,10 @@ class RouterTest extends CakeTestCase {
 
 		$url = '#here';
 		$this->assertEquals($url, Router::url($url));
+
+		$url = '?param=0';
+		$this->assertEquals($url, Router::url($url));
+
 		$url = 'posts/index#here';
 		$expected = FULL_BASE_URL . '/posts/index#here';
 		$this->assertEquals($expected, Router::url($url, true));

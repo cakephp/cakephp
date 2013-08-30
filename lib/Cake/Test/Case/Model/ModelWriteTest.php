@@ -567,6 +567,28 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Tests that counter caches are unchanged when using 'counterCache' => false
+ *
+ * @return void
+ */
+	public function testCounterCacheSkip() {
+		$this->loadFixtures('CounterCacheUser', 'CounterCachePost');
+		$User = new CounterCacheUser();
+		$Post = new CounterCachePost();
+
+		$data = $Post->find('first', array(
+			'conditions' => array('id' => 1),
+			'recursive' => -1
+		));
+		$data[$Post->alias]['user_id'] = 301;
+		$Post->save($data, array('counterCache' => false));
+
+		$users = $User->find('all', array('order' => 'User.id'));
+		$this->assertEquals(2, $users[0]['User']['post_count']);
+		$this->assertEquals(1, $users[1]['User']['post_count']);
+	}
+
+/**
  * test that beforeValidate returning false can abort saves.
  *
  * @return void
@@ -7127,5 +7149,20 @@ class ModelWriteTest extends BaseModelTest {
 			'fields' => array('id', 'published'),
 			'conditions' => array('Item.id' => 1)));
 		$this->assertEquals(true, $result['Item']['published']);
+	}
+
+/**
+ * Test the clear() method.
+ *
+ * @return void
+ */
+	public function testClear() {
+		$this->loadFixtures('Bid');
+		$model = ClassRegistry::init('Bid');
+		$model->set(array('name' => 'Testing', 'message_id' => 3));
+		$this->assertTrue(isset($model->data['Bid']['name']));
+		$this->assertTrue($model->clear());
+		$this->assertFalse(isset($model->data['Bid']['name']));
+		$this->assertFalse(isset($model->data['Bid']['message_id']));
 	}
 }

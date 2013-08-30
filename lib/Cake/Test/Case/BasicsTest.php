@@ -703,8 +703,9 @@ class BasicsTest extends CakeTestCase {
 ########## DEBUG ##########
 'this-is-a-test'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 
 		$this->assertEquals($expected, $result);
 
@@ -766,9 +767,10 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
 		if (php_sapi_name() === 'cli') {
-			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
+			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
 		}
@@ -790,9 +792,10 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
 		if (php_sapi_name() === 'cli') {
-			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
+			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
 		}
@@ -806,8 +809,9 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -818,8 +822,9 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -830,8 +835,9 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -842,8 +848,9 @@ EXPECTED;
 ########## DEBUG ##########
 false
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -853,6 +860,7 @@ EXPECTED;
  * @return void
  */
 	public function testPr() {
+		$this->skipIf(php_sapi_name() == 'cli', 'Skipping web test in cli mode');
 		ob_start();
 		pr('this is a test');
 		$result = ob_get_clean();
@@ -863,6 +871,26 @@ EXPECTED;
 		pr(array('this' => 'is', 'a' => 'test'));
 		$result = ob_get_clean();
 		$expected = "<pre>Array\n(\n    [this] => is\n    [a] => test\n)\n</pre>";
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test pr()
+ *
+ * @return void
+ */
+	public function testPrCli() {
+		$this->skipIf(php_sapi_name() != 'cli', 'Skipping cli test in web mode');
+		ob_start();
+		pr('this is a test');
+		$result = ob_get_clean();
+		$expected = "\nthis is a test\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pr(array('this' => 'is', 'a' => 'test'));
+		$result = ob_get_clean();
+		$expected = "\nArray\n(\n    [this] => is\n    [a] => test\n)\n\n";
 		$this->assertEquals($expected, $result);
 	}
 

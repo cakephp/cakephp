@@ -96,6 +96,7 @@ HTML;
 ########## DEBUG ##########
 %s
 ###########################
+
 TEXT;
 			$template = $html;
 			if (php_sapi_name() === 'cli' || $showHtml === false) {
@@ -231,8 +232,10 @@ if (!function_exists('pluginSplit')) {
 if (!function_exists('pr')) {
 
 /**
- * Print_r convenience function, which prints out <PRE> tags around
- * the output of given array. Similar to debug().
+ * print_r() convenience function
+ *
+ * In terminals this will act the same as using print_r() directly, when not run on cli
+ * print_r() will wrap <PRE> tags around the output of given array. Similar to debug().
  *
  * @see debug()
  * @param array $var Variable to print out
@@ -241,9 +244,8 @@ if (!function_exists('pr')) {
  */
 	function pr($var) {
 		if (Configure::read('debug') > 0) {
-			echo '<pre>';
-			print_r($var);
-			echo '</pre>';
+			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
+			echo sprintf($template, print_r($var, true));
 		}
 	}
 
@@ -389,7 +391,7 @@ if (!function_exists('cache')) {
  * @param mixed $expires A valid strtotime string when the data expires.
  * @param string $target The target of the cached data; either 'cache' or 'public'.
  * @return mixed The contents of the temporary file.
- * @deprecated Please use Cache::write() instead
+ * @deprecated Will be removed in 3.0. Please use Cache::write() instead.
  */
 	function cache($path, $data = null, $expires = '+1 day', $target = 'cache') {
 		if (Configure::read('Cache.disable')) {

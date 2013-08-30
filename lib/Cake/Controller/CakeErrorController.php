@@ -32,13 +32,6 @@ App::uses('AppController', 'Controller');
 class CakeErrorController extends AppController {
 
 /**
- * Controller name
- *
- * @var string
- */
-	public $name = 'CakeError';
-
-/**
  * Uses Property
  *
  * @var array

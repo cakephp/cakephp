@@ -336,7 +336,7 @@ class FileEngine extends CacheEngine {
 		$dir = $this->settings['path'] . $groups;
 
 		if (!is_dir($dir)) {
-			mkdir($dir, 0777, true);
+			mkdir($dir, 0775, true);
 		}
 		$path = new SplFileInfo($dir . $key);
 
@@ -369,6 +369,12 @@ class FileEngine extends CacheEngine {
  */
 	protected function _active() {
 		$dir = new SplFileInfo($this->settings['path']);
+		if (Configure::read('debug')) {
+			$path = $dir->getPathname();
+			if (!is_dir($path)) {
+				mkdir($path, 0775, true);
+			}
+		}
 		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
 			trigger_error(__d('cake_dev', '%s is not writable', $this->settings['path']), E_USER_WARNING);

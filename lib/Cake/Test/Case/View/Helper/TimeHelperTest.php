@@ -87,7 +87,7 @@ class TimeHelperTest extends CakeTestCase {
 			'nice', 'niceShort', 'daysAsSql', 'dayAsSql',
 			'isToday', 'isThisMonth', 'isThisYear', 'wasYesterday',
 			'isTomorrow', 'toQuarter', 'toUnix', 'toAtom', 'toRSS',
-			'timeAgoInWords', 'wasWithinLast', 'gmt', 'format', 'i18nFormat',
+			'wasWithinLast', 'gmt', 'format', 'i18nFormat',
 		);
 		$CakeTime = $this->getMock('CakeTimeMock', $methods);
 		$Time = new TimeHelperTestObject($this->View, array('engine' => 'CakeTimeMock'));
@@ -96,6 +96,12 @@ class TimeHelperTest extends CakeTestCase {
 			$CakeTime->expects($this->at(0))->method($method);
 			$Time->{$method}('who', 'what', 'when', 'where', 'how');
 		}
+
+		$CakeTime = $this->getMock('CakeTimeMock', array('timeAgoInWords'));
+		$Time = new TimeHelperTestObject($this->View, array('engine' => 'CakeTimeMock'));
+		$Time->attach($CakeTime);
+		$CakeTime->expects($this->at(0))->method('timeAgoInWords');
+		$Time->timeAgoInWords('who', array('what'), array('when'), array('where'), array('how'));
 	}
 
 /**

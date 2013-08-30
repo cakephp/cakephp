@@ -3,18 +3,9 @@
  *
  * PHP 5
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.View.Pages
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 if (!Configure::read('debug')):
@@ -68,11 +59,11 @@ endif;
 		$settings = Cache::settings();
 		if (!empty($settings)):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/core.php ', '<em>'. $settings['engine'] . 'Engine</em>');
+				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit %s', '<em>'. $settings['engine'] . 'Engine</em>', 'APP/Config/core.php');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/Config/core.php');
+				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in %s', 'APP/Config/core.php');
 			echo '</span>';
 		endif;
 	?>
@@ -89,7 +80,7 @@ endif;
 			echo '<span class="notice">';
 				echo __d('cake_dev', 'Your database configuration file is NOT present.');
 				echo '<br/>';
-				echo __d('cake_dev', 'Rename APP/Config/database.php.default to APP/Config/database.php');
+				echo __d('cake_dev', 'Rename %s to %s', 'APP/Config/database.php.default', 'APP/Config/database.php');
 			echo '</span>';
 		endif;
 	?>
@@ -132,7 +123,7 @@ if (isset($filePresent)):
 		echo '<p><span class="notice">';
 			echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');
 			echo '<br/>';
-			echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
+			echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding %s when configuring', '<code>--enable-unicode-properties</code>');
 		echo '</span></p>';
 	}
 ?>
@@ -156,9 +147,10 @@ if (isset($filePresent)):
 <h3><?php echo __d('cake_dev', 'Editing this Page'); ?></h3>
 <p>
 <?php
-echo __d('cake_dev', 'To change the content of this page, edit: APP/View/Pages/home.ctp.<br />
-To change its layout, edit: APP/View/Layouts/default.ctp.<br />
-You can also add some CSS styles for your pages at: APP/webroot/css.');
+echo __d('cake_dev', 'To change the content of this page, edit: %s.<br />
+To change its layout, edit: %s.<br />
+You can also add some CSS styles for your pages at: %s.',
+	'APP/View/Pages/home.ctp', 'APP/View/Layouts/default.ctp', 'APP/webroot/css');
 ?>
 </p>
 

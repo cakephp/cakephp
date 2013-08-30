@@ -19,6 +19,7 @@ App::uses('AppShell', 'Console/Command');
  * Provides a very basic 'interactive' console for CakePHP apps.
  *
  * @package       Cake.Console.Command
+ * @deprecated Deprecated since version 2.4, will be removed in 3.0
  */
 class ConsoleShell extends AppShell {
 
@@ -42,6 +43,35 @@ class ConsoleShell extends AppShell {
  * @var array
  */
 	public $models = array();
+
+/**
+ * _finished
+ *
+ * This shell is perpetual, setting this property to true exits the process
+ *
+ * @var mixed
+ */
+	protected $_finished = false;
+
+/**
+ * _methodPatterns
+ *
+ * @var array
+ */
+	protected $_methodPatterns = array(
+		'help' => '/^(help|\?)/',
+		'_exit' => '/^(quit|exit)/',
+		'_models' => '/^models/i',
+		'_bind' => '/^(\w+) bind (\w+) (\w+)/',
+		'_unbind' => '/^(\w+) unbind (\w+) (\w+)/',
+		'_find' => '/.+->find/',
+		'_save' => '/.+->save/',
+		'_columns' => '/^(\w+) columns/',
+		'_routesReload' => '/^routes\s+reload/i',
+		'_routesShow' => '/^routes\s+show/i',
+		'_routeToString' => '/^route\s+(\(.*\))$/i',
+		'_routeToArray' => '/^route\s+(.*)$/i',
+	);
 
 /**
  * Override startup of the Shell
@@ -74,6 +104,11 @@ class ConsoleShell extends AppShell {
 		}
 	}
 
+/**
+ * getOptionParser
+ *
+ * @return void
+ */
 	public function getOptionParser() {
 		$description = array(
 			'The interactive console is a tool for testing parts of your',
@@ -163,189 +198,287 @@ class ConsoleShell extends AppShell {
  * @return void
  */
 	public function main($command = null) {
-		while (true) {
+		$this->_finished = false;
+		while (!$this->_finished) {
 			if (empty($command)) {
 				$command = trim($this->in(''));
 			}
-			switch (true) {
-				case $command == 'help':
-					$this->help();
-					break;
-				case $command == 'quit':
-				case $command == 'exit':
-					return true;
-				case $command == 'models':
-					$this->out(__d('cake_console', 'Model classes:'));
-					$this->hr();
-					foreach ($this->models as $model) {
-						$this->out(" - {$model}");
-					}
-					break;
-				case preg_match("/^(\w+) bind (\w+) (\w+)/", $command, $tmp):
-					foreach ($tmp as $data) {
-						$data = strip_tags($data);
-						$data = str_replace($this->badCommandChars, "", $data);
-					}
 
-					$modelA = $tmp[1];
-					$association = $tmp[2];
-					$modelB = $tmp[3];
+			$method = $this->_method($command);
 
-					if ($this->_isValidModel($modelA) && $this->_isValidModel($modelB) && in_array($association, $this->associations)) {
-						$this->{$modelA}->bindModel(array($association => array($modelB => array('className' => $modelB))), false);
-						$this->out(__d('cake_console', "Created %s association between %s and %s",
-							$association, $modelA, $modelB));
-					} else {
-						$this->out(__d('cake_console', "Please verify you are using valid models and association types"));
-					}
-					break;
-				case preg_match("/^(\w+) unbind (\w+) (\w+)/", $command, $tmp):
-					foreach ($tmp as $data) {
-						$data = strip_tags($data);
-						$data = str_replace($this->badCommandChars, "", $data);
-					}
-
-					$modelA = $tmp[1];
-					$association = $tmp[2];
-					$modelB = $tmp[3];
-
-					// Verify that there is actually an association to unbind
-					$currentAssociations = $this->{$modelA}->getAssociated();
-					$validCurrentAssociation = false;
-
-					foreach ($currentAssociations as $model => $currentAssociation) {
-						if ($model == $modelB && $association == $currentAssociation) {
-							$validCurrentAssociation = true;
-						}
-					}
-
-					if ($this->_isValidModel($modelA) && $this->_isValidModel($modelB) && in_array($association, $this->associations) && $validCurrentAssociation) {
-						$this->{$modelA}->unbindModel(array($association => array($modelB)));
-						$this->out(__d('cake_console', "Removed %s association between %s and %s",
-							$association, $modelA, $modelB));
-					} else {
-						$this->out(__d('cake_console', "Please verify you are using valid models, valid current association, and valid association types"));
-					}
-					break;
-				case (strpos($command, "->find") > 0):
-					// Remove any bad info
-					$command = strip_tags($command);
-					$command = str_replace($this->badCommandChars, "", $command);
-
-					// Do we have a valid model?
-					list($modelToCheck, $tmp) = explode('->', $command);
-
-					if ($this->_isValidModel($modelToCheck)) {
-						$findCommand = "\$data = \$this->$command;";
-						//@codingStandardsIgnoreStart
-						@eval($findCommand);
-						//@codingStandardsIgnoreEnd
-
-						if (is_array($data)) {
-							foreach ($data as $idx => $results) {
-								if (is_numeric($idx)) { // findAll() output
-									foreach ($results as $modelName => $result) {
-										$this->out("$modelName");
-
-										foreach ($result as $field => $value) {
-											if (is_array($value)) {
-												foreach ($value as $field2 => $value2) {
-													$this->out("\t$field2: $value2");
-												}
-
-												$this->out();
-											} else {
-												$this->out("\t$field: $value");
-											}
-										}
-									}
-								} else { // find() output
-									$this->out($idx);
-
-									foreach ($results as $field => $value) {
-										if (is_array($value)) {
-											foreach ($value as $field2 => $value2) {
-												$this->out("\t$field2: $value2");
-											}
-
-											$this->out();
-										} else {
-											$this->out("\t$field: $value");
-										}
-									}
-								}
-							}
-						} else {
-							$this->out();
-							$this->out(__d('cake_console', "No result set found"));
-						}
-					} else {
-						$this->out(__d('cake_console', "%s is not a valid model", $modelToCheck));
-					}
-
-					break;
-				case (strpos($command, '->save') > 0):
-					// Validate the model we're trying to save here
-					$command = strip_tags($command);
-					$command = str_replace($this->badCommandChars, "", $command);
-					list($modelToSave, $tmp) = explode("->", $command);
-
-					if ($this->_isValidModel($modelToSave)) {
-						// Extract the array of data we are trying to build
-						list(, $data) = explode("->save", $command);
-						$data = preg_replace('/^\(*(array)?\(*(.+?)\)*$/i', '\\2', $data);
-						$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
-						//@codingStandardsIgnoreStart
-						@eval($saveCommand);
-						//@codingStandardsIgnoreEnd
-						$this->out(__d('cake_console', 'Saved record for %s', $modelToSave));
-					}
-					break;
-				case preg_match("/^(\w+) columns/", $command, $tmp):
-					$modelToCheck = strip_tags(str_replace($this->badCommandChars, "", $tmp[1]));
-
-					if ($this->_isValidModel($modelToCheck)) {
-						// Get the column info for this model
-						$fieldsCommand = "\$data = \$this->{$modelToCheck}->getColumnTypes();";
-						//@codingStandardsIgnoreStart
-						@eval($fieldsCommand);
-						//@codingStandardsIgnoreEnd
-
-						if (is_array($data)) {
-							foreach ($data as $field => $type) {
-								$this->out("\t{$field}: {$type}");
-							}
-						}
-					} else {
-						$this->out(__d('cake_console', "Please verify that you selected a valid model"));
-					}
-					break;
-				case preg_match("/^routes\s+reload/i", $command, $tmp):
-					if (!$this->_loadRoutes()) {
-						$this->err(__d('cake_console', "There was an error loading the routes config. Please check that the file exists and is free of parse errors."));
-						break;
-					}
-					$this->out(__d('cake_console', "Routes configuration reloaded, %d routes connected", count(Router::$routes)));
-					break;
-				case preg_match("/^routes\s+show/i", $command, $tmp):
-					$this->out(print_r(Hash::combine(Router::$routes, '{n}.template', '{n}.defaults'), true));
-					break;
-				case (preg_match("/^route\s+(\(.*\))$/i", $command, $tmp) == true):
-					//@codingStandardsIgnoreStart
-					if ($url = eval('return array' . $tmp[1] . ';')) {
-						//@codingStandardsIgnoreEnd
-						$this->out(Router::url($url));
-					}
-					break;
-				case preg_match("/^route\s+(.*)/i", $command, $tmp):
-					$this->out(var_export(Router::parse($tmp[1]), true));
-					break;
-				default:
-					$this->out(__d('cake_console', "Invalid command"));
-					$this->out();
+			if ($method) {
+				$this->$method($command);
+			} else {
+				$this->out(__d('cake_console', "Invalid command"));
+				$this->out();
 			}
 			$command = '';
 		}
+	}
+
+/**
+ * Determine the method to process the current command
+ *
+ * @param string $command
+ * @return string or false
+ */
+	protected function _method($command) {
+		foreach ($this->_methodPatterns as $method => $pattern) {
+			if (preg_match($pattern, $command)) {
+				return $method;
+			}
+		}
+
+		return false;
+	}
+
+/**
+ * Set the finiished property so that the loop in main method ends
+ *
+ * @return void
+ */
+	protected function _exit() {
+		$this->_finished = true;
+	}
+
+/**
+ * List all models
+ *
+ * @return void
+ */
+	protected function _models() {
+		$this->out(__d('cake_console', 'Model classes:'));
+		$this->hr();
+		foreach ($this->models as $model) {
+			$this->out(" - {$model}");
+		}
+	}
+
+/**
+ * Bind an association
+ *
+ * @param mixed $command
+ * @return void
+ */
+	protected function _bind($command) {
+		preg_match($this->_methodPatterns[__FUNCTION__], $command, $tmp);
+
+		foreach ($tmp as $data) {
+			$data = strip_tags($data);
+			$data = str_replace($this->badCommandChars, "", $data);
+		}
+
+		$modelA = $tmp[1];
+		$association = $tmp[2];
+		$modelB = $tmp[3];
+
+		if ($this->_isValidModel($modelA) && $this->_isValidModel($modelB) && in_array($association, $this->associations)) {
+			$this->{$modelA}->bindModel(array($association => array($modelB => array('className' => $modelB))), false);
+			$this->out(__d('cake_console', "Created %s association between %s and %s",
+				$association, $modelA, $modelB));
+		} else {
+			$this->out(__d('cake_console', "Please verify you are using valid models and association types"));
+		}
+	}
+
+/**
+ * Unbind an association
+ *
+ * @param mixed $command
+ * @return void
+ */
+	protected function _unbind($command) {
+		preg_match($this->_methodPatterns[__FUNCTION__], $command, $tmp);
+
+		foreach ($tmp as $data) {
+			$data = strip_tags($data);
+			$data = str_replace($this->badCommandChars, "", $data);
+		}
+
+		$modelA = $tmp[1];
+		$association = $tmp[2];
+		$modelB = $tmp[3];
+
+		// Verify that there is actually an association to unbind
+		$currentAssociations = $this->{$modelA}->getAssociated();
+		$validCurrentAssociation = false;
+
+		foreach ($currentAssociations as $model => $currentAssociation) {
+			if ($model == $modelB && $association == $currentAssociation) {
+				$validCurrentAssociation = true;
+			}
+		}
+
+		if ($this->_isValidModel($modelA) && $this->_isValidModel($modelB) && in_array($association, $this->associations) && $validCurrentAssociation) {
+			$this->{$modelA}->unbindModel(array($association => array($modelB)));
+			$this->out(__d('cake_console', "Removed %s association between %s and %s",
+				$association, $modelA, $modelB));
+		} else {
+			$this->out(__d('cake_console', "Please verify you are using valid models, valid current association, and valid association types"));
+		}
+	}
+
+/**
+ * Perform a find
+ *
+ * @param mixed $command
+ * @return void
+ */
+	protected function _find($command) {
+		$command = strip_tags($command);
+		$command = str_replace($this->badCommandChars, "", $command);
+
+		// Do we have a valid model?
+		list($modelToCheck, $tmp) = explode('->', $command);
+
+		if ($this->_isValidModel($modelToCheck)) {
+			$findCommand = "\$data = \$this->$command;";
+			//@codingStandardsIgnoreStart
+			@eval($findCommand);
+			//@codingStandardsIgnoreEnd
+
+			if (is_array($data)) {
+				foreach ($data as $idx => $results) {
+					if (is_numeric($idx)) { // findAll() output
+						foreach ($results as $modelName => $result) {
+							$this->out("$modelName");
+
+							foreach ($result as $field => $value) {
+								if (is_array($value)) {
+									foreach ($value as $field2 => $value2) {
+										$this->out("\t$field2: $value2");
+									}
+
+									$this->out();
+								} else {
+									$this->out("\t$field: $value");
+								}
+							}
+						}
+					} else { // find() output
+						$this->out($idx);
+
+						foreach ($results as $field => $value) {
+							if (is_array($value)) {
+								foreach ($value as $field2 => $value2) {
+									$this->out("\t$field2: $value2");
+								}
+
+								$this->out();
+							} else {
+								$this->out("\t$field: $value");
+							}
+						}
+					}
+				}
+			} else {
+				$this->out();
+				$this->out(__d('cake_console', "No result set found"));
+			}
+		} else {
+			$this->out(__d('cake_console', "%s is not a valid model", $modelToCheck));
+		}
+	}
+
+/**
+ * Save a record
+ *
+ * @param mixed $command
+ * @return void
+ */
+	protected function _save($command) {
+		// Validate the model we're trying to save here
+		$command = strip_tags($command);
+		$command = str_replace($this->badCommandChars, "", $command);
+		list($modelToSave, $tmp) = explode("->", $command);
+
+		if ($this->_isValidModel($modelToSave)) {
+			// Extract the array of data we are trying to build
+			list(, $data) = explode("->save", $command);
+			$data = preg_replace('/^\(*(array)?\(*(.+?)\)*$/i', '\\2', $data);
+			$saveCommand = "\$this->{$modelToSave}->save(array('{$modelToSave}' => array({$data})));";
+			//@codingStandardsIgnoreStart
+			@eval($saveCommand);
+			//@codingStandardsIgnoreEnd
+			$this->out(__d('cake_console', 'Saved record for %s', $modelToSave));
+		}
+	}
+
+/**
+ * Show the columns for a model
+ *
+ * @param mixed $command
+ * @return void
+ */
+	protected function _columns($command) {
+		preg_match($this->_methodPatterns[__FUNCTION__], $command, $tmp);
+
+		$modelToCheck = strip_tags(str_replace($this->badCommandChars, "", $tmp[1]));
+
+		if ($this->_isValidModel($modelToCheck)) {
+			// Get the column info for this model
+			$fieldsCommand = "\$data = \$this->{$modelToCheck}->getColumnTypes();";
+			//@codingStandardsIgnoreStart
+			@eval($fieldsCommand);
+			//@codingStandardsIgnoreEnd
+
+			if (is_array($data)) {
+				foreach ($data as $field => $type) {
+					$this->out("\t{$field}: {$type}");
+				}
+			}
+		} else {
+			$this->out(__d('cake_console', "Please verify that you selected a valid model"));
+		}
+	}
+
+/**
+ * Reload route definitions
+ *
+ * @return void
+ */
+	protected function _routesReload() {
+		if (!$this->_loadRoutes()) {
+			return $this->err(__d('cake_console', "There was an error loading the routes config. Please check that the file exists and is free of parse errors."));
+		}
+		$this->out(__d('cake_console', "Routes configuration reloaded, %d routes connected", count(Router::$routes)));
+	}
+
+/**
+ * Show all routes
+ *
+ * @return void
+ */
+	protected function _routesShow() {
+		$this->out(print_r(Hash::combine(Router::$routes, '{n}.template', '{n}.defaults'), true));
+	}
+
+/**
+ * Parse an array url and show the equivalent url as a string
+ *
+ * @param mixed $command
+ * @return void
+ */
+	protected function _routeToString($command) {
+		preg_match($this->_methodPatterns[__FUNCTION__], $command, $tmp);
+
+		//@codingStandardsIgnoreStart
+		if ($url = eval('return array' . $tmp[1] . ';')) {
+			//@codingStandardsIgnoreEnd
+			$this->out(Router::url($url));
+		}
+	}
+
+/**
+ * Parse a string url and show as an array
+ *
+ * @param mixed $command
+ * @return void
+ */
+	protected function _routeToArray($command) {
+		preg_match($this->_methodPatterns[__FUNCTION__], $command, $tmp);
+
+		$this->out(var_export(Router::parse($tmp[1]), true));
 	}
 
 /**

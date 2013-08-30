@@ -1498,6 +1498,17 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
+ * This function is a convenient wrapper class to create(false) and, as the name suggests, clears the id, data, and validation errors.
+ *
+ * @return always boolean TRUE upon success
+ * @see Model::create()
+ */
+	public function clear() {
+		$this->create(false);
+		return true;
+	}
+
+/**
  * Returns a list of fields from the database, and sets the current model
  * data (Model::$data) with the record found.
  *
@@ -1575,7 +1586,8 @@ class Model extends Object implements CakeEventListener {
  * @param mixed $value Value of the field
  * @param boolean|array $validate Either a boolean, or an array.
  *   If a boolean, indicates whether or not to validate before saving.
- *   If an array, allows control of 'validate' and 'callbacks' options.
+ *   If an array, allows control of 'validate', 'callbacks' and 'counterCache' options.
+ *   See Model::save() for details of each options.
  * @return boolean See Model::save()
  * @see Model::save()
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html#model-savefield-string-fieldname-string-fieldvalue-validate-false
@@ -1604,13 +1616,17 @@ class Model extends Object implements CakeEventListener {
  *   - fieldList: An array of fields you want to allow for saving.
  *   - callbacks: Set to false to disable callbacks. Using 'before' or 'after'
  *      will enable only those callbacks.
+ *   - `counterCache`: Boolean to control updating of counter caches (if any)
  *
  * @param array $fieldList List of fields to allow to be saved
  * @return mixed On success Model::$data if its not empty or true, false on failure
  * @link http://book.cakephp.org/2.0/en/models/saving-your-data.html
  */
 	public function save($data = null, $validate = true, $fieldList = array()) {
-		$defaults = array('validate' => true, 'fieldList' => array(), 'callbacks' => true);
+		$defaults = array(
+			'validate' => true, 'fieldList' => array(),
+			'callbacks' => true, 'counterCache' => true
+		);
 		$_whitelist = $this->whitelist;
 		$fields = array();
 
@@ -1749,7 +1765,7 @@ class Model extends Object implements CakeEventListener {
 				}
 			}
 
-			if ($success && !empty($this->belongsTo)) {
+			if ($success && $options['counterCache'] && !empty($this->belongsTo)) {
 				$this->updateCounterCache($cache, $created);
 			}
 		}
@@ -2030,7 +2046,9 @@ class Model extends Object implements CakeEventListener {
  *       'AssociatedModel' => array('field', 'otherfield')
  *   )
  *   }}}
- * - `deep`: see saveMany/saveAssociated
+ * - `deep`: See saveMany/saveAssociated
+ * - `callbacks`: See Model::save()
+ * - `counterCache`: See Model::save()
  *
  * @param array $data Record data to save. This can be either a numerically-indexed array (for saving multiple
  *     records of the same type), or an array indexed by association name.
@@ -2066,6 +2084,8 @@ class Model extends Object implements CakeEventListener {
  *   Should be set to false if database/table does not support transactions.
  * - `fieldList`: Equivalent to the $fieldList parameter in Model::save()
  * - `deep`: If set to true, all associated data will be saved as well.
+ * - `callbacks`: See Model::save()
+ * - `counterCache`: See Model::save()
  *
  * @param array $data Record data to save. This should be a numerically-indexed array
  * @param array $options Options to use when saving record data, See $options above.
@@ -2179,6 +2199,8 @@ class Model extends Object implements CakeEventListener {
  *   )
  *   }}}
  * - `deep`: If set to true, not only directly associated data is saved, but deeper nested associated data as well.
+ * - `callbacks`: See Model::save()
+ * - `counterCache`: See Model::save()
  *
  * @param array $data Record data to save. This should be an array indexed by association name.
  * @param array $options Options to use when saving record data, See $options above.
@@ -2697,6 +2719,34 @@ class Model extends Object implements CakeEventListener {
 			return null;
 		}
 
+		return $this->_readDataSource($type, $query);
+	}
+
+/**
+ * Read from the datasource
+ *
+ * Model::_readDataSource() is used by all find() calls to read from the data source and can be overloaded to allow
+ * caching of datasource calls.
+ *
+ * {{{
+ * protected function _readDataSource($type, $query) {
+ * 		$cacheName = md5(json_encode($query));
+ * 		$cache = Cache::read($cacheName, 'cache-config-name');
+ * 		if ($cache !== false) {
+ * 			return $cache;
+ * 		}
+ *
+ * 		$results = parent::_readDataSource($type, $query);
+ * 		Cache::write($cacheName, $results, 'cache-config-name');
+ * 		return $results;
+ * }
+ * }}}
+ *
+ * @param string $type Type of find operation (all / first / count / neighbors / list / threaded)
+ * @param array $query Option fields (conditions / fields / joins / limit / offset / order / page / group / callbacks)
+ * @return array
+ */
+	protected function _readDataSource($type, $query) {
 		$results = $this->getDataSource()->read($this, $query);
 		$this->resetAssociations();
 
@@ -2705,10 +2755,6 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$this->findQueryType = null;
-
-		if ($type === 'all') {
-			return $results;
-		}
 
 		if ($this->findMethods[$type] === true) {
 			return $this->{'_find' . ucfirst($type)}('after', $query, $results);
@@ -2732,7 +2778,7 @@ class Model extends Object implements CakeEventListener {
 			(array)$query
 		);
 
-		if ($type !== 'all' && $this->findMethods[$type] === true) {
+		if ($this->findMethods[$type] === true) {
 			$query = $this->{'_find' . ucfirst($type)}('before', $query);
 		}
 
@@ -2758,6 +2804,23 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		return $query;
+	}
+
+/**
+ * Handles the before/after filter logic for find('all') operations. Only called by Model::find().
+ *
+ * @param string $state Either "before" or "after"
+ * @param array $query
+ * @param array $results
+ * @return array
+ * @see Model::find()
+ */
+	protected function _findAll($state, $query, $results = array()) {
+		if ($state === 'before') {
+			return $query;
+		} elseif ($state === 'after') {
+			return $results;
+		}
 	}
 
 /**

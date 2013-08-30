@@ -137,41 +137,45 @@ class CakeResponseTest extends CakeTestCase {
 	public function testHeader() {
 		$response = new CakeResponse();
 		$headers = array();
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header('Location', 'http://example.com');
 		$headers += array('Location' => 'http://example.com');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		//Headers with the same name are overwritten
 		$response->header('Location', 'http://example2.com');
 		$headers = array('Location' => 'http://example2.com');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('WWW-Authenticate' => 'Negotiate'));
 		$headers += array('WWW-Authenticate' => 'Negotiate');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('WWW-Authenticate' => 'Not-Negotiate'));
 		$headers['WWW-Authenticate'] = 'Not-Negotiate';
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('Age' => 12, 'Allow' => 'GET, HEAD'));
 		$headers += array('Age' => 12, 'Allow' => 'GET, HEAD');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		// String headers are allowed
 		$response->header('Content-Language: da');
 		$headers += array('Content-Language' => 'da');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header('Content-Language: da');
 		$headers += array('Content-Language' => 'da');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
 
 		$response->header(array('Content-Encoding: gzip', 'Vary: *', 'Pragma' => 'no-cache'));
 		$headers += array('Content-Encoding' => 'gzip', 'Vary' => '*', 'Pragma' => 'no-cache');
-		$this->assertEquals($response->header(), $headers);
+		$this->assertEquals($headers, $response->header());
+
+		$response->header('Access-Control-Allow-Origin', array('domain1', 'domain2'));
+		$headers += array('Access-Control-Allow-Origin' => array('domain1', 'domain2'));
+		$this->assertEquals($headers, $response->header());
 	}
 
 /**
@@ -182,7 +186,8 @@ class CakeResponseTest extends CakeTestCase {
 		$response = $this->getMock('CakeResponse', array('_sendHeader', '_sendContent', '_setCookies'));
 		$response->header(array(
 			'Content-Language' => 'es',
-			'WWW-Authenticate' => 'Negotiate'
+			'WWW-Authenticate' => 'Negotiate',
+			'Access-Control-Allow-Origin' => array('domain1', 'domain2'),
 		));
 		$response->body('the response body');
 		$response->expects($this->once())->method('_sendContent')->with('the response body');
@@ -194,8 +199,12 @@ class CakeResponseTest extends CakeTestCase {
 		$response->expects($this->at(3))
 			->method('_sendHeader')->with('WWW-Authenticate', 'Negotiate');
 		$response->expects($this->at(4))
-			->method('_sendHeader')->with('Content-Length', 17);
+			->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain1');
 		$response->expects($this->at(5))
+			->method('_sendHeader')->with('Access-Control-Allow-Origin', 'domain2');
+		$response->expects($this->at(6))
+			->method('_sendHeader')->with('Content-Length', 17);
+		$response->expects($this->at(7))
 			->method('_sendHeader')->with('Content-Type', 'text/html; charset=UTF-8');
 		$response->send();
 	}
@@ -361,6 +370,7 @@ class CakeResponseTest extends CakeTestCase {
 /**
  * Tests the httpCodes method
  *
+ * @expectedException CakeException
  */
 	public function testHttpCodes() {
 		$response = new CakeResponse();
@@ -372,16 +382,16 @@ class CakeResponseTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$codes = array(
-			1337 => 'Undefined Unicorn',
-			1729 => 'Hardy-Ramanujan Located'
+			381 => 'Unicorn Moved',
+			555 => 'Unexpected Minotaur'
 		);
 
 		$result = $response->httpCodes($codes);
 		$this->assertTrue($result);
 		$this->assertEquals(42, count($response->httpCodes()));
 
-		$result = $response->httpCodes(1337);
-		$expected = array(1337 => 'Undefined Unicorn');
+		$result = $response->httpCodes(381);
+		$expected = array(381 => 'Unicorn Moved');
 		$this->assertEquals($expected, $result);
 
 		$codes = array(404 => 'Sorry Bro');
@@ -392,6 +402,14 @@ class CakeResponseTest extends CakeTestCase {
 		$result = $response->httpCodes(404);
 		$expected = array(404 => 'Sorry Bro');
 		$this->assertEquals($expected, $result);
+
+		//Throws exception
+		$response->httpCodes(array(
+			0 => 'Nothing Here',
+			-1 => 'Reverse Infinity',
+			12345 => 'Universal Password',
+			'Hello' => 'World'
+		));
 	}
 
 /**
@@ -1551,6 +1569,18 @@ class CakeResponseTest extends CakeTestCase {
 
 		$this->assertEquals(416, $response->statusCode());
 		$result = $response->send();
+	}
+
+/**
+ * Test the location method.
+ *
+ * @return void
+ */
+	public function testLocation() {
+		$response = new CakeResponse();
+		$this->assertNull($response->location(), 'No header should be set.');
+		$this->assertNull($response->location('http://example.org'), 'Setting a location should return null');
+		$this->assertEquals('http://example.org', $response->location(), 'Reading a location should return the value.');
 	}
 
 }

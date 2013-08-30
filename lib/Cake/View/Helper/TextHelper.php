@@ -229,6 +229,29 @@ class TextHelper extends AppHelper {
 	}
 
 /**
+ * Formats paragraphs around given text for all line breaks
+ *  <br /> added for single line return
+ *  <p> added for double line return
+ *
+ * @param string $text Text
+ * @return string The text with proper <p> and <br /> tags
+ * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::autoParagraph
+ */
+	public function autoParagraph($text) {
+		if (trim($text) !== '') {
+			$text = preg_replace('|<br[^>]*>\s*<br[^>]*>|i', "\n\n", $text . "\n");
+			$text = preg_replace("/\n\n+/", "\n\n", str_replace(array("\r\n", "\r"), "\n", $text));
+			$texts = preg_split('/\n\s*\n/', $text, -1, PREG_SPLIT_NO_EMPTY);
+			$text = '';
+			foreach ($texts as $txt) {
+				$text .= '<p>' . nl2br(trim($txt, "\n")) . "</p>\n";
+			}
+			$text = preg_replace('|<p>\s*</p>|', '', $text);
+		}
+		return $text;
+	}
+
+/**
  * @see String::stripLinks()
  *
  * @param string $text Text

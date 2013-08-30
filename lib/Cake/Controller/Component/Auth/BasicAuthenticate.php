@@ -44,31 +44,6 @@ App::uses('BaseAuthenticate', 'Controller/Component/Auth');
 class BasicAuthenticate extends BaseAuthenticate {
 
 /**
- * Settings for this object.
- *
- * - `fields` The fields to use to identify a user by.
- * - `userModel` The model name of the User, defaults to User.
- * - `scope` Additional conditions to use when looking up and authenticating users,
- *    i.e. `array('User.is_active' => 1).`
- * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
- * - `contain` Extra models to contain and store in session.
- * - `realm` The realm authentication is for. Defaults the server name.
- *
- * @var array
- */
-	public $settings = array(
-		'fields' => array(
-			'username' => 'username',
-			'password' => 'password'
-		),
-		'userModel' => 'User',
-		'scope' => array(),
-		'recursive' => 0,
-		'contain' => null,
-		'realm' => '',
-	);
-
-/**
  * Constructor, completes configuration for basic authentication.
  *
  * @param ComponentCollection $collection The Component collection used on this request.
@@ -82,23 +57,15 @@ class BasicAuthenticate extends BaseAuthenticate {
 	}
 
 /**
- * Authenticate a user using basic HTTP auth. Will use the configured User model and attempt a
- * login using basic HTTP auth.
+ * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
+ * login using HTTP auth.
  *
  * @param CakeRequest $request The request to authenticate with.
  * @param CakeResponse $response The response to add headers to.
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		$result = $this->getUser($request);
-
-		if (empty($result)) {
-			$response->header($this->loginHeaders());
-			$response->statusCode(401);
-			$response->send();
-			return false;
-		}
-		return $result;
+		return $this->getUser($request);
 	}
 
 /**
@@ -115,6 +82,20 @@ class BasicAuthenticate extends BaseAuthenticate {
 			return false;
 		}
 		return $this->_findUser($username, $pass);
+	}
+
+/**
+ * Handles an unauthenticated access attempt by sending appropriate login headers
+ *
+ * @param CakeRequest $request A request object.
+ * @param CakeResponse $response A response object.
+ * @return void
+ * @throws UnauthorizedException
+ */
+	public function unauthenticated(CakeRequest $request, CakeResponse $response) {
+		$Exception = new UnauthorizedException();
+		$Exception->responseHeader(array($this->loginHeaders()));
+		throw $Exception;
 	}
 
 /**

@@ -7954,6 +7954,27 @@ class ModelReadTest extends BaseModelTest {
 	}
 
 /**
+ * test to assert that != in key together with a single element array will work
+ *
+ * @return void
+ */
+	public function testNotEqualsInArrayWithOneValue() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+
+		$result = $Article->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Article.id !=' => array(1)
+				)
+			)
+		);
+		$this->assertTrue(is_array($result) && !empty($result));
+	}
+
+/**
  * test custom find method
  *
  * @return void

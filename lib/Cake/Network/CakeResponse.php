@@ -416,8 +416,10 @@ class CakeResponse {
 		$this->_setContent();
 		$this->_setContentLength();
 		$this->_setContentType();
-		foreach ($this->_headers as $header => $value) {
-			$this->_sendHeader($header, $value);
+		foreach ($this->_headers as $header => $values) {
+			foreach ((array)$values as $value) {
+				$this->_sendHeader($header, $value);
+			}
 		}
 		if ($this->_file) {
 			$this->_sendFile($this->_file, $this->_fileRange);
@@ -556,32 +558,40 @@ class CakeResponse {
  * @param string|array $header. An array of header strings or a single header string
  *	- an associative array of "header name" => "header value" is also accepted
  *	- an array of string headers is also accepted
- * @param string $value. The header value.
+ * @param string|array $value. The header value(s)
  * @return array list of headers to be sent
  */
 	public function header($header = null, $value = null) {
 		if ($header === null) {
 			return $this->_headers;
 		}
-		if (is_array($header)) {
-			foreach ($header as $h => $v) {
-				if (is_numeric($h)) {
-					$this->header($v);
-					continue;
-				}
-				$this->_headers[$h] = trim($v);
+		$headers = is_array($header) ? $header : array($header => $value);
+		foreach ($headers as $header => $value) {
+			if (is_numeric($header)) {
+				list($header, $value) = array($value, null);
 			}
-			return $this->_headers;
+			if (is_null($value)) {
+				list($header, $value) = explode(':', $header, 2);
+			}
+			$this->_headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);
 		}
-
-		if ($value !== null) {
-			$this->_headers[$header] = $value;
-			return $this->_headers;
-		}
-
-		list($header, $value) = explode(':', $header, 2);
-		$this->_headers[$header] = trim($value);
 		return $this->_headers;
+	}
+
+/**
+ * Acccessor for the location header.
+ *
+ * Get/Set the Location header value.
+ * @param null|string $url Either null to get the current location, or a string to set one.
+ * @return string|null When setting the location null will be returned. When reading the location
+ *    a string of the current location header value (if any) will be returned.
+ */
+	public function location($url = null) {
+		if ($url === null) {
+			$headers = $this->header();
+			return isset($headers['Location']) ? $headers['Location'] : null;
+		}
+		$this->header('Location', $url);
 	}
 
 /**
@@ -602,7 +612,7 @@ class CakeResponse {
  * Sets the HTTP status code to be sent
  * if $code is null the current code is returned
  *
- * @param integer $code
+ * @param integer $code the HTTP status code
  * @return integer current status code
  * @throws CakeException When an unknown status code is reached.
  */
@@ -619,31 +629,47 @@ class CakeResponse {
 /**
  * Queries & sets valid HTTP response codes & messages.
  *
- * @param integer|array $code If $code is an integer, then the corresponding code/message is
- *        returned if it exists, null if it does not exist. If $code is an array,
- *        then the 'code' and 'message' keys of each nested array are added to the default
- *        HTTP codes. Example:
+ * @param integer|array $code If $code is an integer, then the corresponding code/message is 
+ *        returned if it exists, null if it does not exist. If $code is an array, then the 
+ *        keys are used as codes and the values as messages to add to the default HTTP 
+ *        codes. The codes must be integers greater than 99 and less than 1000. Keep in 
+ *        mind that the HTTP specification outlines that status codes begin with a digit 
+ *        between 1 and 5, which defines the class of response the client is to expect. 
+ *        Example:
  *
  *        httpCodes(404); // returns array(404 => 'Not Found')
  *
  *        httpCodes(array(
- *            701 => 'Unicorn Moved',
- *            800 => 'Unexpected Minotaur'
+ *            381 => 'Unicorn Moved',
+ *            555 => 'Unexpected Minotaur'
  *        )); // sets these new values, and returns true
+ *
+ *        httpCodes(array(
+ *            0 => 'Nothing Here',
+ *            -1 => 'Reverse Infinity',
+ *            12345 => 'Universal Password',
+ *            'Hello' => 'World'
+ *        )); // throws an exception due to invalid codes
+ *
+ *        For more on HTTP status codes see: http://www.w3.org/Protocols/rfc2616/rfc2616-sec6.html#sec6.1
  *
  * @return mixed associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
+ * @throws CakeException If an attempt is made to add an invalid status code
  */
 	public function httpCodes($code = null) {
 		if (empty($code)) {
 			return $this->_statusCodes;
 		}
-
 		if (is_array($code)) {
+			$codes = array_keys($code);
+			$min = min($codes);
+			if (!is_int($min) || $min < 100 || max($codes) > 999) {
+				throw new CakeException(__d('cake_dev', 'Invalid status code'));
+			}
 			$this->_statusCodes = $code + $this->_statusCodes;
 			return true;
 		}
-
 		if (!isset($this->_statusCodes[$code])) {
 			return null;
 		}
@@ -724,9 +750,7 @@ class CakeResponse {
 		}
 
 		foreach ($this->_mimeTypes as $alias => $types) {
-			if (is_array($types) && in_array($ctype, $types)) {
-				return $alias;
-			} elseif (is_string($types) && $types == $ctype) {
+			if (in_array($ctype, (array)$types)) {
 				return $alias;
 			}
 		}
