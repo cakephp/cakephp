@@ -14,7 +14,7 @@
  */
 namespace Cake\Controller\Component;
 
-use Cake\Configure\IniReader;
+use Cake\Configure\Engine\IniConfig;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\Acl\AclInterface;

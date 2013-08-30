@@ -17,10 +17,8 @@ namespace Cake\Configure;
 
 /**
  * An interface for creating objects compatible with Configure::load()
- *
- * @package       Cake.Core
  */
-interface ConfigReaderInterface {
+interface ConfigEngineInterface {
 
 /**
  * Read method is used for reading configuration information from sources.

@@ -15,7 +15,7 @@
  */
 namespace Cake\Controller\Component\Acl;
 
-use Cake\Configure\IniReader;
+use Cake\Configure\Engine\IniConfig;
 use Cake\Controller\Component;
 use Cake\Core\Object;
 use Cake\Utility\Hash;
@@ -156,7 +156,7 @@ class IniAcl extends Object implements AclInterface {
  * @return array INI section structure
  */
 	public function readConfigFile($filename) {
-		$iniFile = new IniReader(dirname($filename) . DS);
+		$iniFile = new IniConfig(dirname($filename) . DS);
 		return $iniFile->read(basename($filename));
 	}
 

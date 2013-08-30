@@ -14,7 +14,7 @@
  */
 namespace Cake\Controller\Component\Acl;
 
-use Cake\Configure\PhpReader;
+use Cake\Configure\Engine\PhpConfig;
 use Cake\Controller\Component;
 use Cake\Core\Object;
 use Cake\Error;
@@ -85,8 +85,8 @@ class PhpAcl extends Object implements AclInterface {
 			$this->options = array_merge($this->options, $Component->settings['adapter']);
 		}
 
-		$Reader = new PhpReader(dirname($this->options['config']) . DS);
-		$config = $Reader->read(basename($this->options['config']));
+		$engine = new PhpConfig(dirname($this->options['config']) . DS);
+		$config = $engine->read(basename($this->options['config']));
 		$this->build($config);
 		$Component->Aco = $this->Aco;
 		$Component->Aro = $this->Aro;
