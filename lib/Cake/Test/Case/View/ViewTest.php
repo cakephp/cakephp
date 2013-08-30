@@ -1392,44 +1392,33 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Data provider for block related tests.
+ *
+ * @return array
+ */
+	public static function blockValueProvider() {
+		return array(
+			'string' => array('A string value'),
+			'null' => array(null),
+			'decimal' => array(1.23456),
+			'object with __toString' => array(new TestObjectWithToString()),
+		);
+	}
+
+/**
  * Test appending to a block with append.
  *
+ * @dataProvider blockValueProvider
  * @return void
  */
-	public function testBlockAppend() {
-		$this->View->assign('test', 'Block');
-		$this->View->append('test', ' content');
+	public function testBlockAppend($value) {
+		$this->View->assign('testBlock', 'Block');
+		$this->View->append('testBlock', $value);
 
-		$result = $this->View->fetch('test');
-		$this->assertEquals('Block content', $result);
+		$result = $this->View->fetch('testBlock');
+		$this->assertSame('Block' . $value, $result);
 	}
 
-/**
- * Test appending null to a block with append.
- *
- * @return void
- * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/3938-this-redirectthis-auth-redirecturl-broken
- */
-	public function testBlockAppendNull() {
-		$this->View->assign('testWithNull', 'Block');
-		$this->View->append('testWithNull', null);
-
-		$result = $this->View->fetch('testWithNull');
-		$this->assertSame('Block', $result);
-	}
-
-/**
- * Test appending an object with __toString magic method to a block with append.
- *
- * @return void
- */
-	public function testBlockAppendObjectWithToString() {
-		$objectWithToString = new TestObjectWithToString();
-		$this->View->assign('testWithObjectWithToString', 'Block ');
-		$this->View->append('testWithObjectWithToString', $objectWithToString);
-		$result = $this->View->fetch('testWithObjectWithToString');
-		$this->assertSame("Block I'm ObjectWithToString", $result);
-	}
 
 /**
  * Test appending an object without __toString magic method to a block with append.
@@ -1441,64 +1430,24 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testBlockAppendObjectWithoutToString() {
-		$objectWithToString = new TestObjectWithoutToString();
-		$this->View->assign('testWithObjectWithoutToString', 'Block ');
-		$this->View->append('testWithObjectWithoutToString', $objectWithToString);
-	}
-
-/**
- * Test appending a decimal to a block with append.
- *
- * @return void
- */
-	public function testBlockAppendDecimal() {
-		$this->View->assign('testWithDecimal', 'Block ');
-		$this->View->append('testWithDecimal', 1.23456789);
-
-		$result = $this->View->fetch('testWithDecimal');
-		$this->assertSame('Block 1.23456789', $result);
+		$object = new TestObjectWithoutToString();
+		$this->View->assign('testBlock', 'Block ');
+		$this->View->append('testBlock', $object);
 	}
 
 /**
  * Test prepending to a block with prepend.
- *
+ * 
+ * @dataProvider blockValueProvider
  * @return void
  */
-	public function testBlockPrepend() {
+	public function testBlockPrepend($value) {
 		$this->View->assign('test', 'Block');
-		$this->View->prepend('test', 'Before ');
+		$this->View->prepend('test', $value);
 
 		$result = $this->View->fetch('test');
-		$this->assertEquals('Before Block', $result);
+		$this->assertEquals($value . 'Block', $result);
 	}
-
-/**
- * Test prepending null to a block with prepend.
- *
- * @return void
- * @link https://cakephp.lighthouseapp.com/projects/42648/tickets/3938-this-redirectthis-auth-redirecturl-broken
- */
-	public function testBlockPrependNull() {
-		$this->View->assign('testWithNull', 'Block');
-		$this->View->prepend('testWithNull', null);
-
-		$result = $this->View->fetch('testWithNull');
-		$this->assertSame('Block', $result);
-	}
-
-/**
- * Test prepending an object with __toString magic method to a block with prepend.
- *
- * @return void
- */
-	public function testBlockPrependObjectWithToString() {
-		$objectWithToString = new TestObjectWithToString();
-		$this->View->assign('testWithObjectWithToString', ' Block');
-		$this->View->prepend('testWithObjectWithToString', $objectWithToString);
-		$result = $this->View->fetch('testWithObjectWithToString');
-		$this->assertSame("I'm ObjectWithToString Block", $result);
-	}
-
 /**
  * Test prepending an object without __toString magic method to a block with prepend.
  *
@@ -1509,22 +1458,9 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testBlockPrependObjectWithoutToString() {
-		$objectWithToString = new TestObjectWithoutToString();
-		$this->View->assign('testWithObjectWithoutToString', 'Block ');
-		$this->View->prepend('testWithObjectWithoutToString', $objectWithToString);
-	}
-
-/**
- * Test prepending a decimal to a block with prepend.
- *
- * @return void
- */
-	public function testBlockPrependDecimal() {
-		$this->View->assign('testWithDecimal', ' Block');
-		$this->View->prepend('testWithDecimal', 1.23456789);
-
-		$result = $this->View->fetch('testWithDecimal');
-		$this->assertSame('1.23456789 Block', $result);
+		$object = new TestObjectWithoutToString();
+		$this->View->assign('test', 'Block ');
+		$this->View->prepend('test', $object);
 	}
 
 /**
