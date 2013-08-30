@@ -179,6 +179,32 @@ class ExtractTaskTest extends CakeTestCase {
 	}
 
 /**
+ * testExtractCategory method
+ *
+ * @return void
+ */
+	public function testExtractCategory() {
+		$this->Task->interactive = false;
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'no';
+		$this->Task->params['merge'] = 'no';
+		$this->Task->expects($this->never())->method('err');
+		$this->Task->expects($this->any())->method('in')
+			->will($this->returnValue('y'));
+		$this->Task->expects($this->never())->method('_stop');
+
+		$this->Task->execute();
+		$this->assertTrue(file_exists($this->path . DS . 'LC_TIME' . DS . 'default.pot'));
+
+		$result = file_get_contents($this->path . DS . 'default.pot');
+
+		$pattern = '/\#: .*extract\.ctp:31\n/';
+		$this->assertNotRegExp($pattern, $result);
+	}
+
+/**
  * test exclusions
  *
  * @return void
