@@ -354,8 +354,6 @@ class Mysql extends DboSource {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
-		preg_match('/  PRIMARY KEY \(([^\)]+?)\),?/', $createSQLInfo['Create Table'], $keys);
-
 		foreach ($columns as $column) {
 			$fields[$column['Field']] = array(
 				'type' => $this->column($column['Type']),
@@ -363,9 +361,6 @@ class Mysql extends DboSource {
 				'default' => isset($column['Default']) ? ($column['Default'] === '' ? '' : ($column['Default'][0] == '\'' ? substr($column['Default'], 1, -1) : ($column['Default'] == 'NULL' ? null : $column['Default']))) : null,
 				'length' => $this->length($column['Type'])
 			);
-			if (isset($keys["`{$column['Field']}`"])) {
-				$fields[$column['Field']]['key'] = $this->index['primary'];
-			}
 			foreach ($this->fieldParameters as $name => $value) {
 				if ($value['column'] !== false && !empty($column[$value['column']])) {
 					$fields[$column['Field']][$name] = $column[$value['column']];
@@ -382,6 +377,13 @@ class Mysql extends DboSource {
 				if ($collation) {
 					$fields[$column['Field']]['collate'] = $collation;
 				}
+			}
+		}
+
+		preg_match('/  PRIMARY KEY \(([^\)]+?)\),?/', $createSQLInfo['Create Table'], $rawPrimaryKeys);
+		if (isset($rawPrimaryKeys[1])) {
+			foreach (explode(',', $rawPrimaryKeys[1]) as $primaryKey) {
+				$fields[trim($primaryKey, '`')]['key'] = $this->index['PRI'];
 			}
 		}
 
