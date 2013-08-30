@@ -67,22 +67,22 @@ class BakeShellTest extends TestCase {
 		$this->Shell->Model = $this->getMock(
 			'Cake\Console\Command\Task\ModelTask',
 			[],
-			[&$this->Dispatcher]
+			[$this->Dispatcher]
 		);
 		$this->Shell->Controller = $this->getMock(
 			'Cake\Console\Command\Task\ControllerTask',
 			[],
-			[&$this->Dispatcher]
+			[$this->Dispatcher]
 		);
 		$this->Shell->View = $this->getMock(
 			'Cake\Console\Command\Task\ModelTask',
 			[],
-			[&$this->Dispatcher]
+			[$this->Dispatcher]
 		);
 		$this->Shell->DbConfig = $this->getMock(
 			'Cake\Console\Command\Task\DbConfigTask',
 			[],
-			[&$this->Dispatcher]
+			[$this->Dispatcher]
 		);
 
 		$this->Shell->DbConfig->expects($this->once())

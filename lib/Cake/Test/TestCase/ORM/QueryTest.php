@@ -17,9 +17,9 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
+use Cake\Database\ConnectionManager;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\ConnectionManager;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
@@ -909,8 +909,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testMapReduceOnlyMapper() {
-		$mapper1 = function() {};
-		$mapper2 = function() {};
+		$mapper1 = function() {
+		};
+		$mapper2 = function() {
+		};
 		$query = new Query($this->connection, $this->table);
 		$this->assertSame($query, $query->mapReduce($mapper1));
 		$this->assertEquals(
@@ -935,10 +937,14 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testMapReduceBothMethods() {
-		$mapper1 = function() {};
-		$mapper2 = function() {};
-		$reducer1 = function() {};
-		$reducer2 = function() {};
+		$mapper1 = function() {
+		};
+		$mapper2 = function() {
+		};
+		$reducer1 = function() {
+		};
+		$reducer2 = function() {
+		};
 		$query = new Query($this->connection, $this->table);
 		$this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
 		$this->assertEquals(
@@ -962,10 +968,14 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testOverwriteMapReduce() {
-		$mapper1 = function() {};
-		$mapper2 = function() {};
-		$reducer1 = function() {};
-		$reducer2 = function() {};
+		$mapper1 = function() {
+		};
+		$mapper2 = function() {
+		};
+		$reducer1 = function() {
+		};
+		$reducer2 = function() {
+		};
 		$query = new Query($this->connection, $this->table);
 		$this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
 		$this->assertEquals(
