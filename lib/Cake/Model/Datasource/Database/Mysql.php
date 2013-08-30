@@ -344,35 +344,49 @@ class Mysql extends DboSource {
 		$table = $this->fullTableName($model);
 
 		$fields = false;
-		$cols = $this->_execute('SHOW FULL COLUMNS FROM ' . $table);
-		if (!$cols) {
+		$columnsStatement = $this->_execute('SHOW CREATE TABLE ' . $table);
+		$columns = false;
+		$keys = false;
+
+		if (!$columnsStatement
+				|| !($createSQLInfo = $columnsStatement->fetch(PDO::FETCH_ASSOC))
+				|| !preg_match_all('/  `(?<Field>[^`]+?)` (?<Type>[^\(]+?(?:\([^\)]+?\))?(?: unsigned)?)(?: CHARACTER SET (?<charset>[a-z0-9\-_]+?))?(?: COLLATE (?<Collation>[a-z0-9\-_]+?))?(?<notNull> NOT NULL)?(?: DEFAULT (?<Default>.+?))?(?: AUTO_INCREMENT)? ?(COMMENT \'(?<Comment>[^\']*?)\')?,?\s/', $createSQLInfo['Create Table'], $columns, PREG_SET_ORDER)) {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
 		}
 
-		while ($column = $cols->fetch(PDO::FETCH_OBJ)) {
-			$fields[$column->Field] = array(
-				'type' => $this->column($column->Type),
-				'null' => ($column->Null === 'YES' ? true : false),
-				'default' => $column->Default,
-				'length' => $this->length($column->Type),
+		preg_match('/  PRIMARY KEY \(([^\)]+?)\),?/', $createSQLInfo['Create Table'], $keys);
+
+		foreach ($columns as $column) {
+			$fields[$column['Field']] = array(
+				'type' => $this->column($column['Type']),
+				'null' => (!isset($column['notNull']) || $column['notNull'] === '' ? true : false),
+				'default' => isset($column['Default']) ? ($column['Default'] === '' ? '' : ($column['Default'][0] == '\'' ? substr($column['Default'], 1, -1) : ($column['Default'] == 'NULL' ? null : $column['Default']))) : null,
+				'length' => $this->length($column['Type'])
 			);
-			if (!empty($column->Key) && isset($this->index[$column->Key])) {
-				$fields[$column->Field]['key'] = $this->index[$column->Key];
+			if (isset($keys["`{$column['Field']}`"])) {
+				$fields[$column['Field']]['key'] = $this->index['primary'];
 			}
 			foreach ($this->fieldParameters as $name => $value) {
-				if (!empty($column->{$value['column']})) {
-					$fields[$column->Field][$name] = $column->{$value['column']};
+				if ($value['column'] !== false && !empty($column[$value['column']])) {
+					$fields[$column['Field']][$name] = $column[$value['column']];
 				}
 			}
-			if (isset($fields[$column->Field]['collate'])) {
-				$charset = $this->getCharsetName($fields[$column->Field]['collate']);
+			if (isset($fields[$column['Field']]['collate'])) {
+				$charset = $this->getCharsetName($fields[$column['Field']]['collate']);
 				if ($charset) {
-					$fields[$column->Field]['charset'] = $charset;
+					$fields[$column['Field']]['charset'] = $charset;
+				}
+			} elseif (!empty($column['charset'])) {
+				$fields[$column['Field']]['charset'] = $column['charset'];
+				$collation = $this->getDefaultCollation($fields[$column['Field']]['charset']);
+				if ($collation) {
+					$fields[$column['Field']]['collate'] = $collation;
 				}
 			}
 		}
+
 		$this->_cacheDescription($key, $fields);
-		$cols->closeCursor();
+		$columnsStatement->closeCursor();
 		return $fields;
 	}
 
