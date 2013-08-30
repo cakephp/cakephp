@@ -50,21 +50,6 @@ define('APP', ROOT . DS . APP_DIR . DS);
 define('WWW_ROOT', APP . WEBROOT_DIR . DS);
 
 /**
- * Path to the public CSS directory.
- */
-define('CSS', WWW_ROOT . 'css' . DS);
-
-/**
- * Path to the public JavaScript directory.
- */
-define('JS', WWW_ROOT . 'js' . DS);
-
-/**
- * Path to the public images directory.
- */
-define('IMAGES', WWW_ROOT . 'img' . DS);
-
-/**
  * Path to the tests directory.
  */
 define('TESTS', APP . 'Test' . DS);
@@ -83,21 +68,6 @@ define('LOGS', TMP . 'logs' . DS);
  * Path to the cache files directory. It can be shared between hosts in a multi-server setup.
  */
 define('CACHE', TMP . 'cache' . DS);
-
-/**
- * Web path to the public images directory.
- */
-define('IMAGES_URL', 'img/');
-
-/**
- * Web path to the CSS files directory.
- */
-define('CSS_URL', 'css/');
-
-/**
- * Web path to the js files directory.
- */
-define('JS_URL', 'js/');
 
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
