@@ -859,7 +859,7 @@ class HtmlHelperTest extends CakeTestCase {
  * @return void
  */
 	public function testScriptTimestamping() {
-		$this->skipIf(!is_writable(JS), 'webroot/js is not Writable, timestamp testing has been skipped.');
+		$this->skipIf(!is_writable(WWW_ROOT . 'js'), 'webroot/js is not Writable, timestamp testing has been skipped.');
 
 		Configure::write('debug', 2);
 		Configure::write('Asset.timestamp', true);
