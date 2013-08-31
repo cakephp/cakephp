@@ -98,7 +98,7 @@ class MemcachedEngineTest extends CakeTestCase {
 			'probability' => 100,
 			'servers' => array('127.0.0.1'),
 			'persistent' => true,
-			'persistent_id' => 'mc',
+			'persistentId' => 'mc',
 			'compress' => false,
 			'engine' => 'Memcached',
 			'login' => null,
