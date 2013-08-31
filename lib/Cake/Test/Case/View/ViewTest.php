@@ -1356,7 +1356,7 @@ class ViewTest extends CakeTestCase {
 
 /**
  * Test setting a block's content to an object with __toString magic method
- * 
+ *
  * @return void
  */
 	public function testBlockSetObjectWithToString() {
@@ -1419,7 +1419,6 @@ class ViewTest extends CakeTestCase {
 		$this->assertSame('Block' . $value, $result);
 	}
 
-
 /**
  * Test appending an object without __toString magic method to a block with append.
  *
@@ -1437,7 +1436,7 @@ class ViewTest extends CakeTestCase {
 
 /**
  * Test prepending to a block with prepend.
- * 
+ *
  * @dataProvider blockValueProvider
  * @return void
  */
@@ -1448,6 +1447,7 @@ class ViewTest extends CakeTestCase {
 		$result = $this->View->fetch('test');
 		$this->assertEquals($value . 'Block', $result);
 	}
+
 /**
  * Test prepending an object without __toString magic method to a block with prepend.
  *
