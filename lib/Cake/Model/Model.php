@@ -24,6 +24,7 @@ namespace Cake\Model;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Object;
+use Cake\Database\ConnectionManager;
 use Cake\Error;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
