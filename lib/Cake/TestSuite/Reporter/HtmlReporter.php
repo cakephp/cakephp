@@ -22,6 +22,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\TestSuite\Coverage\HtmlCoverageReport;
 use Cake\Utility\Inflector;
+use PHPUnit_Util_Diff;
 
 /**
  * HtmlReporter Reports Results of TestSuites and Test Cases
