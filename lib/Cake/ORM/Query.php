@@ -558,6 +558,29 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * Returns the first result out of executed this query, if the query has not been
+ * executed before, it will set the limit clause to 1 for performance reasons.
+ *
+ * ###Example:
+ *
+ * ``$singleUser = $query->select(['id', 'username'])->first()``
+ *
+ * @return mixed the first result from the ResultSet
+ */
+	public function first() {
+		if ($this->_dirty) {
+			$this->limit(1);
+		}
+		$this->bufferResults();
+		$this->_results = $this->execute();
+		// Calls foreach so we cursor is rewinded automatically
+		foreach ($this->_results as $row) {
+			// Just get the first result from the iterator
+			return $row;
+		}
+	}
+
+/**
  * Decorates the ResultSet iterator with MapReduce routines
  *
  * @param $results Cake\ORM\ResultCollectionTrait original results
