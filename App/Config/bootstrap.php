@@ -39,8 +39,7 @@ use Cake\Core\App;
 use Cake\Cache\Cache;
 use Cake\Console\ConsoleErrorHandler;
 use Cake\Core\Configure;
-use Cake\Configure\IniReader;
-use Cake\Configure\PhpReader;
+use Cake\Configure\Engine\PhpConfig;
 use Cake\Core\Plugin;
 use Cake\Database\ConnectionManager;
 use Cake\Error\ErrorHandler;
@@ -57,7 +56,7 @@ use Cake\Utility\Inflector;
  * that changes from configuration that does not. This makes deployment simpler.
  */
 try {
-	$reader = new PhpReader();
+	$reader = new PhpConfig();
 	Configure::config('default', $reader);
 	Configure::load('app.php', 'default', false);
 } catch (\Exception $e) {
