@@ -482,4 +482,24 @@ class ConfigureTest extends TestCase {
 		}
 	}
 
+/**
+ * Test the consume method.
+ *
+ * @return void
+ */
+	public function testConsume() {
+		$this->assertNull(Configure::consume('DoesNotExist'), 'Should be null on empty value');
+		Configure::write('Test', ['key' => 'value', 'key2' => 'value2']);
+
+		$result = Configure::consume('Test.key');
+		$this->assertEquals('value', $result);
+
+		$result = Configure::read('Test.key2');
+		$this->assertEquals('value2', $result, 'Other values should remain.');
+
+		$result = Configure::consume('Test');
+		$expected = ['key2' => 'value2'];
+		$this->assertEquals($expected, $result);
+	}
+
 }

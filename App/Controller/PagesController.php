@@ -21,6 +21,7 @@
  */
 namespace App\Controller;
 
+use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Utility\Inflector;
 
