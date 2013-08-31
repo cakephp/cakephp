@@ -46,6 +46,8 @@ class MemcachedEngine extends CacheEngine {
  *  - servers = string or array of memcached servers, default => 127.0.0.1. If an
  *    array MemcacheEngine will use them as a pool.
  *  - compress = boolean, default => false
+ *  - persistent = string The name of the persistent connection. All configurations using
+ *    the same persistent value will share a single underlying connection.
  *
  * @var array
  */
@@ -72,8 +74,7 @@ class MemcachedEngine extends CacheEngine {
 			'engine' => 'Memcached',
 			'servers' => array('127.0.0.1'),
 			'compress' => false,
-			'persistent' => true,
-			'persistentId' => 'mc',
+			'persistent' => false,
 			'login' => null,
 			'password' => null,
 		);
@@ -87,7 +88,7 @@ class MemcachedEngine extends CacheEngine {
 			return true;
 		}
 
-		$this->_Memcached = new Memcached($this->settings['persistent'] ? $this->settings['persistentId'] : null);
+		$this->_Memcached = new Memcached($this->settings['persistent'] ? (string)$this->settings['persistent'] : null);
 		$this->_setOptions();
 
 		if (count($this->_Memcached->getServerList())) {
