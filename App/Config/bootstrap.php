@@ -51,10 +51,18 @@ use Cake\Utility\Inflector;
 /**
  * Read configuration file and inject configuration into various
  * CakePHP classes.
+ *
+ * By default there is only one configuration file. It is often a good
+ * idea to create multiple configuration files, and separate the configuration
+ * that changes from configuration that does not. This makes deployment simpler.
  */
-$reader = new PhpReader();
-Configure::config('default', $reader);
-Configure::load('app.php', 'default', false);
+try {
+	$reader = new PhpReader();
+	Configure::config('default', $reader);
+	Configure::load('app.php', 'default', false);
+} catch (\Exception $e) {
+	die('Unable to load Config/app.php ensure it exists.');
+}
 
 /**
  * Configure an autoloader for the App namespace.
