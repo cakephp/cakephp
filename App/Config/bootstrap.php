@@ -56,8 +56,7 @@ use Cake\Utility\Inflector;
  * that changes from configuration that does not. This makes deployment simpler.
  */
 try {
-	$reader = new PhpConfig();
-	Configure::config('default', $reader);
+	Configure::config('default', new PhpConfig());
 	Configure::load('app.php', 'default', false);
 } catch (\Exception $e) {
 	die('Unable to load Config/app.php ensure it exists.');
@@ -88,12 +87,10 @@ mb_internal_encoding(Configure::read('App.encoding'));
  * Register application error and exception handlers.
  */
 if (php_sapi_name() == 'cli') {
-	$errorHandler = new ConsoleErrorHandler(Configure::consume('Error'));
+	(new ConsoleErrorHandler(Configure::consume('Error')))->register();
 } else {
-	$errorHandler = new ErrorHandler(Configure::consume('Error'));
+	(new ErrorHandler(Configure::consume('Error')))->register();
 }
-$errorHandler->register();
-unset($errorHandler);
 
 
 /**
