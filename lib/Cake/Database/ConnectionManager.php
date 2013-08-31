@@ -79,11 +79,11 @@ class ConnectionManager {
  *
  * @param string $name The connection name.
  * @return Connection A connection object.
- * @throws Cake\Error\MissingDataSourceConfigException When config data is missing.
+ * @throws Cake\Error\MissingDatasourceConfigException When config data is missing.
  */
 	public static function get($name) {
 		if (empty(static::$_config[$name])) {
-			throw new Error\MissingDataSourceConfigException(['name' => $name]);
+			throw new Error\MissingDatasourceConfigException(['name' => $name]);
 		}
 		if (empty(static::$_registry)) {
 			static::$_registry = new ConnectionRegistry();
