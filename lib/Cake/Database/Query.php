@@ -282,7 +282,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _traverseSelect(callable $visitor) {
 		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset', 'union'];
 		foreach ($parts as $name) {
-			call_user_func($visitor, $this->_parts[$name], $name);
+			$visitor($this->_parts[$name], $name);
 		}
 	}
 
@@ -295,7 +295,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _traverseDelete(callable $visitor) {
 		$parts = ['delete', 'from', 'where'];
 		foreach ($parts as $name) {
-			call_user_func($visitor, $this->_parts[$name], $name);
+			$visitor($this->_parts[$name], $name);
 		}
 	}
 
@@ -308,7 +308,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _traverseUpdate(callable $visitor) {
 		$parts = ['update', 'set', 'where'];
 		foreach ($parts as $name) {
-			call_user_func($visitor, $this->_parts[$name], $name);
+			$visitor($this->_parts[$name], $name);
 		}
 	}
 
@@ -321,7 +321,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _traverseInsert(callable $visitor) {
 		$parts = ['insert', 'values'];
 		foreach ($parts as $name) {
-			call_user_func($visitor, $this->_parts[$name], $name);
+			$visitor($this->_parts[$name], $name);
 		}
 	}
 
@@ -352,7 +352,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  */
 	public function select($fields = [], $overwrite = false) {
 		if (is_callable($fields)) {
-			$fields = call_user_func($fields, $this);
+			$fields = $fields($this);
 		}
 
 		if (!is_array($fields)) {
@@ -1457,7 +1457,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$visitor = function($expression) use (&$visitor, $callback) {
 			if (is_array($expression)) {
 				foreach ($expression as $e) {
-					call_user_func($visitor, $e);
+					$visitor($e);
 				}
 				return;
 			}
@@ -1466,7 +1466,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 				$expression->traverse($visitor);
 
 				if (!($expression instanceof self)) {
-					call_user_func($callback, $expression);
+					$callback($expression);
 				}
 			}
 		};
@@ -1568,7 +1568,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$expression = $this->_parts[$part] ?: $this->newExpr();
 
 		if (is_callable($append)) {
-			$append = call_user_func($append, $this->newExpr(), $this);
+			$append = $append($this->newExpr(), $this);
 		}
 
 		if ($expression->type() === $conjunction) {

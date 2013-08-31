@@ -56,7 +56,7 @@ class Type {
 		'uuid' => ['callback' => 'strval'],
 		'text' => ['callback' => 'strval'],
 		'boolean' => [
-			'callback' => '\Cake\Database\Type::boolval',
+			'callback' => ['\Cake\Database\Type', 'boolval'],
 			'pdo' => PDO::PARAM_BOOL
 		],
 	];
@@ -186,7 +186,7 @@ class Type {
 		if (!empty(self::$_basicTypes[$this->_name])) {
 			$typeInfo = self::$_basicTypes[$this->_name];
 			if (isset($typeInfo['callback'])) {
-				return call_user_func($typeInfo['callback'], $value);
+				return $typeInfo['callback']($value);
 			}
 		}
 		return $value;
