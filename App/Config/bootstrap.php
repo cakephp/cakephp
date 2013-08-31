@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.Config
  * @since         CakePHP(tm) v 0.10.8.2117
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -36,87 +35,89 @@ require __DIR__ . '/paths.php';
  */
 require CORE_PATH . 'Cake/bootstrap.php';
 
-/**
- * Configure the App and debug values.
- *
- * You won't be able to load application classes
- * until after the autoloader is configured in app.php
- */
-require __DIR__ . '/app.php';
-
-/**
- * Load caching configuration.
- */
-require __DIR__ . '/cache.php';
-
-/**
- * Load error handler configuration.
- */
-require __DIR__ . '/error.php';
-
-/**
- * Load email configuration.
- *
- * Create and uncomment this file to use pre-configured
- * email defaults.
- *
- * See App/Config/email.default.php for a template
- */
-// require __DIR__ . '/email.php';
-
-/**
- * Load datasource connections.
- *
- * Create and uncomment this file to use datasource
- * connections.
- *
- * See App/Config/datasources.default.php for a template.
- */
-if (file_exists(__DIR__ . '/datasources.php')) {
-	require __DIR__ . '/datasources.php';
-}
-
-/**
- * Load logging configuration.
- */
-require __DIR__ . '/logging.php';
-
-/**
- * Load session configuration.
- */
-require __DIR__ . '/session.php';
-
-
 use Cake\Core\App;
+use Cake\Cache\Cache;
+use Cake\Console\ConsoleErrorHandler;
 use Cake\Core\Configure;
+use Cake\Configure\Engine\PhpConfig;
 use Cake\Core\Plugin;
+use Cake\Database\ConnectionManager;
+use Cake\Error\ErrorHandler;
+use Cake\Log\Log;
+use Cake\Network\Email\Email;
 use Cake\Utility\Inflector;
 
 /**
- * The settings below can be used to set additional paths to models, views and controllers.
+ * Read configuration file and inject configuration into various
+ * CakePHP classes.
  *
- * App::build(array(
- *     'Model'                     => array('/path/to/models/', '/next/path/to/models/'),
- *     'Model/Behavior'            => array('/path/to/behaviors/', '/next/path/to/behaviors/'),
- *     'Model/Datasource'          => array('/path/to/datasources/', '/next/path/to/datasources/'),
- *     'Model/Datasource/Database' => array('/path/to/databases/', '/next/path/to/database/'),
- *     'Model/Datasource/Session'  => array('/path/to/sessions/', '/next/path/to/sessions/'),
- *     'Controller'                => array('/path/to/controllers/', '/next/path/to/controllers/'),
- *     'Controller/Component'      => array('/path/to/components/', '/next/path/to/components/'),
- *     'Controller/Component/Auth' => array('/path/to/auths/', '/next/path/to/auths/'),
- *     'Controller/Component/Acl'  => array('/path/to/acls/', '/next/path/to/acls/'),
- *     'View'                      => array('/path/to/views/', '/next/path/to/views/'),
- *     'View/Helper'               => array('/path/to/helpers/', '/next/path/to/helpers/'),
- *     'Console'                   => array('/path/to/consoles/', '/next/path/to/consoles/'),
- *     'Console/Command'           => array('/path/to/commands/', '/next/path/to/commands/'),
- *     'Console/Command/Task'      => array('/path/to/tasks/', '/next/path/to/tasks/'),
- *     'Lib'                       => array('/path/to/libs/', '/next/path/to/libs/'),
- *     'Locale'                    => array('/path/to/locales/', '/next/path/to/locales/'),
- *     'Vendor'                    => array('/path/to/vendors/', '/next/path/to/vendors/'),
- *     'Plugin'                    => array('/path/to/plugins/', '/next/path/to/plugins/'),
- * ));
- *
+ * By default there is only one configuration file. It is often a good
+ * idea to create multiple configuration files, and separate the configuration
+ * that changes from configuration that does not. This makes deployment simpler.
  */
+try {
+	Configure::config('default', new PhpConfig());
+	Configure::load('app.php', 'default', false);
+} catch (\Exception $e) {
+	die('Unable to load Config/app.php ensure it exists.');
+}
+
+/**
+ * Configure an autoloader for the App namespace.
+ *
+ * Use App\Controller\AppController as a test to see if composer
+ * support is being used.
+ */
+if (!class_exists('App\Controller\AppController')) {
+	(new \Cake\Core\ClassLoader(Configure::read('App.namespace'), dirname(APP)))->register();
+}
+
+/**
+ * Uncomment this line and correct your server timezone to fix
+ * any date & time related errors.
+ */
+	//date_default_timezone_set('UTC');
+
+/**
+ * Configure the mbstring extension to use the correct encoding.
+ */
+mb_internal_encoding(Configure::read('App.encoding'));
+
+/**
+ * Register application error and exception handlers.
+ */
+if (php_sapi_name() == 'cli') {
+	(new ConsoleErrorHandler(Configure::consume('Error')))->register();
+} else {
+	(new ErrorHandler(Configure::consume('Error')))->register();
+}
+
+
+/**
+ * Set the full base url.
+ * This URL is used as the base of all absolute links.
+ *
+ * If you define fullBaseUrl in your config file you can remove this.
+ */
+if (!Configure::read('App.fullBaseUrl')) {
+	$s = null;
+	if (env('HTTPS')) {
+		$s = 's';
+	}
+
+	$httpHost = env('HTTP_HOST');
+	if (isset($httpHost)) {
+		Configure::write('App.fullBaseUrl', 'http' . $s . '://' . $httpHost);
+	}
+	unset($httpHost, $s);
+}
+
+Cache::config(Configure::consume('Cache'));
+ConnectionManager::config(Configure::consume('Datasources'));
+Email::configTransport(Configure::consume('EmailTransport'));
+Email::config(Configure::consume('Email'));
+Log::config(Configure::consume('Log'));
+
 
 /**
  * Custom Inflector rules, can be set to correctly pluralize or singularize table, model, controller names or whatever other
@@ -136,24 +137,3 @@ use Cake\Utility\Inflector;
  * Plugin::load('DebugKit'); //Loads a single plugin named DebugKit
  *
  */
-
-/**
- * You can attach event listeners to the request lifecycle as Dispatcher Filter . By Default CakePHP bundles two filters:
- *
- * - AssetDispatcher filter will serve your asset files (css, images, js, etc) from your themes and plugins
- * - CacheDispatcher filter will read the Cache.check configure variable and try to serve cached content generated from controllers
- *
- * Feel free to remove or add filters as you see fit for your application. A few examples:
- *
- * Configure::write('Dispatcher.filters', array(
- *		'MyCacheFilter', //  will use MyCacheFilter class from the Routing/Filter package in your app.
- *		'MyPlugin.MyFilter', // will use MyFilter class from the Routing/Filter package in MyPlugin plugin.
- * 		array('callable' => $aFunction, 'on' => 'before', 'priority' => 9), // A valid PHP callback type to be called on beforeDispatch
- *		array('callable' => $anotherMethod, 'on' => 'after'), // A valid PHP callback type to be called on afterDispatch
- *
- * ));
- */
-Configure::write('Dispatcher.filters', array(
-	'AssetDispatcher',
-	'CacheDispatcher'
-));
