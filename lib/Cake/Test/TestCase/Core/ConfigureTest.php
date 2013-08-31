@@ -22,7 +22,7 @@
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Cache\Cache;
-use Cake\Configure\PhpReader;
+use Cake\Configure\Engine\PhpConfig;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -246,7 +246,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadExceptionOnNonExistantFile() {
-		Configure::config('test', new PhpReader());
+		Configure::config('test', new PhpConfig());
 		Configure::load('non_existing_configuration_file', 'test');
 	}
 
@@ -270,7 +270,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadWithMerge() {
-		Configure::config('test', new PhpReader(CAKE . 'Test/TestApp/Config/'));
+		Configure::config('test', new PhpConfig(CAKE . 'Test/TestApp/Config/'));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -293,7 +293,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadNoMerge() {
-		Configure::config('test', new PhpReader(CAKE . 'Test/TestApp/Config/'));
+		Configure::config('test', new PhpConfig(CAKE . 'Test/TestApp/Config/'));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -317,7 +317,7 @@ class ConfigureTest extends TestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
-		Configure::config('test', new PhpReader());
+		Configure::config('test', new PhpConfig());
 		Plugin::load('TestPlugin');
 		$result = Configure::load('TestPlugin.load', 'test');
 		$this->assertTrue($result);
@@ -394,13 +394,13 @@ class ConfigureTest extends TestCase {
 	}
 
 /**
- * test adding new readers.
+ * test adding new engines.
  *
  * @return void
  */
-	public function testReaderSetup() {
-		$reader = new PhpReader();
-		Configure::config('test', $reader);
+	public function testEngineSetup() {
+		$engine = new PhpConfig();
+		Configure::config('test', $engine);
 		$configured = Configure::configured();
 
 		$this->assertTrue(in_array('test', $configured));
@@ -413,14 +413,14 @@ class ConfigureTest extends TestCase {
 	}
 
 /**
- * test reader() throwing exceptions on missing interface.
+ * test engine() throwing exceptions on missing interface.
  *
  * @expectedException PHPUnit_Framework_Error
  * @return void
  */
-	public function testReaderExceptionOnIncorrectClass() {
-		$reader = new \StdClass();
-		Configure::config('test', $reader);
+	public function testEngineExceptionOnIncorrectClass() {
+		$engine = new \StdClass();
+		Configure::config('test', $engine);
 	}
 
 /**
@@ -443,14 +443,14 @@ class ConfigureTest extends TestCase {
 	}
 
 /**
- * test dump integrated with the PhpReader.
+ * test dump integrated with the PhpConfig.
  *
  * @return void
  */
 	public function testDump() {
-		Configure::config('test_reader', new PhpReader(TMP));
+		Configure::config('test_Engine', new PhpConfig(TMP));
 
-		$result = Configure::dump('config_test.php', 'test_reader');
+		$result = Configure::dump('config_test.php', 'test_Engine');
 		$this->assertTrue($result > 0);
 		$result = file_get_contents(TMP . 'config_test.php');
 		$this->assertContains('<?php', $result);
@@ -466,10 +466,10 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testDumpPartial() {
-		Configure::config('test_reader', new PhpReader(TMP));
+		Configure::config('test_Engine', new PhpConfig(TMP));
 		Configure::write('Error', ['test' => 'value']);
 
-		$result = Configure::dump('config_test.php', 'test_reader', ['Error']);
+		$result = Configure::dump('config_test.php', 'test_Engine', ['Error']);
 		$this->assertTrue($result > 0);
 		$result = file_get_contents(TMP . 'config_test.php');
 		$this->assertContains('<?php', $result);

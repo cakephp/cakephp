@@ -2116,14 +2116,14 @@ class HtmlHelperTest extends TestCase {
 	}
 
 /**
- * testLoadConfigWrongReader method
+ * testLoadConfigWrongEngine method
  *
  * @return void
  * @expectedException Cake\Error\ConfigureException
  */
-	public function testLoadConfigWrongReader() {
+	public function testLoadConfigWrongEngine() {
 		$path = CAKE . 'Test/TestApp/Config/';
-		$this->Html->loadConfig(array('htmlhelper_tags', 'wrong_reader'), $path);
+		$this->Html->loadConfig(array('htmlhelper_tags', 'wrong_engine'), $path);
 	}
 
 /**

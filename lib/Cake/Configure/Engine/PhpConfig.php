@@ -1,39 +1,34 @@
 <?php
 /**
- * PhpReader file
- *
- * PHP 5
- *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice
+ * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://book.cakephp.org/2.0/en/development/configuration.html#loading-configuration-files CakePHP(tm) Configuration
- * @package       Cake.Configure
+ * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Configure;
+namespace Cake\Configure\Engine;
 
+use Cake\Configure\ConfigEngineInterface;
 use Cake\Core\App;
 use Cake\Error;
 
 /**
- * PHP Reader allows Configure to load configuration values from
+ * PHP engine allows Configure to load configuration values from
  * files containing simple PHP arrays.
  *
- * Files compatible with PhpReader should define a `$config` variable, that
+ * Files compatible with PhpConfig should define a `$config` variable, that
  * contains all of the configuration data contained in the file.
- *
- * @package       Cake.Configure
  */
-class PhpReader implements ConfigReaderInterface {
+class PhpConfig implements ConfigEngineInterface {
 
 /**
- * The path this reader finds files on.
+ * The path this engine finds files on.
  *
  * @var string
  */

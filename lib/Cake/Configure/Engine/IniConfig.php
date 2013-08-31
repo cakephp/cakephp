@@ -1,9 +1,5 @@
 <?php
 /**
- * IniReader
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,12 +9,12 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Configure
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Configure;
+namespace Cake\Configure\Engine;
 
+use Cake\Configure\ConfigEngineInterface;
 use Cake\Core\App;
 use Cake\Error;
 use Cake\Utility\Hash;
@@ -26,10 +22,10 @@ use Cake\Utility\Hash;
 /**
  * Ini file configuration engine.
  *
- * Since IniReader uses parse_ini_file underneath, you should be aware that this
+ * Since IniConfig uses parse_ini_file underneath, you should be aware that this
  * class shares the same behavior, especially with regards to boolean and null values.
  *
- * In addition to the native `parse_ini_file` features, IniReader also allows you
+ * In addition to the native `parse_ini_file` features, IniConfig also allows you
  * to create nested array structures through usage of `.` delimited names. This allows
  * you to create nested arrays structures in an ini config file. For example:
  *
@@ -50,14 +46,13 @@ use Cake\Utility\Hash;
  * You can combine `.` separated values with sections to create more deeply
  * nested structures.
  *
- * IniReader also manipulates how the special ini values of
+ * IniConfig also manipulates how the special ini values of
  * 'yes', 'no', 'on', 'off', 'null' are handled. These values will be
  * converted to their boolean equivalents.
  *
- * @package       Cake.Configure
  * @see http://php.net/parse_ini_file
  */
-class IniReader implements ConfigReaderInterface {
+class IniConfig implements ConfigEngineInterface {
 
 /**
  * The path to read ini files from.
@@ -95,7 +90,7 @@ class IniReader implements ConfigReaderInterface {
  * For backwards compatibility, acl.ini.php will be treated specially until 3.0.
  *
  * @param string $key The identifier to read from. If the key has a . it will be treated
- *  as a plugin prefix. The chosen file must be on the reader's path.
+ *  as a plugin prefix. The chosen file must be on the engine's path.
  * @return array Parsed configuration values.
  * @throws Cake\Error\ConfigureException when files don't exist.
  *  Or when files contain '..' as this could lead to abusive reads.
