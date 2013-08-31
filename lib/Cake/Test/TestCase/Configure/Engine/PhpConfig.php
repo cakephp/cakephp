@@ -1,6 +1,6 @@
 <?php
 /**
- * PhpConfigReaderTest
+ * PhpConfigEngineTest
  *
  * PHP 5
  *
@@ -17,19 +17,19 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Configure;
+namespace Cake\Test\TestCase\Configure\Engine;
 
-use Cake\Configure\PhpReader;
+use Cake\Configure\Engine\PhpConfig;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class PhpReaderTest
+ * Class PhpConfigTest
  *
  * @package       Cake.Test.Case.Configure
  */
-class PhpReaderTest extends TestCase {
+class PhpConfigTest extends TestCase {
 
 /**
  * Test data to serialize and unserialize.
@@ -67,12 +67,12 @@ class PhpReaderTest extends TestCase {
  * @return void
  */
 	public function testRead() {
-		$reader = new PhpReader($this->path);
-		$values = $reader->read('var_test');
+		$engine = new PhpConfig($this->path);
+		$values = $engine->read('var_test');
 		$this->assertEquals('value', $values['Read']);
 		$this->assertEquals('buried', $values['Deep']['Deeper']['Deepest']);
 
-		$values = $reader->read('var_test.php');
+		$values = $engine->read('var_test.php');
 		$this->assertEquals('value', $values['Read']);
 	}
 
@@ -83,8 +83,8 @@ class PhpReaderTest extends TestCase {
  * @return void
  */
 	public function testReadWithExistentFileWithoutExtension() {
-		$reader = new PhpReader($this->path);
-		$reader->read('no_php_extension');
+		$engine = new PhpConfig($this->path);
+		$engine->read('no_php_extension');
 	}
 
 /**
@@ -94,8 +94,8 @@ class PhpReaderTest extends TestCase {
  * @return void
  */
 	public function testReadWithNonExistentFile() {
-		$reader = new PhpReader($this->path);
-		$reader->read('fake_values');
+		$engine = new PhpConfig($this->path);
+		$engine->read('fake_values');
 	}
 
 /**
@@ -105,8 +105,8 @@ class PhpReaderTest extends TestCase {
  * @return void
  */
 	public function testReadEmptyFile() {
-		$reader = new PhpReader($this->path);
-		$reader->read('empty');
+		$engine = new PhpConfig($this->path);
+		$engine->read('empty');
 	}
 
 /**
@@ -116,8 +116,8 @@ class PhpReaderTest extends TestCase {
  * @return void
  */
 	public function testReadWithDots() {
-		$reader = new PhpReader($this->path);
-		$reader->read('../empty');
+		$engine = new PhpConfig($this->path);
+		$engine->read('../empty');
 	}
 
 /**
@@ -130,11 +130,11 @@ class PhpReaderTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load('TestPlugin');
-		$reader = new PhpReader($this->path);
-		$result = $reader->read('TestPlugin.load');
+		$engine = new PhpConfig($this->path);
+		$result = $engine->read('TestPlugin.load');
 		$this->assertTrue(isset($result['plugin_load']));
 
-		$result = $reader->read('TestPlugin.load.php');
+		$result = $engine->read('TestPlugin.load.php');
 		$this->assertTrue(isset($result['plugin_load']));
 		Plugin::unload();
 	}
@@ -145,8 +145,8 @@ class PhpReaderTest extends TestCase {
  * @return void
  */
 	public function testDump() {
-		$reader = new PhpReader(TMP);
-		$result = $reader->dump('test.php', $this->testData);
+		$engine = new PhpConfig(TMP);
+		$result = $engine->dump('test.php', $this->testData);
 		$this->assertTrue($result > 0);
 		$expected = <<<PHP
 <?php
@@ -174,7 +174,7 @@ PHP;
 		unlink($file);
 		$this->assertTextEquals($expected, $contents);
 
-		$result = $reader->dump('test', $this->testData);
+		$result = $engine->dump('test', $this->testData);
 		$this->assertTrue($result > 0);
 
 		$contents = file_get_contents($file);
@@ -188,9 +188,9 @@ PHP;
  * @return void
  */
 	public function testDumpRead() {
-		$reader = new PhpReader(TMP);
-		$reader->dump('test.php', $this->testData);
-		$result = $reader->read('test.php');
+		$engine = new PhpConfig(TMP);
+		$engine->dump('test.php', $this->testData);
+		$result = $engine->read('test.php');
 		unlink(TMP . 'test.php');
 
 		$this->assertEquals($this->testData, $result);

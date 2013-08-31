@@ -16,8 +16,8 @@
 namespace Cake\Core;
 
 use Cake\Cache\Cache;
-use Cake\Configure\ConfigReaderInterface;
-use Cake\Configure\PhpReader;
+use Cake\Configure\ConfigEngineInterface;
+use Cake\Configure\Engine\PhpConfig;
 use Cake\Error;
 use Cake\Utility\Hash;
 
@@ -43,12 +43,12 @@ class Configure {
 	);
 
 /**
- * Configured reader classes, used to load config files from resources
+ * Configured engine classes, used to load config files from resources
  *
  * @var array
  * @see Configure::load()
  */
-	protected static $_readers = array();
+	protected static $_engines = array();
 
 /**
  * Used to store a dynamic variable in Configure.
@@ -145,54 +145,54 @@ class Configure {
 	}
 
 /**
- * Add a new reader to Configure. Readers allow you to read configuration
- * files in various formats/storage locations. CakePHP comes with two built-in readers
- * PhpReader and IniReader. You can also implement your own reader classes in your application.
+ * Add a new engine to Configure. Engines allow you to read configuration
+ * files in various formats/storage locations. CakePHP comes with two built-in engines
+ * PhpConfig and IniConfig. You can also implement your own engine classes in your application.
  *
- * To add a new reader to Configure:
+ * To add a new engine to Configure:
  *
- * `Configure::config('ini', new IniReader());`
+ * `Configure::config('ini', new IniConfig());`
  *
- * @param string $name The name of the reader being configured. This alias is used later to
- *   read values from a specific reader.
- * @param ConfigReaderInterface $reader The reader to append.
+ * @param string $name The name of the engine being configured. This alias is used later to
+ *   read values from a specific engine.
+ * @param ConfigEngineInterface $engine The engine to append.
  * @return void
  */
-	public static function config($name, ConfigReaderInterface $reader) {
-		static::$_readers[$name] = $reader;
+	public static function config($name, ConfigEngineInterface $engine) {
+		static::$_engines[$name] = $engine;
 	}
 
 /**
- * Gets the names of the configured reader objects.
+ * Gets the names of the configured Engine objects.
  *
  * @param string $name
- * @return array Array of the configured reader objects.
+ * @return array Array of the configured Engine objects.
  */
 	public static function configured($name = null) {
 		if ($name) {
-			return isset(static::$_readers[$name]);
+			return isset(static::$_engines[$name]);
 		}
-		return array_keys(static::$_readers);
+		return array_keys(static::$_engines);
 	}
 
 /**
- * Remove a configured reader. This will unset the reader
+ * Remove a configured engine. This will unset the engine
  * and make any future attempts to use it cause an Exception.
  *
- * @param string $name Name of the reader to drop.
+ * @param string $name Name of the engine to drop.
  * @return boolean Success
  */
 	public static function drop($name) {
-		if (!isset(static::$_readers[$name])) {
+		if (!isset(static::$_engines[$name])) {
 			return false;
 		}
-		unset(static::$_readers[$name]);
+		unset(static::$_engines[$name]);
 		return true;
 	}
 
 /**
  * Loads stored configuration information from a resource. You can add
- * config file resource readers with `Configure::config()`.
+ * config file resource engines with `Configure::config()`.
  *
  * Loaded configuration information will be merged with the current
  * runtime configuration. You can load configuration files from plugins
@@ -200,27 +200,27 @@ class Configure {
  *
  * `Configure::load('Users.user', 'default')`
  *
- * Would load the 'user' config file using the default config reader. You can load
+ * Would load the 'user' config file using the default config engine. You can load
  * app config files by giving the name of the resource you want loaded.
  *
  * `Configure::load('setup', 'default');`
  *
- * If using `default` config and no reader has been configured for it yet,
- * one will be automatically created using PhpReader
+ * If using `default` config and no engine has been configured for it yet,
+ * one will be automatically created using PhpConfig
  *
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::load
  * @param string $key name of configuration resource to load.
- * @param string $config Name of the configured reader to use to read the resource identified by $key.
+ * @param string $config Name of the configured engine to use to read the resource identified by $key.
  * @param boolean $merge if config files should be merged instead of simply overridden
  * @return mixed false if file not found, void if load successful.
- * @throws Cake\Error\ConfigureException Will throw any exceptions the reader raises.
+ * @throws Cake\Error\ConfigureException Will throw any exceptions the engine raises.
  */
 	public static function load($key, $config = 'default', $merge = true) {
-		$reader = static::_getReader($config);
-		if (!$reader) {
+		$engine = static::_getEngine($config);
+		if (!$engine) {
 			return false;
 		}
-		$values = $reader->read($key);
+		$values = $engine->read($key);
 
 		if ($merge) {
 			$keys = array_keys($values);
@@ -236,13 +236,13 @@ class Configure {
 
 /**
  * Dump data currently in Configure into $key. The serialization format
- * is decided by the config reader attached as $config. For example, if the
- * 'default' adapter is a PhpReader, the generated file will be a PHP
- * configuration file loadable by the PhpReader.
+ * is decided by the config engine attached as $config. For example, if the
+ * 'default' adapter is a PhpConfig, the generated file will be a PHP
+ * configuration file loadable by the PhpConfig.
  *
  * ## Usage
  *
- * Given that the 'default' reader is an instance of PhpReader.
+ * Given that the 'default' engine is an instance of PhpConfig.
  * Save all data in Configure to the file `my_config.php`:
  *
  * `Configure::dump('my_config.php', 'default');`
@@ -260,35 +260,35 @@ class Configure {
  * @throws Cake\Error\ConfigureException if the adapter does not implement a `dump` method.
  */
 	public static function dump($key, $config = 'default', $keys = array()) {
-		$reader = static::_getReader($config);
-		if (!$reader) {
-			throw new Error\ConfigureException(__d('cake_dev', 'There is no "%s" adapter.', $config));
+		$engine = static::_getEngine($config);
+		if (!$engine) {
+			throw new Error\ConfigureException(__d('cake_dev', 'There is no "%s" config engine.', $config));
 		}
-		if (!method_exists($reader, 'dump')) {
-			throw new Error\ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a %s method.', $config, 'dump()'));
+		if (!method_exists($engine, 'dump')) {
+			throw new Error\ConfigureException(__d('cake_dev', 'The "%s" config engine, does not have a %s method.', $config, 'dump()'));
 		}
 		$values = static::$_values;
 		if (!empty($keys) && is_array($keys)) {
 			$values = array_intersect_key($values, array_flip($keys));
 		}
-		return (bool)$reader->dump($key, $values);
+		return (bool)$engine->dump($key, $values);
 	}
 
 /**
- * Get the configured reader. Internally used by `Configure::load()` and `Configure::dump()`
- * Will create new PhpReader for default if not configured yet.
+ * Get the configured engine. Internally used by `Configure::load()` and `Configure::dump()`
+ * Will create new PhpConfig for default if not configured yet.
  *
  * @param string $config The name of the configured adapter
- * @return mixed Reader instance or false
+ * @return mixed Engine instance or false
  */
-	protected static function _getReader($config) {
-		if (!isset(static::$_readers[$config])) {
+	protected static function _getEngine($config) {
+		if (!isset(static::$_engines[$config])) {
 			if ($config !== 'default') {
 				return false;
 			}
-			static::config($config, new PhpReader());
+			static::config($config, new PhpConfig());
 		}
-		return static::$_readers[$config];
+		return static::$_engines[$config];
 	}
 
 /**

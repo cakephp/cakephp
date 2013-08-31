@@ -1171,7 +1171,7 @@ class HtmlHelper extends Helper {
  * Load Html tag configuration.
  *
  * Loads a file from APP/Config that contains tag data. By default the file is expected
- * to be compatible with PhpReader:
+ * to be compatible with PhpConfig:
  *
  * `$this->Html->loadConfig('tags.php');`
  *
@@ -1184,7 +1184,7 @@ class HtmlHelper extends Helper {
  * }}}
  *
  * If you wish to store tag definitions in another format you can give an array
- * containing the file name, and reader class name:
+ * containing the file name, and Engine class name:
  *
  * `$this->Html->loadConfig(array('tags.ini', 'ini'));`
  *
@@ -1202,7 +1202,7 @@ class HtmlHelper extends Helper {
  * - `attributeFormat` Format for long attributes e.g. `'%s="%s"'`
  * - `minimizedAttributeFormat` Format for minimized attributes e.g. `'%s="%s"'`
  *
- * @param string|array $configFile String with the config file (load using PhpReader) or an array with file and reader name
+ * @param string|array $configFile String with the config file (load using PhpConfig) or an array with file and engine name
  * @param string $path Path with config file
  * @return mixed False to error or loaded configs
  * @throws Cake\Error\ConfigureException
@@ -1213,26 +1213,26 @@ class HtmlHelper extends Helper {
 			$path = APP . 'Config/';
 		}
 		$file = null;
-		$reader = 'php';
+		$engine = 'php';
 
 		if (!is_array($configFile)) {
 			$file = $configFile;
 		} elseif (isset($configFile[0])) {
 			$file = $configFile[0];
 			if (isset($configFile[1])) {
-				$reader = $configFile[1];
+				$engine = $configFile[1];
 			}
 		} else {
 			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Wrong "configFile" configuration.'));
 		}
 
-		$readerClass = App::classname(Inflector::camelize($reader), 'Configure', 'Reader');
-		if (!$readerClass) {
-			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Unknown reader.'));
+		$engineClass = App::classname(Inflector::camelize($engine), 'Configure/Engine', 'Config');
+		if (!$engineClass) {
+			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Unknown engine.'));
 		}
 
-		$readerObj = new $readerClass($path);
-		$configs = $readerObj->read($file);
+		$engineObj = new $engineClass($path);
+		$configs = $engineObj->read($file);
 		if (isset($configs['tags']) && is_array($configs['tags'])) {
 			$this->_tags = array_merge($this->_tags, $configs['tags']);
 		}
