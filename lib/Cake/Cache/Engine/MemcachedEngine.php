@@ -1,10 +1,5 @@
 <?php
 /**
- * Memcached storage engine for cache
- *
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,14 +9,13 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Cache.Engine
  * @since         CakePHP(tm) v 2.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
- * Memcached storage engine for cache.  Memcached has some limitations in the amount of
- * control you have over expire times far in the future.  See MemcacheEngine::write() for
+ * Memcached storage engine for cache. Memcached has some limitations in the amount of
+ * control you have over expire times far in the future. See MemcachedEngine::write() for
  * more information.
  *
  * Main advantage of this Memcached engine over the memcached engine is
