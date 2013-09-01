@@ -796,8 +796,8 @@ class Model extends Object implements CakeEventListener {
 		if ($result !== array('unhandled')) {
 			return $result;
 		}
-		$return = $this->getDataSource()->query($method, $params, $this);
-		return $return;
+
+		return $this->getDataSource()->query($method, $params, $this);
 	}
 
 /**
@@ -2957,8 +2957,9 @@ class Model extends Object implements CakeEventListener {
  * @return array
  */
 	protected function _findNeighbors($state, $query, $results = array()) {
+		extract($query);
+
 		if ($state === 'before') {
-			extract($query);
 			$conditions = (array)$conditions;
 			if (isset($field) && isset($value)) {
 				if (strpos($field, '.') === false) {
@@ -2976,7 +2977,6 @@ class Model extends Object implements CakeEventListener {
 			return $query;
 		}
 
-		extract($query);
 		unset($query['conditions'][$field . ' <']);
 		$return = array();
 		if (isset($results[0])) {
