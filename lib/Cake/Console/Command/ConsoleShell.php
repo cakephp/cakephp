@@ -71,6 +71,7 @@ class ConsoleShell extends AppShell {
 		'_routesShow' => '/^routes\s+show/i',
 		'_routeToString' => '/^route\s+(\(.*\))$/i',
 		'_routeToArray' => '/^route\s+(.*)$/i',
+		'_customCommand' => '/.+?->(.+)\(/',
 	);
 
 /**
@@ -148,6 +149,16 @@ class ConsoleShell extends AppShell {
 			'',
 			"which returns a list of columns and their type",
 			"",
+			"Run Normal commands",
+			'',
+			'Run any command on your model by doing the following:',
+			'',
+			"\tModelA-><method>()",
+			'',
+			'You can also pass in params into your methods',
+			'',
+			"\tModelA->doSomething(true, array('params' => 'd'))",
+			'',
 			'<info>Route testing</info>',
 			"",
 			'To test URLs against your app\'s route configuration, type:',
@@ -381,7 +392,28 @@ class ConsoleShell extends AppShell {
 	}
 
 /**
- * Save a record
+ * Run any method on model
+ *
+ * @param mixed $command
+ * @return void
+ */
+	protected function _customCommand($command) {
+		// Validate the model we're trying to run here
+		$command = strip_tags($command);
+		$command = str_replace($this->badCommandChars, "", $command);
+		list($modelToExecute, $methodAndParams) = explode("->", $command, 2);
+
+		if ($this->_isValidModel($modelToExecute)) {
+			$executeCommand = "\$data = \$this->{$modelToExecute}->$methodAndParams;";
+			//@codingStandardsIgnoreStart
+			@eval($executeCommand);
+			//@codingStandardsIgnoreEnd
+			$this->out(__d('cake_console', "\n" . var_export($data, true)));
+		}
+	}
+
+/**
+ * Run custom command
  *
  * @param mixed $command
  * @return void
@@ -403,7 +435,6 @@ class ConsoleShell extends AppShell {
 			$this->out(__d('cake_console', 'Saved record for %s', $modelToSave));
 		}
 	}
-
 /**
  * Show the columns for a model
  *
