@@ -553,7 +553,7 @@ class I18n {
 				$currentToken = $parts[0];
 				$value = $parts[1];
 			} elseif ($count == 1) {
-				$value .= $parts[0];
+				$value = is_array($value) ? $parts[0] : $value . $parts[0];
 			} else {
 				continue;
 			}
@@ -575,14 +575,10 @@ class I18n {
 				$val = str_replace($replacements, $mustEscape, $val);
 				$value[$i] = $val;
 			}
-			$value = array_filter($value);
 			if (count($value) == 1) {
 				$definitions[$currentToken] = array_pop($value);
 			} else {
 				$definitions[$currentToken] = $value;
-			}
-			if (empty($value)) {
-				$value = '';
 			}
 		}
 
