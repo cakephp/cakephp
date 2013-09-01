@@ -68,6 +68,21 @@ class PluginTest extends TestCase {
 		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('CustomPlugin'));
 	}
 
+	public function testLoadNamespacedPlugin() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin2' . DS)
+		), App::RESET);
+
+		$mock = $this->getMock('Cake\Core\Plugin', array('_addClassLoader'));
+		$mock->staticExpects($this->once())
+			->method('_addClassLoader')
+			->with('Company\TestPluginThree', CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin2');
+		$mock::load('Company\TestPluginThree');
+
+		$expected = array('TestPluginThree');
+		$this->assertEquals($expected, $mock::loaded());
+	}
+
 /**
  * Tests loading a single plugin
  *

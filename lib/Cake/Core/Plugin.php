@@ -80,7 +80,13 @@ class Plugin {
 			}
 			return;
 		}
-		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false);
+
+		$namespace = $plugin;
+		if (strpos($namespace, '\\', 1)) {
+			$plugin = substr($plugin, strrpos($plugin, '\\') + 1);
+		}
+		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $namespace, 'ignoreMissing' => false);
+
 		if (empty($config['path'])) {
 			$namespacePath = str_replace('\\', DS, $config['namespace']);
 			foreach (App::path('Plugin') as $path) {
@@ -100,8 +106,15 @@ class Plugin {
 		if (empty(static::$_plugins[$plugin]['path'])) {
 			throw new Error\MissingPluginException(array('plugin' => $plugin));
 		}
-		$loader = new ClassLoader($plugin, dirname(static::$_plugins[$plugin]['path']));
-		$loader->register();
+
+		$path = dirname(static::$_plugins[$plugin]['path']);
+		$nsCount = substr_count($config['namespace'], '\\');
+		while ($nsCount) {
+			$path = dirname($path);
+			$nsCount--;
+		}
+
+		static::_addClassLoader($config['namespace'], $path);
 		if (!empty(static::$_plugins[$plugin]['bootstrap'])) {
 			static::bootstrap($plugin);
 		}
@@ -252,6 +265,18 @@ class Plugin {
 		} else {
 			unset(static::$_plugins[$plugin]);
 		}
+	}
+
+/**
+ * Add a class loader instance for the specified namespace and path
+ *
+ * @param string $namespace
+ * @param string $path
+ * @return void
+ */
+	protected static function _addClassLoader($ns, $path) {
+		$loader = new ClassLoader($ns, $path);
+		$loader->register();
 	}
 
 /**

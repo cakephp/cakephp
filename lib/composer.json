@@ -26,7 +26,9 @@
     },
     "autoload": {
         "psr-0": {
-            "Cake\\": "Cake/"
+            "Cake\\": "Cake/",
+            "": "App/Plugin/",
+            "": "plugins/"
         }
     },
     "bin": [
