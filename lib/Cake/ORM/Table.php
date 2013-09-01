@@ -16,9 +16,8 @@
  */
 namespace Cake\ORM;
 
-use Cake\Database\Schema\Table as Schema;
-use Cake\Event\Event;
 use Cake\Event\EventManager;
+use Cake\Database\Schema\Table as Schema;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -492,9 +491,7 @@ class Table {
  * ### Model.beforeFind event
  *
  * Each find() will trigger a `Model.beforeFind` event for all attached
- * listeners. Any listener can stop the event to prevent the default
- * find handler from being called. When a find() is stopped the Query
- * object will still be returned.
+ * listeners. Any listener can set a valid result set using $query
  *
  * @param string $type the type of query to perform
  * @param array $options
@@ -503,12 +500,6 @@ class Table {
 	public function find($type, $options = []) {
 		$query = $this->_buildQuery();
 		$query->select()->applyOptions($options);
-
-		$event = new Event('Model.beforeFind', $this, [$query, $options]);
-		$this->_eventManager->dispatch($event);
-		if ($event->isStopped()) {
-			return $query;
-		}
 		return $this->{'find' . ucfirst($type)}($query, $options);
 	}
 
