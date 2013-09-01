@@ -326,7 +326,7 @@ class L10n {
 	);
 
 /**
- * Class constructor
+ * Constructor
  *
  * @return void
  */
