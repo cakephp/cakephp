@@ -1023,4 +1023,53 @@ class QueryTest extends TestCase {
 		$this->assertEquals([2, 3], iterator_to_array($query->execute()));
 	}
 
+/**
+ * Tests first() method when the query has not been executed before
+ *
+ * @return void
+ */
+	public function testFirstDirtyQuery() {
+		$this->_createTables();
+		$table = Table::build('article', ['table' => 'articles']);
+		$query = new Query($this->connection, $table);
+		$result = $query->select(['id'])->first();
+		$this->assertEquals(['id' => 1], $result);
+		$this->assertEquals(1, $query->clause('limit'));
+		$result = $query->select(['id'])->first();
+		$this->assertEquals(['id' => 1], $result);
+	}
+
+/**
+ * Tests that first can be called again on an already executed query
+ *
+ * @return void
+ */
+	public function testFirstCleanQuery() {
+		$this->_createTables();
+		$table = Table::build('article', ['table' => 'articles']);
+		$query = new Query($this->connection, $table);
+		$query->select(['id'])->toArray();
+
+		$first = $query->first();
+		$this->assertEquals(['id' => 1], $first);
+		$this->assertNull($query->clause('limit'));
+	}
+
+/**
+ * Tests that first() will not execute the same query twice
+ *
+ * @return void
+ */
+	public function testFirstSameResult() {
+		$this->_createTables();
+		$table = Table::build('article', ['table' => 'articles']);
+		$query = new Query($this->connection, $table);
+		$query->select(['id'])->toArray();
+
+		$first = $query->first();
+		$resultSet = $query->execute();
+		$this->assertEquals(['id' => 1], $first);
+		$this->assertSame($resultSet, $query->execute());
+	}
+
 }
