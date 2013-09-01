@@ -46,6 +46,7 @@ class ShellDispatcher {
  *
  * @param array $args the argv from PHP
  * @param boolean $bootstrap Should the environment be bootstrapped.
+ * @return void
  */
 	public function __construct($args = array(), $bootstrap = true) {
 		set_time_limit(0);

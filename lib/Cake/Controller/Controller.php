@@ -314,6 +314,7 @@ class Controller extends Object implements CakeEventListener {
  * @param CakeRequest $request Request object for this controller. Can be null for testing,
  *  but expect that features that use the request parameters will not work.
  * @param CakeResponse $response Response object for this controller.
+ * @return void
  */
 	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {

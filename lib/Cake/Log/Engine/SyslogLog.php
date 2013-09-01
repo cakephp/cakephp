@@ -90,6 +90,7 @@ class SyslogLog extends BaseLog {
  * the error number and the type as a prefix to the message
  *
  * @param array $config
+ * @return void
  */
 	public function __construct($config = array()) {
 		$config += $this->_defaults;

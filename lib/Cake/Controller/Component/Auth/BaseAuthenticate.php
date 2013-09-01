@@ -70,6 +70,7 @@ abstract class BaseAuthenticate {
  *
  * @param ComponentCollection $collection The Component collection used on this request.
  * @param array $settings Array of settings to use.
+ * @return void
  */
 	public function __construct(ComponentCollection $collection, $settings) {
 		$this->_Collection = $collection;

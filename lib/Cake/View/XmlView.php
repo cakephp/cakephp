@@ -63,6 +63,7 @@ class XmlView extends View {
  * Constructor
  *
  * @param Controller $controller
+ * @return void
  */
 	public function __construct(Controller $controller = null) {
 		parent::__construct($controller);

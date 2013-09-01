@@ -151,6 +151,7 @@ class ConsoleOutput {
  * on windows, and is supported.
  *
  * @param string $stream The identifier of the stream to write output to.
+ * @return void
  */
 	public function __construct($stream = 'php://stdout') {
 		$this->_output = fopen($stream, 'w');
@@ -288,6 +289,7 @@ class ConsoleOutput {
 /**
  * clean up and close handles
  *
+ * @return void
  */
 	public function __destruct() {
 		fclose($this->_output);

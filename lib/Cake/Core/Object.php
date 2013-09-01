@@ -33,6 +33,7 @@ class Object {
 /**
  * constructor, no-op
  *
+ * @return void
  */
 	public function __construct() {
 	}

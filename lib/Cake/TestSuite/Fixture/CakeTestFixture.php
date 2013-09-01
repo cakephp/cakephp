@@ -85,6 +85,7 @@ class CakeTestFixture {
  * Instantiate the fixture.
  *
  * @throws CakeException on invalid datasource usage.
+ * @return void
  */
 	public function __construct() {
 		if ($this->name === null) {

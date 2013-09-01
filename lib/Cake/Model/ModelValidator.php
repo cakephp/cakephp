@@ -83,6 +83,7 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
  * Constructor
  *
  * @param Model $Model A reference to the Model the Validator is attached to
+ * @return void
  */
 	public function __construct(Model $Model) {
 		$this->_model = $Model;

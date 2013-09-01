@@ -84,6 +84,7 @@ class File {
  * @param boolean $create Create file if it does not exist (if true)
  * @param integer $mode Mode to apply to the folder holding the file
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File
+ * @return void
  */
 	public function __construct($path, $create = false, $mode = 0755) {
 		$this->Folder = new Folder(dirname($path), $create, $mode);
@@ -97,6 +98,7 @@ class File {
 /**
  * Closes the current file if it is opened
  *
+ * @return void
  */
 	public function __destruct() {
 		$this->close();

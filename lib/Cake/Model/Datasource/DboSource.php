@@ -244,6 +244,7 @@ class DboSource extends DataSource {
  * @param array $config Array of configuration information for the Datasource.
  * @param boolean $autoConnect Whether or not the datasource should automatically connect.
  * @throws MissingConnectionException when a connection cannot be made.
+ * @return void
  */
 	public function __construct($config = null, $autoConnect = true) {
 		if (!isset($config['prefix'])) {
@@ -3303,6 +3304,7 @@ class DboSource extends DataSource {
 /**
  * Used for storing in cache the results of the in-memory methodCache
  *
+ * @return void
  */
 	public function __destruct() {
 		if ($this->_methodCacheChange) {

@@ -95,6 +95,7 @@ class Debugger {
 /**
  * Constructor.
  *
+ * @return void
  */
 	public function __construct() {
 		$docRef = ini_get('docref_root');

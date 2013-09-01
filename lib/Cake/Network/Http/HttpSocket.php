@@ -151,6 +151,7 @@ class HttpSocket extends CakeSocket {
  * See HttpSocket::$config for options that can be used.
  *
  * @param string|array $config Configuration information, either a string URL or an array of options.
+ * @return void
  */
 	public function __construct($config = array()) {
 		if (is_string($config)) {

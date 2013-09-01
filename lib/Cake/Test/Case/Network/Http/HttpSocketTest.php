@@ -68,6 +68,7 @@ class CustomResponse {
 /**
  * Constructor
  *
+ * @return void
  */
 	public function __construct($message) {
 		$this->first10 = substr($message, 0, 10);

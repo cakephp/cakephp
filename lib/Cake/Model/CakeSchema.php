@@ -76,6 +76,7 @@ class CakeSchema extends Object {
  * Constructor
  *
  * @param array $options optional load object properties
+ * @return void
  */
 	public function __construct($options = array()) {
 		parent::__construct();

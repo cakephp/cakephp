@@ -170,6 +170,7 @@ class Shell extends Object {
  * @param ConsoleOutput $stderr A ConsoleOutput object for stderr.
  * @param ConsoleInput $stdin A ConsoleInput object for stdin.
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell
+ * @return void
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		if (!$this->name) {

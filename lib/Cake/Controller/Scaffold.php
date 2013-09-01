@@ -105,6 +105,7 @@ class Scaffold {
  * @param Controller $controller Controller to scaffold
  * @param CakeRequest $request Request parameters.
  * @throws MissingModelException
+ * @return void
  */
 	public function __construct(Controller $controller, CakeRequest $request) {
 		$this->controller = $controller;

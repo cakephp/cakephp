@@ -83,6 +83,7 @@ class JsHelper extends AppHelper {
  *
  * @param View $View the view object the helper is attached to.
  * @param string|array $settings Settings array contains name of engine helper.
+ * @return void
  */
 	public function __construct(View $View, $settings = array()) {
 		$className = 'Jquery';

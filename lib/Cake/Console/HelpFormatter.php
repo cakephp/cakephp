@@ -50,6 +50,7 @@ class HelpFormatter {
  * Build the help formatter for a an OptionParser
  *
  * @param ConsoleOptionParser $parser The option parser help is being generated for.
+ * @return void
  */
 	public function __construct(ConsoleOptionParser $parser) {
 		$this->_parser = $parser;

@@ -86,6 +86,7 @@ class FileLog extends BaseLog {
  *   is made.
  *
  * @param array $options Options for the FileLog, see above.
+ * @return void
  */
 	public function __construct($config = array()) {
 		$config = Hash::merge($this->_defaults, $config);

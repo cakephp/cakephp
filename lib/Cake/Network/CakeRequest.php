@@ -129,6 +129,7 @@ class CakeRequest implements ArrayAccess {
  *
  * @param string $url Trimmed url string to use. Should not contain the application base path.
  * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
+ * @return void
  */
 	public function __construct($url = null, $parseEnvironment = true) {
 		$this->_base();

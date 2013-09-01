@@ -140,6 +140,7 @@ class ConsoleOptionParser {
  * @param string $command The command name this parser is for. The command name is used for generating help.
  * @param boolean $defaultOptions Whether you want the verbose and quiet options set. Setting
  *  this to false will prevent the addition of `--verbose` & `--quiet` options.
+ * @return void
  */
 	public function __construct($command = null, $defaultOptions = true) {
 		$this->command($command);

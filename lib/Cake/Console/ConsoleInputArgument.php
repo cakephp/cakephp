@@ -61,6 +61,7 @@ class ConsoleInputArgument {
  * @param string $help The help text for this option
  * @param boolean $required Whether this argument is required. Missing required args will trigger exceptions
  * @param array $choices Valid choices for this option.
+ * @return void
  */
 	public function __construct($name, $help = '', $required = false, $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {

@@ -63,6 +63,7 @@ class PhpAcl extends Object implements AclInterface {
  * Constructor
  *
  * Sets a few default settings up.
+ * @return void
  */
 	public function __construct() {
 		$this->options = array(
@@ -218,6 +219,7 @@ class PhpAco {
  * Constructor
  *
  * @param array $rules Rules array
+ * @return void
  */
 	public function __construct(array $rules = array()) {
 		foreach (array('allow', 'deny') as $type) {
@@ -406,6 +408,7 @@ class PhpAro {
  * @param array $aro
  * @param array $map
  * @param array $aliases
+ * @return void
  */
 	public function __construct(array $aro = array(), array $map = array(), array $aliases = array()) {
 		if (!empty($map)) {

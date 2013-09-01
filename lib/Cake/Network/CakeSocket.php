@@ -115,6 +115,7 @@ class CakeSocket {
  *
  * @param array $config Socket configuration, which will be merged with the base configuration
  * @see CakeSocket::$_baseConfig
+ * @return void
  */
 	public function __construct($config = array()) {
 		$this->config = array_merge($this->_baseConfig, $config);
@@ -332,6 +333,7 @@ class CakeSocket {
 /**
  * Destructor, used to disconnect from current connection.
  *
+ * @return void
  */
 	public function __destruct() {
 		$this->disconnect();

@@ -39,6 +39,7 @@ class CrudAuthorize extends BaseAuthorize {
  *
  * @param ComponentCollection $collection The component collection from the controller.
  * @param string $settings An array of settings. This class does not use any settings.
+ * @return void
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		parent::__construct($collection, $settings);
