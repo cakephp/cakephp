@@ -3196,6 +3196,9 @@ class Model extends Object implements CakeEventListener {
 		if (empty($field)) {
 			$field = $this->primaryKey;
 		}
+		if ($this->isVirtualField($field)) {
+			return $this->getVirtualField($field);
+		}
 		$db = $this->getDataSource();
 		if (strpos($field, $db->name($alias) . '.') === 0) {
 			return $field;

@@ -2557,6 +2557,15 @@ class DboSource extends DataSource {
 			$virtual = true;
 		}
 
+		if (is_object($model) && $virtual === false && strpos($key, '.') !== false) {
+			list($modelField, $field) = explode('.', $key);
+			if ( $modelField == $model->alias && $model->isVirtualField($field)) {
+				$key = $model->getVirtualField($field);
+				$virtual = true;
+			}
+			unset($modelField,$field);
+		}
+
 		$type = is_object($model) ? $model->getColumnType($key) : null;
 		$null = $value === null || (is_array($value) && empty($value));
 
