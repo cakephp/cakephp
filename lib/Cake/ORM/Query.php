@@ -390,7 +390,7 @@ class Query extends DatabaseQuery {
 			return $this->_results;
 		}
 		if ($this->_useBufferedResults) {
-			return $this->_applyFormatters(
+			return $this->_results = $this->_applyFormatters(
 				new BufferedResultSet($this, $this->executeStatement())
 			);
 		}
@@ -398,7 +398,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Compiles the SQL representation of this query ane executes it using
+ * Compiles the SQL representation of this query and executes it using
  * the provided connection object.
  *
  * @return Cake\Database\StatementInterface
@@ -555,6 +555,29 @@ class Query extends DatabaseQuery {
 		}
 		$this->_mapReduce[] = compact('mapper', 'reducer');
 		return $this;
+	}
+
+/**
+ * Returns the first result out of executing this query, if the query has not been
+ * executed before, it will set the limit clause to 1 for performance reasons.
+ *
+ * ###Example:
+ *
+ * ``$singleUser = $query->select(['id', 'username'])->first()``
+ *
+ * @return mixed the first result from the ResultSet
+ */
+	public function first() {
+		if ($this->_dirty) {
+			$this->limit(1);
+		}
+		$this->bufferResults();
+		$this->_results = $this->execute();
+		// Calls foreach so we cursor is rewound automatically
+		foreach ($this->_results as $row) {
+			// Just get the first result from the iterator
+			return $row;
+		}
 	}
 
 /**
