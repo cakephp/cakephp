@@ -33,11 +33,23 @@ class ConsoleInput {
 	protected $_input;
 
 /**
+ * Can this instance use readline?
+ * Two conditions must be met:
+ * 1. Readline support must be enabled.
+ * 2. Handle we are attached to must be stdin.
+ * Allows rich editing with arrow keys and history when inputting a string.
+ *
+ * @var bool
+ */
+	protected $_canReadline;
+
+/**
  * Constructor
  *
  * @param string $handle The location of the stream to use as input.
  */
 	public function __construct($handle = 'php://stdin') {
+		$this->_canReadline = extension_loaded('readline') && $handle == 'php://stdin' ? true : false;
 		$this->_input = fopen($handle, 'r');
 	}
 
@@ -47,6 +59,13 @@ class ConsoleInput {
  * @return mixed The value of the stream
  */
 	public function read() {
+		if ($this->_canReadline) {
+			$line = readline('');
+			if (!empty($line)) {
+				readline_add_history($line);
+			}
+			return $line;
+		}
 		return fgets($this->_input);
 	}
 
