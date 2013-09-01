@@ -16,10 +16,10 @@
  */
 namespace Cake\ORM;
 
-use Cake\Event\Event;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Event\Event;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -543,7 +543,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Returns an array with the custom options that where applied to this query
+ * Returns an array with the custom options that were applied to this query
  * and that were not already processed by another method in this class.
  *
  * ###Example:
