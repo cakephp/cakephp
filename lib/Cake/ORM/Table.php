@@ -16,8 +16,8 @@
  */
 namespace Cake\ORM;
 
-use Cake\Event\EventManager;
 use Cake\Database\Schema\Table as Schema;
+use Cake\Event\EventManager;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
