@@ -41,7 +41,7 @@ class ConsoleInput {
  *
  * @var bool
  */
-	private $__canReadline;
+	protected $_canReadline;
 
 /**
  * Constructor
@@ -49,7 +49,7 @@ class ConsoleInput {
  * @param string $handle The location of the stream to use as input.
  */
 	public function __construct($handle = 'php://stdin') {
-		$this->__canReadline = extension_loaded('readline') && $handle == 'php://stdin' ? true : false;
+		$this->_canReadline = extension_loaded('readline') && $handle == 'php://stdin' ? true : false;
 		$this->_input = fopen($handle, 'r');
 	}
 
@@ -59,7 +59,7 @@ class ConsoleInput {
  * @return mixed The value of the stream
  */
 	public function read() {
-		if ($this->__canReadline) {
+		if ($this->_canReadline) {
 			$line = readline('');
 			if (!empty($line)) {
 				readline_add_history($line);
