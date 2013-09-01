@@ -2298,6 +2298,12 @@ class ModelIntegrationTest extends BaseModelTest {
 		$expected = $db->name('Domain.DomainHandle');
 		$this->assertEquals($expected, $result);
 
+		$TestModel->virtualFields['my_field'] = 'Test.test_field';
+		$result = $TestModel->escapeField('my_field');
+		$expected = $db->name('Test.test_field');
+		$this->assertEquals($expected, $result);
+		unset($TestModel->virtualFields['my_field']);
+
 		ConnectionManager::create('mock', array('datasource' => 'DboMock'));
 		$TestModel->setDataSource('mock');
 		$db = $TestModel->getDataSource();
