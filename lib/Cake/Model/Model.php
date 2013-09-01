@@ -3200,6 +3200,9 @@ class Model extends Object implements CakeEventListener {
 		if (strpos($field, $db->name($alias) . '.') === 0) {
 			return $field;
 		}
+		if ($this->isVirtualField($field)) {
+			return $db->name($this->getVirtualField($field));
+		}
 		return $db->name($alias . '.' . $field);
 	}
 
