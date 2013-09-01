@@ -19,6 +19,7 @@ namespace Cake\ORM;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
+use Cake\Event\Event;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -107,6 +108,14 @@ class Query extends DatabaseQuery {
  * @var array
  */
 	protected $_mapReduce = [];
+
+/**
+ * Holds any custom options passed using applyOptions that could not be processed
+ * by any method in this class.
+ *
+ * @var array
+ */
+	protected $_options = [];
 
 /**
  * @param Cake\Database\Connection $connection
@@ -386,6 +395,9 @@ class Query extends DatabaseQuery {
  * @return Cake\ORM\ResultCollectionTrait
  */
 	public function execute() {
+		$table = $this->repository();
+		$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
+		$table->getEventManager()->dispatch($event);
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
@@ -522,10 +534,31 @@ class Query extends DatabaseQuery {
 		foreach ($options as $option => $values) {
 			if (isset($valid[$option])) {
 				$this->{$valid[$option]}($values);
+			} else {
+				$this->_options[$option] = $values;
 			}
 		}
 
 		return $this;
+	}
+
+/**
+ * Returns an array with the custom options that were applied to this query
+ * and that were not already processed by another method in this class.
+ *
+ * ###Example:
+ *
+ * {{{
+ *	$query->applyOptions(['doABarrelRoll' => true, 'fields' => ['id', 'name']);
+ *	$query->getOptions(); // Returns ['doABarrelRoll' => true]
+ * }}}
+ *
+ * @see \Cake\ORM\Query::applyOptions() to read about the options that will
+ * be processed by this class and not returned by this function
+ * @return array
+ */
+	public function getOptions() {
+		return $this->_options;
 	}
 
 /**

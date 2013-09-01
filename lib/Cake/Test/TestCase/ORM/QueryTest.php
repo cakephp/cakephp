@@ -904,6 +904,23 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests getOptions() method
+ *
+ * @return void
+ */
+	public function testGetOptions() {
+		$options = ['doABarrelRoll' => true, 'fields' => ['id', 'name']];
+		$query = new Query($this->connection, $this->table);
+		$query->applyOptions($options);
+		$expected = ['doABarrelRoll' => true];
+		$this->assertEquals($expected, $query->getOptions());
+
+		$expected = ['doABarrelRoll' => false, 'doAwesome' => true];
+		$query->applyOptions($expected);
+		$this->assertEquals($expected, $query->getOptions());
+	}
+
+/**
  * Tests registering mappers with mapReduce()
  *
  * @return void
