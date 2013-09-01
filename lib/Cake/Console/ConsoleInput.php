@@ -31,6 +31,7 @@ class ConsoleInput {
  * @var resource
  */
 	protected $_input;
+
 /**
  * Can this instance use readline?
  * Two conditions must be met:
@@ -40,7 +41,7 @@ class ConsoleInput {
  *
  * @var bool
  */
-	private $_can_readline;
+	private $__canReadline;
 
 /**
  * Constructor
@@ -48,7 +49,7 @@ class ConsoleInput {
  * @param string $handle The location of the stream to use as input.
  */
 	public function __construct($handle = 'php://stdin') {
-		$this->_can_readline = extension_loaded('readline') && $handle == 'php://stdin' ? true : false;
+		$this->__canReadline = extension_loaded('readline') && $handle == 'php://stdin' ? true : false;
 		$this->_input = fopen($handle, 'r');
 	}
 
@@ -58,7 +59,7 @@ class ConsoleInput {
  * @return mixed The value of the stream
  */
 	public function read() {
-		if ($this->_can_readline) {
+		if ($this->__canReadline) {
 			$line = readline('');
 			if (!empty($line)) {
 				readline_add_history($line);
