@@ -390,7 +390,7 @@ class Query extends DatabaseQuery {
 			return $this->_results;
 		}
 		if ($this->_useBufferedResults) {
-			return $this->_applyFormatters(
+			return $this->_results = $this->_applyFormatters(
 				new BufferedResultSet($this, $this->executeStatement())
 			);
 		}
@@ -398,7 +398,7 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Compiles the SQL representation of this query ane executes it using
+ * Compiles the SQL representation of this query and executes it using
  * the provided connection object.
  *
  * @return Cake\Database\StatementInterface
