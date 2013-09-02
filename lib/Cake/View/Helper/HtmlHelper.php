@@ -119,6 +119,13 @@ class HtmlHelper extends AppHelper {
 	protected $_includedScripts = array();
 
 /**
+ * Default `safe` option for script blocks.
+ *
+ * @var boolean
+ */
+	protected $_cdataDefault = true;
+
+/**
  * Options for the currently opened script block buffer if any.
  *
  * @var array
@@ -202,6 +209,7 @@ class HtmlHelper extends AppHelper {
  */
 	public function docType($type = 'html5') {
 		if (isset($this->_docTypes[$type])) {
+			$this->_cdataDefault = strpos($type, 'xhtml') !== false;
 			return $this->_docTypes[$type];
 		}
 		return null;
@@ -578,7 +586,7 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::scriptBlock
  */
 	public function scriptBlock($script, $options = array()) {
-		$options += array('type' => 'text/javascript', 'safe' => true, 'inline' => true);
+		$options += array('type' => 'text/javascript', 'safe' => $this->_cdataDefault, 'inline' => true);
 		if ($options['safe']) {
 			$script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
@@ -611,7 +619,7 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::scriptStart
  */
 	public function scriptStart($options = array()) {
-		$options += array('safe' => true, 'inline' => true);
+		$options += array('safe' => $this->_cdataDefault, 'inline' => true);
 		$this->_scriptBlockOptions = $options;
 		ob_start();
 		return null;
