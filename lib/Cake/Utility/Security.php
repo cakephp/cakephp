@@ -319,7 +319,7 @@ class Security {
 
 		$ivSize = mcrypt_get_iv_size($algorithm, $mode);
 		$iv = mcrypt_create_iv($ivSize, MCRYPT_DEV_URANDOM);
-		$ciphertext =  $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
+		$ciphertext = $iv . mcrypt_encrypt($algorithm, $key, $plain, $mode, $iv);
 		$hmac = hash_hmac('sha256', $ciphertext, $key);
 		return $hmac . $ciphertext;
 	}
