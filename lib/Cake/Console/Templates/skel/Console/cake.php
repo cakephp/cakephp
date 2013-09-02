@@ -19,19 +19,33 @@
  */
 
 $ds = DIRECTORY_SEPARATOR;
+$root = dirname(dirname(dirname(__FILE__)));
+$appDir = basename(dirname(dirname(__FILE__)));
 $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
+$paths = array(
+	$root . $ds . $appDir . $ds . 'Lib',
+	$root . $ds . 'lib'
+);
+$found = false;
+
+foreach ($paths as $path) {
+	if (file_exists($path . $ds . $dispatcher)) {
+		$found = $path;
+		break;
+	}
+}
 
 if (function_exists('ini_set')) {
-	$root = dirname(dirname(dirname(__FILE__)));
 
 	// the following line differs from its sibling
 	// /app/Console/cake.php
 	ini_set('include_path', $root . PATH_SEPARATOR . __CAKE_PATH__ . PATH_SEPARATOR . ini_get('include_path'));
+
 }
 
-if (!include ($dispatcher)) {
+if (!include ($found . $ds . $dispatcher)) {
 	trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
-unset($paths, $path, $dispatcher, $root, $ds);
 
+unset($paths, $path, $dispatcher, $root, $ds, $appDir, $found);
 return ShellDispatcher::run($argv);

@@ -18,20 +18,34 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-$ds = DIRECTORY_SEPARATOR;
-$dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
 
-if (function_exists('ini_set')) {
-	$root = dirname(dirname(dirname(__FILE__)));
+$ds = DIRECTORY_SEPARATOR;
+$root = dirname(dirname(dirname(__FILE__)));
+$appDir = basename(dirname(dirname(__FILE__)));
+$dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
+$paths = array(
+	$root . $ds . $appDir . $ds . 'Lib',
+	$root . $ds . 'lib'
+);
+$found = false;
+
+foreach ($paths as $path) {
+	if (file_exists($path . $ds . $dispatcher)) {
+		$found = $path;
+		break;
+	}
+}
+
+if (function_exists('ini_set') && $found) {
 
 	// the following line differs from its sibling
 	// /lib/Cake/Console/Templates/skel/Console/cake.php
-	ini_set('include_path', $root . $ds . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
+	ini_set('include_path', $found . PATH_SEPARATOR . ini_get('include_path'));
 }
 
-if (!include($dispatcher)) {
+if (!include ($found . $ds . $dispatcher)) {
 	trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
-unset($paths, $path, $dispatcher, $root, $ds);
 
+unset($paths, $path, $dispatcher, $root, $ds, $appDir, $found);
 return ShellDispatcher::run($argv);
