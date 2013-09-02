@@ -47,6 +47,7 @@ class HtmlHelper extends AppHelper {
 		'meta' => '<meta%s/>',
 		'metalink' => '<link href="%s"%s/>',
 		'link' => '<a href="%s"%s>%s</a>',
+		'linknohref' => '<a%s>%s</a>',
 		'mailto' => '<a href="mailto:%s" %s>%s</a>',
 		'form' => '<form action="%s"%s>',
 		'formend' => '</form>',
@@ -332,13 +333,13 @@ class HtmlHelper extends AppHelper {
  */
 	public function link($title, $url = null, $options = array(), $confirmMessage = false) {
 		$escapeTitle = true;
-		if ($url !== null) {
-			$url = $this->url($url);
-		} else {
+		if ($url === null) {
 			$url = $this->url($title);
 			$title = htmlspecialchars_decode($url, ENT_QUOTES);
 			$title = h(urldecode($title));
 			$escapeTitle = false;
+		} elseif ($url !== false) {
+			$url = $this->url($url);
 		}
 
 		if (isset($options['escapeTitle'])) {
@@ -368,6 +369,9 @@ class HtmlHelper extends AppHelper {
 			}
 			$options['onclick'] .= 'event.returnValue = false; return false;';
 			unset($options['default']);
+		}
+		if ($url === false) {
+			return sprintf($this->_tags['linknohref'], $this->_parseAttributes($options), $title);
 		}
 		return sprintf($this->_tags['link'], $url, $this->_parseAttributes($options), $title);
 	}
