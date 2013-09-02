@@ -67,7 +67,7 @@ endif;
 		$settings = Cache::settings();
 		if (!empty($settings)):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/core.php ', '<em>'. $settings['engine'] . 'Engine</em>');
+				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/core.php ', '<em>' . $settings['engine'] . 'Engine</em>');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
@@ -113,7 +113,7 @@ if (isset($filePresent)):
 	<?php
 		if ($connected && $connected->isConnected()):
 			echo '<span class="notice success">';
-	 			echo __d('cake_dev', 'Cake is able to connect to the database.');
+				echo __d('cake_dev', 'Cake is able to connect to the database.');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';

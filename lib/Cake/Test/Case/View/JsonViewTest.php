@@ -54,6 +54,25 @@ class JsonViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test that rendering with _serialize does not load helpers
+ *
+ * @return void
+ */
+	public function testRenderSerializeNoHelpers() {
+		$Request = new CakeRequest();
+		$Response = new CakeResponse();
+		$Controller = new Controller($Request, $Response);
+		$Controller->helpers = array('Html');
+		$Controller->set(array(
+			'_serialize' => 'tags',
+			'tags' => array('cakephp', 'framework')
+		));
+		$View = new JsonView($Controller);
+		$View->render();
+		$this->assertFalse(isset($View->Html), 'No helper loaded.');
+	}
+
+/**
  * Test render with an array in _serialize
  *
  * @return void
@@ -146,8 +165,8 @@ class JsonViewTest extends CakeTestCase {
 			)
 		);
 		$Controller->set('user', $data);
+		$Controller->helpers = array('Paginator');
 		$View = new JsonView($Controller);
-		$View->helpers = array('Paginator');
 		$output = $View->render('index');
 
 		$expected = array('user' => 'fake', 'list' => array('item1', 'item2'), 'paging' => array('page' => 2));

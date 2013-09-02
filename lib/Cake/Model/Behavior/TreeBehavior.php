@@ -375,6 +375,12 @@ class TreeBehavior extends ModelBehavior {
 		} else {
 			array_unshift($valuePath, '%s' . $valuePath[0], '{n}.tree_prefix');
 		}
+
+		$conditions = (array)$conditions;
+		if ($scope) {
+			$conditions[] = $scope;
+		}
+
 		$order = $Model->escapeField($left) . " asc";
 		$results = $Model->find('all', compact('conditions', 'fields', 'order', 'recursive'));
 		$stack = array();
