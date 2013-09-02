@@ -1244,7 +1244,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Html->doctype('html5');
+		$this->Html->docType('html5');
 		$result = $this->Html->scriptBlock('window.foo = 2;');
 		$expected = array(
 			'script' => array('type' => 'text/javascript'),
@@ -1253,7 +1253,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Html->doctype('xhtml-strict');
+		$this->Html->docType('xhtml-strict');
 		$result = $this->Html->scriptBlock('window.foo = 2;');
 		$expected = array(
 			'script' => array('type' => 'text/javascript'),
@@ -1320,7 +1320,7 @@ class HtmlHelperTest extends CakeTestCase {
 		$result = $this->Html->scriptEnd();
 		$this->assertNull($result);
 
-		$this->Html->doctype('html4-strict');
+		$this->Html->docType('html4-strict');
 		$result = $this->Html->scriptStart();
 		$this->assertNull($result);
 		echo 'this is some javascript';
@@ -1333,7 +1333,7 @@ class HtmlHelperTest extends CakeTestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Html->doctype('xhtml-trans');
+		$this->Html->docType('xhtml-trans');
 		$result = $this->Html->scriptStart();
 		$this->assertNull($result);
 		echo 'this is some javascript';
