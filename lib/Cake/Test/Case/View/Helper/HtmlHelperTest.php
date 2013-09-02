@@ -1243,6 +1243,26 @@ class HtmlHelperTest extends CakeTestCase {
 			'/script',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Html->doctype('html5');
+		$result = $this->Html->scriptBlock('window.foo = 2;');
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			'window.foo = 2;',
+			'/script',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Html->doctype('xhtml-strict');
+		$result = $this->Html->scriptBlock('window.foo = 2;');
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'window.foo = 2;',
+			$this->cDataEnd,
+			'/script',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -1299,6 +1319,34 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->scriptEnd();
 		$this->assertNull($result);
+
+		$this->Html->doctype('html4-strict');
+		$result = $this->Html->scriptStart();
+		$this->assertNull($result);
+		echo 'this is some javascript';
+
+		$result = $this->Html->scriptEnd();
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			'this is some javascript',
+			'/script'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Html->doctype('xhtml-trans');
+		$result = $this->Html->scriptStart();
+		$this->assertNull($result);
+		echo 'this is some javascript';
+
+		$result = $this->Html->scriptEnd();
+		$expected = array(
+			'script' => array('type' => 'text/javascript'),
+			$this->cDataStart,
+			'this is some javascript',
+			$this->cDataEnd,
+			'/script'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
