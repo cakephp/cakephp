@@ -1520,8 +1520,13 @@ class FormHelper extends AppHelper {
 			);
 
 			if ($label) {
-				$optTitle = $this->Html->useTag('label', $tagName, '', $optTitle);
+				if(is_array($label)) {
+					$optTitle = $this->label($tagName, $optTitle, $label);
+				}else{
+					$optTitle = $this->Html->useTag('label', $tagName, '', $optTitle);
+				}
 			}
+			
 			if (is_array($between)) {
 				$optTitle .= array_shift($between);
 			}
