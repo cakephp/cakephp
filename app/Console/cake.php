@@ -21,12 +21,13 @@
 
 $ds = DIRECTORY_SEPARATOR;
 $root = dirname(dirname(dirname(__FILE__)));
-$app_dir = basename(dirname(dirname(__FILE__)));
+$appDir = basename(dirname(dirname(__FILE__)));
 $dispatcher = 'Cake' . $ds . 'Console' . $ds . 'ShellDispatcher.php';
-$paths =  array(
-	$root . $ds . $app_dir . $ds . 'Lib',
-	$root . $ds . 'lib'	
+$paths = array(
+	$root . $ds . $appDir . $ds . 'Lib',
+	$root . $ds . 'lib'
 );
+$found = false;
 
 foreach ($paths as $path) {
 	if (file_exists($path . $ds . $dispatcher)) {
@@ -35,16 +36,16 @@ foreach ($paths as $path) {
 	}
 }
 
-if (function_exists('ini_set')) {
+if (function_exists('ini_set') && $found) {
 	
 	// the following line differs from its sibling
 	// /lib/Cake/Console/Templates/skel/Console/cake.php
 	ini_set('include_path', $found . PATH_SEPARATOR . ini_get('include_path'));
 }
 
-if (!include($found . $ds . $dispatcher)) {
+if (!include ($found . $ds . $dispatcher)) {
 	trigger_error('Could not locate CakePHP core files.', E_USER_ERROR);
 }
 
-unset($paths, $path, $dispatcher, $root, $ds, $app_dir);
+unset($paths, $path, $dispatcher, $root, $ds, $appDir, $found);
 return ShellDispatcher::run($argv);
