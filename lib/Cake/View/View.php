@@ -98,7 +98,7 @@ class View extends Object {
  *
  * @var mixed A single name as a string or a list of names as an array.
  */
-	public $helpers = array('Html');
+	public $helpers = array();
 
 /**
  * Path to View.
