@@ -1677,6 +1677,7 @@ class Email {
 		$View = new $viewClass(null);
 		$View->viewVars = $this->_viewVars;
 		$View->helpers = $this->_helpers;
+		$View->loadHelpers();
 
 		list($templatePlugin, $template) = pluginSplit($this->_template);
 		list($layoutPlugin, $layout) = pluginSplit($this->_layout);

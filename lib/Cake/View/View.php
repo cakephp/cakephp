@@ -109,7 +109,7 @@ class View extends Object {
  *
  * @var mixed A single name as a string or a list of names as an array.
  */
-	public $helpers = array('Html');
+	public $helpers = array();
 
 /**
  * Path to View.
@@ -258,13 +258,6 @@ class View extends Object {
 	protected $_paths = array();
 
 /**
- * Indicate that helpers have been loaded.
- *
- * @var boolean
- */
-	protected $_helpersLoaded = false;
-
-/**
  * The names of views and their parents used with View::extend();
  *
  * @var array
@@ -344,6 +337,7 @@ class View extends Object {
 		}
 		$this->Helpers = new HelperRegistry($this);
 		$this->Blocks = new ViewBlock();
+		$this->loadHelpers();
 		parent::__construct();
 	}
 
@@ -459,14 +453,11 @@ class View extends Object {
  * @param string $view Name of view file to use
  * @param string $layout Layout to use.
  * @return string Rendered Element
- * @throws Cake\Error\Exception if there is an error in the view.
+ * @throws Cake\Error\Exception If there is an error in the view.
  */
 	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
 			return true;
-		}
-		if (!$this->_helpersLoaded) {
-			$this->loadHelpers();
 		}
 		$this->Blocks->set('content', '');
 
@@ -516,9 +507,6 @@ class View extends Object {
 			return $this->Blocks->get('content');
 		}
 
-		if (!$this->_helpersLoaded) {
-			$this->loadHelpers();
-		}
 		if (empty($content)) {
 			$content = $this->Blocks->get('content');
 		}
@@ -645,9 +633,8 @@ class View extends Object {
  * block will create the block.
  *
  * @param string $name Name of the block
- * @param string $value The content for the block.
+ * @param mixed $value The content for the block.
  * @return void
- * @throws Cake\Error\Exception when you use non-string values.
  * @see ViewBlock::concat()
  */
 	public function append($name, $value = null) {
@@ -659,9 +646,8 @@ class View extends Object {
  * block will create the block.
  *
  * @param string $name Name of the block
- * @param string $value The content for the block.
+ * @param mixed $value The content for the block.
  * @return void
- * @throws CakeException when you use non-string values.
  * @see ViewBlock::concat()
  */
 	public function prepend($name, $value = null) {
@@ -673,9 +659,8 @@ class View extends Object {
  * existing content.
  *
  * @param string $name Name of the block
- * @param string $value The content for the block.
+ * @param mixed $value The content for the block.
  * @return void
- * @throws Cake\Error\Exception when you use non-string values.
  * @see ViewBlock::set()
  */
 	public function assign($name, $value) {
@@ -807,7 +792,7 @@ class View extends Object {
  * Magic accessor for deprecated attributes.
  *
  * @param string $name Name of the attribute to set.
- * @param string $value Value of the attribute to set.
+ * @param mixed $value Value of the attribute to set.
  * @return mixed
  */
 	public function __set($name, $value) {
@@ -838,7 +823,6 @@ class View extends Object {
 			list(, $class) = pluginSplit($properties['class']);
 			$this->{$class} = $this->Helpers->load($properties['class'], $properties['settings']);
 		}
-		$this->_helpersLoaded = true;
 	}
 
 /**
@@ -1150,9 +1134,6 @@ class View extends Object {
  * @return string
  */
 	protected function _renderElement($file, $data, $options) {
-		if (!$this->_helpersLoaded) {
-			$this->loadHelpers();
-		}
 		if ($options['callbacks']) {
 			$this->getEventManager()->dispatch(new Event('View.beforeRender', $this, array($file)));
 		}

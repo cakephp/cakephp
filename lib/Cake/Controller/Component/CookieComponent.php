@@ -133,11 +133,11 @@ class CookieComponent extends Component {
 /**
  * Type of encryption to use.
  *
- * Defaults to Security::rijndael();
+ * Defaults to Security::encrypt(); or AES encryption.
  *
  * @var string
  */
-	protected $_type = 'rijndael';
+	protected $_type = 'aes';
 
 /**
  * Used to reset cookie time if $expire is passed to CookieComponent::write()
@@ -377,12 +377,13 @@ class CookieComponent extends Component {
  * @return void
  * @throws Cake\Error\Exception When an unknown type is used.
  */
-	public function type($type = 'rijndael') {
+	public function type($type = 'aes') {
 		$availableTypes = [
-			'rijndael'
+			'rijndael',
+			'aes'
 		];
 		if (!in_array($type, $availableTypes)) {
-			throw new Error\Exception(__d('cake_dev', 'You must use rijndael for cookie encryption type'));
+			throw new Error\Exception(__d('cake_dev', 'You must use rijndael, or aes for cookie encryption type'));
 		}
 		$this->_type = $type;
 	}
@@ -469,12 +470,20 @@ class CookieComponent extends Component {
 		if (is_array($value)) {
 			$value = $this->_implode($value);
 		}
-
-		if ($this->_encrypted === true) {
-			$type = $this->_type;
-			$value = "Q2FrZQ==." . base64_encode(Security::$type($value, $this->key, 'encrypt'));
+		if (!$this->_encrypted) {
+			return $value;
 		}
-		return $value;
+		$prefix = "Q2FrZQ==.";
+		if ($this->_type === 'rijndael') {
+			$cipher = Security::rijndael($value, $this->key, 'encrypt');
+		}
+		if ($this->_type === 'cipher') {
+			$cipher = Security::cipher($value, $this->key);
+		}
+		if ($this->_type === 'aes') {
+			$cipher = Security::encrypt($value, $this->key);
+		}
+		return $prefix . base64_encode($cipher);
 	}
 
 /**
@@ -490,25 +499,38 @@ class CookieComponent extends Component {
 		foreach ((array)$values as $name => $value) {
 			if (is_array($value)) {
 				foreach ($value as $key => $val) {
-					$pos = strpos($val, 'Q2FrZQ==.');
-					$decrypted[$name][$key] = $this->_explode($val);
-
-					if ($pos !== false) {
-						$val = substr($val, 8);
-						$decrypted[$name][$key] = $this->_explode(Security::$type(base64_decode($val), $this->key, 'decrypt'));
-					}
+					$decrypted[$name][$key] = $this->_decode($val);
 				}
 			} else {
-				$pos = strpos($value, 'Q2FrZQ==.');
-				$decrypted[$name] = $this->_explode($value);
-
-				if ($pos !== false) {
-					$value = substr($value, 8);
-					$decrypted[$name] = $this->_explode(Security::$type(base64_decode($value), $this->key, 'decrypt'));
-				}
+				$decrypted[$name] = $this->_decode($value);
 			}
 		}
 		return $decrypted;
+	}
+
+/**
+ * Decodes and decrypts a single value.
+ *
+ * @param string $value The value to decode & decrypt.
+ * @return string Decoded value.
+ */
+	protected function _decode($value) {
+		$prefix = 'Q2FrZQ==.';
+		$pos = strpos($value, $prefix);
+		if ($pos === false) {
+			return $this->_explode($value);
+		}
+		$value = base64_decode(substr($value, strlen($prefix)));
+		if ($this->_type === 'rijndael') {
+			$plain = Security::rijndael($value, $this->key, 'decrypt');
+		}
+		if ($this->_type === 'cipher') {
+			$plain = Security::cipher($value, $this->key);
+		}
+		if ($this->_type === 'aes') {
+			$plain = Security::decrypt($value, $this->key);
+		}
+		return $this->_explode($plain);
 	}
 
 /**

@@ -246,4 +246,115 @@ class SecurityTest extends TestCase {
 		Security::rijndael($txt, $key, 'encrypt');
 	}
 
+/**
+ * Test encrypt/decrypt.
+ *
+ * @return void
+ */
+	public function testEncryptDecrypt() {
+		$txt = 'The quick brown fox';
+		$key = 'This key is longer than 32 bytes long.';
+		$result = Security::encrypt($txt, $key);
+		$this->assertNotEquals($txt, $result, 'Should be encrypted.');
+		$this->assertNotEquals($result, Security::encrypt($txt, $key), 'Each result is unique.');
+		$this->assertEquals($txt, Security::decrypt($result, $key));
+	}
+
+/**
+ * Test that changing the key causes decryption to fail.
+ *
+ * @return void
+ */
+	public function testDecryptKeyFailure() {
+		$txt = 'The quick brown fox';
+		$key = 'This key is longer than 32 bytes long.';
+		$result = Security::encrypt($txt, $key);
+
+		$key = 'Not the same key. This one will fail';
+		$this->assertFalse(Security::decrypt($txt, $key), 'Modified key will fail.');
+	}
+
+/**
+ * Test that decrypt fails when there is an hmac error.
+ *
+ * @return void
+ */
+	public function testDecryptHmacFailure() {
+		$txt = 'The quick brown fox';
+		$key = 'This key is quite long and works well.';
+		$salt = 'this is a delicious salt!';
+		$result = Security::encrypt($txt, $key, $salt);
+
+		// Change one of the bytes in the hmac.
+		$result[10] = 'x';
+		$this->assertFalse(Security::decrypt($result, $key, $salt), 'Modified hmac causes failure.');
+	}
+
+/**
+ * Test that changing the hmac salt will cause failures.
+ *
+ * @return void
+ */
+	public function testDecryptHmacSaltFailure() {
+		$txt = 'The quick brown fox';
+		$key = 'This key is quite long and works well.';
+		$salt = 'this is a delicious salt!';
+		$result = Security::encrypt($txt, $key, $salt);
+
+		$salt = 'humpty dumpty had a great fall.';
+		$this->assertFalse(Security::decrypt($result, $key, $salt), 'Modified salt causes failure.');
+	}
+
+/**
+ * Test that short keys cause errors
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.
+ * @return void
+ */
+	public function testEncryptInvalidKey() {
+		$txt = 'The quick brown fox jumped over the lazy dog.';
+		$key = 'this is too short';
+		Security::encrypt($txt, $key);
+	}
+
+/**
+ * Test that empty data cause errors
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage The data to encrypt cannot be empty.
+ * @return void
+ */
+	public function testEncryptInvalidData() {
+		$txt = '';
+		$key = 'This is a key that is long enough to be ok.';
+		Security::encrypt($txt, $key);
+	}
+
+/**
+ * Test that short keys cause errors
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.
+ * @return void
+ */
+	public function testDecryptInvalidKey() {
+		$txt = 'The quick brown fox jumped over the lazy dog.';
+		$key = 'this is too short';
+		Security::decrypt($txt, $key);
+	}
+
+/**
+ * Test that empty data cause errors
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage The data to decrypt cannot be empty.
+ * @return void
+ */
+	public function testDecryptInvalidData() {
+		$txt = '';
+		$key = 'This is a key that is long enough to be ok.';
+		Security::decrypt($txt, $key);
+	}
+
 }

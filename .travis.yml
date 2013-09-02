@@ -9,6 +9,9 @@ env:
   - DB=pgsql db_class='Cake\Database\Driver\Postgres' db_dsn='pgsql:host=127.0.0.1;dbname=cakephp_test' db_database="cakephp_test" db_login='postgres' db_password=''
   - DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
 
+services:
+  - memcached
+
 matrix:
   include:
     - php: 5.4
@@ -27,6 +30,7 @@ before_script:
   - sudo apt-get install lighttpd
   - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
+  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - phpenv rehash
   - set +H
 

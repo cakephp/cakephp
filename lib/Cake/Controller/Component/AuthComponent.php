@@ -174,7 +174,7 @@ class AuthComponent extends Component {
 
 /**
  * An URL (defined as a string or array) to the controller action that handles
- * logins. Defaults to `/users/login`
+ * logins. Defaults to `/users/login`.
  *
  * @var mixed
  */
@@ -249,14 +249,14 @@ class AuthComponent extends Component {
 	public $response;
 
 /**
- * Method list for bound controller
+ * Method list for bound controller.
  *
  * @var array
  */
 	protected $_methods = array();
 
 /**
- * Initializes AuthComponent for use in the controller
+ * Initializes AuthComponent for use in the controller.
  *
  * @param Event $event The initialize event.
  * @return void
@@ -609,7 +609,7 @@ class AuthComponent extends Component {
 /**
  * Log a user out.
  *
- * Returns the login action to redirect to. Triggers the logout() method of
+ * Returns the logout action to redirect to. Triggers the logout() method of
  * all the authenticate objects, so they can perform custom logout logic.
  * AuthComponent will remove the session data, so there is no need to do that
  * in an authentication object. Logging out will also renew the session id.
@@ -687,7 +687,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Backwards compatible alias for AuthComponent::redirectUrl()
+ * Backwards compatible alias for AuthComponent::redirectUrl().
  *
  * @param string|array $url Optional URL to write as the login redirect URL.
  * @return string Redirect URL
@@ -759,7 +759,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * loads the configured authentication objects.
+ * Loads the configured authentication objects.
  *
  * @return mixed either null on empty authenticate value, or an array of loaded objects.
  * @throws Cake\Error\Exception

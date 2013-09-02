@@ -576,12 +576,6 @@ class CookieComponentTest extends TestCase {
 
 		$this->Cookie->write('CookieComponentTestCase', '0');
 		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
-
-		$this->Cookie->write('CookieComponentTestCase', false);
-		$this->assertTrue($this->Cookie->check('CookieComponentTestCase'));
-
-		$this->Cookie->write('CookieComponentTestCase', null);
-		$this->assertFalse($this->Cookie->check('CookieComponentTestCase'));
 	}
 
 /**
@@ -667,7 +661,7 @@ class CookieComponentTest extends TestCase {
 		if (is_array($value)) {
 			$value = $this->_implode($value);
 		}
-		return "Q2FrZQ==." . base64_encode(Security::rijndael($value, $this->Cookie->key, 'encrypt'));
+		return "Q2FrZQ==." . base64_encode(Security::encrypt($value, $this->Cookie->key));
 	}
 
 }

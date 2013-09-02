@@ -339,6 +339,8 @@ object(Cake\View\View) {
 	elementCache => 'default'
 	elementCacheSettings => array()
 	viewVars => array()
+	Html => object(Cake\View\Helper\HtmlHelper) {}
+	Form => object(Cake\View\Helper\FormHelper) {}
 	int => (int) 2
 	float => (float) 1.333
 	[protected] _passedVars => array(
@@ -359,7 +361,6 @@ object(Cake\View\View) {
 	)
 	[protected] _scripts => array()
 	[protected] _paths => array()
-	[protected] _helpersLoaded => false
 	[protected] _parents => array()
 	[protected] _current => null
 	[protected] _currentType => ''
