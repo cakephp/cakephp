@@ -37,7 +37,7 @@ foreach ($paths as $path) {
 }
 
 if (function_exists('ini_set') && $found) {
-	
+
 	// the following line differs from its sibling
 	// /lib/Cake/Console/Templates/skel/Console/cake.php
 	ini_set('include_path', $found . PATH_SEPARATOR . ini_get('include_path'));
