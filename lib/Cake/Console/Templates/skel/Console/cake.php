@@ -36,11 +36,12 @@ foreach ($paths as $path) {
 	}
 }
 
-if (function_exists('ini_set') && $found) {
+if (function_exists('ini_set')) {
 
 	// the following line differs from its sibling
-	// /lib/Cake/Console/Templates/skel/Console/cake.php
-	ini_set('include_path', $found . PATH_SEPARATOR . ini_get('include_path'));
+	// /app/Console/cake.php
+	ini_set('include_path', $root . PATH_SEPARATOR . __CAKE_PATH__ . PATH_SEPARATOR . ini_get('include_path'));
+
 }
 
 if (!include ($found . $ds . $dispatcher)) {
