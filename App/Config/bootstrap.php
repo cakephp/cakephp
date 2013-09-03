@@ -14,9 +14,10 @@
  */
 namespace App\Config;
 
-if (file_exists(dirname(__DIR__) . 'vendor/autoload.php')) {
-	require dirname(__DIR__) . 'vendor/autoload.php';
+if (!file_exists(dirname(__DIR__) . 'vendor/autoload.php')) {
+	die('Could not find vendor/autoload.php. You need to install dependencies with composer first.');
 }
+require dirname(__DIR__) . 'vendor/autoload.php';
 
 /**
  * Configure paths required to find CakePHP + general filepath

@@ -72,14 +72,9 @@ define('CACHE', TMP . 'cache' . DS);
 /**
  * The absolute path to the "cake" directory, WITHOUT a trailing DS.
  *
- * Attempt to use composer's vendor directories. If that fails,
- * assume the standard lib/Cake path.
+ * CakePHP should always be installed with composer, so look there.
  */
-if (file_exists(dirname(__DIR__) . '/vendor/autoload.php')) {
-	define('CAKE_CORE_INCLUDE_PATH', dirname(__DIR__) . '/vendor/cakephp/cakephp');
-} else {
-	define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
-}
+define('CAKE_CORE_INCLUDE_PATH', dirname(__DIR__) . '/vendor/cakephp/cakephp');
 
 /**
  * Path to the cake directory.
