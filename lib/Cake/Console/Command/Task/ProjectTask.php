@@ -30,11 +30,11 @@ use Cake\Utility\String;
 class ProjectTask extends Shell {
 
 /**
- * configs path (used in testing).
+ * App path (used in testing).
  *
  * @var string
  */
-	public $configPath = null;
+	public $appPath = null;
 
 /**
  * Checks that given project path does not already exist, and
@@ -104,21 +104,6 @@ class ProjectTask extends Shell {
 	}
 
 /**
- * Checks PHP's include_path for CakePHP.
- *
- * @return boolean Indicates whether or not CakePHP exists on include_path
- */
-	public function cakeOnIncludePath() {
-		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
-		foreach ($paths as $path) {
-			if (file_exists($path . DS . 'Cake/bootstrap.php')) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-/**
  * Looks for a skeleton template of a Cake application,
  * and if not found asks the user for a path. When there is a path
  * this method will make a deep copy of the skeleton to the project directory.
@@ -151,7 +136,6 @@ class ProjectTask extends Shell {
 			return false;
 		}
 		$output = $error = '';
-		fwrite($pipes[0], $input);
 		fclose($pipes[0]);
 
 		$output = stream_get_contents($pipes[1]);
@@ -298,7 +282,8 @@ class ProjectTask extends Shell {
  * @return boolean Success
  */
 	public function cakeAdmin($name) {
-		$path = (empty($this->configPath)) ? APP . 'Config/' : $this->configPath;
+		$path = $this->appPath ?: APP;
+		$path .= 'Config/';
 		$File = new File($path . 'routes.php');
 		$contents = $File->read();
 		if (preg_match('%(\s*[/]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(]*\);)%', $contents, $match)) {
@@ -341,17 +326,17 @@ class ProjectTask extends Shell {
 			$this->hr();
 			$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
 					'Configure::write(\'Routing.prefixes\', array(\'admin\'))',
-					'/app/Config/core.php'));
+					'/app/Config/routes.php'));
 			$this->out(__d('cake_console', 'What would you like the prefix route to be?'));
 			$this->out(__d('cake_console', 'Example: %s', 'www.example.com/admin/controller'));
 			while (!$admin) {
 				$admin = $this->in(__d('cake_console', 'Enter a routing prefix:'), null, 'admin');
 			}
 			if ($this->cakeAdmin($admin) !== true) {
-				$this->out(__d('cake_console', '<error>Unable to write to</error> %s.', '/app/Config/core.php'));
+				$this->out(__d('cake_console', '<error>Unable to write to</error> %s.', '/app/Config/routes.php'));
 				$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
 					'Configure::write(\'Routing.prefixes\', array(\'admin\'))',
-					'/app/Config/core.php'));
+					'/app/Config/routes.php'));
 				return $this->_stop();
 			}
 			return $admin . '_';

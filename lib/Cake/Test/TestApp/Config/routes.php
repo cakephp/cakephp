@@ -23,5 +23,7 @@ namespace TestApp\Config;
 
 use Cake\Routing\Router;
 
+// Configure::write('Routing.prefixes', array());
+
 Router::parseExtensions('json');
 Router::connect('/some_alias', array('controller' => 'tests_apps', 'action' => 'some_method'));
