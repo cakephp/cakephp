@@ -118,6 +118,7 @@ class InflectorTest extends CakeTestCase {
 		$this->assertEquals(Inflector::singularize('geese'), 'goose');
 		$this->assertEquals(Inflector::singularize('feet'), 'foot');
 		$this->assertEquals(Inflector::singularize('objectives'), 'objective');
+		$this->assertEquals(Inflector::singularize('archives'), 'archive');
 
 		$this->assertEquals(Inflector::singularize(''), '');
 	}
