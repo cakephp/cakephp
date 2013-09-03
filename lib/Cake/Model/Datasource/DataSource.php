@@ -21,7 +21,7 @@ namespace Cake\Model\Datasource;
 
 use Cake\Cache\Cache;
 use Cake\Core\Object;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\Model\Model;
 
 /**

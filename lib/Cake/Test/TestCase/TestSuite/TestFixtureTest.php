@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\Core\Configure;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\Model\Model;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;

@@ -20,7 +20,7 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\Model\Model;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;

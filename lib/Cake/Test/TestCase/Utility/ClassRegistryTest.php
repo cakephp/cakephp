@@ -15,7 +15,7 @@
 namespace Cake\Test\TestCase\Utility;
 
 use Cake\Core\Plugin;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
