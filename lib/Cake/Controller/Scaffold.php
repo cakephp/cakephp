@@ -23,7 +23,7 @@ namespace Cake\Controller;
 
 use Cake\Core\Configure;
 use Cake\Error;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\Network\Request;
 use Cake\Utility\Inflector;
 

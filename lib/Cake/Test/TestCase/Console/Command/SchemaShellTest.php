@@ -23,7 +23,7 @@ use Cake\Console\Command\SchemaShell;
 use Cake\Core\App;
 use Cake\Core\Object;
 use Cake\Core\Plugin;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;

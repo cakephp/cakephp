@@ -17,7 +17,7 @@ namespace Cake\Console\Command;
 use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\Model\Schema;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
