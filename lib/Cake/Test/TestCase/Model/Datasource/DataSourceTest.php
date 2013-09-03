@@ -18,7 +18,7 @@
  */
 namespace Cake\Test\TestCase\Model\Datasource;
 
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\Model\Datasource\DataSource;
 use Cake\Model\Model;
 use Cake\TestSuite\TestCase;

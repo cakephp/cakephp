@@ -21,7 +21,7 @@
  */
 namespace Cake\Model\Behavior;
 
-use Cake\Model\ConnectionManager;
+use Cake\Database\ConnectionManager;
 use Cake\Model\Model;
 use Cake\Model\ModelBehavior;
 use Cake\Utility\Hash;
