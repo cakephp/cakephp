@@ -36,6 +36,8 @@ define('LOG_ERROR', LOG_ERR);
 
 @mkdir(LOGS);
 @mkdir(CACHE);
+@mkdir(CACHE . 'views');
+@mkdir(CACHE . 'models');
 
 require CORE_PATH . 'Cake/bootstrap.php';
 

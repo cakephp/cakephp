@@ -1,7 +1,5 @@
 <?php
 /**
- * FileTest file
- *
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -13,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -68,7 +65,7 @@ class FileTest extends TestCase {
  * @return void
  */
 	public function testBasic() {
-		$file = CAKE . DS . 'LICENSE.txt';
+		$file = CORE_PATH . DS . 'LICENSE.txt';
 
 		$this->File = new File($file, false);
 

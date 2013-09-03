@@ -1,7 +1,5 @@
 <?php
 /**
- * BasicsTest file
- *
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -13,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -31,8 +28,6 @@ require_once CAKE . 'basics.php';
 
 /**
  * BasicsTest class
- *
- * @package       Cake.Test.Case
  */
 class BasicsTest extends TestCase {
 

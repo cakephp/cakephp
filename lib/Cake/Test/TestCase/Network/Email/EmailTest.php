@@ -703,12 +703,15 @@ class EmailTest extends TestCase {
 		));
 		$this->CakeEmail->addAttachments(CAKE . 'bootstrap.php');
 		$this->CakeEmail->addAttachments(array(CAKE . 'bootstrap.php'));
-		$this->CakeEmail->addAttachments(array('other.txt' => CAKE . 'bootstrap.php', 'license' => CAKE . 'LICENSE.txt'));
+		$this->CakeEmail->addAttachments(array(
+			'other.txt' => CAKE . 'bootstrap.php',
+			'license' => CORE_PATH . 'LICENSE.txt'
+		));
 		$expected = array(
 			'basics.php' => array('file' => CAKE . 'basics.php', 'mimetype' => 'text/plain'),
 			'bootstrap.php' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
 			'other.txt' => array('file' => CAKE . 'bootstrap.php', 'mimetype' => 'application/octet-stream'),
-			'license' => array('file' => CAKE . 'LICENSE.txt', 'mimetype' => 'application/octet-stream')
+			'license' => array('file' => CORE_PATH . 'LICENSE.txt', 'mimetype' => 'application/octet-stream')
 		);
 		$this->assertSame($this->CakeEmail->attachments(), $expected);
 
@@ -1037,10 +1040,10 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->to('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->emailFormat('text');
-		$data = file_get_contents(CAKE . 'Console/Templates/skel/webroot/img/cake.icon.png');
-		$this->CakeEmail->attachments(array('cake.icon.png' => array(
+		$data = file_get_contents(CAKE . 'Test/TestApp/webroot/img/cake.power.gif');
+		$this->CakeEmail->attachments(array('cake.icon.gif' => array(
 				'data' => $data,
-				'mimetype' => 'image/png'
+				'mimetype' => 'image/gif'
 		)));
 		$result = $this->CakeEmail->send('Hello');
 
@@ -1055,8 +1058,8 @@ class EmailTest extends TestCase {
 				"\r\n" .
 				"\r\n" .
 				"--$boundary\r\n" .
-				"Content-Disposition: attachment; filename=\"cake.icon.png\"\r\n" .
-				"Content-Type: image/png\r\n" .
+				"Content-Disposition: attachment; filename=\"cake.icon.gif\"\r\n" .
+				"Content-Type: image/gif\r\n" .
 				"Content-Transfer-Encoding: base64\r\n\r\n";
 		$expected .= chunk_split(base64_encode($data), 76, "\r\n");
 		$this->assertContains($expected, $result['message']);
@@ -1073,7 +1076,7 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->to('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->emailFormat('both');
-		$this->CakeEmail->attachments(array(CAKE . 'VERSION.txt'));
+		$this->CakeEmail->attachments(array(CORE_PATH . 'VERSION.txt'));
 		$result = $this->CakeEmail->send('Hello');
 
 		$boundary = $this->CakeEmail->getBoundary();
@@ -1120,7 +1123,7 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->emailFormat('both');
 		$this->CakeEmail->attachments(array(
 			'cake.png' => array(
-				'file' => CAKE . 'VERSION.txt',
+				'file' => CORE_PATH . 'VERSION.txt',
 				'contentId' => 'abc123'
 			)
 		));
@@ -1176,7 +1179,7 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->emailFormat('text');
 		$this->CakeEmail->attachments(array(
 			'cake.png' => array(
-				'file' => CAKE . 'VERSION.txt',
+				'file' => CORE_PATH . 'VERSION.txt',
 				'contentDisposition' => false
 			)
 		));
