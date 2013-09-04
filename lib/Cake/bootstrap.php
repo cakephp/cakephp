@@ -24,11 +24,6 @@ define('TIME_START', microtime(true));
 
 require CAKE . 'basics.php';
 
-if (!class_exists('Cake\Core\App')) {
-	require CAKE . 'Core/ClassLoader.php';
-	(new \Cake\Core\ClassLoader('Cake', CORE_PATH))->register();
-}
-
 use Cake\Core\App;
 use Cake\Core\Configure;
 
