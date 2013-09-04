@@ -60,7 +60,7 @@ try {
 	Configure::load('app.php', 'default', false);
 
 	/**
-	 * Load a environment local configuration file.
+	 * Load an environment local configuration file.
 	 * You can use this file to provide local overrides to your
 	 * shared configuration.
 	 */
