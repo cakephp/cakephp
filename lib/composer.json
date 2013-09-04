@@ -26,7 +26,7 @@
     },
     "autoload": {
         "psr-0": {
-            "Cake\\": "Cake/"
+            "Cake\\": "."
         }
     },
     "bin": [
