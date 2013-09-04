@@ -14,10 +14,10 @@
  */
 namespace App\Config;
 
-if (!file_exists(dirname(__DIR__) . 'vendor/autoload.php')) {
-	die('Could not find vendor/autoload.php. You need to install dependencies with composer first.');
+if (!file_exists(dirname(__DIR__) . '/vendor/autoload.php')) {
+	die('Could not find vendor/autoload.php. You need to install dependencies with `php composer.phar install` first.');
 }
-require dirname(__DIR__) . 'vendor/autoload.php';
+require dirname(__DIR__) . '/vendor/autoload.php';
 
 /**
  * Configure paths required to find CakePHP + general filepath
@@ -67,7 +67,7 @@ try {
 	 */
 	// Configure::load('app.local.php', 'default');
 } catch (\Exception $e) {
-	die('Unable to load Config/app.php ensure it exists.');
+	die('Unable to load Config/app.php. Create it by copying Config/app.php.default to Config/app.php.');
 }
 
 /**
