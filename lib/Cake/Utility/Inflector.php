@@ -61,6 +61,7 @@ class Inflector {
 		'irregular' => array(
 			'atlas' => 'atlases',
 			'beef' => 'beefs',
+			'brief' => 'briefs',
 			'brother' => 'brothers',
 			'cafe' => 'cafes',
 			'child' => 'children',
