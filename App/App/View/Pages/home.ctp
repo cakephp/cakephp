@@ -95,25 +95,7 @@ endif;
 		endif;
 	?>
 </p>
-<p>
-	<?php
-		$filePresent = null;
-		if (file_exists(APP . 'Config/datasources.php')):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your datasources configuration file is present.');
-				$filePresent = true;
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your datasources configuration file is NOT present.');
-				echo '<br/>';
-				echo __d('cake_dev', 'Rename APP/Config/datasources.default.php to APP/Config/datasources.php');
-			echo '</span>';
-		endif;
-	?>
-</p>
 <?php
-if (isset($filePresent)):
 	try {
 		$connection = ConnectionManager::getDataSource('default');
 		$connected = $connection->connect();
@@ -143,7 +125,6 @@ if (isset($filePresent)):
 		endif;
 	?>
 </p>
-<?php endif; ?>
 <?php
 	if (!Validation::alphaNumeric('cakephp')):
 		echo '<p><span class="notice">';
