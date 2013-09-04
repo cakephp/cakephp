@@ -64,20 +64,33 @@ class Installer {
  * @return void
  */
 	public static function setTmpPermissions($dir, $io) {
-		$worldWritable = bindec('0110000000');
+		$walker = function ($dir, $perms) use ($io, &$walker) {
+			$files = array_diff(scandir($dir), ['.', '..']);
+			foreach ($files as $file) {
+				$path = $dir . '/' . $file;
 
-		// Get current permissions in decimal format so we can bitmask it.
-		$currentPerms = octdec(substr(sprintf('%o', fileperms($dir . '/tmp')), -4));
+				if (!is_dir($path)) {
+					continue;
+				}
 
-		if (($currentPerms & $worldWritable) != $worldWritable) {
-			$io->write('Attempting to set permissions on tmp/');
-			$result = chmod('./tmp', $currentPerms | $worldWritable);
-			if ($result) {
-				$io->write('Permissions set on tmp/');
-			} else {
-				$io->write('Failed to set permissions on tmp/ you must do it yourself.');
+				// Get current permissions in decimal format so we can bitmask it.
+				$currentPerms = octdec(substr(sprintf('%o', fileperms($path)), -4));
+				if (($currentPerms & $perms) == $perms) {
+					continue;
+				}
+
+				$res = chmod($path, $currentPerms | $perms);
+				if ($res) {
+					$io->write('Permissions set on ' . $path);
+				} else {
+					$io->write('Failed to set permissions on ' . $path);
+				}
+				$walker($path, $perms);
 			}
-		}
+		};
+
+		$worldWritable = bindec('0110000000');
+		$walker($dir . '/tmp', $worldWritable);
 	}
 
 }
