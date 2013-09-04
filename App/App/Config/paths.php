@@ -47,7 +47,7 @@ define('APP', ROOT . DS . APP_DIR . DS);
 /**
  * File path to the webroot directory.
  */
-define('WWW_ROOT', APP . WEBROOT_DIR . DS);
+define('WWW_ROOT', ROOT . DS . WEBROOT_DIR . DS);
 
 /**
  * Path to the tests directory.
@@ -57,7 +57,7 @@ define('TESTS', APP . 'Test' . DS);
 /**
  * Path to the temporary files directory.
  */
-define('TMP', APP . 'tmp' . DS);
+define('TMP', ROOT . DS . 'tmp' . DS);
 
 /**
  * Path to the logs directory.
@@ -74,7 +74,7 @@ define('CACHE', TMP . 'cache' . DS);
  *
  * CakePHP should always be installed with composer, so look there.
  */
-define('CAKE_CORE_INCLUDE_PATH', dirname(__DIR__) . '/vendor/cakephp/cakephp');
+define('CAKE_CORE_INCLUDE_PATH', ROOT . '/vendor/cakephp/cakephp');
 
 /**
  * Path to the cake directory.
