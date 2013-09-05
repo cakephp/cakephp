@@ -12,6 +12,12 @@
  * @since         CakePHP(tm) v 2.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Cache\Engine;
+
+use Cake\Cache\CacheEngine;
+use Cake\Error;
+use Cake\Utility\Inflector;
+use \Memcached;
 
 /**
  * Memcached storage engine for cache. Memcached has some limitations in the amount of
@@ -23,7 +29,6 @@
  * (if memcached extension compiled with --enable-igbinary)
  * Compressed keys can also be incremented/decremented
  *
- * @package       Cake.Cache.Engine
  */
 class MemcachedEngine extends CacheEngine {
 
@@ -55,7 +60,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
- * @throws CacheException when you try use authentication without Memcached compiled with SASL support
+ * @throws Cake\Error\Exception when you try use authentication without Memcached compiled with SASL support
  */
 	public function init($settings = array()) {
 		if (!class_exists('Memcached')) {
@@ -100,7 +105,7 @@ class MemcachedEngine extends CacheEngine {
 
 		if ($this->settings['login'] !== null && $this->settings['password'] !== null) {
 			if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
-				throw new CacheException(
+				throw new Error\Exception(
 					__d('cake_dev', 'Memcached extension is not build with SASL support')
 				);
 			}
@@ -192,7 +197,7 @@ class MemcachedEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
  * @return New incremented value, false otherwise
- * @throws CacheException when you try to increment with compress = true
+ * @throws Cake\Error\Exception when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		return $this->_Memcached->increment($key, $offset);
@@ -204,7 +209,7 @@ class MemcachedEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
  * @return New decremented value, false otherwise
- * @throws CacheException when you try to decrement with compress = true
+ * @throws Cake\Error\Exception when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		return $this->_Memcached->decrement($key, $offset);
