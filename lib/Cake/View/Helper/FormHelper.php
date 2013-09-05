@@ -1522,7 +1522,7 @@ class FormHelper extends AppHelper {
 			if ($label) {
 				$optTitle = $this->label($tagName, $optTitle, is_array($label) ? $label : null);
 			}
-			
+
 			if (is_array($between)) {
 				$optTitle .= array_shift($between);
 			}
