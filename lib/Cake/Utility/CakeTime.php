@@ -793,6 +793,14 @@ class CakeTime {
 		}
 		$diff = $futureTime - $pastTime;
 
+		if (!$diff) {
+			return __d('cake', 'just now', 'just now');
+		}
+
+		if ($diff > abs($now - self::fromString($end))) {
+			return sprintf($absoluteString, date($format, $inSeconds));
+		}
+
 		// If more than a week, then take into account the length of months
 		if ($diff >= 604800) {
 			list($future['H'], $future['i'], $future['s'], $future['d'], $future['m'], $future['Y']) = explode('/', date('H/i/s/d/m/Y', $futureTime));
@@ -855,15 +863,6 @@ class CakeTime {
 			$diff = $diff - ($minutes * 60);
 			$seconds = $diff;
 		}
-		$diff = $futureTime - $pastTime;
-
-		if (!$diff) {
-			return __d('cake', 'just now', 'just now');
-		}
-
-		if ($diff > abs($now - self::fromString($end))) {
-			return sprintf($absoluteString, date($format, $inSeconds));
-		}
 
 		$fWord = $accuracy['second'];
 		if ($years > 0) {
@@ -905,34 +904,34 @@ class CakeTime {
 			$relativeDate .= ($relativeDate ? ', ' : '') . __dn('cake', '%d second', '%d seconds', $seconds, $seconds);
 		}
 
-		$aboutAgo = array(
-			'second' => __d('cake', 'about a second ago'),
-			'minute' => __d('cake', 'about a minute ago'),
-			'hour' => __d('cake', 'about an hour ago'),
-			'day' => __d('cake', 'about a day ago'),
-			'week' => __d('cake', 'about a week ago'),
-			'year' => __d('cake', 'about a year ago')
-		);
-
-		$aboutIn = array(
-			'second' => __d('cake', 'in about a second'),
-			'minute' => __d('cake', 'in about a minute'),
-			'hour' => __d('cake', 'in about an hour'),
-			'day' => __d('cake', 'in about a day'),
-			'week' => __d('cake', 'in about a week'),
-			'year' => __d('cake', 'in about a year')
-		);
-
 		// When time has passed
 		if (!$backwards && $relativeDate) {
 			return sprintf($relativeString, $relativeDate);
 		}
 		if (!$backwards) {
+			$aboutAgo = array(
+				'second' => __d('cake', 'about a second ago'),
+				'minute' => __d('cake', 'about a minute ago'),
+				'hour' => __d('cake', 'about an hour ago'),
+				'day' => __d('cake', 'about a day ago'),
+				'week' => __d('cake', 'about a week ago'),
+				'year' => __d('cake', 'about a year ago')
+			);
+
 			return $aboutAgo[$fWord];
 		}
 
 		// When time is to come
 		if (!$relativeDate) {
+			$aboutIn = array(
+				'second' => __d('cake', 'in about a second'),
+				'minute' => __d('cake', 'in about a minute'),
+				'hour' => __d('cake', 'in about an hour'),
+				'day' => __d('cake', 'in about a day'),
+				'week' => __d('cake', 'in about a week'),
+				'year' => __d('cake', 'in about a year')
+			);
+
 			return $aboutIn[$fWord];
 		}
 
