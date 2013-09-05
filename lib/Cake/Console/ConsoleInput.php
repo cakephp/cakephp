@@ -47,6 +47,7 @@ class ConsoleInput {
  * Constructor
  *
  * @param string $handle The location of the stream to use as input.
+ * @return void
  */
 	public function __construct($handle = 'php://stdin') {
 		$this->_canReadline = extension_loaded('readline') && $handle == 'php://stdin' ? true : false;

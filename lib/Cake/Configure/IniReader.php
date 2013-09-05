@@ -77,6 +77,7 @@ class IniReader implements ConfigReaderInterface {
  * @param string $path Path to load ini config files from. Defaults to APP . 'Config' . DS
  * @param string $section Only get one section, leave null to parse and fetch
  *     all sections in the ini file.
+ * @return void
  */
 	public function __construct($path = null, $section = null) {
 		if (!$path) {

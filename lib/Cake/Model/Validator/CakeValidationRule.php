@@ -112,6 +112,7 @@ class CakeValidationRule {
  * Constructor
  *
  * @param array $validator [optional] The validator properties
+ * @return void
  */
 	public function __construct($validator = array()) {
 		$this->_addValidatorProps($validator);

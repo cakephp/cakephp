@@ -75,6 +75,7 @@ class Component extends Object {
  *
  * @param ComponentCollection $collection A ComponentCollection this component can use to lazy load its components
  * @param array $settings Array of configuration settings.
+ * @return void
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		$this->_Collection = $collection;

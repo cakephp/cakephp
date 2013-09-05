@@ -326,7 +326,9 @@ class L10n {
 	);
 
 /**
- * Class constructor
+ * Constructor
+ *
+ * @return void
  */
 	public function __construct() {
 		if (defined('DEFAULT_LANGUAGE')) {

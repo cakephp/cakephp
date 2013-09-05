@@ -54,6 +54,7 @@ class ConsoleInputSubcommand {
  * @param string $help The help text for this option
  * @param ConsoleOptionParser|array $parser A parser for this subcommand. Either a ConsoleOptionParser, or an array that can be
  *   used with ConsoleOptionParser::buildFromArray()
+ * @return void
  */
 	public function __construct($name, $help = '', $parser = null) {
 		if (is_array($name) && isset($name['name'])) {

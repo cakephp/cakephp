@@ -47,6 +47,7 @@ class ConsoleLog extends BaseLog {
  *
  * @param array $config Options for the FileLog, see above.
  * @throws CakeLogException
+ * @return void
  */
 	public function __construct($config = array()) {
 		parent::__construct($config);

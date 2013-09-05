@@ -106,6 +106,7 @@ class RequestHandlerComponent extends Component {
  *
  * @param ComponentCollection $collection ComponentCollection object.
  * @param array $settings Array of settings.
+ * @return void
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		parent::__construct($collection, $settings + array('checkHttpCache' => true));

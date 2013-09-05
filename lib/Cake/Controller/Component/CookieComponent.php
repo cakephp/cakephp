@@ -166,6 +166,7 @@ class CookieComponent extends Component {
  *
  * @param ComponentCollection $collection A ComponentCollection for this component
  * @param array $settings Array of settings.
+ * @return void
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		$this->key = Configure::read('Security.salt');

@@ -106,6 +106,7 @@ class Folder {
  * @param boolean $create Create folder if not found
  * @param string|boolean $mode Mode (CHMOD) to apply to created folder, false to ignore
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder
+ * @return void
  */
 	public function __construct($path = false, $create = false, $mode = false) {
 		if (empty($path)) {

@@ -78,6 +78,7 @@ class CakeValidationSet implements ArrayAccess, IteratorAggregate, Countable {
  *
  * @param string $fieldName The fieldname
  * @param array $ruleset
+ * @return void
  */
 	public function __construct($fieldName, $ruleSet) {
 		$this->field = $fieldName;

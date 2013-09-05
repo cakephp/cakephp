@@ -85,6 +85,7 @@ class HttpSocketResponse implements ArrayAccess {
  * Constructor
  *
  * @param string $message
+ * @return void
  */
 	public function __construct($message = null) {
 		if ($message !== null) {

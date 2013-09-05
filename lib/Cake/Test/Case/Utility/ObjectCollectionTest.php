@@ -31,6 +31,7 @@ class GenericObject {
  *
  * @param GenericObjectCollection $collection
  * @param array $settings
+ * @return void
  */
 	public function __construct(GenericObjectCollection $collection, $settings = array()) {
 		$this->_Collection = $collection;

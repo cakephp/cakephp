@@ -55,6 +55,7 @@ class FixtureTask extends BakeTask {
  * @param ConsoleOutput $stdout A ConsoleOutput object for stdout.
  * @param ConsoleOutput $stderr A ConsoleOutput object for stderr.
  * @param ConsoleInput $stdin A ConsoleInput object for stdin.
+ * @return void
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		parent::__construct($stdout, $stderr, $stdin);

@@ -39,6 +39,7 @@ class HelperCollection extends ObjectCollection implements CakeEventListener {
  * Constructor
  *
  * @param View $view
+ * @return void
  */
 	public function __construct(View $view) {
 		$this->_View = $view;

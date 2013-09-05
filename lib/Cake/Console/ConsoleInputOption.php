@@ -78,6 +78,7 @@ class ConsoleInputOption {
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
  * @throws ConsoleException
+ * @return void
  */
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = array()) {
 		if (is_array($name) && isset($name['name'])) {

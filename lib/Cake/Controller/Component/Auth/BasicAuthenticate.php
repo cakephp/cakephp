@@ -48,6 +48,7 @@ class BasicAuthenticate extends BaseAuthenticate {
  *
  * @param ComponentCollection $collection The Component collection used on this request.
  * @param array $settings An array of settings.
+ * @return void
  */
 	public function __construct(ComponentCollection $collection, $settings) {
 		parent::__construct($collection, $settings);

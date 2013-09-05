@@ -155,6 +155,7 @@ class HtmlHelper extends AppHelper {
  *
  * @param View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper.
+ * @return void
  */
 	public function __construct(View $View, $settings = array()) {
 		parent::__construct($View, $settings);

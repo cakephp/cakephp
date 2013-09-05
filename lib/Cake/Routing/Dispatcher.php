@@ -52,6 +52,7 @@ class Dispatcher implements CakeEventListener {
  * Constructor.
  *
  * @param string $base The base directory for the application. Writes `App.base` to Configure.
+ * @return void
  */
 	public function __construct($base = false) {
 		if ($base !== false) {

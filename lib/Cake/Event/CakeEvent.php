@@ -75,6 +75,7 @@ class CakeEvent {
  *	$event = new CakeEvent('User.afterRegister', $UserModel);
  * }}}
  *
+ * @return void
  */
 	public function __construct($name, $subject = null, $data = null) {
 		$this->_name = $name;

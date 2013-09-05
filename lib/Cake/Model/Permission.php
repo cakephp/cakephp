@@ -57,6 +57,8 @@ class Permission extends AppModel {
 /**
  * Constructor, used to tell this model to use the
  * database configured for ACL
+ *
+ * @return void
  */
 	public function __construct() {
 		$config = Configure::read('Acl.database');

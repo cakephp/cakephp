@@ -53,6 +53,7 @@ class RedirectRoute extends CakeRoute {
  * @param string $template Template string with parameter placeholders
  * @param array $defaults Array of defaults for the route.
  * @param array $options Array of additional options for the Route
+ * @return void
  */
 	public function __construct($template, $defaults = array(), $options = array()) {
 		parent::__construct($template, $defaults, $options);
