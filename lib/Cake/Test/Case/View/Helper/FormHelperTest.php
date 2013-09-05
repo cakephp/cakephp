@@ -4078,6 +4078,26 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that radio() accepts an array for label
+ *
+ * @return void
+ */
+	public function testRadioLabelArray() {
+		$result = $this->Form->input('Model.field', array(
+			'type' => 'radio',
+			'legend' => false,
+			'label' => array(
+				'class' => 'checkbox float-left',
+			),
+			'options' => array('1' => 'Option A', '2' => 'Option B.')
+		));
+		$this->assertTextContains(
+			'<label for="ModelField1" class="checkbox float-left">Option A</label>',
+			$result
+		);
+	}
+
+/**
  * testSelect method
  *
  * Test select element generation.
