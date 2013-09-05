@@ -567,18 +567,18 @@ class I18n {
 			$mustEscape = array($escape . ',', $escape . ';', $escape . '<', $escape . '>', $escape . $escape);
 			$replacements = array_map('crc32', $mustEscape);
 			$value = str_replace($mustEscape, $replacements, $value);
-			$value = explode(';', $value);
+			$_value = explode(';', $value);
 			$_this->_escape = $escape;
-			foreach ($value as $i => $val) {
+			foreach ($_value as $i => $val) {
 				$val = trim($val, '"');
 				$val = preg_replace_callback('/(?:<)?(.[^>]*)(?:>)?/', array(&$_this, '_parseLiteralValue'), $val);
 				$val = str_replace($replacements, $mustEscape, $val);
-				$value[$i] = $val;
+				$_value[$i] = $val;
 			}
-			if (count($value) === 1) {
-				$definitions[$currentToken] = array_pop($value);
+			if (count($_value) === 1) {
+				$definitions[$currentToken] = array_pop($_value);
 			} else {
-				$definitions[$currentToken] = $value;
+				$definitions[$currentToken] = $_value;
 			}
 		}
 
