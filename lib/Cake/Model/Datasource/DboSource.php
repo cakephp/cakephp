@@ -1730,8 +1730,10 @@ class DboSource extends DataSource {
  * @return string
  */
 	public function renderJoinStatement($data) {
-		extract($data);
-		return trim("{$type} JOIN {$table} {$alias} ON ({$conditions})");
+		if (strtoupper($data['type']) === 'CROSS') {
+			return "{$data['type']} JOIN {$data['table']} {$data['alias']}";
+		}
+		return trim("{$data['type']} JOIN {$data['table']} {$data['alias']} ON ({$data['conditions']})");
 	}
 
 /**

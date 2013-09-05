@@ -1111,8 +1111,14 @@ class DboSourceTest extends CakeTestCase {
  *
  * @return array
  */
-	public static function joinStatements($schema) {
+	public static function joinStatements() {
 		return array(
+			array(array(
+				'type' => 'CROSS',
+				'alias' => 'PostsTag',
+				'table' => 'posts_tags',
+				'conditions' => array('1 = 1')
+			), 'CROSS JOIN cakephp.posts_tags AS PostsTag'),
 			array(array(
 				'type' => 'LEFT',
 				'alias' => 'PostsTag',
