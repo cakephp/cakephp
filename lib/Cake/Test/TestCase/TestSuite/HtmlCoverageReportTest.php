@@ -1,7 +1,5 @@
 <?php
 /**
- * Test case for HtmlCoverageReport
- *
  * PHP5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -13,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.TestSuite
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -28,7 +25,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Class HtmlCoverageReportTest
  *
- * @package       Cake.Test.Case.TestSuite
  */
 class HtmlCoverageReportTest extends TestCase {
 
@@ -76,19 +72,19 @@ class HtmlCoverageReportTest extends TestCase {
  */
 	public function testFilterCoverageDataByPathRemovingElements() {
 		$data = array(
-			CAKE . 'dispatcher.php' => array(
+			CAKE . 'Dispatcher.php' => array(
 				10 => -1,
 				12 => 1
 			),
-			APP . 'app_model.php' => array(
+			APP . 'AppModel.php' => array(
 				50 => 1,
 				52 => -1
 			)
 		);
 		$this->Coverage->setCoverage($data);
-		$result = $this->Coverage->filterCoverageDataByPath(CAKE);
-		$this->assertTrue(isset($result[CAKE . 'dispatcher.php']));
-		$this->assertFalse(isset($result[APP . 'app_model.php']));
+		$result = $this->Coverage->filterCoverageDataByPath(APP);
+		$this->assertArrayNotHasKey(CAKE . 'Dispatcher.php', $result);
+		$this->assertArrayHasKey(APP . 'AppModel.php', $result);
 	}
 
 /**
