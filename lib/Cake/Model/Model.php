@@ -3460,9 +3460,10 @@ class Model extends Object implements CakeEventListener {
  * Called during validation operations, before validation. Please note that custom
  * validation rules can be defined in $validate.
  *
- * @param array $options Options passed from model::save(), see $options of model::save().
+ * @param array $options Options passed from Model::save().
  * @return boolean True if validate operation should continue, false to abort
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
+ * @see Model::save()
  */
 	public function beforeValidate($options = array()) {
 		return true;
