@@ -1,7 +1,5 @@
 <?php
 /**
- * IniEngineTest
- *
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -13,23 +11,21 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Configure
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Configure\Engine;
 
-use Cake\Configure\IniEngine;
+use Cake\Configure\Engine\IniConfig;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class IniEngineTest
+ * Class IniConfigTest
  *
- * @package       Cake.Test.Case.Configure
  */
-class IniEngineTest extends TestCase {
+class IniConfigTest extends TestCase {
 
 /**
  * Test data to serialize and unserialize.
@@ -67,7 +63,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testConstruct() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$config = $engine->read('acl.ini');
 
 		$this->assertTrue(isset($config['admin']));
@@ -81,7 +77,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testRead() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$config = $engine->read('nested');
 		$this->assertTrue($config['bools']['test_on']);
 
@@ -95,7 +91,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testReadOnlyOneSection() {
-		$engine = new IniEngine($this->path, 'admin');
+		$engine = new IniConfig($this->path, 'admin');
 		$config = $engine->read('acl.ini');
 
 		$this->assertTrue(isset($config['groups']));
@@ -108,7 +104,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testReadSpecialAclIniPhp() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$config = $engine->read('acl.ini.php');
 
 		$this->assertTrue(isset($config['admin']));
@@ -122,7 +118,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testReadWithoutSection() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$config = $engine->read('no_section.ini');
 
 		$expected = array(
@@ -138,7 +134,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testReadValuesWithDots() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$config = $engine->read('nested.ini');
 
 		$this->assertTrue(isset($config['database']['db']['username']));
@@ -154,7 +150,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testBooleanReading() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$config = $engine->read('nested.ini');
 
 		$this->assertTrue($config['bools']['test_on']);
@@ -176,7 +172,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testReadWithExistentFileWithoutExtension() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$engine->read('no_ini_extension');
 	}
 
@@ -187,7 +183,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testReadWithNonExistentFile() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$engine->read('fake_values');
 	}
 
@@ -197,7 +193,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testReadEmptyFile() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$config = $engine->read('empty');
 		$this->assertEquals(array(), $config);
 	}
@@ -209,7 +205,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testReadWithDots() {
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$engine->read('../empty');
 	}
 
@@ -223,7 +219,7 @@ class IniEngineTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load('TestPlugin');
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$result = $engine->read('TestPlugin.nested');
 
 		$this->assertTrue(isset($result['database']['db']['username']));
@@ -246,7 +242,7 @@ class IniEngineTest extends TestCase {
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
 		), App::RESET);
 		Plugin::load('TestPlugin');
-		$engine = new IniEngine($this->path);
+		$engine = new IniConfig($this->path);
 		$result = $engine->read('TestPlugin.acl.ini.php');
 
 		$this->assertTrue(isset($result['admin']));
@@ -261,7 +257,7 @@ class IniEngineTest extends TestCase {
  * @return void
  */
 	public function testDump() {
-		$engine = new IniEngine(TMP);
+		$engine = new IniConfig(TMP);
 		$result = $engine->dump('test.ini', $this->testData);
 		$this->assertTrue($result > 0);
 
@@ -296,7 +292,7 @@ INI;
  * @return void
  */
 	public function testDumpRead() {
-		$engine = new IniEngine(TMP);
+		$engine = new IniConfig(TMP);
 		$engine->dump('test.ini', $this->testData);
 		$result = $engine->read('test.ini');
 		unlink(TMP . 'test.ini');

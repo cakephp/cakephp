@@ -21,18 +21,21 @@ define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(dirname(dirname(__DIR__))));
 define('APP_DIR', 'App');
 define('WEBROOT_DIR', 'webroot');
-define('APP', ROOT . DS . APP_DIR . DS);
-define('WWW_ROOT', APP . WEBROOT_DIR . DS);
-define('TESTS', APP . 'Test' . DS);
+
 define('TMP', sys_get_temp_dir() . DS);
 define('LOGS', TMP . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
+
 define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'Cake' . DS);
 define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'TestCase');
 define('LOG_ERROR', LOG_ERR);
 
+// Point app constants to the test app.
+define('APP', ROOT . '/lib/Cake/Test/TestApp/');
+define('WWW_ROOT', APP . WEBROOT_DIR . DS);
+define('TESTS', APP . 'Test' . DS);
 
 @mkdir(LOGS);
 @mkdir(CACHE);

@@ -532,12 +532,8 @@ class ShellTest extends TestCase {
 		$this->assertEquals($expected, $this->Shell->shortPath($path));
 
 		$path = APP;
-		$expected = DS . basename(APP) . DS;
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
-
-		$path = APP . 'index.php';
-		$expected = DS . basename(APP) . DS . 'index.php';
-		$this->assertEquals($expected, $this->Shell->shortPath($path));
+		$result = $this->Shell->shortPath($path);
+		$this->assertNotContains(ROOT, $result, 'Short paths should not contain ROOT');
 	}
 
 /**

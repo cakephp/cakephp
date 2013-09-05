@@ -1,7 +1,5 @@
 <?php
 /**
- * TestSuiteShell test case
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -13,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -25,7 +22,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Class TestTestShell
  *
- * @package       Cake.Test.Case.Console.Command
  */
 class TestTestShell extends TestShell {
 
@@ -42,7 +38,6 @@ class TestTestShell extends TestShell {
 /**
  * Class TestShellTest
  *
- * @package       Cake.Test.Case.Console.Command
  */
 class TestShellTest extends TestCase {
 
@@ -82,14 +77,14 @@ class TestShellTest extends TestCase {
 	public function testMapCoreFileToCategory() {
 		$this->Shell->startup();
 
-		$return = $this->Shell->mapFileToCategory('lib/Cake/basics.php');
+		$return = $this->Shell->mapFileToCategory('Cake/basics.php');
 		$this->assertSame('core', $return);
 
-		$return = $this->Shell->mapFileToCategory('lib/Cake/Core/App.php');
+		$return = $this->Shell->mapFileToCategory('Cake/Core/App.php');
 		$this->assertSame('core', $return);
 
-		$return = $this->Shell->mapFileToCategory('lib/Cake/Some/Deeply/Nested/Structure.php');
-		$this->assertSame('core', $return);
+		$return = $this->Shell->mapFileToCategory('Cake/Some/Deeply/Nested/Structure.php');
+		$this->assertSame('app', $return);
 	}
 
 /**
@@ -180,14 +175,14 @@ class TestShellTest extends TestCase {
 	public function testMapCoreTestToCategory() {
 		$this->Shell->startup();
 
-		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/TestCase/BasicsTest.php');
+		$return = $this->Shell->mapFileToCategory('Cake/Test/TestCase/BasicsTest.php');
 		$this->assertSame('core', $return);
 
-		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/TestCase/BasicsTest.php');
+		$return = $this->Shell->mapFileToCategory('Cake/Test/TestCase/BasicsTest.php');
 		$this->assertSame('core', $return);
 
-		$return = $this->Shell->mapFileToCategory('lib/Cake/Test/TestCase/Some/Deeply/Nested/StructureTest.php');
-		$this->assertSame('core', $return);
+		$return = $this->Shell->mapFileToCategory('Cake/Test/TestCase/Some/Deeply/Nested/StructureTest.php');
+		$this->assertSame('app', $return);
 	}
 
 /**

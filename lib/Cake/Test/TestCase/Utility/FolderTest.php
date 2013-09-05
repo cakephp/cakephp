@@ -219,7 +219,7 @@ class FolderTest extends TestCase {
 		$result = $Folder->delete($mv);
 		$this->assertTrue($result);
 
-		$new = APP . 'index.php';
+		$new = APP . 'Config/acl.ini';
 		$result = $Folder->create($new);
 		$this->assertFalse($result);
 

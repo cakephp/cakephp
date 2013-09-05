@@ -1,7 +1,5 @@
 <?php
 /**
- * AppTest file.
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -12,7 +10,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Core
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +23,6 @@ use Cake\TestSuite\TestCase;
 /**
  * AppTest class
  *
- * @package       Cake.Test.Case.Core
  */
 class AppTest extends TestCase {
 
@@ -377,8 +373,8 @@ class AppTest extends TestCase {
 			)
 		));
 		$result = App::objects('Plugin', null, false);
-		$this->assertTrue(in_array('Cache', $result));
-		$this->assertTrue(in_array('Log', $result));
+		$this->assertContains('TestPlugin', $result);
+		$this->assertContains('TestPluginTwo', $result);
 
 		App::build();
 	}

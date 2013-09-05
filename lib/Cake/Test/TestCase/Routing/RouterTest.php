@@ -1512,10 +1512,9 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testParseExtensions() {
-		$this->assertSame(array(), Router::extensions());
-
+		Router::extensions();
 		Router::parseExtensions('rss');
-		$this->assertEquals(array('rss'), Router::extensions());
+		$this->assertContains('rss', Router::extensions());
 	}
 
 /**
@@ -1524,8 +1523,9 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testSetExtensions() {
+		Router::extensions();
 		Router::setExtensions(array('rss'));
-		$this->assertEquals(array('rss'), Router::extensions());
+		$this->assertContains('rss', Router::extensions());
 
 		require CAKE . 'Config/routes.php';
 
@@ -1537,7 +1537,8 @@ class RouterTest extends TestCase {
 
 		Router::setExtensions(array('xml'));
 		$result = Router::extensions();
-		$this->assertEquals(array('rss', 'xml'), $result);
+		$this->assertContains('rss', $result);
+		$this->assertContains('xml', $result);
 
 		$result = Router::parse('/posts.xml');
 		$this->assertEquals('xml', $result['_ext']);

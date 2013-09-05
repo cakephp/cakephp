@@ -481,7 +481,6 @@ class HtmlHelperTest extends TestCase {
  */
 	public function testImageTagWithTheme() {
 		$this->skipIf(!is_writable(WWW_ROOT), 'Cannot write to webroot.');
-		$themeExists = is_dir(WWW_ROOT . 'theme');
 
 		$testfile = WWW_ROOT . 'theme/test_theme/img/__cake_test_image.gif';
 		new File($testfile, true);
@@ -509,13 +508,6 @@ class HtmlHelperTest extends TestCase {
 				'src' => 'preg:/\/testing\/theme\/test_theme\/img\/__cake_test_image\.gif\?\d+/',
 				'alt' => ''
 		)));
-
-		$dir = new Folder(WWW_ROOT . 'theme/test_theme');
-		$dir->delete();
-		if (!$themeExists) {
-			$dir = new Folder(WWW_ROOT . 'theme');
-			$dir->delete();
-		}
 	}
 
 /**
@@ -543,8 +535,6 @@ class HtmlHelperTest extends TestCase {
 			'link' => array('rel' => 'stylesheet', 'type' => 'text/css', 'href' => 'preg:/.*theme\/test_theme\/css\/theme_webroot\.css/')
 		);
 		$this->assertTags($result, $expected);
-
-		Configure::write('App.www_root', $webRoot);
 	}
 
 /**
@@ -1125,14 +1115,6 @@ class HtmlHelperTest extends TestCase {
 			'script' => array('src' => '/theme/test_theme/js/__test_js.js', 'type' => 'text/javascript')
 		);
 		$this->assertTags($result, $expected);
-
-		$Folder = new Folder(WWW_ROOT . 'theme/test_theme');
-		$Folder->delete();
-
-		if (!$themeExists) {
-			$dir = new Folder(WWW_ROOT . 'theme');
-			$dir->delete();
-		}
 	}
 
 /**

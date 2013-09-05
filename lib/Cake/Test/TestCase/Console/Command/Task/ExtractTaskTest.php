@@ -1,11 +1,5 @@
 <?php
 /**
- * ExtractTaskTest file
- *
- * Test Case for i18n extraction shell task
- *
- * PHP 5
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -31,7 +24,6 @@ use Cake\Utility\Folder;
 /**
  * ExtractTaskTest class
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class ExtractTaskTest extends TestCase {
 
@@ -412,6 +404,7 @@ class ExtractTaskTest extends TestCase {
  * @return void
  */
 	public function testExtractOverwrite() {
+		Configure::write('App.namespace', 'TestApp');
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
@@ -434,6 +427,7 @@ class ExtractTaskTest extends TestCase {
  * @return void
  */
 	public function testExtractCore() {
+		Configure::write('App.namespace', 'TestApp');
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] = CAKE . 'Test/TestApp/';
