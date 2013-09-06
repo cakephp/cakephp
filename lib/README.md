@@ -22,6 +22,21 @@ a starting point. For existing applications you can add the following to your
 
 And run `php composer.phar update`
 
+## Running tests
+
+You can run the tests for cakephp by doing the following:
+
+1. Install dependencies and generate the autoloader with `composer`.  In the root of
+   the project run `php composer.phar install`.
+2. Copy `phpunit.xml.dist` to `phpunit.xml`
+3. Add the relevant database credentials to your phpunit.xml if you want to run tests against
+   a non-SQLite datasource.
+4. Run `vendor/bin/phpunit --stderr`
+
+## Contributing
+
+See CONTRIBUTING.md for more information.
+
 Some Handy Links
 ----------------
 
