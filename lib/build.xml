@@ -250,18 +250,6 @@
 		</phpmd>
 	</target>
 
-	<target name="subtree-split" description="Split the main repo into subtrees for the -app and -framework repos">
-		<echo msg="Generating app-split subtree branch" />
-		<exec command="git subtree split --prefix App/ --branch app-split" />
-
-		<echo msg="Generating framework-split subtree branch" />
-		<exec command="git subtree split --prefix lib/ --branch framework-split" />
-
-		<echo msg="Pushing splits to remotes" />
-		<exec command="git push ${git.subtree.app} app-split:master" />
-		<exec command="git push ${git.subtree.framework} framework-split:master" />
-	</target>
-
 	<!--
 		Top level easy to type targets
 	-->
