@@ -451,13 +451,6 @@ class HtmlHelper extends Helper {
 		} else {
 			$url = $this->assetUrl($path, $options + array('pathPrefix' => Configure::read('App.cssBaseUrl'), 'ext' => '.css'));
 			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
-
-			if (Configure::read('Asset.filter.css')) {
-				$pos = strpos($url, Configure::read('App.cssBaseUrl'));
-				if ($pos !== false) {
-					$url = substr($url, 0, $pos) . 'ccss/' . substr($url, $pos + strlen(Configure::read('App.cssBaseUrl')));
-				}
-			}
 		}
 
 		if ($options['rel'] == 'import') {
@@ -552,10 +545,6 @@ class HtmlHelper extends Helper {
 		if (strpos($url, '//') === false) {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
 			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
-
-			if (Configure::read('Asset.filter.js')) {
-				$url = str_replace(Configure::read('App.jsBaseUrl'), 'cjs/', $url);
-			}
 		}
 		$attributes = $this->_parseAttributes($options, array('block', 'once'), ' ');
 		$out = sprintf($this->_tags['javascriptlink'], $url, $attributes);
