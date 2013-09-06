@@ -210,7 +210,7 @@ class FileEngine extends CacheEngine {
 		}
 		$path = $this->_File->getRealPath();
 		$this->_File = null;
-		return unlink($path);
+		return @unlink($path);
 	}
 
 /**
@@ -291,7 +291,7 @@ class FileEngine extends CacheEngine {
 			if ($file->isFile()) {
 				$_path = $file->getRealPath();
 				$file = null;
-				unlink($_path);
+				@unlink($_path);
 			}
 		}
 	}
@@ -411,7 +411,7 @@ class FileEngine extends CacheEngine {
 			$containsGroup = strpos($object->getPathName(), DS . $group . DS) !== false;
 			$hasPrefix = strpos($object->getBaseName(), $this->settings['prefix']) === 0;
 			if ($object->isFile() && $containsGroup && $hasPrefix) {
-				unlink($object->getPathName());
+				@unlink($object->getPathName());
 			}
 		}
 		return true;
