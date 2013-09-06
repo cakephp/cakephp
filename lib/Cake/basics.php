@@ -789,11 +789,16 @@ if (!function_exists('LogError')) {
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#LogError
  */
-	function LogError($message) {
+	function LogError($message, $scope = array()) {
 		App::uses('CakeLog', 'Log');
 		$bad = array("\n", "\r", "\t");
 		$good = ' ';
-		CakeLog::write('error', str_replace($bad, $good, $message));
+		if (is_string($message)) {
+			$message = str_replace($bad, $good, $message);
+		} else {
+			$message = print_r($message, true);
+		}
+		CakeLog::write(LOG_ERR, $message, $scope);
 	}
 
 }
