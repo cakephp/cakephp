@@ -638,8 +638,7 @@ class FolderTest extends TestCase {
  * @return void
  */
 	public function testFindRecursive() {
-		$Folder = new Folder();
-		$Folder->cd(CAKE);
+		$Folder = new Folder(CAKE);
 		$result = $Folder->findRecursive('(config|paths)\.php');
 		$expected = array(
 			CAKE . 'Config/config.php'
@@ -678,8 +677,7 @@ class FolderTest extends TestCase {
 			$path . 'testme/my.php',
 			$path . 'testme/paths.php'
 		);
-		$this->assertSame($expected, $result);
-		$this->assertSame($expected, $result);
+		$this->assertSame(sort($expected), sort($result));
 
 		$result = $Folder->findRecursive('(paths|my)\.php', true);
 		$expected = array(
