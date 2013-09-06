@@ -1058,27 +1058,6 @@ class HtmlHelperTest extends TestCase {
 	}
 
 /**
- * Test that Asset.filter.js works.
- *
- * @return void
- */
-	public function testScriptAssetFilter() {
-		Configure::write('Asset.filter.js', 'js.php');
-
-		$result = $this->Html->script('jquery-1.3');
-		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => 'cjs/jquery-1.3.js')
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Html->script('//example.com/js/jquery-1.3.js');
-		$expected = array(
-			'script' => array('type' => 'text/javascript', 'src' => '//example.com/js/jquery-1.3.js')
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * testScriptWithFullBase method
  *
  * @return void
