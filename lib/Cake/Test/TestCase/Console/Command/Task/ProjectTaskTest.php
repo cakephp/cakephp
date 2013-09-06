@@ -145,7 +145,6 @@ class ProjectTaskTest extends TestCase {
  */
 	public function testGetPrefixWithMultiplePrefixes() {
 		Configure::write('Routing.prefixes', array('admin', 'ninja', 'shinobi'));
-		$this->_setupTestProject();
 		$this->Task->appPath = $this->Task->path . 'BakeTestApp/';
 		$this->Task->expects($this->once())->method('in')->will($this->returnValue(2));
 
