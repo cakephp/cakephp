@@ -615,8 +615,22 @@ class BasicsTest extends CakeTestCase {
 			CakeLog::disable('stderr');
 		}
 
+		$currencies = array(
+			array('code' => 'USD', 'name' => 'US Dollars'),
+			array('code' => 'IDR', 'title' => 'Indonesian Rupiah'),
+		);
+		$currenciesOutput = print_r($currencies, true);
+
+		$countries = json_decode(json_encode(array(
+			'Indonesia' => array('capital' => 'Jakarta'),
+			'Canada' => array('capital' => 'Toronto'),
+		)));
+		$countriesOutput = print_r($countries, true);
+
 		LogError('Testing LogError() basic function');
 		LogError("Testing with\nmulti-line\nstring");
+		LogError($currencies);
+		LogError($countries);
 
 		if (CakeLog::stream('stderr')) {
 			CakeLog::enable('stderr');
@@ -626,6 +640,8 @@ class BasicsTest extends CakeTestCase {
 		$this->assertRegExp('/Error: Testing LogError\(\) basic function/', $result);
 		$this->assertNotRegExp("/Error: Testing with\nmulti-line\nstring/", $result);
 		$this->assertRegExp('/Error: Testing with multi-line string/', $result);
+		$this->assertRegExp('/' . preg_quote($currenciesOutput) . '/', $result);
+		$this->assertRegExp('/' . preg_quote($countriesOutput) . '/', $result);
 	}
 
 /**
