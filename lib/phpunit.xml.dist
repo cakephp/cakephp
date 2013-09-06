@@ -25,4 +25,22 @@
 			</arguments>
 		</listener>
 	</listeners>
+	<php>
+		<!-- SQLite -->
+		<env name="db_class" value="Cake\Database\Driver\Sqlite"/>
+		<env name="db_dsn" value="sqlite::memory:"/>
+		<!-- Postgres
+		<env name="db_class" value="Cake\Database\Driver\Postgres"/>
+		<env name="db_database" value="cake_test"/>
+		<env name="db_login" value=""/>
+		<env name="db_password" value=""/>
+		-->
+		<!-- Mysql
+		<env name="db_class" value="Cake\Database\Driver\Mysql"/>
+		<env name="db_dsn" value="mysql:host=localhost;dbname=cake_test"/>
+		<env name="db_database" value=""/>
+		<env name="db_login" value=""/>
+		<env name="db_password" value=""/>
+		-->
+	</php>
 </phpunit>
