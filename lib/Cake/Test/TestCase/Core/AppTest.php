@@ -222,8 +222,7 @@ class AppTest extends TestCase {
 	public function testBuildPackage() {
 		$pluginPaths = array(
 			'/foo/bar',
-			APP . 'Plugin' . DS,
-			dirname(dirname(CAKE)) . DS . 'plugins' . DS
+			ROOT . DS . 'Plugin' . DS,
 		);
 		App::build(array(
 			'Plugin' => array(
@@ -269,8 +268,8 @@ class AppTest extends TestCase {
 		));
 		Plugin::load('TestPlugin');
 
-		$result = App::path('Vendor', 'TestPlugin');
-		$this->assertEquals($basepath . 'TestPlugin' . DS . 'vendor' . DS, $result[0]);
+		$result = App::path('Controller', 'TestPlugin');
+		$this->assertEquals($basepath . 'TestPlugin' . DS . 'Controller' . DS, $result[0]);
 	}
 
 /**
@@ -369,14 +368,12 @@ class AppTest extends TestCase {
 
 		App::build(array(
 			'Plugin' => array(
-				CAKE . 'Test/TestApp/'
+				CAKE . 'Test/TestApp/Plugin/'
 			)
 		));
 		$result = App::objects('Plugin', null, false);
 		$this->assertContains('TestPlugin', $result);
 		$this->assertContains('TestPluginTwo', $result);
-
-		App::build();
 	}
 
 /**
