@@ -93,39 +93,11 @@ class App {
 	const RESET = true;
 
 /**
- * Paths to search for files.
- *
- * @var array
- */
-	public static $search = array();
-
-/**
- * Whether or not to return the file that is loaded.
- *
- * @var boolean
- */
-	public static $return = false;
-
-/**
- * Holds key/value pairs of $type => file path.
- *
- * @var array
- */
-	protected static $_map = array();
-
-/**
  * Holds and key => value array of object types.
  *
  * @var array
  */
 	protected static $_objects = array();
-
-/**
- * Holds the location of each class
- *
- * @var array
- */
-	protected static $_classMap = array();
 
 /**
  * Holds the possible paths for each package name
@@ -140,13 +112,6 @@ class App {
  * @var array
  */
 	protected static $_packageFormat = array();
-
-/**
- * Indicates whether the class cache should be stored again because of an addition to it
- *
- * @var boolean
- */
-	protected static $_cacheChange = false;
 
 /**
  * Indicates whether the object cache should be stored again because of an addition to it
@@ -470,97 +435,12 @@ class App {
 	}
 
 /**
- * Method to handle the class loading manually, ie. Vendor classes.
- *
- * @param string $className the name of the class to load
- * @return boolean
- */
-	public static function load($className) {
-		if (!isset(static::$_classMap[$className])) {
-			return false;
-		}
-		if (empty(static::$_map)) {
-			static::$_map = (array)Cache::read('file_map', '_cake_core_');
-		}
-		if (strpos($className, '..') !== false) {
-			return false;
-		}
-
-		$parts = explode('.', static::$_classMap[$className], 2);
-		list($plugin, $package) = count($parts) > 1 ? $parts : array(null, current($parts));
-
-		$file = static::_mapped($className, $plugin);
-		if ($file) {
-			return include $file;
-		}
-		$paths = static::path($package, $plugin);
-
-		if (empty($plugin)) {
-			$appLibs = empty(static::$_packages['Lib']) ? APPLIBS : current(static::$_packages['Lib']);
-			$paths[] = $appLibs . $package . DS;
-			$paths[] = APP . $package . DS;
-			$paths[] = CAKE . $package . DS;
-		} else {
-			$pluginPath = static::pluginPath($plugin);
-			$paths[] = $pluginPath . 'Lib' . DS . $package . DS;
-			$paths[] = $pluginPath . $package . DS;
-		}
-
-		$normalizedClassName = str_replace('\\', DS, $className);
-		foreach ($paths as $path) {
-			$file = $path . $normalizedClassName . '.php';
-			if (file_exists($file)) {
-				static::_map($file, $className, $plugin);
-				return include $file;
-			}
-		}
-
-		return false;
-	}
-
-/**
  * Initializes the App, registers a shutdown function.
  *
  * @return void
  */
 	public static function init() {
 		register_shutdown_function(array(get_called_class(), 'shutdown'));
-	}
-
-/**
- * Maps the $name to the $file.
- *
- * @param string $file full path to file
- * @param string $name unique name for this map
- * @param string $plugin camelized if object is from a plugin, the name of the plugin
- * @return void
- */
-	protected static function _map($file, $name, $plugin = null) {
-		$key = $name;
-		if ($plugin) {
-			$key = 'plugin.' . $name;
-		}
-		if ($plugin && empty(static::$_map[$name])) {
-			static::$_map[$key] = $file;
-		}
-		if (!$plugin && empty(static::$_map['plugin.' . $name])) {
-			static::$_map[$key] = $file;
-		}
-	}
-
-/**
- * Returns a file's complete path.
- *
- * @param string $name unique name
- * @param string $plugin camelized if object is from a plugin, the name of the plugin
- * @return mixed file path if found, false otherwise
- */
-	protected static function _mapped($name, $plugin = null) {
-		$key = $name;
-		if ($plugin) {
-			$key = 'plugin.' . $name;
-		}
-		return isset(static::$_map[$key]) ? static::$_map[$key] : false;
 	}
 
 /**
@@ -640,9 +520,6 @@ class App {
  * @return void
  */
 	public static function shutdown() {
-		if (static::$_cacheChange) {
-			Cache::write('file_map', array_filter(static::$_map), '_cake_core_');
-		}
 		if (static::$_objectCacheChange) {
 			Cache::write('object_map', static::$_objects, '_cake_core_');
 		}
