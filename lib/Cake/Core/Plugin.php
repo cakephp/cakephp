@@ -35,33 +35,73 @@ class Plugin {
 	protected static $_plugins = array();
 
 /**
- * Loads a plugin and optionally loads bootstrapping, routing files or loads a initialization function
+ * Loads a plugin and optionally loads bootstrapping,
+ * routing files or runs a initialization function.
  *
- * Examples:
+ * Plugins only need to be loaded if you want bootstrapping/routes/cli commands to
+ * be exposed. If your plugins do not expose any of these features you do not need
+ * to load them.
  *
- * 	`Plugin::load('DebugKit')` will load the DebugKit plugin and will not load any bootstrap nor route files
- *	`Plugin::load('DebugKit', array('bootstrap' => true, 'routes' => true))` will load the bootstrap.php and routes.php files
- * 	`Plugin::load('DebugKit', array('bootstrap' => false, 'routes' => true))` will load routes.php file but not bootstrap.php
- * 	`Plugin::load('DebugKit', array('bootstrap' => array('config1', 'config2')))` will load config1.php and config2.php files
- *	`Plugin::load('DebugKit', array('bootstrap' => 'aCallableMethod'))` will run the aCallableMethod function to initialize it
- *	`Plugin::load('DebugKit', array('namespace' => 'Cake\DebugKit'))` will load files on APP/Plugin/Cake/DebugKit/Controller/...
+ * This method does not configure any autoloaders. That must be done separately either
+ * through composer, or your own code during App/Config/bootstrap.php.
  *
- * Bootstrap initialization functions can be expressed as a PHP callback type, including closures. Callbacks will receive two
- * parameters (plugin name, plugin configuration)
+ * ## Examples:
+ *
+ * `Plugin::load('DebugKit')`
+ *
+ * Will load the DebugKit plugin and will not load any bootstrap nor route files
+ *
+ * `Plugin::load('DebugKit', array('bootstrap' => true, 'routes' => true))`
+ *
+ * Will load the bootstrap.php and routes.php files.
+ *
+ * `Plugin::load('DebugKit', array('bootstrap' => false, 'routes' => true))`
+ *
+ * Will load routes.php file but not bootstrap.php
+ *
+ * `Plugin::load('DebugKit', array('bootstrap' => array('config1', 'config2')))
+ *
+ * Will load config1.php and config2.php files
+ *
+ * `Plugin::load('DebugKit', array('bootstrap' => 'aCallableMethod'))`
+ *
+ * Will run the aCallableMethod function to initialize it
+ *
+ * `Plugin::load('DebugKit', array('namespace' => 'Cake\DebugKit'))`
+ *
+ * Will load files on APP/Plugin/Cake/DebugKit/Controller/...
+ *
+ * Bootstrap initialization functions can be expressed as a PHP callback type,
+ * including closures. Callbacks will receive two parameters (plugin name, plugin configuration)
  *
  * It is also possible to load multiple plugins at once. Examples:
  *
- * `Plugin::load(array('DebugKit', 'ApiGenerator'))` will load the DebugKit and ApiGenerator plugins
- * `Plugin::load(array('DebugKit', 'ApiGenerator'), array('bootstrap' => true))` will load bootstrap file for both plugins
+ * `Plugin::load(array('DebugKit', 'ApiGenerator'))`
+ *
+ * Will load the DebugKit and ApiGenerator plugins.
+ *
+ * `Plugin::load(array('DebugKit', 'ApiGenerator'), array('bootstrap' => true))`
+ *
+ * Will load bootstrap file for both plugins
  *
  * {{{
- * 	Plugin::load(array(
- * 		'DebugKit' => array('routes' => true),
- * 		'ApiGenerator'
- * 		), array('bootstrap' => true))
+ *   Plugin::load(array(
+ *     'DebugKit' => array('routes' => true),
+ *     'ApiGenerator'
+ *     ), array('bootstrap' => true))
  * }}}
  *
  * Will only load the bootstrap for ApiGenerator and only the routes for DebugKit
+ *
+ * ## Configuration options
+ *
+ * - `bootstrap` - array|boolean - Whether or not you want the $plugin/Config/bootstrap.php file loaded.
+ *   Can also be an array of files to load from $plugin/Config.
+ * - `routes` - boolean - Whether or not you want to load the $plugin/Config/routes.php file.
+ * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
+ * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
+ * - `path` - string - The path the plugin can be found on. If empty the plugin paths will scanned
+ *   for a directory with a name matching the namespace.
  *
  * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
@@ -76,28 +116,27 @@ class Plugin {
 			}
 			return;
 		}
+
 		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false);
 		if (empty($config['path'])) {
 			$namespacePath = str_replace('\\', DS, $config['namespace']);
 			foreach (App::path('Plugin') as $path) {
 				if (is_dir($path . $plugin)) {
-					static::$_plugins[$plugin] = $config + array('path' => $path . $plugin . DS);
+					$config += array('path' => $path . $plugin . DS);
 					break;
 				}
 				if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
-					static::$_plugins[$plugin] = $config + array('path' => $path . $namespacePath . DS);
+					$config += array('path' => $path . $namespacePath . DS);
 					break;
 				}
 			}
-		} else {
-			static::$_plugins[$plugin] = $config;
 		}
+		static::$_plugins[$plugin] = $config;
 
 		if (empty(static::$_plugins[$plugin]['path'])) {
 			throw new Error\MissingPluginException(array('plugin' => $plugin));
 		}
-		$loader = new ClassLoader($plugin, dirname(static::$_plugins[$plugin]['path']));
-		$loader->register();
+
 		if (!empty(static::$_plugins[$plugin]['bootstrap'])) {
 			static::bootstrap($plugin);
 		}
