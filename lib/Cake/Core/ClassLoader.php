@@ -1,7 +1,5 @@
 <?php
 /**
- * ClassLoader class
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -12,7 +10,6 @@
  *
  * @copyright     Copyright 2005-2011, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Core
  * @since         CakePHP(tm) v 3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -21,7 +18,6 @@ namespace Cake\Core;
 /**
  * ClassLoader
  *
- * @package       Cake.Core
  */
 class ClassLoader {
 
@@ -30,7 +26,14 @@ class ClassLoader {
  *
  * @var string
  */
-	protected $_fileExtension = '.php';
+	protected $_fileExtension;
+
+/**
+ * The path a given namespace maps to.
+ *
+ * @var string
+ */
+	protected $_path;
 
 /**
  * Registered namespace
@@ -47,31 +50,15 @@ class ClassLoader {
 	protected $_namespaceLength;
 
 /**
- * Path with the classes
- *
- * @var string
- */
-	protected $_includePath;
-
-/**
  * Constructor
  *
  * @param string $ns The _namespace to use.
  */
-	public function __construct($ns = null, $includePath = null) {
+	public function __construct($ns = null, $path = null, $fileExtension = '.php') {
 		$this->_namespace = rtrim($ns, '\\') . '\\';
 		$this->_namespaceLength = strlen($this->_namespace);
-		$this->_includePath = $includePath;
-	}
-
-/**
- * Sets the base include path for all class files in the _namespace of this class loader.
- *
- * @param string $includePath
- * @return void
- */
-	public function setIncludePath($includePath) {
-		$this->_includePath = $includePath;
+		$this->_path = $path;
+		$this->_fileExtension = '.php';
 	}
 
 /**
@@ -81,16 +68,6 @@ class ClassLoader {
  */
 	public function getIncludePath() {
 		return $this->_includePath;
-	}
-
-/**
- * Sets the file extension of class files in the _namespace of this class loader.
- *
- * @param string $fileExtension
- * @return void
- */
-	public function setFileExtension($fileExtension) {
-		$this->_fileExtension = $fileExtension;
 	}
 
 /**
@@ -130,10 +107,11 @@ class ClassLoader {
 		if (substr($className, 0, $this->_namespaceLength) !== $this->_namespace) {
 			return false;
 		}
-		$path = $this->_includePath . DS . str_replace('\\', DS, $className) . $this->_fileExtension;
+		$path = $this->_path . DS . str_replace('\\', DS, $className) . $this->_fileExtension;
 		if (!file_exists($path)) {
 			return false;
 		}
 		return require $path;
 	}
+
 }
