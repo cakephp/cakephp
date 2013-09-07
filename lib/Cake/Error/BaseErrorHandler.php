@@ -64,6 +64,26 @@ abstract class BaseErrorHandler {
 		error_reporting($level);
 		set_error_handler([$this, 'handleError'], $level);
 		set_exception_handler([$this, 'handleException']);
+		register_shutdown_function(function () {
+			$error = error_get_last();
+			if (!is_array($error)) {
+				return;
+			}
+			$fatals = [
+				E_USER_ERROR,
+				E_ERROR,
+				E_PARSE,
+			];
+			if (!in_array($error['type'], $fatals, true)) {
+				return;
+			}
+			$this->handleFatalError(
+				$error['type'],
+				$error['message'],
+				$error['file'],
+				$error['line']
+			);
+		});
 	}
 
 /**
