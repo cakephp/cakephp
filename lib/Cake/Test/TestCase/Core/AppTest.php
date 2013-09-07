@@ -365,7 +365,9 @@ class AppTest extends TestCase {
 
 		$result = App::objects('NonExistingType');
 		$this->assertSame(array(), $result);
+	}
 
+	function testMe() {
 		App::build(array(
 			'Plugin' => array(
 				CAKE . 'Test/TestApp/Plugin/'
