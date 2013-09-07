@@ -1,7 +1,5 @@
 <?php
 /**
- * Plugin class
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -13,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Core
  * @since         CakePHP(tm) v 2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -23,10 +20,9 @@ use Cake\Error;
 use Cake\Utility\Inflector;
 
 /**
- * Cake Plugin is responsible for loading and unloading plugins. It also can
+ * Plugin is responsible for loading and unloading plugins. It also can
  * retrieve plugin paths and load their bootstrap and routes files.
  *
- * @package       Cake.Core
  * @link http://book.cakephp.org/2.0/en/plugins.html
  */
 class Plugin {
