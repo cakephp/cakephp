@@ -96,7 +96,6 @@ class File {
 
 /**
  * Closes the current file if it is opened
- *
  */
 	public function __destruct() {
 		$this->close();

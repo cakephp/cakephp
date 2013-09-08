@@ -3306,7 +3306,6 @@ class DboSource extends DataSource {
 
 /**
  * Used for storing in cache the results of the in-memory methodCache
- *
  */
 	public function __destruct() {
 		if ($this->_methodCacheChange) {
