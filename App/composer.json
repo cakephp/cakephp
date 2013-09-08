@@ -13,8 +13,8 @@
     },
     "autoload": {
         "psr-0": {
-            "": ".",
-            "App\\": "."
+            "App\\": ".",
+            "": "./Plugin"
         }
     },
     "scripts": {
