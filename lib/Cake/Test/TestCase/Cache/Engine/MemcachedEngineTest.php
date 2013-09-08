@@ -13,18 +13,19 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Cache.Engine
  * @since         CakePHP(tm) v 2.5.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Test\TestCase\Cache\Engine;
 
-App::uses('Cache', 'Cache');
-App::uses('MemcachedEngine', 'Cache/Engine');
+use Cake\Cache\Cache;
+use Cake\Cache\Engine\MemcachedEngine;
+use Cake\Core\Configure;
+use Cake\TestSuite\TestCase;
 
 /**
  * Class TestMemcachedEngine
  *
- * @package       Cake.Test.Case.Cache.Engine
  */
 class TestMemcachedEngine extends MemcachedEngine {
 
@@ -51,9 +52,8 @@ class TestMemcachedEngine extends MemcachedEngine {
 /**
  * MemcachedEngineTest class
  *
- * @package       Cake.Test.Case.Cache.Engine
  */
-class MemcachedEngineTest extends CakeTestCase {
+class MemcachedEngineTest extends TestCase {
 
 /**
  * setUp method
@@ -81,6 +81,7 @@ class MemcachedEngineTest extends CakeTestCase {
 		Cache::drop('memcached');
 		Cache::drop('memcached_groups');
 		Cache::drop('memcached_helper');
+		Cache::drop('compressed_memcached');
 		Cache::config('default');
 	}
 
@@ -120,7 +121,7 @@ class MemcachedEngineTest extends CakeTestCase {
 			'compress' => false
 		));
 
-		$this->assertFalse($Memcached->getMemcached()->getOption(Memcached::OPT_COMPRESSION));
+		$this->assertFalse($Memcached->getMemcached()->getOption(\Memcached::OPT_COMPRESSION));
 
 		$MemcachedCompressed = new TestMemcachedEngine();
 		$MemcachedCompressed->init(array(
@@ -129,7 +130,7 @@ class MemcachedEngineTest extends CakeTestCase {
 			'compress' => true
 		));
 
-		$this->assertTrue($MemcachedCompressed->getMemcached()->getOption(Memcached::OPT_COMPRESSION));
+		$this->assertTrue($MemcachedCompressed->getMemcached()->getOption(\Memcached::OPT_COMPRESSION));
 	}
 
 /**
@@ -154,7 +155,7 @@ class MemcachedEngineTest extends CakeTestCase {
 		);
 
 		$this->setExpectedException(
-			'CacheException', 'Memcached extension is not build with SASL support'
+			'Cake\Error\Exception', 'Memcached extension is not build with SASL support'
 		);
 		$Memcached->init($settings);
 	}
@@ -167,7 +168,7 @@ class MemcachedEngineTest extends CakeTestCase {
 	public function testMultipleServers() {
 		$servers = array('127.0.0.1:11211', '127.0.0.1:11222');
 		$available = true;
-		$Memcached = new Memcached();
+		$Memcached = new \Memcached();
 
 		foreach ($servers as $server) {
 			list($host, $port) = explode(':', $server);
@@ -237,7 +238,12 @@ class MemcachedEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testReadAndWriteCache() {
-		Cache::set(array('duration' => 1), null, 'memcached');
+		Cache::drop('memcached');
+		Cache::config('memcached', array(
+			'engine' => 'Memcached',
+			'prefix' => 'cake_',
+			'duration' => 1
+		));
 
 		$result = Cache::read('test', 'memcached');
 		$expecting = '';
@@ -260,7 +266,12 @@ class MemcachedEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testExpiry() {
-		Cache::set(array('duration' => 1), 'memcached');
+		Cache::drop('memcached');
+		Cache::config('memcached', array(
+			'engine' => 'Memcached',
+			'prefix' => 'cake_',
+			'duration' => 1
+		));
 
 		$result = Cache::read('test', 'memcached');
 		$this->assertFalse($result);
@@ -273,7 +284,12 @@ class MemcachedEngineTest extends CakeTestCase {
 		$result = Cache::read('other_test', 'memcached');
 		$this->assertFalse($result);
 
-		Cache::set(array('duration' => "+1 second"), 'memcached');
+		Cache::drop('memcached');
+		Cache::config('memcached', array(
+			'engine' => 'Memcached',
+			'prefix' => 'cake_',
+			'duration' => '+1 second'
+		));
 
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('other_test', $data, 'memcached');
@@ -283,12 +299,22 @@ class MemcachedEngineTest extends CakeTestCase {
 		$result = Cache::read('other_test', 'memcached');
 		$this->assertFalse($result);
 
-		Cache::config('memcached', array('duration' => '+1 second'));
+		Cache::drop('memcached');
+		Cache::config('memcached', array(
+			'engine' => 'Memcached',
+			'prefix' => 'cake_',
+			'duration' => '+1 second'
+		));
 
 		$result = Cache::read('other_test', 'memcached');
 		$this->assertFalse($result);
 
-		Cache::config('memcached', array('duration' => '+29 days'));
+		Cache::drop('memcached');
+		Cache::config('memcached', array(
+			'engine' => 'Memcached',
+			'prefix' => 'cake2_',
+			'duration' => '+29 days'
+		));
 		$data = 'this is a test of the emergency broadcasting system';
 		$result = Cache::write('long_expiry_test', $data, 'memcached');
 		$this->assertTrue($result);
@@ -297,8 +323,6 @@ class MemcachedEngineTest extends CakeTestCase {
 		$result = Cache::read('long_expiry_test', 'memcached');
 		$expecting = $data;
 		$this->assertEquals($expecting, $result);
-
-		Cache::config('memcached', array('duration' => 3600));
 	}
 
 /**
@@ -492,7 +516,12 @@ class MemcachedEngineTest extends CakeTestCase {
  * @return void
  */
 	public function testZeroDuration() {
-		Cache::config('memcached', array('duration' => 0));
+		Cache::drop('memcached');
+		Cache::config('memcached', array(
+			'engine' => 'Memcached',
+			'prefix' => 'cake2_',
+			'duration' => 0
+		));
 		$result = Cache::write('test_key', 'written!', 'memcached');
 
 		$this->assertTrue($result);
