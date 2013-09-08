@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\MemcachedEngine;
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
-use \Memcached;
 
 /**
  * Class TestMemcachedEngine
@@ -132,7 +132,7 @@ class MemcachedEngineTest extends TestCase {
 			'compress' => false
 		));
 
-		$this->assertFalse($Memcached->getMemcached()->getOption(Memcached::OPT_COMPRESSION));
+		$this->assertFalse($Memcached->getMemcached()->getOption(\Memcached::OPT_COMPRESSION));
 
 		$MemcachedCompressed = new TestMemcachedEngine();
 		$MemcachedCompressed->init(array(
@@ -141,7 +141,7 @@ class MemcachedEngineTest extends TestCase {
 			'compress' => true
 		));
 
-		$this->assertTrue($MemcachedCompressed->getMemcached()->getOption(Memcached::OPT_COMPRESSION));
+		$this->assertTrue($MemcachedCompressed->getMemcached()->getOption(\Memcached::OPT_COMPRESSION));
 	}
 
 /**
@@ -179,7 +179,7 @@ class MemcachedEngineTest extends TestCase {
 	public function testMultipleServers() {
 		$servers = array('127.0.0.1:11211', '127.0.0.1:11222');
 		$available = true;
-		$Memcached = new Memcached();
+		$Memcached = new \Memcached();
 
 		foreach ($servers as $server) {
 			list($host, $port) = explode(':', $server);

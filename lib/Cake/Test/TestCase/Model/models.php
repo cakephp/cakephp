@@ -2041,7 +2041,9 @@ class CallbackPostTestModel extends CakeTestModel {
 /**
  * beforeValidate callback
  *
- * @return boolean
+ * @param array $options Options passed from Model::save().
+ * @return boolean True if validate operation should continue, false to abort
+ * @see Model::save()
  */
 	public function beforeValidate($options = array()) {
 		return $this->beforeValidateReturn;
@@ -4982,7 +4984,9 @@ class CustomArticle extends AppModel {
 /**
  * Alters title data
  *
- * @return void
+ * @param array $options Options passed from Model::save().
+ * @return boolean True if validate operation should continue, false to abort
+ * @see Model::save()
  */
 	public function beforeValidate($options = array()) {
 		$this->data[$this->alias]['title'] = 'foo';

@@ -179,9 +179,11 @@ class TreeBehavior extends ModelBehavior {
  *
  * @since         1.2
  * @param Model $Model Model instance
+ * @param array $options Options passed from Model::save().
  * @return boolean true to continue, false to abort the save
+ * @see Model::save()
  */
-	public function beforeSave(Model $Model) {
+	public function beforeSave(Model $Model, $options = array()) {
 		extract($this->settings[$Model->alias]);
 
 		$this->_addToWhitelist($Model, array($left, $right));

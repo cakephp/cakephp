@@ -660,34 +660,6 @@ class App {
 		if (static::$_objectCacheChange) {
 			Cache::write('object_map', static::$_objects, '_cake_core_');
 		}
-		static::_checkFatalError();
-	}
-
-/**
- * Check if a fatal error happened and trigger the configured handler if configured
- *
- * @return void
- */
-	protected static function _checkFatalError() {
-		$lastError = error_get_last();
-		if (!is_array($lastError)) {
-			return;
-		}
-
-		list(, $log) = ErrorHandler::mapErrorCode($lastError['type']);
-		if ($log !== LOG_ERR) {
-			return;
-		}
-
-		if (PHP_SAPI === 'cli') {
-			$errorHandler = Configure::read('Error.consoleHandler');
-		} else {
-			$errorHandler = Configure::read('Error.handler');
-		}
-		if (!is_callable($errorHandler)) {
-			return;
-		}
-		call_user_func($errorHandler, $lastError['type'], $lastError['message'], $lastError['file'], $lastError['line'], array());
 	}
 
 }

@@ -17,7 +17,6 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 use Cake\Error;
 use Cake\Utility\Inflector;
-use \Memcached;
 
 /**
  * Memcached storage engine for cache. Memcached has some limitations in the amount of
@@ -87,7 +86,7 @@ class MemcachedEngine extends CacheEngine {
 			return true;
 		}
 
-		$this->_Memcached = new Memcached($this->settings['persistent'] ? (string)$this->settings['persistent'] : null);
+		$this->_Memcached = new \Memcached($this->settings['persistent'] ? (string)$this->settings['persistent'] : null);
 		$this->_setOptions();
 
 		if (count($this->_Memcached->getServerList())) {
@@ -120,18 +119,18 @@ class MemcachedEngine extends CacheEngine {
  *
  */
 	protected function _setOptions() {
-		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
+		$this->_Memcached->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
-		if (Memcached::HAVE_IGBINARY) {
-			$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_IGBINARY);
+		if (\Memcached::HAVE_IGBINARY) {
+			$this->_Memcached->setOption(\Memcached::OPT_SERIALIZER, \Memcached::SERIALIZER_IGBINARY);
 		}
 
 		// Check for Amazon ElastiCache instance
 		if (defined('Memcached::OPT_CLIENT_MODE') && defined('Memcached::DYNAMIC_CLIENT_MODE')) {
-			$this->_Memcached->setOption(Memcached::OPT_CLIENT_MODE, Memcached::DYNAMIC_CLIENT_MODE);
+			$this->_Memcached->setOption(\Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE);
 		}
 
-		$this->_Memcached->setOption(Memcached::OPT_COMPRESSION, (bool)$this->settings['compress']);
+		$this->_Memcached->setOption(\Memcached::OPT_COMPRESSION, (bool)$this->settings['compress']);
 	}
 
 /**
