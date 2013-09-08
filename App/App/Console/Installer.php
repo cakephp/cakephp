@@ -35,7 +35,7 @@ class Installer {
 		$rootDir = dirname(dirname(__DIR__));
 		static::createAppConfig($rootDir, $io);
 		static::setTmpPermissions($rootDir, $io);
-
+		static::setSecuritySalt($rootDir, $io);
 	}
 
 /**
@@ -99,6 +99,33 @@ class Installer {
 		$worldWritable = bindec('0000000111');
 		$walker($dir . '/tmp', $worldWritable, $io);
 		$changePerms($dir . '/tmp', $worldWritable, $io);
+	}
+
+/**
+ * Set the security.salt value in the application's config file.
+ *
+ * @param string $dir The application's root directory.
+ * @param Composer\IO\IOInterface IO interface to write to console.
+ * @return void
+ */
+	public static function setSecuritySalt($dir, $io) {
+		$config = $dir . '/App/Config/app.php';
+		$content = file_get_contents($config);
+
+		$newKey = hash('sha256', $dir . php_uname() . microtime(true));
+		$content = str_replace('__SALT__', $newKey, $content, $count);
+
+		if ($count == 0) {
+			$io->write('No Security.salt placeholder to replace.');
+			return;
+		}
+
+		$result = file_put_contents($config, $content);
+		if ($result) {
+			$io->write('Updated Security.salt value in App/Config/app.php');
+			return;
+		}
+		$io->write('Unable to update Security.salt value.');
 	}
 
 }
