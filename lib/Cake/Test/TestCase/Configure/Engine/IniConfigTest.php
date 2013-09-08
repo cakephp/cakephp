@@ -215,9 +215,6 @@ class IniConfigTest extends TestCase {
  * @return void
  */
 	public function testReadPluginValue() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load('TestPlugin');
 		$engine = new IniConfig($this->path);
 		$result = $engine->read('TestPlugin.nested');
@@ -238,9 +235,6 @@ class IniConfigTest extends TestCase {
  * @return void
  */
 	public function testReadPluginSpecialAclIniPhpValue() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load('TestPlugin');
 		$engine = new IniConfig($this->path);
 		$result = $engine->read('TestPlugin.acl.ini.php');

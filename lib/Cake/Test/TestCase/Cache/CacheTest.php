@@ -76,10 +76,6 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testConfigWithLibAndPluginEngines() {
-		App::build(array(
-			'Lib' => array(CAKE . 'Test/TestApp/Lib/'),
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
@@ -298,10 +294,6 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testDrop() {
-		App::build(array(
-			'Lib' => array(CAKE . 'Test/TestApp/Lib/'),
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 
 		$result = Cache::drop('some_config_that_does_not_exist');
@@ -346,10 +338,6 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testWriteTriggerError() {
-		App::build(array(
-			'Lib' => array(CAKE . 'Test/TestApp/Lib/'),
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 		Cache::config('test_trigger', [
 			'engine' => 'TestAppCache',
@@ -363,7 +351,6 @@ class CacheTest extends TestCase {
 			$this->assertTrue(true);
 		}
 		Cache::drop('test_trigger');
-		App::build();
 	}
 
 /**

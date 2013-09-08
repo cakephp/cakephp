@@ -122,9 +122,6 @@ class PhpConfigTest extends TestCase {
  * @return void
  */
 	public function testReadPluginValue() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load('TestPlugin');
 		$engine = new PhpConfig($this->path);
 		$result = $engine->read('TestPlugin.load');

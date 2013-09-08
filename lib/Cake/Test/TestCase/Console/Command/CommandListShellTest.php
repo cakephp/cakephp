@@ -54,14 +54,6 @@ class CommandListShellTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test/TestApp/Plugin/'
-			),
-			'Console/Command' => array(
-				CAKE . 'Test/TestApp/Console/Command/'
-			)
-		), App::RESET);
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$out = new TestStringOutput();

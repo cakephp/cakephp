@@ -100,8 +100,7 @@ class Plugin {
  * - `routes` - boolean - Whether or not you want to load the $plugin/Config/routes.php file.
  * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
  * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
- * - `path` - string - The path the plugin can be found on. If empty the plugin paths will scanned
- *   for a directory with a name matching the namespace.
+ * - `path` - string - The path the plugin can be found on. If empty the default plugin path will be used.
  *
  * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
@@ -119,23 +118,21 @@ class Plugin {
 
 		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false);
 		if (empty($config['path'])) {
+			$path = Configure::read('App.pluginPath');
 			$namespacePath = str_replace('\\', DS, $config['namespace']);
-			foreach (App::path('Plugin') as $path) {
-				if (is_dir($path . $plugin)) {
-					$config += array('path' => $path . $plugin . DS);
-					break;
-				}
-				if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
-					$config += array('path' => $path . $namespacePath . DS);
-					break;
-				}
+			if (is_dir($path . $plugin)) {
+				$config += array('path' => $path . $plugin . DS);
+			}
+			if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
+				$config += array('path' => $path . $namespacePath . DS);
 			}
 		}
-		static::$_plugins[$plugin] = $config;
 
-		if (empty(static::$_plugins[$plugin]['path'])) {
+		if (empty($config['path'])) {
 			throw new Error\MissingPluginException(array('plugin' => $plugin));
 		}
+
+		static::$_plugins[$plugin] = $config;
 
 		if (!empty(static::$_plugins[$plugin]['bootstrap'])) {
 			static::bootstrap($plugin);

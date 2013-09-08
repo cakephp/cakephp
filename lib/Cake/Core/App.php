@@ -173,19 +173,13 @@ class App {
  */
 	public static function path($type, $plugin = null) {
 		if (!empty($plugin)) {
-			$path = array();
+			$path = [];
 			$pluginPath = static::pluginPath($plugin);
-			$packageFormat = static::_packageFormat();
-			if (!empty($packageFormat[$type])) {
-				foreach ($packageFormat[$type] as $f) {
-					$path[] = sprintf($f, $pluginPath);
-				}
-			}
+			$path[] = $pluginPath . $type;
 			return $path;
 		}
-
 		if (!isset(static::$_packages[$type])) {
-			return array();
+			return [APP . DS . $type];
 		}
 		return static::$_packages[$type];
 	}
@@ -451,60 +445,12 @@ class App {
 	protected static function _packageFormat() {
 		if (empty(static::$_packageFormat)) {
 			static::$_packageFormat = array(
-				'Model' => array(
-					'%s' . 'Model' . DS
-				),
-				'Model/Behavior' => array(
-					'%s' . 'Model' . DS . 'Behavior' . DS
-				),
-				'Model/Datasource' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS
-				),
-				'Model/Datasource/Database' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS . 'Database' . DS
-				),
-				'Model/Datasource/Session' => array(
-					'%s' . 'Model' . DS . 'Datasource' . DS . 'Session' . DS
-				),
-				'Controller' => array(
-					'%s' . 'Controller' . DS
-				),
-				'Controller/Component' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS
-				),
-				'Controller/Component/Auth' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS . 'Auth' . DS
-				),
-				'Controller/Component/Acl' => array(
-					'%s' . 'Controller' . DS . 'Component' . DS . 'Acl' . DS
-				),
 				'View' => array(
 					'%s' . 'View' . DS
-				),
-				'View/Helper' => array(
-					'%s' . 'View' . DS . 'Helper' . DS
-				),
-				'Console' => array(
-					'%s' . 'Console' . DS
-				),
-				'Console/Command' => array(
-					'%s' . 'Console' . DS . 'Command' . DS
-				),
-				'Console/Command/Task' => array(
-					'%s' . 'Console' . DS . 'Command' . DS . 'Task' . DS
-				),
-				'Lib' => array(
-					'%s' . 'Lib' . DS
 				),
 				'Locale' => array(
 					'%s' . 'Locale' . DS
 				),
-				'Vendor' => array(
-					ROOT . DS . 'vendor' . DS,
-				),
-				'Plugin' => array(
-					ROOT . DS . 'Plugin' . DS,
-				)
 			);
 		}
 
