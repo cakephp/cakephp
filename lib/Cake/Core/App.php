@@ -79,13 +79,6 @@ class App {
 	const PREPEND = 'prepend';
 
 /**
- * Register package
- *
- * @constant REGISTER
- */
-	const REGISTER = 'register';
-
-/**
  * Reset paths instead of merging
  *
  * @constant RESET
@@ -175,11 +168,11 @@ class App {
 		if (!empty($plugin)) {
 			$path = [];
 			$pluginPath = static::pluginPath($plugin);
-			$path[] = $pluginPath . $type;
+			$path[] = $pluginPath . $type . DS;
 			return $path;
 		}
 		if (!isset(static::$_packages[$type])) {
-			return [APP . DS . $type];
+			return [APP . $type . DS];
 		}
 		return static::$_packages[$type];
 	}
@@ -209,13 +202,11 @@ class App {
  *
  * `App::build(array('View/Helper' => array('/path/to/helpers/', '/another/path/'))); will setup multiple search paths for helpers`
  *
- * `App::build(array('Service' => array('%s' . 'Service/')), App::REGISTER); will register new package 'Service'`
  *
  * If reset is set to true, all loaded plugins will be forgotten and they will be needed to be loaded again.
  *
  * @param array $paths associative array with package names as keys and a list of directories for new search paths
  * @param boolean|string $mode App::RESET will set paths, App::APPEND with append paths, App::PREPEND will prepend paths (default)
- * 	App::REGISTER will register new packages and their paths, %s in path will be replaced by APP path
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::build
  */
@@ -234,18 +225,6 @@ class App {
 
 		$packageFormat = static::_packageFormat();
 
-		if ($mode === static::REGISTER) {
-			foreach ($paths as $package => $formats) {
-				if (empty($packageFormat[$package])) {
-					$packageFormat[$package] = $formats;
-				} else {
-					$formats = array_merge($packageFormat[$package], $formats);
-					$packageFormat[$package] = array_values(array_unique($formats));
-				}
-			}
-			static::$_packageFormat = $packageFormat;
-		}
-
 		$defaults = array();
 		foreach ($packageFormat as $package => $format) {
 			foreach ($format as $f) {
@@ -256,10 +235,6 @@ class App {
 		if (empty($paths)) {
 			static::$_packages = $defaults;
 			return;
-		}
-
-		if ($mode === static::REGISTER) {
-			$paths = array();
 		}
 
 		foreach ($defaults as $type => $default) {

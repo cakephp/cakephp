@@ -85,175 +85,51 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testBuild() {
-		$old = App::path('Model');
+		$old = App::path('View');
 		$expected = array(
-			APP . 'Model' . DS
+			APP . 'View' . DS
 		);
 		$this->assertEquals($expected, $old);
 
-		App::build(array('Model' => array('/path/to/models/')));
-		$new = App::path('Model');
-		$expected = array(
-			'/path/to/models/',
-			APP . 'Model' . DS
-		);
-		$this->assertEquals($expected, $new);
-
 		App::build();
-		App::build(array('Model' => array('/path/to/models/')), App::PREPEND);
-		$new = App::path('Model');
-		$expected = array(
-			'/path/to/models/',
-			APP . 'Model' . DS
-		);
-		$this->assertEquals($expected, $new);
-
-		App::build();
-		App::build(array('Model' => array('/path/to/models/')), App::APPEND);
-		$new = App::path('Model');
-		$expected = array(
-			APP . 'Model' . DS,
-			'/path/to/models/'
-		);
-		$this->assertEquals($expected, $new);
-
-		App::build();
-		App::build(array(
-			'Model' => array('/path/to/models/'),
-			'Controller' => array('/path/to/controllers/'),
-		), App::APPEND);
-		$new = App::path('Model');
-		$expected = array(
-			APP . 'Model' . DS,
-			'/path/to/models/'
-		);
-		$this->assertEquals($expected, $new);
-		$new = App::path('Controller');
-		$expected = array(
-			APP . 'Controller' . DS,
-			'/path/to/controllers/'
-		);
-		$this->assertEquals($expected, $new);
-
-		App::build(); //reset defaults
-		$defaults = App::path('Model');
-		$this->assertEquals($old, $defaults);
-	}
-
-/**
- * tests that it is possible to set up paths using the cake 1.3 notation for them (models, behaviors, controllers...)
- *
- * @return void
- */
-	public function testCompatibleBuild() {
-		$old = App::path('Model');
-		$expected = array(
-			APP . 'Model' . DS
-		);
-		$this->assertEquals($expected, $old);
-
-		App::build(array('Model' => array('/path/to/models/')));
-
-		$expected = array(
-			'/path/to/models/',
-			APP . 'Model' . DS
-		);
-		$this->assertEquals($expected, App::path('Model'));
-
-		App::build(array('Model/Datasource' => array('/path/to/datasources/')));
-		$expected = array(
-			'/path/to/datasources/',
-			APP . 'Model' . DS . 'Datasource' . DS
-		);
-		$this->assertEquals($expected, App::path('Model/Datasource'));
-
-		App::build(array('Model/Behavior' => array('/path/to/behaviors/')));
-		$expected = array(
-			'/path/to/behaviors/',
-			APP . 'Model' . DS . 'Behavior' . DS
-		);
-		$this->assertEquals($expected, App::path('Model/Behavior'));
-
-		App::build(array('Controller' => array('/path/to/controllers/')));
-		$expected = array(
-			'/path/to/controllers/',
-			APP . 'Controller' . DS
-		);
-		$this->assertEquals($expected, App::path('Controller'));
-
-		App::build(array('Controller/Component' => array('/path/to/components/')));
-		$expected = array(
-			'/path/to/components/',
-			APP . 'Controller' . DS . 'Component' . DS
-		);
-		$this->assertEquals($expected, App::path('Controller/Component'));
-
-		App::build(array('View' => array('/path/to/views/')));
+		App::build(array('View' => array('/path/to/views/')), App::PREPEND);
+		$new = App::path('View');
 		$expected = array(
 			'/path/to/views/',
 			APP . 'View' . DS
 		);
-		$this->assertEquals($expected, App::path('View'));
-
-		App::build(array('View/Helper' => array('/path/to/helpers/')));
-		$expected = array(
-			'/path/to/helpers/',
-			APP . 'View' . DS . 'Helper' . DS
-		);
-		$this->assertEquals($expected, App::path('View/Helper'));
-
-		App::build(array('Console/Command' => array('/path/to/shells/')));
-		$expected = array(
-			'/path/to/shells/',
-			APP . 'Console' . DS . 'Command' . DS
-		);
-		$this->assertEquals($expected, App::path('Console/Command'));
-
-		App::build(); //reset defaults
-		$defaults = App::path('Model');
-		$this->assertEquals($old, $defaults);
-	}
-
-/**
- * test package build() with App::REGISTER.
- *
- * @return void
- */
-	public function testBuildPackage() {
-		$pluginPaths = array(
-			'/foo/bar',
-			ROOT . DS . 'Plugin' . DS,
-		);
-		App::build(array(
-			'Plugin' => array(
-				'/foo/bar'
-			)
-		));
-		$result = App::path('Plugin');
-		$this->assertEquals($pluginPaths, $result);
-
-		$paths = App::path('Service');
-		$this->assertSame(array(), $paths);
-
-		App::build(array(
-			'Service' => array(
-				'%s' . 'Service' . DS
-			),
-		), App::REGISTER);
-
-		$expected = array(
-			APP . 'Service' . DS
-		);
-		$result = App::path('Service');
-		$this->assertEquals($expected, $result);
-
-		//Ensure new paths registered for other packages are not affected
-		$result = App::path('Plugin');
-		$this->assertEquals($pluginPaths, $result);
+		$this->assertEquals($expected, $new);
 
 		App::build();
-		$paths = App::path('Service');
-		$this->assertSame(array(), $paths);
+		App::build(array('View' => array('/path/to/views/')), App::APPEND);
+		$new = App::path('View');
+		$expected = array(
+			APP . 'View' . DS,
+			'/path/to/views/'
+		);
+		$this->assertEquals($expected, $new);
+
+		App::build();
+		App::build(array(
+			'View' => array('/path/to/views/'),
+			'Locale' => array('/path/to/locales/'),
+		), App::APPEND);
+		$new = App::path('View');
+		$expected = array(
+			APP . 'View' . DS,
+			'/path/to/views/'
+		);
+		$this->assertEquals($expected, $new);
+		$new = App::path('Locale');
+		$expected = array(
+			APP . 'Locale' . DS,
+			'/path/to/locales/'
+		);
+		$this->assertEquals($expected, $new);
+
+		App::build(); //reset defaults
+		$defaults = App::path('View');
+		$this->assertEquals($old, $defaults);
 	}
 
 /**

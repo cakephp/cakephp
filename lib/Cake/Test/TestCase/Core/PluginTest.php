@@ -57,10 +57,6 @@ class PluginTest extends TestCase {
 		Plugin::load('TestPlugin');
 		$this->assertEquals('TestPlugin', Plugin::getNamespace('TestPlugin'));
 
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin2' . DS)
-		), App::RESET);
-
 		Plugin::load('TestPluginThree', array('namespace' => 'Company\TestPluginThree'));
 		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('TestPluginThree'));
 
@@ -254,7 +250,7 @@ class PluginTest extends TestCase {
  */
 	public function testLoadAll() {
 		Plugin::loadAll();
-		$expected = ['PluginJs', 'TestPlugin', 'TestPluginTwo'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo'];
 		$this->assertEquals($expected, Plugin::loaded());
 	}
 
@@ -264,9 +260,9 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testLoadAllWithDefaults() {
-		$defaults = array('bootstrap' => true);
+		$defaults = array('bootstrap' => true, 'ignoreMissing' => true);
 		Plugin::loadAll(array($defaults));
-		$expected = ['PluginJs', 'TestPlugin', 'TestPluginTwo'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo'];
 		$this->assertEquals($expected, Plugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
@@ -280,10 +276,13 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testLoadAllWithDefaultsAndOverride() {
-		Plugin::loadAll(array(array('bootstrap' => true), 'TestPlugin' => array('routes' => true)));
+		Plugin::loadAll(array(
+			array('bootstrap' => true, 'ignoreMissing' => true),
+			'TestPlugin' => array('routes' => true)
+		));
 		Plugin::routes();
 
-		$expected = ['PluginJs', 'TestPlugin', 'TestPluginTwo'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo'];
 		$this->assertEquals($expected, Plugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
