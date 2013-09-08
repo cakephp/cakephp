@@ -45,7 +45,6 @@ $config = [
 		'imageBaseUrl' => 'img/',
 		'cssBaseUrl' => 'css/',
 		'jsBaseUrl' => 'js/',
-		'pluginPath' => ROOT . '/Plugin/',
 	],
 
 /**
