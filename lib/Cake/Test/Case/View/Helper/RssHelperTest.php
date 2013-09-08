@@ -610,7 +610,7 @@ class RssHelperTest extends CakeTestCase {
 
 		$this->assertTrue($File->write('123'), 'Could not write to ' . $tmpFile);
 
-		if (50300 <= PHP_VERSION_ID) {
+		if (PHP_VERSION_ID >= 50300) {
 			clearstatcache(true, $tmpFile);
 		} else {
 			clearstatcache();

@@ -320,9 +320,11 @@ class TranslateBehavior extends ModelBehavior {
  * beforeValidate Callback
  *
  * @param Model $Model Model invalidFields was called on.
+ * @param array $options Options passed from Model::save().
  * @return boolean
+ * @see Model::save()
  */
-	public function beforeValidate(Model $Model) {
+	public function beforeValidate(Model $Model, $options = array()) {
 		unset($this->runtime[$Model->alias]['beforeSave']);
 		$this->_setRuntimeData($Model);
 		return true;
@@ -335,7 +337,9 @@ class TranslateBehavior extends ModelBehavior {
  * disabled. Or the runtime data hasn't been set yet.
  *
  * @param Model $Model Model save was called on.
+ * @param array $options Options passed from Model::save().
  * @return boolean true.
+ * @see Model::save()
  */
 	public function beforeSave(Model $Model, $options = array()) {
 		if (isset($options['validate']) && !$options['validate']) {
