@@ -59,7 +59,6 @@ class PluginTaskTest extends TestCase {
 			}
 		}
 		$this->_testPath = array_push($paths, TMP . 'tests/');
-		App::build(array('Plugin' => $paths));
 	}
 
 /**

@@ -113,25 +113,7 @@ class ShellDispatcherTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test/TestApp/Plugin/'
-			),
-			'Console/Command' => array(
-				CAKE . 'Test/TestApp/Console/Command/'
-			)
-		), App::RESET);
 		Plugin::load('TestPlugin');
-	}
-
-/**
- * tearDown method
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		Plugin::unload();
 	}
 
 /**
