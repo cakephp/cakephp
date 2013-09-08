@@ -14,10 +14,23 @@
  */
 namespace App\Config;
 
-if (!file_exists(dirname(dirname(__DIR__)) . '/vendor/autoload.php')) {
-	die('Could not find vendor/autoload.php. You need to install dependencies with `php composer.phar install` first.');
+// Use composer to load configure the autoloaders.
+$root = dirname(dirname(__DIR__));
+if (file_exists($root . '/vendor/autoload.php')) {
+	require $root . '/vendor/autoload.php';
 }
-require dirname(dirname(__DIR__)) . '/vendor/autoload.php';
+
+// If you can't use composer, you can use CakePHP's classloader
+// to autoload your application and the framework. You will
+// also need to add autoloaders for each Plugin you use.
+// This code expects that cakephp will be
+// setup in vendor/cakephp/cakephp.
+/*
+require $root . '/vendor/cakephp/cakephp/Cake/Core/ClassLoader.php';
+(new Cake\Core\ClassLoader('App', $root))->register();
+(new Cake\Core\ClassLoader('Cake', $root . '/vendor/cakephp/cakephp')->register();
+*/
+unset($root);
 
 
 /**
