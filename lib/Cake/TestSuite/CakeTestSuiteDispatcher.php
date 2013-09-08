@@ -77,7 +77,7 @@ class CakeTestSuiteDispatcher {
 	protected static $_Reporter = null;
 
 /**
- * constructor
+ * Constructor
  *
  */
 	public function __construct() {
