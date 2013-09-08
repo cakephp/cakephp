@@ -144,9 +144,11 @@ class ModelBehavior extends Object {
  * will allow you to make the validation fail.
  *
  * @param Model $model Model using this behavior
+ * @param array $options Options passed from Model::save().
  * @return mixed False or null will abort the operation. Any other result will continue.
+ * @see Model::save()
  */
-	public function beforeValidate(Model $model) {
+	public function beforeValidate(Model $model, $options = array()) {
 		return true;
 	}
 
@@ -166,9 +168,11 @@ class ModelBehavior extends Object {
  * will abort the save operation.
  *
  * @param Model $model Model using this behavior
+ * @param array $options Options passed from Model::save().
  * @return mixed False if the operation should abort. Any other result will continue.
+ * @see Model::save()
  */
-	public function beforeSave(Model $model) {
+	public function beforeSave(Model $model, $options = array()) {
 		return true;
 	}
 

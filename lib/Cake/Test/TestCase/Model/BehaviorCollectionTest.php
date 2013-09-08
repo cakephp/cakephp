@@ -109,10 +109,12 @@ class TestBehavior extends ModelBehavior {
 /**
  * beforeSave method
  *
- * @param Model $model
- * @return void
+ * @param Model $model Model using this behavior
+ * @param array $options Options passed from Model::save().
+ * @return mixed False if the operation should abort. Any other result will continue.
+ * @see Model::save()
  */
-	public function beforeSave(Model $model) {
+	public function beforeSave(Model $model, $options = array()) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['beforeSave']) || $settings['beforeSave'] === 'off') {
 			return parent::beforeSave($model);
@@ -160,12 +162,14 @@ class TestBehavior extends ModelBehavior {
 	}
 
 /**
- * beforeValidate method
+ * beforeValidate Callback
  *
- * @param Model $model
- * @return void
+ * @param Model $Model Model invalidFields was called on.
+ * @param array $options Options passed from Model::save().
+ * @return boolean
+ * @see Model::save()
  */
-	public function beforeValidate(Model $model) {
+	public function beforeValidate(Model $model, $options = array()) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['validate']) || $settings['validate'] === 'off') {
 			return parent::beforeValidate($model);

@@ -1524,8 +1524,9 @@ class FormHelper extends Helper {
 			);
 
 			if ($label) {
-				$optTitle = $this->Html->useTag('label', $tagName, '', $optTitle);
+				$optTitle = $this->label($tagName, $optTitle, is_array($label) ? $label : null);
 			}
+
 			if (is_array($between)) {
 				$optTitle .= array_shift($between);
 			}
