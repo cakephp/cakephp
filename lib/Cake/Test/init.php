@@ -8,7 +8,6 @@
  *
  * @copyright     Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       app.Config
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
@@ -37,10 +36,12 @@ define('APP', ROOT . '/lib/Cake/Test/TestApp/');
 define('WWW_ROOT', APP . WEBROOT_DIR . DS);
 define('TESTS', APP . 'Test' . DS);
 
+//@codingStandardsIgnoreStart
 @mkdir(LOGS);
 @mkdir(CACHE);
 @mkdir(CACHE . 'views');
 @mkdir(CACHE . 'models');
+//@codingStandardsIgnoreEnd
 
 require CORE_PATH . 'Cake/bootstrap.php';
 
