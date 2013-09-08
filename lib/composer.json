@@ -19,7 +19,8 @@
     },
     "require": {
         "php": ">=5.4",
-        "ext-mbstring": "*"
+        "ext-mcrypt": "*",
+        "ext-mbstring": "*",
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
