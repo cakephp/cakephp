@@ -36,6 +36,8 @@ define('APP', ROOT . '/lib/Cake/Test/TestApp/');
 define('WWW_ROOT', APP . WEBROOT_DIR . DS);
 define('TESTS', APP . 'Test' . DS);
 
+define('TEST_APP', ROOT . '/lib/Cake/Test/TestApp/');
+
 //@codingStandardsIgnoreStart
 @mkdir(LOGS);
 @mkdir(CACHE);
@@ -47,6 +49,9 @@ require CORE_PATH . 'Cake/Core/ClassLoader.php';
 
 (new Cake\Core\ClassLoader('Cake', dirname(dirname(__DIR__)) ))->register();
 (new Cake\Core\ClassLoader('TestApp', dirname(__DIR__) . '/Test'))->register();
+(new Cake\Core\ClassLoader('TestPlugin', CAKE . '/Test/TestApp/Plugin/'))->register();
+(new Cake\Core\ClassLoader('TestPluginTwo', CAKE . '/Test/TestApp/Plugin/'))->register();
+(new Cake\Core\ClassLoader('PluginJs', CAKE . '/Test/TestApp/Plugin/'))->register();
 
 require CORE_PATH . 'Cake/bootstrap.php';
 
@@ -65,6 +70,7 @@ Configure::write('App', [
 	'imageBaseUrl' => 'img/',
 	'jsBaseUrl' => 'js/',
 	'cssBaseUrl' => 'css/',
+	'pluginPath' => TEST_APP . 'Plugin/',
 ]);
 
 Cache::config([
