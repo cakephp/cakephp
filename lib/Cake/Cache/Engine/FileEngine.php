@@ -312,10 +312,10 @@ class FileEngine extends CacheEngine {
  * @param string $key
  * @param integer $offset
  * @return void
- * @throws Cake\Error\CacheException
+ * @throws Cake\Error\Exception
  */
 	public function decrement($key, $offset = 1) {
-		throw new Error\CacheException(__d('cake_dev', 'Files cannot be atomically decremented.'));
+		throw new Error\Exception(__d('cake_dev', 'Files cannot be atomically decremented.'));
 	}
 
 /**
@@ -324,10 +324,10 @@ class FileEngine extends CacheEngine {
  * @param string $key
  * @param integer $offset
  * @return void
- * @throws Cake\Error\CacheException
+ * @throws Cake\Error\Exception
  */
 	public function increment($key, $offset = 1) {
-		throw new Error\CacheException(__d('cake_dev', 'Files cannot be atomically incremented.'));
+		throw new Error\Exception(__d('cake_dev', 'Files cannot be atomically incremented.'));
 	}
 
 /**

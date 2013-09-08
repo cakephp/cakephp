@@ -159,11 +159,11 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
  * @return New incremented value, false otherwise
- * @throws Cake\Error\CacheException when you try to increment with compress = true
+ * @throws Cake\Error\Exception when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new Error\CacheException(
+			throw new Error\Exception(
 				__d('cake_dev', 'Method %s not implemented for compressed cache in %s', 'increment()', __CLASS__)
 			);
 		}
@@ -176,11 +176,11 @@ class MemcacheEngine extends CacheEngine {
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
  * @return New decremented value, false otherwise
- * @throws Cake\Error\CacheException when you try to decrement with compress = true
+ * @throws Cake\Error\Exception when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
 		if ($this->settings['compress']) {
-			throw new Error\CacheException(
+			throw new Error\Exception(
 				__d('cake_dev', 'Method %s not implemented for compressed cache in %s', 'decrement()', __CLASS__)
 			);
 		}
