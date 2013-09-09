@@ -14,7 +14,7 @@
  */
 namespace App\Config;
 
-// Use composer to load configure the autoloaders.
+// Use composer to load the autoloader.
 $root = dirname(dirname(__DIR__));
 if (file_exists($root . '/vendor/autoload.php')) {
 	require $root . '/vendor/autoload.php';
