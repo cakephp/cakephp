@@ -58,9 +58,6 @@ class AppTest extends TestCase {
 		$this->assertFalse(App::classname('Unknown', 'Controller', 'Controller'));
 
 		// Test plugin
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
-		), App::RESET);
 		Plugin::load('TestPlugin');
 		$this->assertEquals('TestPlugin\Utility\TestPluginEngine', App::classname('TestPlugin.TestPlugin', 'Utility', 'Engine'));
 		$this->assertFalse(App::classname('TestPlugin.Unknown', 'Utility'));
@@ -87,7 +84,7 @@ class AppTest extends TestCase {
 	public function testBuild() {
 		$old = App::path('View');
 		$expected = array(
-			APP . 'View' . DS
+			APP . 'View' . DS,
 		);
 		$this->assertEquals($expected, $old);
 
@@ -96,7 +93,7 @@ class AppTest extends TestCase {
 		$new = App::path('View');
 		$expected = array(
 			'/path/to/views/',
-			APP . 'View' . DS
+			APP . 'View' . DS,
 		);
 		$this->assertEquals($expected, $new);
 
@@ -139,9 +136,6 @@ class AppTest extends TestCase {
  */
 	public function testPathWithPlugins() {
 		$basepath = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS;
-		App::build(array(
-			'Plugin' => array($basepath),
-		));
 		Plugin::load('TestPlugin');
 
 		$result = App::path('Controller', 'TestPlugin');
@@ -154,23 +148,23 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testBuildWithReset() {
-		$old = App::path('Model');
+		$old = App::path('View');
 		$expected = array(
-			APP . 'Model' . DS
+			APP . 'View' . DS,
 		);
 		$this->assertEquals($expected, $old);
 
-		App::build(array('Model' => array('/path/to/models/')), App::RESET);
+		App::build(array('View' => array('/path/to/views/')), App::RESET);
 
-		$new = App::path('Model');
+		$new = App::path('View');
 
 		$expected = array(
-			'/path/to/models/'
+			'/path/to/views/'
 		);
 		$this->assertEquals($expected, $new);
 
 		App::build(); //reset defaults
-		$defaults = App::path('Model');
+		$defaults = App::path('View');
 		$this->assertEquals($old, $defaults);
 	}
 
@@ -209,28 +203,20 @@ class AppTest extends TestCase {
 		$this->assertTrue(in_array('Dispatcher', $result));
 		$this->assertTrue(in_array('Router', $result));
 
-		App::build(array(
-			'Model/Behavior' => App::core('Model/Behavior'),
-			'Controller' => App::core('Controller'),
-			'Controller/Component' => App::core('Controller/Component'),
-			'View' => App::core('View'),
-			'Model' => App::core('Model'),
-			'View/Helper' => App::core('View/Helper'),
-		), App::RESET);
 		$result = App::objects('Model/Behavior', null, false);
-		$this->assertTrue(in_array('TreeBehavior', $result));
+		$this->assertContains('PersisterOneBehaviorBehavior', $result);
 
 		$result = App::objects('Controller/Component', null, false);
-		$this->assertTrue(in_array('AuthComponent', $result));
+		$this->assertContains('AppleComponent', $result);
 
 		$result = App::objects('View', null, false);
-		$this->assertTrue(in_array('JsonView', $result));
+		$this->assertContains('CustomJsonView', $result);
 
 		$result = App::objects('View/Helper', null, false);
-		$this->assertTrue(in_array('HtmlHelper', $result));
+		$this->assertContains('BananaHelper', $result);
 
 		$result = App::objects('Model', null, false);
-		$this->assertTrue(in_array('AcoAction', $result));
+		$this->assertContains('Article', $result);
 
 		$result = App::objects('file');
 		$this->assertFalse($result);
@@ -241,14 +227,7 @@ class AppTest extends TestCase {
 
 		$result = App::objects('NonExistingType');
 		$this->assertSame(array(), $result);
-	}
 
-	function testMe() {
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test/TestApp/Plugin/'
-			)
-		));
 		$result = App::objects('Plugin', null, false);
 		$this->assertContains('TestPlugin', $result);
 		$this->assertContains('TestPluginTwo', $result);
@@ -355,9 +334,8 @@ class AppTest extends TestCase {
  */
 	public function testPaths() {
 		$result = App::paths();
-		$this->assertArrayHasKey('Plugin', $result);
-		$this->assertArrayHasKey('Controller', $result);
-		$this->assertArrayHasKey('Controller/Component', $result);
+		$this->assertArrayHasKey('View', $result);
+		$this->assertArrayHasKey('Locale', $result);
 	}
 
 }

@@ -21,25 +21,16 @@ use Cake\Error\ErrorHandler;
 use Cake\Utility\Inflector;
 
 /**
- * App is responsible for path management, class location and class loading.
+ * App is responsible for resource location, and path management.
+ *
  *
  * ### Adding paths
  *
- * You can add paths to the search indexes App uses to find classes using `App::build()`. Adding
- * additional controller paths for example would alter where CakePHP looks for controllers.
- * This allows you to split your application up across the filesystem.
+ * You can add paths to the search indexes App uses to find resources using `App::build()`. Adding
+ * additional view paths for example would alter where CakePHP looks for view files.
  *
- * ### Packages
- *
- * CakePHP is organized around the idea of packages, each class belongs to a package or folder where other
- * classes reside. You can configure each package location in your application using `App::build('APackage/SubPackage', $paths)`
- * to inform the framework where should each class be loaded. Almost every class in the CakePHP framework can be swapped
- * by your own compatible implementation. If you wish to use you own class instead of the classes the framework provides,
- * just add the class to your libs folder mocking the directory location of where CakePHP expects to find it.
- *
- * For instance if you'd like to use your own HttpSocket class, put it under
- *
- *		App/Network/Http/HttpSocket.php
+ * You can only add paths for Views and Locale files. All class based resources should be mapped
+ * using your application's autoloader.
  *
  * ### Inspecting loaded paths
  *
@@ -365,6 +356,8 @@ class App {
 			if (empty($path)) {
 				$path = static::path($type, $plugin);
 			}
+			// TODO write tests and fix objects(Plugin) with plugins
+			// on unique paths. Perhaps use Plugin::loaded()?
 
 			foreach ((array)$path as $dir) {
 				if ($dir != APP && is_dir($dir)) {
@@ -421,7 +414,7 @@ class App {
 		if (empty(static::$_packageFormat)) {
 			static::$_packageFormat = array(
 				'View' => array(
-					'%s' . 'View' . DS
+					'%s' . 'View' . DS,
 				),
 				'Locale' => array(
 					'%s' . 'Locale' . DS
