@@ -20,7 +20,7 @@ namespace Cake\Model;
  *
  * @package Cake.Model
  */
-class I18nModel extends AppModel {
+class I18nModel extends Model {
 
 /**
  * Model name
