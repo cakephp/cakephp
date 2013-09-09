@@ -20,7 +20,7 @@
     "require": {
         "php": ">=5.4",
         "ext-mcrypt": "*",
-        "ext-mbstring": "*",
+        "ext-mbstring": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
