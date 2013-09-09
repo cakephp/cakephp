@@ -43,10 +43,6 @@ class I18nTest extends TestCase {
 		parent::setUp();
 
 		Cache::delete('object_map', '_cake_core_');
-		App::build(array(
-			'Locale' => array(CAKE . 'Test/TestApp/Locale/'),
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load(array('TestPlugin'));
 	}
 
@@ -59,7 +55,6 @@ class I18nTest extends TestCase {
 		parent::tearDown();
 
 		Cache::delete('object_map', '_cake_core_');
-		App::build();
 		Plugin::unload();
 	}
 
@@ -1610,10 +1605,6 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testPluginTranslation() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
-
 		Configure::write('Config.language', 'po');
 		$singular = $this->_domainSingular();
 		$this->assertEquals('Plural Rule 1 (from plugin)', $singular);

@@ -103,15 +103,9 @@ class TextHelperTest extends TestCase {
  * test engine override
  */
 	public function testEngineOverride() {
-		App::build(array(
-			'Utility' => array(CAKE . 'Test/TestApp/Utility/')
-		), App::REGISTER);
 		$Text = new TextHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
 		$this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Text->engine());
 
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 		Plugin::load('TestPlugin');
 		$Text = new TextHelperTestObject($this->View, array('engine' => 'TestPlugin.TestPluginEngine'));
 		$this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Text->engine());

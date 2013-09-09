@@ -134,10 +134,6 @@ class HtmlHelperTest extends TestCase {
 		$this->Html->request = new Request();
 		$this->Html->request->webroot = '';
 
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
-
 		Configure::write('Asset.timestamp', false);
 	}
 
@@ -485,9 +481,6 @@ class HtmlHelperTest extends TestCase {
 		$testfile = WWW_ROOT . 'theme/test_theme/img/__cake_test_image.gif';
 		new File($testfile, true);
 
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
 		Configure::write('Asset.timestamp', true);
 		Configure::write('debug', 1);
 
@@ -516,9 +509,6 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testThemeAssetsInMainWebrootPath() {
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
 		$webRoot = Configure::read('App.www_root');
 		Configure::write('App.www_root', CAKE . 'Test/TestApp/webroot/');
 
@@ -1082,10 +1072,6 @@ class HtmlHelperTest extends TestCase {
 
 		$testfile = WWW_ROOT . 'theme/test_theme/js/__test_js.js';
 		new File($testfile, true);
-
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
 
 		$this->Html->webroot = '/';
 		$this->Html->theme = 'test_theme';

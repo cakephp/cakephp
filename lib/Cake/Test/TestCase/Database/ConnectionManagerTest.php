@@ -139,9 +139,6 @@ class ConnectionManagerTest extends TestCase {
  * @return void
  */
 	public function testGetPluginDataSource() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load('TestPlugin');
 		$name = 'test_variant';
 		$config = array('className' => 'TestPlugin.TestSource');

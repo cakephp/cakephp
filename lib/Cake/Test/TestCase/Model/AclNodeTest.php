@@ -342,9 +342,6 @@ class AclNodeTest extends TestCase {
  * @return void
  */
 	public function testNodeActionAuthorize() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		CakePlugin::load('TestPlugin');
 
 		$Aro = new DbAroTest();

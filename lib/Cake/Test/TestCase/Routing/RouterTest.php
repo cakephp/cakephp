@@ -160,11 +160,6 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testPluginMapResources() {
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test/TestApp/Plugin/'
-			)
-		));
 		$resources = Router::mapResources('TestPlugin.TestPlugin');
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -219,11 +214,6 @@ class RouterTest extends TestCase {
  * testMapResources with custom connectOptions
  */
 	public function testMapResourcesConnectOptions() {
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
-			)
-		));
 		Plugin::load('TestPlugin');
 		$collection = new RouteCollection();
 		Router::setRouteCollection($collection);
@@ -244,11 +234,6 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testPluginMapResourcesWithPrefix() {
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test/TestApp/Plugin/'
-			)
-		));
 		$resources = Router::mapResources('TestPlugin.TestPlugin', array('prefix' => 'api'));
 
 		$_SERVER['REQUEST_METHOD'] = 'GET';
@@ -1435,11 +1420,6 @@ class RouterTest extends TestCase {
 	public function testPrefixRoutingAndPlugins() {
 		Configure::write('Routing.prefixes', array('admin'));
 		$paths = App::path('Plugin');
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test/TestApp/Plugin/'
-			)
-		), App::RESET);
 		Plugin::load(array('TestPlugin'));
 
 		Router::reload();
@@ -1502,8 +1482,6 @@ class RouterTest extends TestCase {
 		));
 		$expected = '/admin/test_plugin/show_tickets';
 		$this->assertEquals($expected, $result);
-
-		App::build(array('Plugin' => $paths));
 	}
 
 /**
@@ -2202,11 +2180,6 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testConnectDefaultRoutes() {
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test/TestApp/Plugin/'
-			)
-		), App::RESET);
 		Plugin::load(array('TestPlugin', 'PluginJs'));
 		Router::reload();
 		require CAKE . 'Config/routes.php';
@@ -2262,11 +2235,6 @@ class RouterTest extends TestCase {
  * @return void
  */
 	public function testUsingCustomRouteClassPluginDotSyntax() {
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS
-			)
-		));
 		Plugin::load('TestPlugin');
 		Router::connect(
 			'/:slug',

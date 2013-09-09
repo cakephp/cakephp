@@ -46,9 +46,6 @@ class ComponentTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 
 		$this->_pluginPaths = App::path('Plugin');
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 	}
 
 /**

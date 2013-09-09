@@ -133,9 +133,6 @@ class SessionHelperTest extends TestCase {
 		$result = $this->Session->flash('classy');
 		$this->assertEquals($expected, $result);
 
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
 		$result = $this->Session->flash('notification');
 		$result = str_replace("\r\n", "\n", $result);
 		$expected = "<div id=\"notificationLayout\">\n\t<h1>Alert!</h1>\n\t<h3>Notice!</h3>\n\t<p>This is a test of the emergency broadcasting system</p>\n</div>";
@@ -166,9 +163,6 @@ class SessionHelperTest extends TestCase {
  * @return void
  */
 	public function testFlashElementInAttrs() {
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
 		$result = $this->Session->flash('flash', array(
 			'element' => 'session_helper',
 			'params' => array('title' => 'Notice!', 'name' => 'Alert!')
@@ -183,9 +177,6 @@ class SessionHelperTest extends TestCase {
  * @return void
  */
 	public function testFlashWithPluginElement() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 		Plugin::load('TestPlugin');
 
 		$result = $this->Session->flash('flash', array(

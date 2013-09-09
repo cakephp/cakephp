@@ -973,9 +973,6 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testConvertSpecifiers() {
-		App::build(array(
-			'Locale' => array(CAKE . 'Test/TestApp/Locale/')
-		), App::RESET);
 		Configure::write('Config.language', 'es');
 		$time = strtotime('Thu Jan 14 11:43:39 2010');
 
@@ -1080,9 +1077,6 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testI18nFormat() {
-		App::build(array(
-			'Locale' => array(CAKE . 'Test/TestApp/Locale/')
-		), App::RESET);
 		Configure::write('Config.language', 'es');
 
 		$time = strtotime('Thu Jan 14 13:59:28 2010');

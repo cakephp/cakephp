@@ -86,7 +86,6 @@ class HelperRegistryTest extends TestCase {
 		$result = $this->Helpers->Form;
 		$this->assertInstanceOf('Cake\View\Helper\FormHelper', $result);
 
-		App::build(array('Plugin' => array(CAKE . 'Test/TestApp/Plugin/')));
 		$this->View->plugin = 'TestPlugin';
 		Plugin::load(array('TestPlugin'));
 		$result = $this->Helpers->OtherHelper;
@@ -137,7 +136,6 @@ class HelperRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoadWithAliasAndPlugin() {
-		App::build(['Plugin' => [CAKE . 'Test/TestApp/Plugin/']]);
 		Plugin::load('TestPlugin');
 		$result = $this->Helpers->load('SomeOther', array('className' => 'TestPlugin.OtherHelper'));
 		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result);
@@ -176,16 +174,11 @@ class HelperRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoadPluginHelper() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-		));
 		Plugin::load(array('TestPlugin'));
 
 		$result = $this->Helpers->load('TestPlugin.OtherHelper');
 		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $result, 'Helper class is wrong.');
 		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $this->Helpers->OtherHelper, 'Class is wrong');
-
-		App::build();
 	}
 
 /**
