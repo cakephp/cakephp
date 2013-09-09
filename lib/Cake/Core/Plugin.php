@@ -20,8 +20,9 @@ use Cake\Error;
 use Cake\Utility\Inflector;
 
 /**
- * Plugin is responsible for loading and unloading plugins. It also can
- * retrieve plugin paths and load their bootstrap and routes files.
+ * Plugin is used to load and locate plugins.
+ *
+ * It also can retrieve plugin paths and load their bootstrap and routes files.
  *
  * @link http://book.cakephp.org/2.0/en/plugins.html
  */
@@ -39,7 +40,7 @@ class Plugin {
  * routing files or runs a initialization function.
  *
  * Plugins only need to be loaded if you want bootstrapping/routes/cli commands to
- * be exposed. If your plugins do not expose any of these features you do not need
+ * be exposed. If your plugin doese not expose any of these features you do not need
  * to load them.
  *
  * This method does not configure any autoloaders. That must be done separately either
@@ -49,7 +50,9 @@ class Plugin {
  *
  * `Plugin::load('DebugKit')`
  *
- * Will load the DebugKit plugin and will not load any bootstrap nor route files
+ * Will load the DebugKit plugin and will not load any bootstrap nor route files.
+ * However, the plugin will be part of the framework default routes, and have its
+ * CLI tools (if any) available for use.
  *
  * `Plugin::load('DebugKit', array('bootstrap' => true, 'routes' => true))`
  *
@@ -63,13 +66,13 @@ class Plugin {
  *
  * Will load config1.php and config2.php files
  *
- * `Plugin::load('DebugKit', array('bootstrap' => 'aCallableMethod'))`
+ * `Plugin::load('DebugKit', array('bootstrap' => '\DebugKit\SomeClass::bootstrap'))`
  *
- * Will run the aCallableMethod function to initialize it
+ * Will run the \DebugKit\SomeClass::bootstrap() function to initialize it
  *
  * `Plugin::load('DebugKit', array('namespace' => 'Cake\DebugKit'))`
  *
- * Will load files on APP/Plugin/Cake/DebugKit/Controller/...
+ * Will load files on APP/Plugin/Cake/DebugKit/...
  *
  * Bootstrap initialization functions can be expressed as a PHP callback type,
  * including closures. Callbacks will receive two parameters (plugin name, plugin configuration)
@@ -100,7 +103,7 @@ class Plugin {
  * - `routes` - boolean - Whether or not you want to load the $plugin/Config/routes.php file.
  * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
  * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
- * - `path` - string - The path the plugin can be found on. If empty the default plugin path will be used.
+ * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPath) will be used.
  *
  * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
@@ -140,15 +143,16 @@ class Plugin {
 	}
 
 /**
- * Will load all the plugins located in the configured plugins folders
+ * Will load all the plugins located in the default plugin folder.
+ *
  * If passed an options array, it will be used as a common default for all plugins to be loaded
  * It is possible to set specific defaults for each plugins in the options array. Examples:
  *
  * {{{
- * 	Plugin::loadAll(array(
- *		array('bootstrap' => true),
- * 		'DebugKit' => array('routes' => true),
- * 	))
+ *  Plugin::loadAll(array(
+ *      array('bootstrap' => true),
+ *      'DebugKit' => array('routes' => true),
+ *  ));
  * }}}
  *
  * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load the routes file
@@ -209,7 +213,8 @@ class Plugin {
 			return false;
 		}
 		if (is_callable($config['bootstrap'])) {
-			return call_user_func_array($config['bootstrap'], array($plugin, $config));
+			$cb = $config['bootstrap'];
+			return $cb($plugin, $config);
 		}
 
 		$path = static::path($plugin);
