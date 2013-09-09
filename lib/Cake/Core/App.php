@@ -158,7 +158,7 @@ class App {
  */
 	public static function path($type, $plugin = null) {
 		if (!empty($plugin)) {
-			return [static::pluginPath($plugin)];
+			return [static::pluginPath($plugin) . $type . DS];
 		}
 		if (!isset(static::$_packages[$type])) {
 			return [APP . $type . DS];
