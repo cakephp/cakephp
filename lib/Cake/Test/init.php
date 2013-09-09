@@ -43,6 +43,11 @@ define('TESTS', APP . 'Test' . DS);
 @mkdir(CACHE . 'models');
 //@codingStandardsIgnoreEnd
 
+require CORE_PATH . 'Cake/Core/ClassLoader.php';
+
+(new Cake\Core\ClassLoader('Cake', dirname(dirname(__DIR__)) ))->register();
+(new Cake\Core\ClassLoader('TestApp', dirname(__DIR__) . '/Test'))->register();
+
 require CORE_PATH . 'Cake/bootstrap.php';
 
 mb_internal_encoding('UTF-8');
@@ -95,5 +100,3 @@ Log::config([
 	]
 ]);
 
-$autoloader = new Cake\Core\ClassLoader('TestApp', dirname(__DIR__) . '/Test');
-$autoloader->register();
