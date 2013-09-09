@@ -23,7 +23,7 @@
 if (php_sapi_name() === 'cli-server') {
 	$_SERVER['PHP_SELF'] = '/' . basename(__FILE__);
 }
-require dirname(__DIR__) . '/Config/bootstrap.php';
+require dirname(__DIR__) . '/App/Config/bootstrap.php';
 
 use Cake\Core\Configure;
 use Cake\Network\Request;

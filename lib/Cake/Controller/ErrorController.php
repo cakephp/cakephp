@@ -42,7 +42,7 @@ class ErrorController extends Controller {
 		parent::__construct($request, $response);
 		$this->constructClasses();
 		if (count(Router::extensions()) &&
-			!$this->Components->attached('RequestHandler')
+			!isset($this->RequestHandler)
 		) {
 			$this->RequestHandler = $this->Components->load('RequestHandler');
 		}

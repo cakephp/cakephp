@@ -1,8 +1,6 @@
 #!/usr/bin/php -q
 <?php
 /**
- * Command-line code generation utility to automate programmer chores.
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -14,38 +12,26 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Console
  * @since         CakePHP(tm) v 1.2.0.5012
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+$cakeRoot = dirname(dirname(dirname(__DIR__)));
 
-$root = dirname(dirname(dirname(__DIR__)));
-$loaded = false;
-
+$app = 'App';
 $appIndex = array_search('-app', $argv);
 if ($appIndex !== false) {
-	$loaded = true;
-	$dir = $argv[$appIndex + 1];
-	require $dir . '/Config/bootstrap.php';
+	$app = $argv[$appIndex + 1];
 }
 
-$locations = [
-	// Default repository layout.
-	$root . '/App/Config/bootstrap.php',
-	// Composer vendor directory
-	$root . '/../../Config/bootstrap.php',
-];
+// Path to default App skeleton.
+$path = $cakeRoot . '/../../' . $app . '/Config/bootstrap.php';
 
-foreach ($locations as $path) {
-	if (file_exists($path)) {
-		$loaded = true;
-		require $path;
-		break;
-	}
-}
-if (!$loaded) {
-	fwrite(STDERR, "Unable to load CakePHP libraries, check your configuration/installation.\n");
+if (!file_exists($path)) {
+	fwrite(STDERR, "Unable to load CakePHP libraries. If you are not using the default App directory, you will need to use the -app flag.\n");
 	exit(10);
 }
-unset($root, $loaded, $appIndex, $dir, $path, $locations);
+
+require $path;
+
+unset($cakeRoot, $path, $app, $appIndex);
 exit(Cake\Console\ShellDispatcher::run($argv));

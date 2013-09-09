@@ -35,7 +35,8 @@ before_script:
   - set +H
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then cd ./lib/Cake && phpunit --stderr; else phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi"
+  - sh -c "cd lib; composer install"
+  - sh -c "if [ '$PHPCS' != '1' ]; then cd ./lib && vendor/bin/phpunit --stderr; else phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi"
 
 notifications:
   email: false

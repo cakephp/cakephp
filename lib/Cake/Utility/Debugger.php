@@ -1,9 +1,5 @@
 <?php
 /**
- * Framework debugging and PHP error-handling class
- *
- * Provides enhanced logging, stack traces, and rendering debug views
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -15,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.4560
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -30,7 +25,6 @@ use Cake\Log\Log;
  *
  * Debugger overrides PHP's default error handling to provide stack traces and enhanced logging
  *
- * @package       Cake.Utility
  * @link          http://book.cakephp.org/2.0/en/development/debugging.html#debugger-class
  */
 class Debugger {
@@ -845,7 +839,7 @@ class Debugger {
  * @return void
  */
 	public static function checkSecurityKeys() {
-		if (Configure::read('Security.salt') === 'DYhG93b0qyJfIxfs2guVoUubWwvniR2G0FgaC9mi') {
+		if (Configure::read('Security.salt') === '__SALT__') {
 			trigger_error(__d('cake_dev', 'Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'APP/Config/app.php'), E_USER_NOTICE);
 		}
 	}

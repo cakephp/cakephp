@@ -20,6 +20,7 @@ use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Object;
 use Cake\Model\Datasource\Session;
+use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -90,6 +91,7 @@ class SessionComponentTest extends TestCase {
  */
 	public function testSessionIdConsistentAcrossRequestAction() {
 		Configure::write('App.namespace', 'TestApp');
+		Router::connect('/:controller/:action');
 
 		$Session = new SessionComponent($this->ComponentRegistry);
 		$Session->check('Test');

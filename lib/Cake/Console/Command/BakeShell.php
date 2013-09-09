@@ -18,6 +18,7 @@ use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
+use Cake\Database\ConnectionManager;
 use Cake\Model\Model;
 use Cake\Utility\Inflector;
 
@@ -83,7 +84,8 @@ class BakeShell extends Shell {
 			}
 		}
 
-		if (!config('database')) {
+		$connections = ConnectionManager::configured();
+		if (empty($connections)) {
 			$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'));
 			$this->args = null;
 			return $this->DbConfig->execute();

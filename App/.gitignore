@@ -1,0 +1,3 @@
+/vendor/*
+/App/Config/app.php
+/tmp/*
