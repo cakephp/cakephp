@@ -24,14 +24,12 @@ And run `php composer.phar update`
 
 ## Running tests
 
-You can run the tests for cakephp by doing the following:
+Assuming you have PHPUnit installed system wide via PEAR, you can run the tests for cakephp by doing the following:
 
-1. Install dependencies and generate the autoloader with `composer`.  In the root of
-   the project run `php composer.phar install`.
-2. Copy `phpunit.xml.dist` to `phpunit.xml`
-3. Add the relevant database credentials to your phpunit.xml if you want to run tests against
+1. Copy `phpunit.xml.dist` to `phpunit.xml`
+2. Add the relevant database credentials to your phpunit.xml if you want to run tests against
    a non-SQLite datasource.
-4. Run `vendor/bin/phpunit --stderr`
+3. Run `phpunit --stderr`
 
 ## Contributing
 
