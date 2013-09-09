@@ -37,8 +37,8 @@ use Cake\Utility\Inflector;
  * You can inspect the currently loaded paths using `App::path('Controller')` for example to see loaded
  * controller paths.
  *
- * It is also possible to inspect paths for plugin classes, for instance, to see a plugin's helpers you would call
- * `App::path('View/Helper', 'MyPlugin')`
+ * It is also possible to inspect paths for plugin classes, for instance, to get 
+ * the path to a plugin's helpers you would call `App::path('View/Helper', 'MyPlugin')`
  *
  * ### Locating plugins and themes
  *
@@ -49,9 +49,10 @@ use Cake\Utility\Inflector;
  * ### Inspecting known objects
  *
  * You can find out which objects App knows about using App::objects('Controller') for example to find
- * which application controllers App knows about.
+ * which application controllers App knows about. This method will not find objects in sub-namespaces
+ * by default.
  *
- * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/app.html
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html
  */
 class App {
 
@@ -157,10 +158,7 @@ class App {
  */
 	public static function path($type, $plugin = null) {
 		if (!empty($plugin)) {
-			$path = [];
-			$pluginPath = static::pluginPath($plugin);
-			$path[] = $pluginPath . $type . DS;
-			return $path;
+			return [static::pluginPath($plugin)];
 		}
 		if (!isset(static::$_packages[$type])) {
 			return [APP . $type . DS];
@@ -169,9 +167,11 @@ class App {
 	}
 
 /**
- * Get all the currently loaded paths from App. Useful for inspecting
- * or storing all paths App knows about. For a paths to a specific package
- * use App::path()
+ * Get all the currently configured paths.
+ *
+ * This will only reflect paths for resources, and not classes.
+ * Class paths are not managed by App and it has no knowledge of them.
+ * For a paths to a specific package use App::path()
  *
  * @return array An array of packages and their associated paths.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::paths
@@ -181,18 +181,25 @@ class App {
 	}
 
 /**
- * Sets up each package location on the file system. You can configure multiple search paths
- * for each package, those will be used to look for files one folder at a time in the specified order
- * All paths should be terminated with a Directory separator
+ * Sets up package locations on the file system.
+ *
+ * You can configure multiple search paths for each package, those
+ * will be used to look for files one folder at a time in the specified
+ * order. All paths should be terminated with a Directory separator
  *
  * Usage:
  *
- * `App::build(array('Model' => array('/a/full/path/to/models/'))); will setup a new search path for the Model package`
+ * `App::build(array('View' => array('/a/full/path/to/views/')));`
  *
- * `App::build(array('Model' => array('/path/to/models/')), App::RESET); will setup the path as the only valid path for searching models`
+ * Will setup a new search path for the Model package
  *
- * `App::build(array('View/Helper' => array('/path/to/helpers/', '/another/path/'))); will setup multiple search paths for helpers`
+ * `App::build(array('View' => array('/path/to/views/')), App::RESET);`
  *
+ * Will setup the path as the only valid path for searching models`
+ *
+ * `App::build(array('View' => array('/path/to/views/', '/another/path/')));`
+ *
+ * Will setup multiple search paths for views.
  *
  * If reset is set to true, all loaded plugins will be forgotten and they will be needed to be loaded again.
  *
@@ -256,7 +263,9 @@ class App {
  *
  * Usage:
  *
- * `App::pluginPath('MyPlugin'); will return the full path to 'MyPlugin' plugin'`
+ * `App::pluginPath('MyPlugin');`
+ *
+ * Will return the full path to 'MyPlugin' plugin
  *
  * @param string $plugin CamelCased/lower_cased plugin name to find the path of.
  * @return string full path to the plugin.
@@ -271,7 +280,7 @@ class App {
  *
  * Usage:
  *
- * `App::themePath('MyTheme'); will return the full path to the 'MyTheme' theme`
+ * `App::themePath('MyTheme');` will return the full path to the 'MyTheme' theme.
  *
  * @param string $theme theme name to find the path of.
  * @return string full path to the theme.
@@ -292,7 +301,9 @@ class App {
  *
  * Usage:
  *
- * `App::core('Cache/Engine'); will return the full path to the cache engines package`
+ * `App::core('Cache/Engine');`
+ *
+ * Will return the full path to the cache engines package.
  *
  * @param string $type
  * @return array full path to package
@@ -356,9 +367,6 @@ class App {
 			if (empty($path)) {
 				$path = static::path($type, $plugin);
 			}
-			// TODO write tests and fix objects(Plugin) with plugins
-			// on unique paths. Perhaps use Plugin::loaded()?
-
 			foreach ((array)$path as $dir) {
 				if ($dir != APP && is_dir($dir)) {
 					$files = new \RegexIterator(new \DirectoryIterator($dir), $extension);
