@@ -27,8 +27,8 @@ if (file_exists($root . '/vendor/autoload.php')) {
 // setup in vendor/cakephp/cakephp.
 /*
 require $root . '/vendor/cakephp/cakephp/Cake/Core/ClassLoader.php';
-(new Cake\Core\ClassLoader('App', $root))->register();
-(new Cake\Core\ClassLoader('Cake', $root . '/vendor/cakephp/cakephp')->register();
+(new \Cake\Core\ClassLoader('App', $root))->register();
+(new \Cake\Core\ClassLoader('Cake', $root . '/vendor/cakephp/cakephp'))->register();
 */
 unset($root);
 
