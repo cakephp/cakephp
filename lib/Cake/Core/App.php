@@ -82,21 +82,21 @@ class App {
  *
  * @var array
  */
-	protected static $_objects = array();
+	protected static $_objects = [];
 
 /**
  * Holds the possible paths for each package name
  *
  * @var array
  */
-	protected static $_packages = array();
+	protected static $_packages = [];
 
 /**
  * Holds the templates for each customizable package path in the application
  *
  * @var array
  */
-	protected static $_packageFormat = array();
+	protected static $_packageFormat = [];
 
 /**
  * Indicates whether the object cache should be stored again because of an addition to it
@@ -189,15 +189,15 @@ class App {
  *
  * Usage:
  *
- * `App::build(array('View' => array('/a/full/path/to/views/')));`
+ * `App::build(['View' => ['/a/full/path/to/views/']]);`
  *
  * Will setup a new search path for the Model package
  *
- * `App::build(array('View' => array('/path/to/views/')), App::RESET);`
+ * `App::build(['View' => ['/path/to/views/']), App::RESET);`
  *
  * Will setup the path as the only valid path for searching models`
  *
- * `App::build(array('View' => array('/path/to/views/', '/another/path/')));`
+ * `App::build(['View' => ['/path/to/views/', '/another/path/']]);`
  *
  * Will setup multiple search paths for views.
  *
@@ -208,7 +208,7 @@ class App {
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::build
  */
-	public static function build($paths = array(), $mode = self::PREPEND) {
+	public static function build($paths = [], $mode = self::PREPEND) {
 		if ($mode === static::RESET) {
 			foreach ($paths as $type => $new) {
 				static::$_packages[$type] = (array)$new;
@@ -223,7 +223,7 @@ class App {
 
 		$packageFormat = static::_packageFormat();
 
-		$defaults = array();
+		$defaults = [];
 		foreach ($packageFormat as $package => $format) {
 			foreach ($format as $f) {
 				$defaults[$package][] = sprintf($f, APP);
@@ -310,7 +310,7 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::core
  */
 	public static function core($type) {
-		return array(CAKE . str_replace('/', DS, $type) . DS);
+		return [CAKE . str_replace('/', DS, $type) . DS];
 	}
 
 /**
@@ -318,14 +318,14 @@ class App {
  *
  * Example usage:
  *
- * `App::objects('Plugin');` returns `array('DebugKit', 'Blog', 'User');`
+ * `App::objects('Plugin');` returns `['DebugKit', 'Blog', 'User'];`
  *
- * `App::objects('Controller');` returns `array('PagesController', 'BlogController');`
+ * `App::objects('Controller');` returns `['PagesController', 'BlogController'];`
  *
  * You can also search only within a plugin's objects by using the plugin dot
  * syntax.
  *
- * `App::objects('MyPlugin.Model');` returns `array('MyPluginPost', 'MyPluginComment');`
+ * `App::objects('MyPlugin.Model');` returns `['MyPluginPost', 'MyPluginComment'];`
  *
  * When scanning directories, files and directories beginning with `.` will be excluded as these
  * are commonly used by version control systems.
@@ -362,7 +362,7 @@ class App {
 		$cacheLocation = empty($plugin) ? 'app' : $plugin;
 
 		if ($cache !== true || !isset(static::$_objects[$cacheLocation][$name])) {
-			$objects = array();
+			$objects = [];
 
 			if (empty($path)) {
 				$path = static::path($type, $plugin);
@@ -410,7 +410,7 @@ class App {
  * @return void
  */
 	public static function init() {
-		register_shutdown_function(array(get_called_class(), 'shutdown'));
+		register_shutdown_function([get_called_class(), 'shutdown']);
 	}
 
 /**
@@ -420,14 +420,14 @@ class App {
  */
 	protected static function _packageFormat() {
 		if (empty(static::$_packageFormat)) {
-			static::$_packageFormat = array(
-				'View' => array(
+			static::$_packageFormat = [
+				'View' => [
 					'%s' . 'View' . DS,
-				),
-				'Locale' => array(
+				],
+				'Locale' => [
 					'%s' . 'Locale' . DS
-				),
-			);
+				],
+			];
 		}
 
 		return static::$_packageFormat;

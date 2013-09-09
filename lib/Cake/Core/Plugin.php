@@ -33,7 +33,7 @@ class Plugin {
  *
  * @var array
  */
-	protected static $_plugins = array();
+	protected static $_plugins = [];
 
 /**
  * Loads a plugin and optionally loads bootstrapping,
@@ -54,23 +54,23 @@ class Plugin {
  * However, the plugin will be part of the framework default routes, and have its
  * CLI tools (if any) available for use.
  *
- * `Plugin::load('DebugKit', array('bootstrap' => true, 'routes' => true))`
+ * `Plugin::load('DebugKit', ['bootstrap' => true, 'routes' => true])`
  *
  * Will load the bootstrap.php and routes.php files.
  *
- * `Plugin::load('DebugKit', array('bootstrap' => false, 'routes' => true))`
+ * `Plugin::load('DebugKit', ['bootstrap' => false, 'routes' => true])`
  *
  * Will load routes.php file but not bootstrap.php
  *
- * `Plugin::load('DebugKit', array('bootstrap' => array('config1', 'config2')))
+ * `Plugin::load('DebugKit', ['bootstrap' => ['config1', 'config2']])
  *
  * Will load config1.php and config2.php files
  *
- * `Plugin::load('DebugKit', array('bootstrap' => '\DebugKit\SomeClass::bootstrap'))`
+ * `Plugin::load('DebugKit', ['bootstrap' => '\DebugKit\SomeClass::bootstrap'])`
  *
  * Will run the \DebugKit\SomeClass::bootstrap() function to initialize it
  *
- * `Plugin::load('DebugKit', array('namespace' => 'Cake\DebugKit'))`
+ * `Plugin::load('DebugKit', ['namespace' => 'Cake\DebugKit'])`
  *
  * Will load files on APP/Plugin/Cake/DebugKit/...
  *
@@ -79,19 +79,20 @@ class Plugin {
  *
  * It is also possible to load multiple plugins at once. Examples:
  *
- * `Plugin::load(array('DebugKit', 'ApiGenerator'))`
+ * `Plugin::load(['DebugKit', 'ApiGenerator'])`
  *
  * Will load the DebugKit and ApiGenerator plugins.
  *
- * `Plugin::load(array('DebugKit', 'ApiGenerator'), array('bootstrap' => true))`
+ * `Plugin::load(['DebugKit', 'ApiGenerator'], ['bootstrap' => true])`
  *
  * Will load bootstrap file for both plugins
  *
  * {{{
- *   Plugin::load(array(
- *     'DebugKit' => array('routes' => true),
+ *   Plugin::load([
+ *     'DebugKit' => ['routes' => true],
  *     'ApiGenerator'
- *     ), array('bootstrap' => true))
+ *     ],
+ *     ['bootstrap' => true])
  * }}}
  *
  * Will only load the bootstrap for ApiGenerator and only the routes for DebugKit
@@ -119,20 +120,20 @@ class Plugin {
 			return;
 		}
 
-		$config += array('bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false);
+		$config += ['bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false];
 		if (empty($config['path'])) {
 			$path = Configure::read('App.pluginPath');
 			$namespacePath = str_replace('\\', DS, $config['namespace']);
 			if (is_dir($path . $plugin)) {
-				$config += array('path' => $path . $plugin . DS);
+				$config += ['path' => $path . $plugin . DS];
 			}
 			if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
-				$config += array('path' => $path . $namespacePath . DS);
+				$config += ['path' => $path . $namespacePath . DS];
 			}
 		}
 
 		if (empty($config['path'])) {
-			throw new Error\MissingPluginException(array('plugin' => $plugin));
+			throw new Error\MissingPluginException(['plugin' => $plugin]);
 		}
 
 		static::$_plugins[$plugin] = $config;
@@ -149,10 +150,10 @@ class Plugin {
  * It is possible to set specific defaults for each plugins in the options array. Examples:
  *
  * {{{
- *  Plugin::loadAll(array(
- *      array('bootstrap' => true),
- *      'DebugKit' => array('routes' => true),
- *  ));
+ *  Plugin::loadAll([
+ *      ['bootstrap' => true],
+ *      'DebugKit' => ['routes' => true],
+ *  ]);
  * }}}
  *
  * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load the routes file
@@ -161,7 +162,7 @@ class Plugin {
  * @param array $options
  * @return void
  */
-	public static function loadAll($options = array()) {
+	public static function loadAll($options = []) {
 		$plugins = App::objects('Plugin');
 		foreach ($plugins as $p) {
 			$opts = isset($options[$p]) ? $options[$p] : null;
@@ -181,7 +182,7 @@ class Plugin {
  */
 	public static function path($plugin) {
 		if (empty(static::$_plugins[$plugin])) {
-			throw new Error\MissingPluginException(array('plugin' => $plugin));
+			throw new Error\MissingPluginException(['plugin' => $plugin]);
 		}
 		return static::$_plugins[$plugin]['path'];
 	}
@@ -195,7 +196,7 @@ class Plugin {
  */
 	public static function getNamespace($plugin) {
 		if (empty(static::$_plugins[$plugin])) {
-			throw new Error\MissingPluginException(array('plugin' => $plugin));
+			throw new Error\MissingPluginException(['plugin' => $plugin]);
 		}
 		return static::$_plugins[$plugin]['namespace'];
 	}
@@ -285,7 +286,7 @@ class Plugin {
  */
 	public static function unload($plugin = null) {
 		if ($plugin === null) {
-			static::$_plugins = array();
+			static::$_plugins = [];
 		} else {
 			unset(static::$_plugins[$plugin]);
 		}
