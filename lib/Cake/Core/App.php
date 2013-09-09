@@ -11,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Core
  * @since         CakePHP(tm) v 1.2.0.6001
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -62,7 +61,6 @@ use Cake\Utility\Inflector;
  * which application controllers App knows about.
  *
  * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/app.html
- * @package       Cake.Core
  */
 class App {
 
@@ -636,12 +634,10 @@ class App {
 					'%s' . 'Locale' . DS
 				),
 				'Vendor' => array(
-					'%s' . 'vendor' . DS,
-					dirname(dirname(CAKE)) . DS . 'vendors' . DS,
+					ROOT . DS . 'vendor' . DS,
 				),
 				'Plugin' => array(
-					APP . 'Plugin' . DS,
-					dirname(dirname(CAKE)) . DS . 'plugins' . DS
+					ROOT . DS . 'Plugin' . DS,
 				)
 			);
 		}

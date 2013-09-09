@@ -1,7 +1,5 @@
 <?php
 /**
- * DispatcherTest file
- *
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -12,7 +10,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Routing
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -35,7 +32,6 @@ use Cake\Utility\Inflector;
 /**
  * A testing stub that doesn't send headers.
  *
- * @package       Cake.Test.Case.Routing
  */
 class DispatcherMockResponse extends Response {
 
@@ -48,7 +44,6 @@ class DispatcherMockResponse extends Response {
 /**
  * TestDispatcher class
  *
- * @package       Cake.Test.Case.Routing
  */
 class TestDispatcher extends Dispatcher {
 
@@ -98,7 +93,6 @@ class TestDispatcher extends Dispatcher {
 /**
  * MyPluginAppController class
  *
- * @package       Cake.Test.Case.Routing
  */
 class MyPluginAppController extends Controller {
 }
@@ -112,7 +106,6 @@ interface DispatcherTestInterfaceController {
 /**
  * MyPluginController class
  *
- * @package       Cake.Test.Case.Routing
  */
 class MyPluginController extends MyPluginAppController {
 
@@ -163,7 +156,6 @@ class MyPluginController extends MyPluginAppController {
 /**
  * OtherPagesController class
  *
- * @package       Cake.Test.Case.Routing
  */
 class OtherPagesController extends MyPluginAppController {
 
@@ -205,7 +197,6 @@ class OtherPagesController extends MyPluginAppController {
 /**
  * ArticlesTestAppController class
  *
- * @package       Cake.Test.Case.Routing
  */
 class ArticlesTestAppController extends Controller {
 }
@@ -213,7 +204,6 @@ class ArticlesTestAppController extends Controller {
 /**
  * ArticlesTestController class
  *
- * @package       Cake.Test.Case.Routing
  */
 class ArticlesTestController extends ArticlesTestAppController {
 
@@ -254,7 +244,6 @@ class ArticlesTestController extends ArticlesTestAppController {
 /**
  * DispatcherTest class
  *
- * @package       Cake.Test.Case.Routing
  */
 class DispatcherTest extends TestCase {
 
@@ -540,9 +529,6 @@ class DispatcherTest extends TestCase {
  * @return void
  */
 	public function testPluginShortCutUrlsWithControllerThatNeedsToBeLoaded() {
-		$loaded = class_exists('TestPluginController', false);
-		$this->skipIf($loaded, 'TestPluginController already loaded.');
-
 		Router::reload();
 		App::build([
 			'Plugin' => [CAKE . 'Test/TestApp/Plugin/']

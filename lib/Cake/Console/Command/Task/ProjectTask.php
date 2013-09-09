@@ -30,11 +30,11 @@ use Cake\Utility\String;
 class ProjectTask extends Shell {
 
 /**
- * configs path (used in testing).
+ * App path (used in testing).
  *
  * @var string
  */
-	public $configPath = null;
+	public $appPath = null;
 
 /**
  * Checks that given project path does not already exist, and
@@ -80,273 +80,63 @@ class ProjectTask extends Shell {
 			}
 		}
 
-		$success = true;
+		if ($project === false) {
+			$this->out(__d('cake_console', 'Aborting project creation.'));
+			return;
+		}
+
 		if ($this->bake($project)) {
-			$path = Folder::slashTerm($project);
-
-			if ($this->appNamespace($path) === true) {
-				$this->out(__d('cake_console', ' * Namespace set for \'App.namespace\' and namespace declarations'));
-			} else {
-				$this->err(__d('cake_console', 'The namespace was <error>NOT</error> set'));
-				$success = false;
-			}
-
-			if ($this->securitySalt($path) === true) {
-				$this->out(__d('cake_console', ' * Random hash key created for \'Security.salt\''));
-			} else {
-				$this->err(__d('cake_console', 'Unable to generate random hash for \'Security.salt\', you should change it in %s', APP . 'Config' . DS . 'app.php'));
-				$success = false;
-			}
-
-			if ($this->cachePrefix($path)) {
-				$this->out(__d('cake_console', ' * Cache prefix set'));
-			} else {
-				$this->err(__d('cake_console', 'The cache prefix was <error>NOT</error> set'));
-				$success = false;
-			}
-
-			$hardCode = false;
-			if ($this->cakeOnIncludePath()) {
-				$this->out(__d('cake_console', '<info>CakePHP is on your `include_path`. CAKE_CORE_INCLUDE_PATH will be set, but commented out.</info>'));
-			} else {
-				$this->out(__d('cake_console', '<warning>CakePHP is not on your `include_path`, CAKE_CORE_INCLUDE_PATH will be hard coded.</warning>'));
-				$this->out(__d('cake_console', 'You can fix this by adding CakePHP to your `include_path`.'));
-				$hardCode = true;
-			}
-			$success = $this->corePath($path, $hardCode) === true;
-			if ($success) {
-				$this->out(__d('cake_console', ' * CAKE_CORE_INCLUDE_PATH set to %s in %s', CAKE_CORE_INCLUDE_PATH, 'Config/paths.php'));
-			} else {
-				$this->err(__d('cake_console', 'Unable to set CAKE_CORE_INCLUDE_PATH, you should change it in %s', $path . 'Config' . DS . 'paths.php'));
-				$success = false;
-			}
-			if ($success && $hardCode) {
-				$this->out(__d('cake_console', '   * <warning>Remember to check these values after moving to production server</warning>'));
-			}
-
-			$Folder = new Folder($path);
-			if (!$Folder->chmod($path . 'tmp', 0777)) {
-				$this->err(__d('cake_console', 'Could not set permissions on %s', $path . DS . 'tmp'));
-				$this->out('chmod -R 0777 ' . $path . DS . 'tmp');
-				$success = false;
-			}
-			if ($success) {
-				$this->out(__d('cake_console', '<success>Project baked successfully!</success>'));
-			} else {
-				$this->out(__d('cake_console', 'Project baked but with <warning>some issues.</warning>.'));
-			}
+			$this->out(__d('cake_console', '<success>Project baked successfully!</success>'));
 			return $path;
 		}
 	}
 
 /**
- * Checks PHP's include_path for CakePHP.
- *
- * @return boolean Indicates whether or not CakePHP exists on include_path
- */
-	public function cakeOnIncludePath() {
-		$paths = explode(PATH_SEPARATOR, ini_get('include_path'));
-		foreach ($paths as $path) {
-			if (file_exists($path . DS . 'Cake/bootstrap.php')) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-/**
- * Looks for a skeleton template of a Cake application,
- * and if not found asks the user for a path. When there is a path
- * this method will make a deep copy of the skeleton to the project directory.
+ * Uses composer to generate a new package using the cakephp/cakephp-app project.
  *
  * @param string $path Project path
- * @param string $skel Path to copy from
- * @param string $skip array of directories to skip when copying
  * @return mixed
  */
-	public function bake($path, $skel = null, $skip = array('empty')) {
-		if (!$skel && !empty($this->params['skel'])) {
-			$skel = $this->params['skel'];
-		}
-		while (!$skel) {
-			$skel = $this->in(
-				__d('cake_console', "What is the path to the directory layout you wish to copy?"),
-				null,
-				CAKE . 'Console' . DS . 'Templates' . DS . 'skel'
-			);
-			if (!$skel) {
-				$this->err(__d('cake_console', 'The directory path you supplied was empty. Please try again.'));
-			} else {
-				while (is_dir($skel) === false) {
-					$skel = $this->in(
-						__d('cake_console', 'Directory path does not exist please choose another:'),
-						null,
-						CAKE . 'Console' . DS . 'Templates' . DS . 'skel'
-					);
-				}
-			}
-		}
-
-		$app = basename($path);
-
-		$this->out(__d('cake_console', '<info>Skel Directory</info>: ') . $skel);
-		$this->out(__d('cake_console', '<info>Will be copied to</info>: ') . $path);
-		$this->out(__d('cake_console', '<info>With namespace</info>: ') . $app);
-		$this->hr();
-
-		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
-
-		switch (strtolower($looksGood)) {
-			case 'y':
-				$Folder = new Folder($skel);
-				if (!empty($this->params['empty'])) {
-					$skip = array();
-				}
-
-				if ($Folder->copy(array('to' => $path, 'skip' => $skip))) {
-					$this->hr();
-					$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $app, $path));
-					$this->hr();
-				} else {
-					$this->err(__d('cake_console', "<error>Could not create</error> '%s' properly.", $app));
-					return false;
-				}
-
-				foreach ($Folder->messages() as $message) {
-					$this->out(String::wrap(' * ' . $message), 1, Shell::VERBOSE);
-				}
-
-				return true;
-			case 'n':
-				unset($this->args[0]);
-				$this->execute();
-				return false;
-			case 'q':
-				$this->out(__d('cake_console', '<error>Bake Aborted.</error>'));
-				return false;
-		}
-	}
-
-/**
- * Writes 'App.namespace' to App/Config/app.php and fixes namespace declarations
- *
- * @param string $path Project path
- * @return boolean Success
- */
-	public function appNamespace($path) {
-		$namespace = basename($path);
-
-		$File = new File($path . 'Config/app.php');
-		$contents = $File->read();
-		$contents = preg_replace(
-			"/namespace = 'App'/",
-			"namespace = '" . $namespace . "'",
-			$contents,
-			-1,
-			$count
-		);
-		if (!$count || !$File->write($contents)) {
+	public function bake($path) {
+		$composer = $this->params['composer'];
+		if (!file_exists($composer)) {
+			$this->error(__d('cake_console', 'Cannot bake project. Could not find composer at "%s".', $composer));
 			return false;
 		}
+		$this->out('<info>Downloading a new cakephp-app from packagist.org</info>');
 
-		$Folder = new Folder($path);
-		$files = $Folder->findRecursive('.*\.php');
-		foreach ($files as $filename) {
-			$File = new File($filename);
-			$contents = $File->read();
-			$contents = preg_replace(
-				'/namespace App\\\/',
-				'namespace ' . $namespace . '\\',
-				$contents,
-				-1,
-				$count
-			);
-			if ($count && !$File->write($contents)) {
-				return false;
-			}
+		$command = 'php ' . escapeshellarg($composer) . ' create-project --dev cakephp/cakephp-app ' . escapeshellarg($path);
+
+		$descriptorSpec = array(
+			0 => array('pipe', 'r'),
+			1 => array('pipe', 'w'),
+			2 => array('pipe', 'w')
+		);
+		$process = proc_open(
+			$command,
+			$descriptorSpec,
+			$pipes
+		);
+		if (!is_resource($process)) {
+			$this->err(__d('cake_console', 'Could not start subprocess.'));
+			return false;
 		}
+		$output = $error = '';
+		fclose($pipes[0]);
 
+		$output = stream_get_contents($pipes[1]);
+		fclose($pipes[1]);
+
+		$error = stream_get_contents($pipes[2]);
+		fclose($pipes[2]);
+		proc_close($process);
+
+		if ($error) {
+			$this->error('Installation from packagist.org failed with: ' . $error);
+			return false;
+		}
+		$this->out($output);
 		return true;
-	}
-
-/**
- * Generates and writes 'Security.salt'
- *
- * @param string $path Project path
- * @return boolean Success
- */
-	public function securitySalt($path) {
-		$File = new File($path . 'Config/app.php');
-		$contents = $File->read();
-		$newSalt = Security::generateAuthKey();
-		$contents = preg_replace(
-			"/('Security.salt',\s+')([^']+)(')/m",
-			'${1}' . $newSalt . '\\3',
-			$contents,
-			-1,
-			$count
-		);
-		if ($count && $File->write($contents)) {
-			return true;
-		}
-		return false;
-	}
-
-/**
- * Writes cache prefix using app's name
- *
- * @param string $dir Path to project
- * @return boolean Success
- */
-	public function cachePrefix($dir) {
-		$app = basename($dir);
-		$File = new File($dir . 'Config/cache.php');
-		$contents = $File->read();
-		if (preg_match('/(\$prefix = \'myapp_\';)/', $contents, $match)) {
-			$result = str_replace($match[0], '$prefix = \'' . $app . '_\';', $contents);
-			return $File->write($result);
-		}
-		return false;
-	}
-
-/**
- * Generates and writes CAKE_CORE_INCLUDE_PATH
- *
- * @param string $path Project path
- * @param boolean $hardCode Whether or not define calls should be hardcoded.
- * @return boolean Success
- */
-	public function corePath($path, $hardCode = true) {
-		if (dirname($path) !== CAKE_CORE_INCLUDE_PATH) {
-			$filename = $path . 'Config/paths.php';
-			if (!$this->_replaceCorePath($filename, $hardCode)) {
-				return false;
-			}
-			return true;
-		}
-	}
-
-/**
- * Replaces the __CAKE_PATH__ placeholder in the template files.
- *
- * @param string $filename The filename to operate on.
- * @param boolean $hardCode Whether or not the define should be uncommented.
- * @return boolean Success
- */
-	protected function _replaceCorePath($filename, $hardCode) {
-		$contents = file_get_contents($filename);
-
-		$root = strpos(CAKE_CORE_INCLUDE_PATH, '/') === 0 ? " DS . '" : "'";
-		$corePath = $root . str_replace(DS, "' . DS . '", trim(CAKE_CORE_INCLUDE_PATH, DS)) . "'";
-
-		$result = str_replace('__CAKE_PATH__', $corePath, $contents, $count);
-		if ($hardCode) {
-			$result = str_replace('//define(\'CAKE_CORE', 'define(\'CAKE_CORE', $result);
-		}
-		if (!file_put_contents($filename, $result)) {
-			return false;
-		}
-		return (bool)$count;
 	}
 
 /**
@@ -356,7 +146,8 @@ class ProjectTask extends Shell {
  * @return boolean Success
  */
 	public function cakeAdmin($name) {
-		$path = (empty($this->configPath)) ? APP . 'Config/' : $this->configPath;
+		$path = $this->appPath ?: APP;
+		$path .= 'Config/';
 		$File = new File($path . 'routes.php');
 		$contents = $File->read();
 		if (preg_match('%(\s*[/]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(]*\);)%', $contents, $match)) {
@@ -399,17 +190,17 @@ class ProjectTask extends Shell {
 			$this->hr();
 			$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
 					'Configure::write(\'Routing.prefixes\', array(\'admin\'))',
-					'/app/Config/core.php'));
+					'/app/Config/routes.php'));
 			$this->out(__d('cake_console', 'What would you like the prefix route to be?'));
 			$this->out(__d('cake_console', 'Example: %s', 'www.example.com/admin/controller'));
 			while (!$admin) {
 				$admin = $this->in(__d('cake_console', 'Enter a routing prefix:'), null, 'admin');
 			}
 			if ($this->cakeAdmin($admin) !== true) {
-				$this->out(__d('cake_console', '<error>Unable to write to</error> %s.', '/app/Config/core.php'));
+				$this->out(__d('cake_console', '<error>Unable to write to</error> %s.', '/app/Config/routes.php'));
 				$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
 					'Configure::write(\'Routing.prefixes\', array(\'admin\'))',
-					'/app/Config/core.php'));
+					'/app/Config/routes.php'));
 				return $this->_stop();
 			}
 			return $admin . '_';
@@ -434,9 +225,9 @@ class ProjectTask extends Shell {
 			))->addOption('theme', array(
 				'short' => 't',
 				'help' => __d('cake_console', 'Theme to use when baking code.')
-			))->addOption('skel', array(
-				'default' => current(App::core('Console')) . 'Templates' . DS . 'skel',
-				'help' => __d('cake_console', 'The directory layout to use for the new application skeleton. Defaults to cake/Console/Templates/skel of CakePHP used to create the project.')
+			))->addOption('composer', array(
+				'default' => ROOT . '/composer.phar',
+				'help' => __d('cake_console', 'The path to the composer executable.')
 			));
 	}
 

@@ -126,7 +126,7 @@ class FormDataTest extends TestCase {
  * @return void
  */
 	public function testAddArrayWithFile() {
-		$file = CAKE . 'VERSION.txt';
+		$file = CORE_PATH . 'VERSION.txt';
 		$contents = file_get_contents($file);
 
 		$data = new FormData();
@@ -160,7 +160,7 @@ class FormDataTest extends TestCase {
  * @return void
  */
 	public function testAddFile() {
-		$file = CAKE . 'VERSION.txt';
+		$file = CORE_PATH . 'VERSION.txt';
 		$contents = file_get_contents($file);
 
 		$data = new FormData();
@@ -187,7 +187,7 @@ class FormDataTest extends TestCase {
  * @return void
  */
 	public function testAddFileHandle() {
-		$file = CAKE . 'VERSION.txt';
+		$file = CORE_PATH . 'VERSION.txt';
 		$fh = fopen($file, 'r');
 
 		$data = new FormData();

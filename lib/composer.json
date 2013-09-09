@@ -1,5 +1,5 @@
 {
-    "name": "cakephp/framework",
+    "name": "cakephp/cakephp",
     "description": "The CakePHP framework",
     "type": "library",
     "keywords": ["framework"],
@@ -13,20 +13,21 @@
     ],
     "support": {
         "issues": "http://cakephp.lighthouseapp.com/",
-        "forum": "http://ask.cakephp.org/",
+        "forum": "http://stackoverflow.com/tags/cakephp",
         "irc": "irc://irc.freenode.org/cakephp",
         "source": "https://github.com/cakephp/cakephp/"
     },
     "require": {
         "php": ">=5.4",
-        "ext-mbstring": "*"
+        "ext-mcrypt": "*",
+        "ext-mbstring": "*",
     },
     "require-dev": {
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
         "psr-0": {
-            "Cake\\": "Cake/"
+            "Cake\\": "."
         }
     },
     "bin": [

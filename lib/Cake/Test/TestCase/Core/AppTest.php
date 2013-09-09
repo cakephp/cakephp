@@ -1,7 +1,5 @@
 <?php
 /**
- * AppTest file.
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -12,7 +10,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Core
  * @since         CakePHP(tm) v 2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -26,7 +23,6 @@ use Cake\TestSuite\TestCase;
 /**
  * AppTest class
  *
- * @package       Cake.Test.Case.Core
  */
 class AppTest extends TestCase {
 
@@ -226,8 +222,7 @@ class AppTest extends TestCase {
 	public function testBuildPackage() {
 		$pluginPaths = array(
 			'/foo/bar',
-			APP . 'Plugin' . DS,
-			dirname(dirname(CAKE)) . DS . 'plugins' . DS
+			ROOT . DS . 'Plugin' . DS,
 		);
 		App::build(array(
 			'Plugin' => array(
@@ -273,8 +268,8 @@ class AppTest extends TestCase {
 		));
 		Plugin::load('TestPlugin');
 
-		$result = App::path('Vendor', 'TestPlugin');
-		$this->assertEquals($basepath . 'TestPlugin' . DS . 'vendor' . DS, $result[0]);
+		$result = App::path('Controller', 'TestPlugin');
+		$this->assertEquals($basepath . 'TestPlugin' . DS . 'Controller' . DS, $result[0]);
 	}
 
 /**
@@ -373,14 +368,12 @@ class AppTest extends TestCase {
 
 		App::build(array(
 			'Plugin' => array(
-				CAKE . 'Test/TestApp/'
+				CAKE . 'Test/TestApp/Plugin/'
 			)
 		));
 		$result = App::objects('Plugin', null, false);
-		$this->assertTrue(in_array('Cache', $result));
-		$this->assertTrue(in_array('Log', $result));
-
-		App::build();
+		$this->assertContains('TestPlugin', $result);
+		$this->assertContains('TestPluginTwo', $result);
 	}
 
 /**

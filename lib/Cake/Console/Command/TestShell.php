@@ -425,10 +425,14 @@ class TestShell extends Shell {
 		}
 
 		$file = str_replace(DS, '/', $file);
-		if (strpos($file, 'lib/Cake/') !== false) {
-			return 'core';
-		} elseif (preg_match('@(?:plugins|Plugin)/([^/]*)@', $file, $match)) {
+		if (preg_match('@(?:plugins|Plugin)/([^/]*)@', $file, $match)) {
 			return $match[1];
+		}
+		if (strpos($file, APP) !== false) {
+			return 'app';
+		}
+		if (file_exists(CAKE . $file) || strpos($file, CAKE) !== false) {
+			return 'core';
 		}
 		return 'app';
 	}

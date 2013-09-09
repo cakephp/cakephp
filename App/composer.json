@@ -2,9 +2,10 @@
     "name": "cakephp/app",
     "description": "CakePHP skeleton app",
     "homepage": "http://cakephp.org",
+    "type": "project",
     "license": "MIT",
     "require": {
-        "cakephp/framework": "dev-3.0",
+        "cakephp/cakephp": "dev-3.0",
         "php": ">=5.4"
     },
     "require-dev": {
@@ -12,7 +13,11 @@
     },
     "autoload": {
         "psr-0": {
-            "App\\": "."
+            "App\\": ".",
+            "": "./Plugin"
         }
+    },
+    "scripts": {
+        "post-install-cmd": "App\\Console\\Installer::postInstall"
     }
 }
