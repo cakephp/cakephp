@@ -408,9 +408,10 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model Model the callback is called on
  * @param boolean $created Whether or not the save created a record.
+ * @param array $options Options passed from Model::save().
  * @return void
  */
-	public function afterSave(Model $Model, $created) {
+	public function afterSave(Model $Model, $created, $options = array()) {
 		if (!isset($this->runtime[$Model->alias]['beforeValidate']) && !isset($this->runtime[$Model->alias]['beforeSave'])) {
 			return true;
 		}

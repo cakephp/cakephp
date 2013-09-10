@@ -178,9 +178,11 @@ class ModelBehavior extends Object {
  *
  * @param Model $model Model using this behavior
  * @param boolean $created True if this save created a new record
+ * @param array $options Options passed from Model::save().
  * @return boolean
+ * @see Model::save()
  */
-	public function afterSave(Model $model, $created) {
+	public function afterSave(Model $model, $created, $options = array()) {
 		return true;
 	}
 

@@ -130,9 +130,10 @@ class TestBehavior extends ModelBehavior {
  *
  * @param Model $model
  * @param boolean $created
+ * @param array $options Options passed from Model::save().
  * @return void
  */
-	public function afterSave(Model $model, $created) {
+	public function afterSave(Model $model, $created, $options = array()) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['afterSave']) || $settings['afterSave'] === 'off') {
 			return parent::afterSave($model, $created);
