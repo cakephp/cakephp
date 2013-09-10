@@ -42,7 +42,6 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testClassname() {
-		$currentApp = Configure::read('App.namespace');
 		Configure::write('App.namespace', 'TestApp');
 
 		// Test core
@@ -62,18 +61,12 @@ class AppTest extends TestCase {
 		$this->assertEquals('TestPlugin\Utility\TestPluginEngine', App::classname('TestPlugin.TestPlugin', 'Utility', 'Engine'));
 		$this->assertFalse(App::classname('TestPlugin.Unknown', 'Utility'));
 
-		Plugin::unload('TestPlugin');
-		Configure::write('App.namespace', $currentApp);
-	}
-
-/**
- * testClassnameUnknownPlugin method
- *
- * @expectedException Cake\Error\MissingPluginException
- * @return void
- */
-	public function testClassnameUnknownPlugin() {
-		App::classname('UnknownPlugin.Classname', 'Utility');
+		$this->assertFalse(Plugin::loaded('TestPluginTwo'), 'TestPluginTwo should not be loaded.');
+		// Test unknown plugin
+		$this->assertEquals(
+			'TestPluginTwo\Console\Command\ExampleShell',
+			App::classname('TestPluginTwo.Example', 'Console/Command', 'Shell')
+		);
 	}
 
 /**

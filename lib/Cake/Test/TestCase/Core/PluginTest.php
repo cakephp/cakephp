@@ -54,6 +54,8 @@ class PluginTest extends TestCase {
 		Plugin::load('TestPlugin');
 		$this->assertEquals('TestPlugin', Plugin::getNamespace('TestPlugin'));
 
+		$this->assertEquals('TestPluginTwo', Plugin::getNamespace('TestPluginTwo'));
+
 		Plugin::load('TestPluginThree', array('namespace' => 'Company\TestPluginThree'));
 		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('TestPluginThree'));
 

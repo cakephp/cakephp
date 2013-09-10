@@ -190,13 +190,15 @@ class Plugin {
 /**
  * Return the namespace for a plugin
  *
+ * If a plugin is unknown, the plugin name will be used as the namespace.
+ * This lets you access vendor libraries or unloaded plugins using `Plugin.Class`.
+ *
  * @param string $plugin name of the plugin in CamelCase format
  * @return string namespace to the plugin
- * @throws Cake\Error\MissingPluginException if the namespace for plugin was not found or plugin has not been loaded
  */
 	public static function getNamespace($plugin) {
 		if (empty(static::$_plugins[$plugin])) {
-			throw new Error\MissingPluginException(['plugin' => $plugin]);
+			return $plugin;
 		}
 		return static::$_plugins[$plugin]['namespace'];
 	}
