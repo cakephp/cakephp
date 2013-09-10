@@ -84,7 +84,7 @@ class TestBehavior extends ModelBehavior {
  * @param boolean $primary
  * @return void
  */
-	public function afterFind(Model $model, $results, $primary) {
+	public function afterFind(Model $model, $results, $primary = false) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['afterFind']) || $settings['afterFind'] === 'off') {
 			return parent::afterFind($model, $results, $primary);
