@@ -96,7 +96,7 @@ class Plugin {
  * - `routes` - boolean - Whether or not you want to load the $plugin/Config/routes.php file.
  * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
  * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
- * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPath) will be used.
+ * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPaths) will be used.
  * - `autoload` - boolean - Whether or not you want an autoloader registered. This defaults to false. The framework
  *   assumes you have configured autoloaders using composer. However, if your application source tree is made up of
  *   plugins, this can be a useful option.
@@ -117,13 +117,17 @@ class Plugin {
 
 		$config += ['autoload' => false, 'bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false];
 		if (empty($config['path'])) {
-			$path = Configure::read('App.pluginPath');
-			$namespacePath = str_replace('\\', DS, $config['namespace']);
-			if (is_dir($path . $plugin)) {
-				$config += ['path' => $path . $plugin . DS];
-			}
-			if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
-				$config += ['path' => $path . $namespacePath . DS];
+			$paths = Configure::read('App.pluginPaths');
+			foreach ((array)$paths as $path) {
+				$namespacePath = str_replace('\\', DS, $config['namespace']);
+				if (is_dir($path . $plugin)) {
+					$config += ['path' => $path . $plugin . DS];
+					break;
+				}
+				if ($plugin !== $config['namespace'] && is_dir($path . $namespacePath)) {
+					$config += ['path' => $path . $namespacePath . DS];
+					break;
+				}
 			}
 		}
 

@@ -70,7 +70,8 @@ Configure::write('App', [
 	'imageBaseUrl' => 'img/',
 	'jsBaseUrl' => 'js/',
 	'cssBaseUrl' => 'css/',
-	'pluginPath' => TEST_APP . 'Plugin/',
+	'pluginPaths' => [TEST_APP . 'Plugin/'],
+	'viewPaths' => [TEST_APP . 'View/']
 ]);
 
 Cache::config([
