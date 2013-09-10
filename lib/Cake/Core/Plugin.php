@@ -62,14 +62,6 @@ class Plugin {
  *
  * Will load routes.php file but not bootstrap.php
  *
- * `Plugin::load('DebugKit', ['bootstrap' => ['config1', 'config2']])
- *
- * Will load config1.php and config2.php files
- *
- * `Plugin::load('DebugKit', ['bootstrap' => '\DebugKit\SomeClass::bootstrap'])`
- *
- * Will run the \DebugKit\SomeClass::bootstrap() function to initialize it
- *
  * `Plugin::load('DebugKit', ['namespace' => 'Cake\DebugKit'])`
  *
  * Will load files on APP/Plugin/Cake/DebugKit/...
@@ -99,8 +91,7 @@ class Plugin {
  *
  * ## Configuration options
  *
- * - `bootstrap` - array|boolean - Whether or not you want the $plugin/Config/bootstrap.php file loaded.
- *   Can also be an array of files to load from $plugin/Config.
+ * - `bootstrap` - array - Whether or not you want the $plugin/Config/bootstrap.php file loaded.
  * - `routes` - boolean - Whether or not you want to load the $plugin/Config/routes.php file.
  * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
  * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
@@ -215,11 +206,6 @@ class Plugin {
 		if ($config['bootstrap'] === false) {
 			return false;
 		}
-		if (is_callable($config['bootstrap'])) {
-			$cb = $config['bootstrap'];
-			return $cb($plugin, $config);
-		}
-
 		$path = static::path($plugin);
 		if ($config['bootstrap'] === true) {
 			return static::_includeFile(
@@ -227,16 +213,6 @@ class Plugin {
 				$config['ignoreMissing']
 			);
 		}
-
-		$bootstrap = (array)$config['bootstrap'];
-		foreach ($bootstrap as $file) {
-			static::_includeFile(
-				$path . 'Config' . DS . $file . '.php',
-				$config['ignoreMissing']
-			);
-		}
-
-		return true;
 	}
 
 /**

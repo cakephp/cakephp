@@ -162,28 +162,6 @@ class PluginTest extends TestCase {
 	}
 
 /**
- * Tests that it is possible to load multiple bootstrap files at once
- *
- * @return void
- */
-	public function testMultipleBootstrapFiles() {
-		Plugin::load('TestPlugin', array('bootstrap' => array('bootstrap', 'custom_config')));
-		$this->assertTrue(Plugin::loaded('TestPlugin'));
-		$this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
-	}
-
-/**
- * Tests that it is possible to load plugin bootstrap by calling a callback function
- *
- * @return void
- */
-	public function testCallbackBootstrap() {
-		Plugin::load('TestPlugin', array('bootstrap' => array($this, 'pluginBootstrap')));
-		$this->assertTrue(Plugin::loaded('TestPlugin'));
-		$this->assertEquals('called plugin bootstrap callback', Configure::read('PluginTest.test_plugin.bootstrap'));
-	}
-
-/**
  * Tests that loading a missing routes file throws a warning
  *
  * @return void
@@ -289,12 +267,4 @@ class PluginTest extends TestCase {
 		$this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
 	}
 
-/**
- * Auxiliary function to test plugin bootstrap callbacks
- *
- * @return void
- */
-	public function pluginBootstrap() {
-		Configure::write('PluginTest.test_plugin.bootstrap', 'called plugin bootstrap callback');
-	}
 }
