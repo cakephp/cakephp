@@ -117,8 +117,8 @@ class Plugin {
 
 		$config += ['autoload' => false, 'bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false];
 		if (empty($config['path'])) {
-			$paths = Configure::read('App.pluginPaths');
-			foreach ((array)$paths as $path) {
+			$paths = App::path('Plugin');
+			foreach ($paths as $path) {
 				$namespacePath = str_replace('\\', DS, $config['namespace']);
 				if (is_dir($path . $plugin)) {
 					$config += ['path' => $path . $plugin . DS];

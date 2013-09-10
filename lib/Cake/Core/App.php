@@ -57,46 +57,11 @@ use Cake\Utility\Inflector;
 class App {
 
 /**
- * Append paths
- *
- * @constant APPEND
- */
-	const APPEND = 'append';
-
-/**
- * Prepend paths
- *
- * @constant PREPEND
- */
-	const PREPEND = 'prepend';
-
-/**
- * Reset paths instead of merging
- *
- * @constant RESET
- */
-	const RESET = true;
-
-/**
  * Holds and key => value array of object types.
  *
  * @var array
  */
 	protected static $_objects = [];
-
-/**
- * Holds the possible paths for each package name
- *
- * @var array
- */
-	protected static $_packages = [];
-
-/**
- * Holds the templates for each customizable package path in the application
- *
- * @var array
- */
-	protected static $_packageFormat = [];
 
 /**
  * Indicates whether the object cache should be stored again because of an addition to it
@@ -157,105 +122,16 @@ class App {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::path
  */
 	public static function path($type, $plugin = null) {
+		if ($type === 'Plugin') {
+			return (array)Configure::read('App.pluginPaths');
+		}
+		if (empty($plugin) && $type === 'View') {
+			return (array)Configure::read('App.viewPaths');
+		}
 		if (!empty($plugin)) {
 			return [static::pluginPath($plugin) . $type . DS];
 		}
-		if (!isset(static::$_packages[$type])) {
-			return [APP . $type . DS];
-		}
-		return static::$_packages[$type];
-	}
-
-/**
- * Get all the currently configured paths.
- *
- * This will only reflect paths for resources, and not classes.
- * Class paths are not managed by App and it has no knowledge of them.
- * For a paths to a specific package use App::path()
- *
- * @return array An array of packages and their associated paths.
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::paths
- */
-	public static function paths() {
-		return static::$_packages;
-	}
-
-/**
- * Sets up package locations on the file system.
- *
- * You can configure multiple search paths for each package, those
- * will be used to look for files one folder at a time in the specified
- * order. All paths should be terminated with a Directory separator
- *
- * Usage:
- *
- * `App::build(['View' => ['/a/full/path/to/views/']]);`
- *
- * Will setup a new search path for the Model package
- *
- * `App::build(['View' => ['/path/to/views/']), App::RESET);`
- *
- * Will setup the path as the only valid path for searching models`
- *
- * `App::build(['View' => ['/path/to/views/', '/another/path/']]);`
- *
- * Will setup multiple search paths for views.
- *
- * If reset is set to true, all loaded plugins will be forgotten and they will be needed to be loaded again.
- *
- * @param array $paths associative array with package names as keys and a list of directories for new search paths
- * @param boolean|string $mode App::RESET will set paths, App::APPEND with append paths, App::PREPEND will prepend paths (default)
- * @return void
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/app.html#App::build
- */
-	public static function build($paths = [], $mode = self::PREPEND) {
-		if ($mode === static::RESET) {
-			foreach ($paths as $type => $new) {
-				static::$_packages[$type] = (array)$new;
-				static::objects($type, null, false);
-			}
-			return;
-		}
-
-		if (empty($paths)) {
-			static::$_packageFormat = null;
-		}
-
-		$packageFormat = static::_packageFormat();
-
-		$defaults = [];
-		foreach ($packageFormat as $package => $format) {
-			foreach ($format as $f) {
-				$defaults[$package][] = sprintf($f, APP);
-			}
-		}
-
-		if (empty($paths)) {
-			static::$_packages = $defaults;
-			return;
-		}
-
-		foreach ($defaults as $type => $default) {
-			if (!empty(static::$_packages[$type])) {
-				$path = static::$_packages[$type];
-			} else {
-				$path = $default;
-			}
-
-			if (!empty($paths[$type])) {
-				$newPath = (array)$paths[$type];
-
-				if ($mode === static::PREPEND) {
-					$path = array_merge($newPath, $path);
-				} else {
-					$path = array_merge($path, $newPath);
-				}
-
-				$path = array_values(array_unique($path));
-			}
-
-			static::$_packages[$type] = $path;
-		}
+		return [APP . $type . DS];
 	}
 
 /**
@@ -288,12 +164,13 @@ class App {
  */
 	public static function themePath($theme) {
 		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
-		foreach (static::$_packages['View'] as $path) {
+		$paths = static::path('View');
+		foreach ($paths as $path) {
 			if (is_dir($path . $themeDir)) {
 				return $path . $themeDir . DS;
 			}
 		}
-		return static::$_packages['View'][0] . $themeDir . DS;
+		return $paths[0] . $themeDir . DS;
 	}
 
 /**
@@ -411,26 +288,6 @@ class App {
  */
 	public static function init() {
 		register_shutdown_function([get_called_class(), 'shutdown']);
-	}
-
-/**
- * Sets then returns the templates for each customizable package path
- *
- * @return array templates for each customizable package path
- */
-	protected static function _packageFormat() {
-		if (empty(static::$_packageFormat)) {
-			static::$_packageFormat = [
-				'View' => [
-					'%s' . 'View' . DS,
-				],
-				'Locale' => [
-					'%s' . 'Locale' . DS
-				],
-			];
-		}
-
-		return static::$_packageFormat;
 	}
 
 /**

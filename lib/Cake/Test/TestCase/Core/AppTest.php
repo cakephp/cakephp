@@ -70,59 +70,6 @@ class AppTest extends TestCase {
 	}
 
 /**
- * testBuild method
- *
- * @return void
- */
-	public function testBuild() {
-		$old = App::path('View');
-		$expected = array(
-			APP . 'View' . DS,
-		);
-		$this->assertEquals($expected, $old);
-
-		App::build();
-		App::build(array('View' => array('/path/to/views/')), App::PREPEND);
-		$new = App::path('View');
-		$expected = array(
-			'/path/to/views/',
-			APP . 'View' . DS,
-		);
-		$this->assertEquals($expected, $new);
-
-		App::build();
-		App::build(array('View' => array('/path/to/views/')), App::APPEND);
-		$new = App::path('View');
-		$expected = array(
-			APP . 'View' . DS,
-			'/path/to/views/'
-		);
-		$this->assertEquals($expected, $new);
-
-		App::build();
-		App::build(array(
-			'View' => array('/path/to/views/'),
-			'Locale' => array('/path/to/locales/'),
-		), App::APPEND);
-		$new = App::path('View');
-		$expected = array(
-			APP . 'View' . DS,
-			'/path/to/views/'
-		);
-		$this->assertEquals($expected, $new);
-		$new = App::path('Locale');
-		$expected = array(
-			APP . 'Locale' . DS,
-			'/path/to/locales/'
-		);
-		$this->assertEquals($expected, $new);
-
-		App::build(); //reset defaults
-		$defaults = App::path('View');
-		$this->assertEquals($old, $defaults);
-	}
-
-/**
  * test path() with a plugin.
  *
  * @return void
@@ -133,32 +80,6 @@ class AppTest extends TestCase {
 
 		$result = App::path('Controller', 'TestPlugin');
 		$this->assertEquals($basepath . 'TestPlugin' . DS . 'Controller' . DS, $result[0]);
-	}
-
-/**
- * testBuildWithReset method
- *
- * @return void
- */
-	public function testBuildWithReset() {
-		$old = App::path('View');
-		$expected = array(
-			APP . 'View' . DS,
-		);
-		$this->assertEquals($expected, $old);
-
-		App::build(array('View' => array('/path/to/views/')), App::RESET);
-
-		$new = App::path('View');
-
-		$expected = array(
-			'/path/to/views/'
-		);
-		$this->assertEquals($expected, $new);
-
-		App::build(); //reset defaults
-		$defaults = App::path('View');
-		$this->assertEquals($old, $defaults);
 	}
 
 /**
@@ -234,9 +155,6 @@ class AppTest extends TestCase {
 
 		$this->skipIf(!is_writable($path), $path . ' is not writable.');
 
-		App::build(array(
-			'Plugin' => array($path)
-		), App::RESET);
 		mkdir($path . '.svn');
 		$result = App::objects('Plugin', null, false);
 		rmdir($path . '.svn');
@@ -250,10 +168,6 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testListObjectsInPlugin() {
-		App::build(array(
-			'Model' => array(CAKE . 'Test/TestApp/Model/'),
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$result = App::objects('TestPlugin.Model');
@@ -275,8 +189,6 @@ class AppTest extends TestCase {
 		$result = App::objects('Model', null, false);
 		$this->assertTrue(in_array('Comment', $result));
 		$this->assertTrue(in_array('Post', $result));
-
-		App::build();
 	}
 
 /**
@@ -285,9 +197,6 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testPluginPath() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
-		));
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$path = App::pluginPath('TestPlugin');
@@ -297,7 +206,6 @@ class AppTest extends TestCase {
 		$path = App::pluginPath('TestPluginTwo');
 		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
 		$this->assertEquals($expected, $path);
-		App::build();
 	}
 
 /**
@@ -306,9 +214,6 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testThemePath() {
-		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
-		));
 		$path = App::themePath('test_theme');
 		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
 		$this->assertEquals($expected, $path);
@@ -316,19 +221,6 @@ class AppTest extends TestCase {
 		$path = App::themePath('TestTheme');
 		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
 		$this->assertEquals($expected, $path);
-
-		App::build();
-	}
-
-/**
- * Test that paths() works.
- *
- * @return void
- */
-	public function testPaths() {
-		$result = App::paths();
-		$this->assertArrayHasKey('View', $result);
-		$this->assertArrayHasKey('Locale', $result);
 	}
 
 }
