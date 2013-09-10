@@ -1336,5 +1336,5 @@ class DboSourceTest extends CakeTestCase {
 
 		$result = $db->insertMulti('articles', array_keys($data[0]), $data);
 		$this->assertTrue($result, 'Data was saved');
-    }
+	}
 }
