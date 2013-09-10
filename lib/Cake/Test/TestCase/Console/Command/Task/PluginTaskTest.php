@@ -23,6 +23,7 @@ namespace Cake\Test\TestCase\Console\Command\Task;
 
 use Cake\Console\Command\Task\DbConfigTask;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Folder;
@@ -52,13 +53,7 @@ class PluginTaskTest extends TestCase {
 		$this->Task->bootstrap = TMP . 'tests/bootstrap.php';
 		touch($this->Task->bootstrap);
 
-		$this->_paths = $paths = App::path('Plugin');
-		foreach ($paths as $i => $p) {
-			if (!is_dir($p)) {
-				array_splice($paths, $i, 1);
-			}
-		}
-		$this->_testPath = array_push($paths, TMP . 'tests/');
+		$this->_path = Configure::read('App.pluginPath');
 	}
 
 /**
@@ -79,24 +74,22 @@ class PluginTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeFoldersAndFiles() {
-		$this->markTestIncomplete('This halts the execution for some reason');
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue($this->_testPath));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'BakeTestPlugin';
 
 		$file = $path . DS . 'Controller/BakeTestPluginAppController.php';
-		$this->Task->expects($this->at(2))->method('createFile')
+		$this->Task->expects($this->at(1))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$file = $path . DS . 'Model/BakeTestPluginAppModel.php';
-		$this->Task->expects($this->at(3))->method('createFile')
+		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$this->Task->bake('BakeTestPlugin');
 
 		$path = $this->Task->path . 'BakeTestPlugin';
-		$this->assertTrue(is_dir($path), 'No plugin dir %s');
+		$this->assertTrue(is_dir($path), 'No plugin dir');
 
 		$directories = array(
 			'Config/Schema',
@@ -127,20 +120,17 @@ class PluginTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithNoArgs() {
-		$this->markTestIncomplete('This halts the execution for some reason');
-
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('TestPlugin'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue($this->_testPath));
-		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
+		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'TestPlugin';
 		$file = $path . DS . 'Controller/TestPluginAppController.php';
 
-		$this->Task->expects($this->at(3))->method('createFile')
+		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$file = $path . DS . 'Model/TestPluginAppModel.php';
-		$this->Task->expects($this->at(4))->method('createFile')
+		$this->Task->expects($this->at(3))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$this->Task->args = array();
@@ -156,21 +146,17 @@ class PluginTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithOneArg() {
-		$this->markTestIncomplete('This halts the execution for some reason');
-
 		$this->Task->expects($this->at(0))->method('in')
-			->will($this->returnValue($this->_testPath));
-		$this->Task->expects($this->at(1))->method('in')
 			->will($this->returnValue('y'));
 
 		$path = $this->Task->path . 'BakeTestPlugin';
 		$file = $path . DS . 'Controller/BakeTestPluginAppController.php';
-		$this->Task->expects($this->at(2))->method('createFile')
+		$this->Task->expects($this->at(1))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$path = $this->Task->path . 'BakeTestPlugin';
 		$file = $path . DS . 'Model/BakeTestPluginAppModel.php';
-		$this->Task->expects($this->at(3))->method('createFile')
+		$this->Task->expects($this->at(2))->method('createFile')
 			->with($file, new \PHPUnit_Framework_Constraint_IsAnything());
 
 		$this->Task->args = array('BakeTestPlugin');

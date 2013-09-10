@@ -1,7 +1,5 @@
 <?php
 /**
- * The Plugin Task handles creating an empty plugin, ready to be used
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -20,6 +18,7 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
 use Cake\Utility\Inflector;
@@ -27,7 +26,6 @@ use Cake\Utility\Inflector;
 /**
  * The Plugin Task handles creating an empty plugin, ready to be used
  *
- * @package       Cake.Console.Command.Task
  */
 class PluginTask extends Shell {
 
@@ -51,7 +49,7 @@ class PluginTask extends Shell {
  * @return void
  */
 	public function initialize() {
-		$this->path = current(App::path('Plugin'));
+		$this->path = Configure::read('App.pluginPath');
 		$this->bootstrap = APP . 'Config/bootstrap.php';
 	}
 
@@ -98,7 +96,7 @@ class PluginTask extends Shell {
  * @return boolean
  */
 	public function bake($plugin) {
-		$pathOptions = App::path('Plugin');
+		$pathOptions = (array)Configure::read('App.pluginPath');
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
