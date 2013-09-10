@@ -250,6 +250,17 @@ class PluginTest extends TestCase {
 	}
 
 /**
+ * Test that plugins don't reload using loadAll();
+ *
+ * @return void
+ */
+	public function testLoadAllWithPluginAlreadyLoaded() {
+		Plugin::load('PluginJs', ['namespace' => 'Company\TestPluginJs']);
+		Plugin::loadAll();
+		$this->assertEquals('Company\TestPluginJs', Plugin::getNamespace('PluginJs'));
+	}
+
+/**
  * Tests that Plugin::loadAll() will load all plgins in the configured folder with bootstrap loading
  *
  * @return void

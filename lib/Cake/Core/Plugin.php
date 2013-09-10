@@ -158,6 +158,8 @@ class Plugin {
  * The above example will load the bootstrap file for all plugins, but for DebugKit it will only load the routes file
  * and will not look for any bootstrap script.
  *
+ * If a plugin has been loaded already, it will not be reloaded by loadAll().
+ *
  * @param array $options
  * @return void
  */
@@ -167,6 +169,9 @@ class Plugin {
 			$opts = isset($options[$p]) ? $options[$p] : null;
 			if ($opts === null && isset($options[0])) {
 				$opts = $options[0];
+			}
+			if (isset(static::$_plugins[$p])) {
+				continue;
 			}
 			static::load($p, (array)$opts);
 		}
