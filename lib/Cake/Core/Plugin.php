@@ -16,6 +16,7 @@
  */
 namespace Cake\Core;
 
+use Cake\Core\ClassLoader;
 use Cake\Error;
 use Cake\Utility\Inflector;
 
@@ -96,6 +97,9 @@ class Plugin {
  * - `namespace` - string - A custom namespace for the plugin. It will default to the plugin name.
  * - `ignoreMissing` - boolean - Set to true to ignore missing bootstrap/routes files.
  * - `path` - string - The path the plugin can be found on. If empty the default plugin path (App.pluginPath) will be used.
+ * - `autoload` - boolean - Whether or not you want an autoloader registered. This defaults to false. The framework
+ *   assumes you have configured autoloaders using composer. However, if your application source tree is made up of
+ *   plugins, this can be a useful option.
  *
  * @param string|array $plugin name of the plugin to be loaded in CamelCase format or array or plugins to load
  * @param array $config configuration options for the plugin
@@ -111,7 +115,7 @@ class Plugin {
 			return;
 		}
 
-		$config += ['bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false];
+		$config += ['autoload' => false, 'bootstrap' => false, 'routes' => false, 'namespace' => $plugin, 'ignoreMissing' => false];
 		if (empty($config['path'])) {
 			$path = Configure::read('App.pluginPath');
 			$namespacePath = str_replace('\\', DS, $config['namespace']);
@@ -129,8 +133,12 @@ class Plugin {
 
 		static::$_plugins[$plugin] = $config;
 
-		if (!empty(static::$_plugins[$plugin]['bootstrap'])) {
+		if ($config['bootstrap'] === true) {
 			static::bootstrap($plugin);
+		}
+
+		if ($config['autoload'] === true) {
+			(new ClassLoader($config['namespace'], dirname($config['path'])))->register();
 		}
 	}
 

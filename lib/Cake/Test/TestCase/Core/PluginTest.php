@@ -97,6 +97,24 @@ class PluginTest extends TestCase {
 	}
 
 /**
+ * Test load() with the autoload option.
+ *
+ * @return void
+ */
+	public function testLoadSingleWithAutoload() {
+		$this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
+		Plugin::load('TestPluginThree', [
+			'namespace' => 'Company\TestPluginThree',
+			'path' => TEST_APP . 'Plugin/TestPluginThree',
+			'autoload' => true,
+		]);
+		$this->assertTrue(
+			class_exists('Company\TestPluginThree\Utility\Hello'),
+			'Class should be loaded'
+		);
+	}
+
+/**
  * Tests loading a plugin and its bootstrap file
  *
  * @return void
