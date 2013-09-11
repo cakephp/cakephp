@@ -538,7 +538,8 @@ class Sqlserver extends DboSource {
 						WHERE _cake_paging_.{$rowCounter} > {$offset}
 						ORDER BY _cake_paging_.{$rowCounter}
 					";
-				} elseif (strpos($limit, 'FETCH') !== false) {
+				}
+				if (strpos($limit, 'FETCH') !== false) {
 					return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}";
 				}
 				return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order}";
@@ -573,7 +574,8 @@ class Sqlserver extends DboSource {
 	public function value($data, $column = null) {
 		if ($data === null || is_array($data) || is_object($data)) {
 			return parent::value($data, $column);
-		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
+		}
+		if (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
 			return $data;
 		}
 
