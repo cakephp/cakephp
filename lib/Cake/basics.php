@@ -245,7 +245,7 @@ if (!function_exists('pr')) {
 	function pr($var) {
 		if (Configure::read('debug') > 0) {
 			$template = php_sapi_name() !== 'cli' ? '<pre>%s</pre>' : "\n%s\n";
-			echo sprintf($template, print_r($var, true));
+			printf($template, print_r($var, true));
 		}
 	}
 
