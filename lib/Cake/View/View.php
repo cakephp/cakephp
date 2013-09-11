@@ -583,7 +583,7 @@ class View extends Object {
  *
  * @param string $var The view var you want the contents of.
  * @param mixed $default The default/fallback content of $var.
- * @return mixed The content of the named var if its set, otherwise null.
+ * @return mixed The content of the named var if its set, otherwise $default.
  */
 	public function get($var, $default = null) {
 		if (!isset($this->viewVars[$var])) {
