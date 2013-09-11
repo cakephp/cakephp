@@ -53,7 +53,7 @@ class PluginTaskTest extends TestCase {
 		$this->Task->bootstrap = TMP . 'tests/bootstrap.php';
 		touch($this->Task->bootstrap);
 
-		$this->_path = Configure::read('App.pluginPath');
+		$this->_path = App::path('Plugin');
 	}
 
 /**

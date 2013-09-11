@@ -49,7 +49,7 @@ class PluginTask extends Shell {
  * @return void
  */
 	public function initialize() {
-		$this->path = Configure::read('App.pluginPath');
+		$this->path = current(App::path('Plugin'));
 		$this->bootstrap = APP . 'Config/bootstrap.php';
 	}
 
@@ -96,7 +96,7 @@ class PluginTask extends Shell {
  * @return boolean
  */
 	public function bake($plugin) {
-		$pathOptions = (array)Configure::read('App.pluginPath');
+		$pathOptions = App::path('Plugin');
 		if (count($pathOptions) > 1) {
 			$this->findPath($pathOptions);
 		}
