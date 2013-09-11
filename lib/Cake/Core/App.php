@@ -112,9 +112,14 @@ class App {
  *
  * Usage:
  *
- * `App::path('Model'); will return all paths for models`
+ * `App::path('Plugin');`
  *
- * `App::path('Model/Datasource', 'MyPlugin'); will return the path for datasources under the 'MyPlugin' plugin`
+ * Will return the configured paths for plugins. This is a simpler way to access
+ * the `App.paths.plugin` configure variable.
+ *
+ * `App::path('Model/Datasource', 'MyPlugin');`
+ *
+ * Will return the path for datasources under the 'MyPlugin' plugin.
  *
  * @param string $type type of path
  * @param string $plugin name of plugin
@@ -123,10 +128,10 @@ class App {
  */
 	public static function path($type, $plugin = null) {
 		if ($type === 'Plugin') {
-			return (array)Configure::read('App.pluginPaths');
+			return (array)Configure::read('App.paths.plugin');
 		}
 		if (empty($plugin) && $type === 'View') {
-			return (array)Configure::read('App.viewPaths');
+			return (array)Configure::read('App.paths.view');
 		}
 		if (!empty($plugin)) {
 			return [static::pluginPath($plugin) . $type . DS];

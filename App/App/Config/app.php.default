@@ -32,11 +32,8 @@ $config = [
  * - imageBaseUrl - Web path to the public images directory under webroot.
  * - cssBaseUrl - Web path to the public css directory under webroot.
  * - jsBaseUrl - Web path to the public js directory under webroot.
- * - pluginPaths - The file paths to your plugins directory. If you have plugins
- *   that are not on these paths, you should use the `path` option when loading those
- *   plugins.
- * - viewPaths - The array of file paths to your views. Most applications only have one, 
- *   but you can add more if necessary.
+ * - paths - Configure paths for non class based resources. Supports the `plugin` and `view`
+ *   subkeys, which allow the definition of paths for plugins and view templates respectively.
  */
 	'App' => [
 		'namespace' => 'App',
@@ -50,8 +47,10 @@ $config = [
 		'imageBaseUrl' => 'img/',
 		'cssBaseUrl' => 'css/',
 		'jsBaseUrl' => 'js/',
-		'pluginPaths' => [ROOT . '/Plugin/'],
-		'viewPaths' => [APP . 'View/'],
+		'paths' => [
+			'plugin' => [ROOT . '/Plugin/'],
+			'view' => [APP . 'View/'],
+		],
 	],
 
 /**
