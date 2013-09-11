@@ -26,11 +26,9 @@ use Cake\Utility\Inflector;
  *
  * ### Adding paths
  *
- * You can add paths to the search indexes App uses to find resources using `App::build()`. Adding
- * additional view paths for example would alter where CakePHP looks for view files.
- *
- * You can only add paths for Views and Locale files. All class based resources should be mapped
- * using your application's autoloader.
+ * Additional paths for Views and Plugins are configured with Configure now. See App/Config/app.php for an
+ * example. The `App.paths.plugins` and `App.paths.views` variables are used to configure paths for plugins
+ * and views respectively. All class based resources should be mapped using your application's autoloader.
  *
  * ### Inspecting loaded paths
  *
@@ -115,7 +113,7 @@ class App {
  * `App::path('Plugin');`
  *
  * Will return the configured paths for plugins. This is a simpler way to access
- * the `App.paths.plugin` configure variable.
+ * the `App.paths.plugins` configure variable.
  *
  * `App::path('Model/Datasource', 'MyPlugin');`
  *
@@ -128,10 +126,10 @@ class App {
  */
 	public static function path($type, $plugin = null) {
 		if ($type === 'Plugin') {
-			return (array)Configure::read('App.paths.plugin');
+			return (array)Configure::read('App.paths.plugins');
 		}
 		if (empty($plugin) && $type === 'View') {
-			return (array)Configure::read('App.paths.view');
+			return (array)Configure::read('App.paths.views');
 		}
 		if (!empty($plugin)) {
 			return [static::pluginPath($plugin) . $type . DS];

@@ -48,8 +48,8 @@ $config = [
 		'cssBaseUrl' => 'css/',
 		'jsBaseUrl' => 'js/',
 		'paths' => [
-			'plugin' => [ROOT . '/Plugin/'],
-			'view' => [APP . 'View/'],
+			'plugins' => [ROOT . '/Plugin/'],
+			'views' => [APP . 'View/'],
 		],
 	],
 
