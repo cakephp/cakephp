@@ -582,11 +582,12 @@ class View extends Object {
  * Blocks are checked before view variables.
  *
  * @param string $var The view var you want the contents of.
+ * @param mixed $default The default/fallback content of $var.
  * @return mixed The content of the named var if its set, otherwise null.
  */
-	public function get($var) {
+	public function get($var, $default = null) {
 		if (!isset($this->viewVars[$var])) {
-			return null;
+			return $default;
 		}
 		return $this->viewVars[$var];
 	}
