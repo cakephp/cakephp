@@ -1660,7 +1660,7 @@ TEXT;
 	}
 
 /**
- * Tests that a vew block uses default value when not assigned and uses assigned value when it is
+ * Tests that a view block uses default value when not assigned and uses assigned value when it is
  *
  * @return void
  */
@@ -1672,6 +1672,22 @@ TEXT;
 		$expected = 'My Title';
 		$this->View->assign('title', $expected);
 		$result = $this->View->fetch('title', $default);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Tests that a view variable uses default value when not assigned and uses assigned value when it is
+ *
+ * @return void
+ */
+	public function testViewVarDefaultValue() {
+		$default = 'Default';
+		$result = $this->View->get('title', $default);
+		$this->assertEquals($default, $result);
+
+		$expected = 'Back to the Future';
+		$this->View->set('title', $expected);
+		$result = $this->View->get('title', $default);
 		$this->assertEquals($expected, $result);
 	}
 }
