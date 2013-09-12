@@ -19,12 +19,12 @@
  */
 
 /**
- * Class TestPluginComponentComponent
+ * Class TestPluginComponent
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Controller.Component
  */
-class TestPluginComponentComponent extends Object {
+class TestPluginComponent extends Component {
 
-	public $components = array('TestPlugin.TestPluginOtherComponent');
+	public $components = array('TestPlugin.TestPluginOther');
 
 }
