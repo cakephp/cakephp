@@ -3392,12 +3392,12 @@ class Model extends Object implements CakeEventListener {
  * Called before each find operation. Return false if you want to halt the find
  * call, otherwise return the (modified) query data.
  *
- * @param array $queryData Data used to execute this query, i.e. conditions, order, etc.
+ * @param array $query Data used to execute this query, i.e. conditions, order, etc.
  * @return mixed true if the operation should continue, false if it should abort; or, modified
- *               $queryData to continue with new $queryData
+ *  $query to continue with new $query
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforefind
  */
-	public function beforeFind($queryData) {
+	public function beforeFind($query) {
 		return true;
 	}
 
@@ -3418,9 +3418,10 @@ class Model extends Object implements CakeEventListener {
  * Called before each save operation, after validation. Return a non-true result
  * to halt the save.
  *
- * @param array $options
+ * @param array $options Options passed from Model::save().
  * @return boolean True if the operation should continue, false if it should abort
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforesave
+ * @see Model::save()
  */
 	public function beforeSave($options = array()) {
 		return true;
@@ -3430,10 +3431,12 @@ class Model extends Object implements CakeEventListener {
  * Called after each successful save operation.
  *
  * @param boolean $created True if this save created a new record
+ * @param array $options Options passed from Model::save().
  * @return void
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#aftersave
+ * @see Model::save()
  */
-	public function afterSave($created) {
+	public function afterSave($created, $options = array()) {
 	}
 
 /**

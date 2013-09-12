@@ -504,6 +504,8 @@ class View extends Object {
 
 		if (empty($content)) {
 			$content = $this->Blocks->get('content');
+		} else {
+			$this->Blocks->set('content', $content);
 		}
 		$this->getEventManager()->dispatch(new CakeEvent('View.beforeLayout', $this, array($layoutFileName)));
 

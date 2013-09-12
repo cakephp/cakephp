@@ -1,1 +1,1 @@
-<?php __('This is a translatable string'); ?>
+<?php echo __('This is a translatable string'); ?>

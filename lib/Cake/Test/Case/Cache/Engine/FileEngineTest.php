@@ -530,4 +530,24 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertFalse(Cache::read('test_groups5', 'file_groups2'));
 		$this->assertEquals('value 3', Cache::read('test_groups6', 'file_groups3'));
 	}
+
+/**
+ * Test that clearGroup works with no prefix.
+ *
+ * @return void
+ */
+	public function testGroupClearNoPrefix() {
+		Cache::config('file_groups', array(
+			'engine' => 'File',
+			'duration' => 3600,
+			'prefix' => '',
+			'groups' => array('group_a', 'group_b')
+		));
+		Cache::write('key_1', 'value', 'file_groups');
+		Cache::write('key_2', 'value', 'file_groups');
+		Cache::clearGroup('group_a', 'file_groups');
+		$this->assertFalse(Cache::read('key_1', 'file_groups'), 'Did not delete');
+		$this->assertFalse(Cache::read('key_2', 'file_groups'), 'Did not delete');
+	}
+
 }

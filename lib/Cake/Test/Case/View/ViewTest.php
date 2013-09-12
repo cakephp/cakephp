@@ -184,11 +184,11 @@ class TestView extends View {
 }
 
 /**
- * TestAfterHelper class
+ * TestBeforeAfterHelper class
  *
  * @package       Cake.Test.Case.View
  */
-class TestAfterHelper extends Helper {
+class TestBeforeAfterHelper extends Helper {
 
 /**
  * property property
@@ -949,10 +949,10 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testBeforeLayout() {
-		$this->PostsController->helpers = array('Session', 'TestAfter', 'Html');
+		$this->PostsController->helpers = array('Session', 'TestBeforeAfter', 'Html');
 		$View = new View($this->PostsController);
 		$View->render('index');
-		$this->assertEquals('Valuation', $View->Helpers->TestAfter->property);
+		$this->assertEquals('Valuation', $View->Helpers->TestBeforeAfter->property);
 	}
 
 /**
@@ -961,7 +961,7 @@ class ViewTest extends CakeTestCase {
  * @return void
  */
 	public function testAfterLayout() {
-		$this->PostsController->helpers = array('Session', 'TestAfter', 'Html');
+		$this->PostsController->helpers = array('Session', 'TestBeforeAfter', 'Html');
 		$this->PostsController->set('variable', 'values');
 
 		$View = new View($this->PostsController);

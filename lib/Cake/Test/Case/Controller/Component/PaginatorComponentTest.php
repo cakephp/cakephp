@@ -601,7 +601,26 @@ class PaginatorComponentTest extends CakeTestCase {
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
 		$expected = array('2007-03-18 10:43:23', '2007-03-18 10:41:23', '2007-03-18 10:39:23');
 		$this->assertEquals($expected, Hash::extract($result, '{n}.PaginatorControllerPost.created'));
-		$this->assertEquals($Controller->PaginatorControllerPost->order, $this->Controller->request['paging']['PaginatorControllerPost']['order']);
+		$this->assertEquals(
+			$Controller->PaginatorControllerPost->order,
+			$Controller->request->paging['PaginatorControllerPost']['options']['order']
+		);
+
+		$Controller->PaginatorControllerPost->order = array('PaginatorControllerPost.id');
+		$result = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
+		$this->assertEmpty($result['order']);
+
+		$Controller->PaginatorControllerPost->order = 'PaginatorControllerPost.id';
+		$results = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
+		$this->assertEmpty($result['order']);
+
+		$Controller->PaginatorControllerPost->order = array(
+			'PaginatorControllerPost.id',
+			'PaginatorControllerPost.created' => 'asc'
+		);
+		$result = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
+		$expected = array('PaginatorControllerPost.created' => 'asc');
+		$this->assertEquals($expected, $result['order']);
 	}
 
 /**
