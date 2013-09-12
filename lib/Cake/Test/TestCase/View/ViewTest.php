@@ -282,10 +282,6 @@ class ViewTest extends TestCase {
 		$this->ThemePostsController->index();
 		$this->ThemeView = new View($this->ThemePostsController);
 
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
-		), App::RESET);
 		App::objects('Plugin', null, false);
 
 		Plugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
@@ -435,10 +431,6 @@ class ViewTest extends TestCase {
 		$this->Controller->action = 'index';
 
 		$View = new TestView($this->Controller);
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS)
-		));
 
 		$pluginPath = Plugin::path('TestPlugin');
 		$expected = CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS . 'View' . DS . 'Tests' . DS . 'index.ctp';

@@ -87,10 +87,6 @@ class ScaffoldViewTest extends TestCase {
 		$this->Controller = new ScaffoldArticlesController($this->request);
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 
-		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS),
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
-		));
 		Plugin::load('TestPlugin');
 	}
 

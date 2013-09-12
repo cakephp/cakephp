@@ -151,11 +151,6 @@ class ExceptionRendererTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Config.language', 'eng');
-		App::build(array(
-			'View' => array(
-				CAKE . 'Test/TestApp/View/'
-			)
-		), App::RESET);
 		Router::reload();
 
 		$request = new Request();
@@ -278,22 +273,6 @@ class ExceptionRendererTest extends TestCase {
  */
 	public function testCakeErrorHelpersNotLost() {
 		Configure::write('App.namespace', 'TestApp');
-		$testApp = CAKE . 'Test/TestApp/';
-		App::build(array(
-			'Controller' => array(
-				$testApp . 'Controller/'
-			),
-			'View/Helper' => array(
-				$testApp . 'View/Helper/'
-			),
-			'View/Layouts' => array(
-				$testApp . 'View/Layouts/'
-			),
-			'Error' => array(
-				$testApp . 'Error/'
-			),
-		), App::RESET);
-
 		$exception = new Error\SocketException('socket exception');
 		$renderer = new \TestApp\Error\TestAppsExceptionRenderer($exception);
 

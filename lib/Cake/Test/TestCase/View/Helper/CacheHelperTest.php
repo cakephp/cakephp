@@ -87,9 +87,6 @@ class CacheHelperTest extends TestCase {
 		$this->Cache = new CacheHelper($View);
 		Configure::write('Cache.check', true);
 		Cache::enable();
-		App::build([
-			'View' => [CAKE . 'Test/TestApp/View/']
-		], App::RESET);
 	}
 
 /**

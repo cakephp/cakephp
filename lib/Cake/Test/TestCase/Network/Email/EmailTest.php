@@ -87,10 +87,6 @@ class EmailTest extends TestCase {
 		parent::setUp();
 		$this->CakeEmail = new TestEmail();
 
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
-
 		Email::configTransport('debug', [
 			'className' => 'Debug'
 		]);
@@ -103,7 +99,6 @@ class EmailTest extends TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		App::build();
 		Log::drop('email');
 		Email::drop('test');
 		Email::dropTransport('debug');
@@ -1472,9 +1467,6 @@ class EmailTest extends TestCase {
  * @return void
  */
 	public function testSendRenderPlugin() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 		Plugin::load('TestPlugin');
 
 		$this->CakeEmail->reset();

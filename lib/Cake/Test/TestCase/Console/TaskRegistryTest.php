@@ -78,9 +78,6 @@ class TaskRegistryTest extends TestCase {
 	public function testLoadPluginTask() {
 		$dispatcher = $this->getMock('Cake\Console\ShellDispatcher', array(), array(), '', false);
 		$shell = $this->getMock('Cake\Console\Shell', array(), array(), '', false);
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 		Plugin::load('TestPlugin');
 		$this->Tasks = new TaskRegistry($shell, $dispatcher);
 
@@ -96,9 +93,6 @@ class TaskRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoadWithAlias() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 		Plugin::load('TestPlugin');
 
 		$result = $this->Tasks->load('DbConfigAliased', array('className' => 'DbConfig'));

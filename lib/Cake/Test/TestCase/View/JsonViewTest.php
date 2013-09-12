@@ -238,9 +238,6 @@ class JsonViewTest extends TestCase {
  * @return void
  */
 	public function testRenderWithView() {
-		App::build([
-			'View' => [CAKE . 'Test' . DS . 'TestApp' . DS . 'View' . DS]
-		]);
 		$Request = new Request();
 		$Response = new Response();
 		$Controller = new Controller($Request, $Response);

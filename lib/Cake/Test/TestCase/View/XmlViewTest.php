@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 2.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -167,9 +166,6 @@ class XmlViewTest extends TestCase {
  * @return void
  */
 	public function testRenderWithView() {
-		App::build(array('View' => array(
-			CAKE . 'Test/TestApp/View/'
-		)));
 		$Request = new Request();
 		$Response = new Response();
 		$Controller = new Controller($Request, $Response);

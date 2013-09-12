@@ -32,18 +32,6 @@ require_once CAKE . 'basics.php';
 class BasicsTest extends TestCase {
 
 /**
- * setUp method
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		App::build(array(
-			'Locale' => array(CAKE . 'Test/TestApp/Locale/')
-		));
-	}
-
-/**
  * test the array_diff_key compatibility function.
  *
  * @return void

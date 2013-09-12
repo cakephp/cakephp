@@ -39,11 +39,6 @@ class PagesControllerTest extends TestCase {
  * @return void
  */
 	public function testDisplay() {
-		App::build(array(
-			'View' => array(
-				CAKE . 'Test/TestApp/View/'
-			)
-		));
 		$Pages = new PagesController(new Request(), new Response());
 
 		$Pages->viewPath = 'Posts';

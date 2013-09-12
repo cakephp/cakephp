@@ -102,11 +102,6 @@ class TemplateTaskTest extends TestCase {
  * @return void
  */
 	public function testGenerate() {
-		App::build(array(
-			'Console' => array(
-				CAKE . 'Test/TestApp/Console/'
-			)
-		));
 		$this->Task->initialize();
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue(1));
 
@@ -122,12 +117,6 @@ class TemplateTaskTest extends TestCase {
  * @return void
  */
 	public function testGenerateWithTemplateFallbacks() {
-		App::build(array(
-			'Console' => array(
-				CAKE . 'Test/TestApp/Console/',
-				CAKE_CORE_INCLUDE_PATH . DS . 'console/'
-			)
-		));
 		$this->Task->initialize();
 		$this->Task->params['theme'] = 'test';
 		$this->Task->set(array(

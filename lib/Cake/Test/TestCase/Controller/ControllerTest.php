@@ -215,7 +215,6 @@ class ControllerTest extends TestCase {
 		parent::setUp();
 
 		App::objects('Plugin', null, false);
-		App::build();
 		Router::reload();
 	}
 
@@ -281,11 +280,6 @@ class ControllerTest extends TestCase {
 	public function testLoadModelInPlugins() {
 		$this->markTestIncomplete('Need to revisit once models work again.');
 		Configure::write('App.namespace', 'TestApp');
-		App::build([
-			'Plugin' => [CAKE . 'Test/TestApp/Plugin/'],
-			'Controller' => [CAKE . 'Test/TestApp/Controller/'],
-			'Model' => [CAKE . 'Test/TestApp/Model/']
-		]);
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController();
@@ -323,7 +317,6 @@ class ControllerTest extends TestCase {
 
 		unset($Controller);
 
-		App::build(['Plugin' => [CAKE . 'Test/TestApp/Plugin/']]);
 		Plugin::load('TestPlugin');
 
 		$Controller = new Controller($request);
@@ -341,7 +334,6 @@ class ControllerTest extends TestCase {
  */
 	public function testConstructClassesWithComponents() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build(['Plugin' => [CAKE . 'Test/TestApp/Plugin/']]);
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController(new Request(), new Response());
@@ -403,15 +395,11 @@ class ControllerTest extends TestCase {
 		$expected = str_replace(array("\t", "\r\n", "\n"), "", $expected);
 		$this->assertEquals($expected, $result);
 
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
 		$Controller = new Controller($request);
 		$Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$Controller->flash('this should work', '/flash', 1, 'ajax2');
 		$result = $Controller->response->body();
 		$this->assertRegExp('/Ajax!/', $result);
-		App::build();
 	}
 
 /**
@@ -421,10 +409,6 @@ class ControllerTest extends TestCase {
  */
 	public function testRender() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build([
-			'Plugin' => [CAKE . 'Test/TestApp/Plugin/'],
-			'View' => [CAKE . 'Test/TestApp/View/']
-		], App::RESET);
 		ClassRegistry::flush();
 		Plugin::load('TestPlugin');
 
@@ -476,11 +460,6 @@ class ControllerTest extends TestCase {
  */
 	public function testBeforeRenderCallbackChangingViewClass() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build([
-			'View' => [
-				CAKE . 'Test/TestApp/View/'
-			]
-		], true);
 		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());
 
 		$Controller->getEventManager()->attach(function ($event) {

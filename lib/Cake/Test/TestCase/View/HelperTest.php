@@ -223,10 +223,6 @@ class HelperTest extends TestCase {
 		ClassRegistry::addObject('HelperTestPost', new HelperTestPost());
 		ClassRegistry::addObject('HelperTestComment', new HelperTestComment());
 		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
-
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-		));
 	}
 
 /**
@@ -730,9 +726,6 @@ class HelperTest extends TestCase {
  */
 	public function testAssetTimestampPluginsAndThemes() {
 		Configure::write('Asset.timestamp', 'force');
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/'),
-		));
 		Plugin::load(array('TestPlugin'));
 
 		$result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
@@ -926,10 +919,6 @@ class HelperTest extends TestCase {
 
 		$this->Helper->theme = 'test_theme';
 
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
-
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/theme/test_theme/img/cake.power.gif';
 		$this->assertEquals($expected, $result);
@@ -966,15 +955,11 @@ class HelperTest extends TestCase {
  * @return void
  */
 	public function testLazyLoadingHelpers() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-		));
 		Plugin::load(array('TestPlugin'));
 
 		$Helper = new TestHelper($this->View);
 		$this->assertInstanceOf('TestPlugin\View\Helper\OtherHelperHelper', $Helper->OtherHelper);
 		$this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $Helper->Html);
-		App::build();
 	}
 
 /**
@@ -983,9 +968,6 @@ class HelperTest extends TestCase {
  * @return void
  */
 	public function testThatHelperHelpersAreNotAttached() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-		), App::RESET);
 		Plugin::loadAll();
 
 		$events = $this->getMock('\Cake\Event\EventManager');

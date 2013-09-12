@@ -137,9 +137,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		if (empty($this->_configure)) {
 			$this->_configure = Configure::read();
 		}
-		if (empty($this->_pathRestore)) {
-			$this->_pathRestore = App::paths();
-		}
 		if (class_exists('Cake\Routing\Router', false)) {
 			Router::reload();
 		}
@@ -152,7 +149,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		App::build($this->_pathRestore, App::RESET);
 		if (class_exists('Cake\Utility\ClassRegistry', false)) {
 			ClassRegistry::flush();
 		}

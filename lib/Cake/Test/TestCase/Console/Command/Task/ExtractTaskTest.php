@@ -252,9 +252,6 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractExcludePlugins() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ExtractTask',
@@ -281,9 +278,6 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractPlugin() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
@@ -310,10 +304,6 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractModelValidation() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build(array(
-			'Model' => array(CAKE . 'Test/TestApp/Model/'),
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load('TestPlugin');
 
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
@@ -361,9 +351,6 @@ class ExtractTaskTest extends TestCase {
  */
 	public function testExtractModelValidationInPlugin() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 		Plugin::load('TestPlugin');
 		$this->out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);

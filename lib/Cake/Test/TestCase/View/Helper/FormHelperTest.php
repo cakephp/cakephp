@@ -3182,9 +3182,6 @@ class FormHelperTest extends TestCase {
  */
 	public function testInputsPluginModel() {
 		$this->loadFixtures('Post');
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 		Plugin::load('TestPlugin');
 		$this->Form->request['models'] = array(
 			'TestPluginPost' => array('plugin' => 'TestPlugin', 'className' => 'TestPluginPost')
@@ -9042,7 +9039,6 @@ class FormHelperTest extends TestCase {
 		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', ClassRegistry::getObject('TestPluginPost'));
 
 		Plugin::unload();
-		App::build();
 	}
 
 /**

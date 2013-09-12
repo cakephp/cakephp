@@ -43,7 +43,6 @@ class ConfigureTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Cache::disable();
-		App::build();
 		App::objects('Plugin', null, true);
 	}
 
@@ -314,9 +313,6 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadPlugin() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Configure::config('test', new PhpConfig());
 		Plugin::load('TestPlugin');
 		$result = Configure::load('TestPlugin.load', 'test');
