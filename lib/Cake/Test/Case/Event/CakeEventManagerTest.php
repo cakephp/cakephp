@@ -388,12 +388,12 @@ class CakeEventManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testDispatchWithGlobal() {
-		$generalManager = $this->getMock('CakeEventManager', array('dispatch'));
+		$generalManager = $this->getMock('CakeEventManager', array('listeners'));
 		$manager = new CakeEventManager;
 		$event = new CakeEvent('fake.event');
 		CakeEventManager::instance($generalManager);
 
-		$generalManager->expects($this->once())->method('dispatch')->with($event);
+		$generalManager->expects($this->once())->method('listeners')->with('fake.event');
 		$manager->dispatch($event);
 	}
 
@@ -403,8 +403,16 @@ class CakeEventManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testStopPropagation() {
+		$generalManager = $this->getMock('CakeEventManager');
 		$manager = new CakeEventManager;
 		$listener = new CakeEventTestListener;
+
+		CakeEventManager::instance($generalManager);
+		$generalManager->expects($this->any())
+				->method('listeners')
+				->with('fake.event')
+				->will($this->returnValue(array()));
+
 		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
 		$manager->attach(array($listener, 'stopListener'), 'fake.event', array('priority' => 8));
 		$manager->attach(array($listener, 'secondListenerFunction'), 'fake.event', array('priority' => 5));
@@ -414,4 +422,36 @@ class CakeEventManagerTest extends CakeTestCase {
 		$expected = array('secondListenerFunction');
 		$this->assertEquals($expected, $listener->callStack);
 	}
+
+/**
+ * Tests event dispatching using priorities
+ *
+ * @return void
+ */
+	public function testDispatchPrioritizedWithGlobal() {
+		$generalManager = $this->getMock('CakeEventManager');
+		$manager = new CakeEventManager;
+		$listener = new CustomTestEventListerner;
+		$event = new CakeEvent('fake.event');
+
+		CakeEventManager::instance($generalManager);
+		$generalManager->expects($this->any())
+				->method('listeners')
+				->with('fake.event')
+				->will($this->returnValue(
+					array(11 => array(
+						array('callable' => array($listener, 'secondListenerFunction'), 'passParams' => false)
+					))
+				));
+
+
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$manager->attach(array($listener, 'thirdListenerFunction'), 'fake.event', array('priority' => 15));
+
+		$manager->dispatch($event);
+
+		$expected = array('listenerFunction', 'secondListenerFunction', 'thirdListenerFunction');
+		$this->assertEquals($expected, $listener->callStack);
+	}
+
 }
