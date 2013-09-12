@@ -793,6 +793,29 @@ class Query extends DatabaseQuery {
  * @return CallbackStatement $statement modified statement with extra loaders
  */
 	protected function _eagerLoad($statement) {
+		$keys = $this->_collectKeys($statement);
+		foreach ($this->_loadEagerly as $association => $meta) {
+			$contain = $meta['associations'];
+			$alias = $meta['instance']->source()->alias();
+			$keys = isset($keys[$alias]) ? $keys[$alias] : null;
+			$f = $meta['instance']->eagerLoader(
+				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
+			);
+			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
+		}
+
+		return $statement;
+	}
+
+/**
+ * Helper function used to return the keys from the query records that will be used
+ * to eagerly load associations.
+ *
+ *
+ * @param BufferedStatement $statement
+ * @return array
+ */
+	protected function _collectKeys($statement) {
 		$collectKeys = [];
 		foreach ($this->_loadEagerly as $association => $meta) {
 			$source = $meta['instance']->source();
@@ -813,17 +836,7 @@ class Query extends DatabaseQuery {
 			$statement->rewind();
 		}
 
-		foreach ($this->_loadEagerly as $association => $meta) {
-			$contain = $meta['associations'];
-			$alias = $meta['instance']->source()->alias();
-			$keys = isset($keys[$alias]) ? $keys[$alias] : null;
-			$f = $meta['instance']->eagerLoader(
-				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
-			);
-			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
-		}
-
-		return $statement;
+		return $keys;
 	}
 
 /**

@@ -1113,4 +1113,47 @@ class QueryTest extends TestCase {
 		$this->assertEquals('Y', $first->published);
 	}
 
+/**
+ * Tests that has many results are also hydrated correctly
+ *
+ * @return void
+ */
+	public function testHydrateWithHasMany() {
+		$this->_createTables();
+
+		$table = Table::build('author', ['connection' => $this->connection]);
+		Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article', [
+			'property' => 'articles',
+			'sort' => ['article.id' => 'asc']
+		]);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->contain('article')
+			->hydrate(true)
+			->toArray();
+
+		$first = $results[0];
+		foreach ($first->articles as $r) {
+			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+		}
+
+		$this->assertCount(2, $first->articles);
+		$expected = [
+			'id' => 1,
+			'title' => 'First Article',
+			'body' => 'First Article Body',
+			'author_id' => 1,
+			'published' => 'Y',
+		];
+		$this->assertEquals($expected, $first->articles[0]->toArray());
+		$expected = [
+			'id' => 3,
+			'title' => 'Third Article',
+			'author_id' => 1,
+			'body' => 'Third Article Body',
+			'published' => 'Y',
+		];
+		$this->assertEquals($expected, $first->articles[1]->toArray());
+	}
 }

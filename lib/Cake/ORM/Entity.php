@@ -6,6 +6,14 @@ class Entity implements \ArrayAccess {
 
 	protected $_properties = [];
 
+	public function __get($property) {
+		return $this->get($property);
+	}
+
+	public function __set($property, $value) {
+		$this->set([$property => $value]);
+	}
+
 	public function set($properties = [], $useSetters = true) {
 		if (!$useSetters) {
 			$this->_properties = $properties + $this->_properties;
@@ -31,12 +39,18 @@ class Entity implements \ArrayAccess {
 		return $value;
 	}
 
-	public function __get($property) {
-		return $this->get($property);
-	}
-
-	public function __set($property, $value) {
-		$this->set([$property => $value]);
+/**
+ * Returns an array with all the properties that have been set
+ * to this entity
+ *
+ * @return array
+ */
+	public function toArray() {
+		$result = [];
+		foreach ($this->_properties as $property => $value) {
+			$result[$property] = $this->get($property);
+		}
+		return $result;
 	}
 
 /**
