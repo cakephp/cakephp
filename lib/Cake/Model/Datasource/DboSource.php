@@ -771,7 +771,7 @@ class DboSource extends DataSource {
 		if ($this->cacheMethods === false) {
 			return $value;
 		}
-		if (empty(self::$methodCache)) {
+		if (!$this->_methodCacheChange && empty(self::$methodCache)) {
 			self::$methodCache = Cache::read('method_cache', '_cake_core_');
 		}
 		if ($value === null) {
