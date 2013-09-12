@@ -1188,7 +1188,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
-			->with('post')
+			->with(array('post', 'put'))
 			->will($this->returnValue(true));
 
 		$this->Controller->request->params['action'] = 'index';
@@ -1240,7 +1240,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
-			->with('post')
+			->with(array('post', 'put'))
 			->will($this->returnValue(true));
 
 		$this->Controller->request->params['action'] = 'index';
@@ -1270,7 +1270,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
-			->with('post')
+			->with(array('post', 'put'))
 			->will($this->returnValue(true));
 
 		$this->Controller->request->params['action'] = 'index';
@@ -1326,7 +1326,7 @@ class SecurityComponentTest extends CakeTestCase {
 
 		$this->Controller->request = $this->getMock('CakeRequest', array('is'));
 		$this->Controller->request->expects($this->once())->method('is')
-			->with('post')
+			->with(array('post', 'put'))
 			->will($this->returnValue(true));
 
 		$this->Controller->request->params['action'] = 'index';

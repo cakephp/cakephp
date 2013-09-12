@@ -8,7 +8,7 @@
 	<p>C. Layout After Test Element But Before Content</p>
 	<?php $this->log('3. layout after test element but before content') ?>
 <!--/nocache-->
-<?php echo $content_for_layout; ?>
+<?php echo $this->fetch('content'); ?>
 <!--nocache-->
 	<p>E. Layout After Content</p>
 	<?php $this->log('5. layout after content') ?>
