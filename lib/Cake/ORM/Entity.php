@@ -2,7 +2,7 @@
 
 namespace Cake\ORM;
 
-class Entity {
+class Entity implements \ArrayAccess {
 
 	protected $_properties = [];
 
@@ -37,6 +37,48 @@ class Entity {
 
 	public function __set($property, $value) {
 		$this->set([$property => $value]);
+	}
+
+/**
+ * Implements isset($entity);
+ *
+ * @param mixed $offset
+ * @return void
+ */
+	public function offsetExists($offset) {
+		return isset($this->_properties[$offset]);
+	}
+/**
+ * Implements $entity[$offset];
+ *
+ * @param mixed $offset
+ * @return void
+ */
+
+	public function offsetGet($offset) {
+		return $this->get($offset);
+	}
+
+/**
+ * Implements $entity[$offset] = $value;
+ *
+ * @param mixed $offset
+ * @param mixed $value
+ * @return void
+ */
+
+	public function offsetSet($offset, $value) {
+		$this->set([$offset => $value]);
+	}
+
+/**
+ * Implements unset($result[$offset);
+ *
+ * @param mixed $offset
+ * @return void
+ */
+	public function offsetUnset($offset) {
+		unset($this->_properties[$offset]);
 	}
 
 }
