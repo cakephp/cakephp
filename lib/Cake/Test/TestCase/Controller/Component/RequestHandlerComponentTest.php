@@ -750,9 +750,6 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testAjaxRedirectAsRequestAction() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		), App::RESET);
 		Router::connect('/:controller/:action');
 		$event = new Event('Controller.beforeRedirect', $this->Controller);
 
@@ -776,8 +773,6 @@ class RequestHandlerComponentTest extends TestCase {
 		);
 		$result = ob_get_clean();
 		$this->assertRegExp('/posts index/', $result, 'RequestAction redirect failed.');
-
-		App::build();
 	}
 
 /**
@@ -788,9 +783,6 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testAjaxRedirectAsRequestActionStillRenderingLayout() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		), App::RESET);
 		Router::connect('/:controller/:action');
 		$event = new Event('Controller.beforeRedirect', $this->Controller);
 

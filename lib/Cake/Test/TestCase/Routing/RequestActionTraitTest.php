@@ -51,11 +51,6 @@ class RequestActionTraitTest extends TestCase {
  * @return void
  */
 	public function testRequestAction() {
-		App::build(array(
-			'Model' => array(CAKE . 'Test/TestApp/Model/'),
-			'View' => array(CAKE . 'Test/TestApp/View/'),
-			'Controller' => array(CAKE . 'Test/TestApp/Controller/')
-		), App::RESET);
 		$this->assertNull(Router::getRequest(), 'request stack should be empty.');
 
 		$result = $this->object->requestAction('');
@@ -97,9 +92,6 @@ class RequestActionTraitTest extends TestCase {
  * @return void
  */
 	public function testRequestActionPlugins() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-		), App::RESET);
 		Plugin::load('TestPlugin');
 		Router::reload();
 
@@ -134,12 +126,6 @@ class RequestActionTraitTest extends TestCase {
  * @return void
  */
 	public function testRequestActionArray() {
-		App::build(array(
-			'Model' => array(CAKE . 'Test/TestApp/Model/'),
-			'View' => array(CAKE . 'Test/TestApp/View/'),
-			'Controller' => array(CAKE . 'Test/TestApp/Controller/'),
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load(array('TestPlugin'));
 
 		$result = $this->object->requestAction(

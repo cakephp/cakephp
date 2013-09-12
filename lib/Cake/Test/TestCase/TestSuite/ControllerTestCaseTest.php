@@ -101,12 +101,6 @@ class ControllerTestCaseTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->markTestIncomplete('Need to revisit once models work again.');
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-			'Controller' => array(CAKE . 'Test/TestApp/Controller/'),
-			'Model' => array(CAKE . 'Test/TestApp/Model/'),
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 

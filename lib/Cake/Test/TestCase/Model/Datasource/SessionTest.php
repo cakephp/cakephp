@@ -537,12 +537,6 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testUsingAppLibsHandler() {
-		App::build(array(
-			'Model/Datasource/Session' => array(
-				CAKE . 'Test/TestApp/Model/Datasource/Session/'
-			),
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 		Configure::write('Session', array(
 			'defaults' => 'cake',
@@ -552,8 +546,6 @@ class SessionTest extends TestCase {
 		));
 		TestCakeSession::destroy();
 		$this->assertTrue(TestCakeSession::started());
-
-		App::build();
 	}
 
 /**
@@ -562,9 +554,6 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testUsingPluginHandler() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load('TestPlugin');
 
 		Configure::write('App.namespace', 'TestApp');
@@ -577,8 +566,6 @@ class SessionTest extends TestCase {
 
 		TestCakeSession::destroy();
 		$this->assertTrue(TestCakeSession::started());
-
-		App::build();
 	}
 
 /**

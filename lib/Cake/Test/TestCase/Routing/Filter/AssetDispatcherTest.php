@@ -41,10 +41,6 @@ class AssetDispatcherTest extends TestCase {
  */
 	public function testNotModified() {
 		$filter = new AssetDispatcher();
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
 		$time = filemtime(App::themePath('TestTheme') . 'webroot/img/cake.power.gif');
 		$time = new \DateTime('@' . $time);
 

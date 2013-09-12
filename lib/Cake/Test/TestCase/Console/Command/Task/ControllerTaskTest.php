@@ -96,8 +96,6 @@ class ControllerTaskTest extends TestCase {
  */
 	public function tearDown() {
 		unset($this->Task);
-		ClassRegistry::flush();
-		App::build();
 		parent::tearDown();
 	}
 

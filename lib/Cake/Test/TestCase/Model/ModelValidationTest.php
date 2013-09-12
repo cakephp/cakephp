@@ -780,9 +780,6 @@ class ModelValidationTest extends ModelTestBase {
 	public function testValidationMessageTranslation() {
 		$lang = Configure::read('Config.language');
 		Configure::write('Config.language', 'en');
-		App::build(array(
-			'Locale' => array(CAKE . 'Test/test_app/Locale/'),
-		), App::RESET);
 
 		$TestModel = new ValidationTest1();
 		$TestModel->validationDomain = 'validation_messages';
@@ -807,7 +804,6 @@ class ModelValidationTest extends ModelTestBase {
 
 		$TestModel->validationDomain = 'default';
 		Configure::write('Config.language', $lang);
-		App::build();
 	}
 
 /**

@@ -67,7 +67,6 @@ class ProjectTaskTest extends TestCase {
 		$this->Task->bake($this->Task->path . 'BakeTestApp');
 	}
 
-
 /**
  * test bake with an absolute path.
  *

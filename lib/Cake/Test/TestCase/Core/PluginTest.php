@@ -32,9 +32,6 @@ class PluginTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS)
-		), App::RESET);
 		App::objects('Plugin', null, false);
 	}
 
@@ -57,9 +54,7 @@ class PluginTest extends TestCase {
 		Plugin::load('TestPlugin');
 		$this->assertEquals('TestPlugin', Plugin::getNamespace('TestPlugin'));
 
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin2' . DS)
-		), App::RESET);
+		$this->assertEquals('TestPluginTwo', Plugin::getNamespace('TestPluginTwo'));
 
 		Plugin::load('TestPluginThree', array('namespace' => 'Company\TestPluginThree'));
 		$this->assertEquals('Company\TestPluginThree', Plugin::getNamespace('TestPluginThree'));
@@ -99,6 +94,24 @@ class PluginTest extends TestCase {
 
 		Plugin::unload('TestFakePlugin');
 		$this->assertEquals($expected, Plugin::loaded());
+	}
+
+/**
+ * Test load() with the autoload option.
+ *
+ * @return void
+ */
+	public function testLoadSingleWithAutoload() {
+		$this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
+		Plugin::load('TestPluginThree', [
+			'namespace' => 'Company\TestPluginThree',
+			'path' => TEST_APP . 'Plugin/TestPluginThree',
+			'autoload' => true,
+		]);
+		$this->assertTrue(
+			class_exists('Company\TestPluginThree\Utility\Hello'),
+			'Class should be loaded'
+		);
 	}
 
 /**
@@ -167,28 +180,6 @@ class PluginTest extends TestCase {
 	}
 
 /**
- * Tests that it is possible to load multiple bootstrap files at once
- *
- * @return void
- */
-	public function testMultipleBootstrapFiles() {
-		Plugin::load('TestPlugin', array('bootstrap' => array('bootstrap', 'custom_config')));
-		$this->assertTrue(Plugin::loaded('TestPlugin'));
-		$this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
-	}
-
-/**
- * Tests that it is possible to load plugin bootstrap by calling a callback function
- *
- * @return void
- */
-	public function testCallbackBootstrap() {
-		Plugin::load('TestPlugin', array('bootstrap' => array($this, 'pluginBootstrap')));
-		$this->assertTrue(Plugin::loaded('TestPlugin'));
-		$this->assertEquals('called plugin bootstrap callback', Configure::read('PluginTest.test_plugin.bootstrap'));
-	}
-
-/**
  * Tests that loading a missing routes file throws a warning
  *
  * @return void
@@ -254,8 +245,19 @@ class PluginTest extends TestCase {
  */
 	public function testLoadAll() {
 		Plugin::loadAll();
-		$expected = ['PluginJs', 'TestPlugin', 'TestPluginTwo'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo'];
 		$this->assertEquals($expected, Plugin::loaded());
+	}
+
+/**
+ * Test that plugins don't reload using loadAll();
+ *
+ * @return void
+ */
+	public function testLoadAllWithPluginAlreadyLoaded() {
+		Plugin::load('PluginJs', ['namespace' => 'Company\TestPluginJs']);
+		Plugin::loadAll();
+		$this->assertEquals('Company\TestPluginJs', Plugin::getNamespace('PluginJs'));
 	}
 
 /**
@@ -264,9 +266,9 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testLoadAllWithDefaults() {
-		$defaults = array('bootstrap' => true);
+		$defaults = array('bootstrap' => true, 'ignoreMissing' => true);
 		Plugin::loadAll(array($defaults));
-		$expected = ['PluginJs', 'TestPlugin', 'TestPluginTwo'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo'];
 		$this->assertEquals($expected, Plugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin bootstrap', Configure::read('PluginTest.test_plugin.bootstrap'));
@@ -280,10 +282,13 @@ class PluginTest extends TestCase {
  * @return void
  */
 	public function testLoadAllWithDefaultsAndOverride() {
-		Plugin::loadAll(array(array('bootstrap' => true), 'TestPlugin' => array('routes' => true)));
+		Plugin::loadAll(array(
+			array('bootstrap' => true, 'ignoreMissing' => true),
+			'TestPlugin' => array('routes' => true)
+		));
 		Plugin::routes();
 
-		$expected = ['PluginJs', 'TestPlugin', 'TestPluginTwo'];
+		$expected = ['Company', 'PluginJs', 'TestPlugin', 'TestPluginTwo'];
 		$this->assertEquals($expected, Plugin::loaded());
 		$this->assertEquals('loaded js plugin bootstrap', Configure::read('PluginTest.js_plugin.bootstrap'));
 		$this->assertEquals('loaded plugin routes', Configure::read('PluginTest.test_plugin.routes'));
@@ -291,12 +296,4 @@ class PluginTest extends TestCase {
 		$this->assertEquals('loaded plugin two bootstrap', Configure::read('PluginTest.test_plugin_two.bootstrap'));
 	}
 
-/**
- * Auxiliary function to test plugin bootstrap callbacks
- *
- * @return void
- */
-	public function pluginBootstrap() {
-		Configure::write('PluginTest.test_plugin.bootstrap', 'called plugin bootstrap callback');
-	}
 }

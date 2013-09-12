@@ -353,11 +353,6 @@ class TestCaseTest extends TestCase {
  */
 	public function testGetMockForModel() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build(array(
-				'Model' => array(
-					CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS
-				)
-		), App::RESET);
 		$Post = $this->getMockForModel('Post');
 
 		$this->assertInstanceOf('TestApp\Model\Post', $Post);
@@ -378,9 +373,6 @@ class TestCaseTest extends TestCase {
  */
 	public function testGetMockForModelWithPlugin() {
 		Configure::write('App.namespace', 'TestApp');
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Plugin::load('TestPlugin');
 		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComment');
 

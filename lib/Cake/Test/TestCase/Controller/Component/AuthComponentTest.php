@@ -875,9 +875,6 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testAjaxLogin() {
-		App::build(array(
-			'View' => array(CAKE . 'Test/TestApp/View/')
-		));
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
 
 		ob_start();

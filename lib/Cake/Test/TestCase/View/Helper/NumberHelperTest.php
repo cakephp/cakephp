@@ -1,7 +1,5 @@
 <?php
 /**
- * NumberHelperTest file
- *
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -13,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -50,7 +47,6 @@ class NumberMock {
 /**
  * NumberHelperTest class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class NumberHelperTest extends TestCase {
 
@@ -85,7 +81,7 @@ class NumberHelperTest extends TestCase {
 		$methods = array(
 			'precision', 'toReadableSize', 'toPercentage', 'format',
 			'currency', 'addFormat',
-			);
+		);
 		$CakeNumber = $this->getMock(__NAMESPACE__ . '\NumberMock', $methods);
 		$Number = new NumberHelperTestObject($this->View, array('engine' => __NAMESPACE__ . '\NumberMock'));
 		$Number->attach($CakeNumber);
@@ -99,15 +95,9 @@ class NumberHelperTest extends TestCase {
  * test engine override
  */
 	public function testEngineOverride() {
-		App::build(array(
-			'Utility' => array(CAKE . 'Test/TestApp/Utility/')
-		), App::REGISTER);
 		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestAppEngine'));
 		$this->assertInstanceOf('TestApp\Utility\TestAppEngine', $Number->engine());
 
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
 		Plugin::load('TestPlugin');
 		$Number = new NumberHelperTestObject($this->View, array('engine' => 'TestPlugin.TestPluginEngine'));
 		$this->assertInstanceOf('TestPlugin\Utility\TestPluginEngine', $Number->engine());

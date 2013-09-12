@@ -1,7 +1,5 @@
 <?php
 /**
- * The Plugin Task handles creating an empty plugin, ready to be used
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -20,6 +18,7 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Utility\File;
 use Cake\Utility\Folder;
 use Cake\Utility\Inflector;
@@ -27,7 +26,6 @@ use Cake\Utility\Inflector;
 /**
  * The Plugin Task handles creating an empty plugin, ready to be used
  *
- * @package       Cake.Console.Command.Task
  */
 class PluginTask extends Shell {
 

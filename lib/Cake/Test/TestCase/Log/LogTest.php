@@ -39,10 +39,6 @@ class LogTest extends TestCase {
  * @return void
  */
 	public function testImportingLoggers() {
-		App::build(array(
-			'Lib' => array(CAKE . 'Test/TestApp/Lib/'),
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
@@ -64,7 +60,6 @@ class LogTest extends TestCase {
 
 		Log::write(LOG_INFO, 'TestPluginLog is not a BaseLog descendant');
 
-		App::build();
 		Plugin::unload();
 	}
 

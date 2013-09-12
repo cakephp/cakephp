@@ -166,10 +166,6 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testInitialize() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/'),
-			'Model' => array(CAKE . 'Test/TestApp/Model/')
-		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 
 		Plugin::load('TestPlugin');
@@ -186,8 +182,6 @@ class ShellTest extends TestCase {
 		$this->assertTrue(isset($this->Shell->Comment));
 		$this->assertInstanceOf('TestApp\Model\Comment', $this->Shell->Comment);
 		$this->assertEquals('TestApp\Model\Comment', $this->Shell->modelClass);
-
-		App::build();
 	}
 
 /**
@@ -196,10 +190,6 @@ class ShellTest extends TestCase {
  * @return void
  */
 	public function testLoadModel() {
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Plugin' . DS),
-			'Model' => array(CAKE . 'Test' . DS . 'TestApp' . DS . 'Model' . DS)
-		), App::RESET);
 		Configure::write('App.namespace', 'TestApp');
 
 		$Shell = new MergeShell();
@@ -212,9 +202,6 @@ class ShellTest extends TestCase {
 		$this->assertTrue(isset($this->Shell->TestPluginPost));
 		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', $this->Shell->TestPluginPost);
 		$this->assertEquals('TestPluginPost', $this->Shell->modelClass);
-
-		App::build();
-		Plugin::unload('TestPlugin');
 	}
 
 /**
