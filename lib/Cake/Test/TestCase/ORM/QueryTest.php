@@ -1089,4 +1089,28 @@ class QueryTest extends TestCase {
 		$this->assertSame($resultSet, $query->execute());
 	}
 
+/**
+ * Testing hydrating a result set into Entity objects
+ *
+ * @return void
+ */
+	public function testHydrateSimple() {
+		$this->_createTables();
+		$table = Table::build('article', ['table' => 'articles']);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()->hydrate(true)->execute()->toArray();
+
+		$this->assertCount(3, $results);
+		foreach ($results as $r) {
+			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+		}
+
+		$first = $results[0];
+		$this->assertEquals(1, $first->id);
+		$this->assertEquals(1, $first->author_id);
+		$this->assertEquals('First Article', $first->title);
+		$this->assertEquals('First Article Body', $first->body);
+		$this->assertEquals('Y', $first->published);
+	}
+
 }

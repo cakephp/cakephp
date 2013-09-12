@@ -98,6 +98,13 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 	protected $_results = [];
 
 /**
+ * Whether to hydrate results into objects or not
+ *
+ * @var boolean
+ */
+	protected $_hydrate = false;
+
+/**
  * Constructor
  *
  * @param Query from where results come
@@ -109,6 +116,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 		$this->_statement = $statement;
 		$this->_defaultTable = $this->_query->repository();
 		$this->_calculateAssociationMap();
+		$this->_hydrate = $this->_query->hydrate();
 	}
 
 /**
@@ -253,7 +261,11 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 			$results = $assoc->transformRow($results);
 		}
 
-		return $results[$defaultAlias];
+		$results = $results[$defaultAlias];
+		if ($this->_hydrate) {
+			$results = (new Entity)->set($results, false);
+		}
+		return $results;
 	}
 
 /**

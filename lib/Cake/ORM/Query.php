@@ -118,6 +118,13 @@ class Query extends DatabaseQuery {
 	protected $_options = [];
 
 /**
+ * Whether to hydrate results into entity objects
+ *
+ * @var boolean
+ */
+	protected $_hydrate = false;
+
+/**
  * @param Cake\Database\Connection $connection
  * @param Cake\ORM\Table $table
  */
@@ -611,6 +618,14 @@ class Query extends DatabaseQuery {
 			// Just get the first result from the iterator
 			return $row;
 		}
+	}
+
+	public function hydrate($enable = null) {
+		if ($enable === null) {
+			return $this->_hydrate;
+		}
+		$this->_hydrate = (bool)$enable;
+		return $this;
 	}
 
 /**
