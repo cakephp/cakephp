@@ -1156,4 +1156,48 @@ class QueryTest extends TestCase {
 		];
 		$this->assertEquals($expected, $first->articles[1]->toArray());
 	}
+
+/**
+ * Tests that belongsToMany associations are also correctly hydrated
+ *
+ * @return void
+ */
+	public function testHydrateBelongsToMany() {
+		$this->_createTables();
+
+		$table = Table::build('Article', ['connection' => $this->connection]);
+		Table::build('Tag', ['connection' => $this->connection]);
+		Table::build('ArticleTag', [
+			'connection' => $this->connection,
+			'table' => 'articles_tags'
+		]);
+		$table->belongsToMany('Tag', ['property' => 'tags']);
+		$query = new Query($this->connection, $table);
+
+		$results = $query
+			->select()
+			->contain('Tag')
+			->hydrate(true)
+			->toArray();
+
+		$first = $results[0];
+		foreach ($first->tags as $r) {
+			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+		}
+
+		$this->assertCount(2, $first->tags);
+		$expected = [
+			'id' => 1,
+			'name' => 'tag1',
+			'ArticleTag' => ['article_id' => 1, 'tag_id' => 1]
+		];
+		$this->assertEquals($expected, $first->tags[0]->toArray());
+
+		$expected = [
+			'id' => 2,
+			'name' => 'tag2',
+			'ArticleTag' => ['article_id' => 1, 'tag_id' => 2]
+		];
+		$this->assertEquals($expected, $first->tags[1]->toArray());
+	}
 }
