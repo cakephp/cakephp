@@ -263,7 +263,7 @@ class CakeEventManager {
 	public function listeners($eventKey) {
 		$globalListeners = array();
 		if (!$this->_isGlobal) {
-			$globalListeners = self::instance()->listeners($eventKey);
+			$globalListeners = self::instance()->prioritisedListeners($eventKey);
 		}
 
 		if (empty($this->_listeners[$eventKey]) && empty($globalListeners)) {
@@ -288,4 +288,16 @@ class CakeEventManager {
 		return $result;
 	}
 
+/**
+ * Returns the listeners for the specified event key indexed by priority
+ *
+ * @param string $eventKey
+ * @return array
+ */
+	public function prioritisedListeners($eventKey) {
+		if (empty($this->_listeners[$eventKey])) {
+			return array();
+		}
+		return $this->_listeners[$eventKey];
+	}
 }
