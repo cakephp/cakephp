@@ -32,11 +32,11 @@ define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'TestCase');
 define('LOG_ERROR', LOG_ERR);
 
 // Point app constants to the test app.
-define('APP', ROOT . '/lib/Cake/Test/TestApp/');
+define('APP', ROOT . '/Cake/Test/TestApp/');
 define('WWW_ROOT', APP . WEBROOT_DIR . DS);
 define('TESTS', APP . 'Test' . DS);
 
-define('TEST_APP', ROOT . '/lib/Cake/Test/TestApp/');
+define('TEST_APP', ROOT . '/Cake/Test/TestApp/');
 
 //@codingStandardsIgnoreStart
 @mkdir(LOGS);

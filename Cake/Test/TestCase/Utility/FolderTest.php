@@ -578,8 +578,8 @@ class FolderTest extends TestCase {
 		$result = $Folder->inCakePath($path);
 		$this->assertFalse($result);
 
-		$path = DS . 'lib' . DS . 'Cake' . DS . 'Config';
-		$Folder->cd(ROOT . DS . 'lib' . DS . 'Cake' . DS . 'Config');
+		$path = DS .  'Cake' . DS . 'Config';
+		$Folder->cd(ROOT . DS . 'Cake' . DS . 'Config');
 		$result = $Folder->inCakePath($path);
 		$this->assertTrue($result);
 	}
