@@ -169,6 +169,7 @@ class CakeLog {
  * {{{
  * CakeLog::config('payments', array(
  *     'engine' => 'File',
+ *     'types' => array('info', 'error', 'warning'),
  *     'scopes' => array('payment', 'order')
  * ));
  * }}}
