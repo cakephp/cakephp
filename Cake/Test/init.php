@@ -17,7 +17,7 @@ use Cake\Database\ConnectionManager;
 use Cake\Log\Log;
 
 define('DS', DIRECTORY_SEPARATOR);
-define('ROOT', dirname(dirname(dirname(__DIR__))));
+define('ROOT', dirname(dirname(__DIR__)));
 define('APP_DIR', 'App');
 define('WEBROOT_DIR', 'webroot');
 
@@ -25,7 +25,7 @@ define('TMP', sys_get_temp_dir() . DS);
 define('LOGS', TMP . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
 
-define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
+define('CAKE_CORE_INCLUDE_PATH', ROOT);
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'Cake' . DS);
 define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'TestCase');
