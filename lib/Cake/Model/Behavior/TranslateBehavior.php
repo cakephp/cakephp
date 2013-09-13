@@ -280,7 +280,7 @@ class TranslateBehavior extends ModelBehavior {
  * @param boolean $primary Did the find originate on $model.
  * @return array Modified results
  */
-	public function afterFind(Model $Model, $results, $primary) {
+	public function afterFind(Model $Model, $results, $primary = false) {
 		$Model->virtualFields = $this->runtime[$Model->alias]['virtualFields'];
 		$this->runtime[$Model->alias]['virtualFields'] = $this->runtime[$Model->alias]['fields'] = array();
 		$locale = $this->_getLocale($Model);
@@ -413,9 +413,10 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model Model the callback is called on
  * @param boolean $created Whether or not the save created a record.
+ * @param array $options Options passed from Model::save().
  * @return void
  */
-	public function afterSave(Model $Model, $created) {
+	public function afterSave(Model $Model, $created, $options = array()) {
 		if (!isset($this->runtime[$Model->alias]['beforeValidate']) && !isset($this->runtime[$Model->alias]['beforeSave'])) {
 			return true;
 		}

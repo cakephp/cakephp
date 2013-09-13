@@ -135,7 +135,7 @@ class ModelBehavior extends Object {
  * @param boolean $primary Whether this model is being queried directly (vs. being queried as an association)
  * @return mixed An array value will replace the value of $results - any other value will be ignored.
  */
-	public function afterFind(Model $model, $results, $primary) {
+	public function afterFind(Model $model, $results, $primary = false) {
 	}
 
 /**
@@ -181,9 +181,11 @@ class ModelBehavior extends Object {
  *
  * @param Model $model Model using this behavior
  * @param boolean $created True if this save created a new record
+ * @param array $options Options passed from Model::save().
  * @return boolean
+ * @see Model::save()
  */
-	public function afterSave(Model $model, $created) {
+	public function afterSave(Model $model, $created, $options = array()) {
 		return true;
 	}
 

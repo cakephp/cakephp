@@ -89,7 +89,7 @@ class TestBehavior extends ModelBehavior {
  * @param boolean $primary
  * @return void
  */
-	public function afterFind(Model $model, $results, $primary) {
+	public function afterFind(Model $model, $results, $primary = false) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['afterFind']) || $settings['afterFind'] === 'off') {
 			return parent::afterFind($model, $results, $primary);
@@ -117,7 +117,7 @@ class TestBehavior extends ModelBehavior {
 	public function beforeSave(Model $model, $options = array()) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['beforeSave']) || $settings['beforeSave'] === 'off') {
-			return parent::beforeSave($model);
+			return parent::beforeSave($model, $options);
 		}
 		switch ($settings['beforeSave']) {
 			case 'on':
@@ -135,12 +135,13 @@ class TestBehavior extends ModelBehavior {
  *
  * @param Model $model
  * @param boolean $created
+ * @param array $options Options passed from Model::save().
  * @return void
  */
-	public function afterSave(Model $model, $created) {
+	public function afterSave(Model $model, $created, $options = array()) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['afterSave']) || $settings['afterSave'] === 'off') {
-			return parent::afterSave($model, $created);
+			return parent::afterSave($model, $created, $options);
 		}
 		$string = 'modified after';
 		if ($created) {
@@ -172,7 +173,7 @@ class TestBehavior extends ModelBehavior {
 	public function beforeValidate(Model $model, $options = array()) {
 		$settings = $this->settings[$model->alias];
 		if (!isset($settings['validate']) || $settings['validate'] === 'off') {
-			return parent::beforeValidate($model);
+			return parent::beforeValidate($model, $options);
 		}
 		switch ($settings['validate']) {
 			case 'on':

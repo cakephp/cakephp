@@ -419,7 +419,10 @@ class FileEngine extends CacheEngine {
 		$contents = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::CHILD_FIRST);
 		foreach ($contents as $object) {
 			$containsGroup = strpos($object->getPathName(), DS . $group . DS) !== false;
-			$hasPrefix = strpos($object->getBaseName(), $this->settings['prefix']) === 0;
+			$hasPrefix = true;
+			if (strlen($this->settings['prefix']) !== 0) {
+				$hasPrefix = strpos($object->getBaseName(), $this->settings['prefix']) === 0;
+			}
 			if ($object->isFile() && $containsGroup && $hasPrefix) {
 				$path = $object->getPathName();
 				$object = null;

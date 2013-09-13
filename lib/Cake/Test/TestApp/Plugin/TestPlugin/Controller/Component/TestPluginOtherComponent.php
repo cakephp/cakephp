@@ -19,13 +19,13 @@
  */
 
 /**
- * Class TestPluginOtherComponentComponent
+ * Class TestPluginOtherComponent
  *
  * @package       Cake.Test.TestApp.Plugin.TestPlugin.Controller.Component
  */
 namespace TestPlugin\Controller\Component;
 
-use Cake\Core\Object;
+use Cake\Controller\Component;
 
-class TestPluginOtherComponentComponent extends Object {
+class TestPluginOtherComponent extends Component {
 }

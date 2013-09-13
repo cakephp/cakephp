@@ -7,7 +7,7 @@
 <body>
 	<!--nocache--><?php $x++; ?><!--/nocache-->
 	<!--nocache--><?php $x++; ?><!--/nocache-->
-	<?php echo $content_for_layout; ?>
+	<?php echo $this->fetch('content'); ?>
 	<!--nocache--><?php echo 'cached count is: ' . $x; ?><!--/nocache-->
 </body>
 </html>

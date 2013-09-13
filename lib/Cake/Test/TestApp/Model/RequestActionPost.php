@@ -33,11 +33,4 @@ class RequestActionPost extends AppModel {
  */
 	public $name = 'RequestActionPost';
 
-/**
- * useTable property
- *
- * @var string 'posts'
- */
-	public $useTable = 'posts';
-
 }

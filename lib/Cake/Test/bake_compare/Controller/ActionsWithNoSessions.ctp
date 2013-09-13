@@ -51,7 +51,7 @@
 		if (!$this->BakeArticle->exists($id)) {
 			throw new NotFoundException(__('Invalid bake article'));
 		}
-		if ($this->request->is('post') || $this->request->is('put')) {
+		if ($this->request->is(array('post', 'put'))) {
 			if ($this->BakeArticle->save($this->request->data)) {
 				return $this->flash(__('The bake article has been saved.'), array('action' => 'index'));
 			}
