@@ -272,11 +272,12 @@ class CakeEventManager {
 
 		$listeners = $this->_listeners[$eventKey];
 		foreach ($globalListeners as $priority => $priorityQ) {
-			if (empty($listeners[$priority])) {
-				$listeners[$priority] = array();
+			if (!empty($listeners[$priority])) {
+				$listeners[$priority] = array_merge($listeners[$priority], $priorityQ);
+				unset($globalListeners[$priority]);
 			}
-			$listeners[$priority] = array_merge($listeners[$priority], $priorityQ);
 
+			$listeners = $listeners + $globalListeners;
 		}
 
 		ksort($listeners);
