@@ -1,7 +1,5 @@
 <?php
 /**
- * Internationalization
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -13,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.I18n
  * @since         CakePHP(tm) v 1.2.0.4116
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -32,7 +29,6 @@ use Cake\Utility\String;
 /**
  * I18n handles translation of Text and time format strings.
  *
- * @package       Cake.I18n
  */
 class I18n {
 

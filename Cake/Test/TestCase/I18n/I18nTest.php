@@ -1,7 +1,5 @@
 <?php
 /**
- * I18nTest file
- *
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
@@ -13,7 +11,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.I18n
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -25,12 +22,12 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\I18n\I18n;
+use Cake\Model\Datasource\Session;
 use Cake\TestSuite\TestCase;
 
 /**
  * I18nTest class
  *
- * @package       Cake.Test.Case.I18n
  */
 class I18nTest extends TestCase {
 
@@ -42,7 +39,6 @@ class I18nTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		Cache::delete('object_map', '_cake_core_');
 		Plugin::load(array('TestPlugin'));
 	}
 
@@ -54,7 +50,6 @@ class I18nTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 
-		Cache::delete('object_map', '_cake_core_');
 		Plugin::unload();
 	}
 
@@ -1523,6 +1518,7 @@ class I18nTest extends TestCase {
  * @return void
  */
 	public function testSetLanguageWithSession() {
+		Session::start();
 		$_SESSION['Config']['language'] = 'po';
 		$singular = $this->_singular();
 		$this->assertEquals('Po (translated)', $singular);

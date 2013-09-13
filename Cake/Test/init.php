@@ -14,6 +14,7 @@
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\I18n\I18n;
 use Cake\Log\Log;
 
 define('DS', DIRECTORY_SEPARATOR);
@@ -109,3 +110,5 @@ Log::config([
 	]
 ]);
 
+// Initialize the empty language.
+I18n::translate('empty');
