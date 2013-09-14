@@ -620,11 +620,19 @@ class Validation {
 				case 'all':
 					// includes all NANPA members.
 					// see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories
-					$regex = '/^(?:(?:\+?1\s*(?:[.-]\s*)?)?(?:\(\s*([2-9]1[02-9]|[2-9][02-8]1|3[02-689][0-9]|9[02-57-9][0-9]|[246-8][02-46-8][02-46-9])\s*\)';
-					$regex .= '|(55[0-46-9]|5[0-46-9][5]|[0-46-9]55|[2-9]1[02-9]|[2-9][02-8]1|[2-46-9][02-46-8][02-46-9]))\s*(?:[.-]\s*)?)';
-					$regex .= '(?!(555(?:\s*(?:[.|\-|\s]\s*))(01([0-9][0-9])|1212)))';
+					$regex = '/^(?:(?:\+?1\s*(?:[.-]\s*)?)?';
+
+					// Area code 555, X11 is not allowed.
+					$areaCode = '(?![2-9]11)(?!555)([2-9][0-8][0-9])';
+					$regex .= '(?:\(\s*' . $areaCode . '\s*\)|' . $areaCode . ')';
+					$regex .= '\s*(?:[.-]\s*)?)';
+
+					// Exchange and 555-XXXX numbers
+					$regex .= '(?!(555(?:\s*(?:[.\-\s]\s*))(01([0-9][0-9])|1212)))';
 					$regex .= '(?!(555(01([0-9][0-9])|1212)))';
 					$regex .= '([2-9]1[02-9]|[2-9]1[02-9]|[2-9][02-9]1|[2-9][02-9]{2})\s*(?:[.-]\s*)';
+
+					// Local number and extension
 					$regex .= '?([0-9]{4})';
 					$regex .= '(?:\s*(?:#|x\.?|ext\.?|extension)\s*(\d+))?$/';
 				break;
