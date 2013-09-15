@@ -4,17 +4,52 @@ namespace Cake\ORM;
 
 class Entity implements \ArrayAccess {
 
+/**
+ * Holds all properties and their values for this entity
+ *
+ * @var array
+ */
 	protected $_properties = [];
 
+/**
+ * Magic getter to access properties that has be set in this entity
+ *
+ * @param string $property name of the property to access
+ * @return mixed
+ */
 	public function &__get($property) {
 		return $this->get($property);
 	}
 
+/**
+ * Magic setter to add or edit a property in this entity
+ *
+ * @param string $property the name of the property to set
+ * @param mixed $value the value to set to the property
+ * @return void
+ */
 	public function __set($property, $value) {
 		$this->set([$property => $value]);
 	}
 
-	public function set($properties = [], $useSetters = true) {
+/**
+ * Set a hashed array as properties in this entity by converting each
+ * key => value pair into properties in this object.
+ *
+ * ## Example:
+ *
+ * {{
+ *	$entity->set(['name' => 'andrew', 'id' => 1]);
+ *	echo $entity->name // prints andrew
+ *	echo $entity->id // prints 1
+ * }}
+ *
+ * @param array $properties list of properties to set
+ * @param boolean $useSetters whether to use setter functions in this object
+ * or bypass them
+ * @return \Cake\ORM\Entity
+ */
+	public function set(array $properties = [], $useSetters = true) {
 		if (!$useSetters) {
 			$this->_properties = $properties + $this->_properties;
 			return $this;
@@ -29,10 +64,16 @@ class Entity implements \ArrayAccess {
 		return $this;
 	}
 
+/**
+ * Returns the value of a property by name
+ *
+ * @param string $property the name of the property to retrieve
+ * @return mixed
+ */
 	public function &get($property) {
 		$method = 'get' . ucFirst($property);
 		if (method_exists($this, $method)) {
-			$value = $this->{$method}();
+			$value =& $this->{$method}();
 		} else {
 			$value =& $this->_properties[$property];
 		}
