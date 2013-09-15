@@ -282,7 +282,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			])
 			->will($this->returnSelf());
 
-		$callable = $association->eagerLoader(compact('keys'));
+		$callable = $association->eagerLoader(compact('keys', 'query'));
 		$row = ['Article__id' => 1, 'title' => 'article 1'];
 		$result = $callable($row);
 		$row['Tag__Tag'] = [
@@ -347,7 +347,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			->with(['id' => 'ASC'])
 			->will($this->returnValue($query));
 
-		$association->eagerLoader(compact('keys'));
+		$association->eagerLoader(compact('keys', 'query'));
 	}
 
 /**
@@ -413,7 +413,8 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Tag.id !=' => 3],
 			'sort' => ['name' => 'DESC'],
 			'fields' => ['name', 'ArticleTag.article_id'],
-			'keys' => $keys
+			'keys' => $keys,
+			'query' => $query
 		]);
 	}
 
@@ -450,7 +451,8 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 
 		$association->eagerLoader([
 			'keys' => $keys,
-			'fields' => ['name']
+			'fields' => ['name'],
+			'query' => $query
 		]);
 	}
 
@@ -519,7 +521,8 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnSelf());
 
 		$callable = $association->eagerLoader([
-			'query' => $parent, 'strategy' => BelongsToMany::STRATEGY_SUBQUERY
+			'query' => $parent, 'strategy' => BelongsToMany::STRATEGY_SUBQUERY,
+			'keys' => []
 		]);
 
 		$row['Tag__Tag'] = [
