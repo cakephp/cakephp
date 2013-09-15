@@ -96,6 +96,13 @@ class Table {
 	protected $_primaryKey = 'id';
 
 /**
+ * The name of the field that represents a human readable representation of a row
+ *
+ * @var string
+ */
+	protected $_displayField;
+
+/**
  * The list of associations for this table. Indexed by association name,
  * values are Association object instances.
  *
@@ -339,6 +346,28 @@ class Table {
 	}
 
 /**
+ * Returns the display field or sets a new one
+ *
+ * @param string $key sets a new name to be used as display field
+ * @return string
+ */
+	public function displayField($key = null) {
+		if ($key !== null) {
+			$this->_displayField = $key;
+		}
+		if ($this->_displayField === null) {
+			$schema = $this->schema();
+			if ($schema->column('title')) {
+				$this->_displayField = 'title';
+			}
+			if ($schema->column('name')) {
+				$this->_displayField = 'name';
+			}
+		}
+		return $this->_displayField;
+	}
+
+/**
  * Returns a association objected configured for the specified alias if any
  *
  * @param string $name the alias used for the association
@@ -536,19 +565,20 @@ class Table {
  * @return \Cake\ORM\Query
  */
 	public function findList(Query $query, array $options = []) {
-		$columns = [];
-		$mapper = function($key, $row, $mapReduce) use (&$columns) {
-			if (empty($columns)) {
-				$columns = array_slice(array_keys($row), 0, 3);
-			}
-
-			list($rowKey, $rowVal) = $columns;
-			if (!isset($columns[2])) {
+		$options += [
+			'idField' => $this->primaryKey(),
+			'valueField' => $this->displayField(),
+			'groupField' => false
+		];
+		$mapper = function($key, $row, $mapReduce) use ($options) {
+			$rowKey = $options['idField'];
+			$rowVal = $options['valueField'];
+			if (!($options['groupField'])) {
 				$mapReduce->emit($row[$rowVal], $row[$rowKey]);
 				return;
 			}
 
-			$key = $row[$columns[2]];
+			$key = $row[$options['groupField']];
 			$mapReduce->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
 		};
 
@@ -603,7 +633,7 @@ class Table {
 				$mapReduce->emit($row->getArrayCopy());
 			});
 		}
-		
+
 		return $query;
 	}
 

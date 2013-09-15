@@ -191,6 +191,72 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that name will be selected as a displayField
+ *
+ * @return void
+ */
+	public function testDisplayFieldName() {
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'foo' => ['type' => 'string'],
+				'name' => ['type' => 'string']
+			]
+		]);
+		$this->assertEquals('name', $table->displayField());
+	}
+
+/**
+ * Tests that title will be selected as a displayField
+ *
+ * @return void
+ */
+	public function testDisplayFieldTitle() {
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'foo' => ['type' => 'string'],
+				'title' => ['type' => 'string']
+			]
+		]);
+		$this->assertEquals('title', $table->displayField());
+	}
+
+/**
+ * Tests that no displayField will fallback to primary key
+ *
+ * @return void
+ */
+	public function testDisplayFallback() {
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'id' => ['type' => 'string'],
+				'foo' => ['type' => 'string']
+			]
+		]);
+		$this->assertEquals('id', $table->displayField());
+	}
+
+/**
+ * Tests that displayField can be changed
+ *
+ * @return void
+ */
+	public function testDisplaySet() {
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'id' => ['type' => 'string'],
+				'foo' => ['type' => 'string']
+			]
+		]);
+		$this->assertEquals('id', $table->displayField());
+		$table->displayField('foo');
+		$this->assertEquals('foo', $table->displayField());
+	}
+
+/**
  * Tests schema method
  *
  * @return void
@@ -514,7 +580,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testFindList() {
 		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
-		$query = $table->find('list', ['fields' => ['id', 'username']])->order('id');
+		$table->displayField('username');
+		$query = $table->find('list', ['fields' => ['id', 'username']])
+			->order('id');
 		$expected = [
 			1 => 'mariano',
 			2 => 'nate',
@@ -523,7 +591,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertSame($expected, $query->toArray());
 
-		$query = $table->find('list')
+		$query = $table->find('list', ['groupField' => 'odd'])
 			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
 			->order('id');
 		$expected = [
@@ -676,6 +744,43 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'children' => []
 		];
 		$this->assertEquals($expected, $results[0]->children[0]->children[1]->toArray());
+	}
+
+/**
+ * Tests find('list') with hydrated records
+ *
+ * @return void
+ */
+	public function testFindListHydrated() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table->displayField('username');
+		$query = $table
+			->find('list', ['fields' => ['id', 'username']])
+			->hydrate(true)
+			->order('id');
+		$expected = [
+			1 => 'mariano',
+			2 => 'nate',
+			3 => 'larry',
+			4 => 'garrett'
+		];
+		$this->assertSame($expected, $query->toArray());
+
+		$query = $table->find('list', ['groupField' => 'odd'])
+			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->hydrate(true)
+			->order('id');
+		$expected = [
+			0 => [
+				1 => 'mariano',
+				3 => 'larry'
+			],
+			1 => [
+				2 => 'nate',
+				4 => 'garrett'
+			]
+		];
+		$this->assertSame($expected, $query->toArray());
 	}
 
 }
