@@ -536,6 +536,7 @@ class Table {
  * @return \Cake\ORM\Query
  */
 	public function findList(Query $query, array $options = []) {
+		$columns = [];
 		$mapper = function($key, $row, $mapReduce) use (&$columns) {
 			if (empty($columns)) {
 				$columns = array_slice(array_keys($row), 0, 3);
@@ -575,28 +576,35 @@ class Table {
  */
 	public function findThreaded(Query $query, array $options = []) {
 		$parents = [];
+		$hydrate = $query->hydrate();
 		$mapper = function($key, $row, $mapReduce) use (&$parents) {
+			$row['children'] = [];
 			$parents[$row['id']] =& $row;
 			$mapReduce->emitIntermediate($row['parent_id'], $row['id']);
 		};
 
-		$reducer = function($key, $values, $mapReduce) use (&$parents) {
+		$reducer = function($key, $values, $mapReduce) use (&$parents, $hydrate) {
 			if (empty($key) || !isset($parents[$key])) {
 				foreach ($values as $id) {
-					$parents[$id] = new \ArrayObject($parents[$id]);
+					$parents[$id] = $hydrate ? $parents[$id] : new \ArrayObject($parents[$id]);
 					$mapReduce->emit($parents[$id]);
 				}
 				return;
 			}
+
 			foreach ($values as $id) {
 				$parents[$key]['children'][] =& $parents[$id];
 			}
 		};
 
-		$formatter = function($key, $row, $mapReduce) {
-			$mapReduce->emit($row->getArrayCopy());
-		};
-		return $query->mapReduce($mapper, $reducer)->mapReduce($formatter);
+		$query->mapReduce($mapper, $reducer);
+		if (!$hydrate) {
+			$query->mapReduce(function($key, $row, $mapReduce) {
+				$mapReduce->emit($row->getArrayCopy());
+			});
+		}
+		
+		return $query;
 	}
 
 /**

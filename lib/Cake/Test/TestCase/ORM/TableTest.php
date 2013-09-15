@@ -561,11 +561,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 								'id' => 7,
 								'parent_id' => 2,
 								'name' => 'Category 1.1.1',
+								'children' => []
 							],
 							[
 								'id' => 8,
 								'parent_id' => '2',
 								'name' => 'Category 1.1.2',
+								'children' => []
 							]
 						],
 					],
@@ -573,6 +575,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 						'id' => 3,
 						'parent_id' => '1',
 						'name' => 'Category 1.2',
+						'children' => []
 					],
 				]
 			],
@@ -580,6 +583,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				'id' => 4,
 				'parent_id' => 0,
 				'name' => 'Category 2',
+				'children' => []
 			],
 			[
 				'id' => 5,
@@ -590,6 +594,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 						'id' => '6',
 						'parent_id' => '5',
 						'name' => 'Category 3.1',
+						'children' => []
 					]
 				]
 			]
