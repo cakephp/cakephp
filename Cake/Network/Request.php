@@ -326,7 +326,7 @@ class Request implements \ArrayAccess {
  * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
  */
 	protected static function _base() {
-		$base = $dir = $webroot = null;
+		$base = $dir = $webroot = $baseUrl = null;
 		$config = Configure::read('App');
 		extract($config);
 
