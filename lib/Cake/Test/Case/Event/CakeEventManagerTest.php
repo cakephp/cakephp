@@ -214,6 +214,29 @@ class CakeEventManagerTest extends CakeTestCase {
 	}
 
 /**
+ * Tests event dispatching
+ *
+ * @return void
+ */
+	public function testDispatchClosure() {
+		$this->skipIf(
+			version_compare(PHP_VERSION, '5.3.0', '<'),
+			'These tests fail in PHP version < 5.3'
+		);
+
+		$manager = new CakeEventManager;
+		$listener = $this->getMock('CakeEventTestListener');
+		$anotherListener = $this->getMock('CakeEventTestListener');
+
+		$manager->attach(function($testEvent) use ($listener) { $listener->listenerFunction($testEvent); }, 'fake.event');
+
+		$event = new CakeEvent('fake.event');
+
+		$listener->expects($this->once())->method('listenerFunction')->with($event);
+		$manager->dispatch($event);
+	}
+
+/**
  * Tests event dispatching using event key name
  *
  * @return void
@@ -388,12 +411,12 @@ class CakeEventManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testDispatchWithGlobal() {
-		$generalManager = $this->getMock('CakeEventManager', array('dispatch'));
+		$generalManager = $this->getMock('CakeEventManager', array('prioritisedListeners'));
 		$manager = new CakeEventManager;
 		$event = new CakeEvent('fake.event');
 		CakeEventManager::instance($generalManager);
 
-		$generalManager->expects($this->once())->method('dispatch')->with($event);
+		$generalManager->expects($this->once())->method('prioritisedListeners')->with('fake.event');
 		$manager->dispatch($event);
 	}
 
@@ -403,8 +426,16 @@ class CakeEventManagerTest extends CakeTestCase {
  * @return void
  */
 	public function testStopPropagation() {
+		$generalManager = $this->getMock('CakeEventManager');
 		$manager = new CakeEventManager;
 		$listener = new CakeEventTestListener;
+
+		CakeEventManager::instance($generalManager);
+		$generalManager->expects($this->any())
+				->method('prioritisedListeners')
+				->with('fake.event')
+				->will($this->returnValue(array()));
+
 		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
 		$manager->attach(array($listener, 'stopListener'), 'fake.event', array('priority' => 8));
 		$manager->attach(array($listener, 'secondListenerFunction'), 'fake.event', array('priority' => 5));
@@ -412,6 +443,67 @@ class CakeEventManagerTest extends CakeTestCase {
 		$manager->dispatch($event);
 
 		$expected = array('secondListenerFunction');
+		$this->assertEquals($expected, $listener->callStack);
+	}
+
+/**
+ * Tests event dispatching using priorities
+ *
+ * @return void
+ */
+	public function testDispatchPrioritizedWithGlobal() {
+		$generalManager = $this->getMock('CakeEventManager');
+		$manager = new CakeEventManager;
+		$listener = new CustomTestEventListerner;
+		$event = new CakeEvent('fake.event');
+
+		CakeEventManager::instance($generalManager);
+		$generalManager->expects($this->any())
+				->method('prioritisedListeners')
+				->with('fake.event')
+				->will($this->returnValue(
+					array(11 => array(
+						array('callable' => array($listener, 'secondListenerFunction'), 'passParams' => false)
+					))
+				));
+
+
+		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
+		$manager->attach(array($listener, 'thirdListenerFunction'), 'fake.event', array('priority' => 15));
+
+		$manager->dispatch($event);
+
+		$expected = array('listenerFunction', 'secondListenerFunction', 'thirdListenerFunction');
+		$this->assertEquals($expected, $listener->callStack);
+	}
+
+	/**
+ * Tests event dispatching using priorities
+ *
+ * @return void
+ */
+	public function testDispatchGlobalBeforeLocal() {
+		$generalManager = $this->getMock('CakeEventManager');
+		$manager = new CakeEventManager;
+		$listener = new CustomTestEventListerner;
+		$event = new CakeEvent('fake.event');
+
+		CakeEventManager::instance($generalManager);
+		$generalManager->expects($this->any())
+				->method('prioritisedListeners')
+				->with('fake.event')
+				->will($this->returnValue(
+					array(10 => array(
+						array('callable' => array($listener, 'listenerFunction'), 'passParams' => false)
+					))
+				));
+
+
+		$manager->attach(array($listener, 'secondListenerFunction'), 'fake.event');
+
+		$manager->dispatch($event);
+
+		$expected = array('listenerFunction', 'secondListenerFunction');
 		$this->assertEquals($expected, $listener->callStack);
 	}
 }
