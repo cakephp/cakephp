@@ -1278,4 +1278,77 @@ class QueryTest extends TestCase {
 		$this->assertEquals('First Article Body', $first->body);
 		$this->assertEquals('Y', $first->published);
 	}
+
+/**
+ * Tests that has many results are also hydrated correctly
+ * when specified a custom entity class
+ *
+ * @return void
+ */
+	public function testHydrateWithHasManyCustomEntity() {
+		$this->_createTables();
+
+		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
+		$articleEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
+		$table = Table::build('author', [
+			'connection' => $this->connection,
+			'entityClass' => $authorEntity
+		]);
+		Table::build('article', [
+			'connection' => $this->connection,
+			'entityClass' => $articleEntity
+		]);
+		$table->hasMany('article', [
+			'property' => 'articles',
+			'sort' => ['article.id' => 'asc']
+		]);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->contain('article')
+			->hydrate(true)
+			->toArray();
+
+		$first = $results[0];
+		$this->assertInstanceOf($authorEntity, $first);
+		foreach ($first->articles as $r) {
+			$this->assertInstanceOf($articleEntity, $r);
+		}
+
+		$this->assertCount(2, $first->articles);
+		$expected = [
+			'id' => 1,
+			'title' => 'First Article',
+			'body' => 'First Article Body',
+			'author_id' => 1,
+			'published' => 'Y',
+		];
+		$this->assertEquals($expected, $first->articles[0]->toArray());
+	}
+
+/**
+ * Tests that belongsTo relations are correctly hydrated into a custom entity class
+ *
+ * @return void
+ */
+	public function testHydrateBelongsToCustomEntity() {
+		$this->_createTables();
+
+		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
+		$table = Table::build('article', ['table' => 'articles']);
+		Table::build('author', [
+			'connection' => $this->connection,
+			'entityClass' => $authorEntity
+		]);
+		$table->belongsTo('author');
+
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->contain('author')
+			->order(['article.id' => 'asc'])
+			->hydrate(true)
+			->toArray();
+
+		$first = $results[0];
+		$this->assertInstanceOf($authorEntity, $first->author);
+	}
 }
