@@ -664,12 +664,6 @@ class ViewTest extends TestCase {
 		$result = $this->View->element('test_element');
 		$this->assertEquals('this is the test element', $result);
 
-		$result = $this->View->element('plugin_element', array(), array('plugin' => 'TestPlugin'));
-		$this->assertEquals('this is the plugin element using params[plugin]', $result);
-
-		$result = $this->View->element('plugin_element', array(), array('plugin' => 'test_plugin'));
-		$this->assertEquals('this is the plugin element using params[plugin]', $result);
-
 		$result = $this->View->element('TestPlugin.plugin_element');
 		$this->assertEquals('this is the plugin element using params[plugin]', $result);
 
@@ -686,16 +680,6 @@ class ViewTest extends TestCase {
  */
 	public function testElementInexistent() {
 		$this->View->element('non_existent_element');
-	}
-
-/**
- * Test elementInexistent2 method
- *
- * @expectedException PHPUnit_Framework_Error_Notice
- * @return void
- */
-	public function testElementInexistent2() {
-		$this->View->element('TestPlugin.plugin_element', array(), array('plugin' => 'test_plugin'));
 	}
 
 /**

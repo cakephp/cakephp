@@ -533,10 +533,8 @@ class PaginatorHelper extends Helper {
  *    custom content you would like.
  * - `separator` The separator string to use, default to ' of '
  *
- * The `%page%` style placeholders also work, but are deprecated and will be removed in a future version.
  * @param array $options Options for the counter string. See #options for list of keys.
  * @return string Counter string.
- * @deprecated The %page% style placeholders are deprecated.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::counter
  */
 	public function counter($options = array()) {
@@ -578,20 +576,15 @@ class PaginatorHelper extends Helper {
 				break;
 			default:
 				$map = array(
-					'%page%' => $paging['page'],
-					'%pages%' => $paging['pageCount'],
-					'%current%' => $paging['current'],
-					'%count%' => $paging['count'],
-					'%start%' => $start,
-					'%end%' => $end,
-					'%model%' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
+					'{:page}' => $paging['page'],
+					'{:pages}' => $paging['pageCount'],
+					'{:current}' => $paging['current'],
+					'{:count}' => $paging['count'],
+					'{:start}' => $start,
+					'{:end}' => $end,
+					'{:model}' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
 				);
 				$out = str_replace(array_keys($map), array_values($map), $options['format']);
-
-				$newKeys = array(
-					'{:page}', '{:pages}', '{:current}', '{:count}', '{:start}', '{:end}', '{:model}'
-				);
-				$out = str_replace($newKeys, array_values($map), $out);
 		}
 		return $out;
 	}
