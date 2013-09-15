@@ -367,6 +367,7 @@ class Table {
 		}
 		if ($this->_displayField === null) {
 			$schema = $this->schema();
+			$this->_displayField = $this->primaryKey();
 			if ($schema->column('title')) {
 				$this->_displayField = 'title';
 			}
