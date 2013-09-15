@@ -168,18 +168,6 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Hash the plain text password so that it matches the hashed/encrypted password
- * in the datasource.
- *
- * @param string $password The plain text password.
- * @return string The hashed form of the password.
- * @deprecated Since 2.4. Use a PasswordHasher class instead.
- */
-	protected function _password($password) {
-		return Security::hash($password, null, true);
-	}
-
-/**
  * Authenticate a user based on the request information.
  *
  * @param Cake\Network\Request $request Request to get authentication information from.

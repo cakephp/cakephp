@@ -680,29 +680,6 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Queries & sets valid HTTP response codes & messages.
- *
- * @param integer|array $code If $code is an integer, then the corresponding code/message is
- *        returned if it exists, null if it does not exist. If $code is an array,
- *        then the 'code' and 'message' keys of each nested array are added to the default
- *        HTTP codes. Example:
- *
- *        httpCodes(404); // returns array(404 => 'Not Found')
- *
- *        httpCodes(array(
- *            701 => 'Unicorn Moved',
- *            800 => 'Unexpected Minotaur'
- *        )); // sets these new values, and returns true
- *
- * @return array Associative array of the HTTP codes as keys, and the message
- *    strings as values, or null of the given $code does not exist.
- * @deprecated Since 2.4. Will be removed in 3.0. Use Cake\Network\Response::httpCodes().
- */
-	public function httpCodes($code = null) {
-		return $this->response->httpCodes($code);
-	}
-
-/**
  * Loads and instantiates models required by this controller.
  * If the model is non existent, it will throw a missing database table error, as Cake generates
  * dynamic models for the time being.
@@ -790,17 +767,6 @@ class Controller extends Object implements EventListener {
 			extract($response, EXTR_OVERWRITE);
 		}
 		return compact('url', 'status', 'exit');
-	}
-
-/**
- * Convenience and object wrapper method for Cake\Network\Response::header().
- *
- * @param string $status The header message that is being set.
- * @return void
- * @deprecated Will be removed in 3.0. Use Cake\Network\Response::header().
- */
-	public function header($status) {
-		$this->response->header($status);
 	}
 
 /**
@@ -929,17 +895,6 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Forces the user's browser not to cache the results of the current request.
- *
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::disableCache
- * @deprecated Will be removed in 3.0. Use Cake\Network\Response::disableCache().
- */
-	public function disableCache() {
-		$this->response->disableCache();
-	}
-
-/**
  * Shows a message to the user for $pause seconds, then redirects to $url.
  * Uses flash.ctp as the default layout for the message.
  * Does not work if the current debug level is higher than 0.
@@ -1042,18 +997,6 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Alias to beforeScaffold()
- *
- * @param string $method
- * @return boolean
- * @see Controller::beforeScaffold()
- * @deprecated Will be removed in 3.0.
- */
-	protected function _beforeScaffold($method) {
-		return $this->beforeScaffold($method);
-	}
-
-/**
  * This method should be overridden in child classes.
  *
  * @param string $method name of method called either edit or update.
@@ -1062,18 +1005,6 @@ class Controller extends Object implements EventListener {
  */
 	public function afterScaffoldSave($method) {
 		return true;
-	}
-
-/**
- * Alias to afterScaffoldSave()
- *
- * @param string $method
- * @return boolean
- * @see Controller::afterScaffoldSave()
- * @deprecated Will be removed in 3.0.
- */
-	protected function _afterScaffoldSave($method) {
-		return $this->afterScaffoldSave($method);
 	}
 
 /**
@@ -1088,18 +1019,6 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Alias to afterScaffoldSaveError()
- *
- * @param string $method
- * @return boolean
- * @see Controller::afterScaffoldSaveError()
- * @deprecated Will be removed in 3.0.
- */
-	protected function _afterScaffoldSaveError($method) {
-		return $this->afterScaffoldSaveError($method);
-	}
-
-/**
  * This method should be overridden in child classes.
  * If not it will render a scaffold error.
  * Method MUST return true in child classes
@@ -1110,18 +1029,6 @@ class Controller extends Object implements EventListener {
  */
 	public function scaffoldError($method) {
 		return false;
-	}
-
-/**
- * Alias to scaffoldError()
- *
- * @param string $method
- * @return boolean
- * @see Controller::scaffoldError()
- * @deprecated Will be removed in 3.0.
- */
-	protected function _scaffoldError($method) {
-		return $this->scaffoldError($method);
 	}
 
 /**

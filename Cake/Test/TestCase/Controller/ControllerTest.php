@@ -567,7 +567,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testRedirectBeforeRedirectModifyingStatusCode() {
-		$Controller = $this->getMock('Cake\Controller\Controller', array('header', '_stop'));
+		$Controller = $this->getMock('Cake\Controller\Controller', array('_stop'));
 		$Controller->response = new Response();
 
 		$Controller->getEventManager()->attach(function ($event, $response, $url) {
@@ -786,20 +786,6 @@ class ControllerTest extends TestCase {
 
 		$expected = array('title' => array('The provided value is invalid'));
 		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testControllerHttpCodes method
- *
- * @return void
- */
-	public function testControllerHttpCodes() {
-		$response = $this->getMock('Cake\Network\Response', array('httpCodes'));
-		$Controller = new Controller(null, $response);
-		$Controller->response->expects($this->at(0))->method('httpCodes')->with(null);
-		$Controller->response->expects($this->at(1))->method('httpCodes')->with(100);
-		$Controller->httpCodes();
-		$Controller->httpCodes(100);
 	}
 
 /**

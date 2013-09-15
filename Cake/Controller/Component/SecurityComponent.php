@@ -46,42 +46,6 @@ class SecurityComponent extends Component {
 	public $blackHoleCallback = null;
 
 /**
- * List of controller actions for which a POST request is required
- *
- * @var array
- * @deprecated Use CakeRequest::onlyAllow() instead.
- * @see SecurityComponent::requirePost()
- */
-	public $requirePost = array();
-
-/**
- * List of controller actions for which a GET request is required
- *
- * @var array
- * @deprecated Use CakeRequest::onlyAllow() instead.
- * @see SecurityComponent::requireGet()
- */
-	public $requireGet = array();
-
-/**
- * List of controller actions for which a PUT request is required
- *
- * @var array
- * @deprecated Use CakeRequest::onlyAllow() instead.
- * @see SecurityComponent::requirePut()
- */
-	public $requirePut = array();
-
-/**
- * List of controller actions for which a DELETE request is required
- *
- * @var array
- * @deprecated Use CakeRequest::onlyAllow() instead.
- * @see SecurityComponent::requireDelete()
- */
-	public $requireDelete = array();
-
-/**
  * List of actions that require an SSL-secured connection
  *
  * @var array
@@ -114,15 +78,6 @@ class SecurityComponent extends Component {
  * @see SecurityComponent::requireAuth()
  */
 	public $allowedActions = array();
-
-/**
- * Deprecated property, superseded by unlockedFields.
- *
- * @var array
- * @deprecated
- * @see SecurityComponent::$unlockedFields
- */
-	public $disabledFields = array();
 
 /**
  * Form fields to exclude from POST validation. Fields can be unlocked
@@ -223,7 +178,6 @@ class SecurityComponent extends Component {
 		$controller = $event->subject();
 		$this->request = $controller->request;
 		$this->_action = $this->request->params['action'];
-		$this->_methodsRequired($controller);
 		$this->_secureRequired($controller);
 		$this->_authRequired($controller);
 
@@ -249,51 +203,6 @@ class SecurityComponent extends Component {
 		if ($isPost && is_array($controller->request->data)) {
 			unset($controller->request->data['_Token']);
 		}
-	}
-
-/**
- * Sets the actions that require a POST request, or empty for all actions
- *
- * @return void
- * @deprecated Use CakeRequest::onlyAllow() instead.
- * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#SecurityComponent::requirePost
- */
-	public function requirePost() {
-		$args = func_get_args();
-		$this->_requireMethod('Post', $args);
-	}
-
-/**
- * Sets the actions that require a GET request, or empty for all actions
- *
- * @deprecated Use CakeRequest::onlyAllow() instead.
- * @return void
- */
-	public function requireGet() {
-		$args = func_get_args();
-		$this->_requireMethod('Get', $args);
-	}
-
-/**
- * Sets the actions that require a PUT request, or empty for all actions
- *
- * @deprecated Use CakeRequest::onlyAllow() instead.
- * @return void
- */
-	public function requirePut() {
-		$args = func_get_args();
-		$this->_requireMethod('Put', $args);
-	}
-
-/**
- * Sets the actions that require a DELETE request, or empty for all actions
- *
- * @deprecated Use CakeRequest::onlyAllow() instead.
- * @return void
- */
-	public function requireDelete() {
-		$args = func_get_args();
-		$this->_requireMethod('Delete', $args);
 	}
 
 /**
@@ -352,29 +261,6 @@ class SecurityComponent extends Component {
 			$actions = $actions[0];
 		}
 		$this->{'require' . $method} = (empty($actions)) ? array('*'): $actions;
-	}
-
-/**
- * Check if HTTP methods are required
- *
- * @param Controller $controller Instantiating controller
- * @return boolean true if $method is required
- */
-	protected function _methodsRequired(Controller $controller) {
-		foreach (array('Post', 'Get', 'Put', 'Delete') as $method) {
-			$property = 'require' . $method;
-			if (is_array($this->$property) && !empty($this->$property)) {
-				$require = $this->$property;
-				if (in_array($this->_action, $require) || $this->$property == array('*')) {
-					if (!$this->request->is($method)) {
-						if (!$this->blackHole($controller, $method)) {
-							return null;
-						}
-					}
-				}
-			}
-		}
-		return true;
 	}
 
 /**
@@ -535,7 +421,7 @@ class SecurityComponent extends Component {
 			'key' => $authKey,
 			'allowedControllers' => $this->allowedControllers,
 			'allowedActions' => $this->allowedActions,
-			'unlockedFields' => array_merge($this->disabledFields, $this->unlockedFields),
+			'unlockedFields' => $this->unlockedFields,
 			'csrfTokens' => array()
 		);
 

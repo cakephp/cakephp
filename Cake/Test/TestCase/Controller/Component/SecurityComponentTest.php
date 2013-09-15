@@ -203,15 +203,10 @@ class SecurityComponentTest extends TestCase {
  */
 	public function testConstructorSettingProperties() {
 		$settings = array(
-			'requirePost' => array('edit', 'update'),
 			'requireSecure' => array('update_account'),
-			'requireGet' => array('index'),
 			'validatePost' => false,
 		);
 		$Security = new SecurityComponent($this->Controller->Components, $settings);
-		$this->assertEquals($Security->requirePost, $settings['requirePost']);
-		$this->assertEquals($Security->requireSecure, $settings['requireSecure']);
-		$this->assertEquals($Security->requireGet, $settings['requireGet']);
 		$this->assertEquals($Security->validatePost, $settings['validatePost']);
 	}
 
@@ -226,34 +221,6 @@ class SecurityComponentTest extends TestCase {
 		$result = $this->Controller->request->params['_Token']['key'];
 		$this->assertNotNull($result);
 		$this->assertTrue($this->Controller->Session->check('_Token'));
-	}
-
-/**
- * testRequirePostFail method
- *
- * @return void
- */
-	public function testRequirePostFail() {
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'posted';
-		$this->Controller->Security->requirePost(array('posted'));
-		$this->Controller->Security->startup($event);
-		$this->assertTrue($this->Controller->failed);
-	}
-
-/**
- * testRequirePostSucceed method
- *
- * @return void
- */
-	public function testRequirePostSucceed() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'posted';
-		$this->Controller->Security->requirePost('posted');
-		$this->Security->startup($event);
-		$this->assertFalse($this->Controller->failed);
 	}
 
 /**
@@ -341,146 +308,6 @@ class SecurityComponentTest extends TestCase {
 		);
 		$this->Controller->action = 'posted';
 		$this->Controller->Security->requireAuth('posted');
-		$this->Controller->Security->startup($event);
-		$this->assertFalse($this->Controller->failed);
-	}
-
-/**
- * testRequirePostSucceedWrongMethod method
- *
- * @return void
- */
-	public function testRequirePostSucceedWrongMethod() {
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'getted';
-		$this->Controller->Security->requirePost('posted');
-		$this->Controller->Security->startup($event);
-		$this->assertFalse($this->Controller->failed);
-	}
-
-/**
- * testRequireGetFail method
- *
- * @return void
- */
-	public function testRequireGetFail() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'getted';
-		$this->Controller->Security->requireGet(array('getted'));
-		$this->Controller->Security->startup($event);
-		$this->assertTrue($this->Controller->failed);
-	}
-
-/**
- * testRequireGetSucceed method
- *
- * @return void
- */
-	public function testRequireGetSucceed() {
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'getted';
-		$this->Controller->Security->requireGet('getted');
-		$this->Controller->Security->startup($event);
-		$this->assertFalse($this->Controller->failed);
-	}
-
-/**
- * testRequireGetSucceedWrongMethod method
- *
- * @return void
- */
-	public function testRequireGetSucceedWrongMethod() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'posted';
-		$this->Security->requireGet('getted');
-		$this->Security->startup($event);
-		$this->assertFalse($this->Controller->failed);
-	}
-
-/**
- * testRequirePutFail method
- *
- * @return void
- */
-	public function testRequirePutFail() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'putted';
-		$this->Controller->Security->requirePut(array('putted'));
-		$this->Controller->Security->startup($event);
-		$this->assertTrue($this->Controller->failed);
-	}
-
-/**
- * testRequirePutSucceed method
- *
- * @return void
- */
-	public function testRequirePutSucceed() {
-		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'putted';
-		$this->Controller->Security->requirePut('putted');
-		$this->Controller->Security->startup($event);
-		$this->assertFalse($this->Controller->failed);
-	}
-
-/**
- * testRequirePutSucceedWrongMethod method
- *
- * @return void
- */
-	public function testRequirePutSucceedWrongMethod() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'posted';
-		$this->Controller->Security->requirePut('putted');
-		$this->Controller->Security->startup($event);
-		$this->assertFalse($this->Controller->failed);
-	}
-
-/**
- * testRequireDeleteFail method
- *
- * @return void
- */
-	public function testRequireDeleteFail() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'deleted';
-		$this->Controller->Security->requireDelete(array('deleted', 'other_method'));
-		$this->Controller->Security->startup($event);
-		$this->assertTrue($this->Controller->failed);
-	}
-
-/**
- * testRequireDeleteSucceed method
- *
- * @return void
- */
-	public function testRequireDeleteSucceed() {
-		$_SERVER['REQUEST_METHOD'] = 'DELETE';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'deleted';
-		$this->Controller->Security->requireDelete('deleted');
-		$this->Controller->Security->startup($event);
-		$this->assertFalse($this->Controller->failed);
-	}
-
-/**
- * testRequireDeleteSucceedWrongMethod method
- *
- * @return void
- */
-	public function testRequireDeleteSucceedWrongMethod() {
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->request['action'] = 'posted';
-		$this->Controller->Security->requireDelete('deleted');
 		$this->Controller->Security->startup($event);
 		$this->assertFalse($this->Controller->failed);
 	}

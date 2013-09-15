@@ -687,17 +687,6 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Backwards compatible alias for AuthComponent::redirectUrl().
- *
- * @param string|array $url Optional URL to write as the login redirect URL.
- * @return string Redirect URL
- * @deprecated 2.3 Use AuthComponent::redirectUrl() instead
- */
-	public function redirect($url = null) {
-		return $this->redirectUrl($url);
-	}
-
-/**
  * Get the URL a user should be redirected to upon login.
  *
  * Pass an URL in to set the destination a user should be redirected to upon
@@ -787,20 +776,6 @@ class AuthComponent extends Component {
 			$this->_authenticateObjects[] = new $className($this->_registry, $settings);
 		}
 		return $this->_authenticateObjects;
-	}
-
-/**
- * Hash a password with the application's salt value (as defined with Configure::write('Security.salt');
- *
- * This method is intended as a convenience wrapper for Security::hash(). If you want to use
- * a hashing/encryption system not supported by that method, do not use this method.
- *
- * @param string $password Password to hash
- * @return string Hashed password
- * @deprecated Since 2.4. Use Security::hash() directly or a password hasher object.
- */
-	public static function password($password) {
-		return Security::hash($password, null, true);
 	}
 
 /**
