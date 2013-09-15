@@ -6,7 +6,7 @@ class Entity implements \ArrayAccess {
 
 	protected $_properties = [];
 
-	public function __get($property) {
+	public function &__get($property) {
 		return $this->get($property);
 	}
 
@@ -29,12 +29,12 @@ class Entity implements \ArrayAccess {
 		return $this;
 	}
 
-	public function get($property) {
+	public function &get($property) {
 		$method = 'get' . ucFirst($property);
 		if (method_exists($this, $method)) {
 			$value = $this->{$method}();
 		} else {
-			$value = $this->_properties[$property];
+			$value =& $this->_properties[$property];
 		}
 		return $value;
 	}
@@ -69,7 +69,7 @@ class Entity implements \ArrayAccess {
  * @return void
  */
 
-	public function offsetGet($offset) {
+	public function &offsetGet($offset) {
 		return $this->get($offset);
 	}
 

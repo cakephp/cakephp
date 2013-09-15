@@ -599,8 +599,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				]
 			]
 		];
-		$results = $table->find('threaded')
+		$results = $table->find('all')
 			->select(['id', 'parent_id', 'name'])
+			->hydrate(false)
+			->threaded()
 			->toArray();
 		$this->assertEquals($expected, $results);
 	}
@@ -651,6 +653,29 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->threaded(['order' => ['name' => 'ASC']])
 			->list(['keyPath' => 'id']);
 		$this->assertSame($query, $result);
+	}
+
+/**
+ * Tests find('threaded') with hydrated results
+ *
+ * @return void
+ */
+	public function testFindThreadedHydrated() {
+		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
+		$results = $table->find('all')
+			->hydrate(true)
+			->threaded()
+			->select(['id', 'parent_id', 'name'])
+			->toArray();
+
+		$this->assertEquals(1, $results[0]->id);
+		$expected = [
+			'id' => 8,
+			'parent_id' => 2,
+			'name' => 'Category 1.1.2',
+			'children' => []
+		];
+		$this->assertEquals($expected, $results[0]->children[0]->children[1]->toArray());
 	}
 
 }
