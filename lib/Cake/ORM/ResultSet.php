@@ -270,7 +270,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 		}
 
 		$results = $results[$defaultAlias];
-		if ($this->_hydrate) {
+		if ($this->_hydrate && !($results instanceof Entity)) {
 			$results = (new Entity)->set($results, false);
 		}
 		return $results;

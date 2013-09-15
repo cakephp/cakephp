@@ -489,10 +489,7 @@ class QueryTest extends TestCase {
 			],
 			[
 				'id' => 2,
-				'name' => 'nate',
-				'articles' => [
-					'author' => ['id' => 2, 'name' => 'nate']
-				]
+				'name' => 'nate'
 			],
 			[
 				'id' => 3,
@@ -510,10 +507,7 @@ class QueryTest extends TestCase {
 			],
 			[
 				'id' => 4,
-				'name' => 'garrett',
-				'articles' => [
-					'author' => ['id' => 4, 'name' => 'garrett']
-				]
+				'name' => 'garrett'
 			]
 		];
 		$this->assertEquals($expected, $results);
@@ -1225,6 +1219,36 @@ class QueryTest extends TestCase {
 		$this->assertInstanceOf('\Cake\ORM\Entity', $first->author);
 		$expected = ['id' => 1, 'name' => 'mariano'];
 		$this->assertEquals($expected, $first->author->toArray());
+	}
+
+/**
+ * Tests that deeply nested associations are also hydrated correctly
+ *
+ * @return void
+ */
+	public function testHydrateDeep() {
+		$this->_createTables();
+
+		$table = Table::build('author', ['connection' => $this->connection]);
+		$article = Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article', [
+			'property' => 'articles',
+			'sort' => ['article.id' => 'asc']
+		]);
+		$article->belongsTo('author');
+		$query = new Query($this->connection, $table);
+
+		$results = $query->select()
+			->contain(['article' => ['author']])
+			->hydrate(true)
+			->toArray();
+
+		$this->assertCount(4, $results);
+		$first = $results[0];
+		$this->assertInstanceOf('\Cake\ORM\Entity', $first->articles[0]->author);
+		$expected = ['id' => 1, 'name' => 'mariano'];
+		$this->assertEquals($expected, $first->articles[0]->author->toArray());
+		$this->assertFalse(isset($results[3]->articles));
 	}
 
 }
