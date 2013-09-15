@@ -120,6 +120,13 @@ class Table {
 	protected $_eventManager;
 
 /**
+ * The name of the class that represent a single row for this table
+ *
+ * @var string
+ */
+	protected $_entityClass = '\Cake\ORM\Entity';
+
+/**
  * Initializes a new instance
  *
  * The $config array understands the following keys:
@@ -152,6 +159,9 @@ class Table {
 		}
 		if (!empty($config['schema'])) {
 			$this->schema($config['schema']);
+		}
+		if (!empty($config['entityClass'])) {
+			$this->entityClass($config['entityClass']);
 		}
 		$eventManager = null;
 		if (!empty($config['eventManager'])) {
@@ -365,6 +375,20 @@ class Table {
 			}
 		}
 		return $this->_displayField;
+	}
+
+/**
+ * Returns the class used to hydrate rows for this table or sets
+ * a new one
+ *
+ * @param string $name the name of the class to use
+ * @return string
+ */
+	public function entityClass($name = null) {
+		if ($name !== null) {
+			$this->_entityClass = $name;
+		}
+		return $this->_entityClass;
 	}
 
 /**

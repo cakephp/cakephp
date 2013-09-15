@@ -105,6 +105,13 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 	protected $_hydrate = false;
 
 /**
+ * The fully namespaced name of the class to use for hydrating results
+ *
+ * @var string
+ */
+	protected $_entityClass;
+
+/**
  * Constructor
  *
  * @param Query from where results come
@@ -117,6 +124,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 		$this->_defaultTable = $this->_query->repository();
 		$this->_calculateAssociationMap();
 		$this->_hydrate = $this->_query->hydrate();
+		$this->_entityClass = $query->repository()->entityClass();
 	}
 
 /**
@@ -271,7 +279,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 
 		$results = $results[$defaultAlias];
 		if ($this->_hydrate && !($results instanceof Entity)) {
-			$results = (new Entity)->set($results, false);
+			$results = (new $this->_entityClass)->set($results, false);
 		}
 		return $results;
 	}

@@ -1251,4 +1251,31 @@ class QueryTest extends TestCase {
 		$this->assertFalse(isset($results[3]->articles));
 	}
 
+/**
+ * Tests that it is possible to use a custom entity class
+ *
+ * @return void
+ */
+	public function testHydrateCustomObject() {
+		$this->_createTables();
+		$class = $this->getMockClass('\Cake\ORM\Entity', ['fakeMethod']);
+		$table = Table::build('article', [
+			'table' => 'articles',
+			'entityClass' => $class
+		]);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()->hydrate(true)->execute()->toArray();
+
+		$this->assertCount(3, $results);
+		foreach ($results as $r) {
+			$this->assertInstanceOf($class, $r);
+		}
+
+		$first = $results[0];
+		$this->assertEquals(1, $first->id);
+		$this->assertEquals(1, $first->author_id);
+		$this->assertEquals('First Article', $first->title);
+		$this->assertEquals('First Article Body', $first->body);
+		$this->assertEquals('Y', $first->published);
+	}
 }
