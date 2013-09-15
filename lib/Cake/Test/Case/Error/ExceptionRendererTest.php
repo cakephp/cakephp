@@ -761,7 +761,7 @@ class ExceptionRendererTest extends CakeTestCase {
 		$ExceptionRenderer->render();
 		$this->assertEquals('', $ExceptionRenderer->controller->layoutPath);
 		$this->assertEquals('', $ExceptionRenderer->controller->subDir);
-		$this->assertEquals('Errors/', $ExceptionRenderer->controller->viewPath);
+		$this->assertEquals('Errors', $ExceptionRenderer->controller->viewPath);
 	}
 
 /**
