@@ -26,7 +26,6 @@ before_script:
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE DATABASE cakephp_test;' -U postgres; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
-  - chmod -R 777 ./App/tmp
   - sudo apt-get install lighttpd
   - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
@@ -35,7 +34,7 @@ before_script:
   - set +H
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then cd ./lib && phpunit --stderr; else phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; fi"
+  - sh -c "if [ '$PHPCS' != '1' ]; then phpunit --stderr; else phpcs -p --extensions=php --standard=CakePHP ./Cake; fi"
 
 notifications:
   email: false
