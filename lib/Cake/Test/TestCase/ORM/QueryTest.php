@@ -66,7 +66,7 @@ class QueryTest extends TestCase {
 		$orderTypes = Table::build('orderType', ['schema' => $schema]);
 		$stuff = Table::build('stuff', ['schema' => $schema, 'table' => 'things']);
 		$stuffTypes = Table::build('stuffType', ['schema' => $schema]);
-		$categories = Table::build('category', ['schema' => $schema]);
+		$categories = Table::build('category', ['sche' => $schema]);
 
 		$table->belongsTo('client');
 		$clients->hasOne('order');
@@ -1189,15 +1189,42 @@ class QueryTest extends TestCase {
 		$expected = [
 			'id' => 1,
 			'name' => 'tag1',
-			'ArticleTag' => ['article_id' => 1, 'tag_id' => 1]
+			'ArticleTag' => (new \Cake\ORM\Entity)->set(['article_id' => 1, 'tag_id' => 1])
 		];
 		$this->assertEquals($expected, $first->tags[0]->toArray());
 
 		$expected = [
 			'id' => 2,
 			'name' => 'tag2',
-			'ArticleTag' => ['article_id' => 1, 'tag_id' => 2]
+			'ArticleTag' => (new \Cake\ORM\Entity)->set(['article_id' => 1, 'tag_id' => 2])
 		];
 		$this->assertEquals($expected, $first->tags[1]->toArray());
 	}
+
+/**
+ * Tests that belongsTo relations are correctly hydrated
+ *
+ * @return void
+ */
+	public function testHydrateBelongsTo() {
+		$this->_createTables();
+
+		$table = Table::build('article', ['table' => 'articles']);
+		Table::build('author', ['connection' => $this->connection]);
+		$table->belongsTo('author');
+
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->contain('author')
+			->order(['article.id' => 'asc'])
+			->hydrate(true)
+			->toArray();
+
+		$this->assertCount(3, $results);
+		$first = $results[0];
+		$this->assertInstanceOf('\Cake\ORM\Entity', $first->author);
+		$expected = ['id' => 1, 'name' => 'mariano'];
+		$this->assertEquals($expected, $first->author->toArray());
+	}
+
 }

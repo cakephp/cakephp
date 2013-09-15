@@ -192,7 +192,10 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 		$map = [];
 		$visitor = function($level) use (&$visitor, &$map) {
 			foreach ($level as $assoc => $meta) {
-				$map[$assoc] = $meta['instance'];
+				$map[$assoc] = [
+					'instance' => $meta['instance'],
+					'canBeJoined' => $meta['canBeJoined']
+				];
 				if (!empty($meta['associations'])) {
 					$visitor($meta['associations']);
 				}
@@ -257,8 +260,13 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 			if (!isset($results[$alias])) {
 				continue;
 			}
-			$results[$alias] = $this->_castValues($assoc->target(), $results[$alias]);
-			$results = $assoc->transformRow($results);
+			$instance = $assoc['instance'];
+			$results[$alias] = $this->_castValues($instance->target(), $results[$alias]);
+
+			if ($this->_hydrate && $assoc['canBeJoined']) {
+				$results[$alias] = (new Entity)->set($results[$alias], false);
+			}
+			$results = $instance->transformRow($results);
 		}
 
 		$results = $results[$defaultAlias];
