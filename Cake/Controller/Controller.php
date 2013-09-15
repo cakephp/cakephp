@@ -170,7 +170,7 @@ class Controller extends Object implements EventListener {
 
 /**
  * The name of the layout file to render the view inside of. The name specified
- * is the filename of the layout in /app/View/Layouts without the .ctp
+ * is the filename of the layout in /app/View/Layout without the .ctp
  * extension.
  *
  * @var string

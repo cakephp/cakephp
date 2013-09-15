@@ -22,7 +22,7 @@ class TestAppsExceptionRenderer extends ExceptionRenderer {
 			$controller->layout = 'banana';
 		} catch (\Exception $e) {
 			$controller = new Controller($request, $response);
-			$controller->viewPath = 'Errors';
+			$controller->viewPath = 'Error';
 		}
 		return $controller;
 	}

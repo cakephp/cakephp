@@ -54,7 +54,7 @@ if (!empty($filePresent)):
 <h2><?php echo __d('cake', 'Editing this Page'); ?></h2>
 <p>
 <?php echo __d('cake', 'To change the content of this page, create: /app/View/Pages/home.ctp.'); ?><br />
-<?php echo __d('cake', 'To change its layout, create: /app/View/Layouts/default.ctp.'); ?><br />
+<?php echo __d('cake', 'To change its layout, create: /app/View/Layout/default.ctp.'); ?><br />
 <a href="http://manual.cakephp.org/"><?php echo __d('cake', 'See the views section of the manual for more info.'); ?> </a><br />
 <?php echo __d('cake', 'You can also add some CSS styles for your pages at: app/webroot/css/.'); ?>
 </p>

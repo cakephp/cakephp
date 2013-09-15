@@ -373,7 +373,7 @@ class View extends Object {
  * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
  * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
  *
- * @param string $name Name of template file in the/app/View/Elements/ folder,
+ * @param string $name Name of template file in the/app/View/Element/ folder,
  *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
  *   is not found in the plugin, the normal view path cascade will be searched.
  * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
@@ -416,7 +416,7 @@ class View extends Object {
 		if (empty($options['ignoreMissing'])) {
 			list ($plugin, $name) = pluginSplit($name, true);
 			$name = str_replace('/', DS, $name);
-			$file = $plugin . 'Elements' . DS . $name . $this->ext;
+			$file = $plugin . 'Element' . DS . $name . $this->ext;
 			trigger_error(__d('cake_dev', 'Element Not Found: %s', $file), E_USER_NOTICE);
 		}
 	}
@@ -424,7 +424,7 @@ class View extends Object {
 /**
  * Checks if an element exists
  *
- * @param string $name Name of template file in the /app/View/Elements/ folder,
+ * @param string $name Name of template file in the /app/View/Element/ folder,
  *   or `MyPlugin.template` to check the template element from MyPlugin. If the element
  *   is not found in the plugin, the normal view path cascade will be searched.
  * @return boolean Success
@@ -712,7 +712,7 @@ class View extends Object {
 					if (!$parent) {
 						list($plugin, $name) = $this->pluginSplit($name);
 						$paths = $this->_paths($plugin);
-						$defaultPath = $paths[0] . 'Elements' . DS;
+						$defaultPath = $paths[0] . 'Element' . DS;
 						throw new \LogicException(__d(
 							'cake_dev',
 							'You cannot extend an element which does not exist (%s).',
@@ -1002,7 +1002,7 @@ class View extends Object {
 		}
 		list($plugin, $name) = $this->pluginSplit($name);
 		$paths = $this->_paths($plugin);
-		$file = 'Layouts' . DS . $subDir . $name;
+		$file = 'Layout' . DS . $subDir . $name;
 
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
@@ -1041,8 +1041,8 @@ class View extends Object {
 		$exts = $this->_getExtensions();
 		foreach ($exts as $ext) {
 			foreach ($paths as $path) {
-				if (file_exists($path . 'Elements' . DS . $name . $ext)) {
-					return $path . 'Elements' . DS . $name . $ext;
+				if (file_exists($path . 'Element' . DS . $name . $ext)) {
+					return $path . 'Element' . DS . $name . $ext;
 				}
 			}
 		}
