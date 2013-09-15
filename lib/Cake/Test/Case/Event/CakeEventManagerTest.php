@@ -444,7 +444,6 @@ class CakeEventManagerTest extends CakeTestCase {
 					))
 				));
 
-
 		$manager->attach(array($listener, 'listenerFunction'), 'fake.event');
 		$manager->attach(array($listener, 'thirdListenerFunction'), 'fake.event', array('priority' => 15));
 
@@ -454,7 +453,7 @@ class CakeEventManagerTest extends CakeTestCase {
 		$this->assertEquals($expected, $listener->callStack);
 	}
 
-	/**
+/**
  * Tests event dispatching using priorities
  *
  * @return void
@@ -474,7 +473,6 @@ class CakeEventManagerTest extends CakeTestCase {
 						array('callable' => array($listener, 'listenerFunction'), 'passParams' => false)
 					))
 				));
-
 
 		$manager->attach(array($listener, 'secondListenerFunction'), 'fake.event');
 
