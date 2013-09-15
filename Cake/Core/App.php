@@ -23,7 +23,6 @@ use Cake\Utility\Inflector;
 /**
  * App is responsible for resource location, and path management.
  *
- *
  * ### Adding paths
  *
  * Additional paths for Views and Plugins are configured with Configure now. See App/Config/app.php for an
@@ -83,10 +82,8 @@ class App {
 		}
 
 		list($plugin, $name) = pluginSplit($class);
-		$checkCore = true;
 		if ($plugin) {
 			$base = Plugin::getNamespace($plugin);
-			$checkCore = false;
 		} else {
 			$base = Configure::read('App.namespace');
 		}
@@ -96,11 +93,12 @@ class App {
 		if (class_exists($base . $fullname)) {
 			return $base . $fullname;
 		}
+		if ($plugin) {
+			return false;
+		}
 
-		if ($checkCore) {
-			if (class_exists('Cake' . $fullname)) {
-				return 'Cake' . $fullname;
-			}
+		if (class_exists('Cake' . $fullname)) {
+			return 'Cake' . $fullname;
 		}
 		return false;
 	}
