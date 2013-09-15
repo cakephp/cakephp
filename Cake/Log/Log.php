@@ -266,42 +266,6 @@ class Log {
 	}
 
 /**
- * Checks whether $streamName is enabled
- *
- * @param string $streamName to check
- * @return bool
- * @throws Cake\Error\Exception
- * @deprecated This method will be removed in 3.0 stable.
- */
-	public static function enabled($streamName) {
-		throw new Error\Exception(__d('cake_dev', 'Log::enabled() is deprecated. Use Log::configured() instead.'));
-	}
-
-/**
- * Enable stream.
- *
- * @param string $streamName to enable
- * @return void
- * @throws Cake\Error\Exception
- * @deprecated This method will be removed in 3.0 stable.
- */
-	public static function enable($streamName) {
-		throw new Error\Exception(__d('cake_dev', 'Log::enable() is deprecated. Use Log::config() instead.'));
-	}
-
-/**
- * Disable stream.
- *
- * @param string $streamName to disable
- * @return void
- * @throws Cake\Error\Exception
- * @deprecated This method will be removed in 3.0 stable.
- */
-	public static function disable($streamName) {
-		throw new Error\Exception(__d('cake_dev', 'Log::disable() is deprecated. Use Log::drop() instead.'));
-	}
-
-/**
  * Get a logging engine.
  *
  * @param string $name Key name of a configured adapter to get.
