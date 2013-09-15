@@ -477,33 +477,4 @@ class CakeEventManagerTest extends CakeTestCase {
 		$this->assertEquals($expected, $listener->callStack);
 	}
 
-	/**
- * Tests event dispatching using priorities
- *
- * @return void
- */
-	public function testDispatchGlobalBeforeLocal() {
-		$generalManager = $this->getMock('CakeEventManager');
-		$manager = new CakeEventManager;
-		$listener = new CustomTestEventListerner;
-		$event = new CakeEvent('fake.event');
-
-		CakeEventManager::instance($generalManager);
-		$generalManager->expects($this->any())
-				->method('prioritisedListeners')
-				->with('fake.event')
-				->will($this->returnValue(
-					array(10 => array(
-						array('callable' => array($listener, 'listenerFunction'), 'passParams' => false)
-					))
-				));
-
-
-		$manager->attach(array($listener, 'secondListenerFunction'), 'fake.event');
-
-		$manager->dispatch($event);
-
-		$expected = array('listenerFunction', 'secondListenerFunction');
-		$this->assertEquals($expected, $listener->callStack);
-	}
 }

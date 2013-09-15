@@ -273,7 +273,7 @@ class CakeEventManager {
 		$listeners = $this->_listeners[$eventKey];
 		foreach ($globalListeners as $priority => $priorityQ) {
 			if (!empty($listeners[$priority])) {
-				$listeners[$priority] = array_merge($priorityQ, $listeners[$priority]);
+				$listeners[$priority] = array_merge($listeners[$priority], $priorityQ);
 				unset($globalListeners[$priority]);
 			}
 
