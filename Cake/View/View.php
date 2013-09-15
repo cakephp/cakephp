@@ -382,20 +382,13 @@ class View extends Object {
  *   If an array, the following keys can be used:
  *   - `config` - Used to store the cached element in a custom cache configuration.
  *   - `key` - Used to define the key used in the Cache::write(). It will be prefixed with `element_`
- * - `plugin` - Load an element from a specific plugin. This option is deprecated, see below.
  * - `callbacks` - Set to true to fire beforeRender and afterRender helper callbacks for this element.
  *   Defaults to false.
  * - `ignoreMissing` - Used to allow missing elements. Set to true to not trigger notices.
  * @return string Rendered Element
- * @deprecated The `$options['plugin']` is deprecated and will be removed in CakePHP 3.0. Use
- *   `Plugin.element_name` instead.
  */
 	public function element($name, $data = array(), $options = array()) {
 		$file = $plugin = null;
-
-		if (isset($options['plugin'])) {
-			$name = Inflector::camelize($options['plugin']) . '.' . $name;
-		}
 
 		if (!isset($options['callbacks'])) {
 			$options['callbacks'] = false;
@@ -571,17 +564,6 @@ class View extends Object {
  */
 	public function getVars() {
 		return array_keys($this->viewVars);
-	}
-
-/**
- * Returns the contents of the given View variable(s)
- *
- * @param string $var The view var you want the contents of.
- * @return mixed The content of the named var if its set, otherwise null.
- * @deprecated Will be removed in 3.0. Use View::get() instead.
- */
-	public function getVar($var) {
-		return $this->get($var);
 	}
 
 /**

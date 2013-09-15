@@ -257,33 +257,6 @@ class LogTest extends TestCase {
 		}
 	}
 
-/**
- * test enable() throws exceptions
- *
- * @expectedException Cake\Error\Exception
- */
-	public function testStreamEnable() {
-		Log::enable('debug');
-	}
-
-/**
- * test enabled() throws exceptions
- *
- * @expectedException Cake\Error\Exception
- */
-	public function testStreamEnabled() {
-		Log::enabled('debug');
-	}
-
-/**
- * test disable() throws exceptions
- *
- * @expectedException Cake\Error\Exception
- */
-	public function testStreamDisable() {
-		Log::disable('debug');
-	}
-
 	protected function _resetLogConfig() {
 		Log::config('debug', array(
 			'engine' => 'File',

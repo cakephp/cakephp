@@ -179,10 +179,7 @@ class SessionHelperTest extends TestCase {
 	public function testFlashWithPluginElement() {
 		Plugin::load('TestPlugin');
 
-		$result = $this->Session->flash('flash', array(
-			'element' => 'plugin_element',
-			'params' => array('plugin' => 'TestPlugin')
-		));
+		$result = $this->Session->flash('flash', array('element' => 'TestPlugin.plugin_element'));
 		$expected = 'this is the plugin element using params[plugin]';
 		$this->assertEquals($expected, $result);
 	}

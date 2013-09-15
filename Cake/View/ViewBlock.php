@@ -155,23 +155,6 @@ class ViewBlock {
 	}
 
 /**
- * Append to an existing or new block. Appending to a new
- * block will create the block.
- *
- * Calling append() without a value will create a new capturing
- * block that needs to be finished with View::end(). The content
- * of the new capturing context will be added to the existing block context.
- *
- * @param string $name Name of the block
- * @param string $value The content for the block.
- * @return void
- * @deprecated As of 2.3 use ViewBlock::concat() instead.
- */
-	public function append($name, $value = null) {
-		$this->concat($name, $value);
-	}
-
-/**
  * Set the content for a block. This will overwrite any
  * existing content.
  *
