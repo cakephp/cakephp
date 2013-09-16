@@ -1,27 +1,49 @@
 <?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP Project
+ * @package       Cake.Console.Command
+ * @since         CakePHP v 2.5
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+
 App::uses('CommandListShell', 'Console/Command');
 
 /**
- * CompletionShell
+ * Provide command completion shells such as bash.
+ * 
+ * @package       Cake.Console.Command
  */
 class CompletionShell extends CommandListShell {
 
 /**
- * Echo no header
+ * Echo no header by overriding the startup method
  *
+ * @return void
  */
 	public function startup() {
 	}
 
 /**
- * Not called by the autocomplet shell - this is for curious users
+ * Not called by the autocomplete shell - this is for curious users
+ *
+ * @return void
  */
 	public function main() {
-		$this->out($this->OptionParser->help());
+		return $this->out($this->OptionParser->help());
 	}
 
 /**
  * list commands
+ *
+ * @return void
  */
 	public function commands() {
 		$options = $this->_commands();
@@ -30,6 +52,8 @@ class CompletionShell extends CommandListShell {
 
 /**
  * list options for the named command
+ *
+ * @return void
  */
 	public function options() {
 		if (!$this->args) {
@@ -57,6 +81,8 @@ class CompletionShell extends CommandListShell {
 
 /**
  * list subcommands for the named command
+ *
+ * @return void
  */
 	public function subCommands() {
 		if (!$this->args) {
@@ -69,6 +95,8 @@ class CompletionShell extends CommandListShell {
 
 /**
  * Guess autocomplete from the whole argument string
+ * 
+ * @return void
  */
 	public function fuzzy() {
 		return $this->_output();
@@ -76,6 +104,8 @@ class CompletionShell extends CommandListShell {
 
 /**
  * getOptionParser for _this_ shell
+ *
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$translationDomain = 'bash_completion';
@@ -186,18 +216,21 @@ class CompletionShell extends CommandListShell {
 	}
 
 /**
- * _getShell
+ * Get Shell instance for the given command
  *
  * @param mixed $commandName
+ * @return mixed
  */
 	protected function _getShell($commandName) {
 		list($plugin, $name) = pluginSplit($commandName, true);
 
+		if ($plugin === 'CORE.' || $plugin === 'APP.' || $plugin === 'core.' || $plugin === 'app.') {
+			$commandName = $name;
+			$plugin = '';
+		}
+
 		if (!in_array($commandName, $this->_commands())) {
 			return false;
-		}
-		if ($plugin === 'CORE.' || $plugin === 'APP.') {
-			$plugin = '';
 		}
 
 		$name = Inflector::camelize($name);
@@ -217,10 +250,11 @@ class CompletionShell extends CommandListShell {
  * Emit results as a string, space delimited
  *
  * @param array $options
+ * @return void
  */
 	protected function _output($options = array()) {
 		if ($options) {
-			$this->out(implode($options, ' '));
+			return $this->out(implode($options, ' '));
 		}
 	}
 }
