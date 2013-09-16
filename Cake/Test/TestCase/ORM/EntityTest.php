@@ -99,4 +99,45 @@ class EntityTest extends TestCase {
 		$this->assertEquals(['c', 'd'], $entity->stuff);
 	}
 
+/**
+ * Tests that it is possible to bypass the setters
+ *
+ * @return void
+ */
+	public function testBypassSetters() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['setName', 'setStuff']);
+		$entity->expects($this->never())->method('setName');
+		$entity->expects($this->never())->method('setStuff');
+
+		$entity->set('name', 'Jones', false);
+		$this->assertEquals('Jones', $entity->name);
+
+		$entity->set('stuff', 'Thing', false);
+		$this->assertEquals('Thing', $entity->stuff);
+
+		$entity->set(['name' => 'foo', 'stuff' => 'bar'], false);
+		$this->assertEquals('bar', $entity->stuff);
+	}
+
+/**
+ * Tests that the constructor will set initial properties
+ *
+ * @return void
+ */
+	public function testConstructor() {
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['set'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->at(0))
+			->method('set')
+			->with(['a' => 'b', 'c' => 'd'], true);
+
+		$entity->expects($this->at(1))
+			->method('set')
+			->with(['foo' => 'bar'], false);
+
+		$entity->__construct(['a' => 'b', 'c' => 'd']);
+		$entity->__construct(['foo' => 'bar'], false);
+	}
 }
