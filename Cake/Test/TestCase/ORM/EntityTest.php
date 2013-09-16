@@ -140,4 +140,80 @@ class EntityTest extends TestCase {
 		$entity->__construct(['a' => 'b', 'c' => 'd']);
 		$entity->__construct(['foo' => 'bar'], false);
 	}
+
+/**
+ * Tests getting properties with no custom getters
+ *
+ * @return void
+ */
+	public function testGetNoGetters() {
+		$entity = new Entity(['id' => 1, 'foo' => 'bar']);
+		$this->assertSame(1, $entity->get('id'));
+		$this->assertSame('bar', $entity->get('foo'));
+	}
+
+/**
+ * Tests get with custom getter
+ *
+ * @return void
+ */
+	public function testGetCustomGetters() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->expects($this->once())->method('getName')
+			->with('Jones')
+			->will($this->returnCallback(function($name) {
+				$this->assertSame('Jones', $name);
+				return 'Dr. ' . $name;
+			}));
+		$entity->set('name', 'Jones');
+		$this->assertEquals('Dr. Jones', $entity->get('name'));
+	}
+
+/**
+ * Test magic property setting with no custom setter
+ *
+ * @return void
+ */
+	public function testMagicSet() {
+		$entity = new Entity;
+		$entity->name = 'Jones';
+		$this->assertEquals('Jones', $entity->name);
+		$entity->name = 'George';
+		$this->assertEquals('George', $entity->name);
+	}
+
+/**
+ * Tests magic set with custom setter function
+ *
+ * @return void
+ */
+	public function testMagicSetWithSetter() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['setName']);
+		$entity->expects($this->once())->method('setName')
+			->with('Jones')
+			->will($this->returnCallback(function($name) {
+				$this->assertEquals('Jones', $name);
+				return 'Dr. ' . $name;
+			}));
+		$entity->name = 'Jones';
+		$this->assertEquals('Dr. Jones', $entity->name);
+	}
+
+/**
+ * Tests the magic getter with a custom getter function
+ *
+ * @return void
+ */
+	public function testMagicGetWithGetter() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->expects($this->once())->method('getName')
+			->with('Jones')
+			->will($this->returnCallback(function($name) {
+				$this->assertSame('Jones', $name);
+				return 'Dr. ' . $name;
+			}));
+		$entity->set('name', 'Jones');
+		$this->assertEquals('Dr. Jones', $entity->name);
+
+	}
 }
