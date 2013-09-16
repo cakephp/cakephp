@@ -86,7 +86,7 @@ class Entity implements \ArrayAccess {
  * or bypass them
  * @return \Cake\ORM\Entity
  */
-	public function set($property, $value = false, $useSetters = true) {
+	public function set($property, $value = true, $useSetters = true) {
 		if (is_string($property)) {
 			$property = [$property => $value];
 		} else {
