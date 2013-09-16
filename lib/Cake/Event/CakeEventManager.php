@@ -230,15 +230,12 @@ class CakeEventManager {
 			$event = new CakeEvent($event);
 		}
 
-		if (!$this->_isGlobal) {
-			self::instance()->dispatch($event);
-		}
-
-		if (empty($this->_listeners[$event->name()])) {
+		$listeners = $this->listeners($event->name());
+		if (empty($listeners)) {
 			return;
 		}
 
-		foreach ($this->listeners($event->name()) as $listener) {
+		foreach ($listeners as $listener) {
 			if ($event->isStopped()) {
 				break;
 			}
@@ -279,13 +276,12 @@ class CakeEventManager {
 				$listeners[$priority] = array_merge($priorityQ, $listeners[$priority]);
 				unset($globalListeners[$priority]);
 			}
-
-			$listeners = $listeners + $globalListeners;
 		}
+		$listeners = $listeners + $globalListeners;
 
 		ksort($listeners);
 		$result = array();
-		foreach ($this->_listeners[$eventKey] as $priorityQ) {
+		foreach ($listeners as $priorityQ) {
 			$result = array_merge($result, $priorityQ);
 		}
 		return $result;
