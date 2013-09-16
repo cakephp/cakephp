@@ -88,7 +88,7 @@ class Entity implements \ArrayAccess {
  */
 	public function toArray() {
 		$result = [];
-		foreach ($this->_properties as $property => $value) {
+		foreach($this->_properties as $property => $value) {
 			$result[$property] = $this->get($property);
 		}
 		return $result;
