@@ -66,7 +66,7 @@ class QueryTest extends TestCase {
 		$orderTypes = Table::build('orderType', ['schema' => $schema]);
 		$stuff = Table::build('stuff', ['schema' => $schema, 'table' => 'things']);
 		$stuffTypes = Table::build('stuffType', ['schema' => $schema]);
-		$categories = Table::build('category', ['sche' => $schema]);
+		$categories = Table::build('category', ['schema' => $schema]);
 
 		$table->belongsTo('client');
 		$clients->hasOne('order');
