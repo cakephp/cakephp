@@ -115,11 +115,10 @@ class Entity implements \ArrayAccess {
  */
 	public function &get($property) {
 		$method = 'get' . ucFirst($property);
-		$value = $this->_properties[$property];
-		if (method_exists($this, $method)) {
-			$this->_properties[$property] = $this->{$method}($value);
-		}
 		$value =& $this->_properties[$property];
+		if (method_exists($this, $method)) {
+			$value = $this->{$method}($value);
+		}
 		return $value;
 	}
 

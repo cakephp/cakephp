@@ -216,4 +216,31 @@ class EntityTest extends TestCase {
 		$this->assertEquals('Dr. Jones', $entity->name);
 
 	}
+
+/**
+ * Test indirectly modifying internal properties
+ *
+ * @return void
+ */
+	public function testIndirectModification() {
+		$entity = new Entity;
+		$entity->things = ['a', 'b'];
+		$entity->things[] = 'c';
+		$this->assertEquals(['a', 'b', 'c'], $entity->things);
+	}
+
+/**
+ * Test indirectly modifying internal properties with a getter
+ *
+ * @return void
+ */
+	public function testIndirectModificationWithGetter() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['getThings']);
+		$entity->expects($this->atLeastOnce())->method('getThings')
+			->will($this->returnArgument(0));
+		$entity->things = ['a', 'b'];
+		$entity->things[] = 'c';
+		$this->assertEquals(['a', 'b', 'c'], $entity->things);
+	}
+
 }
