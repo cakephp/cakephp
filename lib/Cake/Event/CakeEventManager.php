@@ -276,9 +276,8 @@ class CakeEventManager {
 				$listeners[$priority] = array_merge($priorityQ, $listeners[$priority]);
 				unset($globalListeners[$priority]);
 			}
-
-			$listeners = $listeners + $globalListeners;
 		}
+		$listeners = $listeners + $globalListeners;
 
 		ksort($listeners);
 		$result = array();

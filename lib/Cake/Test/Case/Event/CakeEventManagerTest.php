@@ -430,8 +430,8 @@ class CakeEventManagerTest extends CakeTestCase {
  */
 	public function testDispatchPrioritizedWithGlobal() {
 		$generalManager = $this->getMock('CakeEventManager');
-		$manager = new CakeEventManager;
-		$listener = new CustomTestEventListerner;
+		$manager = new CakeEventManager();
+		$listener = new CustomTestEventListerner();
 		$event = new CakeEvent('fake.event');
 
 		CakeEventManager::instance($generalManager);
@@ -460,8 +460,8 @@ class CakeEventManagerTest extends CakeTestCase {
  */
 	public function testDispatchGlobalBeforeLocal() {
 		$generalManager = $this->getMock('CakeEventManager');
-		$manager = new CakeEventManager;
-		$listener = new CustomTestEventListerner;
+		$manager = new CakeEventManager();
+		$listener = new CustomTestEventListerner();
 		$event = new CakeEvent('fake.event');
 
 		CakeEventManager::instance($generalManager);
