@@ -3143,12 +3143,11 @@ class Model extends Object implements CakeEventListener {
 
 /**
  * Returns an array of fields that have failed the validation of the current model.
- * 
+ *
  * Additionally it populates the validationErrors property of the model with the same array.
  *
  * @param string $options An optional array of custom options to be made available in the beforeValidate callback
- * @return array Array of invalid fields and its error messages
- * 
+ * @return array Array of invalid fields and their error messages
  * @see Model::validates()
  */
 	public function invalidFields($options = array()) {
