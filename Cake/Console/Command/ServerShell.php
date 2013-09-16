@@ -124,11 +124,10 @@ class ServerShell extends Shell {
  * @return void
  */
 	public function main() {
-		$command = sprintf("php -S %s:%d -t %s %s",
+		$command = sprintf('php -S %s:%d -t %s',
 			$this->_host,
 			$this->_port,
-			escapeshellarg($this->_documentRoot),
-			escapeshellarg($this->_documentRoot . '/index.php')
+			escapeshellarg($this->_documentRoot)
 		);
 
 		$port = ($this->_port == static::DEFAULT_PORT) ? '' : ':' . $this->_port;
