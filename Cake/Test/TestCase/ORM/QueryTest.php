@@ -1183,14 +1183,14 @@ class QueryTest extends TestCase {
 		$expected = [
 			'id' => 1,
 			'name' => 'tag1',
-			'ArticleTag' => (new \Cake\ORM\Entity)->set(['article_id' => 1, 'tag_id' => 1])
+			'ArticleTag' => new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 1])
 		];
 		$this->assertEquals($expected, $first->tags[0]->toArray());
 
 		$expected = [
 			'id' => 2,
 			'name' => 'tag2',
-			'ArticleTag' => (new \Cake\ORM\Entity)->set(['article_id' => 1, 'tag_id' => 2])
+			'ArticleTag' => new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 2])
 		];
 		$this->assertEquals($expected, $first->tags[1]->toArray());
 	}

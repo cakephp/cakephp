@@ -12,6 +12,22 @@ class Entity implements \ArrayAccess {
 	protected $_properties = [];
 
 /**
+ * Initializes the internal properties of this entity out of the
+ * keys in an array
+ *
+ * ### Example:
+ *
+ * ``$entity = new Entity(['id' => 1, 'name' => 'Andrew'])``
+ *
+ * @param array $properties hash of properties to set in this entity
+ * @param boolean $useSetters whether use internal setters for properties or not
+ * @return void
+ */
+	public function __construct(array $properties = [], $useSetters = true) {
+		$this->set($properties, $useSetters);
+	}
+
+/**
  * Magic getter to access properties that has be set in this entity
  *
  * @param string $property name of the property to access
@@ -33,8 +49,15 @@ class Entity implements \ArrayAccess {
 	}
 
 /**
- * Set a hashed array as properties in this entity by converting each
- * key => value pair into properties in this object.
+ * Sets a single property inside this entity.
+ *
+ * ### Example:
+ *
+ * ``$entity->set('name', 'Andrew');``
+ *
+ * It is also possible to mass-assign multiple properties to this entity
+ * with one call by passing a hashed array as properties in the form of
+ * property => value pairs
  *
  * ## Example:
  *
@@ -44,22 +67,42 @@ class Entity implements \ArrayAccess {
  *	echo $entity->id // prints 1
  * }}
  *
- * @param array $properties list of properties to set
+ * Some times it is handy to bypass setter functions in this entity when assigning
+ * properties. You can achieve this by setting the third argument to false when
+ * assigning a single property or the second param when using an array of
+ * properties.
+ *
+ * ### Example:
+ *
+ * ``$entity->set('name', 'Andrew', false);``
+ *
+ * ``$entity->set(['name' => 'Andrew', 'id' => 1], false);``
+ *
+ * @param string|array $property the name of property to set or a list of
+ * properties with their respective values
+ * @param mixed|boolean $value the value to set to the property or a boolean
+ * signifying whether to use internal setter functions or not
  * @param boolean $useSetters whether to use setter functions in this object
  * or bypass them
  * @return \Cake\ORM\Entity
  */
-	public function set(array $properties = [], $useSetters = true) {
+	public function set($property, $value = false, $useSetters = true) {
+		if (is_string($property)) {
+			$property = [$property => $value];
+		} else {
+			$useSetters = $value;
+		}
+
 		if (!$useSetters) {
-			$this->_properties = $properties + $this->_properties;
+			$this->_properties = $property + $this->_properties;
 			return $this;
 		}
 
-		foreach($properties as $property => $value) {
-			if (method_exists($this, 'set' . ucFirst($property))) {
-				$value = $this->{'set' . ucFirst($property)}($value);
+		foreach ($property as $p => $value) {
+			if (method_exists($this, 'set' . ucFirst($p))) {
+				$value = $this->{'set' . ucFirst($p)}($value);
 			}
-			$this->_properties[$property] = $value;
+			$this->_properties[$p] = $value;
 		}
 		return $this;
 	}
@@ -72,11 +115,11 @@ class Entity implements \ArrayAccess {
  */
 	public function &get($property) {
 		$method = 'get' . ucFirst($property);
+		$value = $this->_properties[$property];
 		if (method_exists($this, $method)) {
-			$value =& $this->{$method}();
-		} else {
-			$value =& $this->_properties[$property];
+			$this->_properties[$property] = $this->{$method}($value);
 		}
+		$value =& $this->_properties[$property];
 		return $value;
 	}
 
@@ -88,7 +131,7 @@ class Entity implements \ArrayAccess {
  */
 	public function toArray() {
 		$result = [];
-		foreach($this->_properties as $property => $value) {
+		foreach ($this->_properties as $property => $value) {
 			$result[$property] = $this->get($property);
 		}
 		return $result;
