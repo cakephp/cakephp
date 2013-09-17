@@ -243,7 +243,7 @@ class Dispatcher implements CakeEventListener {
  * Load controller and return controller classname
  *
  * @param CakeRequest $request
- * @return string|bool Name of controller class name
+ * @return string|boolean Name of controller class name
  */
 	protected function _loadController($request) {
 		$pluginName = $pluginPath = $controller = null;

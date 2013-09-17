@@ -211,7 +211,7 @@ class AuthComponent extends Component {
  * Error to display when user attempts to access an object or action to which they do not have
  * access.
  *
- * @var string|bool Error message or boolean false to suppress flash message
+ * @var string|boolean Error message or boolean false to suppress flash message
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#AuthComponent::$authError
  */
 	public $authError = null;

@@ -647,7 +647,7 @@ class FormHelper extends AppHelper {
  *
  * ### Options:
  *
- * - `escape` bool - Whether or not to html escape the contents of the error.
+ * - `escape` boolean - Whether or not to html escape the contents of the error.
  * - `wrap` mixed - Whether or not the error message should be wrapped in a div. If a
  *   string, will be used as the HTML tag to use.
  * - `class` string - The classname for the error message
