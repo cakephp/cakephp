@@ -150,7 +150,7 @@ class ExceptionRenderer {
 		}
 		if (empty($controller)) {
 			$controller = new Controller($request, $response);
-			$controller->viewPath = 'Errors';
+			$controller->viewPath = 'Error';
 		}
 		return $controller;
 	}
@@ -286,7 +286,7 @@ class ExceptionRenderer {
 	protected function _outputMessageSafe($template) {
 		$this->controller->layoutPath = null;
 		$this->controller->subDir = null;
-		$this->controller->viewPath = 'Errors/';
+		$this->controller->viewPath = 'Error';
 		$this->controller->layout = 'error';
 		$this->controller->helpers = array('Form', 'Html', 'Session');
 

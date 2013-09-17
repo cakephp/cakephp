@@ -120,7 +120,7 @@ class ExtractTaskTest extends TestCase {
 		$pattern = '/msgid "To change the content of this page, edit: APP\/View\/Pages\/home\.ctp/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/To change its layout, edit: APP\/View\/Layouts\/default\.ctp\./s';
+		$pattern = '/To change its layout, edit: APP\/View\/Layout\/default\.ctp\./s';
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/You can also add some CSS styles for your pages at: APP\/webroot\/css\."/';
@@ -204,7 +204,7 @@ class ExtractTaskTest extends TestCase {
 
 		$this->Task->params['paths'] = CAKE . 'Test/TestApp/View';
 		$this->Task->params['output'] = $this->path . DS;
-		$this->Task->params['exclude'] = 'Pages,Layouts';
+		$this->Task->params['exclude'] = 'Pages,Layout';
 		$this->Task->params['extract-core'] = 'no';
 
 		$this->Task->expects($this->any())->method('in')
