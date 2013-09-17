@@ -4098,6 +4098,27 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that label id's match the input element id's when radio is called after create().
+ *
+ * @return void
+ */
+	public function testRadioWithCreate() {
+		$this->Form->create('Model');
+		$result = $this->Form->radio('recipient',
+			array('1' => '1', '2' => '2', '3' => '3'),
+			array('legend' => false, 'value' => '1')
+		);
+		$this->assertTextNotContains(
+			'<label for="ModelModelRecipient1">1</label>',
+			$result
+		);
+		$this->assertTextContains(
+			'<label for="ModelRecipient1">1</label>',
+			$result
+		);
+	}
+
+/**
  * testSelect method
  *
  * Test select element generation.
