@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -21,7 +20,6 @@ namespace Cake\Model;
 /**
  * Access Control Object
  *
- * @package       Cake.Model
  */
 class Aco extends AclNode {
 

@@ -26,7 +26,6 @@ use Cake\Utility\Inflector;
  * Filters a request and tests whether it is a file in the webroot folder or not and
  * serves the file to the client if appropriate.
  *
- * @package Cake.Routing.Filter
  */
 class AssetDispatcher extends DispatcherFilter {
 

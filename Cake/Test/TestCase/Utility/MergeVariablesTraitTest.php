@@ -58,7 +58,6 @@ class Grandchild extends Child {
 /**
  * MergeVariablesTrait test case
  *
- * @package Cake.Test.TestCase.Utility
  */
 class MergeVariablesTraitTest extends TestCase {
 

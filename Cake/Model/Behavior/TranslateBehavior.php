@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.4525
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -26,7 +25,6 @@ use Cake\Utility\ClassRegistry;
 /**
  * Translate behavior
  *
- * @package       Cake.Model.Behavior
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/translate.html
  */
 class TranslateBehavior extends ModelBehavior {

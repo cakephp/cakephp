@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
 /**
  * SessionComponentTest class
  *
- * @package       Cake.Test.Case.Controller.Component
  */
 class SessionComponentTest extends TestCase {
 

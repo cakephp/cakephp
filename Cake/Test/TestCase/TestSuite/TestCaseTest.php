@@ -32,7 +32,6 @@ use Cake\Utility\ClassRegistry;
 /**
  * TestCaseTest
  *
- * @package       Cake.Test.Case.TestSuite
  */
 class TestCaseTest extends TestCase {
 

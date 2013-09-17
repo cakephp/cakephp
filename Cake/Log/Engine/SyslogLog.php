@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package       Cake.Log.Engine
  * @since         CakePHP(tm) v 2.4
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */

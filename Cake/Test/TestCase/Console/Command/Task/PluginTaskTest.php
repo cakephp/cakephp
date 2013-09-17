@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -31,7 +30,6 @@ use Cake\Utility\Folder;
 /**
  * PluginTaskPlugin class
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class PluginTaskTest extends TestCase {
 

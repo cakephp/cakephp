@@ -23,7 +23,6 @@ use Cake\Utility\Folder;
 /**
  * ProjectTask Test class
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class ProjectTaskTest extends TestCase {
 

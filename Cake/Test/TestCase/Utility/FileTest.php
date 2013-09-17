@@ -23,7 +23,6 @@ use Cake\Utility\Folder;
 /**
  * FileTest class
  *
- * @package       Cake.Test.Case.Utility
  */
 class FileTest extends TestCase {
 

@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html
- * @package       Cake.Error
  * @since         CakePHP(tm) v 3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -23,7 +22,6 @@ namespace Cake\Error;
  * All HTTP status/error related exceptions should extend this class so
  * catch blocks can be specifically typed.
  *
- * @package       Cake.Error
  */
 class HttpException extends BaseException {
 }

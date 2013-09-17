@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakefoundation.org/projects/info/cakephp CakePHP Project
- * @package       Cake.Test.TestApp.Plugin.TestPlugin.Model
  * @since         CakePHP v 1.2.0.7726
  * @version       $Revision$
  * @modifiedby    $LastChangedBy$
@@ -24,7 +23,6 @@
 /**
  * Class TestPluginComment
  *
- * @package       Cake.Test.TestApp.Plugin.TestPlugin.Model
  */
 namespace TestPlugin\Model;
 

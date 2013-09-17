@@ -33,7 +33,6 @@ if (!class_exists('Cake\Model\ScaffoldMock')) {
 /**
  * TestScaffoldView class
  *
- * @package       Cake.Test.TestCase.View
  */
 class TestScaffoldView extends ScaffoldView {
 
@@ -53,7 +52,6 @@ class TestScaffoldView extends ScaffoldView {
 /**
  * ScaffoldViewTest class
  *
- * @package       Cake.Test.TestCase.View
  */
 class ScaffoldViewTest extends TestCase {
 

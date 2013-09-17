@@ -22,7 +22,6 @@ use Cake\Utility\Security;
 /**
  * Simple password hashing class.
  *
- * @package       Cake.Controller.Component.Auth
  */
 class SimplePasswordHasher extends AbstractPasswordHasher {
 

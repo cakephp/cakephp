@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 /**
  * PluginTest class
  *
- * @package Cake.Test.Case.Core
  */
 class PluginTest extends TestCase {
 

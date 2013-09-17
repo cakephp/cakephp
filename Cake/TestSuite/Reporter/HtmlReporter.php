@@ -28,7 +28,6 @@ use PHPUnit_Util_Diff;
  * HtmlReporter Reports Results of TestSuites and Test Cases
  * in an HTML format / context.
  *
- * @package       Cake.TestSuite.Reporter
  */
 class HtmlReporter extends BaseReporter {
 

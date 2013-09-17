@@ -37,7 +37,6 @@ class MergeShell extends Shell {
 /**
  * ShellTestShell class
  *
- * @package       Cake.Test.Case.Console.Command
  */
 class ShellTestShell extends Shell {
 
@@ -96,7 +95,6 @@ class ShellTestShell extends Shell {
 /**
  * TestAppleTask class
  *
- * @package       Cake.Test.Case.Console.Command
  */
 class TestAppleTask extends Shell {
 }
@@ -104,7 +102,6 @@ class TestAppleTask extends Shell {
 /**
  * TestBananaTask class
  *
- * @package       Cake.Test.Case.Console.Command
  */
 class TestBananaTask extends Shell {
 }
@@ -115,7 +112,6 @@ class_alias(__NAMESPACE__ . '\TestBananaTask', 'Cake\Console\Command\Task\TestBa
 /**
  * ShellTest class
  *
- * @package       Cake.Test.Case.Console.Command
  */
 class ShellTest extends TestCase {
 

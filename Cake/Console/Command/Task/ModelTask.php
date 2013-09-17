@@ -28,7 +28,6 @@ use Cake\Utility\Inflector;
 /**
  * Task class for creating and updating model files.
  *
- * @package	   Cake.Console.Command.Task
  */
 class ModelTask extends BakeTask {
 

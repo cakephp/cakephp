@@ -25,7 +25,6 @@ use Cake\Utility\Inflector;
  * PhpAcl implements an access control system using a plain PHP configuration file.
  * An example file can be found in app/Config/acl.php
  *
- * @package Cake.Controller.Component.Acl
  */
 class PhpAcl extends Object implements AclInterface {
 

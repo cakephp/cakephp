@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
  * @since         Cake v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -28,7 +27,6 @@ use Cake\Utility\Inflector;
 /**
  * ScaffoldView provides specific view file loading features for scaffolded views.
  *
- * @package       Cake.View
  */
 class ScaffoldView extends View {
 

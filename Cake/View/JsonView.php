@@ -50,7 +50,6 @@ use Cake\Network\Response;
  * You can also enable JSONP support by setting parameter `_jsonp` to true or a string to specify
  * custom query string paramater name which will contain the callback function name.
  *
- * @package       Cake.View
  * @since         CakePHP(tm) v 2.1.0
  */
 class JsonView extends View {

@@ -18,7 +18,6 @@ use Cake\Controller\Controller;
 /**
  * ScaffoldArticlesController class
  *
- * @package TestApp.Controller
  */
 class ScaffoldArticlesController extends Controller {
 

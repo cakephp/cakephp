@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v 2.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -19,7 +18,6 @@ namespace Cake\Model\Datasource\Session;
  * Interface for Session handlers. Custom session handler classes should implement
  * this interface as it allows Cake\Model\Datasource\Session know how to map methods to session_set_save_handler()
  *
- * @package       Cake.Model.Datasource.Session
  */
 interface SessionHandlerInterface {
 

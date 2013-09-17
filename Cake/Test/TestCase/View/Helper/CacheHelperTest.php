@@ -28,7 +28,6 @@ use Cake\View\View;
 /**
  * CacheTestController class
  *
- * @package Cake.Test.Case.View.Helper
  */
 class CacheTestController extends Controller {
 
@@ -58,7 +57,6 @@ class CacheTestController extends Controller {
 /**
  * CacheHelperTest class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class CacheHelperTest extends TestCase {
 

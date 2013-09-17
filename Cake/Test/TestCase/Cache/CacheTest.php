@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
 /**
  * CacheTest class
  *
- * @package       Cake.Test.Case.Cache
  */
 class CacheTest extends TestCase {
 

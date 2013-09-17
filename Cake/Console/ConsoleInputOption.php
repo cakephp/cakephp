@@ -25,7 +25,6 @@ use Cake\Error;
  * ConsoleOptionParser creates these when you use addOption()
  *
  * @see ConsoleOptionParser::addOption()
- * @package       Cake.Console
  */
 class ConsoleInputOption {
 

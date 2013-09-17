@@ -23,7 +23,6 @@ use Cake\Utility\Inflector;
  *
  * Implementation of a Cake Shell to show CakePHP core method signatures.
  *
- * @package       Cake.Console.Command
  */
 class ApiShell extends Shell {
 

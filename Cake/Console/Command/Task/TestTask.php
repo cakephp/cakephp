@@ -29,7 +29,6 @@ use Cake\Utility\Inflector;
 /**
  * Task class for creating and updating test files.
  *
- * @package       Cake.Console.Command.Task
  */
 class TestTask extends BakeTask {
 

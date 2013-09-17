@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Model.Datasource.Session
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -29,7 +28,6 @@ use Cake\Utility\ClassRegistry;
 /**
  * Class SessionTestModel
  *
- * @package       Cake.Test.Case.Model.Datasource.Session
  */
 class SessionTestModel extends Model {
 
@@ -40,7 +38,6 @@ class SessionTestModel extends Model {
 /**
  * Database session test.
  *
- * @package       Cake.Test.Case.Model.Datasource.Session
  */
 class DatabaseSessionTest extends TestCase {
 

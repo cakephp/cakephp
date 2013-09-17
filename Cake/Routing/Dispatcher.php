@@ -16,7 +16,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Routing
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -40,7 +39,6 @@ use Cake\View\View;
  * to locate and load the correct controller. If found, the requested action is called on
  * the controller.
  *
- * @package       Cake.Routing
  */
 class Dispatcher implements EventListener {
 

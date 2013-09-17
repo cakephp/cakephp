@@ -26,7 +26,6 @@ use Cake\Utility\Security;
 /**
  * Base Authentication class with common methods and properties.
  *
- * @package       Cake.Controller.Component.Auth
  */
 abstract class BaseAuthenticate {
 

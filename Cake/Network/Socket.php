@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Network
  * @since         CakePHP(tm) v 1.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -27,7 +26,6 @@ use Cake\Utility\Validation;
  *
  * Core base class for network communication.
  *
- * @package       Cake.Network
  */
 class Socket {
 

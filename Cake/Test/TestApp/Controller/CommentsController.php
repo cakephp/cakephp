@@ -8,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.TestApp.Controller
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -19,7 +18,6 @@ use TestApp\Controller\AppController;
 /**
  * ControllerPostsController class
  *
- * @package       Cake.Test.Case.Controller
  */
 class CommentsController extends AppController {
 

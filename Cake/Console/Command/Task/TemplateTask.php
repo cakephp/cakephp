@@ -27,7 +27,6 @@ use Cake\Utility\ViewVarsTrait;
  * Template Task can generate templated output Used in other Tasks.
  * Acts like a simplified View class.
  *
- * @package       Cake.Console.Command.Task
  */
 class TemplateTask extends Shell {
 

@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -51,7 +50,6 @@ use Cake\Utility\ViewVarsTrait;
  *
  * Example of theme path with `$this->theme = 'SuperHot';` Would be `app/View/Themed/SuperHot/Posts`
  *
- * @package       Cake.View
  * @property      CacheHelper $Cache
  * @property      FormHelper $Form
  * @property      HtmlHelper $Html

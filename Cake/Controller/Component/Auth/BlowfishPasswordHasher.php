@@ -22,7 +22,6 @@ use Cake\Utility\Security;
 /**
  * Blowfish password hashing class.
  *
- * @package       Cake.Controller.Component.Auth
  */
 class BlowfishPasswordHasher extends AbstractPasswordHasher {
 

@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v 0.10.5.1790
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -30,7 +29,6 @@ use Cake\Model\Model;
  * DataSources are the link between models and the source of data that models represent.
  *
  * @link          http://book.cakephp.org/2.0/en/models/datasources.html#basic-api-for-datasources
- * @package       Cake.Model.Datasource
  */
 class DataSource extends Object {
 

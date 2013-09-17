@@ -23,7 +23,6 @@ use Cake\Utility\Inflector;
 /**
  * Task class for creating and updating fixtures files.
  *
- * @package       Cake.Console.Command.Task
  */
 class FixtureTask extends BakeTask {
 

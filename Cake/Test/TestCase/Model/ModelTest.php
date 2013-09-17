@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -23,7 +22,6 @@
  *
  * This test group will run model class tests
  *
- * @package       Cake.Test.Case
  */
 class ModelTest extends PHPUnit_Framework_TestSuite {
 

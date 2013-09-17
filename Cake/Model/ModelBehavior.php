@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 1.2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -62,7 +61,6 @@ use Cake\Core\Object;
  * still the first parameter, but the called method name will be the 2nd parameter. This allows
  * you to munge the method name for additional information, much like Model::findAllByXX.
  *
- * @package       Cake.Model
  * @see Model::$actsAs
  * @see BehaviorCollection::load()
  */

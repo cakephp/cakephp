@@ -65,7 +65,6 @@ use Cake\View\View;
  *   a redirect is done.
  * - `afterFilter(Event $event)` - Called after each action is complete and after the view is rendered.
  *
- * @package       Cake.Controller
  * @property      AclComponent $Acl
  * @property      AuthComponent $Auth
  * @property      CookieComponent $Cookie

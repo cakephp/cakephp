@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -30,7 +29,6 @@ use Cake\Utility\Hash;
  * used for a find call. Most useful for limiting the amount of associations and
  * data returned.
  *
- * @package       Cake.Model.Behavior
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html
  */
 class ContainableBehavior extends ModelBehavior {

@@ -24,7 +24,6 @@ use Cake\Error\Exception;
  *
  * Offers different validation methods.
  *
- * @package       Cake.Utility
  */
 class Validation {
 

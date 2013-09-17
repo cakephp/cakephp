@@ -19,7 +19,6 @@ use Cake\Utility\ViewVarsTrait;
 /**
  * ViewVarsTrait test case
  *
- * @package Cake.Test.TestCase.Utility
  */
 class ViewVarsTraitTest extends TestCase {
 

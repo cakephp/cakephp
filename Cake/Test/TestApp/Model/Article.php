@@ -18,7 +18,6 @@ use Cake\TestSuite\Fixture\TestModel;
 /**
  * Article class
  *
- * @package TestApp.Model
  */
 class Article extends TestModel {
 

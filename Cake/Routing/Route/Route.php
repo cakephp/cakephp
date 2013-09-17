@@ -23,7 +23,6 @@ use Cake\Routing\Router;
  * Not normally created as a standalone. Use Router::connect() to create
  * Routes for your application.
  *
- * @package Cake.Routing.Route
  */
 class Route {
 
