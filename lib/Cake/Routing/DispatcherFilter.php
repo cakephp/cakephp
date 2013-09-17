@@ -31,7 +31,7 @@ abstract class DispatcherFilter implements CakeEventListener {
 /**
  * Default priority for all methods in this filter
  *
- * @var int
+ * @var integer
  */
 	public $priority = 10;
 

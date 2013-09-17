@@ -68,7 +68,7 @@ class Test extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -105,7 +105,7 @@ class TestAlias extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -141,7 +141,7 @@ class TestValidate extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -215,7 +215,7 @@ class User extends CakeTestModel {
 /**
  * beforeFind() callback used to run ContainableBehaviorTest::testLazyLoad()
  *
- * @return bool
+ * @return boolean
  * @throws Exception
  */
 	public function beforeFind($queryData) {
@@ -278,7 +278,7 @@ class Article extends CakeTestModel {
 /**
  * beforeSaveReturn property
  *
- * @var bool true
+ * @var boolean
  */
 	public $beforeSaveReturn = true;
 
@@ -2105,7 +2105,7 @@ class TheVoid extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 }
@@ -2127,7 +2127,7 @@ class ValidationTest1 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -2213,7 +2213,7 @@ class ValidationTest2 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -3079,7 +3079,7 @@ class TranslatedItem extends CakeTestModel {
 /**
  * cacheQueries property
  *
- * @var bool false
+ * @var boolean
  */
 	public $cacheQueries = false;
 
@@ -3116,7 +3116,7 @@ class TranslatedItem2 extends CakeTestModel {
 /**
  * cacheQueries property
  *
- * @var bool false
+ * @var boolean
  */
 	public $cacheQueries = false;
 
@@ -3160,7 +3160,7 @@ class TranslatedItemWithTable extends CakeTestModel {
 /**
  * cacheQueries property
  *
- * @var bool false
+ * @var boolean
  */
 	public $cacheQueries = false;
 
@@ -3234,7 +3234,7 @@ class TranslatedArticle extends CakeTestModel {
 /**
  * cacheQueries property
  *
- * @var bool false
+ * @var boolean
  */
 	public $cacheQueries = false;
 
@@ -3536,7 +3536,7 @@ class TestModel extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -3611,7 +3611,7 @@ class TestModel2 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 }
@@ -3633,7 +3633,7 @@ class TestModel3 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 }
@@ -3662,7 +3662,7 @@ class TestModel4 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -3746,7 +3746,7 @@ class TestModel4TestModel7 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -3791,7 +3791,7 @@ class TestModel5 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -3859,7 +3859,7 @@ class TestModel6 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -3919,7 +3919,7 @@ class TestModel7 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -3966,7 +3966,7 @@ class TestModel8 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4027,7 +4027,7 @@ class TestModel9 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4088,7 +4088,7 @@ class Level extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4147,7 +4147,7 @@ class Group extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4207,7 +4207,7 @@ class User2 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4279,7 +4279,7 @@ class Category2 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4362,7 +4362,7 @@ class Article2 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4434,7 +4434,7 @@ class CategoryFeatured2 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4482,7 +4482,7 @@ class Featured2 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4547,7 +4547,7 @@ class Comment2 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4594,7 +4594,7 @@ class ArticleFeatured2 extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -4667,7 +4667,7 @@ class MysqlTestModel extends Model {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 

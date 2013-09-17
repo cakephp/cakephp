@@ -33,7 +33,7 @@ class TestAuthComponent extends AuthComponent {
 /**
  * testStop property
  *
- * @var bool false
+ * @var boolean
  */
 	public $testStop = false;
 
@@ -271,7 +271,7 @@ class AuthComponentTest extends CakeTestCase {
 /**
  * initialized property
  *
- * @var bool false
+ * @var boolean
  */
 	public $initialized = false;
 

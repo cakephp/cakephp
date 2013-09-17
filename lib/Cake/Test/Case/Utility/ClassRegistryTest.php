@@ -30,7 +30,7 @@ class ClassRegisterModel extends CakeTestModel {
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 }
