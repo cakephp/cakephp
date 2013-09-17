@@ -212,16 +212,18 @@ class PaginatorComponent extends Component {
 			throw new Error\NotFoundException();
 		}
 
+		reset($order);
 		$paging = array(
+			'findType' => $type,
 			'page' => $page,
 			'current' => count($results),
 			'count' => $count,
 			'prevPage' => ($page > 1),
 			'nextPage' => ($count > ($page * $limit)),
 			'pageCount' => $pageCount,
-			'order' => $order,
+			'sort' => key($order),
+			'direction' => current($order),
 			'limit' => $limit,
-			'options' => Hash::diff($options, $defaults),
 		);
 
 		if (!isset($this->Controller->request['paging'])) {

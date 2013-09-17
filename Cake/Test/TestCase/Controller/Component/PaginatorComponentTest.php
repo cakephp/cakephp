@@ -254,7 +254,7 @@ class PaginatorComponentTest extends TestCase {
 		$paging = $Controller->request->params['paging']['PaginatorControllerPost'];
 
 		$this->assertEquals(12, $Controller->PaginatorControllerPost->lastQueries[1]['limit']);
-		$this->assertEquals(12, $paging['options']['limit']);
+		$this->assertEquals(12, $paging['limit']);
 
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('ControllerPaginateModel');
@@ -319,7 +319,7 @@ class PaginatorComponentTest extends TestCase {
 			$Controller->PaginatorControllerPost->lastQueries[1]['conditions'],
 			array('PaginatorControllerPost.id > ' => '1')
 		);
-		$this->assertFalse(isset($Controller->request->params['paging']['PaginatorControllerPost']['options'][0]));
+		$this->assertEquals('popular', $Controller->request->params['paging']['PaginatorControllerPost']['findType']);
 	}
 
 /**
@@ -367,7 +367,7 @@ class PaginatorComponentTest extends TestCase {
 		$this->assertEquals($expected, Hash::extract($result, '{n}.PaginatorControllerPost.created'));
 		$this->assertEquals(
 			$Controller->PaginatorControllerPost->order,
-			$Controller->request->paging['PaginatorControllerPost']['options']['order']
+			$Controller->request->paging['PaginatorControllerPost']['order']
 		);
 
 		$Controller->PaginatorControllerPost->order = array('PaginatorControllerPost.id');
@@ -867,26 +867,26 @@ class PaginatorComponentTest extends TestCase {
 			'contain' => array('ControllerComment'), 'limit' => '1000'
 		);
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(100, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(100, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 
 		$Controller->request->query = array(
 			'contain' => array('ControllerComment'), 'limit' => '1000', 'maxLimit' => 1000
 		);
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(100, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(100, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 
 		$Controller->request->query = array('contain' => array('ControllerComment'), 'limit' => '10');
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(10, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(10, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 
 		$Controller->request->query = array('contain' => array('ControllerComment'), 'limit' => '1000');
 		$Controller->paginate = array('maxLimit' => 2000);
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(1000, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(1000, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 
 		$Controller->request->query = array('contain' => array('ControllerComment'), 'limit' => '5000');
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(2000, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(2000, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 	}
 
 /**
