@@ -2268,19 +2268,14 @@ class PaginatorHelperTest extends TestCase {
 				),
 			)
 		);
-		$input = 'Page %page% of %pages%, showing %current% records out of %count% total, ';
-		$input .= 'starting on record %start%, ending on %end%';
-		$result = $this->Paginator->counter($input);
-		$expected = 'Page 1 of 5, showing 3 records out of 13 total, starting on record 1, ';
-		$expected .= 'ending on 3';
-		$this->assertEquals($expected, $result);
-
 		$input = 'Page {:page} of {:pages}, showing {:current} records out of {:count} total, ';
 		$input .= 'starting on record {:start}, ending on {:end}';
+		$expected = 'Page 1 of 5, showing 3 records out of 13 total, starting on record 1, ';
+		$expected .= 'ending on 3';
 		$result = $this->Paginator->counter($input);
 		$this->assertEquals($expected, $result);
 
-		$input = 'Page %page% of %pages%';
+		$input = 'Page {:page} of {:pages}';
 		$result = $this->Paginator->counter($input);
 		$expected = 'Page 1 of 5';
 		$this->assertEquals($expected, $result);
@@ -2297,7 +2292,7 @@ class PaginatorHelperTest extends TestCase {
 		$expected = '1 - 3 of 13';
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Paginator->counter('Showing %page% of %pages% %model%');
+		$result = $this->Paginator->counter('Showing {:page} of {:pages} {:model}');
 		$this->assertEquals('Showing 1 of 5 clients', $result);
 	}
 

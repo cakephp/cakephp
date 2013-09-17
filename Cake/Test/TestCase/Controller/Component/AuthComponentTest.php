@@ -1181,17 +1181,6 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * test password hashing
- *
- * @return void
- */
-	public function testPassword() {
-		$result = $this->Auth->password('password');
-		$expected = Security::hash('password', null, true);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * testUser method
  *
  * @return void
