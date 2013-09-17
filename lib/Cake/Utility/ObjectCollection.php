@@ -44,7 +44,7 @@ abstract class ObjectCollection {
 /**
  * Default object priority. A non zero integer.
  *
- * @var int
+ * @var integer
  */
 	public $defaultPriority = 10;
 

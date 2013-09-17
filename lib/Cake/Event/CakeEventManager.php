@@ -32,7 +32,7 @@ class CakeEventManager {
 /**
  * The default priority queue value for new, attached listeners
  *
- * @var int
+ * @var integer
  */
 	public static $defaultPriority = 10;
 

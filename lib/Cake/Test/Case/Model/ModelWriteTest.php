@@ -7144,7 +7144,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel = new Item();
 
 		$result = $TestModel->save(array('published' => true, 'id' => 1));
-		$this->assertTrue((boolean)$result);
+		$this->assertTrue((bool)$result);
 		$result = $TestModel->find('first', array(
 			'fields' => array('id', 'published'),
 			'conditions' => array('Item.id' => 1)));
