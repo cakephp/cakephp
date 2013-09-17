@@ -25,7 +25,6 @@ use Cake\Utility\String;
 /**
  * Task class for creating new project apps and plugins
  *
- * @package       Cake.Console.Command.Task
  */
 class ProjectTask extends Shell {
 

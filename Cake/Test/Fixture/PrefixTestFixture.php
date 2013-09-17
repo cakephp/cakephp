@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.4667
  * @license       http://www.opensource.org/licenses/opengroup.php Open Group Test Suite License
  */
@@ -23,7 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 /**
  * PrefixTestFixture
  *
- * @package       Cake.Test.Fixture
  */
 class PrefixTestFixture extends TestFixture {
 

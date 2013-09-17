@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.7879
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -27,7 +26,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Like Number tree, but doesn't use the default values for lft and rght or parent_id
  *
  * @uses          TestFixture
- * @package       Cake.Test.Fixture
  */
 class UnconventionalTreeFixture extends TestFixture {
 

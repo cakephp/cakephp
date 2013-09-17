@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
 /**
  * FileEngineTest class
  *
- * @package       Cake.Test.Case.Cache.Engine
  */
 class FileEngineTest extends TestCase {
 

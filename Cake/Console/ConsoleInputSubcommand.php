@@ -23,7 +23,6 @@ namespace Cake\Console;
  * Created when you call ConsoleOptionParser::addSubcommand()
  *
  * @see ConsoleOptionParser::addSubcommand()
- * @package       Cake.Console
  */
 class ConsoleInputSubcommand {
 

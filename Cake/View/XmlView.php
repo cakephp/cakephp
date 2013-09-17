@@ -51,7 +51,6 @@ use Cake\Utility\Xml;
  * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.
  *
- * @package       Cake.View
  * @since         CakePHP(tm) v 2.1.0
  */
 class XmlView extends View {

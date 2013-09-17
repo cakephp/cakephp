@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller.Component.Acl
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -24,7 +23,6 @@ use Cake\Utility\Hash;
  * IniAcl implements an access control system using an INI file. An example
  * of the ini file used can be found in /config/acl.ini.php.
  *
- * @package       Cake.Controller.Component.Acl
  */
 class IniAcl extends Object implements AclInterface {
 

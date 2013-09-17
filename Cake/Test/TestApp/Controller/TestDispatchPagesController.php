@@ -18,7 +18,6 @@ use Cake\Controller\Controller;
 /**
  * TestDispatchPagesController class
  *
- * @package       Cake.Test.Case.Routing
  */
 class TestDispatchPagesController extends Controller {
 

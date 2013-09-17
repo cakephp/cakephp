@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
 /**
  * ConsoleLogTest class
  *
- * @package       Cake.Test.Case.Log.Engine
  */
 class ConsoleLogTest extends TestCase {
 

@@ -6,7 +6,6 @@ use Cake\TestSuite\Fixture\TestModel;
 /**
  * PaginatorCustomPost class
  *
- * @package Cake.Test.Case.Controller.Component
  */
 class PaginatorCustomPost extends TestModel {
 

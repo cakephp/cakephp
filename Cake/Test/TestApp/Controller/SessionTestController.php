@@ -18,7 +18,6 @@ use Cake\Controller\Controller;
 /**
  * SessionTestController class
  *
- * @package Cake.Test.TestApp.Controller
  */
 class SessionTestController extends Controller {
 

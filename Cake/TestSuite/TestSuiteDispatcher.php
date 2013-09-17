@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -28,7 +27,6 @@ define('APP_TEST_CASES', TESTS . 'TestCase');
 /**
  * TestSuiteDispatcher handles web requests to the test suite and runs the correct action.
  *
- * @package       Cake.TestSuite
  */
 class TestSuiteDispatcher {
 

@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -33,7 +32,6 @@ use Cake\View\Helper;
 /**
  * Class BakeArticle
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class BakeArticle extends Model {
 
@@ -48,7 +46,6 @@ class_alias('Cake\Test\TestCase\Console\Command\Task\BakeArticle', 'Cake\Model\B
 /**
  * ControllerTaskTest class
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class ControllerTaskTest extends TestCase {
 

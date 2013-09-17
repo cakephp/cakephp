@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -29,7 +28,6 @@ use Cake\View\View;
 /**
  * Class TextHelperTestObject
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class TextHelperTestObject extends TextHelper {
 
@@ -46,7 +44,6 @@ class TextHelperTestObject extends TextHelper {
 /**
  * StringMock class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class StringMock {
 }
@@ -54,7 +51,6 @@ class StringMock {
 /**
  * TextHelperTest class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class TextHelperTest extends TestCase {
 

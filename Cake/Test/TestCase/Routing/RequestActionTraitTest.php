@@ -21,7 +21,6 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
 /**
- * @package Cake.Test.TestCase.Routing
  */
 class RequestActionTraitTest extends TestCase {
 

@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Console.Templates.default.classes
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -30,8 +29,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * <?php echo $fullClassName; ?> Test Case
- *
- * @package <?php echo str_replace('\\', '.', $namespace) . "\n"; ?>
  */
 <?php if ($type === 'Controller'): ?>
 class <?php echo $className; ?>Test extends ControllerTestCase {

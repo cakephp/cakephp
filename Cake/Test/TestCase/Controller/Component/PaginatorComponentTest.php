@@ -25,7 +25,6 @@ use Cake\Utility\Hash;
 /**
  * PaginatorTestController class
  *
- * @package       Cake.Test.Case.Controller.Component
  */
 class PaginatorTestController extends Controller {
 

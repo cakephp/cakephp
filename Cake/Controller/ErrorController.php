@@ -21,7 +21,6 @@ use Cake\Routing\Router;
  *
  * Controller used by ErrorHandler to render error views.
  *
- * @package       Cake.Controller
  */
 class ErrorController extends Controller {
 

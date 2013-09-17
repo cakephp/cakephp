@@ -15,7 +15,6 @@
  *
  * @copyright     CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Model
  * @since         1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -31,7 +30,6 @@ require_once __DIR__ . DS . 'models.php';
 /**
  * TestBehavior class
  *
- * @package       Cake.Test.Case.Model
  */
 class TestBehavior extends ModelBehavior {
 
@@ -340,7 +338,6 @@ class TestBehavior extends ModelBehavior {
 /**
  * Test2Behavior class
  *
- * @package       Cake.Test.Case.Model
  */
 class Test2Behavior extends TestBehavior {
 
@@ -357,7 +354,6 @@ class Test2Behavior extends TestBehavior {
 /**
  * Test3Behavior class
  *
- * @package       Cake.Test.Case.Model
  */
 class Test3Behavior extends TestBehavior {
 }
@@ -365,7 +361,6 @@ class Test3Behavior extends TestBehavior {
 /**
  * Test4Behavior class
  *
- * @package       Cake.Test.Case.Model
  */
 class Test4Behavior extends ModelBehavior {
 
@@ -380,7 +375,6 @@ class Test4Behavior extends ModelBehavior {
 /**
  * Test5Behavior class
  *
- * @package       Cake.Test.Case.Model
  */
 class Test5Behavior extends ModelBehavior {
 
@@ -395,7 +389,6 @@ class Test5Behavior extends ModelBehavior {
 /**
  * Test6Behavior class
  *
- * @package       Cake.Test.Case.Model
  */
 class Test6Behavior extends ModelBehavior {
 
@@ -410,7 +403,6 @@ class Test6Behavior extends ModelBehavior {
 /**
  * Test7Behavior class
  *
- * @package       Cake.Test.Case.Model
  */
 class Test7Behavior extends ModelBehavior {
 
@@ -464,7 +456,6 @@ class Orangutan extends Monkey {
 /**
  * BehaviorCollection class
  *
- * @package       Cake.Test.Case.Model
  */
 class BehaviorCollectionTest extends TestCase {
 

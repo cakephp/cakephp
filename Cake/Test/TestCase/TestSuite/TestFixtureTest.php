@@ -24,7 +24,6 @@ use Cake\Utility\ClassRegistry;
 /**
  * ArticleFixture class
  *
- * @package       Cake.Test.TestCase.TestSuite
  */
 class ArticleFixture extends TestFixture {
 
@@ -64,8 +63,6 @@ class ArticleFixture extends TestFixture {
 /**
  * StringFieldsTestFixture class
  *
- * @package       Cake.Test.Case.TestSuite
- * @subpackage    cake.cake.tests.cases.libs
  */
 class StringsTestFixture extends TestFixture {
 
@@ -104,7 +101,6 @@ class StringsTestFixture extends TestFixture {
 /**
  * ImportFixture class
  *
- * @package       Cake.Test.Case.TestSuite
  */
 class ImportFixture extends TestFixture {
 
@@ -119,7 +115,6 @@ class ImportFixture extends TestFixture {
 /**
  * Test case for TestFixture
  *
- * @package       Cake.Test.Case.TestSuite
  */
 class TestFixtureTest extends TestCase {
 

@@ -26,7 +26,6 @@ use Cake\Utility\Inflector;
 /**
  * Abstract base authorization adapter for AuthComponent.
  *
- * @package       Cake.Controller.Component.Auth
  * @since 2.0
  * @see AuthComponent::$authenticate
  */

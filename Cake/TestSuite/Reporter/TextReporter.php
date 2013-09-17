@@ -24,7 +24,6 @@ use Cake\Utility\Inflector;
 /**
  * TextReporter contains reporting features used for plain text based output
  *
- * @package       Cake.TestSuite.Reporter
  */
 class TextReporter extends BaseReporter {
 

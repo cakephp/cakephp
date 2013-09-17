@@ -32,7 +32,6 @@ use Cake\Utility\Inflector;
  * You can define by changing `Configure::write('Acl.classname', 'DbAcl');` in your App/Config/acl.php.
  * Concrete ACL implementations should extend `AclBase` and implement the methods it defines.
  *
- * @package       Cake.Controller.Component
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/access-control-lists.html
  */
 class AclComponent extends Component {

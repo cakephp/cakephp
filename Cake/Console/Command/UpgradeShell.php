@@ -492,7 +492,7 @@ class UpgradeShell extends Shell {
  *
  * @param string $filePath The file to add a namespace to.
  * @param string $ns The base namespace to use.
- * @param bool $dry Whether or not to operate in dry-run mode.
+ * @param boolean $dry Whether or not to operate in dry-run mode.
  * @return void
  */
 	protected function _addNamespace($path, $filePath, $ns, $dry) {

@@ -25,7 +25,6 @@ use Cake\Core\Configure;
 /**
  * built-in Server Shell
  *
- * @package       Cake.Console.Command
  */
 class ServerShell extends Shell {
 

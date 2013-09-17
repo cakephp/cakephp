@@ -19,7 +19,6 @@ use Cake\Event\Event;
 /**
  * SomePostsController class
  *
- * @package       Cake.Test.Case.Routing
  */
 class SomePostsController extends Controller {
 

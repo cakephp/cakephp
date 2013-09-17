@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -32,7 +31,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Test View Task Comment Model
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskComment extends Model {
 
@@ -59,7 +57,6 @@ class ViewTaskComment extends Model {
 /**
  * Test View Task Article Model
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskArticle extends Model {
 
@@ -74,7 +71,6 @@ class ViewTaskArticle extends Model {
 /**
  * Test View Task Comments Controller
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskCommentsController extends Controller {
 
@@ -102,7 +98,6 @@ class ViewTaskCommentsController extends Controller {
 /**
  * Test View Task Articles Controller
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskArticlesController extends Controller {
 
@@ -175,7 +170,6 @@ class_alias(__NAMESPACE__ . '\ViewTaskArticle', 'Cake\Model\ViewTaskArticle');
 /**
  * ViewTaskTest class
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class ViewTaskTest extends TestCase {
 

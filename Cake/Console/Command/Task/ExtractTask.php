@@ -29,7 +29,6 @@ use Cake\Utility\Inflector;
 /**
  * Language string extractor
  *
- * @package       Cake.Console.Command.Task
  */
 class ExtractTask extends Shell {
 

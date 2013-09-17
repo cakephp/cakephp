@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -24,7 +23,6 @@ use Cake\Utility\Folder;
 /**
  * A class to contain test cases and run them with shared fixtures
  *
- * @package       Cake.TestSuite
  */
 class TestSuite extends \PHPUnit_Framework_TestSuite {
 

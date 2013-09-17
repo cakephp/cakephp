@@ -37,7 +37,6 @@ use TestApp\Model\AuthUser;
 /**
  * AuthComponentTest class
  *
- * @package       Cake.Test.Case.Controller.Component
  */
 class AuthComponentTest extends TestCase {
 

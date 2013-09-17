@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource.Session
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -25,7 +24,6 @@ use Cake\Core\Configure;
 /**
  * CacheSession provides method for saving sessions into a Cache engine. Used with Session
  *
- * @package       Cake.Model.Datasource.Session
  * @see Cake\Model\Datasource\Session for configuration information.
  */
 class CacheSession implements SessionHandlerInterface {

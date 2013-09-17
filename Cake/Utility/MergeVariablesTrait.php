@@ -19,7 +19,6 @@ use Cake\Utility\Hash;
  * Provides features for merging object properties recursively with
  * parent classes.
  *
- * @package Cake.Utility
  */
 trait MergeVariablesTrait {
 

@@ -25,7 +25,6 @@ use Cake\TestSuite\TestCase;
 /**
  * XcacheEngineTest class
  *
- * @package       Cake.Test.Case.Cache.Engine
  */
 class XcacheEngineTest extends TestCase {
 

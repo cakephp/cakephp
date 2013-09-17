@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package       Cake.Log.Engine
  * @since         CakePHP(tm) v 2.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -22,7 +21,6 @@ use Cake\Utility\Hash;
 /**
  * Console logging. Writes logs to console output.
  *
- * @package       Cake.Log.Engine
  */
 class ConsoleLog extends BaseLog {
 
