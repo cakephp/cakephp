@@ -77,7 +77,13 @@ class UpgradeShell extends Shell {
 		$path = $this->_getPath();
 
 		$moves = array(
-			'Test' . DS . 'Case' => 'Test' . DS . 'TestCase'
+			'Test' . DS . 'Case' => 'Test' . DS . 'TestCase',
+			'View' . DS . 'Elements' => 'View' . DS . 'Element',
+			'View' . DS . 'Emails' => 'View' . DS . 'Email',
+			'View' . DS . 'Layouts' => 'View' . DS . 'Layout',
+			'View' . DS . 'Layout' . DS . 'Emails' => 'View' . DS . 'Layout' . DS . 'Email',
+			'View' . DS . 'Scaffolds' => 'View' . DS . 'Scaffold',
+			'View' . DS . 'Errors' => 'View' . DS . 'Error',
 		);
 		$dry = $this->params['dryRun'];
 
