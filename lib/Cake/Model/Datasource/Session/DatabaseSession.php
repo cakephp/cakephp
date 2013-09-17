@@ -38,7 +38,7 @@ class DatabaseSession implements CakeSessionHandlerInterface {
 /**
  * Number of seconds to mark the session as expired
  *
- * @var int
+ * @var integer
  */
 	protected $_timeout;
 

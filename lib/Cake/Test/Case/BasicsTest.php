@@ -278,7 +278,7 @@ class BasicsTest extends CakeTestCase {
 
 		Configure::write('Cache.disable', false);
 		$result = cache('basics_test', 'simple cache write');
-		$this->assertTrue((boolean)$result);
+		$this->assertTrue((bool)$result);
 		$this->assertTrue(file_exists(CACHE . 'basics_test'));
 
 		$result = cache('basics_test');

@@ -1052,7 +1052,7 @@ class CakeRequestTest extends CakeTestCase {
  * Helper function for testing callbacks.
  *
  * @param $request
- * @return bool
+ * @return boolean
  */
 	public function detectCallback($request) {
 		return (bool)$request->return;
