@@ -497,7 +497,7 @@ class Validation {
 		if ($type === 'ipv6') {
 			$flags = FILTER_FLAG_IPV6;
 		}
-		return (boolean)filter_var($check, FILTER_VALIDATE_IP, array('flags' => $flags));
+		return (bool)filter_var($check, FILTER_VALIDATE_IP, array('flags' => $flags));
 	}
 
 /**
