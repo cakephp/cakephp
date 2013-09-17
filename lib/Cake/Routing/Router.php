@@ -778,7 +778,7 @@ class Router {
  *   or an array specifying any of the following: 'controller', 'action',
  *   and/or 'plugin', in addition to named arguments (keyed array elements),
  *   and standard URL arguments (indexed array elements)
- * @param bool|array $full If (bool) true, the full base URL will be prepended to the result.
+ * @param boolean|array $full If (bool) true, the full base URL will be prepended to the result.
  *   If an array accepts the following keys
  *    - escape - used when making URLs embedded in html escapes query string '&'
  *    - full - if true the full base URL will be prepended.

@@ -718,7 +718,7 @@ class Controller extends Object implements CakeEventListener {
  *
  * @param string $modelClass Name of model class to load
  * @param integer|string $id Initial ID the instanced model class should have
- * @return bool True if the model was found
+ * @return boolean True if the model was found
  * @throws MissingModelException if the model class cannot be found.
  */
 	public function loadModel($modelClass = null, $id = null) {

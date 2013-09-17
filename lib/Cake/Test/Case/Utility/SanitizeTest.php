@@ -60,7 +60,7 @@ class SanitizeTest extends CakeTestCase {
 /**
  * autoFixtures property
  *
- * @var bool false
+ * @var boolean
  */
 	public $autoFixtures = false;
 
