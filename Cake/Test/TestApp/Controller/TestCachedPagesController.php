@@ -6,7 +6,6 @@ use Cake\Controller\Controller;
 /**
  * TestCachedPagesController class
  *
- * @package       Cake.Test.Case.Routing
  */
 class TestCachedPagesController extends Controller {
 

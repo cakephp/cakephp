@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.I18n
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -26,7 +25,6 @@ use Cake\TestSuite\TestCase;
 /**
  * L10nTest class
  *
- * @package       Cake.Test.Case.I18n
  */
 class L10nTest extends TestCase {
 

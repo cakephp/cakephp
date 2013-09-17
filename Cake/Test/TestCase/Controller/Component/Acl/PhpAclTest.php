@@ -24,7 +24,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for the PhpAcl implementation
  *
- * @package       Cake.Test.Case.Controller.Component.Acl
  */
 class PhpAclTest extends TestCase {
 

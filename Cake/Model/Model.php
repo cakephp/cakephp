@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 0.10.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -44,7 +43,6 @@ use Cake\Utility\Xml;
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment' primary key.
  *
- * @package       Cake.Model
  * @link          http://book.cakephp.org/2.0/en/models.html
  */
 class Model extends Object implements EventListener {

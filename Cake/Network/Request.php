@@ -26,7 +26,6 @@ use Cake\Utility\Hash;
  *
  * `$request['controller']` or `$request->controller`.
  *
- * @package       Cake.Network
  */
 class Request implements \ArrayAccess {
 

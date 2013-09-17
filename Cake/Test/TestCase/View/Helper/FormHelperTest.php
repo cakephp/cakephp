@@ -32,7 +32,6 @@ use Cake\View\View;
 /**
  * ContactTestController class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ContactTestController extends Controller {
 
@@ -47,7 +46,6 @@ class ContactTestController extends Controller {
 /**
  * Contact class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class Contact extends TestModel {
 
@@ -148,7 +146,6 @@ class Contact extends TestModel {
 /**
  * ContactTagsContact class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ContactTagsContact extends TestModel {
 
@@ -185,7 +182,6 @@ class ContactTagsContact extends TestModel {
 /**
  * ContactNonStandardPk class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ContactNonStandardPk extends Contact {
 
@@ -213,7 +209,6 @@ class ContactNonStandardPk extends Contact {
 /**
  * ContactTag class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ContactTag extends Model {
 
@@ -240,7 +235,6 @@ class ContactTag extends Model {
 /**
  * UserForm class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class UserForm extends TestModel {
 
@@ -280,7 +274,6 @@ class UserForm extends TestModel {
 /**
  * OpenidUrl class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class OpenidUrl extends TestModel {
 
@@ -335,7 +328,6 @@ class OpenidUrl extends TestModel {
 /**
  * ValidateUser class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ValidateUser extends TestModel {
 
@@ -384,7 +376,6 @@ class ValidateUser extends TestModel {
 /**
  * ValidateProfile class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ValidateProfile extends TestModel {
 
@@ -443,7 +434,6 @@ class ValidateProfile extends TestModel {
 /**
  * ValidateItem class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ValidateItem extends TestModel {
 
@@ -492,7 +482,6 @@ class ValidateItem extends TestModel {
 /**
  * TestMail class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class TestMail extends TestModel {
 
@@ -508,7 +497,6 @@ class TestMail extends TestModel {
 /**
  * FormHelperTest class
  *
- * @package       Cake.Test.Case.View.Helper
  * @property FormHelper $Form
  */
 class FormHelperTest extends TestCase {

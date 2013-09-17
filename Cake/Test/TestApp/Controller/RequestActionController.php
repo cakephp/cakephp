@@ -20,7 +20,6 @@ namespace TestApp\Controller;
 /**
  * RequestActionController class
  *
- * @package Cake.Test.TestApp.Controller
  */
 class RequestActionController extends AppController {
 

@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Routing
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -37,7 +36,6 @@ use Cake\Utility\Inflector;
  * parameters, routes are enumerated in the order they were connected. You can modify the order of connected
  * routes using Router::promote(). For more information on routes and how to connect them see Router::connect().
  *
- * @package       Cake.Routing
  */
 class Router {
 
@@ -678,7 +676,7 @@ class Router {
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action', 'plugin'
  *   additionally, you can provide routed elements or query string parameters.
- * @param bool|array $options If (bool) true, the full base URL will be prepended to the result.
+ * @param boolean|array $options If (bool) true, the full base URL will be prepended to the result.
  *   If an array accepts the following keys.  If used with a named route you can provide
  *   a list of query string parameters.
  * @return string Full translated URL with base path.

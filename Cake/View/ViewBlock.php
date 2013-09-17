@@ -24,7 +24,6 @@ use Cake\Error;
  * of content that are present in a layout or parent view, but are defined by the child
  * view or elements used in the view.
  *
- * @package Cake.View
  */
 class ViewBlock {
 

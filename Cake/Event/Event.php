@@ -19,7 +19,6 @@ namespace Cake\Event;
  * payload. The name can be any string that uniquely identifies the event across the application, while the subject
  * represents the object that the event applies to.
  *
- * @package Cake.Event
  */
 class Event {
 

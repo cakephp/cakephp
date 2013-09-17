@@ -21,7 +21,6 @@ use Cake\Cache\CacheEngine;
  *
  * Supports wincache 1.1.0 and higher.
  *
- * @package       Cake.Cache.Engine
  */
 class WincacheEngine extends CacheEngine {
 

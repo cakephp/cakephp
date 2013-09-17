@@ -20,7 +20,6 @@ use Cake\Cache\CacheEngine;
 /**
  * Redis storage engine for cache.
  *
- * @package       Cake.Cache.Engine
  */
 class RedisEngine extends CacheEngine {
 

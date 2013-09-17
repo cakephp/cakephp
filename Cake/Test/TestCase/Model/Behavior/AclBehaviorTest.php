@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP v 1.2.0.4487
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -32,7 +31,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Test Person class - self joined model
  *
- * @package       Cake.Test.Case.Model.Behavior
  */
 class AclPerson extends TestModel {
 
@@ -99,7 +97,6 @@ class AclPerson extends TestModel {
 /**
  * AclUser class
  *
- * @package       Cake.Test.Case.Model.Behavior
  */
 class AclUser extends TestModel {
 

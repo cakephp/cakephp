@@ -21,7 +21,6 @@ use Cake\Utility\Security;
 /**
  * SecurityTest class
  *
- * @package       Cake.Test.Case.Utility
  */
 class SecurityTest extends TestCase {
 

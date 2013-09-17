@@ -22,7 +22,6 @@ use Cake\Routing\Router;
 /**
  * Provides the requestAction() method for doing sub-requests
  *
- * @package Cake.Routing
  */
 trait RequestActionTrait {
 

@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Fixture
  * @since         1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -23,7 +22,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 /**
  * CampaignFixture class
  *
- * @package       Cake.Test.Fixture
  */
 class CampaignFixture extends TestFixture {
 

@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 1.2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -32,7 +31,6 @@ use Cake\Utility\ObjectCollection;
  *
  * Defines the Behavior interface, and contains common model interaction functionality.
  *
- * @package       Cake.Model
  */
 class BehaviorCollection extends ObjectCollection implements EventListener {
 

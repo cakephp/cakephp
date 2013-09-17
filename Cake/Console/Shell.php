@@ -34,7 +34,6 @@ use Cake\Utility\String;
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
- * @package       Cake.Console
  */
 class Shell extends Object {
 

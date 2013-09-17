@@ -26,7 +26,6 @@ require_once 'PHPUnit/TextUI/TestRunner.php';
 /**
  * A custom test runner for Cake's use of PHPUnit.
  *
- * @package       Cake.TestSuite
  */
 class TestRunner extends \PHPUnit_TextUI_TestRunner {
 

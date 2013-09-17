@@ -6,7 +6,6 @@ use Cake\TestSuite\TestCase;
 /**
  * This class helpes in indirectly testing the functionaliteies of CakeTestCase::assertTags
  *
- * @package       Cake.Test.Fixture
  */
 class AssertTagsTestCase extends TestCase {
 

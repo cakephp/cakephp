@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 /**
  * TestShellDispatcher class
  *
- * @package       Cake.Test.Case.Console
  */
 class TestShellDispatcher extends ShellDispatcher {
 
@@ -102,7 +101,6 @@ class TestShellDispatcher extends ShellDispatcher {
 /**
  * ShellDispatcherTest
  *
- * @package       Cake.Test.Case.Console
  */
 class ShellDispatcherTest extends TestCase {
 

@@ -34,7 +34,6 @@ use Cake\Utility\Inflector;
  *
  * You can configure a FileEngine cache, using Cache::config()
  *
- * @package       Cake.Cache.Engine
  */
 class FileEngine extends CacheEngine {
 

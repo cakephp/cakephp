@@ -25,7 +25,6 @@ use Cake\Utility\Inflector;
 /**
  * ModelTaskTest class
  *
- * @package Cake.Test.Case.Console.Command.Task
  */
 class ModelTaskTest extends TestCase {
 

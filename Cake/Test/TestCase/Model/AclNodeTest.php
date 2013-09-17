@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -27,7 +26,6 @@ use Cake\TestSuite\TestCase;
 /**
  * DB ACL wrapper test class
  *
- * @package       Cake.Test.Case.Model
  */
 class DbAclNodeTestBase extends AclNode {
 
@@ -49,7 +47,6 @@ class DbAclNodeTestBase extends AclNode {
 /**
  * Aro Test Wrapper
  *
- * @package       Cake.Test.Case.Model
  */
 class DbAroTest extends DbAclNodeTestBase {
 
@@ -71,7 +68,6 @@ class DbAroTest extends DbAclNodeTestBase {
 /**
  * Aco Test Wrapper
  *
- * @package       Cake.Test.Case.Model
  */
 class DbAcoTest extends DbAclNodeTestBase {
 
@@ -93,7 +89,6 @@ class DbAcoTest extends DbAclNodeTestBase {
 /**
  * Permission Test Wrapper
  *
- * @package       Cake.Test.Case.Model
  */
 class DbPermissionTest extends TestModel {
 
@@ -122,7 +117,6 @@ class DbPermissionTest extends TestModel {
 /**
  * DboActionTest class
  *
- * @package       Cake.Test.Case.Model
  */
 class DbAcoActionTest extends TestModel {
 
@@ -144,7 +138,6 @@ class DbAcoActionTest extends TestModel {
 /**
  * DbAroUserTest class
  *
- * @package       Cake.Test.Case.Model
  */
 class DbAroUserTest extends TestModel {
 
@@ -181,7 +174,6 @@ class DbAroUserTest extends TestModel {
 /**
  * TestDbAcl class
  *
- * @package       Cake.Test.Case.Model
  */
 class TestDbAcl extends DbAcl {
 
@@ -202,7 +194,6 @@ class TestDbAcl extends DbAcl {
 /**
  * AclNodeTest class
  *
- * @package       Cake.Test.Case.Model
  */
 class AclNodeTest extends TestCase {
 

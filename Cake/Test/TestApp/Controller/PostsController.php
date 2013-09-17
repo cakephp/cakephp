@@ -19,7 +19,6 @@ use TestApp\Controller\AppController;
 /**
  * PostsController class
  *
- * @package TestApp.Controller
  */
 class PostsController extends AppController {
 

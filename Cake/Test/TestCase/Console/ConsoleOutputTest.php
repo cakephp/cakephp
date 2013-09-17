@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Console
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -25,7 +24,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Class ConsoleOutputTest
  *
- * @package       Cake.Test.Case.Console
  */
 class ConsoleOutputTest extends TestCase {
 

@@ -17,7 +17,6 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- * @package Cake.TestSuite
  */
 namespace Cake\TestSuite;
 
@@ -29,7 +28,6 @@ use Cake\Error;
  *
  * Turns partial paths used on the testsuite console and web UI into full file paths.
  *
- * @package Cake.TestSuite
  */
 class TestLoader extends \PHPUnit_Runner_StandardTestSuiteLoader {
 

@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Validator
  * @since         CakePHP(tm) v 2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -25,7 +24,6 @@ namespace Cake\Model\Validator;
  * ValidationRule object. Represents a validation method, error message and
  * rules for applying such method to a field.
  *
- * @package       Cake.Model.Validator
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
 class ValidationRule {

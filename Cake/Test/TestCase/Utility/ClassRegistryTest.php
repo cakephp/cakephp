@@ -23,7 +23,6 @@ use Cake\Utility\ClassRegistry;
 /**
  * ClassRegisterModel class
  *
- * @package       Cake.Test.Case.Utility
  */
 class ClassRegisterModel extends TestModel {
 
@@ -38,7 +37,6 @@ class ClassRegisterModel extends TestModel {
 /**
  * RegisterArticle class
  *
- * @package       Cake.Test.Case.Utility
  */
 class RegisterArticle extends ClassRegisterModel {
 }
@@ -46,7 +44,6 @@ class RegisterArticle extends ClassRegisterModel {
 /**
  * RegisterArticleFeatured class
  *
- * @package       Cake.Test.Case.Utility
  */
 class RegisterArticleFeatured extends ClassRegisterModel {
 }
@@ -54,7 +51,6 @@ class RegisterArticleFeatured extends ClassRegisterModel {
 /**
  * RegisterArticleTag class
  *
- * @package       Cake.Test.Case.Utility
  */
 class RegisterArticleTag extends ClassRegisterModel {
 }
@@ -62,7 +58,6 @@ class RegisterArticleTag extends ClassRegisterModel {
 /**
  * RegistryPluginAppModel class
  *
- * @package       Cake.Test.Case.Utility
  */
 class RegistryPluginAppModel extends ClassRegisterModel {
 
@@ -77,7 +72,6 @@ class RegistryPluginAppModel extends ClassRegisterModel {
 /**
  * TestRegistryPluginModel class
  *
- * @package       Cake.Test.Case.Utility
  */
 class TestRegistryPluginModel extends RegistryPluginAppModel {
 }
@@ -85,14 +79,12 @@ class TestRegistryPluginModel extends RegistryPluginAppModel {
 /**
  * RegisterCategory class
  *
- * @package       Cake.Test.Case.Utility
  */
 class RegisterCategory extends ClassRegisterModel {
 }
 /**
  * RegisterPrefixedDs class
  *
- * @package       Cake.Test.Case.Utility
  */
 class RegisterPrefixedDs extends ClassRegisterModel {
 
@@ -125,7 +117,6 @@ interface ClassRegistryInterfaceTest {
 /**
  * ClassRegistryTest class
  *
- * @package       Cake.Test.Case.Utility
  */
 class ClassRegistryTest extends TestCase {
 

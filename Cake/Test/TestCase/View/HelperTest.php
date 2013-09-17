@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -33,7 +32,6 @@ use Cake\View\View;
 /**
  * HelperTestPost class
  *
- * @package       Cake.Test.Case.View
  */
 class HelperTestPost extends Model {
 
@@ -73,7 +71,6 @@ class HelperTestPost extends Model {
 /**
  * HelperTestComment class
  *
- * @package       Cake.Test.Case.View
  */
 class HelperTestComment extends Model {
 
@@ -107,7 +104,6 @@ class HelperTestComment extends Model {
 /**
  * HelperTestTag class
  *
- * @package       Cake.Test.Case.View
  */
 class HelperTestTag extends Model {
 
@@ -138,7 +134,6 @@ class HelperTestTag extends Model {
 /**
  * HelperTestPostsTag class
  *
- * @package       Cake.Test.Case.View
  */
 class HelperTestPostsTag extends Model {
 
@@ -201,7 +196,6 @@ class TestHelper extends Helper {
 /**
  * HelperTest class
  *
- * @package       Cake.Test.Case.View
  */
 class HelperTest extends TestCase {
 

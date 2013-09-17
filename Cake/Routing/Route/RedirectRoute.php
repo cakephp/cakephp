@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Routing.Route
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -24,7 +23,6 @@ use Cake\Routing\Route\Route;
  * are useful when you want to have Routing layer redirects occur in your
  * application, for when URLs move.
  *
- * @package Cake.Routing.Route
  */
 class RedirectRoute extends Route {
 

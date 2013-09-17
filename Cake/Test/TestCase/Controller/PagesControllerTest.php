@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -29,7 +28,6 @@ use TestApp\Controller\PagesController;
 /**
  * PagesControllerTest class
  *
- * @package       Cake.Test.Case.Controller
  */
 class PagesControllerTest extends TestCase {
 

@@ -25,7 +25,6 @@ use Cake\View\JsonView;
 /**
  * JsonViewTest
  *
- * @package Cake.Test.Case.View
  */
 class JsonViewTest extends TestCase {
 

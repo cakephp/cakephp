@@ -22,7 +22,6 @@ use Cake\Utility\Xml;
 /**
  * Article class
  *
- * @package       Cake.Test.Case.Utility
  */
 class XmlArticle extends TestModel {
 
@@ -49,7 +48,6 @@ class XmlArticle extends TestModel {
 /**
  * User class
  *
- * @package       Cake.Test.Case.Utility
  */
 class XmlUser extends TestModel {
 
@@ -75,7 +73,6 @@ class XmlUser extends TestModel {
 /**
  * XmlTest class
  *
- * @package       Cake.Test.Case.Utility
  */
 class XmlTest extends TestCase {
 

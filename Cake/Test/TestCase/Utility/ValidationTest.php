@@ -25,7 +25,6 @@ use Cake\Utility\Validation;
 /**
  * CustomValidator class
  *
- * @package       Cake.Test.Case.Utility
  */
 class CustomValidator {
 
@@ -46,7 +45,6 @@ class CustomValidator {
  *
  * Used to test pass through of Validation
  *
- * @package       Cake.Test.Case.Utility
  */
 class TestNlValidation {
 
@@ -76,7 +74,6 @@ class TestNlValidation {
  *
  * Used to test pass through of Validation
  *
- * @package       Cake.Test.Case.Utility
  */
 class TestDeValidation {
 
@@ -95,7 +92,6 @@ class TestDeValidation {
 /**
  * Test Case for Validation Class
  *
- * @package       Cake.Test.Case.Utility
  */
 class ValidationTest extends TestCase {
 

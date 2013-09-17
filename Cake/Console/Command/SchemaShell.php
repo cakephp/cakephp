@@ -30,7 +30,6 @@ use Cake\Utility\String;
  * Schema is CakePHP's database management utility. This helps you maintain versions of
  * of your database.
  *
- * @package       Cake.Console.Command
  * @link          http://book.cakephp.org/2.0/en/console-and-shells/schema-management-and-migrations.html
  */
 class SchemaShell extends Shell {

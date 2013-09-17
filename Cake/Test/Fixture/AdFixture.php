@@ -14,7 +14,6 @@
  *
  * @copyright     CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * @link          http://www.cakephp.org
- * @package       Cake.Test.Fixture
  * @since         1.2
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -25,7 +24,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 /**
  * AdFixture class
  *
- * @package       Cake.Test.Fixture
  */
 class AdFixture extends TestFixture {
 

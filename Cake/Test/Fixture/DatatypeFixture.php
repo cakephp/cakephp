@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Fixture
  * @since         CakePHP(tm) v 1.2.0.7026
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -24,7 +23,6 @@ use Cake\TestSuite\Fixture\TestFixture;
 /**
  * Short description for class.
  *
- * @package       Cake.Test.Fixture
  */
 class DatatypeFixture extends TestFixture {
 

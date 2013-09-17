@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -34,7 +33,6 @@ use Cake\View\View;
 /**
  * ViewPostsController class
  *
- * @package       Cake.Test.Case.View
  */
 class ViewPostsController extends Controller {
 
@@ -80,7 +78,6 @@ class ViewPostsController extends Controller {
 /**
  * ThemePostsController class
  *
- * @package       Cake.Test.Case.View
  */
 class ThemePostsController extends Controller {
 
@@ -103,7 +100,6 @@ class ThemePostsController extends Controller {
 /**
  * TestThemeView class
  *
- * @package       Cake.Test.Case.View
  */
 class TestThemeView extends View {
 
@@ -143,7 +139,6 @@ class TestThemeView extends View {
 /**
  * TestView class
  *
- * @package       Cake.Test.Case.View
  */
 class TestView extends View {
 
@@ -192,7 +187,6 @@ class TestView extends View {
 /**
  * TestBeforeAfterHelper class
  *
- * @package       Cake.Test.Case.View
  */
 class TestBeforeAfterHelper extends Helper {
 
@@ -249,7 +243,6 @@ class TestObjectWithoutToString {
 /**
  * ViewTest class
  *
- * @package       Cake.Test.Case.View
  */
 class ViewTest extends TestCase {
 

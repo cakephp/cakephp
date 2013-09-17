@@ -29,7 +29,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Short description for class.
  *
- * @package       Cake.Test.Case.Error
  */
 class AuthBlueberryUser extends TestModel {
 
@@ -44,7 +43,6 @@ class AuthBlueberryUser extends TestModel {
 /**
  * BlueberryComponent class
  *
- * @package       Cake.Test.Case.Error
  */
 class BlueberryComponent extends Component {
 
@@ -69,7 +67,6 @@ class BlueberryComponent extends Component {
 /**
  * TestErrorController class
  *
- * @package       Cake.Test.Case.Error
  */
 class TestErrorController extends Controller {
 
@@ -111,7 +108,6 @@ class TestErrorController extends Controller {
 /**
  * MyCustomExceptionRenderer class
  *
- * @package       Cake.Test.Case.Error
  */
 class MyCustomExceptionRenderer extends ExceptionRenderer {
 
@@ -129,7 +125,6 @@ class MyCustomExceptionRenderer extends ExceptionRenderer {
 /**
  * Exception class for testing app error handlers and custom errors.
  *
- * @package       Cake.Test.Case.Error
  */
 class MissingWidgetThingException extends Error\NotFoundException {
 }
@@ -137,7 +132,6 @@ class MissingWidgetThingException extends Error\NotFoundException {
 /**
  * ExceptionRendererTest class
  *
- * @package       Cake.Test.Case.Error
  */
 class ExceptionRendererTest extends TestCase {
 
