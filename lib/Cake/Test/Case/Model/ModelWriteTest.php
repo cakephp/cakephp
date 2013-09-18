@@ -318,7 +318,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel2 = new Item();
 
 		$result = $TestModel->findById(1);
-		$this->assertSame($result['Syfile']['item_count'], null);
+		$this->assertNull($result['Syfile']['item_count']);
 
 		$TestModel2->save(array(
 			'name' => 'Item 7',
@@ -480,7 +480,7 @@ class ModelWriteTest extends BaseModelTest {
 		$TestModel2->belongsTo['Syfile']['counterScope'] = array('published' => true);
 
 		$result = $TestModel->findById(1);
-		$this->assertSame($result['Syfile']['item_count'], null);
+		$this->assertNull($result['Syfile']['item_count']);
 
 		$TestModel2->save(array(
 			'name' => 'Item 7',
@@ -4629,7 +4629,7 @@ class ModelWriteTest extends BaseModelTest {
 			array('validate' => 'first')
 		);
 
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $model->Comment->find('all');
 		$this->assertSame(count($result), 1);
@@ -6033,7 +6033,7 @@ class ModelWriteTest extends BaseModelTest {
 			array('validate' => 'first')
 		);
 
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $model->Comment->find('all');
 		$this->assertSame(count($result), 1);

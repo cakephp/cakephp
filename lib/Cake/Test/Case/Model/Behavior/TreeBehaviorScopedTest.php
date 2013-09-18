@@ -461,10 +461,10 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->assertNotSame($result, true);
 
 		$result = $this->Tree->recover();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -491,10 +491,10 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->assertNotSame($result, true);
 
 		$result = $this->Tree->recover();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -523,7 +523,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree->recover();
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**

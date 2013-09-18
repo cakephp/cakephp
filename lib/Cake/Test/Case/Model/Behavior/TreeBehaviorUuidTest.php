@@ -114,7 +114,7 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 			array($modelClass => array('name' => '1.1.1', $leftField => 12, $rightField => 13)));
 		$this->assertEquals($direct, $expects);
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -177,7 +177,7 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 		$this->assertEquals(array_values($nodes), $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -210,7 +210,7 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 		$this->assertEquals(array_values($nodes), $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
