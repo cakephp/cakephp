@@ -351,9 +351,9 @@ class PaginatorHelper extends Helper {
 		$paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 		$url = [
 			'page' => $paging['page'],
-			'sort' => $paging['sort'],
-			'direction' => $paging['sort'],
 			'limit' => $paging['limit'],
+			'sort' => $paging['sort'],
+			'direction' => $paging['direction'],
 		];
 		$url = array_merge(array_filter($url), $options);
 
