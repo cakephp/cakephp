@@ -134,7 +134,7 @@ class MemcachedEngine extends CacheEngine {
 
 		if (!array_key_exists($this->settings['serializer'], self::$serializer)) {
 			throw new CacheException(
-				__d('cake_dev', sprintf('%s is not a valid serializer engine for Memcached', $this->settings['serializer']))
+				__d('cake_dev', '%s is not a valid serializer engine for Memcached', $this->settings['serializer'])
 			);
 		}
 
