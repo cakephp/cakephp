@@ -48,6 +48,19 @@ class MemcachedEngine extends CacheEngine {
 	public $settings = array();
 
 /**
+ * List of available serializer engine
+ *
+ * Memcached must be compiled with json and igbinary support to use these engines
+ *
+ * @var array
+ */
+	public static $serializer = array(
+		'igbinary' => Memcached::SERIALIZER_IGBINARY,
+		'json' => Memcached::SERIALIZER_JSON,
+		'php' => Memcached::SERIALIZER_PHP
+	);
+
+/**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
@@ -71,6 +84,7 @@ class MemcachedEngine extends CacheEngine {
 			'persistent' => false,
 			'login' => null,
 			'password' => null,
+			'serializer' => 'php'
 		);
 		parent::init($settings);
 
@@ -113,13 +127,32 @@ class MemcachedEngine extends CacheEngine {
 /**
  * Settings the memcached instance
  *
+ * @throws CacheException when the Memcached extension is not built with the desired serializer engine
  */
 	protected function _setOptions() {
 		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
-		if (Memcached::HAVE_IGBINARY) {
-			$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_IGBINARY);
+		if (!array_key_exists($this->settings['serializer'], self::$serializer)) {
+			throw new CacheException(
+				__d('cake_dev', sprintf('%s is not a valid serializer engine for Memcached', $this->settings['serializer']))
+			);
 		}
+
+		$serializer = self::$serializer['php'];
+		switch($this->settings['serializer']) {
+			case 'igbinary':
+				if (Memcached::HAVE_IGBINARY) {
+					$serializer = self::$serializer['igbinary'];
+				}
+				break;
+			case 'json':
+				if (Memcached::HAVE_JSON) {
+					$serializer = self::$serializer['json'];
+				}
+				break;
+		}
+
+		$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, $serializer);
 
 		// Check for Amazon ElastiCache instance
 		if (defined('Memcached::OPT_CLIENT_MODE') && defined('Memcached::DYNAMIC_CLIENT_MODE')) {

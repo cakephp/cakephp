@@ -102,7 +102,8 @@ class MemcachedEngineTest extends CakeTestCase {
 			'engine' => 'Memcached',
 			'login' => null,
 			'password' => null,
-			'groups' => array()
+			'groups' => array(),
+			'serializer' => 'php'
 		);
 		$this->assertEquals($expecting, $settings);
 	}
@@ -130,6 +131,90 @@ class MemcachedEngineTest extends CakeTestCase {
 		));
 
 		$this->assertTrue($MemcachedCompressed->getMemcached()->getOption(Memcached::OPT_COMPRESSION));
+	}
+
+/**
+ * test accepts only valid serializer engine
+ *
+ * @return  void
+ */
+	public function testInvalidSerializerSetting() {
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serializer' => 'invalid_serializer'
+		);
+
+		$this->setExpectedException(
+			'CacheException', 'invalid_serializer is not a valid serializer engine for Memcached'
+		);
+		$Memcached->init($settings);
+	}
+
+/**
+ * testPhpSerializerSetting method
+ *
+ * @return void
+ */
+	public function testPhpSerializerSetting() {
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serializer' => 'php'
+		);
+
+		$Memcached->init($settings);
+		$this->assertEquals(Memcached::SERIALIZER_PHP, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
+	}
+
+/**
+ * testPhpSerializerSetting method
+ *
+ * @return void
+ */
+	public function testJsonSerializerSetting() {
+		$this->skipIf(
+			!Memcached::HAVE_JSON,
+			'Memcached extension is not compiled with json support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serializer' => 'json'
+		);
+
+		$Memcached->init($settings);
+		$this->assertEquals(Memcached::SERIALIZER_JSON, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
+	}
+
+/**
+ * testPhpSerializerSetting method
+ *
+ * @return void
+ */
+	public function testIgbinarySerializerSetting() {
+		$this->skipIf(
+			!Memcached::HAVE_IGBINARY,
+			'Memcached extension is not compiled with igbinary support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serializer' => 'igbinary'
+		);
+
+		$Memcached->init($settings);
+		$this->assertEquals(Memcached::SERIALIZER_IGBINARY, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
 	}
 
 /**
