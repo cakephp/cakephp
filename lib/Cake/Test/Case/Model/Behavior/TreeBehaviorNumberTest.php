@@ -91,6 +91,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$save[$modelClass]['id'] = $result[$modelClass]['id'];
 		$save[$modelClass][$leftField] = 0;
 
+		$this->Tree->create();
 		$this->Tree->save($save);
 		$result = $this->Tree->verify();
 		$this->assertNotSame($result, true);
@@ -118,6 +119,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$save[$modelClass]['id'] = $result[$modelClass]['id'];
 		$save[$modelClass][$rightField] = 0;
 
+		$this->Tree->create();
 		$this->Tree->save($save);
 		$result = $this->Tree->verify();
 		$this->assertNotSame($result, true);
@@ -190,17 +192,21 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->order = null;
 		$this->Tree->Behaviors->disable('Tree');
 
+		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
 		$node1 = $this->Tree->id;
 
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node11 = $this->Tree->id;
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node12 = $this->Tree->id;
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
 
@@ -242,19 +248,24 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->order = null;
 		$this->Tree->Behaviors->disable('Tree');
 
+		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
 		$node1 = $this->Tree->id;
 
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node11 = $this->Tree->id;
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node12 = $this->Tree->id;
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Lost', $parentField => 9, $leftField => 0, $rightField => 0));
 
@@ -408,6 +419,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 
+		$this->Tree->create();
 		$this->Tree->save(array($modelClass => array('name' => 'testAddOrphan', $parentField => null)));
 		$result = $this->Tree->find('first', array('fields' => array('name', $parentField), 'order' => $modelClass . '.' . $leftField . ' desc'));
 		$expected = array($modelClass => array('name' => 'testAddOrphan', $parentField => null));
@@ -495,6 +507,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$initialCount = $this->Tree->find('count');
 		//$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
 
+		$this->Tree->create();
 		$saveSuccess = $this->Tree->save(array($modelClass => array('name' => 'testAddInvalid', $parentField => 99999)));
 		$this->assertFalse($saveSuccess);
 
@@ -516,6 +529,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 
+		$this->Tree->create();
 		$this->Tree->save(array('name' => 'testAddNotIndexed', $parentField => null));
 		$result = $this->Tree->find('first', array('fields' => array('name', $parentField), 'order' => $modelClass . '.' . $leftField . ' desc'));
 		$expected = array($modelClass => array('name' => 'testAddNotIndexed', $parentField => null));
@@ -592,6 +606,7 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->whitelist = array('name', $parentField);
+		$this->Tree->create();
 		$this->Tree->save(array($modelClass => array('name' => 'testAddOrphan', $parentField => null)));
 		$result = $this->Tree->findByName('testAddOrphan', array('name', $parentField, $leftField, $rightField));
 		$expected = array('name' => 'testAddOrphan', $parentField => null, $leftField => '15', $rightField => 16);
