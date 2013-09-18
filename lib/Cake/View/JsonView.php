@@ -53,8 +53,8 @@ App::uses('View', 'View');
 class JsonView extends View {
 
 /**
- * JSON views are always located in the 'json' sub directory for a
- * controller's views.
+ * JSON views are always located in the 'json' sub directory for
+ * controllers' views.
  *
  * @var string
  */
