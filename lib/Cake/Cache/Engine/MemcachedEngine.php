@@ -143,11 +143,19 @@ class MemcachedEngine extends CacheEngine {
 			case 'igbinary':
 				if (Memcached::HAVE_IGBINARY) {
 					$serializer = self::$serializer['igbinary'];
+				} else {
+					throw new CacheException(
+						__d('cake_dev', 'Memcached extension is not compiled with igbinary support')
+					);
 				}
 				break;
 			case 'json':
 				if (Memcached::HAVE_JSON) {
 					$serializer = self::$serializer['json'];
+				} else {
+					throw new CacheException(
+						__d('cake_dev', 'Memcached extension is not compiled with json support')
+					);
 				}
 				break;
 		}

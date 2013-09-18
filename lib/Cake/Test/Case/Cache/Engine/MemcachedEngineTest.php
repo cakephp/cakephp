@@ -172,7 +172,7 @@ class MemcachedEngineTest extends CakeTestCase {
 	}
 
 /**
- * testPhpSerializerSetting method
+ * testJsonSerializerSetting method
  *
  * @return void
  */
@@ -195,7 +195,7 @@ class MemcachedEngineTest extends CakeTestCase {
 	}
 
 /**
- * testPhpSerializerSetting method
+ * testIgbinarySerializerSetting method
  *
  * @return void
  */
@@ -215,6 +215,56 @@ class MemcachedEngineTest extends CakeTestCase {
 
 		$Memcached->init($settings);
 		$this->assertEquals(Memcached::SERIALIZER_IGBINARY, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
+	}
+
+/**
+ * testJsonSerializerThrowException method
+ *
+ * @return void
+ */
+	public function testJsonSerializerThrowException() {
+		$this->skipIf(
+			Memcached::HAVE_JSON,
+			'Memcached extension is compiled with json support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serializer' => 'json'
+		);
+
+		$this->setExpectedException(
+			'CacheException', 'Memcached extension is not compiled with json support'
+		);
+		$Memcached->init($settings);
+	}
+
+/**
+ * testIgbinarySerializerThrowException method
+ *
+ * @return void
+ */
+	public function testIgbinarySerializerThrowException() {
+		$this->skipIf(
+			Memcached::HAVE_IGBINARY,
+			'Memcached extension is compiled with igbinary support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serializer' => 'igbinary'
+		);
+
+		$this->setExpectedException(
+			'CacheException', 'Memcached extension is not compiled with igbinary support'
+		);
+		$Memcached->init($settings);
 	}
 
 /**
