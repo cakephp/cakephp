@@ -766,7 +766,7 @@ class Validation {
 	}
 
 /**
- * Checks if a value is in a given list.
+ * Checks if a value is in a given list. Comparison is case sensitive.
  *
  * @param string $check Value to check
  * @param array $list List to check against
@@ -775,6 +775,17 @@ class Validation {
  */
 	public static function inList($check, $list, $strict = true) {
 		return in_array($check, $list, $strict);
+	}
+
+/**
+ * Checks if a value is in a given list. Comparison is case insensitive.
+ *
+ * @param string $check Value to check
+ * @param array $list List to check against
+ * @return boolean Success
+ */
+	public static function inListInsensitive($check, $list) {
+		return in_array(mb_strtolower($check), array_map('mb_strtolower', $list));
 	}
 
 /**
@@ -896,7 +907,7 @@ class Validation {
 	}
 
 /**
- * Checks the mime type of a file
+ * Checks the mime type of a file. Comparison is case sensitive.
  *
  * @param string|array $check
  * @param array $mimeTypes to check for

@@ -1950,6 +1950,17 @@ class ValidationTest extends CakeTestCase {
 	}
 
 /**
+ * testInListInsensitive method
+ *
+ * @return void
+ */
+	public function testInListInsensitive() {
+		$this->assertTrue(Validation::inListInsensitive('one', array('One', 'two')));
+		$this->assertTrue(Validation::inListInsensitive('Two', array('one', 'two')));
+		$this->assertFalse(Validation::inListInsensitive('three', array('one', 'two')));
+	}
+
+/**
  * testRange method
  *
  * @return void
@@ -2333,6 +2344,7 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::mimeType($image, array('image/gif')));
 		$this->assertTrue(Validation::mimeType(array('tmp_name' => $image), array('image/gif')));
 
+		$this->assertFalse(Validation::mimeType($image, array('image/GIF')));
 		$this->assertFalse(Validation::mimeType($image, array('image/png')));
 		$this->assertFalse(Validation::mimeType(array('tmp_name' => $image), array('image/png')));
 	}
