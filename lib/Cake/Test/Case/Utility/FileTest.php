@@ -310,11 +310,11 @@ class FileTest extends CakeTestCase {
 		} else {
 			$expected = "some\nvery\ncool\nteststring here\n\n\nfor\n\n\n\n\nhere";
 		}
-		$this->assertSame(File::prepare($string), $expected);
+		$this->assertSame($expected, File::prepare($string));
 
 		$expected = "some\r\nvery\r\ncool\r\nteststring here\r\n\r\n\r\n";
 		$expected .= "for\r\n\r\n\r\n\r\n\r\nhere";
-		$this->assertSame(File::prepare($string, true), $expected);
+		$this->assertSame($expected, File::prepare($string, true));
 	}
 
 /**
