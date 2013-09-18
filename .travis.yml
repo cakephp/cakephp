@@ -11,6 +11,9 @@ env:
   - DB=pgsql
   - DB=sqlite
 
+services:
+  - memcached
+
 matrix:
   include:
     - php: 5.4
@@ -29,6 +32,7 @@ before_script:
   - sudo apt-get install lighttpd
   - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
+  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
   - phpenv rehash
   - set +H
   - echo "<?php
