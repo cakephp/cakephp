@@ -223,7 +223,7 @@ class PaginatorComponent extends Component {
 			'pageCount' => $pageCount,
 			'sort' => key($order),
 			'direction' => current($order),
-			'limit' => $limit,
+			'limit' => $defaults['limit'] != $options['limit'] ? $options['limit'] : null,
 		);
 
 		if (!isset($this->Controller->request['paging'])) {
