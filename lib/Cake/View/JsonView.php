@@ -19,7 +19,7 @@ App::uses('View', 'View');
  *
  * By setting the '_serialize' key in your controller, you can specify a view variable
  * that should be serialized to JSON and used as the response for the request.
- * This allows you to omit views + layouts, if your just need to emit a single view
+ * This allows you to omit views and layouts if you just need to emit a single view
  * variable as the JSON response.
  *
  * In your controller, you could do the following:
@@ -42,7 +42,7 @@ App::uses('View', 'View');
  * `{"posts": [...], "users": [...]}`
  *
  * If you don't use the `_serialize` key, you will need a view. You can use extended
- * views to provide layout like functionality.
+ * views to provide layout-like functionality.
  *
  * You can also enable JSONP support by setting parameter `_jsonp` to true or a string to specify
  * custom query string paramater name which will contain the callback function name.
@@ -53,8 +53,8 @@ App::uses('View', 'View');
 class JsonView extends View {
 
 /**
- * JSON views are always located in the 'json' sub directory for a
- * controllers views.
+ * JSON views are always located in the 'json' sub directory for
+ * controllers' views.
  *
  * @var string
  */
@@ -89,7 +89,7 @@ class JsonView extends View {
  *
  * ### Special parameters
  * `_serialize` To convert a set of view variables into a JSON response.
- *   It's value can be a string for single variable name or array for multiple names.
+ *   Its value can be a string for single variable name or array for multiple names.
  *   You can omit the`_serialize` parameter, and use a normal view + layout as well.
  * `_jsonp` Enables JSONP support and wraps response in callback function provided in query string.
  *   - Setting it to true enables the default query string parameter "callback".
