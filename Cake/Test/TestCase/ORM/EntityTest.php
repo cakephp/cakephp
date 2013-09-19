@@ -256,6 +256,33 @@ class EntityTest extends TestCase {
 	}
 
 /**
+ * Tests unsetProperty one property at a time
+ *
+ * @return void
+ */
+	public function testUnset() {
+		$entity = new Entity(['id' => 1, 'name' => 'bar']);
+		$entity->unsetProperty('id');
+		$this->assertFalse($entity->has('id'));
+		$this->assertTrue($entity->has('name'));
+		$entity->unsetProperty('name');
+		$this->assertFalse($entity->has('id'));
+	}
+
+/**
+ * Tests unsetProperty whith multiple properties
+ *
+ * @return void
+ */
+	public function testUnsetMultiple() {
+		$entity = new Entity(['id' => 1, 'name' => 'bar', 'thing' => 2]);
+		$entity->unsetProperty(['id', 'thing']);
+		$this->assertFalse($entity->has('id'));
+		$this->assertTrue($entity->has('name'));
+		$this->assertFalse($entity->has('thing'));
+	}
+
+/**
  * Tests the magic __isset() method
  *
  * @return void
@@ -266,6 +293,19 @@ class EntityTest extends TestCase {
 		$this->assertTrue(isset($entity->name));
 		$this->assertTrue(isset($entity->foo));
 		$this->assertFalse(isset($entity->thing));
+	}
+
+/**
+ * Tests the magic __unset() method
+ *
+ * @return void
+ */
+	public function testMagicUnset() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['unsetProperty']);
+		$entity->expects($this->at(0))
+			->method('unsetProperty')
+			->with('foo');
+		unset($entity->foo);
 	}
 
 /**
@@ -301,4 +341,39 @@ class EntityTest extends TestCase {
 		$this->assertEquals('worked', $entity['foo']);
 		$this->assertEquals('worked too', $entity['bar']);
 	}
+
+/**
+ * Tests set with array access
+ *
+ * @return void
+ */
+	public function testSetArrayAccess() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['set']);
+		$entity->expects($this->at(0))
+			->method('set')
+			->with(['foo' => 1])
+			->will($this->returnSelf());
+
+		$entity->expects($this->at(1))
+			->method('set')
+			->with(['bar' => 2])
+			->will($this->returnSelf());
+
+		$entity['foo'] = 1;
+		$entity['bar'] = 2;
+	}
+
+/**
+ * Tests unset with array access
+ *
+ * @return void
+ */
+	public function testUnsetArrayAccess() {
+	$entity = $this->getMock('\Cake\ORM\Entity', ['unsetProperty']);
+	$entity->expects($this->at(0))
+		->method('unsetProperty')
+		->with('foo');
+	unset($entity['foo']);
+	}
+
 }

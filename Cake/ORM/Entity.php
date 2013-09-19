@@ -49,6 +49,28 @@ class Entity implements \ArrayAccess {
 	}
 
 /**
+ * Returns whether this entity contains a property named $property
+ * regardless of if it is empty.
+ *
+ * @see \Cake\ORM\Entity::has()
+ * @param string $property
+ * @return boolean
+ */
+	public function __isset($property) {
+		return $this->has($property);
+	}
+
+/**
+ * Removes a property from this entity
+ *
+ * @param string $property
+ * @return void
+ */
+	public function __unset($property) {
+		$this->unsetProperty($property);
+	}
+
+/**
  * Sets a single property inside this entity.
  *
  * ### Example:
@@ -131,18 +153,6 @@ class Entity implements \ArrayAccess {
  * Returns whether this entity contains a property named $property
  * regardless of if it is empty.
  *
- * @see \Cake\ORM\Entity::has()
- * @param string $property
- * @return boolean
- */
-	public function __isset($property) {
-		return $this->has($property);
-	}
-
-/**
- * Returns whether this entity contains a property named $property
- * regardless of if it is empty.
- *
  * ### Example:
  *
  * {{{
@@ -158,6 +168,27 @@ class Entity implements \ArrayAccess {
 	public function has($property) {
 		$set = array_key_exists($property, $this->_properties);
 		return $set || method_exists($this, 'get' . ucFirst($property));
+	}
+
+/**
+ * Removes a property or list of properties from this entity
+ *
+ * ### Examples:
+ *
+ * ``$entity->unsetProperty('name');``
+ *
+ * ``$entity->unsetProperty(['name', 'last_name']);``
+ *
+ * @param string|array $property
+ * @return \Cake\ORM\
+ */
+	public function unsetProperty($property) {
+		$property = (array)$property;
+		foreach ($property as $p) {
+			unset($this->_properties[$p]);
+		}
+
+		return $this;
 	}
 
 /**
@@ -213,7 +244,7 @@ class Entity implements \ArrayAccess {
  * @return void
  */
 	public function offsetUnset($offset) {
-		unset($this->_properties[$offset]);
+		$this->unsetProperty($offset);
 	}
 
 }
