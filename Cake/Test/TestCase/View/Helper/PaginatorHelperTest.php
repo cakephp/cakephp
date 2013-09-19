@@ -1959,7 +1959,6 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Article']['page'] = 3;
 		$this->Paginator->request->params['paging']['Article']['direction'] = 'DESC';
 		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'DESC';
 
 		$this->Paginator->options(array('url' => array('_full' => true)));
 
