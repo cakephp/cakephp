@@ -214,7 +214,6 @@ class EntityTest extends TestCase {
 			}));
 		$entity->set('name', 'Jones');
 		$this->assertEquals('Dr. Jones', $entity->name);
-
 	}
 
 /**
@@ -241,6 +240,32 @@ class EntityTest extends TestCase {
 		$entity->things = ['a', 'b'];
 		$entity->things[] = 'c';
 		$this->assertEquals(['a', 'b', 'c'], $entity->things);
+	}
+
+/**
+ * Tests has() method
+ *
+ * @return void
+ */
+	public function testHas() {
+		$entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
+		$this->assertTrue($entity->has('id'));
+		$this->assertTrue($entity->has('name'));
+		$this->assertTrue($entity->has('foo'));
+		$this->assertFalse($entity->has('last_name'));
+	}
+
+/**
+ * Tests the magic __isset() method
+ *
+ * @return void
+ */
+	public function testMagicIsset() {
+		$entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
+		$this->assertTrue(isset($entity->id));
+		$this->assertTrue(isset($entity->name));
+		$this->assertTrue(isset($entity->foo));
+		$this->assertFalse(isset($entity->thing));
 	}
 
 }

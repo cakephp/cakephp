@@ -115,11 +115,49 @@ class Entity implements \ArrayAccess {
  */
 	public function &get($property) {
 		$method = 'get' . ucFirst($property);
-		$value =& $this->_properties[$property];
+		$value = null;
+
+		if (isset($this->_properties[$property])) {
+			$value =& $this->_properties[$property];
+		}
+
 		if (method_exists($this, $method)) {
 			$value = $this->{$method}($value);
 		}
 		return $value;
+	}
+
+/**
+ * Returns whether this entity contains a property named $property
+ * regardless of if it is empty.
+ *
+ * @see \Cake\ORM\Entity::has()
+ * @param string $property
+ * @return boolean
+ */
+	public function __isset($property) {
+		return $this->has($property);
+	}
+
+/**
+ * Returns whether this entity contains a property named $property
+ * regardless of if it is empty.
+ *
+ * ### Example:
+ *
+ * {{{
+ *		$entity = new Entity(['id' => 1, 'name' => null]);
+ *		$entity->has('id'); // true
+ *		$entity->has('name'); // true
+ *		$entity->has('last_name'); // false
+ * }}}
+ *
+ * @param string $property
+ * @return boolean
+ */
+	public function has($property) {
+		$set = array_key_exists($property, $this->_properties);
+		return $set || method_exists($this, 'get' . ucFirst($property));
 	}
 
 /**
@@ -143,7 +181,7 @@ class Entity implements \ArrayAccess {
  * @return void
  */
 	public function offsetExists($offset) {
-		return isset($this->_properties[$offset]);
+		return $this->has($offset);
 	}
 /**
  * Implements $entity[$offset];
