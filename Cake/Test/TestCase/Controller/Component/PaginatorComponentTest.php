@@ -52,7 +52,6 @@ class PaginatorComponentTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Need to revisit once models work again.');
 
 		$this->_ns = Configure::read('App.namespace');
 		Configure::write('App.namespace', 'TestApp');
@@ -82,6 +81,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->request->params['pass'] = array('1');
@@ -178,6 +178,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPageParamCasting() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Controller->Post->expects($this->at(0))
 			->method('hasMethod')
 			->with('paginate')
@@ -208,6 +209,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateExtraParams() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
@@ -252,7 +254,7 @@ class PaginatorComponentTest extends TestCase {
 		$paging = $Controller->request->params['paging']['PaginatorControllerPost'];
 
 		$this->assertEquals(12, $Controller->PaginatorControllerPost->lastQueries[1]['limit']);
-		$this->assertEquals(12, $paging['options']['limit']);
+		$this->assertEquals(12, $paging['limit']);
 
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('ControllerPaginateModel');
@@ -296,6 +298,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateSpecialType() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->request->params['pass'][] = '1';
@@ -316,7 +319,7 @@ class PaginatorComponentTest extends TestCase {
 			$Controller->PaginatorControllerPost->lastQueries[1]['conditions'],
 			array('PaginatorControllerPost.id > ' => '1')
 		);
-		$this->assertFalse(isset($Controller->request->params['paging']['PaginatorControllerPost']['options'][0]));
+		$this->assertEquals('popular', $Controller->request->params['paging']['PaginatorControllerPost']['findType']);
 	}
 
 /**
@@ -325,6 +328,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testDefaultPaginateParams() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->modelClass = 'PaginatorControllerPost';
 		$Controller->request->query = [];
@@ -344,6 +348,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateOrderModelDefault() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
 		$Controller->params['url'] = array();
@@ -362,7 +367,7 @@ class PaginatorComponentTest extends TestCase {
 		$this->assertEquals($expected, Hash::extract($result, '{n}.PaginatorControllerPost.created'));
 		$this->assertEquals(
 			$Controller->PaginatorControllerPost->order,
-			$Controller->request->paging['PaginatorControllerPost']['options']['order']
+			$Controller->request->paging['PaginatorControllerPost']['order']
 		);
 
 		$Controller->PaginatorControllerPost->order = array('PaginatorControllerPost.id');
@@ -388,6 +393,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateOrderVirtualField() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->request->query = [];
@@ -415,6 +421,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateOrderVirtualFieldJoinedModel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
 		$Controller->request->query = [];
@@ -438,6 +445,7 @@ class PaginatorComponentTest extends TestCase {
  * @expectedException Cake\Error\MissingModelException
  */
 	public function testPaginateMissingModel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->constructClasses();
 		$Controller->Paginator->paginate('MissingModel');
@@ -621,6 +629,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testOutOfRangePageNumberGetsClamped() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
 		$Controller->request->query['page'] = 3000;
@@ -633,10 +642,11 @@ class PaginatorComponentTest extends TestCase {
  * Test that a really REALLY large page number gets clamped to the max page size.
  *
  *
- * @expectedException NotFoundException
+ * @expectedException Cake\Error\NotFoundException
  * @return void
  */
 	public function testOutOfVeryBigPageNumberGetsClamped() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
 		$Controller->params['named'] = array(
@@ -650,10 +660,11 @@ class PaginatorComponentTest extends TestCase {
 /**
  * testOutOfRangePageNumberAndPageCountZero
  *
- * @expectedException NotFoundException
+ * @expectedException Cake\Error\NotFoundException
  * @return void
  */
 	public function testOutOfRangePageNumberAndPageCountZero() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
 		$Controller->uses = array('PaginatorControllerPost');
 		$Controller->request->query['page'] = 3000;
@@ -697,7 +708,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortWhitelistTrusted() {
-		$model = $this->getMock('Model');
+		$model = $this->getMock('Cake\Model\Model');
 		$model->alias = 'model';
 		$model->expects($this->never())->method('hasField');
 
@@ -739,9 +750,9 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortSharedFields() {
-		$model = $this->getMock('Model');
+		$model = $this->getMock('Cake\Model\Model');
 		$model->alias = 'Parent';
-		$model->Child = $this->getMock('Model');
+		$model->Child = $this->getMock('Cake\Model\Model');
 		$model->Child->alias = 'Child';
 
 		$model->expects($this->never())
@@ -808,7 +819,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortInvalidAlias() {
-		$model = $this->getMock('Model');
+		$model = $this->getMock('Cake\Model\Model');
 		$model->alias = 'Model';
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
@@ -845,6 +856,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateMaxLimit() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new Controller($this->request);
 
 		$Controller->uses = array('PaginatorControllerPost', 'ControllerComment');
@@ -855,26 +867,26 @@ class PaginatorComponentTest extends TestCase {
 			'contain' => array('ControllerComment'), 'limit' => '1000'
 		);
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(100, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(100, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 
 		$Controller->request->query = array(
 			'contain' => array('ControllerComment'), 'limit' => '1000', 'maxLimit' => 1000
 		);
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(100, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(100, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 
 		$Controller->request->query = array('contain' => array('ControllerComment'), 'limit' => '10');
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(10, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(10, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 
 		$Controller->request->query = array('contain' => array('ControllerComment'), 'limit' => '1000');
 		$Controller->paginate = array('maxLimit' => 2000);
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(1000, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(1000, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 
 		$Controller->request->query = array('contain' => array('ControllerComment'), 'limit' => '5000');
 		$result = $Controller->paginate('PaginatorControllerPost');
-		$this->assertEquals(2000, $Controller->request->params['paging']['PaginatorControllerPost']['options']['limit']);
+		$this->assertEquals(2000, $Controller->request->params['paging']['PaginatorControllerPost']['limit']);
 	}
 
 /**
@@ -883,6 +895,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateOrderVirtualFieldSharedWithRealField() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->constructClasses();
@@ -927,6 +940,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFind() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new Controller($this->request);
 		$Controller->uses = ['PaginatorCustomPost'];
 
@@ -968,6 +982,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFindFieldsArray() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorCustomPost');
 		$Controller->constructClasses();
@@ -1000,6 +1015,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFindWithCustomFindKey() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorCustomPost');
 		$Controller->constructClasses();
@@ -1033,6 +1049,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFindGroupBy() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorCustomPost');
 		$Controller->constructClasses();
@@ -1098,6 +1115,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFindCount() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new Controller($this->request);
 		$Controller->uses = array('PaginatorCustomPost');
 		$Controller->constructClasses();
@@ -1139,4 +1157,5 @@ class PaginatorComponentTest extends TestCase {
 		$this->assertTrue($result['nextPage']);
 		$this->assertFalse($result['prevPage']);
 	}
+
 }

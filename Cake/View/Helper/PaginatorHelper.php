@@ -56,9 +56,7 @@ class PaginatorHelper extends Helper {
  *
  * @var array
  */
-	public $options = array(
-		'convertKeys' => array('page', 'limit', 'sort', 'direction')
-	);
+	public $options = [];
 
 /**
  * Before render callback. Overridden to merge passed args with url options.
@@ -134,9 +132,6 @@ class PaginatorHelper extends Helper {
 			);
 			unset($options[$model]);
 		}
-		if (!empty($options['convertKeys'])) {
-			$options['convertKeys'] = array_merge($this->options['convertKeys'], $options['convertKeys']);
-		}
 		$this->options = array_filter(array_merge($this->options, $options));
 	}
 
@@ -167,17 +162,10 @@ class PaginatorHelper extends Helper {
  */
 	public function sortKey($model = null, $options = array()) {
 		if (empty($options)) {
-			$params = $this->params($model);
-			$options = $params['options'];
+			$options = $this->params($model);
 		}
-		if (isset($options['sort']) && !empty($options['sort'])) {
+		if (!empty($options['sort'])) {
 			return $options['sort'];
-		}
-		if (isset($options['order'])) {
-			return is_array($options['order']) ? key($options['order']) : $options['order'];
-		}
-		if (isset($params['order'])) {
-			return is_array($params['order']) ? key($params['order']) : $params['order'];
 		}
 		return null;
 	}
@@ -195,16 +183,11 @@ class PaginatorHelper extends Helper {
 		$dir = null;
 
 		if (empty($options)) {
-			$params = $this->params($model);
-			$options = $params['options'];
+			$options = $this->params($model);
 		}
 
 		if (isset($options['direction'])) {
 			$dir = strtolower($options['direction']);
-		} elseif (isset($options['order']) && is_array($options['order'])) {
-			$dir = strtolower(current($options['order']));
-		} elseif (isset($params['order']) && is_array($params['order'])) {
-			$dir = strtolower(current($params['order']));
 		}
 
 		if ($dir === 'desc') {
@@ -349,7 +332,6 @@ class PaginatorHelper extends Helper {
 			$url = array_merge((array)$options['url'], (array)$url);
 			unset($options['url']);
 		}
-		unset($options['convertKeys']);
 
 		$url = $this->url($url, true, $model);
 		return $this->Html->link($title, $url, $options);
@@ -366,16 +348,15 @@ class PaginatorHelper extends Helper {
  */
 	public function url($options = array(), $asArray = false, $model = null) {
 		$paging = $this->params($model);
-		$url = array_merge(array_filter($paging['options']), $options);
+		$paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
+		$url = [
+			'page' => $paging['page'],
+			'limit' => $paging['limit'],
+			'sort' => $paging['sort'],
+			'direction' => $paging['direction'],
+		];
+		$url = array_merge(array_filter($url), $options);
 
-		if (isset($url['order'])) {
-			$sort = $direction = null;
-			if (is_array($url['order'])) {
-				list($sort, $direction) = array($this->sortKey($model, $url), current($url['order']));
-			}
-			unset($url['order']);
-			$url = array_merge($url, compact('sort', 'direction'));
-		}
 		if (!empty($url['page']) && $url['page'] == 1) {
 			$url['page'] = null;
 		}
