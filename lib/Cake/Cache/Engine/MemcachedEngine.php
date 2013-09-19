@@ -84,7 +84,7 @@ class MemcachedEngine extends CacheEngine {
 			'persistent' => false,
 			'login' => null,
 			'password' => null,
-			'serializer' => 'php'
+			'serialize' => 'php'
 		);
 		parent::init($settings);
 
@@ -132,14 +132,14 @@ class MemcachedEngine extends CacheEngine {
 	protected function _setOptions() {
 		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
-		if (!array_key_exists($this->settings['serializer'], self::$serializer)) {
+		if (!array_key_exists($this->settings['serialize'], self::$serializer)) {
 			throw new CacheException(
-				__d('cake_dev', '%s is not a valid serializer engine for Memcached', $this->settings['serializer'])
+				__d('cake_dev', '%s is not a valid serializer engine for Memcached', $this->settings['serialize'])
 			);
 		}
 
 		$serializer = self::$serializer['php'];
-		switch($this->settings['serializer']) {
+		switch($this->settings['serialize']) {
 			case 'igbinary':
 				if (Memcached::HAVE_IGBINARY) {
 					$serializer = self::$serializer['igbinary'];
