@@ -42,6 +42,9 @@ class MemcachedEngine extends CacheEngine {
  *  - compress = boolean, default => false
  *  - persistent = string The name of the persistent connection. All configurations using
  *    the same persistent value will share a single underlying connection.
+ *  - serialize = string, default => php. The serializer engine used to serialize data.
+ *    Available engines are php, igbinary and json. Beside php, the memcached extension
+ *    must be compiled with the appropriate serializer support.
  *
  * @var array
  */
