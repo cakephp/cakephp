@@ -91,7 +91,7 @@ class MemcachedEngineTest extends CakeTestCase {
  */
 	public function testSettings() {
 		$settings = Cache::settings('memcached');
-		unset($settings['serialize'], $settings['path']);
+		unset($settings['path']);
 		$expecting = array(
 			'prefix' => 'cake_',
 			'duration' => 3600,
