@@ -268,4 +268,37 @@ class EntityTest extends TestCase {
 		$this->assertFalse(isset($entity->thing));
 	}
 
+/**
+ * Tests isset with array access
+ *
+ * @return void
+ */
+	public function testIssetArrayAccess() {
+		$entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
+		$this->assertTrue(isset($entity['id']));
+		$this->assertTrue(isset($entity['name']));
+		$this->assertTrue(isset($entity['foo']));
+		$this->assertFalse(isset($entity['thing']));
+	}
+
+/**
+ * Tests get property with array access
+ *
+ * @return void
+ */
+	public function testGetArrayAccess() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['get']);
+		$entity->expects($this->at(0))
+			->method('get')
+			->with('foo')
+			->will($this->returnValue('worked'));
+
+		$entity->expects($this->at(1))
+			->method('get')
+			->with('bar')
+			->will($this->returnValue('worked too'));
+
+		$this->assertEquals('worked', $entity['foo']);
+		$this->assertEquals('worked too', $entity['bar']);
+	}
 }
