@@ -1443,6 +1443,95 @@ class TreeBehaviorNumberTest extends CakeTestCase {
 	}
 
 /**
+ * testGenerateTreeArray method
+ *
+ * @return void
+ */
+	public function testGenerateTreeArray() {
+		extract($this->settings);
+		$this->Tree = new $modelClass();
+		$this->Tree->order = null;
+		$this->Tree->bindModel(array('belongsTo' => array('Dummy' =>
+			array('className' => $modelClass, 'foreignKey' => $parentField, 'conditions' => array('Dummy.id' => null)))), false);
+		$this->Tree->initialize(2, 2);
+
+		$result = $this->Tree->generateTreeArray();
+		$expected = array(
+			array(
+				"NumberTree" => array(
+					'id' => '1',
+					'name' => '1. Root',
+					'parent_id' => null,
+					'lft' => '1',
+					'rght' => '14',
+					'tree_prefix' => ''
+				)
+			),
+			array(
+				"NumberTree" => array(
+					'id' => '2',
+					'name' => '1.1',
+					'parent_id' => '1',
+					'lft' => '2',
+					'rght' => '7',
+					'tree_prefix' => '_'
+				)
+			),
+			array(
+				"NumberTree" => array(
+					'id' => '3',
+					'name' => '1.1.1',
+					'parent_id' => '2',
+					'lft' => '3',
+					'rght' => '4',
+					'tree_prefix' => '__'
+				)
+			),
+			array(
+				"NumberTree" => array(
+					'id' => '4',
+					'name' => '1.1.2',
+					'parent_id' => '2',
+					'lft' => '5',
+					'rght' => '6',
+					'tree_prefix' => '__'
+				)
+			),
+			array(
+				"NumberTree" => array(
+					'id' => '5',
+					'name' => '1.2',
+					'parent_id' => '1',
+					'lft' => '8',
+					'rght' => '13',
+					'tree_prefix' => '_'
+				)
+			),
+			array(
+				"NumberTree" => array(
+					'id' => '6',
+					'name' => '1.2.1',
+					'parent_id' => '5',
+					'lft' => '9',
+					'rght' => '10',
+					'tree_prefix' => '__'
+				)
+			),
+			array(
+				"NumberTree" => array(
+					'id' => '7',
+					'name' => '1.2.2',
+					'parent_id' => '5',
+					'lft' => '11',
+					'rght' => '12',
+					'tree_prefix' => '__'
+				)
+			)
+		);
+		$this->assertSame($expected, $result);
+	}
+
+/**
  * Test the formatting options of generateTreeList()
  *
  * @return void
