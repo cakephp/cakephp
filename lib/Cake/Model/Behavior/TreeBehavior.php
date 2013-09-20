@@ -344,36 +344,35 @@ class TreeBehavior extends ModelBehavior {
  * @param Model $Model Model instance
  * @param array $records Initial list of records to start with (usually just a blank array())
  * @param string $spacer The character or characters which will be repeated
- * @param integer $parent_id The record id to start with (usually NULL to start from the root node)
+ * @param integer $ParentId The record id to start with (usually NULL to start from the root node)
  * @param string|array $fields Table fields as a string or as an array('Model.field1','Model.Field2',...)
  * @param string|array $order SQL conditions as a string or as an array('Model.field1' =>'ASC',...)
  * @param string|array $conditions SQL conditions as a string or as an array('field' =>'value',...)
- * @param string $parent_id_field_name The name of the parent_id column (e.g. parent_id)
+ * @param string $ParentIdFieldName The name of the parent_id column (e.g. parent_id)
  * @return array An associative array of records
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::generateTreeArray
  */
-	public function generateTreeArray(Model $model, $records=array(), $spacer="_", $parent_id=NULL, $fields=array(), $order= array(), $conditions=array(), $parent_id_field_name="parent_id"){
+	public function generateTreeArray(Model $model, $records=array(), $spacer="_", $ParentId=null, $fields=array(), $order= array(), $conditions=array(), $ParentIdFieldName="parent_id") {
+		$ParentIdColumnName = sprintf("%s.%s", $model->alias, $ParentIdFieldName);
+		$conditions[$ParentIdColumnName] = $ParentId;
 
-		$parent_id_column_name = sprintf("%s.%s", $model->alias, $parent_id_field_name);
-		$conditions[$parent_id_column_name] = $parent_id;
-
-		$spacer_to_use = "";
-		if($parent_id != NULL){
-			$spacer_to_use = $spacer; // the root records does not need a spacer
+		$SpacerToUse = "";
+		if ($ParentId != null) {
+			$SpacerToUse = $spacer; // the root records does not need a spacer
 		}
 		$model->recursive = -1;
-		$children = $model->find("all", compact("conditions","fields","order"));
-		if((bool)$children){
-			foreach($children as $child){
+		$children = $model->find("all", compact("conditions", "fields", "order"));
+		if ((bool)$children) {
+			foreach ($children as $child) {
 				// add the prefix to the child record
-				$child[$model->alias]['tree_prefix'] = $spacer_to_use;
+				$child[$model->alias]['tree_prefix'] = $SpacerToUse;
 
 				// add the child to the tree
 				$records[] = $child;
 
 				// find all the children under the current child
-				$child_record_id = $child[$model->alias][$model->primaryKey];
-				$records = $model->generateTreeArray($records, $spacer_to_use.$spacer, $child_record_id, $fields, $order, $conditions, $parent_id_field_name);
+				$ChildRecordId = $child[$model->alias][$model->primaryKey];
+				$records = $model->generateTreeArray($records, $SpacerToUse . $spacer, $ChildRecordId, $fields, $order, $conditions, $ParentIdFieldName);
 			}
 		}
 		return $records;
