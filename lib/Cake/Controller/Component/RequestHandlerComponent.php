@@ -518,6 +518,9 @@ class RequestHandlerComponent extends Component {
 		}
 
 		list($contentType) = explode(';', env('CONTENT_TYPE'));
+		if (is_null($contentType)) {
+			$contentType = $this->response->type();
+		}
 		if (!$type) {
 			return $this->mapType($contentType);
 		}
