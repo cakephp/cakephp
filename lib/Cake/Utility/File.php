@@ -574,7 +574,6 @@ class File {
  * @param  string $search
  * @param  string $replace
  * @return boolean Success
- * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::replace
  */
 	public function replace($search, $replace) {
 		if (!$this->exists()) {
@@ -585,7 +584,7 @@ class File {
 			return false;
 		}
 
-		$TemporaryFile = new File(TMP . DS . "temp_" . time(), true, 0666);
+		$TemporaryFile = new File(tempnam(TMP, "temp_"));
 
 		if (!$TemporaryFile->writable() || !$TemporaryFile->readable()) {
 			return false;

@@ -557,11 +557,7 @@ class FileTest extends CakeTestCase {
 
 		// Double check
 		$contents = $TmpFile->read();
-		if (strpos($contents, "public functionsdfsa testPassed") === false) {
-			$this->assertTrue(false);
-		} else {
-			$this->assertTrue(true);
-		}
+		$this->assertContains("* testReplace method passed", $contents);
 
 		$TmpFile->delete();
 	}
