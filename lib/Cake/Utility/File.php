@@ -587,4 +587,39 @@ class File {
 		return clearstatcache();
 	}
 
+/**
+ * Searches for a given text and replaces the text if found
+ * @param  string $search
+ * @param  string $replace
+ * @return boolean Success
+ */
+	public function replace($search, $replace) {
+		if (!$this->exists()) {
+			return false;
+		}
+
+		if (!$this->readable() || !$this->writable()) {
+			return false;
+		}
+
+		$TemporaryFile = new File(tempnam(TMP, "temp_"));
+
+		if (!$TemporaryFile->writable() || !$TemporaryFile->readable()) {
+			return false;
+		}
+
+		$this->open();
+		$TemporaryFile->open();
+		$TemporaryFile->write(str_replace($search, $replace, $this->read()), "w", true);
+		$TemporaryFile->close();
+		$this->close();
+
+		// overwrite the original file
+		$replaced = $TemporaryFile->copy($this->path, true);
+
+		$TemporaryFile->delete();
+
+		return $replaced;
+	}
+
 }
