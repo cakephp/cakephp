@@ -602,29 +602,19 @@ class File {
 			return false;
 		}
 
-		$TemporaryFile = new File(tempnam(TMP, "temp_"));
-
-		if (!$TemporaryFile->writable() || !$TemporaryFile->readable()) {
-			return false;
-		}
-
 		$this->open();
-		if (flock($this->handle, LOCK_EX) === false) {
-			return false;
+		if ($this->lock !== null) {
+			if (flock($this->handle, LOCK_EX) === false) {
+				return false;
+			}
 		}
 
-		$TemporaryFile->open();
-		$TemporaryFile->write(str_replace($search, $replace, $this->read()), "w", true);
-		$TemporaryFile->close();
-
-		$replaced = $TemporaryFile->copy($this->path, true);
+		$replaced = $this->write(str_replace($search, $replace, $this->read()), "w", true);
 
 		if ($this->lock !== null) {
 			flock($this->handle, LOCK_UN);
 		}
 		$this->close();
-
-		$TemporaryFile->delete();
 
 		return $replaced;
 	}
