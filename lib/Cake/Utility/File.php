@@ -593,7 +593,7 @@ class File {
  * @param  string $replace
  * @return boolean Success
  */
-	public function replace($search, $replace) {
+	public function replaceText($search, $replace) {
 		if (!$this->exists()) {
 			return false;
 		}
@@ -609,13 +609,20 @@ class File {
 		}
 
 		$this->open();
+		if (flock($this->handle, LOCK_EX) === false) {
+			return false;
+		}
+
 		$TemporaryFile->open();
 		$TemporaryFile->write(str_replace($search, $replace, $this->read()), "w", true);
 		$TemporaryFile->close();
-		$this->close();
 
-		// overwrite the original file
 		$replaced = $TemporaryFile->copy($this->path, true);
+
+		if ($this->lock !== null) {
+			flock($this->handle, LOCK_UN);
+		}
+		$this->close();
 
 		$TemporaryFile->delete();
 
