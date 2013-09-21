@@ -569,4 +569,45 @@ class File {
 		return false;
 	}
 
+/**
+ * Searches for a given text and replaces the text if found
+ * @param  string $search
+ * @param  string $replace
+ * @return boolean Success
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::replace
+ */
+	public function replace($search, $replace) {
+		if (!$this->exists()) {
+			return false;
+		}
+
+		if (!$this->readable() || !$this->writable()) {
+			return false;
+		}
+
+		$TemporaryFile = new File(TMP . DS . "temp_" . time(), true, 0666);
+
+		if (!$TemporaryFile->writable() || !$TemporaryFile->readable()) {
+			return false;
+		}
+
+		$this->open();
+		$TemporaryFile->open();
+
+		while (!feof($this->handle)) {
+			$data = fgets($this->handle, 4096);
+			$TemporaryFile->append(str_replace($search, $replace, $data), true);
+		}
+
+		$TemporaryFile->close();
+		$this->close();
+
+		// overwrite the original file
+		$replaced = $TemporaryFile->copy($this->path, true);
+
+		$TemporaryFile->delete();
+
+		return $replaced;
+	}
+
 }

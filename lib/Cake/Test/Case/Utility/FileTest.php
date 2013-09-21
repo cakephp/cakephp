@@ -541,6 +541,32 @@ class FileTest extends CakeTestCase {
 	}
 
 /**
+ * testReplace method
+ *
+ * @return void
+ */
+	public function testReplace() {
+		$TestFile = new File(__FILE__);
+		$TmpFile = new File(TMP . 'tests' . DS . 'cakephp.file.test.tmp');
+		// Copy the test file to the temporary location
+		$TestFile->copy($TmpFile->path, true);
+
+		// Replace the contents of the tempory file
+		$result = $TmpFile->replace("* testReplace method", "* testReplace method passed");
+		$this->assertTrue($result);
+
+		// Double check
+		$contents = $TmpFile->read();
+		if (strpos($contents, "public functionsdfsa testPassed") === false) {
+			$this->assertTrue(false);
+		} else {
+			$this->assertTrue(true);
+		}
+
+		$TmpFile->delete();
+	}
+
+/**
  * getTmpFile method
  *
  * @param boolean $paintSkip
