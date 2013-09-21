@@ -589,20 +589,15 @@ class File {
 
 /**
  * Searches for a given text and replaces the text if found
- * @param  string $search
- * @param  string $replace
+ * @param string $search
+ * @param string $replace
  * @return boolean Success
  */
 	public function replaceText($search, $replace) {
-		if (!$this->exists()) {
+		if (!$this->open("r+")) {
 			return false;
 		}
 
-		if (!$this->readable() || !$this->writable()) {
-			return false;
-		}
-
-		$this->open();
 		if ($this->lock !== null) {
 			if (flock($this->handle, LOCK_EX) === false) {
 				return false;
