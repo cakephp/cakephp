@@ -38,7 +38,7 @@ class DatabaseSession implements SessionHandlerInterface {
 /**
  * Number of seconds to mark the session as expired
  *
- * @var int
+ * @var integer
  */
 	protected $_timeout;
 

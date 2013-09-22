@@ -82,7 +82,7 @@ class PhpConfig implements ConfigEngineInterface {
  * @param string $key The identifier to write to. If the key has a . it will be treated
  *  as a plugin prefix.
  * @param array $data Data to dump.
- * @return int Bytes saved.
+ * @return integer Bytes saved.
  */
 	public function dump($key, $data) {
 		$contents = '<?php' . "\n" . '$config = ' . var_export($data, true) . ';';

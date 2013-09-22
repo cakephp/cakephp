@@ -145,16 +145,16 @@ class PaginatorComponentTest extends TestCase {
 		$Controller->Paginator->paginate('PaginatorControllerPost');
 		$this->assertSame(1, $Controller->request->params['paging']['PaginatorControllerPost']['page']);
 		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['pageCount'], 3);
-		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['prevPage'], false);
-		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['nextPage'], true);
+		$this->assertFalse($Controller->params['paging']['PaginatorControllerPost']['prevPage']);
+		$this->assertTrue($Controller->params['paging']['PaginatorControllerPost']['nextPage']);
 
 		$Controller->request->query = array();
 		$Controller->Paginator->settings = array('limit' => 'garbage!', 'maxLimit' => 10);
 		$Controller->Paginator->paginate('PaginatorControllerPost');
 		$this->assertSame(1, $Controller->request->params['paging']['PaginatorControllerPost']['page']);
 		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['pageCount'], 3);
-		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['prevPage'], false);
-		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['nextPage'], true);
+		$this->assertFalse($Controller->params['paging']['PaginatorControllerPost']['prevPage']);
+		$this->assertTrue($Controller->params['paging']['PaginatorControllerPost']['nextPage']);
 
 		$Controller->request->query = array();
 		$Controller->Paginator->settings = array('limit' => '-1', 'maxLimit' => 10);
@@ -163,8 +163,8 @@ class PaginatorComponentTest extends TestCase {
 		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['limit'], 1);
 		$this->assertSame(1, $Controller->request->params['paging']['PaginatorControllerPost']['page']);
 		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['pageCount'], 3);
-		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['prevPage'], false);
-		$this->assertSame($Controller->request->params['paging']['PaginatorControllerPost']['nextPage'], true);
+		$this->assertFalse($Controller->params['paging']['PaginatorControllerPost']['prevPage']);
+		$this->assertTrue($Controller->params['paging']['PaginatorControllerPost']['nextPage']);
 
 		$Controller->Paginator->settings = array('conditions' => array('PaginatorAuthor.user' => 'mariano'));
 		$Controller->Paginator->paginate('PaginatorControllerPost');

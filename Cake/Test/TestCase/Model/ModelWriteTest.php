@@ -309,7 +309,7 @@ class ModelWriteTest extends ModelTestBase {
 		$TestModel2 = new Item();
 
 		$result = $TestModel->findById(1);
-		$this->assertSame($result['Syfile']['item_count'], null);
+		$this->assertNull($result['Syfile']['item_count']);
 
 		$TestModel2->save(array(
 			'name' => 'Item 7',
@@ -471,7 +471,7 @@ class ModelWriteTest extends ModelTestBase {
 		$TestModel2->belongsTo['Syfile']['counterScope'] = array('published' => true);
 
 		$result = $TestModel->findById(1);
-		$this->assertSame($result['Syfile']['item_count'], null);
+		$this->assertNull($result['Syfile']['item_count']);
 
 		$TestModel2->save(array(
 			'name' => 'Item 7',
@@ -4620,7 +4620,7 @@ class ModelWriteTest extends ModelTestBase {
 			array('validate' => 'first')
 		);
 
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $model->Comment->find('all');
 		$this->assertSame(count($result), 1);
@@ -6024,7 +6024,7 @@ class ModelWriteTest extends ModelTestBase {
 			array('validate' => 'first')
 		);
 
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $model->Comment->find('all');
 		$this->assertSame(count($result), 1);
@@ -7135,7 +7135,7 @@ class ModelWriteTest extends ModelTestBase {
 		$TestModel = new Item();
 
 		$result = $TestModel->save(array('published' => true, 'id' => 1));
-		$this->assertTrue((boolean)$result);
+		$this->assertTrue((bool)$result);
 		$result = $TestModel->find('first', array(
 			'fields' => array('id', 'published'),
 			'conditions' => array('Item.id' => 1)));

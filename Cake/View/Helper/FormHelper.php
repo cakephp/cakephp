@@ -649,7 +649,7 @@ class FormHelper extends Helper {
  *
  * ### Options:
  *
- * - `escape` bool - Whether or not to html escape the contents of the error.
+ * - `escape` boolean - Whether or not to html escape the contents of the error.
  * - `wrap` mixed - Whether or not the error message should be wrapped in a div. If a
  *   string, will be used as the HTML tag to use.
  * - `class` string - The classname for the error message
@@ -1522,7 +1522,9 @@ class FormHelper extends Helper {
 			);
 
 			if ($label) {
-				$optTitle = $this->label($tagName, $optTitle, is_array($label) ? $label : null);
+				$labelOpts = is_array($label) ? $label : array();
+				$labelOpts += array('for' => $tagName);
+				$optTitle = $this->label($tagName, $optTitle, $labelOpts);
 			}
 
 			if (is_array($between)) {

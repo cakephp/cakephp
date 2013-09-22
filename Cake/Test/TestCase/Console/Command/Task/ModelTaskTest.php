@@ -264,7 +264,7 @@ class ModelTaskTest extends TestCase {
  */
 	public function testInitValidations() {
 		$result = $this->Task->initValidations();
-		$this->assertTrue(in_array('notempty', $result));
+		$this->assertTrue(in_array('notEmpty', $result));
 	}
 
 /**
@@ -278,7 +278,7 @@ class ModelTaskTest extends TestCase {
 		$this->Task->initValidations();
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('notempty' => 'notempty');
+		$expected = array('notEmpty' => 'notEmpty');
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'date', 'length' => 10, 'null' => false));
@@ -314,7 +314,7 @@ class ModelTaskTest extends TestCase {
 			->will($this->onConsecutiveCalls('24', 'y', '18', 'n'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('notempty' => 'notempty', 'maxlength' => 'maxlength');
+		$expected = array('notEmpty' => 'notEmpty', 'maxLength' => 'maxLength');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -335,7 +335,7 @@ class ModelTaskTest extends TestCase {
 			->with($this->stringContains('make a valid'));
 
 		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('notempty' => 'notempty');
+		$expected = array('notEmpty' => 'notEmpty');
 		$this->assertEquals($expected, $result);
 	}
 
@@ -401,7 +401,7 @@ class ModelTaskTest extends TestCase {
 		$result = $this->Task->doValidation($Model);
 		$expected = array(
 			'name' => array(
-				'notempty' => 'notempty'
+				'notEmpty' => 'notEmpty'
 			),
 			'email' => array(
 				'email' => 'email',
@@ -737,7 +737,7 @@ class ModelTaskTest extends TestCase {
 	public function testBakeValidation() {
 		$validate = array(
 			'name' => array(
-				'notempty' => 'notempty'
+				'notempty' => 'notEmpty'
 			),
 			'email' => array(
 				'email' => 'email',
@@ -755,7 +755,7 @@ class ModelTaskTest extends TestCase {
 		$expected = <<< STRINGEND
 array(
 			'notempty' => array(
-				'rule' => array('notempty'),
+				'rule' => array('notEmpty'),
 				//'message' => 'Your custom message here',
 				//'allowEmpty' => false,
 				//'required' => false,
