@@ -248,6 +248,12 @@ class PaginatorHelper extends Helper {
 
 /**
  * Generate an active/inactive link for next/prev methods.
+ *
+ * @param string $text The enabled text for the link.
+ * @param boolean $enabled Whether or not the enabled/disabled version should be created.
+ * @param array $options An array of options from the calling method.
+ * @param array $templates An array of templates with the 'active' and 'disabled' keys.
+ * @return string Generated HTML
  */
 	protected function _toggledLink($text, $enabled, $options, $templates) {
 		$template = $templates['active'];
@@ -312,7 +318,7 @@ class PaginatorHelper extends Helper {
 		$enabled = $this->hasPrev($options['model']);
 		$templates = [
 			'active' => 'prevActive',
-			'disabled' =>  'prevDisabled'
+			'disabled' => 'prevDisabled'
 		];
 		return $this->_toggledLink($title, $enabled, $options, $templates);
 	}

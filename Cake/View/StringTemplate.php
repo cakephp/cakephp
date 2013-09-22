@@ -14,8 +14,8 @@
  */
 namespace Cake\View;
 
-use Cake\Core\Plugin;
 use Cake\Configure\Engine\PhpConfig;
+use Cake\Core\Plugin;
 use Cake\Error;
 
 /**
