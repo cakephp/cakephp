@@ -79,6 +79,23 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
+ * Test the templates method.
+ *
+ * @return void
+ */
+	public function testTemplates() {
+		$result = $this->Paginator->templates([
+			'test' => 'val'
+		]);
+		$this->assertNull($result, 'Setting should return null');
+		$result = $this->Paginator->templates();
+		$this->assertArrayHasKey('test', $result);
+		$this->assertEquals('val', $result['test']);
+
+		$this->assertEquals('val', $this->Paginator->templates('test'));
+	}
+
+/**
  * testHasPrevious method
  *
  * @return void

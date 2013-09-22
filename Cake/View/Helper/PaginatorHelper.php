@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Error;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
+use Cake\View\StringTemplate;
 use Cake\View\View;
 
 /**
@@ -35,7 +36,7 @@ class PaginatorHelper extends Helper {
  *
  * @var array
  */
-	public $helpers = array('Html');
+	public $helpers = ['Html'];
 
 /**
  * Holds the default options for pagination links
@@ -57,6 +58,52 @@ class PaginatorHelper extends Helper {
  * @var array
  */
 	public $options = [];
+
+/**
+ * StringTemplate instance.
+ *
+ * @var Cake\View\StringTemplate
+ */
+	protected $_templater;
+
+/**
+ * The default templates used by PaginatorHelper.
+ *
+ * @var array
+ */
+	protected $_defaultTemplates = [
+
+	];
+
+/**
+ * Constructor
+ *
+ * @param View $View The View this helper is being attached to.
+ * @param array $settings Configuration settings for the helper.
+ */
+	public function __construct(View $View, $settings = []) {
+		parent::__construct($View, $settings);
+
+		$this->_templater = new StringTemplate();
+		$this->_templater->add($this->_defaultTemplates);
+		if (isset($settings['templates'])) {
+			$this->_templater->load($settings['templates']);
+		}
+	}
+
+/**
+ * Get/set templates to use.
+ *
+ * @param string|null|array $templates null or string allow reading templates. An array 
+ *   allows templates to be added.
+ * @return void|string|array
+ */
+	public function templates($templates = null) {
+		if ($templates === null || is_string($templates)) {
+			return $this->_templater->get($templates);
+		}
+		return $this->_templater->add($templates);
+	}
 
 /**
  * Before render callback. Overridden to merge passed args with url options.
