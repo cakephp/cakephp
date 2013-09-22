@@ -676,7 +676,7 @@ class TreeBehavior extends ModelBehavior {
 
 		$scope = $this->settings[$Model->alias]['scope'];
 		if ($scope && ($scope !== '1 = 1' && $scope !== true)) {
-			$conditions[] = $scope;
+			$params['conditions'][] = $scope;
 		}
 
 		$children = $Model->find('all', $params);

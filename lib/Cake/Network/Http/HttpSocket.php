@@ -474,7 +474,7 @@ class HttpSocket extends CakeSocket {
  * }}}
  *
  * @param string|array $uri URI to request. See HttpSocket::_parseUri()
- * @param array $data Array of POST data keys and values.
+ * @param array $data Array of request body data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request, either false on failure or the response to the request.
  */
@@ -487,7 +487,7 @@ class HttpSocket extends CakeSocket {
  * Issues a PUT request to the specified URI, query, and request.
  *
  * @param string|array $uri URI to request, See HttpSocket::_parseUri()
- * @param array $data Array of PUT data keys and values.
+ * @param array $data Array of request body data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
  */
@@ -500,7 +500,7 @@ class HttpSocket extends CakeSocket {
  * Issues a PATCH request to the specified URI, query, and request.
  *
  * @param string|array $uri URI to request, See HttpSocket::_parseUri()
- * @param array $data Array of PATCH data keys and values.
+ * @param array $data Array of request body data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
  */
@@ -513,7 +513,7 @@ class HttpSocket extends CakeSocket {
  * Issues a DELETE request to the specified URI, query, and request.
  *
  * @param string|array $uri URI to request (see {@link _parseUri()})
- * @param array $data Query to append to URI
+ * @param array $data Array of request body data keys and values.
  * @param array $request An indexed array with indexes such as 'method' or uri
  * @return mixed Result of request
  */

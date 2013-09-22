@@ -937,7 +937,7 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals('posts', $request->controller);
 		$this->assertEquals('view', $request->action);
 		$this->assertEquals('blogs', $request->plugin);
-		$this->assertSame($request->banana, null);
+		$this->assertNull($request->banana);
 	}
 
 /**
