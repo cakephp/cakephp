@@ -683,9 +683,9 @@ class Controller extends Object implements EventListener {
  * If the model is non existent, it will throw a missing database table error, as Cake generates
  * dynamic models for the time being.
  *
- * @param string $modelClass Name of model class to load
- * @param integer|string $id Initial ID the instanced model class should have
- * @return mixed true when single model found and instance created, error returned if model not found.
+ * @param string $modelClass Name of model class to load.
+ * @param integer|string $id Initial ID the instanced model class should have.
+ * @return boolean True when single model found and instance created.
  * @throws Cake\Error\MissingModelException if the model class cannot be found.
  */
 	public function loadModel($modelClass = null, $id = null) {

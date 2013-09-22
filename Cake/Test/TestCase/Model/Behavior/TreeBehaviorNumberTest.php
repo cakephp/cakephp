@@ -34,7 +34,7 @@ class TreeBehaviorNumberTest extends TestCase {
 /**
  * Whether backup global state for each test method or not
  *
- * @var bool false
+ * @var boolean
  */
 	public $backupGlobals = false;
 
@@ -76,7 +76,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals(7, $result);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -95,15 +95,16 @@ class TreeBehaviorNumberTest extends TestCase {
 		$save[$modelClass]['id'] = $result[$modelClass]['id'];
 		$save[$modelClass][$leftField] = 0;
 
+		$this->Tree->create();
 		$this->Tree->save($save);
 		$result = $this->Tree->verify();
 		$this->assertNotSame($result, true);
 
 		$result = $this->Tree->recover();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -122,15 +123,16 @@ class TreeBehaviorNumberTest extends TestCase {
 		$save[$modelClass]['id'] = $result[$modelClass]['id'];
 		$save[$modelClass][$rightField] = 0;
 
+		$this->Tree->create();
 		$this->Tree->save($save);
 		$result = $this->Tree->verify();
 		$this->assertNotSame($result, true);
 
 		$result = $this->Tree->recover();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -153,10 +155,10 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertNotSame($result, true);
 
 		$result = $this->Tree->recover();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -177,10 +179,10 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertNotSame($result, true);
 
 		$result = $this->Tree->recover('MPTT');
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -194,17 +196,21 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->Tree->order = null;
 		$this->Tree->Behaviors->disable('Tree');
 
+		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
 		$node1 = $this->Tree->id;
 
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node11 = $this->Tree->id;
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node12 = $this->Tree->id;
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
 
@@ -246,19 +252,24 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->Tree->order = null;
 		$this->Tree->Behaviors->disable('Tree');
 
+		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Main', $parentField => null, $leftField => 0, $rightField => 0));
 		$node1 = $this->Tree->id;
 
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'About Us', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node11 = $this->Tree->id;
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Programs', $parentField => $node1, $leftField => 0, $rightField => 0));
 		$node12 = $this->Tree->id;
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Mission and History', $parentField => $node11, $leftField => 0, $rightField => 0));
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Overview', $parentField => $node12, $leftField => 0, $rightField => 0));
+
 		$this->Tree->create();
 		$this->Tree->save(array('name' => 'Lost', $parentField => 9, $leftField => 0, $rightField => 0));
 
@@ -322,10 +333,10 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertNotSame($result, true);
 
 		$result = $this->Tree->recover();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -345,10 +356,10 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertNotSame($result, true);
 
 		$result = $this->Tree->recover();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -370,7 +381,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->Tree->recover();
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 	}
 
 /**
@@ -412,13 +423,14 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 
+		$this->Tree->create();
 		$this->Tree->save(array($modelClass => array('name' => 'testAddOrphan', $parentField => null)));
 		$result = $this->Tree->find('first', array('fields' => array('name', $parentField), 'order' => $modelClass . '.' . $leftField . ' desc'));
 		$expected = array($modelClass => array('name' => 'testAddOrphan', $parentField => null));
 		$this->assertEquals($expected, $result);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -450,7 +462,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertSame($children, $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -499,14 +511,15 @@ class TreeBehaviorNumberTest extends TestCase {
 		$initialCount = $this->Tree->find('count');
 		//$this->expectError('Trying to save a node under a none-existant node in TreeBehavior::beforeSave');
 
+		$this->Tree->create();
 		$saveSuccess = $this->Tree->save(array($modelClass => array('name' => 'testAddInvalid', $parentField => 99999)));
-		$this->assertSame($saveSuccess, false);
+		$this->assertFalse($saveSuccess);
 
 		$laterCount = $this->Tree->find('count');
 		$this->assertSame($initialCount, $laterCount);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -520,13 +533,14 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->Tree->order = null;
 		$this->Tree->initialize(2, 2);
 
+		$this->Tree->create();
 		$this->Tree->save(array('name' => 'testAddNotIndexed', $parentField => null));
 		$result = $this->Tree->find('first', array('fields' => array('name', $parentField), 'order' => $modelClass . '.' . $leftField . ' desc'));
 		$expected = array($modelClass => array('name' => 'testAddNotIndexed', $parentField => null));
 		$this->assertEquals($expected, $result);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -553,7 +567,7 @@ class TreeBehaviorNumberTest extends TestCase {
 			array($modelClass => array('id' => 3, 'name' => '1.1.1', $parentField => 1, $leftField => 12, $rightField => 13)));
 		$this->assertEquals($direct, $expects);
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -596,11 +610,12 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->Tree->initialize(2, 2);
 
 		$this->Tree->whitelist = array('name', $parentField);
+		$this->Tree->create();
 		$this->Tree->save(array($modelClass => array('name' => 'testAddOrphan', $parentField => null)));
 		$result = $this->Tree->findByName('testAddOrphan', array('name', $parentField, $leftField, $rightField));
 		$expected = array('name' => 'testAddOrphan', $parentField => null, $leftField => '15', $rightField => 16);
 		$this->assertEquals($expected, $result[$modelClass]);
-		$this->assertSame($this->Tree->verify(), true);
+		$this->assertTrue($this->Tree->verify());
 	}
 
 /**
@@ -629,7 +644,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($expects, $result);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -658,7 +673,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($expects, $result);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -691,7 +706,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($before, $after);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -716,7 +731,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertSame($initialCount, $laterCount);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -737,12 +752,12 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->Tree->id = $data[$modelClass]['id'];
 		$saveSuccess = $this->Tree->saveField($parentField, $this->Tree->id);
 
-		$this->assertSame($saveSuccess, false);
+		$this->assertFalse($saveSuccess);
 		$laterCount = $this->Tree->find('count');
 		$this->assertSame($initialCount, $laterCount);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -1004,7 +1019,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->Tree->save(array($parentField => null));
 
 		$result = $this->Tree->verify();
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$this->Tree->moveUp();
 
@@ -1035,7 +1050,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($initialCount - 1, $laterCount);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 
 		$initialCount = $this->Tree->find('count');
 		$result = $this->Tree->findByName('1.1');
@@ -1047,7 +1062,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($initialCount - 2, $laterCount);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -1093,7 +1108,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($topNodes, $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -1127,7 +1142,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($topNodes, $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -1162,7 +1177,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($nodes, $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -1197,7 +1212,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($topNodes, $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -1230,7 +1245,7 @@ class TreeBehaviorNumberTest extends TestCase {
 		$this->assertEquals($nodes, $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**

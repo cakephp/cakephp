@@ -627,11 +627,11 @@ class BehaviorCollectionTest extends TestCase {
 		$this->assertSame($Apple->Behaviors->enabled(), array());
 
 		$Apple->Sample->Behaviors->attach('Test');
-		$this->assertSame($Apple->Sample->Behaviors->enabled('Test'), true);
+		$this->assertTrue($Apple->Sample->Behaviors->enabled('Test'));
 		$this->assertSame($Apple->Behaviors->enabled(), array());
 
 		$Apple->Behaviors->enable('Test');
-		$this->assertSame($Apple->Behaviors->loaded('Test'), true);
+		$this->assertTrue($Apple->Behaviors->loaded('Test'));
 		$this->assertSame($Apple->Behaviors->enabled(), array('Test'));
 
 		$Apple->Behaviors->disable('Test');
@@ -656,7 +656,7 @@ class BehaviorCollectionTest extends TestCase {
 		$expected = $Apple->find('all');
 
 		$Apple->Behaviors->attach('Test');
-		$this->assertSame($Apple->find('all'), null);
+		$this->assertNull($Apple->find('all'));
 
 		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off'));
 		$this->assertSame($expected, $Apple->find('all'));
@@ -927,28 +927,28 @@ class BehaviorCollectionTest extends TestCase {
 		$Apple = new Apple();
 
 		$Apple->Behaviors->attach('Test', array('beforeFind' => 'off', 'beforeDelete' => 'off'));
-		$this->assertSame($Apple->delete(6), true);
+		$this->assertTrue($Apple->delete(6));
 
 		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'on'));
-		$this->assertSame($Apple->delete(4), false);
+		$this->assertFalse($Apple->delete(4));
 
 		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'test2'));
 
 		ob_start();
 		$results = $Apple->delete(4);
 		$this->assertSame(trim(ob_get_clean()), 'beforeDelete success (cascading)');
-		$this->assertSame($results, true);
+		$this->assertTrue($results);
 
 		ob_start();
 		$results = $Apple->delete(3, false);
 		$this->assertSame(trim(ob_get_clean()), 'beforeDelete success');
-		$this->assertSame($results, true);
+		$this->assertTrue($results);
 
 		$Apple->Behaviors->attach('Test', array('beforeDelete' => 'off', 'afterDelete' => 'on'));
 		ob_start();
 		$results = $Apple->delete(2, false);
 		$this->assertSame(trim(ob_get_clean()), 'afterDelete success');
-		$this->assertSame($results, true);
+		$this->assertTrue($results);
 	}
 
 /**
@@ -974,14 +974,14 @@ class BehaviorCollectionTest extends TestCase {
 		$Apple = new Apple();
 
 		$Apple->Behaviors->attach('Test');
-		$this->assertSame($Apple->validates(), true);
+		$this->assertTrue($Apple->validates());
 
 		$Apple->Behaviors->attach('Test', array('validate' => 'on'));
-		$this->assertSame($Apple->validates(), false);
+		$this->assertFalse($Apple->validates());
 		$this->assertSame($Apple->validationErrors, array('name' => array(true)));
 
 		$Apple->Behaviors->attach('Test', array('validate' => 'stop'));
-		$this->assertSame($Apple->validates(), false);
+		$this->assertFalse($Apple->validates());
 		$this->assertSame($Apple->validationErrors, array('name' => array(true, true)));
 
 		$Apple->Behaviors->attach('Test', array('validate' => 'whitelist'));
@@ -1002,10 +1002,10 @@ class BehaviorCollectionTest extends TestCase {
 		$Apple = new Apple();
 
 		$Apple->Behaviors->attach('Test');
-		$this->assertSame($Apple->validates(), true);
+		$this->assertTrue($Apple->validates());
 
 		$Apple->Behaviors->attach('Test', array('afterValidate' => 'on'));
-		$this->assertSame($Apple->validates(), true);
+		$this->assertTrue($Apple->validates());
 		$this->assertSame($Apple->validationErrors, array());
 
 		$Apple->Behaviors->attach('Test', array('afterValidate' => 'test'));
