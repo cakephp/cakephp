@@ -591,10 +591,6 @@ class RequestTest extends TestCase {
 		$result = $request->referer(false);
 		$this->assertSame($result, Configure::read('App.fullBaseUrl') . '/some/path');
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
-		$result = $request->referer(true);
-		$this->assertSame($result, '/some/path');
-
 		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/recipes/add';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/recipes/add');
@@ -876,7 +872,7 @@ class RequestTest extends TestCase {
 		$this->assertEquals('posts', $request->controller);
 		$this->assertEquals('view', $request->action);
 		$this->assertEquals('blogs', $request->plugin);
-		$this->assertSame($request->banana, null);
+		$this->assertNull($request->banana);
 	}
 
 /**
@@ -996,7 +992,7 @@ class RequestTest extends TestCase {
  * Helper function for testing callbacks.
  *
  * @param $request
- * @return bool
+ * @return boolean
  */
 	public function detectCallback($request) {
 		return (bool)$request->return;

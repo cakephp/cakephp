@@ -28,7 +28,7 @@ class TranslateBehaviorTest extends TestCase {
 /**
  * autoFixtures property
  *
- * @var bool false
+ * @var boolean
  */
 	public $autoFixtures = false;
 

@@ -32,7 +32,7 @@ abstract class DispatcherFilter implements EventListener {
 /**
  * Default priority for all methods in this filter
  *
- * @var int
+ * @var integer
  */
 	public $priority = 10;
 

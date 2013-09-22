@@ -32,7 +32,7 @@ class TreeBehaviorAfterTest extends TestCase {
 /**
  * Whether backup global state for each test method or not
  *
- * @var bool false
+ * @var boolean
  */
 	public $backupGlobals = false;
 

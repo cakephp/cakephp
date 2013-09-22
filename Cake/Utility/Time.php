@@ -1042,7 +1042,7 @@ class Time {
 
 /**
  * Returns a formatted date string, given either a UNIX timestamp or a valid strtotime() date string.
- * It take in account the default date format for the current language if a LC_TIME file is used.
+ * It takes into account the default date format for the current language if a LC_TIME file is used.
  *
  * @param integer|string|DateTime $date UNIX timestamp, strtotime() valid string or DateTime object
  * @param string $format strftime format string.

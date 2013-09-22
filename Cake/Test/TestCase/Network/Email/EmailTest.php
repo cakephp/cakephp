@@ -132,6 +132,25 @@ class EmailTest extends TestCase {
 	}
 
 /**
+ * Test that from addresses using colons work.
+ *
+ * @return void
+ */
+	public function testFromWithColonsAndQuotes() {
+		$address = array(
+			'info@example.com' => '70:20:00 " Forum'
+		);
+		$this->CakeEmail->from($address);
+		$this->assertEquals($address, $this->CakeEmail->from());
+		$this->CakeEmail->to('info@example.com')
+			->subject('Test email')
+			->transport('debug');
+
+		$result = $this->CakeEmail->send();
+		$this->assertContains('From: "70:20:00 \" Forum" <info@example.com>', $result['headers']);
+	}
+
+/**
  * testSender method
  *
  * @return void
@@ -145,7 +164,7 @@ class EmailTest extends TestCase {
 		$this->assertSame($this->CakeEmail->sender(), $expected);
 
 		$headers = $this->CakeEmail->getHeaders(array('from' => true, 'sender' => true));
-		$this->assertSame($headers['From'], false);
+		$this->assertFalse($headers['From']);
 		$this->assertSame($headers['Sender'], 'Name <cake@cakephp.org>');
 
 		$this->CakeEmail->from('cake@cakephp.org', 'CakePHP');
@@ -322,6 +341,10 @@ class EmailTest extends TestCase {
 
 		$result = $this->CakeEmail->formatAddress(array('me@example.com' => 'Last, First'));
 		$expected = array('"Last, First" <me@example.com>');
+		$this->assertSame($expected, $result);
+
+		$result = $this->CakeEmail->formatAddress(array('me@example.com' => '"Last" First'));
+		$expected = array('"\"Last\" First" <me@example.com>');
 		$this->assertSame($expected, $result);
 
 		$result = $this->CakeEmail->formatAddress(array('me@example.com' => 'Last First'));

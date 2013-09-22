@@ -33,7 +33,7 @@ class AssetDispatcher extends DispatcherFilter {
  * Default priority for all methods in this filter
  * This filter should run before the request gets parsed by router
  *
- * @var int
+ * @var integer
  */
 	public $priority = 9;
 

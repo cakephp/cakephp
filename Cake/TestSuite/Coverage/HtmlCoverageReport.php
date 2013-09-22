@@ -1,7 +1,5 @@
 <?php
 /**
- * Generates code coverage reports in HTML from data obtained from PHPUnit
- *
  * PHP5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -25,9 +23,23 @@ namespace Cake\TestSuite\Coverage;
 class HtmlCoverageReport extends BaseCoverageReport {
 
 /**
- * Generates report html to display.
+ * Holds the total number of processed rows.
  *
- * @return string compiled html report.
+ * @var integer
+ */
+	protected $_total = 0;
+
+/**
+ * Holds the total number of covered rows.
+ *
+ * @var integer
+ */
+	protected $_covered = 0;
+
+/**
+ * Generates report HTML to display.
+ *
+ * @return string Compiled HTML report.
  */
 	public function report() {
 		$pathFilter = $this->getPathFilter();
@@ -45,6 +57,12 @@ HTML;
 			$fileData = file($file);
 			$output .= $this->generateDiff($file, $fileData, $coverageData);
 		}
+
+		$percentCovered = 100;
+		if ($this->_total > 0) {
+			$percentCovered = round(100 * $this->_covered / $this->_total, 2);
+		}
+		$output .= '<div class="total">Overall coverage: <span class="coverage">' . $percentCovered . '%</span></div>';
 		return $output;
 	}
 
@@ -66,6 +84,8 @@ HTML;
 		$diff = array();
 
 		list($covered, $total) = $this->_calculateCoveredLines($fileLines, $coverageData);
+		$this->_covered += $covered;
+		$this->_total += $total;
 
 		//shift line numbers forward one;
 		array_unshift($fileLines, ' ');
@@ -118,13 +138,13 @@ HTML;
 	}
 
 /**
- * Renders the html for a single line in the html diff.
+ * Renders the HTML for a single line in the HTML diff.
  *
  * @param string $line
  * @param integer $linenumber
  * @param string $class
  * @param array $coveringTests
- * @return void
+ * @return string
  */
 	protected function _paintLine($line, $linenumber, $class, $coveringTests) {
 		$coveredBy = '';
@@ -147,7 +167,7 @@ HTML;
 /**
  * generate some javascript for the coverage report.
  *
- * @return void
+ * @return string
  */
 	public function coverageScript() {
 		return <<<HTML
@@ -174,7 +194,7 @@ HTML;
  *
  * @param string $filename
  * @param string $percent
- * @return void
+ * @return string
  */
 	public function coverageHeader($filename, $percent) {
 		$filename = basename($filename);
