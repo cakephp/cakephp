@@ -1,6 +1,10 @@
 <?php
 namespace Cake\View;
 
+use Cake\Core\Plugin;
+use Cake\Configure\Engine\PhpConfig;
+use Cake\Error;
+
 /**
  * Provides a interface for registering and inserting
  * content into simple logic-less string templates.
@@ -16,6 +20,27 @@ class StringTemplate {
  * @var array
  */
 	protected $_templates = [];
+
+/**
+ * Load a config file containing templates.
+ *
+ * Template files should define a `$config` variable containing
+ * all the templates to load. Loaded templates will be merged with existing
+ * templates.
+ *
+ * @param string $file The file to load
+ * @return void
+ */
+	public function load($file) {
+		list($plugin, $file) = pluginSplit($file);
+		$path = APP . 'Config/';
+		if ($plugin !== null) {
+			$path = Plugin::path($plugin) . 'Config/';
+		}
+		$loader = new PhpConfig($path);
+		$templates = $loader->read($file);
+		$this->add($templates);
+	}
 
 /**
  * Add one or more template strings.
