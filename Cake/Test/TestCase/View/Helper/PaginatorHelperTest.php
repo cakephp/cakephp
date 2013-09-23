@@ -101,9 +101,9 @@ class PaginatorHelperTest extends TestCase {
  * @return void
  */
 	public function testHasPrevious() {
-		$this->assertSame($this->Paginator->hasPrev(), false);
+		$this->assertFalse($this->Paginator->hasPrev());
 		$this->Paginator->request->params['paging']['Article']['prevPage'] = true;
-		$this->assertSame($this->Paginator->hasPrev(), true);
+		$this->assertTrue($this->Paginator->hasPrev());
 		$this->Paginator->request->params['paging']['Article']['prevPage'] = false;
 	}
 
@@ -113,9 +113,9 @@ class PaginatorHelperTest extends TestCase {
  * @return void
  */
 	public function testHasNext() {
-		$this->assertSame($this->Paginator->hasNext(), true);
+		$this->assertTrue($this->Paginator->hasNext());
 		$this->Paginator->request->params['paging']['Article']['nextPage'] = false;
-		$this->assertSame($this->Paginator->hasNext(), false);
+		$this->assertFalse($this->Paginator->hasNext());
 		$this->Paginator->request->params['paging']['Article']['nextPage'] = true;
 	}
 
