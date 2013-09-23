@@ -108,43 +108,41 @@ class CompletionShell extends CommandListShell {
  * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
-		$translationDomain = 'bash_completion';
+		$parser = parent::getOptionParser();
 
-		$parser = AppShell::getOptionParser();
-
-		$parser->description(__d($translationDomain, 'Used by bash to autocomplete command name, options and arguments'))
+		$parser->description(__d('cake_console', 'Used by shells like bash to autocomplete command name, options and arguments'))
 			->addSubcommand('commands', array(
-				'help' => __d($translationDomain, 'Output a list of available commands'),
+				'help' => __d('cake_console', 'Output a list of available commands'),
 				'parser' => array(
-					'description' => __d($translationDomain, 'List all availables'),
+					'description' => __d('cake_console', 'List all availables'),
 					'arguments' => array(
 					)
 				)
 			))->addSubcommand('subcommands', array(
-				'help' => __d($translationDomain, 'Output a list of available subcommands'),
+				'help' => __d('cake_console', 'Output a list of available subcommands'),
 				'parser' => array(
-					'description' => __d($translationDomain, 'List subcommands for a command'),
+					'description' => __d('cake_console', 'List subcommands for a command'),
 					'arguments' => array(
 						'command' => array(
-							'help' => __d($translationDomain, 'The command name'),
+							'help' => __d('cake_console', 'The command name'),
 							'required' => true,
 						)
 					)
 				)
 			))->addSubcommand('options', array(
-				'help' => __d($translationDomain, 'Output a list of available options'),
+				'help' => __d('cake_console', 'Output a list of available options'),
 				'parser' => array(
-					'description' => __d($translationDomain, 'List options'),
+					'description' => __d('cake_console', 'List options'),
 					'arguments' => array(
 						'command' => array(
-							'help' => __d($translationDomain, 'The command name'),
+							'help' => __d('cake_console', 'The command name'),
 							'required' => false,
 						)
 					)
 				)
 			))->epilog(
 				array(
-					'This command is not intended to be called manually',
+					__d('cake_console', 'This command is not intended to be called manually'),
 				)
 			);
 		return $parser;
@@ -162,7 +160,7 @@ class CompletionShell extends CommandListShell {
 		$options = array();
 		foreach ($shellList as $type => $commands) {
 			$prefix = '';
-			if (!in_array($type, array('app', 'core', 'APP', 'CORE'))) {
+			if (!in_array(strtolower($type), array('app', 'core'))) {
 				$prefix = $type . '.';
 			}
 
@@ -187,12 +185,8 @@ class CompletionShell extends CommandListShell {
 			return array();
 		}
 
-		$return = array();
 		$taskMap = TaskCollection::normalizeObjectArray((array)$Shell->tasks);
-		foreach ($taskMap as $task => $properties) {
-			$return[] = $task;
-		}
-
+		$return = array_keys($taskMap);
 		$return = array_map('Inflector::underscore', $return);
 
 		$ShellReflection = new ReflectionClass('AppShell');
@@ -222,11 +216,11 @@ class CompletionShell extends CommandListShell {
  * @return mixed
  */
 	protected function _getShell($commandName) {
-		list($plugin, $name) = pluginSplit($commandName, true);
+		list($pluginDot, $name) = pluginSplit($commandName, true);
 
-		if ($plugin === 'CORE.' || $plugin === 'APP.' || $plugin === 'core.' || $plugin === 'app.') {
+		if (in_array(strtolower($pluginDot), array('app.', 'core.'))) {
 			$commandName = $name;
-			$plugin = '';
+			$pluginDot = '';
 		}
 
 		if (!in_array($commandName, $this->_commands())) {
@@ -234,12 +228,12 @@ class CompletionShell extends CommandListShell {
 		}
 
 		$name = Inflector::camelize($name);
-		$plugin = Inflector::camelize($plugin);
+		$pluginDot = Inflector::camelize($pluginDot);
 		$class = $name . 'Shell';
-		APP::uses($class, $plugin . 'Console/Command');
+		APP::uses($class, $pluginDot . 'Console/Command');
 
 		$Shell = new $class();
-		$Shell->plugin = trim($plugin, '.');
+		$Shell->plugin = trim($pluginDot, '.');
 		$Shell->initialize();
 		$Shell->loadTasks();
 
