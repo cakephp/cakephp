@@ -262,7 +262,7 @@ class PaginatorHelper extends Helper {
 			$template = $templates['disabled'];
 		}
 
-		if (!$enabled && $text == '') {
+		if (!$enabled && $text === false) {
 			return '';
 		}
 		$text = $options['escape'] ? h($text) : $text;
@@ -294,7 +294,7 @@ class PaginatorHelper extends Helper {
  * ### Options:
  *
  * - `disabledTitle` The text to used when the link is disabled. This
- *   defaults to the same text at the active link. Setting to null or '' will cause
+ *   defaults to the same text at the active link. Setting to false will cause
  *   this method to return ''.
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
@@ -329,7 +329,7 @@ class PaginatorHelper extends Helper {
  * ### Options:
  *
  * - `disabledTitle` The text to used when the link is disabled. This
- *   defaults to the same text at the active link. Setting to null or '' will cause
+ *   defaults to the same text at the active link. Setting to false will cause
  *   this method to return ''.
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
