@@ -2961,7 +2961,7 @@ class DboSource extends DataSource {
  * @return string
  */
 	public function createSchema($schema, $tableName = null) {
-		if (!is_a($schema, 'CakeSchema')) {
+		if (!$schema instanceof CakeSchema) {
 			trigger_error(__d('cake_dev', 'Invalid schema object'), E_USER_WARNING);
 			return null;
 		}
