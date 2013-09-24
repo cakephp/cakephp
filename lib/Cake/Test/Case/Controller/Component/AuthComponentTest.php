@@ -506,6 +506,35 @@ class AuthComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test that isAuthorized allow access to loginAction
+ *
+ * @return void
+ */
+	public function testIsAuthorizedLoginAction() {
+		$controller = $this->getMock('Controller');
+		$controller->methods = array('login');
+
+		$this->getMock('BaseAuthorize', array('authorize'), array(), 'AuthMockFiveAuthorize', false);
+		$this->Auth->authorize = array('AuthMockFive');
+
+		$user = array('user' => 'mark');
+		$this->Auth->Session->write('Auth.User', $user);
+		$mocks = $this->Auth->constructAuthorize();
+
+		$url = '/AuthTest/login';
+		$this->Auth->request = $controller->request = new CakeRequest($url);
+		$this->Auth->request->addParams(Router::parse($url));
+		$this->Auth->loginAction = array('controller' => 'AuthTest', 'action' => 'login');
+
+		$request = $controller->request;
+		$mocks[0]->expects($this->once())
+			->method('authorize')
+			->with($user, $request)
+			->will($this->returnValue(false));
+		$this->assertTrue($this->Auth->isAuthorized(null, $request));
+	}
+
+/**
  * test that loadAuthorize resets the loaded objects each time.
  *
  * @return void

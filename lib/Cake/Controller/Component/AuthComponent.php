@@ -467,6 +467,9 @@ class AuthComponent extends Component {
 				return true;
 			}
 		}
+		if (Router::normalize($this->loginAction) === Router::normalize($request->url)) {
+			return true;
+		}
 		return false;
 	}
 
