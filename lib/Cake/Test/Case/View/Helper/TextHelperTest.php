@@ -241,6 +241,10 @@ class TextHelperTest extends CakeTestCase {
 				'Text with a url http://www.not--work.com and more',
 				'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more',
 			),
+			array(
+				'Text with a url wwww.invalid.com and more',
+				'Text with a url wwww.invalid.com and more',
+			),
 		);
 	}
 
