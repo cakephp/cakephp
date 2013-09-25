@@ -24,7 +24,6 @@ App::uses('AbstractTransport', 'Network/Email');
 App::uses('File', 'Utility');
 App::uses('String', 'Utility');
 App::uses('View', 'View');
-App::import('I18n', 'Multibyte');
 
 /**
  * Cake e-mail class.
@@ -980,7 +979,7 @@ class CakeEmail {
  *		'contentDisposition' => false
  * ));
  * }}}
- * 
+ *
  * Attach a file from string and specify additional properties:
  *
  * {{{
