@@ -2027,7 +2027,7 @@ class PaginatorHelperTest extends TestCase {
  */
 	public function testParam() {
 		$result = $this->Paginator->param('count');
-		$this->assertIdentical(62, $result);
+		$this->assertSame(62, $result);
 
 		$result = $this->Paginator->param('imaginary');
 		$this->assertNull($result);
