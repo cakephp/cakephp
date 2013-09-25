@@ -136,7 +136,7 @@ class ClassRegistryTest extends CakeTestCase {
  */
 	public function testAddModel() {
 		$Tag = ClassRegistry::init('RegisterArticleTag');
-		$this->assertTrue($Tag instanceof RegisterArticleTag);
+		$this->assertInstanceOf('RegisterArticleTag', $Tag);
 
 		$TagCopy = ClassRegistry::isKeySet('RegisterArticleTag');
 		$this->assertTrue($TagCopy);
@@ -145,11 +145,11 @@ class ClassRegistryTest extends CakeTestCase {
 
 		$TagCopy = ClassRegistry::getObject('RegisterArticleTag');
 
-		$this->assertTrue($TagCopy instanceof RegisterArticleTag);
+		$this->assertInstanceOf('RegisterArticleTag', $TagCopy);
 		$this->assertSame($Tag, $TagCopy);
 
 		$NewTag = ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
-		$this->assertTrue($Tag instanceof RegisterArticleTag);
+		$this->assertInstanceOf('RegisterArticleTag', $Tag);
 
 		$NewTagCopy = ClassRegistry::init(array('class' => 'RegisterArticleTag', 'alias' => 'NewTag'));
 
@@ -166,17 +166,17 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertTrue($TagCopy->name === 'SomeOtherName');
 
 		$User = ClassRegistry::init(array('class' => 'RegisterUser', 'alias' => 'User', 'table' => false));
-		$this->assertTrue($User instanceof AppModel);
+		$this->assertInstanceOf('AppModel', $User);
 
 		$UserCopy = ClassRegistry::init(array('class' => 'RegisterUser', 'alias' => 'User', 'table' => false));
-		$this->assertTrue($UserCopy instanceof AppModel);
+		$this->assertInstanceOf('AppModel', $UserCopy);
 		$this->assertEquals($User, $UserCopy);
 
 		$Category = ClassRegistry::init(array('class' => 'RegisterCategory'));
-		$this->assertTrue($Category instanceof RegisterCategory);
+		$this->assertTrue('RegisterCategory', $Category);
 
 		$ParentCategory = ClassRegistry::init(array('class' => 'RegisterCategory', 'alias' => 'ParentCategory'));
-		$this->assertTrue($ParentCategory instanceof RegisterCategory);
+		$this->assertInstanceOf('RegisterCategory', $ParentCategory);
 		$this->assertNotSame($Category, $ParentCategory);
 
 		$this->assertNotEquals($Category->alias, $ParentCategory->alias);
@@ -193,12 +193,12 @@ class ClassRegistryTest extends CakeTestCase {
 		ClassRegistry::init('RegisterArticleTag');
 
 		$ArticleTag = ClassRegistry::getObject('RegisterArticleTag');
-		$this->assertTrue($ArticleTag instanceof RegisterArticleTag);
+		$this->assertInstanceOf('RegisterArticleTag', $ArticleTag);
 		ClassRegistry::flush();
 
 		$NoArticleTag = ClassRegistry::isKeySet('RegisterArticleTag');
 		$this->assertFalse($NoArticleTag);
-		$this->assertTrue($ArticleTag instanceof RegisterArticleTag);
+		$this->assertTrue('RegisterArticleTag', $ArticleTag);
 	}
 
 /**
@@ -233,13 +233,13 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertTrue($Tag);
 
 		$Article = ClassRegistry::getObject('Article');
-		$this->assertTrue($Article instanceof RegisterArticle);
+		$this->assertInstanceOf('RegisterArticle', $Article);
 
 		$Featured = ClassRegistry::getObject('Featured');
-		$this->assertTrue($Featured instanceof RegisterArticleFeatured);
+		$this->assertInstanceOf('RegisterArticleFeatured', $Featured);
 
 		$Tag = ClassRegistry::getObject('Tag');
-		$this->assertTrue($Tag instanceof RegisterArticleTag);
+		$this->assertInstanceOf('RegisterArticleTag', $Tag);
 	}
 
 /**
@@ -254,15 +254,15 @@ class ClassRegistryTest extends CakeTestCase {
 		//Faking a plugin
 		CakePlugin::load('RegistryPlugin', array('path' => '/fake/path'));
 		$TestRegistryPluginModel = ClassRegistry::init('RegistryPlugin.TestRegistryPluginModel');
-		$this->assertTrue($TestRegistryPluginModel instanceof TestRegistryPluginModel);
+		$this->assertInstanceOf('TestRegistryPluginModel', $TestRegistryPluginModel);
 
 		$this->assertEquals('something_', $TestRegistryPluginModel->tablePrefix);
 
 		$PluginUser = ClassRegistry::init(array('class' => 'RegistryPlugin.RegisterUser', 'alias' => 'RegistryPluginUser', 'table' => false));
-		$this->assertTrue($PluginUser instanceof RegistryPluginAppModel);
+		$this->assertInstanceOf('RegistryPluginAppModel', $PluginUser);
 
 		$PluginUserCopy = ClassRegistry::getObject('RegistryPluginUser');
-		$this->assertTrue($PluginUserCopy instanceof RegistryPluginAppModel);
+		$this->assertInstanceOf('RegistryPluginAppModel', $PluginUserCopy);
 		$this->assertSame($PluginUser, $PluginUserCopy);
 		CakePlugin::unload();
 	}

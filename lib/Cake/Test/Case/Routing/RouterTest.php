@@ -2354,7 +2354,7 @@ class RouterTest extends CakeTestCase {
 			array('controller' => 'posts', 'action' => 'view'),
 			array('routeClass' => 'MockConnectedRoute', 'slug' => '[a-z_-]+')
 		);
-		$this->assertTrue($routes[0] instanceof MockConnectedRoute, 'Incorrect class used. %s');
+		$this->assertInstanceOf('MockConnectedRoute', $routes[0], 'Incorrect class used. %s');
 		$expected = array('controller' => 'posts', 'action' => 'view', 'slug' => 'test');
 		$routes[0]->expects($this->any())
 			->method('parse')
