@@ -232,7 +232,7 @@ class DataSource extends Object {
  * @param mixed $conditions The conditions to use for deleting.
  * @return boolean Success
  */
-	public function delete(Model $model, $id = null) {
+	public function delete(Model $model, $conditions = null) {
 		return false;
 	}
 
