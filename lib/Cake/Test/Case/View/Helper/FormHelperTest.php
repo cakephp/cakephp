@@ -3978,6 +3978,40 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.field', array(
+			'type' => 'radio',
+			'options' => array(
+				1 => 'A',
+				2 => 'B',
+				3 => 'C'
+			),
+			'disabled' => array(1)
+		));
+
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'ModelField_', 'value' => '')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'id' => 'ModelField1', 'disabled' => 'disabled', 'value' => '1')),
+			array('label' => array('for' => 'ModelField1')),
+			'A',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'id' => 'ModelField2', 'value' => '2')),
+			array('label' => array('for' => 'ModelField2')),
+			'B',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'id' => 'ModelField3', 'value' => '3')),
+			array('label' => array('for' => 'ModelField3')),
+			'C',
+			'/label',
+			'/fieldset',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
