@@ -1388,7 +1388,7 @@ class ViewTest extends CakeTestCase {
 	public function testBlockSetDecimal() {
 		$this->View->assign('testWithDecimal', 1.23456789);
 		$result = $this->View->fetch('testWithDecimal');
-		$this->assertEqual('1.23456789', $result);
+		$this->assertEquals('1.23456789', $result);
 	}
 
 /**

@@ -9312,7 +9312,7 @@ class FormHelperTest extends CakeTestCase {
 			'div' => false,
 			'label' => false,
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 }
