@@ -1506,7 +1506,7 @@ class FormHelper extends AppHelper {
 		}
 
 		foreach ($options as $optValue => $optTitle) {
-			$optionsHere = array('value' => $optValue);
+			$optionsHere = array('value' => $optValue, 'disabled' => false);
 
 			if (isset($value) && strval($optValue) === strval($value)) {
 				$optionsHere['checked'] = 'checked';
