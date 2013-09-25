@@ -279,7 +279,7 @@ class TestTask extends BakeTask {
  */
 	public function buildTestSubject($type, $class) {
 		ClassRegistry::flush();
-		App::import($type, $class);
+		App::uses($class, $type);
 		$class = $this->getRealClassName($type, $class);
 		if (strtolower($type) === 'model') {
 			$instance = ClassRegistry::init($class);
