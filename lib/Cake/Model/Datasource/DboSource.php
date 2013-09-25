@@ -861,7 +861,7 @@ class DboSource extends DataSource {
  * @return boolean True if the result is valid else false
  */
 	public function hasResult() {
-		return is_a($this->_result, 'PDOStatement');
+		return $this->_result instanceof PDOStatement;
 	}
 
 /**

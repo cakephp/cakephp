@@ -137,7 +137,7 @@ class SchemaShellTest extends CakeTestCase {
 	public function testStartup() {
 		$this->Shell->startup();
 		$this->assertTrue(isset($this->Shell->Schema));
-		$this->assertTrue(is_a($this->Shell->Schema, 'CakeSchema'));
+		$this->assertTrue($this->Shell->Schema instanceof CakeSchema);
 		$this->assertEquals(Inflector::camelize(Inflector::slug(APP_DIR)), $this->Shell->Schema->name);
 		$this->assertEquals('schema.php', $this->Shell->Schema->file);
 
