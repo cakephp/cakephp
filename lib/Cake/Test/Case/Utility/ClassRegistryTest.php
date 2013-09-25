@@ -173,7 +173,7 @@ class ClassRegistryTest extends CakeTestCase {
 		$this->assertEquals($User, $UserCopy);
 
 		$Category = ClassRegistry::init(array('class' => 'RegisterCategory'));
-		$this->assertTrue('RegisterCategory', $Category);
+		$this->assertInstanceOf('RegisterCategory', $Category);
 
 		$ParentCategory = ClassRegistry::init(array('class' => 'RegisterCategory', 'alias' => 'ParentCategory'));
 		$this->assertInstanceOf('RegisterCategory', $ParentCategory);
@@ -198,7 +198,7 @@ class ClassRegistryTest extends CakeTestCase {
 
 		$NoArticleTag = ClassRegistry::isKeySet('RegisterArticleTag');
 		$this->assertFalse($NoArticleTag);
-		$this->assertTrue('RegisterArticleTag', $ArticleTag);
+		$this->assertInstanceOf('RegisterArticleTag', $ArticleTag);
 	}
 
 /**
