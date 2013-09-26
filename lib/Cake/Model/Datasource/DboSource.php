@@ -2281,6 +2281,7 @@ class DboSource extends DataSource {
 			$fields,
 			$quote,
 			ConnectionManager::getSourceName($this),
+			$model->schemaName,
 			$model->table
 		);
 		$cacheKey = md5(serialize($cacheKey));
