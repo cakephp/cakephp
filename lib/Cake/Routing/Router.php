@@ -1064,7 +1064,7 @@ class Router {
 			$url = $params->query;
 			$params = $params->params;
 		} else {
-			$url = $params['url'];
+			$url = isset($params['url']) ? $params['url'] : null;
 		}
 		$pass = isset($params['pass']) ? $params['pass'] : array();
 		$named = isset($params['named']) ? $params['named'] : array();
