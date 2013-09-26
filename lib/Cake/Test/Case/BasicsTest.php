@@ -151,6 +151,12 @@ class BasicsTest extends CakeTestCase {
 		$_SERVER['HTTPS'] = '';
 		$this->assertFalse(env('HTTPS'));
 
+		$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'http'
+		$this->assertFalse(env('HTTPS'));
+
+		$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https'
+		$this->assertTrue(env('HTTPS'));
+
 		$_SERVER = array();
 
 		$_ENV['SCRIPT_URI'] = 'https://domain.test/a/test.php';
