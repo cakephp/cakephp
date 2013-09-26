@@ -699,7 +699,7 @@ class JsHelperTest extends CakeTestCase {
 	}
 
 /**
- * test set()'ing variables to the Javascript buffer and controlling the output var name.
+ * test set()'ing variables to the JavaScript buffer and controlling the output var name.
  *
  * @return void
  */
