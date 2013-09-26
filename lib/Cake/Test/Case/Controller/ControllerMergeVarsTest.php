@@ -94,7 +94,7 @@ class MergeVarPluginAppController extends MergeVarsAppController {
  *
  * @var array
  */
-	public $helpers = array('JavaScript');
+	public $helpers = array('Js');
 
 /**
  * parent for mergeVars
@@ -205,7 +205,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 
 		$expected = array(
 			'MergeVar' => array('format' => 'html', 'terse'),
-			'JavaScript' => null
+			'Js' => null
 		);
 		$this->assertEquals($expected, $Controller->helpers, 'Helpers are unexpected.');
 
