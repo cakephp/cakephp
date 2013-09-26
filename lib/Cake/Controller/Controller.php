@@ -88,7 +88,7 @@ class Controller extends Object implements CakeEventListener {
  * An array containing the names of helpers this controller uses. The array elements should
  * not contain the "Helper" part of the classname.
  *
- * Example: `public $helpers = array('Html', 'Javascript', 'Time', 'Ajax');`
+ * Example: `public $helpers = array('Html', 'Js', 'Time', 'Ajax');`
  *
  * @var mixed A single name as a string or a list of names as an array.
  * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
@@ -940,7 +940,7 @@ class Controller extends Object implements CakeEventListener {
 		$models = ClassRegistry::keys();
 		foreach ($models as $currentModel) {
 			$currentObject = ClassRegistry::getObject($currentModel);
-			if (is_a($currentObject, 'Model')) {
+			if ($currentObject instanceof Model) {
 				$className = get_class($currentObject);
 				list($plugin) = pluginSplit(App::location($className));
 				$this->request->params['models'][$currentObject->alias] = compact('plugin', 'className');

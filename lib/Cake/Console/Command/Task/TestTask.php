@@ -279,7 +279,7 @@ class TestTask extends BakeTask {
  */
 	public function buildTestSubject($type, $class) {
 		ClassRegistry::flush();
-		App::import($type, $class);
+		App::uses($class, $type);
 		$class = $this->getRealClassName($type, $class);
 		if (strtolower($type) === 'model') {
 			$instance = ClassRegistry::init($class);
@@ -374,9 +374,9 @@ class TestTask extends BakeTask {
  */
 	public function generateFixtureList($subject) {
 		$this->_fixtures = array();
-		if (is_a($subject, 'Model')) {
+		if ($subject instanceof Model) {
 			$this->_processModel($subject);
-		} elseif (is_a($subject, 'Controller')) {
+		} elseif ($subject instanceof Controller) {
 			$this->_processController($subject);
 		}
 		return array_values($this->_fixtures);
