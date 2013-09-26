@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Error;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
+use Cake\View\StringTemplate;
 use Cake\View\View;
 
 /**
@@ -35,7 +36,7 @@ class PaginatorHelper extends Helper {
  *
  * @var array
  */
-	public $helpers = array('Html');
+	public $helpers = ['Html'];
 
 /**
  * Holds the default options for pagination links
@@ -57,6 +58,55 @@ class PaginatorHelper extends Helper {
  * @var array
  */
 	public $options = [];
+
+/**
+ * StringTemplate instance.
+ *
+ * @var Cake\View\StringTemplate
+ */
+	protected $_templater;
+
+/**
+ * The default templates used by PaginatorHelper.
+ *
+ * @var array
+ */
+	protected $_defaultTemplates = [
+		'nextActive' => '<li class="next"><a rel="next" href="{{url}}">{{text}}</a></li>',
+		'nextDisabled' => '<li class="next disabled"><span>{{text}}</span></li>',
+		'prevActive' => '<li class="prev"><a rel="prev" href="{{url}}">{{text}}</a></li>',
+		'prevDisabled' => '<li class="prev disabled"><span>{{text}}</span></li>',
+	];
+
+/**
+ * Constructor
+ *
+ * @param View $View The View this helper is being attached to.
+ * @param array $settings Configuration settings for the helper.
+ */
+	public function __construct(View $View, $settings = []) {
+		parent::__construct($View, $settings);
+
+		$this->_templater = new StringTemplate();
+		$this->_templater->add($this->_defaultTemplates);
+		if (isset($settings['templates'])) {
+			$this->_templater->load($settings['templates']);
+		}
+	}
+
+/**
+ * Get/set templates to use.
+ *
+ * @param string|null|array $templates null or string allow reading templates. An array 
+ *   allows templates to be added.
+ * @return void|string|array
+ */
+	public function templates($templates = null) {
+		if ($templates === null || is_string($templates)) {
+			return $this->_templater->get($templates);
+		}
+		return $this->_templater->add($templates);
+	}
 
 /**
  * Before render callback. Overridden to merge passed args with url options.
@@ -197,28 +247,80 @@ class PaginatorHelper extends Helper {
 	}
 
 /**
+ * Generate an active/inactive link for next/prev methods.
+ *
+ * @param string $text The enabled text for the link.
+ * @param boolean $enabled Whether or not the enabled/disabled version should be created.
+ * @param array $options An array of options from the calling method.
+ * @param array $templates An array of templates with the 'active' and 'disabled' keys.
+ * @return string Generated HTML
+ */
+	protected function _toggledLink($text, $enabled, $options, $templates) {
+		$template = $templates['active'];
+		if (!$enabled) {
+			$text = $options['disabledTitle'];
+			$template = $templates['disabled'];
+		}
+
+		if (!$enabled && $text === false) {
+			return '';
+		}
+		$text = $options['escape'] ? h($text) : $text;
+		$paging = $this->params($options['model']);
+
+		if (!$enabled) {
+			return $this->_templater->format($template, [
+				'text' => $text,
+			]);
+		}
+
+		if (!empty($this->options['url'])) {
+			$options['url'] = array_merge($this->options['url'], $options['url']);
+		}
+		$url = array_merge(
+			$options['url'],
+			['page' => $paging['page'] + $options['step']]
+		);
+		$url = $this->url($url);
+		return $this->_templater->format($template, [
+			'url' => $url,
+			'text' => $text,
+		]);
+	}
+
+/**
  * Generates a "previous" link for a set of paged records
  *
  * ### Options:
  *
- * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
+ * - `disabledTitle` The text to used when the link is disabled. This
+ *   defaults to the same text at the active link. Setting to false will cause
+ *   this method to return ''.
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
- * - `disabledTag` Tag to use instead of A tag when there is no previous page
+ * - `url` Additional URL parameters to use in the generated URL.
  *
  * @param string $title Title for the link. Defaults to '<< Previous'.
- * @param array $options Options for pagination link. See #options for list of keys.
- * @param string $disabledTitle Title when the link is disabled.
- * @param array $disabledOptions Options for the disabled pagination link. See #options for list of keys.
- * @return string A "previous" link or $disabledTitle text if the link is disabled.
+ * @param array $options Options for pagination link. See above for list of keys.
+ * @return string A "previous" link or a disabled link.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::prev
  */
-	public function prev($title = '<< Previous', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
-		$defaults = array(
-			'rel' => 'prev'
-		);
+	public function prev($title = '<< Previous', $options = []) {
+		$defaults = [
+			'url' => [],
+			'model' => $this->defaultModel(),
+			'disabledTitle' => $title,
+			'escape' => true,
+		];
 		$options = array_merge($defaults, (array)$options);
-		return $this->_pagingLink('Prev', $title, $options, $disabledTitle, $disabledOptions);
+		$options['step'] = -1;
+
+		$enabled = $this->hasPrev($options['model']);
+		$templates = [
+			'active' => 'prevActive',
+			'disabled' => 'prevDisabled'
+		];
+		return $this->_toggledLink($title, $enabled, $options, $templates);
 	}
 
 /**
@@ -226,24 +328,34 @@ class PaginatorHelper extends Helper {
  *
  * ### Options:
  *
- * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
+ * - `disabledTitle` The text to used when the link is disabled. This
+ *   defaults to the same text at the active link. Setting to false will cause
+ *   this method to return ''.
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
- * - `disabledTag` Tag to use instead of A tag when there is no next page
+ * - `url` Additional URL parameters to use in the generated URL.
  *
  * @param string $title Title for the link. Defaults to 'Next >>'.
  * @param array $options Options for pagination link. See above for list of keys.
- * @param string $disabledTitle Title when the link is disabled.
- * @param array $disabledOptions Options for the disabled pagination link. See above for list of keys.
  * @return string A "next" link or $disabledTitle text if the link is disabled.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::next
  */
-	public function next($title = 'Next >>', $options = array(), $disabledTitle = null, $disabledOptions = array()) {
-		$defaults = array(
-			'rel' => 'next'
-		);
+	public function next($title = 'Next >>', $options = []) {
+		$defaults = [
+			'url' => [],
+			'model' => $this->defaultModel(),
+			'disabledTitle' => $title,
+			'escape' => true,
+		];
 		$options = array_merge($defaults, (array)$options);
-		return $this->_pagingLink('Next', $title, $options, $disabledTitle, $disabledOptions);
+		$options['step'] = 1;
+
+		$enabled = $this->hasNext($options['model']);
+		$templates = [
+			'active' => 'nextActive',
+			'disabled' =>  'nextDisabled'
+		];
+		return $this->_toggledLink($title, $enabled, $options, $templates);
 	}
 
 /**
@@ -364,73 +476,6 @@ class PaginatorHelper extends Helper {
 			return $url;
 		}
 		return parent::url($url);
-	}
-
-/**
- * Protected method for generating prev/next links
- *
- * @param string $which
- * @param string $title
- * @param array $options
- * @param string $disabledTitle
- * @param array $disabledOptions
- * @return string
- */
-	protected function _pagingLink($which, $title = null, $options = array(), $disabledTitle = null, $disabledOptions = array()) {
-		$check = 'has' . $which;
-		$_defaults = array(
-			'url' => array(), 'step' => 1, 'escape' => true, 'model' => null,
-			'tag' => 'span', 'class' => strtolower($which), 'disabledTag' => null
-		);
-		$options = array_merge($_defaults, (array)$options);
-		$paging = $this->params($options['model']);
-		if (empty($disabledOptions)) {
-			$disabledOptions = $options;
-		}
-
-		if (!$this->{$check}($options['model']) && (!empty($disabledTitle) || !empty($disabledOptions))) {
-			if (!empty($disabledTitle) && $disabledTitle !== true) {
-				$title = $disabledTitle;
-			}
-			$options = array_merge($_defaults, (array)$disabledOptions);
-		} elseif (!$this->{$check}($options['model'])) {
-			return null;
-		}
-
-		foreach (array_keys($_defaults) as $key) {
-			${$key} = $options[$key];
-			unset($options[$key]);
-		}
-
-		if ($this->{$check}($model)) {
-			$url = array_merge(
-				array('page' => $paging['page'] + ($which === 'Prev' ? $step * -1 : $step)),
-				$url
-			);
-			if ($tag === false) {
-				return $this->link(
-					$title,
-					$url,
-					compact('escape', 'model', 'class') + $options
-				);
-			}
-			$link = $this->link($title, $url, compact('escape', 'model') + $options);
-			return $this->Html->tag($tag, $link, compact('class'));
-		}
-		unset($options['rel']);
-		if (!$tag) {
-			if ($disabledTag) {
-				$tag = $disabledTag;
-				$disabledTag = null;
-			} else {
-				$tag = $_defaults['tag'];
-			}
-		}
-		if ($disabledTag) {
-			$title = $this->Html->tag($disabledTag, $title, compact('escape') + $options);
-			return $this->Html->tag($tag, $title, compact('class'));
-		}
-		return $this->Html->tag($tag, $title, compact('escape', 'class') + $options);
 	}
 
 /**
