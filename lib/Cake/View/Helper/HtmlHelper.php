@@ -618,7 +618,7 @@ class HtmlHelper extends AppHelper {
 	}
 
 /**
- * End a Buffered section of Javascript capturing.
+ * End a Buffered section of JavaScript capturing.
  * Generates a script tag inline or in `$scripts_for_layout` depending on the settings
  * used when the scriptBlock was started
  *

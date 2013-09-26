@@ -19,7 +19,7 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
 /**
  * MooTools Engine Helper for JsHelper
  *
- * Provides MooTools specific Javascript for JsHelper.
+ * Provides MooTools specific JavaScript for JsHelper.
  * Assumes that you have the following MooTools packages
  *
  * - Remote, Remote.HTML, Remote.JSON
@@ -144,7 +144,7 @@ class MootoolsEngineHelper extends JsBaseEngineHelper {
  * - 'stop' - Whether you want the event to stopped. (defaults true)
  *
  * @param string $type Type of event to bind to the current dom id
- * @param string $callback The Javascript function you wish to trigger or the function literal
+ * @param string $callback The JavaScript function you wish to trigger or the function literal
  * @param array $options Options for the event.
  * @return string completed event handler
  */
