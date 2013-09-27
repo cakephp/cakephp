@@ -219,7 +219,8 @@ abstract class ControllerTestCase extends CakeTestCase {
 		$options = array_merge(array(
 			'data' => array(),
 			'method' => 'POST',
-			'return' => 'result'
+			'return' => 'result',
+			'named'  => array()
 		), $options);
 
 		$restore = array('get' => $_GET, 'post' => $_POST);
@@ -267,6 +268,9 @@ abstract class ControllerTestCase extends CakeTestCase {
 			$params['return'] = 1;
 			$params['bare'] = 1;
 			$params['requested'] = 1;
+		}
+		if (isset($options['named']) && is_array($options['named'])) {
+			$params['named'] = $options['named'];
 		}
 		$Dispatch->testController = $this->controller;
 		$Dispatch->response = $this->getMock('CakeResponse', array('send'));
