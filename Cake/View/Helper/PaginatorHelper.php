@@ -836,11 +836,8 @@ class PaginatorHelper extends Helper {
  *
  * ### Options:
  *
- * - `tag` The tag wrapping tag you want to use, defaults to 'span'
- * - `before` Content to insert before the link/tag
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
- * - `separator` Content between the generated links, defaults to ' | '
- * - `ellipsis` Content for ellipsis, defaults to '...'
+ * - `escape` Whether or not to HTML escape the text.
  *
  * @param string|integer $last if string use as label for the link, if numeric print page numbers
  * @param array $options Array of options
@@ -849,45 +846,42 @@ class PaginatorHelper extends Helper {
  */
 	public function last($last = 'last >>', $options = array()) {
 		$options = array_merge(
-			array(
-				'tag' => 'span',
-				'before' => null,
-				'model' => $this->defaultModel(),
-				'separator' => ' | ',
-				'ellipsis' => '...',
-				'class' => null
-			),
-		(array)$options);
+			['model' => $this->defaultModel(), 'escape' => true],
+			(array)$options
+		);
 
-		$params = array_merge(array('page' => 1), (array)$this->params($options['model']));
+		$params = array_merge(
+			['page' => 1],
+			(array)$this->params($options['model'])
+		);
 		unset($options['model']);
 
 		if ($params['pageCount'] <= 1) {
 			return false;
 		}
 
-		extract($options);
-		unset($options['tag'], $options['before'], $options['model'], $options['separator'], $options['ellipsis'], $options['class']);
-
 		$out = '';
 		$lower = $params['pageCount'] - $last + 1;
 
 		if (is_int($last) && $params['page'] <= $lower) {
-			if ($before === null) {
-				$before = $ellipsis;
-			}
+			$ellipsis = $this->_templater->format('ellipsis', []);
+			$separator = $this->_templater->format('separator', []);
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
+				$out .= $this->_templater->format('number', [
+					'url' => $this->url(['page' => $i]),
+					'text' => $i
+				]);
 				if ($i != $params['pageCount']) {
 					$out .= $separator;
 				}
 			}
-			$out = $before . $out;
+			$out = $ellipsis . $out;
 		} elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
-			$options += array('rel' => 'last');
-			$out = $before . $this->Html->tag(
-				$tag, $this->link($last, array('page' => $params['pageCount']), $options), compact('class')
-			);
+			$last = $options['escape'] ? h($last) : $last;
+			$out .= $this->_templater->format('last', [
+				'url' => $this->url(['page' => $params['pageCount']]),
+				'text' => $last
+			]);
 		}
 		return $out;
 	}

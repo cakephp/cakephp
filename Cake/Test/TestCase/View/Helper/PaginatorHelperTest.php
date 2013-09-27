@@ -1745,7 +1745,7 @@ class PaginatorHelperTest extends TestCase {
  */
 	public function testFirstAndLastTag() {
 		$this->Paginator->request->params['paging']['Article']['page'] = 2;
-		$result = $this->Paginator->first('<<', array('tag' => 'li', 'class' => 'first'));
+		$result = $this->Paginator->first('<<');
 		$expected = array(
 			'li' => array('class' => 'first'),
 			'a' => array('href' => '/index', 'rel' => 'first'),
@@ -1755,14 +1755,14 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Paginator->last(2, array('tag' => 'li', 'class' => 'last'));
+		$result = $this->Paginator->last(2);
 		$expected = array(
 			'...',
-			'li' => array('class' => 'last'),
+			'<li',
 			array('a' => array('href' => '/index?page=6')), '6', '/a',
 			'/li',
 			' | ',
-			array('li' => array('class' => 'last')),
+			'<li',
 			array('a' => array('href' => '/index?page=7')), '7', '/a',
 			'/li',
 		);
@@ -1887,22 +1887,22 @@ class PaginatorHelperTest extends TestCase {
 	public function testLast() {
 		$result = $this->Paginator->last();
 		$expected = array(
-			'<span',
+			'li' => ['class' => 'last'],
 			'a' => array('href' => '/index?page=7', 'rel' => 'last'),
 			'last &gt;&gt;',
 			'/a',
-			'/span'
+			'/li'
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Paginator->last(1);
 		$expected = array(
 			'...',
-			'<span',
+			'<li',
 			'a' => array('href' => '/index?page=7'),
 			'7',
 			'/a',
-			'/span'
+			'/li'
 		);
 		$this->assertTags($result, $expected);
 
@@ -1911,13 +1911,13 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->last(2);
 		$expected = array(
 			'...',
-			'<span',
+			'<li',
 			array('a' => array('href' => '/index?page=6')), '6', '/a',
-			'/span',
+			'/li',
 			' | ',
-			'<span',
+			'<li',
 			array('a' => array('href' => '/index?page=7')), '7', '/a',
-			'/span',
+			'/li',
 		);
 		$this->assertTags($result, $expected);
 
@@ -1926,7 +1926,7 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
- * undocumented function
+ * test the options for last()
  *
  * @return void
  */
@@ -1946,48 +1946,35 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->last();
 		$expected = array(
-			'<span',
-			array('a' => array(
+			'li' => ['class' => 'last'],
+			'a' => array(
 				'href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC',
 				'rel' => 'last'
-			)),
+			),
 				'last &gt;&gt;', '/a',
-			'/span',
+			'/li',
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Paginator->last(1);
 		$expected = array(
 			'...',
-			'<span',
+			'<li',
 			array('a' => array('href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC')), '15', '/a',
-			'/span',
+			'/li',
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Paginator->last(2);
 		$expected = array(
 			'...',
-			'<span',
+			'<li',
 			array('a' => array('href' => '/index?page=14&amp;sort=Client.name&amp;direction=DESC')), '14', '/a',
-			'/span',
+			'/li',
 			' | ',
-			'<span',
+			'<li',
 			array('a' => array('href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC')), '15', '/a',
-			'/span',
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Paginator->last(2, array('ellipsis' => '<span class="ellipsis">...</span>'));
-		$expected = array(
-			array('span' => array('class' => 'ellipsis')), '...', '/span',
-			'<span',
-			array('a' => array('href' => '/index?page=14&amp;sort=Client.name&amp;direction=DESC')), '14', '/a',
-			'/span',
-			' | ',
-			'<span',
-			array('a' => array('href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC')), '15', '/a',
-			'/span',
+			'/li',
 		);
 		$this->assertTags($result, $expected);
 	}
