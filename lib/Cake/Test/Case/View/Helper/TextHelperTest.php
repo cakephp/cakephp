@@ -241,6 +241,14 @@ class TextHelperTest extends CakeTestCase {
 				'Text with a url http://www.not--work.com and more',
 				'Text with a url <a href="http://www.not--work.com">http://www.not--work.com</a> and more',
 			),
+			array(
+				'Text with a partial www.küchenschöhn-not-working.de URL',
+				'Text with a partial <a href="http://www.küchenschöhn-not-working.de">www.küchenschöhn-not-working.de</a> URL'
+			),
+			array(
+				'Text with a partial http://www.küchenschöhn-not-working.de URL',
+				'Text with a partial <a href="http://www.küchenschöhn-not-working.de">http://www.küchenschöhn-not-working.de</a> URL'
+			)
 		);
 	}
 
@@ -383,7 +391,7 @@ TEXT;
 
 TEXT;
 		$result = $this->Text->autoParagraph($text);
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
 		$result = $this->Text->autoParagraph($text);
 		$text = 'This is a <BR id="test"/><br class="test"> test text';
 		$expected = <<<TEXT
@@ -392,7 +400,7 @@ TEXT;
 
 TEXT;
 		$result = $this->Text->autoParagraph($text);
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
 		$text = <<<TEXT
 This is a test text.
 This is a line return.
@@ -403,7 +411,7 @@ This is a line return.</p>
 
 TEXT;
 		$result = $this->Text->autoParagraph($text);
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
 		$text = <<<TEXT
 This is a test text.
 
@@ -415,7 +423,7 @@ TEXT;
 
 TEXT;
 		$result = $this->Text->autoParagraph($text);
-		$this->assertEquals($expected, $result);
+		$this->assertTextEquals($expected, $result);
 	}
 
 }
