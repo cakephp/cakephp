@@ -136,7 +136,7 @@ class View extends Object {
 	public $layoutPath = null;
 
 /**
- * Turns on or off Cake's conventional mode of applying layout files. On by default.
+ * Turns on or off CakePHP's conventional mode of applying layout files. On by default.
  * Setting to off means that layouts will not be automatically applied to rendered views.
  *
  * @var boolean
@@ -144,7 +144,7 @@ class View extends Object {
 	public $autoLayout = true;
 
 /**
- * File extension. Defaults to Cake's template ".ctp".
+ * File extension. Defaults to CakePHP's template ".ctp".
  *
  * @var string
  */

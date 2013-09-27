@@ -207,7 +207,7 @@ class Controller extends Object implements CakeEventListener {
 	public $View;
 
 /**
- * File extension for view templates. Defaults to Cake's conventional ".ctp".
+ * File extension for view templates. Defaults to CakePHP's conventional ".ctp".
  *
  * @var string
  */
