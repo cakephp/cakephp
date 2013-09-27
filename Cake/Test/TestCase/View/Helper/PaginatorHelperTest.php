@@ -1810,13 +1810,13 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->first();
 		$expected = array(
-			'<span',
+			'li' => ['class' => 'first'],
 			array('a' => array(
 				'href' => Configure::read('App.fullBaseUrl') . '/index?sort=Article.title&amp;direction=DESC', 'rel' => 'first'
 			)),
 			'&lt;&lt; first',
 			'/a',
-			'/span',
+			'/li',
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -1830,23 +1830,23 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params['paging']['Article']['page'] = 3;
 		$result = $this->Paginator->first();
 		$expected = array(
-			'<span',
+			'li' => ['class' => 'first'],
 			'a' => array('href' => '/index', 'rel' => 'first'),
 			'&lt;&lt; first',
 			'/a',
-			'/span'
+			'/li'
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Paginator->first(2);
 		$expected = array(
-			'<span',
+			'<li',
 			array('a' => array('href' => '/index')), '1', '/a',
-			'/span',
+			'/li',
 			' | ',
-			'<span',
+			'<li',
 			array('a' => array('href' => '/index?page=2')), '2', '/a',
-			'/span'
+			'/li'
 		);
 		$this->assertTags($result, $expected);
 
