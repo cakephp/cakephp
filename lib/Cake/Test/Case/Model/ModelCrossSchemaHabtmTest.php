@@ -147,7 +147,7 @@ class ModelCrossSchemaHabtmTest extends BaseModelTest {
 		));
 
 		$results = $Player->saveAll($player, array('validate' => 'first'));
-		$this->assertNotEqual(false, $results);
+		$this->assertNotSame(false, $results);
 		$count = $Player->find('count');
 		$this->assertEquals(5, $count);
 
