@@ -3501,17 +3501,20 @@ class Model extends Object implements CakeEventListener {
 	protected function _clearCache($type = null) {
 		if ($type === null) {
 			if (Configure::read('Cache.check') === true) {
-				$assoc[] = strtolower(Inflector::pluralize($this->alias));
-				$assoc[] = strtolower(Inflector::underscore(Inflector::pluralize($this->alias)));
-				foreach ($this->_associations as $key => $association) {
-					foreach ($this->$association as $key => $className) {
-						$check = strtolower(Inflector::pluralize($className['className']));
-						if (!in_array($check, $assoc)) {
-							$assoc[] = strtolower(Inflector::pluralize($className['className']));
-							$assoc[] = strtolower(Inflector::underscore(Inflector::pluralize($className['className'])));
+				$pluralized = Inflector::pluralize($this->alias);
+				$assoc[$this->alias] = strtolower($pluralized);
+				$assoc[] = strtolower(Inflector::underscore($pluralized));
+				foreach ($this->_associations as $association) {
+					foreach ($this->$association as $associatedClass) {
+						$className = $associatedClass['className'];
+						if (!isset($assoc[$className])) {
+							$pluralized = Inflector::pluralize($className);
+							$assoc[$className] = strtolower($pluralized);
+							$assoc[] = strtolower(Inflector::underscore($pluralized));
 						}
 					}
 				}
+				$assoc = array_unique($assoc);
 				clearCache($assoc);
 				return true;
 			}
