@@ -951,6 +951,9 @@ class DboSourceTest extends CakeTestCase {
  * @return void
  */
 	public function testFieldsCacheKeyWithSchemanameChange() {
+		if ($this->db instanceof Postgres || $this->db instanceof Sqlserver) {
+			$this->markTestSkipped('Cannot run this test with SqlServer or Postgres');
+		}
 		Cache::delete('method_cache', '_cake_core_');
 		DboSource::$methodCache = array();
 		$Article = ClassRegistry::init('Article');
