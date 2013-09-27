@@ -186,9 +186,9 @@ class TextHelper extends AppHelper {
 		$options += array('escape' => true);
 		$this->_placeholders = array();
 
-		$atom = '[a-z0-9!#$%&\'*+\/=?^_`{|}~-]';
+		$atom = '[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]';
 		$text = preg_replace_callback(
-			'/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)+)/i',
+			'/(' . $atom . '+(?:\.' . $atom . '+)*@[\p{L}0-9-]+(?:\.[a-z0-9-]+)+)/ui',
 			array(&$this, '_insertPlaceholder'),
 			$text
 		);
