@@ -17,7 +17,7 @@ Some Handy Links
 
 [The Bakery](http://bakery.cakephp.org) - Tips, tutorials and articles
 
-[API](http://api.cakephp.org) - A reference to Cake's classes
+[API](http://api.cakephp.org) - A reference to CakePHP's classes
 
 [CakePHP TV](http://tv.cakephp.org) - Screen casts from events and video tutorials
 
