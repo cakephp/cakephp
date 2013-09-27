@@ -76,6 +76,8 @@ class PaginatorHelper extends Helper {
 		'nextDisabled' => '<li class="next disabled"><span>{{text}}</span></li>',
 		'prevActive' => '<li class="prev"><a rel="prev" href="{{url}}">{{text}}</a></li>',
 		'prevDisabled' => '<li class="prev disabled"><span>{{text}}</span></li>',
+		'counterRange' => '{{start}} - {{end}} of {{count}}',
+		'counterPages' => '{{page}} of {{pages}}',
 	];
 
 /**
@@ -554,25 +556,23 @@ class PaginatorHelper extends Helper {
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel();
  * - `format` The format string you want to use, defaults to 'pages' Which generates output like '1 of 5'
  *    set to 'range' to generate output like '1 - 3 of 13'. Can also be set to a custom string, containing
- *    the following placeholders `{:page}`, `{:pages}`, `{:current}`, `{:count}`, `{:model}`, `{:start}`, `{:end}` and any
+ *    the following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}` and any
  *    custom content you would like.
- * - `separator` The separator string to use, default to ' of '
  *
  * @param array $options Options for the counter string. See #options for list of keys.
  * @return string Counter string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::counter
  */
-	public function counter($options = array()) {
+	public function counter($options = []) {
 		if (is_string($options)) {
 			$options = array('format' => $options);
 		}
 
 		$options = array_merge(
-			array(
+			[
 				'model' => $this->defaultModel(),
 				'format' => 'pages',
-				'separator' => __d('cake', ' of ')
-			),
+			],
 		$options);
 
 		$paging = $this->params($options['model']);
@@ -590,28 +590,23 @@ class PaginatorHelper extends Helper {
 
 		switch ($options['format']) {
 			case 'range':
-				if (!is_array($options['separator'])) {
-					$options['separator'] = array(' - ', $options['separator']);
-				}
-				$out = $start . $options['separator'][0] . $end . $options['separator'][1];
-				$out .= $paging['count'];
-				break;
 			case 'pages':
-				$out = $paging['page'] . $options['separator'] . $paging['pageCount'];
+				$template = 'counter' . ucfirst($options['format']);
 				break;
 			default:
-				$map = array(
-					'{:page}' => $paging['page'],
-					'{:pages}' => $paging['pageCount'],
-					'{:current}' => $paging['current'],
-					'{:count}' => $paging['count'],
-					'{:start}' => $start,
-					'{:end}' => $end,
-					'{:model}' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
-				);
-				$out = str_replace(array_keys($map), array_values($map), $options['format']);
+				$template = 'counterCustom';
+				$this->_templater->add([$template => $options['format']]);
 		}
-		return $out;
+		$map = [
+			'page' => $paging['page'],
+			'pages' => $paging['pageCount'],
+			'current' => $paging['current'],
+			'count' => $paging['count'],
+			'start' => $start,
+			'end' => $end,
+			'model' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
+		];
+		return $this->_templater->format($template, $map);
 	}
 
 /**
