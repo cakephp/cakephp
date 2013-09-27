@@ -364,6 +364,11 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'Text with <a href="mailto:düsentrieb@küchenschöhn-not-working.de">düsentrieb@küchenschöhn-not-working.de</a> address';
 		$result = $this->Text->autoLinkEmails($text);
 		$this->assertRegExp('#^' . $expected . '$#', $result);
+
+		$text = 'Text with me@subdomain.küchenschöhn.de address';
+		$expected = 'Text with <a href="mailto:me@subdomain.küchenschöhn.de">me@subdomain.küchenschöhn.de</a> address';
+		$result = $this->Text->autoLinkEmails($text);
+		$this->assertRegExp('#^' . $expected . '$#', $result);
 	}
 
 /**
