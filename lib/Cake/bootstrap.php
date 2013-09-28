@@ -1,6 +1,6 @@
 <?php
 /**
- * Basic Cake functionality.
+ * Basic CakePHP functionality.
  *
  * Handles loading of core files needed on every request
  *
