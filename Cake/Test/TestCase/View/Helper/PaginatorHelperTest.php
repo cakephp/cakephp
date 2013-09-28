@@ -245,17 +245,6 @@ class PaginatorHelperTest extends TestCase {
 			'/a'
 		);
 		$this->assertTags($result, $expected);
-
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
-
-		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'desc', 'class' => 'foo'));
-		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'foo asc'),
-			'Title',
-			'/a'
-		);
-		$this->assertTags($result, $expected);
 	}
 
 /**

@@ -83,6 +83,9 @@ class PaginatorHelper extends Helper {
 		'number' => '<li><a href="{{url}}">{{text}}</a></li>',
 		'ellipsis' => '...',
 		'separator' => ' | ',
+		'sort' => '<a href="{{url}}">{{text}}</a>',
+		'sortAsc' => '<a class="asc" href="{{url}}">{{text}}</a>',
+		'sortDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
 	];
 
 /**
@@ -405,21 +408,25 @@ class PaginatorHelper extends Helper {
 			$key === $defaultModel . '.' . $sortKey
 		);
 
+		$template = 'sort';
 		if ($isSorted) {
 			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
-			$class = $dir === 'asc' ? 'desc' : 'asc';
-			if (!empty($options['class'])) {
-				$options['class'] .= ' ' . $class;
-			} else {
-				$options['class'] = $class;
-			}
+			$template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
 		}
 		if (is_array($title) && array_key_exists($dir, $title)) {
 			$title = $title[$dir];
 		}
 
-		$url = array_merge(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
-		return $this->link($title, $url, $options);
+		$url = array_merge(
+			['sort' => $key, 'direction' => $dir],
+			$url,
+			['order' => null]
+		);
+		$vars = [
+			'text' => $title,
+			'url' => $this->url($url),
+		];
+		return $this->_templater->format($template, $vars);
 	}
 
 /**
