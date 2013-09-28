@@ -27,6 +27,15 @@ App::uses('CakeEmail', 'Network/Email');
 class TestCakeEmail extends CakeEmail {
 
 /**
+ * Config classname.
+ *
+ * Use a the testing config class in this file.
+ *
+ * @var string
+ */
+	protected $_configClass = 'TestEmailConfig';
+
+/**
  * Config
  *
  */
@@ -79,7 +88,7 @@ class TestCakeEmail extends CakeEmail {
  * EmailConfig class
  *
  */
-class EmailConfig {
+class TestEmailConfig {
 
 /**
  * test config
@@ -841,7 +850,7 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testConfigString() {
-		$configs = new EmailConfig();
+		$configs = new TestEmailConfig();
 		$this->CakeEmail->config('test');
 
 		$result = $this->CakeEmail->to();
@@ -1767,8 +1776,8 @@ class CakeEmailTest extends CakeTestCase {
  * @return void
  */
 	public function testConstructWithConfigString() {
-		$configs = new EmailConfig();
-		$this->CakeEmail = new CakeEmail('test');
+		$configs = new TestEmailConfig();
+		$this->CakeEmail = new TestCakeEmail('test');
 
 		$result = $this->CakeEmail->to();
 		$this->assertEquals($configs->test['to'], $result);

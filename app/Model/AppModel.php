@@ -1,6 +1,6 @@
 <?php
 /**
- * Application model for Cake.
+ * Application model for CakePHP.
  *
  * This file is application-wide model file. You can put all
  * application-wide model-related methods here.
