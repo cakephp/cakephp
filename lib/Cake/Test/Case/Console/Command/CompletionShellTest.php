@@ -22,6 +22,7 @@ App::uses('CompletionShell', 'Console/Command');
 App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
 App::uses('Shell', 'Console');
+App::uses('CommandTask', 'Console/Command/Task');
 
 /**
  * Class TestCompletionStringOutput
@@ -67,6 +68,12 @@ class CompletionShellTest extends CakeTestCase {
 
 		$this->Shell = $this->getMock(
 			'CompletionShell',
+			array('in', '_stop', 'clear'),
+			array($out, $out, $in)
+		);
+
+		$this->Shell->Command = $this->getMock(
+			'CommandTask',
 			array('in', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
