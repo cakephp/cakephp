@@ -114,7 +114,7 @@ class ShellDispatcher {
 	}
 
 /**
- * Initializes the environment and loads the Cake core.
+ * Initializes the environment and loads the CakePHP core.
  *
  * @return boolean Success.
  */

@@ -2,7 +2,7 @@
 /**
  * This is email configuration file.
  *
- * Use it to configure email transports of Cake.
+ * Use it to configure email transports of CakePHP.
  *
  * PHP 5
  *
