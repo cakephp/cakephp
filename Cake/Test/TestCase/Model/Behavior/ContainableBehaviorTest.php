@@ -3478,7 +3478,7 @@ class ContainableBehaviorTest extends TestCase {
 					'joinTable' => 'articles_tags',
 					'foreignKey' => 'article_id',
 					'associationForeignKey' => 'tag_id',
-					// LENGHT function mysql-only, using LIKE does almost the same
+					// LENGTH function mysql-only, using LIKE does almost the same
 					'conditions' => "ShortTag.tag LIKE '???'"
 				)
 			)

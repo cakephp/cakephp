@@ -343,6 +343,13 @@ class Email {
 	protected $_emailPattern = null;
 
 /**
+ * The classname used for email configuration.
+ *
+ * @var string
+ */
+	protected $_configClass = 'EmailConfig';
+
+/**
  * Constructor
  *
  * @param array|string $config Array of configs, or string to load configs from email.php

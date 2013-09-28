@@ -165,6 +165,7 @@ class ShellTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 
 		Plugin::load('TestPlugin');
+		$this->Shell->tasks = array('DbConfig' => array('one', 'two'));
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');
 		$this->Shell->initialize();
 

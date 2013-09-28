@@ -24,13 +24,13 @@ use Cake\Core\ClassLoader;
 require_once 'PHPUnit/TextUI/TestRunner.php';
 
 /**
- * A custom test runner for Cake's use of PHPUnit.
+ * A custom test runner for CakePHP's use of PHPUnit.
  *
  */
 class TestRunner extends \PHPUnit_TextUI_TestRunner {
 
 /**
- * Lets us pass in some options needed for cake's webrunner.
+ * Lets us pass in some options needed for CakePHP's webrunner.
  *
  * @param mixed $loader
  * @param array $params list of options to be used for this run

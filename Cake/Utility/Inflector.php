@@ -18,7 +18,7 @@ namespace Cake\Utility;
  * Pluralize and singularize English words.
  *
  * Inflector pluralizes and singularizes English nouns.
- * Used by Cake's naming conventions throughout the framework.
+ * Used by CakePHP's naming conventions throughout the framework.
  *
  * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html
  */

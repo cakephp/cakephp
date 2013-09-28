@@ -305,7 +305,10 @@ class AuthComponent extends Component {
 			return $this->_unauthenticated($controller);
 		}
 
-		if (empty($this->authorize) || $this->isAuthorized($this->user())) {
+		if ($this->_isLoginAction($controller) ||
+			empty($this->authorize) ||
+			$this->isAuthorized($this->user())
+		) {
 			return true;
 		}
 
@@ -348,6 +351,11 @@ class AuthComponent extends Component {
 		}
 
 		if ($this->_isLoginAction($controller)) {
+			if (empty($controller->request->data)) {
+				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
+					$this->Session->write('Auth.redirect', $controller->referer(null, true));
+				}
+			}
 			return true;
 		}
 
@@ -368,9 +376,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Normalizes $loginAction and checks if current request url is same as login
- * action. If current url is same as login action, referrer url is saved in session
- * which is later accessible using redirectUrl().
+ * Normalizes $loginAction and checks if current request url is same as login action.
  *
  * @param Controller $controller A reference to the controller object.
  * @return boolean True if current action is login action else false.
@@ -383,15 +389,7 @@ class AuthComponent extends Component {
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
 
-		if ($loginAction == $url) {
-			if (empty($controller->request->data)) {
-				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
-					$this->Session->write('Auth.redirect', $controller->referer(null, true));
-				}
-			}
-			return true;
-		}
-		return false;
+		return $loginAction === $url;
 	}
 
 /**

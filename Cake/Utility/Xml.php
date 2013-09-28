@@ -26,7 +26,7 @@ use Cake\Network\Http\Client;
 use \DOMDocument;
 
 /**
- * XML handling for Cake.
+ * XML handling for CakePHP.
  *
  * The methods in these classes enable the datasources that use XML to work.
  *
