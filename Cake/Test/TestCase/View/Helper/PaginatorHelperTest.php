@@ -248,6 +248,30 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
+ * test sort() with escape option
+ */
+	public function testSortEscape() {
+		$result = $this->Paginator->sort('title', 'TestTitle >');
+		$expected = array(
+			'a' => array('href' => '/index?sort=title&amp;direction=asc'),
+			'TestTitle &gt;',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->sort('title', 'TestTitle >', ['escape' => true]);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Paginator->sort('title', 'TestTitle >', ['escape' => false]);
+		$expected = array(
+			'a' => array('href' => '/index?sort=title&amp;direction=asc'),
+			'TestTitle >',
+			'/a'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test that sort() works with virtual field order options.
  *
  * @return void

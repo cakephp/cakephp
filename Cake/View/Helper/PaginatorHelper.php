@@ -383,8 +383,11 @@ class PaginatorHelper extends Helper {
  *  key the returned link will sort by 'desc'.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sort
  */
-	public function sort($key, $title = null, $options = array()) {
-		$options = array_merge(array('url' => array(), 'model' => null), $options);
+	public function sort($key, $title = null, $options = []) {
+		$options = array_merge(
+			['url' => array(), 'model' => null, 'escape' => true],
+			$options
+		);
 		$url = $options['url'];
 		unset($options['url']);
 
@@ -423,7 +426,7 @@ class PaginatorHelper extends Helper {
 			['order' => null]
 		);
 		$vars = [
-			'text' => $title,
+			'text' => $options['escape'] ? h($title) : $title,
 			'url' => $this->url($url),
 		];
 		return $this->_templater->format($template, $vars);
