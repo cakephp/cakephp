@@ -1883,7 +1883,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for'),
 			'Cost Decimal',
 			'/label',
-			'input' => array('name', 'type' => 'number', 'id'),
+			'input' => array('name', 'type' => 'number', 'step' => '0.001', 'id'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
