@@ -31,7 +31,7 @@ class SqliteSchema extends BaseSchema {
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @throws Cake\Database\Exception
+ * @throws Cake\Database\Exception when unable to parse column type
  * @return array Array of column information.
  */
 	protected function _convertColumn($column) {
@@ -191,6 +191,7 @@ class SqliteSchema extends BaseSchema {
 /**
  * {@inheritdoc}
  *
+ * @throws Cake\Database\Exception when the column type is unknown
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
