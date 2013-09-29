@@ -25,45 +25,22 @@ use Cake\Database\Schema\Table;
 class PostgresSchema extends BaseSchema {
 
 /**
- * The driver instance being used.
+ * {@inheritdoc}
  *
- * @var Cake\Database\Driver\Postgres
- */
-	protected $_driver;
-
-/**
- * Constructor
- *
- * @param Cake\Database\Driver\Postgres $driver Driver to use.
- * @return void
- */
-	public function __construct($driver) {
-		$this->_driver = $driver;
-	}
-
-/**
- * Get the SQL to list the tables
- *
- * @param array $config The connection configuration to use for
- *    getting tables from.
- * @return array An array of (sql, params) to execute.
  */
 	public function listTablesSql($config) {
-		$sql = "SELECT table_name as name FROM information_schema.tables WHERE table_schema = ? ORDER BY name";
+		$sql = 'SELECT table_name as name FROM information_schema.tables WHERE table_schema = ? ORDER BY name';
 		$schema = empty($config['schema']) ? 'public' : $config['schema'];
 		return [$sql, [$schema]];
 	}
 
 /**
- * Get the SQL to describe a table in Postgres.
+ * {@inheritdoc}
  *
- * @param string $table The table name to describe
- * @param array $config The connection configuration to use
- * @return array An array of (sql, params) to execute.
  */
-	public function describeTableSql($table, $config) {
+	public function describeTableSql($name, $config) {
 		$sql =
-		"SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type,
+		'SELECT DISTINCT table_schema AS schema, column_name AS name, data_type AS type,
 			is_nullable AS null, column_default AS default,
 			character_maximum_length AS char_length,
 			d.description as comment,
@@ -74,10 +51,10 @@ class PostgresSchema extends BaseSchema {
 		LEFT JOIN pg_catalog.pg_index i ON (i.indrelid = cl.oid AND i.indkey[0] = c.ordinal_position)
 		LEFT JOIN pg_catalog.pg_description d on (cl.oid = d.objoid AND d.objsubid = c.ordinal_position)
 		WHERE table_name = ? AND table_schema = ? AND table_catalog = ?
-		ORDER BY ordinal_position";
+		ORDER BY ordinal_position';
 
 		$schema = empty($config['schema']) ? 'public' : $config['schema'];
-		return [$sql, [$table, $schema, $config['database']]];
+		return [$sql, [$name, $schema, $config['database']]];
 	}
 
 /**
@@ -90,7 +67,7 @@ class PostgresSchema extends BaseSchema {
  * @throws Cake\Database\Exception when column cannot be parsed.
  * @return array Array of column information.
  */
-	public function convertColumn($column) {
+	protected function _convertColumn($column) {
 		preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
 			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
@@ -149,14 +126,11 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Convert field description results into abstract schema fields.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object to append fields to.
- * @param array $row The row data from describeTableSql
- * @return void
  */
 	public function convertFieldDescription(Table $table, $row) {
-		$field = $this->convertColumn($row['type']);
+		$field = $this->_convertColumn($row['type']);
 
 		if ($field['type'] === 'boolean') {
 			if ($row['default'] === 'true') {
@@ -177,14 +151,11 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Get the SQL to describe the indexes in a table.
+ * {@inheritdoc}
  *
- * @param string $table The table name to get information on.
- * @param array $config The configuration containing the schema name.
- * @return array An array of (sql, params) to execute.
  */
 	public function describeIndexSql($table, $config) {
-		$sql = "SELECT
+		$sql = 'SELECT
 			c2.relname,
 			i.indisprimary,
 			i.indisunique,
@@ -203,7 +174,7 @@ class PostgresSchema extends BaseSchema {
 		)
 		AND c.oid = i.indrelid
 		AND i.indexrelid = c2.oid
-		ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname";
+		ORDER BY i.indisprimary DESC, i.indisunique DESC, c2.relname';
 
 		$schema = 'public';
 		if (!empty($config['schema'])) {
@@ -213,12 +184,8 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Convert an index into the abstract description.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object to append
- *    an index or constraint to.
- * @param array $row The row data from describeIndexSql
- * @return void
  */
 	public function convertIndexDescription(Table $table, $row) {
 		$type = Table::INDEX_INDEX;
@@ -245,12 +212,11 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL to describe the foreign keys on a table.
+ * {@inheritdoc}
  *
- * @return array List of sql, params
  */
-	public function describeForeignKeySql($table, $config = []) {
-		$sql = "SELECT
+	public function describeForeignKeySql($table, $config) {
+		$sql = 'SELECT
 			r.conname AS name,
 			r.confupdtype AS update_type,
 			r.confdeltype AS delete_type,
@@ -264,19 +230,17 @@ class PostgresSchema extends BaseSchema {
 				AND n.nspname = ?
 				AND n.oid = c.relnamespace
 			)
-			AND r.contype = 'f'";
+			AND r.contype = "f"';
+
 		$schema = empty($config['schema']) ? 'public' : $config['schema'];
 		return [$sql, [$table, $schema]];
 	}
 
 /**
- * Convert a foreign key description into constraints on the Table object.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Table $table The table instance to populate.
- * @param array $row The row of data.
- * @return void
  */
-	public function convertForeignKey(Table $table, $row) {
+	public function convertForeignKeyDescription(Table $table, $row) {
 		preg_match('/REFERENCES ([^\)]+)\(([^\)]+)\)/', $row['definition'], $matches);
 		$tableName = $matches[1];
 		$column = $matches[2];
@@ -296,10 +260,8 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Convert Postgres on clauses to the abstract ones.
+ * {@inheritdoc}
  *
- * @param string $clause
- * @return string|null
  */
 	protected function _convertOnClause($clause) {
 		if ($clause === 'r') {
@@ -315,11 +277,8 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single column.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
- * @param string $name The name of the column.
- * @return string SQL fragment.
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -389,11 +348,8 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single index
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
- * @param string $name The name of the column.
- * @return string SQL fragment.
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);
@@ -409,11 +365,8 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single constraint
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
- * @param string $name The name of the column.
- * @return string SQL fragment.
  */
 	public function constraintSql(Table $table, $name) {
 		$data = $table->constraint($name);
@@ -453,13 +406,8 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL to create a table.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table Table instance.
- * @param array $columns The columns to go inside the table.
- * @param array $constraints The constraints for the table.
- * @param array $indexes The indexes for the table.
- * @return string Complete CREATE TABLE statement
  */
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = array_merge($columns, $constraints);
@@ -484,15 +432,13 @@ class PostgresSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL to truncate a table.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table Table instance
- * @return array SQL statements to drop truncate a table.
  */
 	public function truncateTableSql(Table $table) {
 		$name = $this->_driver->quoteIdentifier($table->name());
 		return [
-			sprintf("TRUNCATE %s RESTART IDENTITY", $name)
+			sprintf('TRUNCATE %s RESTART IDENTITY', $name)
 		];
 	}
 

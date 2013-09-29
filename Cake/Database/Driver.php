@@ -16,8 +16,6 @@
  */
 namespace Cake\Database;
 
-use \Cake\Database\SqlDialectTrait;
-
 /**
  * Represents a database diver containing all specificities for
  * a database engine including its SQL dialect

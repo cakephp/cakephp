@@ -21,56 +21,32 @@ use Cake\Database\Schema\Table;
 
 /**
  * Schema management/reflection features for MySQL
+ *
  */
 class MysqlSchema extends BaseSchema {
 
 /**
- * The driver instance being used.
+ * {@inheritdoc}
  *
- * @var Cake\Database\Driver\Mysql
  */
-	protected $_driver;
-
-/**
- * Constructor
- *
- * @param Cake\Database\Driver $driver The driver to use.
- * @return void
- */
-	public function __construct($driver) {
-		$this->_driver = $driver;
+	public function listTablesSql($config) {
+		return ['SHOW TABLES FROM ?', [$config['database']]];
 	}
 
 /**
- * Get the SQL to list the tables in MySQL
+ * {@inheritdoc}
  *
- * @param array $config The connection configuration to use for
- *    getting tables from.
- * @return array An array of (sql, params) to execute.
  */
-	public function listTablesSql(array $config) {
-		return ["SHOW TABLES FROM " . $this->_driver->quoteIdentifier($config['database']), []];
+	public function describeTableSql($name, $config) {
+		return ['SHOW FULL COLUMNS FROM ?', [$name]];
 	}
 
 /**
- * Get the SQL to describe a table in MySQL.
+ * {@inheritdoc}
  *
- * @param string $table The table name to describe.
- * @return array An array of (sql, params) to execute.
  */
-	public function describeTableSql($table) {
-		return ["SHOW FULL COLUMNS FROM " . $this->_driver->quoteIdentifier($table), []];
-	}
-
-/**
- * Get the SQL to describe the indexes in a table.
- *
- * @param string $table The table name to get information on.
- * @return array An array of (sql, params) to execute.
- */
-	public function describeIndexSql($table) {
-		$sql = sprintf('SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($table));
-		return [$sql, []];
+	public function describeIndexSql($table, $config) {
+		return ['SHOW INDEXES FROM ?', [$table]];
 	}
 
 /**
@@ -82,7 +58,7 @@ class MysqlSchema extends BaseSchema {
  * @return array Array of column information.
  * @throws Cake\Database\Exception When column type cannot be parsed.
  */
-	public function convertColumn($column) {
+	protected function _convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
 			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
@@ -133,14 +109,11 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * Convert field description results into abstract schema fields.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object to append fields to.
- * @param array $row The row data from describeTableSql
- * @return void
  */
 	public function convertFieldDescription(Table $table, $row) {
-		$field = $this->convertColumn($row['Type']);
+		$field = $this->_convertColumn($row['Type']);
 		$field += [
 			'null' => $row['Null'] === 'YES' ? true : false,
 			'default' => $row['Default'],
@@ -151,12 +124,8 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * Convert an index into the abstract description.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object to append
- *    an index or constraint to.
- * @param array $row The row data from describeIndexSql
- * @return void
  */
 	public function convertIndexDescription(Table $table, $row) {
 		$type = null;
@@ -181,8 +150,8 @@ class MysqlSchema extends BaseSchema {
 			$length[$row['Column_name']] = $row['Sub_part'];
 		}
 		$isIndex = (
-			$type == Table::INDEX_INDEX ||
-			$type == Table::INDEX_FULLTEXT
+			$type === Table::INDEX_INDEX ||
+			$type === Table::INDEX_FULLTEXT
 		);
 		if ($isIndex) {
 			$existing = $table->index($name);
@@ -190,8 +159,7 @@ class MysqlSchema extends BaseSchema {
 			$existing = $table->constraint($name);
 		}
 
-		// MySQL multi column indexes come back
-		// as multiple rows.
+		// MySQL multi column indexes come back as multiple rows.
 		if (!empty($existing)) {
 			$columns = array_merge($existing['columns'], $columns);
 			$length = array_merge($existing['length'], $length);
@@ -212,27 +180,23 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL to describe the foreign keys on a table.
+ * {@inheritdoc}
  *
- * @return array List of sql, params
  */
 	public function describeForeignKeySql($table, $config) {
 		$sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
 			INNER JOIN information_schema.referential_constraints AS rc
 			ON (kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME)
-			WHERE kcu.TABLE_SCHEMA = ?
-			AND kcu.TABLE_NAME = ?';
+			WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ?';
+
 		return [$sql, [$config['database'], $table]];
 	}
 
 /**
- * Convert a foreign key description into constraints on the Table object.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Table $table The table instance to populate.
- * @param array $row The row of data.
- * @return void
  */
-	public function convertForeignKey(Table $table, $row) {
+	public function convertForeignKeyDescription(Table $table, $row) {
 		$data = [
 			'type' => Table::CONSTRAINT_FOREIGN,
 			'columns' => [$row['COLUMN_NAME']],
@@ -245,46 +209,36 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL to truncate a table.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table Table instance
- * @return array TRUNCATE TABLE sql
  */
 	public function truncateTableSql(Table $table) {
-		return [sprintf("TRUNCATE TABLE `%s`", $table->name())];
+		return [sprintf('TRUNCATE TABLE `%s`', $table->name())];
 	}
 
 /**
- * Generate the SQL to create a table.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table Table instance
- * @param array $columns The columns to go inside the table.
- * @param array $constraints The constraints for the table.
- * @param array $indexes The indexes for the table.
- * @return array Complete CREATE TABLE statement(s)
  */
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$content = implode(",\n", array_merge($columns, $constraints, $indexes));
 		$content = sprintf("CREATE TABLE `%s` (\n%s\n)", $table->name(), $content);
 		$options = $table->options();
 		if (isset($options['engine'])) {
-			$content .= sprintf(" ENGINE=%s", $options['engine']);
+			$content .= sprintf(' ENGINE=%s', $options['engine']);
 		}
 		if (isset($options['charset'])) {
-			$content .= sprintf(" DEFAULT CHARSET=%s", $options['charset']);
+			$content .= sprintf(' DEFAULT CHARSET=%s', $options['charset']);
 		}
 		if (isset($options['collate'])) {
-			$content .= sprintf(" COLLATE=%s", $options['collate']);
+			$content .= sprintf(' COLLATE=%s', $options['collate']);
 		}
 		return [$content];
 	}
 
 /**
- * Generate the SQL fragment for a single column in MySQL
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
- * @param string $name The name of the column.
- * @return string SQL fragment.
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -356,11 +310,8 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL fragments for defining table constraints.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
- * @param string $name The name of the column.
- * @return string SQL fragment.
  */
 	public function constraintSql(Table $table, $name) {
 		$data = $table->constraint($name);
@@ -382,11 +333,8 @@ class MysqlSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single index in MySQL
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
- * @param string $name The name of the column.
- * @return string SQL fragment.
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);
