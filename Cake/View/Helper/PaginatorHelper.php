@@ -81,6 +81,7 @@ class PaginatorHelper extends Helper {
 		'first' => '<li class="first"><a rel="first" href="{{url}}">{{text}}</a></li>',
 		'last' => '<li class="last"><a rel="last" href="{{url}}">{{text}}</a></li>',
 		'number' => '<li><a href="{{url}}">{{text}}</a></li>',
+		'current' => '<li class="active"><span>{{text}}</span></li>',
 		'ellipsis' => '...',
 		'separator' => ' | ',
 		'sort' => '<a href="{{url}}">{{text}}</a>',
@@ -639,32 +640,29 @@ class PaginatorHelper extends Helper {
  * - `after` Content to be inserted after the numbers
  * - `model` Model to create numbers for, defaults to PaginatorHelper::defaultModel()
  * - `modulus` how many numbers to include on either side of the current page, defaults to 8.
- * - `separator` Separator content defaults to ' | '
- * - `tag` The tag to wrap links in, defaults to 'span'
  * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
  *    links to generate.
  * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
  *    links to generate.
- * - `ellipsis` Ellipsis content, defaults to '...'
- * - `class` Class for wrapper tag
- * - `currentClass` Class for wrapper tag on current active page, defaults to 'current'
- * - `currentTag` Tag to use for current page number, defaults to null
  *
- * @param array $options Options for the numbers, (before, after, model, modulus, separator)
+ * The generated number links will include the 'ellipsis' template when the `first` and `last` options
+ * are used and a range of page links will not be generated because they fall outside the range defined
+ * by modulus.
+ *
+ * @param array $options Options for the numbers, (before, after, model, modulus)
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::numbers
  */
 	public function numbers($options = array()) {
 		if ($options === true) {
 			$options = array(
-				'before' => ' | ', 'after' => ' | ', 'first' => 'first', 'last' => 'last'
+				'first' => 'first', 'last' => 'last'
 			);
 		}
 
 		$defaults = array(
-			'tag' => 'span', 'before' => null, 'after' => null, 'model' => $this->defaultModel(), 'class' => null,
-			'modulus' => '8', 'separator' => ' | ', 'first' => null, 'last' => null, 'ellipsis' => '...',
-			'currentClass' => 'current', 'currentTag' => null
+			'before' => null, 'after' => null, 'model' => $this->defaultModel(),
+			'modulus' => '8', 'first' => null, 'last' => null,
 		);
 		$options += $defaults;
 
@@ -675,96 +673,103 @@ class PaginatorHelper extends Helper {
 			return false;
 		}
 
-		extract($options);
-		unset($options['tag'], $options['before'], $options['after'], $options['model'],
-			$options['modulus'], $options['separator'], $options['first'], $options['last'],
-			$options['ellipsis'], $options['class'], $options['currentClass'], $options['currentTag']
-		);
-
 		$out = '';
+		$separator = $this->_templater->format('separator', []);
+		$ellipsis = $this->_templater->format('ellipsis', []);
 
-		if ($modulus && $params['pageCount'] > $modulus) {
-			$half = intval($modulus / 2);
+		if ($options['modulus'] && $params['pageCount'] > $options['modulus']) {
+			$half = intval($options['modulus'] / 2);
 			$end = $params['page'] + $half;
 
 			if ($end > $params['pageCount']) {
 				$end = $params['pageCount'];
 			}
-			$start = $params['page'] - ($modulus - ($end - $params['page']));
+			$start = $params['page'] - ($options['modulus'] - ($end - $params['page']));
 			if ($start <= 1) {
 				$start = 1;
-				$end = $params['page'] + ($modulus - $params['page']) + 1;
+				$end = $params['page'] + ($options['modulus'] - $params['page']) + 1;
 			}
 
-			if ($first && $start > 1) {
-				$offset = ($start <= (int)$first) ? $start - 1 : $first;
+			if ($options['first'] && $start > 1) {
+				$offset = ($start <= (int)$options['first']) ? $start - 1 : $options['first'];
+				$out .= $this->first($offset);
 				if ($offset < $start - 1) {
-					$out .= $this->first($offset, compact('tag', 'separator', 'ellipsis', 'class'));
+					$out .= $ellipsis;
 				} else {
-					$out .= $this->first($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('after' => $separator));
+					$out .= $separator;
 				}
 			}
 
-			$out .= $before;
+			$out .= $options['before'];
 
 			for ($i = $start; $i < $params['page']; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class')) . $separator;
+				$vars = [
+					'text' => $i,
+					'url' => $this->url(['page' => $i]),
+				];
+				$out .= $this->_templater->format('number', $vars) . $separator;
 			}
 
-			if ($class) {
-				$currentClass .= ' ' . $class;
-			}
-			if ($currentTag) {
-				$out .= $this->Html->tag($tag, $this->Html->tag($currentTag, $params['page']), array('class' => $currentClass));
-			} else {
-				$out .= $this->Html->tag($tag, $params['page'], array('class' => $currentClass));
-			}
+			$out .= $this->_templater->format('current', [
+				'text' => $params['page'],
+				'url' => $this->url(['page' => $params['page']]),
+			]);
+
 			if ($i != $params['pageCount']) {
 				$out .= $separator;
 			}
 
 			$start = $params['page'] + 1;
 			for ($i = $start; $i < $end; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class')) . $separator;
+				$vars = [
+					'text' => $i,
+					'url' => $this->url(['page' => $i]),
+				];
+				$out .= $this->_templater->format('number', $vars) . $separator;
 			}
 
 			if ($end != $params['page']) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $end), $options), compact('class'));
+				$vars = [
+					'text' => $i,
+					'url' => $this->url(['page' => $end]),
+				];
+				$out .= $this->_templater->format('number', $vars);
 			}
 
-			$out .= $after;
+			$out .= $options['after'];
 
-			if ($last && $end < $params['pageCount']) {
-				$offset = ($params['pageCount'] < $end + (int)$last) ? $params['pageCount'] - $end : $last;
-				if ($offset <= $last && $params['pageCount'] - $end > $offset) {
-					$out .= $this->last($offset, compact('tag', 'separator', 'ellipsis', 'class'));
+			if ($options['last'] && $end < $params['pageCount']) {
+				$offset = ($params['pageCount'] < $end + (int)$options['last']) ? $params['pageCount'] - $end : $options['last'];
+				if ($offset <= $options['last'] && $params['pageCount'] - $end > $offset) {
+					$out .= $ellipsis;
 				} else {
-					$out .= $this->last($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('before' => $separator));
+					$out .= $separator;
 				}
+				$out .= $this->last($offset);
 			}
 
 		} else {
-			$out .= $before;
+			$out .= $options['before'];
 
 			for ($i = 1; $i <= $params['pageCount']; $i++) {
 				if ($i == $params['page']) {
-					if ($class) {
-						$currentClass .= ' ' . $class;
-					}
-					if ($currentTag) {
-						$out .= $this->Html->tag($tag, $this->Html->tag($currentTag, $i), array('class' => $currentClass));
-					} else {
-						$out .= $this->Html->tag($tag, $i, array('class' => $currentClass));
-					}
+					$out .= $this->_templater->format('current', [
+						'text' => $params['page'],
+						'url' => $this->url(['page' => $params['page']]),
+					]);
 				} else {
-					$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
+					$vars = [
+						'text' => $i,
+						'url' => $this->url(['page' => $i]),
+					];
+					$out .= $this->_templater->format('number', $vars);
 				}
 				if ($i != $params['pageCount']) {
 					$out .= $separator;
 				}
 			}
 
-			$out .= $after;
+			$out .= $options['after'];
 		}
 
 		return $out;
