@@ -1770,7 +1770,6 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->last(2);
 		$expected = array(
-			'...',
 			'<li',
 			array('a' => array('href' => '/index?page=6')), '6', '/a',
 			'/li',
@@ -1910,7 +1909,6 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->last(1);
 		$expected = array(
-			'...',
 			'<li',
 			'a' => array('href' => '/index?page=7'),
 			'7',
@@ -1923,7 +1921,6 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->last(2);
 		$expected = array(
-			'...',
 			'<li',
 			array('a' => array('href' => '/index?page=6')), '6', '/a',
 			'/li',
@@ -1971,7 +1968,6 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->last(1);
 		$expected = array(
-			'...',
 			'<li',
 			array('a' => array('href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC')), '15', '/a',
 			'/li',
@@ -1980,7 +1976,6 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->last(2);
 		$expected = array(
-			'...',
 			'<li',
 			array('a' => array('href' => '/index?page=14&amp;sort=Client.name&amp;direction=DESC')), '14', '/a',
 			'/li',

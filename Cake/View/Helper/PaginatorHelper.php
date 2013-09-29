@@ -812,7 +812,6 @@ class PaginatorHelper extends Helper {
 		$out = '';
 
 		if (is_int($first) && $params['page'] >= $first) {
-			$ellipsis = $this->_templater->format('ellipsis', []);
 			$separator = $this->_templater->format('separator', []);
 			for ($i = 1; $i <= $first; $i++) {
 				$out .= $this->_templater->format('number', [
@@ -874,7 +873,6 @@ class PaginatorHelper extends Helper {
 		$lower = $params['pageCount'] - $last + 1;
 
 		if (is_int($last) && $params['page'] <= $lower) {
-			$ellipsis = $this->_templater->format('ellipsis', []);
 			$separator = $this->_templater->format('separator', []);
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
 				$out .= $this->_templater->format('number', [
@@ -885,7 +883,6 @@ class PaginatorHelper extends Helper {
 					$out .= $separator;
 				}
 			}
-			$out = $ellipsis . $out;
 		} elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
 			$last = $options['escape'] ? h($last) : $last;
 			$out .= $this->_templater->format('last', [
