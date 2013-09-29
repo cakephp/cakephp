@@ -1147,7 +1147,7 @@ class FormHelper extends AppHelper {
 				'boolean' => 'checkbox', 'timestamp' => 'datetime',
 				'text' => 'textarea', 'time' => 'time',
 				'date' => 'date', 'float' => 'number',
-				'integer' => 'number'
+				'integer' => 'number', 'decimal' => 'number'
 			);
 
 			if (isset($this->map[$type])) {
