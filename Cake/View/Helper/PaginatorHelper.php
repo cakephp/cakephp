@@ -660,7 +660,7 @@ class PaginatorHelper extends Helper {
 
 		$defaults = array(
 			'before' => null, 'after' => null, 'model' => $this->defaultModel(),
-			'modulus' => '8', 'first' => null, 'last' => null,
+			'modulus' => 8, 'first' => null, 'last' => null,
 		);
 		$options += $defaults;
 
