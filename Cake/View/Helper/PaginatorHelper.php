@@ -82,7 +82,7 @@ class PaginatorHelper extends Helper {
 		'last' => '<li class="last"><a rel="last" href="{{url}}">{{text}}</a></li>',
 		'number' => '<li><a href="{{url}}">{{text}}</a></li>',
 		'current' => '<li class="active"><span>{{text}}</span></li>',
-		'ellipsis' => '...',
+		'ellipsis' => '<li class="ellipsis">...</li>',
 		'separator' => ' | ',
 		'sort' => '<a href="{{url}}">{{text}}</a>',
 		'sortAsc' => '<a class="asc" href="{{url}}">{{text}}</a>',
