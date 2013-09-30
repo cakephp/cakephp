@@ -47,7 +47,6 @@ class PaginatorHelper extends Helper {
  *    and custom (default). In the default mode the supplied string is parsed and constants are replaced
  *    by their actual values.
  *    placeholders: %page%, %pages%, %current%, %count%, %start%, %end% .
- * - `separator` The separator of the actual page and number of pages (default: ' of ').
  * - `url` Url of the action. See Router::url()
  * - `url['sort']`  the key that the recordset is sorted.
  * - `url['direction']` Direction of the sorting (default: 'asc').
@@ -83,7 +82,6 @@ class PaginatorHelper extends Helper {
 		'number' => '<li><a href="{{url}}">{{text}}</a></li>',
 		'current' => '<li class="active"><span>{{text}}</span></li>',
 		'ellipsis' => '<li class="ellipsis">...</li>',
-		'separator' => ' | ',
 		'sort' => '<a href="{{url}}">{{text}}</a>',
 		'sortAsc' => '<a class="asc" href="{{url}}">{{text}}</a>',
 		'sortDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
@@ -674,7 +672,6 @@ class PaginatorHelper extends Helper {
 		}
 
 		$out = '';
-		$separator = $this->_templater->format('separator', []);
 		$ellipsis = $this->_templater->format('ellipsis', []);
 
 		if ($options['modulus'] && $params['pageCount'] > $options['modulus']) {
@@ -695,8 +692,6 @@ class PaginatorHelper extends Helper {
 				$out .= $this->first($offset);
 				if ($offset < $start - 1) {
 					$out .= $ellipsis;
-				} else {
-					$out .= $separator;
 				}
 			}
 
@@ -707,7 +702,7 @@ class PaginatorHelper extends Helper {
 					'text' => $i,
 					'url' => $this->url(['page' => $i]),
 				];
-				$out .= $this->_templater->format('number', $vars) . $separator;
+				$out .= $this->_templater->format('number', $vars);
 			}
 
 			$out .= $this->_templater->format('current', [
@@ -715,17 +710,13 @@ class PaginatorHelper extends Helper {
 				'url' => $this->url(['page' => $params['page']]),
 			]);
 
-			if ($i != $params['pageCount']) {
-				$out .= $separator;
-			}
-
 			$start = $params['page'] + 1;
 			for ($i = $start; $i < $end; $i++) {
 				$vars = [
 					'text' => $i,
 					'url' => $this->url(['page' => $i]),
 				];
-				$out .= $this->_templater->format('number', $vars) . $separator;
+				$out .= $this->_templater->format('number', $vars);
 			}
 
 			if ($end != $params['page']) {
@@ -742,8 +733,6 @@ class PaginatorHelper extends Helper {
 				$offset = ($params['pageCount'] < $end + (int)$options['last']) ? $params['pageCount'] - $end : $options['last'];
 				if ($offset <= $options['last'] && $params['pageCount'] - $end > $offset) {
 					$out .= $ellipsis;
-				} else {
-					$out .= $separator;
 				}
 				$out .= $this->last($offset);
 			}
@@ -763,9 +752,6 @@ class PaginatorHelper extends Helper {
 						'url' => $this->url(['page' => $i]),
 					];
 					$out .= $this->_templater->format('number', $vars);
-				}
-				if ($i != $params['pageCount']) {
-					$out .= $separator;
 				}
 			}
 
@@ -817,15 +803,11 @@ class PaginatorHelper extends Helper {
 		$out = '';
 
 		if (is_int($first) && $params['page'] >= $first) {
-			$separator = $this->_templater->format('separator', []);
 			for ($i = 1; $i <= $first; $i++) {
 				$out .= $this->_templater->format('number', [
 					'url' => $this->url(['page' => $i]),
 					'text' => $i
 				]);
-				if ($i != $first) {
-					$out .= $separator;
-				}
 			}
 		} elseif ($params['page'] > 1 && is_string($first)) {
 			$first = $options['escape'] ? h($first) : $first;
@@ -878,15 +860,11 @@ class PaginatorHelper extends Helper {
 		$lower = $params['pageCount'] - $last + 1;
 
 		if (is_int($last) && $params['page'] <= $lower) {
-			$separator = $this->_templater->format('separator', []);
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
 				$out .= $this->_templater->format('number', [
 					'url' => $this->url(['page' => $i]),
 					'text' => $i
 				]);
-				if ($i != $params['pageCount']) {
-					$out .= $separator;
-				}
 			}
 		} elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
 			$last = $options['escape'] ? h($last) : $last;
