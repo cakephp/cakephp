@@ -6754,7 +6754,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $matches[1];
 		$expected = range(date('Y') + 20, 1930);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$this->Form->request->data['Project']['release'] = '2050-10-10';
 		$result = $this->Form->year('Project.release');
@@ -6762,7 +6762,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $matches[1];
 		$expected = range(2050, date('Y') - 20);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$this->Form->request->data['Project']['release'] = '1881-10-10';
 		$result = $this->Form->year('Project.release', 1890, 1900);
@@ -6770,7 +6770,7 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $matches[1];
 		$expected = range(1900, 1881);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -9312,7 +9312,7 @@ class FormHelperTest extends CakeTestCase {
 			'div' => false,
 			'label' => false,
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 }

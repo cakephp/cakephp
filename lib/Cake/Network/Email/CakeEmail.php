@@ -326,6 +326,13 @@ class CakeEmail {
 	protected $_emailPattern = null;
 
 /**
+ * The classname used for email configuration.
+ *
+ * @var string
+ */
+	protected $_configClass = 'EmailConfig';
+
+/**
  * Constructor
  *
  * @param array|string $config Array of configs, or string to load configs from email.php
@@ -1179,10 +1186,10 @@ class CakeEmail {
  */
 	protected function _applyConfig($config) {
 		if (is_string($config)) {
-			if (!class_exists('EmailConfig') && !config('email')) {
+			if (!class_exists($this->_configClass) && !config('email')) {
 				throw new ConfigureException(__d('cake_dev', '%s not found.', APP . 'Config' . DS . 'email.php'));
 			}
-			$configs = new EmailConfig();
+			$configs = new $this->_configClass();
 			if (!isset($configs->{$config})) {
 				throw new ConfigureException(__d('cake_dev', 'Unknown email configuration "%s".', $config));
 			}

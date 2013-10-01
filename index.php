@@ -23,7 +23,7 @@
  */
 
 /**
- *  Get Cake's root directory
+ *  Get CakePHP's root directory
  */
 define('APP_DIR', 'app');
 define('DS', DIRECTORY_SEPARATOR);
