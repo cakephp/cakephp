@@ -603,6 +603,16 @@ class RequestHandlerComponentTest extends CakeTestCase {
 		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
 		$this->assertFalse($result);
 
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		unset($_SERVER['CONTENT_TYPE']);
+		$_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
+
+		$result = $this->RequestHandler->requestedWith(array('json', 'xml'));
+		$this->assertEquals('json', $result);
+
+		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
+		$this->assertFalse($result);
+
 		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
 		$this->assertTrue($this->RequestHandler->isXml());
 		$this->assertFalse($this->RequestHandler->isAtom());
