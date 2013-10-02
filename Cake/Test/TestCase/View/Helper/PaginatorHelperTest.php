@@ -1401,6 +1401,39 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
+ * Test that numbers() works with the non default model.
+ *
+ * @return void
+ */
+	public function testNumbersNonDefaultModel() {
+		$this->Paginator->request->params['paging'] = array(
+			'Client' => array(
+				'page' => 1,
+				'current' => 3,
+				'count' => 13,
+				'prevPage' => false,
+				'nextPage' => true,
+				'pageCount' => 5,
+			),
+			'Server' => array(
+				'page' => 5,
+				'current' => 1,
+				'count' => 5,
+				'prevPage' => true,
+				'nextPage' => false,
+				'pageCount' => 5,
+			)
+		);
+		$result = $this->Paginator->numbers(['model' => 'Server']);
+		$this->assertContains('<li class="active"><span>5</span></li>', $result);
+		$this->assertNotContains('<li class="active"><span>1</span></li>', $result);
+
+		$result = $this->Paginator->numbers(['model' => 'Client']);
+		$this->assertContains('<li class="active"><span>1</span></li>', $result);
+		$this->assertNotContains('<li class="active"><span>5</span></li>', $result);
+	}
+
+/**
  * test first() and last() with tag options
  *
  * @return void
@@ -1441,6 +1474,37 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->last();
 		$expected = '';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test first() with a the model parameter.
+ *
+ * @return void
+ */
+	public function testFirstNonDefaultModel() {
+		$this->Paginator->request->params['paging']['Article']['page'] = 1;
+		$this->Paginator->request->params['paging']['Client'] = array(
+			'page' => 3,
+			'current' => 3,
+			'count' => 13,
+			'prevPage' => false,
+			'nextPage' => true,
+			'pageCount' => 5,
+		);
+
+		
+		$result = $this->Paginator->first('first', ['model' => 'Article:']);
+		$this->assertEquals('', $result);
+
+		$result = $this->Paginator->first('first', ['model' => 'Client']);
+		$expected = array(
+			'li' => array('class' => 'first'),
+			'a' => array('href' => '/index', 'rel' => 'first'),
+			'first',
+			'/a',
+			'/li'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -1628,6 +1692,36 @@ class PaginatorHelperTest extends TestCase {
 			'<li',
 			array('a' => array('href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC')), '15', '/a',
 			'/li',
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test last() with a the model parameter.
+ *
+ * @return void
+ */
+	public function testLastNonDefaultModel() {
+		$this->Paginator->request->params['paging']['Article']['page'] = 7;
+		$this->Paginator->request->params['paging']['Client'] = array(
+			'page' => 3,
+			'current' => 3,
+			'count' => 13,
+			'prevPage' => false,
+			'nextPage' => true,
+			'pageCount' => 5,
+		);
+
+		$result = $this->Paginator->last('last', ['model' => 'Article:']);
+		$this->assertEquals('', $result);
+
+		$result = $this->Paginator->last('last', ['model' => 'Client']);
+		$expected = array(
+			'li' => array('class' => 'last'),
+			'a' => array('href' => '/index?page=5', 'rel' => 'last'),
+			'last',
+			'/a',
+			'/li'
 		);
 		$this->assertTags($result, $expected);
 	}
