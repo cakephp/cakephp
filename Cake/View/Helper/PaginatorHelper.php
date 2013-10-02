@@ -14,9 +14,6 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\Core\App;
-use Cake\Error;
-use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\View;
