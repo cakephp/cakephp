@@ -280,6 +280,19 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
+ * Test that the headers sent by firefox are not treated as XML requests.
+ *
+ * @return void
+ */
+	public function testInititalizeFirefoxHeaderNotXml() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
+		Router::parseExtensions('xml', 'json');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertNull($this->RequestHandler->ext);
+	}
+
+/**
  * Test that a type mismatch doesn't incorrectly set the ext
  *
  * @return void
