@@ -588,8 +588,8 @@ class PaginatorHelper extends Helper {
  *
  * ### Options
  *
- * - `before` Content to be inserted before the numbers
- * - `after` Content to be inserted after the numbers
+ * - `before` Content to be inserted before the numbers, but after the first links.
+ * - `after` Content to be inserted after the numbers, but before the last links.
  * - `model` Model to create numbers for, defaults to PaginatorHelper::defaultModel()
  * - `modulus` how many numbers to include on either side of the current page, defaults to 8.
  * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
@@ -598,8 +598,8 @@ class PaginatorHelper extends Helper {
  *    links to generate.
  *
  * The generated number links will include the 'ellipsis' template when the `first` and `last` options
- * are used and a range of page links will not be generated because they fall outside the range defined
- * by modulus.
+ * and the number of pages exceed the modulus. For example if you have 25 pages, and use the first/last
+ * options and a modulus of 8, ellipsis content will be inserted after the first and last link sets.
  *
  * @param array $options Options for the numbers, (before, after, model, modulus)
  * @return string numbers string.
