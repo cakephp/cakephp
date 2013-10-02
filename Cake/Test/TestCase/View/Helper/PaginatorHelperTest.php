@@ -20,9 +20,6 @@ use Cake\Core\Configure;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\View\Helper\FormHelper;
-use Cake\View\Helper\HtmlHelper;
-use Cake\View\Helper\JsHelper;
 use Cake\View\Helper\PaginatorHelper;
 use Cake\View\View;
 
@@ -60,7 +57,6 @@ class PaginatorHelperTest extends TestCase {
 				)
 			)
 		));
-		$this->Paginator->Html = new HtmlHelper($this->View);
 
 		Configure::write('Routing.prefixes', array());
 		Router::reload();

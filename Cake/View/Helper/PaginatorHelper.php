@@ -26,17 +26,9 @@ use Cake\View\View;
  *
  * PaginationHelper encloses all methods needed when working with pagination.
  *
- * @property HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html
  */
 class PaginatorHelper extends Helper {
-
-/**
- * Helper dependencies
- *
- * @var array
- */
-	public $helpers = ['Html'];
 
 /**
  * Holds the default options for pagination links
