@@ -146,6 +146,21 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
+ * Test that RequestHandler does not set extension to csv for text/plain mimetype
+ *
+ * @return void
+ */
+	public function testInitializeContentTypeWithjQueryTextPlainAccept() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/plain, */*; q=0.01';
+		$event = new Event('Controller.initialize', $this->Controller);
+		$this->assertNull($this->RequestHandler->ext);
+		Router::parseExtensions('csv');
+
+		$this->RequestHandler->initialize($event);
+		$this->assertNull($this->RequestHandler->ext);
+	}
+
+/**
  * Test that RequestHandler sets $this->ext when jQuery sends its wonky-ish headers
  * and the application is configured to handle multiple extensions
  *
