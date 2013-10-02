@@ -51,13 +51,13 @@ class MemcachedEngine extends CacheEngine {
 	public $settings = array();
 
 /**
- * List of available serializer engine
+ * List of available serializer engines
  *
  * Memcached must be compiled with json and igbinary support to use these engines
  *
  * @var array
  */
-	public static $serializer = array(
+	protected $_serializers = array(
 		'igbinary' => Memcached::SERIALIZER_IGBINARY,
 		'json' => Memcached::SERIALIZER_JSON,
 		'php' => Memcached::SERIALIZER_PHP
@@ -135,17 +135,17 @@ class MemcachedEngine extends CacheEngine {
 	protected function _setOptions() {
 		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
-		if (!array_key_exists($this->settings['serialize'], self::$serializer)) {
+		if (!isset($this->_serializers[$this->settings['serialize']])) {
 			throw new CacheException(
 				__d('cake_dev', '%s is not a valid serializer engine for Memcached', $this->settings['serialize'])
 			);
 		}
 
-		$serializer = self::$serializer['php'];
+		$serializer = $this->_serializers['php'];
 		switch($this->settings['serialize']) {
 			case 'igbinary':
 				if (Memcached::HAVE_IGBINARY) {
-					$serializer = self::$serializer['igbinary'];
+					$serializer = $this->_serializers['igbinary'];
 				} else {
 					throw new CacheException(
 						__d('cake_dev', 'Memcached extension is not compiled with igbinary support')
@@ -154,7 +154,7 @@ class MemcachedEngine extends CacheEngine {
 				break;
 			case 'json':
 				if (Memcached::HAVE_JSON) {
-					$serializer = self::$serializer['json'];
+					$serializer = $this->_serializers['json'];
 				} else {
 					throw new CacheException(
 						__d('cake_dev', 'Memcached extension is not compiled with json support')
