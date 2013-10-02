@@ -942,75 +942,6 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-/**
- * testGenericLinks method
- *
- * @return void
- */
-	public function testGenericLinks() {
-		$result = $this->Paginator->link('Sort by title on page 5', array('sort' => 'title', 'page' => 5, 'direction' => 'desc'));
-		$expected = array(
-			'a' => array('href' => '/index?page=5&amp;sort=title&amp;direction=desc'),
-			'Sort by title on page 5',
-			'/a'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Paginator->request->params['paging']['Article']['page'] = 2;
-		$result = $this->Paginator->link('Sort by title', array('sort' => 'title', 'direction' => 'desc'));
-		$expected = array(
-			'a' => array('href' => '/index?page=2&amp;sort=title&amp;direction=desc'),
-			'Sort by title',
-			'/a'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Paginator->request->params['paging']['Article']['page'] = 4;
-		$result = $this->Paginator->link('Sort by title on page 4', array('sort' => 'Article.title', 'direction' => 'desc'));
-		$expected = array(
-			'a' => array('href' => '/index?page=4&amp;sort=Article.title&amp;direction=desc'),
-			'Sort by title on page 4',
-			'/a'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Tests generation of generic links with preset options
- *
- * @return void
- */
-	public function testGenericLinksWithPresetOptions() {
-		$result = $this->Paginator->link('Foo!', array('page' => 1));
-		$this->assertTags($result, array('a' => array('href' => '/index'), 'Foo!', '/a'));
-
-		$this->Paginator->options(array('sort' => 'title', 'direction' => 'desc'));
-		$result = $this->Paginator->link('Foo!', array('page' => 1));
-		$this->assertTags($result, array(
-			'a' => array(
-				'href' => '/index',
-				'sort' => 'title',
-				'direction' => 'desc'
-			),
-			'Foo!',
-			'/a'
-		));
-
-		$this->Paginator->options(array('sort' => null, 'direction' => null));
-		$result = $this->Paginator->link('Foo!', array('page' => 1));
-		$this->assertTags($result, array('a' => array('href' => '/index'), 'Foo!', '/a'));
-
-		$this->Paginator->options(array('url' => array(
-			'sort' => 'title',
-			'direction' => 'desc'
-		)));
-		$result = $this->Paginator->link('Foo!', array('page' => 1));
-		$this->assertTags($result, array(
-			'a' => array('href' => '/index?sort=title&amp;direction=desc'),
-			'Foo!',
-			'/a'
-		));
-	}
 
 /**
  * testNumbers method
@@ -1757,55 +1688,6 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->hasPage(2);
 		$this->assertTrue($result);
-	}
-
-/**
- * testWithPlugin method
- *
- * @return void
- */
-	public function testWithPlugin() {
-		Router::setRequestInfo(array(
-			array(
-				'pass' => array(), 'prefix' => null,
-				'controller' => 'magazines', 'plugin' => 'my_plugin', 'action' => 'index',
-			),
-			array('base' => '', 'here' => '/my_plugin/magazines', 'webroot' => '/')
-		));
-
-		$result = $this->Paginator->link('Page 3', array('page' => 3));
-		$expected = array(
-			'a' => array('href' => '/my_plugin/magazines/index?page=3'), 'Page 3', '/a'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Paginator->options(array('url' => array('action' => 'another_index')));
-		$result = $this->Paginator->link('Page 3', array('page' => 3));
-		$expected = array(
-			'a' => array('href' => '/my_plugin/magazines/another_index?page=3'), 'Page 3', '/a'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Paginator->options(array('url' => array('controller' => 'issues')));
-		$result = $this->Paginator->link('Page 3', array('page' => 3));
-		$expected = array(
-			'a' => array('href' => '/my_plugin/issues/index?page=3'), 'Page 3', '/a'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Paginator->options(array('url' => array('plugin' => null)));
-		$result = $this->Paginator->link('Page 3', array('page' => 3));
-		$expected = array(
-			'a' => array('href' => '/magazines/index?page=3'), 'Page 3', '/a'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Paginator->options(array('url' => array('plugin' => null, 'controller' => 'issues')));
-		$result = $this->Paginator->link('Page 3', array('page' => 3));
-		$expected = array(
-			'a' => array('href' => '/issues/index?page=3'), 'Page 3', '/a'
-		);
-		$this->assertTags($result, $expected);
 	}
 
 /**

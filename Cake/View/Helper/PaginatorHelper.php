@@ -432,37 +432,6 @@ class PaginatorHelper extends Helper {
 	}
 
 /**
- * Generates a link with pagination parameters
- *
- * ### Options
- *
- * - `escape` Whether you want the contents html entity encoded, defaults to true
- * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
- *
- * @param string $title Title for the link.
- * @param string|array $url Url for the action. See Router::url()
- * @param array $options Options for the link. See #options for list of keys.
- * @return string A link with pagination parameters.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::link
- */
-	public function link($title, $url = array(), $options = array()) {
-		$options = array_merge(array('model' => null, 'escape' => true), $options);
-		$model = $options['model'];
-		unset($options['model']);
-
-		if (!empty($this->options)) {
-			$options = array_merge($this->options, $options);
-		}
-		if (isset($options['url'])) {
-			$url = array_merge((array)$options['url'], (array)$url);
-			unset($options['url']);
-		}
-
-		$url = $this->url($url, true, $model);
-		return $this->Html->link($title, $url, $options);
-	}
-
-/**
  * Merges passed URL options with current pagination state to generate a pagination URL.
  *
  * @param array $options Pagination/URL options array
@@ -471,7 +440,7 @@ class PaginatorHelper extends Helper {
  * @return mixed By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::url
  */
-	public function url($options = array(), $asArray = false, $model = null) {
+	public function url($options = array(), $model = null) {
 		$paging = $this->params($model);
 		$paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 		$url = [
@@ -488,9 +457,6 @@ class PaginatorHelper extends Helper {
 
 		if (!empty($url['page']) && $url['page'] == 1) {
 			$url['page'] = null;
-		}
-		if ($asArray) {
-			return $url;
 		}
 		return parent::url($url);
 	}
