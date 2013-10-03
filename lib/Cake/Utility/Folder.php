@@ -328,7 +328,7 @@ class Folder {
 	public static function addPathElement($path, $element) {
 		$element = (array)$element;
 		array_unshift($element, rtrim($path, DS));
-		return implode(DS, $element)
+		return implode(DS, $element);
 	}
 
 /**
