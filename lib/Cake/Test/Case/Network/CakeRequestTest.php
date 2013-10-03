@@ -1173,7 +1173,6 @@ class CakeRequestTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 	}
 
-
 /**
  * Test that parsing accept headers with invalid syntax works.
  *
