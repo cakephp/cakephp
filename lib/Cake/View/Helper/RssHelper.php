@@ -123,11 +123,11 @@ class RssHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::channel
  */
 	public function channel($attrib = array(), $elements = array(), $content = null) {
-		if (!isset($elements['title']) && !empty($this->_View->pageTitle)) {
-			$elements['title'] = $this->_View->pageTitle;
-		}
 		if (!isset($elements['link'])) {
 			$elements['link'] = '/';
+		}
+		if (!isset($elements['title'])) {
+			$elements['title'] = '';
 		}
 		if (!isset($elements['description'])) {
 			$elements['description'] = '';
