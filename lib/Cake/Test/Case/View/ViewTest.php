@@ -1615,19 +1615,6 @@ TEXT;
  *
  * @return void
  */
-	public function testPropertySetting() {
-		$this->assertFalse(isset($this->View->pageTitle));
-		$this->View->pageTitle = 'test';
-		$this->assertTrue(isset($this->View->pageTitle));
-		$this->assertTrue(!empty($this->View->pageTitle));
-		$this->assertEquals('test', $this->View->pageTitle);
-	}
-
-/**
- * Test that setting arbitrary properties still works.
- *
- * @return void
- */
 	public function testPropertySettingMagicGet() {
 		$this->assertFalse(isset($this->View->action));
 		$this->View->request->params['action'] = 'login';
