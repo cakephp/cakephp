@@ -12,7 +12,7 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\View;
+namespace Cake\Test\TestCase\View;
 
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;

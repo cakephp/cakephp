@@ -369,7 +369,10 @@ class UpgradeShell extends Shell {
 
 		// Process field property.
 		$processor = function ($matches) use ($export) {
+			//@codingStandardsIgnoreStart
 			eval('$data = [' . $matches[2] . '];');
+			//@codingStandardsIgnoreEnd
+
 			$constraints = [];
 			$out = [];
 			foreach ($data as $field => $properties) {
