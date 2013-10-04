@@ -14,10 +14,10 @@
  */
 namespace Cake\View\Helper;
 
+use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\View;
-use Cake\Utility\Inflector;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
@@ -349,7 +349,7 @@ class PaginatorHelper extends Helper {
 		$enabled = $this->hasNext($options['model']);
 		$templates = [
 			'active' => 'nextActive',
-			'disabled' =>  'nextDisabled'
+			'disabled' => 'nextDisabled'
 		];
 		return $this->_toggledLink($title, $enabled, $options, $templates);
 	}
