@@ -372,7 +372,7 @@ class File {
  * Get md5 Checksum of file with previous check of Filesize
  *
  * @param integer|boolean $maxsize in MB or true to force
- * @return string md5 Checksum {@link http://php.net/md5_file See md5_file()}
+ * @return string|false md5 Checksum {@link http://php.net/md5_file See md5_file()}, or false in case of an error
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::md5
  */
 	public function md5($maxsize = 5) {
@@ -415,7 +415,7 @@ class File {
 /**
  * Returns the "chmod" (permissions) of the File.
  *
- * @return string Permissions for the file
+ * @return string|false Permissions for the file, or false in case of an error
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::perms
  */
 	public function perms() {
@@ -428,7 +428,7 @@ class File {
 /**
  * Returns the Filesize
  *
- * @return integer size of the file in bytes, or false in case of an error
+ * @return integer|false size of the file in bytes, or false in case of an error
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::size
  */
 	public function size() {
@@ -471,7 +471,7 @@ class File {
 /**
  * Returns the File's owner.
  *
- * @return integer the Fileowner
+ * @return integer|false the Fileowner, or false in case of an error
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::owner
  */
 	public function owner() {
@@ -484,7 +484,7 @@ class File {
 /**
  * Returns the File's group.
  *
- * @return integer the Filegroup
+ * @return integer|false the Filegroup, or false in case of an error
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::group
  */
 	public function group() {
@@ -497,7 +497,7 @@ class File {
 /**
  * Returns last access time.
  *
- * @return integer timestamp Timestamp of last access time
+ * @return integer|false Timestamp of last access time, or false in case of an error
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::lastAccess
  */
 	public function lastAccess() {
@@ -510,7 +510,7 @@ class File {
 /**
  * Returns last modified time.
  *
- * @return integer timestamp Timestamp of last modification
+ * @return integer|false Timestamp of last modification, or false in case of an error
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::lastChange
  */
 	public function lastChange() {
