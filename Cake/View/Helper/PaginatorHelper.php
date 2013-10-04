@@ -17,6 +17,7 @@ namespace Cake\View\Helper;
 use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\View;
+use Cake\Utility\Inflector;
 
 /**
  * Pagination Helper class for easy generation of pagination links.
