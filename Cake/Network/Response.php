@@ -98,7 +98,7 @@ class Response {
 		'cpio' => 'application/x-cpio',
 		'cpt' => 'application/mac-compactpro',
 		'csh' => 'application/x-csh',
-		'csv' => array('text/csv', 'application/vnd.ms-excel', 'text/plain'),
+		'csv' => array('text/csv', 'application/vnd.ms-excel'),
 		'dcr' => 'application/x-director',
 		'dir' => 'application/x-director',
 		'dms' => 'application/octet-stream',
@@ -630,12 +630,12 @@ class Response {
 /**
  * Queries & sets valid HTTP response codes & messages.
  *
- * @param integer|array $code If $code is an integer, then the corresponding code/message is 
- *        returned if it exists, null if it does not exist. If $code is an array, then the 
- *        keys are used as codes and the values as messages to add to the default HTTP 
- *        codes. The codes must be integers greater than 99 and less than 1000. Keep in 
- *        mind that the HTTP specification outlines that status codes begin with a digit 
- *        between 1 and 5, which defines the class of response the client is to expect. 
+ * @param integer|array $code If $code is an integer, then the corresponding code/message is
+ *        returned if it exists, null if it does not exist. If $code is an array, then the
+ *        keys are used as codes and the values as messages to add to the default HTTP
+ *        codes. The codes must be integers greater than 99 and less than 1000. Keep in
+ *        mind that the HTTP specification outlines that status codes begin with a digit
+ *        between 1 and 5, which defines the class of response the client is to expect.
  *        Example:
  *
  *        httpCodes(404); // returns array(404 => 'Not Found')
