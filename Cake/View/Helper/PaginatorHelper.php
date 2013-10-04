@@ -14,9 +14,6 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\Core\App;
-use Cake\Error;
-use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\View;
@@ -26,17 +23,9 @@ use Cake\View\View;
  *
  * PaginationHelper encloses all methods needed when working with pagination.
  *
- * @property HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html
  */
 class PaginatorHelper extends Helper {
-
-/**
- * Helper dependencies
- *
- * @var array
- */
-	public $helpers = ['Html'];
 
 /**
  * Holds the default options for pagination links
@@ -47,7 +36,6 @@ class PaginatorHelper extends Helper {
  *    and custom (default). In the default mode the supplied string is parsed and constants are replaced
  *    by their actual values.
  *    placeholders: %page%, %pages%, %current%, %count%, %start%, %end% .
- * - `separator` The separator of the actual page and number of pages (default: ' of ').
  * - `url` Url of the action. See Router::url()
  * - `url['sort']`  the key that the recordset is sorted.
  * - `url['direction']` Direction of the sorting (default: 'asc').
@@ -76,6 +64,16 @@ class PaginatorHelper extends Helper {
 		'nextDisabled' => '<li class="next disabled"><span>{{text}}</span></li>',
 		'prevActive' => '<li class="prev"><a rel="prev" href="{{url}}">{{text}}</a></li>',
 		'prevDisabled' => '<li class="prev disabled"><span>{{text}}</span></li>',
+		'counterRange' => '{{start}} - {{end}} of {{count}}',
+		'counterPages' => '{{page}} of {{pages}}',
+		'first' => '<li class="first"><a rel="first" href="{{url}}">{{text}}</a></li>',
+		'last' => '<li class="last"><a rel="last" href="{{url}}">{{text}}</a></li>',
+		'number' => '<li><a href="{{url}}">{{text}}</a></li>',
+		'current' => '<li class="active"><span>{{text}}</span></li>',
+		'ellipsis' => '<li class="ellipsis">...</li>',
+		'sort' => '<a href="{{url}}">{{text}}</a>',
+		'sortAsc' => '<a class="asc" href="{{url}}">{{text}}</a>',
+		'sortDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
 	];
 
 /**
@@ -266,22 +264,19 @@ class PaginatorHelper extends Helper {
 			return '';
 		}
 		$text = $options['escape'] ? h($text) : $text;
-		$paging = $this->params($options['model']);
 
 		if (!$enabled) {
 			return $this->_templater->format($template, [
 				'text' => $text,
 			]);
 		}
+		$paging = $this->params($options['model']);
 
-		if (!empty($this->options['url'])) {
-			$options['url'] = array_merge($this->options['url'], $options['url']);
-		}
 		$url = array_merge(
 			$options['url'],
 			['page' => $paging['page'] + $options['step']]
 		);
-		$url = $this->url($url);
+		$url = $this->url($url, $options['model']);
 		return $this->_templater->format($template, [
 			'url' => $url,
 			'text' => $text,
@@ -376,8 +371,11 @@ class PaginatorHelper extends Helper {
  *  key the returned link will sort by 'desc'.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sort
  */
-	public function sort($key, $title = null, $options = array()) {
-		$options = array_merge(array('url' => array(), 'model' => null), $options);
+	public function sort($key, $title = null, $options = []) {
+		$options = array_merge(
+			['url' => array(), 'model' => null, 'escape' => true],
+			$options
+		);
 		$url = $options['url'];
 		unset($options['url']);
 
@@ -401,64 +399,36 @@ class PaginatorHelper extends Helper {
 			$key === $defaultModel . '.' . $sortKey
 		);
 
+		$template = 'sort';
 		if ($isSorted) {
 			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
-			$class = $dir === 'asc' ? 'desc' : 'asc';
-			if (!empty($options['class'])) {
-				$options['class'] .= ' ' . $class;
-			} else {
-				$options['class'] = $class;
-			}
+			$template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
 		}
 		if (is_array($title) && array_key_exists($dir, $title)) {
 			$title = $title[$dir];
 		}
 
-		$url = array_merge(array('sort' => $key, 'direction' => $dir), $url, array('order' => null));
-		return $this->link($title, $url, $options);
-	}
-
-/**
- * Generates a link with pagination parameters
- *
- * ### Options
- *
- * - `escape` Whether you want the contents html entity encoded, defaults to true
- * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
- *
- * @param string $title Title for the link.
- * @param string|array $url Url for the action. See Router::url()
- * @param array $options Options for the link. See #options for list of keys.
- * @return string A link with pagination parameters.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::link
- */
-	public function link($title, $url = array(), $options = array()) {
-		$options = array_merge(array('model' => null, 'escape' => true), $options);
-		$model = $options['model'];
-		unset($options['model']);
-
-		if (!empty($this->options)) {
-			$options = array_merge($this->options, $options);
-		}
-		if (isset($options['url'])) {
-			$url = array_merge((array)$options['url'], (array)$url);
-			unset($options['url']);
-		}
-
-		$url = $this->url($url, true, $model);
-		return $this->Html->link($title, $url, $options);
+		$url = array_merge(
+			['sort' => $key, 'direction' => $dir],
+			$url,
+			['order' => null]
+		);
+		$vars = [
+			'text' => $options['escape'] ? h($title) : $title,
+			'url' => $this->url($url, $options['model']),
+		];
+		return $this->_templater->format($template, $vars);
 	}
 
 /**
  * Merges passed URL options with current pagination state to generate a pagination URL.
  *
  * @param array $options Pagination/URL options array
- * @param boolean $asArray Return the url as an array, or a URI string
  * @param string $model Which model to paginate on
  * @return mixed By default, returns a full pagination URL string for use in non-standard contexts (i.e. JavaScript)
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::url
  */
-	public function url($options = array(), $asArray = false, $model = null) {
+	public function url($options = array(), $model = null) {
 		$paging = $this->params($model);
 		$paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 		$url = [
@@ -467,13 +437,14 @@ class PaginatorHelper extends Helper {
 			'sort' => $paging['sort'],
 			'direction' => $paging['direction'],
 		];
+
+		if (!empty($this->options['url'])) {
+			$url = array_merge($this->options['url'], $url);
+		}
 		$url = array_merge(array_filter($url), $options);
 
 		if (!empty($url['page']) && $url['page'] == 1) {
 			$url['page'] = null;
-		}
-		if ($asArray) {
-			return $url;
 		}
 		return parent::url($url);
 	}
@@ -554,25 +525,23 @@ class PaginatorHelper extends Helper {
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel();
  * - `format` The format string you want to use, defaults to 'pages' Which generates output like '1 of 5'
  *    set to 'range' to generate output like '1 - 3 of 13'. Can also be set to a custom string, containing
- *    the following placeholders `{:page}`, `{:pages}`, `{:current}`, `{:count}`, `{:model}`, `{:start}`, `{:end}` and any
+ *    the following placeholders `{{page}}`, `{{pages}}`, `{{current}}`, `{{count}}`, `{{model}}`, `{{start}}`, `{{end}}` and any
  *    custom content you would like.
- * - `separator` The separator string to use, default to ' of '
  *
  * @param array $options Options for the counter string. See #options for list of keys.
  * @return string Counter string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::counter
  */
-	public function counter($options = array()) {
+	public function counter($options = []) {
 		if (is_string($options)) {
 			$options = array('format' => $options);
 		}
 
 		$options = array_merge(
-			array(
+			[
 				'model' => $this->defaultModel(),
 				'format' => 'pages',
-				'separator' => __d('cake', ' of ')
-			),
+			],
 		$options);
 
 		$paging = $this->params($options['model']);
@@ -590,28 +559,23 @@ class PaginatorHelper extends Helper {
 
 		switch ($options['format']) {
 			case 'range':
-				if (!is_array($options['separator'])) {
-					$options['separator'] = array(' - ', $options['separator']);
-				}
-				$out = $start . $options['separator'][0] . $end . $options['separator'][1];
-				$out .= $paging['count'];
-				break;
 			case 'pages':
-				$out = $paging['page'] . $options['separator'] . $paging['pageCount'];
+				$template = 'counter' . ucfirst($options['format']);
 				break;
 			default:
-				$map = array(
-					'{:page}' => $paging['page'],
-					'{:pages}' => $paging['pageCount'],
-					'{:current}' => $paging['current'],
-					'{:count}' => $paging['count'],
-					'{:start}' => $start,
-					'{:end}' => $end,
-					'{:model}' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
-				);
-				$out = str_replace(array_keys($map), array_values($map), $options['format']);
+				$template = 'counterCustom';
+				$this->_templater->add([$template => $options['format']]);
 		}
-		return $out;
+		$map = [
+			'page' => $paging['page'],
+			'pages' => $paging['pageCount'],
+			'current' => $paging['current'],
+			'count' => $paging['count'],
+			'start' => $start,
+			'end' => $end,
+			'model' => strtolower(Inflector::humanize(Inflector::tableize($options['model'])))
+		];
+		return $this->_templater->format($template, $map);
 	}
 
 /**
@@ -624,136 +588,127 @@ class PaginatorHelper extends Helper {
  *
  * ### Options
  *
- * - `before` Content to be inserted before the numbers
- * - `after` Content to be inserted after the numbers
+ * - `before` Content to be inserted before the numbers, but after the first links.
+ * - `after` Content to be inserted after the numbers, but before the last links.
  * - `model` Model to create numbers for, defaults to PaginatorHelper::defaultModel()
  * - `modulus` how many numbers to include on either side of the current page, defaults to 8.
- * - `separator` Separator content defaults to ' | '
- * - `tag` The tag to wrap links in, defaults to 'span'
  * - `first` Whether you want first links generated, set to an integer to define the number of 'first'
  *    links to generate.
  * - `last` Whether you want last links generated, set to an integer to define the number of 'last'
  *    links to generate.
- * - `ellipsis` Ellipsis content, defaults to '...'
- * - `class` Class for wrapper tag
- * - `currentClass` Class for wrapper tag on current active page, defaults to 'current'
- * - `currentTag` Tag to use for current page number, defaults to null
  *
- * @param array $options Options for the numbers, (before, after, model, modulus, separator)
+ * The generated number links will include the 'ellipsis' template when the `first` and `last` options
+ * and the number of pages exceed the modulus. For example if you have 25 pages, and use the first/last
+ * options and a modulus of 8, ellipsis content will be inserted after the first and last link sets.
+ *
+ * @param array $options Options for the numbers, (before, after, model, modulus)
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::numbers
  */
 	public function numbers($options = array()) {
 		if ($options === true) {
 			$options = array(
-				'before' => ' | ', 'after' => ' | ', 'first' => 'first', 'last' => 'last'
+				'first' => 'first', 'last' => 'last'
 			);
 		}
 
 		$defaults = array(
-			'tag' => 'span', 'before' => null, 'after' => null, 'model' => $this->defaultModel(), 'class' => null,
-			'modulus' => '8', 'separator' => ' | ', 'first' => null, 'last' => null, 'ellipsis' => '...',
-			'currentClass' => 'current', 'currentTag' => null
+			'before' => null, 'after' => null, 'model' => $this->defaultModel(),
+			'modulus' => 8, 'first' => null, 'last' => null,
 		);
 		$options += $defaults;
 
 		$params = (array)$this->params($options['model']) + array('page' => 1);
-		unset($options['model']);
 
 		if ($params['pageCount'] <= 1) {
 			return false;
 		}
 
-		extract($options);
-		unset($options['tag'], $options['before'], $options['after'], $options['model'],
-			$options['modulus'], $options['separator'], $options['first'], $options['last'],
-			$options['ellipsis'], $options['class'], $options['currentClass'], $options['currentTag']
-		);
-
 		$out = '';
+		$ellipsis = $this->_templater->format('ellipsis', []);
 
-		if ($modulus && $params['pageCount'] > $modulus) {
-			$half = intval($modulus / 2);
+		if ($options['modulus'] && $params['pageCount'] > $options['modulus']) {
+			$half = intval($options['modulus'] / 2);
 			$end = $params['page'] + $half;
 
 			if ($end > $params['pageCount']) {
 				$end = $params['pageCount'];
 			}
-			$start = $params['page'] - ($modulus - ($end - $params['page']));
+			$start = $params['page'] - ($options['modulus'] - ($end - $params['page']));
 			if ($start <= 1) {
 				$start = 1;
-				$end = $params['page'] + ($modulus - $params['page']) + 1;
+				$end = $params['page'] + ($options['modulus'] - $params['page']) + 1;
 			}
 
-			if ($first && $start > 1) {
-				$offset = ($start <= (int)$first) ? $start - 1 : $first;
+			if ($options['first'] && $start > 1) {
+				$offset = ($start <= (int)$options['first']) ? $start - 1 : $options['first'];
+				$out .= $this->first($offset);
 				if ($offset < $start - 1) {
-					$out .= $this->first($offset, compact('tag', 'separator', 'ellipsis', 'class'));
-				} else {
-					$out .= $this->first($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('after' => $separator));
+					$out .= $ellipsis;
 				}
 			}
 
-			$out .= $before;
+			$out .= $options['before'];
 
 			for ($i = $start; $i < $params['page']; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class')) . $separator;
+				$vars = [
+					'text' => $i,
+					'url' => $this->url(['page' => $i], $options['model']),
+				];
+				$out .= $this->_templater->format('number', $vars);
 			}
 
-			if ($class) {
-				$currentClass .= ' ' . $class;
-			}
-			if ($currentTag) {
-				$out .= $this->Html->tag($tag, $this->Html->tag($currentTag, $params['page']), array('class' => $currentClass));
-			} else {
-				$out .= $this->Html->tag($tag, $params['page'], array('class' => $currentClass));
-			}
-			if ($i != $params['pageCount']) {
-				$out .= $separator;
-			}
+			$out .= $this->_templater->format('current', [
+				'text' => $params['page'],
+				'url' => $this->url(['page' => $params['page']], $options['model']),
+			]);
 
 			$start = $params['page'] + 1;
 			for ($i = $start; $i < $end; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class')) . $separator;
+				$vars = [
+					'text' => $i,
+					'url' => $this->url(['page' => $i], $options['model']),
+				];
+				$out .= $this->_templater->format('number', $vars);
 			}
 
 			if ($end != $params['page']) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $end), $options), compact('class'));
+				$vars = [
+					'text' => $i,
+					'url' => $this->url(['page' => $end], $options['model']),
+				];
+				$out .= $this->_templater->format('number', $vars);
 			}
 
-			$out .= $after;
+			$out .= $options['after'];
 
-			if ($last && $end < $params['pageCount']) {
-				$offset = ($params['pageCount'] < $end + (int)$last) ? $params['pageCount'] - $end : $last;
-				if ($offset <= $last && $params['pageCount'] - $end > $offset) {
-					$out .= $this->last($offset, compact('tag', 'separator', 'ellipsis', 'class'));
-				} else {
-					$out .= $this->last($offset, compact('tag', 'separator', 'class', 'ellipsis') + array('before' => $separator));
+			if ($options['last'] && $end < $params['pageCount']) {
+				$offset = ($params['pageCount'] < $end + (int)$options['last']) ? $params['pageCount'] - $end : $options['last'];
+				if ($offset <= $options['last'] && $params['pageCount'] - $end > $offset) {
+					$out .= $ellipsis;
 				}
+				$out .= $this->last($offset);
 			}
 
 		} else {
-			$out .= $before;
+			$out .= $options['before'];
 
 			for ($i = 1; $i <= $params['pageCount']; $i++) {
 				if ($i == $params['page']) {
-					if ($class) {
-						$currentClass .= ' ' . $class;
-					}
-					if ($currentTag) {
-						$out .= $this->Html->tag($tag, $this->Html->tag($currentTag, $i), array('class' => $currentClass));
-					} else {
-						$out .= $this->Html->tag($tag, $i, array('class' => $currentClass));
-					}
+					$out .= $this->_templater->format('current', [
+						'text' => $params['page'],
+						'url' => $this->url(['page' => $params['page']], $options['model']),
+					]);
 				} else {
-					$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
-				}
-				if ($i != $params['pageCount']) {
-					$out .= $separator;
+					$vars = [
+						'text' => $i,
+						'url' => $this->url(['page' => $i], $options['model']),
+					];
+					$out .= $this->_templater->format('number', $vars);
 				}
 			}
 
-			$out .= $after;
+			$out .= $options['after'];
 		}
 
 		return $out;
@@ -773,11 +728,8 @@ class PaginatorHelper extends Helper {
  *
  * ### Options:
  *
- * - `tag` The tag wrapping tag you want to use, defaults to 'span'
- * - `after` Content to insert after the link/tag
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
- * - `separator` Content between the generated links, defaults to ' | '
- * - `ellipsis` Content for ellipsis, defaults to '...'
+ * - `escape` Whether or not to HTML escape the text.
  *
  * @param string|integer $first if string use as label for the link. If numeric, the number of page links
  *   you want at the beginning of the range.
@@ -785,43 +737,33 @@ class PaginatorHelper extends Helper {
  * @return string numbers string.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::first
  */
-	public function first($first = '<< first', $options = array()) {
+	public function first($first = '<< first', $options = []) {
 		$options = array_merge(
-			array(
-				'tag' => 'span',
-				'after' => null,
-				'model' => $this->defaultModel(),
-				'separator' => ' | ',
-				'ellipsis' => '...',
-				'class' => null
-			),
-		(array)$options);
+			['model' => $this->defaultModel(), 'escape' => true],
+			(array)$options
+		);
 
-		$params = array_merge(array('page' => 1), (array)$this->params($options['model']));
-		unset($options['model']);
+		$params = $this->params($options['model']);
 
 		if ($params['pageCount'] <= 1) {
 			return false;
 		}
-		extract($options);
-		unset($options['tag'], $options['after'], $options['model'], $options['separator'], $options['ellipsis'], $options['class']);
 
 		$out = '';
 
 		if (is_int($first) && $params['page'] >= $first) {
-			if ($after === null) {
-				$after = $ellipsis;
-			}
 			for ($i = 1; $i <= $first; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
-				if ($i != $first) {
-					$out .= $separator;
-				}
+				$out .= $this->_templater->format('number', [
+					'url' => $this->url(['page' => $i], $options['model']),
+					'text' => $i
+				]);
 			}
-			$out .= $after;
 		} elseif ($params['page'] > 1 && is_string($first)) {
-			$options += array('rel' => 'first');
-			$out = $this->Html->tag($tag, $this->link($first, array('page' => 1), $options), compact('class')) . $after;
+			$first = $options['escape'] ? h($first) : $first;
+			$out .= $this->_templater->format('first', [
+				'url' => $this->url(['page' => 1], $options['model']),
+				'text' => $first
+			]);
 		}
 		return $out;
 	}
@@ -839,11 +781,8 @@ class PaginatorHelper extends Helper {
  *
  * ### Options:
  *
- * - `tag` The tag wrapping tag you want to use, defaults to 'span'
- * - `before` Content to insert before the link/tag
  * - `model` The model to use defaults to PaginatorHelper::defaultModel()
- * - `separator` Content between the generated links, defaults to ' | '
- * - `ellipsis` Content for ellipsis, defaults to '...'
+ * - `escape` Whether or not to HTML escape the text.
  *
  * @param string|integer $last if string use as label for the link, if numeric print page numbers
  * @param array $options Array of options
@@ -852,45 +791,32 @@ class PaginatorHelper extends Helper {
  */
 	public function last($last = 'last >>', $options = array()) {
 		$options = array_merge(
-			array(
-				'tag' => 'span',
-				'before' => null,
-				'model' => $this->defaultModel(),
-				'separator' => ' | ',
-				'ellipsis' => '...',
-				'class' => null
-			),
-		(array)$options);
+			['model' => $this->defaultModel(), 'escape' => true],
+			(array)$options
+		);
 
-		$params = array_merge(array('page' => 1), (array)$this->params($options['model']));
-		unset($options['model']);
+		$params = $this->params($options['model']);
 
 		if ($params['pageCount'] <= 1) {
 			return false;
 		}
 
-		extract($options);
-		unset($options['tag'], $options['before'], $options['model'], $options['separator'], $options['ellipsis'], $options['class']);
-
 		$out = '';
 		$lower = $params['pageCount'] - $last + 1;
 
 		if (is_int($last) && $params['page'] <= $lower) {
-			if ($before === null) {
-				$before = $ellipsis;
-			}
 			for ($i = $lower; $i <= $params['pageCount']; $i++) {
-				$out .= $this->Html->tag($tag, $this->link($i, array('page' => $i), $options), compact('class'));
-				if ($i != $params['pageCount']) {
-					$out .= $separator;
-				}
+				$out .= $this->_templater->format('number', [
+					'url' => $this->url(['page' => $i], $options['model']),
+					'text' => $i
+				]);
 			}
-			$out = $before . $out;
 		} elseif ($params['page'] < $params['pageCount'] && is_string($last)) {
-			$options += array('rel' => 'last');
-			$out = $before . $this->Html->tag(
-				$tag, $this->link($last, array('page' => $params['pageCount']), $options), compact('class')
-			);
+			$last = $options['escape'] ? h($last) : $last;
+			$out .= $this->_templater->format('last', [
+				'url' => $this->url(['page' => $params['pageCount']], $options['model']),
+				'text' => $last
+			]);
 		}
 		return $out;
 	}
