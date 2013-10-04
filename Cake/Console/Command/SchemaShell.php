@@ -49,17 +49,26 @@ class SchemaShell extends Shell {
 	protected $_dry = null;
 
 /**
- * Override startup
+ * Override _welcome
  *
  * @return void
  * @throws \Cake\Error\Exception
+ */
+	protected function _welcome() {
+		parent::_welcome();
+
+		throw new \Cake\Error\Exception('Schema shell is not working at this time.');
+	}
+
+/**
+ * Override startup
+ *
+ * @return void
  */
 	public function startup() {
 		$this->_welcome();
 		$this->out('Cake Schema Shell');
 		$this->hr();
-
-		throw new \Cake\Error\Exception('Schema shell is not working at this time.');
 
 		Cache::disable();
 
