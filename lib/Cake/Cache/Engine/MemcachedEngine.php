@@ -135,35 +135,20 @@ class MemcachedEngine extends CacheEngine {
 	protected function _setOptions() {
 		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
-		if (!isset($this->_serializers[$this->settings['serialize']])) {
+		$serializer = strtolower($this->settings['serialize']);
+		if (!isset($this->_serializers[$serializer])) {
 			throw new CacheException(
-				__d('cake_dev', '%s is not a valid serializer engine for Memcached', $this->settings['serialize'])
+				__d('cake_dev', '%s is not a valid serializer engine for Memcached', $serializer)
 			);
 		}
 
-		$serializer = $this->_serializers['php'];
-		switch($this->settings['serialize']) {
-			case 'igbinary':
-				if (Memcached::HAVE_IGBINARY) {
-					$serializer = $this->_serializers['igbinary'];
-				} else {
-					throw new CacheException(
-						__d('cake_dev', 'Memcached extension is not compiled with igbinary support')
-					);
-				}
-				break;
-			case 'json':
-				if (Memcached::HAVE_JSON) {
-					$serializer = $this->_serializers['json'];
-				} else {
-					throw new CacheException(
-						__d('cake_dev', 'Memcached extension is not compiled with json support')
-					);
-				}
-				break;
+		if ($serializer !== 'php' && !constant('Memcached::HAVE_' . strtoupper($serializer))) {
+			throw new CacheException(
+				__d('cake_dev', 'Memcached extension is not compiled with %s support', $serializer)
+			);
 		}
 
-		$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, $serializer);
+		$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, $this->_serializers[$serializer]);
 
 		// Check for Amazon ElastiCache instance
 		if (defined('Memcached::OPT_CLIENT_MODE') && defined('Memcached::DYNAMIC_CLIENT_MODE')) {
