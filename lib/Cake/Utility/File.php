@@ -451,7 +451,7 @@ class File {
 /**
  * Returns true if the File is executable.
  *
- * @return boolean Rrue if it's executable, false otherwise
+ * @return boolean True if it's executable, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#File::executable
  */
 	public function executable() {
