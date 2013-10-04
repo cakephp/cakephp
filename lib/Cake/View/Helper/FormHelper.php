@@ -1625,17 +1625,16 @@ class FormHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::hidden
  */
 	public function hidden($fieldName, $options = array()) {
-		$secure = true;
+		$options += array('required' => false, 'secure' => true);
 
-		if (isset($options['secure'])) {
-			$secure = $options['secure'];
-			unset($options['secure']);
-		}
+		$secure = $options['secure'];
+		unset($options['secure']);
+
 		$options = $this->_initInputField($fieldName, array_merge(
 			$options, array('secure' => self::SECURE_SKIP)
 		));
 
-		if ($secure && $secure !== self::SECURE_SKIP) {
+		if ($secure === true) {
 			$this->_secure(true, null, '' . $options['value']);
 		}
 
@@ -2012,12 +2011,8 @@ class FormHelper extends AppHelper {
 			$tag = 'selectstart';
 		}
 
-		if ($tag !== 'checkboxmultiplestart' &&
-			!isset($attributes['required']) &&
-			empty($attributes['disabled']) &&
-			$this->_introspectModel($this->model(), 'validates', $this->field())
-		) {
-			$attributes['required'] = true;
+		if ($tag === 'checkboxmultiplestart') {
+			unset($attributes['required']);
 		}
 
 		if (!empty($tag) || isset($template)) {
@@ -2847,13 +2842,19 @@ class FormHelper extends AppHelper {
 		if ($this->tagIsInvalid() !== false) {
 			$result = $this->addClass($result, 'form-error');
 		}
-		if (!empty($result['disabled']) || $secure === self::SECURE_SKIP) {
+
+		if (!empty($result['disabled'])) {
 			return $result;
 		}
+
 		if (!isset($result['required']) &&
 			$this->_introspectModel($this->model(), 'validates', $this->field())
 		) {
 			$result['required'] = true;
+		}
+
+		if ($secure === self::SECURE_SKIP) {
+			return $result;
 		}
 
 		$this->_secure($secure, $this->_secureFieldName($options));
