@@ -923,7 +923,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->next('Next', [
 			'model' => 'Server'
 		]);
-		$expected ='<li class="next disabled"><span>Next</span></li>';
+		$expected = '<li class="next disabled"><span>Next</span></li>';
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Paginator->prev('Prev', [
@@ -1236,7 +1236,7 @@ class PaginatorHelperTest extends TestCase {
 			array('li' => array()), array('a' => array('href' => '/index?page=2')), '2', '/a', '/li',
 			array('li' => array('class' => 'ellipsis')), '...', '/li',
 			array('li' => array()), array('a' => array('href' => '/index?page=4894')), '4894', '/a', '/li',
-			array('li' => array('class' => 'active')), '<span',  '4895', '/span', '/li',
+			array('li' => array('class' => 'active')), '<span', '4895', '/span', '/li',
 			array('li' => array()), array('a' => array('href' => '/index?page=4896')), '4896', '/a', '/li',
 			array('li' => array()), array('a' => array('href' => '/index?page=4897')), '4897', '/a', '/li',
 		);
@@ -1488,7 +1488,6 @@ class PaginatorHelperTest extends TestCase {
 			'pageCount' => 5,
 		);
 
-		
 		$result = $this->Paginator->first('first', ['model' => 'Article:']);
 		$this->assertEquals('', $result);
 
