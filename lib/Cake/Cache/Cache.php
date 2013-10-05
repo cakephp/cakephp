@@ -549,9 +549,20 @@ class Cache {
  * will be invoked. The results will then be stored into the cache config
  * at key.
  *
+ * Examples:
+ *
+ * Using a Closure to provide data, assume $this is a Model:
+ *
+ * {{{
+ * $model = $this;
+ * $results = Cache::remember('all_articles', function () use ($model) {
+ *      return $model->find('all');
+ * });
+ * }}}
+ *
  * @param string $key The cache key to read/store data at.
  * @param callable $callable The callable that provides data in the case when
- *   the cache key is empty.
+ *   the cache key is empty. Can be any callable type supported by your PHP.
  * @param string $config The cache configuration to use for this operation.
  *   Defaults to default.
  */
