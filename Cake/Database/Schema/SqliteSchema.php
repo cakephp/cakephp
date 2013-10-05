@@ -25,33 +25,16 @@ use Cake\Database\Schema\Table;
 class SqliteSchema extends BaseSchema {
 
 /**
- * The driver instance being used.
- *
- * @var Cake\Database\Driver\Sqlite
- */
-	protected $_driver;
-
-/**
- * Constructor
- *
- * @param Cake\Database\Driver\Sqlite $driver Driver to use.
- * @return void
- */
-	public function __construct($driver) {
-		$this->_driver = $driver;
-	}
-
-/**
  * Convert a column definition to the abstract types.
  *
  * The returned type will be a type that
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @throws Cake\Database\Exception
+ * @throws Cake\Database\Exception when unable to parse column type
  * @return array Array of column information.
  */
-	public function convertColumn($column) {
+	protected function _convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
 			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
@@ -94,34 +77,31 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * Get the SQL to list the tables in Sqlite
+ * {@inheritdoc}
  *
- * @param array $config The connection configuration to use for
- *    getting tables from.
- * @return array An array of (sql, params) to execute.
  */
-	public function listTablesSql() {
-		return ["SELECT name FROM sqlite_master WHERE type='table' ORDER BY name", []];
+	public function listTablesSql($config) {
+		return ['SELECT name FROM sqlite_master WHERE type="table" ORDER BY name', []];
 	}
 
 /**
- * Get the SQL to describe a table in Sqlite.
+ * {@inheritdoc}
  *
- * @param string $table The table name to describe
- * @return array An array of (sql, params) to execute.
  */
-	public function describeTableSql($table) {
-		return ["PRAGMA table_info(" . $this->_driver->quoteIdentifier($table) . ")", []];
+	public function describeTableSql($name, $config) {
+		$sql = sprintf(
+			'PRAGMA table_info(%s)',
+			$this->_driver->quoteIdentifier($name)
+		);
+		return [$sql, []];
 	}
 
 /**
- * Convert field description results into abstract schema fields.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object to append fields to.
- * @param array $row The row data from describeTableSql
  */
 	public function convertFieldDescription(Table $table, $row) {
-		$field = $this->convertColumn($row['type']);
+		$field = $this->_convertColumn($row['type']);
 		$field += [
 			'null' => !$row['notnull'],
 			'default' => $row['dflt_value'] === null ? null : trim($row['dflt_value'], "'"),
@@ -139,12 +119,10 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * Get the SQL to describe the indexes in a table.
+ * {@inheritdoc}
  *
- * @param string $table The table name to get information on.
- * @return array An array of (sql, params) to execute.
  */
-	public function describeIndexSql($table) {
+	public function describeIndexSql($table, $config) {
 		$sql = sprintf(
 			'PRAGMA index_list(%s)',
 			$this->_driver->quoteIdentifier($table)
@@ -153,17 +131,13 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * Convert an index into the abstract description.
+ * {@inheritdoc}
  *
  * Since SQLite does not have a way to get metadata about all indexes at once,
  * additional queries are done here. Sqlite constraint names are not
  * stable, and the names for constraints will not match those used to create
  * the table. This is a limitation in Sqlite's metadata features.
  *
- * @param Cake\Database\Schema\Table $table The table object to append
- *    an index or constraint to.
- * @param array $row The row data from describeIndexSql
- * @return void
  */
 	public function convertIndexDescription(Table $table, $row) {
 		$sql = sprintf(
@@ -190,23 +164,19 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL to describe the foreign keys on a table.
+ * {@inheritdoc}
  *
- * @return array List of sql, params
  */
-	public function describeForeignKeySql($table) {
+	public function describeForeignKeySql($table, $config) {
 		$sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($table));
 		return [$sql, []];
 	}
 
 /**
- * Convert a foreign key description into constraints on the Table object.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Table $table The table instance to populate.
- * @param array $row The row of data.
- * @return void
  */
-	public function convertForeignKey(Table $table, $row) {
+	public function convertForeignKeyDescription(Table $table, $row) {
 		$data = [
 			'type' => Table::CONSTRAINT_FOREIGN,
 			'columns' => [$row['from']],
@@ -219,12 +189,9 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single column in Sqlite
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
- * @param string $name The name of the column.
- * @return string SQL fragment.
- * @throws Cake\Database\Exception On unknown column types.
+ * @throws Cake\Database\Exception when the column type is unknown
  */
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
@@ -277,14 +244,11 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL fragments for defining table constraints.
+ * {@inheritdoc}
  *
  * Note integer primary keys will return ''. This is intentional as Sqlite requires
  * that integer primary keys be defined in the column definition.
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
- * @param string $name The name of the column.
- * @return string SQL fragment.
  */
 	public function constraintSql(Table $table, $name) {
 		$data = $table->constraint($name);
@@ -325,11 +289,8 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL fragment for a single index.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
- * @param string $name The name of the column.
- * @return string SQL fragment.
  */
 	public function indexSql(Table $table, $name) {
 		$data = $table->index($name);
@@ -345,15 +306,10 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL to create a table.
+ * {@inheritdoc}
  *
- * @param Table $table Cake\Database\Schema\Table instance
- * @param array $columns The columns to go inside the table.
- * @param array $constraints The constraints for the table.
- * @param array $indexes The indexes for the table.
- * @return array Complete CREATE TABLE statement(s)S
  */
-	public function createTableSql($table, $columns, $constraints, $indexes) {
+	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$lines = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($lines));
 		$table = sprintf("CREATE TABLE \"%s\" (\n%s\n)", $table->name(), $content);
@@ -365,10 +321,8 @@ class SqliteSchema extends BaseSchema {
 	}
 
 /**
- * Generate the SQL to truncate a table.
+ * {@inheritdoc}
  *
- * @param Cake\Database\Schema\Table $table Table instance
- * @return array SQL statements to drop truncate a table.
  */
 	public function truncateTableSql(Table $table) {
 		$name = $table->name();

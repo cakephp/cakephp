@@ -70,7 +70,7 @@ published BOOLEAN DEFAULT false,
 views SMALLINT DEFAULT 0,
 created TIMESTAMP,
 CONSTRAINT "content_idx" UNIQUE ("title", "body"),
-CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE 
+CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 )
 SQL;
 		$connection->execute($table);
@@ -79,11 +79,11 @@ SQL;
 	}
 
 /**
- * Dataprovider for column testing
+ * Data provider for convert column testing
  *
  * @return array
  */
-	public static function columnProvider() {
+	public static function convertColumnProvider() {
 		return [
 			[
 				'TIMESTAMP',
@@ -185,15 +185,33 @@ SQL;
 	}
 
 /**
- * Test parsing Postgres column types.
+ * Test parsing Postgres column types from field description.
  *
- * @dataProvider columnProvider
+ * @dataProvider convertColumnProvider
  * @return void
  */
-	public function testConvertColumnType($input, $expected) {
+	public function testConvertColumn($type, $expected) {
+		$field = [
+			'name' => 'field',
+			'type' => $type,
+			'null' => 'YES',
+			'default' => 'Default value',
+			'comment' => 'Comment section',
+			'char_length' => null,
+		];
+		$expected += [
+			'null' => true,
+			'default' => 'Default value',
+			'comment' => 'Comment section',
+		];
+
 		$driver = $this->getMock('Cake\Database\Driver\Postgres');
 		$dialect = new PostgresSchema($driver);
-		$this->assertEquals($expected, $dialect->convertColumn($input));
+
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
+		$table->expects($this->at(0))->method('addColumn')->with('field', $expected);
+
+		$dialect->convertFieldDescription($table, $field);
 	}
 
 /**
