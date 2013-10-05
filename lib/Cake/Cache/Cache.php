@@ -542,4 +542,27 @@ class Cache {
 		throw new CacheException(__d('cake_dev', 'Invalid cache group %s', $group));
 	}
 
+/**
+ * Provides the ability to easily do read-through caching.
+ *
+ * When called if the $key is not set in $config, the $callable function
+ * will be invoked. The results will then be stored into the cache config
+ * at key.
+ *
+ * @param string $key The cache key to read/store data at.
+ * @param callable $callable The callable that provides data in the case when
+ *   the cache key is empty.
+ * @param string $config The cache configuration to use for this operation.
+ *   Defaults to default.
+ */
+	public static function remember($key, $callable, $config = 'default') {
+		$existing = self::read($key, $config);
+		if ($existing !== false) {
+			return $existing;
+		}
+		$results = call_user_func($callable);
+		self::write($key, $results, $config);
+		return $results;
+	}
+
 }
