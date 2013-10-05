@@ -42,10 +42,26 @@ class MemcachedEngine extends CacheEngine {
  *  - compress = boolean, default => false
  *  - persistent = string The name of the persistent connection. All configurations using
  *    the same persistent value will share a single underlying connection.
+ *  - serialize = string, default => php. The serializer engine used to serialize data.
+ *    Available engines are php, igbinary and json. Beside php, the memcached extension
+ *    must be compiled with the appropriate serializer support.
  *
  * @var array
  */
 	public $settings = array();
+
+/**
+ * List of available serializer engines
+ *
+ * Memcached must be compiled with json and igbinary support to use these engines
+ *
+ * @var array
+ */
+	protected $_serializers = array(
+		'igbinary' => Memcached::SERIALIZER_IGBINARY,
+		'json' => Memcached::SERIALIZER_JSON,
+		'php' => Memcached::SERIALIZER_PHP
+	);
 
 /**
  * Initialize the Cache Engine
@@ -71,6 +87,7 @@ class MemcachedEngine extends CacheEngine {
 			'persistent' => false,
 			'login' => null,
 			'password' => null,
+			'serialize' => 'php'
 		);
 		parent::init($settings);
 
@@ -113,13 +130,25 @@ class MemcachedEngine extends CacheEngine {
 /**
  * Settings the memcached instance
  *
+ * @throws CacheException when the Memcached extension is not built with the desired serializer engine
  */
 	protected function _setOptions() {
 		$this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
-		if (Memcached::HAVE_IGBINARY) {
-			$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, Memcached::SERIALIZER_IGBINARY);
+		$serializer = strtolower($this->settings['serialize']);
+		if (!isset($this->_serializers[$serializer])) {
+			throw new CacheException(
+				__d('cake_dev', '%s is not a valid serializer engine for Memcached', $serializer)
+			);
 		}
+
+		if ($serializer !== 'php' && !constant('Memcached::HAVE_' . strtoupper($serializer))) {
+			throw new CacheException(
+				__d('cake_dev', 'Memcached extension is not compiled with %s support', $serializer)
+			);
+		}
+
+		$this->_Memcached->setOption(Memcached::OPT_SERIALIZER, $this->_serializers[$serializer]);
 
 		// Check for Amazon ElastiCache instance
 		if (defined('Memcached::OPT_CLIENT_MODE') && defined('Memcached::DYNAMIC_CLIENT_MODE')) {
