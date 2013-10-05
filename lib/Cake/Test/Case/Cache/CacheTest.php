@@ -501,11 +501,11 @@ class CacheTest extends CakeTestCase {
  */
 	public function testRemember() {
 		$expected = 'This is some data 0';
-		$result = Cache::remember('test_key', [$this, 'cacher'], 'default');
+		$result = Cache::remember('test_key', array($this, 'cacher'), 'default');
 		$this->assertEquals($expected, $result);
 
 		$this->_count = 1;
-		$result = Cache::remember('test_key', [$this, 'cacher'], 'default');
+		$result = Cache::remember('test_key', array($this, 'cacher'), 'default');
 		$this->assertEquals($expected, $result);
 	}
 
