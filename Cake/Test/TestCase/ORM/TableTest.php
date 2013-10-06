@@ -783,4 +783,44 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 	}
 
+/**
+ * Tests automatic setup of associations based on entity information
+ *
+ * @return void
+ */
+	public function testAutoSetupBelongsToBasic() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$barTarget = new Table(['table' => 'bars', 'connection' => $this->connection]);
+
+		$entity = $this->getMockClass('\Cake\ORM\Entity', ['belongsTo']);
+		$barEntity = $this->getMockClass('\Cake\ORM\Entity', ['repository']);
+		class_alias($barEntity, 'App\Model\Entity\Bar');
+
+		$entity::staticExpects($this->once())->method('belongsTo')
+			->will($this->returnValue(['Bar', 'Foo.Department']));
+
+		$barEntity::staticExpects($this->at(0))->method('repository')
+			->will($this->returnValue($barTarget));
+
+		$depatmentTarget = new Table([
+			'table' => 'departments',
+			'connection' => $this->connection
+		]);
+		$departmentEntity = $this->getMockClass('\Cake\ORM\Entity', ['repository']);
+		class_alias($departmentEntity, 'Foo\Model\Entity\Department');
+
+		$departmentEntity::staticExpects($this->at(1))->method('repository')
+			->will($this->returnValue($depatmentTarget));
+
+		$table->entityClass($entity);
+		$association = $table->association('Bar');
+		$this->assertEquals('Bar', $association->name());
+		$this->assertEquals('bar', $association->property());
+		$this->assertSame($barTarget, $association->target());
+
+		$association = $table->association('Department');
+		$this->assertEquals('Department', $association->name());
+		$this->assertEquals('department', $association->property());
+		$this->assertSame($depatmentTarget, $association->target());
+	}
 }

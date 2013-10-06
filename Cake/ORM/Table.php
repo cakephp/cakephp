@@ -16,6 +16,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Event\EventManager;
 use Cake\ORM\Association\BelongsTo;
@@ -125,6 +126,13 @@ class Table {
  * @var string
  */
 	protected $_entityClass = '\Cake\ORM\Entity';
+
+/**
+ * Whether associations where copied already from the entity class or not
+ *
+ * @var boolean
+ */
+	protected $_associationsInit = false;
 
 /**
  * Initializes a new instance
@@ -402,6 +410,10 @@ class Table {
  * @return Cake\ORM\Association
  */
 	public function association($name) {
+		if (!$this->_associationsInit && $this->entityClass()) {
+			$this->_associationsInit = true;
+			$this->_setupAssociations();
+		}
 		if (isset($this->_associations[$name])) {
 			return $this->_associations[$name];
 		}
@@ -755,6 +767,46 @@ class Table {
 		}
 		$options = array_shift($args) ?: [];
 		return $this->callFinder($method, $query, $options);
+	}
+
+/**
+ * Copies association configuration from the entity class to the associations
+ * classes stored in this object
+ *
+ * @return void
+ */
+	protected function _setupAssociations() {
+		$entity = $this->entityClass();
+		$types = [
+			'belongsTo' => false,
+			'hasOne' => false,
+			'hasMany' => true,
+			'belongsToMany' => true
+		];
+
+		foreach ($types as $assoc => $plural) {
+			$associations = $entity::$assoc();
+			foreach ($associations as $key => $val) {
+				if (is_integer($key)) {
+					$entityClass = App::classname($val, 'Model\Entity');
+					list(,$className) = pluginSplit($val);
+					list($key, $val) = [$className, compact('entityClass')];
+				}
+
+				if (!empty($val['className'])) {
+					$val['entityClass'] = App::classname($val['className'],  'Model\Entity');
+					unset($val['className']);
+				}
+
+				if (empty($val['property'])) {
+					$name = Inflector::variable($key);
+					$name = $plural ? Inflector::pluralize($name) : $name;
+					$val['property'] = $name;
+				}
+
+				$this->{$assoc}($key, $val);
+			}
+		}
 	}
 
 }

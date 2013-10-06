@@ -31,6 +31,36 @@ class Entity implements \ArrayAccess {
 	protected static $_repositoryClass;
 
 /**
+ * List of Belongs To associations
+ *
+ * ### Basic usage
+ *
+ * `public $belongsTo = array('Group', 'Department');`
+ *
+ * ### Detailed configuration
+ *
+ * {{{
+ * public $belongsTo = array(
+ *     'Group',
+ *     'Department' => array(
+ *         'className' => 'Department',
+ *         'foreignKey' => 'department_id'
+ *     )
+ * );
+ * }}}
+ *
+ * @see \Cake\ORM\Table::belongsTo() for a list of accepted configuration keys
+ * @var array
+ */
+	protected static $_belongsTo = [];
+
+	protected static $_hasOne = [];
+
+	protected static $_hasMany = [];
+
+	protected static $_belongsToMany = [];
+
+/**
  * Initializes the internal properties of this entity out of the
  * keys in an array
  *
@@ -328,7 +358,7 @@ class Entity implements \ArrayAccess {
 			if ($self === __CLASS__ || count($parts) < 3) {
 				return self::$_repositoryClass[$self] = $default;
 			}
-			
+
 			$alias = array_pop($parts) . 'Table';
 			$class = implode('\\', array_slice($parts, 0, -1)) . '\Repository\\' . $alias;
 			if (!class_exists($class)) {
@@ -344,6 +374,46 @@ class Entity implements \ArrayAccess {
 		}
 
 		return $result;
+	}
+
+/**
+ * Returns the BelongsTo associations as statically defined in the $_belongsTo
+ * property
+ *
+ * @return array
+ */
+	public static function belongsTo() {
+		return static::$_belongsTo;
+	}
+
+/**
+ * Returns the HasOne associations as statically defined in the $_hasOne
+ * property
+ *
+ * @return array
+ */
+	public static function hasOne() {
+		return static::$_hasOne;
+	}
+
+/**
+ * Returns the HasMany associations as statically defined in the $_hasMany
+ * property
+ *
+ * @return array
+ */
+	public static function hasMany() {
+		return static::$_hasMany;
+	}
+
+/**
+ * Returns the BelongsToMany associations as statically defined in the
+ * $_belongsToMany property
+ *
+ * @return array
+ */
+	public static function belongsToMany() {
+		return static::$_belongsToMany;
 	}
 
 }
