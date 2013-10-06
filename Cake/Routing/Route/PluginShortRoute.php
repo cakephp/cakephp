@@ -20,7 +20,6 @@ use Cake\Routing\Route\Route;
  * Plugin short route, that copies the plugin param to the controller parameters
  * It is used for supporting /:plugin routes.
  *
- * @package Cake.Routing.Route
  */
 class PluginShortRoute extends Route {
 

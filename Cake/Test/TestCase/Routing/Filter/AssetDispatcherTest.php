@@ -8,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
- * @package       Cake.Test.Case.Routing.Filter
  * @since         CakePHP(tm) v 2.2
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */

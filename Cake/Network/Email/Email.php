@@ -343,6 +343,13 @@ class Email {
 	protected $_emailPattern = null;
 
 /**
+ * The classname used for email configuration.
+ *
+ * @var string
+ */
+	protected $_configClass = 'EmailConfig';
+
+/**
  * Constructor
  *
  * @param array|string $config Array of configs, or string to load configs from email.php
@@ -778,6 +785,10 @@ class Email {
 /**
  * Format addresses
  *
+ * If the address contains non alphanumeric/whitespace characters, it will
+ * be quoted as characters like `:` and `,` are known to cause issues
+ * in address header fields.
+ *
  * @param array $address
  * @return array
  */
@@ -787,10 +798,11 @@ class Email {
 			if ($email === $alias) {
 				$return[] = $email;
 			} else {
-				if (strpos($alias, ',') !== false) {
-					$alias = '"' . $alias . '"';
+				$encoded = $this->_encode($alias);
+				if ($encoded === $alias && preg_match('/[^a-z0-9 ]/i', $encoded)) {
+					$encoded = '"' . str_replace('"', '\"', $encoded) . '"';
 				}
-				$return[] = sprintf('%s <%s>', $this->_encode($alias), $email);
+				$return[] = sprintf('%s <%s>', $encoded, $email);
 			}
 		}
 		return $return;
@@ -1698,7 +1710,7 @@ class Email {
 		foreach ($types as $type) {
 			$View->set('content', $content);
 			$View->hasRendered = false;
-			$View->viewPath = $View->layoutPath = 'Emails/' . $type;
+			$View->viewPath = $View->layoutPath = 'Email/' . $type;
 
 			$render = $View->render($template, $layout);
 			$render = str_replace(array("\r\n", "\r"), "\n", $render);

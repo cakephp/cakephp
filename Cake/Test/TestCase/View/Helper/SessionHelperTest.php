@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.View.Helper
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -30,7 +29,6 @@ use Cake\View\View;
 /**
  * SessionHelperTest class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class SessionHelperTest extends TestCase {
 
@@ -179,10 +177,7 @@ class SessionHelperTest extends TestCase {
 	public function testFlashWithPluginElement() {
 		Plugin::load('TestPlugin');
 
-		$result = $this->Session->flash('flash', array(
-			'element' => 'plugin_element',
-			'params' => array('plugin' => 'TestPlugin')
-		));
+		$result = $this->Session->flash('flash', array('element' => 'TestPlugin.plugin_element'));
 		$expected = 'this is the plugin element using params[plugin]';
 		$this->assertEquals($expected, $result);
 	}

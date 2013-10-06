@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -31,7 +30,6 @@ use Cake\View\Helper;
 /**
  * ControllerTestDispatcher class
  *
- * @package       Cake.TestSuite
  */
 class ControllerTestDispatcher extends Dispatcher {
 
@@ -91,7 +89,6 @@ class ControllerTestDispatcher extends Dispatcher {
 /**
  * InterceptContentHelper class
  *
- * @package       Cake.TestSuite
  */
 class InterceptContentHelper extends Helper {
 
@@ -110,7 +107,6 @@ class InterceptContentHelper extends Helper {
 /**
  * ControllerTestCase class
  *
- * @package       Cake.TestSuite
  */
 abstract class ControllerTestCase extends TestCase {
 

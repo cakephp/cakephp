@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
  * @since         CakePHP(tm) v 2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -24,7 +23,6 @@ namespace Cake\Utility;
  * support for pseudo Xpath, its more fully featured dot notation provides
  * similar features in a more consistent implementation.
  *
- * @package       Cake.Utility
  */
 class Hash {
 
@@ -481,14 +479,14 @@ class Hash {
 			$val = $needle[$key];
 			unset($needle[$key]);
 
-			if (isset($data[$key]) && is_array($val)) {
+			if (array_key_exists($key, $data) && is_array($val)) {
 				$next = $data[$key];
 				unset($data[$key]);
 
 				if (!empty($val)) {
 					$stack[] = array($val, $next);
 				}
-			} elseif (!isset($data[$key]) || $data[$key] != $val) {
+			} elseif (!array_key_exists($key, $data) || $data[$key] != $val) {
 				return false;
 			}
 

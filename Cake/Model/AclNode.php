@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -26,7 +25,6 @@ use Cake\Utility\Inflector;
 /**
  * ACL Node
  *
- * @package       Cake.Model
  */
 class AclNode extends Model {
 
@@ -125,7 +123,7 @@ class AclNode extends Model {
 			) {
 				return false;
 			}
-		} elseif (is_object($ref) && is_a($ref, 'Model')) {
+		} elseif (is_object($ref) && $ref instanceof Model) {
 			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);

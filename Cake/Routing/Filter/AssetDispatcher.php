@@ -26,7 +26,6 @@ use Cake\Utility\Inflector;
  * Filters a request and tests whether it is a file in the webroot folder or not and
  * serves the file to the client if appropriate.
  *
- * @package Cake.Routing.Filter
  */
 class AssetDispatcher extends DispatcherFilter {
 
@@ -34,7 +33,7 @@ class AssetDispatcher extends DispatcherFilter {
  * Default priority for all methods in this filter
  * This filter should run before the request gets parsed by router
  *
- * @var int
+ * @var integer
  */
 	public $priority = 9;
 

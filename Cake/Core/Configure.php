@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Core
  * @since         CakePHP(tm) v 1.0.0.2363
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -28,7 +27,6 @@ use Cake\Utility\Hash;
  * as methods for loading additional configuration files or storing runtime configuration
  * for future use.
  *
- * @package       Cake.Core
  * @link          http://book.cakephp.org/2.0/en/development/configuration.html#configure-class
  */
 class Configure {

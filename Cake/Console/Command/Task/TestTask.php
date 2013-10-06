@@ -29,7 +29,6 @@ use Cake\Utility\Inflector;
 /**
  * Task class for creating and updating test files.
  *
- * @package       Cake.Console.Command.Task
  */
 class TestTask extends BakeTask {
 
@@ -398,9 +397,9 @@ class TestTask extends BakeTask {
  */
 	public function generateFixtureList($subject) {
 		$this->_fixtures = array();
-		if (is_a($subject, 'Model')) {
+		if ($subject instanceof Model) {
 			$this->_processModel($subject);
-		} elseif (is_a($subject, 'Controller')) {
+		} elseif ($subject instanceof Controller) {
 			$this->_processController($subject);
 		}
 		return array_values($this->_fixtures);

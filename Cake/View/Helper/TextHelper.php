@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -32,7 +31,6 @@ use Cake\View\View;
  *
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
- * @package       Cake.View.Helper
  * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html
  * @see String
@@ -108,7 +106,7 @@ class TextHelper extends Helper {
 		$this->_placeholders = array();
 		$options += array('escape' => true);
 
-		$pattern = '#(?<!href="|src="|">)((?:https?|ftp|nntp)://[a-z0-9.\-:]+(?:[/?][^\s<]*)?)#i';
+		$pattern = '#(?<!href="|src="|">)((?:https?|ftp|nntp)://[\p{L}0-9.\-:]+(?:[/?][^\s<]*)?)#ui';
 		$text = preg_replace_callback(
 			$pattern,
 			array(&$this, '_insertPlaceHolder'),
@@ -189,9 +187,9 @@ class TextHelper extends Helper {
 		$options += array('escape' => true);
 		$this->_placeholders = array();
 
-		$atom = '[a-z0-9!#$%&\'*+\/=?^_`{|}~-]';
+		$atom = '[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]';
 		$text = preg_replace_callback(
-			'/(' . $atom . '+(?:\.' . $atom . '+)*@[a-z0-9-]+(?:\.[a-z0-9-]+)+)/i',
+			'/(' . $atom . '+(?:\.' . $atom . '+)*@[\p{L}0-9-]+(?:\.[\p{L}0-9-]+)+)/ui',
 			array(&$this, '_insertPlaceholder'),
 			$text
 		);

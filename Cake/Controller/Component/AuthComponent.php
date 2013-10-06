@@ -210,7 +210,7 @@ class AuthComponent extends Component {
  * Error to display when user attempts to access an object or action to which they do not have
  * access.
  *
- * @var string|bool Error message or boolean false to suppress flash message
+ * @var string|boolean Error message or boolean false to suppress flash message
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#AuthComponent::$authError
  */
 	public $authError = null;
@@ -305,7 +305,10 @@ class AuthComponent extends Component {
 			return $this->_unauthenticated($controller);
 		}
 
-		if (empty($this->authorize) || $this->isAuthorized($this->user())) {
+		if ($this->_isLoginAction($controller) ||
+			empty($this->authorize) ||
+			$this->isAuthorized($this->user())
+		) {
 			return true;
 		}
 
@@ -348,6 +351,11 @@ class AuthComponent extends Component {
 		}
 
 		if ($this->_isLoginAction($controller)) {
+			if (empty($controller->request->data)) {
+				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
+					$this->Session->write('Auth.redirect', $controller->referer(null, true));
+				}
+			}
 			return true;
 		}
 
@@ -358,7 +366,7 @@ class AuthComponent extends Component {
 			return false;
 		}
 		if (!empty($this->ajaxLogin)) {
-			$controller->viewPath = 'Elements';
+			$controller->viewPath = 'Element';
 			echo $controller->render($this->ajaxLogin, $this->RequestHandler->ajaxLayout);
 			$this->_stop();
 			return false;
@@ -368,9 +376,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Normalizes $loginAction and checks if current request url is same as login
- * action. If current url is same as login action, referrer url is saved in session
- * which is later accessible using redirectUrl().
+ * Normalizes $loginAction and checks if current request url is same as login action.
  *
  * @param Controller $controller A reference to the controller object.
  * @return boolean True if current action is login action else false.
@@ -383,15 +389,7 @@ class AuthComponent extends Component {
 		$url = Router::normalize($url);
 		$loginAction = Router::normalize($this->loginAction);
 
-		if ($loginAction == $url) {
-			if (empty($controller->request->data)) {
-				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
-					$this->Session->write('Auth.redirect', $controller->referer(null, true));
-				}
-			}
-			return true;
-		}
-		return false;
+		return $loginAction === $url;
 	}
 
 /**
@@ -687,17 +685,6 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Backwards compatible alias for AuthComponent::redirectUrl().
- *
- * @param string|array $url Optional URL to write as the login redirect URL.
- * @return string Redirect URL
- * @deprecated 2.3 Use AuthComponent::redirectUrl() instead
- */
-	public function redirect($url = null) {
-		return $this->redirectUrl($url);
-	}
-
-/**
  * Get the URL a user should be redirected to upon login.
  *
  * Pass an URL in to set the destination a user should be redirected to upon
@@ -790,26 +777,12 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Hash a password with the application's salt value (as defined with Configure::write('Security.salt');
- *
- * This method is intended as a convenience wrapper for Security::hash(). If you want to use
- * a hashing/encryption system not supported by that method, do not use this method.
- *
- * @param string $password Password to hash
- * @return string Hashed password
- * @deprecated Since 2.4. Use Security::hash() directly or a password hasher object.
- */
-	public static function password($password) {
-		return Security::hash($password, null, true);
-	}
-
-/**
  * Check whether or not the current user has data in the session, and is considered logged in.
  *
  * @return boolean true if the user is logged in, false otherwise
  */
 	public function loggedIn() {
-		return (boolean)$this->user();
+		return (bool)$this->user();
 	}
 
 /**

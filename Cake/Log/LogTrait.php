@@ -17,7 +17,6 @@ namespace Cake\Log;
  * A trait providing an object short-cut method
  * to logging.
  *
- * @package Cake.Log
  */
 trait LogTrait {
 

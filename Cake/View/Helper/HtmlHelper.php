@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 0.9.1
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -32,7 +31,6 @@ use Cake\View\View;
  *
  * HtmlHelper encloses all methods needed while working with HTML pages.
  *
- * @package       Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html
  */
 class HtmlHelper extends Helper {
@@ -613,7 +611,7 @@ class HtmlHelper extends Helper {
 	}
 
 /**
- * End a Buffered section of Javascript capturing.
+ * End a Buffered section of JavaScript capturing.
  * Generates a script tag inline or in `$scripts_for_layout` depending on the settings
  * used when the scriptBlock was started
  *

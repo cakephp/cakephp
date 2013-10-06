@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
  * @since         CakePHP v .0.10.3.1400
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -27,11 +26,10 @@ use Cake\Network\Http\Client;
 use \DOMDocument;
 
 /**
- * XML handling for Cake.
+ * XML handling for CakePHP.
  *
  * The methods in these classes enable the datasources that use XML to work.
  *
- * @package       Cake.Utility
  */
 class Xml {
 

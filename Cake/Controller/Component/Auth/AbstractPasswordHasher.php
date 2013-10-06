@@ -19,7 +19,6 @@ namespace Cake\Controller\Component\Auth;
 /**
  * Abstract password hashing class
  *
- * @package       Cake.Controller.Component.Auth
  */
 abstract class AbstractPasswordHasher {
 

@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -27,7 +26,6 @@ require_once dirname(__DIR__) . DS . 'models.php';
 /**
  * ContainableTest class
  *
- * @package       Cake.Test.Case.Model.Behavior
  */
 class ContainableBehaviorTest extends TestCase {
 
@@ -3480,7 +3478,7 @@ class ContainableBehaviorTest extends TestCase {
 					'joinTable' => 'articles_tags',
 					'foreignKey' => 'article_id',
 					'associationForeignKey' => 'tag_id',
-					// LENGHT function mysql-only, using LIKE does almost the same
+					// LENGTH function mysql-only, using LIKE does almost the same
 					'conditions' => "ShortTag.tag LIKE '???'"
 				)
 			)

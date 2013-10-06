@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.0.5551
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -25,7 +24,6 @@ use Cake\Core\Configure;
  * String handling methods.
  *
  *
- * @package       Cake.Utility
  */
 class String {
 

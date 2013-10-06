@@ -25,7 +25,6 @@ use Cake\Utility\Validation;
 /**
  * CustomValidator class
  *
- * @package       Cake.Test.Case.Utility
  */
 class CustomValidator {
 
@@ -46,7 +45,6 @@ class CustomValidator {
  *
  * Used to test pass through of Validation
  *
- * @package       Cake.Test.Case.Utility
  */
 class TestNlValidation {
 
@@ -76,7 +74,6 @@ class TestNlValidation {
  *
  * Used to test pass through of Validation
  *
- * @package       Cake.Test.Case.Utility
  */
 class TestDeValidation {
 
@@ -95,7 +92,6 @@ class TestDeValidation {
 /**
  * Test Case for Validation Class
  *
- * @package       Cake.Test.Case.Utility
  */
 class ValidationTest extends TestCase {
 
@@ -1948,8 +1944,15 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::inList('three', array('one', 'two')));
 		$this->assertFalse(Validation::inList('1one', array(0, 1, 2, 3)));
 		$this->assertFalse(Validation::inList('one', array(0, 1, 2, 3)));
-		$this->assertFalse(Validation::inList('2', array(1, 2, 3)));
-		$this->assertTrue(Validation::inList('2', array(1, 2, 3), false));
+		$this->assertTrue(Validation::inList('2', array(1, 2, 3)));
+		$this->assertFalse(Validation::inList('2x', array(1, 2, 3)));
+		$this->assertFalse(Validation::inList(2, array('1', '2x', '3')));
+		$this->assertFalse(Validation::inList('One', array('one', 'two')));
+
+		// case insensitive
+		$this->assertTrue(Validation::inList('one', array('One', 'Two'), true));
+		$this->assertTrue(Validation::inList('Two', array('one', 'two'), true));
+		$this->assertFalse(Validation::inList('three', array('one', 'two'), true));
 	}
 
 /**
@@ -2068,14 +2071,24 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::multiple(array('foo', 'bar', 'baz', 'squirrel'), array('min' => 10)));
 
 		$this->assertTrue(Validation::multiple(array(0, 5, 9), array('in' => range(0, 10), 'max' => 5)));
-		$this->assertFalse(Validation::multiple(array('0', '5', '9'), array('in' => range(0, 10), 'max' => 5)));
-		$this->assertTrue(Validation::multiple(array('0', '5', '9'), array('in' => range(0, 10), 'max' => 5), false));
+		$this->assertTrue(Validation::multiple(array('0', '5', '9'), array('in' => range(0, 10), 'max' => 5)));
+
 		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 6, 2, 1), array('in' => range(0, 10), 'max' => 5)));
 		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 11), array('in' => range(0, 10), 'max' => 5)));
 
 		$this->assertFalse(Validation::multiple(array(0, 5, 9), array('in' => range(0, 10), 'max' => 5, 'min' => 3)));
 		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 6, 2, 1), array('in' => range(0, 10), 'max' => 5, 'min' => 2)));
 		$this->assertFalse(Validation::multiple(array(0, 5, 9, 8, 11), array('in' => range(0, 10), 'max' => 5, 'min' => 2)));
+
+		$this->assertFalse(Validation::multiple(array('2x', '3x'), array('in' => array(1, 2, 3, 4, 5))));
+		$this->assertFalse(Validation::multiple(array(2, 3), array('in' => array('1x', '2x', '3x', '4x'))));
+		$this->assertFalse(Validation::multiple(array('one'), array('in' => array('One', 'Two'))));
+		$this->assertFalse(Validation::multiple(array('Two'), array('in' => array('one', 'two'))));
+
+		// case insensitive
+		$this->assertTrue(Validation::multiple(array('one'), array('in' => array('One', 'Two')), true));
+		$this->assertTrue(Validation::multiple(array('Two'), array('in' => array('one', 'two')), true));
+		$this->assertFalse(Validation::multiple(array('three'), array('in' => array('one', 'two')), true));
 	}
 
 /**
@@ -2137,9 +2150,6 @@ class ValidationTest extends TestCase {
 
 		// invalid area-codes
 		$this->assertFalse(Validation::phone('1-(511)-999-9999'));
-		$this->assertFalse(Validation::phone('1-(379)-999-9999'));
-		$this->assertFalse(Validation::phone('1-(962)-999-9999'));
-		$this->assertFalse(Validation::phone('1-(295)-999-9999'));
 		$this->assertFalse(Validation::phone('1-(555)-999-9999'));
 
 		// invalid exhange
@@ -2150,10 +2160,13 @@ class ValidationTest extends TestCase {
 		$this->assertFalse(Validation::phone('1-(222)-555-0122'));
 
 		// valid phone numbers
+		$this->assertTrue(Validation::phone('416-428-1234'));
 		$this->assertTrue(Validation::phone('1-(369)-333-4444'));
 		$this->assertTrue(Validation::phone('1-(973)-333-4444'));
 		$this->assertTrue(Validation::phone('1-(313)-555-9999'));
 		$this->assertTrue(Validation::phone('1-(222)-555-0299'));
+		$this->assertTrue(Validation::phone('508-428-1234'));
+		$this->assertTrue(Validation::phone('1-(508)-232-9651'));
 
 		$this->assertTrue(Validation::phone('1 (222) 333 4444'));
 		$this->assertTrue(Validation::phone('+1 (222) 333 4444'));
@@ -2336,6 +2349,7 @@ class ValidationTest extends TestCase {
 		$this->assertTrue(Validation::mimeType($image, array('image/gif')));
 		$this->assertTrue(Validation::mimeType(array('tmp_name' => $image), array('image/gif')));
 
+		$this->assertFalse(Validation::mimeType($image, array('image/GIF')));
 		$this->assertFalse(Validation::mimeType($image, array('image/png')));
 		$this->assertFalse(Validation::mimeType(array('tmp_name' => $image), array('image/png')));
 	}

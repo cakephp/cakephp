@@ -26,7 +26,6 @@ use Cake\Utility\ClassRegistry;
 /**
  * Test Article model
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskArticle extends Model {
 
@@ -92,7 +91,6 @@ class TestTaskArticle extends Model {
 /**
  * Tag Testing Model
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskTag extends Model {
 
@@ -121,7 +119,6 @@ class TestTaskTag extends Model {
 /**
  * Simulated plugin
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskAppModel extends Model {
 }
@@ -129,7 +126,6 @@ class TestTaskAppModel extends Model {
 /**
  * Testing AppMode (TaskComment)
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskComment extends TestTaskAppModel {
 
@@ -156,7 +152,6 @@ class TestTaskComment extends TestTaskAppModel {
 /**
  * Test Task Comments Controller
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskCommentsController extends Controller {
 
@@ -171,7 +166,6 @@ class TestTaskCommentsController extends Controller {
 /**
  * TestTaskTest class
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class TestTaskTest extends TestCase {
 

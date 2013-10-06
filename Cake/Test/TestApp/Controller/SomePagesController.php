@@ -19,7 +19,6 @@ use Cake\Network\Response;
 /**
  * SomePagesController class
  *
- * @package       Cake.Test.Case.Routing
  */
 class SomePagesController extends Controller {
 

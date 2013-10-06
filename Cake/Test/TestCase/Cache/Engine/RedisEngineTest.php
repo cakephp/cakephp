@@ -22,7 +22,6 @@ use Cake\TestSuite\TestCase;
 /**
  * RedisEngineTest class
  *
- * @package       Cake.Test.Case.Cache.Engine
  */
 class RedisEngineTest extends TestCase {
 

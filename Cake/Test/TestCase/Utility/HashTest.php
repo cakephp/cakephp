@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
  * @since         CakePHP(tm) v 2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -21,7 +20,6 @@ use Cake\Utility\Hash;
 /**
  * Class HashTest
  *
- * @package       Cake.Utility
  */
 class HashTest extends TestCase {
 
@@ -595,6 +593,12 @@ class HashTest extends TestCase {
 		);
 		$this->assertTrue(Hash::contains($b, $a));
 		$this->assertFalse(Hash::contains($a, $b));
+
+		$a = array(0 => 'test', 'string' => null);
+		$this->assertTrue(Hash::contains($a, array('string' => null)));
+
+		$a = array(0 => 'test', 'string' => null);
+		$this->assertTrue(Hash::contains($a, array('test')));
 	}
 
 /**

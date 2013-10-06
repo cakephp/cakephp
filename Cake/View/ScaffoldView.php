@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View
  * @since         Cake v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -28,7 +27,6 @@ use Cake\Utility\Inflector;
 /**
  * ScaffoldView provides specific view file loading features for scaffolded views.
  *
- * @package       Cake.View
  */
 class ScaffoldView extends View {
 
@@ -70,7 +68,7 @@ class ScaffoldView extends View {
 		}
 
 		$names[] = $this->viewPath . DS . $subDir . $scaffoldAction;
-		$names[] = 'Scaffolds' . DS . $subDir . $name;
+		$names[] = 'Scaffold' . DS . $subDir . $name;
 
 		$paths = $this->_paths($this->plugin);
 		$exts = array($this->ext);
@@ -87,8 +85,8 @@ class ScaffoldView extends View {
 			}
 		}
 
-		if ($name === 'Scaffolds' . DS . $subDir . 'error') {
-			return CAKE . 'View' . DS . 'Errors' . DS . 'scaffold_error.ctp';
+		if ($name === 'Scaffold' . DS . $subDir . 'error') {
+			return CAKE . 'View' . DS . 'Error' . DS . 'scaffold_error.ctp';
 		}
 
 		throw new Error\MissingViewException($paths[0] . $name . $this->ext);

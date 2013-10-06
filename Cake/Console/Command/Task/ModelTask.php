@@ -28,7 +28,6 @@ use Cake\Utility\Inflector;
 /**
  * Task class for creating and updating model files.
  *
- * @package	   Cake.Console.Command.Task
  */
 class ModelTask extends BakeTask {
 
@@ -382,7 +381,7 @@ class ModelTask extends BakeTask {
 		$default = 1;
 		foreach ($options as $option) {
 			if ($option{0} !== '_') {
-				$choices[$default] = strtolower($option);
+				$choices[$default] = $option;
 				$default++;
 			}
 		}
@@ -435,9 +434,9 @@ class ModelTask extends BakeTask {
 				} elseif ($metaData['type'] === 'string' && $metaData['length'] == 36) {
 					$guess = $methods['uuid'];
 				} elseif ($metaData['type'] === 'string') {
-					$guess = $methods['notempty'];
+					$guess = $methods['notEmpty'];
 				} elseif ($metaData['type'] === 'text') {
-					$guess = $methods['notempty'];
+					$guess = $methods['notEmpty'];
 				} elseif ($metaData['type'] === 'integer') {
 					$guess = $methods['numeric'];
 				} elseif ($metaData['type'] === 'boolean') {

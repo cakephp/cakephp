@@ -118,6 +118,18 @@ class Table {
 		self::CONSTRAINT_FOREIGN,
 	];
 
+/**
+ * Names of the valid foreign key actions.
+ *
+ * @var array
+ */
+	protected $_validForeignKeyActions = [
+		self::ACTION_CASCADE,
+		self::ACTION_SET_NULL,
+		self::ACTION_NO_ACTION,
+		self::ACTION_RESTRICT,
+	];
+
 	const CONSTRAINT_PRIMARY = 'primary';
 	const CONSTRAINT_UNIQUE = 'unique';
 	const CONSTRAINT_FOREIGN = 'foreign';
@@ -358,12 +370,11 @@ class Table {
 		if (count($attrs['references']) < 2) {
 			throw new Exception(__d('cake_dev', 'References must contain a table and column.'));
 		}
-		$validActions = [static::ACTION_CASCADE, static::ACTION_RESTRICT, static::ACTION_SET_NULL, static::ACTION_NO_ACTION];
-		if (!in_array($attrs['update'], $validActions)) {
-			throw new Exception(__d('cake_dev', 'Update action is invalid. Must be one of %s', implode(',', $validActions)));
+		if (!in_array($attrs['update'], $this->_validForeignKeyActions)) {
+			throw new Exception(__d('cake_dev', 'Update action is invalid. Must be one of %s', implode(',', $this->_validForeignKeyActions)));
 		}
-		if (!in_array($attrs['delete'], $validActions)) {
-			throw new Exception(__d('cake_dev', 'Delete action is invalid. Must be one of %s', implode(',', $validActions)));
+		if (!in_array($attrs['delete'], $this->_validForeignKeyActions)) {
+			throw new Exception(__d('cake_dev', 'Delete action is invalid. Must be one of %s', implode(',', $this->_validForeignKeyActions)));
 		}
 		return $attrs;
 	}

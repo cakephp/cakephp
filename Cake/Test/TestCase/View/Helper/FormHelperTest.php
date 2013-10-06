@@ -32,7 +32,6 @@ use Cake\View\View;
 /**
  * ContactTestController class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ContactTestController extends Controller {
 
@@ -47,14 +46,13 @@ class ContactTestController extends Controller {
 /**
  * Contact class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class Contact extends TestModel {
 
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -148,14 +146,13 @@ class Contact extends TestModel {
 /**
  * ContactTagsContact class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ContactTagsContact extends TestModel {
 
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -185,7 +182,6 @@ class ContactTagsContact extends TestModel {
 /**
  * ContactNonStandardPk class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ContactNonStandardPk extends Contact {
 
@@ -213,14 +209,13 @@ class ContactNonStandardPk extends Contact {
 /**
  * ContactTag class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ContactTag extends Model {
 
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -240,14 +235,13 @@ class ContactTag extends Model {
 /**
  * UserForm class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class UserForm extends TestModel {
 
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -280,14 +274,13 @@ class UserForm extends TestModel {
 /**
  * OpenidUrl class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class OpenidUrl extends TestModel {
 
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -335,14 +328,13 @@ class OpenidUrl extends TestModel {
 /**
  * ValidateUser class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ValidateUser extends TestModel {
 
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -384,14 +376,13 @@ class ValidateUser extends TestModel {
 /**
  * ValidateProfile class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ValidateProfile extends TestModel {
 
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -443,14 +434,13 @@ class ValidateProfile extends TestModel {
 /**
  * ValidateItem class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class ValidateItem extends TestModel {
 
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -492,14 +482,13 @@ class ValidateItem extends TestModel {
 /**
  * TestMail class
  *
- * @package       Cake.Test.Case.View.Helper
  */
 class TestMail extends TestModel {
 
 /**
  * useTable property
  *
- * @var bool false
+ * @var boolean
  */
 	public $useTable = false;
 
@@ -508,7 +497,6 @@ class TestMail extends TestModel {
 /**
  * FormHelperTest class
  *
- * @package       Cake.Test.Case.View.Helper
  * @property FormHelper $Form
  */
 class FormHelperTest extends TestCase {
@@ -3981,6 +3969,40 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Model.field', array(
+			'type' => 'radio',
+			'options' => array(
+				1 => 'A',
+				2 => 'B',
+				3 => 'C'
+			),
+			'disabled' => array(1)
+		));
+
+		$expected = array(
+			'div' => array('class' => 'input radio'),
+			'fieldset' => array(),
+			'legend' => array(),
+			'Field',
+			'/legend',
+			array('input' => array('type' => 'hidden', 'name' => 'data[Model][field]', 'id' => 'ModelField_', 'value' => '')),
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'id' => 'ModelField1', 'disabled' => 'disabled', 'value' => '1')),
+			array('label' => array('for' => 'ModelField1')),
+			'A',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'id' => 'ModelField2', 'value' => '2')),
+			array('label' => array('for' => 'ModelField2')),
+			'B',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]', 'id' => 'ModelField3', 'value' => '3')),
+			array('label' => array('for' => 'ModelField3')),
+			'C',
+			'/label',
+			'/fieldset',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -4096,6 +4118,27 @@ class FormHelperTest extends TestCase {
 		));
 		$this->assertTextContains(
 			'<label for="ModelField1" class="checkbox float-left">Option A</label>',
+			$result
+		);
+	}
+
+/**
+ * Test that label id's match the input element id's when radio is called after create().
+ *
+ * @return void
+ */
+	public function testRadioWithCreate() {
+		$this->Form->create('Model');
+		$result = $this->Form->radio('recipient',
+			array('1' => '1', '2' => '2', '3' => '3'),
+			array('legend' => false, 'value' => '1')
+		);
+		$this->assertTextNotContains(
+			'<label for="ModelModelRecipient1">1</label>',
+			$result
+		);
+		$this->assertTextContains(
+			'<label for="ModelRecipient1">1</label>',
 			$result
 		);
 	}
@@ -6719,7 +6762,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $matches[1];
 		$expected = range(date('Y') + 20, 1930);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$this->Form->request->data['Project']['release'] = '2050-10-10';
 		$result = $this->Form->year('Project.release');
@@ -6727,7 +6770,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $matches[1];
 		$expected = range(2050, date('Y') - 20);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$this->Form->request->data['Project']['release'] = '1881-10-10';
 		$result = $this->Form->year('Project.release', 1890, 1900);
@@ -6735,7 +6778,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $matches[1];
 		$expected = range(1900, 1881);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -9266,7 +9309,7 @@ class FormHelperTest extends TestCase {
 			'div' => false,
 			'label' => false,
 		);
-		$this->assertEqual($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 }

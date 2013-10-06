@@ -33,7 +33,6 @@ if (!class_exists('Cake\Model\ScaffoldMock')) {
 /**
  * TestScaffoldView class
  *
- * @package       Cake.Test.TestCase.View
  */
 class TestScaffoldView extends ScaffoldView {
 
@@ -53,7 +52,6 @@ class TestScaffoldView extends ScaffoldView {
 /**
  * ScaffoldViewTest class
  *
- * @package       Cake.Test.TestCase.View
  */
 class ScaffoldViewTest extends TestCase {
 
@@ -111,39 +109,39 @@ class ScaffoldViewTest extends TestCase {
 		$this->Controller->request->params['action'] = 'index';
 		$ScaffoldView = new TestScaffoldView($this->Controller);
 		$result = $ScaffoldView->testGetFilename('index');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'index.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffold' . DS . 'index.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('edit');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'form.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffold' . DS . 'form.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('add');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'form.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffold' . DS . 'form.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('view');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'view.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffold' . DS . 'view.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_index');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'index.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffold' . DS . 'index.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_view');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'view.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffold' . DS . 'view.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_edit');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'form.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffold' . DS . 'form.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('admin_add');
-		$expected = CAKE . 'View' . DS . 'Scaffolds' . DS . 'form.ctp';
+		$expected = CAKE . 'View' . DS . 'Scaffold' . DS . 'form.ctp';
 		$this->assertEquals($expected, $result);
 
 		$result = $ScaffoldView->testGetFilename('error');
-		$expected = CAKE . 'View' . DS . 'Errors' . DS . 'scaffold_error.ctp';
+		$expected = CAKE . 'View' . DS . 'Error' . DS . 'scaffold_error.ctp';
 		$this->assertEquals($expected, $result);
 
 		$Controller = new ScaffoldArticlesController($this->request);

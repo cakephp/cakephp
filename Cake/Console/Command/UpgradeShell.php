@@ -77,7 +77,13 @@ class UpgradeShell extends Shell {
 		$path = $this->_getPath();
 
 		$moves = array(
-			'Test' . DS . 'Case' => 'Test' . DS . 'TestCase'
+			'Test' . DS . 'Case' => 'Test' . DS . 'TestCase',
+			'View' . DS . 'Elements' => 'View' . DS . 'Element',
+			'View' . DS . 'Emails' => 'View' . DS . 'Email',
+			'View' . DS . 'Layouts' => 'View' . DS . 'Layout',
+			'View' . DS . 'Layout' . DS . 'Emails' => 'View' . DS . 'Layout' . DS . 'Email',
+			'View' . DS . 'Scaffolds' => 'View' . DS . 'Scaffold',
+			'View' . DS . 'Errors' => 'View' . DS . 'Error',
 		);
 		$dry = $this->params['dryRun'];
 
@@ -363,7 +369,10 @@ class UpgradeShell extends Shell {
 
 		// Process field property.
 		$processor = function ($matches) use ($export) {
+			//@codingStandardsIgnoreStart
 			eval('$data = [' . $matches[2] . '];');
+			//@codingStandardsIgnoreEnd
+
 			$constraints = [];
 			$out = [];
 			foreach ($data as $field => $properties) {
@@ -486,7 +495,7 @@ class UpgradeShell extends Shell {
  *
  * @param string $filePath The file to add a namespace to.
  * @param string $ns The base namespace to use.
- * @param bool $dry Whether or not to operate in dry-run mode.
+ * @param boolean $dry Whether or not to operate in dry-run mode.
  * @return void
  */
 	protected function _addNamespace($path, $filePath, $ns, $dry) {

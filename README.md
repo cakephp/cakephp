@@ -12,7 +12,7 @@ loss to flexibility.
 
 You can install CakePHP into your project using
 [composer](http://getcomposer.org).  If you're starting a new project, we
-recommend using the [app skeleton](https://github.com/cakephp/cakephp-app) as
+recommend using the [app skeleton](https://github.com/cakephp/app) as
 a starting point. For existing applications you can add the following to your
 `composer.json` file:
 
@@ -46,7 +46,7 @@ Some Handy Links
 
 [The Bakery](http://bakery.cakephp.org) - Tips, tutorials and articles
 
-[API](http://api.cakephp.org) - A reference to Cake's classes
+[API](http://api.cakephp.org) - A reference to CakePHP's classes
 
 [CakePHP TV](http://tv.cakephp.org) - Screen casts from events and video tutorials
 

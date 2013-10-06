@@ -25,7 +25,6 @@ use Cake\Utility\String;
 /**
  * Task class for creating new project apps and plugins
  *
- * @package       Cake.Console.Command.Task
  */
 class ProjectTask extends Shell {
 
@@ -56,7 +55,7 @@ class ProjectTask extends Shell {
 		}
 
 		while (!$project) {
-			$prompt = __d('cake_console', "What is the path to the project you want to bake?");
+			$prompt = __d('cake_console', 'What is the path to the project you want to bake?');
 			$project = $this->in($prompt, null, $suggestedPath);
 		}
 
@@ -92,7 +91,7 @@ class ProjectTask extends Shell {
 	}
 
 /**
- * Uses composer to generate a new package using the cakephp/cakephp-app project.
+ * Uses composer to generate a new package using the cakephp/app project.
  *
  * @param string $path Project path
  * @return mixed
@@ -103,9 +102,9 @@ class ProjectTask extends Shell {
 			$this->error(__d('cake_console', 'Cannot bake project. Could not find composer at "%s".', $composer));
 			return false;
 		}
-		$this->out('<info>Downloading a new cakephp-app from packagist.org</info>');
+		$this->out(__d('cake_console', '<info>Downloading a new cakephp app from packagist.org</info>'));
 
-		$command = 'php ' . escapeshellarg($composer) . ' create-project --dev cakephp/cakephp-app ' . escapeshellarg($path);
+		$command = 'php ' . escapeshellarg($composer) . ' create-project --dev cakephp/app ' . escapeshellarg($path);
 
 		$descriptorSpec = array(
 			0 => array('pipe', 'r'),
@@ -118,7 +117,7 @@ class ProjectTask extends Shell {
 			$pipes
 		);
 		if (!is_resource($process)) {
-			$this->err(__d('cake_console', 'Could not start subprocess.'));
+			$this->error(__d('cake_console', 'Could not start subprocess.'));
 			return false;
 		}
 		$output = $error = '';
@@ -132,7 +131,7 @@ class ProjectTask extends Shell {
 		proc_close($process);
 
 		if ($error) {
-			$this->error('Installation from packagist.org failed with: ' . $error);
+			$this->error(__d('cake_console', 'Installation from packagist.org failed with: %s', $error));
 			return false;
 		}
 		$this->out($output);

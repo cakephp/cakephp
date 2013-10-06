@@ -26,7 +26,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Help to test SmtpTransport
  *
- * @package Cake.Test.Case.Network.Email
  */
 class SmtpTestTransport extends SmtpTransport {
 

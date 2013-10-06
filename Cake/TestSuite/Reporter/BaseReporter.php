@@ -25,7 +25,6 @@ require_once 'PHPUnit/TextUI/ResultPrinter.php';
 /**
  * BaseReporter contains common reporting features used in the CakePHP Test suite
  *
- * @package       Cake.TestSuite.Reporter
  */
 class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 

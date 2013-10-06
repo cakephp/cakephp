@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.5330
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -30,14 +29,13 @@ require_once dirname(__DIR__) . DS . 'models.php';
 /**
  * TreeBehaviorUuidTest class
  *
- * @package       Cake.Test.Case.Model.Behavior
  */
 class TreeBehaviorUuidTest extends TestCase {
 
 /**
  * Whether backup global state for each test method or not
  *
- * @var bool false
+ * @var boolean
  */
 	public $backupGlobals = false;
 
@@ -120,7 +118,7 @@ class TreeBehaviorUuidTest extends TestCase {
 			array($modelClass => array('name' => '1.1.1', $leftField => 12, $rightField => 13)));
 		$this->assertEquals($direct, $expects);
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -183,7 +181,7 @@ class TreeBehaviorUuidTest extends TestCase {
 		$this->assertEquals(array_values($nodes), $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -216,7 +214,7 @@ class TreeBehaviorUuidTest extends TestCase {
 		$this->assertEquals(array_values($nodes), $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**

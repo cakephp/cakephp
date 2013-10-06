@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Console.Command
  * @since         CakePHP v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -24,7 +23,6 @@ use Cake\Utility\Inflector;
 /**
  * Shows a list of commands available from the console.
  *
- * @package       Cake.Console.Command
  */
 class CommandListShell extends Shell {
 

@@ -26,7 +26,6 @@ use Cake\Utility\Security;
 /**
  * Base Authentication class with common methods and properties.
  *
- * @package       Cake.Controller.Component.Auth
  */
 abstract class BaseAuthenticate {
 
@@ -165,18 +164,6 @@ abstract class BaseAuthenticate {
 		}
 		$this->_passwordHasher = new $className($config);
 		return $this->_passwordHasher;
-	}
-
-/**
- * Hash the plain text password so that it matches the hashed/encrypted password
- * in the datasource.
- *
- * @param string $password The plain text password.
- * @return string The hashed form of the password.
- * @deprecated Since 2.4. Use a PasswordHasher class instead.
- */
-	protected function _password($password) {
-		return Security::hash($password, null, true);
 	}
 
 /**

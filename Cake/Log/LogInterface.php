@@ -18,7 +18,6 @@ namespace Cake\Log;
  * LogStreamInterface is the interface that should be implemented
  * by all classes that are going to be used as Log streams.
  *
- * @package       Cake.Log
  */
 interface LogInterface {
 

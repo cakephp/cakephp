@@ -12,7 +12,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.5432
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -25,7 +24,6 @@ use Cake\Utility\String;
 /**
  * StringTest class
  *
- * @package       Cake.Test.Case.Utility
  */
 class StringTest extends TestCase {
 

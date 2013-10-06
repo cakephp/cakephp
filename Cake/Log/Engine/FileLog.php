@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
- * @package       Cake.Log.Engine
  * @since         CakePHP(tm) v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -23,7 +22,6 @@ use Cake\Utility\Hash;
  * File Storage stream for Logging. Writes logs to different files
  * based on the level of log it is.
  *
- * @package       Cake.Log.Engine
  */
 class FileLog extends BaseLog {
 

@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Controller
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -30,7 +29,6 @@ use Cake\Utility\Inflector;
  *
  * Override this controller by placing a copy in controllers directory of an application
  *
- * @package       Cake.Controller
  * @link http://book.cakephp.org/2.0/en/controllers/pages-controller.html
  */
 class PagesController extends AppController {

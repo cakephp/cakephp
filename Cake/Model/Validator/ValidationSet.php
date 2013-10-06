@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Validator
  * @since         CakePHP(tm) v 2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -25,7 +24,6 @@ namespace Cake\Model\Validator;
  * ValidationSet object. Holds all validation rules for a field and exposes
  * methods to dynamically add or remove validation rules
  *
- * @package       Cake.Model.Validator
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
 class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
@@ -499,7 +497,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Returns the number of rules in this set
  *
- * @return int
+ * @return integer
  */
 	public function count() {
 		return count($this->_rules);

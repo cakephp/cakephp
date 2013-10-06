@@ -3,7 +3,7 @@
  * Dispatcher takes the URL information, parses it for parameters and
  * tells the involved controllers what to do.
  *
- * This is the heart of Cake's operation.
+ * This is the heart of CakePHP's operation.
  *
  * PHP 5
  *
@@ -16,7 +16,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Routing
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -40,7 +39,6 @@ use Cake\View\View;
  * to locate and load the correct controller. If found, the requested action is called on
  * the controller.
  *
- * @package       Cake.Routing
  */
 class Dispatcher implements EventListener {
 
@@ -249,7 +247,7 @@ class Dispatcher implements EventListener {
  * Load controller and return controller classname
  *
  * @param Cake\Network\Request $request
- * @return string|bool Name of controller class name
+ * @return string|boolean Name of controller class name
  */
 	protected function _loadController($request) {
 		$pluginName = $pluginPath = $controller = null;

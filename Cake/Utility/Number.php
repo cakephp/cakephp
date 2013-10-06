@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -28,7 +27,6 @@ use Cake\Error;
  *
  * Methods to make numbers more readable.
  *
- * @package       Cake.Utility
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html
  */
 class Number {
@@ -193,7 +191,7 @@ class Number {
  * Formats a number into a currency format.
  *
  * @param float $value A floating point number
- * @param integer $options if int then places, if string then before, if (,.-) then use it
+ * @param integer $options If integer then places, if string then before, if (,.-) then use it
  *   or array with places and before keys
  * @return string formatted number
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::format

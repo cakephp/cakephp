@@ -23,7 +23,6 @@ use Cake\TestSuite\TestCase;
 /**
  * TestShellDispatcher class
  *
- * @package       Cake.Test.Case.Console
  */
 class TestShellDispatcher extends ShellDispatcher {
 
@@ -102,7 +101,6 @@ class TestShellDispatcher extends ShellDispatcher {
 /**
  * ShellDispatcherTest
  *
- * @package       Cake.Test.Case.Console
  */
 class ShellDispatcherTest extends TestCase {
 
@@ -424,7 +422,6 @@ class ShellDispatcherTest extends TestCase {
 		$Mock = $this->getMock('Cake\Console\Shell', array(), array(), 'MockWithMainShell');
 
 		$Mock->expects($this->once())->method('initialize');
-		$Mock->expects($this->once())->method('loadTasks');
 		$Mock->expects($this->once())->method('runCommand')
 			->with(null, array())
 			->will($this->returnValue(true));
@@ -450,7 +447,6 @@ class ShellDispatcherTest extends TestCase {
 		$this->mockObjects[] = $Shell;
 
 		$Shell->expects($this->once())->method('initialize');
-		$Shell->expects($this->once())->method('loadTasks');
 		$Shell->expects($this->once())->method('runCommand')
 			->with('initdb', array('initdb'))
 			->will($this->returnValue(true));
@@ -474,7 +470,6 @@ class ShellDispatcherTest extends TestCase {
 		$Shell = $this->getMock('Cake\Core\Object', $methods, array(), 'MockWithMainNotAShell');
 
 		$Shell->expects($this->never())->method('initialize');
-		$Shell->expects($this->never())->method('loadTasks');
 		$Shell->expects($this->once())->method('startup');
 		$Shell->expects($this->once())->method('main')->will($this->returnValue(true));
 		$Dispatcher->TestShell = $Shell;
@@ -507,7 +502,6 @@ class ShellDispatcherTest extends TestCase {
 		$Shell = $this->getMock('Object', $methods, array(&$Dispatcher), 'MockWithoutMainNotAShell');
 
 		$Shell->expects($this->never())->method('initialize');
-		$Shell->expects($this->never())->method('loadTasks');
 		$Shell->expects($this->once())->method('startup');
 		$Shell->expects($this->once())->method('main')->will($this->returnValue(true));
 		$Dispatcher->TestShell = $Shell;

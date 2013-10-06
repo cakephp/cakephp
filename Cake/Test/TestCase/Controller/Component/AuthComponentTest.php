@@ -37,7 +37,6 @@ use TestApp\Model\AuthUser;
 /**
  * AuthComponentTest class
  *
- * @package       Cake.Test.Case.Controller.Component
  */
 class AuthComponentTest extends TestCase {
 
@@ -58,7 +57,7 @@ class AuthComponentTest extends TestCase {
 /**
  * initialized property
  *
- * @var bool false
+ * @var boolean
  */
 	public $initialized = false;
 
@@ -666,6 +665,28 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
+ * testNoLoginRedirectForAuthenticatedUser method
+ *
+ * @return void
+ */
+	public function testNoLoginRedirectForAuthenticatedUser() {
+		$this->Controller->request['controller'] = 'auth_test';
+		$this->Controller->request['action'] = 'login';
+		$this->Controller->here = '/auth_test/login';
+		$this->Auth->request->url = 'auth_test/login';
+
+		$this->Auth->Session->write('Auth.User.id', '1');
+		$this->Auth->authenticate = array('Form');
+		$this->getMock('BaseAuthorize', array('authorize'), array(), 'NoLoginRedirectMockAuthorize', false);
+		$this->Auth->authorize = array('NoLoginRedirectMockAuthorize');
+		$this->Auth->loginAction = array('controller' => 'auth_test', 'action' => 'login');
+
+		$return = $this->Auth->startup($this->Controller);
+		$this->assertTrue($return);
+		$this->assertNull($this->Controller->testUrl);
+	}
+
+/**
  * Default to loginRedirect, if set, on authError.
  *
  * @return void
@@ -1178,17 +1199,6 @@ class AuthComponentTest extends TestCase {
 
 		Configure::write('App', $App);
 		Router::reload();
-	}
-
-/**
- * test password hashing
- *
- * @return void
- */
-	public function testPassword() {
-		$result = $this->Auth->password('password');
-		$expected = Security::hash('password', null, true);
-		$this->assertEquals($expected, $result);
 	}
 
 /**

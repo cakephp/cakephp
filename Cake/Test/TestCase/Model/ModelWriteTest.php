@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -28,7 +27,6 @@ use Cake\Test\TestCase\Model\ModelTestBase;
 /**
  * ModelWriteTest
  *
- * @package       Cake.Test.Case.Model
  */
 class ModelWriteTest extends ModelTestBase {
 
@@ -311,7 +309,7 @@ class ModelWriteTest extends ModelTestBase {
 		$TestModel2 = new Item();
 
 		$result = $TestModel->findById(1);
-		$this->assertSame($result['Syfile']['item_count'], null);
+		$this->assertNull($result['Syfile']['item_count']);
 
 		$TestModel2->save(array(
 			'name' => 'Item 7',
@@ -473,7 +471,7 @@ class ModelWriteTest extends ModelTestBase {
 		$TestModel2->belongsTo['Syfile']['counterScope'] = array('published' => true);
 
 		$result = $TestModel->findById(1);
-		$this->assertSame($result['Syfile']['item_count'], null);
+		$this->assertNull($result['Syfile']['item_count']);
 
 		$TestModel2->save(array(
 			'name' => 'Item 7',
@@ -4622,7 +4620,7 @@ class ModelWriteTest extends ModelTestBase {
 			array('validate' => 'first')
 		);
 
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $model->Comment->find('all');
 		$this->assertSame(count($result), 1);
@@ -6026,7 +6024,7 @@ class ModelWriteTest extends ModelTestBase {
 			array('validate' => 'first')
 		);
 
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $model->Comment->find('all');
 		$this->assertSame(count($result), 1);
@@ -7137,7 +7135,7 @@ class ModelWriteTest extends ModelTestBase {
 		$TestModel = new Item();
 
 		$result = $TestModel->save(array('published' => true, 'id' => 1));
-		$this->assertTrue((boolean)$result);
+		$this->assertTrue((bool)$result);
 		$result = $TestModel->find('first', array(
 			'fields' => array('id', 'published'),
 			'conditions' => array('Item.id' => 1)));

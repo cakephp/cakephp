@@ -19,7 +19,6 @@ use Cake\Log\LogInterface;
 /**
  * Base log engine class.
  *
- * @package       Cake.Log.Engine
  */
 abstract class BaseLog implements LogInterface {
 

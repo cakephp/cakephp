@@ -29,7 +29,6 @@ use Cake\Routing\Router;
  * to create permission systems that focus more on what is being done to resources, rather than the specific actions
  * being visited.
  *
- * @package       Cake.Controller.Component.Auth
  * @since 2.0
  * @see AuthComponent::$authenticate
  * @see AclComponent::check()

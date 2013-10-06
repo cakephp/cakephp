@@ -14,7 +14,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.TestSuite.Coverage
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -28,7 +27,6 @@ use Cake\Utility\Inflector;
  * Abstract class for common CoverageReport methods.
  * Provides several template methods for custom output.
  *
- * @package       Cake.TestSuite.Coverage
  */
 abstract class BaseCoverageReport {
 
@@ -101,7 +99,7 @@ abstract class BaseCoverageReport {
 /**
  * Gets the base path that the files we are interested in live in.
  *
- * @return void
+ * @return string Path
  */
 	public function getPathFilter() {
 		$path = ROOT . DS;

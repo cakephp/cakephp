@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
- * @package       Cake.Test.Case.Controller
  * @since         CakePHP(tm) v 1.2.0.5436
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -32,7 +31,6 @@ class_alias('Cake\Test\TestCase\Model\ScaffoldMock', 'Cake\Model\ScaffoldMock');
 /**
  * ScaffoldMockController class
  *
- * @package       Cake.Test.Case.Controller
  */
 class ScaffoldMockController extends Controller {
 
@@ -47,7 +45,6 @@ class ScaffoldMockController extends Controller {
 /**
  * ScaffoldMockControllerWithFields class
  *
- * @package       Cake.Test.Case.Controller
  */
 class ScaffoldMockControllerWithFields extends Controller {
 
@@ -80,7 +77,6 @@ class ScaffoldMockControllerWithFields extends Controller {
 /**
  * TestScaffoldMock class
  *
- * @package       Cake.Test.Case.Controller
  */
 class TestScaffoldMock extends Scaffold {
 
@@ -107,7 +103,6 @@ class TestScaffoldMock extends Scaffold {
 /**
  * Scaffold Test class
  *
- * @package       Cake.Test.Case.Controller
  */
 class ScaffoldTest extends TestCase {
 

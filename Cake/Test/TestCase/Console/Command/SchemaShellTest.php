@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 1.3
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -86,7 +85,6 @@ class SchemaShellTestSchema extends Object {
 /**
  * SchemaShellTest class
  *
- * @package       Cake.Test.Case.Console.Command
  */
 class SchemaShellTest extends TestCase {
 
@@ -139,7 +137,7 @@ class SchemaShellTest extends TestCase {
 	public function testStartup() {
 		$this->Shell->startup();
 		$this->assertTrue(isset($this->Shell->Schema));
-		$this->assertTrue(is_a($this->Shell->Schema, 'Cake\Model\Schema'));
+		$this->assertInstanceOf('Cake\Model\Schema', $this->Shell->Schema);
 		$this->assertEquals(Inflector::camelize(Inflector::slug(APP_DIR)), $this->Shell->Schema->name);
 		$this->assertEquals('schema.php', $this->Shell->Schema->file);
 

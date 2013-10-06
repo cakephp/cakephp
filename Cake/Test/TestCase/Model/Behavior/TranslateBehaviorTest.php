@@ -22,14 +22,13 @@ require_once dirname(__DIR__) . DS . 'models.php';
 /**
  * TranslateBehaviorTest class
  *
- * @package       Cake.Test.Case.Model.Behavior
  */
 class TranslateBehaviorTest extends TestCase {
 
 /**
  * autoFixtures property
  *
- * @var bool false
+ * @var boolean
  */
 	public $autoFixtures = false;
 

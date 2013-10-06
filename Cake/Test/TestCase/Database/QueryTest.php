@@ -1941,7 +1941,7 @@ class QueryTest extends TestCase {
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table
- * @param int $count
+ * @param integer $count
  * @param array $rows
  * @return void
  */

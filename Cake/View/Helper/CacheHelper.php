@@ -24,7 +24,6 @@ use Cake\View\Helper;
  * When using CacheHelper you don't call any of its methods, they are all automatically
  * called by View, and use the $cacheAction settings set in the controller.
  *
- * @package Cake.View.Helper
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html
  */
 class CacheHelper extends Helper {

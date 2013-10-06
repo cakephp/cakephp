@@ -30,7 +30,6 @@ use Cake\View\XmlView;
 /**
  * XmlViewTest
  *
- * @package       Cake.Test.Case.View
  */
 class XmlViewTest extends TestCase {
 

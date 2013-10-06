@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Test.Case.Controller.Component.Acl
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -26,7 +25,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for the IniAcl implementation
  *
- * @package       Cake.Test.Case.Controller.Component.Acl
  */
 class IniAclTest extends TestCase {
 

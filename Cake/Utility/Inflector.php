@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -19,9 +18,8 @@ namespace Cake\Utility;
  * Pluralize and singularize English words.
  *
  * Inflector pluralizes and singularizes English nouns.
- * Used by Cake's naming conventions throughout the framework.
+ * Used by CakePHP's naming conventions throughout the framework.
  *
- * @package       Cake.Utility
  * @link          http://book.cakephp.org/2.0/en/core-utility-libraries/inflector.html
  */
 class Inflector {

@@ -8,7 +8,6 @@
  *
  * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 1.2.0.7726
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
@@ -20,7 +19,6 @@ use Cake\TestSuite\TestCase;
 /**
  * ApiShellTest class
  *
- * @package       Cake.Test.Case.Console.Command
  */
 class ApiShellTest extends TestCase {
 
@@ -56,7 +54,7 @@ class ApiShellTest extends TestCase {
 			->method('out')
 			->with($this->logicalAnd(
 				$this->contains('8. beforeFilter($event)'),
-				$this->contains('24. render($view = NULL, $layout = NULL)')
+				$this->contains('21. render($view = NULL, $layout = NULL)')
 			));
 
 		$this->Shell->args = ['controller'];

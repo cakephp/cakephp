@@ -24,7 +24,6 @@ use Cake\Utility\ClassRegistry;
 /**
  * FixtureTaskTest class
  *
- * @package       Cake.Test.Case.Console.Command.Task
  */
 class FixtureTaskTest extends TestCase {
 

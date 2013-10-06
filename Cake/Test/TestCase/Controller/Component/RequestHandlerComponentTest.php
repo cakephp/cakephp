@@ -146,6 +146,21 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
+ * Test that RequestHandler does not set extension to csv for text/plain mimetype
+ *
+ * @return void
+ */
+	public function testInitializeContentTypeWithjQueryTextPlainAccept() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/plain, */*; q=0.01';
+		$event = new Event('Controller.initialize', $this->Controller);
+		$this->assertNull($this->RequestHandler->ext);
+		Router::parseExtensions('csv');
+
+		$this->RequestHandler->initialize($event);
+		$this->assertNull($this->RequestHandler->ext);
+	}
+
+/**
  * Test that RequestHandler sets $this->ext when jQuery sends its wonky-ish headers
  * and the application is configured to handle multiple extensions
  *
@@ -530,21 +545,6 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * Tests the detection of various Flash versions
- *
- * @return void
- */
-	public function testFlashDetection() {
-		$request = $this->getMock('Cake\Network\Request');
-		$request->expects($this->once())->method('is')
-			->with('flash')
-			->will($this->returnValue(true));
-
-		$this->RequestHandler->request = $request;
-		$this->assertTrue($this->RequestHandler->isFlash());
-	}
-
-/**
  * testRequestContentTypes method
  *
  * @return void
@@ -610,51 +610,6 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * testRequestProperties method
- *
- * @return void
- */
-	public function testRequestProperties() {
-		$request = $this->getMock('Cake\Network\Request');
-		$request->expects($this->once())->method('is')
-			->with('ssl')
-			->will($this->returnValue(true));
-
-		$this->RequestHandler->request = $request;
-		$this->assertTrue($this->RequestHandler->isSsl());
-	}
-
-/**
- * testRequestMethod method
- *
- * @return void
- */
-	public function testRequestMethod() {
-		$request = $this->getMock('Cake\Network\Request');
-		$request->expects($this->at(0))->method('is')
-			->with('get')
-			->will($this->returnValue(true));
-
-		$request->expects($this->at(1))->method('is')
-			->with('post')
-			->will($this->returnValue(false));
-
-		$request->expects($this->at(2))->method('is')
-			->with('delete')
-			->will($this->returnValue(true));
-
-		$request->expects($this->at(3))->method('is')
-			->with('put')
-			->will($this->returnValue(false));
-
-		$this->RequestHandler->request = $request;
-		$this->assertTrue($this->RequestHandler->isGet());
-		$this->assertFalse($this->RequestHandler->isPost());
-		$this->assertTrue($this->RequestHandler->isDelete());
-		$this->assertFalse($this->RequestHandler->isPut());
-	}
-
-/**
  * test that map alias converts aliases to content types.
  *
  * @return void
@@ -712,35 +667,6 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_ACCEPT'] = '*/*;q=0.5';
 		$this->assertEquals('html', $this->RequestHandler->prefers());
 		$this->assertFalse($this->RequestHandler->prefers('rss'));
-	}
-
-/**
- * testCustomContent method
- *
- * @return void
- */
-	public function testCustomContent() {
-		$_SERVER['HTTP_ACCEPT'] = 'text/x-mobile,text/html;q=0.9,text/plain;q=0.8,*/*;q=0.5';
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->RequestHandler->setContent('mobile', 'text/x-mobile');
-		$this->RequestHandler->startup($event);
-		$this->assertEquals('mobile', $this->RequestHandler->prefers());
-	}
-
-/**
- * testClientProperties method
- *
- * @return void
- */
-	public function testClientProperties() {
-		$request = $this->getMock('Cake\Network\Request');
-		$request->expects($this->once())->method('referer');
-		$request->expects($this->once())->method('clientIp')->will($this->returnValue(false));
-
-		$this->RequestHandler->request = $request;
-
-		$this->RequestHandler->getReferer();
-		$this->RequestHandler->getClientIP(false);
 	}
 
 /**

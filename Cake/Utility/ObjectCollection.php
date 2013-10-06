@@ -26,7 +26,6 @@ use Cake\Event\Event;
  * they all support an `enabled` option that controls the enabled/disabled state of the object
  * when loaded.
  *
- * @package       Cake.Utility
  * @since CakePHP(tm) v 2.0
  */
 abstract class ObjectCollection {
@@ -48,7 +47,7 @@ abstract class ObjectCollection {
 /**
  * Default object priority. A non zero integer.
  *
- * @var int
+ * @var integer
  */
 	public $defaultPriority = 10;
 

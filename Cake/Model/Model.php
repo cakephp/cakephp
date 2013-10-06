@@ -15,7 +15,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model
  * @since         CakePHP(tm) v 0.10.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -44,7 +43,6 @@ use Cake\Utility\Xml;
  * (i.e. class 'User' => table 'users'; class 'Man' => table 'men')
  * The table is required to have at least 'id auto_increment' primary key.
  *
- * @package       Cake.Model
  * @link          http://book.cakephp.org/2.0/en/models.html
  */
 class Model extends Object implements EventListener {
@@ -3146,10 +3144,12 @@ class Model extends Object implements EventListener {
 	}
 
 /**
- * Returns an array of fields that have failed validation. On the current model.
+ * Returns an array of fields that have failed the validation of the current model.
+ *
+ * Additionally it populates the validationErrors property of the model with the same array.
  *
  * @param string $options An optional array of custom options to be made available in the beforeValidate callback
- * @return array Array of invalid fields
+ * @return array Array of invalid fields and their error messages
  * @see Model::validates()
  */
 	public function invalidFields($options = array()) {

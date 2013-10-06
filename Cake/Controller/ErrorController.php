@@ -21,7 +21,6 @@ use Cake\Routing\Router;
  *
  * Controller used by ErrorHandler to render error views.
  *
- * @package       Cake.Controller
  */
 class ErrorController extends Controller {
 
@@ -53,7 +52,7 @@ class ErrorController extends Controller {
 		if (isset($this->Security)) {
 			$eventManager->detach($this->Security);
 		}
-		$this->_set(array('cacheAction' => false, 'viewPath' => 'Errors'));
+		$this->_set(array('cacheAction' => false, 'viewPath' => 'Error'));
 	}
 
 }

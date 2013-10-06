@@ -34,7 +34,6 @@ use Cake\Utility\String;
 /**
  * Base class for command-line utilities for automating programmer chores.
  *
- * @package       Cake.Console
  */
 class Shell extends Object {
 
@@ -205,6 +204,7 @@ class Shell extends Object {
  */
 	public function initialize() {
 		$this->_loadModels();
+		$this->loadTasks();
 	}
 
 /**

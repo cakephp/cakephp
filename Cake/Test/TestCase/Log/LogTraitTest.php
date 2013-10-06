@@ -21,7 +21,6 @@ use Cake\TestSuite\TestCase;
 /**
  * Test case for LogTrait
  *
- * @package Cake.Test.TestCase.Log
  */
 class LogTraitTest extends TestCase {
 

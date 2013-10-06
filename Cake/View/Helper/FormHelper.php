@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -30,7 +29,6 @@ use \DateTime;
  *
  * Automatic generation of HTML FORMs from given data.
  *
- * @package       Cake.View.Helper
  * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html
  */
@@ -651,7 +649,7 @@ class FormHelper extends Helper {
  *
  * ### Options:
  *
- * - `escape` bool - Whether or not to html escape the contents of the error.
+ * - `escape` boolean - Whether or not to html escape the contents of the error.
  * - `wrap` mixed - Whether or not the error message should be wrapped in a div. If a
  *   string, will be used as the HTML tag to use.
  * - `class` string - The classname for the error message
@@ -1510,7 +1508,7 @@ class FormHelper extends Helper {
 		}
 
 		foreach ($options as $optValue => $optTitle) {
-			$optionsHere = array('value' => $optValue);
+			$optionsHere = array('value' => $optValue, 'disabled' => false);
 
 			if (isset($value) && strval($optValue) === strval($value)) {
 				$optionsHere['checked'] = 'checked';
@@ -1524,7 +1522,9 @@ class FormHelper extends Helper {
 			);
 
 			if ($label) {
-				$optTitle = $this->label($tagName, $optTitle, is_array($label) ? $label : null);
+				$labelOpts = is_array($label) ? $label : array();
+				$labelOpts += array('for' => $tagName);
+				$optTitle = $this->label($tagName, $optTitle, $labelOpts);
 			}
 
 			if (is_array($between)) {
@@ -1741,7 +1741,7 @@ class FormHelper extends Helper {
  * @param string $title The content to be wrapped by <a> tags.
  * @param string|array $url Cake-relative URL or array of URL parameters, or external URL (starts with http://)
  * @param array $options Array of HTML attributes.
- * @param bool|string $confirmMessage JavaScript confirmation message.
+ * @param boolean|string $confirmMessage JavaScript confirmation message.
  * @return string An `<a />` element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */

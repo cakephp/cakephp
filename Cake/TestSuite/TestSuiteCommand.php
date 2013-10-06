@@ -13,7 +13,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -27,7 +26,6 @@ require_once 'PHPUnit/TextUI/Command.php';
 /**
  * Class to customize loading of test suites from CLI
  *
- * @package       Cake.TestSuite
  */
 class TestSuiteCommand extends \PHPUnit_TextUI_Command {
 

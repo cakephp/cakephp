@@ -6,7 +6,6 @@ use Cake\TestSuite\TestCase;
 /**
  * This class helps in testing the life-cycle of fixtures inside a CakeTestCase
  *
- * @package       Cake.Test.Fixture
  */
 class FixturizedTestCase extends TestCase {
 

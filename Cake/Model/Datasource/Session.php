@@ -9,7 +9,6 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v .0.10.0.1222
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
@@ -22,12 +21,11 @@ use Cake\Model\Datasource\Session\SessionHandlerInterface;
 use Cake\Utility\Hash;
 
 /**
- * Session class for Cake.
+ * Session class for CakePHP.
  *
- * Cake abstracts the handling of sessions. There are several convenient methods to access session information.
+ * CakePHP abstracts the handling of sessions. There are several convenient methods to access session information.
  * This class is the implementation of those methods. They are mostly used by the Session Component.
  *
- * @package       Cake.Model.Datasource
  */
 class Session {
 
@@ -439,7 +437,7 @@ class Session {
 	}
 
 /**
- * Helper method to initialize a session, based on Cake core settings.
+ * Helper method to initialize a session, based on CakePHP core settings.
  *
  * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
  *

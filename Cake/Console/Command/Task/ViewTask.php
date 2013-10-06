@@ -26,7 +26,6 @@ use Cake\Utility\Inflector;
 /**
  * Task class for creating and updating view files.
  *
- * @package       Cake.Console.Command.Task
  */
 class ViewTask extends BakeTask {
 

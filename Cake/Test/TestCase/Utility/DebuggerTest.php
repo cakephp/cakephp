@@ -24,7 +24,6 @@ use Cake\View\View;
 /**
  * DebuggerTestCaseDebugger class
  *
- * @package       Cake.Test.Case.Utility
  */
 class DebuggerTestCaseDebugger extends Debugger {
 }
@@ -35,7 +34,6 @@ class DebuggerTestCaseDebugger extends Debugger {
  * !!! Be careful with changing code below as it may
  * !!! change line numbers which are used in the tests
  *
- * @package       Cake.Test.Case.Utility
  */
 class DebuggerTest extends TestCase {
 
