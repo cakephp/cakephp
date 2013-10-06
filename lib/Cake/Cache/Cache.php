@@ -555,7 +555,7 @@ class Cache {
  *
  * {{{
  * $model = $this;
- * $results = Cache::remember('all_articles', function () use ($model) {
+ * $results = Cache::remember('all_articles', function() use ($model) {
  *      return $model->find('all');
  * });
  * }}}
