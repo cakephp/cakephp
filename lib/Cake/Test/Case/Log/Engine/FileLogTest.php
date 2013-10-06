@@ -117,6 +117,8 @@ class FileLogTest extends CakeTestCase {
 		$result = file_get_contents($files[1]);
 		$this->assertRegExp('/Warning: Test warning second/', $result);
 
+		file_put_contents($path . 'error.log.0000000000', "The oldest log file with over 35 bytes.\n");
+
 		sleep(1);
 		clearstatcache();
 		$log->write('warning', 'Test warning fourth');

@@ -206,7 +206,7 @@ class FileLog extends BaseLog {
 
 		if ($this->_config['rotate']) {
 			$files = glob($filepath . '.*');
-			if (count($files) === $this->_config['rotate']) {
+			while (count($files) >= $this->_config['rotate']) {
 				unlink(array_shift($files));
 			}
 		}
