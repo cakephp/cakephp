@@ -381,4 +381,64 @@ class EntityTest extends TestCase {
 	unset($entity['foo']);
 	}
 
+/**
+ * Tests that the default repository class is Cake\ORM\Table
+ *
+ * @return void
+ */
+	public function testRepositoryClassDefault() {
+		$this->assertEquals('\Cake\ORM\Table', Entity::repositoryClass());
+	}
+
+/**
+ * Tests that using a simple string for repositoryClass will try to
+ * load the class from the App namespace
+ *
+ * @return void
+ */
+	public function testRepositoryClassInAPP() {
+		$class = $this->getMockClass('\Cake\ORM\Table');
+		class_alias($class, 'App\Model\Repository\TestUserTable');
+		$this->assertEquals('App\Model\Repository\TestUserTable', Entity::repositoryClass('TestUser'));
+	}
+
+/**
+ * Tests that using a simple string for repositoryClass will try to
+ * load the class from the Plugin namespace when using plugin notation
+ *
+ * @return void
+ */
+	public function testRepositoryClassInPlugin() {
+		$class = $this->getMockClass('\Cake\ORM\Table');
+		class_alias($class, 'MyPlugin\Model\Repository\SuperUserTable');
+		$this->assertEquals(
+			'MyPlugin\Model\Repository\SuperUserTable',
+			Entity::repositoryClass('MyPlugin.SuperUser')
+		);
+	}
+
+/**
+ * Tests that using a simple string for repositoryClass will return false
+ * when the class does not exist in the namespace
+ *
+ * @return void
+ */
+	public function testRepositoryClassNonExisting() {
+		$this->assertFalse(Entity::repositoryClass('FooUser'));
+		$this->assertFalse(Entity::repositoryClass('Foo.User'));
+	}
+
+/**
+ * Tests getting the repositoryClass based on conventions for the entity
+ * namespace
+ *
+ * @return void
+ */
+	public function testRepositoryClassConventionForAPP() {
+		$class = $this->getMockClass('\Cake\ORM\Table');
+		class_alias($class, 'TestApp\Model\Repository\ArticleTable');
+		$result = \TestApp\Model\Entity\Article::repositoryClass();
+		$this->assertEquals('TestApp\Model\Repository\ArticleTable', $result);
+	}
+
 }

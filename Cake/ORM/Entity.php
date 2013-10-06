@@ -2,6 +2,9 @@
 
 namespace Cake\ORM;
 
+use Cake\Core\App;
+use Cake\ORM\Table;
+
 class Entity implements \ArrayAccess {
 
 /**
@@ -10,6 +13,21 @@ class Entity implements \ArrayAccess {
  * @var array
  */
 	protected $_properties = [];
+
+/**
+ * Holds a reference to the objects acting as a repository for this type
+ * of entity
+ *
+ * @var Cake\ORM\Table
+ */
+	protected static $_repository;
+
+/**
+ * The name of the class to use as a repository
+ *
+ * @var string
+ */
+	protected static $_repositoryClass;
 
 /**
  * Initializes the internal properties of this entity out of the
@@ -244,6 +262,80 @@ class Entity implements \ArrayAccess {
  */
 	public function offsetUnset($offset) {
 		$this->unsetProperty($offset);
+	}
+
+/**
+ * Returns the instance of the table object associated to this entity.
+ * If called with a Table object as first argument, it will be set as the default
+ * repository object to use.
+ *
+ * @param \Cake\ORM\Table $table The table object to use as a repository of this
+ * type of Entity
+ * @return \Cake\ORM\Table
+ */
+	public static function repository(Table $table = null) {
+		if ($table === null) {
+			if (static::$_repository === null) {
+				$className = static::repositoryClass();
+				$self = get_called_class();
+				$alias = explode('\\', $self);
+				static::$_repository = $className::build(array_pop($alias), [
+					'entityClass' => $self
+				]);
+			}
+			return static::$_repository;
+		}
+		$table->entityClass(get_called_class());
+		return static::$_repository = $table;
+	}
+
+/**
+ * Returns the fully namespaced class name for the repository object associated to
+ * this entity. If a string is passed as first argument, it will be used to store
+ * the name of the repository object to use.
+ *
+ * Plugin notation can be used to specify the name of the object to load. By
+ * convention, classes will be loaded from `[PluginName]\Model\Repository\`
+ * base namespace if a plugin is specified or from `App\Model\Repository` if
+ * none is passed.
+ *
+ * ### Examples:
+ *
+ * - ``User::repositoryClass('\App\Model\Repository\SuperUserTable');``
+ * - ``User::repositoryClass('My.User');`` // Looks inside My plugin
+ *
+ * @param string $class Fully namespaced class name or name of the object using
+ * plugin notation.
+ * @return string|boolean the full name of the class or false if the class does not exist
+ */
+	public static function repositoryClass($class = null) {
+		if ($class) {
+			static::$_repositoryClass = $class;
+		}
+
+		if (empty(static::$_repositoryClass)) {
+			if (!empty(static::$_repository)) {
+				return static::$_repositoryClass = get_class(static::$_repository);
+			}
+
+			$default = '\Cake\ORM\Table';
+			$self = get_called_class();
+			$parts = explode('\\', $self);
+
+			if ($self === __CLASS__ || count($parts) < 3) {
+				return static::$_repositoryClass = $default;
+			}
+			
+			$alias = array_pop($parts) . 'Table';
+			$class = implode('\\', array_slice($parts, 0, -1)) . '\Repository\\' . $alias;
+			if (!class_exists($class)) {
+				return static::$_repositoryClass = $default;
+			}
+
+			static::$_repositoryClass = $class;
+		}
+
+		return App::className(static::$_repositoryClass, 'Model\Repository', 'Table');
 	}
 
 }

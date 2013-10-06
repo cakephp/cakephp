@@ -141,7 +141,7 @@ class Query extends DatabaseQuery {
  * and this query object will be returned for chaining.
  *
  * @param \Cake\ORM\Table $table The default table object to use
- * @var \Cake\ORM\Table|Query
+ * @return \Cake\ORM\Table|Query
  */
 	public function repository(Table $table = null) {
 		if ($table === null) {

@@ -134,8 +134,11 @@ class Table {
  * - table: Name of the database table to represent
  * - alias: Alias to be assigned to this table (default to table name)
  * - connection: The connection instance to use
+ * - entityClass: The fully namespaced class name of the entity class that will
+ *   represent rows in this table.
  * - schema: A \Cake\Database\Schema\Table object or an array that can be
  *   passed to it.
+ * - eventManager: An instance of an event manager to use for internal events
  *
  * @param array config Lsit of options for this table
  * @return void
