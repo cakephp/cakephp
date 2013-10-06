@@ -1789,6 +1789,8 @@ class Model extends Object implements CakeEventListener {
 				$this->getEventManager()->dispatch($event);
 			}
 			if (!empty($this->data)) {
+				$this->data[$this->alias] = array_combine($fields, $values);
+				$this->data[$this->alias][$this->primaryKey] = $this->id;
 				$success = $this->data;
 			}
 			$this->data = false;
