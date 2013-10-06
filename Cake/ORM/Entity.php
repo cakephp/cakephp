@@ -158,7 +158,7 @@ class Entity implements \ArrayAccess {
  * {{{
  *		$entity = new Entity(['id' => 1, 'name' => null]);
  *		$entity->has('id'); // true
- *		$entity->has('name'); // true
+ *		$entity->has('name'); // false
  *		$entity->has('last_name'); // false
  * }}}
  *
@@ -166,8 +166,7 @@ class Entity implements \ArrayAccess {
  * @return boolean
  */
 	public function has($property) {
-		$set = array_key_exists($property, $this->_properties);
-		return $set || method_exists($this, 'get' . ucFirst($property));
+		return $this->get($property) !== null;
 	}
 
 /**

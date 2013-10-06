@@ -251,8 +251,13 @@ class EntityTest extends TestCase {
 		$entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
 		$this->assertTrue($entity->has('id'));
 		$this->assertTrue($entity->has('name'));
-		$this->assertTrue($entity->has('foo'));
+		$this->assertFalse($entity->has('foo'));
 		$this->assertFalse($entity->has('last_name'));
+
+		$entity = $this->getMock('\Cake\ORM\Entity', ['getThings']);
+		$entity->expects($this->once())->method('getThings')
+			->will($this->returnValue(0));
+		$this->assertTrue($entity->has('things'));
 	}
 
 /**
@@ -291,7 +296,7 @@ class EntityTest extends TestCase {
 		$entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
 		$this->assertTrue(isset($entity->id));
 		$this->assertTrue(isset($entity->name));
-		$this->assertTrue(isset($entity->foo));
+		$this->assertFalse(isset($entity->foo));
 		$this->assertFalse(isset($entity->thing));
 	}
 
@@ -317,7 +322,7 @@ class EntityTest extends TestCase {
 		$entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
 		$this->assertTrue(isset($entity['id']));
 		$this->assertTrue(isset($entity['name']));
-		$this->assertTrue(isset($entity['foo']));
+		$this->assertFalse(isset($entity['foo']));
 		$this->assertFalse(isset($entity['thing']));
 	}
 
