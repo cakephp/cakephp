@@ -142,6 +142,7 @@ class FileLogTest extends CakeTestCase {
 			'size' => 35,
 			'rotate' => 0
 		));
+		file_put_contents($path . 'debug.log.0000000000', "The oldest log file with over 35 bytes.\n");
 		$log->write('debug', 'Test debug');
 		$this->assertTrue(file_exists($path . 'debug.log'));
 
