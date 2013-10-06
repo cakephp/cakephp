@@ -52,7 +52,6 @@ class PaginatorHelperTest extends TestCase {
 					'nextPage' => true,
 					'pageCount' => 7,
 					'sort' => null,
-					'direction' => null,
 					'limit' => null,
 				)
 			)
@@ -134,15 +133,14 @@ class PaginatorHelperTest extends TestCase {
 				'prevPage' => false,
 				'nextPage' => true,
 				'pageCount' => 7,
-				'sort' => 'date',
-				'direction' => 'asc',
+				'sort' => ['date' => 'asc'],
 				'page' => 1,
 			)
 		);
 
 		$result = $this->Paginator->sort('title');
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=asc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=asc'),
 			'Title',
 			'/a'
 		);
@@ -150,7 +148,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('date');
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=date&amp;direction=desc', 'class' => 'asc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Bdate%5D=desc', 'class' => 'asc'),
 			'Date',
 			'/a'
 		);
@@ -158,7 +156,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('title', 'TestTitle');
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=asc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=asc'),
 			'TestTitle',
 			'/a'
 		);
@@ -166,77 +164,71 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('title', array('asc' => 'ascending', 'desc' => 'descending'));
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=asc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=asc'),
 			'ascending',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'title';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['title' => 'asc'];
 		$result = $this->Paginator->sort('title', array('asc' => 'ascending', 'desc' => 'descending'));
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=desc', 'class' => 'asc'),
 			'descending',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'desc'];
 		$result = $this->Paginator->sort('title');
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=asc', 'class' => 'desc'),
 			'Title',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'asc'];
 		$result = $this->Paginator->sort('title');
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=desc', 'class' => 'asc'),
 			'Title',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'desc'];
 		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'desc'));
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=asc', 'class' => 'desc'),
 			'Title',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'desc'];
 		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'asc'));
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=asc', 'class' => 'desc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=asc', 'class' => 'desc'),
 			'Title',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'asc'];
 		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'asc'));
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=desc', 'class' => 'asc'),
 			'Title',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'asc'];
 
 		$result = $this->Paginator->sort('title', 'Title', array('direction' => 'desc'));
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=desc', 'class' => 'asc'),
 			'Title',
 			'/a'
 		);
@@ -249,7 +241,7 @@ class PaginatorHelperTest extends TestCase {
 	public function testSortEscape() {
 		$result = $this->Paginator->sort('title', 'TestTitle >');
 		$expected = array(
-			'a' => array('href' => '/index?sort=title&amp;direction=asc'),
+			'a' => array('href' => '/index?sort%5Btitle%5D=asc'),
 			'TestTitle &gt;',
 			'/a'
 		);
@@ -260,7 +252,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('title', 'TestTitle >', ['escape' => false]);
 		$expected = array(
-			'a' => array('href' => '/index?sort=title&amp;direction=asc'),
+			'a' => array('href' => '/index?sort%5Btitle%5D=asc'),
 			'TestTitle >',
 			'/a'
 		);
@@ -277,12 +269,11 @@ class PaginatorHelperTest extends TestCase {
 			array('plugin' => null, 'controller' => 'accounts', 'action' => 'index', 'pass' => array(), 'form' => array(), 'url' => array('url' => 'accounts/')),
 			array('base' => '', 'here' => '/accounts/', 'webroot' => '/')
 		));
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'full_name';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['full_name' => 'asc'];
 
 		$result = $this->Paginator->sort('Article.full_name');
 		$expected = array(
-			'a' => array('href' => '/accounts/index?sort=Article.full_name&amp;direction=desc', 'class' => 'asc'),
+			'a' => array('href' => '/accounts/index?sort%5BArticle.full_name%5D=desc', 'class' => 'asc'),
 			'Article Full Name',
 			'/a'
 		);
@@ -290,17 +281,16 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('full_name');
 		$expected = array(
-			'a' => array('href' => '/accounts/index?sort=full_name&amp;direction=desc', 'class' => 'asc'),
+			'a' => array('href' => '/accounts/index?sort%5Bfull_name%5D=desc', 'class' => 'asc'),
 			'Full Name',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'full_name';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['full_name' => 'desc'];
 		$result = $this->Paginator->sort('Article.full_name');
 		$expected = array(
-			'a' => array('href' => '/accounts/index?sort=Article.full_name&amp;direction=asc', 'class' => 'desc'),
+			'a' => array('href' => '/accounts/index?sort%5BArticle.full_name%5D=asc', 'class' => 'desc'),
 			'Article Full Name',
 			'/a'
 		);
@@ -308,7 +298,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('full_name');
 		$expected = array(
-			'a' => array('href' => '/accounts/index?sort=full_name&amp;direction=asc', 'class' => 'desc'),
+			'a' => array('href' => '/accounts/index?sort%5Bfull_name%5D=asc', 'class' => 'desc'),
 			'Full Name',
 			'/a'
 		);
@@ -330,7 +320,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('title', 'TestTitle', array('direction' => 'desc'));
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=desc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=desc'),
 			'TestTitle',
 			'/a'
 		);
@@ -338,7 +328,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('title', array('asc' => 'ascending', 'desc' => 'descending'), array('direction' => 'desc'));
 		$expected = array(
-			'a' => array('href' => '/accounts/index/param?sort=title&amp;direction=desc'),
+			'a' => array('href' => '/accounts/index/param?sort%5Btitle%5D=desc'),
 			'descending',
 			'/a'
 		);
@@ -356,81 +346,41 @@ class PaginatorHelperTest extends TestCase {
 			array('base' => '', 'here' => '/accounts/', 'webroot' => '/')
 		));
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'desc'];
 		$result = $this->Paginator->sort('Article.title');
 		$expected = array(
-			'a' => array('href' => '/accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'),
+			'a' => array('href' => '/accounts/index?sort%5BArticle.title%5D=asc', 'class' => 'desc'),
 			'Article Title',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'desc'];
 		$result = $this->Paginator->sort('Article.title', 'Title');
 		$expected = array(
-			'a' => array('href' => '/accounts/index?sort=Article.title&amp;direction=asc', 'class' => 'desc'),
+			'a' => array('href' => '/accounts/index?sort%5BArticle.title%5D=asc', 'class' => 'desc'),
 			'Title',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'asc'];
 		$result = $this->Paginator->sort('Article.title', 'Title');
 		$expected = array(
-			'a' => array('href' => '/accounts/index?sort=Article.title&amp;direction=desc', 'class' => 'asc'),
+			'a' => array('href' => '/accounts/index?sort%5BArticle.title%5D=desc', 'class' => 'asc'),
 			'Title',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Account.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Account.title' => 'asc'];
 		$result = $this->Paginator->sort('title');
 		$expected = array(
-			'a' => array('href' => '/accounts/index?sort=title&amp;direction=asc'),
+			'a' => array('href' => '/accounts/index?sort%5Btitle%5D=asc'),
 			'Title',
 			'/a'
 		);
 		$this->assertTags($result, $expected);
-	}
-
-/**
- * testSortKey method
- *
- * @return void
- */
-	public function testSortKey() {
-		$result = $this->Paginator->sortKey('Article', array('sort' => 'Article.title'));
-		$this->assertEquals('Article.title', $result);
-
-		$result = $this->Paginator->sortKey('Article', array('sort' => 'Article'));
-		$this->assertEquals('Article', $result);
-	}
-
-/**
- * Test that sortKey falls back to the default sorting options set
- * in the $params which are the default pagination options.
- *
- * @return void
- */
-	public function testSortKeyFallbackToParams() {
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.body';
-		$result = $this->Paginator->sortKey();
-		$this->assertEquals('Article.body', $result);
-
-		$result = $this->Paginator->sortKey('Article');
-		$this->assertEquals('Article.body', $result);
-
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.body';
-		$this->Paginator->request->params['paging']['Article']['order'] = 'DESC';
-		$result = $this->Paginator->sortKey();
-		$this->assertEquals('Article.body', $result);
-
-		$result = $this->Paginator->sortKey('Article');
-		$this->assertEquals('Article.body', $result);
 	}
 
 /**
@@ -439,39 +389,37 @@ class PaginatorHelperTest extends TestCase {
  * @return void
  */
 	public function testSortDir() {
-		$result = $this->Paginator->sortDir();
-		$expected = 'asc';
-		$this->assertEquals($expected, $result);
+		$result = $this->Paginator->sortDir('title');
+		$this->assertNull($result);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
-		$result = $this->Paginator->sortDir();
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'desc'];
+		$result = $this->Paginator->sortDir('Article.title');
 		$this->assertEquals('desc', $result);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
-		$result = $this->Paginator->sortDir();
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'asc'];
+		$result = $this->Paginator->sortDir('title');
 		$this->assertEquals('asc', $result);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'desc';
-		$result = $this->Paginator->sortDir();
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['title' => 'desc'];
+		$result = $this->Paginator->sortDir('Article.title');
 		$this->assertEquals('desc', $result);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
-		$result = $this->Paginator->sortDir();
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['title' => 'asc'];
+		$result = $this->Paginator->sortDir('title');
 		$this->assertEquals('asc', $result);
 
-		unset($this->Paginator->request->params['paging']['Article']['direction']);
-		$result = $this->Paginator->sortDir('Article', array('direction' => 'asc'));
+		unset($this->Paginator->request->params['paging']['Article']['sort']);
+		$result = $this->Paginator->sortDir('title', 'Article', array('sort' => ['title' => 'asc']));
 		$this->assertEquals('asc', $result);
 
-		$result = $this->Paginator->sortDir('Article', array('direction' => 'desc'));
+		$result = $this->Paginator->sortDir('title', 'Article', array('sort' => ['Article.title' => 'desc']));
 		$this->assertEquals('desc', $result);
 
-		$result = $this->Paginator->sortDir('Article', array('direction' => 'asc'));
+		$result = $this->Paginator->sortDir('Article.title', 'Article', array('sort' => ['title' => 'asc']));
 		$this->assertEquals('asc', $result);
+
+		$result = $this->Paginator->sortDir('Article.title', 'Article', array('sort' => ['Article.title' => 'desc']));
+		$this->assertEquals('desc', $result);
 	}
 
 /**
@@ -481,22 +429,20 @@ class PaginatorHelperTest extends TestCase {
  * @return void
  */
 	public function testSortDirFallbackToParams() {
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.body';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.body' => 'asc'];
 
-		$result = $this->Paginator->sortDir();
+		$result = $this->Paginator->sortDir('body');
 		$this->assertEquals('asc', $result);
 
-		$result = $this->Paginator->sortDir('Article');
+		$result = $this->Paginator->sortDir('body', 'Article');
 		$this->assertEquals('asc', $result);
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.body';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'DESC';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.body' => 'DESC'];
 
-		$result = $this->Paginator->sortDir();
+		$result = $this->Paginator->sortDir('body');
 		$this->assertEquals('desc', $result);
 
-		$result = $this->Paginator->sortDir('Article');
+		$result = $this->Paginator->sortDir('body', 'Article');
 		$this->assertEquals('desc', $result);
 	}
 
@@ -527,7 +473,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->options(array('url' => array('param')));
 		$result = $this->Paginator->sort('title');
 		$expected = array(
-			'a' => array('href' => '/admin/users/index/param?sort=title&amp;direction=asc'),
+			'a' => array('href' => '/admin/users/index/param?sort%5Btitle%5D=asc'),
 			'Title',
 			'/a'
 		);
@@ -536,7 +482,7 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->options(array('url' => array('param')));
 		$result = $this->Paginator->sort('Article.title', 'Title');
 		$expected = array(
-			'a' => array('href' => '/admin/users/index/param?sort=Article.title&amp;direction=asc'),
+			'a' => array('href' => '/admin/users/index/param?sort%5BArticle.title%5D=asc'),
 			'Title',
 			'/a'
 		);
@@ -551,7 +497,7 @@ class PaginatorHelperTest extends TestCase {
 	public function testUrlGeneration() {
 		$result = $this->Paginator->sort('controller');
 		$expected = array(
-			'a' => array('href' => '/index?sort=controller&amp;direction=asc'),
+			'a' => array('href' => '/index?sort%5Bcontroller%5D=asc'),
 			'Controller',
 			'/a'
 		);
@@ -564,14 +510,14 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->url();
 		$this->assertEquals('/index?page=2', $result);
 
-		$options = array('sort' => 'Article', 'direction' => 'desc');
+		$options = array('sort' => ['Article' => 'desc']);
 		$result = $this->Paginator->url($options);
-		$this->assertEquals('/index?page=2&amp;sort=Article&amp;direction=desc', $result);
+		$this->assertEquals('/index?page=2&amp;sort%5BArticle%5D=desc', $result);
 
 		$this->Paginator->request->params['paging']['Article']['page'] = 3;
-		$options = array('sort' => 'Article.name', 'direction' => 'desc');
+		$options = array('sort' => ['Article.name' => 'desc']);
 		$result = $this->Paginator->url($options);
-		$this->assertEquals('/index?page=3&amp;sort=Article.name&amp;direction=desc', $result);
+		$this->assertEquals('/index?page=3&amp;sort%5BArticle.name%5D=desc', $result);
 	}
 
 /**
@@ -600,7 +546,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('name', null, array('url' => $options));
 		$expected = array(
-			'a' => array('href' => '/members/posts/index?page=2&amp;sort=name&amp;direction=asc'),
+			'a' => array('href' => '/members/posts/index?page=2&amp;sort%5Bname%5D=asc'),
 			'Name',
 			'/a'
 		);
@@ -626,14 +572,14 @@ class PaginatorHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$options = array('prefix' => 'members', 'controller' => 'posts', 'sort' => 'name', 'direction' => 'desc');
+		$options = array('prefix' => 'members', 'controller' => 'posts', 'sort' => ['name' => 'desc']);
 		$result = $this->Paginator->url($options);
-		$expected = '/members/posts/index?page=2&amp;sort=name&amp;direction=desc';
+		$expected = '/members/posts/index?page=2&amp;sort%5Bname%5D=desc';
 		$this->assertEquals($expected, $result);
 
-		$options = array('controller' => 'posts', 'sort' => 'Article.name', 'direction' => 'desc');
+		$options = array('controller' => 'posts', 'sort' => ['Article.name' => 'desc']);
 		$result = $this->Paginator->url($options);
-		$expected = '/posts/index?page=2&amp;sort=Article.name&amp;direction=desc';
+		$expected = '/posts/index?page=2&amp;sort%5BArticle.name%5D=desc';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -647,14 +593,12 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params = array();
 
 		$options = array('paging' => array('Article' => array(
-			'direction' => 'desc',
-			'sort' => 'title'
+			'sort' => ['title' => 'desc']
 		)));
 		$this->Paginator->options($options);
 
 		$expected = array('Article' => array(
-			'direction' => 'desc',
-			'sort' => 'title'
+			'sort' => ['title' => 'desc']
 		));
 		$this->assertEquals($expected, $this->Paginator->request->params['paging']);
 
@@ -662,21 +606,18 @@ class PaginatorHelperTest extends TestCase {
 		$this->Paginator->request->params = array();
 
 		$options = array('Article' => array(
-			'direction' => 'desc',
-			'sort' => 'title'
+			'sort' => ['title' => 'desc']
 		));
 		$this->Paginator->options($options);
 		$this->assertEquals($expected, $this->Paginator->request->params['paging']);
 
 		$options = array('paging' => array('Article' => array(
-			'direction' => 'desc',
-			'sort' => 'Article.title'
+			'sort' => ['Article.title' => 'desc']
 		)));
 		$this->Paginator->options($options);
 
 		$expected = array('Article' => array(
-			'direction' => 'desc',
-			'sort' => 'Article.title'
+			'sort' => ['Article.title' => 'desc']
 		));
 		$this->assertEquals($expected, $this->Paginator->request->params['paging']);
 	}
@@ -695,7 +636,7 @@ class PaginatorHelperTest extends TestCase {
 			'Article' => array(
 				'page' => 1, 'current' => 3, 'count' => 13,
 				'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
-				'sort' => null, 'direction' => null,
+				'sort' => null,
 			)
 		);
 
@@ -705,7 +646,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->sort('title');
 		$expected = array(
-			'a' => array('href' => '/articles/index/2?sort=title&amp;direction=asc&amp;foo=bar&amp;x=y'),
+			'a' => array('href' => '/articles/index/2?sort%5Btitle%5D=asc&amp;foo=bar&amp;x=y'),
 			'Title',
 			'/a'
 		);
@@ -1522,8 +1463,7 @@ class PaginatorHelperTest extends TestCase {
  */
 	public function testFirstFullBaseUrl() {
 		$this->Paginator->request->params['paging']['Article']['page'] = 3;
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'DESC';
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'DESC'];
 
 		$this->Paginator->options(array('url' => array('_full' => true)));
 
@@ -1531,7 +1471,7 @@ class PaginatorHelperTest extends TestCase {
 		$expected = array(
 			'li' => ['class' => 'first'],
 			array('a' => array(
-				'href' => Configure::read('App.fullBaseUrl') . '/index?sort=Article.title&amp;direction=DESC', 'rel' => 'first'
+				'href' => Configure::read('App.fullBaseUrl') . '/index?sort%5BArticle.title%5D=DESC', 'rel' => 'first'
 			)),
 			'&lt;&lt; first',
 			'/a',
@@ -1654,8 +1594,7 @@ class PaginatorHelperTest extends TestCase {
 				'prevPage' => false,
 				'nextPage' => 2,
 				'pageCount' => 15,
-				'sort' => 'Client.name',
-				'direction' => 'DESC',
+				'sort' => ['Client.name' => 'DESC'],
 			)
 		);
 
@@ -1663,7 +1602,7 @@ class PaginatorHelperTest extends TestCase {
 		$expected = array(
 			'li' => ['class' => 'last'],
 			'a' => array(
-				'href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC',
+				'href' => '/index?page=15&amp;sort%5BClient.name%5D=DESC',
 				'rel' => 'last'
 			),
 				'last &gt;&gt;', '/a',
@@ -1674,7 +1613,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->last(1);
 		$expected = array(
 			'<li',
-			array('a' => array('href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC')), '15', '/a',
+			array('a' => array('href' => '/index?page=15&amp;sort%5BClient.name%5D=DESC')), '15', '/a',
 			'/li',
 		);
 		$this->assertTags($result, $expected);
@@ -1682,10 +1621,10 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->last(2);
 		$expected = array(
 			'<li',
-			array('a' => array('href' => '/index?page=14&amp;sort=Client.name&amp;direction=DESC')), '14', '/a',
+			array('a' => array('href' => '/index?page=14&amp;sort%5BClient.name%5D=DESC')), '14', '/a',
 			'/li',
 			'<li',
-			array('a' => array('href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC')), '15', '/a',
+			array('a' => array('href' => '/index?page=15&amp;sort%5BClient.name%5D=DESC')), '15', '/a',
 			'/li',
 		);
 		$this->assertTags($result, $expected);
@@ -1736,8 +1675,7 @@ class PaginatorHelperTest extends TestCase {
 				'nextPage' => true,
 				'pageCount' => 5,
 				'limit' => 3,
-				'sort' => 'Client.name',
-				'order' => 'DESC',
+				'sort' => ['Client.name' => 'DESC'],
 			)
 		);
 		$input = 'Page {{page}} of {{pages}}, showing {{current}} records out of {{count}} total, ';
@@ -1790,14 +1728,12 @@ class PaginatorHelperTest extends TestCase {
 			array('base' => '', 'here' => '/accounts/', 'webroot' => '/')
 		));
 
-		$this->Paginator->request->params['paging']['Article']['sort'] = 'Article.title';
-		$this->Paginator->request->params['paging']['Article']['direction'] = 'asc';
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Article.title' => 'asc'];
 		$this->Paginator->request->params['paging']['Article']['page'] = 1;
 
 		$test = array('url' => array(
 			'page' => '1',
-			'sort' => 'Article.title',
-			'direction' => 'asc',
+			'sort' => ['Article.title' => 'asc'],
 		));
 		$this->Paginator->options($test);
 
@@ -1805,7 +1741,7 @@ class PaginatorHelperTest extends TestCase {
 		$expected = array(
 			'li' => array('class' => 'next'),
 			'a' => array(
-				'href' => '/accounts/index?page=2&amp;sort=Article.title&amp;direction=asc',
+				'href' => '/accounts/index?page=2&amp;sort%5BArticle.title%5D=asc',
 				'rel' => 'next'
 			),
 			'Next',

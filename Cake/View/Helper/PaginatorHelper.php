@@ -96,7 +96,7 @@ class PaginatorHelper extends Helper {
 /**
  * Get/set templates to use.
  *
- * @param string|null|array $templates null or string allow reading templates. An array 
+ * @param string|null|array $templates null or string allow reading templates. An array
  *   allows templates to be added.
  * @return void|string|array
  */
@@ -201,44 +201,39 @@ class PaginatorHelper extends Helper {
 	}
 
 /**
- * Gets the current key by which the recordset is sorted
+ * Gets the direction of a field used to sort the recordset
  *
+ * @param string $field Field name.
  * @param string $model Optional model name. Uses the default if none is specified.
  * @param array $options Options for pagination links. See #options for list of keys.
- * @return string The name of the key by which the recordset is being sorted, or
- *  null if the results are not currently sorted.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortKey
- */
-	public function sortKey($model = null, $options = array()) {
-		if (empty($options)) {
-			$options = $this->params($model);
-		}
-		if (!empty($options['sort'])) {
-			return $options['sort'];
-		}
-		return null;
-	}
-
-/**
- * Gets the current direction the recordset is sorted
- *
- * @param string $model Optional model name. Uses the default if none is specified.
- * @param array $options Options for pagination links. See #options for list of keys.
- * @return string The direction by which the recordset is being sorted, or
- *  null if the results are not currently sorted.
+ * @return string The direction of the field by which the recordset is being sorted, or
+ *  null if the field is not currently being used to sort.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortDir
  */
-	public function sortDir($model = null, $options = array()) {
-		$dir = null;
-
+	public function sortDir($field, $model = null, $options = []) {
+		$model = $model ?: $this->defaultModel();
 		if (empty($options)) {
 			$options = $this->params($model);
 		}
-
-		if (isset($options['direction'])) {
-			$dir = strtolower($options['direction']);
+		if (empty($options['sort'])) {
+			return null;
 		}
 
+		$alias = $model;
+		if (strpos($field, '.') !== false) {
+			list($alias, $field) = explode('.', $field);
+		}
+		if (isset($options['sort'][$alias . '.' . $field])) {
+			$dir = $options['sort'][$alias . '.' . $field];
+		}
+		if ($model === $alias && isset($options['sort'][$field])) {
+			$dir = $options['sort'][$field];
+		}
+		if (empty($dir)) {
+			return null;
+		}
+
+		$dir = strtolower($dir);
 		if ($dir === 'desc') {
 			return 'desc';
 		}
@@ -392,17 +387,10 @@ class PaginatorHelper extends Helper {
 		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
 		unset($options['direction']);
 
-		$sortKey = $this->sortKey($options['model']);
-		$defaultModel = $this->defaultModel();
-		$isSorted = (
-			$sortKey === $key ||
-			$sortKey === $defaultModel . '.' . $key ||
-			$key === $defaultModel . '.' . $sortKey
-		);
-
+		$sortDir = $this->sortDir($key, $options['model']);
 		$template = 'sort';
-		if ($isSorted) {
-			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
+		if ($sortDir !== null) {
+			$dir = $sortDir === 'asc' ? 'desc' : 'asc';
 			$template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
 		}
 		if (is_array($title) && array_key_exists($dir, $title)) {
@@ -410,7 +398,7 @@ class PaginatorHelper extends Helper {
 		}
 
 		$url = array_merge(
-			['sort' => $key, 'direction' => $dir],
+			['sort' => [$key => $dir]],
 			$url,
 			['order' => null]
 		);
@@ -431,12 +419,11 @@ class PaginatorHelper extends Helper {
  */
 	public function url($options = array(), $model = null) {
 		$paging = $this->params($model);
-		$paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
+		$paging += ['page' => null, 'sort' => null, 'limit' => null];
 		$url = [
 			'page' => $paging['page'],
 			'limit' => $paging['limit'],
 			'sort' => $paging['sort'],
-			'direction' => $paging['direction'],
 		];
 
 		if (!empty($this->options['url'])) {
