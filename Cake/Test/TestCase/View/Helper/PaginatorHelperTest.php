@@ -447,6 +447,25 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
+ * Test that sortDir returns the right direction when sorting multiple models
+ *
+ * @return void
+ */
+	public function testSortDirMultipleModel() {
+		$this->Paginator->request->params['paging']['Article']['sort'] = ['Author.name' => 'asc'];
+		$this->Paginator->request->params['paging']['Comment']['sort'] = ['Comment.created' => 'desc'];
+
+		$result = $this->Paginator->sortDir('Author.name');
+		$this->assertEquals('asc', $result);
+
+		$result = $this->Paginator->sortDir('Author.name', 'Comment');
+		$this->assertNull($result);
+
+		$result = $this->Paginator->sortDir('created', 'Comment');
+		$this->assertEquals('desc', $result);
+	}
+
+/**
  * testSortAdminLinks method
  *
  * @return void
