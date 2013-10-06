@@ -23,9 +23,10 @@ class Entity implements \ArrayAccess {
 	protected static $_repository;
 
 /**
- * The name of the class to use as a repository
+ * A list of entity classes pointing to the class name of the repository
+ * object to use
  *
- * @var string
+ * @var array
  */
 	protected static $_repositoryClass;
 
@@ -278,8 +279,8 @@ class Entity implements \ArrayAccess {
 			if (static::$_repository === null) {
 				$className = static::repositoryClass();
 				$self = get_called_class();
-				$alias = explode('\\', $self);
-				static::$_repository = $className::build(array_pop($alias), [
+				list($namespace, $alias) = namespaceSplit($self);
+				static::$_repository = $className::build($alias, [
 					'entityClass' => $self
 				]);
 			}
@@ -306,16 +307,18 @@ class Entity implements \ArrayAccess {
  *
  * @param string $class Fully namespaced class name or name of the object using
  * plugin notation.
+ * @throws \Cake\ORM\Error\MissingTableClassException when the table class cannot be found
  * @return string|boolean the full name of the class or false if the class does not exist
  */
 	public static function repositoryClass($class = null) {
+		$self = get_called_class();
 		if ($class) {
-			static::$_repositoryClass = $class;
+			self::$_repositoryClass[$self] = $class;
 		}
 
-		if (empty(static::$_repositoryClass)) {
-			if (!empty(static::$_repository)) {
-				return static::$_repositoryClass = get_class(static::$_repository);
+		if (empty(static::$_repositoryClass[$self])) {
+			if (!empty(self::$_repository)) {
+				return self::$_repositoryClass[$self] = get_class(static::$_repository);
 			}
 
 			$default = '\Cake\ORM\Table';
@@ -323,19 +326,24 @@ class Entity implements \ArrayAccess {
 			$parts = explode('\\', $self);
 
 			if ($self === __CLASS__ || count($parts) < 3) {
-				return static::$_repositoryClass = $default;
+				return self::$_repositoryClass[$self] = $default;
 			}
 			
 			$alias = array_pop($parts) . 'Table';
 			$class = implode('\\', array_slice($parts, 0, -1)) . '\Repository\\' . $alias;
 			if (!class_exists($class)) {
-				return static::$_repositoryClass = $default;
+				return self::$_repositoryClass[$self] = $default;
 			}
 
-			static::$_repositoryClass = $class;
+			self::$_repositoryClass[$self] = $class;
 		}
 
-		return App::className(static::$_repositoryClass, 'Model\Repository', 'Table');
+		$result = App::className(self::$_repositoryClass[$self], 'Model\Repository', 'Table');
+		if (!$result) {
+			throw new Error\MissingTableClassException([static::$_repositoryClass[$self]]);
+		}
+
+		return $result;
 	}
 
 }

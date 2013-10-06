@@ -15,14 +15,16 @@
  * @since         CakePHP(tm) v 3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\ORM\Error;
+
+use Cake\Error\Exception;
 
 /**
  * Exception raised when a Model could not be found.
  *
  */
-class MissingModelException extends Exception {
+class MissingTableClassException extends Exception {
 
-	protected $_messageTemplate = 'Model %s could not be found.';
+	protected $_messageTemplate = 'Table class %s could not be found.';
 
 }

@@ -418,14 +418,15 @@ class EntityTest extends TestCase {
 	}
 
 /**
- * Tests that using a simple string for repositoryClass will return false
+ * Tests that using a simple string for repositoryClass will throw an exception
  * when the class does not exist in the namespace
  *
+ * @expectedException Cake\ORM\Error\MissingTableClassException
+ * @expectedExceptionMessage Table class FooUser could not be found.
  * @return void
  */
 	public function testRepositoryClassNonExisting() {
 		$this->assertFalse(Entity::repositoryClass('FooUser'));
-		$this->assertFalse(Entity::repositoryClass('Foo.User'));
 	}
 
 /**
@@ -439,6 +440,34 @@ class EntityTest extends TestCase {
 		class_alias($class, 'TestApp\Model\Repository\ArticleTable');
 		$result = \TestApp\Model\Entity\Article::repositoryClass();
 		$this->assertEquals('TestApp\Model\Repository\ArticleTable', $result);
+	}
+
+/**
+ * Tests the repository method
+ *
+ * @return void
+ */
+	public function testRepository() {
+		$entity = $this->getMockClass('\Cake\ORM\Entity', ['repositoryClass']);
+		$entity::staticExpects($this->once())->method('repositoryClass')
+			->will($this->returnValue('\Cake\ORM\Table'));
+		$repository = $entity::repository();
+		$this->assertInstanceOf('\Cake\ORM\Table', $repository);
+		$this->assertEquals($entity, $repository->entityClass());
+		$this->assertSame($repository, $entity::repository());
+	}
+
+/**
+ * Tests setting a table object using the repository method
+ *
+ * @return void
+ */
+	public function testSetRepository() {
+		$entity = $this->getMockClass('\Cake\ORM\Entity', ['repositoryClass']);
+		$table = new \Cake\ORM\Table;
+		$entity::repository($table);
+		$this->assertEquals($entity, $table->entityClass());
+		$this->assertSame($table, $entity::repository());
 	}
 
 }
