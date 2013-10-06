@@ -39,11 +39,11 @@ class SqliteSchemaTest extends TestCase {
 	}
 
 /**
- * Dataprovider for column testing
+ * Data provider for convert column testing
  *
  * @return array
  */
-	public static function columnProvider() {
+	public static function convertColumnProvider() {
 		return [
 			[
 				'DATETIME',
@@ -109,15 +109,31 @@ class SqliteSchemaTest extends TestCase {
 	}
 
 /**
- * Test parsing SQLite column types.
+ * Test parsing SQLite column types from field description.
  *
- * @dataProvider columnProvider
+ * @dataProvider convertColumnProvider
  * @return void
  */
-	public function testConvertColumnType($input, $expected) {
+	public function testConvertColumn($type, $expected) {
+		$field = [
+			'pk' => false,
+			'name' => 'field',
+			'type' => $type,
+			'notnull' => false,
+			'dflt_value' => 'Default value',
+		];
+		$expected += [
+			'null' => true,
+			'default' => 'Default value',
+		];
+
 		$driver = $this->getMock('Cake\Database\Driver\Sqlite');
 		$dialect = new SqliteSchema($driver);
-		$this->assertEquals($expected, $dialect->convertColumn($input));
+
+		$table = $this->getMock('Cake\Database\Schema\Table', [], ['table']);
+		$table->expects($this->at(0))->method('addColumn')->with('field', $expected);
+
+		$dialect->convertFieldDescription($table, $field);
 	}
 
 /**
