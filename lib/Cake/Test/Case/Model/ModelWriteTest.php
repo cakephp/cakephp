@@ -292,6 +292,39 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Test that save() only returns the actually saved fields when whitelisting is used.
+ * The primary key is always returned, though.
+ */
+	public function testSaveWithFieldList() {
+		$this->loadFixtures('Bidding');
+		$model = new Bidding();
+
+		$data = array('bid' => 'foo', 'name' => 'bar');
+		$model->create();
+		$result = $model->save(
+			$data,
+			array('fieldList' => array('bid'))
+		);
+		$expected = array(
+			'bid' => 'foo',
+			'id' => $model->id
+		);
+		$this->assertEquals($expected, $result['Bidding']);
+
+		$data['id'] = $model->id;
+		$model->create();
+		$result = $model->save(
+			$data,
+			array('fieldList' => array('name'))
+		);
+		$expected = array(
+			'name' => 'bar',
+			'id' => $model->id
+		);
+		$this->assertEquals($expected, $result['Bidding']);
+	}
+
+/**
  * test that save() resets whitelist on failed save
  */
 	public function testSaveFieldListResetsWhitelistOnFailedSave() {
