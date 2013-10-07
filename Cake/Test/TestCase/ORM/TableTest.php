@@ -19,23 +19,17 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 
 /**
- * Used to test correct class is instantiated when using Table::build();
+ * Used to test correct class is instantiated when using TableRegistry::get();
  */
 class UsersTable extends Table {
-
-/**
- * Overrides default table name
- *
- * @var string
- */
-	protected $_table = 'users';
 
 }
 
 /**
- * Used to test correct class is instantiated when using Table::build();
+ * Used to test correct class is instantiated when using TableRegistry::get();
  */
 class MyUsersTable extends Table {
 
@@ -67,8 +61,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
-		Configure::write('App.namespace', 'App');
+		TableRegistry::clear();
 	}
 /**
  * Tests that table options can be pre-configured for the factory method
@@ -76,36 +69,36 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testConfigAndBuild() {
-		Table::clearRegistry();
-		$map = Table::config();
+		TableRegistry::clear();
+		$map = TableRegistry::config();
 		$this->assertEquals([], $map);
 
 		$options = ['connection' => $this->connection];
-		Table::config('users', $options);
-		$map = Table::config();
+		TableRegistry::config('users', $options);
+		$map = TableRegistry::config();
 		$this->assertEquals(['users' => $options], $map);
-		$this->assertEquals($options, Table::config('users'));
+		$this->assertEquals($options, TableRegistry::config('users'));
 
 		$schema = ['id' => ['type' => 'rubbish']];
 		$options += ['schema' => $schema];
-		Table::config('users', $options);
+		TableRegistry::config('users', $options);
 
-		$table = Table::build('foo', ['table' => 'users']);
+		$table = TableRegistry::get('users', ['table' => 'users']);
 		$this->assertInstanceOf('Cake\ORM\Table', $table);
 		$this->assertEquals('users', $table->table());
-		$this->assertEquals('foo', $table->alias());
+		$this->assertEquals('users', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
 		$this->assertEquals(array_keys($schema), $table->schema()->columns());
 		$this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
 
-		Table::clearRegistry();
-		$this->assertEmpty(Table::config());
+		TableRegistry::clear();
+		$this->assertEmpty(TableRegistry::config());
 
-		Table::config('users', $options);
-		$table = Table::build('foo', ['className' => __NAMESPACE__ . '\MyUsersTable']);
+		TableRegistry::config('users', $options);
+		$table = TableRegistry::get('users', ['className' => __NAMESPACE__ . '\MyUsersTable']);
 		$this->assertInstanceOf(__NAMESPACE__ . '\MyUsersTable', $table);
 		$this->assertEquals('users', $table->table());
-		$this->assertEquals('foo', $table->alias());
+		$this->assertEquals('users', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
 		$this->assertEquals(array_keys($schema), $table->schema()->columns());
 	}
@@ -117,32 +110,20 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testBuildConvention() {
-		$table = Table::build('article');
+		$table = TableRegistry::get('article');
 		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
-		$table = Table::build('Article');
+		$table = TableRegistry::get('Article');
 		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
 
-		$table = Table::build('author');
+		$table = TableRegistry::get('author');
 		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
-		$table = Table::build('Author');
+		$table = TableRegistry::get('Author');
 		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
 
 		$class = $this->getMockClass('\Cake\ORM\Table');
 		class_alias($class, 'MyPlugin\Model\Repository\SuperTestTable');
-		$table = Table::build('MyPlugin.SuperTest');
+		$table = TableRegistry::get('MyPlugin.SuperTest');
 		$this->assertInstanceOf($class, $table);
-	}
-
-/**
- * Tests getting and setting a Table instance in the registry
- *
- * @return void
- */
-	public function testInstance() {
-		$this->assertNull(Table::instance('users'));
-		$table = new Table(['table' => 'users']);
-		Table::instance('users', $table);
-		$this->assertSame($table, Table::instance('users'));
 	}
 
 /**
@@ -583,7 +564,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['_buildQuery'],
-			[['table' => 'users']]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())

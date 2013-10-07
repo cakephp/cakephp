@@ -16,6 +16,9 @@
  */
 namespace Cake\ORM;
 
+use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
+
 /**
  * An Association is a relationship established between two tables and is used
  * to configure and customize the way interconnected records are retrieved.
@@ -210,7 +213,7 @@ abstract class Association {
 
 		if ($table === null) {
 			$className = $this->_className;
-			$this->_targetTable = Table::build($this->_name, compact('className'));
+			$this->_targetTable = TableRegistry::get($this->_name, compact('className'));
 		}
 		return $this->_targetTable;
 	}

@@ -1,6 +1,7 @@
 <?php
 namespace Cake\ORM;
 
+use Cake\Core\App;
 use Cake\Utility\Inflector;
 
 /**
@@ -26,10 +27,10 @@ class TableRegistry {
  * all tables
  *
  * @param string $table name of the table
- * @param array $options list of options for the table
+ * @param null|array $options list of options for the table
  * @return array
  */
-	public static function config($table, $data) {
+	public static function config($table = null, $options = null) {
 		if ($table === null) {
 			return static::$_config;
 		}
@@ -37,7 +38,7 @@ class TableRegistry {
 			return static::$_config = $table;
 		}
 		if ($options === null) {
-			return isset(static::$_config[$table]) ? static::$_tablesMap[$table] : [];
+			return isset(static::$_config[$table]) ? static::$_config[$table] : [];
 		}
 		return static::$_config[$table] = $options;
 	}
@@ -80,6 +81,9 @@ class TableRegistry {
 			$options['className'] = $className;
 		}
 
+		if (isset(static::$_config[$alias])) {
+			$options = array_merge(static::$_config[$alias], $options);
+		}
 		return static::$_instances[$alias] = new $options['className']($options);
 	}
 

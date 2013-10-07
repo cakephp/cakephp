@@ -54,14 +54,6 @@ class Table {
 	protected static $_instances = [];
 
 /**
- * A collection of default options to apply to each table built with the
- * factory method. Indexed by table name
- *
- * @var array
- */
-	protected static $_tablesMap = [];
-
-/**
  * Name of the table as it can be found in the database
  *
  * @var string
@@ -149,19 +141,10 @@ class Table {
 		if (empty($config['table'])) {
 			$config['table'] = Inflector::tableize(get_class($this));
 		}
-		if (!empty($config['table'])) {
-			$this->table($config['table']);
-		}
-
+		$this->table($config['table']);
 		if (!empty($config['alias'])) {
 			$this->alias($config['alias']);
 		}
-
-		$table = $this->table();
-		if (isset(static::$_tablesMap[$table])) {
-			$config = array_merge(static::$_tablesMap[$table], $config);
-		}
-
 		if (!empty($config['connection'])) {
 			$this->connection($config['connection']);
 		}
@@ -198,44 +181,6 @@ class Table {
  * @return void
  */
 	public function initialize(array $config) {
-	}
-
-/**
- * A factory method to build a new Table instance. Once created, the instance
- * will be registered so it can be re-used if tried to build again for the same
- * alias.
- *
- * The options that can be passed are the same as in `__construct()`, but the
- * key `className` is also recognized.
- *
- * When $options contains `className` this method will try to instantiate an
- * object of that class instead of this default Table class.
- *
- * If no `table` option is passed, the table name will be the tableized version
- * of the provided $alias.
- *
- * @param string $alias the alias for the table
- * @param array $options a list of options as accepted by `__construct()`
- * @return Table
- */
-	public static function build($alias, array $options = []) {
-		return TableRegistry::get($alias, $options);
-	}
-
-/**
- * Returns the Table object associated to the provided alias, if any.
- * If a Table is passed as second parameter it will be associated to the
- * passed $alias even if another object was associated before.
- *
- * @param string $alias
- * @param Table $object
- * @return Table
- */
-	public static function instance($alias, self $object = null) {
-		if ($object === null) {
-			return TableRegistry::get($alias);
-		}
-		return TableRegistry::set($alias, $object);
 	}
 
 /**
