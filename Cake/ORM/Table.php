@@ -261,7 +261,7 @@ class Table {
 			if ($this->_schema === null) {
 				$this->_schema = $this->connection()
 					->schemaCollection()
-					->describe($this->_table);
+					->describe($this->table());
 			}
 			return $this->_schema;
 		}
