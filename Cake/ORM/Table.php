@@ -146,6 +146,9 @@ class Table {
  * @return void
  */
 	public function __construct(array $config = []) {
+		if (empty($config['table'])) {
+			$config['table'] = Inflector::tableize(get_class($this));
+		}
 		if (!empty($config['table'])) {
 			$this->table($config['table']);
 		}
@@ -173,6 +176,7 @@ class Table {
 			$eventManager = $config['eventManager'];
 		}
 		$this->_eventManager = $eventManager ?: new EventManager();
+<<<<<<< HEAD
 		$this->initialize($config);
 	}
 
@@ -215,25 +219,7 @@ class Table {
  * @return Table
  */
 	public static function build($alias, array $options = []) {
-		if (isset(static::$_instances[$alias])) {
-			return static::$_instances[$alias];
-		}
-
-		list($plugin, $baseClass) = pluginSplit($alias);
-		$options = ['alias' => $baseClass] + $options;
-
-		if (empty($options['className'])) {
-			$options['className'] = get_called_class();
-		}
-
-		if ($options['className'] === __CLASS__ || $plugin) {
-			$class = $options['className'];
-			$classified = Inflector::classify($alias);
-			$class = App::classname($classified, 'Model\Repository', 'Table') ?: $class;
-			$options['className'] = $class;
-		}
-
-		return static::$_instances[$alias] = new $options['className']($options);
+		return TableRegistry::get($alias, $options);
 	}
 
 /**
@@ -247,46 +233,9 @@ class Table {
  */
 	public static function instance($alias, self $object = null) {
 		if ($object === null) {
-			return isset(static::$_instances[$alias]) ? static::$_instances[$alias] : null;
+			return TableRegistry::get($alias);
 		}
-		return static::$_instances[$alias] = $object;
-	}
-
-/**
- * Stores a list of options to be used when instantiating an object for the table
- * with the same name as $table. The options that can be stored are those that
- * are recognized by `build()`
- *
- * If second argument is omitted, it will return the current settings for $table
- *
- * If no arguments are passed it will return the full configuration array for
- * all tables
- *
- * @param string $table name of the table
- * @param array $options list of options for the table
- * @return array
- */
-	public static function config($table = null, array $options = null) {
-		if ($table === null) {
-			return static::$_tablesMap;
-		}
-		if (!is_string($table)) {
-			return static::$_tablesMap = $table;
-		}
-		if ($options === null) {
-			return isset(static::$_tablesMap[$table]) ? static::$_tablesMap[$table] : [];
-		}
-		return static::$_tablesMap[$table] = $options;
-	}
-
-/**
- * Clears the registry of instantiated tables and default configurations
- *
- * @return void
- */
-	public static function clearRegistry() {
-		static::$_instances = [];
-		static::$_tablesMap = [];
+		return TableRegistry::set($alias, $object);
 	}
 
 /**
