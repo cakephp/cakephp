@@ -113,27 +113,27 @@ class PaginatorComponentTest extends TestCase {
 		$this->assertEquals(1, $Controller->request->params['paging']['PaginatorControllerPost']['page']);
 		$this->assertEquals(array(1, 2, 3), $results);
 
-		$Controller->request->query = array('sort' => ['PaginatorControllerPost.id' => 'asc']);
+		$Controller->request->query = array('order' => ['PaginatorControllerPost.id' => 'asc']);
 		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerPost'), '{n}.PaginatorControllerPost.id');
 		$this->assertEquals(1, $Controller->request->params['paging']['PaginatorControllerPost']['page']);
 		$this->assertEquals(array(1, 2, 3), $results);
 
-		$Controller->request->query = array('sort' => ['PaginatorControllerPost.id' => 'desc']);
+		$Controller->request->query = array('order' => ['PaginatorControllerPost.id' => 'desc']);
 		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerPost'), '{n}.PaginatorControllerPost.id');
 		$this->assertEquals(1, $Controller->request->params['paging']['PaginatorControllerPost']['page']);
 		$this->assertEquals(array(3, 2, 1), $results);
 
-		$Controller->request->query = array('sort' => ['id' => 'desc']);
+		$Controller->request->query = array('order' => ['id' => 'desc']);
 		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerPost'), '{n}.PaginatorControllerPost.id');
 		$this->assertEquals(1, $Controller->request->params['paging']['PaginatorControllerPost']['page']);
 		$this->assertEquals(array(3, 2, 1), $results);
 
-		$Controller->request->query = array('sort' => ['NotExisting.field' => 'desc']);
+		$Controller->request->query = array('order' => ['NotExisting.field' => 'desc']);
 		$Controller->Paginator->paginate('PaginatorControllerPost');
 		$this->assertEquals(1, $Controller->request->params['paging']['PaginatorControllerPost']['page']);
 		$this->assertEquals(array(), $Controller->PaginatorControllerPost->lastQueries[1]['order'][0], 'no order should be set.');
 
-		$Controller->request->query = array('sort' => ['PaginatorControllerPost.author_id' => 'allYourBase']);
+		$Controller->request->query = array('order' => ['PaginatorControllerPost.author_id' => 'allYourBase']);
 		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerPost'), '{n}.PaginatorControllerPost.id');
 		$this->assertEquals(array('PaginatorControllerPost.author_id' => 'asc'), $Controller->PaginatorControllerPost->lastQueries[1]['order'][0]);
 		$this->assertEquals(array(1, 3, 2), $results);
@@ -369,18 +369,18 @@ class PaginatorComponentTest extends TestCase {
 		);
 
 		$Controller->PaginatorControllerPost->order = array('PaginatorControllerPost.id');
-		$result = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
+		$result = $Controller->Paginator->validateOrder($Controller->PaginatorControllerPost, array());
 		$this->assertEmpty($result['order']);
 
 		$Controller->PaginatorControllerPost->order = 'PaginatorControllerPost.id';
-		$results = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
+		$results = $Controller->Paginator->validateOrder($Controller->PaginatorControllerPost, array());
 		$this->assertEmpty($result['order']);
 
 		$Controller->PaginatorControllerPost->order = array(
 			'PaginatorControllerPost.id',
 			'PaginatorControllerPost.created' => 'asc'
 		);
-		$result = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
+		$result = $Controller->Paginator->validateOrder($Controller->PaginatorControllerPost, array());
 		$expected = array('PaginatorControllerPost.created' => 'asc');
 		$this->assertEquals($expected, $result['order']);
 	}
@@ -408,7 +408,7 @@ class PaginatorComponentTest extends TestCase {
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
 		$this->assertEquals(array(4, 3, 2), Hash::extract($result, '{n}.PaginatorControllerPost.offset_test'));
 
-		$Controller->request->query = array('sort' => ['offset_test' => 'asc']);
+		$Controller->request->query = array('order' => ['offset_test' => 'asc']);
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
 		$this->assertEquals(array(2, 3, 4), Hash::extract($result, '{n}.PaginatorControllerPost.offset_test'));
 	}
@@ -432,7 +432,7 @@ class PaginatorComponentTest extends TestCase {
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
 		$this->assertEquals(array(4, 2, 2), Hash::extract($result, '{n}.PaginatorAuthor.joined_offset'));
 
-		$Controller->request->query = array('sort' => ['PaginatorAuthor.joined_offset' => 'asc']);
+		$Controller->request->query = array('order' => ['PaginatorAuthor.joined_offset' => 'asc']);
 		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
 		$this->assertEquals(array(2, 2, 4), Hash::extract($result, '{n}.PaginatorAuthor.joined_offset'));
 	}
@@ -671,10 +671,10 @@ class PaginatorComponentTest extends TestCase {
 /**
  * test that validate order behaves as expected with different inputs
  *
- * @dataProvider validateSortProvider
+ * @dataProvider validateOrderProvider
  * @return void
  */
-	public function testValidateSort($sort, $expected, $whitelist = []) {
+	public function testValidateOrder($order, $expected, $whitelist = []) {
 		$Model = $this->getMock('Cake\Model\Model');
 		$Model->alias = 'Post';
 		$Model->expects($this->any())
@@ -691,19 +691,19 @@ class PaginatorComponentTest extends TestCase {
 				return in_array($field, ['id', 'name'], true);
 			}));
 
-		$result = $this->Paginator->validateSort($Model, ['sort' => $sort], $whitelist);
+		$result = $this->Paginator->validateOrder($Model, ['order' => $order], $whitelist);
 		$this->assertEquals($expected, $result['order']);
 	}
 
 /**
- * Data provider for validateSort test
+ * Data provider for validateOrder test
  *
  * @return array
  */
-	public function validateSortProvider() {
+	public function validateOrderProvider() {
 		return [
 			'success' => [
-				'sort' => [
+				'order' => [
 					'title' => 'asc',
 					'Post.id' => 'asc',
 					'Author.name' => 'asc'
@@ -715,7 +715,7 @@ class PaginatorComponentTest extends TestCase {
 				]
 			],
 			'remove invalid fields' => [
-				'sort' => [
+				'order' => [
 					'invalid' => 'asc',
 					'Author.invalid' => 'asc',
 					'Invalid.id' => 'asc'
@@ -723,13 +723,13 @@ class PaginatorComponentTest extends TestCase {
 				'expected' => []
 			],
 			'both field and direction are required' => [
-				'sort' => [
+				'order' => [
 					'id'
 				],
 				'expected' => []
 			],
 			'normalize direction' => [
-				'sort' => [
+				'order' => [
 					'Post.id' => 'DESC',
 					'Author.id' => 'ASC'
 				],
@@ -739,7 +739,7 @@ class PaginatorComponentTest extends TestCase {
 				]
 			],
 			'fallback invalid direction' => [
-				'sort' => [
+				'order' => [
 					'Post.id' => 'invalid'
 				],
 				'expected' => [
@@ -747,7 +747,7 @@ class PaginatorComponentTest extends TestCase {
 				]
 			],
 			'accept whitelisted fields' => [
-				'sort' => [
+				'order' => [
 					'title' => 'asc',
 					'Author.name' => 'asc'
 				],
@@ -761,7 +761,7 @@ class PaginatorComponentTest extends TestCase {
 				]
 			],
 			'accept whitelisted fields even when inexistent' => [
-				'sort' => [
+				'order' => [
 					'Post.inexistent' => 'asc',
 				],
 				'expected' => [
@@ -772,7 +772,7 @@ class PaginatorComponentTest extends TestCase {
 				],
 			],
 			'remove non-whitelisted fields' => [
-				'sort' => [
+				'order' => [
 					'id' => 'asc',
 					'title' => 'asc'
 				],
@@ -785,7 +785,7 @@ class PaginatorComponentTest extends TestCase {
 			],
 			// `id` and `Post.id` should be supported, but it should not validate `Author.id`
 			'remove correct non-whitelisted field' => [
-				'sort' => [
+				'order' => [
 					'Post.id' => 'asc',
 					'Author.id' => 'asc'
 				],
@@ -800,45 +800,30 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
- * test that $options['sort'] has priority over $options['order']
- * and $options['order'] over $object->order
+ * test that validate order uses order property from Model if none is provided
  *
  * @return void
  */
-	public function testValidateSortKeyPriority() {
+	public function testValidateOrderFallbackToModel() {
 		$Model = $this->getMock('Cake\Model\Model');
 		$Model->alias = 'Post';
-		$Model->order = ['three' => 'asc'];
+		$Model->order = ['id' => 'asc'];
 		$Model->expects($this->any())
 			->method('hasField')
-			->will($this->returnCallback(function($field) {
-				return in_array($field, ['one', 'two', 'three'], true);
-			}));
-
-		$options = [
-			'sort' => [
-				'one' => 'asc'
-			],
-			'order' => [
-				'two' => 'asc'
-			]
-		];
-		$result = $this->Paginator->validateSort($Model, $options);
-		$expected = ['Post.one' => 'asc'];
-		$this->assertEquals($expected, $result['order']);
+			->will($this->returnValue(true));
 
 		$options = [
 			'order' => [
-				'two' => 'asc'
+				'title' => 'asc'
 			]
 		];
-		$result = $this->Paginator->validateSort($Model, $options);
-		$expected = ['Post.two' => 'asc'];
+		$result = $this->Paginator->validateOrder($Model, $options);
+		$expected = ['Post.title' => 'asc'];
 		$this->assertEquals($expected, $result['order']);
 
 		$options = [];
-		$result = $this->Paginator->validateSort($Model, $options);
-		$expected = ['Post.three' => 'asc'];
+		$result = $this->Paginator->validateOrder($Model, $options);
+		$expected = ['Post.id' => 'asc'];
 		$this->assertEquals($expected, $result['order']);
 	}
 
@@ -933,7 +918,7 @@ class PaginatorComponentTest extends TestCase {
 			),
 		);
 		$Controller->request->params['named'] = array(
-			'sort' => ['PaginatorControllerPost.title' => 'desc']
+			'order' => ['PaginatorControllerPost.title' => 'desc']
 		);
 		$result = Hash::extract(
 			$Controller->paginate('PaginatorControllerComment'),
