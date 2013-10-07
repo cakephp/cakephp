@@ -20,7 +20,7 @@ use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
 
 /**
- * Schema management/reflection features for MySQL
+ * Schema generation/reflection features for MySQL
  *
  */
 class MysqlSchema extends BaseSchema {
@@ -30,7 +30,7 @@ class MysqlSchema extends BaseSchema {
  *
  */
 	public function listTablesSql($config) {
-		return ['SHOW TABLES FROM ?', [$config['database']]];
+		return ['SHOW TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']), []];
 	}
 
 /**
@@ -38,7 +38,7 @@ class MysqlSchema extends BaseSchema {
  *
  */
 	public function describeTableSql($name, $config) {
-		return ['SHOW FULL COLUMNS FROM ?', [$name]];
+		return ['SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($name), []];
 	}
 
 /**
@@ -46,7 +46,7 @@ class MysqlSchema extends BaseSchema {
  *
  */
 	public function describeIndexSql($table, $config) {
-		return ['SHOW INDEXES FROM ?', [$table]];
+		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($table), []];
 	}
 
 /**
