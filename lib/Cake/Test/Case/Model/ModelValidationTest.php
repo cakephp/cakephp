@@ -612,6 +612,12 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals(0, $joinRecords, 'Records were saved on the join table. %s');
 	}
 
+/**
+ * Test that if a behavior modifies the model's whitelist validation gets triggered
+ * properly for those fields.
+ *
+ * @return void
+ */
 	public function testValidateWithFieldListAndBehavior() {
 		$TestModel = new ValidationTest1();
 		$TestModel->validate = array(
