@@ -1572,19 +1572,6 @@ TEXT;
 	}
 
 /**
- * Test that setting arbitrary properties still works.
- *
- * @return void
- */
-	public function testPropertySettingMagicGet() {
-		$this->assertFalse(isset($this->View->action));
-		$this->View->request->params['action'] = 'login';
-		$this->assertEquals('login', $this->View->action);
-		$this->assertTrue(isset($this->View->action));
-		$this->assertTrue(!empty($this->View->action));
-	}
-
-/**
  * Test memory leaks that existed in _paths at one point.
  *
  * @return void
