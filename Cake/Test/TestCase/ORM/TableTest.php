@@ -814,11 +814,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table->entityClass($entity);
 		$association = $table->association('Bar');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsTo', $association);
 		$this->assertEquals('Bar', $association->name());
 		$this->assertEquals('bar', $association->property());
 		$this->assertSame($barTarget, $association->target());
 
 		$association = $table->association('Department');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsTo', $association);
 		$this->assertEquals('Department', $association->name());
 		$this->assertEquals('department', $association->property());
 		$this->assertSame($depatmentTarget, $association->target());
@@ -858,11 +860,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table->entityClass($entity);
 		$association = $table->association('Bar');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsTo', $association);
 		$this->assertEquals('Bar', $association->name());
 		$this->assertEquals('thing', $association->property());
 		$this->assertSame($barTarget, $association->target());
 
 		$association = $table->association('Baz');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsTo', $association);
 		$this->assertEquals('Baz', $association->name());
 		$this->assertEquals('baz', $association->property());
 		$this->assertEquals('crazy_id', $association->foreignKey());
@@ -907,11 +911,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table->entityClass($entity);
 		$association = $table->association('Bar');
+		$this->assertInstanceOf('\Cake\ORM\Association\HasMany', $association);
 		$this->assertEquals('Bar', $association->name());
 		$this->assertEquals('bars', $association->property());
 		$this->assertSame($barTarget, $association->target());
 
 		$association = $table->association('Baz');
+		$this->assertInstanceOf('\Cake\ORM\Association\HasOne', $association);
 		$this->assertEquals('Baz', $association->name());
 		$this->assertEquals('baz', $association->property());
 		$this->assertSame($bazTarget, $association->target());
