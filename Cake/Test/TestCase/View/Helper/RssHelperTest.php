@@ -94,7 +94,7 @@ class RssHelperTest extends TestCase {
  */
 	public function testChannel() {
 		$attrib = array('a' => '1', 'b' => '2');
-		$elements = array('title' => 'title');
+		$elements = array('title' => 'Title');
 		$content = 'content';
 
 		$result = $this->Rss->channel($attrib, $elements, $content);
@@ -104,30 +104,7 @@ class RssHelperTest extends TestCase {
 				'b' => '2'
 			),
 			'<title',
-			'title',
-			'/title',
-			'<link',
-			$this->Rss->url('/', true),
-			'/link',
-			'<description',
-			'content',
-			'/channel'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->View->pageTitle = 'title';
-		$attrib = array('a' => '1', 'b' => '2');
-		$elements = array();
-		$content = 'content';
-
-		$result = $this->Rss->channel($attrib, $elements, $content);
-		$expected = array(
-			'channel' => array(
-				'a' => '1',
-				'b' => '2'
-			),
-			'<title',
-			'title',
+			'Title',
 			'/title',
 			'<link',
 			$this->Rss->url('/', true),

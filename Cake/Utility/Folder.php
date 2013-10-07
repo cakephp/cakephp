@@ -320,12 +320,14 @@ class Folder {
  * Returns $path with $element added, with correct slash in-between.
  *
  * @param string $path Path
- * @param string $element Element to and at end of path
+ * @param string|array $element Element to add at end of path
  * @return string Combined path
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/file-folder.html#Folder::addPathElement
  */
 	public static function addPathElement($path, $element) {
-		return rtrim($path, DS) . DS . $element;
+		$element = (array)$element;
+		array_unshift($element, rtrim($path, DS));
+		return implode(DS, $element);
 	}
 
 /**
