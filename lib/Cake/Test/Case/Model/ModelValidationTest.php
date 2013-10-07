@@ -622,12 +622,10 @@ class ModelValidationTest extends BaseModelTest {
 		$TestModel = new ValidationTest1();
 		$TestModel->validate = array(
 			'title' => array(
-				'rule' => 'alphaNumeric',
-				'required' => true
+				'rule' => 'notEmpty',
 			),
 			'name' => array(
-				'rule' => 'alphaNumeric',
-				'required' => true
+				'rule' => 'notEmpty',
 		));
 		$TestModel->Behaviors->attach('ValidationRule', array('fields' => array('name')));
 
