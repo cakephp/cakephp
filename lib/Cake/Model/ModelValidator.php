@@ -249,7 +249,11 @@ class ModelValidator implements ArrayAccess, IteratorAggregate, Countable {
 			return $model->validationErrors;
 		}
 
-		$fieldList = isset($options['fieldList']) ? $options['fieldList'] : array();
+		$fieldList = $model->whitelist;
+		if (empty($fieldList) && !empty($options['fieldList'])) {
+			$fieldList = $options['fieldList'];
+		}
+
 		$exists = $model->exists();
 		$methods = $this->getMethods();
 		$fields = $this->_validationList($fieldList);
