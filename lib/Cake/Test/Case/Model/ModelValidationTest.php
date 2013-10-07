@@ -612,6 +612,30 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals(0, $joinRecords, 'Records were saved on the join table. %s');
 	}
 
+	public function testValidateWithFieldListAndBehavior() {
+		$TestModel = new ValidationTest1();
+		$TestModel->validate = array(
+			'title' => array(
+				'rule' => 'alphaNumeric',
+				'required' => true
+			),
+			'name' => array(
+				'rule' => 'alphaNumeric',
+				'required' => true
+		));
+		$TestModel->Behaviors->attach('ValidationRule', array('fields' => array('name')));
+
+		$data = array(
+			'title' => '',
+			'name' => '',
+		);
+		$result = $TestModel->save($data, array('fieldList' => array('title')));
+		$this->assertFalse($result);
+
+		$expected = array('title' => array('This field cannot be left blank'), 'name' => array('This field cannot be left blank'));
+		$this->assertEquals($expected, $TestModel->validationErrors);
+	}
+
 /**
  * test that saveAll and with models with validation interact well
  *
@@ -2377,6 +2401,24 @@ class ModelValidationTest extends BaseModelTest {
 			),
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+}
+
+/**
+ * Behavior for testing validation rules.
+ */
+class ValidationRuleBehavior extends ModelBehavior {
+
+	public function setup(Model $Model, $config = array()) {
+		$this->settings[$Model->alias] = $config;
+	}
+
+	public function beforeValidate(Model $Model, $options = array()) {
+		$fields = $this->settings[$Model->alias]['fields'];
+		foreach ($fields as $field) {
+			$Model->whitelist[] = $field;
+		}
 	}
 
 }
