@@ -794,7 +794,7 @@ class Table {
 				}
 
 				if (!empty($val['className'])) {
-					$val['entityClass'] = App::classname($val['className'],  'Model\Entity');
+					$val['entityClass'] = App::classname($val['className'], 'Model\Entity');
 					unset($val['className']);
 				}
 
@@ -804,7 +804,11 @@ class Table {
 					$val['property'] = $name;
 				}
 
-				$this->{$assoc}($key, $val);
+				$result = $this->{$assoc}($key, $val);
+				if ($assoc === 'belongsToMany' && !empty($val['with'])) {
+					$withClass = App::classname($val['with'], 'Model\Entity');
+					$result->pivot($withClass::repository());
+				}
 			}
 		}
 	}

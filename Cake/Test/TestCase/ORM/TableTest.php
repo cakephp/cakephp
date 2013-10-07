@@ -923,4 +923,75 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($bazTarget, $association->target());
 	}
 
+/**
+ * Tests automatic setup of associations based on entity information
+ *
+ * @return void
+ */
+	public function testAutoSetupBelongstoMany() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$barTarget = new Table(['table' => 'bars', 'connection' => $this->connection]);
+
+		$entity = $this->getMockClass('\Cake\ORM\Entity', ['belongsToMany']);
+		$barEntity = $this->getMockClass('\Cake\ORM\Entity', ['repository']);
+		class_alias($barEntity, 'Foo3\Model\Entity\Bar');
+
+		$entity::staticExpects($this->once())->method('belongsToMany')
+			->will($this->returnValue(['Foo3.Bar']));
+
+		$barEntity::staticExpects($this->at(0))->method('repository')
+			->will($this->returnValue($barTarget));
+
+		$table->entityClass($entity);
+		$association = $table->association('Bar');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $association);
+		$this->assertEquals('Bar', $association->name());
+		$this->assertEquals('bars', $association->property());
+		$this->assertSame($barTarget, $association->target());
+	}
+
+/**
+ * Tests that it is possible to setup a belongsTo association and specify the pivot
+ * entity
+ *
+ * @return void
+ */
+	public function testAutoSetupBelongstoManyWith() {
+		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$barTarget = new Table(['table' => 'bars', 'connection' => $this->connection]);
+
+		$entity = $this->getMockClass('\Cake\ORM\Entity', ['belongsToMany']);
+		$barEntity = $this->getMockClass('\Cake\ORM\Entity', ['repository']);
+		class_alias($barEntity, 'Foo4\Model\Entity\Bar');
+
+		$entity::staticExpects($this->once())->method('belongsToMany')
+			->will($this->returnValue([
+				'Bar' => [
+					'className' => 'Foo4.Bar',
+					'with' => 'Foo4.Baz'
+				]
+			]));
+
+		$barEntity::staticExpects($this->at(1))->method('repository')
+			->will($this->returnValue($barTarget));
+
+		$bazTarget = new Table([
+			'table' => 'baz',
+			'connection' => $this->connection
+		]);
+		$bazEntity = $this->getMockClass('\Cake\ORM\Entity', ['repository']);
+		class_alias($bazEntity, 'Foo4\Model\Entity\Baz');
+
+		$bazEntity::staticExpects($this->at(0))->method('repository')
+			->will($this->returnValue($bazTarget));
+
+		$table->entityClass($entity);
+		$association = $table->association('Bar');
+		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $association);
+		$this->assertEquals('Bar', $association->name());
+		$this->assertEquals('bars', $association->property());
+		$this->assertSame($barTarget, $association->target());
+		$this->assertSame($bazTarget, $association->pivot());
+	}
+
 }
