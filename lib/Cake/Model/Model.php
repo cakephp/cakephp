@@ -3499,25 +3499,23 @@ class Model extends Object implements CakeEventListener {
  * @return boolean true on delete
  */
 	protected function _clearCache($type = null) {
-		if ($type === null) {
-			if (Configure::read('Cache.check') === true) {
-				$assoc[] = strtolower(Inflector::pluralize($this->alias));
-				$assoc[] = strtolower(Inflector::underscore(Inflector::pluralize($this->alias)));
-				foreach ($this->_associations as $key => $association) {
-					foreach ($this->$association as $key => $className) {
-						$check = strtolower(Inflector::pluralize($className['className']));
-						if (!in_array($check, $assoc)) {
-							$assoc[] = strtolower(Inflector::pluralize($className['className']));
-							$assoc[] = strtolower(Inflector::underscore(Inflector::pluralize($className['className'])));
-						}
-					}
-				}
-				clearCache($assoc);
-				return true;
-			}
-		} else {
-			//Will use for query cache deleting
+		if ($type !== null || Configure::read('Cache.check') !== true) {
+			return;
 		}
+		$assoc[] = strtolower(Inflector::pluralize($this->alias));
+		$assoc[] = Inflector::underscore(Inflector::pluralize($this->alias));
+		foreach ($this->_associations as $association) {
+			foreach ($this->$association as $className) {
+				$pluralized = strtolower(Inflector::pluralize($className['className']));
+				if (!in_array($pluralized, $assoc)) {
+					$assoc[] = $pluralized;
+					$assoc[] = Inflector::underscore(Inflector::pluralize($className['className']));
+				}
+			}
+		}
+		$assoc = array_unique($assoc);
+		clearCache($assoc);
+		return true;
 	}
 
 /**

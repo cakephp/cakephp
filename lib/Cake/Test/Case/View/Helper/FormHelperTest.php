@@ -8184,6 +8184,22 @@ class FormHelperTest extends CakeTestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('Contact.iamrequiredalways', array('type' => 'file'));
+		$expected = array(
+			'div' => array('class' => 'input file required'),
+			'label' => array('for' => 'ContactIamrequiredalways'),
+			'Iamrequiredalways',
+			'/label',
+			'input' => array(
+				'type' => 'file',
+				'name' => 'data[Contact][iamrequiredalways]',
+				'id' => 'ContactIamrequiredalways',
+				'required' => 'required'
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

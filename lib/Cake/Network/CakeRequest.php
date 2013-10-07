@@ -788,7 +788,10 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Parse Accept* headers with qualifier options
+ * Parse Accept* headers with qualifier options.
+ *
+ * Only qualifiers will be extracted, any other accept extensions will be
+ * discarded as they are not frequently used.
  *
  * @param string $header
  * @return array
@@ -797,14 +800,21 @@ class CakeRequest implements ArrayAccess {
 		$accept = array();
 		$header = explode(',', $header);
 		foreach (array_filter($header) as $value) {
-			$prefPos = strpos($value, ';');
-			if ($prefPos !== false) {
-				$prefValue = substr($value, strpos($value, '=') + 1);
-				$value = trim(substr($value, 0, $prefPos));
-			} else {
-				$prefValue = '1.0';
-				$value = trim($value);
+			$prefValue = '1.0';
+			$value = trim($value);
+
+			$semiPos = strpos($value, ';');
+			if ($semiPos !== false) {
+				$params = explode(';', $value);
+				$value = trim($params[0]);
+				foreach ($params as $param) {
+					$qPos = strpos($param, 'q=');
+					if ($qPos !== false) {
+						$prefValue = substr($param, $qPos + 2);
+					}
+				}
 			}
+
 			if (!isset($accept[$prefValue])) {
 				$accept[$prefValue] = array();
 			}
