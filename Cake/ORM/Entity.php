@@ -2,7 +2,6 @@
 
 namespace Cake\ORM;
 
-use Cake\Core\App;
 use Cake\ORM\Table;
 
 class Entity implements \ArrayAccess {
@@ -13,52 +12,6 @@ class Entity implements \ArrayAccess {
  * @var array
  */
 	protected $_properties = [];
-
-/**
- * Holds a reference to the objects acting as a repository for this type
- * of entity
- *
- * @var Cake\ORM\Table
- */
-	protected static $_repository;
-
-/**
- * A list of entity classes pointing to the class name of the repository
- * object to use
- *
- * @var array
- */
-	protected static $_repositoryClass;
-
-/**
- * List of Belongs To associations
- *
- * ### Basic usage
- *
- * `public $belongsTo = array('Group', 'Department');`
- *
- * ### Detailed configuration
- *
- * {{{
- * public $belongsTo = array(
- *     'Group',
- *     'Department' => array(
- *         'className' => 'Department',
- *         'foreignKey' => 'department_id'
- *     )
- * );
- * }}}
- *
- * @see \Cake\ORM\Table::belongsTo() for a list of accepted configuration keys
- * @var array
- */
-	protected static $_belongsTo = [];
-
-	protected static $_hasOne = [];
-
-	protected static $_hasMany = [];
-
-	protected static $_belongsToMany = [];
 
 /**
  * Initializes the internal properties of this entity out of the
@@ -293,127 +246,6 @@ class Entity implements \ArrayAccess {
  */
 	public function offsetUnset($offset) {
 		$this->unsetProperty($offset);
-	}
-
-/**
- * Returns the instance of the table object associated to this entity.
- * If called with a Table object as first argument, it will be set as the default
- * repository object to use.
- *
- * @param \Cake\ORM\Table $table The table object to use as a repository of this
- * type of Entity
- * @return \Cake\ORM\Table
- */
-	public static function repository(Table $table = null) {
-		if ($table === null) {
-			if (static::$_repository === null) {
-				$className = static::repositoryClass();
-				$self = get_called_class();
-				list($namespace, $alias) = namespaceSplit($self);
-				static::$_repository = $className::build($alias, [
-					'entityClass' => $self
-				]);
-			}
-			return static::$_repository;
-		}
-		$table->entityClass(get_called_class());
-		return static::$_repository = $table;
-	}
-
-/**
- * Returns the fully namespaced class name for the repository object associated to
- * this entity. If a string is passed as first argument, it will be used to store
- * the name of the repository object to use.
- *
- * Plugin notation can be used to specify the name of the object to load. By
- * convention, classes will be loaded from `[PluginName]\Model\Repository\`
- * base namespace if a plugin is specified or from `App\Model\Repository` if
- * none is passed.
- *
- * ### Examples:
- *
- * - ``User::repositoryClass('\App\Model\Repository\SuperUserTable');``
- * - ``User::repositoryClass('My.User');`` // Looks inside My plugin
- *
- * @param string $class Fully namespaced class name or name of the object using
- * plugin notation.
- * @throws \Cake\ORM\Error\MissingTableClassException when the table class cannot be found
- * @return string|boolean the full name of the class or false if the class does not exist
- */
-	public static function repositoryClass($class = null) {
-		$self = get_called_class();
-		if ($class) {
-			self::$_repositoryClass[$self] = $class;
-		}
-
-		if (empty(static::$_repositoryClass[$self])) {
-			if (!empty(self::$_repository)) {
-				return self::$_repositoryClass[$self] = get_class(static::$_repository);
-			}
-
-			$default = '\Cake\ORM\Table';
-			$self = get_called_class();
-			$parts = explode('\\', $self);
-
-			if ($self === __CLASS__ || count($parts) < 3) {
-				return self::$_repositoryClass[$self] = $default;
-			}
-
-			$alias = array_pop($parts) . 'Table';
-			$class = implode('\\', array_slice($parts, 0, -1)) . '\Repository\\' . $alias;
-			if (!class_exists($class)) {
-				return self::$_repositoryClass[$self] = $default;
-			}
-
-			self::$_repositoryClass[$self] = $class;
-		}
-
-		$result = App::className(self::$_repositoryClass[$self], 'Model\Repository', 'Table');
-		if (!$result) {
-			throw new Error\MissingTableClassException([static::$_repositoryClass[$self]]);
-		}
-
-		return $result;
-	}
-
-/**
- * Returns the BelongsTo associations as statically defined in the $_belongsTo
- * property
- *
- * @return array
- */
-	public static function belongsTo() {
-		return static::$_belongsTo;
-	}
-
-/**
- * Returns the HasOne associations as statically defined in the $_hasOne
- * property
- *
- * @return array
- */
-	public static function hasOne() {
-		return static::$_hasOne;
-	}
-
-/**
- * Returns the HasMany associations as statically defined in the $_hasMany
- * property
- *
- * @return array
- */
-	public static function hasMany() {
-		return static::$_hasMany;
-	}
-
-/**
- * Returns the BelongsToMany associations as statically defined in the
- * $_belongsToMany property
- *
- * @return array
- */
-	public static function belongsToMany() {
-		return static::$_belongsToMany;
 	}
 
 }

@@ -128,14 +128,6 @@ abstract class Association {
 	protected $_strategy = self::STRATEGY_JOIN;
 
 /**
- * The name of the entity class associated to the targetTable, used to load an
- * instance of this table in case it is present
- *
- * @return void
- */
-	protected $_entityClass;
-
-/**
  * Constructor. Subclasses can override _options function to get the original
  * list of passed options if expecting any other special key
  *
@@ -152,8 +144,7 @@ abstract class Association {
 			'sourceTable',
 			'targetTable',
 			'joinType',
-			'property',
-			'entityClass'
+			'property'
 		];
 		foreach ($defaults as $property) {
 			if (isset($options[$property])) {
@@ -211,11 +202,6 @@ abstract class Association {
 	public function target(Table $table = null) {
 		if ($table === null && $this->_targetTable) {
 			return $this->_targetTable;
-		}
-
-		if ($table === null && $this->_entityClass) {
-			$entity = $this->_entityClass;
-			$table = $entity::repository();
 		}
 
 		if ($table !== null) {
