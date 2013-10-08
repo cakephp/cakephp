@@ -1313,7 +1313,7 @@ class CakeEmail {
  * @return array Wrapped message
  */
 	protected function _wrap($message, $wrapLength = CakeEmail::LINE_LENGTH_MUST) {
-		if (strlen($message) == 0) {
+		if (strlen($message) === 0) {
 			return array('');
 		}
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
@@ -1643,7 +1643,7 @@ class CakeEmail {
 			$layout = false;
 		}
 
-		if ($View->get('content') == '') {
+		if ($View->get('content') === null) {
 			$View->set('content', $content);
 		}
 
