@@ -80,11 +80,11 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$this->Tree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
+		$this->Tree->Behaviors->load('Tree', array('scope' => 'FlagTree.flag = 1'));
 		$this->assertEquals(array(), $this->Tree->children());
 
 		$this->Tree->id = 1;
-		$this->Tree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
+		$this->Tree->Behaviors->load('Tree', array('scope' => 'FlagTree.flag = 1'));
 
 		$result = $this->Tree->children();
 		$expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
@@ -117,11 +117,11 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
+		$this->Tree->Behaviors->load('Tree', array('scope' => array('FlagTree.flag' => 1)));
 		$this->assertEquals(array(), $this->Tree->children());
 
 		$this->Tree->id = 1;
-		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
+		$this->Tree->Behaviors->load('Tree', array('scope' => array('FlagTree.flag' => 1)));
 
 		$result = $this->Tree->children();
 		$expected = array(array('FlagTree' => array('id' => '2', 'name' => '1.1', 'parent_id' => '1', 'lft' => '2', 'rght' => '9', 'flag' => '1')));
@@ -139,7 +139,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 	public function testMoveUpWithScope() {
 		$this->Ad = new Ad();
 		$this->Ad->order = null;
-		$this->Ad->Behaviors->attach('Tree', array('scope' => 'Campaign'));
+		$this->Ad->Behaviors->load('Tree', array('scope' => 'Campaign'));
 		$this->Ad->moveUp(6);
 
 		$this->Ad->id = 4;
@@ -156,7 +156,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 	public function testMoveDownWithScope() {
 		$this->Ad = new Ad();
 		$this->Ad->order = null;
-		$this->Ad->Behaviors->attach('Tree', array('scope' => 'Campaign'));
+		$this->Ad->Behaviors->load('Tree', array('scope' => 'Campaign'));
 		$this->Ad->moveDown(6);
 
 		$this->Ad->id = 4;
@@ -175,7 +175,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree = new FlagTree();
 		$this->Tree->order = null;
 		$this->Tree->cacheQueries = false;
-		$this->Tree->Behaviors->attach('Translate', array('title'));
+		$this->Tree->Behaviors->load('Translate', array('title'));
 
 		//Save
 		$this->Tree->create();
@@ -316,7 +316,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 				)
 			)
 		));
-		$this->TreeTwo->Behaviors->attach('Tree', array(
+		$this->TreeTwo->Behaviors->load('Tree', array(
 			'scope' => 'FirstTree'
 		));
 
@@ -358,7 +358,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree->id = 2;
 		$this->Tree->saveField('flag', 1);
 
-		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
+		$this->Tree->Behaviors->load('Tree', array('scope' => array('FlagTree.flag' => 1)));
 
 		$result = $this->Tree->generateTreeList();
 		$expected = array(
@@ -368,7 +368,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		// As string.
-		$this->Tree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
+		$this->Tree->Behaviors->load('Tree', array('scope' => 'FlagTree.flag = 1'));
 
 		$result = $this->Tree->generateTreeList();
 		$this->assertEquals($expected, $result);
@@ -392,7 +392,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree->order = null;
 		$this->Tree->initialize(2, 3);
 
-		$this->Tree->Behaviors->attach('Tree', array('scope' => 'FlagTree.flag = 1'));
+		$this->Tree->Behaviors->load('Tree', array('scope' => 'FlagTree.flag = 1'));
 		$this->Tree->Behaviors->disable('Tree');
 
 		$this->Tree->create();
@@ -457,7 +457,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree->id = 2;
 		$this->Tree->saveField('flag', 1);
 
-		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
+		$this->Tree->Behaviors->load('Tree', array('scope' => array('FlagTree.flag' => 1)));
 
 		$result = $this->Tree->findByName('1.1');
 		$this->Tree->updateAll(array($parentField => 999999), array('id' => $result[$modelClass]['id']));
@@ -488,7 +488,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree->id = 2;
 		$this->Tree->saveField('flag', 1);
 
-		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
+		$this->Tree->Behaviors->load('Tree', array('scope' => array('FlagTree.flag' => 1)));
 
 		$this->Tree->updateAll(array($parentField => null));
 
@@ -518,7 +518,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree->id = 2;
 		$this->Tree->saveField('flag', 1);
 
-		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
+		$this->Tree->Behaviors->load('Tree', array('scope' => array('FlagTree.flag' => 1)));
 
 		$this->Tree->updateAll(array($leftField => 0, $rightField => 0));
 
@@ -547,7 +547,7 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 		$this->Tree->id = 2;
 		$this->Tree->saveField('flag', 1);
 
-		$this->Tree->Behaviors->attach('Tree', array('scope' => array('FlagTree.flag' => 1)));
+		$this->Tree->Behaviors->load('Tree', array('scope' => array('FlagTree.flag' => 1)));
 
 		$result = $this->Tree->findByName('1.1');
 		$this->Tree->updateAll(array($rightField => $result[$modelClass][$leftField]), array('id' => $result[$modelClass]['id']));

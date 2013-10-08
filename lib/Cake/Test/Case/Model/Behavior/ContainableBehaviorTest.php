@@ -61,9 +61,9 @@ class ContainableBehaviorTest extends CakeTestCase {
 			'hasAndBelongsToMany' => array('Article')
 		), false);
 
-		$this->User->Behaviors->attach('Containable');
-		$this->Article->Behaviors->attach('Containable');
-		$this->Tag->Behaviors->attach('Containable');
+		$this->User->Behaviors->load('Containable');
+		$this->Article->Behaviors->load('Containable');
+		$this->Tag->Behaviors->load('Containable');
 	}
 
 /**
@@ -162,7 +162,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidContainmentsNoNotices() {
-		$this->Article->Behaviors->attach('Containable', array('notices' => false));
+		$this->Article->Behaviors->load('Containable', array('notices' => false));
 		$this->_containments($this->Article, array('Comment', 'InvalidBinding'));
 	}
 
@@ -3241,7 +3241,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testOriginalAssociations() {
-		$this->Article->Comment->Behaviors->attach('Containable');
+		$this->Article->Comment->Behaviors->load('Containable');
 
 		$options = array(
 			'conditions' => array(
@@ -3356,9 +3356,9 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->JoinB = ClassRegistry::init('JoinB');
 		$this->JoinC = ClassRegistry::init('JoinC');
 
-		$this->JoinA->Behaviors->attach('Containable');
-		$this->JoinB->Behaviors->attach('Containable');
-		$this->JoinC->Behaviors->attach('Containable');
+		$this->JoinA->Behaviors->load('Containable');
+		$this->JoinB->Behaviors->load('Containable');
+		$this->JoinC->Behaviors->load('Containable');
 
 		$this->JoinA->JoinB->find('all', array('contain' => array('JoinA')));
 		$this->JoinA->bindModel(array('hasOne' => array('JoinAsJoinC' => array('joinTable' => 'as_cs'))), false);
@@ -3373,9 +3373,9 @@ class ContainableBehaviorTest extends CakeTestCase {
  *
  */
 	public function testResetAssociation() {
-		$this->Article->Behaviors->attach('Containable');
-		$this->Article->Comment->Behaviors->attach('Containable');
-		$this->Article->User->Behaviors->attach('Containable');
+		$this->Article->Behaviors->load('Containable');
+		$this->Article->Comment->Behaviors->load('Containable');
+		$this->Article->User->Behaviors->load('Containable');
 
 		$initialOptions = array(
 			'conditions' => array(
