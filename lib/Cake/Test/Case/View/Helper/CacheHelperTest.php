@@ -515,7 +515,7 @@ class CacheHelperTest extends CakeTestCase {
  *
  * This test verifies view cache is created correctly when the app name is contained in part of the controller name.
  * (webapp Name) base name is 'cache' controller is 'cacheTest' action is 'cache_name'
- * apps url would look something like http://localhost/cache/cacheTest/cache_name
+ * apps URL would look something like http://localhost/cache/cacheTest/cache_name
  *
  * @return void
  */

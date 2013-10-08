@@ -372,7 +372,7 @@ class Router {
  *   routes that end in `*` are greedy. As you can remap URLs and not loose any passed/named args.
  *
  * @param string $route A string describing the template of the route
- * @param array $url An URL to redirect to. Can be a string or a Cake array-based URL
+ * @param array $url A URL to redirect to. Can be a string or a Cake array-based URL
  * @param array $options An array matching the named elements in the route to regular expressions which that
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
@@ -542,7 +542,7 @@ class Router {
 	}
 
 /**
- * Parses given URL string. Returns 'routing' parameters for that url.
+ * Parses given URL string. Returns 'routing' parameters for that URL.
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
@@ -619,7 +619,7 @@ class Router {
 
 /**
  * Takes parameter and path information back from the Dispatcher, sets these
- * parameters as the current request parameters that are merged with url arrays
+ * parameters as the current request parameters that are merged with URL arrays
  * created later in the request.
  *
  * Nested requests will create a stack of requests. You can remove requests using
@@ -767,7 +767,7 @@ class Router {
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
  *
- * - `base` - Set to false to remove the base path from the generated url. If your application
+ * - `base` - Set to false to remove the base path from the generated URL. If your application
  *   is not in the root directory, this can be used to generate URLs that are 'cake relative'.
  *   cake relative URLs are required when using requestAction.
  * - `?` - Takes an array of query string parameters
@@ -906,8 +906,8 @@ class Router {
 	}
 
 /**
- * Sets the full base url that will be used as a prefix for generating
- * fully qualified URLs for this application. If not parameters are passed,
+ * Sets the full base URL that will be used as a prefix for generating
+ * fully qualified URLs for this application. If no parameters are passed,
  * the currently configured value is returned.
  *
  * ## Note:
@@ -1139,7 +1139,7 @@ class Router {
  *
  * @param string $base Base URL
  * @param string $plugin Plugin name
- * @return string base url with plugin name removed if present
+ * @return string base URL with plugin name removed if present
  */
 	public static function stripPlugin($base, $plugin = null) {
 		if ($plugin) {

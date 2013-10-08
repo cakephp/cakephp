@@ -255,7 +255,7 @@ class ModelWriteTest extends BaseModelTest {
 /**
  * test that Caches are getting cleared on save().
  * ensure that both inflections of controller names are getting cleared
- * as url for controller could be either overallFavorites/index or overall_favorites/index
+ * as URL for controller could be either overallFavorites/index or overall_favorites/index
  *
  * @return void
  */

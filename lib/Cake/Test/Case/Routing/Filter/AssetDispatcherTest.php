@@ -129,7 +129,7 @@ class AssetDispatcherTest extends CakeTestCase {
 	}
 
 /**
- * Test that no exceptions are thrown for //index.php type urls.
+ * Test that no exceptions are thrown for //index.php type URLs.
  *
  * @return void
  */
