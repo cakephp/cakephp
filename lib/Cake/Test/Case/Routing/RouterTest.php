@@ -652,7 +652,7 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * Test url generation with an admin prefix
+ * Test URL generation with an admin prefix
  *
  * @return void
  */
@@ -1583,7 +1583,7 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * test url generation with legacy (1.2) style prefix routes.
+ * Test URL generation with legacy (1.2) style prefix routes.
  *
  * @return void
  * @see testUrlGenerationWithAutoPrefixes
@@ -2556,7 +2556,7 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * test that a route object returning a full url is not modified.
+ * test that a route object returning a full URL is not modified.
  *
  * @return void
  */

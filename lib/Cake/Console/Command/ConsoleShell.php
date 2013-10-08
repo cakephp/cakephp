@@ -454,7 +454,7 @@ class ConsoleShell extends AppShell {
 	}
 
 /**
- * Parse an array url and show the equivalent url as a string
+ * Parse an array URL and show the equivalent URL as a string
  *
  * @param mixed $command
  * @return void
@@ -470,7 +470,7 @@ class ConsoleShell extends AppShell {
 	}
 
 /**
- * Parse a string url and show as an array
+ * Parse a string URL and show as an array
  *
  * @param mixed $command
  * @return void

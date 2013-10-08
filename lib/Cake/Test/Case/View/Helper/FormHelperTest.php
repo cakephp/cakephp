@@ -7761,7 +7761,7 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
- * Test base form url when url param is passed with multiple parameters (&)
+ * Test base form URL when url param is passed with multiple parameters (&)
  *
  */
 	public function testCreateQuerystringrequest() {

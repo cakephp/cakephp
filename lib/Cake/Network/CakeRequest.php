@@ -32,7 +32,7 @@ App::uses('Hash', 'Utility');
 class CakeRequest implements ArrayAccess {
 
 /**
- * Array of parameters parsed from the url.
+ * Array of parameters parsed from the URL.
  *
  * @var array
  */
@@ -62,14 +62,14 @@ class CakeRequest implements ArrayAccess {
 	public $query = array();
 
 /**
- * The url string used for the request.
+ * The URL string used for the request.
  *
  * @var string
  */
 	public $url;
 
 /**
- * Base url path.
+ * Base URL path.
  *
  * @var string
  */
@@ -127,7 +127,7 @@ class CakeRequest implements ArrayAccess {
 /**
  * Constructor
  *
- * @param string $url Trimmed url string to use. Should not contain the application base path.
+ * @param string $url Trimmed URL string to use. Should not contain the application base path.
  * @param boolean $parseEnvironment Set to false to not auto parse the environment. ie. GET, POST and FILES.
  */
 	public function __construct($url = null, $parseEnvironment = true) {
@@ -817,7 +817,7 @@ class CakeRequest implements ArrayAccess {
 
 /**
  * Provides a read accessor for `$this->query`. Allows you
- * to use a syntax similar to `CakeSession` for reading url query data.
+ * to use a syntax similar to `CakeSession` for reading URL query data.
  *
  * @param string $name Query string variable name
  * @return mixed The value being read
