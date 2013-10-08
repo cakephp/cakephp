@@ -1,4 +1,19 @@
 <?php
+/**
+ * PHP Version 5.4
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP(tm) v 3.0.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 namespace Cake\ORM;
 
 use Cake\Core\App;
@@ -12,8 +27,18 @@ use Cake\Utility\Inflector;
  */
 class TableRegistry {
 
+/**
+ * Configuration for aliases.
+ *
+ * @var array
+ */
 	protected static $_config = [];
 
+/**
+ * Instances that belong to the registry.
+ *
+ * @var array
+ */
 	protected static $_instances = [];
 
 /**
@@ -88,10 +113,13 @@ class TableRegistry {
 	}
 
 /**
- * Set an instance, this should be temporary.
+ * Set an instance.
  *
+ * @param string $alias The alias to set.
+ * @param Cake\ORM\Table The table to set.
+ * @return void
  */
-	public static function set($alias, $object) {
+	public static function set($alias, Table $object) {
 		return static::$_instances[$alias] = $object;
 	}
 
