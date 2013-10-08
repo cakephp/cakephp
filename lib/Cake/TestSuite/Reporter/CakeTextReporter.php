@@ -141,7 +141,7 @@ class CakeTextReporter extends CakeBaseReporter {
 
 /**
  * Generate a test case list in plain text.
- * Creates as series of url's for tests that can be run.
+ * Creates as series of URLs for tests that can be run.
  * One case per line.
  *
  * @return void

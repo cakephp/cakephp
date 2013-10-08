@@ -449,7 +449,7 @@ class RequestHandlerComponentTest extends CakeTestCase {
 	}
 
 /**
- * test that redirects with ajax and no url don't do anything.
+ * test that redirects with ajax and no URL don't do anything.
  *
  * @return void
  */

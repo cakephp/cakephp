@@ -127,7 +127,7 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
- * Test that querystring args provided in the url string are parsed.
+ * Test that querystring args provided in the URL string are parsed.
  *
  * @return void
  */
@@ -1290,8 +1290,8 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
- * Test base, webroot, url and here parsing when there is url rewriting but
- * CakePHP gets called with index.php in url nonetheless.
+ * Test base, webroot, URL and here parsing when there is URL rewriting but
+ * CakePHP gets called with index.php in URL nonetheless.
  *
  * Tests uri with
  * - index.php/
@@ -1354,7 +1354,7 @@ class CakeRequestTest extends CakeTestCase {
 	}
 
 /**
- * Test base, webroot, and url parsing when there is no url rewriting
+ * Test base, webroot, and URL parsing when there is no URL rewriting
  *
  * @return void
  */

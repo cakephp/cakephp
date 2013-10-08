@@ -189,7 +189,7 @@ class AuthComponent extends Component {
  * Normally, if a user is redirected to the $loginAction page, the location they
  * were redirected from will be stored in the session so that they can be
  * redirected back after a successful login. If this session value is not
- * set, redirectUrl() method will return the url specified in $loginRedirect.
+ * set, redirectUrl() method will return the URL specified in $loginRedirect.
  *
  * @var mixed
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#AuthComponent::$loginRedirect
@@ -375,7 +375,7 @@ class AuthComponent extends Component {
 	}
 
 /**
- * Normalizes $loginAction and checks if current request url is same as login action.
+ * Normalizes $loginAction and checks if current request URL is same as login action.
  *
  * @param Controller $controller A reference to the controller object.
  * @return boolean True if current action is login action else false.

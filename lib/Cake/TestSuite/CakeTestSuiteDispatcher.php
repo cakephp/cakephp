@@ -191,7 +191,7 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
- * Parse url params into a 'request'
+ * Parse URL params into a 'request'
  *
  * @return void
  */
