@@ -791,7 +791,7 @@ class Validation {
 	}
 
 /**
- * Checks that a value is a valid uuid - http://tools.ietf.org/html/rfc4122
+ * Checks that a value is a valid UUID - http://tools.ietf.org/html/rfc4122
  *
  * @param string $check Value to check
  * @return boolean Success
