@@ -98,7 +98,7 @@ class ShellDispatcher {
  */
 	protected function _initEnvironment() {
 		if (!$this->_bootstrap()) {
-			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'Cake exists in ' . CAKE_CORE_INCLUDE_PATH;
+			$message = "Unable to load CakePHP core.\nMake sure " . DS . 'lib' . DS . 'CakePHP exists in ' . CAKE_CORE_INCLUDE_PATH;
 			throw new CakeException($message);
 		}
 

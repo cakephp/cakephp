@@ -10,7 +10,7 @@
 ; * @since         CakePHP(tm) v 0.10.0.1076
 ; */
 
-; acl.ini.php - Cake ACL Configuration
+; acl.ini.php - CakePHP ACL Configuration
 ; ---------------------------------------------------------------------
 ; Use this file to specify user permissions.
 ; aco = access control object (something in your application)

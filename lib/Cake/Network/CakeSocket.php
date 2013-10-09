@@ -1,6 +1,6 @@
 <?php
 /**
- * Cake Socket connection class.
+ * CakePHP Socket connection class.
  *
  * PHP 5
  *
@@ -21,7 +21,7 @@
 App::uses('Validation', 'Utility');
 
 /**
- * Cake network socket connection class.
+ * CakePHP network socket connection class.
  *
  * Core base class for network communication.
  *
