@@ -2653,7 +2653,7 @@ class RouterTest extends CakeTestCase {
 			array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
 			array('action' => 'edit', 'method' => 'POST', 'id' => true)
 		);
-		$this->assertEquals($default, $expected);
+		$this->assertEquals($expected, $default);
 
 		$custom = array(
 			array('action' => 'index', 'method' => 'GET', 'id' => false),
