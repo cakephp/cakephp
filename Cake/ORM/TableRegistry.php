@@ -42,30 +42,31 @@ class TableRegistry {
 	protected static $_instances = [];
 
 /**
- * Stores a list of options to be used when instantiating an object for the table
- * with the same name as $table. The options that can be stored are those that
- * are recognized by `build()`
+ * Stores a list of options to be used when instantiating an object
+ * with a matching alias.
  *
- * If second argument is omitted, it will return the current settings for $table
+ * The options that can be stored are those that are recognized by `build()`
+ * If second argument is omitted, it will return the current settings
+ * for $alias.
  *
  * If no arguments are passed it will return the full configuration array for
- * all tables
+ * all aliases
  *
- * @param string $table name of the table
- * @param null|array $options list of options for the table
- * @return array
+ * @param string $alias Name of the alias
+ * @param null|array $options list of options for the alias
+ * @return array The config data.
  */
-	public static function config($table = null, $options = null) {
-		if ($table === null) {
+	public static function config($alias = null, $options = null) {
+		if ($alias === null) {
 			return static::$_config;
 		}
-		if (!is_string($table)) {
-			return static::$_config = $table;
+		if (!is_string($alias)) {
+			return static::$_config = $alias;
 		}
 		if ($options === null) {
-			return isset(static::$_config[$table]) ? static::$_config[$table] : [];
+			return isset(static::$_config[$alias]) ? static::$_config[$alias] : [];
 		}
-		return static::$_config[$table] = $options;
+		return static::$_config[$alias] = $options;
 	}
 
 /**
