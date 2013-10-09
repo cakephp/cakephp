@@ -149,7 +149,7 @@ class UpgradeShell extends Shell {
 			$contents,
 			$count
 		);
-		if ($count == 0) {
+		if ($count === 0) {
 			$this->out(
 				__d('cake_console', '<info>Skip %s as there are no renames to do.</info>', $path),
 				1,
@@ -322,7 +322,7 @@ class UpgradeShell extends Shell {
 		$path = $this->_getPath();
 
 		$app = rtrim(APP, DS);
-		if ($path == $app || !empty($this->params['plugin'])) {
+		if ($path === $app || !empty($this->params['plugin'])) {
 			$path .= DS . 'Test' . DS . 'Fixture' . DS;
 		}
 		$this->out(__d('cake_console', 'Processing fixtures on %s', $path));
@@ -441,30 +441,94 @@ class UpgradeShell extends Shell {
 		foreach ($this->_files as $filePath) {
 			$patterns = [
 				[
-					' Replace $this->_Collection with $this->_registry',
+					'Replace $this->_Collection with $this->_registry',
 					'#\$this->_Collection#',
 					'$this->_registry',
 				],
 				[
-					' Replace ComponentCollection arguments',
+					'Replace ComponentCollection arguments',
 					'#ComponentCollection\s+\$collection#',
 					'ComponentRegistry $registry',
 				],
 				[
-					' Rename ComponentCollection',
+					'Rename ComponentCollection',
 					'#ComponentCollection#',
 					"ComponentRegistry",
 				],
 				[
-					' Rename HelperCollection',
+					'Rename HelperCollection',
 					'#HelperCollection#',
 					"HelperRegistry",
 				],
 				[
-					' Rename TaskCollection',
+					'Rename TaskCollection',
 					'#TaskCollection#',
 					"TaskRegistry",
 				],
+			];
+			$this->_updateFileRegexp($filePath, $patterns);
+		}
+		$this->out(__d('cake_console', '<success>Collection class uses rename successfully.</success>'));
+	}
+
+/**
+ * Update test case assertion methods.
+ *
+ * @return void
+ */
+	public function tests() {
+		$path = $this->_getPath();
+
+		$Folder = new Folder($path);
+		$this->_paths = $Folder->tree(null, false, 'dir');
+		$this->_findFiles('php');
+		foreach ($this->_files as $filePath) {
+			$patterns = [
+				[
+					'Replace assertEqual() with assertEquals()',
+					'#\$this-\>assertEqual\(\#i',
+					'$this->assertEquals(',
+				],
+				[
+					'Replace assertNotEqual() with assertNotEquals()',
+					'#\$this-\>assertNotEqual\(\#i',
+					'$this->assertNotEquals(',
+				],
+				[
+					'Replace assertIdentical() with assertSame()',
+					'#\$this-\>assertIdentical\(\#i',
+					'$this->assertSame(',
+				],
+				[
+					'Replace assertNotIdentical() with assertNotSame()',
+					'#\$this-\>assertNotIdentical\(\#i',
+					'$this->assertNotSame(',
+				],
+				[
+					'Replace assertPattern() with assertRegExp()',
+					'#\$this-\>assertPattern\(\#i',
+					'$this->assertRegExp(',
+				],
+				[
+					'Replace assertNoPattern() with assertNotRegExp()',
+					'#\$this-\>assertNoPattern\(\#i',
+					'$this->assertNotRegExp(',
+				],
+				[
+					'Replace assertReference() with assertSame()',
+					'#\$this-\>assertReference\(\$(.*?),\s*\'(.*?)\'\)#i',
+					'$this->assertSame($\1, $\2)',
+				],
+				[
+					'Replace assertIsA() with assertInstanceOf()',
+					'#\$this-\>assertIsA\(\$(.*?),\s*\'(.*?)\'\)#i',
+					'$this->assertInstanceOf(\'\2\', $\1)',
+				],
+				[
+					'Replace assert*($is, $expected) with assert*($expected, $is) - except for assertTags()',
+					'/\bassert((?!tags)\w+)\(\$(\w+),\s*\$expected\)/i',
+					'assert\1($expected, $\2)'
+				]
 			];
 			$this->_updateFileRegexp($filePath, $patterns);
 		}
@@ -510,7 +574,7 @@ class UpgradeShell extends Shell {
 		$namespace = trim($ns . str_replace(DS, '\\', dirname($shortPath)), '\\');
 		$patterns = [
 			[
-				' namespace to ' . $namespace,
+				'namespace to ' . $namespace,
 				'#^(<\?(?:php)?\s+(?:\/\*.*?\*\/\s{0,1})?)#s',
 				"\\1namespace " . $namespace . ";\n",
 			]
