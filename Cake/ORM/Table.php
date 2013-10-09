@@ -46,14 +46,6 @@ use Cake\Utility\Inflector;
 class Table {
 
 /**
- * A list of all table instances that has been built using the factory
- * method. Instances are indexed by alias
- *
- * @var array
- */
-	protected static $_instances = [];
-
-/**
  * Name of the table as it can be found in the database
  *
  * @var string
