@@ -713,7 +713,7 @@ class Controller extends Object implements CakeEventListener {
 
 /**
  * Loads and instantiates models required by this controller.
- * If the model is non existent, it will throw a missing database table error, as Cake generates
+ * If the model is non existent, it will throw a missing database table error, as CakePHP generates
  * dynamic models for the time being.
  *
  * @param string $modelClass Name of model class to load

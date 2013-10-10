@@ -1,6 +1,6 @@
 <?php
 /**
- * Cake E-Mail
+ * CakePHP Email
  *
  * PHP 5
  *
@@ -26,7 +26,7 @@ App::uses('String', 'Utility');
 App::uses('View', 'View');
 
 /**
- * Cake e-mail class.
+ * CakePHP email class.
  *
  * This class is used for handling Internet Message Format based
  * based on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt

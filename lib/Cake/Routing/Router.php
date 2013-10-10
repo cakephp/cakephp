@@ -372,7 +372,7 @@ class Router {
  *   routes that end in `*` are greedy. As you can remap URLs and not loose any passed/named args.
  *
  * @param string $route A string describing the template of the route
- * @param array $url A URL to redirect to. Can be a string or a Cake array-based URL
+ * @param array $url A URL to redirect to. Can be a string or a CakePHP array-based URL
  * @param array $options An array matching the named elements in the route to regular expressions which that
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.

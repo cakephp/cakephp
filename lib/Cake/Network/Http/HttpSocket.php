@@ -23,7 +23,7 @@ App::uses('Router', 'Routing');
 App::uses('Hash', 'Utility');
 
 /**
- * Cake network socket connection class.
+ * CakePHP network socket connection class.
  *
  * Core base class for HTTP network communication. HttpSocket can be used as an
  * Object Oriented replacement for cURL in many places.
