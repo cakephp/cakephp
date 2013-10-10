@@ -53,7 +53,7 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * Run all upgrade steps one at a time
+ * Run all upgrade steps one at a time.
  *
  * @return void
  */
@@ -69,7 +69,7 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * Move files and folders to their new homes
+ * Move files and folders to their new homes.
  *
  * @return void
  */
@@ -201,7 +201,7 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * Replace all the App::uses() calls with `use`
+ * Replace all the App::uses() calls with `use`.
  *
  * @param string $file The file to search and replace.
  * @param boolean $dryRun Whether or not to do the thing.
@@ -351,7 +351,7 @@ class UpgradeShell extends Shell {
 			}
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
-					$vals[] = "'{$key}' => [" . implode(", ", $export($val)) . "]";
+					$vals[] = "'{$key}' => [" . implode(', ', $export($val)) . ']';
 				} else {
 					$val = var_export($val, true);
 					if ($val === 'NULL') {
@@ -453,22 +453,22 @@ class UpgradeShell extends Shell {
 				[
 					'Rename ComponentCollection',
 					'#ComponentCollection#',
-					"ComponentRegistry",
+					'ComponentRegistry',
 				],
 				[
 					'Rename HelperCollection',
 					'#HelperCollection#',
-					"HelperRegistry",
+					'HelperRegistry',
 				],
 				[
 					'Rename TaskCollection',
 					'#TaskCollection#',
-					"TaskRegistry",
+					'TaskRegistry',
 				],
 			];
 			$this->_updateFileRegexp($filePath, $patterns);
 		}
-		$this->out(__d('cake_console', '<success>Collection class uses rename successfully.</success>'));
+		$this->out(__d('cake_console', '<success>Collection class uses renamed successfully.</success>'));
 	}
 
 /**
@@ -532,11 +532,11 @@ class UpgradeShell extends Shell {
 			];
 			$this->_updateFileRegexp($filePath, $patterns);
 		}
-		$this->out(__d('cake_console', '<success>Collection class uses rename successfully.</success>'));
+		$this->out(__d('cake_console', '<success>Assertion methods renamed successfully.</success>'));
 	}
 
 /**
- * Filter paths to remove webroot, Plugin, tmp directories
+ * Filter paths to remove webroot, Plugin, tmp directories.
  *
  * @return array
  */
@@ -566,7 +566,7 @@ class UpgradeShell extends Shell {
 		if (preg_match('/namespace\s+[a-z0-9\\\]+;/', $contents)) {
 			$this->out(__d(
 				'cake_console',
-				"<warning>Skipping %s as it already has a namespace.</warning>",
+				'<warning>Skipping %s as it already has a namespace.</warning>',
 				$shortPath
 			));
 			return;
@@ -653,7 +653,7 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * get the option parser
+ * Get the option parser.
  *
  * @return ConsoleOptionParser
  */
@@ -712,7 +712,11 @@ class UpgradeShell extends Shell {
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')],
 			])
 			->addSubcommand('rename_collections', [
-				'help' => __d('cake_console', "Rename HelperCollection, ComponentCollection, and TaskCollection. Will also rename component constructor arguments and _Collection properties on all objects."),
+				'help' => __d('cake_console', 'Rename HelperCollection, ComponentCollection, and TaskCollection. Will also rename component constructor arguments and _Collection properties on all objects.'),
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
+			])
+			->addSubcommand('tests', [
+				'help' => __d('cake_console', 'Rename test case assertion methods.'),
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			]);
 	}
