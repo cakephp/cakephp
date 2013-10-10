@@ -1,13 +1,11 @@
 # User specific & automatically generated files #
 #################################################
-/App/Config/datasources.php
-/App/tmp
-/lib/Cake/Console/Templates/skel/tmp/
-/plugins
-/vendors
 /build
 /dist
 /tags
+/composer.lock
+/phpunit.xml
+/vendor
 
 # OS generated files #
 ######################
