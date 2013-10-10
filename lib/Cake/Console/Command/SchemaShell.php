@@ -67,7 +67,7 @@ class SchemaShell extends AppShell {
 			$name = $this->params['name'] = $splitName;
 		}
 
-		if ($name) {
+		if ($name && empty($this->params['file'])) {
 			$this->params['file'] = Inflector::underscore($name);
 		}
 
