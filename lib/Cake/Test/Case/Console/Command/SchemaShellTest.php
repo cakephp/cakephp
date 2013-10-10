@@ -586,6 +586,42 @@ class SchemaShellTest extends CakeTestCase {
 	}
 
 /**
+ * test that passing name and file creates the passed filename with the
+ * passed classname
+ *
+ * @return void
+ */
+	public function testNameAndFile() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS)
+		));
+		CakePlugin::load('TestPlugin');
+		$this->Shell->params = array(
+			'plugin' => 'TestPlugin',
+			'connection' => 'test',
+			'name' => 'custom_name',
+			'file' => 'other_name',
+			'force' => false,
+			'overwrite' => true,
+		);
+		$this->Shell->startup();
+		$file = $this->Shell->Schema->path . DS . 'other_name.php';
+		if (file_exists($file)) {
+			unlink($file);
+		}
+		$this->Shell->generate();
+
+		$this->assertFileExists($file);
+		$contents = file_get_contents($file);
+		$this->assertRegExp('/class CustomNameSchema/', $contents);
+
+		if (file_exists($file)) {
+			unlink($file);
+		}
+		CakePlugin::unload();
+	}
+
+/**
  * test that using Plugin.name with write.
  *
  * @return void
