@@ -169,7 +169,7 @@ class Configure {
 	}
 
 /**
- * Used to read information stored in Configure. Its not
+ * Used to read information stored in Configure. It's not
  * possible to store `null` values in Configure.
  *
  * Usage:

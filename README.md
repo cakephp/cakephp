@@ -11,7 +11,7 @@ Some Handy Links
 
 [CakePHP](http://www.cakephp.org) - The rapid development PHP framework
 
-[Cookbook](http://book.cakephp.org) - THE Cake user documentation; start learning here!
+[Cookbook](http://book.cakephp.org) - THE CakePHP user documentation; start learning here!
 
 [Plugins](http://plugins.cakephp.org/) - A repository of extensions to the framework
 

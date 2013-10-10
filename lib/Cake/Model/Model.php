@@ -2,7 +2,7 @@
 /**
  * Object-relational mapper.
  *
- * DBO-backed object data model, for mapping database tables to Cake objects.
+ * DBO-backed object data model, for mapping database tables to CakePHP objects.
  *
  * PHP 5
  *

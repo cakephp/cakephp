@@ -111,11 +111,11 @@ if (isset($filePresent)):
 	<?php
 		if ($connected && $connected->isConnected()):
 			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Cake is able to connect to the database.');
+				echo __d('cake_dev', 'CakePHP is able to connect to the database.');
 			echo '</span>';
 		else:
 			echo '<span class="notice">';
-				echo __d('cake_dev', 'Cake is NOT able to connect to the database.');
+				echo __d('cake_dev', 'CakePHP is NOT able to connect to the database.');
 				echo '<br /><br />';
 				echo $errorMsg;
 			echo '</span>';
