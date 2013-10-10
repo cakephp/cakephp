@@ -46,9 +46,9 @@ class DateTypeTest extends TestCase {
 
 		$result = $this->type->toPHP('2001-01-04', $this->driver);
 		$this->assertInstanceOf('DateTime', $result);
-		$this->assertEqual('2001', $result->format('Y'));
-		$this->assertEqual('01', $result->format('m'));
-		$this->assertEqual('04', $result->format('d'));
+		$this->assertEquals('2001', $result->format('Y'));
+		$this->assertEquals('01', $result->format('m'));
+		$this->assertEquals('04', $result->format('d'));
 
 		$result = $this->type->toPHP('2001-01-04 10:11:12', $this->driver);
 		$this->assertFalse($result);
