@@ -53,7 +53,7 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * Run all upgrade steps one at a time
+ * Run all upgrade steps one at a time.
  *
  * @return void
  */
@@ -69,7 +69,7 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * Move files and folders to their new homes
+ * Move files and folders to their new homes.
  *
  * @return void
  */
@@ -149,7 +149,7 @@ class UpgradeShell extends Shell {
 			$contents,
 			$count
 		);
-		if ($count == 0) {
+		if ($count === 0) {
 			$this->out(
 				__d('cake_console', '<info>Skip %s as there are no renames to do.</info>', $path),
 				1,
@@ -201,7 +201,7 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * Replace all the App::uses() calls with `use`
+ * Replace all the App::uses() calls with `use`.
  *
  * @param string $file The file to search and replace.
  * @param boolean $dryRun Whether or not to do the thing.
@@ -322,7 +322,7 @@ class UpgradeShell extends Shell {
 		$path = $this->_getPath();
 
 		$app = rtrim(APP, DS);
-		if ($path == $app || !empty($this->params['plugin'])) {
+		if ($path === $app || !empty($this->params['plugin'])) {
 			$path .= DS . 'Test' . DS . 'Fixture' . DS;
 		}
 		$this->out(__d('cake_console', 'Processing fixtures on %s', $path));
@@ -351,7 +351,7 @@ class UpgradeShell extends Shell {
 			}
 			foreach ($values as $key => $val) {
 				if (is_array($val)) {
-					$vals[] = "'{$key}' => [" . implode(", ", $export($val)) . "]";
+					$vals[] = "'{$key}' => [" . implode(', ', $export($val)) . ']';
 				} else {
 					$val = var_export($val, true);
 					if ($val === 'NULL') {
@@ -444,38 +444,102 @@ class UpgradeShell extends Shell {
 		foreach ($this->_files as $filePath) {
 			$patterns = [
 				[
-					' Replace $this->_Collection with $this->_registry',
+					'Replace $this->_Collection with $this->_registry',
 					'#\$this->_Collection#',
 					'$this->_registry',
 				],
 				[
-					' Replace ComponentCollection arguments',
+					'Replace ComponentCollection arguments',
 					'#ComponentCollection\s+\$collection#',
 					'ComponentRegistry $registry',
 				],
 				[
-					' Rename ComponentCollection',
+					'Rename ComponentCollection',
 					'#ComponentCollection#',
-					"ComponentRegistry",
+					'ComponentRegistry',
 				],
 				[
-					' Rename HelperCollection',
+					'Rename HelperCollection',
 					'#HelperCollection#',
-					"HelperRegistry",
+					'HelperRegistry',
 				],
 				[
-					' Rename TaskCollection',
+					'Rename TaskCollection',
 					'#TaskCollection#',
-					"TaskRegistry",
+					'TaskRegistry',
 				],
 			];
 			$this->_updateFileRegexp($filePath, $patterns);
 		}
-		$this->out(__d('cake_console', '<success>Collection class uses rename successfully.</success>'));
+		$this->out(__d('cake_console', '<success>Collection class uses renamed successfully.</success>'));
 	}
 
 /**
- * Filter paths to remove webroot, Plugin, tmp directories
+ * Update test case assertion methods.
+ *
+ * @return void
+ */
+	public function tests() {
+		$path = $this->_getPath();
+
+		$Folder = new Folder($path);
+		$this->_paths = $Folder->tree(null, false, 'dir');
+		$this->_findFiles('php');
+		foreach ($this->_files as $filePath) {
+			$patterns = [
+				[
+					'Replace assertEqual() with assertEquals()',
+					'#\$this-\>assertEqual\(\#i',
+					'$this->assertEquals(',
+				],
+				[
+					'Replace assertNotEqual() with assertNotEquals()',
+					'#\$this-\>assertNotEqual\(\#i',
+					'$this->assertNotEquals(',
+				],
+				[
+					'Replace assertIdentical() with assertSame()',
+					'#\$this-\>assertIdentical\(\#i',
+					'$this->assertSame(',
+				],
+				[
+					'Replace assertNotIdentical() with assertNotSame()',
+					'#\$this-\>assertNotIdentical\(\#i',
+					'$this->assertNotSame(',
+				],
+				[
+					'Replace assertPattern() with assertRegExp()',
+					'#\$this-\>assertPattern\(\#i',
+					'$this->assertRegExp(',
+				],
+				[
+					'Replace assertNoPattern() with assertNotRegExp()',
+					'#\$this-\>assertNoPattern\(\#i',
+					'$this->assertNotRegExp(',
+				],
+				[
+					'Replace assertReference() with assertSame()',
+					'#\$this-\>assertReference\(\$(.*?),\s*\'(.*?)\'\)#i',
+					'$this->assertSame($\1, $\2)',
+				],
+				[
+					'Replace assertIsA() with assertInstanceOf()',
+					'#\$this-\>assertIsA\(\$(.*?),\s*\'(.*?)\'\)#i',
+					'$this->assertInstanceOf(\'\2\', $\1)',
+				],
+				[
+					'Replace assert*($is, $expected) with assert*($expected, $is) - except for assertTags()',
+					'/\bassert((?!tags)\w+)\(\$(\w+),\s*\$expected\)/i',
+					'assert\1($expected, $\2)'
+				]
+			];
+			$this->_updateFileRegexp($filePath, $patterns);
+		}
+		$this->out(__d('cake_console', '<success>Assertion methods renamed successfully.</success>'));
+	}
+
+/**
+ * Filter paths to remove webroot, Plugin, tmp directories.
  *
  * @return array
  */
@@ -505,7 +569,7 @@ class UpgradeShell extends Shell {
 		if (preg_match('/namespace\s+[a-z0-9\\\]+;/', $contents)) {
 			$this->out(__d(
 				'cake_console',
-				"<warning>Skipping %s as it already has a namespace.</warning>",
+				'<warning>Skipping %s as it already has a namespace.</warning>',
 				$shortPath
 			));
 			return;
@@ -513,7 +577,7 @@ class UpgradeShell extends Shell {
 		$namespace = trim($ns . str_replace(DS, '\\', dirname($shortPath)), '\\');
 		$patterns = [
 			[
-				' namespace to ' . $namespace,
+				'namespace to ' . $namespace,
 				'#^(<\?(?:php)?\s+(?:\/\*.*?\*\/\s{0,1})?)#s',
 				"\\1namespace " . $namespace . ";\n",
 			]
@@ -592,7 +656,7 @@ class UpgradeShell extends Shell {
 	}
 
 /**
- * get the option parser
+ * Get the option parser.
  *
  * @return ConsoleOptionParser
  */
@@ -651,7 +715,11 @@ class UpgradeShell extends Shell {
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')],
 			])
 			->addSubcommand('rename_collections', [
-				'help' => __d('cake_console', "Rename HelperCollection, ComponentCollection, and TaskCollection. Will also rename component constructor arguments and _Collection properties on all objects."),
+				'help' => __d('cake_console', 'Rename HelperCollection, ComponentCollection, and TaskCollection. Will also rename component constructor arguments and _Collection properties on all objects.'),
+				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
+			])
+			->addSubcommand('tests', [
+				'help' => __d('cake_console', 'Rename test case assertion methods.'),
 				'parser' => ['options' => compact('plugin', 'dryRun'), 'arguments' => compact('path')]
 			]);
 	}

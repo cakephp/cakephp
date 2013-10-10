@@ -525,79 +525,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 // @codingStandardsIgnoreStart
 
 /**
- * Compatibility wrapper function for assertEquals
- *
- *
- * @param mixed $result
- * @param mixed $expected
- * @param string $message the text to display if the assertion is not correct
- * @return void
- */
-	protected static function assertEqual($result, $expected, $message = '') {
-		return static::assertEquals($expected, $result, $message);
-	}
-
-/**
- * Compatibility wrapper function for assertNotEquals
- *
- * @param mixed $result
- * @param mixed $expected
- * @param string $message the text to display if the assertion is not correct
- * @return void
- */
-	protected static function assertNotEqual($result, $expected, $message = '') {
-		return static::assertNotEquals($expected, $result, $message);
-	}
-
-/**
- * Compatibility wrapper function for assertRegexp
- *
- * @param mixed $pattern a regular expression
- * @param string $string the text to be matched
- * @param string $message the text to display if the assertion is not correct
- * @return void
- */
-	protected static function assertPattern($pattern, $string, $message = '') {
-		return static::assertRegExp($pattern, $string, $message);
-	}
-
-/**
- * Compatibility wrapper function for assertEquals
- *
- * @param mixed $actual
- * @param mixed $expected
- * @param string $message the text to display if the assertion is not correct
- * @return void
- */
-	protected static function assertIdentical($actual, $expected, $message = '') {
-		return static::assertSame($expected, $actual, $message);
-	}
-
-/**
- * Compatibility wrapper function for assertNotEquals
- *
- * @param mixed $actual
- * @param mixed $expected
- * @param string $message the text to display if the assertion is not correct
- * @return void
- */
-	protected static function assertNotIdentical($actual, $expected, $message = '') {
-		return static::assertNotSame($expected, $actual, $message);
-	}
-
-/**
- * Compatibility wrapper function for assertNotRegExp
- *
- * @param mixed $pattern a regular expression
- * @param string $string the text to be matched
- * @param string $message the text to display if the assertion is not correct
- * @return void
- */
-	protected static function assertNoPattern($pattern, $string, $message = '') {
-		return static::assertNotRegExp($pattern, $string, $message);
-	}
-
-/**
  * assert no errors
  */
 	protected function assertNoErrors() {
@@ -629,30 +556,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	}
 
 /**
- * Compatibility wrapper function for assertSame
- *
- * @param mixed $first
- * @param mixed $second
- * @param string $message the text to display if the assertion is not correct
- * @return void
- */
-	protected static function assertReference(&$first, &$second, $message = '') {
-		return static::assertSame($first, $second, $message);
-	}
-
-/**
- * Compatibility wrapper for assertIsA
- *
- * @param string $object
- * @param string $type
- * @param string $message
- * @return void
- */
-	protected static function assertIsA($object, $type, $message = '') {
-		return static::assertInstanceOf($type, $object, $message);
-	}
-
-/**
  * Compatibility function to test if value is between an acceptable range
  *
  * @param mixed $result
@@ -680,7 +583,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 		}
 		return $condition;
 	}
-	// @codingStandardsIgnoreEnd
+
+// @codingStandardsIgnoreEnd
 
 /**
  * Mock a model, maintain fixtures and table association
