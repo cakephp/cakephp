@@ -79,7 +79,6 @@ class CakeTestSuiteDispatcher {
 /**
  * constructor
  *
- * @return void
  */
 	public function __construct() {
 		$this->_baseUrl = $_SERVER['PHP_SELF'];
