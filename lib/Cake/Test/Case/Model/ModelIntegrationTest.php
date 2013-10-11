@@ -1706,7 +1706,8 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'First Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'updated' => '2007-03-18 10:41:31',
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'Something' => array(
 					array(
@@ -1722,7 +1723,8 @@ class ModelIntegrationTest extends BaseModelTest {
 							'something_else_id' => '1',
 							'doomed' => true,
 							'created' => '2007-03-18 10:43:23',
-							'updated' => '2007-03-18 10:45:31'
+							'updated' => '2007-03-18 10:45:31',
+							'afterFind' => 'Successfully added by AfterFind'
 			)))),
 			array(
 				'SomethingElse' => array(
@@ -1731,7 +1733,8 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Second Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'updated' => '2007-03-18 10:43:31',
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'Something' => array(
 					array(
@@ -1747,7 +1750,8 @@ class ModelIntegrationTest extends BaseModelTest {
 							'something_else_id' => '2',
 							'doomed' => true,
 							'created' => '2007-03-18 10:39:23',
-							'updated' => '2007-03-18 10:41:31'
+							'updated' => '2007-03-18 10:41:31',
+							'afterFind' => 'Successfully added by AfterFind'
 			)))),
 			array(
 				'SomethingElse' => array(
@@ -1756,7 +1760,8 @@ class ModelIntegrationTest extends BaseModelTest {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'updated' => '2007-03-18 10:45:31',
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'Something' => array(
 					array(
@@ -1772,7 +1777,8 @@ class ModelIntegrationTest extends BaseModelTest {
 							'something_else_id' => '3',
 							'doomed' => false,
 							'created' => '2007-03-18 10:41:23',
-							'updated' => '2007-03-18 10:43:31'
+							'updated' => '2007-03-18 10:43:31',
+							'afterFind' => 'Successfully added by AfterFind'
 		)))));
 		$this->assertEquals($expected, $result);
 
@@ -1798,8 +1804,11 @@ class ModelIntegrationTest extends BaseModelTest {
 						'JoinThing' => array(
 							'doomed' => true,
 							'something_id' => '1',
-							'something_else_id' => '2'
-			)))),
+							'something_else_id' => '2',
+							'afterFind' => 'Successfully added by AfterFind'
+						),
+						'afterFind' => 'Successfully added by AfterFind'
+					))),
 			array(
 				'Something' => array(
 					'id' => '2',
@@ -1820,8 +1829,11 @@ class ModelIntegrationTest extends BaseModelTest {
 						'JoinThing' => array(
 							'doomed' => false,
 							'something_id' => '2',
-							'something_else_id' => '3'
-			)))),
+							'something_else_id' => '3',
+							'afterFind' => 'Successfully added by AfterFind'
+						),
+						'afterFind' => 'Successfully added by AfterFind'
+					))),
 			array(
 				'Something' => array(
 					'id' => '3',
@@ -1842,8 +1854,11 @@ class ModelIntegrationTest extends BaseModelTest {
 						'JoinThing' => array(
 							'doomed' => true,
 							'something_id' => '3',
-							'something_else_id' => '1'
-		)))));
+							'something_else_id' => '1',
+							'afterFind' => 'Successfully added by AfterFind'
+						),
+						'afterFind' => 'Successfully added by AfterFind'
+		))));
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->findById(1);
@@ -1867,8 +1882,11 @@ class ModelIntegrationTest extends BaseModelTest {
 					'JoinThing' => array(
 						'doomed' => true,
 						'something_id' => '1',
-						'something_else_id' => '2'
-		))));
+						'something_else_id' => '2',
+						'afterFind' => 'Successfully added by AfterFind'
+					),
+					'afterFind' => 'Successfully added by AfterFind'
+		)));
 		$this->assertEquals($expected, $result);
 
 		$expected = $TestModel->findById(1);
@@ -1908,8 +1926,10 @@ class ModelIntegrationTest extends BaseModelTest {
 					'JoinThing' => array(
 						'doomed' => true,
 						'something_id' => '1',
-						'something_else_id' => '1'
-				)
+						'something_else_id' => '1',
+						'afterFind' => 'Successfully added by AfterFind'
+					),
+					'afterFind' => 'Successfully added by AfterFind'
 			),
 				array(
 					'id' => '2',
@@ -1921,8 +1941,10 @@ class ModelIntegrationTest extends BaseModelTest {
 					'JoinThing' => array(
 						'doomed' => true,
 						'something_id' => '1',
-						'something_else_id' => '2'
-				)
+						'something_else_id' => '2',
+						'afterFind' => 'Successfully added by AfterFind'
+					),
+					'afterFind' => 'Successfully added by AfterFind'
 			),
 				array(
 					'id' => '3',
@@ -1934,10 +1956,12 @@ class ModelIntegrationTest extends BaseModelTest {
 					'JoinThing' => array(
 						'doomed' => false,
 						'something_id' => '1',
-						'something_else_id' => '3')
-					)
+						'something_else_id' => '3',
+						'afterFind' => 'Successfully added by AfterFind'
+					),
+					'afterFind' => 'Successfully added by AfterFind'
 				)
-			);
+			));
 		$this->assertEquals(self::date(), $result['Something']['updated']);
 		unset($result['Something']['updated']);
 		$this->assertEquals($expected, $result);
