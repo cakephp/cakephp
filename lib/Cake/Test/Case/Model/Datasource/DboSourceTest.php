@@ -684,6 +684,22 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test that flushMethodCache works as expected
+ * 
+ * @return void
+ */
+	public function testFlushMethodCache() {
+		$this->testDb->cacheMethods = true;
+		$this->testDb->cacheMethod('name','some-key','stuff');
+
+		Cache::write('method_cache', DboTestSource::$methodCache, '_cake_core_');
+
+		$this->testDb->flushMethodCache();
+		$result = $this->testDb->cacheMethod('name','some-key');
+		$this->assertNull($result);
+	}
+
+/**
  * testLog method
  *
  * @outputBuffering enabled
