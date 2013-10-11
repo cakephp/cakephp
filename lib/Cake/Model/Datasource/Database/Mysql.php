@@ -372,6 +372,15 @@ class Mysql extends DboSource {
  * @return array
  */
 	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
+		$query = array('joins' => array());
+		if (isset($conditions['joins'])) {
+			$query['joins'] = $conditions['joins'];
+			unset($conditions['joins']);
+			if (!$conditions) {
+				$conditions = true;
+			}
+		}
+		
 		if (!$this->_useAlias) {
 			return parent::update($model, $fields, $values, $conditions);
 		}
@@ -390,7 +399,15 @@ class Mysql extends DboSource {
 		if (!empty($conditions)) {
 			$alias = $this->name($model->alias);
 			if ($model->name == $model->alias) {
-				$joins = implode(' ', $this->_getJoins($model));
+				if (!empty($query['joins'])) {
+					$count = count($query['joins']);
+					for ($i = 0; $i < $count; $i++) {
+						if (is_array($query['joins'][$i])) {
+							$query['joins'][$i] = $this->buildJoinStatement($query['joins'][$i]);
+						}
+					}
+				}
+				$joins = implode(' ', array_merge($this->_getJoins($model), $query['joins']));
 			}
 		}
 		$conditions = $this->conditions($this->defaultConditions($model, $conditions, $alias), true, true, $model);
