@@ -516,8 +516,13 @@ class CakeRequest implements ArrayAccess {
 		}
 		if (isset($detect['param'])) {
 			$key = $detect['param'];
-			$value = $detect['value'];
-			return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+			if (isset($detect['value'])) {
+				$value = $detect['value'];
+				return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+			}
+			if (isset($detect['options'])) {
+				return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+			}
 		}
 		if (isset($detect['callback']) && is_callable($detect['callback'])) {
 			return call_user_func($detect['callback'], $this);
@@ -576,7 +581,13 @@ class CakeRequest implements ArrayAccess {
  *
  * Allows for custom detectors on the request parameters.
  *
- * e.g `addDetector('post', array('param' => 'requested', 'value' => 1)`
+ * e.g `addDetector('requested', array('param' => 'requested', 'value' => 1)`
+ *
+ * You can also make parameter detectors that accept multiple values
+ * using the `options` key. This is useful when you want to check
+ * if a request parameter is in a list of options.
+ *
+ * `addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'csv'))`
  *
  * @param string $name The name of the detector.
  * @param array $options The options for the detector definition. See above.

@@ -1918,7 +1918,7 @@ class Model extends Object implements CakeEventListener {
 				}
 
 				foreach ((array)$data as $row) {
-					if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
+					if ((is_string($row) && (strlen($row) === 36 || strlen($row) === 16)) || is_numeric($row)) {
 						$newJoins[] = $row;
 						$values = array($id, $row);
 
