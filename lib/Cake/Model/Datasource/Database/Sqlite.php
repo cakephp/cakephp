@@ -230,7 +230,9 @@ class Sqlite extends DboSource {
  * @return boolean SQL TRUNCATE TABLE statement, false if not applicable.
  */
 	public function truncate($table) {
-		$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->startQuote . $this->fullTableName($table, false, false) . $this->endQuote);
+		if (in_array('sqlite_sequence', $this->listSources())) {
+			$this->_execute('DELETE FROM sqlite_sequence where name=' . $this->startQuote . $this->fullTableName($table, false, false) . $this->endQuote);
+		}
 		return $this->execute('DELETE FROM ' . $this->fullTableName($table));
 	}
 
