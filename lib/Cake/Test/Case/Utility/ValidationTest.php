@@ -1924,6 +1924,7 @@ class ValidationTest extends CakeTestCase {
 	}
 
 	public function testUuid() {
+		$this->assertTrue(Validation::uuid('00000000-0000-0000-0000-000000000000'));
 		$this->assertTrue(Validation::uuid('550e8400-e29b-11d4-a716-446655440000'));
 		$this->assertFalse(Validation::uuid('BRAP-e29b-11d4-a716-446655440000'));
 		$this->assertTrue(Validation::uuid('550E8400-e29b-11D4-A716-446655440000'));
