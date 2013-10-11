@@ -158,7 +158,6 @@ class DbAclTwoTest extends DbAcl {
 /**
  * construct method
  *
- * @return void
  */
 	public function __construct() {
 		$this->Aro = new AroTwoTest();

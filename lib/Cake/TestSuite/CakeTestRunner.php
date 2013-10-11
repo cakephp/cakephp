@@ -33,7 +33,6 @@ class CakeTestRunner extends PHPUnit_TextUI_TestRunner {
  *
  * @param mixed $loader
  * @param array $params list of options to be used for this run
- * @return void
  */
 	public function __construct($loader, $params) {
 		parent::__construct($loader);
