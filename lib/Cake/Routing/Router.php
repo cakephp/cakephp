@@ -803,6 +803,9 @@ class Router {
 			$params = $request->params;
 			$path = array('base' => $request->base, 'here' => $request->here);
 		}
+		if (empty($path['base'])) {
+			$path['base'] = Configure::read('App.base');
+		}
 
 		$base = $path['base'];
 		$extension = $output = $q = $frag = null;
