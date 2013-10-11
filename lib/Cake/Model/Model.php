@@ -2241,7 +2241,7 @@ class Model extends Object implements CakeEventListener {
 		$return = array();
 		$validates = true;
 		foreach ($data as $association => $values) {
-			$notEmpty = !empty($values[$association]) || (!isset($values[$association]) && !empty($values));
+			$notEmpty = (is_object($values)) || !empty($values[$association]) || (!isset($values[$association]) && !empty($values));
 			if (isset($associations[$association]) && $associations[$association] === 'belongsTo' && $notEmpty) {
 				$validates = $this->{$association}->create(null) !== null;
 				$saved = false;
@@ -2277,7 +2277,7 @@ class Model extends Object implements CakeEventListener {
 			if (!$validates) {
 				break;
 			}
-			$notEmpty = !empty($values[$association]) || (!isset($values[$association]) && !empty($values));
+			$notEmpty = (is_object($values)) || !empty($values[$association]) || (!isset($values[$association]) && !empty($values));
 			if (isset($associations[$association]) && $notEmpty) {
 				$type = $associations[$association];
 				$key = $this->{$type}[$association]['foreignKey'];
