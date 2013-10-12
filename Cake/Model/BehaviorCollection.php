@@ -73,18 +73,6 @@ class BehaviorCollection extends ObjectCollection implements EventListener {
 	}
 
 /**
- * Backwards compatible alias for load()
- *
- * @param string $behavior
- * @param array $config
- * @return void
- * @deprecated Will be removed in 3.0. Replaced with load().
- */
-	public function attach($behavior, $config = array()) {
-		return $this->load($behavior, $config);
-	}
-
-/**
  * Loads a behavior into the collection. You can use use `$config['enabled'] = false`
  * to load a behavior with callbacks disabled. By default callbacks are enabled. Disable behaviors
  * can still be used as normal.
@@ -199,17 +187,6 @@ class BehaviorCollection extends ObjectCollection implements EventListener {
 				unset($this->_methods[$m]);
 			}
 		}
-	}
-
-/**
- * Backwards compatible alias for unload()
- *
- * @param string $name Name of behavior
- * @return void
- * @deprecated Will be removed in 3.0. Use unload instead.
- */
-	public function detach($name) {
-		return $this->unload($name);
 	}
 
 /**

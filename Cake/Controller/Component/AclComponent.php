@@ -155,32 +155,4 @@ class AclComponent extends Component {
 		return $this->_Instance->inherit($aro, $aco, $action);
 	}
 
-/**
- * Pass-thru function for ACL grant instance. An alias for AclComponent::allow()
- *
- * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
- * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
- * @param string $action Action (defaults to *)
- * @return boolean Success
- * @deprecated Will be removed in 3.0.
- */
-	public function grant($aro, $aco, $action = "*") {
-		trigger_error(__d('cake_dev', '%s is deprecated, use %s instead', 'AclComponent::grant()', 'allow()'), E_USER_WARNING);
-		return $this->_Instance->allow($aro, $aco, $action);
-	}
-
-/**
- * Pass-thru function for ACL grant instance. An alias for AclComponent::deny()
- *
- * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
- * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
- * @param string $action Action (defaults to *)
- * @return boolean Success
- * @deprecated Will be removed in 3.0.
- */
-	public function revoke($aro, $aco, $action = "*") {
-		trigger_error(__d('cake_dev', '%s is deprecated, use %s instead', 'AclComponent::revoke()', 'deny()'), E_USER_WARNING);
-		return $this->_Instance->deny($aro, $aco, $action);
-	}
-
 }
