@@ -32,7 +32,7 @@ Get Support!
 
 [Q & A](http://ask.cakephp.org/) - Ask questions here, all questions welcome
 
-[Lighthouse](https://cakephp.lighthouseapp.com/) - Got issues? Please tell us!
+[GitHub Issues](https://github.com/cakephp/cakephp/issues) - Got issues? Please tell us!
 
 [![Bake Status](https://secure.travis-ci.org/cakephp/cakephp.png?branch=master)](http://travis-ci.org/cakephp/cakephp)
 
