@@ -98,7 +98,7 @@ class FixtureManager {
 		if ($this->_initialized) {
 			return;
 		}
-		$db = ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::get('test', false);
 		$db->cacheSources = false;
 		$this->_db = $db;
 		$this->_initialized = true;
@@ -155,7 +155,7 @@ class FixtureManager {
 		if (!$db) {
 			$db = $this->_db;
 			if (!empty($fixture->connection)) {
-				$db = ConnectionManager::getDataSource($fixture->connection);
+				$db = ConnectionManager::get($fixture->connection, false);
 			}
 		}
 		if (!empty($fixture->created) && in_array($db->configName(), $fixture->created)) {
@@ -203,7 +203,7 @@ class FixtureManager {
 		}
 		try {
 			foreach ($dbs as $db => $fixtures) {
-				$db = ConnectionManager::getDataSource($fixture->connection);
+				$db = ConnectionManager::get($fixture->connection, false);
 				$db->begin();
 				foreach ($fixtures as $fixture) {
 					$this->_setupTable($fixture, $db, $test->dropTables);
