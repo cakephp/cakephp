@@ -131,18 +131,19 @@ class ConnectionManager {
  * defined. If you want the original unaliased connections use getOriginal()
  *
  * @param string $name The connection name.
+ * @param boolean $useAliases Set to false to not use aliased connections.
  * @return Connection A connection object.
  * @throws Cake\Error\MissingDatasourceConfigException When config data is missing.
  */
-	public static function get($name) {
-		if (empty(static::$_config[$name]) && empty(static::$_aliasMap[$name])) {
+	public static function get($name, $useAliases = true) {
+		if ($useAliases && isset(static::$_aliasMap[$name])) {
+			$name = static::$_aliasMap[$name];
+		}
+		if (empty(static::$_config[$name])) {
 			throw new Error\MissingDatasourceConfigException(['name' => $name]);
 		}
 		if (empty(static::$_registry)) {
 			static::$_registry = new ConnectionRegistry();
-		}
-		if (isset(static::$_aliasMap[$name])) {
-			$name = static::$_aliasMap[$name];
 		}
 		if (isset(static::$_registry->{$name})) {
 			return static::$_registry->{$name};

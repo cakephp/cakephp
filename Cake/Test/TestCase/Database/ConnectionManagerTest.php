@@ -121,6 +121,21 @@ class ConnectionManagerTest extends TestCase {
 	}
 
 /**
+ * Test loading connections without aliases
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage The datasource configuration "other_name" was not found.
+ * @return void
+ */
+	public function testGetNoAlias() {
+		$config = ConnectionManager::config('test');
+		$this->skipIf(empty($config), 'No test config, skipping');
+
+		ConnectionManager::alias('test', 'other_name');
+		ConnectionManager::get('other_name', false);
+	}
+
+/**
  * Test that configured() finds configured sources.
  *
  * @return void
