@@ -33,6 +33,7 @@ class ConnectionManagerTest extends TestCase {
 		parent::tearDown();
 		Plugin::unload();
 		ConnectionManager::drop('test_variant');
+		ConnectionManager::dropAlias('other_name');
 	}
 
 /**
@@ -156,8 +157,8 @@ class ConnectionManagerTest extends TestCase {
  */
 	public function testDrop() {
 		ConnectionManager::config('test_variant', [
-			'datasource' => 'Sqlite',
-			'database' => 'memory'
+			'className' => 'Sqlite',
+			'database' => ':memory:'
 		]);
 		$result = ConnectionManager::configured();
 		$this->assertContains('test_variant', $result);
@@ -167,6 +168,32 @@ class ConnectionManagerTest extends TestCase {
 		$this->assertNotContains('test_variant', $result);
 
 		$this->assertFalse(ConnectionManager::drop('probably_does_not_exist'), 'Should return false on failure.');
+	}
+
+/**
+ * Test aliasing connections.
+ *
+ * @return void
+ */
+	public function testAlias() {
+		ConnectionManager::config('test_variant', [
+			'className' => 'Sqlite',
+			'database' => ':memory:'
+		]);
+		ConnectionManager::alias('test_variant', 'other_name');
+		$result = ConnectionManager::get('test_variant');
+		$this->assertSame($result, ConnectionManager::get('other_name'));
+	}
+
+/**
+ * Test alias() raises an error when aliasing an undefined connection.
+ *
+ * @expectedException Cake\Error\MissingDatasourceConfigException
+ * @return void
+ */
+	public function testAliasError() {
+		$this->assertNotContains('test_kaboom', ConnectionManager::configured());
+		ConnectionManager::alias('test_kaboom', 'other_name');
 	}
 
 }
