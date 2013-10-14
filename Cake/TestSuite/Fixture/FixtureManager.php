@@ -26,7 +26,6 @@ use Cake\Database\ConnectionManager;
 use Cake\Error;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
 /**
@@ -70,11 +69,7 @@ class FixtureManager {
  * @return void
  */
 	public function fixturize($test) {
-		if (!$this->_initialized) {
-			ClassRegistry::config(array('ds' => 'test', 'testing' => true));
-		}
 		if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
-			$test->db = $this->_db;
 			return;
 		}
 		$this->_initDb();
@@ -90,6 +85,29 @@ class FixtureManager {
 	}
 
 /**
+ * Add aliaes for all non test prefixed connections.
+ *
+ * This allows models to use the test connections without 
+ * a pile of configuration work.
+ *
+ * @return void
+ */
+	protected function _aliasConnections() {
+		$connections = ConnectionManager::configured();
+		ConnectionManager::alias('test', 'default');
+		foreach ($connections as $connection) {
+			if ($connection === 'default') {
+				continue;
+			}
+			if (strpos($connection, 'test') === 0) {
+				continue;
+			}
+			$alias = 'test_' . $connection;
+			ConnectionManager::alias($alias, $connection);
+		}
+	}
+
+/**
  * Initializes this class with a DataSource object to use as default for all fixtures
  *
  * @return void
@@ -98,8 +116,8 @@ class FixtureManager {
 		if ($this->_initialized) {
 			return;
 		}
+		$this->_aliasConnections();
 		$db = ConnectionManager::get('test', false);
-		$db->cacheSources = false;
 		$this->_db = $db;
 		$this->_initialized = true;
 	}

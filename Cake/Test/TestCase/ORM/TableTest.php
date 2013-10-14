@@ -486,7 +486,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['b' => 'c'],
 			'sort' => ['foo' => 'asc']
 		];
-		$table = new Table(['table' => 'authors']);
+		$table = new Table(['table' => 'authors', 'connection' => $this->connection]);
 		$belongsToMany = $table->belongsToMany('tag', $options);
 		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $belongsToMany);
 		$this->assertSame($belongsToMany, $table->association('tag'));
@@ -582,7 +582,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindApplyOptions() {
-		$table = $this->getMock('Cake\ORM\Table', ['_buildQuery'], [['table' => 'users']]);
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['_buildQuery'],
+			[['table' => 'users', 'connection' => $this->connection]]
+		);
 		$query = $this->getMock('Cake\ORM\Query', [], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('_buildQuery')
@@ -708,7 +712,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testCallingFindersDirectly() {
-		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$table = $this->getMock('\Cake\ORM\Table', ['find'], [], '', false);
 		$query = $this->getMock('\Cake\ORM\Query', [], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('find')
@@ -716,7 +720,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 		$this->assertSame($query, $table->list());
 
-		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$table = $this->getMock('\Cake\ORM\Table', ['find'], [], '', false);
 		$table->expects($this->once())
 			->method('find')
 			->with('threaded', ['order' => ['name' => 'ASC']])
@@ -730,7 +734,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testStackingFinders() {
-		$table = $this->getMock('\Cake\ORM\Table', ['find', 'findList']);
+		$table = $this->getMock('\Cake\ORM\Table', ['find', 'findList'], [], '', false);
 		$params = [$this->connection, $table];
 		$query = $this->getMock('\Cake\ORM\Query', ['addDefaultTypes'], $params);
 

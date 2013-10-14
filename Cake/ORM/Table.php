@@ -151,15 +151,27 @@ class Table {
 			$eventManager = $config['eventManager'];
 		}
 		$this->_eventManager = $eventManager ?: new EventManager();
-<<<<<<< HEAD
 		$this->initialize($config);
 	}
 
 /**
- * This method is meant to be overridden by subclasses so that any initial setting
- * up for associations, validation rules or any custom logic can be done.
+ * Get the default connection name.
  *
- * ### Example:
+ * This method is used to get the fallback connection name if an
+ * instance is created through the TableRegistry without a connection.
+ *
+ * @return string
+ * @see Cake\ORM\TableRegistry::get()
+ */
+	public static function defaultConnectionName() {
+		return 'default';
+	}
+
+/**
+ * Initialize a table instance. Called after the constructor.
+ *
+ * You can use this method to define associations, attach behaviors
+ * define validation and do any other initialization logic you need.
  *
  * {{{
  *	public function initialize(array $config) {

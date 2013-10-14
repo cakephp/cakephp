@@ -61,11 +61,15 @@ class TableRegistryTest extends TestCase {
  * @return void
  */
 	public function testGet() {
-		$result = TableRegistry::get('Article', ['table' => 'my_articles']);
+		$result = TableRegistry::get('Article', [
+			'table' => 'my_articles',
+		]);
 		$this->assertInstanceOf('Cake\ORM\Table', $result);
 		$this->assertEquals('my_articles', $result->table());
 
-		$result2 = TableRegistry::get('Article', ['table' => 'herp_derp']);
+		$result2 = TableRegistry::get('Article', [
+			'table' => 'herp_derp',
+		]);
 		$this->assertSame($result, $result2);
 		$this->assertEquals('my_articles', $result->table());
 	}
@@ -76,7 +80,9 @@ class TableRegistryTest extends TestCase {
  * @return void
  */
 	public function testGetWithConfig() {
-		TableRegistry::config('Article', ['table' => 'my_articles']);
+		TableRegistry::config('Article', [
+			'table' => 'my_articles',
+		]);
 		$result = TableRegistry::get('Article');
 		$this->assertEquals('my_articles', $result->table(), 'Should use config() data.');
 	}

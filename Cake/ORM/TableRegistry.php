@@ -17,6 +17,7 @@
 namespace Cake\ORM;
 
 use Cake\Core\App;
+use Cake\Database\ConnectionManager;
 use Cake\Utility\Inflector;
 
 /**
@@ -86,6 +87,9 @@ class TableRegistry {
  * If no `table` option is passed, the table name will be the tableized version
  * of the provided $alias.
  *
+ * If no `connection` option is passed the table's defaultConnectionName() method
+ * will be called to get the default connection name to use.
+ *
  * @param string $alias The alias you want to get.
  * @param array $options The options you want to build the table with.
  *   If a table has already been loaded the options will be ignored.
@@ -109,6 +113,10 @@ class TableRegistry {
 
 		if (isset(static::$_config[$alias])) {
 			$options = array_merge(static::$_config[$alias], $options);
+		}
+		if (empty($options['connection'])) {
+			$connectionName = $options['className']::defaultConnectionName();
+			$options['connection'] = ConnectionManager::get($connectionName);
 		}
 		return static::$_instances[$alias] = new $options['className']($options);
 	}
