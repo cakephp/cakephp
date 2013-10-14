@@ -181,7 +181,7 @@ You can also add some CSS styles for your pages at: %s.',
 </p>
 
 <h3><?php echo __d('cake_dev', 'Official Plugins'); ?></h3>
-<p>
+<div>
 <ul>
 	<li>
 		<?php echo $this->Html->link('DebugKit', 'https://github.com/cakephp/debug_kit') ?>:
@@ -192,7 +192,7 @@ You can also add some CSS styles for your pages at: %s.',
 		<?php echo __d('cake_dev', 'contains various localized validation classes and translations for specific countries'); ?>
 	</li>
 </ul>
-</p>
+</div>
 
 <h3><?php echo __d('cake_dev', 'More about Cake'); ?></h3>
 <p>
