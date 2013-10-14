@@ -1261,7 +1261,7 @@ class QueryTest extends TestCase {
 		$class = $this->getMockClass('\Cake\ORM\Entity', ['fakeMethod']);
 		$table = Table::build('article', [
 			'table' => 'articles',
-			'entityClass' => $class
+			'entityClass' => '\\' . $class
 		]);
 		$query = new Query($this->connection, $table);
 		$results = $query->select()->hydrate(true)->execute()->toArray();
@@ -1292,11 +1292,11 @@ class QueryTest extends TestCase {
 		$articleEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
 		$table = Table::build('author', [
 			'connection' => $this->connection,
-			'entityClass' => $authorEntity
+			'entityClass' => '\\' . $authorEntity
 		]);
 		Table::build('article', [
 			'connection' => $this->connection,
-			'entityClass' => $articleEntity
+			'entityClass' => '\\' . $articleEntity
 		]);
 		$table->hasMany('article', [
 			'property' => 'articles',
@@ -1337,7 +1337,7 @@ class QueryTest extends TestCase {
 		$table = Table::build('article', ['table' => 'articles']);
 		Table::build('author', [
 			'connection' => $this->connection,
-			'entityClass' => $authorEntity
+			'entityClass' => '\\' . $authorEntity
 		]);
 		$table->belongsTo('author');
 

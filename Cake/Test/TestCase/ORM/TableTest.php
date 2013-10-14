@@ -783,4 +783,74 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 	}
 
+	public function testEntityClassDefault() {
+		$table = new Table();
+		$this->assertEquals('\Cake\ORM\Entity', $table->entityClass());
+	}
+
+/**
+ * Tests that using a simple string for entityClass will try to
+ * load the class from the App namespace
+ *
+ * @return void
+ */
+	public function testRepositoryClassInAPP() {
+		$class = $this->getMockClass('\Cake\ORM\Entity');
+		class_alias($class, 'App\Model\Entity\TestUser');
+		$table = new Table();
+		$this->assertEquals('App\Model\Entity\TestUser', $table->entityClass('TestUser'));
+	}
+
+/**
+ * Tests that using a simple string for entityClass will try to
+ * load the class from the Plugin namespace when using plugin notation
+ *
+ * @return void
+ */
+	public function testRepositoryClassInPlugin() {
+		$class = $this->getMockClass('\Cake\ORM\Entity');
+		class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
+		$table = new Table();
+		$this->assertEquals(
+			'MyPlugin\Model\Entity\SuperUser',
+			$table->entityClass('MyPlugin.SuperUser')
+		);
+	}
+
+/**
+ * Tests that using a simple string for entityClass will throw an exception
+ * when the class does not exist in the namespace
+ *
+ * @expectedException Cake\ORM\Error\MissingEntityException
+ * @expectedExceptionMessage Entity class FooUser could not be found.
+ * @return void
+ */
+	public function testRepositoryClassNonExisting() {
+		$table = new Table;
+		$this->assertFalse($table->entityClass('FooUser'));
+	}
+
+/**
+ * Tests getting the entityClass based on conventions for the entity
+ * namespace
+ *
+ * @return void
+ */
+	public function testRepositoryClassConventionForAPP() {
+		$table = new \TestApp\Model\Repository\ArticleTable;
+		$this->assertEquals('TestApp\Model\Entity\Article', $table->entityClass());
+	}
+
+/**
+ * Tests setting a entity class object using the setter method
+ *
+ * @return void
+ */
+	public function testSetEntityClass() {
+		$table = new Table;
+		$class = '\\' . $this->getMockClass('\Cake\ORM\Entity');
+		$table->entityClass($class);
+		$this->assertEquals($class, $table->entityClass());
+	}
+
 }

@@ -125,8 +125,7 @@ class Table {
  *
  * @var string
  */
-	protected $_entityClass = '\Cake\ORM\Entity';
-
+	protected $_entityClass;
 
 /**
  * Initializes a new instance
@@ -388,12 +387,35 @@ class Table {
  * a new one
  *
  * @param string $name the name of the class to use
+ * @throws \Cake\ORM\Error\MissingEntityException when the entity class cannot be found
  * @return string
  */
 	public function entityClass($name = null) {
-		if ($name !== null) {
-			$this->_entityClass = $name;
+		if ($name === null && !$this->_entityClass) {
+			$default = '\Cake\ORM\Entity';
+			$self = get_called_class();
+			$parts = explode('\\', $self);
+
+			if ($self === __CLASS__ || count($parts) < 3) {
+				return $this->_entityClass = $default;
+			}
+
+			$alias = substr(array_pop($parts), 0, -5);
+			$name = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $alias;
+			if (!class_exists($name)) {
+				return $this->_entityClass = $default;
+			}
 		}
+
+		if ($name !== null) {
+			$class = App::classname($name, 'Model\Entity');
+			$this->_entityClass = $class;
+		}
+
+		if (!$this->_entityClass) {
+			throw new Error\MissingEntityException([$name]);
+		}
+
 		return $this->_entityClass;
 	}
 
