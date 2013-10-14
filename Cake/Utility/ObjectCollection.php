@@ -268,19 +268,6 @@ abstract class ObjectCollection {
 	}
 
 /**
- * Gets the list of attached objects, or, whether the given object is attached
- *
- * @param string $name Optional. The name of the object to check the status of. If omitted,
- *   returns an array of currently-attached objects
- * @return mixed If $name is specified, returns the boolean status of the corresponding object.
- *    Otherwise, returns an array of all attached objects.
- * @deprecated Will be removed in 3.0. Use loaded instead.
- */
-	public function attached($name = null) {
-		return $this->loaded($name);
-	}
-
-/**
  * Gets the list of loaded objects, or, whether the given object is loaded
  *
  * @param string $name Optional. The name of the object to check the status of. If omitted,

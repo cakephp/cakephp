@@ -42,24 +42,6 @@ class Security {
 	public static $hashCost = '10';
 
 /**
- * Get allowed minutes of inactivity based on security level.
- *
- * @deprecated Exists for backwards compatibility only, not used by the core
- * @return integer Allowed inactivity in minutes
- */
-	public static function inactiveMins() {
-		switch (Configure::read('Security.level')) {
-			case 'high':
-				return 10;
-			case 'medium':
-				return 100;
-			case 'low':
-			default:
-				return 300;
-		}
-	}
-
-/**
  * Generate authorization hash.
  *
  * @return string Hash
@@ -165,17 +147,6 @@ class Security {
 			));
 		}
 		static::$hashCost = $cost;
-	}
-
-/**
- * Deprecated method. Does nothing.
- * @param string $text Encrypted string to decrypt, normal string to encrypt
- * @param string $key Key to use
- * @throws Cake\Error\Exception
- * @deprecated This method will be removed in 3.x
- */
-	public static function cipher($text, $key) {
-		throw new Error\Exception(__d('cake_dev', 'Security::cipher() has been removed. Use Security::rijndael() to encrypt data'));
 	}
 
 /**

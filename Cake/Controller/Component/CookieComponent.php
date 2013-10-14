@@ -477,9 +477,6 @@ class CookieComponent extends Component {
 		if ($this->_type === 'rijndael') {
 			$cipher = Security::rijndael($value, $this->key, 'encrypt');
 		}
-		if ($this->_type === 'cipher') {
-			$cipher = Security::cipher($value, $this->key);
-		}
 		if ($this->_type === 'aes') {
 			$cipher = Security::encrypt($value, $this->key);
 		}
@@ -523,9 +520,6 @@ class CookieComponent extends Component {
 		$value = base64_decode(substr($value, strlen($prefix)));
 		if ($this->_type === 'rijndael') {
 			$plain = Security::rijndael($value, $this->key, 'decrypt');
-		}
-		if ($this->_type === 'cipher') {
-			$plain = Security::cipher($value, $this->key);
 		}
 		if ($this->_type === 'aes') {
 			$plain = Security::decrypt($value, $this->key);
