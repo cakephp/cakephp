@@ -91,20 +91,14 @@ class ConnectionManager {
  *
  * You can remove aliases with ConnectionManager::dropAlias().
  *
- * @param string|array $from The connection to rename. Can also be a map of multiple
- *   aliases to set.
- * @param string $to The connection $from should return when loaded with get().
+ * @param string $from The connection to add an alias to.
+ * @param string $to The alias to create. $from should return when loaded with get().
  * @return void
  */
 	public static function alias($from, $to = null) {
-		if (is_array($from)) {
-			foreach ($from as $source => $dest) {
-				static::alias($source, $dest);
-			}
-		}
-		if (empty(static::$_config[$from])) {
+		if (empty(static::$_config[$to]) && empty(static::$_config[$from])) {
 			throw new Error\MissingDatasourceConfigException(
-				__d('cake_dev', 'Cannot alias connection "%s" as it does not exist.', $from)
+				__d('cake_dev', 'Cannot create alias of "%s" as it does not exist.', $from)
 			);
 		}
 		static::$_aliasMap[$to] = $from;
