@@ -117,6 +117,7 @@ class TimeHelper extends AppHelper {
 
 /**
  * Call methods from CakeTime utility class
+ * @return mixed Whatever is returned by called method, or false on failure
  */
 	public function __call($method, $params) {
 		return call_user_func_array(array($this->_engine, $method), $params);
