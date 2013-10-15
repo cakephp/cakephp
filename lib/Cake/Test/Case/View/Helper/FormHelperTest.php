@@ -807,6 +807,36 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Tests correct generation of file upload fields for binary fields
+ *
+ * @return void
+ */
+	public function testFileUploadFieldTypeGenerationForBinaries() {
+		$model = ClassRegistry::getObject('Contact');
+		$model->setSchema(array('foo' => array(
+			'type' => 'binary',
+			'null' => false,
+			'default' => null,
+			'length' => 1024
+		)));
+
+		$this->Form->create('Contact');
+		$result = $this->Form->input('foo');
+		$expected = array(
+			'div' => array('class' => 'input file'),
+			'label' => array('for' => 'ContactFoo'),
+			'Foo',
+			'/label',
+			array('input' => array(
+				'type' => 'file', 'name' => 'data[Contact][foo]',
+				'id' => 'ContactFoo'
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testFormSecurityMultipleFields method
  *
  * Test secure() with multiple row form. Ensure hash is correct.
