@@ -1708,6 +1708,11 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::email('!def!xyz%abc@example.com'));
 		$this->assertTrue(Validation::email('_somename@example.com'));
 
+		/// Unicode
+		$this->assertTrue(Validation::email('some@eräume.foo'));
+		$this->assertTrue(Validation::email('äu@öe.eräume.foo'));
+		$this->assertTrue(Validation::email('Nyrée.surname@example.com'));
+
 		// invalid addresses
 		$this->assertFalse(Validation::email('abc@example'));
 		$this->assertFalse(Validation::email('abc@example.c'));
@@ -1725,7 +1730,6 @@ class ValidationTest extends CakeTestCase {
 		$this->assertFalse(Validation::email("abc@sub'example.com"));
 		$this->assertFalse(Validation::email('abc@sub/example.com'));
 		$this->assertFalse(Validation::email('abc@yahoo!.com'));
-		$this->assertFalse(Validation::email("Nyrée.surname@example.com"));
 		$this->assertFalse(Validation::email('abc@example_underscored.com'));
 		$this->assertFalse(Validation::email('raw@test.ra.ru....com'));
 	}
@@ -1904,6 +1908,8 @@ class ValidationTest extends CakeTestCase {
 		$this->assertTrue(Validation::url('http://www.zwischenraume.cz'));
 		$this->assertTrue(Validation::url('http://www.last.fm/music/浜崎あゆみ'), 'utf8 path failed');
 		$this->assertTrue(Validation::url('http://www.electrohome.ro/images/239537750-284232-215_300[1].jpg'));
+		$this->assertTrue(Validation::url('http://www.eräume.foo'));
+		$this->assertTrue(Validation::url('http://äüö.eräume.foo'));
 
 		$this->assertTrue(Validation::url('http://cakephp.org:80'));
 		$this->assertTrue(Validation::url('http://cakephp.org:443'));
