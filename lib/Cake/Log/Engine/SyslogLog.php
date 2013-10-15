@@ -154,7 +154,7 @@ class SyslogLog extends BaseLog {
 
 /**
  * Closes the logger connection
- **/
+ */
 	public function __destruct() {
 		closelog();
 	}
