@@ -263,6 +263,19 @@ class ContainableBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * Tests the method chaining with contain()
+ */
+	public function testContainMethodChaining() {
+		$containObj = $this->Article->contain('Comment.User');
+
+		$this->assertInstanceOf('Article', $containObj);
+
+		$r = $containObj->find('all');
+		$this->assertTrue(Set::matches('/Comment/User', $r));
+		$this->assertFalse(Set::matches('/Comment/Article', $r));
+	}
+
+/**
  * testContainFindList method
  *
  * @return void

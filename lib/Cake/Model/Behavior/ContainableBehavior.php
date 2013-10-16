@@ -223,17 +223,19 @@ class ContainableBehavior extends ModelBehavior {
 	}
 
 /**
- * Unbinds all relations from a model except the specified ones. Calling this function without
- * parameters unbinds all related models.
+ * Unbinds all relations from a model except the specified ones.
+ *
+ * Calling this function without parameters unbinds all related models.
  *
  * @param Model $Model Model on which binding restriction is being applied
- * @return void
+ * @return Model The model object for method chaining
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/containable.html#using-containable
  */
 	public function contain(Model $Model) {
 		$args = func_get_args();
 		$contain = call_user_func_array('am', array_slice($args, 1));
 		$this->runtime[$Model->alias]['contain'] = $contain;
+		return $Model;
 	}
 
 /**
