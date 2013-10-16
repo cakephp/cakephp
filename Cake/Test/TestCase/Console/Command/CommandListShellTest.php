@@ -1,9 +1,5 @@
 <?php
 /**
- * CommandListShellTest file
- *
- * PHP 5
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -64,7 +60,7 @@ class CommandListShellTest extends TestCase {
 		);
 
 		$this->Shell->Command = $this->getMock(
-			'CommandTask',
+			'Cake\Console\Command\Task\CommandTask',
 			array('in', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
@@ -96,7 +92,7 @@ class CommandListShellTest extends TestCase {
 		$expected = "/\[.*TestPluginTwo.*\] example, welcome/";
 		$this->assertRegExp($expected, $output);
 
-		$expected = "/\[.*CORE.*\] acl, api, bake, completion, command_list, i18n, schema, server, test, upgrade/";
+		$expected = "/\[.*CORE.*\] acl, api, bake, command_list, completion, i18n, schema, server, test, upgrade/";
 		$this->assertRegExp($expected, $output);
 
 		$expected = "/\[.*app.*\] sample/";

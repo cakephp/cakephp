@@ -12,15 +12,21 @@
  * @since         CakePHP(tm) v 2.5
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command\Task;
 
-App::uses('AppShell', 'Console/Command');
+use Cake\Console\ConsoleOptionParser;
+use Cake\Console\Shell;
+use Cake\Core\App;
+use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
+use \ReflectionClass;
+use \ReflectionMethod;
 
 /**
  * Base class for Shell Command reflection.
  *
- * @package       Cake.Console.Command.Task
  */
-class CommandTask extends AppShell {
+class CommandTask extends Shell {
 
 /**
  * Gets the shell command listing.
@@ -30,7 +36,7 @@ class CommandTask extends AppShell {
 	public function getShellList() {
 		$skipFiles = array('AppShell');
 
-		$plugins = CakePlugin::loaded();
+		$plugins = Plugin::loaded();
 		$shellList = array_fill_keys($plugins, null) + array('CORE' => null, 'app' => null);
 
 		$corePath = App::core('Console/Command');
@@ -100,22 +106,22 @@ class CommandTask extends AppShell {
 			return array();
 		}
 
-		$taskMap = TaskCollection::normalizeObjectArray((array)$Shell->tasks);
+		$taskMap = $this->Tasks->normalizeArray((array)$Shell->tasks);
 		$return = array_keys($taskMap);
-		$return = array_map('Inflector::underscore', $return);
+		$return = array_map('Cake\Utility\Inflector::underscore', $return);
 
-		$ShellReflection = new ReflectionClass('AppShell');
-		$shellMethods = $ShellReflection->getMethods(ReflectionMethod::IS_PUBLIC);
 		$shellMethodNames = array('main', 'help');
-		foreach ($shellMethods as $method) {
-			$shellMethodNames[] = $method->getName();
-		}
+
+		$baseClasses = ['Object', 'Shell', 'AppShell'];
 
 		$Reflection = new ReflectionClass($Shell);
 		$methods = $Reflection->getMethods(ReflectionMethod::IS_PUBLIC);
 		$methodNames = array();
 		foreach ($methods as $method) {
-			$methodNames[] = $method->getName();
+			$declaringClass = $method->getDeclaringClass()->getShortName();
+			if (!in_array($declaringClass, $baseClasses)) {
+				$methodNames[] = $method->getName();
+			}
 		}
 
 		$return += array_diff($methodNames, $shellMethodNames);
@@ -144,8 +150,10 @@ class CommandTask extends AppShell {
 
 		$name = Inflector::camelize($name);
 		$pluginDot = Inflector::camelize($pluginDot);
-		$class = $name . 'Shell';
-		APP::uses($class, $pluginDot . 'Console/Command');
+		$class = App::classname($pluginDot . $name, 'Console/Command', 'Shell');
+		if (!$class) {
+			return false;
+		}
 
 		$Shell = new $class();
 		$Shell->plugin = trim($pluginDot, '.');

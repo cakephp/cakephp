@@ -17,6 +17,7 @@ namespace Cake\Cache\Engine;
 use Cake\Cache\CacheEngine;
 use Cake\Error;
 use Cake\Utility\Inflector;
+use \Memcached;
 
 /**
  * Memcached storage engine for cache. Memcached has some limitations in the amount of
@@ -85,7 +86,6 @@ class MemcachedEngine extends CacheEngine {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
 		$settings += array(
-			'engine' => 'Memcached',
 			'servers' => array('127.0.0.1'),
 			'compress' => false,
 			'persistent' => false,

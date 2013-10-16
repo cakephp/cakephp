@@ -254,7 +254,8 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
 		Router::parseExtensions('xml', 'json');
 
-		$this->RequestHandler->initialize($this->Controller);
+		$event = new Event('Controller.initialize', $this->Controller);
+		$this->RequestHandler->initialize($event);
 		$this->assertNull($this->RequestHandler->ext);
 	}
 

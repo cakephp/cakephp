@@ -1,9 +1,5 @@
 <?php
 /**
- * CompletionShellTest file
- *
- * PHP 5
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -13,21 +9,22 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 2.5
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command;
 
-App::uses('CompletionShell', 'Console/Command');
-App::uses('ConsoleOutput', 'Console');
-App::uses('ConsoleInput', 'Console');
-App::uses('Shell', 'Console');
-App::uses('CommandTask', 'Console/Command/Task');
+use Cake\Console\Command\CompletionShell;
+use Cake\Console\Command\Task\CommandTask;
+use Cake\Console\ConsoleOutput;
+use Cake\Console\ConsoleInput;
+use Cake\Console\Shell;
+use Cake\Core\Plugin;
+use Cake\TestSuite\TestCase;
 
 /**
  * Class TestCompletionStringOutput
  *
- * @package       Cake.Test.Case.Console.Command
  */
 class TestCompletionStringOutput extends ConsoleOutput {
 
@@ -41,10 +38,8 @@ class TestCompletionStringOutput extends ConsoleOutput {
 
 /**
  * Class CompletionShellTest
- *
- * @package       Cake.Test.Case.Console.Command
  */
-class CompletionShellTest extends CakeTestCase {
+class CompletionShellTest extends TestCase {
 
 /**
  * setUp method
@@ -53,27 +48,19 @@ class CompletionShellTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		App::build(array(
-			'Plugin' => array(
-				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
-			),
-			'Console/Command' => array(
-				CAKE . 'Test' . DS . 'test_app' . DS . 'Console' . DS . 'Command' . DS
-			)
-		), App::RESET);
-		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
+		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$out = new TestCompletionStringOutput();
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$this->Shell = $this->getMock(
-			'CompletionShell',
+			'Cake\Console\Command\CompletionShell',
 			array('in', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
 
 		$this->Shell->Command = $this->getMock(
-			'CommandTask',
+			'Cake\Console\Command\Task\CommandTask',
 			array('in', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
@@ -87,7 +74,7 @@ class CompletionShellTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Shell);
-		CakePlugin::unload();
+		Plugin::unload();
 	}
 
 /**
@@ -125,7 +112,7 @@ class CompletionShellTest extends CakeTestCase {
 		$this->Shell->runCommand('commands', array());
 		$output = $this->Shell->stdout->output;
 
-		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome acl api bake command_list completion console i18n schema server test testsuite upgrade sample\n";
+		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome acl api bake command_list completion i18n schema server test upgrade sample\n";
 		$this->assertEquals($expected, $output);
 	}
 

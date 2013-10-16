@@ -9,19 +9,17 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
- * @package       Cake.Console.Command
  * @since         CakePHP v 2.5
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Console\Command;
 
-App::uses('AppShell', 'Console/Command');
+use Cake\Console\Shell;
 
 /**
  * Provide command completion shells such as bash.
- * 
- * @package       Cake.Console.Command
  */
-class CompletionShell extends AppShell {
+class CompletionShell extends Shell {
 
 /**
  * Contains tasks to load and instantiate

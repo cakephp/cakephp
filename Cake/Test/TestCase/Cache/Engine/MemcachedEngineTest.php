@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\Engine\MemcachedEngine;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
+use \Memcached;
 
 /**
  * Class TestMemcachedEngine
@@ -111,7 +112,6 @@ class MemcachedEngineTest extends TestCase {
 			'servers' => array('127.0.0.1'),
 			'persistent' => false,
 			'compress' => false,
-			'engine' => 'Memcached',
 			'login' => null,
 			'password' => null,
 			'groups' => array(),
@@ -153,14 +153,14 @@ class MemcachedEngineTest extends TestCase {
 	public function testInvalidSerializerSetting() {
 		$Memcached = new TestMemcachedEngine();
 		$settings = array(
-			'engine' => 'Memcached',
+			'className' => 'Memcached',
 			'servers' => array('127.0.0.1:11211'),
 			'persistent' => false,
 			'serialize' => 'invalid_serializer'
 		);
 
 		$this->setExpectedException(
-			'CacheException', 'invalid_serializer is not a valid serializer engine for Memcached'
+			'Cake\Error\Exception', 'invalid_serializer is not a valid serializer engine for Memcached'
 		);
 		$Memcached->init($settings);
 	}
@@ -173,7 +173,7 @@ class MemcachedEngineTest extends TestCase {
 	public function testPhpSerializerSetting() {
 		$Memcached = new TestMemcachedEngine();
 		$settings = array(
-			'engine' => 'Memcached',
+			'className' => 'Memcached',
 			'servers' => array('127.0.0.1:11211'),
 			'persistent' => false,
 			'serialize' => 'php'
@@ -242,14 +242,14 @@ class MemcachedEngineTest extends TestCase {
 
 		$Memcached = new TestMemcachedEngine();
 		$settings = array(
-			'engine' => 'Memcached',
+			'className' => 'Memcached',
 			'servers' => array('127.0.0.1:11211'),
 			'persistent' => false,
 			'serialize' => 'json'
 		);
 
 		$this->setExpectedException(
-			'CacheException', 'Memcached extension is not compiled with json support'
+			'Cake\Error\Exception', 'Memcached extension is not compiled with json support'
 		);
 		$Memcached->init($settings);
 	}
@@ -274,7 +274,7 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$this->setExpectedException(
-			'CacheException', 'Memcached extension is not compiled with igbinary support'
+			'Cake\Error\Exception', 'Memcached extension is not compiled with igbinary support'
 		);
 		$Memcached->init($settings);
 	}

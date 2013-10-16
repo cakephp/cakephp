@@ -952,7 +952,7 @@ class EmailTest extends TestCase {
  */
 	public function testSendWithNoContentDoesNotOverwriteViewVar() {
 		$this->CakeEmail->reset();
-		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->transport('debug');
 		$this->CakeEmail->from('cake@cakephp.org');
 		$this->CakeEmail->to('you@cakephp.org');
 		$this->CakeEmail->subject('My title');

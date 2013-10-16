@@ -21,6 +21,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Event\Event;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
@@ -410,7 +411,7 @@ class RequestHandlerComponent extends Component {
 
 		list($contentType) = explode(';', env('CONTENT_TYPE'));
 		if ($contentType === '') {
-			list($contentType) = explode(';', CakeRequest::header('CONTENT_TYPE'));
+			list($contentType) = explode(';', Request::header('CONTENT_TYPE'));
 		}
 		if (!$type) {
 			return $this->response->mapType($contentType);

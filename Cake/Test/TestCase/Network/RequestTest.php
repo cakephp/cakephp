@@ -1105,7 +1105,7 @@ class RequestTest extends TestCase {
 	public function testParseAcceptIgnoreAcceptExtensions() {
 		$_SERVER['HTTP_ACCEPT'] = 'application/json;level=1, text/plain, */*';
 
-		$request = new CakeRequest('/', false);
+		$request = new Request('/', false);
 		$result = $request->parseAccept();
 		$expected = array(
 			'1.0' => array('application/json', 'text/plain', '*/*'),
@@ -1122,7 +1122,7 @@ class RequestTest extends TestCase {
  */
 	public function testParseAcceptInvalidSyntax() {
 		$_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
-		$request = new CakeRequest('/', false);
+		$request = new Request('/', false);
 		$result = $request->parseAccept();
 		$expected = array(
 			'1.0' => array('text/html', 'application/xhtml+xml', 'application/xml', 'image/jpeg'),
