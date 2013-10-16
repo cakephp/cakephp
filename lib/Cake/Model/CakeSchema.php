@@ -551,7 +551,7 @@ class CakeSchema extends Object {
 				continue;
 			}
 			$correspondingValue = $array2[$key];
-			if (($value === null ) !== ($correspondingValue === null)) {
+			if (($value === null) !== ($correspondingValue === null)) {
 				$difference[$key] = $value;
 				continue;
 			}
