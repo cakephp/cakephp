@@ -107,10 +107,12 @@ p {
 #footer {
 	clear: both;
 	padding: 6px 10px;
-	text-align: right;
 }
 #header a, #footer a {
 	color: #fff;
+}
+#cake-powered {
+	float: right;
 }
 
 /** containers **/
