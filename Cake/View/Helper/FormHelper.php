@@ -1149,7 +1149,7 @@ class FormHelper extends Helper {
 				'boolean' => 'checkbox', 'timestamp' => 'datetime',
 				'text' => 'textarea', 'time' => 'time',
 				'date' => 'date', 'float' => 'number',
-				'integer' => 'number'
+				'integer' => 'number', 'decimal' => 'number'
 			);
 
 			if (isset($this->map[$type])) {
@@ -1162,10 +1162,13 @@ class FormHelper extends Helper {
 			}
 			if (
 				$options['type'] === 'number' &&
-				$type === 'float' &&
 				!isset($options['step'])
 			) {
-				$options['step'] = 'any';
+				if ($type === 'decimal') {
+					$options['step'] = pow(10, -1 * substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1));
+				} elseif ($type === 'float') {
+					$options['step'] = 'any';
+				}
 			}
 		}
 
@@ -1627,17 +1630,16 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::hidden
  */
 	public function hidden($fieldName, $options = array()) {
-		$secure = true;
+		$options += array('required' => false, 'secure' => true);
 
-		if (isset($options['secure'])) {
-			$secure = $options['secure'];
-			unset($options['secure']);
-		}
+		$secure = $options['secure'];
+		unset($options['secure']);
+
 		$options = $this->_initInputField($fieldName, array_merge(
 			$options, array('secure' => static::SECURE_SKIP)
 		));
 
-		if ($secure && $secure !== static::SECURE_SKIP) {
+		if ($secure === true) {
 			$this->_secure(true, null, '' . $options['value']);
 		}
 
@@ -1724,7 +1726,7 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Creates an HTML link, but access the url using the method you specify (defaults to POST).
+ * Creates an HTML link, but access the URL using the method you specify (defaults to POST).
  * Requires javascript to be enabled in browser.
  *
  * This method creates a `<form>` element. So do not use this method inside an existing form.
@@ -2014,12 +2016,8 @@ class FormHelper extends Helper {
 			$tag = 'selectstart';
 		}
 
-		if ($tag !== 'checkboxmultiplestart' &&
-			!isset($attributes['required']) &&
-			empty($attributes['disabled']) &&
-			$this->_introspectModel($this->model(), 'validates', $this->field())
-		) {
-			$attributes['required'] = true;
+		if ($tag === 'checkboxmultiplestart') {
+			unset($attributes['required']);
 		}
 
 		if (!empty($tag) || isset($template)) {
@@ -2852,10 +2850,15 @@ class FormHelper extends Helper {
 		if (!empty($result['disabled']) || $secure === static::SECURE_SKIP) {
 			return $result;
 		}
+
 		if (!isset($result['required']) &&
 			$this->_introspectModel($this->model(), 'validates', $this->field())
 		) {
 			$result['required'] = true;
+		}
+
+		if ($secure === self::SECURE_SKIP) {
+			return $result;
 		}
 
 		$this->_secure($secure, $this->_secureFieldName($options));

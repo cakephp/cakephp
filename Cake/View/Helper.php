@@ -270,7 +270,7 @@ class Helper extends Object implements EventListener {
  * Returns an URL pointing at the provided parameters.
  *
  * @param string|array $url Either a relative string url like `/products/view/23` or
- *    an array of url parameters. Using an array for URLs will allow you to leverage
+ *    an array of URL parameters. Using an array for URLs will allow you to leverage
  *    the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
  * @return string Full translated URL with base path.
@@ -317,16 +317,16 @@ class Helper extends Object implements EventListener {
 	}
 
 /**
- * Generate url for given asset file. Depending on options passed provides full url with domain name.
+ * Generate URL for given asset file. Depending on options passed provides full URL with domain name.
  * Also calls Helper::assetTimestamp() to add timestamp to local files
  *
- * @param string|array Path string or url array
+ * @param string|array Path string or URL array
  * @param array $options Options array. Possible keys:
- *   `fullBase` Return full url with domain name
+ *   `fullBase` Return full URL with domain name
  *   `pathPrefix` Path prefix for relative URLs
  *   `ext` Asset extension to append
  *   `plugin` False value will prevent parsing path as a plugin
- * @return string Generated url
+ * @return string Generated URL
  */
 	public function assetUrl($path, $options = array()) {
 		if (is_array($path)) {
@@ -365,8 +365,8 @@ class Helper extends Object implements EventListener {
 /**
  * Encodes an URL for use in HTML attributes.
  *
- * @param string $url The url to encode.
- * @return string The url encoded for both URL & HTML contexts.
+ * @param string $url The URL to encode.
+ * @return string The URL encoded for both URL & HTML contexts.
  */
 	protected function _encodeUrl($url) {
 		$path = parse_url($url, PHP_URL_PATH);

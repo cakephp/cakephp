@@ -2,7 +2,7 @@
 /**
  * Model behaviors base class.
  *
- * Adds methods and automagic functionality to Cake Models.
+ * Adds methods and automagic functionality to CakePHP Models.
  *
  * PHP 5
  *

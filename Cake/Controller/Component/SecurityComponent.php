@@ -260,7 +260,7 @@ class SecurityComponent extends Component {
 		if (isset($actions[0]) && is_array($actions[0])) {
 			$actions = $actions[0];
 		}
-		$this->{'require' . $method} = (empty($actions)) ? array('*'): $actions;
+		$this->{'require' . $method} = (empty($actions)) ? array('*') : $actions;
 	}
 
 /**

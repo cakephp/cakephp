@@ -103,7 +103,7 @@ class MemcachedEngineTest extends TestCase {
  */
 	public function testSettings() {
 		$settings = Cache::settings('memcached');
-		unset($settings['serialize'], $settings['path']);
+		unset($settings['path']);
 		$expecting = array(
 			'prefix' => 'cake_',
 			'duration' => 3600,
@@ -114,7 +114,8 @@ class MemcachedEngineTest extends TestCase {
 			'engine' => 'Memcached',
 			'login' => null,
 			'password' => null,
-			'groups' => array()
+			'groups' => array(),
+			'serialize' => 'php'
 		);
 		$this->assertEquals($expecting, $settings);
 	}
@@ -142,6 +143,140 @@ class MemcachedEngineTest extends TestCase {
 		));
 
 		$this->assertTrue($MemcachedCompressed->getMemcached()->getOption(\Memcached::OPT_COMPRESSION));
+	}
+
+/**
+ * test accepts only valid serializer engine
+ *
+ * @return  void
+ */
+	public function testInvalidSerializerSetting() {
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serialize' => 'invalid_serializer'
+		);
+
+		$this->setExpectedException(
+			'CacheException', 'invalid_serializer is not a valid serializer engine for Memcached'
+		);
+		$Memcached->init($settings);
+	}
+
+/**
+ * testPhpSerializerSetting method
+ *
+ * @return void
+ */
+	public function testPhpSerializerSetting() {
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serialize' => 'php'
+		);
+
+		$Memcached->init($settings);
+		$this->assertEquals(Memcached::SERIALIZER_PHP, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
+	}
+
+/**
+ * testJsonSerializerSetting method
+ *
+ * @return void
+ */
+	public function testJsonSerializerSetting() {
+		$this->skipIf(
+			!Memcached::HAVE_JSON,
+			'Memcached extension is not compiled with json support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serialize' => 'json'
+		);
+
+		$Memcached->init($settings);
+		$this->assertEquals(Memcached::SERIALIZER_JSON, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
+	}
+
+/**
+ * testIgbinarySerializerSetting method
+ *
+ * @return void
+ */
+	public function testIgbinarySerializerSetting() {
+		$this->skipIf(
+			!Memcached::HAVE_IGBINARY,
+			'Memcached extension is not compiled with igbinary support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serialize' => 'igbinary'
+		);
+
+		$Memcached->init($settings);
+		$this->assertEquals(Memcached::SERIALIZER_IGBINARY, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
+	}
+
+/**
+ * testJsonSerializerThrowException method
+ *
+ * @return void
+ */
+	public function testJsonSerializerThrowException() {
+		$this->skipIf(
+			Memcached::HAVE_JSON,
+			'Memcached extension is compiled with json support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serialize' => 'json'
+		);
+
+		$this->setExpectedException(
+			'CacheException', 'Memcached extension is not compiled with json support'
+		);
+		$Memcached->init($settings);
+	}
+
+/**
+ * testIgbinarySerializerThrowException method
+ *
+ * @return void
+ */
+	public function testIgbinarySerializerThrowException() {
+		$this->skipIf(
+			Memcached::HAVE_IGBINARY,
+			'Memcached extension is compiled with igbinary support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serialize' => 'igbinary'
+		);
+
+		$this->setExpectedException(
+			'CacheException', 'Memcached extension is not compiled with igbinary support'
+		);
+		$Memcached->init($settings);
 	}
 
 /**

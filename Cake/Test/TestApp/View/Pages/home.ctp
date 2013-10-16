@@ -20,6 +20,9 @@ endif;
 	1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
 	2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
 </p>
+<?php
+endif;
+?>
 <p>
 <?php
 	if (version_compare(PHP_VERSION, '5.4.3', '>=')):
@@ -97,7 +100,7 @@ endif;
 			echo '<br/>';
 			echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
 		echo '</span></p>';
-	}
+	endif;
 ?>
 
 <p>

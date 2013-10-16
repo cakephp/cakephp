@@ -946,6 +946,27 @@ class EmailTest extends TestCase {
 	}
 
 /**
+ * Calling send() with no parameters should not overwrite the view variables.
+ *
+ * @return void
+ */
+	public function testSendWithNoContentDoesNotOverwriteViewVar() {
+		$this->CakeEmail->reset();
+		$this->CakeEmail->transport('Debug');
+		$this->CakeEmail->from('cake@cakephp.org');
+		$this->CakeEmail->to('you@cakephp.org');
+		$this->CakeEmail->subject('My title');
+		$this->CakeEmail->emailFormat('text');
+		$this->CakeEmail->template('default');
+		$this->CakeEmail->viewVars(array(
+			'content' => 'A message to you',
+		));
+
+		$result = $this->CakeEmail->send();
+		$this->assertContains('A message to you', $result['message']);
+	}
+
+/**
  * testSendWithContent method
  *
  * @return void

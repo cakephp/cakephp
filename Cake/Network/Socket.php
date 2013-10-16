@@ -1,6 +1,6 @@
 <?php
 /**
- * Cake Socket connection class.
+ * CakePHP Socket connection class.
  *
  * PHP 5
  *
@@ -22,7 +22,7 @@ use Cake\Error;
 use Cake\Utility\Validation;
 
 /**
- * Cake network socket connection class.
+ * CakePHP network socket connection class.
  *
  * Core base class for network communication.
  *

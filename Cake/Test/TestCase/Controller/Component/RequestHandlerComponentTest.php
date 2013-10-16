@@ -246,6 +246,19 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
+ * Test that the headers sent by firefox are not treated as XML requests.
+ *
+ * @return void
+ */
+	public function testInititalizeFirefoxHeaderNotXml() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
+		Router::parseExtensions('xml', 'json');
+
+		$this->RequestHandler->initialize($this->Controller);
+		$this->assertNull($this->RequestHandler->ext);
+	}
+
+/**
  * Test that a type mismatch doesn't incorrectly set the ext
  *
  * @return void
@@ -411,7 +424,7 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * test that redirects with ajax and no url don't do anything.
+ * test that redirects with ajax and no URL don't do anything.
  *
  * @return void
  */
@@ -556,6 +569,16 @@ class RequestHandlerComponentTest extends TestCase {
 		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$_SERVER['CONTENT_TYPE'] = 'application/json';
 		$this->assertEquals('json', $this->RequestHandler->requestedWith());
+
+		$result = $this->RequestHandler->requestedWith(array('json', 'xml'));
+		$this->assertEquals('json', $result);
+
+		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
+		$this->assertFalse($result);
+
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+		unset($_SERVER['CONTENT_TYPE']);
+		$_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
 
 		$result = $this->RequestHandler->requestedWith(array('json', 'xml'));
 		$this->assertEquals('json', $result);

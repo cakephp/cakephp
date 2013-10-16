@@ -55,6 +55,7 @@ class FolderTest extends TestCase {
 		if (file_exists(TMP . 'tests')) {
 			$cleaner(TMP . 'tests');
 		}
+		parent::tearDown();
 	}
 
 /**

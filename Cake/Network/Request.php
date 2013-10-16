@@ -30,7 +30,7 @@ use Cake\Utility\Hash;
 class Request implements \ArrayAccess {
 
 /**
- * Array of parameters parsed from the url.
+ * Array of parameters parsed from the URL.
  *
  * @var array
  */
@@ -65,14 +65,14 @@ class Request implements \ArrayAccess {
 	public $cookies = [];
 
 /**
- * The url string used for the request.
+ * The URL string used for the request.
  *
  * @var string
  */
 	public $url;
 
 /**
- * Base url path.
+ * Base URL path.
  *
  * @var string
  */
@@ -849,7 +849,10 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Parse Accept* headers with qualifier options
+ * Parse Accept* headers with qualifier options.
+ *
+ * Only qualifiers will be extracted, any other accept extensions will be
+ * discarded as they are not frequently used.
  *
  * @param string $header
  * @return array
@@ -858,14 +861,21 @@ class Request implements \ArrayAccess {
 		$accept = array();
 		$header = explode(',', $header);
 		foreach (array_filter($header) as $value) {
-			$prefPos = strpos($value, ';');
-			if ($prefPos !== false) {
-				$prefValue = substr($value, strpos($value, '=') + 1);
-				$value = trim(substr($value, 0, $prefPos));
-			} else {
-				$prefValue = '1.0';
-				$value = trim($value);
+			$prefValue = '1.0';
+			$value = trim($value);
+
+			$semiPos = strpos($value, ';');
+			if ($semiPos !== false) {
+				$params = explode(';', $value);
+				$value = trim($params[0]);
+				foreach ($params as $param) {
+					$qPos = strpos($param, 'q=');
+					if ($qPos !== false) {
+						$prefValue = substr($param, $qPos + 2);
+					}
+				}
 			}
+
 			if (!isset($accept[$prefValue])) {
 				$accept[$prefValue] = array();
 			}
@@ -879,7 +889,7 @@ class Request implements \ArrayAccess {
 
 /**
  * Provides a read accessor for `$this->query`. Allows you
- * to use a syntax similar to `CakeSession` for reading url query data.
+ * to use a syntax similar to `CakeSession` for reading URL query data.
  *
  * @param string $name Query string variable name
  * @return mixed The value being read

@@ -33,7 +33,6 @@ abstract class BaseLog implements LogInterface {
  * __construct method
  *
  * @param array $config Configuration array
- * @return void
  */
 	public function __construct(array $config = []) {
 		$this->config($config);

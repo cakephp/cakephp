@@ -19,6 +19,7 @@
 namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\Command\CommandListShell;
+use Cake\Console\Command\Task\CommandTask;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\App;
 use Cake\Core\Plugin;
@@ -61,6 +62,12 @@ class CommandListShellTest extends TestCase {
 			array('in', '_stop', 'clear'),
 			array($out, $out, $in)
 		);
+
+		$this->Shell->Command = $this->getMock(
+			'CommandTask',
+			array('in', '_stop', 'clear'),
+			array($out, $out, $in)
+		);
 	}
 
 /**
@@ -89,7 +96,7 @@ class CommandListShellTest extends TestCase {
 		$expected = "/\[.*TestPluginTwo.*\] example, welcome/";
 		$this->assertRegExp($expected, $output);
 
-		$expected = "/\[.*CORE.*\] acl, api, bake, command_list, i18n, schema, server, test, upgrade/";
+		$expected = "/\[.*CORE.*\] acl, api, bake, completion, command_list, i18n, schema, server, test, upgrade/";
 		$this->assertRegExp($expected, $output);
 
 		$expected = "/\[.*app.*\] sample/";

@@ -616,6 +616,34 @@ class ModelValidationTest extends ModelTestBase {
 	}
 
 /**
+ * Test that if a behavior modifies the model's whitelist validation gets triggered
+ * properly for those fields.
+ *
+ * @return void
+ */
+	public function testValidateWithFieldListAndBehavior() {
+		$TestModel = new ValidationTest1();
+		$TestModel->validate = array(
+			'title' => array(
+				'rule' => 'notEmpty',
+			),
+			'name' => array(
+				'rule' => 'notEmpty',
+		));
+		$TestModel->Behaviors->attach('ValidationRule', array('fields' => array('name')));
+
+		$data = array(
+			'title' => '',
+			'name' => '',
+		);
+		$result = $TestModel->save($data, array('fieldList' => array('title')));
+		$this->assertFalse($result);
+
+		$expected = array('title' => array('This field cannot be left blank'), 'name' => array('This field cannot be left blank'));
+		$this->assertEquals($expected, $TestModel->validationErrors);
+	}
+
+/**
  * test that saveAll and with models with validation interact well
  *
  * @return void
@@ -1719,7 +1747,7 @@ class ModelValidationTest extends ModelTestBase {
 		$expected = array_map('strtolower', get_class_methods('Article'));
 		$this->assertEquals($expected, array_keys($result));
 
-		$TestModel->Behaviors->attach('Containable');
+		$TestModel->Behaviors->load('Containable');
 		$newList = array(
 			'contain',
 			'resetbindings',
@@ -1729,7 +1757,7 @@ class ModelValidationTest extends ModelTestBase {
 		);
 		$this->assertEquals(array_merge($expected, $newList), array_keys($Validator->getMethods()));
 
-		$TestModel->Behaviors->detach('Containable');
+		$TestModel->Behaviors->unload('Containable');
 		$this->assertEquals($expected, array_keys($Validator->getMethods()));
 	}
 
@@ -2376,6 +2404,24 @@ class ModelValidationTest extends ModelTestBase {
 			),
 		);
 		$this->assertEquals($expected, $result);
+	}
+
+}
+
+/**
+ * Behavior for testing validation rules.
+ */
+class ValidationRuleBehavior extends ModelBehavior {
+
+	public function setup(Model $Model, $config = array()) {
+		$this->settings[$Model->alias] = $config;
+	}
+
+	public function beforeValidate(Model $Model, $options = array()) {
+		$fields = $this->settings[$Model->alias]['fields'];
+		foreach ($fields as $field) {
+			$Model->whitelist[] = $field;
+		}
 	}
 
 }

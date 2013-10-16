@@ -64,7 +64,6 @@ abstract class BaseCoverageReport {
  *
  * @param array $coverage Array of coverage data from PHPUnit_Test_Result
  * @param Cake\TestSuite\Reporter\BaseReporter $reporter A reporter to use for the coverage report.
- * @return void
  */
 	public function __construct($coverage, BaseReporter $reporter) {
 		$this->_rawCoverage = $coverage;

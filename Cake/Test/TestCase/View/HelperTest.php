@@ -554,7 +554,7 @@ class HelperTest extends TestCase {
 	}
 
 /**
- * Ensure HTML escaping of url params. So link addresses are valid and not exploited
+ * Ensure HTML escaping of URL params. So link addresses are valid and not exploited
  *
  * @return void
  */

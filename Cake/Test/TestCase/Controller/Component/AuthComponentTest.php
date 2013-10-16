@@ -997,7 +997,7 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * test that logout deletes the session variables. and returns the correct url
+ * test that logout deletes the session variables. and returns the correct URL
  *
  * @return void
  */

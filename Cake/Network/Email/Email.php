@@ -27,7 +27,7 @@ use Cake\Utility\Validation;
 use Cake\View\View;
 
 /**
- * Cake e-mail class.
+ * CakePHP email class.
  *
  * This class is used for sending Internet Message Format based
  * on the standard outlined in http://www.rfc-editor.org/rfc/rfc2822.txt
@@ -1376,6 +1376,9 @@ class Email {
  * @return array Wrapped message
  */
 	protected function _wrap($message, $wrapLength = Email::LINE_LENGTH_MUST) {
+		if (strlen($message) === 0) {
+			return array('');
+		}
 		$message = str_replace(array("\r\n", "\r"), "\n", $message);
 		$lines = explode("\n", $message);
 		$formatted = array();
@@ -1707,8 +1710,11 @@ class Email {
 			$layout = false;
 		}
 
-		foreach ($types as $type) {
+		if ($View->get('content') === null) {
 			$View->set('content', $content);
+		}
+
+		foreach ($types as $type) {
 			$View->hasRendered = false;
 			$View->viewPath = $View->layoutPath = 'Email/' . $type;
 

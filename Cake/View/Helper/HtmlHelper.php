@@ -405,7 +405,7 @@ class HtmlHelper extends Helper {
  *   This overrides the `inline` option.
  * - `plugin` False value will prevent parsing path as a plugin
  * - `rel` Defaults to 'stylesheet'. If equal to 'import' the stylesheet will be imported.
- * - `fullBase` If true the url will get a full address for the css file.
+ * - `fullBase` If true the URL will get a full address for the css file.
  *
  * @param string|array $path The name of a CSS style sheet or an array containing names of
  *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot

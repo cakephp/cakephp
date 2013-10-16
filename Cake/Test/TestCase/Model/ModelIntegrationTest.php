@@ -192,7 +192,7 @@ class ModelIntegrationTest extends ModelTestBase {
 		$TestModel = new Apple();
 		$this->assertEquals(array(), $TestModel->Behaviors->loaded());
 
-		$TestModel->Behaviors->attach('Tree', array('left' => 'left_field', 'right' => 'right_field'));
+		$TestModel->Behaviors->load('Tree', array('left' => 'left_field', 'right' => 'right_field'));
 		$this->assertTrue(is_object($TestModel->Behaviors->Tree));
 		$this->assertEquals(array('Tree'), $TestModel->Behaviors->loaded());
 
@@ -207,11 +207,11 @@ class ModelIntegrationTest extends ModelTestBase {
 		);
 		$this->assertEquals($expected, $TestModel->Behaviors->Tree->settings['Apple']);
 
-		$TestModel->Behaviors->attach('Tree', array('enabled' => false));
+		$TestModel->Behaviors->load('Tree', array('enabled' => false));
 		$this->assertEquals($expected, $TestModel->Behaviors->Tree->settings['Apple']);
 		$this->assertEquals(array('Tree'), $TestModel->Behaviors->loaded());
 
-		$TestModel->Behaviors->detach('Tree');
+		$TestModel->Behaviors->unload('Tree');
 		$this->assertEquals(array(), $TestModel->Behaviors->loaded());
 		$this->assertFalse(isset($TestModel->Behaviors->Tree));
 	}
@@ -1686,7 +1686,8 @@ class ModelIntegrationTest extends ModelTestBase {
 					'body' => 'First Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:39:23',
-					'updated' => '2007-03-18 10:41:31'
+					'updated' => '2007-03-18 10:41:31',
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'Something' => array(
 					array(
@@ -1702,7 +1703,8 @@ class ModelIntegrationTest extends ModelTestBase {
 							'something_else_id' => '1',
 							'doomed' => true,
 							'created' => '2007-03-18 10:43:23',
-							'updated' => '2007-03-18 10:45:31'
+							'updated' => '2007-03-18 10:45:31',
+							'afterFind' => 'Successfully added by AfterFind'
 			)))),
 			array(
 				'SomethingElse' => array(
@@ -1711,7 +1713,8 @@ class ModelIntegrationTest extends ModelTestBase {
 					'body' => 'Second Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:41:23',
-					'updated' => '2007-03-18 10:43:31'
+					'updated' => '2007-03-18 10:43:31',
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'Something' => array(
 					array(
@@ -1727,7 +1730,8 @@ class ModelIntegrationTest extends ModelTestBase {
 							'something_else_id' => '2',
 							'doomed' => true,
 							'created' => '2007-03-18 10:39:23',
-							'updated' => '2007-03-18 10:41:31'
+							'updated' => '2007-03-18 10:41:31',
+							'afterFind' => 'Successfully added by AfterFind'
 			)))),
 			array(
 				'SomethingElse' => array(
@@ -1736,7 +1740,8 @@ class ModelIntegrationTest extends ModelTestBase {
 					'body' => 'Third Post Body',
 					'published' => 'Y',
 					'created' => '2007-03-18 10:43:23',
-					'updated' => '2007-03-18 10:45:31'
+					'updated' => '2007-03-18 10:45:31',
+					'afterFind' => 'Successfully added by AfterFind'
 				),
 				'Something' => array(
 					array(
@@ -1752,7 +1757,8 @@ class ModelIntegrationTest extends ModelTestBase {
 							'something_else_id' => '3',
 							'doomed' => false,
 							'created' => '2007-03-18 10:41:23',
-							'updated' => '2007-03-18 10:43:31'
+							'updated' => '2007-03-18 10:43:31',
+							'afterFind' => 'Successfully added by AfterFind'
 		)))));
 		$this->assertEquals($expected, $result);
 
@@ -1778,8 +1784,11 @@ class ModelIntegrationTest extends ModelTestBase {
 						'JoinThing' => array(
 							'doomed' => true,
 							'something_id' => '1',
-							'something_else_id' => '2'
-			)))),
+							'something_else_id' => '2',
+							'afterFind' => 'Successfully added by AfterFind'
+						),
+						'afterFind' => 'Successfully added by AfterFind'
+					))),
 			array(
 				'Something' => array(
 					'id' => '2',
@@ -1800,8 +1809,11 @@ class ModelIntegrationTest extends ModelTestBase {
 						'JoinThing' => array(
 							'doomed' => false,
 							'something_id' => '2',
-							'something_else_id' => '3'
-			)))),
+							'something_else_id' => '3',
+							'afterFind' => 'Successfully added by AfterFind'
+						),
+						'afterFind' => 'Successfully added by AfterFind'
+					))),
 			array(
 				'Something' => array(
 					'id' => '3',
@@ -1822,8 +1834,11 @@ class ModelIntegrationTest extends ModelTestBase {
 						'JoinThing' => array(
 							'doomed' => true,
 							'something_id' => '3',
-							'something_else_id' => '1'
-		)))));
+							'something_else_id' => '1',
+							'afterFind' => 'Successfully added by AfterFind'
+						),
+						'afterFind' => 'Successfully added by AfterFind'
+		))));
 		$this->assertEquals($expected, $result);
 
 		$result = $TestModel->findById(1);
@@ -1847,8 +1862,11 @@ class ModelIntegrationTest extends ModelTestBase {
 					'JoinThing' => array(
 						'doomed' => true,
 						'something_id' => '1',
-						'something_else_id' => '2'
-		))));
+						'something_else_id' => '2',
+						'afterFind' => 'Successfully added by AfterFind'
+					),
+					'afterFind' => 'Successfully added by AfterFind'
+		)));
 		$this->assertEquals($expected, $result);
 
 		$expected = $TestModel->findById(1);
@@ -1888,8 +1906,10 @@ class ModelIntegrationTest extends ModelTestBase {
 					'JoinThing' => array(
 						'doomed' => true,
 						'something_id' => '1',
-						'something_else_id' => '1'
-				)
+						'something_else_id' => '1',
+						'afterFind' => 'Successfully added by AfterFind'
+					),
+					'afterFind' => 'Successfully added by AfterFind'
 			),
 				array(
 					'id' => '2',
@@ -1901,8 +1921,10 @@ class ModelIntegrationTest extends ModelTestBase {
 					'JoinThing' => array(
 						'doomed' => true,
 						'something_id' => '1',
-						'something_else_id' => '2'
-				)
+						'something_else_id' => '2',
+						'afterFind' => 'Successfully added by AfterFind'
+					),
+					'afterFind' => 'Successfully added by AfterFind'
 			),
 				array(
 					'id' => '3',
@@ -1914,8 +1936,10 @@ class ModelIntegrationTest extends ModelTestBase {
 					'JoinThing' => array(
 						'doomed' => false,
 						'something_id' => '1',
-						'something_else_id' => '3')
-					)
+						'something_else_id' => '3',
+						'afterFind' => 'Successfully added by AfterFind'
+					),
+					'afterFind' => 'Successfully added by AfterFind'
 				)
 			);
 		$this->assertEquals(static::date(), $result['Something']['updated']);

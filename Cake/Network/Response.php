@@ -251,9 +251,9 @@ class Response {
 		'f4b' => 'audio/mp4',
 		'gif' => 'image/gif',
 		'ief' => 'image/ief',
-		'jpe' => 'image/jpeg',
-		'jpeg' => 'image/jpeg',
 		'jpg' => 'image/jpeg',
+		'jpeg' => 'image/jpeg',
+		'jpe' => 'image/jpeg',
 		'pbm' => 'image/x-portable-bitmap',
 		'pgm' => 'image/x-portable-graymap',
 		'png' => 'image/png',
@@ -571,7 +571,7 @@ class Response {
 			if (is_numeric($header)) {
 				list($header, $value) = array($value, null);
 			}
-			if (is_null($value)) {
+			if ($value === null) {
 				list($header, $value) = explode(':', $header, 2);
 			}
 			$this->_headers[$header] = is_array($value) ? array_map('trim', $value) : trim($value);

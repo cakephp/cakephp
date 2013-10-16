@@ -27,6 +27,13 @@ use Cake\Utility\Inflector;
 class CommandListShell extends Shell {
 
 /**
+ * Contains tasks to load and instantiate
+ *
+ * @var array
+ */
+	public $tasks = array('Command');
+
+/**
  * startup
  *
  * @return void
@@ -57,7 +64,7 @@ class CommandListShell extends Shell {
 			$this->out(__d('cake_console', "<info>Available Shells:</info>"), 2);
 		}
 
-		$shellList = $this->_getShellList();
+		$shellList = $this->Command->getShellList();
 		if (empty($shellList)) {
 			return;
 		}
@@ -66,48 +73,6 @@ class CommandListShell extends Shell {
 			$this->_asText($shellList);
 		} else {
 			$this->_asXml($shellList);
-		}
-	}
-
-/**
- * Gets the shell command listing.
- *
- * @return array
- */
-	protected function _getShellList() {
-		$skipFiles = array('AppShell');
-
-		$plugins = Plugin::loaded();
-		$shellList = array_fill_keys($plugins, null) + array('CORE' => null, 'app' => null);
-
-		$corePath = App::core('Console/Command');
-		$shells = App::objects('file', $corePath[0]);
-		$shells = array_diff($shells, $skipFiles);
-		$this->_appendShells('CORE', $shells, $shellList);
-
-		$appShells = App::objects('Console/Command', null, false);
-		$appShells = array_diff($appShells, $shells, $skipFiles);
-		$this->_appendShells('app', $appShells, $shellList);
-
-		foreach ($plugins as $plugin) {
-			$pluginShells = App::objects($plugin . '.Console/Command');
-			$this->_appendShells($plugin, $pluginShells, $shellList);
-		}
-
-		return array_filter($shellList);
-	}
-
-/**
- * Scan the provided paths for shells, and append them into $shellList
- *
- * @param string $type
- * @param array $shells
- * @param array $shellList
- * @return void
- */
-	protected function _appendShells($type, $shells, &$shellList) {
-		foreach ($shells as $shell) {
-			$shellList[$type][] = Inflector::underscore(str_replace('Shell', '', $shell));
 		}
 	}
 

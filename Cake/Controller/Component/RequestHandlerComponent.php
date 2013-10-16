@@ -409,6 +409,9 @@ class RequestHandlerComponent extends Component {
 		}
 
 		list($contentType) = explode(';', env('CONTENT_TYPE'));
+		if ($contentType === '') {
+			list($contentType) = explode(';', CakeRequest::header('CONTENT_TYPE'));
+		}
 		if (!$type) {
 			return $this->response->mapType($contentType);
 		}

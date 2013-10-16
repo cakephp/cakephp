@@ -87,7 +87,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * Test that querystring args provided in the url string are parsed.
+ * Test that querystring args provided in the URL string are parsed.
  *
  * @return void
  */
@@ -1098,6 +1098,41 @@ class RequestTest extends TestCase {
 	}
 
 /**
+ * Test parsing accept ignores index param
+ *
+ * @return void
+ */
+	public function testParseAcceptIgnoreAcceptExtensions() {
+		$_SERVER['HTTP_ACCEPT'] = 'application/json;level=1, text/plain, */*';
+
+		$request = new CakeRequest('/', false);
+		$result = $request->parseAccept();
+		$expected = array(
+			'1.0' => array('application/json', 'text/plain', '*/*'),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that parsing accept headers with invalid syntax works.
+ *
+ * The header used is missing a q value for application/xml.
+ *
+ * @return void
+ */
+	public function testParseAcceptInvalidSyntax() {
+		$_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
+		$request = new CakeRequest('/', false);
+		$result = $request->parseAccept();
+		$expected = array(
+			'1.0' => array('text/html', 'application/xhtml+xml', 'application/xml', 'image/jpeg'),
+			'0.9' => array('image/*'),
+			'0.8' => array('*/*'),
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test baseUrl and webroot with ModRewrite
  *
  * @return void
@@ -1195,8 +1230,8 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * Test base, webroot, url and here parsing when there is url rewriting but
- * CakePHP gets called with index.php in url nonetheless.
+ * Test base, webroot, URL and here parsing when there is URL rewriting but
+ * CakePHP gets called with index.php in URL nonetheless.
  *
  * Tests uri with
  * - index.php/
@@ -1259,7 +1294,7 @@ class RequestTest extends TestCase {
 	}
 
 /**
- * Test base, webroot, and url parsing when there is no url rewriting
+ * Test base, webroot, and URL parsing when there is no URL rewriting
  *
  * @return void
  */

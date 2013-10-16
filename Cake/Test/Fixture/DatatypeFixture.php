@@ -33,6 +33,7 @@ class DatatypeFixture extends TestFixture {
  */
 	public $fields = array(
 		'id' => ['type' => 'integer', 'null' => false],
+		'decimal_field' => ['type' => 'decimal', 'length' => '6', 'precision' => 3, 'default' => '0.000'],
 		'float_field' => ['type' => 'float', 'length' => '5,2', 'null' => false, 'default' => null],
 		'huge_int' => ['type' => 'biginteger'],
 		'bool' => ['type' => 'boolean', 'null' => false, 'default' => false],

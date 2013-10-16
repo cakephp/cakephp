@@ -121,12 +121,12 @@ class SessionTest extends TestCase {
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		if (TestCakeSession::started()) {
 			session_write_close();
 		}
 		unset($_SESSION);
-		parent::teardown();
+		parent::tearDown();
 	}
 
 /**

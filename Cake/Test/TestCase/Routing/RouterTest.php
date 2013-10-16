@@ -84,6 +84,18 @@ class RouterTest extends TestCase {
 	}
 
 /**
+ * Test that Router uses App.base to build URL's when there are no stored
+ * request objects.
+ *
+ * @return void
+ */
+	public function testBaseUrlWithBasePath() {
+		Configure::write('App.base', '/cakephp');
+		Router::fullBaseUrl('http://example.com');
+		$this->assertEquals('http://example.com/cakephp/tasks', Router::url('/tasks', true));
+	}
+
+/**
  * testRouteDefaultParams method
  *
  * @return void
@@ -686,7 +698,7 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test url generation with an admin prefix
+ * Test URL generation with an admin prefix
  *
  * @return void
  */
@@ -1613,7 +1625,7 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * test newer style automatically generated prefix routes.
+ * Test newer style automatically generated prefix routes.
  *
  * @return void
  * @see testUrlGenerationWithAutoPrefixes
@@ -2423,7 +2435,7 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * test that a route object returning a full url is not modified.
+ * test that a route object returning a full URL is not modified.
  *
  * @return void
  */
@@ -2520,7 +2532,7 @@ class RouterTest extends TestCase {
 			array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
 			array('action' => 'edit', 'method' => 'POST', 'id' => true)
 		);
-		$this->assertEquals($default, $expected);
+		$this->assertEquals($expected, $default);
 
 		$custom = array(
 			array('action' => 'index', 'method' => 'GET', 'id' => false),

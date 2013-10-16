@@ -71,7 +71,7 @@ class AssetDispatcherTest extends TestCase {
 	}
 
 /**
- * Test that no exceptions are thrown for //index.php type urls.
+ * Test that no exceptions are thrown for //index.php type URLs.
  *
  * @return void
  */

@@ -140,7 +140,7 @@ class Router {
 	protected static $_initialState = array();
 
 /**
- * The stack of URL filters to apply against routing urls before passing the
+ * The stack of URL filters to apply against routing URLs before passing the
  * parameters to the route collection.
  *
  * @var array
@@ -228,7 +228,7 @@ class Router {
 /**
  * Connects a new Route in the router.
  *
- * Routes are a way of connecting request urls to objects in your application.
+ * Routes are a way of connecting request URLs to objects in your application.
  * At their core routes are a set or regular expressions that are used to
  * match requests to destinations.
  *
@@ -347,7 +347,7 @@ class Router {
  *
  * - `status` Sets the HTTP status (default 301)
  * - `persist` Passes the params to the redirected route, if it can. This is useful with greedy routes,
- *   routes that end in `*` are greedy. As you can remap urls and not loose any passed args.
+ *   routes that end in `*` are greedy. As you can remap URLs and not loose any passed args.
  *
  * @param string $route A string describing the template of the route
  * @param array $url An URL to redirect to. Can be a string or a Cake array-based URL
@@ -465,7 +465,7 @@ class Router {
 	}
 
 /**
- * Parses given URL string. Returns 'routing' parameters for that url.
+ * Parses given URL string. Returns 'routing' parameters for that URL.
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
@@ -493,7 +493,7 @@ class Router {
 
 /**
  * Takes parameter and path information back from the Dispatcher, sets these
- * parameters as the current request parameters that are merged with url arrays
+ * parameters as the current request parameters that are merged with URL arrays
  * created later in the request.
  *
  * Nested requests will create a stack of requests. You can remove requests using
@@ -524,7 +524,7 @@ class Router {
 
 /**
  * Push a request onto the request stack. Pushing a request
- * sets the request context used when generating urls.
+ * sets the request context used when generating URLs.
  *
  * @param Cake\Network\Request $request
  * @return void
@@ -598,21 +598,21 @@ class Router {
 	}
 
 /**
- * Add a url filter to Router.
+ * Add a URL filter to Router.
  *
- * Url filter functions are applied to every array $url provided to
- * Router::url() before the urls are sent to the route collection.
+ * URL filter functions are applied to every array $url provided to
+ * Router::url() before the URLs are sent to the route collection.
  *
  * Callback functions should expect the following parameters:
  *
- * - `$params` The url params being processed.
+ * - `$params` The URL params being processed.
  * - `$request` The current request.
  *
- * The url filter function should *always* return the params even if unmodified.
+ * The URL filter function should *always* return the params even if unmodified.
  *
  * ### Usage
  *
- * Url filters allow you to easily implement features like persistent parameters.
+ * URL filters allow you to easily implement features like persistent parameters.
  *
  * {{{
  * Router::addUrlFilter(function ($params, $request) {
@@ -631,10 +631,10 @@ class Router {
 	}
 
 /**
- * Applies all the connected url filters to the url.
+ * Applies all the connected URL filters to the URL.
  *
- * @param array $url The url array being modified.
- * @return array The modified url.
+ * @param array $url The URL array being modified.
+ * @return array The modified URL.
  * @see Router::url()
  * @see Router::addUrlFilter()
  */
@@ -655,23 +655,23 @@ class Router {
  *
  * - `Router::url('/posts/edit/1');` Returns the string with the base dir prepended.
  *   This usage does not use reverser routing.
- * - `Router::url(array('controller' => 'posts', 'action' => 'edit'));` Returns a url
+ * - `Router::url(array('controller' => 'posts', 'action' => 'edit'));` Returns a URL
  *   generated through reverse routing.
- * - `Router::url('custom-name', array(...));` Returns a url generated through reverse
+ * - `Router::url('custom-name', array(...));` Returns a URL generated through reverse
  *   routing.  This form allows you to leverage named routes.
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
  *
- * - `_base` - Set to false to remove the base path from the generated url. If your application
- *   is not in the root directory, this can be used to generate urls that are 'cake relative'.
- *   cake relative urls are required when using requestAction.
+ * - `_base` - Set to false to remove the base path from the generated URL. If your application
+ *   is not in the root directory, this can be used to generate URLs that are 'cake relative'.
+ *   cake relative URLs are required when using requestAction.
  * - `_scheme` - Set to create links on different schemes like `webcal` or `ftp`. Defaults
  *   to the current scheme.
  * - `_host` - Set the host to use for the link.  Defaults to the current host.
  * - `_port` - Set the port if you need to create links on non-standard ports.
- * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated urls.
- * - `#` - Allows you to set url hash fragments.
- * - `ssl` - Set to true to convert the generated url to https, or false to force http.
+ * - `_full` - If true output of `Router::fullBaseUrl()` will be prepended to generated URLs.
+ * - `#` - Allows you to set URL hash fragments.
+ * - `ssl` - Set to true to convert the generated URL to https, or false to force http.
  *
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action', 'plugin'
@@ -721,6 +721,9 @@ class Router {
 			$params = $request->params;
 			$here = $request->here;
 			$base = $request->base;
+		}
+		if (!isset($base)) {
+			$base = Configure::read('App.base');
 		}
 
 		if (empty($url)) {
@@ -813,7 +816,7 @@ class Router {
 	}
 
 /**
- * Sets the full base url that will be used as a prefix for generating
+ * Sets the full base URL that will be used as a prefix for generating
  * fully qualified URLs for this application. If not parameters are passed,
  * the currently configured value is returned.
  *
@@ -843,15 +846,15 @@ class Router {
  *
  * Works similarly to Router::url(), but since parsed URL's contain additional
  * 'pass' as well as 'url.url' keys. Those keys need to be specially
- * handled in order to reverse a params array into a string url.
+ * handled in order to reverse a params array into a string URL.
  *
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
  * are used for CakePHP internals and should not normally be part of an output URL.
  *
  * @param Cake\Network\Request|array $params The params array or
  *     Cake\Network\Request object that needs to be reversed.
- * @param boolean $full Set to true to include the full url including the
- *     protocol when reversing the url.
+ * @param boolean $full Set to true to include the full URL including the
+ *     protocol when reversing the URL.
  * @return string The string that is the reversed result of the array
  */
 	public static function reverse($params, $full = false) {
