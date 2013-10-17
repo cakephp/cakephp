@@ -92,7 +92,7 @@ class CommandListShellTest extends TestCase {
 		$expected = "/\[.*TestPluginTwo.*\] example, welcome/";
 		$this->assertRegExp($expected, $output);
 
-		$expected = "/\[.*CORE.*\] acl, api, bake, command_list, completion, i18n, schema, server, test, upgrade/";
+		$expected = "/\[.*CORE.*\] acl, api, bake, command_list, completion, i18n, server, test, upgrade/";
 		$this->assertRegExp($expected, $output);
 
 		$expected = "/\[.*app.*\] sample/";
