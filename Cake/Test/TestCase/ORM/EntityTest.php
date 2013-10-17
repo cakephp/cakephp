@@ -395,8 +395,21 @@ class EntityTest extends TestCase {
 		$entity->expects($this->once())->method('getBar');
 		$entity2->expects($this->once())->method('setBar');
 
-		$entity->setFoo(1);
-		$entity->getBar();
-		$entity2->setBar(1);
+		$entity->set('foo', 1);
+		$entity->get('bar');
+		$entity2->set('bar', 1);
+	}
+
+/**
+ * Tests that long properties in the entity are inflected correctly
+ *
+ * @return void
+ */
+	public function testSetGetLongProperyNames() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['getVeryLongProperty', 'setVeryLongProperty']);
+		$entity->expects($this->once())->method('getVeryLongProperty');
+		$entity->expects($this->once())->method('setVeryLongProperty');
+		$entity->get('very_long_property');
+		$entity->set('very_long_property', 1);
 	}
 }
