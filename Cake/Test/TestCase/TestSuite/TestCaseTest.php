@@ -412,14 +412,4 @@ class TestCaseTest extends TestCase {
 		$this->assertFalse($Mock->save(array()));
 	}
 
-/**
- * testGetMockForModelDoesNotExist
- *
- * @expectedException Cake\Error\MissingModelException
- * @expectedExceptionMessage Model IDoNotExist could not be found
- * @return void
- */
-	public function testGetMockForModelDoesNotExist() {
-		$this->getMockForModel('IDoNotExist');
-	}
 }

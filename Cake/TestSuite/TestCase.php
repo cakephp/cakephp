@@ -689,6 +689,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param mixed $methods
  * @param array $config
  * @throws Cake\Error\MissingModelException
+ * @todo Rewrite so it gets a model for a Table object
  * @return Model
  */
 	public function getMockForModel($model, $methods = array(), $config = array()) {
