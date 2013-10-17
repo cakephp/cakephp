@@ -374,11 +374,29 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testUnsetArrayAccess() {
-	$entity = $this->getMock('\Cake\ORM\Entity', ['unsetProperty']);
-	$entity->expects($this->at(0))
-		->method('unsetProperty')
-		->with('foo');
-	unset($entity['foo']);
+		$entity = $this->getMock('\Cake\ORM\Entity', ['unsetProperty']);
+		$entity->expects($this->at(0))
+			->method('unsetProperty')
+			->with('foo');
+		unset($entity['foo']);
 	}
 
+/**
+ * Tests that the method cache will only report the methods for the called class,
+ * this is, calling methods defined in another entity will not cause a fatal error
+ * when trying to call directly an inexistent method in another class
+ *
+ * @return void
+ */
+	public function testMethodCache() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['setFoo', 'getBar']);
+		$entity2 = $this->getMock('\Cake\ORM\Entity', ['setBar']);
+		$entity->expects($this->once())->method('setFoo');
+		$entity->expects($this->once())->method('getBar');
+		$entity2->expects($this->once())->method('setBar');
+
+		$entity->setFoo(1);
+		$entity->getBar();
+		$entity2->setBar(1);
+	}
 }

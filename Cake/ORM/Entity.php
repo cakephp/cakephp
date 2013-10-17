@@ -1,8 +1,23 @@
 <?php
-
+/**
+ * PHP Version 5.4
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP(tm) v 3.0.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
 namespace Cake\ORM;
 
 use Cake\ORM\Table;
+use Cake\Utility\Inflector;
 
 class Entity implements \ArrayAccess {
 
@@ -12,6 +27,20 @@ class Entity implements \ArrayAccess {
  * @var array
  */
 	protected $_properties = [];
+
+/**
+ * Holds the name of the class for the instance object
+ *
+ * @var string
+ */
+	protected $_className;
+
+/**
+ * Holds a cached list of methods that exist in the instanced class
+ *
+ * @var array
+ */
+	protected static $_accessors = [];
 
 /**
  * Initializes the internal properties of this entity out of the
@@ -26,6 +55,7 @@ class Entity implements \ArrayAccess {
  * @return void
  */
 	public function __construct(array $properties = [], $useSetters = true) {
+		$this->_className = get_class($this);
 		$this->set($properties, $useSetters);
 	}
 
@@ -123,8 +153,9 @@ class Entity implements \ArrayAccess {
 		}
 
 		foreach ($property as $p => $value) {
-			if (method_exists($this, 'set' . ucFirst($p))) {
-				$value = $this->{'set' . ucFirst($p)}($value);
+			$setter = 'set' . Inflector::camelize($p);
+			if ($this->_methodExists($setter)) {
+				$value = $this->{$setter}($value);
 			}
 			$this->_properties[$p] = $value;
 		}
@@ -138,14 +169,14 @@ class Entity implements \ArrayAccess {
  * @return mixed
  */
 	public function &get($property) {
-		$method = 'get' . ucFirst($property);
+		$method = 'get' . Inflector::camelize($property);
 		$value = null;
 
 		if (isset($this->_properties[$property])) {
 			$value =& $this->_properties[$property];
 		}
 
-		if (method_exists($this, $method)) {
+		if ($this->_methodExists($method)) {
 			$value = $this->{$method}($value);
 		}
 		return $value;
@@ -246,6 +277,19 @@ class Entity implements \ArrayAccess {
  */
 	public function offsetUnset($offset) {
 		$this->unsetProperty($offset);
+	}
+
+/**
+ * Determines whether a method exists in this class
+ *
+ * @param string $method the method to check for existence
+ * @return boolean true if method exists
+ */
+	protected function _methodExists($method) {
+		if (empty(static::$_accessors[$this->_className])) {
+			static::$_accessors[$this->_className] = array_flip(get_class_methods($this));
+		}
+		return isset(static::$_accessors[$this->_className][$method]);
 	}
 
 }
