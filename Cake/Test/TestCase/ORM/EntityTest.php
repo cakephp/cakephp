@@ -412,4 +412,15 @@ class EntityTest extends TestCase {
 		$entity->get('very_long_property');
 		$entity->set('very_long_property', 1);
 	}
+
+/**
+ * Tests serializing an entity as json
+ *
+ * @return void
+ */
+	public function testJsonSerialize() {
+		$data = ['name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
+		$entity = new Entity($data);
+		$this->assertEquals(json_encode($data), json_encode($entity));
+	}
 }

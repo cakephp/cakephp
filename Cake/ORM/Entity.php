@@ -19,7 +19,7 @@ namespace Cake\ORM;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
-class Entity implements \ArrayAccess {
+class Entity implements \ArrayAccess, \JsonSerializable {
 
 /**
  * Holds all properties and their values for this entity
@@ -290,6 +290,15 @@ class Entity implements \ArrayAccess {
 			static::$_accessors[$this->_className] = array_flip(get_class_methods($this));
 		}
 		return isset(static::$_accessors[$this->_className][$method]);
+	}
+
+/**
+ * Returns the properties that will be serialized as json
+ *
+ * @return array
+ */
+	public function jsonSerialize() {
+		return $this->_properties;
 	}
 
 }
