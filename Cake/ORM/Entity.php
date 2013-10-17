@@ -19,6 +19,10 @@ namespace Cake\ORM;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
+/**
+ * An entity represents a single result row from a repository. It exposes the
+ * methods for retrieving and storing properties associated in this row.
+ */
 class Entity implements \ArrayAccess, \JsonSerializable {
 
 /**
