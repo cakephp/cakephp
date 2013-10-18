@@ -228,7 +228,7 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'dataExpression' => true,
 			'data' => '$("#someId").serialize()',
 		));
-		$expected = '$.ajax({async:true, data:$("#someId").serialize(), success:function (data, textStatus) {doFoo}, type:"post", url:"\/mpm\/people\/edit\/1", xhr:function () {return jQuery.ajaxSettings.xhr();}});';
+		$expected = '$.ajax({async:true, data:$("#someId").serialize(), success:function (data, textStatus) {doFoo}, type:"post", url:"\/people\/edit\/1", xhr:function () {return jQuery.ajaxSettings.xhr();}});';
 		$this->assertEquals($expected, $result);
 	}
 
