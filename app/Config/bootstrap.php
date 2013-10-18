@@ -65,7 +65,7 @@ Cache::config('default', array('engine' => 'File'));
 /**
  * Plugins
  */
-include('plugins.php');
+include ('plugins.php');
 
 /**
  * You can attach event listeners to the request lifecycle as Dispatcher Filter. By default CakePHP bundles two filters:

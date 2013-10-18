@@ -20,7 +20,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-include( 'environment.php' );
+include ('environment.php');
 
 /**
  * CakePHP Debug Level:
@@ -35,7 +35,7 @@ include( 'environment.php' );
  * In production mode, flash messages redirect after a time interval.
  * In development mode, you need to click the flash message to continue.
  */
-if ( ENV_DEVELOPMENT ) {
+if (ENV_DEVELOPMENT) {
 	Configure::write('debug', 2);
 } else {
 	Configure::write('debug', 0);
