@@ -12,12 +12,12 @@
  * @since         CakePHP v 2.5
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Console\Command;
+namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\Command\CompletionShell;
 use Cake\Console\Command\Task\CommandTask;
-use Cake\Console\ConsoleOutput;
 use Cake\Console\ConsoleInput;
+use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;

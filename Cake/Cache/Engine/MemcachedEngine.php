@@ -134,7 +134,7 @@ class MemcachedEngine extends CacheEngine {
 /**
  * Settings the memcached instance
  *
- * @throws CacheException when the Memcached extension is not built with the desired serializer engine
+ * @throws Cake\Error\Exception when the Memcached extension is not built with the desired serializer engine
  */
 	protected function _setOptions() {
 		$this->_Memcached->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
