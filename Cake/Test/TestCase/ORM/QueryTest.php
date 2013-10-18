@@ -92,7 +92,7 @@ class QueryTest extends TestCase {
  *
  * @return void
  */
-	protected function _createTables() {
+	protected function _configureTables() {
 		Table::config('authors', ['connection' => $this->connection]);
 		Table::config('articles', ['connection' => $this->connection]);
 		Table::config('publications', ['connection' => $this->connection]);
@@ -259,7 +259,7 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testContainResultFetchingOneLevelNoHydration() {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$table = Table::build('article', ['table' => 'articles']);
 		Table::build('author', ['connection' => $this->connection]);
@@ -328,7 +328,7 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingNoHydration($strategy) {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
@@ -405,7 +405,7 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy) {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
@@ -456,7 +456,7 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingDeepNoHydration($strategy) {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$table = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
@@ -529,7 +529,7 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingFromSecondaryTable($strategy) {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$author = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
@@ -633,7 +633,7 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testBelongsToManyEagerLoadingNoHydration($strategy) {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$table = Table::build('Article', ['connection' => $this->connection]);
 		Table::build('Tag', ['connection' => $this->connection]);
@@ -738,7 +738,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFilteringByHasManyNoHydration() {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$query = new Query($this->connection, $this->table);
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -777,7 +777,7 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testFilteringByBelongsToManyNoHydration() {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$query = new Query($this->connection, $this->table);
 		$table = Table::build('Article', ['connection' => $this->connection]);
@@ -1053,7 +1053,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstDirtyQuery() {
-		$this->_createTables();
+		$this->_configureTables();
 		$table = Table::build('article', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$result = $query->select(['id'])->hydrate(false)->first();
@@ -1069,7 +1069,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstCleanQuery() {
-		$this->_createTables();
+		$this->_configureTables();
 		$table = Table::build('article', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$query->select(['id'])->toArray();
@@ -1085,7 +1085,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstSameResult() {
-		$this->_createTables();
+		$this->_configureTables();
 		$table = Table::build('article', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$query->select(['id'])->toArray();
@@ -1102,7 +1102,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateSimple() {
-		$this->_createTables();
+		$this->_configureTables();
 		$table = Table::build('article', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$results = $query->select()->execute()->toArray();
@@ -1126,7 +1126,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateWithHasMany() {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
@@ -1169,7 +1169,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateBelongsToMany() {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$table = Table::build('Article', ['connection' => $this->connection]);
 		Table::build('Tag', ['connection' => $this->connection]);
@@ -1212,7 +1212,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateBelongsTo() {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$table = Table::build('article', ['table' => 'articles']);
 		Table::build('author', ['connection' => $this->connection]);
@@ -1237,7 +1237,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateDeep() {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$table = Table::build('author', ['connection' => $this->connection]);
 		$article = Table::build('article', ['connection' => $this->connection]);
@@ -1266,7 +1266,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateCustomObject() {
-		$this->_createTables();
+		$this->_configureTables();
 		$class = $this->getMockClass('\Cake\ORM\Entity', ['fakeMethod']);
 		$table = Table::build('article', [
 			'table' => 'articles',
@@ -1295,7 +1295,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateWithHasManyCustomEntity() {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
 		$articleEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
@@ -1339,7 +1339,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateBelongsToCustomEntity() {
-		$this->_createTables();
+		$this->_configureTables();
 
 		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
 		$table = Table::build('article', ['table' => 'articles']);
