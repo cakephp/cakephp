@@ -285,9 +285,14 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFindAllNoFields() {
+	public function testFindAllNoFieldsAndNoHydration() {
 		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
-		$results = $table->find('all')->where(['id IN' => [1, 2]])->order('id')->toArray();
+		$results = $table
+			->find('all')
+			->where(['id IN' => [1, 2]])
+			->order('id')
+			->hydrate(false)
+			->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -312,9 +317,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFindAllSomeFields() {
+	public function testFindAllSomeFieldsNoHydration() {
 		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
-		$results = $table->find('all')->select(['username', 'password'])->order('username')->toArray();
+		$results = $table->find('all')
+			->select(['username', 'password'])
+			->hydrate(false)
+			->order('username')->toArray();
 		$expected = [
 			['username' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
 			['username' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
@@ -323,7 +331,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertSame($expected, $results);
 
-		$results = $table->find('all')->select(['foo' => 'username', 'password'])->order('username')->toArray();
+		$results = $table->find('all')
+			->select(['foo' => 'username', 'password'])
+			->order('username')
+			->hydrate(false)
+			->toArray();
 		$expected = [
 			['foo' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
 			['foo' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
@@ -344,6 +356,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query = $table->find('all')
 			->select(['id', 'username'])
 			->where(['created >=' => new \DateTime('2010-01-22 00:00')])
+			->hydrate(false)
 			->order('id');
 		$expected = [
 			['id' => 3, 'username' => 'larry'],
@@ -488,6 +501,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result = $table->find('all')
 			->select(['username'])
 			->order(['id' => 'asc'])
+			->hydrate(false)
 			->toArray();
 		$expected = array_fill(0, 3, $fields);
 		$expected[] = ['username' => 'garrett'];
@@ -578,10 +592,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFindList() {
+	public function testFindListNoHydration() {
 		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
 		$table->displayField('username');
 		$query = $table->find('list', ['fields' => ['id', 'username']])
+			->hydrate(false)
 			->order('id');
 		$expected = [
 			1 => 'mariano',
@@ -593,6 +608,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$query = $table->find('list', ['groupField' => 'odd'])
 			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->hydrate(false)
 			->order('id');
 		$expected = [
 			0 => [
@@ -612,7 +628,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFindThreaded() {
+	public function testFindThreadedNoHydration() {
 		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
 		$expected = [
 			[
@@ -731,7 +747,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testFindThreadedHydrated() {
 		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
 		$results = $table->find('all')
-			->hydrate(true)
 			->threaded()
 			->select(['id', 'parent_id', 'name'])
 			->toArray();
@@ -756,7 +771,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->displayField('username');
 		$query = $table
 			->find('list', ['fields' => ['id', 'username']])
-			->hydrate(true)
 			->order('id');
 		$expected = [
 			1 => 'mariano',

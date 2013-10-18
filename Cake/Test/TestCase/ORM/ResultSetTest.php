@@ -85,13 +85,28 @@ class ResultSetTest extends TestCase {
  *
  * @return void
  */
-	public function testIteratorAfterSerialization() {
-		$query = $this->table->find('all');
+	public function testIteratorAfterSerializationNoHydration() {
+		$query = $this->table->find('all')->hydrate(false);
 		$results = unserialize(serialize($query->execute()));
 
 		// Use a loop to test Iterator implementation
 		foreach ($results as $i => $row) {
 			$this->assertEquals($this->fixtureData[$i], $row, "Row $i does not match");
+		}
+	}
+
+/**
+ * Test iteration after serialization
+ *
+ * @return void
+ */
+	public function testIteratorAfterSerializationHydrated() {
+		$query = $this->table->find('all');
+		$results = unserialize(serialize($query->execute()));
+
+		// Use a loop to test Iterator implementation
+		foreach ($results as $i => $row) {
+			$this->assertEquals(new \Cake\ORM\Entity($this->fixtureData[$i]), $row, "Row $i does not match");
 		}
 	}
 
