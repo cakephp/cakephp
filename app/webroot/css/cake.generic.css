@@ -77,39 +77,39 @@ p {
 	text-align: left;
 }
 
-#header{
+header{
 	padding: 10px 20px;
 }
-#header h1 {
+header h1 {
 	line-height:20px;
 	background: #003d4c url('../img/cake.icon.png') no-repeat left;
 	color: #fff;
 	padding: 0px 30px;
 }
-#header h1 a {
+header h1 a {
 	color: #fff;
 	background: #003d4c;
 	font-weight: normal;
 	text-decoration: none;
 }
-#header h1 a:hover {
+header h1 a:hover {
 	color: #fff;
 	background: #003d4c;
 	text-decoration: underline;
 }
-#content{
+article{
 	background: #fff;
 	clear: both;
 	color: #333;
 	padding: 10px 20px 40px 20px;
 	overflow: auto;
 }
-#footer {
+article{
 	clear: both;
 	padding: 6px 10px;
 	text-align: right;
 }
-#header a, #footer a {
+article a, footer a {
 	color: #fff;
 }
 
