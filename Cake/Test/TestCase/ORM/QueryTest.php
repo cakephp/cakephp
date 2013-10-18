@@ -179,7 +179,6 @@ class QueryTest extends TestCase {
 
 		$s = $query
 			->select('foo.id')
-			->repository($this->table)
 			->contain($contains)->sql();
 	}
 
@@ -255,10 +254,11 @@ class QueryTest extends TestCase {
 
 /**
  * Tests that results are grouped correctly when using contain()
+ * and results are not hydrated
  *
  * @return void
  **/
-	public function testContainResultFetchingOneLevel() {
+	public function testContainResultFetchingOneLevelNoHydration() {
 		$this->_createTables();
 
 		$table = Table::build('article', ['table' => 'articles']);
@@ -268,6 +268,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
 			->contain('author')
+			->hydrate(false)
 			->order(['article.id' => 'asc'])
 			->toArray();
 		$expected = [
@@ -318,14 +319,15 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that HasMany associations are correctly eager loaded.
+ * Tests that HasMany associations are correctly eager loaded and results
+ * correctly nested when no hydration is used
  * Also that the query object passes the correct parent model keys to the
  * association objects in order to perform eager loading with select strategy
  *
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoading($strategy) {
+	public function testHasManyEagerLoadingNoHydration($strategy) {
 		$this->_createTables();
 
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -337,7 +339,10 @@ class QueryTest extends TestCase {
 		]);
 		$query = new Query($this->connection, $table);
 
-		$results = $query->select()->contain('article')->toArray();
+		$results = $query->select()
+			->contain('article')
+			->hydrate(false)
+			->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -386,6 +391,7 @@ class QueryTest extends TestCase {
 		$results = $query->repository($table)
 			->select()
 			->contain(['article' => ['conditions' => ['id' => 2]]])
+			->hydrate(false)
 			->toArray();
 		unset($expected[0]['articles']);
 		$this->assertEquals($expected, $results);
@@ -398,7 +404,7 @@ class QueryTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoadingFieldsAndOrder($strategy) {
+	public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy) {
 		$this->_createTables();
 
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -413,6 +419,7 @@ class QueryTest extends TestCase {
 					'sort' => ['id' => 'DESC']
 				]
 			])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -448,7 +455,7 @@ class QueryTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoadingDeep($strategy) {
+	public function testHasManyEagerLoadingDeepNoHydration($strategy) {
 		$this->_createTables();
 
 		$table = Table::build('author', ['connection' => $this->connection]);
@@ -463,6 +470,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->select()
 			->contain(['article' => ['author']])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -535,6 +543,7 @@ class QueryTest extends TestCase {
 		$results = $query->select()
 			->contain(['author' => ['post']])
 			->order(['article.id' => 'ASC'])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -623,7 +632,7 @@ class QueryTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testBelongsToManyEagerLoading($strategy) {
+	public function testBelongsToManyEagerLoadingNoHydration($strategy) {
 		$this->_createTables();
 
 		$table = Table::build('Article', ['connection' => $this->connection]);
@@ -635,7 +644,7 @@ class QueryTest extends TestCase {
 		$table->belongsToMany('Tag', ['property' => 'tags', 'strategy' => $strategy]);
 		$query = new Query($this->connection, $table);
 
-		$results = $query->select()->contain('Tag')->toArray();
+		$results = $query->select()->contain('Tag')->hydrate(false)->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -687,6 +696,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->select()
 			->contain(['Tag' => ['conditions' => ['id' => 3]]])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -727,7 +737,7 @@ class QueryTest extends TestCase {
  *
  * @return void
  */
-	public function testFilteringByHasMany() {
+	public function testFilteringByHasManyNoHydration() {
 		$this->_createTables();
 
 		$query = new Query($this->connection, $this->table);
@@ -737,6 +747,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->repository($table)
 			->select()
+			->hydrate(false)
 			->contain(['article' => [
 				'matching' => true,
 				'conditions' => ['article.id' => 2]
@@ -765,7 +776,7 @@ class QueryTest extends TestCase {
  *
  * @return void
  **/
-	public function testFilteringByBelongsToMany() {
+	public function testFilteringByBelongsToManyNoHydration() {
 		$this->_createTables();
 
 		$query = new Query($this->connection, $this->table);
@@ -782,6 +793,7 @@ class QueryTest extends TestCase {
 				'matching' => true,
 				'conditions' => ['Tag.id' => 3]
 			]])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -804,6 +816,7 @@ class QueryTest extends TestCase {
 				'matching' => true,
 				'conditions' => ['Tag.name' => 'tag2']]
 			])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -1043,7 +1056,7 @@ class QueryTest extends TestCase {
 		$this->_createTables();
 		$table = Table::build('article', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
-		$result = $query->select(['id'])->first();
+		$result = $query->select(['id'])->hydrate(false)->first();
 		$this->assertEquals(['id' => 1], $result);
 		$this->assertEquals(1, $query->clause('limit'));
 		$result = $query->select(['id'])->first();
@@ -1061,7 +1074,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$query->select(['id'])->toArray();
 
-		$first = $query->first();
+		$first = $query->hydrate(false)->first();
 		$this->assertEquals(['id' => 1], $first);
 		$this->assertNull($query->clause('limit'));
 	}
@@ -1077,7 +1090,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$query->select(['id'])->toArray();
 
-		$first = $query->first();
+		$first = $query->hydrate(false)->first();
 		$resultSet = $query->execute();
 		$this->assertEquals(['id' => 1], $first);
 		$this->assertSame($resultSet, $query->execute());
@@ -1092,7 +1105,7 @@ class QueryTest extends TestCase {
 		$this->_createTables();
 		$table = Table::build('article', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
-		$results = $query->select()->hydrate(true)->execute()->toArray();
+		$results = $query->select()->execute()->toArray();
 
 		$this->assertCount(3, $results);
 		foreach ($results as $r) {
@@ -1124,7 +1137,6 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
 			->contain('article')
-			->hydrate(true)
 			->toArray();
 
 		$first = $results[0];
@@ -1171,7 +1183,6 @@ class QueryTest extends TestCase {
 		$results = $query
 			->select()
 			->contain('Tag')
-			->hydrate(true)
 			->toArray();
 
 		$first = $results[0];
@@ -1211,7 +1222,6 @@ class QueryTest extends TestCase {
 		$results = $query->select()
 			->contain('author')
 			->order(['article.id' => 'asc'])
-			->hydrate(true)
 			->toArray();
 
 		$this->assertCount(3, $results);
@@ -1240,7 +1250,6 @@ class QueryTest extends TestCase {
 
 		$results = $query->select()
 			->contain(['article' => ['author']])
-			->hydrate(true)
 			->toArray();
 
 		$this->assertCount(4, $results);
@@ -1264,7 +1273,7 @@ class QueryTest extends TestCase {
 			'entityClass' => '\\' . $class
 		]);
 		$query = new Query($this->connection, $table);
-		$results = $query->select()->hydrate(true)->execute()->toArray();
+		$results = $query->select()->execute()->toArray();
 
 		$this->assertCount(3, $results);
 		foreach ($results as $r) {
@@ -1305,7 +1314,6 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
 			->contain('article')
-			->hydrate(true)
 			->toArray();
 
 		$first = $results[0];
@@ -1345,7 +1353,6 @@ class QueryTest extends TestCase {
 		$results = $query->select()
 			->contain('author')
 			->order(['article.id' => 'asc'])
-			->hydrate(true)
 			->toArray();
 
 		$first = $results[0];

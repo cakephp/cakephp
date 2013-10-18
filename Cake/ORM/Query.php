@@ -122,7 +122,7 @@ class Query extends DatabaseQuery {
  *
  * @var boolean
  */
-	protected $_hydrate = false;
+	protected $_hydrate = true;
 
 /**
  * @param Cake\Database\Connection $connection
