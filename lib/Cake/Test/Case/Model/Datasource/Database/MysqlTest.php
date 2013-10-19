@@ -355,6 +355,15 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->index('with_compound_text_index', false);
 		$this->Dbo->rawQuery('DROP TABLE ' . $name);
 		$this->assertEquals($expected, $result);
+
+		$name = $this->Dbo->fullTableName('with_spatial_key');
+		$this->Dbo->rawQuery('CREATE TABLE ' . $name . ' (pt point not null, SPATIAL KEY (`pt`)) ENGINE = MYISAM;');
+		$expected = array(
+			'pt' => array('column' => 'pt', 'type' => 'spatial'),
+		);
+		$result = $this->Dbo->index('with_spatial_key', false);
+		$this->Dbo->rawQuery('DROP TABLE ' . $name);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -554,6 +563,10 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->column('decimal(14,7) unsigned');
 		$expected = 'decimal';
 		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->column('point');
+		$expected = 'coordinate';
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -573,13 +586,15 @@ class MysqlTest extends CakeTestCase {
 				'id' => array('type' => 'integer', 'null' => false, 'default' => 0),
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 				'group1' => array('type' => 'integer', 'null' => true),
-				'group2' => array('type' => 'integer', 'null' => true)
+				'group2' => array('type' => 'integer', 'null' => true),
+				'point' => array('type' => 'coordinate')
 		)));
 		$result = $this->Dbo->createSchema($schemaA);
 		$this->assertContains('`id` int(11) DEFAULT 0 NOT NULL,', $result);
 		$this->assertContains('`name` varchar(50) NOT NULL,', $result);
 		$this->assertContains('`group1` int(11) DEFAULT NULL', $result);
 		$this->assertContains('`group2` int(11) DEFAULT NULL', $result);
+		$this->assertContains('`point` point', $result);
 
 		//Test that the string is syntactically correct
 		$query = $this->Dbo->getConnection()->prepare($result);
@@ -593,10 +608,12 @@ class MysqlTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 				'group1' => array('type' => 'integer', 'null' => true),
 				'group2' => array('type' => 'integer', 'null' => true),
+				'point' => array('type' => 'coordinate'),
 				'indexes' => array(
 					'name_idx' => array('column' => 'name', 'unique' => 0),
 					'group_idx' => array('column' => 'group1', 'unique' => 0),
 					'compound_idx' => array('column' => array('group1', 'group2'), 'unique' => 0),
+					'point' => array('column' => 'point', 'type' => 'spatial'),
 					'PRIMARY' => array('column' => 'id', 'unique' => 1))
 		)));
 
@@ -605,6 +622,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertContains('ADD KEY `name_idx` (`name`),', $result);
 		$this->assertContains('ADD KEY `group_idx` (`group1`),', $result);
 		$this->assertContains('ADD KEY `compound_idx` (`group1`, `group2`),', $result);
+		$this->assertContains('ADD SPATIAL KEY  (`point`),', $result);
 		$this->assertContains('ADD PRIMARY KEY  (`id`);', $result);
 
 		//Test that the string is syntactically correct
@@ -620,10 +638,12 @@ class MysqlTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 				'group1' => array('type' => 'integer', 'null' => true),
 				'group2' => array('type' => 'integer', 'null' => true),
+				'point' => array('type' => 'coordinate'),
 				'indexes' => array(
 					'name_idx' => array('column' => 'name', 'unique' => 1),
 					'group_idx' => array('column' => 'group2', 'unique' => 0),
 					'compound_idx' => array('column' => array('group2', 'group1'), 'unique' => 0),
+					'point' => array('column' => 'point', 'type' => 'spatial'),
 					'id_name_idx' => array('column' => array('id', 'name'), 'unique' => 0))
 		)));
 
@@ -651,6 +671,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertContains('DROP KEY `name_idx`,', $result);
 		$this->assertContains('DROP KEY `group_idx`,', $result);
 		$this->assertContains('DROP KEY `compound_idx`,', $result);
+		$this->assertContains('DROP KEY `point`,', $result);
 		$this->assertContains('DROP KEY `id_name_idx`;', $result);
 
 		$query = $this->Dbo->getConnection()->prepare($result);
@@ -3032,6 +3053,13 @@ class MysqlTest extends CakeTestCase {
 		);
 		$result = $this->Dbo->buildIndex($data);
 		$expected = array('KEY `MyMultiTextIndex` (`text_field1`(20), `text_field2`(20))');
+		$this->assertEquals($expected, $result);
+
+		$data = array(
+			'Point' => array('column' => 'point', 'type' => 'spatial')
+		);
+		$result = $this->Dbo->buildIndex($data);
+		$expected = array('SPATIAL KEY  (`point`)');
 		$this->assertEquals($expected, $result);
 	}
 
