@@ -69,6 +69,14 @@ class BelongsToMany extends Association {
 	protected $_joinTable;
 
 /**
+ * The name of the hasMany association from the target table
+ * to the pivot table
+ *
+ * @var string
+ */
+	protected $_pivotAssociationName;
+
+/**
  * Sets the table instance for the pivot relation. If no arguments
  * are passed, the current configured table instance is returned
  *
@@ -220,7 +228,7 @@ class BelongsToMany extends Association {
  */
 	protected function _addFilteringCondition($query, $key, $filter) {
 		return $query->contain([
-			$this->pivot()->alias() => [
+			$this->_pivotAssociationName() => [
 				'conditions' => [$key . ' in' => $filter],
 				'matching' => true
 			]
@@ -235,7 +243,23 @@ class BelongsToMany extends Association {
  * @return string
  */
 	protected function _linkField($options) {
-		return sprintf('%s.%s', $this->pivot()->alias(), $options['foreignKey']);
+		return sprintf('%s.%s', $this->_pivotAssociationName(), $options['foreignKey']);
+	}
+
+/**
+ * Returns the name of the association from the target table to the pivot table,
+ * this name is used to generate alias in the query and to later on retrieve the
+ * results.
+ *
+ * @return string
+ */
+	protected function _pivotAssociationName() {
+		if (!$this->_pivotAssociationName) {
+			$this->_pivotAssociationName = $this->target()
+				->association($this->pivot()->alias())
+				->name();
+		}
+		return $this->_pivotAssociationName;
 	}
 
 /**

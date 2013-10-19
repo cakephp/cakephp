@@ -14,17 +14,14 @@ namespace TestApp\Model\Repository;
 use Cake\ORM\Table;
 
 /**
- * Article table class
+ * Tag table class
  *
  */
-class ArticleTable extends Table {
+class ArticlesTagTable extends Table {
 
 	public function initialize(array $config) {
-		$this->belongsTo('author');
-		$this->belongsToMany('tag', [
-			'property' => 'tags'
-		]);
-		$this->hasMany('articlesTag');
+		$this->belongsTo('article');
+		$this->belongsTo('tag');
 	}
 
 }

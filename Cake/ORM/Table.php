@@ -456,6 +456,7 @@ class Table {
  * @return Cake\ORM\Association
  */
 	public function association($name) {
+		$name = strtolower($name);
 		if (isset($this->_associations[$name])) {
 			return $this->_associations[$name];
 		}
@@ -491,7 +492,7 @@ class Table {
 	public function belongsTo($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsTo($associated, $options);
-		return $this->_associations[$association->name()] = $association;
+		return $this->_associations[strtolower($association->name())] = $association;
 	}
 
 /**
@@ -521,7 +522,7 @@ class Table {
 	public function hasOne($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasOne($associated, $options);
-		return $this->_associations[$association->name()] = $association;
+		return $this->_associations[strtolower($association->name())] = $association;
 	}
 
 /**
@@ -555,7 +556,7 @@ class Table {
 	public function hasMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasMany($associated, $options);
-		return $this->_associations[$association->name()] = $association;
+		return $this->_associations[strtolower($association->name())] = $association;
 	}
 
 /**
@@ -592,7 +593,7 @@ class Table {
 	public function belongsToMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsToMany($associated, $options);
-		return $this->_associations[$association->name()] = $association;
+		return $this->_associations[strtolower($association->name())] = $association;
 	}
 
 /**

@@ -924,4 +924,17 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		}
 	}
 
+/**
+ * Tests that the correct table and entity are loaded for the pivot association in
+ * a belongsToMany setup
+ *
+ * @return void
+ */
+	public function testReciprocalBelongsToMany() {
+		$table = new \TestApp\Model\Repository\ArticleTable;
+		$result = $table->find('all')->contain(['tag'])->first();
+		$this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
+		$this->assertInstanceOf('TestApp\Model\Entity\ArticlesTag', $result->tags[0]->extraInfo);
+	}
+
 }

@@ -223,7 +223,7 @@ trait ExternalAssociationTrait {
  * @return string
  */
 	protected function _linkField($options) {
-		return sprintf('%s.%s', $this->target()->alias(), $options['foreignKey']);
+		return sprintf('%s.%s', $this->name(), $options['foreignKey']);
 	}
 
 /**
