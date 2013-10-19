@@ -83,9 +83,11 @@ class BelongsToMany extends Association {
 
 		if ($table === null) {
 			if (empty($this->_pivotTable)) {
-				$table = Table::instance($sAlias . $tAlias);
-				$table = $table ?: Table::build($sAlias . $tAlias, [
-					'table' => $this->_joinTableName()
+				$tableName = $this->_joinTableName();
+				$tableAlias = Inflector::classify(Inflector::singularize($tableName));
+				$table = Table::instance($tableAlias);
+				$table = $table ?: Table::build($tableAlias, [
+					'table' => $tableName
 				]);
 			} else {
 				return $this->_pivotTable;
@@ -198,9 +200,8 @@ class BelongsToMany extends Association {
 		$fetchQuery = $this->_buildQuery($options);
 		$resultMap = [];
 		$key = $options['foreignKey'];
-		$property = $this->target()->association(
-			$this->pivot()->alias()
-		)->property();
+		$property = $this->target()->association($this->pivot()->alias())->property();
+
 		foreach ($fetchQuery->execute() as $result) {
 			$resultMap[$result[$property][$key]][] = $result;
 		}

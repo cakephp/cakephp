@@ -625,12 +625,12 @@ class QueryTest extends TestCase {
 					[
 						'id' => 1,
 						'name' => 'tag1',
-						'ArticleTag' => ['article_id' => 1, 'tag_id' => 1]
+						'ArticlesTag' => ['article_id' => 1, 'tag_id' => 1]
 					],
 					[
 						'id' => 2,
 						'name' => 'tag2',
-						'ArticleTag' => ['article_id' => 1, 'tag_id' => 2]
+						'ArticlesTag' => ['article_id' => 1, 'tag_id' => 2]
 					]
 				]
 			],
@@ -644,12 +644,12 @@ class QueryTest extends TestCase {
 					[
 						'id' => 1,
 						'name' => 'tag1',
-						'ArticleTag' => ['article_id' => 2, 'tag_id' => 1]
+						'ArticlesTag' => ['article_id' => 2, 'tag_id' => 1]
 					],
 					[
 						'id' => 3,
 						'name' => 'tag3',
-						'ArticleTag' => ['article_id' => 2, 'tag_id' => 3]
+						'ArticlesTag' => ['article_id' => 2, 'tag_id' => 3]
 					]
 				]
 			],
@@ -685,7 +685,7 @@ class QueryTest extends TestCase {
 					[
 						'id' => 3,
 						'name' => 'tag3',
-						'ArticleTag' => ['article_id' => 2, 'tag_id' => 3]
+						'ArticlesTag' => ['article_id' => 2, 'tag_id' => 3]
 					]
 				]
 			],
@@ -1124,7 +1124,7 @@ class QueryTest extends TestCase {
 	public function testHydrateBelongsToMany() {
 		$table = Table::build('Article', ['connection' => $this->connection]);
 		Table::build('Tag', ['connection' => $this->connection]);
-		Table::build('ArticleTag', [
+		Table::build('ArticlesTag', [
 			'connection' => $this->connection,
 			'table' => 'articles_tags'
 		]);
@@ -1145,14 +1145,14 @@ class QueryTest extends TestCase {
 		$expected = [
 			'id' => 1,
 			'name' => 'tag1',
-			'ArticleTag' => new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 1])
+			'ArticlesTag' => new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 1])
 		];
 		$this->assertEquals($expected, $first->tags[0]->toArray());
 
 		$expected = [
 			'id' => 2,
 			'name' => 'tag2',
-			'ArticleTag' => new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 2])
+			'ArticlesTag' => new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 2])
 		];
 		$this->assertEquals($expected, $first->tags[1]->toArray());
 	}
