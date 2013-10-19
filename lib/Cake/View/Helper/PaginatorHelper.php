@@ -315,9 +315,10 @@ class PaginatorHelper extends AppHelper {
  *
  * ### Options:
  *
- * - `escape` Whether you want the contents html entity encoded, defaults to true
- * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
+ * - `escape` Whether you want the contents html entity encoded, defaults to true.
+ * - `model` The model to use, defaults to PaginatorHelper::defaultModel().
  * - `direction` The default direction to use when this link isn't active.
+ * - `lock` Lock direction. Will only use the default direction then, defaults to false.
  *
  * @param string $key The name of the key that the recordset should be sorted.
  * @param string $title Title for the link. If $title is null $key will be used
@@ -341,8 +342,11 @@ class PaginatorHelper extends AppHelper {
 
 			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
 		}
-		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
+		$defaultDir = isset($options['direction']) ? $options['direction'] : 'asc';
 		unset($options['direction']);
+
+		$locked = isset($options['lock']) ? $options['lock'] : false;
+		unset($options['lock']);
 
 		$sortKey = $this->sortKey($options['model']);
 		$defaultModel = $this->defaultModel();
@@ -352,6 +356,7 @@ class PaginatorHelper extends AppHelper {
 			$key === $defaultModel . '.' . $sortKey
 		);
 
+		$dir = $defaultDir;
 		if ($isSorted) {
 			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
 			$class = $dir === 'asc' ? 'desc' : 'asc';
@@ -359,6 +364,10 @@ class PaginatorHelper extends AppHelper {
 				$options['class'] .= ' ' . $class;
 			} else {
 				$options['class'] = $class;
+			}
+			if ($locked) {
+				$dir = $defaultDir;
+				$options['class'] .= ' locked';
 			}
 		}
 		if (is_array($title) && array_key_exists($dir, $title)) {
