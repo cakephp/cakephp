@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
 use Cake\ORM\BehaviorRegistry;
@@ -34,6 +35,7 @@ class BehaviorRegistryTest extends TestCase {
 		$this->Table = new Table(['table' => 'articles']);
 		$this->EventManager = $this->Table->getEventManager();
 		$this->Behaviors = new BehaviorRegistry($this->Table);
+		Configure::write('App.namespace', 'TestApp');
 	}
 
 /**
@@ -48,12 +50,15 @@ class BehaviorRegistryTest extends TestCase {
 	}
 
 /**
- * Test loading app & core behaviors.
+ * Test loading behaviors.
  *
  * @return void
  */
 	public function testLoad() {
-		$this->markTestIncomplete('not done');
+		$settings = ['replacement' => '-'];
+		$result = $this->Behaviors->load('Sluggable', $settings);
+		$this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result);
+		$this->assertEquals($settings, $result->settings);
 	}
 
 /**
@@ -62,7 +67,12 @@ class BehaviorRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoadBindEvents() {
-		$this->markTestIncomplete('not done');
+		$result = $this->EventManager->listeners('Model.beforeFind');
+		$this->assertCount(0, $result);
+
+		$this->Behaviors->load('Sluggable');
+		$result = $this->EventManager->listeners('Model.beforeFind');
+		$this->assertCount(1, $result);
 	}
 
 /**
@@ -71,7 +81,12 @@ class BehaviorRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoadEnabledFalse() {
-		$this->markTestIncomplete('not done');
+		$result = $this->EventManager->listeners('Model.beforeFind');
+		$this->assertCount(0, $result);
+
+		$this->Behaviors->load('Sluggable', ['enabled' => false]);
+		$result = $this->EventManager->listeners('Model.beforeFind');
+		$this->assertCount(0, $result);
 	}
 
 /**
@@ -80,7 +95,9 @@ class BehaviorRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoadPlugin() {
-		$this->markTestIncomplete('not done');
+		Plugin::load('TestPlugin');
+		$result = $this->Behaviors->load('TestPlugin.PersisterOne');
+		$this->assertInstanceOf('TestPlugin\Model\Behavior\PersisterOneBehavior', $result);
 	}
 
 /**
@@ -90,7 +107,7 @@ class BehaviorRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoadMissingClass() {
-		$this->markTestIncomplete('not done');
+		$this->Behaviors->load('DoesNotExist');
 	}
 
 /**
