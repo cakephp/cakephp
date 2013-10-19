@@ -442,7 +442,6 @@ class PaginatorComponentTest extends TestCase {
 /**
  * Tests for missing models
  *
- * @expectedException Cake\Error\MissingModelException
  */
 	public function testPaginateMissingModel() {
 		$this->markTestIncomplete('Need to revisit once models work again.');
