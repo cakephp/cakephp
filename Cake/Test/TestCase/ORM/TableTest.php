@@ -71,6 +71,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testConfigAndBuild() {
+		Table::clearRegistry();
 		$map = Table::config();
 		$this->assertEquals([], $map);
 
@@ -172,6 +173,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testConnection() {
+		Table::clearRegistry();
 		$table = new Table(['table' => 'users']);
 		$this->assertNull($table->connection());
 		$table->connection($this->connection);
@@ -263,7 +265,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testSchema() {
 		$schema = $this->connection->schemaCollection()->describe('users');
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$this->assertEquals($schema, $table->schema());
 
 		$table = new Table(['table' => 'stuff']);
@@ -286,7 +288,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllNoFieldsAndNoHydration() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$results = $table
 			->find('all')
 			->where(['id IN' => [1, 2]])
@@ -318,7 +320,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllSomeFieldsNoHydration() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$results = $table->find('all')
 			->select(['username', 'password'])
 			->hydrate(false)
@@ -352,7 +354,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllConditionAutoTypes() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$query = $table->find('all')
 			->select(['id', 'username'])
 			->where(['created >=' => new \DateTime('2010-01-22 00:00')])
@@ -379,7 +381,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindBeforeFindEventMutateQuery() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$table->getEventManager()->attach(function ($event, $query, $options) {
 			$query->limit(1);
 		}, 'Model.beforeFind');
@@ -395,7 +397,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindBeforeFindEventOverrideReturn() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$expected = ['One', 'Two', 'Three'];
 		$table->getEventManager()->attach(function ($event, $query, $options) use ($expected) {
 			$query->setResult($expected);
@@ -493,7 +495,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testUpdateAll() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$fields = ['username' => 'mark'];
 		$result = $table->updateAll($fields, ['id <' => 4]);
 		$this->assertTrue($result);
@@ -517,7 +519,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['_buildQuery'],
-			[['table' => 'users', 'connection' => $this->connection]]
+			[['table' => 'users']]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
@@ -535,7 +537,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteAll() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$result = $table->deleteAll(['id <' => 4]);
 		$this->assertTrue($result);
 
@@ -553,7 +555,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['_buildQuery'],
-			[['table' => 'users', 'connection' => $this->connection]]
+			[['table' => 'users']]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
@@ -593,7 +595,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindListNoHydration() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$table->displayField('username');
 		$query = $table->find('list', ['fields' => ['id', 'username']])
 			->hydrate(false)
@@ -629,7 +631,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindThreadedNoHydration() {
-		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'categories']);
 		$expected = [
 			[
 				'id' => 1,
@@ -745,7 +747,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindThreadedHydrated() {
-		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'categories']);
 		$results = $table->find('all')
 			->threaded()
 			->select(['id', 'parent_id', 'name'])
@@ -767,7 +769,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindListHydrated() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table(['table' => 'users']);
 		$table->displayField('username');
 		$query = $table
 			->find('list', ['fields' => ['id', 'username']])
