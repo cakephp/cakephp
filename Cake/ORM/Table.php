@@ -218,9 +218,18 @@ class Table {
 			return static::$_instances[$alias];
 		}
 
-		$options = ['alias' => $alias] + $options;
+		list($plugin, $baseClass) = pluginSplit($alias);
+		$options = ['alias' => $baseClass] + $options;
+
 		if (empty($options['className'])) {
 			$options['className'] = get_called_class();
+		}
+
+		if ($options['className'] === __CLASS__ || $plugin) {
+			$class = $options['className'];
+			$classified = Inflector::classify($alias);
+			$class = App::classname($classified, 'Model\Repository', 'Table') ?: $class;
+			$options['className'] = $class;
 		}
 
 		return static::$_instances[$alias] = new $options['className']($options);

@@ -54,16 +54,18 @@ class MyUsersTable extends Table {
  */
 class TableTest extends \Cake\TestSuite\TestCase {
 
-	public $fixtures = ['core.user', 'core.category'];
+	public $fixtures = ['core.user', 'core.category', 'core.article', 'core.author'];
 
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
+		Configure::write('App.namespace', 'TestApp');
 	}
 
 	public function tearDown() {
 		parent::tearDown();
 		Table::clearRegistry();
+		Configure::write('App.namespace', 'App');
 	}
 /**
  * Tests that table options can be pre-configured for the factory method
@@ -103,6 +105,29 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('foo', $table->alias());
 		$this->assertSame($this->connection, $table->connection());
 		$this->assertEquals(array_keys($schema), $table->schema()->columns());
+	}
+
+/**
+ * Tests that tables can be instantiated based on conventions
+ * and using plugin notation
+ *
+ * @return void
+ */
+	public function testBuildConvention() {
+		$table = Table::build('article');
+		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
+		$table = Table::build('Article');
+		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
+
+		$table = Table::build('author');
+		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
+		$table = Table::build('Author');
+		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
+
+		$class = $this->getMockClass('\Cake\ORM\Table');
+		class_alias($class, 'MyPlugin\Model\Repository\SuperTestTable');
+		$table = Table::build('MyPlugin.SuperTest');
+		$this->assertInstanceOf($class, $table);
 	}
 
 /**
@@ -812,9 +837,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testRepositoryClassInAPP() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
-		class_alias($class, 'App\Model\Entity\TestUser');
+		class_alias($class, 'TestApp\Model\Entity\TestUser');
 		$table = new Table();
-		$this->assertEquals('App\Model\Entity\TestUser', $table->entityClass('TestUser'));
+		$this->assertEquals('TestApp\Model\Entity\TestUser', $table->entityClass('TestUser'));
 	}
 
 /**
