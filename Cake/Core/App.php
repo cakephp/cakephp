@@ -34,7 +34,7 @@ use Cake\Utility\Inflector;
  * You can inspect the currently loaded paths using `App::path('Controller')` for example to see loaded
  * controller paths.
  *
- * It is also possible to inspect paths for plugin classes, for instance, to get 
+ * It is also possible to inspect paths for plugin classes, for instance, to get
  * the path to a plugin's helpers you would call `App::path('View/Helper', 'MyPlugin')`
  *
  * ### Locating plugins and themes

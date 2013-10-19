@@ -147,9 +147,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		if (class_exists('Cake\Utility\ClassRegistry', false)) {
-			ClassRegistry::flush();
-		}
 		if (!empty($this->_configure)) {
 			Configure::clear();
 			Configure::write($this->_configure);
@@ -593,6 +590,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param mixed $methods
  * @param array $config
  * @throws Cake\Error\MissingModelException
+ * @todo Rewrite so it gets a model for a Table object
  * @return Model
  */
 	public function getMockForModel($model, $methods = array(), $config = array()) {

@@ -16,6 +16,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Event\EventManager;
 use Cake\ORM\Association\BelongsTo;
@@ -96,6 +97,13 @@ class Table {
 	protected $_primaryKey = 'id';
 
 /**
+ * The name of the field that represents a human readable representation of a row
+ *
+ * @var string
+ */
+	protected $_displayField;
+
+/**
  * The list of associations for this table. Indexed by association name,
  * values are Association object instances.
  *
@@ -113,6 +121,13 @@ class Table {
 	protected $_eventManager;
 
 /**
+ * The name of the class that represent a single row for this table
+ *
+ * @var string
+ */
+	protected $_entityClass;
+
+/**
  * Initializes a new instance
  *
  * The $config array understands the following keys:
@@ -120,13 +135,16 @@ class Table {
  * - table: Name of the database table to represent
  * - alias: Alias to be assigned to this table (default to table name)
  * - connection: The connection instance to use
+ * - entityClass: The fully namespaced class name of the entity class that will
+ *   represent rows in this table.
  * - schema: A \Cake\Database\Schema\Table object or an array that can be
  *   passed to it.
+ * - eventManager: An instance of an event manager to use for internal events
  *
  * @param array config Lsit of options for this table
  * @return void
  */
-	public function __construct($config = []) {
+	public function __construct(array $config = []) {
 		if (!empty($config['table'])) {
 			$this->table($config['table']);
 		}
@@ -146,11 +164,35 @@ class Table {
 		if (!empty($config['schema'])) {
 			$this->schema($config['schema']);
 		}
+		if (!empty($config['entityClass'])) {
+			$this->entityClass($config['entityClass']);
+		}
 		$eventManager = null;
 		if (!empty($config['eventManager'])) {
 			$eventManager = $config['eventManager'];
 		}
 		$this->_eventManager = $eventManager ?: new EventManager();
+		$this->initialize($config);
+	}
+
+/**
+ * This method is meant to be overridden by subclasses so that any initial setting
+ * up for associations, validation rules or any custom logic can be done.
+ *
+ * ### Example:
+ *
+ * {{{
+ *	public function initialize(array $config) {
+ *		$this->belongsTo('User');
+ *		$this->belongsToMany('Tagging.Tag');
+ *		$this->primaryKey('something_else');
+ *	}
+ * }}}
+ *
+ * @param array $config Configuration options passed to the constructor
+ * @return void
+ */
+	public function initialize(array $config) {
 	}
 
 /**
@@ -176,9 +218,18 @@ class Table {
 			return static::$_instances[$alias];
 		}
 
-		$options = ['alias' => $alias] + $options;
+		list($plugin, $baseClass) = pluginSplit($alias);
+		$options = ['alias' => $baseClass] + $options;
+
 		if (empty($options['className'])) {
 			$options['className'] = get_called_class();
+		}
+
+		if ($options['className'] === __CLASS__ || $plugin) {
+			$class = $options['className'];
+			$classified = Inflector::classify($alias);
+			$class = App::classname($classified, 'Model\Repository', 'Table') ?: $class;
+			$options['className'] = $class;
 		}
 
 		return static::$_instances[$alias] = new $options['className']($options);
@@ -336,6 +387,66 @@ class Table {
 			$this->_primaryKey = $key;
 		}
 		return $this->_primaryKey;
+	}
+
+/**
+ * Returns the display field or sets a new one
+ *
+ * @param string $key sets a new name to be used as display field
+ * @return string
+ */
+	public function displayField($key = null) {
+		if ($key !== null) {
+			$this->_displayField = $key;
+		}
+		if ($this->_displayField === null) {
+			$schema = $this->schema();
+			$this->_displayField = $this->primaryKey();
+			if ($schema->column('title')) {
+				$this->_displayField = 'title';
+			}
+			if ($schema->column('name')) {
+				$this->_displayField = 'name';
+			}
+		}
+		return $this->_displayField;
+	}
+
+/**
+ * Returns the class used to hydrate rows for this table or sets
+ * a new one
+ *
+ * @param string $name the name of the class to use
+ * @throws \Cake\ORM\Error\MissingEntityException when the entity class cannot be found
+ * @return string
+ */
+	public function entityClass($name = null) {
+		if ($name === null && !$this->_entityClass) {
+			$default = '\Cake\ORM\Entity';
+			$self = get_called_class();
+			$parts = explode('\\', $self);
+
+			if ($self === __CLASS__ || count($parts) < 3) {
+				return $this->_entityClass = $default;
+			}
+
+			$alias = substr(array_pop($parts), 0, -5);
+			$name = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $alias;
+			if (!class_exists($name)) {
+				return $this->_entityClass = $default;
+			}
+		}
+
+		if ($name !== null) {
+			$class = App::classname($name, 'Model\Entity');
+			$this->_entityClass = $class;
+		}
+
+		if (!$this->_entityClass) {
+			throw new Error\MissingEntityException([$name]);
+		}
+
+		return $this->_entityClass;
 	}
 
 /**
@@ -536,18 +647,20 @@ class Table {
  * @return \Cake\ORM\Query
  */
 	public function findList(Query $query, array $options = []) {
-		$mapper = function($key, $row, $mapReduce) use (&$columns) {
-			if (empty($columns)) {
-				$columns = array_slice(array_keys($row), 0, 3);
-			}
-
-			list($rowKey, $rowVal) = $columns;
-			if (!isset($columns[2])) {
+		$options += [
+			'idField' => $this->primaryKey(),
+			'valueField' => $this->displayField(),
+			'groupField' => false
+		];
+		$mapper = function($key, $row, $mapReduce) use ($options) {
+			$rowKey = $options['idField'];
+			$rowVal = $options['valueField'];
+			if (!($options['groupField'])) {
 				$mapReduce->emit($row[$rowVal], $row[$rowKey]);
 				return;
 			}
 
-			$key = $row[$columns[2]];
+			$key = $row[$options['groupField']];
 			$mapReduce->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
 		};
 
@@ -575,28 +688,35 @@ class Table {
  */
 	public function findThreaded(Query $query, array $options = []) {
 		$parents = [];
+		$hydrate = $query->hydrate();
 		$mapper = function($key, $row, $mapReduce) use (&$parents) {
+			$row['children'] = [];
 			$parents[$row['id']] =& $row;
 			$mapReduce->emitIntermediate($row['parent_id'], $row['id']);
 		};
 
-		$reducer = function($key, $values, $mapReduce) use (&$parents) {
+		$reducer = function($key, $values, $mapReduce) use (&$parents, $hydrate) {
 			if (empty($key) || !isset($parents[$key])) {
 				foreach ($values as $id) {
-					$parents[$id] = new \ArrayObject($parents[$id]);
+					$parents[$id] = $hydrate ? $parents[$id] : new \ArrayObject($parents[$id]);
 					$mapReduce->emit($parents[$id]);
 				}
 				return;
 			}
+
 			foreach ($values as $id) {
 				$parents[$key]['children'][] =& $parents[$id];
 			}
 		};
 
-		$formatter = function($key, $row, $mapReduce) {
-			$mapReduce->emit($row->getArrayCopy());
-		};
-		return $query->mapReduce($mapper, $reducer)->mapReduce($formatter);
+		$query->mapReduce($mapper, $reducer);
+		if (!$hydrate) {
+			$query->mapReduce(function($key, $row, $mapReduce) {
+				$mapReduce->emit($row->getArrayCopy());
+			});
+		}
+
+		return $query;
 	}
 
 /**

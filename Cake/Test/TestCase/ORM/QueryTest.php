@@ -88,19 +88,6 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test helper for creating tables.
- *
- * @return void
- */
-	protected function _createTables() {
-		Table::config('authors', ['connection' => $this->connection]);
-		Table::config('articles', ['connection' => $this->connection]);
-		Table::config('publications', ['connection' => $this->connection]);
-		Table::config('tags', ['connection' => $this->connection]);
-		Table::config('articles_tags', ['connection' => $this->connection]);
-	}
-
-/**
  * Tests that fully defined belongsTo and hasOne relationships are joined correctly
  *
  * @return void
@@ -179,7 +166,6 @@ class QueryTest extends TestCase {
 
 		$s = $query
 			->select('foo.id')
-			->repository($this->table)
 			->contain($contains)->sql();
 	}
 
@@ -255,19 +241,18 @@ class QueryTest extends TestCase {
 
 /**
  * Tests that results are grouped correctly when using contain()
+ * and results are not hydrated
  *
  * @return void
  **/
-	public function testContainResultFetchingOneLevel() {
-		$this->_createTables();
-
+	public function testContainResultFetchingOneLevelNoHydration() {
 		$table = Table::build('article', ['table' => 'articles']);
-		Table::build('author', ['connection' => $this->connection]);
 		$table->belongsTo('author');
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
 			->contain('author')
+			->hydrate(false)
 			->order(['article.id' => 'asc'])
 			->toArray();
 		$expected = [
@@ -318,16 +303,15 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that HasMany associations are correctly eager loaded.
+ * Tests that HasMany associations are correctly eager loaded and results
+ * correctly nested when no hydration is used
  * Also that the query object passes the correct parent model keys to the
  * association objects in order to perform eager loading with select strategy
  *
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoading($strategy) {
-		$this->_createTables();
-
+	public function testHasManyEagerLoadingNoHydration($strategy) {
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
 		$table->hasMany('article', [
@@ -337,7 +321,10 @@ class QueryTest extends TestCase {
 		]);
 		$query = new Query($this->connection, $table);
 
-		$results = $query->select()->contain('article')->toArray();
+		$results = $query->select()
+			->contain('article')
+			->hydrate(false)
+			->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -386,6 +373,7 @@ class QueryTest extends TestCase {
 		$results = $query->repository($table)
 			->select()
 			->contain(['article' => ['conditions' => ['id' => 2]]])
+			->hydrate(false)
 			->toArray();
 		unset($expected[0]['articles']);
 		$this->assertEquals($expected, $results);
@@ -398,9 +386,7 @@ class QueryTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoadingFieldsAndOrder($strategy) {
-		$this->_createTables();
-
+	public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy) {
 		$table = Table::build('author', ['connection' => $this->connection]);
 		Table::build('article', ['connection' => $this->connection]);
 		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
@@ -413,6 +399,7 @@ class QueryTest extends TestCase {
 					'sort' => ['id' => 'DESC']
 				]
 			])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -448,11 +435,9 @@ class QueryTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testHasManyEagerLoadingDeep($strategy) {
-		$this->_createTables();
-
-		$table = Table::build('author', ['connection' => $this->connection]);
-		$article = Table::build('article', ['connection' => $this->connection]);
+	public function testHasManyEagerLoadingDeepNoHydration($strategy) {
+		$table = Table::build('author');
+		$article = Table::build('article');
 		$table->hasMany('article', [
 			'property' => 'articles',
 			'stratgey' => $strategy,
@@ -463,6 +448,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->select()
 			->contain(['article' => ['author']])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -489,10 +475,7 @@ class QueryTest extends TestCase {
 			],
 			[
 				'id' => 2,
-				'name' => 'nate',
-				'articles' => [
-					'author' => ['id' => 2, 'name' => 'nate']
-				]
+				'name' => 'nate'
 			],
 			[
 				'id' => 3,
@@ -510,10 +493,7 @@ class QueryTest extends TestCase {
 			],
 			[
 				'id' => 4,
-				'name' => 'garrett',
-				'articles' => [
-					'author' => ['id' => 4, 'name' => 'garrett']
-				]
+				'name' => 'garrett'
 			]
 		];
 		$this->assertEquals($expected, $results);
@@ -527,11 +507,9 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingFromSecondaryTable($strategy) {
-		$this->_createTables();
-
-		$author = Table::build('author', ['connection' => $this->connection]);
-		$article = Table::build('article', ['connection' => $this->connection]);
-		$post = Table::build('post', ['connection' => $this->connection]);
+		$author = Table::build('author');
+		$article = Table::build('article');
+		$post = Table::build('post');
 
 		$author->hasMany('post', ['property' => 'posts'] + compact('strategy'));
 		$article->belongsTo('author');
@@ -541,6 +519,7 @@ class QueryTest extends TestCase {
 		$results = $query->select()
 			->contain(['author' => ['post']])
 			->order(['article.id' => 'ASC'])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -629,19 +608,12 @@ class QueryTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  **/
-	public function testBelongsToManyEagerLoading($strategy) {
-		$this->_createTables();
-
-		$table = Table::build('Article', ['connection' => $this->connection]);
-		Table::build('Tag', ['connection' => $this->connection]);
-		Table::build('ArticleTag', [
-			'connection' => $this->connection,
-			'table' => 'articles_tags'
-		]);
+	public function testBelongsToManyEagerLoadingNoHydration($strategy) {
+		$table = Table::build('Article');
 		$table->belongsToMany('Tag', ['property' => 'tags', 'strategy' => $strategy]);
 		$query = new Query($this->connection, $table);
 
-		$results = $query->select()->contain('Tag')->toArray();
+		$results = $query->select()->contain('Tag')->hydrate(false)->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -693,6 +665,7 @@ class QueryTest extends TestCase {
 
 		$results = $query->select()
 			->contain(['Tag' => ['conditions' => ['id' => 3]]])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -733,16 +706,14 @@ class QueryTest extends TestCase {
  *
  * @return void
  */
-	public function testFilteringByHasMany() {
-		$this->_createTables();
-
+	public function testFilteringByHasManyNoHydration() {
 		$query = new Query($this->connection, $this->table);
-		$table = Table::build('author', ['connection' => $this->connection]);
-		Table::build('article', ['connection' => $this->connection]);
+		$table = Table::build('author');
 		$table->hasMany('article', ['property' => 'articles']);
 
 		$results = $query->repository($table)
 			->select()
+			->hydrate(false)
 			->contain(['article' => [
 				'matching' => true,
 				'conditions' => ['article.id' => 2]
@@ -771,16 +742,9 @@ class QueryTest extends TestCase {
  *
  * @return void
  **/
-	public function testFilteringByBelongsToMany() {
-		$this->_createTables();
-
+	public function testFilteringByBelongsToManyNoHydration() {
 		$query = new Query($this->connection, $this->table);
-		$table = Table::build('Article', ['connection' => $this->connection]);
-		Table::build('Tag', ['connection' => $this->connection]);
-		Table::build('ArticleTag', [
-			'connection' => $this->connection,
-			'table' => 'articles_tags'
-		]);
+		$table = Table::build('Article');
 		$table->belongsToMany('Tag', ['property' => 'tags']);
 
 		$results = $query->repository($table)->select()
@@ -788,6 +752,7 @@ class QueryTest extends TestCase {
 				'matching' => true,
 				'conditions' => ['Tag.id' => 3]
 			]])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -810,6 +775,7 @@ class QueryTest extends TestCase {
 				'matching' => true,
 				'conditions' => ['Tag.name' => 'tag2']]
 			])
+			->hydrate(false)
 			->toArray();
 		$expected = [
 			[
@@ -846,7 +812,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testBufferResults() {
-		$table = Table::build('article', ['connection' => $this->connection, 'table' => 'articles']);
+		$table = Table::build('article');
 		$query = new Query($this->connection, $table);
 
 		$result = $query->select()->bufferResults();
@@ -1046,10 +1012,9 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstDirtyQuery() {
-		$this->_createTables();
 		$table = Table::build('article', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
-		$result = $query->select(['id'])->first();
+		$result = $query->select(['id'])->hydrate(false)->first();
 		$this->assertEquals(['id' => 1], $result);
 		$this->assertEquals(1, $query->clause('limit'));
 		$result = $query->select(['id'])->first();
@@ -1062,12 +1027,11 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstCleanQuery() {
-		$this->_createTables();
 		$table = Table::build('article', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$query->select(['id'])->toArray();
 
-		$first = $query->first();
+		$first = $query->hydrate(false)->first();
 		$this->assertEquals(['id' => 1], $first);
 		$this->assertNull($query->clause('limit'));
 	}
@@ -1078,15 +1042,262 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstSameResult() {
-		$this->_createTables();
 		$table = Table::build('article', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$query->select(['id'])->toArray();
 
-		$first = $query->first();
+		$first = $query->hydrate(false)->first();
 		$resultSet = $query->execute();
 		$this->assertEquals(['id' => 1], $first);
 		$this->assertSame($resultSet, $query->execute());
 	}
 
+/**
+ * Testing hydrating a result set into Entity objects
+ *
+ * @return void
+ */
+	public function testHydrateSimple() {
+		$table = Table::build('article', ['table' => 'articles']);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()->execute()->toArray();
+
+		$this->assertCount(3, $results);
+		foreach ($results as $r) {
+			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+		}
+
+		$first = $results[0];
+		$this->assertEquals(1, $first->id);
+		$this->assertEquals(1, $first->author_id);
+		$this->assertEquals('First Article', $first->title);
+		$this->assertEquals('First Article Body', $first->body);
+		$this->assertEquals('Y', $first->published);
+	}
+
+/**
+ * Tests that has many results are also hydrated correctly
+ *
+ * @return void
+ */
+	public function testHydrateWithHasMany() {
+		$table = Table::build('author', ['connection' => $this->connection]);
+		Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article', [
+			'property' => 'articles',
+			'sort' => ['article.id' => 'asc']
+		]);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->contain('article')
+			->toArray();
+
+		$first = $results[0];
+		foreach ($first->articles as $r) {
+			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+		}
+
+		$this->assertCount(2, $first->articles);
+		$expected = [
+			'id' => 1,
+			'title' => 'First Article',
+			'body' => 'First Article Body',
+			'author_id' => 1,
+			'published' => 'Y',
+		];
+		$this->assertEquals($expected, $first->articles[0]->toArray());
+		$expected = [
+			'id' => 3,
+			'title' => 'Third Article',
+			'author_id' => 1,
+			'body' => 'Third Article Body',
+			'published' => 'Y',
+		];
+		$this->assertEquals($expected, $first->articles[1]->toArray());
+	}
+
+/**
+ * Tests that belongsToMany associations are also correctly hydrated
+ *
+ * @return void
+ */
+	public function testHydrateBelongsToMany() {
+		$table = Table::build('Article', ['connection' => $this->connection]);
+		Table::build('Tag', ['connection' => $this->connection]);
+		Table::build('ArticleTag', [
+			'connection' => $this->connection,
+			'table' => 'articles_tags'
+		]);
+		$table->belongsToMany('Tag', ['property' => 'tags']);
+		$query = new Query($this->connection, $table);
+
+		$results = $query
+			->select()
+			->contain('Tag')
+			->toArray();
+
+		$first = $results[0];
+		foreach ($first->tags as $r) {
+			$this->assertInstanceOf('\Cake\ORM\Entity', $r);
+		}
+
+		$this->assertCount(2, $first->tags);
+		$expected = [
+			'id' => 1,
+			'name' => 'tag1',
+			'ArticleTag' => new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 1])
+		];
+		$this->assertEquals($expected, $first->tags[0]->toArray());
+
+		$expected = [
+			'id' => 2,
+			'name' => 'tag2',
+			'ArticleTag' => new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 2])
+		];
+		$this->assertEquals($expected, $first->tags[1]->toArray());
+	}
+
+/**
+ * Tests that belongsTo relations are correctly hydrated
+ *
+ * @return void
+ */
+	public function testHydrateBelongsTo() {
+		$table = Table::build('article', ['table' => 'articles']);
+		Table::build('author', ['connection' => $this->connection]);
+		$table->belongsTo('author');
+
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->contain('author')
+			->order(['article.id' => 'asc'])
+			->toArray();
+
+		$this->assertCount(3, $results);
+		$first = $results[0];
+		$this->assertInstanceOf('\Cake\ORM\Entity', $first->author);
+		$expected = ['id' => 1, 'name' => 'mariano'];
+		$this->assertEquals($expected, $first->author->toArray());
+	}
+
+/**
+ * Tests that deeply nested associations are also hydrated correctly
+ *
+ * @return void
+ */
+	public function testHydrateDeep() {
+		$table = Table::build('author', ['connection' => $this->connection]);
+		$article = Table::build('article', ['connection' => $this->connection]);
+		$table->hasMany('article', [
+			'property' => 'articles',
+			'sort' => ['article.id' => 'asc']
+		]);
+		$article->belongsTo('author');
+		$query = new Query($this->connection, $table);
+
+		$results = $query->select()
+			->contain(['article' => ['author']])
+			->toArray();
+
+		$this->assertCount(4, $results);
+		$first = $results[0];
+		$this->assertInstanceOf('\Cake\ORM\Entity', $first->articles[0]->author);
+		$expected = ['id' => 1, 'name' => 'mariano'];
+		$this->assertEquals($expected, $first->articles[0]->author->toArray());
+		$this->assertFalse(isset($results[3]->articles));
+	}
+
+/**
+ * Tests that it is possible to use a custom entity class
+ *
+ * @return void
+ */
+	public function testHydrateCustomObject() {
+		$class = $this->getMockClass('\Cake\ORM\Entity', ['fakeMethod']);
+		$table = Table::build('article', [
+			'table' => 'articles',
+			'entityClass' => '\\' . $class
+		]);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()->execute()->toArray();
+
+		$this->assertCount(3, $results);
+		foreach ($results as $r) {
+			$this->assertInstanceOf($class, $r);
+		}
+
+		$first = $results[0];
+		$this->assertEquals(1, $first->id);
+		$this->assertEquals(1, $first->author_id);
+		$this->assertEquals('First Article', $first->title);
+		$this->assertEquals('First Article Body', $first->body);
+		$this->assertEquals('Y', $first->published);
+	}
+
+/**
+ * Tests that has many results are also hydrated correctly
+ * when specified a custom entity class
+ *
+ * @return void
+ */
+	public function testHydrateWithHasManyCustomEntity() {
+		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
+		$articleEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
+		$table = Table::build('author', [
+			'connection' => $this->connection,
+			'entityClass' => '\\' . $authorEntity
+		]);
+		Table::build('article', [
+			'connection' => $this->connection,
+			'entityClass' => '\\' . $articleEntity
+		]);
+		$table->hasMany('article', [
+			'property' => 'articles',
+			'sort' => ['article.id' => 'asc']
+		]);
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->contain('article')
+			->toArray();
+
+		$first = $results[0];
+		$this->assertInstanceOf($authorEntity, $first);
+		foreach ($first->articles as $r) {
+			$this->assertInstanceOf($articleEntity, $r);
+		}
+
+		$this->assertCount(2, $first->articles);
+		$expected = [
+			'id' => 1,
+			'title' => 'First Article',
+			'body' => 'First Article Body',
+			'author_id' => 1,
+			'published' => 'Y',
+		];
+		$this->assertEquals($expected, $first->articles[0]->toArray());
+	}
+
+/**
+ * Tests that belongsTo relations are correctly hydrated into a custom entity class
+ *
+ * @return void
+ */
+	public function testHydrateBelongsToCustomEntity() {
+		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
+		$table = Table::build('article', ['table' => 'articles']);
+		Table::build('author', [
+			'connection' => $this->connection,
+			'entityClass' => '\\' . $authorEntity
+		]);
+		$table->belongsTo('author');
+
+		$query = new Query($this->connection, $table);
+		$results = $query->select()
+			->contain('author')
+			->order(['article.id' => 'asc'])
+			->toArray();
+
+		$first = $results[0];
+		$this->assertInstanceOf($authorEntity, $first->author);
+	}
 }

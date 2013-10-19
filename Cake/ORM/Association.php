@@ -394,7 +394,9 @@ abstract class Association {
 	public function transformRow($row) {
 		$sourceAlias = $this->source()->alias();
 		$targetAlias = $this->target()->alias();
-		$row[$sourceAlias][$this->property()] = $row[$targetAlias];
+		if (isset($row[$sourceAlias])) {
+			$row[$sourceAlias][$this->property()] = $row[$targetAlias];
+		}
 		return $row;
 	}
 
