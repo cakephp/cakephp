@@ -130,10 +130,9 @@ class Table {
  * @return void
  */
 	public function __construct(array $config = []) {
-		if (empty($config['table'])) {
-			$config['table'] = Inflector::tableize(get_class($this));
+		if (!empty($config['table'])) {
+			$this->table($config['table']);
 		}
-		$this->table($config['table']);
 		if (!empty($config['alias'])) {
 			$this->alias($config['alias']);
 		}
