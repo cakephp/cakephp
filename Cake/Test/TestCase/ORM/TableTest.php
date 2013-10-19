@@ -894,4 +894,31 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($class, $table->entityClass());
 	}
 
+/**
+ * Proves that associations, even though they are lazy loaded, will fetch
+ * records using the correct table class and hydrate with the correct entity
+ *
+ * @return void
+ */
+	public function testReciprocalBelongsToLoading() {
+		$table = new \TestApp\Model\Repository\ArticleTable;
+		$result = $table->find('all')->contain(['author'])->first();
+		$this->assertInstanceOf('TestApp\Model\Entity\Author', $result->author);
+	}
+
+/**
+ * Proves that associations, even though they are lazy loaded, will fetch
+ * records using the correct table class and hydrate with the correct entity
+ *
+ * @return void
+ */
+	public function testReciprocalHasManyLoading() {
+		$table = new \TestApp\Model\Repository\ArticleTable;
+		$result = $table->find('all')->contain(['author' => ['article']])->first();
+		$this->assertCount(2, $result->author->article);
+		foreach ($result->author->article as $article) {
+			$this->assertInstanceOf('TestApp\Model\Entity\Article', $article);
+		}
+	}
+
 }
