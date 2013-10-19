@@ -42,13 +42,6 @@ class FixtureManager {
 	protected $_initialized = false;
 
 /**
- * Default datasource to use
- *
- * @var DataSource
- */
-	protected $_db = null;
-
-/**
  * Holds the fixture classes that where instantiated
  *
  * @var array
@@ -69,11 +62,11 @@ class FixtureManager {
  * @return void
  */
 	public function fixturize($test) {
+		$this->_initDb();
 		if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
 			return;
 		}
-		$this->_initDb();
-		$test->db = $this->_db;
+		$test->db = ConnectionManager::get('test', false);
 		if (!is_array($test->fixtures)) {
 			$test->fixtures = array_map('trim', explode(',', $test->fixtures));
 		}
@@ -117,8 +110,6 @@ class FixtureManager {
 			return;
 		}
 		$this->_aliasConnections();
-		$db = ConnectionManager::get('test', false);
-		$this->_db = $db;
 		$this->_initialized = true;
 	}
 
@@ -171,9 +162,11 @@ class FixtureManager {
  */
 	protected function _setupTable(TestFixture $fixture, Connection $db = null, $drop = true) {
 		if (!$db) {
-			$db = $this->_db;
 			if (!empty($fixture->connection)) {
 				$db = ConnectionManager::get($fixture->connection, false);
+			}
+			if (!$db) {
+				$db = ConnectionManager::get('test', false);
 			}
 		}
 		if (!empty($fixture->created) && in_array($db->configName(), $fixture->created)) {
