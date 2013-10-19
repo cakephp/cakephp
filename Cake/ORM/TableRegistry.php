@@ -100,7 +100,6 @@ class TableRegistry {
 			return static::$_instances[$alias];
 		}
 
-
 		list($plugin, $baseClass) = pluginSplit($alias);
 		$options = ['alias' => $baseClass] + $options;
 

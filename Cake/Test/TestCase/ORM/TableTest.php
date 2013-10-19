@@ -29,20 +29,6 @@ class UsersTable extends Table {
 }
 
 /**
- * Used to test correct class is instantiated when using TableRegistry::get();
- */
-class MyUsersTable extends Table {
-
-/**
- * Overrides default table name
- *
- * @var string
- */
-	protected $_table = 'users';
-
-}
-
-/**
  * Tests Table class
  *
  */
@@ -62,68 +48,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		TableRegistry::clear();
-	}
-/**
- * Tests that table options can be pre-configured for the factory method
- *
- * @return void
- */
-	public function testConfigAndBuild() {
-		TableRegistry::clear();
-		$map = TableRegistry::config();
-		$this->assertEquals([], $map);
-
-		$options = ['connection' => $this->connection];
-		TableRegistry::config('users', $options);
-		$map = TableRegistry::config();
-		$this->assertEquals(['users' => $options], $map);
-		$this->assertEquals($options, TableRegistry::config('users'));
-
-		$schema = ['id' => ['type' => 'rubbish']];
-		$options += ['schema' => $schema];
-		TableRegistry::config('users', $options);
-
-		$table = TableRegistry::get('users', ['table' => 'users']);
-		$this->assertInstanceOf('Cake\ORM\Table', $table);
-		$this->assertEquals('users', $table->table());
-		$this->assertEquals('users', $table->alias());
-		$this->assertSame($this->connection, $table->connection());
-		$this->assertEquals(array_keys($schema), $table->schema()->columns());
-		$this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
-
-		TableRegistry::clear();
-		$this->assertEmpty(TableRegistry::config());
-
-		TableRegistry::config('users', $options);
-		$table = TableRegistry::get('users', ['className' => __NAMESPACE__ . '\MyUsersTable']);
-		$this->assertInstanceOf(__NAMESPACE__ . '\MyUsersTable', $table);
-		$this->assertEquals('users', $table->table());
-		$this->assertEquals('users', $table->alias());
-		$this->assertSame($this->connection, $table->connection());
-		$this->assertEquals(array_keys($schema), $table->schema()->columns());
-	}
-
-/**
- * Tests that tables can be instantiated based on conventions
- * and using plugin notation
- *
- * @return void
- */
-	public function testBuildConvention() {
-		$table = TableRegistry::get('article');
-		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
-		$table = TableRegistry::get('Article');
-		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
-
-		$table = TableRegistry::get('author');
-		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
-		$table = TableRegistry::get('Author');
-		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
-
-		$class = $this->getMockClass('\Cake\ORM\Table');
-		class_alias($class, 'MyPlugin\Model\Repository\SuperTestTable');
-		$table = TableRegistry::get('MyPlugin.SuperTest');
-		$this->assertInstanceOf($class, $table);
 	}
 
 /**

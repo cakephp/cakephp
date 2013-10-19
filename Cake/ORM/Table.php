@@ -36,12 +36,13 @@ use Cake\Utility\Inflector;
  * ### Callbacks/events
  *
  * Table objects provide a few callbacks/events you can hook into to augment/replace
- * find operations. Each event uses the standard Event subsystem in CakePHP
+ * find operations. Each event uses the standard event subsystem in CakePHP
  *
  * - beforeFind($event, $query, $options) - Fired before each find operation. By stopping
  *   the event and supplying a return value you can bypass the find operation entirely. Any
  *   changes done to the $query instance will be retained for the rest of the find.
  *
+ * @see Cake\Event\EventManager for reference on the events system.
  */
 class Table {
 
