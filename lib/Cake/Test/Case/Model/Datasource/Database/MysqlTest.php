@@ -565,7 +565,7 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->column('point');
-		$expected = 'coordinate';
+		$expected = 'point';
 		$this->assertEquals($expected, $result);
 	}
 
@@ -587,7 +587,7 @@ class MysqlTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 				'group1' => array('type' => 'integer', 'null' => true),
 				'group2' => array('type' => 'integer', 'null' => true),
-				'point' => array('type' => 'coordinate')
+				'point' => array('type' => 'point')
 		)));
 		$result = $this->Dbo->createSchema($schemaA);
 		$this->assertContains('`id` int(11) DEFAULT 0 NOT NULL,', $result);
@@ -608,7 +608,7 @@ class MysqlTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 				'group1' => array('type' => 'integer', 'null' => true),
 				'group2' => array('type' => 'integer', 'null' => true),
-				'point' => array('type' => 'coordinate'),
+				'point' => array('type' => 'point'),
 				'indexes' => array(
 					'name_idx' => array('column' => 'name', 'unique' => 0),
 					'group_idx' => array('column' => 'group1', 'unique' => 0),
@@ -638,7 +638,7 @@ class MysqlTest extends CakeTestCase {
 				'name' => array('type' => 'string', 'null' => false, 'length' => 50),
 				'group1' => array('type' => 'integer', 'null' => true),
 				'group2' => array('type' => 'integer', 'null' => true),
-				'point' => array('type' => 'coordinate'),
+				'point' => array('type' => 'point'),
 				'indexes' => array(
 					'name_idx' => array('column' => 'name', 'unique' => 1),
 					'group_idx' => array('column' => 'group2', 'unique' => 0),
