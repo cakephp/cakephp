@@ -102,7 +102,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
  *
  * @var boolean
  */
-	protected $_hydrate = false;
+	protected $_hydrate = true;
 
 /**
  * The fully namespaced name of the class to use for hydrating results
