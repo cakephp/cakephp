@@ -1,11 +1,5 @@
 <?php
 /**
- * Behavior for binding management.
- *
- * Behavior to simplify manipulating a model's bindings when doing a find operation
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,11 +12,16 @@
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace TestApp\Model\Behavior;
+
+use Cake\ORM\Behavior;
 
 /**
- * Behavior to allow for dynamic and atomic manipulation of a Model's associations used for a find call. Most useful for limiting
- * the amount of associations and data returned.
- *
+ * Test class for trigging duplicate method errors.
  */
-class PersisterTwoBehaviorBehavior extends ModelBehavior {
+class DuplicateBehavior extends Behavior {
+
+	public function slugify() {
+	}
+
 }

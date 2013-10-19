@@ -100,4 +100,27 @@ class BehaviorRegistry extends ObjectRegistry {
 		return $instance;
 	}
 
+/**
+ * Check if any of the loaded behaviors implement a method.
+ *
+ * Will return true if any behavior provides a public method with
+ * the chosen name.
+ *
+ * @param string $method The method to check for.
+ * @return boolean
+ */
+	public function hasMethod($method) {
+	}
+
+/**
+ * Invoke a method on a behavior.
+ *
+ * @param string $method The method to invoke.
+ * @param mixed $args The arguments you want to invoke the method with should
+ *  be provided as the remaining arguments to call()
+ * @return mixed The return value depends on the underlying behavior method.
+ */
+	public function call($method) {
+	}
+
 }

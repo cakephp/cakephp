@@ -118,7 +118,8 @@ class BehaviorRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoadDuplicateMethodError() {
-		$this->markTestIncomplete('not done');
+		$this->Behaviors->load('Sluggable');
+		$this->Behaviors->load('Duplicate');
 	}
 
 /**
@@ -127,7 +128,20 @@ class BehaviorRegistryTest extends TestCase {
  * @return void
  */
 	public function testHasMethod() {
-		$this->markTestIncomplete('not done');
+		$this->Behaviors->load('Sluggable');
+		$this->assertTrue($this->Behaviors->hasMethod('slugify'));
+		$this->assertFalse($this->Behaviors->hasMethod('nope'));
+	}
+
+/**
+ * test call
+ *
+ * @return void
+ */
+	public function testCall() {
+		$this->Behaviors->load('Sluggable');
+		$result = $this->Behaviors->call('slugify', 'some value');
+		$this->assertEquals('some_value', $result);
 	}
 
 }
