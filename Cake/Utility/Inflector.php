@@ -715,7 +715,7 @@ class Inflector {
 			sprintf('/^[%s]+|[%s]+$/', $quotedReplacement, $quotedReplacement) => '',
 		);
 
-		$string = str_replace(array_keys(self::$_transliteration), array_values(self::$_transliteration), $string);
+		$string = str_replace(array_keys(static::$_transliteration), array_values(static::$_transliteration), $string);
 		return preg_replace(array_keys($map), array_values($map), $string);
 	}
 
