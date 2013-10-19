@@ -120,7 +120,7 @@ class Mysql extends DboSource {
 		'date' => array('name' => 'date', 'format' => 'Y-m-d', 'formatter' => 'date'),
 		'binary' => array('name' => 'blob'),
 		'boolean' => array('name' => 'tinyint', 'limit' => '1'),
-		'coordinate' => array('name' => 'point'),
+		'point' => array('name' => 'point')
 	);
 
 /**
@@ -606,7 +606,7 @@ class Mysql extends DboSource {
 			if ($name === 'PRIMARY') {
 				$out .= 'PRIMARY ';
 				$name = null;
-			} else if (isset($value['type']) && $value['type'] === 'spatial') {
+			} elseif (isset($value['type']) && $value['type'] === 'spatial') {
 				$out .= 'SPATIAL ';
 				$name = null;
 			} else {
@@ -752,7 +752,7 @@ class Mysql extends DboSource {
 			return $col;
 		}
 		if ((strpos($col, 'point') !== false) || $col === 'point') {
-			return 'coordinate';
+			return 'point';
 		}
 		if (($col === 'tinyint' && $limit === 1) || $col === 'boolean') {
 			return 'boolean';
