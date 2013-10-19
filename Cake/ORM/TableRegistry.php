@@ -108,7 +108,6 @@ class TableRegistry {
 			$class = Inflector::classify($alias);
 			$className = App::classname($class, 'Model\Repository', 'Table');
 			$options['className'] = $className ?: 'Cake\ORM\Table';
-			$options['className'] = $className;
 		}
 
 		if (isset(static::$_config[$alias])) {
