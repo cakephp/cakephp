@@ -144,7 +144,7 @@ class Table {
  * @param array config Lsit of options for this table
  * @return void
  */
-	public function __construct($config = []) {
+	public function __construct(array $config = []) {
 		if (!empty($config['table'])) {
 			$this->table($config['table']);
 		}
@@ -172,6 +172,27 @@ class Table {
 			$eventManager = $config['eventManager'];
 		}
 		$this->_eventManager = $eventManager ?: new EventManager();
+		$this->initialize($config);
+	}
+
+/**
+ * This method is meant to be overridden by subclasses so that any initial setting
+ * up for associations, validation rules or any custom logic can be done.
+ *
+ * ### Example:
+ *
+ * {{{
+ *	public function initialize(array $config) {
+ *		$this->belongsTo('User');
+ *		$this->belongsToMany('Tagging.Tag');
+ *		$this->primaryKey('something_else');
+ *	}
+ * }}}
+ *
+ * @param array $config Configuration options passed to the constructor
+ * @return void
+ */
+	public function initialize(array $config) {
 	}
 
 /**

@@ -517,7 +517,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['_buildQuery'],
-			['table' => 'users', 'connection' => $this->connection]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
@@ -553,7 +553,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['_buildQuery'],
-			['table' => 'users', 'connection' => $this->connection]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
@@ -571,7 +571,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindApplyOptions() {
-		$table = $this->getMock('Cake\ORM\Table', ['_buildQuery'], ['table' => 'users']);
+		$table = $this->getMock('Cake\ORM\Table', ['_buildQuery'], [['table' => 'users']]);
 		$query = $this->getMock('Cake\ORM\Query', [], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('_buildQuery')
