@@ -399,6 +399,26 @@ class Cache {
 		return $engine->read($settings['prefix'] . $key);
 	}
 
+/**
+ * Read multiple keys from the cache. Will automatically use the currently
+ * active cache configuration. To set the currently active configuration use
+ * Cache::config()
+ *
+ * ### Usage:
+ *
+ * Reading multiple keys from the active cache configuration.
+ *
+ * `Cache::read(array('my_data_1', 'my_data_2)));`
+ *
+ * Reading from a specific cache configuration.
+ *
+ * `Cache::read(array('my_data_1', 'my_data_2), 'long_term');`
+ *
+ * @param array $key an array of keys to fetch from the cache
+ * @param string $config optional name of the configuration to use. Defaults to 'default'
+ * @return array The cached data for all the keys, or false if the data doesn't exist, has expired, or if there was an error fetching it
+ */
+
 	public static function readMulti($keys, $config = 'default') {
 		$settings = self::settings($config);
 		if (empty($settings)) {
@@ -407,17 +427,17 @@ class Cache {
 		if (!self::isInitialized($config)) {
 			return false;
 		}
-		if(method_exists(self::$_engines[$config],'readMulti')){
-			foreach($keys as &$key){
+		if (method_exists(self::$_engines[$config],'readMulti')) {
+			foreach ($keys as &$key) {
 				$key = self::$_engines[$config]->key($key);
 				if (!$key) {
 					return false;
 				}
 			}
 			return self::$_engines[$config]->readMulti($settings['prefix'] . $key);
-		}else{
+		} else {
 			$return=array();
-			foreach($keys as $key){
+			foreach ($keys as $key) {
 				$return[$key]=self::read($key, $config);
 			}
 			return $return;
@@ -537,17 +557,17 @@ class Cache {
 		if (!self::isInitialized($config)) {
 			return false;
 		}
-		if(method_exists(self::$_engines[$config],'deleteMulti')){
-			foreach($keys as &$key){
+		if (method_exists(self::$_engines[$config],'deleteMulti')) {
+			foreach ($keys as &$key) {
 				$key = self::$_engines[$config]->key($key);
 				if (!$key) {
 					return false;
 				}
 			}
 			$return=self::$_engines[$config]->deleteMulti($settings['prefix'] . $key);
-		}else{
+		} else {
 			$return=array();
-			foreach($keys as $key){
+			foreach ($keys as $key) {
 				$return[$key]=self::delete($key, $config);
 			}
 			return $return;
