@@ -88,14 +88,20 @@ class FixtureManager {
 	protected function _aliasConnections() {
 		$connections = ConnectionManager::configured();
 		ConnectionManager::alias('test', 'default');
+		$map = [
+			'test' => 'default',
+		];
 		foreach ($connections as $connection) {
-			if ($connection === 'default') {
+			if (isset($map[$connection])) {
 				continue;
 			}
-			if (strpos($connection, 'test') === 0) {
-				continue;
+			if (strpos($connection, 'test_') === 0) {
+				$map[$connection] = substr($connection, 5);
+			} else {
+				$map['test_' . $connection] = $connection;
 			}
-			$alias = 'test_' . $connection;
+		}
+		foreach ($map as $alias => $connection) {
 			ConnectionManager::alias($alias, $connection);
 		}
 	}
