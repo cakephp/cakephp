@@ -27,11 +27,22 @@ use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 
 /**
- * Represents a single database table. Exposes methods for retrieving data out
- * of it and manages the associations it has to other tables. Multiple
- * instances of this class can be created for the same database table with
- * different aliases, this allows you to address your database structure in a
- * richer and more expressive way.
+ * Represents a single database table.
+ *
+ * Exposes methods for retrieving data out of it, and manages the associations
+ * this table has to other tables. Multiple instances of this class can be created
+ * for the same database table with different aliases, this allows you to address 
+ * your database structure in a richer and more expressive way.
+ *
+ * ### Retrieving data
+ *
+ * The primary way to retreive data is using Table::find(). See that method
+ * for more information.
+ *
+ * ### Bulk updates/deletes
+ *
+ * You can use Table::updateAll() and Table::deleteAll() to do bulk updates/deletes.
+ * You should be aware that events will *not* be fired for bulk updates/deletes.
  *
  * ### Callbacks/events
  *

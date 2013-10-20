@@ -21,10 +21,36 @@ use Cake\Database\ConnectionManager;
 use Cake\Utility\Inflector;
 
 /**
- * Provides a registry/factory for Table gateways.
+ * Provides a registry/factory for Table objects.
  *
  * This registry allows you to centralize the configuration for tables
  * their connections and other meta-data.
+ *
+ * ## Configuring instances
+ *
+ * You may need to configure your table objects, using TableRegistry you can
+ * centralize configuration. Any configuration set before instances are created
+ * will be used when creating instances. If you modify configuration after
+ * an instance is made, the instances *will not* be updated.
+ *
+ * {{{
+ * TableRegistry::config('User', ['table' => 'my_users']);
+ * }}}
+ *
+ * Configuration data is stored *per alias* if you use the same table with
+ * multiple aliases you will need to set configuration multiple times.
+ *
+ * ## Getting instances
+ *
+ * You can fetch instances out of the registry using get(). One instance is stored
+ * per alias. Once an alias is populated the same instance will always be returned.
+ * This is used to make the ORM use less memory and help make cyclic references easier
+ * to solve.
+ *
+ * {{{
+ * $table = TableRegistry::get('User', $config);
+ * }}}
+ *
  */
 class TableRegistry {
 
@@ -78,11 +104,15 @@ class TableRegistry {
  * This is important because table associations are resolved at runtime
  * and cyclic references need to be handled correctly.
  *
- * The options that can be passed are the same as in `__construct()`, but the
+ * The options that can be passed are the same as in `Table::__construct()`, but the
  * key `className` is also recognized.
  *
- * When $options contains `className` this method will try to instantiate an
- * object of that class instead of this default Table class.
+ * If $options does not contain `className` CakePHP will attempt to inflect the
+ * class name based on the alias. For example 'User' would result in
+ * `App\Model\Repository\UserTable` being attempted. If this class does not exist,
+ * then the default `Cake\ORM\Table` class will be used. By setting the `className`
+ * option you can define the specific class to use. This className can
+ * use a short class reference.
  *
  * If no `table` option is passed, the table name will be the tableized version
  * of the provided $alias.
