@@ -937,4 +937,23 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('TestApp\Model\Entity\ArticlesTag', $result->tags[0]->extraInfo);
 	}
 
+/**
+ * Tests that it is possible to insert a new row using the save method
+ *
+ * @return void
+ */
+	public function testSaveNewEntity() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table = Table::build('user');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals($entity->id, 5);
+
+		$row = $table->find('all')->where(['id' => 5])->first();
+		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
 }

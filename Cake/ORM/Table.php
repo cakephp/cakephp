@@ -23,6 +23,7 @@ use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
+use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 
 /**
@@ -770,6 +771,23 @@ class Table {
 			->where($conditions);
 		$statement = $query->executeStatement();
 		return $statement->rowCount() > 0;
+	}
+
+	public function save(Entity $entity, $options = []) {
+		$data = $entity->toArray();
+		$schema = $this->schema();
+		$data = array_intersect_key($data, array_flip($schema->columns()));
+		$query = $this->_buildQuery();
+		$statement = $query->insert($this->table(), array_keys($data))
+			->values($data)
+			->executeStatement();
+
+		if ($statement->rowCount() > 0) {
+			$id = $this->connection()->lastInsertId($this->table());
+			$entity->set($this->primaryKey(), $id);
+		}
+
+		return $entity;
 	}
 
 /**

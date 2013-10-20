@@ -221,7 +221,7 @@ class BelongsToMany extends Association {
  * Appends any conditions required to load the relevant set of records in the
  * target table query given a filter key and some filtering values.
  *
- * @param \Cake\ORM\Query taget table's query
+ * @param \Cake\ORM\Query target table's query
  * @param string $key the fields that should be used for filtering
  * @param mixed $filter the value that should be used to match for $key
  * @return \Cake\ORM\Query
