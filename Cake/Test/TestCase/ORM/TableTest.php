@@ -19,32 +19,12 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 
 /**
- * Used to test correct class is instantiated when using Table::build();
+ * Used to test correct class is instantiated when using TableRegistry::get();
  */
 class UsersTable extends Table {
-
-/**
- * Overrides default table name
- *
- * @var string
- */
-	protected $_table = 'users';
-
-}
-
-/**
- * Used to test correct class is instantiated when using Table::build();
- */
-class MyUsersTable extends Table {
-
-/**
- * Overrides default table name
- *
- * @var string
- */
-	protected $_table = 'users';
 
 }
 
@@ -67,82 +47,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
-		Configure::write('App.namespace', 'App');
-	}
-/**
- * Tests that table options can be pre-configured for the factory method
- *
- * @return void
- */
-	public function testConfigAndBuild() {
-		Table::clearRegistry();
-		$map = Table::config();
-		$this->assertEquals([], $map);
-
-		$options = ['connection' => $this->connection];
-		Table::config('users', $options);
-		$map = Table::config();
-		$this->assertEquals(['users' => $options], $map);
-		$this->assertEquals($options, Table::config('users'));
-
-		$schema = ['id' => ['type' => 'rubbish']];
-		$options += ['schema' => $schema];
-		Table::config('users', $options);
-
-		$table = Table::build('foo', ['table' => 'users']);
-		$this->assertInstanceOf('Cake\ORM\Table', $table);
-		$this->assertEquals('users', $table->table());
-		$this->assertEquals('foo', $table->alias());
-		$this->assertSame($this->connection, $table->connection());
-		$this->assertEquals(array_keys($schema), $table->schema()->columns());
-		$this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
-
-		Table::clearRegistry();
-		$this->assertEmpty(Table::config());
-
-		Table::config('users', $options);
-		$table = Table::build('foo', ['className' => __NAMESPACE__ . '\MyUsersTable']);
-		$this->assertInstanceOf(__NAMESPACE__ . '\MyUsersTable', $table);
-		$this->assertEquals('users', $table->table());
-		$this->assertEquals('foo', $table->alias());
-		$this->assertSame($this->connection, $table->connection());
-		$this->assertEquals(array_keys($schema), $table->schema()->columns());
-	}
-
-/**
- * Tests that tables can be instantiated based on conventions
- * and using plugin notation
- *
- * @return void
- */
-	public function testBuildConvention() {
-		$table = Table::build('article');
-		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
-		$table = Table::build('Article');
-		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
-
-		$table = Table::build('author');
-		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
-		$table = Table::build('Author');
-		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
-
-		$class = $this->getMockClass('\Cake\ORM\Table');
-		class_alias($class, 'MyPlugin\Model\Repository\SuperTestTable');
-		$table = Table::build('MyPlugin.SuperTest');
-		$this->assertInstanceOf($class, $table);
-	}
-
-/**
- * Tests getting and setting a Table instance in the registry
- *
- * @return void
- */
-	public function testInstance() {
-		$this->assertNull(Table::instance('users'));
-		$table = new Table(['table' => 'users']);
-		Table::instance('users', $table);
-		$this->assertSame($table, Table::instance('users'));
+		TableRegistry::clear();
 	}
 
 /**
@@ -201,7 +106,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testConnection() {
-		Table::clearRegistry();
 		$table = new Table(['table' => 'users']);
 		$this->assertNull($table->connection());
 		$table->connection($this->connection);
@@ -293,7 +197,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testSchema() {
 		$schema = $this->connection->schemaCollection()->describe('users');
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$this->assertEquals($schema, $table->schema());
 
 		$table = new Table(['table' => 'stuff']);
@@ -316,7 +223,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllNoFieldsAndNoHydration() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$results = $table
 			->find('all')
 			->where(['id IN' => [1, 2]])
@@ -348,7 +258,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllSomeFieldsNoHydration() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$results = $table->find('all')
 			->select(['username', 'password'])
 			->hydrate(false)
@@ -382,7 +295,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllConditionAutoTypes() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$query = $table->find('all')
 			->select(['id', 'username'])
 			->where(['created >=' => new \DateTime('2010-01-22 00:00')])
@@ -409,7 +325,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindBeforeFindEventMutateQuery() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$table->getEventManager()->attach(function ($event, $query, $options) {
 			$query->limit(1);
 		}, 'Model.beforeFind');
@@ -425,7 +344,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindBeforeFindEventOverrideReturn() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$expected = ['One', 'Two', 'Three'];
 		$table->getEventManager()->attach(function ($event, $query, $options) use ($expected) {
 			$query->setResult($expected);
@@ -505,7 +427,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['b' => 'c'],
 			'sort' => ['foo' => 'asc']
 		];
-		$table = new Table(['table' => 'authors']);
+		$table = new Table(['table' => 'authors', 'connection' => $this->connection]);
 		$belongsToMany = $table->belongsToMany('tag', $options);
 		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $belongsToMany);
 		$this->assertSame($belongsToMany, $table->association('tag'));
@@ -523,7 +445,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testUpdateAll() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$fields = ['username' => 'mark'];
 		$result = $table->updateAll($fields, ['id <' => 4]);
 		$this->assertTrue($result);
@@ -565,7 +490,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteAll() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$result = $table->deleteAll(['id <' => 4]);
 		$this->assertTrue($result);
 
@@ -583,7 +511,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['_buildQuery'],
-			[['table' => 'users']]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
@@ -601,7 +529,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindApplyOptions() {
-		$table = $this->getMock('Cake\ORM\Table', ['_buildQuery'], [['table' => 'users']]);
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['_buildQuery'],
+			[['table' => 'users', 'connection' => $this->connection]]
+		);
 		$query = $this->getMock('Cake\ORM\Query', [], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('_buildQuery')
@@ -623,7 +555,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindListNoHydration() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$table->displayField('username');
 		$query = $table->find('list', ['fields' => ['id', 'username']])
 			->hydrate(false)
@@ -659,7 +594,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindThreadedNoHydration() {
-		$table = new Table(['table' => 'categories']);
+		$table = new Table([
+			'table' => 'categories',
+			'connection' => $this->connection,
+		]);
 		$expected = [
 			[
 				'id' => 1,
@@ -727,7 +665,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testCallingFindersDirectly() {
-		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$table = $this->getMock('\Cake\ORM\Table', ['find'], [], '', false);
 		$query = $this->getMock('\Cake\ORM\Query', [], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('find')
@@ -735,7 +673,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 		$this->assertSame($query, $table->list());
 
-		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$table = $this->getMock('\Cake\ORM\Table', ['find'], [], '', false);
 		$table->expects($this->once())
 			->method('find')
 			->with('threaded', ['order' => ['name' => 'ASC']])
@@ -749,7 +687,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testStackingFinders() {
-		$table = $this->getMock('\Cake\ORM\Table', ['find', 'findList']);
+		$table = $this->getMock('\Cake\ORM\Table', ['find', 'findList'], [], '', false);
 		$params = [$this->connection, $table];
 		$query = $this->getMock('\Cake\ORM\Query', ['addDefaultTypes'], $params);
 
@@ -775,7 +713,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindThreadedHydrated() {
-		$table = new Table(['table' => 'categories']);
+		$table = new Table([
+			'table' => 'categories',
+			'connection' => $this->connection,
+		]);
 		$results = $table->find('all')
 			->threaded()
 			->select(['id', 'parent_id', 'name'])
@@ -797,7 +738,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindListHydrated() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$table->displayField('username');
 		$query = $table
 			->find('list', ['fields' => ['id', 'username']])
@@ -904,7 +848,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalBelongsToLoading() {
-		$table = new \TestApp\Model\Repository\ArticleTable;
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
 		$result = $table->find('all')->contain(['author'])->first();
 		$this->assertInstanceOf('TestApp\Model\Entity\Author', $result->author);
 	}
@@ -916,7 +862,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalHasManyLoading() {
-		$table = new \TestApp\Model\Repository\ArticleTable;
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
 		$result = $table->find('all')->contain(['author' => ['article']])->first();
 		$this->assertCount(2, $result->author->article);
 		foreach ($result->author->article as $article) {
@@ -931,7 +879,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalBelongsToMany() {
-		$table = new \TestApp\Model\Repository\ArticleTable;
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
 		$result = $table->find('all')->contain(['tag'])->first();
 		$this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
 		$this->assertInstanceOf('TestApp\Model\Entity\ArticlesTag', $result->tags[0]->extraInfo);
@@ -949,7 +899,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = Table::build('user');
+		$table = TableRegistry::get('user');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals($entity->id, 5);
 

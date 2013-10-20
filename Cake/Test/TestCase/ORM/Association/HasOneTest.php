@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 
 /**
  * Tests HasOne class
@@ -33,13 +34,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->user = Table::build('User', [
+		$this->user = TableRegistry::get('User', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'username' => ['type' => 'string'],
 			]
 		]);
-		$this->profile = Table::build('Profile', [
+		$this->profile = TableRegistry::get('Profile', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'first_name' => ['type' => 'string'],
@@ -55,7 +56,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
+		TableRegistry::clear();
 	}
 
 /**

@@ -19,12 +19,14 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests BelongsToMany class
  *
  */
-class BelongsToManyTest extends \Cake\TestSuite\TestCase {
+class BelongsToManyTest extends TestCase {
 
 /**
  * Set up
@@ -47,7 +49,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'id' => ['type' => 'integer'],
 			'name' => ['type' => 'string'],
 		]);
-		Table::instance('Article', $this->article);
+		TableRegistry::set('Article', $this->article);
 	}
 
 /**
@@ -57,7 +59,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
+		TableRegistry::clear();
 	}
 
 /**
@@ -126,7 +128,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf($hasMany, $this->tag->association('ArticlesTag'));
 
 		$this->assertSame($pivot, $assoc->pivot());
-		$pivot2 = Table::build('Foo');
+		$pivot2 = TableRegistry::get('Foo');
 		$assoc->pivot($pivot2);
 		$this->assertSame($pivot2, $assoc->pivot());
 
@@ -163,7 +165,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->tag,
 			'conditions' => ['Tag.name' => 'cake']
 		];
-		Table::build('ArticlesTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -213,7 +215,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->tag,
 			'conditions' => ['Tag.name' => 'cake']
 		];
-		Table::build('ArticlesTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -254,7 +256,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
 		];
-		Table::build('ArticlesTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -310,7 +312,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Tag.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		Table::build('ArticlesTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -362,7 +364,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Tag.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		Table::build('ArticlesTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -432,7 +434,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Tag.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		Table::build('ArticlesTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -468,7 +470,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Tag.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		Table::build('ArticlesTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
