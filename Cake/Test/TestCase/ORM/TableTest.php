@@ -879,7 +879,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalBelongsToMany() {
-		$table = new \TestApp\Model\Repository\ArticleTable;
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
 		$result = $table->find('all')->contain(['tag'])->first();
 		$this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
 		$this->assertInstanceOf('TestApp\Model\Entity\ArticlesTag', $result->tags[0]->extraInfo);
@@ -897,7 +899,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = Table::build('user');
+		$table = TableRegistry::get('user');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals($entity->id, 5);
 
