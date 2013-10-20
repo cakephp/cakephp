@@ -216,7 +216,7 @@ class PostgresSchema extends BaseSchema {
  *
  */
 	public function describeForeignKeySql($table, $config) {
-		$sql = 'SELECT
+		$sql = "SELECT
 			r.conname AS name,
 			r.confupdtype AS update_type,
 			r.confdeltype AS delete_type,
@@ -230,7 +230,7 @@ class PostgresSchema extends BaseSchema {
 				AND n.nspname = ?
 				AND n.oid = c.relnamespace
 			)
-			AND r.contype = "f"';
+			AND r.contype = 'f'";
 
 		$schema = empty($config['schema']) ? 'public' : $config['schema'];
 		return [$sql, [$table, $schema]];
