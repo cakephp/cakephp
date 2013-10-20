@@ -399,6 +399,31 @@ class Cache {
 		return $engine->read($settings['prefix'] . $key);
 	}
 
+	public static function readMulti($keys, $config = 'default') {
+		$settings = self::settings($config);
+		if (empty($settings)) {
+			return false;
+		}
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+		if(method_exists(self::$_engines[$config],'readMulti')){
+			foreach($keys as &$key){
+				$key = self::$_engines[$config]->key($key);
+				if (!$key) {
+					return false;
+				}
+			}
+			return self::$_engines[$config]->readMulti($settings['prefix'] . $key);
+		}else{
+			$return=array();
+			foreach($keys as $key){
+				$return[$key]=self::read($key, $config);
+			}
+			return $return;
+		}
+	}
+
 /**
  * Increment a number under the key and return incremented value.
  *
@@ -484,6 +509,51 @@ class Cache {
 		$success = $engine->delete($settings['prefix'] . $key);
 		static::set(null, $config);
 		return $success;
+	}
+
+/**
+ * Delete a key from the cache.
+ *
+ * ### Usage:
+ *
+ * Deleting multiple keys from the active cache configuration.
+ *
+ * `Cache::delete(array('my_data_1', 'my_data_2'));`
+ *
+ * Deleting from a specific cache configuration.
+ *
+ * `Cache::delete(array('my_data_1', 'my_data_2), 'long_term');`
+ *
+ * @param array $keys Identifiers for the data to be deleted
+ * @param string $config name of the configuration to use. Defaults to 'default'
+ * @return array of boolean value that are true if the value was successfully deleted, false if it didn't exist or couldn't be removed
+ */
+	public static function deleteMulti($keys, $config = 'default') {
+		$settings = self::settings($config);
+
+		if (empty($settings)) {
+			return false;
+		}
+		if (!self::isInitialized($config)) {
+			return false;
+		}
+		if(method_exists(self::$_engines[$config],'deleteMulti')){
+			foreach($keys as &$key){
+				$key = self::$_engines[$config]->key($key);
+				if (!$key) {
+					return false;
+				}
+			}
+			$return=self::$_engines[$config]->deleteMulti($settings['prefix'] . $key);
+		}else{
+			$return=array();
+			foreach($keys as $key){
+				$return[$key]=self::delete($key, $config);
+			}
+			return $return;
+		}
+		self::set(null, $config);
+		return $return;
 	}
 
 /**
