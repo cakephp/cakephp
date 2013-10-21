@@ -423,4 +423,28 @@ class EntityTest extends TestCase {
 		$entity = new Entity($data);
 		$this->assertEquals(json_encode($data), json_encode($entity));
 	}
+
+/**
+ * Tests the extract method
+ *
+ * @return void
+ */
+	public function testExtract() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$expected = ['author_id' => 3, 'title' => 'Foo', ];
+		$this->assertEquals($expected, $entity->extract(['author_id', 'title']));
+
+		$expected = ['id' => 1];
+		$this->assertEquals($expected, $entity->extract(['id']));
+
+		$expected = [];
+		$this->assertEquals($expected, $entity->extract([]));
+
+		$expected = ['id' => 1, 'crazyness' => null];
+		$this->assertEquals($expected, $entity->extract(['id', 'crazyness']));
+	}
 }

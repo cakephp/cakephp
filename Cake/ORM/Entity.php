@@ -305,4 +305,19 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		return $this->_properties;
 	}
 
+/**
+ * Returns an array with the requested properties
+ * stored in this entity, indexed by property name
+ *
+ * @param array $properties list of properties to be returned
+ * @return array
+ */
+	public function extract(array $properties) {
+		$result = [];
+		foreach ($properties as $property) {
+			$result[$property] = $this->get($property);
+		}
+		return $result;
+	}
+
 }
