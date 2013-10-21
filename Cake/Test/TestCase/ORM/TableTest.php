@@ -949,7 +949,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = Table::build('user');
+		$table = Table::build('users');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals($entity->id, 5);
 

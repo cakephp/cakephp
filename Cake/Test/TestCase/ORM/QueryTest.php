@@ -1300,4 +1300,5 @@ class QueryTest extends TestCase {
 		$first = $results[0];
 		$this->assertInstanceOf($authorEntity, $first->author);
 	}
+
 }

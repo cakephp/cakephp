@@ -783,8 +783,9 @@ class Table {
 			->executeStatement();
 
 		if ($statement->rowCount() > 0) {
-			$id = $this->connection()->lastInsertId($this->table());
-			$entity->set($this->primaryKey(), $id);
+			$primary = $this->primaryKey();
+			$id = $statement->lastInsertId($this->table(), $primary);
+			$entity->set($primary, $id);
 		}
 
 		return $entity;
