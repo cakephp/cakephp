@@ -49,7 +49,7 @@ class AssetDispatcherTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
-		), APP::RESET);
+		), App::RESET);
 
 		$request = new CakeRequest('theme/test_theme/ccss/cake.generic.css');
 		$event = new CakeEvent('DispatcherTest', $this, compact('request', 'response'));
@@ -153,7 +153,7 @@ class AssetDispatcherTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
-		), APP::RESET);
+		), App::RESET);
 
 		$response = $this->getMock('CakeResponse', array('_sendHeader'));
 		$request = new CakeRequest('theme/test_theme/../../../../../../VERSION.txt');
@@ -175,7 +175,7 @@ class AssetDispatcherTest extends CakeTestCase {
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
-		), APP::RESET);
+		), App::RESET);
 
 		$response = $this->getMock('CakeResponse', array('_sendHeader', 'send'));
 		$request = new CakeRequest('theme/test_theme/%2e./%2e./%2e./%2e./%2e./%2e./VERSION.txt');
