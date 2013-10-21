@@ -1957,7 +1957,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test that append() will actually append a string to a select query
+ * Test that append() will actually append a string to an insert query
  *
  * @return void
  */
@@ -1975,7 +1975,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test that append() will actually append a string to a select query
+ * Test that append() will actually append a string to an update query
  *
  * @return void
  */
@@ -1989,6 +1989,23 @@ class QueryTest extends TestCase {
 			->sql();
 		$this->assertContains('UPDATE', $sql);
 		$this->assertContains('SET', $sql);
+		$this->assertContains('WHERE', $sql);
+		$this->assertEquals(' RETURNING id', substr($sql, -13));
+	}
+
+/**
+ * Test that append() will actually append a string to a delete query
+ *
+ * @return void
+ */
+	public function testAppendDelete() {
+		$query = new Query($this->connection);
+		$sql = $query
+			->delete('articles')
+			->where(['id' => 1])
+			->append('RETURNING id')
+			->sql();
+		$this->assertContains('DELETE FROM', $sql);
 		$this->assertContains('WHERE', $sql);
 		$this->assertEquals(' RETURNING id', substr($sql, -13));
 	}
