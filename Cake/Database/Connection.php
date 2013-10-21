@@ -471,16 +471,6 @@ class Connection {
 	}
 
 /**
- * Returns last id generated for a table or sequence in database
- *
- * @param string $table table name or sequence to get last insert value from
- * @return string|integer
- */
-	public function lastInsertId($table) {
-		return $this->_driver->lastInsertId($table);
-	}
-
-/**
  * Enables or disables query logging for this connection.
  *
  * @param boolean $enable whether to turn logging on or disable it
