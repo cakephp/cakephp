@@ -79,10 +79,6 @@ class TemplateTask extends AppShell {
 
 		$paths[] = $core;
 
-		foreach ($paths as $i => $path) {
-			$paths[$i] = rtrim($path, DS) . DS;
-		}
-
 		$themes = array();
 		foreach ($paths as $path) {
 			$Folder = new Folder($path . 'Templates', false);
