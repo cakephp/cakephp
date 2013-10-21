@@ -1668,7 +1668,7 @@ class QueryTest extends TestCase {
 				'body' => 'test insert'
 			]);
 		$result = $query->sql();
-		$this->assertEquals(
+		$this->assertContains(
 			'INSERT INTO articles (title, body) VALUES (?, ?)',
 			$result
 		);
@@ -1701,7 +1701,7 @@ class QueryTest extends TestCase {
 				'title' => 'mark',
 			]);
 		$result = $query->sql();
-		$this->assertEquals(
+		$this->assertContains(
 			'INSERT INTO articles (title, body) VALUES (?, ?)',
 			$result
 		);
