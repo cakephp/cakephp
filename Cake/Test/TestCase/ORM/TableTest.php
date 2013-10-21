@@ -956,4 +956,28 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$row = $table->find('all')->where(['id' => 5])->first();
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
+
+/**
+ * Tests that saving an entity will filter out properties that
+ * are not present in the table schema when saving
+ *
+ * @return void
+ */
+	public function testSaveEntityOnlySchemaFields() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'crazyness' => 'super crazy value',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00'),
+		]);
+		$table = Table::build('users');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals($entity->id, 5);
+
+		$row = $table->find('all')->where(['id' => 5])->first();
+		$entity->unsetProperty('crazyness');
+		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
+
 }
