@@ -980,4 +980,27 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
 
+/**
+ * Tests saving only a few fields in an entity when an fieldList
+ * is passed to save
+ *
+ * @return void
+ */
+	public function testSaveWithFieldList() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table = Table::build('users');
+		$fieldList = ['fieldList' => ['username', 'created', 'updated']];
+		$this->assertSame($entity, $table->save($entity, $fieldList));
+		$this->assertEquals($entity->id, 5);
+
+		$row = $table->find('all')->where(['id' => 5])->first();
+		$entity->set('password', null);
+		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
+
 }

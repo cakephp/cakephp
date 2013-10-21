@@ -774,7 +774,10 @@ class Table {
 	}
 
 	public function save(Entity $entity, $options = []) {
-		$data = $entity->toArray();
+		$data = empty($options['fieldList']) ?
+			$entity->toArray() :
+			$entity->extract($options['fieldList']);
+
 		$schema = $this->schema();
 		$data = array_intersect_key($data, array_flip($schema->columns()));
 		$query = $this->_buildQuery();
