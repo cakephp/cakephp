@@ -95,7 +95,7 @@ abstract class BaseCoverageReport {
 /**
  * Gets the base path that the files we are interested in live in.
  *
- * @return void
+ * @return string Path
  */
 	public function getPathFilter() {
 		$path = ROOT . DS;

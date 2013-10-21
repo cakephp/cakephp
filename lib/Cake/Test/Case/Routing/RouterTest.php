@@ -192,6 +192,28 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
+ * testMapResources with custom connectOptions
+ */
+	public function testMapResourcesConnectOptions() {
+		App::build(array(
+			'Plugin' => array(
+				CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS
+			)
+		));
+		CakePlugin::load('TestPlugin');
+		App::uses('TestRoute', 'TestPlugin.Routing/Route');
+		$resources = Router::mapResources('Posts', array(
+			'connectOptions' => array(
+				'routeClass' => 'TestPlugin.TestRoute',
+				'foo' => '^(bar)$',
+			),
+		));
+		$route = end(Router::$routes);
+		$this->assertInstanceOf('TestRoute', $route);
+		$this->assertEquals('^(bar)$', $route->options['foo']);
+	}
+
+/**
  * Test mapResources with a plugin and prefix.
  *
  * @return void

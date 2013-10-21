@@ -605,7 +605,6 @@ class ControllerTest extends CakeTestCase {
 
 		$Controller->set('title', 'someTitle');
 		$this->assertSame($Controller->viewVars['title'], 'someTitle');
-		$this->assertTrue(empty($Controller->pageTitle));
 
 		$Controller->viewVars = array();
 		$expected = array('ModelName' => 'name', 'ModelName2' => 'name2');

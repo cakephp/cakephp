@@ -354,6 +354,7 @@ class ValidateUser extends CakeTestModel {
 		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'balance' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
+		'cost_decimal' => array('type' => 'decimal', 'null' => false, 'length' => '6,3'),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
@@ -799,6 +800,36 @@ class FormHelperTest extends CakeTestCase {
 			'/label',
 			array('input' => array(
 				'type' => 'number', 'name' => 'data[Contact][foo]',
+				'id' => 'ContactFoo'
+			)),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Tests correct generation of file upload fields for binary fields
+ *
+ * @return void
+ */
+	public function testFileUploadFieldTypeGenerationForBinaries() {
+		$model = ClassRegistry::getObject('Contact');
+		$model->setSchema(array('foo' => array(
+			'type' => 'binary',
+			'null' => false,
+			'default' => null,
+			'length' => 1024
+		)));
+
+		$this->Form->create('Contact');
+		$result = $this->Form->input('foo');
+		$expected = array(
+			'div' => array('class' => 'input file'),
+			'label' => array('for' => 'ContactFoo'),
+			'Foo',
+			'/label',
+			array('input' => array(
+				'type' => 'file', 'name' => 'data[Contact][foo]',
 				'id' => 'ContactFoo'
 			)),
 			'/div'
@@ -1872,6 +1903,17 @@ class FormHelperTest extends CakeTestCase {
 			'Balance',
 			'/label',
 			'input' => array('name', 'type' => 'number', 'id'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('ValidateUser.cost_decimal');
+		$expected = array(
+			'div' => array('class'),
+			'label' => array('for'),
+			'Cost Decimal',
+			'/label',
+			'input' => array('name', 'type' => 'number', 'step' => '0.001', 'id'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
