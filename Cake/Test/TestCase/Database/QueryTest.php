@@ -1938,6 +1938,25 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Test that append() will actually append a string to a select query
+ *
+ * @return void
+ */
+	public function testAppendSelect() {
+		$query = new Query($this->connection);
+		$sql = $query
+			->select(['id', 'title'])
+			->from('articles')
+			->where(['id' => 1])
+			->append('FOR UPDATE')
+			->sql();
+		$this->assertContains('SELECT', $sql);
+		$this->assertContains('FROM', $sql);
+		$this->assertContains('WHERE', $sql);
+		$this->assertEquals('FOR UPDATE', substr($sql, -10));
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table

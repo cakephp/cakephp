@@ -72,7 +72,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		'order' => null,
 		'limit' => null,
 		'offset' => null,
-		'union' => []
+		'union' => [],
+		'append' => null
 	];
 
 /**
@@ -91,6 +92,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		'order' => ' %s',
 		'limit' => ' LIMIT %s',
 		'offset' => ' OFFSET %s',
+		'append' => ' %s'
 	];
 
 /**
@@ -280,7 +282,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseSelect(callable $visitor) {
-		$parts = ['select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit', 'offset', 'union'];
+		$parts = [
+			'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
+			'offset', 'union', 'append'
+		];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
 		}
@@ -293,7 +298,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseDelete(callable $visitor) {
-		$parts = ['delete', 'from', 'where'];
+		$parts = ['delete', 'from', 'where', 'append'];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
 		}
@@ -306,7 +311,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseUpdate(callable $visitor) {
-		$parts = ['update', 'set', 'where'];
+		$parts = ['update', 'set', 'where', 'append'];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
 		}
@@ -319,7 +324,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseInsert(callable $visitor) {
-		$parts = ['insert', 'values'];
+		$parts = ['insert', 'values', 'append'];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
 		}
@@ -1316,6 +1321,27 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		if ($table) {
 			$this->from($table);
 		}
+		return $this;
+	}
+
+/**
+ * A string or expression that will be appended to the generated query
+ *
+ * ### Examples:
+ * {{{
+ * $query->select('id')->where(['author_id' => 1])->append('FOR UPDATE');
+ * $query
+ *	->insert('articles', ['title'])
+ *	->values(['author_id' => 1])
+ *	->append('RETURNING id');
+ * }}}
+ *
+ * @params string|QueryExpression the expression to be appended
+ * @return Query
+ */
+	public function append($expression = null) {
+		$this->_dirty();
+		$this->_parts['append'] = $expression;
 		return $this;
 	}
 
