@@ -1974,6 +1974,24 @@ class QueryTest extends TestCase {
 		$this->assertEquals(' RETURNING id', substr($sql, -13));
 	}
 
+/**
+ * Test that append() will actually append a string to a select query
+ *
+ * @return void
+ */
+	public function testAppendUpdate() {
+		$query = new Query($this->connection);
+		$sql = $query
+			->update('articles')
+			->set(['title' => 'foo'])
+			->where(['id' => 1])
+			->append('RETURNING id')
+			->sql();
+		$this->assertContains('UPDATE', $sql);
+		$this->assertContains('SET', $sql);
+		$this->assertContains('WHERE', $sql);
+		$this->assertEquals(' RETURNING id', substr($sql, -13));
+	}
 
 /**
  * Assertion for comparing a table's contents with what is in it.
