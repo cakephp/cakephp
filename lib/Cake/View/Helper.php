@@ -196,6 +196,7 @@ class Helper extends Object {
  *
  * @param string $name Name of the property being accessed.
  * @return mixed Helper or property found at $name
+ * @deprecated Accessing request properties through this method is deprecated and will be removed in 3.0.
  */
 	public function __get($name) {
 		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
@@ -224,6 +225,7 @@ class Helper extends Object {
  * @param string $name Name of the property being accessed.
  * @param mixed $value
  * @return void
+ * @deprecated This method will be removed in 3.0
  */
 	public function __set($name, $value) {
 		switch ($name) {
@@ -404,6 +406,7 @@ class Helper extends Object {
  *
  * @param string|array $output Either an array of strings to clean or a single string to clean.
  * @return string|array cleaned content for output
+ * @deprecated This method will be removed in 3.0
  */
 	public function clean($output) {
 		$this->_reset();
