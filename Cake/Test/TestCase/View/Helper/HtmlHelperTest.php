@@ -1070,7 +1070,7 @@ class HtmlHelperTest extends TestCase {
 		$testfile = WWW_ROOT . 'theme/test_theme/js/__test_js.js';
 		new File($testfile, true);
 
-		$this->Html->webroot = '/';
+		$this->Html->request->webroot = '/';
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->script('__test_js.js');
 		$expected = array(

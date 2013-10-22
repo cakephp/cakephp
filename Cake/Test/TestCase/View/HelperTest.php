@@ -824,34 +824,6 @@ class HelperTest extends TestCase {
 	}
 
 /**
- * testClean method
- *
- * @return void
- */
-	public function testClean() {
-		$result = $this->Helper->clean(array());
-		$this->assertEquals(null, $result);
-
-		$result = $this->Helper->clean(array('<script>with something</script>', '<applet>something else</applet>'));
-		$this->assertEquals(array('with something', 'something else'), $result);
-
-		$result = $this->Helper->clean('<script>with something</script>');
-		$this->assertEquals('with something', $result);
-
-		$result = $this->Helper->clean('<script type="text/javascript">alert("ruined");</script>');
-		$this->assertNotRegExp('#</*script#', $result);
-
-		$result = $this->Helper->clean("<script \ntype=\"text/javascript\">\n\talert('ruined');\n\n\t\t</script>");
-		$this->assertNotRegExp('#</*script#', $result);
-
-		$result = $this->Helper->clean('<body/onload=do(/something/)>');
-		$this->assertEquals('<body/>', $result);
-
-		$result = $this->Helper->clean('&lt;script&gt;alert(document.cookie)&lt;/script&gt;');
-		$this->assertEquals('&amp;lt;script&amp;gt;alert(document.cookie)&amp;lt;/script&amp;gt;', $result);
-	}
-
-/**
  * testMultiDimensionalField method
  *
  * @return void
