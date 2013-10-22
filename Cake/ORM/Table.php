@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
+use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
@@ -773,7 +774,15 @@ class Table {
 		return $statement->rowCount() > 0;
 	}
 
-	public function save(Entity $entity, $options = []) {
+	public function save(Entity $entity, array $options = []) {
+		$options = new \ArrayObject($options);
+		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
+		$this->getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
 		$data = empty($options['fieldList']) ?
 			$entity->toArray() :
 			$entity->extract($options['fieldList']);

@@ -1003,4 +1003,27 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
 
+/**
+ * Tests that it is possible to modify data from the beforeSave callback
+ *
+ * @return void
+ */
+	public function testbeforeSaveModifyData() {
+		$table = Table::build('users');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$listener = function($e, $entity, $options) use ($data) {
+			$this->assertSAme($data, $entity);
+			$entity->set('password', 'foo');
+		};
+		$table->getEventManager()->attach($listener, 'Model.beforeSave');
+		$this->assertSame($data, $table->save($data));
+		$this->assertEquals($data->id, 5);
+		$row = $table->find('all')->where(['id' => 5])->first();
+		$this->assertEquals('foo', $row->get('password'));
+	}
+
 }
