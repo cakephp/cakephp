@@ -1072,7 +1072,7 @@ class DboSource extends DataSource {
 			}
 		}
 
-		$query = trim($this->generateAssociationQuery($model, null, null, null, null, $queryData, false, $null));
+		$query = $this->generateAssociationQuery($model, null, null, null, null, $queryData, false, $null);
 
 		$resultSet = $this->fetchAll($query, $model->cacheQueries);
 
@@ -1749,19 +1749,19 @@ class DboSource extends DataSource {
 
 		switch (strtolower($type)) {
 			case 'select':
-				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}";
+				return trim("SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}");
 			case 'create':
 				return "INSERT INTO {$table} ({$fields}) VALUES ({$values})";
 			case 'update':
 				if (!empty($alias)) {
 					$aliases = "{$this->alias}{$alias} {$joins} ";
 				}
-				return "UPDATE {$table} {$aliases}SET {$fields} {$conditions}";
+				return trim("UPDATE {$table} {$aliases}SET {$fields} {$conditions}");
 			case 'delete':
 				if (!empty($alias)) {
 					$aliases = "{$this->alias}{$alias} {$joins} ";
 				}
-				return "DELETE {$alias} FROM {$table} {$aliases}{$conditions}";
+				return trim("DELETE {$alias} FROM {$table} {$aliases}{$conditions}");
 			case 'schema':
 				foreach (array('columns', 'indexes', 'tableParameters') as $var) {
 					if (is_array(${$var})) {
