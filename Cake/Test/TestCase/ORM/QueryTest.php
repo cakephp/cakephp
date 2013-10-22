@@ -506,9 +506,8 @@ class QueryTest extends TestCase {
  *
  * @dataProvider strategiesProvider
  * @return void
- **/
+ */
 	public function testHasManyEagerLoadingFromSecondaryTable($strategy) {
-
 		$author = TableRegistry::get('author');
 		$article = TableRegistry::get('article');
 		$post = TableRegistry::get('post');
