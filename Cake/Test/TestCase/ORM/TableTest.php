@@ -1008,7 +1008,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testbeforeSaveModifyData() {
+	public function testBeforeSaveModifyData() {
 		$table = Table::build('users');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
@@ -1024,6 +1024,36 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($data->id, 5);
 		$row = $table->find('all')->where(['id' => 5])->first();
 		$this->assertEquals('foo', $row->get('password'));
+	}
+
+/**
+ * Tests that it is possible to modify the options array in beforeSave
+ *
+ * @return void
+ */
+	public function testBeforeSaveModifyOptions() {
+		$table = Table::build('users');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'foo',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$listener1 = function($e, $entity, $options) {
+			$options['fieldList'][] = 'created';
+		};
+		$listener2 = function($e, $entity, $options) {
+			$options['fieldList'][] = 'updated';
+		};
+		$table->getEventManager()->attach($listener1, 'Model.beforeSave');
+		$table->getEventManager()->attach($listener2, 'Model.beforeSave');
+		$this->assertSame($data, $table->save($data));
+		$this->assertEquals($data->id, 5);
+
+		$row = $table->find('all')->where(['id' => 5])->first();
+		$data->set('username', null);
+		$data->set('password', null);
+		$this->assertEquals($data->toArray(), $row->toArray());
 	}
 
 }
