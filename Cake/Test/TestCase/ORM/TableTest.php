@@ -1056,4 +1056,28 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($data->toArray(), $row->toArray());
 	}
 
+/**
+ * Tests that it is possible to stop the saving altogether, without implying
+ * the save operation failed
+ *
+ * @return void
+ */
+	public function testBeforeSaveStopEvent() {
+		$table = Table::build('users');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$listener = function($e, $entity) {
+			$e->stopPropagation();
+			return $entity;
+		};
+		$table->getEventManager()->attach($listener, 'Model.beforeSave');
+		$this->assertSame($data, $table->save($data));
+		$this->assertNull($data->id);
+		$row = $table->find('all')->where(['id' => 5])->first();
+		$this->assertNull($row);
+	}
+
 }
