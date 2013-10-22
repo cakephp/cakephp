@@ -134,7 +134,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Build an HTTP Socket using the specified configuration.
  *
- * You can use an URL string to set the URL and use default configurations for
+ * You can use a URL string to set the URL and use default configurations for
  * all other options:
  *
  * `$http = new HttpSocket('http://cakephp.org/');`
@@ -464,7 +464,7 @@ class HttpSocket extends CakeSocket {
 /**
  * Issues a POST request to the specified URI, query, and request.
  *
- * `post()` can be used to post simple data arrays to an URL:
+ * `post()` can be used to post simple data arrays to a URL:
  *
  * {{{
  * $response = $http->post('http://example.com', array(
@@ -545,7 +545,7 @@ class HttpSocket extends CakeSocket {
  *
  * Would return `/search?q=socket`.
  *
- * @param string|array Either a string or array of URL options to create an URL with.
+ * @param string|array Either a string or array of URL options to create a URL with.
  * @param string $uriTemplate A template string to use for URL formatting.
  * @return mixed Either false on failure or a string containing the composed URL.
  */
