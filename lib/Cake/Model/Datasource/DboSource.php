@@ -1055,6 +1055,9 @@ class DboSource extends DataSource {
 			unset($_associations[2], $_associations[3]);
 		}
 
+		$saveOriginalQueryDataJoins = $queryData['joins'];
+		$queryData['joins'] = array();
+
 		foreach ($_associations as $type) {
 			foreach ($model->{$type} as $assoc => $assocData) {
 				$linkModel = $model->{$assoc};
@@ -1070,6 +1073,10 @@ class DboSource extends DataSource {
 					}
 				}
 			}
+		}
+
+		foreach ($saveOriginalQueryDataJoins as $originalJoin) {
+			array_push($queryData['joins'], $originalJoin);
 		}
 
 		$query = trim($this->generateAssociationQuery($model, null, null, null, null, $queryData, false, $null));
