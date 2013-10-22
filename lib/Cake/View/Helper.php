@@ -245,7 +245,7 @@ class Helper extends Object {
 /**
  * Finds URL for specified action.
  *
- * Returns an URL pointing at the provided parameters.
+ * Returns a URL pointing at the provided parameters.
  *
  * @param string|array $url Either a relative string url like `/products/view/23` or
  *    an array of URL parameters. Using an array for URLs will allow you to leverage
@@ -341,7 +341,7 @@ class Helper extends Object {
 	}
 
 /**
- * Encodes an URL for use in HTML attributes.
+ * Encodes a URL for use in HTML attributes.
  *
  * @param string $url The URL to encode.
  * @return string The URL encoded for both URL & HTML contexts.
