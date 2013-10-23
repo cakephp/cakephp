@@ -351,7 +351,7 @@ class TimeHelper extends AppHelper {
  * - `element` - The element to wrap the formatted time in.
  *   Has a few additional options:
  *   - `tag` - The tag to use, defaults to 'span'.
- *   - `class` - The classname to use, defaults to `time-ago-in-words`.
+ *   - `class` - The class name to use, defaults to `time-ago-in-words`.
  *   - `title` - Defaults to the $dateTime input.
  *
  * @param integer|string|DateTime $dateTime UNIX timestamp, strtotime() valid string or DateTime object

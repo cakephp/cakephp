@@ -294,7 +294,7 @@ class Model extends Object implements CakeEventListener {
  *
  * ### Possible keys in association
  *
- * - `className`: the classname of the model being associated to the current model.
+ * - `className`: the class name of the model being associated to the current model.
  *   If you're defining a 'Profile belongsTo User' relationship, the className key should equal 'User.'
  * - `foreignKey`: the name of the foreign key found in the current model. This is
  *   especially handy if you need to define multiple belongsTo relationships. The default
@@ -341,7 +341,7 @@ class Model extends Object implements CakeEventListener {
  *
  * ### Possible keys in association
  *
- * - `className`: the classname of the model being associated to the current model.
+ * - `className`: the class name of the model being associated to the current model.
  *   If you're defining a 'User hasOne Profile' relationship, the className key should equal 'Profile.'
  * - `foreignKey`: the name of the foreign key found in the other model. This is
  *   especially handy if you need to define multiple hasOne relationships.
@@ -384,7 +384,7 @@ class Model extends Object implements CakeEventListener {
  *
  * ### Possible keys in association
  *
- * - `className`: the classname of the model being associated to the current model.
+ * - `className`: the class name of the model being associated to the current model.
  *   If you're defining a 'User hasMany Comment' relationship, the className key should equal 'Comment.'
  * - `foreignKey`: the name of the foreign key found in the other model. This is
  *   especially handy if you need to define multiple hasMany relationships. The default
@@ -435,7 +435,7 @@ class Model extends Object implements CakeEventListener {
  *
  * ### Possible keys in association
  *
- * - `className`: the classname of the model being associated to the current model.
+ * - `className`: the class name of the model being associated to the current model.
  *   If you're defining a 'Recipe HABTM Tag' relationship, the className key should equal 'Tag.'
  * - `joinTable`: The name of the join table used in this association (if the
  *   current table doesn't adhere to the naming convention for HABTM join tables).

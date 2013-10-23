@@ -105,7 +105,7 @@ HTML;
 	}
 
 /**
- * Guess the classname the test was for based on the test case filename.
+ * Guess the class name the test was for based on the test case filename.
  *
  * @param ReflectionClass $testReflection.
  * @return string Possible test subject name.

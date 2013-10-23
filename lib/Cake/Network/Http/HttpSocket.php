@@ -78,7 +78,7 @@ class HttpSocket extends CakeSocket {
 	public $response = null;
 
 /**
- * Response classname
+ * Response class name
  *
  * @var string
  */

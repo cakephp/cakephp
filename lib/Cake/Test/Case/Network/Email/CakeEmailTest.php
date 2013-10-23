@@ -27,7 +27,7 @@ App::uses('CakeEmail', 'Network/Email');
 class TestCakeEmail extends CakeEmail {
 
 /**
- * Config classname.
+ * Config class name.
  *
  * Use a the testing config class in this file.
  *
