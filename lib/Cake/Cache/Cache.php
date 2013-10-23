@@ -1,16 +1,17 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Cache
  * @since         CakePHP(tm) v 1.2.0.4933
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Inflector', 'Utility');
@@ -19,10 +20,10 @@ App::uses('CacheEngine', 'Cache');
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you
  * to use several different Cache engines, without coupling your application to a specific
- * implementation.  It also allows you to change out cache storage or configuration without effecting
+ * implementation. It also allows you to change out cache storage or configuration without effecting
  * the rest of your application.
  *
- * You can configure Cache engines in your application's `bootstrap.php` file.  A sample configuration would
+ * You can configure Cache engines in your application's `bootstrap.php` file. A sample configuration would
  * be
  *
  * {{{
@@ -32,9 +33,9 @@ App::uses('CacheEngine', 'Cache');
  *  ));
  * }}}
  *
- * This would configure an APC cache engine to the 'shared' alias.  You could then read and write
- * to that cache alias by using it for the `$config` parameter in the various Cache methods.  In
- * general all Cache operations are supported by all cache engines.  However, Cache::increment() and
+ * This would configure an APC cache engine to the 'shared' alias. You could then read and write
+ * to that cache alias by using it for the `$config` parameter in the various Cache methods. In
+ * general all Cache operations are supported by all cache engines. However, Cache::increment() and
  * Cache::decrement() are not supported by File caching.
  *
  * @package       Cake.Cache
@@ -51,6 +52,13 @@ class Cache {
 	protected static $_config = array();
 
 /**
+ * Group to Config mapping
+ *
+ * @var array
+ */
+	protected static $_groups = array();
+
+/**
  * Whether to reset the settings with the next call to Cache::set();
  *
  * @var array
@@ -65,7 +73,7 @@ class Cache {
 	protected static $_engines = array();
 
 /**
- * Set the cache configuration to use.  config() can
+ * Set the cache configuration to use. config() can
  * both create new configurations, return the settings for already configured
  * configurations.
  *
@@ -95,20 +103,20 @@ class Cache {
  *    handy for deleting a complete group from cache.
  * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
  *    with either another cache config or another application.
- * - `probability` Probability of hitting a cache gc cleanup.  Setting to 0 will disable
+ * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
  *    cache::gc from ever being called automatically.
  * - `servers' Used by memcache. Give the address of the memcached servers to use.
- * - `compress` Used by memcache.  Enables memcache's compressed format.
- * - `serialize` Used by FileCache.  Should cache objects be serialized first.
- * - `path` Used by FileCache.  Path to where cachefiles should be saved.
- * - `lock` Used by FileCache.  Should files be locked before writing to them?
- * - `user` Used by Xcache.  Username for XCache
- * - `password` Used by Xcache.  Password for XCache
+ * - `compress` Used by memcache. Enables memcache's compressed format.
+ * - `serialize` Used by FileCache. Should cache objects be serialized first.
+ * - `path` Used by FileCache. Path to where cachefiles should be saved.
+ * - `lock` Used by FileCache. Should files be locked before writing to them?
+ * - `user` Used by Xcache. Username for XCache
+ * - `password` Used by Xcache/Redis. Password for XCache/Redis
  *
  * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
  * @param array $settings Optional associative array of settings passed to the engine
- * @return array(engine, settings) on success, false on failure
+ * @return array array(engine, settings) on success, false on failure
  * @throws CacheException
  */
 	public static function config($name = null, $settings = array()) {
@@ -127,6 +135,14 @@ class Cache {
 
 		if (empty(self::$_config[$name]['engine'])) {
 			return false;
+		}
+
+		if (!empty(self::$_config[$name]['groups'])) {
+			foreach (self::$_config[$name]['groups'] as $group) {
+				self::$_groups[$group][] = $name;
+				sort(self::$_groups[$group]);
+				self::$_groups[$group] = array_unique(self::$_groups[$group]);
+			}
 		}
 
 		$engine = self::$_config[$name]['engine'];
@@ -154,20 +170,20 @@ class Cache {
 		$cacheClass = $class . 'Engine';
 		App::uses($cacheClass, $plugin . 'Cache/Engine');
 		if (!class_exists($cacheClass)) {
-			return false;
+			throw new CacheException(__d('cake_dev', 'Cache engine %s is not available.', $name));
 		}
 		$cacheClass = $class . 'Engine';
 		if (!is_subclass_of($cacheClass, 'CacheEngine')) {
-			throw new CacheException(__d('cake_dev', 'Cache engines must use CacheEngine as a base class.'));
+			throw new CacheException(__d('cake_dev', 'Cache engines must use %s as a base class.', 'CacheEngine'));
 		}
 		self::$_engines[$name] = new $cacheClass();
-		if (self::$_engines[$name]->init($config)) {
-			if (self::$_engines[$name]->settings['probability'] && time() % self::$_engines[$name]->settings['probability'] === 0) {
-				self::$_engines[$name]->gc();
-			}
-			return true;
+		if (!self::$_engines[$name]->init($config)) {
+			throw new CacheException(__d('cake_dev', 'Cache engine %s is not properly configured.', $name));
 		}
-		return false;
+		if (self::$_engines[$name]->settings['probability'] && time() % self::$_engines[$name]->settings['probability'] === 0) {
+			self::$_engines[$name]->gc();
+		}
+		return true;
 	}
 
 /**
@@ -180,7 +196,7 @@ class Cache {
 	}
 
 /**
- * Drops a cache engine.  Deletes the cache configuration information
+ * Drops a cache engine. Deletes the cache configuration information
  * If the deleted configuration is the last configuration using an certain engine,
  * the Engine instance is also unset.
  *
@@ -196,7 +212,7 @@ class Cache {
 	}
 
 /**
- * Temporarily change the settings on a cache config.  The settings will persist for the next write
+ * Temporarily change the settings on a cache config. The settings will persist for the next write
  * operation (write, decrement, increment, clear). Any reads that are done before the write, will
  * use the modified settings. If `$settings` is empty, the settings will be reset to the
  * original configuration.
@@ -262,7 +278,7 @@ class Cache {
 
 /**
  * Write data for key into cache. Will automatically use the currently
- * active cache configuration.  To set the currently active configuration use
+ * active cache configuration. To set the currently active configuration use
  * Cache::config()
  *
  * ### Usage:
@@ -312,8 +328,8 @@ class Cache {
 	}
 
 /**
- * Read a key from the cache.  Will automatically use the currently
- * active cache configuration.  To set the currently active configuration use
+ * Read a key from the cache. Will automatically use the currently
+ * active cache configuration. To set the currently active configuration use
  * Cache::config()
  *
  * ### Usage:
@@ -366,7 +382,7 @@ class Cache {
 		}
 		$key = self::$_engines[$config]->key($key);
 
-		if (!$key || !is_integer($offset) || $offset < 0) {
+		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 		$success = self::$_engines[$config]->increment($settings['prefix'] . $key, $offset);
@@ -394,7 +410,7 @@ class Cache {
 		}
 		$key = self::$_engines[$config]->key($key);
 
-		if (!$key || !is_integer($offset) || $offset < 0) {
+		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 		$success = self::$_engines[$config]->decrement($settings['prefix'] . $key, $offset);
@@ -497,5 +513,33 @@ class Cache {
 		return array();
 	}
 
-}
+/**
+ * Retrieve group names to config mapping.
+ *
+ * {{{
+ *	Cache::config('daily', array(
+ *		'duration' => '1 day', 'groups' => array('posts')
+ *	));
+ *	Cache::config('weekly', array(
+ *		'duration' => '1 week', 'groups' => array('posts', 'archive')
+ *	));
+ *	$configs = Cache::groupConfigs('posts');
+ * }}}
+ *
+ * $config will equal to `array('posts' => array('daily', 'weekly'))`
+ *
+ * @param string $group group name or null to retrieve all group mappings
+ * @return array map of group and all configuration that has the same group
+ * @throws CacheException
+ */
+	public static function groupConfigs($group = null) {
+		if ($group === null) {
+			return self::$_groups;
+		}
+		if (isset(self::$_groups[$group])) {
+			return array($group => self::$_groups[$group]);
+		}
+		throw new CacheException(__d('cake_dev', 'Invalid cache group %s', $group));
+	}
 
+}

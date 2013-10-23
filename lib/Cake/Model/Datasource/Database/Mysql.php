@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource.Database
  * @since         CakePHP(tm) v 0.10.5.1790
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('DboSource', 'Model/Datasource');
@@ -108,6 +109,7 @@ class Mysql extends DboSource {
 		'primary_key' => array('name' => 'NOT NULL AUTO_INCREMENT'),
 		'string' => array('name' => 'varchar', 'limit' => '255'),
 		'text' => array('name' => 'text'),
+		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
@@ -119,7 +121,23 @@ class Mysql extends DboSource {
 	);
 
 /**
+ * Mapping of collation names to character set names
+ *
+ * @var array
+ */
+	protected $_charsets = array();
+
+/**
  * Connects to the database using options in the given configuration array.
+ *
+ * MySQL supports a few additional options that other drivers do not:
+ *
+ * - `unix_socket` Set to the path of the MySQL sock file. Can be used in place
+ *   of host + port.
+ * - `ssl_key` SSL key file for connecting via SSL. Must be combined with `ssl_cert`.
+ * - `ssl_cert` The SSL certificate to use when connecting via SSL. Must be
+ *   combined with `ssl_key`.
+ * - `ssl_ca` The certificate authority for SSL connections.
  *
  * @return boolean True if the database could be connected, else false
  * @throws MissingConnectionException
@@ -127,20 +145,30 @@ class Mysql extends DboSource {
 	public function connect() {
 		$config = $this->config;
 		$this->connected = false;
+
+		$flags = array(
+			PDO::ATTR_PERSISTENT => $config['persistent'],
+			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
+		);
+
+		if (!empty($config['encoding'])) {
+			$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
+		}
+		if (!empty($config['ssl_key']) && !empty($config['ssl_cert'])) {
+			$flags[PDO::MYSQL_ATTR_SSL_KEY] = $config['ssl_key'];
+			$flags[PDO::MYSQL_ATTR_SSL_CERT] = $config['ssl_cert'];
+		}
+		if (!empty($config['ssl_ca'])) {
+			$flags[PDO::MYSQL_ATTR_SSL_CA] = $config['ssl_ca'];
+		}
+		if (empty($config['unix_socket'])) {
+			$dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
+		} else {
+			$dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
+		}
+
 		try {
-			$flags = array(
-				PDO::ATTR_PERSISTENT => $config['persistent'],
-				PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-				PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-			);
-			if (!empty($config['encoding'])) {
-				$flags[PDO::MYSQL_ATTR_INIT_COMMAND] = 'SET NAMES ' . $config['encoding'];
-			}
-			if (empty($config['unix_socket'])) {
-				$dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
-			} else {
-				$dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
-			}
 			$this->_connection = new PDO(
 				$dsn,
 				$config['login'],
@@ -148,6 +176,11 @@ class Mysql extends DboSource {
 				$flags
 			);
 			$this->connected = true;
+			if (!empty($config['settings'])) {
+				foreach ($config['settings'] as $key => $value) {
+					$this->_execute("SET $key=$value");
+				}
+			}
 		} catch (PDOException $e) {
 			throw new MissingConnectionException(array(
 				'class' => get_class($this),
@@ -155,6 +188,7 @@ class Mysql extends DboSource {
 			));
 		}
 
+		$this->_charsets = array();
 		$this->_useAlias = (bool)version_compare($this->getVersion(), "4.1", ">=");
 
 		return $this->connected;
@@ -177,7 +211,7 @@ class Mysql extends DboSource {
  */
 	public function listSources($data = null) {
 		$cache = parent::listSources();
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$result = $this->_execute('SHOW TABLES FROM ' . $this->name($this->config['database']));
@@ -185,17 +219,16 @@ class Mysql extends DboSource {
 		if (!$result) {
 			$result->closeCursor();
 			return array();
-		} else {
-			$tables = array();
-
-			while ($line = $result->fetch(PDO::FETCH_NUM)) {
-				$tables[] = $line[0];
-			}
-
-			$result->closeCursor();
-			parent::listSources($tables);
-			return $tables;
 		}
+		$tables = array();
+
+		while ($line = $result->fetch(PDO::FETCH_NUM)) {
+			$tables[] = $line[0];
+		}
+
+		$result->closeCursor();
+		parent::listSources($tables);
+		return $tables;
 	}
 
 /**
@@ -211,10 +244,10 @@ class Mysql extends DboSource {
 
 		while ($numFields-- > 0) {
 			$column = $results->getColumnMeta($index);
-			if (empty($column['native_type'])) {
-				$type = ($column['len'] == 1) ? 'boolean' : 'string';
+			if ($column['len'] === 1 && (empty($column['native_type']) || $column['native_type'] === 'TINY')) {
+				$type = 'boolean';
 			} else {
-				$type = $column['native_type'];
+				$type = empty($column['native_type']) ? 'string' : $column['native_type'];
 			}
 			if (!empty($column['table']) && strpos($column['name'], $this->virtualFieldSeparator) === false) {
 				$this->map[$index++] = array($column['table'], $column['name'], $type);
@@ -261,15 +294,24 @@ class Mysql extends DboSource {
  * @return string Character set name
  */
 	public function getCharsetName($name) {
-		if ((bool)version_compare($this->getVersion(), "5", ">=")) {
-			$r = $this->_execute('SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?', array($name));
-			$cols = $r->fetch(PDO::FETCH_ASSOC);
-
-			if (isset($cols['CHARACTER_SET_NAME'])) {
-				return $cols['CHARACTER_SET_NAME'];
-			}
+		if ((bool)version_compare($this->getVersion(), "5", "<")) {
+			return false;
 		}
-		return false;
+		if (isset($this->_charsets[$name])) {
+			return $this->_charsets[$name];
+		}
+		$r = $this->_execute(
+			'SELECT CHARACTER_SET_NAME FROM INFORMATION_SCHEMA.COLLATIONS WHERE COLLATION_NAME = ?',
+			array($name)
+		);
+		$cols = $r->fetch(PDO::FETCH_ASSOC);
+
+		if (isset($cols['CHARACTER_SET_NAME'])) {
+			$this->_charsets[$name] = $cols['CHARACTER_SET_NAME'];
+		} else {
+			$this->_charsets[$name] = false;
+		}
+		return $this->_charsets[$name];
 	}
 
 /**
@@ -282,7 +324,7 @@ class Mysql extends DboSource {
 	public function describe($model) {
 		$key = $this->fullTableName($model, false);
 		$cache = parent::describe($key);
-		if ($cache != null) {
+		if ($cache) {
 			return $cache;
 		}
 		$table = $this->fullTableName($model);
@@ -334,7 +376,7 @@ class Mysql extends DboSource {
 			return parent::update($model, $fields, $values, $conditions);
 		}
 
-		if ($values == null) {
+		if (!$values) {
 			$combined = $fields;
 		} else {
 			$combined = array_combine($fields, $values);
@@ -425,17 +467,22 @@ class Mysql extends DboSource {
 		$table = $this->fullTableName($model);
 		$old = version_compare($this->getVersion(), '4.1', '<=');
 		if ($table) {
-			$indices = $this->_execute('SHOW INDEX FROM ' . $table);
+			$indexes = $this->_execute('SHOW INDEX FROM ' . $table);
 			// @codingStandardsIgnoreStart
 			// MySQL columns don't match the cakephp conventions.
-			while ($idx = $indices->fetch(PDO::FETCH_OBJ)) {
+			while ($idx = $indexes->fetch(PDO::FETCH_OBJ)) {
 				if ($old) {
 					$idx = (object)current((array)$idx);
 				}
 				if (!isset($index[$idx->Key_name]['column'])) {
 					$col = array();
 					$index[$idx->Key_name]['column'] = $idx->Column_name;
-					$index[$idx->Key_name]['unique'] = intval($idx->Non_unique == 0);
+
+					if ($idx->Index_type === 'FULLTEXT') {
+						$index[$idx->Key_name]['type'] = strtolower($idx->Index_type);
+					} else {
+						$index[$idx->Key_name]['unique'] = intval($idx->Non_unique == 0);
+					}
 				} else {
 					if (!empty($index[$idx->Key_name]['column']) && !is_array($index[$idx->Key_name]['column'])) {
 						$col[] = $index[$idx->Key_name]['column'];
@@ -443,9 +490,15 @@ class Mysql extends DboSource {
 					$col[] = $idx->Column_name;
 					$index[$idx->Key_name]['column'] = $col;
 				}
+				if (!empty($idx->Sub_part)) {
+					if (!isset($index[$idx->Key_name]['length'])) {
+						$index[$idx->Key_name]['length'] = array();
+					}
+					$index[$idx->Key_name]['length'][$idx->Column_name] = $idx->Sub_part;
+				}
 			}
 			// @codingStandardsIgnoreEnd
-			$indices->closeCursor();
+			$indexes->closeCursor();
 		}
 		return $index;
 	}
@@ -486,13 +539,13 @@ class Mysql extends DboSource {
 								}
 								$colList[] = $alter;
 							}
-						break;
+							break;
 						case 'drop':
 							foreach ($column as $field => $col) {
 								$col['name'] = $field;
 								$colList[] = 'DROP ' . $this->name($field);
 							}
-						break;
+							break;
 						case 'change':
 							foreach ($column as $field => $col) {
 								if (!isset($col['name'])) {
@@ -500,7 +553,7 @@ class Mysql extends DboSource {
 								}
 								$colList[] = 'CHANGE ' . $this->name($field) . ' ' . $this->buildColumn($col);
 							}
-						break;
+							break;
 					}
 				}
 				$colList = array_merge($colList, $this->_alterIndexes($curTable, $indexes));
@@ -512,21 +565,13 @@ class Mysql extends DboSource {
 	}
 
 /**
- * Generate a MySQL "drop table" statement for the given Schema object
+ * Generate a "drop table" statement for the given table
  *
- * @param CakeSchema $schema An instance of a subclass of CakeSchema
- * @param string $table Optional.  If specified only the table name given will be generated.
- *                      Otherwise, all tables defined in the schema are generated.
- * @return string
+ * @param type $table Name of the table to drop
+ * @return string Drop table SQL statement
  */
-	public function dropSchema(CakeSchema $schema, $table = null) {
-		$out = '';
-		foreach ($schema->tables as $curTable => $columns) {
-			if (!$table || $table === $curTable) {
-				$out .= 'DROP TABLE IF EXISTS ' . $this->fullTableName($curTable) . ";\n";
-			}
-		}
-		return $out;
+	protected function _dropTable($table) {
+		return 'DROP TABLE IF EXISTS ' . $this->fullTableName($table) . ";";
 	}
 
 /**
@@ -544,6 +589,58 @@ class Mysql extends DboSource {
 	}
 
 /**
+ * Format indexes for create table
+ *
+ * @param array $indexes An array of indexes to generate SQL from
+ * @param string $table Optional table name, not used
+ * @return array An array of SQL statements for indexes
+ * @see DboSource::buildIndex()
+ */
+	public function buildIndex($indexes, $table = null) {
+		$join = array();
+		foreach ($indexes as $name => $value) {
+			$out = '';
+			if ($name === 'PRIMARY') {
+				$out .= 'PRIMARY ';
+				$name = null;
+			} else {
+				if (!empty($value['unique'])) {
+					$out .= 'UNIQUE ';
+				}
+				$name = $this->startQuote . $name . $this->endQuote;
+			}
+			if (isset($value['type']) && strtolower($value['type']) === 'fulltext') {
+				$out .= 'FULLTEXT ';
+			}
+			$out .= 'KEY ' . $name . ' (';
+
+			if (is_array($value['column'])) {
+				if (isset($value['length'])) {
+					$vals = array();
+					foreach ($value['column'] as $column) {
+						$name = $this->name($column);
+						if (isset($value['length'])) {
+							$name .= $this->_buildIndexSubPart($value['length'], $column);
+						}
+						$vals[] = $name;
+					}
+					$out .= implode(', ', $vals);
+				} else {
+					$out .= implode(', ', array_map(array(&$this, 'name'), $value['column']));
+				}
+			} else {
+				$out .= $this->name($value['column']);
+				if (isset($value['length'])) {
+					$out .= $this->_buildIndexSubPart($value['length'], $value['column']);
+				}
+			}
+			$out .= ')';
+			$join[] = $out;
+		}
+		return $join;
+	}
+
+/**
  * Generate MySQL index alteration statements for a table.
  *
  * @param string $table Table to alter indexes for
@@ -555,34 +652,38 @@ class Mysql extends DboSource {
 		if (isset($indexes['drop'])) {
 			foreach ($indexes['drop'] as $name => $value) {
 				$out = 'DROP ';
-				if ($name == 'PRIMARY') {
+				if ($name === 'PRIMARY') {
 					$out .= 'PRIMARY KEY';
 				} else {
-					$out .= 'KEY ' . $name;
+					$out .= 'KEY ' . $this->startQuote . $name . $this->endQuote;
 				}
 				$alter[] = $out;
 			}
 		}
 		if (isset($indexes['add'])) {
-			foreach ($indexes['add'] as $name => $value) {
-				$out = 'ADD ';
-				if ($name == 'PRIMARY') {
-					$out .= 'PRIMARY ';
-					$name = null;
-				} else {
-					if (!empty($value['unique'])) {
-						$out .= 'UNIQUE ';
-					}
-				}
-				if (is_array($value['column'])) {
-					$out .= 'KEY ' . $name . ' (' . implode(', ', array_map(array(&$this, 'name'), $value['column'])) . ')';
-				} else {
-					$out .= 'KEY ' . $name . ' (' . $this->name($value['column']) . ')';
-				}
-				$alter[] = $out;
+			$add = $this->buildIndex($indexes['add']);
+			foreach ($add as $index) {
+				$alter[] = 'ADD ' . $index;
 			}
 		}
 		return $alter;
+	}
+
+/**
+ * Format length for text indexes
+ *
+ * @param array $lengths An array of lengths for a single index
+ * @param string $column The column for which to generate the index length
+ * @return string Formatted length part of an index field
+ */
+	protected function _buildIndexSubPart($lengths, $column) {
+		if ($lengths === null) {
+			return '';
+		}
+		if (!isset($lengths[$column])) {
+			return '';
+		}
+		return '(' . $lengths[$column] . ')';
 	}
 
 /**
@@ -601,24 +702,23 @@ class Mysql extends DboSource {
 		if (!$result) {
 			$result->closeCursor();
 			return array();
-		} else {
-			$tables = array();
-			foreach ($result as $row) {
-				$tables[$row['Name']] = (array)$row;
-				unset($tables[$row['Name']]['queryString']);
-				if (!empty($row['Collation'])) {
-					$charset = $this->getCharsetName($row['Collation']);
-					if ($charset) {
-						$tables[$row['Name']]['charset'] = $charset;
-					}
+		}
+		$tables = array();
+		foreach ($result as $row) {
+			$tables[$row['Name']] = (array)$row;
+			unset($tables[$row['Name']]['queryString']);
+			if (!empty($row['Collation'])) {
+				$charset = $this->getCharsetName($row['Collation']);
+				if ($charset) {
+					$tables[$row['Name']]['charset'] = $charset;
 				}
 			}
-			$result->closeCursor();
-			if (is_string($name) && isset($tables[$name])) {
-				return $tables[$name];
-			}
-			return $tables;
 		}
+		$result->closeCursor();
+		if (is_string($name) && isset($tables[$name])) {
+			return $tables[$name];
+		}
+		return $tables;
 	}
 
 /**
@@ -645,8 +745,11 @@ class Mysql extends DboSource {
 		if (in_array($col, array('date', 'time', 'datetime', 'timestamp'))) {
 			return $col;
 		}
-		if (($col === 'tinyint' && $limit == 1) || $col === 'boolean') {
+		if (($col === 'tinyint' && $limit === 1) || $col === 'boolean') {
 			return 'boolean';
+		}
+		if (strpos($col, 'bigint') !== false || $col === 'bigint') {
+			return 'biginteger';
 		}
 		if (strpos($col, 'int') !== false) {
 			return 'integer';

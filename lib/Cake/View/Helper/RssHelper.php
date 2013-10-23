@@ -5,16 +5,17 @@
  * Simplifies the output of RSS feeds.
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AppHelper', 'View/Helper');
@@ -137,7 +138,7 @@ class RssHelper extends AppHelper {
 		foreach ($elements as $elem => $data) {
 			$attributes = array();
 			if (is_array($data)) {
-				if (strtolower($elem) == 'cloud') {
+				if (strtolower($elem) === 'cloud') {
 					$attributes = $data;
 					$data = array();
 				} elseif (isset($data['attrib']) && is_array($data['attrib'])) {
@@ -167,7 +168,7 @@ class RssHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::items
  */
 	public function items($items, $callback = null) {
-		if ($callback != null) {
+		if ($callback) {
 			$items = array_map($callback, $items);
 		}
 
@@ -207,7 +208,7 @@ class RssHelper extends AppHelper {
 			switch ($key) {
 				case 'pubDate' :
 					$val = $this->time($val);
-				break;
+					break;
 				case 'category' :
 					if (is_array($val) && !empty($val[0])) {
 						foreach ($val as $category) {
@@ -223,7 +224,7 @@ class RssHelper extends AppHelper {
 					} elseif (is_array($val) && isset($val['domain'])) {
 						$attrib['domain'] = $val['domain'];
 					}
-				break;
+					break;
 				case 'link':
 				case 'guid':
 				case 'comments':
@@ -233,7 +234,7 @@ class RssHelper extends AppHelper {
 						$val = $val['url'];
 					}
 					$val = $this->url($val, true);
-				break;
+					break;
 				case 'source':
 					if (is_array($val) && isset($val['url'])) {
 						$attrib['url'] = $this->url($val['url'], true);
@@ -242,7 +243,7 @@ class RssHelper extends AppHelper {
 						$attrib['url'] = $this->url($val[0], true);
 						$val = $val[1];
 					}
-				break;
+					break;
 				case 'enclosure':
 					if (is_string($val['url']) && is_file(WWW_ROOT . $val['url']) && file_exists(WWW_ROOT . $val['url'])) {
 						if (!isset($val['length']) && strpos($val['url'], '://') === false) {
@@ -255,11 +256,11 @@ class RssHelper extends AppHelper {
 					$val['url'] = $this->url($val['url'], true);
 					$attrib = $val;
 					$val = null;
-				break;
+					break;
 				default:
 					$attrib = $att;
 			}
-			if (!is_null($val) && $escape) {
+			if ($val !== null && $escape) {
 				$val = h($val);
 			}
 			$elements[$key] = $this->elem($key, $attrib, $val);

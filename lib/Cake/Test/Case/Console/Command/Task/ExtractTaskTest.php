@@ -7,16 +7,17 @@
  * PHP 5
  *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command.Task
  * @since         CakePHP v 1.2.0.7726
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Folder', 'Utility');
@@ -49,7 +50,7 @@ class ExtractTaskTest extends CakeTestCase {
 			array($out, $out, $in)
 		);
 		$this->path = TMP . 'tests' . DS . 'extract_task_test';
-		$Folder = new Folder($this->path . DS . 'locale', true);
+		new Folder($this->path . DS . 'locale', true);
 	}
 
 /**
@@ -148,7 +149,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:99\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:83\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 
@@ -175,6 +176,32 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
 		$this->assertRegExp($pattern, $result);
+	}
+
+/**
+ * testExtractCategory method
+ *
+ * @return void
+ */
+	public function testExtractCategory() {
+		$this->Task->interactive = false;
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'no';
+		$this->Task->params['merge'] = 'no';
+		$this->Task->expects($this->never())->method('err');
+		$this->Task->expects($this->any())->method('in')
+			->will($this->returnValue('y'));
+		$this->Task->expects($this->never())->method('_stop');
+
+		$this->Task->execute();
+		$this->assertTrue(file_exists($this->path . DS . 'LC_TIME' . DS . 'default.pot'));
+
+		$result = file_get_contents($this->path . DS . 'default.pot');
+
+		$pattern = '/\#: .*extract\.ctp:31\n/';
+		$this->assertNotRegExp($pattern, $result);
 	}
 
 /**
@@ -267,7 +294,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->out = $this->getMock('ConsoleOutput', array(), array(), '', false);
 		$this->in = $this->getMock('ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('ExtractTask',
-			array('_isExtractingApp', '_extractValidationMessages', 'in', 'out', 'err', 'clear', '_stop'),
+			array('_isExtractingApp', 'in', 'out', 'err', 'clear', '_stop'),
 			array($this->out, $this->out, $this->in)
 		);
 
@@ -279,6 +306,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertNotRegExp('#Pages#', $result);
 		$this->assertContains('translate.ctp:1', $result);
 		$this->assertContains('This is a translatable string', $result);
+		$this->assertContains('I can haz plugin model validation message', $result);
 	}
 
 /**
@@ -308,10 +336,10 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
-		$pattern = preg_quote('#Model' . DS . 'PersisterOne.php:validation for field title#', '\\');
+		$pattern = preg_quote('#Model/PersisterOne.php:validation for field title#', '\\');
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = preg_quote('#Model' . DS . 'PersisterOne.php:validation for field body#', '\\');
+		$pattern = preg_quote('#Model/PersisterOne.php:validation for field body#', '\\');
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
@@ -354,10 +382,10 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
 
-		$pattern = preg_quote('#Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS . 'TestPluginPost.php:validation for field title#', '\\');
+		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field title#', '\\');
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = preg_quote('#Plugin' . DS . 'TestPlugin' . DS . 'Model' . DS . 'TestPluginPost.php:validation for field body#', '\\');
+		$pattern = preg_quote('#Plugin/TestPlugin/Model/TestPluginPost.php:validation for field body#', '\\');
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';
@@ -393,10 +421,10 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'test_plugin.pot');
 
-		$pattern = preg_quote('#Model' . DS . 'TestPluginPost.php:validation for field title#', '\\');
+		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field title#', '\\');
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = preg_quote('#Model' . DS . 'TestPluginPost.php:validation for field body#', '\\');
+		$pattern = preg_quote('#Model/TestPluginPost.php:validation for field body#', '\\');
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '#msgid "Post title is required"#';

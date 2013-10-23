@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       Cake.Log.Engine
  * @since         CakePHP(tm) v 2.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeLogInterface', 'Log');
@@ -36,14 +37,14 @@ abstract class BaseLog implements CakeLogInterface {
 /**
  * __construct method
  *
- * @return void
+ * @param array $config Configuration array
  */
 	public function __construct($config = array()) {
 		$this->config($config);
 	}
 
 /**
- * Sets instance config.  When $config is null, returns config array
+ * Sets instance config. When $config is null, returns config array
  *
  * Config
  *
@@ -55,8 +56,10 @@ abstract class BaseLog implements CakeLogInterface {
  */
 	public function config($config = array()) {
 		if (!empty($config)) {
-			if (isset($config['types']) && is_string($config['types'])) {
-				$config['types'] = array($config['types']);
+			foreach (array('types', 'scopes') as $option) {
+				if (isset($config[$option]) && is_string($config[$option])) {
+					$config[$option] = array($config[$option]);
+				}
 			}
 			$this->_config = $config;
 		}

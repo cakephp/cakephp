@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Cache.Engine
  * @since         CakePHP(tm) v 1.2.0.5434
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Cache', 'Cache');
@@ -51,7 +52,7 @@ class FileEngineTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Cache::clear(false, 'file_test');
+		// Cache::clear(false, 'file_test');
 		Cache::drop('file_test');
 		Cache::drop('file_groups');
 		Cache::drop('file_groups2');
@@ -181,7 +182,7 @@ class FileEngineTest extends CakeTestCase {
 
 		$newread = Cache::read('serialize_test', 'file_test');
 
-		$delete = Cache::delete('serialize_test', 'file_test');
+		Cache::delete('serialize_test', 'file_test');
 
 		$this->assertSame($read, serialize($data));
 
@@ -255,6 +256,41 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
+ * Test that clear() also removes files with group tags.
+ *
+ * @return void
+ */
+	public function testClearWithGroups() {
+		$engine = new FileEngine();
+		$engine->init(array(
+			'prefix' => 'cake_test_',
+			'duration' => DAY,
+			'groups' => array('short', 'round')
+		));
+		$key = 'cake_test_test_key';
+		$engine->write($key, 'it works', DAY);
+		$engine->clear(false);
+		$this->assertFalse($engine->read($key), 'Key should have been removed');
+	}
+
+/**
+ * Test that clear() also removes files with group tags.
+ *
+ * @return void
+ */
+	public function testClearWithNoKeys() {
+		$engine = new FileEngine();
+		$engine->init(array(
+			'prefix' => 'cake_test_',
+			'duration' => DAY,
+			'groups' => array('one', 'two')
+		));
+		$key = 'cake_test_test_key';
+		$engine->clear(false);
+		$this->assertFalse($engine->read($key), 'No errors should be found');
+	}
+
+/**
  * testKeyPath method
  *
  * @return void
@@ -269,6 +305,14 @@ class FileEngineTest extends CakeTestCase {
 
 		$result = Cache::clear(false, 'file_test');
 		$this->assertTrue($result);
+
+		$result = Cache::write('domain.test.com:8080', 'here', 'file_test');
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'cake_domain_test_com_8080'));
+
+		$result = Cache::write('command>dir|more', 'here', 'file_test');
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'cake_command_dir_more'));
 	}
 
 /**
@@ -337,20 +381,19 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
- * check that FileEngine generates an error when a configured Path does not exist.
+ * check that FileEngine does not generate an error when a configured Path does not exist in debug mode.
  *
- * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
-	public function testErrorWhenPathDoesNotExist() {
-		$this->skipIf(is_dir(TMP . 'tests' . DS . 'file_failure'), 'Cannot run test directory exists.');
+	public function testPathDoesNotExist() {
+		$this->skipIf(is_dir(TMP . 'tests' . DS . 'autocreate'), 'Cannot run if test directory exists.');
 
-		Cache::config('failure', array(
+		Cache::config('autocreate', array(
 			'engine' => 'File',
-			'path' => TMP . 'tests' . DS . 'file_failure'
+			'path' => TMP . 'tests' . DS . 'autocreate'
 		));
 
-		Cache::drop('failure');
+		Cache::drop('autocreate');
 	}
 
 /**
@@ -365,7 +408,7 @@ class FileEngineTest extends CakeTestCase {
 		Cache::config('mask_test', array('engine' => 'File', 'path' => TMP . 'tests'));
 		$data = 'This is some test content';
 		$write = Cache::write('masking_test', $data, 'mask_test');
-		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
+		$result = substr(sprintf('%o', fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
 		$expected = '0664';
 		$this->assertEquals($expected, $result);
 		Cache::delete('masking_test', 'mask_test');
@@ -373,7 +416,7 @@ class FileEngineTest extends CakeTestCase {
 
 		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0666, 'path' => TMP . 'tests'));
 		$write = Cache::write('masking_test', $data, 'mask_test');
-		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
+		$result = substr(sprintf('%o', fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
 		$expected = '0666';
 		$this->assertEquals($expected, $result);
 		Cache::delete('masking_test', 'mask_test');
@@ -381,7 +424,7 @@ class FileEngineTest extends CakeTestCase {
 
 		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0644, 'path' => TMP . 'tests'));
 		$write = Cache::write('masking_test', $data, 'mask_test');
-		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
+		$result = substr(sprintf('%o', fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
 		$expected = '0644';
 		$this->assertEquals($expected, $result);
 		Cache::delete('masking_test', 'mask_test');
@@ -389,7 +432,7 @@ class FileEngineTest extends CakeTestCase {
 
 		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0640, 'path' => TMP . 'tests'));
 		$write = Cache::write('masking_test', $data, 'mask_test');
-		$result = substr(sprintf('%o',fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
+		$result = substr(sprintf('%o', fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
 		$expected = '0640';
 		$this->assertEquals($expected, $result);
 		Cache::delete('masking_test', 'mask_test');
@@ -411,12 +454,42 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
- * Tests that deleteing from a groups-enabled config is possible
+ * Test that clearing with repeat writes works properly
+ */
+	public function testClearingWithRepeatWrites() {
+		Cache::config('repeat', array(
+			'engine' => 'File', 'groups' => array('users')
+		));
+
+		$this->assertTrue(Cache::write('user', 'rchavik', 'repeat'));
+		$this->assertEquals('rchavik', Cache::read('user', 'repeat'));
+
+		Cache::delete('user', 'repeat');
+		$this->assertEquals(false, Cache::read('user', 'repeat'));
+
+		$this->assertTrue(Cache::write('user', 'ADmad', 'repeat'));
+		$this->assertEquals('ADmad', Cache::read('user', 'repeat'));
+
+		Cache::clearGroup('users', 'repeat');
+		$this->assertEquals(false, Cache::read('user', 'repeat'));
+
+		$this->assertTrue(Cache::write('user', 'markstory', 'repeat'));
+		$this->assertEquals('markstory', Cache::read('user', 'repeat'));
+
+		Cache::drop('repeat');
+	}
+
+/**
+ * Tests that deleting from a groups-enabled config is possible
  *
  * @return void
  */
 	public function testGroupDelete() {
-		Cache::config('file_groups', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_a', 'group_b')));
+		Cache::config('file_groups', array(
+			'engine' => 'File',
+			'duration' => 3600,
+			'groups' => array('group_a', 'group_b')
+		));
 		$this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
 		$this->assertEquals('value', Cache::read('test_groups', 'file_groups'));
 		$this->assertTrue(Cache::delete('test_groups', 'file_groups'));
@@ -428,28 +501,53 @@ class FileEngineTest extends CakeTestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Cache::config('file_groups', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_a', 'group_b')));
 		Cache::config('file_groups2', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_b')));
-		Cache::config('file_groups3', array('engine' => 'File', 'duration' => 3600, 'groups' => array('group_a')));
+		Cache::config('file_groups3', array(
+			'engine' => 'File',
+			'duration' => 3600,
+			'groups' => array('group_b'),
+			'prefix' => 'leading_',
+		));
 
 		$this->assertTrue(Cache::write('test_groups', 'value', 'file_groups'));
-		$this->assertTrue(Cache::write('test_groups2', 'value', 'file_groups2'));
-		$this->assertTrue(Cache::write('test_groups3', 'value', 'file_groups3'));
+		$this->assertTrue(Cache::write('test_groups2', 'value 2', 'file_groups2'));
+		$this->assertTrue(Cache::write('test_groups3', 'value 3', 'file_groups3'));
 
-		$this->assertTrue(Cache::clearGroup('group_a', 'file_groups'));
+		$this->assertTrue(Cache::clearGroup('group_b', 'file_groups'));
 		$this->assertFalse(Cache::read('test_groups', 'file_groups'));
-		$this->assertEquals('value', Cache::read('test_groups2', 'file_groups2'));
-		$this->assertFalse(Cache::read('test_groups3', 'file_groups3'));
+		$this->assertFalse(Cache::read('test_groups2', 'file_groups2'));
+		$this->assertEquals('value 3', Cache::read('test_groups3', 'file_groups3'));
 
 		$this->assertTrue(Cache::write('test_groups4', 'value', 'file_groups'));
-		$this->assertTrue(Cache::write('test_groups5', 'value', 'file_groups2'));
-		$this->assertTrue(Cache::write('test_groups6', 'value', 'file_groups3'));
+		$this->assertTrue(Cache::write('test_groups5', 'value 2', 'file_groups2'));
+		$this->assertTrue(Cache::write('test_groups6', 'value 3', 'file_groups3'));
 
 		$this->assertTrue(Cache::clearGroup('group_b', 'file_groups'));
 		$this->assertFalse(Cache::read('test_groups4', 'file_groups'));
 		$this->assertFalse(Cache::read('test_groups5', 'file_groups2'));
-		$this->assertEquals('value', Cache::read('test_groups6', 'file_groups3'));
+		$this->assertEquals('value 3', Cache::read('test_groups6', 'file_groups3'));
 	}
+
+/**
+ * Test that clearGroup works with no prefix.
+ *
+ * @return void
+ */
+	public function testGroupClearNoPrefix() {
+		Cache::config('file_groups', array(
+			'engine' => 'File',
+			'duration' => 3600,
+			'prefix' => '',
+			'groups' => array('group_a', 'group_b')
+		));
+		Cache::write('key_1', 'value', 'file_groups');
+		Cache::write('key_2', 'value', 'file_groups');
+		Cache::clearGroup('group_a', 'file_groups');
+		$this->assertFalse(Cache::read('key_1', 'file_groups'), 'Did not delete');
+		$this->assertFalse(Cache::read('key_2', 'file_groups'), 'Did not delete');
+	}
+
 }

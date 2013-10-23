@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 define('CORE_TEST_CASES', CAKE . 'Test' . DS . 'Case');
@@ -55,7 +56,7 @@ class CakeTestSuiteDispatcher {
 	protected $_baseUrl;
 
 /**
- * Base dir of the request.  Used for accessing assets.
+ * Base dir of the request. Used for accessing assets.
  *
  * @var string
  */
@@ -78,7 +79,6 @@ class CakeTestSuiteDispatcher {
 /**
  * constructor
  *
- * @return void
  */
 	public function __construct() {
 		$this->_baseUrl = $_SERVER['PHP_SELF'];
@@ -117,7 +117,7 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
- * Checks that PHPUnit is installed.  Will exit if it doesn't
+ * Checks that PHPUnit is installed. Will exit if it doesn't
  *
  * @return void
  */
@@ -136,14 +136,18 @@ class CakeTestSuiteDispatcher {
  * @return boolean true if found, false otherwise
  */
 	public function loadTestFramework() {
+		if (class_exists('PHPUnit_Framework_TestCase')) {
+			return true;
+		}
 		foreach (App::path('vendors') as $vendor) {
-			if (is_dir($vendor . 'PHPUnit')) {
+			$vendor = rtrim($vendor, DS);
+			if (is_dir($vendor . DS . 'PHPUnit')) {
 				ini_set('include_path', $vendor . PATH_SEPARATOR . ini_get('include_path'));
 				break;
 			}
 		}
-
-		return include 'PHPUnit' . DS . 'Autoload.php';
+		include 'PHPUnit' . DS . 'Autoload.php';
+		return class_exists('PHPUnit_Framework_TestCase');
 	}
 
 /**
@@ -186,7 +190,7 @@ class CakeTestSuiteDispatcher {
 	}
 
 /**
- * Parse url params into a 'request'
+ * Parse URL params into a 'request'
  *
  * @return void
  */
@@ -239,7 +243,7 @@ class CakeTestSuiteDispatcher {
 		try {
 			self::time();
 			$command = new CakeTestSuiteCommand('CakeTestLoader', $commandArgs);
-			$result = $command->run($options);
+			$command->run($options);
 		} catch (MissingConnectionException $exception) {
 			ob_end_clean();
 			$baseDir = $this->_baseDir;

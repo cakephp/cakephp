@@ -4,16 +4,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model
  * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Model', 'Model');
@@ -84,7 +85,7 @@ class AclNode extends Model {
 				'joins' => array(array(
 					'table' => $table,
 					'alias' => "{$type}0",
-					'type' => 'LEFT',
+					'type' => 'INNER',
 					'conditions' => array("{$type}0.alias" => $start)
 				)),
 				'order' => $db->name("{$type}.lft") . ' DESC'
@@ -96,7 +97,7 @@ class AclNode extends Model {
 				$queryData['joins'][] = array(
 					'table' => $table,
 					'alias' => "{$type}{$i}",
-					'type' => 'LEFT',
+					'type' => 'INNER',
 					'conditions' => array(
 						$db->name("{$type}{$i}.lft") . ' > ' . $db->name("{$type}{$j}.lft"),
 						$db->name("{$type}{$i}.rght") . ' < ' . $db->name("{$type}{$j}.rght"),
@@ -120,11 +121,11 @@ class AclNode extends Model {
 			) {
 				return false;
 			}
-		} elseif (is_object($ref) && is_a($ref, 'Model')) {
+		} elseif (is_object($ref) && $ref instanceof Model) {
 			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);
-			list($plugin, $alias) = pluginSplit($name);
+			list(, $alias) = pluginSplit($name);
 
 			$model = ClassRegistry::init(array('class' => $name, 'alias' => $alias));
 
@@ -162,7 +163,7 @@ class AclNode extends Model {
 				'joins' => array(array(
 					'table' => $table,
 					'alias' => "{$type}0",
-					'type' => 'LEFT',
+					'type' => 'INNER',
 					'conditions' => array(
 						$db->name("{$type}.lft") . ' <= ' . $db->name("{$type}0.lft"),
 						$db->name("{$type}.rght") . ' >= ' . $db->name("{$type}0.rght")

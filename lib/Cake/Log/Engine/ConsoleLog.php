@@ -5,23 +5,24 @@
  * PHP 5
  *
  * CakePHP(tm) :  Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakefoundation.org/projects/info/cakephp CakePHP(tm) Project
  * @package       Cake.Log.Engine
  * @since         CakePHP(tm) v 2.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('BaseLog', 'Log/Engine');
 App::uses('ConsoleOutput', 'Console');
 
 /**
- * Console logging.  Writes logs to console output.
+ * Console logging. Writes logs to console output.
  *
  * @package       Cake.Log.Engine
  */
@@ -49,7 +50,7 @@ class ConsoleLog extends BaseLog {
  */
 	public function __construct($config = array()) {
 		parent::__construct($config);
-		if (DS == '\\' && !(bool)env('ANSICON')) {
+		if (DS === '\\' && !(bool)env('ANSICON')) {
 			$outputAs = ConsoleOutput::PLAIN;
 		} else {
 			$outputAs = ConsoleOutput::COLOR;

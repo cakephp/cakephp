@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Cache.Engine
  * @since         CakePHP(tm) v 2.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Cache', 'Cache');
@@ -25,7 +26,7 @@ App::uses('RedisEngine', 'Cache/Engine');
  *
  * @package       Cake.Test.Case.Cache.Engine
  */
-class RegisEngineTest extends CakeTestCase {
+class RedisEngineTest extends CakeTestCase {
 
 /**
  * setUp method
@@ -33,6 +34,7 @@ class RegisEngineTest extends CakeTestCase {
  * @return void
  */
 	public function setUp() {
+		parent::setUp();
 		$this->skipIf(!class_exists('Redis'), 'Redis is not installed or configured properly.');
 
 		$this->_cacheDisable = Configure::read('Cache.disable');
@@ -50,6 +52,7 @@ class RegisEngineTest extends CakeTestCase {
  * @return void
  */
 	public function tearDown() {
+		parent::tearDown();
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::drop('');
 		Cache::drop('redis_groups');
@@ -73,7 +76,8 @@ class RegisEngineTest extends CakeTestCase {
 			'server' => '127.0.0.1',
 			'port' => 6379,
 			'timeout' => 0,
-			'persistent' => true
+			'persistent' => true,
+			'password' => false,
 		);
 		$this->assertEquals($expecting, $settings);
 	}
@@ -315,7 +319,7 @@ class RegisEngineTest extends CakeTestCase {
  * Test clearing a cache group
  *
  * @return void
- **/
+ */
 	public function testGroupClear() {
 		Cache::config('redis_groups', array(
 			'engine' => 'Redis',

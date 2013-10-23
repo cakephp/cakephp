@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 1.2.0.4213
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Component', 'Controller');
@@ -61,7 +62,7 @@ class CookieComponent extends Component {
  * $this->Cookie->path = '/';
  *
  * The path on the server in which the cookie will be available on.
- * If  public $cookiePath is set to '/foo/', the cookie will only be available
+ * If public $cookiePath is set to '/foo/', the cookie will only be available
  * within the /foo/ directory and all sub-directories such as /foo/bar/ of domain.
  * The default value is the entire domain.
  *
@@ -110,8 +111,8 @@ class CookieComponent extends Component {
 /**
  * HTTP only cookie
  *
- * Set to true to make HTTP only cookies.  Cookies that are HTTP only
- * are not accessible in Javascript.
+ * Set to true to make HTTP only cookies. Cookies that are HTTP only
+ * are not accessible in JavaScript.
  *
  * @var boolean
  */
@@ -177,7 +178,7 @@ class CookieComponent extends Component {
 		if ($controller && isset($controller->response)) {
 			$this->_response = $controller->response;
 		} else {
-			$this->_response = new CakeResponse(array('charset' => Configure::read('App.encoding')));
+			$this->_response = new CakeResponse();
 		}
 	}
 
@@ -208,7 +209,8 @@ class CookieComponent extends Component {
  * @param string|array $key Key for the value
  * @param mixed $value Value
  * @param boolean $encrypt Set to true to encrypt value, false otherwise
- * @param integer|string $expires Can be either Unix timestamp, or date string
+ * @param integer|string $expires Can be either the number of seconds until a cookie
+ *   expires, or a strtotime compatible time offset.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/cookie.html#CookieComponent::write
  */
@@ -217,7 +219,7 @@ class CookieComponent extends Component {
 			$this->read();
 		}
 
-		if (is_null($encrypt)) {
+		if ($encrypt === null) {
 			$encrypt = true;
 		}
 		$this->_encrypted = $encrypt;
@@ -260,7 +262,7 @@ class CookieComponent extends Component {
 		if (empty($this->_values[$this->name])) {
 			$this->_values[$this->name] = array();
 		}
-		if (is_null($key)) {
+		if ($key === null) {
 			return $this->_values[$this->name];
 		}
 
@@ -276,6 +278,19 @@ class CookieComponent extends Component {
 			return Hash::get($this->_values[$this->name][$key], $names[1]);
 		}
 		return $this->_values[$this->name][$key];
+	}
+
+/**
+ * Returns true if given variable is set in cookie.
+ *
+ * @param string $var Variable name to check for
+ * @return boolean True if variable is there
+ */
+	public function check($key = null) {
+		if (empty($key)) {
+			return false;
+		}
+		return $this->read($key) !== null;
 	}
 
 /**
@@ -372,20 +387,20 @@ class CookieComponent extends Component {
  * @return integer Unix timestamp
  */
 	protected function _expire($expires = null) {
-		$now = time();
-		if (is_null($expires)) {
+		if ($expires === null) {
 			return $this->_expires;
 		}
 		$this->_reset = $this->_expires;
-
-		if ($expires == 0) {
+		if (!$expires) {
 			return $this->_expires = 0;
 		}
+		$now = new DateTime();
 
-		if (is_integer($expires) || is_numeric($expires)) {
-			return $this->_expires = $now + intval($expires);
+		if (is_int($expires) || is_numeric($expires)) {
+			return $this->_expires = $now->format('U') + intval($expires);
 		}
-		return $this->_expires = strtotime($expires, $now);
+		$now->modify($expires);
+		return $this->_expires = $now->format('U');
 	}
 
 /**
@@ -406,7 +421,7 @@ class CookieComponent extends Component {
 			'httpOnly' => $this->httpOnly
 		));
 
-		if (!is_null($this->_reset)) {
+		if (!empty($this->_reset)) {
 			$this->_expires = $this->_reset;
 			$this->_reset = null;
 		}
@@ -434,7 +449,6 @@ class CookieComponent extends Component {
  * Encrypts $value using public $type method in Security class
  *
  * @param string $value Value to encrypt
- * @return string encrypted string
  * @return string Encoded values
  */
 	protected function _encrypt($value) {
@@ -504,7 +518,7 @@ class CookieComponent extends Component {
 		$first = substr($string, 0, 1);
 		if ($first === '{' || $first === '[') {
 			$ret = json_decode($string, true);
-			return ($ret != null) ? $ret : $string;
+			return ($ret) ? $ret : $string;
 		}
 		$array = array();
 		foreach (explode(',', $string) as $pair) {
@@ -517,4 +531,3 @@ class CookieComponent extends Component {
 		return $array;
 	}
 }
-

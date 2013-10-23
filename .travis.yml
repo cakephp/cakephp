@@ -4,6 +4,7 @@ php:
   - 5.2
   - 5.3
   - 5.4
+  - 5.5
 
 env:
   - DB=mysql
@@ -11,16 +12,13 @@ env:
   - DB=sqlite
 
 matrix:
-  allow_failures:
-    - php: 5.4
-      env:
-        - PHPCS=1
   include:
     - php: 5.4
       env:
         - PHPCS=1
 
 before_script:
+  - sudo locale-gen de_DE
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test2;'; fi"
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'CREATE DATABASE cakephp_test3;'; fi"
@@ -28,13 +26,9 @@ before_script:
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test2;' -U postgres -d cakephp_test; fi"
   - sh -c "if [ '$DB' = 'pgsql' ]; then psql -c 'CREATE SCHEMA test3;' -U postgres -d cakephp_test; fi"
   - chmod -R 777 ./app/tmp
-  - echo "var net = require('net');
-    var server = net.createServer();
-    server.listen(80, 'localhost');
-    console.log('TCP server listening on port 80 at localhost.');" > app/tmp/socket.js
-  - sudo node ./app/tmp/socket.js &
-  - pear channel-discover pear.cakephp.org
-  - pear install --alldeps cakephp/CakePHP_CodeSniffer
+  - sudo apt-get install lighttpd
+  - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
   - phpenv rehash
   - set +H
   - echo "<?php
@@ -118,7 +112,7 @@ before_script:
     }" > app/Config/database.php
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else phpcs --extensions=php --standard=CakePHP ./lib/Cake; fi"
+  - sh -c "if [ '$PHPCS' = '1' ]; then phpcs -p --extensions=php --standard=CakePHP ./lib/Cake; elif [ '$DB' = 'mysql' ]; then ./lib/Cake/Console/cake test core AllTests --stderr; else ./lib/Cake/Console/cake test core AllDbRelated --stderr; fi"
 
 notifications:
   email: false

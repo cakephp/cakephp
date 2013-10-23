@@ -7,21 +7,23 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Error
  * @since         CakePHP(tm) v 0.10.5.1732
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Debugger', 'Utility');
 App::uses('CakeLog', 'Log');
 App::uses('ExceptionRenderer', 'Error');
+App::uses('Router', 'Routing');
 
 /**
  *
@@ -30,12 +32,12 @@ App::uses('ExceptionRenderer', 'Error');
  *
  * ### Uncaught exceptions
  *
- * When debug < 1 a CakeException will render 404 or  500 errors.  If an uncaught exception is thrown
+ * When debug < 1 a CakeException will render 404 or 500 errors. If an uncaught exception is thrown
  * and it is a type that ErrorHandler does not know about it will be treated as a 500 error.
  *
  * ### Implementing application specific exception handling
  *
- * You can implement application specific exception handling in one of a few ways.  Each approach
+ * You can implement application specific exception handling in one of a few ways. Each approach
  * gives you different amounts of control over the exception handling process.
  *
  * - Set Configure::write('Exception.handler', 'YourClass::yourMethod');
@@ -44,22 +46,22 @@ App::uses('ExceptionRenderer', 'Error');
  *
  * #### Create your own Exception handler with `Exception.handler`
  *
- * This gives you full control over the exception handling process.  The class you choose should be
- * loaded in your app/Config/bootstrap.php, so its available to handle any exceptions.  You can
+ * This gives you full control over the exception handling process. The class you choose should be
+ * loaded in your app/Config/bootstrap.php, so its available to handle any exceptions. You can
  * define the handler as any callback type. Using Exception.handler overrides all other exception
  * handling settings and logic.
  *
  * #### Using `AppController::appError();`
  *
- * This controller method is called instead of the default exception rendering.  It receives the
- * thrown exception as its only argument.  You should implement your error handling in that method.
+ * This controller method is called instead of the default exception rendering. It receives the
+ * thrown exception as its only argument. You should implement your error handling in that method.
  * Using AppController::appError(), will supersede any configuration for Exception.renderer.
  *
  * #### Using a custom renderer with `Exception.renderer`
  *
  * If you don't want to take control of the exception handling, but want to change how exceptions are
- * rendered you can use `Exception.renderer` to choose a class to render exception pages.  By default
- * `ExceptionRenderer` is used.  Your custom exception renderer class should be placed in app/Lib/Error.
+ * rendered you can use `Exception.renderer` to choose a class to render exception pages. By default
+ * `ExceptionRenderer` is used. Your custom exception renderer class should be placed in app/Lib/Error.
  *
  * Your custom renderer should expect an exception in its constructor, and implement a render method.
  * Failing to do so will cause additional errors.
@@ -73,8 +75,8 @@ App::uses('ExceptionRenderer', 'Error');
  * ### PHP errors
  *
  * Error handler also provides the built in features for handling php errors (trigger_error).
- * While in debug mode, errors will be output to the screen using debugger.  While in production mode,
- * errors will be logged to CakeLog.  You can control which errors are logged by setting
+ * While in debug mode, errors will be output to the screen using debugger. While in production mode,
+ * errors will be logged to CakeLog. You can control which errors are logged by setting
  * `Error.level` in your core.php.
  *
  * #### Logging errors
@@ -84,7 +86,7 @@ App::uses('ExceptionRenderer', 'Error');
  *
  * #### Controlling what errors are logged/displayed
  *
- * You can control which errors are logged / displayed by ErrorHandler by setting `Error.level`.  Setting this
+ * You can control which errors are logged / displayed by ErrorHandler by setting `Error.level`. Setting this
  * to one or a combination of a few of the E_* constants will only enable the specified errors.
  *
  * e.g. `Configure::write('Error.level', E_ALL & ~E_NOTICE);`
@@ -108,15 +110,9 @@ class ErrorHandler {
  */
 	public static function handleException(Exception $exception) {
 		$config = Configure::read('Exception');
-		if (!empty($config['log'])) {
-			$message = sprintf("[%s] %s\n%s",
-				get_class($exception),
-				$exception->getMessage(),
-				$exception->getTraceAsString()
-			);
-			CakeLog::write(LOG_ERR, $message);
-		}
-		$renderer = $config['renderer'];
+		self::_log($exception, $config);
+
+		$renderer = isset($config['renderer']) ? $config['renderer'] : 'ExceptionRenderer';
 		if ($renderer !== 'ExceptionRenderer') {
 			list($plugin, $renderer) = pluginSplit($renderer, true);
 			App::uses($renderer, $plugin . 'Error');
@@ -137,8 +133,56 @@ class ErrorHandler {
 	}
 
 /**
+ * Generates a formatted error message
+ * @param Exception $exception Exception instance
+ * @return string Formatted message
+ */
+	protected static function _getMessage($exception) {
+		$message = sprintf("[%s] %s",
+			get_class($exception),
+			$exception->getMessage()
+		);
+		if (method_exists($exception, 'getAttributes')) {
+			$attributes = $exception->getAttributes();
+			if ($attributes) {
+				$message .= "\nException Attributes: " . var_export($exception->getAttributes(), true);
+			}
+		}
+		if (php_sapi_name() !== 'cli') {
+			$request = Router::getRequest();
+			if ($request) {
+				$message .= "\nRequest URL: " . $request->here();
+			}
+		}
+		$message .= "\nStack Trace:\n" . $exception->getTraceAsString();
+		return $message;
+	}
+
+/**
+ * Handles exception logging
+ *
+ * @param Exception $exception
+ * @param array $config
+ * @return boolean
+ */
+	protected static function _log(Exception $exception, $config) {
+		if (empty($config['log'])) {
+			return false;
+		}
+
+		if (!empty($config['skipLog'])) {
+			foreach ((array)$config['skipLog'] as $class) {
+				if ($exception instanceof $class) {
+					return false;
+				}
+			}
+		}
+		return CakeLog::write(LOG_ERR, self::_getMessage($exception));
+	}
+
+/**
  * Set as the default error handler by CakePHP. Use Configure::write('Error.handler', $callback), to use your own
- * error handling methods.  This function will use Debugger to display errors when debug > 0.  And
+ * error handling methods. This function will use Debugger to display errors when debug > 0. And
  * will log errors to CakeLog, when debug == 0.
  *
  * You can use Configure::write('Error.level', $value); to set what type of errors will be handled here.
@@ -175,14 +219,13 @@ class ErrorHandler {
 				'path' => Debugger::trimPath($file)
 			);
 			return Debugger::getInstance()->outputError($data);
-		} else {
-			$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
-			if (!empty($errorConfig['trace'])) {
-				$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
-				$message .= "\nTrace:\n" . $trace . "\n";
-			}
-			return CakeLog::write($log, $message);
 		}
+		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
+		if (!empty($errorConfig['trace'])) {
+			$trace = Debugger::trace(array('start' => 1, 'format' => 'log'));
+			$message .= "\nTrace:\n" . $trace . "\n";
+		}
+		return CakeLog::write($log, $message);
 	}
 
 /**
@@ -204,7 +247,7 @@ class ErrorHandler {
 		}
 
 		if (ob_get_level()) {
-			ob_clean();
+			ob_end_clean();
 		}
 
 		if (Configure::read('debug')) {
@@ -231,28 +274,28 @@ class ErrorHandler {
 			case E_USER_ERROR:
 				$error = 'Fatal Error';
 				$log = LOG_ERR;
-			break;
+				break;
 			case E_WARNING:
 			case E_USER_WARNING:
 			case E_COMPILE_WARNING:
 			case E_RECOVERABLE_ERROR:
 				$error = 'Warning';
 				$log = LOG_WARNING;
-			break;
+				break;
 			case E_NOTICE:
 			case E_USER_NOTICE:
 				$error = 'Notice';
 				$log = LOG_NOTICE;
-			break;
+				break;
 			case E_STRICT:
 				$error = 'Strict';
 				$log = LOG_NOTICE;
-			break;
+				break;
 			case E_DEPRECATED:
 			case E_USER_DEPRECATED:
 				$error = 'Deprecated';
 				$log = LOG_NOTICE;
-			break;
+				break;
 		}
 		return array($error, $log);
 	}

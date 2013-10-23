@@ -5,23 +5,24 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.TestSuite.templates
  * @since         CakePHP(tm) v 1.2.0.4433
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>CakePHP Test Suite 2.2</title>
+		<title>CakePHP Test Suite <?php echo Configure::version(); ?></title>
 		<style type="text/css">
 			body h2 {color: #777;}
 			h3 {font-size: 170%; padding-top: 1em}
@@ -127,7 +128,7 @@
 			div.code-coverage-results span.result-bad { color: #a00; }
 			div.code-coverage-results span.result-ok { color: #fa0; }
 			div.code-coverage-results span.result-good { color: #0a0; }
-			
+
 			div#version {
 				padding-top: 2px;
 				float: right;
@@ -143,4 +144,4 @@
 				<h1>CakePHP: the rapid development php framework</h1>
 			</div>
 			<div id="content">
-			<h2>CakePHP Test Suite 2.2</h2>
+			<h2>CakePHP Test Suite <?php echo Configure::version(); ?></h2>

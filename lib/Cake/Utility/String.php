@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 1.2.0.5551
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -92,12 +93,10 @@ class String {
 		}
 
 		list($timeMid, $timeLow) = explode(' ', microtime());
-		$uuid = sprintf(
+		return sprintf(
 			"%08x-%04x-%04x-%02x%02x-%04x%08x", (int)$timeLow, (int)substr($timeMid, 2) & 0xffff,
 			mt_rand(0, 0xfff) | 0x4000, mt_rand(0, 0x3f) | 0x80, mt_rand(0, 0xff), $pid, $node
 		);
-
-		return $uuid;
 	}
 
 /**
@@ -136,7 +135,7 @@ class String {
 			}
 			if ($tmpOffset !== -1) {
 				$buffer .= substr($data, $offset, ($tmpOffset - $offset));
-				if ($data{$tmpOffset} == $separator && $depth == 0) {
+				if (!$depth && $data{$tmpOffset} == $separator) {
 					$results[] = $buffer;
 					$buffer = '';
 				} else {
@@ -156,7 +155,6 @@ class String {
 							$open = true;
 						} else {
 							$depth--;
-							$open = false;
 						}
 					}
 				}
@@ -171,11 +169,10 @@ class String {
 		}
 
 		if (!empty($results)) {
-			$data = array_map('trim', $results);
-		} else {
-			$data = array();
+			return array_map('trim', $results);
 		}
-		return $data;
+
+		return array();
 	}
 
 /**
@@ -194,9 +191,9 @@ class String {
  * - clean: A boolean or array with instructions for String::cleanInsert
  *
  * @param string $str A string containing variable placeholders
- * @param string $data A key => val array where each key stands for a placeholder variable name
+ * @param array $data A key => val array where each key stands for a placeholder variable name
  *     to be replaced with val
- * @param string $options An array of options, see description above
+ * @param array $options An array of options, see description above
  * @return string
  */
 	public static function insert($str, $data, $options = array()) {
@@ -227,25 +224,23 @@ class String {
 				$str = substr_replace($str, $val, $pos, 1);
 			}
 			return ($options['clean']) ? String::cleanInsert($str, $options) : $str;
-		} else {
-			asort($data);
+		}
 
-			$hashKeys = array();
-			foreach ($data as $key => $value) {
-				$hashKeys[] = crc32($key);
-			}
+		asort($data);
 
-			$tempData = array_combine(array_keys($data), array_values($hashKeys));
-			krsort($tempData);
-			foreach ($tempData as $key => $hashVal) {
-				$key = sprintf($format, preg_quote($key, '/'));
-				$str = preg_replace($key, $hashVal, $str);
-			}
-			$dataReplacements = array_combine($hashKeys, array_values($data));
-			foreach ($dataReplacements as $tmpHash => $tmpValue) {
-				$tmpValue = (is_array($tmpValue)) ? '' : $tmpValue;
-				$str = str_replace($tmpHash, $tmpValue, $str);
-			}
+		$dataKeys = array_keys($data);
+		$hashKeys = array_map('crc32', $dataKeys);
+		$tempData = array_combine($dataKeys, $hashKeys);
+		krsort($tempData);
+
+		foreach ($tempData as $key => $hashVal) {
+			$key = sprintf($format, preg_quote($key, '/'));
+			$str = preg_replace($key, $hashVal, $str);
+		}
+		$dataReplacements = array_combine($hashKeys, array_values($data));
+		foreach ($dataReplacements as $tmpHash => $tmpValue) {
+			$tmpValue = (is_array($tmpValue)) ? '' : $tmpValue;
+			$str = str_replace($tmpHash, $tmpValue, $str);
 		}
 
 		if (!isset($options['format']) && isset($options['before'])) {
@@ -261,7 +256,7 @@ class String {
  * by String::insert().
  *
  * @param string $str
- * @param string $options
+ * @param array $options
  * @return string
  * @see String::insert()
  */
@@ -324,12 +319,12 @@ class String {
  *
  * ### Options
  *
- * - `width` The width to wrap to.  Defaults to 72
+ * - `width` The width to wrap to. Defaults to 72.
  * - `wordWrap` Only wrap on words breaks (spaces) Defaults to true.
  * - `indent` String to indent with. Defaults to null.
  * - `indentAt` 0 based index to start indenting at. Defaults to 0.
  *
- * @param string $text Text the text to format.
+ * @param string $text The text to format.
  * @param array|integer $options Array of options to use, or an integer to wrap the text to.
  * @return string Formatted text.
  */
@@ -339,7 +334,7 @@ class String {
 		}
 		$options += array('width' => 72, 'wordWrap' => true, 'indent' => null, 'indentAt' => 0);
 		if ($options['wordWrap']) {
-			$wrapped = wordwrap($text, $options['width'], "\n");
+			$wrapped = self::wordWrap($text, $options['width'], "\n");
 		} else {
 			$wrapped = trim(chunk_split($text, $options['width'] - 1, "\n"));
 		}
@@ -354,6 +349,55 @@ class String {
 	}
 
 /**
+ * Unicode aware version of wordwrap.
+ *
+ * @param string $text The text to format.
+ * @param integer $width The width to wrap to. Defaults to 72.
+ * @param string $break The line is broken using the optional break parameter. Defaults to '\n'.
+ * @param boolean $cut If the cut is set to true, the string is always wrapped at the specified width.
+ * @return string Formatted text.
+ */
+	public static function wordWrap($text, $width = 72, $break = "\n", $cut = false) {
+		if ($cut) {
+			$parts = array();
+			while (mb_strlen($text) > 0) {
+				$part = mb_substr($text, 0, $width);
+				$parts[] = trim($part);
+				$text = trim(mb_substr($text, mb_strlen($part)));
+			}
+			return implode($break, $parts);
+		}
+
+		$parts = array();
+		while (mb_strlen($text) > 0) {
+			if ($width >= mb_strlen($text)) {
+				$parts[] = trim($text);
+				break;
+			}
+
+			$part = mb_substr($text, 0, $width);
+			$nextChar = mb_substr($text, $width, 1);
+			if ($nextChar !== ' ') {
+				$breakAt = mb_strrpos($part, ' ');
+				if ($breakAt === false) {
+					$breakAt = mb_strpos($text, ' ', $width);
+				}
+				if ($breakAt === false) {
+					$parts[] = trim($text);
+					break;
+				}
+				$part = mb_substr($text, 0, $breakAt);
+			}
+
+			$part = trim($part);
+			$parts[] = $part;
+			$text = trim(mb_substr($text, mb_strlen($part)));
+		}
+
+		return implode($break, $parts);
+	}
+
+/**
  * Highlights a given phrase in a text. You can specify any expression in highlighter that
  * may include the \1 expression to include the $phrase found.
  *
@@ -361,7 +405,7 @@ class String {
  *
  * - `format` The piece of html with that the phrase will be highlighted
  * - `html` If true, will ignore any HTML tags, ensuring that only the correct text is highlighted
- * - `regex` a custom regex rule that is ued to match words, default is '|$tag|iu'
+ * - `regex` a custom regex rule that is used to match words, default is '|$tag|iu'
  *
  * @param string $text Text to search the phrase in
  * @param string $phrase The phrase that will be searched
@@ -397,14 +441,14 @@ class String {
 			}
 
 			return preg_replace($replace, $with, $text);
-		} else {
-			$phrase = '(' . preg_quote($phrase, '|') . ')';
-			if ($html) {
-				$phrase = "(?![^<]+>)$phrase(?![^<]+>)";
-			}
-
-			return preg_replace(sprintf($options['regex'], $phrase), $format, $text);
 		}
+
+		$phrase = '(' . preg_quote($phrase, '|') . ')';
+		if ($html) {
+			$phrase = "(?![^<]+>)$phrase(?![^<]+>)";
+		}
+
+		return preg_replace(sprintf($options['regex'], $phrase), $format, $text);
 	}
 
 /**
@@ -419,14 +463,54 @@ class String {
 	}
 
 /**
- * Truncates text.
+ * Truncates text starting from the end.
  *
- * Cuts a string to the length of $length and replaces the last characters
- * with the ending if the text is longer than length.
+ * Cuts a string to the length of $length and replaces the first characters
+ * with the ellipsis if the text is longer than length.
  *
  * ### Options:
  *
- * - `ending` Will be used as Ending and appended to the trimmed string
+ * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
+ * - `exact` If false, $text will not be cut mid-word
+ *
+ * @param string $text String to truncate.
+ * @param integer $length Length of returned string, including ellipsis.
+ * @param array $options An array of options.
+ * @return string Trimmed string.
+ */
+	public static function tail($text, $length = 100, $options = array()) {
+		$default = array(
+			'ellipsis' => '...', 'exact' => true
+		);
+		$options = array_merge($default, $options);
+		extract($options);
+
+		if (!function_exists('mb_strlen')) {
+			class_exists('Multibyte');
+		}
+
+		if (mb_strlen($text) <= $length) {
+			return $text;
+		}
+
+		$truncate = mb_substr($text, mb_strlen($text) - $length + mb_strlen($ellipsis));
+		if (!$exact) {
+			$spacepos = mb_strpos($truncate, ' ');
+			$truncate = $spacepos === false ? '' : trim(mb_substr($truncate, $spacepos));
+		}
+
+		return $ellipsis . $truncate;
+	}
+
+/**
+ * Truncates text.
+ *
+ * Cuts a string to the length of $length and replaces the last characters
+ * with the ellipsis if the text is longer than length.
+ *
+ * ### Options:
+ *
+ * - `ellipsis` Will be used as Ending and appended to the trimmed string (`ending` is deprecated)
  * - `exact` If false, $text will not be cut mid-word
  * - `html` If true, HTML tags would be handled correctly
  *
@@ -438,8 +522,13 @@ class String {
  */
 	public static function truncate($text, $length = 100, $options = array()) {
 		$default = array(
-			'ending' => '...', 'exact' => true, 'html' => false
+			'ellipsis' => '...', 'exact' => true, 'html' => false
 		);
+		if (isset($options['ending'])) {
+			$default['ellipsis'] = $options['ending'];
+		} elseif (!empty($options['html']) && Configure::read('App.encoding') === 'UTF-8') {
+			$default['ellipsis'] = "\xe2\x80\xa6";
+		}
 		$options = array_merge($default, $options);
 		extract($options);
 
@@ -451,7 +540,7 @@ class String {
 			if (mb_strlen(preg_replace('/<.*?>/', '', $text)) <= $length) {
 				return $text;
 			}
-			$totalLength = mb_strlen(strip_tags($ending));
+			$totalLength = mb_strlen(strip_tags($ellipsis));
 			$openTags = array();
 			$truncate = '';
 
@@ -484,7 +573,7 @@ class String {
 						}
 					}
 
-					$truncate .= mb_substr($tag[3], 0 , $left + $entitiesLength);
+					$truncate .= mb_substr($tag[3], 0, $left + $entitiesLength);
 					break;
 				} else {
 					$truncate .= $tag[3];
@@ -497,9 +586,8 @@ class String {
 		} else {
 			if (mb_strlen($text) <= $length) {
 				return $text;
-			} else {
-				$truncate = mb_substr($text, 0, $length - mb_strlen($ending));
 			}
+			$truncate = mb_substr($text, 0, $length - mb_strlen($ellipsis));
 		}
 		if (!$exact) {
 			$spacepos = mb_strrpos($truncate, ' ');
@@ -523,14 +611,14 @@ class String {
 						}
 					} else {
 						foreach ($droppedTags as $closingTag) {
-							array_push($openTags, $closingTag[1]);
+							$openTags[] = $closingTag[1];
 						}
 					}
 				}
 			}
 			$truncate = mb_substr($truncate, 0, $spacepos);
 		}
-		$truncate .= $ending;
+		$truncate .= $ellipsis;
 
 		if ($html) {
 			foreach ($openTags as $tag) {
@@ -548,23 +636,23 @@ class String {
  * @param string $text String to search the phrase in
  * @param string $phrase Phrase that will be searched for
  * @param integer $radius The amount of characters that will be returned on each side of the founded phrase
- * @param string $ending Ending that will be appended
+ * @param string $ellipsis Ending that will be appended
  * @return string Modified string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html#TextHelper::excerpt
  */
-	public static function excerpt($text, $phrase, $radius = 100, $ending = '...') {
+	public static function excerpt($text, $phrase, $radius = 100, $ellipsis = '...') {
 		if (empty($text) || empty($phrase)) {
-			return self::truncate($text, $radius * 2, array('ending' => $ending));
+			return self::truncate($text, $radius * 2, array('ellipsis' => $ellipsis));
 		}
 
-		$append = $prepend = $ending;
+		$append = $prepend = $ellipsis;
 
 		$phraseLen = mb_strlen($phrase);
 		$textLen = mb_strlen($text);
 
 		$pos = mb_strpos(mb_strtolower($text), mb_strtolower($phrase));
 		if ($pos === false) {
-			return mb_substr($text, 0, $radius) . $ending;
+			return mb_substr($text, 0, $radius) . $ellipsis;
 		}
 
 		$startPos = $pos - $radius;
@@ -597,9 +685,8 @@ class String {
 	public static function toList($list, $and = 'and', $separator = ', ') {
 		if (count($list) > 1) {
 			return implode($separator, array_slice($list, null, -1)) . ' ' . $and . ' ' . array_pop($list);
-		} else {
-			return array_pop($list);
 		}
-	}
 
+		return array_pop($list);
+	}
 }

@@ -6,10 +6,10 @@
 	Uses phing to create releases, and pear packages.
 	Based off of build.xml in doctrine.
 
-	Requires the d51PearPkg2 to be installed:
+	Requires the cakephp/d51PearPkg2 to be installed:
 
 	pear channel-discover pear.domain51.com
-	pear install domain51/Phing_d51PearPkg2Task
+	pear install cakephp/Phing_d51PearPkg2Task
 
 	Use the `release` task to update VERSION.txt, and create a new tag.
 	Use the `build` task to create a pear package based on the current working copy.
@@ -40,6 +40,9 @@
 		<include name="cake" />
 	</fileset>
 
+	<fileset id="non-tests" dir="./lib/Cake">
+		<exclude name=".lib/Cake/Test" />
+	</fileset>
 
 	<!-- start fresh each time.  Remove the dist and build dirs -->
 	<target name="clean">
@@ -110,7 +113,7 @@
 		Define the package.xml.  Using xml to make xml is fun!
 	-->
 	<target name="define-pear-package" depends="copy-files">
-		<d51pearpkg2 baseinstalldir="/" dir="${build.dir}/${pear.package}">
+		<d51pearpkg2 addhiddenfiles="true" baseinstalldir="/" dir="${build.dir}/${pear.package}">
 			<name>CakePHP</name>
 			<summary>CakePHP Rapid Development Framework</summary>
 			<channel>pear.cakephp.org</channel>
@@ -130,7 +133,7 @@
 			<license>MIT License</license>
 			<version release="${pear.version}" api="${pear.version}" />
 			<stability release="${pear.stability}" api="${pear.stability}" />
-			<notes>http://github.com/cakephp/cakephp/blob/master/README</notes>
+			<notes>https://github.com/cakephp/cakephp/blob/master/README</notes>
 			<dependencies>
 				<php minimum_version="5.2.8" />
 				<pear minimum_version="1.9.0" recommended_version="1.9.4" />
@@ -148,6 +151,9 @@
 			</release>
 			<exceptions key="Cake/VERSION.txt">php</exceptions>
 			<exceptions key="Cake/LICENSE.txt">php</exceptions>
+			<exceptions key="Cake/Config/cacert.pem">php</exceptions>
+			<exceptions key="Cake/Console/Templates/skel/.htaccess">php</exceptions>
+			<exceptions key="Cake/Console/Templates/skel/webroot/.htaccess">php</exceptions>
 		</d51pearpkg2>
 	</target>
 
@@ -156,6 +162,17 @@
 		<exec command="pear package" dir="${build.dir}/${pear.package}" passthru="true"/>
 		<echo msg="Moving ${pear.package}.tgz"/>
 		<move file="${build.dir}/${pear.package}/${pear.package}.tgz" todir="${dist.dir}" />
+	</target>
+
+	<!--
+		Updates the local copy to the latest head.
+	-->
+	<target name="update-branch">
+		<echo msg="Updating to latest master." />
+		<exec executable="git pull">
+			<arg value="${git.remote}" />
+			<arg value="master" />
+		</exec>
 	</target>
 
 	<!--
@@ -176,7 +193,7 @@
 	<!--
 		Create the release commit that updates the version number and pushes the commits.
 	-->
-	<target name="release-commit" depends="next-version,prepare">
+	<target name="release-commit" depends="update-branch,next-version,prepare">
 		<echo msg="Creating new release commit" />
 		<exec command="git add ./lib/Cake/VERSION.txt" logoutput="true" checkreturn="true" />
 		<exec command="git commit -m 'Update version number to ${release_version}'" logoutput="true" checkreturn="true" />
@@ -205,10 +222,43 @@
 		<exec command="ssh cakephp@cakephp.org pirum add ${pirum.dir} ${pirum.dir}/${pear.package}.tgz" checkreturn="true" />
 	</target>
 
+	<target name="codestyle" description="Check codestyle (human readable format)">
+		<phpcodesniffer
+			standard="CakePHP"
+			allowedFileExtensions="php">
+			<fileset refid="libs" />
+		</phpcodesniffer>
+	</target>
+
+	<target name="reports-ci">
+		<phpcodesniffer
+			standard="CakePHP"
+			allowedFileExtensions="php">
+			<fileset refid="libs" />
+			<formatter type="checkstyle" outfile="checkstyle.xml" />
+		</phpcodesniffer>
+		<phpcpd
+			minLines="4"
+			minTokens="50">
+			<fileset refid="libs" />
+			<formatter type="pmd" outfile="pmd-cpd.xml"/>
+		</phpcpd>
+		<phpdepend>
+			<fileset refid="non-tests" />
+			<logger type="jdepend-xml" outfile="jdepend.xml"/>
+		</phpdepend>
+		<phpmd rulesets="codesize,unusedcode,design">
+			<fileset refid="non-tests" />
+			<formatter type="xml" outfile="reports/pmd.html"/>
+		</phpmd>
+	</target>
+
 	<!--
 		Top level easy to type targets
 	-->
 	<target name="build" depends="generate-package" description="Generate a pear package" />
 	<target name="release" depends="release-commit,build,distribute" description="Release a new version of CakePHP" />
+	<target name="code-reports" depends="reports-ci"
+		description="Run the code reports, generating XML output for CI server use." />
 
 </project>

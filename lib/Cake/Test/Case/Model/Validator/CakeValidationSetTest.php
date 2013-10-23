@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/view/1196/Testing>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/view/1196/Testing CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model.Validator
  * @since         CakePHP(tm) v 2.2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeValidationSet', 'Model/Validator');
@@ -24,7 +25,17 @@ App::uses('CakeValidationSet', 'Model/Validator');
  *
  * @package       Cake.Test.Case.Model.Validator
  */
-class CakeValidationSetTest  extends CakeTestCase {
+class CakeValidationSetTest extends CakeTestCase {
+
+/**
+ * override locale to the default (eng).
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		Configure::write('Config.language', 'eng');
+	}
 
 /**
  * testValidate method
@@ -76,11 +87,6 @@ class CakeValidationSetTest  extends CakeTestCase {
 	public function testGetRule() {
 		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
 		$Field = new CakeValidationSet('title', $rules);
-		$data = array(
-			'title' => '',
-			'body' => 'a body'
-		);
-
 		$result = $Field->getRule('notEmpty');
 		$this->assertInstanceOf('CakeValidationRule', $result);
 		$this->assertEquals('notEmpty', $result->rule);

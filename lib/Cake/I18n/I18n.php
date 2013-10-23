@@ -5,24 +5,23 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.I18n
  * @since         CakePHP(tm) v 1.2.0.4116
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-/**
- * Included libraries.
- */
 App::uses('CakePlugin', 'Core');
 App::uses('L10n', 'I18n');
 App::uses('Multibyte', 'I18n');
+App::uses('CakeSession', 'Model/Datasource');
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -90,12 +89,15 @@ class I18n {
 		'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
 	);
 
+/**
+ * Escape string
+ *
+ * @var string
+ */
 	protected $_escape = null;
 
 /**
  * Constructor, use I18n::getInstance() to get the i18n translation object.
- *
- * @return void
  */
 	public function __construct() {
 		$this->l10n = new L10n();
@@ -106,7 +108,7 @@ class I18n {
  *
  * @return I18n
  */
-	public static function &getInstance() {
+	public static function getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] = new I18n();
@@ -120,12 +122,14 @@ class I18n {
  *
  * @param string $singular String to translate
  * @param string $plural Plural string (if any)
- * @param string $domain Domain The domain of the translation.  Domains are often used by plugin translations
+ * @param string $domain Domain The domain of the translation. Domains are often used by plugin translations.
+ *    If null, the default domain will be used.
  * @param string $category Category The integer value of the category to use.
  * @param integer $count Count Count is used with $plural to choose the correct plural form.
  * @param string $language Language to translate string to.
- * 	If null it checks for language in session followed by Config.language configuration variable.
+ *    If null it checks for language in session followed by Config.language configuration variable.
  * @return string translated string.
+ * @throws CakeException When '' is provided as a domain.
  */
 	public static function translate($singular, $plural = null, $domain = null, $category = 6, $count = null, $language = null) {
 		$_this = I18n::getInstance();
@@ -142,9 +146,10 @@ class I18n {
 		}
 
 		if (empty($language)) {
-			if (!empty($_SESSION['Config']['language'])) {
-				$language = $_SESSION['Config']['language'];
-			} else {
+			if (CakeSession::started()) {
+				$language = CakeSession::read('Config.language');
+			}
+			if (empty($language)) {
 				$language = Configure::read('Config.language');
 			}
 		}
@@ -154,8 +159,11 @@ class I18n {
 			$_this->_lang = $lang;
 		}
 
-		if (is_null($domain)) {
+		if ($domain === null) {
 			$domain = self::$defaultDomain;
+		}
+		if ($domain === '') {
+			throw new CakeException(__d('cake_dev', 'You cannot use "" as a domain.'));
 		}
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
@@ -169,7 +177,7 @@ class I18n {
 			Cache::write($_this->domain, $_this->_domains[$domain][$_this->_lang], '_cake_core_');
 		}
 
-		if ($_this->category == 'LC_TIME') {
+		if ($_this->category === 'LC_TIME') {
 			return $_this->_translateTime($singular, $domain);
 		}
 
@@ -218,7 +226,7 @@ class I18n {
 	}
 
 /**
- * Clears the domains internal data array.  Useful for testing i18n.
+ * Clears the domains internal data array. Useful for testing i18n.
  *
  * @return void
  */
@@ -316,7 +324,7 @@ class I18n {
 				if (is_file($localeDef)) {
 					$definitions = self::loadLocaleDefinition($localeDef);
 					if ($definitions !== false) {
-						$this->_domains[$domain][$this->_lang][$this->category] = self::loadLocaleDefinition($localeDef);
+						$this->_domains[$domain][$this->_lang][$this->category] = $definitions;
 						$this->_noLocale = false;
 						return $domain;
 					}
@@ -368,7 +376,7 @@ class I18n {
 			$head = $this->_domains[$domain][$this->_lang][$this->category][""];
 
 			foreach (explode("\n", $head) as $line) {
-				$header = strtok($line,":");
+				$header = strtok($line, ':');
 				$line = trim(strtok("\n"));
 				$this->_domains[$domain][$this->_lang][$this->category]["%po-header"][strtolower($header)] = $line;
 			}
@@ -402,10 +410,10 @@ class I18n {
 		if ($data = file_get_contents($filename)) {
 			$translations = array();
 			$header = substr($data, 0, 20);
-			$header = unpack("L1magic/L1version/L1count/L1o_msg/L1o_trn", $header);
+			$header = unpack('L1magic/L1version/L1count/L1o_msg/L1o_trn', $header);
 			extract($header);
 
-			if ((dechex($magic) == '950412de' || dechex($magic) == 'ffffffff950412de') && $version == 0) {
+			if ((dechex($magic) === '950412de' || dechex($magic) === 'ffffffff950412de') && !$version) {
 				for ($n = 0; $n < $count; $n++) {
 					$r = unpack("L1len/L1offs", substr($data, $o_msg + $n * 8, 8));
 					$msgid = substr($data, $r["offs"], $r["len"]);
@@ -440,19 +448,19 @@ class I18n {
  * @return mixed Array of translations on success or false on failure
  */
 	public static function loadPo($filename) {
-		if (!$file = fopen($filename, "r")) {
+		if (!$file = fopen($filename, 'r')) {
 			return false;
 		}
 
 		$type = 0;
 		$translations = array();
-		$translationKey = "";
+		$translationKey = '';
 		$plural = 0;
-		$header = "";
+		$header = '';
 
 		do {
 			$line = trim(fgets($file));
-			if ($line == "" || $line[0] == "#") {
+			if ($line === '' || $line[0] === '#') {
 				continue;
 			}
 			if (preg_match("/msgid[[:space:]]+\"(.+)\"$/i", $line, $regs)) {
@@ -460,7 +468,7 @@ class I18n {
 				$translationKey = stripcslashes($regs[1]);
 			} elseif (preg_match("/msgid[[:space:]]+\"\"$/i", $line, $regs)) {
 				$type = 2;
-				$translationKey = "";
+				$translationKey = '';
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && ($type == 1 || $type == 2 || $type == 3)) {
 				$type = 3;
 				$translationKey .= stripcslashes($regs[1]);
@@ -469,7 +477,7 @@ class I18n {
 				$type = 4;
 			} elseif (preg_match("/msgstr[[:space:]]+\"\"$/i", $line, $regs) && ($type == 1 || $type == 3) && $translationKey) {
 				$type = 4;
-				$translations[$translationKey] = "";
+				$translations[$translationKey] = '';
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 4 && $translationKey) {
 				$translations[$translationKey] .= stripcslashes($regs[1]);
 			} elseif (preg_match("/msgid_plural[[:space:]]+\".*\"$/i", $line, $regs)) {
@@ -482,7 +490,7 @@ class I18n {
 				$type = 7;
 			} elseif (preg_match("/msgstr\[(\d+)\][[:space:]]+\"\"$/i", $line, $regs) && ($type == 6 || $type == 7) && $translationKey) {
 				$plural = $regs[1];
-				$translations[$translationKey][$plural] = "";
+				$translations[$translationKey][$plural] = '';
 				$type = 7;
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 7 && $translationKey) {
 				$translations[$translationKey][$plural] .= stripcslashes($regs[1]);
@@ -490,20 +498,20 @@ class I18n {
 				$header .= stripcslashes($regs[1]);
 				$type = 5;
 			} elseif (preg_match("/msgstr[[:space:]]+\"\"$/i", $line, $regs) && !$translationKey) {
-				$header = "";
+				$header = '';
 				$type = 5;
 			} elseif (preg_match("/^\"(.*)\"$/i", $line, $regs) && $type == 5) {
 				$header .= stripcslashes($regs[1]);
 			} else {
 				unset($translations[$translationKey]);
 				$type = 0;
-				$translationKey = "";
+				$translationKey = '';
 				$plural = 0;
 			}
 		} while (!feof($file));
 		fclose($file);
 
-		$merge[""] = $header;
+		$merge[''] = $header;
 		return array_merge($merge, $translations);
 	}
 
@@ -514,7 +522,7 @@ class I18n {
  * @return mixed Array of definitions on success or false on failure
  */
 	public static function loadLocaleDefinition($filename) {
-		if (!$file = fopen($filename, "r")) {
+		if (!$file = fopen($filename, 'r')) {
 			return false;
 		}
 
@@ -539,11 +547,11 @@ class I18n {
 				continue;
 			}
 			$count = count($parts);
-			if ($count == 2) {
+			if ($count === 2) {
 				$currentToken = $parts[0];
 				$value = $parts[1];
-			} elseif ($count == 1) {
-				$value .= $parts[0];
+			} elseif ($count === 1) {
+				$value = is_array($value) ? $parts[0] : $value . $parts[0];
 			} else {
 				continue;
 			}
@@ -565,7 +573,7 @@ class I18n {
 				$val = str_replace($replacements, $mustEscape, $val);
 				$value[$i] = $val;
 			}
-			if (count($value) == 1) {
+			if (count($value) === 1) {
 				$definitions[$currentToken] = array_pop($value);
 			} else {
 				$definitions[$currentToken] = $value;
@@ -585,19 +593,19 @@ class I18n {
 		$string = $string[1];
 		if (substr($string, 0, 2) === $this->_escape . 'x') {
 			$delimiter = $this->_escape . 'x';
-			return join('', array_map('chr', array_map('hexdec',array_filter(explode($delimiter, $string)))));
+			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		if (substr($string, 0, 2) === $this->_escape . 'd') {
 			$delimiter = $this->_escape . 'd';
-			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
+			return implode('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
 		if ($string[0] === $this->_escape && isset($string[1]) && is_numeric($string[1])) {
 			$delimiter = $this->_escape;
-			return join('', array_map('chr', array_filter(explode($delimiter, $string))));
+			return implode('', array_map('chr', array_filter(explode($delimiter, $string))));
 		}
 		if (substr($string, 0, 3) === 'U00') {
 			$delimiter = 'U00';
-			return join('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
+			return implode('', array_map('chr', array_map('hexdec', array_filter(explode($delimiter, $string)))));
 		}
 		if (preg_match('/U([0-9a-fA-F]{4})/', $string, $match)) {
 			return Multibyte::ascii(array(hexdec($match[1])));

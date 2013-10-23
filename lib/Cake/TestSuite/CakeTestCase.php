@@ -5,17 +5,19 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.TestSuite
  * @since         CakePHP(tm) v 1.2.0.4667
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('CakeFixtureManager', 'TestSuite/Fixture');
 App::uses('CakeTestFixture', 'TestSuite/Fixture');
 
@@ -42,7 +44,11 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	public $autoFixtures = true;
 
 /**
+ * Control table create/drops on each test method.
+ *
  * Set this to false to avoid tables to be dropped if they already exist
+ * between each test method. Tables will still be dropped at the
+ * end of each test runner execution.
  *
  * @var boolean
  */
@@ -67,7 +73,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * If no TestResult object is passed a new one will be created.
  * This method is run for each test method in this class
  *
- * @param  PHPUnit_Framework_TestResult $result
+ * @param PHPUnit_Framework_TestResult $result
  * @return PHPUnit_Framework_TestResult
  * @throws InvalidArgumentException
  */
@@ -170,7 +176,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Announces the start of a test.
  *
- * @param string $method Test method just started.
  * @return void
  */
 	protected function assertPreConditions() {
@@ -181,7 +186,6 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 /**
  * Announces the end of a test.
  *
- * @param string $method Test method just finished.
  * @return void
  */
 	protected function assertPostConditions() {
@@ -206,7 +210,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		}
 		$args = func_get_args();
 		foreach ($args as $class) {
-			$this->fixtureManager->loadSingle($class);
+			$this->fixtureManager->loadSingle($class, null, $this->dropTables);
 		}
 	}
 
@@ -381,7 +385,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 				$tags = (string)$tags;
 			}
 			$i++;
-			if (is_string($tags) && $tags{0} == '<') {
+			if (is_string($tags) && $tags{0} === '<') {
 				$tags = array(substr($tags, 1) => array());
 			} elseif (is_string($tags)) {
 				$tagsTrimmed = preg_replace('/\s+/m', '', $tags);
@@ -389,12 +393,12 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 				if (preg_match('/^\*?\//', $tags, $match) && $tagsTrimmed !== '//') {
 					$prefix = array(null, null);
 
-					if ($match[0] == '*/') {
+					if ($match[0] === '*/') {
 						$prefix = array('Anything, ', '.*?');
 					}
 					$regex[] = array(
 						sprintf('%sClose %s tag', $prefix[0], substr($tags, strlen($match[0]))),
-						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags,  strlen($match[0]))),
+						sprintf('%s<[\s]*\/[\s]*%s[\s]*>[\n\r]*', $prefix[1], substr($tags, strlen($match[0]))),
 						$i,
 					);
 					continue;
@@ -496,6 +500,7 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
  * Generates all permutation of an array $items and returns them in a new array.
  *
  * @param array $items An array of items
+ * @param array $perms
  * @return array
  */
 	protected function _arrayPermute($items, $perms = array()) {
@@ -594,6 +599,9 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		return self::assertNotRegExp($pattern, $string, $message);
 	}
 
+/**
+ * assert no errors
+ */
 	protected function assertNoErrors() {
 	}
 
@@ -675,5 +683,31 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 		return $condition;
 	}
 	// @codingStandardsIgnoreEnd
+
+/**
+ * Mock a model, maintain fixtures and table association
+ *
+ * @param string $model
+ * @param mixed $methods
+ * @param array $config
+ * @throws MissingModelException
+ * @return Model
+ */
+	public function getMockForModel($model, $methods = array(), $config = array()) {
+		$config += ClassRegistry::config('Model');
+
+		list($plugin, $name) = pluginSplit($model, true);
+		App::uses($name, $plugin . 'Model');
+		$config = array_merge((array)$config, array('name' => $name));
+
+		if (!class_exists($name)) {
+			throw new MissingModelException(array($model));
+		}
+
+		$mock = $this->getMock($name, $methods, array($config));
+		ClassRegistry::removeObject($name);
+		ClassRegistry::addObject($name, $mock);
+		return $mock;
+	}
 
 }

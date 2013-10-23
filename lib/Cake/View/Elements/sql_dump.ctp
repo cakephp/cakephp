@@ -1,40 +1,42 @@
 <?php
 /**
- * SQL Dump element.  Dumps out SQL log information
+ * SQL Dump element. Dumps out SQL log information
  *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Elements
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 if (!class_exists('ConnectionManager') || Configure::read('debug') < 2) {
 	return false;
 }
-$noLogs = !isset($logs);
+$noLogs = !isset($sqlLogs);
 if ($noLogs):
 	$sources = ConnectionManager::sourceList();
 
-	$logs = array();
+	$sqlLogs = array();
 	foreach ($sources as $source):
 		$db = ConnectionManager::getDataSource($source);
 		if (!method_exists($db, 'getLog')):
 			continue;
 		endif;
-		$logs[$source] = $db->getLog();
+		$sqlLogs[$source] = $db->getLog();
 	endforeach;
 endif;
 
 if ($noLogs || isset($_forced_from_dbo_)):
-	foreach ($logs as $source => $logInfo):
+	foreach ($sqlLogs as $source => $logInfo):
 		$text = $logInfo['count'] > 1 ? 'queries' : 'query';
 		printf(
 			'<table class="cake-sql-log" id="cakeSqlLog_%s" summary="Cake SQL Log" cellspacing="0">',
@@ -56,19 +58,27 @@ if ($noLogs || isset($_forced_from_dbo_)):
 				}
 				foreach ($i['params'] as $bindKey => $bindVal) {
 					if ($bindType === true) {
-						$bindParam .= h($bindKey) ." => " . h($bindVal) . ", ";
+						$bindParam .= h($bindKey) . " => " . h($bindVal) . ", ";
 					} else {
 						$bindParam .= h($bindVal) . ", ";
 					}
 				}
 				$i['query'] .= " , params[ " . rtrim($bindParam, ', ') . " ]";
 			}
-			echo "<tr><td>" . ($k + 1) . "</td><td>" . h($i['query']) . "</td><td>{$i['error']}</td><td style = \"text-align: right\">{$i['affected']}</td><td style = \"text-align: right\">{$i['numRows']}</td><td style = \"text-align: right\">{$i['took']}</td></tr>\n";
+			printf('<tr><td>%d</td><td>%s</td><td>%s</td><td style="text-align: right">%d</td><td style="text-align: right">%d</td><td style="text-align: right">%d</td></tr>%s',
+				$k + 1,
+				h($i['query']),
+				$i['error'],
+				$i['affected'],
+				$i['numRows'],
+				$i['took'],
+				"\n"
+			);
 		endforeach;
 	?>
 	</tbody></table>
 	<?php
 	endforeach;
 else:
-	echo '<p>Encountered unexpected $logs cannot generate SQL log</p>';
+	printf('<p>%s</p>', __d('cake_dev', 'Encountered unexpected %s. Cannot generate SQL log.', '$sqlLogs'));
 endif;

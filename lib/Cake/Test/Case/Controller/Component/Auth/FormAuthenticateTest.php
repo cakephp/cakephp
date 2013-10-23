@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Test.Case.Controller.Component.Auth
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AuthComponent', 'Controller/Component');
@@ -32,6 +33,11 @@ require_once CAKE . 'Test' . DS . 'Case' . DS . 'Model' . DS . 'models.php';
  */
 class FormAuthenticateTest extends CakeTestCase {
 
+/**
+ * Fixtrues
+ *
+ * @var array
+ */
 	public $fixtures = array('core.user', 'core.auth_user');
 
 /**
@@ -96,6 +102,43 @@ class FormAuthenticateTest extends CakeTestCase {
 	public function testAuthenticateNoPassword() {
 		$request = new CakeRequest('posts/index', false);
 		$request->data = array('User' => array('user' => 'mariano'));
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+/**
+ * test authenticate password is false method
+ *
+ * @return void
+ */
+	public function testAuthenticatePasswordIsFalse() {
+		$request = new CakeRequest('posts/index', false);
+		$request->data = array(
+			'User' => array(
+				'user' => 'mariano',
+				'password' => null
+		));
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+/**
+ * test authenticate field is not string
+ *
+ * @return void
+ */
+	public function testAuthenticateFieldsAreNotString() {
+		$request = new CakeRequest('posts/index', false);
+		$request->data = array(
+			'User' => array(
+				'user' => array('mariano', 'phpnut'),
+				'password' => 'my password'
+		));
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
+
+		$request->data = array(
+			'User' => array(
+				'user' => 'mariano',
+				'password' => array('password1', 'password2')
+		));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -188,6 +231,54 @@ class FormAuthenticateTest extends CakeTestCase {
 		unset($result['updated']);
 		$this->assertEquals($expected, $result);
 		CakePlugin::unload();
+	}
+
+/**
+ * test password hasher settings
+ *
+ * @return void
+ */
+	public function testPasswordHasherSettings() {
+		$this->auth->settings['passwordHasher'] = array(
+			'className' => 'Simple',
+			'hashType' => 'md5'
+		);
+
+		$passwordHasher = $this->auth->passwordHasher();
+		$result = $passwordHasher->config();
+		$this->assertEquals('md5', $result['hashType']);
+
+		$hash = Security::hash('mypass', 'md5', true);
+		$User = ClassRegistry::init('User');
+		$User->updateAll(
+			array('password' => $User->getDataSource()->value($hash)),
+			array('User.user' => 'mariano')
+		);
+
+		$request = new CakeRequest('posts/index', false);
+		$request->data = array('User' => array(
+			'user' => 'mariano',
+			'password' => 'mypass'
+		));
+
+		$result = $this->auth->authenticate($request, $this->response);
+		$expected = array(
+			'id' => 1,
+			'user' => 'mariano',
+			'created' => '2007-03-17 01:16:23',
+			'updated' => '2007-03-17 01:18:31'
+		);
+		$this->assertEquals($expected, $result);
+
+		$this->auth = new FormAuthenticate($this->Collection, array(
+			'fields' => array('username' => 'user', 'password' => 'password'),
+			'userModel' => 'User'
+		));
+		$this->auth->settings['passwordHasher'] = array(
+			'className' => 'Simple',
+			'hashType' => 'sha1'
+		);
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
 }

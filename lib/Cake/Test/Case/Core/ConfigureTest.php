@@ -7,17 +7,19 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Core
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('PhpReader', 'Configure');
 
 /**
@@ -65,6 +67,23 @@ class ConfigureTest extends CakeTestCase {
 			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'test.php');
 		}
 		Configure::drop('test');
+	}
+
+/**
+ * Test to ensure bootrapping doesn't overwrite prior configs set under 'App' key
+ * @return void
+ */
+	public function testBootstrap() {
+		$expected = array(
+			'foo' => 'bar'
+		);
+		Configure::write('App', $expected);
+
+		Configure::bootstrap(true);
+		$result = Configure::read('App');
+
+		$this->assertEquals($expected['foo'], $result['foo']);
+		$this->assertFalse($result['base']);
 	}
 
 /**
@@ -178,6 +197,60 @@ class ConfigureTest extends CakeTestCase {
 	}
 
 /**
+ * testCheck method
+ *
+ * @return void
+ */
+	public function testCheck() {
+		Configure::write('ConfigureTestCase', 'value');
+		$this->assertTrue(Configure::check('ConfigureTestCase'));
+
+		$this->assertFalse(Configure::check('NotExistingConfigureTestCase'));
+	}
+
+/**
+ * testCheckingSavedEmpty method
+ *
+ * @return void
+ */
+	public function testCheckingSavedEmpty() {
+		$this->assertTrue(Configure::write('ConfigureTestCase', 0));
+		$this->assertTrue(Configure::check('ConfigureTestCase'));
+
+		$this->assertTrue(Configure::write('ConfigureTestCase', '0'));
+		$this->assertTrue(Configure::check('ConfigureTestCase'));
+
+		$this->assertTrue(Configure::write('ConfigureTestCase', false));
+		$this->assertTrue(Configure::check('ConfigureTestCase'));
+
+		$this->assertTrue(Configure::write('ConfigureTestCase', null));
+		$this->assertFalse(Configure::check('ConfigureTestCase'));
+	}
+
+/**
+ * testCheckKeyWithSpaces method
+ *
+ * @return void
+ */
+	public function testCheckKeyWithSpaces() {
+		$this->assertTrue(Configure::write('Configure Test', "test"));
+		$this->assertTrue(Configure::check('Configure Test'));
+		Configure::delete('Configure Test');
+
+		$this->assertTrue(Configure::write('Configure Test.Test Case', "test"));
+		$this->assertTrue(Configure::check('Configure Test.Test Case'));
+	}
+
+/**
+ * testCheckEmpty
+ *
+ * @return void
+ */
+	public function testCheckEmpty() {
+		$this->assertFalse(Configure::check());
+	}
+
+/**
  * testLoad method
  *
  * @expectedException RuntimeException
@@ -185,7 +258,7 @@ class ConfigureTest extends CakeTestCase {
  */
 	public function testLoadExceptionOnNonExistantFile() {
 		Configure::config('test', new PhpReader());
-		$result = Configure::load('non_existing_configuration_file', 'test');
+		Configure::load('non_existing_configuration_file', 'test');
 	}
 
 /**
@@ -391,7 +464,7 @@ class ConfigureTest extends CakeTestCase {
 /**
  * Test dumping only some of the data.
  *
- * @return
+ * @return void
  */
 	public function testDumpPartial() {
 		Configure::config('test_reader', new PhpReader(TMP));

@@ -5,15 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5012
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -24,8 +25,8 @@ App::uses('DbAcl', 'Model');
 App::uses('Hash', 'Utility');
 
 /**
- * Shell for ACL management.  This console is known to have issues with zend.ze1_compatibility_mode
- * being enabled.  Be sure to turn it off when using this shell.
+ * Shell for ACL management. This console is known to have issues with zend.ze1_compatibility_mode
+ * being enabled. Be sure to turn it off when using this shell.
  *
  * @package       Cake.Console.Command
  */
@@ -75,18 +76,18 @@ class AclShell extends AppShell {
 		App::uses($class, $plugin . 'Controller/Component/Acl');
 		if (!in_array($class, array('DbAcl', 'DB_ACL')) && !is_subclass_of($class, 'DbAcl')) {
 			$out = "--------------------------------------------------\n";
-			$out .= __d('cake_console', 'Error: Your current Cake configuration is set to an ACL implementation other than DB.') . "\n";
+			$out .= __d('cake_console', 'Error: Your current CakePHP configuration is set to an ACL implementation other than DB.') . "\n";
 			$out .= __d('cake_console', 'Please change your core config to reflect your decision to use DbAcl before attempting to use this script') . "\n";
 			$out .= "--------------------------------------------------\n";
 			$out .= __d('cake_console', 'Current ACL Classname: %s', $class) . "\n";
 			$out .= "--------------------------------------------------\n";
 			$this->err($out);
-			$this->_stop();
+			return $this->_stop();
 		}
 
 		if ($this->command) {
 			if (!config('database')) {
-				$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'), true);
+				$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'));
 				$this->args = null;
 				return $this->DbConfig->execute();
 			}
@@ -121,14 +122,14 @@ class AclShell extends AppShell {
 		$class = ucfirst($this->args[0]);
 		$parent = $this->parseIdentifier($this->args[1]);
 
-		if (!empty($parent) && $parent != '/' && $parent != 'root') {
+		if (!empty($parent) && $parent !== '/' && $parent !== 'root') {
 			$parent = $this->_getNodeId($class, $parent);
 		} else {
 			$parent = null;
 		}
 
 		$data = $this->parseIdentifier($this->args[2]);
-		if (is_string($data) && $data != '/') {
+		if (is_string($data) && $data !== '/') {
 			$data = array('alias' => $data);
 		} elseif (is_string($data)) {
 			$this->error(__d('cake_console', '/ can not be used as an alias!') . __d('cake_console', "	/ is the root, please supply a sub alias"));
@@ -178,9 +179,9 @@ class AclShell extends AppShell {
 		);
 		$this->Acl->{$class}->create();
 		if (!$this->Acl->{$class}->save($data)) {
-			$this->out(__d('cake_console', 'Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.'), true);
+			$this->out(__d('cake_console', 'Error in setting new parent. Please make sure the parent node exists, and is not a descendant of the node specified.'));
 		} else {
-			$this->out(__d('cake_console', 'Node parent set to %s', $this->args[2]) . "\n", true);
+			$this->out(__d('cake_console', 'Node parent set to %s', $this->args[2]) . "\n");
 		}
 	}
 
@@ -236,9 +237,9 @@ class AclShell extends AppShell {
 		extract($this->_getParams());
 
 		if ($this->Acl->check($aro, $aco, $action)) {
-			$this->out(__d('cake_console', '%s is <success>allowed</success>.', $aroName), true);
+			$this->out(__d('cake_console', '%s is <success>allowed</success>.', $aroName));
 		} else {
-			$this->out(__d('cake_console', '%s is <error>not allowed</error>.', $aroName), true);
+			$this->out(__d('cake_console', '%s is <error>not allowed</error>.', $aroName));
 		}
 	}
 
@@ -251,9 +252,9 @@ class AclShell extends AppShell {
 		extract($this->_getParams());
 
 		if ($this->Acl->allow($aro, $aco, $action)) {
-			$this->out(__d('cake_console', 'Permission <success>granted</success>.'), true);
+			$this->out(__d('cake_console', 'Permission <success>granted</success>.'));
 		} else {
-			$this->out(__d('cake_console', 'Permission was <error>not granted</error>.'), true);
+			$this->out(__d('cake_console', 'Permission was <error>not granted</error>.'));
 		}
 	}
 
@@ -266,9 +267,9 @@ class AclShell extends AppShell {
 		extract($this->_getParams());
 
 		if ($this->Acl->deny($aro, $aco, $action)) {
-			$this->out(__d('cake_console', 'Permission denied.'), true);
+			$this->out(__d('cake_console', 'Permission denied.'));
 		} else {
-			$this->out(__d('cake_console', 'Permission was not denied.'), true);
+			$this->out(__d('cake_console', 'Permission was not denied.'));
 		}
 	}
 
@@ -281,9 +282,9 @@ class AclShell extends AppShell {
 		extract($this->_getParams());
 
 		if ($this->Acl->inherit($aro, $aco, $action)) {
-			$this->out(__d('cake_console', 'Permission inherited.'), true);
+			$this->out(__d('cake_console', 'Permission inherited.'));
 		} else {
-			$this->out(__d('cake_console', 'Permission was not inherited.'), true);
+			$this->out(__d('cake_console', 'Permission was not inherited.'));
 		}
 	}
 
@@ -324,7 +325,7 @@ class AclShell extends AppShell {
 		$this->hr();
 
 		$stack = array();
-		$last  = null;
+		$last = null;
 
 		foreach ($nodes as $n) {
 			$stack[] = $n;
@@ -376,6 +377,7 @@ class AclShell extends AppShell {
 				'help' => __d('cake_console', 'Create a new ACL node'),
 				'parser' => array(
 					'description' => __d('cake_console', 'Creates a new ACL object <node> under the parent'),
+					'epilog' => __d('cake_console', 'You can use `root` as the parent when creating nodes to create top level nodes.'),
 					'arguments' => array(
 						'type' => $type,
 						'parent' => array(
@@ -501,7 +503,7 @@ class AclShell extends AppShell {
 					' - <model>.<id> - The node will be bound to a specific record of the given model.',
 					'',
 					' - <alias> - The node will be given a string alias (or path, in the case of <parent>)',
-					"   i.e. 'John'.  When used with <parent>, this takes the form of an alias path,",
+					"   i.e. 'John'. When used with <parent>, this takes the form of an alias path,",
 					"   i.e. <group>/<subgroup>/<parent>.",
 					'',
 					"To add a node at the root level, enter 'root' or '/' as the <parent> parameter."
@@ -598,12 +600,12 @@ class AclShell extends AppShell {
  * @return array Variables
  */
 	protected function _dataVars($type = null) {
-		if ($type == null) {
+		if (!$type) {
 			$type = $this->args[0];
 		}
 		$vars = array();
 		$class = ucwords($type);
-		$vars['secondary_id'] = (strtolower($class) == 'aro') ? 'foreign_key' : 'object_id';
+		$vars['secondary_id'] = (strtolower($class) === 'aro') ? 'foreign_key' : 'object_id';
 		$vars['data_name'] = $type;
 		$vars['table_name'] = $type . 's';
 		$vars['class'] = $class;

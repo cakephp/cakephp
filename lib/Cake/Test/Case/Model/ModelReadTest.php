@@ -5,18 +5,21 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
+
 /**
  * ModelReadTest
  *
@@ -26,7 +29,7 @@ class ModelReadTest extends BaseModelTest {
 
 /**
  * testExists function
- * @retun void
+ * @return void
  */
 	public function testExists() {
 		$this->loadFixtures('User');
@@ -231,7 +234,7 @@ class ModelReadTest extends BaseModelTest {
 			array('Product' => array('type' => 'Music'), array('price' => 4)),
 			array('Product' => array('type' => 'Toy'), array('price' => 3))
 		);
-		$result = $Product->find('all',array(
+		$result = $Product->find('all', array(
 			'fields' => array('Product.type', 'MIN(Product.price) as price'),
 			'group' => 'Product.type',
 			'order' => 'Product.type ASC'
@@ -254,7 +257,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag', 'Comment', 'Attachment');
 		$Article = new Article();
 
-		$query  = 'SELECT title FROM ';
+		$query = 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.id IN (1,2)';
 
@@ -262,7 +265,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertTrue(is_array($results));
 		$this->assertEquals(2, count($results));
 
-		$query  = 'SELECT title, body FROM ';
+		$query = 'SELECT title, body FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.id = 1';
 
@@ -270,7 +273,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertFalse($this->db->getQueryCache($query));
 		$this->assertTrue(is_array($results));
 
-		$query  = 'SELECT title, id FROM ';
+		$query = 'SELECT title, id FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles');
 		$query .= '.published = ' . $this->db->value('Y');
@@ -312,7 +315,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertFalse(empty($result));
 
-		$query  = 'SELECT id, created FROM ';
+		$query = 'SELECT id, created FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= '  WHERE ' . $this->db->fullTableName('articles') . '.title = ?';
 
@@ -326,7 +329,7 @@ class ModelReadTest extends BaseModelTest {
 		$result = $this->db->getQueryCache($query, $params);
 		$this->assertTrue(empty($result));
 
-		$query  = 'SELECT title FROM ';
+		$query = 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles') . '.title LIKE ?';
 
@@ -339,7 +342,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 
 		//related to ticket #5035
-		$query  = 'SELECT title FROM ';
+		$query = 'SELECT title FROM ';
 		$query .= $this->db->fullTableName('articles') . ' WHERE title = ? AND published = ?';
 		$params = array('First? Article', 'Y');
 		$Article->query($query, $params);
@@ -359,12 +362,12 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('Article', 'User', 'Tag', 'ArticlesTag');
 		$Article = new Article();
 
-		$query  = 'SELECT * FROM ' . $this->db->fullTableName('articles');
+		$query = 'SELECT * FROM ' . $this->db->fullTableName('articles');
 		$query .= ' WHERE ' . $this->db->fullTableName('articles');
 		$query .= '.published = ? AND ' . $this->db->fullTableName('articles') . '.user_id = ?';
 		$params = array('Y');
 
-		$result = $Article->query($query, $params);
+		$Article->query($query, $params);
 	}
 
 /**
@@ -384,7 +387,7 @@ class ModelReadTest extends BaseModelTest {
 			$this->db->fullTableName('articles') . '.published', 'Y'
 		);
 
-		$result = $Article->query($query, $param);
+		$Article->query($query, $param);
 	}
 
 /**
@@ -2996,7 +2999,6 @@ class ModelReadTest extends BaseModelTest {
 
 		$duplicateModel = new NodeAfterFind();
 		$duplicateModel->recursive = 3;
-		$duplicateModelData = $duplicateModel->find('all');
 
 		$noAfterFindModel = new NodeNoAfterFind();
 		$noAfterFindModel->recursive = 3;
@@ -3004,6 +3006,30 @@ class ModelReadTest extends BaseModelTest {
 
 		$this->assertFalse($afterFindModel == $noAfterFindModel);
 		$this->assertEquals($afterFindData, $noAfterFindData);
+	}
+
+/**
+ * Test that afterFind can completely unset data.
+ *
+ * @return void
+ */
+	public function testAfterFindUnset() {
+		$this->loadFixtures('Article', 'Comment', 'User');
+		$model = new CustomArticle();
+		$model->bindModel(array(
+			'hasMany' => array(
+				'ModifiedComment' => array(
+					'className' => 'ModifiedComment',
+					'foreignKey' => 'article_id',
+				)
+			)
+		));
+		$model->ModifiedComment->remove = true;
+		$result = $model->find('all');
+		$this->assertTrue(
+			empty($result[0]['ModifiedComment']),
+			'Zeroith row should be removed by afterFind'
+		);
 	}
 
 /**
@@ -3016,7 +3042,7 @@ class ModelReadTest extends BaseModelTest {
 		$Apple = new Apple();
 		$result = $Apple->find('threaded');
 		$result = Hash::extract($result, '{n}.children');
-		$expected = array(array(), array(), array(), array(), array(), array(),	array());
+		$expected = array(array(), array(), array(), array(), array(), array(), array());
 		$this->assertEquals($expected, $result);
 	}
 
@@ -3031,7 +3057,7 @@ class ModelReadTest extends BaseModelTest {
 		$Model->recursive = -1;
 		$result = $Model->find('threaded');
 		$result = Hash::extract($result, '{n}.children');
-		$expected = array(array(), array(), array(), array(), array(), array(),	array());
+		$expected = array(array(), array(), array(), array(), array(), array(), array());
 		$this->assertEquals($expected, $result);
 
 		$result = $Model->find('threaded', array('parent' => 'mother_id'));
@@ -3739,7 +3765,7 @@ class ModelReadTest extends BaseModelTest {
 /**
  * Test find(neighbors) with missing fields so no neighbors are found.
  *
- * @return
+ * @return void
  */
 	public function testFindNeighborsNoPrev() {
 		$this->loadFixtures('User', 'Article', 'Comment', 'Tag', 'ArticlesTag', 'Attachment');
@@ -3760,6 +3786,7 @@ class ModelReadTest extends BaseModelTest {
 		);
 		$this->assertEquals($expected, $result);
 	}
+
 /**
  * testFindCombinedRelations method
  *
@@ -6275,6 +6302,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->loadFixtures('User');
 		$TestModel = new User();
 		$TestModel->cacheQueries = false;
+		$TestModel->order = null;
 
 		$expected = array(
 			'conditions' => array(
@@ -6822,6 +6850,8 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEquals('mariano', $result);
 
+		$TestModel->order = null;
+
 		$result = $TestModel->field('COUNT(*) AS count', true);
 		$this->assertEquals(4, $result);
 
@@ -6877,7 +6907,9 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertNotRegExp('/ORDER\s+BY/', $log['log'][0]['query']);
 
 		$Article = new Article();
+		$Article->order = null;
 		$Article->recursive = -1;
+
 		$expected = count($Article->find('all', array(
 			'fields' => array('Article.user_id'),
 			'group' => 'Article.user_id')
@@ -7693,34 +7725,34 @@ class ModelReadTest extends BaseModelTest {
 			$this->assertFalse((bool)$result['Author']['false']);
 		}
 
-		$result = $Post->find('first',array('fields' => array('author_id')));
+		$result = $Post->find('first', array('fields' => array('author_id')));
 		$this->assertFalse(isset($result['Post']['two']));
 		$this->assertFalse(isset($result['Author']['false']));
 
-		$result = $Post->find('first',array('fields' => array('author_id', 'two')));
+		$result = $Post->find('first', array('fields' => array('author_id', 'two')));
 		$this->assertEquals(2, $result['Post']['two']);
 		$this->assertFalse(isset($result['Author']['false']));
 
-		$result = $Post->find('first',array('fields' => array('two')));
+		$result = $Post->find('first', array('fields' => array('two')));
 		$this->assertEquals(2, $result['Post']['two']);
 
 		$Post->id = 1;
 		$result = $Post->field('two');
 		$this->assertEquals(2, $result);
 
-		$result = $Post->find('first',array(
+		$result = $Post->find('first', array(
 			'conditions' => array('two' => 2),
 			'limit' => 1
 		));
 		$this->assertEquals(2, $result['Post']['two']);
 
-		$result = $Post->find('first',array(
+		$result = $Post->find('first', array(
 			'conditions' => array('two <' => 3),
 			'limit' => 1
 		));
 		$this->assertEquals(2, $result['Post']['two']);
 
-		$result = $Post->find('first',array(
+		$result = $Post->find('first', array(
 			'conditions' => array('NOT' => array('two >' => 3)),
 			'limit' => 1
 		));
@@ -7734,6 +7766,8 @@ class ModelReadTest extends BaseModelTest {
 		));
 		$this->assertEquals(2, $result['Post']['id']);
 
+		$Post->order = null;
+
 		$Post->virtualFields = array('other_field' => 'Post.id + 1');
 		$result = $Post->find('all', array(
 			'fields' => array($dbo->calculate($Post, 'max', array('other_field')))
@@ -7741,7 +7775,7 @@ class ModelReadTest extends BaseModelTest {
 		$this->assertEquals(4, $result[0][0]['other_field']);
 
 		ClassRegistry::flush();
-		$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'), 'Model');
+		$Writing = ClassRegistry::init(array('class' => 'Post', 'alias' => 'Writing'));
 		$Writing->virtualFields = array('two' => "1 + 1");
 		$result = $Writing->find('first');
 		$this->assertEquals(2, $result['Writing']['two']);
@@ -7913,6 +7947,27 @@ class ModelReadTest extends BaseModelTest {
 			array(
 				'conditions' => array(
 					'Article.id NOT' => array(1)
+				)
+			)
+		);
+		$this->assertTrue(is_array($result) && !empty($result));
+	}
+
+/**
+ * test to assert that != in key together with a single element array will work
+ *
+ * @return void
+ */
+	public function testNotEqualsInArrayWithOneValue() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+
+		$result = $Article->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Article.id !=' => array(1)
 				)
 			)
 		);

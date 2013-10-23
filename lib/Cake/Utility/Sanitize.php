@@ -7,19 +7,20 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::import('Model', 'ConnectionManager');
+App::uses('ConnectionManager', 'Model');
 
 /**
  * Data Sanitization.
@@ -28,6 +29,7 @@ App::import('Model', 'ConnectionManager');
  * and all of the above on arrays.
  *
  * @package       Cake.Utility
+ * @deprecated    Deprecated since version 2.4
  */
 class Sanitize {
 
@@ -46,14 +48,15 @@ class Sanitize {
 			}
 		}
 
-		if (is_array($string)) {
-			$cleaned = array();
-			foreach ($string as $key => $clean) {
-				$cleaned[$key] = preg_replace("/[^{$allow}a-zA-Z0-9]/", '', $clean);
-			}
-		} else {
-			$cleaned = preg_replace("/[^{$allow}a-zA-Z0-9]/", '', $string);
+		if (!is_array($string)) {
+			return preg_replace("/[^{$allow}a-zA-Z0-9]/", '', $string);
 		}
+
+		$cleaned = array();
+		foreach ($string as $key => $clean) {
+			$cleaned[$key] = preg_replace("/[^{$allow}a-zA-Z0-9]/", '', $clean);
+		}
+
 		return $cleaned;
 	}
 
@@ -65,19 +68,17 @@ class Sanitize {
  * @return string SQL safe string
  */
 	public static function escape($string, $connection = 'default') {
-		$db = ConnectionManager::getDataSource($connection);
 		if (is_numeric($string) || $string === null || is_bool($string)) {
 			return $string;
 		}
+		$db = ConnectionManager::getDataSource($connection);
 		$string = $db->value($string, 'string');
-		if ($string[0] === 'N') {
-			$string = substr($string, 2);
-		} else {
-			$string = substr($string, 1);
+		$start = 1;
+		if ($string{0} === 'N') {
+			$start = 2;
 		}
 
-		$string = substr($string, 0, -1);
-		return $string;
+		return substr(substr($string, $start), 0, -1);
 	}
 
 /**
@@ -91,7 +92,7 @@ class Sanitize {
  * - remove (boolean) if true strips all HTML tags before encoding
  * - charset (string) the charset used to encode the string
  * - quotes (int) see http://php.net/manual/en/function.htmlentities.php
- * - double (boolean) doube encode html entities
+ * - double (boolean) double encode html entities
  *
  * @param string $string String from where to strip tags
  * @param array $options Array of options to use.
@@ -128,8 +129,7 @@ class Sanitize {
  * @return string whitespace sanitized string
  */
 	public static function stripWhitespace($str) {
-		$r = preg_replace('/[\n\r\t]+/', '', $str);
-		return preg_replace('/\s{2,}/u', ' ', $r);
+		return preg_replace('/\s{2,}/u', ' ', preg_replace('/[\n\r\t]+/', '', $str));
 	}
 
 /**
@@ -139,20 +139,29 @@ class Sanitize {
  * @return string Sting with images stripped.
  */
 	public static function stripImages($str) {
-		$str = preg_replace('/(<a[^>]*>)(<img[^>]+alt=")([^"]*)("[^>]*>)(<\/a>)/i', '$1$3$5<br />', $str);
-		$str = preg_replace('/(<img[^>]+alt=")([^"]*)("[^>]*>)/i', '$2<br />', $str);
-		$str = preg_replace('/<img[^>]*>/i', '', $str);
-		return $str;
+		$preg = array(
+			'/(<a[^>]*>)(<img[^>]+alt=")([^"]*)("[^>]*>)(<\/a>)/i' => '$1$3$5<br />',
+			'/(<img[^>]+alt=")([^"]*)("[^>]*>)/i' => '$2<br />',
+			'/<img[^>]*>/i' => ''
+		);
+
+		return preg_replace(array_keys($preg), array_values($preg), $str);
 	}
 
 /**
  * Strips scripts and stylesheets from output
  *
  * @param string $str String to sanitize
- * @return string String with <script>, <style>, <link>, <img> elements removed.
+ * @return string String with <link>, <img>, <script>, <style> elements and html comments removed.
  */
 	public static function stripScripts($str) {
-		return preg_replace('/(<link[^>]+rel="[^"]*stylesheet"[^>]*>|<img[^>]*>|style="[^"]*")|<script[^>]*>.*?<\/script>|<style[^>]*>.*?<\/style>|<!--.*?-->/is', '', $str);
+		$regex =
+			'/(<link[^>]+rel="[^"]*stylesheet"[^>]*>|' .
+			'<img[^>]*>|style="[^"]*")|' .
+			'<script[^>]*>.*?<\/script>|' .
+			'<style[^>]*>.*?<\/style>|' .
+			'<!--.*?-->/is';
+		return preg_replace($regex, '', $str);
 	}
 
 /**
@@ -162,10 +171,11 @@ class Sanitize {
  * @return string sanitized string
  */
 	public static function stripAll($str) {
-		$str = Sanitize::stripWhitespace($str);
-		$str = Sanitize::stripImages($str);
-		$str = Sanitize::stripScripts($str);
-		return $str;
+		return Sanitize::stripScripts(
+			Sanitize::stripImages(
+				Sanitize::stripWhitespace($str)
+			)
+		);
 	}
 
 /**
@@ -212,10 +222,8 @@ class Sanitize {
 			return $data;
 		}
 
-		if (is_string($options)) {
+		if (!is_array($options)) {
 			$options = array('connection' => $options);
-		} elseif (!is_array($options)) {
-			$options = array();
 		}
 
 		$options = array_merge(array(
@@ -235,30 +243,29 @@ class Sanitize {
 				$data[$key] = Sanitize::clean($val, $options);
 			}
 			return $data;
-		} else {
-			if ($options['odd_spaces']) {
-				$data = str_replace(chr(0xCA), '', $data);
-			}
-			if ($options['encode']) {
-				$data = Sanitize::html($data, array('remove' => $options['remove_html']));
-			}
-			if ($options['dollar']) {
-				$data = str_replace("\\\$", "$", $data);
-			}
-			if ($options['carriage']) {
-				$data = str_replace("\r", "", $data);
-			}
-			if ($options['unicode']) {
-				$data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
-			}
-			if ($options['escape']) {
-				$data = Sanitize::escape($data, $options['connection']);
-			}
-			if ($options['backslash']) {
-				$data = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $data);
-			}
-			return $data;
 		}
-	}
 
+		if ($options['odd_spaces']) {
+			$data = str_replace(chr(0xCA), '', $data);
+		}
+		if ($options['encode']) {
+			$data = Sanitize::html($data, array('remove' => $options['remove_html']));
+		}
+		if ($options['dollar']) {
+			$data = str_replace("\\\$", "$", $data);
+		}
+		if ($options['carriage']) {
+			$data = str_replace("\r", "", $data);
+		}
+		if ($options['unicode']) {
+			$data = preg_replace("/&amp;#([0-9]+);/s", "&#\\1;", $data);
+		}
+		if ($options['escape']) {
+			$data = Sanitize::escape($data, $options['connection']);
+		}
+		if ($options['backslash']) {
+			$data = preg_replace("/\\\(?!&amp;#|\?#)/", "\\", $data);
+		}
+		return $data;
+	}
 }

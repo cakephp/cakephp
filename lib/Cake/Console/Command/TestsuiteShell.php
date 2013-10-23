@@ -7,15 +7,16 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html
  * @since         CakePHP(tm) v 1.2.0.4433
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('TestShell', 'Console/Command');
@@ -41,8 +42,7 @@ class TestsuiteShell extends TestShell {
 		$parser = parent::getOptionParser();
 		$parser->description(array(
 			__d('cake_console', 'The CakePHP Testsuite allows you to run test cases from the command line'),
-			__d('cake_console', '<warning>This shell is for backwards-compatibility only</warning>'),
-			__d('cake_console', 'use the test shell instead')
+			__d('cake_console', "<warning>This shell is for backwards-compatibility only</warning>\nuse the test shell instead"),
 		));
 
 		return $parser;
@@ -66,11 +66,11 @@ class TestsuiteShell extends TestShell {
 
 		$category = $this->args[0];
 
-		if ($category == 'core') {
+		if ($category === 'core') {
 			$params['core'] = true;
-		} elseif ($category == 'app') {
+		} elseif ($category === 'app') {
 			$params['app'] = true;
-		} elseif ($category != 'core') {
+		} elseif ($category !== 'core') {
 			$params['plugin'] = $category;
 		}
 

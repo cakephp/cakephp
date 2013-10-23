@@ -5,17 +5,19 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 
 /**
@@ -149,7 +151,7 @@ class ModelDeleteTest extends BaseModelTest {
  * @return void
  */
 	public function testDeleteDependentWithConditions() {
-		$this->loadFixtures('Cd','Book','OverallFavorite');
+		$this->loadFixtures('Cd', 'Book', 'OverallFavorite');
 
 		$Cd = new Cd();
 		$Book = new Book();
@@ -435,6 +437,26 @@ class ModelDeleteTest extends BaseModelTest {
 	}
 
 /**
+ * testDeleteAllFailedFind method
+ *
+ * Eg: Behavior callback stops the event, find returns null
+ *
+ * @return void
+ */
+	public function testDeleteAllFailedFind() {
+		$this->loadFixtures('Article');
+		$this->getMock('Article', array('find'), array(), 'ArticleDeleteAll');
+
+		$TestModel = new ArticleDeleteAll();
+		$TestModel->expects($this->once())
+			->method('find')
+			->will($this->returnValue(null));
+
+		$result = $TestModel->deleteAll(array('Article.user_id' => 999));
+		$this->assertFalse($result);
+	}
+
+/**
  * testRecursiveDel method
  *
  * @return void
@@ -548,6 +570,7 @@ class ModelDeleteTest extends BaseModelTest {
 			'Tag' => array('with' => 'TestPlugin.ArticlesTag')
 		)), false);
 
+		$Article->ArticlesTag->order = null;
 		$this->assertTrue($Article->delete(1));
 	}
 
@@ -638,7 +661,7 @@ class ModelDeleteTest extends BaseModelTest {
 		$this->assertEquals(4, $result);
 
 		$result = $Article->delete(1, true);
-		$this->assertSame($result, true);
+		$this->assertTrue($result);
 
 		$result = $Article->Comment->find('count', array(
 			'conditions' => array('Comment.article_id' => 1)

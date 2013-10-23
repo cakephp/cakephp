@@ -6,16 +6,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Cache.Engine
  * @since         CakePHP(tm) v 1.2.0.4933
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -27,10 +28,10 @@ class ApcEngine extends CacheEngine {
 
 /**
  * Contains the compiled group names
- * (prefixed witht the global configuration prefix)
+ * (prefixed with the global configuration prefix)
  *
  * @var array
- **/
+ */
 	protected $_compiledGroupNames = array();
 
 /**
@@ -61,9 +62,8 @@ class ApcEngine extends CacheEngine {
  * @return boolean True if the data was successfully cached, false on failure
  */
 	public function write($key, $value, $duration) {
-		if ($duration == 0) {
-			$expires = 0;
-		} else {
+		$expires = 0;
+		if ($duration) {
 			$expires = time() + $duration;
 		}
 		apc_store($key . '_expires', $expires, $duration);
@@ -118,10 +118,10 @@ class ApcEngine extends CacheEngine {
 	}
 
 /**
- * Delete all keys from the cache.  This will clear every cache config using APC.
+ * Delete all keys from the cache. This will clear every cache config using APC.
  *
  * @param boolean $check If true, nothing will be cleared, as entries are removed
- *    from APC as they expired.  This flag is really only used by FileEngine.
+ *    from APC as they expired. This flag is really only used by FileEngine.
  * @return boolean True Returns true.
  */
 	public function clear($check) {
@@ -145,7 +145,7 @@ class ApcEngine extends CacheEngine {
  * the group accordingly.
  *
  * @return array
- **/
+ */
 	public function groups() {
 		if (empty($this->_compiledGroupNames)) {
 			foreach ($this->settings['groups'] as $group) {
@@ -177,7 +177,7 @@ class ApcEngine extends CacheEngine {
  * old values will remain in storage until they expire.
  *
  * @return boolean success
- **/
+ */
 	public function clearGroup($group) {
 		apc_inc($this->settings['prefix'] . $group, 1, $success);
 		return $success;

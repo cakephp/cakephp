@@ -5,15 +5,16 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -83,15 +84,16 @@ class TestTask extends BakeTask {
  */
 	public function execute() {
 		parent::execute();
-		if (empty($this->args)) {
+		$count = count($this->args);
+		if (!$count) {
 			$this->_interactive();
 		}
 
-		if (count($this->args) == 1) {
+		if ($count === 1) {
 			$this->_interactive($this->args[0]);
 		}
 
-		if (count($this->args) > 1) {
+		if ($count > 1) {
 			$type = Inflector::classify($this->args[0]);
 			if ($this->bake($type, $this->args[1])) {
 				$this->out('<success>Done</success>');
@@ -196,7 +198,7 @@ class TestTask extends BakeTask {
 		}
 		$keys[] = 'q';
 		$selection = $this->in(__d('cake_console', 'Enter the type of object to bake a test for or (q)uit'), $keys, 'q');
-		if ($selection == 'q') {
+		if ($selection === 'q') {
 			return $this->_stop();
 		}
 		$types = array_keys($this->classTypes);
@@ -275,11 +277,11 @@ class TestTask extends BakeTask {
  * @param string $class the Classname of the class the test is being generated for.
  * @return object And instance of the class that is going to be tested.
  */
-	public function &buildTestSubject($type, $class) {
+	public function buildTestSubject($type, $class) {
 		ClassRegistry::flush();
-		App::import($type, $class);
+		App::uses($class, $type);
 		$class = $this->getRealClassName($type, $class);
-		if (strtolower($type) == 'model') {
+		if (strtolower($type) === 'model') {
 			$instance = ClassRegistry::init($class);
 		} else {
 			$instance = new $class();
@@ -293,10 +295,10 @@ class TestTask extends BakeTask {
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $class the Classname of the class the test is being generated for.
- * @return string Real classname
+ * @return string Real class name
  */
 	public function getRealClassName($type, $class) {
-		if (strtolower($type) == 'model' || empty($this->classTypes[$type])) {
+		if (strtolower($type) === 'model' || empty($this->classTypes[$type])) {
 			return $class;
 		}
 
@@ -334,7 +336,7 @@ class TestTask extends BakeTask {
  * @param string $type The type the class having a test
  *   generated for is in.
  * @return array Array of (class, type)
- * @throws CakeException On invalid typename
+ * @throws CakeException on invalid types.
  */
 	public function getBaseType($type) {
 		if (empty($this->baseTypes[$type])) {
@@ -356,7 +358,7 @@ class TestTask extends BakeTask {
 		$thisMethods = array_diff($classMethods, $parentMethods);
 		$out = array();
 		foreach ($thisMethods as $method) {
-			if (substr($method, 0, 1) != '_' && $method != strtolower($className)) {
+			if (substr($method, 0, 1) !== '_' && $method != strtolower($className)) {
 				$out[] = $method;
 			}
 		}
@@ -372,9 +374,9 @@ class TestTask extends BakeTask {
  */
 	public function generateFixtureList($subject) {
 		$this->_fixtures = array();
-		if (is_a($subject, 'Model')) {
+		if ($subject instanceof Model) {
 			$this->_processModel($subject);
-		} elseif (is_a($subject, 'Controller')) {
+		} elseif ($subject instanceof Controller) {
 			$this->_processController($subject);
 		}
 		return array_values($this->_fixtures);
@@ -395,9 +397,9 @@ class TestTask extends BakeTask {
 			if (!isset($this->_fixtures[$className])) {
 				$this->_processModel($subject->{$alias});
 			}
-			if ($type == 'hasAndBelongsToMany') {
+			if ($type === 'hasAndBelongsToMany') {
 				if (!empty($subject->hasAndBelongsToMany[$alias]['with'])) {
-					list($plugin, $joinModel) = pluginSplit($subject->hasAndBelongsToMany[$alias]['with']);
+					list(, $joinModel) = pluginSplit($subject->hasAndBelongsToMany[$alias]['with']);
 				} else {
 					$joinModel = Inflector::classify($subject->hasAndBelongsToMany[$alias]['joinTable']);
 				}
@@ -422,13 +424,13 @@ class TestTask extends BakeTask {
 			$models = $subject->uses;
 		}
 		foreach ($models as $model) {
-			list($plugin, $model) = pluginSplit($model);
+			list(, $model) = pluginSplit($model);
 			$this->_processModel($subject->{$model});
 		}
 	}
 
 /**
- * Add classname to the fixture list.
+ * Add class name to the fixture list.
  * Sets the app. or plugin.plugin_name. prefix.
  *
  * @param string $name Name of the Model class that a fixture might be required for.
@@ -452,7 +454,7 @@ class TestTask extends BakeTask {
 	public function getUserFixtures() {
 		$proceed = $this->in(__d('cake_console', 'Bake could not detect fixtures, would you like to add some?'), array('y', 'n'), 'n');
 		$fixtures = array();
-		if (strtolower($proceed) == 'y') {
+		if (strtolower($proceed) === 'y') {
 			$fixtureList = $this->in(__d('cake_console', "Please provide a comma separated list of the fixtures names you'd like to use.\nExample: 'app.comment, app.post, plugin.forums.post'"));
 			$fixtureListTrimmed = str_replace(' ', '', $fixtureList);
 			$fixtures = explode(',', $fixtureListTrimmed);
@@ -470,11 +472,11 @@ class TestTask extends BakeTask {
  */
 	public function hasMockClass($type) {
 		$type = strtolower($type);
-		return $type == 'controller';
+		return $type === 'controller';
 	}
 
 /**
- * Generate a constructor code snippet for the type and classname
+ * Generate a constructor code snippet for the type and class name
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $fullClassName The Classname of the class the test is being generated for.
@@ -484,17 +486,17 @@ class TestTask extends BakeTask {
 	public function generateConstructor($type, $fullClassName, $plugin) {
 		$type = strtolower($type);
 		$pre = $construct = $post = '';
-		if ($type == 'model') {
+		if ($type === 'model') {
 			$construct = "ClassRegistry::init('{$plugin}$fullClassName');\n";
 		}
-		if ($type == 'behavior') {
+		if ($type === 'behavior') {
 			$construct = "new $fullClassName();\n";
 		}
-		if ($type == 'helper') {
+		if ($type === 'helper') {
 			$pre = "\$View = new View();\n";
 			$construct = "new {$fullClassName}(\$View);\n";
 		}
-		if ($type == 'component') {
+		if ($type === 'component') {
 			$pre = "\$Collection = new ComponentCollection();\n";
 			$construct = "new {$fullClassName}(\$Collection);\n";
 		}
@@ -502,7 +504,7 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * Generate the uses() calls for a type & classname
+ * Generate the uses() calls for a type & class name
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $realType The package name for the class.
@@ -512,11 +514,11 @@ class TestTask extends BakeTask {
 	public function generateUses($type, $realType, $className) {
 		$uses = array();
 		$type = strtolower($type);
-		if ($type == 'component') {
+		if ($type === 'component') {
 			$uses[] = array('ComponentCollection', 'Controller');
 			$uses[] = array('Component', 'Controller');
 		}
-		if ($type == 'helper') {
+		if ($type === 'helper') {
 			$uses[] = array('View', 'View');
 			$uses[] = array('Helper', 'View');
 		}
@@ -561,9 +563,15 @@ class TestTask extends BakeTask {
 				)
 			))->addArgument('name', array(
 				'help' => __d('cake_console', 'An existing class to bake tests for.')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
 			))->addOption('plugin', array(
 				'short' => 'p',
 				'help' => __d('cake_console', 'CamelCased name of the plugin to bake tests for.')
+			))->addOption('force', array(
+				'short' => 'f',
+				'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
 	}
 

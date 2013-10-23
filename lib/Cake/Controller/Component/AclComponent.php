@@ -1,17 +1,19 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component
  * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('Component', 'Controller');
 App::uses('AclInterface', 'Controller/Component/Acl');
 
@@ -96,7 +98,7 @@ class AclComponent extends Component {
 	}
 
 /**
- * Pass-thru function for ACL check instance.  Check methods
+ * Pass-thru function for ACL check instance. Check methods
  * are used to check whether or not an ARO can access an ACO
  *
  * @param array|string|Model $aro ARO The requesting object identifier. See `AclNode::node()` for possible formats
@@ -154,10 +156,10 @@ class AclComponent extends Component {
  * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return boolean Success
- * @deprecated
+ * @deprecated Will be removed in 3.0.
  */
 	public function grant($aro, $aco, $action = "*") {
-		trigger_error(__d('cake_dev', 'AclComponent::grant() is deprecated, use allow() instead'), E_USER_WARNING);
+		trigger_error(__d('cake_dev', '%s is deprecated, use %s instead', 'AclComponent::grant()', 'allow()'), E_USER_WARNING);
 		return $this->_Instance->allow($aro, $aco, $action);
 	}
 
@@ -168,10 +170,10 @@ class AclComponent extends Component {
  * @param array|string|Model $aco ACO The controlled object identifier. See `AclNode::node()` for possible formats
  * @param string $action Action (defaults to *)
  * @return boolean Success
- * @deprecated
+ * @deprecated Will be removed in 3.0.
  */
 	public function revoke($aro, $aco, $action = "*") {
-		trigger_error(__d('cake_dev', 'AclComponent::revoke() is deprecated, use deny() instead'), E_USER_WARNING);
+		trigger_error(__d('cake_dev', '%s is deprecated, use %s instead', 'AclComponent::revoke()', 'deny()'), E_USER_WARNING);
 		return $this->_Instance->deny($aro, $aco, $action);
 	}
 

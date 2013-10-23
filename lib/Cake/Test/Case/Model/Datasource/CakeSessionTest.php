@@ -5,22 +5,28 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model.Datasource
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeSession', 'Model/Datasource');
 App::uses('DatabaseSession', 'Model/Datasource/Session');
 App::uses('CacheSession', 'Model/Datasource/Session');
 
+/**
+ * Class TestCakeSession
+ *
+ * @package       Cake.Test.Case.Model.Datasource
+ */
 class TestCakeSession extends CakeSession {
 
 	public static function setUserAgent($value) {
@@ -33,6 +39,11 @@ class TestCakeSession extends CakeSession {
 
 }
 
+/**
+ * Class TestCacheSession
+ *
+ * @package       Cake.Test.Case.Model.Datasource
+ */
 class TestCacheSession extends CacheSession {
 
 	protected function _writeSession() {
@@ -41,6 +52,11 @@ class TestCacheSession extends CacheSession {
 
 }
 
+/**
+ * Class TestDatabaseSession
+ *
+ * @package       Cake.Test.Case.Model.Datasource
+ */
 class TestDatabaseSession extends DatabaseSession {
 
 	protected function _writeSession() {
@@ -108,12 +124,12 @@ class CakeSessionTest extends CakeTestCase {
  *
  * @return void
  */
-	public function teardown() {
+	public function tearDown() {
 		if (TestCakeSession::started()) {
 			session_write_close();
 		}
 		unset($_SESSION);
-		parent::teardown();
+		parent::tearDown();
 	}
 
 /**
@@ -231,7 +247,7 @@ class CakeSessionTest extends CakeTestCase {
 		TestCakeSession::write('SessionTestCase', 'value');
 		$this->assertTrue(TestCakeSession::check('SessionTestCase'));
 
-		$this->assertFalse(TestCakeSession::check('NotExistingSessionTestCase'), false);
+		$this->assertFalse(TestCakeSession::check('NotExistingSessionTestCase'));
 	}
 
 /**
@@ -244,7 +260,7 @@ class CakeSessionTest extends CakeTestCase {
 		$result = TestCakeSession::read('testing');
 		$this->assertEquals('1,2,3', $result);
 
-		TestCakeSession::write('testing', array('1' => 'one', '2' => 'two','3' => 'three'));
+		TestCakeSession::write('testing', array('1' => 'one', '2' => 'two', '3' => 'three'));
 		$result = TestCakeSession::read('testing.1');
 		$this->assertEquals('one', $result);
 
@@ -344,21 +360,6 @@ class CakeSessionTest extends CakeTestCase {
 		$this->assertFalse(TestCakeSession::started());
 		$this->assertTrue(TestCakeSession::start());
 		$this->assertTrue(TestCakeSession::started());
-	}
-
-/**
- * testError method
- *
- * @return void
- */
-	public function testError() {
-		TestCakeSession::read('Does.not.exist');
-		$result = TestCakeSession::error();
-		$this->assertEquals("Does.not.exist doesn't exist", $result);
-
-		TestCakeSession::delete('Failing.delete');
-		$result = TestCakeSession::error();
-		$this->assertEquals("Failing.delete doesn't exist", $result);
 	}
 
 /**

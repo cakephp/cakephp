@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Controller.Component.Acl
  * @since         CakePHP(tm) v 2.1
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -25,7 +26,14 @@
  */
 class PhpAcl extends Object implements AclInterface {
 
+/**
+ * Constant for deny
+ */
 	const DENY = false;
+
+/**
+ * Constant for allow
+ */
 	const ALLOW = true;
 
 /**
@@ -91,11 +99,11 @@ class PhpAcl extends Object implements AclInterface {
  */
 	public function build(array $config) {
 		if (empty($config['roles'])) {
-			throw new AclException(__d('cake_dev','"roles" section not found in configuration.'));
+			throw new AclException(__d('cake_dev', '"roles" section not found in configuration.'));
 		}
 
 		if (empty($config['rules']['allow']) && empty($config['rules']['deny'])) {
-			throw new AclException(__d('cake_dev','Neither "allow" nor "deny" rules were provided in configuration.'));
+			throw new AclException(__d('cake_dev', 'Neither "allow" nor "deny" rules were provided in configuration.'));
 		}
 
 		$rules['allow'] = !empty($config['rules']['allow']) ? $config['rules']['allow'] : array();
@@ -157,7 +165,7 @@ class PhpAcl extends Object implements AclInterface {
 		$allow = $this->options['policy'];
 		$prioritizedAros = $this->Aro->roles($aro);
 
-		if ($action && $action != "*") {
+		if ($action && $action !== "*") {
 			$aco .= '/' . $action;
 		}
 
@@ -167,14 +175,14 @@ class PhpAcl extends Object implements AclInterface {
 			return $allow;
 		}
 
-		foreach ($path as $depth => $node) {
+		foreach ($path as $node) {
 			foreach ($prioritizedAros as $aros) {
 				if (!empty($node['allow'])) {
-					$allow = $allow || count(array_intersect($node['allow'], $aros)) > 0;
+					$allow = $allow || count(array_intersect($node['allow'], $aros));
 				}
 
 				if (!empty($node['deny'])) {
-					$allow = $allow && count(array_intersect($node['deny'], $aros)) == 0;
+					$allow = $allow && !count(array_intersect($node['deny'], $aros));
 				}
 			}
 		}
@@ -206,6 +214,11 @@ class PhpAco {
 		'*' => '.*',
 	);
 
+/**
+ * Constructor
+ *
+ * @param array $rules Rules array
+ */
 	public function __construct(array $rules = array()) {
 		foreach (array('allow', 'deny') as $type) {
 			if (empty($rules[$type])) {
@@ -219,6 +232,7 @@ class PhpAco {
 /**
  * return path to the requested ACO with allow and deny rules attached on each level
  *
+ * @param string $aco ACO string
  * @return array
  */
 	public function path($aco) {
@@ -263,6 +277,10 @@ class PhpAco {
 /**
  * allow/deny ARO access to ARO
  *
+ * @param string $aro ARO string
+ * @param string $aco ACO string
+ * @param string $action Action string
+ * @param string $type access type
  * @return void
  */
 	public function access($aro, $aco, $action, $type = 'deny') {
@@ -273,7 +291,7 @@ class PhpAco {
 
 		foreach ($aco as $i => $node) {
 			if (!isset($tree[$node])) {
-				$tree[$node]  = array(
+				$tree[$node] = array(
 					'children' => array(),
 				);
 			}
@@ -303,7 +321,7 @@ class PhpAco {
 			return array_map('strtolower', $aco);
 		}
 
-		// strip multiple occurences of '/'
+		// strip multiple occurrences of '/'
 		$aco = preg_replace('#/+#', '/', $aco);
 		// make case insensitive
 		$aco = ltrim(strtolower($aco), '/');
@@ -319,7 +337,6 @@ class PhpAco {
  */
 	public function build(array $allow, array $deny = array()) {
 		$this->_tree = array();
-		$tree = array();
 
 		foreach ($allow as $dotPath => $aros) {
 			if (is_string($aros)) {
@@ -349,8 +366,6 @@ class PhpAro {
 /**
  * role to resolve to when a provided ARO is not listed in
  * the internal tree
- *
- * @var string
  */
 	const DEFAULT_ROLE = 'Role/default';
 
@@ -385,6 +400,13 @@ class PhpAro {
  */
 	protected $_tree = array();
 
+/**
+ * Constructor
+ *
+ * @param array $aro
+ * @param array $map
+ * @param array $aliases
+ */
 	public function __construct(array $aro = array(), array $map = array(), array $aliases = array()) {
 		if (!empty($map)) {
 			$this->map = $map;
@@ -519,7 +541,7 @@ class PhpAro {
  * @param array $alias alias from => to (e.g. Role/13 -> Role/editor)
  * @return void
  */
-	public  function addAlias(array $alias) {
+	public function addAlias(array $alias) {
 		$this->aliases = array_merge($this->aliases, $alias);
 	}
 

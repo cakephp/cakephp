@@ -7,23 +7,24 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Log
  * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('LogEngineCollection', 'Log');
 
 /**
- * Logs messages to configured Log adapters.  One or more adapters
- * can be configured using CakeLogs's methods.  If you don't
+ * Logs messages to configured Log adapters. One or more adapters
+ * can be configured using CakeLogs's methods. If you don't
  * configure any adapters, and write to the logs a default
  * FileLog will be autoconfigured for you.
  *
@@ -33,14 +34,14 @@ App::uses('LogEngineCollection', 'Log');
  * A sample configuration would look like:
  *
  * {{{
- * CakeLog::config('my_log', array('engine' => 'FileLog'));
+ * CakeLog::config('my_log', array('engine' => 'File'));
  * }}}
  *
  * See the documentation on CakeLog::config() for more detail.
  *
  * ### Writing to the log
  *
- * You write to the logs using CakeLog::write().  See its documentation for more
+ * You write to the logs using CakeLog::write(). See its documentation for more
  * information.
  *
  * ### Logging Levels
@@ -55,16 +56,16 @@ App::uses('LogEngineCollection', 'Log');
  * }}}
  *
  * If you require custom logging levels, you can use CakeLog::levels() to
- * append additoinal logging levels.
+ * append additional logging levels.
  *
  * ### Logging scopes
  *
  * When logging messages and configuring log adapters, you can specify
- * 'scopes' that the logger will handle.  You can think of scopes as subsystems
- * in your application that may require different logging setups.  For
+ * 'scopes' that the logger will handle. You can think of scopes as subsystems
+ * in your application that may require different logging setups. For
  * example in an e-commerce application you may want to handle logged errors
  * in the cart and ordering subsystems differently than the rest of the
- * application.  By using scopes you can control logging for each part
+ * application. By using scopes you can control logging for each part
  * of your application and still keep standard log levels.
  *
  *
@@ -132,14 +133,14 @@ class CakeLog {
  *
  * {{{
  * CakeLog::config('second_file', array(
- *     'engine' => 'FileLog',
+ *     'engine' => 'File',
  *     'path' => '/var/logs/my_app/'
  * ));
  * }}}
  *
  * Will configure a FileLog instance to use the specified path.
  * All options that are not `engine` are passed onto the logging adapter,
- * and handled there.  Any class can be configured as a logging
+ * and handled there. Any class can be configured as a logging
  * adapter as long as it implements the methods in CakeLogInterface.
  *
  * ### Logging levels
@@ -161,13 +162,14 @@ class CakeLog {
  * ### Logging scopes
  *
  * When configuring loggers you can define the active scopes the logger
- * is for.  If defined only the listed scopes will be handled by the
- * logger.  If you don't define any scopes an adapter will catch
+ * is for. If defined only the listed scopes will be handled by the
+ * logger. If you don't define any scopes an adapter will catch
  * all scopes that match the handled levels.
  *
  * {{{
  * CakeLog::config('payments', array(
  *     'engine' => 'File',
+ *     'types' => array('info', 'error', 'warning'),
  *     'scopes' => array('payment', 'order')
  * ));
  * }}}
@@ -190,7 +192,7 @@ class CakeLog {
 			throw new CakeLogException(__d('cake_dev', 'Invalid key name'));
 		}
 		if (empty($config['engine'])) {
-			throw new CakeLogException(__d('cake_dev', 'Missing logger classname'));
+			throw new CakeLogException(__d('cake_dev', 'Missing logger class name'));
 		}
 		if (empty(self::$_Collection)) {
 			self::_init();
@@ -208,7 +210,7 @@ class CakeLog {
 		if (empty(self::$_Collection)) {
 			self::_init();
 		}
-		return self::$_Collection->attached();
+		return self::$_Collection->loaded();
 	}
 
 /**
@@ -254,8 +256,8 @@ class CakeLog {
  * }}}
  *
  * @param array $levels array
- * @param bool $append true to append, false to replace
- * @return array active log levels
+ * @param boolean $append true to append, false to replace
+ * @return array Active log levels
  */
 	public static function levels($levels = array(), $append = true) {
 		if (empty(self::$_Collection)) {
@@ -277,7 +279,7 @@ class CakeLog {
 /**
  * Reset log levels to the original value
  *
- * @return array default log levels
+ * @return array Default log levels
  */
 	public static function defaultLevels() {
 		self::$_levelMap = self::$_defaultLevels;
@@ -286,7 +288,7 @@ class CakeLog {
 	}
 
 /**
- * Removes a stream from the active streams.  Once a stream has been removed
+ * Removes a stream from the active streams. Once a stream has been removed
  * it will no longer have messages sent to it.
  *
  * @param string $streamName Key name of a configured stream to remove.
@@ -300,10 +302,10 @@ class CakeLog {
 	}
 
 /**
- * Checks wether $streamName is enabled
+ * Checks whether $streamName is enabled
  *
  * @param string $streamName to check
- * @return bool
+ * @return boolean
  * @throws CakeLogException
  */
 	public static function enabled($streamName) {
@@ -317,7 +319,7 @@ class CakeLog {
 	}
 
 /**
- * Enable stream.  Streams that were previously disabled
+ * Enable stream. Streams that were previously disabled
  * can be re-enabled with this method.
  *
  * @param string $streamName to enable
@@ -335,7 +337,7 @@ class CakeLog {
 	}
 
 /**
- * Disable stream.  Disabling a stream will
+ * Disable stream. Disabling a stream will
  * prevent that log stream from receiving any messages until
  * its re-enabled.
  *
@@ -358,7 +360,7 @@ class CakeLog {
  *
  * @see BaseLog
  * @param string $streamName Key name of a configured stream to get.
- * @return $mixed instance of BaseLog or false if not found
+ * @return mixed instance of BaseLog or false if not found
  */
 	public static function stream($streamName) {
 		if (empty(self::$_Collection)) {
@@ -377,7 +379,7 @@ class CakeLog {
  */
 	protected static function _autoConfig() {
 		self::$_Collection->load('default', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'path' => LOGS,
 		));
 	}
@@ -427,7 +429,7 @@ class CakeLog {
 		foreach (self::$_Collection->enabled() as $streamName) {
 			$logger = self::$_Collection->{$streamName};
 			$types = $scopes = $config = array();
-			if ($logger instanceof BaseLog) {
+			if (method_exists($logger, 'config')) {
 				$config = $logger->config();
 			}
 			if (isset($config['types'])) {

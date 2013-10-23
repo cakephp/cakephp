@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Console
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -153,7 +154,7 @@ class ShellDispatcherTest extends CakeTestCase {
 			'app' => 'new',
 			'webroot' => 'webroot',
 			'working' => str_replace('/', DS, '/var/www/htdocs/new'),
-			'root' => str_replace('/', DS,'/var/www/htdocs')
+			'root' => str_replace('/', DS, '/var/www/htdocs')
 		);
 		$Dispatcher->parseParams($params);
 		$this->assertEquals($expected, $Dispatcher->params);
@@ -379,7 +380,7 @@ class ShellDispatcherTest extends CakeTestCase {
 			'app' => 'old',
 			'webroot' => 'webroot',
 			'working' => str_replace('/', DS, '/var/www/htdocs/old'),
-			'root' => str_replace('/', DS,'/var/www/htdocs')
+			'root' => str_replace('/', DS, '/var/www/htdocs')
 		);
 		$Dispatcher->parseParams($params);
 		$this->assertEquals($expected, $Dispatcher->params);
@@ -440,7 +441,6 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Mock = $this->getMock('Shell', array(), array(), 'MockWithMainShell');
 
 		$Mock->expects($this->once())->method('initialize');
-		$Mock->expects($this->once())->method('loadTasks');
 		$Mock->expects($this->once())->method('runCommand')
 			->with(null, array())
 			->will($this->returnValue(true));
@@ -466,7 +466,6 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->mockObjects[] = $Shell;
 
 		$Shell->expects($this->once())->method('initialize');
-		$Shell->expects($this->once())->method('loadTasks');
 		$Shell->expects($this->once())->method('runCommand')
 			->with('initdb', array('initdb'))
 			->will($this->returnValue(true));
@@ -490,7 +489,6 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell = $this->getMock('Object', $methods, array(), 'MockWithMainNotAShell');
 
 		$Shell->expects($this->never())->method('initialize');
-		$Shell->expects($this->never())->method('loadTasks');
 		$Shell->expects($this->once())->method('startup');
 		$Shell->expects($this->once())->method('main')->will($this->returnValue(true));
 		$Dispatcher->TestShell = $Shell;
@@ -523,7 +521,6 @@ class ShellDispatcherTest extends CakeTestCase {
 		$Shell = $this->getMock('Object', $methods, array(&$Dispatcher), 'MockWithoutMainNotAShell');
 
 		$Shell->expects($this->never())->method('initialize');
-		$Shell->expects($this->never())->method('loadTasks');
 		$Shell->expects($this->once())->method('startup');
 		$Shell->expects($this->once())->method('main')->will($this->returnValue(true));
 		$Dispatcher->TestShell = $Shell;
@@ -564,7 +561,7 @@ class ShellDispatcherTest extends CakeTestCase {
 		$this->assertEquals('a', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array('b' => 'c', 'd'));
 
-		$Dispatcher->args = array(0 => 'a',  2 => 'b', 30 => 'c');
+		$Dispatcher->args = array(0 => 'a', 2 => 'b', 30 => 'c');
 		$this->assertEquals('a', $Dispatcher->shiftArgs());
 		$this->assertSame($Dispatcher->args, array(0 => 'b', 1 => 'c'));
 

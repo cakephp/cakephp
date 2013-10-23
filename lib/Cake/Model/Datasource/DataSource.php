@@ -5,21 +5,25 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Model.Datasource
  * @since         CakePHP(tm) v 0.10.5.1790
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
  * DataSource base class
  *
+ * DataSources are the link between models and the source of data that models represent.
+ *
+ * @link          http://book.cakephp.org/2.0/en/models/datasources.html#basic-api-for-datasources
  * @package       Cake.Model.Datasource
  */
 class DataSource extends Object {
@@ -169,7 +173,7 @@ class DataSource extends Object {
 /**
  * Converts column types to basic types
  *
- * @param string $real Real  column type (i.e. "varchar(255)")
+ * @param string $real Real column type (i.e. "varchar(255)")
  * @return string Abstract column type (i.e. "string")
  */
 	public function column($real) {
@@ -226,9 +230,9 @@ class DataSource extends Object {
  *
  * @param Model $model The model class having record(s) deleted
  * @param mixed $conditions The conditions to use for deleting.
- * @return void
+ * @return boolean Success
  */
-	public function delete(Model $model, $id = null) {
+	public function delete(Model $model, $conditions = null) {
 		return false;
 	}
 
@@ -264,7 +268,7 @@ class DataSource extends Object {
 
 /**
  * Check whether the conditions for the Datasource being available
- * are satisfied.  Often used from connect() to check for support
+ * are satisfied. Often used from connect() to check for support
  * before establishing a connection.
  *
  * @return boolean Whether or not the Datasources conditions for use are met.
@@ -353,9 +357,9 @@ class DataSource extends Object {
 							}
 						}
 						$type = $model->getColumnType($model->primaryKey);
-					break;
+						break;
 					case '{$__cakeForeignKey__$}':
-						foreach ($model->associations() as $id => $name) {
+						foreach ($model->associations() as $name) {
 							foreach ($model->$name as $assocName => $assoc) {
 								if ($assocName === $association) {
 									if (isset($assoc['foreignKey'])) {
@@ -385,7 +389,7 @@ class DataSource extends Object {
 								}
 							}
 						}
-					break;
+						break;
 				}
 				if (empty($val) && $val !== '0') {
 					return false;
@@ -411,7 +415,6 @@ class DataSource extends Object {
  * Returns the schema name. Override this in subclasses.
  *
  * @return string schema name
- * @access public
  */
 	public function getSchemaName() {
 		return null;
@@ -421,7 +424,6 @@ class DataSource extends Object {
  * Closes a connection. Override in subclasses
  *
  * @return boolean
- * @access public
  */
 	public function close() {
 		return $this->connected = false;

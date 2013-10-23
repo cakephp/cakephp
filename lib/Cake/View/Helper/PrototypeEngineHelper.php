@@ -2,22 +2,23 @@
 /**
  * Prototype Engine Helper for JsHelper
  *
- * Provides Prototype specific Javascript for JsHelper. Requires at least
+ * Provides Prototype specific JavaScript for JsHelper. Requires at least
  * Prototype 1.6
  *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.View.Helper
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('JsBaseEngineHelper', 'View/Helper');
@@ -25,7 +26,7 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
 /**
  * Prototype Engine Helper for JsHelper
  *
- * Provides Prototype specific Javascript for JsHelper. Requires at least
+ * Provides Prototype specific JavaScript for JsHelper. Requires at least
  * Prototype 1.6
  *
  * @package       Cake.View.Helper
@@ -119,7 +120,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  */
 	public function get($selector) {
 		$this->_multiple = false;
-		if ($selector == 'window' || $selector == 'document') {
+		if ($selector === 'window' || $selector === 'document') {
 			$this->selection = "$(" . $selector . ")";
 			return $this;
 		}
@@ -141,7 +142,7 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * - `stop` - Whether you want the event to stopped. (defaults true)
  *
  * @param string $type Type of event to bind to the current 946 id
- * @param string $callback The Javascript function you wish to trigger or the function literal
+ * @param string $callback The JavaScript function you wish to trigger or the function literal
  * @param array $options Options for the event.
  * @return string completed event handler
  */
@@ -195,9 +196,9 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 		$effect = '';
 		$optionString = null;
 		if (isset($options['speed'])) {
-			if ($options['speed'] == 'fast') {
+			if ($options['speed'] === 'fast') {
 				$options['duration'] = 0.5;
-			} elseif ($options['speed'] == 'slow') {
+			} elseif ($options['speed'] === 'slow') {
 				$options['duration'] = 2;
 			} else {
 				$options['duration'] = 1;
@@ -211,17 +212,17 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
 			case 'hide':
 			case 'show':
 				$effect = $this->selection . '.' . $name . '();';
-			break;
+				break;
 			case 'slideIn':
 			case 'slideOut':
-				$name = ($name == 'slideIn') ? 'slideDown' : 'slideUp';
+				$name = ($name === 'slideIn') ? 'slideDown' : 'slideUp';
 				$effect = 'Effect.' . $name . '(' . $this->selection . $optionString . ');';
-			break;
+				break;
 			case 'fadeIn':
 			case 'fadeOut':
-				$name = ($name == 'fadeIn') ? 'appear' : 'fade';
+				$name = ($name === 'fadeIn') ? 'appear' : 'fade';
 				$effect = $this->selection . '.' . $name . '(' . substr($optionString, 2) . ');';
-			break;
+				break;
 		}
 		return $effect;
 	}
@@ -234,10 +235,11 @@ class PrototypeEngineHelper extends JsBaseEngineHelper {
  * @return string The completed ajax call.
  */
 	public function request($url, $options = array()) {
-		$url = '"' . $this->url($url) . '"';
+		$url = html_entity_decode($this->url($url), ENT_COMPAT, Configure::read('App.encoding'));
+		$url = '"' . $url . '"';
 		$options = $this->_mapOptions('request', $options);
 		$type = '.Request';
-		if (isset($options['type']) && strtolower($options['type']) == 'json') {
+		if (isset($options['type']) && strtolower($options['type']) === 'json') {
 			unset($options['type']);
 		}
 		if (isset($options['update'])) {

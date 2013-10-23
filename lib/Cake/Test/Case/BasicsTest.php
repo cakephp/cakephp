@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 require_once CAKE . 'basics.php';
@@ -277,7 +278,7 @@ class BasicsTest extends CakeTestCase {
 
 		Configure::write('Cache.disable', false);
 		$result = cache('basics_test', 'simple cache write');
-		$this->assertTrue((boolean)$result);
+		$this->assertTrue((bool)$result);
 		$this->assertTrue(file_exists(CACHE . 'basics_test'));
 
 		$result = cache('basics_test');
@@ -702,8 +703,9 @@ class BasicsTest extends CakeTestCase {
 ########## DEBUG ##########
 'this-is-a-test'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 
 		$this->assertEquals($expected, $result);
 
@@ -765,9 +767,10 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
+		if (php_sapi_name() === 'cli') {
+			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
 		}
@@ -789,9 +792,10 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		if (php_sapi_name() == 'cli') {
-			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 17);
+		if (php_sapi_name() === 'cli') {
+			$expected = sprintf($expectedText, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 18);
 		} else {
 			$expected = sprintf($expectedHtml, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 19);
 		}
@@ -805,8 +809,9 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -817,8 +822,9 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 
 		ob_start();
@@ -829,8 +835,22 @@ EXPECTED;
 ########## DEBUG ##########
 '<div>this-is-a-test</div>'
 ###########################
+
 EXPECTED;
-		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 8);
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		debug(false, false, false);
+		$result = ob_get_clean();
+		$expected = <<<EXPECTED
+
+########## DEBUG ##########
+false
+###########################
+
+EXPECTED;
+		$expected = sprintf($expected, str_replace(CAKE_CORE_INCLUDE_PATH, '', __FILE__), __LINE__ - 9);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -840,6 +860,7 @@ EXPECTED;
  * @return void
  */
 	public function testPr() {
+		$this->skipIf(php_sapi_name() == 'cli', 'Skipping web test in cli mode');
 		ob_start();
 		pr('this is a test');
 		$result = ob_get_clean();
@@ -850,6 +871,26 @@ EXPECTED;
 		pr(array('this' => 'is', 'a' => 'test'));
 		$result = ob_get_clean();
 		$expected = "<pre>Array\n(\n    [this] => is\n    [a] => test\n)\n</pre>";
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test pr()
+ *
+ * @return void
+ */
+	public function testPrCli() {
+		$this->skipIf(php_sapi_name() != 'cli', 'Skipping cli test in web mode');
+		ob_start();
+		pr('this is a test');
+		$result = ob_get_clean();
+		$expected = "\nthis is a test\n";
+		$this->assertEquals($expected, $result);
+
+		ob_start();
+		pr(array('this' => 'is', 'a' => 'test'));
+		$result = ob_get_clean();
+		$expected = "\nArray\n(\n    [this] => is\n    [a] => test\n)\n\n";
 		$this->assertEquals($expected, $result);
 	}
 

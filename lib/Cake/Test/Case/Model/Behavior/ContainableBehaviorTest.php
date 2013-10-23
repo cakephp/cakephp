@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Model.Behavior
  * @since         CakePHP(tm) v 1.2.0.5669
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Model', 'Model');
@@ -60,9 +61,9 @@ class ContainableBehaviorTest extends CakeTestCase {
 			'hasAndBelongsToMany' => array('Article')
 		), false);
 
-		$this->User->Behaviors->attach('Containable');
-		$this->Article->Behaviors->attach('Containable');
-		$this->Tag->Behaviors->attach('Containable');
+		$this->User->Behaviors->load('Containable');
+		$this->Article->Behaviors->load('Containable');
+		$this->Tag->Behaviors->load('Containable');
 	}
 
 /**
@@ -152,7 +153,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidContainments() {
-		$r = $this->_containments($this->Article, array('Comment', 'InvalidBinding'));
+		$this->_containments($this->Article, array('Comment', 'InvalidBinding'));
 	}
 
 /**
@@ -161,8 +162,8 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidContainmentsNoNotices() {
-		$this->Article->Behaviors->attach('Containable', array('notices' => false));
-		$r = $this->_containments($this->Article, array('Comment', 'InvalidBinding'));
+		$this->Article->Behaviors->load('Containable', array('notices' => false));
+		$this->_containments($this->Article, array('Comment', 'InvalidBinding'));
 	}
 
 /**
@@ -243,7 +244,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testBeforeFindWithNonExistingBinding() {
-		$r = $this->Article->find('all', array('contain' => array('Comment' => 'NonExistingBinding')));
+		$this->Article->find('all', array('contain' => array('Comment' => 'NonExistingBinding')));
 	}
 
 /**
@@ -259,6 +260,30 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$r = $this->Article->find('all');
 		$this->assertFalse(Set::matches('/Comment/User', $r));
+	}
+
+/**
+ * testContainFindList method
+ *
+ * @return void
+ */
+	public function testContainFindList() {
+		$this->Article->contain('Comment.User');
+		$result = $this->Article->find('list');
+		$expected = array(
+			1 => 'First Article',
+			2 => 'Second Article',
+			3 => 'Third Article'
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Article->find('list', array('fields' => array('Article.id', 'User.id'), 'contain' => array('User')));
+		$expected = array(
+			1 => '1',
+			2 => '3',
+			3 => '1'
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -3216,7 +3241,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  * @return void
  */
 	public function testOriginalAssociations() {
-		$this->Article->Comment->Behaviors->attach('Containable');
+		$this->Article->Comment->Behaviors->load('Containable');
 
 		$options = array(
 			'conditions' => array(
@@ -3228,7 +3253,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$firstResult = $this->Article->Comment->find('all', $options);
 
-		$dummyResult = $this->Article->Comment->find('all', array(
+		$this->Article->Comment->find('all', array(
 			'conditions' => array(
 				'User.user' => 'mariano'
 			),
@@ -3331,9 +3356,9 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->JoinB = ClassRegistry::init('JoinB');
 		$this->JoinC = ClassRegistry::init('JoinC');
 
-		$this->JoinA->Behaviors->attach('Containable');
-		$this->JoinB->Behaviors->attach('Containable');
-		$this->JoinC->Behaviors->attach('Containable');
+		$this->JoinA->Behaviors->load('Containable');
+		$this->JoinB->Behaviors->load('Containable');
+		$this->JoinC->Behaviors->load('Containable');
 
 		$this->JoinA->JoinB->find('all', array('contain' => array('JoinA')));
 		$this->JoinA->bindModel(array('hasOne' => array('JoinAsJoinC' => array('joinTable' => 'as_cs'))), false);
@@ -3348,9 +3373,9 @@ class ContainableBehaviorTest extends CakeTestCase {
  *
  */
 	public function testResetAssociation() {
-		$this->Article->Behaviors->attach('Containable');
-		$this->Article->Comment->Behaviors->attach('Containable');
-		$this->Article->User->Behaviors->attach('Containable');
+		$this->Article->Behaviors->load('Containable');
+		$this->Article->Comment->Behaviors->load('Containable');
+		$this->Article->User->Behaviors->load('Containable');
 
 		$initialOptions = array(
 			'conditions' => array(
@@ -3442,18 +3467,18 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$articleHabtm = array(
 			'hasAndBelongsToMany' => array(
 				'Tag' => array(
-					'className'				=> 'Tag',
-					'joinTable'				=> 'articles_tags',
-					'foreignKey'			=> 'article_id',
+					'className' => 'Tag',
+					'joinTable' => 'articles_tags',
+					'foreignKey' => 'article_id',
 					'associationForeignKey' => 'tag_id'
 				),
 				'ShortTag' => array(
-					'className'				=> 'Tag',
-					'joinTable'				=> 'articles_tags',
-					'foreignKey'			=> 'article_id',
+					'className' => 'Tag',
+					'joinTable' => 'articles_tags',
+					'foreignKey' => 'article_id',
 					'associationForeignKey' => 'tag_id',
-					// LENGHT function mysql-only, using LIKE does almost the same
-					'conditions' 			=> "ShortTag.tag LIKE '???'"
+					// LENGTH function mysql-only, using LIKE does almost the same
+					'conditions' => "ShortTag.tag LIKE '???'"
 				)
 			)
 		);
@@ -3647,11 +3672,10 @@ class ContainableBehaviorTest extends CakeTestCase {
 		if (!is_array($Model)) {
 			$result = $Model->containments($contain);
 			return $this->_containments($result['models']);
-		} else {
-			$result = $Model;
-			foreach ($result as $i => $containment) {
-				$result[$i] = array_diff_key($containment, array('instance' => true));
-			}
+		}
+		$result = $Model;
+		foreach ($result as $i => $containment) {
+			$result[$i] = array_diff_key($containment, array('instance' => true));
 		}
 		return $result;
 	}

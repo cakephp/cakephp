@@ -5,23 +5,35 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Log.Engine
  * @since         CakePHP(tm) v 1.3
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('ConsoleLog', 'Log/Engine');
 
+/**
+ * Class TestConsoleLog
+ *
+ * @package       Cake.Test.Case.Log.Engine
+ */
 class TestConsoleLog extends ConsoleLog {
 
 }
 
+/**
+ * Class TestCakeLog
+ *
+ * @package       Cake.Test.Case.Log.Engine
+ */
 class TestCakeLog extends CakeLog {
 
 	public static function replace($key, &$engine) {
@@ -40,12 +52,12 @@ class ConsoleLogTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		CakeLog::config('debug', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('notice', 'info', 'debug'),
 			'file' => 'debug',
 		));
 		CakeLog::config('error', array(
-			'engine' => 'FileLog',
+			'engine' => 'File',
 			'types' => array('error', 'warning'),
 			'file' => 'error',
 		));
@@ -66,7 +78,7 @@ class ConsoleLogTest extends CakeTestCase {
  */
 	public function testConsoleOutputWrites() {
 		TestCakeLog::config('test_console_log', array(
-			'engine' => 'TestConsoleLog',
+			'engine' => 'TestConsole',
 			));
 
 		$mock = $this->getMock('TestConsoleLog', array('write'), array(
@@ -85,7 +97,7 @@ class ConsoleLogTest extends CakeTestCase {
  */
 	public function testCombinedLogWriting() {
 		TestCakeLog::config('test_console_log', array(
-			'engine' => 'TestConsoleLog',
+			'engine' => 'TestConsole',
 			));
 		$mock = $this->getMock('TestConsoleLog', array('write'), array(
 			array('types' => 'error'),
@@ -121,9 +133,9 @@ class ConsoleLogTest extends CakeTestCase {
  */
 	public function testDefaultOutputAs() {
 		TestCakeLog::config('test_console_log', array(
-			'engine' => 'TestConsoleLog',
+			'engine' => 'TestConsole',
 			));
-		if (DS == '\\' && !(bool)env('ANSICON')) {
+		if (DS === '\\' && !(bool)env('ANSICON')) {
 			$expected = ConsoleOutput::PLAIN;
 		} else {
 			$expected = ConsoleOutput::COLOR;

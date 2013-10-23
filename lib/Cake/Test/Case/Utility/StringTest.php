@@ -5,17 +5,19 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Utility
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('String', 'Utility');
 
 /**
@@ -178,7 +180,7 @@ class StringTest extends CakeTestCase {
 		$expected = "this is a long string with a few? params you know";
 		$this->assertEquals($expected, $result);
 
-		$result = String::insert('update saved_urls set url = :url where id = :id', array('url' => 'http://www.testurl.com/param1:url/param2:id','id' => 1));
+		$result = String::insert('update saved_urls set url = :url where id = :id', array('url' => 'http://www.testurl.com/param1:url/param2:id', 'id' => 1));
 		$expected = "update saved_urls set url = http://www.testurl.com/param1:url/param2:id where id = 1";
 		$this->assertEquals($expected, $result);
 
@@ -313,6 +315,67 @@ class StringTest extends CakeTestCase {
 	}
 
 /**
+ * test that wordWrap() works the same as built-in wordwrap function
+ *
+ * @dataProvider wordWrapProvider
+ * @return void
+ */
+	public function testWordWrap($text, $width, $break = "\n", $cut = false) {
+		$result = String::wordWrap($text, $width, $break, $cut);
+		$expected = wordwrap($text, $width, $break, $cut);
+		$this->assertTextEquals($expected, $result, 'Text not wrapped same as built-in function.');
+	}
+
+/**
+ * data provider for testWordWrap method
+ *
+ * @return array
+ */
+	public function wordWrapProvider() {
+		return array(
+			array(
+				'The quick brown fox jumped over the lazy dog.',
+				33
+			),
+			array(
+				'A very long woooooooooooord.',
+				8
+			),
+			array(
+				'A very long woooooooooooord. Right.',
+				8
+			),
+		);
+	}
+
+/**
+ * test that wordWrap() properly handle unicode strings.
+ *
+ * @return void
+ */
+	public function testWordWrapUnicodeAware() {
+		$text = 'Но вим омниюм факёльиси элыктрам, мюнырэ лэгыры векж ыт. Выльёт квюандо нюмквуам ты кюм. Зыд эю рыбюм.';
+		$result = String::wordWrap($text, 33, "\n", true);
+		$expected = <<<TEXT
+Но вим омниюм факёльиси элыктрам,
+мюнырэ лэгыры векж ыт. Выльёт квю
+андо нюмквуам ты кюм. Зыд эю рыбю
+м.
+TEXT;
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
+
+		$text = 'Но вим омниюм факёльиси элыктрам, мюнырэ лэгыры векж ыт. Выльёт квюандо нюмквуам ты кюм. Зыд эю рыбюм.';
+		$result = String::wordWrap($text, 33, "\n");
+		$expected = <<<TEXT
+Но вим омниюм факёльиси элыктрам,
+мюнырэ лэгыры векж ыт. Выльёт
+квюандо нюмквуам ты кюм. Зыд эю
+рыбюм.
+TEXT;
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
+	}
+
+/**
  * test wrap method.
  *
  * @return void
@@ -328,13 +391,21 @@ TEXT;
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 
 		$result = String::wrap($text, array('width' => 20, 'wordWrap' => false));
+		$expected = 'This is the song th' . "\n" .
+			'at never ends. This' . "\n" .
+			' is the song that n' . "\n" .
+			'ever ends. This is ' . "\n" .
+			'the song that never' . "\n" .
+			' ends.';
+		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
+
+		$text = 'Но вим омниюм факёльиси элыктрам, мюнырэ лэгыры векж ыт. Выльёт квюандо нюмквуам ты кюм. Зыд эю рыбюм.';
+		$result = String::wrap($text, 33);
 		$expected = <<<TEXT
-This is the song th
-at never ends. This
- is the song that n
-ever ends. This is 
-the song that never
- ends.
+Но вим омниюм факёльиси элыктрам,
+мюнырэ лэгыры векж ыт. Выльёт
+квюандо нюмквуам ты кюм. Зыд эю
+рыбюм.
 TEXT;
 		$this->assertTextEquals($expected, $result, 'Text not wrapped.');
 	}
@@ -372,6 +443,7 @@ TEXT;
 		$text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
 		$text10 = 'http://example.com/something/foo:bar';
 
+		$elipsis = "\xe2\x80\xa6";
 		$this->assertSame($this->Text->truncate($text1, 15), 'The quick br...');
 		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false)), 'The quick...');
 		$this->assertSame($this->Text->truncate($text1, 100), 'The quick brown fox jumps over the lazy dog');
@@ -379,18 +451,18 @@ TEXT;
 		$this->assertSame($this->Text->truncate($text2, 10, array('exact' => false)), '...');
 		$this->assertSame($this->Text->truncate($text3, 20), '<b>&copy; 2005-20...');
 		$this->assertSame($this->Text->truncate($text4, 15), '<img src="my...');
-		$this->assertSame($this->Text->truncate($text5, 6, array('ending' => '')), '0<b>1<');
-		$this->assertSame($this->Text->truncate($text1, 15, array('html' => true)), 'The quick br...');
-		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false, 'html' => true)), 'The quick...');
-		$this->assertSame($this->Text->truncate($text2, 10, array('html' => true)), 'Heiz&ouml;lr...');
-		$this->assertSame($this->Text->truncate($text2, 10, array('exact' => false, 'html' => true)), '...');
-		$this->assertSame($this->Text->truncate($text3, 20, array('html' => true)), '<b>&copy; 2005-2007, Cake...</b>');
-		$this->assertSame($this->Text->truncate($text4, 15, array('html' => true)), '<img src="mypic.jpg"> This image ...');
-		$this->assertSame($this->Text->truncate($text4, 45, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But t...</b>');
-		$this->assertSame($this->Text->truncate($text4, 90, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Grea...');
-		$this->assertSame($this->Text->truncate($text5, 6, array('ending' => '', 'html' => true)), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
-		$this->assertSame($this->Text->truncate($text5, 20, array('ending' => '', 'html' => true)), $text5);
-		$this->assertSame($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's...</strong></p>");
+		$this->assertSame($this->Text->truncate($text5, 6, array('ellipsis' => '')), '0<b>1<');
+		$this->assertSame($this->Text->truncate($text1, 15, array('html' => true)), 'The quick brow' . $elipsis);
+		$this->assertSame($this->Text->truncate($text1, 15, array('exact' => false, 'html' => true)), 'The quick' . $elipsis);
+		$this->assertSame($this->Text->truncate($text2, 10, array('html' => true)), 'Heiz&ouml;lr&uuml;c' . $elipsis);
+		$this->assertSame($this->Text->truncate($text2, 10, array('exact' => false, 'html' => true)), $elipsis);
+		$this->assertSame($this->Text->truncate($text3, 20, array('html' => true)), '<b>&copy; 2005-2007, Cake S' . $elipsis . '</b>');
+		$this->assertSame($this->Text->truncate($text4, 15, array('html' => true)), '<img src="mypic.jpg"> This image ta' . $elipsis);
+		$this->assertSame($this->Text->truncate($text4, 45, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the' . $elipsis . '</b>');
+		$this->assertSame($this->Text->truncate($text4, 90, array('html' => true)), '<img src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great,' . $elipsis);
+		$this->assertSame($this->Text->truncate($text5, 6, array('ellipsis' => '', 'html' => true)), '0<b>1<i>2<span class="myclass">3</span>4<u>5</u></i></b>');
+		$this->assertSame($this->Text->truncate($text5, 20, array('ellipsis' => '', 'html' => true)), $text5);
+		$this->assertSame($this->Text->truncate($text6, 57, array('exact' => false, 'html' => true)), "<p><strong>Extra dates have been announced for this year's" . $elipsis . "</strong></p>");
 		$this->assertSame($this->Text->truncate($text7, 255), $text7);
 		$this->assertSame($this->Text->truncate($text7, 15), 'El moño está...');
 		$this->assertSame($this->Text->truncate($text8, 15), 'Vive la R' . chr(195) . chr(169) . 'pu...');
@@ -399,7 +471,7 @@ TEXT;
 
 		$text = '<p><span style="font-size: medium;"><a>Iamatestwithnospacesandhtml</a></span></p>';
 		$result = $this->Text->truncate($text, 10, array(
-			'ending' => '...',
+			'ellipsis' => '...',
 			'exact' => false,
 			'html' => true
 		));
@@ -422,7 +494,7 @@ podeís adquirirla.</span></p>
 <p><span style="font-size: medium;"><a>http://www.amazon.com/Steve-
 Jobs-Walter-Isaacson/dp/1451648537</a></span></p>';
 		$result = $this->Text->truncate($text, 500, array(
-			'ending' => '... ',
+			'ellipsis' => '... ',
 			'exact' => false,
 			'html' => true
 		));
@@ -441,6 +513,88 @@ Isaacson</strong>", aquí os dejamos la dirección de amazon donde
 podeís adquirirla.</span></p>
 <p><span style="font-size: medium;"><a>... </a></span></p>';
 		$this->assertEquals($expected, $result);
+
+		// test deprecated `ending` (`ellipsis` taking precedence if both are defined)
+		$result = $this->Text->truncate($text1, 31, array(
+			'ending' => '.',
+			'exact' => false,
+		));
+		$expected = 'The quick brown fox jumps.';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Text->truncate($text1, 31, array(
+			'ellipsis' => '..',
+			'ending' => '.',
+			'exact' => false,
+		));
+		$expected = 'The quick brown fox jumps..';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testTruncate method with non utf8 sites
+ *
+ * @return void
+ */
+	public function testTruncateLegacy() {
+		Configure::write('App.encoding', 'ISO-8859-1');
+		$text = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
+		$result = $this->Text->truncate($text, 31, array(
+			'html' => true,
+			'exact' => false,
+		));
+		$expected = '<b>&copy; 2005-2007, Cake Software...</b>';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Text->truncate($text, 31, array(
+			'html' => true,
+			'exact' => true,
+		));
+		$expected = '<b>&copy; 2005-2007, Cake Software F...</b>';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * testTail method
+ *
+ * @return void
+ */
+	public function testTail() {
+		$text1 = 'The quick brown fox jumps over the lazy dog';
+		$text2 = 'Heiz&ouml;lr&uuml;cksto&szlig;abd&auml;mpfung';
+		$text3 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
+		$text4 = 'Vive la R' . chr(195) . chr(169) . 'publique de France';
+		$text5 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
+
+		$result = $this->Text->tail($text1, 13);
+		$this->assertEquals('...e lazy dog', $result);
+
+		$result = $this->Text->tail($text1, 13, array('exact' => false));
+		$this->assertEquals('...lazy dog', $result);
+
+		$result = $this->Text->tail($text1, 100);
+		$this->assertEquals('The quick brown fox jumps over the lazy dog', $result);
+
+		$result = $this->Text->tail($text2, 10);
+		$this->assertEquals('...;mpfung', $result);
+
+		$result = $this->Text->tail($text2, 10, array('exact' => false));
+		$this->assertEquals('...', $result);
+
+		$result = $this->Text->tail($text3, 255);
+		$this->assertEquals($text3, $result);
+
+		$result = $this->Text->tail($text3, 21);
+		$this->assertEquals('...á dicho la verdad?', $result);
+
+		$result = $this->Text->tail($text4, 25);
+		$this->assertEquals('...a R' . chr(195) . chr(169) . 'publique de France', $result);
+
+		$result = $this->Text->tail($text5, 10);
+		$this->assertEquals('...цчшщъыь', $result);
+
+		$result = $this->Text->tail($text5, 6, array('ellipsis' => ''));
+		$this->assertEquals('чшщъыь', $result);
 	}
 
 /**

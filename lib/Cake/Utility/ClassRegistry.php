@@ -1,16 +1,17 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Utility
  * @since         CakePHP(tm) v 0.9.2
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -57,7 +58,7 @@ class ClassRegistry {
  *
  * @return ClassRegistry instance
  */
-	public static function &getInstance() {
+	public static function getInstance() {
 		static $instance = array();
 		if (!$instance) {
 			$instance[0] = new ClassRegistry();
@@ -72,7 +73,7 @@ class ClassRegistry {
  * Examples
  * Simple Use: Get a Post model instance ```ClassRegistry::init('Post');```
  *
- * Expanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry', 'type' => 'Model');```
+ * Expanded: ```array('class' => 'ClassName', 'alias' => 'AliasNameStoredInTheRegistry');```
  *
  * Model Classes can accept optional ```array('id' => $id, 'table' => $table, 'ds' => $ds, 'alias' => $alias);```
  *
@@ -94,8 +95,6 @@ class ClassRegistry {
  */
 	public static function init($class, $strict = false) {
 		$_this = ClassRegistry::getInstance();
-		$false = false;
-		$true = true;
 
 		if (is_array($class)) {
 			$objects = $class;
@@ -105,11 +104,19 @@ class ClassRegistry {
 		} else {
 			$objects = array(array('class' => $class));
 		}
-		$defaults = isset($_this->_config['Model']) ? $_this->_config['Model'] : array();
+		$defaults = array();
+		if (isset($_this->_config['Model'])) {
+			$defaults = $_this->_config['Model'];
+		}
 		$count = count($objects);
-		$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
+		$availableDs = null;
 
-		foreach ($objects as $key => $settings) {
+		foreach ($objects as $settings) {
+			if (is_numeric($settings)) {
+				trigger_error(__d('cake_dev', '(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
+				return false;
+			}
+
 			if (is_array($settings)) {
 				$pluginPath = null;
 				$settings = array_merge($defaults, $settings);
@@ -118,6 +125,7 @@ class ClassRegistry {
 				list($plugin, $class) = pluginSplit($class);
 				if ($plugin) {
 					$pluginPath = $plugin . '.';
+					$settings['plugin'] = $plugin;
 				}
 
 				if (empty($settings['alias'])) {
@@ -125,7 +133,8 @@ class ClassRegistry {
 				}
 				$alias = $settings['alias'];
 
-				if ($model = $_this->_duplicate($alias, $class)) {
+				$model = $_this->_duplicate($alias, $class);
+				if ($model) {
 					$_this->map($alias, $class);
 					return $model;
 				}
@@ -144,6 +153,9 @@ class ClassRegistry {
 						$defaultProperties = $reflection->getDefaultProperties();
 						if (isset($defaultProperties['useDbConfig'])) {
 							$useDbConfig = $defaultProperties['useDbConfig'];
+							if ($availableDs === null) {
+								$availableDs = array_keys(ConnectionManager::enumConnectionObjects());
+							}
 							if (in_array('test_' . $useDbConfig, $availableDs)) {
 								$useDbConfig = 'test_' . $useDbConfig;
 							}
@@ -157,17 +169,16 @@ class ClassRegistry {
 					} else {
 						$instance = $reflection->newInstance();
 					}
-					if ($strict) {
-						$instance = ($instance instanceof Model) ? $instance : null;
+					if ($strict && !$instance instanceof Model) {
+						$instance = null;
 					}
 				}
 				if (!isset($instance)) {
+					$appModel = 'AppModel';
 					if ($strict) {
 						return false;
 					} elseif ($plugin && class_exists($plugin . 'AppModel')) {
 						$appModel = $plugin . 'AppModel';
-					} else {
-						$appModel = 'AppModel';
 					}
 					if (!empty($appModel)) {
 						$settings['name'] = $class;
@@ -176,18 +187,15 @@ class ClassRegistry {
 
 					if (!isset($instance)) {
 						trigger_error(__d('cake_dev', '(ClassRegistry::init() could not create instance of %s', $class), E_USER_WARNING);
-						return $false;
+						return false;
 					}
 				}
 				$_this->map($alias, $class);
-			} elseif (is_numeric($settings)) {
-				trigger_error(__d('cake_dev', '(ClassRegistry::init() Attempted to create instance of a class with a numeric name'), E_USER_WARNING);
-				return $false;
 			}
 		}
 
 		if ($count > 1) {
-			return $true;
+			return true;
 		}
 		return $instance;
 	}
@@ -195,8 +203,8 @@ class ClassRegistry {
 /**
  * Add $object to the registry, associating it with the name $key.
  *
- * @param string $key		Key for the object in registry
- * @param object $object	Object to store
+ * @param string $key Key for the object in registry
+ * @param object $object Object to store
  * @return boolean True if the object was written, false if $key already exists
  */
 	public static function addObject($key, $object) {
@@ -212,7 +220,7 @@ class ClassRegistry {
 /**
  * Remove object which corresponds to given key.
  *
- * @param string $key	Key of object to remove from registry
+ * @param string $key Key of object to remove from registry
  * @return void
  */
 	public static function removeObject($key) {
@@ -232,12 +240,8 @@ class ClassRegistry {
 	public static function isKeySet($key) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
-		if (isset($_this->_objects[$key])) {
-			return true;
-		} elseif (isset($_this->_map[$key])) {
-			return true;
-		}
-		return false;
+
+		return isset($_this->_objects[$key]) || isset($_this->_map[$key]);
 	}
 
 /**
@@ -246,8 +250,7 @@ class ClassRegistry {
  * @return array Set of keys stored in registry
  */
 	public static function keys() {
-		$_this = ClassRegistry::getInstance();
-		return array_keys($_this->_objects);
+		return array_keys(ClassRegistry::getInstance()->_objects);
 	}
 
 /**
@@ -256,7 +259,7 @@ class ClassRegistry {
  * @param string $key Key of object to look for
  * @return mixed Object stored in registry or boolean false if the object does not exist.
  */
-	public static function &getObject($key) {
+	public static function getObject($key) {
 		$_this = ClassRegistry::getInstance();
 		$key = Inflector::underscore($key);
 		$return = false;
@@ -274,10 +277,10 @@ class ClassRegistry {
 /**
  * Sets the default constructor parameter for an object type
  *
- * @param string $type Type of object.  If this parameter is omitted, defaults to "Model"
+ * @param string $type Type of object. If this parameter is omitted, defaults to "Model"
  * @param array $param The parameter that will be passed to object constructors when objects
  *                      of $type are created
- * @return mixed Void if $param is being set.  Otherwise, if only $type is passed, returns
+ * @return mixed Void if $param is being set. Otherwise, if only $type is passed, returns
  *               the previously-set value of $param, or null if not set.
  */
 	public static function config($type, $param = array()) {
@@ -286,7 +289,7 @@ class ClassRegistry {
 		if (empty($param) && is_array($type)) {
 			$param = $type;
 			$type = 'Model';
-		} elseif (is_null($param)) {
+		} elseif ($param === null) {
 			unset($_this->_config[$type]);
 		} elseif (empty($param) && is_string($type)) {
 			return isset($_this->_config[$type]) ? $_this->_config[$type] : null;
@@ -304,11 +307,11 @@ class ClassRegistry {
  * @param string $class
  * @return boolean
  */
-	protected function &_duplicate($alias,  $class) {
+	protected function &_duplicate($alias, $class) {
 		$duplicate = false;
 		if ($this->isKeySet($alias)) {
 			$model = $this->getObject($alias);
-			if (is_object($model) && (is_a($model, $class) || $model->alias === $class)) {
+			if (is_object($model) && ($model instanceof $class || $model->alias === $class)) {
 				$duplicate = $model;
 			}
 			unset($model);
@@ -338,8 +341,7 @@ class ClassRegistry {
  * @return array Keys of registry's map
  */
 	public static function mapKeys() {
-		$_this = ClassRegistry::getInstance();
-		return array_keys($_this->_map);
+		return array_keys(ClassRegistry::getInstance()->_map);
 	}
 
 /**

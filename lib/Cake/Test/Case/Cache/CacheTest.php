@@ -5,16 +5,17 @@
  * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
  * @package       Cake.Test.Case.Cache
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Cache', 'Cache');
@@ -47,6 +48,9 @@ class CacheTest extends CakeTestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
+		Cache::drop('latest');
+		Cache::drop('page');
+		Cache::drop('archive');
 		Configure::write('Cache.disable', $this->_cacheDisable);
 		Cache::config('default', $this->_defaultCacheConfig['settings']);
 	}
@@ -62,6 +66,17 @@ class CacheTest extends CakeTestCase {
 		$this->assertEquals(Cache::config('new'), $results);
 		$this->assertTrue(isset($results['engine']));
 		$this->assertTrue(isset($results['settings']));
+	}
+
+/**
+ * testConfigInvalidEngine method
+ *
+ * @expectedException CacheException
+ * @return void
+ */
+	public function testConfigInvalidEngine() {
+		$settings = array('engine' => 'Imaginary');
+		Cache::config('imaginary', $settings);
 	}
 
 /**
@@ -117,6 +132,10 @@ class CacheTest extends CakeTestCase {
  * @return void
  */
 	public function testInvalidConfig() {
+		// In debug mode it would auto create the folder.
+		$debug = Configure::read('debug');
+		Configure::write('debug', 0);
+
 		Cache::config('invalid', array(
 			'engine' => 'File',
 			'duration' => '+1 year',
@@ -125,7 +144,9 @@ class CacheTest extends CakeTestCase {
 			'serialize' => true,
 			'random' => 'wii'
 		));
-		$read = Cache::read('Test', 'invalid');
+		Cache::read('Test', 'invalid');
+
+		Configure::write('debug', $debug);
 	}
 
 /**
@@ -216,13 +237,74 @@ class CacheTest extends CakeTestCase {
 			'duration' => 3600,
 			'probability' => 100,
 			'engine' => 'File',
-			'isWindows' => DIRECTORY_SEPARATOR == '\\',
+			'isWindows' => DIRECTORY_SEPARATOR === '\\',
 			'mask' => 0664,
 			'groups' => array()
 		);
 		$this->assertEquals($expected, Cache::settings('sessions'));
 
 		Cache::config('sessions', $_cacheConfigSessions['settings']);
+	}
+
+/**
+ * testGroupConfigs method
+ */
+	public function testGroupConfigs() {
+		Cache::config('latest', array(
+			'duration' => 300,
+			'engine' => 'File',
+			'groups' => array(
+				'posts', 'comments',
+			),
+		));
+
+		$expected = array(
+			'posts' => array('latest'),
+			'comments' => array('latest'),
+		);
+		$result = Cache::groupConfigs();
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::groupConfigs('posts');
+		$this->assertEquals(array('posts' => array('latest')), $result);
+
+		Cache::config('page', array(
+			'duration' => 86400,
+			'engine' => 'File',
+			'groups' => array(
+				'posts', 'archive'
+			),
+		));
+
+		$result = Cache::groupConfigs();
+		$expected = array(
+			'posts' => array('latest', 'page'),
+			'comments' => array('latest'),
+			'archive' => array('page'),
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Cache::groupConfigs('archive');
+		$this->assertEquals(array('archive' => array('page')), $result);
+
+		Cache::config('archive', array(
+			'duration' => 86400 * 30,
+			'engine' => 'File',
+			'groups' => array(
+				'posts', 'archive', 'comments',
+			),
+		));
+
+		$result = Cache::groupConfigs('archive');
+		$this->assertEquals(array('archive' => array('archive', 'page')), $result);
+	}
+
+/**
+ * testGroupConfigsThrowsException method
+ * @expectedException CacheException
+ */
+	public function testGroupConfigsThrowsException() {
+		Cache::groupConfigs('bogus');
 	}
 
 /**
@@ -290,13 +372,13 @@ class CacheTest extends CakeTestCase {
  */
 	public function testWriteEmptyValues() {
 		Cache::write('App.falseTest', false);
-		$this->assertSame(Cache::read('App.falseTest'), false);
+		$this->assertFalse(Cache::read('App.falseTest'));
 
 		Cache::write('App.trueTest', true);
-		$this->assertSame(Cache::read('App.trueTest'), true);
+		$this->assertTrue(Cache::read('App.trueTest'));
 
 		Cache::write('App.nullTest', null);
-		$this->assertSame(Cache::read('App.nullTest'), null);
+		$this->assertNull(Cache::read('App.nullTest'));
 
 		Cache::write('App.zeroTest', 0);
 		$this->assertSame(Cache::read('App.zeroTest'), 0);
@@ -391,7 +473,7 @@ class CacheTest extends CakeTestCase {
 
 		Cache::delete('test_cache');
 
-		$global = Cache::settings();
+		Cache::settings();
 
 		Cache::set($_cacheSet);
 	}

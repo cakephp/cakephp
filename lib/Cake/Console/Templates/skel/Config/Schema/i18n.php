@@ -1,6 +1,4 @@
 <?php
-/*i18n schema generated on: 2007-11-25 07:11:25 : 1196004805*/
-
 /**
  * This is i18n Schema file
  *
@@ -8,29 +6,20 @@
  *
  * PHP 5
  *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config.Schema
  * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 
-// @codingStandardsIgnoreStart
-
-/*
+/**
  *
  * Using the Schema command line utility
+ *
+ * Use it to configure database for i18n
+ *
  * cake schema run create i18n
  */
-class i18nSchema extends CakeSchema {
-
-// @codingStandardsIgnoreEnd
+class I18nSchema extends CakeSchema {
 
 	public $name = 'i18n';
 

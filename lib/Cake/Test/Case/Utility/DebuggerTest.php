@@ -1,20 +1,22 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @since         CakePHP(tm) v 1.2.0.5432
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('Debugger', 'Utility');
 
 /**
- * DebugggerTestCaseDebuggger class
+ * DebuggerTestCaseDebugger class
  *
  * @package       Cake.Test.Case.Utility
  */
@@ -65,7 +67,7 @@ class DebuggerTest extends CakeTestCase {
 	public function testDocRef() {
 		ini_set('docref_root', '');
 		$this->assertEquals(ini_get('docref_root'), '');
-		$debugger = new Debugger();
+		new Debugger();
 		$this->assertEquals(ini_get('docref_root'), 'http://php.net/');
 	}
 
@@ -84,7 +86,13 @@ class DebuggerTest extends CakeTestCase {
 		$this->assertTrue(is_array($result));
 		$this->assertEquals(4, count($result));
 
-		$pattern = '/<code><span style\="color\: \#\d+">.*?&lt;\?php/';
+		$pattern = '/<code>.*?<span style\="color\: \#\d+">.*?&lt;\?php/';
+		$this->assertRegExp($pattern, $result[0]);
+
+		$result = Debugger::excerpt(__FILE__, 11, 2);
+		$this->assertEquals(5, count($result));
+
+		$pattern = '/<span style\="color\: \#\d{6}">\*<\/span>/';
 		$this->assertRegExp($pattern, $result[0]);
 
 		$return = Debugger::excerpt('[internal]', 2, 2);
@@ -135,8 +143,8 @@ class DebuggerTest extends CakeTestCase {
 			'a' => array(
 				'href' => "javascript:void(0);",
 				'onclick' => "preg:/document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display = " .
-					 "\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
-					 " \? '' \: 'none'\);/"
+					"\(document\.getElementById\('cakeErr[a-z0-9]+\-trace'\)\.style\.display == 'none'" .
+					" \? '' \: 'none'\);/"
 			),
 			'b' => array(), 'Notice', '/b', ' (8)',
 		));
@@ -165,7 +173,7 @@ class DebuggerTest extends CakeTestCase {
 
 		Debugger::output('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-				 '{:description}</error>',
+				'{:description}</error>',
 			'context' => "<context>{:context}</context>",
 			'trace' => "<stack>{:trace}</stack>",
 		));
@@ -217,7 +225,7 @@ class DebuggerTest extends CakeTestCase {
 
 		Debugger::addFormat('js', array(
 			'traceLine' => '{:reference} - <a href="txmt://open?url=file://{:file}' .
-							 '&line={:line}">{:path}</a>, line {:line}'
+				'&line={:line}">{:path}</a>, line {:line}'
 		));
 		Debugger::outputAs('js');
 
@@ -226,7 +234,7 @@ class DebuggerTest extends CakeTestCase {
 
 		Debugger::addFormat('xml', array(
 			'error' => '<error><code>{:code}</code><file>{:file}</file><line>{:line}</line>' .
-						 '{:description}</error>',
+				'{:description}</error>',
 		));
 		Debugger::outputAs('xml');
 
@@ -325,10 +333,46 @@ object(View) {
 	request => object(CakeRequest) {}
 	response => object(CakeResponse) {}
 	elementCache => 'default'
+	elementCacheSettings => array()
+	Html => object(HtmlHelper) {}
+	Form => object(FormHelper) {}
 	int => (int) 2
 	float => (float) 1.333
+
+TEXT;
+		if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+			$expected .= <<<TEXT
+	[protected] _passedVars => array(
+		(int) 0 => 'viewVars',
+		(int) 1 => 'autoLayout',
+		(int) 2 => 'ext',
+		(int) 3 => 'helpers',
+		(int) 4 => 'view',
+		(int) 5 => 'layout',
+		(int) 6 => 'name',
+		(int) 7 => 'theme',
+		(int) 8 => 'layoutPath',
+		(int) 9 => 'viewPath',
+		(int) 10 => 'request',
+		(int) 11 => 'plugin',
+		(int) 12 => 'passedArgs',
+		(int) 13 => 'cacheAction'
+	)
+	[protected] _scripts => array()
+	[protected] _paths => array()
+	[protected] _parents => array()
+	[protected] _current => null
+	[protected] _currentType => ''
+	[protected] _stack => array()
+	[protected] _eventManager => object(CakeEventManager) {}
+	[protected] _eventManagerConfigured => false
+
+TEXT;
+		}
+		$expected .= <<<TEXT
 }
 TEXT;
+
 		$this->assertTextEquals($expected, $result);
 
 		$data = array(
@@ -358,6 +402,44 @@ array(
 )
 TEXT;
 		$this->assertTextEquals($expected, $result);
+
+		$data = false;
+		$result = Debugger::exportVar($data);
+		$expected = <<<TEXT
+false
+TEXT;
+		$this->assertTextEquals($expected, $result);
+
+		$file = fopen('php://output', 'w');
+		fclose($file);
+		$result = Debugger::exportVar($file);
+		$this->assertTextEquals('unknown', $result);
+	}
+
+/**
+ * Test exporting various kinds of false.
+ *
+ * @return void
+ */
+	public function testExportVarZero() {
+		$data = array(
+			'nothing' => '',
+			'null' => null,
+			'false' => false,
+			'szero' => '0',
+			'zero' => 0
+		);
+		$result = Debugger::exportVar($data);
+		$expected = <<<TEXT
+array(
+	'nothing' => '',
+	'null' => null,
+	'false' => false,
+	'szero' => '0',
+	'zero' => (int) 0
+)
+TEXT;
+		$this->assertTextEquals($expected, $result);
 	}
 
 /**
@@ -369,6 +451,7 @@ TEXT;
 		if (file_exists(LOGS . 'debug.log')) {
 			unlink(LOGS . 'debug.log');
 		}
+		CakeLog::config('file', array('engine' => 'File', 'path' => TMP . 'logs' . DS));
 
 		Debugger::log('cool');
 		$result = file_get_contents(LOGS . 'debug.log');
@@ -407,8 +490,11 @@ TEXT;
 		ob_start();
 		Debugger::dump($var);
 		$result = ob_get_clean();
+
+		$open = php_sapi_name() == 'cli' ? "\n" : '<pre>';
+		$close = php_sapi_name() == 'cli' ? "\n" : '</pre>';
 		$expected = <<<TEXT
-<pre>array(
+{$open}array(
 	'People' => array(
 		(int) 0 => array(
 			'name' => 'joeseph',
@@ -421,7 +507,7 @@ TEXT;
 			'hair' => 'black'
 		)
 	)
-)</pre>
+){$close}
 TEXT;
 		$this->assertTextEquals($expected, $result);
 	}

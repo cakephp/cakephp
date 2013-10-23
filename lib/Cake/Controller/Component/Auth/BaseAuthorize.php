@@ -3,15 +3,17 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
 App::uses('Hash', 'Utility');
 
 /**
@@ -40,10 +42,10 @@ abstract class BaseAuthorize {
 /**
  * Settings for authorize objects.
  *
- * - `actionPath` - The path to ACO nodes that contains the nodes for controllers.  Used as a prefix
+ * - `actionPath` - The path to ACO nodes that contains the nodes for controllers. Used as a prefix
  *    when calling $this->action();
  * - `actionMap` - Action -> crud mappings. Used by authorization objects that want to map actions to CRUD roles.
- * - `userModel` - Model name that ARO records can be found under.  Defaults to 'User'.
+ * - `userModel` - Model name that ARO records can be found under. Defaults to 'User'.
  *
  * @var array
  */
@@ -64,7 +66,7 @@ abstract class BaseAuthorize {
  * Constructor
  *
  * @param ComponentCollection $collection The controller for this request.
- * @param string $settings An array of settings.  This class does not use any settings.
+ * @param string $settings An array of settings. This class does not use any settings.
  */
 	public function __construct(ComponentCollection $collection, $settings = array()) {
 		$this->_Collection = $collection;
@@ -101,14 +103,14 @@ abstract class BaseAuthorize {
 	}
 
 /**
- * Get the action path for a given request.  Primarily used by authorize objects
+ * Get the action path for a given request. Primarily used by authorize objects
  * that need to get information about the plugin, controller, and action being invoked.
  *
  * @param CakeRequest $request The request a path is needed for.
  * @param string $path
  * @return string the action path for the given request.
  */
-	public function action($request, $path = '/:plugin/:controller/:action') {
+	public function action(CakeRequest $request, $path = '/:plugin/:controller/:action') {
 		$plugin = empty($request['plugin']) ? null : Inflector::camelize($request['plugin']) . '/';
 		$path = str_replace(
 			array(':controller', ':action', ':plugin/'),
@@ -120,7 +122,7 @@ abstract class BaseAuthorize {
 	}
 
 /**
- * Maps crud actions to actual action names.  Used to modify or get the current mapped actions.
+ * Maps crud actions to actual action names. Used to modify or get the current mapped actions.
  *
  * Create additional mappings for a standard CRUD operation:
  *
@@ -135,8 +137,8 @@ abstract class BaseAuthorize {
  * }}}
  *
  * You can use the custom CRUD operations to create additional generic permissions
- * that behave like CRUD operations.  Doing this will require additional columns on the
- * permissions lookup.  When using with DbAcl, you'll have to add additional _admin type columns
+ * that behave like CRUD operations. Doing this will require additional columns on the
+ * permissions lookup. When using with DbAcl, you'll have to add additional _admin type columns
  * to the `aros_acos` table.
  *
  * @param array $map Either an array of mappings, or undefined to get current values.

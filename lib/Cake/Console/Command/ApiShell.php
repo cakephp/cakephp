@@ -7,15 +7,16 @@
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 1.2.0.5012
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('AppShell', 'Console/Command');
@@ -73,12 +74,13 @@ class ApiShell extends AppShell {
 			$path = $this->paths['core'];
 		}
 
-		if (count($this->args) == 1) {
-			$file = $type;
-			$class = Inflector::camelize($type);
-		} elseif (count($this->args) > 1) {
+		$count = count($this->args);
+		if ($count > 1) {
 			$file = Inflector::underscore($this->args[1]);
 			$class = Inflector::camelize($this->args[1]);
+		} elseif ($count) {
+			$file = $type;
+			$class = Inflector::camelize($type);
 		}
 		$objects = App::objects('class', $path);
 		if (in_array($class, $objects)) {
@@ -98,7 +100,7 @@ class ApiShell extends AppShell {
 			if (isset($this->params['method'])) {
 				if (!isset($parsed[$this->params['method']])) {
 					$this->err(__d('cake_console', '%s::%s() could not be found', $class, $this->params['method']));
-					$this->_stop();
+					return $this->_stop();
 				}
 				$method = $parsed[$this->params['method']];
 				$this->out($class . '::' . $method['method'] . $method['parameters']);
@@ -160,7 +162,7 @@ class ApiShell extends AppShell {
  * @return void
  */
 	public function help() {
-		$head  = "Usage: cake api [<type>] <className> [-m <method>]\n";
+		$head = "Usage: cake api [<type>] <className> [-m <method>]\n";
 		$head .= "-----------------------------------------------\n";
 		$head .= "Parameters:\n\n";
 

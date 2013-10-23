@@ -1,21 +1,22 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link http://cakephp.org CakePHP(tm) Project
- * @since CakePHP(tm) v 2.2
- * @license MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP(tm) v 2.2
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('DispatcherFilter', 'Routing');
 
 /**
- * This filter will check wheter the response was previously cached in the file system
+ * This filter will check whether the response was previously cached in the file system
  * and served it back to the client if appropriate.
  *
  * @package Cake.Routing.Filter
@@ -26,7 +27,7 @@ class CacheDispatcher extends DispatcherFilter {
  * Default priority for all methods in this filter
  * This filter should run before the request gets parsed by router
  *
- * @var int
+ * @var integer
  */
 	public $priority = 9;
 
@@ -36,14 +37,18 @@ class CacheDispatcher extends DispatcherFilter {
  * @param CakeEvent $event containing the request and response object
  * @return CakeResponse with cached content if found, null otherwise
  */
-	public function beforeDispatch($event) {
+	public function beforeDispatch(CakeEvent $event) {
 		if (Configure::read('Cache.check') !== true) {
 			return;
 		}
 
 		$path = $event->data['request']->here();
-		if ($path == '/') {
+		if ($path === '/') {
 			$path = 'home';
+		}
+		$prefix = Configure::read('Cache.viewPrefix');
+		if ($prefix) {
+			$path = $prefix . '_' . $path;
 		}
 		$path = strtolower(Inflector::slug($path));
 
@@ -55,6 +60,7 @@ class CacheDispatcher extends DispatcherFilter {
 		if (file_exists($filename)) {
 			$controller = null;
 			$view = new View($controller);
+			$view->response = $event->data['response'];
 			$result = $view->renderCache($filename, microtime(true));
 			if ($result !== false) {
 				$event->stopPropagation();

@@ -1,16 +1,17 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Routing.Route
  * @since         CakePHP(tm) v 2.0
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('CakeResponse', 'Network');
@@ -33,14 +34,14 @@ class RedirectRoute extends CakeRoute {
 	public $response = null;
 
 /**
- * The location to redirect to. Either a string or a cake array url.
+ * The location to redirect to. Either a string or a CakePHP array URL.
  *
  * @var mixed
  */
 	public $redirect;
 
 /**
- * Flag for disabling exit() when this route parses a url.
+ * Flag for disabling exit() when this route parses a URL.
  *
  * @var boolean
  */
@@ -59,10 +60,10 @@ class RedirectRoute extends CakeRoute {
 	}
 
 /**
- * Parses a string url into an array. Parsed urls will result in an automatic
+ * Parses a string URL into an array. Parsed URLs will result in an automatic
  * redirection
  *
- * @param string $url The url to parse
+ * @param string $url The URL to parse
  * @return boolean False on failure
  */
 	public function parse($url) {
@@ -74,11 +75,18 @@ class RedirectRoute extends CakeRoute {
 			$this->response = new CakeResponse();
 		}
 		$redirect = $this->redirect;
-		if (count($this->redirect) == 1 && !isset($this->redirect['controller'])) {
+		if (count($this->redirect) === 1 && !isset($this->redirect['controller'])) {
 			$redirect = $this->redirect[0];
 		}
 		if (isset($this->options['persist']) && is_array($redirect)) {
 			$redirect += array('named' => $params['named'], 'pass' => $params['pass'], 'url' => array());
+			if (is_array($this->options['persist'])) {
+				foreach ($this->options['persist'] as $elem) {
+					if (isset($params[$elem])) {
+						$redirect[$elem] = $params[$elem];
+					}
+				}
+			}
 			$redirect = Router::reverse($redirect);
 		}
 		$status = 301;
@@ -95,7 +103,7 @@ class RedirectRoute extends CakeRoute {
  * There is no reverse routing redirection routes
  *
  * @param array $url Array of parameters to convert to a string.
- * @return mixed either false or a string url.
+ * @return mixed either false or a string URL.
  */
 	public function match($url) {
 		return false;

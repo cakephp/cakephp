@@ -7,16 +7,17 @@
  * PHP 5
  *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.Console.Command
  * @since         CakePHP v 1.2.0.7726
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('ShellDispatcher', 'Console');
@@ -194,6 +195,7 @@ class ShellTest extends CakeTestCase {
 		), App::RESET);
 
 		CakePlugin::load('TestPlugin');
+		$this->Shell->tasks = array('DbConfig' => array('one', 'two'));
 		$this->Shell->uses = array('TestPlugin.TestPluginPost');
 		$this->Shell->initialize();
 
@@ -207,6 +209,33 @@ class ShellTest extends CakeTestCase {
 		$this->assertTrue(isset($this->Shell->Comment));
 		$this->assertInstanceOf('Comment', $this->Shell->Comment);
 		$this->assertEquals('Comment', $this->Shell->modelClass);
+		$this->assertInstanceOf('DbConfigTask', $this->Shell->DbConfig);
+
+		App::build();
+	}
+
+/**
+ * testLoadModel method
+ *
+ * @return void
+ */
+	public function testLoadModel() {
+		App::build(array(
+			'Plugin' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS),
+			'Model' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'Model' . DS)
+		), App::RESET);
+
+		$Shell = new TestMergeShell();
+		$this->assertEquals('Comment', $Shell->Comment->alias);
+		$this->assertInstanceOf('Comment', $Shell->Comment);
+		$this->assertEquals('Comment', $Shell->modelClass);
+
+		CakePlugin::load('TestPlugin');
+		$this->Shell->loadModel('TestPlugin.TestPluginPost');
+		$this->assertTrue(isset($this->Shell->TestPluginPost));
+		$this->assertInstanceOf('TestPluginPost', $this->Shell->TestPluginPost);
+		$this->assertEquals('TestPluginPost', $this->Shell->modelClass);
+		CakePlugin::unload('TestPlugin');
 
 		App::build();
 	}
@@ -545,7 +574,7 @@ class ShellTest extends CakeTestCase {
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
 
-		$Folder = new Folder($path, true);
+		new Folder($path, true);
 
 		$this->Shell->interactive = false;
 
@@ -572,7 +601,7 @@ class ShellTest extends CakeTestCase {
 
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
-		$Folder = new Folder($path, true);
+		new Folder($path, true);
 
 		$this->Shell->interactive = true;
 
@@ -663,7 +692,6 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testRunCommandMain() {
-		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('main', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('main')->will($this->returnValue(true));
@@ -677,7 +705,6 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testRunCommandWithMethod() {
-		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('hit_me', 'startup'), array(), '', false);
 
 		$Mock->expects($this->once())->method('hit_me')->will($this->returnValue(true));
@@ -700,7 +727,7 @@ class ShellTest extends CakeTestCase {
 		$Mock->expects($this->never())->method('hr');
 		$Mock->expects($this->once())->method('out');
 
-		$result = $Mock->runCommand('hr', array());
+		$Mock->runCommand('hr', array());
 	}
 
 /**
@@ -709,7 +736,6 @@ class ShellTest extends CakeTestCase {
  * @return void
  */
 	public function testRunCommandMissingMethod() {
-		$methods = get_class_methods('Shell');
 		$Mock = $this->getMock('Shell', array('startup', 'getOptionParser', 'out'), array(), '', false);
 		$Parser = $this->getMock('ConsoleOptionParser', array(), array(), '', false);
 
@@ -762,7 +788,7 @@ class ShellTest extends CakeTestCase {
 
 		$Shell->RunCommand = $task;
 
-		$result = $Shell->runCommand('run_command', array('run_command', 'one', 'value'));
+		$Shell->runCommand('run_command', array('run_command', 'one', 'value'));
 	}
 
 /**
@@ -831,7 +857,7 @@ TEXT;
 			array('types' => 'error'),
 		));
 		TestCakeLog::config('console', array(
-			'engine' => 'ConsoleLog',
+			'engine' => 'Console',
 			'stream' => 'php://stderr',
 			));
 		TestCakeLog::replace('console', $mock);
@@ -848,7 +874,7 @@ TEXT;
  * Tests that _useLogger works properly
  *
  * @return void
- **/
+ */
 	public function testProtectedUseLogger() {
 		CakeLog::drop('stdout');
 		CakeLog::drop('stderr');

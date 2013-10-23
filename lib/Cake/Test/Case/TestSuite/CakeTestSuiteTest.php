@@ -1,16 +1,17 @@
 <?php
 /**
  * CakePHP : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc.
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc.
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP Project
  * @package       Cake.Test.Case.TestSuite
  * @since         CakePHP v 1.2.0.4487
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 /**
@@ -61,7 +62,7 @@ class CakeTestSuiteTest extends CakeTestCase {
  * @return void
  */
 	public function testAddTestDirectoryRecursiveWithHidden() {
-		$this->skipIf(!is_writeable(TMP), 'Cant addTestDirectoryRecursiveWithHidden unless the tmp folder is writable.');
+		$this->skipIf(!is_writable(TMP), 'Cant addTestDirectoryRecursiveWithHidden unless the tmp folder is writable.');
 
 		$Folder = new Folder(TMP . 'MyTestFolder', true, 0777);
 		mkdir($Folder->path . DS . '.svn', 0777, true);
@@ -85,7 +86,7 @@ class CakeTestSuiteTest extends CakeTestCase {
  * @return void
  */
 	public function testAddTestDirectoryRecursiveWithNonPhp() {
-		$this->skipIf(!is_writeable(TMP), 'Cant addTestDirectoryRecursiveWithNonPhp unless the tmp folder is writable.');
+		$this->skipIf(!is_writable(TMP), 'Cant addTestDirectoryRecursiveWithNonPhp unless the tmp folder is writable.');
 
 		$Folder = new Folder(TMP . 'MyTestFolder', true, 0777);
 		touch($Folder->path . DS . 'BackupTest.php~');

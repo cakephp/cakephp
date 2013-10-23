@@ -1,20 +1,22 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Core
  * @since         CakePHP(tm) v 1.0.0.2363
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
 App::uses('Hash', 'Utility');
 App::uses('ConfigReaderInterface', 'Configure');
+
 /**
  * Compatibility with 2.1, which expects Configure to load Set.
  */
@@ -65,19 +67,17 @@ class Configure {
  */
 	public static function bootstrap($boot = true) {
 		if ($boot) {
-			self::write('App', array(
-				'base' => false,
-				'baseUrl' => false,
-				'dir' => APP_DIR,
-				'webroot' => WEBROOT_DIR,
-				'www_root' => WWW_ROOT
-			));
+			self::_appDefaults();
 
 			if (!include APP . 'Config' . DS . 'core.php') {
-				trigger_error(__d('cake_dev', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
+				trigger_error(__d('cake_dev',
+						"Can't find application core file. Please create %s, and make sure it is readable by PHP.",
+						APP . 'Config' . DS . 'core.php'),
+					E_USER_ERROR
+				);
 			}
-			App::$bootstrapping = false;
 			App::init();
+			App::$bootstrapping = false;
 			App::build();
 
 			$exception = array(
@@ -90,7 +90,11 @@ class Configure {
 			self::_setErrorHandlers($error, $exception);
 
 			if (!include APP . 'Config' . DS . 'bootstrap.php') {
-				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
+				trigger_error(__d('cake_dev',
+						"Can't find application bootstrap file. Please create %s, and make sure it is readable by PHP.",
+						APP . 'Config' . DS . 'bootstrap.php'),
+					E_USER_ERROR
+				);
 			}
 			restore_error_handler();
 
@@ -105,6 +109,20 @@ class Configure {
 				class_exists('String');
 			}
 		}
+	}
+
+/**
+ * Set app's default configs
+ * @return void
+ */
+	protected static function _appDefaults() {
+		self::write('App', (array)self::read('App') + array(
+			'base' => false,
+			'baseUrl' => false,
+			'dir' => APP_DIR,
+			'webroot' => WEBROOT_DIR,
+			'www_root' => WWW_ROOT
+		));
 	}
 
 /**
@@ -126,7 +144,8 @@ class Configure {
  * }}}
  *
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::write
- * @param array $config Name of var to write
+ * @param string|array $config The key to write, can be a dot notation value.
+ * Alternatively can be an array containing key(s) and value(s).
  * @param mixed $value Value to set for var
  * @return boolean True if write was successful
  */
@@ -150,7 +169,7 @@ class Configure {
 	}
 
 /**
- * Used to read information stored in Configure.  Its not
+ * Used to read information stored in Configure. It's not
  * possible to store `null` values in Configure.
  *
  * Usage:
@@ -159,8 +178,8 @@ class Configure {
  * Configure::read('Name.key'); will return only the value of Configure::Name[key]
  * }}}
  *
- * @linkhttp://book.cakephp.org/2.0/en/development/configuration.html#Configure::read
- * @param string $var Variable to obtain.  Use '.' to access array elements.
+ * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::read
+ * @param string $var Variable to obtain. Use '.' to access array elements.
  * @return mixed value stored in configure, or null.
  */
 	public static function read($var = null) {
@@ -168,6 +187,19 @@ class Configure {
 			return self::$_values;
 		}
 		return Hash::get(self::$_values, $var);
+	}
+
+/**
+ * Returns true if given variable is set in Configure.
+ *
+ * @param string $var Variable name to check for
+ * @return boolean True if variable is there
+ */
+	public static function check($var = null) {
+		if (empty($var)) {
+			return false;
+		}
+		return Hash::get(self::$_values, $var) !== null;
 	}
 
 /**
@@ -184,20 +216,19 @@ class Configure {
  * @return void
  */
 	public static function delete($var = null) {
-		$keys = explode('.', $var);
 		self::$_values = Hash::remove(self::$_values, $var);
 	}
 
 /**
- * Add a new reader to Configure.  Readers allow you to read configuration
- * files in various formats/storage locations.  CakePHP comes with two built-in readers
- * PhpReader and IniReader.  You can also implement your own reader classes in your application.
+ * Add a new reader to Configure. Readers allow you to read configuration
+ * files in various formats/storage locations. CakePHP comes with two built-in readers
+ * PhpReader and IniReader. You can also implement your own reader classes in your application.
  *
  * To add a new reader to Configure:
  *
  * `Configure::config('ini', new IniReader());`
  *
- * @param string $name The name of the reader being configured.  This alias is used later to
+ * @param string $name The name of the reader being configured. This alias is used later to
  *   read values from a specific reader.
  * @param ConfigReaderInterface $reader The reader to append.
  * @return void
@@ -220,7 +251,7 @@ class Configure {
 	}
 
 /**
- * Remove a configured reader.  This will unset the reader
+ * Remove a configured reader. This will unset the reader
  * and make any future attempts to use it cause an Exception.
  *
  * @param string $name Name of the reader to drop.
@@ -235,7 +266,7 @@ class Configure {
 	}
 
 /**
- * Loads stored configuration information from a resource.  You can add
+ * Loads stored configuration information from a resource. You can add
  * config file resource readers with `Configure::config()`.
  *
  * Loaded configuration information will be merged with the current
@@ -244,7 +275,7 @@ class Configure {
  *
  * `Configure::load('Users.user', 'default')`
  *
- * Would load the 'user' config file using the default config reader.  You can load
+ * Would load the 'user' config file using the default config reader. You can load
  * app config files by giving the name of the resource you want loaded.
  *
  * `Configure::load('setup', 'default');`
@@ -279,8 +310,8 @@ class Configure {
 	}
 
 /**
- * Dump data currently in Configure into $filename.  The serialization format
- * is decided by the config reader attached as $config.  For example, if the
+ * Dump data currently in Configure into $key. The serialization format
+ * is decided by the config reader attached as $config. For example, if the
  * 'default' adapter is a PhpReader, the generated file will be a PHP
  * configuration file loadable by the PhpReader.
  *
@@ -306,10 +337,10 @@ class Configure {
 	public static function dump($key, $config = 'default', $keys = array()) {
 		$reader = self::_getReader($config);
 		if (!$reader) {
-			throw new ConfigureException(__d('cake', 'There is no "%s" adapter.', $config));
+			throw new ConfigureException(__d('cake_dev', 'There is no "%s" adapter.', $config));
 		}
 		if (!method_exists($reader, 'dump')) {
-			throw new ConfigureException(__d('cake', 'The "%s" adapter, does not have a dump() method.', $config));
+			throw new ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a %s method.', $config, 'dump()'));
 		}
 		$values = self::$_values;
 		if (!empty($keys) && is_array($keys)) {
@@ -352,12 +383,12 @@ class Configure {
 	}
 
 /**
- * Used to write runtime configuration into Cache.  Stored runtime configuration can be
- * restored using `Configure::restore()`.  These methods can be used to enable configuration managers
+ * Used to write runtime configuration into Cache. Stored runtime configuration can be
+ * restored using `Configure::restore()`. These methods can be used to enable configuration managers
  * frontends, or other GUI type interfaces for configuration.
  *
  * @param string $name The storage name for the saved configuration.
- * @param string $cacheConfig The cache configuration to save into.  Defaults to 'default'
+ * @param string $cacheConfig The cache configuration to save into. Defaults to 'default'
  * @param array $data Either an array of data to store, or leave empty to store all values.
  * @return boolean Success
  */
@@ -369,7 +400,7 @@ class Configure {
 	}
 
 /**
- * Restores configuration data stored in the Cache into configure.  Restored
+ * Restores configuration data stored in the Cache into configure. Restored
  * values will overwrite existing ones.
  *
  * @param string $name Name of the stored config file to load.

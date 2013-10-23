@@ -1,21 +1,3 @@
-<?php
-/**
- *
- * PHP 5
- *
- * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- *
- * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
- * @link          http://cakephp.org CakePHP(tm) Project
- * @package       cake.libs.view.templates.layouts
- * @since         CakePHP(tm) v 0.10.0.1076
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
- */
-?>
 <p>This is regular text</p>
 <!--nocache-->
 	<p>A. Layout Before Content</p>
@@ -26,7 +8,7 @@
 	<p>C. Layout After Test Element But Before Content</p>
 	<?php $this->log('3. layout after test element but before content') ?>
 <!--/nocache-->
-<?php echo $content_for_layout; ?>
+<?php echo $this->fetch('content'); ?>
 <!--nocache-->
 	<p>E. Layout After Content</p>
 	<?php $this->log('5. layout after content') ?>

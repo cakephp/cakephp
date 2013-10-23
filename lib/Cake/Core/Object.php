@@ -1,19 +1,24 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       Cake.Core
  * @since         CakePHP(tm) v 0.2.9
- * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+App::uses('CakeLog', 'Log');
+App::uses('Dispatcher', 'Routing');
+App::uses('Router', 'Routing');
 App::uses('Set', 'Utility');
+App::uses('CakeLog', 'Log');
 
 /**
  * Object class provides a few generic methods used in several subclasses.
@@ -49,16 +54,16 @@ class Object {
  * or fetch the return value from controller actions.
  *
  * Under the hood this method uses Router::reverse() to convert the $url parameter into a string
- * URL.  You should use URL formats that are compatible with Router::reverse()
+ * URL. You should use URL formats that are compatible with Router::reverse()
  *
  * #### Passing POST and GET data
  *
- * POST and GET data can be simulated in requestAction.  Use `$extra['url']` for
- * GET data.  The `$extra['data']` parameter allows POST data simulation.
+ * POST and GET data can be simulated in requestAction. Use `$extra['url']` for
+ * GET data. The `$extra['data']` parameter allows POST data simulation.
  *
- * @param string|array $url String or array-based url.  Unlike other url arrays in CakePHP, this
- *    url will not automatically handle passed and named arguments in the $url parameter.
- * @param array $extra if array includes the key "return" it sets the AutoRender to true.  Can
+ * @param string|array $url String or array-based URL. Unlike other URL arrays in CakePHP, this
+ *    URL will not automatically handle passed and named arguments in the $url parameter.
+ * @param array $extra if array includes the key "return" it sets the AutoRender to true. Can
  *    also be used to submit GET/POST data, and named/passed arguments.
  * @return mixed Boolean true or false on success/failure, or contents
  *    of rendered action if 'return' is set in $extra.
@@ -67,7 +72,6 @@ class Object {
 		if (empty($url)) {
 			return false;
 		}
-		App::uses('Dispatcher', 'Routing');
 		if (($index = array_search('return', $extra)) !== false) {
 			$extra['return'] = 0;
 			$extra['autoRender'] = 1;
@@ -84,8 +88,8 @@ class Object {
 		$data = isset($extra['data']) ? $extra['data'] : null;
 		unset($extra['data']);
 
-		if (is_string($url) && strpos($url, FULL_BASE_URL) === 0) {
-			$url = Router::normalize(str_replace(FULL_BASE_URL, '', $url));
+		if (is_string($url) && strpos($url, Router::fullBaseUrl()) === 0) {
+			$url = Router::normalize(str_replace(Router::fullBaseUrl(), '', $url));
 		}
 		if (is_string($url)) {
 			$request = new CakeRequest($url);
@@ -108,9 +112,9 @@ class Object {
  * Calls a method on this object with the given parameters. Provides an OO wrapper
  * for `call_user_func_array`
  *
- * @param string $method  Name of the method to call
- * @param array $params  Parameter list to use when calling $method
- * @return mixed  Returns the result of the method call
+ * @param string $method Name of the method to call
+ * @param array $params Parameter list to use when calling $method
+ * @return mixed Returns the result of the method call
  */
 	public function dispatchMethod($method, $params = array()) {
 		switch (count($params)) {
@@ -132,7 +136,7 @@ class Object {
 	}
 
 /**
- * Stop execution of the current script.  Wraps exit() making
+ * Stop execution of the current script. Wraps exit() making
  * testing easier.
  *
  * @param integer|string $status see http://php.net/exit for values
@@ -143,23 +147,23 @@ class Object {
 	}
 
 /**
- * Convenience method to write a message to CakeLog.  See CakeLog::write()
+ * Convenience method to write a message to CakeLog. See CakeLog::write()
  * for more information on writing to logs.
  *
  * @param string $msg Log message
  * @param integer $type Error type constant. Defined in app/Config/core.php.
  * @return boolean Success of log write
  */
-	public function log($msg, $type = LOG_ERR) {
-		App::uses('CakeLog', 'Log');
+	public function log($msg, $type = LOG_ERR, $scope = null) {
 		if (!is_string($msg)) {
 			$msg = print_r($msg, true);
 		}
-		return CakeLog::write($type, $msg);
+
+		return CakeLog::write($type, $msg, $scope);
 	}
 
 /**
- * Allows setting of multiple properties of the object in a single line of code.  Will only set
+ * Allows setting of multiple properties of the object in a single line of code. Will only set
  * properties that are part of a class declaration.
  *
  * @param array $properties An associative array containing properties and corresponding values.
@@ -180,7 +184,7 @@ class Object {
  * Merges this objects $property with the property in $class' definition.
  * This classes value for the property will be merged on top of $class'
  *
- * This provides some of the DRY magic CakePHP provides.  If you want to shut it off, redefine
+ * This provides some of the DRY magic CakePHP provides. If you want to shut it off, redefine
  * this method as an empty function.
  *
  * @param array $properties The name of the properties to merge.
