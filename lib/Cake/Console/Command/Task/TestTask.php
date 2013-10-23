@@ -295,7 +295,7 @@ class TestTask extends BakeTask {
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $class the Classname of the class the test is being generated for.
- * @return string Real classname
+ * @return string Real class name
  */
 	public function getRealClassName($type, $class) {
 		if (strtolower($type) === 'model' || empty($this->classTypes[$type])) {
@@ -430,7 +430,7 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * Add classname to the fixture list.
+ * Add class name to the fixture list.
  * Sets the app. or plugin.plugin_name. prefix.
  *
  * @param string $name Name of the Model class that a fixture might be required for.
@@ -476,7 +476,7 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * Generate a constructor code snippet for the type and classname
+ * Generate a constructor code snippet for the type and class name
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $fullClassName The Classname of the class the test is being generated for.
@@ -504,7 +504,7 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * Generate the uses() calls for a type & classname
+ * Generate the uses() calls for a type & class name
  *
  * @param string $type The Type of object you are generating tests for eg. controller
  * @param string $realType The package name for the class.

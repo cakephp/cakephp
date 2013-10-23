@@ -587,7 +587,7 @@ class SchemaShellTest extends CakeTestCase {
 
 /**
  * test that passing name and file creates the passed filename with the
- * passed classname
+ * passed class name
  *
  * @return void
  */
