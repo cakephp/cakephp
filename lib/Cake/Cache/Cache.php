@@ -533,7 +533,7 @@ class Cache {
  * @throws CacheException
  */
 	public static function groupConfigs($group = null) {
-		if ($group == null) {
+		if ($group === null) {
 			return self::$_groups;
 		}
 		if (isset(self::$_groups[$group])) {
