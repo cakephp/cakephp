@@ -75,7 +75,7 @@ abstract class ObjectRegistry {
 		if (!$className) {
 			$this->_throwMissingClassError($objectName, substr($plugin, 0, -1));
 		}
-		$instance = $this->_create($className, $settings);
+		$instance = $this->_create($className, $name, $settings);
 		$this->_loaded[$name] = $instance;
 		return $instance;
 	}
@@ -104,10 +104,11 @@ abstract class ObjectRegistry {
  * required.
  *
  * @param string $class The class to build.
+ * @param string $alias The alias of the object.
  * @param array $settings The settings for construction
  * @return mixed
  */
-	abstract protected function _create($class, $settings);
+	abstract protected function _create($class, $alias, $settings);
 
 /**
  * Get the loaded object list, or get the object instance at a given name.

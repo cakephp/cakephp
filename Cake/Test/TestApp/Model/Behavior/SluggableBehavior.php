@@ -35,7 +35,7 @@ class SluggableBehavior extends Behavior {
 		return $query;
 	}
 
-	public function slugify(Table $table, $value) {
+	public function slugify($value) {
 		return Inflector::slug($value);
 	}
 

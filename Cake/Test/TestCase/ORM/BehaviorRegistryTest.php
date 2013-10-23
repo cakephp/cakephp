@@ -55,7 +55,7 @@ class BehaviorRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoad() {
-		$settings = ['replacement' => '-'];
+		$settings = ['alias' => 'Sluggable', 'replacement' => '-'];
 		$result = $this->Behaviors->load('Sluggable', $settings);
 		$this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result);
 		$this->assertEquals($settings, $result->settings);
@@ -114,7 +114,7 @@ class BehaviorRegistryTest extends TestCase {
  * Test load() duplicate method error
  *
  * @expectedException Cake\Error\Exception
- * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate method "dupe"
+ * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate method "slugify"
  * @return void
  */
 	public function testLoadDuplicateMethodError() {
@@ -140,7 +140,10 @@ class BehaviorRegistryTest extends TestCase {
  */
 	public function testCall() {
 		$this->Behaviors->load('Sluggable');
-		$result = $this->Behaviors->call('slugify', 'some value');
+		$result = $this->Behaviors->call('nope');
+		$this->assertFalse($result);
+
+		$result = $this->Behaviors->call('slugify', ['some value']);
 		$this->assertEquals('some_value', $result);
 	}
 

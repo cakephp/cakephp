@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Core\App;
 use Cake\Error;
+use Cake\ORM\Behavior;
 use Cake\ORM\Table;
 use Cake\Utility\ObjectRegistry;
 
@@ -42,6 +43,13 @@ class BehaviorRegistry extends ObjectRegistry {
  * @var Cake\Event\EventManager
  */
 	protected $_eventManager;
+
+/**
+ * Method mappings.
+ *
+ * @var array
+ */
+	protected $_methodMap = [];
 
 /**
  * Constructor
@@ -88,14 +96,46 @@ class BehaviorRegistry extends ObjectRegistry {
  * Enabled behaviors will be registered with the event manager.
  *
  * @param string $class The classname that is missing.
+ * @param string $alias The alias of the object.
  * @param array $settings An array of settings to use for the behavior.
  * @return Component The constructed behavior class.
  */
-	protected function _create($class, $settings) {
+	protected function _create($class, $alias, $settings) {
 		$instance = new $class($this->_table, $settings);
 		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
 		if ($enable) {
 			$this->_eventManager->attach($instance);
+		}
+		$this->_mapMethods($instance, $class, $alias);
+		return $instance;
+	}
+
+/**
+ * Store the map of behavior methods and ensure there are no duplicates.
+ *
+ * Use the implementedEvents() method to exclude callback methods.
+ *
+ * @param Cake\ORM\Behavior $instance
+ * @return void
+ */
+	protected function _mapMethods(Behavior $instance, $class, $alias) {
+		$events = $instance->implementedEvents();
+		$methods = get_class_methods($instance);
+		foreach ($events as $e => $binding) {
+			if (is_array($binding) && isset($binding['callable']) && isset($binding['callable'])) {
+				$binding = $binding['callable'];
+			}
+			$index = array_search($binding, $methods);
+			unset($methods[$index]);
+		}
+
+		foreach ($methods as $method) {
+			if (isset($this->_methodMap[$method])) {
+				$message = '%s contains duplicate method "%s" which is already provided by %s';
+				$error = __d('cake_dev', $message, $class, $method, $this->_methodMap[$method]);
+				throw new Error\Exception($error);
+			}
+			$this->_methodMap[$method] = $alias;
 		}
 		return $instance;
 	}
@@ -110,17 +150,22 @@ class BehaviorRegistry extends ObjectRegistry {
  * @return boolean
  */
 	public function hasMethod($method) {
+		return isset($this->_methodMap[$method]);
 	}
 
 /**
  * Invoke a method on a behavior.
  *
  * @param string $method The method to invoke.
- * @param mixed $args The arguments you want to invoke the method with should
- *  be provided as the remaining arguments to call()
+ * @param array $args The arguments you want to invoke the method with.
  * @return mixed The return value depends on the underlying behavior method.
  */
-	public function call($method) {
+	public function call($method, array $args = []) {
+		if (!$this->hasMethod($method)) {
+			return false;
+		}
+		$alias = $this->_methodMap[$method];
+		return call_user_func_array([$this->_loaded[$alias], $method], $args);
 	}
 
 }
