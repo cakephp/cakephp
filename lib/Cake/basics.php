@@ -125,22 +125,22 @@ TEXT;
 if (!function_exists('sortByKey')) {
 
 /**
- * Sorts given $array by key $sortby.
+ * Sorts given $array by key $sortBy.
  *
  * @param array $array Array to sort
- * @param string $sortby Sort by this key
+ * @param string $sortBy Sort by this key
  * @param string $order Sort order asc/desc (ascending or descending).
  * @param integer $type Type of sorting to perform
  * @return mixed Sorted array
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#sortByKey
  */
-	function sortByKey(&$array, $sortby, $order = 'asc', $type = SORT_NUMERIC) {
+	function sortByKey(&$array, $sortBy, $order = 'asc', $type = SORT_NUMERIC) {
 		if (!is_array($array)) {
 			return null;
 		}
 
 		foreach ($array as $key => $val) {
-			$sa[$key] = $val[$sortby];
+			$sa[$key] = $val[$sortBy];
 		}
 
 		if ($order === 'asc') {
