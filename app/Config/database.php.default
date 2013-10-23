@@ -1,9 +1,5 @@
 <?php
 /**
- * This is core configuration file.
- *
- * Use it to configure core behaviour of CakePHP.
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -18,15 +14,18 @@
  * @package       app.Config
  * @since         CakePHP(tm) v 0.2.9
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
- *
+ */
+
+/**
  * Database configuration class.
+ *
  * You can specify multiple configurations for production, development and testing.
  *
  * datasource => The name of a supported datasource; valid options are as follows:
- *		Database/Mysql 		- MySQL 4 & 5,
- *		Database/Sqlite		- SQLite (PHP5 only),
- *		Database/Postgres	- PostgreSQL 7 and higher,
- *		Database/Sqlserver	- Microsoft SQL Server 2005 and higher
+ *  Database/Mysql - MySQL 4 & 5,
+ *  Database/Sqlite - SQLite (PHP5 only),
+ *  Database/Postgres - PostgreSQL 7 and higher,
+ *  Database/Sqlserver - Microsoft SQL Server 2005 and higher
  *
  * You can add custom database datasources (or override existing datasources) by adding the
  * appropriate file to app/Model/Datasource/Database. Datasources should be named 'MyDatasource.php',
@@ -43,7 +42,8 @@
  * on a per-table basis with the Model::$tablePrefix property.
  *
  * schema =>
- * For Postgres/Sqlserver specifies which schema you would like to use the tables in. Postgres defaults to 'public'. For Sqlserver, it defaults to empty and use
+ * For Postgres/Sqlserver specifies which schema you would like to use the tables in.
+ * Postgres defaults to 'public'. For Sqlserver, it defaults to empty and use
  * the connected user's default schema (typically 'dbo').
  *
  * encoding =>
