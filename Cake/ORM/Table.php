@@ -775,7 +775,7 @@ class Table {
 	}
 
 	public function save(Entity $entity, array $options = []) {
-		$options = new \ArrayObject($options);
+		$options = new \ArrayObject($options + ['atomic' => true]);
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 
@@ -790,21 +790,38 @@ class Table {
 		$schema = $this->schema();
 		$data = array_intersect_key($data, array_flip($schema->columns()));
 		$query = $this->_buildQuery();
-		$statement = $query->insert($this->table(), array_keys($data))
+
+		$connection = $this->connection();
+		if ($options['atomic']) {
+			$connection->begin();
+		}
+
+		try {
+			$statement = $query->insert($this->table(), array_keys($data))
 			->values($data)
 			->executeStatement();
 
-		$success = false;
-		if ($statement->rowCount() > 0) {
-			$primary = $this->primaryKey();
-			$id = $statement->lastInsertId($this->table(), $primary);
-			$entity->set($primary, $id);
-			$success = $entity;
+			$success = false;
+			if ($statement->rowCount() > 0) {
+				$primary = $this->primaryKey();
+				$id = $statement->lastInsertId($this->table(), $primary);
+				$entity->set($primary, $id);
+				$success = $entity;
+			}
+		} catch (\Exception $e) {
+			if ($options['atomic']) {
+				$connection->rollback();
+			}
+			throw $e;
 		}
 
 		if ($success) {
 			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 			$this->getEventManager()->dispatch($event);
+		}
+
+		if ($options['atomic']) {
+			$connection->commit();
 		}
 
 		return $success;

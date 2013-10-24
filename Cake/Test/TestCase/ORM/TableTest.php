@@ -1136,4 +1136,30 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($called);
 	}
 
+/**
+ * Tests that save is wrapped around a transaction
+ *
+ * @return void
+ */
+	public function testAtomicSave() {
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['begin', 'commit'],
+			[ConnectionManager::config('test')]
+		);
+		$connection->driver(ConnectionManager::get('test')->driver());
+		$table = $this->getMock('\Cake\ORM\Table', ['connection'], [['table' => 'users']]);
+		$table->expects($this->any())->method('connection')
+			->will($this->returnValue($connection));
+
+		$connection->expects($this->once())->method('begin');
+		$connection->expects($this->once())->method('commit');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$this->assertSame($data, $table->save($data));
+	}
+
 }
