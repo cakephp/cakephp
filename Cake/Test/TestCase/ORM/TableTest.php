@@ -1080,4 +1080,60 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($row);
 	}
 
+/**
+ * Asserts that afterSave callback is called on successful save
+ *
+ * @return void
+ */
+	public function testAfterSave() {
+		$table = Table::build('users');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+
+		$called = false;
+		$listener = function($e, $entity, $options) use ($data, &$called) {
+			$this->assertSame($data, $entity);
+			$called = true;
+		};
+		$table->getEventManager()->attach($listener, 'Model.afterSave');
+		$this->assertSame($data, $table->save($data));
+		$this->assertEquals($data->id, 5);
+		$this->assertTrue($called);
+	}
+
+/**
+ * Asserts that afterSave callback not is called on unsuccessful save
+ *
+ * @return void
+ */
+	public function testAfterSaveNotCalled() {
+		$table = $this->getMock('\Cake\ORM\Table', ['_buildQuery'], [['table' => 'users']]);
+		$query = $this->getMock('\Cake\ORM\Query', ['executeStatement'], [null, $table]);
+		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('executeStatement')
+			->will($this->returnValue($statement));
+
+		$statement->expects($this->once())->method('rowCount')->will($this->returnValue(0));
+
+		$called = false;
+		$listener = function($e, $entity, $options) use ($data, &$called) {
+			$called = true;
+		};
+		$table->getEventManager()->attach($listener, 'Model.afterSave');
+		$this->assertFalse($table->save($data));
+		$this->assertFalse($called);
+	}
+
 }

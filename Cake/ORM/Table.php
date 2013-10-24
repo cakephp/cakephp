@@ -794,13 +794,20 @@ class Table {
 			->values($data)
 			->executeStatement();
 
+		$success = false;
 		if ($statement->rowCount() > 0) {
 			$primary = $this->primaryKey();
 			$id = $statement->lastInsertId($this->table(), $primary);
 			$entity->set($primary, $id);
+			$success = $entity;
 		}
 
-		return $entity;
+		if ($success) {
+			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
+			$this->getEventManager()->dispatch($event);
+		}
+
+		return $success;
 	}
 
 /**
