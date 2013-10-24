@@ -665,7 +665,8 @@ class Model extends Object implements CakeEventListener {
  * Would create a model attached to the posts table on connection2. Dynamic model creation is useful
  * when you want a model object that contains no associations or attached behaviors.
  *
- * @param integer|string|array $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param boolean|integer|string|array $id Set this ID for this model on startup,
+ * can also be an array of options, see above.
  * @param string $table Name of database table to use.
  * @param string $ds DataSource connection name.
  */
@@ -904,7 +905,7 @@ class Model extends Object implements CakeEventListener {
  * Example: Add a new hasOne binding to the Profile model not
  * defined in the model source code:
  *
- * `$this->User->bindModel( array('hasOne' => array('Profile')) );`
+ * `$this->User->bindModel(array('hasOne' => array('Profile')));`
  *
  * Bindings that are not made permanent will be reset by the next Model::find() call on this
  * model.
@@ -953,7 +954,7 @@ class Model extends Object implements CakeEventListener {
  * Example: Turn off the associated Model Support request,
  * to temporarily lighten the User model:
  *
- * `$this->User->unbindModel( array('hasMany' => array('Supportrequest')) );`
+ * `$this->User->unbindModel(array('hasMany' => array('Supportrequest')));`
  *
  * unbound models that are not made permanent will reset with the next call to Model::find()
  *
@@ -1552,7 +1553,7 @@ class Model extends Object implements CakeEventListener {
 /**
  * This function is a convenient wrapper class to create(false) and, as the name suggests, clears the id, data, and validation errors.
  *
- * @return always boolean TRUE upon success
+ * @return boolean Always true upon success
  * @see Model::create()
  */
 	public function clear() {
@@ -2777,7 +2778,7 @@ class Model extends Object implements CakeEventListener {
  *
  * Used to perform find operations, where the first argument is type of find operation to perform
  * (all / first / count / neighbors / list / threaded),
- * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
+ * second parameter options for finding (indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order', 'callbacks')
  *
  * Eg:
@@ -3302,7 +3303,7 @@ class Model extends Object implements CakeEventListener {
  *
  * Additionally it populates the validationErrors property of the model with the same array.
  *
- * @param string $options An optional array of custom options to be made available in the beforeValidate callback
+ * @param array|string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return array Array of invalid fields and their error messages
  * @see Model::validates()
  */
