@@ -3669,25 +3669,29 @@ class Model extends Object implements CakeEventListener {
  *
  * @param string $type If null this deletes cached views if Cache.check is true
  *     Will be used to allow deleting query cache also
- * @return boolean true on delete
+ * @return mixed True on delete, null otherwise
  */
 	protected function _clearCache($type = null) {
 		if ($type !== null || Configure::read('Cache.check') !== true) {
 			return;
 		}
-		$assoc[] = strtolower(Inflector::pluralize($this->alias));
-		$assoc[] = Inflector::underscore(Inflector::pluralize($this->alias));
+		$pluralized = Inflector::pluralize($this->alias);
+		$assoc = array(
+			strtolower($pluralized),
+			Inflector::underscore($pluralized)
+		);
 		foreach ($this->_associations as $association) {
-			foreach ($this->$association as $className) {
-				$pluralized = strtolower(Inflector::pluralize($className['className']));
-				if (!in_array($pluralized, $assoc)) {
-					$assoc[] = $pluralized;
-					$assoc[] = Inflector::underscore(Inflector::pluralize($className['className']));
+			foreach ($this->{$association} as $className) {
+				$pluralizedAssociation = Inflector::pluralize($className['className']);
+				if (!in_array(strtolower($pluralizedAssociation), $assoc)) {
+					$assoc = array_merge($assoc, array(
+						strtolower($pluralizedAssociation),
+						Inflector::underscore($pluralizedAssociation)
+					));
 				}
 			}
 		}
-		$assoc = array_unique($assoc);
-		clearCache($assoc);
+		clearCache(array_unique($assoc));
 		return true;
 	}
 
