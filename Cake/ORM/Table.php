@@ -783,6 +783,19 @@ class Table {
 			return $event->result;
 		}
 
+		if ($options['atomic']) {
+			$connection = $this->connection();
+			$success = $connection->transactional(function() use ($entity, $options) {
+				return $this->_processSave($entity, $options);
+			});
+		} else {
+			$success = $this->_processSave($entity, $data, $options);
+		}
+
+		return $success;
+	}
+
+	protected function _processSave($entity, $options) {
 		$data = empty($options['fieldList']) ?
 			$entity->toArray() :
 			$entity->extract($options['fieldList']);
@@ -790,38 +803,21 @@ class Table {
 		$schema = $this->schema();
 		$data = array_intersect_key($data, array_flip($schema->columns()));
 		$query = $this->_buildQuery();
-
-		$connection = $this->connection();
-		if ($options['atomic']) {
-			$connection->begin();
-		}
-
-		try {
-			$statement = $query->insert($this->table(), array_keys($data))
+		$statement = $query->insert($this->table(), array_keys($data))
 			->values($data)
 			->executeStatement();
 
-			$success = false;
-			if ($statement->rowCount() > 0) {
-				$primary = $this->primaryKey();
-				$id = $statement->lastInsertId($this->table(), $primary);
-				$entity->set($primary, $id);
-				$success = $entity;
-			}
-		} catch (\Exception $e) {
-			if ($options['atomic']) {
-				$connection->rollback();
-			}
-			throw $e;
+		$success = false;
+		if ($statement->rowCount() > 0) {
+			$primary = $this->primaryKey();
+			$id = $statement->lastInsertId($this->table(), $primary);
+			$entity->set($primary, $id);
+			$success = $entity;
 		}
 
 		if ($success) {
 			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 			$this->getEventManager()->dispatch($event);
-		}
-
-		if ($options['atomic']) {
-			$connection->commit();
 		}
 
 		return $success;
