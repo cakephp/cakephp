@@ -447,4 +447,49 @@ class EntityTest extends TestCase {
 		$expected = ['id' => 1, 'crazyness' => null];
 		$this->assertEquals($expected, $entity->extract(['id', 'crazyness']));
 	}
+
+/**
+ * Tests dirty() method on a newly created object
+ *
+ * @return void
+ */
+	public function testDirty() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$this->assertTrue($entity->dirty('id'));
+		$this->assertTrue($entity->dirty('title'));
+		$this->assertTrue($entity->dirty('author_id'));
+
+		$entity->dirty('id', false);
+		$this->assertFalse($entity->dirty('id'));
+		$this->assertTrue($entity->dirty('title'));
+		$entity->dirty('title', false);
+		$this->assertFalse($entity->dirty('title'));
+	}
+
+/**
+ * Tests dirty() when altering properties values and adding new ones
+ *
+ * @return void
+ */
+	public function testDirtyChangingProperties() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'Foo',
+		]);
+		$entity->dirty('title', false);
+		$this->assertFalse($entity->dirty('title'));
+		$entity->set('title', 'Foo');
+		$this->assertFalse($entity->dirty('title'));
+		$entity->set('title', 'Foo');
+		$this->assertFalse($entity->dirty('title'));
+		$entity->set('title', 'Something Else');
+		$this->assertTrue($entity->dirty('title'));
+
+		$entity->set('something', 'else');
+		$this->assertTrue($entity->dirty('something'));
+	}
+
 }

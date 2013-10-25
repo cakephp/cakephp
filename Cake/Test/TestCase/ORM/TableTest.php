@@ -1235,7 +1235,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
-		$statement->expects($this->once())->method('rowCount')->will($this->returnValue(0));
+		$statement->expects($this->once())->method('rowCount')
+			->will($this->returnValue(0));
 		$connection->expects($this->once())->method('begin');
 		$connection->expects($this->once())->method('rollback');
 		$query->expects($this->once())->method('executeStatement')

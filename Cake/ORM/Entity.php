@@ -40,6 +40,14 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected $_className;
 
 /**
+ * Holds a list of the properties that where modified after that where added or
+ * modified after this object was originally created.
+ *
+ * @var array
+ */
+	protected $_dirty = [];
+
+/**
  * Holds a cached list of methods that exist in the instanced class
  *
  * @var array
@@ -151,12 +159,21 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			$useSetters = $value;
 		}
 
-		if (!$useSetters) {
-			$this->_properties = $property + $this->_properties;
-			return $this;
-		}
-
 		foreach ($property as $p => $value) {
+			$markDirty = true;
+			if (isset($this->_properties[$p])) {
+				$markDirty = $value !== $this->_properties[$p];
+			}
+
+			if ($markDirty) {
+				$this->dirty($p, true);
+			}
+
+			if (!$useSetters) {
+				$this->_properties[$p] = $value;
+				continue;
+			}
+
 			$setter = 'set' . Inflector::camelize($p);
 			if ($this->_methodExists($setter)) {
 				$value = $this->{$setter}($value);
@@ -318,6 +335,31 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			$result[$property] = $this->get($property);
 		}
 		return $result;
+	}
+
+/**
+ * Sets the dirty status of a single property. If called with no second
+ * argument, it will return whether the property was modified or not
+ * after the object creation.
+ *
+ * @param string $property the field to set or check status for
+ * @param null|boolean true means the property was changed, false means
+ * it was not changed and null will make the function return current state
+ * for that property
+ * @return boolean whether the property was changed or not
+ */
+	public function dirty($property, $isDirty = null) {
+		if ($isDirty === null) {
+			return isset($this->_dirty[$property]);
+		}
+
+		if (!$isDirty) {
+			unset($this->_dirty[$property]);
+			return false;
+		}
+		
+		$this->_dirty[$property] = true;
+		return true;
 	}
 
 }
