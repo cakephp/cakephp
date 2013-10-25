@@ -26,7 +26,6 @@ use Cake\Database\ConnectionManager;
 use Cake\Error;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
 /**
@@ -41,13 +40,6 @@ class FixtureManager {
  * @var boolean
  */
 	protected $_initialized = false;
-
-/**
- * Default datasource to use
- *
- * @var DataSource
- */
-	protected $_db = null;
 
 /**
  * Holds the fixture classes that where instantiated
@@ -70,15 +62,11 @@ class FixtureManager {
  * @return void
  */
 	public function fixturize($test) {
-		if (!$this->_initialized) {
-			ClassRegistry::config(array('ds' => 'test', 'testing' => true));
-		}
+		$this->_initDb();
 		if (empty($test->fixtures) || !empty($this->_processed[get_class($test)])) {
-			$test->db = $this->_db;
 			return;
 		}
-		$this->_initDb();
-		$test->db = $this->_db;
+		$test->db = ConnectionManager::get('test', false);
 		if (!is_array($test->fixtures)) {
 			$test->fixtures = array_map('trim', explode(',', $test->fixtures));
 		}
@@ -90,6 +78,35 @@ class FixtureManager {
 	}
 
 /**
+ * Add aliaes for all non test prefixed connections.
+ *
+ * This allows models to use the test connections without 
+ * a pile of configuration work.
+ *
+ * @return void
+ */
+	protected function _aliasConnections() {
+		$connections = ConnectionManager::configured();
+		ConnectionManager::alias('test', 'default');
+		$map = [
+			'test' => 'default',
+		];
+		foreach ($connections as $connection) {
+			if (isset($map[$connection])) {
+				continue;
+			}
+			if (strpos($connection, 'test_') === 0) {
+				$map[$connection] = substr($connection, 5);
+			} else {
+				$map['test_' . $connection] = $connection;
+			}
+		}
+		foreach ($map as $alias => $connection) {
+			ConnectionManager::alias($alias, $connection);
+		}
+	}
+
+/**
  * Initializes this class with a DataSource object to use as default for all fixtures
  *
  * @return void
@@ -98,9 +115,7 @@ class FixtureManager {
 		if ($this->_initialized) {
 			return;
 		}
-		$db = ConnectionManager::getDataSource('test');
-		$db->cacheSources = false;
-		$this->_db = $db;
+		$this->_aliasConnections();
 		$this->_initialized = true;
 	}
 
@@ -153,9 +168,11 @@ class FixtureManager {
  */
 	protected function _setupTable(TestFixture $fixture, Connection $db = null, $drop = true) {
 		if (!$db) {
-			$db = $this->_db;
 			if (!empty($fixture->connection)) {
-				$db = ConnectionManager::getDataSource($fixture->connection);
+				$db = ConnectionManager::get($fixture->connection, false);
+			}
+			if (!$db) {
+				$db = ConnectionManager::get('test', false);
 			}
 		}
 		if (!empty($fixture->created) && in_array($db->configName(), $fixture->created)) {
@@ -203,7 +220,7 @@ class FixtureManager {
 		}
 		try {
 			foreach ($dbs as $db => $fixtures) {
-				$db = ConnectionManager::getDataSource($fixture->connection);
+				$db = ConnectionManager::get($fixture->connection, false);
 				$db->begin();
 				foreach ($fixtures as $fixture) {
 					$this->_setupTable($fixture, $db, $test->dropTables);

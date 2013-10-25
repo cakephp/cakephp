@@ -33,7 +33,10 @@ class ResultSetTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
-		$this->table = new Table(['table' => 'articles']);
+		$this->table = new Table([
+			'table' => 'articles',
+			'connection' => $this->connection,
+		]);
 
 		$this->fixtureData = [
 			['id' => 1, 'author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'],

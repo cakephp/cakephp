@@ -18,11 +18,12 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Association;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 
 /**
  * A Test double used to assert that default tables are created
  *
- **/
+ */
 class TestTable extends Table {
 
 }
@@ -63,7 +64,7 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
+		TableRegistry::clear();
 	}
 
 /**

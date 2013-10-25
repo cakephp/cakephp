@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 
 /**
  * Tests HasMany class
@@ -33,7 +34,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->author = Table::build('Author', [
+		$this->author = TableRegistry::get('Author', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'username' => ['type' => 'string'],
@@ -56,7 +57,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
+		TableRegistry::clear();
 	}
 
 /**

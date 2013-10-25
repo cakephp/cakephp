@@ -594,7 +594,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @return Model
  */
 	public function getMockForModel($model, $methods = array(), $config = array()) {
-		$config += ClassRegistry::config('Model');
+		$config += (array)ClassRegistry::config('Model');
 
 		$modelClass = App::className($model, 'Model');
 		list(, $name) = namespaceSplit($modelClass);

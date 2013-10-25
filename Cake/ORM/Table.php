@@ -28,39 +28,35 @@ use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 
 /**
- * Represents a single database table. Exposes methods for retrieving data out
- * of it and manages the associations it has to other tables. Multiple
- * instances of this class can be created for the same database table with
- * different aliases, this allows you to address your database structure in a
- * richer and more expressive way.
+ * Represents a single database table.
+ *
+ * Exposes methods for retrieving data out of it, and manages the associations
+ * this table has to other tables. Multiple instances of this class can be created
+ * for the same database table with different aliases, this allows you to address 
+ * your database structure in a richer and more expressive way.
+ *
+ * ### Retrieving data
+ *
+ * The primary way to retreive data is using Table::find(). See that method
+ * for more information.
+ *
+ * ### Bulk updates/deletes
+ *
+ * You can use Table::updateAll() and Table::deleteAll() to do bulk updates/deletes.
+ * You should be aware that events will *not* be fired for bulk updates/deletes.
  *
  * ### Callbacks/events
  *
  * Table objects provide a few callbacks/events you can hook into to augment/replace
- * find operations. Each event uses the standard Event subsystem in CakePHP
+ * find operations. Each event uses the standard event subsystem in CakePHP
  *
  * - beforeFind($event, $query, $options) - Fired before each find operation. By stopping
  *   the event and supplying a return value you can bypass the find operation entirely. Any
  *   changes done to the $query instance will be retained for the rest of the find.
  *
+ * @see Cake\Event\EventManager for reference on the events system.
  */
 class Table {
-
-/**
- * A list of all table instances that has been built using the factory
- * method. Instances are indexed by alias
- *
- * @var array
- */
-	protected static $_instances = [];
-
-/**
- * A collection of default options to apply to each table built with the
- * factory method. Indexed by table name
- *
- * @var array
- */
-	protected static $_tablesMap = [];
 
 /**
  * Name of the table as it can be found in the database
@@ -150,16 +146,9 @@ class Table {
 		if (!empty($config['table'])) {
 			$this->table($config['table']);
 		}
-
 		if (!empty($config['alias'])) {
 			$this->alias($config['alias']);
 		}
-
-		$table = $this->table();
-		if (isset(static::$_tablesMap[$table])) {
-			$config = array_merge(static::$_tablesMap[$table], $config);
-		}
-
 		if (!empty($config['connection'])) {
 			$this->connection($config['connection']);
 		}
@@ -178,10 +167,23 @@ class Table {
 	}
 
 /**
- * This method is meant to be overridden by subclasses so that any initial setting
- * up for associations, validation rules or any custom logic can be done.
+ * Get the default connection name.
  *
- * ### Example:
+ * This method is used to get the fallback connection name if an
+ * instance is created through the TableRegistry without a connection.
+ *
+ * @return string
+ * @see Cake\ORM\TableRegistry::get()
+ */
+	public static function defaultConnectionName() {
+		return 'default';
+	}
+
+/**
+ * Initialize a table instance. Called after the constructor.
+ *
+ * You can use this method to define associations, attach behaviors
+ * define validation and do any other initialization logic you need.
  *
  * {{{
  *	public function initialize(array $config) {
@@ -195,99 +197,6 @@ class Table {
  * @return void
  */
 	public function initialize(array $config) {
-	}
-
-/**
- * A factory method to build a new Table instance. Once created, the instance
- * will be registered so it can be re-used if tried to build again for the same
- * alias.
- *
- * The options that can be passed are the same as in `__construct()`, but the
- * key `className` is also recognized.
- *
- * When $options contains `className` this method will try to instantiate an
- * object of that class instead of this default Table class.
- *
- * If no `table` option is passed, the table name will be the tableized version
- * of the provided $alias.
- *
- * @param string $alias the alias for the table
- * @param array $options a list of options as accepted by `__construct()`
- * @return Table
- */
-	public static function build($alias, array $options = []) {
-		if (isset(static::$_instances[$alias])) {
-			return static::$_instances[$alias];
-		}
-
-		list($plugin, $baseClass) = pluginSplit($alias);
-		$options = ['alias' => $baseClass] + $options;
-
-		if (empty($options['className'])) {
-			$options['className'] = get_called_class();
-		}
-
-		if ($options['className'] === __CLASS__ || $plugin) {
-			$class = $options['className'];
-			$classified = Inflector::classify($alias);
-			$class = App::classname($classified, 'Model\Repository', 'Table') ?: $class;
-			$options['className'] = $class;
-		}
-
-		return static::$_instances[$alias] = new $options['className']($options);
-	}
-
-/**
- * Returns the Table object associated to the provided alias, if any.
- * If a Table is passed as second parameter it will be associated to the
- * passed $alias even if another object was associated before.
- *
- * @param string $alias
- * @param Table $object
- * @return Table
- */
-	public static function instance($alias, self $object = null) {
-		if ($object === null) {
-			return isset(static::$_instances[$alias]) ? static::$_instances[$alias] : null;
-		}
-		return static::$_instances[$alias] = $object;
-	}
-
-/**
- * Stores a list of options to be used when instantiating an object for the table
- * with the same name as $table. The options that can be stored are those that
- * are recognized by `build()`
- *
- * If second argument is omitted, it will return the current settings for $table
- *
- * If no arguments are passed it will return the full configuration array for
- * all tables
- *
- * @param string $table name of the table
- * @param array $options list of options for the table
- * @return array
- */
-	public static function config($table = null, array $options = null) {
-		if ($table === null) {
-			return static::$_tablesMap;
-		}
-		if (!is_string($table)) {
-			return static::$_tablesMap = $table;
-		}
-		if ($options === null) {
-			return isset(static::$_tablesMap[$table]) ? static::$_tablesMap[$table] : [];
-		}
-		return static::$_tablesMap[$table] = $options;
-	}
-
-/**
- * Clears the registry of instantiated tables and default configurations
- *
- * @return void
- */
-	public static function clearRegistry() {
-		static::$_instances = [];
-		static::$_tablesMap = [];
 	}
 
 /**
@@ -368,7 +277,7 @@ class Table {
 			if ($this->_schema === null) {
 				$this->_schema = $this->connection()
 					->schemaCollection()
-					->describe($this->_table);
+					->describe($this->table());
 			}
 			return $this->_schema;
 		}

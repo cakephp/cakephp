@@ -21,7 +21,6 @@ use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\Table;
 use Cake\Error;
 use Cake\Log\Log;
-use Cake\ORM\Table as Repository;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -274,8 +273,6 @@ class TestFixture {
  * @return boolean on success or if there are no records to insert, or false on failure
  */
 	public function insert(Connection $db) {
-		Repository::config($this->table, ['connection' => $db]);
-
 		if (isset($this->records) && !empty($this->records)) {
 			list($fields, $values, $types) = $this->_getRecords();
 			$query = $db->newQuery()

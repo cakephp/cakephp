@@ -19,6 +19,7 @@ namespace Cake\ORM\Association;
 use Cake\ORM\Association;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
 /**
@@ -93,8 +94,7 @@ class BelongsToMany extends Association {
 			if (empty($this->_pivotTable)) {
 				$tableName = $this->_joinTableName();
 				$tableAlias = Inflector::classify(Inflector::singularize($tableName));
-				$table = Table::instance($tableAlias);
-				$table = $table ?: Table::build($tableAlias, [
+				$table = TableRegistry::get($tableAlias, [
 					'table' => $tableName
 				]);
 			} else {
@@ -103,7 +103,7 @@ class BelongsToMany extends Association {
 		}
 
 		if (is_string($table)) {
-			$table = Table::build($table);
+			$table = TableRegistry::get($table);
 		}
 
 		if (!$table->association($sAlias)) {

@@ -46,6 +46,13 @@ class ConnectionManager {
 	protected static $_config = [];
 
 /**
+ * A map of connection aliases.
+ *
+ * @var array
+ */
+	protected static $_aliasMap = [];
+
+/**
  * The ConnectionRegistry used by the manager.
  *
  * @var Cake\Database\ConnectionRegistry
@@ -72,16 +79,61 @@ class ConnectionManager {
 	}
 
 /**
+ * Set one or more connection aliases.
+ *
+ * Connection aliases allow you to rename active connections without overwriting
+ * the aliased connection. This is most useful in the testsuite for replacing
+ * connections with their test variant.
+ *
+ * Defined aliases will take precedence over normal connection names. For example,
+ * if you alias 'default' to 'test', fetching 'default' will always return the 'test'
+ * connection as long as the alias is defined.
+ *
+ * You can remove aliases with ConnectionManager::dropAlias().
+ *
+ * @param string $from The connection to add an alias to.
+ * @param string $to The alias to create. $from should return when loaded with get().
+ * @return void
+ * @throws Cake\Error\MissingDataSourceConfigException When aliasing a connection that does not exist.
+ */
+	public static function alias($from, $to) {
+		if (empty(static::$_config[$to]) && empty(static::$_config[$from])) {
+			throw new Error\MissingDatasourceConfigException(
+				__d('cake_dev', 'Cannot create alias of "%s" as it does not exist.', $from)
+			);
+		}
+		static::$_aliasMap[$to] = $from;
+	}
+
+/**
+ * Drop an alias.
+ *
+ * Removes an alias from ConnectionManager. Fetching the aliased
+ * connection may fail if there is no other connection with that name.
+ *
+ * @param string $name The connection name to remove aliases for.
+ * @return void
+ */
+	public static function dropAlias($name) {
+		unset(static::$_aliasMap[$name]);
+	}
+
+/**
  * Get a connection.
  *
  * If the connection has not been constructed an instance will be added
- * to the registry.
+ * to the registry. This method will use any aliases that have been
+ * defined. If you want the original unaliased connections use getOriginal()
  *
  * @param string $name The connection name.
+ * @param boolean $useAliases Set to false to not use aliased connections.
  * @return Connection A connection object.
  * @throws Cake\Error\MissingDatasourceConfigException When config data is missing.
  */
-	public static function get($name) {
+	public static function get($name, $useAliases = true) {
+		if ($useAliases && isset(static::$_aliasMap[$name])) {
+			$name = static::$_aliasMap[$name];
+		}
 		if (empty(static::$_config[$name])) {
 			throw new Error\MissingDatasourceConfigException(['name' => $name]);
 		}
