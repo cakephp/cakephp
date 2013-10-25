@@ -1163,7 +1163,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that save is wrapped around a transaction
+ * Tests that save will rollback the transaction in the case of an exception
  *
  * @expectedException \PDOException
  * @return void
@@ -1196,6 +1196,50 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$connection->expects($this->once())->method('rollback');
 		$query->expects($this->once())->method('executeStatement')
 			->will($this->throwException(new \PDOException));
+
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table->save($data);
+	}
+
+/**
+ * Tests that save will rollback the transaction in the case of an exception
+ *
+ * @return void
+ */
+	public function testAtomicSaveRollbackOnFailure() {
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['begin', 'rollback'],
+			[ConnectionManager::config('test')]
+		);
+		$connection->driver(ConnectionManager::get('test')->driver());
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery', 'connection'],
+			[['table' => 'users']]
+		);
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['executeStatement', 'addDefaultTypes'],
+			[null, $table]
+		);
+
+		$table->expects($this->any())->method('connection')
+			->will($this->returnValue($connection));
+
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+
+		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+		$statement->expects($this->once())->method('rowCount')->will($this->returnValue(0));
+		$connection->expects($this->once())->method('begin');
+		$connection->expects($this->once())->method('rollback');
+		$query->expects($this->once())->method('executeStatement')
+			->will($this->returnValue($statement));
 
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
