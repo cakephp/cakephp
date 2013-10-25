@@ -273,7 +273,9 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 			$results[$alias] = $this->_castValues($instance->target(), $results[$alias]);
 
 			if ($this->_hydrate && $assoc['canBeJoined']) {
-				$results[$alias] = new $assoc['entityClass']($results[$alias], false);
+				$entity = new $assoc['entityClass']($results[$alias], false);
+				$entity->clean();
+				$results[$alias] = $entity;
 			}
 			$results = $instance->transformRow($results);
 		}
@@ -281,6 +283,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 		$results = $results[$defaultAlias];
 		if ($this->_hydrate && !($results instanceof Entity)) {
 			$results = new $this->_entityClass($results, false);
+			$results->clean();
 		}
 		return $results;
 	}
