@@ -888,6 +888,63 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test adding a behavior to a table.
+ *
+ * @return void
+ */
+	public function testAddBehavior() {
+		$mock = $this->getMock('Cake\ORM\BehaviorRegistry', [], [], '', false);
+		$mock->expects($this->once())
+			->method('load')
+			->with('Sluggable');
+
+		$table = new Table([
+			'table' => 'articles',
+			'behaviors' => $mock
+		]);
+		$table->addBehavior('Sluggable');
+	}
+
+/**
+ * Ensure exceptions are raised on missing behaviors.
+ *
+ * @expectedException Cake\Error\MissingBehaviorException
+ */
+	public function testAddBehaviorMissing() {
+		$table = TableRegistry::get('article');
+		$this->assertNull($table->addBehavior('NopeNotThere'));
+	}
+
+/**
+ * Test mixin methods from behaviors.
+ *
+ * @return void
+ */
+	public function testCallBehaviorMethod() {
+		$table = TableRegistry::get('article');
+		$table->addBehavior('Sluggable');
+		$this->assertEquals('some_value', $table->slugify('some value'));
+	}
+
+/**
+ * Test finder methods from behaviors.
+ *
+ * @return void
+ */
+	public function testCallBehaviorFinder() {
+		$table = TableRegistry::get('article');
+		$table->addBehavior('Sluggable');
+
+		$query = $table->noSlug();
+		$this->assertInstanceOf('Cake\ORM\Query', $query);
+		$this->assertNotEmpty($query->clause('where'));
+
+		$query = $table->find('noSlug');
+		$this->assertInstanceOf('Cake\ORM\Query', $query);
+		$this->assertNotEmpty($query->clause('where'));
+	}
+
+/**
  * Tests that it is possible to insert a new row using the save method
  *
  * @return void

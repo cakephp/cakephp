@@ -23,6 +23,7 @@ use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
+use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 
@@ -31,7 +32,7 @@ use Cake\Utility\Inflector;
  *
  * Exposes methods for retrieving data out of it, and manages the associations
  * this table has to other tables. Multiple instances of this class can be created
- * for the same database table with different aliases, this allows you to address 
+ * for the same database table with different aliases, this allows you to address
  * your database structure in a richer and more expressive way.
  *
  * ### Retrieving data
@@ -109,13 +110,20 @@ class Table {
 	protected $_associations = [];
 
 /**
- * EventManager for this model.
+ * EventManager for this table.
  *
  * All model/behavior callbacks will be dispatched on this manager.
  *
  * @var Cake\Event\EventManager
  */
 	protected $_eventManager;
+
+/**
+ * BehaviorRegistry for this table
+ *
+ * @var Cake\ORM\BehaviorRegistry
+ */
+	protected $_behaviors;
 
 /**
  * The name of the class that represent a single row for this table
@@ -137,6 +145,7 @@ class Table {
  * - schema: A \Cake\Database\Schema\Table object or an array that can be
  *   passed to it.
  * - eventManager: An instance of an event manager to use for internal events
+ * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
  *
  * @param array config Lsit of options for this table
  * @return void
@@ -157,11 +166,15 @@ class Table {
 		if (!empty($config['entityClass'])) {
 			$this->entityClass($config['entityClass']);
 		}
-		$eventManager = null;
+		$eventManager = $behaviors = null;
 		if (!empty($config['eventManager'])) {
 			$eventManager = $config['eventManager'];
 		}
+		if (!empty($config['behaviors'])) {
+			$behaviors = $config['behaviors'];
+		}
 		$this->_eventManager = $eventManager ?: new EventManager();
+		$this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
 		$this->initialize($config);
 	}
 
@@ -360,6 +373,31 @@ class Table {
 	}
 
 /**
+ * Add a behavior.
+ *
+ * Adds a behavior to this table's behavior collection. Behaviors
+ * provide an easy way to create horizontally re-usable features
+ * that can provide trait like functionality, and allow for events
+ * to be listened to.
+ *
+ * Example:
+ *
+ * Load a behavior, with some settings.
+ *
+ * {{{
+ * $this->addBehavior('Tree', ['parent' => 'parentId']);
+ * }}}
+ *
+ * @param string $name The name of the behavior. Can be a short class reference.
+ * @param array $options The options for the behavior to use.
+ * @return null
+ * @see Cake\ORM\Behavior
+ */
+	public function addBehavior($name, $options = []) {
+		$this->_behaviors->load($name, $options);
+	}
+
+/**
  * Returns a association objected configured for the specified alias if any
  *
  * @param string $name the alias used for the association
@@ -522,7 +560,7 @@ class Table {
 	public function find($type, $options = []) {
 		$query = $this->_buildQuery();
 		$query->select()->applyOptions($options);
-		return $this->{'find' . ucfirst($type)}($query, $options);
+		return $this->callFinder($type, $query, $options);
 	}
 
 /**
@@ -709,21 +747,36 @@ class Table {
  * @return \Cake\ORM\Query
  * @throws \BadMethodCallException
  */
-	public function callFinder($type, Query $query = null, $options = []) {
-		if (!method_exists($this, 'find' . ucfirst($type))) {
+	public function callFinder($type, Query $query, $options = []) {
+		$finder = 'find' . ucfirst($type);
+		$behaviorFinder = ($this->_behaviors && $this->_behaviors->hasFinder($finder));
+		$missingMethod = (!method_exists($this, $finder) && !$behaviorFinder);
+		if ($missingMethod) {
 			throw new \BadMethodCallException(
-				__d('cake_dev', 'Unknown table method %s', $type)
+				__d('cake_dev', 'Unknown finder method "%s"', $finder)
 			);
 		}
-		if ($query === null) {
-			return $this->find($type, $options);
+		if ($behaviorFinder) {
+			return $this->_behaviors->call($finder, [$query, $options]);
 		}
-		return $this->{'find' . ucfirst($type)}($query, $options);
+		return $this->{$finder}($query, $options);
 	}
 
 /**
- * Magic method to be able to call scoped finders without the
- * find prefix
+ * Magic method to be able to call scoped finders & behaviors
+ * without the find prefix.
+ *
+ * ## Finder delegation
+ *
+ * You can use this feature to invoke finder methods, without
+ * adding the 'find' prefix or preparing a query ahead of time.
+ * For example, if your Table provided a `findRecent` finder, you
+ * could call `$table->recent()` instead.
+ *
+ * ## Behavior delegation
+ *
+ * If your Table uses any behaviors you can call them as if
+ * they were on the table object.
  *
  * @param string $method name of the method to be invoked
  * @param array $args List of arguments passed to the function
@@ -731,11 +784,18 @@ class Table {
  * @throws \BadMethodCallException
  */
 	public function __call($method, $args) {
+		if ($this->_behaviors && $this->_behaviors->hasMethod($method)) {
+			return $this->_behaviors->call($method, $args);
+		}
+
 		$query = null;
 		if (isset($args[0]) && $args[0] instanceof Query) {
 			$query = array_shift($args);
 		}
 		$options = array_shift($args) ?: [];
+		if ($query === null) {
+			return $this->find($method, $options);
+		}
 		return $this->callFinder($method, $query, $options);
 	}
 
