@@ -362,4 +362,15 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		return true;
 	}
 
+/**
+ * Sets the entire entity as clean, which means that it will appear as
+ * no properties being modified or added at all. This is an useful call
+ * for an initial object hydration
+ *
+ * @return void
+ */
+	public function clean() {
+		$this->_dirty = [];
+	}
+
 }

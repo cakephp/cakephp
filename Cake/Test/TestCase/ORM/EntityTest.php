@@ -492,4 +492,24 @@ class EntityTest extends TestCase {
 		$this->assertTrue($entity->dirty('something'));
 	}
 
+/**
+ * Tests the clean method
+ *
+ * @return void
+ */
+	public function testClean() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$this->assertTrue($entity->dirty('id'));
+		$this->assertTrue($entity->dirty('title'));
+		$this->assertTrue($entity->dirty('author_id'));
+
+		$entity->clean();
+		$this->assertFalse($entity->dirty('id'));
+		$this->assertFalse($entity->dirty('title'));
+		$this->assertFalse($entity->dirty('author_id'));
+	}
 }
