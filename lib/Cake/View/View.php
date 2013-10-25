@@ -1182,7 +1182,7 @@ class View extends Object {
  */
 	protected function _renderElement($file, $data, $options) {
 		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file)));
+			$this->getEventManager()->dispatch(new CakeEvent('View.beforeRender', $this, array($file, $data)));
 		}
 
 		$current = $this->_current;
@@ -1195,7 +1195,7 @@ class View extends Object {
 		$this->_current = $current;
 
 		if ($options['callbacks']) {
-			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element)));
+			$this->getEventManager()->dispatch(new CakeEvent('View.afterRender', $this, array($file, $element, $data)));
 		}
 		if (isset($options['cache'])) {
 			Cache::write($this->elementCacheSettings['key'], $element, $this->elementCacheSettings['config']);

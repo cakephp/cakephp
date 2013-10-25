@@ -713,12 +713,23 @@ class ViewTest extends CakeTestCase {
 		$this->getMock('Helper', array(), array($this->View), 'ElementCallbackMockHtmlHelper');
 		$this->View->helpers = array('ElementCallbackMockHtml');
 		$this->View->loadHelpers();
+		$elementParameters = array('parameter1', 'parameter2');
 
-		$this->View->ElementCallbackMockHtml->expects($this->at(0))->method('beforeRender');
-		$this->View->ElementCallbackMockHtml->expects($this->at(1))->method('afterRender');
+		$this->View->ElementCallbackMockHtml
+			->expects($this->once())
+			->method('beforeRender')
+			->with($this->stringContains('test_element'),
+				$this->equalTo($elementParameters)
+			);
+		$this->View->ElementCallbackMockHtml
+			->expects($this->once())
+			->method('afterRender')
+			->with($this->stringContains('test_element'),
+				$this->anything(),
+				$this->equalTo($elementParameters)
+			);
 
-		$this->View->element('test_element', array(), array('callbacks' => true));
-		$this->mockObjects[] = $this->View->ElementCallbackMockHtml;
+		$this->View->element('test_element', $elementParameters, array('callbacks' => true));
 	}
 
 /**
