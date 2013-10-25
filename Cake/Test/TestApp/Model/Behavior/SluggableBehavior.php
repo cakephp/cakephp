@@ -14,6 +14,7 @@
  */
 namespace TestApp\Model\Behavior;
 
+use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
@@ -25,7 +26,7 @@ class SluggableBehavior extends Behavior {
 		$this->settings = $options;
 	}
 
-	public function beforeFind(Query $query, $options = []) {
+	public function beforeFind(Event $event, Query $query, $options = []) {
 		$query->where(['slug' => 'test']);
 		return $query;
 	}

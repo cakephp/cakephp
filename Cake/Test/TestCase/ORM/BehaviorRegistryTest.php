@@ -131,6 +131,23 @@ class BehaviorRegistryTest extends TestCase {
 		$this->Behaviors->load('Sluggable');
 		$this->assertTrue($this->Behaviors->hasMethod('slugify'));
 		$this->assertFalse($this->Behaviors->hasMethod('nope'));
+		$this->assertFalse($this->Behaviors->hasMethod('beforeFind'));
+		$this->assertFalse($this->Behaviors->hasMethod('findNoSlug'));
+	}
+
+/**
+ * Test hasFinder() method.
+ *
+ * @return void
+ */
+	public function testHasFinder() {
+		$this->Behaviors->load('Sluggable');
+
+		$this->assertTrue($this->Behaviors->hasFinder('findNoSlug'));
+		$this->assertFalse($this->Behaviors->hasFinder('findnoslug'));
+		$this->assertFalse($this->Behaviors->hasFinder('findnoslug'));
+		$this->assertFalse($this->Behaviors->hasFinder('slugify'));
+		$this->assertFalse($this->Behaviors->hasFinder('nope'));
 	}
 
 /**
@@ -140,11 +157,23 @@ class BehaviorRegistryTest extends TestCase {
  */
 	public function testCall() {
 		$this->Behaviors->load('Sluggable');
-		$result = $this->Behaviors->call('nope');
-		$this->assertFalse($result);
-
 		$result = $this->Behaviors->call('slugify', ['some value']);
 		$this->assertEquals('some_value', $result);
+
+		$query = $this->getMock('Cake\ORM\Query', [], [null, null]);
+		$result = $this->Behaviors->call('findNoSlug', [$query]);
+		$this->assertEquals($query, $result);
+	}
+
+/**
+ * Test errors on unknown methods.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Cannot call "nope"
+ */
+	public function testCallError() {
+		$this->Behaviors->load('Sluggable');
+		$this->Behaviors->call('nope');
 	}
 
 }

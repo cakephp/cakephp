@@ -52,6 +52,13 @@ class BehaviorRegistry extends ObjectRegistry {
 	protected $_methodMap = [];
 
 /**
+ * Finder method mappings.
+ *
+ * @var array
+ */
+	protected $_finderMap = [];
+
+/**
  * Constructor
  *
  * @param Cake\ORM\Table $table
@@ -130,21 +137,26 @@ class BehaviorRegistry extends ObjectRegistry {
 		}
 
 		foreach ($methods as $method) {
-			if (isset($this->_methodMap[$method])) {
+			$isFinder = substr($method, 0, 4) === 'find';
+			if (($isFinder && isset($this->_finderMap[$method])) || isset($this->_methodMap[$method])) {
 				$message = '%s contains duplicate method "%s" which is already provided by %s';
 				$error = __d('cake_dev', $message, $class, $method, $this->_methodMap[$method]);
 				throw new Error\Exception($error);
 			}
-			$this->_methodMap[$method] = $alias;
+			if ($isFinder) {
+				$this->_finderMap[$method] = $alias;
+			} else {
+				$this->_methodMap[$method] = $alias;
+			}
 		}
 		return $instance;
 	}
 
 /**
- * Check if any of the loaded behaviors implement a method.
+ * Check if any loaded behavior implements a method.
  *
- * Will return true if any behavior provides a public method with
- * the chosen name.
+ * Will return true if any behavior provides a public non-finder method 
+ * with the chosen name.
  *
  * @param string $method The method to check for.
  * @return boolean
@@ -154,18 +166,36 @@ class BehaviorRegistry extends ObjectRegistry {
 	}
 
 /**
- * Invoke a method on a behavior.
+ * Check if any loaded behavior implements the named finder.
+ *
+ * Will return true if any behavior provides a public method with
+ * the chosen name.
+ *
+ * @param string $method The method to check for.
+ * @return boolean
+ */
+	public function hasFinder($method) {
+		return isset($this->_finderMap[$method]);
+	}
+
+/**
+ * Invoke a method or finder on a behavior.
  *
  * @param string $method The method to invoke.
  * @param array $args The arguments you want to invoke the method with.
  * @return mixed The return value depends on the underlying behavior method.
+ * @throw Cake\Error\Exception When the method is unknown.
  */
 	public function call($method, array $args = []) {
-		if (!$this->hasMethod($method)) {
-			return false;
+		if ($this->hasMethod($method)) {
+			$alias = $this->_methodMap[$method];
+			return call_user_func_array([$this->_loaded[$alias], $method], $args);
 		}
-		$alias = $this->_methodMap[$method];
-		return call_user_func_array([$this->_loaded[$alias], $method], $args);
+		if ($this->hasFinder($method)) {
+			$alias = $this->_finderMap[$method];
+			return call_user_func_array([$this->_loaded[$alias], $method], $args);
+		}
+		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behaviors.', $method));
 	}
 
 }
