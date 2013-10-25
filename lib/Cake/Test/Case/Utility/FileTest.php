@@ -396,7 +396,7 @@ class FileTest extends CakeTestCase {
 	public function testWrite() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
-		};
+		}
 		if (file_exists($tmpFile)) {
 			unlink($tmpFile);
 		}
@@ -426,7 +426,7 @@ class FileTest extends CakeTestCase {
 	public function testAppend() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
-		};
+		}
 		if (file_exists($tmpFile)) {
 			unlink($tmpFile);
 		}
