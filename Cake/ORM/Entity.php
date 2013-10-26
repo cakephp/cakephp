@@ -72,12 +72,29 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * ``$entity = new Entity(['id' => 1, 'name' => 'Andrew'])``
  *
  * @param array $properties hash of properties to set in this entity
- * @param boolean $useSetters whether use internal setters for properties or not
- * @return void
+ * @param array $options list of options to use when creating this entity
+ * the following list of options can be used:
+ *
+ * - useSetters: whether use internal setters for properties or not
+ * - markClean: whether to mark all properties as clean after setting them
+ * - markNew: whether this instance has not yet been persisted
  */
-	public function __construct(array $properties = [], $useSetters = true) {
+	public function __construct(array $properties = [], array $options = []) {
+		$options += [
+			'useSetters' => true,
+			'markClean' => false,
+			'markNew' => null
+		];
 		$this->_className = get_class($this);
-		$this->set($properties, $useSetters);
+		$this->set($properties, $options['useSetters']);
+
+		if ($options['markClean']) {
+			$this->clean();
+		}
+
+		if ($options['markNew'] !== null) {
+			$this->isNew($options['markNew']);
+		}
 	}
 
 /**

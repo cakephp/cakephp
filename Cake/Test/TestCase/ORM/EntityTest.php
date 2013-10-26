@@ -46,7 +46,7 @@ class EntityTest extends TestCase {
  *
  * @return void
  */
-	public function testSetMultiplePropertiesNOSetters() {
+	public function testSetMultiplePropertiesNoSetters() {
 		$entity = new Entity;
 		$entity->set(['foo' => 'bar', 'id' => 1]);
 		$this->assertEquals('bar', $entity->foo);
@@ -138,7 +138,7 @@ class EntityTest extends TestCase {
 			->with(['foo' => 'bar'], false);
 
 		$entity->__construct(['a' => 'b', 'c' => 'd']);
-		$entity->__construct(['foo' => 'bar'], false);
+		$entity->__construct(['foo' => 'bar'], ['useSetters' => false]);
 	}
 
 /**
@@ -530,4 +530,47 @@ class EntityTest extends TestCase {
 		$entity->isNew(false);
 		$this->assertFalse($entity->isNew());
 	}
+
+/**
+ * Tests the constructor when passing the markClean option
+ *
+ * @return void
+ */
+	public function testConstructorWithClean() {
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['clean'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->never())->method('clean');
+		$entity->__construct(['a' => 'b', 'c' => 'd']);
+
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['clean'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->once())->method('clean');
+		$entity->__construct(['a' => 'b', 'c' => 'd'], ['markClean' => true]);
+	}
+
+/**
+ * Tests the constructor when passing the markClean option
+ *
+ * @return void
+ */
+	public function testConstructorWithMarkNew() {
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['isNew'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->never())->method('clean');
+		$entity->__construct(['a' => 'b', 'c' => 'd']);
+
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['isNew'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->once())->method('isNew');
+		$entity->__construct(['a' => 'b', 'c' => 'd'], ['markNew' => true]);
+	}
+
 }

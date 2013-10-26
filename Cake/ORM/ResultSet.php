@@ -265,6 +265,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 			$results[$defaultAlias]
 		);
 
+		$options = ['useSetters' => false, 'markClean' => true];
 		foreach (array_reverse($this->_associationMap) as $alias => $assoc) {
 			if (!isset($results[$alias])) {
 				continue;
@@ -273,7 +274,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 			$results[$alias] = $this->_castValues($instance->target(), $results[$alias]);
 
 			if ($this->_hydrate && $assoc['canBeJoined']) {
-				$entity = new $assoc['entityClass']($results[$alias], false);
+				$entity = new $assoc['entityClass']($results[$alias], $options);
 				$entity->clean();
 				$results[$alias] = $entity;
 			}
@@ -282,8 +283,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 
 		$results = $results[$defaultAlias];
 		if ($this->_hydrate && !($results instanceof Entity)) {
-			$results = new $this->_entityClass($results, false);
-			$results->clean();
+			$results = new $this->_entityClass($results, $options);
 		}
 		return $results;
 	}
