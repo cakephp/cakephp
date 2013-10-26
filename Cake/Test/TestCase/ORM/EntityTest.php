@@ -512,4 +512,22 @@ class EntityTest extends TestCase {
 		$this->assertFalse($entity->dirty('title'));
 		$this->assertFalse($entity->dirty('author_id'));
 	}
+
+/**
+ * Tests the isNew method
+ *
+ * @return void
+ */
+	public function testIsNew() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$this->assertNull($entity->isNew());
+		$entity->isNew(true);
+		$this->assertTrue($entity->isNew());
+		$entity->isNew(false);
+		$this->assertFalse($entity->isNew());
+	}
 }

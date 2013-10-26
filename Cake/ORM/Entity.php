@@ -55,6 +55,15 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected static $_accessors = [];
 
 /**
+ * Indicates whether this entity was already persisted in database,
+ * a null value indicates that it is unknown if it was persisted
+ * already
+ *
+ * @var boolean
+ */
+	protected $_persited = null;
+
+/**
  * Initializes the internal properties of this entity out of the
  * keys in an array
  *
@@ -371,6 +380,26 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 	public function clean() {
 		$this->_dirty = [];
+	}
+
+/**
+ * Returns whether this entity instance was already persisted in the database,
+ * This method can return null in the case there is no prior information on
+ * the status of this entity.
+ *
+ * If called with a boolean it will set the known status of this instance,
+ * true means that the instance is not yet persisted in the database, false
+ * that it already is.
+ *
+ * @param boolean $new true if it is known this instance was persisted
+ * @return boolean if it is known whether the entity was already persisted
+ * null otherwise
+ */
+	public function isNew($new = null) {
+		if ($new === null) {
+			return $this->_persisted;
+		}
+		return $this->_persisted = (bool)$new;
 	}
 
 }
