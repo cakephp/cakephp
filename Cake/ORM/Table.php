@@ -685,13 +685,6 @@ class Table {
 
 	public function save(Entity $entity, array $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true]);
-		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
-		$this->getEventManager()->dispatch($event);
-
-		if ($event->isStopped()) {
-			return $event->result;
-		}
-
 		if ($options['atomic']) {
 			$connection = $this->connection();
 			$success = $connection->transactional(function() use ($entity, $options) {
@@ -705,6 +698,13 @@ class Table {
 	}
 
 	protected function _processSave($entity, $options) {
+		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
+		$this->getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
 		$data = empty($options['fieldList']) ?
 			$entity->toArray() :
 			$entity->extract($options['fieldList']);
