@@ -682,6 +682,65 @@ class ContainableBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
+		$this->Article->contain(array('User' => array('id', 'ArticleFeatured')));
+		$result = $this->Article->find('all', array('recursive' => 2));
+		$expected = array(
+			array(
+				'Article' => array(
+					'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
+					'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+				),
+				'User' => array(
+					'id' => 1,
+					'ArticleFeatured' => array(
+						array(
+							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+						),
+						array(
+							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+						)
+					)
+				)
+			),
+			array(
+				'Article' => array(
+					'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
+					'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+				),
+				'User' => array(
+					'id' => 3,
+					'ArticleFeatured' => array(
+						array(
+						'id' => 2, 'user_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body',
+						'published' => 'Y', 'created' => '2007-03-18 10:41:23', 'updated' => '2007-03-18 10:43:31'
+						)
+					)
+				)
+			),
+			array(
+				'Article' => array(
+					'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
+					'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+				),
+				'User' => array(
+					'id' => 1,
+					'ArticleFeatured' => array(
+						array(
+							'id' => 1, 'user_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body',
+							'published' => 'Y', 'created' => '2007-03-18 10:39:23', 'updated' => '2007-03-18 10:41:31'
+						),
+						array(
+							'id' => 3, 'user_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body',
+							'published' => 'Y', 'created' => '2007-03-18 10:43:23', 'updated' => '2007-03-18 10:45:31'
+						)
+					)
+				)
+			)
+		);
+		$this->assertEquals($expected, $result);
+
 		$this->Article->contain(array('User' => array('ArticleFeatured', 'Comment')));
 		$result = $this->Article->find('all', array('recursive' => 2));
 		$expected = array(
