@@ -884,7 +884,37 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 		$result = $table->find('all')->contain(['tag'])->first();
 		$this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
-		$this->assertInstanceOf('TestApp\Model\Entity\ArticlesTag', $result->tags[0]->extraInfo);
+		$this->assertInstanceOf(
+			'TestApp\Model\Entity\ArticlesTag',
+			$result->tags[0]->extraInfo
+		);
+	}
+
+/**
+ * Tests that recently fetched entities are always clean
+ *
+ * @return void
+ */
+	public function testFindCleanEntities() {
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
+		$results = $table->find('all')->contain(['tag', 'author'])->toArray();
+		$this->assertCount(3, $results);
+		foreach ($results as $article) {
+			$this->assertFalse($article->dirty('id'));
+			$this->assertFalse($article->dirty('title'));
+			$this->assertFalse($article->dirty('author_id'));
+			$this->assertFalse($article->dirty('body'));
+			$this->assertFalse($article->dirty('published'));
+			$this->assertFalse($article->dirty('author'));
+			$this->assertFalse($article->author->dirty('id'));
+			$this->assertFalse($article->author->dirty('name'));
+			$this->assertFalse($article->dirty('tag'));
+			if ($article->tag) {
+				$this->assertFalse($article->tag[0]->extraInfo->dirty('tag_id'));
+			}
+		}
 	}
 
 /**
