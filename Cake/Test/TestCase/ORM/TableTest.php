@@ -1305,4 +1305,21 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($entity->dirty('updated'));
 	}
 
+/**
+ * Tests that a recently saved entity is marked as not new
+ *
+ * @return void
+ */
+	public function testsASavedEntityIsNotNew() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table = TableRegistry::get('users');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+	}
+
 }

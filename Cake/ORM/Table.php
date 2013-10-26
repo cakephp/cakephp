@@ -730,6 +730,7 @@ class Table {
 			$id = $statement->lastInsertId($this->table(), $primary);
 			$entity->set($primary, $id);
 			$entity->clean();
+			$entity->isNew(false);
 			$success = $entity;
 		}
 
