@@ -588,13 +588,14 @@ class File {
 	}
 
 /**
- * Searches for a given text and replaces the text if found
- * @param string $search
- * @param string $replace
+ * Searches for a given text and replaces the text if found.
+ *
+ * @param string|array $search Text(s) to search for.
+ * @param string|array $replace Text(s) to replace with.
  * @return boolean Success
  */
 	public function replaceText($search, $replace) {
-		if (!$this->open("r+")) {
+		if (!$this->open('r+')) {
 			return false;
 		}
 
@@ -604,7 +605,7 @@ class File {
 			}
 		}
 
-		$replaced = $this->write(str_replace($search, $replace, $this->read()), "w", true);
+		$replaced = $this->write(str_replace($search, $replace, $this->read()), 'w', true);
 
 		if ($this->lock !== null) {
 			flock($this->handle, LOCK_UN);
