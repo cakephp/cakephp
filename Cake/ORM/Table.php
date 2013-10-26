@@ -719,8 +719,19 @@ class Table {
 			}
 		}
 
+		$success = $this->_insert($entity, $data);
+
+		if ($success) {
+			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
+			$this->getEventManager()->dispatch($event);
+		}
+
+		return $success;
+	}
+
+	protected function _insert($entity, $data) {
 		$query = $this->_buildQuery();
-		$statement = $query->insert($this->table(), $keys)
+		$statement = $query->insert($this->table(), array_keys($data))
 			->values($data)
 			->executeStatement();
 
@@ -733,12 +744,6 @@ class Table {
 			$entity->isNew(false);
 			$success = $entity;
 		}
-
-		if ($success) {
-			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
-			$this->getEventManager()->dispatch($event);
-		}
-
 		return $success;
 	}
 
