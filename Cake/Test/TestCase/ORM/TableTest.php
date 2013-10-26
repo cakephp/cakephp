@@ -1238,4 +1238,51 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->save($data);
 	}
 
+/**
+ * Tests that only the properties marked as dirty are actually saved
+ * to the database
+ *
+ * @return void
+ */
+	public function testSaveOnlyDirtyProperties() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$entity->clean();
+		$entity->dirty('username', true);
+		$entity->dirty('created', true);
+		$entity->dirty('updated', true);
+
+		$table = TableRegistry::get('users');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals($entity->id, 5);
+
+		$row = $table->find('all')->where(['id' => 5])->first();
+		$entity->set('password', null);
+		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
+
+/**
+ * Tests that a recently saved entity is marked as clean
+ *
+ * @return void
+ */
+	public function testsASavedEntityIsClean() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table = TableRegistry::get('users');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->dirty('usermane'));
+		$this->assertFalse($entity->dirty('password'));
+		$this->assertFalse($entity->dirty('created'));
+		$this->assertFalse($entity->dirty('updated'));
+	}
+
 }

@@ -711,8 +711,16 @@ class Table {
 
 		$schema = $this->schema();
 		$data = array_intersect_key($data, array_flip($schema->columns()));
+		$keys = array_keys($data);
+
+		foreach ($keys as $i => $property) {
+			if (!$entity->dirty($property)) {
+				unset($keys[$i], $data[$property]);
+			}
+		}
+
 		$query = $this->_buildQuery();
-		$statement = $query->insert($this->table(), array_keys($data))
+		$statement = $query->insert($this->table(), $keys)
 			->values($data)
 			->executeStatement();
 
@@ -721,6 +729,7 @@ class Table {
 			$primary = $this->primaryKey();
 			$id = $statement->lastInsertId($this->table(), $primary);
 			$entity->set($primary, $id);
+			$entity->clean();
 			$success = $entity;
 		}
 
