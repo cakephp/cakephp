@@ -61,7 +61,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  *
  * @var boolean
  */
-	protected $_persited = null;
+	protected $_persisted = null;
 
 /**
  * Initializes the internal properties of this entity out of the
