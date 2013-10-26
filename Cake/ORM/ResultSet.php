@@ -265,7 +265,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 			$results[$defaultAlias]
 		);
 
-		$options = ['useSetters' => false, 'markClean' => true];
+		$options = ['useSetters' => false, 'markClean' => true, 'markNew' => false];
 		foreach (array_reverse($this->_associationMap) as $alias => $assoc) {
 			if (!isset($results[$alias])) {
 				continue;

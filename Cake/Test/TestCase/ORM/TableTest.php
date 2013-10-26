@@ -918,6 +918,26 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that recently fetched entities are marked as not new
+ *
+ * @return void
+ */
+	public function testFindPersistedEntities() {
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
+		$results = $table->find('all')->contain(['tag', 'author'])->toArray();
+		$this->assertCount(3, $results);
+		foreach ($results as $article) {
+			$this->assertFalse($article->isNew());
+			foreach ((array)$article->tag as $tag) {
+				$this->assertFalse($tag->isNew());
+				$this->assertFalse($tag->extraInfo->isNew());
+			}
+		}
+	}
+
+/**
  * Tests that it is possible to insert a new row using the save method
  *
  * @return void
