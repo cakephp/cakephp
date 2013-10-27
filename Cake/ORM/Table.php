@@ -683,6 +683,22 @@ class Table {
 		return $statement->rowCount() > 0;
 	}
 
+/**
+ * Returns true if there is any row in this table matching the specified
+ * conditions.
+ *
+ * @param array $conditions
+ * @return boolean
+ */
+	public function exists(array $conditions) {
+		return (bool)count($this->find('all')
+			->select(['exists' => 1])
+			->where($conditions)
+			->limit(1)
+			->hydrate(false)
+			->toArray());
+	}
+
 	public function save(Entity $entity, array $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true]);
 		if ($options['atomic']) {

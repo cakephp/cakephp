@@ -938,6 +938,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests the exists function
+ *
+ * @return void
+ */
+	public function testExists() {
+		$table = TableRegistry::get('users');
+		$this->assertTrue($table->exists(['id' => 1]));
+		$this->assertFalse($table->exists(['id' => 501]));
+		$this->assertTrue($table->exists(['id' => 3, 'username' => 'larry']));
+	}
+
+/**
  * Tests that it is possible to insert a new row using the save method
  *
  * @return void
