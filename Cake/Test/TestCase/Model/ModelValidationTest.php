@@ -1747,17 +1747,23 @@ class ModelValidationTest extends ModelTestBase {
 		$expected = array_map('strtolower', get_class_methods('Article'));
 		$this->assertEquals($expected, array_keys($result));
 
-		$TestModel->Behaviors->load('Containable');
+		$TestModel->Behaviors->load('Tree');
 		$newList = array(
-			'contain',
-			'resetbindings',
-			'containments',
-			'fielddependencies',
-			'containmentsmap'
+			'childcount',
+			'children',
+			'generatetreelist',
+			'getparentnode',
+			'getpath',
+			'movedown',
+			'moveup',
+			'recover',
+			'reorder',
+			'removefromtree',
+			'verify',
 		);
 		$this->assertEquals(array_merge($expected, $newList), array_keys($Validator->getMethods()));
 
-		$TestModel->Behaviors->unload('Containable');
+		$TestModel->Behaviors->unload('Tree');
 		$this->assertEquals($expected, array_keys($Validator->getMethods()));
 	}
 
