@@ -1427,4 +1427,42 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($entity, $table->save($entity));
 	}
 
+/**
+ * Tests that passing only the primary key to save will not execute any queries
+ * but still return success
+ *
+ * @return void
+ */
+	public function testUpdateNoChange() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery'],
+			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+		);
+		$table->expects($this->never())->method('_buildQuery');
+		$entity = new \Cake\ORM\Entity([
+			'id' => 2,
+		], ['markNew' => false]);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Tests that failing to pass a primary key to save will result in exception
+ *
+ * @expectedException \InvalidArgumentException
+ * @return void
+ */
+	public function testUpdateNoPrimaryButOtherKeys() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery'],
+			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+		);
+		$table->expects($this->never())->method('_buildQuery');
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'mariano',
+		], ['markNew' => false]);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
 }

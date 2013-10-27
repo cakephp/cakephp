@@ -836,9 +836,20 @@ class Table {
  * @return \Cake\ORM\Entity|boolean
  */
 	protected function _update($entity, $data) {
-		$query = $this->_buildQuery();
 		$primaryKey = $entity->extract((array)$this->primaryKey());
 		$data = array_diff_key($data, $primaryKey);
+
+		if (empty($data)) {
+			return $entity;
+		}
+
+		$filtered = array_filter($primaryKey, 'strlen');
+		if (count($filtered) < count($primaryKey)) {
+			$message = __d('cake_dev', 'A primary key value is needed for updating');
+			throw new \InvalidArgumentException($message);
+		}
+
+		$query = $this->_buildQuery();
 		$statement = $query->update($this->table())
 			->set($data)
 			->where($primaryKey)
