@@ -699,6 +699,44 @@ class Table {
 			->toArray());
 	}
 
+/**
+ * Persists an entity based on the fields that are marked as dirty on it and
+ * matching the list of fields passed in the `fieldList` inside the options
+ * array. Returns the same entity after a successful save or false in case
+ * of any error.
+ *
+ * The options array can receive the following keys:
+ *
+ * - fieldList: An array of field names that should be saved, if empty all
+ * properties in the passed entity will be saved
+ * - atomic: Whether to execute the save and callbacks inside a database
+ * transaction (defualt: true)
+ *
+ * When saving, this method will trigger two events:
+ *
+ * - Model.beforeSave: Will be triggered just before the list of fields to be
+ * persisted is calculated. It receives both the entity and the options as
+ * arguments. The options array is passed as an ArrayObject, so any changes in
+ * it will be reflected in every listener and remembered at the end of the event
+ * so it can be used for the rest of the save operation. Returning false in any
+ * of the listeners will abort the saving process. If the event is stopped
+ * using the event API, the event object's `result` property will be returned.
+ * This can be useful when having your own saving strategy implemented inside a
+ * listener.
+ * - Model.afterSave: Will be triggered after a successful insert or save,
+ * listeners will receive the entity and the options array as arguments. The type
+ * of operation performed (insert or update) can be determined by checking the
+ * entity's method `isNew`, true meaning an insert and false an update.
+ *
+ * This method will determine whether the passed entity needs to be
+ * inserted or updated in the database. It does that by checking the `isNew`
+ * method on the entity, if no information can be found there, it will go
+ * directly to the database to check the entity's status.
+ *
+ * @param \Cake\ORM\Entity the entity to be saved
+ * @param array $options
+ * @return \Cake\ORM\Entity|boolean
+ */
 	public function save(Entity $entity, array $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true]);
 		if ($options['atomic']) {
@@ -713,6 +751,13 @@ class Table {
 		return $success;
 	}
 
+/**
+ * Performs the actual saving of an entity based on the passed options.
+ *
+ * @param \Cake\ORM\Entity the entity to be saved
+ * @param array $options
+ * @return \Cake\ORM\Entity|boolean
+ */
 	protected function _processSave($entity, $options) {
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
@@ -753,11 +798,19 @@ class Table {
 		if ($success) {
 			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 			$this->getEventManager()->dispatch($event);
+			$entity->isNew(false);
 		}
 
 		return $success;
 	}
 
+/**
+ * Auxiliary function to handle the insert of an entity's data in the table
+ *
+ * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param array $data The actual data that needs to be saved
+ * @return \Cake\ORM\Entity|boolean
+ */
 	protected function _insert($entity, $data) {
 		$query = $this->_buildQuery();
 		$statement = $query->insert($this->table(), array_keys($data))
@@ -770,12 +823,18 @@ class Table {
 			$id = $statement->lastInsertId($this->table(), $primary);
 			$entity->set($primary, $id);
 			$entity->clean();
-			$entity->isNew(false);
 			$success = $entity;
 		}
 		return $success;
 	}
 
+/**
+ * Auxiliary function to handle the update of an entity's data in the table
+ *
+ * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param array $data The actual data that needs to be saved
+ * @return \Cake\ORM\Entity|boolean
+ */
 	protected function _update($entity, $data) {
 		$query = $this->_buildQuery();
 		$primaryKey = $entity->extract((array)$this->primaryKey());
