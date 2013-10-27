@@ -19,8 +19,7 @@ use Cake\Event\EventListener;
 /**
  * Base class for behaviors.
  *
- * Defines the Behavior interface, and contains common model interaction
- * functionality. Behaviors allow you to simulate mixins, and create
+ * Behaviors allow you to simulate mixins, and create
  * reusable blocks of application logic, that can be reused across
  * several models. Behaviors also provide a way to hook into model
  * callbacks and augment their behavior.
@@ -37,7 +36,7 @@ use Cake\Event\EventListener;
  * }
  * }}}
  *
- * Would be called like `$this->Table->doSomething($arg1, $arg2);`.
+ * Would be called like `$table->doSomething($arg1, $arg2);`.
  *
  * ## Callback methods
  *

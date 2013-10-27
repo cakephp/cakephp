@@ -105,7 +105,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $class The classname that is missing.
  * @param string $alias The alias of the object.
  * @param array $settings An array of settings to use for the behavior.
- * @return Component The constructed behavior class.
+ * @return Behavior The constructed behavior class.
  */
 	protected function _create($class, $alias, $settings) {
 		$instance = new $class($this->_table, $settings);
@@ -140,8 +140,13 @@ class BehaviorRegistry extends ObjectRegistry {
 		foreach ($methods as $method) {
 			$isFinder = substr($method, 0, 4) === 'find';
 			if (($isFinder && isset($this->_finderMap[$method])) || isset($this->_methodMap[$method])) {
-				$message = '%s contains duplicate method "%s" which is already provided by %s';
-				$error = __d('cake_dev', $message, $class, $method, $this->_methodMap[$method]);
+				$error = __d(
+					'cake_dev',
+					'%s contains duplicate method "%s" which is already provided by %s',
+					$class,
+					$method,
+					$this->_methodMap[$method]
+				);
 				throw new Error\Exception($error);
 			}
 			if ($isFinder) {

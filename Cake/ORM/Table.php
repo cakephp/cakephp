@@ -392,7 +392,7 @@ class Table {
  *
  * @param string $name The name of the behavior. Can be a short class reference.
  * @param array $options The options for the behavior to use.
- * @return null
+ * @return void
  * @see Cake\ORM\Behavior
  */
 	public function addBehavior($name, $options = []) {
