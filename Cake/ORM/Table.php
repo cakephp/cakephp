@@ -37,7 +37,7 @@ use Cake\Utility\Inflector;
  *
  * ### Retrieving data
  *
- * The primary way to retreive data is using Table::find(). See that method
+ * The primary way to retrieve data is using Table::find(). See that method
  * for more information.
  *
  * ### Bulk updates/deletes
