@@ -118,7 +118,7 @@ class AppTest extends TestCase {
 		$this->assertTrue(in_array('Router', $result));
 
 		$result = App::objects('Model/Behavior', null, false);
-		$this->assertContains('PersisterOneBehaviorBehavior', $result);
+		$this->assertContains('SluggableBehavior', $result);
 
 		$result = App::objects('Controller/Component', null, false);
 		$this->assertContains('AppleComponent', $result);
@@ -174,7 +174,7 @@ class AppTest extends TestCase {
 		$this->assertTrue(in_array('TestPluginPost', $result));
 
 		$result = App::objects('TestPlugin.Model/Behavior');
-		$this->assertTrue(in_array('TestPluginPersisterOneBehavior', $result));
+		$this->assertTrue(in_array('PersisterOneBehavior', $result));
 
 		$result = App::objects('TestPlugin.View/Helper');
 		$expected = array('OtherHelperHelper', 'PluggedHelperHelper', 'TestPluginAppHelper');
