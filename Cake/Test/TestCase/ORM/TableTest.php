@@ -1342,4 +1342,26 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($entity->isNew());
 	}
 
+/**
+ * Tests that save can detect automatically if it needs to insert
+ * or update a row
+ *
+ * @return void
+ */
+	public function testSaveUpdateAuto() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 2,
+			'username' => 'baggins'
+		]);
+		$table = TableRegistry::get('users');
+		$original = $table->find('all')->where(['id' => 2])->first();
+		$this->assertSame($entity, $table->save($entity));
+		$row = $table->find('all')->where(['id' => 2])->first();
+		$this->assertEquals('baggins', $row->username);
+		$this->assertEquals($original->password, $row->password);
+		$this->assertEquals($original->created, $row->created);
+		$this->assertEquals($original->updated, $row->updated);
+	}
+
+
 }

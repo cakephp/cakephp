@@ -775,7 +775,19 @@ class Table {
 	}
 
 	protected function _update($entity, $data) {
+		$query = $this->_buildQuery();
+		$primaryKey = $entity->extract((array)$this->primaryKey());
+		$statement = $query->update($this->table())
+			->set($data)
+			->where($primaryKey)
+			->executeStatement();
 
+		$success = false;
+		if ($statement->rowCount() > 0) {
+			$entity->clean();
+			$success = $entity;
+		}
+		return $success;
 	}
 
 /**
