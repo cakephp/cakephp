@@ -687,7 +687,7 @@ class Table {
  * Returns true if there is any row in this table matching the specified
  * conditions.
  *
- * @param array $conditions
+ * @param array $conditions list of conditions to pass to the query
  * @return boolean
  */
 	public function exists(array $conditions) {
@@ -735,7 +735,18 @@ class Table {
 			}
 		}
 
-		$success = $this->_insert($entity, $data);
+		$primary = $entity->extract((array)$this->primaryKey());
+		if ($primary && $entity->isNew() === null) {
+			$entity->isNew(!$this->exists($primary));
+		} else {
+			$entity->isNew(true);
+		}
+
+		if ($entity->isNew()) {
+			$success = $this->_insert($entity, $data);
+		} else {
+			$success = $this->_update($entity, $data);
+		}
 
 		if ($success) {
 			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
@@ -761,6 +772,10 @@ class Table {
 			$success = $entity;
 		}
 		return $success;
+	}
+
+	protected function _update($entity, $data) {
+
 	}
 
 /**
