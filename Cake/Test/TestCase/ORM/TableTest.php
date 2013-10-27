@@ -1361,7 +1361,29 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($original->password, $row->password);
 		$this->assertEquals($original->created, $row->created);
 		$this->assertEquals($original->updated, $row->updated);
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->dirty('id'));
+		$this->assertFalse($entity->dirty('username'));
 	}
 
-
+/**
+ * Tests that marking an entity as already persisted will prevent the save
+ * method from trying to infer the entity's actual status.
+ *
+ * @return void
+ */
+	public function testSaveUpdateWithHint() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['exists'],
+			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+		);
+		$entity = new \Cake\ORM\Entity([
+			'id' => 2,
+			'username' => 'baggins'
+		], ['markNew' => false]);
+		$this->assertFalse($entity->isNew());
+		$table->expects($this->never())->method('exists');
+		$this->assertSame($entity, $table->save($entity));
+	}
 }

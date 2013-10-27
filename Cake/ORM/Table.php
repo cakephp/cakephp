@@ -738,7 +738,9 @@ class Table {
 		$primary = $entity->extract((array)$this->primaryKey());
 		if ($primary && $entity->isNew() === null) {
 			$entity->isNew(!$this->exists($primary));
-		} else {
+		}
+
+		if ($entity->isNew() === null) {
 			$entity->isNew(true);
 		}
 
