@@ -209,7 +209,7 @@ class User extends CakeTestModel {
 	public $validate = array('user' => 'notEmpty', 'password' => 'notEmpty');
 
 /**
- * beforeFind() callback used to run ContainableBehaviorTest::testLazyLoad()
+ * beforeFind() callback
  *
  * @return boolean
  * @throws \Exception
@@ -610,14 +610,6 @@ class AgainModifiedComment extends CakeTestModel {
  */
 class MergeVarPluginAppModel extends Model {
 
-/**
- * actsAs parameter
- *
- * @var array
- */
-	public $actsAs = array(
-		'Containable'
-	);
 }
 
 /**
@@ -648,15 +640,6 @@ class MergeVarPluginPost extends MergeVarPluginAppModel {
  *
  */
 class MergeVarPluginComment extends MergeVarPluginAppModel {
-
-/**
- * actsAs parameter
- *
- * @var array
- */
-	public $actsAs = array(
-		'Containable' => array('some_settings')
-	);
 
 /**
  * useTable parameter

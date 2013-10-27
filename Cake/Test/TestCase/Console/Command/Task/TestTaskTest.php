@@ -370,11 +370,8 @@ class TestTaskTest extends TestCase {
 		$result = $this->Task->getRealClassname('Helper', 'FormHelper');
 		$this->assertEquals('App\View\Helper\FormHelper', $result);
 
-		$result = $this->Task->getRealClassname('Behavior', 'Containable');
-		$this->assertEquals('App\Model\Behavior\ContainableBehavior', $result);
-
-		$result = $this->Task->getRealClassname('Behavior', 'ContainableBehavior');
-		$this->assertEquals('App\Model\Behavior\ContainableBehavior', $result);
+		$result = $this->Task->getRealClassname('Behavior', 'Tree');
+		$this->assertEquals('App\Model\Behavior\TreeBehavior', $result);
 
 		$result = $this->Task->getRealClassname('Component', 'Auth');
 		$this->assertEquals('App\Controller\Component\AuthComponent', $result);
@@ -609,12 +606,12 @@ class TestTaskTest extends TestCase {
 			array('Model', 'Post', 'TestCase/Model/PostTest.php'),
 			array('Helper', 'Form', 'TestCase/View/Helper/FormHelperTest.php'),
 			array('Controller', 'Posts', 'TestCase/Controller/PostsControllerTest.php'),
-			array('Behavior', 'Containable', 'TestCase/Model/Behavior/ContainableBehaviorTest.php'),
+			array('Behavior', 'Tree', 'TestCase/Model/Behavior/TreeBehaviorTest.php'),
 			array('Component', 'Auth', 'TestCase/Controller/Component/AuthComponentTest.php'),
 			array('model', 'Post', 'TestCase/Model/PostTest.php'),
 			array('helper', 'Form', 'TestCase/View/Helper/FormHelperTest.php'),
 			array('controller', 'Posts', 'TestCase/Controller/PostsControllerTest.php'),
-			array('behavior', 'Containable', 'TestCase/Model/Behavior/ContainableBehaviorTest.php'),
+			array('behavior', 'Tree', 'TestCase/Model/Behavior/TreeBehaviorTest.php'),
 			array('component', 'Auth', 'TestCase/Controller/Component/AuthComponentTest.php'),
 		);
 	}
