@@ -779,6 +779,7 @@ class Table {
 	protected function _update($entity, $data) {
 		$query = $this->_buildQuery();
 		$primaryKey = $entity->extract((array)$this->primaryKey());
+		$data = array_diff_key($data, $primaryKey);
 		$statement = $query->update($this->table())
 			->set($data)
 			->where($primaryKey)

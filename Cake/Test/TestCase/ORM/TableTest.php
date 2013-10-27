@@ -1386,4 +1386,45 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->expects($this->never())->method('exists');
 		$this->assertSame($entity, $table->save($entity));
 	}
+
+/**
+ * Tests that when updating the primary key is not passed to the list of
+ * attributes to change
+ *
+ * @return void
+ */
+	public function testSaveUpdatePrimaryKeyNotModified() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery'],
+			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+		);
+
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['executeStatement', 'addDefaultTypes', 'set'],
+			[null, $table]
+		);
+
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+
+		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+		$statement->expects($this->once())->method('rowCount')
+			->will($this->returnValue(1));
+
+		$query->expects($this->once())->method('executeStatement')
+			->will($this->returnValue($statement));
+
+		$query->expects($this->once())->method('set')
+			->with(['username' => 'baggins'])
+			->will($this->returnValue($query));
+
+		$entity = new \Cake\ORM\Entity([
+			'id' => 2,
+			'username' => 'baggins'
+		], ['markNew' => false]);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
 }
