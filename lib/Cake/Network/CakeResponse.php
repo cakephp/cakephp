@@ -1296,6 +1296,7 @@ class CakeResponse {
 			}
 			$this->download($name);
 			$this->header('Accept-Ranges', 'bytes');
+			$this->header('Content-Transfer-Encoding', 'binary');
 
 			$httpRange = env('HTTP_RANGE');
 			if (isset($httpRange)) {
