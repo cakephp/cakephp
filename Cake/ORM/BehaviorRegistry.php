@@ -124,6 +124,7 @@ class BehaviorRegistry extends ObjectRegistry {
  *
  * @param Cake\ORM\Behavior $instance
  * @return void
+ * @throws Cake\Error\Exception when duplicate methods are connected.
  */
 	protected function _mapMethods(Behavior $instance, $class, $alias) {
 		$events = $instance->implementedEvents();
@@ -184,7 +185,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @param string $method The method to invoke.
  * @param array $args The arguments you want to invoke the method with.
  * @return mixed The return value depends on the underlying behavior method.
- * @throw Cake\Error\Exception When the method is unknown.
+ * @throws Cake\Error\Exception When the method is unknown.
  */
 	public function call($method, array $args = []) {
 		if ($this->hasMethod($method)) {
