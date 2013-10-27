@@ -28,12 +28,12 @@ use Cake\Event\EventListener;
  * ### Mixin methods
  *
  * Behaviors can provide mixin like features by declaring public
- * methods. These methods should expect the Table instance to be
- * shifted onto the parameter list.
+ * methods. These methods will be accessible on the tables the
+ * behavior has been added to.
  *
  * {{{
- * function doSomething(Table $table, $arg1, $arg2) {
- *		//do something
+ * function doSomething($arg1, $arg2) {
+ *   // do something
  * }
  * }}}
  *
@@ -41,6 +41,49 @@ use Cake\Event\EventListener;
  *
  * ## Callback methods
  *
+ * Behaviors can listen to any events fired on a Table. By default
+ * CakePHP provides a number of lifecycle events your behaviors can
+ * listen to:
+ *
+ * - `beforeFind(Event $event, Query $query)`
+ *   Fired before a query is converted into SQL.
+ *
+ * - `beforeDelete(Event $event, Entity $entity)`
+ *   Fired before an entity is deleted.
+ *
+ * - `afterDelete(Event $event, Entity $entity)`
+ *   Fired after an entity has been deleted. The entity parameter
+ *   will contain the entity state from before it was deleted.
+ *
+ * - `beforeSave(Event $event, Entity $entity)`
+ *   Fired before an entity is saved. In the case where
+ *   multiple entities are being saved, one event will be fired
+ *   for each entity.
+ *
+ * - `afterSave(Event $event, Entity $entity)`
+ *   Fired after an entity is saved. The saved entity will be provided
+ *   as a parameter.
+ *
+ * In addition to the core events, behaviors can respond to any
+ * event fired from your Table classes including custom application
+ * specific ones.
+ *
+ * ## Finder methods
+ *
+ * Behaviors can provide finder methods that hook into a Table's
+ * find() method. Custom finders are a great way to provide preset
+ * queries that relate to your behavior. For example a SluggableBehavior
+ * could provide a find('slugged') finder. Behavior finders
+ * are implemented the same as other finders. Any method
+ * starting with `find` will be setup as a finder. Your finder
+ * methods should expect the following arguments:
+ *
+ * {{{
+ * findSlugged(Query $query, array $options = [])
+ * }}}
+ *
+ *
+ * @see Cake\ORM\Table::addBehavior()
  */
 class Behavior implements EventListener {
 

@@ -388,6 +388,8 @@ class Table {
  * $this->addBehavior('Tree', ['parent' => 'parentId']);
  * }}}
  *
+ * Behaviors are generally loaded during Table::initialize().
+ *
  * @param string $name The name of the behavior. Can be a short class reference.
  * @param array $options The options for the behavior to use.
  * @return null
