@@ -1133,6 +1133,10 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(3))
 			->method('header')
+			->with('Content-Transfer-Encoding', 'binary');
+
+		$response->expects($this->at(4))
+			->method('header')
 			->with('Content-Length', 35);
 
 		$response->expects($this->once())->method('_clearBuffer');
@@ -1194,6 +1198,10 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(4))
 			->method('header')
+			->with('Content-Transfer-Encoding', 'binary');
+
+		$response->expects($this->at(5))
+			->method('header')
 			->with('Content-Length', 35);
 
 		$response->expects($this->once())->method('_clearBuffer');
@@ -1253,6 +1261,10 @@ class CakeResponseTest extends CakeTestCase {
 			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(4))
+			->method('header')
+			->with('Content-Transfer-Encoding', 'binary');
+
+		$response->expects($this->at(5))
 			->method('header')
 			->with('Content-Length', 35);
 
