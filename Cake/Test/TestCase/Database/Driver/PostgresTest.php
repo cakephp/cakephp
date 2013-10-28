@@ -154,12 +154,12 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 		$query->insert('articles', ['id', 'title'])->values([1, 'foo']);
 		$translator = $driver->queryTranslator('insert');
 		$query = $translator($query);
-		$this->assertEquals('RETURNING *', $query->clause('append'));
+		$this->assertEquals('RETURNING *', $query->clause('epilog'));
 
 		$query = new \Cake\Database\Query($connection);
-		$query->insert('articles', ['id', 'title'])->values([1, 'foo'])->append('FOO');
+		$query->insert('articles', ['id', 'title'])->values([1, 'foo'])->epilog('FOO');
 		$query = $translator($query);
-		$this->assertEquals('FOO', $query->clause('append'));
+		$this->assertEquals('FOO', $query->clause('epilog'));
 	}
 
 }

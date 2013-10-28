@@ -1938,7 +1938,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test that append() will actually append a string to a select query
+ * Test that epilog() will actually append a string to a select query
  *
  * @return void
  */
@@ -1948,7 +1948,7 @@ class QueryTest extends TestCase {
 			->select(['id', 'title'])
 			->from('articles')
 			->where(['id' => 1])
-			->append('FOR UPDATE')
+			->epilog('FOR UPDATE')
 			->sql();
 		$this->assertContains('SELECT', $sql);
 		$this->assertContains('FROM', $sql);
@@ -1957,7 +1957,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test that append() will actually append a string to an insert query
+ * Test that epilog() will actually append a string to an insert query
  *
  * @return void
  */
@@ -1966,7 +1966,7 @@ class QueryTest extends TestCase {
 		$sql = $query
 			->insert('articles', ['id', 'title'])
 			->values([1, 'a title'])
-			->append('RETURNING id')
+			->epilog('RETURNING id')
 			->sql();
 		$this->assertContains('INSERT', $sql);
 		$this->assertContains('INTO', $sql);
@@ -1975,7 +1975,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test that append() will actually append a string to an update query
+ * Test that epilog() will actually append a string to an update query
  *
  * @return void
  */
@@ -1985,7 +1985,7 @@ class QueryTest extends TestCase {
 			->update('articles')
 			->set(['title' => 'foo'])
 			->where(['id' => 1])
-			->append('RETURNING id')
+			->epilog('RETURNING id')
 			->sql();
 		$this->assertContains('UPDATE', $sql);
 		$this->assertContains('SET', $sql);
@@ -1994,7 +1994,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test that append() will actually append a string to a delete query
+ * Test that epilog() will actually append a string to a delete query
  *
  * @return void
  */
@@ -2003,7 +2003,7 @@ class QueryTest extends TestCase {
 		$sql = $query
 			->delete('articles')
 			->where(['id' => 1])
-			->append('RETURNING id')
+			->epilog('RETURNING id')
 			->sql();
 		$this->assertContains('DELETE FROM', $sql);
 		$this->assertContains('WHERE', $sql);

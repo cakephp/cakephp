@@ -63,8 +63,8 @@ trait PostgresDialectTrait {
  * @return Cake\Database\Query
  */
 	protected function _insertQueryTranslator($query) {
-		if (!$query->clause('append')) {
-			$query->append('RETURNING *');
+		if (!$query->clause('epilog')) {
+			$query->epilog('RETURNING *');
 		}
 		return $query;
 	}

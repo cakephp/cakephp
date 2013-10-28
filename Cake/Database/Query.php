@@ -73,7 +73,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		'limit' => null,
 		'offset' => null,
 		'union' => [],
-		'append' => null
+		'epilog' => null
 	];
 
 /**
@@ -92,7 +92,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		'order' => ' %s',
 		'limit' => ' LIMIT %s',
 		'offset' => ' OFFSET %s',
-		'append' => ' %s'
+		'epilog' => ' %s'
 	];
 
 /**
@@ -284,7 +284,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _traverseSelect(callable $visitor) {
 		$parts = [
 			'select', 'from', 'join', 'where', 'group', 'having', 'order', 'limit',
-			'offset', 'union', 'append'
+			'offset', 'union', 'epilog'
 		];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
@@ -298,7 +298,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseDelete(callable $visitor) {
-		$parts = ['delete', 'from', 'where', 'append'];
+		$parts = ['delete', 'from', 'where', 'epilog'];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
 		}
@@ -311,7 +311,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseUpdate(callable $visitor) {
-		$parts = ['update', 'set', 'where', 'append'];
+		$parts = ['update', 'set', 'where', 'epilog'];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
 		}
@@ -324,7 +324,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return void
  */
 	protected function _traverseInsert(callable $visitor) {
-		$parts = ['insert', 'values', 'append'];
+		$parts = ['insert', 'values', 'epilog'];
 		foreach ($parts as $name) {
 			$visitor($this->_parts[$name], $name);
 		}
@@ -1329,19 +1329,19 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * ### Examples:
  * {{{
- * $query->select('id')->where(['author_id' => 1])->append('FOR UPDATE');
+ * $query->select('id')->where(['author_id' => 1])->epilog('FOR UPDATE');
  * $query
  *	->insert('articles', ['title'])
  *	->values(['author_id' => 1])
- *	->append('RETURNING id');
+ *	->epilog('RETURNING id');
  * }}}
  *
  * @params string|QueryExpression the expression to be appended
  * @return Query
  */
-	public function append($expression = null) {
+	public function epilog($expression = null) {
 		$this->_dirty();
-		$this->_parts['append'] = $expression;
+		$this->_parts['epilog'] = $expression;
 		return $this;
 	}
 
