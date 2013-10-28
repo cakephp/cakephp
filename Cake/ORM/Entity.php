@@ -352,12 +352,15 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * stored in this entity, indexed by property name
  *
  * @param array $properties list of properties to be returned
+ * @param boolean $onlyDirty Return the requested property only if it is dirty
  * @return array
  */
-	public function extract(array $properties) {
+	public function extract(array $properties, $onlyDirty = false) {
 		$result = [];
 		foreach ($properties as $property) {
-			$result[$property] = $this->get($property);
+			if (!$onlyDirty || $this->dirty($property)) {
+				$result[$property] = $this->get($property);
+			}
 		}
 		return $result;
 	}

@@ -738,7 +738,7 @@ class Table {
  * @return \Cake\ORM\Entity|boolean
  */
 	public function save(Entity $entity, array $options = []) {
-		$options = new \ArrayObject($options + ['atomic' => true]);
+		$options = new \ArrayObject($options + ['atomic' => true, 'fieldList' => []]);
 		if ($options['atomic']) {
 			$connection = $this->connection();
 			$success = $connection->transactional(function() use ($entity, $options) {
@@ -766,19 +766,9 @@ class Table {
 			return $event->result;
 		}
 
-		$data = empty($options['fieldList']) ?
-			$entity->toArray() :
-			$entity->extract($options['fieldList']);
-
-		$schema = $this->schema();
-		$data = array_intersect_key($data, array_flip($schema->columns()));
+		$list = $options['fieldList'] ?: $this->schema()->columns();
+		$data = $entity->extract($list, true);
 		$keys = array_keys($data);
-
-		foreach ($keys as $i => $property) {
-			if (!$entity->dirty($property)) {
-				unset($keys[$i], $data[$property]);
-			}
-		}
 
 		$primary = $entity->extract((array)$this->primaryKey());
 		if ($primary && $entity->isNew() === null) {

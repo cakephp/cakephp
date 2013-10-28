@@ -493,6 +493,24 @@ class EntityTest extends TestCase {
 	}
 
 /**
+ * Tests extract only dirty properties
+ *
+ * @return void
+ */
+	public function testExtractDirty() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$entity->dirty('id', false);
+		$entity->dirty('title', false);
+		$expected = ['author_id' => 3];
+		$result = $entity->extract(['id', 'title', 'author_id'], true);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Tests the clean method
  *
  * @return void
