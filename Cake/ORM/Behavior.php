@@ -67,6 +67,10 @@ use Cake\Event\EventListener;
  * event fired from your Table classes including custom application
  * specific ones.
  *
+ * You can set the priority of a behaviors callbacks by using the
+ * `priority` setting when attaching a behavior. This will set the
+ * priority for all the callbacks a behavior provides.
+ *
  * ## Finder methods
  *
  * Behaviors can provide finder methods that hook into a Table's
@@ -83,6 +87,7 @@ use Cake\Event\EventListener;
  *
  *
  * @see Cake\ORM\Table::addBehavior()
+ * @see Cake\Event\EventManager
  */
 class Behavior implements EventListener {
 
@@ -91,7 +96,29 @@ class Behavior implements EventListener {
  *
  * @var array
  */
-	public $settings = [];
+	protected $_settings = [];
+
+/**
+ * Constructor
+ *
+ * Does not retain a reference to the Table object. If you need this
+ * you should override the constructor.
+ *
+ * @param Table $table The table this behavior is attached to.
+ * @param array $settings The settings for this behavior.
+ */
+	public function __construct(Table $table, array $settings = []) {
+		$this->_settings = $settings;
+	}
+
+/**
+ * Read the settings being used.
+ *
+ * @return array
+ */
+	public function settings() {
+		return $this->_settings;
+	}
 
 /**
  * Get the Model callbacks this behavior is interested in.
@@ -112,10 +139,21 @@ class Behavior implements EventListener {
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
 		];
+		$settings = $this->settings();
+		$priority = isset($settings['priority']) ? $settings['priority'] : null;
 		$events = [];
+
 		foreach ($eventMap as $event => $method) {
-			if (method_exists($this, $method)) {
+			if (!method_exists($this, $method)) {
+				continue;
+			}
+			if ($priority === null) {
 				$events[$event] = $method;
+			} else {
+				$events[$event] = [
+					'callable' => $method,
+					'priority' => $priority
+				];
 			}
 		}
 		return $events;
