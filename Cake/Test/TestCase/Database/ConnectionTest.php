@@ -38,6 +38,20 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
+ * Auxiliary method to build a mock for a driver so it can be injected into
+ * the connection object
+ *
+ * @return \Cake\Database\Driver
+ */
+	public function getMockFormDriver() {
+		$driver = $this->getMock('Cake\Database\Driver');
+		$driver->expects($this->once())
+			->method('enabled')
+			->will($this->returnValue(true));
+		return $driver;
+	}
+
+/**
  * Tests connecting to database
  *
  * @return void
@@ -680,10 +694,7 @@ class ConnectionTest extends TestCase {
 			['connect'],
 			[['log' => true]]
 		);
-		$driver = $this->getMock('Cake\Database\Driver');
-		$driver->expects($this->once())
-			->method('enabled')
-			->will($this->returnValue(true));
+		$driver = $this->getMockFormDriver();
 		$connection->driver($driver);
 
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
@@ -710,10 +721,7 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testLogCommitTransaction() {
-		$driver = $this->getMock('Cake\Database\Driver');
-		$driver->expects($this->once())
-			->method('enabled')
-			->will($this->returnValue(true));
+		$driver = $this->getMockFormDriver();
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect'],
@@ -740,10 +748,7 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testTransactionalSuccess() {
-		$driver = $this->getMock('Cake\Database\Driver');
-		$driver->expects($this->once())
-			->method('enabled')
-			->will($this->returnValue(true));
+		$driver = $this->getMockFormDriver();
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'commit', 'begin'],
@@ -765,10 +770,7 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testTransactionalFail() {
-		$driver = $this->getMock('Cake\Database\Driver');
-		$driver->expects($this->once())
-			->method('enabled')
-			->will($this->returnValue(true));
+		$driver = $this->getMockFormDriver();
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'commit', 'begin', 'rollback'],
@@ -792,10 +794,7 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testTransactionalWithException() {
-		$driver = $this->getMock('Cake\Database\Driver');
-		$driver->expects($this->once())
-			->method('enabled')
-			->will($this->returnValue(true));
+		$driver = $this->getMockFormDriver();
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'commit', 'begin', 'rollback'],
