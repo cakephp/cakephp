@@ -40,8 +40,8 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected $_className;
 
 /**
- * Holds a list of the properties that where modified after that where added or
- * modified after this object was originally created.
+ * Holds a list of the properties that were modified or added after this object
+ * was originally created.
  *
  * @var array
  */
@@ -55,9 +55,8 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected static $_accessors = [];
 
 /**
- * Indicates whether this entity was already persisted in database,
- * a null value indicates that it is unknown if it was persisted
- * already
+ * Indicates whether or not this entity has already been persisted.
+ * A null value indicates an unknown persistence status
  *
  * @var boolean
  */
@@ -400,7 +399,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	}
 
 /**
- * Returns whether this entity instance was already persisted in the database,
+ * Returns whether or not this entity has already been persisted.
  * This method can return null in the case there is no prior information on
  * the status of this entity.
  *

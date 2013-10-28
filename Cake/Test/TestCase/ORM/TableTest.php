@@ -1028,7 +1028,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
 		$listener = function($e, $entity, $options) use ($data) {
-			$this->assertSAme($data, $entity);
+			$this->assertSame($data, $entity);
 			$entity->set('password', 'foo');
 		};
 		$table->getEventManager()->attach($listener, 'Model.beforeSave');

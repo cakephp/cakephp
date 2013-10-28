@@ -442,10 +442,10 @@ class Connection {
  * Executes a callable function inside a transaction, if any exception occurs
  * while executing the passed callable, the transaction will be rolled back
  * If the result of the callable function is ``false``, the transaction will
- * also be rolled back. Otherwise the transaction is committed at after
- * executing the callback
+ * also be rolled back. Otherwise the transaction is committed after executing
+ * the callback
  *
- * The callback will receive as first argument this connection instance.
+ * The callback will receive the connection instance as its first argument..
  *
  * ### Example:
  *

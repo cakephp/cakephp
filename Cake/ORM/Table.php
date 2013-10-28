@@ -710,7 +710,7 @@ class Table {
  * - fieldList: An array of field names that should be saved, if empty all
  * properties in the passed entity will be saved
  * - atomic: Whether to execute the save and callbacks inside a database
- * transaction (defualt: true)
+ * transaction (default: true)
  *
  * When saving, this method will trigger two events:
  *
