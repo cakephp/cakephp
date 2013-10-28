@@ -36,9 +36,9 @@ class Configure {
  *
  * @var array
  */
-	protected static $_values = array(
+	protected static $_values = [
 		'debug' => 0
-	);
+	];
 
 /**
  * Configured engine classes, used to load config files from resources
@@ -46,7 +46,7 @@ class Configure {
  * @var array
  * @see Configure::load()
  */
-	protected static $_engines = array();
+	protected static $_engines = [];
 
 /**
  * Used to store a dynamic variable in Configure.
@@ -54,16 +54,16 @@ class Configure {
  * Usage:
  * {{{
  * Configure::write('One.key1', 'value of the Configure::One[key1]');
- * Configure::write(array('One.key1' => 'value of the Configure::One[key1]'));
- * Configure::write('One', array(
+ * Configure::write(['One.key1' => 'value of the Configure::One[key1]']);
+ * Configure::write('One', [
  *     'key1' => 'value of the Configure::One[key1]',
  *     'key2' => 'value of the Configure::One[key2]'
- * );
+ * ]);
  *
- * Configure::write(array(
+ * Configure::write([
  *     'One.key1' => 'value of the Configure::One[key1]',
  *     'One.key2' => 'value of the Configure::One[key2]'
- * ));
+ * ]);
  * }}}
  *
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::write
@@ -74,7 +74,7 @@ class Configure {
  */
 	public static function write($config, $value = null) {
 		if (!is_array($config)) {
-			$config = array($config => $value);
+			$config = [$config => $value];
 		}
 
 		foreach ($config as $name => $value) {
@@ -271,7 +271,7 @@ class Configure {
  *
  * Save only the error handling configuration:
  *
- * `Configure::dump('error.php', 'default', array('Error', 'Exception');`
+ * `Configure::dump('error.php', 'default', ['Error', 'Exception'];`
  *
  * @param string $key The identifier to create in the config adapter.
  *   This could be a filename or a cache key depending on the adapter being used.
@@ -281,7 +281,7 @@ class Configure {
  * @return boolean success
  * @throws Cake\Error\ConfigureException if the adapter does not implement a `dump` method.
  */
-	public static function dump($key, $config = 'default', $keys = array()) {
+	public static function dump($key, $config = 'default', $keys = []) {
 		$engine = static::_getEngine($config);
 		if (!$engine) {
 			throw new Error\ConfigureException(__d('cake_dev', 'There is no "%s" config engine.', $config));
@@ -367,7 +367,7 @@ class Configure {
  * @return boolean success.
  */
 	public static function clear() {
-		static::$_values = array();
+		static::$_values = [];
 		return true;
 	}
 

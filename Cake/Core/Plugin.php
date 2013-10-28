@@ -106,10 +106,10 @@ class Plugin {
  * @throws Cake\Error\MissingPluginException if the folder for the plugin to be loaded is not found
  * @return void
  */
-	public static function load($plugin, $config = array()) {
+	public static function load($plugin, $config = []) {
 		if (is_array($plugin)) {
 			foreach ($plugin as $name => $conf) {
-				list($name, $conf) = (is_numeric($name)) ? array($conf, $config) : array($name, $conf);
+				list($name, $conf) = (is_numeric($name)) ? [$conf, $config] : [$name, $conf];
 				static::load($name, $conf);
 			}
 			return;
