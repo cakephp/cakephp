@@ -39,6 +39,14 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		'core.tag', 'core.articles_tag'
 	];
 
+/**
+ * Handy variable containing the next primary key that will be inserted in the
+ * users table
+ *
+ * @var integer
+ */
+	public static $nextUserId = 5;
+
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
@@ -963,9 +971,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
-		$this->assertEquals($entity->id, 5);
+		$this->assertEquals($entity->id, self::$nextUserId);
 
-		$row = $table->find('all')->where(['id' => 5])->first();
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
 
@@ -985,9 +993,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
-		$this->assertEquals($entity->id, 5);
+		$this->assertEquals($entity->id, self::$nextUserId);
 
-		$row = $table->find('all')->where(['id' => 5])->first();
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
 		$entity->unsetProperty('crazyness');
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
@@ -1008,9 +1016,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('users');
 		$fieldList = ['fieldList' => ['username', 'created', 'updated']];
 		$this->assertSame($entity, $table->save($entity, $fieldList));
-		$this->assertEquals($entity->id, 5);
+		$this->assertEquals($entity->id, self::$nextUserId);
 
-		$row = $table->find('all')->where(['id' => 5])->first();
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
 		$entity->set('password', null);
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
@@ -1033,8 +1041,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		};
 		$table->getEventManager()->attach($listener, 'Model.beforeSave');
 		$this->assertSame($data, $table->save($data));
-		$this->assertEquals($data->id, 5);
-		$row = $table->find('all')->where(['id' => 5])->first();
+		$this->assertEquals($data->id, self::$nextUserId);
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
 		$this->assertEquals('foo', $row->get('password'));
 	}
 
@@ -1060,9 +1068,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->getEventManager()->attach($listener1, 'Model.beforeSave');
 		$table->getEventManager()->attach($listener2, 'Model.beforeSave');
 		$this->assertSame($data, $table->save($data));
-		$this->assertEquals($data->id, 5);
+		$this->assertEquals($data->id, self::$nextUserId);
 
-		$row = $table->find('all')->where(['id' => 5])->first();
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
 		$data->set('username', null);
 		$data->set('password', null);
 		$this->assertEquals($data->toArray(), $row->toArray());
@@ -1088,7 +1096,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->getEventManager()->attach($listener, 'Model.beforeSave');
 		$this->assertSame($data, $table->save($data));
 		$this->assertNull($data->id);
-		$row = $table->find('all')->where(['id' => 5])->first();
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
 		$this->assertNull($row);
 	}
 
@@ -1112,7 +1120,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		};
 		$table->getEventManager()->attach($listener, 'Model.afterSave');
 		$this->assertSame($data, $table->save($data));
-		$this->assertEquals($data->id, 5);
+		$this->assertEquals($data->id, self::$nextUserId);
 		$this->assertTrue($called);
 	}
 
@@ -1298,9 +1306,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
-		$this->assertEquals($entity->id, 5);
+		$this->assertEquals($entity->id, self::$nextUserId);
 
-		$row = $table->find('all')->where(['id' => 5])->first();
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
 		$entity->set('password', null);
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
