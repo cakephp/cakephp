@@ -53,7 +53,7 @@ class Object {
  * @param array $params Parameter list to use when calling $method
  * @return mixed Returns the result of the method call
  */
-	public function dispatchMethod($method, $params = array()) {
+	public function dispatchMethod($method, $params = []) {
 		switch (count($params)) {
 			case 0:
 				return $this->{$method}();
@@ -68,7 +68,7 @@ class Object {
 			case 5:
 				return $this->{$method}($params[0], $params[1], $params[2], $params[3], $params[4]);
 			default:
-				return call_user_func_array(array(&$this, $method), $params);
+				return call_user_func_array([&$this, $method], $params);
 		}
 	}
 
@@ -90,7 +90,7 @@ class Object {
  * @param array $properties An associative array containing properties and corresponding values.
  * @return void
  */
-	protected function _set($properties = array()) {
+	protected function _set($properties = []) {
 		if (is_array($properties) && !empty($properties)) {
 			$vars = get_object_vars($this);
 			foreach ($properties as $key => $val) {
