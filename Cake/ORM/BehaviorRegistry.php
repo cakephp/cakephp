@@ -121,6 +121,8 @@ class BehaviorRegistry extends ObjectRegistry {
  * Store the map of behavior methods and ensure there are no duplicates.
  *
  * Use the implementedEvents() method to exclude callback methods.
+ * In addition methods starting with `_` will be ignored, as will 
+ * method declared on Cake\ORM\Behavior
  *
  * @param Cake\ORM\Behavior $instance
  * @return void
@@ -128,34 +130,45 @@ class BehaviorRegistry extends ObjectRegistry {
  */
 	protected function _mapMethods(Behavior $instance, $class, $alias) {
 		$events = $instance->implementedEvents();
-		$methods = get_class_methods($instance);
+
+		$reflection = new \ReflectionClass($instance);
+		$eventMethods = [];
 		foreach ($events as $e => $binding) {
 			if (is_array($binding) && isset($binding['callable']) && isset($binding['callable'])) {
 				$binding = $binding['callable'];
 			}
-			$index = array_search($binding, $methods);
-			unset($methods[$index]);
+			$eventMethods[$binding] = true;
 		}
 
-		foreach ($methods as $method) {
-			$isFinder = substr($method, 0, 4) === 'find';
-			if (($isFinder && isset($this->_finderMap[$method])) || isset($this->_methodMap[$method])) {
+		foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+			if ($method->getDeclaringClass()->getName() === 'Cake\ORM\Behavior') {
+				continue;
+			}
+
+			$methodName = $method->getName();
+			if (strpos($methodName, '_') === 0 || isset($eventMethods[$methodName])) {
+				continue;
+			}
+			$methodName = strtolower($methodName);
+
+			if (isset($this->_finderMap[$methodName]) || isset($this->_methodMap[$methodName])) {
 				$error = __d(
 					'cake_dev',
 					'%s contains duplicate method "%s" which is already provided by %s',
 					$class,
-					$method,
-					$this->_methodMap[$method]
+					$method->getName(),
+					$this->_methodMap[$methodName]
 				);
 				throw new Error\Exception($error);
 			}
+
+			$isFinder = substr($methodName, 0, 4) === 'find';
 			if ($isFinder) {
-				$this->_finderMap[$method] = $alias;
+				$this->_finderMap[$methodName] = $alias;
 			} else {
-				$this->_methodMap[$method] = $alias;
+				$this->_methodMap[$methodName] = $alias;
 			}
 		}
-		return $instance;
 	}
 
 /**
@@ -168,6 +181,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @return boolean
  */
 	public function hasMethod($method) {
+		$method = strtolower($method);
 		return isset($this->_methodMap[$method]);
 	}
 
@@ -181,6 +195,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * @return boolean
  */
 	public function hasFinder($method) {
+		$method = strtolower($method);
 		return isset($this->_finderMap[$method]);
 	}
 
@@ -193,14 +208,17 @@ class BehaviorRegistry extends ObjectRegistry {
  * @throws Cake\Error\Exception When the method is unknown.
  */
 	public function call($method, array $args = []) {
+		$method = strtolower($method);
 		if ($this->hasMethod($method)) {
 			$alias = $this->_methodMap[$method];
 			return call_user_func_array([$this->_loaded[$alias], $method], $args);
 		}
+
 		if ($this->hasFinder($method)) {
 			$alias = $this->_finderMap[$method];
 			return call_user_func_array([$this->_loaded[$alias], $method], $args);
 		}
+
 		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behaviors.', $method));
 	}
 

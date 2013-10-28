@@ -55,10 +55,14 @@ class BehaviorRegistryTest extends TestCase {
  * @return void
  */
 	public function testLoad() {
+		Plugin::load('TestPlugin');
 		$settings = ['alias' => 'Sluggable', 'replacement' => '-'];
 		$result = $this->Behaviors->load('Sluggable', $settings);
 		$this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result);
 		$this->assertEquals($settings, $result->settings);
+
+		$result = $this->Behaviors->load('TestPlugin.PersisterOne');
+		$this->assertInstanceOf('TestPlugin\Model\Behavior\PersisterOneBehavior', $result);
 	}
 
 /**
@@ -130,6 +134,12 @@ class BehaviorRegistryTest extends TestCase {
 	public function testHasMethod() {
 		$this->Behaviors->load('Sluggable');
 		$this->assertTrue($this->Behaviors->hasMethod('slugify'));
+		$this->assertTrue($this->Behaviors->hasMethod('SLUGIFY'));
+
+		$this->assertFalse($this->Behaviors->hasMethod('__construct'));
+		$this->assertFalse($this->Behaviors->hasMethod('settings'));
+		$this->assertFalse($this->Behaviors->hasMethod('implementedEvents'));
+
 		$this->assertFalse($this->Behaviors->hasMethod('nope'));
 		$this->assertFalse($this->Behaviors->hasMethod('beforeFind'));
 		$this->assertFalse($this->Behaviors->hasMethod('findNoSlug'));
@@ -144,9 +154,11 @@ class BehaviorRegistryTest extends TestCase {
 		$this->Behaviors->load('Sluggable');
 
 		$this->assertTrue($this->Behaviors->hasFinder('findNoSlug'));
-		$this->assertFalse($this->Behaviors->hasFinder('findnoslug'));
-		$this->assertFalse($this->Behaviors->hasFinder('findnoslug'));
+		$this->assertTrue($this->Behaviors->hasFinder('findnoslug'));
+		$this->assertTrue($this->Behaviors->hasFinder('FINDNOSLUG'));
+
 		$this->assertFalse($this->Behaviors->hasFinder('slugify'));
+		$this->assertFalse($this->Behaviors->hasFinder('beforeFind'));
 		$this->assertFalse($this->Behaviors->hasFinder('nope'));
 	}
 

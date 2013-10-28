@@ -16,4 +16,8 @@ namespace TestPlugin\Model\Behavior;
 use Cake\ORM\Behavior;
 
 class PersisterOneBehavior extends Behavior {
+
+	public function persist() {
+	}
+
 }
