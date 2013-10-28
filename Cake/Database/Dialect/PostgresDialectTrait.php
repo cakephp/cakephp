@@ -52,55 +52,7 @@ trait PostgresDialectTrait {
  * @return Cake\Database\Query
  */
 	protected function _selectQueryTranslator($query) {
-		$limit = $query->clause('limit');
-		$offset = $query->clause('offset');
-		$order = $query->clause('order');
-
-		if ($limit || $offset) {
-			$query = clone $query;
-			$field = '_cake_paging_._cake_page_rownum_';
-			$outer = (new Query($query->connection()))
-				->select('*')
-				->from(['_cake_paging_' => $query]);
-
-			if ($offset) {
-				$outer->where(["$field >" => $offset]);
-			}
-			if ($limit) {
-				$outer->where(["$field <=" => (int)$offset + (int)$limit]);
-			}
-
-			if ($order === null) {
-				$order = new OrderByExpression('NULL');
-			}
-
-			$query
-				->select(['_cake_page_rownum_' => new UnaryExpression($order, [], 'ROW_NUMBER() OVER')])
-				->limit(null)
-				->offset(null)
-				->order([], true);
-			return $outer->decorateResults($this->_rowNumberRemover());
-		}
-
 		return $query;
-	}
-
-/**
- * Returns a function that will be used as a callback for a results decorator.
- * this function is responsible for deleting the artificial column in results
- * used for paginating the query.
- *
- * @return \Closure
- */
-	protected function _rowNumberRemover() {
-		return function($row) {
-			if (isset($row['_cake_page_rownum_'])) {
-				unset($row['_cake_page_rownum_']);
-			} else {
-				array_pop($row);
-			}
-			return $row;
-		};
 	}
 
 /**

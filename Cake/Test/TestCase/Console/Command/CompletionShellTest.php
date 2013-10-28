@@ -12,12 +12,12 @@
  * @since         CakePHP v 2.5
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Console\Command;
+namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\Command\CompletionShell;
 use Cake\Console\Command\Task\CommandTask;
-use Cake\Console\ConsoleOutput;
 use Cake\Console\ConsoleInput;
+use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
@@ -112,7 +112,7 @@ class CompletionShellTest extends TestCase {
 		$this->Shell->runCommand('commands', array());
 		$output = $this->Shell->stdout->output;
 
-		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome acl api bake command_list completion i18n server test upgrade sample\n";
+		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome acl bake command_list completion i18n server test upgrade sample\n";
 		$this->assertEquals($expected, $output);
 	}
 

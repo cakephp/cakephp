@@ -591,13 +591,6 @@ class Model extends Object implements EventListener {
  */
 	public $__backOriginalAssociation = array();
 
-/**
- * Back containable association
- *
- * @var array
- */
-	public $__backContainableAssociation = array();
-
 // @codingStandardsIgnoreEnd
 
 /**

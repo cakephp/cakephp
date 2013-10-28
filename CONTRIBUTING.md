@@ -63,11 +63,11 @@ Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to setup the CakePHP standard. The README contains installation info
 for the sniff and phpcs.
 
-
 # Additional Resources
 
 * [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
 * [Existing issues](https://github.com/cakephp/cakephp/issues)
+* [Development Roadmap](https://github.com/cakephp/cakephp/wiki/3.0-Roadmap)
 * [General GitHub documentation](https://help.github.com/)
 * [GitHub pull request documentation](https://help.github.com/send-pull-requests/)
 * #cakephp IRC channel on freenode.org

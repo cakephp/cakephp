@@ -118,6 +118,13 @@ class Query extends DatabaseQuery {
 	protected $_options = [];
 
 /**
+ * Whether to hydrate results into entity objects
+ *
+ * @var boolean
+ */
+	protected $_hydrate = true;
+
+/**
  * @param Cake\Database\Connection $connection
  * @param Cake\ORM\Table $table
  */
@@ -134,7 +141,7 @@ class Query extends DatabaseQuery {
  * and this query object will be returned for chaining.
  *
  * @param \Cake\ORM\Table $table The default table object to use
- * @var \Cake\ORM\Table|Query
+ * @return \Cake\ORM\Table|Query
  */
 	public function repository(Table $table = null) {
 		if ($table === null) {
@@ -613,6 +620,14 @@ class Query extends DatabaseQuery {
 		}
 	}
 
+	public function hydrate($enable = null) {
+		if ($enable === null) {
+			return $this->_hydrate;
+		}
+		$this->_hydrate = (bool)$enable;
+		return $this;
+	}
+
 /**
  * Decorates the ResultSet iterator with MapReduce routines
  *
@@ -778,6 +793,29 @@ class Query extends DatabaseQuery {
  * @return CallbackStatement $statement modified statement with extra loaders
  */
 	protected function _eagerLoad($statement) {
+		$keys = $this->_collectKeys($statement);
+		foreach ($this->_loadEagerly as $association => $meta) {
+			$contain = $meta['associations'];
+			$alias = $meta['instance']->source()->alias();
+			$keys = isset($keys[$alias]) ? $keys[$alias] : null;
+			$f = $meta['instance']->eagerLoader(
+				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
+			);
+			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
+		}
+
+		return $statement;
+	}
+
+/**
+ * Helper function used to return the keys from the query records that will be used
+ * to eagerly load associations.
+ *
+ *
+ * @param BufferedStatement $statement
+ * @return array
+ */
+	protected function _collectKeys($statement) {
 		$collectKeys = [];
 		foreach ($this->_loadEagerly as $association => $meta) {
 			$source = $meta['instance']->source();
@@ -798,17 +836,7 @@ class Query extends DatabaseQuery {
 			$statement->rewind();
 		}
 
-		foreach ($this->_loadEagerly as $association => $meta) {
-			$contain = $meta['associations'];
-			$alias = $meta['instance']->source()->alias();
-			$keys = isset($keys[$alias]) ? $keys[$alias] : null;
-			$f = $meta['instance']->eagerLoader(
-				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
-			);
-			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
-		}
-
-		return $statement;
+		return $keys;
 	}
 
 /**

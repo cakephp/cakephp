@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 
 /**
  * Tests BelongsTo class
@@ -33,13 +34,13 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->company = Table::build('Company', [
+		$this->company = TableRegistry::get('Company', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'company_name' => ['type' => 'string'],
 			]
 		]);
-		$this->client = Table::build('Client', [
+		$this->client = TableRegistry::get('Client', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'client_name' => ['type' => 'string'],
@@ -55,7 +56,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
+		TableRegistry::clear();
 	}
 
 /**

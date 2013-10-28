@@ -1582,14 +1582,8 @@ class ModelIntegrationTest extends ModelTestBase {
 		$this->loadFixtures('Post');
 
 		$TestModel = ClassRegistry::init('MergeVarPluginPost');
-		$this->assertEquals(array('Containable' => null, 'Tree' => null), $TestModel->actsAs);
-		$this->assertTrue(isset($TestModel->Behaviors->Containable));
+		$this->assertEquals(array('Tree' => null), $TestModel->actsAs);
 		$this->assertTrue(isset($TestModel->Behaviors->Tree));
-
-		$TestModel = ClassRegistry::init('MergeVarPluginComment');
-		$expected = array('Containable' => array('some_settings'));
-		$this->assertEquals($expected, $TestModel->actsAs);
-		$this->assertTrue(isset($TestModel->Behaviors->Containable));
 	}
 
 /**

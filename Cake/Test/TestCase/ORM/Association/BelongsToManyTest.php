@@ -19,12 +19,14 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 
 /**
  * Tests BelongsToMany class
  *
  */
-class BelongsToManyTest extends \Cake\TestSuite\TestCase {
+class BelongsToManyTest extends TestCase {
 
 /**
  * Set up
@@ -47,7 +49,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'id' => ['type' => 'integer'],
 			'name' => ['type' => 'string'],
 		]);
-		Table::instance('Article', $this->article);
+		TableRegistry::set('Article', $this->article);
 	}
 
 /**
@@ -57,7 +59,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
+		TableRegistry::clear();
 	}
 
 /**
@@ -108,7 +110,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		]);
 		$pivot = $assoc->pivot();
 		$this->assertInstanceOf('\Cake\ORM\Table', $pivot);
-		$this->assertEquals('ArticleTag', $pivot->alias());
+		$this->assertEquals('ArticlesTag', $pivot->alias());
 		$this->assertEquals('articles_tags', $pivot->table());
 		$this->assertSame($this->article, $pivot->association('Article')->target());
 		$this->assertSame($this->tag, $pivot->association('Tag')->target());
@@ -117,20 +119,20 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf($belongsTo, $pivot->association('Article'));
 		$this->assertInstanceOf($belongsTo, $pivot->association('Tag'));
 
-		$this->assertSame($pivot, $this->tag->association('ArticleTag')->target());
+		$this->assertSame($pivot, $this->tag->association('ArticlesTag')->target());
 		$this->assertSame($this->article, $this->tag->association('Article')->target());
 
 		$hasMany = '\Cake\ORM\Association\HasMany';
 		$belongsToMany = '\Cake\ORM\Association\BelongsToMany';
 		$this->assertInstanceOf($belongsToMany, $this->tag->association('Article'));
-		$this->assertInstanceOf($hasMany, $this->tag->association('ArticleTag'));
+		$this->assertInstanceOf($hasMany, $this->tag->association('ArticlesTag'));
 
 		$this->assertSame($pivot, $assoc->pivot());
-		$pivot2 = Table::build('Foo');
+		$pivot2 = TableRegistry::get('Foo');
 		$assoc->pivot($pivot2);
 		$this->assertSame($pivot2, $assoc->pivot());
 
-		$assoc->pivot('ArticleTag');
+		$assoc->pivot('ArticlesTag');
 		$this->assertSame($pivot, $assoc->pivot());
 	}
 
@@ -146,7 +148,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'joinTable' => 'tags_articles'
 		]);
 		$pivot = $assoc->pivot();
-		$this->assertEquals('ArticleTag', $pivot->alias());
+		$this->assertEquals('TagsArticle', $pivot->alias());
 		$this->assertEquals('tags_articles', $pivot->table());
 	}
 
@@ -163,7 +165,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->tag,
 			'conditions' => ['Tag.name' => 'cake']
 		];
-		Table::build('ArticleTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -181,10 +183,10 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			]
 		]);
 		$query->expects($this->at(2))->method('join')->with([
-			'ArticleTag' => [
+			'ArticlesTag' => [
 				'conditions' => [
-					'Article.id = ArticleTag.article_id',
-					'Tag.id = ArticleTag.tag_id'
+					'Article.id = ArticlesTag.article_id',
+					'Tag.id = ArticlesTag.tag_id'
 				],
 				'type' => 'INNER',
 				'table' => 'articles_tags'
@@ -195,8 +197,8 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'Tag__name' => 'Tag.name',
 		]);
 		$query->expects($this->at(3))->method('select')->with([
-			'ArticleTag__article_id' => 'ArticleTag.article_id',
-			'ArticleTag__tag_id' => 'ArticleTag.tag_id',
+			'ArticlesTag__article_id' => 'ArticlesTag.article_id',
+			'ArticlesTag__tag_id' => 'ArticlesTag.tag_id',
 		]);
 		$association->attachTo($query);
 	}
@@ -213,7 +215,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->tag,
 			'conditions' => ['Tag.name' => 'cake']
 		];
-		Table::build('ArticleTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -231,10 +233,10 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			]
 		]);
 		$query->expects($this->at(1))->method('join')->with([
-			'ArticleTag' => [
+			'ArticlesTag' => [
 				'conditions' => [
-					'Article.id = ArticleTag.article_id',
-					'Tag.id = ArticleTag.tag_id'
+					'Article.id = ArticlesTag.article_id',
+					'Tag.id = ArticlesTag.tag_id'
 				],
 				'type' => 'INNER',
 				'table' => 'articles_tags'
@@ -254,7 +256,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
 		];
-		Table::build('ArticleTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -267,33 +269,33 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('contain')
 			->with([
-				'ArticleTag' => [
-					'conditions' => ['ArticleTag.article_id in' => $keys],
+				'ArticlesTag' => [
+					'conditions' => ['ArticlesTag.article_id in' => $keys],
 					'matching' => true
 				]
 			])
 			->will($this->returnSelf());
 
-		$callable = $association->eagerLoader(compact('keys'));
+		$callable = $association->eagerLoader(compact('keys', 'query'));
 		$row = ['Article__id' => 1, 'title' => 'article 1'];
 		$result = $callable($row);
 		$row['Tag__Tag'] = [
-			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]]
 		];
 		$this->assertEquals($row, $result);
 
 		$row = ['Article__id' => 2, 'title' => 'article 2'];
 		$result = $callable($row);
 		$row['Tag__Tag'] = [
-			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
+			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
 		];
 		$this->assertEquals($row, $result);
 	}
@@ -310,7 +312,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Tag.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		Table::build('ArticleTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -324,16 +326,16 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('contain')
 			->with([
-				'ArticleTag' => [
-					'conditions' => ['ArticleTag.article_id in' => $keys],
+				'ArticlesTag' => [
+					'conditions' => ['ArticlesTag.article_id in' => $keys],
 					'matching' => true
 				]
 			])
@@ -347,7 +349,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			->with(['id' => 'ASC'])
 			->will($this->returnValue($query));
 
-		$association->eagerLoader(compact('keys'));
+		$association->eagerLoader(compact('keys', 'query'));
 	}
 
 /**
@@ -362,7 +364,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Tag.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		Table::build('ArticleTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -376,16 +378,16 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('contain')
 			->with([
-				'ArticleTag' => [
-					'conditions' => ['ArticleTag.article_id in' => $keys],
+				'ArticlesTag' => [
+					'conditions' => ['ArticlesTag.article_id in' => $keys],
 					'matching' => true
 				]
 			])
@@ -405,15 +407,16 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('select')
 			->with([
 				'Tag__name' => 'Tag.name',
-				'ArticleTag__article_id' => 'ArticleTag.article_id'
+				'ArticlesTag__article_id' => 'ArticlesTag.article_id'
 			])
 			->will($this->returnValue($query));
 
 		$association->eagerLoader([
 			'conditions' => ['Tag.id !=' => 3],
 			'sort' => ['name' => 'DESC'],
-			'fields' => ['name', 'ArticleTag.article_id'],
-			'keys' => $keys
+			'fields' => ['name', 'ArticlesTag.article_id'],
+			'keys' => $keys,
+			'query' => $query
 		]);
 	}
 
@@ -421,7 +424,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
  * Test the eager loader method with default query clauses
  *
  * @expectedException \InvalidArgumentException
- * @expectedExceptionMessage You are required to select the "ArticleTag.article_id"
+ * @expectedExceptionMessage You are required to select the "ArticlesTag.article_id"
  * @return void
  */
 	public function testEagerLoaderFieldsException() {
@@ -431,7 +434,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Tag.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		Table::build('ArticleTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -450,7 +453,8 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 
 		$association->eagerLoader([
 			'keys' => $keys,
-			'fields' => ['name']
+			'fields' => ['name'],
+			'query' => $query
 		]);
 	}
 
@@ -466,7 +470,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Tag.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		Table::build('ArticleTag', [
+		TableRegistry::get('ArticlesTag', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
@@ -487,8 +491,8 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
@@ -502,7 +506,7 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 		unset($joins[1]);
 		$expected
 			->contain([], true)
-			->select('ArticleTag.article_id', true)
+			->select('ArticlesTag.article_id', true)
 			->join($joins, [], true);
 
 		$query->expects($this->once())->method('where')
@@ -511,26 +515,27 @@ class BelongsToManyTest extends \Cake\TestSuite\TestCase {
 
 		$query->expects($this->once())->method('contain')
 			->with([
-				'ArticleTag' => [
-					'conditions' => ['ArticleTag.article_id in' => $expected],
+				'ArticlesTag' => [
+					'conditions' => ['ArticlesTag.article_id in' => $expected],
 					'matching' => true
 				]
 			])
 			->will($this->returnSelf());
 
 		$callable = $association->eagerLoader([
-			'query' => $parent, 'strategy' => BelongsToMany::STRATEGY_SUBQUERY
+			'query' => $parent, 'strategy' => BelongsToMany::STRATEGY_SUBQUERY,
+			'keys' => []
 		]);
 
 		$row['Tag__Tag'] = [
-			['id' => 1, 'name' => 'foo', 'ArticleTag' => ['article_id' => 1]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]]
 		];
 		$row['Article__id'] = 1;
 		$result = $callable($row);
 		$this->assertEquals($row, $result);
 
 		$row['Tag__Tag'] = [
-			['id' => 2, 'name' => 'bar', 'ArticleTag' => ['article_id' => 2]]
+			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
 		];
 		$row['Article__id'] = 2;
 		$result = $callable($row);

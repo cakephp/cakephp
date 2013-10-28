@@ -19,32 +19,12 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 
 /**
- * Used to test correct class is instantiated when using Table::build();
+ * Used to test correct class is instantiated when using TableRegistry::get();
  */
 class UsersTable extends Table {
-
-/**
- * Overrides default table name
- *
- * @var string
- */
-	protected $_table = 'users';
-
-}
-
-/**
- * Used to test correct class is instantiated when using Table::build();
- */
-class MyUsersTable extends Table {
-
-/**
- * Overrides default table name
- *
- * @var string
- */
-	protected $_table = 'users';
 
 }
 
@@ -54,66 +34,20 @@ class MyUsersTable extends Table {
  */
 class TableTest extends \Cake\TestSuite\TestCase {
 
-	public $fixtures = ['core.user', 'core.category'];
+	public $fixtures = [
+		'core.user', 'core.category', 'core.article', 'core.author',
+		'core.tag', 'core.articles_tag'
+	];
 
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
+		Configure::write('App.namespace', 'TestApp');
 	}
 
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
-	}
-/**
- * Tests that table options can be pre-configured for the factory method
- *
- * @return void
- */
-	public function testConfigAndBuild() {
-		$map = Table::config();
-		$this->assertEquals([], $map);
-
-		$options = ['connection' => $this->connection];
-		Table::config('users', $options);
-		$map = Table::config();
-		$this->assertEquals(['users' => $options], $map);
-		$this->assertEquals($options, Table::config('users'));
-
-		$schema = ['id' => ['type' => 'rubbish']];
-		$options += ['schema' => $schema];
-		Table::config('users', $options);
-
-		$table = Table::build('foo', ['table' => 'users']);
-		$this->assertInstanceOf('Cake\ORM\Table', $table);
-		$this->assertEquals('users', $table->table());
-		$this->assertEquals('foo', $table->alias());
-		$this->assertSame($this->connection, $table->connection());
-		$this->assertEquals(array_keys($schema), $table->schema()->columns());
-		$this->assertEquals($schema['id']['type'], $table->schema()->column('id')['type']);
-
-		Table::clearRegistry();
-		$this->assertEmpty(Table::config());
-
-		Table::config('users', $options);
-		$table = Table::build('foo', ['className' => __NAMESPACE__ . '\MyUsersTable']);
-		$this->assertInstanceOf(__NAMESPACE__ . '\MyUsersTable', $table);
-		$this->assertEquals('users', $table->table());
-		$this->assertEquals('foo', $table->alias());
-		$this->assertSame($this->connection, $table->connection());
-		$this->assertEquals(array_keys($schema), $table->schema()->columns());
-	}
-
-/**
- * Tests getting and setting a Table instance in the registry
- *
- * @return void
- */
-	public function testInstance() {
-		$this->assertNull(Table::instance('users'));
-		$table = new Table(['table' => 'users']);
-		Table::instance('users', $table);
-		$this->assertSame($table, Table::instance('users'));
+		TableRegistry::clear();
 	}
 
 /**
@@ -191,13 +125,82 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that name will be selected as a displayField
+ *
+ * @return void
+ */
+	public function testDisplayFieldName() {
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'foo' => ['type' => 'string'],
+				'name' => ['type' => 'string']
+			]
+		]);
+		$this->assertEquals('name', $table->displayField());
+	}
+
+/**
+ * Tests that title will be selected as a displayField
+ *
+ * @return void
+ */
+	public function testDisplayFieldTitle() {
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'foo' => ['type' => 'string'],
+				'title' => ['type' => 'string']
+			]
+		]);
+		$this->assertEquals('title', $table->displayField());
+	}
+
+/**
+ * Tests that no displayField will fallback to primary key
+ *
+ * @return void
+ */
+	public function testDisplayFallback() {
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'id' => ['type' => 'string'],
+				'foo' => ['type' => 'string']
+			]
+		]);
+		$this->assertEquals('id', $table->displayField());
+	}
+
+/**
+ * Tests that displayField can be changed
+ *
+ * @return void
+ */
+	public function testDisplaySet() {
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'id' => ['type' => 'string'],
+				'foo' => ['type' => 'string']
+			]
+		]);
+		$this->assertEquals('id', $table->displayField());
+		$table->displayField('foo');
+		$this->assertEquals('foo', $table->displayField());
+	}
+
+/**
  * Tests schema method
  *
  * @return void
  */
 	public function testSchema() {
 		$schema = $this->connection->schemaCollection()->describe('users');
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$this->assertEquals($schema, $table->schema());
 
 		$table = new Table(['table' => 'stuff']);
@@ -219,9 +222,17 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFindAllNoFields() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
-		$results = $table->find('all')->where(['id IN' => [1, 2]])->order('id')->toArray();
+	public function testFindAllNoFieldsAndNoHydration() {
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
+		$results = $table
+			->find('all')
+			->where(['id IN' => [1, 2]])
+			->order('id')
+			->hydrate(false)
+			->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -246,9 +257,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFindAllSomeFields() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
-		$results = $table->find('all')->select(['username', 'password'])->order('username')->toArray();
+	public function testFindAllSomeFieldsNoHydration() {
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
+		$results = $table->find('all')
+			->select(['username', 'password'])
+			->hydrate(false)
+			->order('username')->toArray();
 		$expected = [
 			['username' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
 			['username' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
@@ -257,7 +274,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertSame($expected, $results);
 
-		$results = $table->find('all')->select(['foo' => 'username', 'password'])->order('username')->toArray();
+		$results = $table->find('all')
+			->select(['foo' => 'username', 'password'])
+			->order('username')
+			->hydrate(false)
+			->toArray();
 		$expected = [
 			['foo' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
 			['foo' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
@@ -274,10 +295,14 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindAllConditionAutoTypes() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$query = $table->find('all')
 			->select(['id', 'username'])
 			->where(['created >=' => new \DateTime('2010-01-22 00:00')])
+			->hydrate(false)
 			->order('id');
 		$expected = [
 			['id' => 3, 'username' => 'larry'],
@@ -300,7 +325,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindBeforeFindEventMutateQuery() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$table->getEventManager()->attach(function ($event, $query, $options) {
 			$query->limit(1);
 		}, 'Model.beforeFind');
@@ -316,7 +344,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindBeforeFindEventOverrideReturn() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$expected = ['One', 'Two', 'Three'];
 		$table->getEventManager()->attach(function ($event, $query, $options) use ($expected) {
 			$query->setResult($expected);
@@ -396,7 +427,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['b' => 'c'],
 			'sort' => ['foo' => 'asc']
 		];
-		$table = new Table(['table' => 'authors']);
+		$table = new Table(['table' => 'authors', 'connection' => $this->connection]);
 		$belongsToMany = $table->belongsToMany('tag', $options);
 		$this->assertInstanceOf('\Cake\ORM\Association\BelongsToMany', $belongsToMany);
 		$this->assertSame($belongsToMany, $table->association('tag'));
@@ -414,7 +445,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testUpdateAll() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$fields = ['username' => 'mark'];
 		$result = $table->updateAll($fields, ['id <' => 4]);
 		$this->assertTrue($result);
@@ -422,6 +456,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result = $table->find('all')
 			->select(['username'])
 			->order(['id' => 'asc'])
+			->hydrate(false)
 			->toArray();
 		$expected = array_fill(0, 3, $fields);
 		$expected[] = ['username' => 'garrett'];
@@ -437,7 +472,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['_buildQuery'],
-			['table' => 'users', 'connection' => $this->connection]
+			[['table' => 'users']]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
@@ -455,7 +490,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteAll() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
 		$result = $table->deleteAll(['id <' => 4]);
 		$this->assertTrue($result);
 
@@ -473,7 +511,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['_buildQuery'],
-			['table' => 'users', 'connection' => $this->connection]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
@@ -491,7 +529,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindApplyOptions() {
-		$table = $this->getMock('Cake\ORM\Table', ['_buildQuery'], ['table' => 'users']);
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['_buildQuery'],
+			[['table' => 'users', 'connection' => $this->connection]]
+		);
 		$query = $this->getMock('Cake\ORM\Query', [], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('_buildQuery')
@@ -512,9 +554,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFindList() {
-		$table = new Table(['table' => 'users', 'connection' => $this->connection]);
-		$query = $table->find('list', ['fields' => ['id', 'username']])->order('id');
+	public function testFindListNoHydration() {
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
+		$table->displayField('username');
+		$query = $table->find('list', ['fields' => ['id', 'username']])
+			->hydrate(false)
+			->order('id');
 		$expected = [
 			1 => 'mariano',
 			2 => 'nate',
@@ -523,8 +571,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertSame($expected, $query->toArray());
 
-		$query = $table->find('list')
+		$query = $table->find('list', ['groupField' => 'odd'])
 			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->hydrate(false)
 			->order('id');
 		$expected = [
 			0 => [
@@ -544,8 +593,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFindThreaded() {
-		$table = new Table(['table' => 'categories', 'connection' => $this->connection]);
+	public function testFindThreadedNoHydration() {
+		$table = new Table([
+			'table' => 'categories',
+			'connection' => $this->connection,
+		]);
 		$expected = [
 			[
 				'id' => 1,
@@ -561,11 +613,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 								'id' => 7,
 								'parent_id' => 2,
 								'name' => 'Category 1.1.1',
+								'children' => []
 							],
 							[
 								'id' => 8,
 								'parent_id' => '2',
 								'name' => 'Category 1.1.2',
+								'children' => []
 							]
 						],
 					],
@@ -573,6 +627,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 						'id' => 3,
 						'parent_id' => '1',
 						'name' => 'Category 1.2',
+						'children' => []
 					],
 				]
 			],
@@ -580,6 +635,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				'id' => 4,
 				'parent_id' => 0,
 				'name' => 'Category 2',
+				'children' => []
 			],
 			[
 				'id' => 5,
@@ -590,12 +646,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 						'id' => '6',
 						'parent_id' => '5',
 						'name' => 'Category 3.1',
+						'children' => []
 					]
 				]
 			]
 		];
-		$results = $table->find('threaded')
+		$results = $table->find('all')
 			->select(['id', 'parent_id', 'name'])
+			->hydrate(false)
+			->threaded()
 			->toArray();
 		$this->assertEquals($expected, $results);
 	}
@@ -606,7 +665,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testCallingFindersDirectly() {
-		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$table = $this->getMock('\Cake\ORM\Table', ['find'], [], '', false);
 		$query = $this->getMock('\Cake\ORM\Query', [], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('find')
@@ -614,7 +673,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 		$this->assertSame($query, $table->list());
 
-		$table = $this->getMock('\Cake\ORM\Table', ['find']);
+		$table = $this->getMock('\Cake\ORM\Table', ['find'], [], '', false);
 		$table->expects($this->once())
 			->method('find')
 			->with('threaded', ['order' => ['name' => 'ASC']])
@@ -628,7 +687,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testStackingFinders() {
-		$table = $this->getMock('\Cake\ORM\Table', ['find', 'findList']);
+		$table = $this->getMock('\Cake\ORM\Table', ['find', 'findList'], [], '', false);
 		$params = [$this->connection, $table];
 		$query = $this->getMock('\Cake\ORM\Query', ['addDefaultTypes'], $params);
 
@@ -648,4 +707,203 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($query, $result);
 	}
 
+/**
+ * Tests find('threaded') with hydrated results
+ *
+ * @return void
+ */
+	public function testFindThreadedHydrated() {
+		$table = new Table([
+			'table' => 'categories',
+			'connection' => $this->connection,
+		]);
+		$results = $table->find('all')
+			->threaded()
+			->select(['id', 'parent_id', 'name'])
+			->toArray();
+
+		$this->assertEquals(1, $results[0]->id);
+		$expected = [
+			'id' => 8,
+			'parent_id' => 2,
+			'name' => 'Category 1.1.2',
+			'children' => []
+		];
+		$this->assertEquals($expected, $results[0]->children[0]->children[1]->toArray());
+	}
+
+/**
+ * Tests find('list') with hydrated records
+ *
+ * @return void
+ */
+	public function testFindListHydrated() {
+		$table = new Table([
+			'table' => 'users',
+			'connection' => $this->connection,
+		]);
+		$table->displayField('username');
+		$query = $table
+			->find('list', ['fields' => ['id', 'username']])
+			->order('id');
+		$expected = [
+			1 => 'mariano',
+			2 => 'nate',
+			3 => 'larry',
+			4 => 'garrett'
+		];
+		$this->assertSame($expected, $query->toArray());
+
+		$query = $table->find('list', ['groupField' => 'odd'])
+			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->hydrate(true)
+			->order('id');
+		$expected = [
+			0 => [
+				1 => 'mariano',
+				3 => 'larry'
+			],
+			1 => [
+				2 => 'nate',
+				4 => 'garrett'
+			]
+		];
+		$this->assertSame($expected, $query->toArray());
+	}
+
+	public function testEntityClassDefault() {
+		$table = new Table();
+		$this->assertEquals('\Cake\ORM\Entity', $table->entityClass());
+	}
+
+/**
+ * Tests that using a simple string for entityClass will try to
+ * load the class from the App namespace
+ *
+ * @return void
+ */
+	public function testRepositoryClassInAPP() {
+		$class = $this->getMockClass('\Cake\ORM\Entity');
+		class_alias($class, 'TestApp\Model\Entity\TestUser');
+		$table = new Table();
+		$this->assertEquals('TestApp\Model\Entity\TestUser', $table->entityClass('TestUser'));
+	}
+
+/**
+ * Tests that using a simple string for entityClass will try to
+ * load the class from the Plugin namespace when using plugin notation
+ *
+ * @return void
+ */
+	public function testRepositoryClassInPlugin() {
+		$class = $this->getMockClass('\Cake\ORM\Entity');
+		class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
+		$table = new Table();
+		$this->assertEquals(
+			'MyPlugin\Model\Entity\SuperUser',
+			$table->entityClass('MyPlugin.SuperUser')
+		);
+	}
+
+/**
+ * Tests that using a simple string for entityClass will throw an exception
+ * when the class does not exist in the namespace
+ *
+ * @expectedException Cake\ORM\Error\MissingEntityException
+ * @expectedExceptionMessage Entity class FooUser could not be found.
+ * @return void
+ */
+	public function testRepositoryClassNonExisting() {
+		$table = new Table;
+		$this->assertFalse($table->entityClass('FooUser'));
+	}
+
+/**
+ * Tests getting the entityClass based on conventions for the entity
+ * namespace
+ *
+ * @return void
+ */
+	public function testRepositoryClassConventionForAPP() {
+		$table = new \TestApp\Model\Repository\ArticleTable;
+		$this->assertEquals('TestApp\Model\Entity\Article', $table->entityClass());
+	}
+
+/**
+ * Tests setting a entity class object using the setter method
+ *
+ * @return void
+ */
+	public function testSetEntityClass() {
+		$table = new Table;
+		$class = '\\' . $this->getMockClass('\Cake\ORM\Entity');
+		$table->entityClass($class);
+		$this->assertEquals($class, $table->entityClass());
+	}
+
+/**
+ * Proves that associations, even though they are lazy loaded, will fetch
+ * records using the correct table class and hydrate with the correct entity
+ *
+ * @return void
+ */
+	public function testReciprocalBelongsToLoading() {
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
+		$result = $table->find('all')->contain(['author'])->first();
+		$this->assertInstanceOf('TestApp\Model\Entity\Author', $result->author);
+	}
+
+/**
+ * Proves that associations, even though they are lazy loaded, will fetch
+ * records using the correct table class and hydrate with the correct entity
+ *
+ * @return void
+ */
+	public function testReciprocalHasManyLoading() {
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
+		$result = $table->find('all')->contain(['author' => ['article']])->first();
+		$this->assertCount(2, $result->author->article);
+		foreach ($result->author->article as $article) {
+			$this->assertInstanceOf('TestApp\Model\Entity\Article', $article);
+		}
+	}
+
+/**
+ * Tests that the correct table and entity are loaded for the pivot association in
+ * a belongsToMany setup
+ *
+ * @return void
+ */
+	public function testReciprocalBelongsToMany() {
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
+		$result = $table->find('all')->contain(['tag'])->first();
+		$this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
+		$this->assertInstanceOf('TestApp\Model\Entity\ArticlesTag', $result->tags[0]->extraInfo);
+	}
+
+/**
+ * Tests that it is possible to insert a new row using the save method
+ *
+ * @return void
+ */
+	public function testSaveNewEntity() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table = TableRegistry::get('user');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals($entity->id, 5);
+
+		$row = $table->find('all')->where(['id' => 5])->first();
+		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
 }

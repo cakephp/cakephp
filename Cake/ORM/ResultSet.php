@@ -98,6 +98,20 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 	protected $_results = [];
 
 /**
+ * Whether to hydrate results into objects or not
+ *
+ * @var boolean
+ */
+	protected $_hydrate = true;
+
+/**
+ * The fully namespaced name of the class to use for hydrating results
+ *
+ * @var string
+ */
+	protected $_entityClass;
+
+/**
  * Constructor
  *
  * @param Query from where results come
@@ -109,6 +123,8 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 		$this->_statement = $statement;
 		$this->_defaultTable = $this->_query->repository();
 		$this->_calculateAssociationMap();
+		$this->_hydrate = $this->_query->hydrate();
+		$this->_entityClass = $query->repository()->entityClass();
 	}
 
 /**
@@ -184,7 +200,11 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 		$map = [];
 		$visitor = function($level) use (&$visitor, &$map) {
 			foreach ($level as $assoc => $meta) {
-				$map[$assoc] = $meta['instance'];
+				$map[$assoc] = [
+					'instance' => $meta['instance'],
+					'canBeJoined' => $meta['canBeJoined'],
+					'entityClass' => $meta['instance']->target()->entityClass()
+				];
 				if (!empty($meta['associations'])) {
 					$visitor($meta['associations']);
 				}
@@ -249,11 +269,20 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 			if (!isset($results[$alias])) {
 				continue;
 			}
-			$results[$alias] = $this->_castValues($assoc->target(), $results[$alias]);
-			$results = $assoc->transformRow($results);
+			$instance = $assoc['instance'];
+			$results[$alias] = $this->_castValues($instance->target(), $results[$alias]);
+
+			if ($this->_hydrate && $assoc['canBeJoined']) {
+				$results[$alias] = new $assoc['entityClass']($results[$alias], false);
+			}
+			$results = $instance->transformRow($results);
 		}
 
-		return $results[$defaultAlias];
+		$results = $results[$defaultAlias];
+		if ($this->_hydrate && !($results instanceof Entity)) {
+			$results = new $this->_entityClass($results, false);
+		}
+		return $results;
 	}
 
 /**

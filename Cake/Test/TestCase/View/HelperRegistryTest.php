@@ -61,7 +61,7 @@ class HelperRegistryTest extends TestCase {
 	}
 
 /**
- * test triggering callbacks on loaded helpers
+ * test loading helpers.
  *
  * @return void
  */

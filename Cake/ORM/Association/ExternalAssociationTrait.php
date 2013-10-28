@@ -170,10 +170,15 @@ trait ExternalAssociationTrait {
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 		$key = $this->_linkField($options);
 
-		$filter = ($options['strategy'] == parent::STRATEGY_SUBQUERY) ?
-			$this->_buildSubquery($options['query'], $key) : $options['keys'];
+		$filter = $options['keys'];
+		if ($options['strategy'] === parent::STRATEGY_SUBQUERY) {
+			$filter = $this->_buildSubquery($options['query'], $key);
+		}
 
-		$fetchQuery = $target->find('all')->where($options['conditions']);
+		$fetchQuery = $target
+			->find('all')
+			->where($options['conditions'])
+			->hydrate($options['query']->hydrate());
 		$fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
 
 		if (!empty($options['fields'])) {
@@ -218,7 +223,7 @@ trait ExternalAssociationTrait {
  * @return string
  */
 	protected function _linkField($options) {
-		return sprintf('%s.%s', $this->target()->alias(), $options['foreignKey']);
+		return sprintf('%s.%s', $this->name(), $options['foreignKey']);
 	}
 
 /**

@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 
 /**
  * Tests HasMany class
@@ -33,7 +34,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->author = Table::build('Author', [
+		$this->author = TableRegistry::get('Author', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'username' => ['type' => 'string'],
@@ -56,7 +57,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  */
 	public function tearDown() {
 		parent::tearDown();
-		Table::clearRegistry();
+		TableRegistry::clear();
 	}
 
 /**
@@ -118,7 +119,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$callable = $association->eagerLoader(compact('keys'));
+		$callable = $association->eagerLoader(compact('keys', 'query'));
 		$row = ['Author__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
 		$row['Article__Article'] = [
@@ -176,7 +177,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->with(['id' => 'ASC'])
 			->will($this->returnValue($query));
 
-		$association->eagerLoader(compact('keys'));
+		$association->eagerLoader(compact('keys', 'query'));
 	}
 
 /**
@@ -239,7 +240,8 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'sort' => ['title' => 'DESC'],
 			'fields' => ['title', 'author_id'],
 			'contain' => ['Category' => ['fields' => ['a', 'b']]],
-			'keys' => $keys
+			'keys' => $keys,
+			'query' => $query
 		]);
 	}
 
@@ -267,7 +269,11 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$this->article->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 
-		$association->eagerLoader(['fields' => ['id', 'title'], 'keys' => $keys]);
+		$association->eagerLoader([
+			'fields' => ['id', 'title'],
+			'keys' => $keys,
+			'query' => $query
+		]);
 	}
 
 /**
@@ -316,7 +322,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$callable = $association->eagerLoader([
-			'query' => $parent, 'strategy' => HasMany::STRATEGY_SUBQUERY
+			'query' => $parent, 'strategy' => HasMany::STRATEGY_SUBQUERY, 'keys' => []
 		]);
 		$row = ['Author__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);

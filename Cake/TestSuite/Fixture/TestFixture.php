@@ -283,6 +283,7 @@ class TestFixture {
 			}
 			return $query->execute();
 		}
+
 		return true;
 	}
 

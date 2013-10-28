@@ -16,48 +16,46 @@
  */
 namespace Cake\ORM;
 
+use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Event\EventManager;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
+use Cake\ORM\Entity;
 use Cake\Utility\Inflector;
 
 /**
- * Represents a single database table. Exposes methods for retrieving data out
- * of it and manages the associations it has to other tables. Multiple
- * instances of this class can be created for the same database table with
- * different aliases, this allows you to address your database structure in a
- * richer and more expressive way.
+ * Represents a single database table.
+ *
+ * Exposes methods for retrieving data out of it, and manages the associations
+ * this table has to other tables. Multiple instances of this class can be created
+ * for the same database table with different aliases, this allows you to address 
+ * your database structure in a richer and more expressive way.
+ *
+ * ### Retrieving data
+ *
+ * The primary way to retreive data is using Table::find(). See that method
+ * for more information.
+ *
+ * ### Bulk updates/deletes
+ *
+ * You can use Table::updateAll() and Table::deleteAll() to do bulk updates/deletes.
+ * You should be aware that events will *not* be fired for bulk updates/deletes.
  *
  * ### Callbacks/events
  *
  * Table objects provide a few callbacks/events you can hook into to augment/replace
- * find operations. Each event uses the standard Event subsystem in CakePHP
+ * find operations. Each event uses the standard event subsystem in CakePHP
  *
  * - beforeFind($event, $query, $options) - Fired before each find operation. By stopping
  *   the event and supplying a return value you can bypass the find operation entirely. Any
  *   changes done to the $query instance will be retained for the rest of the find.
  *
+ * @see Cake\Event\EventManager for reference on the events system.
  */
 class Table {
-
-/**
- * A list of all table instances that has been built using the factory
- * method. Instances are indexed by alias
- *
- * @var array
- */
-	protected static $_instances = [];
-
-/**
- * A collection of default options to apply to each table built with the
- * factory method. Indexed by table name
- *
- * @var array
- */
-	protected static $_tablesMap = [];
 
 /**
  * Name of the table as it can be found in the database
@@ -96,6 +94,13 @@ class Table {
 	protected $_primaryKey = 'id';
 
 /**
+ * The name of the field that represents a human readable representation of a row
+ *
+ * @var string
+ */
+	protected $_displayField;
+
+/**
  * The list of associations for this table. Indexed by association name,
  * values are Association object instances.
  *
@@ -113,6 +118,13 @@ class Table {
 	protected $_eventManager;
 
 /**
+ * The name of the class that represent a single row for this table
+ *
+ * @var string
+ */
+	protected $_entityClass;
+
+/**
  * Initializes a new instance
  *
  * The $config array understands the following keys:
@@ -120,121 +132,70 @@ class Table {
  * - table: Name of the database table to represent
  * - alias: Alias to be assigned to this table (default to table name)
  * - connection: The connection instance to use
+ * - entityClass: The fully namespaced class name of the entity class that will
+ *   represent rows in this table.
  * - schema: A \Cake\Database\Schema\Table object or an array that can be
  *   passed to it.
+ * - eventManager: An instance of an event manager to use for internal events
  *
  * @param array config Lsit of options for this table
  * @return void
  */
-	public function __construct($config = []) {
+	public function __construct(array $config = []) {
 		if (!empty($config['table'])) {
 			$this->table($config['table']);
 		}
-
 		if (!empty($config['alias'])) {
 			$this->alias($config['alias']);
 		}
-
-		$table = $this->table();
-		if (isset(static::$_tablesMap[$table])) {
-			$config = array_merge(static::$_tablesMap[$table], $config);
-		}
-
 		if (!empty($config['connection'])) {
 			$this->connection($config['connection']);
 		}
 		if (!empty($config['schema'])) {
 			$this->schema($config['schema']);
 		}
+		if (!empty($config['entityClass'])) {
+			$this->entityClass($config['entityClass']);
+		}
 		$eventManager = null;
 		if (!empty($config['eventManager'])) {
 			$eventManager = $config['eventManager'];
 		}
 		$this->_eventManager = $eventManager ?: new EventManager();
+		$this->initialize($config);
 	}
 
 /**
- * A factory method to build a new Table instance. Once created, the instance
- * will be registered so it can be re-used if tried to build again for the same
- * alias.
+ * Get the default connection name.
  *
- * The options that can be passed are the same as in `__construct()`, but the
- * key `className` is also recognized.
+ * This method is used to get the fallback connection name if an
+ * instance is created through the TableRegistry without a connection.
  *
- * When $options contains `className` this method will try to instantiate an
- * object of that class instead of this default Table class.
- *
- * If no `table` option is passed, the table name will be the tableized version
- * of the provided $alias.
- *
- * @param string $alias the alias for the table
- * @param array $options a list of options as accepted by `__construct()`
- * @return Table
+ * @return string
+ * @see Cake\ORM\TableRegistry::get()
  */
-	public static function build($alias, array $options = []) {
-		if (isset(static::$_instances[$alias])) {
-			return static::$_instances[$alias];
-		}
-
-		$options = ['alias' => $alias] + $options;
-		if (empty($options['className'])) {
-			$options['className'] = get_called_class();
-		}
-
-		return static::$_instances[$alias] = new $options['className']($options);
+	public static function defaultConnectionName() {
+		return 'default';
 	}
 
 /**
- * Returns the Table object associated to the provided alias, if any.
- * If a Table is passed as second parameter it will be associated to the
- * passed $alias even if another object was associated before.
+ * Initialize a table instance. Called after the constructor.
  *
- * @param string $alias
- * @param Table $object
- * @return Table
- */
-	public static function instance($alias, self $object = null) {
-		if ($object === null) {
-			return isset(static::$_instances[$alias]) ? static::$_instances[$alias] : null;
-		}
-		return static::$_instances[$alias] = $object;
-	}
-
-/**
- * Stores a list of options to be used when instantiating an object for the table
- * with the same name as $table. The options that can be stored are those that
- * are recognized by `build()`
+ * You can use this method to define associations, attach behaviors
+ * define validation and do any other initialization logic you need.
  *
- * If second argument is omitted, it will return the current settings for $table
+ * {{{
+ *	public function initialize(array $config) {
+ *		$this->belongsTo('User');
+ *		$this->belongsToMany('Tagging.Tag');
+ *		$this->primaryKey('something_else');
+ *	}
+ * }}}
  *
- * If no arguments are passed it will return the full configuration array for
- * all tables
- *
- * @param string $table name of the table
- * @param array $options list of options for the table
- * @return array
- */
-	public static function config($table = null, array $options = null) {
-		if ($table === null) {
-			return static::$_tablesMap;
-		}
-		if (!is_string($table)) {
-			return static::$_tablesMap = $table;
-		}
-		if ($options === null) {
-			return isset(static::$_tablesMap[$table]) ? static::$_tablesMap[$table] : [];
-		}
-		return static::$_tablesMap[$table] = $options;
-	}
-
-/**
- * Clears the registry of instantiated tables and default configurations
- *
+ * @param array $config Configuration options passed to the constructor
  * @return void
  */
-	public static function clearRegistry() {
-		static::$_instances = [];
-		static::$_tablesMap = [];
+	public function initialize(array $config) {
 	}
 
 /**
@@ -315,7 +276,7 @@ class Table {
 			if ($this->_schema === null) {
 				$this->_schema = $this->connection()
 					->schemaCollection()
-					->describe($this->_table);
+					->describe($this->table());
 			}
 			return $this->_schema;
 		}
@@ -339,12 +300,73 @@ class Table {
 	}
 
 /**
+ * Returns the display field or sets a new one
+ *
+ * @param string $key sets a new name to be used as display field
+ * @return string
+ */
+	public function displayField($key = null) {
+		if ($key !== null) {
+			$this->_displayField = $key;
+		}
+		if ($this->_displayField === null) {
+			$schema = $this->schema();
+			$this->_displayField = $this->primaryKey();
+			if ($schema->column('title')) {
+				$this->_displayField = 'title';
+			}
+			if ($schema->column('name')) {
+				$this->_displayField = 'name';
+			}
+		}
+		return $this->_displayField;
+	}
+
+/**
+ * Returns the class used to hydrate rows for this table or sets
+ * a new one
+ *
+ * @param string $name the name of the class to use
+ * @throws \Cake\ORM\Error\MissingEntityException when the entity class cannot be found
+ * @return string
+ */
+	public function entityClass($name = null) {
+		if ($name === null && !$this->_entityClass) {
+			$default = '\Cake\ORM\Entity';
+			$self = get_called_class();
+			$parts = explode('\\', $self);
+
+			if ($self === __CLASS__ || count($parts) < 3) {
+				return $this->_entityClass = $default;
+			}
+
+			$alias = substr(array_pop($parts), 0, -5);
+			$name = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $alias;
+			if (!class_exists($name)) {
+				return $this->_entityClass = $default;
+			}
+		}
+
+		if ($name !== null) {
+			$class = App::classname($name, 'Model\Entity');
+			$this->_entityClass = $class;
+		}
+
+		if (!$this->_entityClass) {
+			throw new Error\MissingEntityException([$name]);
+		}
+
+		return $this->_entityClass;
+	}
+
+/**
  * Returns a association objected configured for the specified alias if any
  *
  * @param string $name the alias used for the association
  * @return Cake\ORM\Association
  */
 	public function association($name) {
+		$name = strtolower($name);
 		if (isset($this->_associations[$name])) {
 			return $this->_associations[$name];
 		}
@@ -380,7 +402,7 @@ class Table {
 	public function belongsTo($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsTo($associated, $options);
-		return $this->_associations[$association->name()] = $association;
+		return $this->_associations[strtolower($association->name())] = $association;
 	}
 
 /**
@@ -410,7 +432,7 @@ class Table {
 	public function hasOne($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasOne($associated, $options);
-		return $this->_associations[$association->name()] = $association;
+		return $this->_associations[strtolower($association->name())] = $association;
 	}
 
 /**
@@ -444,7 +466,7 @@ class Table {
 	public function hasMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasMany($associated, $options);
-		return $this->_associations[$association->name()] = $association;
+		return $this->_associations[strtolower($association->name())] = $association;
 	}
 
 /**
@@ -481,7 +503,7 @@ class Table {
 	public function belongsToMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsToMany($associated, $options);
-		return $this->_associations[$association->name()] = $association;
+		return $this->_associations[strtolower($association->name())] = $association;
 	}
 
 /**
@@ -536,18 +558,20 @@ class Table {
  * @return \Cake\ORM\Query
  */
 	public function findList(Query $query, array $options = []) {
-		$mapper = function($key, $row, $mapReduce) use (&$columns) {
-			if (empty($columns)) {
-				$columns = array_slice(array_keys($row), 0, 3);
-			}
-
-			list($rowKey, $rowVal) = $columns;
-			if (!isset($columns[2])) {
+		$options += [
+			'idField' => $this->primaryKey(),
+			'valueField' => $this->displayField(),
+			'groupField' => false
+		];
+		$mapper = function($key, $row, $mapReduce) use ($options) {
+			$rowKey = $options['idField'];
+			$rowVal = $options['valueField'];
+			if (!($options['groupField'])) {
 				$mapReduce->emit($row[$rowVal], $row[$rowKey]);
 				return;
 			}
 
-			$key = $row[$columns[2]];
+			$key = $row[$options['groupField']];
 			$mapReduce->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
 		};
 
@@ -575,28 +599,35 @@ class Table {
  */
 	public function findThreaded(Query $query, array $options = []) {
 		$parents = [];
+		$hydrate = $query->hydrate();
 		$mapper = function($key, $row, $mapReduce) use (&$parents) {
+			$row['children'] = [];
 			$parents[$row['id']] =& $row;
 			$mapReduce->emitIntermediate($row['parent_id'], $row['id']);
 		};
 
-		$reducer = function($key, $values, $mapReduce) use (&$parents) {
+		$reducer = function($key, $values, $mapReduce) use (&$parents, $hydrate) {
 			if (empty($key) || !isset($parents[$key])) {
 				foreach ($values as $id) {
-					$parents[$id] = new \ArrayObject($parents[$id]);
+					$parents[$id] = $hydrate ? $parents[$id] : new \ArrayObject($parents[$id]);
 					$mapReduce->emit($parents[$id]);
 				}
 				return;
 			}
+
 			foreach ($values as $id) {
 				$parents[$key]['children'][] =& $parents[$id];
 			}
 		};
 
-		$formatter = function($key, $row, $mapReduce) {
-			$mapReduce->emit($row->getArrayCopy());
-		};
-		return $query->mapReduce($mapper, $reducer)->mapReduce($formatter);
+		$query->mapReduce($mapper, $reducer);
+		if (!$hydrate) {
+			$query->mapReduce(function($key, $row, $mapReduce) {
+				$mapReduce->emit($row->getArrayCopy());
+			});
+		}
+
+		return $query;
 	}
 
 /**
@@ -649,6 +680,23 @@ class Table {
 			->where($conditions);
 		$statement = $query->executeStatement();
 		return $statement->rowCount() > 0;
+	}
+
+	public function save(Entity $entity, $options = []) {
+		$data = $entity->toArray();
+		$schema = $this->schema();
+		$data = array_intersect_key($data, array_flip($schema->columns()));
+		$query = $this->_buildQuery();
+		$statement = $query->insert($this->table(), array_keys($data))
+			->values($data)
+			->executeStatement();
+
+		if ($statement->rowCount() > 0) {
+			$id = $this->connection()->lastInsertId($this->table());
+			$entity->set($this->primaryKey(), $id);
+		}
+
+		return $entity;
 	}
 
 /**
