@@ -53,7 +53,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @var array
  */
-	public $settings = array();
+	public $settings = [];
 
 /**
  * List of available serializer engines
@@ -62,41 +62,41 @@ class MemcachedEngine extends CacheEngine {
  *
  * @var array
  */
-	protected $_serializers = array(
+	protected $_serializers = [
 		'igbinary' => Memcached::SERIALIZER_IGBINARY,
 		'json' => Memcached::SERIALIZER_JSON,
 		'php' => Memcached::SERIALIZER_PHP
-	);
+	)];
 
 /**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
- * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
+ * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = []);
  *
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  * @throws Cake\Error\Exception when you try use authentication without Memcached compiled with SASL support
  */
-	public function init($settings = array()) {
+	public function init($settings = []) {
 		if (!class_exists('Memcached')) {
 			return false;
 		}
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
-		$settings += array(
-			'servers' => array('127.0.0.1'),
+		$settings += [
+			'servers' => ['127.0.0.1'],
 			'compress' => false,
 			'persistent' => false,
 			'login' => null,
 			'password' => null,
 			'serialize' => 'php'
-		);
+		];
 		parent::init($settings);
 
 		if (!is_array($this->settings['servers'])) {
-			$this->settings['servers'] = array($this->settings['servers']);
+			$this->settings['servers'] = [$this->settings['servers']];
 		}
 
 		if (isset($this->_Memcached)) {
@@ -110,7 +110,7 @@ class MemcachedEngine extends CacheEngine {
 			return true;
 		}
 
-		$servers = array();
+		$servers = [];
 		foreach ($this->settings['servers'] as $server) {
 			$servers[] = $this->_parseServerString($server);
 		}
@@ -171,7 +171,7 @@ class MemcachedEngine extends CacheEngine {
  */
 	protected function _parseServerString($server) {
 		if ($server[0] === 'u') {
-			return array($server, 0);
+			return [$server, 0];
 		}
 		if (substr($server, 0, 1) === '[') {
 			$position = strpos($server, ']:');
@@ -187,7 +187,7 @@ class MemcachedEngine extends CacheEngine {
 			$host = substr($server, 0, $position);
 			$port = substr($server, $position + 1);
 		}
-		return array($host, (int)$port);
+		return [$host, (int)$port];
 	}
 
 /**
@@ -300,7 +300,7 @@ class MemcachedEngine extends CacheEngine {
 			ksort($groups);
 		}
 
-		$result = array();
+		$result = [];
 		$groups = array_values($groups);
 		foreach ($this->settings['groups'] as $i => $group) {
 			$result[] = $group . $groups[$i];
