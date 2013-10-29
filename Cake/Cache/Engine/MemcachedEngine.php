@@ -66,7 +66,7 @@ class MemcachedEngine extends CacheEngine {
 		'igbinary' => Memcached::SERIALIZER_IGBINARY,
 		'json' => Memcached::SERIALIZER_JSON,
 		'php' => Memcached::SERIALIZER_PHP
-	)];
+	];
 
 /**
  * Initialize the Cache Engine
