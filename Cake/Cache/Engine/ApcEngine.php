@@ -29,7 +29,7 @@ class ApcEngine extends CacheEngine {
  *
  * @var array
  */
-	protected $_compiledGroupNames = array();
+	protected $_compiledGroupNames = [];
 
 /**
  * Initialize the Cache Engine
@@ -39,7 +39,7 @@ class ApcEngine extends CacheEngine {
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($settings = array()) {
+	public function init($settings = []) {
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
@@ -158,7 +158,7 @@ class ApcEngine extends CacheEngine {
 			ksort($groups);
 		}
 
-		$result = array();
+		$result = [];
 		$groups = array_values($groups);
 		foreach ($this->settings['groups'] as $i => $group) {
 			$result[] = $group . $groups[$i];

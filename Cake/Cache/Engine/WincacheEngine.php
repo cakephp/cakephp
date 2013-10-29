@@ -30,7 +30,7 @@ class WincacheEngine extends CacheEngine {
  *
  * @var array
  */
-	protected $_compiledGroupNames = array();
+	protected $_compiledGroupNames = [];
 
 /**
  * Initialize the Cache Engine
@@ -42,7 +42,7 @@ class WincacheEngine extends CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  * @see CacheEngine::__defaults
  */
-	public function init($settings = array()) {
+	public function init($settings = []) {
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
@@ -165,7 +165,7 @@ class WincacheEngine extends CacheEngine {
 			ksort($groups);
 		}
 
-		$result = array();
+		$result = [];
 		$groups = array_values($groups);
 		foreach ($this->settings['groups'] as $i => $group) {
 			$result[] = $group . $groups[$i];
