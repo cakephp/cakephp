@@ -442,9 +442,9 @@ class AclShell extends Shell {
 						__d('cake_console', 'Use this command to check ACL permissions.')
 					],
 					'arguments' => [
-						'aro' => ['help' => __d('cake_console', 'ARO to check.'), 'required' => true),
-						'aco' => ['help' => __d('cake_console', 'ACO to check.'), 'required' => true),
-						'action' => ['help' => __d('cake_console', 'Action to check'), 'default' => 'all')
+						'aro' => ['help' => __d('cake_console', 'ARO to check.'), 'required' => true],
+						'aco' => ['help' => __d('cake_console', 'ACO to check.'), 'required' => true],
+						'action' => ['help' => __d('cake_console', 'Action to check'), 'default' => 'all']
 					]
 				]
 			])->addSubcommand('grant', [
@@ -454,9 +454,9 @@ class AclShell extends Shell {
 						__d('cake_console', 'Use this command to grant ACL permissions. Once executed, the ARO specified (and its children, if any) will have ALLOW access to the specified ACO action (and the ACO\'s children, if any).')
 					],
 					'arguments' => [
-						'aro' => ['help' => __d('cake_console', 'ARO to grant permission to.'), 'required' => true),
-						'aco' => ['help' => __d('cake_console', 'ACO to grant access to.'), 'required' => true),
-						'action' => ['help' => __d('cake_console', 'Action to grant'), 'default' => 'all')
+						'aro' => ['help' => __d('cake_console', 'ARO to grant permission to.'), 'required' => true],
+						'aco' => ['help' => __d('cake_console', 'ACO to grant access to.'), 'required' => true],
+						'action' => ['help' => __d('cake_console', 'Action to grant'), 'default' => 'all']
 					]
 				]
 			])->addSubcommand('deny', [
@@ -466,9 +466,9 @@ class AclShell extends Shell {
 						__d('cake_console', 'Use this command to deny ACL permissions. Once executed, the ARO specified (and its children, if any) will have DENY access to the specified ACO action (and the ACO\'s children, if any).')
 					],
 					'arguments' => [
-						'aro' => ['help' => __d('cake_console', 'ARO to deny.'), 'required' => true),
-						'aco' => ['help' => __d('cake_console', 'ACO to deny.'), 'required' => true),
-						'action' => ['help' => __d('cake_console', 'Action to deny'), 'default' => 'all')
+						'aro' => ['help' => __d('cake_console', 'ARO to deny.'), 'required' => true],
+						'aco' => ['help' => __d('cake_console', 'ACO to deny.'), 'required' => true],
+						'action' => ['help' => __d('cake_console', 'Action to deny'), 'default' => 'all']
 					]
 				]
 			])->addSubcommand('inherit', [
@@ -476,29 +476,29 @@ class AclShell extends Shell {
 				'parser' => [
 					'description' => [
 						__d('cake_console', "Use this command to force a child ARO object to inherit its permissions settings from its parent.")
-					),
+					],
 					'arguments' => [
-						'aro' => ['help' => __d('cake_console', 'ARO to have permissions inherit.'), 'required' => true),
-						'aco' => ['help' => __d('cake_console', 'ACO to inherit permissions on.'), 'required' => true),
-						'action' => ['help' => __d('cake_console', 'Action to inherit'), 'default' => 'all')
-					)
-				)
-			))->addSubcommand('view', [
+						'aro' => ['help' => __d('cake_console', 'ARO to have permissions inherit.'), 'required' => true],
+						'aco' => ['help' => __d('cake_console', 'ACO to inherit permissions on.'), 'required' => true],
+						'action' => ['help' => __d('cake_console', 'Action to inherit'), 'default' => 'all']
+					]
+				]
+			])->addSubcommand('view', [
 				'help' => __d('cake_console', 'View a tree or a single node\'s subtree.'),
 				'parser' => [
 					'description' => [
 						__d('cake_console', "The view command will return the ARO or ACO tree."),
 						__d('cake_console', "The optional node parameter allows you to return"),
 						__d('cake_console', "only a portion of the requested tree.")
-					),
+					],
 					'arguments' => [
 						'type' => $type,
-						'node' => ['help' => __d('cake_console', 'The optional node to view the subtree of.'))
-					)
-				)
-			))->addSubcommand('initdb', [
+						'node' => ['help' => __d('cake_console', 'The optional node to view the subtree of.')]
+					]
+				]
+			])->addSubcommand('initdb', [
 				'help' => __d('cake_console', 'Initialize the DbAcl tables. Uses this command : cake schema create DbAcl')
-			))->epilog(
+			])->epilog(
 				[
 					'Node and parent arguments can be in one of the following formats:',
 					'',
@@ -509,7 +509,7 @@ class AclShell extends Shell {
 					"   i.e. <group>/<subgroup>/<parent>.",
 					'',
 					"To add a node at the root level, enter 'root' or '/' as the <parent> parameter."
-				)
+				]
 			);
 		return $parser;
 	}
