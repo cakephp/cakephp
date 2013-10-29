@@ -67,7 +67,7 @@ abstract class JsBaseEngineHelper extends AppHelper {
 	}
 
 /**
- * Redirects to an URL. Creates a window.location modification snippet
+ * Redirects to a URL. Creates a window.location modification snippet
  * that can be used to trigger 'redirects' from JavaScript.
  *
  * @param string|array $url URL

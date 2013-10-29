@@ -192,9 +192,7 @@ class Dispatcher implements CakeEventListener {
 
 		if ($render && $controller->autoRender) {
 			$response = $controller->render();
-		} elseif (!($result instanceof CakeResponse) &&
-			$response->body() === null
-		) {
+		} elseif (!($result instanceof CakeResponse) && $response->body() === null) {
 			$response->body($result);
 		}
 		$controller->shutdownProcess();
@@ -240,7 +238,7 @@ class Dispatcher implements CakeEventListener {
 	}
 
 /**
- * Load controller and return controller classname
+ * Load controller and return controller class name
  *
  * @param CakeRequest $request
  * @return string|boolean Name of controller class name

@@ -69,7 +69,7 @@ class MailTransportTest extends CakeTestCase {
 		$data .= "Content-Transfer-Encoding: 8bit";
 
 		$subject = '=?UTF-8?B?Rm/DuCBCw6VyIELDqXogRm/DuCBCw6VyIELDqXogRm/DuCBCw6VyIELDqXog?=';
-		$subject .= "\r\n" . ' =?UTF-8?B?Rm/DuCBCw6VyIELDqXo=?=';
+		$subject .= ' =?UTF-8?B?Rm/DuCBCw6VyIELDqXo=?=';
 		$this->MailTransport->expects($this->once())->method('_mail')
 			->with(
 				'CakePHP <cake@cakephp.org>',

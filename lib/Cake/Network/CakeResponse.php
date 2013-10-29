@@ -300,6 +300,7 @@ class CakeResponse {
 		'webapp' => 'application/x-web-app-manifest+json',
 		'vcf' => 'text/x-vcard',
 		'vtt' => 'text/vtt',
+		'mkv' => 'video/x-matroska',
 	);
 
 /**
@@ -1281,7 +1282,7 @@ class CakeResponse {
 			$agent = env('HTTP_USER_AGENT');
 
 			if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent)) {
-				$contentType = 'application/octetstream';
+				$contentType = 'application/octet-stream';
 			} elseif (preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
 				$contentType = 'application/force-download';
 			}
@@ -1296,6 +1297,7 @@ class CakeResponse {
 			}
 			$this->download($name);
 			$this->header('Accept-Ranges', 'bytes');
+			$this->header('Content-Transfer-Encoding', 'binary');
 
 			$httpRange = env('HTTP_RANGE');
 			if (isset($httpRange)) {
@@ -1373,6 +1375,7 @@ class CakeResponse {
 
 		$bufferSize = 8192;
 		set_time_limit(0);
+		session_write_close();
 		while (!feof($file->handle)) {
 			if (!$this->_isActive()) {
 				$file->close();

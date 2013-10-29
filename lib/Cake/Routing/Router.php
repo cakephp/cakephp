@@ -80,7 +80,7 @@ class Router {
 	protected static $_parseExtensions = false;
 
 /**
- * List of valid extensions to parse from an URL. If null, any extension is allowed.
+ * List of valid extensions to parse from a URL. If null, any extension is allowed.
  *
  * @var array
  */
@@ -278,7 +278,7 @@ class Router {
  * - `pass` is used to define which of the routed parameters should be shifted into the pass array. Adding a
  *   parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
  * - `persist` is used to define which route parameters should be automatically included when generating
- *   new URLs. You can override persistent parameters by redefining them in an URL or remove them by
+ *   new URLs. You can override persistent parameters by redefining them in a URL or remove them by
  *   setting the parameter to `false`. Ex. `'persist' => array('lang')`
  * - `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
  *   via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
@@ -359,7 +359,7 @@ class Router {
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view'), array('persist' => true));`
  *
  * Redirects /home/* to /posts/view and passes the parameters to /posts/view. Using an array as the
- * redirect destination allows you to use other routes to define where an URL string should be redirected to.
+ * redirect destination allows you to use other routes to define where a URL string should be redirected to.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
  *
@@ -595,7 +595,7 @@ class Router {
 	}
 
 /**
- * Parses a file extension out of an URL, if Router::parseExtensions() is enabled.
+ * Parses a file extension out of a URL, if Router::parseExtensions() is enabled.
  *
  * @param string $url
  * @return array Returns an array containing the altered URL and the parsed extension.
@@ -764,7 +764,7 @@ class Router {
 /**
  * Finds URL for specified action.
  *
- * Returns an URL pointing to a combination of controller and action. Param
+ * Returns a URL pointing to a combination of controller and action. Param
  * $url can be:
  *
  * - Empty - the method will find address to actual controller/action.
@@ -944,7 +944,7 @@ class Router {
  * A special fallback method that handles URL arrays that cannot match
  * any defined routes.
  *
- * @param array $url An URL that didn't match any routes
+ * @param array $url A URL that didn't match any routes
  * @return string A generated URL for the array
  * @see Router::url()
  */
@@ -1091,7 +1091,7 @@ class Router {
 	}
 
 /**
- * Normalizes an URL for purposes of comparison.
+ * Normalizes a URL for purposes of comparison.
  *
  * Will strip the base path off and replace any double /'s.
  * It will not unify the casing and underscoring of the input value.

@@ -271,7 +271,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			$options['success'] = $success;
 			unset($options['update']);
 		}
-		$callbacks = array('success', 'error', 'beforeSend', 'complete');
+		$callbacks = array('success', 'error', 'beforeSend', 'complete', 'xhr');
 		if (!empty($options['dataExpression'])) {
 			$callbacks[] = 'data';
 			unset($options['dataExpression']);

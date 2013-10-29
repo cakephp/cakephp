@@ -41,7 +41,7 @@ class RedirectRoute extends CakeRoute {
 	public $redirect;
 
 /**
- * Flag for disabling exit() when this route parses an URL.
+ * Flag for disabling exit() when this route parses a URL.
  *
  * @var boolean
  */

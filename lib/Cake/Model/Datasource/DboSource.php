@@ -663,7 +663,8 @@ class DboSource extends DataSource {
 		if ($cache && ($cached = $this->getQueryCache($sql, $params)) !== false) {
 			return $cached;
 		}
-		if ($result = $this->execute($sql, array(), $params)) {
+		$result = $this->execute($sql, array(), $params);
+		if ($result) {
 			$out = array();
 
 			if ($this->hasResult()) {
@@ -1072,7 +1073,7 @@ class DboSource extends DataSource {
 			}
 		}
 
-		$query = trim($this->generateAssociationQuery($model, null, null, null, null, $queryData, false, $null));
+		$query = $this->generateAssociationQuery($model, null, null, null, null, $queryData, false, $null);
 
 		$resultSet = $this->fetchAll($query, $model->cacheQueries);
 
@@ -1404,7 +1405,7 @@ class DboSource extends DataSource {
 			if (isset($merge[$association])) {
 				$data[$association] = $merge[$association][0];
 			} else {
-				if (count($merge[0][$association]) > 1) {
+				if (!empty($merge[0][$association])) {
 					foreach ($merge[0] as $assoc => $data2) {
 						if ($assoc !== $association) {
 							$merge[0][$association][$assoc] = $data2;
@@ -1755,19 +1756,19 @@ class DboSource extends DataSource {
 
 		switch (strtolower($type)) {
 			case 'select':
-				return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}";
+				return trim("SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}");
 			case 'create':
 				return "INSERT INTO {$table} ({$fields}) VALUES ({$values})";
 			case 'update':
 				if (!empty($alias)) {
 					$aliases = "{$this->alias}{$alias} {$joins} ";
 				}
-				return "UPDATE {$table} {$aliases}SET {$fields} {$conditions}";
+				return trim("UPDATE {$table} {$aliases}SET {$fields} {$conditions}");
 			case 'delete':
 				if (!empty($alias)) {
 					$aliases = "{$this->alias}{$alias} {$joins} ";
 				}
-				return "DELETE {$alias} FROM {$table} {$aliases}{$conditions}";
+				return trim("DELETE {$alias} FROM {$table} {$aliases}{$conditions}");
 			case 'schema':
 				foreach (array('columns', 'indexes', 'tableParameters') as $var) {
 					if (is_array(${$var})) {

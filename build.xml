@@ -145,9 +145,9 @@
 			<dirroles key="Cake/Console/Templates/default">php</dirroles>
 			<dirroles key="Cake/View">php</dirroles>
 			<release>
-				<install as="cake" name="bin/cake" />
-				<install as="cake.php" name="bin/cake.php" />
 				<install as="cake.bat" name="bin/cake.bat" />
+				<install as="cake.php" name="bin/cake.php" />
+				<install as="cake" name="bin/cake" />
 			</release>
 			<exceptions key="Cake/VERSION.txt">php</exceptions>
 			<exceptions key="Cake/LICENSE.txt">php</exceptions>

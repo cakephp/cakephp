@@ -593,7 +593,7 @@ class Hash {
 	}
 
 /**
- * Expand/unflattens an string to an array
+ * Expands a flat array to a nested array.
  *
  * For example, unflattens an array that was collapsed with `Hash::flatten()`
  * into a multi-dimensional array. So, `array('0.Foo.Bar' => 'Far')` becomes

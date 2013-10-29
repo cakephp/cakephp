@@ -1133,6 +1133,10 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(3))
 			->method('header')
+			->with('Content-Transfer-Encoding', 'binary');
+
+		$response->expects($this->at(4))
+			->method('header')
 			->with('Content-Length', 35);
 
 		$response->expects($this->once())->method('_clearBuffer');
@@ -1181,7 +1185,7 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(1))
 			->method('type')
-			->with('application/octetstream')
+			->with('application/octet-stream')
 			->will($this->returnValue(false));
 
 		$response->expects($this->once())
@@ -1193,6 +1197,10 @@ class CakeResponseTest extends CakeTestCase {
 			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(4))
+			->method('header')
+			->with('Content-Transfer-Encoding', 'binary');
+
+		$response->expects($this->at(5))
 			->method('header')
 			->with('Content-Length', 35);
 
@@ -1253,6 +1261,10 @@ class CakeResponseTest extends CakeTestCase {
 			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(4))
+			->method('header')
+			->with('Content-Transfer-Encoding', 'binary');
+
+		$response->expects($this->at(5))
 			->method('header')
 			->with('Content-Length', 35);
 
@@ -1456,6 +1468,10 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(3))
 			->method('header')
+			->with('Content-Transfer-Encoding', 'binary');
+
+		$response->expects($this->at(4))
+			->method('header')
 			->with(array(
 				'Content-Length' => $length,
 				'Content-Range' => $offsetResponse,
@@ -1507,6 +1523,10 @@ class CakeResponseTest extends CakeTestCase {
 
 		$response->expects($this->at(3))
 			->method('header')
+			->with('Content-Transfer-Encoding', 'binary');
+
+		$response->expects($this->at(4))
+			->method('header')
 			->with(array(
 				'Content-Length' => 18,
 				'Content-Range' => 'bytes 8-25/38',
@@ -1557,6 +1577,10 @@ class CakeResponseTest extends CakeTestCase {
 			->with('Accept-Ranges', 'bytes');
 
 		$response->expects($this->at(3))
+			->method('header')
+			->with('Content-Transfer-Encoding', 'binary');
+
+		$response->expects($this->at(4))
 			->method('header')
 			->with(array(
 				'Content-Range' => 'bytes 0-37/38',

@@ -805,7 +805,7 @@ class Debugger {
 	}
 
 /**
- * Get the type of the given variable. Will return the classname
+ * Get the type of the given variable. Will return the class name
  * for objects.
  *
  * @param mixed $var The variable to get the type of

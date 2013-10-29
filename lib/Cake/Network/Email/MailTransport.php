@@ -42,9 +42,10 @@ class MailTransport extends AbstractTransport {
 		unset($headers['To']);
 		$headers = $this->_headersToString($headers, $eol);
 		$message = implode($eol, $email->message());
+		$subject = str_replace(array("\r", "\n"), '', $email->subject());
 
 		$params = isset($this->_config['additionalParameters']) ? $this->_config['additionalParameters'] : null;
-		$this->_mail($to, $email->subject(), $message, $headers, $params);
+		$this->_mail($to, $subject, $message, $headers, $params);
 		return array('headers' => $headers, 'message' => $message);
 	}
 

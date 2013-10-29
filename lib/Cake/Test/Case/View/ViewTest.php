@@ -1516,6 +1516,20 @@ class ViewTest extends CakeTestCase {
 	}
 
 /**
+ * Test that starting the same block twice throws an exception
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testStartBlocksTwice() {
+		$this->View->start('first');
+		echo 'In first ';
+		$this->View->start('second');
+		echo 'In second';
+		$this->View->start('first');
+	}
+
+/**
  * Test that an exception gets thrown when you leave a block open at the end
  * of a view.
  *

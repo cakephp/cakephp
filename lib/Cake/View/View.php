@@ -539,7 +539,7 @@ class View extends Object {
 	public function renderCache($filename, $timeStart) {
 		$response = $this->response;
 		ob_start();
-		include ($filename);
+		include $filename;
 
 		$type = $response->mapType($response->type());
 		if (Configure::read('debug') > 0 && $type === 'html') {
