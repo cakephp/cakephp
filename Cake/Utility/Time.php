@@ -302,7 +302,9 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::serverOffset
  */
 	public static function serverOffset() {
-		return date('Z', time());
+		$defaultTimeZone = new \DateTimeZone(date_default_timezone_get());
+		$now = new \DateTime('now', $defaultTimeZone);
+		return $defaultTimeZone->getOffset($now);
 	}
 
 /**
