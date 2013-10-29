@@ -599,7 +599,7 @@ class Sqlserver extends DboSource {
  * @param Model $model
  * @param array $queryData
  * @param integer $recursive
- * @return array Array of resultset rows, or false if no rows matched
+ * @return array|false Array of resultset rows, or false if no rows matched
  */
 	public function read(Model $model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);

@@ -663,7 +663,8 @@ class DboSource extends DataSource {
 		if ($cache && ($cached = $this->getQueryCache($sql, $params)) !== false) {
 			return $cached;
 		}
-		if ($result = $this->execute($sql, array(), $params)) {
+		$result = $this->execute($sql, array(), $params);
+		if ($result) {
 			$out = array();
 
 			if ($this->hasResult()) {
