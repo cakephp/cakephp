@@ -35,24 +35,24 @@ class XcacheEngine extends CacheEngine {
  *
  * @var array
  */
-	public $settings = array();
+	public $settings = [];
 
 /**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
- * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
+ * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = []);
  *
  * @param array $settings array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($settings = array()) {
+	public function init($settings = []) {
 		if (php_sapi_name() !== 'cli') {
-			parent::init(array_merge(array(
+			parent::init(array_merge([
 				'prefix' => Inflector::slug(APP_DIR) . '_',
 				'PHP_AUTH_USER' => 'user',
 				'PHP_AUTH_PW' => 'password'
-				), $settings)
+				], $settings)
 			);
 			return function_exists('xcache_info');
 		}
@@ -149,7 +149,7 @@ class XcacheEngine extends CacheEngine {
  * @return array
  */
 	public function groups() {
-		$result = array();
+		$result = [];
 		foreach ($this->settings['groups'] as $group) {
 			$value = xcache_get($this->settings['prefix'] . $group);
 			if (!$value) {
@@ -182,8 +182,8 @@ class XcacheEngine extends CacheEngine {
  * @return void
  */
 	protected function _auth($reverse = false) {
-		static $backup = array();
-		$keys = array('PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password');
+		static $backup = [];
+		$keys = ['PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password'];
 		foreach ($keys as $key => $setting) {
 			if ($reverse) {
 				if (isset($backup[$key])) {
