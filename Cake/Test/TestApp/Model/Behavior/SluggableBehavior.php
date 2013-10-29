@@ -22,10 +22,6 @@ use Cake\Utility\Inflector;
 
 class SluggableBehavior extends Behavior {
 
-	public function __construct(Table $table, $options = []) {
-		$this->settings = $options;
-	}
-
 	public function beforeFind(Event $event, Query $query, $options = []) {
 		$query->where(['slug' => 'test']);
 		return $query;
