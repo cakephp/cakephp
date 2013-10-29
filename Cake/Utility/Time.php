@@ -296,16 +296,6 @@ class Time {
 	}
 
 /**
- * Returns server's offset from GMT in seconds.
- *
- * @return integer Offset
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::serverOffset
- */
-	public static function serverOffset() {
-		return date('Z', time());
-	}
-
-/**
  * Returns a UNIX timestamp, given either a UNIX timestamp or a valid strtotime() date string.
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
