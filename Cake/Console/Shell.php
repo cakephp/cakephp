@@ -72,7 +72,7 @@ class Shell extends Object {
  *
  * @var array
  */
-	public $params = array();
+	public $params = [];
 
 /**
  * The command (method/task) that is being run.
@@ -86,7 +86,7 @@ class Shell extends Object {
  *
  * @var array
  */
-	public $args = array();
+	public $args = [];
 
 /**
  * The name of the shell in camelized.
@@ -109,14 +109,14 @@ class Shell extends Object {
  * @var array
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::$tasks
  */
-	public $tasks = array();
+	public $tasks = [];
 
 /**
  * Contains the loaded tasks
  *
  * @var array
  */
-	public $taskNames = array();
+	public $taskNames = [];
 
 /**
  * Contains models to load and instantiate
@@ -124,7 +124,7 @@ class Shell extends Object {
  * @var array
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::$uses
  */
-	public $uses = array();
+	public $uses = [];
 
 /**
  * This shell's primary model class name, the first model in the $uses property
@@ -145,7 +145,7 @@ class Shell extends Object {
  *
  * @var string
  */
-	protected $_taskMap = array();
+	protected $_taskMap = [];
 
 /**
  * stdout object.
@@ -179,7 +179,7 @@ class Shell extends Object {
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		if (!$this->name) {
 			list(, $class) = namespaceSplit(get_class($this));
-			$this->name = str_replace(array('Shell', 'Task'), '', $class);
+			$this->name = str_replace(['Shell', 'Task'], '', $class);
 		}
 		$this->Tasks = new TaskRegistry($this);
 
@@ -294,11 +294,11 @@ class Shell extends Object {
 			$this->modelClass = $modelClass;
 		}
 
-		$this->{$modelClass} = ClassRegistry::init(array(
+		$this->{$modelClass} = ClassRegistry::init([
 			'class' => $plugin . $modelClass,
 			'alias' => $modelClass,
 			'id' => $id
-		));
+		]);
 		if (!$this->{$modelClass}) {
 			throw new Error\MissingModelException($modelClass);
 		}
@@ -518,7 +518,7 @@ class Shell extends Object {
 			} elseif (strpos($options, '/')) {
 				$options = explode('/', $options);
 			} else {
-				$options = array($options);
+				$options = [$options];
 			}
 		}
 		if (is_array($options)) {
@@ -583,7 +583,7 @@ class Shell extends Object {
  * @see String::wrap()
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::wrapText
  */
-	public function wrapText($text, $options = array()) {
+	public function wrapText($text, $options = []) {
 		return String::wrap($text, $options);
 	}
 
@@ -705,7 +705,7 @@ class Shell extends Object {
 
 		if (is_file($path) && empty($this->params['force']) && $this->interactive === true) {
 			$this->out(__d('cake_console', '<warning>File `%s` exists</warning>', $path));
-			$key = $this->in(__d('cake_console', 'Do you want to overwrite?'), array('y', 'n', 'q'), 'n');
+			$key = $this->in(__d('cake_console', 'Do you want to overwrite?'), ['y', 'n', 'q'], 'n');
 
 			if (strtolower($key) === 'q') {
 				$this->out(__d('cake_console', '<error>Quitting</error>.'), 2);
@@ -745,7 +745,7 @@ class Shell extends Object {
 		}
 
 		$prompt = __d('cake_console', 'PHPUnit is not installed. Do you want to bake unit test files anyway?');
-		$unitTest = $this->in($prompt, array('y', 'n'), 'y');
+		$unitTest = $this->in($prompt, ['y', 'n'], 'y');
 		$result = strtolower($unitTest) === 'y' || strtolower($unitTest) === 'yes';
 
 		if ($result) {

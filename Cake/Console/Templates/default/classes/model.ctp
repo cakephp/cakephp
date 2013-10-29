@@ -27,7 +27,7 @@ echo "App::uses('{$plugin}AppModel', '{$pluginPath}Model');\n";
  * <?php echo $name ?> Model
  *
 <?php
-foreach (array('hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany') as $assocType) {
+foreach (['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany'] as $assocType) {
 	if (!empty($associations[$assocType])) {
 		foreach ($associations[$assocType] as $relation) {
 			echo " * @property {$relation['className']} \${$relation['alias']}\n";
@@ -80,28 +80,28 @@ if (!empty($actsAs)): ?>
  *
  * @var array
  */
-	public $actsAs = array(<?php echo "\n\t"; foreach ($actsAs as $behavior): echo "\t"; var_export($behavior); echo ",\n\t"; endforeach; ?>);
+	public $actsAs = [<?php echo "\n\t"; foreach ($actsAs as $behavior): echo "\t"; var_export($behavior); echo ",\n\t"; endforeach; ?>];
 
 <?php endif;
 
 if (!empty($validate)):
 	echo "/**\n * Validation rules\n *\n * @var array\n */\n";
-	echo "\tpublic \$validate = array(\n";
+	echo "\tpublic \$validate = [\n";
 	foreach ($validate as $field => $validations):
-		echo "\t\t'$field' => array(\n";
+		echo "\t\t'$field' => [\n";
 		foreach ($validations as $key => $validator):
-			echo "\t\t\t'$key' => array(\n";
-			echo "\t\t\t\t'rule' => array('$validator'),\n";
+			echo "\t\t\t'$key' => [\n";
+			echo "\t\t\t\t'rule' => ['$validator'],\n";
 			echo "\t\t\t\t//'message' => 'Your custom message here',\n";
 			echo "\t\t\t\t//'allowEmpty' => false,\n";
 			echo "\t\t\t\t//'required' => false,\n";
 			echo "\t\t\t\t//'last' => false, // Stop validation after this rule\n";
 			echo "\t\t\t\t//'on' => 'create', // Limit validation to 'create' or 'update' operations\n";
-			echo "\t\t\t),\n";
+			echo "\t\t\t],\n";
 		endforeach;
-		echo "\t\t),\n";
+		echo "\t\t],\n";
 	endforeach;
-	echo "\t);\n";
+	echo "\t];\n";
 endif;
 
 foreach ($associations as $assoc):
@@ -114,19 +114,19 @@ foreach ($associations as $assoc):
 	endif;
 endforeach;
 
-foreach (array('hasOne', 'belongsTo') as $assocType):
+foreach (['hasOne', 'belongsTo'] as $assocType):
 	if (!empty($associations[$assocType])):
 		$typeCount = count($associations[$assocType]);
 		echo "\n/**\n * $assocType associations\n *\n * @var array\n */";
-		echo "\n\tpublic \$$assocType = array(";
+		echo "\n\tpublic \$$assocType = [";
 		foreach ($associations[$assocType] as $i => $relation):
-			$out = "\n\t\t'{$relation['alias']}' => array(\n";
+			$out = "\n\t\t'{$relation['alias']}' => [\n";
 			$out .= "\t\t\t'className' => '{$relation['className']}',\n";
 			$out .= "\t\t\t'foreignKey' => '{$relation['foreignKey']}',\n";
 			$out .= "\t\t\t'conditions' => '',\n";
 			$out .= "\t\t\t'fields' => '',\n";
 			$out .= "\t\t\t'order' => ''\n";
-			$out .= "\t\t)";
+			$out .= "\t\t]";
 			if ($i + 1 < $typeCount) {
 				$out .= ",";
 			}
@@ -139,9 +139,9 @@ endforeach;
 if (!empty($associations['hasMany'])):
 	$belongsToCount = count($associations['hasMany']);
 	echo "\n/**\n * hasMany associations\n *\n * @var array\n */";
-	echo "\n\tpublic \$hasMany = array(";
+	echo "\n\tpublic \$hasMany = [";
 	foreach ($associations['hasMany'] as $i => $relation):
-		$out = "\n\t\t'{$relation['alias']}' => array(\n";
+		$out = "\n\t\t'{$relation['alias']}' => [\n";
 		$out .= "\t\t\t'className' => '{$relation['className']}',\n";
 		$out .= "\t\t\t'foreignKey' => '{$relation['foreignKey']}',\n";
 		$out .= "\t\t\t'dependent' => false,\n";
@@ -153,21 +153,21 @@ if (!empty($associations['hasMany'])):
 		$out .= "\t\t\t'exclusive' => '',\n";
 		$out .= "\t\t\t'finderQuery' => '',\n";
 		$out .= "\t\t\t'counterQuery' => ''\n";
-		$out .= "\t\t)";
+		$out .= "\t\t]";
 		if ($i + 1 < $belongsToCount) {
 			$out .= ",";
 		}
 		echo $out;
 	endforeach;
-	echo "\n\t);\n\n";
+	echo "\n\t];\n\n";
 endif;
 
 if (!empty($associations['hasAndBelongsToMany'])):
 	$habtmCount = count($associations['hasAndBelongsToMany']);
 	echo "\n/**\n * hasAndBelongsToMany associations\n *\n * @var array\n */";
-	echo "\n\tpublic \$hasAndBelongsToMany = array(";
+	echo "\n\tpublic \$hasAndBelongsToMany = [";
 	foreach ($associations['hasAndBelongsToMany'] as $i => $relation):
-		$out = "\n\t\t'{$relation['alias']}' => array(\n";
+		$out = "\n\t\t'{$relation['alias']}' => [\n";
 		$out .= "\t\t\t'className' => '{$relation['className']}',\n";
 		$out .= "\t\t\t'joinTable' => '{$relation['joinTable']}',\n";
 		$out .= "\t\t\t'foreignKey' => '{$relation['foreignKey']}',\n";
@@ -179,13 +179,13 @@ if (!empty($associations['hasAndBelongsToMany'])):
 		$out .= "\t\t\t'limit' => '',\n";
 		$out .= "\t\t\t'offset' => '',\n";
 		$out .= "\t\t\t'finderQuery' => '',\n";
-		$out .= "\t\t)";
+		$out .= "\t\t]";
 		if ($i + 1 < $habtmCount) {
 			$out .= ",";
 		}
 		echo $out;
 	endforeach;
-	echo "\n\t);\n\n";
+	echo "\n\t];\n\n";
 endif;
 ?>
 }

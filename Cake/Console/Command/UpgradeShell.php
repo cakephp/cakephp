@@ -76,7 +76,7 @@ class UpgradeShell extends Shell {
 	public function locations() {
 		$path = $this->_getPath();
 
-		$moves = array(
+		$moves = [
 			'Test' . DS . 'Case' => 'Test' . DS . 'TestCase',
 			'View' . DS . 'Elements' => 'View' . DS . 'Element',
 			'View' . DS . 'Emails' => 'View' . DS . 'Email',
@@ -84,7 +84,7 @@ class UpgradeShell extends Shell {
 			'View' . DS . 'Layout' . DS . 'Emails' => 'View' . DS . 'Layout' . DS . 'Email',
 			'View' . DS . 'Scaffolds' => 'View' . DS . 'Scaffold',
 			'View' . DS . 'Errors' => 'View' . DS . 'Error',
-		);
+		];
 		$dry = $this->params['dryRun'];
 
 		foreach ($moves as $old => $new) {
@@ -606,7 +606,7 @@ class UpgradeShell extends Shell {
  * @return void
  */
 	protected function _findFiles($extensions = '', $exclude = []) {
-		$this->_files = array();
+		$this->_files = [];
 		foreach ($this->_paths as $path) {
 			if (!is_dir($path)) {
 				continue;

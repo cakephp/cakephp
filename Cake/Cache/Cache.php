@@ -32,10 +32,10 @@ use Cake\Utility\Inflector;
  * A sample configuration would be:
  *
  * {{{
- * Cache::config('shared', array(
+ * Cache::config('shared', [
  *    'engine' => 'Cake\Cache\Engine\ApcEngine',
  *    'prefix' => 'my_app_'
- * ));
+ * ]);
  * }}}
  *
  * This would configure an APC cache engine to the 'shared' alias. You could then read and write
@@ -77,7 +77,7 @@ use Cake\Utility\Inflector;
  * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
  * @param array $settings Optional associative array of settings passed to the engine
- * @return array array(engine, settings) on success, false on failure
+ * @return array [engine, settings] on success, false on failure
  * @throws Cake\Error\Exception
  */
 class Cache {
@@ -99,14 +99,14 @@ class Cache {
  *
  * @var array
  */
-	protected static $_config = array();
+	protected static $_config = [];
 
 /**
  * Group to Config mapping
  *
  * @var array
  */
-	protected static $_groups = array();
+	protected static $_groups = [];
 
 /**
  * Whether to reset the settings with the next call to Cache::set();
@@ -416,7 +416,7 @@ class Cache {
 		}
 
 		if (isset(self::$_groups[$group])) {
-			return array($group => self::$_groups[$group]);
+			return [$group => self::$_groups[$group]];
 		}
 
 		throw new Error\Exception(__d('cake_dev', 'Invalid cache group %s', $group));

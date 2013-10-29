@@ -31,7 +31,7 @@ class CommandListShell extends Shell {
  *
  * @var array
  */
-	public $tasks = array('Command');
+	public $tasks = ['Command'];
 
 /**
  * startup
@@ -129,14 +129,13 @@ class CommandListShell extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		return $parser->description(__d('cake_console', 'Get the list of available shells for this CakePHP application.'))
-			->addOption('sort', array(
+			->addOption('sort', [
 				'help' => __d('cake_console', 'Does nothing (deprecated)'),
 				'boolean' => true
-			))
-			->addOption('xml', array(
+			])->addOption('xml', [
 				'help' => __d('cake_console', 'Get the listing as XML.'),
 				'boolean' => true
-			));
+			]);
 	}
 
 }

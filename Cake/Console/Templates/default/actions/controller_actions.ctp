@@ -39,11 +39,11 @@
 		if (!$this-><?php echo $currentModelName; ?>->exists($id)) {
 			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		$options = array('conditions' => array('<?php echo $currentModelName; ?>.' . $this-><?php echo $currentModelName; ?>->primaryKey => $id));
+		$options = ['conditions' => ['<?php echo $currentModelName; ?>.' . $this-><?php echo $currentModelName; ?>->primaryKey => $id]];
 		$this->set('<?php echo $singularName; ?>', $this-><?php echo $currentModelName; ?>->find('first', $options));
 	}
 
-<?php $compact = array(); ?>
+<?php $compact = []; ?>
 /**
  * <?php echo $admin ?>add method
  *
@@ -55,16 +55,16 @@
 			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved.'));
-				return $this->redirect(array('action' => 'index'));
+				return $this->redirect(['action' => 'index']);
 			} else {
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
 <?php else: ?>
-				return $this->flash(__('The <?php echo strtolower($singularHumanName); ?> has been saved.'), array('action' => 'index'));
+				return $this->flash(__('The <?php echo strtolower($singularHumanName); ?> has been saved.'), ['action' => 'index']);
 <?php endif; ?>
 			}
 		}
 <?php
-	foreach (array('belongsTo', 'hasAndBelongsToMany') as $assoc):
+	foreach (['belongsTo', 'hasAndBelongsToMany'] as $assoc):
 		foreach ($modelObj->{$assoc} as $associationName => $relation):
 			if (!empty($associationName)):
 				$otherModelName = $this->_modelName($associationName);
@@ -80,7 +80,7 @@
 ?>
 	}
 
-<?php $compact = array(); ?>
+<?php $compact = []; ?>
 /**
  * <?php echo $admin ?>edit method
  *
@@ -92,23 +92,23 @@
 		if (!$this-><?php echo $currentModelName; ?>->exists($id)) {
 			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
 		}
-		if ($this->request->is(array('post', 'put'))) {
+		if ($this->request->is(['post', 'put'])) {
 			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
 <?php if ($wannaUseSession): ?>
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved.'));
-				return $this->redirect(array('action' => 'index'));
+				return $this->redirect(['action' => 'index']);
 			} else {
 				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
 <?php else: ?>
-				return $this->flash(__('The <?php echo strtolower($singularHumanName); ?> has been saved.'), array('action' => 'index'));
+				return $this->flash(__('The <?php echo strtolower($singularHumanName); ?> has been saved.'), ['action' => 'index']);
 <?php endif; ?>
 			}
 		} else {
-			$options = array('conditions' => array('<?php echo $currentModelName; ?>.' . $this-><?php echo $currentModelName; ?>->primaryKey => $id));
+			$options = ['conditions' => ['<?php echo $currentModelName; ?>.' . $this-><?php echo $currentModelName; ?>->primaryKey => $id]];
 			$this->request->data = $this-><?php echo $currentModelName; ?>->find('first', $options);
 		}
 <?php
-		foreach (array('belongsTo', 'hasAndBelongsToMany') as $assoc):
+		foreach (['belongsTo', 'hasAndBelongsToMany'] as $assoc):
 			foreach ($modelObj->{$assoc} as $associationName => $relation):
 				if (!empty($associationName)):
 					$otherModelName = $this->_modelName($associationName);
@@ -143,11 +143,11 @@
 		} else {
 			$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be deleted. Please, try again.'));
 		}
-		return $this->redirect(array('action' => 'index'));
+		return $this->redirect(['action' => 'index']);
 <?php else: ?>
-			return $this->flash(__('The <?php echo strtolower($singularHumanName); ?> has been deleted.'), array('action' => 'index'));
+			return $this->flash(__('The <?php echo strtolower($singularHumanName); ?> has been deleted.'), ['action' => 'index']);
 		} else {
-			return $this->flash(__('The <?php echo strtolower($singularHumanName); ?> could not be deleted. Please, try again.'), array('action' => 'index'));
+			return $this->flash(__('The <?php echo strtolower($singularHumanName); ?> could not be deleted. Please, try again.'), ['action' => 'index']);
 		}
 <?php endif; ?>
 	}

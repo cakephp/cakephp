@@ -26,7 +26,7 @@ class CompletionShell extends Shell {
  *
  * @var array
  */
-	public $tasks = array('Command');
+	public $tasks = ['Command'];
 
 /**
  * Echo no header by overriding the startup method
@@ -102,39 +102,39 @@ class CompletionShell extends Shell {
 		$parser = parent::getOptionParser();
 
 		$parser->description(__d('cake_console', 'Used by shells like bash to autocomplete command name, options and arguments'))
-			->addSubcommand('commands', array(
+			->addSubcommand('commands', [
 				'help' => __d('cake_console', 'Output a list of available commands'),
-				'parser' => array(
+				'parser' => [
 					'description' => __d('cake_console', 'List all availables'),
-					'arguments' => array(
-					)
-				)
-			))->addSubcommand('subcommands', array(
+					'arguments' => [
+					]
+				]
+			])->addSubcommand('subcommands', [
 				'help' => __d('cake_console', 'Output a list of available subcommands'),
-				'parser' => array(
+				'parser' => [
 					'description' => __d('cake_console', 'List subcommands for a command'),
-					'arguments' => array(
-						'command' => array(
+					'arguments' => [
+						'command' => [
 							'help' => __d('cake_console', 'The command name'),
 							'required' => true,
-						)
-					)
-				)
-			))->addSubcommand('options', array(
+						]
+					]
+				]
+			])->addSubcommand('options', [
 				'help' => __d('cake_console', 'Output a list of available options'),
-				'parser' => array(
+				'parser' => [
 					'description' => __d('cake_console', 'List options'),
-					'arguments' => array(
-						'command' => array(
+					'arguments' => [
+						'command' => [
 							'help' => __d('cake_console', 'The command name'),
 							'required' => false,
-						)
-					)
-				)
-			))->epilog(
-				array(
+						]
+					]
+				]
+			])->epilog(
+				[
 					__d('cake_console', 'This command is not intended to be called manually'),
-				)
+				]
 			);
 		return $parser;
 	}
@@ -145,7 +145,7 @@ class CompletionShell extends Shell {
  * @param array $options
  * @return void
  */
-	protected function _output($options = array()) {
+	protected function _output($options = []) {
 		if ($options) {
 			return $this->out(implode($options, ' '));
 		}

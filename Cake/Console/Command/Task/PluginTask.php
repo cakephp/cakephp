@@ -105,11 +105,11 @@ class PluginTask extends Shell {
 		$this->out(__d('cake_console', "<info>Plugin Directory:</info> %s", $this->path . $plugin));
 		$this->hr();
 
-		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n', 'q'), 'y');
+		$looksGood = $this->in(__d('cake_console', 'Look okay?'), ['y', 'n', 'q'], 'y');
 
 		if (strtolower($looksGood) === 'y') {
 			$Folder = new Folder($this->path . $plugin);
-			$directories = array(
+			$directories = [
 				'Config/Schema',
 				'Model/Behavior',
 				'Model/Datasource',
@@ -123,7 +123,7 @@ class PluginTask extends Shell {
 				'Test/Fixture',
 				'vendor',
 				'webroot'
-			);
+			];
 
 			foreach ($directories as $directory) {
 				$dirPath = $this->path . $plugin . DS . $directory;
@@ -178,7 +178,7 @@ class PluginTask extends Shell {
 		$bootstrap = new File($this->bootstrap, false);
 		$contents = $bootstrap->read();
 		if (!preg_match("@\n\s*Plugin::loadAll@", $contents)) {
-			$bootstrap->append("\nPlugin::load('$plugin', array('bootstrap' => false, 'routes' => false));\n");
+			$bootstrap->append("\nPlugin::load('$plugin', ['bootstrap' => false, 'routes' => false]);\n");
 			$this->out('');
 			$this->out(__d('cake_dev', '%s modified', $this->bootstrap));
 		}
@@ -221,9 +221,9 @@ class PluginTask extends Shell {
 		return $parser->description(__d('cake_console',
 			'Create the directory structure, AppModel and AppController classes for a new plugin. ' .
 			'Can create plugins in any of your bootstrapped plugin paths.'
-		))->addArgument('name', array(
+		))->addArgument('name', [
 			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
-		));
+		]);
 	}
 
 }

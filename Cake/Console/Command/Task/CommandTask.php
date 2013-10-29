@@ -34,10 +34,10 @@ class CommandTask extends Shell {
  * @return array
  */
 	public function getShellList() {
-		$skipFiles = array('AppShell');
+		$skipFiles = ['AppShell'];
 
 		$plugins = Plugin::loaded();
-		$shellList = array_fill_keys($plugins, null) + array('CORE' => null, 'app' => null);
+		$shellList = array_fill_keys($plugins, null) + ['CORE' => null, 'app' => null];
 
 		$corePath = App::core('Console/Command');
 		$shells = App::objects('file', $corePath[0]);
@@ -78,10 +78,10 @@ class CommandTask extends Shell {
 	public function commands() {
 		$shellList = $this->getShellList();
 
-		$options = array();
+		$options = [];
 		foreach ($shellList as $type => $commands) {
 			$prefix = '';
-			if (!in_array(strtolower($type), array('app', 'core'))) {
+			if (!in_array(strtolower($type), ['app', 'core'])) {
 				$prefix = $type . '.';
 			}
 
@@ -103,20 +103,20 @@ class CommandTask extends Shell {
 		$Shell = $this->getShell($commandName);
 
 		if (!$Shell) {
-			return array();
+			return [];
 		}
 
 		$taskMap = $this->Tasks->normalizeArray((array)$Shell->tasks);
 		$return = array_keys($taskMap);
 		$return = array_map('Cake\Utility\Inflector::underscore', $return);
 
-		$shellMethodNames = array('main', 'help');
+		$shellMethodNames = ['main', 'help'];
 
 		$baseClasses = ['Object', 'Shell', 'AppShell'];
 
 		$Reflection = new ReflectionClass($Shell);
 		$methods = $Reflection->getMethods(ReflectionMethod::IS_PUBLIC);
-		$methodNames = array();
+		$methodNames = [];
 		foreach ($methods as $method) {
 			$declaringClass = $method->getDeclaringClass()->getShortName();
 			if (!in_array($declaringClass, $baseClasses)) {
@@ -139,7 +139,7 @@ class CommandTask extends Shell {
 	public function getShell($commandName) {
 		list($pluginDot, $name) = pluginSplit($commandName, true);
 
-		if (in_array(strtolower($pluginDot), array('app.', 'core.'))) {
+		if (in_array(strtolower($pluginDot), ['app.', 'core.'])) {
 			$commandName = $name;
 			$pluginDot = '';
 		}
@@ -176,7 +176,7 @@ class CommandTask extends Shell {
 			$parser = $Shell->getOptionParser();
 		}
 
-		$options = array();
+		$options = [];
 		$array = $parser->options();
 		foreach ($array as $name => $obj) {
 			$options[] = "--$name";

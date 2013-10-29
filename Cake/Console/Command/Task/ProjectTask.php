@@ -46,7 +46,7 @@ class ProjectTask extends Shell {
 		if (isset($this->args[0])) {
 			$project = $this->args[0];
 		} else {
-			$appContents = array_diff(scandir(APP), array('.', '..'));
+			$appContents = array_diff(scandir(APP), ['.', '..']);
 			if (empty($appContents)) {
 				$suggestedPath = rtrim(APP, DS);
 			} else {
@@ -62,7 +62,7 @@ class ProjectTask extends Shell {
 		$namespace = basename($project);
 		if (!preg_match('/^\w[\w\d_]+$/', $namespace)) {
 			$this->err(__d('cake_console', 'Project Name/Namespace needs to start with a letter and can only contain letters, digits and underscore'));
-			$this->args = array();
+			$this->args = [];
 			return $this->execute();
 		}
 
@@ -73,7 +73,7 @@ class ProjectTask extends Shell {
 		$response = false;
 		while (!$response && is_dir($project) === true && file_exists($project . 'Config' . 'boostrap.php')) {
 			$prompt = __d('cake_console', '<warning>A project already exists in this location:</warning> %s Overwrite?', $project);
-			$response = $this->in($prompt, array('y', 'n'), 'n');
+			$response = $this->in($prompt, ['y', 'n'], 'n');
 			if (strtolower($response) === 'n') {
 				$response = $project = false;
 			}
@@ -106,11 +106,11 @@ class ProjectTask extends Shell {
 
 		$command = 'php ' . escapeshellarg($composer) . ' create-project --dev cakephp/app ' . escapeshellarg($path);
 
-		$descriptorSpec = array(
-			0 => array('pipe', 'r'),
-			1 => array('pipe', 'w'),
-			2 => array('pipe', 'w')
-		);
+		$descriptorSpec = [
+			0 => ['pipe', 'r'],
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w']
+		];
 		$process = proc_open(
 			$command,
 			$descriptorSpec,
@@ -149,10 +149,10 @@ class ProjectTask extends Shell {
 		$path .= 'Config/';
 		$File = new File($path . 'routes.php');
 		$contents = $File->read();
-		if (preg_match('%(\s*[/]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(]*\);)%', $contents, $match)) {
-			$result = str_replace($match[0], "\n" . 'Configure::write(\'Routing.prefixes\', array(\'' . $name . '\'));', $contents);
+		if (preg_match('%(\s*[/]*Configure::write\(\'Routing.prefixes\',[\s\'a-z,\)\(\]\[]*\);)%', $contents, $match)) {
+			$result = str_replace($match[0], "\n" . 'Configure::write(\'Routing.prefixes\', [\'' . $name . '\']);', $contents);
 			if ($File->write($result)) {
-				Configure::write('Routing.prefixes', array($name));
+				Configure::write('Routing.prefixes', [$name]);
 				return true;
 			}
 		}
@@ -175,7 +175,7 @@ class ProjectTask extends Shell {
 				$this->out();
 				$this->out(__d('cake_console', 'You have more than one routing prefix configured'));
 			}
-			$options = array();
+			$options = [];
 			foreach ($prefixes as $i => $prefix) {
 				$options[] = $i + 1;
 				if ($this->interactive) {
@@ -188,7 +188,7 @@ class ProjectTask extends Shell {
 		if ($this->interactive) {
 			$this->hr();
 			$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
-					'Configure::write(\'Routing.prefixes\', array(\'admin\'))',
+					'Configure::write(\'Routing.prefixes\', [\'admin\'])',
 					'/app/Config/routes.php'));
 			$this->out(__d('cake_console', 'What would you like the prefix route to be?'));
 			$this->out(__d('cake_console', 'Example: %s', 'www.example.com/admin/controller'));
@@ -198,7 +198,7 @@ class ProjectTask extends Shell {
 			if ($this->cakeAdmin($admin) !== true) {
 				$this->out(__d('cake_console', '<error>Unable to write to</error> %s.', '/app/Config/routes.php'));
 				$this->out(__d('cake_console', 'You need to enable %s in %s to use prefix routing.',
-					'Configure::write(\'Routing.prefixes\', array(\'admin\'))',
+					'Configure::write(\'Routing.prefixes\', [\'admin\'])',
 					'/app/Config/routes.php'));
 				return $this->_stop();
 			}
@@ -216,18 +216,18 @@ class ProjectTask extends Shell {
 		$parser = parent::getOptionParser();
 		return $parser->description(
 				__d('cake_console', 'Generate a new CakePHP project skeleton.')
-			)->addArgument('name', array(
+			)->addArgument('name', [
 				'help' => __d('cake_console', 'Application directory to make, if it starts with "/" the path is absolute.')
-			))->addOption('empty', array(
+			])->addOption('empty', [
 				'boolean' => true,
 				'help' => __d('cake_console', 'Create empty files in each of the directories. Good if you are using git')
-			))->addOption('theme', array(
+			])->addOption('theme', [
 				'short' => 't',
 				'help' => __d('cake_console', 'Theme to use when baking code.')
-			))->addOption('composer', array(
+			])->addOption('composer', [
 				'default' => ROOT . '/composer.phar',
 				'help' => __d('cake_console', 'The path to the composer executable.')
-			));
+			]);
 	}
 
 }

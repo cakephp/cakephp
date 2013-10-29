@@ -38,7 +38,7 @@ class BakeShell extends Shell {
  *
  * @var array
  */
-	public $tasks = array('Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test');
+	public $tasks = ['Project', 'DbConfig', 'Model', 'Controller', 'View', 'Plugin', 'Fixture', 'Test'];
 
 /**
  * The connection being used.
@@ -58,7 +58,7 @@ class BakeShell extends Shell {
 		Cache::disable();
 
 		$task = Inflector::classify($this->command);
-		if (isset($this->{$task}) && !in_array($task, array('Project', 'DbConfig'))) {
+		if (isset($this->{$task}) && !in_array($task, ['Project', 'DbConfig'])) {
 			if (isset($this->params['connection'])) {
 				$this->{$task}->connection = $this->params['connection'];
 			}
@@ -100,7 +100,7 @@ class BakeShell extends Shell {
 		$this->out(__d('cake_console', '[T]est case'));
 		$this->out(__d('cake_console', '[Q]uit'));
 
-		$classToBake = strtoupper($this->in(__d('cake_console', 'What would you like to Bake?'), array('D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q')));
+		$classToBake = strtoupper($this->in(__d('cake_console', 'What would you like to Bake?'), ['D', 'M', 'V', 'C', 'P', 'F', 'T', 'Q']));
 		switch ($classToBake) {
 			case 'D':
 				$this->DbConfig->execute();
@@ -150,7 +150,7 @@ class BakeShell extends Shell {
 			$name = $this->Model->getName($this->connection);
 		}
 
-		foreach (array('Model', 'Controller', 'View') as $task) {
+		foreach (['Model', 'Controller', 'View'] as $task) {
 			$this->{$task}->connection = $this->connection;
 			$this->{$task}->interactive = false;
 		}
@@ -167,7 +167,7 @@ class BakeShell extends Shell {
 			$object = new $model();
 			$modelExists = true;
 		} else {
-			$object = new Model(array('name' => $name, 'ds' => $this->connection));
+			$object = new Model(['name' => $name, 'ds' => $this->connection]);
 		}
 
 		$modelBaked = $this->Model->bake($object, false);
@@ -189,7 +189,7 @@ class BakeShell extends Shell {
 			}
 			$controller = App::classname($controller, 'Controller', 'Controller');
 			if ($controller) {
-				$this->View->args = array($name);
+				$this->View->args = [$name];
 				$this->View->execute();
 			}
 			$this->out('', 1, Shell::QUIET);
@@ -212,40 +212,40 @@ class BakeShell extends Shell {
 			'The Bake script generates controllers, views and models for your application.' .
 			' If run with no command line arguments, Bake guides the user through the class creation process.' .
 			' You can customize the generation process by telling Bake where different parts of your application are using command line arguments.'
-		))->addSubcommand('all', array(
+		))->addSubcommand('all', [
 			'help' => __d('cake_console', 'Bake a complete MVC. optional <name> of a Model'),
-		))->addSubcommand('project', array(
+		])->addSubcommand('project', [
 			'help' => __d('cake_console', 'Bake a new app folder in the path supplied or in current directory if no path is specified'),
 			'parser' => $this->Project->getOptionParser()
-		))->addSubcommand('plugin', array(
+		])->addSubcommand('plugin', [
 			'help' => __d('cake_console', 'Bake a new plugin folder in the path supplied or in current directory if no path is specified.'),
 			'parser' => $this->Plugin->getOptionParser()
-		))->addSubcommand('db_config', array(
+		])->addSubcommand('db_config', [
 			'help' => __d('cake_console', 'Bake a datasources.php file in config directory.'),
 			'parser' => $this->DbConfig->getOptionParser()
-		))->addSubcommand('model', array(
+		])->addSubcommand('model', [
 			'help' => __d('cake_console', 'Bake a model.'),
 			'parser' => $this->Model->getOptionParser()
-		))->addSubcommand('view', array(
+		])->addSubcommand('view', [
 			'help' => __d('cake_console', 'Bake views for controllers.'),
 			'parser' => $this->View->getOptionParser()
-		))->addSubcommand('controller', array(
+		])->addSubcommand('controller', [
 			'help' => __d('cake_console', 'Bake a controller.'),
 			'parser' => $this->Controller->getOptionParser()
-		))->addSubcommand('fixture', array(
+		])->addSubcommand('fixture', [
 			'help' => __d('cake_console', 'Bake a fixture.'),
 			'parser' => $this->Fixture->getOptionParser()
-		))->addSubcommand('test', array(
+		])->addSubcommand('test', [
 			'help' => __d('cake_console', 'Bake a unit test.'),
 			'parser' => $this->Test->getOptionParser()
-		))->addOption('connection', array(
+		])->addOption('connection', [
 			'help' => __d('cake_console', 'Database connection to use in conjunction with `bake all`.'),
 			'short' => 'c',
 			'default' => 'default'
-		))->addOption('theme', array(
+		])->addOption('theme', [
 			'short' => 't',
 			'help' => __d('cake_console', 'Theme to use when baking code.')
-		));
+		]);
 	}
 
 }

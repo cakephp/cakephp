@@ -42,9 +42,9 @@ class <?php echo $className; ?>Test extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array(
+	public $fixtures = [
 		'<?php echo join("',\n\t\t'", $fixtures); ?>'
-	);
+	];
 
 <?php endif; ?>
 <?php if (!empty($construction)): ?>

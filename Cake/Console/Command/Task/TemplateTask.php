@@ -38,7 +38,7 @@ class TemplateTask extends Shell {
  *
  * @var array
  */
-	public $templatePaths = array();
+	public $templatePaths = [];
 
 /**
  * Initialize callback. Setup paths for the template task.
@@ -80,7 +80,7 @@ class TemplateTask extends Shell {
 			$paths[$i] = rtrim($path, DS) . DS;
 		}
 
-		$themes = array();
+		$themes = [];
 		foreach ($paths as $path) {
 			$Folder = new Folder($path . 'Templates', false);
 			$contents = $Folder->read();
@@ -152,7 +152,7 @@ class TemplateTask extends Shell {
 		$this->hr();
 
 		$i = 1;
-		$indexedPaths = array();
+		$indexedPaths = [];
 		foreach ($this->templatePaths as $key => $path) {
 			$this->out($i . '. ' . $key);
 			$indexedPaths[$i] = $path;

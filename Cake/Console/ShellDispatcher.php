@@ -29,14 +29,14 @@ class ShellDispatcher {
  *
  * @var array
  */
-	public $params = array();
+	public $params = [];
 
 /**
  * Contains arguments parsed from the command line.
  *
  * @var array
  */
-	public $args = array();
+	public $args = [];
 
 /**
  * Constructor
@@ -47,7 +47,7 @@ class ShellDispatcher {
  * @param array $args the argv from PHP
  * @param boolean $bootstrap Should the environment be bootstrapped.
  */
-	public function __construct($args = array(), $bootstrap = true) {
+	public function __construct($args = [], $bootstrap = true) {
 		set_time_limit(0);
 		$this->parseParams($args);
 
@@ -139,7 +139,7 @@ class ShellDispatcher {
 			$this->help();
 			return false;
 		}
-		if (in_array($shell, array('help', '--help', '-h'))) {
+		if (in_array($shell, ['help', '--help', '-h'])) {
 			$this->help();
 			return true;
 		}
@@ -172,7 +172,7 @@ class ShellDispatcher {
 			}
 		}
 
-		throw new Error\MissingShellMethodException(array('shell' => $shell, 'method' => $command));
+		throw new Error\MissingShellMethodException(['shell' => $shell, 'method' => $command]);
 	}
 
 /**
@@ -195,9 +195,9 @@ class ShellDispatcher {
 		$class = App::classname($class, 'Console/Command', 'Shell');
 
 		if (!class_exists($class)) {
-			throw new Error\MissingShellException(array(
+			throw new Error\MissingShellException([
 				'class' => $shell,
-			));
+			]);
 		}
 		$Shell = new $class();
 		$Shell->plugin = trim($plugin, '.');
@@ -213,12 +213,12 @@ class ShellDispatcher {
 	public function parseParams($args) {
 		$this->_parsePaths($args);
 
-		$defaults = array(
+		$defaults = [
 			'app' => 'App',
 			'root' => dirname(dirname(dirname(__DIR__))),
 			'working' => null,
 			'webroot' => 'webroot'
-		);
+		];
 		$params = array_merge($defaults, array_intersect_key($this->params, $defaults));
 		$isWin = false;
 		foreach ($defaults as $default => $value) {
@@ -271,8 +271,8 @@ class ShellDispatcher {
  * @return void
  */
 	protected function _parsePaths($args) {
-		$parsed = array();
-		$keys = array('-working', '--working', '-app', '--app', '-root', '--root');
+		$parsed = [];
+		$keys = ['-working', '--working', '-app', '--app', '-root', '--root'];
 		foreach ($keys as $key) {
 			while (($index = array_search($key, $args)) !== false) {
 				$keyname = str_replace('-', '', $key);
@@ -300,7 +300,7 @@ class ShellDispatcher {
  * @return void
  */
 	public function help() {
-		$this->args = array_merge(array('command_list'), $this->args);
+		$this->args = array_merge(['command_list'], $this->args);
 		$this->dispatch();
 	}
 

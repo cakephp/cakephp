@@ -81,7 +81,7 @@ class ConsoleInputOption {
  * @param array $choices Valid choices for this option.
  * @throws Cake\Error\ConsoleException
  */
-	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = array()) {
+	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = []) {
 		if (is_array($name) && isset($name['name'])) {
 			foreach ($name as $key => $value) {
 				$this->{'_' . $key} = $value;
