@@ -307,10 +307,16 @@ class CookieComponent extends Component {
  * Delete a cookie value
  *
  * Optional [Name.], required key
- * $this->Cookie->read('Name.key);
+ * $this->Cookie->delete('Name.key);
  *
  * You must use this method before any output is sent to the browser.
  * Failure to do so will result in header already sent errors.
+ *
+ * This method will delete both the top level and 2nd level cookies set.
+ * For example assuming that $name = App, deleting `User` will delete
+ * both `App[User]` and any other cookie values like `App[User][email]`
+ * This is done to clean up cookie storage from before 2.4.3, where cookies
+ * were stored inconsistently.
  *
  * @param string $key Key of the value to be deleted
  * @return void
