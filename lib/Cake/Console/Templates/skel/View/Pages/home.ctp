@@ -194,7 +194,7 @@ You can also add some CSS styles for your pages at: %s.',
 </ul>
 </p>
 
-<h3><?php echo __d('cake_dev', 'More about Cake'); ?></h3>
+<h3><?php echo __d('cake_dev', 'More about CakePHP'); ?></h3>
 <p>
 <?php echo __d('cake_dev', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
 </p>

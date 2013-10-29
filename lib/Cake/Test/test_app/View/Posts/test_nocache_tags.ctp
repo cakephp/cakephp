@@ -91,7 +91,7 @@ if (!empty($filePresent)):
 <a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-cake1.html"><?php echo __d('cake', 'Cook up Web sites fast with CakePHP'); ?></a><br />
 <a href="http://www-128.ibm.com/developerworks/edu/os-dw-os-php-wiki1.html"><?php echo __d('cake', 'Create an interactive production wiki using PHP'); ?></a>
 </p>
-<h2><?php echo __d('cake', 'More about Cake'); ?></h2>
+<h2><?php echo __d('cake', 'More about CakePHP'); ?></h2>
 <p>
 <?php echo __d('cake', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
 </p>
