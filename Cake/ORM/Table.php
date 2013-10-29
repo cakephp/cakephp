@@ -135,6 +135,13 @@ class Table {
 	protected $_entityClass;
 
 /**
+ * A list of validation objects indexed by name
+ *
+ * @var array
+ */
+	protected $_validators = [];
+
+/**
  * Initializes a new instance
  *
  * The $config array understands the following keys:
@@ -732,6 +739,70 @@ class Table {
 		$success = $statement->rowCount() > 0;
 		$statement->closeCursor();
 		return $success;
+	}
+
+/**
+ * Returns the validation rules tagged with $name. It is possible to have
+ * multiple different named validation sets, this is useful when you need
+ * to use varying rules when saving from different routines in your system.
+ *
+ * There are two different ways of creating and naming validation sets: by
+ * creating a new method inside your own Table subclass, or by building
+ * the validator object yourself and storing it using this method.
+ *
+ * For example, if you wish to create a validation set called 'forSubscription',
+ * you will need to create a method in your Table subclass as follows:
+ *
+ * {{{
+ * public function validationForSubscription($validator) {
+ *	return $validator
+ *	->add('email', 'required', ['rule' => 'email', 'required' => true])
+ *	->add('password', 'valid', ['rule' => 'notEmpty', 'required' => true]);
+ * }
+ * }}}
+ *
+ * Otherwise, you can build the object by yourself and store it in the Table object:
+ *
+ * {{{
+ * $validator = new \Cake\ORM\Validator($table);
+ * $validator
+ *	->add('email', 'required', ['rule' => 'email', 'required' => true])
+ *	->add('password', 'valid', ['rule' => 'notEmpty', 'required' => true]);
+ * $table->validator('forSubscription', $validator);
+ * }}}
+ *
+ * You can implement the method in `validationDefault` in your Table subclass
+ * should you wish to have a validation set that applies in cases where no other
+ * set is specified.
+ *
+ * @param string $name the name of the validation set to return
+ * @param \Cake\ORM\Validator $validator
+ * @return \Cake\ORM\Validator
+ */
+	public function validator($name = 'default', $instance = null) {
+		if ($instance === null && isset($this->_validators[$name])) {
+			return $this->_validators[$name];
+		}
+
+		if ($instance !== null) {
+			return $this->_validators[$name] = $instance;
+		}
+
+		$validator = new Validator;
+		$validator = $this->{'validation' . $name}($validator);
+		return $this->_validators[$name] = $validator;
+	}
+
+/**
+ * Returns the default validator object. Subclasses can override this function
+ * to add a default validation set to the validator object.
+ *
+ * @param \Cake\ORM\Validator $validator The validator that can be modified to
+ * add some rules to it.
+ * @return \Cake\ORM\Validator
+ */
+	public function validationDefault(Validator $validator) {
+		return $validator;
 	}
 
 /**
