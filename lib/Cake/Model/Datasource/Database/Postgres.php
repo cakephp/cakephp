@@ -325,7 +325,7 @@ class Postgres extends DboSource {
 		$fullTable = $this->fullTableName($table);
 
 		$sequence = $this->value($this->getSequence($tableName, $column));
-		$this->execute("SELECT setval($sequence, (SELECT MAX(id) FROM $fullTable))");
+		$this->execute("SELECT setval($sequence, (SELECT MAX($column) FROM $fullTable))");
 		return true;
 	}
 
