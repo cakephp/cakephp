@@ -514,7 +514,7 @@ class CakeTime {
 	public static function isThisWeek($dateString, $timezone = null) {
 		$timestamp = self::fromString($dateString, $timezone);
 		$now = self::fromString('now', $timezone);
-		return date('W o', $timestamp) == date('W o', $now);
+		return date('W o', $timestamp) === date('W o', $now);
 	}
 
 /**
@@ -528,7 +528,7 @@ class CakeTime {
 	public static function isThisMonth($dateString, $timezone = null) {
 		$timestamp = self::fromString($dateString, $timezone);
 		$now = self::fromString('now', $timezone);
-		return date('m Y', $timestamp) == date('m Y', $now);
+		return date('m Y', $timestamp) === date('m Y', $now);
 	}
 
 /**
@@ -542,7 +542,7 @@ class CakeTime {
 	public static function isThisYear($dateString, $timezone = null) {
 		$timestamp = self::fromString($dateString, $timezone);
 		$now = self::fromString('now', $timezone);
-		return date('Y', $timestamp) == date('Y', $now);
+		return date('Y', $timestamp) === date('Y', $now);
 	}
 
 /**
@@ -556,7 +556,7 @@ class CakeTime {
 	public static function wasYesterday($dateString, $timezone = null) {
 		$timestamp = self::fromString($dateString, $timezone);
 		$yesterday = self::fromString('yesterday', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', $yesterday);
+		return date('Y-m-d', $timestamp) === date('Y-m-d', $yesterday);
 	}
 
 /**
@@ -570,7 +570,7 @@ class CakeTime {
 	public static function isTomorrow($dateString, $timezone = null) {
 		$timestamp = self::fromString($dateString, $timezone);
 		$tomorrow = self::fromString('tomorrow', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', $tomorrow);
+		return date('Y-m-d', $timestamp) === date('Y-m-d', $tomorrow);
 	}
 
 /**
