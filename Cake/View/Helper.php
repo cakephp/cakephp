@@ -206,6 +206,7 @@ class Helper extends Object implements EventListener {
  *
  * @param string $name Name of the property being accessed.
  * @return mixed Helper or property found at $name
+ * @deprecated Accessing request properties through this method is deprecated and will be removed in 3.0.
  */
 	public function __get($name) {
 		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
@@ -220,7 +221,7 @@ class Helper extends Object implements EventListener {
 /**
  * Finds URL for specified action.
  *
- * Returns an URL pointing at the provided parameters.
+ * Returns a URL pointing at the provided parameters.
  *
  * @param string|array $url Either a relative string url like `/products/view/23` or
  *    an array of URL parameters. Using an array for URLs will allow you to leverage
@@ -316,7 +317,7 @@ class Helper extends Object implements EventListener {
 	}
 
 /**
- * Encodes an URL for use in HTML attributes.
+ * Encodes a URL for use in HTML attributes.
  *
  * @param string $url The URL to encode.
  * @return string The URL encoded for both URL & HTML contexts.
@@ -733,7 +734,7 @@ class Helper extends Object implements EventListener {
  * Adds the given class to the element options
  *
  * @param array $options Array options/attributes to add a class to
- * @param string $class The classname being added.
+ * @param string $class The class name being added.
  * @param string $key the key to use for class.
  * @return array Array of options with $key set.
  */

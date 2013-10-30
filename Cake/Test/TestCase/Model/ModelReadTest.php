@@ -2184,10 +2184,10 @@ class ModelReadTest extends ModelTestBase {
 
 		$this->assertEquals($expected, $result);
 
-		$result = $TestModel->unbindModel(array('hasMany' => array('Child')));
+		$result = $TestModel->unbindModel(array('hasMany' => 'Child'));
 		$this->assertTrue($result);
 
-		$result = $TestModel->Sample->unbindModel(array('belongsTo' => array('Apple')));
+		$result = $TestModel->Sample->unbindModel(array('belongsTo' => 'Apple'));
 		$this->assertTrue($result);
 
 		$result = $TestModel->find('all');

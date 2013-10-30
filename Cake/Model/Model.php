@@ -297,7 +297,7 @@ class Model extends Object implements EventListener {
  *
  * ### Possible keys in association
  *
- * - `className`: the classname of the model being associated to the current model.
+ * - `className`: the class name of the model being associated to the current model.
  *   If you're defining a 'Profile belongsTo User' relationship, the className key should equal 'User.'
  * - `foreignKey`: the name of the foreign key found in the current model. This is
  *   especially handy if you need to define multiple belongsTo relationships. The default
@@ -344,7 +344,7 @@ class Model extends Object implements EventListener {
  *
  * ### Possible keys in association
  *
- * - `className`: the classname of the model being associated to the current model.
+ * - `className`: the class name of the model being associated to the current model.
  *   If you're defining a 'User hasOne Profile' relationship, the className key should equal 'Profile.'
  * - `foreignKey`: the name of the foreign key found in the other model. This is
  *   especially handy if you need to define multiple hasOne relationships.
@@ -387,7 +387,7 @@ class Model extends Object implements EventListener {
  *
  * ### Possible keys in association
  *
- * - `className`: the classname of the model being associated to the current model.
+ * - `className`: the class name of the model being associated to the current model.
  *   If you're defining a 'User hasMany Comment' relationship, the className key should equal 'Comment.'
  * - `foreignKey`: the name of the foreign key found in the other model. This is
  *   especially handy if you need to define multiple hasMany relationships. The default
@@ -438,7 +438,7 @@ class Model extends Object implements EventListener {
  *
  * ### Possible keys in association
  *
- * - `className`: the classname of the model being associated to the current model.
+ * - `className`: the class name of the model being associated to the current model.
  *   If you're defining a 'Recipe HABTM Tag' relationship, the className key should equal 'Tag.'
  * - `joinTable`: The name of the join table used in this association (if the
  *   current table doesn't adhere to the naming convention for HABTM join tables).
@@ -661,7 +661,8 @@ class Model extends Object implements EventListener {
  * Would create a model attached to the posts table on connection2. Dynamic model creation is useful
  * when you want a model object that contains no associations or attached behaviors.
  *
- * @param integer|string|array $id Set this ID for this model on startup, can also be an array of options, see above.
+ * @param boolean|integer|string|array $id Set this ID for this model on startup,
+ * can also be an array of options, see above.
  * @param string $table Name of database table to use.
  * @param string $ds DataSource connection name.
  */
@@ -900,7 +901,7 @@ class Model extends Object implements EventListener {
  * Example: Add a new hasOne binding to the Profile model not
  * defined in the model source code:
  *
- * `$this->User->bindModel( array('hasOne' => array('Profile')) );`
+ * `$this->User->bindModel(array('hasOne' => array('Profile')));`
  *
  * Bindings that are not made permanent will be reset by the next Model::find() call on this
  * model.
@@ -949,9 +950,11 @@ class Model extends Object implements EventListener {
  * Example: Turn off the associated Model Support request,
  * to temporarily lighten the User model:
  *
- * `$this->User->unbindModel( array('hasMany' => array('Supportrequest')) );`
+ * `$this->User->unbindModel(array('hasMany' => array('SupportRequest')));`
+ * Or alternatively:
+ * `$this->User->unbindModel(array('hasMany' => 'SupportRequest'));`
  *
- * unbound models that are not made permanent will reset with the next call to Model::find()
+ * Unbound models that are not made permanent will reset with the next call to Model::find()
  *
  * @param array $params Set of bindings to unbind (indexed by binding type)
  * @param boolean $reset Set to false to make the unbinding permanent
@@ -963,7 +966,7 @@ class Model extends Object implements EventListener {
 			if ($reset === true && !isset($this->__backAssociation[$assoc])) {
 				$this->__backAssociation[$assoc] = $this->{$assoc};
 			}
-
+			$models = Hash::normalize((array)$models, false);
 			foreach ($models as $model) {
 				if ($reset === false && isset($this->__backAssociation[$assoc][$model])) {
 					unset($this->__backAssociation[$assoc][$model]);
@@ -983,30 +986,32 @@ class Model extends Object implements EventListener {
  */
 	protected function _createLinks() {
 		foreach ($this->_associations as $type) {
-			if (!is_array($this->{$type})) {
-				$this->{$type} = explode(',', $this->{$type});
+			$association =& $this->{$type};
 
-				foreach ($this->{$type} as $i => $className) {
+			if (!is_array($association)) {
+				$association = explode(',', $association);
+
+				foreach ($association as $i => $className) {
 					$className = trim($className);
-					unset($this->{$type}[$i]);
-					$this->{$type}[$className] = array();
+					unset ($association[$i]);
+					$association[$className] = array();
 				}
 			}
 
-			if (!empty($this->{$type})) {
-				foreach ($this->{$type} as $assoc => $value) {
+			if (!empty($association)) {
+				foreach ($association as $assoc => $value) {
 					$plugin = null;
 
 					if (is_numeric($assoc)) {
-						unset($this->{$type}[$assoc]);
+						unset($association[$assoc]);
 						$assoc = $value;
 						$value = array();
 
 						if (strpos($assoc, '.') !== false) {
 							list($plugin, $assoc) = pluginSplit($assoc, true);
-							$this->{$type}[$assoc] = array('className' => $plugin . $assoc);
+							$association[$assoc] = array('className' => $plugin . $assoc);
 						} else {
-							$this->{$type}[$assoc] = $value;
+							$association[$assoc] = $value;
 						}
 					}
 
@@ -1062,9 +1067,10 @@ class Model extends Object implements EventListener {
 	protected function _generateAssociation($type, $assocKey) {
 		$class = $assocKey;
 		$dynamicWith = false;
+		$assoc =& $this->{$type}[$assocKey];
 
 		foreach ($this->_associationKeys[$type] as $key) {
-			if (!isset($this->{$type}[$assocKey][$key]) || $this->{$type}[$assocKey][$key] === null) {
+			if (!isset($assoc[$key]) || $assoc[$key] === null) {
 				$data = '';
 
 				switch ($key) {
@@ -1081,7 +1087,7 @@ class Model extends Object implements EventListener {
 						break;
 
 					case 'with':
-						$data = Inflector::camelize(Inflector::singularize($this->{$type}[$assocKey]['joinTable']));
+						$data = Inflector::camelize(Inflector::singularize($assoc['joinTable']));
 						$dynamicWith = true;
 						break;
 
@@ -1100,11 +1106,11 @@ class Model extends Object implements EventListener {
 						break;
 				}
 
-				$this->{$type}[$assocKey][$key] = $data;
+				$assoc[$key] = $data;
 			}
 
 			if ($dynamicWith) {
-				$this->{$type}[$assocKey]['dynamicWith'] = true;
+				$assoc['dynamicWith'] = true;
 			}
 		}
 	}
@@ -1176,24 +1182,22 @@ class Model extends Object implements EventListener {
 		}
 
 		foreach ($data as $modelName => $fieldSet) {
-			if (is_array($fieldSet)) {
-				foreach ($fieldSet as $fieldName => $fieldValue) {
-					if (isset($this->validationErrors[$fieldName])) {
-						unset($this->validationErrors[$fieldName]);
-					}
+			if (!is_array($fieldSet)) {
+				continue;
+			}
 
-					if ($modelName === $this->alias) {
-						if ($fieldName === $this->primaryKey) {
-							$this->id = $fieldValue;
-						}
-					}
+			foreach ($fieldSet as $fieldName => $fieldValue) {
+				unset($this->validationErrors[$fieldName]);
 
-					if (is_array($fieldValue) || is_object($fieldValue)) {
-						$fieldValue = $this->deconstruct($fieldName, $fieldValue);
-					}
-
-					$this->data[$modelName][$fieldName] = $fieldValue;
+				if ($modelName === $this->alias && $fieldName === $this->primaryKey) {
+					$this->id = $fieldValue;
 				}
+
+				if (is_array($fieldValue) || is_object($fieldValue)) {
+					$fieldValue = $this->deconstruct($fieldName, $fieldValue);
+				}
+
+				$this->data[$modelName][$fieldName] = $fieldValue;
 			}
 		}
 
@@ -1548,7 +1552,7 @@ class Model extends Object implements EventListener {
 /**
  * This function is a convenient wrapper class to create(false) and, as the name suggests, clears the id, data, and validation errors.
  *
- * @return always boolean TRUE upon success
+ * @return boolean Always true upon success
  * @see Model::create()
  */
 	public function clear() {
@@ -1740,20 +1744,22 @@ class Model extends Object implements EventListener {
 		$now = time();
 
 		foreach ($dateFields as $updateCol) {
-			if ($this->hasField($updateCol) && !in_array($updateCol, $fields)) {
-				$default = array('formatter' => 'date');
-				$colType = array_merge($default, $db->columns[$this->getColumnType($updateCol)]);
-				if (!array_key_exists('format', $colType)) {
-					$time = $now;
-				} else {
-					$time = call_user_func($colType['formatter'], $colType['format']);
-				}
-
-				if (!empty($this->whitelist)) {
-					$this->whitelist[] = $updateCol;
-				}
-				$this->set($updateCol, $time);
+			if (in_array($updateCol, $fields) || !$this->hasField($updateCol)) {
+				continue;
 			}
+
+			$default = array('formatter' => 'date');
+			$colType = array_merge($default, $db->columns[$this->getColumnType($updateCol)]);
+
+			$time = $now;
+			if (array_key_exists('format', $colType)) {
+				$time = call_user_func($colType['formatter'], $colType['format']);
+			}
+
+			if (!empty($this->whitelist)) {
+				$this->whitelist[] = $updateCol;
+			}
+			$this->set($updateCol, $time);
 		}
 
 		if ($options['callbacks'] === true || $options['callbacks'] === 'before') {
@@ -1779,18 +1785,16 @@ class Model extends Object implements EventListener {
 					$v = $v[$n];
 				}
 				$joined[$n] = $v;
-			} else {
-				if ($n === $this->alias) {
-					foreach (array('created', 'updated', 'modified') as $field) {
-						if (array_key_exists($field, $v) && empty($v[$field])) {
-							unset($v[$field]);
-						}
+			} elseif ($n === $this->alias) {
+				foreach (array('created', 'updated', 'modified') as $field) {
+					if (array_key_exists($field, $v) && empty($v[$field])) {
+						unset($v[$field]);
 					}
+				}
 
-					foreach ($v as $x => $y) {
-						if ($this->hasField($x) && (empty($this->whitelist) || in_array($x, $this->whitelist))) {
-							list($fields[], $values[]) = array($x, $y);
-						}
+				foreach ($v as $x => $y) {
+					if ($this->hasField($x) && (empty($this->whitelist) || in_array($x, $this->whitelist))) {
+						list($fields[], $values[]) = array($x, $y);
 					}
 				}
 			}
@@ -1886,117 +1890,123 @@ class Model extends Object implements EventListener {
  */
 	protected function _saveMulti($joined, $id, $db) {
 		foreach ($joined as $assoc => $data) {
-			if (isset($this->hasAndBelongsToMany[$assoc])) {
-				list($join) = $this->joinModel($this->hasAndBelongsToMany[$assoc]['with']);
+			if (!isset($this->hasAndBelongsToMany[$assoc])) {
+				continue;
+			}
 
-				if ($with = $this->hasAndBelongsToMany[$assoc]['with']) {
-					$withModel = is_array($with) ? key($with) : $with;
-					list(, $withModel) = pluginSplit($withModel);
-					$dbMulti = $this->{$withModel}->getDataSource();
-				} else {
-					$dbMulti = $db;
+			$habtm = $this->hasAndBelongsToMany[$assoc];
+
+			list($join) = $this->joinModel($habtm['with']);
+
+			$Model = $this->{$join};
+
+			if (!empty($habtm['with'])) {
+				$withModel = is_array($habtm['with']) ? key($habtm['with']) : $habtm['with'];
+				list(, $withModel) = pluginSplit($withModel);
+				$dbMulti = $this->{$withModel}->getDataSource();
+			} else {
+				$dbMulti = $db;
+			}
+
+			$isUUID = !empty($Model->primaryKey) && $Model->_isUUIDField($Model->primaryKey);
+
+			$newData = $newValues = $newJoins = array();
+			$primaryAdded = false;
+
+			$fields = array(
+				$dbMulti->name($habtm['foreignKey']),
+				$dbMulti->name($habtm['associationForeignKey'])
+			);
+
+			$idField = $db->name($Model->primaryKey);
+			if ($isUUID && !in_array($idField, $fields)) {
+				$fields[] = $idField;
+				$primaryAdded = true;
+			}
+
+			foreach ((array)$data as $row) {
+				if ((is_string($row) && (strlen($row) == 36 || strlen($row) == 16)) || is_numeric($row)) {
+					$newJoins[] = $row;
+					$values = array($id, $row);
+
+					if ($isUUID && $primaryAdded) {
+						$values[] = String::uuid();
+					}
+
+					$newValues[$row] = $values;
+					unset($values);
+				} elseif (isset($row[$habtm['associationForeignKey']])) {
+					if (!empty($row[$Model->primaryKey])) {
+						$newJoins[] = $row[$habtm['associationForeignKey']];
+					}
+
+					$newData[] = $row;
+				} elseif (isset($row[$join]) && isset($row[$join][$habtm['associationForeignKey']])) {
+					if (!empty($row[$join][$Model->primaryKey])) {
+						$newJoins[] = $row[$join][$habtm['associationForeignKey']];
+					}
+
+					$newData[] = $row[$join];
 				}
+			}
 
-				$isUUID = !empty($this->{$join}->primaryKey) && $this->{$join}->_isUUIDField($this->{$join}->primaryKey);
-
-				$newData = $newValues = $newJoins = array();
-				$primaryAdded = false;
-
-				$fields = array(
-					$dbMulti->name($this->hasAndBelongsToMany[$assoc]['foreignKey']),
-					$dbMulti->name($this->hasAndBelongsToMany[$assoc]['associationForeignKey'])
+			$keepExisting = $habtm['unique'] === 'keepExisting';
+			if ($habtm['unique']) {
+				$conditions = array(
+					$join . '.' . $habtm['foreignKey'] => $id
 				);
 
-				$idField = $db->name($this->{$join}->primaryKey);
-				if ($isUUID && !in_array($idField, $fields)) {
-					$fields[] = $idField;
-					$primaryAdded = true;
+				if (!empty($habtm['conditions'])) {
+					$conditions = array_merge($conditions, (array)$habtm['conditions']);
 				}
 
-				foreach ((array)$data as $row) {
-					if ((is_string($row) && (strlen($row) === 36 || strlen($row) === 16)) || is_numeric($row)) {
-						$newJoins[] = $row;
-						$values = array($id, $row);
+				$associationForeignKey = $Model->alias . '.' . $habtm['associationForeignKey'];
+				$links = $Model->find('all', array(
+					'conditions' => $conditions,
+					'recursive' => empty($habtm['conditions']) ? -1 : 0,
+					'fields' => $associationForeignKey,
+				));
 
-						if ($isUUID && $primaryAdded) {
-							$values[] = String::uuid();
-						}
-
-						$newValues[$row] = $values;
-						unset($values);
-					} elseif (isset($row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
-						if (!empty($row[$this->{$join}->primaryKey])) {
-							$newJoins[] = $row[$this->hasAndBelongsToMany[$assoc]['associationForeignKey']];
-						}
-
-						$newData[] = $row;
-					} elseif (isset($row[$join]) && isset($row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']])) {
-						if (!empty($row[$join][$this->{$join}->primaryKey])) {
-							$newJoins[] = $row[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']];
-						}
-
-						$newData[] = $row[$join];
+				$oldLinks = Hash::extract($links, "{n}.{$associationForeignKey}");
+				if (!empty($oldLinks)) {
+					if ($keepExisting && !empty($newJoins)) {
+						$conditions[$associationForeignKey] = array_diff($oldLinks, $newJoins);
+					} else {
+						$conditions[$associationForeignKey] = $oldLinks;
 					}
+
+					$dbMulti->delete($Model, $conditions);
 				}
+			}
 
-				$keepExisting = $this->hasAndBelongsToMany[$assoc]['unique'] === 'keepExisting';
-				if ($this->hasAndBelongsToMany[$assoc]['unique']) {
-					$conditions = array(
-						$join . '.' . $this->hasAndBelongsToMany[$assoc]['foreignKey'] => $id
-					);
-
-					if (!empty($this->hasAndBelongsToMany[$assoc]['conditions'])) {
-						$conditions = array_merge($conditions, (array)$this->hasAndBelongsToMany[$assoc]['conditions']);
+			if (!empty($newData)) {
+				foreach ($newData as $data) {
+					$data[$habtm['foreignKey']] = $id;
+					if (empty($data[$Model->primaryKey])) {
+						$Model->create();
 					}
 
-					$associationForeignKey = $this->{$join}->alias . '.' . $this->hasAndBelongsToMany[$assoc]['associationForeignKey'];
-					$links = $this->{$join}->find('all', array(
-						'conditions' => $conditions,
-						'recursive' => empty($this->hasAndBelongsToMany[$assoc]['conditions']) ? -1 : 0,
-						'fields' => $associationForeignKey,
-					));
+					$Model->save($data);
+				}
+			}
 
-					$oldLinks = Hash::extract($links, "{n}.{$associationForeignKey}");
-					if (!empty($oldLinks)) {
-						if ($keepExisting && !empty($newJoins)) {
-							$conditions[$associationForeignKey] = array_diff($oldLinks, $newJoins);
+			if (!empty($newValues)) {
+				if ($keepExisting && !empty($links)) {
+					foreach ($links as $link) {
+						$oldJoin = $link[$join][$habtm['associationForeignKey']];
+						if (!in_array($oldJoin, $newJoins)) {
+							$conditions[$associationForeignKey] = $oldJoin;
+							$db->delete($Model, $conditions);
 						} else {
-							$conditions[$associationForeignKey] = $oldLinks;
+							unset($newValues[$oldJoin]);
 						}
-
-						$dbMulti->delete($this->{$join}, $conditions);
 					}
-				}
 
-				if (!empty($newData)) {
-					foreach ($newData as $data) {
-						$data[$this->hasAndBelongsToMany[$assoc]['foreignKey']] = $id;
-						if (empty($data[$this->{$join}->primaryKey])) {
-							$this->{$join}->create();
-						}
-
-						$this->{$join}->save($data);
-					}
+					$newValues = array_values($newValues);
 				}
 
 				if (!empty($newValues)) {
-					if ($keepExisting && !empty($links)) {
-						foreach ($links as $link) {
-							$oldJoin = $link[$join][$this->hasAndBelongsToMany[$assoc]['associationForeignKey']];
-							if (!in_array($oldJoin, $newJoins)) {
-								$conditions[$associationForeignKey] = $oldJoin;
-								$db->delete($this->{$join}, $conditions);
-							} else {
-								unset($newValues[$oldJoin]);
-							}
-						}
-
-						$newValues = array_values($newValues);
-					}
-
-					if (!empty($newValues)) {
-						$dbMulti->insertMulti($this->{$join}, $fields, $newValues);
-					}
+					$dbMulti->insertMulti($Model, $fields, $newValues);
 				}
 			}
 		}
@@ -2015,64 +2025,66 @@ class Model extends Object implements EventListener {
 		$keys['old'] = isset($keys['old']) ? $keys['old'] : array();
 
 		foreach ($this->belongsTo as $parent => $assoc) {
-			if (!empty($assoc['counterCache'])) {
-				if (!is_array($assoc['counterCache'])) {
-					if (isset($assoc['counterScope'])) {
-						$assoc['counterCache'] = array($assoc['counterCache'] => $assoc['counterScope']);
-					} else {
-						$assoc['counterCache'] = array($assoc['counterCache'] => array());
-					}
+			if (empty($assoc['counterCache'])) {
+				continue;
+			}
+
+			$Model = $this->{$parent};
+
+			if (!is_array($assoc['counterCache'])) {
+				if (isset($assoc['counterScope'])) {
+					$assoc['counterCache'] = array($assoc['counterCache'] => $assoc['counterScope']);
+				} else {
+					$assoc['counterCache'] = array($assoc['counterCache'] => array());
+				}
+			}
+
+			$foreignKey = $assoc['foreignKey'];
+			$fkQuoted = $this->escapeField($assoc['foreignKey']);
+
+			foreach ($assoc['counterCache'] as $field => $conditions) {
+				if (!is_string($field)) {
+					$field = Inflector::underscore($this->alias) . '_count';
 				}
 
-				$foreignKey = $assoc['foreignKey'];
-				$fkQuoted = $this->escapeField($assoc['foreignKey']);
+				if (!$Model->hasField($field)) {
+					continue;
+				}
 
-				foreach ($assoc['counterCache'] as $field => $conditions) {
-					if (!is_string($field)) {
-						$field = Inflector::underscore($this->alias) . '_count';
-					}
+				if ($conditions === true) {
+					$conditions = array();
+				} else {
+					$conditions = (array)$conditions;
+				}
 
-					if (!$this->{$parent}->hasField($field)) {
-						continue;
-					}
+				if (!array_key_exists($foreignKey, $keys)) {
+					$keys[$foreignKey] = $this->field($foreignKey);
+				}
 
-					if ($conditions === true) {
-						$conditions = array();
-					} else {
-						$conditions = (array)$conditions;
-					}
+				$recursive = (empty($conditions) ? -1 : 0);
 
-					if (!array_key_exists($foreignKey, $keys)) {
-						$keys[$foreignKey] = $this->field($foreignKey);
-					}
-
-					$recursive = (empty($conditions) ? -1 : 0);
-
-					if (isset($keys['old'][$foreignKey])) {
-						if ($keys['old'][$foreignKey] != $keys[$foreignKey]) {
-							$conditions[$fkQuoted] = $keys['old'][$foreignKey];
-							$count = intval($this->find('count', compact('conditions', 'recursive')));
-
-							$this->{$parent}->updateAll(
-								array($field => $count),
-								array($this->{$parent}->escapeField() => $keys['old'][$foreignKey])
-							);
-						}
-					}
-
-					$conditions[$fkQuoted] = $keys[$foreignKey];
-
-					if ($recursive === 0) {
-						$conditions = array_merge($conditions, (array)$conditions);
-					}
-
+				if (isset($keys['old'][$foreignKey]) && $keys['old'][$foreignKey] != $keys[$foreignKey]) {
+					$conditions[$fkQuoted] = $keys['old'][$foreignKey];
 					$count = intval($this->find('count', compact('conditions', 'recursive')));
 
-					$this->{$parent}->updateAll(
+					$Model->updateAll(
 						array($field => $count),
-						array($this->{$parent}->escapeField() => $keys[$foreignKey])
+						array($Model->escapeField() => $keys['old'][$foreignKey])
 					);
 				}
+
+				$conditions[$fkQuoted] = $keys[$foreignKey];
+
+				if ($recursive === 0) {
+					$conditions = array_merge($conditions, (array)$conditions);
+				}
+
+				$count = intval($this->find('count', compact('conditions', 'recursive')));
+
+				$Model->updateAll(
+					array($field => $count),
+					array($Model->escapeField() => $keys[$foreignKey])
+				);
 			}
 		}
 	}
@@ -2337,33 +2349,37 @@ class Model extends Object implements EventListener {
 		$return = array();
 		$validates = true;
 		foreach ($data as $association => $values) {
-			$notEmpty = !empty($values[$association]) || (!isset($values[$association]) && !empty($values));
-			if (isset($associations[$association]) && $associations[$association] === 'belongsTo' && $notEmpty) {
-				$validates = $this->{$association}->create(null) !== null;
-				$saved = false;
-				if ($validates) {
-					if ($options['deep']) {
-						$saved = $this->{$association}->saveAssociated($values, array_merge($options, array('atomic' => false)));
-					} else {
-						$saved = $this->{$association}->save($values, array_merge($options, array('atomic' => false)));
-					}
-					$validates = ($saved === true || (is_array($saved) && !in_array(false, $saved, true)));
-				}
-
-				if ($validates) {
-					$key = $this->belongsTo[$association]['foreignKey'];
-					if (isset($data[$this->alias])) {
-						$data[$this->alias][$key] = $this->{$association}->id;
-					} else {
-						$data = array_merge(array($key => $this->{$association}->id), $data, array($key => $this->{$association}->id));
-					}
-					$options = $this->_addToWhiteList($key, $options);
-				} else {
-					$validationErrors[$association] = $this->{$association}->validationErrors;
-				}
-
-				$return[$association] = $validates;
+			$isEmpty = empty($values) || (isset($values[$association]) && empty($values[$association]));
+			if ($isEmpty || !isset($associations[$association]) || $associations[$association] !== 'belongsTo') {
+				continue;
 			}
+
+			$Model = $this->{$association};
+
+			$validates = $Model->create(null) !== null;
+			$saved = false;
+			if ($validates) {
+				if ($options['deep']) {
+					$saved = $Model->saveAssociated($values, array_merge($options, array('atomic' => false)));
+				} else {
+					$saved = $Model->save($values, array_merge($options, array('atomic' => false)));
+				}
+				$validates = ($saved === true || (is_array($saved) && !in_array(false, $saved, true)));
+			}
+
+			if ($validates) {
+				$key = $this->belongsTo[$association]['foreignKey'];
+				if (isset($data[$this->alias])) {
+					$data[$this->alias][$key] = $Model->id;
+				} else {
+					$data = array_merge(array($key => $Model->id), $data, array($key => $Model->id));
+				}
+				$options = $this->_addToWhiteList($key, $options);
+			} else {
+				$validationErrors[$association] = $Model->validationErrors;
+			}
+
+			$return[$association] = $validates;
 		}
 
 		if ($validates && !($this->create(null) !== null && $this->save($data, $options))) {
@@ -2377,56 +2393,60 @@ class Model extends Object implements EventListener {
 				break;
 			}
 
-			$notEmpty = !empty($values[$association]) || (!isset($values[$association]) && !empty($values));
-			if (isset($associations[$association]) && $notEmpty) {
-				$type = $associations[$association];
-				$key = $this->{$type}[$association]['foreignKey'];
-				switch ($type) {
-					case 'hasOne':
-						if (isset($values[$association])) {
-							$values[$association][$key] = $this->id;
+			$isEmpty = empty($values) || (isset($values[$association]) && empty($values[$association]));
+			if ($isEmpty || !isset($associations[$association])) {
+				continue;
+			}
+
+			$Model = $this->{$association};
+
+			$type = $associations[$association];
+			$key = $this->{$type}[$association]['foreignKey'];
+			switch ($type) {
+				case 'hasOne':
+					if (isset($values[$association])) {
+						$values[$association][$key] = $this->id;
+					} else {
+						$values = array_merge(array($key => $this->id), $values, array($key => $this->id));
+					}
+
+					$validates = $Model->create(null) !== null;
+					$saved = false;
+
+					if ($validates) {
+						$options = $Model->_addToWhiteList($key, $options);
+						if ($options['deep']) {
+							$saved = $Model->saveAssociated($values, array_merge($options, array('atomic' => false)));
 						} else {
-							$values = array_merge(array($key => $this->id), $values, array($key => $this->id));
+							$saved = $Model->save($values, $options);
 						}
+					}
 
-						$validates = $this->{$association}->create(null) !== null;
-						$saved = false;
+					$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, $saved, true))));
+					if (!$validates) {
+						$validationErrors[$association] = $Model->validationErrors;
+					}
 
-						if ($validates) {
-							$options = $this->{$association}->_addToWhiteList($key, $options);
-							if ($options['deep']) {
-								$saved = $this->{$association}->saveAssociated($values, array_merge($options, array('atomic' => false)));
-							} else {
-								$saved = $this->{$association}->save($values, $options);
-							}
+					$return[$association] = $validates;
+					break;
+				case 'hasMany':
+					foreach ($values as $i => $value) {
+						if (isset($values[$i][$association])) {
+							$values[$i][$association][$key] = $this->id;
+						} else {
+							$values[$i] = array_merge(array($key => $this->id), $value, array($key => $this->id));
 						}
+					}
 
-						$validates = ($validates && ($saved === true || (is_array($saved) && !in_array(false, $saved, true))));
-						if (!$validates) {
-							$validationErrors[$association] = $this->{$association}->validationErrors;
-						}
+					$options = $Model->_addToWhiteList($key, $options);
+					$_return = $Model->saveMany($values, array_merge($options, array('atomic' => false)));
+					if (in_array(false, $_return, true)) {
+						$validationErrors[$association] = $Model->validationErrors;
+						$validates = false;
+					}
 
-						$return[$association] = $validates;
-						break;
-					case 'hasMany':
-						foreach ($values as $i => $value) {
-							if (isset($values[$i][$association])) {
-								$values[$i][$association][$key] = $this->id;
-							} else {
-								$values[$i] = array_merge(array($key => $this->id), $value, array($key => $this->id));
-							}
-						}
-
-						$options = $this->{$association}->_addToWhiteList($key, $options);
-						$_return = $this->{$association}->saveMany($values, array_merge($options, array('atomic' => false)));
-						if (in_array(false, $_return, true)) {
-							$validationErrors[$association] = $this->{$association}->validationErrors;
-							$validates = false;
-						}
-
-						$return[$association] = $_return;
-						break;
-				}
+					$return[$association] = $_return;
+					break;
 			}
 		}
 		$this->validationErrors = $validationErrors;
@@ -2471,10 +2491,7 @@ class Model extends Object implements EventListener {
 			return $options;
 		}
 
-		if (!empty($options['fieldList']) &&
-			is_array($options['fieldList']) &&
-			Hash::dimensions($options['fieldList']) < 2
-		) {
+		if (!empty($options['fieldList']) && is_array($options['fieldList']) && Hash::dimensions($options['fieldList']) < 2) {
 			$options['fieldList'][] = $key;
 		}
 
@@ -2599,29 +2616,29 @@ class Model extends Object implements EventListener {
 				continue;
 			}
 
-			$model = $this->{$assoc};
+			$Model = $this->{$assoc};
 
-			if ($data['foreignKey'] === false && $data['conditions'] && in_array($this->name, $model->getAssociated('belongsTo'))) {
-				$model->recursive = 0;
+			if ($data['foreignKey'] === false && $data['conditions'] && in_array($this->name, $Model->getAssociated('belongsTo'))) {
+				$Model->recursive = 0;
 				$conditions = array($this->escapeField(null, $this->name) => $id);
 			} else {
-				$model->recursive = -1;
-				$conditions = array($model->escapeField($data['foreignKey']) => $id);
+				$Model->recursive = -1;
+				$conditions = array($Model->escapeField($data['foreignKey']) => $id);
 				if ($data['conditions']) {
 					$conditions = array_merge((array)$data['conditions'], $conditions);
 				}
 			}
 
 			if (isset($data['exclusive']) && $data['exclusive']) {
-				$model->deleteAll($conditions);
+				$Model->deleteAll($conditions);
 			} else {
-				$records = $model->find('all', array(
-					'conditions' => $conditions, 'fields' => $model->primaryKey
+				$records = $Model->find('all', array(
+					'conditions' => $conditions, 'fields' => $Model->primaryKey
 				));
 
 				if (!empty($records)) {
 					foreach ($records as $record) {
-						$model->delete($record[$model->alias][$model->primaryKey]);
+						$Model->delete($record[$Model->alias][$Model->primaryKey]);
 					}
 				}
 			}
@@ -2641,16 +2658,17 @@ class Model extends Object implements EventListener {
 	protected function _deleteLinks($id) {
 		foreach ($this->hasAndBelongsToMany as $data) {
 			list(, $joinModel) = pluginSplit($data['with']);
-			$records = $this->{$joinModel}->find('all', array(
-				'conditions' => array($this->{$joinModel}->escapeField($data['foreignKey']) => $id),
-				'fields' => $this->{$joinModel}->primaryKey,
+			$Model = $this->{$joinModel};
+			$records = $Model->find('all', array(
+				'conditions' => array($Model->escapeField($data['foreignKey']) => $id),
+				'fields' => $Model->primaryKey,
 				'recursive' => -1,
 				'callbacks' => false
 			));
 
 			if (!empty($records)) {
 				foreach ($records as $record) {
-					$this->{$joinModel}->delete($record[$this->{$joinModel}->alias][$this->{$joinModel}->primaryKey]);
+					$Model->delete($record[$Model->alias][$Model->primaryKey]);
 				}
 			}
 		}
@@ -2772,7 +2790,7 @@ class Model extends Object implements EventListener {
  *
  * Used to perform find operations, where the first argument is type of find operation to perform
  * (all / first / count / neighbors / list / threaded),
- * second parameter options for finding ( indexed array, including: 'conditions', 'limit',
+ * second parameter options for finding (indexed array, including: 'conditions', 'limit',
  * 'recursive', 'page', 'fields', 'offset', 'order', 'callbacks')
  *
  * Eg:
@@ -3297,7 +3315,7 @@ class Model extends Object implements EventListener {
  *
  * Additionally it populates the validationErrors property of the model with the same array.
  *
- * @param string $options An optional array of custom options to be made available in the beforeValidate callback
+ * @param array|string $options An optional array of custom options to be made available in the beforeValidate callback
  * @return array Array of invalid fields and their error messages
  * @see Model::validates()
  */
@@ -3664,25 +3682,29 @@ class Model extends Object implements EventListener {
  *
  * @param string $type If null this deletes cached views if Cache.check is true
  *     Will be used to allow deleting query cache also
- * @return boolean true on delete
+ * @return mixed True on delete, null otherwise
  */
 	protected function _clearCache($type = null) {
 		if ($type !== null || Configure::read('Cache.check') !== true) {
 			return;
 		}
-		$assoc[] = strtolower(Inflector::pluralize($this->alias));
-		$assoc[] = Inflector::underscore(Inflector::pluralize($this->alias));
+		$pluralized = Inflector::pluralize($this->alias);
+		$assoc = array(
+			strtolower($pluralized),
+			Inflector::underscore($pluralized)
+		);
 		foreach ($this->_associations as $association) {
-			foreach ($this->$association as $className) {
-				$pluralized = strtolower(Inflector::pluralize($className['className']));
-				if (!in_array($pluralized, $assoc)) {
-					$assoc[] = $pluralized;
-					$assoc[] = Inflector::underscore(Inflector::pluralize($className['className']));
+			foreach ($this->{$association} as $className) {
+				$pluralizedAssociation = Inflector::pluralize($className['className']);
+				if (!in_array(strtolower($pluralizedAssociation), $assoc)) {
+					$assoc = array_merge($assoc, array(
+						strtolower($pluralizedAssociation),
+						Inflector::underscore($pluralizedAssociation)
+					));
 				}
 			}
 		}
-		$assoc = array_unique($assoc);
-		clearCache($assoc);
+		clearCache(array_unique($assoc));
 		return true;
 	}
 

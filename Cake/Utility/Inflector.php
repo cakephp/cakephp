@@ -128,8 +128,8 @@ class Inflector {
 			'/(tive)s$/i' => '\1',
 			'/(hive)s$/i' => '\1',
 			'/(drive)s$/i' => '\1',
-			'/([lre])ves$/i' => '\1f',
-			'/([^fo])ves$/i' => '\1fe',
+			'/([le])ves$/i' => '\1f',
+			'/([^rfo])ves$/i' => '\1fe',
 			'/(^analy)ses$/i' => '\1sis',
 			'/(analy|diagno|^ba|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
 			'/([ti])a$/i' => '\1um',
@@ -147,7 +147,6 @@ class Inflector {
 		'irregular' => array(
 			'foes' => 'foe',
 			'waves' => 'wave',
-			'curves' => 'curve'
 		)
 	);
 

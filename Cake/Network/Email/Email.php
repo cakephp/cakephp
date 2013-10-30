@@ -343,7 +343,7 @@ class Email {
 	protected $_emailPattern = null;
 
 /**
- * The classname used for email configuration.
+ * The class name used for email configuration.
  *
  * @var string
  */

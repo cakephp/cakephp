@@ -50,7 +50,7 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
 	}
 
 /**
- * Ugly hack to get around PHPUnit having a hard coded classname for the Runner. :(
+ * Ugly hack to get around PHPUnit having a hard coded class name for the Runner. :(
  *
  * @param array   $argv
  * @param boolean $exit

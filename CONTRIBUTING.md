@@ -67,7 +67,7 @@ for the sniff and phpcs.
 
 * [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
 * [Existing issues](https://github.com/cakephp/cakephp/issues)
-* [Development Roadmap](https://github.com/cakephp/cakephp/wiki/3.0-Roadmap)
+* [Development Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps)
 * [General GitHub documentation](https://help.github.com/)
 * [GitHub pull request documentation](https://help.github.com/send-pull-requests/)
 * #cakephp IRC channel on freenode.org

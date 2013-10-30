@@ -49,7 +49,7 @@ class FileEngine extends CacheEngine {
  *
  * - path = absolute path to cache directory, default => CACHE
  * - prefix = string prefix for filename, default => cake_
- * - lock = enable file locking on write, default => false
+ * - lock = enable file locking on write, default => true
  * - serialize = serialize the data, default => true
  *
  * @var array

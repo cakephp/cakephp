@@ -394,7 +394,7 @@ class FileTest extends TestCase {
 	public function testWrite() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
-		};
+		}
 		if (file_exists($tmpFile)) {
 			unlink($tmpFile);
 		}
@@ -424,7 +424,7 @@ class FileTest extends TestCase {
 	public function testAppend() {
 		if (!$tmpFile = $this->_getTmpFile()) {
 			return false;
-		};
+		}
 		if (file_exists($tmpFile)) {
 			unlink($tmpFile);
 		}
@@ -559,5 +559,41 @@ class FileTest extends TestCase {
 			$this->markTestSkipped($message);
 		}
 		return false;
+	}
+
+/**
+ * testReplaceText method
+ *
+ * @return void
+ */
+	public function testReplaceText() {
+		$TestFile = new File(dirname(__FILE__) . '/../../TestApp/vendor/welcome.php');
+		$TmpFile = new File(TMP . 'tests' . DS . 'cakephp.file.test.tmp');
+
+		// Copy the test file to the temporary location
+		$TestFile->copy($TmpFile->path, true);
+
+		// Replace the contents of the tempory file
+		$result = $TmpFile->replaceText('welcome.php', 'welcome.tmp');
+		$this->assertTrue($result);
+
+		// Double check
+		$expected = 'This is the welcome.tmp file in vendors directory';
+		$contents = $TmpFile->read();
+		$this->assertContains($expected, $contents);
+
+		$search = array('This is the', 'welcome.php file', 'in tmp directory');
+		$replace = array('This should be a', 'welcome.tmp file', 'in the Lib directory');
+
+		// Replace the contents of the tempory file
+		$result = $TmpFile->replaceText($search, $replace);
+		$this->assertTrue($result);
+
+		// Double check
+		$expected = 'This should be a welcome.tmp file in vendors directory';
+		$contents = $TmpFile->read();
+		$this->assertContains($expected, $contents);
+
+		$TmpFile->delete();
 	}
 }
