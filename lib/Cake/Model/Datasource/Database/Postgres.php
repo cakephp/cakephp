@@ -882,7 +882,11 @@ class Postgres extends DboSource {
 		}
 		foreach ($indexes as $name => $value) {
 			if ($name === 'PRIMARY') {
-				$out = 'PRIMARY KEY  (' . $this->name($value['column']) . ')';
+				$cols = $this->name($value['column']);
+				if (is_array($cols)) {
+					$cols = implode(', ', $cols);
+				}
+				$out = 'PRIMARY KEY  (' . $cols . ')';
 			} else {
 				$out = 'CREATE ';
 				if (!empty($value['unique'])) {
