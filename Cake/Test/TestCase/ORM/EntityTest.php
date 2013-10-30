@@ -46,7 +46,7 @@ class EntityTest extends TestCase {
  *
  * @return void
  */
-	public function testSetMultiplePropertiesNOSetters() {
+	public function testSetMultiplePropertiesNoSetters() {
 		$entity = new Entity;
 		$entity->set(['foo' => 'bar', 'id' => 1]);
 		$this->assertEquals('bar', $entity->foo);
@@ -138,7 +138,7 @@ class EntityTest extends TestCase {
 			->with(['foo' => 'bar'], false);
 
 		$entity->__construct(['a' => 'b', 'c' => 'd']);
-		$entity->__construct(['foo' => 'bar'], false);
+		$entity->__construct(['foo' => 'bar'], ['useSetters' => false]);
 	}
 
 /**
@@ -423,4 +423,172 @@ class EntityTest extends TestCase {
 		$entity = new Entity($data);
 		$this->assertEquals(json_encode($data), json_encode($entity));
 	}
+
+/**
+ * Tests the extract method
+ *
+ * @return void
+ */
+	public function testExtract() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$expected = ['author_id' => 3, 'title' => 'Foo', ];
+		$this->assertEquals($expected, $entity->extract(['author_id', 'title']));
+
+		$expected = ['id' => 1];
+		$this->assertEquals($expected, $entity->extract(['id']));
+
+		$expected = [];
+		$this->assertEquals($expected, $entity->extract([]));
+
+		$expected = ['id' => 1, 'crazyness' => null];
+		$this->assertEquals($expected, $entity->extract(['id', 'crazyness']));
+	}
+
+/**
+ * Tests dirty() method on a newly created object
+ *
+ * @return void
+ */
+	public function testDirty() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$this->assertTrue($entity->dirty('id'));
+		$this->assertTrue($entity->dirty('title'));
+		$this->assertTrue($entity->dirty('author_id'));
+
+		$entity->dirty('id', false);
+		$this->assertFalse($entity->dirty('id'));
+		$this->assertTrue($entity->dirty('title'));
+		$entity->dirty('title', false);
+		$this->assertFalse($entity->dirty('title'));
+	}
+
+/**
+ * Tests dirty() when altering properties values and adding new ones
+ *
+ * @return void
+ */
+	public function testDirtyChangingProperties() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'Foo',
+		]);
+		$entity->dirty('title', false);
+		$this->assertFalse($entity->dirty('title'));
+		$entity->set('title', 'Foo');
+		$this->assertFalse($entity->dirty('title'));
+		$entity->set('title', 'Foo');
+		$this->assertFalse($entity->dirty('title'));
+		$entity->set('title', 'Something Else');
+		$this->assertTrue($entity->dirty('title'));
+
+		$entity->set('something', 'else');
+		$this->assertTrue($entity->dirty('something'));
+	}
+
+/**
+ * Tests extract only dirty properties
+ *
+ * @return void
+ */
+	public function testExtractDirty() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$entity->dirty('id', false);
+		$entity->dirty('title', false);
+		$expected = ['author_id' => 3];
+		$result = $entity->extract(['id', 'title', 'author_id'], true);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Tests the clean method
+ *
+ * @return void
+ */
+	public function testClean() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$this->assertTrue($entity->dirty('id'));
+		$this->assertTrue($entity->dirty('title'));
+		$this->assertTrue($entity->dirty('author_id'));
+
+		$entity->clean();
+		$this->assertFalse($entity->dirty('id'));
+		$this->assertFalse($entity->dirty('title'));
+		$this->assertFalse($entity->dirty('author_id'));
+	}
+
+/**
+ * Tests the isNew method
+ *
+ * @return void
+ */
+	public function testIsNew() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 1,
+			'title' => 'Foo',
+			'author_id' => 3
+		]);
+		$this->assertNull($entity->isNew());
+		$entity->isNew(true);
+		$this->assertTrue($entity->isNew());
+		$entity->isNew(false);
+		$this->assertFalse($entity->isNew());
+	}
+
+/**
+ * Tests the constructor when passing the markClean option
+ *
+ * @return void
+ */
+	public function testConstructorWithClean() {
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['clean'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->never())->method('clean');
+		$entity->__construct(['a' => 'b', 'c' => 'd']);
+
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['clean'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->once())->method('clean');
+		$entity->__construct(['a' => 'b', 'c' => 'd'], ['markClean' => true]);
+	}
+
+/**
+ * Tests the constructor when passing the markClean option
+ *
+ * @return void
+ */
+	public function testConstructorWithMarkNew() {
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['isNew'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->never())->method('clean');
+		$entity->__construct(['a' => 'b', 'c' => 'd']);
+
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['isNew'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->once())->method('isNew');
+		$entity->__construct(['a' => 'b', 'c' => 'd'], ['markNew' => true]);
+	}
+
 }

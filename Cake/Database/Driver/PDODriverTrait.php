@@ -126,9 +126,9 @@ trait PDODriverTrait {
  * @param string $table table name or sequence to get last insert value from
  * @return string|integer
  */
-	public function lastInsertId($table = null) {
+	public function lastInsertId($table = null, $column = null) {
 		$this->connect();
-		return $this->_connection->lastInsertId();
+		return $this->_connection->lastInsertId($table);
 	}
 
 /**

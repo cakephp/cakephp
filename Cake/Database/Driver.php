@@ -164,10 +164,11 @@ abstract class Driver {
  * Returns last id generated for a table or sequence in database
  *
  * @param string $table table name or sequence to get last insert value from
+ * @param string column the name of the column representing the primary key
  * @return string|integer
  */
-	public function lastInsertId($table = null) {
-		return $this->_connection->lastInsertId($table);
+	public function lastInsertId($table = null, $column = null) {
+		return $this->_connection->lastInsertId($table, $column);
 	}
 
 /**

@@ -40,11 +40,27 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected $_className;
 
 /**
+ * Holds a list of the properties that were modified or added after this object
+ * was originally created.
+ *
+ * @var array
+ */
+	protected $_dirty = [];
+
+/**
  * Holds a cached list of methods that exist in the instanced class
  *
  * @var array
  */
 	protected static $_accessors = [];
+
+/**
+ * Indicates whether or not this entity has already been persisted.
+ * A null value indicates an unknown persistence status
+ *
+ * @var boolean
+ */
+	protected $_persisted = null;
 
 /**
  * Initializes the internal properties of this entity out of the
@@ -55,12 +71,29 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * ``$entity = new Entity(['id' => 1, 'name' => 'Andrew'])``
  *
  * @param array $properties hash of properties to set in this entity
- * @param boolean $useSetters whether use internal setters for properties or not
- * @return void
+ * @param array $options list of options to use when creating this entity
+ * the following list of options can be used:
+ *
+ * - useSetters: whether use internal setters for properties or not
+ * - markClean: whether to mark all properties as clean after setting them
+ * - markNew: whether this instance has not yet been persisted
  */
-	public function __construct(array $properties = [], $useSetters = true) {
+	public function __construct(array $properties = [], array $options = []) {
+		$options += [
+			'useSetters' => true,
+			'markClean' => false,
+			'markNew' => null
+		];
 		$this->_className = get_class($this);
-		$this->set($properties, $useSetters);
+		$this->set($properties, $options['useSetters']);
+
+		if ($options['markClean']) {
+			$this->clean();
+		}
+
+		if ($options['markNew'] !== null) {
+			$this->isNew($options['markNew']);
+		}
 	}
 
 /**
@@ -151,12 +184,21 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			$useSetters = $value;
 		}
 
-		if (!$useSetters) {
-			$this->_properties = $property + $this->_properties;
-			return $this;
-		}
-
 		foreach ($property as $p => $value) {
+			$markDirty = true;
+			if (isset($this->_properties[$p])) {
+				$markDirty = $value !== $this->_properties[$p];
+			}
+
+			if ($markDirty) {
+				$this->dirty($p, true);
+			}
+
+			if (!$useSetters) {
+				$this->_properties[$p] = $value;
+				continue;
+			}
+
 			$setter = 'set' . Inflector::camelize($p);
 			if ($this->_methodExists($setter)) {
 				$value = $this->{$setter}($value);
@@ -303,6 +345,80 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 	public function jsonSerialize() {
 		return $this->_properties;
+	}
+
+/**
+ * Returns an array with the requested properties
+ * stored in this entity, indexed by property name
+ *
+ * @param array $properties list of properties to be returned
+ * @param boolean $onlyDirty Return the requested property only if it is dirty
+ * @return array
+ */
+	public function extract(array $properties, $onlyDirty = false) {
+		$result = [];
+		foreach ($properties as $property) {
+			if (!$onlyDirty || $this->dirty($property)) {
+				$result[$property] = $this->get($property);
+			}
+		}
+		return $result;
+	}
+
+/**
+ * Sets the dirty status of a single property. If called with no second
+ * argument, it will return whether the property was modified or not
+ * after the object creation.
+ *
+ * @param string $property the field to set or check status for
+ * @param null|boolean true means the property was changed, false means
+ * it was not changed and null will make the function return current state
+ * for that property
+ * @return boolean whether the property was changed or not
+ */
+	public function dirty($property, $isDirty = null) {
+		if ($isDirty === null) {
+			return isset($this->_dirty[$property]);
+		}
+
+		if (!$isDirty) {
+			unset($this->_dirty[$property]);
+			return false;
+		}
+		
+		$this->_dirty[$property] = true;
+		return true;
+	}
+
+/**
+ * Sets the entire entity as clean, which means that it will appear as
+ * no properties being modified or added at all. This is an useful call
+ * for an initial object hydration
+ *
+ * @return void
+ */
+	public function clean() {
+		$this->_dirty = [];
+	}
+
+/**
+ * Returns whether or not this entity has already been persisted.
+ * This method can return null in the case there is no prior information on
+ * the status of this entity.
+ *
+ * If called with a boolean it will set the known status of this instance,
+ * true means that the instance is not yet persisted in the database, false
+ * that it already is.
+ *
+ * @param boolean $new true if it is known this instance was persisted
+ * @return boolean if it is known whether the entity was already persisted
+ * null otherwise
+ */
+	public function isNew($new = null) {
+		if ($new === null) {
+			return $this->_persisted;
+		}
+		return $this->_persisted = (bool)$new;
 	}
 
 }

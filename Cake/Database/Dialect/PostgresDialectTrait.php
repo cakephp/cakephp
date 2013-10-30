@@ -56,6 +56,20 @@ trait PostgresDialectTrait {
 	}
 
 /**
+ * Modifies the original insert query to append a "RETURNING *" epilogue
+ * so that the latest insert id can be retrieved
+ *
+ * @param Cake\Database\Query $query
+ * @return Cake\Database\Query
+ */
+	protected function _insertQueryTranslator($query) {
+		if (!$query->clause('epilog')) {
+			$query->epilog('RETURNING *');
+		}
+		return $query;
+	}
+
+/**
  * Returns an dictionary of expressions to be transformed when compiling a Query
  * to SQL. Array keys are method names to be called in this class
  *

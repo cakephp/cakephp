@@ -1668,7 +1668,7 @@ class QueryTest extends TestCase {
 				'body' => 'test insert'
 			]);
 		$result = $query->sql();
-		$this->assertEquals(
+		$this->assertContains(
 			'INSERT INTO articles (title, body) VALUES (?, ?)',
 			$result
 		);
@@ -1701,7 +1701,7 @@ class QueryTest extends TestCase {
 				'title' => 'mark',
 			]);
 		$result = $query->sql();
-		$this->assertEquals(
+		$this->assertContains(
 			'INSERT INTO articles (title, body) VALUES (?, ?)',
 			$result
 		);
@@ -1935,6 +1935,79 @@ class QueryTest extends TestCase {
 			->bind(':bar', '2007-03-18 10:52:00')
 			->execute();
 		$this->assertEquals($expected, $results->fetchAll('assoc'));
+	}
+
+/**
+ * Test that epilog() will actually append a string to a select query
+ *
+ * @return void
+ */
+	public function testAppendSelect() {
+		$query = new Query($this->connection);
+		$sql = $query
+			->select(['id', 'title'])
+			->from('articles')
+			->where(['id' => 1])
+			->epilog('FOR UPDATE')
+			->sql();
+		$this->assertContains('SELECT', $sql);
+		$this->assertContains('FROM', $sql);
+		$this->assertContains('WHERE', $sql);
+		$this->assertEquals(' FOR UPDATE', substr($sql, -11));
+	}
+
+/**
+ * Test that epilog() will actually append a string to an insert query
+ *
+ * @return void
+ */
+	public function testAppendInsert() {
+		$query = new Query($this->connection);
+		$sql = $query
+			->insert('articles', ['id', 'title'])
+			->values([1, 'a title'])
+			->epilog('RETURNING id')
+			->sql();
+		$this->assertContains('INSERT', $sql);
+		$this->assertContains('INTO', $sql);
+		$this->assertContains('VALUES', $sql);
+		$this->assertEquals(' RETURNING id', substr($sql, -13));
+	}
+
+/**
+ * Test that epilog() will actually append a string to an update query
+ *
+ * @return void
+ */
+	public function testAppendUpdate() {
+		$query = new Query($this->connection);
+		$sql = $query
+			->update('articles')
+			->set(['title' => 'foo'])
+			->where(['id' => 1])
+			->epilog('RETURNING id')
+			->sql();
+		$this->assertContains('UPDATE', $sql);
+		$this->assertContains('SET', $sql);
+		$this->assertContains('WHERE', $sql);
+		$this->assertEquals(' RETURNING id', substr($sql, -13));
+	}
+
+/**
+ * Test that epilog() will actually append a string to a delete query
+ *
+ * @return void
+ */
+	public function testAppendDelete() {
+		$query = new Query($this->connection);
+		$sql = $query
+			->delete('articles')
+			->where(['id' => 1])
+			->epilog('RETURNING id')
+			->sql();
+		$this->assertContains('DELETE FROM', $sql);
+		$this->assertContains('WHERE', $sql);
+		$this->assertEquals(' RETURNING id', substr($sql, -13));
 	}
 
 /**

@@ -38,6 +38,20 @@ class ConnectionTest extends TestCase {
 	}
 
 /**
+ * Auxiliary method to build a mock for a driver so it can be injected into
+ * the connection object
+ *
+ * @return \Cake\Database\Driver
+ */
+	public function getMockFormDriver() {
+		$driver = $this->getMock('Cake\Database\Driver');
+		$driver->expects($this->once())
+			->method('enabled')
+			->will($this->returnValue(true));
+		return $driver;
+	}
+
+/**
  * Tests connecting to database
  *
  * @return void
@@ -680,10 +694,7 @@ class ConnectionTest extends TestCase {
 			['connect'],
 			[['log' => true]]
 		);
-		$driver = $this->getMock('Cake\Database\Driver');
-		$driver->expects($this->once())
-			->method('enabled')
-			->will($this->returnValue(true));
+		$driver = $this->getMockFormDriver();
 		$connection->driver($driver);
 
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
@@ -710,10 +721,7 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testLogCommitTransaction() {
-		$driver = $this->getMock('Cake\Database\Driver');
-		$driver->expects($this->once())
-			->method('enabled')
-			->will($this->returnValue(true));
+		$driver = $this->getMockFormDriver();
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect'],
@@ -731,6 +739,74 @@ class ConnectionTest extends TestCase {
 		$connection->logQueries(true);
 		$connection->begin();
 		$connection->commit();
+	}
+
+/**
+ * Tests that the transactional method will start and commit a transaction
+ * around some arbitrary function passed as argument
+ *
+ * @return void
+ */
+	public function testTransactionalSuccess() {
+		$driver = $this->getMockFormDriver();
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['connect', 'commit', 'begin'],
+			[['datasource' => $driver]]
+		);
+		$connection->expects($this->at(0))->method('begin');
+		$connection->expects($this->at(1))->method('commit');
+		$result = $connection->transactional(function($conn) use ($connection) {
+			$this->assertSame($connection, $conn);
+			return 'thing';
+		});
+		$this->assertEquals('thing', $result);
+	}
+
+/**
+ * Tests that the transactional method will rollback the transaction if false
+ * is returned from the callback
+ *
+ * @return void
+ */
+	public function testTransactionalFail() {
+		$driver = $this->getMockFormDriver();
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['connect', 'commit', 'begin', 'rollback'],
+			[['datasource' => $driver]]
+		);
+		$connection->expects($this->at(0))->method('begin');
+		$connection->expects($this->at(1))->method('rollback');
+		$connection->expects($this->never())->method('commit');
+		$result = $connection->transactional(function($conn) use ($connection) {
+			$this->assertSame($connection, $conn);
+			return false;
+		});
+		$this->assertFalse($result);
+	}
+
+/**
+ * Tests that the transactional method will rollback the transaction
+ * and throw the same exception if the callback raises one
+ *
+ * @expectedException \InvalidArgumentException
+ * @return void
+ */
+	public function testTransactionalWithException() {
+		$driver = $this->getMockFormDriver();
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['connect', 'commit', 'begin', 'rollback'],
+			[['datasource' => $driver]]
+		);
+		$connection->expects($this->at(0))->method('begin');
+		$connection->expects($this->at(1))->method('rollback');
+		$connection->expects($this->never())->method('commit');
+		$connection->transactional(function($conn) use ($connection) {
+			$this->assertSame($connection, $conn);
+			throw new \InvalidArgumentException;
+		});
 	}
 
 }

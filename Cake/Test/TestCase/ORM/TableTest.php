@@ -39,6 +39,14 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		'core.tag', 'core.articles_tag'
 	];
 
+/**
+ * Handy variable containing the next primary key that will be inserted in the
+ * users table
+ *
+ * @var integer
+ */
+	public static $nextUserId = 5;
+
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
@@ -884,7 +892,69 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 		$result = $table->find('all')->contain(['tag'])->first();
 		$this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
-		$this->assertInstanceOf('TestApp\Model\Entity\ArticlesTag', $result->tags[0]->extraInfo);
+		$this->assertInstanceOf(
+			'TestApp\Model\Entity\ArticlesTag',
+			$result->tags[0]->extraInfo
+		);
+	}
+
+/**
+ * Tests that recently fetched entities are always clean
+ *
+ * @return void
+ */
+	public function testFindCleanEntities() {
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
+		$results = $table->find('all')->contain(['tag', 'author'])->toArray();
+		$this->assertCount(3, $results);
+		foreach ($results as $article) {
+			$this->assertFalse($article->dirty('id'));
+			$this->assertFalse($article->dirty('title'));
+			$this->assertFalse($article->dirty('author_id'));
+			$this->assertFalse($article->dirty('body'));
+			$this->assertFalse($article->dirty('published'));
+			$this->assertFalse($article->dirty('author'));
+			$this->assertFalse($article->author->dirty('id'));
+			$this->assertFalse($article->author->dirty('name'));
+			$this->assertFalse($article->dirty('tag'));
+			if ($article->tag) {
+				$this->assertFalse($article->tag[0]->extraInfo->dirty('tag_id'));
+			}
+		}
+	}
+
+/**
+ * Tests that recently fetched entities are marked as not new
+ *
+ * @return void
+ */
+	public function testFindPersistedEntities() {
+		$table = new \TestApp\Model\Repository\ArticleTable([
+			'connection' => $this->connection,
+		]);
+		$results = $table->find('all')->contain(['tag', 'author'])->toArray();
+		$this->assertCount(3, $results);
+		foreach ($results as $article) {
+			$this->assertFalse($article->isNew());
+			foreach ((array)$article->tag as $tag) {
+				$this->assertFalse($tag->isNew());
+				$this->assertFalse($tag->extraInfo->isNew());
+			}
+		}
+	}
+
+/**
+ * Tests the exists function
+ *
+ * @return void
+ */
+	public function testExists() {
+		$table = TableRegistry::get('users');
+		$this->assertTrue($table->exists(['id' => 1]));
+		$this->assertFalse($table->exists(['id' => 501]));
+		$this->assertTrue($table->exists(['id' => 3, 'username' => 'larry']));
 	}
 
 /**
@@ -899,11 +969,508 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
-		$this->assertEquals($entity->id, 5);
+		$this->assertEquals($entity->id, self::$nextUserId);
 
-		$row = $table->find('all')->where(['id' => 5])->first();
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
 		$this->assertEquals($entity->toArray(), $row->toArray());
 	}
+
+/**
+ * Tests that saving an entity will filter out properties that
+ * are not present in the table schema when saving
+ *
+ * @return void
+ */
+	public function testSaveEntityOnlySchemaFields() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'crazyness' => 'super crazy value',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00'),
+		]);
+		$table = TableRegistry::get('users');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals($entity->id, self::$nextUserId);
+
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
+		$entity->unsetProperty('crazyness');
+		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
+
+/**
+ * Tests saving only a few fields in an entity when an fieldList
+ * is passed to save
+ *
+ * @return void
+ */
+	public function testSaveWithFieldList() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table = TableRegistry::get('users');
+		$fieldList = ['fieldList' => ['username', 'created', 'updated']];
+		$this->assertSame($entity, $table->save($entity, $fieldList));
+		$this->assertEquals($entity->id, self::$nextUserId);
+
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
+		$entity->set('password', null);
+		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
+
+/**
+ * Tests that it is possible to modify data from the beforeSave callback
+ *
+ * @return void
+ */
+	public function testBeforeSaveModifyData() {
+		$table = TableRegistry::get('users');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$listener = function($e, $entity, $options) use ($data) {
+			$this->assertSame($data, $entity);
+			$entity->set('password', 'foo');
+		};
+		$table->getEventManager()->attach($listener, 'Model.beforeSave');
+		$this->assertSame($data, $table->save($data));
+		$this->assertEquals($data->id, self::$nextUserId);
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
+		$this->assertEquals('foo', $row->get('password'));
+	}
+
+/**
+ * Tests that it is possible to modify the options array in beforeSave
+ *
+ * @return void
+ */
+	public function testBeforeSaveModifyOptions() {
+		$table = TableRegistry::get('users');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'foo',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$listener1 = function($e, $entity, $options) {
+			$options['fieldList'][] = 'created';
+		};
+		$listener2 = function($e, $entity, $options) {
+			$options['fieldList'][] = 'updated';
+		};
+		$table->getEventManager()->attach($listener1, 'Model.beforeSave');
+		$table->getEventManager()->attach($listener2, 'Model.beforeSave');
+		$this->assertSame($data, $table->save($data));
+		$this->assertEquals($data->id, self::$nextUserId);
+
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
+		$data->set('username', null);
+		$data->set('password', null);
+		$this->assertEquals($data->toArray(), $row->toArray());
+	}
+
+/**
+ * Tests that it is possible to stop the saving altogether, without implying
+ * the save operation failed
+ *
+ * @return void
+ */
+	public function testBeforeSaveStopEvent() {
+		$table = TableRegistry::get('users');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$listener = function($e, $entity) {
+			$e->stopPropagation();
+			return $entity;
+		};
+		$table->getEventManager()->attach($listener, 'Model.beforeSave');
+		$this->assertSame($data, $table->save($data));
+		$this->assertNull($data->id);
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
+		$this->assertNull($row);
+	}
+
+/**
+ * Asserts that afterSave callback is called on successful save
+ *
+ * @return void
+ */
+	public function testAfterSave() {
+		$table = TableRegistry::get('users');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+
+		$called = false;
+		$listener = function($e, $entity, $options) use ($data, &$called) {
+			$this->assertSame($data, $entity);
+			$called = true;
+		};
+		$table->getEventManager()->attach($listener, 'Model.afterSave');
+		$this->assertSame($data, $table->save($data));
+		$this->assertEquals($data->id, self::$nextUserId);
+		$this->assertTrue($called);
+	}
+
+/**
+ * Asserts that afterSave callback not is called on unsuccessful save
+ *
+ * @return void
+ */
+	public function testAfterSaveNotCalled() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery', 'exists'],
+			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+		);
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['executeStatement', 'addDefaultTypes'],
+			[null, $table]
+		);
+		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+
+		$table->expects($this->once())->method('exists')
+			->will($this->returnValue(false));
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('executeStatement')
+			->will($this->returnValue($statement));
+
+		$statement->expects($this->once())->method('rowCount')->will($this->returnValue(0));
+
+		$called = false;
+		$listener = function($e, $entity, $options) use ($data, &$called) {
+			$called = true;
+		};
+		$table->getEventManager()->attach($listener, 'Model.afterSave');
+		$this->assertFalse($table->save($data));
+		$this->assertFalse($called);
+	}
+
+/**
+ * Tests that save is wrapped around a transaction
+ *
+ * @return void
+ */
+	public function testAtomicSave() {
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['begin', 'commit'],
+			[ConnectionManager::config('test')]
+		);
+		$connection->driver(ConnectionManager::get('test')->driver());
+		$table = $this->getMock('\Cake\ORM\Table', ['connection'], [['table' => 'users']]);
+		$table->expects($this->any())->method('connection')
+			->will($this->returnValue($connection));
+
+		$connection->expects($this->once())->method('begin');
+		$connection->expects($this->once())->method('commit');
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$this->assertSame($data, $table->save($data));
+	}
+
+/**
+ * Tests that save will rollback the transaction in the case of an exception
+ *
+ * @expectedException \PDOException
+ * @return void
+ */
+	public function testAtomicSaveRollback() {
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['begin', 'rollback'],
+			[ConnectionManager::config('test')]
+		);
+		$connection->driver(ConnectionManager::get('test')->driver());
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery', 'connection', 'exists'],
+			[['table' => 'users']]
+		);
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['executeStatement', 'addDefaultTypes'],
+			[null, $table]
+		);
+
+		$table->expects($this->once())->method('exists')
+			->will($this->returnValue(false));
+
+		$table->expects($this->any())->method('connection')
+			->will($this->returnValue($connection));
+
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+
+		$connection->expects($this->once())->method('begin');
+		$connection->expects($this->once())->method('rollback');
+		$query->expects($this->once())->method('executeStatement')
+			->will($this->throwException(new \PDOException));
+
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table->save($data);
+	}
+
+/**
+ * Tests that save will rollback the transaction in the case of an exception
+ *
+ * @return void
+ */
+	public function testAtomicSaveRollbackOnFailure() {
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['begin', 'rollback'],
+			[ConnectionManager::config('test')]
+		);
+		$connection->driver(ConnectionManager::get('test')->driver());
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery', 'connection', 'exists'],
+			[['table' => 'users']]
+		);
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['executeStatement', 'addDefaultTypes'],
+			[null, $table]
+		);
+
+		$table->expects($this->once())->method('exists')
+			->will($this->returnValue(false));
+
+		$table->expects($this->any())->method('connection')
+			->will($this->returnValue($connection));
+
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+
+		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+		$statement->expects($this->once())->method('rowCount')
+			->will($this->returnValue(0));
+		$connection->expects($this->once())->method('begin');
+		$connection->expects($this->once())->method('rollback');
+		$query->expects($this->once())->method('executeStatement')
+			->will($this->returnValue($statement));
+
+		$data = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table->save($data);
+	}
+
+/**
+ * Tests that only the properties marked as dirty are actually saved
+ * to the database
+ *
+ * @return void
+ */
+	public function testSaveOnlyDirtyProperties() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$entity->clean();
+		$entity->dirty('username', true);
+		$entity->dirty('created', true);
+		$entity->dirty('updated', true);
+
+		$table = TableRegistry::get('users');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals($entity->id, self::$nextUserId);
+
+		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
+		$entity->set('password', null);
+		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
+
+/**
+ * Tests that a recently saved entity is marked as clean
+ *
+ * @return void
+ */
+	public function testsASavedEntityIsClean() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table = TableRegistry::get('users');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->dirty('usermane'));
+		$this->assertFalse($entity->dirty('password'));
+		$this->assertFalse($entity->dirty('created'));
+		$this->assertFalse($entity->dirty('updated'));
+	}
+
+/**
+ * Tests that a recently saved entity is marked as not new
+ *
+ * @return void
+ */
+	public function testsASavedEntityIsNotNew() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'root',
+			'created' => new \DateTime('2013-10-10 00:00'),
+			'updated' => new \DateTime('2013-10-10 00:00')
+		]);
+		$table = TableRegistry::get('users');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+	}
+
+/**
+ * Tests that save can detect automatically if it needs to insert
+ * or update a row
+ *
+ * @return void
+ */
+	public function testSaveUpdateAuto() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 2,
+			'username' => 'baggins'
+		]);
+		$table = TableRegistry::get('users');
+		$original = $table->find('all')->where(['id' => 2])->first();
+		$this->assertSame($entity, $table->save($entity));
+		$row = $table->find('all')->where(['id' => 2])->first();
+		$this->assertEquals('baggins', $row->username);
+		$this->assertEquals($original->password, $row->password);
+		$this->assertEquals($original->created, $row->created);
+		$this->assertEquals($original->updated, $row->updated);
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->dirty('id'));
+		$this->assertFalse($entity->dirty('username'));
+	}
+
+/**
+ * Tests that marking an entity as already persisted will prevent the save
+ * method from trying to infer the entity's actual status.
+ *
+ * @return void
+ */
+	public function testSaveUpdateWithHint() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['exists'],
+			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+		);
+		$entity = new \Cake\ORM\Entity([
+			'id' => 2,
+			'username' => 'baggins'
+		], ['markNew' => false]);
+		$this->assertFalse($entity->isNew());
+		$table->expects($this->never())->method('exists');
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Tests that when updating the primary key is not passed to the list of
+ * attributes to change
+ *
+ * @return void
+ */
+	public function testSaveUpdatePrimaryKeyNotModified() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery'],
+			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+		);
+
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['executeStatement', 'addDefaultTypes', 'set'],
+			[null, $table]
+		);
+
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+
+		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
+		$statement->expects($this->once())->method('rowCount')
+			->will($this->returnValue(1));
+
+		$query->expects($this->once())->method('executeStatement')
+			->will($this->returnValue($statement));
+
+		$query->expects($this->once())->method('set')
+			->with(['username' => 'baggins'])
+			->will($this->returnValue($query));
+
+		$entity = new \Cake\ORM\Entity([
+			'id' => 2,
+			'username' => 'baggins'
+		], ['markNew' => false]);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Tests that passing only the primary key to save will not execute any queries
+ * but still return success
+ *
+ * @return void
+ */
+	public function testUpdateNoChange() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery'],
+			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+		);
+		$table->expects($this->never())->method('_buildQuery');
+		$entity = new \Cake\ORM\Entity([
+			'id' => 2,
+		], ['markNew' => false]);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Tests that failing to pass a primary key to save will result in exception
+ *
+ * @expectedException \InvalidArgumentException
+ * @return void
+ */
+	public function testUpdateNoPrimaryButOtherKeys() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['_buildQuery'],
+			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+		);
+		$table->expects($this->never())->method('_buildQuery');
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'mariano',
+		], ['markNew' => false]);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
 }

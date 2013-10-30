@@ -264,4 +264,18 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 		}
 	}
 
+/**
+ * Returns the latest primary inserted using this statement
+ *
+ * @param string $table table name or sequence to get last insert value from
+ * @param string column the name of the column representing the primary key
+ * @return string
+ */
+	public function lastInsertId($table = null, $column = null) {
+		if ($column && $row = $this->fetch('assoc')) {
+			return $row[$column];
+		}
+		return $this->_driver->lastInsertId($table, $column);
+	}
+
 }

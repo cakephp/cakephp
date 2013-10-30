@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
+use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
@@ -36,7 +37,7 @@ use Cake\Utility\Inflector;
  *
  * ### Retrieving data
  *
- * The primary way to retreive data is using Table::find(). See that method
+ * The primary way to retrieve data is using Table::find(). See that method
  * for more information.
  *
  * ### Bulk updates/deletes
@@ -682,21 +683,174 @@ class Table {
 		return $statement->rowCount() > 0;
 	}
 
-	public function save(Entity $entity, $options = []) {
-		$data = $entity->toArray();
-		$schema = $this->schema();
-		$data = array_intersect_key($data, array_flip($schema->columns()));
+/**
+ * Returns true if there is any row in this table matching the specified
+ * conditions.
+ *
+ * @param array $conditions list of conditions to pass to the query
+ * @return boolean
+ */
+	public function exists(array $conditions) {
+		return (bool)count($this->find('all')
+			->select(['exists' => 1])
+			->where($conditions)
+			->limit(1)
+			->hydrate(false)
+			->toArray());
+	}
+
+/**
+ * Persists an entity based on the fields that are marked as dirty on it and
+ * matching the list of fields passed in the `fieldList` inside the options
+ * array. Returns the same entity after a successful save or false in case
+ * of any error.
+ *
+ * The options array can receive the following keys:
+ *
+ * - fieldList: An array of field names that should be saved, if empty all
+ * properties in the passed entity will be saved
+ * - atomic: Whether to execute the save and callbacks inside a database
+ * transaction (default: true)
+ *
+ * When saving, this method will trigger two events:
+ *
+ * - Model.beforeSave: Will be triggered just before the list of fields to be
+ * persisted is calculated. It receives both the entity and the options as
+ * arguments. The options array is passed as an ArrayObject, so any changes in
+ * it will be reflected in every listener and remembered at the end of the event
+ * so it can be used for the rest of the save operation. Returning false in any
+ * of the listeners will abort the saving process. If the event is stopped
+ * using the event API, the event object's `result` property will be returned.
+ * This can be useful when having your own saving strategy implemented inside a
+ * listener.
+ * - Model.afterSave: Will be triggered after a successful insert or save,
+ * listeners will receive the entity and the options array as arguments. The type
+ * of operation performed (insert or update) can be determined by checking the
+ * entity's method `isNew`, true meaning an insert and false an update.
+ *
+ * This method will determine whether the passed entity needs to be
+ * inserted or updated in the database. It does that by checking the `isNew`
+ * method on the entity, if no information can be found there, it will go
+ * directly to the database to check the entity's status.
+ *
+ * @param \Cake\ORM\Entity the entity to be saved
+ * @param array $options
+ * @return \Cake\ORM\Entity|boolean
+ */
+	public function save(Entity $entity, array $options = []) {
+		$options = new \ArrayObject($options + ['atomic' => true, 'fieldList' => []]);
+		if ($options['atomic']) {
+			$connection = $this->connection();
+			$success = $connection->transactional(function() use ($entity, $options) {
+				return $this->_processSave($entity, $options);
+			});
+		} else {
+			$success = $this->_processSave($entity, $data, $options);
+		}
+
+		return $success;
+	}
+
+/**
+ * Performs the actual saving of an entity based on the passed options.
+ *
+ * @param \Cake\ORM\Entity the entity to be saved
+ * @param array $options
+ * @return \Cake\ORM\Entity|boolean
+ */
+	protected function _processSave($entity, $options) {
+		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
+		$this->getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
+		$list = $options['fieldList'] ?: $this->schema()->columns();
+		$data = $entity->extract($list, true);
+		$keys = array_keys($data);
+
+		$primary = $entity->extract((array)$this->primaryKey());
+		if ($primary && $entity->isNew() === null) {
+			$entity->isNew(!$this->exists($primary));
+		}
+
+		if ($entity->isNew() === null) {
+			$entity->isNew(true);
+		}
+
+		if ($entity->isNew()) {
+			$success = $this->_insert($entity, $data);
+		} else {
+			$success = $this->_update($entity, $data);
+		}
+
+		if ($success) {
+			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
+			$this->getEventManager()->dispatch($event);
+			$entity->isNew(false);
+		}
+
+		return $success;
+	}
+
+/**
+ * Auxiliary function to handle the insert of an entity's data in the table
+ *
+ * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param array $data The actual data that needs to be saved
+ * @return \Cake\ORM\Entity|boolean
+ */
+	protected function _insert($entity, $data) {
 		$query = $this->_buildQuery();
 		$statement = $query->insert($this->table(), array_keys($data))
 			->values($data)
 			->executeStatement();
 
+		$success = false;
 		if ($statement->rowCount() > 0) {
-			$id = $this->connection()->lastInsertId($this->table());
-			$entity->set($this->primaryKey(), $id);
+			$primary = $this->primaryKey();
+			$id = $statement->lastInsertId($this->table(), $primary);
+			$entity->set($primary, $id);
+			$entity->clean();
+			$success = $entity;
+		}
+		return $success;
+	}
+
+/**
+ * Auxiliary function to handle the update of an entity's data in the table
+ *
+ * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param array $data The actual data that needs to be saved
+ * @return \Cake\ORM\Entity|boolean
+ */
+	protected function _update($entity, $data) {
+		$primaryKey = $entity->extract((array)$this->primaryKey());
+		$data = array_diff_key($data, $primaryKey);
+
+		if (empty($data)) {
+			return $entity;
 		}
 
-		return $entity;
+		$filtered = array_filter($primaryKey, 'strlen');
+		if (count($filtered) < count($primaryKey)) {
+			$message = __d('cake_dev', 'A primary key value is needed for updating');
+			throw new \InvalidArgumentException($message);
+		}
+
+		$query = $this->_buildQuery();
+		$statement = $query->update($this->table())
+			->set($data)
+			->where($primaryKey)
+			->executeStatement();
+
+		$success = false;
+		if ($statement->rowCount() > 0) {
+			$entity->clean();
+			$success = $entity;
+		}
+		return $success;
 	}
 
 /**
