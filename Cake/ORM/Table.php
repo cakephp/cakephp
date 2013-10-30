@@ -789,7 +789,7 @@ class Table {
 			return $this->_validators[$name] = $instance;
 		}
 
-		$validator = new Validator($this);
+		$validator = new Validator;
 		$validator = $this->{'validation' . ucfirst($name)}($validator);
 		return $this->_validators[$name] = $validator;
 	}

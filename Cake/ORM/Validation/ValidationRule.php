@@ -27,20 +27,6 @@ namespace Cake\Model\Validator;
 class ValidationRule {
 
 /**
- * Whether the field passed this validation rule
- *
- * @var mixed
- */
-	protected $_valid = true;
-
-/**
- * Holds whether the record being validated is being created or updated
- *
- * @var boolean
- */
-	protected $_isUpdate = false;
-
-/**
  * Validation method
  *
  * @var mixed
@@ -160,24 +146,6 @@ class ValidationRule {
 			'last' => $this->last,
 			'message' => $this->message
 		);
-	}
-
-/**
- * Sets the recordExists configuration value for this rule,
- * ir refers to whether the model record it is validating exists
- * exists in the collection or not (create or update operation)
- *
- * If called with no parameters it will return whether this rule
- * is configured for update operations or not.
- *
- * @param boolean $exists Boolean to indicate if records exists
- * @return boolean
- */
-	public function isUpdate($exists = null) {
-		if ($exists === null) {
-			return $this->_isUpdate;
-		}
-		return $this->_isUpdate = $exists;
 	}
 
 /**

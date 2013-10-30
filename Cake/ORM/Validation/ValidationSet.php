@@ -48,13 +48,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_validationDomain = null;
 
 /**
- * Whether the validation is stopped
- *
- * @var boolean
- */
-	public $isStopped = false;
-
-/**
  * Holds the fieldname
  *
  * @var string
@@ -83,13 +76,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_allowEmpty = false;
 
 /**
- * Holds whether the record being validated is to be created or updated
- *
- * @var boolean
- */
-	protected $_isUpdate = false;
-
-/**
  * Constructor
  *
  * @param string $fieldName The fieldname
@@ -110,31 +96,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 			}
 		}
 		$this->ruleSet = $ruleSet;
-	}
-
-/**
- * Sets the list of methods to use for validation
- *
- * @param array $methods Methods list
- * @return void
- */
-	public function setMethods($methods) {
-		$this->_methods = $methods;
-	}
-
-/**
- * Sets the I18n domain for validation messages.
- *
- * If no argument is passed the currently set domain will be returned.
- *
- * @param string $validationDomain The validation domain to be used.
- * @return string
- */
-	public function validationDomain($validationDomain = null) {
-		if ($validationDomain === null) {
-			return $this->_validationDomain;
-		}
-		return $this->_validationDomain = $validationDomain;
 	}
 
 /**
@@ -165,26 +126,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 			return $this->_allowEmpty;
 		}
 		return $this->_allowEmpty = $allowEmpty;
-	}
-
-/**
- * Sets the isUpdate configuration value for this ruleset,
- * it refers to whether the model record it is validating exists
- * in the collection or not (create or update operation)
- *
- * If called with no parameters it will return whether this ruleset
- * is configured for update operations or not.
- *
- * @return boolean
- */
-	public function isUpdate($isUpdate = null) {
-		if ($isUpdate === null) {
-			return $this->_isUpdate;
-		}
-		foreach ($this->getRules() as $rule) {
-			$rule->isUpdate($isUpdate);
-		}
-		return $this->_isUpdate = $isUpdate;
 	}
 
 /**

@@ -1831,7 +1831,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testValidatorSetter() {
 		$table = new Table;
-		$validator = new \Cake\ORM\Validator($table);
+		$validator = new \Cake\ORM\Validator;
 		$table->validator('other', $validator);
 		$this->assertSame($validator, $table->validator('other'));
 	}
