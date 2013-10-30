@@ -14,7 +14,7 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Model;
+namespace Cake\ORM;
 
 use Cake\ORM\Validation\ValidationSet;
 use Cake\Utility\Hash;
@@ -27,7 +27,7 @@ use Cake\Utility\Hash;
  *
  * @link          http://book.cakephp.org/2.0/en/data-validation.html
  */
-class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
+class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 
 /**
  * Holds the ValidationSet objects array
@@ -79,7 +79,7 @@ class ModelValidator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param \Cake\ORM\Table $table A reference to the table object this is bound to
  */
 	public function __construct(Table $table) {
-		$this->_model = $model;
+		$this->_table = $table;
 	}
 
 /**

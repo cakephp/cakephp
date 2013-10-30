@@ -1797,4 +1797,43 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertTrue($table->hasField('body'), 'Should be there.');
 	}
 
+/**
+ * Tests that there exists a default validator
+ *
+ * @return void
+ */
+	public function testValidatorDefault() {
+		$table = new Table();
+		$validator = $table->validator();
+		$this->assertInstanceOf('\Cake\ORM\Validator', $validator);
+		$default = $table->validator('default');
+		$this->assertSame($validator, $default);
+	}
+
+/**
+ * Tests that it is possible to define custom validator methods
+ *
+ * @return void
+ */
+	public function functionTestValidationWithDefiner() {
+		$table = $this->getMock('\Cake\ORM\Table', ['validationForOtherStuff']);
+		$table->expects($this->once())->method('validationForOtherStuff')
+			->will($this->returnArgument(0));
+		$other = $table->validator('forOtherStuff');
+		$this->assertInstanceOf('\Cake\ORM\Validator', $other);
+		$this->assertNotSame($other, $table->validator());
+	}
+
+/**
+ * Tests that it is possible to set a custom validator under a name
+ *
+ * @return void
+ */
+	public function testValidatorSetter() {
+		$table = new Table;
+		$validator = new \Cake\ORM\Validator($table);
+		$table->validator('other', $validator);
+		$this->assertSame($validator, $table->validator('other'));
+	}
+
 }

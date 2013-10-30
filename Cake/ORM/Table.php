@@ -27,6 +27,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
+use Cake\ORM\Validator;
 use Cake\Utility\Inflector;
 
 /**
@@ -788,8 +789,8 @@ class Table {
 			return $this->_validators[$name] = $instance;
 		}
 
-		$validator = new Validator;
-		$validator = $this->{'validation' . $name}($validator);
+		$validator = new Validator($this);
+		$validator = $this->{'validation' . ucfirst($name)}($validator);
 		return $this->_validators[$name] = $validator;
 	}
 
