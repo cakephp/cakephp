@@ -496,7 +496,7 @@ class Time {
 	public static function isPast($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
 		$dateTime = new \DateTime;
-		return $timestamp > $dateTime->getTimestamp();
+		return $timestamp < $dateTime->getTimestamp();
 	}
 
 /**
