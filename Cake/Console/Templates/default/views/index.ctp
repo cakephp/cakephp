@@ -35,7 +35,7 @@ use Cake\Utility\Inflector;
 				foreach ($associations['belongsTo'] as $alias => $details) {
 					if ($field === $details['foreignKey']) {
 						$isKey = true;
-						echo "\t\t<td>\n\t\t\t<?php echo \$this->Html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], array('controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}'])); ?>\n\t\t</td>\n";
+						echo "\t\t<td>\n\t\t\t<?php echo \$this->Html->link(\${$singularVar}['{$alias}']['{$details['displayField']}'], ['controller' => '{$details['controller']}', 'action' => 'view', \${$singularVar}['{$alias}']['{$details['primaryKey']}']]); ?>\n\t\t</td>\n";
 						break;
 					}
 				}
@@ -46,9 +46,9 @@ use Cake\Utility\Inflector;
 		}
 
 		echo "\t\t<td class=\"actions\">\n";
-		echo "\t\t\t<?php echo \$this->Html->link(__('View'), array('action' => 'view', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-		echo "\t\t\t<?php echo \$this->Html->link(__('Edit'), array('action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
-		echo "\t\t\t<?php echo \$this->Form->postLink(__('Delete'), array('action' => 'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']), null, __('Are you sure you want to delete # %s?', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
+		echo "\t\t\t<?php echo \$this->Html->link(__('View'), ['action' => 'view', \${$singularVar}['{$modelClass}']['{$primaryKey}']]); ?>\n";
+		echo "\t\t\t<?php echo \$this->Html->link(__('Edit'), ['action' => 'edit', \${$singularVar}['{$modelClass}']['{$primaryKey}']]); ?>\n";
+		echo "\t\t\t<?php echo \$this->Form->postLink(__('Delete'), ['action' => 'delete', \${$singularVar}['{$modelClass}']['{$primaryKey}']], null, __('Are you sure you want to delete # %s?', \${$singularVar}['{$modelClass}']['{$primaryKey}'])); ?>\n";
 		echo "\t\t</td>\n";
 	echo "\t</tr>\n";
 
@@ -57,17 +57,17 @@ use Cake\Utility\Inflector;
 	</table>
 	<p>
 	<?php echo "<?php
-	echo \$this->Paginator->counter(array(
+	echo \$this->Paginator->counter([
 	'format' => __('Page {:page} of {:pages}, showing {:current} records out of {:count} total, starting on record {:start}, ending on {:end}')
-	));
+	]);
 	?>"; ?>
 	</p>
 	<div class="paging">
 	<?php
 		echo "<?php\n";
-		echo "\t\techo \$this->Paginator->prev('< ' . __('previous'), array(), null, array('class' => 'prev disabled'));\n";
-		echo "\t\techo \$this->Paginator->numbers(array('separator' => ''));\n";
-		echo "\t\techo \$this->Paginator->next(__('next') . ' >', array(), null, array('class' => 'next disabled'));\n";
+		echo "\t\techo \$this->Paginator->prev('< ' . __('previous'), [], null, ['class' => 'prev disabled']);\n";
+		echo "\t\techo \$this->Paginator->numbers(['separator' => '']);\n";
+		echo "\t\techo \$this->Paginator->next(__('next') . ' >', [], null, ['class' => 'next disabled']);\n";
 		echo "\t?>\n";
 	?>
 	</div>
@@ -75,14 +75,14 @@ use Cake\Utility\Inflector;
 <div class="actions">
 	<h3><?php echo "<?php echo __('Actions'); ?>"; ?></h3>
 	<ul>
-		<li><?php echo "<?php echo \$this->Html->link(__('New " . $singularHumanName . "'), array('action' => 'add')); ?>"; ?></li>
+		<li><?php echo "<?php echo \$this->Html->link(__('New " . $singularHumanName . "'), ['action' => 'add']); ?>"; ?></li>
 <?php
-	$done = array();
+	$done = [];
 	foreach ($associations as $type => $data) {
 		foreach ($data as $alias => $details) {
 			if ($details['controller'] != $this->name && !in_array($details['controller'], $done)) {
-				echo "\t\t<li><?php echo \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), array('controller' => '{$details['controller']}', 'action' => 'index')); ?> </li>\n";
-				echo "\t\t<li><?php echo \$this->Html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "'), array('controller' => '{$details['controller']}', 'action' => 'add')); ?> </li>\n";
+				echo "\t\t<li><?php echo \$this->Html->link(__('List " . Inflector::humanize($details['controller']) . "'), ['controller' => '{$details['controller']}', 'action' => 'index']); ?> </li>\n";
+				echo "\t\t<li><?php echo \$this->Html->link(__('New " . Inflector::humanize(Inflector::underscore($alias)) . "'), ['controller' => '{$details['controller']}', 'action' => 'add']); ?> </li>\n";
 				$done[] = $details['controller'];
 			}
 		}

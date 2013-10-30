@@ -52,7 +52,7 @@ class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>App
 
 	if (count($helpers)):
 		echo "/**\n * Helpers\n *\n * @var array\n */\n";
-		echo "\tpublic \$helpers = array(";
+		echo "\tpublic \$helpers = [";
 		for ($i = 0, $len = count($helpers); $i < $len; $i++):
 			if ($i != $len - 1):
 				echo "'" . Inflector::camelize($helpers[$i]) . "', ";
@@ -60,12 +60,12 @@ class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>App
 				echo "'" . Inflector::camelize($helpers[$i]) . "'";
 			endif;
 		endfor;
-		echo ");\n\n";
+		echo "];\n\n";
 	endif;
 
 	if (count($components)):
 		echo "/**\n * Components\n *\n * @var array\n */\n";
-		echo "\tpublic \$components = array(";
+		echo "\tpublic \$components = [";
 		for ($i = 0, $len = count($components); $i < $len; $i++):
 			if ($i != $len - 1):
 				echo "'" . Inflector::camelize($components[$i]) . "', ";
@@ -73,7 +73,7 @@ class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>App
 				echo "'" . Inflector::camelize($components[$i]) . "'";
 			endif;
 		endfor;
-		echo ");\n\n";
+		echo "];\n\n";
 	endif;
 
 	echo trim($actions);

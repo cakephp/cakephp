@@ -34,7 +34,7 @@ class ViewTask extends BakeTask {
  *
  * @var array
  */
-	public $tasks = array('Project', 'Controller', 'DbConfig', 'Template');
+	public $tasks = ['Project', 'Controller', 'DbConfig', 'Template'];
 
 /**
  * path to View directory
@@ -62,7 +62,7 @@ class ViewTask extends BakeTask {
  *
  * @var array
  */
-	public $scaffoldActions = array('index', 'view', 'add', 'edit');
+	public $scaffoldActions = ['index', 'view', 'add', 'edit'];
 
 /**
  * An array of action names that don't require templates. These
@@ -70,7 +70,7 @@ class ViewTask extends BakeTask {
  *
  * @var array
  */
-	public $noTemplateActions = array('delete');
+	public $noTemplateActions = ['delete'];
 
 /**
  * Override initialize
@@ -172,7 +172,7 @@ class ViewTask extends BakeTask {
 
 		$actions = null;
 		if (isset($this->args[1])) {
-			$actions = array($this->args[1]);
+			$actions = [$this->args[1]];
 		}
 		$this->interactive = false;
 		foreach ($tables as $table) {
@@ -209,16 +209,16 @@ class ViewTask extends BakeTask {
 		$this->controllerName = $this->Controller->getName();
 
 		$prompt = __d('cake_console', "Would you like bake to build your views interactively?\nWarning: Choosing no will overwrite %s views if it exist.", $this->controllerName);
-		$interactive = $this->in($prompt, array('y', 'n'), 'n');
+		$interactive = $this->in($prompt, ['y', 'n'], 'n');
 
 		if (strtolower($interactive) === 'n') {
 			$this->interactive = false;
 		}
 
 		$prompt = __d('cake_console', "Would you like to create some CRUD views\n(index, add, view, edit) for this controller?\nNOTE: Before doing so, you'll need to create your controller\nand model classes (including associated models).");
-		$wannaDoScaffold = $this->in($prompt, array('y', 'n'), 'y');
+		$wannaDoScaffold = $this->in($prompt, ['y', 'n'], 'y');
 
-		$wannaDoAdmin = $this->in(__d('cake_console', "Would you like to create the views for admin routing?"), array('y', 'n'), 'n');
+		$wannaDoAdmin = $this->in(__d('cake_console', "Would you like to create the views for admin routing?"), ['y', 'n'], 'n');
 
 		if (strtolower($wannaDoScaffold) === 'y' || strtolower($wannaDoAdmin) === 'y') {
 			$vars = $this->_loadController();
@@ -229,7 +229,7 @@ class ViewTask extends BakeTask {
 			if (strtolower($wannaDoAdmin) === 'y') {
 				$admin = $this->Project->getPrefix();
 				$regularActions = $this->scaffoldActions;
-				$adminActions = array();
+				$adminActions = [];
 				foreach ($regularActions as $action) {
 					$adminActions[] = $admin . $action;
 				}
@@ -288,7 +288,7 @@ class ViewTask extends BakeTask {
 			$primaryKey = $displayField = null;
 			$singularVar = Inflector::variable(Inflector::singularize($this->controllerName));
 			$singularHumanName = $this->_singularHumanName($this->controllerName);
-			$fields = $schema = $associations = array();
+			$fields = $schema = $associations = [];
 		}
 		$pluralVar = Inflector::variable($this->controllerName);
 		$pluralHumanName = $this->_pluralHumanName($this->controllerName);
@@ -332,7 +332,7 @@ class ViewTask extends BakeTask {
 		$this->out(__d('cake_console', 'Action Name:     %s', $action));
 		$this->out(__d('cake_console', 'Path:            %s', $this->getPath() . $this->controllerName . DS . Inflector::underscore($action) . ".ctp"));
 		$this->hr();
-		$looksGood = $this->in(__d('cake_console', 'Look okay?'), array('y', 'n'), 'y');
+		$looksGood = $this->in(__d('cake_console', 'Look okay?'), ['y', 'n'], 'y');
 		if (strtolower($looksGood) === 'y') {
 			$this->bake($action, ' ');
 			return $this->_stop();
@@ -406,10 +406,10 @@ class ViewTask extends BakeTask {
 				$template = str_replace($prefix . '_', '', $template);
 			}
 		}
-		if (in_array($template, array('add', 'edit'))) {
+		if (in_array($template, ['add', 'edit'])) {
 			$template = 'form';
 		} elseif (preg_match('@(_add|_edit)$@', $template)) {
-			$template = str_replace(array('_add', '_edit'), '_form', $template);
+			$template = str_replace(['_add', '_edit'], '_form', $template);
 		}
 		return $template;
 	}
@@ -423,30 +423,30 @@ class ViewTask extends BakeTask {
 		$parser = parent::getOptionParser();
 		return $parser->description(
 			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.')
-		)->addArgument('controller', array(
+		)->addArgument('controller', [
 			'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')
-		))->addArgument('action', array(
+		])->addArgument('action', [
 			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
-		))->addArgument('alias', array(
+		])->addArgument('alias', [
 			'help' => __d('cake_console', 'Will bake the template in <action> but create the filename after <alias>.')
-		))->addOption('plugin', array(
+		])->addOption('plugin', [
 			'short' => 'p',
 			'help' => __d('cake_console', 'Plugin to bake the view into.')
-		))->addOption('admin', array(
+		])->addOption('admin', [
 			'help' => __d('cake_console', 'Set to only bake views for a prefix in Routing.prefixes'),
 			'boolean' => true
-		))->addOption('theme', array(
+		])->addOption('theme', [
 			'short' => 't',
 			'help' => __d('cake_console', 'Theme to use when baking code.')
-		))->addOption('connection', array(
+		])->addOption('connection', [
 			'short' => 'c',
 			'help' => __d('cake_console', 'The connection the connected model is on.')
-		))->addOption('force', array(
+		])->addOption('force', [
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
-		))->addSubcommand('all', array(
+		])->addSubcommand('all', [
 			'help' => __d('cake_console', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
-		))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
+		])->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
 	}
 
 /**
@@ -456,8 +456,8 @@ class ViewTask extends BakeTask {
  * @return array $associations
  */
 	protected function _associations(Model $model) {
-		$keys = array('belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany');
-		$associations = array();
+		$keys = ['belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'];
+		$associations = [];
 
 		foreach ($keys as $type) {
 			foreach ($model->{$type} as $assocKey => $assocData) {

@@ -64,7 +64,7 @@ use Cake\Utility\Inflector;
  * arguments any arguments greater than those defined will cause exceptions. Additionally you can
  * declare arguments as optional, by setting the required param to false.
  *
- * `$parser->addArgument('model', array('required' => false));`
+ * `$parser->addArgument('model', ['required' => false]);`
  *
  * ### Providing Help text
  *
@@ -96,14 +96,14 @@ class ConsoleOptionParser {
  * @see ConsoleOptionParser::addOption()
  * @var array
  */
-	protected $_options = array();
+	protected $_options = [];
 
 /**
  * Map of short -> long options, generated when using addOption()
  *
  * @var string
  */
-	protected $_shortOptions = array();
+	protected $_shortOptions = [];
 
 /**
  * Positional argument definitions.
@@ -111,7 +111,7 @@ class ConsoleOptionParser {
  * @see ConsoleOptionParser::addArgument()
  * @var array
  */
-	protected $_args = array();
+	protected $_args = [];
 
 /**
  * Subcommands for this Shell.
@@ -119,7 +119,7 @@ class ConsoleOptionParser {
  * @see ConsoleOptionParser::addSubcommand()
  * @var array
  */
-	protected $_subcommands = array();
+	protected $_subcommands = [];
 
 /**
  * Command name.
@@ -138,22 +138,22 @@ class ConsoleOptionParser {
 	public function __construct($command = null, $defaultOptions = true) {
 		$this->command($command);
 
-		$this->addOption('help', array(
+		$this->addOption('help', [
 			'short' => 'h',
 			'help' => __d('cake_console', 'Display this help.'),
 			'boolean' => true
-		));
+		]);
 
 		if ($defaultOptions) {
-			$this->addOption('verbose', array(
+			$this->addOption('verbose', [
 				'short' => 'v',
 				'help' => __d('cake_console', 'Enable verbose output.'),
 				'boolean' => true
-			))->addOption('quiet', array(
+			])->addOption('quiet', [
 				'short' => 'q',
 				'help' => __d('cake_console', 'Enable quiet output.'),
 				'boolean' => true
-			));
+			]);
 		}
 	}
 
@@ -172,19 +172,19 @@ class ConsoleOptionParser {
  * Build a parser from an array. Uses an array like
  *
  * {{{
- * $spec = array(
+ * $spec = [
  *		'description' => 'text',
  *		'epilog' => 'text',
- *		'arguments' => array(
+ *		'arguments' => [
  *			// list of arguments compatible with addArguments.
- *		),
- *		'options' => array(
+ *		],
+ *		'options' => [
  *			// list of options compatible with addOptions
- *		),
- *		'subcommands' => array(
+ *		],
+ *		'subcommands' => [
  *			// list of subcommands to add.
- *		)
- * );
+ *		]
+ * ];
  * }}}
  *
  * @param array $spec The spec to build the OptionParser with.
@@ -282,19 +282,19 @@ class ConsoleOptionParser {
  * @param array $options An array of parameters that define the behavior of the option
  * @return ConsoleOptionParser $this.
  */
-	public function addOption($name, $options = array()) {
+	public function addOption($name, $options = []) {
 		if (is_object($name) && $name instanceof ConsoleInputOption) {
 			$option = $name;
 			$name = $option->name();
 		} else {
-			$defaults = array(
+			$defaults = [
 				'name' => $name,
 				'short' => null,
 				'help' => '',
 				'default' => null,
 				'boolean' => false,
-				'choices' => array()
-			);
+				'choices' => []
+			];
 			$options = array_merge($defaults, $options);
 			$option = new ConsoleInputOption($options);
 		}
@@ -322,18 +322,18 @@ class ConsoleOptionParser {
  * @param array $params Parameters for the argument, see above.
  * @return ConsoleOptionParser $this.
  */
-	public function addArgument($name, $params = array()) {
+	public function addArgument($name, $params = []) {
 		if (is_object($name) && $name instanceof ConsoleInputArgument) {
 			$arg = $name;
 			$index = count($this->_args);
 		} else {
-			$defaults = array(
+			$defaults = [
 				'name' => $name,
 				'help' => '',
 				'index' => count($this->_args),
 				'required' => false,
-				'choices' => array()
-			);
+				'choices' => []
+			];
 			$options = array_merge($defaults, $params);
 			$index = $options['index'];
 			unset($options['index']);
@@ -389,16 +389,16 @@ class ConsoleOptionParser {
  * @param array $options Array of params, see above.
  * @return ConsoleOptionParser $this.
  */
-	public function addSubcommand($name, $options = array()) {
+	public function addSubcommand($name, $options = []) {
 		if (is_object($name) && $name instanceof ConsoleInputSubcommand) {
 			$command = $name;
 			$name = $command->name();
 		} else {
-			$defaults = array(
+			$defaults = [
 				'name' => $name,
 				'help' => '',
 				'parser' => null
-			);
+			];
 			$options = array_merge($defaults, $options);
 			$command = new ConsoleInputSubcommand($options);
 		}
@@ -454,14 +454,14 @@ class ConsoleOptionParser {
  * @param array $argv Array of args (argv) to parse.
  * @param string $command The subcommand to use. If this parameter is a subcommand, that has a parser,
  *    That parser will be used to parse $argv instead.
- * @return Array array($params, $args)
+ * @return Array [$params, $args]
  * @throws Cake\Error\ConsoleException When an invalid parameter is encountered.
  */
 	public function parse($argv, $command = null) {
 		if (isset($this->_subcommands[$command]) && $this->_subcommands[$command]->parser()) {
 			return $this->_subcommands[$command]->parser()->parse($argv);
 		}
-		$params = $args = array();
+		$params = $args = [];
 		$this->_tokens = $argv;
 		while (($token = array_shift($this->_tokens)) !== null) {
 			if (substr($token, 0, 2) === '--') {
@@ -491,7 +491,7 @@ class ConsoleOptionParser {
 				$params[$name] = false;
 			}
 		}
-		return array($params, $args);
+		return [$params, $args];
 	}
 
 /**

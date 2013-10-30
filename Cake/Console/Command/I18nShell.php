@@ -38,7 +38,7 @@ class I18nShell extends Shell {
  *
  * @var array
  */
-	public $tasks = array('DbConfig', 'Extract');
+	public $tasks = ['DbConfig', 'Extract'];
 
 /**
  * Override startup of the Shell
@@ -51,7 +51,7 @@ class I18nShell extends Shell {
 			$this->dataSource = $this->params['datasource'];
 		}
 
-		if ($this->command && !in_array($this->command, array('help'))) {
+		if ($this->command && !in_array($this->command, ['help'])) {
 			if (!config('database')) {
 				$this->out(__d('cake_console', 'Your database configuration was not found. Take a moment to create one.'));
 				return $this->DbConfig->execute();
@@ -72,7 +72,7 @@ class I18nShell extends Shell {
 		$this->out(__d('cake_console', '[H]elp'));
 		$this->out(__d('cake_console', '[Q]uit'));
 
-		$choice = strtolower($this->in(__d('cake_console', 'What would you like to do?'), array('E', 'I', 'H', 'Q')));
+		$choice = strtolower($this->in(__d('cake_console', 'What would you like to do?'), ['E', 'I', 'H', 'Q']));
 		switch ($choice) {
 			case 'e':
 				$this->Extract->execute();
@@ -110,12 +110,12 @@ class I18nShell extends Shell {
 		$parser = parent::getOptionParser();
 		return $parser->description(
 			__d('cake_console', 'I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.')
-			)->addSubcommand('initdb', array(
+			)->addSubcommand('initdb', [
 				'help' => __d('cake_console', 'Initialize the i18n table.')
-			))->addSubcommand('extract', array(
+			])->addSubcommand('extract', [
 				'help' => __d('cake_console', 'Extract the po translations from your application'),
 				'parser' => $this->Extract->getOptionParser()
-			));
+			]);
 	}
 
 }

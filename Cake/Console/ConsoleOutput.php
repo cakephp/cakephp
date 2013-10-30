@@ -85,7 +85,7 @@ class ConsoleOutput {
  *
  * @var array
  */
-	protected static $_foregroundColors = array(
+	protected static $_foregroundColors = [
 		'black' => 30,
 		'red' => 31,
 		'green' => 32,
@@ -94,14 +94,14 @@ class ConsoleOutput {
 		'magenta' => 35,
 		'cyan' => 36,
 		'white' => 37
-	);
+	];
 
 /**
  * background colors used in colored output.
  *
  * @var array
  */
-	protected static $_backgroundColors = array(
+	protected static $_backgroundColors = [
 		'black' => 40,
 		'red' => 41,
 		'green' => 42,
@@ -110,19 +110,19 @@ class ConsoleOutput {
 		'magenta' => 45,
 		'cyan' => 46,
 		'white' => 47
-	);
+	];
 
 /**
  * formatting options for colored output
  *
  * @var string
  */
-	protected static $_options = array(
+	protected static $_options = [
 		'bold' => 1,
 		'underline' => 4,
 		'blink' => 5,
 		'reverse' => 7,
-	);
+	];
 
 /**
  * Styles that are available as tags in console output.
@@ -130,19 +130,19 @@ class ConsoleOutput {
  *
  * @var array
  */
-	protected static $_styles = array(
-		'emergency' => array('text' => 'red', 'underline' => true),
-		'alert' => array('text' => 'red', 'underline' => true),
-		'critical' => array('text' => 'red', 'underline' => true),
-		'error' => array('text' => 'red', 'underline' => true),
-		'warning' => array('text' => 'yellow'),
-		'info' => array('text' => 'cyan'),
-		'debug' => array('text' => 'yellow'),
-		'success' => array('text' => 'green'),
-		'comment' => array('text' => 'blue'),
-		'question' => array('text' => 'magenta'),
-		'notice' => array('text' => 'cyan')
-	);
+	protected static $_styles = [
+		'emergency' => ['text' => 'red', 'underline' => true],
+		'alert' => ['text' => 'red', 'underline' => true],
+		'critical' => ['text' => 'red', 'underline' => true],
+		'error' => ['text' => 'red', 'underline' => true],
+		'warning' => ['text' => 'yellow'],
+		'info' => ['text' => 'cyan'],
+		'debug' => ['text' => 'yellow'],
+		'success' => ['text' => 'green'],
+		'comment' => ['text' => 'blue'],
+		'question' => ['text' => 'magenta'],
+		'notice' => ['text' => 'cyan']
+	];
 
 /**
  * Construct the output object.
@@ -190,7 +190,7 @@ class ConsoleOutput {
 			return preg_replace('#</?(?:' . $tags . ')>#', '', $text);
 		}
 		return preg_replace_callback(
-			'/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims', array($this, '_replaceTags'), $text
+			'/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims', [$this, '_replaceTags'], $text
 		);
 	}
 
@@ -206,7 +206,7 @@ class ConsoleOutput {
 			return '<' . $matches['tag'] . '>' . $matches['text'] . '</' . $matches['tag'] . '>';
 		}
 
-		$styleInfo = array();
+		$styleInfo = [];
 		if (!empty($style['text']) && isset(static::$_foregroundColors[$style['text']])) {
 			$styleInfo[] = static::$_foregroundColors[$style['text']];
 		}
@@ -245,7 +245,7 @@ class ConsoleOutput {
  *
  * ### Create or modify an existing style
  *
- * `$this->output->styles('annoy', array('text' => 'purple', 'background' => 'yellow', 'blink' => true));`
+ * `$this->output->styles('annoy', ['text' => 'purple', 'background' => 'yellow', 'blink' => true]);`
  *
  * ### Remove a style
  *
