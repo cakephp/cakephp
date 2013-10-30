@@ -278,7 +278,7 @@ class Sqlserver extends DboSource {
 			for ($i = 0; $i < $count; $i++) {
 				$prepend = '';
 
-				if (strpos($fields[$i], 'DISTINCT') !== false) {
+				if (strpos($fields[$i], 'DISTINCT') !== false && strpos($fields[$i], 'COUNT') === false) {
 					$prepend = 'DISTINCT ';
 					$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 				}
