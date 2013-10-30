@@ -75,6 +75,8 @@ class PaginatorHelper extends Helper {
 		'sort' => '<a href="{{url}}">{{text}}</a>',
 		'sortAsc' => '<a class="asc" href="{{url}}">{{text}}</a>',
 		'sortDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
+		'sortAscLocked' => '<a class="asc locked" href="{{url}}">{{text}}</a>',
+		'sortDescLocked' => '<a class="desc locked" href="{{url}}">{{text}}</a>',
 	];
 
 /**
@@ -96,7 +98,7 @@ class PaginatorHelper extends Helper {
 /**
  * Get/set templates to use.
  *
- * @param string|null|array $templates null or string allow reading templates. An array 
+ * @param string|null|array $templates null or string allow reading templates. An array
  *   allows templates to be added.
  * @return void|string|array
  */
@@ -360,9 +362,10 @@ class PaginatorHelper extends Helper {
  *
  * ### Options:
  *
- * - `escape` Whether you want the contents html entity encoded, defaults to true
- * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
+ * - `escape` Whether you want the contents html entity encoded, defaults to true.
+ * - `model` The model to use, defaults to PaginatorHelper::defaultModel().
  * - `direction` The default direction to use when this link isn't active.
+ * - `lock` Lock direction. Will only use the default direction then, defaults to false.
  *
  * @param string $key The name of the key that the recordset should be sorted.
  * @param string $title Title for the link. If $title is null $key will be used
@@ -389,8 +392,11 @@ class PaginatorHelper extends Helper {
 
 			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
 		}
-		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
+		$defaultDir = isset($options['direction']) ? $options['direction'] : 'asc';
 		unset($options['direction']);
+
+		$locked = isset($options['lock']) ? $options['lock'] : false;
+		unset($options['lock']);
 
 		$sortKey = $this->sortKey($options['model']);
 		$defaultModel = $this->defaultModel();
@@ -401,9 +407,14 @@ class PaginatorHelper extends Helper {
 		);
 
 		$template = 'sort';
+		$dir = $defaultDir;
 		if ($isSorted) {
-			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
-			$template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
+			if ($locked) {
+				$template = $dir === 'asc' ? 'sortDescLocked' : 'sortAscLocked';
+			} else {
+				$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
+				$template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
+			}
 		}
 		if (is_array($title) && array_key_exists($dir, $title)) {
 			$title = $title[$dir];

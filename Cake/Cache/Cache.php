@@ -411,7 +411,7 @@ class Cache {
  * @throws Cake\Error\Exception
  */
 	public static function groupConfigs($group = null) {
-		if ($group == null) {
+		if ($group === null) {
 			return static::$_groups;
 		}
 

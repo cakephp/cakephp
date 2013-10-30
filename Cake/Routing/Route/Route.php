@@ -387,7 +387,7 @@ class Route {
 	}
 
 /**
- * Check if an URL array matches this route instance.
+ * Check if a URL array matches this route instance.
  *
  * If the URL matches the route parameters and settings, then
  * return a generated string URL. If the URL doesn't match the route parameters, false will be returned.
@@ -498,7 +498,7 @@ class Route {
 	}
 
 /**
- * Converts a matching route array into an URL string.
+ * Converts a matching route array into a URL string.
  *
  * Composes the string URL using the template
  * used to create the route.

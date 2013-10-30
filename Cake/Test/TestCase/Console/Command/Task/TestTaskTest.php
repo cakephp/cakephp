@@ -312,7 +312,7 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
- * test that getClassName returns the user choice as a classname.
+ * test that getClassName returns the user choice as a class name.
  *
  * @return void
  */
@@ -347,7 +347,7 @@ class TestTaskTest extends TestCase {
 	}
 
 /**
- * test that resolving classnames works
+ * test that resolving class names works
  *
  * @return void
  */

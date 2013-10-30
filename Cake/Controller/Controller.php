@@ -111,7 +111,7 @@ class Controller extends Object implements EventListener {
 
 /**
  * An array containing the names of helpers this controller uses. The array elements should
- * not contain the "Helper" part of the classname.
+ * not contain the "Helper" part of the class name.
  *
  * Example: `public $helpers = array('Html', 'Js', 'Time', 'Ajax');`
  *
@@ -139,7 +139,7 @@ class Controller extends Object implements EventListener {
 	public $response;
 
 /**
- * The classname to use for creating the response object.
+ * The class name to use for creating the response object.
  *
  * @var string
  */
@@ -200,7 +200,7 @@ class Controller extends Object implements EventListener {
 
 /**
  * Array containing the names of components this controller uses. Component names
- * should not contain the "Component" portion of the classname.
+ * should not contain the "Component" portion of the class name.
  *
  * Example: `public $components = array('Session', 'RequestHandler', 'Acl');`
  *
