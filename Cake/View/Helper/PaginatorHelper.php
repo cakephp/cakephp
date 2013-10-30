@@ -34,12 +34,11 @@ class PaginatorHelper extends Helper {
  * The values that may be specified are:
  *
  * - `format` Format of the counter. Supported formats are 'range' and 'pages'
- *    and custom (default). In the default mode the supplied string is parsed and constants are replaced
- *    by their actual values.
- *    placeholders: %page%, %pages%, %current%, %count%, %start%, %end% .
+ *    and custom (default). In the default mode the supplied string is parsed
+ *    and constants are replaced by their actual values.
+ *    Placeholders: %page%, %pages%, %current%, %count%, %start%, %end%.
  * - `url` Url of the action. See Router::url()
- * - `url['sort']`  the key that the recordset is sorted.
- * - `url['direction']` Direction of the sorting (default: 'asc').
+ * - `url['order']` Key-pair array contaning field and direction used to sort the recorset.
  * - `url['page']` Page number to use in links.
  * - `model` The name of the model.
  * - `escape` Defines if the title field for the link should be escaped (default: true).
@@ -72,9 +71,9 @@ class PaginatorHelper extends Helper {
 		'number' => '<li><a href="{{url}}">{{text}}</a></li>',
 		'current' => '<li class="active"><span>{{text}}</span></li>',
 		'ellipsis' => '<li class="ellipsis">...</li>',
-		'sort' => '<a href="{{url}}">{{text}}</a>',
-		'sortAsc' => '<a class="asc" href="{{url}}">{{text}}</a>',
-		'sortDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
+		'order' => '<a href="{{url}}">{{text}}</a>',
+		'orderAsc' => '<a class="asc" href="{{url}}">{{text}}</a>',
+		'orderDesc' => '<a class="desc" href="{{url}}">{{text}}</a>',
 	];
 
 /**
@@ -96,7 +95,7 @@ class PaginatorHelper extends Helper {
 /**
  * Get/set templates to use.
  *
- * @param string|null|array $templates null or string allow reading templates. An array 
+ * @param string|null|array $templates null or string allow reading templates. An array
  *   allows templates to be added.
  * @return void|string|array
  */
@@ -201,45 +200,40 @@ class PaginatorHelper extends Helper {
 	}
 
 /**
- * Gets the current key by which the recordset is sorted
+ * Gets the direction of a field used to order the recordset
  *
+ * @param string $field Field name.
  * @param string $model Optional model name. Uses the default if none is specified.
  * @param array $options Options for pagination links. See #options for list of keys.
- * @return string The name of the key by which the recordset is being sorted, or
- *  null if the results are not currently sorted.
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortKey
- */
-	public function sortKey($model = null, $options = array()) {
-		if (empty($options)) {
-			$options = $this->params($model);
-		}
-		if (!empty($options['sort'])) {
-			return $options['sort'];
-		}
-		return null;
-	}
-
-/**
- * Gets the current direction the recordset is sorted
- *
- * @param string $model Optional model name. Uses the default if none is specified.
- * @param array $options Options for pagination links. See #options for list of keys.
- * @return string The direction by which the recordset is being sorted, or
- *  null if the results are not currently sorted.
+ * @return string The direction of the field by which the recordset is being ordered, or
+ *  null if the field is not currently being used to order.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sortDir
  */
-	public function sortDir($model = null, $options = array()) {
-		$dir = null;
-
+	public function orderDir($field, $model = null, $options = []) {
+		$model = $model ?: $this->defaultModel();
 		if (empty($options)) {
 			$options = $this->params($model);
 		}
-
-		if (isset($options['direction'])) {
-			$dir = strtolower($options['direction']);
+		if (empty($options['order'])) {
+			return null;
 		}
 
-		if ($dir === 'desc') {
+		$alias = $model;
+		if (strpos($field, '.') !== false) {
+			list($alias, $field) = explode('.', $field);
+		}
+		if (isset($options['order'][$alias . '.' . $field])) {
+			$direction = $options['order'][$alias . '.' . $field];
+		}
+		if ($model === $alias && isset($options['order'][$field])) {
+			$direction = $options['order'][$field];
+		}
+		if (empty($direction)) {
+			return null;
+		}
+
+		$direction = strtolower($direction);
+		if ($direction === 'desc') {
 			return 'desc';
 		}
 		return 'asc';
@@ -355,7 +349,7 @@ class PaginatorHelper extends Helper {
 	}
 
 /**
- * Generates a sorting link. Sets named parameters for the sort and direction. Handles
+ * Generates a ordering link. Sets named parameters for the order and direction. Handles
  * direction switching automatically.
  *
  * ### Options:
@@ -364,15 +358,15 @@ class PaginatorHelper extends Helper {
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
  * - `direction` The default direction to use when this link isn't active.
  *
- * @param string $key The name of the key that the recordset should be sorted.
+ * @param string $key The name of the key that the recordset should be ordered.
  * @param string $title Title for the link. If $title is null $key will be used
  *		for the title and will be generated by inflection.
- * @param array $options Options for sorting link. See above for list of keys.
- * @return string A link sorting default by 'asc'. If the resultset is sorted 'asc' by the specified
- *  key the returned link will sort by 'desc'.
+ * @param array $options Options for ordering link. See above for list of keys.
+ * @return string A link ordering default by 'asc'. If the resultset is ordered 'asc'
+ *  by the specified key the returned link will order by 'desc'.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html#PaginatorHelper::sort
  */
-	public function sort($key, $title = null, $options = []) {
+	public function order($key, $title = null, $options = []) {
 		$options = array_merge(
 			['url' => array(), 'model' => null, 'escape' => true],
 			$options
@@ -389,30 +383,22 @@ class PaginatorHelper extends Helper {
 
 			$title = __(Inflector::humanize(preg_replace('/_id$/', '', $title)));
 		}
-		$dir = isset($options['direction']) ? $options['direction'] : 'asc';
+		$direction = isset($options['direction']) ? $options['direction'] : 'asc';
 		unset($options['direction']);
 
-		$sortKey = $this->sortKey($options['model']);
-		$defaultModel = $this->defaultModel();
-		$isSorted = (
-			$sortKey === $key ||
-			$sortKey === $defaultModel . '.' . $key ||
-			$key === $defaultModel . '.' . $sortKey
-		);
-
-		$template = 'sort';
-		if ($isSorted) {
-			$dir = $this->sortDir($options['model']) === 'asc' ? 'desc' : 'asc';
-			$template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
+		$orderDir = $this->orderDir($key, $options['model']);
+		$template = 'order';
+		if ($orderDir !== null) {
+			$direction = $orderDir === 'asc' ? 'desc' : 'asc';
+			$template = $direction === 'asc' ? 'orderDesc' : 'orderAsc';
 		}
-		if (is_array($title) && array_key_exists($dir, $title)) {
-			$title = $title[$dir];
+		if (is_array($title) && array_key_exists($direction, $title)) {
+			$title = $title[$direction];
 		}
 
 		$url = array_merge(
-			['sort' => $key, 'direction' => $dir],
-			$url,
-			['order' => null]
+			['order' => [$key => $direction]],
+			$url
 		);
 		$vars = [
 			'text' => $options['escape'] ? h($title) : $title,
@@ -431,12 +417,11 @@ class PaginatorHelper extends Helper {
  */
 	public function url($options = array(), $model = null) {
 		$paging = $this->params($model);
-		$paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
+		$paging += ['page' => null, 'order' => null, 'limit' => null];
 		$url = [
 			'page' => $paging['page'],
 			'limit' => $paging['limit'],
-			'sort' => $paging['sort'],
-			'direction' => $paging['direction'],
+			'order' => $paging['order'],
 		];
 
 		if (!empty($this->options['url'])) {

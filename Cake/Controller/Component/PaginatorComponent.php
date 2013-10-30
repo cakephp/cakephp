@@ -94,7 +94,7 @@ class PaginatorComponent extends Component {
  * @var array
  */
 	public $whitelist = array(
-		'limit', 'sort', 'page', 'direction'
+		'limit', 'order', 'page'
 	);
 
 /**
@@ -115,7 +115,7 @@ class PaginatorComponent extends Component {
  * @param Model|string $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
  * @param string|array $scope Additional find conditions to use while paginating
  * @param array $whitelist List of allowed fields for ordering. This allows you to prevent ordering
- *   on non-indexed, or undesirable columns. See PaginatorComponent::validateSort() for additional details
+ *   on non-indexed, or undesirable columns. See PaginatorComponent::validateOrder() for additional details
  *   on how the whitelisting and sort field validation works.
  * @return array Model query results
  * @throws Cake\Error\MissingModelException
@@ -135,7 +135,7 @@ class PaginatorComponent extends Component {
 		}
 
 		$options = $this->mergeOptions($object->alias);
-		$options = $this->validateSort($object, $options, $whitelist);
+		$options = $this->validateOrder($object, $options, $whitelist);
 		$options = $this->checkLimit($options);
 
 		$conditions = $fields = $order = $limit = $page = $recursive = null;
@@ -212,7 +212,6 @@ class PaginatorComponent extends Component {
 			throw new Error\NotFoundException();
 		}
 
-		reset($order);
 		$paging = array(
 			'findType' => $type,
 			'page' => $page,
@@ -221,8 +220,7 @@ class PaginatorComponent extends Component {
 			'prevPage' => ($page > 1),
 			'nextPage' => ($count > ($page * $limit)),
 			'pageCount' => $pageCount,
-			'sort' => key($order),
-			'direction' => current($order),
+			'order' => $order,
 			'limit' => $defaults['limit'] != $options['limit'] ? $options['limit'] : null,
 		);
 
@@ -334,8 +332,7 @@ class PaginatorComponent extends Component {
 
 /**
  * Validate that the desired sorting can be performed on the $object. Only fields or
- * virtualFields can be sorted on. The direction param will also be sanitized. Lastly
- * sort + direction keys will be converted into the model friendly order key.
+ * virtualFields can be sorted on. The direction param will also be sanitized.
  *
  * You can use the whitelist parameter to control which columns/fields are available for sorting.
  * This helps prevent users from ordering large result sets on un-indexed values.
@@ -346,52 +343,41 @@ class PaginatorComponent extends Component {
  * @param Model $object The model being paginated.
  * @param array $options The pagination options being used for this request.
  * @param array $whitelist The list of columns that can be used for sorting. If empty all keys are allowed.
- * @return array An array of options with sort + direction removed and replaced with order if possible.
+ * @return array An array of options with sort validated and sanitized.
  */
-	public function validateSort(Model $object, array $options, array $whitelist = array()) {
-		if (empty($options['order']) && is_array($object->order)) {
-			$options['order'] = $object->order;
+	public function validateOrder(Model $object, array $options, array $whitelist = []) {
+		if (!empty($options['order']) && is_array($options['order'])) {
+			$order = $options['order'];
+		} elseif (!empty($object->order) && is_array($object->order)) {
+			$order = $object->order;
 		}
-
-		if (isset($options['sort'])) {
-			$direction = null;
-			if (isset($options['direction'])) {
-				$direction = strtolower($options['direction']);
-			}
-			if (!in_array($direction, array('asc', 'desc'))) {
-				$direction = 'asc';
-			}
-			$options['order'] = array($options['sort'] => $direction);
-		}
-
-		if (!empty($whitelist) && isset($options['order']) && is_array($options['order'])) {
-			$field = key($options['order']);
-			$inWhitelist = in_array($field, $whitelist, true);
-			if (!$inWhitelist) {
-				$options['order'] = null;
-			}
+		if (empty($order)) {
 			return $options;
 		}
 
-		if (!empty($options['order']) && is_array($options['order'])) {
-			$order = array();
-			foreach ($options['order'] as $key => $value) {
-				$field = $key;
-				$alias = $object->alias;
-				if (strpos($key, '.') !== false) {
-					list($alias, $field) = explode('.', $key);
-				}
-				$correctAlias = ($object->alias == $alias);
-
-				if ($correctAlias && $object->hasField($field)) {
-					$order[$object->alias . '.' . $field] = $value;
-				} elseif ($correctAlias && $object->hasField($key, true)) {
-					$order[$field] = $value;
-				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field, true)) {
-					$order[$alias . '.' . $field] = $value;
-				}
+		$options['order'] = [];
+		foreach ($order as $field => $direction) {
+			$alias = $object->alias;
+			if (strpos($field, '.') !== false) {
+				list($alias, $field) = explode('.', $field);
 			}
-			$options['order'] = $order;
+
+			$direction = strtolower($direction);
+			if (!in_array($direction, ['asc', 'desc'])) {
+				$direction = 'asc';
+			}
+
+			$whitelisted = !empty($whitelist) && (
+				in_array($alias . '.' . $field, $whitelist, true) ||
+				($object->alias === $alias && in_array($field, $whitelist, true))
+			);
+			$exists = empty($whitelist) && (
+				($object->alias === $alias && $object->hasField($field, true)) ||
+				(isset($object->{$alias}) && $object->{$alias}->hasField($field, true))
+			);
+			if ($whitelisted || $exists) {
+				$options['order'][$alias . '.' . $field] = $direction;
+			}
 		}
 
 		return $options;
