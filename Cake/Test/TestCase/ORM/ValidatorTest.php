@@ -69,4 +69,25 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($validationSet, $validator->field('thing'));
 	}
 
+/**
+ * Tests the remove method
+ *
+ * @return void
+ */
+	public function testRemove() {
+		$validator = new Validator;
+		$validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
+		$validator->add('title', 'foo', ['rule' => 'bar']);
+		$this->assertCount(2, $validator->field('title'));
+		$validator->remove('title');
+		$this->assertCount(0, $validator->field('title'));
+		$validator->remove('title');
+
+		$validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
+		$validator->add('title', 'foo', ['rule' => 'bar']);
+		$this->assertCount(2, $validator->field('title'));
+		$validator->remove('title', 'foo');
+		$this->assertCount(1, $validator->field('title'));
+		$this->assertNull($validator->field('title')->rule('foo'));
+	}
 }
