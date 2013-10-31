@@ -1554,4 +1554,67 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($entity, $table->save($entity));
 	}
 
+/**
+ * Test simple delete.
+ *
+ * @return void
+ */
+	public function testDelete() {
+		$this->markTestIncomplete('not done');
+	}
+
+/**
+ * Test delete with dependent records
+ *
+ * @return void
+ */
+	public function testDeleteDependent() {
+		$this->markTestIncomplete('not done');
+	}
+
+/**
+ * Test delete with BelongsToMany
+ *
+ * @return void
+ */
+	public function testDeleteBelongsToMany() {
+		$this->markTestIncomplete('not done');
+	}
+
+/**
+ * Test delete callbacks
+ *
+ * @return void
+ */
+	public function testDeleteCallbacks() {
+		$this->markTestIncomplete('not done');
+	}
+
+/**
+ * Test delete beforeDelete can abort the delete.
+ *
+ * @return void
+ */
+	public function testDeleteBeforeDeleteAbort() {
+		$this->markTestIncomplete('not done');
+	}
+
+/**
+ * Test delete beforeDelete return result
+ *
+ * @return void
+ */
+	public function testDeleteBeforeDeleteReturnResult() {
+		$this->markTestIncomplete('not done');
+	}
+
+/**
+ * Test deleting new entities does nothing.
+ *
+ * @return void
+ */
+	public function testDeleteIsNew() {
+		$this->markTestIncomplete('not done');
+	}
+
 }
