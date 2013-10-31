@@ -35,5 +35,12 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$set = $validator->field('title');
 		$this->assertInstanceOf('\Cake\ORM\Validation\ValidationSet', $set);
 		$this->assertCount(1, $set);
+
+		$validator->add('title', 'another', ['rule' => 'alphanumeric']);
+		$this->assertCount(2, $set);
+
+		$validator->add('body', 'another', ['rule' => 'crazy']);
+		$this->assertCount(1, $validator->field('body'));
+		$this->assertCount(2, $validator);
 	}
 }
