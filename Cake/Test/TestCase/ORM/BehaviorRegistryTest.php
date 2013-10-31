@@ -134,9 +134,15 @@ class BehaviorRegistryTest extends TestCase {
  * @return void
  */
 	public function testHasMethod() {
+		Plugin::load('TestPlugin');
+		$this->Behaviors->load('TestPlugin.PersisterOne');
 		$this->Behaviors->load('Sluggable');
+
 		$this->assertTrue($this->Behaviors->hasMethod('slugify'));
 		$this->assertTrue($this->Behaviors->hasMethod('SLUGIFY'));
+
+		$this->assertTrue($this->Behaviors->hasMethod('persist'));
+		$this->assertTrue($this->Behaviors->hasMethod('PERSIST'));
 
 		$this->assertFalse($this->Behaviors->hasMethod('__construct'));
 		$this->assertFalse($this->Behaviors->hasMethod('settings'));

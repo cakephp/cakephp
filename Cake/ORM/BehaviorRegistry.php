@@ -59,6 +59,16 @@ class BehaviorRegistry extends ObjectRegistry {
 	protected $_finderMap = [];
 
 /**
+ * Method cache for behaviors.
+ *
+ * Stores the reflected method + finder methods per class.
+ * This prevents reflecting the same class multiple times in a single process.
+ *
+ * @var array
+ */
+	protected static $_methodCache = [];
+
+/**
  * Constructor
  *
  * @param Cake\ORM\Table $table
@@ -113,26 +123,31 @@ class BehaviorRegistry extends ObjectRegistry {
 		if ($enable) {
 			$this->_eventManager->attach($instance);
 		}
-		$this->_mapMethods($instance, $class, $alias);
+		$methods = $this->_getMethods($instance, $class, $alias);
+		$this->_methodMap = array_merge($this->_methodMap, $methods['methods']);
+		$this->_finderMap = array_merge($this->_finderMap, $methods['finders']);
 		return $instance;
 	}
 
 /**
- * Store the map of behavior methods and ensure there are no duplicates.
+ * Get the behavior methods and ensure there are no duplicates.
  *
  * Use the implementedEvents() method to exclude callback methods.
- * In addition methods starting with `_` will be ignored, as will 
- * method declared on Cake\ORM\Behavior
+ * Methods starting with `_` will be ignored, as will methods 
+ * declared on Cake\ORM\Behavior
  *
  * @param Cake\ORM\Behavior $instance
  * @return void
  * @throws Cake\Error\Exception when duplicate methods are connected.
  */
-	protected function _mapMethods(Behavior $instance, $class, $alias) {
+	protected function _getMethods(Behavior $instance, $class, $alias) {
+		if (isset(static::$_methodCache[$class])) {
+			return static::$_methodCache[$class];
+		}
 		$events = $instance->implementedEvents();
+		$reflection = new \ReflectionClass($class);
 
-		$reflection = new \ReflectionClass($instance);
-		$eventMethods = [];
+		$eventMethods = $methodMap = $finderMap = [];
 		foreach ($events as $e => $binding) {
 			if (is_array($binding) && isset($binding['callable']) && isset($binding['callable'])) {
 				$binding = $binding['callable'];
@@ -152,23 +167,30 @@ class BehaviorRegistry extends ObjectRegistry {
 			$methodName = strtolower($methodName);
 
 			if (isset($this->_finderMap[$methodName]) || isset($this->_methodMap[$methodName])) {
+				if (isset($this->_finderMap[$methodName])) {
+					$duplicate = $this->_finderMap[$methodName];
+				} else {
+					$duplicate = $this->_methodMap[$methodName];
+				}
 				$error = __d(
 					'cake_dev',
-					'%s contains duplicate method "%s" which is already provided by %s',
+					'%s contains duplicate method "%s" which is already provided by "%s"',
 					$class,
 					$method->getName(),
-					$this->_methodMap[$methodName]
+					$duplicate
 				);
 				throw new Error\Exception($error);
 			}
 
 			$isFinder = substr($methodName, 0, 4) === 'find';
 			if ($isFinder) {
-				$this->_finderMap[$methodName] = $alias;
+				$finderMap[$methodName] = $alias;
 			} else {
-				$this->_methodMap[$methodName] = $alias;
+				$methodMap[$methodName] = $alias;
 			}
 		}
+		static::$_methodCache[$class] = ['methods' => $methodMap, 'finders' => $finderMap];
+		return static::$_methodCache[$class];
 	}
 
 /**
