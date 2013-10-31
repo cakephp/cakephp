@@ -73,11 +73,12 @@ class TaskRegistry extends ObjectRegistry {
  *
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
  *
- * @param string $class The classname that is missing.
+ * @param string $class The classname to create.
+ * @param string $alias The alias of the task.
  * @param array $settings An array of settings to use for the task.
  * @return Component The constructed task class.
  */
-	protected function _create($class, $settings) {
+	protected function _create($class, $alias, $settings) {
 		return new $class(
 			$this->_Shell->stdout,
 			$this->_Shell->stderr,

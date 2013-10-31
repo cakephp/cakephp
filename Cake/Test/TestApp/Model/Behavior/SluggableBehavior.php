@@ -1,11 +1,5 @@
 <?php
 /**
- * Behavior for binding management.
- *
- * Behavior to simplify manipulating a model's bindings when doing a find operation
- *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,11 +12,28 @@
  * @since         CakePHP(tm) v 1.2.0.5669
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+namespace TestApp\Model\Behavior;
 
-/**
- * Behavior to allow for dynamic and atomic manipulation of a Model's associations used for a find call. Most useful for limiting
- * the amount of associations and data returned.
- *
- */
-class PersisterOneBehaviorBehavior extends ModelBehavior {
+use Cake\Event\Event;
+use Cake\ORM\Behavior;
+use Cake\ORM\Query;
+use Cake\ORM\Table;
+use Cake\Utility\Inflector;
+
+class SluggableBehavior extends Behavior {
+
+	public function beforeFind(Event $event, Query $query, $options = []) {
+		$query->where(['slug' => 'test']);
+		return $query;
+	}
+
+	public function findNoSlug(Query $query, $options = []) {
+		$query->where(['slug' => null]);
+		return $query;
+	}
+
+	public function slugify($value) {
+		return Inflector::slug($value);
+	}
+
 }

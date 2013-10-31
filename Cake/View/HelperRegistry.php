@@ -133,11 +133,12 @@ class HelperRegistry extends ObjectRegistry {
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
  * Enabled helpers will be registered with the event manager.
  *
- * @param string $class The classname that is missing.
+ * @param string $class The class to create.
+ * @param string $alias The alias of the loaded helper.
  * @param array $settings An array of settings to use for the helper.
  * @return Component The constructed helper class.
  */
-	protected function _create($class, $settings) {
+	protected function _create($class, $alias, $settings) {
 		$instance = new $class($this->_View, $settings);
 		$vars = array('request', 'theme', 'plugin');
 		foreach ($vars as $var) {

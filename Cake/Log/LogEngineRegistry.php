@@ -58,12 +58,13 @@ class LogEngineRegistry extends ObjectRegistry {
  *
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
  * @param string|LogInterface $class The classname or object to make.
+ * @param string $alias The alias of the object.
  * @param array $settings An array of settings to use for the logger.
  * @return LogEngine The constructed logger class.
  * @throws Cake\Error\Exception when an object doesn't implement
  *    the correct interface.
  */
-	protected function _create($class, $settings) {
+	protected function _create($class, $alias, $settings) {
 		if (is_object($class)) {
 			$instance = $class;
 		}

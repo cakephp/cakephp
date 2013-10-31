@@ -66,10 +66,11 @@ class ConnectionRegistry extends ObjectRegistry {
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
  *
  * @param string|Driver $class The classname or object to make.
+ * @param string $alias The alias of the object.
  * @param array $settings An array of settings to use for the driver.
  * @return Connection A connection with the correct driver.
  */
-	protected function _create($class, $settings) {
+	protected function _create($class, $alias, $settings) {
 		if (is_object($class)) {
 			$instance = $class;
 		}
