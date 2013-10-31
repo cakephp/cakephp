@@ -83,7 +83,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param boolean|string $validatePresent Valid values are true, false, 'create', 'update'
  * @return boolean|string
  */
-	public function validatePresent($validatePresent = null) {
+	public function isPresenceRequired($validatePresent = null) {
 		if ($validatePresent === null) {
 			return $this->_validatePresent;
 		}

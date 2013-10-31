@@ -90,4 +90,25 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(1, $validator->field('title'));
 		$this->assertNull($validator->field('title')->rule('foo'));
 	}
+
+/**
+ * Tests the validatePresence method
+ *
+ * @return void
+ */
+	public function testValidatePresence() {
+		$validator = new Validator;
+		$this->assertSame($validator, $validator->validatePresence('title'));
+		$this->assertTrue($validator->field('title')->isPresenceRequired());
+
+		$validator->validatePresence('title', false);
+		$this->assertFalse($validator->field('title')->isPresenceRequired());
+
+		$validator->validatePresence('title', 'created');
+		$this->assertEquals('created', $validator->field('title')->isPresenceRequired());
+
+		$validator->validatePresence('title', 'updated');
+		$this->assertEquals('updated', $validator->field('title')->isPresenceRequired());
+	}
+
 }

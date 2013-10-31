@@ -255,4 +255,16 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 		}
 		return $this;
 	}
+
+/**
+ * Sets whether a field is required to be present in data array.
+ *
+ * @param string $field the name of the field 
+ * @param boolean|string $allowEmpty Valid values are true, false, 'create', 'update'
+ * @return Validator this instance
+ */
+	public function validatePresence($field, $type = true) {
+		$this->field($field)->isPresenceRequired($type);
+		return $this;
+	}
 }
