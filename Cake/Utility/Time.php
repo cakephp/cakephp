@@ -463,9 +463,12 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isToday
  */
 	public static function isToday($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$now = static::fromString('now', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', $now);
+		$dateTime = new \DateTime;
+		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
+			->format('Y-m-d');
+		$now = $dateTime->setTimestamp(static::fromString('now', $timezone))
+			->format('Y-m-d');
+		return $timestamp === $now;
 	}
 
 /**
@@ -503,9 +506,12 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isThisWeek
  */
 	public static function isThisWeek($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$now = static::fromString('now', $timezone);
-		return date('W o', $timestamp) == date('W o', $now);
+		$dateTime = new \DateTime;
+		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
+			->format('W o');
+		$now = $dateTime->setTimestamp(static::fromString('now', $timezone))
+			->format('W o');
+		return $timestamp === $now;
 	}
 
 /**
@@ -517,9 +523,12 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isThisMonth
  */
 	public static function isThisMonth($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$now = static::fromString('now', $timezone);
-		return date('m Y', $timestamp) == date('m Y', $now);
+		$dateTime = new \DateTime;
+		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
+			->format('m Y');
+		$now = $dateTime->setTimestamp(static::fromString('now', $timezone))
+			->format('m Y');
+		return $timestamp === $now;
 	}
 
 /**
@@ -531,9 +540,12 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isThisYear
  */
 	public static function isThisYear($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$now = static::fromString('now', $timezone);
-		return date('Y', $timestamp) == date('Y', $now);
+		$dateTime = new \DateTime;
+		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
+			->format('Y');
+		$now = $dateTime->setTimestamp(static::fromString('now', $timezone))
+			->format('Y');
+		return $timestamp === $now;
 	}
 
 /**
@@ -545,9 +557,12 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::wasYesterday
  */
 	public static function wasYesterday($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$yesterday = static::fromString('yesterday', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', $yesterday);
+		$dateTime = new \DateTime;
+		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
+			->format('Y-m-d');
+		$yesterday = $dateTime->setTimestamp(static::fromString('yesterday', $timezone))
+			->format('Y-m-d');
+		return $timestamp === $yesterday;
 	}
 
 /**
@@ -559,9 +574,12 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isTomorrow
  */
 	public static function isTomorrow($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$tomorrow = static::fromString('tomorrow', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', $tomorrow);
+		$dateTime = new \DateTime;
+		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
+			->format('Y-m-d');
+		$tomorrow = $dateTime->setTimestamp(static::fromString('tomorrow', $timezone))
+			->format('Y-m-d');
+		return $timestamp === $tomorrow;
 	}
 
 /**
