@@ -179,17 +179,6 @@ class ValidationRule {
 	}
 
 /**
- * Resets internal state for this rule, by default it will become valid
- * and it will set isUpdate() to false
- *
- * @return void
- */
-	public function reset() {
-		$this->_valid = true;
-		$this->_isUpdate = false;
-	}
-
-/**
  * Returns passed options for this rule
  *
  * @param string|integer $key Array index
