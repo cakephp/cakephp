@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Model\Validator;
+namespace Cake\ORM\Validation;
 
 /**
  * ValidationSet object. Holds all validation rules for a field and exposes
@@ -74,29 +74,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @var boolean|string
  */
 	protected $_allowEmpty = false;
-
-/**
- * Constructor
- *
- * @param string $fieldName The fieldname
- * @param array $ruleset
- */
-	public function __construct($fieldName, $ruleSet) {
-		$this->field = $fieldName;
-
-		if (!is_array($ruleSet) || (is_array($ruleSet) && isset($ruleSet['rule']))) {
-			$ruleSet = array($ruleSet);
-		}
-
-		foreach ($ruleSet as $index => $validateProp) {
-			if (in_array($index, array('_validatePresent', '_allowEmpty'), true)) {
-				$this->{$index} = $validateProp;
-			} else {
-				$this->_rules[$index] = new ValidationRule($validateProp);
-			}
-		}
-		$this->ruleSet = $ruleSet;
-	}
 
 /**
  * Sets whether a field is required to be present in data array.
@@ -242,7 +219,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param string $name
  * @return Cake\Model\Validator\ValidationRule
  */
-	public function getRule($name) {
+	public function rule($name) {
 		if (!empty($this->_rules[$name])) {
 			return $this->_rules[$name];
 		}
@@ -253,7 +230,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @return array
  */
-	public function getRules() {
+	public function rules() {
 		return $this->_rules;
 	}
 
@@ -272,7 +249,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param Cake\Model\Validator\ValidationRule|array $rule The validation rule to be set
  * @return Cake\Model\Validator\ValidationSet this instance
  */
-	public function setRule($name, $rule) {
+	public function add($name, $rule) {
 		if (!($rule instanceof ValidationRule)) {
 			$rule = new ValidationRule($rule);
 		}
@@ -287,41 +264,15 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * {{{
  *		$set
- *			->removeRule('notEmpty')
- *			->removeRule('inRange')
+ *			->remove('notEmpty')
+ *			->remove('inRange')
  * }}}
  *
  * @param string $name The name under which the rule should be unset
  * @return Cake\Model\Validator\ValidationSet this instance
  */
-	public function removeRule($name) {
+	public function remove($name) {
 		unset($this->_rules[$name]);
-		return $this;
-	}
-
-/**
- * Sets the rules for a given field
- *
- * ## Example:
- *
- * {{{
- *		$set->setRules(array(
- *			'notEmpty' => array('rule' => 'notEmpty'),
- *			'inRange' => array('rule' => array('between', 4, 10)
- * 		));
- * }}}
- *
- * @param array $rules The rules to be set
- * @param boolean $mergeVars [optional] If true, merges vars instead of replace. Defaults to true.
- * @return ModelField
- */
-	public function setRules($rules = array(), $mergeVars = true) {
-		if ($mergeVars === false) {
-			$this->_rules = array();
-		}
-		foreach ($rules as $name => $rule) {
-			$this->setRule($name, $rule);
-		}
 		return $this;
 	}
 

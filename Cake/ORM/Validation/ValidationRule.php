@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Model\Validator;
+namespace Cake\ORM\Validation;
 
 /**
  * ValidationRule object. Represents a validation method, error message and

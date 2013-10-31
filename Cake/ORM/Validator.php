@@ -17,7 +17,6 @@
 namespace Cake\ORM;
 
 use Cake\ORM\Validation\ValidationSet;
-use Cake\Utility\Hash;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
@@ -104,20 +103,20 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Returns a Cake ValidationSet object containing all validation rules for a field, if no
- * params are passed then it returns an array with all Cake ValidationSet objects for each field
+ * Returns a ValidationSet object containing all validation rules for a field, if
+ * passed a ValidationSet as second argument, it will replace any other rule set defined
+ * before
  *
- * @param string $name [optional] The fieldname to fetch. Defaults to null.
- * @return Cake\Model\Validator\ValidationSet|array
+ * @param string $name [optional] The fieldname to fetch.
+ * @param \Cake\ORM\Validation\ValidationSet $set The set of rules for field
+ * @return Cake\Model\Validator\ValidationSet
  */
-	public function getField($name = null) {
-		if ($name !== null) {
-			if (!empty($this->_fields[$name])) {
-				return $this->_fields[$name];
-			}
-			return null;
+	public function field($name, ValidationSet $set = null) {
+		if (empty($this->_fields[$name])) {
+			$set = $set ?: new ValidationSet;
+			$this->_fields[$name] = $set;
 		}
-		return $this->_fields;
+		return $this->_fields[$name];
 	}
 
 /**
@@ -148,7 +147,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @return Cake\Model\Validator\ValidationSet
  */
 	public function offsetGet($field) {
-		return $this->_fields[$field];
+		return $this->field($field);
 	}
 
 /**
@@ -196,15 +195,15 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Adds a new rule to a field's rule set. If second argumet is an array or instance of
- * Cake\Model\Validator\ValidationSet then rules list for the field will be replaced with second argument and
+ * Adds a new rule to a field's rule set. If second argument is an array
+ * then rules list for the field will be replaced with second argument and
  * third argument will be ignored.
  *
  * ## Example:
  *
  * {{{
  *		$validator
- *			->add('title', 'required', array('rule' => 'notEmpty', 'required' => true))
+ *			->add('title', 'required', array('rule' => 'notEmpty'))
  *			->add('user_id', 'valid', array('rule' => 'numeric', 'message' => 'Invalid User'))
  *
  *		$validator->add('password', array(
@@ -214,29 +213,21 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * }}}
  *
  * @param string $field The name of the field from wich the rule will be removed
- * @param string|array|Cake\Model\Validator\ValidationSet $name name of the rule to be added or list of rules for the field
- * @param array|Cake\Model\Validator\ValidationRule $rule or list of rules to be added to the field's rule set
- * @return ModelValidator this instance
+ * @param array|string $name The alias for a single rule or multiple rules array
+ * @param array|Cake\ORM\Validation\ValidationRule $rule the rule to add
+ * @return Validator this instance
  */
-	public function add($field, $name, $rule = null) {
-		if ($name instanceof ValidationSet) {
-			$this->_fields[$field] = $name;
-			return $this;
+	public function add($field, $name, $rule = []) {
+		$rules = $rule;
+		$field = $this->field($field);
+
+		if (!is_array($name)) {
+			$rules = [$name => $rule];
 		}
 
-		if (!isset($this->_fields[$field])) {
-			$rule = (is_string($name)) ? array($name => $rule) : $name;
-			$this->_fields[$field] = new ValidationSet($field, $rule);
-		} else {
-			if (is_string($name)) {
-				$this->_fields[$field]->setRule($name, $rule);
-			} else {
-				$this->_fields[$field]->setRules($name);
-			}
+		foreach ($rules as $name => $rule) {
+			$field->add($name, $rule);
 		}
-
-		$methods = $this->getMethods();
-		$this->_fields[$field]->setMethods($methods);
 
 		return $this;
 	}
@@ -254,13 +245,13 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field The name of the field from which the rule will be removed
  * @param string $rule the name of the rule to be removed
- * @return ModelValidator this instance
+ * @return Validator this instance
  */
 	public function remove($field, $rule = null) {
 		if ($rule === null) {
 			unset($this->_fields[$field]);
 		} else {
-			$this->_fields[$field]->removeRule($rule);
+			$this->field($field)->remove($rule);
 		}
 		return $this;
 	}
