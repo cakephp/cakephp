@@ -208,7 +208,7 @@ class HashTest extends CakeTestCase {
 		$default = array('empty');
 		$this->assertEquals($default, Hash::get($data, '5.Article.title', $default));
 		$this->assertEquals($default, Hash::get(array(), '5.Article.title', $default));
-		
+
 		$result = Hash::get($data, '1.Article.title.not_there');
 		$this->assertNull($result);
 
