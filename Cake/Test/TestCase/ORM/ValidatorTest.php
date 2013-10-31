@@ -16,6 +16,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use \Cake\ORM\Validation\ValidationSet;
 use \Cake\ORM\Validator;
 
 /**
@@ -43,4 +44,29 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(1, $validator->field('body'));
 		$this->assertCount(2, $validator);
 	}
+
+/**
+ * Tests that calling field will create a default validation set for it
+ *
+ * @return void
+ */
+	public function testFieldDefault() {
+		$validator = new Validator;
+		$field = $validator->field('foo');
+		$this->assertInstanceOf('\Cake\ORM\Validation\ValidationSet', $field);
+		$this->assertCount(0, $field);
+	}
+
+/**
+ * Tests that field method can be used as a setter
+ *
+ * @return void
+ */
+	public function testFieldSetter() {
+		$validator = new Validator;
+		$validationSet = new ValidationSet;
+		$validator->field('thing', $validationSet);
+		$this->assertSame($validationSet, $validator->field('thing'));
+	}
+
 }
