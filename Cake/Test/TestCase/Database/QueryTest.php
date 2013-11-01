@@ -95,7 +95,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(array('body' => 'Second Article Body', 'author_id' => 3, 'name' => 'nate'), $result->fetch('assoc'));
 		$this->assertEquals(array('body' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'), $result->fetch('assoc'));
 
-		//Overwrite tables and only fetch from authors
+		// Overwrite tables and only fetch from authors
 		$result = $query->select('name', true)->from('authors', true)->order(['name' => 'desc'], true)->execute();
 		$this->assertEquals(array('nate'), $result->fetch());
 		$this->assertEquals(array('mariano'), $result->fetch());
@@ -134,6 +134,20 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Test that table aliases are quoted.
+ *
+ * @return void
+ */
+	public function testSelectAliasTablesAreQuoted() {
+		$query = new Query($this->connection);
+		$query = $query->select(['text' => 'a.body', 'a.author_id'])
+			->from(['a' => 'articles']);
+
+		$sql = $query->sql();
+		$this->assertRegExp('/articles AS [`"]a[`"]/', $sql);
+	}
+
+/**
  * Tests that tables can also be aliased and referenced in the select clause using such alias
  *
  * @return void
@@ -142,6 +156,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query->select(['text' => 'a.body', 'a.author_id'])
 			->from(['a' => 'articles'])->execute();
+
 		$this->assertEquals(['text' => 'First Article Body', 'author_id' => 1], $result->fetch('assoc'));
 		$this->assertEquals(['text' => 'Second Article Body', 'author_id' => 3], $result->fetch('assoc'));
 

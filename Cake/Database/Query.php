@@ -511,10 +511,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _buildFromPart($parts, $generator) {
 		$select = ' FROM %s';
 		$normalized = [];
+		$driver = $this->connection()->driver();
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
-				$p = $p . ' ' . $k;
+				$p = $p . ' AS ' . $driver->quoteIdentifier($k);
 			}
 			$normalized[] = $p;
 		}
