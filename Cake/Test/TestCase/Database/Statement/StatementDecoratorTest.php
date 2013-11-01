@@ -53,6 +53,8 @@ class StatemetDecoratorTest extends TestCase {
 		$driver = $this->getMock('\Cake\Database\Driver');
 		$statement = new StatementDecorator($internal, $driver);
 
+		$internal->expects($this->once())->method('columnCount')
+			->will($this->returnValue(1));
 		$internal->expects($this->once())->method('fetch')
 			->with('assoc')
 			->will($this->returnValue(['id' => 2]));
