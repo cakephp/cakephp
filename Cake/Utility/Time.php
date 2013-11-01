@@ -463,12 +463,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isToday
  */
 	public static function isToday($dateString, $timezone = null) {
-		$dateTime = new \DateTime;
-		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format('Y-m-d');
-		$now = $dateTime->setTimestamp(static::fromString('now', $timezone))
-			->format('Y-m-d');
-		return $timestamp === $now;
+		return static::_evaluateConstraint($dateString, $timezone, 'now', 'Y-m-d');
 	}
 
 /**
@@ -506,12 +501,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isThisWeek
  */
 	public static function isThisWeek($dateString, $timezone = null) {
-		$dateTime = new \DateTime;
-		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format('W o');
-		$now = $dateTime->setTimestamp(static::fromString('now', $timezone))
-			->format('W o');
-		return $timestamp === $now;
+		return static::_evaluateConstraint($dateString, $timezone, 'now', 'W o');
 	}
 
 /**
@@ -523,12 +513,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isThisMonth
  */
 	public static function isThisMonth($dateString, $timezone = null) {
-		$dateTime = new \DateTime;
-		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format('m Y');
-		$now = $dateTime->setTimestamp(static::fromString('now', $timezone))
-			->format('m Y');
-		return $timestamp === $now;
+		return static::_evaluateConstraint($dateString, $timezone, 'now', 'm Y');
 	}
 
 /**
@@ -540,12 +525,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isThisYear
  */
 	public static function isThisYear($dateString, $timezone = null) {
-		$dateTime = new \DateTime;
-		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format('Y');
-		$now = $dateTime->setTimestamp(static::fromString('now', $timezone))
-			->format('Y');
-		return $timestamp === $now;
+		return static::_evaluateConstraint($dateString, $timezone, 'now', 'Y');
 	}
 
 /**
@@ -557,12 +537,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::wasYesterday
  */
 	public static function wasYesterday($dateString, $timezone = null) {
-		$dateTime = new \DateTime;
-		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format('Y-m-d');
-		$yesterday = $dateTime->setTimestamp(static::fromString('yesterday', $timezone))
-			->format('Y-m-d');
-		return $timestamp === $yesterday;
+		return static::_evaluateConstraint($dateString, $timezone, 'yesterday', 'Y-m-d');
 	}
 
 /**
@@ -574,12 +549,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isTomorrow
  */
 	public static function isTomorrow($dateString, $timezone = null) {
-		$dateTime = new \DateTime;
-		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format('Y-m-d');
-		$tomorrow = $dateTime->setTimestamp(static::fromString('tomorrow', $timezone))
-			->format('Y-m-d');
-		return $timestamp === $tomorrow;
+		return static::_evaluateConstraint($dateString, $timezone, 'tomorrow', 'Y-m-d');
 	}
 
 /**
@@ -1133,6 +1103,24 @@ class Time {
 			$format = utf8_encode($format);
 		}
 		return $format;
+	}
+
+/**
+ * Evaluates if the provided date and time is within a time constraint.
+ *
+ * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
+ * @param string $anchor The relative date and time to compare against
+ * @param string $format The date and time format used for comparison
+ * @return boolean True if datetime string is within the constraint
+ */
+	protected static function _evaluateConstraint($dateString, $timezone = null, $anchor, $format) {
+		$dateTime = new \DateTime;
+		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
+			->format($format);
+		$now = $dateTime->setTimestamp(static::fromString($anchor, $timezone))
+			->format($format);
+		return $timestamp === $now;
 	}
 
 }
