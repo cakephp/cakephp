@@ -273,7 +273,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  */
 	public function lastInsertId($table = null, $column = null) {
 		$row = null;
-		if ($column) {
+		if ($column && $this->columnCount()) {
 			$row = $this->fetch('assoc');
 		}
 		if ($column && $row) {
