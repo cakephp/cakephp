@@ -1483,9 +1483,6 @@ class ViewTest extends TestCase {
  */
 	public function testStartBlocksTwice() {
 		$this->View->start('first');
-		echo 'In first ';
-		$this->View->start('second');
-		echo 'In second';
 		$this->View->start('first');
 	}
 
