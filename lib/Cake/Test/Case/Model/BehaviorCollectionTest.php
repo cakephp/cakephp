@@ -21,6 +21,7 @@
  */
 
 App::uses('AppModel', 'Model');
+
 require_once dirname(__FILE__) . DS . 'models.php';
 
 /**

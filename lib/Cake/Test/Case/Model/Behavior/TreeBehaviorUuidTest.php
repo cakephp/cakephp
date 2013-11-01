@@ -23,6 +23,7 @@
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
 App::uses('String', 'Utility');
+
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
 /**
