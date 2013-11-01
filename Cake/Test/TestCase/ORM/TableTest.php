@@ -951,7 +951,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testExists() {
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$this->assertTrue($table->exists(['id' => 1]));
 		$this->assertFalse($table->exists(['id' => 501]));
 		$this->assertTrue($table->exists(['id' => 3, 'username' => 'larry']));
@@ -1027,7 +1027,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals($entity->id, self::$nextUserId);
 
@@ -1050,7 +1050,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00'),
 		]);
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals($entity->id, self::$nextUserId);
 
@@ -1073,7 +1073,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$fieldList = ['fieldList' => ['username', 'created', 'updated']];
 		$this->assertSame($entity, $table->save($entity, $fieldList));
 		$this->assertEquals($entity->id, self::$nextUserId);
@@ -1090,7 +1090,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testBeforeSaveModifyData() {
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'created' => new \DateTime('2013-10-10 00:00'),
@@ -1114,7 +1114,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testBeforeSaveModifyOptions() {
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'password' => 'foo',
@@ -1146,7 +1146,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testBeforeSaveStopEvent() {
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'created' => new \DateTime('2013-10-10 00:00'),
@@ -1170,7 +1170,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAfterSave() {
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'created' => new \DateTime('2013-10-10 00:00'),
@@ -1377,7 +1377,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity->dirty('created', true);
 		$entity->dirty('updated', true);
 
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals($entity->id, self::$nextUserId);
 
@@ -1399,7 +1399,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertFalse($entity->dirty('usermane'));
 		$this->assertFalse($entity->dirty('password'));
@@ -1420,7 +1420,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertFalse($entity->isNew());
 	}
@@ -1437,7 +1437,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'id' => 2,
 			'username' => 'baggins'
 		]);
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$original = $table->find('all')->where(['id' => 2])->first();
 		$this->assertSame($entity, $table->save($entity));
 
