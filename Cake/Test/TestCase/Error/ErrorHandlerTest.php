@@ -64,6 +64,7 @@ class ErrorHandlerTest extends TestCase {
 		Log::drop('error_test');
 		if ($this->_restoreError) {
 			restore_error_handler();
+			restore_exception_handler();
 		}
 	}
 
