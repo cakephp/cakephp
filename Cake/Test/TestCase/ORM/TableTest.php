@@ -951,7 +951,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testExists() {
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$this->assertTrue($table->exists(['id' => 1]));
 		$this->assertFalse($table->exists(['id' => 501]));
 		$this->assertTrue($table->exists(['id' => 3, 'username' => 'larry']));
@@ -1026,7 +1026,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals($entity->id, self::$nextUserId);
 
@@ -1048,7 +1048,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00'),
 		]);
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals($entity->id, self::$nextUserId);
 
@@ -1070,7 +1070,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$fieldList = ['fieldList' => ['username', 'created', 'updated']];
 		$this->assertSame($entity, $table->save($entity, $fieldList));
 		$this->assertEquals($entity->id, self::$nextUserId);
@@ -1086,7 +1086,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testBeforeSaveModifyData() {
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'created' => new \DateTime('2013-10-10 00:00'),
@@ -1109,7 +1109,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testBeforeSaveModifyOptions() {
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'password' => 'foo',
@@ -1140,7 +1140,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testBeforeSaveStopEvent() {
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'created' => new \DateTime('2013-10-10 00:00'),
@@ -1163,7 +1163,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAfterSave() {
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$data = new \Cake\ORM\Entity([
 			'username' => 'superuser',
 			'created' => new \DateTime('2013-10-10 00:00'),
@@ -1190,7 +1190,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['_buildQuery', 'exists'],
-			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
@@ -1229,12 +1229,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testAtomicSave() {
+		$config = ConnectionManager::config('test');
+
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['begin', 'commit'],
-			[ConnectionManager::config('test')]
+			[$config]
 		);
-		$connection->driver(ConnectionManager::get('test')->driver());
+		$connection->driver($this->connection->driver());
+
 		$table = $this->getMock('\Cake\ORM\Table', ['connection'], [['table' => 'users']]);
 		$table->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
@@ -1361,7 +1364,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity->dirty('created', true);
 		$entity->dirty('updated', true);
 
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertEquals($entity->id, self::$nextUserId);
 
@@ -1382,7 +1385,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertFalse($entity->dirty('usermane'));
 		$this->assertFalse($entity->dirty('password'));
@@ -1402,7 +1405,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'created' => new \DateTime('2013-10-10 00:00'),
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertFalse($entity->isNew());
 	}
@@ -1418,9 +1421,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'id' => 2,
 			'username' => 'baggins'
 		]);
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('user');
 		$original = $table->find('all')->where(['id' => 2])->first();
 		$this->assertSame($entity, $table->save($entity));
+
 		$row = $table->find('all')->where(['id' => 2])->first();
 		$this->assertEquals('baggins', $row->username);
 		$this->assertEquals($original->password, $row->password);
@@ -1462,7 +1466,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['_buildQuery'],
-			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
 
 		$query = $this->getMock(
@@ -1502,7 +1506,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['_buildQuery'],
-			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$table->expects($this->never())->method('_buildQuery');
 		$entity = new \Cake\ORM\Entity([
@@ -1521,7 +1525,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['_buildQuery'],
-			[['table' => 'users', 'connection' => ConnectionManager::get('test')]]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$table->expects($this->never())->method('_buildQuery');
 		$entity = new \Cake\ORM\Entity([
