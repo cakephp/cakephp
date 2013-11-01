@@ -829,6 +829,7 @@ class QueryTest extends TestCase {
 		$this->assertSame($query, $result, 'Query should be the same');
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\ORM\BufferedResultSet', $result);
+		$result->toArray();
 	}
 
 /**
@@ -992,7 +993,7 @@ class QueryTest extends TestCase {
 		$params = [$this->connection, $this->table];
 		$query = $this->getMock('\Cake\ORM\Query', ['executeStatement'], $params);
 
-		$statement = $this->getMock('\Database\StatementInterface', ['fetch']);
+		$statement = $this->getMock('\Database\StatementInterface', ['fetch', 'closeCursor']);
 		$statement->expects($this->exactly(3))
 			->method('fetch')
 			->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));

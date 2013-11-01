@@ -613,11 +613,8 @@ class Query extends DatabaseQuery {
 		}
 		$this->bufferResults();
 		$this->_results = $this->execute();
-		// Calls foreach so we cursor is rewound automatically
-		foreach ($this->_results as $row) {
-			// Just get the first result from the iterator
-			return $row;
-		}
+		return $this->_results->one();
+
 	}
 
 	public function hydrate($enable = null) {

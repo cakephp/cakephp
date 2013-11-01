@@ -697,7 +697,9 @@ class Table {
 			->set($fields)
 			->where($conditions);
 		$statement = $query->executeStatement();
-		return $statement->rowCount() > 0;
+		$success = $statement->rowCount() > 0;
+		$statement->closeCursor();
+		return $success;
 	}
 
 /**
@@ -720,7 +722,9 @@ class Table {
 		$query->delete($this->table())
 			->where($conditions);
 		$statement = $query->executeStatement();
-		return $statement->rowCount() > 0;
+		$success = $statement->rowCount() > 0;
+		$statement->closeCursor();
+		return $success;
 	}
 
 /**
@@ -785,7 +789,7 @@ class Table {
 				return $this->_processSave($entity, $options);
 			});
 		} else {
-			$success = $this->_processSave($entity, $data, $options);
+			$success = $this->_processSave($entity, $options);
 		}
 
 		return $success;
@@ -855,6 +859,7 @@ class Table {
 			$entity->clean();
 			$success = $entity;
 		}
+		$statement->closeCursor();
 		return $success;
 	}
 
@@ -890,6 +895,7 @@ class Table {
 			$entity->clean();
 			$success = $entity;
 		}
+		$statement->closeCursor();
 		return $success;
 	}
 

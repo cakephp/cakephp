@@ -181,7 +181,29 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
  */
 	public function valid() {
 		$this->_current = $this->_fetchResult();
-		return $this->_current !== false;
+		$valid = $this->_current !== false;
+
+		if (!$valid && $this->_statement) {
+			$this->_statement->closeCursor();
+		}
+
+		return $valid;
+	}
+
+/**
+ * Returns the first result in this set and blocks the set so that no other
+ * results can be fetched
+ *
+ * @return array|object
+ */
+	public function one() {
+		if ($this->valid()) {
+			if ($this->_statement) {
+				$this->_statement->closeCursor();
+			}
+			return $this->_current;
+		}
+		return null;
 	}
 
 /**

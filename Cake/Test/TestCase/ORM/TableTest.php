@@ -1017,6 +1017,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that it is possible to insert a new row using the save method
  *
+ * @group save
  * @return void
  */
 	public function testSaveNewEntity() {
@@ -1038,6 +1039,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that saving an entity will filter out properties that
  * are not present in the table schema when saving
  *
+ * @group save
  * @return void
  */
 	public function testSaveEntityOnlySchemaFields() {
@@ -1061,6 +1063,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests saving only a few fields in an entity when an fieldList
  * is passed to save
  *
+ * @group save
  * @return void
  */
 	public function testSaveWithFieldList() {
@@ -1083,6 +1086,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that it is possible to modify data from the beforeSave callback
  *
+ * @group save
  * @return void
  */
 	public function testBeforeSaveModifyData() {
@@ -1106,6 +1110,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that it is possible to modify the options array in beforeSave
  *
+ * @group save
  * @return void
  */
 	public function testBeforeSaveModifyOptions() {
@@ -1137,6 +1142,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that it is possible to stop the saving altogether, without implying
  * the save operation failed
  *
+ * @group save
  * @return void
  */
 	public function testBeforeSaveStopEvent() {
@@ -1160,6 +1166,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Asserts that afterSave callback is called on successful save
  *
+ * @group save
  * @return void
  */
 	public function testAfterSave() {
@@ -1184,10 +1191,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Asserts that afterSave callback not is called on unsuccessful save
  *
+ * @group save
  * @return void
  */
 	public function testAfterSaveNotCalled() {
-		$this->markTestIncomplete('This test causes errors with Sqlite');
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['_buildQuery', 'exists'],
@@ -1213,7 +1220,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('executeStatement')
 			->will($this->returnValue($statement));
 
-		$statement->expects($this->once())->method('rowCount')->will($this->returnValue(0));
+		$statement->expects($this->once())->method('rowCount')
+			->will($this->returnValue(0));
 
 		$called = false;
 		$listener = function($e, $entity, $options) use ($data, &$called) {
@@ -1227,6 +1235,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that save is wrapped around a transaction
  *
+ * @group save
  * @return void
  */
 	public function testAtomicSave() {
@@ -1256,6 +1265,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that save will rollback the transaction in the case of an exception
  *
+ * @group save
  * @expectedException \PDOException
  * @return void
  */
@@ -1302,6 +1312,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that save will rollback the transaction in the case of an exception
  *
+ * @group save
  * @return void
  */
 	public function testAtomicSaveRollbackOnFailure() {
@@ -1351,6 +1362,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that only the properties marked as dirty are actually saved
  * to the database
  *
+ * @group save
  * @return void
  */
 	public function testSaveOnlyDirtyProperties() {
@@ -1377,6 +1389,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that a recently saved entity is marked as clean
  *
+ * @group save
  * @return void
  */
 	public function testsASavedEntityIsClean() {
@@ -1397,6 +1410,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that a recently saved entity is marked as not new
  *
+ * @group save
  * @return void
  */
 	public function testsASavedEntityIsNotNew() {
@@ -1415,6 +1429,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that save can detect automatically if it needs to insert
  * or update a row
  *
+ * @group save
  * @return void
  */
 	public function testSaveUpdateAuto() {
@@ -1440,6 +1455,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that marking an entity as already persisted will prevent the save
  * method from trying to infer the entity's actual status.
  *
+ * @group save
  * @return void
  */
 	public function testSaveUpdateWithHint() {
@@ -1461,6 +1477,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that when updating the primary key is not passed to the list of
  * attributes to change
  *
+ * @group save
  * @return void
  */
 	public function testSaveUpdatePrimaryKeyNotModified() {
@@ -1501,6 +1518,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that passing only the primary key to save will not execute any queries
  * but still return success
  *
+ * @group save
  * @return void
  */
 	public function testUpdateNoChange() {
@@ -1519,11 +1537,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Tests that failing to pass a primary key to save will result in exception
  *
+ * @group save
  * @expectedException \InvalidArgumentException
  * @return void
  */
 	public function testUpdateNoPrimaryButOtherKeys() {
-		$this->markTestIncomplete('This test causes errors with Sqlite');
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
 			['_buildQuery'],

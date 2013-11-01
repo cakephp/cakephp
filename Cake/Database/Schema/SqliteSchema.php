@@ -150,6 +150,7 @@ class SqliteSchema extends BaseSchema {
 		foreach ($statement->fetchAll('assoc') as $column) {
 			$columns[] = $column['name'];
 		}
+		$statement->closeCursor();
 		if ($row['unique']) {
 			$table->addConstraint($row['name'], [
 				'type' => Table::CONSTRAINT_UNIQUE,

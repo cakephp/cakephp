@@ -55,6 +55,7 @@ class BufferedStatement extends StatementDecorator {
 		if ($record === false) {
 			$this->_allFetched = true;
 			$this->_counter = $this->_count + 1;
+			$this->_statement->closeCursor();
 			return false;
 		}
 
@@ -70,6 +71,7 @@ class BufferedStatement extends StatementDecorator {
 		$this->_records = parent::fetchAll($type);
 		$this->_count = count($this->_records);
 		$this->_allFetched = true;
+		$this->_statement->closeCursor();
 		return $this->_records;
 	}
 

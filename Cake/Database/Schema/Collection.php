@@ -64,6 +64,7 @@ class Collection {
 		while ($row = $statement->fetch()) {
 			$result[] = $row[0];
 		}
+		$statement->closeCursor();
 		return $result;
 	}
 
@@ -82,23 +83,27 @@ class Collection {
 		if (count($statement) === 0) {
 			throw new Exception(__d('cake_dev', 'Cannot describe %s. It has 0 columns.', $name));
 		}
+		$statement->closeCursor();
 
 		$table = new Table($name);
 		foreach ($statement->fetchAll('assoc') as $row) {
 			$this->_dialect->convertFieldDescription($table, $row);
 		}
+		$statement->closeCursor();
 
 		list($sql, $params) = $this->_dialect->describeIndexSql($name, $config);
 		$statement = $this->_executeSql($sql, $params);
 		foreach ($statement->fetchAll('assoc') as $row) {
 			$this->_dialect->convertIndexDescription($table, $row);
 		}
+		$statement->closeCursor();
 
 		list($sql, $params) = $this->_dialect->describeForeignKeySql($name, $config);
 		$statement = $this->_executeSql($sql, $params);
 		foreach ($statement->fetchAll('assoc') as $row) {
 			$this->_dialect->convertForeignKeyDescription($table, $row);
 		}
+		$statement->closeCursor();
 		return $table;
 	}
 

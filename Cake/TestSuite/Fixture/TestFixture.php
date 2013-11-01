@@ -226,7 +226,7 @@ class TestFixture {
 		try {
 			$queries = $this->_schema->createSql($db);
 			foreach ($queries as $query) {
-				$db->execute($query);
+				$db->execute($query)->closeCursor();
 			}
 			$this->created[] = $db->configName();
 		} catch (\Exception $e) {
@@ -256,7 +256,7 @@ class TestFixture {
 		try {
 			$sql = $this->_schema->dropSql($db);
 			foreach ($sql as $stmt) {
-				$db->execute($stmt);
+				$db->execute($stmt)->closeCursor();
 			}
 			$this->created = array_diff($this->created, [$db->configName()]);
 		} catch (\Exception $e) {
@@ -281,7 +281,9 @@ class TestFixture {
 			foreach ($values as $row) {
 				$query->values($row);
 			}
-			return $query->execute();
+			$statement = $query->execute();
+			$statement->closeCursor();
+			return $statement;
 		}
 
 		return true;
@@ -318,7 +320,7 @@ class TestFixture {
 	public function truncate(Connection $db) {
 		$sql = $this->_schema->truncateSql($db);
 		foreach ($sql as $stmt) {
-			$db->execute($stmt);
+			$db->execute($stmt)->closeCursor();
 		}
 		return true;
 	}

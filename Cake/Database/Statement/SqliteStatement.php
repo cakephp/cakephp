@@ -31,7 +31,9 @@ class SqliteStatement extends BufferedStatement {
 		if (preg_match('/^(?:DELETE|UPDATE|INSERT)/i', $this->_statement->queryString)) {
 			$changes = $this->_driver->prepare('SELECT CHANGES()');
 			$changes->execute();
-			return $changes->fetch()[0];
+			$count = $changes->fetch()[0];
+			$changes->closeCursor();
+			return $count;
 		}
 		return parent::rowCount();
 	}

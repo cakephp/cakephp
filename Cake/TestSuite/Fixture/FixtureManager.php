@@ -80,7 +80,7 @@ class FixtureManager {
 /**
  * Add aliaes for all non test prefixed connections.
  *
- * This allows models to use the test connections without 
+ * This allows models to use the test connections without
  * a pile of configuration work.
  *
  * @return void
@@ -221,12 +221,12 @@ class FixtureManager {
 		try {
 			foreach ($dbs as $db => $fixtures) {
 				$db = ConnectionManager::get($fixture->connection, false);
-				$db->begin();
-				foreach ($fixtures as $fixture) {
-					$this->_setupTable($fixture, $db, $test->dropTables);
-					$fixture->insert($db);
-				}
-				$db->commit();
+				$db->transactional(function($db) use ($fixtures, $test) {
+					foreach ($fixtures as $fixture) {
+						$this->_setupTable($fixture, $db, $test->dropTables);
+						$fixture->insert($db);
+					}
+				});
 			}
 		} catch (\PDOException $e) {
 			$msg = __d('cake_dev', 'Unable to insert fixtures for "%s" test case. %s', get_class($test), $e->getMessage());
