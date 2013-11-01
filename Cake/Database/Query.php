@@ -1651,7 +1651,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		if ($transformed !== $this) {
 			$this->_transformedQuery = $transformed;
-			
 		}
 
 		return $transformed;
