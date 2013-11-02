@@ -170,7 +170,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('andWhere')
-			->with(['Article.author_id in' => $keys])
+			->with(['Article.author_id IN' => $keys])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('order')
@@ -215,7 +215,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('andWhere')
-			->with(['Article.author_id in' => $keys])
+			->with(['Article.author_id IN' => $keys])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('order')
@@ -318,7 +318,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->select('Article.author_id', true)
 			->join($joins, [], true);
 		$query->expects($this->once())->method('andWhere')
-			->with(['Article.author_id in' => $expected])
+			->with(['Article.author_id IN' => $expected])
 			->will($this->returnValue($query));
 
 		$callable = $association->eagerLoader([
