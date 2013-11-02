@@ -1599,7 +1599,28 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				'author_id' => $entity->id
 			]
 		]);
-		$this->assertNull($query->execute()->one());
+		$this->assertNull($query->execute()->one(), 'Should not find any rows.');
+	}
+
+/**
+ * Test delete with dependent records and cascade = false
+ *
+ * @return void
+ */
+	public function testDeleteDependentCascadeFalse() {
+		$table = TableRegistry::get('author');
+		$table->hasOne('article', [
+			'foreignKey' => 'author_id',
+			'dependent' => true,
+		]);
+
+		$query = $table->find('all')->where(['id' => 1]);
+		$entity = $query->first();
+		$result = $table->delete($entity, ['cascade' => false]);
+
+		$articles = $table->association('article')->target();
+		$query = $articles->find('all')->where(['author_id' => $entity->id]);
+		$this->assertCount(2, $query->execute(), 'Should find rows.');
 	}
 
 /**
@@ -1608,7 +1629,38 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteBelongsToMany() {
-		$this->markTestIncomplete('not done');
+		$table = TableRegistry::get('article');
+		$table->belongsToMany('tag', [
+			'foreignKey' => 'article_id',
+			'joinTable' => 'articles_tags'
+		]);
+		$query = $table->find('all')->where(['id' => 1]);
+		$entity = $query->first();
+		$table->delete($entity);
+
+		$pivot = $table->association('tag')->pivot();
+		$query = $pivot->find('all')->where(['article_id' => 1]);
+		$this->assertNull($query->execute()->one(), 'Should not find any rows.');
+	}
+
+/**
+ * Test delete with belongsToMany and cascade = false
+ *
+ * @return void
+ */
+	public function testDeleteCascadeFalseBelongsToMany() {
+		$table = TableRegistry::get('article');
+		$table->belongsToMany('tag', [
+			'foreignKey' => 'article_id',
+			'joinTable' => 'articles_tags'
+		]);
+		$query = $table->find('all')->where(['id' => 1]);
+		$entity = $query->first();
+		$table->delete($entity, ['cascade' => false]);
+
+		$pivot = $table->association('tag')->pivot();
+		$query = $pivot->find('all')->where(['article_id' => 1]);
+		$this->assertCount(2, $query->execute(), 'Should find rows.');
 	}
 
 /**

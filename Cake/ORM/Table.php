@@ -460,6 +460,8 @@ class Table {
  * - targetTable: An instance of a table object to be used as the target table
  * - foreignKey: The name of the field to use as foreign key, if false none
  *   will be used
+ * - dependent: Set to true if you want CakePHP to cascade deletes to the
+ *   associated table when an entity is removed on this table.
  * - conditions: array with a list of conditions to filter the join with
  * - joinType: The type of join to be used (e.g. LEFT)
  *
@@ -490,6 +492,8 @@ class Table {
  * - targetTable: An instance of a table object to be used as the target table
  * - foreignKey: The name of the field to use as foreign key, if false none
  *   will be used
+ * - dependent: Set to true if you want CakePHP to cascade deletes to the
+ *   associated table when an entity is removed on this table.
  * - conditions: array with a list of conditions to filter the join with
  * - sort: The order in which results for this association should be returned
  * - strategy: The strategy to be used for selecting results Either 'select'
@@ -716,6 +720,7 @@ class Table {
  *
  * @param array $conditions An array of conditions, similar to those used with find()
  * @return boolean Success Returns true if one or more rows are effected.
+ * @see Cake\ORM\Table::delete()
  */
 	public function deleteAll($conditions) {
 		$query = $this->_buildQuery();
@@ -939,23 +944,11 @@ class Table {
 			return $this->_processDelete($entity, $options);
 		};
 
-		if ($options['atomic']) {
-			$success = $this->connection()->transactional($process);
-		} else {
-			$success = $process();
-		}
+		$success = $options['atomic'] ? $this->connection()->transactional($process) : $process();
+
 		if (!$success) {
 			return $success;
 		}
-		foreach ($this->_associations as $assoc) {
-			if ($assoc->dependent()) {
-				$this->_deleteDependent($assoc, $entity);
-			}
-			if ($assoc instanceof BelongsToMany) {
-				// TODO finish
-			}
-		}
-
 		$event = new Event('Model.afterDelete', $this, [
 			'entity' => $entity,
 			'options' => $options
@@ -966,6 +959,12 @@ class Table {
 
 /**
  * Perform the delete operation.
+ *
+ * Will delete the entity provided. Will remove rows from any
+ * dependent associations, and clear out join tables for BelongsToMany associations.
+ *
+ * Setting $options['cascade'] = false will prevent associated data including
+ * join tables from being cleared.
  *
  * @param Entity $entity The entity to delete.
  * @param array $options The options for the delete.
@@ -983,7 +982,21 @@ class Table {
 			->where($conditions)
 			->executeStatement();
 
-		return $statement->rowCount() > 0;
+		$success = $statement->rowCount() > 0;
+
+		if (!$success || !$options['cascade']) {
+			return $success;
+		}
+
+		foreach ($this->_associations as $assoc) {
+			// TODO Perhaps refactor the deletion into the association class?
+			if ($assoc->dependent()) {
+				$this->_deleteDependent($assoc, $entity);
+			} elseif ($assoc instanceof BelongsToMany) {
+				$this->_deletePivotRecords($assoc, $entity);
+			}
+		}
+		return $success;
 	}
 
 /**
@@ -1008,6 +1021,25 @@ class Table {
 		foreach ($query as $related) {
 			$table->delete($related, ['atomic' => false]);
 		}
+	}
+
+/**
+ * Clear the data out of a BelongsToMany join table.
+ *
+ * @param Cake\ORM\Association\BelongsToMany $assoc The association to clear.
+ * @param Cake\ORM\Entity $entity The entity to remove pivot records for.
+ * @return void
+ */
+	protected function _deletePivotRecords(BelongsToMany $assoc, Entity $entity) {
+		$foreignKey = $assoc->foreignKey();
+		$primaryKey = $this->primaryKey();
+		$conditions = [
+			$foreignKey => $entity->get($primaryKey)
+		];
+		// TODO fix multi-column primary keys.
+		$conditions = array_merge($conditions, $assoc->conditions());
+		$table = $assoc->pivot();
+		$table->deleteAll($conditions);
 	}
 
 /**
