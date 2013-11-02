@@ -171,7 +171,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 
 /**
  * Sets the isUpdate configuration value for this ruleset,
- * it refers to wheter the model record it is validating exists
+ * it refers to whether the model record it is validating exists
  * in the collection or not (create or update operation)
  *
  * If called with no parameters it will return whether this ruleset
