@@ -1560,7 +1560,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDelete() {
-		$table = TableRegistry::get('user');
+		$table = TableRegistry::get('users');
 		$conditions = [
 			'limit' => 1,
 			'conditions' => [
@@ -1601,7 +1601,33 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteCallbacks() {
-		$this->markTestIncomplete('not done');
+		$entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
+		$options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
+
+		$mock = $this->getMock('Cake\Event\EventManager');
+		$mock->expects($this->at(0))
+			->method('dispatch')
+			->with($this->logicalAnd(
+				$this->attributeEqualTo('_name', 'Model.beforeDelete'),
+				$this->attributeEqualTo(
+					'data',
+					['entity' => $entity, 'options' => $options]
+				)
+			));
+
+		$mock->expects($this->at(1))
+			->method('dispatch')
+			->with($this->logicalAnd(
+				$this->attributeEqualTo('_name', 'Model.afterDelete'),
+				$this->attributeEqualTo(
+					'data',
+					['entity' => $entity, 'options' => $options]
+				)
+			));
+
+		$table = TableRegistry::get('users', ['eventManager' => $mock]);
+		$entity->isNew(false);
+		$table->delete($entity);
 	}
 
 /**
@@ -1610,7 +1636,20 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteBeforeDeleteAbort() {
-		$this->markTestIncomplete('not done');
+		$entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
+		$options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
+
+		$mock = $this->getMock('Cake\Event\EventManager');
+		$mock->expects($this->once())
+			->method('dispatch')
+			->will($this->returnCallback(function ($event) {
+				$event->stopPropagation();
+			}));
+
+		$table = TableRegistry::get('users', ['eventManager' => $mock]);
+		$entity->isNew(false);
+		$result = $table->delete($entity);
+		$this->assertNull($result);
 	}
 
 /**
@@ -1619,7 +1658,21 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteBeforeDeleteReturnResult() {
-		$this->markTestIncomplete('not done');
+		$entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
+		$options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
+
+		$mock = $this->getMock('Cake\Event\EventManager');
+		$mock->expects($this->once())
+			->method('dispatch')
+			->will($this->returnCallback(function ($event) {
+				$event->stopPropagation();
+				$event->result = 'got stopped';
+			}));
+
+		$table = TableRegistry::get('users', ['eventManager' => $mock]);
+		$entity->isNew(false);
+		$result = $table->delete($entity);
+		$this->assertEquals('got stopped', $result);
 	}
 
 /**
@@ -1628,7 +1681,19 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteIsNew() {
-		$this->markTestIncomplete('not done');
+		$entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
+
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['_buildQuery'],
+			[['connection' => $this->connection]]
+		);
+		$table->expects($this->never())
+			->method('_buildQuery');
+
+		$entity->isNew(true);
+		$result = $table->delete($entity);
+		$this->assertFalse($result);
 	}
 
 }

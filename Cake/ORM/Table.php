@@ -938,6 +938,7 @@ class Table {
 		$process = function () use ($entity, $options) {
 			return $this->_processDelete($entity, $options);
 		};
+
 		if ($options['atomic']) {
 			$success = $this->connection()->transactional($process);
 		} else {
