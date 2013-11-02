@@ -947,7 +947,14 @@ class Table {
 		if (!$success) {
 			return $success;
 		}
-		// TODO add deletion of BelongsToMany and dependents.
+		foreach ($this->_associations as $assoc) {
+			if ($assoc->dependent()) {
+				$this->_deleteDependent($assoc, $entity);
+			}
+			if ($assoc instanceof BelongsToMany) {
+				// TODO finish
+			}
+		}
 
 		$event = new Event('Model.afterDelete', $this, [
 			'entity' => $entity,
@@ -969,8 +976,7 @@ class Table {
 			return false;
 		}
 		$primaryKey = (array)$this->primaryKey();
-		$values = (array)$entity->extract($primaryKey);
-		$conditions = array_combine($primaryKey, $values);
+		$conditions = (array)$entity->extract($primaryKey);
 
 		$query = $this->_buildQuery();
 		$statement = $query->delete($this->table())
@@ -978,6 +984,30 @@ class Table {
 			->executeStatement();
 
 		return $statement->rowCount() > 0;
+	}
+
+/**
+ * Delete data in any associations that are marked 'dependent'
+ *
+ * @param Cake\ORM\Association $assoc The association to clear.
+ * @param Cake\ORM\Entity $entity The entity to delete dependent data for.
+ * @return void
+ */
+	protected function _deleteDependent(Association $assoc, Entity $entity) {
+		$table = $assoc->target();
+		$foreignKey = $assoc->foreignKey();
+		$primaryKey = $this->primaryKey();
+
+		$conditions = [
+			$foreignKey => $entity->get($primaryKey)
+		];
+		// TODO fix multi-column primary keys.
+		$conditions = array_merge($conditions, $assoc->conditions());
+
+		$query = $table->find('all')->where($conditions);
+		foreach ($query as $related) {
+			$table->delete($related, ['atomic' => false]);
+		}
 	}
 
 /**

@@ -1583,7 +1583,23 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteDependent() {
-		$this->markTestIncomplete('not done');
+		$table = TableRegistry::get('author');
+		$table->hasOne('article', [
+			'foreignKey' => 'author_id',
+			'dependent' => true,
+		]);
+
+		$query = $table->find('all')->where(['id' => 1]);
+		$entity = $query->first();
+		$result = $table->delete($entity);
+
+		$articles = $table->association('article')->target();
+		$query = $articles->find('all', [
+			'conditions' => [
+				'author_id' => $entity->id
+			]
+		]);
+		$this->assertNull($query->execute()->one());
 	}
 
 /**

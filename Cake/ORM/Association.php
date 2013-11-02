@@ -249,9 +249,11 @@ abstract class Association {
 	}
 
 /**
- * Sets Whether the records on the target table are dependent on the source table,
- * often used to indicate that records should be removed is the owning record in
+ * Sets whether the records on the target table are dependent on the source table.
+ *
+ * This is primarily used to indicate that records should be removed is the owning record in
  * the source table is deleted.
+ *
  * If no parameters are passed current setting is returned.
  *
  * @param boolean $dependent
