@@ -1560,7 +1560,21 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDelete() {
-		$this->markTestIncomplete('not done');
+		$table = TableRegistry::get('user');
+		$conditions = [
+			'limit' => 1,
+			'conditions' => [
+				'username' => 'nate'
+			]
+		];
+		$query = $table->find('all', $conditions);
+		$entity = $query->first();
+		$result = $table->delete($entity);
+		$this->assertTrue($result);
+
+		$query = $table->find('all', $conditions);
+		$results = $query->execute();
+		$this->assertCount(0, $results, 'Find should fail.');
 	}
 
 /**

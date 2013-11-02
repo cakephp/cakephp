@@ -900,6 +900,86 @@ class Table {
 	}
 
 /**
+ * Delete a single entity.
+ *
+ * Deletes an entity and possibly related associations from the database.
+ * Any associations marked as dependent will be removed. Any
+ * rows in a BelongsToMany join table will be removed as well.
+ *
+ * ## Options
+ *
+ * - `cascade` Defaults to true. Set to false to disable cascaded deletes.
+ *   Use this when you don't want to cascade or when your foreign keys
+ *   will handle the cascading delete for you.
+ * - `atomic` Defaults to true. When true the deletion happens within a transaction.
+ *
+ * ## Events
+ *
+ * - `beforeDelete` Fired before the delete occurs. If stopped the delete
+ *   will be aborted. Receives the event, entity, and options.
+ * - `afterDelete` Fired after the delete has been successful. Receives
+ *   the event, entity, and options.
+ *
+ * @param Entity $entity The entity to remove.
+ * @param array $options The options fo the delete.
+ * @return boolean success
+ */
+	public function delete(Entity $entity, array $options = []) {
+		$options = new \ArrayObject($options + ['atomic' => true, 'cascade' => true]);
+		$event = new Event('Model.beforeDelete', $this, [
+			'entity' => $entity,
+			'options' => $options
+		]);
+		$this->getEventManager()->dispatch($event);
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
+		$process = function () use ($entity, $options) {
+			return $this->_processDelete($entity, $options);
+		};
+		if ($options['atomic']) {
+			$success = $this->connection()->transactional($process);
+		} else {
+			$success = $process();
+		}
+		if (!$success) {
+			return $success;
+		}
+		// TODO add deletion of BelongsToMany and dependents.
+
+		$event = new Event('Model.afterDelete', $this, [
+			'entity' => $entity,
+			'options' => $options
+		]);
+		$this->getEventManager()->dispatch($event);
+		return $success;
+	}
+
+/**
+ * Perform the delete operation.
+ *
+ * @param Entity $entity The entity to delete.
+ * @param array $options The options for the delete.
+ * @return boolean success
+ */
+	protected function _processDelete($entity, $options) {
+		if ($entity->isNew()) {
+			return false;
+		}
+		$primaryKey = (array)$this->primaryKey();
+		$values = (array)$entity->extract($primaryKey);
+		$conditions = array_combine($primaryKey, $values);
+
+		$query = $this->_buildQuery();
+		$statement = $query->delete($this->table())
+			->where($conditions)
+			->executeStatement();
+
+		return $statement->rowCount() > 0;
+	}
+
+/**
  * Calls a finder method directly and applies it to the passed query,
  * if no query is passed a new one will be created and returned
  *
