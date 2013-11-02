@@ -664,10 +664,12 @@ class Query extends DatabaseQuery {
 
 /**
  * Applies some defaults to the query object before it is executed.
- * Specifically add the FROM clause, adds default table fields if none is
+ *
+ * Specifically add the FROM clause, adds default table fields if none are
  * specified and applies the joins required to eager load associations defined
  * using `contain`
  *
+ * @see Cake\Database\Query::execute()
  * @return Query
  */
 	protected function _transformQuery() {
