@@ -614,9 +614,17 @@ class Query extends DatabaseQuery {
 		$this->bufferResults();
 		$this->_results = $this->execute();
 		return $this->_results->one();
-
 	}
 
+/**
+ * Toggle hydrating entites.
+ *
+ * If set to false array results will be returned
+ *
+ * @param boolean|null $enable Use a boolean to set the hydration mode.
+ *   Null will fetch the current hydration mode.
+ * @return boolean|Query A boolean when reading, and $this when setting the mode.
+ */
 	public function hydrate($enable = null) {
 		if ($enable === null) {
 			return $this->_hydrate;

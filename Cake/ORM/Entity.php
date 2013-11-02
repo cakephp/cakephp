@@ -385,7 +385,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			unset($this->_dirty[$property]);
 			return false;
 		}
-		
+
 		$this->_dirty[$property] = true;
 		return true;
 	}

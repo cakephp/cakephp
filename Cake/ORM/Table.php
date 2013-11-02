@@ -869,6 +869,7 @@ class Table {
  * @param \Cake\ORM\Entity the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
  * @return \Cake\ORM\Entity|boolean
+ * @throws \InvalidArgumentException When primary key data is missing.
  */
 	protected function _update($entity, $data) {
 		$primaryKey = $entity->extract((array)$this->primaryKey());
