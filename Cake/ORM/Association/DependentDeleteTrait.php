@@ -48,9 +48,12 @@ trait DependentDeleteTrait {
 		// TODO fix multi-column primary keys.
 		$conditions = array_merge($conditions, $this->conditions());
 
-		$query = $table->find('all')->where($conditions);
-		foreach ($query as $related) {
-			$table->delete($related, $options);
+		if ($this->_cascadeCallbacks) {
+			foreach ($table->find('all')->where($conditions) as $related) {
+				$table->delete($related, $options);
+			}
+		} else {
+			$table->deleteAll($conditions);
 		}
 		return true;
 	}

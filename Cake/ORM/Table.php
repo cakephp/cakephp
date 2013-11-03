@@ -461,7 +461,12 @@ class Table {
  * - foreignKey: The name of the field to use as foreign key, if false none
  *   will be used
  * - dependent: Set to true if you want CakePHP to cascade deletes to the
- *   associated table when an entity is removed on this table.
+ *   associated table when an entity is removed on this table. Set to false
+ *   if you don't want CakePHP to remove associated data, for when you are using
+ *   database constraints.
+ * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
+ *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
+ *   When true records will be loaded and then deleted.
  * - conditions: array with a list of conditions to filter the join with
  * - joinType: The type of join to be used (e.g. LEFT)
  *
@@ -493,7 +498,12 @@ class Table {
  * - foreignKey: The name of the field to use as foreign key, if false none
  *   will be used
  * - dependent: Set to true if you want CakePHP to cascade deletes to the
- *   associated table when an entity is removed on this table.
+ *   associated table when an entity is removed on this table. Set to false
+ *   if you don't want CakePHP to remove associated data, for when you are using
+ *   database constraints.
+ * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
+ *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
+ *   When true records will be loaded and then deleted.
  * - conditions: array with a list of conditions to filter the join with
  * - sort: The order in which results for this association should be returned
  * - strategy: The strategy to be used for selecting results Either 'select'
@@ -531,6 +541,9 @@ class Table {
  * - through: If you choose to use an already instantiated link table, set this
  *   key to a configured Table instance containing associations to both the source
  *   and target tables in this association.
+ * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
+ *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
+ *   When true pivot table records will be loaded and then deleted.
  * - conditions: array with a list of conditions to filter the join with
  * - sort: The order in which results for this association should be returned
  * - strategy: The strategy to be used for selecting results Either 'select'
@@ -908,16 +921,14 @@ class Table {
  * Delete a single entity.
  *
  * Deletes an entity and possibly related associations from the database
- * based on the 'cascade' option. When true, the cascade option will cause
- * any associations marked as dependent to be removed. Any
- * rows in a BelongsToMany join table will be removed as well.
+ * based on the 'dependent' option used when defining the association.
+ * For HasMany and HasOne associations records will be removed based on
+ * the dependent option. Join table records in BelongsToMany associations
+ * will always be removed. You can use the `cascadeCallbacks` option
+ * when defining associations to change how associated data is deleted.
  *
  * ## Options
  *
- * - `cascade` Defaults to true. Set to false to disable cascaded deletes.
- *   Use this when you don't want to cascade or when your foreign keys
- *   will handle the cascading delete for you. Cascaded deletes
- *   will occur inside the transaction when atomic is true.
  * - `atomic` Defaults to true. When true the deletion happens within a transaction.
  *
  * ## Events
@@ -936,7 +947,7 @@ class Table {
  * @return boolean success
  */
 	public function delete(Entity $entity, array $options = []) {
-		$options = new \ArrayObject($options + ['atomic' => true, 'cascade' => true]);
+		$options = new \ArrayObject($options + ['atomic' => true]);
 
 		$process = function() use ($entity, $options) {
 			return $this->_processDelete($entity, $options);
@@ -953,9 +964,6 @@ class Table {
  *
  * Will delete the entity provided. Will remove rows from any
  * dependent associations, and clear out join tables for BelongsToMany associations.
- *
- * Setting $options['cascade'] = false will prevent associated data including
- * join tables from being cleared.
  *
  * @param Entity $entity The entity to delete.
  * @param ArrayObject $options The options for the delete.
@@ -984,8 +992,7 @@ class Table {
 			->executeStatement();
 
 		$success = $statement->rowCount() > 0;
-
-		if (!$success || !$options['cascade']) {
+		if (!$success) {
 			return $success;
 		}
 

@@ -235,7 +235,13 @@ class BelongsToMany extends Association {
 		$conditions = array_merge($conditions, $this->conditions());
 
 		$table = $this->pivot();
-		return $table->deleteAll($conditions);
+		if ($this->_cascadeCallbacks) {
+			foreach ($table->find('all')->where($conditions) as $related) {
+				$table->delete($related, $options);
+			}
+		} else {
+			return $table->deleteAll($conditions);
+		}
 	}
 
 /**

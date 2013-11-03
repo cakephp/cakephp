@@ -95,6 +95,13 @@ abstract class Association {
 	protected $_dependent = false;
 
 /**
+ * Whether or not cascaded deletes should also fire callbacks.
+ *
+ * @var string
+ */
+	protected $_cascadeCallbacks = false;
+
+/**
  * Source table instance
  *
  * @var Cake\ORM\Table
@@ -145,6 +152,7 @@ abstract class Association {
 			'foreignKey',
 			'conditions',
 			'dependent',
+			'cascadeCallbacks',
 			'sourceTable',
 			'targetTable',
 			'joinType',

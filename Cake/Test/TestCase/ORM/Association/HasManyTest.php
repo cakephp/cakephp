@@ -42,7 +42,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			]
 		]);
 		$this->article = $this->getMock(
-			'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Article', 'table' => 'articles']]
+			'Cake\ORM\Table', ['find', 'deleteAll', 'delete'], [['alias' => 'Article', 'table' => 'articles']]
 		);
 		$this->article->schema([
 			'id' => ['type' => 'integer'],
@@ -434,7 +434,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test cascading delete with has many.
+ * Test cascading deletes.
  *
  * @return void
  */
@@ -443,7 +443,33 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'dependent' => true,
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
-			'conditions' => ['Article.is_active' => true]
+			'conditions' => ['Article.is_active' => true],
+		];
+		$association = new HasMany('Article', $config);
+
+		$this->article->expects($this->once())
+			->method('deleteAll')
+			->with([
+				'Article.is_active' => true,
+				'author_id' => 1
+			]);
+
+		$entity = new Entity(['id' => 1, 'name' => 'PHP']);
+		$association->cascadeDelete($entity);
+	}
+
+/**
+ * Test cascading delete with has many.
+ *
+ * @return void
+ */
+	public function testCascadeDeleteCallbacks() {
+		$config = [
+			'dependent' => true,
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Article.is_active' => true],
+			'cascadeCallbacks' => true,
 		];
 		$association = new HasMany('Article', $config);
 
