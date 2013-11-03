@@ -550,6 +550,7 @@ class File {
  * its available, otherwise falls back to mime_content_type
  *
  * @return false|string The mimetype of the file, or false if reading fails.
+ * @throws CakeException when the functions finfo_open or mime_content_type of php not exists
  */
 	public function mime() {
 		if (!$this->exists()) {
