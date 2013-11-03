@@ -1452,6 +1452,27 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that beforeFind gets the correct isNew() state for the entity
+ *
+ * @return void
+ */
+	public function testBeforeSaveGetsCorrectPersistance() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 2,
+			'username' => 'baggins'
+		]);
+		$table = TableRegistry::get('users');
+		$called = false;
+		$listener = function($event, $entity) use (&$called) {
+			$this->assertFalse($entity->isNew());
+			$called = true;
+		};
+		$table->getEventManager()->attach($listener, 'Model.beforeSave');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertTrue($called);
+	}
+
+/**
  * Tests that marking an entity as already persisted will prevent the save
  * method from trying to infer the entity's actual status.
  *

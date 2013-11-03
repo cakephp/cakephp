@@ -803,6 +803,15 @@ class Table {
  * @return \Cake\ORM\Entity|boolean
  */
 	protected function _processSave($entity, $options) {
+		$primary = $entity->extract((array)$this->primaryKey());
+		if ($primary && $entity->isNew() === null) {
+			$entity->isNew(!$this->exists($primary));
+		}
+
+		if ($entity->isNew() === null) {
+			$entity->isNew(true);
+		}
+
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 
@@ -813,15 +822,6 @@ class Table {
 		$list = $options['fieldList'] ?: $this->schema()->columns();
 		$data = $entity->extract($list, true);
 		$keys = array_keys($data);
-
-		$primary = $entity->extract((array)$this->primaryKey());
-		if ($primary && $entity->isNew() === null) {
-			$entity->isNew(!$this->exists($primary));
-		}
-
-		if ($entity->isNew() === null) {
-			$entity->isNew(true);
-		}
 
 		if ($entity->isNew()) {
 			$success = $this->_insert($entity, $data);
