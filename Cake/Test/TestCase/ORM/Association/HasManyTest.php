@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\ORM\Association\HasMany;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -41,7 +42,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			]
 		]);
 		$this->article = $this->getMock(
-			'Cake\ORM\Table', ['find'], [['alias' => 'Article', 'table' => 'articles']]
+			'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Article', 'table' => 'articles']]
 		);
 		$this->article->schema([
 			'id' => ['type' => 'integer'],
@@ -431,4 +432,50 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
 	}
+
+/**
+ * Test cascading delete with has many.
+ *
+ * @return void
+ */
+	public function testCascadeDelete() {
+		$config = [
+			'dependent' => true,
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Article.is_active' => true]
+		];
+		$association = new HasMany('Article', $config);
+
+		$articleOne = new Entity(['id' => 2, 'title' => 'test']);
+		$articleTwo = new Entity(['id' => 3, 'title' => 'testing']);
+		$iterator = new \ArrayIterator([
+			$articleOne,
+			$articleTwo
+		]);
+
+		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
+		$query->expects($this->once())
+			->method('where')
+			->with(['Article.is_active' => true, 'author_id' => 1])
+			->will($this->returnSelf());
+		$query->expects($this->any())
+			->method('getIterator')
+			->will($this->returnValue($iterator));
+
+		$this->article->expects($this->once())
+			->method('find')
+			->will($this->returnValue($query));
+
+		$this->article->expects($this->at(1))
+			->method('delete')
+			->with($articleOne, ['atomic' => false]);
+		$this->article->expects($this->at(2))
+			->method('delete')
+			->with($articleTwo, ['atomic' => false]);
+
+		$entity = new Entity(['id' => 1, 'name' => 'mark']);
+		$this->assertTrue($association->cascadeDelete($entity));
+	}
+
 }

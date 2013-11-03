@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -160,6 +161,27 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		]);
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Test the cascading delete of BelongsTo.
+ *
+ * @return void
+ */
+	public function testCascadeDelete() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->client,
+			'targetTable' => $mock,
+		];
+		$mock->expects($this->never())
+			->method('find');
+		$mock->expects($this->never())
+			->method('delete');
+
+		$association = new BelongsTo('Company', $config);
+		$entity = new Entity(['company_name' => 'CakePHP', 'id' => 1]);
+		$this->assertTrue($association->cascadeDelete($entity));
 	}
 
 }
