@@ -567,7 +567,7 @@ class File {
 		if (function_exists('mime_content_type')) {
 			return mime_content_type($this->pwd());
 		}
-		return false;
+		throw new CakeException(__d('cake_dev', 'Can not determine the mimetype. Your PHP needs at least one of these functions: finfo_open or mime_content_type'));
 	}
 
 /**
