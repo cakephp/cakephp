@@ -17,6 +17,7 @@
 namespace Cake\ORM\Association;
 
 use Cake\ORM\Association;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -215,6 +216,25 @@ class BelongsToMany extends Association {
 		}
 
 		return $this->_resultInjector($fetchQuery, $resultMap);
+	}
+
+/**
+ * Clear out the data in the join/pivot table for a given entity.
+ *
+ * @param Cake\ORM\Entity $entity The entity that started the cascading delete.
+ * @return boolean Success.
+ */
+	public function cascadeDelete(Entity $entity) {
+		$foreignKey = $this->foreignKey();
+		$primaryKey = $this->source()->primaryKey();
+		$conditions = [
+			$foreignKey => $entity->get($primaryKey)
+		];
+		// TODO fix multi-column primary keys.
+		$conditions = array_merge($conditions, $this->conditions());
+
+		$table = $this->pivot();
+		$table->deleteAll($conditions);
 	}
 
 /**

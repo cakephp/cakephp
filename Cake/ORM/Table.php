@@ -989,57 +989,9 @@ class Table {
 		}
 
 		foreach ($this->_associations as $assoc) {
-			// TODO Perhaps refactor the deletion into the association class?
-			if ($assoc->dependent()) {
-				$this->_deleteDependent($assoc, $entity);
-			} elseif ($assoc instanceof BelongsToMany) {
-				$this->_deletePivotRecords($assoc, $entity);
-			}
+			$assoc->cascadeDelete($entity);
 		}
 		return $success;
-	}
-
-/**
- * Delete data in any associations that are marked 'dependent'
- *
- * @param Cake\ORM\Association $assoc The association to clear.
- * @param Cake\ORM\Entity $entity The entity to delete dependent data for.
- * @return void
- */
-	protected function _deleteDependent(Association $assoc, Entity $entity) {
-		$table = $assoc->target();
-		$foreignKey = $assoc->foreignKey();
-		$primaryKey = $this->primaryKey();
-
-		$conditions = [
-			$foreignKey => $entity->get($primaryKey)
-		];
-		// TODO fix multi-column primary keys.
-		$conditions = array_merge($conditions, $assoc->conditions());
-
-		$query = $table->find('all')->where($conditions);
-		foreach ($query as $related) {
-			$table->delete($related, ['atomic' => false]);
-		}
-	}
-
-/**
- * Clear the data out of a BelongsToMany join table.
- *
- * @param Cake\ORM\Association\BelongsToMany $assoc The association to clear.
- * @param Cake\ORM\Entity $entity The entity to remove pivot records for.
- * @return void
- */
-	protected function _deletePivotRecords(BelongsToMany $assoc, Entity $entity) {
-		$foreignKey = $assoc->foreignKey();
-		$primaryKey = $this->primaryKey();
-		$conditions = [
-			$foreignKey => $entity->get($primaryKey)
-		];
-		// TODO fix multi-column primary keys.
-		$conditions = array_merge($conditions, $assoc->conditions());
-		$table = $assoc->pivot();
-		$table->deleteAll($conditions);
 	}
 
 /**

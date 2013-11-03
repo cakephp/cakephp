@@ -16,6 +16,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 
@@ -415,4 +416,16 @@ abstract class Association {
  * @return string|array|boolean
  */
 	protected abstract function _joinCondition(array $options);
+
+/**
+ * Handles cascading a delete from an associated model.
+ *
+ * Each implementing class should handle the cascaded delete as
+ * required.
+ *
+ * @param Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @return boolean Success
+ */
+	public abstract function cascadeDelete(Entity $entity);
+
 }
