@@ -469,10 +469,10 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 
 		$this->article->expects($this->at(1))
 			->method('delete')
-			->with($articleOne, ['atomic' => false]);
+			->with($articleOne, []);
 		$this->article->expects($this->at(2))
 			->method('delete')
-			->with($articleTwo, ['atomic' => false]);
+			->with($articleTwo, []);
 
 		$entity = new Entity(['id' => 1, 'name' => 'mark']);
 		$this->assertTrue($association->cascadeDelete($entity));

@@ -50,7 +50,7 @@ trait DependentDeleteTrait {
 
 		$query = $table->find('all')->where($conditions);
 		foreach ($query as $related) {
-			$table->delete($related, ['atomic' => false]);
+			$table->delete($related, $options);
 		}
 		return true;
 	}
