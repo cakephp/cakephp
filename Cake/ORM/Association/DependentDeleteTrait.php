@@ -31,9 +31,10 @@ trait DependentDeleteTrait {
  * This method does nothing if the association is not dependent.
  *
  * @param Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param array $options The options for the original delete.
  * @return boolean Success.
  */
-	public function cascadeDelete(Entity $entity) {
+	public function cascadeDelete(Entity $entity, $options = []) {
 		if (!$this->dependent()) {
 			return true;
 		}

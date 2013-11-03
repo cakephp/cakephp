@@ -424,8 +424,9 @@ abstract class Association {
  * required.
  *
  * @param Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param array $options The options for the original delete.
  * @return boolean Success
  */
-	public abstract function cascadeDelete(Entity $entity);
+	public abstract function cascadeDelete(Entity $entity, $options = []);
 
 }

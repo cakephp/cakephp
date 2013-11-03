@@ -989,7 +989,7 @@ class Table {
 		}
 
 		foreach ($this->_associations as $assoc) {
-			$assoc->cascadeDelete($entity);
+			$assoc->cascadeDelete($entity, $options);
 		}
 		return $success;
 	}

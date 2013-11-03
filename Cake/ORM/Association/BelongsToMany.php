@@ -222,9 +222,10 @@ class BelongsToMany extends Association {
  * Clear out the data in the join/pivot table for a given entity.
  *
  * @param Cake\ORM\Entity $entity The entity that started the cascading delete.
+ * @param array $options The options for the original delete.
  * @return boolean Success.
  */
-	public function cascadeDelete(Entity $entity) {
+	public function cascadeDelete(Entity $entity, $options = []) {
 		$foreignKey = $this->foreignKey();
 		$primaryKey = $this->source()->primaryKey();
 		$conditions = [
