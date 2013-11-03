@@ -1710,7 +1710,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$mock = $this->getMock('Cake\Event\EventManager');
 		$mock->expects($this->once())
 			->method('dispatch')
-			->will($this->returnCallback(function ($event) {
+			->will($this->returnCallback(function($event) {
 				$event->stopPropagation();
 			}));
 
@@ -1732,7 +1732,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$mock = $this->getMock('Cake\Event\EventManager');
 		$mock->expects($this->once())
 			->method('dispatch')
-			->will($this->returnCallback(function ($event) {
+			->will($this->returnCallback(function($event) {
 				$event->stopPropagation();
 				$event->result = 'got stopped';
 			}));

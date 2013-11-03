@@ -907,15 +907,17 @@ class Table {
 /**
  * Delete a single entity.
  *
- * Deletes an entity and possibly related associations from the database.
- * Any associations marked as dependent will be removed. Any
+ * Deletes an entity and possibly related associations from the database
+ * based on the 'cascade' option. When true, the cascade option will cause
+ * any associations marked as dependent to be removed. Any
  * rows in a BelongsToMany join table will be removed as well.
  *
  * ## Options
  *
  * - `cascade` Defaults to true. Set to false to disable cascaded deletes.
  *   Use this when you don't want to cascade or when your foreign keys
- *   will handle the cascading delete for you.
+ *   will handle the cascading delete for you. Cascaded deletes
+ *   will occur inside the transaction when atomic is true.
  * - `atomic` Defaults to true. When true the deletion happens within a transaction.
  *
  * ## Events
@@ -925,36 +927,25 @@ class Table {
  * - `afterDelete` Fired after the delete has been successful. Receives
  *   the event, entity, and options.
  *
+ * The options argument will be converted into an \ArrayObject instance
+ * for the duration of the callbacks, this allows listeners to modify
+ * the options used in the delete operation.
+ *
  * @param Entity $entity The entity to remove.
  * @param array $options The options fo the delete.
  * @return boolean success
  */
 	public function delete(Entity $entity, array $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true, 'cascade' => true]);
-		$event = new Event('Model.beforeDelete', $this, [
-			'entity' => $entity,
-			'options' => $options
-		]);
-		$this->getEventManager()->dispatch($event);
-		if ($event->isStopped()) {
-			return $event->result;
-		}
 
-		$process = function () use ($entity, $options) {
+		$process = function() use ($entity, $options) {
 			return $this->_processDelete($entity, $options);
 		};
 
-		$success = $options['atomic'] ? $this->connection()->transactional($process) : $process();
-
-		if (!$success) {
-			return $success;
+		if ($options['atomic']) {
+			return $this->connection()->transactional($process);
 		}
-		$event = new Event('Model.afterDelete', $this, [
-			'entity' => $entity,
-			'options' => $options
-		]);
-		$this->getEventManager()->dispatch($event);
-		return $success;
+		return $process();
 	}
 
 /**
@@ -967,10 +958,20 @@ class Table {
  * join tables from being cleared.
  *
  * @param Entity $entity The entity to delete.
- * @param array $options The options for the delete.
+ * @param ArrayObject $options The options for the delete.
  * @return boolean success
  */
 	protected function _processDelete($entity, $options) {
+		$eventManager = $this->getEventManager();
+		$event = new Event('Model.beforeDelete', $this, [
+			'entity' => $entity,
+			'options' => $options
+		]);
+		$eventManager->dispatch($event);
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
 		if ($entity->isNew()) {
 			return false;
 		}
@@ -989,8 +990,15 @@ class Table {
 		}
 
 		foreach ($this->_associations as $assoc) {
-			$assoc->cascadeDelete($entity, $options);
+			$assoc->cascadeDelete($entity, $options->getArrayCopy());
 		}
+
+		$event = new Event('Model.afterDelete', $this, [
+			'entity' => $entity,
+			'options' => $options
+		]);
+		$eventManager->dispatch($event);
+
 		return $success;
 	}
 
