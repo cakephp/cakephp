@@ -17,12 +17,32 @@ namespace Cake\Test\TestCase\Model\Behavior;
 use Cake\Event\Event;
 use Cake\Model\Behavior\TimestampBehavior;
 use Cake\ORM\Entity;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
  * Behavior test case
  */
 class TimestampBehaviorTest extends TestCase {
+
+/**
+ * autoFixtures
+ *
+ * Don't load fixtures for all tests
+ *
+ * @var bool
+ */
+	public $autoFixtures = false;
+
+/**
+ * fixtures
+ *
+ * @var array
+ */
+	public $fixtures = [
+		'core.user'
+	];
+
 
 /**
  * Sanity check Implemented events
@@ -238,5 +258,40 @@ class TimestampBehaviorTest extends TestCase {
 			$return,
 			'Should return the same value as initially set'
 		);
+	}
+
+/**
+ * Test that calling save, triggers an insert including the created and updated field values
+ *
+ * @return void
+ */
+    public function testSaveTriggersInsert() {
+		$this->loadFixtures('User'); //@TODO make fixtures more consistent/easier to use
+
+        $table = TableRegistry::get('users');
+		$table->addBehavior('Timestamp', [
+			'events' => [
+				'Model.beforeSave' => [
+					'created' => 'new',
+					'updated' => 'always'
+				]
+			]
+		]);
+
+        $entity = new Entity([
+            'username' => 'timestamp',
+        ]);
+		$return = $table->save($entity);
+		$this->assertSame($return, $entity);
+
+		$row = $table->find('all')->where(['id' => $entity->id])->first();
+
+		$now = time();
+
+		$storedValue = $row->created->getTimestamp();
+		$this->assertLessThan(3, abs($storedValue - $now), "The stored created timestamp is expected to within 3 seconds of the current timestamp");
+
+		$storedValue = $row->updated->getTimestamp();
+		$this->assertLessThan(3, abs($storedValue - $now), "The stored updated timestamp is expected to within 3 seconds of the current timestamp");
 	}
 }
