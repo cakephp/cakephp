@@ -92,6 +92,13 @@ use Cake\Event\EventListener;
 class Behavior implements EventListener {
 
 /**
+ * _reflectionMethods
+ *
+ * @var array
+ */
+	protected $_reflectionMethods;
+
+/**
  * Contains configuration settings.
  *
  * @var array
@@ -157,6 +164,74 @@ class Behavior implements EventListener {
 			}
 		}
 		return $events;
+	}
+
+/**
+ * implementedFinders
+ *
+ * @return array
+ */
+	public function implementedFinders() {
+		$reflectionMethods = $this->_reflectionMethods();
+		return $reflectionMethods['finders'];
+	}
+
+/**
+ * implementedMethods
+ *
+ * @return array
+ */
+	public function implementedMethods() {
+		$reflectionMethods = $this->_reflectionMethods();
+		return $reflectionMethods['methods'];
+	}
+
+/**
+ * _reflectionmethods
+ *
+ * @return array
+ */
+	protected function _reflectionMethods() {
+		if (isset($this->_reflectionMethods)) {
+			return $this->_reflectionMethods;
+		}
+
+		$events = $this->implementedEvents();
+		$eventMethods = [];
+		foreach ($events as $e => $binding) {
+			if (is_array($binding) && isset($binding['callable']) && isset($binding['callable'])) {
+				$binding = $binding['callable'];
+			}
+			$eventMethods[$binding] = true;
+		}
+
+		$return = [
+			'finders' => [],
+			'methods' => []
+		];
+
+		$reflection = new \ReflectionClass(get_class($this));
+
+		foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
+			if ($method->getDeclaringClass()->getName() === 'Cake\ORM\Behavior') {
+				continue;
+			}
+
+			$methodName = $method->getName();
+			if (strpos($methodName, '_') === 0 || isset($eventMethods[$methodName])) {
+				continue;
+			}
+			$methodName = strtolower($methodName);
+
+			$isFinder = substr($methodName, 0, 4) === 'find';
+			if ($isFinder) {
+				$return['finders'][] = $methodName;
+			} else {
+				$return['methods'][] = $methodName;
+			}
+		}
+
+		return $this->_reflectionMethods = $return;
 	}
 
 }

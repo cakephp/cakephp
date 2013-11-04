@@ -133,7 +133,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * Get the behavior methods and ensure there are no duplicates.
  *
  * Use the implementedEvents() method to exclude callback methods.
- * Methods starting with `_` will be ignored, as will methods 
+ * Methods starting with `_` will be ignored, as will methods
  * declared on Cake\ORM\Behavior
  *
  * @param Cake\ORM\Behavior $instance
@@ -144,51 +144,45 @@ class BehaviorRegistry extends ObjectRegistry {
 		if (isset(static::$_methodCache[$class])) {
 			return static::$_methodCache[$class];
 		}
-		$events = $instance->implementedEvents();
-		$reflection = new \ReflectionClass($class);
 
-		$eventMethods = $methodMap = $finderMap = [];
-		foreach ($events as $e => $binding) {
-			if (is_array($binding) && isset($binding['callable']) && isset($binding['callable'])) {
-				$binding = $binding['callable'];
-			}
-			$eventMethods[$binding] = true;
-		}
+		$methodMap = $finderMap = [];
+		$finders = $instance->implementedFinders();
+		$methods = $instance->implementedMethods();
 
-		foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-			if ($method->getDeclaringClass()->getName() === 'Cake\ORM\Behavior') {
-				continue;
-			}
-
-			$methodName = $method->getName();
-			if (strpos($methodName, '_') === 0 || isset($eventMethods[$methodName])) {
-				continue;
-			}
+		foreach($finders as $methodName) {
 			$methodName = strtolower($methodName);
 
-			if (isset($this->_finderMap[$methodName]) || isset($this->_methodMap[$methodName])) {
-				if (isset($this->_finderMap[$methodName])) {
-					$duplicate = $this->_finderMap[$methodName];
-				} else {
-					$duplicate = $this->_methodMap[$methodName];
-				}
+			if (isset($this->_finderMap[$methodName])) {
+				$duplicate = $this->_finderMap[$methodName];
 				$error = __d(
 					'cake_dev',
 					'%s contains duplicate method "%s" which is already provided by "%s"',
 					$class,
-					$method->getName(),
+					$methodName,
 					$duplicate
 				);
 				throw new Error\Exception($error);
 			}
-
-			$isFinder = substr($methodName, 0, 4) === 'find';
-			if ($isFinder) {
-				$finderMap[$methodName] = $alias;
-			} else {
-				$methodMap[$methodName] = $alias;
-			}
+			$finderMap[$methodName] = $alias;
 		}
+
+		foreach($methods as $methodName) {
+			$methodName = strtolower($methodName);
+
+			if (isset($this->_methodMap[$methodName])) {
+				$duplicate = $this->_methodMap[$methodName];
+				$error = __d(
+					'cake_dev',
+					'%s contains duplicate method "%s" which is already provided by "%s"',
+					$class,
+					$methodName,
+					$duplicate
+				);
+				throw new Error\Exception($error);
+			}
+			$methodMap[$methodName] = $alias;
+		}
+
 		static::$_methodCache[$class] = ['methods' => $methodMap, 'finders' => $finderMap];
 		return static::$_methodCache[$class];
 	}
@@ -196,7 +190,7 @@ class BehaviorRegistry extends ObjectRegistry {
 /**
  * Check if any loaded behavior implements a method.
  *
- * Will return true if any behavior provides a public non-finder method 
+ * Will return true if any behavior provides a public non-finder method
  * with the chosen name.
  *
  * @param string $method The method to check for.
