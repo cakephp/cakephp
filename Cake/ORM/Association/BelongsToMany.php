@@ -239,9 +239,9 @@ class BelongsToMany extends Association {
 			foreach ($table->find('all')->where($conditions) as $related) {
 				$table->delete($related, $options);
 			}
-		} else {
-			return $table->deleteAll($conditions);
+			return true;
 		}
+		return $table->deleteAll($conditions);
 	}
 
 /**
