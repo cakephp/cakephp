@@ -48,7 +48,7 @@ class TimestampBehaviorTest extends TestCase {
  */
 	public function testImplementedEventsCustom() {
 		$table = $this->getMock('Cake\ORM\Table');
-		$settings = ['events' => ['Something.special' => ['date_specialed' => true]]];
+		$settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
 		$this->Behavior = new TimestampBehavior($table, $settings);
 
 		$expected = [
@@ -66,7 +66,7 @@ class TimestampBehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$this->Behavior = new TimestampBehavior($table, ['refreshTimestamp' => false]);
 		$ts = new \DateTime('2000-01-01');
-		$this->Behavior->setTimestamp($ts);
+		$this->Behavior->timestamp($ts);
 
 		$event = new Event('Model.beforeSave');
 		$entity = new Entity(['name' => 'Foo']);
@@ -85,7 +85,7 @@ class TimestampBehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$this->Behavior = new TimestampBehavior($table, ['refreshTimestamp' => false]);
 		$ts = new \DateTime('2000-01-01');
-		$this->Behavior->setTimestamp($ts);
+		$this->Behavior->timestamp($ts);
 
 		$event = new Event('Model.beforeSave');
 		$existingValue = new \DateTime('2011-11-11');
@@ -105,7 +105,7 @@ class TimestampBehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$this->Behavior = new TimestampBehavior($table, ['refreshTimestamp' => false]);
 		$ts = new \DateTime('2000-01-01');
-		$this->Behavior->setTimestamp($ts);
+		$this->Behavior->timestamp($ts);
 
 		$event = new Event('Model.beforeSave');
 		$entity = new Entity(['name' => 'Foo']);
@@ -125,7 +125,7 @@ class TimestampBehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$this->Behavior = new TimestampBehavior($table, ['refreshTimestamp' => false]);
 		$ts = new \DateTime('2000-01-01');
-		$this->Behavior->setTimestamp($ts);
+		$this->Behavior->timestamp($ts);
 
 		$event = new Event('Model.beforeSave');
 		$entity = new Entity(['name' => 'Foo']);
@@ -145,7 +145,7 @@ class TimestampBehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$this->Behavior = new TimestampBehavior($table, ['refreshTimestamp' => false]);
 		$ts = new \DateTime('2000-01-01');
-		$this->Behavior->setTimestamp($ts);
+		$this->Behavior->timestamp($ts);
 
 		$event = new Event('Model.beforeSave');
 		$existingValue = new \DateTime('2011-11-11');
@@ -167,16 +167,11 @@ class TimestampBehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$this->Behavior = new TimestampBehavior($table);
 
-		$property = new \ReflectionProperty('Cake\Model\Behavior\TimestampBehavior', '_ts');
-		$property->setAccessible(true);
-
-		$this->assertNull($property->getValue($this->Behavior), 'Should be null be default');
-
-		$return = $this->Behavior->getTimestamp();
+		$return = $this->Behavior->timestamp();
 		$this->assertInstanceOf(
 			'DateTime',
 			$return,
-			'After calling for the first time, should be a date time object'
+			'Should return a timestamp object'
 		);
 
 		return $this->Behavior;
@@ -191,17 +186,13 @@ class TimestampBehaviorTest extends TestCase {
 	public function testGetTimestampPersists($behavior) {
 		$this->Behavior = $behavior;
 
-		$property = new \ReflectionProperty('Cake\Model\Behavior\TimestampBehavior', '_ts');
-		$property->setAccessible(true);
-
-		$initialValue = $property->getValue($this->Behavior);
-		$this->Behavior->getTimestamp();
-		$postValue = $property->getValue($this->Behavior);
+		$initialValue = $this->Behavior->timestamp();
+		$postValue = $this->Behavior->timestamp();
 
 		$this->assertSame(
 			$initialValue,
 			$postValue,
-			'The timestamp should be exactly the same value'
+			'The timestamp should be exactly the same object'
 		);
 	}
 
@@ -214,39 +205,13 @@ class TimestampBehaviorTest extends TestCase {
 	public function testGetTimestampRefreshes($behavior) {
 		$this->Behavior = $behavior;
 
-		$property = new \ReflectionProperty('Cake\Model\Behavior\TimestampBehavior', '_ts');
-		$property->setAccessible(true);
-
-		$initialValue = $property->getValue($this->Behavior);
-		$this->Behavior->getTimestamp(true);
-		$postValue = $property->getValue($this->Behavior);
+		$initialValue = $this->Behavior->timestamp();
+		$postValue = $this->Behavior->timestamp(null, true);
 
 		$this->assertNotSame(
 			$initialValue,
 			$postValue,
 			'The timestamp should be a different object if refreshTimestamp is truthy'
-		);
-	}
-
-/**
- * testSetTimestampDefault
- *
- * @return void
- */
-	public function testSetTimestampDefault() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
-
-		$this->Behavior->setTimestamp();
-
-		$property = new \ReflectionProperty('Cake\Model\Behavior\TimestampBehavior', '_ts');
-		$property->setAccessible(true);
-		$set = $property->getValue($this->Behavior);
-
-		$this->assertInstanceOf(
-			'DateTime',
-			$set,
-			'After calling for the first time, should be a date time object'
 		);
 	}
 
@@ -260,22 +225,13 @@ class TimestampBehaviorTest extends TestCase {
 		$this->Behavior = new TimestampBehavior($table);
 
 		$ts = new \DateTime();
-		$this->Behavior->setTimestamp($ts);
-
-		$property = new \ReflectionProperty('Cake\Model\Behavior\TimestampBehavior', '_ts');
-		$property->setAccessible(true);
-		$set = $property->getValue($this->Behavior);
-
-		$this->assertInstanceOf(
-			'DateTime',
-			$set,
-			'After calling for the first time, should be a date time object'
-		);
+		$this->Behavior->timestamp($ts);
+		$return = $this->Behavior->timestamp();
 
 		$this->assertSame(
 			$ts,
-			$set,
-			'Should have set the same object passed in'
+			$return,
+			'Should return the same value as initially set'
 		);
 	}
 }

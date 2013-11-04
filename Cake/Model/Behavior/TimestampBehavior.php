@@ -27,8 +27,8 @@ class TimestampBehavior extends Behavior {
  * These are merged with user-provided settings when the behavior is used.
  *
  * events - an event-name keyed array of which fields to update, and when, for a given event
- * possible values for when a field will be updated are true, "new" or "existing" to set the
- * field value always, only when a new record or only when an existing record.
+ * possible values for when a field will be updated are "always", "new" or "existing", to set
+ * the field value always, only when a new record or only when an existing record.
  *
  * refreshTimestamp - if true (the default) the timestamp used will be the current time when
  * the code is executed, to set to an explicit date time value - set refreshTimetamp to false
@@ -40,7 +40,7 @@ class TimestampBehavior extends Behavior {
 		'events' => [
 			'Model.beforeSave' => [
 				'created' => 'new',
-				'modified' => true,
+				'modified' => 'always'
 			]
 		],
 		'refreshTimestamp' => true
@@ -83,9 +83,9 @@ class TimestampBehavior extends Behavior {
 
 		$new = $entity->isNew() !== false;
 
-		foreach($settings['events'][$eventName] as $field => $when) {
+		foreach ($settings['events'][$eventName] as $field => $when) {
 			if (
-				$when === true ||
+				$when === 'always' ||
 				($when === 'new' && $new) ||
 				($when === 'existing' && !$new)
 			) {
@@ -105,41 +105,29 @@ class TimestampBehavior extends Behavior {
  */
 	public function implementedEvents() {
 		$events = array_flip(array_keys($this->_settings['events']));
-		foreach($events as &$method) {
+		foreach ($events as &$method) {
 			$method = 'handleEvent';
 		}
 		return $events;
 	}
 
 /**
- * getTimestamp
- *
- * Gets the current timestamp. If $refreshTimestamp is not truthy, the existing timestamp will be
- * returned
- *
- * @return \DateTime
- */
-	public function getTimestamp($refreshTimestamp = null) {
-		if ($this->_ts === null || $refreshTimestamp) {
-			$this->setTimestamp();
-		}
-
-		return $this->_ts;
-	}
-
-/**
- * setTimestamp
+ * Get or set the timestamp to be used
  *
  * Set the timestamp to the given DateTime object, or if not passed a new DateTime object
  *
- * @param int $ts
- * @return void
+ * @param \DateTime $ts
+ * @param bool $refreshTimestamp
+ * @return \DateTime
  */
-	public function setTimestamp(\DateTime $ts = null) {
-		if ($ts === null) {
-			$ts = new \DateTime();
+	public function timestamp(\DateTime $ts = null, $refreshTimestamp = false) {
+		if ($ts) {
+			$this->_ts = $ts;
+		} elseif ($this->_ts === null || $refreshTimestamp) {
+			$this->_ts = new \DateTime();
 		}
-		$this->_ts = $ts;
+
+		return $this->_ts;
 	}
 
 /**
@@ -154,6 +142,6 @@ class TimestampBehavior extends Behavior {
 		if ($entity->dirty($field)) {
 			return;
 		}
-		$entity->set($field, $this->getTimestamp($refreshTimestamp));
+		$entity->set($field, $this->timestamp(null, $refreshTimestamp));
 	}
 }
