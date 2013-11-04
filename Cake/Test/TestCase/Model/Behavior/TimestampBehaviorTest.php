@@ -265,10 +265,10 @@ class TimestampBehaviorTest extends TestCase {
  *
  * @return void
  */
-    public function testSaveTriggersInsert() {
+	public function testSaveTriggersInsert() {
 		$this->loadFixtures('User'); //@TODO make fixtures more consistent/easier to use
 
-        $table = TableRegistry::get('users');
+		$table = TableRegistry::get('users');
 		$table->addBehavior('Timestamp', [
 			'events' => [
 				'Model.beforeSave' => [
@@ -278,9 +278,7 @@ class TimestampBehaviorTest extends TestCase {
 			]
 		]);
 
-        $entity = new Entity([
-            'username' => 'timestamp',
-        ]);
+		$entity = new Entity(['username' => 'timestamp test']);
 		$return = $table->save($entity);
 		$this->assertSame($return, $entity);
 
