@@ -81,6 +81,11 @@ class TimestampBehavior extends Behavior {
 		$new = $entity->isNew() !== false;
 
 		foreach ($settings['events'][$eventName] as $field => $when) {
+			if (!in_array($when, ['always', 'new', 'existing'])) {
+				throw new \UnexpectedValueException(
+					__d('cake', 'When should be one of "always", "new" or "existing". The passed value "%s" is invalid', $when)
+				);
+			}
 			if (
 				$when === 'always' ||
 				($when === 'new' && $new) ||

@@ -179,6 +179,23 @@ class TimestampBehaviorTest extends TestCase {
 	}
 
 /**
+ * testInvalidEventConfig
+ *
+ * @expectedException UnexpectedValueException
+ * @expectedExceptionMessage 'When should be one of "always", "new" or "existing". The passed value "fat fingers" is invalid'
+ * @return void
+ */
+	public function testInvalidEventConfig() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$settings = ['events' => ['Model.beforeSave' => ['created' => 'fat fingers']]];
+		$this->Behavior = new TimestampBehavior($table, $settings);
+
+		$event = new Event('Model.beforeSave');
+		$entity = new Entity(['name' => 'Foo']);
+		$this->Behavior->handleEvent($event, $entity);
+	}
+
+/**
  * testGetTimestamp
  *
  * @return void
