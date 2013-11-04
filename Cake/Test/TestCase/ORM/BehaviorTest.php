@@ -31,6 +31,24 @@ class TestBehavior extends Behavior {
 }
 
 /**
+ * Test Stub.
+ */
+class Test2Behavior extends Behavior {
+
+/**
+ * Test for event bindings.
+ */
+	public function beforeFind() {
+	}
+
+	public function findFoo() {
+	}
+
+	public function doSomething() {
+	}
+
+}
+/**
  * Behavior test case
  */
 class BehaviorTest extends TestCase {
@@ -85,6 +103,98 @@ class BehaviorTest extends TestCase {
 			]
 		];
 		$this->assertEquals($expected, $behavior->implementedEvents());
+	}
+
+/**
+ * testImplementedMethods
+ *
+ * @return void
+ */
+	public function testImplementedMethods() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table);
+		$expected = [
+			'dosomething' => 'dosomething'
+		];
+		$this->assertEquals($expected, $behavior->implementedMethods());
+	}
+
+/**
+ * testImplementedMethodsAliased
+ *
+ * @return void
+ */
+	public function testImplementedMethodsAliased() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedMethods' => [
+				'aliased' => 'dosomething'
+			]
+		]);
+		$expected = [
+			'aliased' => 'dosomething'
+		];
+		$this->assertEquals($expected, $behavior->implementedMethods());
+	}
+
+/**
+ * testImplementedMethodsDisabled
+ *
+ * @return void
+ */
+	public function testImplementedMethodsDisabled() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedMethods' => []
+		]);
+		$expected = [];
+		$this->assertEquals($expected, $behavior->implementedMethods());
+	}
+
+/**
+ * testImplementedFinders
+ *
+ * @return void
+ */
+	public function testImplementedFinders() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table);
+		$expected = [
+			'foo' => 'findfoo'
+		];
+		$this->assertEquals($expected, $behavior->implementedFinders());
+	}
+
+/**
+ * testImplementedFindersAliased
+ *
+ * @return void
+ */
+	public function testImplementedFindersAliased() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedFinders' => [
+				'aliased' => 'findfoo'
+			]
+		]);
+		$expected = [
+			'aliased' => 'findfoo'
+		];
+		$this->assertEquals($expected, $behavior->implementedFinders());
+	}
+
+/**
+ * testImplementedFindersDisabled
+ *
+ * @return void
+ */
+	public function testImplementedFindersDisabled() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedFinders' => []
+		]);
+		$expected = [];
+		$this->assertEquals($expected, $behavior->implementedFinders());
 	}
 
 }
