@@ -7243,6 +7243,74 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that postLink adds form tags to view block
+ *
+ * @return void
+ */
+	public function testPostLinkFormBuffer() {
+		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('inline' => false));
+		$this->assertTags($result, array(
+			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
+			'Delete',
+			'/a'
+		));
+
+		$result = $this->View->fetch('postLink');
+		$this->assertTags($result, array(
+			'form' => array(
+				'method' => 'post', 'action' => '/posts/delete/1',
+				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+			),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/form'
+		));
+
+		$result = $this->Form->postLink('Delete', '/posts/delete/2',
+			array('inline' => false, 'method' => 'DELETE')
+		);
+		$this->assertTags($result, array(
+			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
+			'Delete',
+			'/a'
+		));
+
+		$result = $this->View->fetch('postLink');
+		$this->assertTags($result, array(
+			'form' => array(
+				'method' => 'post', 'action' => '/posts/delete/1',
+				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+			),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/form',
+			array(
+				'form' => array(
+					'method' => 'post', 'action' => '/posts/delete/2',
+					'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				),
+			),
+			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'DELETE')),
+			'/form'
+		));
+
+		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('block' => 'foobar'));
+		$this->assertTags($result, array(
+			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
+			'Delete',
+			'/a'
+		));
+
+		$result = $this->View->fetch('foobar');
+		$this->assertTags($result, array(
+			'form' => array(
+				'method' => 'post', 'action' => '/posts/delete/1',
+				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+			),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/form'
+		));
+	}
+
+/**
  * testSubmitButton method
  *
  * @return void
