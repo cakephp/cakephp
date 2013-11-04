@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 
@@ -580,7 +581,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 
 		$query = $table->find('list', ['groupField' => 'odd'])
-			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->select(['id', 'username', 'odd' => new QueryExpression('id % 2 = 0')])
 			->hydrate(false)
 			->order('id');
 		$expected = [
@@ -763,7 +764,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 
 		$query = $table->find('list', ['groupField' => 'odd'])
-			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->select(['id', 'username', 'odd' => new QueryExpression('id % 2 = 0')])
 			->hydrate(true)
 			->order('id');
 		$expected = [

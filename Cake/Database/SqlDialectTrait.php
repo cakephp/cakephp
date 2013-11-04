@@ -107,11 +107,47 @@ trait SqlDialectTrait {
  * @return Query The modified query
  */
 	protected function _selectQueryTranslator($query) {
+		$query = $this->_transformDistinct($query);
+		$part = $query->clause('select');
+		$result = [];
+		foreach ((array)$part as $alias => $value) {
+			$value = !is_string($value) ? $value : $this->quoteIdentifier($value);
+			$result[$alias] = $value;
+		}
+		$query->select($result, true);
+
+		$part = $query->clause('from');
+		$result = [];
+		foreach ((array)$part as $alias => $value) {
+			$alias = is_numeric($alias) ? $alias : $this->quoteIdentifier($alias);
+			$result[$alias] = $value;
+		}
+		$query->from($result, true);
+
+		$part = $query->clause('join');
+		$result = [];
+		foreach ((array)$part as $value) {
+			$alias =  empty($value['alias']) ? null : $this->quoteIdentifier($value['alias']);
+			$value['alias'] = $alias;
+			$result[$alias] = $value;
+		}
+		$query->join($result, [], true);
+
+		return $query;
+	}
+
+/**
+ * Returns the passed query after rewriting the DISTINCT clause, so that drivers
+ * that do not support the "ON" part can provide the actual way it should be done
+ *
+ * @param Query $query The query to be transformed
+ * @return Query
+ */
+	protected function _transformDistinct($query) {
 		if (is_array($query->clause('distinct'))) {
 			$query->group($query->clause('distinct'), true);
 			$query->distinct(false);
 		}
-
 		return $query;
 	}
 

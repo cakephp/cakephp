@@ -359,7 +359,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  */
 	public function iterateParts(callable $callable) {
 		$parts = [];
-		foreach ($this->_conditions as $c) {
+		foreach ($this->_conditions as $k => $c) {
 			$part = $callable($c);
 			if ($part !== null) {
 				$parts[] = $part;

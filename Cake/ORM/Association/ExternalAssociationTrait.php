@@ -16,6 +16,8 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\UnaryExpression;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
@@ -121,12 +123,17 @@ trait ExternalAssociationTrait {
  * @return string|array
  */
 	protected function _joinCondition(array $options) {
-		return sprintf('%s.%s = %s.%s',
-				$this->_sourceTable->alias(),
-				$this->_sourceTable->primaryKey(),
-				$this->_targetTable->alias(),
-				$options['foreignKey']
-			);
+		$field = sprintf(
+			'%s.%s',
+			$this->_sourceTable->alias(),
+			$this->_sourceTable->primaryKey()
+		);
+		$value = new UnaryExpression(sprintf(
+			'%s.%s',
+			$this->_targetTable->alias(),
+			$options['foreignKey']
+		), [], '');
+		return new Comparison($field, $value, 'string', '=');
 	}
 
 /**

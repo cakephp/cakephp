@@ -17,6 +17,7 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\Query;
@@ -45,13 +46,12 @@ trait PostgresDialectTrait {
 	protected $_endQuote = '"';
 
 /**
- * Returns a query that has been transformed to the specific SQL dialect
- * by changing or re-arranging SQL clauses as required.
+ * Distinct clause needs no transformation
  *
- * @param Cake\Database\Query $query
- * @return Cake\Database\Query
+ * @param Query $query The query to be transformed
+ * @return Query
  */
-	protected function _selectQueryTranslator($query) {
+	protected function _transformDistinct($query) {
 		return $query;
 	}
 
@@ -78,8 +78,25 @@ trait PostgresDialectTrait {
 	protected function _expressionTranslators() {
 		$namespace = 'Cake\Database\Expression';
 		return [
+			$namespace . '\Comparison' => '_transformComparison',
+			$namespace . '\UnaryExpression' => '_transformUnary',
 			$namespace . '\FunctionExpression' => '_transformFunctionExpression'
 		];
+	}
+
+	protected function _transformComparison(Comparison $expression) {
+		$field = $expression->getField();
+		if (is_string($field)) {
+			$expression->field($this->quoteIdentifier($field));
+		}
+	}
+
+	protected function _transformUnary(UnaryExpression $expression) {
+		$expression->iterateParts(function($part) {
+			if (is_string($part)) {
+				return $this->quoteIdentifier($part);
+			}
+		});
 	}
 
 /**
