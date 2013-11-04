@@ -174,6 +174,11 @@ class TimestampBehaviorTest extends TestCase {
 			'Should return a timestamp object'
 		);
 
+		$now = time();
+		$ts = $return->getTimestamp();
+
+		$this->assertLessThan(3, abs($now - $ts), "Timestamp is expected to within 3 seconds of the current timestamp");
+
 		return $this->Behavior;
 	}
 
