@@ -29,12 +29,30 @@ class TimestampBehaviorTest extends TestCase {
  *
  * @return void
  */
-	public function testImplementedEvents() {
+	public function testImplementedEventsDefault() {
 		$table = $this->getMock('Cake\ORM\Table');
 		$this->Behavior = new TimestampBehavior($table);
 
 		$expected = [
-			'Model.beforeSave' => 'beforeSave'
+			'Model.beforeSave' => 'handleEvent'
+		];
+		$this->assertEquals($expected, $this->Behavior->implementedEvents());
+	}
+
+/**
+ * testImplementedEventsCustom
+ *
+ * The behavior allows for handling any event - test an example
+ *
+ * @return void
+ */
+	public function testImplementedEventsCustom() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$settings = ['events' => ['Something.special' => ['date_specialed' => true]]];
+		$this->Behavior = new TimestampBehavior($table, $settings);
+
+		$expected = [
+			'Something.special' => 'handleEvent'
 		];
 		$this->assertEquals($expected, $this->Behavior->implementedEvents());
 	}
@@ -53,7 +71,7 @@ class TimestampBehaviorTest extends TestCase {
 		$event = new Event('Model.beforeSave');
 		$entity = new Entity(['name' => 'Foo']);
 
-		$return = $this->Behavior->beforeSave($event, $entity);
+		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
 		$this->assertSame($ts, $entity->created, 'Created timestamp is expected to be the mocked value');
 	}
@@ -73,7 +91,7 @@ class TimestampBehaviorTest extends TestCase {
 		$existingValue = new \DateTime('2011-11-11');
 		$entity = new Entity(['name' => 'Foo', 'created' => $existingValue]);
 
-		$return = $this->Behavior->beforeSave($event, $entity);
+		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
 		$this->assertSame($existingValue, $entity->created, 'Created timestamp is expected to be unchanged');
 	}
@@ -93,7 +111,7 @@ class TimestampBehaviorTest extends TestCase {
 		$entity = new Entity(['name' => 'Foo']);
 		$entity->isNew(false);
 
-		$return = $this->Behavior->beforeSave($event, $entity);
+		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
 		$this->assertNull($entity->created, 'Created timestamp is expected to be untouched if the entity is not new');
 	}
@@ -113,7 +131,7 @@ class TimestampBehaviorTest extends TestCase {
 		$entity = new Entity(['name' => 'Foo']);
 		$entity->isNew(false);
 
-		$return = $this->Behavior->beforeSave($event, $entity);
+		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
 		$this->assertSame($ts, $entity->modified, 'Modified timestamp is expected to be the mocked value');
 	}
@@ -135,7 +153,7 @@ class TimestampBehaviorTest extends TestCase {
 		$entity->clean();
 		$entity->isNew(false);
 
-		$return = $this->Behavior->beforeSave($event, $entity);
+		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
 		$this->assertSame($ts, $entity->modified, 'Modified timestamp is expected to be updated');
 	}

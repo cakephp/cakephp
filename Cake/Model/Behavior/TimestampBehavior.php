@@ -26,6 +26,10 @@ class TimestampBehavior extends Behavior {
  *
  * These are merged with user-provided settings when the behavior is used.
  *
+ * events - an event-name keyed array of which fields to update, and when, for a given event
+ * possible values for when a field will be updated are true, "new" or "existing" to set the
+ * field value always, only when a new record or only when an existing record.
+ *
  * refreshTimestamp - if true (the default) the timestamp used will be the current time when
  * the code is executed, to set to an explicit date time value - set refreshTimetamp to false
  * and call setTimestamp() on the behavior class before use.
@@ -33,9 +37,11 @@ class TimestampBehavior extends Behavior {
  * @var array
  */
 	protected $_defaultSettings = [
-		'fields' => [
-			'created' => 'created',
-			'updated' => 'modified'
+		'events' => [
+			'Model.beforeSave' => [
+				'created' => 'new',
+				'modified' => true,
+			]
 		],
 		'refreshTimestamp' => true
 	];
@@ -60,7 +66,7 @@ class TimestampBehavior extends Behavior {
 	}
 
 /**
- * beforeSave
+ * handleEvent
  *
  * There is only one event handler, it can be configured to be called for any event
  *
@@ -68,16 +74,41 @@ class TimestampBehavior extends Behavior {
  * @param Entity $entity
  * @return true (irrespective of the behavior logic, the save will not be prevented)
  */
-	public function beforeSave(Event $event, Entity $entity) {
+	public function handleEvent(Event $event, Entity $entity) {
+		$eventName = $event->name();
 		$settings = $this->settings();
+		if (!isset($settings['events'][$eventName])) {
+			return true;
+		}
+
 		$new = $entity->isNew() !== false;
 
-		if ($new) {
-			$this->_updateField($entity, $settings['fields']['created'], $settings['refreshTimestamp']);
+		foreach($settings['events'][$eventName] as $field => $when) {
+			if (
+				$when === true ||
+				($when === 'new' && $new) ||
+				($when === 'existing' && !$new)
+			) {
+				$this->_updateField($entity, $field, $settings['refreshTimestamp']);
+			}
 		}
-		$this->_updateField($entity, $settings['fields']['updated'], $settings['refreshTimestamp']);
 
 		return true;
+	}
+
+/**
+ * implementedEvents
+ *
+ * The implemented events of this behavior depend on configuration
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		$events = array_flip(array_keys($this->_settings['events']));
+		foreach($events as &$method) {
+			$method = 'handleEvent';
+		}
+		return $events;
 	}
 
 /**
