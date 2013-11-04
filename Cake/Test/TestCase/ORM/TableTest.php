@@ -1575,4 +1575,194 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($entity, $table->save($entity));
 	}
 
+/**
+ * Test simple delete.
+ *
+ * @return void
+ */
+	public function testDelete() {
+		$table = TableRegistry::get('users');
+		$conditions = [
+			'limit' => 1,
+			'conditions' => [
+				'username' => 'nate'
+			]
+		];
+		$query = $table->find('all', $conditions);
+		$entity = $query->first();
+		$result = $table->delete($entity);
+		$this->assertTrue($result);
+
+		$query = $table->find('all', $conditions);
+		$results = $query->execute();
+		$this->assertCount(0, $results, 'Find should fail.');
+	}
+
+/**
+ * Test delete with dependent records
+ *
+ * @return void
+ */
+	public function testDeleteDependent() {
+		$table = TableRegistry::get('author');
+		$table->hasOne('article', [
+			'foreignKey' => 'author_id',
+			'dependent' => true,
+		]);
+
+		$query = $table->find('all')->where(['id' => 1]);
+		$entity = $query->first();
+		$result = $table->delete($entity);
+
+		$articles = $table->association('article')->target();
+		$query = $articles->find('all', [
+			'conditions' => [
+				'author_id' => $entity->id
+			]
+		]);
+		$this->assertNull($query->execute()->one(), 'Should not find any rows.');
+	}
+
+/**
+ * Test delete with dependent = false does not cascade.
+ *
+ * @return void
+ */
+	public function testDeleteNoDependentNoCascade() {
+		$table = TableRegistry::get('author');
+		$table->hasMany('article', [
+			'foreignKey' => 'author_id',
+			'dependent' => false,
+		]);
+
+		$query = $table->find('all')->where(['id' => 1]);
+		$entity = $query->first();
+		$result = $table->delete($entity);
+
+		$articles = $table->association('article')->target();
+		$query = $articles->find('all')->where(['author_id' => $entity->id]);
+		$this->assertCount(2, $query->execute(), 'Should find rows.');
+	}
+
+/**
+ * Test delete with BelongsToMany
+ *
+ * @return void
+ */
+	public function testDeleteBelongsToMany() {
+		$table = TableRegistry::get('article');
+		$table->belongsToMany('tag', [
+			'foreignKey' => 'article_id',
+			'joinTable' => 'articles_tags'
+		]);
+		$query = $table->find('all')->where(['id' => 1]);
+		$entity = $query->first();
+		$table->delete($entity);
+
+		$pivot = $table->association('tag')->pivot();
+		$query = $pivot->find('all')->where(['article_id' => 1]);
+		$this->assertNull($query->execute()->one(), 'Should not find any rows.');
+	}
+
+/**
+ * Test delete callbacks
+ *
+ * @return void
+ */
+	public function testDeleteCallbacks() {
+		$entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
+		$options = new \ArrayObject(['atomic' => true]);
+
+		$mock = $this->getMock('Cake\Event\EventManager');
+		$mock->expects($this->at(0))
+			->method('dispatch')
+			->with($this->logicalAnd(
+				$this->attributeEqualTo('_name', 'Model.beforeDelete'),
+				$this->attributeEqualTo(
+					'data',
+					['entity' => $entity, 'options' => $options]
+				)
+			));
+
+		$mock->expects($this->at(1))
+			->method('dispatch')
+			->with($this->logicalAnd(
+				$this->attributeEqualTo('_name', 'Model.afterDelete'),
+				$this->attributeEqualTo(
+					'data',
+					['entity' => $entity, 'options' => $options]
+				)
+			));
+
+		$table = TableRegistry::get('users', ['eventManager' => $mock]);
+		$entity->isNew(false);
+		$table->delete($entity);
+	}
+
+/**
+ * Test delete beforeDelete can abort the delete.
+ *
+ * @return void
+ */
+	public function testDeleteBeforeDeleteAbort() {
+		$entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
+		$options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
+
+		$mock = $this->getMock('Cake\Event\EventManager');
+		$mock->expects($this->once())
+			->method('dispatch')
+			->will($this->returnCallback(function($event) {
+				$event->stopPropagation();
+			}));
+
+		$table = TableRegistry::get('users', ['eventManager' => $mock]);
+		$entity->isNew(false);
+		$result = $table->delete($entity);
+		$this->assertNull($result);
+	}
+
+/**
+ * Test delete beforeDelete return result
+ *
+ * @return void
+ */
+	public function testDeleteBeforeDeleteReturnResult() {
+		$entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
+		$options = new \ArrayObject(['atomic' => true, 'cascade' => true]);
+
+		$mock = $this->getMock('Cake\Event\EventManager');
+		$mock->expects($this->once())
+			->method('dispatch')
+			->will($this->returnCallback(function($event) {
+				$event->stopPropagation();
+				$event->result = 'got stopped';
+			}));
+
+		$table = TableRegistry::get('users', ['eventManager' => $mock]);
+		$entity->isNew(false);
+		$result = $table->delete($entity);
+		$this->assertEquals('got stopped', $result);
+	}
+
+/**
+ * Test deleting new entities does nothing.
+ *
+ * @return void
+ */
+	public function testDeleteIsNew() {
+		$entity = new \Cake\ORM\Entity(['id' => 1, 'name' => 'mark']);
+
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['_buildQuery'],
+			[['connection' => $this->connection]]
+		);
+		$table->expects($this->never())
+			->method('_buildQuery');
+
+		$entity->isNew(true);
+		$result = $table->delete($entity);
+		$this->assertFalse($result);
+	}
+
 }

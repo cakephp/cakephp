@@ -17,6 +17,7 @@
 namespace Cake\ORM\Association;
 
 use Cake\ORM\Association;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
@@ -50,6 +51,19 @@ class BelongsTo extends Association {
 			return $this->_foreignKey;
 		}
 		return parent::foreignKey($key);
+	}
+
+/**
+ * Handle cascading deletes.
+ *
+ * BelongsTo associations are never cleared in a cascading delete scenario.
+ *
+ * @param Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param array $options The options for the original delete.
+ * @return boolean Success.
+ */
+	public function cascadeDelete(Entity $entity, $options = []) {
+		return true;
 	}
 
 /**

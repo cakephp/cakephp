@@ -16,6 +16,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 
@@ -94,6 +95,13 @@ abstract class Association {
 	protected $_dependent = false;
 
 /**
+ * Whether or not cascaded deletes should also fire callbacks.
+ *
+ * @var string
+ */
+	protected $_cascadeCallbacks = false;
+
+/**
  * Source table instance
  *
  * @var Cake\ORM\Table
@@ -144,6 +152,7 @@ abstract class Association {
 			'foreignKey',
 			'conditions',
 			'dependent',
+			'cascadeCallbacks',
 			'sourceTable',
 			'targetTable',
 			'joinType',
@@ -249,9 +258,11 @@ abstract class Association {
 	}
 
 /**
- * Sets Whether the records on the target table are dependent on the source table,
- * often used to indicate that records should be removed is the owning record in
+ * Sets whether the records on the target table are dependent on the source table.
+ *
+ * This is primarily used to indicate that records should be removed is the owning record in
  * the source table is deleted.
+ *
  * If no parameters are passed current setting is returned.
  *
  * @param boolean $dependent
@@ -413,4 +424,17 @@ abstract class Association {
  * @return string|array|boolean
  */
 	protected abstract function _joinCondition(array $options);
+
+/**
+ * Handles cascading a delete from an associated model.
+ *
+ * Each implementing class should handle the cascaded delete as
+ * required.
+ *
+ * @param Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param array $options The options for the original delete.
+ * @return boolean Success
+ */
+	public abstract function cascadeDelete(Entity $entity, $options = []);
+
 }

@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\ORM\Association\BelongsToMany;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -36,14 +37,14 @@ class BelongsToManyTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->tag = $this->getMock(
-			'Cake\ORM\Table', ['find'], [['alias' => 'Tag', 'table' => 'tags']]
+			'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Tag', 'table' => 'tags']]
 		);
 		$this->tag->schema([
 			'id' => ['type' => 'integer'],
 			'name' => ['type' => 'string'],
 		]);
 		$this->article = $this->getMock(
-			'Cake\ORM\Table', ['find'], [['alias' => 'Article', 'table' => 'articles']]
+			'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Article', 'table' => 'articles']]
 		);
 		$this->article->schema([
 			'id' => ['type' => 'integer'],
@@ -540,6 +541,84 @@ class BelongsToManyTest extends TestCase {
 		$row['Article__id'] = 2;
 		$result = $callable($row);
 		$this->assertEquals($row, $result);
+	}
+
+/**
+ * Test cascading deletes.
+ *
+ * @return void
+ */
+	public function testCascadeDelete() {
+		$articleTag = $this->getMock('Cake\ORM\Table', ['deleteAll'], [], '', false);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'conditions' => ['Tag.name' => 'foo'],
+			'sort' => ['id' => 'ASC'],
+		];
+		$association = new BelongsToMany('Tag', $config);
+		$association->pivot($articleTag);
+
+		$articleTag->expects($this->once())
+			->method('deleteAll')
+			->with([
+				'Tag.name' => 'foo',
+				'article_id' => 1
+			]);
+
+		$entity = new Entity(['id' => 1, 'name' => 'PHP']);
+		$association->cascadeDelete($entity);
+	}
+
+/**
+ * Test cascading deletes with callbacks.
+ *
+ * @return void
+ */
+	public function testCascadeDeleteWithCallbacks() {
+		$articleTag = $this->getMock('Cake\ORM\Table', ['find', 'delete'], [], '', false);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'conditions' => ['Tag.name' => 'foo'],
+			'cascadeCallbacks' => true,
+		];
+		$association = new BelongsToMany('Tag', $config);
+		$association->pivot($articleTag);
+
+		$articleTagOne = new Entity(['article_id' => 1, 'tag_id' => 2]);
+		$articleTagTwo = new Entity(['article_id' => 1, 'tag_id' => 4]);
+		$iterator = new \ArrayIterator([
+			$articleTagOne,
+			$articleTagTwo
+		]);
+
+		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
+		$query->expects($this->once())
+			->method('where')
+			->with(['Tag.name' => 'foo', 'article_id' => 1])
+			->will($this->returnSelf());
+
+		$query->expects($this->any())
+			->method('getIterator')
+			->will($this->returnValue($iterator));
+
+		$articleTag->expects($this->once())
+			->method('find')
+			->will($this->returnValue($query));
+
+		$articleTag->expects($this->at(1))
+			->method('delete')
+			->with($articleTagOne, []);
+		$articleTag->expects($this->at(2))
+			->method('delete')
+			->with($articleTagTwo, []);
+
+		$articleTag->expects($this->never())
+			->method('deleteAll');
+
+		$entity = new Entity(['id' => 1, 'name' => 'PHP']);
+		$association->cascadeDelete($entity);
 	}
 
 }

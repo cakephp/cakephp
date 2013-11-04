@@ -17,6 +17,7 @@
 namespace Cake\ORM\Association;
 
 use Cake\ORM\Association;
+use Cake\ORM\Association\DependentDeleteTrait;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
@@ -27,6 +28,8 @@ use Cake\Utility\Inflector;
  * An example of a HasOne association would be User has one Profile.
  */
 class HasOne extends Association {
+
+	use DependentDeleteTrait;
 
 /**
  * Whether this association can be expressed directly in a query join

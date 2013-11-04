@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\ORM\Association\HasMany;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -41,7 +42,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			]
 		]);
 		$this->article = $this->getMock(
-			'Cake\ORM\Table', ['find'], [['alias' => 'Article', 'table' => 'articles']]
+			'Cake\ORM\Table', ['find', 'deleteAll', 'delete'], [['alias' => 'Article', 'table' => 'articles']]
 		);
 		$this->article->schema([
 			'id' => ['type' => 'integer'],
@@ -170,7 +171,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('andWhere')
-			->with(['Article.author_id in' => $keys])
+			->with(['Article.author_id IN' => $keys])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('order')
@@ -215,7 +216,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('andWhere')
-			->with(['Article.author_id in' => $keys])
+			->with(['Article.author_id IN' => $keys])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('order')
@@ -318,7 +319,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->select('Article.author_id', true)
 			->join($joins, [], true);
 		$query->expects($this->once())->method('andWhere')
-			->with(['Article.author_id in' => $expected])
+			->with(['Article.author_id IN' => $expected])
 			->will($this->returnValue($query));
 
 		$callable = $association->eagerLoader([
@@ -431,4 +432,76 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
 	}
+
+/**
+ * Test cascading deletes.
+ *
+ * @return void
+ */
+	public function testCascadeDelete() {
+		$config = [
+			'dependent' => true,
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Article.is_active' => true],
+		];
+		$association = new HasMany('Article', $config);
+
+		$this->article->expects($this->once())
+			->method('deleteAll')
+			->with([
+				'Article.is_active' => true,
+				'author_id' => 1
+			]);
+
+		$entity = new Entity(['id' => 1, 'name' => 'PHP']);
+		$association->cascadeDelete($entity);
+	}
+
+/**
+ * Test cascading delete with has many.
+ *
+ * @return void
+ */
+	public function testCascadeDeleteCallbacks() {
+		$config = [
+			'dependent' => true,
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Article.is_active' => true],
+			'cascadeCallbacks' => true,
+		];
+		$association = new HasMany('Article', $config);
+
+		$articleOne = new Entity(['id' => 2, 'title' => 'test']);
+		$articleTwo = new Entity(['id' => 3, 'title' => 'testing']);
+		$iterator = new \ArrayIterator([
+			$articleOne,
+			$articleTwo
+		]);
+
+		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
+		$query->expects($this->once())
+			->method('where')
+			->with(['Article.is_active' => true, 'author_id' => 1])
+			->will($this->returnSelf());
+		$query->expects($this->any())
+			->method('getIterator')
+			->will($this->returnValue($iterator));
+
+		$this->article->expects($this->once())
+			->method('find')
+			->will($this->returnValue($query));
+
+		$this->article->expects($this->at(1))
+			->method('delete')
+			->with($articleOne, []);
+		$this->article->expects($this->at(2))
+			->method('delete')
+			->with($articleTwo, []);
+
+		$entity = new Entity(['id' => 1, 'name' => 'mark']);
+		$this->assertTrue($association->cascadeDelete($entity));
+	}
+
 }

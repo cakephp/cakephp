@@ -460,6 +460,13 @@ class Table {
  * - targetTable: An instance of a table object to be used as the target table
  * - foreignKey: The name of the field to use as foreign key, if false none
  *   will be used
+ * - dependent: Set to true if you want CakePHP to cascade deletes to the
+ *   associated table when an entity is removed on this table. Set to false
+ *   if you don't want CakePHP to remove associated data, for when you are using
+ *   database constraints.
+ * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
+ *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
+ *   When true records will be loaded and then deleted.
  * - conditions: array with a list of conditions to filter the join with
  * - joinType: The type of join to be used (e.g. LEFT)
  *
@@ -490,6 +497,13 @@ class Table {
  * - targetTable: An instance of a table object to be used as the target table
  * - foreignKey: The name of the field to use as foreign key, if false none
  *   will be used
+ * - dependent: Set to true if you want CakePHP to cascade deletes to the
+ *   associated table when an entity is removed on this table. Set to false
+ *   if you don't want CakePHP to remove associated data, for when you are using
+ *   database constraints.
+ * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
+ *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
+ *   When true records will be loaded and then deleted.
  * - conditions: array with a list of conditions to filter the join with
  * - sort: The order in which results for this association should be returned
  * - strategy: The strategy to be used for selecting results Either 'select'
@@ -527,6 +541,9 @@ class Table {
  * - through: If you choose to use an already instantiated link table, set this
  *   key to a configured Table instance containing associations to both the source
  *   and target tables in this association.
+ * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
+ *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
+ *   When true pivot table records will be loaded and then deleted.
  * - conditions: array with a list of conditions to filter the join with
  * - sort: The order in which results for this association should be returned
  * - strategy: The strategy to be used for selecting results Either 'select'
@@ -716,6 +733,7 @@ class Table {
  *
  * @param array $conditions An array of conditions, similar to those used with find()
  * @return boolean Success Returns true if one or more rows are effected.
+ * @see Cake\ORM\Table::delete()
  */
 	public function deleteAll($conditions) {
 		$query = $this->_buildQuery();
@@ -897,6 +915,98 @@ class Table {
 			$success = $entity;
 		}
 		$statement->closeCursor();
+		return $success;
+	}
+
+/**
+ * Delete a single entity.
+ *
+ * Deletes an entity and possibly related associations from the database
+ * based on the 'dependent' option used when defining the association.
+ * For HasMany and HasOne associations records will be removed based on
+ * the dependent option. Join table records in BelongsToMany associations
+ * will always be removed. You can use the `cascadeCallbacks` option
+ * when defining associations to change how associated data is deleted.
+ *
+ * ## Options
+ *
+ * - `atomic` Defaults to true. When true the deletion happens within a transaction.
+ *
+ * ## Events
+ *
+ * - `beforeDelete` Fired before the delete occurs. If stopped the delete
+ *   will be aborted. Receives the event, entity, and options.
+ * - `afterDelete` Fired after the delete has been successful. Receives
+ *   the event, entity, and options.
+ *
+ * The options argument will be converted into an \ArrayObject instance
+ * for the duration of the callbacks, this allows listeners to modify
+ * the options used in the delete operation.
+ *
+ * @param Entity $entity The entity to remove.
+ * @param array $options The options fo the delete.
+ * @return boolean success
+ */
+	public function delete(Entity $entity, array $options = []) {
+		$options = new \ArrayObject($options + ['atomic' => true]);
+
+		$process = function() use ($entity, $options) {
+			return $this->_processDelete($entity, $options);
+		};
+
+		if ($options['atomic']) {
+			return $this->connection()->transactional($process);
+		}
+		return $process();
+	}
+
+/**
+ * Perform the delete operation.
+ *
+ * Will delete the entity provided. Will remove rows from any
+ * dependent associations, and clear out join tables for BelongsToMany associations.
+ *
+ * @param Entity $entity The entity to delete.
+ * @param ArrayObject $options The options for the delete.
+ * @return boolean success
+ */
+	protected function _processDelete($entity, $options) {
+		$eventManager = $this->getEventManager();
+		$event = new Event('Model.beforeDelete', $this, [
+			'entity' => $entity,
+			'options' => $options
+		]);
+		$eventManager->dispatch($event);
+		if ($event->isStopped()) {
+			return $event->result;
+		}
+
+		if ($entity->isNew()) {
+			return false;
+		}
+		$primaryKey = (array)$this->primaryKey();
+		$conditions = (array)$entity->extract($primaryKey);
+
+		$query = $this->_buildQuery();
+		$statement = $query->delete($this->table())
+			->where($conditions)
+			->executeStatement();
+
+		$success = $statement->rowCount() > 0;
+		if (!$success) {
+			return $success;
+		}
+
+		foreach ($this->_associations as $assoc) {
+			$assoc->cascadeDelete($entity, $options->getArrayCopy());
+		}
+
+		$event = new Event('Model.afterDelete', $this, [
+			'entity' => $entity,
+			'options' => $options
+		]);
+		$eventManager->dispatch($event);
+
 		return $success;
 	}
 

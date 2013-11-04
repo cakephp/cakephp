@@ -212,7 +212,7 @@ trait ExternalAssociationTrait {
  * @return \Cake\ORM\Query
  */
 	protected function _addFilteringCondition($query, $key, $filter) {
-		return $query->andWhere([$key . ' in' => $filter]);
+		return $query->andWhere([$key . ' IN' => $filter]);
 	}
 
 /**
