@@ -21,16 +21,38 @@ use Cake\Database\ValueBinder;
 
 class FieldExpression implements ExpressionInterface {
 
+/**
+ * Holds the field string
+ *
+ * @var string
+ */
 	protected $_field;
 
+/**
+ * Constructor
+ *
+ * @param string $field The field this expression represents
+ * @return void
+ */
 	public function __construct($field) {
-		$this->field($field);
+		$this->setField($field);
 	}
 
-	public function field($field) {
+/**
+ * Sets the field this expression represents
+ *
+ * @param string $field
+ * @return void
+ */
+	public function setField($field) {
 		$this->_field = $field;
 	}
 
+/**
+ * Returns the field this expression represents
+ *
+ * @return string
+ */
 	public function getField() {
 		return $this->_field;
 	}

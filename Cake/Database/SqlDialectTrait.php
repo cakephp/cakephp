@@ -152,7 +152,7 @@ trait SqlDialectTrait {
  * @return void
  */
 	protected function _quoteField(FieldExpression $expression) {
-		$expression->field($this->quoteIdentifier($expression->getField()));
+		$expression->setField($this->quoteIdentifier($expression->getField()));
 	}
 
 /**
