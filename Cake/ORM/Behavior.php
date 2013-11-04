@@ -172,6 +172,10 @@ class Behavior implements EventListener {
  * @return array
  */
 	public function implementedFinders() {
+		if (isset($this->_settings['implementedFinders'])) {
+			return $this->_settings['implementedFinders'];
+		}
+
 		$reflectionMethods = $this->_reflectionMethods();
 		return $reflectionMethods['finders'];
 	}
@@ -182,6 +186,10 @@ class Behavior implements EventListener {
  * @return array
  */
 	public function implementedMethods() {
+		if (isset($this->_settings['implementedMethods'])) {
+			return $this->_settings['implementedMethods'];
+		}
+
 		$reflectionMethods = $this->_reflectionMethods();
 		return $reflectionMethods['methods'];
 	}
@@ -225,9 +233,9 @@ class Behavior implements EventListener {
 
 			$isFinder = substr($methodName, 0, 4) === 'find';
 			if ($isFinder) {
-				$return['finders'][] = $methodName;
+				$return['finders'][substr($methodName, 4)] = $methodName;
 			} else {
-				$return['methods'][] = $methodName;
+				$return['methods'][$methodName] = $methodName;
 			}
 		}
 
