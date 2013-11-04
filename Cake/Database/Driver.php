@@ -39,6 +39,14 @@ abstract class Driver {
 	protected $_baseConfig = [];
 
 /**
+ * Indicates whether or not the driver is doing automatic identifier quoting
+ * for all queries
+ *
+ * @var bool
+ */
+	protected $_autoQuoting = false;
+
+/**
  * Constructor
  *
  * @param array $config The configuration for the driver.
@@ -47,6 +55,9 @@ abstract class Driver {
 	public function __construct($config = []) {
 		$config += $this->_baseConfig;
 		$this->_config = $config;
+		if (!empty($config['quoteIdentifiers'])) {
+			$this->autoQuoting(true);
+		}
 	}
 
 /**
@@ -178,6 +189,23 @@ abstract class Driver {
  */
 	public function isConnected() {
 		return $this->_connection !== null;
+	}
+
+/**
+ * Returns whether or not this driver should automatically quote identifiers
+ * in queries
+ *
+ * If called with a boolean argument, it will toggle the auto quoting setting
+ * to the passed value
+ *
+ * @param boolean $enable whether to enable auto quoting
+ * @return boolean
+ */
+	public function autoQuoting($enable = null) {
+		if ($enable === null) {
+			return $this->_autoQuoting;
+		}
+		return $this->_autoQuoting = (bool)$enable;
 	}
 
 /**

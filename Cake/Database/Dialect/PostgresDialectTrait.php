@@ -17,8 +17,6 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
-use Cake\Database\Expression\Comparison;
-use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
@@ -29,7 +27,9 @@ use Cake\Database\SqlDialectTrait;
  */
 trait PostgresDialectTrait {
 
-	use SqlDialectTrait;
+	use SqlDialectTrait {
+		_expressionTranslators as private _quotingTranslators;
+	}
 
 /**
  *  String used to start a database identifier quoting to make it safe
@@ -77,26 +77,9 @@ trait PostgresDialectTrait {
  */
 	protected function _expressionTranslators() {
 		$namespace = 'Cake\Database\Expression';
-		return [
-			$namespace . '\Comparison' => '_transformComparison',
-			$namespace . '\UnaryExpression' => '_transformUnary',
+		return $this->_quotingTranslators() + [
 			$namespace . '\FunctionExpression' => '_transformFunctionExpression'
 		];
-	}
-
-	protected function _transformComparison(Comparison $expression) {
-		$field = $expression->getField();
-		if (is_string($field)) {
-			$expression->field($this->quoteIdentifier($field));
-		}
-	}
-
-	protected function _transformUnary(UnaryExpression $expression) {
-		$expression->iterateParts(function($part) {
-			if (is_string($part)) {
-				return $this->quoteIdentifier($part);
-			}
-		});
 	}
 
 /**

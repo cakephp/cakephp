@@ -17,7 +17,7 @@
 namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\Comparison;
-use Cake\Database\Expression\UnaryExpression;
+use Cake\Database\Expression\FieldExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -81,11 +81,11 @@ class BelongsTo extends Association {
 			$this->target()->alias(),
 			$this->_targetTable->primaryKey()
 		);
-		$value = new UnaryExpression(sprintf(
+		$value = new FieldExpression(sprintf(
 			'%s.%s',
 			$this->_sourceTable->alias(),
 			$options['foreignKey']
-		), [], '');
+		));
 		return new Comparison($field, $value, 'string', '=');
 	}
 

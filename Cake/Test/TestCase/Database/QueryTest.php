@@ -134,20 +134,6 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test that table aliases are quoted.
- *
- * @return void
- */
-	public function testSelectAliasTablesAreQuoted() {
-		$query = new Query($this->connection);
-		$query = $query->select(['text' => 'a.body', 'a.author_id'])
-			->from(['a' => 'articles']);
-
-		$sql = $query->sql();
-		$this->assertRegExp('/articles AS [`"]a[`"]/', $sql);
-	}
-
-/**
  * Tests that tables can also be aliased and referenced in the select clause using such alias
  *
  * @return void

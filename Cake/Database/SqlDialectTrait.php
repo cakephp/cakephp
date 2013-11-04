@@ -16,6 +16,10 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\Expression\Comparison;
+use Cake\Database\Expression\OrderByExpression;
+use Cake\Database\Expression\FieldExpression;
+
 trait SqlDialectTrait {
 
 /**
@@ -72,14 +76,18 @@ trait SqlDialectTrait {
  */
 	public function queryTranslator($type) {
 		return function($query) use ($type) {
-			$query = $this->{'_' . $type . 'QueryTranslator'}($query);
+			if ($this->autoQuoting()) {
+				$query = $this->_quoteQueryIdentifiers($type, $query);
+			}
 
-			if (!$this->_expressionTranslators()) {
+			$query = $this->{'_' . $type . 'QueryTranslator'}($query);
+			$translators = $this->_expressionTranslators();
+			if (!$translators) {
 				return $query;
 			}
 
-			$query->traverseExpressions(function($expression) {
-				foreach ($this->_expressionTranslators() as $class => $method) {
+			$query->traverseExpressions(function($expression) use ($translators) {
+				foreach ($translators as $class => $method) {
 					if ($expression instanceof $class) {
 						$this->{$method}($expression);
 					}
@@ -94,10 +102,57 @@ trait SqlDialectTrait {
  * objects to conform with the specific SQL dialect. Keys are class names
  * and values a method in this class.
  *
- * @return void
+ * @return array
  */
 	protected function _expressionTranslators() {
+		if ($this->autoQuoting()) {
+			$namespace = 'Cake\Database\Expression';
+			return [
+				$namespace . '\Comparison' => '_quoteComparison',
+				$namespace . '\OrderByExpression' => '_quoteOrderBy',
+				$namespace . '\FieldExpression' => '_quoteField'
+			];
+		}
+
 		return [];
+	}
+
+/**
+ * Quotes identifiers in comparison expression objects
+ *
+ * @param \Cake\Database\Expression\Comparison $expression
+ * @return void
+ */
+	protected function _quoteComparison(Comparison $expression) {
+		$field = $expression->getField();
+		if (is_string($field)) {
+			$expression->field($this->quoteIdentifier($field));
+		}
+	}
+
+/**
+ * Quotes identifiers in "order by" expression objects
+ *
+ * @param \Cake\Database\Expression\OrderByExpression $expression
+ * @return void
+ */
+	protected function _quoteOrderBy(OrderByExpression $expression) {
+		$expression->iterateParts(function($part, &$field) {
+			if (is_string($field)) {
+				$field = $this->quoteIdentifier($field);
+			}
+			return $part;
+		});
+	}
+
+/**
+ * Quotes identifiers in "order by" expression objects
+ *
+ * @param \Cake\Database\Expression\FieldExpression $expression
+ * @return void
+ */
+	protected function _quoteField(FieldExpression $expression) {
+		$expression->field($this->quoteIdentifier($expression->getField()));
 	}
 
 /**
@@ -107,33 +162,7 @@ trait SqlDialectTrait {
  * @return Query The modified query
  */
 	protected function _selectQueryTranslator($query) {
-		$query = $this->_transformDistinct($query);
-		$part = $query->clause('select');
-		$result = [];
-		foreach ((array)$part as $alias => $value) {
-			$value = !is_string($value) ? $value : $this->quoteIdentifier($value);
-			$result[$alias] = $value;
-		}
-		$query->select($result, true);
-
-		$part = $query->clause('from');
-		$result = [];
-		foreach ((array)$part as $alias => $value) {
-			$alias = is_numeric($alias) ? $alias : $this->quoteIdentifier($alias);
-			$result[$alias] = $value;
-		}
-		$query->from($result, true);
-
-		$part = $query->clause('join');
-		$result = [];
-		foreach ((array)$part as $value) {
-			$alias =  empty($value['alias']) ? null : $this->quoteIdentifier($value['alias']);
-			$value['alias'] = $alias;
-			$result[$alias] = $value;
-		}
-		$query->join($result, [], true);
-
-		return $query;
+		return $this->_transformDistinct($query);
 	}
 
 /**
@@ -148,6 +177,48 @@ trait SqlDialectTrait {
 			$query->group($query->clause('distinct'), true);
 			$query->distinct(false);
 		}
+		return $query;
+	}
+
+/**
+ * Iterates over each of the clauses in a query looking for identifiers and
+ * quotes them
+ *
+ * @param string $type the type of query to be quoted 
+ * @param Query $query The query to have its identifiers quoted
+ * @return Query
+ */
+	protected function _quoteQueryIdentifiers($type, $query) {
+		if ($type !== 'select') {
+			return $query;
+		}
+
+		$quoter = function($part) use ($query) {
+			$result = [];
+			foreach ((array)$query->clause($part) as $alias => $value) {
+				$value = !is_string($value) ? $value : $this->quoteIdentifier($value);
+				$alias = is_numeric($alias) ? $alias : $this->quoteIdentifier($alias);
+				$result[$alias] = $value;
+			}
+			$query->{$part}($result, true);
+		};
+
+		if (is_array($query->clause('distinct'))) {
+			$quoter('distinct', $query);
+		}
+
+		$quoter('select');
+		$quoter('from');
+		$quoter('group');
+
+		$result = [];
+		foreach ((array)$query->clause('join') as $value) {
+			$alias =  empty($value['alias']) ? null : $this->quoteIdentifier($value['alias']);
+			$value['alias'] = $alias;
+			$result[$alias] = $value;
+		}
+		$query->join($result, [], true);
+
 		return $query;
 	}
 

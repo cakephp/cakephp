@@ -23,7 +23,9 @@ use Cake\Database\SqlDialectTrait;
 
 trait SqliteDialectTrait {
 
-	use SqlDialectTrait;
+	use SqlDialectTrait {
+		_expressionTranslators as private _quotingTranslators;
+	}
 
 /**
  *  String used to start a database identifier quoting to make it safe
@@ -47,7 +49,7 @@ trait SqliteDialectTrait {
  */
 	protected function _expressionTranslators() {
 		$namespace = 'Cake\Database\Expression';
-		return [
+		return $this->_quotingTranslators() + [
 			$namespace . '\FunctionExpression' => '_transformFunctionExpression'
 		];
 	}

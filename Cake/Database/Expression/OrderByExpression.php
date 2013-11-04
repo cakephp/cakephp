@@ -49,8 +49,18 @@ class OrderByExpression extends QueryExpression {
 		return sprintf('ORDER BY %s', implode(', ', $order));
 	}
 
-	protected function _addConditions(array $conditions, array $types) {
-		$this->_conditions = array_merge($this->_conditions, $conditions);
+/**
+ * Auxiliary function used for decomposing a nested array of conditions and build
+ * a tree structure inside this object to represent the full SQL expression.
+ *
+ * New order by expressions are merged to existing ones
+ *
+ * @param array $orders list of order by expressions
+ * @param array $types list of types associated on fields referenced in $conditions
+ * @return void
+ */
+	protected function _addConditions(array $orders, array $types) {
+		$this->_conditions = array_merge($this->_conditions, $orders);
 	}
 
 }
