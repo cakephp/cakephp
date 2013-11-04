@@ -150,7 +150,7 @@ class BehaviorRegistryTest extends TestCase {
 
 		$this->assertFalse($this->Behaviors->hasMethod('nope'));
 		$this->assertFalse($this->Behaviors->hasMethod('beforeFind'));
-		$this->assertFalse($this->Behaviors->hasMethod('findNoSlug'));
+		$this->assertFalse($this->Behaviors->hasMethod('noSlug'));
 	}
 
 /**
@@ -161,9 +161,9 @@ class BehaviorRegistryTest extends TestCase {
 	public function testHasFinder() {
 		$this->Behaviors->load('Sluggable');
 
-		$this->assertTrue($this->Behaviors->hasFinder('findNoSlug'));
-		$this->assertTrue($this->Behaviors->hasFinder('findnoslug'));
-		$this->assertTrue($this->Behaviors->hasFinder('FINDNOSLUG'));
+		$this->assertTrue($this->Behaviors->hasFinder('noSlug'));
+		$this->assertTrue($this->Behaviors->hasFinder('noslug'));
+		$this->assertTrue($this->Behaviors->hasFinder('NOSLUG'));
 
 		$this->assertFalse($this->Behaviors->hasFinder('slugify'));
 		$this->assertFalse($this->Behaviors->hasFinder('beforeFind'));
@@ -181,7 +181,7 @@ class BehaviorRegistryTest extends TestCase {
 		$this->assertEquals('some_value', $result);
 
 		$query = $this->getMock('Cake\ORM\Query', [], [null, null]);
-		$result = $this->Behaviors->call('findNoSlug', [$query]);
+		$result = $this->Behaviors->call('noSlug', [$query]);
 		$this->assertEquals($query, $result);
 	}
 

@@ -141,50 +141,43 @@ class BehaviorRegistry extends ObjectRegistry {
  * @throws Cake\Error\Exception when duplicate methods are connected.
  */
 	protected function _getMethods(Behavior $instance, $class, $alias) {
-		if (isset(static::$_methodCache[$class])) {
-			return static::$_methodCache[$class];
-		}
-
-		$methodMap = $finderMap = [];
 		$finders = $instance->implementedFinders();
 		$methods = $instance->implementedMethods();
 
-		foreach($finders as $methodName) {
-			$methodName = strtolower($methodName);
+		foreach($finders as $finder => &$methodName) {
+			$finder = strtolower($finder);
+			if (isset($this->_finderMap[$finder])) {
+				$duplicate = $this->_finderMap[$finder];
+				$error = __d(
+					'cake_dev',
+					'%s contains duplicate finder "%s" which is already provided by "%s"',
+					$class,
+					$finder,
+					$duplicate[0]
+				);
+				throw new Error\Exception($error);
+			}
+			$methodName = [$alias, $methodName];
+		}
 
-			if (isset($this->_finderMap[$methodName])) {
-				$duplicate = $this->_finderMap[$methodName];
+		foreach($methods as $method => &$methodName) {
+			$method = strtolower($method);
+
+			if (isset($this->_methodMap[$method])) {
+				$duplicate = $this->_methodMap[$method];
 				$error = __d(
 					'cake_dev',
 					'%s contains duplicate method "%s" which is already provided by "%s"',
 					$class,
-					$methodName,
-					$duplicate
+					$method,
+					$duplicate[0]
 				);
 				throw new Error\Exception($error);
 			}
-			$finderMap[$methodName] = $alias;
+			$methodName = [$alias, $methodName];
 		}
 
-		foreach($methods as $methodName) {
-			$methodName = strtolower($methodName);
-
-			if (isset($this->_methodMap[$methodName])) {
-				$duplicate = $this->_methodMap[$methodName];
-				$error = __d(
-					'cake_dev',
-					'%s contains duplicate method "%s" which is already provided by "%s"',
-					$class,
-					$methodName,
-					$duplicate
-				);
-				throw new Error\Exception($error);
-			}
-			$methodMap[$methodName] = $alias;
-		}
-
-		static::$_methodCache[$class] = ['methods' => $methodMap, 'finders' => $finderMap];
-		return static::$_methodCache[$class];
+		return compact('methods', 'finders');
 	}
 
 /**
@@ -226,13 +219,13 @@ class BehaviorRegistry extends ObjectRegistry {
 	public function call($method, array $args = []) {
 		$method = strtolower($method);
 		if ($this->hasMethod($method)) {
-			$alias = $this->_methodMap[$method];
-			return call_user_func_array([$this->_loaded[$alias], $method], $args);
+			list($behavior, $callMethod) = $this->_methodMap[$method];
+			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
 		if ($this->hasFinder($method)) {
-			$alias = $this->_finderMap[$method];
-			return call_user_func_array([$this->_loaded[$alias], $method], $args);
+			list($behavior, $callMethod) = $this->_finderMap[$method];
+			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
 		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behaviors.', $method));
