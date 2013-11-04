@@ -77,9 +77,6 @@ class TimestampBehavior extends Behavior {
 	public function handleEvent(Event $event, Entity $entity) {
 		$eventName = $event->name();
 		$settings = $this->settings();
-		if (!isset($settings['events'][$eventName])) {
-			return true;
-		}
 
 		$new = $entity->isNew() !== false;
 
