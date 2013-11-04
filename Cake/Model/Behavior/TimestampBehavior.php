@@ -104,11 +104,7 @@ class TimestampBehavior extends Behavior {
  * @return array
  */
 	public function implementedEvents() {
-		$events = array_flip(array_keys($this->_settings['events']));
-		foreach ($events as &$method) {
-			$method = 'handleEvent';
-		}
-		return $events;
+		return array_fill_keys(array_keys($this->_settings['events']), 'handleEvent');
 	}
 
 /**
