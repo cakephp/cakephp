@@ -1056,7 +1056,12 @@ class DboSource extends DataSource {
 			unset($_associations[2], $_associations[3]);
 		}
 
+		// Generate hasOne and belongsTo associations inside $queryData
 		foreach ($_associations as $type) {
+			if ($type !== 'hasOne' && $type !== 'belongsTo') {
+				continue;
+			}
+
 			foreach ($model->{$type} as $assoc => $assocData) {
 				$linkModel = $model->{$assoc};
 				$external = isset($assocData['external']);
@@ -1073,6 +1078,7 @@ class DboSource extends DataSource {
 			}
 		}
 
+		// Build SQL statement with the primary model, plus hasOne and belongsTo associations
 		$query = $this->generateAssociationQuery($model, null, null, null, null, $queryData, false, $null);
 
 		$resultSet = $this->fetchAll($query, $model->cacheQueries);
@@ -1084,6 +1090,7 @@ class DboSource extends DataSource {
 
 		$filtered = array();
 
+		// Filter hasOne and belongsTo associations
 		if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
 			$filtered = $this->_filterResults($resultSet, $model);
 		}
