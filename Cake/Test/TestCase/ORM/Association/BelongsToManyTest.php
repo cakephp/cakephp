@@ -16,6 +16,7 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use Cake\Database\Expression\FieldExpression;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -183,11 +184,15 @@ class BelongsToManyTest extends TestCase {
 				'table' => 'tags'
 			]
 		]);
+
+		$field1 = new FieldExpression('ArticlesTag.article_id');
+		$field2 = new FieldExpression('ArticlesTag.tag_id');
+
 		$query->expects($this->at(2))->method('join')->with([
 			'ArticlesTag' => [
 				'conditions' => [
-					'Article.id = ArticlesTag.article_id',
-					'Tag.id = ArticlesTag.tag_id'
+					['Article.id' => $field1],
+					['Tag.id' => $field2]
 				],
 				'type' => 'INNER',
 				'table' => 'articles_tags'
@@ -233,11 +238,15 @@ class BelongsToManyTest extends TestCase {
 				'table' => 'tags'
 			]
 		]);
+
+		$field1 = new FieldExpression('ArticlesTag.article_id');
+		$field2 = new FieldExpression('ArticlesTag.tag_id');
+
 		$query->expects($this->at(1))->method('join')->with([
 			'ArticlesTag' => [
 				'conditions' => [
-					'Article.id = ArticlesTag.article_id',
-					'Tag.id = ArticlesTag.tag_id'
+					['Article.id' => $field1],
+					['Tag.id' => $field2]
 				],
 				'type' => 'INNER',
 				'table' => 'articles_tags'

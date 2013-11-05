@@ -16,7 +16,6 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\FieldExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Entity;
@@ -73,7 +72,7 @@ class BelongsTo extends Association {
  * clause for getting the results on the target table.
  *
  * @param array $options list of options passed to attachTo method
- * @return boolean|QueryExpression
+ * @return array
  */
 	protected function _joinCondition(array $options) {
 		$field = sprintf(
@@ -86,7 +85,7 @@ class BelongsTo extends Association {
 			$this->_sourceTable->alias(),
 			$options['foreignKey']
 		));
-		return new Comparison($field, $value, 'string', '=');
+		return [$field => $value];
 	}
 
 }

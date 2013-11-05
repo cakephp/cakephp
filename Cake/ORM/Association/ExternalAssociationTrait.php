@@ -133,7 +133,7 @@ trait ExternalAssociationTrait {
 			$this->_targetTable->alias(),
 			$options['foreignKey']
 		));
-		return new Comparison($field, $value, 'string', '=');
+		return [$field => $value];
 	}
 
 /**
