@@ -1677,7 +1677,8 @@ class QueryTest extends TestCase {
 			]);
 		$result = $query->sql();
 		$this->assertRegExp(
-			'/INSERT INTO [`"]articles[`"] \([`"]title[`"], [`"]body[`"]\) VALUES \(\?, \?\)/',
+			'/INSERT INTO [`"]?articles[`"]? \([`"]?title[`"]?, [`"]?body[`"]?\) ' .
+			'VALUES \(\?, \?\)/',
 			$result
 		);
 
@@ -1710,7 +1711,8 @@ class QueryTest extends TestCase {
 			]);
 		$result = $query->sql();
 		$this->assertRegExp(
-			'/INSERT INTO [`"]articles[`"] \([`"]title[`"], [`"]body[`"]\) VALUES \(\?, \?\)/',
+			'/INSERT INTO [`"]?articles[`"]? \([`"]?title[`"]?, [`"]?body[`"]?\) ' .
+			'VALUES \(\?, \?\)/',
 			$result
 		);
 
@@ -1786,7 +1788,8 @@ class QueryTest extends TestCase {
 
 		$result = $query->sql();
 		$this->assertRegExp(
-			'/INSERT INTO [`"]articles[`"] \([`"]title[`"], [`"]body[`"], [`"]author_id[`"]\) SELECT/',
+			'/INSERT INTO [`"]?articles[`"]? \([`"]?title[`"]?, [`"]?body[`"]?, ' .
+			'[`"]?author_id[`"]?\) SELECT/',
 			$result
 		);
 		$this->assertRegExp(
@@ -2149,6 +2152,26 @@ class QueryTest extends TestCase {
 			->sql();
 		$this->assertRegExp('/[`"]something[`"] = :c0 AND/', $sql);
 		$this->assertRegExp('/\([`"]foo[`"] = :c1 OR [`"]baz[`"] = :c2\)/', $sql);
+	}
+
+/**
+ * Tests that insert query parts get quoted automatically
+ *
+ * @return void
+ */
+	public function testQuotingInsert() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->insert('foo', ['bar', 'baz'])
+			->where(['something' => 'value'])
+			->sql();
+		$this->assertRegExp('/INSERT INTO [`"]foo[`"] \([`"]bar[`"], [`"]baz[`"]\)/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->insert('foo', [$query->newExpr()->add('bar')])
+			->where(['something' => 'value'])
+			->sql();
+		$this->assertRegExp('/INSERT INTO [`"]foo[`"] \(\(bar\)\)/', $sql);
 	}
 
 /**

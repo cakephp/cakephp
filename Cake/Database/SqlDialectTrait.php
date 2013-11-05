@@ -245,7 +245,9 @@ trait SqlDialectTrait {
 		list($table, $columns) = $query->clause('insert');
 		$table = $this->quoteIdentifier($table);
 		foreach ($columns as &$column) {
-			$column = $this->quoteIdentifier($column);
+			if (is_string($column)) {
+				$column = $this->quoteIdentifier($column);
+			}
 		}
 		$query->insert($table, $columns);
 		return $query;
