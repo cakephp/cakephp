@@ -1567,7 +1567,7 @@ class QueryTest extends TestCase {
 			->set('name', 'mark')
 			->where(['id' => 1]);
 		$result = $query->sql();
-		$this->assertContains('UPDATE authors SET name = :', $result);
+		$this->assertRegExp('/^UPDATE ["`]?authors["`]? SET ["`]?name["`]? = :/', $result);
 
 		$result = $query->execute();
 		$this->assertCount(1, $result);
@@ -1586,10 +1586,12 @@ class QueryTest extends TestCase {
 			->where(['id' => 1]);
 		$result = $query->sql();
 
-		$this->assertEquals(
-			'UPDATE articles SET title = :c0 , body = :c1 WHERE id = :c2',
+		$this->assertRegExp(
+			'/UPDATE ["`]?articles["`]? SET ["`]?title["`]? = :c0 , ["`]?body["`]? = :c1/',
 			$result
 		);
+
+		$this->assertRegExp('/ WHERE ["`]?id["`]? = :c2$/', $result);
 
 		$result = $query->execute();
 		$this->assertCount(1, $result);
@@ -1611,10 +1613,10 @@ class QueryTest extends TestCase {
 		$result = $query->sql();
 
 		$this->assertRegExp(
-			'/UPDATE articles SET title = :[0-9a-z]+ , body = :[0-9a-z]+/',
+			'/UPDATE ["`]?articles["`]? SET ["`]?title["`]? = :[0-9a-z]+ , ["`]?body["`]? = :[0-9a-z]+/',
 			$result
 		);
-		$this->assertContains('WHERE id = :', $result);
+		$this->assertRegExp('/WHERE ["`]?id["`]? = :/', $result);
 
 		$result = $query->execute();
 		$this->assertCount(1, $result);
@@ -1636,8 +1638,8 @@ class QueryTest extends TestCase {
 			->where(['id' => 1]);
 		$result = $query->sql();
 
-		$this->assertContains(
-			'UPDATE articles SET title = author_id WHERE id = :',
+		$this->assertRegExp(
+			'/UPDATE ["`]?articles["`]? SET title = author_id WHERE ["`]?id["`]? = :/',
 			$result
 		);
 
@@ -1769,7 +1771,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertFromSelect() {
-		$select = (new Query($this->connection))->select("name, 'some text', 99")
+		$select = (new Query($this->connection))->select(['name', "'some text'", 99])
 			->from('authors')
 			->where(['id' => 1]);
 
@@ -1783,7 +1785,9 @@ class QueryTest extends TestCase {
 
 		$result = $query->sql();
 		$this->assertContains('INSERT INTO articles (title, body, author_id) SELECT', $result);
-		$this->assertContains("SELECT name, 'some text', 99 FROM authors", $result);
+		$this->assertRegExp(
+			'/SELECT ["`]?name["`]?, \'some text\', 99 FROM ["`]?authors["`]?/',
+			$result);
 		$result = $query->execute();
 
 		$this->assertCount(1, $result);
