@@ -2105,6 +2105,50 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests automatic identifier quoting in the group by clause
+ *
+ * @return void
+ */
+	public function testQuotingGroupBy() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->group(['something'])->sql();
+		$this->assertRegExp('/GROUP BY [`"]something[`"]/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->group([$query->newExpr()->add('bar')])->sql();
+		$this->assertRegExp('/GROUP BY \(bar\)/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->group([new FieldExpression('bar')])->sql();
+		$this->assertRegExp('/GROUP BY \([`"]bar[`"]\)/', $sql);
+	}
+
+/**
+ * Tests automatic identifier quoting strings inside conditions expressions
+ *
+ * @return void
+ */
+	public function testQuotingExpressions() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')
+			->where(['something' => 'value'])
+			->sql();
+		$this->assertRegExp('/WHERE [`"]something[`"] = :c0/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')
+			->where([
+				'something' => 'value',
+				'OR' => ['foo' => 'bar', 'baz' => 'cake']
+			])
+			->sql();
+		$this->assertRegExp('/[`"]something[`"] = :c0 AND/', $sql);
+		$this->assertRegExp('/\([`"]foo[`"] = :c1 OR [`"]baz[`"] = :c2\)/', $sql);
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table
