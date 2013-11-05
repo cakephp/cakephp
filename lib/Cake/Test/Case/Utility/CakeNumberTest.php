@@ -775,4 +775,17 @@ class CakeNumberTest extends CakeTestCase {
 		);
 	}
 
+/**
+ * testDefaultFractionSymbol
+ * Setting this to false prevents auto conversion of 0.2 to 20
+ *
+ * @ return void
+ */
+	public function testDefaultFractionSymbolIsFalse() {
+		$this->assertFalse(
+			$this->Number->defaultFractionSymbol(), 
+			'The default fractionSymbol must be set to false'
+		);
+	}
+
 }
