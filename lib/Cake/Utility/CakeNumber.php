@@ -414,5 +414,14 @@ class CakeNumber {
 		}
 		return self::$_defaultCurrency;
 	}
+	
+/**
+ * Getter for default fractionSymbol
+ *
+ * @ return string
+ */
+	public function defaultFractionSymbol() {
+		return self::$_currencyDefaults['fractionSymbol'];
+	}
 
 }
