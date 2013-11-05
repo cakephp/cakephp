@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\Database\Expression\FieldExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Query;
@@ -113,7 +114,9 @@ class QueryTest extends TestCase {
 			->with(['client' => [
 				'table' => 'clients',
 				'type' => 'LEFT',
-				'conditions' => ['client.id = foo.client_id']
+				'conditions' => [
+					['client.id' => new FieldExpression('foo.client_id')]
+				]
 			]])
 			->will($this->returnValue($query));
 
@@ -121,7 +124,9 @@ class QueryTest extends TestCase {
 			->with(['order' => [
 				'table' => 'orders',
 				'type' => 'INNER',
-				'conditions' => ['client.id = order.client_id']
+				'conditions' => [
+					['client.id' => new FieldExpression('order.client_id')]
+				]
 			]])
 			->will($this->returnValue($query));
 
@@ -129,7 +134,9 @@ class QueryTest extends TestCase {
 			->with(['orderType' => [
 				'table' => 'order_types',
 				'type' => 'LEFT',
-				'conditions' => ['orderType.id = order.order_type_id']
+				'conditions' => [
+					['orderType.id' => new FieldExpression('order.order_type_id')]
+				]
 			]])
 			->will($this->returnValue($query));
 
@@ -137,7 +144,9 @@ class QueryTest extends TestCase {
 			->with(['stuff' => [
 				'table' => 'things',
 				'type' => 'INNER',
-				'conditions' => ['order.id = stuff.order_id']
+				'conditions' => [
+					['order.id' => new FieldExpression('stuff.order_id')]
+				]
 			]])
 			->will($this->returnValue($query));
 
@@ -145,7 +154,9 @@ class QueryTest extends TestCase {
 			->with(['stuffType' => [
 				'table' => 'stuff_types',
 				'type' => 'LEFT',
-				'conditions' => ['stuffType.id = stuff.stuff_type_id']
+				'conditions' => [
+					['stuffType.id' => new FieldExpression('stuff.stuff_type_id')]
+				]
 			]])
 			->will($this->returnValue($query));
 
@@ -153,7 +164,9 @@ class QueryTest extends TestCase {
 			->with(['company' => [
 				'table' => 'organizations',
 				'type' => 'LEFT',
-				'conditions' => ['company.id = client.organization_id']
+				'conditions' => [
+					['company.id' => new FieldExpression('client.organization_id')]
+				]
 			]])
 			->will($this->returnValue($query));
 
@@ -161,7 +174,9 @@ class QueryTest extends TestCase {
 			->with(['category' => [
 				'table' => 'categories',
 				'type' => 'LEFT',
-				'conditions' => ['category.id = company.category_id']
+				'conditions' => [
+					['category.id' => new FieldExpression('company.category_id')]
+				]
 			]])
 			->will($this->returnValue($query));
 
@@ -196,6 +211,7 @@ class QueryTest extends TestCase {
 			'client__telephone' => 'client.telephone',
 			'order__total' => 'order.total', 'order__placed' => 'order.placed'
 		];
+		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
 	}
 
@@ -217,6 +233,7 @@ class QueryTest extends TestCase {
 			'order__id' => 'order.id', 'order__total' => 'order.total',
 			'order__placed' => 'order.placed'
 		];
+		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
 
 		$contains['client']['fields'] = ['name'];
@@ -224,6 +241,7 @@ class QueryTest extends TestCase {
 		$query->select('foo.id')->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = ['foo__id' => 'foo.id', 'client__name' => 'client.name'];
+		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
 
 		$contains['client']['fields'] = [];
@@ -237,7 +255,28 @@ class QueryTest extends TestCase {
 			'client__name' => 'client.name',
 			'client__phone' => 'client.phone',
 		];
+		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
+	}
+
+/**
+ * Helper function sued to quoted both keys and values in an array in case
+ * the test suite is running with auto quoting enabled
+ *
+ * @param array $elements
+ * @return array
+ */
+	protected function _quoteArray($elements) {
+		if ($this->connection->driver()->autoQuoting()) {
+			$quoter = function($e) {
+				return $this->connection->driver()->quoteIdentifier($e);
+			};
+			return array_combine(
+				array_map($quoter, array_keys($elements)),
+				array_map($quoter, array_values($elements))
+			);
+		}
+		return $elements;
 	}
 
 /**

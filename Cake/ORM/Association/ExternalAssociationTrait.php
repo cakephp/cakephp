@@ -16,7 +16,6 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\FieldExpression;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
@@ -120,7 +119,7 @@ trait ExternalAssociationTrait {
  * clause for getting the results on the target table.
  *
  * @param array $options list of options passed to attachTo method
- * @return string|array
+ * @return array
  */
 	protected function _joinCondition(array $options) {
 		$field = sprintf(
