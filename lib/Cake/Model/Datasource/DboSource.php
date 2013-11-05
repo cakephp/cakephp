@@ -1066,7 +1066,6 @@ class DboSource extends DataSource {
 				$linkModel = $model->{$assoc};
 				$external = isset($assocData['external']);
 
-				$linkModel->getDataSource();
 				if ($model->useDbConfig === $linkModel->useDbConfig) {
 					if ($bypass) {
 						$assocData['fields'] = false;
