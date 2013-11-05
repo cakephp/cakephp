@@ -77,7 +77,10 @@ trait SqlDialectTrait {
 	public function queryTranslator($type) {
 		return function($query) use ($type) {
 			if ($this->autoQuoting()) {
+				$binder = $query->valueBinder();
+				$query->valueBinder(false);
 				$query = $this->_quoteQueryIdentifiers($type, $query);
+				$query->valueBinder($binder);
 			}
 
 			$query = $this->{'_' . $type . 'QueryTranslator'}($query);
@@ -189,12 +192,10 @@ trait SqlDialectTrait {
  * @return Query
  */
 	protected function _quoteQueryIdentifiers($type, $query) {
-		if ($type !== 'select') {
-			return $query;
+		if ($type === 'insert') {
+			return $this->_quoteInsertIdentifiers($query);
 		}
 
-		$binder = $query->valueBinder();
-		$query->valueBinder(false);
 		$quoter = function($part) use ($query) {
 			$result = [];
 			foreach ((array)$query->clause($part) as $alias => $value) {
@@ -202,7 +203,9 @@ trait SqlDialectTrait {
 				$alias = is_numeric($alias) ? $alias : $this->quoteIdentifier($alias);
 				$result[$alias] = $value;
 			}
-			$query->{$part}($result, true);
+			if ($result) {
+				$query->{$part}($result, true);
+			}
 		};
 
 		if (is_array($query->clause('distinct'))) {
@@ -224,8 +227,27 @@ trait SqlDialectTrait {
 
 			$result[$alias] = $value;
 		}
-		$query->join($result, [], true);
-		$query->valueBinder($binder);
+
+		if ($result) {
+			$query->join($result, [], true);
+		}
+
+		return $query;
+	}
+
+/**
+ * Quotes the table name and columns for an insert query
+ *
+ * @param Query $query
+ * @return Query
+ */
+	protected function _quoteInsertIdentifiers($query) {
+		list($table, $columns) = $query->clause('insert');
+		$table = $this->quoteIdentifier($table);
+		foreach ($columns as &$column) {
+			$column = $this->quoteIdentifier($column);
+		}
+		$query->insert($table, $columns);
 		return $query;
 	}
 

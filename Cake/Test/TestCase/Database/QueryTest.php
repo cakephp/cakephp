@@ -1515,7 +1515,7 @@ class QueryTest extends TestCase {
 			->where('1 = 1');
 
 		$result = $query->sql();
-		$this->assertContains('DELETE FROM authors', $result);
+		$this->assertRegExp('/^DELETE FROM [`"]?authors[`"]?/', $result);
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -1534,7 +1534,7 @@ class QueryTest extends TestCase {
 			->where('1 = 1');
 
 		$result = $query->sql();
-		$this->assertContains('DELETE FROM authors ', $result);
+		$this->assertRegExp('/^DELETE FROM [`"]?authors[`"]? /', $result);
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -1553,8 +1553,8 @@ class QueryTest extends TestCase {
 			->where('1 = 1');
 		$result = $query->sql();
 
-		$this->assertContains('DELETE FROM authors', $result);
-		$this->assertContains('authors WHERE 1 = 1', $result);
+		$this->assertRegExp('/^DELETE FROM [`"]?authors[`"]? /', $result);
+		$this->assertContains(' WHERE 1 = 1', $result);
 	}
 
 /**
@@ -1676,8 +1676,8 @@ class QueryTest extends TestCase {
 				'body' => 'test insert'
 			]);
 		$result = $query->sql();
-		$this->assertContains(
-			'INSERT INTO articles (title, body) VALUES (?, ?)',
+		$this->assertRegExp(
+			'/INSERT INTO [`"]articles[`"] \([`"]title[`"], [`"]body[`"]\) VALUES \(\?, \?\)/',
 			$result
 		);
 
@@ -1709,8 +1709,8 @@ class QueryTest extends TestCase {
 				'title' => 'mark',
 			]);
 		$result = $query->sql();
-		$this->assertContains(
-			'INSERT INTO articles (title, body) VALUES (?, ?)',
+		$this->assertRegExp(
+			'/INSERT INTO [`"]articles[`"] \([`"]title[`"], [`"]body[`"]\) VALUES \(\?, \?\)/',
 			$result
 		);
 
@@ -1785,7 +1785,10 @@ class QueryTest extends TestCase {
 		->values($select);
 
 		$result = $query->sql();
-		$this->assertContains('INSERT INTO articles (title, body, author_id) SELECT', $result);
+		$this->assertRegExp(
+			'/INSERT INTO [`"]articles[`"] \([`"]title[`"], [`"]body[`"], [`"]author_id[`"]\) SELECT/',
+			$result
+		);
 		$this->assertRegExp(
 			'/SELECT ["`]?name["`]?, \'some text\', 99 FROM ["`]?authors["`]?/',
 			$result);

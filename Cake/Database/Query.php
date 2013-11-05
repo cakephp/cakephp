@@ -1228,7 +1228,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$this->_dirty();
 		$this->_type = 'insert';
 		$this->_parts['insert'] = [$table, $columns];
-		$this->_parts['values'] = new ValuesExpression($columns, $types + $this->defaultTypes());
+
+		if (!$this->_parts['values']) {
+			$this->_parts['values'] = new ValuesExpression($columns, $types + $this->defaultTypes());
+		}
+
 		return $this;
 	}
 
