@@ -1027,10 +1027,7 @@ class DboSource extends DataSource {
 	public function read(Model $model, $queryData = array(), $recursive = null) {
 		$queryData = $this->_scrubQueryData($queryData);
 
-		$null = null;
 		$array = array('callbacks' => $queryData['callbacks']);
-		$linkedModels = array();
-		$bypass = false;
 
 		if ($recursive === null && isset($queryData['recursive'])) {
 			$recursive = $queryData['recursive'];
@@ -1041,6 +1038,7 @@ class DboSource extends DataSource {
 			$model->recursive = $recursive;
 		}
 
+		$bypass = false;
 		if (!empty($queryData['fields'])) {
 			$bypass = true;
 			$queryData['fields'] = $this->fields($model, null, $queryData['fields']);
@@ -1057,6 +1055,8 @@ class DboSource extends DataSource {
 		}
 
 		// Generate hasOne and belongsTo associations inside $queryData
+		$linkedModels = array();
+		$null = null;
 		foreach ($_associations as $type) {
 			if ($type !== 'hasOne' && $type !== 'belongsTo') {
 				continue;
@@ -1064,23 +1064,25 @@ class DboSource extends DataSource {
 
 			foreach ($model->{$type} as $assoc => $assocData) {
 				$linkModel = $model->{$assoc};
-				$external = isset($assocData['external']);
 
-				if ($model->useDbConfig === $linkModel->useDbConfig) {
-					if ($bypass) {
-						$assocData['fields'] = false;
-					}
-					if ($this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null) === true) {
-						$linkedModels[$type . '/' . $assoc] = true;
-					}
+				if ($model->useDbConfig !== $linkModel->useDbConfig) {
+					continue;
+				}
+
+				$external = isset($assocData['external']);
+				if ($bypass) {
+					$assocData['fields'] = false;
+				}
+				if ($this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null) === true) {
+					$linkedModels[$type . '/' . $assoc] = true;
 				}
 			}
 		}
 
 		// Build SQL statement with the primary model, plus hasOne and belongsTo associations
 		$query = $this->generateAssociationQuery($model, null, null, null, null, $queryData, false, $null);
-
 		$resultSet = $this->fetchAll($query, $model->cacheQueries);
+		unset($query);
 
 		if ($resultSet === false) {
 			$model->onError();
