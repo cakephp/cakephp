@@ -297,7 +297,7 @@ class TimestampBehaviorTest extends TestCase {
 
 		$entity = new Entity(['username' => 'timestamp test']);
 		$return = $table->save($entity);
-		$this->assertSame($return, $entity);
+		$this->assertSame($entity, $return, 'The returned object is expected to be the same entity object');
 
 		$row = $table->find('all')->where(['id' => $entity->id])->first();
 
