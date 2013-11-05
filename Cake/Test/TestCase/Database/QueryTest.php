@@ -2072,6 +2072,37 @@ class QueryTest extends TestCase {
 		$this->assertRegExp('/FROM \(bar\) AS [`"]foo[`"]$/', $sql);
 	}
 
+/**
+ * Tests automatic identifier quoting for DISTINCT ON
+ *
+ * @return void
+ */
+	public function testQuotingDistinctOn() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->distinct(['something'])->sql();
+		$this->assertRegExp('/[`"]something[`"]/', $sql);
+	}
+
+/**
+ * Tests automatic identifier quoting in the join clause
+ *
+ * @return void
+ */
+	public function testQuotingJoinsAndAlias() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->join(['something'])->sql();
+		$this->assertRegExp('/JOIN [`"]something[`"]/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->join(['foo' => 'something'])->sql();
+		$this->assertRegExp('/JOIN [`"]something[`"] [`"]foo[`"]/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->join(['foo' => $query->newExpr()->add('bar')])->sql();
+		$this->assertRegExp('/JOIN \(bar\) [`"]foo[`"]/', $sql);
+	}
 
 /**
  * Assertion for comparing a table's contents with what is in it.

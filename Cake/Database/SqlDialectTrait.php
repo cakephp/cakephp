@@ -184,7 +184,7 @@ trait SqlDialectTrait {
  * Iterates over each of the clauses in a query looking for identifiers and
  * quotes them
  *
- * @param string $type the type of query to be quoted 
+ * @param string $type the type of query to be quoted
  * @param Query $query The query to have its identifiers quoted
  * @return Query
  */
@@ -217,6 +217,11 @@ trait SqlDialectTrait {
 		foreach ((array)$query->clause('join') as $value) {
 			$alias =  empty($value['alias']) ? null : $this->quoteIdentifier($value['alias']);
 			$value['alias'] = $alias;
+
+			if (is_string($value['table'])) {
+				$value['table'] = $this->quoteIdentifier($value['table']);
+			}
+
 			$result[$alias] = $value;
 		}
 		$query->join($result, [], true);
