@@ -36,10 +36,12 @@ class QueryTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
+		$this->autoQuote = $this->connection->driver()->autoQuoting();
 	}
 
 	public function tearDown() {
 		parent::tearDown();
+		$this->connection->driver()->autoQuoting($this->autoQuote);
 		unset($this->connection);
 	}
 
@@ -49,6 +51,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSelectFieldsOnly() {
+		$this->connection->driver()->autoQuoting(false);
 		$query = new Query($this->connection);
 		$result = $query->select('1 + 1')->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -70,6 +73,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSelectClosure() {
+		$this->connection->driver()->autoQuoting(false);
 		$query = new Query($this->connection);
 		$result = $query->select(function($q) use ($query) {
 			$this->assertSame($query, $q);

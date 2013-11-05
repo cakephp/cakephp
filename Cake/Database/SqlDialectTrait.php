@@ -193,6 +193,8 @@ trait SqlDialectTrait {
 			return $query;
 		}
 
+		$binder = $query->valueBinder();
+		$query->valueBinder(false);
 		$quoter = function($part) use ($query) {
 			$result = [];
 			foreach ((array)$query->clause($part) as $alias => $value) {
@@ -218,7 +220,7 @@ trait SqlDialectTrait {
 			$result[$alias] = $value;
 		}
 		$query->join($result, [], true);
-
+		$query->valueBinder($binder);
 		return $query;
 	}
 

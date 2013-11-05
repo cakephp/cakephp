@@ -19,6 +19,10 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 
+/**
+ * Represents a single field name in the database
+ *
+ */
 class FieldExpression implements ExpressionInterface {
 
 /**

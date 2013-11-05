@@ -1666,7 +1666,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _dirty() {
 		$this->_dirty = true;
 		$this->_transformedQuery = null;
-		$this->valueBinder()->reset();
+
+		if ($this->_valueBinder) {
+			$this->valueBinder()->reset();
+		}
 	}
 
 /**
