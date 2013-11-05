@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\Database\Expression\FieldExpression;
 use Cake\Database\Query;
 use Cake\TestSuite\TestCase;
 
@@ -2018,6 +2019,59 @@ class QueryTest extends TestCase {
 		$this->assertContains('WHERE', $sql);
 		$this->assertEquals(' RETURNING id', substr($sql, -13));
 	}
+
+/**
+ * Tests automatic identifier quoting in the select clause
+ *
+ * @return void
+ */
+	public function testQuotingSelectFieldsAndAlias() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select(['something'])->sql();
+		$this->assertRegExp('/SELECT [`"]something[`"]$/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => 'something'])->sql();
+		$this->assertRegExp('/SELECT [`"]something[`"] AS [`"]foo[`"]$/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => 1])->sql();
+		$this->assertRegExp('/SELECT 1 AS [`"]foo[`"]$/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => '1 + 1'])->sql();
+		$this->assertRegExp('/SELECT [`"]1 \+ 1[`"] AS [`"]foo[`"]$/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => $query->newExpr()->add('1 + 1')])->sql();
+		$this->assertRegExp('/SELECT \(1 \+ 1\) AS [`"]foo[`"]$/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => new FieldExpression('bar')])->sql();
+		$this->assertRegExp('/[`"]bar[`"]/', $sql);
+	}
+
+/**
+ * Tests automatic identifier quoting in the from clause
+ *
+ * @return void
+ */
+	public function testQuotingFromAndAlias() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->from(['something'])->sql();
+		$this->assertRegExp('/FROM [`"]something[`"]/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->from(['foo' => 'something'])->sql();
+		$this->assertRegExp('/FROM [`"]something[`"] AS [`"]foo[`"]$/', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->from(['foo' => $query->newExpr()->add('bar')])->sql();
+		$this->assertRegExp('/FROM \(bar\) AS [`"]foo[`"]$/', $sql);
+	}
+
 
 /**
  * Assertion for comparing a table's contents with what is in it.
