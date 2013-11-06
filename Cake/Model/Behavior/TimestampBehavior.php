@@ -111,6 +111,32 @@ class TimestampBehavior extends Behavior {
 	}
 
 /**
+ * implementedFinders
+ *
+ * This behavior does not implement any finders
+ *
+ * @return array
+ */
+	public function implementedFinders() {
+		return [];
+	}
+
+/**
+ * implementedMethods
+ *
+ * Only the timestamp method is callable from a table.
+ *
+ * @return void
+ */
+	public function implementedMethods() {
+		if (isset($this->_settings['implementedMethods'])) {
+			return $this->_settings['implementedMethods'];
+		}
+
+		return ['timestamp' => 'timestamp'];
+	}
+
+/**
  * Get or set the timestamp to be used
  *
  * Set the timestamp to the given DateTime object, or if not passed a new DateTime object
