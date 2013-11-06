@@ -99,7 +99,7 @@ class Component extends Object implements EventListener {
  */
 	public function __construct(ComponentRegistry $registry, $settings = []) {
 		$this->_registry = $registry;
-		$this->settings = $settings;
+		$this->settings = array_merge($this->settings, $settings);
 		$this->_set($settings);
 		if (!empty($this->components)) {
 			$this->_componentMap = $registry->normalizeArray($this->components);
