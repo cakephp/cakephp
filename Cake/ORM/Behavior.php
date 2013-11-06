@@ -92,7 +92,7 @@ use Cake\Event\EventListener;
 class Behavior implements EventListener {
 
 /**
- * _reflectionMethods
+ * A cache of the methods provided by this class
  *
  * @var array
  */
@@ -207,7 +207,7 @@ class Behavior implements EventListener {
 		$events = $this->implementedEvents();
 		$eventMethods = [];
 		foreach ($events as $e => $binding) {
-			if (is_array($binding) && isset($binding['callable']) && isset($binding['callable'])) {
+			if (is_array($binding) && isset($binding['callable'])) {
 				$binding = $binding['callable'];
 			}
 			$eventMethods[$binding] = true;
@@ -231,8 +231,7 @@ class Behavior implements EventListener {
 			}
 			$methodName = strtolower($methodName);
 
-			$isFinder = substr($methodName, 0, 4) === 'find';
-			if ($isFinder) {
+			if (substr($methodName, 0, 4) === 'find') {
 				$return['finders'][substr($methodName, 4)] = $methodName;
 			} else {
 				$return['methods'][$methodName] = $methodName;
