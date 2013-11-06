@@ -196,7 +196,7 @@ class BehaviorRegistry extends ObjectRegistry {
 	}
 
 /**
- * Invoke a method or finder on a behavior.
+ * Invoke a method on a behavior.
  *
  * @param string $method The method to invoke.
  * @param array $args The arguments you want to invoke the method with.
@@ -210,12 +210,26 @@ class BehaviorRegistry extends ObjectRegistry {
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		if ($this->hasFinder($method)) {
-			list($behavior, $callMethod) = $this->_finderMap[$method];
+		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behaviors.', $method));
+	}
+
+/**
+ * Invoke a finder on a behavior.
+ *
+ * @param string $type The finder type to invoke.
+ * @param array $args The arguments you want to invoke the method with.
+ * @return mixed The return value depends on the underlying behavior method.
+ * @throws Cake\Error\Exception When the method is unknown.
+ */
+	public function callFinder($type, array $args = []) {
+		$type = strtolower($type);
+
+		if ($this->hasFinder($type)) {
+			list($behavior, $callMethod) = $this->_finderMap[$type];
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behaviors.', $method));
+		throw new Error\Exception(__d('cake_dev', 'Cannot call finder "%s" it does not belong to any attached behaviors.', $type));
 	}
 
 }

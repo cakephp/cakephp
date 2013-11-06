@@ -179,10 +179,6 @@ class BehaviorRegistryTest extends TestCase {
 		$this->Behaviors->load('Sluggable');
 		$result = $this->Behaviors->call('slugify', ['some value']);
 		$this->assertEquals('some_value', $result);
-
-		$query = $this->getMock('Cake\ORM\Query', [], [null, null]);
-		$result = $this->Behaviors->call('noSlug', [$query]);
-		$this->assertEquals($query, $result);
 	}
 
 /**
@@ -194,6 +190,32 @@ class BehaviorRegistryTest extends TestCase {
 	public function testCallError() {
 		$this->Behaviors->load('Sluggable');
 		$this->Behaviors->call('nope');
+	}
+
+/**
+ * test call finder
+ *
+ * @return void
+ */
+	public function testCallFinder() {
+		$this->Behaviors->load('Sluggable');
+		$result = $this->Behaviors->call('slugify', ['some value']);
+		$this->assertEquals('some_value', $result);
+
+		$query = $this->getMock('Cake\ORM\Query', [], [null, null]);
+		$result = $this->Behaviors->callFinder('noSlug', [$query]);
+		$this->assertEquals($query, $result);
+	}
+
+/**
+ * Test errors on unknown methods.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Cannot call finder "nope"
+ */
+	public function testCallFinderError() {
+		$this->Behaviors->load('Sluggable');
+		$this->Behaviors->callFinder('nope');
 	}
 
 }
