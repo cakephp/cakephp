@@ -421,6 +421,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->article,
 			'conditions' => ['Article.is_active' => true]
 		];
+		$field = new FieldExpression('Article.author_id');
 		$association = new HasMany('Article', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Article' => [
