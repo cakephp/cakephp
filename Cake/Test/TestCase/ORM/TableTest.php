@@ -814,7 +814,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
 			class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
 		}
-		
+
 		$table = new Table();
 		$this->assertEquals(
 			'MyPlugin\Model\Entity\SuperUser',
@@ -1247,7 +1247,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testAtomicSave() {
+	public function _testAtomicSave() {
 		$config = ConnectionManager::config('test');
 
 		$connection = $this->getMock(

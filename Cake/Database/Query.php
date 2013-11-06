@@ -436,7 +436,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
-				$p = $p . ' AS ' . $driver->quoteIdentifier($k);
+				$p = $p . ' AS ' . $k;
 			}
 			$normalized[] = $p;
 		}

@@ -754,7 +754,7 @@ class Table {
  */
 	public function exists(array $conditions) {
 		return (bool)count($this->find('all')
-			->select(['exists' => 1])
+			->select(['existing' => 1])
 			->where($conditions)
 			->limit(1)
 			->hydrate(false)

@@ -1308,16 +1308,16 @@ class QueryTest extends TestCase {
 			->from('comments')
 			->where(['created >' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
 		$result = $query
-			->select(['comment'])
+			->select(['say' => 'comment'])
 			->from(['b' => $subquery])
 			->where(['id !=' => 3])
 			->execute();
 
 		$expected = [
-			['comment' => 'Second Comment for First Article'],
-			['comment' => 'Fourth Comment for First Article'],
-			['comment' => 'First Comment for Second Article'],
-			['comment' => 'Second Comment for Second Article'],
+			['say' => 'Second Comment for First Article'],
+			['say' => 'Fourth Comment for First Article'],
+			['say' => 'First Comment for Second Article'],
+			['say' => 'Second Comment for Second Article'],
 		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
