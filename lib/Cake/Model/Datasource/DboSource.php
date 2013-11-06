@@ -1112,7 +1112,7 @@ class DboSource extends DataSource {
 						} else {
 							$db = ConnectionManager::getDataSource($linkModel->useDbConfig);
 						}
-					} elseif ($model->recursive > 1 && ($type === 'belongsTo' || $type === 'hasOne')) {
+					} elseif ($model->recursive > 1) {
 						$db = $this;
 					}
 
