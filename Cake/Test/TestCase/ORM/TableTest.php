@@ -793,7 +793,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testRepositoryClassInAPP() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
-		class_alias($class, 'TestApp\Model\Entity\TestUser');
+
+		if (!class_exists('TestApp\Model\Entity\TestUser')) {
+			class_alias($class, 'TestApp\Model\Entity\TestUser');
+		}
+
 		$table = new Table();
 		$this->assertEquals('TestApp\Model\Entity\TestUser', $table->entityClass('TestUser'));
 	}
@@ -806,7 +810,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testRepositoryClassInPlugin() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
-		class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
+
+		if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
+			class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
+		}
+		
 		$table = new Table();
 		$this->assertEquals(
 			'MyPlugin\Model\Entity\SuperUser',

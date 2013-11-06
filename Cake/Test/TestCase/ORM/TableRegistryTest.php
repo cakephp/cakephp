@@ -136,7 +136,10 @@ class TableRegistryTest extends TestCase {
 			->method('defaultConnectionName')
 			->will($this->returnValue('test'));
 
-		class_alias($class, 'MyPlugin\Model\Repository\SuperTestTable');
+		if (!class_exists('MyPlugin\Model\Repository\SuperTestTable')) {
+			class_alias($class, 'MyPlugin\Model\Repository\SuperTestTable');
+		}
+
 		$table = TableRegistry::get('MyPlugin.SuperTest');
 		$this->assertInstanceOf($class, $table);
 	}
