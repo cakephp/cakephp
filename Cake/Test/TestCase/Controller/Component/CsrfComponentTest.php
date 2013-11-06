@@ -68,6 +68,100 @@ class CsrfComponentTest extends TestCase {
 		$this->assertNotEmpty($cookie, 'Should set a token.');
 		$this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
 		$this->assertEquals(0, $cookie['expiry'], 'session duration.');
+		$this->assertEquals('/dir', $cookie['path'], 'session path.');
+	}
+
+/**
+ * Data provider for HTTP method tests.
+ *
+ * @return void
+ */
+	public static function httpMethodProvider() {
+		return [
+			['PATCH'], ['PUT'], ['POST'], ['DELETE']
+		];
+	}
+
+/**
+ * Test that the X-CSRF-Token works with the various http methods.
+ *
+ * @dataProvider httpMethodProvider
+ * @return void
+ */
+	public function testValidTokenInHeader($method) {
+		$_SERVER['REQUEST_METHOD'] = $method;
+		$_SERVER['HTTP_X_CSRF_TOKEN'] = 'testing123';
+
+		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller->request = new Request(['cookies' => ['csrfToken' => 'testing123']]);
+		$controller->response = new Response();
+
+		$event = new Event('Controller.startup', $controller);
+		$result = $this->component->startUp($event);
+		$this->assertNull($result, 'No exception means valid.');
+	}
+
+/**
+ * Test that the X-CSRF-Token works with the various http methods.
+ *
+ * @dataProvider httpMethodProvider
+ * @expectedException Cake\Error\ForbiddenException
+ * @return void
+ */
+	public function testInvalidTokenInHeader($method) {
+		$_SERVER['REQUEST_METHOD'] = $method;
+		$_SERVER['HTTP_X_CSRF_TOKEN'] = 'nope';
+
+		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller->request = new Request([
+			'cookies' => ['csrfToken' => 'testing123']
+		]);
+		$controller->response = new Response();
+
+		$event = new Event('Controller.startup', $controller);
+		$this->component->startUp($event);
+	}
+
+/**
+ * Test that request data works with the various http methods.
+ *
+ * @dataProvider httpMethodProvider
+ * @return void
+ */
+	public function testValidTokenRequestData($method) {
+		$_SERVER['REQUEST_METHOD'] = $method;
+
+		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller->request = new Request([
+			'post' => ['_csrfToken' => 'testing123'],
+			'cookies' => ['csrfToken' => 'testing123']
+		]);
+		$controller->response = new Response();
+
+		$event = new Event('Controller.startup', $controller);
+		$result = $this->component->startUp($event);
+		$this->assertNull($result, 'No exception means valid.');
+	}
+
+/**
+ * Test that request data works with the various http methods.
+ *
+ * @dataProvider httpMethodProvider
+ * @expectedException Cake\Error\ForbiddenException
+ * @return void
+ */
+	public function testInvalidTokenRequestData($method) {
+		$_SERVER['REQUEST_METHOD'] = $method;
+
+		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller->request = new Request([
+			'post' => ['_csrfToken' => 'nope'],
+			'cookies' => ['csrfToken' => 'testing123']
+		]);
+		$controller->response = new Response();
+
+		$event = new Event('Controller.startup', $controller);
+		$this->component->startUp($event);
 	}
 
 }
