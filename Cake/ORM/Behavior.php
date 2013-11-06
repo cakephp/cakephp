@@ -96,7 +96,7 @@ class Behavior implements EventListener {
  *
  * @var array
  */
-	protected $_reflectionMethods;
+	protected static $_reflectionMethods;
 
 /**
  * Contains configuration settings.
@@ -200,8 +200,8 @@ class Behavior implements EventListener {
  * @return array
  */
 	protected function _reflectionMethods() {
-		if (isset($this->_reflectionMethods)) {
-			return $this->_reflectionMethods;
+		if (isset(static::$_reflectionMethods)) {
+			return static::$_reflectionMethods;
 		}
 
 		$events = $this->implementedEvents();
@@ -239,7 +239,7 @@ class Behavior implements EventListener {
 			}
 		}
 
-		return $this->_reflectionMethods = $return;
+		return static::$_reflectionMethods = $return;
 	}
 
 }
