@@ -22,7 +22,7 @@ use \PHPUnit_Framework_Test;
 
 /**
  * A decorator class used to run a test case once for each permutation defined
- * in the decorated test suite
+ * in the decorated test suite.
  *
  */
 class TestPermutationDecorator extends PHPUnit_Extensions_TestDecorator {
@@ -55,7 +55,7 @@ class TestPermutationDecorator extends PHPUnit_Extensions_TestDecorator {
  * @return void
  */
 	public function count() {
-		return count($this->_permutations) + $this->test->count();
+		return count($this->_permutations) * $this->test->count();
 	}
 
 /**
