@@ -1,0 +1,117 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP(tm) v3.0.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Controller\Component;
+
+use Cake\Core\Configure;
+use Cake\Controller\Component;
+use Cake\Error\ForbiddenException;
+use Cake\Event\Event;
+use Cake\Network\Request;
+use Cake\Network\Response;
+use Cake\Utility\Security;
+use Cake\Utility\String;
+
+/**
+ * Provides CSRF protection & validation.
+ *
+ * Unlike other versions of CakePHP the CSRF token
+ * is stored in a cookie and is compared to request data, or the
+ * X-CSRF-Token header on each PATCH, POST, PUT, or DELETE request.
+ *
+ * If the request data is missing or does not match the cookie data,
+ * a ForbiddenException will be raised.
+ *
+ * This component integrates with the FormHelper automatically and when
+ * used together your forms will have CSRF tokens automatically added
+ * when `$this->Form->create(...)` is used in a view.
+ */
+class CsrfComponent extends Component {
+
+/**
+ * Settings for the CSRF handling.
+ *
+ *  - cookieName = The name of the cookie to send.
+ *  - expiry = How long the CSRF token should last. Defaults to browser session.
+ *  - field = The form field to check. Changing this will also require configuring
+ *    FormHelper.
+ *
+ * @var array
+ */
+	public $settings = [
+		'cookieName' => 'csrfToken',
+		'expiry' => 0,
+		'field' => '_csrfToken',
+	];
+
+/**
+ * Startup callback.
+ *
+ * Validates the CSRF token for POST data. If
+ * the request is a GET request, and the cookie value
+ * is absent a cookie will be set.
+ *
+ * @param Cake\Event\Event $event
+ * @return void
+ */
+	public function startup(Event $event) {
+		$controller = $event->subject();
+		$request = $controller->request;
+		$response = $controller->response;
+		$cookieName = $this->settings['cookieName'];
+
+		if ($request->is('get') && $request->cookie($cookieName) === null) {
+			$this->_setCookie($request, $response);
+		}
+		if ($request->is(['patch', 'put', 'post', 'delete'])) {
+			$this->_validateToken($request);
+		}
+	}
+
+/**
+ * Set the cookie in the response.
+ *
+ * @param Cake\Network\Request $request The request object.
+ * @param Cake\Network\Response $response The response object.
+ */
+	protected function _setCookie(Request $request, Response $response) {
+		$settings = $this->settings;
+		$response->cookie([
+			'name' => $settings['cookieName'],
+			'value' => Security::hash(String::uuid(), 'sha1', true),
+			'expiry' => $settings['expiry'],
+			'path' => $request->base,
+		]);
+	}
+
+/**
+ * Validate the request data against the cookie token.
+ *
+ * @param Cake\Network\Request $request The request to validate against.
+ * @throws Cake\Error\ForbiddenException when the CSRF token is invalid or missing.
+ * @return void
+ */
+	protected function _validateToken(Request $request) {
+		$settings = $this->settings;
+
+		$cookie = $request->cookie($settings['cookieName']);
+		$post = $request->data($settings['field']);
+		$header = $request->header('X-CSRF-Token');
+
+		if ($post !== $cookie && $header !== $cookie) {
+			throw new ForbiddenException(__d('cake', 'Invalid CSRF token.'));
+		}
+	}
+
+}
