@@ -99,7 +99,7 @@ class Behavior implements EventListener {
  *
  * @var array
  */
-	protected static $_reflectionMethods;
+	protected static $_reflectionMethods = [];
 
 /**
  * Contains configuration settings.
@@ -176,7 +176,7 @@ class Behavior implements EventListener {
  *
  *   [
  *     'this' => 'findThis',
- *     'alias' => 'findMmethodName'
+ *     'alias' => 'findMethodName'
  *   ]
  *
  * With the above example, a call to `$Table->find('this')` will call `$Behavior->findThis()`
@@ -226,7 +226,11 @@ class Behavior implements EventListener {
 	}
 
 /**
- * _reflectionmethods
+ * Get the methods implemented by this behavior
+ *
+ * Use the implementedEvents() method to exclude callback methods.
+ * Methods starting with `_` will be ignored, as will methods
+ * declared on Cake\ORM\Behavior
  *
  * @return array
  */
