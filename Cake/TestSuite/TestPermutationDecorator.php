@@ -63,9 +63,13 @@ class TestPermutationDecorator extends PHPUnit_Extensions_TestDecorator {
  * permutations.
  *
  * @param PHPUnit_Framework_TestResult $result
+ * @param  mixed $filter
+ * @param  array $groups
+ * @param  array $excludeGroups
+ * @param  boolean $processIsolation
  * @return PHPUnit_Framework_TestResult
  */
-	public function run(PHPUnit_Framework_TestResult $result = null) {
+	public function run(PHPUnit_Framework_TestResult $result = null, $filter = false, array $groups = [], array $excludeGroups = [], $processIsolation = false) {
 		if ($result === NULL) {
             $result = $this->createResult();
 		}
@@ -77,7 +81,7 @@ class TestPermutationDecorator extends PHPUnit_Extensions_TestDecorator {
 			if (is_callable($permutation)) {
 				$permutation($this->test);
 			}
-			$this->test->run($result);
+			$this->test->run($result, $filter, $groups, $excludeGroups, $processIsolation);
 		}
 
 		return $result;
