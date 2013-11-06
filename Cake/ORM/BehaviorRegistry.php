@@ -59,16 +59,6 @@ class BehaviorRegistry extends ObjectRegistry {
 	protected $_finderMap = [];
 
 /**
- * Method cache for behaviors.
- *
- * Stores the reflected method + finder methods per class.
- * This prevents reflecting the same class multiple times in a single process.
- *
- * @var array
- */
-	protected static $_methodCache = [];
-
-/**
  * Constructor
  *
  * @param Cake\ORM\Table $table
@@ -124,8 +114,8 @@ class BehaviorRegistry extends ObjectRegistry {
 			$this->_eventManager->attach($instance);
 		}
 		$methods = $this->_getMethods($instance, $class, $alias);
-		$this->_methodMap = array_merge($this->_methodMap, $methods['methods']);
-		$this->_finderMap = array_merge($this->_finderMap, $methods['finders']);
+		$this->_methodMap += $methods['methods'];
+		$this->_finderMap += $methods['finders'];
 		return $instance;
 	}
 
@@ -141,11 +131,10 @@ class BehaviorRegistry extends ObjectRegistry {
  * @throws Cake\Error\Exception when duplicate methods are connected.
  */
 	protected function _getMethods(Behavior $instance, $class, $alias) {
-		$finders = $instance->implementedFinders();
-		$methods = $instance->implementedMethods();
+		$finders = array_change_key_case($instance->implementedFinders());
+		$methods = array_change_key_case($instance->implementedMethods());
 
 		foreach($finders as $finder => &$methodName) {
-			$finder = strtolower($finder);
 			if (isset($this->_finderMap[$finder])) {
 				$duplicate = $this->_finderMap[$finder];
 				$error = __d(
@@ -161,8 +150,6 @@ class BehaviorRegistry extends ObjectRegistry {
 		}
 
 		foreach($methods as $method => &$methodName) {
-			$method = strtolower($method);
-
 			if (isset($this->_methodMap[$method])) {
 				$duplicate = $this->_methodMap[$method];
 				$error = __d(

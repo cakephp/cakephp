@@ -92,7 +92,10 @@ use Cake\Event\EventListener;
 class Behavior implements EventListener {
 
 /**
- * A cache of the methods provided by this class
+ * Method cache for behaviors.
+ *
+ * Stores the reflected method + finder methods per class.
+ * This prevents reflecting the same class multiple times in a single process.
  *
  * @var array
  */
@@ -228,8 +231,9 @@ class Behavior implements EventListener {
  * @return array
  */
 	protected function _reflectionMethods() {
-		if (isset(static::$_reflectionMethods)) {
-			return static::$_reflectionMethods;
+		$class = get_class($this);
+		if (isset(self::$_reflectionMethods[$class])) {
+			return self::$_reflectionMethods[$class];
 		}
 
 		$events = $this->implementedEvents();
@@ -265,7 +269,7 @@ class Behavior implements EventListener {
 			}
 		}
 
-		return static::$_reflectionMethods = $return;
+		return self::$_reflectionMethods[$class] = $return;
 	}
 
 }
