@@ -169,6 +169,20 @@ class Behavior implements EventListener {
 /**
  * implementedFinders
  *
+ * provides and alias->methodname map of which finders a behavior implements. Example:
+ *
+ *   [
+ *     'this' => 'findThis',
+ *     'alias' => 'findMmethodName'
+ *   ]
+ *
+ * With the above example, a call to `$Table->find('this')` will call `$Behavior->findThis()`
+ * and a call to `$Table->find('alias')` will call `$Behavior->findMethodName()`
+ *
+ * It is recommended, though not required,  to override this method in child classes such that
+ * it is not necessary to use reflections to derive the available method list. See core
+ * behaviors for an example
+ *
  * @return array
  */
 	public function implementedFinders() {
@@ -182,6 +196,20 @@ class Behavior implements EventListener {
 
 /**
  * implementedMethods
+ *
+ * provides and alias->methodname map of which methods a behavior implements. Example:
+ *
+ *   [
+ *     'method' => 'method',
+ *     'aliasedmethod' => 'somethingElse'
+ *   ]
+ *
+ * With the above example, a call to `$Table->method()` will call `$Behavior->method()`
+ * and a call to `$Table->aliasedmethod()` will call `$Behavior->somethingElse()`
+ *
+ * It is recommended, though not required,  to override this method in child classes such that
+ * it is not necessary to use reflections to derive the available method list. See core
+ * behaviors for an example
  *
  * @return array
  */
@@ -229,10 +257,9 @@ class Behavior implements EventListener {
 			if (strpos($methodName, '_') === 0 || isset($eventMethods[$methodName])) {
 				continue;
 			}
-			$methodName = strtolower($methodName);
 
 			if (substr($methodName, 0, 4) === 'find') {
-				$return['finders'][substr($methodName, 4)] = $methodName;
+				$return['finders'][lcfirst(substr($methodName, 4))] = $methodName;
 			} else {
 				$return['methods'][$methodName] = $methodName;
 			}

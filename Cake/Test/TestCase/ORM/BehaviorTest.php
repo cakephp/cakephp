@@ -114,7 +114,7 @@ class BehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table);
 		$expected = [
-			'dosomething' => 'dosomething'
+			'doSomething' => 'doSomething'
 		];
 		$this->assertEquals($expected, $behavior->implementedMethods());
 	}
@@ -128,11 +128,11 @@ class BehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table, [
 			'implementedMethods' => [
-				'aliased' => 'dosomething'
+				'aliased' => 'doSomething'
 			]
 		]);
 		$expected = [
-			'aliased' => 'dosomething'
+			'aliased' => 'doSomething'
 		];
 		$this->assertEquals($expected, $behavior->implementedMethods());
 	}
@@ -160,7 +160,7 @@ class BehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table);
 		$expected = [
-			'foo' => 'findfoo'
+			'foo' => 'findFoo'
 		];
 		$this->assertEquals($expected, $behavior->implementedFinders());
 	}
@@ -174,11 +174,11 @@ class BehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table, [
 			'implementedFinders' => [
-				'aliased' => 'findfoo'
+				'aliased' => 'findFoo'
 			]
 		]);
 		$expected = [
-			'aliased' => 'findfoo'
+			'aliased' => 'findFoo'
 		];
 		$this->assertEquals($expected, $behavior->implementedFinders());
 	}
