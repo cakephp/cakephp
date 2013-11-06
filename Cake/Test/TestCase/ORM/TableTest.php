@@ -1247,7 +1247,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function _testAtomicSave() {
+	public function testAtomicSave() {
 		$config = ConnectionManager::config('test');
 
 		$connection = $this->getMock(
