@@ -44,7 +44,7 @@ abstract class ObjectRegistry {
  * If a subclass provides event support, you can use `$settings['enabled'] = false`
  * to exclude constructed objects from being registered for events.
  *
- * Using Cake\Controller\Controller::$components as an example. You can alias 
+ * Using Cake\Controller\Controller::$components as an example. You can alias
  * an object by setting the 'className' key, i.e.,
  *
  * {{{
@@ -174,6 +174,20 @@ abstract class ObjectRegistry {
  */
 	public function reset() {
 		$this->_loaded = [];
+	}
+
+/**
+ * set an object directly into the registry by name
+ *
+ * This is primarily to aide testing
+ *
+ * @param string $objectName
+ * @param object $object instance to store in the registry
+ * @return void
+ */
+	public function set($objectName, $object) {
+		list($plugin, $name) = pluginSplit($objectName);
+		$this->_loaded[$name] = $object;
 	}
 
 }
