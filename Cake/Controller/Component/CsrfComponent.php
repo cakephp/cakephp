@@ -59,8 +59,10 @@ class CsrfComponent extends Component {
  * Startup callback.
  *
  * Validates the CSRF token for POST data. If
- * the request is a GET request, and the cookie value
- * is absent a cookie will be set.
+ * the request is a GET request, and the cookie value is absent a cookie will be set.
+ *
+ * Once a cookie is set it will be copied into request->params['_csrfToken']
+ * so that application and framework code can easily access the csrf token.
  *
  * RequestAction requests do not get checked, nor will
  * they set a cookie should it be missing.
@@ -74,11 +76,16 @@ class CsrfComponent extends Component {
 		$response = $controller->response;
 		$cookieName = $this->settings['cookieName'];
 
+		$cookieData = $request->cookie($cookieName);
+		if ($cookieData) {
+			$request->params['_csrfToken'] = $cookieData;
+		}
+
 		if ($request->is('requested')) {
 			return;
 		}
 
-		if ($request->is('get') && $request->cookie($cookieName) === null) {
+		if ($request->is('get') && $cookieData === null) {
 			$this->_setCookie($request, $response);
 		}
 		if ($request->is(['patch', 'put', 'post', 'delete'])) {
@@ -89,14 +96,19 @@ class CsrfComponent extends Component {
 /**
  * Set the cookie in the response.
  *
+ * Also sets the request->params['_csrfToken'] so the newly minted
+ * token is available in the request data.
+ *
  * @param Cake\Network\Request $request The request object.
  * @param Cake\Network\Response $response The response object.
  */
 	protected function _setCookie(Request $request, Response $response) {
 		$settings = $this->settings;
+		$value = Security::hash(String::uuid(), 'sha1', true);
+		$request->params['_csrfToken'] = $value;
 		$response->cookie([
 			'name' => $settings['cookieName'],
-			'value' => Security::hash(String::uuid(), 'sha1', true),
+			'value' => $value,
 			'expiry' => $settings['expiry'],
 			'path' => $request->base,
 		]);

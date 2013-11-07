@@ -69,6 +69,8 @@ class CsrfComponentTest extends TestCase {
 		$this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
 		$this->assertEquals(0, $cookie['expiry'], 'session duration.');
 		$this->assertEquals('/dir', $cookie['path'], 'session path.');
+
+		$this->assertEquals($cookie['value'], $controller->request->params['_csrfToken']);
 	}
 
 /**
@@ -183,6 +185,7 @@ class CsrfComponentTest extends TestCase {
 		$event = new Event('Controller.startup', $controller);
 		$result = $this->component->startUp($event);
 		$this->assertNull($result, 'No error.');
+		$this->assertEquals('testing123', $controller->request->params['_csrfToken']);
 	}
 
 /**
