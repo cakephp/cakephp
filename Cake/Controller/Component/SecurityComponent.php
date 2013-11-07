@@ -29,7 +29,6 @@ use Cake\Utility\Security;
  * your application. It provides methods for various tasks like:
  *
  * - Restricting which HTTP methods your application accepts.
- * - CSRF protection.
  * - Form tampering protection
  * - Requiring that SSL be used.
  * - Limiting cross controller communication.
@@ -90,7 +89,7 @@ class SecurityComponent extends Component {
 	public $unlockedFields = array();
 
 /**
- * Actions to exclude from CSRF and POST validation checks.
+ * Actions to exclude from POST validation checks.
  * Other checks like requireAuth(), requireSecure(),
  * requirePost(), requireGet() etc. will still be applied.
  *
@@ -105,47 +104,6 @@ class SecurityComponent extends Component {
  * @var boolean
  */
 	public $validatePost = true;
-
-/**
- * Whether to use CSRF protected forms. Set to false to disable CSRF protection on forms.
- *
- * @var boolean
- * @see http://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
- * @see SecurityComponent::$csrfExpires
- */
-	public $csrfCheck = true;
-
-/**
- * The duration from when a CSRF token is created that it will expire on.
- * Each form/page request will generate a new token that can only be submitted once unless
- * it expires. Can be any value compatible with strtotime()
- *
- * @var string
- */
-	public $csrfExpires = '+30 minutes';
-
-/**
- * Controls whether or not CSRF tokens are use and burn. Set to false to not generate
- * new tokens on each request. One token will be reused until it expires. This reduces
- * the chances of users getting invalid requests because of token consumption.
- * It has the side effect of making CSRF less secure, as tokens are reusable.
- *
- * @var boolean
- */
-	public $csrfUseOnce = true;
-
-/**
- * Control the number of tokens a user can keep open.
- * This is most useful with one-time use tokens. Since new tokens
- * are created on each request, having a hard limit on the number of open tokens
- * can be useful in controlling the size of the session file.
- *
- * When tokens are evicted, the oldest ones will be removed, as they are the most likely
- * to be dead/expired.
- *
- * @var integer
- */
-	public $csrfLimit = 100;
 
 /**
  * Other components used by the Security component
@@ -194,9 +152,6 @@ class SecurityComponent extends Component {
 		if (!in_array($this->_action, (array)$this->unlockedActions) && $isPost && $isNotRequestAction) {
 			if ($this->validatePost && $this->_validatePost($controller) === false) {
 				return $this->blackHole($controller, 'auth');
-			}
-			if ($this->csrfCheck && $this->_validateCsrf($controller) === false) {
-				return $this->blackHole($controller, 'csrf');
 			}
 		}
 		$this->generateToken($controller->request);
@@ -422,22 +377,11 @@ class SecurityComponent extends Component {
 			'allowedControllers' => $this->allowedControllers,
 			'allowedActions' => $this->allowedActions,
 			'unlockedFields' => $this->unlockedFields,
-			'csrfTokens' => array()
 		);
 
 		$tokenData = array();
 		if ($this->Session->check('_Token')) {
 			$tokenData = $this->Session->read('_Token');
-			if (!empty($tokenData['csrfTokens']) && is_array($tokenData['csrfTokens'])) {
-				$token['csrfTokens'] = $this->_expireTokens($tokenData['csrfTokens']);
-			}
-		}
-		if ($this->csrfUseOnce || empty($token['csrfTokens'])) {
-			$token['csrfTokens'][$authKey] = strtotime($this->csrfExpires);
-		}
-		if (!$this->csrfUseOnce) {
-			$csrfTokens = array_keys($token['csrfTokens']);
-			$token['key'] = $csrfTokens[0];
 		}
 		$this->Session->write('_Token', $token);
 		$request->params['_Token'] = array(
@@ -445,47 +389,6 @@ class SecurityComponent extends Component {
 			'unlockedFields' => $token['unlockedFields']
 		);
 		return true;
-	}
-
-/**
- * Validate that the controller has a CSRF token in the POST data
- * and that the token is legit/not expired. If the token is valid
- * it will be removed from the list of valid tokens.
- *
- * @param Controller $controller A controller to check
- * @return boolean Valid csrf token.
- */
-	protected function _validateCsrf(Controller $controller) {
-		$token = $this->Session->read('_Token');
-		$requestToken = $controller->request->data('_Token.key');
-		if (isset($token['csrfTokens'][$requestToken]) && $token['csrfTokens'][$requestToken] >= time()) {
-			if ($this->csrfUseOnce) {
-				$this->Session->delete('_Token.csrfTokens.' . $requestToken);
-			}
-			return true;
-		}
-		return false;
-	}
-
-/**
- * Expire CSRF nonces and remove them from the valid tokens.
- * Uses a simple timeout to expire the tokens.
- *
- * @param array $tokens An array of nonce => expires.
- * @return array An array of nonce => expires.
- */
-	protected function _expireTokens($tokens) {
-		$now = time();
-		foreach ($tokens as $nonce => $expires) {
-			if ($expires < $now) {
-				unset($tokens[$nonce]);
-			}
-		}
-		$overflow = count($tokens) - $this->csrfLimit;
-		if ($overflow > 0) {
-			$tokens = array_slice($tokens, $overflow + 1, null, true);
-		}
-		return $tokens;
 	}
 
 /**
