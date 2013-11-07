@@ -70,8 +70,8 @@ class TestPermutationDecorator extends PHPUnit_Extensions_TestDecorator {
  * @return PHPUnit_Framework_TestResult
  */
 	public function run(PHPUnit_Framework_TestResult $result = null, $filter = false, array $groups = [], array $excludeGroups = [], $processIsolation = false) {
-		if ($result === NULL) {
-            $result = $this->createResult();
+		if ($result === null) {
+			$result = $this->createResult();
 		}
 
 		foreach ($this->_permutations as $permutation) {

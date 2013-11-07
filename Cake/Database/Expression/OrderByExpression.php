@@ -50,8 +50,8 @@ class OrderByExpression extends QueryExpression {
 	}
 
 /**
- * Auxiliary function used for decomposing a nested array of conditions and build
- * a tree structure inside this object to represent the full SQL expression.
+ * Auxiliary function used for decomposing a nested array of conditions and
+ * building a tree structure inside this object to represent the full SQL expression.
  *
  * New order by expressions are merged to existing ones
  *
