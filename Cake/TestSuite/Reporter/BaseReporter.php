@@ -20,8 +20,6 @@ namespace Cake\TestSuite\Reporter;
 
 use Cake\TestSuite\TestLoader;
 
-require_once 'PHPUnit/TextUI/ResultPrinter.php';
-
 /**
  * BaseReporter contains common reporting features used in the CakePHP Test suite
  *
