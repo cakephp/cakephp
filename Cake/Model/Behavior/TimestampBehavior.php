@@ -37,6 +37,8 @@ class TimestampBehavior extends Behavior {
  * @var array
  */
 	protected $_defaultSettings = [
+		'implementedFinders' => [],
+		'implementedMethods' => ['timestamp' => 'timestamp'],
 		'events' => [
 			'Model.beforeSave' => [
 				'created' => 'new',
@@ -108,32 +110,6 @@ class TimestampBehavior extends Behavior {
  */
 	public function implementedEvents() {
 		return array_fill_keys(array_keys($this->_settings['events']), 'handleEvent');
-	}
-
-/**
- * implementedFinders
- *
- * This behavior does not implement any finders
- *
- * @return array
- */
-	public function implementedFinders() {
-		return [];
-	}
-
-/**
- * implementedMethods
- *
- * Only the timestamp method is callable from a table.
- *
- * @return void
- */
-	public function implementedMethods() {
-		if (isset($this->_settings['implementedMethods'])) {
-			return $this->_settings['implementedMethods'];
-		}
-
-		return ['timestamp' => 'timestamp'];
 	}
 
 /**

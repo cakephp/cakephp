@@ -182,9 +182,9 @@ class Behavior implements EventListener {
  * With the above example, a call to `$Table->find('this')` will call `$Behavior->findThis()`
  * and a call to `$Table->find('alias')` will call `$Behavior->findMethodName()`
  *
- * It is recommended, though not required,  to override this method in child classes such that
- * it is not necessary to use reflections to derive the available method list. See core
- * behaviors for an example
+ * It is recommended, though not required, to define implementedFinders in the settings property
+ * of child classes such that it is not necessary to use reflections to derive the available
+ * method list. See core behaviors for examples
  *
  * @return array
  */
@@ -210,9 +210,9 @@ class Behavior implements EventListener {
  * With the above example, a call to `$Table->method()` will call `$Behavior->method()`
  * and a call to `$Table->aliasedmethod()` will call `$Behavior->somethingElse()`
  *
- * It is recommended, though not required,  to override this method in child classes such that
- * it is not necessary to use reflections to derive the available method list. See core
- * behaviors for an example
+ * It is recommended, though not required, to define implementedFinders in the settings property
+ * of child classes such that it is not necessary to use reflections to derive the available
+ * method list. See core behaviors for examples
  *
  * @return array
  */
