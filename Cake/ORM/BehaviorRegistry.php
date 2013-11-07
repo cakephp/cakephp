@@ -210,7 +210,7 @@ class BehaviorRegistry extends ObjectRegistry {
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behaviors.', $method));
+		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behavior.', $method));
 	}
 
 /**
@@ -229,7 +229,7 @@ class BehaviorRegistry extends ObjectRegistry {
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Error\Exception(__d('cake_dev', 'Cannot call finder "%s" it does not belong to any attached behaviors.', $type));
+		throw new Error\Exception(__d('cake_dev', 'Cannot call finder "%s" it does not belong to any attached behavior.', $type));
 	}
 
 }
