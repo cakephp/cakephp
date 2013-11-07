@@ -371,9 +371,7 @@ class SecurityComponent extends Component {
 			}
 			return false;
 		}
-		$authKey = Security::generateAuthKey();
 		$token = array(
-			'key' => $authKey,
 			'allowedControllers' => $this->allowedControllers,
 			'allowedActions' => $this->allowedActions,
 			'unlockedFields' => $this->unlockedFields,
@@ -385,7 +383,6 @@ class SecurityComponent extends Component {
 		}
 		$this->Session->write('_Token', $token);
 		$request->params['_Token'] = array(
-			'key' => $token['key'],
 			'unlockedFields' => $token['unlockedFields']
 		);
 		return true;
