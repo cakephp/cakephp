@@ -580,7 +580,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateWithSecurity() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
 		$expected = array(
@@ -588,7 +588,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[key]', 'value' => 'testKey', 'id'
+				'type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testKey', 'id'
 			)),
 			'/div'
 		);
@@ -607,13 +607,13 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateEndGetNoSecurity() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array('type' => 'get', 'url' => '/contacts/add'));
-		$this->assertNotContains('Token', $result);
+		$this->assertNotContains('testKey', $result);
 
 		$result = $this->Form->end('Save');
-		$this->assertNotContains('Token', $result);
+		$this->assertNotContains('testKey', $result);
 	}
 
 /**
@@ -633,7 +633,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testValidateHashNoModel() {
-		$this->Form->request['_Token'] = array('key' => 'foo');
+		$this->Form->request->params['_csrfToken'] = 'foo';
 		$result = $this->Form->secure(array('anything'));
 		$this->assertRegExp('/540ac9c60d323c22bafe997b72c0790f39a8bdef/', $result);
 	}
@@ -672,7 +672,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testNoCheckboxLocking() {
-		$this->Form->request['_Token'] = array('key' => 'foo');
+		$this->Form->request->params['_csrfToken'] = 'foo';
 		$this->assertSame(array(), $this->Form->fields);
 
 		$this->Form->checkbox('check', array('value' => '1'));
@@ -690,7 +690,7 @@ class FormHelperTest extends TestCase {
 		$key = 'testKey';
 		$fields = array('Model.password', 'Model.username', 'Model.valid' => '0');
 
-		$this->Form->request['_Token'] = array('key' => $key);
+		$this->Form->request->params['_csrfToken'] = $key;
 		$result = $this->Form->secure($fields);
 
 		$hash = Security::hash(serialize($fields) . Configure::read('Security.salt'));
@@ -852,7 +852,7 @@ class FormHelperTest extends TestCase {
 			'Model.0.valid' => '0', 'Model.1.password', 'Model.1.username',
 			'Model.1.hidden' => 'value', 'Model.1.valid' => '0'
 		);
-		$this->Form->request['_Token'] = array('key' => $key);
+		$this->Form->request->params['_csrfToken'] = $key;
 		$result = $this->Form->secure($fields);
 
 		$hash = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
@@ -882,7 +882,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormSecurityMultipleSubmitButtons() {
 		$key = 'testKey';
-		$this->Form->request['_Token'] = array('key' => $key);
+		$this->Form->request->params['_csrfToken'] = $key;
 
 		$this->Form->create('Addresses');
 		$this->Form->input('Address.title');
@@ -926,7 +926,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testSecurityButtonNestedNamed() {
 		$key = 'testKey';
-		$this->Form->request['_Token'] = array('key' => $key);
+		$this->Form->request->params['_csrfToken'] = $key;
 
 		$this->Form->create('Addresses');
 		$this->Form->button('Test', array('type' => 'submit', 'name' => 'Address[button]'));
@@ -941,7 +941,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testSecuritySubmitNestedNamed() {
 		$key = 'testKey';
-		$this->Form->request['_Token'] = array('key' => $key);
+		$this->Form->request->params['_csrfToken'] = $key;
 
 		$this->Form->create('Addresses');
 		$this->Form->submit('Test', array('type' => 'submit', 'name' => 'Address[button]'));
@@ -956,7 +956,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testSecuritySubmitImageNoName() {
 		$key = 'testKey';
-		$this->Form->request['_Token'] = array('key' => $key);
+		$this->Form->request->params['_csrfToken'] = $key;
 
 		$this->Form->create('User');
 		$result = $this->Form->submit('save.png');
@@ -976,7 +976,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testSecuritySubmitImageName() {
 		$key = 'testKey';
-		$this->Form->request['_Token'] = array('key' => $key);
+		$this->Form->request->params['_csrfToken'] = $key;
 
 		$this->Form->create('User');
 		$result = $this->Form->submit('save.png', array('name' => 'test'));
@@ -998,8 +998,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormSecurityMultipleInputFields() {
 		$key = 'testKey';
-
-		$this->Form->request['_Token'] = array('key' => $key);
+		$this->Form->request->params['_csrfToken'] = $key;
 		$this->Form->create('Addresses');
 
 		$this->Form->hidden('Addresses.0.id', array('value' => '123456'));
@@ -1046,8 +1045,8 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormSecurityArrayFields() {
 		$key = 'testKey';
+		$this->Form->request->params['_csrfToken'] = $key;
 
-		$this->Form->request->params['_Token']['key'] = $key;
 		$this->Form->create('Address');
 		$this->Form->input('Address.primary.1');
 		$this->assertEquals('Address.primary', $this->Form->fields[0]);
@@ -1065,8 +1064,8 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormSecurityMultipleInputDisabledFields() {
 		$key = 'testKey';
+		$this->Form->request->params['_csrfToken'] = $key;
 		$this->Form->request->params['_Token'] = array(
-			'key' => $key,
 			'unlockedFields' => array('first_name', 'address')
 		);
 		$this->Form->create();
@@ -1113,8 +1112,8 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormSecurityInputUnlockedFields() {
 		$key = 'testKey';
+		$this->Form->request->params['_csrfToken'] = $key;
 		$this->Form->request['_Token'] = array(
-			'key' => $key,
 			'unlockedFields' => array('first_name', 'address')
 		);
 		$this->Form->create();
@@ -1159,7 +1158,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecureWithCustomNameAttribute() {
-		$this->Form->request->params['_Token']['key'] = 'testKey';
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$this->Form->text('UserForm.published', array('name' => 'User[custom]'));
 		$this->assertEquals('User.custom', $this->Form->fields[0]);
@@ -1176,7 +1175,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredInput() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
@@ -1185,7 +1184,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[key]',
+				'type' => 'hidden', 'name' => '_csrfToken',
 				'value' => 'testKey', 'id' => 'preg:/Token\d+/'
 			)),
 			'/div'
@@ -1284,7 +1283,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecuredInputCustomName() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$this->Form->input('text_input', array(
@@ -1308,7 +1307,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredFileInput() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$this->Form->file('Attachment.file');
@@ -1325,7 +1324,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredMultipleSelect() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'one', '2' => 'two');
 
@@ -1344,7 +1343,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredRadio() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'option1', '2' => 'option2');
 
@@ -1359,7 +1358,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredAndDisabledNotAssoc() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$this->Form->select('Model.select', array(1, 2), array('disabled'));
 		$this->Form->checkbox('Model.checkbox', array('disabled'));
@@ -1381,7 +1380,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredAndDisabled() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$this->Form->checkbox('Model.checkbox', array('disabled' => true));
 		$this->Form->text('Model.text', array('disabled' => true));
@@ -1408,8 +1407,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDisableSecurityUsingForm() {
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->Form->request['_Token'] = array(
-			'key' => 'testKey',
 			'disabledFields' => array()
 		);
 		$this->Form->create();
@@ -1435,8 +1434,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testUnlockFieldAddsToList() {
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->Form->request['_Token'] = array(
-			'key' => 'testKey',
 			'unlockedFields' => array()
 		);
 		$this->Form->create('Contact');
@@ -1453,8 +1452,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testUnlockFieldRemovingFromFields() {
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->Form->request['_Token'] = array(
-			'key' => 'testKey',
 			'unlockedFields' => array()
 		);
 		$this->Form->create('Contact');
@@ -5121,7 +5120,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleCheckboxSecurity() {
-		$this->Form->request['_Token'] = array('key' => 'testKey');
+		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$result = $this->Form->select(
@@ -5142,7 +5141,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleSecureWithNoOptions() {
-		$this->Form->request['_Token'] = array('key' => 'testkey');
+		$this->Form->request->params['_csrfToken'] = 'testkey';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$this->Form->select(
@@ -5159,7 +5158,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectNoSecureWithNoOptions() {
-		$this->Form->request['_Token'] = array('key' => 'testkey');
+		$this->Form->request->params['_csrfToken'] = 'testkey';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$this->Form->select(
@@ -7071,7 +7070,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testButtonUnlockedByDefault() {
-		$this->Form->request->params['_Token']['key'] = 'secured';
+		$this->Form->request->params['_csrfToken'] = 'secured';
 		$this->Form->button('Save', array('name' => 'save'));
 		$this->Form->button('Clear');
 
@@ -7107,7 +7106,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurePostButton() {
-		$this->Form->request->params['_Token'] = array('key' => 'testkey');
+		$this->Form->request->params['_csrfToken'] = 'testkey';
 
 		$result = $this->Form->postButton('Delete', '/posts/delete/1');
 		$expected = array(
@@ -7116,7 +7115,7 @@ class FormHelperTest extends TestCase {
 			),
 			array('div' => array('style' => 'display:none;')),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
 			'/div',
 			'button' => array('type' => 'submit'),
 			'Delete',
@@ -7228,7 +7227,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurePostLink() {
-		$this->Form->request->params['_Token'] = array('key' => 'testkey');
+		$this->Form->request->params['_csrfToken'] = 'testkey';
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
 		$expected = array(
@@ -7237,7 +7236,7 @@ class FormHelperTest extends TestCase {
 				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
 			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
@@ -7433,7 +7432,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSubmitUnlockedByDefault() {
-		$this->Form->request->params['_Token']['key'] = 'secured';
+		$this->Form->request->params['_csrfToken'] = 'secured';
 		$this->Form->submit('Go go');
 		$this->Form->submit('Save', array('name' => 'save'));
 
