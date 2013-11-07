@@ -304,11 +304,9 @@ class ResponseTest extends TestCase {
 		$response = new Response();
 		$since = time();
 		$time = new \DateTime('+1 day', new \DateTimeZone('UTC'));
-		$response->expires('+1 day');
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
-			'Expires' => $time->format('D, j M Y H:i:s') . ' GMT',
 			'Cache-Control' => 'public, max-age=' . ($time->format('U') - time())
 		);
 		$response->cache($since);
@@ -320,7 +318,6 @@ class ResponseTest extends TestCase {
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
-			'Expires' => gmdate("D, j M Y H:i:s", strtotime($time)) . " GMT",
 			'Cache-Control' => 'public, max-age=' . (strtotime($time) - time())
 		);
 		$response->cache($since, $time);
@@ -332,7 +329,6 @@ class ResponseTest extends TestCase {
 		$expected = array(
 			'Date' => gmdate("D, j M Y G:i:s ", $since) . 'GMT',
 			'Last-Modified' => gmdate("D, j M Y H:i:s ", $since) . 'GMT',
-			'Expires' => gmdate("D, j M Y H:i:s", $time) . " GMT",
 			'Cache-Control' => 'public, max-age=0'
 		);
 		$response->cache($since, $time);

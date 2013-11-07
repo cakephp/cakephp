@@ -801,7 +801,6 @@ class Response {
 			'Date' => gmdate("D, j M Y G:i:s ", time()) . 'GMT'
 		));
 		$this->modified($since);
-		$this->expires($time);
 		$this->sharable(true);
 		$this->maxAge($time - time());
 	}
