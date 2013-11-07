@@ -29,8 +29,8 @@ use Cake\ORM\Query;
  */
 class HasMany extends Association {
 
-	use ExternalAssociationTrait;
 	use DependentDeleteTrait;
+	use ExternalAssociationTrait;
 
 /**
  * The type of join to be used when adding the association to a query

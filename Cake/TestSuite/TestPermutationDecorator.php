@@ -17,8 +17,8 @@
 namespace Cake\TestSuite;
 
 use \PHPUnit_Extensions_TestDecorator;
-use \PHPUnit_Framework_TestResult;
 use \PHPUnit_Framework_Test;
+use \PHPUnit_Framework_TestResult;
 
 /**
  * A decorator class used to run a test case once for each permutation defined
