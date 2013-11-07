@@ -16,10 +16,6 @@
  */
 namespace Cake\Database;
 
-use Cake\Database\Expression\Comparison;
-use Cake\Database\Expression\OrderByExpression;
-use Cake\Database\Expression\IdentifierExpression;
-
 trait SqlDialectTrait {
 
 /**
@@ -77,10 +73,7 @@ trait SqlDialectTrait {
 	public function queryTranslator($type) {
 		return function($query) use ($type) {
 			if ($this->autoQuoting()) {
-				$binder = $query->valueBinder();
-				$query->valueBinder(false);
-				$query = $this->_quoteQueryIdentifiers($type, $query);
-				$query->valueBinder($binder);
+				$query = (new IdentifierQuoter($this))->quote($query);
 			}
 
 			$query = $this->{'_' . $type . 'QueryTranslator'}($query);
@@ -108,56 +101,7 @@ trait SqlDialectTrait {
  * @return array
  */
 	protected function _expressionTranslators() {
-		if ($this->autoQuoting()) {
-			$namespace = 'Cake\Database\Expression';
-			return [
-				$namespace . '\Comparison' => '_quoteComparison',
-				$namespace . '\OrderByExpression' => '_quoteOrderBy',
-				$namespace . '\IdentifierExpression' => '_quoteField'
-			];
-		}
-
 		return [];
-	}
-
-/**
- * Quotes identifiers in comparison expression objects
- *
- * @param \Cake\Database\Expression\Comparison $expression
- * @return void
- */
-	protected function _quoteComparison(Comparison $expression) {
-		$field = $expression->getField();
-		if (is_string($field)) {
-			$expression->field($this->quoteIdentifier($field));
-		}
-	}
-
-/**
- * Quotes identifiers in "order by" expression objects
- *
- * @param \Cake\Database\Expression\OrderByExpression $expression
- * @return void
- */
-	protected function _quoteOrderBy(OrderByExpression $expression) {
-		$expression->iterateParts(function($part, &$field) {
-			if (is_string($field)) {
-				$field = $this->quoteIdentifier($field);
-			}
-			return $part;
-		});
-	}
-
-/**
- * Quotes identifiers in "order by" expression objects
- *
- * @param \Cake\Database\Expression\IdentifierExpression $expression
- * @return void
- */
-	protected function _quoteField(IdentifierExpression $expression) {
-		$expression->setIdentifier(
-			$this->quoteIdentifier($expression->getIdentifier())
-		);
 	}
 
 /**
@@ -182,76 +126,6 @@ trait SqlDialectTrait {
 			$query->group($query->clause('distinct'), true);
 			$query->distinct(false);
 		}
-		return $query;
-	}
-
-/**
- * Iterates over each of the clauses in a query looking for identifiers and
- * quotes them
- *
- * @param string $type the type of query to be quoted
- * @param Query $query The query to have its identifiers quoted
- * @return Query
- */
-	protected function _quoteQueryIdentifiers($type, $query) {
-		if ($type === 'insert') {
-			return $this->_quoteInsertIdentifiers($query);
-		}
-
-		$quoter = function($part) use ($query) {
-			$result = [];
-			foreach ((array)$query->clause($part) as $alias => $value) {
-				$value = !is_string($value) ? $value : $this->quoteIdentifier($value);
-				$alias = is_numeric($alias) ? $alias : $this->quoteIdentifier($alias);
-				$result[$alias] = $value;
-			}
-			if ($result) {
-				$query->{$part}($result, true);
-			}
-		};
-
-		if (is_array($query->clause('distinct'))) {
-			$quoter('distinct', $query);
-		}
-
-		$quoter('select');
-		$quoter('from');
-		$quoter('group');
-
-		$result = [];
-		foreach ((array)$query->clause('join') as $value) {
-			$alias =  empty($value['alias']) ? null : $this->quoteIdentifier($value['alias']);
-			$value['alias'] = $alias;
-
-			if (is_string($value['table'])) {
-				$value['table'] = $this->quoteIdentifier($value['table']);
-			}
-
-			$result[$alias] = $value;
-		}
-
-		if ($result) {
-			$query->join($result, [], true);
-		}
-
-		return $query;
-	}
-
-/**
- * Quotes the table name and columns for an insert query
- *
- * @param Query $query
- * @return Query
- */
-	protected function _quoteInsertIdentifiers($query) {
-		list($table, $columns) = $query->clause('insert');
-		$table = $this->quoteIdentifier($table);
-		foreach ($columns as &$column) {
-			if (is_string($column)) {
-				$column = $this->quoteIdentifier($column);
-			}
-		}
-		$query->insert($table, $columns);
 		return $query;
 	}
 

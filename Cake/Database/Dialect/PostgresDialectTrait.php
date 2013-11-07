@@ -27,10 +27,7 @@ use Cake\Database\SqlDialectTrait;
  */
 trait PostgresDialectTrait {
 
-	use SqlDialectTrait {
-		_expressionTranslators as private _quotingTranslators;
-	}
-
+	use SqlDialectTrait;
 /**
  *  String used to start a database identifier quoting to make it safe
  *
@@ -77,7 +74,7 @@ trait PostgresDialectTrait {
  */
 	protected function _expressionTranslators() {
 		$namespace = 'Cake\Database\Expression';
-		return $this->_quotingTranslators() + [
+		return [
 			$namespace . '\FunctionExpression' => '_transformFunctionExpression'
 		];
 	}
