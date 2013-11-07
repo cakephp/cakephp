@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
 use Cake\TestSuite\TestCase;
 
@@ -2054,7 +2054,7 @@ class QueryTest extends TestCase {
 		$this->assertRegExp('/SELECT \(1 \+ 1\) AS [`"]foo[`"]$/', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select(['foo' => new FieldExpression('bar')])->sql();
+		$sql = $query->select(['foo' => new IdentifierExpression('bar')])->sql();
 		$this->assertRegExp('/[`"]bar[`"]/', $sql);
 	}
 
@@ -2126,7 +2126,7 @@ class QueryTest extends TestCase {
 		$this->assertRegExp('/GROUP BY \(bar\)/', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->select('*')->group([new FieldExpression('bar')])->sql();
+		$sql = $query->select('*')->group([new IdentifierExpression('bar')])->sql();
 		$this->assertRegExp('/GROUP BY \([`"]bar[`"]\)/', $sql);
 	}
 

@@ -16,7 +16,7 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
 use Cake\ORM\Query;
@@ -75,7 +75,7 @@ class HasOne extends Association {
 			$this->_sourceTable->alias(),
 			$this->_sourceTable->primaryKey()
 		);
-		$value = new FieldExpression(sprintf(
+		$value = new IdentifierExpression(sprintf(
 			'%s.%s', $this->_targetTable->alias(), $options['foreignKey']
 		));
 		return [$field => $value];

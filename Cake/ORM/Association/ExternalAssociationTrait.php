@@ -16,7 +16,7 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
@@ -127,7 +127,7 @@ trait ExternalAssociationTrait {
 			$this->_sourceTable->alias(),
 			$this->_sourceTable->primaryKey()
 		);
-		$value = new FieldExpression(sprintf(
+		$value = new IdentifierExpression(sprintf(
 			'%s.%s',
 			$this->_targetTable->alias(),
 			$options['foreignKey']

@@ -16,7 +16,7 @@
  */
 namespace Cake\ORM\Association;
 
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -80,7 +80,7 @@ class BelongsTo extends Association {
 			$this->target()->alias(),
 			$this->_targetTable->primaryKey()
 		);
-		$value = new FieldExpression(sprintf(
+		$value = new IdentifierExpression(sprintf(
 			'%s.%s',
 			$this->_sourceTable->alias(),
 			$options['foreignKey']

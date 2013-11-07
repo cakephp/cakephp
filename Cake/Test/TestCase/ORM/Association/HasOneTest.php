@@ -16,7 +16,7 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
@@ -85,7 +85,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Profile.is_active' => true]
 		];
 		$association = new HasOne('Profile', $config);
-		$field = new FieldExpression('Profile.user_id');
+		$field = new IdentifierExpression('Profile.user_id');
 		$query->expects($this->once())->method('join')->with([
 			'Profile' => [
 				'conditions' => [
@@ -152,7 +152,7 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Profile.is_active' => true]
 		];
 		$association = new HasOne('Profile', $config);
-		$field = new FieldExpression('Profile.user_id');
+		$field = new IdentifierExpression('Profile.user_id');
 		$query->expects($this->once())->method('join')->with([
 			'Profile' => [
 				'conditions' => [

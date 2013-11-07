@@ -16,26 +16,26 @@
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
 /**
- * Tests FieldExpression class
+ * Tests IdentifierExpression class
  *
  **/
-class FieldExpressionTest extends TestCase {
+class IdentifierExpressionTest extends TestCase {
 
 /**
  * Tests getting and setting the field
  *
- * @return 
+ * @return
  */
 	public function testGetAndSet() {
-		$expression = new FieldExpression('foo');
-		$this->assertEquals('foo', $expression->getField());
-		$expression->setField('bar');
-		$this->assertEquals('bar', $expression->getField());
+		$expression = new IdentifierExpression('foo');
+		$this->assertEquals('foo', $expression->getIdentifier());
+		$expression->setIdentifier('bar');
+		$this->assertEquals('bar', $expression->getIdentifier());
 	}
 
 /**
@@ -44,7 +44,7 @@ class FieldExpressionTest extends TestCase {
  * @return void
  */
 	public function testSQL() {
-		$expression = new FieldExpression('foo');
+		$expression = new IdentifierExpression('foo');
 		$this->assertEquals('foo', $expression->sql(new ValueBinder));
 	}
 

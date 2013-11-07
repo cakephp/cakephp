@@ -16,7 +16,7 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -185,8 +185,8 @@ class BelongsToManyTest extends TestCase {
 			]
 		]);
 
-		$field1 = new FieldExpression('ArticlesTag.article_id');
-		$field2 = new FieldExpression('ArticlesTag.tag_id');
+		$field1 = new IdentifierExpression('ArticlesTag.article_id');
+		$field2 = new IdentifierExpression('ArticlesTag.tag_id');
 
 		$query->expects($this->at(2))->method('join')->with([
 			'ArticlesTag' => [
@@ -239,8 +239,8 @@ class BelongsToManyTest extends TestCase {
 			]
 		]);
 
-		$field1 = new FieldExpression('ArticlesTag.article_id');
-		$field2 = new FieldExpression('ArticlesTag.tag_id');
+		$field1 = new IdentifierExpression('ArticlesTag.article_id');
+		$field2 = new IdentifierExpression('ArticlesTag.tag_id');
 
 		$query->expects($this->at(1))->method('join')->with([
 			'ArticlesTag' => [

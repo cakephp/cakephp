@@ -16,7 +16,7 @@
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -355,7 +355,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'conditions' => ['Article.is_active' => true]
 		];
 
-		$field = new FieldExpression('Article.author_id');
+		$field = new IdentifierExpression('Article.author_id');
 		$association = new HasMany('Article', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Article' => [
@@ -421,7 +421,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->article,
 			'conditions' => ['Article.is_active' => true]
 		];
-		$field = new FieldExpression('Article.author_id');
+		$field = new IdentifierExpression('Article.author_id');
 		$association = new HasMany('Article', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Article' => [

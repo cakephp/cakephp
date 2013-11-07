@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Query;
@@ -115,7 +115,7 @@ class QueryTest extends TestCase {
 				'table' => 'clients',
 				'type' => 'LEFT',
 				'conditions' => [
-					['client.id' => new FieldExpression('foo.client_id')]
+					['client.id' => new IdentifierExpression('foo.client_id')]
 				]
 			]])
 			->will($this->returnValue($query));
@@ -125,7 +125,7 @@ class QueryTest extends TestCase {
 				'table' => 'orders',
 				'type' => 'INNER',
 				'conditions' => [
-					['client.id' => new FieldExpression('order.client_id')]
+					['client.id' => new IdentifierExpression('order.client_id')]
 				]
 			]])
 			->will($this->returnValue($query));
@@ -135,7 +135,7 @@ class QueryTest extends TestCase {
 				'table' => 'order_types',
 				'type' => 'LEFT',
 				'conditions' => [
-					['orderType.id' => new FieldExpression('order.order_type_id')]
+					['orderType.id' => new IdentifierExpression('order.order_type_id')]
 				]
 			]])
 			->will($this->returnValue($query));
@@ -145,7 +145,7 @@ class QueryTest extends TestCase {
 				'table' => 'things',
 				'type' => 'INNER',
 				'conditions' => [
-					['order.id' => new FieldExpression('stuff.order_id')]
+					['order.id' => new IdentifierExpression('stuff.order_id')]
 				]
 			]])
 			->will($this->returnValue($query));
@@ -155,7 +155,7 @@ class QueryTest extends TestCase {
 				'table' => 'stuff_types',
 				'type' => 'LEFT',
 				'conditions' => [
-					['stuffType.id' => new FieldExpression('stuff.stuff_type_id')]
+					['stuffType.id' => new IdentifierExpression('stuff.stuff_type_id')]
 				]
 			]])
 			->will($this->returnValue($query));
@@ -165,7 +165,7 @@ class QueryTest extends TestCase {
 				'table' => 'organizations',
 				'type' => 'LEFT',
 				'conditions' => [
-					['company.id' => new FieldExpression('client.organization_id')]
+					['company.id' => new IdentifierExpression('client.organization_id')]
 				]
 			]])
 			->will($this->returnValue($query));
@@ -175,7 +175,7 @@ class QueryTest extends TestCase {
 				'table' => 'categories',
 				'type' => 'LEFT',
 				'conditions' => [
-					['category.id' => new FieldExpression('company.category_id')]
+					['category.id' => new IdentifierExpression('company.category_id')]
 				]
 			]])
 			->will($this->returnValue($query));

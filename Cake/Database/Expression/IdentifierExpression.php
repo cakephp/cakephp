@@ -20,45 +20,45 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 
 /**
- * Represents a single field name in the database
+ * Represents a single identifier name in the database
  *
  */
-class FieldExpression implements ExpressionInterface {
+class IdentifierExpression implements ExpressionInterface {
 
 /**
- * Holds the field string
+ * Holds the identifier string
  *
  * @var string
  */
-	protected $_field;
+	protected $_identifier;
 
 /**
  * Constructor
  *
- * @param string $field The field this expression represents
+ * @param string $identifier The identifier this expression represents
  * @return void
  */
-	public function __construct($field) {
-		$this->setField($field);
+	public function __construct($identifier) {
+		$this->setIdentifier($identifier);
 	}
 
 /**
- * Sets the field this expression represents
+ * Sets the identifier this expression represents
  *
- * @param string $field
+ * @param string $identifier
  * @return void
  */
-	public function setField($field) {
-		$this->_field = $field;
+	public function setIdentifier($identifier) {
+		$this->_identifier = $identifier;
 	}
 
 /**
- * Returns the field this expression represents
+ * Returns the identifier this expression represents
  *
  * @return string
  */
-	public function getField() {
-		return $this->_field;
+	public function getIdentifier() {
+		return $this->_identifier;
 	}
 
 /**
@@ -68,7 +68,7 @@ class FieldExpression implements ExpressionInterface {
  * @return string
  */
 	public function sql(ValueBinder $generator) {
-		return $this->_field;
+		return $this->_identifier;
 	}
 
 /**

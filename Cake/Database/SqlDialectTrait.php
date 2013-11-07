@@ -18,7 +18,7 @@ namespace Cake\Database;
 
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\OrderByExpression;
-use Cake\Database\Expression\FieldExpression;
+use Cake\Database\Expression\IdentifierExpression;
 
 trait SqlDialectTrait {
 
@@ -113,7 +113,7 @@ trait SqlDialectTrait {
 			return [
 				$namespace . '\Comparison' => '_quoteComparison',
 				$namespace . '\OrderByExpression' => '_quoteOrderBy',
-				$namespace . '\FieldExpression' => '_quoteField'
+				$namespace . '\IdentifierExpression' => '_quoteField'
 			];
 		}
 
@@ -151,11 +151,13 @@ trait SqlDialectTrait {
 /**
  * Quotes identifiers in "order by" expression objects
  *
- * @param \Cake\Database\Expression\FieldExpression $expression
+ * @param \Cake\Database\Expression\IdentifierExpression $expression
  * @return void
  */
-	protected function _quoteField(FieldExpression $expression) {
-		$expression->setField($this->quoteIdentifier($expression->getField()));
+	protected function _quoteField(IdentifierExpression $expression) {
+		$expression->setIdentifier(
+			$this->quoteIdentifier($expression->getIdentifier())
+		);
 	}
 
 /**
