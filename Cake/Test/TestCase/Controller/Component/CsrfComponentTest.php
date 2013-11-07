@@ -164,4 +164,79 @@ class CsrfComponentTest extends TestCase {
 		$this->component->startUp($event);
 	}
 
+/**
+ * Test that CSRF checks are not applied to request action requests.
+ *
+ * @return void
+ */
+	public function testCsrfValidationSkipsRequestAction() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+
+		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller->request = new Request([
+			'params' => ['requested' => 1],
+			'post' => ['_csrfToken' => 'nope'],
+			'cookies' => ['csrfToken' => 'testing123']
+		]);
+		$controller->response = new Response();
+
+		$event = new Event('Controller.startup', $controller);
+		$result = $this->component->startUp($event);
+		$this->assertNull($result, 'No error.');
+	}
+
+/**
+ * Test that the configuration options work.
+ *
+ * @return void
+ */
+	public function testConfigurationCookieCreate() {
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+
+		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller->request = new Request(['base' => '/dir']);
+		$controller->response = new Response();
+
+		$component = new CsrfComponent($this->registry, [
+			'cookieName' => 'token',
+			'expiry' => 90,
+		]);
+
+		$event = new Event('Controller.startup', $controller);
+		$component->startUp($event);
+
+		$this->assertEmpty($controller->response->cookie('csrfToken'));
+		$cookie = $controller->response->cookie('token');
+		$this->assertNotEmpty($cookie, 'Should set a token.');
+		$this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
+		$this->assertEquals(90, $cookie['expiry'], 'session duration.');
+		$this->assertEquals('/dir', $cookie['path'], 'session path.');
+	}
+
+/**
+ * Test that the configuration options work.
+ *
+ * @return void
+ */
+	public function testConfigurationValidate() {
+		$_SERVER['REQUEST_METHOD'] = 'POST';
+
+		$controller = $this->getMock('Cake\Controller\Controller');
+		$controller->request = new Request([
+			'cookies' => ['csrfToken' => 'nope', 'token' => 'yes'],
+			'post' => ['_csrfToken' => 'no match', 'token' => 'yes'],
+		]);
+		$controller->response = new Response();
+
+		$component = new CsrfComponent($this->registry, [
+			'cookieName' => 'token',
+			'field' => 'token',
+			'expiry' => 90,
+		]);
+
+		$event = new Event('Controller.startup', $controller);
+		$result = $component->startUp($event);
+		$this->assertNull($result, 'Config settings should work.');
+	}
+
 }

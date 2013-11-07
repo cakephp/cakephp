@@ -62,6 +62,9 @@ class CsrfComponent extends Component {
  * the request is a GET request, and the cookie value
  * is absent a cookie will be set.
  *
+ * RequestAction requests do not get checked, nor will
+ * they set a cookie should it be missing.
+ *
  * @param Cake\Event\Event $event
  * @return void
  */
@@ -70,6 +73,10 @@ class CsrfComponent extends Component {
 		$request = $controller->request;
 		$response = $controller->response;
 		$cookieName = $this->settings['cookieName'];
+
+		if ($request->is('requested')) {
+			return;
+		}
 
 		if ($request->is('get') && $request->cookie($cookieName) === null) {
 			$this->_setCookie($request, $response);
