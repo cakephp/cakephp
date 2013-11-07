@@ -56,18 +56,6 @@ class TimestampBehavior extends Behavior {
 	protected $_ts;
 
 /**
- * Constructor
- *
- * Merge settings with the default and store in the settings property
- *
- * @param Table $table The table this behavior is attached to.
- * @param array $settings The settings for this behavior.
- */
-	public function __construct(Table $table, array $settings = []) {
-		$this->_settings = $settings + $this->_defaultSettings;
-	}
-
-/**
  * handleEvent
  *
  * There is only one event handler, it can be configured to be called for any event

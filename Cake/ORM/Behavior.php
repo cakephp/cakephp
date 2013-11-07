@@ -102,6 +102,15 @@ class Behavior implements EventListener {
 	protected static $_reflectionMethods = [];
 
 /**
+ * Default settings
+ *
+ * These are merged with user-provided settings when the behavior is used.
+ *
+ * @var array
+ */
+	protected $_defaultSettings = [];
+
+/**
  * Contains configuration settings.
  *
  * @var array
@@ -111,14 +120,17 @@ class Behavior implements EventListener {
 /**
  * Constructor
  *
+ * Merge settings with the default and store in the settings property
+ *
  * Does not retain a reference to the Table object. If you need this
  * you should override the constructor.
+ *
  *
  * @param Table $table The table this behavior is attached to.
  * @param array $settings The settings for this behavior.
  */
 	public function __construct(Table $table, array $settings = []) {
-		$this->_settings = $settings;
+		$this->_settings = $settings + $this->_defaultSettings;
 	}
 
 /**
