@@ -41,13 +41,83 @@ class Test2Behavior extends Behavior {
 	public function beforeFind() {
 	}
 
+/**
+ * Test finder
+ */
 	public function findFoo() {
 	}
 
+/**
+ * Test method
+ */
 	public function doSomething() {
 	}
 
 }
+
+ */
+class Test3Behavior extends Behavior {
+
+/**
+ * Test for event bindings.
+ */
+	public function beforeFind() {
+	}
+
+/**
+ * Test finder
+ */
+	public function findFoo() {
+	}
+
+/**
+ * Test method
+ */
+	public function doSomething() {
+	}
+
+/**
+ * verifySettings
+ */
+	public function verifySettings() {
+	}
+
+/**
+ * implementedEvents
+ *
+ * This class does pretend to implement beforeFind
+ *
+ * @return void
+ */
+	public function implementedEvents() {
+		return ['Model.beforeFind' => 'beforeFind'];
+	}
+
+/**
+ * implementedFinders
+ */
+	public function implementedFinders() {
+	}
+
+/**
+ * implementedMethods
+ */
+	public function implementedMethods() {
+	}
+
+/**
+ * Expose protected method for testing
+ *
+ * Since this is public - it'll show up as callable which is a side-effect
+ *
+ * @return array
+ */
+	public function testReflectionCache() {
+		return $this->_reflectionCache();
+	}
+
+}
+
 /**
  * Behavior test case
  */
@@ -72,6 +142,21 @@ class BehaviorTest extends TestCase {
 		$settings = ['key' => 'value'];
 		$behavior = new TestBehavior($table, $settings);
 		$this->assertEquals($settings, $behavior->settings());
+	}
+
+	public function testReflectionCache() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test3Behavior($table);
+		$expected = [
+			'finders' => [
+				'foo' => 'findFoo'
+			],
+			'methods' => [
+				'doSomething' => 'doSomething',
+				'testReflectionCache' => 'testReflectionCache'
+			]
+		];
+		$this->assertEquals($expected, $behavior->testReflectionCache());
 	}
 
 /**

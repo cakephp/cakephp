@@ -93,14 +93,14 @@ use Cake\Event\EventListener;
 class Behavior implements EventListener {
 
 /**
- * Method cache for behaviors.
+ * Reflection method cache for behaviors.
  *
  * Stores the reflected method + finder methods per class.
  * This prevents reflecting the same class multiple times in a single process.
  *
  * @var array
  */
-	protected static $_reflectionMethods = [];
+	protected static $_reflectionCache = [];
 
 /**
  * Default settings
@@ -230,7 +230,7 @@ class Behavior implements EventListener {
 			return $this->_settings['implementedFinders'];
 		}
 
-		$reflectionMethods = $this->_reflectionMethods();
+		$reflectionMethods = $this->_reflectionCache();
 		return $reflectionMethods['finders'];
 	}
 
@@ -258,7 +258,7 @@ class Behavior implements EventListener {
 			return $this->_settings['implementedMethods'];
 		}
 
-		$reflectionMethods = $this->_reflectionMethods();
+		$reflectionMethods = $this->_reflectionCache();
 		return $reflectionMethods['methods'];
 	}
 
@@ -271,10 +271,10 @@ class Behavior implements EventListener {
  *
  * @return array
  */
-	protected function _reflectionMethods() {
+	protected function _reflectionCache() {
 		$class = get_class($this);
-		if (isset(self::$_reflectionMethods[$class])) {
-			return self::$_reflectionMethods[$class];
+		if (isset(self::$_reflectionCache[$class])) {
+			return self::$_reflectionCache[$class];
 		}
 
 		$events = $this->implementedEvents();
@@ -286,15 +286,24 @@ class Behavior implements EventListener {
 			$eventMethods[$binding] = true;
 		}
 
+		$baseClass = 'Cake\ORM\Behavior';
+		if (isset(self::$_reflectionCache[$baseClass])) {
+			$baseMethods = self::$_reflectionCache[$baseClass];
+		} else {
+			$baseMethods = get_class_methods($baseClass);
+			self::$_reflectionCache[$baseClass] = $baseMethods;
+		}
+
 		$return = [
 			'finders' => [],
 			'methods' => []
 		];
 
-		$reflection = new \ReflectionClass(get_class($this));
+		$reflection = new \ReflectionClass($class);
 
 		foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-			if ($method->getDeclaringClass()->getName() === 'Cake\ORM\Behavior') {
+			$methodName = $method->getName();
+			if (in_array($methodName, $baseMethods)) {
 				continue;
 			}
 
@@ -310,7 +319,7 @@ class Behavior implements EventListener {
 			}
 		}
 
-		return self::$_reflectionMethods[$class] = $return;
+		return self::$_reflectionCache[$class] = $return;
 	}
 
 }
