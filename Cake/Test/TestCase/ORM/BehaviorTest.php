@@ -55,6 +55,8 @@ class Test2Behavior extends Behavior {
 
 }
 
+/**
+ * Test3Behavior
  */
 class Test3Behavior extends Behavior {
 
