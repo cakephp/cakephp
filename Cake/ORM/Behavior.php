@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Error\Exception;
 use Cake\Event\EventListener;
 
 /**
@@ -131,6 +132,7 @@ class Behavior implements EventListener {
  */
 	public function __construct(Table $table, array $settings = []) {
 		$this->_settings = $settings + $this->_defaultSettings;
+		$this->verifySettings();
 	}
 
 /**
@@ -140,6 +142,29 @@ class Behavior implements EventListener {
  */
 	public function settings() {
 		return $this->_settings;
+	}
+
+/**
+ * verifySettings
+ *
+ * Check that implemented* keys contain values pointing at callable
+ *
+ * @return void
+ * @throws Cake\Error\Exception if settings are invalid
+ */
+	public function verifySettings() {
+		$keys = ['implementedFinders', 'implementedMethods'];
+		foreach ($keys as $key) {
+			if (!isset($this->_settings[$key])) {
+				continue;
+			}
+
+			foreach ($this->_settings[$key] as $method) {
+				if (!is_callable([$this, $method])) {
+					throw new Exception(__d('cake_dev', 'The method %s is not callable on class %s', $method, get_class($this)));
+				}
+			}
+		}
 	}
 
 /**
