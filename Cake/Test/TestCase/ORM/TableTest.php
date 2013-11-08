@@ -669,28 +669,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that finders can be called directly
- *
- * @return void
- */
-	public function testCallingFindersDirectly() {
-		$table = $this->getMock('\Cake\ORM\Table', ['find'], [], '', false);
-		$query = $this->getMock('\Cake\ORM\Query', [], [$this->connection, $table]);
-		$table->expects($this->once())
-			->method('find')
-			->with('list', [])
-			->will($this->returnValue($query));
-		$this->assertSame($query, $table->list());
-
-		$table = $this->getMock('\Cake\ORM\Table', ['find'], [], '', false);
-		$table->expects($this->once())
-			->method('find')
-			->with('threaded', ['order' => ['name' => 'ASC']])
-			->will($this->returnValue($query));
-		$this->assertSame($query, $table->threaded(['order' => ['name' => 'ASC']]));
-	}
-
-/**
  * Tests that finders can be stacked
  *
  * @return void
@@ -711,7 +689,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$result = $table
-			->threaded(['order' => ['name' => 'ASC']])
+			->find('threaded', ['order' => ['name' => 'ASC']])
 			->list(['keyPath' => 'id']);
 		$this->assertSame($query, $result);
 	}
@@ -1013,10 +991,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testCallBehaviorFinder() {
 		$table = TableRegistry::get('article');
 		$table->addBehavior('Sluggable');
-
-		$query = $table->noSlug();
-		$this->assertInstanceOf('Cake\ORM\Query', $query);
-		$this->assertNotEmpty($query->clause('where'));
 
 		$query = $table->find('noSlug');
 		$this->assertInstanceOf('Cake\ORM\Query', $query);

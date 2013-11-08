@@ -1039,13 +1039,6 @@ class Table {
  * Magic method to be able to call scoped finders & behaviors
  * without the find prefix.
  *
- * ## Finder delegation
- *
- * You can use this feature to invoke finder methods, without
- * adding the 'find' prefix or preparing a query ahead of time.
- * For example, if your Table provided a `findRecent` finder, you
- * could call `$table->recent()` instead.
- *
  * ## Behavior delegation
  *
  * If your Table uses any behaviors you can call them as if
@@ -1061,15 +1054,9 @@ class Table {
 			return $this->_behaviors->call($method, $args);
 		}
 
-		$query = null;
-		if (isset($args[0]) && $args[0] instanceof Query) {
-			$query = array_shift($args);
-		}
-		$options = array_shift($args) ?: [];
-		if ($query === null) {
-			return $this->find($method, $options);
-		}
-		return $this->callFinder($method, $query, $options);
+		throw new \BadMethodCallException(
+			__d('cake_dev', 'Unknown method "%s"', $method)
+		);
 	}
 
 }
