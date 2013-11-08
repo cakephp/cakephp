@@ -57,7 +57,7 @@ class IdentifierQuoter {
 		if ($query->type() === 'insert') {
 			$this->_quoteInsert($query);
 		} else {
-			$this->_qouteParts($query);
+			$this->_quoteParts($query);
 		}
 
 		$query->traverseExpressions(function($expression) {
@@ -87,14 +87,14 @@ class IdentifierQuoter {
  * @param Query
  * @return void
  */
-	protected function _qouteParts($query) {
+	protected function _quoteParts($query) {
 		foreach (['distinct', 'select', 'from', 'group'] as $part) {
 			$contents = $query->clause($part);
 
 			if (!is_array($contents)) {
 				continue;
 			}
-	
+
 			$result = $this->_basicQuoter($contents);
 			if ($result) {
 				$query->{$part}($result, true);
@@ -125,7 +125,7 @@ class IdentifierQuoter {
 	}
 
 /**
- * Quotes both the table and alias fot an array of joins as stored in a Query
+ * Quotes both the table and alias for an array of joins as stored in a Query
  * object
  *
  * @param array $joins
