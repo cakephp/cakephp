@@ -200,8 +200,8 @@ class Table {
  *
  * {{{
  *	public function initialize(array $config) {
- *		$this->belongsTo('User');
- *		$this->belongsToMany('Tagging.Tag');
+ *		$this->belongsTo('Users');
+ *		$this->belongsToMany('Tagging.Tags');
  *		$this->primaryKey('something_else');
  *	}
  * }}}
@@ -228,7 +228,7 @@ class Table {
 			if (empty($table)) {
 				$table = $this->alias();
 			}
-			$this->_table = Inflector::tableize($table);
+			$this->_table = Inflector::underscore($table);
 		}
 		return $this->_table;
 	}

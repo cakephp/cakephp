@@ -36,13 +36,13 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->company = TableRegistry::get('Company', [
+		$this->company = TableRegistry::get('Companies', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'company_name' => ['type' => 'string'],
 			]
 		]);
-		$this->client = TableRegistry::get('Client', [
+		$this->client = TableRegistry::get('Clients', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'client_name' => ['type' => 'string'],
@@ -83,23 +83,23 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,
 			'targetTable' => $this->company,
-			'conditions' => ['Company.is_active' => true]
+			'conditions' => ['Companies.is_active' => true]
 		];
-		$association = new BelongsTo('Company', $config);
-		$field = new IdentifierExpression('Client.company_id');
+		$association = new BelongsTo('Companies', $config);
+		$field = new IdentifierExpression('Clients.company_id');
 		$query->expects($this->once())->method('join')->with([
-			'Company' => [
+			'Companies' => [
 				'conditions' => [
-					'Company.is_active' => true,
-					['Company.id' => $field]
+					'Companies.is_active' => true,
+					['Companies.id' => $field]
 				],
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]
 		]);
 		$query->expects($this->once())->method('select')->with([
-			'Company__id' => 'Company.id',
-			'Company__company_name' => 'Company.company_name'
+			'Companies__id' => 'Companies.id',
+			'Companies__company_name' => 'Companies.company_name'
 		]);
 		$association->attachTo($query);
 	}
@@ -114,24 +114,24 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'foreignKey' => 'company_id',
 			'sourceTable' => $this->client,
-			'conditions' => ['Company.is_active' => true]
+			'conditions' => ['Companies.is_active' => true]
 		];
-		$association = new BelongsTo('Company', $config);
+		$association = new BelongsTo('Companies', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Company' => [
+			'Companies' => [
 				'conditions' => [
-					'Company.is_active' => false
+					'Companies.is_active' => false
 				],
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
 		]);
 		$query->expects($this->once())->method('select')->with([
-			'Company__company_name' => 'Company.company_name'
+			'Companies__company_name' => 'Companies.company_name'
 		]);
 
 		$override = [
-			'conditions' => ['Company.is_active' => false],
+			'conditions' => ['Companies.is_active' => false],
 			'foreignKey' => false,
 			'fields' => ['company_name']
 		];
@@ -148,15 +148,15 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'sourceTable' => $this->client,
 			'targetTable' => $this->company,
-			'conditions' => ['Company.is_active' => true]
+			'conditions' => ['Companies.is_active' => true]
 		];
-		$association = new BelongsTo('Company', $config);
-		$field = new IdentifierExpression('Client.company_id');
+		$association = new BelongsTo('Companies', $config);
+		$field = new IdentifierExpression('Clients.company_id');
 		$query->expects($this->once())->method('join')->with([
-			'Company' => [
+			'Companies' => [
 				'conditions' => [
-					'Company.is_active' => true,
-					['Company.id' => $field]
+					'Companies.is_active' => true,
+					['Companies.id' => $field]
 				],
 				'type' => 'LEFT',
 				'table' => 'companies',
@@ -182,7 +182,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$mock->expects($this->never())
 			->method('delete');
 
-		$association = new BelongsTo('Company', $config);
+		$association = new BelongsTo('Companies', $config);
 		$entity = new Entity(['company_name' => 'CakePHP', 'id' => 1]);
 		$this->assertTrue($association->cascadeDelete($entity));
 	}
