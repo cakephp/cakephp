@@ -62,6 +62,7 @@ class TimestampBehavior extends Behavior {
  *
  * @param Event $event
  * @param Entity $entity
+ * @throws \UnexpectedValueException if a field's when value is misdefined
  * @return true (irrespective of the behavior logic, the save will not be prevented)
  * @throws \UnexpectedValueException When the value for an event is not 'new', 'existing' or true.
  */
