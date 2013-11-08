@@ -38,20 +38,20 @@ class BelongsToManyTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->tag = $this->getMock(
-			'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Tag', 'table' => 'tags']]
+			'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Tags', 'table' => 'tags']]
 		);
 		$this->tag->schema([
 			'id' => ['type' => 'integer'],
 			'name' => ['type' => 'string'],
 		]);
 		$this->article = $this->getMock(
-			'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Article', 'table' => 'articles']]
+			'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Articles', 'table' => 'articles']]
 		);
 		$this->article->schema([
 			'id' => ['type' => 'integer'],
 			'name' => ['type' => 'string'],
 		]);
-		TableRegistry::set('Article', $this->article);
+		TableRegistry::set('Articles', $this->article);
 	}
 
 /**
@@ -112,29 +112,29 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$pivot = $assoc->pivot();
 		$this->assertInstanceOf('\Cake\ORM\Table', $pivot);
-		$this->assertEquals('ArticlesTag', $pivot->alias());
+		$this->assertEquals('ArticlesTags', $pivot->alias());
 		$this->assertEquals('articles_tags', $pivot->table());
-		$this->assertSame($this->article, $pivot->association('Article')->target());
-		$this->assertSame($this->tag, $pivot->association('Tag')->target());
+		$this->assertSame($this->article, $pivot->association('Articles')->target());
+		$this->assertSame($this->tag, $pivot->association('Tags')->target());
 
 		$belongsTo = '\Cake\ORM\Association\BelongsTo';
-		$this->assertInstanceOf($belongsTo, $pivot->association('Article'));
-		$this->assertInstanceOf($belongsTo, $pivot->association('Tag'));
+		$this->assertInstanceOf($belongsTo, $pivot->association('Articles'));
+		$this->assertInstanceOf($belongsTo, $pivot->association('Tags'));
 
-		$this->assertSame($pivot, $this->tag->association('ArticlesTag')->target());
-		$this->assertSame($this->article, $this->tag->association('Article')->target());
+		$this->assertSame($pivot, $this->tag->association('ArticlesTags')->target());
+		$this->assertSame($this->article, $this->tag->association('Articles')->target());
 
 		$hasMany = '\Cake\ORM\Association\HasMany';
 		$belongsToMany = '\Cake\ORM\Association\BelongsToMany';
-		$this->assertInstanceOf($belongsToMany, $this->tag->association('Article'));
-		$this->assertInstanceOf($hasMany, $this->tag->association('ArticlesTag'));
+		$this->assertInstanceOf($belongsToMany, $this->tag->association('Articles'));
+		$this->assertInstanceOf($hasMany, $this->tag->association('ArticlesTags'));
 
 		$this->assertSame($pivot, $assoc->pivot());
-		$pivot2 = TableRegistry::get('Foo');
+		$pivot2 = TableRegistry::get('Foos');
 		$assoc->pivot($pivot2);
 		$this->assertSame($pivot2, $assoc->pivot());
 
-		$assoc->pivot('ArticlesTag');
+		$assoc->pivot('ArticlesTags');
 		$this->assertSame($pivot, $assoc->pivot());
 	}
 
@@ -150,7 +150,7 @@ class BelongsToManyTest extends TestCase {
 			'joinTable' => 'tags_articles'
 		]);
 		$pivot = $assoc->pivot();
-		$this->assertEquals('TagsArticle', $pivot->alias());
+		$this->assertEquals('TagsArticles', $pivot->alias());
 		$this->assertEquals('tags_articles', $pivot->table());
 	}
 
@@ -165,46 +165,46 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tag.name' => 'cake']
+			'conditions' => ['Tags.name' => 'cake']
 		];
-		TableRegistry::get('ArticlesTag', [
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
 				'tag_id' => ['type' => 'integer']
 			]
 		]);
-		$association = new BelongsToMany('Tag', $config);
+		$association = new BelongsToMany('Tags', $config);
 		$query->expects($this->at(0))->method('join')->with([
-			'Tag' => [
+			'Tags' => [
 				'conditions' => [
-					'Tag.name' => 'cake'
+					'Tags.name' => 'cake'
 				],
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
 		]);
 
-		$field1 = new IdentifierExpression('ArticlesTag.article_id');
-		$field2 = new IdentifierExpression('ArticlesTag.tag_id');
+		$field1 = new IdentifierExpression('ArticlesTags.article_id');
+		$field2 = new IdentifierExpression('ArticlesTags.tag_id');
 
 		$query->expects($this->at(2))->method('join')->with([
-			'ArticlesTag' => [
+			'ArticlesTags' => [
 				'conditions' => [
-					['Article.id' => $field1],
-					['Tag.id' => $field2]
+					['Articles.id' => $field1],
+					['Tags.id' => $field2]
 				],
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]
 		]);
 		$query->expects($this->at(1))->method('select')->with([
-			'Tag__id' => 'Tag.id',
-			'Tag__name' => 'Tag.name',
+			'Tags__id' => 'Tags.id',
+			'Tags__name' => 'Tags.name',
 		]);
 		$query->expects($this->at(3))->method('select')->with([
-			'ArticlesTag__article_id' => 'ArticlesTag.article_id',
-			'ArticlesTag__tag_id' => 'ArticlesTag.tag_id',
+			'ArticlesTags__article_id' => 'ArticlesTags.article_id',
+			'ArticlesTags__tag_id' => 'ArticlesTags.tag_id',
 		]);
 		$association->attachTo($query);
 	}
@@ -219,34 +219,34 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tag.name' => 'cake']
+			'conditions' => ['Tags.name' => 'cake']
 		];
-		TableRegistry::get('ArticlesTag', [
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
 				'tag_id' => ['type' => 'integer']
 			]
 		]);
-		$association = new BelongsToMany('Tag', $config);
+		$association = new BelongsToMany('Tags', $config);
 		$query->expects($this->at(0))->method('join')->with([
-			'Tag' => [
+			'Tags' => [
 				'conditions' => [
-					'Tag.name' => 'cake'
+					'Tags.name' => 'cake'
 				],
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
 		]);
 
-		$field1 = new IdentifierExpression('ArticlesTag.article_id');
-		$field2 = new IdentifierExpression('ArticlesTag.tag_id');
+		$field1 = new IdentifierExpression('ArticlesTags.article_id');
+		$field2 = new IdentifierExpression('ArticlesTags.tag_id');
 
 		$query->expects($this->at(1))->method('join')->with([
-			'ArticlesTag' => [
+			'ArticlesTags' => [
 				'conditions' => [
-					['Article.id' => $field1],
-					['Tag.id' => $field2]
+					['Articles.id' => $field1],
+					['Tags.id' => $field2]
 				],
 				'type' => 'INNER',
 				'table' => 'articles_tags'
@@ -266,46 +266,46 @@ class BelongsToManyTest extends TestCase {
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
 		];
-		TableRegistry::get('ArticlesTag', [
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
 				'tag_id' => ['type' => 'integer']
 			]
 		]);
-		$association = new BelongsToMany('Tag', $config);
+		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock('Cake\ORM\Query', ['execute', 'contain'], [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('contain')
 			->with([
-				'ArticlesTag' => [
-					'conditions' => ['ArticlesTag.article_id in' => $keys],
+				'ArticlesTags' => [
+					'conditions' => ['ArticlesTags.article_id in' => $keys],
 					'matching' => true
 				]
 			])
 			->will($this->returnSelf());
 
 		$callable = $association->eagerLoader(compact('keys', 'query'));
-		$row = ['Article__id' => 1, 'title' => 'article 1'];
+		$row = ['Articles__id' => 1, 'title' => 'article 1'];
 		$result = $callable($row);
-		$row['Tag__Tag'] = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]]
+		$row['Tags__Tags'] = [
+			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]]
 		];
 		$this->assertEquals($row, $result);
 
-		$row = ['Article__id' => 2, 'title' => 'article 2'];
+		$row = ['Articles__id' => 2, 'title' => 'article 2'];
 		$result = $callable($row);
-		$row['Tag__Tag'] = [
-			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
+		$row['Tags__Tags'] = [
+			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
 		];
 		$this->assertEquals($row, $result);
 	}
@@ -319,40 +319,40 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tag.name' => 'foo'],
+			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		TableRegistry::get('ArticlesTag', [
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
 				'tag_id' => ['type' => 'integer']
 			]
 		]);
-		$association = new BelongsToMany('Tag', $config);
+		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['execute', 'contain', 'where', 'order'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('contain')
 			->with([
-				'ArticlesTag' => [
-					'conditions' => ['ArticlesTag.article_id in' => $keys],
+				'ArticlesTags' => [
+					'conditions' => ['ArticlesTags.article_id in' => $keys],
 					'matching' => true
 				]
 			])
 			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('where')
-			->with(['Tag.name' => 'foo'])
+			->with(['Tags.name' => 'foo'])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('order')
@@ -371,33 +371,33 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tag.name' => 'foo'],
+			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		TableRegistry::get('ArticlesTag', [
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
 				'tag_id' => ['type' => 'integer']
 			]
 		]);
-		$association = new BelongsToMany('Tag', $config);
+		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['execute', 'contain', 'where', 'order', 'select'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('contain')
 			->with([
-				'ArticlesTag' => [
-					'conditions' => ['ArticlesTag.article_id in' => $keys],
+				'ArticlesTags' => [
+					'conditions' => ['ArticlesTags.article_id in' => $keys],
 					'matching' => true
 				]
 			])
@@ -405,8 +405,8 @@ class BelongsToManyTest extends TestCase {
 
 		$query->expects($this->once())->method('where')
 			->with([
-				'Tag.name' => 'foo',
-				'Tag.id !=' => 3
+				'Tags.name' => 'foo',
+				'Tags.id !=' => 3
 			])
 			->will($this->returnValue($query));
 
@@ -416,15 +416,15 @@ class BelongsToManyTest extends TestCase {
 
 		$query->expects($this->once())->method('select')
 			->with([
-				'Tag__name' => 'Tag.name',
-				'ArticlesTag__article_id' => 'ArticlesTag.article_id'
+				'Tags__name' => 'Tags.name',
+				'ArticlesTags__article_id' => 'ArticlesTags.article_id'
 			])
 			->will($this->returnValue($query));
 
 		$association->eagerLoader([
-			'conditions' => ['Tag.id !=' => 3],
+			'conditions' => ['Tags.id !=' => 3],
 			'sort' => ['name' => 'DESC'],
-			'fields' => ['name', 'ArticlesTag.article_id'],
+			'fields' => ['name', 'ArticlesTags.article_id'],
 			'keys' => $keys,
 			'query' => $query
 		]);
@@ -434,24 +434,24 @@ class BelongsToManyTest extends TestCase {
  * Test the eager loader method with default query clauses
  *
  * @expectedException \InvalidArgumentException
- * @expectedExceptionMessage You are required to select the "ArticlesTag.article_id"
+ * @expectedExceptionMessage You are required to select the "ArticlesTags.article_id"
  * @return void
  */
 	public function testEagerLoaderFieldsException() {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tag.name' => 'foo'],
+			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		TableRegistry::get('ArticlesTag', [
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
 				'tag_id' => ['type' => 'integer']
 			]
 		]);
-		$association = new BelongsToMany('Tag', $config);
+		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['execute', 'contain', 'where', 'order', 'select'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
@@ -477,17 +477,17 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tag.name' => 'foo'],
+			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		TableRegistry::get('ArticlesTag', [
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
 				'tag_id' => ['type' => 'integer']
 			]
 		]);
-		$association = new BelongsToMany('Tag', $config);
+		$association = new BelongsToMany('Tags', $config);
 		$parent = (new Query(null, null))
 			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
 			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
@@ -501,14 +501,14 @@ class BelongsToManyTest extends TestCase {
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('where')
-			->with(['Tag.name' => 'foo'])
+			->with(['Tags.name' => 'foo'])
 			->will($this->returnSelf());
 
 		$expected = clone $parent;
@@ -516,17 +516,17 @@ class BelongsToManyTest extends TestCase {
 		unset($joins[1]);
 		$expected
 			->contain([], true)
-			->select('ArticlesTag.article_id', true)
+			->select('ArticlesTags.article_id', true)
 			->join($joins, [], true);
 
 		$query->expects($this->once())->method('where')
-			->with(['Tag.name' => 'foo'])
+			->with(['Tags.name' => 'foo'])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('contain')
 			->with([
-				'ArticlesTag' => [
-					'conditions' => ['ArticlesTag.article_id in' => $expected],
+				'ArticlesTags' => [
+					'conditions' => ['ArticlesTags.article_id in' => $expected],
 					'matching' => true
 				]
 			])
@@ -537,17 +537,17 @@ class BelongsToManyTest extends TestCase {
 			'keys' => []
 		]);
 
-		$row['Tag__Tag'] = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTag' => ['article_id' => 1]]
+		$row['Tags__Tags'] = [
+			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]]
 		];
-		$row['Article__id'] = 1;
+		$row['Articles__id'] = 1;
 		$result = $callable($row);
 		$this->assertEquals($row, $result);
 
-		$row['Tag__Tag'] = [
-			['id' => 2, 'name' => 'bar', 'ArticlesTag' => ['article_id' => 2]]
+		$row['Tags__Tags'] = [
+			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
 		];
-		$row['Article__id'] = 2;
+		$row['Articles__id'] = 2;
 		$result = $callable($row);
 		$this->assertEquals($row, $result);
 	}
@@ -562,16 +562,16 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tag.name' => 'foo'],
+			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		$association = new BelongsToMany('Tag', $config);
+		$association = new BelongsToMany('Tags', $config);
 		$association->pivot($articleTag);
 
 		$articleTag->expects($this->once())
 			->method('deleteAll')
 			->with([
-				'Tag.name' => 'foo',
+				'Tags.name' => 'foo',
 				'article_id' => 1
 			]);
 
@@ -589,7 +589,7 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tag.name' => 'foo'],
+			'conditions' => ['Tags.name' => 'foo'],
 			'cascadeCallbacks' => true,
 		];
 		$association = new BelongsToMany('Tag', $config);
@@ -605,7 +605,7 @@ class BelongsToManyTest extends TestCase {
 		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
 		$query->expects($this->once())
 			->method('where')
-			->with(['Tag.name' => 'foo', 'article_id' => 1])
+			->with(['Tags.name' => 'foo', 'article_id' => 1])
 			->will($this->returnSelf());
 
 		$query->expects($this->any())
