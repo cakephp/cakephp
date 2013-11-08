@@ -210,10 +210,12 @@ class Behavior implements EventListener {
  *
  * provides and alias->methodname map of which finders a behavior implements. Example:
  *
- *   [
- *     'this' => 'findThis',
- *     'alias' => 'findMethodName'
- *   ]
+ * {{{
+ *  [
+ *    'this' => 'findThis',
+ *    'alias' => 'findMethodName'
+ *  ]
+ * }}}
  *
  * With the above example, a call to `$Table->find('this')` will call `$Behavior->findThis()`
  * and a call to `$Table->find('alias')` will call `$Behavior->findMethodName()`
@@ -236,12 +238,14 @@ class Behavior implements EventListener {
 /**
  * implementedMethods
  *
- * provides and alias->methodname map of which methods a behavior implements. Example:
+ * provides an alias->methodname map of which methods a behavior implements. Example:
  *
- *   [
- *     'method' => 'method',
- *     'aliasedmethod' => 'somethingElse'
- *   ]
+ * {{{
+ *  [
+ *    'method' => 'method',
+ *    'aliasedmethod' => 'somethingElse'
+ *  ]
+ * }}}
  *
  * With the above example, a call to `$Table->method()` will call `$Behavior->method()`
  * and a call to `$Table->aliasedmethod()` will call `$Behavior->somethingElse()`
