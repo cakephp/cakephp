@@ -35,13 +35,13 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->user = TableRegistry::get('User', [
+		$this->user = TableRegistry::get('Users', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'username' => ['type' => 'string'],
 			]
 		]);
-		$this->profile = TableRegistry::get('Profile', [
+		$this->profile = TableRegistry::get('Profiles', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'first_name' => ['type' => 'string'],
@@ -82,24 +82,24 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'foreignKey' => 'user_id',
 			'sourceTable' => $this->user,
 			'targetTable' => $this->profile,
-			'conditions' => ['Profile.is_active' => true]
+			'conditions' => ['Profiles.is_active' => true]
 		];
-		$association = new HasOne('Profile', $config);
-		$field = new IdentifierExpression('Profile.user_id');
+		$association = new HasOne('Profiles', $config);
+		$field = new IdentifierExpression('Profiles.user_id');
 		$query->expects($this->once())->method('join')->with([
-			'Profile' => [
+			'Profiles' => [
 				'conditions' => [
-					'Profile.is_active' => true,
-					['User.id' => $field],
+					'Profiles.is_active' => true,
+					['Users.id' => $field],
 				],
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
 		]);
 		$query->expects($this->once())->method('select')->with([
-			'Profile__id' => 'Profile.id',
-			'Profile__first_name' => 'Profile.first_name',
-			'Profile__user_id' => 'Profile.user_id'
+			'Profiles__id' => 'Profiles.id',
+			'Profiles__first_name' => 'Profiles.first_name',
+			'Profiles__user_id' => 'Profiles.user_id'
 		]);
 		$association->attachTo($query);
 	}
@@ -115,24 +115,24 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'foreignKey' => 'user_id',
 			'sourceTable' => $this->user,
 			'targetTable' => $this->profile,
-			'conditions' => ['Profile.is_active' => true]
+			'conditions' => ['Profiles.is_active' => true]
 		];
-		$association = new HasOne('Profile', $config);
+		$association = new HasOne('Profiles', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Profile' => [
+			'Profiles' => [
 				'conditions' => [
-					'Profile.is_active' => false
+					'Profiles.is_active' => false
 				],
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
 		]);
 		$query->expects($this->once())->method('select')->with([
-			'Profile__first_name' => 'Profile.first_name'
+			'Profiles__first_name' => 'Profiles.first_name'
 		]);
 
 		$override = [
-			'conditions' => ['Profile.is_active' => false],
+			'conditions' => ['Profiles.is_active' => false],
 			'foreignKey' => false,
 			'fields' => ['first_name']
 		];
@@ -149,15 +149,15 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'sourceTable' => $this->user,
 			'targetTable' => $this->profile,
-			'conditions' => ['Profile.is_active' => true]
+			'conditions' => ['Profiles.is_active' => true]
 		];
-		$association = new HasOne('Profile', $config);
-		$field = new IdentifierExpression('Profile.user_id');
+		$association = new HasOne('Profiles', $config);
+		$field = new IdentifierExpression('Profiles.user_id');
 		$query->expects($this->once())->method('join')->with([
-			'Profile' => [
+			'Profiles' => [
 				'conditions' => [
-					'Profile.is_active' => true,
-					['User.id' => $field],
+					'Profiles.is_active' => true,
+					['Users.id' => $field],
 				],
 				'type' => 'INNER',
 				'table' => 'profiles'

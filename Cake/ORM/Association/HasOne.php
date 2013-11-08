@@ -56,7 +56,8 @@ class HasOne extends Association {
 	public function foreignKey($key = null) {
 		if ($key === null) {
 			if ($this->_foreignKey === null) {
-				$this->_foreignKey = Inflector::tableize($this->source()->alias()) . '_id';
+				$key = Inflector::singularize($this->source()->alias());
+				$this->_foreignKey = Inflector::underscore($key) . '_id';
 			}
 			return $this->_foreignKey;
 		}
