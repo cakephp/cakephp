@@ -203,6 +203,7 @@ class CsrfComponentTest extends TestCase {
 		$component = new CsrfComponent($this->registry, [
 			'cookieName' => 'token',
 			'expiry' => 90,
+			'secure' => true
 		]);
 
 		$event = new Event('Controller.startup', $controller);
@@ -214,6 +215,7 @@ class CsrfComponentTest extends TestCase {
 		$this->assertRegExp('/^[a-f0-9]+$/', $cookie['value'], 'Should look like a hash.');
 		$this->assertEquals(90, $cookie['expiry'], 'session duration.');
 		$this->assertEquals('/dir', $cookie['path'], 'session path.');
+		$this->assertTrue($cookie['secure'], 'cookie security flag missing');
 	}
 
 /**

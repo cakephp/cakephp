@@ -44,6 +44,7 @@ class CsrfComponent extends Component {
  *
  *  - cookieName = The name of the cookie to send.
  *  - expiry = How long the CSRF token should last. Defaults to browser session.
+ *  - secure = Whether or not the cookie will be set with the Secure flag. Defaults to false.
  *  - field = The form field to check. Changing this will also require configuring
  *    FormHelper.
  *
@@ -52,6 +53,7 @@ class CsrfComponent extends Component {
 	public $settings = [
 		'cookieName' => 'csrfToken',
 		'expiry' => 0,
+		'secure' => false,
 		'field' => '_csrfToken',
 	];
 
@@ -111,6 +113,7 @@ class CsrfComponent extends Component {
 			'value' => $value,
 			'expiry' => $settings['expiry'],
 			'path' => $request->base,
+			'secure' => $settings['secure'],
 		]);
 	}
 
