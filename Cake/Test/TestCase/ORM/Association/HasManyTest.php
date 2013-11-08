@@ -36,14 +36,16 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->author = TableRegistry::get('Author', [
+		$this->author = TableRegistry::get('Authors', [
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'username' => ['type' => 'string'],
 			]
 		]);
 		$this->article = $this->getMock(
-			'Cake\ORM\Table', ['find', 'deleteAll', 'delete'], [['alias' => 'Article', 'table' => 'articles']]
+			'Cake\ORM\Table',
+			['find', 'deleteAll', 'delete'],
+			[['alias' => 'Articles', 'table' => 'articles']]
 		);
 		$this->article->schema([
 			'id' => ['type' => 'integer'],
@@ -109,7 +111,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->article,
 			'strategy' => 'select'
 		];
-		$association = new HasMany('Article', $config);
+		$association = new HasMany('Articles', $config);
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock('Cake\ORM\Query', ['execute'], [null, null]);
 		$this->article->expects($this->once())->method('find')->with('all')
@@ -122,16 +124,16 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($results));
 
 		$callable = $association->eagerLoader(compact('keys', 'query'));
-		$row = ['Author__id' => 1, 'username' => 'author 1'];
+		$row = ['Authors__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
-		$row['Article__Article'] = [
+		$row['Articles__Articles'] = [
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 			];
 		$this->assertEquals($row, $result);
 
-		$row = ['Author__id' => 2, 'username' => 'author 2'];
+		$row = ['Authors__id' => 2, 'username' => 'author 2'];
 		$result = $callable($row);
-		$row['Article__Article'] = [
+		$row['Articles__Articles'] = [
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
 			];
 		$this->assertEquals($row, $result);
@@ -146,11 +148,11 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
-			'conditions' => ['Article.is_active' => true],
+			'conditions' => ['Articles.is_active' => true],
 			'sort' => ['id' => 'ASC'],
 			'strategy' => 'select'
 		];
-		$association = new HasMany('Article', $config);
+		$association = new HasMany('Articles', $config);
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
 			'Cake\ORM\Query',
@@ -168,11 +170,11 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('where')
-			->with(['Article.is_active' => true])
+			->with(['Articles.is_active' => true])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('andWhere')
-			->with(['Article.author_id IN' => $keys])
+			->with(['Articles.author_id IN' => $keys])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('order')
@@ -191,11 +193,11 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
-			'conditions' => ['Article.is_active' => true],
+			'conditions' => ['Articles.is_active' => true],
 			'sort' => ['id' => 'ASC'],
 			'strategy' => 'select'
 		];
-		$association = new HasMany('Article', $config);
+		$association = new HasMany('Articles', $config);
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
 			'Cake\ORM\Query',
@@ -213,11 +215,11 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('where')
-			->with(['Article.is_active' => true, 'Article.id !=' => 3])
+			->with(['Articles.is_active' => true, 'Articles.id !=' => 3])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('andWhere')
-			->with(['Article.author_id IN' => $keys])
+			->with(['Articles.author_id IN' => $keys])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('order')
@@ -226,22 +228,22 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 
 		$query->expects($this->once())->method('select')
 			->with([
-				'Article__title' => 'Article.title',
-				'Article__author_id' => 'Article.author_id'
+				'Articles__title' => 'Articles.title',
+				'Articles__author_id' => 'Articles.author_id'
 			])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('contain')
 			->with([
-				'Category' => ['fields' => ['a', 'b']],
+				'Categories' => ['fields' => ['a', 'b']],
 			])
 			->will($this->returnValue($query));
 
 		$association->eagerLoader([
-			'conditions' => ['Article.id !=' => 3],
+			'conditions' => ['Articles.id !=' => 3],
 			'sort' => ['title' => 'DESC'],
 			'fields' => ['title', 'author_id'],
-			'contain' => ['Category' => ['fields' => ['a', 'b']]],
+			'contain' => ['Categories' => ['fields' => ['a', 'b']]],
 			'keys' => $keys,
 			'query' => $query
 		]);
@@ -252,7 +254,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
  * exception
  *
  * @expectedException \InvalidArgumentException
- * @expectedExceptionMessage You are required to select the "Article.author_id"
+ * @expectedExceptionMessage You are required to select the "Articles.author_id"
  * @return void
  */
 	public function testEagerLoaderFieldsException() {
@@ -261,7 +263,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->article,
 			'strategy' => 'select'
 		];
-		$association = new HasMany('Article', $config);
+		$association = new HasMany('Articles', $config);
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
 			'Cake\ORM\Query',
@@ -288,7 +290,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
 		];
-		$association = new HasMany('Article', $config);
+		$association = new HasMany('Articles', $config);
 		$parent = (new Query(null, null))
 			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
 			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
@@ -317,25 +319,25 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		unset($joins[1]);
 		$expected
 			->contain([], true)
-			->select('Article.author_id', true)
+			->select('Articles.author_id', true)
 			->join($joins, [], true);
 		$query->expects($this->once())->method('andWhere')
-			->with(['Article.author_id IN' => $expected])
+			->with(['Articles.author_id IN' => $expected])
 			->will($this->returnValue($query));
 
 		$callable = $association->eagerLoader([
 			'query' => $parent, 'strategy' => HasMany::STRATEGY_SUBQUERY, 'keys' => []
 		]);
-		$row = ['Author__id' => 1, 'username' => 'author 1'];
+		$row = ['Authors__id' => 1, 'username' => 'author 1'];
 		$result = $callable($row);
-		$row['Article__Article'] = [
+		$row['Articles__Articles'] = [
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 		];
 		$this->assertEquals($row, $result);
 
-		$row = ['Author__id' => 2, 'username' => 'author 2'];
+		$row = ['Authors__id' => 2, 'username' => 'author 2'];
 		$result = $callable($row);
-		$row['Article__Article'] = [
+		$row['Articles__Articles'] = [
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
 		];
 		$this->assertEquals($row, $result);
@@ -352,25 +354,25 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
-			'conditions' => ['Article.is_active' => true]
+			'conditions' => ['Articles.is_active' => true]
 		];
 
-		$field = new IdentifierExpression('Article.author_id');
-		$association = new HasMany('Article', $config);
+		$field = new IdentifierExpression('Articles.author_id');
+		$association = new HasMany('Articles', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Article' => [
+			'Articles' => [
 				'conditions' => [
-					'Article.is_active' => true,
-					['Author.id' => $field]
+					'Articles.is_active' => true,
+					['Authors.id' => $field]
 				],
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
 		]);
 		$query->expects($this->once())->method('select')->with([
-			'Article__id' => 'Article.id',
-			'Article__title' => 'Article.title',
-			'Article__author_id' => 'Article.author_id'
+			'Articles__id' => 'Articles.id',
+			'Articles__title' => 'Articles.title',
+			'Articles__author_id' => 'Articles.author_id'
 		]);
 		$association->attachTo($query);
 	}
@@ -385,24 +387,24 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
-			'conditions' => ['Article.is_active' => true]
+			'conditions' => ['Articles.is_active' => true]
 		];
-		$association = new HasMany('Article', $config);
+		$association = new HasMany('Articles', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Article' => [
+			'Articles' => [
 				'conditions' => [
-					'Article.is_active' => false
+					'Articles.is_active' => false
 				],
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
 		]);
 		$query->expects($this->once())->method('select')->with([
-			'Article__title' => 'Article.title'
+			'Articles__title' => 'Articles.title'
 		]);
 
 		$override = [
-			'conditions' => ['Article.is_active' => false],
+			'conditions' => ['Articles.is_active' => false],
 			'foreignKey' => false,
 			'fields' => ['title']
 		];
@@ -419,15 +421,15 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$config = [
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
-			'conditions' => ['Article.is_active' => true]
+			'conditions' => ['Articles.is_active' => true]
 		];
-		$field = new IdentifierExpression('Article.author_id');
-		$association = new HasMany('Article', $config);
+		$field = new IdentifierExpression('Articles.author_id');
+		$association = new HasMany('Articles', $config);
 		$query->expects($this->once())->method('join')->with([
-			'Article' => [
+			'Articles' => [
 				'conditions' => [
-					'Article.is_active' => true,
-					['Author.id' => $field]
+					'Articles.is_active' => true,
+					['Authors.id' => $field]
 				],
 				'type' => 'INNER',
 				'table' => 'articles'
@@ -447,14 +449,14 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'dependent' => true,
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
-			'conditions' => ['Article.is_active' => true],
+			'conditions' => ['Articles.is_active' => true],
 		];
-		$association = new HasMany('Article', $config);
+		$association = new HasMany('Articles', $config);
 
 		$this->article->expects($this->once())
 			->method('deleteAll')
 			->with([
-				'Article.is_active' => true,
+				'Articles.is_active' => true,
 				'author_id' => 1
 			]);
 
@@ -472,10 +474,10 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'dependent' => true,
 			'sourceTable' => $this->author,
 			'targetTable' => $this->article,
-			'conditions' => ['Article.is_active' => true],
+			'conditions' => ['Articles.is_active' => true],
 			'cascadeCallbacks' => true,
 		];
-		$association = new HasMany('Article', $config);
+		$association = new HasMany('Articles', $config);
 
 		$articleOne = new Entity(['id' => 2, 'title' => 'test']);
 		$articleTwo = new Entity(['id' => 3, 'title' => 'testing']);
@@ -487,7 +489,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
 		$query->expects($this->once())
 			->method('where')
-			->with(['Article.is_active' => true, 'author_id' => 1])
+			->with(['Articles.is_active' => true, 'author_id' => 1])
 			->will($this->returnSelf());
 		$query->expects($this->any())
 			->method('getIterator')
