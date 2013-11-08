@@ -1022,17 +1022,17 @@ class Table {
  */
 	public function callFinder($type, Query $query, $options = []) {
 		$finder = 'find' . ucfirst($type);
-		$behaviorFinder = ($this->_behaviors && $this->_behaviors->hasFinder($finder));
-		$missingMethod = (!method_exists($this, $finder) && !$behaviorFinder);
-		if ($missingMethod) {
-			throw new \BadMethodCallException(
-				__d('cake_dev', 'Unknown finder method "%s"', $finder)
-			);
+		if (method_exists($this, $finder)) {
+			return $this->{$finder}($query, $options);
 		}
-		if ($behaviorFinder) {
+
+		if ($this->_behaviors && $this->_behaviors->hasFinder($finder)) {
 			return $this->_behaviors->call($finder, [$query, $options]);
 		}
-		return $this->{$finder}($query, $options);
+
+		throw new \BadMethodCallException(
+			__d('cake_dev', 'Unknown finder method "%s"', $finder)
+		);
 	}
 
 /**
