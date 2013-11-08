@@ -173,12 +173,23 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * test call
  *
+ * Setup a behavior, then replace it with a mock to verify methods are called.
+ * use dummy return values to verify the return value makes it back
+ *
  * @return void
  */
 	public function testCall() {
 		$this->Behaviors->load('Sluggable');
-		$result = $this->Behaviors->call('slugify', ['some value']);
-		$this->assertEquals('some_value', $result);
+		$mockedBehavior = $this->getMock('Behavior', ['slugify']);
+		$this->Behaviors->set('Sluggable', $mockedBehavior);
+
+		$mockedBehavior
+			->expects($this->once())
+			->method('slugify')
+			->with(['some value'])
+			->will($this->returnValue('some-thing'));
+		$return = $this->Behaviors->call('slugify', [['some value']]);
+		$this->assertSame('some-thing', $return);
 	}
 
 /**
@@ -195,16 +206,24 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * test call finder
  *
+ * Setup a behavior, then replace it with a mock to verify methods are called.
+ * use dummy return values to verify the return value makes it back
+ *
  * @return void
  */
 	public function testCallFinder() {
 		$this->Behaviors->load('Sluggable');
-		$result = $this->Behaviors->call('slugify', ['some value']);
-		$this->assertEquals('some_value', $result);
+		$mockedBehavior = $this->getMock('Behavior', ['findNoSlug']);
+		$this->Behaviors->set('Sluggable', $mockedBehavior);
 
 		$query = $this->getMock('Cake\ORM\Query', [], [null, null]);
-		$result = $this->Behaviors->callFinder('noSlug', [$query]);
-		$this->assertEquals($query, $result);
+		$mockedBehavior
+			->expects($this->once())
+			->method('findNoSlug')
+			->with($query, [])
+			->will($this->returnValue('example'));
+		$return = $this->Behaviors->callFinder('noSlug', [$query, []]);
+		$this->assertSame('example', $return);
 	}
 
 /**
