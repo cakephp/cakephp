@@ -113,6 +113,7 @@ class Request implements \ArrayAccess {
 		'get' => array('env' => 'REQUEST_METHOD', 'value' => 'GET'),
 		'post' => array('env' => 'REQUEST_METHOD', 'value' => 'POST'),
 		'put' => array('env' => 'REQUEST_METHOD', 'value' => 'PUT'),
+		'patch' => array('env' => 'REQUEST_METHOD', 'value' => 'PATCH'),
 		'delete' => array('env' => 'REQUEST_METHOD', 'value' => 'DELETE'),
 		'head' => array('env' => 'REQUEST_METHOD', 'value' => 'HEAD'),
 		'options' => array('env' => 'REQUEST_METHOD', 'value' => 'OPTIONS'),

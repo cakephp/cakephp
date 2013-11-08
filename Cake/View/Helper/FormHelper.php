@@ -456,22 +456,23 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Return a CSRF input if the _Token is present.
- * Used to secure forms in conjunction with SecurityComponent
+ * Return a CSRF input if the request data is present.
+ * Used to secure forms in conjunction with CsrfComponent & 
+ * SecurityComponent
  *
  * @return string
  */
 	protected function _csrfField() {
-		if (empty($this->request->params['_Token'])) {
-			return '';
-		}
 		if (!empty($this->request['_Token']['unlockedFields'])) {
 			foreach ((array)$this->request['_Token']['unlockedFields'] as $unlocked) {
 				$this->_unlockedFields[] = $unlocked;
 			}
 		}
-		return $this->hidden('_Token.key', array(
-			'value' => $this->request->params['_Token']['key'], 'id' => 'Token' . mt_rand(),
+		if (empty($this->request->params['_csrfToken'])) {
+			return '';
+		}
+		return $this->hidden('_csrfToken', array(
+			'value' => $this->request->params['_csrfToken'], 'id' => 'Token' . mt_rand(),
 			'secure' => static::SECURE_SKIP
 		));
 	}
