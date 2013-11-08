@@ -126,15 +126,6 @@ class Test3Behavior extends Behavior {
 class BehaviorTest extends TestCase {
 
 /**
- * setup
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-	}
-
-/**
  * Test the side effects of the constructor.
  *
  * @return void

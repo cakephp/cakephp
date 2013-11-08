@@ -134,7 +134,7 @@ class BehaviorRegistry extends ObjectRegistry {
 		$finders = array_change_key_case($instance->implementedFinders());
 		$methods = array_change_key_case($instance->implementedMethods());
 
-		foreach($finders as $finder => $methodName) {
+		foreach ($finders as $finder => $methodName) {
 			if (isset($this->_finderMap[$finder])) {
 				$duplicate = $this->_finderMap[$finder];
 				$error = __d(
@@ -149,7 +149,7 @@ class BehaviorRegistry extends ObjectRegistry {
 			$finders[$finder] = [$alias, $methodName];
 		}
 
-		foreach($methods as $method => $methodName) {
+		foreach ($methods as $method => $methodName) {
 			if (isset($this->_methodMap[$method])) {
 				$duplicate = $this->_methodMap[$method];
 				$error = __d(
