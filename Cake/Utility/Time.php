@@ -463,9 +463,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isToday
  */
 	public static function isToday($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$now = static::fromString('now', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', $now);
+		return static::_isWithinTimeSpan($dateString, 'now', 'Y-m-d', $timezone);
 	}
 
 /**
@@ -503,9 +501,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isThisWeek
  */
 	public static function isThisWeek($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$now = static::fromString('now', $timezone);
-		return date('W o', $timestamp) == date('W o', $now);
+		return static::_isWithinTimeSpan($dateString, 'now', 'W o', $timezone);
 	}
 
 /**
@@ -517,9 +513,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isThisMonth
  */
 	public static function isThisMonth($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$now = static::fromString('now', $timezone);
-		return date('m Y', $timestamp) == date('m Y', $now);
+		return static::_isWithinTimeSpan($dateString, 'now', 'm Y', $timezone);
 	}
 
 /**
@@ -531,9 +525,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isThisYear
  */
 	public static function isThisYear($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$now = static::fromString('now', $timezone);
-		return date('Y', $timestamp) == date('Y', $now);
+		return static::_isWithinTimeSpan($dateString, 'now', 'Y', $timezone);
 	}
 
 /**
@@ -545,9 +537,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::wasYesterday
  */
 	public static function wasYesterday($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$yesterday = static::fromString('yesterday', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', $yesterday);
+		return static::_isWithinTimeSpan($dateString, 'yesterday', 'Y-m-d', $timezone);
 	}
 
 /**
@@ -559,9 +549,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::isTomorrow
  */
 	public static function isTomorrow($dateString, $timezone = null) {
-		$timestamp = static::fromString($dateString, $timezone);
-		$tomorrow = static::fromString('tomorrow', $timezone);
-		return date('Y-m-d', $timestamp) == date('Y-m-d', $tomorrow);
+		return static::_isWithinTimeSpan($dateString, 'tomorrow', 'Y-m-d', $timezone);
 	}
 
 /**
@@ -1115,6 +1103,24 @@ class Time {
 			$format = utf8_encode($format);
 		}
 		return $format;
+	}
+
+/**
+ * Evaluates if the provided date and time is within a time span.
+ *
+ * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
+ * @param string $anchor The relative date and time to compare against
+ * @param string $format The date and time format used for comparison
+ * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
+ * @return boolean True if datetime string is within the time span
+ */
+	protected static function _isWithinTimeSpan($dateString, $anchor, $format, $timezone = null) {
+		$dateTime = new \DateTime;
+		$timestamp = $dateTime->setTimestamp(static::fromString($dateString, $timezone))
+			->format($format);
+		$now = $dateTime->setTimestamp(static::fromString($anchor, $timezone))
+			->format($format);
+		return $timestamp === $now;
 	}
 
 }
