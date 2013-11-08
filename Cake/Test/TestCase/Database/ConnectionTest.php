@@ -793,6 +793,7 @@ class ConnectionTest extends TestCase {
  *
  * @expectedException \InvalidArgumentException
  * @return void
+ * @throws \InvalidArgumentException
  */
 	public function testTransactionalWithException() {
 		$driver = $this->getMockFormDriver();

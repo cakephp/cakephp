@@ -458,6 +458,8 @@ class Connection {
  *
  * @param callable $callback the code to be executed inside a transaction
  * @return mixed result from the $callback function
+ * @throws \Exception Will re-throw any exception raised in $callback after
+ *   rolling back the transaction.
  */
 	public function transactional(callable $callback) {
 		$this->begin();

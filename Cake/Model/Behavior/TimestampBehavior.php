@@ -73,6 +73,7 @@ class TimestampBehavior extends Behavior {
  * @param Event $event
  * @param Entity $entity
  * @return true (irrespective of the behavior logic, the save will not be prevented)
+ * @throws \UnexpectedValueException When the value for an event is not 'new', 'existing' or true.
  */
 	public function handleEvent(Event $event, Entity $entity) {
 		$eventName = $event->name();

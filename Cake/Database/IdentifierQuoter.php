@@ -17,8 +17,8 @@
 namespace Cake\Database;
 
 use Cake\Database\Expression\Comparison;
-use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\OrderByExpression;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object

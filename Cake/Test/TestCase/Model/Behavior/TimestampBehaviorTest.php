@@ -43,7 +43,6 @@ class TimestampBehaviorTest extends TestCase {
 		'core.user'
 	];
 
-
 /**
  * Sanity check Implemented events
  *
@@ -283,7 +282,7 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testSaveTriggersInsert() {
-		$this->loadFixtures('User'); //@TODO make fixtures more consistent/easier to use
+		$this->loadFixtures('User');
 
 		$table = TableRegistry::get('users');
 		$table->addBehavior('Timestamp', [

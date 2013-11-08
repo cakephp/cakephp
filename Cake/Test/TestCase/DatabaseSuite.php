@@ -17,8 +17,8 @@
 namespace Cake\Test\TestCase;
 
 use Cake\Database\ConnectionManager;
-use Cake\TestSuite\TestSuite;
 use Cake\TestSuite\TestPermutationDecorator;
+use Cake\TestSuite\TestSuite;
 
 /**
  * All tests related to database
