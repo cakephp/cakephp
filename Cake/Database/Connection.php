@@ -401,6 +401,7 @@ class Connection {
 		if ($enable === null) {
 			return $this->_useSavePoints;
 		}
+
 		if ($enable === false) {
 			return $this->_useSavePoints = false;
 		}

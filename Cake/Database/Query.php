@@ -515,7 +515,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
 			if (!is_numeric($k)) {
-				$p = $p . ' AS ' . $driver->quoteIdentifier($k);
+				$p = $p . ' AS ' . $k;
 			}
 			$normalized[] = $p;
 		}
@@ -1228,7 +1228,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$this->_dirty();
 		$this->_type = 'insert';
 		$this->_parts['insert'] = [$table, $columns];
-		$this->_parts['values'] = new ValuesExpression($columns, $types + $this->defaultTypes());
+
+		if (!$this->_parts['values']) {
+			$this->_parts['values'] = new ValuesExpression($columns, $types + $this->defaultTypes());
+		}
+
 		return $this;
 	}
 
@@ -1666,7 +1670,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected function _dirty() {
 		$this->_dirty = true;
 		$this->_transformedQuery = null;
-		$this->valueBinder()->reset();
+
+		if ($this->_valueBinder) {
+			$this->valueBinder()->reset();
+		}
 	}
 
 /**

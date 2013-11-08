@@ -72,14 +72,18 @@ trait SqlDialectTrait {
  */
 	public function queryTranslator($type) {
 		return function($query) use ($type) {
-			$query = $this->{'_' . $type . 'QueryTranslator'}($query);
+			if ($this->autoQuoting()) {
+				$query = (new IdentifierQuoter($this))->quote($query);
+			}
 
-			if (!$this->_expressionTranslators()) {
+			$query = $this->{'_' . $type . 'QueryTranslator'}($query);
+			$translators = $this->_expressionTranslators();
+			if (!$translators) {
 				return $query;
 			}
 
-			$query->traverseExpressions(function($expression) {
-				foreach ($this->_expressionTranslators() as $class => $method) {
+			$query->traverseExpressions(function($expression) use ($translators) {
+				foreach ($translators as $class => $method) {
 					if ($expression instanceof $class) {
 						$this->{$method}($expression);
 					}
@@ -94,7 +98,7 @@ trait SqlDialectTrait {
  * objects to conform with the specific SQL dialect. Keys are class names
  * and values a method in this class.
  *
- * @return void
+ * @return array
  */
 	protected function _expressionTranslators() {
 		return [];
@@ -107,11 +111,21 @@ trait SqlDialectTrait {
  * @return Query The modified query
  */
 	protected function _selectQueryTranslator($query) {
+		return $this->_transformDistinct($query);
+	}
+
+/**
+ * Returns the passed query after rewriting the DISTINCT clause, so that drivers
+ * that do not support the "ON" part can provide the actual way it should be done
+ *
+ * @param Query $query The query to be transformed
+ * @return Query
+ */
+	protected function _transformDistinct($query) {
 		if (is_array($query->clause('distinct'))) {
 			$query->group($query->clause('distinct'), true);
 			$query->distinct(false);
 		}
-
 		return $query;
 	}
 

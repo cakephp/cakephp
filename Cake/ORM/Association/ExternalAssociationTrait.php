@@ -16,6 +16,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
@@ -118,15 +119,20 @@ trait ExternalAssociationTrait {
  * clause for getting the results on the target table.
  *
  * @param array $options list of options passed to attachTo method
- * @return string|array
+ * @return array
  */
 	protected function _joinCondition(array $options) {
-		return sprintf('%s.%s = %s.%s',
-				$this->_sourceTable->alias(),
-				$this->_sourceTable->primaryKey(),
-				$this->_targetTable->alias(),
-				$options['foreignKey']
-			);
+		$field = sprintf(
+			'%s.%s',
+			$this->_sourceTable->alias(),
+			$this->_sourceTable->primaryKey()
+		);
+		$value = new IdentifierExpression(sprintf(
+			'%s.%s',
+			$this->_targetTable->alias(),
+			$options['foreignKey']
+		));
+		return [$field => $value];
 	}
 
 /**

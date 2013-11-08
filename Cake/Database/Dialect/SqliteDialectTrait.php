@@ -121,7 +121,10 @@ trait SqliteDialectTrait {
 			$newQuery->union($q->select($select), true);
 		}
 
-		$v->query($newQuery);
+		if ($newQuery->type()) {
+			$v->query($newQuery);
+		}
+
 		return $query;
 	}
 

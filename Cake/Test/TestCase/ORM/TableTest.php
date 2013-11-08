@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 
@@ -580,7 +581,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 
 		$query = $table->find('list', ['groupField' => 'odd'])
-			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->select(['id', 'username', 'odd' => new QueryExpression('id % 2 = 0')])
 			->hydrate(false)
 			->order('id');
 		$expected = [
@@ -763,7 +764,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 
 		$query = $table->find('list', ['groupField' => 'odd'])
-			->select(['id', 'username', 'odd' => 'id % 2 = 0'])
+			->select(['id', 'username', 'odd' => new QueryExpression('id % 2 = 0')])
 			->hydrate(true)
 			->order('id');
 		$expected = [
@@ -792,7 +793,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testRepositoryClassInAPP() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
-		class_alias($class, 'TestApp\Model\Entity\TestUser');
+
+		if (!class_exists('TestApp\Model\Entity\TestUser')) {
+			class_alias($class, 'TestApp\Model\Entity\TestUser');
+		}
+
 		$table = new Table();
 		$this->assertEquals('TestApp\Model\Entity\TestUser', $table->entityClass('TestUser'));
 	}
@@ -805,7 +810,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testRepositoryClassInPlugin() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
-		class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
+
+		if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
+			class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
+		}
+
 		$table = new Table();
 		$this->assertEquals(
 			'MyPlugin\Model\Entity\SuperUser',

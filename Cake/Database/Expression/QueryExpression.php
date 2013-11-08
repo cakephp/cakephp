@@ -341,7 +341,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  */
 	public function traverse(callable $callable) {
 		foreach ($this->_conditions as $c) {
-			if ($c instanceof self) {
+			if ($c instanceof ExpressionInterface) {
 				$callable($c);
 				$c->traverse($callable);
 			}
@@ -354,15 +354,21 @@ class QueryExpression implements ExpressionInterface, Countable {
  * which the currently visited part will be replaced. If the callable function
  * returns null then the part will be discarded completely from this expression
  *
+ * The callback function will receive each of the conditions as first param and
+ * the key as second param. It is possible to declare the second parameter as
+ * passed by reference, this will enable you to change the key under which the
+ * modified part is stored.
+ *
  * @param callable $callable
  * @return QueryExpression
  */
 	public function iterateParts(callable $callable) {
 		$parts = [];
-		foreach ($this->_conditions as $c) {
-			$part = $callable($c);
+		foreach ($this->_conditions as $k => $c) {
+			$key =& $k;
+			$part = $callable($c, $key);
 			if ($part !== null) {
-				$parts[] = $part;
+				$parts[$key] = $part;
 			}
 		}
 		$this->_conditions = $parts;

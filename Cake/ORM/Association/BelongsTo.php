@@ -16,6 +16,7 @@
  */
 namespace Cake\ORM\Association;
 
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -71,15 +72,20 @@ class BelongsTo extends Association {
  * clause for getting the results on the target table.
  *
  * @param array $options list of options passed to attachTo method
- * @return string|array
+ * @return array
  */
 	protected function _joinCondition(array $options) {
-		return sprintf('%s.%s = %s.%s',
-				$this->target()->alias(),
-				$this->_targetTable->primaryKey(),
-				$this->_sourceTable->alias(),
-				$options['foreignKey']
-			);
+		$field = sprintf(
+			'%s.%s',
+			$this->target()->alias(),
+			$this->_targetTable->primaryKey()
+		);
+		$value = new IdentifierExpression(sprintf(
+			'%s.%s',
+			$this->_sourceTable->alias(),
+			$options['foreignKey']
+		));
+		return [$field => $value];
 	}
 
 }

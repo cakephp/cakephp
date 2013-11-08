@@ -17,7 +17,6 @@
 namespace Cake\Database\Dialect;
 
 use Cake\Database\Expression\FunctionExpression;
-use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\UnaryExpression;
 use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
@@ -45,13 +44,12 @@ trait PostgresDialectTrait {
 	protected $_endQuote = '"';
 
 /**
- * Returns a query that has been transformed to the specific SQL dialect
- * by changing or re-arranging SQL clauses as required.
+ * Distinct clause needs no transformation
  *
- * @param Cake\Database\Query $query
- * @return Cake\Database\Query
+ * @param Query $query The query to be transformed
+ * @return Query
  */
-	protected function _selectQueryTranslator($query) {
+	protected function _transformDistinct($query) {
 		return $query;
 	}
 

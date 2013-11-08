@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
 use Cake\TestSuite\TestCase;
 
@@ -36,10 +37,12 @@ class QueryTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
+		$this->autoQuote = $this->connection->driver()->autoQuoting();
 	}
 
 	public function tearDown() {
 		parent::tearDown();
+		$this->connection->driver()->autoQuoting($this->autoQuote);
 		unset($this->connection);
 	}
 
@@ -49,6 +52,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSelectFieldsOnly() {
+		$this->connection->driver()->autoQuoting(false);
 		$query = new Query($this->connection);
 		$result = $query->select('1 + 1')->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -70,6 +74,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testSelectClosure() {
+		$this->connection->driver()->autoQuoting(false);
 		$query = new Query($this->connection);
 		$result = $query->select(function($q) use ($query) {
 			$this->assertSame($query, $q);
@@ -131,20 +136,6 @@ class QueryTest extends TestCase {
 			->from('articles')->execute();
 		$this->assertEquals(array('text' => 'First Article Body', 'two' => 2, 'three' => 3), $result->fetch('assoc'));
 		$this->assertEquals(array('text' => 'Second Article Body', 'two' => 2, 'three' => 5), $result->fetch('assoc'));
-	}
-
-/**
- * Test that table aliases are quoted.
- *
- * @return void
- */
-	public function testSelectAliasTablesAreQuoted() {
-		$query = new Query($this->connection);
-		$query = $query->select(['text' => 'a.body', 'a.author_id'])
-			->from(['a' => 'articles']);
-
-		$sql = $query->sql();
-		$this->assertRegExp('/articles AS [`"]a[`"]/', $sql);
 	}
 
 /**
@@ -1317,16 +1308,16 @@ class QueryTest extends TestCase {
 			->from('comments')
 			->where(['created >' => new \DateTime('2007-03-18 10:45:23')], ['created' => 'datetime']);
 		$result = $query
-			->select(['comment'])
+			->select(['say' => 'comment'])
 			->from(['b' => $subquery])
 			->where(['id !=' => 3])
 			->execute();
 
 		$expected = [
-			['comment' => 'Second Comment for First Article'],
-			['comment' => 'Fourth Comment for First Article'],
-			['comment' => 'First Comment for Second Article'],
-			['comment' => 'Second Comment for Second Article'],
+			['say' => 'Second Comment for First Article'],
+			['say' => 'Fourth Comment for First Article'],
+			['say' => 'First Comment for Second Article'],
+			['say' => 'Second Comment for Second Article'],
 		];
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 	}
@@ -1524,7 +1515,7 @@ class QueryTest extends TestCase {
 			->where('1 = 1');
 
 		$result = $query->sql();
-		$this->assertContains('DELETE FROM authors', $result);
+		$this->assertQuotedQuery('DELETE FROM <authors>', $result, true);
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -1543,7 +1534,7 @@ class QueryTest extends TestCase {
 			->where('1 = 1');
 
 		$result = $query->sql();
-		$this->assertContains('DELETE FROM authors ', $result);
+		$this->assertQuotedQuery('DELETE FROM <authors>', $result, true);
 
 		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
@@ -1562,8 +1553,8 @@ class QueryTest extends TestCase {
 			->where('1 = 1');
 		$result = $query->sql();
 
-		$this->assertContains('DELETE FROM authors', $result);
-		$this->assertContains('authors WHERE 1 = 1', $result);
+		$this->assertQuotedQuery('DELETE FROM <authors>', $result, true);
+		$this->assertContains(' WHERE 1 = 1', $result);
 	}
 
 /**
@@ -1577,7 +1568,7 @@ class QueryTest extends TestCase {
 			->set('name', 'mark')
 			->where(['id' => 1]);
 		$result = $query->sql();
-		$this->assertContains('UPDATE authors SET name = :', $result);
+		$this->assertQuotedQuery('UPDATE <authors> SET <name> = :', $result, true);
 
 		$result = $query->execute();
 		$this->assertCount(1, $result);
@@ -1596,11 +1587,13 @@ class QueryTest extends TestCase {
 			->where(['id' => 1]);
 		$result = $query->sql();
 
-		$this->assertEquals(
-			'UPDATE articles SET title = :c0 , body = :c1 WHERE id = :c2',
-			$result
+		$this->assertQuotedQuery(
+			'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
+			$result,
+			true
 		);
 
+		$this->assertQuotedQuery(' WHERE <id> = :c2$', $result, true);
 		$result = $query->execute();
 		$this->assertCount(1, $result);
 	}
@@ -1620,11 +1613,12 @@ class QueryTest extends TestCase {
 			->where(['id' => 1]);
 		$result = $query->sql();
 
-		$this->assertRegExp(
-			'/UPDATE articles SET title = :[0-9a-z]+ , body = :[0-9a-z]+/',
-			$result
+		$this->assertQuotedQuery(
+			'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
+			$result,
+			true
 		);
-		$this->assertContains('WHERE id = :', $result);
+		$this->assertQuotedQuery('WHERE <id> = :', $result, true);
 
 		$result = $query->execute();
 		$this->assertCount(1, $result);
@@ -1646,9 +1640,10 @@ class QueryTest extends TestCase {
 			->where(['id' => 1]);
 		$result = $query->sql();
 
-		$this->assertContains(
-			'UPDATE articles SET title = author_id WHERE id = :',
-			$result
+		$this->assertQuotedQuery(
+			'UPDATE <articles> SET title = author_id WHERE <id> = :',
+			$result,
+			true
 		);
 
 		$result = $query->execute();
@@ -1683,9 +1678,11 @@ class QueryTest extends TestCase {
 				'body' => 'test insert'
 			]);
 		$result = $query->sql();
-		$this->assertContains(
-			'INSERT INTO articles (title, body) VALUES (?, ?)',
-			$result
+		$this->assertQuotedQuery(
+			'INSERT INTO <articles> \(<title>, <body>\) ' .
+			'VALUES \(\?, \?\)',
+			$result,
+			true
 		);
 
 		$result = $query->execute();
@@ -1716,9 +1713,11 @@ class QueryTest extends TestCase {
 				'title' => 'mark',
 			]);
 		$result = $query->sql();
-		$this->assertContains(
-			'INSERT INTO articles (title, body) VALUES (?, ?)',
-			$result
+		$this->assertQuotedQuery(
+			'INSERT INTO <articles> \(<title>, <body>\) ' .
+			'VALUES \(\?, \?\)',
+			$result,
+			true
 		);
 
 		$result = $query->execute();
@@ -1779,7 +1778,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testInsertFromSelect() {
-		$select = (new Query($this->connection))->select("name, 'some text', 99")
+		$select = (new Query($this->connection))->select(['name', "'some text'", 99])
 			->from('authors')
 			->where(['id' => 1]);
 
@@ -1792,8 +1791,13 @@ class QueryTest extends TestCase {
 		->values($select);
 
 		$result = $query->sql();
-		$this->assertContains('INSERT INTO articles (title, body, author_id) SELECT', $result);
-		$this->assertContains("SELECT name, 'some text', 99 FROM authors", $result);
+		$this->assertQuotedQuery(
+			'INSERT INTO <articles> \(<title>, <body>, <author_id>\) SELECT',
+			$result,
+			true
+		);
+		$this->assertQuotedQuery(
+			'SELECT <name>, \'some text\', 99 FROM <authors>', $result, true);
 		$result = $query->execute();
 
 		$this->assertCount(1, $result);
@@ -2026,6 +2030,154 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests automatic identifier quoting in the select clause
+ *
+ * @return void
+ */
+	public function testQuotingSelectFieldsAndAlias() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select(['something'])->sql();
+		$this->assertQuotedQuery('SELECT <something>$', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => 'something'])->sql();
+		$this->assertQuotedQuery('SELECT <something> AS <foo>$', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => 1])->sql();
+		$this->assertQuotedQuery('SELECT 1 AS <foo>$', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => '1 + 1'])->sql();
+		$this->assertQuotedQuery('SELECT <1 \+ 1> AS <foo>$', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => $query->newExpr()->add('1 + 1')])->sql();
+		$this->assertQuotedQuery('SELECT \(1 \+ 1\) AS <foo>$', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select(['foo' => new IdentifierExpression('bar')])->sql();
+		$this->assertQuotedQuery('<bar>', $sql);
+	}
+
+/**
+ * Tests automatic identifier quoting in the from clause
+ *
+ * @return void
+ */
+	public function testQuotingFromAndAlias() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->from(['something'])->sql();
+		$this->assertQuotedQuery('FROM <something>', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->from(['foo' => 'something'])->sql();
+		$this->assertQuotedQuery('FROM <something> AS <foo>$', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->from(['foo' => $query->newExpr()->add('bar')])->sql();
+		$this->assertQuotedQuery('FROM \(bar\) AS <foo>$', $sql);
+	}
+
+/**
+ * Tests automatic identifier quoting for DISTINCT ON
+ *
+ * @return void
+ */
+	public function testQuotingDistinctOn() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->distinct(['something'])->sql();
+		$this->assertQuotedQuery('<something>', $sql);
+	}
+
+/**
+ * Tests automatic identifier quoting in the join clause
+ *
+ * @return void
+ */
+	public function testQuotingJoinsAndAlias() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->join(['something'])->sql();
+		$this->assertQuotedQuery('JOIN <something>', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->join(['foo' => 'something'])->sql();
+		$this->assertQuotedQuery('JOIN <something> <foo>', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->join(['foo' => $query->newExpr()->add('bar')])->sql();
+		$this->assertQuotedQuery('JOIN \(bar\) <foo>', $sql);
+	}
+
+/**
+ * Tests automatic identifier quoting in the group by clause
+ *
+ * @return void
+ */
+	public function testQuotingGroupBy() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->group(['something'])->sql();
+		$this->assertQuotedQuery('GROUP BY <something>', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->group([$query->newExpr()->add('bar')])->sql();
+		$this->assertQuotedQuery('GROUP BY \(bar\)', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')->group([new IdentifierExpression('bar')])->sql();
+		$this->assertQuotedQuery('GROUP BY \(<bar>\)', $sql);
+	}
+
+/**
+ * Tests automatic identifier quoting strings inside conditions expressions
+ *
+ * @return void
+ */
+	public function testQuotingExpressions() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->select('*')
+			->where(['something' => 'value'])
+			->sql();
+		$this->assertQuotedQuery('WHERE <something> = :c0', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->select('*')
+			->where([
+				'something' => 'value',
+				'OR' => ['foo' => 'bar', 'baz' => 'cake']
+			])
+			->sql();
+		$this->assertQuotedQuery('<something> = :c0 AND', $sql);
+		$this->assertQuotedQuery('\(<foo> = :c1 OR <baz> = :c2\)', $sql);
+	}
+
+/**
+ * Tests that insert query parts get quoted automatically
+ *
+ * @return void
+ */
+	public function testQuotingInsert() {
+		$this->connection->driver()->autoQuoting(true);
+		$query = new Query($this->connection);
+		$sql = $query->insert('foo', ['bar', 'baz'])
+			->where(['something' => 'value'])
+			->sql();
+		$this->assertQuotedQuery('INSERT INTO <foo> \(<bar>, <baz>\)', $sql);
+
+		$query = new Query($this->connection);
+		$sql = $query->insert('foo', [$query->newExpr()->add('bar')])
+			->where(['something' => 'value'])
+			->sql();
+		$this->assertQuotedQuery('INSERT INTO <foo> \(\(bar\)\)', $sql);
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table
@@ -2040,6 +2192,26 @@ class QueryTest extends TestCase {
 			->execute();
 		$this->assertCount($count, $result, 'Row count is incorrect');
 		$this->assertEquals($rows, $result->fetchAll('assoc'));
+	}
+
+/**
+ * Assertion for comparing a regex pattern against a query having its indentifiers
+ * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
+ * parameter is set to true, it will alter the pattern to both accept quoted and
+ * unquoted queries
+ *
+ * @param string $pattern
+ * @param string $query the result to compare against
+ * @param boolean $optional
+ * @return void
+ */
+	public function assertQuotedQuery($pattern, $query, $optional = false) {
+		if ($optional) {
+			$optional = '?';
+		}
+		$pattern = str_replace('<', '[`"\[]' . $optional, $pattern);
+		$pattern = str_replace('>', '[`"\]]' . $optional, $pattern);
+		$this->assertRegExp('#' . $pattern . '#', $query);
 	}
 
 }
