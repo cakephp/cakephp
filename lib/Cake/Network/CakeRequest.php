@@ -756,7 +756,7 @@ class CakeRequest implements ArrayAccess {
  * {{{ CakeRequest::acceptLanguage('es-es'); }}}
  *
  * @param string $language The language to test.
- * @return If a $language is provided, a boolean. Otherwise the array of accepted languages.
+ * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.
  */
 	public static function acceptLanguage($language = null) {
 		$raw = self::_parseAcceptWithQualifier(self::header('Accept-Language'));
