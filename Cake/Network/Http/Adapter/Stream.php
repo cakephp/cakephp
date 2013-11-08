@@ -244,7 +244,7 @@ class Stream {
 		fclose($this->_stream);
 
 		if ($meta['timed_out']) {
-			throw Error\Exception('Connection timed out ' . $url);
+			throw new Error\Exception('Connection timed out ' . $url);
 		}
 		$headers = $meta['wrapper_data'];
 		if (isset($meta['wrapper_type']) && $meta['wrapper_type'] === 'curl') {
