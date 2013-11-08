@@ -106,6 +106,7 @@ class BelongsToMany extends Association {
 		if (is_string($table)) {
 			$table = TableRegistry::get($table);
 		}
+
 		if (!$table->association($sAlias)) {
 			$table->belongsTo($sAlias)->target($this->source());
 		}

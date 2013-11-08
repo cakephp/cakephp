@@ -28,6 +28,7 @@ use Cake\Database\SqlDialectTrait;
 trait PostgresDialectTrait {
 
 	use SqlDialectTrait;
+
 /**
  *  String used to start a database identifier quoting to make it safe
  *
