@@ -26,9 +26,9 @@ use Cake\Utility\String;
 /**
  * Provides CSRF protection & validation.
  *
- * Unlike other versions of CakePHP the CSRF token
- * is stored in a cookie and is compared to request data, or the
- * X-CSRF-Token header on each PATCH, POST, PUT, or DELETE request.
+ * This component adds a CSRF token to a cookie. The cookie value is compared to
+ * request data, or the X-CSRF-Token header on each PATCH, POST,
+ * PUT, or DELETE request.
  *
  * If the request data is missing or does not match the cookie data,
  * a ForbiddenException will be raised.
