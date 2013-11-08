@@ -17,7 +17,7 @@ use Cake\ORM\Table;
  * Author table class
  *
  */
-class AuthorTable extends Table {
+class AuthorsTable extends Table {
 
 	public function initialize(array $config) {
 		$this->hasMany('article');

@@ -68,17 +68,17 @@ class TableRegistryTest extends TestCase {
  * @return void
  */
 	public function testConfig() {
-		$this->assertEquals([], TableRegistry::config('Test'));
+		$this->assertEquals([], TableRegistry::config('Tests'));
 
 		$data = [
 			'connection' => 'testing',
 			'entityClass' => 'TestApp\Model\Entity\Article',
 		];
-		$result = TableRegistry::config('Test', $data);
+		$result = TableRegistry::config('Tests', $data);
 		$this->assertEquals($data, $result, 'Returns config data.');
 
 		$result = TableRegistry::config();
-		$expected = ['Test' => $data];
+		$expected = ['Tests' => $data];
 		$this->assertEquals($expected, $result);
 	}
 
@@ -88,13 +88,13 @@ class TableRegistryTest extends TestCase {
  * @return void
  */
 	public function testGet() {
-		$result = TableRegistry::get('Article', [
+		$result = TableRegistry::get('Articles', [
 			'table' => 'my_articles',
 		]);
 		$this->assertInstanceOf('Cake\ORM\Table', $result);
 		$this->assertEquals('my_articles', $result->table());
 
-		$result2 = TableRegistry::get('Article', [
+		$result2 = TableRegistry::get('Articles', [
 			'table' => 'herp_derp',
 		]);
 		$this->assertSame($result, $result2);
@@ -107,10 +107,10 @@ class TableRegistryTest extends TestCase {
  * @return void
  */
 	public function testGetWithConfig() {
-		TableRegistry::config('Article', [
+		TableRegistry::config('Articles', [
 			'table' => 'my_articles',
 		]);
-		$result = TableRegistry::get('Article');
+		$result = TableRegistry::get('Articles');
 		$this->assertEquals('my_articles', $result->table(), 'Should use config() data.');
 	}
 
@@ -121,26 +121,26 @@ class TableRegistryTest extends TestCase {
  * @return void
  */
 	public function testBuildConvention() {
-		$table = TableRegistry::get('article');
-		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
-		$table = TableRegistry::get('Article');
-		$this->assertInstanceOf('\TestApp\Model\Repository\ArticleTable', $table);
+		$table = TableRegistry::get('articles');
+		$this->assertInstanceOf('\TestApp\Model\Repository\ArticlesTable', $table);
+		$table = TableRegistry::get('Articles');
+		$this->assertInstanceOf('\TestApp\Model\Repository\ArticlesTable', $table);
 
-		$table = TableRegistry::get('author');
-		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
-		$table = TableRegistry::get('Author');
-		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorTable', $table);
+		$table = TableRegistry::get('authors');
+		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorsTable', $table);
+		$table = TableRegistry::get('Authors');
+		$this->assertInstanceOf('\TestApp\Model\Repository\AuthorsTable', $table);
 
 		$class = $this->getMockClass('\Cake\ORM\Table');
 		$class::staticExpects($this->once())
 			->method('defaultConnectionName')
 			->will($this->returnValue('test'));
 
-		if (!class_exists('MyPlugin\Model\Repository\SuperTestTable')) {
-			class_alias($class, 'MyPlugin\Model\Repository\SuperTestTable');
+		if (!class_exists('MyPlugin\Model\Repository\SuperTestsTable')) {
+			class_alias($class, 'MyPlugin\Model\Repository\SuperTestsTable');
 		}
 
-		$table = TableRegistry::get('MyPlugin.SuperTest');
+		$table = TableRegistry::get('MyPlugin.SuperTests');
 		$this->assertInstanceOf($class, $table);
 	}
 
@@ -192,8 +192,8 @@ class TableRegistryTest extends TestCase {
  */
 	public function testSet() {
 		$mock = $this->getMock('Cake\ORM\Table');
-		$this->assertSame($mock, TableRegistry::set('Article', $mock));
-		$this->assertSame($mock, TableRegistry::get('Article'));
+		$this->assertSame($mock, TableRegistry::set('Articles', $mock));
+		$this->assertSame($mock, TableRegistry::get('Articles'));
 	}
 
 }
