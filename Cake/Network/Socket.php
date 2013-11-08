@@ -383,12 +383,8 @@ class Socket {
 		if ($enableCryptoResult === true) {
 			$this->encrypted = $enable;
 			return true;
-		} else {
-			$errorMessage = __d('cake_dev', 'Unable to perform enableCrypto operation on Cake\Error\Socket');
-			$this->setLastError(null, $errorMessage);
-			throw new Error\SocketException($errorMessage);
 		}
-		$errorMessage = __d('cake_dev', 'Unable to perform enableCrypto operation on CakeSocket');
+		$errorMessage = __d('cake_dev', 'Unable to perform enableCrypto operation on the current socket');
 		$this->setLastError(null, $errorMessage);
 		throw new Error\SocketException($errorMessage);
 	}
