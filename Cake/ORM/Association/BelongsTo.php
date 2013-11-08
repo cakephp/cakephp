@@ -69,6 +69,24 @@ class BelongsTo extends Association {
 	}
 
 /**
+ * Sets the property name that should be filled with data from the target table
+ * in the source table record.
+ * If no arguments are passed, currently configured type is returned.
+ *
+ * @param string $name
+ * @return string
+ */
+	public function property($name = null) {
+		if ($name !== null) {
+			return parent::property($name);
+		}
+		if ($name === null && !$this->_property) {
+			$this->_property = Inflector::underscore(Inflector::singularize($this->_name));
+		}
+		return $this->_property;
+	}
+
+/**
  * Returns a single or multiple conditions to be appended to the generated join
  * clause for getting the results on the target table.
  *

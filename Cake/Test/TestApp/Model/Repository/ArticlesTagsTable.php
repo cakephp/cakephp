@@ -20,8 +20,8 @@ use Cake\ORM\Table;
 class ArticlesTagsTable extends Table {
 
 	public function initialize(array $config) {
-		$this->belongsTo('article');
-		$this->belongsTo('tag');
+		$this->belongsTo('articles');
+		$this->belongsTo('tags');
 	}
 
 }

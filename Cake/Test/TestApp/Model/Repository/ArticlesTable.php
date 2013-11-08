@@ -20,11 +20,9 @@ use Cake\ORM\Table;
 class ArticlesTable extends Table {
 
 	public function initialize(array $config) {
-		$this->belongsTo('author');
-		$this->belongsToMany('tag', [
-			'property' => 'tags'
-		]);
-		$this->hasMany('articlesTag');
+		$this->belongsTo('authors');
+		$this->belongsToMany('tags');
+		$this->hasMany('articlesTags');
 	}
 
 }

@@ -20,9 +20,9 @@ use Cake\ORM\Table;
 class TagsTable extends Table {
 
 	public function initialize(array $config) {
-		$this->belongsTo('author');
-		$this->belongsToMany('tag', ['property' => 'tags']);
-		$this->hasMany('articlesTag', ['property' => 'extraInfo']);
+		$this->belongsTo('authors');
+		$this->belongsToMany('tags');
+		$this->hasMany('articlesTags', ['property' => 'extraInfo']);
 	}
 
 }

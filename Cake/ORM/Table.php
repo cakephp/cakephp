@@ -354,7 +354,7 @@ class Table {
 				return $this->_entityClass = $default;
 			}
 
-			$alias = substr(array_pop($parts), 0, -5);
+			$alias = Inflector::singularize(substr(array_pop($parts), 0, -5));
 			$name = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $alias;
 			if (!class_exists($name)) {
 				return $this->_entityClass = $default;
