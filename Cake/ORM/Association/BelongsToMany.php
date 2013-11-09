@@ -94,7 +94,7 @@ class BelongsToMany extends Association {
 		if ($table === null) {
 			if (empty($this->_pivotTable)) {
 				$tableName = $this->_joinTableName();
-				$tableAlias = Inflector::classify(Inflector::singularize($tableName));
+				$tableAlias = Inflector::camelize($tableName);
 				$table = TableRegistry::get($tableAlias, [
 					'table' => $tableName
 				]);
@@ -300,7 +300,7 @@ class BelongsToMany extends Association {
 	protected function _joinTableName($name = null) {
 		if ($name === null) {
 			if (empty($this->_joinTable)) {
-				$aliases = array_map('\Cake\Utility\Inflector::tableize', [
+				$aliases = array_map('\Cake\Utility\Inflector::underscore', [
 					$sAlias = $this->source()->alias(),
 					$tAlias = $this->target()->alias()
 				]);

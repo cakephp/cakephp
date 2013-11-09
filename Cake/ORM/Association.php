@@ -19,6 +19,7 @@ namespace Cake\ORM;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * An Association is a relationship established between two tables and is used
@@ -167,10 +168,6 @@ abstract class Association {
 		$this->_name = $name;
 		$this->_options($options);
 
-		if (empty($this->_property)) {
-			$this->property($name);
-		}
-
 		if (!empty($options['strategy'])) {
 			$this->strategy($options['strategy']);
 		}
@@ -310,6 +307,9 @@ abstract class Association {
 	public function property($name = null) {
 		if ($name !== null) {
 			$this->_property = $name;
+		}
+		if ($name === null && !$this->_property) {
+			$this->_property = Inflector::underscore($this->_name);
 		}
 		return $this->_property;
 	}

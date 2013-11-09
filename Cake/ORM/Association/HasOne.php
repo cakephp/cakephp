@@ -56,11 +56,30 @@ class HasOne extends Association {
 	public function foreignKey($key = null) {
 		if ($key === null) {
 			if ($this->_foreignKey === null) {
-				$this->_foreignKey = Inflector::underscore($this->source()->alias()) . '_id';
+				$key = Inflector::singularize($this->source()->alias());
+				$this->_foreignKey = Inflector::underscore($key) . '_id';
 			}
 			return $this->_foreignKey;
 		}
 		return parent::foreignKey($key);
+	}
+
+/**
+ * Sets the property name that should be filled with data from the target table
+ * in the source table record.
+ * If no arguments are passed, currently configured type is returned.
+ *
+ * @param string $name
+ * @return string
+ */
+	public function property($name = null) {
+		if ($name !== null) {
+			return parent::property($name);
+		}
+		if ($name === null && !$this->_property) {
+			$this->_property = Inflector::underscore(Inflector::singularize($this->_name));
+		}
+		return $this->_property;
 	}
 
 /**

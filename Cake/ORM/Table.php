@@ -200,8 +200,8 @@ class Table {
  *
  * {{{
  *	public function initialize(array $config) {
- *		$this->belongsTo('User');
- *		$this->belongsToMany('Tagging.Tag');
+ *		$this->belongsTo('Users');
+ *		$this->belongsToMany('Tagging.Tags');
  *		$this->primaryKey('something_else');
  *	}
  * }}}
@@ -228,7 +228,7 @@ class Table {
 			if (empty($table)) {
 				$table = $this->alias();
 			}
-			$this->_table = Inflector::tableize($table);
+			$this->_table = Inflector::underscore($table);
 		}
 		return $this->_table;
 	}
@@ -354,7 +354,7 @@ class Table {
 				return $this->_entityClass = $default;
 			}
 
-			$alias = substr(array_pop($parts), 0, -5);
+			$alias = Inflector::singularize(substr(array_pop($parts), 0, -5));
 			$name = implode('\\', array_slice($parts, 0, -1)) . '\Entity\\' . $alias;
 			if (!class_exists($name)) {
 				return $this->_entityClass = $default;

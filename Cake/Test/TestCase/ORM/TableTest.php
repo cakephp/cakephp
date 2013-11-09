@@ -73,11 +73,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table = $this->getMockBuilder('\Cake\ORM\Table')
 			->setMethods(['find'])
-			->setMockClassName('SpecialThingTable')
+			->setMockClassName('SpecialThingsTable')
 			->getMock();
 		$this->assertEquals('special_things', $table->table());
 
-		$table = new Table(['alias' => 'LoveBoat']);
+		$table = new Table(['alias' => 'LoveBoats']);
 		$this->assertEquals('love_boats', $table->table());
 
 		$table->table('other');
@@ -820,7 +820,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testRepositoryClassConventionForAPP() {
-		$table = new \TestApp\Model\Repository\ArticleTable;
+		$table = new \TestApp\Model\Repository\ArticlesTable;
 		$this->assertEquals('TestApp\Model\Entity\Article', $table->entityClass());
 	}
 
@@ -843,10 +843,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalBelongsToLoading() {
-		$table = new \TestApp\Model\Repository\ArticleTable([
+		$table = new \TestApp\Model\Repository\ArticlesTable([
 			'connection' => $this->connection,
 		]);
-		$result = $table->find('all')->contain(['author'])->first();
+		$result = $table->find('all')->contain(['authors'])->first();
 		$this->assertInstanceOf('TestApp\Model\Entity\Author', $result->author);
 	}
 
@@ -857,12 +857,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalHasManyLoading() {
-		$table = new \TestApp\Model\Repository\ArticleTable([
+		$table = new \TestApp\Model\Repository\ArticlesTable([
 			'connection' => $this->connection,
 		]);
-		$result = $table->find('all')->contain(['author' => ['article']])->first();
-		$this->assertCount(2, $result->author->article);
-		foreach ($result->author->article as $article) {
+		$result = $table->find('all')->contain(['authors' => ['articles']])->first();
+		$this->assertCount(2, $result->author->articles);
+		foreach ($result->author->articles as $article) {
 			$this->assertInstanceOf('TestApp\Model\Entity\Article', $article);
 		}
 	}
@@ -874,10 +874,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalBelongsToMany() {
-		$table = new \TestApp\Model\Repository\ArticleTable([
+		$table = new \TestApp\Model\Repository\ArticlesTable([
 			'connection' => $this->connection,
 		]);
-		$result = $table->find('all')->contain(['tag'])->first();
+		$result = $table->find('all')->contain(['tags'])->first();
 		$this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
 		$this->assertInstanceOf(
 			'TestApp\Model\Entity\ArticlesTag',
@@ -891,10 +891,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindCleanEntities() {
-		$table = new \TestApp\Model\Repository\ArticleTable([
+		$table = new \TestApp\Model\Repository\ArticlesTable([
 			'connection' => $this->connection,
 		]);
-		$results = $table->find('all')->contain(['tag', 'author'])->toArray();
+		$results = $table->find('all')->contain(['tags', 'authors'])->toArray();
 		$this->assertCount(3, $results);
 		foreach ($results as $article) {
 			$this->assertFalse($article->dirty('id'));
@@ -918,10 +918,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindPersistedEntities() {
-		$table = new \TestApp\Model\Repository\ArticleTable([
+		$table = new \TestApp\Model\Repository\ArticlesTable([
 			'connection' => $this->connection,
 		]);
-		$results = $table->find('all')->contain(['tag', 'author'])->toArray();
+		$results = $table->find('all')->contain(['tags', 'authors'])->toArray();
 		$this->assertCount(3, $results);
 		foreach ($results as $article) {
 			$this->assertFalse($article->isNew());
@@ -989,7 +989,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testCallBehaviorFinder() {
-		$table = TableRegistry::get('article');
+		$table = TableRegistry::get('articles');
 		$table->addBehavior('Sluggable');
 
 		$query = $table->find('noSlug');
@@ -1587,8 +1587,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteDependent() {
-		$table = TableRegistry::get('author');
-		$table->hasOne('article', [
+		$table = TableRegistry::get('authors');
+		$table->hasOne('articles', [
 			'foreignKey' => 'author_id',
 			'dependent' => true,
 		]);
@@ -1597,7 +1597,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = $query->first();
 		$result = $table->delete($entity);
 
-		$articles = $table->association('article')->target();
+		$articles = $table->association('articles')->target();
 		$query = $articles->find('all', [
 			'conditions' => [
 				'author_id' => $entity->id
@@ -1612,7 +1612,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteNoDependentNoCascade() {
-		$table = TableRegistry::get('author');
+		$table = TableRegistry::get('authors');
 		$table->hasMany('article', [
 			'foreignKey' => 'author_id',
 			'dependent' => false,
@@ -1622,7 +1622,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = $query->first();
 		$result = $table->delete($entity);
 
-		$articles = $table->association('article')->target();
+		$articles = $table->association('articles')->target();
 		$query = $articles->find('all')->where(['author_id' => $entity->id]);
 		$this->assertCount(2, $query->execute(), 'Should find rows.');
 	}
@@ -1633,7 +1633,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testDeleteBelongsToMany() {
-		$table = TableRegistry::get('article');
+		$table = TableRegistry::get('articles');
 		$table->belongsToMany('tag', [
 			'foreignKey' => 'article_id',
 			'joinTable' => 'articles_tags'
@@ -1642,7 +1642,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = $query->first();
 		$table->delete($entity);
 
-		$pivot = $table->association('tag')->pivot();
+		$pivot = $table->association('tags')->pivot();
 		$query = $pivot->find('all')->where(['article_id' => 1]);
 		$this->assertNull($query->execute()->one(), 'Should not find any rows.');
 	}

@@ -34,7 +34,7 @@ use Cake\Utility\Inflector;
  * an instance is made, the instances *will not* be updated.
  *
  * {{{
- * TableRegistry::config('User', ['table' => 'my_users']);
+ * TableRegistry::config('Users', ['table' => 'my_users']);
  * }}}
  *
  * Configuration data is stored *per alias* if you use the same table with
@@ -48,7 +48,7 @@ use Cake\Utility\Inflector;
  * to solve.
  *
  * {{{
- * $table = TableRegistry::get('User', $config);
+ * $table = TableRegistry::get('Users', $config);
  * }}}
  *
  */
@@ -107,14 +107,14 @@ class TableRegistry {
  * The options that can be passed are the same as in `Table::__construct()`, but the
  * key `className` is also recognized.
  *
- * If $options does not contain `className` CakePHP will attempt to inflect the
- * class name based on the alias. For example 'User' would result in
- * `App\Model\Repository\UserTable` being attempted. If this class does not exist,
+ * If $options does not contain `className` CakePHP will attempt to construct the
+ * class name based on the alias. For example 'Users' would result in
+ * `App\Model\Repository\UsersTable` being attempted. If this class does not exist,
  * then the default `Cake\ORM\Table` class will be used. By setting the `className`
  * option you can define the specific class to use. This className can
  * use a short class reference.
  *
- * If no `table` option is passed, the table name will be the tableized version
+ * If no `table` option is passed, the table name will be the underscored version
  * of the provided $alias.
  *
  * If no `connection` option is passed the table's defaultConnectionName() method
@@ -134,7 +134,7 @@ class TableRegistry {
 		$options = ['alias' => $baseClass] + $options;
 
 		if (empty($options['className'])) {
-			$class = Inflector::classify($alias);
+			$class = Inflector::camelize($alias);
 			$className = App::classname($class, 'Model\Repository', 'Table');
 			$options['className'] = $className ?: 'Cake\ORM\Table';
 		}

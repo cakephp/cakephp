@@ -167,7 +167,7 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testProperty() {
-		$this->assertEquals('Foo', $this->association->property());
+		$this->assertEquals('foo', $this->association->property());
 		$this->association->property('thing');
 		$this->assertEquals('thing', $this->association->property());
 	}
