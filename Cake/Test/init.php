@@ -25,6 +25,7 @@ define('WEBROOT_DIR', 'webroot');
 define('TMP', sys_get_temp_dir() . DS);
 define('LOGS', TMP . 'logs' . DS);
 define('CACHE', TMP . 'cache' . DS);
+define('SESSIONS', TMP . 'sessions' . DS);
 
 define('CAKE_CORE_INCLUDE_PATH', ROOT);
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
@@ -41,6 +42,7 @@ define('TEST_APP', ROOT . '/Cake/Test/TestApp/');
 
 //@codingStandardsIgnoreStart
 @mkdir(LOGS);
+@mkdir(SESSIONS);
 @mkdir(CACHE);
 @mkdir(CACHE . 'views');
 @mkdir(CACHE . 'models');

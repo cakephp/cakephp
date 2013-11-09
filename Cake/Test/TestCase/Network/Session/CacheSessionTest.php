@@ -16,12 +16,12 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Model\Datasource\Session;
+namespace Cake\Test\TestCase\Network\Session;
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
-use Cake\Model\Datasource\Session;
-use Cake\Model\Datasource\Session\CacheSession;
+use Cake\Network\Session;
+use Cake\Network\Session\CacheSession;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -38,10 +38,12 @@ class CacheSessionTest extends TestCase {
  * @return void
  */
 	public static function setupBeforeClass() {
-		Configure::write('Cache.session_test', array(
+		Cache::enable();
+		Cache::config('session_test', [
 			'engine' => 'File',
-			'prefix' => 'session_test_'
-		));
+			'path' => TMP . 'sessions',
+			'prefix' => 'session_test'
+		]);
 		static::$_sessionBackup = Configure::read('Session');
 
 		Configure::write('Session.handler.config', 'session_test');
@@ -85,7 +87,7 @@ class CacheSessionTest extends TestCase {
  * @return void
  */
 	public function testOpen() {
-		$this->assertTrue($this->storage->open());
+		$this->assertTrue($this->storage->open(null, null));
 	}
 
 /**
@@ -96,7 +98,6 @@ class CacheSessionTest extends TestCase {
 	public function testWrite() {
 		$this->storage->write('abc', 'Some value');
 		$this->assertEquals('Some value', Cache::read('abc', 'session_test'), 'Value was not written.');
-		$this->assertFalse(Cache::read('abc', 'default'), 'Cache should only write to the given config.');
 	}
 
 /**

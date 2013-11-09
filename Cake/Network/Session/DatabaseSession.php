@@ -17,10 +17,12 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-namespace Cake\Model\Datasource\Session;
+namespace Cake\Network\Session;
 
 use Cake\Core\Configure;
-use Cake\Utility\ClassRegistry;
+use Cake\ORM\Entity;
+use Cake\ORM\TableRegistry;
+use SessionHandlerInterface;
 
 /**
  * DatabaseSession provides methods to be used with Session.
@@ -29,11 +31,11 @@ use Cake\Utility\ClassRegistry;
 class DatabaseSession implements SessionHandlerInterface {
 
 /**
- * Reference to the model handling the session data
+ * Reference to the table handling the session data
  *
  * @var Model
  */
-	protected $_model;
+	protected $_table;
 
 /**
  * Number of seconds to mark the session as expired
@@ -52,26 +54,27 @@ class DatabaseSession implements SessionHandlerInterface {
 
 		if (empty($modelName)) {
 			$settings = array(
-				'class' => 'Session',
-				'alias' => 'Session',
+				'alias' => 'Sessions',
 				'table' => 'cake_sessions',
 			);
 		} else {
 			$settings = array(
-				'class' => $modelName,
-				'alias' => 'Session',
+				'className' => $modelName,
+				'alias' => 'Sessions',
 			);
 		}
-		$this->_model = ClassRegistry::init($settings);
+		$this->_table = TableRegistry::get('Sessions', $settings);
 		$this->_timeout = Configure::read('Session.timeout') * 60;
 	}
 
 /**
  * Method called on open of a database session.
  *
+ * @param The path where to store/retrieve the session.
+ * @param The session name.
  * @return boolean Success
  */
-	public function open() {
+	public function open($savePath, $name) {
 		return true;
 	}
 
@@ -91,15 +94,18 @@ class DatabaseSession implements SessionHandlerInterface {
  * @return mixed The value of the key or false if it does not exist
  */
 	public function read($id) {
-		$row = $this->_model->find('first', array(
-			'conditions' => array($this->_model->primaryKey => $id)
-		));
+		$result = $this->_table
+			->find('all')
+			->select(['data'])
+			->where([$this->_table->primaryKey() => $id])
+			->hydrate(false)
+			->first();
 
-		if (empty($row[$this->_model->alias]['data'])) {
+		if (empty($result)) {
 			return false;
 		}
 
-		return $row[$this->_model->alias]['data'];
+		return $result['data'];
 	}
 
 /**
@@ -114,9 +120,13 @@ class DatabaseSession implements SessionHandlerInterface {
 			return false;
 		}
 		$expires = time() + $this->_timeout;
-		$record = compact('id', 'data', 'expires');
-		$record[$this->_model->primaryKey] = $id;
-		return $this->_model->save($record);
+		$record = compact('data', 'expires');
+		$record[$this->_table->primaryKey()] = $id;
+		$result = $this->_table->save(new Entity($record));
+		if ($result) {
+			return $result->toArray();
+		}
+		return false;
 	}
 
 /**
@@ -126,22 +136,17 @@ class DatabaseSession implements SessionHandlerInterface {
  * @return boolean True for successful delete, false otherwise.
  */
 	public function destroy($id) {
-		return $this->_model->delete($id);
+		return $this->_table->delete(new Entity([$this->_table->primaryKey() => $id]));
 	}
 
 /**
  * Helper function called on gc for database sessions.
  *
- * @param integer $expires Timestamp (defaults to current time)
- * @return boolean Success
+ * @param string $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
+ * @return boolean True on success, false on failure.
  */
-	public function gc($expires = null) {
-		if (!$expires) {
-			$expires = time();
-		} else {
-			$expires = time() - $expires;
-		}
-		return $this->_model->deleteAll(array($this->_model->alias . ".expires <" => $expires), false, false);
+	public function gc($maxlifetime) {
+		return $this->_table->deleteAll(['expires <' => time() - $maxlifetime]);
 	}
 
 }

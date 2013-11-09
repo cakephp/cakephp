@@ -16,10 +16,11 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Model\Datasource\Session;
+namespace Cake\Network\Session;
 
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use SessionHandlerInterface;
 
 /**
  * CacheSession provides method for saving sessions into a Cache engine. Used with Session
@@ -31,9 +32,11 @@ class CacheSession implements SessionHandlerInterface {
 /**
  * Method called on open of a database session.
  *
+ * @param The path where to store/retrieve the session.
+ * @param The session name.
  * @return boolean Success
  */
-	public function open() {
+	public function open($savePath, $name) {
 		return true;
 	}
 
@@ -47,7 +50,7 @@ class CacheSession implements SessionHandlerInterface {
 	}
 
 /**
- * Method used to read from a database session.
+ * Method used to read from a cache session.
  *
  * @param string $id The key of the value to read
  * @return mixed The value of the key or false if it does not exist
@@ -57,7 +60,7 @@ class CacheSession implements SessionHandlerInterface {
 	}
 
 /**
- * Helper function called on write for database sessions.
+ * Helper function called on write for cache sessions.
  *
  * @param integer $id ID that uniquely identifies session in database
  * @param mixed $data The value of the data to be saved.
@@ -68,7 +71,7 @@ class CacheSession implements SessionHandlerInterface {
 	}
 
 /**
- * Method called on the destruction of a database session.
+ * Method called on the destruction of a cache session.
  *
  * @param integer $id ID that uniquely identifies session in cache
  * @return boolean True for successful delete, false otherwise.
@@ -80,11 +83,11 @@ class CacheSession implements SessionHandlerInterface {
 /**
  * Helper function called on gc for cache sessions.
  *
- * @param integer $expires Timestamp (defaults to current time)
- * @return boolean Success
+ * @param string $maxlifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
+ * @return boolean True on success, false on failure.
  */
-	public function gc($expires = null) {
-		return Cache::gc(Configure::read('Session.handler.config'), $expires);
+	public function gc($maxlifetime) {
+		return Cache::gc(Configure::read('Session.handler.config'), time() - $maxlifetime);
 	}
 
 }

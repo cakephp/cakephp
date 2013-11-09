@@ -1,15 +1,15 @@
 <?php
-namespace TestApp\Model\Datasource\Session;
+namespace TestApp\Network\Session;
 
-use Cake\Model\Datasource\Session\SessionHandlerInterface;
+use SessionHandlerInterface;
 
 /**
- * Test suite app/Model/Datasource/Session session handler
+ * Test suite app/Network/Session session handler
  *
  */
 class TestAppLibSession implements SessionHandlerInterface {
 
-	public function open() {
+	public function open($savePath, $name) {
 		return true;
 	}
 
@@ -25,7 +25,7 @@ class TestAppLibSession implements SessionHandlerInterface {
 	public function destroy($id) {
 	}
 
-	public function gc($expires = null) {
+	public function gc($maxlifetime) {
 	}
 
 }

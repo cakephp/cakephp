@@ -21,7 +21,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Model\Datasource\Session;
+use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\SessionHelper;
 use Cake\View\View;

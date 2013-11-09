@@ -16,22 +16,23 @@
  * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Model\Datasource\Session;
+namespace Cake\Test\TestCase\Network\Session;
 
 use Cake\Core\Configure;
-use Cake\Model\Datasource\Session;
-use Cake\Model\Datasource\Session\DatabaseSession;
-use Cake\Model\Model;
+use Cake\Database\ConnectionManager;
+use Cake\Network\Session;
+use Cake\Network\Session\DatabaseSession;
+use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 
 /**
  * Class SessionTestModel
  *
  */
-class SessionTestModel extends Model {
+class SessionTestTable extends Table {
 
-	public $useTable = 'sessions';
+	protected $_table = 'sessions';
 
 }
 
@@ -48,7 +49,7 @@ class DatabaseSessionTest extends TestCase {
  *
  * @var string
  */
-	public $fixtures = array('core.session');
+	public $fixtures = ['core.session'];
 
 /**
  * test case startup
@@ -58,7 +59,7 @@ class DatabaseSessionTest extends TestCase {
 	public static function setupBeforeClass() {
 		static::$_sessionBackup = Configure::read('Session');
 		Configure::write('Session.handler', array(
-			'model' => 'SessionTestModel',
+			'model' => __NAMESPACE__ . '\SessionTestTable'
 		));
 		Configure::write('Session.timeout', 100);
 	}
@@ -79,7 +80,7 @@ class DatabaseSessionTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Models are not work, neither will database sessions');
+		Configure::write('App.namespace', 'TestApp');
 		$this->storage = new DatabaseSession();
 	}
 
@@ -90,7 +91,7 @@ class DatabaseSessionTest extends TestCase {
  */
 	public function tearDown() {
 		unset($this->storage);
-		ClassRegistry::flush();
+		TableRegistry::clear();
 		parent::tearDown();
 	}
 
@@ -100,14 +101,14 @@ class DatabaseSessionTest extends TestCase {
  * @return void
  */
 	public function testConstructionSettings() {
-		ClassRegistry::flush();
+		TableRegistry::clear();
 		new DatabaseSession();
 
-		$session = ClassRegistry::getObject('session');
-		$this->assertInstanceOf('SessionTestModel', $session);
-		$this->assertEquals('Session', $session->alias);
-		$this->assertEquals('test', $session->useDbConfig);
-		$this->assertEquals('sessions', $session->useTable);
+		$session = TableRegistry::get('Sessions');
+		$this->assertInstanceOf(__NAMESPACE__ . '\SessionTestTable', $session);
+		$this->assertEquals('Sessions', $session->alias());
+		$this->assertEquals(ConnectionManager::get('test'), $session->connection());
+		$this->assertEquals('sessions', $session->table());
 	}
 
 /**
@@ -116,7 +117,7 @@ class DatabaseSessionTest extends TestCase {
  * @return void
  */
 	public function testOpen() {
-		$this->assertTrue($this->storage->open());
+		$this->assertTrue($this->storage->open(null, null));
 	}
 
 /**
@@ -126,14 +127,12 @@ class DatabaseSessionTest extends TestCase {
  */
 	public function testWrite() {
 		$result = $this->storage->write('foo', 'Some value');
-		$expected = array(
-			'Session' => array(
-				'id' => 'foo',
-				'data' => 'Some value',
-			)
-		);
-		$expires = $result['Session']['expires'];
-		unset($result['Session']['expires']);
+		$expected = [
+			'id' => 'foo',
+			'data' => 'Some value',
+		];
+		$expires = $result['expires'];
+		unset($result['expires']);
 		$this->assertEquals($expected, $result);
 
 		$expected = time() + (Configure::read('Session.timeout') * 60);
@@ -184,14 +183,14 @@ class DatabaseSessionTest extends TestCase {
  * @return void
  */
 	public function testGc() {
-		ClassRegistry::flush();
+		TableRegistry::clear();
 		Configure::write('Session.timeout', 0);
 
 		$storage = new DatabaseSession();
 		$storage->write('foo', 'Some value');
 
 		sleep(1);
-		$storage->gc();
+		$storage->gc(0);
 		$this->assertFalse($storage->read('foo'));
 	}
 }
