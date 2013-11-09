@@ -1068,10 +1068,11 @@ class DboSource extends DataSource {
 					continue;
 				}
 
-				$external = isset($assocData['external']);
 				if ($bypass) {
 					$assocData['fields'] = false;
 				}
+				$external = isset($assocData['external']);
+
 				if ($this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external) === true) {
 					$linkedModels[$type . '/' . $assoc] = true;
 				}
@@ -1079,7 +1080,8 @@ class DboSource extends DataSource {
 		}
 
 		// Build SQL statement with the primary model, plus hasOne and belongsTo associations
-		$query = $this->generateAssociationQuery($model, null, null, null, null, $queryData, false);
+		$query = $this->buildAssociationQuery($model, $queryData);
+
 		$resultSet = $this->fetchAll($query, $model->cacheQueries);
 		unset($query);
 
@@ -1095,6 +1097,7 @@ class DboSource extends DataSource {
 			$filtered = $this->_filterResults($resultSet, $model);
 		}
 
+		// Deep associations
 		if ($model->recursive > -1) {
 			$joined = array();
 			if (isset($queryData['joins'][0]['alias'])) {
@@ -1127,6 +1130,7 @@ class DboSource extends DataSource {
 					}
 				}
 			}
+
 			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
 				$this->_filterResults($resultSet, $model, $filtered);
 			}
@@ -1140,7 +1144,9 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Passes association results thru afterFind filters of corresponding model
+ * Passes association results through afterFind filters of corresponding model.
+ *
+ * The primary model is always filtered.
  *
  * @param array $results Reference of resultset to be filtered
  * @param Model $model Instance of model to operate against
@@ -1570,14 +1576,9 @@ class DboSource extends DataSource {
  * @param array $queryData
  * @param boolean $external Whether or not the association query is on an external datasource.
  * @return mixed
- *   String containing an SQL statement, when $linkModel is null.
  *   True. when $external is false and association $type is 'hasOne' or 'belongsTo'.
  */
 	public function generateAssociationQuery(Model $Model, $linkModel, $type, $association, $assocData, &$queryData, $external) {
-		if ($linkModel === null) {
-			return $this->buildAssociationQuery($Model, $queryData);
-		}
-
 		$assocData = $this->_scrubQueryData($assocData);
 
 		if ($external && !empty($assocData['finderQuery'])) {
