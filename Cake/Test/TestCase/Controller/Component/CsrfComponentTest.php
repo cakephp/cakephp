@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\Component\CsrfComponent;
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Component\CsrfComponent;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Network\Response;
@@ -60,7 +60,7 @@ class CsrfComponentTest extends TestCase {
 		$controller = $this->getMock('Cake\Controller\Controller');
 		$controller->request = new Request(['base' => '/dir']);
 		$controller->response = new Response();
-		
+
 		$event = new Event('Controller.startup', $controller);
 		$this->component->startUp($event);
 

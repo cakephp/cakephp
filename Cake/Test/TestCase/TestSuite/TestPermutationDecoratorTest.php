@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\TestSuite;
 
 use Cake\TestSuite\TestPermutationDecorator;
 use \PHPUnit_Extensions_TestDecorator;
-use \PHPUnit_Framework_TestResult;
 use \PHPUnit_Framework_Test;
+use \PHPUnit_Framework_TestResult;
 
 /**
  * TestPermutationTest
