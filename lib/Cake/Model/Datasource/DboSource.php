@@ -1505,69 +1505,89 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Generates an array representing a query or part of a query from a single model or two associated models
+ * Prepares fields required by an SQL statement.
  *
- * @param Model $model
- * @param Model $linkModel
- * @param string $type
+ * When no fields are set, all the $Model fields are returned.
+ *
+ * @param Model $Model
+ * @param array $queryData
+ * @return array Array containing SQL fields.
+ */
+	public function prepareFields(Model $Model, $queryData) {
+		if (empty($queryData['fields'])) {
+			$queryData['fields'] = $this->fields($Model);
+
+		// hasMany relationships need the $Model primary key.
+		} elseif (!empty($Model->hasMany) && $Model->recursive > -1) {
+			$assocFields = $this->fields($Model, null, "{$Model->alias}.{$Model->primaryKey}");
+			$passedFields = $queryData['fields'];
+
+			if (
+				count($passedFields) > 1 ||
+				(strpos($passedFields[0], $assocFields[0]) === false && !preg_match('/^[a-z]+\(/i', $passedFields[0]))
+			) {
+				$queryData['fields'] = array_merge($passedFields, $assocFields);
+			}
+		}
+
+		return array_unique($queryData['fields']);
+	}
+
+/**
+ * Builds an SQL statement.
+ *
+ * @param Model $Model
+ * @param array $queryData
+ * @return string String containing an SQL statement.
+ */
+	public function buildAssociationQuery(Model $Model, &$queryData) {
+		$queryData = $this->_scrubQueryData($queryData);
+
+		return $this->buildStatement(
+			array(
+				'fields' => $this->prepareFields($Model, $queryData),
+				'table' => $this->fullTableName($Model),
+				'alias' => $Model->alias,
+				'limit' => $queryData['limit'],
+				'offset' => $queryData['offset'],
+				'joins' => $queryData['joins'],
+				'conditions' => $queryData['conditions'],
+				'order' => $queryData['order'],
+				'group' => $queryData['group']
+			),
+			$Model
+		);
+	}
+
+/**
+ * Generates an array representing a query or part of a query from a single model or two associated models.
+ *
+ * @param Model $Model
+ * @param Model $linkModel If null
+ * @param string $type Association type, one of the model association types ie. hasMany
  * @param string $association
  * @param array $assocData
  * @param array $queryData
  * @param boolean $external Whether or not the association query is on an external datasource.
  * @return mixed
+ *   String containing an SQL statement, when $linkModel is null.
+ *   True. when $external is false and association $type is 'hasOne' or 'belongsTo'.
  */
-	public function generateAssociationQuery(Model $model, $linkModel, $type, $association, $assocData, &$queryData, $external) {
-		$queryData = $this->_scrubQueryData($queryData);
-		$assocData = $this->_scrubQueryData($assocData);
-		$modelAlias = $model->alias;
-
-		if (empty($queryData['fields'])) {
-			$queryData['fields'] = $this->fields($model, $modelAlias);
-		} elseif (!empty($model->hasMany) && $model->recursive > -1) {
-			$assocFields = $this->fields($model, $modelAlias, array("{$modelAlias}.{$model->primaryKey}"));
-			$passedFields = $queryData['fields'];
-			if (count($passedFields) === 1) {
-				if (strpos($passedFields[0], $assocFields[0]) === false && !preg_match('/^[a-z]+\(/i', $passedFields[0])) {
-					$queryData['fields'] = array_merge($passedFields, $assocFields);
-				} else {
-					$queryData['fields'] = $passedFields;
-				}
-			} else {
-				$queryData['fields'] = array_merge($passedFields, $assocFields);
-			}
-			unset($assocFields, $passedFields);
-		}
-
+	public function generateAssociationQuery(Model $Model, $linkModel, $type, $association, $assocData, &$queryData, $external) {
 		if ($linkModel === null) {
-			return $this->buildStatement(
-				array(
-					'fields' => array_unique($queryData['fields']),
-					'table' => $this->fullTableName($model),
-					'alias' => $modelAlias,
-					'limit' => $queryData['limit'],
-					'offset' => $queryData['offset'],
-					'joins' => $queryData['joins'],
-					'conditions' => $queryData['conditions'],
-					'order' => $queryData['order'],
-					'group' => $queryData['group']
-				),
-				$model
-			);
+			return $this->buildAssociationQuery($Model, $queryData);
 		}
+
+		$assocData = $this->_scrubQueryData($assocData);
 
 		if ($external && !empty($assocData['finderQuery'])) {
 			return $assocData['finderQuery'];
 		}
 
-		$self = $model->name === $linkModel->name;
-		$fields = array();
-
-		if ($external || (in_array($type, array('hasOne', 'belongsTo')) && $assocData['fields'] !== false)) {
-			$fields = $this->fields($linkModel, $association, $assocData['fields']);
-		}
-
-		if (empty($assocData['offset']) && !empty($assocData['page'])) {
-			$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
+		if (in_array($type, array('hasMany', 'hasAndBelongsToMany'))) {
+			if (empty($assocData['offset']) && !empty($assocData['page'])) {
+				$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
+			}
 		}
 
 		switch ($type) {
@@ -1575,10 +1595,13 @@ class DboSource extends DataSource {
 			case 'belongsTo':
 				$conditions = $this->_mergeConditions(
 					$assocData['conditions'],
-					$this->getConstraint($type, $model, $linkModel, $association, array_merge($assocData, compact('external', 'self')))
+					$this->getConstraint($type, $Model, $linkModel, $association, array_merge($assocData, compact('external', 'self')))
 				);
 
+				$self = ($Model->name === $linkModel->name);
+
 				if (!$self && $external) {
+					$modelAlias = $Model->alias;
 					foreach ($conditions as $key => $condition) {
 						if (is_numeric($key) && strpos($condition, $modelAlias . '.') !== false) {
 							unset($conditions[$key]);
@@ -1590,7 +1613,7 @@ class DboSource extends DataSource {
 					$query = array_merge($assocData, array(
 						'conditions' => $conditions,
 						'table' => $this->fullTableName($linkModel),
-						'fields' => $fields,
+						'fields' => $this->fields($linkModel, $association, $assocData['fields']),
 						'alias' => $association,
 						'group' => null
 					));
@@ -1599,16 +1622,26 @@ class DboSource extends DataSource {
 						'table' => $linkModel,
 						'alias' => $association,
 						'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
-						'conditions' => trim($this->conditions($conditions, true, false, $model))
+						'conditions' => trim($this->conditions($conditions, true, false, $Model))
 					);
-					$queryData['fields'] = array_merge($queryData['fields'], $fields);
+
+					$queryData = $this->_scrubQueryData($queryData);
+
+					$fields = array();
+					if ($assocData['fields'] !== false) {
+						$fields = $this->fields($linkModel, $association, $assocData['fields']);
+					}
+
+					$queryData['fields'] = array_merge($this->prepareFields($Model, $queryData), $fields);
 
 					if (!empty($assocData['order'])) {
 						$queryData['order'][] = $assocData['order'];
 					}
+
 					if (!in_array($join, $queryData['joins'])) {
 						$queryData['joins'][] = $join;
 					}
+
 					return true;
 				}
 				break;
@@ -1617,8 +1650,9 @@ class DboSource extends DataSource {
 				if (!empty($assocData['foreignKey'])) {
 					$assocData['fields'] = array_merge($assocData['fields'], $this->fields($linkModel, $association, array("{$association}.{$assocData['foreignKey']}")));
 				}
+
 				$query = array(
-					'conditions' => $this->_mergeConditions($this->getConstraint('hasMany', $model, $linkModel, $association, $assocData), $assocData['conditions']),
+					'conditions' => $this->_mergeConditions($this->getConstraint('hasMany', $Model, $linkModel, $association, $assocData), $assocData['conditions']),
 					'fields' => array_unique($assocData['fields']),
 					'table' => $this->fullTableName($linkModel),
 					'alias' => $association,
@@ -1634,14 +1668,14 @@ class DboSource extends DataSource {
 
 				if (isset($assocData['with']) && !empty($assocData['with'])) {
 					$joinKeys = array($assocData['foreignKey'], $assocData['associationForeignKey']);
-					list($with, $joinFields) = $model->joinModel($assocData['with'], $joinKeys);
+					list($with, $joinFields) = $Model->joinModel($assocData['with'], $joinKeys);
 
-					$joinTbl = $model->{$with};
+					$joinTbl = $Model->{$with};
 					$joinAlias = $joinTbl;
 
 					if (is_array($joinFields) && !empty($joinFields)) {
-						$joinAssoc = $joinAlias = $model->{$with}->alias;
-						$joinFields = $this->fields($model->{$with}, $joinAlias, $joinFields);
+						$joinAssoc = $joinAlias = $joinTbl->alias;
+						$joinFields = $this->fields($joinTbl, $joinAlias, $joinFields);
 					} else {
 						$joinFields = array();
 					}
@@ -1649,6 +1683,7 @@ class DboSource extends DataSource {
 					$joinTbl = $assocData['joinTable'];
 					$joinAlias = $this->fullTableName($assocData['joinTable']);
 				}
+
 				$query = array(
 					'conditions' => $assocData['conditions'],
 					'limit' => $assocData['limit'],
@@ -1661,14 +1696,14 @@ class DboSource extends DataSource {
 					'joins' => array(array(
 						'table' => $joinTbl,
 						'alias' => $joinAssoc,
-						'conditions' => $this->getConstraint('hasAndBelongsToMany', $model, $linkModel, $joinAlias, $assocData, $association)
+						'conditions' => $this->getConstraint('hasAndBelongsToMany', $Model, $linkModel, $joinAlias, $assocData, $association)
 					))
 				);
 				break;
 		}
 
 		if (isset($query)) {
-			return $this->buildStatement($query, $model);
+			return $this->buildStatement($query, $Model);
 		}
 
 		return null;
