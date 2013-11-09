@@ -62,21 +62,21 @@ class QueryTest extends TestCase {
 		];
 
 		$this->table = $table = TableRegistry::get('foo', ['schema' => $schema]);
-		$clients = TableRegistry::get('client', ['schema' => $schema1]);
-		$orders = TableRegistry::get('order', ['schema' => $schema2]);
-		$companies = TableRegistry::get('company', ['schema' => $schema, 'table' => 'organizations']);
-		$orderTypes = TableRegistry::get('orderType', ['schema' => $schema]);
+		$clients = TableRegistry::get('clients', ['schema' => $schema1]);
+		$orders = TableRegistry::get('orders', ['schema' => $schema2]);
+		$companies = TableRegistry::get('companies', ['schema' => $schema, 'table' => 'organizations']);
+		$orderTypes = TableRegistry::get('orderTypes', ['schema' => $schema]);
 		$stuff = TableRegistry::get('stuff', ['schema' => $schema, 'table' => 'things']);
-		$stuffTypes = TableRegistry::get('stuffType', ['schema' => $schema]);
-		$categories = TableRegistry::get('category', ['schema' => $schema]);
+		$stuffTypes = TableRegistry::get('stuffTypes', ['schema' => $schema]);
+		$categories = TableRegistry::get('categories', ['schema' => $schema]);
 
-		$table->belongsTo('client');
-		$clients->hasOne('order');
-		$clients->belongsTo('company');
-		$orders->belongsTo('orderType');
+		$table->belongsTo('clients');
+		$clients->hasOne('orders');
+		$clients->belongsTo('companies');
+		$orders->belongsTo('orderTypes');
 		$orders->hasOne('stuff');
-		$stuff->belongsTo('stuffType');
-		$companies->belongsTo('category');
+		$stuff->belongsTo('stuffTypes');
+		$companies->belongsTo('categories');
 	}
 
 /**
@@ -96,14 +96,14 @@ class QueryTest extends TestCase {
  **/
 	public function testContainToJoinsOneLevel() {
 		$contains = [
-			'client' => [
-			'order' => [
-					'orderType',
-					'stuff' => ['stuffType']
+			'clients' => [
+			'orders' => [
+					'orderTypes',
+					'stuff' => ['stuffTypes']
 				],
-				'company' => [
+				'companies' => [
 					'foreignKey' => 'organization_id',
-					'category'
+					'categories'
 				]
 			]
 		];
@@ -111,31 +111,31 @@ class QueryTest extends TestCase {
 		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
 
 		$query->expects($this->at(0))->method('join')
-			->with(['client' => [
+			->with(['clients' => [
 				'table' => 'clients',
 				'type' => 'LEFT',
 				'conditions' => [
-					['client.id' => new IdentifierExpression('foo.client_id')]
+					['clients.id' => new IdentifierExpression('foo.client_id')]
 				]
 			]])
 			->will($this->returnValue($query));
 
 		$query->expects($this->at(1))->method('join')
-			->with(['order' => [
+			->with(['orders' => [
 				'table' => 'orders',
 				'type' => 'INNER',
 				'conditions' => [
-					['client.id' => new IdentifierExpression('order.client_id')]
+					['clients.id' => new IdentifierExpression('orders.client_id')]
 				]
 			]])
 			->will($this->returnValue($query));
 
 		$query->expects($this->at(2))->method('join')
-			->with(['orderType' => [
+			->with(['orderTypes' => [
 				'table' => 'order_types',
 				'type' => 'LEFT',
 				'conditions' => [
-					['orderType.id' => new IdentifierExpression('order.order_type_id')]
+					['orderTypes.id' => new IdentifierExpression('orders.order_type_id')]
 				]
 			]])
 			->will($this->returnValue($query));
@@ -145,37 +145,37 @@ class QueryTest extends TestCase {
 				'table' => 'things',
 				'type' => 'INNER',
 				'conditions' => [
-					['order.id' => new IdentifierExpression('stuff.order_id')]
+					['orders.id' => new IdentifierExpression('stuff.order_id')]
 				]
 			]])
 			->will($this->returnValue($query));
 
 		$query->expects($this->at(4))->method('join')
-			->with(['stuffType' => [
+			->with(['stuffTypes' => [
 				'table' => 'stuff_types',
 				'type' => 'LEFT',
 				'conditions' => [
-					['stuffType.id' => new IdentifierExpression('stuff.stuff_type_id')]
+					['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')]
 				]
 			]])
 			->will($this->returnValue($query));
 
 		$query->expects($this->at(5))->method('join')
-			->with(['company' => [
+			->with(['companies' => [
 				'table' => 'organizations',
 				'type' => 'LEFT',
 				'conditions' => [
-					['company.id' => new IdentifierExpression('client.organization_id')]
+					['companies.id' => new IdentifierExpression('clients.organization_id')]
 				]
 			]])
 			->will($this->returnValue($query));
 
 		$query->expects($this->at(6))->method('join')
-			->with(['category' => [
+			->with(['categories' => [
 				'table' => 'categories',
 				'type' => 'LEFT',
 				'conditions' => [
-					['category.id' => new IdentifierExpression('company.category_id')]
+					['categories.id' => new IdentifierExpression('companies.category_id')]
 				]
 			]])
 			->will($this->returnValue($query));
@@ -192,9 +192,9 @@ class QueryTest extends TestCase {
  **/
 	public function testContainToFieldsPredefined() {
 		$contains = [
-			'client' => [
-				'fields' => ['name', 'company_id', 'client.telephone'],
-				'order' => [
+			'clients' => [
+				'fields' => ['name', 'company_id', 'clients.telephone'],
+				'orders' => [
 					'fields' => ['total', 'placed']
 				]
 			]
@@ -206,10 +206,10 @@ class QueryTest extends TestCase {
 		$query->select('foo.id')->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
-			'foo__id' => 'foo.id', 'client__name' => 'client.name',
-			'client__company_id' => 'client.company_id',
-			'client__telephone' => 'client.telephone',
-			'order__total' => 'order.total', 'order__placed' => 'order.placed'
+			'foo__id' => 'foo.id', 'clients__name' => 'clients.name',
+			'clients__company_id' => 'clients.company_id',
+			'clients__telephone' => 'clients.telephone',
+			'orders__total' => 'orders.total', 'orders__placed' => 'orders.placed'
 		];
 		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
@@ -222,38 +222,38 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testContainToFieldsDefault() {
-		$contains = ['client' => ['order']];
+		$contains = ['clients' => ['orders']];
 
 		$query = new Query($this->connection, $this->table);
 		$query->select()->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
-			'foo__id' => 'foo.id', 'client__name' => 'client.name',
-			'client__id' => 'client.id', 'client__phone' => 'client.phone',
-			'order__id' => 'order.id', 'order__total' => 'order.total',
-			'order__placed' => 'order.placed'
+			'foo__id' => 'foo.id', 'clients__name' => 'clients.name',
+			'clients__id' => 'clients.id', 'clients__phone' => 'clients.phone',
+			'orders__id' => 'orders.id', 'orders__total' => 'orders.total',
+			'orders__placed' => 'orders.placed'
 		];
 		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
 
-		$contains['client']['fields'] = ['name'];
+		$contains['clients']['fields'] = ['name'];
 		$query = new Query($this->connection, $this->table);
 		$query->select('foo.id')->contain($contains)->sql();
 		$select = $query->clause('select');
-		$expected = ['foo__id' => 'foo.id', 'client__name' => 'client.name'];
+		$expected = ['foo__id' => 'foo.id', 'clients__name' => 'clients.name'];
 		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
 
-		$contains['client']['fields'] = [];
-		$contains['client']['order']['fields'] = false;
+		$contains['clients']['fields'] = [];
+		$contains['clients']['orders']['fields'] = false;
 		$query = new Query($this->connection, $this->table);
 		$query->select()->contain($contains)->sql();
 		$select = $query->clause('select');
 		$expected = [
 			'foo__id' => 'foo.id',
-			'client__id' => 'client.id',
-			'client__name' => 'client.name',
-			'client__phone' => 'client.phone',
+			'clients__id' => 'clients.id',
+			'clients__name' => 'clients.name',
+			'clients__phone' => 'clients.phone',
 		];
 		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
@@ -286,14 +286,14 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testContainResultFetchingOneLevel() {
-		$table = TableRegistry::get('article', ['table' => 'articles']);
-		$table->belongsTo('author');
+		$table = TableRegistry::get('articles', ['table' => 'articles']);
+		$table->belongsTo('authors');
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->contain('author')
+			->contain('authors')
 			->hydrate(false)
-			->order(['article.id' => 'asc'])
+			->order(['articles.id' => 'asc'])
 			->toArray();
 		$expected = [
 			[
@@ -352,17 +352,17 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHasManyEagerLoadingNoHydration($strategy) {
-		$table = TableRegistry::get('author');
-		TableRegistry::get('article');
-		$table->hasMany('article', [
+		$table = TableRegistry::get('authors');
+		TableRegistry::get('articles');
+		$table->hasMany('articles', [
 			'property' => 'articles',
 			'strategy' => $strategy,
-			'sort' => ['article.id' => 'asc']
+			'sort' => ['articles.id' => 'asc']
 		]);
 		$query = new Query($this->connection, $table);
 
 		$results = $query->select()
-			->contain('article')
+			->contain('articles')
 			->hydrate(false)
 			->toArray();
 		$expected = [
@@ -412,12 +412,12 @@ class QueryTest extends TestCase {
 
 		$results = $query->repository($table)
 			->select()
-			->contain(['article' => ['conditions' => ['id' => 2]]])
+			->contain(['articles' => ['conditions' => ['id' => 2]]])
 			->hydrate(false)
 			->toArray();
 		unset($expected[0]['articles']);
 		$this->assertEquals($expected, $results);
-		$this->assertEquals($table->association('article')->strategy(), $strategy);
+		$this->assertEquals($table->association('articles')->strategy(), $strategy);
 	}
 
 /**
@@ -427,14 +427,14 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy) {
-		$table = TableRegistry::get('author');
-		TableRegistry::get('article');
-		$table->hasMany('article', ['property' => 'articles'] + compact('strategy'));
+		$table = TableRegistry::get('authors');
+		TableRegistry::get('articles');
+		$table->hasMany('articles', ['property' => 'articles'] + compact('strategy'));
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
 			->contain([
-				'article' => [
+				'articles' => [
 					'fields' => ['title', 'author_id'],
 					'sort' => ['id' => 'DESC']
 				]
@@ -476,18 +476,18 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHasManyEagerLoadingDeep($strategy) {
-		$table = TableRegistry::get('author');
-		$article = TableRegistry::get('article');
-		$table->hasMany('article', [
+		$table = TableRegistry::get('authors');
+		$article = TableRegistry::get('articles');
+		$table->hasMany('articles', [
 			'property' => 'articles',
 			'stratgey' => $strategy,
-			'sort' => ['article.id' => 'asc']
+			'sort' => ['articles.id' => 'asc']
 		]);
-		$article->belongsTo('author');
+		$article->belongsTo('authors');
 		$query = new Query($this->connection, $table);
 
 		$results = $query->select()
-			->contain(['article' => ['author']])
+			->contain(['articles' => ['authors']])
 			->hydrate(false)
 			->toArray();
 		$expected = [
@@ -547,18 +547,18 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHasManyEagerLoadingFromSecondaryTable($strategy) {
-		$author = TableRegistry::get('author');
-		$article = TableRegistry::get('article');
-		$post = TableRegistry::get('post');
+		$author = TableRegistry::get('authors');
+		$article = TableRegistry::get('articles');
+		$post = TableRegistry::get('posts');
 
-		$author->hasMany('post', ['property' => 'posts'] + compact('strategy'));
-		$article->belongsTo('author');
+		$author->hasMany('posts', compact('strategy'));
+		$article->belongsTo('authors');
 
 		$query = new Query($this->connection, $article);
 
 		$results = $query->select()
-			->contain(['author' => ['post']])
-			->order(['article.id' => 'ASC'])
+			->contain(['authors' => ['posts']])
+			->order(['articles.id' => 'ASC'])
 			->hydrate(false)
 			->toArray();
 		$expected = [
@@ -649,15 +649,15 @@ class QueryTest extends TestCase {
  * @return void
  **/
 	public function testBelongsToManyEagerLoadingNoHydration($strategy) {
-		$table = TableRegistry::get('Article');
-		TableRegistry::get('Tag');
-		TableRegistry::get('ArticleTag', [
+		$table = TableRegistry::get('Articles');
+		TableRegistry::get('Tags');
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags'
 		]);
-		$table->belongsToMany('Tag', ['property' => 'tags', 'strategy' => $strategy]);
+		$table->belongsToMany('Tags', ['strategy' => $strategy]);
 		$query = new Query($this->connection, $table);
 
-		$results = $query->select()->contain('Tag')->hydrate(false)->toArray();
+		$results = $query->select()->contain('Tags')->hydrate(false)->toArray();
 		$expected = [
 			[
 				'id' => 1,
@@ -669,12 +669,12 @@ class QueryTest extends TestCase {
 					[
 						'id' => 1,
 						'name' => 'tag1',
-						'ArticlesTag' => ['article_id' => 1, 'tag_id' => 1]
+						'articles_tags' => ['article_id' => 1, 'tag_id' => 1]
 					],
 					[
 						'id' => 2,
 						'name' => 'tag2',
-						'ArticlesTag' => ['article_id' => 1, 'tag_id' => 2]
+						'articles_tags' => ['article_id' => 1, 'tag_id' => 2]
 					]
 				]
 			],
@@ -688,12 +688,12 @@ class QueryTest extends TestCase {
 					[
 						'id' => 1,
 						'name' => 'tag1',
-						'ArticlesTag' => ['article_id' => 2, 'tag_id' => 1]
+						'articles_tags' => ['article_id' => 2, 'tag_id' => 1]
 					],
 					[
 						'id' => 3,
 						'name' => 'tag3',
-						'ArticlesTag' => ['article_id' => 2, 'tag_id' => 3]
+						'articles_tags' => ['article_id' => 2, 'tag_id' => 3]
 					]
 				]
 			],
@@ -708,7 +708,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $results);
 
 		$results = $query->select()
-			->contain(['Tag' => ['conditions' => ['id' => 3]]])
+			->contain(['Tags' => ['conditions' => ['id' => 3]]])
 			->hydrate(false)
 			->toArray();
 		$expected = [
@@ -729,7 +729,7 @@ class QueryTest extends TestCase {
 					[
 						'id' => 3,
 						'name' => 'tag3',
-						'ArticlesTag' => ['article_id' => 2, 'tag_id' => 3]
+						'articles_tags' => ['article_id' => 2, 'tag_id' => 3]
 					]
 				]
 			],
@@ -742,7 +742,7 @@ class QueryTest extends TestCase {
 			],
 		];
 		$this->assertEquals($expected, $results);
-		$this->assertEquals($table->association('Tag')->strategy(), $strategy);
+		$this->assertEquals($table->association('Tags')->strategy(), $strategy);
 	}
 
 /**
@@ -752,16 +752,16 @@ class QueryTest extends TestCase {
  */
 	public function testFilteringByHasManyNoHydration() {
 		$query = new Query($this->connection, $this->table);
-		$table = TableRegistry::get('author');
-		TableRegistry::get('article');
-		$table->hasMany('article', ['property' => 'articles']);
+		$table = TableRegistry::get('authors');
+		TableRegistry::get('articles');
+		$table->hasMany('articles');
 
 		$results = $query->repository($table)
 			->select()
 			->hydrate(false)
-			->contain(['article' => [
+			->contain(['articles' => [
 				'matching' => true,
-				'conditions' => ['article.id' => 2]
+				'conditions' => ['articles.id' => 2]
 			]])
 			->toArray();
 		$expected = [
@@ -789,17 +789,17 @@ class QueryTest extends TestCase {
  **/
 	public function testFilteringByBelongsToManyNoHydration() {
 		$query = new Query($this->connection, $this->table);
-		$table = TableRegistry::get('Article');
-		TableRegistry::get('Tag');
-		TableRegistry::get('ArticleTag', [
+		$table = TableRegistry::get('Articles');
+		TableRegistry::get('Tags');
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags'
 		]);
-		$table->belongsToMany('Tag', ['property' => 'tags']);
+		$table->belongsToMany('Tags');
 
 		$results = $query->repository($table)->select()
-			->contain(['Tag' => [
+			->contain(['Tags' => [
 				'matching' => true,
-				'conditions' => ['Tag.id' => 3]
+				'conditions' => ['Tags.id' => 3]
 			]])
 			->hydrate(false)
 			->toArray();
@@ -820,9 +820,9 @@ class QueryTest extends TestCase {
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->contain(['Tag' => [
+			->contain(['Tags' => [
 				'matching' => true,
-				'conditions' => ['Tag.name' => 'tag2']]
+				'conditions' => ['Tags.name' => 'tag2']]
 			])
 			->hydrate(false)
 			->toArray();
@@ -861,7 +861,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testBufferResults() {
-		$table = TableRegistry::get('article', ['table' => 'articles']);
+		$table = TableRegistry::get('articles', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 
 		$result = $query->select()->bufferResults();
@@ -1062,7 +1062,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstDirtyQuery() {
-		$table = TableRegistry::get('article', ['table' => 'articles']);
+		$table = TableRegistry::get('articles', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$result = $query->select(['id'])->hydrate(false)->first();
 		$this->assertEquals(['id' => 1], $result);
@@ -1077,7 +1077,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstCleanQuery() {
-		$table = TableRegistry::get('article', ['table' => 'articles']);
+		$table = TableRegistry::get('articles', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$query->select(['id'])->toArray();
 
@@ -1092,7 +1092,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstSameResult() {
-		$table = TableRegistry::get('article', ['table' => 'articles']);
+		$table = TableRegistry::get('articles', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$query->select(['id'])->toArray();
 
@@ -1108,7 +1108,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateSimple() {
-		$table = TableRegistry::get('article', ['table' => 'articles']);
+		$table = TableRegistry::get('articles', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$results = $query->select()->execute()->toArray();
 
@@ -1131,15 +1131,15 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateWithHasMany() {
-		$table = TableRegistry::get('author');
-		TableRegistry::get('article');
-		$table->hasMany('article', [
+		$table = TableRegistry::get('authors');
+		TableRegistry::get('articles');
+		$table->hasMany('articles', [
 			'property' => 'articles',
-			'sort' => ['article.id' => 'asc']
+			'sort' => ['articles.id' => 'asc']
 		]);
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->contain('article')
+			->contain('articles')
 			->toArray();
 
 		$first = $results[0];
@@ -1172,17 +1172,17 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateBelongsToMany() {
-		$table = TableRegistry::get('Article');
-		TableRegistry::get('Tag');
-		TableRegistry::get('ArticlesTag', [
+		$table = TableRegistry::get('Articles');
+		TableRegistry::get('Tags');
+		TableRegistry::get('ArticlesTags', [
 			'table' => 'articles_tags'
 		]);
-		$table->belongsToMany('Tag', ['property' => 'tags']);
+		$table->belongsToMany('Tags');
 		$query = new Query($this->connection, $table);
 
 		$results = $query
 			->select()
-			->contain('Tag')
+			->contain('Tags')
 			->toArray();
 
 		$first = $results[0];
@@ -1196,7 +1196,7 @@ class QueryTest extends TestCase {
 		$expected = [
 			'id' => 1,
 			'name' => 'tag1',
-			'ArticlesTag' => $articleTag
+			'articles_tags' => $articleTag
 		];
 		$this->assertEquals($expected, $first->tags[0]->toArray());
 
@@ -1205,7 +1205,7 @@ class QueryTest extends TestCase {
 		$expected = [
 			'id' => 2,
 			'name' => 'tag2',
-			'ArticlesTag' => $articleTag
+			'articles_tags' => $articleTag
 		];
 		$this->assertEquals($expected, $first->tags[1]->toArray());
 	}
@@ -1216,14 +1216,14 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateBelongsTo() {
-		$table = TableRegistry::get('article', ['table' => 'articles']);
-		TableRegistry::get('author');
-		$table->belongsTo('author');
+		$table = TableRegistry::get('articles');
+		TableRegistry::get('authors');
+		$table->belongsTo('authors');
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->contain('author')
-			->order(['article.id' => 'asc'])
+			->contain('authors')
+			->order(['articles.id' => 'asc'])
 			->toArray();
 
 		$this->assertCount(3, $results);
@@ -1239,17 +1239,17 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testHydrateDeep() {
-		$table = TableRegistry::get('author');
-		$article = TableRegistry::get('article');
-		$table->hasMany('article', [
+		$table = TableRegistry::get('authors');
+		$article = TableRegistry::get('articles');
+		$table->hasMany('articles', [
 			'property' => 'articles',
-			'sort' => ['article.id' => 'asc']
+			'sort' => ['articles.id' => 'asc']
 		]);
-		$article->belongsTo('author');
+		$article->belongsTo('authors');
 		$query = new Query($this->connection, $table);
 
 		$results = $query->select()
-			->contain(['article' => ['author']])
+			->contain(['articles' => ['authors']])
 			->toArray();
 
 		$this->assertCount(4, $results);
@@ -1267,7 +1267,7 @@ class QueryTest extends TestCase {
  */
 	public function testHydrateCustomObject() {
 		$class = $this->getMockClass('\Cake\ORM\Entity', ['fakeMethod']);
-		$table = TableRegistry::get('article', [
+		$table = TableRegistry::get('articles', [
 			'table' => 'articles',
 			'entityClass' => '\\' . $class
 		]);
@@ -1296,19 +1296,19 @@ class QueryTest extends TestCase {
 	public function testHydrateWithHasManyCustomEntity() {
 		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
 		$articleEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
-		$table = TableRegistry::get('author', [
+		$table = TableRegistry::get('authors', [
 			'entityClass' => '\\' . $authorEntity
 		]);
-		TableRegistry::get('article', [
+		TableRegistry::get('articles', [
 			'entityClass' => '\\' . $articleEntity
 		]);
-		$table->hasMany('article', [
+		$table->hasMany('articles', [
 			'property' => 'articles',
-			'sort' => ['article.id' => 'asc']
+			'sort' => ['articles.id' => 'asc']
 		]);
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->contain('article')
+			->contain('articles')
 			->toArray();
 
 		$first = $results[0];
@@ -1335,16 +1335,16 @@ class QueryTest extends TestCase {
  */
 	public function testHydrateBelongsToCustomEntity() {
 		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
-		$table = TableRegistry::get('article', ['table' => 'articles']);
-		TableRegistry::get('author', [
+		$table = TableRegistry::get('articles');
+		TableRegistry::get('authors', [
 			'entityClass' => '\\' . $authorEntity
 		]);
-		$table->belongsTo('author');
+		$table->belongsTo('authors');
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->contain('author')
-			->order(['article.id' => 'asc'])
+			->contain('authors')
+			->order(['articles.id' => 'asc'])
 			->toArray();
 
 		$first = $results[0];
