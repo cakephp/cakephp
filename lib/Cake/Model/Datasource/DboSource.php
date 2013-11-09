@@ -1203,7 +1203,8 @@ class DboSource extends DataSource {
 			unset($stack['_joined']);
 		}
 
-		if (!$query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external)) {
+		$query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external);
+		if (empty($query)) {
 			return;
 		}
 
