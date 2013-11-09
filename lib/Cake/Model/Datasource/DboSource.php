@@ -1056,7 +1056,6 @@ class DboSource extends DataSource {
 
 		// Generate hasOne and belongsTo associations inside $queryData
 		$linkedModels = array();
-		$null = null;
 		foreach ($_associations as $type) {
 			if ($type !== 'hasOne' && $type !== 'belongsTo') {
 				continue;
@@ -1073,14 +1072,14 @@ class DboSource extends DataSource {
 				if ($bypass) {
 					$assocData['fields'] = false;
 				}
-				if ($this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external, $null) === true) {
+				if ($this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external) === true) {
 					$linkedModels[$type . '/' . $assoc] = true;
 				}
 			}
 		}
 
 		// Build SQL statement with the primary model, plus hasOne and belongsTo associations
-		$query = $this->generateAssociationQuery($model, null, null, null, null, $queryData, false, $null);
+		$query = $this->generateAssociationQuery($model, null, null, null, null, $queryData, false);
 		$resultSet = $this->fetchAll($query, $model->cacheQueries);
 		unset($query);
 
@@ -1204,7 +1203,7 @@ class DboSource extends DataSource {
 			unset($stack['_joined']);
 		}
 
-		if (!$query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external, $resultSet)) {
+		if (!$query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external)) {
 			return;
 		}
 
@@ -1513,11 +1512,10 @@ class DboSource extends DataSource {
  * @param string $association
  * @param array $assocData
  * @param array $queryData
- * @param boolean $external
- * @param array $resultSet
+ * @param boolean $external Whether or not the association query is on an external datasource.
  * @return mixed
  */
-	public function generateAssociationQuery(Model $model, $linkModel, $type, $association, $assocData, &$queryData, $external, &$resultSet) {
+	public function generateAssociationQuery(Model $model, $linkModel, $type, $association, $assocData, &$queryData, $external) {
 		$queryData = $this->_scrubQueryData($queryData);
 		$assocData = $this->_scrubQueryData($assocData);
 		$modelAlias = $model->alias;
