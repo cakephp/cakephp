@@ -90,8 +90,8 @@ class SecurityComponent extends Component {
 
 /**
  * Actions to exclude from POST validation checks.
- * Other checks like requireAuth(), requireSecure(),
- * requirePost(), requireGet() etc. will still be applied.
+ * Other checks like requireAuth(), requireSecure()
+ * etc. will still be applied.
  *
  * @var array
  */
