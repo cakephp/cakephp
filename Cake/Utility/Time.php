@@ -136,7 +136,8 @@ class Time {
  */
 	public static function convertSpecifiers($format, $time = null) {
 		if (!$time) {
-			$time = time();
+			$dateTime = new \DateTime;
+			$time = $dateTime->getTimestamp();
 		}
 		static::$_time = $time;
 		return preg_replace_callback('/\%(\w+)/', array(__CLASS__, '_translateSpecifier'), $format);
@@ -356,7 +357,8 @@ class Time {
  */
 	public static function nice($dateString = null, $timezone = null, $format = null) {
 		if (!$dateString) {
-			$dateString = time();
+			$dateTime = new \DateTime;
+			$dateString = $dateTime->getTimestamp();
 		}
 		$date = static::fromString($dateString, $timezone);
 
@@ -383,7 +385,8 @@ class Time {
  */
 	public static function niceShort($dateString = null, $timezone = null) {
 		if (!$dateString) {
-			$dateString = time();
+			$dateTime = new \DateTime;
+			$dateString = $dateTime->getTimestamp();
 		}
 		$date = static::fromString($dateString, $timezone);
 
@@ -476,7 +479,8 @@ class Time {
  */
 	public static function isFuture($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
-		return $timestamp > time();
+		$dateTime = new \DateTime;
+		return $timestamp > $dateTime->getTimestamp();
 	}
 
 /**
@@ -489,7 +493,8 @@ class Time {
  */
 	public static function isPast($dateString, $timezone = null) {
 		$timestamp = static::fromString($dateString, $timezone);
-		return $timestamp < time();
+		$dateTime = new \DateTime;
+		return $timestamp < $dateTime->getTimestamp();
 	}
 
 /**
@@ -970,7 +975,8 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::gmt
  */
 	public static function gmt($dateString = null) {
-		$time = time();
+		$dateTime = new \DateTime;
+		$time = $dateTime->getTimestamp();
 		if ($dateString) {
 			$time = static::fromString($dateString);
 		}
