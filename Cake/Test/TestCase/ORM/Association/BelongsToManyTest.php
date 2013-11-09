@@ -279,8 +279,8 @@ class BelongsToManyTest extends TestCase {
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
@@ -298,14 +298,14 @@ class BelongsToManyTest extends TestCase {
 		$row = ['Articles__id' => 1, 'title' => 'article 1'];
 		$result = $callable($row);
 		$row['Tags__Tags'] = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]]
+			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]]
 		];
 		$this->assertEquals($row, $result);
 
 		$row = ['Articles__id' => 2, 'title' => 'article 2'];
 		$result = $callable($row);
 		$row['Tags__Tags'] = [
-			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
+			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
 		$this->assertEquals($row, $result);
 	}
@@ -336,8 +336,8 @@ class BelongsToManyTest extends TestCase {
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
@@ -388,8 +388,8 @@ class BelongsToManyTest extends TestCase {
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
@@ -501,8 +501,8 @@ class BelongsToManyTest extends TestCase {
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]],
-			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
+			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
@@ -538,14 +538,14 @@ class BelongsToManyTest extends TestCase {
 		]);
 
 		$row['Tags__Tags'] = [
-			['id' => 1, 'name' => 'foo', 'ArticlesTags' => ['article_id' => 1]]
+			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]]
 		];
 		$row['Articles__id'] = 1;
 		$result = $callable($row);
 		$this->assertEquals($row, $result);
 
 		$row['Tags__Tags'] = [
-			['id' => 2, 'name' => 'bar', 'ArticlesTags' => ['article_id' => 2]]
+			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
 		$row['Articles__id'] = 2;
 		$result = $callable($row);
