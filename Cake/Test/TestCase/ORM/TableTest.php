@@ -663,8 +663,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$results = $table->find('all')
 			->select(['id', 'parent_id', 'name'])
 			->hydrate(false)
-			->threaded()
+			->find('threaded')
 			->toArray();
+
 		$this->assertEquals($expected, $results);
 	}
 
@@ -690,7 +691,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table
 			->find('threaded', ['order' => ['name' => 'ASC']])
-			->list(['keyPath' => 'id']);
+			->find('list', ['keyPath' => 'id']);
 		$this->assertSame($query, $result);
 	}
 
@@ -705,7 +706,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'connection' => $this->connection,
 		]);
 		$results = $table->find('all')
-			->threaded()
+			->find('threaded')
 			->select(['id', 'parent_id', 'name'])
 			->toArray();
 
