@@ -416,10 +416,32 @@ class HtmlHelperTest extends CakeTestCase {
 
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
+	}
 
+/**
+ * Test image() with query strings.
+ *
+ * @return void
+ */
+	public function testImageQueryString() {
 		$result = $this->Html->image('test.gif?one=two&three=four');
 		$this->assertTags($result, array('img' => array('src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '')));
 
+		$result = $this->Html->image(array(
+			'controller' => 'images',
+			'action' => 'display',
+			'test',
+			'?' => array('one' => 'two', 'three' => 'four')
+		));
+		$this->assertTags($result, array('img' => array('src' => '/images/display/test?one=two&amp;three=four', 'alt' => '')));
+	}
+
+/**
+ * Test that image works with pathPrefix.
+ *
+ * @return void
+ */
+	public function testImagePathPrefix() {
 		$result = $this->Html->image('test.gif', array('pathPrefix' => '/my/custom/path/'));
 		$this->assertTags($result, array('img' => array('src' => '/my/custom/path/test.gif', 'alt' => '')));
 
