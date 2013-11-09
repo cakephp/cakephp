@@ -149,6 +149,7 @@ class Table {
 	protected static $_validForeignKeyActions = [
 		self::ACTION_CASCADE,
 		self::ACTION_SET_NULL,
+		self::ACTION_SET_DEFAULT,
 		self::ACTION_NO_ACTION,
 		self::ACTION_RESTRICT,
 	];
@@ -162,6 +163,7 @@ class Table {
 
 	const ACTION_CASCADE = 'cascade';
 	const ACTION_SET_NULL = 'setNull';
+	const ACTION_SET_DEFAULT = 'setDefault';
 	const ACTION_NO_ACTION = 'noAction';
 	const ACTION_RESTRICT = 'restrict';
 

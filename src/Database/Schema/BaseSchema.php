@@ -54,6 +54,9 @@ abstract class BaseSchema {
 		if ($on === Table::ACTION_SET_NULL) {
 			return 'SET NULL';
 		}
+		if ($on === Table::ACTION_SET_DEFAULT) {
+			return 'SET DEFAULT';
+		}
 		if ($on === Table::ACTION_CASCADE) {
 			return 'CASCADE';
 		}
