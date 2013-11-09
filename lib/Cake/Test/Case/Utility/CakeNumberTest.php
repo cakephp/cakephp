@@ -775,4 +775,23 @@ class CakeNumberTest extends CakeTestCase {
 		);
 	}
 
+/**
+ * testFractionToCurrency
+ * Even if the fractionSymbol is not specified, 0.2 should remain as 0.2
+ * not change to 20
+ * 
+ * @ return void
+ */
+	public function testFractionToCurrency() {
+		// Using the default USD currency doesn't help because it already sets the
+		// fractionSymbol.
+		// Testing with currency = ''
+		$val = 0.2;
+		$this->assertEquals(
+			number_format($val, 2, '.', ','),
+			$this->Number->currency($val, '', array(
+				'places' => 2, 'decimals' => '.', 'thousands' => ','
+			))
+		);
+	}
 }
