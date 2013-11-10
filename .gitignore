@@ -4,7 +4,7 @@
 /dist
 /tags
 /composer.lock
-/phpunit.xml
+/Cake/phpunit.xml
 /vendor
 
 # OS generated files #
