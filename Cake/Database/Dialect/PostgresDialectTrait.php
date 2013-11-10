@@ -44,6 +44,13 @@ trait PostgresDialectTrait {
 	protected $_endQuote = '"';
 
 /**
+ * The schema dialect class for this driver
+ *
+ * @var \Cake\Database\Schema\PostgresSchema
+ */
+	protected $_schemaDialect;
+
+/**
  * Distinct clause needs no transformation
  *
  * @param Query $query The query to be transformed
@@ -124,6 +131,9 @@ trait PostgresDialectTrait {
  * @return Cake\Database\Schema\PostgresSchema
  */
 	public function schemaDialect() {
-		return new \Cake\Database\Schema\PostgresSchema($this);
+		if (!$this->_schemaDialect) {
+			$this->_schemaDialect = new \Cake\Database\Schema\PostgresSchema($this);
+		}
+		return $this->_schemaDialect;
 	}
 }

@@ -41,6 +41,13 @@ trait MysqlDialectTrait {
 	protected $_endQuote = '`';
 
 /**
+ * The schema dialect class for this driver
+ *
+ * @var \Cake\Database\Schema\MysqlSchema
+ */
+	protected $_schemaDialect;
+
+/**
  * Get the schema dialect.
  *
  * Used by Cake\Schema package to reflect schema and
@@ -49,7 +56,10 @@ trait MysqlDialectTrait {
  * @return Cake\Database\Schema\MysqlSchema
  */
 	public function schemaDialect() {
-		return new \Cake\Database\Schema\MysqlSchema($this);
+		if (!$this->_schemaDialect) {
+			$this->_schemaDialect = new \Cake\Database\Schema\MysqlSchema($this);
+		}
+		return $this->_schemaDialect;
 	}
 
 }

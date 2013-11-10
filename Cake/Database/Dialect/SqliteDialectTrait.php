@@ -40,6 +40,13 @@ trait SqliteDialectTrait {
 	protected $_endQuote = '"';
 
 /**
+ * The schema dialect class for this driver
+ *
+ * @var \Cake\Database\Schema\SqliteSchema
+ */
+	protected $_schemaDialect;
+
+/**
  * Returns an dictionary of expressions to be transformed when compiling a Query
  * to SQL. Array keys are method names to be called in this class
  *
@@ -137,7 +144,10 @@ trait SqliteDialectTrait {
  * @return Cake\Database\Schema\SqliteSchema
  */
 	public function schemaDialect() {
-		return new \Cake\Database\Schema\SqliteSchema($this);
+		if (!$this->_schemaDialect) {
+			$this->_schemaDialect = new \Cake\Database\Schema\SqliteSchema($this);
+		}
+		return $this->_schemaDialect;
 	}
 
 }
