@@ -14,13 +14,13 @@
 
 	<testsuites>
 		<testsuite name="CakePHP Test Suite">
-			<directory>./Test/TestCase/</directory>
-			<exclude>./Test/TestCase/Model/</exclude>
-			<exclude>./Test/TestCase/Database/</exclude>
-			<exclude>./Test/TestCase/ORM/</exclude>
+			<directory>./Cake/Test/TestCase/</directory>
+			<exclude>./Cake/Test/TestCase/Model/</exclude>
+			<exclude>./Cake/Test/TestCase/Database/</exclude>
+			<exclude>./Cake/Test/TestCase/ORM/</exclude>
 		</testsuite>
 		<testsuite name="Database Test Suite">
-			<file>./Test/TestCase/DatabaseSuite.php</file>
+			<file>./Cake/Test/TestCase/DatabaseSuite.php</file>
 		</testsuite>
 	</testsuites>
 	<listeners>
