@@ -67,10 +67,10 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 				$this->returnArgument(0)
 			));
 
-		$connection->expects($this->at(1))->method('exec')->with('Execute this');
-		$connection->expects($this->at(2))->method('exec')->with('this too');
-		$connection->expects($this->at(3))->method('exec')->with('SET config1 value1');
-		$connection->expects($this->at(4))->method('exec')->with('SET config2 value2');
+		$connection->expects($this->at(0))->method('exec')->with('Execute this');
+		$connection->expects($this->at(1))->method('exec')->with('this too');
+		$connection->expects($this->at(2))->method('exec')->with('SET config1 value1');
+		$connection->expects($this->at(3))->method('exec')->with('SET config2 value2');
 
 		$driver->connection($connection);
 		$driver->expects($this->once())->method('_connect')

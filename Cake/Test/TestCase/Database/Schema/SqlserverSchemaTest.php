@@ -147,7 +147,7 @@ SQL;
 	}
 
 /**
- * Test parsing Postgres column types from field description.
+ * Test parsing Sqlserver column types from field description.
  *
  * @dataProvider convertColumnProvider
  * @return void
@@ -175,7 +175,7 @@ SQL;
 	}
 
 /**
- * Test listing tables with Postgres
+ * Test listing tables with Sqlserver
  *
  * @return void
  */
@@ -192,7 +192,7 @@ SQL;
 	}
 
 /**
- * Test describing a table with Postgres
+ * Test describing a table with Sqlserver
  *
  * @return void
  */
@@ -633,7 +633,7 @@ SQL;
  * @return Driver
  */
 	protected function _getMockedDriver() {
-		$driver = new \Cake\Database\Driver\Postgres();
+		$driver = new \Cake\Database\Driver\Sqlserver();
 		$mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
 		$mock->expects($this->any())
 			->method('quote')
