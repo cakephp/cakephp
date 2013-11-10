@@ -87,6 +87,9 @@ class MysqlSchema extends BaseSchema {
 		if (strpos($col, 'int') !== false) {
 			return ['type' => 'integer', 'length' => $length];
 		}
+		if ($col === 'char' && $length === 36) {
+			return ['type' => 'uuid', 'length' => null];
+		}
 		if ($col === 'char') {
 			return ['type' => 'string', 'fixed' => true, 'length' => $length];
 		}

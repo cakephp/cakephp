@@ -98,7 +98,7 @@ class PostgresSchema extends BaseSchema {
 			return ['type' => 'string', 'length' => 39];
 		}
 		if ($col === 'uuid') {
-			return ['type' => 'string', 'fixed' => true, 'length' => 36];
+			return ['type' => 'uuid', 'length' => null];
 		}
 		if ($col === 'char' || $col === 'character') {
 			return ['type' => 'string', 'fixed' => true, 'length' => $length];

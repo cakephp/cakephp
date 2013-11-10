@@ -74,6 +74,10 @@ class SqliteSchemaTest extends TestCase {
 				['type' => 'string', 'fixed' => true, 'length' => 25]
 			],
 			[
+				'CHAR(36)',
+				['type' => 'uuid', 'length' => null]
+			],
+			[
 				'BLOB',
 				['type' => 'binary', 'length' => null]
 			],
