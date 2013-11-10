@@ -82,6 +82,7 @@ class Test3Behavior extends Behavior {
  * verifySettings
  */
 	public function verifySettings() {
+		parent::verifySettings();
 	}
 
 /**
@@ -276,26 +277,9 @@ class BehaviorTest extends TestCase {
 	}
 
 /**
- * testImplementedFinderInvalid
+ * testVerifySettings
  *
- * @expectedException Cake\Error\Exception
- * @expectedExceptionMessage The method findNotDefined is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
- *
- * @return void
- */
-	public function testImplementedFinderInvalid() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$behavior = new Test2Behavior($table, [
-			'implementedFinders' => [
-				'aliased' => 'findNotDefined'
-			]
-		]);
-	}
-
-/**
- * testImplementedMethods
- *
- * Simply don't expect an exception to be thrown
+ * Don't expect an exception to be thrown
  *
  * @return void
  */
@@ -303,16 +287,53 @@ class BehaviorTest extends TestCase {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table);
 		$behavior->verifySettings();
+		$this->assertTrue(true, 'No exception thrown');
 	}
 
 /**
- * testImplementedMethodsOverriden
+ * testVerifySettingsImplementedFindersOverriden
  *
  * Simply don't expect an exception to be thrown
  *
  * @return void
  */
-	public function testVerifySettingsOverriden() {
+	public function testVerifySettingsImplementedFindersOverriden() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedFinders' => [
+				'aliased' => 'findFoo'
+			]
+		]);
+		$behavior->verifySettings();
+		$this->assertTrue(true, 'No exception thrown');
+	}
+
+/**
+ * testVerifyImplementedFindersInvalid
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage The method findNotDefined is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
+ *
+ * @return void
+ */
+	public function testVerifyImplementedFindersInvalid() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedFinders' => [
+				'aliased' => 'findNotDefined'
+			]
+		]);
+		$behavior->verifySettings();
+	}
+
+/**
+ * testVerifySettingsImplementedMethodsOverriden
+ *
+ * Don't expect an exception to be thrown
+ *
+ * @return void
+ */
+	public function testVerifySettingsImplementedMethodsOverriden() {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table);
 		$behavior = new Test2Behavior($table, [
@@ -321,17 +342,18 @@ class BehaviorTest extends TestCase {
 			]
 		]);
 		$behavior->verifySettings();
+		$this->assertTrue(true, 'No exception thrown');
 	}
 
 /**
- * testImplementedMethodsInvalid
+ * testVerifyImplementedMethodsInvalid
  *
  * @expectedException Cake\Error\Exception
  * @expectedExceptionMessage The method iDoNotExist is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
  *
  * @return void
  */
-	public function testVerifySettingsInvalid() {
+	public function testVerifyImplementedMethodsInvalid() {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table, [
 			'implementedMethods' => [

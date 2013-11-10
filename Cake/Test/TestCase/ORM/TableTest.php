@@ -1015,12 +1015,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testCallBehaviorAliasedFinder() {
-		$table = TableRegistry::get('article');
+		$table = TableRegistry::get('articles');
 		$table->addBehavior('Sluggable', ['implementedFinders' => ['special' => 'findNoSlug']]);
-
-		$query = $table->special();
-		$this->assertInstanceOf('Cake\ORM\Query', $query);
-		$this->assertNotEmpty($query->clause('where'));
 
 		$query = $table->find('special');
 		$this->assertInstanceOf('Cake\ORM\Query', $query);
