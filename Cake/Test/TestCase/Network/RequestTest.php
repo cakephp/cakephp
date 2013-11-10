@@ -189,41 +189,52 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testPutParsing() {
-		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$_SERVER['CONTENT_TYPE'] = 'application/x-www-form-urlencoded; charset=UTF-8';
-
 		$data = array(
 			'Article' => array('title')
 		);
-		$request = new Request(array(
-			'input' => 'Article[]=title'
-		));
+		$request = new Request([
+			'input' => 'Article[]=title',
+			'environment' => [
+				'REQUEST_METHOD' => 'PUT',
+				'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
+			]
+		]);
 		$this->assertEquals($data, $request->data);
 
 		$data = array('one' => 1, 'two' => 'three');
-		$request = new Request(array(
-			'input' => 'one=1&two=three'
-		));
+		$request = new Request([
+			'input' => 'one=1&two=three',
+			'environment' => [
+				'REQUEST_METHOD' => 'PUT',
+				'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
+			]
+		]);
 		$this->assertEquals($data, $request->data);
 
-		$_SERVER['REQUEST_METHOD'] = 'DELETE';
-		$request = new Request(array(
-			'input' => 'Article[title]=Testing&action=update'
-		));
+		$request = new Request([
+			'input' => 'Article[title]=Testing&action=update',
+			'environment' => [
+				'REQUEST_METHOD' => 'DELETE',
+				'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
+			]
+		]);
 		$expected = array(
 			'Article' => array('title' => 'Testing'),
 			'action' => 'update'
 		);
 		$this->assertEquals($expected, $request->data);
 
-		$_SERVER['REQUEST_METHOD'] = 'PATCH';
 		$data = array(
 			'Article' => array('title'),
 			'Tag' => array('Tag' => array(1, 2))
 		);
-		$request = new Request(array(
-			'input' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2'
-		));
+		$request = new Request([
+			'input' => 'Article[]=title&Tag[Tag][]=1&Tag[Tag][]=2',
+			'environment' => [
+				'REQUEST_METHOD' => 'PATCH',
+				'CONTENT_TYPE' => 'application/x-www-form-urlencoded; charset=UTF-8'
+			]
+		]);
 		$this->assertEquals($data, $request->data);
 	}
 
@@ -233,12 +244,13 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testPutParsingJSON() {
-		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$_SERVER['CONTENT_TYPE'] = 'application/json';
-
 		$data = '{"Article":["title"]}';
 		$request = new Request([
-			'input' => $data
+			'input' => $data,
+			'environment' => [
+				'REQUEST_METHOD' => 'PUT',
+				'CONTENT_TYPE' => 'application/json'
+			]
 		]);
 		$this->assertEquals([], $request->data);
 		$result = $request->input('json_decode', true);
@@ -528,15 +540,14 @@ class RequestTest extends TestCase {
 	public function testMethodOverrides() {
 		$post = array('_method' => 'POST');
 		$request = new Request(compact('post'));
-		$this->assertEquals(env('REQUEST_METHOD'), 'POST');
+		$this->assertEquals('POST', $request->env('REQUEST_METHOD'));
 
 		$post = array('_method' => 'DELETE');
 		$request = new Request(compact('post'));
-		$this->assertEquals(env('REQUEST_METHOD'), 'DELETE');
+		$this->assertEquals('DELETE', $request->env('REQUEST_METHOD'));
 
-		$_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'PUT';
-		$request = new Request();
-		$this->assertEquals(env('REQUEST_METHOD'), 'PUT');
+		$request = new Request(['environment' => ['HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT']]);
+		$this->assertEquals('PUT', $request->env('REQUEST_METHOD'));
 	}
 
 /**
@@ -545,10 +556,11 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testclientIp() {
-		$_SERVER['HTTP_X_FORWARDED_FOR'] = '192.168.1.5, 10.0.1.1, proxy.com';
-		$_SERVER['HTTP_CLIENT_IP'] = '192.168.1.2';
-		$_SERVER['REMOTE_ADDR'] = '192.168.1.3';
-		$request = new Request();
+		$request = new Request(['environment' => [
+			'HTTP_X_FORWARDED_FOR' => '192.168.1.5, 10.0.1.1, proxy.com',
+			'HTTP_CLIENT_IP' => '192.168.1.2',
+			'REMOTE_ADDR' => '192.168.1.3'
+		]]);
 
 		$request->trustProxy = true;
 		$this->assertEquals('192.168.1.5', $request->clientIp());
@@ -556,13 +568,13 @@ class RequestTest extends TestCase {
 		$request->trustProxy = false;
 		$this->assertEquals('192.168.1.2', $request->clientIp());
 
-		unset($_SERVER['HTTP_X_FORWARDED_FOR']);
+		$request->env('HTTP_X_FORWARDED_FOR', '');
 		$this->assertEquals('192.168.1.2', $request->clientIp());
 
-		unset($_SERVER['HTTP_CLIENT_IP']);
+		$request->env('HTTP_CLIENT_IP', '');
 		$this->assertEquals('192.168.1.3', $request->clientIp());
 
-		$_SERVER['HTTP_CLIENTADDRESS'] = '10.0.1.2, 10.0.1.1';
+		$request->env('HTTP_CLIENTADDRESS', '10.0.1.2, 10.0.1.1');
 		$this->assertEquals('10.0.1.2', $request->clientIp());
 	}
 
@@ -575,27 +587,27 @@ class RequestTest extends TestCase {
 		$request = new Request();
 		$request->webroot = '/';
 
-		$_SERVER['HTTP_REFERER'] = 'http://cakephp.org';
+		$request->env('HTTP_REFERER', 'http://cakephp.org');
 		$result = $request->referer();
-		$this->assertSame($result, 'http://cakephp.org');
+		$this->assertSame('http://cakephp.org', $result);
 
-		$_SERVER['HTTP_REFERER'] = '';
+		$request->env('HTTP_REFERER', '');
 		$result = $request->referer();
-		$this->assertSame($result, '/');
+		$this->assertSame('/', $result);
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
+		$request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
 		$result = $request->referer(true);
-		$this->assertSame($result, '/some/path');
+		$this->assertSame('/some/path', $result);
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/some/path';
+		$request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
 		$result = $request->referer(false);
-		$this->assertSame($result, Configure::read('App.fullBaseUrl') . '/some/path');
+		$this->assertSame(Configure::read('App.fullBaseUrl') . '/some/path', $result);
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/recipes/add';
+		$request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/recipes/add');
 		$result = $request->referer(true);
-		$this->assertSame($result, '/recipes/add');
+		$this->assertSame('/recipes/add', $result);
 
-		$_SERVER['HTTP_X_FORWARDED_HOST'] = 'cakephp.org';
+		$request->env('HTTP_X_FORWARDED_HOST', 'cakephp.org');
 		$result = $request->referer();
 		$this->assertSame(Configure::read('App.fullBaseUrl') . '/recipes/add', $result);
 
@@ -617,10 +629,10 @@ class RequestTest extends TestCase {
 		$request->base = '/waves';
 		$request->here = '/waves/users/login';
 
-		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/waves/waves/add';
+		$request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/waves/waves/add');
 
 		$result = $request->referer(true);
-		$this->assertSame($result, '/waves/add');
+		$this->assertSame('/waves/add', $result);
 	}
 
 /**
@@ -633,21 +645,21 @@ class RequestTest extends TestCase {
 
 		$this->assertFalse($request->is('undefined-behavior'));
 
-		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$request->env('REQUEST_METHOD', 'GET');
 		$this->assertTrue($request->is('get'));
 
-		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$request->env('REQUEST_METHOD', 'POST');
 		$this->assertTrue($request->is('POST'));
 
-		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request->env('REQUEST_METHOD', 'PUT');
 		$this->assertTrue($request->is('put'));
 		$this->assertFalse($request->is('get'));
 
-		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$request->env('REQUEST_METHOD', 'DELETE');
 		$this->assertTrue($request->is('delete'));
 		$this->assertTrue($request->isDelete());
 
-		$_SERVER['REQUEST_METHOD'] = 'delete';
+		$request->env('REQUEST_METHOD', 'delete');
 		$this->assertFalse($request->is('delete'));
 	}
 
@@ -659,13 +671,13 @@ class RequestTest extends TestCase {
 	public function testIsMultiple() {
 		$request = new Request();
 
-		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$request->env('REQUEST_METHOD', 'GET');
 		$this->assertTrue($request->is(array('get', 'post')));
 
-		$_SERVER['REQUEST_METHOD'] = 'POST';
+		$request->env('REQUEST_METHOD', 'POST');
 		$this->assertTrue($request->is(array('get', 'post')));
 
-		$_SERVER['REQUEST_METHOD'] = 'PUT';
+		$request->env('REQUEST_METHOD', 'PUT');
 		$this->assertFalse($request->is(array('get', 'post')));
 	}
 
@@ -677,8 +689,8 @@ class RequestTest extends TestCase {
 	public function testIsAll() {
 		$request = new Request();
 
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
-		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
+		$request->env('REQUEST_METHOD', 'GET');
 
 		$this->assertTrue($request->isAll(array('ajax', 'get')));
 		$this->assertFalse($request->isAll(array('post', 'get')));
@@ -691,8 +703,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testMethod() {
-		$_SERVER['REQUEST_METHOD'] = 'delete';
-		$request = new Request();
+		$request = new Request(['environment' => ['REQUEST_METHOD' => 'delete']]);
 
 		$this->assertEquals('delete', $request->method());
 	}
@@ -703,8 +714,7 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testHost() {
-		$_SERVER['HTTP_HOST'] = 'localhost';
-		$request = new Request();
+		$request = new Request(['environment' => ['HTTP_HOST' => 'localhost']]);
 
 		$this->assertEquals('localhost', $request->host());
 	}
@@ -715,13 +725,12 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testPort() {
-		$_SERVER['SERVER_PORT'] = '80';
-		$request = new Request();
+		$request = new Request(['environment' => ['SERVER_PORT' => '80']]);
 
 		$this->assertEquals('80', $request->port());
 
-		$_SERVER['SERVER_PORT'] = '443';
-		$_SERVER['HTTP_X_FORWARDED_PORT'] = 80;
+		$request->env('SERVER_PORT', '443');
+		$request->env('HTTP_X_FORWARDED_PORT', '80');
 		$this->assertEquals('443', $request->port());
 
 		$request->trustProxy = true;
@@ -734,12 +743,11 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testDomain() {
-		$_SERVER['HTTP_HOST'] = 'something.example.com';
-		$request = new Request();
+		$request = new Request(['environment' => ['HTTP_HOST' => 'something.example.com']]);
 
 		$this->assertEquals('example.com', $request->domain());
 
-		$_SERVER['HTTP_HOST'] = 'something.example.co.uk';
+		$request->env('HTTP_HOST', 'something.example.co.uk');
 		$this->assertEquals('example.co.uk', $request->domain(2));
 	}
 
@@ -749,14 +757,14 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testScheme() {
-		$_SERVER['HTTPS'] = 'on';
-		$request = new Request();
+		$request = new Request(['environment' => ['HTTPS' => 'on']]);
+
 		$this->assertEquals('https', $request->scheme());
 
-		unset($_SERVER['HTTPS']);
+		$request->env('HTTPS', '');
 		$this->assertEquals('http', $request->scheme());
 
-		$_SERVER['HTTP_X_FORWARDED_PROTO'] = 'https';
+		$request->env('HTTP_X_FORWARDED_PROTO', 'https');
 		$request->trustProxy = true;
 		$this->assertEquals('https', $request->scheme());
 	}
@@ -767,18 +775,17 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testSubdomain() {
-		$_SERVER['HTTP_HOST'] = 'something.example.com';
-		$request = new Request();
+		$request = new Request(['environment' => ['HTTP_HOST' => 'something.example.com']]);
 
-		$this->assertEquals(array('something'), $request->subdomains());
+		$this->assertEquals(['something'], $request->subdomains());
 
-		$_SERVER['HTTP_HOST'] = 'www.something.example.com';
+		$request->env('HTTP_HOST', 'www.something.example.com');
 		$this->assertEquals(array('www', 'something'), $request->subdomains());
 
-		$_SERVER['HTTP_HOST'] = 'www.something.example.co.uk';
+		$request->env('HTTP_HOST', 'www.something.example.co.uk');
 		$this->assertEquals(array('www', 'something'), $request->subdomains(2));
 
-		$_SERVER['HTTP_HOST'] = 'example.co.uk';
+		$request->env('HTTP_HOST', 'example.co.uk');
 		$this->assertEquals(array(), $request->subdomains(2));
 	}
 
@@ -790,28 +797,34 @@ class RequestTest extends TestCase {
 	public function testisAjaxFlashAndFriends() {
 		$request = new Request();
 
-		$_SERVER['HTTP_USER_AGENT'] = 'Shockwave Flash';
+		$request->env('HTTP_USER_AGENT', 'Shockwave Flash');
 		$this->assertTrue($request->is('flash'));
 
-		$_SERVER['HTTP_USER_AGENT'] = 'Adobe Flash';
+		$request->env('HTTP_USER_AGENT', 'Adobe Flash');
 		$this->assertTrue($request->is('flash'));
 
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$request->env('HTTP_X_REQUESTED_WITH', 'XMLHttpRequest');
 		$this->assertTrue($request->is('ajax'));
 
-		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHTTPREQUEST';
+		$request->env('HTTP_X_REQUESTED_WITH', 'XMLHTTPREQUEST');
 		$this->assertFalse($request->is('ajax'));
 		$this->assertFalse($request->isAjax());
 
-		$_SERVER['HTTP_USER_AGENT'] = 'Android 2.0';
+		$request->env('HTTP_USER_AGENT', 'Android 2.0');
 		$this->assertTrue($request->is('mobile'));
 		$this->assertTrue($request->isMobile());
 
-		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Windows NT 5.1; rv:2.0b6pre) Gecko/20100902 Firefox/4.0b6pre Fennec/2.0b1pre';
+		$request->env(
+			'HTTP_USER_AGENT',
+			'Mozilla/5.0 (Windows NT 5.1; rv:2.0b6pre) Gecko/20100902 Firefox/4.0b6pre Fennec/2.0b1pre'
+		);
 		$this->assertTrue($request->is('mobile'));
 		$this->assertTrue($request->isMobile());
 
-		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; OMNIA7)';
+		$request->env(
+			'HTTP_USER_AGENT',
+			'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; OMNIA7)'
+		);
 		$this->assertTrue($request->is('mobile'));
 		$this->assertTrue($request->isMobile());
 	}
@@ -833,30 +846,36 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testIsSsl() {
-		$request = new Request();
-
 		$_SERVER['HTTPS'] = 1;
+		$request = new Request();
 		$this->assertTrue($request->is('ssl'));
 
 		$_SERVER['HTTPS'] = 'on';
+		$request = new Request();
 		$this->assertTrue($request->is('ssl'));
 
 		$_SERVER['HTTPS'] = '1';
+		$request = new Request();
 		$this->assertTrue($request->is('ssl'));
 
 		$_SERVER['HTTPS'] = 'I am not empty';
+		$request = new Request();
 		$this->assertTrue($request->is('ssl'));
 
 		$_SERVER['HTTPS'] = 1;
+		$request = new Request();
 		$this->assertTrue($request->is('ssl'));
 
 		$_SERVER['HTTPS'] = 'off';
+		$request = new Request();
 		$this->assertFalse($request->is('ssl'));
 
 		$_SERVER['HTTPS'] = false;
+		$request = new Request();
 		$this->assertFalse($request->is('ssl'));
 
 		$_SERVER['HTTPS'] = '';
+		$request = new Request();
 		$this->assertFalse($request->is('ssl'));
 	}
 
@@ -933,36 +952,36 @@ class RequestTest extends TestCase {
 		$request = new Request();
 		$request->addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
 
-		$_SERVER['TEST_VAR'] = 'something';
+		$request->env('TEST_VAR', 'something');
 		$this->assertTrue($request->is('compare'), 'Value match failed.');
 
-		$_SERVER['TEST_VAR'] = 'wrong';
+		$request->env('TEST_VAR', 'wrong');
 		$this->assertFalse($request->is('compare'), 'Value mis-match failed.');
 
 		$request->addDetector('compareCamelCase', array('env' => 'TEST_VAR', 'value' => 'foo'));
 
-		$_SERVER['TEST_VAR'] = 'foo';
+		$request->env('TEST_VAR', 'foo');
 		$this->assertTrue($request->is('compareCamelCase'), 'Value match failed.');
 		$this->assertTrue($request->is('comparecamelcase'), 'detectors should be case insensitive');
 		$this->assertTrue($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
-		$_SERVER['TEST_VAR'] = 'not foo';
+		$request->env('TEST_VAR', 'not foo');
 		$this->assertFalse($request->is('compareCamelCase'), 'Value match failed.');
 		$this->assertFalse($request->is('comparecamelcase'), 'detectors should be case insensitive');
 		$this->assertFalse($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
 		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
-		$_SERVER['TEST_VAR'] = 'banana';
+		$request->env('TEST_VAR', 'banana');
 		$this->assertTrue($request->isBanana());
 
-		$_SERVER['TEST_VAR'] = 'wrong value';
+		$request->env('TEST_VAR', 'wrong value');
 		$this->assertFalse($request->isBanana());
 
 		$request->addDetector('mobile', array('options' => array('Imagination')));
-		$_SERVER['HTTP_USER_AGENT'] = 'Imagination land';
+		$request->env('HTTP_USER_AGENT', 'Imagination land');
 		$this->assertTrue($request->isMobile());
 
-		$_SERVER['HTTP_USER_AGENT'] = 'iPhone 3.0';
+		$request->env('HTTP_USER_AGENT', 'iPhone 3.0');
 		$this->assertTrue($request->isMobile());
 
 		$request->addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, 'detectCallback')));
@@ -1004,12 +1023,13 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testHeader() {
-		$_SERVER['HTTP_HOST'] = 'localhost';
-		$_SERVER['HTTP_USER_AGENT'] = 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16';
-		$request = new Request();
+		$request = new Request(['environment' => [
+			'HTTP_HOST' => 'localhost',
+			'HTTP_USER_AGENT' => 'Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10_6_4; en-ca) AppleWebKit/534.8+ (KHTML, like Gecko) Version/5.0 Safari/533.16'
+		]]);
 
-		$this->assertEquals($_SERVER['HTTP_HOST'], $request->header('host'));
-		$this->assertEquals($_SERVER['HTTP_USER_AGENT'], $request->header('User-Agent'));
+		$this->assertEquals($request->env('HTTP_HOST'), $request->header('host'));
+		$this->assertEquals($request->env('HTTP_USER_AGENT'), $request->header('User-Agent'));
 	}
 
 /**
@@ -1018,8 +1038,9 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testAccepts() {
-		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml;q=0.9,application/xhtml+xml,text/html,text/plain,image/png';
-		$request = new Request();
+		$request = new Request(['environment' => [
+			'HTTP_ACCEPT' => 'text/xml,application/xml;q=0.9,application/xhtml+xml,text/html,text/plain,image/png'
+		]]);
 
 		$result = $request->accepts();
 		$expected = array(
@@ -1040,8 +1061,9 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testAcceptWithWhitespace() {
-		$_SERVER['HTTP_ACCEPT'] = 'text/xml  ,  text/html ,  text/plain,image/png';
-		$request = new Request();
+		$request = new Request(['environment' => [
+			'HTTP_ACCEPT' => 'text/xml  ,  text/html ,  text/plain,image/png'
+		]]);
 		$result = $request->accepts();
 		$expected = array(
 			'text/xml', 'text/html', 'text/plain', 'image/png'
@@ -1057,8 +1079,9 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testAcceptWithQvalueSorting() {
-		$_SERVER['HTTP_ACCEPT'] = 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0';
-		$request = new Request();
+		$request = new Request(['environment' => [
+			'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0'
+		]]);
 		$result = $request->accepts();
 		$expected = array('application/xml', 'text/html', 'application/json');
 		$this->assertEquals($expected, $result);
@@ -1070,8 +1093,9 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testParseAcceptWithQValue() {
-		$_SERVER['HTTP_ACCEPT'] = 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0,image/png';
-		$request = new Request();
+		$request = new Request(['environment' => [
+			'HTTP_ACCEPT' => 'text/html;q=0.8,application/json;q=0.7,application/xml;q=1.0,image/png'
+		]]);
 		$result = $request->parseAccept();
 		$expected = array(
 			'1.0' => array('application/xml', 'image/png'),
@@ -1087,9 +1111,9 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testParseAcceptNoQValues() {
-		$_SERVER['HTTP_ACCEPT'] = 'application/json, text/plain, */*';
-
-		$request = new Request();
+		$request = new Request(['environment' => [
+			'HTTP_ACCEPT' => 'application/json, text/plain, */*'
+		]]);
 		$result = $request->parseAccept();
 		$expected = array(
 			'1.0' => array('application/json', 'text/plain', '*/*'),
@@ -1103,9 +1127,11 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testParseAcceptIgnoreAcceptExtensions() {
-		$_SERVER['HTTP_ACCEPT'] = 'application/json;level=1, text/plain, */*';
+		$request = new Request(['environment' => [
+			'url' => '/',
+			'HTTP_ACCEPT' => 'application/json;level=1, text/plain, */*'
+		]], false);
 
-		$request = new Request('/', false);
 		$result = $request->parseAccept();
 		$expected = array(
 			'1.0' => array('application/json', 'text/plain', '*/*'),
@@ -1121,8 +1147,10 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testParseAcceptInvalidSyntax() {
-		$_SERVER['HTTP_ACCEPT'] = 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8';
-		$request = new Request('/', false);
+		$request = new Request(['environment' => [
+			'url' => '/',
+			'HTTP_ACCEPT' => 'text/html,application/xhtml+xml,application/xml;image/png,image/jpeg,image/*;q=0.9,*/*;q=0.8'
+		]], false);
 		$result = $request->parseAccept();
 		$expected = array(
 			'1.0' => array('text/html', 'application/xhtml+xml', 'application/xml', 'image/jpeg'),
@@ -1973,40 +2001,42 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testAcceptLanguage() {
+		$request = new Request();
+
 		// Weird language
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
-		$result = Request::acceptLanguage();
+		$request->env('HTTP_ACCEPT_LANGUAGE', 'inexistent,en-ca');
+		$result = $request->acceptLanguage();
 		$this->assertEquals(array('inexistent', 'en-ca'), $result, 'Languages do not match');
 
 		// No qualifier
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx,en_ca';
-		$result = Request::acceptLanguage();
+		$request->env('HTTP_ACCEPT_LANGUAGE', 'es_mx,en_ca');
+		$result = $request->acceptLanguage();
 		$this->assertEquals(array('es-mx', 'en-ca'), $result, 'Languages do not match');
 
 		// With qualifier
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en-US,en;q=0.8,pt-BR;q=0.6,pt;q=0.4';
-		$result = Request::acceptLanguage();
+		$request->env('HTTP_ACCEPT_LANGUAGE', 'en-US,en;q=0.8,pt-BR;q=0.6,pt;q=0.4');
+		$result = $request->acceptLanguage();
 		$this->assertEquals(array('en-us', 'en', 'pt-br', 'pt'), $result, 'Languages do not match');
 
 		// With spaces
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'da, en-gb;q=0.8, en;q=0.7';
-		$result = Request::acceptLanguage();
+		$request->env('HTTP_ACCEPT_LANGUAGE', 'da, en-gb;q=0.8, en;q=0.7');
+		$result = $request->acceptLanguage();
 		$this->assertEquals(array('da', 'en-gb', 'en'), $result, 'Languages do not match');
 
 		// Checking if requested
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx,en_ca';
-		$result = Request::acceptLanguage();
+		$request->env('HTTP_ACCEPT_LANGUAGE', 'es_mx,en_ca');
+		$result = $request->acceptLanguage();
 
-		$result = Request::acceptLanguage('en-ca');
+		$result = $request->acceptLanguage('en-ca');
 		$this->assertTrue($result);
 
-		$result = Request::acceptLanguage('en-CA');
+		$result = $request->acceptLanguage('en-CA');
 		$this->assertTrue($result);
 
-		$result = Request::acceptLanguage('en-us');
+		$result = $request->acceptLanguage('en-us');
 		$this->assertFalse($result);
 
-		$result = Request::acceptLanguage('en-US');
+		$result = $request->acceptLanguage('en-US');
 		$this->assertFalse($result);
 	}
 
@@ -2145,12 +2175,14 @@ XML;
  * @return void
  */
 	public function testOnlyAllow() {
-		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$request = new Request('/posts/edit/1');
+		$request = new Request(['environment' => [
+			'url' => '/posts/edit/1',
+			'REQUEST_METHOD' => 'PUT'
+		]]);
 
 		$this->assertTrue($request->onlyAllow(array('put')));
 
-		$_SERVER['REQUEST_METHOD'] = 'DELETE';
+		$request->env('REQUEST_METHOD', 'DELETE');
 		$this->assertTrue($request->onlyAllow('post', 'delete'));
 	}
 
@@ -2160,8 +2192,10 @@ XML;
  * @return void
  */
 	public function testOnlyAllowException() {
-		$_SERVER['REQUEST_METHOD'] = 'PUT';
-		$request = new Request('/posts/edit/1');
+		$request = new Request([
+			'url' => '/posts/edit/1',
+			'environment' => ['REQUEST_METHOD' => 'PUT']
+		]);
 
 		try {
 			$request->onlyAllow('POST', 'DELETE');

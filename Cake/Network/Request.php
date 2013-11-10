@@ -65,6 +65,13 @@ class Request implements \ArrayAccess {
 	public $cookies = [];
 
 /**
+ * Array of environment data.
+ *
+ * @var array
+ */
+	protected $_environment = [];
+
+/**
  * The URL string used for the request.
  *
  * @var string
@@ -140,7 +147,7 @@ class Request implements \ArrayAccess {
 /**
  * Wrapper method to create a new request from PHP superglobals.
  *
- * Uses the $_GET, $_POST, $_FILES, $_COOKIE and php://input data to construct
+ * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
  * the request.
  *
  * @return Cake\Network\Request
@@ -152,6 +159,7 @@ class Request implements \ArrayAccess {
 			'post' => $_POST,
 			'files' => $_FILES,
 			'cookies' => $_COOKIE,
+			'environment' => $_SERVER + $_ENV,
 			'base' => $base,
 			'webroot' => $webroot,
 		);
@@ -168,8 +176,9 @@ class Request implements \ArrayAccess {
  *
  * - `post` POST data or non query string data
  * - `query` Additional data from the query string.
- * - `files` Uploaded file data formatted like $_FILES
+ * - `files` Uploaded file data formatted like $_FILES.
  * - `cookies` Cookies for this request.
+ * - `environment` $_SERVER and $_ENV data.
  * - `url` The url without the base path for the request.
  * - `base` The base url for the request.
  * - `webroot` The webroot directory for the request.
@@ -188,6 +197,7 @@ class Request implements \ArrayAccess {
 			'post' => array(),
 			'files' => array(),
 			'cookies' => array(),
+			'environment' => array(),
 			'url' => '',
 			'base' => '',
 			'webroot' => '',
@@ -213,6 +223,7 @@ class Request implements \ArrayAccess {
 		$this->here = $this->base . '/' . $this->url;
 		$this->webroot = $config['webroot'];
 
+		$this->_environment = $config['environment'];
 		if (isset($config['input'])) {
 			$this->_input = $config['input'];
 		}
@@ -223,29 +234,25 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Sets the env('REQUEST_METHOD') based on the simulated _method HTTP override
- * value.
+ * Sets the REQUEST_METHOD environment variable based on the simulated _method
+ * HTTP override value.
  *
  * @param array $data Array of post data.
  * @return array
  */
 	protected function _processPost($data) {
 		if (
-			in_array(env('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH')) &&
-			strpos(env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
+			in_array($this->env('REQUEST_METHOD'), array('PUT', 'DELETE', 'PATCH')) &&
+			strpos($this->env('CONTENT_TYPE'), 'application/x-www-form-urlencoded') === 0
 		) {
 			$data = $this->input();
 			parse_str($data, $data);
 		}
-		if (env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
-			$data['_method'] = env('HTTP_X_HTTP_METHOD_OVERRIDE');
+		if ($this->env('HTTP_X_HTTP_METHOD_OVERRIDE')) {
+			$data['_method'] = $this->env('HTTP_X_HTTP_METHOD_OVERRIDE');
 		}
 		if (isset($data['_method'])) {
-			if (!empty($_SERVER)) {
-				$_SERVER['REQUEST_METHOD'] = $data['_method'];
-			} else {
-				$_ENV['REQUEST_METHOD'] = $data['_method'];
-			}
+			$this->_environment['REQUEST_METHOD'] = $data['_method'];
 			unset($data['_method']);
 		}
 		return $data;
@@ -428,18 +435,18 @@ class Request implements \ArrayAccess {
  * @return string The client IP.
  */
 	public function clientIp() {
-		if ($this->trustProxy && env('HTTP_X_FORWARDED_FOR')) {
-			$ipaddr = preg_replace('/(?:,.*)/', '', env('HTTP_X_FORWARDED_FOR'));
+		if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_FOR')) {
+			$ipaddr = preg_replace('/(?:,.*)/', '', $this->env('HTTP_X_FORWARDED_FOR'));
 		} else {
-			if (env('HTTP_CLIENT_IP')) {
-				$ipaddr = env('HTTP_CLIENT_IP');
+			if ($this->env('HTTP_CLIENT_IP')) {
+				$ipaddr = $this->env('HTTP_CLIENT_IP');
 			} else {
-				$ipaddr = env('REMOTE_ADDR');
+				$ipaddr = $this->env('REMOTE_ADDR');
 			}
 		}
 
-		if (env('HTTP_CLIENTADDRESS')) {
-			$tmpipaddr = env('HTTP_CLIENTADDRESS');
+		if ($this->env('HTTP_CLIENTADDRESS')) {
+			$tmpipaddr = $this->env('HTTP_CLIENTADDRESS');
 
 			if (!empty($tmpipaddr)) {
 				$ipaddr = preg_replace('/(?:,.*)/', '', $tmpipaddr);
@@ -451,13 +458,14 @@ class Request implements \ArrayAccess {
 /**
  * Returns the referer that referred this request.
  *
- * @param boolean $local Attempt to return a local address. Local addresses do not contain hostnames.
+ * @param boolean $local Attempt to return a local address.
+ *   Local addresses do not contain hostnames.
  * @return string The referring address for this request.
  */
 	public function referer($local = false) {
-		$ref = env('HTTP_REFERER');
-		if ($this->trustProxy && env('HTTP_X_FORWARDED_HOST')) {
-			$ref = env('HTTP_X_FORWARDED_HOST');
+		$ref = $this->env('HTTP_REFERER');
+		if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_HOST')) {
+			$ref = $this->env('HTTP_X_FORWARDED_HOST');
 		}
 
 		$base = Configure::read('App.fullBaseUrl') . $this->webroot;
@@ -540,14 +548,14 @@ class Request implements \ArrayAccess {
 		$detect = $this->_detectors[$type];
 		if (isset($detect['env'])) {
 			if (isset($detect['value'])) {
-				return env($detect['env']) == $detect['value'];
+				return $this->env($detect['env']) == $detect['value'];
 			}
 			if (isset($detect['pattern'])) {
-				return (bool)preg_match($detect['pattern'], env($detect['env']));
+				return (bool)preg_match($detect['pattern'], $this->env($detect['env']));
 			}
 			if (isset($detect['options'])) {
 				$pattern = '/' . implode('|', $detect['options']) . '/i';
-				return (bool)preg_match($pattern, env($detect['env']));
+				return (bool)preg_match($pattern, $this->env($detect['env']));
 			}
 		}
 		if (isset($detect['param'])) {
@@ -686,14 +694,11 @@ class Request implements \ArrayAccess {
  * Read an HTTP header from the Request information.
  *
  * @param string $name Name of the header you want.
- * @return mixed Either false on no header being set or the value of the header.
+ * @return mixed Either null on no header being set or the value of the header.
  */
-	public static function header($name) {
-		$name = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
-		if (!empty($_SERVER[$name])) {
-			return $_SERVER[$name];
-		}
-		return false;
+	public function header($name) {
+		$name = 'HTTP_' . str_replace('-', '_', $name);
+		return $this->env($name);
 	}
 
 /**
@@ -710,7 +715,7 @@ class Request implements \ArrayAccess {
  * @return string The name of the HTTP method used.
  */
 	public function method() {
-		return env('REQUEST_METHOD');
+		return $this->env('REQUEST_METHOD');
 	}
 
 /**
@@ -719,7 +724,7 @@ class Request implements \ArrayAccess {
  * @return string
  */
 	public function host() {
-		return env('HTTP_HOST');
+		return $this->env('HTTP_HOST');
 	}
 
 /**
@@ -728,10 +733,10 @@ class Request implements \ArrayAccess {
  * @return string
  */
 	public function port() {
-		if ($this->trustProxy && env('HTTP_X_FORWARDED_PORT')) {
-			return env('HTTP_X_FORWARDED_PORT');
+		if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_PORT')) {
+			return $this->env('HTTP_X_FORWARDED_PORT');
 		}
-		return env('SERVER_PORT');
+		return $this->env('SERVER_PORT');
 	}
 
 /**
@@ -742,10 +747,10 @@ class Request implements \ArrayAccess {
  * @return string The scheme used for the request.
  */
 	public function scheme() {
-		if ($this->trustProxy && env('HTTP_X_FORWARDED_PROTO')) {
-			return env('HTTP_X_FORWARDED_PROTO');
+		if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_PROTO')) {
+			return $this->env('HTTP_X_FORWARDED_PROTO');
 		}
-		return env('HTTPS') ? 'https' : 'http';
+		return $this->env('HTTPS') ? 'https' : 'http';
 	}
 
 /**
@@ -831,8 +836,8 @@ class Request implements \ArrayAccess {
  * @param string $language The language to test.
  * @return If a $language is provided, a boolean. Otherwise the array of accepted languages.
  */
-	public static function acceptLanguage($language = null) {
-		$raw = static::_parseAcceptWithQualifier(static::header('Accept-Language'));
+	public function acceptLanguage($language = null) {
+		$raw = $this->_parseAcceptWithQualifier($this->header('Accept-Language'));
 		$accept = array();
 		foreach ($raw as $languages) {
 			foreach ($languages as &$lang) {
@@ -858,7 +863,7 @@ class Request implements \ArrayAccess {
  * @param string $header
  * @return array
  */
-	protected static function _parseAcceptWithQualifier($header) {
+	protected function _parseAcceptWithQualifier($header) {
 		$accept = array();
 		$header = explode(',', $header);
 		foreach (array_filter($header) as $value) {
@@ -983,6 +988,28 @@ class Request implements \ArrayAccess {
 			return $this->cookies[$key];
 		}
 		return null;
+	}
+
+/**
+ * Get/Set value from the request's environment data.
+ * Fallback to using env() if key not set in $environment property.
+ *
+ * @param string $key The key you want to read/write from/to.
+ * @param string $value Value to set. Defaut null.
+ * @return null|string|Cake\Network\Request Request instance if used as setter,
+ *   if used as getter either the environment value, or null if the value doesn't exist.
+ */
+	public function env($key, $value = null) {
+		if ($value !== null) {
+			$this->_environment[$key] = $value;
+			return $this;
+		}
+
+		$key = strtoupper($key);
+		if (!array_key_exists($key, $this->_environment)) {
+			$this->_environment[$key] = env($key);
+		}
+		return $this->_environment[$key];
 	}
 
 /**

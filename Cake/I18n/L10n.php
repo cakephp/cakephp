@@ -413,7 +413,8 @@ class L10n {
  * @return boolean Success
  */
 	protected function _autoLanguage() {
-		$_detectableLanguages = Request::acceptLanguage();
+		$request = Request::createFromGlobals();
+		$_detectableLanguages = $request->acceptLanguage();
 		foreach ($_detectableLanguages as $langKey) {
 			if (isset($this->_l10nCatalog[$langKey])) {
 				$this->_setLanguage($langKey);
