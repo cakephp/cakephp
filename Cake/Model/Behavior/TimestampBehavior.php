@@ -37,6 +37,8 @@ class TimestampBehavior extends Behavior {
  * @var array
  */
 	protected $_defaultSettings = [
+		'implementedFinders' => [],
+		'implementedMethods' => ['timestamp' => 'timestamp'],
 		'events' => [
 			'Model.beforeSave' => [
 				'created' => 'new',
@@ -54,24 +56,13 @@ class TimestampBehavior extends Behavior {
 	protected $_ts;
 
 /**
- * Constructor
- *
- * Merge settings with the default and store in the settings property
- *
- * @param Table $table The table this behavior is attached to.
- * @param array $settings The settings for this behavior.
- */
-	public function __construct(Table $table, array $settings = []) {
-		$this->_settings = $settings + $this->_defaultSettings;
-	}
-
-/**
  * handleEvent
  *
  * There is only one event handler, it can be configured to be called for any event
  *
  * @param Event $event
  * @param Entity $entity
+ * @throws \UnexpectedValueException if a field's when value is misdefined
  * @return true (irrespective of the behavior logic, the save will not be prevented)
  * @throws \UnexpectedValueException When the value for an event is not 'new', 'existing' or true.
  */

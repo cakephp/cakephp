@@ -59,16 +59,6 @@ class BehaviorRegistry extends ObjectRegistry {
 	protected $_finderMap = [];
 
 /**
- * Method cache for behaviors.
- *
- * Stores the reflected method + finder methods per class.
- * This prevents reflecting the same class multiple times in a single process.
- *
- * @var array
- */
-	protected static $_methodCache = [];
-
-/**
  * Constructor
  *
  * @param Cake\ORM\Table $table
@@ -124,8 +114,8 @@ class BehaviorRegistry extends ObjectRegistry {
 			$this->_eventManager->attach($instance);
 		}
 		$methods = $this->_getMethods($instance, $class, $alias);
-		$this->_methodMap = array_merge($this->_methodMap, $methods['methods']);
-		$this->_finderMap = array_merge($this->_finderMap, $methods['finders']);
+		$this->_methodMap += $methods['methods'];
+		$this->_finderMap += $methods['finders'];
 		return $instance;
 	}
 
@@ -133,7 +123,7 @@ class BehaviorRegistry extends ObjectRegistry {
  * Get the behavior methods and ensure there are no duplicates.
  *
  * Use the implementedEvents() method to exclude callback methods.
- * Methods starting with `_` will be ignored, as will methods 
+ * Methods starting with `_` will be ignored, as will methods
  * declared on Cake\ORM\Behavior
  *
  * @param Cake\ORM\Behavior $instance
@@ -141,62 +131,46 @@ class BehaviorRegistry extends ObjectRegistry {
  * @throws Cake\Error\Exception when duplicate methods are connected.
  */
 	protected function _getMethods(Behavior $instance, $class, $alias) {
-		if (isset(static::$_methodCache[$class])) {
-			return static::$_methodCache[$class];
+		$finders = array_change_key_case($instance->implementedFinders());
+		$methods = array_change_key_case($instance->implementedMethods());
+
+		foreach ($finders as $finder => $methodName) {
+			if (isset($this->_finderMap[$finder])) {
+				$duplicate = $this->_finderMap[$finder];
+				$error = __d(
+					'cake_dev',
+					'%s contains duplicate finder "%s" which is already provided by "%s"',
+					$class,
+					$finder,
+					$duplicate[0]
+				);
+				throw new Error\Exception($error);
+			}
+			$finders[$finder] = [$alias, $methodName];
 		}
-		$events = $instance->implementedEvents();
-		$reflection = new \ReflectionClass($class);
 
-		$eventMethods = $methodMap = $finderMap = [];
-		foreach ($events as $e => $binding) {
-			if (is_array($binding) && isset($binding['callable']) && isset($binding['callable'])) {
-				$binding = $binding['callable'];
-			}
-			$eventMethods[$binding] = true;
-		}
-
-		foreach ($reflection->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-			if ($method->getDeclaringClass()->getName() === 'Cake\ORM\Behavior') {
-				continue;
-			}
-
-			$methodName = $method->getName();
-			if (strpos($methodName, '_') === 0 || isset($eventMethods[$methodName])) {
-				continue;
-			}
-			$methodName = strtolower($methodName);
-
-			if (isset($this->_finderMap[$methodName]) || isset($this->_methodMap[$methodName])) {
-				if (isset($this->_finderMap[$methodName])) {
-					$duplicate = $this->_finderMap[$methodName];
-				} else {
-					$duplicate = $this->_methodMap[$methodName];
-				}
+		foreach ($methods as $method => $methodName) {
+			if (isset($this->_methodMap[$method])) {
+				$duplicate = $this->_methodMap[$method];
 				$error = __d(
 					'cake_dev',
 					'%s contains duplicate method "%s" which is already provided by "%s"',
 					$class,
-					$method->getName(),
-					$duplicate
+					$method,
+					$duplicate[0]
 				);
 				throw new Error\Exception($error);
 			}
-
-			$isFinder = substr($methodName, 0, 4) === 'find';
-			if ($isFinder) {
-				$finderMap[$methodName] = $alias;
-			} else {
-				$methodMap[$methodName] = $alias;
-			}
+			$methods[$method] = [$alias, $methodName];
 		}
-		static::$_methodCache[$class] = ['methods' => $methodMap, 'finders' => $finderMap];
-		return static::$_methodCache[$class];
+
+		return compact('methods', 'finders');
 	}
 
 /**
  * Check if any loaded behavior implements a method.
  *
- * Will return true if any behavior provides a public non-finder method 
+ * Will return true if any behavior provides a public non-finder method
  * with the chosen name.
  *
  * @param string $method The method to check for.
@@ -222,7 +196,7 @@ class BehaviorRegistry extends ObjectRegistry {
 	}
 
 /**
- * Invoke a method or finder on a behavior.
+ * Invoke a method on a behavior.
  *
  * @param string $method The method to invoke.
  * @param array $args The arguments you want to invoke the method with.
@@ -232,16 +206,30 @@ class BehaviorRegistry extends ObjectRegistry {
 	public function call($method, array $args = []) {
 		$method = strtolower($method);
 		if ($this->hasMethod($method)) {
-			$alias = $this->_methodMap[$method];
-			return call_user_func_array([$this->_loaded[$alias], $method], $args);
+			list($behavior, $callMethod) = $this->_methodMap[$method];
+			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		if ($this->hasFinder($method)) {
-			$alias = $this->_finderMap[$method];
-			return call_user_func_array([$this->_loaded[$alias], $method], $args);
+		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behavior.', $method));
+	}
+
+/**
+ * Invoke a finder on a behavior.
+ *
+ * @param string $type The finder type to invoke.
+ * @param array $args The arguments you want to invoke the method with.
+ * @return mixed The return value depends on the underlying behavior method.
+ * @throws Cake\Error\Exception When the method is unknown.
+ */
+	public function callFinder($type, array $args = []) {
+		$type = strtolower($type);
+
+		if ($this->hasFinder($type)) {
+			list($behavior, $callMethod) = $this->_finderMap[$type];
+			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behaviors.', $method));
+		throw new Error\Exception(__d('cake_dev', 'Cannot call finder "%s" it does not belong to any attached behavior.', $type));
 	}
 
 }

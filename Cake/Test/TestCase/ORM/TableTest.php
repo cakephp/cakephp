@@ -985,6 +985,17 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test you can alias a behavior method
+ *
+ * @return void
+ */
+	public function testCallBehaviorAliasedMethod() {
+		$table = TableRegistry::get('article');
+		$table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
+		$this->assertEquals('some_value', $table->wednesday('some value'));
+	}
+
+/**
  * Test finder methods from behaviors.
  *
  * @return void
@@ -994,6 +1005,20 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->addBehavior('Sluggable');
 
 		$query = $table->find('noSlug');
+		$this->assertInstanceOf('Cake\ORM\Query', $query);
+		$this->assertNotEmpty($query->clause('where'));
+	}
+
+/**
+ * testCallBehaviorAliasedFinder
+ *
+ * @return void
+ */
+	public function testCallBehaviorAliasedFinder() {
+		$table = TableRegistry::get('articles');
+		$table->addBehavior('Sluggable', ['implementedFinders' => ['special' => 'findNoSlug']]);
+
+		$query = $table->find('special');
 		$this->assertInstanceOf('Cake\ORM\Query', $query);
 		$this->assertNotEmpty($query->clause('where'));
 	}

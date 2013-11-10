@@ -31,18 +31,100 @@ class TestBehavior extends Behavior {
 }
 
 /**
- * Behavior test case
+ * Test Stub.
  */
-class BehaviorTest extends TestCase {
+class Test2Behavior extends Behavior {
 
 /**
- * setup
+ * Test for event bindings.
+ */
+	public function beforeFind() {
+	}
+
+/**
+ * Test finder
+ */
+	public function findFoo() {
+	}
+
+/**
+ * Test method
+ */
+	public function doSomething() {
+	}
+
+}
+
+/**
+ * Test3Behavior
+ */
+class Test3Behavior extends Behavior {
+
+/**
+ * Test for event bindings.
+ */
+	public function beforeFind() {
+	}
+
+/**
+ * Test finder
+ */
+	public function findFoo() {
+	}
+
+/**
+ * Test method
+ */
+	public function doSomething() {
+	}
+
+/**
+ * verifySettings
+ */
+	public function verifySettings() {
+		parent::verifySettings();
+	}
+
+/**
+ * implementedEvents
+ *
+ * This class does pretend to implement beforeFind
  *
  * @return void
  */
-	public function setUp() {
-		parent::setUp();
+	public function implementedEvents() {
+		return ['Model.beforeFind' => 'beforeFind'];
 	}
+
+/**
+ * implementedFinders
+ */
+	public function implementedFinders() {
+	}
+
+/**
+ * implementedMethods
+ */
+	public function implementedMethods() {
+	}
+
+/**
+ * Expose protected method for testing
+ *
+ * Since this is public - it'll show up as callable which is a side-effect
+ *
+ * @return array
+ */
+	public function testReflectionCache() {
+		return $this->_reflectionCache();
+	}
+
+}
+
+/**
+ * Behavior test case
+ */
+class BehaviorTest extends TestCase {
 
 /**
  * Test the side effects of the constructor.
@@ -54,6 +136,21 @@ class BehaviorTest extends TestCase {
 		$settings = ['key' => 'value'];
 		$behavior = new TestBehavior($table, $settings);
 		$this->assertEquals($settings, $behavior->settings());
+	}
+
+	public function testReflectionCache() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test3Behavior($table);
+		$expected = [
+			'finders' => [
+				'foo' => 'findFoo'
+			],
+			'methods' => [
+				'doSomething' => 'doSomething',
+				'testReflectionCache' => 'testReflectionCache'
+			]
+		];
+		$this->assertEquals($expected, $behavior->testReflectionCache());
 	}
 
 /**
@@ -85,6 +182,185 @@ class BehaviorTest extends TestCase {
 			]
 		];
 		$this->assertEquals($expected, $behavior->implementedEvents());
+	}
+
+/**
+ * testImplementedMethods
+ *
+ * @return void
+ */
+	public function testImplementedMethods() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table);
+		$expected = [
+			'doSomething' => 'doSomething'
+		];
+		$this->assertEquals($expected, $behavior->implementedMethods());
+	}
+
+/**
+ * testImplementedMethodsAliased
+ *
+ * @return void
+ */
+	public function testImplementedMethodsAliased() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedMethods' => [
+				'aliased' => 'doSomething'
+			]
+		]);
+		$expected = [
+			'aliased' => 'doSomething'
+		];
+		$this->assertEquals($expected, $behavior->implementedMethods());
+	}
+
+/**
+ * testImplementedMethodsDisabled
+ *
+ * @return void
+ */
+	public function testImplementedMethodsDisabled() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedMethods' => []
+		]);
+		$expected = [];
+		$this->assertEquals($expected, $behavior->implementedMethods());
+	}
+
+/**
+ * testImplementedFinders
+ *
+ * @return void
+ */
+	public function testImplementedFinders() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table);
+		$expected = [
+			'foo' => 'findFoo'
+		];
+		$this->assertEquals($expected, $behavior->implementedFinders());
+	}
+
+/**
+ * testImplementedFindersAliased
+ *
+ * @return void
+ */
+	public function testImplementedFindersAliased() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedFinders' => [
+				'aliased' => 'findFoo'
+			]
+		]);
+		$expected = [
+			'aliased' => 'findFoo'
+		];
+		$this->assertEquals($expected, $behavior->implementedFinders());
+	}
+
+/**
+ * testImplementedFindersDisabled
+ *
+ * @return void
+ */
+	public function testImplementedFindersDisabled() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedFinders' => []
+		]);
+		$expected = [];
+		$this->assertEquals($expected, $behavior->implementedFinders());
+	}
+
+/**
+ * testVerifySettings
+ *
+ * Don't expect an exception to be thrown
+ *
+ * @return void
+ */
+	public function testVerifySettings() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table);
+		$behavior->verifySettings();
+		$this->assertTrue(true, 'No exception thrown');
+	}
+
+/**
+ * testVerifySettingsImplementedFindersOverriden
+ *
+ * Simply don't expect an exception to be thrown
+ *
+ * @return void
+ */
+	public function testVerifySettingsImplementedFindersOverriden() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedFinders' => [
+				'aliased' => 'findFoo'
+			]
+		]);
+		$behavior->verifySettings();
+		$this->assertTrue(true, 'No exception thrown');
+	}
+
+/**
+ * testVerifyImplementedFindersInvalid
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage The method findNotDefined is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
+ *
+ * @return void
+ */
+	public function testVerifyImplementedFindersInvalid() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedFinders' => [
+				'aliased' => 'findNotDefined'
+			]
+		]);
+		$behavior->verifySettings();
+	}
+
+/**
+ * testVerifySettingsImplementedMethodsOverriden
+ *
+ * Don't expect an exception to be thrown
+ *
+ * @return void
+ */
+	public function testVerifySettingsImplementedMethodsOverriden() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table);
+		$behavior = new Test2Behavior($table, [
+			'implementedMethods' => [
+				'aliased' => 'doSomething'
+			]
+		]);
+		$behavior->verifySettings();
+		$this->assertTrue(true, 'No exception thrown');
+	}
+
+/**
+ * testVerifyImplementedMethodsInvalid
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage The method iDoNotExist is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
+ *
+ * @return void
+ */
+	public function testVerifyImplementedMethodsInvalid() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedMethods' => [
+				'aliased' => 'iDoNotExist'
+			]
+		]);
+		$behavior->verifySettings();
 	}
 
 }

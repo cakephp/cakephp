@@ -1026,12 +1026,12 @@ class Table {
 			return $this->{$finder}($query, $options);
 		}
 
-		if ($this->_behaviors && $this->_behaviors->hasFinder($finder)) {
-			return $this->_behaviors->call($finder, [$query, $options]);
+		if ($this->_behaviors && $this->_behaviors->hasFinder($type)) {
+			return $this->_behaviors->callFinder($type, [$query, $options]);
 		}
 
 		throw new \BadMethodCallException(
-			__d('cake_dev', 'Unknown finder method "%s"', $finder)
+			__d('cake_dev', 'Unknown finder method "%s"', $type)
 		);
 	}
 
