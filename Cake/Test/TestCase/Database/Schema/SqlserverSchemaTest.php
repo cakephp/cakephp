@@ -46,8 +46,8 @@ class SqlserverSchemaTest extends TestCase {
 	protected function _createTables($connection) {
 		$this->_needsConnection();
 
-		$connection->execute("IF OBJECT_ID('dbo.Scores', 'U') IS NOT NULL DROP TABLE schema_articles");
-		$connection->execute("IF OBJECT_ID('dbo.Scores', 'U') IS NOT NULL DROP TABLE schema_authors");
+		$connection->execute("IF OBJECT_ID('schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
+		$connection->execute("IF OBJECT_ID('schema_authors', 'U') IS NOT NULL DROP TABLE schema_authors");
 
 		$table = <<<SQL
 CREATE TABLE schema_authors (
@@ -63,13 +63,13 @@ SQL;
 CREATE TABLE schema_articles (
 id BIGINT PRIMARY KEY,
 title VARCHAR(20),
-body TEXT,
+body VARCHAR(1000),
 author_id INTEGER NOT NULL,
-published BOOLEAN DEFAULT false,
+published BIT DEFAULT 0,
 views SMALLINT DEFAULT 0,
 created DATETIME,
 CONSTRAINT [content_idx] UNIQUE ([title], [body]),
-CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE SET DEFAULT ON UPDATE CASCADE
+CONSTRAINT [author_idx] FOREIGN KEY ([author_id]) REFERENCES [schema_authors] ([id]) ON DELETE CASCADE ON UPDATE CASCADE
 )
 SQL;
 		$connection->execute($table);
@@ -218,14 +218,14 @@ SQL;
 				'default' => null,
 				'length' => 20,
 				'precision' => null,
-				'comment' => 'a title',
+				'comment' => null,
 				'fixed' => null,
 			],
 			'body' => [
-				'type' => 'text',
+				'type' => 'string',
 				'null' => true,
 				'default' => null,
-				'length' => null,
+				'length' => 1000,
 				'precision' => null,
 				'fixed' => null,
 				'comment' => null,
@@ -285,18 +285,6 @@ SQL;
 		$schema = new SchemaCollection($connection);
 		$result = $schema->describe('schema_articles');
 		$this->assertInstanceOf('Cake\Database\Schema\Table', $result);
-		$expected = [
-			'primary' => [
-				'type' => 'primary',
-				'columns' => ['id'],
-				'length' => []
-			],
-			'content_idx' => [
-				'type' => 'unique',
-				'columns' => ['title', 'body'],
-				'length' => []
-			]
-		];
 		$this->assertCount(3, $result->constraints());
 		$expected = [
 			'primary' => [
@@ -315,7 +303,7 @@ SQL;
 				'references' => ['schema_authors', 'id'],
 				'length' => [],
 				'update' => 'cascade',
-				'delete' => 'setDefault',
+				'delete' => 'cascade',
 			]
 		];
 		$this->assertEquals($expected['primary'], $result->constraint('primary'));
@@ -362,7 +350,7 @@ SQL;
 			[
 				'role',
 				['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-				"[role] VARCHAR(10) NOT NULL DEFAULT 'admin'"
+				"[role] VARCHAR(10) NOT NULL DEFAULT [admin]"
 			],
 			[
 				'title',
@@ -423,12 +411,12 @@ SQL;
 			[
 				'checked',
 				['type' => 'boolean', 'default' => false],
-				'[checked] BOOLEAN DEFAULT FALSE'
+				'[checked] BIT DEFAULT 0'
 			],
 			[
 				'checked',
 				['type' => 'boolean', 'default' => true, 'null' => false],
-				'[checked] BOOLEAN NOT NULL DEFAULT TRUE'
+				'[checked] BIT NOT NULL DEFAULT 1'
 			],
 			// datetimes
 			[
@@ -503,7 +491,7 @@ SQL;
 				'author_id_idx',
 				['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setDefault'],
 				'CONSTRAINT [author_id_idx] FOREIGN KEY ([author_id]) ' .
-				'REFERENCES [authors] ([id]) ON UPDATE SET NULL ON DELETE SET DEFAULT'
+				'REFERENCES [authors] ([id]) ON UPDATE SET DEFAULT ON DELETE SET NULL'
 			],
 			[
 				'author_id_idx',

@@ -30,7 +30,7 @@ class SqlserverSchema extends BaseSchema {
  */
 	public function listTablesSql($config) {
 		$schema = empty($config['schema']) ? 'dbo' : $config['schema'];
-		return ['SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ?', [$schema]];
+		return ['SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ? ORDER BY TABLE_NAME', [$schema]];
 	}
 
 /**
@@ -81,7 +81,7 @@ class SqlserverSchema extends BaseSchema {
 			return ['type' => 'datetime', 'length' => null];
 		}
 
-		if ($col === 'int') {
+		if ($col === 'int' || $col === 'integer') {
 			return ['type' => 'integer', 'length' => 10];
 		}
 		if ($col === 'bigint') {
@@ -94,7 +94,7 @@ class SqlserverSchema extends BaseSchema {
 			return ['type' => 'integer', 'length' => 3];
 		}
 		if ($col === 'bit') {
-			return ['type' => 'integer', 'length' => 1];
+			return ['type' => 'boolean', 'length' => null];
 		}
 		if (
 			strpos($col, 'numeric') !== false ||
@@ -111,7 +111,7 @@ class SqlserverSchema extends BaseSchema {
 			return ['type' => 'string', 'length' => $length];
 		}
 		if (strpos($col, 'char') !== false) {
-			return ['type' => 'string', 'length' => $length];
+			return ['type' => 'string', 'fixed' => true, 'length' => $length];
 		}
 		if (strpos($col, 'text') !== false) {
 			return ['type' => 'text', 'length' => null];
@@ -135,20 +135,17 @@ class SqlserverSchema extends BaseSchema {
  */
 	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->_convertColumn($row['type']);
+		if (!empty($row['default'])) {
+			$row['default'] = trim($row['default'], '()');
+		}
 
 		if ($field['type'] === 'boolean') {
-			if ($row['default'] === 'true') {
-				$row['default'] = 1;
-			}
-			if ($row['default'] === 'false') {
-				$row['default'] = 0;
-			}
+			$row['default'] = (int)$row['default'];
 		}
 
 		$field += [
 			'null' => $row['null'] === 'YES' ? true : false,
 			'default' => $row['default'],
-			'comment' => $row['comment']
 		];
 		$field['length'] = $row['char_length'] ?: $field['length'];
 		$table->addColumn($row['name'], $field);
@@ -161,7 +158,7 @@ class SqlserverSchema extends BaseSchema {
 	public function describeIndexSql($table, $config) {
 		$sql = "
 			SELECT  
-				T.[name] AS [table_name], I.[name] AS [index_name],
+				I.[name] AS [index_name],
 				IC.[index_column_id] AS [index_order],
 				AC.[name] AS [column_name],  
 				I.[is_unique], I.[is_primary_key], 
@@ -171,7 +168,7 @@ class SqlserverSchema extends BaseSchema {
 			INNER JOIN sys.[index_columns] IC ON I.[object_id] = IC.[object_id] AND I.[index_id] = IC.[index_id]
 			INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id] 
 			WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND OBJECT_SCHEMA_NAME(T.[object_id],DB_ID()) = ?
-			ORDER BY I.[index_id], IC.[index_column_id];
+			ORDER BY I.[index_id], IC.[index_column_id]
 		";
 
 		$schema = empty($config['schema']) ? 'dbo' : $config['schema'];
@@ -184,7 +181,7 @@ class SqlserverSchema extends BaseSchema {
  */
 	public function convertIndexDescription(Table $table, $row) {
 		$type = Table::INDEX_INDEX;
-		$name = $row['table_name'];
+		$name = $row['index_name'];
 		if ($row['is_primary_key']) {
 			$name = $type = Table::CONSTRAINT_PRIMARY;
 		}
@@ -246,7 +243,7 @@ class SqlserverSchema extends BaseSchema {
 		$data = [
 			'type' => Table::CONSTRAINT_FOREIGN,
 			'columns' => [$row['column']],
-			'references' => [$row['refernece_table'], $row['reference_column']],
+			'references' => [$row['reference_table'], $row['reference_column']],
 			'update' => $this->_convertOnClause($row['update_type']),
 			'delete' => $this->_convertOnClause($row['delete_type']),
 		];
@@ -260,7 +257,7 @@ class SqlserverSchema extends BaseSchema {
  */
 	protected function _foreignOnClause($on) {
 		$parent = parent::_foreignOnClause($on);
-		return $parent === Table::ACTION_RESTRICT ? Table::ACTION_SET_NULL : $parent;
+		return $parent === 'RESTRICT' ? parent::_foreignOnClause(Table::ACTION_SET_NULL) : $parent;
 	}
 
 /**
@@ -290,7 +287,7 @@ class SqlserverSchema extends BaseSchema {
 		$out = $this->_driver->quoteIdentifier($name);
 		$typeMap = [
 			'biginteger' => ' BIGINT',
-			'boolean' => ' BOOLEAN',
+			'boolean' => ' BIT',
 			'binary' => ' BINARY',
 			'float' => ' FLOAT',
 			'decimal' => ' DECIMAL',
@@ -342,8 +339,9 @@ class SqlserverSchema extends BaseSchema {
 			$out .= ' DEFAULT NULL';
 			unset($data['default']);
 		}
-		if (isset($data['default']) && $data['type'] !== 'timestamp') {
-			$out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
+		if (isset($data['default']) && $data['type'] !== 'datetime') {
+			$default = is_bool($data['default']) ? (int)$data['default'] : $this->_driver->schemaValue($data['default']);
+			$out .= ' DEFAULT ' . $default;
 		}
 		return $out;
 	}

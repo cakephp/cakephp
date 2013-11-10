@@ -35,7 +35,7 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 	public function testConnectionConfigCustom() {
 		$config = [
 			'persistent' => false,
-			'host' => 'foo\SQLSERVER',
+			'host' => 'foo',
 			'login' => 'Administrator',
 			'password' => 'blablabla',
 			'database' => 'bar',
@@ -51,7 +51,7 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 		);
 
 		$expected = $config;
-		$expected['dsn'] = 'sqlsrv:server=foo\SQLSERVER;Database=bar';
+		$expected['dsn'] = 'sqlsrv:Server=foo;Database=bar';
 		$expected['flags'] += [
 			PDO::ATTR_PERSISTENT => false,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,

@@ -31,11 +31,11 @@ class Sqlserver extends \Cake\Database\Driver {
  */
 	protected $_baseConfig = [
 		'persistent' => true,
-		'host' => 'localhost\SQLEXPRESS',
+		'host' => 'localhost',
 		'login' => '',
 		'password' => '',
 		'database' => 'cake',
-		'encoding' => 'utf8',
+		'encoding' => PDO::SQLSRV_ENCODING_UTF8,
 		'flags' => [],
 		'init' => [],
 		'settings' => [],
@@ -43,7 +43,7 @@ class Sqlserver extends \Cake\Database\Driver {
 	];
 
 /**
- * Establishes a connection to the databse server
+ * Establishes a connection to the database server
  *
  * @return boolean true on success
  */
@@ -61,7 +61,7 @@ class Sqlserver extends \Cake\Database\Driver {
 			$config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
 		}
 		if (empty($config['dsn'])) {
-			$config['dsn'] = "sqlsrv:server={$config['host']};Database={$config['database']}";
+			$config['dsn'] = "sqlsrv:Server={$config['host']};Database={$config['database']}";
 		}
 
 		$this->_connect($config);
