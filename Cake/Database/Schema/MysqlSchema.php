@@ -258,6 +258,7 @@ class MysqlSchema extends BaseSchema {
 			'time' => ' TIME',
 			'datetime' => ' DATETIME',
 			'timestamp' => ' TIMESTAMP',
+			'uuid' => ' CHAR(36)',
 		];
 		$specialMap = [
 			'string' => true,

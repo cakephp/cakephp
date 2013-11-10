@@ -294,6 +294,7 @@ class PostgresSchema extends BaseSchema {
 			'time' => ' TIME',
 			'datetime' => ' TIMESTAMP',
 			'timestamp' => ' TIMESTAMP',
+			'uuid' => ' UUID',
 		];
 
 		if (isset($typeMap[$data['type']])) {
@@ -314,9 +315,6 @@ class PostgresSchema extends BaseSchema {
 			$type = ' VARCHAR';
 			if ($isFixed) {
 				$type = ' CHAR';
-			}
-			if ($isFixed && isset($data['length']) && $data['length'] == 36) {
-				$type = ' UUID';
 			}
 			$out .= $type;
 			if (isset($data['length']) && $data['length'] != 36) {

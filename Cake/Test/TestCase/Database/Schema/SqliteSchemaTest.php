@@ -355,6 +355,11 @@ SQL;
 				['type' => 'string'],
 				'"title" VARCHAR'
 			],
+			[
+				'id',
+				['type' => 'uuid'],
+				'"id" CHAR(36)'
+			],
 			// Text
 			[
 				'body',

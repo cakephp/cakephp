@@ -207,6 +207,7 @@ class SqliteSchema extends BaseSchema {
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
 		$typeMap = [
+			'uuid' => ' CHAR(36)',
 			'string' => ' VARCHAR',
 			'integer' => ' INTEGER',
 			'biginteger' => ' BIGINT',
