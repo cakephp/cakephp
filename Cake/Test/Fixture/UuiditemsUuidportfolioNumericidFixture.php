@@ -33,8 +33,8 @@ class UuiditemsUuidportfolioNumericidFixture extends TestFixture {
  */
 	public $fields = array(
 		'id' => ['type' => 'integer', 'length' => 10],
-		'uuiditem_id' => ['type' => 'string', 'length' => 36, 'null' => false],
-		'uuidportfolio_id' => ['type' => 'string', 'length' => 36, 'null' => false],
+		'uuiditem_id' => ['type' => 'uuid', 'null' => false],
+		'uuidportfolio_id' => ['type' => 'uuid', 'null' => false],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
