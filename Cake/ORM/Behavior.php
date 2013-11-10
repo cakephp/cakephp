@@ -131,7 +131,6 @@ class Behavior implements EventListener {
  */
 	public function __construct(Table $table, array $settings = []) {
 		$this->_settings = $settings + $this->_defaultSettings;
-		$this->verifySettings();
 	}
 
 /**

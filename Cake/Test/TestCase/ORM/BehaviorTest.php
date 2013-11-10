@@ -230,23 +230,6 @@ class BehaviorTest extends TestCase {
 	}
 
 /**
- * testImplementedMethodsInvalid
- *
- * @expectedException Cake\Error\Exception
- * @expectedExceptionMessage The method iDoNotExist is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
- *
- * @return void
- */
-	public function testImplementedMethodsInvalid() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$behavior = new Test2Behavior($table, [
-			'implementedMethods' => [
-				'aliased' => 'iDoNotExist'
-			]
-		]);
-	}
-
-/**
  * testImplementedFinders
  *
  * @return void
@@ -308,4 +291,54 @@ class BehaviorTest extends TestCase {
 			]
 		]);
 	}
+
+/**
+ * testImplementedMethods
+ *
+ * Simply don't expect an exception to be thrown
+ *
+ * @return void
+ */
+	public function testVerifySettings() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table);
+		$behavior->verifySettings();
+	}
+
+/**
+ * testImplementedMethodsOverriden
+ *
+ * Simply don't expect an exception to be thrown
+ *
+ * @return void
+ */
+	public function testVerifySettingsOverriden() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table);
+		$behavior = new Test2Behavior($table, [
+			'implementedMethods' => [
+				'aliased' => 'doSomething'
+			]
+		]);
+		$behavior->verifySettings();
+	}
+
+/**
+ * testImplementedMethodsInvalid
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage The method iDoNotExist is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
+ *
+ * @return void
+ */
+	public function testVerifySettingsInvalid() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$behavior = new Test2Behavior($table, [
+			'implementedMethods' => [
+				'aliased' => 'iDoNotExist'
+			]
+		]);
+		$behavior->verifySettings();
+	}
+
 }
