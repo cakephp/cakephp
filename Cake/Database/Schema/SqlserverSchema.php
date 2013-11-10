@@ -29,8 +29,7 @@ class SqlserverSchema extends BaseSchema {
  *
  */
 	public function listTablesSql($config) {
-		$schema = empty($config['schema']) ? 'dbo' : $config['schema'];
-		return ['SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA = ? ORDER BY TABLE_NAME', [$schema]];
+		return ['SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME', []];
 	}
 
 /**
@@ -44,11 +43,10 @@ class SqlserverSchema extends BaseSchema {
 			CHARACTER_MAXIMUM_LENGTH AS [char_length],
 			'' AS [comment], ORDINAL_POSITION AS [ordinal_position]
 		FROM INFORMATION_SCHEMA.COLUMNS
-		WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
+		WHERE TABLE_NAME = ?
 		ORDER BY ordinal_position";
 
-		$schema = empty($config['schema']) ? 'dbo' : $config['schema'];
-		return [$sql, [$name, $schema]];
+		return [$sql, [$name]];
 	}
 
 /**
@@ -167,12 +165,11 @@ class SqlserverSchema extends BaseSchema {
 			INNER JOIN sys.[indexes] I ON T.[object_id] = I.[object_id]  
 			INNER JOIN sys.[index_columns] IC ON I.[object_id] = IC.[object_id] AND I.[index_id] = IC.[index_id]
 			INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id] 
-			WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND OBJECT_SCHEMA_NAME(T.[object_id],DB_ID()) = ?
+			WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ?
 			ORDER BY I.[index_id], IC.[index_column_id]
 		";
 
-		$schema = empty($config['schema']) ? 'dbo' : $config['schema'];
-		return [$sql, [$table, $schema]];
+		return [$sql, [$table]];
 	}
 
 /**
@@ -228,11 +225,10 @@ class SqlserverSchema extends BaseSchema {
 			INNER JOIN sys.tables RT ON RT.object_id = FKC.referenced_object_id
 			INNER JOIN sys.columns C ON C.column_id = FKC.parent_column_id AND C.object_id = FKC.parent_object_id
 			INNER JOIN sys.columns RC ON RC.column_id = FKC.referenced_column_id AND RC.object_id = FKC.referenced_object_id
-			WHERE FK.is_ms_shipped = 0 AND T.name = ? AND OBJECT_SCHEMA_NAME(T.[object_id],DB_ID()) = ?
+			WHERE FK.is_ms_shipped = 0 AND T.name = ?
 		";
 
-		$schema = empty($config['schema']) ? 'dbo' : $config['schema'];
-		return [$sql, [$table, $schema]];
+		return [$sql, [$table]];
 	}
 
 /**
