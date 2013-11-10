@@ -674,11 +674,50 @@ SQL;
 		$connection->expects($this->any())->method('driver')
 			->will($this->returnValue($driver));
 
+		$statement = $this->getMock(
+			'\PDOStatement',
+			['execute', 'rowCount', 'closeCursor', 'fetch']
+		);
+		$driver->connection()->expects($this->once())->method('prepare')
+			->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
+			->will($this->returnValue($statement));
+		$statement->expects($this->at(0))->method('fetch')
+			->will($this->returnValue(['1']));
+		$statement->expects($this->at(2))->method('fetch')
+			->will($this->returnValue(false));
+
 		$table = new Table('articles');
 		$result = $table->truncateSql($connection);
 		$this->assertCount(2, $result);
 		$this->assertEquals('DELETE FROM sqlite_sequence WHERE name="articles"', $result[0]);
 		$this->assertEquals('DELETE FROM "articles"', $result[1]);
+	}
+
+/**
+ * Test truncateSql() with no sequences
+ *
+ * @return void
+ */
+	public function testTruncateSqlNoSequences() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$statement = $this->getMock(
+			'\PDOStatement',
+			['execute', 'rowCount', 'closeCursor', 'fetch']
+		);
+		$driver->connection()->expects($this->once())->method('prepare')
+			->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
+			->will($this->returnValue($statement));
+		$statement->expects($this->once())->method('fetch')
+			->will($this->returnValue(false));
+
+		$table = new Table('articles');
+		$result = $table->truncateSql($connection);
+		$this->assertCount(1, $result);
+		$this->assertEquals('DELETE FROM "articles"', $result[0]);
 	}
 
 /**
@@ -688,7 +727,7 @@ SQL;
  */
 	protected function _getMockedDriver() {
 		$driver = new \Cake\Database\Driver\Sqlite();
-		$mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier']);
+		$mock = $this->getMock('FakePdo', ['quote', 'quoteIdentifier', 'prepare']);
 		$mock->expects($this->any())
 			->method('quote')
 			->will($this->returnCallback(function ($value) {
