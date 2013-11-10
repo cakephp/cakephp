@@ -221,7 +221,7 @@ class Type {
  * @return boolean
  */
 	public static function boolval($value) {
-		if (is_string($value)) {
+		if (is_string($value) && !is_numeric($value)) {
 			return strtolower($value) === 'true' ? true : false;
 		}
 		return !empty($value);

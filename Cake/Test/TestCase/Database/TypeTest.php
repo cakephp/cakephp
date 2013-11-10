@@ -295,6 +295,12 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 
 		$driver = $this->getMock('\Cake\Database\Driver');
 		$this->assertFalse($type->toDatabase(0, $driver));
+
+		$driver = $this->getMock('\Cake\Database\Driver');
+		$this->assertTrue($type->toDatabase('1', $driver));
+
+		$driver = $this->getMock('\Cake\Database\Driver');
+		$this->assertFalse($type->toDatabase('0', $driver));
 	}
 
 /**
@@ -322,11 +328,13 @@ class TypeTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertTrue($type->toPHP(true, $driver));
 		$this->assertTrue($type->toPHP(1, $driver));
+		$this->assertTrue($type->toPHP('1', $driver));
 		$this->assertTrue($type->toPHP('TRUE', $driver));
 		$this->assertTrue($type->toPHP('true', $driver));
 
 		$this->assertFalse($type->toPHP(false, $driver));
 		$this->assertFalse($type->toPHP(0, $driver));
+		$this->assertFalse($type->toPHP('0', $driver));
 		$this->assertFalse($type->toPHP('FALSE', $driver));
 		$this->assertFalse($type->toPHP('false', $driver));
 	}
