@@ -61,12 +61,17 @@ class Sqlserver extends \Cake\Database\Driver {
 			$config['flags'][PDO::SQLSRV_ATTR_ENCODING] = $config['encoding'];
 		}
 		if (empty($config['dsn'])) {
-			$config['dsn'] = "sqlsrv:Server={$config['host']};Database={$config['database']}";
+			if ($this->pdoDriverName() === 'sqlsrv') {
+				$config['dsn'] = "sqlsrv:Server={$config['host']};Database={$config['database']}";
+			} else {
+				$config['dsn'] = "dblib:host={$config['host']};dbname={$config['database']}";
+			}
 		}
 
 		$this->_connect($config);
 
 		$connection = $this->connection();
+		$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		if (!empty($config['init'])) {
 			foreach ((array)$config['init'] as $command) {
 				$connection->exec($command);
@@ -81,13 +86,33 @@ class Sqlserver extends \Cake\Database\Driver {
 	}
 
 /**
+ * Establishes a connection to the databse server
+ *
+ * @param array $config configuration to be used for creating connection
+ * @return boolean true on success
+ */
+	protected function _connect(array $config) {
+		if ($this->pdoDriverName() !== 'sqlsrv') {
+			$connection = new PDO($config['dsn'], $config['login'], $config['password']);
+		} else {
+			$connection = new PDO($config['dsn'], $config['login'], $config['password'], $config['flags']);
+		}
+		$this->connection($connection);
+		return true;
+	}
+
+/**
  * Returns whether php is able to use this driver for connecting to database
  *
  * @return boolean true if it is valid to use this driver
  */
 
 	public function enabled() {
-		return in_array('sqlsrv', PDO::getAvailableDrivers());
+		return in_array($this->pdoDriverName(), PDO::getAvailableDrivers());
+	}
+
+	protected function pdoDriverName() {
+		return strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? 'sqlsrv' : 'dblib';
 	}
 
 }
