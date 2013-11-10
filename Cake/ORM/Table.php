@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
+use Cake\Database\Type;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Association\BelongsTo;
@@ -865,15 +866,30 @@ class Table {
  */
 	protected function _insert($entity, $data) {
 		$query = $this->_buildQuery();
+
+		$id = null;
+		$primary = $this->primaryKey();
+		if ($primary) {
+			$typeName = $this->schema()->columnType($primary);
+			$type = Type::build($typeName);
+			$id = $type->newId();
+		}
+		if ($id !== null) {
+			$data[$primary] = $id;
+		}
+
 		$statement = $query->insert($this->table(), array_keys($data))
 			->values($data)
 			->executeStatement();
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
-			$primary = $this->primaryKey();
-			$id = $statement->lastInsertId($this->table(), $primary);
-			$entity->set($primary, $id);
+			if (!isset($data[$primary])) {
+				$id = $statement->lastInsertId($this->table(), $primary);
+			}
+			if ($id !== null) {
+				$entity->set($primary, $id);
+			}
 			$entity->clean();
 			$success = $entity;
 		}
