@@ -571,7 +571,7 @@ SQL;
 
 		$expected = <<<SQL
 CREATE TABLE [schema_articles] (
-[id] SERIAL,
+[id] INTEGER NOT NULL,
 [title] VARCHAR NOT NULL,
 [body] TEXT,
 [created] DATETIME,

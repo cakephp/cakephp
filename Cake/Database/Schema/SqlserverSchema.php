@@ -258,6 +258,15 @@ class SqlserverSchema extends BaseSchema {
  * {@inheritdoc}
  *
  */
+	protected function _foreignOnClause($on) {
+		$parent = parent::_foreignOnClause($on);
+		return $parent === Table::ACTION_RESTRICT ? Table::ACTION_SET_NULL : $parent;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ */
 	protected function _convertOnClause($clause) {
 		switch ($clause) {
 			case 'NO_ACTION':
