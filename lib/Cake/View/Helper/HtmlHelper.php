@@ -276,11 +276,10 @@ class HtmlHelper extends AppHelper {
 		$out = null;
 
 		if (isset($options['link'])) {
+			$options['link'] = $this->assetUrl($options['link']);
 			if (isset($options['rel']) && $options['rel'] === 'icon') {
 				$out = sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('block', 'link'), ' ', ' '));
 				$options['rel'] = 'shortcut icon';
-			} else {
-				$options['link'] = $this->url($options['link'], true);
 			}
 			$out .= sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('block', 'link'), ' ', ' '));
 		} else {
