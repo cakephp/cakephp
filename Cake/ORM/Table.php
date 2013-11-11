@@ -867,13 +867,8 @@ class Table {
 	protected function _insert($entity, $data) {
 		$query = $this->_buildQuery();
 
-		$id = null;
 		$primary = $this->primaryKey();
-		if ($primary) {
-			$typeName = $this->schema()->columnType($primary);
-			$type = Type::build($typeName);
-			$id = $type->newId();
-		}
+		$id = $this->_newId($primary);
 		if ($id !== null) {
 			$data[$primary] = $id;
 		}
@@ -895,6 +890,25 @@ class Table {
 		}
 		$statement->closeCursor();
 		return $success;
+	}
+
+/**
+ * Generate a primary key value for a new record.
+ *
+ * By default, this uses the type system to generate a new primary key
+ * value if possible. You can override this method if you have specific requirements
+ * for id generation.
+ *
+ * @param string $primary The primary key column to get a new ID for.
+ * @return null|mixed Either null or the new primary key value.
+ */
+	protected function _newId($primary) {
+		if (!$primary) {
+			return null;
+		}
+		$typeName = $this->schema()->columnType($primary);
+		$type = Type::build($typeName);
+		return $type->newId();
 	}
 
 /**
