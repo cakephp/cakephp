@@ -132,9 +132,6 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 			} else {
 				$this->_loaded[$alias] = new $class();
 				ClassRegistry::addObject($class, $this->_loaded[$alias]);
-				if (!empty($plugin)) {
-					ClassRegistry::addObject($plugin . '.' . $class, $this->_loaded[$alias]);
-				}
 			}
 		} elseif (isset($this->_loaded[$alias]->settings) && isset($this->_loaded[$alias]->settings[$this->modelName])) {
 			if ($config !== null && $config !== false) {
