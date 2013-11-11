@@ -395,6 +395,7 @@ class CakeEventManagerTest extends CakeTestCase {
 
 		$generalManager->expects($this->once())->method('prioritisedListeners')->with('fake.event');
 		$manager->dispatch($event);
+		CakeEventManager::instance(new CakeEventManager());
 	}
 
 /**
@@ -421,6 +422,7 @@ class CakeEventManagerTest extends CakeTestCase {
 
 		$expected = array('secondListenerFunction');
 		$this->assertEquals($expected, $listener->callStack);
+		CakeEventManager::instance(new CakeEventManager());
 	}
 
 /**
@@ -451,6 +453,7 @@ class CakeEventManagerTest extends CakeTestCase {
 
 		$expected = array('listenerFunction', 'secondListenerFunction', 'thirdListenerFunction');
 		$this->assertEquals($expected, $listener->callStack);
+		CakeEventManager::instance(new CakeEventManager());
 	}
 
 /**
@@ -480,6 +483,7 @@ class CakeEventManagerTest extends CakeTestCase {
 
 		$expected = array('listenerFunction', 'secondListenerFunction');
 		$this->assertEquals($expected, $listener->callStack);
+		CakeEventManager::instance(new CakeEventManager());
 	}
 
 }
