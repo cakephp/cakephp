@@ -82,6 +82,10 @@ class MysqlSchemaTest extends TestCase {
 				['type' => 'string', 'length' => 25, 'fixed' => true]
 			],
 			[
+				'CHAR(36)',
+				['type' => 'uuid', 'length' => null]
+			],
+			[
 				'TINYTEXT',
 				['type' => 'string', 'length' => null]
 			],
@@ -370,6 +374,11 @@ SQL;
 				'title',
 				['type' => 'string'],
 				'`title` VARCHAR(255)'
+			],
+			[
+				'id',
+				['type' => 'uuid'],
+				'`id` CHAR(36)'
 			],
 			// Text
 			[

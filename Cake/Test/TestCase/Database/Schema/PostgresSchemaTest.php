@@ -155,7 +155,7 @@ SQL;
 			],
 			[
 				'UUID',
-				['type' => 'string', 'fixed' => true, 'length' => 36]
+				['type' => 'uuid', 'length' => null]
 			],
 			[
 				'INET',
@@ -396,7 +396,7 @@ SQL;
 			],
 			[
 				'id',
-				['type' => 'string', 'length' => 36, 'fixed' => true, 'null' => false],
+				['type' => 'uuid', 'length' => 36, 'null' => false],
 				'"id" UUID NOT NULL'
 			],
 			[

@@ -38,7 +38,8 @@ class Type {
 		'date' => 'Cake\Database\Type\DateType',
 		'datetime' => 'Cake\Database\Type\DateTimeType',
 		'timestamp' => 'Cake\Database\Type\DateTimeType',
-		'time' => 'Cake\Database\Type\TimeType'
+		'time' => 'Cake\Database\Type\TimeType',
+		'uuid' => 'Cake\Database\Type\UuidType',
 	];
 
 /**
@@ -53,7 +54,6 @@ class Type {
 		'integer' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
 		'biginteger' => ['callback' => 'intval', 'pdo' => PDO::PARAM_INT],
 		'string' => ['callback' => 'strval'],
-		'uuid' => ['callback' => 'strval'],
 		'text' => ['callback' => 'strval'],
 		'boolean' => [
 			'callback' => ['\Cake\Database\Type', 'boolval'],
@@ -221,10 +221,23 @@ class Type {
  * @return boolean
  */
 	public static function boolval($value) {
-		if (is_string($value)) {
+		if (is_string($value) && !is_numeric($value)) {
 			return strtolower($value) === 'true' ? true : false;
 		}
 		return !empty($value);
+	}
+
+/**
+ * Generate a new primary key value for a given type.
+ *
+ * This method can be used by types to create new primary key values
+ * when entities are inserted.
+ *
+ * @return mixed A new primary key value.
+ * @see Cake\Database\Type\UuidType
+ */
+	public function newId() {
+		return null;
 	}
 
 }

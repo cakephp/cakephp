@@ -32,7 +32,7 @@ class UuidTagFixture extends TestFixture {
  * @var array
  */
 	public $fields = array(
-		'id' => ['type' => 'string', 'length' => 36],
+		'id' => ['type' => 'uuid'],
 		'name' => ['type' => 'string', 'length' => 255],
 		'created' => ['type' => 'datetime'],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]

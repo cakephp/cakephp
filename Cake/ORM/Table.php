@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
+use Cake\Database\Type;
 use Cake\Event\Event;
 use Cake\Event\EventManager;
 use Cake\ORM\Association\BelongsTo;
@@ -865,20 +866,49 @@ class Table {
  */
 	protected function _insert($entity, $data) {
 		$query = $this->_buildQuery();
+
+		$primary = $this->primaryKey();
+		$id = $this->_newId($primary);
+		if ($id !== null) {
+			$data[$primary] = $id;
+		}
+
 		$statement = $query->insert($this->table(), array_keys($data))
 			->values($data)
 			->executeStatement();
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
-			$primary = $this->primaryKey();
-			$id = $statement->lastInsertId($this->table(), $primary);
-			$entity->set($primary, $id);
+			if (!isset($data[$primary])) {
+				$id = $statement->lastInsertId($this->table(), $primary);
+			}
+			if ($id !== null) {
+				$entity->set($primary, $id);
+			}
 			$entity->clean();
 			$success = $entity;
 		}
 		$statement->closeCursor();
 		return $success;
+	}
+
+/**
+ * Generate a primary key value for a new record.
+ *
+ * By default, this uses the type system to generate a new primary key
+ * value if possible. You can override this method if you have specific requirements
+ * for id generation.
+ *
+ * @param string $primary The primary key column to get a new ID for.
+ * @return null|mixed Either null or the new primary key value.
+ */
+	protected function _newId($primary) {
+		if (!$primary) {
+			return null;
+		}
+		$typeName = $this->schema()->columnType($primary);
+		$type = Type::build($typeName);
+		return $type->newId();
 	}
 
 /**

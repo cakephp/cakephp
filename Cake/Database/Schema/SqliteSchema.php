@@ -71,6 +71,9 @@ class SqliteSchema extends BaseSchema {
 		if (strpos($col, 'int') !== false) {
 			return ['type' => 'integer', 'length' => $length];
 		}
+		if ($col === 'char' && $length === 36) {
+			return ['type' => 'uuid', 'length' => null];
+		}
 		if ($col === 'char') {
 			return ['type' => 'string', 'fixed' => true, 'length' => $length];
 		}
@@ -204,6 +207,7 @@ class SqliteSchema extends BaseSchema {
 	public function columnSql(Table $table, $name) {
 		$data = $table->column($name);
 		$typeMap = [
+			'uuid' => ' CHAR(36)',
 			'string' => ' VARCHAR',
 			'integer' => ' INTEGER',
 			'biginteger' => ' BIGINT',
