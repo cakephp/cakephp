@@ -47,19 +47,6 @@ use Cake\Network\Response;
 class BasicAuthenticate extends BaseAuthenticate {
 
 /**
- * Constructor, completes configuration for basic authentication.
- *
- * @param ComponentRegistry $registry The Component registry used on this request.
- * @param array $settings An array of settings.
- */
-	public function __construct(ComponentRegistry $registry, $settings) {
-		parent::__construct($registry, $settings);
-		if (empty($this->settings['realm'])) {
-			$this->settings['realm'] = env('SERVER_NAME');
-		}
-	}
-
-/**
  * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
  * login using HTTP auth.
  *
@@ -78,8 +65,8 @@ class BasicAuthenticate extends BaseAuthenticate {
  * @return mixed Either false or an array of user information
  */
 	public function getUser(Request $request) {
-		$username = env('PHP_AUTH_USER');
-		$pass = env('PHP_AUTH_PW');
+		$username = $request->env('PHP_AUTH_USER');
+		$pass = $request->env('PHP_AUTH_PW');
 
 		if (empty($username) || empty($pass)) {
 			return false;
@@ -104,10 +91,12 @@ class BasicAuthenticate extends BaseAuthenticate {
 /**
  * Generate the login headers
  *
+ * @param Cake\Network\Request $request Request object.
  * @return string Headers for logging in.
  */
-	public function loginHeaders() {
-		return sprintf('WWW-Authenticate: Basic realm="%s"', $this->settings['realm']);
+	public function loginHeaders(Request $request) {
+		$realm = !empty($this->settings['realm']) ? $this->settings['realm'] : $request->env('SERVER_NAME');
+		return sprintf('WWW-Authenticate: Basic realm="%s"', $realm);
 	}
 
 }

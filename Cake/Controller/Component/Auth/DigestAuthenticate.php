@@ -87,28 +87,12 @@ class DigestAuthenticate extends BasicAuthenticate {
 		'scope' => array(),
 		'recursive' => 0,
 		'contain' => null,
-		'realm' => '',
+		'realm' => null,
 		'qop' => 'auth',
-		'nonce' => '',
-		'opaque' => '',
+		'nonce' => null,
+		'opaque' => null,
 		'passwordHasher' => 'Simple',
 	);
-
-/**
- * Constructor, completes configuration for digest authentication.
- *
- * @param ComponentRegistry $registry The Component registry used on this request.
- * @param array $settings An array of settings.
- */
-	public function __construct(ComponentRegistry $registry, $settings) {
-		parent::__construct($registry, $settings);
-		if (empty($this->settings['nonce'])) {
-			$this->settings['nonce'] = uniqid('');
-		}
-		if (empty($this->settings['opaque'])) {
-			$this->settings['opaque'] = md5($this->settings['realm']);
-		}
-	}
 
 /**
  * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
@@ -117,7 +101,7 @@ class DigestAuthenticate extends BasicAuthenticate {
  * @return mixed Either false or an array of user information
  */
 	public function getUser(Request $request) {
-		$digest = $this->_getDigest();
+		$digest = $this->_getDigest($request);
 		if (empty($digest)) {
 			return false;
 		}
@@ -131,7 +115,8 @@ class DigestAuthenticate extends BasicAuthenticate {
 		}
 		$password = $user[$this->settings['fields']['password']];
 		unset($user[$this->settings['fields']['password']]);
-		if ($digest['response'] === $this->generateResponseHash($digest, $password)) {
+		$hash = $this->generateResponseHash($digest, $password, $request->env('REQUEST_METHOD'));
+		if ($digest['response'] === $hash) {
 			return $user;
 		}
 		return false;
@@ -140,10 +125,11 @@ class DigestAuthenticate extends BasicAuthenticate {
 /**
  * Gets the digest headers from the request/environment.
  *
+ * @param Cake\Network\Request $request Request object.
  * @return array Array of digest information.
  */
-	protected function _getDigest() {
-		$digest = env('PHP_AUTH_DIGEST');
+	protected function _getDigest(Request $request) {
+		$digest = $request->env('PHP_AUTH_DIGEST');
 		if (empty($digest) && function_exists('apache_request_headers')) {
 			$headers = apache_request_headers();
 			if (!empty($headers['Authorization']) && substr($headers['Authorization'], 0, 7) === 'Digest ') {
@@ -186,13 +172,14 @@ class DigestAuthenticate extends BasicAuthenticate {
  *
  * @param array $digest Digest information containing data from DigestAuthenticate::parseAuthData().
  * @param string $password The digest hash password generated with DigestAuthenticate::password()
+ * @param string $method Request method
  * @return string Response hash
  */
-	public function generateResponseHash($digest, $password) {
+	public function generateResponseHash($digest, $password, $method) {
 		return md5(
 			$password .
 			':' . $digest['nonce'] . ':' . $digest['nc'] . ':' . $digest['cnonce'] . ':' . $digest['qop'] . ':' .
-			md5(env('REQUEST_METHOD') . ':' . $digest['uri'])
+			md5($method . ':' . $digest['uri'])
 		);
 	}
 
@@ -211,15 +198,16 @@ class DigestAuthenticate extends BasicAuthenticate {
 /**
  * Generate the login headers
  *
+ * @param Cake\Network\Request $request Request object.
  * @return string Headers for logging in.
  */
-	public function loginHeaders() {
+	public function loginHeaders(Request $request) {
 		$options = array(
-			'realm' => $this->settings['realm'],
+			'realm' => $this->settings['realm'] ?: $request->env('SERVER_NAME'),
 			'qop' => $this->settings['qop'],
-			'nonce' => $this->settings['nonce'],
-			'opaque' => $this->settings['opaque']
+			'nonce' => $this->settings['nonce'] ?: uniqid(''),
 		);
+		$options['nonce'] = $this->settings['nonce'] ?: $options['realm'];
 		$opts = array();
 		foreach ($options as $k => $v) {
 			$opts[] = sprintf('%s="%s"', $k, $v);

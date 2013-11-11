@@ -98,8 +98,10 @@ class BasicAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateNoUsername() {
-		$request = new Request('posts/index');
-		$_SERVER['PHP_AUTH_PW'] = 'foobar';
+		$request = new Request([
+			'url' => 'posts/index',
+			'environment' => ['PHP_AUTH_PW' => 'foobar']
+		]);
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
@@ -110,9 +112,10 @@ class BasicAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateNoPassword() {
-		$request = new Request('posts/index');
-		$_SERVER['PHP_AUTH_USER'] = 'mariano';
-		$_SERVER['PHP_AUTH_PW'] = null;
+		$request = new Request([
+			'url' => 'posts/index',
+			'environment' => ['PHP_AUTH_USER' => 'mariano']
+		]);
 
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
@@ -123,11 +126,14 @@ class BasicAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateInjection() {
-		$request = new Request('posts/index');
+		$request = new Request([
+			'url' => 'posts/index',
+			'environment' => [
+				'PHP_AUTH_USER' => '> 1',
+				'PHP_AUTH_PW' => "' OR 1 = 1"
+			]
+		]);
 		$request->addParams(array('pass' => array()));
-
-		$_SERVER['PHP_AUTH_USER'] = '> 1';
-		$_SERVER['PHP_AUTH_PW'] = "' OR 1 = 1";
 
 		$this->assertFalse($this->auth->getUser($request));
 
@@ -160,11 +166,14 @@ class BasicAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateSuccess() {
-		$request = new Request('posts/index');
+		$request = new Request([
+			'url' => 'posts/index',
+			'environment' => [
+				'PHP_AUTH_USER' => 'mariano',
+				'PHP_AUTH_PW' => 'password'
+			]
+		]);
 		$request->addParams(array('pass' => array()));
-
-		$_SERVER['PHP_AUTH_USER'] = 'mariano';
-		$_SERVER['PHP_AUTH_PW'] = 'password';
 
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
@@ -185,11 +194,14 @@ class BasicAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateFailReChallenge() {
 		$this->auth->settings['scope'] = array('user' => 'nate');
-		$request = new Request('posts/index');
+		$request = new Request([
+			'url' => 'posts/index',
+			'environment' => [
+				'PHP_AUTH_USER' => 'mariano',
+				'PHP_AUTH_PW' => 'password'
+			]
+		]);
 		$request->addParams(array('pass' => array()));
-
-		$_SERVER['PHP_AUTH_USER'] = 'mariano';
-		$_SERVER['PHP_AUTH_PW'] = 'password';
 
 		$this->auth->unauthenticated($request, $this->response);
 	}
@@ -203,11 +215,14 @@ class BasicAuthenticateTest extends TestCase {
 		$hash = Security::hash('password', 'blowfish');
 		$this->skipIf(strpos($hash, '$2a$') === false, 'Skipping blowfish tests as hashing is not working');
 
-		$request = new Request('posts/index');
+		$request = new Request([
+			'url' => 'posts/index',
+			'environment' => [
+				'PHP_AUTH_USER' => 'mariano',
+				'PHP_AUTH_PW' => 'password'
+			]
+		]);
 		$request->addParams(array('pass' => array()));
-
-		$_SERVER['PHP_AUTH_USER'] = 'mariano';
-		$_SERVER['PHP_AUTH_PW'] = 'password';
 
 		$User = ClassRegistry::init('User');
 		$User->updateAll(
