@@ -1523,8 +1523,8 @@ class DboSource extends DataSource {
 		if (empty($queryData['fields'])) {
 			$queryData['fields'] = $this->fields($Model);
 
-		// hasMany relationships need the $Model primary key.
 		} elseif (!empty($Model->hasMany) && $Model->recursive > -1) {
+			// hasMany relationships need the $Model primary key.
 			$assocFields = $this->fields($Model, null, "{$Model->alias}.{$Model->primaryKey}");
 			$passedFields = $queryData['fields'];
 
