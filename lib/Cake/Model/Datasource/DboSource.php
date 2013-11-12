@@ -2048,27 +2048,39 @@ class DboSource extends DataSource {
 /**
  * Returns an array of SQL JOIN fragments from a model's associations
  *
- * @param Model $model
+ * @param Model $Model
  * @return array
  */
-	protected function _getJoins(Model $model) {
+	protected function _getJoins(Model $Model) {
 		$join = array();
-		$joins = array_merge($model->getAssociated('hasOne'), $model->getAssociated('belongsTo'));
+		$joins = array_merge($Model->getAssociated('hasOne'), $Model->getAssociated('belongsTo'));
 
 		foreach ($joins as $assoc) {
-			if (isset($model->{$assoc}) && $model->useDbConfig == $model->{$assoc}->useDbConfig && $model->{$assoc}->getDataSource()) {
-				$assocData = $model->getAssociated($assoc);
-				$join[] = $this->buildJoinStatement(array(
-					'table' => $model->{$assoc},
-					'alias' => $assoc,
-					'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
-					'conditions' => trim($this->conditions(
-						$this->_mergeConditions($assocData['conditions'], $this->getConstraint($assocData['association'], $model, $model->{$assoc}, $assoc, $assocData)),
-						true, false, $model
-					))
-				));
+			if (!isset($Model->{$assoc})) {
+				continue;
 			}
+
+			$LinkModel = $Model->{$assoc};
+
+			if ($Model->useDbConfig !== $LinkModel->useDbConfig) {
+				continue;
+			}
+
+			$assocData = $Model->getAssociated($assoc);
+
+			$join[] = $this->buildJoinStatement(array(
+				'table' => $LinkModel,
+				'alias' => $assoc,
+				'type' => isset($assocData['type']) ? $assocData['type'] : 'LEFT',
+				'conditions' => trim($this->conditions(
+					$this->_mergeConditions($assocData['conditions'], $this->getConstraint($assocData['association'], $Model, $LinkModel, $assoc, $assocData)),
+					true,
+					false,
+					$Model
+				))
+			));
 		}
+
 		return $join;
 	}
 
