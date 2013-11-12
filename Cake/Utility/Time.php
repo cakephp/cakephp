@@ -437,8 +437,7 @@ class Time {
 	public static function daysAsSql($begin, $end, $fieldName, $timezone = null) {
 		$dateTime = new \DateTime;
 		$begin = $dateTime->setTimestamp(static::fromString($begin, $timezone))
-			->format('Y-m-d')
-			. ' 00:00:00';
+			->format('Y-m-d') . ' 00:00:00';
 		$end = $dateTime->setTimestamp(static::fromString($end, $timezone))
 			->format('Y-m-d') . ' 23:59:59';
 
