@@ -435,10 +435,12 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::daysAsSql
  */
 	public static function daysAsSql($begin, $end, $fieldName, $timezone = null) {
-		$begin = static::fromString($begin, $timezone);
-		$end = static::fromString($end, $timezone);
-		$begin = date('Y-m-d', $begin) . ' 00:00:00';
-		$end = date('Y-m-d', $end) . ' 23:59:59';
+		$dateTime = new \DateTime;
+		$begin = $dateTime->setTimestamp(static::fromString($begin, $timezone))
+			->format('Y-m-d')
+			. ' 00:00:00';
+		$end = $dateTime->setTimestamp(static::fromString($end, $timezone))
+			->format('Y-m-d') . ' 23:59:59';
 
 		return "($fieldName >= '$begin') AND ($fieldName <= '$end')";
 	}
@@ -566,14 +568,16 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::toQuarter
  */
 	public static function toQuarter($dateString, $range = false) {
-		$time = static::fromString($dateString);
-		$date = ceil(date('m', $time) / 3);
+		$dateTime = new \DateTime;
+		$timeStamp = $dateTime->setTimestamp(static::fromString($dateString));
+
+		$quater = ceil($timeStamp->format('m') / 3);
 		if ($range === false) {
-			return $date;
+			return $quater;
 		}
 
-		$year = date('Y', $time);
-		switch ($date) {
+		$year = $timeStamp->format('Y');
+		switch ($quater) {
 			case 1:
 				return array($year . '-01-01', $year . '-03-31');
 			case 2:
@@ -645,7 +649,9 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::toAtom
  */
 	public static function toAtom($dateString, $timezone = null) {
-		return date('Y-m-d\TH:i:s\Z', static::fromString($dateString, $timezone));
+		$dateTime = new \DateTime;
+		return $dateTime->setTimestamp(static::fromString($dateString, $timezone))
+			->format('Y-m-d\TH:i:s\Z');
 	}
 
 /**
@@ -657,10 +663,12 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::toRSS
  */
 	public static function toRSS($dateString, $timezone = null) {
+		$dateTime = new \DateTime;
 		$date = static::fromString($dateString, $timezone);
 
 		if ($timezone === null) {
-			return date("r", $date);
+			return $dateTime->setTimestamp($date)
+				->format('r');
 		}
 
 		$userOffset = $timezone;
@@ -679,7 +687,8 @@ class Time {
 			$minutes = (int)(fmod(abs($userOffset), $hours) * 60);
 			$timezone = ($userOffset < 0 ? '-' : '+') . str_pad($hours, 2, '0', STR_PAD_LEFT) . str_pad($minutes, 2, '0', STR_PAD_LEFT);
 		}
-		return date('D, d M Y H:i:s', $date) . ' ' . $timezone;
+		return $dateTime->setTimestamp($date)
+			->format('D, d M Y H:i:s') . ' ' . $timezone;
 	}
 
 /**
