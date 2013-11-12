@@ -713,13 +713,16 @@ class DboSource extends DataSource {
 				if (strpos($field, $this->virtualFieldSeparator) === false) {
 					continue;
 				}
+
 				list($alias, $virtual) = explode($this->virtualFieldSeparator, $field);
 
 				if (!ClassRegistry::isKeySet($alias)) {
 					return;
 				}
-				$model = ClassRegistry::getObject($alias);
-				if ($model->isVirtualField($virtual)) {
+
+				$Model = ClassRegistry::getObject($alias);
+
+				if ($Model->isVirtualField($virtual)) {
 					$result[$alias][$virtual] = $value;
 					unset($result[0][$field]);
 				}
@@ -947,6 +950,7 @@ class DboSource extends DataSource {
 		} else {
 			$table = strval($model);
 		}
+
 		if ($schema && !isset($schemaName)) {
 			$schemaName = $this->getSchemaName();
 		}
@@ -959,11 +963,13 @@ class DboSource extends DataSource {
 			}
 			return $this->name($table);
 		}
+
 		if ($schema && !empty($schemaName)) {
 			if (strstr($table, '.') === false) {
 				return $schemaName . '.' . $table;
 			}
 		}
+
 		return $table;
 	}
 
@@ -972,45 +978,47 @@ class DboSource extends DataSource {
  *
  * Creates new records in the database.
  *
- * @param Model $model Model object that the record is for.
- * @param array $fields An array of field names to insert. If null, $model->data will be
+ * @param Model $Model Model object that the record is for.
+ * @param array $fields An array of field names to insert. If null, $Model->data will be
  *   used to generate field names.
- * @param array $values An array of values with keys matching the fields. If null, $model->data will
+ * @param array $values An array of values with keys matching the fields. If null, $Model->data will
  *   be used to generate values.
  * @return boolean Success
  */
-	public function create(Model $model, $fields = null, $values = null) {
+	public function create(Model $Model, $fields = null, $values = null) {
 		$id = null;
 
 		if (!$fields) {
 			unset($fields, $values);
-			$fields = array_keys($model->data);
-			$values = array_values($model->data);
+			$fields = array_keys($Model->data);
+			$values = array_values($Model->data);
 		}
 		$count = count($fields);
 
 		for ($i = 0; $i < $count; $i++) {
-			$valueInsert[] = $this->value($values[$i], $model->getColumnType($fields[$i]));
+			$valueInsert[] = $this->value($values[$i], $Model->getColumnType($fields[$i]));
 			$fieldInsert[] = $this->name($fields[$i]);
-			if ($fields[$i] == $model->primaryKey) {
+			if ($fields[$i] == $Model->primaryKey) {
 				$id = $values[$i];
 			}
 		}
+
 		$query = array(
-			'table' => $this->fullTableName($model),
+			'table' => $this->fullTableName($Model),
 			'fields' => implode(', ', $fieldInsert),
 			'values' => implode(', ', $valueInsert)
 		);
 
 		if ($this->execute($this->renderStatement('create', $query))) {
 			if (empty($id)) {
-				$id = $this->lastInsertId($this->fullTableName($model, false, false), $model->primaryKey);
+				$id = $this->lastInsertId($this->fullTableName($Model, false, false), $Model->primaryKey);
 			}
-			$model->setInsertID($id);
-			$model->id = $id;
+			$Model->setInsertID($id);
+			$Model->id = $id;
 			return true;
 		}
-		$model->onError();
+
+		$Model->onError();
 		return false;
 	}
 
@@ -1019,12 +1027,12 @@ class DboSource extends DataSource {
  *
  * Reads record(s) from the database.
  *
- * @param Model $model A Model object that the query is for.
+ * @param Model $Model A Model object that the query is for.
  * @param array $queryData An array of queryData information containing keys similar to Model::find()
  * @param integer $recursive Number of levels of association
  * @return mixed boolean false on error/failure. An array of results on success.
  */
-	public function read(Model $model, $queryData = array(), $recursive = null) {
+	public function read(Model $Model, $queryData = array(), $recursive = null) {
 		$queryData = $this->_scrubQueryData($queryData);
 
 		$array = array('callbacks' => $queryData['callbacks']);
@@ -1034,23 +1042,23 @@ class DboSource extends DataSource {
 		}
 
 		if ($recursive !== null) {
-			$_recursive = $model->recursive;
-			$model->recursive = $recursive;
+			$_recursive = $Model->recursive;
+			$Model->recursive = $recursive;
 		}
 
 		$bypass = false;
 		if (!empty($queryData['fields'])) {
 			$bypass = true;
-			$queryData['fields'] = $this->fields($model, null, $queryData['fields']);
+			$queryData['fields'] = $this->fields($Model, null, $queryData['fields']);
 		} else {
-			$queryData['fields'] = $this->fields($model);
+			$queryData['fields'] = $this->fields($Model);
 		}
 
-		$_associations = $model->associations();
+		$_associations = $Model->associations();
 
-		if ($model->recursive == -1) {
+		if ($Model->recursive == -1) {
 			$_associations = array();
-		} elseif ($model->recursive === 0) {
+		} elseif ($Model->recursive === 0) {
 			unset($_associations[2], $_associations[3]);
 		}
 
@@ -1061,10 +1069,10 @@ class DboSource extends DataSource {
 				continue;
 			}
 
-			foreach ($model->{$type} as $assoc => $assocData) {
-				$linkModel = $model->{$assoc};
+			foreach ($Model->{$type} as $assoc => $assocData) {
+				$LinkModel = $Model->{$assoc};
 
-				if ($model->useDbConfig !== $linkModel->useDbConfig) {
+				if ($Model->useDbConfig !== $LinkModel->useDbConfig) {
 					continue;
 				}
 
@@ -1073,20 +1081,20 @@ class DboSource extends DataSource {
 				}
 				$external = isset($assocData['external']);
 
-				if ($this->generateAssociationQuery($model, $linkModel, $type, $assoc, $assocData, $queryData, $external) === true) {
+				if ($this->generateAssociationQuery($Model, $LinkModel, $type, $assoc, $assocData, $queryData, $external) === true) {
 					$linkedModels[$type . '/' . $assoc] = true;
 				}
 			}
 		}
 
 		// Build SQL statement with the primary model, plus hasOne and belongsTo associations
-		$query = $this->buildAssociationQuery($model, $queryData);
+		$query = $this->buildAssociationQuery($Model, $queryData);
 
-		$resultSet = $this->fetchAll($query, $model->cacheQueries);
+		$resultSet = $this->fetchAll($query, $Model->cacheQueries);
 		unset($query);
 
 		if ($resultSet === false) {
-			$model->onError();
+			$Model->onError();
 			return false;
 		}
 
@@ -1094,34 +1102,34 @@ class DboSource extends DataSource {
 
 		// Filter hasOne and belongsTo associations
 		if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-			$filtered = $this->_filterResults($resultSet, $model);
+			$filtered = $this->_filterResults($resultSet, $Model);
 		}
 
 		// Deep associations
-		if ($model->recursive > -1) {
+		if ($Model->recursive > -1) {
 			$joined = array();
 			if (isset($queryData['joins'][0]['alias'])) {
-				$joined[$model->alias] = (array)Hash::extract($queryData['joins'], '{n}.alias');
+				$joined[$Model->alias] = (array)Hash::extract($queryData['joins'], '{n}.alias');
 			}
 
 			foreach ($_associations as $type) {
-				foreach ($model->{$type} as $assoc => $assocData) {
-					$linkModel = $model->{$assoc};
+				foreach ($Model->{$type} as $assoc => $assocData) {
+					$LinkModel = $Model->{$assoc};
 
 					if (!isset($linkedModels[$type . '/' . $assoc])) {
-						if ($model->useDbConfig === $linkModel->useDbConfig) {
+						if ($Model->useDbConfig === $LinkModel->useDbConfig) {
 							$db = $this;
 						} else {
-							$db = ConnectionManager::getDataSource($linkModel->useDbConfig);
+							$db = ConnectionManager::getDataSource($LinkModel->useDbConfig);
 						}
-					} elseif ($model->recursive > 1) {
+					} elseif ($Model->recursive > 1) {
 						$db = $this;
 					}
 
 					if (isset($db) && method_exists($db, 'queryAssociation')) {
 						$stack = array($assoc);
 						$stack['_joined'] = $joined;
-						$db->queryAssociation($model, $linkModel, $type, $assoc, $assocData, $array, true, $resultSet, $model->recursive - 1, $stack);
+						$db->queryAssociation($Model, $LinkModel, $type, $assoc, $assocData, $array, true, $resultSet, $Model->recursive - 1, $stack);
 						unset($db);
 
 						if ($type === 'hasMany' || $type === 'hasAndBelongsToMany') {
@@ -1132,12 +1140,12 @@ class DboSource extends DataSource {
 			}
 
 			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-				$this->_filterResults($resultSet, $model, $filtered);
+				$this->_filterResults($resultSet, $Model, $filtered);
 			}
 		}
 
 		if ($recursive !== null) {
-			$model->recursive = $_recursive;
+			$Model->recursive = $_recursive;
 		}
 
 		return $resultSet;
@@ -1149,11 +1157,11 @@ class DboSource extends DataSource {
  * The primary model is always filtered.
  *
  * @param array $results Reference of resultset to be filtered
- * @param Model $model Instance of model to operate against
+ * @param Model $Model Instance of model to operate against
  * @param array $filtered List of classes already filtered, to be skipped
- * @return array Array of results that have been filtered through $model->afterFind
+ * @return array Array of results that have been filtered through $Model->afterFind
  */
-	protected function _filterResults(&$results, Model $model, $filtered = array()) {
+	protected function _filterResults(&$results, Model $Model, $filtered = array()) {
 		if (!is_array($results)) {
 			return array();
 		}
@@ -1163,19 +1171,19 @@ class DboSource extends DataSource {
 			return array();
 		}
 
-		$keys = array_diff(array_keys($current), $filtered, array($model->alias));
+		$keys = array_diff(array_keys($current), $filtered, array($Model->alias));
 		$filtering = array();
 
 		foreach ($keys as $className) {
-			if (!isset($model->{$className}) || !is_object($model->{$className})) {
+			if (!isset($Model->{$className}) || !is_object($Model->{$className})) {
 				continue;
 			}
 
-			$linkedModel = $model->{$className};
+			$LinkedModel = $Model->{$className};
 			$filtering[] = $className;
 
 			foreach ($results as $key => &$result) {
-				$data = $linkedModel->afterFind(array(array($className => $result[$className])), false);
+				$data = $LinkedModel->afterFind(array(array($className => $result[$className])), false);
 				if (isset($data[0][$className])) {
 					$result[$className] = $data[0][$className];
 				} else {
@@ -1190,8 +1198,8 @@ class DboSource extends DataSource {
 /**
  * Queries associations. Used to fetch results on recursive models.
  *
- * @param Model $model Primary Model object
- * @param Model $linkModel Linked model that
+ * @param Model $Model Primary Model object
+ * @param Model $LinkModel Linked model that
  * @param string $type Association type, one of the model association types ie. hasMany
  * @param string $association
  * @param array $assocData
@@ -1203,62 +1211,62 @@ class DboSource extends DataSource {
  * @return mixed
  * @throws CakeException when results cannot be created.
  */
-	public function queryAssociation(Model $model, &$linkModel, $type, $association, $assocData, &$queryData, $external, &$resultSet, $recursive, $stack) {
+	public function queryAssociation(Model $Model, &$LinkModel, $type, $association, $assocData, &$queryData, $external, &$resultSet, $recursive, $stack) {
 		if (isset($stack['_joined'])) {
 			$joined = $stack['_joined'];
 			unset($stack['_joined']);
 		}
 
-		$query = $this->generateAssociationQuery($model, $linkModel, $type, $association, $assocData, $queryData, $external);
+		$query = $this->generateAssociationQuery($Model, $LinkModel, $type, $association, $assocData, $queryData, $external);
 		if (empty($query)) {
 			return;
 		}
 
 		if (!is_array($resultSet)) {
-			throw new CakeException(__d('cake_dev', 'Error in Model %s', get_class($model)));
+			throw new CakeException(__d('cake_dev', 'Error in Model %s', get_class($Model)));
 		}
 
 		if ($type === 'hasMany' && empty($assocData['limit']) && !empty($assocData['foreignKey'])) {
 			$ins = $fetch = array();
 			foreach ($resultSet as &$result) {
-				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $assocData, $model, $linkModel, $stack)) {
+				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $assocData, $Model, $LinkModel, $stack)) {
 					$ins[] = $in;
 				}
 			}
 
 			if (!empty($ins)) {
 				$ins = array_unique($ins);
-				$fetch = $this->fetchAssociated($model, $query, $ins);
+				$fetch = $this->fetchAssociated($Model, $query, $ins);
 			}
 
 			if ($recursive > 0 && !empty($fetch) && is_array($fetch)) {
-				foreach ($linkModel->associations() as $type1) {
-					foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
-						$deepModel = $linkModel->{$assoc1};
+				foreach ($LinkModel->associations() as $type1) {
+					foreach ($LinkModel->{$type1} as $assoc1 => $assocData1) {
+						$DeepModel = $LinkModel->{$assoc1};
 						$tmpStack = $stack;
 						$tmpStack[] = $assoc1;
 
-						if ($linkModel->useDbConfig === $deepModel->useDbConfig) {
+						if ($LinkModel->useDbConfig === $DeepModel->useDbConfig) {
 							$db = $this;
 						} else {
-							$db = ConnectionManager::getDataSource($deepModel->useDbConfig);
+							$db = ConnectionManager::getDataSource($DeepModel->useDbConfig);
 						}
 
-						$db->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
+						$db->queryAssociation($LinkModel, $DeepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
 					}
 				}
 			}
 
 			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-				$this->_filterResults($fetch, $model);
+				$this->_filterResults($fetch, $Model);
 			}
 
-			return $this->_mergeHasMany($resultSet, $fetch, $association, $model, $linkModel);
+			return $this->_mergeHasMany($resultSet, $fetch, $association, $Model, $LinkModel);
 
 		} elseif ($type === 'hasAndBelongsToMany') {
 			$ins = $fetch = array();
 			foreach ($resultSet as &$result) {
-				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $assocData, $model, $linkModel, $stack)) {
+				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $assocData, $Model, $LinkModel, $stack)) {
 					$ins[] = $in;
 				}
 			}
@@ -1274,60 +1282,61 @@ class DboSource extends DataSource {
 				$query = str_replace(' WHERE 1 = 1', '', $query);
 			}
 
-			$foreignKey = $model->hasAndBelongsToMany[$association]['foreignKey'];
-			$joinKeys = array($foreignKey, $model->hasAndBelongsToMany[$association]['associationForeignKey']);
-			list($with, $habtmFields) = $model->joinModel($model->hasAndBelongsToMany[$association]['with'], $joinKeys);
+			$foreignKey = $Model->hasAndBelongsToMany[$association]['foreignKey'];
+			$joinKeys = array($foreignKey, $Model->hasAndBelongsToMany[$association]['associationForeignKey']);
+			list($with, $habtmFields) = $Model->joinModel($Model->hasAndBelongsToMany[$association]['with'], $joinKeys);
 			$habtmFieldsCount = count($habtmFields);
-			$q = $this->insertQueryData($query, null, $association, $assocData, $model, $linkModel, $stack);
+			$q = $this->insertQueryData($query, null, $association, $assocData, $Model, $LinkModel, $stack);
 
 			if ($q !== false) {
-				$fetch = $this->fetchAll($q, $model->cacheQueries);
+				$fetch = $this->fetchAll($q, $Model->cacheQueries);
 			} else {
 				$fetch = null;
 			}
 
 			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-				$this->_filterResults($fetch, $model);
+				$this->_filterResults($fetch, $Model);
 			}
 		}
 
-		$modelAlias = $model->alias;
-		$primaryKey = $model->primaryKey;
+		$modelAlias = $Model->alias;
+		$primaryKey = $Model->primaryKey;
 
 		foreach ($resultSet as &$row) {
 			if ($type !== 'hasAndBelongsToMany') {
-				$q = $this->insertQueryData($query, $row, $association, $assocData, $model, $linkModel, $stack);
+				$q = $this->insertQueryData($query, $row, $association, $assocData, $Model, $LinkModel, $stack);
+
 				$fetch = null;
 				if ($q !== false) {
 					$joinedData = array();
-					if (($type === 'belongsTo' || $type === 'hasOne') && isset($row[$linkModel->alias], $joined[$model->alias]) && in_array($linkModel->alias, $joined[$model->alias])) {
-						$joinedData = Hash::filter($row[$linkModel->alias]);
+					if (($type === 'belongsTo' || $type === 'hasOne') && isset($row[$LinkModel->alias], $joined[$Model->alias]) && in_array($LinkModel->alias, $joined[$Model->alias])) {
+						$joinedData = Hash::filter($row[$LinkModel->alias]);
 						if (!empty($joinedData)) {
-							$fetch[0] = array($linkModel->alias => $row[$linkModel->alias]);
+							$fetch[0] = array($LinkModel->alias => $row[$LinkModel->alias]);
 						}
 					} else {
-						$fetch = $this->fetchAll($q, $model->cacheQueries);
+						$fetch = $this->fetchAll($q, $Model->cacheQueries);
 					}
 				}
 			}
 
-			$selfJoin = ($linkModel->name === $model->name);
+			$selfJoin = ($LinkModel->name === $Model->name);
 
 			if (!empty($fetch) && is_array($fetch)) {
 				if ($recursive > 0) {
-					foreach ($linkModel->associations() as $type1) {
-						foreach ($linkModel->{$type1} as $assoc1 => $assocData1) {
-							$deepModel = $linkModel->{$assoc1};
+					foreach ($LinkModel->associations() as $type1) {
+						foreach ($LinkModel->{$type1} as $assoc1 => $assocData1) {
+							$DeepModel = $LinkModel->{$assoc1};
 
-							if ($type1 === 'belongsTo' || ($deepModel->alias === $modelAlias && $type === 'belongsTo') || ($deepModel->alias !== $modelAlias)) {
+							if ($type1 === 'belongsTo' || ($DeepModel->alias === $modelAlias && $type === 'belongsTo') || ($DeepModel->alias !== $modelAlias)) {
 								$tmpStack = $stack;
 								$tmpStack[] = $assoc1;
-								if ($linkModel->useDbConfig == $deepModel->useDbConfig) {
+								if ($LinkModel->useDbConfig == $DeepModel->useDbConfig) {
 									$db = $this;
 								} else {
-									$db = ConnectionManager::getDataSource($deepModel->useDbConfig);
+									$db = ConnectionManager::getDataSource($DeepModel->useDbConfig);
 								}
-								$db->queryAssociation($linkModel, $deepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
+								$db->queryAssociation($LinkModel, $DeepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
 							}
 						}
 					}
@@ -1354,7 +1363,7 @@ class DboSource extends DataSource {
 				}
 
 				if ($type !== 'hasAndBelongsToMany' && isset($row[$association])) {
-					$row[$association] = $linkModel->afterFind($row[$association], false);
+					$row[$association] = $LinkModel->afterFind($row[$association], false);
 				}
 
 			} else {
@@ -1367,17 +1376,17 @@ class DboSource extends DataSource {
 /**
  * A more efficient way to fetch associations.
  *
- * @param Model $model Primary model object
+ * @param Model $Model Primary model object
  * @param string $query Association query
  * @param array $ids Array of IDs of associated records
  * @return array Association results
  */
-	public function fetchAssociated(Model $model, $query, $ids) {
+	public function fetchAssociated(Model $Model, $query, $ids) {
 		$query = str_replace('{$__cakeID__$}', implode(', ', $ids), $query);
 		if (count($ids) > 1) {
 			$query = str_replace('= (', 'IN (', $query);
 		}
-		return $this->fetchAll($query, $model->cacheQueries);
+		return $this->fetchAll($query, $Model->cacheQueries);
 	}
 
 /**
@@ -1386,14 +1395,14 @@ class DboSource extends DataSource {
  * @param array $resultSet Data to merge into
  * @param array $merge Data to merge
  * @param string $association Name of Model being Merged
- * @param Model $model Model being merged onto
- * @param Model $linkModel Model being merged
+ * @param Model $Model Model being merged onto
+ * @param Model $LinkModel Model being merged
  * @return void
  */
-	protected function _mergeHasMany(&$resultSet, $merge, $association, $model, $linkModel) {
-		$modelAlias = $model->alias;
-		$primaryKey = $model->primaryKey;
-		$foreignKey = $model->hasMany[$association]['foreignKey'];
+	protected function _mergeHasMany(&$resultSet, $merge, $association, $Model, $LinkModel) {
+		$modelAlias = $Model->alias;
+		$primaryKey = $Model->primaryKey;
+		$foreignKey = $Model->hasMany[$association]['foreignKey'];
 
 		foreach ($resultSet as &$result) {
 			if (!isset($result[$modelAlias])) {
