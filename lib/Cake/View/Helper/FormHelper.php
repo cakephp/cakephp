@@ -523,6 +523,7 @@ class FormHelper extends AppHelper {
 		$out .= $this->Html->useTag('formend');
 
 		$this->_View->modelScope = false;
+		$this->requestType = null;
 		return $out;
 	}
 
