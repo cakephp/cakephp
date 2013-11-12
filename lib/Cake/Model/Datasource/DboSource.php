@@ -1208,7 +1208,7 @@ class DboSource extends DataSource {
  * @return mixed
  * @throws CakeException when results cannot be created.
  */
-	public function queryAssociation(Model $Model, &$LinkModel, $type, $association, $assocData, &$queryData, $external, &$resultSet, $recursive, $stack) {
+	public function queryAssociation(Model $Model, Model $LinkModel, $type, $association, $assocData, &$queryData, $external, &$resultSet, $recursive, $stack) {
 		if (isset($stack['_joined'])) {
 			$joined = $stack['_joined'];
 			unset($stack['_joined']);
@@ -1298,7 +1298,6 @@ class DboSource extends DataSource {
 		foreach ($resultSet as &$row) {
 			if ($type !== 'hasAndBelongsToMany') {
 				$q = $this->insertQueryData($query, $row, $association, $Model, $stack);
-
 
 				$fetch = null;
 				if ($q !== false) {
@@ -1581,7 +1580,7 @@ class DboSource extends DataSource {
  * @return mixed
  *   True. when $external is false and association $type is 'hasOne' or 'belongsTo'.
  */
-	public function generateAssociationQuery(Model $Model, $LinkModel, $type, $association, $assocData, &$queryData, $external) {
+	public function generateAssociationQuery(Model $Model, Model $LinkModel, $type, $association, $assocData, &$queryData, $external) {
 		$assocData = $this->_scrubQueryData($assocData);
 
 		if ($external && !empty($assocData['finderQuery'])) {
@@ -1789,6 +1788,7 @@ class DboSource extends DataSource {
  */
 	public function buildStatement($query, $model) {
 		$query = array_merge($this->_queryDefaults, $query);
+
 		if (!empty($query['joins'])) {
 			$count = count($query['joins']);
 			for ($i = 0; $i < $count; $i++) {
@@ -1797,6 +1797,7 @@ class DboSource extends DataSource {
 				}
 			}
 		}
+
 		return $this->renderStatement('select', array(
 			'conditions' => $this->conditions($query['conditions'], true, true, $model),
 			'fields' => implode(', ', $query['fields']),
