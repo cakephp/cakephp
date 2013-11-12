@@ -1117,11 +1117,7 @@ class DboSource extends DataSource {
 					$LinkModel = $Model->{$assoc};
 
 					if (!isset($linkedModels[$type . '/' . $assoc])) {
-						if ($Model->useDbConfig === $LinkModel->useDbConfig) {
-							$db = $this;
-						} else {
-							$db = ConnectionManager::getDataSource($LinkModel->useDbConfig);
-						}
+						$db = $Model->useDbConfig === $LinkModel->useDbConfig ? $this : $LinkModel->getDataSource();
 					} elseif ($Model->recursive > 1) {
 						$db = $this;
 					}
@@ -1129,8 +1125,8 @@ class DboSource extends DataSource {
 					if (isset($db) && method_exists($db, 'queryAssociation')) {
 						$stack = array($assoc);
 						$stack['_joined'] = $joined;
+
 						$db->queryAssociation($Model, $LinkModel, $type, $assoc, $assocData, $array, true, $resultSet, $Model->recursive - 1, $stack);
-						unset($db);
 
 						if ($type === 'hasMany' || $type === 'hasAndBelongsToMany') {
 							$filtered[] = $assoc;
@@ -1246,11 +1242,7 @@ class DboSource extends DataSource {
 						$tmpStack = $stack;
 						$tmpStack[] = $assoc1;
 
-						if ($LinkModel->useDbConfig === $DeepModel->useDbConfig) {
-							$db = $this;
-						} else {
-							$db = ConnectionManager::getDataSource($DeepModel->useDbConfig);
-						}
+						$db = $LinkModel->useDbConfig === $DeepModel->useDbConfig ? $this : $DeepModel->getDataSource();
 
 						$db->queryAssociation($LinkModel, $DeepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
 					}
@@ -1331,11 +1323,9 @@ class DboSource extends DataSource {
 							if ($type1 === 'belongsTo' || ($DeepModel->alias === $modelAlias && $type === 'belongsTo') || ($DeepModel->alias !== $modelAlias)) {
 								$tmpStack = $stack;
 								$tmpStack[] = $assoc1;
-								if ($LinkModel->useDbConfig == $DeepModel->useDbConfig) {
-									$db = $this;
-								} else {
-									$db = ConnectionManager::getDataSource($DeepModel->useDbConfig);
-								}
+
+								$db = $LinkModel->useDbConfig === $DeepModel->useDbConfig ? $this : $DeepModel->getDataSource();
+
 								$db->queryAssociation($LinkModel, $DeepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
 							}
 						}
