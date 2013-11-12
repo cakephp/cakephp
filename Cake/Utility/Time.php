@@ -650,7 +650,7 @@ class Time {
 	public static function toAtom($dateString, $timezone = null) {
 		$dateTime = new \DateTime;
 		return $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format(DATE_ATOM);
+			->format($dateTime::ATOM);
 	}
 
 /**

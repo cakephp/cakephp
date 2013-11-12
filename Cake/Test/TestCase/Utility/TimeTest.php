@@ -562,7 +562,7 @@ class TimeTest extends TestCase {
  */
 	public function testToAtom() {
 		$dateTime = new \DateTime;
-		$this->assertEquals($dateTime->format(DATE_ATOM), $this->Time->toAtom(time()));
+		$this->assertEquals($dateTime->format($dateTime::ATOM), $this->Time->toAtom(time()));
 	}
 
 /**
