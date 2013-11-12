@@ -1606,12 +1606,12 @@ class DboSource extends DataSource {
 		switch ($type) {
 			case 'hasOne':
 			case 'belongsTo':
+				$self = ($Model->name === $linkModel->name);
+
 				$conditions = $this->_mergeConditions(
 					$assocData['conditions'],
 					$this->getConstraint($type, $Model, $linkModel, $association, array_merge($assocData, compact('external', 'self')))
 				);
-
-				$self = ($Model->name === $linkModel->name);
 
 				if (!$self && $external) {
 					$modelAlias = $Model->alias;
