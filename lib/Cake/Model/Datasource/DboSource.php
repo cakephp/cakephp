@@ -1261,7 +1261,7 @@ class DboSource extends DataSource {
 				$this->_filterResults($fetch, $Model);
 			}
 
-			return $this->_mergeHasMany($resultSet, $fetch, $association, $Model, $LinkModel);
+			return $this->_mergeHasMany($resultSet, $fetch, $association, $Model);
 
 		} elseif ($type === 'hasAndBelongsToMany') {
 			$ins = $fetch = array();
@@ -1396,10 +1396,9 @@ class DboSource extends DataSource {
  * @param array $merge Data to merge
  * @param string $association Name of Model being Merged
  * @param Model $Model Model being merged onto
- * @param Model $LinkModel Model being merged
  * @return void
  */
-	protected function _mergeHasMany(&$resultSet, $merge, $association, $Model, $LinkModel) {
+	protected function _mergeHasMany(&$resultSet, $merge, $association, $Model) {
 		$modelAlias = $Model->alias;
 		$primaryKey = $Model->primaryKey;
 		$foreignKey = $Model->hasMany[$association]['foreignKey'];
