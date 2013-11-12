@@ -1542,11 +1542,14 @@ class DboSource extends DataSource {
 /**
  * Builds an SQL statement.
  *
+ * This is merely a convenient wrapper to DboSource::buildStatement().
+ *
  * @param Model $Model
  * @param array $queryData
  * @return string String containing an SQL statement.
+ * @see DboSource::buildStatement()
  */
-	public function buildAssociationQuery(Model $Model, &$queryData) {
+	public function buildAssociationQuery(Model $Model, $queryData) {
 		$queryData = $this->_scrubQueryData($queryData);
 
 		return $this->buildStatement(
