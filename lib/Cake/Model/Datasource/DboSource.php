@@ -1320,7 +1320,7 @@ class DboSource extends DataSource {
 				}
 			}
 
-			$selfJoin = ($LinkModel->name === $Model->name);
+			$selfJoin = ($Model->name === $LinkModel->name);
 
 			if (!empty($fetch) && is_array($fetch)) {
 				if ($recursive > 0) {
@@ -1605,14 +1605,14 @@ class DboSource extends DataSource {
 		switch ($type) {
 			case 'hasOne':
 			case 'belongsTo':
-				$self = ($Model->name === $linkModel->name);
-
 				$conditions = $this->_mergeConditions(
 					$assocData['conditions'],
-					$this->getConstraint($type, $Model, $linkModel, $association, array_merge($assocData, compact('external', 'self')))
+					$this->getConstraint($type, $Model, $linkModel, $association, array_merge($assocData, compact('external')))
 				);
 
-				if (!$self && $external) {
+				$selfJoin = ($Model->name === $linkModel->name);
+
+				if ($external && !$selfJoin) {
 					$modelAlias = $Model->alias;
 					foreach ($conditions as $key => $condition) {
 						if (is_numeric($key) && strpos($condition, $modelAlias . '.') !== false) {
@@ -1733,7 +1733,7 @@ class DboSource extends DataSource {
  * @return array Conditions array defining the constraint between $model and $association
  */
 	public function getConstraint($type, $model, $linkModel, $alias, $assoc, $alias2 = null) {
-		$assoc += array('external' => false, 'self' => false);
+		$assoc += array('external' => false);
 
 		if (empty($assoc['foreignKey'])) {
 			return array();
