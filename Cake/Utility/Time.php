@@ -570,13 +570,13 @@ class Time {
 		$dateTime = new \DateTime;
 		$timeStamp = $dateTime->setTimestamp(static::fromString($dateString));
 
-		$quater = ceil($timeStamp->format('m') / 3);
+		$quarter = ceil($timeStamp->format('m') / 3);
 		if ($range === false) {
-			return $quater;
+			return $quarter;
 		}
 
 		$year = $timeStamp->format('Y');
-		switch ($quater) {
+		switch ($quarter) {
 			case 1:
 				return array($year . '-01-01', $year . '-03-31');
 			case 2:
@@ -650,7 +650,7 @@ class Time {
 	public static function toAtom($dateString, $timezone = null) {
 		$dateTime = new \DateTime;
 		return $dateTime->setTimestamp(static::fromString($dateString, $timezone))
-			->format('Y-m-d\TH:i:s\Z');
+			->format(DATE_ATOM);
 	}
 
 /**

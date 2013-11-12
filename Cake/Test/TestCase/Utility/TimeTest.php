@@ -561,7 +561,8 @@ class TimeTest extends TestCase {
  * @return void
  */
 	public function testToAtom() {
-		$this->assertEquals(date('Y-m-d\TH:i:s\Z'), $this->Time->toAtom(time()));
+		$dateTime = new \DateTime;
+		$this->assertEquals($dateTime->format(DATE_ATOM), $this->Time->toAtom(time()));
 	}
 
 /**
