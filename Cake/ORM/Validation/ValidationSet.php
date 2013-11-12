@@ -48,13 +48,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_validationDomain = null;
 
 /**
- * Holds the fieldname
- *
- * @var string
- */
-	public $field = null;
-
-/**
  * Holds the original ruleSet
  *
  * @var array
@@ -98,7 +91,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param boolean|string $allowEmpty Valid values are true, false, 'create', 'update'
  * @return boolean|string
  */
-	public function allowEmpty($allowEmpty = null) {
+	public function isEmptyAllowed($allowEmpty = null) {
 		if ($allowEmpty === null) {
 			return $this->_allowEmpty;
 		}
@@ -144,40 +137,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 		}
 
 		return $errors;
-	}
-
-/**
- * Returns whether the field can be left blank according to `allowEmpty`
- *
- * @return boolean
- */
-	public function isEmptyAllowed() {
-		if (in_array($this->_allowEmpty, array('create', 'update'), true)) {
-			return (
-				($this->_allowEmpty === 'create' && !$this->_isUpdate) ||
-				($this->_allowEmpty === 'update' && $this->_isUpdate)
-			);
-		}
-
-		return $this->_allowEmpty;
-	}
-
-
-/**
- * Checks if the `allowEmpty` property applies
- *
- * @param string $field Field to check
- * @param array $data data to check against
- * @return boolean
- */
-	public function checkEmpty($field, $data) {
-		if (!array_key_exists($field, $data)) {
-			return false;
-		}
-		if (empty($data[$field]) && $data[$field] != '0' && $this->isEmptyAllowed()) {
-			return true;
-		}
-		return false;
 	}
 
 /**

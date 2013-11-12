@@ -58,6 +58,11 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
 				$errors[$name][] = __d('cake', 'This field is required');
 			}
+			if ($keyPresent && !$this->_checkEmpty($field, $newRecord)) {
+				if ($this->_fieldIsEmpty($data[$name])) {
+					$errors[$name][] = __d('cake', 'This field cannot be left empty');
+				}
+			}
 		}
 
 		return $errors;
@@ -221,11 +226,24 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Sets whether a field is required to be present in data array.
  *
  * @param string $field the name of the field
- * @param boolean|string $allowEmpty Valid values are true, false, 'create', 'update'
+ * @param boolean|string $mode Valid values are true, false, 'create', 'update'
  * @return Validator this instance
  */
-	public function validatePresence($field, $type = true) {
-		$this->field($field)->isPresenceRequired($type);
+	public function validatePresence($field, $mode = true) {
+		$this->field($field)->isPresenceRequired($mode);
+		return $this;
+	}
+
+/**
+ * Sets whether a field is allowed to be empty. If it is,  all other validation
+ * rules will be ignored
+ *
+ * @param string $field the name of the field
+ * @param boolean|string $mode Valid values are true, false, 'create', 'update'
+ * @return Validator this instance
+ */
+	public function allowEmpty($field, $mode = true) {
+		$this->field($field)->isEmptyAllowed($mode);
 		return $this;
 	}
 
@@ -247,6 +265,39 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 		}
 
 		return !$required;
+	}
+
+/**
+ * 
+ * Returns whether the field can be left blank according to `allowEmpty`
+ *
+ * @param ValidationSet $field the set of rules for a field
+ * @param boolean $newRecord whether the data to be validated is new or to be updated.
+ * @return boolean
+ */
+	protected function _checkEmpty($field, $newRecord) {
+		$allowed = $field->isEmptyAllowed();
+		if (in_array($allowed, array('create', 'update'), true)) {
+			$allowed = (
+				($allowed === 'create' && $newRecord) ||
+				($allowed === 'update' && !$newRecord)
+			);
+		}
+
+		return $allowed;
+	}
+
+/**
+ * Returns true if the field is empty in the passed data array
+ *
+ * @param mixed $data value to check against
+ * @return boolean
+ */
+	protected function _fieldIsEmpty($data) {
+		if (empty($data) && $data !== '0' && $data !== false && $data !== 0) {
+			return true;
+		}
+		return false;
 	}
 
 }

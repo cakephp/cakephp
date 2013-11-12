@@ -127,7 +127,83 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 
 		$validator->validatePresence('title', false);
 		$this->assertEmpty($validator->errors(['foo' => 'bar']));
+	}
 
+/**
+ * Tests the allowEmpty method
+ *
+ * @return void
+ */
+	public function testAllowEmpty() {
+		$validator = new Validator;
+		$this->assertSame($validator, $validator->allowEmpty('title'));
+		$this->assertTrue($validator->field('title')->isEmptyAllowed());
+
+		$validator->allowEmpty('title', false);
+		$this->assertFalse($validator->field('title')->isEmptyAllowed());
+
+		$validator->allowEmpty('title', 'created');
+		$this->assertEquals('created', $validator->field('title')->isEmptyAllowed());
+
+		$validator->allowEmpty('title', 'updated');
+		$this->assertEquals('updated', $validator->field('title')->isEmptyAllowed());
+	}
+
+/**
+ * Tests errors generated when a field is not allowed to be empty
+ *
+ * @return void
+ */
+	public function testErrorsWithEmptyNotAllowed() {
+		$validator = new Validator;
+		$validator->allowEmpty('title', false);
+		$errors = $validator->errors(['title' => '']);
+		$expected = ['title' => ['This field cannot be left empty']];
+		$this->assertEquals($expected, $errors);
+
+		$errors = $validator->errors(['title' => []]);
+		$expected = ['title' => ['This field cannot be left empty']];
+		$this->assertEquals($expected, $errors);
+
+		$errors = $validator->errors(['title' => null]);
+		$expected = ['title' => ['This field cannot be left empty']];
+		$this->assertEquals($expected, $errors);
+
+		$errors = $validator->errors(['title' => 0]);
+		$this->assertEmpty($errors);
+
+		$errors = $validator->errors(['title' => '0']);
+		$this->assertEmpty($errors);
+
+		$errors = $validator->errors(['title' => false]);
+		$this->assertEmpty($errors);
+	}
+
+/**
+ * Tests errors generated when a field is allowed to be empty
+ *
+ * @return void
+ */
+	public function testErrorsWithEmptyAllowed() {
+		$validator = new Validator;
+		$validator->allowEmpty('title');
+		$errors = $validator->errors(['title' => '']);
+		$this->assertEmpty($errors);
+
+		$errors = $validator->errors(['title' => []]);
+		$this->assertEmpty($errors);
+
+		$errors = $validator->errors(['title' => null]);
+		$this->assertEmpty($errors);
+
+		$errors = $validator->errors(['title' => 0]);
+		$this->assertEmpty($errors);
+
+		$errors = $validator->errors(['title' => '0']);
+		$this->assertEmpty($errors);
+
+		$errors = $validator->errors(['title' => false]);
+		$this->assertEmpty($errors);
 	}
 
 }
