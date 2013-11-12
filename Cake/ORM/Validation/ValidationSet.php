@@ -162,27 +162,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 		return $this->_allowEmpty;
 	}
 
-/**
- * Checks if `validatePresent` property applies
- *
- * @param string $field Field to check
- * @param array $data data to check against
- * @return boolean
- */
-	public function checkValidatePresent($field, $data) {
-		if (array_key_exists($field, $data)) {
-			return false;
-		}
-
-		if (in_array($this->_validatePresent, array('create', 'update'), true)) {
-			return (
-				($this->_validatePresent === 'create' && !$this->_isUpdate) ||
-				($this->_validatePresent === 'update' && $this->_isUpdate)
-			);
-		}
-
-		return $this->_validatePresent;
-	}
 
 /**
  * Checks if the `allowEmpty` property applies

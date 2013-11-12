@@ -157,7 +157,6 @@ class ValidationRule {
  * @return boolean True if the rule could be dispatched, false otherwise
  */
 	public function process($field, $data, $methods) {
-		$this->_valid = true;
 		$this->_parseRule($field, $data);
 
 		$validator = $this->_getPropertiesArray();

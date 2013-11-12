@@ -111,4 +111,23 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('updated', $validator->field('title')->isPresenceRequired());
 	}
 
+/**
+ * Tests errors generated when a field presence is required
+ *
+ * @return void
+ */
+	public function testErrorsWithPresenceRequired() {
+		$validator = new Validator;
+		$validator->validatePresence('title');
+		$errors = $validator->errors(['foo' => 'something']);
+		$expected = ['title' => ['This field is required']];
+		$this->assertEquals($expected, $errors);
+
+		$this->assertEmpty($validator->errors(['title' => 'bar']));
+
+		$validator->validatePresence('title', false);
+		$this->assertEmpty($validator->errors(['foo' => 'bar']));
+
+	}
+
 }

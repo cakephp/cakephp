@@ -43,63 +43,24 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_validationDomain = 'default';
 
 /**
- * List of errors found during validation
- *
- * @var array
- */
-	protected $_errors = [];
-
-/**
- * Returns true if all fields pass validation.
- *
- * @param array $options An optional array of custom options to be made available
- * in the beforeValidate callback
- * @return boolean True if there are no errors
- */
-	public function validates($options = array()) {
-		$errors = $this->errors($options);
-		if (is_array($errors)) {
-			return count($errors) === 0;
-		}
-		return $errors;
-	}
-
-/**
  * Returns an array of fields that have failed validation. On the current model. This method will
  * actually run validation rules over data, not just return the messages.
  *
- * @param string $options An optional array of custom options to be made available in the beforeValidate callback
+ * @param array $data The data to be checked for errors
+ * @param boolean $newRecord whether the data to be validated is new or to be updated.
  * @return array Array of invalid fields
  * @see Validator::validates()
  */
-	public function errors($options = array()) {
-		$fieldList =  $options['fieldList'];
-		$exists = $model->exists();
-		$methods = $this->getMethods();
-		$fields = $this->_validationList($fieldList);
-
-		foreach ($fields as $field) {
-			$field->setMethods($methods);
-			$data = isset($model->data[$model->alias]) ? $model->data[$model->alias] : array();
-			$errors = $field->validate($data, $exists);
-			foreach ($errors as $error) {
-				$this->invalidate($field->field, $error);
+	public function errors(array $data, $newRecord = true) {
+		$errors = [];
+		foreach ($this->_fields as $name => $field) {
+			$keyPresent = array_key_exists($name, $data);
+			if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
+				$errors[$name][] = __d('cake', 'This field is required');
 			}
 		}
 
-		return $this->_errors;
-	}
-
-/**
- * Marks a field as invalid in an entity, optionally setting a message explaining
- * why the rule failed
- *
- * @param \Cake\ORM\Entity $entity The name of the field to invalidate
- * @param string $field The name of the field to invalidate
- * @param string $message Validation message explaining why the rule failed, defaults to true.
- * @return void
- */
-	public function invalidate($entity, $field, $message = true) {
+		return $errors;
 	}
 
 /**
@@ -259,7 +220,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Sets whether a field is required to be present in data array.
  *
- * @param string $field the name of the field 
+ * @param string $field the name of the field
  * @param boolean|string $allowEmpty Valid values are true, false, 'create', 'update'
  * @return Validator this instance
  */
@@ -267,4 +228,25 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 		$this->field($field)->isPresenceRequired($type);
 		return $this;
 	}
+
+/**
+ * Returns false if any validation for the passed rule set should be stopped
+ * due to the field missing in the data array
+ *
+ * @param ValidationSet $field the set of rules for a field
+ * @param boolean $newRecord whether the data to be validated is new or to be updated.
+ * @return boolean
+ */
+	protected function _checkPresence($field, $newRecord) {
+		$required = $field->isPresenceRequired();
+		if (in_array($required, ['create', 'update'], true)) {
+			return (
+				($required === 'create' && !$newRecord) ||
+				($required === 'update' && $newRecord)
+			);
+		}
+
+		return !$required;
+	}
+
 }
