@@ -636,6 +636,7 @@ class DboSource extends DataSource {
 
 /**
  * Returns an array of all result rows for a given SQL query.
+ *
  * Returns false if no rows matched.
  *
  * ### Options
@@ -1225,7 +1226,7 @@ class DboSource extends DataSource {
 		if ($type === 'hasMany' && empty($assocData['limit']) && !empty($assocData['foreignKey'])) {
 			$ins = $fetch = array();
 			foreach ($resultSet as &$result) {
-				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $assocData, $Model, $LinkModel, $stack)) {
+				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $Model, $stack)) {
 					$ins[] = $in;
 				}
 			}
@@ -1258,7 +1259,7 @@ class DboSource extends DataSource {
 		} elseif ($type === 'hasAndBelongsToMany') {
 			$ins = $fetch = array();
 			foreach ($resultSet as &$result) {
-				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $assocData, $Model, $LinkModel, $stack)) {
+				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $Model, $stack)) {
 					$ins[] = $in;
 				}
 			}
@@ -1278,7 +1279,7 @@ class DboSource extends DataSource {
 			$joinKeys = array($foreignKey, $Model->hasAndBelongsToMany[$association]['associationForeignKey']);
 			list($with, $habtmFields) = $Model->joinModel($Model->hasAndBelongsToMany[$association]['with'], $joinKeys);
 			$habtmFieldsCount = count($habtmFields);
-			$q = $this->insertQueryData($query, null, $association, $assocData, $Model, $LinkModel, $stack);
+			$q = $this->insertQueryData($query, null, $association, $Model, $stack);
 
 			if ($q !== false) {
 				$fetch = $this->fetchAll($q, $Model->cacheQueries);
@@ -1296,7 +1297,8 @@ class DboSource extends DataSource {
 
 		foreach ($resultSet as &$row) {
 			if ($type !== 'hasAndBelongsToMany') {
-				$q = $this->insertQueryData($query, $row, $association, $assocData, $Model, $LinkModel, $stack);
+				$q = $this->insertQueryData($query, $row, $association, $Model, $stack);
+
 
 				$fetch = null;
 				if ($q !== false) {
