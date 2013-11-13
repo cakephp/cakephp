@@ -34,12 +34,13 @@ class Hash {
  * @param array $data Array of data to operate on.
  * @param string|array $path The path being searched for. Either a dot
  *   separated string, or an array of path segments.
+ * @param mixed $default The return value when the path does not exist
  * @return mixed The value fetched from the array, or null.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::get
  */
-	public static function get(array $data, $path) {
+	public static function get(array $data, $path, $default = null) {
 		if (empty($data)) {
-			return null;
+			return $default;
 		}
 		if (is_string($path) || is_numeric($path)) {
 			$parts = explode('.', $path);
@@ -50,7 +51,7 @@ class Hash {
 			if (is_array($data) && isset($data[$key])) {
 				$data =& $data[$key];
 			} else {
-				return null;
+				return $default;
 			}
 		}
 		return $data;

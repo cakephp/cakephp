@@ -205,6 +205,10 @@ class HashTest extends TestCase {
 		$result = Hash::get($data, '5.Article.title');
 		$this->assertNull($result);
 
+		$default = array('empty');
+		$this->assertEquals($default, Hash::get($data, '5.Article.title', $default));
+		$this->assertEquals($default, Hash::get(array(), '5.Article.title', $default));
+
 		$result = Hash::get($data, '1.Article.title.not_there');
 		$this->assertNull($result);
 

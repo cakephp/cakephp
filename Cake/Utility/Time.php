@@ -454,7 +454,7 @@ class Time {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::dayAsSql
  */
 	public static function dayAsSql($dateString, $fieldName, $timezone = null) {
-		return static::daysAsSql($dateString, $dateString, $fieldName);
+		return static::daysAsSql($dateString, $dateString, $fieldName, $timezone);
 	}
 
 /**

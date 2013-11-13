@@ -572,12 +572,14 @@ class CookieComponentTest extends TestCase {
 		$this->request->cookies['CakeTestCookie'] = array(
 			'JSON' => '{"name":"value"}',
 			'Empty' => '',
-			'String' => '{"somewhat:"broken"}'
+			'String' => '{"somewhat:"broken"}',
+			'Array' => '{}'
 		);
 		$this->assertEquals(array('name' => 'value'), $this->Cookie->read('JSON'));
 		$this->assertEquals('value', $this->Cookie->read('JSON.name'));
 		$this->assertEquals('', $this->Cookie->read('Empty'));
 		$this->assertEquals('{"somewhat:"broken"}', $this->Cookie->read('String'));
+		$this->assertEquals(array(), $this->Cookie->read('Array'));
 	}
 
 /**

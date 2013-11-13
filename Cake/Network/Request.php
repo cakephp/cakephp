@@ -829,7 +829,7 @@ class Request implements \ArrayAccess {
  * {{{ \Cake\Network\Request::acceptLanguage('es-es'); }}}
  *
  * @param string $language The language to test.
- * @return If a $language is provided, a boolean. Otherwise the array of accepted languages.
+ * @return mixed If a $language is provided, a boolean. Otherwise the array of accepted languages.
  */
 	public static function acceptLanguage($language = null) {
 		$raw = static::_parseAcceptWithQualifier(static::header('Accept-Language'));

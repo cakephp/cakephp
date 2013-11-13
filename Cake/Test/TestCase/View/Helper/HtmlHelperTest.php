@@ -397,10 +397,32 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->image('/test/view/1.gif');
 		$this->assertTags($result, array('img' => array('src' => '/test/view/1.gif', 'alt' => '')));
+	}
 
+/**
+ * Test image() with query strings.
+ *
+ * @return void
+ */
+	public function testImageQueryString() {
 		$result = $this->Html->image('test.gif?one=two&three=four');
 		$this->assertTags($result, array('img' => array('src' => 'img/test.gif?one=two&amp;three=four', 'alt' => '')));
 
+		$result = $this->Html->image(array(
+			'controller' => 'images',
+			'action' => 'display',
+			'test',
+			'?' => array('one' => 'two', 'three' => 'four')
+		));
+		$this->assertTags($result, array('img' => array('src' => '/images/display/test?one=two&amp;three=four', 'alt' => '')));
+	}
+
+/**
+ * Test that image works with pathPrefix.
+ *
+ * @return void
+ */
+	public function testImagePathPrefix() {
 		$result = $this->Html->image('test.gif', array('pathPrefix' => '/my/custom/path/'));
 		$this->assertTags($result, array('img' => array('src' => '/my/custom/path/test.gif', 'alt' => '')));
 
@@ -1592,19 +1614,6 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->meta('icon', 'favicon.ico');
-		$expected = array(
-			'link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'),
-			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon'))
-		);
-		$this->assertTags($result, $expected);
-		$result = $this->Html->meta('icon');
-		$expected = array(
-			'link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'),
-			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon'))
-		);
-		$this->assertTags($result, $expected);
-
 		$result = $this->Html->meta('keywords', 'these, are, some, meta, keywords');
 		$this->assertTags($result, array('meta' => array('name' => 'keywords', 'content' => 'these, are, some, meta, keywords')));
 		$this->assertRegExp('/\s+\/>$/', $result);
@@ -1614,6 +1623,45 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'));
 		$this->assertTags($result, array('meta' => array('name' => 'ROBOTS', 'content' => 'ALL')));
+	}
+
+/**
+ * Test generating favicon's with meta()
+ *
+ * @return void
+ */
+	public function testMetaIcon() {
+		$result = $this->Html->meta('icon', 'favicon.ico');
+		$expected = array(
+			'link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'),
+			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon'))
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->meta('icon');
+		$expected = array(
+			'link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'icon'),
+			array('link' => array('href' => 'preg:/.*favicon\.ico/', 'type' => 'image/x-icon', 'rel' => 'shortcut icon'))
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Html->meta('icon', '/favicon.png?one=two&three=four');
+		$url = '/favicon.png?one=two&amp;three=four';
+		$expected = array(
+			'link' => array(
+				'href' => $url,
+				'type' => 'image/x-icon',
+				'rel' => 'icon'
+			),
+			array(
+				'link' => array(
+					'href' => $url,
+					'type' => 'image/x-icon',
+					'rel' => 'shortcut icon'
+				)
+			)
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

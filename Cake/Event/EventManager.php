@@ -223,15 +223,12 @@ class EventManager {
 			$event = new Event($event);
 		}
 
-		if (!$this->_isGlobal) {
-			static::instance()->dispatch($event);
-		}
-
-		if (empty($this->_listeners[$event->name()])) {
+		$listeners = $this->listeners($event->name());
+		if (empty($listeners)) {
 			return;
 		}
 
-		foreach ($this->listeners($event->name()) as $listener) {
+		foreach ($listeners as $listener) {
 			if ($event->isStopped()) {
 				break;
 			}
@@ -284,15 +281,42 @@ class EventManager {
  * @return array
  */
 	public function listeners($eventKey) {
-		if (empty($this->_listeners[$eventKey])) {
-			return array();
+		$globalListeners = array();
+		if (!$this->_isGlobal) {
+			$globalListeners = static::instance()->prioritisedListeners($eventKey);
 		}
-		ksort($this->_listeners[$eventKey]);
+
+		if (empty($this->_listeners[$eventKey]) && empty($globalListeners)) {
+			return [];
+		}
+
+		$listeners = $this->_listeners[$eventKey];
+		foreach ($globalListeners as $priority => $priorityQ) {
+			if (!empty($listeners[$priority])) {
+				$listeners[$priority] = array_merge($priorityQ, $listeners[$priority]);
+				unset($globalListeners[$priority]);
+			}
+		}
+		$listeners = $listeners + $globalListeners;
+
+		ksort($listeners);
 		$result = array();
-		foreach ($this->_listeners[$eventKey] as $priorityQ) {
+		foreach ($listeners as $priorityQ) {
 			$result = array_merge($result, $priorityQ);
 		}
 		return $result;
 	}
 
+/**
+ * Returns the listeners for the specified event key indexed by priority
+ *
+ * @param string $eventKey
+ * @return array
+ */
+	public function prioritisedListeners($eventKey) {
+		if (empty($this->_listeners[$eventKey])) {
+			return array();
+		}
+		return $this->_listeners[$eventKey];
+	}
 }

@@ -3193,7 +3193,7 @@ class Model extends Object implements EventListener {
 	}
 
 /**
- * Passes query results through model and behavior afterFilter() methods.
+ * Passes query results through model and behavior afterFind() methods.
  *
  * @param array $results Results to filter
  * @param boolean $primary If this is the primary model results (results from model where the find operation was performed)

@@ -168,12 +168,13 @@ class Debugger {
  *
  *
  * @param mixed $var the variable to dump
+ * @param int $depth The depth to output to. Defaults to 3.
  * @return void
  * @see Debugger::exportVar()
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::dump
  */
-	public static function dump($var) {
-		pr(static::exportVar($var));
+	public static function dump($var, $depth = 3) {
+		pr(static::exportVar($var, $depth));
 	}
 
 /**

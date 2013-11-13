@@ -1739,7 +1739,12 @@ class FormHelper extends Helper {
  * - `data` - Array with key/value to pass in input hidden
  * - `method` - Request method to use. Set to 'delete' to simulate HTTP/1.1 DELETE request. Defaults to 'post'.
  * - `confirm` - Can be used instead of $confirmMessage.
- * - Other options is the same of HtmlHelper::link() method.
+ * - `inline` - Whether or not the associated form tag should be output inline.
+ *   Set to false to have the form tag appended to the 'postLink' view block.
+ *   Defaults to true.
+ * - `block` - Choose a custom block to append the form tag to. Using this option
+ *   will override the inline option.
+ * - Other options are the same of HtmlHelper::link() method.
  * - The option `onclick` will be replaced.
  *
  * @param string $title The content to be wrapped by <a> tags.
@@ -1750,6 +1755,12 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postLink
  */
 	public function postLink($title, $url = null, $options = array(), $confirmMessage = false) {
+		$options += array('inline' => true, 'block' => null);
+		if (!$options['inline'] && empty($options['block'])) {
+			$options['block'] = __FUNCTION__;
+		}
+		unset($options['inline']);
+
 		$requestMethod = 'POST';
 		if (!empty($options['method'])) {
 			$requestMethod = strtoupper($options['method']);
@@ -1789,6 +1800,12 @@ class FormHelper extends Helper {
 		}
 		$out .= $this->secure($fields);
 		$out .= $this->Html->useTag('formend');
+
+		if ($options['block']) {
+			$this->_View->append($options['block'], $out);
+			$out = '';
+		}
+		unset($options['block']);
 
 		$url = '#';
 		$onClick = 'document.' . $formName . '.submit();';
