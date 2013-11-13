@@ -397,14 +397,14 @@ class RequestHandlerComponentTest extends TestCase {
 		if (!function_exists('str_getcsv')) {
 			$this->markTestSkipped('Need "str_getcsv" for this test.');
 		}
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_SERVER['CONTENT_TYPE'] = 'text/csv';
 		$event = new Event('Controller.startup', $this->Controller);
 		$this->Controller->request = $this->getMock('Cake\Network\Request', array('_readInput'));
 		$this->Controller->request->expects($this->once())
 			->method('_readInput')
 			->will($this->returnValue('"A","csv","string"'));
 		$this->RequestHandler->addInputType('csv', array('str_getcsv'));
+		$this->RequestHandler->request->env('REQUEST_METHOD', 'POST');
+		$this->RequestHandler->request->env('CONTENT_TYPE', 'text/csv');
 		$this->RequestHandler->startup($event);
 		$expected = array(
 			'A', 'csv', 'string'
@@ -551,10 +551,11 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testRequestClientTypes() {
-		$_SERVER['HTTP_X_PROTOTYPE_VERSION'] = '1.5';
+		$this->RequestHandler->request->env('HTTP_X_PROTOTYPE_VERSION', '1.5');
 		$this->assertEquals('1.5', $this->RequestHandler->getAjaxVersion());
 
-		unset($_SERVER['HTTP_X_REQUESTED_WITH'], $_SERVER['HTTP_X_PROTOTYPE_VERSION']);
+		$this->RequestHandler->request->env('HTTP_X_REQUESTED_WITH', false);
+		$this->RequestHandler->request->env('HTTP_X_PROTOTYPE_VERSION', false);
 		$this->assertFalse($this->RequestHandler->getAjaxVersion());
 	}
 
@@ -564,11 +565,11 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testRequestContentTypes() {
-		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$this->RequestHandler->request->env('REQUEST_METHOD', 'GET');
 		$this->assertNull($this->RequestHandler->requestedWith());
 
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		$_SERVER['CONTENT_TYPE'] = 'application/json';
+		$this->RequestHandler->request->env('REQUEST_METHOD', 'POST');
+		$this->RequestHandler->request->env('CONTENT_TYPE', 'application/json');
 		$this->assertEquals('json', $this->RequestHandler->requestedWith());
 
 		$result = $this->RequestHandler->requestedWith(array('json', 'xml'));
@@ -577,9 +578,9 @@ class RequestHandlerComponentTest extends TestCase {
 		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
 		$this->assertFalse($result);
 
-		$_SERVER['REQUEST_METHOD'] = 'POST';
-		unset($_SERVER['CONTENT_TYPE']);
-		$_SERVER['HTTP_CONTENT_TYPE'] = 'application/json';
+		$this->RequestHandler->request->env('REQUEST_METHOD', 'POST');
+		$this->RequestHandler->request->env('CONTENT_TYPE', '');
+		$this->RequestHandler->request->env('HTTP_CONTENT_TYPE', 'application/json');
 
 		$result = $this->RequestHandler->requestedWith(array('json', 'xml'));
 		$this->assertEquals('json', $result);
@@ -587,24 +588,22 @@ class RequestHandlerComponentTest extends TestCase {
 		$result = $this->RequestHandler->requestedWith(array('rss', 'atom'));
 		$this->assertFalse($result);
 
-		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
+		$this->RequestHandler->request->env('HTTP_ACCEPT', 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*');
 		$this->assertTrue($this->RequestHandler->isXml());
 		$this->assertFalse($this->RequestHandler->isAtom());
 		$this->assertFalse($this->RequestHandler->isRSS());
 
-		$_SERVER['HTTP_ACCEPT'] = 'application/atom+xml,text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
+		$this->RequestHandler->request->env('HTTP_ACCEPT', 'application/atom+xml,text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*');
 		$this->assertTrue($this->RequestHandler->isAtom());
 		$this->assertFalse($this->RequestHandler->isRSS());
 
-		$_SERVER['HTTP_ACCEPT'] = 'application/rss+xml,text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
+		$this->RequestHandler->request->env('HTTP_ACCEPT', 'application/rss+xml,text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*');
 		$this->assertFalse($this->RequestHandler->isAtom());
 		$this->assertTrue($this->RequestHandler->isRSS());
 
 		$this->assertFalse($this->RequestHandler->isWap());
-		$_SERVER['HTTP_ACCEPT'] = 'text/vnd.wap.wml,text/html,text/plain,image/png,*/*';
+		$this->RequestHandler->request->env('HTTP_ACCEPT', 'text/vnd.wap.wml,text/html,text/plain,image/png,*/*');
 		$this->assertTrue($this->RequestHandler->isWap());
-
-		$_SERVER['HTTP_ACCEPT'] = 'application/rss+xml,text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
 	}
 
 /**
@@ -673,7 +672,10 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testPrefers() {
-		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*';
+		$this->RequestHandler->request->env(
+			'HTTP_ACCEPT',
+			'text/xml,application/xml,application/xhtml+xml,text/html,text/plain,image/png,*/*'
+		);
 		$this->assertNotEquals('rss', $this->RequestHandler->prefers());
 		$this->RequestHandler->ext = 'rss';
 		$this->assertEquals('rss', $this->RequestHandler->prefers());
@@ -684,11 +686,14 @@ class RequestHandlerComponentTest extends TestCase {
 		$this->assertTrue($this->RequestHandler->prefers(array('rss')), 'Should return true if input matches ext.');
 		$this->assertFalse($this->RequestHandler->prefers(array('html')), 'No match with ext, return false.');
 
-		$_SERVER['HTTP_ACCEPT'] = 'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5';
 		$this->_init();
+		$this->RequestHandler->request->env(
+			'HTTP_ACCEPT',
+			'text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5'
+		);
 		$this->assertEquals('xml', $this->RequestHandler->prefers());
 
-		$_SERVER['HTTP_ACCEPT'] = '*/*;q=0.5';
+		$this->RequestHandler->request->env('HTTP_ACCEPT', '*/*;q=0.5');
 		$this->assertEquals('html', $this->RequestHandler->prefers());
 		$this->assertFalse($this->RequestHandler->prefers('rss'));
 	}

@@ -20,6 +20,7 @@ namespace Cake\Test\TestCase\I18n;
 
 use Cake\Core\Configure;
 use Cake\I18n\L10n;
+use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -36,6 +37,7 @@ class L10nTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::delete('Config.language');
+		$this->request = new Request();
 	}
 
 /**
@@ -44,7 +46,7 @@ class L10nTest extends TestCase {
  * @return void
  */
 	public function testGet() {
-		$localize = new L10n();
+		$localize = new L10n($this->request);
 
 		// Catalog Entry
 		$lang = $localize->get('en');
@@ -88,10 +90,9 @@ class L10nTest extends TestCase {
  * @return void
  */
 	public function testGetAutoLanguage() {
-		$serverBackup = $_SERVER;
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'inexistent,en-ca';
+		$this->request->env('HTTP_ACCEPT_LANGUAGE', 'inexistent,en-ca');
 
-		$localize = new L10n();
+		$localize = new L10n($this->request);
 		$lang = $localize->get();
 
 		$this->assertEquals('en-ca', $lang);
@@ -99,7 +100,7 @@ class L10nTest extends TestCase {
 		$this->assertEquals(array('en_ca', 'eng'), $localize->languagePath);
 		$this->assertEquals('en_ca', $localize->locale);
 
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'es_mx';
+		$this->request->env('HTTP_ACCEPT_LANGUAGE', 'es_mx');
 		$lang = $localize->get();
 
 		$this->assertEquals('es-mx', $lang);
@@ -107,19 +108,17 @@ class L10nTest extends TestCase {
 		$this->assertEquals(array('es_mx', 'spa'), $localize->languagePath);
 		$this->assertEquals('es_mx', $localize->locale);
 
-		$localize = new L10n();
+		$localize = new L10n($this->request);
 		$localize->default = 'en-us';
 		$lang = $localize->get();
 		$this->assertEquals(array('es_mx', 'spa', 'eng'), $localize->languagePath);
 
-		$_SERVER['HTTP_ACCEPT_LANGUAGE'] = 'en_xy,en_ca';
+		$this->request->env('HTTP_ACCEPT_LANGUAGE', 'en_xy,en_ca');
 		$localize->get();
 
 		$this->assertEquals('English', $localize->language);
 		$this->assertEquals(array('eng'), $localize->languagePath);
 		$this->assertEquals('eng', $localize->locale);
-
-		$_SERVER = $serverBackup;
 	}
 
 /**
@@ -131,7 +130,7 @@ class L10nTest extends TestCase {
 		$this->skipIf(defined('DEFAULT_LANGUAGE'), 'Cannot re-define already defined constant.');
 
 		define('DEFAULT_LANGUAGE', 'en-us');
-		$localize = new L10n();
+		$localize = new L10n($this->request);
 
 		$lang = $localize->get('use_default');
 
@@ -140,7 +139,7 @@ class L10nTest extends TestCase {
 		$this->assertEquals(array('en_us', 'eng'), $localize->languagePath);
 		$this->assertEquals('en_us', $localize->locale);
 
-		$localize = new L10n();
+		$localize = new L10n($this->request);
 
 		$lang = $localize->get();
 
@@ -156,7 +155,7 @@ class L10nTest extends TestCase {
  * @return void
  */
 	public function testMap() {
-		$localize = new L10n();
+		$localize = new L10n($this->request);
 
 		$result = $localize->map(array('afr', 'af'));
 		$expected = array('afr' => 'af', 'af' => 'afr');
@@ -493,7 +492,7 @@ class L10nTest extends TestCase {
  * @return void
  */
 	public function testCatalog() {
-		$localize = new L10n();
+		$localize = new L10n($this->request);
 
 		$result = $localize->catalog(array('af'));
 		$expected = array(

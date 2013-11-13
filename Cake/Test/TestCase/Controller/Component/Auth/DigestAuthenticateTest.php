@@ -49,7 +49,6 @@ class DigestAuthenticateTest extends TestCase {
 		$this->markTestIncomplete('Need to revisit once models work again.');
 
 		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
-		$this->server = $_SERVER;
 		$this->auth = new DigestAuthenticate($this->Collection, array(
 			'fields' => array('username' => 'user', 'password' => 'password'),
 			'userModel' => 'User',
@@ -62,18 +61,7 @@ class DigestAuthenticateTest extends TestCase {
 		$User = ClassRegistry::init('User');
 		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
 
-		$_SERVER['REQUEST_METHOD'] = 'GET';
 		$this->response = $this->getMock('Cake\Network\Response');
-	}
-
-/**
- * tearDown
- *
- * @return void
- */
-	public function tearDown() {
-		parent::tearDown();
-		$_SERVER = $this->server;
 	}
 
 /**
@@ -118,7 +106,7 @@ class DigestAuthenticateTest extends TestCase {
 		$request = new Request('posts/index');
 		$request->addParams(array('pass' => array()));
 
-		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
+		$digest = <<<DIGEST
 Digest username="incorrect_user",
 realm="localhost",
 nonce="123456",
@@ -129,6 +117,7 @@ cnonce="0a4f113b",
 response="6629fae49393a05397450978507c4ef1",
 opaque="123abc"
 DIGEST;
+		$request->env('PHP_AUTH_DIGEST', $digest);
 
 		$this->auth->unauthenticated($request, $this->response);
 	}
@@ -162,7 +151,7 @@ DIGEST;
 		$request = new Request('posts/index');
 		$request->addParams(array('pass' => array()));
 
-		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
+		$digest = <<<DIGEST
 Digest username="mariano",
 realm="localhost",
 nonce="123",
@@ -173,6 +162,7 @@ cnonce="123",
 response="06b257a54befa2ddfb9bfa134224aa29",
 opaque="123abc"
 DIGEST;
+		$request->env('PHP_AUTH_DIGEST', $digest);
 
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
@@ -196,7 +186,7 @@ DIGEST;
 		$request = new Request('posts/index');
 		$request->addParams(array('pass' => array()));
 
-		$_SERVER['PHP_AUTH_DIGEST'] = <<<DIGEST
+		$digest = <<<DIGEST
 Digest username="mariano",
 realm="localhost",
 nonce="123",
@@ -207,6 +197,7 @@ cnonce="123",
 response="6629fae49393a05397450978507c4ef1",
 opaque="123abc"
 DIGEST;
+		$request->env('PHP_AUTH_DIGEST', $digest);
 
 		$this->auth->unauthenticated($request, $this->response);
 	}
