@@ -3157,16 +3157,16 @@ class MysqlTest extends CakeTestCase {
 	
 	
 /**
- * testBuildColumn3 method
+ * Test `unsigned` field parameter
  *
  * @param array $data Column data
  * @param string $expected Expected sql part
  * 
  * @return void
  * 
- * @dataProvider buildColumn3Provider
+ * @dataProvider buildColumnUnsignedProvider
  */
-	public function testBuildColumn3($data, $expected) {
+	public function testBuildColumnUnsigned($data, $expected) {
 		$restore = $this->Dbo->columns;
 		$this->Dbo->columns = array('string' => 1, 'integer' => 1, 'float' => 1, 'biginteger' => 1, 'any' => 1);
 
@@ -3177,11 +3177,11 @@ class MysqlTest extends CakeTestCase {
 	}
 	
 /**
- * Data provider testBuildColumn3 method
+ * Data provider testBuildColumnUnsigned method
  *
  * @return array
  */
-	public function buildColumn3Provider() {
+	public function buildColumnUnsignedProvider() {
 		return array(
 			//set #0
 			array(
