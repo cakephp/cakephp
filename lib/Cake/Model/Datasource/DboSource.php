@@ -1729,22 +1729,37 @@ class DboSource extends DataSource {
 		}
 
 		switch (true) {
-			case ($assoc['external'] && $type === 'hasOne'):
-				return array("{$alias}.{$assoc['foreignKey']}" => '{$__cakeID__$}');
-			case ($assoc['external'] && $type === 'belongsTo'):
-				return array("{$alias}.{$linkModel->primaryKey}" => '{$__cakeForeignKey__$}');
-			case (!$assoc['external'] && $type === 'hasOne'):
-				return array("{$alias}.{$assoc['foreignKey']}" => $this->identifier("{$model->alias}.{$model->primaryKey}"));
-			case (!$assoc['external'] && $type === 'belongsTo'):
-				return array("{$model->alias}.{$assoc['foreignKey']}" => $this->identifier("{$alias}.{$linkModel->primaryKey}"));
+			case ($type === 'hasOne' && $assoc['external']):
+				return array(
+					"{$alias}.{$assoc['foreignKey']}" => '{$__cakeID__$}'
+				);
+			case ($type === 'hasOne' && !$assoc['external']):
+				return array(
+					"{$alias}.{$assoc['foreignKey']}" => $this->identifier("{$model->alias}.{$model->primaryKey}")
+				);
+			case ($type === 'belongsTo' && $assoc['external']):
+				return array(
+					"{$alias}.{$linkModel->primaryKey}" => '{$__cakeForeignKey__$}'
+				);
+			case ($type === 'belongsTo' && !$assoc['external']):
+				return array(
+					"{$model->alias}.{$assoc['foreignKey']}" => $this->identifier("{$alias}.{$linkModel->primaryKey}")
+				);
 			case ($type === 'hasMany'):
-				return array("{$alias}.{$assoc['foreignKey']}" => array('{$__cakeID__$}'));
+				return array(
+					"{$alias}.{$assoc['foreignKey']}" => array('{$__cakeID__$}')
+				);
 			case ($type === 'hasAndBelongsToMany'):
 				return array(
-					array("{$alias}.{$assoc['foreignKey']}" => '{$__cakeID__$}'),
-					array("{$alias}.{$assoc['associationForeignKey']}" => $this->identifier("{$alias2}.{$linkModel->primaryKey}"))
+					array(
+						"{$alias}.{$assoc['foreignKey']}" => '{$__cakeID__$}'
+					),
+					array(
+						"{$alias}.{$assoc['associationForeignKey']}" => $this->identifier("{$alias2}.{$linkModel->primaryKey}")
+					)
 				);
 		}
+
 		return array();
 	}
 
