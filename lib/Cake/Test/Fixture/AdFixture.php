@@ -12,7 +12,7 @@
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://www.cakephp.org
  * @package       Cake.Test.Fixture
  * @since         1.2
