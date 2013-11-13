@@ -221,6 +221,8 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$another = new \stdClass;
 		$this->assertSame($validator, $validator->scope('bar', $another));
 		$this->assertSame($another, $validator->scope('bar'));
+
+		$this->assertEquals('\Cake\Utility\Validation', $validator->scope('default'));
 	}
 
 }

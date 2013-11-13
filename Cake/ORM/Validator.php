@@ -109,6 +109,9 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			if (isset($this->_scopes[$name])) {
 				return $this->_scopes[$name];
 			}
+			if ($name === 'default') {
+				return $this->_scopes[$name] = '\Cake\Utility\Validation';
+			}
 			return null;
 		}
 		$this->_scopes[$name] = $object;
