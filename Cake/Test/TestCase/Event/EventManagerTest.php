@@ -374,7 +374,7 @@ class EventManagerTest extends TestCase {
  * @return void
  */
 	public function testDispatchWithGlobal() {
-		$generalManager = $this->getMock('Cake\Event\EventManager', array('dispatch'));
+		$generalManager = $this->getMock('Cake\Event\EventManager', array('prioritisedListeners'));
 		$manager = new EventManager();
 		$event = new Event('fake.event');
 		EventManager::instance($generalManager);
