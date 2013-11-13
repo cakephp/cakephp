@@ -81,6 +81,13 @@ class L10n {
 	public $direction = 'ltr';
 
 /**
+ * Request object instance
+ *
+ * @var Cake\Network\Request
+ */
+	protected $_request = null;
+
+/**
  * Maps ISO 639-3 to I10n::_l10nCatalog
  * The terminological codes (first one per language) should be used if possible.
  * They are the ones building the path in `/APP/Locale/[code]/`
@@ -327,8 +334,12 @@ class L10n {
 
 /**
  * Class constructor
+ *
+ * @param Cake\Network\Request $request Request object
  */
-	public function __construct() {
+	public function __construct(Request $request) {
+		$this->_request = $request;
+
 		if (defined('DEFAULT_LANGUAGE')) {
 			$this->default = DEFAULT_LANGUAGE;
 		}
@@ -413,7 +424,7 @@ class L10n {
  * @return boolean Success
  */
 	protected function _autoLanguage() {
-		$_detectableLanguages = Request::acceptLanguage();
+		$_detectableLanguages = $this->_request->acceptLanguage();
 		foreach ($_detectableLanguages as $langKey) {
 			if (isset($this->_l10nCatalog[$langKey])) {
 				$this->_setLanguage($langKey);

@@ -14,6 +14,7 @@
  */
 namespace Cake\Routing\Route;
 
+use Cake\Network\Request;
 use Cake\Routing\Router;
 
 /**
@@ -254,6 +255,8 @@ class Route {
  * @return mixed Boolean false on failure, otherwise an array or parameters
  */
 	public function parse($url) {
+		$request = Router::getRequest(true) ?: Request::createFromGlobals();
+
 		if (!$this->compiled()) {
 			$this->compile();
 		}
@@ -276,7 +279,7 @@ class Route {
 				$h = false;
 
 				foreach ($val as $v) {
-					if (env($header) === $v) {
+					if ($request->env($header) === $v) {
 						$h = true;
 					}
 				}

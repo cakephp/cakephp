@@ -22,6 +22,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\Model\Datasource\Session;
+use Cake\Network\Request;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\String;
@@ -99,10 +100,21 @@ class I18n {
 	protected $_escape = null;
 
 /**
- * Constructor, use I18n::getInstance() to get the i18n translation object.
+ * Request object instance
+ *
+ * @var Cake\Network\Request
  */
-	public function __construct() {
-		$this->l10n = new L10n();
+	protected $_request = null;
+
+/**
+ * Constructor, use I18n::getInstance() to get the i18n translation object.
+ *
+ * @param Cake\Network\Request $request Request object
+ */
+	public function __construct(Request $request) {
+		$this->_request = $request;
+
+		$this->l10n = new L10n($this->_request);
 	}
 
 /**
@@ -113,7 +125,7 @@ class I18n {
 	public static function getInstance() {
 		static $instance = array();
 		if (!$instance) {
-			$instance[0] = new I18n();
+			$instance[0] = new I18n(Request::createFromGlobals());
 		}
 		return $instance[0];
 	}

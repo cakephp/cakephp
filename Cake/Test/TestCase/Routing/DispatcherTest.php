@@ -925,10 +925,12 @@ class DispatcherTest extends TestCase {
 		Router::reload();
 		Router::mapResources('Posts');
 
-		$_SERVER['REQUEST_METHOD'] = 'POST';
 		$dispatcher = new Dispatcher();
 
-		$request = new Request('/posts');
+		$request = new Request([
+			'url' => '/posts',
+			'environment' => ['REQUEST_METHOD' => 'POST']
+		]);
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
@@ -942,10 +944,13 @@ class DispatcherTest extends TestCase {
 			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
 		}
 
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-		$_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE'] = 'PUT';
-
-		$request = new Request('/posts/5');
+		$request = new Request([
+			'url' => '/posts/5',
+			'environment' => [
+				'REQUEST_METHOD' => 'GET',
+				'HTTP_X_HTTP_METHOD_OVERRIDE' => 'PUT'
+			]
+		]);
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
@@ -960,10 +965,12 @@ class DispatcherTest extends TestCase {
 			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
 		}
 
-		unset($_SERVER['HTTP_X_HTTP_METHOD_OVERRIDE']);
-		$_SERVER['REQUEST_METHOD'] = 'GET';
-
-		$request = new Request('/posts/5');
+		$request = new Request([
+			'url' => '/posts/5',
+			'environment' => [
+				'REQUEST_METHOD' => 'GET'
+			]
+		]);
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
@@ -978,10 +985,10 @@ class DispatcherTest extends TestCase {
 			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
 		}
 
-		$request = new Request(array(
+		$request = new Request([
 			'url' => '/posts/5',
 			'post' => array('_method' => 'PUT')
-		));
+		]);
 		$event = new Event(__CLASS__, $dispatcher, array('request' => $request));
 		$dispatcher->parseParams($event);
 		$expected = array(
@@ -995,8 +1002,6 @@ class DispatcherTest extends TestCase {
 		foreach ($expected as $key => $value) {
 			$this->assertEquals($value, $request[$key], 'Value mismatch for ' . $key . ' %s');
 		}
-
-		$_SERVER = array();
 
 		$request = new Request(array(
 			'url' => '/posts',

@@ -18,6 +18,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Event\Event;
+use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\DispatcherFilter;
 use Cake\Utility\Inflector;
@@ -44,7 +45,9 @@ class AssetDispatcher extends DispatcherFilter {
  * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
  */
 	public function beforeDispatch(Event $event) {
-		$url = urldecode($event->data['request']->url);
+		$request = $event->data['request'];
+
+		$url = urldecode($request->url);
 		if (strpos($url, '..') !== false || strpos($url, '.') === false) {
 			return;
 		}
@@ -58,13 +61,13 @@ class AssetDispatcher extends DispatcherFilter {
 		$event->stopPropagation();
 
 		$response->modified(filemtime($assetFile));
-		if ($response->checkNotModified($event->data['request'])) {
+		if ($response->checkNotModified($request)) {
 			return $response;
 		}
 
 		$pathSegments = explode('.', $url);
 		$ext = array_pop($pathSegments);
-		$this->_deliverAsset($response, $assetFile, $ext);
+		$this->_deliverAsset($request, $response, $assetFile, $ext);
 		return $response;
 	}
 
@@ -96,17 +99,18 @@ class AssetDispatcher extends DispatcherFilter {
 /**
  * Sends an asset file to the client
  *
+ * @param Cake\Network\Request $request The request object to use.
  * @param Cake\Network\Response $response The response object to use.
  * @param string $assetFile Path to the asset file in the file system
  * @param string $ext The extension of the file to determine its mime type
  * @return void
  */
-	protected function _deliverAsset(Response $response, $assetFile, $ext) {
+	protected function _deliverAsset(Request $request, Response $response, $assetFile, $ext) {
 		ob_start();
 		$compressionEnabled = Configure::read('Asset.compress') && $response->compress();
 		if ($response->type($ext) == $ext) {
 			$contentType = 'application/octet-stream';
-			$agent = env('HTTP_USER_AGENT');
+			$agent = $request->env('HTTP_USER_AGENT');
 			if (preg_match('%Opera(/| )([0-9].[0-9]{1,2})%', $agent) || preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
 				$contentType = 'application/octetstream';
 			}
