@@ -3166,14 +3166,9 @@ class MysqlTest extends CakeTestCase {
  * 
  * @dataProvider buildColumnUnsignedProvider
  */
-	public function testBuildColumnUnsigned($data, $expected) {
-		$restore = $this->Dbo->columns;
-		$this->Dbo->columns = array('string' => 1, 'integer' => 1, 'float' => 1, 'biginteger' => 1, 'any' => 1);
-
+	public function testBuildColumnUnsigned($data, $expected) {//debug($this->Dbo->columns);
 		$result = $this->Dbo->buildColumn($data);
 		$this->assertEquals($expected, $result);
-		
-		$this->Dbo->columns = $restore;
 	}
 	
 /**
@@ -3188,18 +3183,20 @@ class MysqlTest extends CakeTestCase {
 				array(
 					'name' => 'testName',
 					'type' => 'integer',
+					'length' => 11,
 					'unsigned' => true
 				),
-				'`testName`  UNSIGNED'
+				'`testName` int(11) UNSIGNED'
 			),
 			//set #1
 			array(
 				array(
 					'name' => 'testName',
 					'type' => 'biginteger',
+					'length' => 20,
 					'unsigned' => true
 				),
-				'`testName`  UNSIGNED'
+				'`testName` bigint(20) UNSIGNED'
 			),
 			//set #2
 			array(
@@ -3208,43 +3205,54 @@ class MysqlTest extends CakeTestCase {
 					'type' => 'float',
 					'unsigned' => true
 				),
-				'`testName`  UNSIGNED'
+				'`testName` float UNSIGNED'
 			),
 			//set #3
 			array(
 				array(
 					'name' => 'testName',
 					'type' => 'string',
+					'length' => 255,
 					'unsigned' => true
 				),
-				'`testName` '
+				'`testName` varchar(255)'
 			),
 			//set #4
 			array(
 				array(
 					'name' => 'testName',
-					'type' => 'any',
+					'type' => 'date',
 					'unsigned' => true
 				),
-				'`testName` '
+				'`testName` date'
 			),
 			//set #5
 			array(
 				array(
 					'name' => 'testName',
-					'type' => 'any',
+					'type' => 'date',
 					'unsigned' => false
 				),
-				'`testName` '
+				'`testName` date'
 			),
 			//set #6
 			array(
 				array(
 					'name' => 'testName',
 					'type' => 'integer',
+					'length' => 11,
 					'unsigned' => false
 				),
-				'`testName` '
+				'`testName` int(11)'
+			),
+			//set #7
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'numeric',
+					'unsigned' => true
+				),
+				'`testName` decimal UNSIGNED'
 			)
 		);
 	}

@@ -91,7 +91,7 @@ class Mysql extends DboSource {
 			'value' => 'UNSIGNED', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'afterDefault',
 			'noVal' => true,
 			'options' => array(true),
-			'types' => array('integer', 'float', 'biginteger')
+			'types' => array('integer', 'float', 'biginteger', 'numeric')
 		)
 	);
 
