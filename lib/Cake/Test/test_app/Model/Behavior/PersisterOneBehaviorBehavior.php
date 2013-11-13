@@ -4,8 +4,6 @@
  *
  * Behavior to simplify manipulating a model's bindings when doing a find operation
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

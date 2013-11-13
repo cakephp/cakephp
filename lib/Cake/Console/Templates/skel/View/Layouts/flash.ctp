@@ -1,7 +1,6 @@
 <?php
 /**
  *
- * PHP 5
  *
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.View.Layouts

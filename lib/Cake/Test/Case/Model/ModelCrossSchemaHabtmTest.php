@@ -1,10 +1,10 @@
 <?php
 /**
+ *
+ *
  * Tests cross database HABTM. Requires $test and $test2 to both be set in DATABASE_CONFIG
  * NOTE: When testing on MySQL, you must set 'persistent' => false on *both* database connections,
  * or one connection will step on the other.
- *
- * PHP 5
  *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)

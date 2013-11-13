@@ -8,8 +8,6 @@
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

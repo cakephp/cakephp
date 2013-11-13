@@ -7,8 +7,6 @@
  * This class is the implementation of those methods.
  * They are mostly used by the Session Component.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

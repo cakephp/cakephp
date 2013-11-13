@@ -2,8 +2,6 @@
 /**
  * AppShell file
  *
- * PHP 5
- *
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 2.0
  */

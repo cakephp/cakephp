@@ -5,8 +5,6 @@
  * This file is application-wide helper file. You can put all
  * application-wide helper-related methods here.
  *
- * PHP 5
- *
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.View.Helper
  * @since         CakePHP(tm) v 0.2.9

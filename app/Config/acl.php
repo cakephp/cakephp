@@ -4,8 +4,6 @@
  *
  * Use it to configure access control of your CakePHP application.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
