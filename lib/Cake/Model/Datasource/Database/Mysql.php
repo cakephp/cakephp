@@ -86,7 +86,13 @@ class Mysql extends DboSource {
 	public $fieldParameters = array(
 		'charset' => array('value' => 'CHARACTER SET', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault'),
 		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => ' ', 'column' => 'Collation', 'position' => 'beforeDefault'),
-		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault')
+		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault'),
+		'unsigned' => array(
+			'value' => 'UNSIGNED', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'afterDefault',
+			'noVal' => true,
+			'options' => array(true),
+			'types' => array('integer', 'float', 'biginteger')
+		)
 	);
 
 /**

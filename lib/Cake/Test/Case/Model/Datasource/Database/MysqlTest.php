@@ -3154,6 +3154,100 @@ class MysqlTest extends CakeTestCase {
 		);
 		$this->Dbo->buildColumn($data);
 	}
+	
+	
+/**
+ * testBuildColumn3 method
+ *
+ * @param array $data Column data
+ * @param string $expected Expected sql part
+ * 
+ * @return void
+ * 
+ * @dataProvider buildColumn3Provider
+ */
+	public function testBuildColumn3($data, $expected) {
+		$restore = $this->Dbo->columns;
+		$this->Dbo->columns = array('string' => 1, 'integer' => 1, 'float' => 1, 'biginteger' => 1, 'any' => 1);
+
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+		
+		$this->Dbo->columns = $restore;
+	}
+	
+/**
+ * Data provider testBuildColumn3 method
+ *
+ * @return array
+ */
+	public function buildColumn3Provider() {
+		return array(
+			//set #0
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'integer',
+					'unsigned' => true
+				),
+				'`testName`  UNSIGNED'
+			),
+			//set #1
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'biginteger',
+					'unsigned' => true
+				),
+				'`testName`  UNSIGNED'
+			),
+			//set #2
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'float',
+					'unsigned' => true
+				),
+				'`testName`  UNSIGNED'
+			),
+			//set #3
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'string',
+					'unsigned' => true
+				),
+				'`testName` '
+			),
+			//set #4
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'any',
+					'unsigned' => true
+				),
+				'`testName` '
+			),
+			//set #5
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'any',
+					'unsigned' => false
+				),
+				'`testName` '
+			),
+			//set #6
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'integer',
+					'unsigned' => false
+				),
+				'`testName` '
+			)
+		);
+	}
 
 /**
  * test hasAny()
