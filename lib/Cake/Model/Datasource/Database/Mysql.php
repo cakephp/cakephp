@@ -88,7 +88,7 @@ class Mysql extends DboSource {
 		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => ' ', 'column' => 'Collation', 'position' => 'beforeDefault'),
 		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault'),
 		'unsigned' => array(
-			'value' => 'UNSIGNED', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'afterDefault',
+			'value' => 'UNSIGNED', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault',
 			'noVal' => true,
 			'options' => array(true),
 			'types' => array('integer', 'float', 'biginteger', 'numeric')

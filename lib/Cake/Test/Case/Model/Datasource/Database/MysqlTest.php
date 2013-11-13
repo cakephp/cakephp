@@ -3253,6 +3253,16 @@ class MysqlTest extends CakeTestCase {
 					'unsigned' => true
 				),
 				'`testName` decimal UNSIGNED'
+			),
+			//set #7
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'numeric',
+					'unsigned' => true,
+					'default' => 1
+				),
+				'`testName` decimal UNSIGNED DEFAULT 1'
 			)
 		);
 	}
