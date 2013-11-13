@@ -568,14 +568,14 @@ class Time {
  */
 	public static function toQuarter($dateString, $range = false) {
 		$dateTime = new \DateTime;
-		$timeStamp = $dateTime->setTimestamp(static::fromString($dateString));
+		$dateTime->setTimestamp(static::fromString($dateString));
 
-		$quarter = ceil($timeStamp->format('m') / 3);
+		$quarter = ceil($dateTime->format('m') / 3);
 		if ($range === false) {
 			return $quarter;
 		}
 
-		$year = $timeStamp->format('Y');
+		$year = $dateTime->format('Y');
 		switch ($quarter) {
 			case 1:
 				return array($year . '-01-01', $year . '-03-31');
