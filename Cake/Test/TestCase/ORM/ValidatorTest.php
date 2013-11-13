@@ -225,4 +225,26 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('\Cake\Utility\Validation', $validator->scope('default'));
 	}
 
+/**
+ * Tests errors() method when using validators from the default scope, this proves
+ * that it returns a default validation message and the custom one set in the rule
+ *
+ * @return void
+ */
+	public function testErrorsFromDefaultScope() {
+		$validator = new Validator;
+		$validator
+			->add('email', 'alpha', ['rule' => 'alphanumeric'])
+			->add('email', 'notEmpty', ['rule' => 'notEmpty'])
+			->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
+		$errors = $validator->errors(['email' => 'not an email!']);
+		$expected = [
+			'email' => [
+				'alpha' => 'The provided value is invalid',
+				'email' => 'Y u no write email?'
+			]
+		];
+		$this->assertEquals($expected, $errors);
+	}
+
 }

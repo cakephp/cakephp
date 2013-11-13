@@ -27,13 +27,6 @@ namespace Cake\ORM\Validation;
 class ValidationRule {
 
 /**
- * Validation method
- *
- * @var mixed
- */
-	protected $_rule = null;
-
-/**
  * Validation method arguments
  *
  * @var array
@@ -41,39 +34,32 @@ class ValidationRule {
 	protected $_ruleParams = array();
 
 /**
- * Holds passed in options
+ * The method to be called for a given scope
  *
- * @var array
+ * @var string|\Closure
  */
-	protected $_passedOptions = array();
-
-/**
- * The 'rule' key
- *
- * @var mixed
- */
-	public $rule = 'blank';
+	protected $_rule;
 
 /**
  * The 'on' key
  *
  * @var string
  */
-	public $on = null;
+	protected $_on = null;
 
 /**
  * The 'last' key
  *
  * @var boolean
  */
-	public $last = true;
+	protected $_last = true;
 
 /**
  * The 'message' key
  *
  * @var string
  */
-	public $message = null;
+	protected $_message = null;
 
 /**
  * Constructor
@@ -82,19 +68,6 @@ class ValidationRule {
  */
 	public function __construct($validator = array()) {
 		$this->_addValidatorProps($validator);
-	}
-
-/**
- * Checks if the rule is valid
- *
- * @return boolean
- */
-	public function isValid() {
-		if (!$this->_valid || (is_string($this->_valid) && !empty($this->_valid))) {
-			return false;
-		}
-
-		return true;
 	}
 
 /**
@@ -122,72 +95,25 @@ class ValidationRule {
 	}
 
 /**
- * Gets the validation error message
+ * Dispatches the validation rule to the given validator method and returns
+ * a boolean indicating whether the rule passed or not. If a string is returned
+ * it is assumed that the rule failed and the error message was given as a result.
  *
- * @return string
+ * @param mixed $data The data to validate
+ * @param array $scopes associative array with objects or class names that will
+ * be passed as the last argument for the validation method
+ * @param boolean $newRecord whether or not the data to be validated belongs to
+ * a new record
+ * @return boolean|string
  */
-	public function getValidationResult() {
-		return $this->_valid;
-	}
-
-/**
- * Gets an array with the rule properties
- *
- * @return array
- */
-	protected function _getPropertiesArray() {
-		$rule = $this->rule;
-		if (!is_string($rule)) {
-			unset($rule[0]);
+	public function process($data, $scopes, $newRecord) {
+		$scope = $scopes['default'];
+		$callable = [$scope, $this->_rule];
+		$result = $callable($data, $scopes);
+		if ($result === false) {
+			return $this->_message ?: false;
 		}
-		return array(
-			'rule' => $rule,
-			'on' => $this->on,
-			'last' => $this->last,
-			'message' => $this->message
-		);
-	}
-
-/**
- * Dispatches the validation rule to the given validator method
- *
- * @param string $field Field name
- * @param array $data Data array
- * @param array $methods Methods list
- * @return boolean True if the rule could be dispatched, false otherwise
- */
-	public function process($field, $data, $methods) {
-		$this->_parseRule($field, $data);
-
-		$validator = $this->_getPropertiesArray();
-		$rule = strtolower($this->_rule);
-		if (isset($methods[$rule])) {
-			$this->_ruleParams[] = array_merge($validator, $this->_passedOptions);
-			$this->_ruleParams[0] = array($field => $this->_ruleParams[0]);
-			$this->_valid = call_user_func_array($methods[$rule], $this->_ruleParams);
-		} elseif (method_exists('Cake\Utility\Validation', $this->_rule)) {
-			$this->_valid = call_user_func_array(array('Cake\Utility\Validation', $this->_rule), $this->_ruleParams);
-		} elseif (is_string($validator['rule'])) {
-			$this->_valid = preg_match($this->_rule, $data[$field]);
-		} else {
-			trigger_error(__d('cake_dev', 'Could not find validation handler %s for %s', $this->_rule, $field), E_USER_WARNING);
-			return false;
-		}
-
-		return true;
-	}
-
-/**
- * Returns passed options for this rule
- *
- * @param string|integer $key Array index
- * @return array
- */
-	public function getOptions($key) {
-		if (!isset($this->_passedOptions[$key])) {
-			return null;
-		}
-		return $this->_passedOptions[$key];
+		return $result;
 	}
 
 /**
@@ -203,28 +129,9 @@ class ValidationRule {
 		foreach ($validator as $key => $value) {
 			if (isset($value) || !empty($value)) {
 				if (in_array($key, array('rule', 'on', 'message', 'last'))) {
-					$this->{$key} = $validator[$key];
-				} else {
-					$this->_passedOptions[$key] = $value;
+					$this->{"_$key"} = $validator[$key];
 				}
 			}
-		}
-	}
-
-/**
- * Parses the rule and sets the rule and ruleParams
- *
- * @param string $field Field name
- * @param array $data Data array
- * @return void
- */
-	protected function _parseRule($field, $data) {
-		if (is_array($this->rule)) {
-			$this->_rule = $this->rule[0];
-			$this->_ruleParams = array_merge(array($data[$field]), array_values(array_slice($this->rule, 1)));
-		} else {
-			$this->_rule = $this->rule;
-			$this->_ruleParams = array($data[$field]);
 		}
 	}
 

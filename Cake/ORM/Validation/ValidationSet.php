@@ -191,64 +191,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Fetches the correct error message for a failed validation
- *
- * @param string $name the name of the rule as it was configured
- * @param Cake\Model\Validator\ValidationRule $rule the object containing validation information
- * @return string
- */
-	protected function _processValidationResponse($name, $rule) {
-		$message = $rule->getValidationResult();
-		if (is_string($message)) {
-			return $message;
-		}
-		$message = $rule->message;
-
-		if ($message !== null) {
-			$args = null;
-			if (is_array($message)) {
-				$result = $message[0];
-				$args = array_slice($message, 1);
-			} else {
-				$result = $message;
-			}
-			if (is_array($rule->rule) && $args === null) {
-				$args = array_slice($rule->rule, 1);
-			}
-			$args = $this->_translateArgs($args);
-
-			$message = __d($this->_validationDomain, $result, $args);
-		} elseif (is_string($name)) {
-			if (is_array($rule->rule)) {
-				$args = array_slice($rule->rule, 1);
-				$args = $this->_translateArgs($args);
-				$message = __d($this->_validationDomain, $name, $args);
-			} else {
-				$message = __d($this->_validationDomain, $name);
-			}
-		} else {
-			$message = __d('cake', 'The provided value is invalid');
-		}
-
-		return $message;
-	}
-
-/**
- * Applies translations to validator arguments.
- *
- * @param array $args The args to translate
- * @return array Translated args.
- */
-	protected function _translateArgs($args) {
-		foreach ((array)$args as $k => $arg) {
-			if (is_string($arg)) {
-				$args[$k] = __d($this->_validationDomain, $arg);
-			}
-		}
-		return $args;
-	}
-
-/**
  * Returns whether an index exists in the rule set
  *
  * @param string $index name of the rule

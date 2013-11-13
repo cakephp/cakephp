@@ -63,13 +63,31 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 		$errors = [];
 		foreach ($this->_fields as $name => $field) {
 			$keyPresent = array_key_exists($name, $data);
+
 			if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
 				$errors[$name][] = __d('cake', 'This field is required');
+				continue;
 			}
-			if ($keyPresent && !$this->_checkEmpty($field, $newRecord)) {
-				if ($this->_fieldIsEmpty($data[$name])) {
-					$errors[$name][] = __d('cake', 'This field cannot be left empty');
-				}
+
+			if (!$keyPresent) {
+				continue;
+			}
+
+			$canBeEmpty = $this->_canBeEmpty($field, $newRecord);
+			$isEmpty = $this->_fieldIsEmpty($data[$name]);
+
+			if (!$canBeEmpty && $isEmpty) {
+				$errors[$name][] = __d('cake', 'This field cannot be left empty');
+				continue;
+			}
+
+			if ($isEmpty) {
+				continue;
+			}
+
+			$result = $this->_processRules($field, $data[$name], $newRecord);
+			if ($result) {
+				$errors[$name] = $result;
 			}
 		}
 
@@ -308,7 +326,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @param boolean $newRecord whether the data to be validated is new or to be updated.
  * @return boolean
  */
-	protected function _checkEmpty($field, $newRecord) {
+	protected function _canBeEmpty($field, $newRecord) {
 		$allowed = $field->isEmptyAllowed();
 		if (in_array($allowed, array('create', 'update'), true)) {
 			$allowed = (
@@ -331,6 +349,23 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			return true;
 		}
 		return false;
+	}
+
+	protected function _processRules(ValidationSet $rules, $value, $newRecord) {
+		$errors = [];
+		$this->scope('default'); // Loading default scope in case there is none
+		foreach ($rules as $name => $rule) {
+			$result = $rule->process($value, $this->_scopes, $newRecord);
+			if ($result === true) {
+				continue;
+			}
+
+			$errors[$name] = __d('cake', 'The provided value is invalid');
+			if (is_string($result)) {
+				$errors[$name] = __d($this->_validationDomain, $result);
+			}
+		}
+		return $errors;
 	}
 
 }
