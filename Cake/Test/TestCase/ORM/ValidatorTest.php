@@ -247,4 +247,36 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $errors);
 	}
 
+/**
+ * Tests using validation methods from different scopes and returning the error
+ * as a string
+ *
+ * @return void
+ */
+	public function testErrorsFromCustomScope() {
+		$validator = new Validator;
+		$validator
+			->add('email', 'alpha', ['rule' => 'alphanumeric'])
+			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+
+		$thing = $this->getMock('\stdClass', ['isCool']);
+		$thing->expects($this->once())->method('isCool')
+			->will($this->returnCallback(function($data, $scopes) use ($thing) {
+				$this->assertEquals('bar', $data);
+				$expected = [
+					'default' => '\Cake\Utility\Validation',
+					'thing' => $thing
+				];
+				$this->assertEquals($expected, $scopes);
+				return "That ain't cool, yo";
+			}));
+
+		$validator->scope('thing', $thing);
+		$errors = $validator->errors(['email' => '!', 'title' => 'bar']);
+		$expected = [
+			'email' => ['alpha' => 'The provided value is invalid'],
+			'title' => ['cool' =>  "That ain't cool, yo"]
+		];
+		$this->assertEquals($expected, $errors);
+	}
 }

@@ -62,6 +62,14 @@ class ValidationRule {
 	protected $_message = null;
 
 /**
+ * Key under which the object or class where the method to be used for
+ * validation will be found
+ *
+ * @var string
+ */
+	protected $_scope = 'default';
+
+/**
  * Constructor
  *
  * @param array $validator [optional] The validator properties
@@ -107,7 +115,7 @@ class ValidationRule {
  * @return boolean|string
  */
 	public function process($data, $scopes, $newRecord) {
-		$scope = $scopes['default'];
+		$scope = $scopes[$this->_scope];
 		$callable = [$scope, $this->_rule];
 		$result = $callable($data, $scopes);
 		if ($result === false) {
@@ -123,12 +131,9 @@ class ValidationRule {
  * @return void
  */
 	protected function _addValidatorProps($validator = array()) {
-		if (!is_array($validator)) {
-			$validator = array('rule' => $validator);
-		}
 		foreach ($validator as $key => $value) {
 			if (isset($value) || !empty($value)) {
-				if (in_array($key, array('rule', 'on', 'message', 'last'))) {
+				if (in_array($key, array('rule', 'on', 'message', 'last', 'scope'))) {
 					$this->{"_$key"} = $validator[$key];
 				}
 			}
