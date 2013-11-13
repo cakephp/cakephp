@@ -9,7 +9,6 @@
 *.ctp text
 *.sql text
 *.md text
-*.mo text
 *.po text
 *.js text
 *.css text
@@ -31,3 +30,4 @@
 *.jpg binary
 *.gif binary
 *.ico binary
+*.mo binary
