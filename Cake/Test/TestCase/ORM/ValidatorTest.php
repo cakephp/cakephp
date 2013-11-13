@@ -206,4 +206,21 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertEmpty($errors);
 	}
 
+/**
+ * Test the scope() method
+ *
+ * @return void
+ */
+	public function testScope() {
+		$validator = new Validator;
+		$object = new \stdClass;
+		$this->assertSame($validator, $validator->scope('foo', $object));
+		$this->assertSame($object, $validator->scope('foo'));
+		$this->assertNull($validator->scope('bar'));
+
+		$another = new \stdClass;
+		$this->assertSame($validator, $validator->scope('bar', $another));
+		$this->assertSame($another, $validator->scope('bar'));
+	}
+
 }

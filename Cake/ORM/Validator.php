@@ -33,7 +33,15 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @var array
  */
-	protected $_fields = array();
+	protected $_fields = [];
+
+/**
+ * An associative array of objects or classes containing methods
+ * used for validation
+ *
+ * @var array
+ */
+	protected $_scopes = [];
 
 /**
  * The translation domain to use when setting the error messages
@@ -83,6 +91,28 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			$this->_fields[$name] = $set;
 		}
 		return $this->_fields[$name];
+	}
+
+/**
+ * Associates an object to a name so it can be used as a scope. Scopes are objects
+ * or class name that can contain methods used during validation of for deciding
+ * whether a validation rule can be applied. All validation methods, when called
+ * will receive the full list of scopes stored in this validator.
+ *
+ * If called with no arguments, it will return the scope stored under that name if
+ * it exists, otherwise it returns this instance of chaining.
+ *
+ * @return Validator|object|string
+ */
+	public function scope($name, $object = null) {
+		if ($object === null) {
+			if (isset($this->_scopes[$name])) {
+				return $this->_scopes[$name];
+			}
+			return null;
+		}
+		$this->_scopes[$name] = $object;
+		return $this;
 	}
 
 /**

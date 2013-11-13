@@ -107,18 +107,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @return array list of validation errors for this field
  */
 	public function validate($data, $isUpdate = false) {
-		$this->_isUpdate = $isUpdate;
-
-		if ($this->checkValidatePresent($this->field, $data)) {
-			return array(__d('cake', 'This field must exist in data'));
-		}
-
-		if (!array_key_exists($this->field, $data)) {
-			return array();
-		}
-
-		$errors = array();
-		$checkEmpty = $this->checkEmpty($this->field, $data);
 		foreach ($this->getRules() as $name => $rule) {
 			if ($rule->skip()) {
 				continue;
