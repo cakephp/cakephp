@@ -350,17 +350,26 @@ class ModelTask extends BakeTask {
 		if (!$model instanceof Model) {
 			return false;
 		}
-		$fields = $model->schema();
 
+		$fields = $model->schema();
 		if (empty($fields)) {
 			return false;
 		}
+
+		$skipFields = false;
 		$validate = array();
 		$this->initValidations();
 		foreach ($fields as $fieldName => $field) {
 			$validation = $this->fieldValidation($fieldName, $field, $model->primaryKey);
+			if (isset($validation['_skipFields'])) {
+				unset($validation['_skipFields']);
+				$skipFields = true;
+			}
 			if (!empty($validation)) {
 				$validate[$fieldName] = $validation;
+			}
+			if ($skipFields) {
+				return $validate;
 			}
 		}
 		return $validate;
@@ -401,6 +410,11 @@ class ModelTask extends BakeTask {
 		$defaultChoice = count($this->_validations);
 		$validate = $alreadyChosen = array();
 
+		$prompt = __d('cake_console',
+			"or enter in a valid regex validation string.\nAlternatively [s] skip the rest of the fields.\n"
+		);
+		$methods = array_flip($this->_validations);
+
 		$anotherValidator = 'y';
 		while ($anotherValidator === 'y') {
 			if ($this->interactive) {
@@ -424,8 +438,6 @@ class ModelTask extends BakeTask {
 				$this->hr();
 			}
 
-			$prompt = __d('cake_console', "... or enter in a valid regex validation string.\n");
-			$methods = array_flip($this->_validations);
 			$guess = $defaultChoice;
 			if ($metaData['null'] != 1 && !in_array($fieldName, array($primaryKey, 'created', 'modified', 'updated'))) {
 				if ($fieldName === 'email') {
@@ -455,6 +467,10 @@ class ModelTask extends BakeTask {
 
 			if ($this->interactive === true) {
 				$choice = $this->in($prompt, null, $guess);
+				if ($choice === 's') {
+					$validate['_skipFields'] = true;
+					return $validate;
+				}
 				if (in_array($choice, $alreadyChosen)) {
 					$this->out(__d('cake_console', "You have already chosen that validation rule,\nplease choose again"));
 					continue;
@@ -482,7 +498,12 @@ class ModelTask extends BakeTask {
 			}
 			$anotherValidator = 'n';
 			if ($this->interactive && $choice != $defaultChoice) {
-				$anotherValidator = $this->in(__d('cake_console', 'Would you like to add another validation rule?'), array('y', 'n'), 'n');
+				$anotherValidator = $this->in(__d('cake_console', "Would you like to add another validation rule\n" .
+					"or skip the rest of the fields?"), array('y', 'n', 's'), 'n');
+				if ($anotherValidator === 's') {
+					$validate['_skipFields'] = true;
+					return $validate;
+				}
 			}
 		}
 		return $validate;
