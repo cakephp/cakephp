@@ -286,8 +286,7 @@ class ConsoleOutput {
 	}
 
 /**
- * clean up and close handles
- *
+ * Clean up and close handles
  */
 	public function __destruct() {
 		fclose($this->_output);

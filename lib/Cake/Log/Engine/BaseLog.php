@@ -35,7 +35,7 @@ abstract class BaseLog implements CakeLogInterface {
 	protected $_config = array();
 
 /**
- * __construct method
+ * Constructor
  *
  * @param array $config Configuration array
  */

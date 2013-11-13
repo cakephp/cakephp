@@ -331,7 +331,6 @@ class CakeSocket {
 
 /**
  * Destructor, used to disconnect from current connection.
- *
  */
 	public function __destruct() {
 		$this->disconnect();

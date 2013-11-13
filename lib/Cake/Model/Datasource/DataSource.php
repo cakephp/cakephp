@@ -431,7 +431,6 @@ class DataSource extends Object {
 
 /**
  * Closes the current datasource.
- *
  */
 	public function __destruct() {
 		if ($this->_transactionStarted) {
