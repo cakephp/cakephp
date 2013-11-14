@@ -112,7 +112,6 @@ class Mysql extends DboSource {
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
-		'numeric' => array('name' => 'decimal', 'formatter' => 'floatval'),
 		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
