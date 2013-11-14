@@ -78,35 +78,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Runs all validation rules in this set and returns a list of
- * validation errors
- *
- * @param array $data Data array to validate
- * @param boolean $isUpdate Is record being updated or created
- * @return array list of validation errors for this field
- */
-	public function validate($data, $isUpdate = false) {
-		foreach ($this->getRules() as $name => $rule) {
-			if ($rule->skip()) {
-				continue;
-			}
-			if ($checkEmpty) {
-				break;
-			}
-
-			$rule->process($this->field, $data, $this->_methods);
-			if (!$rule->isValid()) {
-				$errors[] = $this->_processValidationResponse($name, $rule);
-				if ($rule->isLast()) {
-					break;
-				}
-			}
-		}
-
-		return $errors;
-	}
-
-/**
  * Gets a rule for a given name if exists
  *
  * @param string $name
