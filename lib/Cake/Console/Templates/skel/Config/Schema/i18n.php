@@ -4,8 +4,6 @@
  *
  * Use it to configure database for i18n
  *
- * PHP 5
- *
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config.Schema
  * @since         CakePHP(tm) v 0.2.9

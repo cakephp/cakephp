@@ -6,8 +6,6 @@
  *
  * You can configure a FileEngine cache, using Cache::config()
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
