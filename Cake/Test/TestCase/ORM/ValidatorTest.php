@@ -279,4 +279,37 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertEquals($expected, $errors);
 	}
+
+/**
+ * Tests that it is possible to pass extra arguments to the validation function
+ * and it still gets the scopes as last argument
+ *
+ * @return void
+ */
+	public function testMethodsWithExtraArguments() {
+		$validator = new Validator;
+		$validator->add('title', 'cool', [
+			'rule' => ['isCool', 'and', 'awesome'],
+			'scope' => 'thing'
+		]);
+		$thing = $this->getMock('\stdClass', ['isCool']);
+		$thing->expects($this->once())->method('isCool')
+			->will($this->returnCallback(function($data, $a, $b, $scopes) use ($thing) {
+				$this->assertEquals('bar', $data);
+				$this->assertEquals('and', $a);
+				$this->assertEquals('awesome', $b);
+				$expected = [
+					'default' => '\Cake\Utility\Validation',
+					'thing' => $thing
+				];
+				$this->assertEquals($expected, $scopes);
+				return "That ain't cool, yo";
+			}));
+		$validator->scope('thing', $thing);
+		$errors = $validator->errors(['email' => '!', 'title' => 'bar']);
+		$expected = [
+			'title' => ['cool' =>  "That ain't cool, yo"]
+		];
+		$this->assertEquals($expected, $errors);
+	}
 }

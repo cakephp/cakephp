@@ -34,27 +34,6 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_rules = array();
 
 /**
- * List of methods available for validation
- *
- * @var array
- */
-	protected $_methods = array();
-
-/**
- * I18n domain for validation messages.
- *
- * @var string
- */
-	protected $_validationDomain = null;
-
-/**
- * Holds the original ruleSet
- *
- * @var array
- */
-	public $ruleSet = array();
-
-/**
  * Denotes whether the fieldname key must be present in data array
  *
  * @var boolean|string

@@ -27,13 +27,6 @@ namespace Cake\ORM\Validation;
 class ValidationRule {
 
 /**
- * Validation method arguments
- *
- * @var array
- */
-	protected $_ruleParams = array();
-
-/**
  * The method to be called for a given scope
  *
  * @var string|\Closure
@@ -68,6 +61,13 @@ class ValidationRule {
  * @var string
  */
 	protected $_scope = 'default';
+
+/**
+ * Extra arguments to be passed to the validation method
+ *
+ * @var array
+ */
+	protected $_pass = [];
 
 /**
  * Constructor
@@ -117,7 +117,14 @@ class ValidationRule {
 	public function process($data, $scopes, $newRecord) {
 		$scope = $scopes[$this->_scope];
 		$callable = [$scope, $this->_rule];
-		$result = $callable($data, $scopes);
+
+		if ($this->_pass) {
+			$args = array_merge([$data], $this->_pass, [$scopes]);
+			$result = call_user_func_array($callable, $args);
+		} else {
+			$result = $callable($data, $scopes);
+		}
+
 		if ($result === false) {
 			return $this->_message ?: false;
 		}
@@ -132,10 +139,15 @@ class ValidationRule {
  */
 	protected function _addValidatorProps($validator = array()) {
 		foreach ($validator as $key => $value) {
-			if (isset($value) || !empty($value)) {
-				if (in_array($key, array('rule', 'on', 'message', 'last', 'scope'))) {
-					$this->{"_$key"} = $validator[$key];
-				}
+			if (!isset($value) || empty($value)) {
+				continue;
+			}
+			if ($key === 'rule' && is_array($value)) {
+				$this->_pass = array_slice($value, 1);
+				$value = array_shift($value);
+			}
+			if (in_array($key, ['rule', 'on', 'message', 'last', 'scope', 'pass'])) {
+				$this->{"_$key"} = $value;
 			}
 		}
 	}

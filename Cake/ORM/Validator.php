@@ -351,6 +351,15 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 		return false;
 	}
 
+/**
+ * Iterates over each rule in the validation set and collects the errors resulting
+ * from executing them
+ *
+ * @param ValidationSet $rules the list of rules for a field
+ * @param mixed $value the value to be checked
+ * @param boolean $newRecord whether is it a new record or an existing one
+ * @return array
+ */
 	protected function _processRules(ValidationSet $rules, $value, $newRecord) {
 		$errors = [];
 		$this->scope('default'); // Loading default scope in case there is none
