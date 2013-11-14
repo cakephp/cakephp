@@ -3154,7 +3154,7 @@ class MysqlTest extends CakeTestCase {
 		);
 		$this->Dbo->buildColumn($data);
 	}
-	
+
 /**
  * Test `unsigned` field parameter
  *
@@ -3169,7 +3169,7 @@ class MysqlTest extends CakeTestCase {
 		$result = $this->Dbo->buildColumn($data);
 		$this->assertEquals($expected, $result);
 	}
-	
+
 /**
  * Data provider testBuildColumnUnsigned method
  *
