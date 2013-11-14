@@ -115,8 +115,12 @@ class ValidationRule {
  * @return boolean|string
  */
 	public function process($data, $scopes, $newRecord) {
-		$scope = $scopes[$this->_scope];
-		$callable = [$scope, $this->_rule];
+		if (is_callable($this->_rule)) {
+			$callable = $this->_rule;
+		} else {
+			$scope = $scopes[$this->_scope];
+			$callable = [$scope, $this->_rule];
+		}
 
 		if ($this->_pass) {
 			$args = array_merge([$data], $this->_pass, [$scopes]);

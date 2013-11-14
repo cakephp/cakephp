@@ -314,6 +314,23 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that it is possible to use a closure as a rule
+ *
+ * @return void
+ */
+	public function testUsingClosureAsRule() {
+		$validator = new Validator;
+		$validator->add('name', 'myRule', [
+			'rule' => function($data, $scopes) {
+				$this->assertEquals('foo', $data);
+				return 'You fail';
+			}
+		]);
+		$expected = ['name' => ['myRule' => 'You fail']];
+		$this->assertEquals($expected, $validator->errors(['name' => 'foo']));
+	}
+
+/**
  * Tests that setting last to a rule will stop validating the rest of the rules
  *
  * @return void
