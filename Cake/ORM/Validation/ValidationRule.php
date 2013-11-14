@@ -45,7 +45,7 @@ class ValidationRule {
  *
  * @var boolean
  */
-	protected $_last = true;
+	protected $_last = false;
 
 /**
  * The 'message' key
@@ -99,7 +99,7 @@ class ValidationRule {
  * @return boolean
  */
 	public function isLast() {
-		return (bool)$this->last;
+		return (bool)$this->_last;
 	}
 
 /**

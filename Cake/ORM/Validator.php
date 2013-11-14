@@ -373,6 +373,10 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			if (is_string($result)) {
 				$errors[$name] = __d($this->_validationDomain, $result);
 			}
+
+			if ($rule->isLast()) {
+				break;
+			}
 		}
 		return $errors;
 	}

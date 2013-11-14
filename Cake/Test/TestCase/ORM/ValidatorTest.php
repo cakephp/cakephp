@@ -312,4 +312,24 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->assertEquals($expected, $errors);
 	}
+
+/**
+ * Tests that setting last to a rule will stop validating the rest of the rules
+ *
+ * @return void
+ */
+	public function testErrorsWithLastRule() {
+		$validator = new Validator;
+		$validator
+			->add('email', 'alpha', ['rule' => 'alphanumeric', 'last' => true])
+			->add('email', 'email', ['rule' => 'email', 'message' => 'Y u no write email?']);
+		$errors = $validator->errors(['email' => 'not an email!']);
+		$expected = [
+			'email' => [
+				'alpha' => 'The provided value is invalid'
+			]
+		];
+
+		$this->assertEquals($expected, $errors);
+	}
 }
