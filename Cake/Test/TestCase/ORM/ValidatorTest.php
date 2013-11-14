@@ -349,4 +349,5 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertEquals($expected, $errors);
 	}
+
 }

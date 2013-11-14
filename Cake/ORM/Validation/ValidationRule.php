@@ -29,7 +29,7 @@ class ValidationRule {
 /**
  * The method to be called for a given scope
  *
- * @var string|\Closure
+ * @var string|callable
  */
 	protected $_rule;
 
@@ -81,11 +81,12 @@ class ValidationRule {
 /**
  * Checks if the validation rule should be skipped
  *
- * @return boolean True if the ValidationRule can be skipped
+ * @param boolean $newRecord whether the rule to be processed is new or pre-existent
+ * @return boolean True if the ValidationRule should be skipped
  */
-	public function skip() {
-		if (!empty($this->on)) {
-			if ($this->on === 'create' && $this->isUpdate() || $this->on === 'update' && !$this->isUpdate()) {
+	public function skip($newRecord) {
+		if (!empty($this->_on)) {
+			if ($this->_on === 'create' && !$newRecord || $this->_on === 'update' && $newRecord) {
 				return true;
 			}
 		}
@@ -113,13 +114,21 @@ class ValidationRule {
  * @param boolean $newRecord whether or not the data to be validated belongs to
  * a new record
  * @return boolean|string
+ * @throws \InvalidArgumentException when the supplied rule is not a valid
+ * callable for the configured scope
  */
 	public function process($data, $scopes, $newRecord) {
 		if (is_callable($this->_rule)) {
 			$callable = $this->_rule;
+			$isCallable = true;
 		} else {
 			$scope = $scopes[$this->_scope];
 			$callable = [$scope, $this->_rule];
+			$isCallable = is_callable($callable);
+		}
+
+		if (!$isCallable) {
+			throw new \InvalidArgumentException('Invalid validation callable');
 		}
 
 		if ($this->_pass) {
