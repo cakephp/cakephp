@@ -3148,7 +3148,6 @@ class DboSource extends DataSource {
 				if (isset($value['types']) && !in_array($columnData['type'], $value['types'], true)) {
 					continue;
 				}
-				
 				$val = $columnData[$paramName];
 				if ($value['quote']) {
 					$val = $this->value($val);
