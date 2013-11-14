@@ -119,4 +119,32 @@ class ValidationRuleTest extends TestCase {
 		]);
 		$this->assertFalse($Rule->process($data, $scopes, false));
 	}
+
+/**
+ * Tests that the 'on' key can be a callable function
+ *
+ * @return void
+ */
+	public function testCallableOn() {
+		$data = 'some data';
+		$scopes = ['default' => $this];
+
+		$Rule = new ValidationRule([
+			'rule' => 'myTestRule',
+			'on' => function($s) use ($scopes) {
+				$this->assertEquals($scopes, $s);
+				return true;
+			}
+		]);
+		$this->assertFalse($Rule->process($data, $scopes, true));
+
+		$Rule = new ValidationRule([
+			'rule' => 'myTestRule',
+			'on' => function($s) use ($scopes) {
+				$this->assertEquals($scopes, $s);
+				return false;
+			}
+		]);
+		$this->assertTrue($Rule->process($data, $scopes, true));
+	}
 }

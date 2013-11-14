@@ -79,21 +79,6 @@ class ValidationRule {
 	}
 
 /**
- * Checks if the validation rule should be skipped
- *
- * @param boolean $newRecord whether the rule to be processed is new or pre-existent
- * @return boolean True if the ValidationRule should be skipped
- */
-	public function skip($newRecord) {
-		if (!empty($this->_on)) {
-			if ($this->_on === 'create' && !$newRecord || $this->_on === 'update' && $newRecord) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-/**
  * Returns whether this rule should break validation process for associated field
  * after it fails
  *
@@ -118,7 +103,7 @@ class ValidationRule {
  * callable for the configured scope
  */
 	public function process($data, $scopes, $newRecord) {
-		if ($this->skip($newRecord)) {
+		if ($this->_skip($newRecord, $scopes)) {
 			return true;
 		}
 
@@ -147,6 +132,29 @@ class ValidationRule {
 		}
 		return $result;
 	}
+
+/**
+ * Checks if the validation rule should be skipped
+ *
+ * @param boolean $newRecord whether the rule to be processed is new or pre-existent
+ * @param array $scopes associative array with objects or class names that will
+ * be passed as the last argument for the validation method
+ * @return boolean True if the ValidationRule should be skipped
+ */
+	protected function _skip($newRecord, $scopes) {
+		if (is_callable($this->_on)) {
+			$function = $this->_on;
+			return !$function($scopes);
+		}
+
+		if (!empty($this->_on)) {
+			if ($this->_on === 'create' && !$newRecord || $this->_on === 'update' && $newRecord) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 /**
  * Sets the rule properties from the rule entry in validate
