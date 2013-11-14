@@ -1472,7 +1472,9 @@ class EmailTest extends TestCase {
 		$this->assertInstanceOf('Cake\Network\Email\Email', $result);
 
 		$result = $this->CakeEmail->send();
-		$this->assertTrue((bool)strpos($result['message'], 'Right now: ' . date('Y-m-d\TH:i:s\Z', $timestamp)));
+		$dateTime = new \DateTime;
+		$dateTime->setTimestamp($timestamp);
+		$this->assertTrue((bool)strpos($result['message'], 'Right now: ' . $dateTime->format($dateTime::ATOM)));
 
 		$result = $this->CakeEmail->helpers();
 		$this->assertEquals(array('Time'), $result);
