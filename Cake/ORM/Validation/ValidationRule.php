@@ -118,6 +118,10 @@ class ValidationRule {
  * callable for the configured scope
  */
 	public function process($data, $scopes, $newRecord) {
+		if ($this->skip($newRecord)) {
+			return true;
+		}
+
 		if (is_callable($this->_rule)) {
 			$callable = $this->_rule;
 			$isCallable = true;

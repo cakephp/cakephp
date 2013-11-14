@@ -92,4 +92,31 @@ class ValidationRuleTest extends TestCase {
 		$Rule->process($data, $scopes, true);
 	}
 
+/**
+ * Tests that a rule can be skipped
+ *
+ * @return void
+ */
+	public function testSkip() {
+		$data = 'some data';
+		$scopes = ['default' => $this];
+
+		$Rule = new ValidationRule([
+			'rule' => 'myTestRule',
+			'on' => 'create'
+		]);
+		$this->assertFalse($Rule->process($data, $scopes, true));
+
+		$Rule = new ValidationRule([
+			'rule' => 'myTestRule',
+			'on' => 'update'
+		]);
+		$this->assertTrue($Rule->process($data, $scopes, true));
+
+		$Rule = new ValidationRule([
+			'rule' => 'myTestRule',
+			'on' => 'update'
+		]);
+		$this->assertFalse($Rule->process($data, $scopes, false));
+	}
 }
