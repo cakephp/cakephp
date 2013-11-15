@@ -393,11 +393,11 @@ class TimeTest extends TestCase {
 
 		$this->Time->niceFormat = '%Y-%d-%m';
 		$this->assertEquals(date('Y-d-m', $time), $this->Time->nice($time));
-		$this->assertEquals('%Y-%d-%m', $this->Time->niceFormat);
+		$this->assertEquals('%Y-%d-%m', Time::$niceFormat);
 
 		Time::$niceFormat = '%Y-%d-%m %H:%M';
 		$this->assertEquals(date('Y-d-m H:i', $time), $this->Time->nice($time));
-		$this->assertEquals('%Y-%d-%m %H:%M', $this->Time->niceFormat);
+		$this->assertEquals('%Y-%d-%m %H:%M', Time::$niceFormat);
 
 		date_default_timezone_set('UTC');
 		$result = $this->Time->nice(null, 'America/New_York');
