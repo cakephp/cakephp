@@ -391,7 +391,7 @@ class TimeTest extends TestCase {
 		$this->assertEquals(date('D', $time), $this->Time->nice($time, null, '%a'));
 		$this->assertEquals(date('M d, Y', $time), $this->Time->nice($time, null, '%b %d, %Y'));
 
-		$this->Time->niceFormat = '%Y-%d-%m';
+		Time::$niceFormat = '%Y-%d-%m';
 		$this->assertEquals(date('Y-d-m', $time), $this->Time->nice($time));
 		$this->assertEquals('%Y-%d-%m', Time::$niceFormat);
 
