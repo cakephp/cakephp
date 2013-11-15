@@ -91,40 +91,6 @@ class Time {
 	protected static $_time = null;
 
 /**
- * Magic set method for backward compatibility.
- *
- * Used by TimeHelper to modify static variables in this class
- *
- * @param string $name Variable name
- * @param mixes $value Variable value
- * @return void
- */
-	public function __set($name, $value) {
-		switch ($name) {
-			case 'niceFormat':
-				static::${$name} = $value;
-				break;
-		}
-	}
-
-/**
- * Magic set method for backward compatibility.
- *
- * Used by TimeHelper to get static variables in this class.
- *
- * @param string $name Variable name
- * @return mixed
- */
-	public function __get($name) {
-		switch ($name) {
-			case 'niceFormat':
-				return static::${$name};
-			default:
-				return null;
-		}
-	}
-
-/**
  * Converts a string representing the format for the function strftime and returns a
  * windows safe and i18n aware format.
  *
