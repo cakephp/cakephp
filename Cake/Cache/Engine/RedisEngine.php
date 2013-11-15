@@ -41,18 +41,17 @@ class RedisEngine extends CacheEngine {
  *
  * @var array
  */
-	public $settings = [];
+	protected $_config = [];
 
 /**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
- * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = []);
  *
- * @param array $settings array of setting for the engine
+ * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($settings = []) {
+	public function init($config = []) {
 		if (!class_exists('Redis')) {
 			return false;
 		}
@@ -64,7 +63,7 @@ class RedisEngine extends CacheEngine {
 			'password' => false,
 			'timeout' => 0,
 			'persistent' => true
-			], $settings)
+			], $config)
 		);
 
 		return $this->_connect();
@@ -79,20 +78,20 @@ class RedisEngine extends CacheEngine {
 		$return = false;
 		try {
 			$this->_Redis = new \Redis();
-			if (empty($this->settings['persistent'])) {
-				$return = $this->_Redis->connect($this->settings['server'], $this->settings['port'], $this->settings['timeout']);
+			if (empty($this->_config['persistent'])) {
+				$return = $this->_Redis->connect($this->_config['server'], $this->_config['port'], $this->_config['timeout']);
 			} else {
-				$persistentId = $this->settings['port'] . $this->settings['timeout'] . $this->settings['database'];
-				$return = $this->_Redis->pconnect($this->settings['server'], $this->settings['port'], $this->settings['timeout'], $persistentId);
+				$persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
+				$return = $this->_Redis->pconnect($this->_config['server'], $this->_config['port'], $this->_config['timeout'], $persistentId);
 			}
 		} catch (RedisException $e) {
 			return false;
 		}
-		if ($return && $this->settings['password']) {
-			$return = $this->_Redis->auth($this->settings['password']);
+		if ($return && $this->_config['password']) {
+			$return = $this->_Redis->auth($this->_config['password']);
 		}
 		if ($return) {
-			$return = $this->_Redis->select($this->settings['database']);
+			$return = $this->_Redis->select($this->_config['database']);
 		}
 		return $return;
 	}
@@ -175,7 +174,7 @@ class RedisEngine extends CacheEngine {
 		if ($check) {
 			return true;
 		}
-		$keys = $this->_Redis->getKeys($this->settings['prefix'] . '*');
+		$keys = $this->_Redis->getKeys($this->_config['prefix'] . '*');
 		$this->_Redis->del($keys);
 
 		return true;
@@ -190,11 +189,11 @@ class RedisEngine extends CacheEngine {
  */
 	public function groups() {
 		$result = [];
-		foreach ($this->settings['groups'] as $group) {
-			$value = $this->_Redis->get($this->settings['prefix'] . $group);
+		foreach ($this->_config['groups'] as $group) {
+			$value = $this->_Redis->get($this->_config['prefix'] . $group);
 			if (!$value) {
 				$value = 1;
-				$this->_Redis->set($this->settings['prefix'] . $group, $value);
+				$this->_Redis->set($this->_config['prefix'] . $group, $value);
 			}
 			$result[] = $group . $value;
 		}
@@ -208,14 +207,14 @@ class RedisEngine extends CacheEngine {
  * @return boolean success
  */
 	public function clearGroup($group) {
-		return (bool)$this->_Redis->incr($this->settings['prefix'] . $group);
+		return (bool)$this->_Redis->incr($this->_config['prefix'] . $group);
 	}
 
 /**
  * Disconnects from the redis server
  */
 	public function __destruct() {
-		if (!$this->settings['persistent']) {
+		if (!$this->_config['persistent']) {
 			$this->_Redis->close();
 		}
 	}

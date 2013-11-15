@@ -35,24 +35,23 @@ class XcacheEngine extends CacheEngine {
  *
  * @var array
  */
-	public $settings = [];
+	protected $_config = [];
 
 /**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
- * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = []);
  *
- * @param array $settings array of setting for the engine
+ * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($settings = []) {
+	public function init($config = []) {
 		if (php_sapi_name() !== 'cli') {
 			parent::init(array_merge([
 				'prefix' => Inflector::slug(APP_DIR) . '_',
 				'PHP_AUTH_USER' => 'user',
 				'PHP_AUTH_PW' => 'password'
-				], $settings)
+				], $config)
 			);
 			return function_exists('xcache_info');
 		}
@@ -83,7 +82,7 @@ class XcacheEngine extends CacheEngine {
 		if (xcache_isset($key)) {
 			$time = time();
 			$cachetime = intval(xcache_get($key . '_expires'));
-			if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
+			if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
 				return false;
 			}
 			return xcache_get($key);
@@ -150,11 +149,11 @@ class XcacheEngine extends CacheEngine {
  */
 	public function groups() {
 		$result = [];
-		foreach ($this->settings['groups'] as $group) {
-			$value = xcache_get($this->settings['prefix'] . $group);
+		foreach ($this->_config['groups'] as $group) {
+			$value = xcache_get($this->_config['prefix'] . $group);
 			if (!$value) {
 				$value = 1;
-				xcache_set($this->settings['prefix'] . $group, $value, 0);
+				xcache_set($this->_config['prefix'] . $group, $value, 0);
 			}
 			$result[] = $group . $value;
 		}
@@ -168,7 +167,7 @@ class XcacheEngine extends CacheEngine {
  * @return boolean success
  */
 	public function clearGroup($group) {
-		return (bool)xcache_inc($this->settings['prefix'] . $group, 1);
+		return (bool)xcache_inc($this->_config['prefix'] . $group, 1);
 	}
 
 /**
@@ -176,7 +175,7 @@ class XcacheEngine extends CacheEngine {
  * Makes necessary changes (and reverting them back) in $_SERVER
  *
  * This has to be done because xcache_clear_cache() needs to pass Basic Http Auth
- * (see xcache.admin configuration settings)
+ * (see xcache.admin configuration config)
  *
  * @param boolean $reverse Revert changes
  * @return void
@@ -197,10 +196,10 @@ class XcacheEngine extends CacheEngine {
 				if (!empty($value)) {
 					$backup[$key] = $value;
 				}
-				if (!empty($this->settings[$setting])) {
-					$_SERVER[$key] = $this->settings[$setting];
-				} elseif (!empty($this->settings[$key])) {
-					$_SERVER[$key] = $this->settings[$key];
+				if (!empty($this->_config[$setting])) {
+					$_SERVER[$key] = $this->_config[$setting];
+				} elseif (!empty($this->_config[$key])) {
+					$_SERVER[$key] = $this->_config[$key];
 				} else {
 					$_SERVER[$key] = $value;
 				}
