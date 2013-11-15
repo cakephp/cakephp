@@ -16,9 +16,8 @@
  */
 namespace Cake\Test\TestCase\Model\Validator;
 
-use Cake\Core\Configure;
-use Cake\Model\Validator\ValidationRule;
-use Cake\Model\Validator\ValidationSet;
+use Cake\ORM\Validation\ValidationRule;
+use Cake\ORM\Validation\ValidationSet;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -28,174 +27,17 @@ use Cake\TestSuite\TestCase;
 class ValidationSetTest extends TestCase {
 
 /**
- * override locale to the default (eng).
- *
- * @return void
- */
-	public function setUp() {
-		parent::setUp();
-		Configure::write('Config.language', 'eng');
-	}
-
-/**
- * testValidate method
- *
- * @return void
- */
-	public function testValidate() {
-		$Field = new ValidationSet('title', 'notEmpty');
-		$data = array(
-			'title' => '',
-			'body' => 'a body'
-		);
-
-		$result = $Field->validate($data);
-		$expected = array('The provided value is invalid');
-		$this->assertEquals($expected, $result);
-
-		$Field = new ValidationSet('body', 'notEmpty');
-
-		$result = $Field->validate($data);
-		$this->assertEmpty($result);
-
-		$Field = new ValidationSet('body', array(
-			'inList' => array(
-				'rule' => array('inList', array('test'))
-			)
-		));
-		$result = $Field->validate($data);
-		$expected = array('inList');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * testValidateWithvalidatePresent method
- *
- * @return void
- */
-	public function testValidateWithvalidatePresent() {
-		$data = array(
-			'title' => '',
-			'body' => 'a body'
-		);
-		$expectedPresent = array('This field must exist in data');
-
-		$Field = new ValidationSet('notthere', array(
-			'_validatePresent' => true,
-			'notEmpty' => array(
-				'rule' => 'notEmpty'
-			)
-		));
-
-		$result = $Field->validate($data);
-		$this->assertEquals($expectedPresent, $result);
-
-		$Field = new ValidationSet('notthere', array(
-			'_validatePresent' => 'create',
-			'notEmpty' => array(
-				'rule' => 'notEmpty'
-			)
-		));
-
-		$result = $Field->validate($data);
-		$this->assertEquals($expectedPresent, $result);
-
-		$result = $Field->validate($data, true);
-		$this->assertSame(array(), $result);
-
-		$Field = new ValidationSet('notthere', array(
-			'_validatePresent' => 'update',
-			'notEmpty' => array(
-				'rule' => 'notEmpty'
-			)
-		));
-
-		$result = $Field->validate($data);
-		$this->assertSame(array(), $result);
-
-		$result = $Field->validate($data, true);
-		$this->assertEquals($expectedPresent, $result);
-	}
-
-/**
- * testValidateWithAllowEmpty method
- *
- * @return void
- */
-	public function testValidateWithAllowEmpty() {
-		$data = array(
-			'title' => '',
-			'body' => 'a body'
-		);
-
-		$Field = new ValidationSet('title', array(
-			'_allowEmpty' => true,
-			'notEmpty' => array(
-				'rule' => 'notEmpty'
-			)
-		));
-
-		$result = $Field->validate($data);
-		$this->assertSame(array(), $result);
-
-		$Field = new ValidationSet('title', array(
-			'_allowEmpty' => 'create',
-			'notEmpty' => array(
-				'rule' => 'notEmpty'
-			)
-		));
-
-		$result = $Field->validate($data);
-		$this->assertSame(array(), $result);
-
-		$result = $Field->validate($data, true);
-		$this->assertEquals(array('notEmpty'), $result);
-
-		$Field = new ValidationSet('title', array(
-			'_allowEmpty' => 'update',
-			'notEmpty' => array(
-				'rule' => 'notEmpty'
-			)
-		));
-
-		$result = $Field->validate($data);
-		$this->assertEquals(array('notEmpty'), $result);
-
-		$result = $Field->validate($data, true);
-		$this->assertSame(array(), $result);
-
-		$Field = new ValidationSet('title', array(
-			'_allowEmpty' => 'update',
-			'notEmpty' => array(
-				'rule' => 'notEmpty',
-				'on' => 'create'
-			),
-			'between' => array(
-				'rule' => array('between', 1, 50),
-				'on' => 'update'
-			)
-		));
-		$result = $Field->validate($data);
-		$this->assertEquals(array('notEmpty'), $result);
-
-		$result = $Field->validate($data, true);
-		$this->assertSame(array(), $result);
-	}
-
-/**
  * testGetRule method
  *
  * @return void
  */
 	public function testGetRule() {
-		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
-		$Field = new ValidationSet('title', $rules);
-		$result = $Field->getRule('notEmpty');
-		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $result);
-		$this->assertEquals('notEmpty', $result->rule);
-		$this->assertEquals(null, $result->on);
-		$this->assertEquals(true, $result->last);
-		$this->assertEquals('Can not be empty', $result->message);
+		$field = new ValidationSet;
+		$field->add('notEmpty', ['rule' => 'notEmpty', 'message' => 'Can not be empty']);
+		$result = $field->rule('notEmpty');
+		$this->assertInstanceOf('Cake\ORM\Validation\ValidationRule', $result);
+		$expected = new ValidationRule(['rule' => 'notEmpty', 'message' => 'Can not be empty']);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -204,79 +46,12 @@ class ValidationSetTest extends TestCase {
  * @return void
  */
 	public function testGetRules() {
-		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
-		$Field = new ValidationSet('title', $rules);
+		$field = new ValidationSet;
+		$field->add('notEmpty', ['rule' => 'notEmpty', 'message' => 'Can not be empty']);
 
-		$result = $Field->getRules();
-		$this->assertEquals(array('notEmpty'), array_keys($result));
-		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $result['notEmpty']);
-	}
-
-/**
- * testSetRule method
- *
- * @return void
- */
-	public function testSetRule() {
-		$rules = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
-		$Field = new ValidationSet('title', $rules);
-		$Rule = new ValidationRule($rules['notEmpty']);
-
-		$this->assertEquals($Rule, $Field->getRule('notEmpty'));
-
-		$rules = array('validEmail' => array('rule' => 'email', 'message' => 'Invalid email'));
-		$Rule = new ValidationRule($rules['validEmail']);
-		$Field->setRule('validEmail', $Rule);
-		$result = $Field->getRules();
-		$this->assertEquals(array('notEmpty', 'validEmail'), array_keys($result));
-
-		$rules = array('validEmail' => array('rule' => 'email', 'message' => 'Other message'));
-		$Rule = new ValidationRule($rules['validEmail']);
-		$Field->setRule('validEmail', $Rule);
-		$result = $Field->getRules();
-		$this->assertEquals(array('notEmpty', 'validEmail'), array_keys($result));
-		$result = $Field->getRule('validEmail');
-		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $result);
-		$this->assertEquals('email', $result->rule);
-		$this->assertEquals(null, $result->on);
-		$this->assertEquals(true, $result->last);
-		$this->assertEquals('Other message', $result->message);
-	}
-
-/**
- * testSetRules method
- *
- * @return void
- */
-	public function testSetRules() {
-		$rule = array('notEmpty' => array('rule' => 'notEmpty', 'message' => 'Can not be empty'));
-		$Field = new ValidationSet('title', $rule);
-		$RuleEmpty = new ValidationRule($rule['notEmpty']);
-
-		$rule = array('validEmail' => array('rule' => 'email', 'message' => 'Invalid email'));
-		$RuleEmail = new ValidationRule($rule['validEmail']);
-
-		$rules = array('validEmail' => $RuleEmail);
-		$Field->setRules($rules, false);
-		$result = $Field->getRules();
-		$this->assertEquals(array('validEmail'), array_keys($result));
-
-		$Field->setRules(array('validEmail' => $rule), false);
-		$result = $Field->getRules();
-		$this->assertEquals(array('validEmail'), array_keys($result));
-		$this->assertTrue(array_pop($result) instanceof ValidationRule);
-
-		$rules = array('notEmpty' => $RuleEmpty);
-		$Field->setRules($rules, true);
-		$result = $Field->getRules();
-		$this->assertEquals(array('validEmail', 'notEmpty'), array_keys($result));
-
-		$rules = array('notEmpty' => array('rule' => 'notEmpty'));
-		$Field->setRules($rules, true);
-		$result = $Field->getRules();
-		$this->assertEquals(array('validEmail', 'notEmpty'), array_keys($result));
-		$this->assertTrue(array_pop($result) instanceof ValidationRule);
-		$this->assertTrue(array_pop($result) instanceof ValidationRule);
+		$result = $field->rules();
+		$this->assertEquals(['notEmpty'], array_keys($result));
+		$this->assertInstanceOf('Cake\ORM\Validation\ValidationRule', $result['notEmpty']);
 	}
 
 /**
@@ -285,24 +60,22 @@ class ValidationSetTest extends TestCase {
  * @return void
  */
 	public function testArrayAccessGet() {
-		$Set = new ValidationSet('title', array(
-			'_validatePresent' => true,
-			'notEmpty' => array('rule' => 'notEmpty'),
-			'numeric' => array('rule' => 'numeric'),
-			'other' => array('rule' => array('other', 1)),
-		));
+		$set = (new ValidationSet)
+			->add('notEmpty', ['rule' => 'notEmpty'])
+			->add('numeric', ['rule' => 'numeric'])
+			->add('other', ['rule' => 'email']);
 
-		$rule = $Set['notEmpty'];
-		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $rule);
-		$this->assertEquals('notEmpty', $rule->rule);
+		$rule = $set['notEmpty'];
+		$this->assertInstanceOf('Cake\ORM\Validation\ValidationRule', $rule);
+		$this->assertEquals(new ValidationRule(['rule' => 'notEmpty']), $rule);
 
-		$rule = $Set['numeric'];
-		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $rule);
-		$this->assertEquals('numeric', $rule->rule);
+		$rule = $set['numeric'];
+		$this->assertInstanceOf('Cake\ORM\Validation\ValidationRule', $rule);
+		$this->assertEquals(new ValidationRule(['rule' => 'numeric']), $rule);
 
-		$rule = $Set['other'];
-		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $rule);
-		$this->assertEquals(array('other', 1), $rule->rule);
+		$rule = $set['other'];
+		$this->assertInstanceOf('Cake\ORM\Validation\ValidationRule', $rule);
+		$this->assertEquals(new ValidationRule(['rule' => 'email']), $rule);
 	}
 
 /**
@@ -311,17 +84,15 @@ class ValidationSetTest extends TestCase {
  * @return void
  */
 	public function testArrayAccessExists() {
-		$Set = new ValidationSet('title', array(
-			'_validatePresent' => true,
-			'notEmpty' => array('rule' => 'notEmpty'),
-			'numeric' => array('rule' => 'numeric'),
-			'other' => array('rule' => array('other', 1)),
-		));
+		$set = (new ValidationSet)
+			->add('notEmpty', ['rule' => 'notEmpty'])
+			->add('numeric', ['rule' => 'numeric'])
+			->add('other', ['rule' => 'email']);
 
-		$this->assertTrue(isset($Set['notEmpty']));
-		$this->assertTrue(isset($Set['numeric']));
-		$this->assertTrue(isset($Set['other']));
-		$this->assertFalse(isset($Set['fail']));
+		$this->assertTrue(isset($set['notEmpty']));
+		$this->assertTrue(isset($set['numeric']));
+		$this->assertTrue(isset($set['other']));
+		$this->assertFalse(isset($set['fail']));
 	}
 
 /**
@@ -330,22 +101,14 @@ class ValidationSetTest extends TestCase {
  * @return void
  */
 	public function testArrayAccessSet() {
-		$Set = new ValidationSet('title', array(
-			'_validatePresent' => true,
-			'notEmpty' => array('rule' => 'notEmpty'),
-		));
+		$set = (new ValidationSet)
+			->add('notEmpty', ['rule' => 'notEmpty']);
 
-		$this->assertFalse(isset($Set['other']));
-		$Set['other'] = array('rule' => array('other', 1));
-		$rule = $Set['other'];
-		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $rule);
-		$this->assertEquals(array('other', 1), $rule->rule);
-
-		$this->assertFalse(isset($Set['numeric']));
-		$Set['numeric'] = new ValidationRule(array('rule' => 'numeric'));
-		$rule = $Set['numeric'];
-		$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $rule);
-		$this->assertEquals('numeric', $rule->rule);
+		$this->assertFalse(isset($set['other']));
+		$set['other'] = ['rule' => 'email'];
+		$rule = $set['other'];
+		$this->assertInstanceOf('Cake\ORM\Validation\ValidationRule', $rule);
+		$this->assertEquals(new ValidationRule(['rule' => 'email']), $rule);
 	}
 
 /**
@@ -354,21 +117,19 @@ class ValidationSetTest extends TestCase {
  * @return void
  */
 	public function testArrayAccessUnset() {
-		$Set = new ValidationSet('title', array(
-			'_validatePresent' => true,
-			'notEmpty' => array('rule' => 'notEmpty'),
-			'numeric' => array('rule' => 'numeric'),
-			'other' => array('rule' => array('other', 1)),
-		));
+		$set = (new ValidationSet)
+			->add('notEmpty', ['rule' => 'notEmpty'])
+			->add('numeric', ['rule' => 'numeric'])
+			->add('other', ['rule' => 'email']);
 
-		unset($Set['notEmpty']);
-		$this->assertFalse(isset($Set['notEmpty']));
+		unset($set['notEmpty']);
+		$this->assertFalse(isset($set['notEmpty']));
 
-		unset($Set['numeric']);
-		$this->assertFalse(isset($Set['notEmpty']));
+		unset($set['numeric']);
+		$this->assertFalse(isset($set['numeric']));
 
-		unset($Set['other']);
-		$this->assertFalse(isset($Set['notEmpty']));
+		unset($set['other']);
+		$this->assertFalse(isset($set['other']));
 	}
 
 /**
@@ -377,15 +138,13 @@ class ValidationSetTest extends TestCase {
  * @return void
  */
 	public function testIterator() {
-		$Set = new ValidationSet('title', array(
-			'_validatePresent' => true,
-			'notEmpty' => array('rule' => 'notEmpty'),
-			'numeric' => array('rule' => 'numeric'),
-			'other' => array('rule' => array('other', 1)),
-		));
+		$set = (new ValidationSet)
+			->add('notEmpty', ['rule' => 'notEmpty'])
+			->add('numeric', ['rule' => 'numeric'])
+			->add('other', ['rule' => 'email']);
 
 		$i = 0;
-		foreach ($Set as $name => $rule) {
+		foreach ($set as $name => $rule) {
 			if ($i === 0) {
 				$this->assertEquals('notEmpty', $name);
 			}
@@ -395,7 +154,7 @@ class ValidationSetTest extends TestCase {
 			if ($i === 2) {
 				$this->assertEquals('other', $name);
 			}
-			$this->assertInstanceOf('Cake\Model\Validator\ValidationRule', $rule);
+			$this->assertInstanceOf('Cake\ORM\Validation\ValidationRule', $rule);
 			$i++;
 		}
 		$this->assertEquals(3, $i);
@@ -407,16 +166,14 @@ class ValidationSetTest extends TestCase {
  * @return void
  */
 	public function testCount() {
-		$Set = new ValidationSet('title', array(
-			'_validatePresent' => true,
-			'notEmpty' => array('rule' => 'notEmpty'),
-			'numeric' => array('rule' => 'numeric'),
-			'other' => array('rule' => array('other', 1)),
-		));
-		$this->assertCount(3, $Set);
+		$set = (new ValidationSet)
+			->add('notEmpty', ['rule' => 'notEmpty'])
+			->add('numeric', ['rule' => 'numeric'])
+			->add('other', ['rule' => 'email']);
+		$this->assertCount(3, $set);
 
-		unset($Set['other']);
-		$this->assertCount(2, $Set);
+		unset($set['other']);
+		$this->assertCount(2, $set);
 	}
 
 /**
@@ -425,21 +182,21 @@ class ValidationSetTest extends TestCase {
  * @return void
  */
 	public function testRemoveRule() {
-		$Set = new ValidationSet('title', array(
+		$set = new ValidationSet('title', array(
 			'_validatePresent' => true,
 			'notEmpty' => array('rule' => 'notEmpty'),
 			'numeric' => array('rule' => 'numeric'),
 			'other' => array('rule' => array('other', 1)),
 		));
 
-		$Set->removeRule('notEmpty');
-		$this->assertFalse(isset($Set['notEmpty']));
+		$set->remove('notEmpty');
+		$this->assertFalse(isset($set['notEmpty']));
 
-		$Set->removeRule('numeric');
-		$this->assertFalse(isset($Set['numeric']));
+		$set->remove('numeric');
+		$this->assertFalse(isset($set['numeric']));
 
-		$Set->removeRule('other');
-		$this->assertFalse(isset($Set['other']));
+		$set->remove('other');
+		$this->assertFalse(isset($set['other']));
 	}
 
 }

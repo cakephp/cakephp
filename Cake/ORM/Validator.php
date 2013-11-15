@@ -176,9 +176,10 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	public function offsetSet($field, $rules) {
 		if (!$rules instanceof ValidationSet) {
-			$rules = new ValidationSet($field, $rules);
-			$methods = $this->getMethods();
-			$rules->setMethods($methods);
+			$set = new ValidationSet;
+			foreach((array)$rules as $name => $rule) {
+				$set->add($name, $rule);
+			}
 		}
 		$this->_fields[$field] = $rules;
 	}

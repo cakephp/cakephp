@@ -350,4 +350,64 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $errors);
 	}
 
+/**
+ * Tests it is possible to get validation sets for a field using an array interface
+ *
+ * @return void
+ */
+	public function testArrayAccessGet() {
+		$validator = new Validator;
+		$validator
+			->add('email', 'alpha', ['rule' => 'alphanumeric'])
+			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+		$this->assertSame($validator['email'], $validator->field('email'));
+		$this->assertSame($validator['title'], $validator->field('title'));
+	}
+
+/**
+ * Tests it is possible to check for validation sets for a field using an array inteface
+ *
+ * @return void
+ */
+	public function testArrayAccessExists() {
+		$validator = new Validator;
+		$validator
+			->add('email', 'alpha', ['rule' => 'alphanumeric'])
+			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+		$this->assertTrue(isset($validator['email']));
+		$this->assertTrue(isset($validator['title']));
+		$this->assertFalse(isset($validator['foo']));
+	}
+
+/**
+ * Tests it is possible to set validation rules for a field using an array inteface
+ *
+ * @return void
+ */
+	public function testArrayAccessSet() {
+		$validator = new Validator;
+		$validator
+			->add('email', 'alpha', ['rule' => 'alphanumeric'])
+			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+		$validator['name'] = $validator->field('title');
+		$this->assertSame($validator->field('title'), $validator->field('name'));
+		$validator['name'] = ['alpha' => ['rule' => 'alphanumeric']];
+		$this->assertEquals($validator->field('email'), $validator->field('email'));
+	}
+
+/**
+ * Tests it is possible to unset validation rules
+ *
+ * @return void
+ */
+	public function testArrayAccessUset() {
+		$validator = new Validator;
+		$validator
+			->add('email', 'alpha', ['rule' => 'alphanumeric'])
+			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+		$this->assertTrue(isset($validator['title']));
+		unset($validator['title']);
+		$this->assertFalse(isset($validator['title']));
+	}
+
 }
