@@ -56,10 +56,10 @@ class BehaviorRegistryTest extends TestCase {
  */
 	public function testLoad() {
 		Plugin::load('TestPlugin');
-		$settings = ['alias' => 'Sluggable', 'replacement' => '-'];
-		$result = $this->Behaviors->load('Sluggable', $settings);
+		$config = ['alias' => 'Sluggable', 'replacement' => '-'];
+		$result = $this->Behaviors->load('Sluggable', $config);
 		$this->assertInstanceOf('TestApp\Model\Behavior\SluggableBehavior', $result);
-		$this->assertEquals($settings, $result->settings());
+		$this->assertEquals($config, $result->config());
 
 		$result = $this->Behaviors->load('TestPlugin.PersisterOne');
 		$this->assertInstanceOf('TestPlugin\Model\Behavior\PersisterOneBehavior', $result);
@@ -145,7 +145,7 @@ class BehaviorRegistryTest extends TestCase {
 		$this->assertTrue($this->Behaviors->hasMethod('PERSIST'));
 
 		$this->assertFalse($this->Behaviors->hasMethod('__construct'));
-		$this->assertFalse($this->Behaviors->hasMethod('settings'));
+		$this->assertFalse($this->Behaviors->hasMethod('config'));
 		$this->assertFalse($this->Behaviors->hasMethod('implementedEvents'));
 
 		$this->assertFalse($this->Behaviors->hasMethod('nope'));
