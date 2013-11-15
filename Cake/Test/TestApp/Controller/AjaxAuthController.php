@@ -18,6 +18,7 @@
 namespace TestApp\Controller;
 
 use Cake\Controller\Controller;
+use Cake\Event\Event;
 
 /**
  * AjaxAuthController class
@@ -58,7 +59,7 @@ class AjaxAuthController extends Controller {
  *
  * @return void
  */
-	public function beforeFilter() {
+	public function beforeFilter(Event $event) {
 		$this->TestAuth->ajaxLogin = 'test_element';
 		$this->TestAuth->userModel = 'AuthUser';
 		$this->TestAuth->RequestHandler->ajaxLayout = 'ajax2';

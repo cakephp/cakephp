@@ -21,11 +21,10 @@ namespace Cake\Test\TestCase\Controller\Component\Auth;
 use Cake\Controller\Component\Auth\BasicAuthenticate;
 use Cake\Error;
 use Cake\Network\Request;
+use Cake\ORM\Entity;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Security;
-
-require_once CAKE . 'Test/TestCase/Model/models.php';
 
 /**
  * Test case for BasicAuthentication
@@ -47,19 +46,16 @@ class BasicAuthenticateTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Need to revisit once models work again.');
 
 		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
 		$this->auth = new BasicAuthenticate($this->Collection, array(
-			'fields' => array('username' => 'user', 'password' => 'password'),
-			'userModel' => 'User',
-			'realm' => 'localhost',
-			'recursive' => 0
+			'userModel' => 'Users',
+			'realm' => 'localhost'
 		));
 
 		$password = Security::hash('password', null, true);
-		$User = ClassRegistry::init('User');
-		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
+		$User = TableRegistry::get('Users');
+		$User->updateAll(['password' => $password], []);
 		$this->response = $this->getMock('Cake\Network\Response');
 	}
 
@@ -75,7 +71,6 @@ class BasicAuthenticateTest extends TestCase {
 		));
 		$this->assertEquals('AuthUser', $object->settings['userModel']);
 		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $object->settings['fields']);
-		$this->assertEquals(env('SERVER_NAME'), $object->settings['realm']);
 	}
 
 /**
@@ -178,9 +173,9 @@ class BasicAuthenticateTest extends TestCase {
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
 			'id' => 1,
-			'user' => 'mariano',
-			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'username' => 'mariano',
+			'created' => new \DateTime('2007-03-17 01:16:23'),
+			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -193,7 +188,7 @@ class BasicAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateFailReChallenge() {
-		$this->auth->settings['scope'] = array('user' => 'nate');
+		$this->auth->settings['scope'] = array('username' => 'nate');
 		$request = new Request([
 			'url' => 'posts/index',
 			'environment' => [
@@ -224,10 +219,10 @@ class BasicAuthenticateTest extends TestCase {
 		]);
 		$request->addParams(array('pass' => array()));
 
-		$User = ClassRegistry::init('User');
+		$User = TableRegistry::get('Users');
 		$User->updateAll(
-			array('password' => $User->getDataSource()->value($hash)),
-			array('User.user' => 'mariano')
+			array('password' => $hash),
+			array('username' => 'mariano')
 		);
 
 		$this->auth->settings['passwordHasher'] = 'Blowfish';
@@ -235,9 +230,9 @@ class BasicAuthenticateTest extends TestCase {
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
 			'id' => 1,
-			'user' => 'mariano',
-			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'username' => 'mariano',
+			'created' => new \DateTime('2007-03-17 01:16:23'),
+			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
 		$this->assertEquals($expected, $result);
 	}

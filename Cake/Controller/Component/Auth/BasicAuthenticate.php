@@ -84,7 +84,7 @@ class BasicAuthenticate extends BaseAuthenticate {
  */
 	public function unauthenticated(Request $request, Response $response) {
 		$Exception = new Error\UnauthorizedException();
-		$Exception->responseHeader(array($this->loginHeaders()));
+		$Exception->responseHeader(array($this->loginHeaders($request)));
 		throw $Exception;
 	}
 

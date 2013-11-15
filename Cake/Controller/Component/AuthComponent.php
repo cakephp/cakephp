@@ -21,9 +21,9 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Event\Event;
-use Cake\Model\Datasource\Session;
 use Cake\Network\Request;
 use Cake\Network\Response;
+use Cake\Network\Session;
 use Cake\Routing\Router;
 use Cake\Utility\Debugger;
 use Cake\Utility\Hash;
@@ -57,7 +57,7 @@ class AuthComponent extends Component {
  * {{{
  *	$this->Auth->authenticate = array(
  *		'Form' => array(
- *			'userModel' => 'Users.User'
+ *			'userModel' => 'Users.Users'
  *		)
  *	);
  * }}}
@@ -69,8 +69,8 @@ class AuthComponent extends Component {
  * {{{
  *	$this->Auth->authenticate = array(
  *		'all' => array(
- *			'userModel' => 'Users.User',
- *			'scope' => array('User.active' => 1)
+ *			'userModel' => 'Users.Users',
+ *			'scope' => ['Users.active' => 1]
  *		),
  *		'Form',
  *		'Basic'
@@ -351,10 +351,11 @@ class AuthComponent extends Component {
 		}
 
 		if ($this->_isLoginAction($controller)) {
-			if (empty($controller->request->data)) {
-				if (!$this->Session->check('Auth.redirect') && env('HTTP_REFERER')) {
-					$this->Session->write('Auth.redirect', $controller->referer(null, true));
-				}
+			if (empty($controller->request->data) &&
+				!$this->Session->check('Auth.redirect') &&
+				$this->request->env('HTTP_REFERER')
+			) {
+				$this->Session->write('Auth.redirect', $controller->referer(null, true));
 			}
 			return true;
 		}
