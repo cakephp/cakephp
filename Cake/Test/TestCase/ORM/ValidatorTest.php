@@ -410,4 +410,17 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse(isset($validator['title']));
 	}
 
+/**
+ * Tests the countable interface
+ *
+ * @return void
+ */
+	public function testCount() {
+		$validator = new Validator;
+		$validator
+			->add('email', 'alpha', ['rule' => 'alphanumeric'])
+			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+		$this->assertCount(2, $validator);
+	}
+
 }
