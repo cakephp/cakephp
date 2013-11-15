@@ -39,7 +39,6 @@ class WincacheEngine extends CacheEngine {
  *
  * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
- * @see CacheEngine::__defaults
  */
 	public function init($config = []) {
 		if (!isset($config['prefix'])) {
