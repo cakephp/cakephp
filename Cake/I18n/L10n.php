@@ -340,9 +340,6 @@ class L10n {
 	public function __construct(Request $request) {
 		$this->_request = $request;
 
-		if (defined('DEFAULT_LANGUAGE')) {
-			$this->default = DEFAULT_LANGUAGE;
-		}
 		$default = Configure::read('Config.language');
 		if ($default) {
 			$this->default = $default;

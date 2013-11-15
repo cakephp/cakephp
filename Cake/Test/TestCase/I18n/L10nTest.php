@@ -122,34 +122,6 @@ class L10nTest extends TestCase {
 	}
 
 /**
- * testGet method with deprecated constant DEFAULT_LANGUAGE
- *
- * @return void
- */
-	public function testGetWithDeprecatedConstant() {
-		$this->skipIf(defined('DEFAULT_LANGUAGE'), 'Cannot re-define already defined constant.');
-
-		define('DEFAULT_LANGUAGE', 'en-us');
-		$localize = new L10n($this->request);
-
-		$lang = $localize->get('use_default');
-
-		$this->assertEquals('en-us', $lang);
-		$this->assertEquals('English (United States)', $localize->language);
-		$this->assertEquals(array('en_us', 'eng'), $localize->languagePath);
-		$this->assertEquals('en_us', $localize->locale);
-
-		$localize = new L10n($this->request);
-
-		$lang = $localize->get();
-
-		$this->assertEquals('en-us', $lang);
-		$this->assertEquals('English (United States)', $localize->language);
-		$this->assertEquals(array('en_us', 'eng'), $localize->languagePath);
-		$this->assertEquals('en_us', $localize->locale);
-	}
-
-/**
  * testMap method
  *
  * @return void
