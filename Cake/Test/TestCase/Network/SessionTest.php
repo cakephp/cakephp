@@ -12,15 +12,15 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Model\Datasource;
+namespace Cake\Test\TestCase\Network;
 
 use Cake\Cache\Cache;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Model\Datasource\Session;
-use Cake\Model\Datasource\Session\CacheSession;
-use Cake\Model\Datasource\Session\DatabaseSession;
+use Cake\Network\Session;
+use Cake\Network\Session\CacheSession;
+use Cake\Network\Session\DatabaseSession;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -76,7 +76,7 @@ class SessionTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.session');
+	public $fixtures = array('core.session', 'core.cake_session');
 
 /**
  * setup before class.
@@ -570,6 +570,12 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testReadAndWriteWithCacheStorage() {
+		Cache::config('default', [
+			'engine' => 'File',
+			'path' => TMP,
+			'prefix' => 'session_test_'
+		]);
+
 		Configure::write('Session.defaults', 'cache');
 		Configure::write('Session.handler.engine', __NAMESPACE__ . '\TestCacheSession');
 
@@ -610,9 +616,9 @@ class SessionTest extends TestCase {
 		Configure::write('Session.handler.engine', __NAMESPACE__ . '\TestCacheSession');
 		Configure::write('Session.handler.config', 'session_test');
 
-		Configure::write('Cache.session_test', [
+		Cache::config('session_test', [
 			'engine' => 'File',
-			'prefix' => 'session_test_',
+			'prefix' => 'session_test_'
 		]);
 
 		TestCakeSession::init();
@@ -633,9 +639,6 @@ class SessionTest extends TestCase {
 	public function testReadAndWriteWithDatabaseStorage() {
 		Configure::write('Session.defaults', 'database');
 		Configure::write('Session.handler.engine', __NAMESPACE__ . '\TestDatabaseSession');
-		Configure::write('Session.handler.table', 'sessions');
-		Configure::write('Session.handler.model', 'Session');
-		Configure::write('Session.handler.database', 'test');
 
 		TestCakeSession::init();
 		$this->assertNull(TestCakeSession::id());

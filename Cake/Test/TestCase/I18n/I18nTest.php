@@ -22,7 +22,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
 use Cake\I18n\I18n;
-use Cake\Model\Datasource\Session;
+use Cake\Network\Session;
 use Cake\TestSuite\TestCase;
 
 /**

@@ -12,13 +12,13 @@
  * @since         CakePHP(tm) v .0.10.0.1222
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Model\Datasource;
+namespace Cake\Network;
 
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
-use Cake\Model\Datasource\Session\SessionHandlerInterface;
 use Cake\Utility\Hash;
+use SessionHandlerInterface;
 
 /**
  * Session class for CakePHP.
@@ -111,7 +111,7 @@ class Session {
  * This feature is only used when config value `Session.autoRegenerate` is set to true.
  *
  * @var integer
- * @see Cake\Model\Datasource\Session::_checkValid()
+ * @see Cake\Network\Session::_checkValid()
  */
 	public static $requestCountdown = 10;
 
@@ -513,7 +513,7 @@ class Session {
  * @throws Cake\Error\Exception
  */
 	protected static function _getHandler($class) {
-		$class = App::className($class, 'Model/Datasource/Session');
+		$class = App::className($class, 'Network/Session');
 		if (!class_exists($class)) {
 			throw new Error\Exception(__d('cake_dev', 'Could not load %s to handle the session.', $class));
 		}
@@ -521,7 +521,7 @@ class Session {
 		if ($handler instanceof SessionHandlerInterface) {
 			return $handler;
 		}
-		throw new Error\Exception(__d('cake_dev', 'Chosen SessionHandler does not implement SessionHandlerInterface it cannot be used with an engine key.'));
+		throw new Error\Exception(__d('cake_dev', 'Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.'));
 	}
 
 /**
@@ -584,8 +584,7 @@ class Session {
 					'session.serialize_handler' => 'php',
 				),
 				'handler' => array(
-					'engine' => 'DatabaseSession',
-					'model' => 'Session'
+					'engine' => 'DatabaseSession'
 				)
 			)
 		);

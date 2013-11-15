@@ -18,7 +18,7 @@
  */
 namespace Cake\View\Helper;
 
-use Cake\Model\Datasource\Session;
+use Cake\Network\Session;
 use Cake\View\Helper;
 
 /**
