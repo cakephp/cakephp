@@ -66,57 +66,6 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * Magic accessor for deprecated attributes.
- *
- * @param string $name Name of the attribute to set.
- * @param string $value Value of the attribute to set.
- * @return void
- */
-	public function __set($name, $value) {
-		switch ($name) {
-			case 'niceFormat':
-				$this->_engine->{$name} = $value;
-				break;
-			default:
-				$this->{$name} = $value;
-		}
-	}
-
-/**
- * Magic isset check for deprecated attributes.
- *
- * @param string $name Name of the attribute to check.
- * @return boolean
- */
-	public function __isset($name) {
-		if (isset($this->{$name})) {
-			return true;
-		}
-		$magicGet = array('niceFormat');
-		if (in_array($name, $magicGet)) {
-			return $this->__get($name) !== null;
-		}
-		return null;
-	}
-
-/**
- * Magic accessor for attributes that were deprecated.
- *
- * @param string $name Name of the attribute to get.
- * @return mixed
- */
-	public function __get($name) {
-		if (isset($this->_engine->{$name})) {
-			return $this->_engine->{$name};
-		}
-		$magicGet = array('niceFormat');
-		if (in_array($name, $magicGet)) {
-			return $this->_engine->{$name};
-		}
-		return null;
-	}
-
-/**
  * Call methods from Cake\Utility\Time utility class
  * @return mixed Whatever is returned by called method, or false on failure
  */
