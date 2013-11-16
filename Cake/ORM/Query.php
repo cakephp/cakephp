@@ -617,6 +617,20 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * Return the COUNT(*) for for the query.
+ *
+ * This method will replace the selected fields with a COUNT(*)
+ * and execute the queries returning the number of rows.
+ *
+ * @return integer
+ */
+	public function total() {
+		return $this->select(['count' => $this->count('*')], true)
+			->hydrate(false)
+			->first()['count'];
+	}
+
+/**
  * Toggle hydrating entites.
  *
  * If set to false array results will be returned

@@ -1351,4 +1351,23 @@ class QueryTest extends TestCase {
 		$this->assertInstanceOf($authorEntity, $first->author);
 	}
 
+/**
+ * Test getting totals from queries.
+ *
+ * @return void
+ */
+	public function testTotal() {
+		$table = TableRegistry::get('articles');
+		$result = $table->find('all')->total();
+		$this->assertEquals(3, $result);
+
+		$query = $table->find('all')
+			->where(['id >' => 1]);
+		$result = $query->total();
+		$this->assertEquals(2, $result);
+
+		$result = $query->execute();
+		$this->assertEquals(['count' => 2], $result->one());
+	}
+
 }
