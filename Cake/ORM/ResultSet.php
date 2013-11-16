@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\Database\Exception;
 use Cake\Database\Type;
+use \Countable;
 use \Iterator;
 use \JsonSerializable;
 use \Serializable;
@@ -29,7 +30,7 @@ use \Serializable;
  * queries required for eager loading external associations.
  *
  */
-class ResultSet implements Iterator, Serializable, JsonSerializable {
+class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
 	use ResultCollectionTrait;
 
@@ -43,7 +44,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 /**
  * Database statement holding the results
  *
- * @var \Cake\Database\Statement
+ * @var \Cake\Database\StatementInterface
  */
 	protected $_statement;
 
@@ -115,7 +116,7 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
  * Constructor
  *
  * @param Query from where results come
- * @param \Cake\Database\Statement $statement
+ * @param \Cake\Database\StatementInterface $statement
  * @return void
  */
 	public function __construct($query, $statement) {
@@ -192,7 +193,11 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 
 /**
  * Returns the first result in this set and blocks the set so that no other
- * results can be fetched
+ * results can be fetched.
+ *
+ * When using serialized results, the index will be incremented past the
+ * end of the results simulating the behavior when the result set is backed
+ * by a statement.
  *
  * @return array|object
  */
@@ -201,9 +206,26 @@ class ResultSet implements Iterator, Serializable, JsonSerializable {
 			if ($this->_statement) {
 				$this->_statement->closeCursor();
 			}
+			if (!$this->_statement && $this->_results) {
+				$this->_index = count($this->_results);
+			}
 			return $this->_current;
 		}
 		return null;
+	}
+
+/**
+ * Gives the number of rows in the result set.
+ *
+ * Part of the countable interface.
+ *
+ * @return integer
+ */
+	public function count() {
+		if ($this->_statement) {
+			return $this->_statement->rowCount();
+		}
+		return count($this->_results);
 	}
 
 /**

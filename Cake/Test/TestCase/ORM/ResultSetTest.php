@@ -30,6 +30,11 @@ class ResultSetTest extends TestCase {
 
 	public $fixtures = ['core.article'];
 
+/**
+ * setup
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
@@ -126,6 +131,64 @@ class ResultSetTest extends TestCase {
 
 		$expected = json_encode($this->fixtureData);
 		$this->assertEquals($expected, json_encode($results));
+	}
+
+/**
+ * Test one() method with a statement backed result set.
+ *
+ * @return void
+ */
+	public function testOne() {
+		$query = $this->table->find('all');
+		$results = $query->hydrate(false)->execute();
+
+		$row = $results->one();
+		$this->assertEquals($this->fixtureData[0], $row);
+
+		$this->assertNull($results->one(), 'No more rows.');
+		$this->assertNull($results->one(), 'No more rows.');
+	}
+
+/**
+ * Test one() method with a result set that has been unserialized
+ *
+ * @return void
+ */
+	public function testOneAfterSerialize() {
+		$query = $this->table->find('all');
+		$results = $query->hydrate(false)->execute();
+		$results = unserialize(serialize($results));
+
+		$row = $results->one();
+		$this->assertEquals($this->fixtureData[0], $row);
+
+		$this->assertNull($results->one(), 'No more rows.');
+		$this->assertNull($results->one(), 'No more rows.');
+	}
+
+/**
+ * Test the countable interface.
+ *
+ * @return void
+ */
+	public function testCount() {
+		$query = $this->table->find('all');
+		$results = $query->execute();
+
+		$this->assertCount(3, $results, 'Should be countable and 3');
+	}
+
+/**
+ * Test the countable interface after unserialize
+ *
+ * @return void
+ */
+	public function testCountAfterSerialize() {
+		$query = $this->table->find('all');
+		$results = $query->execute();
+		$results = unserialize(serialize($results));
+
+		$this->assertCount(3, $results, 'Should be countable and 3');
 	}
 
 }
