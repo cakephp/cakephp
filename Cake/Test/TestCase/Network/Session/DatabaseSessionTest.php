@@ -27,21 +27,16 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
 /**
- * Class SessionTestModel
- *
- */
-class SessionTestTable extends Table {
-
-	protected $_table = 'sessions';
-
-}
-
-/**
  * Database session test.
  *
  */
 class DatabaseSessionTest extends TestCase {
 
+/**
+ * sessionBackup
+ *
+ * @var array
+ */
 	protected static $_sessionBackup;
 
 /**
@@ -58,8 +53,9 @@ class DatabaseSessionTest extends TestCase {
  */
 	public static function setupBeforeClass() {
 		static::$_sessionBackup = Configure::read('Session');
+
 		Configure::write('Session.handler', array(
-			'model' => __NAMESPACE__ . '\SessionTestTable'
+			'model' => 'Sessions'
 		));
 		Configure::write('Session.timeout', 100);
 	}
@@ -105,7 +101,7 @@ class DatabaseSessionTest extends TestCase {
 		new DatabaseSession();
 
 		$session = TableRegistry::get('Sessions');
-		$this->assertInstanceOf(__NAMESPACE__ . '\SessionTestTable', $session);
+		$this->assertInstanceOf('Cake\ORM\Table', $session);
 		$this->assertEquals('Sessions', $session->alias());
 		$this->assertEquals(ConnectionManager::get('test'), $session->connection());
 		$this->assertEquals('sessions', $session->table());

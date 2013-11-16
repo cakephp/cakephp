@@ -50,20 +50,16 @@ class DatabaseSession implements SessionHandlerInterface {
  *
  */
 	public function __construct() {
-		$modelName = Configure::read('Session.handler.model');
+		$modelAlias = Configure::read('Session.handler.model');
 
-		if (empty($modelName)) {
-			$settings = array(
-				'alias' => 'Sessions',
+		if (empty($modelAlias)) {
+			$this->_table = TableRegistry::get('Sessions', [
 				'table' => 'cake_sessions',
-			);
+			]);
 		} else {
-			$settings = array(
-				'className' => $modelName,
-				'alias' => 'Sessions',
-			);
+			$this->_table = TableRegistry::get($modelAlias);
 		}
-		$this->_table = TableRegistry::get('Sessions', $settings);
+
 		$this->_timeout = Configure::read('Session.timeout') * 60;
 	}
 
