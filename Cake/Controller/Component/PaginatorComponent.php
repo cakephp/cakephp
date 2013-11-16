@@ -124,18 +124,13 @@ class PaginatorComponent extends Component {
  * @throws Cake\Error\MissingModelException
  * @throws Cake\Error\NotFoundException
  */
-	public function paginate($object = null, $scope = array(), $whitelist = array()) {
+	public function paginate($object, $scope = array(), $whitelist = array()) {
 		if (is_array($object)) {
 			$whitelist = $scope;
 			$scope = $object;
 			$object = null;
 		}
 
-		$object = $this->_getObject($object);
-
-		if (!is_object($object)) {
-			throw new Error\MissingModelException($object);
-		}
 		$alias = $object->alias();
 
 		$options = $this->mergeOptions($alias);
@@ -168,12 +163,8 @@ class PaginatorComponent extends Component {
 
 		if (!empty($extra['findType'])) {
 			$type = $extra['findType'];
-			unset($extra['findType']);
 		}
-
-		if ($type !== 'all') {
-			$extra['type'] = $type;
-		}
+		unset($extra['findType'], $extra['maxLimit']);
 
 		if (intval($page) < 1) {
 			$page = 1;
@@ -181,17 +172,21 @@ class PaginatorComponent extends Component {
 		$page = $options['page'] = (int)$page;
 
 		$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
-		$results = $object->find($type, array_merge($parameters, $extra));
+		$query = $object->find($type, array_merge($parameters, $extra));
+
+		$results = $query->execute();
+		$numResults = count($results);
 
 		$defaults = $this->getDefaults($alias);
 		unset($defaults[0]);
 
-		if (!$results) {
+		if (!$numResults) {
 			$count = 0;
 		} else {
 			$parameters = compact('conditions');
 			$count = $object->find($type, array_merge($parameters, $extra))->total();
 		}
+
 		$pageCount = intval(ceil($count / $limit));
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
@@ -206,7 +201,7 @@ class PaginatorComponent extends Component {
 		$paging = array(
 			'findType' => $type,
 			'page' => $page,
-			'current' => count($results),
+			'current' => $numResults,
 			'count' => $count,
 			'prevPage' => ($page > 1),
 			'nextPage' => ($count > ($page * $limit)),
@@ -381,6 +376,7 @@ class PaginatorComponent extends Component {
 			}
 			$options['order'] = $order;
 		}
+		unset($options['sort'], $options['direction']);
 
 		return $options;
 	}
