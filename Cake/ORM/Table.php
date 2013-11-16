@@ -302,6 +302,20 @@ class Table {
 	}
 
 /**
+ * Test to see if a Table has a specific field/column.
+ *
+ * Delegates to the schema object and checks for column presence
+ * using the Schema\Table instance.
+ *
+ * @param string $field The field to check for.
+ * @return boolean True if the field exists, false if it does not.
+ */
+	public function hasField($field) {
+		$schema = $this->schema();
+		return $schema->column($field) !== null;
+	}
+
+/**
  * Returns the primary key field name or sets a new one
  *
  * @param string $key sets a new name to be used as primary key

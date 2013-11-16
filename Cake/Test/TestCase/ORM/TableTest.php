@@ -1774,4 +1774,16 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($result);
 	}
 
+/**
+ * test hasField()
+ *
+ * @return void
+ */
+	public function testHasField() {
+		$table = TableRegistry::get('articles');
+		$this->assertFalse($table->hasField('nope'), 'Should not be there.');
+		$this->assertTrue($table->hasField('title'), 'Should be there.');
+		$this->assertTrue($table->hasField('body'), 'Should be there.');
+	}
+
 }
