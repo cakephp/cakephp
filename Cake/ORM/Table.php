@@ -27,7 +27,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
-use Cake\ORM\Validator;
+use Cake\Validation\Validator;
 use Cake\Utility\Inflector;
 
 /**
@@ -765,7 +765,7 @@ class Table {
  * Otherwise, you can build the object by yourself and store it in the Table object:
  *
  * {{{
- * $validator = new \Cake\ORM\Validator($table);
+ * $validator = new \Cake\Validation\Validator($table);
  * $validator
  *	->add('email', 'required', ['rule' => 'email', 'required' => true])
  *	->add('password', 'valid', ['rule' => 'notEmpty', 'required' => true]);
@@ -777,8 +777,8 @@ class Table {
  * set is specified.
  *
  * @param string $name the name of the validation set to return
- * @param \Cake\ORM\Validator $validator
- * @return \Cake\ORM\Validator
+ * @param \Cake\Validation\Validator $validator
+ * @return \Cake\Validation\Validator
  */
 	public function validator($name = 'default', $instance = null) {
 		if ($instance === null && isset($this->_validators[$name])) {
@@ -798,9 +798,9 @@ class Table {
  * Returns the default validator object. Subclasses can override this function
  * to add a default validation set to the validator object.
  *
- * @param \Cake\ORM\Validator $validator The validator that can be modified to
+ * @param \Cake\Validation\Validator $validator The validator that can be modified to
  * add some rules to it.
- * @return \Cake\ORM\Validator
+ * @return \Cake\Validation\Validator
  */
 	public function validationDefault(Validator $validator) {
 		return $validator;

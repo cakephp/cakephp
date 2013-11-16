@@ -1805,7 +1805,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testValidatorDefault() {
 		$table = new Table();
 		$validator = $table->validator();
-		$this->assertInstanceOf('\Cake\ORM\Validator', $validator);
+		$this->assertInstanceOf('\Cake\Validation\Validator', $validator);
 		$default = $table->validator('default');
 		$this->assertSame($validator, $default);
 	}
@@ -1820,7 +1820,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->expects($this->once())->method('validationForOtherStuff')
 			->will($this->returnArgument(0));
 		$other = $table->validator('forOtherStuff');
-		$this->assertInstanceOf('\Cake\ORM\Validator', $other);
+		$this->assertInstanceOf('\Cake\Validation\Validator', $other);
 		$this->assertNotSame($other, $table->validator());
 	}
 
@@ -1831,7 +1831,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testValidatorSetter() {
 		$table = new Table;
-		$validator = new \Cake\ORM\Validator;
+		$validator = new \Cake\Validation\Validator;
 		$table->validator('other', $validator);
 		$this->assertSame($validator, $table->validator('other'));
 	}

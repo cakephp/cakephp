@@ -6,7 +6,7 @@
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
+ * For full copyright and license infValidationation, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -14,10 +14,10 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\ORM;
+namespace Cake\Test\TestCase\Validation;
 
-use \Cake\ORM\Validation\ValidationSet;
-use \Cake\ORM\Validator;
+use \Cake\Validation\ValidationSet;
+use \Cake\Validation\Validator;
 
 /**
  * Tests Validator class
@@ -34,7 +34,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator = new Validator;
 		$validator->add('title', 'not-empty', ['rule' => 'notEmpty']);
 		$set = $validator->field('title');
-		$this->assertInstanceOf('\Cake\ORM\Validation\ValidationSet', $set);
+		$this->assertInstanceOf('\Cake\Validation\ValidationSet', $set);
 		$this->assertCount(1, $set);
 
 		$validator->add('title', 'another', ['rule' => 'alphanumeric']);
@@ -53,7 +53,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	public function testFieldDefault() {
 		$validator = new Validator;
 		$field = $validator->field('foo');
-		$this->assertInstanceOf('\Cake\ORM\Validation\ValidationSet', $field);
+		$this->assertInstanceOf('\Cake\Validation\ValidationSet', $field);
 		$this->assertCount(0, $field);
 	}
 

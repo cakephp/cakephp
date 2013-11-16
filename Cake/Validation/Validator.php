@@ -14,9 +14,9 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\ORM;
+namespace Cake\Validation;
 
-use Cake\ORM\Validation\ValidationSet;
+use Cake\Validation\ValidationSet;
 
 /**
  * Validator object encapsulates all methods related to data validations for a model
@@ -100,7 +100,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * before
  *
  * @param string $name [optional] The fieldname to fetch.
- * @param \Cake\ORM\Validation\ValidationSet $set The set of rules for field
+ * @param \Cake\Validation\ValidationSet $set The set of rules for field
  * @return Cake\Model\Validator\ValidationSet
  */
 	public function field($name, ValidationSet $set = null) {
@@ -232,7 +232,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field The name of the field from wich the rule will be removed
  * @param array|string $name The alias for a single rule or multiple rules array
- * @param array|Cake\ORM\Validation\ValidationRule $rule the rule to add
+ * @param array|Cake\Validation\ValidationRule $rule the rule to add
  * @return Validator this instance
  */
 	public function add($field, $name, $rule = []) {
@@ -320,7 +320,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * 
+ *
  * Returns whether the field can be left blank according to `allowEmpty`
  *
  * @param ValidationSet $field the set of rules for a field

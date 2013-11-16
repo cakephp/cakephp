@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\ORM\Validation;
+namespace Cake\Validation;
 
 /**
  * ValidationSet object. Holds all validation rules for a field and exposes
