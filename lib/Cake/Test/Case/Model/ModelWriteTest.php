@@ -6245,6 +6245,32 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Test that saveAssociated will accept expression object values when saving.
+ *
+ * @return void
+ */
+	public function testSaveAssociatedExpressionObjects() {
+		$this->loadFixtures('Post', 'Author', 'Comment', 'Attachment', 'Article', 'User');
+		$TestModel = new Post();
+		$db = $TestModel->getDataSource();
+
+		$TestModel->saveAssociated(array(
+			'Post' => array(
+				'title' => $db->expression('(SELECT "Post with Author")'),
+				'body' => 'This post will be saved with an author'
+			),
+			'Author' => array(
+				'user' => 'bob',
+				'password' => '5f4dcc3b5aa765d61d8327deb882cf90'
+		)));
+
+		$result = $TestModel->find('first', array(
+			'order' => array('Post.id ' => 'DESC')
+		));
+		$this->assertEquals('Post with Author', $result['Post']['title']);
+	}
+
+/**
  * testUpdateWithCalculation method
  *
  * @return void
