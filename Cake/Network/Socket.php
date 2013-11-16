@@ -17,7 +17,7 @@
 namespace Cake\Network;
 
 use Cake\Error;
-use Cake\Utility\Validation;
+use Cake\Validation\Validation;
 
 /**
  * CakePHP network socket connection class.

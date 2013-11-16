@@ -81,7 +81,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Gets a rule for a given name if exists
  *
  * @param string $name
- * @return Cake\Model\Validator\ValidationRule
+ * @return Cake\Validation\ValidationRule
  */
 	public function rule($name) {
 		if (!empty($this->_rules[$name])) {
@@ -105,13 +105,13 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * {{{
  *		$set
- *			->setRule('notEmpty', array('rule' => 'notEmpty'))
- *			->setRule('inRange', array('rule' => array('between', 4, 10))
+ *			->add('notEmpty', ['rule' => 'notEmpty'])
+ *			->add('inRange', ['rule' => ['between', 4, 10])
  * }}}
  *
  * @param string $name The name under which the rule should be set
- * @param Cake\Model\Validator\ValidationRule|array $rule The validation rule to be set
- * @return Cake\Model\Validator\ValidationSet this instance
+ * @param \Cake\Validation\ValidationRule|array $rule The validation rule to be set
+ * @return \Cake\Validation\ValidationSet this instance
  */
 	public function add($name, $rule) {
 		if (!($rule instanceof ValidationRule)) {
@@ -133,7 +133,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * }}}
  *
  * @param string $name The name under which the rule should be unset
- * @return Cake\Model\Validator\ValidationSet this instance
+ * @return Cake\Validation\ValidationSet this instance
  */
 	public function remove($name) {
 		unset($this->_rules[$name]);
@@ -154,7 +154,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns a rule object by its index
  *
  * @param string $index name of the rule
- * @return Cake\Model\Validator\ValidationRule
+ * @return Cake\Validation\ValidationRule
  */
 	public function offsetGet($index) {
 		return $this->_rules[$index];
@@ -164,7 +164,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Sets or replace a validation rule
  *
  * @param string $index name of the rule
- * @param Cake\Model\Validator\ValidationRule|array rule to add to $index
+ * @param Cake\Validation\ValidationRule|array rule to add to $index
  * @return void
  */
 	public function offsetSet($index, $rule) {

@@ -5,7 +5,7 @@ use Cake\Core\Plugin;
 use Cake\Database\ConnectionManager;
 use Cake\Error;
 use Cake\Utility\Debugger;
-use Cake\Utility\Validation;
+use Cake\Validation\Validation;
 
 if (Configure::read('debug') == 0):
 	throw new Error\NotFoundException();

@@ -243,7 +243,7 @@ class FormHelper extends Helper {
 /**
  * Returns if a field is required to be filled based on validation properties from the validating object.
  *
- * @param Cake\Model\Validator\ValidationSet $validationRules
+ * @param Cake\Validation\ValidationSet $validationRules
  * @return boolean true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validationRules) {

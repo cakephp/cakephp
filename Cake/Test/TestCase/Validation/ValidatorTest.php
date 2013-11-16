@@ -222,7 +222,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($validator, $validator->scope('bar', $another));
 		$this->assertSame($another, $validator->scope('bar'));
 
-		$this->assertEquals('\Cake\Utility\Validation', $validator->scope('default'));
+		$this->assertEquals('\Cake\Validation\Validation', $validator->scope('default'));
 	}
 
 /**
@@ -264,7 +264,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnCallback(function($data, $scopes) use ($thing) {
 				$this->assertEquals('bar', $data);
 				$expected = [
-					'default' => '\Cake\Utility\Validation',
+					'default' => '\Cake\Validation\Validation',
 					'thing' => $thing
 				];
 				$this->assertEquals($expected, $scopes);
@@ -299,7 +299,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 				$this->assertEquals('and', $a);
 				$this->assertEquals('awesome', $b);
 				$expected = [
-					'default' => '\Cake\Utility\Validation',
+					'default' => '\Cake\Validation\Validation',
 					'thing' => $thing
 				];
 				$this->assertEquals($expected, $scopes);

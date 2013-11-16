@@ -18,8 +18,8 @@
  */
 namespace Cake\Test\TestCase\ORM\Validaton;
 
-use Cake\ORM\Validation\ValidationRule;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\ValidationRule;
 
 /**
  * ValidationRuleTest

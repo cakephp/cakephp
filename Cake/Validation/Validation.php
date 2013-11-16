@@ -14,10 +14,12 @@
  * @since         CakePHP(tm) v 1.2.0.3830
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Utility;
+namespace Cake\Validation;
 
 use Cake\Core\App;
 use Cake\Error\Exception;
+use Cake\Utility\File;
+use Cake\Utility\Number;
 
 /**
  * Validation Class. Used for validation of model data
@@ -821,7 +823,7 @@ class Validation {
  * @return mixed Return of Passed method, false on failure
  */
 	protected static function _pass($method, $check, $classPrefix) {
-		$className = App::classname($classPrefix, 'Utility', 'Validation');
+		$className = App::classname($classPrefix, 'Validation', 'Validation');
 		if (!$className) {
 			trigger_error(__d('cake_dev', 'Could not find class for validation, unable to complete validation.'), E_USER_WARNING);
 			return false;
