@@ -1117,6 +1117,29 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that first can be called against a query with a mapReduce
+ *
+ * @return void
+ */
+	public function testFirstMapReduce() {
+		$map = function($key, $row, $mapReduce) {
+			$mapReduce->emitIntermediate('id', $row['id']);
+		};
+		$reduce = function($key, $values, $mapReduce) {
+			$mapReduce->emit(array_sum($values));
+		};
+
+		$table = TableRegistry::get('articles', ['table' => 'articles']);
+		$query = new Query($this->connection, $table);
+		$query->select(['id'])
+			->hydrate(false)
+			->mapReduce($map, $reduce);
+
+		$first = $query->first();
+		$this->assertEquals(1, $first);
+	}
+
+/**
  * Testing hydrating a result set into Entity objects
  *
  * @return void

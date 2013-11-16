@@ -585,6 +585,7 @@ class Query extends DatabaseQuery {
  * @param callable $reducer
  * @param boolean $overwrite
  * @return Cake\ORM\Query|array
+ * @see Cake\ORM\MapReduce for details on how to use emit data to the map reducer.
  */
 	public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false) {
 		if ($overwrite) {
@@ -601,9 +602,9 @@ class Query extends DatabaseQuery {
  * Returns the first result out of executing this query, if the query has not been
  * executed before, it will set the limit clause to 1 for performance reasons.
  *
- * ###Example:
+ * ### Example:
  *
- * ``$singleUser = $query->select(['id', 'username'])->first()``
+ * `$singleUser = $query->select(['id', 'username'])->first();`
  *
  * @return mixed the first result from the ResultSet
  */
@@ -620,14 +621,16 @@ class Query extends DatabaseQuery {
  * Return the COUNT(*) for for the query.
  *
  * This method will replace the selected fields with a COUNT(*)
- * and execute the queries returning the number of rows.
+ * erase any configured mapReduce functions and execute the query
+ * returning the number of rows.
  *
  * @return integer
  */
 	public function total() {
-		return $this->select(['count' => $this->count('*')], true)
-			->hydrate(false)
-			->first()['count'];
+		$query = $this->select(['count' => $this->count('*')], true)
+			->hydrate(false);
+		$query->mapReduce(null, null, true);
+		return $query->first()['count'];
 	}
 
 /**

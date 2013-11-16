@@ -16,9 +16,11 @@
  */
 namespace Cake\ORM;
 
+use \ArrayIterator;
 use \IteratorAggregate;
 use \JsonSerializable;
 use \Serializable;
+use \Traversable;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
@@ -37,7 +39,27 @@ class ResultSetDecorator implements IteratorAggregate, Serializable, JsonSeriali
  */
 	protected $_results;
 
-	public function __construct(\Traversable $results) {
+/**
+ * Internal index pointer.
+ *
+ * @var integer
+ */
+	protected $_index = 0;
+
+/**
+ * The array form of the results. Used to 
+ * facilitate one().
+ *
+ * @var array
+ */
+	protected $_arrayResults;
+
+/**
+ * Constructor
+ *
+ * @param Traversable $results
+ */
+	public function __construct(Traversable $results) {
 		$this->_results = $results;
 	}
 
@@ -48,9 +70,26 @@ class ResultSetDecorator implements IteratorAggregate, Serializable, JsonSeriali
  */
 	public function getIterator() {
 		if (is_array($this->_results)) {
-			$this->_results = new \ArrayIterator($this->_results);
+			$this->_results = new ArrayIterator($this->_results);
 		}
 		return $this->_results;
+	}
+
+/**
+ * Get a single result from the results.
+ *
+ * @return mixed
+ */
+	public function one() {
+		if (empty($this->_arrayResults) && !is_array($this->_results)) {
+			$this->_arrayResults = iterator_to_array($this->_results);
+		}
+		$index = $this->_index;
+		$this->_index++;
+		if (!isset($this->_arrayResults[$index])) {
+			return false;
+		}
+		return $this->_arrayResults[$index];
 	}
 
 }
