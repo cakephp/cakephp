@@ -539,7 +539,7 @@ class Query extends DatabaseQuery {
 		];
 
 		foreach ($options as $option => $values) {
-			if (isset($valid[$option])) {
+			if (isset($valid[$option]) && isset($values)) {
 				$this->{$valid[$option]}($values);
 			} else {
 				$this->_options[$option] = $values;

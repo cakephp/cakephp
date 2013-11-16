@@ -920,6 +920,20 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * ApplyOptions should ignore null values.
+ *
+ * @return void
+ */
+	public function testApplyOptionsIgnoreNull() {
+		$options = [
+			'fields' => null,
+		];
+		$query = new Query($this->connection, $this->table);
+		$query->applyOptions($options);
+		$this->assertEquals([], $query->clause('select'));
+	}
+
+/**
  * Tests getOptions() method
  *
  * @return void
