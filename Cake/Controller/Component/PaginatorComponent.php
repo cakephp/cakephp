@@ -19,6 +19,7 @@ namespace Cake\Controller\Component;
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Error;
+use Cake\ORM\Table;
 use Cake\Model\Model;
 use Cake\Utility\Hash;
 
@@ -114,12 +115,12 @@ class PaginatorComponent extends Component {
 /**
  * Handles automatic pagination of model records.
  *
- * @param Model|string $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
+ * @param Table $object The table to paginate.
  * @param string|array $scope Additional find conditions to use while paginating
  * @param array $whitelist List of allowed fields for ordering. This allows you to prevent ordering
  *   on non-indexed, or undesirable columns. See PaginatorComponent::validateSort() for additional details
  *   on how the whitelisting and sort field validation works.
- * @return array Model query results
+ * @return array Query results
  * @throws Cake\Error\MissingModelException
  * @throws Cake\Error\NotFoundException
  */
@@ -135,15 +136,17 @@ class PaginatorComponent extends Component {
 		if (!is_object($object)) {
 			throw new Error\MissingModelException($object);
 		}
+		$alias = $object->alias();
 
-		$options = $this->mergeOptions($object->alias);
+		$options = $this->mergeOptions($alias);
 		$options = $this->validateSort($object, $options, $whitelist);
 		$options = $this->checkLimit($options);
 
-		$conditions = $fields = $order = $limit = $page = $recursive = null;
+		$conditions = $fields = $limit = $page = null;
+		$order = [];
 
 		if (!isset($options['conditions'])) {
-			$options['conditions'] = array();
+			$options['conditions'] = [];
 		}
 
 		$type = 'all';
@@ -157,15 +160,10 @@ class PaginatorComponent extends Component {
 
 		if (is_array($scope) && !empty($scope)) {
 			$conditions = array_merge($conditions, $scope);
-		} elseif (is_string($scope)) {
-			$conditions = array($conditions, $scope);
-		}
-		if ($recursive === null) {
-			$recursive = $object->recursive;
 		}
 
 		$extra = array_diff_key($options, compact(
-			'conditions', 'fields', 'order', 'limit', 'page', 'recursive'
+			'conditions', 'fields', 'order', 'limit', 'page'
 		));
 
 		if (!empty($extra['findType'])) {
@@ -182,30 +180,17 @@ class PaginatorComponent extends Component {
 		}
 		$page = $options['page'] = (int)$page;
 
-		if ($object->hasMethod('paginate')) {
-			$results = $object->paginate(
-				$conditions, $fields, $order, $limit, $page, $recursive, $extra
-			);
-		} else {
-			$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
-			if ($recursive != $object->recursive) {
-				$parameters['recursive'] = $recursive;
-			}
-			$results = $object->find($type, array_merge($parameters, $extra));
-		}
-		$defaults = $this->getDefaults($object->alias);
+		$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
+		$results = $object->find($type, array_merge($parameters, $extra));
+
+		$defaults = $this->getDefaults($alias);
 		unset($defaults[0]);
 
 		if (!$results) {
 			$count = 0;
-		} elseif ($object->hasMethod('paginateCount')) {
-			$count = $object->paginateCount($conditions, $recursive, $extra);
 		} else {
 			$parameters = compact('conditions');
-			if ($recursive != $object->recursive) {
-				$parameters['recursive'] = $recursive;
-			}
-			$count = $object->find('count', array_merge($parameters, $extra));
+			$count = $object->find($type, array_merge($parameters, $extra))->total();
 		}
 		$pageCount = intval(ceil($count / $limit));
 		$requestedPage = $page;
@@ -214,6 +199,9 @@ class PaginatorComponent extends Component {
 			throw new Error\NotFoundException();
 		}
 
+		if (!is_array($order)) {
+			$order = (array)$order;
+		}
 		reset($order);
 		$paging = array(
 			'findType' => $type,
@@ -233,7 +221,7 @@ class PaginatorComponent extends Component {
 		}
 		$this->Controller->request['paging'] = array_merge(
 			(array)$this->Controller->request['paging'],
-			array($object->alias => $paging)
+			array($alias => $paging)
 		);
 
 		if (
@@ -345,16 +333,12 @@ class PaginatorComponent extends Component {
  * Any columns listed in the sort whitelist will be implicitly trusted. You can use this to sort
  * on synthetic columns, or columns added in custom find operations that may not exist in the schema.
  *
- * @param Model $object The model being paginated.
+ * @param Table $object The model being paginated.
  * @param array $options The pagination options being used for this request.
  * @param array $whitelist The list of columns that can be used for sorting. If empty all keys are allowed.
  * @return array An array of options with sort + direction removed and replaced with order if possible.
  */
-	public function validateSort(Model $object, array $options, array $whitelist = array()) {
-		if (empty($options['order']) && is_array($object->order)) {
-			$options['order'] = $object->order;
-		}
-
+	public function validateSort(Table $object, array $options, array $whitelist = array()) {
 		if (isset($options['sort'])) {
 			$direction = null;
 			if (isset($options['direction'])) {
@@ -376,20 +360,22 @@ class PaginatorComponent extends Component {
 		}
 
 		if (!empty($options['order']) && is_array($options['order'])) {
+			$tableAlias = $object->alias();
 			$order = array();
 			foreach ($options['order'] as $key => $value) {
 				$field = $key;
-				$alias = $object->alias;
+				$alias = $tableAlias;
 				if (strpos($key, '.') !== false) {
 					list($alias, $field) = explode('.', $key);
 				}
-				$correctAlias = ($object->alias == $alias);
+				$correctAlias = ($tableAlias == $alias);
 
 				if ($correctAlias && $object->hasField($field)) {
-					$order[$object->alias . '.' . $field] = $value;
+					$order[$tableAlias . '.' . $field] = $value;
 				} elseif ($correctAlias && $object->hasField($key, true)) {
 					$order[$field] = $value;
 				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field, true)) {
+					// TODO fix associated sorting.
 					$order[$alias . '.' . $field] = $value;
 				}
 			}

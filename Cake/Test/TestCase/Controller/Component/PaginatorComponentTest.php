@@ -21,8 +21,10 @@ namespace Cake\Test\TestCase\Controller\Component;
 use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
+use Cake\Database\ConnectionManager;
 use Cake\Error;
 use Cake\Network\Request;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 
@@ -58,7 +60,6 @@ class PaginatorComponentTest extends TestCase {
 		parent::setUp();
 		return $this->markTestIncomplete('Need to revisit once models work again.');
 
-		$this->_ns = Configure::read('App.namespace');
 		Configure::write('App.namespace', 'TestApp');
 
 		$this->request = new Request('controller_posts/index');
@@ -66,7 +67,8 @@ class PaginatorComponentTest extends TestCase {
 		$this->Controller = new Controller($this->request);
 		$this->Paginator = new PaginatorComponent($this->getMock('Cake\Controller\ComponentRegistry'), array());
 		$this->Paginator->Controller = $this->Controller;
-		$this->Controller->Post = $this->getMock('Cake\Model\Model');
+		$this->Post = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$this->Controller->Post = $this->Post;
 		$this->Controller->Post->alias = 'Post';
 	}
 
@@ -76,8 +78,8 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function tearDown() {
-		Configure::write('App.namespace', $this->_ns);
 		parent::tearDown();
+		TableRegistry::clear();
 	}
 
 /**
@@ -183,29 +185,27 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPageParamCasting() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Controller->Post->expects($this->at(0))
-			->method('hasMethod')
-			->with('paginate')
-			->will($this->returnValue(false));
+		$this->Post->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('Posts'));
 
-		$this->Controller->Post->expects($this->at(1))
+		$this->Post->expects($this->at(1))
 			->method('find')
 			->will($this->returnValue(array('stuff')));
 
-		$this->Controller->Post->expects($this->at(2))
-			->method('hasMethod')
-			->with('paginateCount')
-			->will($this->returnValue(false));
-
-		$this->Controller->Post->expects($this->at(3))
-			->method('find')
+		$query = $this->getMock('Cake\ORM\Query', ['total'], [], '', false);
+		$query->expects($this->once())
+			->method('total')
 			->will($this->returnValue(2));
+
+		$this->Post->expects($this->at(2))
+			->method('find')
+			->will($this->returnValue($query));
 
 		$this->request->query = array('page' => '1 " onclick="alert(\'xss\');">');
 		$this->Paginator->settings = array('limit' => 1, 'maxLimit' => 10);
-		$this->Paginator->paginate('Post');
-		$this->assertSame(1, $this->request->params['paging']['Post']['page'], 'XSS exploit opened');
+		$this->Paginator->paginate($this->Post);
+		$this->assertSame(1, $this->request->params['paging']['Posts']['page'], 'XSS exploit opened');
 	}
 
 /**
@@ -303,48 +303,65 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateSpecialType() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
-		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
 		$Controller->request->params['pass'][] = '1';
 		$Controller->request->query = [];
 		$Controller->constructClasses();
 
+		$table = $this->_getMockPosts(['findPopular']);
 		$Controller->Paginator->settings = array(
-			'PaginatorControllerPost' => array(
+			'PaginatorPosts' => array(
 				'popular',
 				'fields' => array('id', 'title'),
 				'maxLimit' => 10,
 			)
 		);
-		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
 
-		$this->assertEquals(array(2, 3), Hash::extract($result, '{n}.PaginatorControllerPost.id'));
-		$this->assertEquals(
-			$Controller->PaginatorControllerPost->lastQueries[1]['conditions'],
-			array('PaginatorControllerPost.id > ' => '1')
-		);
-		$this->assertEquals('popular', $Controller->request->params['paging']['PaginatorControllerPost']['findType']);
+		$table->expects($this->once())
+			->method('findPopular');
+
+		$result = $Controller->Paginator->paginate($table);
+		$this->assertEquals('popular', $Controller->request->params['paging']['PaginatorPosts']['findType']);
 	}
 
 /**
- * testDefaultPaginateParams method
+ * test that flat default pagination parameters work.
  *
  * @return void
  */
 	public function testDefaultPaginateParams() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Controller = new PaginatorTestController($this->request);
-		$Controller->modelClass = 'PaginatorControllerPost';
 		$Controller->request->query = [];
 		$Controller->constructClasses();
 		$Controller->Paginator->settings = array(
-			'order' => 'PaginatorControllerPost.id DESC',
+			'order' => 'PaginatorPosts.id DESC',
 			'maxLimit' => 10,
 		);
-		$results = Hash::extract($Controller->Paginator->paginate('PaginatorControllerPost'), '{n}.PaginatorControllerPost.id');
-		$this->assertEquals('PaginatorControllerPost.id DESC', $Controller->request->params['paging']['PaginatorControllerPost']['order']);
-		$this->assertEquals(array(3, 2, 1), $results);
+
+		$table = $this->_getMockPosts(['find']);
+
+		$table->expects($this->at(0))
+			->method('find')
+			->with('all', [
+				'conditions' => [],
+				'fields' => null,
+				'limit' => 10,
+				'maxLimit' => 10,
+				'page' => 1,
+				'order' => 'PaginatorPosts.id DESC'
+			])
+			->will($this->returnValue(['stuff']));
+
+		$query = $this->getMock('Cake\ORM\Query', ['total'], [], '', false);
+		$query->expects($this->once())
+			->method('total')
+			->will($this->returnValue(2));
+
+		$table->expects($this->at(1))
+			->method('find')
+			->will($this->returnValue($query));
+
+		$Controller->Paginator->paginate($table);
 	}
 
 /**
@@ -616,9 +633,13 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortInvalidDirection() {
-		$model = $this->getMock('Cake\Model\Model');
-		$model->alias = 'model';
-		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
+		$model->expects($this->any())
+			->method('hasField')
+			->will($this->returnValue(true));
 
 		$options = array('sort' => 'something', 'direction' => 'boogers');
 		$result = $this->Paginator->validateSort($model, $options);
@@ -696,8 +717,10 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortWhitelistFailure() {
-		$model = $this->getMock('Cake\Model\Model');
-		$model->alias = 'model';
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
 		$options = array('sort' => 'body', 'direction' => 'asc');
@@ -712,8 +735,10 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortWhitelistTrusted() {
-		$model = $this->getMock('Cake\Model\Model');
-		$model->alias = 'model';
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
 		$model->expects($this->never())->method('hasField');
 
 		$options = array('sort' => 'body', 'direction' => 'asc');
@@ -729,15 +754,17 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortVirtualField() {
-		$model = $this->getMock('Cake\Model\Model');
-		$model->alias = 'model';
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
 
-		$model->expects($this->at(0))
+		$model->expects($this->at(1))
 			->method('hasField')
 			->with('something')
 			->will($this->returnValue(false));
 
-		$model->expects($this->at(1))
+		$model->expects($this->at(2))
 			->method('hasField')
 			->with('something', true)
 			->will($this->returnValue(true));
@@ -754,10 +781,14 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortSharedFields() {
-		$model = $this->getMock('Cake\Model\Model');
-		$model->alias = 'Parent';
-		$model->Child = $this->getMock('Cake\Model\Model');
-		$model->Child->alias = 'Child';
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
+		$model->Child = $this->getMock('Cake\ORM\Table');
+		$model->Child->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('Child'));
 
 		$model->expects($this->never())
 			->method('hasField');
@@ -778,8 +809,10 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortMultiple() {
-		$model = $this->getMock('Cake\Model\Model');
-		$model->alias = 'model';
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
 		$options = array(
@@ -803,8 +836,10 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortNoSort() {
-		$model = $this->getMock('Cake\Model\Model');
-		$model->alias = 'model';
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
 		$options = array('direction' => 'asc');
@@ -823,8 +858,10 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testValidateSortInvalidAlias() {
-		$model = $this->getMock('Cake\Model\Model');
-		$model->alias = 'Model';
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
 		$options = array('sort' => 'Derp.id');
@@ -1160,6 +1197,19 @@ class PaginatorComponentTest extends TestCase {
 		$this->assertEquals(2, $result['pageCount']);
 		$this->assertTrue($result['nextPage']);
 		$this->assertFalse($result['prevPage']);
+	}
+
+/**
+ * Helper method for making mocks.
+ *
+ * @return Table
+ */
+	protected function _getMockPosts($methods = []) {
+		return $this->getMock(
+			'TestApp\Model\Repository\PaginatorPostsTable',
+			$methods,
+			[['connection' => ConnectionManager::get('test'), 'alias' => 'PaginatorPosts']]
+		);
 	}
 
 }
