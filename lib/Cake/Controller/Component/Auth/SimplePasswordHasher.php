@@ -36,6 +36,7 @@ class SimplePasswordHasher extends AbstractPasswordHasher {
  *
  * @param string $password Plain text password to hash.
  * @return string Password hash
+ * @link http://book.cakephp.org/2.0/en/core-libraries/components/authentication.html#hashing-passwords
  */
 	public function hash($password) {
 		return Security::hash($password, $this->_config['hashType'], true);
