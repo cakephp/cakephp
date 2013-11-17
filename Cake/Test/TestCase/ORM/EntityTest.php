@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 
 /**
  * Entity test case.
@@ -646,6 +647,47 @@ class EntityTest extends TestCase {
 
 		$expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
 		$this->assertEquals($expected, $entity->toArray());
+	}
+
+/**
+ * Tests that missing fields will not be passed as null to the validator
+ *
+ * @return void
+ */
+	public function testValidateMissingFields() {
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['getSomething'])
+			->disableOriginalConstructor()
+			->getMock();
+		$validator = $this->getMock('\Cake\Validation\Validator');
+		$entity->set('a', 'b');
+
+		$validator->expects($this->once())->method('errors')
+			->with(['a' => 'b'], true)
+			->will($this->returnValue(['a' => ['not valid']]));
+		$this->assertFalse($entity->validate($validator, ['a', 'something']));
+		$this->assertEquals(['a' => ['not valid']], $entity->errors());
+	}
+
+/**
+ * Tests that only fields in the passed list are validated
+ *
+ * @return void
+ */
+	public function testValidateOnlyFieldsInList() {
+		$validator = $this->getMock('\Cake\Validation\Validator');
+		$entity = new Entity([
+			'a' => 'b',
+			'cool' => false,
+			'something' => true
+		]);
+		$entity->isNew(false);
+
+		$validator->expects($this->once())->method('errors')
+			->with(['a' => 'b', 'something' => true], false)
+			->will($this->returnValue(['something' => ['not valid']]));
+		$this->assertFalse($entity->validate($validator, ['a', 'something']));
+		$this->assertEquals(['something' => ['not valid']], $entity->errors());
 	}
 
 }

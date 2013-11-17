@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -61,6 +62,13 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * @var boolean
  */
 	protected $_persisted = null;
+
+/**
+ * List of errors per field as stored in this object
+ *
+ * @var array
+ */
+	protected $_errors = [];
 
 /**
  * Initializes the internal properties of this entity out of the
@@ -412,6 +420,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 	public function clean() {
 		$this->_dirty = [];
+		$this->_errors = [];
 	}
 
 /**
@@ -434,4 +443,44 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		return $this->_persisted = (bool)$new;
 	}
 
+	public function validate(Validator $validator, array $fieldList) {
+		if (empty($fieldList)) {
+			$fieldList = array_keys($this->_properties);
+		}
+
+		$missing = array_diff_key(array_flip($fieldList), $this->_properties);
+		$data = $this->extract($fieldList);
+
+		if ($missing) {
+			foreach ($data as $field => $value) {
+				if ($value === null && isset($missing[$field])) {
+					unset($data[$field]);
+				}
+			}
+		}
+
+		$new = $this->isNew();
+		$this->errors($validator->errors($data, $new === null ? true : false));
+		return empty($this->_errors);
+	}
+
+	public function errors($field = null, $errors = null) {
+		if ($field === null) {
+			return $this->_errors;
+		}
+
+		if (is_string($field) && $errors === null && isset($this->_errors[$field])) {
+			return $this->_errors[$field];
+		}
+
+		if (!is_array($field)) {
+			$field = [$field => $errors];
+		}
+
+		foreach ($field as $f => $error) {
+			$this->_errors[$f] = (array)$error;
+		}
+
+		return $this;
+	}
 }
