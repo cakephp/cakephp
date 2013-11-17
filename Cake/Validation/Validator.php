@@ -41,7 +41,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @var array
  */
-	protected $_scopes = [];
+	protected $_providers = [];
 
 /**
  * The translation domain to use when setting the error messages
@@ -112,27 +112,27 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- * Associates an object to a name so it can be used as a scope. Scopes are objects
- * or class name that can contain methods used during validation of for deciding
- * whether a validation rule can be applied. All validation methods, when called
- * will receive the full list of scopes stored in this validator.
+ * Associates an object to a name so it can be used as a provider. Providers are
+ * objects or class names that can contain methods used during validation of for
+ * deciding whether a validation rule can be applied. All validation methods,
+ * when called will receive the full list of providers stored in this validator.
  *
- * If called with no arguments, it will return the scope stored under that name if
+ * If called with no arguments, it will return the provider stored under that name if
  * it exists, otherwise it returns this instance of chaining.
  *
  * @return Validator|object|string
  */
-	public function scope($name, $object = null) {
+	public function provider($name, $object = null) {
 		if ($object === null) {
-			if (isset($this->_scopes[$name])) {
-				return $this->_scopes[$name];
+			if (isset($this->_providers[$name])) {
+				return $this->_providers[$name];
 			}
 			if ($name === 'default') {
-				return $this->_scopes[$name] = '\Cake\Validation\Validation';
+				return $this->_providers[$name] = '\Cake\Validation\Validation';
 			}
 			return null;
 		}
-		$this->_scopes[$name] = $object;
+		$this->_providers[$name] = $object;
 		return $this;
 	}
 
@@ -362,9 +362,9 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	protected function _processRules(ValidationSet $rules, $value, $newRecord) {
 		$errors = [];
-		$this->scope('default'); // Loading default scope in case there is none
+		$this->provider('default'); // Loading default provider in case there is none
 		foreach ($rules as $name => $rule) {
-			$result = $rule->process($value, $this->_scopes, $newRecord);
+			$result = $rule->process($value, $this->_providers, $newRecord);
 			if ($result === true) {
 				continue;
 			}

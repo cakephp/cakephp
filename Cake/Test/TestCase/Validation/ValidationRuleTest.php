@@ -61,19 +61,19 @@ class ValidationRuleTest extends TestCase {
  */
 	public function testCustomMethods() {
 		$data = 'some data';
-		$scopes = ['default' => $this];
+		$providers = ['default' => $this];
 
 		$Rule = new ValidationRule(['rule' => 'myTestRule']);
-		$this->assertFalse($Rule->process($data, $scopes, true));
+		$this->assertFalse($Rule->process($data, $providers, true));
 
 		$Rule = new ValidationRule(['rule' => 'myTestRule2']);
-		$this->assertTrue($Rule->process($data, $scopes, true));
+		$this->assertTrue($Rule->process($data, $providers, true));
 
 		$Rule = new ValidationRule(['rule' => 'myTestRule3']);
-		$this->assertEquals('string', $Rule->process($data, $scopes, true));
+		$this->assertEquals('string', $Rule->process($data, $providers, true));
 
 		$Rule = new ValidationRule(['rule' => 'myTestRule', 'message' => 'foo']);
-		$this->assertEquals('foo', $Rule->process($data, $scopes, true));
+		$this->assertEquals('foo', $Rule->process($data, $providers, true));
 	}
 
 /**
@@ -86,10 +86,10 @@ class ValidationRuleTest extends TestCase {
 	public function testCustomMethodMissingError() {
 		$def = ['rule' => ['totallyMissing']];
 		$data = 'some data';
-		$scopes = ['default' => $this];
+		$providers = ['default' => $this];
 
 		$Rule = new ValidationRule($def);
-		$Rule->process($data, $scopes, true);
+		$Rule->process($data, $providers, true);
 	}
 
 /**
@@ -99,25 +99,25 @@ class ValidationRuleTest extends TestCase {
  */
 	public function testSkip() {
 		$data = 'some data';
-		$scopes = ['default' => $this];
+		$providers = ['default' => $this];
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
 			'on' => 'create'
 		]);
-		$this->assertFalse($Rule->process($data, $scopes, true));
+		$this->assertFalse($Rule->process($data, $providers, true));
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
 			'on' => 'update'
 		]);
-		$this->assertTrue($Rule->process($data, $scopes, true));
+		$this->assertTrue($Rule->process($data, $providers, true));
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
 			'on' => 'update'
 		]);
-		$this->assertFalse($Rule->process($data, $scopes, false));
+		$this->assertFalse($Rule->process($data, $providers, false));
 	}
 
 /**
@@ -127,24 +127,24 @@ class ValidationRuleTest extends TestCase {
  */
 	public function testCallableOn() {
 		$data = 'some data';
-		$scopes = ['default' => $this];
+		$providers = ['default' => $this];
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
-			'on' => function($s) use ($scopes) {
-				$this->assertEquals($scopes, $s);
+			'on' => function($s) use ($providers) {
+				$this->assertEquals($providers, $s);
 				return true;
 			}
 		]);
-		$this->assertFalse($Rule->process($data, $scopes, true));
+		$this->assertFalse($Rule->process($data, $providers, true));
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
-			'on' => function($s) use ($scopes) {
-				$this->assertEquals($scopes, $s);
+			'on' => function($s) use ($providers) {
+				$this->assertEquals($providers, $s);
 				return false;
 			}
 		]);
-		$this->assertTrue($Rule->process($data, $scopes, true));
+		$this->assertTrue($Rule->process($data, $providers, true));
 	}
 }

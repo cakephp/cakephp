@@ -1056,7 +1056,7 @@ class Table {
 		$statement->closeCursor();
 		return $success;
 	}
-	
+
 /**
  * Validates the $entity if the 'validate' key is not set to false in $options
  * If not empty it will construct a default validation object or get one with

@@ -60,7 +60,7 @@ class ValidationRule {
  *
  * @var string
  */
-	protected $_scope = 'default';
+	protected $_provider = 'default';
 
 /**
  * Extra arguments to be passed to the validation method
@@ -94,7 +94,7 @@ class ValidationRule {
  * it is assumed that the rule failed and the error message was given as a result.
  *
  * @param mixed $data The data to validate
- * @param array $scopes associative array with objects or class names that will
+ * @param array $providers associative array with objects or class names that will
  * be passed as the last argument for the validation method
  * @param boolean $newRecord whether or not the data to be validated belongs to
  * a new record
@@ -102,8 +102,8 @@ class ValidationRule {
  * @throws \InvalidArgumentException when the supplied rule is not a valid
  * callable for the configured scope
  */
-	public function process($data, $scopes, $newRecord) {
-		if ($this->_skip($newRecord, $scopes)) {
+	public function process($data, $providers, $newRecord) {
+		if ($this->_skip($newRecord, $providers)) {
 			return true;
 		}
 
@@ -111,8 +111,8 @@ class ValidationRule {
 			$callable = $this->_rule;
 			$isCallable = true;
 		} else {
-			$scope = $scopes[$this->_scope];
-			$callable = [$scope, $this->_rule];
+			$provider = $providers[$this->_provider];
+			$callable = [$provider, $this->_rule];
 			$isCallable = is_callable($callable);
 		}
 
@@ -121,10 +121,10 @@ class ValidationRule {
 		}
 
 		if ($this->_pass) {
-			$args = array_merge([$data], $this->_pass, [$scopes]);
+			$args = array_merge([$data], $this->_pass, [$providers]);
 			$result = call_user_func_array($callable, $args);
 		} else {
-			$result = $callable($data, $scopes);
+			$result = $callable($data, $providers);
 		}
 
 		if ($result === false) {
@@ -137,14 +137,14 @@ class ValidationRule {
  * Checks if the validation rule should be skipped
  *
  * @param boolean $newRecord whether the rule to be processed is new or pre-existent
- * @param array $scopes associative array with objects or class names that will
+ * @param array $providers associative array with objects or class names that will
  * be passed as the last argument for the validation method
  * @return boolean True if the ValidationRule should be skipped
  */
-	protected function _skip($newRecord, $scopes) {
+	protected function _skip($newRecord, $providers) {
 		if (is_callable($this->_on)) {
 			$function = $this->_on;
-			return !$function($scopes);
+			return !$function($providers);
 		}
 
 		if (!empty($this->_on)) {
@@ -170,7 +170,7 @@ class ValidationRule {
 				$this->_pass = array_slice($value, 1);
 				$value = array_shift($value);
 			}
-			if (in_array($key, ['rule', 'on', 'message', 'last', 'scope', 'pass'])) {
+			if (in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'])) {
 				$this->{"_$key"} = $value;
 			}
 		}

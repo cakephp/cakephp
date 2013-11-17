@@ -207,31 +207,31 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test the scope() method
+ * Test the provider() method
  *
  * @return void
  */
-	public function testScope() {
+	public function testProvider() {
 		$validator = new Validator;
 		$object = new \stdClass;
-		$this->assertSame($validator, $validator->scope('foo', $object));
-		$this->assertSame($object, $validator->scope('foo'));
-		$this->assertNull($validator->scope('bar'));
+		$this->assertSame($validator, $validator->provider('foo', $object));
+		$this->assertSame($object, $validator->provider('foo'));
+		$this->assertNull($validator->provider('bar'));
 
 		$another = new \stdClass;
-		$this->assertSame($validator, $validator->scope('bar', $another));
-		$this->assertSame($another, $validator->scope('bar'));
+		$this->assertSame($validator, $validator->provider('bar', $another));
+		$this->assertSame($another, $validator->provider('bar'));
 
-		$this->assertEquals('\Cake\Validation\Validation', $validator->scope('default'));
+		$this->assertEquals('\Cake\Validation\Validation', $validator->provider('default'));
 	}
 
 /**
- * Tests errors() method when using validators from the default scope, this proves
+ * Tests errors() method when using validators from the default provider, this proves
  * that it returns a default validation message and the custom one set in the rule
  *
  * @return void
  */
-	public function testErrorsFromDefaultScope() {
+	public function testErrorsFromDefaultProvider() {
 		$validator = new Validator;
 		$validator
 			->add('email', 'alpha', ['rule' => 'alphanumeric'])
@@ -248,30 +248,30 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests using validation methods from different scopes and returning the error
+ * Tests using validation methods from different providers and returning the error
  * as a string
  *
  * @return void
  */
-	public function testErrorsFromCustomScope() {
+	public function testErrorsFromCustomProvider() {
 		$validator = new Validator;
 		$validator
 			->add('email', 'alpha', ['rule' => 'alphanumeric'])
-			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+			->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 
 		$thing = $this->getMock('\stdClass', ['isCool']);
 		$thing->expects($this->once())->method('isCool')
-			->will($this->returnCallback(function($data, $scopes) use ($thing) {
+			->will($this->returnCallback(function($data, $providers) use ($thing) {
 				$this->assertEquals('bar', $data);
 				$expected = [
 					'default' => '\Cake\Validation\Validation',
 					'thing' => $thing
 				];
-				$this->assertEquals($expected, $scopes);
+				$this->assertEquals($expected, $providers);
 				return "That ain't cool, yo";
 			}));
 
-		$validator->scope('thing', $thing);
+		$validator->provider('thing', $thing);
 		$errors = $validator->errors(['email' => '!', 'title' => 'bar']);
 		$expected = [
 			'email' => ['alpha' => 'The provided value is invalid'],
@@ -282,7 +282,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 
 /**
  * Tests that it is possible to pass extra arguments to the validation function
- * and it still gets the scopes as last argument
+ * and it still gets the providers as last argument
  *
  * @return void
  */
@@ -290,11 +290,11 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator = new Validator;
 		$validator->add('title', 'cool', [
 			'rule' => ['isCool', 'and', 'awesome'],
-			'scope' => 'thing'
+			'provider' => 'thing'
 		]);
 		$thing = $this->getMock('\stdClass', ['isCool']);
 		$thing->expects($this->once())->method('isCool')
-			->will($this->returnCallback(function($data, $a, $b, $scopes) use ($thing) {
+			->will($this->returnCallback(function($data, $a, $b, $providers) use ($thing) {
 				$this->assertEquals('bar', $data);
 				$this->assertEquals('and', $a);
 				$this->assertEquals('awesome', $b);
@@ -302,10 +302,10 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 					'default' => '\Cake\Validation\Validation',
 					'thing' => $thing
 				];
-				$this->assertEquals($expected, $scopes);
+				$this->assertEquals($expected, $providers);
 				return "That ain't cool, yo";
 			}));
-		$validator->scope('thing', $thing);
+		$validator->provider('thing', $thing);
 		$errors = $validator->errors(['email' => '!', 'title' => 'bar']);
 		$expected = [
 			'title' => ['cool' =>  "That ain't cool, yo"]
@@ -321,7 +321,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	public function testUsingClosureAsRule() {
 		$validator = new Validator;
 		$validator->add('name', 'myRule', [
-			'rule' => function($data, $scopes) {
+			'rule' => function($data, $provider) {
 				$this->assertEquals('foo', $data);
 				return 'You fail';
 			}
@@ -359,7 +359,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator = new Validator;
 		$validator
 			->add('email', 'alpha', ['rule' => 'alphanumeric'])
-			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+			->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 		$this->assertSame($validator['email'], $validator->field('email'));
 		$this->assertSame($validator['title'], $validator->field('title'));
 	}
@@ -373,7 +373,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator = new Validator;
 		$validator
 			->add('email', 'alpha', ['rule' => 'alphanumeric'])
-			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+			->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 		$this->assertTrue(isset($validator['email']));
 		$this->assertTrue(isset($validator['title']));
 		$this->assertFalse(isset($validator['foo']));
@@ -388,7 +388,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator = new Validator;
 		$validator
 			->add('email', 'alpha', ['rule' => 'alphanumeric'])
-			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+			->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 		$validator['name'] = $validator->field('title');
 		$this->assertSame($validator->field('title'), $validator->field('name'));
 		$validator['name'] = ['alpha' => ['rule' => 'alphanumeric']];
@@ -404,7 +404,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator = new Validator;
 		$validator
 			->add('email', 'alpha', ['rule' => 'alphanumeric'])
-			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+			->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 		$this->assertTrue(isset($validator['title']));
 		unset($validator['title']);
 		$this->assertFalse(isset($validator['title']));
@@ -419,7 +419,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator = new Validator;
 		$validator
 			->add('email', 'alpha', ['rule' => 'alphanumeric'])
-			->add('title', 'cool', ['rule' => 'isCool', 'scope' => 'thing']);
+			->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 		$this->assertCount(2, $validator);
 	}
 
