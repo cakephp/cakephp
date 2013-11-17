@@ -117,7 +117,10 @@ class ValidationRule {
 		}
 
 		if (!$isCallable) {
-			throw new \InvalidArgumentException('Invalid validation callable');
+			$message = 'Unable to call method %s in %s provider';
+			throw new \InvalidArgumentException(
+				sprintf($message, $this->_rule, $this->_provider)
+			);
 		}
 
 		if ($this->_pass) {

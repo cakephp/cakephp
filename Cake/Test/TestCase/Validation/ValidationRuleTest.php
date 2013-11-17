@@ -80,7 +80,7 @@ class ValidationRuleTest extends TestCase {
  * Make sure errors are triggered when validation is missing.
  *
  * @expectedException \InvalidArgumentException
- * @expectedExceptionMessage Invalid validation callable
+ * @expectedExceptionMessage Unable to call method totallyMissing in default provider
  * @return void
  */
 	public function testCustomMethodMissingError() {
