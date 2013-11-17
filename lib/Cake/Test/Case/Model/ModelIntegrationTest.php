@@ -2204,7 +2204,7 @@ class ModelIntegrationTest extends BaseModelTest {
 		} else {
 			$intLength = 11;
 		}
-		foreach (array('collate', 'charset', 'comment') as $type) {
+		foreach (array('collate', 'charset', 'comment', 'unsigned') as $type) {
 			foreach ($result as $i => $r) {
 				unset($result[$i][$type]);
 			}
@@ -2216,8 +2216,7 @@ class ModelIntegrationTest extends BaseModelTest {
 				'null' => false,
 				'default' => null,
 				'length' => $intLength,
-				'key' => 'primary',
-				'unsigned' => false
+				'key' => 'primary'
 			),
 			'user' => array(
 				'type' => 'string',
