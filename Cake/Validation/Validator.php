@@ -320,7 +320,6 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
- *
  * Returns whether the field can be left blank according to `allowEmpty`
  *
  * @param ValidationSet $field the set of rules for a field

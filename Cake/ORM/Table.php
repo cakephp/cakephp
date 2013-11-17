@@ -780,7 +780,7 @@ class Table {
  * @param \Cake\Validation\Validator $validator
  * @return \Cake\Validation\Validator
  */
-	public function validator($name = 'default', $instance = null) {
+	public function validator($name = 'default', Validator $instance = null) {
 		if ($instance === null && isset($this->_validators[$name])) {
 			return $this->_validators[$name];
 		}
@@ -860,6 +860,11 @@ class Table {
  * properties in the passed entity will be saved
  * - atomic: Whether to execute the save and callbacks inside a database
  * transaction (default: true)
+ * - validate: Whether or not validate the entity before saving, if validation
+ * fails, it will abort the save operation. If this key is set to a string value,
+ * the validator object registered in this table under the provided name will be
+ * used instead of the default one. (default:true)
+ *
  *
  * When saving, this method will trigger four events:
  *
@@ -1051,9 +1056,11 @@ class Table {
 		$statement->closeCursor();
 		return $success;
 	}
-
+	
 /**
  * Validates the $entity if the 'validate' key is not set to false in $options
+ * If not empty it will construct a default validation object or get one with
+ * the name passed in the key
  *
  * @param \Cake\ORM\Entity The entity to validate
  * @param \ArrayObject $options
@@ -1067,7 +1074,7 @@ class Table {
 		$type = is_string($options['validate']) ? $options['validate'] : 'default';
 		$validator = $this->validator($type);
 
-		$pass =  compact('entity', 'options', 'validator');
+		$pass = compact('entity', 'options', 'validator');
 		$event = new Event('Model.beforeValidate', $this, $pass);
 		$this->getEventManager()->dispatch($event);
 
