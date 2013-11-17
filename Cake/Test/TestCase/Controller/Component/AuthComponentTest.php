@@ -87,7 +87,7 @@ class AuthComponentTest extends TestCase {
 		Router::connect('/:controller/:action/*');
 
 		$Users = TableRegistry::get('AuthUsers');
-		$Users->updateAll(['password' => Security::hash('cake', null, true)], []);
+		$Users->updateAll(['password' => Security::hash('cake', 'blowfish', false)], []);
 	}
 
 /**
@@ -1077,7 +1077,7 @@ class AuthComponentTest extends TestCase {
 
 		$user = array(
 			'username' => 'mariano',
-			'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+			'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
 			'created' => new \DateTime('2007-03-17 01:16:23'),
 			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);

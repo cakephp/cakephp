@@ -53,7 +53,7 @@ class FormAuthenticateTest extends TestCase {
 		$this->auth = new FormAuthenticate($this->Collection, array(
 			'userModel' => 'Users'
 		));
-		$password = Security::hash('password', null, true);
+		$password = Security::hash('password', 'blowfish', false);
 		$Users = TableRegistry::get('Users');
 		$Users->updateAll(['password' => $password], []);
 		$this->response = $this->getMock('Cake\Network\Response');
@@ -207,7 +207,7 @@ class FormAuthenticateTest extends TestCase {
 		$PluginModel = TableRegistry::get('TestPlugin.AuthUsers');
 		$user['id'] = 1;
 		$user['username'] = 'gwoo';
-		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
+		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake', 'blowfish', false);
 		$PluginModel->save(new Entity($user));
 
 		$this->auth->settings['userModel'] = 'TestPlugin.AuthUsers';

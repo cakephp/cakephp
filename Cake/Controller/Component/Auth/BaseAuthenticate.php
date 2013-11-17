@@ -53,7 +53,7 @@ abstract class BaseAuthenticate {
 		'userModel' => 'Users',
 		'scope' => [],
 		'contain' => null,
-		'passwordHasher' => 'Simple'
+		'passwordHasher' => 'Blowfish'
 	];
 
 /**

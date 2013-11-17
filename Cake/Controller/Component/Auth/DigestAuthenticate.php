@@ -90,7 +90,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 		'qop' => 'auth',
 		'nonce' => null,
 		'opaque' => null,
-		'passwordHasher' => 'Simple',
+		'passwordHasher' => 'Blowfish',
 	);
 
 /**

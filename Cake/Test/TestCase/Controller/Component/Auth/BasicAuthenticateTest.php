@@ -53,7 +53,7 @@ class BasicAuthenticateTest extends TestCase {
 			'realm' => 'localhost'
 		));
 
-		$password = Security::hash('password', null, true);
+		$password = Security::hash('password', 'blowfish', false);
 		$User = TableRegistry::get('Users');
 		$User->updateAll(['password' => $password], []);
 		$this->response = $this->getMock('Cake\Network\Response');

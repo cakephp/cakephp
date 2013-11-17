@@ -246,14 +246,14 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			[
 				'id' => 1,
 				'username' => 'mariano',
-				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
 				'created' => new \DateTime('2007-03-17 01:16:23'),
 				'updated' => new \DateTime('2007-03-17 01:18:31'),
 			],
 			[
 				'id' => 2,
 				'username' => 'nate',
-				'password' => '5f4dcc3b5aa765d61d8327deb882cf99',
+				'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO',
 				'created' => new \DateTime('2008-03-17 01:18:23'),
 				'updated' => new \DateTime('2008-03-17 01:20:31'),
 			],
@@ -276,10 +276,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->hydrate(false)
 			->order('username')->toArray();
 		$expected = [
-			['username' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
-			['username' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
-			['username' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
-			['username' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['username' => 'garrett', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
+			['username' => 'larry', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
+			['username' => 'mariano', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
+			['username' => 'nate', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
 		];
 		$this->assertSame($expected, $results);
 
@@ -289,10 +289,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->hydrate(false)
 			->toArray();
 		$expected = [
-			['foo' => 'garrett', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
-			['foo' => 'larry', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
-			['foo' => 'mariano', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
-			['foo' => 'nate', 'password' => '5f4dcc3b5aa765d61d8327deb882cf99'],
+			['foo' => 'garrett', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
+			['foo' => 'larry', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
+			['foo' => 'mariano', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
+			['foo' => 'nate', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO'],
 		];
 		$this->assertSame($expected, $results);
 	}
