@@ -46,6 +46,7 @@ class UnsignedFixture extends CakeTestFixture {
 		'ubiginteger' => array('type' => 'biginteger', 'length' => '20', 'default' => 3, 'unsigned' => true),
 		'float' => array('type' => 'float', 'length' => '4'),
 		'ufloat' => array('type' => 'float', 'length' => '4', 'unsigned' => true),
+		'string' => array('type' => 'string', 'length' => '4'),
 		'tableParameters' => array(
 			'engine' => 'MyISAM'
 		)

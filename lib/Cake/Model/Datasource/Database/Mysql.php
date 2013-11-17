@@ -347,9 +347,11 @@ class Mysql extends DboSource {
 				'type' => $this->column($column->Type),
 				'null' => ($column->Null === 'YES' ? true : false),
 				'default' => $column->Default,
-				'length' => $this->length($column->Type),
-				'unsigned' => $this->unsigned($column->Type)
+				'length' => $this->length($column->Type)
 			);
+			if (in_array($fields[$column->Field]['type'], $this->fieldParameters['unsigned']['types'], true)) {
+				$fields[$column->Field]['unsigned'] = $this->unsigned($column->Type);
+			}
 			if (!empty($column->Key) && isset($this->index[$column->Key])) {
 				$fields[$column->Field]['key'] = $this->index[$column->Key];
 			}

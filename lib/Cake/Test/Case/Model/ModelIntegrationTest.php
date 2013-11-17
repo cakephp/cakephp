@@ -2216,7 +2216,8 @@ class ModelIntegrationTest extends BaseModelTest {
 				'null' => false,
 				'default' => null,
 				'length' => $intLength,
-				'key' => 'primary'
+				'key' => 'primary',
+				'unsigned' => false
 			),
 			'user' => array(
 				'type' => 'string',

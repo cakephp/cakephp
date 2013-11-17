@@ -3283,6 +3283,7 @@ class MysqlTest extends CakeTestCase {
 			$this->assertArrayHasKey('unsigned', $schema[$type]);
 			$this->assertFalse($schema[$type]['unsigned']);
 		}
+		$this->assertArrayNotHasKey('unsigned', $schema['string']);
 	}
 
 /**
