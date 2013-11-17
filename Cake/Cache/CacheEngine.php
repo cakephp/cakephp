@@ -27,7 +27,7 @@ abstract class CacheEngine {
  *
  * @var array
  */
-	public $settings = [];
+	protected $_config = [];
 
 /**
  * Contains the compiled string with all groups
@@ -42,23 +42,23 @@ abstract class CacheEngine {
  *
  * Called automatically by the cache frontend
  *
- * @param array $settings Associative array of parameters for the engine
+ * @param array $config Associative array of parameters for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($settings = []) {
-		$settings += $this->settings + [
+	public function init($config = []) {
+		$config += $this->_config + [
 			'prefix' => 'cake_',
 			'duration' => 3600,
 			'probability' => 100,
 			'groups' => []
 		];
-		$this->settings = $settings;
-		if (!empty($this->settings['groups'])) {
-			sort($this->settings['groups']);
-			$this->_groupPrefix = str_repeat('%s_', count($this->settings['groups']));
+		$this->_config = $config;
+		if (!empty($this->_config['groups'])) {
+			sort($this->_config['groups']);
+			$this->_groupPrefix = str_repeat('%s_', count($this->_config['groups']));
 		}
-		if (!is_numeric($this->settings['duration'])) {
-			$this->settings['duration'] = strtotime($this->settings['duration']) - time();
+		if (!is_numeric($this->_config['duration'])) {
+			$this->_config['duration'] = strtotime($this->_config['duration']) - time();
 		}
 		return true;
 	}
@@ -146,16 +146,16 @@ abstract class CacheEngine {
  * @return array
  */
 	public function groups() {
-		return $this->settings['groups'];
+		return $this->_config['groups'];
 	}
 
 /**
- * Cache Engine settings
+ * Cache Engine config
  *
- * @return array settings
+ * @return array config
  */
 	public function settings() {
-		return $this->settings;
+		return $this->_config;
 	}
 
 /**

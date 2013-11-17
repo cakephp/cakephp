@@ -36,17 +36,15 @@ class WincacheEngine extends CacheEngine {
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
- * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = array());
  *
- * @param array $settings array of setting for the engine
+ * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
- * @see CacheEngine::__defaults
  */
-	public function init($settings = []) {
-		if (!isset($settings['prefix'])) {
-			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
+	public function init($config = []) {
+		if (!isset($config['prefix'])) {
+			$config['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
-		parent::init($settings);
+		parent::init($config);
 		return function_exists('wincache_ucache_info');
 	}
 
@@ -79,7 +77,7 @@ class WincacheEngine extends CacheEngine {
 	public function read($key) {
 		$time = time();
 		$cachetime = intval(wincache_ucache_get($key . '_expires'));
-		if ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime) {
+		if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
 			return false;
 		}
 		return wincache_ucache_get($key);
@@ -133,7 +131,7 @@ class WincacheEngine extends CacheEngine {
 		$cacheKeys = $info['ucache_entries'];
 		unset($info);
 		foreach ($cacheKeys as $key) {
-			if (strpos($key['key_name'], $this->settings['prefix']) === 0) {
+			if (strpos($key['key_name'], $this->_config['prefix']) === 0) {
 				wincache_ucache_delete($key['key_name']);
 			}
 		}
@@ -149,13 +147,13 @@ class WincacheEngine extends CacheEngine {
  */
 	public function groups() {
 		if (empty($this->_compiledGroupNames)) {
-			foreach ($this->settings['groups'] as $group) {
-				$this->_compiledGroupNames[] = $this->settings['prefix'] . $group;
+			foreach ($this->_config['groups'] as $group) {
+				$this->_compiledGroupNames[] = $this->_config['prefix'] . $group;
 			}
 		}
 
 		$groups = wincache_ucache_get($this->_compiledGroupNames);
-		if (count($groups) !== count($this->settings['groups'])) {
+		if (count($groups) !== count($this->_config['groups'])) {
 			foreach ($this->_compiledGroupNames as $group) {
 				if (!isset($groups[$group])) {
 					wincache_ucache_set($group, 1);
@@ -167,7 +165,7 @@ class WincacheEngine extends CacheEngine {
 
 		$result = [];
 		$groups = array_values($groups);
-		foreach ($this->settings['groups'] as $i => $group) {
+		foreach ($this->_config['groups'] as $i => $group) {
 			$result[] = $group . $groups[$i];
 		}
 		return $result;
@@ -181,7 +179,7 @@ class WincacheEngine extends CacheEngine {
  */
 	public function clearGroup($group) {
 		$success = null;
-		wincache_ucache_inc($this->settings['prefix'] . $group, 1, $success);
+		wincache_ucache_inc($this->_config['prefix'] . $group, 1, $success);
 		return $success;
 	}
 

@@ -103,61 +103,61 @@ class Behavior implements EventListener {
 	protected static $_reflectionCache = [];
 
 /**
- * Default settings
+ * Default configuration
  *
- * These are merged with user-provided settings when the behavior is used.
+ * These are merged with user-provided configuration when the behavior is used.
  *
  * @var array
  */
-	protected $_defaultSettings = [];
+	protected $_defaultConfig = [];
 
 /**
- * Contains configuration settings.
+ * Contains configuration.
  *
  * @var array
  */
-	protected $_settings = [];
+	protected $_config = [];
 
 /**
  * Constructor
  *
- * Merge settings with the default and store in the settings property
+ * Merge config with the default and store in the config property
  *
  * Does not retain a reference to the Table object. If you need this
  * you should override the constructor.
  *
  * @param Table $table The table this behavior is attached to.
- * @param array $settings The settings for this behavior.
+ * @param array $config The config for this behavior.
  */
-	public function __construct(Table $table, array $settings = []) {
-		$this->_settings = $settings + $this->_defaultSettings;
+	public function __construct(Table $table, array $config = []) {
+		$this->_config = $config + $this->_defaultConfig;
 	}
 
 /**
- * Read the settings being used.
+ * Read the configuration being used.
  *
  * @return array
  */
-	public function settings() {
-		return $this->_settings;
+	public function config() {
+		return $this->_config;
 	}
 
 /**
- * verifySettings
+ * verifyConfig
  *
  * Check that implemented* keys contain values pointing at callable
  *
  * @return void
- * @throws Cake\Error\Exception if settings are invalid
+ * @throws Cake\Error\Exception if config are invalid
  */
-	public function verifySettings() {
+	public function verifyConfig() {
 		$keys = ['implementedFinders', 'implementedMethods'];
 		foreach ($keys as $key) {
-			if (!isset($this->_settings[$key])) {
+			if (!isset($this->_config[$key])) {
 				continue;
 			}
 
-			foreach ($this->_settings[$key] as $method) {
+			foreach ($this->_config[$key] as $method) {
 				if (!is_callable([$this, $method])) {
 					throw new Exception(__d('cake_dev', 'The method %s is not callable on class %s', $method, get_class($this)));
 				}
@@ -184,8 +184,8 @@ class Behavior implements EventListener {
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
 		];
-		$settings = $this->settings();
-		$priority = isset($settings['priority']) ? $settings['priority'] : null;
+		$config = $this->config();
+		$priority = isset($config['priority']) ? $config['priority'] : null;
 		$events = [];
 
 		foreach ($eventMap as $event => $method) {
@@ -219,15 +219,15 @@ class Behavior implements EventListener {
  * With the above example, a call to `$Table->find('this')` will call `$Behavior->findThis()`
  * and a call to `$Table->find('alias')` will call `$Behavior->findMethodName()`
  *
- * It is recommended, though not required, to define implementedFinders in the settings property
+ * It is recommended, though not required, to define implementedFinders in the config property
  * of child classes such that it is not necessary to use reflections to derive the available
  * method list. See core behaviors for examples
  *
  * @return array
  */
 	public function implementedFinders() {
-		if (isset($this->_settings['implementedFinders'])) {
-			return $this->_settings['implementedFinders'];
+		if (isset($this->_config['implementedFinders'])) {
+			return $this->_config['implementedFinders'];
 		}
 
 		$reflectionMethods = $this->_reflectionCache();
@@ -249,15 +249,15 @@ class Behavior implements EventListener {
  * With the above example, a call to `$Table->method()` will call `$Behavior->method()`
  * and a call to `$Table->aliasedmethod()` will call `$Behavior->somethingElse()`
  *
- * It is recommended, though not required, to define implementedFinders in the settings property
+ * It is recommended, though not required, to define implementedFinders in the config property
  * of child classes such that it is not necessary to use reflections to derive the available
  * method list. See core behaviors for examples
  *
  * @return array
  */
 	public function implementedMethods() {
-		if (isset($this->_settings['implementedMethods'])) {
-			return $this->_settings['implementedMethods'];
+		if (isset($this->_config['implementedMethods'])) {
+			return $this->_config['implementedMethods'];
 		}
 
 		$reflectionMethods = $this->_reflectionCache();

@@ -104,12 +104,12 @@ class BehaviorRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $alias The alias of the object.
- * @param array $settings An array of settings to use for the behavior.
+ * @param array $config An array of config to use for the behavior.
  * @return Behavior The constructed behavior class.
  */
-	protected function _create($class, $alias, $settings) {
-		$instance = new $class($this->_table, $settings);
-		$enable = isset($settings['enabled']) ? $settings['enabled'] : true;
+	protected function _create($class, $alias, $config) {
+		$instance = new $class($this->_table, $config);
+		$enable = isset($config['enabled']) ? $config['enabled'] : true;
 		if ($enable) {
 			$this->_eventManager->attach($instance);
 		}

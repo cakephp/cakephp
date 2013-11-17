@@ -53,7 +53,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @var array
  */
-	public $settings = [];
+	protected $_config = [];
 
 /**
  * List of available serializer engines
@@ -72,20 +72,19 @@ class MemcachedEngine extends CacheEngine {
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
- * To reinitialize the settings call Cache::engine('EngineName', [optional] settings = []);
  *
- * @param array $settings array of setting for the engine
+ * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  * @throws Cake\Error\Exception when you try use authentication without Memcached compiled with SASL support
  */
-	public function init($settings = []) {
+	public function init($config = []) {
 		if (!class_exists('Memcached')) {
 			return false;
 		}
-		if (!isset($settings['prefix'])) {
-			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
+		if (!isset($config['prefix'])) {
+			$config['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
-		$settings += [
+		$config += [
 			'servers' => ['127.0.0.1'],
 			'compress' => false,
 			'persistent' => false,
@@ -93,17 +92,17 @@ class MemcachedEngine extends CacheEngine {
 			'password' => null,
 			'serialize' => 'php'
 		];
-		parent::init($settings);
+		parent::init($config);
 
-		if (!is_array($this->settings['servers'])) {
-			$this->settings['servers'] = [$this->settings['servers']];
+		if (!is_array($this->_config['servers'])) {
+			$this->_config['servers'] = [$this->_config['servers']];
 		}
 
 		if (isset($this->_Memcached)) {
 			return true;
 		}
 
-		$this->_Memcached = new \Memcached($this->settings['persistent'] ? (string)$this->settings['persistent'] : null);
+		$this->_Memcached = new \Memcached($this->_config['persistent'] ? (string)$this->_config['persistent'] : null);
 		$this->_setOptions();
 
 		if (count($this->_Memcached->getServerList())) {
@@ -111,7 +110,7 @@ class MemcachedEngine extends CacheEngine {
 		}
 
 		$servers = [];
-		foreach ($this->settings['servers'] as $server) {
+		foreach ($this->_config['servers'] as $server) {
 			$servers[] = $this->_parseServerString($server);
 		}
 
@@ -119,13 +118,13 @@ class MemcachedEngine extends CacheEngine {
 			return false;
 		}
 
-		if ($this->settings['login'] !== null && $this->settings['password'] !== null) {
+		if ($this->_config['login'] !== null && $this->_config['password'] !== null) {
 			if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
 				throw new Error\Exception(
 					__d('cake_dev', 'Memcached extension is not build with SASL support')
 				);
 			}
-			$this->_Memcached->setSaslAuthData($this->settings['login'], $this->settings['password']);
+			$this->_Memcached->setSaslAuthData($this->_config['login'], $this->_config['password']);
 		}
 
 		return true;
@@ -139,7 +138,7 @@ class MemcachedEngine extends CacheEngine {
 	protected function _setOptions() {
 		$this->_Memcached->setOption(\Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
-		$serializer = strtolower($this->settings['serialize']);
+		$serializer = strtolower($this->_config['serialize']);
 		if (!isset($this->_serializers[$serializer])) {
 			throw new Error\Exception(
 				__d('cake_dev', '%s is not a valid serializer engine for Memcached', $serializer)
@@ -159,7 +158,7 @@ class MemcachedEngine extends CacheEngine {
 			$this->_Memcached->setOption(\Memcached::OPT_CLIENT_MODE, \Memcached::DYNAMIC_CLIENT_MODE);
 		}
 
-		$this->_Memcached->setOption(\Memcached::OPT_COMPRESSION, (bool)$this->settings['compress']);
+		$this->_Memcached->setOption(\Memcached::OPT_COMPRESSION, (bool)$this->_config['compress']);
 	}
 
 /**
@@ -267,7 +266,7 @@ class MemcachedEngine extends CacheEngine {
 		$keys = $this->_Memcached->getAllKeys();
 
 		foreach ($keys as $key) {
-			if (strpos($key, $this->settings['prefix']) === 0) {
+			if (strpos($key, $this->_config['prefix']) === 0) {
 				$this->_Memcached->delete($key);
 			}
 		}
@@ -284,13 +283,13 @@ class MemcachedEngine extends CacheEngine {
  */
 	public function groups() {
 		if (empty($this->_compiledGroupNames)) {
-			foreach ($this->settings['groups'] as $group) {
-				$this->_compiledGroupNames[] = $this->settings['prefix'] . $group;
+			foreach ($this->_config['groups'] as $group) {
+				$this->_compiledGroupNames[] = $this->_config['prefix'] . $group;
 			}
 		}
 
 		$groups = $this->_Memcached->getMulti($this->_compiledGroupNames);
-		if (count($groups) !== count($this->settings['groups'])) {
+		if (count($groups) !== count($this->_config['groups'])) {
 			foreach ($this->_compiledGroupNames as $group) {
 				if (!isset($groups[$group])) {
 					$this->_Memcached->set($group, 1, 0);
@@ -302,7 +301,7 @@ class MemcachedEngine extends CacheEngine {
 
 		$result = [];
 		$groups = array_values($groups);
-		foreach ($this->settings['groups'] as $i => $group) {
+		foreach ($this->_config['groups'] as $i => $group) {
 			$result[] = $group . $groups[$i];
 		}
 
@@ -316,6 +315,6 @@ class MemcachedEngine extends CacheEngine {
  * @return boolean success
  */
 	public function clearGroup($group) {
-		return (bool)$this->_Memcached->increment($this->settings['prefix'] . $group);
+		return (bool)$this->_Memcached->increment($this->_config['prefix'] . $group);
 	}
 }

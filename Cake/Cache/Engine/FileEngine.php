@@ -53,9 +53,8 @@ class FileEngine extends CacheEngine {
  * - serialize = serialize the data, default => true
  *
  * @var array
- * @see CacheEngine::__defaults
  */
-	public $settings = [];
+	protected $_config = [];
 
 /**
  * True unless FileEngine::__active(); fails
@@ -69,11 +68,11 @@ class FileEngine extends CacheEngine {
  *
  * Called automatically by the cache frontend.
  *
- * @param array $settings array of setting for the engine
+ * @param array $config array of setting for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
-	public function init($settings = []) {
-		$settings += [
+	public function init($config = []) {
+		$config += [
 			'path' => CACHE,
 			'prefix' => 'cake_',
 			'lock' => true,
@@ -81,13 +80,13 @@ class FileEngine extends CacheEngine {
 			'isWindows' => false,
 			'mask' => 0664
 		];
-		parent::init($settings);
+		parent::init($config);
 
 		if (DS === '\\') {
-			$this->settings['isWindows'] = true;
+			$this->_config['isWindows'] = true;
 		}
-		if (substr($this->settings['path'], -1) !== DS) {
-			$this->settings['path'] .= DS;
+		if (substr($this->_config['path'], -1) !== DS) {
+			$this->_config['path'] .= DS;
 		}
 		if (!empty($this->_groupPrefix)) {
 			$this->_groupPrefix = str_replace('_', DS, $this->_groupPrefix);
@@ -124,12 +123,12 @@ class FileEngine extends CacheEngine {
 
 		$lineBreak = "\n";
 
-		if ($this->settings['isWindows']) {
+		if ($this->_config['isWindows']) {
 			$lineBreak = "\r\n";
 		}
 
-		if (!empty($this->settings['serialize'])) {
-			if ($this->settings['isWindows']) {
+		if (!empty($this->_config['serialize'])) {
+			if ($this->_config['isWindows']) {
 				$data = str_replace('\\', '\\\\\\\\', serialize($data));
 			} else {
 				$data = serialize($data);
@@ -139,14 +138,14 @@ class FileEngine extends CacheEngine {
 		$expires = time() + $duration;
 		$contents = $expires . $lineBreak . $data . $lineBreak;
 
-		if ($this->settings['lock']) {
+		if ($this->_config['lock']) {
 			$this->_File->flock(LOCK_EX);
 		}
 
 		$this->_File->rewind();
 		$success = $this->_File->ftruncate(0) && $this->_File->fwrite($contents) && $this->_File->fflush();
 
-		if ($this->settings['lock']) {
+		if ($this->_config['lock']) {
 			$this->_File->flock(LOCK_UN);
 		}
 
@@ -164,7 +163,7 @@ class FileEngine extends CacheEngine {
 			return false;
 		}
 
-		if ($this->settings['lock']) {
+		if ($this->_config['lock']) {
 			$this->_File->flock(LOCK_SH);
 		}
 
@@ -172,8 +171,8 @@ class FileEngine extends CacheEngine {
 		$time = time();
 		$cachetime = intval($this->_File->current());
 
-		if ($cachetime !== false && ($cachetime < $time || ($time + $this->settings['duration']) < $cachetime)) {
-			if ($this->settings['lock']) {
+		if ($cachetime !== false && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
+			if ($this->_config['lock']) {
 				$this->_File->flock(LOCK_UN);
 			}
 			return false;
@@ -186,14 +185,14 @@ class FileEngine extends CacheEngine {
 			$this->_File->next();
 		}
 
-		if ($this->settings['lock']) {
+		if ($this->_config['lock']) {
 			$this->_File->flock(LOCK_UN);
 		}
 
 		$data = trim($data);
 
-		if ($data !== '' && !empty($this->settings['serialize'])) {
-			if ($this->settings['isWindows']) {
+		if ($data !== '' && !empty($this->_config['serialize'])) {
+			if ($this->_config['isWindows']) {
 				$data = str_replace('\\\\\\\\', '\\', $data);
 			}
 			$data = unserialize((string)$data);
@@ -234,12 +233,12 @@ class FileEngine extends CacheEngine {
 		$threshold = $now = false;
 		if ($check) {
 			$now = time();
-			$threshold = $now - $this->settings['duration'];
+			$threshold = $now - $this->_config['duration'];
 		}
 
-		$this->_clearDirectory($this->settings['path'], $now, $threshold);
+		$this->_clearDirectory($this->_config['path'], $now, $threshold);
 
-		$directory = new \RecursiveDirectoryIterator($this->settings['path']);
+		$directory = new \RecursiveDirectoryIterator($this->_config['path']);
 		$contents = new \RecursiveIteratorIterator($directory, \RecursiveIteratorIterator::SELF_FIRST);
 		$cleared = [];
 		foreach ($contents as $path) {
@@ -265,7 +264,7 @@ class FileEngine extends CacheEngine {
  * @return void
  */
 	protected function _clearDirectory($path, $now, $threshold) {
-		$prefixLength = strlen($this->settings['prefix']);
+		$prefixLength = strlen($this->_config['prefix']);
 
 		if (!is_dir($path)) {
 			return;
@@ -273,7 +272,7 @@ class FileEngine extends CacheEngine {
 
 		$dir = dir($path);
 		while (($entry = $dir->read()) !== false) {
-			if (substr($entry, 0, $prefixLength) !== $this->settings['prefix']) {
+			if (substr($entry, 0, $prefixLength) !== $this->_config['prefix']) {
 				continue;
 			}
 			$filePath = $path . $entry;
@@ -342,7 +341,7 @@ class FileEngine extends CacheEngine {
 		if (!empty($this->_groupPrefix)) {
 			$groups = vsprintf($this->_groupPrefix, $this->groups());
 		}
-		$dir = $this->settings['path'] . $groups;
+		$dir = $this->_config['path'] . $groups;
 
 		if (!is_dir($dir)) {
 			mkdir($dir, 0775, true);
@@ -362,10 +361,10 @@ class FileEngine extends CacheEngine {
 			}
 			unset($path);
 
-			if (!$exists && !chmod($this->_File->getPathname(), (int)$this->settings['mask'])) {
+			if (!$exists && !chmod($this->_File->getPathname(), (int)$this->_config['mask'])) {
 				trigger_error(__d(
 					'cake_dev', 'Could not apply permission mask "%s" on cache file "%s"',
-					[$this->_File->getPathname(), $this->settings['mask']]), E_USER_WARNING);
+					[$this->_File->getPathname(), $this->_config['mask']]), E_USER_WARNING);
 			}
 		}
 		return true;
@@ -377,7 +376,7 @@ class FileEngine extends CacheEngine {
  * @return boolean
  */
 	protected function _active() {
-		$dir = new \SplFileInfo($this->settings['path']);
+		$dir = new \SplFileInfo($this->_config['path']);
 		if (Configure::read('debug')) {
 			$path = $dir->getPathname();
 			if (!is_dir($path)) {
@@ -386,7 +385,7 @@ class FileEngine extends CacheEngine {
 		}
 		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
-			trigger_error(__d('cake_dev', '%s is not writable', $this->settings['path']), E_USER_WARNING);
+			trigger_error(__d('cake_dev', '%s is not writable', $this->_config['path']), E_USER_WARNING);
 			return false;
 		}
 		return true;
@@ -414,13 +413,13 @@ class FileEngine extends CacheEngine {
  */
 	public function clearGroup($group) {
 		$this->_File = null;
-		$directoryIterator = new \RecursiveDirectoryIterator($this->settings['path']);
+		$directoryIterator = new \RecursiveDirectoryIterator($this->_config['path']);
 		$contents = new \RecursiveIteratorIterator($directoryIterator, \RecursiveIteratorIterator::CHILD_FIRST);
 		foreach ($contents as $object) {
 			$containsGroup = strpos($object->getPathName(), DS . $group . DS) !== false;
 			$hasPrefix = true;
-			if (strlen($this->settings['prefix']) !== 0) {
-				$hasPrefix = strpos($object->getBaseName(), $this->settings['prefix']) === 0;
+			if (strlen($this->_config['prefix']) !== 0) {
+				$hasPrefix = strpos($object->getBaseName(), $this->_config['prefix']) === 0;
 			}
 			if ($object->isFile() && $containsGroup && $hasPrefix) {
 				$path = $object->getPathName();

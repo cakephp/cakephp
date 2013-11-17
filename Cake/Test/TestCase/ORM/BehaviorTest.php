@@ -79,10 +79,10 @@ class Test3Behavior extends Behavior {
 	}
 
 /**
- * verifySettings
+ * Test method to ensure it is ignored as a callable method.
  */
-	public function verifySettings() {
-		parent::verifySettings();
+	public function verifyConfig() {
+		return parent::verifyConfig();
 	}
 
 /**
@@ -133,9 +133,9 @@ class BehaviorTest extends TestCase {
  */
 	public function testConstructor() {
 		$table = $this->getMock('Cake\ORM\Table');
-		$settings = ['key' => 'value'];
-		$behavior = new TestBehavior($table, $settings);
-		$this->assertEquals($settings, $behavior->settings());
+		$config = ['key' => 'value'];
+		$behavior = new TestBehavior($table, $config);
+		$this->assertEquals($config, $behavior->config());
 	}
 
 	public function testReflectionCache() {
@@ -277,34 +277,34 @@ class BehaviorTest extends TestCase {
 	}
 
 /**
- * testVerifySettings
+ * testVerifyConfig
  *
  * Don't expect an exception to be thrown
  *
  * @return void
  */
-	public function testVerifySettings() {
+	public function testVerifyConfig() {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table);
-		$behavior->verifySettings();
+		$behavior->verifyConfig();
 		$this->assertTrue(true, 'No exception thrown');
 	}
 
 /**
- * testVerifySettingsImplementedFindersOverriden
+ * testVerifyConfigImplementedFindersOverriden
  *
  * Simply don't expect an exception to be thrown
  *
  * @return void
  */
-	public function testVerifySettingsImplementedFindersOverriden() {
+	public function testVerifyConfigImplementedFindersOverriden() {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table, [
 			'implementedFinders' => [
 				'aliased' => 'findFoo'
 			]
 		]);
-		$behavior->verifySettings();
+		$behavior->verifyConfig();
 		$this->assertTrue(true, 'No exception thrown');
 	}
 
@@ -323,17 +323,17 @@ class BehaviorTest extends TestCase {
 				'aliased' => 'findNotDefined'
 			]
 		]);
-		$behavior->verifySettings();
+		$behavior->verifyConfig();
 	}
 
 /**
- * testVerifySettingsImplementedMethodsOverriden
+ * testVerifyConfigImplementedMethodsOverriden
  *
  * Don't expect an exception to be thrown
  *
  * @return void
  */
-	public function testVerifySettingsImplementedMethodsOverriden() {
+	public function testVerifyConfigImplementedMethodsOverriden() {
 		$table = $this->getMock('Cake\ORM\Table');
 		$behavior = new Test2Behavior($table);
 		$behavior = new Test2Behavior($table, [
@@ -341,7 +341,7 @@ class BehaviorTest extends TestCase {
 				'aliased' => 'doSomething'
 			]
 		]);
-		$behavior->verifySettings();
+		$behavior->verifyConfig();
 		$this->assertTrue(true, 'No exception thrown');
 	}
 
@@ -360,7 +360,7 @@ class BehaviorTest extends TestCase {
 				'aliased' => 'iDoNotExist'
 			]
 		]);
-		$behavior->verifySettings();
+		$behavior->verifyConfig();
 	}
 
 }
