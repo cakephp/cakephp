@@ -665,38 +665,16 @@ class EntityTest extends TestCase {
 		$validator->expects($this->once())->method('errors')
 			->with(['a' => 'b'], true)
 			->will($this->returnValue(['a' => ['not valid']]));
-		$this->assertFalse($entity->validate($validator, ['a', 'something']));
+		$this->assertFalse($entity->validate($validator));
 		$this->assertEquals(['a' => ['not valid']], $entity->errors());
 	}
 
 /**
- * Tests that only fields in the passed list are validated
+ * Tests validate when the validator returns no errors
  *
  * @return void
  */
-	public function testValidateOnlyFieldsInList() {
-		$validator = $this->getMock('\Cake\Validation\Validator');
-		$entity = new Entity([
-			'a' => 'b',
-			'cool' => false,
-			'something' => true
-		]);
-		$entity->isNew(false);
-
-		$validator->expects($this->once())->method('errors')
-			->with(['a' => 'b', 'something' => true], false)
-			->will($this->returnValue(['something' => ['not valid']]));
-		$this->assertFalse($entity->validate($validator, ['a', 'something']));
-		$this->assertEquals(['something' => ['not valid']], $entity->errors());
-	}
-
-/**
- * Tests validate when called with no fieldList, it also tests the case when
- * the validator returns no errors
- *
- * @return void
- */
-	public function testValidateNoFieldList() {
+	public function testValidateSuccess() {
 		$validator = $this->getMock('\Cake\Validation\Validator');
 		$data = [
 			'a' => 'b',

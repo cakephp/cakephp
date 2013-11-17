@@ -449,32 +449,14 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * errors will be copied inside this entity and can be retrieved using the
  * `errors` method.
  *
- * The second argument can be used to restrict the fields that need to be passed
- * to the validator object.
- *
  * This function returns true if there were no validation errors or false
  * otherwise.
  *
  * @param \Cake\Validation\Validator $validator
- * @param array $fieldList The fields to be passed to the validator
  * @return boolean
  */
-	public function validate(Validator $validator, array $fieldList = []) {
-		if (empty($fieldList)) {
-			$fieldList = array_keys($this->_properties);
-		}
-
-		$missing = array_diff_key(array_flip($fieldList), $this->_properties);
-		$data = $this->extract($fieldList);
-
-		if ($missing) {
-			foreach ($data as $field => $value) {
-				if ($value === null && isset($missing[$field])) {
-					unset($data[$field]);
-				}
-			}
-		}
-
+	public function validate(Validator $validator) {
+		$data = $this->toArray();
 		$new = $this->isNew();
 		$this->errors($validator->errors($data, $new === null ? true : $new));
 		return empty($this->_errors);
