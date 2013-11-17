@@ -3278,8 +3278,8 @@ class MysqlTest extends CakeTestCase {
 		$types = $this->Dbo->fieldParameters['unsigned']['types'];
 		$schema = $Model->schema();
 		foreach ($types as $type) {
-			$this->assertArrayHasKey('unsigned', $schema['u'.$type]);
-			$this->assertTrue($schema['u'.$type]['unsigned']);
+			$this->assertArrayHasKey('unsigned', $schema['u' . $type]);
+			$this->assertTrue($schema['u' . $type]['unsigned']);
 			$this->assertArrayHasKey('unsigned', $schema[$type]);
 			$this->assertFalse($schema[$type]['unsigned']);
 		}
