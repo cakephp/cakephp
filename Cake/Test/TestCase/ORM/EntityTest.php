@@ -739,4 +739,32 @@ class EntityTest extends TestCase {
 		$this->assertEquals($errors, $entity->errors());
 	}
 
+/**
+ * Tests that changing the value of a property will remove errors
+ * stored for it
+ *
+ * @return void
+ */
+	public function testDirtyRemovesError() {
+		$entity = new Entity(['a' => 'b']);
+		$entity->errors('a', 'is not good');
+		$entity->set('a', 'c');
+		$this->assertEmpty($entity->errors('a'));
+
+		$entity->errors('a', 'is not good');
+		$entity->dirty('a', true);
+		$this->assertEmpty($entity->errors('a'));
+	}
+
+/**
+ * Tests that marking an entity as clean will remove errors too
+ *
+ * @return void
+ */
+	public function testCleanRemovesErrors() {
+		$entity = new Entity(['a' => 'b']);
+		$entity->errors('a', 'is not good');
+		$entity->clean();
+		$this->assertEmpty($entity->errors());
+	}
 }

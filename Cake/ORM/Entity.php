@@ -408,6 +408,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		}
 
 		$this->_dirty[$property] = true;
+		unset($this->_errors[$property]);
 		return true;
 	}
 
@@ -513,8 +514,8 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			return $this->_errors;
 		}
 
-		if (is_string($field) && $errors === null && isset($this->_errors[$field])) {
-			return $this->_errors[$field];
+		if (is_string($field) && $errors === null) {
+			return isset($this->_errors[$field]) ? $this->_errors[$field] : [];
 		}
 
 		if (!is_array($field)) {
