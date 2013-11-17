@@ -69,4 +69,31 @@ class ResultSetDecoratorTest extends TestCase {
 		$serialized = serialize($decorator);
 		$this->assertEquals([1, 2, 3], unserialize($serialized)->toArray());
 	}
+
+/**
+ * Test the one() method which is part of the ResultSet duck type.
+ *
+ * @return void
+ */
+	public function testOne() {
+		$data = new \ArrayIterator([1, 2, 3]);
+		$decorator = new ResultSetDecorator($data);
+
+		$this->assertEquals(1, $decorator->one());
+		$this->assertEquals(1, $decorator->one());
+	}
+
+/**
+ * Test the count() method which is part of the ResultSet duck type.
+ *
+ * @return void
+ */
+	public function testCount() {
+		$data = new \ArrayIterator([1, 2, 3]);
+		$decorator = new ResultSetDecorator($data);
+
+		$this->assertEquals(3, $decorator->count());
+		$this->assertCount(3, $decorator);
+	}
+
 }

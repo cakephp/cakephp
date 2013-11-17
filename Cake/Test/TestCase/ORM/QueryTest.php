@@ -920,6 +920,20 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * ApplyOptions should ignore null values.
+ *
+ * @return void
+ */
+	public function testApplyOptionsIgnoreNull() {
+		$options = [
+			'fields' => null,
+		];
+		$query = new Query($this->connection, $this->table);
+		$query->applyOptions($options);
+		$this->assertEquals([], $query->clause('select'));
+	}
+
+/**
  * Tests getOptions() method
  *
  * @return void
@@ -1100,6 +1114,29 @@ class QueryTest extends TestCase {
 		$resultSet = $query->execute();
 		$this->assertEquals(['id' => 1], $first);
 		$this->assertSame($resultSet, $query->execute());
+	}
+
+/**
+ * Tests that first can be called against a query with a mapReduce
+ *
+ * @return void
+ */
+	public function testFirstMapReduce() {
+		$map = function($key, $row, $mapReduce) {
+			$mapReduce->emitIntermediate('id', $row['id']);
+		};
+		$reduce = function($key, $values, $mapReduce) {
+			$mapReduce->emit(array_sum($values));
+		};
+
+		$table = TableRegistry::get('articles', ['table' => 'articles']);
+		$query = new Query($this->connection, $table);
+		$query->select(['id'])
+			->hydrate(false)
+			->mapReduce($map, $reduce);
+
+		$first = $query->first();
+		$this->assertEquals(1, $first);
 	}
 
 /**
@@ -1349,6 +1386,25 @@ class QueryTest extends TestCase {
 
 		$first = $results[0];
 		$this->assertInstanceOf($authorEntity, $first->author);
+	}
+
+/**
+ * Test getting totals from queries.
+ *
+ * @return void
+ */
+	public function testTotal() {
+		$table = TableRegistry::get('articles');
+		$result = $table->find('all')->total();
+		$this->assertEquals(3, $result);
+
+		$query = $table->find('all')
+			->where(['id >' => 1]);
+		$result = $query->total();
+		$this->assertEquals(2, $result);
+
+		$result = $query->execute();
+		$this->assertEquals(['count' => 2], $result->one());
 	}
 
 }

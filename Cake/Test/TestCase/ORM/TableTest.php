@@ -569,6 +569,17 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'connection' => $this->connection,
 		]);
 		$table->displayField('username');
+		$query = $table->find('list')
+			->hydrate(false)
+			->order('id');
+		$expected = [
+			1 => 'mariano',
+			2 => 'nate',
+			3 => 'larry',
+			4 => 'garrett'
+		];
+		$this->assertSame($expected, $query->toArray());
+
 		$query = $table->find('list', ['fields' => ['id', 'username']])
 			->hydrate(false)
 			->order('id');
@@ -1772,6 +1783,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity->isNew(true);
 		$result = $table->delete($entity);
 		$this->assertFalse($result);
+	}
+
+/**
+ * test hasField()
+ *
+ * @return void
+ */
+	public function testHasField() {
+		$table = TableRegistry::get('articles');
+		$this->assertFalse($table->hasField('nope'), 'Should not be there.');
+		$this->assertTrue($table->hasField('title'), 'Should be there.');
+		$this->assertTrue($table->hasField('body'), 'Should be there.');
 	}
 
 }

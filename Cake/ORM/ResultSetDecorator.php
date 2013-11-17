@@ -16,9 +16,12 @@
  */
 namespace Cake\ORM;
 
+use \ArrayIterator;
+use \Countable;
 use \IteratorAggregate;
 use \JsonSerializable;
 use \Serializable;
+use \Traversable;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
@@ -26,7 +29,7 @@ use \Serializable;
  *
  * @return void
  */
-class ResultSetDecorator implements IteratorAggregate, Serializable, JsonSerializable {
+class ResultSetDecorator implements Countable, IteratorAggregate, Serializable, JsonSerializable {
 
 	use ResultCollectionTrait;
 
@@ -37,7 +40,12 @@ class ResultSetDecorator implements IteratorAggregate, Serializable, JsonSeriali
  */
 	protected $_results;
 
-	public function __construct(\Traversable $results) {
+/**
+ * Constructor
+ *
+ * @param Traversable $results
+ */
+	public function __construct(Traversable $results) {
 		$this->_results = $results;
 	}
 
@@ -48,9 +56,43 @@ class ResultSetDecorator implements IteratorAggregate, Serializable, JsonSeriali
  */
 	public function getIterator() {
 		if (is_array($this->_results)) {
-			$this->_results = new \ArrayIterator($this->_results);
+			$this->_results = new ArrayIterator($this->_results);
 		}
 		return $this->_results;
+	}
+
+/**
+ * Get a single result from the results.
+ *
+ * Calling this method will convert the underlying data into
+ * an array and will return the first result in the data set.
+ *
+ * @return mixed The first value in the results will be returned.
+ */
+	public function one() {
+		if (!is_array($this->_results)) {
+			$this->_results = iterator_to_array($this->_results);
+		}
+		if (count($this->_results) < 1) {
+			return false;
+		}
+		return current($this->_results);
+	}
+
+/**
+ * Make this object countable.
+ *
+ * Part of the Countable interface. Calling this method
+ * will convert the underlying traversable object into an array and
+ * get the count of the underlying data.
+ *
+ * @return integer.
+ */
+	public function count() {
+		if (!is_array($this->_results)) {
+			$this->_results = iterator_to_array($this->_results);
+		}
+		return count($this->_results);
 	}
 
 }
