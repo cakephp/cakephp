@@ -479,6 +479,35 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		return empty($this->_errors);
 	}
 
+/**
+ * Sets the error messages for a field or a list of fields. When called
+ * without the second argument it returns the validation
+ * errors for the specified fields. If called with no arguments it returns
+ * all the validation error messages stored in this entity.
+ *
+ * ### Example
+ *
+ * {{{
+ * // Sets the error messages for a single field
+ * $entity->errors('salary', ['must be numeric', 'must be a positive number']);
+ *
+ * // Returns the error messages for a single field
+ * $entity->errors('salary');
+ *
+ * // Returns all error messages indexed by field name
+ * $entity->errors();
+ *
+ * // Sets the error messages for multiple fields at once
+ * $entity->errors(['salary' => ['message'], 'name' => ['another message']);
+ * }}}
+ *
+ * When used as a setter, this method will return this entity instance for method
+ * chaining.
+ *
+ * @param string|array $field
+ * @param string|array $errors The errors to be set for $field
+ * @return array|Entity
+ */
 	public function errors($field = null, $errors = null) {
 		if ($field === null) {
 			return $this->_errors;
@@ -498,4 +527,5 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 
 		return $this;
 	}
+
 }
