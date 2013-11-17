@@ -757,8 +757,9 @@ class Table {
  * {{{
  * public function validationForSubscription($validator) {
  *	return $validator
- *	->add('email', 'required', ['rule' => 'email', 'required' => true])
- *	->add('password', 'valid', ['rule' => 'notEmpty', 'required' => true]);
+ *	->add('email', 'valid-email', ['rule' => 'email'])
+ *	->add('password', 'valid', ['rule' => 'notEmpty']);
+ *	->validatePresence('username')
  * }
  * }}}
  *
@@ -767,8 +768,9 @@ class Table {
  * {{{
  * $validator = new \Cake\Validation\Validator($table);
  * $validator
- *	->add('email', 'required', ['rule' => 'email', 'required' => true])
- *	->add('password', 'valid', ['rule' => 'notEmpty', 'required' => true]);
+ *	->add('email', 'valid-email', ['rule' => 'email'])
+ *	->add('password', 'valid', ['rule' => 'notEmpty'])
+ *	->allowEmpty('bio');
  * $table->validator('forSubscription', $validator);
  * }}}
  *
@@ -1073,6 +1075,8 @@ class Table {
 
 		$type = is_string($options['validate']) ? $options['validate'] : 'default';
 		$validator = $this->validator($type);
+		$validator->provider('table', $this);
+		$validator->provider('entity', $entity);
 
 		$pass = compact('entity', 'options', 'validator');
 		$event = new Event('Model.beforeValidate', $this, $pass);

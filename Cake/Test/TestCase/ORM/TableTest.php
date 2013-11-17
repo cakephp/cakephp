@@ -1850,6 +1850,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->validator()->validatePresence('password');
 		$this->assertFalse($table->save($entity));
 		$this->assertNotEmpty($entity->errors('password'));
+		$this->assertSame($entity, $table->validator()->provider('entity'));
+		$this->assertSame($table, $table->validator()->provider('table'));
 	}
 
 /**
