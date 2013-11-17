@@ -861,8 +861,18 @@ class Table {
  * - atomic: Whether to execute the save and callbacks inside a database
  * transaction (default: true)
  *
- * When saving, this method will trigger two events:
+ * When saving, this method will trigger four events:
  *
+ * - Model.beforeValidate: Will be triggered right before any validation is done
+ * for the passed entity if the validate key in $options is not set to false.
+ * Listeners will receive as arguments the entity, the options array and the
+ * validation object to be used for validating the entity. If the event is
+ * stopped the validation result will be set to the result of the event itself.
+ * - Model.afterValidate: Will be triggered right after the `validate()` method is
+ * called in the entity. Listeners will receive as arguments the entity, the
+ * options array and the validation object to be used for validating the entity.
+ * If the event is stopped the validation result will be set to the result of
+ * the event itself.
  * - Model.beforeSave: Will be triggered just before the list of fields to be
  * persisted is calculated. It receives both the entity and the options as
  * arguments. The options array is passed as an ArrayObject, so any changes in
