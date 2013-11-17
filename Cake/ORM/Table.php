@@ -1057,11 +1057,28 @@ class Table {
 		$type = is_string($options['validate']) ? $options['validate'] : 'default';
 		$validator = $this->validator($type);
 
+		$pass =  compact('entity', 'options', 'validator');
+		$event = new Event('Model.beforeValidate', $this, $pass);
+		$this->getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return (bool)$event->result;
+		}
+
 		if (!count($validator)) {
 			return true;
 		}
 
-		return $entity->validate($validator, $options['fieldList']);
+		$success = $entity->validate($validator, $options['fieldList']);
+
+		$event = new Event('Model.afterValidate', $this, $pass);
+		$this->getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			$success = (bool)$event->result;
+		}
+
+		return $success;
 	}
 
 /**

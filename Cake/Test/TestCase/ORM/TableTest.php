@@ -1903,4 +1903,68 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEmpty($entity->errors('password'));
 	}
 
+/**
+ * Tests beforeValidate event is triggered
+ *
+ * @return void
+ */
+	public function testBeforeValidate() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$table->getEventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
+			$this->assertSame($entity, $en);
+			$this->assertTrue($opt['crazy']);
+			$this->assertSame($ev->subject()->validator('default'), $val);
+			$val->validatePresence('password');
+		}, 'Model.beforeValidate');
+		$this->assertFalse($table->save($entity, ['crazy' => true]));
+		$this->assertNotEmpty($entity->errors('password'));
+	}
+
+/**
+ * Tests that beforeValidate can set the validation result
+ *
+ * @return void
+ */
+	public function testBeforeValidateSetResult() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$table->getEventManager()->attach(function($ev, $en) {
+			$en->errors('username', 'Not good');
+			return false;
+		}, 'Model.beforeValidate');
+		$this->assertFalse($table->save($entity));
+		$this->assertEquals(['Not good'], $entity->errors('username'));
+	}
+
+/**
+ * Tests that afterValidate is triggered and can set a result
+ *
+ * @return void
+ */
+	public function testAfterValidate() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'hey'
+		]);
+		$table = TableRegistry::get('users');
+		$table->validator()->validatePresence('password');
+		$table->getEventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
+			$this->assertSame($entity, $en);
+			$this->assertTrue($opt['crazy']);
+			$this->assertSame($ev->subject()->validator('default'), $val);
+
+			$en->errors('username', 'Not good');
+			return false;
+		}, 'Model.afterValidate');
+
+		$this->assertFalse($table->save($entity, ['crazy' => true]));
+		$this->assertEmpty($entity->errors('password'));
+		$this->assertEquals(['Not good'], $entity->errors('username'));
+	}
+
 }
