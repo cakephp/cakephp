@@ -21,6 +21,7 @@ use Cake\Database\ConnectionManager;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Validation\Validator;
 
 /**
  * Used to test correct class is instantiated when using TableRegistry::get();
@@ -1834,6 +1835,72 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$validator = new \Cake\Validation\Validator;
 		$table->validator('other', $validator);
 		$this->assertSame($validator, $table->validator('other'));
+	}
+
+/**
+ * Tests saving with validation
+ *
+ * @return void
+ */
+	public function testSaveWithValidationError() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$table->validator()->validatePresence('password');
+		$this->assertFalse($table->save($entity));
+		$this->assertNotEmpty($entity->errors('password'));
+	}
+
+/**
+ * Tests saving with validation and field list
+ *
+ * @return void
+ */
+	public function testSaveWithValidationErrorAndFieldList() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$table->validator()->validatePresence('password');
+		$this->assertFalse($table->save($entity, [
+			'fieldList' => ['username', 'password']
+		]));
+		$this->assertNotEmpty($entity->errors('password'));
+	}
+
+/**
+ * Tests using a custom validation object when saving
+ *
+ * @return void
+ */
+	public function testSaveWithDifferentValidator() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$validator = (new Validator)->validatePresence('password');
+		$table->validator('custom', $validator);
+		$this->assertFalse($table->save($entity, ['validate' => 'custom']));
+		$this->assertNotEmpty($entity->errors('password'));
+
+		$this->assertSame($entity, $table->save($entity), 'default was not used');
+	}
+
+/**
+ * Tests saving with successful validation
+ *
+ * @return void
+ */
+	public function testSaveWithValidationSuccess() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'hey'
+		]);
+		$table = TableRegistry::get('users');
+		$table->validator()->validatePresence('password');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEmpty($entity->errors('password'));
 	}
 
 }
