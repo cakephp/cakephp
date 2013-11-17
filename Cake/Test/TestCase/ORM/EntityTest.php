@@ -690,4 +690,26 @@ class EntityTest extends TestCase {
 		$this->assertEquals(['something' => ['not valid']], $entity->errors());
 	}
 
+/**
+ * Tests validate when called with no fieldList, it also tests the case when
+ * the validator returns no errors
+ *
+ * @return void
+ */
+	public function testValidateNoFieldList() {
+		$validator = $this->getMock('\Cake\Validation\Validator');
+		$data = [
+			'a' => 'b',
+			'cool' => false,
+			'something' => true
+		];
+		$entity = new Entity($data);
+		$entity->isNew(true);
+
+		$validator->expects($this->once())->method('errors')
+			->with($data, true)
+			->will($this->returnValue([]));
+		$this->assertTrue($entity->validate($validator));
+		$this->assertEquals([], $entity->errors());
+	}
 }

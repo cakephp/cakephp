@@ -443,7 +443,22 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		return $this->_persisted = (bool)$new;
 	}
 
-	public function validate(Validator $validator, array $fieldList) {
+/**
+ * Validates the internal properties using a validator object. The resulting
+ * errors will be copied inside this entity and can be retrieved using the
+ * `errors` method.
+ *
+ * The second argument can be used to restrict the fields that need to be passed
+ * to the validator object.
+ *
+ * This function returns true if there were no validation errors or false
+ * otherwise.
+ *
+ * @param \Cake\Validation\Validator $validator
+ * @param array $fieldList The fields to be passed to the validator
+ * @return boolean
+ */
+	public function validate(Validator $validator, array $fieldList = []) {
 		if (empty($fieldList)) {
 			$fieldList = array_keys($this->_properties);
 		}
@@ -460,7 +475,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		}
 
 		$new = $this->isNew();
-		$this->errors($validator->errors($data, $new === null ? true : false));
+		$this->errors($validator->errors($data, $new === null ? true : $new));
 		return empty($this->_errors);
 	}
 
