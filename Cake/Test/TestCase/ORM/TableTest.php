@@ -1865,9 +1865,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]);
 		$table = TableRegistry::get('users');
 		$table->validator()->validatePresence('password');
-		$this->assertFalse($table->save($entity, [
-			'fieldList' => ['username', 'password']
-		]));
+		$this->assertFalse($table->save($entity));
 		$this->assertNotEmpty($entity->errors('password'));
 	}
 
