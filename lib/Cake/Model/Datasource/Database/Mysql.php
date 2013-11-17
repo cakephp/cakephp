@@ -348,6 +348,7 @@ class Mysql extends DboSource {
 				'null' => ($column->Null === 'YES' ? true : false),
 				'default' => $column->Default,
 				'length' => $this->length($column->Type),
+				'unsigned' => $this->unsigned($column->Type)
 			);
 			if (!empty($column->Key) && isset($this->index[$column->Key])) {
 				$fields[$column->Field]['key'] = $this->index[$column->Key];
@@ -780,6 +781,16 @@ class Mysql extends DboSource {
 			return "enum($vals)";
 		}
 		return 'text';
+	}
+
+/**
+ * Check if column type is unsigned
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return bool True if column is unsigned, false otherwise
+ */
+	public function unsigned($real) {
+		return strpos(strtolower($real), 'unsigned') !== false;
 	}
 
 /**

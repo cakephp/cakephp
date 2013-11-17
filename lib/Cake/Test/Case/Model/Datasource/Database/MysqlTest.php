@@ -47,7 +47,7 @@ class MysqlTest extends CakeTestCase {
 	public $fixtures = array(
 		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
 		'core.sample', 'core.tag', 'core.user', 'core.post', 'core.author', 'core.data_test',
-		'core.binary_test', 'core.inno'
+		'core.binary_test', 'core.inno', 'core.unsigned'
 	);
 
 /**
@@ -3165,7 +3165,7 @@ class MysqlTest extends CakeTestCase {
  * 
  * @dataProvider buildColumnUnsignedProvider
  */
-	public function testBuildColumnUnsigned($data, $expected) {//debug($this->Dbo->columns);
+	public function testBuildColumnUnsigned($data, $expected) {
 		$result = $this->Dbo->buildColumn($data);
 		$this->assertEquals($expected, $result);
 	}
@@ -3264,6 +3264,25 @@ class MysqlTest extends CakeTestCase {
 				'`testName` decimal UNSIGNED DEFAULT 1'
 			)
 		);
+	}
+
+/**
+ * Test getting `unsigned` field parameter from DB
+ * 
+ * @return void
+ */
+	public function testSchemaUnsigned() {
+		$this->loadFixtures('Unsigned');
+		$Model = ClassRegistry::init('Model');
+		$Model->setSource('unsigned');
+		$types = $this->Dbo->fieldParameters['unsigned']['types'];
+		$schema = $Model->schema();
+		foreach ($types as $type) {
+			$this->assertArrayHasKey('unsigned', $schema['u'.$type]);
+			$this->assertTrue($schema['u'.$type]['unsigned']);
+			$this->assertArrayHasKey('unsigned', $schema[$type]);
+			$this->assertFalse($schema[$type]['unsigned']);
+		}
 	}
 
 /**
