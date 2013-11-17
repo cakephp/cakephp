@@ -3248,7 +3248,7 @@ class MysqlTest extends CakeTestCase {
 			array(
 				array(
 					'name' => 'testName',
-					'type' => 'numeric',
+					'type' => 'decimal',
 					'unsigned' => true
 				),
 				'`testName` decimal UNSIGNED'
@@ -3257,20 +3257,11 @@ class MysqlTest extends CakeTestCase {
 			array(
 				array(
 					'name' => 'testName',
-					'type' => 'numeric',
+					'type' => 'decimal',
 					'unsigned' => true,
 					'default' => 1
 				),
 				'`testName` decimal UNSIGNED DEFAULT 1'
-			),
-			//set #8
-			array(
-				array(
-					'name' => 'testName',
-					'type' => 'decimal',
-					'unsigned' => true
-				),
-				'`testName` decimal UNSIGNED'
 			)
 		);
 	}
