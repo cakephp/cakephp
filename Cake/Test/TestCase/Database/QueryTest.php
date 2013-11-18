@@ -1850,7 +1850,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query->select(
 				function($q) {
-					return ['total' => $q->count('*')];
+					return ['total' => $q->func()->count('*')];
 				}
 			)
 			->from('articles')
@@ -1859,7 +1859,9 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
-		$result = $query->select(['c' => $query->concat(['title' => 'literal', ' is appended'])])
+		$result = $query->select([
+				'c' => $query->func()->concat(['title' => 'literal', ' is appended'])
+			])
 			->from('articles')
 			->order(['c' => 'ASC'])
 			->execute();
@@ -1872,19 +1874,19 @@ class QueryTest extends TestCase {
 
 		$query = new Query($this->connection);
 		$result = $query
-			->select(['d' => $query->dateDiff(['2012-01-05', '2012-01-02'])])
+			->select(['d' => $query->func()->dateDiff(['2012-01-05', '2012-01-02'])])
 			->execute();
 		$this->assertEquals([['d' => '3.0']], $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
-			->select(['d' => $query->now('date')])
+			->select(['d' => $query->func()->now('date')])
 			->execute();
 		$this->assertEquals([['d' => date('Y-m-d')]], $result->fetchAll('assoc'));
 
 		$query = new Query($this->connection);
 		$result = $query
-			->select(['d' => $query->now('time')])
+			->select(['d' => $query->func()->now('time')])
 			->execute();
 		$this->assertWithinMargin(
 			date('U'),
@@ -1894,7 +1896,7 @@ class QueryTest extends TestCase {
 
 		$query = new Query($this->connection);
 		$result = $query
-			->select(['d' => $query->now()])
+			->select(['d' => $query->func()->now()])
 			->execute();
 		$this->assertWithinMargin(
 			date('U'),

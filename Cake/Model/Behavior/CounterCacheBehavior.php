@@ -71,11 +71,8 @@ use Cake\Utility\Inflector;
  *                 'published' => true,
  *                 'user_id' => $entity->get('user_id')
  *             ]);
- *             return $query
- *                 ->select(['count' => $query->count('*')], true)
- *                 ->hydrate(false)
- *                 ->first()['count'];
- *         }
+ *             return $query->count();
+ *          }
  *     ]
  * ]
  * }}}
@@ -194,6 +191,6 @@ class CounterCacheBehavior extends Behavior {
 		$config['conditions'] = array_merge($conditions, $config['conditions']);
 		$query = $this->_table->find($findType, $config);
 
-		return $query->select(['count' => $query->count('*')], true)->hydrate(false)->first()['count'];
+		return $query->count();
 	}
 }

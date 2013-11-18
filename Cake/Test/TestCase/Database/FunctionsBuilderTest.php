@@ -16,25 +16,23 @@
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Database\FunctionsTrait;
+use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 
 /**
- * Tests FunctionsTrait class
+ * Tests FunctionsBuilder class
  *
  **/
-class FunctionsTraitTest extends \Cake\TestSuite\TestCase {
+class FunctionsBuilderTest extends \Cake\TestSuite\TestCase {
 
 /**
- * Setups a mock for FunctionsTrait
+ * Setups a mock for FunctionsBuilder
  *
  * @return void
  */
 	public function setUp() {
 		parent::setUp();
-		$this->functions = $this->getObjectForTrait(
-			'\Cake\Database\FunctionsTrait'
-		);
+		$this->functions = new FunctionsBuilder;
 	}
 
 /**
@@ -42,8 +40,8 @@ class FunctionsTraitTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFunc() {
-		$function = $this->functions->func('MyFunc', ['b' => 'literal']);
+	public function testArbitrary() {
+		$function = $this->functions->MyFunc(['b' => 'literal']);
 		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals('MyFunc', $function->name());
 		$this->assertEquals('MyFunc(b)', $function->sql(new ValueBinder));

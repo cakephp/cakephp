@@ -35,8 +35,6 @@ use IteratorAggregate;
  */
 class Query implements ExpressionInterface, IteratorAggregate {
 
-	use FunctionsTrait;
-
 /**
  * Connection instance to be used to execute this query
  *
@@ -147,6 +145,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @var ValueBinder
  */
 	protected $_valueBinder;
+
+/**
+ * Instance of functions builder object used for generating arbitrary SQL functions
+ *
+ * @var FunctionsBuilder
+ */
+	protected $_functionsBuilder;
 
 /**
  * Constructor
@@ -1372,16 +1377,23 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
- * Returns a new instance of a FunctionExpression. This is used for generating
- * arbitrary function calls in the final SQL string.
+ * Returns an instance of a functions builder object that can be used for
+ * generating arbitrary SQL functions.
  *
- * @param string $name the name of the SQL function to constructed
- * @param array $params list of params to be passed to the function
- * @param array $types list of types for each function param
- * @return FunctionExpression
+ * ### Example:
+ *
+ * {{{
+ * $query->func()->count('*');
+ * $query->func()->dateDiff(['2012-01-05', '2012-01-02'])
+ * }}}
+ *
+ * @return FunctionsBuilder
  */
-	public function func($name, $params = [], $types = []) {
-		return new FunctionExpression($name, $params, $types);
+	public function func() {
+		if (empty($this->_functionsBuilder)) {
+			$this->_functionsBuilder = new FunctionsBuilder;
+		}
+		return $this->_functionsBuilder;
 	}
 
 /**
