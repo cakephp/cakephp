@@ -34,7 +34,7 @@ class FunctionsBuilder {
  * @param array $types list of types for each function param
  * @return FunctionExpression
  */
-	public function func($name, $params = [], $types = []) {
+	protected function _build($name, $params = [], $types = []) {
 		return new FunctionExpression($name, $params, $types);
 	}
 
@@ -53,7 +53,7 @@ class FunctionsBuilder {
 		} else {
 			$expression = [$expression => 'literal'];
 		}
-		return $this->func($name, $expression, $types);
+		return $this->_build($name, $expression, $types);
 	}
 
 /**
@@ -119,7 +119,7 @@ class FunctionsBuilder {
  * @return FunctionExpression
  */
 	public function concat($args, $types = []) {
-		return $this->func('CONCAT', $args, $types);
+		return $this->_build('CONCAT', $args, $types);
 	}
 
 /**
@@ -130,7 +130,7 @@ class FunctionsBuilder {
  * @return FunctionExpression
  */
 	public function coalesce($args, $types = []) {
-		return $this->func('COALESCE', $args, $types);
+		return $this->_build('COALESCE', $args, $types);
 	}
 
 /**
@@ -142,7 +142,7 @@ class FunctionsBuilder {
  * @return FunctionExpression
  */
 	public function dateDiff($dates, $types = []) {
-		return $this->func('DATEDIFF', $dates, $types);
+		return $this->_build('DATEDIFF', $dates, $types);
 	}
 
 /**
@@ -155,13 +155,33 @@ class FunctionsBuilder {
  */
 	public function now($type = 'datetime') {
 		if ($type === 'datetime') {
-			return $this->func('NOW');
+			return $this->_build('NOW');
 		}
 		if ($type === 'date') {
-			return $this->func('CURRENT_DATE');
+			return $this->_build('CURRENT_DATE');
 		}
 		if ($type === 'time') {
-			return $this->func('CURRENT_TIME');
+			return $this->_build('CURRENT_TIME');
+		}
+	}
+
+/**
+ * Magic method dispatcher to create custom SQL function calls
+ *
+ * @param string $name the SQL function name to construct
+ * @param array $args list with up to 2 arguments, first one being an array with
+ * parameters for the SQL function and second one a list of types to bind to those
+ * params
+ * @return \Cake\Database\FunctionExpression
+ */
+	public function __call($name, $args) {
+		switch (count($args)) {
+			case 0:
+				return $this->_build($name);
+			case 1:
+				return $this->_build($name, $args[0]);
+			default:
+				return $this->_build($name, $args[0], $args[1]);
 		}
 	}
 

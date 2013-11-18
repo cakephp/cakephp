@@ -40,8 +40,8 @@ class FunctionsBuilderTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testFunc() {
-		$function = $this->functions->func('MyFunc', ['b' => 'literal']);
+	public function testArbitrary() {
+		$function = $this->functions->MyFunc(['b' => 'literal']);
 		$this->assertInstanceOf('\Cake\Database\Expression\FunctionExpression', $function);
 		$this->assertEquals('MyFunc', $function->name());
 		$this->assertEquals('MyFunc(b)', $function->sql(new ValueBinder));
