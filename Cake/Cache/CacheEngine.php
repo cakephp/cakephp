@@ -30,6 +30,21 @@ abstract class CacheEngine {
 	protected $_config = [];
 
 /**
+ * Default configuration
+ *
+ * These settings apply to all cache engines, and can be overriden by a specific cache
+ * engine or runtime settings
+ *
+ * @var array
+ */
+	protected static $_defaultConfig = [
+		'prefix' => 'cake_',
+		'duration' => 3600,
+		'probability' => 100,
+		'groups' => []
+	];
+
+/**
  * Contains the compiled string with all groups
  * prefixes to be prepended to every key in this cache engine
  *
@@ -40,18 +55,14 @@ abstract class CacheEngine {
 /**
  * Initialize the cache engine
  *
- * Called automatically by the cache frontend
+ * Called automatically by the cache frontend. Merge the runtime config with the defaults
+ * for the specific cache engine, and the general defaults before use
  *
  * @param array $config Associative array of parameters for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($config = []) {
-		$config += $this->_config + [
-			'prefix' => 'cake_',
-			'duration' => 3600,
-			'probability' => 100,
-			'groups' => []
-		];
+		$config += $this->_config + static::$_defaultConfig + self::$_defaultConfig;
 		$this->_config = $config;
 		if (!empty($this->_config['groups'])) {
 			sort($this->_config['groups']);

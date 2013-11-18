@@ -44,6 +44,23 @@ class RedisEngine extends CacheEngine {
 	protected $_config = [];
 
 /**
+ * Default config
+ *
+ * The defaults used unless overriden by runtime configuration
+ *
+ * @var array
+ */
+	protected static $_defaultConfig = [
+		'prefix' => null,
+		'server' => '127.0.0.1',
+		'database' => 0,
+		'port' => 6379,
+		'password' => false,
+		'timeout' => 0,
+		'persistent' => true
+	];
+
+/**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
@@ -55,16 +72,7 @@ class RedisEngine extends CacheEngine {
 		if (!class_exists('Redis')) {
 			return false;
 		}
-		parent::init(array_merge([
-			'prefix' => null,
-			'server' => '127.0.0.1',
-			'database' => 0,
-			'port' => 6379,
-			'password' => false,
-			'timeout' => 0,
-			'persistent' => true
-			], $config)
-		);
+		parent::init($config);
 
 		return $this->_connect();
 	}

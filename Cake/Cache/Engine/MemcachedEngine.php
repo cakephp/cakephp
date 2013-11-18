@@ -56,6 +56,22 @@ class MemcachedEngine extends CacheEngine {
 	protected $_config = [];
 
 /**
+ * Default config
+ *
+ * The defaults used unless overriden by runtime configuration
+ *
+ * @var array
+ */
+	protected static $_defaultConfig = [
+		'servers' => ['127.0.0.1'],
+		'compress' => false,
+		'persistent' => false,
+		'login' => null,
+		'password' => null,
+		'serialize' => 'php'
+	];
+
+/**
  * List of available serializer engines
  *
  * Memcached must be compiled with json and igbinary support to use these engines
@@ -84,14 +100,6 @@ class MemcachedEngine extends CacheEngine {
 		if (!isset($config['prefix'])) {
 			$config['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
-		$config += [
-			'servers' => ['127.0.0.1'],
-			'compress' => false,
-			'persistent' => false,
-			'login' => null,
-			'password' => null,
-			'serialize' => 'php'
-		];
 		parent::init($config);
 
 		if (!is_array($this->_config['servers'])) {

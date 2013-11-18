@@ -38,6 +38,17 @@ class XcacheEngine extends CacheEngine {
 	protected $_config = [];
 
 /**
+ * Default config
+ *
+ * @var array
+ */
+	protected static $_defaultConfig = [
+		'prefix' => null,
+		'PHP_AUTH_USER' => 'user',
+		'PHP_AUTH_PW' => 'password'
+	];
+
+/**
  * Initialize the Cache Engine
  *
  * Called automatically by the cache frontend
@@ -47,12 +58,10 @@ class XcacheEngine extends CacheEngine {
  */
 	public function init($config = []) {
 		if (php_sapi_name() !== 'cli') {
-			parent::init(array_merge([
-				'prefix' => Inflector::slug(APP_DIR) . '_',
-				'PHP_AUTH_USER' => 'user',
-				'PHP_AUTH_PW' => 'password'
-				], $config)
-			);
+			if (!isset($config['prefix'])) {
+				$config['prefix'] = Inflector::slug(APP_DIR) . '_';
+			}
+			parent::init($config);
 			return function_exists('xcache_info');
 		}
 		return false;

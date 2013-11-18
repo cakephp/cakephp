@@ -57,6 +57,20 @@ class FileEngine extends CacheEngine {
 	protected $_config = [];
 
 /**
+ * _defaultConfig
+ *
+ * @var mixed
+ */
+	protected static $_defaultConfig = [
+		'path' => CACHE,
+		'prefix' => 'cake_',
+		'lock' => true,
+		'serialize' => true,
+		'isWindows' => false,
+		'mask' => 0664
+	];
+
+/**
  * True unless FileEngine::__active(); fails
  *
  * @var boolean
@@ -72,14 +86,6 @@ class FileEngine extends CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($config = []) {
-		$config += [
-			'path' => CACHE,
-			'prefix' => 'cake_',
-			'lock' => true,
-			'serialize' => true,
-			'isWindows' => false,
-			'mask' => 0664
-		];
 		parent::init($config);
 
 		if (DS === '\\') {
