@@ -1080,9 +1080,6 @@ class Table {
 	}
 
 /**
- * Magic method to be able to call scoped finders & behaviors
- * without the find prefix.
- *
  * ## Behavior delegation
  *
  * If your Table uses any behaviors you can call them as if
