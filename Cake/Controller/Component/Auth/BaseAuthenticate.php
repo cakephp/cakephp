@@ -16,10 +16,12 @@
 namespace Cake\Controller\Component\Auth;
 
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Component\Auth\AbstractPasswordHasher;
+use Cake\Core\App;
 use Cake\Error;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Utility\ClassRegistry;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Security;
 
@@ -33,10 +35,9 @@ abstract class BaseAuthenticate {
  * Settings for this object.
  *
  * - `fields` The fields to use to identify a user by.
- * - `userModel` The model name of the User, defaults to User.
+ * - `userModel` The alias for users table, defaults to Users.
  * - `scope` Additional conditions to use when looking up and authenticating users,
- *    i.e. `array('User.is_active' => 1).`
- * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
+ *    i.e. `['Users.is_active' => 1].`
  * - `contain` Extra models to contain and store in session.
  * - `passwordHasher` Password hasher class. Can be a string specifying class name
  *    or an array containing `className` key, any other keys will be passed as
@@ -44,17 +45,16 @@ abstract class BaseAuthenticate {
  *
  * @var array
  */
-	public $settings = array(
-		'fields' => array(
+	public $settings = [
+		'fields' => [
 			'username' => 'username',
 			'password' => 'password'
-		),
-		'userModel' => 'User',
-		'scope' => array(),
-		'recursive' => 0,
+		],
+		'userModel' => 'Users',
+		'scope' => [],
 		'contain' => null,
-		'passwordHasher' => 'Simple'
-	);
+		'passwordHasher' => 'Blowfish'
+	];
 
 /**
  * A Component registry, used to get more components.
@@ -82,17 +82,14 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Find a user record using the standard options.
- *
- * The $username parameter can be a (string)username or an array containing
- * conditions for Model::find('first'). If the $password param is not provided
- * the password field will be present in returned array.
+ * Find a user record using the username and password provided.
  *
  * Input passwords will be hashed even when a user doesn't exist. This
  * helps mitigate timing attacks that are attempting to find valid usernames.
  *
- * @param string|array $username The username/identifier, or an array of find conditions.
- * @param string $password The password, only used if $username param is string.
+ * @param string $username The username/identifier.
+ * @param string $password The password, if not provide password checking is skipped
+ *   and result of find is returned.
  * @return boolean|array Either false on failure, or an array of user data.
  */
 	protected function _findUser($username, $password = null) {
@@ -100,38 +97,33 @@ abstract class BaseAuthenticate {
 		list(, $model) = pluginSplit($userModel);
 		$fields = $this->settings['fields'];
 
-		if (is_array($username)) {
-			$conditions = $username;
-		} else {
-			$conditions = array(
-				$model . '.' . $fields['username'] => $username
-			);
-		}
+		$conditions = [$model . '.' . $fields['username'] => $username];
 
 		if (!empty($this->settings['scope'])) {
 			$conditions = array_merge($conditions, $this->settings['scope']);
 		}
 
-		$result = ClassRegistry::init($userModel)->find('first', array(
-			'conditions' => $conditions,
-			'recursive' => $this->settings['recursive'],
-			'contain' => $this->settings['contain'],
-		));
-		if (empty($result[$model])) {
-			$this->passwordHasher()->hash($password);
+		$table = TableRegistry::get($userModel)->find('all');
+		if ($this->settings['contain']) {
+			$table = $table->contain($this->settings['contain']);
+		}
+		$result = $table
+			->where($conditions)
+			->hydrate(false)
+			->first();
+
+		if (empty($result)) {
 			return false;
 		}
 
-		$user = $result[$model];
-		if ($password) {
-			if (!$this->passwordHasher()->check($password, $user[$fields['password']])) {
+		if ($password !== null) {
+			if (!$this->passwordHasher()->check($password, $result[$fields['password']])) {
 				return false;
 			}
-			unset($user[$fields['password']]);
+			unset($result[$fields['password']]);
 		}
 
-		unset($result[$model]);
-		return array_merge($user, $result);
+		return $result;
 	}
 
 /**
@@ -154,15 +146,17 @@ abstract class BaseAuthenticate {
 			$config = $this->settings['passwordHasher'];
 			unset($config['className']);
 		}
+
 		list($plugin, $class) = pluginSplit($class, true);
 		$className = App::classname($class, 'Controller/Component/Auth', 'PasswordHasher');
 		if (!class_exists($className)) {
 			throw new Error\Exception(__d('cake_dev', 'Password hasher class "%s" was not found.', $class));
 		}
-		if (!is_subclass_of($className, 'AbstractPasswordHasher')) {
+
+		$this->_passwordHasher = new $className($config);
+		if (!($this->_passwordHasher instanceof AbstractPasswordHasher)) {
 			throw new Error\Exception(__d('cake_dev', 'Password hasher must extend AbstractPasswordHasher class.'));
 		}
-		$this->_passwordHasher = new $className($config);
 		return $this->_passwordHasher;
 	}
 

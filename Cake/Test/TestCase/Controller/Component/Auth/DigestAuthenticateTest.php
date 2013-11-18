@@ -21,10 +21,9 @@ namespace Cake\Test\TestCase\Controller\Component\Auth;
 use Cake\Controller\Component\Auth\DigestAuthenticate;
 use Cake\Error;
 use Cake\Network\Request;
+use Cake\ORM\Entity;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
-
-require_once CAKE . 'Test/TestCase/Model/models.php';
 
 /**
  * Test case for DigestAuthentication
@@ -46,20 +45,19 @@ class DigestAuthenticateTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Need to revisit once models work again.');
 
 		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
 		$this->auth = new DigestAuthenticate($this->Collection, array(
-			'fields' => array('username' => 'user', 'password' => 'password'),
-			'userModel' => 'User',
+			'fields' => array('username' => 'username', 'password' => 'password'),
+			'userModel' => 'Users',
 			'realm' => 'localhost',
 			'nonce' => 123,
 			'opaque' => '123abc'
 		));
 
 		$password = DigestAuthenticate::password('mariano', 'cake', 'localhost');
-		$User = ClassRegistry::init('User');
-		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
+		$User = TableRegistry::get('Users');
+		$User->updateAll(['password' => $password], []);
 
 		$this->response = $this->getMock('Cake\Network\Response');
 	}
@@ -128,7 +126,10 @@ DIGEST;
  * @return void
  */
 	public function testAuthenticateChallenge() {
-		$request = new Request('posts/index');
+		$request = new Request([
+			'url' => 'posts/index',
+			'environment' => ['REQUEST_METHOD' => 'GET']
+		]);
 		$request->addParams(array('pass' => array()));
 
 		try {
@@ -148,7 +149,10 @@ DIGEST;
  * @return void
  */
 	public function testAuthenticateSuccess() {
-		$request = new Request('posts/index');
+		$request = new Request([
+			'url' => 'posts/index',
+			'environment' => ['REQUEST_METHOD' => 'GET']
+		]);
 		$request->addParams(array('pass' => array()));
 
 		$digest = <<<DIGEST
@@ -167,9 +171,9 @@ DIGEST;
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
 			'id' => 1,
-			'user' => 'mariano',
-			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'username' => 'mariano',
+			'created' => new \DateTime('2007-03-17 01:16:23'),
+			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -182,8 +186,11 @@ DIGEST;
  * @return void
  */
 	public function testAuthenticateFailReChallenge() {
-		$this->auth->settings['scope'] = array('user' => 'nate');
-		$request = new Request('posts/index');
+		$this->auth->settings['scope'] = array('username' => 'nate');
+		$request = new Request([
+			'url' => 'posts/index',
+			'environment' => ['REQUEST_METHOD' => 'GET']
+		]);
 		$request->addParams(array('pass' => array()));
 
 		$digest = <<<DIGEST

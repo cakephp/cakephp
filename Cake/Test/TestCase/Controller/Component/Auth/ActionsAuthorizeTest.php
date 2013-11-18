@@ -62,7 +62,7 @@ class ActionsAuthorizeTest extends TestCase {
  */
 	public function testAuthorizeFailure() {
 		$user = array(
-			'User' => array(
+			'Users' => array(
 				'id' => 1,
 				'user' => 'mariano'
 			)
@@ -81,7 +81,7 @@ class ActionsAuthorizeTest extends TestCase {
 			->with($user, 'controllers/Posts/index')
 			->will($this->returnValue(false));
 
-		$this->assertFalse($this->auth->authorize($user['User'], $request));
+		$this->assertFalse($this->auth->authorize($user['Users'], $request));
 	}
 
 /**
@@ -91,7 +91,7 @@ class ActionsAuthorizeTest extends TestCase {
  */
 	public function testAuthorizeSuccess() {
 		$user = array(
-			'User' => array(
+			'Users' => array(
 				'id' => 1,
 				'user' => 'mariano'
 			)
@@ -110,7 +110,7 @@ class ActionsAuthorizeTest extends TestCase {
 			->with($user, 'controllers/Posts/index')
 			->will($this->returnValue(true));
 
-		$this->assertTrue($this->auth->authorize($user['User'], $request));
+		$this->assertTrue($this->auth->authorize($user['Users'], $request));
 	}
 
 /**
@@ -128,13 +128,13 @@ class ActionsAuthorizeTest extends TestCase {
 
 		$this->_mockAcl();
 
-		$this->auth->settings['userModel'] = 'TestPlugin.TestPluginAuthUser';
+		$this->auth->settings['userModel'] = 'TestPlugin.AuthUser';
 		$user = array(
 			'id' => 1,
-			'user' => 'mariano'
+			'username' => 'mariano'
 		);
 
-		$expected = array('TestPlugin.TestPluginAuthUser' => array('id' => 1, 'user' => 'mariano'));
+		$expected = array('TestPlugin.AuthUser' => array('id' => 1, 'username' => 'mariano'));
 		$this->Acl->expects($this->once())
 			->method('check')
 			->with($expected, 'controllers/Posts/index')

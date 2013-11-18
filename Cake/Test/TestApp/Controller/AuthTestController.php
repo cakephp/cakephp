@@ -38,7 +38,7 @@ class AuthTestController extends Controller {
  *
  * @var array
  */
-	public $uses = array('AuthUser');
+	public $uses = array('Users');
 
 /**
  * components property

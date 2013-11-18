@@ -70,7 +70,7 @@ class CrudAuthorizeTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'foobar'
 		));
-		$user = array('User' => array('user' => 'mark'));
+		$user = array('User' => array('username' => 'mark'));
 
 		$this->auth->authorize($user, $request);
 	}
@@ -86,7 +86,7 @@ class CrudAuthorizeTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'index'
 		));
-		$user = array('User' => array('user' => 'mark'));
+		$user = array('Users' => array('username' => 'mark'));
 
 		$this->_mockAcl();
 		$this->Acl->expects($this->once())
@@ -94,7 +94,7 @@ class CrudAuthorizeTest extends TestCase {
 			->with($user, 'Posts', 'read')
 			->will($this->returnValue(true));
 
-		$this->assertTrue($this->auth->authorize($user['User'], $request));
+		$this->assertTrue($this->auth->authorize($user['Users'], $request));
 	}
 
 /**
@@ -108,7 +108,7 @@ class CrudAuthorizeTest extends TestCase {
 			'controller' => 'posts',
 			'action' => 'index'
 		));
-		$user = array('User' => array('user' => 'mark'));
+		$user = array('Users' => array('username' => 'mark'));
 
 		$this->_mockAcl();
 		$this->Acl->expects($this->once())
@@ -116,7 +116,7 @@ class CrudAuthorizeTest extends TestCase {
 			->with($user, 'Posts', 'read')
 			->will($this->returnValue(false));
 
-		$this->assertFalse($this->auth->authorize($user['User'], $request));
+		$this->assertFalse($this->auth->authorize($user['Users'], $request));
 	}
 
 /**

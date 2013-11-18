@@ -65,7 +65,7 @@ abstract class BaseAuthorize {
 			'delete' => 'delete',
 			'remove' => 'delete'
 		),
-		'userModel' => 'User'
+		'userModel' => 'Users'
 	);
 
 /**

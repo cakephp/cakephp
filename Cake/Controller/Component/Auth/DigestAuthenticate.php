@@ -19,7 +19,6 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Component\Auth\BasicAuthenticate;
 use Cake\Network\Request;
 use Cake\Network\Response;
-use Cake\Utility\ClassRegistry;
 
 /**
  * Digest Authentication adapter for AuthComponent.
@@ -91,7 +90,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 		'qop' => 'auth',
 		'nonce' => null,
 		'opaque' => null,
-		'passwordHasher' => 'Simple',
+		'passwordHasher' => 'Blowfish',
 	);
 
 /**
@@ -107,9 +106,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 		}
 
 		list(, $model) = pluginSplit($this->settings['userModel']);
-		$user = $this->_findUser(array(
-			$model . '.' . $this->settings['fields']['username'] => $digest['username']
-		));
+		$user = $this->_findUser($digest['username']);
 		if (empty($user)) {
 			return false;
 		}
@@ -207,7 +204,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 			'qop' => $this->settings['qop'],
 			'nonce' => $this->settings['nonce'] ?: uniqid(''),
 		);
-		$options['nonce'] = $this->settings['nonce'] ?: $options['realm'];
+		$options['opaque'] = $this->settings['opaque'] ?: md5($options['realm']);
 		$opts = array();
 		foreach ($options as $k => $v) {
 			$opts[] = sprintf('%s="%s"', $k, $v);

@@ -24,11 +24,10 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
+use Cake\ORM\Entity;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Security;
-
-require_once CAKE . 'Test/TestCase/Model/models.php';
 
 /**
  * Test case for FormAuthentication
@@ -50,15 +49,13 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
 		$this->auth = new FormAuthenticate($this->Collection, array(
-			'fields' => array('username' => 'user', 'password' => 'password'),
-			'userModel' => 'User'
+			'userModel' => 'Users'
 		));
-		$password = Security::hash('password', null, true);
-		$User = ClassRegistry::init('User');
-		$User->updateAll(array('password' => $User->getDataSource()->value($password)));
+		$password = Security::hash('password', 'blowfish', false);
+		$Users = TableRegistry::get('Users');
+		$Users->updateAll(['password' => $password], []);
 		$this->response = $this->getMock('Cake\Network\Response');
 	}
 
@@ -69,10 +66,10 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testConstructor() {
 		$object = new FormAuthenticate($this->Collection, array(
-			'userModel' => 'AuthUser',
+			'userModel' => 'AuthUsers',
 			'fields' => array('username' => 'user', 'password' => 'password')
 		));
-		$this->assertEquals('AuthUser', $object->settings['userModel']);
+		$this->assertEquals('AuthUsers', $object->settings['userModel']);
 		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $object->settings['fields']);
 	}
 
@@ -94,7 +91,7 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateNoUsername() {
 		$request = new Request('posts/index');
-		$request->data = array('User' => array('password' => 'foobar'));
+		$request->data = array('Users' => array('password' => 'foobar'));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -105,7 +102,7 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateNoPassword() {
 		$request = new Request('posts/index');
-		$request->data = array('User' => array('user' => 'mariano'));
+		$request->data = array('Users' => array('username' => 'mariano'));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 	}
 
@@ -117,8 +114,8 @@ class FormAuthenticateTest extends TestCase {
 	public function testAuthenticatePasswordIsFalse() {
 		$request = new Request('posts/index', false);
 		$request->data = array(
-			'User' => array(
-				'user' => 'mariano',
+			'Users' => array(
+				'username' => 'mariano',
 				'password' => null
 		));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
@@ -130,17 +127,17 @@ class FormAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateFieldsAreNotString() {
-		$request = new CakeRequest('posts/index', false);
+		$request = new Request('posts/index', false);
 		$request->data = array(
-			'User' => array(
-				'user' => array('mariano', 'phpnut'),
+			'Users' => array(
+				'username' => array('mariano', 'phpnut'),
 				'password' => 'my password'
 		));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
 
 		$request->data = array(
-			'User' => array(
-				'user' => 'mariano',
+			'Users' => array(
+				'username' => 'mariano',
 				'password' => array('password1', 'password2')
 		));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
@@ -154,8 +151,8 @@ class FormAuthenticateTest extends TestCase {
 	public function testAuthenticateInjection() {
 		$request = new Request('posts/index');
 		$request->data = array(
-			'User' => array(
-				'user' => '> 1',
+			'Users' => array(
+				'username' => '> 1',
 				'password' => "' OR 1 = 1"
 		));
 		$this->assertFalse($this->auth->authenticate($request, $this->response));
@@ -168,16 +165,16 @@ class FormAuthenticateTest extends TestCase {
  */
 	public function testAuthenticateSuccess() {
 		$request = new Request('posts/index');
-		$request->data = array('User' => array(
-			'user' => 'mariano',
+		$request->data = array('Users' => array(
+			'username' => 'mariano',
 			'password' => 'password'
 		));
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
 			'id' => 1,
-			'user' => 'mariano',
-			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'username' => 'mariano',
+			'created' => new \DateTime('2007-03-17 01:16:23'),
+			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
 		$this->assertEquals($expected, $result);
 	}
@@ -188,10 +185,10 @@ class FormAuthenticateTest extends TestCase {
  * @return void
  */
 	public function testAuthenticateScopeFail() {
-		$this->auth->settings['scope'] = array('user' => 'nate');
+		$this->auth->settings['scope'] = array('Users.id' => 2);
 		$request = new Request('posts/index');
-		$request->data = array('User' => array(
-			'user' => 'mariano',
+		$request->data = array('Users' => array(
+			'username' => 'mariano',
 			'password' => 'password'
 		));
 
@@ -207,17 +204,16 @@ class FormAuthenticateTest extends TestCase {
 		Cache::delete('object_map', '_cake_core_');
 		Plugin::load('TestPlugin');
 
-		$PluginModel = ClassRegistry::init('TestPlugin.TestPluginAuthUser');
+		$PluginModel = TableRegistry::get('TestPlugin.AuthUsers');
 		$user['id'] = 1;
 		$user['username'] = 'gwoo';
-		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake');
-		$PluginModel->save($user, false);
+		$user['password'] = Security::hash(Configure::read('Security.salt') . 'cake', 'blowfish', false);
+		$PluginModel->save(new Entity($user));
 
-		$this->auth->settings['userModel'] = 'TestPlugin.TestPluginAuthUser';
-		$this->auth->settings['fields']['username'] = 'username';
+		$this->auth->settings['userModel'] = 'TestPlugin.AuthUsers';
 
 		$request = new Request('posts/index');
-		$request->data = array('TestPluginAuthUser' => array(
+		$request->data = array('AuthUsers' => array(
 			'username' => 'gwoo',
 			'password' => 'cake'
 		));
@@ -226,10 +222,9 @@ class FormAuthenticateTest extends TestCase {
 		$expected = array(
 			'id' => 1,
 			'username' => 'gwoo',
-			'created' => '2007-03-17 01:16:23'
+			'created' => new \DateTime('2007-03-17 01:16:23'),
+			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
-		$this->assertEquals(static::date(), $result['updated']);
-		unset($result['updated']);
 		$this->assertEquals($expected, $result);
 		Plugin::unload();
 	}
@@ -250,30 +245,30 @@ class FormAuthenticateTest extends TestCase {
 		$this->assertEquals('md5', $result['hashType']);
 
 		$hash = Security::hash('mypass', 'md5', true);
-		$User = ClassRegistry::init('User');
+		$User = TableRegistry::get('Users');
 		$User->updateAll(
-			array('password' => $User->getDataSource()->value($hash)),
-			array('User.user' => 'mariano')
+			array('password' => $hash),
+			array('username' => 'mariano')
 		);
 
 		$request = new Request('posts/index');
-		$request->data = array('User' => array(
-			'user' => 'mariano',
+		$request->data = array('Users' => array(
+			'username' => 'mariano',
 			'password' => 'mypass'
 		));
 
 		$result = $this->auth->authenticate($request, $this->response);
 		$expected = array(
 			'id' => 1,
-			'user' => 'mariano',
-			'created' => '2007-03-17 01:16:23',
-			'updated' => '2007-03-17 01:18:31'
+			'username' => 'mariano',
+			'created' => new \DateTime('2007-03-17 01:16:23'),
+			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
 		$this->assertEquals($expected, $result);
 
 		$this->auth = new FormAuthenticate($this->Collection, array(
-			'fields' => array('username' => 'user', 'password' => 'password'),
-			'userModel' => 'User'
+			'fields' => array('username' => 'username', 'password' => 'password'),
+			'userModel' => 'Users'
 		));
 		$this->auth->settings['passwordHasher'] = array(
 			'className' => 'Simple',

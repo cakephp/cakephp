@@ -26,7 +26,7 @@ use Cake\Network\Response;
  * {{{
  *	$this->Auth->authenticate = array(
  *		'Form' => array(
- *			'scope' => array('User.active' => 1)
+ *			'scope' => array('Users.active' => 1)
  *		)
  *	)
  * }}}
