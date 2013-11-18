@@ -33,7 +33,7 @@ abstract class CacheEngine {
  * Default configuration
  *
  * These settings apply to all cache engines, and can be overriden by a specific cache
- * engine or runtime settings
+ * engine or runtime config
  *
  * @var array
  */
@@ -165,7 +165,7 @@ abstract class CacheEngine {
  *
  * @return array config
  */
-	public function settings() {
+	public function config() {
 		return $this->_config;
 	}
 

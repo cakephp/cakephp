@@ -60,19 +60,19 @@ class CacheRegistry extends ObjectRegistry {
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
  * @param string|CacheEngine $class The classname or object to make.
  * @param string $alias The alias of the object.
- * @param array $settings An array of settings to use for the cache engine.
+ * @param array $config An array of settings to use for the cache engine.
  * @return CacheEngine The constructed CacheEngine class.
  * @throws Cake\Error\Exception when an object doesn't implement
  *    the correct interface.
  */
-	protected function _create($class, $alias, $settings) {
+	protected function _create($class, $alias, $config) {
 		if (is_object($class)) {
 			$instance = $class;
 		}
 
-		unset($settings['className']);
+		unset($config['className']);
 		if (!isset($instance)) {
-			$instance = new $class($settings);
+			$instance = new $class($config);
 		}
 
 		if (!($instance instanceof CacheEngine)) {
@@ -82,14 +82,14 @@ class CacheRegistry extends ObjectRegistry {
 			));
 		}
 
-		if (!$instance->init($settings)) {
+		if (!$instance->init($config)) {
 			throw new Error\Exception(
 				__d('cake_dev', 'Cache engine %s is not properly configured.', $class)
 			);
 		}
 
-		$settings = $instance->settings();
-		if ($settings['probability'] && time() % $settings['probability'] === 0) {
+		$config = $instance->config();
+		if ($config['probability'] && time() % $config['probability'] === 0) {
 			$instance->gc();
 		}
 		return $instance;

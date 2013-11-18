@@ -76,7 +76,7 @@ use Cake\Utility\Inflector;
  *
  * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
- * @param array $settings Optional associative array of settings passed to the engine
+ * @param array $config Optional associative array of settings passed to the engine
  * @return array [engine, settings] on success, false on failure
  * @throws Cake\Error\Exception
  */
@@ -208,17 +208,17 @@ class Cache {
  */
 	public static function write($key, $value, $config = 'default') {
 		$engine = static::engine($config);
-		$settings = static::settings($config);
-
 		if (!$engine) {
 			return false;
 		}
-		$key = $engine->key($key);
 
+		$key = $engine->key($key);
 		if (!$key || is_resource($value)) {
 			return false;
 		}
-		$success = $engine->write($settings['prefix'] . $key, $value, $settings['duration']);
+
+		$config = $engine->config();
+		$success = $engine->write($config['prefix'] . $key, $value, $config['duration']);
 		if ($success === false && $value !== '') {
 			trigger_error(
 				__d('cake_dev',
@@ -252,7 +252,6 @@ class Cache {
  */
 	public static function read($key, $config = 'default') {
 		$engine = static::engine($config);
-		$settings = static::settings($config);
 		if (!$engine) {
 			return false;
 		}
@@ -262,7 +261,8 @@ class Cache {
 			return false;
 		}
 
-		return $engine->read($settings['prefix'] . $key);
+		$config = $engine->config();
+		return $engine->read($config['prefix'] . $key);
 	}
 
 /**
@@ -276,17 +276,17 @@ class Cache {
  */
 	public static function increment($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		$settings = static::settings($config);
-
 		if (!$engine) {
 			return false;
 		}
-		$key = $engine->key($key);
 
+		$key = $engine->key($key);
 		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
-		return $engine->increment($settings['prefix'] . $key, $offset);
+
+		$config = $engine->config();
+		return $engine->increment($config['prefix'] . $key, $offset);
 	}
 
 /**
@@ -300,17 +300,17 @@ class Cache {
  */
 	public static function decrement($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		$settings = static::settings($config);
-
 		if (!$engine) {
 			return false;
 		}
-		$key = $engine->key($key);
 
+		$key = $engine->key($key);
 		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
-		return $engine->decrement($settings['prefix'] . $key, $offset);
+
+		$config = $engine->config();
+		return $engine->decrement($config['prefix'] . $key, $offset);
 	}
 
 /**
@@ -331,9 +331,7 @@ class Cache {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public static function delete($key, $config = 'default') {
-		$settings = static::settings($config);
 		$engine = static::engine($config);
-
 		if (!$engine) {
 			return false;
 		}
@@ -343,7 +341,8 @@ class Cache {
 			return false;
 		}
 
-		return $engine->delete($settings['prefix'] . $key);
+		$config = $engine->config();
+		return $engine->delete($config['prefix'] . $key);
 	}
 
 /**
