@@ -4,18 +4,17 @@
  *
  * InflectorTest is used to test cases on the Inflector class
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
- * Licensed under The Open Group Test Suite License
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html
  * @since         CakePHP(tm) v 1.2.0.4206
- * @license       http://www.opensource.org/licenses/opengroup.php Open Group Test Suite License
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Test\TestCase\Utility;
 
@@ -120,6 +119,7 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::singularize('quotas'), 'quota');
 		$this->assertEquals(Inflector::singularize('curves'), 'curve');
 		$this->assertEquals(Inflector::singularize('body_curves'), 'body_curve');
+		$this->assertEquals(Inflector::singularize('metadata'), 'metadata');
 		$this->assertEquals(Inflector::singularize(''), '');
 	}
 
@@ -184,6 +184,7 @@ class InflectorTest extends TestCase {
 		$this->assertEquals(Inflector::pluralize('quota'), 'quotas');
 		$this->assertEquals(Inflector::pluralize('curve'), 'curves');
 		$this->assertEquals(Inflector::pluralize('body_curve'), 'body_curves');
+		$this->assertEquals(Inflector::pluralize('metadata'), 'metadata');
 		$this->assertEquals(Inflector::pluralize(''), '');
 	}
 

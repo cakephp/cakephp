@@ -1,5 +1,9 @@
 <?php
 /**
+ * EventTest file
+ *
+ * Test Case for Event class
+ *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

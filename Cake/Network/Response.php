@@ -2,8 +2,6 @@
 /**
  * Cake Response
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -377,7 +375,7 @@ class Response {
 	protected $_cookies = array();
 
 /**
- * Class constructor
+ * Constructor
  *
  * @param array $options list of parameters to setup the response. Possible values are:
  *	- body: the response text that should be sent to the client

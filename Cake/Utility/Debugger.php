@@ -1,6 +1,8 @@
 <?php
 /**
- * PHP 5
+ * Framework debugging and PHP error-handling class
+ *
+ * Provides enhanced logging, stack traces, and rendering debug views
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)

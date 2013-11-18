@@ -4,8 +4,6 @@
  *
  * The methods in these classes enable the datasources that use XML to work.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

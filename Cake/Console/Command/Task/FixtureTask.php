@@ -1,5 +1,7 @@
 <?php
 /**
+ * The FixtureTask handles creating and updating fixture files.
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

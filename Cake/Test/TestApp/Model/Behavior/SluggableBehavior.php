@@ -1,5 +1,9 @@
 <?php
 /**
+ * Behavior for binding management.
+ *
+ * Behavior to simplify manipulating a model's bindings when doing a find operation
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

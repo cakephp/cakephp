@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP 5
+ * TestSuiteShell test case
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)

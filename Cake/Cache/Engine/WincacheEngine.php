@@ -1,5 +1,9 @@
 <?php
 /**
+ * Wincache storage engine for cache.
+ *
+ * Supports wincache 1.1.0 and higher.
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

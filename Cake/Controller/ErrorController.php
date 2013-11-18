@@ -1,5 +1,9 @@
 <?php
 /**
+ * Error Handling Controller
+ *
+ * Controller used by ErrorHandler to render error views.
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -32,7 +36,7 @@ class ErrorController extends Controller {
 	public $uses = array();
 
 /**
- * __construct
+ * Constructor
  *
  * @param Cake\Network\Request $request
  * @param Cake\Network\Response $response
