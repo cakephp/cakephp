@@ -20,6 +20,7 @@
 
 App::uses('TaskCollection', 'Console');
 App::uses('Shell', 'Console');
+
 /**
  * Extended Task
  */
