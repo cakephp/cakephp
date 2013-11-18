@@ -1,5 +1,9 @@
 <?php
 /**
+ * TestTaskTest file
+ *
+ * Test Case for test generation shell task
+ *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

@@ -1,5 +1,7 @@
 <?php
 /**
+ * Event Manager
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -88,7 +90,7 @@ class EventManager {
  *
  * @param array $options used to set the `priority` flag to the listener. In the future more options may be added.
  * Priorities are handled like queues, and multiple attachments added to the same priority queue will be treated in
- * the order of insertion. 
+ * the order of insertion.
  *
  * @return void
  * @throws InvalidArgumentException When event key is missing or callable is not an

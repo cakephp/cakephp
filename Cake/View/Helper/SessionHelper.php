@@ -2,8 +2,6 @@
 /**
  * Session Helper provides access to the Session in the Views.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

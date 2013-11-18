@@ -1,5 +1,12 @@
 <?php
 /**
+ * Session class for CakePHP.
+ *
+ * CakePHP abstracts the handling of sessions.
+ * There are several convenient methods to access session information.
+ * This class is the implementation of those methods.
+ * They are mostly used by the Session Component.
+ *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

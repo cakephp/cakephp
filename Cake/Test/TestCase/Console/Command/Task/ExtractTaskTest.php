@@ -1,5 +1,9 @@
 <?php
 /**
+ * ExtractTaskTest file
+ *
+ * Test Case for i18n extraction shell task
+ *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

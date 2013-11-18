@@ -4,8 +4,6 @@
  *
  * Use for testing the loading of schema files from plugins.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
