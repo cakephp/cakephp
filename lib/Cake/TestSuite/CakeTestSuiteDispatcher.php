@@ -2,8 +2,6 @@
 /**
  * CakeTestSuiteDispatcher controls dispatching TestSuite web based requests.
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -77,8 +75,7 @@ class CakeTestSuiteDispatcher {
 	protected static $_Reporter = null;
 
 /**
- * constructor
- *
+ * Constructor
  */
 	public function __construct() {
 		$this->_baseUrl = $_SERVER['PHP_SELF'];

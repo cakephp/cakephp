@@ -8,8 +8,6 @@
  * You should also use this file to include any files that provide global functions/constants
  * that your application uses.
  *
- * PHP 5
- *
  * @link          http://cakephp.org CakePHP(tm) Project
  * @package       app.Config
  * @since         CakePHP(tm) v 0.10.8.2117

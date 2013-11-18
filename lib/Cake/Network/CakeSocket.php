@@ -2,8 +2,6 @@
 /**
  * CakePHP Socket connection class.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -331,7 +329,6 @@ class CakeSocket {
 
 /**
  * Destructor, used to disconnect from current connection.
- *
  */
 	public function __destruct() {
 		$this->disconnect();

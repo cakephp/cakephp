@@ -2,8 +2,6 @@
 /**
  * Convenience class for reading, writing and appending to files.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -96,7 +94,6 @@ class File {
 
 /**
  * Closes the current file if it is opened
- *
  */
 	public function __destruct() {
 		$this->close();

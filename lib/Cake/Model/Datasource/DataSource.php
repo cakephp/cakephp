@@ -2,8 +2,6 @@
 /**
  * DataSource base class
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -431,7 +429,6 @@ class DataSource extends Object {
 
 /**
  * Closes the current datasource.
- *
  */
 	public function __destruct() {
 		if ($this->_transactionStarted) {

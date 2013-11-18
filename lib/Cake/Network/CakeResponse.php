@@ -2,8 +2,6 @@
 /**
  * CakeResponse
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -376,7 +374,7 @@ class CakeResponse {
 	protected $_cookies = array();
 
 /**
- * Class constructor
+ * Constructor
  *
  * @param array $options list of parameters to setup the response. Possible values are:
  *	- body: the response text that should be sent to the client
@@ -630,12 +628,12 @@ class CakeResponse {
 /**
  * Queries & sets valid HTTP response codes & messages.
  *
- * @param integer|array $code If $code is an integer, then the corresponding code/message is 
- *        returned if it exists, null if it does not exist. If $code is an array, then the 
- *        keys are used as codes and the values as messages to add to the default HTTP 
- *        codes. The codes must be integers greater than 99 and less than 1000. Keep in 
- *        mind that the HTTP specification outlines that status codes begin with a digit 
- *        between 1 and 5, which defines the class of response the client is to expect. 
+ * @param integer|array $code If $code is an integer, then the corresponding code/message is
+ *        returned if it exists, null if it does not exist. If $code is an array, then the
+ *        keys are used as codes and the values as messages to add to the default HTTP
+ *        codes. The codes must be integers greater than 99 and less than 1000. Keep in
+ *        mind that the HTTP specification outlines that status codes begin with a digit
+ *        between 1 and 5, which defines the class of response the client is to expect.
  *        Example:
  *
  *        httpCodes(404); // returns array(404 => 'Not Found')

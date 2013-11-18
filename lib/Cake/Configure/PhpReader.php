@@ -2,8 +2,6 @@
 /**
  * PhpReader file
  *
- * PHP 5
- *
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License

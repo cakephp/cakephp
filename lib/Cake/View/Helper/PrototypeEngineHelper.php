@@ -5,8 +5,6 @@
  * Provides Prototype specific JavaScript for JsHelper. Requires at least
  * Prototype 1.6
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
