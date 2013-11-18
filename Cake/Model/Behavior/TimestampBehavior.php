@@ -22,9 +22,9 @@ use Cake\ORM\Table;
 class TimestampBehavior extends Behavior {
 
 /**
- * Default settings
+ * Default config
  *
- * These are merged with user-provided settings when the behavior is used.
+ * These are merged with user-provided config when the behavior is used.
  *
  * events - an event-name keyed array of which fields to update, and when, for a given event
  * possible values for when a field will be updated are "always", "new" or "existing", to set
@@ -68,11 +68,11 @@ class TimestampBehavior extends Behavior {
  */
 	public function handleEvent(Event $event, Entity $entity) {
 		$eventName = $event->name();
-		$settings = $this->config();
+		$config = $this->config();
 
 		$new = $entity->isNew() !== false;
 
-		foreach ($settings['events'][$eventName] as $field => $when) {
+		foreach ($config['events'][$eventName] as $field => $when) {
 			if (!in_array($when, ['always', 'new', 'existing'])) {
 				throw new \UnexpectedValueException(
 					__d('cake_dev', 'When should be one of "always", "new" or "existing". The passed value "%s" is invalid', $when)
@@ -83,7 +83,7 @@ class TimestampBehavior extends Behavior {
 				($when === 'new' && $new) ||
 				($when === 'existing' && !$new)
 			) {
-				$this->_updateField($entity, $field, $settings['refreshTimestamp']);
+				$this->_updateField($entity, $field, $config['refreshTimestamp']);
 			}
 		}
 
