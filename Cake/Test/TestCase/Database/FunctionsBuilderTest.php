@@ -16,25 +16,23 @@
  */
 namespace Cake\Test\TestCase\Database;
 
-use Cake\Database\FunctionsTrait;
+use Cake\Database\FunctionsBuilder;
 use Cake\Database\ValueBinder;
 
 /**
- * Tests FunctionsTrait class
+ * Tests FunctionsBuilder class
  *
  **/
-class FunctionsTraitTest extends \Cake\TestSuite\TestCase {
+class FunctionsBuilderTest extends \Cake\TestSuite\TestCase {
 
 /**
- * Setups a mock for FunctionsTrait
+ * Setups a mock for FunctionsBuilder
  *
  * @return void
  */
 	public function setUp() {
 		parent::setUp();
-		$this->functions = $this->getObjectForTrait(
-			'\Cake\Database\FunctionsTrait'
-		);
+		$this->functions = new FunctionsBuilder;
 	}
 
 /**

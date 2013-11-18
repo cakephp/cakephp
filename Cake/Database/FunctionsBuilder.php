@@ -21,9 +21,9 @@ use Cake\Database\Expression\FunctionExpression;
 /**
  * Contains methods related to generating FunctionExpression objects
  * with most commonly used SQL functions.
- * This trait is just a factory for FunctionExpression objects.
+ * This acts as a factory for FunctionExpression objects.
  */
-trait FunctionsTrait {
+class FunctionsBuilder {
 
 /**
  * Returns a new instance of a FunctionExpression. This is used for generating
