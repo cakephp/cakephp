@@ -1389,18 +1389,18 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test getting totals from queries.
+ * Test getting counts from queries.
  *
  * @return void
  */
-	public function testTotal() {
+	public function testCount() {
 		$table = TableRegistry::get('articles');
-		$result = $table->find('all')->total();
+		$result = $table->find('all')->count();
 		$this->assertEquals(3, $result);
 
 		$query = $table->find('all')
 			->where(['id >' => 1]);
-		$result = $query->total();
+		$result = $query->count();
 		$this->assertEquals(2, $result);
 
 		$result = $query->execute();

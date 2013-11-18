@@ -626,8 +626,8 @@ class Query extends DatabaseQuery {
  *
  * @return integer
  */
-	public function total() {
-		$query = $this->select(['count' => $this->count('*')], true)
+	public function count() {
+		$query = $this->select(['count' => $this->func()->count('*')], true)
 			->hydrate(false);
 		$query->mapReduce(null, null, true);
 		return $query->first()['count'];
