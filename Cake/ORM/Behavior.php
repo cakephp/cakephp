@@ -109,7 +109,7 @@ class Behavior implements EventListener {
  *
  * @var array
  */
-	protected $_defaultConfig = [];
+	protected static $_defaultConfig = [];
 
 /**
  * Contains configuration.
@@ -130,7 +130,7 @@ class Behavior implements EventListener {
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
-		$this->_config = $config + $this->_defaultConfig;
+		$this->_config = $config + static::$_defaultConfig;
 	}
 
 /**
