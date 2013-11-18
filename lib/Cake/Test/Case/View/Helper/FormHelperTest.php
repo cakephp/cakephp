@@ -9356,6 +9356,28 @@ class FormHelperTest extends CakeTestCase {
 			'label' => false,
 		);
 		$this->assertEquals($expected, $result);
+		
+		$this->Form->inputDefaults(array(
+			'div' => false,
+			'label' => array(
+				'class' => 'special'
+			)
+		));
+		$result = $this->Form->input('Contact.field1', array(
+			'label' => array(
+				'text' => 'Label'
+			)
+		));
+		$expected = array(
+			'label' => array('for' => 'ContactField1', 'class' => 'special'),
+			'Label',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'data[Contact][field1]',
+				'id' => 'ContactField1'
+			),
+		);
+		$this->assertTags($result, $expected);
 	}
 
 }
