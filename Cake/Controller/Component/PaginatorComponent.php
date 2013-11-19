@@ -188,7 +188,7 @@ class PaginatorComponent extends Component {
 			$count = 0;
 		} else {
 			$parameters = compact('conditions');
-			$count = $object->find($type, array_merge($parameters, $extra))->total();
+			$count = $object->find($type, array_merge($parameters, $extra))->count();
 		}
 
 		$pageCount = intval(ceil($count / $limit));
