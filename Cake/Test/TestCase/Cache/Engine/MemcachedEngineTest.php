@@ -649,7 +649,7 @@ class MemcachedEngineTest extends TestCase {
  */
 	public function testLongDurationEqualToZero() {
 		$memcached = new TestMemcachedEngine();
-		$memcached->_config['compress'] = false;
+		$memcached->init(['compress' => false]);
 
 		$mock = $this->getMock('Memcached');
 		$memcached->setMemcached($mock);
