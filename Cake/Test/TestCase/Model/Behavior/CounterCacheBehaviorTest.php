@@ -27,9 +27,11 @@ use Cake\TestSuite\TestCase;
  * Used for testing counter cache with custom finder
  */
 class PostTable extends Table {
+
 	public function findPublished(Query $query, array $options = []) {
 		return $query->where(['published' => true]);
 	}
+
 }
 
 /**
