@@ -357,7 +357,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * @return array
  */
 	public function jsonSerialize() {
-		return $this->_properties;
+		return $this->toArray();
 	}
 
 /**
