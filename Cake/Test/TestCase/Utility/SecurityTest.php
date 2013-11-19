@@ -138,7 +138,6 @@ class SecurityTest extends TestCase {
 	public function testHashBlowfish() {
 		Security::setCost(10);
 		$test = Security::hash('password', 'blowfish');
-		$this->skipIf(strpos($test, '$2a$') === false, 'Blowfish hashes are incorrect.');
 
 		$_hashType = Security::$hashType;
 
