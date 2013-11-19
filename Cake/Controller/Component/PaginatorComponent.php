@@ -20,8 +20,6 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Error;
 use Cake\ORM\Table;
-use Cake\Model\Model;
-use Cake\Utility\Hash;
 
 /**
  * This component is used to handle automatic model data pagination. The primary way to use this
@@ -29,53 +27,23 @@ use Cake\Utility\Hash;
  *
  * ### Configuring pagination
  *
- * You configure pagination using the PaginatorComponent::$settings. This allows you to configure
- * the default pagination behavior in general or for a specific model. General settings are used when there
- * are no specific model configuration, or the model you are paginating does not have specific settings.
- *
- * {{{
- *	$this->Paginator->settings = array(
- *		'limit' => 20,
- *		'maxLimit' => 100
- *	);
- * }}}
- *
- * The above settings will be used to paginate any model. You can configure model specific settings by
- * keying the settings with the model name.
- *
- * {{{
- *	$this->Paginator->settings = array(
- *		'Post' => array(
- *			'limit' => 20,
- *			'maxLimit' => 100
- *		),
- *		'Comment' => array( ... )
- *	);
- * }}}
- *
- * This would allow you to have different pagination settings for `Comment` and `Post` models.
- *
- * #### Paginating with custom finders
- *
- * You can paginate with any find type defined on your model using the `findType` option.
- *
- * {{{
- * $this->Paginator->settings = array(
- *		'Post' => array(
- *			'findType' => 'popular'
- *		)
- * );
- * }}}
- *
- * Would paginate using the `find('popular')` method.
- *
+ * You configure pagination when calling paginate(). See that method for more details.
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/pagination.html
  */
 class PaginatorComponent extends Component {
 
 /**
- * Pagination settings. These settings control pagination at a general level.
- * You can also define sub arrays for pagination settings for specific models.
+ * The current request instance.
+ *
+ * @var Cake\Network\Request
+ */
+	public $request;
+
+/**
+ * Default pagination settings.
+ *
+ * When calling paginate() these settings will be merged with the configuration
+ * you provide.
  *
  * - `maxLimit` The maximum limit users can choose to view. Defaults to 100
  * - `limit` The initial number of items per page. Defaults to 20.
@@ -83,7 +51,7 @@ class PaginatorComponent extends Component {
  *
  * @var array
  */
-	public $settings = array(
+	protected $_defaultConfig = array(
 		'page' => 1,
 		'limit' => 20,
 		'maxLimit' => 100,
@@ -106,17 +74,64 @@ class PaginatorComponent extends Component {
  * @param ComponentRegistry $collection A ComponentRegistry this component can use to lazy load its components
  * @param array $settings Array of configuration settings.
  */
-	public function __construct(ComponentRegistry $collection, $settings = array()) {
-		$settings = array_merge($this->settings, (array)$settings);
-		$this->Controller = $collection->getController();
+	public function __construct(ComponentRegistry $collection, $settings = []) {
+		$settings = array_merge($this->_defaultConfig, (array)$settings);
+		$this->request = $collection->getController()->request;
 		parent::__construct($collection, $settings);
 	}
 
 /**
  * Handles automatic pagination of model records.
  *
+ * ## Configuring pagination
+ *
+ * When calling `paginate()` you can use the $settings parameter to pass in pagination settings.
+ * These settings are used to build the queries made and control other pagination settings.
+ *
+ * If your settings contain a key with the current table's alias. The data inside that key will be used.
+ * Otherwise the top level configuration will be used.
+ *
+ * {{{
+ *  $settings = array(
+ *    'limit' => 20,
+ *    'maxLimit' => 100
+ *  );
+ *  $results = $paginator->paginate($table, $settings);
+ * }}}
+ *
+ * The above settings will be used to paginate any Table. You can configure Table specific settings by
+ * keying the settings with the Table alias.
+ *
+ * {{{
+ *  $settings = array(
+ *    'Posts' => array(
+ *      'limit' => 20,
+ *      'maxLimit' => 100
+ *    ),
+ *    'Comments' => array( ... )
+ *  );
+ *  $results = $paginator->paginate($table, $settings);
+ * }}}
+ *
+ * This would allow you to have different pagination settings for `Comments` and `Posts` tables.
+ *
+ * #### Paginating with custom finders
+ *
+ * You can paginate with any find type defined on your table using the `findType` option.
+ *
+ * {{{
+ * $settings = array(
+ *   'Post' => array(
+ *     'findType' => 'popular'
+ *   )
+ * );
+ * $results = $paginator->paginate($table, $settings);
+ * }}}
+ *
+ * Would paginate using the `find('popular')` method.
+ *
  * @param Table $object The table to paginate.
- * @param string|array $scope Additional find conditions to use while paginating
+ * @param array $settings The settings/configuration used for pagination.
  * @param array $whitelist List of allowed fields for ordering. This allows you to prevent ordering
  *   on non-indexed, or undesirable columns. See PaginatorComponent::validateSort() for additional details
  *   on how the whitelisting and sort field validation works.
@@ -124,16 +139,10 @@ class PaginatorComponent extends Component {
  * @throws Cake\Error\MissingModelException
  * @throws Cake\Error\NotFoundException
  */
-	public function paginate($object, $scope = array(), $whitelist = array()) {
-		if (is_array($object)) {
-			$whitelist = $scope;
-			$scope = $object;
-			$object = null;
-		}
-
+	public function paginate($object, $settings = array(), $whitelist = array()) {
 		$alias = $object->alias();
 
-		$options = $this->mergeOptions($alias);
+		$options = $this->mergeOptions($alias, $settings);
 		$options = $this->validateSort($object, $options, $whitelist);
 		$options = $this->checkLimit($options);
 
@@ -152,11 +161,6 @@ class PaginatorComponent extends Component {
 		}
 
 		extract($options);
-
-		if (is_array($scope) && !empty($scope)) {
-			$conditions = array_merge($conditions, $scope);
-		}
-
 		$extra = array_diff_key($options, compact(
 			'conditions', 'fields', 'order', 'limit', 'page'
 		));
@@ -177,7 +181,7 @@ class PaginatorComponent extends Component {
 		$results = $query->execute();
 		$numResults = count($results);
 
-		$defaults = $this->getDefaults($alias);
+		$defaults = $this->getDefaults($alias, $settings);
 		unset($defaults[0]);
 
 		if (!$numResults) {
@@ -211,65 +215,14 @@ class PaginatorComponent extends Component {
 			'limit' => $defaults['limit'] != $options['limit'] ? $options['limit'] : null,
 		);
 
-		if (!isset($this->Controller->request['paging'])) {
-			$this->Controller->request['paging'] = array();
+		if (!isset($this->request['paging'])) {
+			$this->request['paging'] = array();
 		}
-		$this->Controller->request['paging'] = array_merge(
-			(array)$this->Controller->request['paging'],
+		$this->request['paging'] = array_merge(
+			(array)$this->request['paging'],
 			array($alias => $paging)
 		);
-
-		if (
-			!in_array('Paginator', $this->Controller->helpers) &&
-			!array_key_exists('Paginator', $this->Controller->helpers)
-		) {
-			$this->Controller->helpers[] = 'Paginator';
-		}
 		return $results;
-	}
-
-/**
- * Get the object pagination will occur on.
- *
- * @param string|Model $object The object you are looking for.
- * @return mixed The model object to paginate on.
- */
-	protected function _getObject($object) {
-		if (is_string($object)) {
-			$assoc = null;
-			if (strpos($object, '.') !== false) {
-				list($object, $assoc) = pluginSplit($object);
-			}
-			if ($assoc && isset($this->Controller->{$object}->{$assoc})) {
-				return $this->Controller->{$object}->{$assoc};
-			}
-			if ($assoc && isset($this->Controller->{$this->Controller->modelClass}->{$assoc})) {
-				return $this->Controller->{$this->Controller->modelClass}->{$assoc};
-			}
-			if (isset($this->Controller->{$object})) {
-				return $this->Controller->{$object};
-			}
-			if (isset($this->Controller->{$this->Controller->modelClass}->{$object})) {
-				return $this->Controller->{$this->Controller->modelClass}->{$object};
-			}
-		}
-		if (empty($object) || $object === null) {
-			if (isset($this->Controller->{$this->Controller->modelClass})) {
-				return $this->Controller->{$this->Controller->modelClass};
-			}
-
-			$className = null;
-			$name = $this->Controller->uses[0];
-			if (strpos($this->Controller->uses[0], '.') !== false) {
-				list($name, $className) = explode('.', $this->Controller->uses[0]);
-			}
-			if ($className) {
-				return $this->Controller->{$className};
-			}
-
-			return $this->Controller->{$name};
-		}
-		return $object;
 	}
 
 /**
@@ -285,11 +238,12 @@ class PaginatorComponent extends Component {
  *
  * @param string $alias Model alias being paginated, if the general settings has a key with this value
  *   that key's settings will be used for pagination instead of the general ones.
+ * @param array $settings The settings to merge with the request data.
  * @return array Array of merged options.
  */
-	public function mergeOptions($alias) {
-		$defaults = $this->getDefaults($alias);
-		$request = $this->Controller->request->query;
+	public function mergeOptions($alias, $settings) {
+		$defaults = $this->getDefaults($alias, $settings);
+		$request = $this->request->query;
 		$request = array_intersect_key($request, array_flip($this->whitelist));
 		return array_merge($defaults, $request);
 	}
@@ -299,12 +253,12 @@ class PaginatorComponent extends Component {
  * will be used.
  *
  * @param string $alias Model name to get default settings for.
+ * @param array $defaults The defaults to use for combining settings.
  * @return array An array of pagination defaults for a model, or the general settings.
  */
-	public function getDefaults($alias) {
-		$defaults = $this->settings;
-		if (isset($this->settings[$alias])) {
-			$defaults = $this->settings[$alias];
+	public function getDefaults($alias, $defaults) {
+		if (isset($defaults[$alias])) {
+			$defaults = $defaults[$alias];
 		}
 		if (isset($defaults['limit']) &&
 			(empty($defaults['maxLimit']) || $defaults['limit'] > $defaults['maxLimit'])

@@ -843,34 +843,35 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * test that using Controller::paginate() falls back to PaginatorComponent
+ * test using Controller::paginate()
  *
  * @return void
  */
-	public function testPaginateBackwardsCompatibility() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+	public function testPaginate() {
 		$request = new Request('controller_posts/index');
 		$request->params['pass'] = array();
 		$response = $this->getMock('Cake\Network\Response', ['httpCodes']);
 
 		$Controller = new Controller($request, $response);
-		$Controller->uses = ['Post', 'Comment'];
-		$Controller->passedArgs[] = '1';
 		$Controller->request->query['url'] = [];
 		$Controller->constructClasses();
 		$expected = ['page' => 1, 'limit' => 20, 'maxLimit' => 100];
 		$this->assertEquals($expected, $Controller->paginate);
 
-		$results = Hash::extract($Controller->paginate('Post'), '{n}.Post.id');
-		$this->assertEquals([1, 2, 3], $results);
+		$this->assertNotContains('Paginator', $Controller->helpers);
+		$this->assertArrayNotHasKey('Paginator', $Controller->helpers);
+
+		$results = $Controller->paginate('Posts');
+		$this->assertContains('Paginator', $Controller->helpers, 'Paginator should be added.');
+		$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 
 		$Controller->paginate = array('limit' => '1');
 		$this->assertEquals(array('limit' => '1'), $Controller->paginate);
-		$Controller->paginate('Post');
-		$this->assertSame($Controller->request->params['paging']['Post']['page'], 1);
-		$this->assertSame($Controller->request->params['paging']['Post']['pageCount'], 3);
-		$this->assertSame($Controller->request->params['paging']['Post']['prevPage'], false);
-		$this->assertSame($Controller->request->params['paging']['Post']['nextPage'], true);
+		$Controller->paginate('Posts');
+		$this->assertSame($Controller->request->params['paging']['Posts']['page'], 1);
+		$this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 3);
+		$this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], false);
+		$this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], true);
 	}
 
 /**

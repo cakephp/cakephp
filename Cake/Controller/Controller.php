@@ -22,6 +22,7 @@ use Cake\Error;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
+use Cake\ORM\TableRegistry;
 use Cake\Network\Request;
 use Cake\Network\Response;
 use Cake\Routing\RequestActionTrait;
@@ -916,17 +917,34 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Handles automatic pagination of model records.
+ * Handles pagination of records in Table objects.
  *
- * @param Model|string $object Model to paginate (e.g: model instance, or 'Model', or 'Model.InnerModel')
- * @param string|array $scope Conditions to use while paginating
- * @param array $whitelist List of allowed options for paging
- * @return array Model query results
- * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::paginate
- * @deprecated Will be removed in 3.0. Use PaginatorComponent instead.
+ * Will load the referenced Table object, and have the PaginatorComponent
+ * paginate the query using the request date and settings defined in `$this->paginate`.
+ *
+ * This method will also make the PaginatorHelper available in the view.
+ *
+ * @param Table|string $object Table to paginate (e.g: Table instance, or 'Model')
+ * @param array $whitelist List of allowed options for paging. Use this list to
+ *   disable certain URL parameters 
+ * @return ORM\ResultSet Query results
+ * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::paginate
  */
-	public function paginate($object = null, $scope = array(), $whitelist = array()) {
-		return $this->Components->load('Paginator', $this->paginate)->paginate($object, $scope, $whitelist);
+	public function paginate($object = null, $whitelist = []) {
+		if (is_string($object)) {
+			$object = TableRegistry::get($object);
+		}
+		if (empty($object)) {
+			$object = TableRegistry::get($this->modelClass);
+		}
+		$this->Paginator = $this->Components->load('Paginator');
+		if (
+			!in_array('Paginator', $this->helpers) &&
+			!array_key_exists('Paginator', $this->helpers)
+		) {
+			$this->helpers[] = 'Paginator';
+		}
+		return $this->Paginator->paginate($object, $this->paginate, $whitelist);
 	}
 
 /**
