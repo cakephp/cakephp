@@ -104,11 +104,35 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator->validatePresence('title', false);
 		$this->assertFalse($validator->field('title')->isPresenceRequired());
 
-		$validator->validatePresence('title', 'created');
-		$this->assertEquals('created', $validator->field('title')->isPresenceRequired());
+		$validator->validatePresence('title', 'create');
+		$this->assertEquals('create', $validator->field('title')->isPresenceRequired());
 
-		$validator->validatePresence('title', 'updated');
-		$this->assertEquals('updated', $validator->field('title')->isPresenceRequired());
+		$validator->validatePresence('title', 'update');
+		$this->assertEquals('update', $validator->field('title')->isPresenceRequired());
+	}
+
+/**
+ * Tests the isPresenceRequired method
+ *
+ * @return void
+ */
+	public function testIsPresenceRequired() {
+		$validator = new Validator;
+		$this->assertSame($validator, $validator->validatePresence('title'));
+		$this->assertTrue($validator->isPresenceRequired('title', true));
+		$this->assertTrue($validator->isPresenceRequired('title', false));
+
+		$validator->validatePresence('title', false);
+		$this->assertFalse($validator->isPresenceRequired('title', true));
+		$this->assertFalse($validator->isPresenceRequired('title', false));
+
+		$validator->validatePresence('title', 'create');
+		$this->assertTrue($validator->isPresenceRequired('title', true));
+		$this->assertFalse($validator->isPresenceRequired('title', false));
+
+		$validator->validatePresence('title', 'update');
+		$this->assertTrue($validator->isPresenceRequired('title', false));
+		$this->assertFalse($validator->isPresenceRequired('title', true));
 	}
 
 /**
@@ -148,6 +172,31 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator->allowEmpty('title', 'updated');
 		$this->assertEquals('updated', $validator->field('title')->isEmptyAllowed());
 	}
+
+/**
+ * Tests the isEmptyAllowed method
+ *
+ * @return void
+ */
+	public function testIsEmptyAllowed() {
+		$validator = new Validator;
+		$this->assertSame($validator, $validator->allowEmpty('title'));
+		$this->assertTrue($validator->isEmptyAllowed('title', true));
+		$this->assertTrue($validator->isEmptyAllowed('title', false));
+
+		$validator->allowEmpty('title', false);
+		$this->assertFalse($validator->isEmptyAllowed('title', true));
+		$this->assertFalse($validator->isEmptyAllowed('title', false));
+
+		$validator->allowEmpty('title', 'create');
+		$this->assertTrue($validator->isEmptyAllowed('title', true));
+		$this->assertFalse($validator->isEmptyAllowed('title', false));
+
+		$validator->allowEmpty('title', 'update');
+		$this->assertTrue($validator->isEmptyAllowed('title', false));
+		$this->assertFalse($validator->isEmptyAllowed('title', true));
+	}
+
 
 /**
  * Tests errors generated when a field is not allowed to be empty

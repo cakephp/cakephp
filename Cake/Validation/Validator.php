@@ -300,6 +300,30 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
+ * Returns whether or not a field can be left empty for a new or already existing
+ * record.
+ *
+ * @param string field
+ * @param boolean $newRecord whether the data to be validated is new or to be updated.
+ * @return boolean
+ */
+	public function isEmptyAllowed($field, $newRecord) {
+		return $this->_canBeEmpty($this->field($field), $newRecord);
+	}
+
+/**
+ * Returns whether or not a field can be left out for a new or already existing
+ * record.
+ *
+ * @param string field
+ * @param boolean $newRecord whether the data to be validated is new or to be updated.
+ * @return boolean
+ */
+	public function isPresenceRequired($field, $newRecord) {
+		return !$this->_checkPresence($this->field($field), $newRecord);
+	}
+
+/**
  * Returns false if any validation for the passed rule set should be stopped
  * due to the field missing in the data array
  *
