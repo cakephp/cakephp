@@ -142,6 +142,9 @@ class PaginatorComponent extends Component {
 		$alias = $object->alias();
 
 		$options = $this->mergeOptions($alias, $settings);
+
+		// TODO perhaps move this until after the query has been created.
+		// Then we could look at the fields in the query.
 		$options = $this->validateSort($object, $options, $whitelist);
 		$options = $this->checkLimit($options);
 
@@ -176,6 +179,8 @@ class PaginatorComponent extends Component {
 
 		$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
 		$query = $object->find($type, array_merge($parameters, $extra));
+
+		// TODO Validate sort and apply them here.
 
 		$results = $query->execute();
 		$numResults = count($results);
@@ -310,6 +315,8 @@ class PaginatorComponent extends Component {
 		if (!empty($options['order']) && is_array($options['order'])) {
 			$tableAlias = $object->alias();
 			$order = array();
+
+			// TODO Remove associated field checks and rely on the whitelist.
 			foreach ($options['order'] as $key => $value) {
 				$field = $key;
 				$alias = $tableAlias;
