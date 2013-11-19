@@ -64,7 +64,7 @@ abstract class CacheEngine {
  * Initialize the cache engine
  *
  * Called automatically by the cache frontend. Merge the runtime config with the defaults
- * for the specific cache engine, and the general defaults before use
+ * before use.
  *
  * @param array $config Associative array of parameters for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
