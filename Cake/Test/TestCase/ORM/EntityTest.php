@@ -605,6 +605,8 @@ class EntityTest extends TestCase {
 
 /**
  * Test toArray recursive.
+ *
+ * @return void
  */
 	public function testToArrayRecursive() {
 		$data = ['id' => 1, 'name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
@@ -628,6 +630,22 @@ class EntityTest extends TestCase {
 			]
 		];
 		$this->assertEquals($expected, $user->toArray());
+	}
+
+/**
+ * Test that get accessors are called when converting to arrays.
+ *
+ * @return void
+ */
+	public function testToArrayWithAccessor() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->set(['name' => 'Mark', 'email' => 'mark@example.com']);
+		$entity->expects($this->any())
+			->method('getName')
+			->will($this->returnValue('Jose'));
+
+		$expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
+		$this->assertEquals($expected, $entity->toArray());
 	}
 
 }
