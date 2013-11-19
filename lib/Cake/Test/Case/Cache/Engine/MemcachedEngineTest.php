@@ -285,7 +285,7 @@ class MemcachedEngineTest extends CakeTestCase {
 		);
 
 		$this->setExpectedException(
-			'CacheException', 'Memcached extension is not compiled with msgpack support'
+			'CacheException', 'msgpack is not a valid serializer engine for Memcached'
 		);
 		$Memcached->init($settings);
 	}
