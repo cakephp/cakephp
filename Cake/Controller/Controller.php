@@ -931,11 +931,15 @@ class Controller extends Object implements EventListener {
  * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::paginate
  */
 	public function paginate($object = null, $whitelist = []) {
-		if (is_string($object)) {
-			$object = TableRegistry::get($object);
+		$try = [$object, $this->modelClass];
+		if (isset($this->uses[0])) {
+			$try[] = $this->uses[0];
 		}
-		if (empty($object)) {
-			$object = TableRegistry::get($this->modelClass);
+		foreach ($try as $tableName) {
+			if (!empty($tableName)) {
+				$table = TableRegistry::get($tableName);
+				break;
+			}
 		}
 		$this->Paginator = $this->Components->load('Paginator');
 		if (
@@ -944,7 +948,7 @@ class Controller extends Object implements EventListener {
 		) {
 			$this->helpers[] = 'Paginator';
 		}
-		return $this->Paginator->paginate($object, $this->paginate, $whitelist);
+		return $this->Paginator->paginate($table, $this->paginate, $whitelist);
 	}
 
 /**

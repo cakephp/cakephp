@@ -862,16 +862,32 @@ class ControllerTest extends TestCase {
 		$this->assertArrayNotHasKey('Paginator', $Controller->helpers);
 
 		$results = $Controller->paginate('Posts');
-		$this->assertContains('Paginator', $Controller->helpers, 'Paginator should be added.');
 		$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
+		$this->assertContains('Paginator', $Controller->helpers, 'Paginator should be added.');
 
-		$Controller->paginate = array('limit' => '1');
-		$this->assertEquals(array('limit' => '1'), $Controller->paginate);
-		$Controller->paginate('Posts');
 		$this->assertSame($Controller->request->params['paging']['Posts']['page'], 1);
-		$this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 3);
+		$this->assertSame($Controller->request->params['paging']['Posts']['pageCount'], 1);
 		$this->assertSame($Controller->request->params['paging']['Posts']['prevPage'], false);
-		$this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], true);
+		$this->assertSame($Controller->request->params['paging']['Posts']['nextPage'], false);
+	}
+
+/**
+ * test that paginate uses modelClass property.
+ *
+ * @return void
+ */
+	public function testPaginateUsesModelClass() {
+		$request = new Request('controller_posts/index');
+		$request->params['pass'] = array();
+		$response = $this->getMock('Cake\Network\Response', ['httpCodes']);
+
+		$Controller = new Controller($request, $response);
+		$Controller->request->query['url'] = [];
+		$Controller->constructClasses();
+		$Controller->modelClass = 'Posts';
+		$results = $Controller->paginate();
+
+		$this->assertInstanceOf('Cake\ORM\ResultSet', $results);
 	}
 
 /**
