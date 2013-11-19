@@ -843,6 +843,7 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
+
 		if (!$className) {
 			return false;
 		}
@@ -1128,7 +1129,7 @@ class Model extends Object implements CakeEventListener {
 
 		if (method_exists($db, 'listSources')) {
 			$restore = $db->cacheSources;
-			$db->cacheSources = $this->cacheSources;
+			$db->cacheSources = ($restore && $this->cacheSources);
 			$sources = $db->listSources();
 			$db->cacheSources = $restore;
 
