@@ -1081,30 +1081,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests saving only a few fields in an entity when an fieldList
- * is passed to save
- *
- * @group save
- * @return void
- */
-	public function testSaveWithFieldList() {
-		$entity = new \Cake\ORM\Entity([
-			'username' => 'superuser',
-			'password' => 'root',
-			'created' => new \DateTime('2013-10-10 00:00'),
-			'updated' => new \DateTime('2013-10-10 00:00')
-		]);
-		$table = TableRegistry::get('users');
-		$fieldList = ['fieldList' => ['username', 'created', 'updated']];
-		$this->assertSame($entity, $table->save($entity, $fieldList));
-		$this->assertEquals($entity->id, self::$nextUserId);
-
-		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
-		$entity->set('password', null);
-		$this->assertEquals($entity->toArray(), $row->toArray());
-	}
-
-/**
  * Tests that it is possible to modify data from the beforeSave callback
  *
  * @group save
@@ -1143,10 +1119,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'updated' => new \DateTime('2013-10-10 00:00')
 		]);
 		$listener1 = function($e, $entity, $options) {
-			$options['fieldList'][] = 'created';
+			$options['crazy'] = true;
 		};
 		$listener2 = function($e, $entity, $options) {
-			$options['fieldList'][] = 'updated';
+			$this->assertTrue($options['crazy']);
 		};
 		$table->getEventManager()->attach($listener1, 'Model.beforeSave');
 		$table->getEventManager()->attach($listener2, 'Model.beforeSave');
@@ -1154,8 +1130,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($data->id, self::$nextUserId);
 
 		$row = $table->find('all')->where(['id' => self::$nextUserId])->first();
-		$data->set('username', null);
-		$data->set('password', null);
 		$this->assertEquals($data->toArray(), $row->toArray());
 	}
 
