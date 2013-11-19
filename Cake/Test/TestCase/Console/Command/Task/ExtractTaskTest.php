@@ -127,23 +127,23 @@ class ExtractTaskTest extends TestCase {
 		$this->assertRegExp($pattern, $result);
 
 		// extract.ctp
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:15;6\n';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:\d+;\d+\n';
 		$pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/msgid "You have %d new message."\nmsgstr ""/';
 		$this->assertNotRegExp($pattern, $result, 'No duplicate msgid');
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:7\n';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
 		$pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:126\n';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:\d+\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:22\nmsgid "';
+		$pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\nmsgid "';
 		$pattern .= 'Hot features!';
 		$pattern .= '\\\n - No Configuration: Set-up the database and let the magic begin';
 		$pattern .= '\\\n - Extremely Simple: Just look at the name...It\'s Cake';
@@ -190,8 +190,7 @@ class ExtractTaskTest extends TestCase {
 
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
-		$pattern = '/\#: .*extract\.ctp:31\n/';
-		$this->assertNotRegExp($pattern, $result);
+		$this->assertNotContains('You have a new message (category: LC_TIME).', $result);
 	}
 
 /**
@@ -214,10 +213,10 @@ class ExtractTaskTest extends TestCase {
 		$this->assertTrue(file_exists($this->path . DS . 'default.pot'));
 		$result = file_get_contents($this->path . DS . 'default.pot');
 
-		$pattern = '/\#: .*extract\.ctp:6\n/';
+		$pattern = '/\#: .*extract\.ctp:\d+\n/';
 		$this->assertNotRegExp($pattern, $result);
 
-		$pattern = '/\#: .*default\.ctp:26\n/';
+		$pattern = '/\#: .*default\.ctp:\d+\n/';
 		$this->assertNotRegExp($pattern, $result);
 	}
 
@@ -292,7 +291,7 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->execute();
 		$result = file_get_contents($this->path . DS . 'default.pot');
 		$this->assertNotRegExp('#Pages#', $result);
-		$this->assertContains('translate.ctp:1', $result);
+		$this->assertRegExp('/translate\.ctp:\d+/', $result);
 		$this->assertContains('This is a translatable string', $result);
 		$this->assertContains('I can haz plugin model validation message', $result);
 	}
