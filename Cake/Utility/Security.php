@@ -210,10 +210,10 @@ class Security {
 	protected static function _crypt($password, $salt = false) {
 		if ($salt === false) {
 			$salt = static::_salt(22);
-			$salt = vsprintf('$2a$%02d$%s', array(static::$hashCost, $salt));
+			$salt = vsprintf('$2y$%02d$%s', array(static::$hashCost, $salt));
 		}
 
-		if ($salt === true || strpos($salt, '$2a$') !== 0 || strlen($salt) < 29) {
+		if ($salt === true || strpos($salt, '$2y$') !== 0 || strlen($salt) < 29) {
 			throw new Error\Exception(__d(
 				'cake_dev',
 				'Invalid salt: %s for %s Please visit http://www.php.net/crypt and read the appropriate section for building %s salts.',
