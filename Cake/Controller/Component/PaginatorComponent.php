@@ -1,7 +1,5 @@
 <?php
 /**
- * Paginator Component
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -28,6 +26,7 @@ use Cake\ORM\Table;
  * ### Configuring pagination
  *
  * You configure pagination when calling paginate(). See that method for more details.
+ *
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/pagination.html
  */
 class PaginatorComponent extends Component {
