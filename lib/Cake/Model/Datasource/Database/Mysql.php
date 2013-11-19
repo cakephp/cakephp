@@ -350,7 +350,7 @@ class Mysql extends DboSource {
 				'length' => $this->length($column->Type)
 			);
 			if (in_array($fields[$column->Field]['type'], $this->fieldParameters['unsigned']['types'], true)) {
-				$fields[$column->Field]['unsigned'] = $this->unsigned($column->Type);
+				$fields[$column->Field]['unsigned'] = $this->_unsigned($column->Type);
 			}
 			if (!empty($column->Key) && isset($this->index[$column->Key])) {
 				$fields[$column->Field]['key'] = $this->index[$column->Key];
@@ -786,16 +786,6 @@ class Mysql extends DboSource {
 	}
 
 /**
- * Check if column type is unsigned
- *
- * @param string $real Real database-layer column type (i.e. "varchar(255)")
- * @return bool True if column is unsigned, false otherwise
- */
-	public function unsigned($real) {
-		return strpos(strtolower($real), 'unsigned') !== false;
-	}
-
-/**
  * Gets the schema name
  *
  * @return string The schema name
@@ -811,6 +801,16 @@ class Mysql extends DboSource {
  */
 	public function nestedTransactionSupported() {
 		return $this->useNestedTransactions && version_compare($this->getVersion(), '4.1', '>=');
+	}
+
+/**
+ * Check if column type is unsigned
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return bool True if column is unsigned, false otherwise
+ */
+	protected function _unsigned($real) {
+		return strpos(strtolower($real), 'unsigned') !== false;
 	}
 
 }
