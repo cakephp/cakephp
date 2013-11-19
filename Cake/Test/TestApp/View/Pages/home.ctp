@@ -67,7 +67,8 @@ endif;
 </p>
 <p>
 	<?php
-		$settings = Cache::settings('_cake_model_');
+		$engine = Cache::engine('_cake_model_');
+		$settings = $engine ? $engine->config() : false;
 		if (!empty($settings)):
 			echo '<span class="notice success">';
 				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/cache.php', '<em>'. $settings['engine'] . 'Engine</em>');
