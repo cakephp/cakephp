@@ -224,7 +224,7 @@ class MemcachedEngineTest extends CakeTestCase {
  */
 	public function testMsgpackSerializerSetting() {
 		$this->skipIf(
-			!Memcached::HAVE_MSGPACK,
+			!defined('Memcached::HAVE_MSGPACK') || !Memcached::HAVE_MSGPACK,
 			'Memcached extension is not compiled with msgpack support'
 		);
 
@@ -272,7 +272,7 @@ class MemcachedEngineTest extends CakeTestCase {
  */
 	public function testMsgpackSerializerThrowException() {
 		$this->skipIf(
-			Memcached::HAVE_MSGPACK,
+			defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK,
 			'Memcached extension is compiled with msgpack support'
 		);
 
