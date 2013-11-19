@@ -843,7 +843,6 @@ class Model extends Object implements CakeEventListener {
 			}
 		}
 
-
 		if (!$className) {
 			return false;
 		}
