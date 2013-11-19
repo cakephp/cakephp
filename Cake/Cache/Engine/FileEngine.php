@@ -62,7 +62,7 @@ class FileEngine extends CacheEngine {
  *
  * @var array
  */
-	protected static $_defaultConfig = [
+	protected $_defaultConfig = [
 		'duration' => 3600,
 		'groups' => [],
 		'isWindows' => false,

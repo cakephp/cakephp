@@ -45,7 +45,7 @@ abstract class CacheEngine {
  *
  * @var array
  */
-	protected static $_defaultConfig = [
+	protected $_defaultConfig = [
 		'duration' => 3600,
 		'groups' => [],
 		'prefix' => 'cake_',
@@ -70,7 +70,7 @@ abstract class CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($config = []) {
-		$config += $this->_config + static::$_defaultConfig;
+		$config += $this->_config + $this->_defaultConfig;
 		$this->_config = $config;
 		if (!empty($this->_config['groups'])) {
 			sort($this->_config['groups']);

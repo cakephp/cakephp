@@ -62,7 +62,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @var array
  */
-	protected static $_defaultConfig = [
+	protected $_defaultConfig = [
 		'compress' => false,
 		'duration' => 3600,
 		'groups' => [],

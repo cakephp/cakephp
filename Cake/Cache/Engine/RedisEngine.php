@@ -49,7 +49,7 @@ class RedisEngine extends CacheEngine {
  *
  * @var array
  */
-	protected static $_defaultConfig = [
+	protected $_defaultConfig = [
 		'database' => 0,
 		'duration' => 3600,
 		'groups' => [],
