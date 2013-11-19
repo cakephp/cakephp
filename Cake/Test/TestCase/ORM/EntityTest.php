@@ -430,7 +430,7 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testExtract() {
-		$entity = new \Cake\ORM\Entity([
+		$entity = new Entity([
 			'id' => 1,
 			'title' => 'Foo',
 			'author_id' => 3
@@ -454,7 +454,7 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testDirty() {
-		$entity = new \Cake\ORM\Entity([
+		$entity = new Entity([
 			'id' => 1,
 			'title' => 'Foo',
 			'author_id' => 3
@@ -476,7 +476,7 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testDirtyChangingProperties() {
-		$entity = new \Cake\ORM\Entity([
+		$entity = new Entity([
 			'title' => 'Foo',
 		]);
 		$entity->dirty('title', false);
@@ -498,7 +498,7 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testExtractDirty() {
-		$entity = new \Cake\ORM\Entity([
+		$entity = new Entity([
 			'id' => 1,
 			'title' => 'Foo',
 			'author_id' => 3
@@ -516,7 +516,7 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testClean() {
-		$entity = new \Cake\ORM\Entity([
+		$entity = new Entity([
 			'id' => 1,
 			'title' => 'Foo',
 			'author_id' => 3
@@ -537,7 +537,7 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testIsNew() {
-		$entity = new \Cake\ORM\Entity([
+		$entity = new Entity([
 			'id' => 1,
 			'title' => 'Foo',
 			'author_id' => 3
@@ -589,6 +589,63 @@ class EntityTest extends TestCase {
 			->getMock();
 		$entity->expects($this->once())->method('isNew');
 		$entity->__construct(['a' => 'b', 'c' => 'd'], ['markNew' => true]);
+	}
+
+/**
+ * Test toArray method.
+ *
+ * @return void
+ */
+	public function testToArray() {
+		$data = ['name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
+		$entity = new Entity($data);
+
+		$this->assertEquals($data, $entity->toArray());
+	}
+
+/**
+ * Test toArray recursive.
+ *
+ * @return void
+ */
+	public function testToArrayRecursive() {
+		$data = ['id' => 1, 'name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
+		$user = new Entity($data);
+		$comments = [
+			new Entity(['user_id' => 1, 'body' => 'Comment 1']),
+			new Entity(['user_id' => 1, 'body' => 'Comment 2']),
+		];
+		$user->comments = $comments;
+		$user->profile = new Entity(['email' => 'mark@example.com']);
+
+		$expected = [
+			'id' => 1,
+			'name' => 'James',
+			'age' => 20,
+			'phones' => ['123', '457'],
+			'profile' => ['email' => 'mark@example.com'],
+			'comments' => [
+				['user_id' => 1, 'body' => 'Comment 1'],
+				['user_id' => 1, 'body' => 'Comment 2'],
+			]
+		];
+		$this->assertEquals($expected, $user->toArray());
+	}
+
+/**
+ * Test that get accessors are called when converting to arrays.
+ *
+ * @return void
+ */
+	public function testToArrayWithAccessor() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->set(['name' => 'Mark', 'email' => 'mark@example.com']);
+		$entity->expects($this->any())
+			->method('getName')
+			->will($this->returnValue('Jose'));
+
+		$expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
+		$this->assertEquals($expected, $entity->toArray());
 	}
 
 }
