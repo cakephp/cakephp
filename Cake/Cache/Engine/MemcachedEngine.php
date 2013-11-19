@@ -40,35 +40,39 @@ class MemcachedEngine extends CacheEngine {
 	protected $_Memcached = null;
 
 /**
- * Settings
- *
- *  - servers = string or array of memcached servers, default => 127.0.0.1. If an
- *    array MemcacheEngine will use them as a pool.
- *  - compress = boolean, default => false
- *  - persistent = string The name of the persistent connection. All configurations using
- *    the same persistent value will share a single underlying connection.
- *  - serialize = string, default => php. The serializer engine used to serialize data.
- *    Available engines are php, igbinary and json. Beside php, the memcached extension
- *    must be compiled with the appropriate serializer support.
- *
- * @var array
- */
-	protected $_config = [];
-
-/**
- * Default config
- *
  * The defaults used unless overriden by runtime configuration
+ *
+ * - `compress` Whether to compress data
+ * - `duration` Specify how long items in this cache configuration last.
+ * - `groups` List of groups or 'tags' associated to every key stored in this config.
+ *    handy for deleting a complete group from cache.
+ * - `login` Login to access the Memcache server
+ * - `password` Password to access the Memcache server
+ * - `persistent` The name of the persistent connection. All configurations using
+ *    the same persistent value will share a single underlying connection.
+ * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
+ *    with either another cache config or another application.
+ * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
+ *    cache::gc from ever being called automatically.
+ * - `serialize` The serializer engine used to serialize data. Available engines are php,
+ *    igbinary and json. Beside php, the memcached extension must be compiled with the
+ *    appropriate serializer support.
+ * - `servers` String or array of memcached servers. If an array MemcacheEngine will use
+ *    them as a pool.
  *
  * @var array
  */
 	protected static $_defaultConfig = [
-		'servers' => ['127.0.0.1'],
 		'compress' => false,
-		'persistent' => false,
+		'duration' => 3600,
+		'groups' => [],
 		'login' => null,
 		'password' => null,
-		'serialize' => 'php'
+		'persistent' => false,
+		'prefix' => 'cake_',
+		'probability' => 100,
+		'serialize' => 'php',
+		'servers' => ['127.0.0.1'],
 	];
 
 /**

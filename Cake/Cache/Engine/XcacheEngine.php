@@ -28,22 +28,25 @@ use Cake\Cache\CacheEngine;
 class XcacheEngine extends CacheEngine {
 
 /**
- * Settings
+ * The defaults used unless overriden by runtime configuration
  *
- *  - PHP_AUTH_USER = xcache.admin.user, default cake
- *  - PHP_AUTH_PW = xcache.admin.password, default cake
- *
- * @var array
- */
-	protected $_config = [];
-
-/**
- * Default config
+ * - `duration` Specify how long items in this cache configuration last.
+ * - `groups` List of groups or 'tags' associated to every key stored in this config.
+ *    handy for deleting a complete group from cache.
+ * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
+ *    with either another cache config or another application.
+ * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
+ *    cache::gc from ever being called automatically.
+ * - `PHP_AUTH_USER` xcache.admin.user
+ * - `PHP_AUTH_PW` xcache.admin.password
  *
  * @var array
  */
 	protected static $_defaultConfig = [
+		'duration' => 3600,
+		'groups' => [],
 		'prefix' => null,
+		'probability' => 100,
 		'PHP_AUTH_USER' => 'user',
 		'PHP_AUTH_PW' => 'password'
 	];
@@ -192,7 +195,7 @@ class XcacheEngine extends CacheEngine {
 	protected function _auth($reverse = false) {
 		static $backup = [];
 		$keys = ['PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password'];
-		foreach ($keys as $key => $setting) {
+		foreach ($keys as $key => $value) {
 			if ($reverse) {
 				if (isset($backup[$key])) {
 					$_SERVER[$key] = $backup[$key];
@@ -205,8 +208,8 @@ class XcacheEngine extends CacheEngine {
 				if (!empty($value)) {
 					$backup[$key] = $value;
 				}
-				if (!empty($this->_config[$setting])) {
-					$_SERVER[$key] = $this->_config[$setting];
+				if (!empty($this->_config[$value])) {
+					$_SERVER[$key] = $this->_config[$value];
 				} elseif (!empty($this->_config[$key])) {
 					$_SERVER[$key] = $this->_config[$key];
 				} else {

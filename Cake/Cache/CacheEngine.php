@@ -23,25 +23,33 @@ use Cake\Utility\Inflector;
 abstract class CacheEngine {
 
 /**
- * Settings of current engine instance
+ * Runtime config
+ *
+ * This is the config of a particular instance
  *
  * @var array
  */
 	protected $_config = [];
 
 /**
- * Default configuration
+ * The default cache configuration is overriden in most cache adapters. These are
+ * the keys that are common to all adapters. If overriden, this property is not used.
  *
- * These settings apply to all cache engines, and can be overriden by a specific cache
- * engine or runtime config
+ * - `duration` Specify how long items in this cache configuration last.
+ * - `groups` List of groups or 'tags' associated to every key stored in this config.
+ *    handy for deleting a complete group from cache.
+ * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
+ *    with either another cache config or another application.
+ * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
+ *    cache::gc from ever being called automatically.
  *
  * @var array
  */
 	protected static $_defaultConfig = [
-		'prefix' => 'cake_',
 		'duration' => 3600,
-		'probability' => 100,
-		'groups' => []
+		'groups' => [],
+		'prefix' => 'cake_',
+		'probability' => 100
 	];
 
 /**
@@ -62,7 +70,7 @@ abstract class CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($config = []) {
-		$config += $this->_config + static::$_defaultConfig + self::$_defaultConfig;
+		$config += $this->_config + static::$_defaultConfig;
 		$this->_config = $config;
 		if (!empty($this->_config['groups'])) {
 			sort($this->_config['groups']);
