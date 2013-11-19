@@ -60,6 +60,7 @@ class MemcachedEngine extends CacheEngine {
 	protected $_serializers = array(
 		'igbinary' => Memcached::SERIALIZER_IGBINARY,
 		'json' => Memcached::SERIALIZER_JSON,
+		'msgpack' => Memcached::SERIALIZER_MSGPACK,
 		'php' => Memcached::SERIALIZER_PHP
 	);
 
