@@ -273,12 +273,25 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * Returns an array with all the properties that have been set
  * to this entity
  *
+ * This method will recursively transform entities assigned to properties
+ * into arrays as well.
+ *
  * @return array
  */
 	public function toArray() {
 		$result = [];
 		foreach ($this->_properties as $property => $value) {
-			$result[$property] = $this->get($property);
+			$value = $this->get($property);
+			if (is_array($value) && isset($value[0]) && $value[0] instanceof self) {
+				$result[$property] = [];
+				foreach ($value as $k => $entity) {
+					$result[$property][$k] = $entity->toArray();
+				}
+			} elseif ($value instanceof self) {
+				$result[$property] = $value->toArray();
+			} else {
+				$result[$property] = $value;
+			}
 		}
 		return $result;
 	}
