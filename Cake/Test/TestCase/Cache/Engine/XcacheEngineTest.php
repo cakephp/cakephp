@@ -47,13 +47,13 @@ class XcacheEngineTest extends TestCase {
  *
  * @return void
  */
-	protected function _configCache($settings = []) {
+	protected function _configCache($config = []) {
 		$defaults = [
 			'className' => 'Xcache',
 			'prefix' => 'cake_',
 		];
 		Cache::drop('xcache');
-		Cache::config('xcache', array_merge($defaults, $settings));
+		Cache::config('xcache', array_merge($defaults, $config));
 	}
 
 /**
@@ -68,22 +68,22 @@ class XcacheEngineTest extends TestCase {
 	}
 
 /**
- * testSettings method
+ * testConfig method
  *
  * @return void
  */
-	public function testSettings() {
-		$settings = Cache::settings();
+	public function testConfig() {
+		$config = Cache::engine('xcache')->config();
 		$expecting = [
 			'prefix' => 'cake_',
 			'duration' => 3600,
 			'probability' => 100,
 		];
-		$this->assertTrue(isset($settings['PHP_AUTH_USER']));
-		$this->assertTrue(isset($settings['PHP_AUTH_PW']));
+		$this->assertTrue(isset($config['PHP_AUTH_USER']));
+		$this->assertTrue(isset($config['PHP_AUTH_PW']));
 
-		unset($settings['PHP_AUTH_USER'], $settings['PHP_AUTH_PW']);
-		$this->assertEquals($settings, $expecting);
+		unset($config['PHP_AUTH_USER'], $config['PHP_AUTH_PW']);
+		$this->assertEquals($config, $expecting);
 	}
 
 /**

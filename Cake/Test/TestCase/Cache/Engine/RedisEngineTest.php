@@ -55,23 +55,23 @@ class RedisEngineTest extends TestCase {
  *
  * @return void
  */
-	protected function _configCache($settings = []) {
+	protected function _configCache($config = []) {
 		$defaults = [
 			'className' => 'Redis',
 			'prefix' => 'cake_',
 			'duration' => 3600
 		];
 		Cache::drop('redis');
-		Cache::config('redis', array_merge($defaults, $settings));
+		Cache::config('redis', array_merge($defaults, $config));
 	}
 
 /**
- * testSettings method
+ * testConfig method
  *
  * @return void
  */
-	public function testSettings() {
-		$settings = Cache::settings('redis');
+	public function testConfig() {
+		$config = Cache::engine('redis')->config();
 		$expecting = array(
 			'prefix' => 'cake_',
 			'duration' => 3600,
@@ -84,7 +84,7 @@ class RedisEngineTest extends TestCase {
 			'password' => false,
 			'database' => 0,
 		);
-		$this->assertEquals($expecting, $settings);
+		$this->assertEquals($expecting, $config);
 	}
 
 /**
@@ -94,7 +94,7 @@ class RedisEngineTest extends TestCase {
  */
 	public function testConnect() {
 		$Redis = new RedisEngine();
-		$this->assertTrue($Redis->init(Cache::settings('redis')));
+		$this->assertTrue($Redis->init(Cache::engine('redis')->config()));
 	}
 
 /**

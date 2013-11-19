@@ -56,13 +56,13 @@ class WincacheEngineTest extends TestCase {
  *
  * @return void
  */
-	protected function _configCache($settings = []) {
+	protected function _configCache($config = []) {
 		$defaults = [
 			'className' => 'Wincache',
 			'prefix' => 'cake_'
 		];
 		Cache::drop('wincache');
-		Cache::config('wincache', array_merge($defaults, $settings));
+		Cache::config('wincache', array_merge($defaults, $config));
 	}
 
 /**

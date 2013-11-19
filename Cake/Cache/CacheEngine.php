@@ -70,8 +70,7 @@ abstract class CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($config = []) {
-		$config += $this->_config + $this->_defaultConfig;
-		$this->_config = $config;
+		$this->_config = $config + $this->_defaultConfig;
 		if (!empty($this->_config['groups'])) {
 			sort($this->_config['groups']);
 			$this->_groupPrefix = str_repeat('%s_', count($this->_config['groups']));

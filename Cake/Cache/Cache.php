@@ -364,22 +364,6 @@ class Cache {
 	}
 
 /**
- * Return the settings for the named cache engine.
- *
- * @param string $name Name of the configuration to get settings for. Defaults to 'default'
- * @return array list of settings for this engine
- * @see Cache::config()
- */
-	public static function settings($config = 'default') {
-		$engine = static::engine($config);
-		if (!$engine) {
-			return [];
-		}
-
-		return $engine->settings();
-	}
-
-/**
  * Retrieve group names to config mapping.
  *
  * {{{
