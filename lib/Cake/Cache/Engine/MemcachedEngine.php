@@ -60,7 +60,6 @@ class MemcachedEngine extends CacheEngine {
 	protected $_serializers = array(
 		'igbinary' => Memcached::SERIALIZER_IGBINARY,
 		'json' => Memcached::SERIALIZER_JSON,
-		'msgpack' => Memcached::SERIALIZER_MSGPACK,
 		'php' => Memcached::SERIALIZER_PHP
 	);
 
@@ -81,6 +80,11 @@ class MemcachedEngine extends CacheEngine {
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
+
+		if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
+			$this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
+		}
+
 		$settings += array(
 			'engine' => 'Memcached',
 			'servers' => array('127.0.0.1'),
