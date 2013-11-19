@@ -1228,21 +1228,17 @@ class QueryTest extends TestCase {
 		}
 
 		$this->assertCount(2, $first->tags);
-		$articleTag = new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 1]);
-		$articleTag->clean();
 		$expected = [
 			'id' => 1,
 			'name' => 'tag1',
-			'articles_tags' => $articleTag
+			'articles_tags' => ['article_id' => 1, 'tag_id' => 1]
 		];
 		$this->assertEquals($expected, $first->tags[0]->toArray());
 
-		$articleTag = new \Cake\ORM\Entity(['article_id' => 1, 'tag_id' => 2]);
-		$articleTag->clean();
 		$expected = [
 			'id' => 2,
 			'name' => 'tag2',
-			'articles_tags' => $articleTag
+			'articles_tags' => ['article_id' => 1, 'tag_id' => 2]
 		];
 		$this->assertEquals($expected, $first->tags[1]->toArray());
 	}
