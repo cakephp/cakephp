@@ -19,8 +19,9 @@ namespace Cake\TestSuite;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
-use Cake\Utility\ClassRegistry;
+use Cake\Utility\Inflector;
 
 /**
  * Cake TestCase class
@@ -584,26 +585,27 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Mock a model, maintain fixtures and table association
  *
- * @param string $model
+ * @param string $alias
  * @param mixed $methods
- * @param array $config
- * @throws Cake\Error\MissingModelException
- * @todo Rewrite so it gets a model for a Table object
+ * @param array $options
+ * @throws Cake\ORM\Error\MissingTableClassException
  * @return Model
  */
-	public function getMockForModel($model, $methods = array(), $config = array()) {
-		$config += (array)ClassRegistry::config('Model');
-
-		$modelClass = App::className($model, 'Model');
-		list(, $name) = namespaceSplit($modelClass);
-		$config = array_merge((array)$config, array('name' => $name));
-		if (!$modelClass) {
-			throw new Error\MissingModelException(array($model));
+	public function getMockForModel($alias, $methods = array(), $options = array()) {
+		if (empty($options['className'])) {
+			$class = Inflector::camelize($alias);
+			$className = App::classname($class, 'Model\Repository', 'Table');
+			if (!$className) {
+				throw new \Cake\ORM\Error\MissingTableClassException(array($alias));
+			}
+			$options['className'] = $className;
 		}
 
-		$mock = $this->getMock($modelClass, $methods, array($config));
-		ClassRegistry::removeObject($name);
-		ClassRegistry::addObject($name, $mock);
+		list($plugin, $baseClass) = pluginSplit($alias);
+		$options = $options + ['alias' => $baseClass] + TableRegistry::config($alias);
+
+		$mock = $this->getMock($options['className'], $methods, array($options));
+		TableRegistry::set($alias, $mock);
 		return $mock;
 	}
 

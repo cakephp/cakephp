@@ -1,8 +1,6 @@
 <?php
 /**
- * MissingModelException class
- *
- * PHP 5
+ * MissingTableClassException class
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -19,11 +17,11 @@ namespace Cake\ORM\Error;
 use Cake\Error\Exception;
 
 /**
- * Exception raised when an Entity  could not be found.
+ * Exception raised when a Table could not be found.
  *
  */
-class MissingEntityException extends Exception {
+class MissingTableClassException extends Exception {
 
-	protected $_messageTemplate = 'Entity class %s could not be found.';
+	protected $_messageTemplate = 'Table class %s could not be found.';
 
 }
