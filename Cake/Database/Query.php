@@ -1067,6 +1067,28 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
+ * Set the page of results you want.
+ *
+ * This method provides an easier to use interface to set the limit + offset
+ * in the record set you want as results. If empty the limit will default to
+ * the existing limit clause, and if that too is empty, then `25` will be used.
+ *
+ * Pages should start at 1.
+ *
+ * @param integer $num The page number you want.
+ * @reutrn Query
+ */
+	public function page($page) {
+		$limit = $this->clause('limit');
+		if ($limit === null) {
+			$limit = 25;
+			$this->limit($limit);
+		}
+		$this->offset(($page - 1) * $limit);
+		return $this;
+	}
+
+/**
  * Sets the number of records that should be retrieved from database,
  * accepts an integer or an expression object that evaluates to an integer.
  * In some databases, this operation might not be supported or will require
@@ -1094,6 +1116,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Sets the number of records that should be skipped from the original result set
  * This is commonly used for paginating large results. Accepts an integer or an
  * expression object that evaluates to an integer.
+ *
  * In some databases, this operation might not be supported or will require
  * the query to be transformed in order to limit the result set size.
  *

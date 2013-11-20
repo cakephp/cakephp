@@ -150,7 +150,7 @@ class PaginatorComponentTest extends TestCase {
 	public function testPaginateCustomFinder() {
 		$settings = array(
 			'PaginatorPosts' => array(
-				'popular',
+				'findType' => 'popular',
 				'fields' => array('id', 'title'),
 				'maxLimit' => 10,
 			)

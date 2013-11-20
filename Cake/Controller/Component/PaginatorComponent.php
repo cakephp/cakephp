@@ -136,7 +136,7 @@ class PaginatorComponent extends Component {
 		$alias = $object->alias();
 
 		$options = $this->mergeOptions($alias, $settings);
-		$options = $this->validateSort($object, $options, $whitelist);
+		$options = $this->validateSort($object, $options);
 		$options = $this->checkLimit($options);
 
 		$conditions = $fields = $limit = $page = null;

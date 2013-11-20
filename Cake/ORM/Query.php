@@ -495,25 +495,26 @@ class Query extends DatabaseQuery {
  * ## Example:
  *
  * {{{
- *	$query->applyOptions([
- *		'fields' => ['id', 'name'],
- *		'conditions' => [
- *			'created >=' => '2013-01-01'
- *		],
- *		'limit' => 10
- *	]);
+ * $query->applyOptions([
+ *   'fields' => ['id', 'name'],
+ *   'conditions' => [
+ *     'created >=' => '2013-01-01'
+ *   ],
+ *   'limit' => 10
+ * ]);
  * }}}
  *
  * Is equivalent to:
  *
  * {{{
- *	$query
- *	->select(['id', 'name'])
- *	->where(['created >=' => '2013-01-01'])
- *	->limit(10)
+ *  $query
+ *  ->select(['id', 'name'])
+ *  ->where(['created >=' => '2013-01-01'])
+ *  ->limit(10)
  * }}}
  *
  * @param array $options list of query clauses to apply new parts to. Accepts:
+ *
  * - fields: Maps to the select method
  * - conditions: Maps to the where method
  * - limit: Maps to the limit method
@@ -523,19 +524,22 @@ class Query extends DatabaseQuery {
  * - having: Maps to the having method
  * - contain: Maps to the contain options for eager loading
  * - join: Maps to the join method
+ * - join: Maps to the page method
+ *
  * @return Cake\ORM\Query
  */
 	public function applyOptions(array $options) {
 		$valid = [
 			'fields' => 'select',
 			'conditions' => 'where',
-			'limit' => 'limit',
+			'join' => 'join',
 			'order' => 'order',
+			'limit' => 'limit',
 			'offset' => 'offset',
 			'group' => 'group',
 			'having' => 'having',
 			'contain' => 'contain',
-			'join' => 'join'
+			'page' => 'page',
 		];
 
 		foreach ($options as $option => $values) {
