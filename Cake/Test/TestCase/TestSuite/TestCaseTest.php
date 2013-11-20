@@ -22,10 +22,10 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Test\Fixture\AssertTagsTestCase;
 use Cake\Test\Fixture\FixturizedTestCase;
-use Cake\Utility\ClassRegistry;
 
 /**
  * TestCaseTest
@@ -349,17 +349,25 @@ class TestCaseTest extends TestCase {
  */
 	public function testGetMockForModel() {
 		Configure::write('App.namespace', 'TestApp');
-		$Post = $this->getMockForModel('Post');
+		$Posts = $this->getMockForModel('Posts');
+		$entity = new \Cake\ORM\Entity(array());
 
-		$this->assertInstanceOf('TestApp\Model\Post', $Post);
-		$this->assertNull($Post->save(array()));
-		$this->assertNull($Post->implementedEvents());
-		$this->assertEquals('posts', $Post->useTable);
+		$this->assertInstanceOf('TestApp\Model\Repository\PostsTable', $Posts);
+		$this->assertNull($Posts->save($entity));
+		$this->assertNull($Posts->table());
 
-		$Post = $this->getMockForModel('Post', array('save'));
+		$Posts = $this->getMockForModel('Posts', array('save'));
 
-		$this->assertNull($Post->save(array()));
-		$this->assertInternalType('array', $Post->implementedEvents());
+		$this->assertNull($Posts->save($entity));
+
+		$Posts->expects($this->at(0))
+			->method('save')
+			->will($this->returnValue(true));
+		$Posts->expects($this->at(1))
+			->method('save')
+			->will($this->returnValue(false));
+		$this->assertTrue($Posts->save($entity));
+		$this->assertFalse($Posts->save($entity));
 	}
 
 /**
@@ -370,34 +378,41 @@ class TestCaseTest extends TestCase {
 	public function testGetMockForModelWithPlugin() {
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
-		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComment');
+		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments');
 
-		$result = ClassRegistry::init('TestPlugin.TestPluginComment');
-		$this->assertInstanceOf('\TestPlugin\Model\TestPluginComment', $result);
+		$result = TableRegistry::get('TestPlugin.TestPluginComments');
+		$this->assertInstanceOf('\TestPlugin\Model\Repository\TestPluginCommentsTable', $result);
 
-		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComment', array('save'));
+		$TestPluginComment = $this->getMockForModel('TestPlugin.TestPluginComments', array('save'));
 
-		$this->assertInstanceOf('\TestPlugin\Model\TestPluginComment', $TestPluginComment);
+		$this->assertInstanceOf('\TestPlugin\Model\Repository\TestPluginCommentsTable', $TestPluginComment);
 		$TestPluginComment->expects($this->at(0))
 			->method('save')
 			->will($this->returnValue(true));
 		$TestPluginComment->expects($this->at(1))
 			->method('save')
 			->will($this->returnValue(false));
-		$this->assertTrue($TestPluginComment->save(array()));
-		$this->assertFalse($TestPluginComment->save(array()));
+
+		$entity = new \Cake\ORM\Entity(array());
+		$this->assertTrue($TestPluginComment->save($entity));
+		$this->assertFalse($TestPluginComment->save($entity));
 	}
 
 /**
- * testGetMockForModelModel
+ * testGetMockForModelTable
  *
  * @return void
  */
-	public function testGetMockForModelModel() {
-		$Mock = $this->getMockForModel('Model', array('save'), array('name' => 'Comment'));
+	public function testGetMockForModelTable() {
+		$Mock = $this->getMockForModel(
+			'Table',
+			array('save'),
+			array('alias' => 'Comments', 'className' => '\Cake\ORM\Table')
+		);
 
-		$result = ClassRegistry::init('Comment');
-		$this->assertInstanceOf('Cake\Model\Model', $result);
+		$result = TableRegistry::get('Comments');
+		$this->assertInstanceOf('Cake\ORM\Table', $result);
+		$this->assertEquals('Comments', $Mock->alias());
 
 		$Mock->expects($this->at(0))
 			->method('save')
@@ -406,8 +421,9 @@ class TestCaseTest extends TestCase {
 			->method('save')
 			->will($this->returnValue(false));
 
-		$this->assertTrue($Mock->save(array()));
-		$this->assertFalse($Mock->save(array()));
+		$entity = new \Cake\ORM\Entity(array());
+		$this->assertTrue($Mock->save($entity));
+		$this->assertFalse($Mock->save($entity));
 	}
 
 }
