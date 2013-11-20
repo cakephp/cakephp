@@ -57,26 +57,11 @@ use Cake\Utility\Inflector;
  *   This engine is recommended to people deploying on windows with IIS.
  * - `RedisEngine` - Uses redis and php-redis extension to store cache data.
  *
- * The following keys are used in core cache engines:
- *
- * - `duration` Specify how long items in this cache configuration last.
- * - `groups` List of groups or 'tags' associated to every key stored in this config.
- *    handy for deleting a complete group from cache.
- * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
- *    with either another cache config or another application.
- * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
- *    cache::gc from ever being called automatically.
- * - `servers' Used by memcache. Give the address of the memcached servers to use.
- * - `compress` Used by memcache. Enables memcache's compressed format.
- * - `serialize` Used by FileCache. Should cache objects be serialized first.
- * - `path` Used by FileCache. Path to where cachefiles should be saved.
- * - `lock` Used by FileCache. Should files be locked before writing to them?
- * - `user` Used by Xcache. Username for XCache
- * - `password` Used by Xcache/Redis. Password for XCache/Redis
+ * See Cache engine documentation for expected configuration keys.
  *
  * @see app/Config/core.php for configuration settings
  * @param string $name Name of the configuration
- * @param array $settings Optional associative array of settings passed to the engine
+ * @param array $config Optional associative array of settings passed to the engine
  * @return array [engine, settings] on success, false on failure
  * @throws Cake\Error\Exception
  */
@@ -208,17 +193,17 @@ class Cache {
  */
 	public static function write($key, $value, $config = 'default') {
 		$engine = static::engine($config);
-		$settings = static::settings($config);
-
 		if (!$engine) {
 			return false;
 		}
-		$key = $engine->key($key);
 
+		$key = $engine->key($key);
 		if (!$key || is_resource($value)) {
 			return false;
 		}
-		$success = $engine->write($settings['prefix'] . $key, $value, $settings['duration']);
+
+		$config = $engine->config();
+		$success = $engine->write($config['prefix'] . $key, $value, $config['duration']);
 		if ($success === false && $value !== '') {
 			trigger_error(
 				__d('cake_dev',
@@ -252,7 +237,6 @@ class Cache {
  */
 	public static function read($key, $config = 'default') {
 		$engine = static::engine($config);
-		$settings = static::settings($config);
 		if (!$engine) {
 			return false;
 		}
@@ -262,7 +246,8 @@ class Cache {
 			return false;
 		}
 
-		return $engine->read($settings['prefix'] . $key);
+		$config = $engine->config();
+		return $engine->read($config['prefix'] . $key);
 	}
 
 /**
@@ -276,17 +261,17 @@ class Cache {
  */
 	public static function increment($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		$settings = static::settings($config);
-
 		if (!$engine) {
 			return false;
 		}
-		$key = $engine->key($key);
 
+		$key = $engine->key($key);
 		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
-		return $engine->increment($settings['prefix'] . $key, $offset);
+
+		$config = $engine->config();
+		return $engine->increment($config['prefix'] . $key, $offset);
 	}
 
 /**
@@ -300,17 +285,17 @@ class Cache {
  */
 	public static function decrement($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		$settings = static::settings($config);
-
 		if (!$engine) {
 			return false;
 		}
-		$key = $engine->key($key);
 
+		$key = $engine->key($key);
 		if (!$key || !is_int($offset) || $offset < 0) {
 			return false;
 		}
-		return $engine->decrement($settings['prefix'] . $key, $offset);
+
+		$config = $engine->config();
+		return $engine->decrement($config['prefix'] . $key, $offset);
 	}
 
 /**
@@ -331,9 +316,7 @@ class Cache {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public static function delete($key, $config = 'default') {
-		$settings = static::settings($config);
 		$engine = static::engine($config);
-
 		if (!$engine) {
 			return false;
 		}
@@ -343,7 +326,8 @@ class Cache {
 			return false;
 		}
 
-		return $engine->delete($settings['prefix'] . $key);
+		$config = $engine->config();
+		return $engine->delete($config['prefix'] . $key);
 	}
 
 /**
@@ -377,22 +361,6 @@ class Cache {
 
 		$success = $engine->clearGroup($group);
 		return $success;
-	}
-
-/**
- * Return the settings for the named cache engine.
- *
- * @param string $name Name of the configuration to get settings for. Defaults to 'default'
- * @return array list of settings for this engine
- * @see Cache::config()
- */
-	public static function settings($config = 'default') {
-		$engine = static::engine($config);
-		if (!$engine) {
-			return [];
-		}
-
-		return $engine->settings();
 	}
 
 /**

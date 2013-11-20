@@ -78,13 +78,13 @@ class CacheTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
-		$settings = ['engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_'];
-		Cache::config('libEngine', $settings);
+		$config = ['engine' => 'TestAppCache', 'path' => TMP, 'prefix' => 'cake_test_'];
+		Cache::config('libEngine', $config);
 		$engine = Cache::engine('libEngine');
 		$this->assertInstanceOf('\TestApp\Cache\Engine\TestAppCacheEngine', $engine);
 
-		$settings = ['engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_'];
-		$result = Cache::config('pluginLibEngine', $settings);
+		$config = ['engine' => 'TestPlugin.TestPluginCache', 'path' => TMP, 'prefix' => 'cake_test_'];
+		$result = Cache::config('pluginLibEngine', $config);
 		$engine = Cache::engine('pluginLibEngine');
 		$this->assertInstanceOf('\TestPlugin\Cache\Engine\TestPluginCacheEngine', $engine);
 
@@ -151,9 +151,9 @@ class CacheTest extends TestCase {
  * @dataProvider configProvider
  * @return void
  */
-	public function testConfigVariants($settings) {
+	public function testConfigVariants($config) {
 		$this->assertNotContains('test', Cache::configured(), 'test config should not exist.');
-		Cache::config('tests', $settings);
+		Cache::config('tests', $config);
 
 		$engine = Cache::engine('tests');
 		$this->assertInstanceOf('Cake\Cache\Engine\FileEngine', $engine);
@@ -167,8 +167,8 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testConfigInvalidEngine() {
-		$settings = array('engine' => 'Imaginary');
-		Cache::config('test', $settings);
+		$config = array('engine' => 'Imaginary');
+		Cache::config('test', $config);
 		Cache::engine('test');
 	}
 
@@ -203,14 +203,14 @@ class CacheTest extends TestCase {
  * @return void
  */
 	public function testConfigRead() {
-		$settings = [
+		$config = [
 			'engine' => 'File',
 			'path' => TMP,
 			'prefix' => 'cake_'
 		];
-		Cache::config('tests', $settings);
-		$expected = $settings;
-		$expected['className'] = $settings['engine'];
+		Cache::config('tests', $config);
+		$expected = $config;
+		$expected['className'] = $config['engine'];
 		unset($expected['engine']);
 		$this->assertEquals($expected, Cache::config('tests'));
 	}

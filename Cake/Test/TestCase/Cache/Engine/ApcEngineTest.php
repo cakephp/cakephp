@@ -58,13 +58,13 @@ class ApcEngineTest extends TestCase {
  *
  * @return void
  */
-	protected function _configCache($settings = []) {
+	protected function _configCache($config = []) {
 		$defaults = [
 			'className' => 'Apc',
 			'prefix' => 'cake_',
 		];
 		Cache::drop('apc');
-		Cache::config('apc', array_merge($defaults, $settings));
+		Cache::config('apc', array_merge($defaults, $config));
 	}
 
 /**

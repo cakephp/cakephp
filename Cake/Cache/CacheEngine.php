@@ -23,11 +23,34 @@ use Cake\Utility\Inflector;
 abstract class CacheEngine {
 
 /**
- * Settings of current engine instance
+ * Runtime config
+ *
+ * This is the config of a particular instance
  *
  * @var array
  */
 	protected $_config = [];
+
+/**
+ * The default cache configuration is overriden in most cache adapters. These are
+ * the keys that are common to all adapters. If overriden, this property is not used.
+ *
+ * - `duration` Specify how long items in this cache configuration last.
+ * - `groups` List of groups or 'tags' associated to every key stored in this config.
+ *    handy for deleting a complete group from cache.
+ * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
+ *    with either another cache config or another application.
+ * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
+ *    cache::gc from ever being called automatically.
+ *
+ * @var array
+ */
+	protected $_defaultConfig = [
+		'duration' => 3600,
+		'groups' => [],
+		'prefix' => 'cake_',
+		'probability' => 100
+	];
 
 /**
  * Contains the compiled string with all groups
@@ -40,19 +63,14 @@ abstract class CacheEngine {
 /**
  * Initialize the cache engine
  *
- * Called automatically by the cache frontend
+ * Called automatically by the cache frontend. Merge the runtime config with the defaults
+ * before use.
  *
  * @param array $config Associative array of parameters for the engine
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($config = []) {
-		$config += $this->_config + [
-			'prefix' => 'cake_',
-			'duration' => 3600,
-			'probability' => 100,
-			'groups' => []
-		];
-		$this->_config = $config;
+		$this->_config = $config + $this->_defaultConfig;
 		if (!empty($this->_config['groups'])) {
 			sort($this->_config['groups']);
 			$this->_groupPrefix = str_repeat('%s_', count($this->_config['groups']));
@@ -154,7 +172,7 @@ abstract class CacheEngine {
  *
  * @return array config
  */
-	public function settings() {
+	public function config() {
 		return $this->_config;
 	}
 

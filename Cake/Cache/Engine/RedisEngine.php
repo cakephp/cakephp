@@ -33,17 +33,36 @@ class RedisEngine extends CacheEngine {
 	protected $_Redis = null;
 
 /**
- * Settings
+ * The default config used unless overriden by runtime configuration
  *
- *  - server = string URL or ip to the Redis server host
- *  - database = integer database number to use for connection
- *  - port = integer port number to the Redis server (default: 6379)
- *  - timeout = float timeout in seconds (default: 0)
- *  - persistent = boolean Connects to the Redis server with a persistent connection (default: true)
+ * - `database` database number to use for connection.
+ * - `duration` Specify how long items in this cache configuration last.
+ * - `groups` List of groups or 'tags' associated to every key stored in this config.
+ *    handy for deleting a complete group from cache.
+ * - `password` Redis server password.
+ * - `persistent` Connect to the Redis server with a persistent connection
+ * - `port` port number to the Redis server.
+ * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
+ *    with either another cache config or another application.
+ * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
+ *    cache::gc from ever being called automatically.
+ * - `server` URL or ip to the Redis server host.
+ * - `timeout` timeout in seconds (float).
  *
  * @var array
  */
-	protected $_config = [];
+	protected $_defaultConfig = [
+		'database' => 0,
+		'duration' => 3600,
+		'groups' => [],
+		'password' => false,
+		'persistent' => true,
+		'port' => 6379,
+		'prefix' => null,
+		'probability' => 100,
+		'server' => '127.0.0.1',
+		'timeout' => 0
+	];
 
 /**
  * Initialize the Cache Engine
@@ -57,16 +76,7 @@ class RedisEngine extends CacheEngine {
 		if (!class_exists('Redis')) {
 			return false;
 		}
-		parent::init(array_merge([
-			'prefix' => null,
-			'server' => '127.0.0.1',
-			'database' => 0,
-			'port' => 6379,
-			'password' => false,
-			'timeout' => 0,
-			'persistent' => true
-			], $config)
-		);
+		parent::init($config);
 
 		return $this->_connect();
 	}

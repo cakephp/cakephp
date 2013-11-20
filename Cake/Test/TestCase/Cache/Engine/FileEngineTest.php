@@ -64,13 +64,13 @@ class FileEngineTest extends TestCase {
  *
  * @return void
  */
-	protected function _configCache($settings = []) {
+	protected function _configCache($config = []) {
 		$defaults = [
 			'className' => 'File',
 			'path' => TMP . 'tests',
 		];
 		Cache::drop('file_test');
-		Cache::config('file_test', array_merge($defaults, $settings));
+		Cache::config('file_test', array_merge($defaults, $config));
 	}
 
 /**

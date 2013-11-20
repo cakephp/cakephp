@@ -43,16 +43,34 @@ class FileEngine extends CacheEngine {
 	protected $_File = null;
 
 /**
- * Settings
+ * The default config used unless overriden by runtime configuration
  *
- * - path = absolute path to cache directory, default => CACHE
- * - prefix = string prefix for filename, default => cake_
- * - lock = enable file locking on write, default => true
- * - serialize = serialize the data, default => true
+ * - `duration` Specify how long items in this cache configuration last.
+ * - `groups` List of groups or 'tags' associated to every key stored in this config.
+ *    handy for deleting a complete group from cache.
+ * - `isWindows` Automatically populated with whether the host is windows or not
+ * - `lock` Used by FileCache. Should files be locked before writing to them?
+ * - `mask` The mask used for created files
+ * - `path` Path to where cachefiles should be saved.
+ * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
+ *    with either another cache config or another application.
+ * - `probability` Probability of hitting a cache gc cleanup. Setting to 0 will disable
+ *    cache::gc from ever being called automatically.
+ * - `serialize` Should cache objects be serialized first.
  *
  * @var array
  */
-	protected $_config = [];
+	protected $_defaultConfig = [
+		'duration' => 3600,
+		'groups' => [],
+		'isWindows' => false,
+		'lock' => true,
+		'mask' => 0664,
+		'path' => CACHE,
+		'prefix' => 'cake_',
+		'probability' => 100,
+		'serialize' => true
+	];
 
 /**
  * True unless FileEngine::__active(); fails
@@ -70,14 +88,6 @@ class FileEngine extends CacheEngine {
  * @return boolean True if the engine has been successfully initialized, false if not
  */
 	public function init($config = []) {
-		$config += [
-			'path' => CACHE,
-			'prefix' => 'cake_',
-			'lock' => true,
-			'serialize' => true,
-			'isWindows' => false,
-			'mask' => 0664
-		];
 		parent::init($config);
 
 		if (DS === '\\') {
