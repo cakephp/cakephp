@@ -31,7 +31,7 @@ class RedisEngine extends CacheEngine {
 	protected $_Redis = null;
 
 /**
- * The defaults used unless overriden by runtime configuration
+ * The default config used unless overriden by runtime configuration
  *
  * - `database` database number to use for connection.
  * - `duration` Specify how long items in this cache configuration last.
