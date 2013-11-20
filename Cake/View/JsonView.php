@@ -146,11 +146,16 @@ class JsonView extends View {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
 		}
 
-		if (Configure::read('debug')) {
-			return json_encode($data, JSON_PRETTY_PRINT);
+		$jsonOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
+		if (isset($this->viewVars['_jsonOptions'])) {
+			$jsonOptions = $this->viewVars['_jsonOptions'];
 		}
 
-		return json_encode($data, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT);
+		if (Configure::read('debug')) {
+			return json_encode($data, $jsonOptions | JSON_PRETTY_PRINT);
+		}
+
+		return json_encode($data, $jsonOptions);
 	}
 
 }
