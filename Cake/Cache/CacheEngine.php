@@ -97,10 +97,9 @@ abstract class CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param integer $duration How long to cache for.
  * @return boolean True if the data was successfully cached, false on failure
  */
-	abstract public function write($key, $value, $duration);
+	abstract public function write($key, $value);
 
 /**
  * Read a key from the cache
@@ -194,6 +193,21 @@ abstract class CacheEngine {
 
 		$key = preg_replace('/[\s]+/', '_', strtolower(trim(str_replace([DS, '/', '.'], '_', strval($key)))));
 		return $prefix . $key;
+	}
+
+/**
+ * Generates a safe key, taking account of the configured key prefix
+ *
+ * @param string $key the key passed over
+ * @return mixed string $key or false
+ */
+	protected function _key($key) {
+		$key = $this->key($key);
+		if (!$key) {
+			throw new \InvalidArgumentException(__d('cake_dev', 'An empty value is not valid as a cache key'));
+		}
+
+		return $this->_config['prefix'] . $key;
 	}
 
 }

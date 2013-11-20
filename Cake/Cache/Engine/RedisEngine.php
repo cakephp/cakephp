@@ -113,13 +113,16 @@ class RedisEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was successfully cached, false on failure
  */
-	public function write($key, $value, $duration) {
+	public function write($key, $value) {
+		$key = $this->_key($key);
+
 		if (!is_int($value)) {
 			$value = serialize($value);
 		}
+
+		$duration = $this->_config['duration'];
 		if ($duration === 0) {
 			return $this->_Redis->set($key, $value);
 		}
@@ -134,6 +137,8 @@ class RedisEngine extends CacheEngine {
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	public function read($key) {
+		$key = $this->_key($key);
+
 		$value = $this->_Redis->get($key);
 		if (ctype_digit($value)) {
 			$value = (int)$value;
@@ -152,6 +157,8 @@ class RedisEngine extends CacheEngine {
  * @return New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return (int)$this->_Redis->incrBy($key, $offset);
 	}
 
@@ -163,6 +170,8 @@ class RedisEngine extends CacheEngine {
  * @return New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return (int)$this->_Redis->decrBy($key, $offset);
 	}
 
@@ -173,6 +182,8 @@ class RedisEngine extends CacheEngine {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
+		$key = $this->_key($key);
+
 		return $this->_Redis->delete($key) > 0;
 	}
 
