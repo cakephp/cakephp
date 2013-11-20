@@ -79,13 +79,6 @@ class Session {
 	public static $time = false;
 
 /**
- * Cookie lifetime
- *
- * @var integer
- */
-	public static $cookieLifeTime;
-
-/**
  * Time when this session becomes invalid.
  *
  * @var integer
@@ -107,20 +100,13 @@ class Session {
 	public static $host = null;
 
 /**
- * Session timeout multiplier factor
- *
- * @var integer
- */
-	public static $timeout = null;
-
-/**
  * Number of requests that can occur during a session time without the session being renewed.
  * This feature is only used when config value `Session.autoRegenerate` is set to true.
  *
  * @var integer
  * @see Cake\Network\Session::_checkValid()
  */
-	public static $requestCountdown = 10;
+	protected static $_requestCountdown = 10;
 
 /**
  * Pseudo constructor.
@@ -629,9 +615,14 @@ class Session {
 			static::$valid = false;
 			return false;
 		}
-		if ($config = static::read('Config')) {
-			$sessionConfig = Configure::read('Session');
 
+		$sessionConfig = Configure::read('Session');
+		$requestCountdown = static::$_requestCountdown;
+		if (isset($sessionConfig['requestCountdown'])) {
+			$requestCountdown = $sessionConfig['requestCountdown'];
+		}
+
+		if ($config = static::read('Config')) {
 			if (static::_validAgentAndTime()) {
 				static::write('Config.time', static::$sessionTime);
 				if (isset($sessionConfig['autoRegenerate']) && $sessionConfig['autoRegenerate'] === true) {
@@ -641,7 +632,7 @@ class Session {
 
 					if ($check < 1) {
 						static::renew();
-						static::write('Config.countdown', static::$requestCountdown);
+						static::write('Config.countdown', $requestCountdown);
 					}
 				}
 				static::$valid = true;
@@ -653,7 +644,7 @@ class Session {
 		} else {
 			static::write('Config.userAgent', static::$_userAgent);
 			static::write('Config.time', static::$sessionTime);
-			static::write('Config.countdown', static::$requestCountdown);
+			static::write('Config.countdown', $requestCountdown);
 			static::$valid = true;
 		}
 	}
