@@ -1,7 +1,5 @@
 <?php
-
 App::uses('AppController', 'Controller');
-
 /**
  * Articles Controller
  *
