@@ -437,8 +437,12 @@ class PaginatorComponentTest extends TestCase {
 			->will($this->returnValue('model'));
 		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
 
-		$options = array('sort' => 'body', 'direction' => 'asc');
-		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
+		$options = array(
+			'sort' => 'body',
+			'direction' => 'asc',
+			'sortWhitelist' => ['title', 'id']
+		);
+		$result = $this->Paginator->validateSort($model, $options);
 
 		$this->assertEquals([], $result['order']);
 	}
@@ -455,8 +459,12 @@ class PaginatorComponentTest extends TestCase {
 			->will($this->returnValue('model'));
 		$model->expects($this->never())->method('hasField');
 
-		$options = array('sort' => 'body', 'direction' => 'asc');
-		$result = $this->Paginator->validateSort($model, $options, array('body'));
+		$options = array(
+			'sort' => 'body',
+			'direction' => 'asc',
+			'sortWhitelist' => ['body']
+		);
+		$result = $this->Paginator->validateSort($model, $options);
 
 		$expected = array('body' => 'asc');
 		$this->assertEquals($expected, $result['order']);
@@ -502,8 +510,11 @@ class PaginatorComponentTest extends TestCase {
 		$model->expects($this->any())->method('hasField')
 			->will($this->returnValue(true));
 
-		$options = array('direction' => 'asc');
-		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
+		$options = array(
+			'direction' => 'asc',
+			'sortWhitelist' => ['title', 'id'],
+		);
+		$result = $this->Paginator->validateSort($model, $options);
 		$this->assertEquals([], $result['order']);
 	}
 

@@ -95,7 +95,23 @@ class PaginatorComponent extends Component {
  *
  * This would allow you to have different pagination settings for `Comments` and `Posts` tables.
  *
- * #### Paginating with custom finders
+ * ### Controlling sort fields
+ *
+ * By default CakePHP will automatically allow sorting on any column on the table object being
+ * paginated. Often times you will want to allow sorting on either associated columns or calculated
+ * fields. In these cases you will need to define a whitelist of all the columns you wish to allow
+ * sorting on. You can define the whitelist in the `$settings` parameter:
+ *
+ * {{{
+ * $settings = [
+ *   'Articles' => [
+ *     'findType' => 'custom',
+ *     'sortWhitelist' => ['title', 'author_id', 'comment_count'],
+ *   ]
+ * ];
+ * }}}
+ *
+ * ### Paginating with custom finders
  *
  * You can paginate with any find type defined on your table using the `findType` option.
  *
@@ -112,14 +128,11 @@ class PaginatorComponent extends Component {
  *
  * @param Table $object The table to paginate.
  * @param array $settings The settings/configuration used for pagination.
- * @param array $whitelist List of allowed fields for ordering. This allows you to prevent ordering
- *   on non-indexed, or undesirable columns. See PaginatorComponent::validateSort() for additional details
- *   on how the whitelisting and sort field validation works.
  * @return array Query results
  * @throws Cake\Error\MissingModelException
  * @throws Cake\Error\NotFoundException
  */
-	public function paginate($object, $settings = array(), $whitelist = array()) {
+	public function paginate($object, array $settings = []) {
 		$alias = $object->alias();
 
 		$options = $this->mergeOptions($alias, $settings);
@@ -133,18 +146,12 @@ class PaginatorComponent extends Component {
 			$options['conditions'] = [];
 		}
 
-		$type = 'all';
-
-		if (isset($options[0])) {
-			$type = $options[0];
-			unset($options[0]);
-		}
-
 		extract($options);
 		$extra = array_diff_key($options, compact(
 			'conditions', 'fields', 'order', 'limit', 'page'
 		));
 
+		$type = 'all';
 		if (!empty($extra['findType'])) {
 			$type = $extra['findType'];
 		}
@@ -158,7 +165,6 @@ class PaginatorComponent extends Component {
 		$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
 		$query = $object->find($type, array_merge($parameters, $extra));
 
-		// TODO Validate sort and apply them here.
 		$results = $query->execute();
 		$numResults = count($results);
 
@@ -263,6 +269,8 @@ class PaginatorComponent extends Component {
  * You can use the whitelist parameter to control which columns/fields are available for sorting.
  * This helps prevent users from ordering large result sets on un-indexed values.
  *
+ * If you need to sort on associated columns or synthetic properties you will need to use a whitelist.
+ *
  * Any columns listed in the sort whitelist will be implicitly trusted. You can use this to sort
  * on synthetic columns, or columns added in custom find operations that may not exist in the schema.
  *
@@ -271,7 +279,7 @@ class PaginatorComponent extends Component {
  * @param array $whitelist The list of columns that can be used for sorting. If empty all keys are allowed.
  * @return array An array of options with sort + direction removed and replaced with order if possible.
  */
-	public function validateSort(Table $object, array $options, array $whitelist = array()) {
+	public function validateSort(Table $object, array $options) {
 		if (isset($options['sort'])) {
 			$direction = null;
 			if (isset($options['direction'])) {
@@ -291,9 +299,9 @@ class PaginatorComponent extends Component {
 			$options['order'] = (array)$options['order'];
 		}
 
-		if (!empty($whitelist)) {
+		if (!empty($options['sortWhitelist'])) {
 			$field = key($options['order']);
-			$inWhitelist = in_array($field, $whitelist, true);
+			$inWhitelist = in_array($field, $options['sortWhitelist'], true);
 			if (!$inWhitelist) {
 				$options['order'] = [];
 			}
