@@ -80,8 +80,6 @@ class FileEngineTest extends TestCase {
  */
 	public function testReadAndWriteCacheExpired() {
 		$this->_configCache(['duration' => 1]);
-		$result = Cache::write(null, 'here', 'file_test');
-		$this->assertFalse($result);
 
 		$result = Cache::read('test', 'file_test');
 		$expecting = '';

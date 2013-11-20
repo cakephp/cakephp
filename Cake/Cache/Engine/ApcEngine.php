@@ -54,11 +54,13 @@ class ApcEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was successfully cached, false on failure
  */
-	public function write($key, $value, $duration) {
+	public function write($key, $value) {
+		$key = $this->_key($key);
+
 		$expires = 0;
+		$duration = $this->_config['duration'];
 		if ($duration) {
 			$expires = time() + $duration;
 		}
@@ -73,6 +75,8 @@ class ApcEngine extends CacheEngine {
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	public function read($key) {
+		$key = $this->_key($key);
+
 		$time = time();
 		$cachetime = intval(apc_fetch($key . '_expires'));
 		if ($cachetime !== 0 && ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime)) {
@@ -89,6 +93,8 @@ class ApcEngine extends CacheEngine {
  * @return New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return apc_inc($key, $offset);
 	}
 
@@ -100,6 +106,8 @@ class ApcEngine extends CacheEngine {
  * @return New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return apc_dec($key, $offset);
 	}
 
@@ -110,6 +118,8 @@ class ApcEngine extends CacheEngine {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
+		$key = $this->_key($key);
+
 		return apc_delete($key);
 	}
 

@@ -193,17 +193,11 @@ class Cache {
  */
 	public static function write($key, $value, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
+		if (!$engine || is_resource($value)) {
 			return false;
 		}
 
-		$key = $engine->key($key);
-		if (!$key || is_resource($value)) {
-			return false;
-		}
-
-		$config = $engine->config();
-		$success = $engine->write($config['prefix'] . $key, $value, $config['duration']);
+		$success = $engine->write($key, $value);
 		if ($success === false && $value !== '') {
 			trigger_error(
 				__d('cake_dev',
@@ -241,13 +235,7 @@ class Cache {
 			return false;
 		}
 
-		$key = $engine->key($key);
-		if (!$key) {
-			return false;
-		}
-
-		$config = $engine->config();
-		return $engine->read($config['prefix'] . $key);
+		return $engine->read($key);
 	}
 
 /**
@@ -261,17 +249,11 @@ class Cache {
  */
 	public static function increment($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
+		if (!$engine || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 
-		$key = $engine->key($key);
-		if (!$key || !is_int($offset) || $offset < 0) {
-			return false;
-		}
-
-		$config = $engine->config();
-		return $engine->increment($config['prefix'] . $key, $offset);
+		return $engine->increment($key, $offset);
 	}
 
 /**
@@ -285,17 +267,11 @@ class Cache {
  */
 	public static function decrement($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
+		if (!$engine || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 
-		$key = $engine->key($key);
-		if (!$key || !is_int($offset) || $offset < 0) {
-			return false;
-		}
-
-		$config = $engine->config();
-		return $engine->decrement($config['prefix'] . $key, $offset);
+		return $engine->decrement($key, $offset);
 	}
 
 /**
@@ -321,13 +297,7 @@ class Cache {
 			return false;
 		}
 
-		$key = $engine->key($key);
-		if (!$key) {
-			return false;
-		}
-
-		$config = $engine->config();
-		return $engine->delete($config['prefix'] . $key);
+		return $engine->delete($key);
 	}
 
 /**
@@ -359,8 +329,7 @@ class Cache {
 			return false;
 		}
 
-		$success = $engine->clearGroup($group);
-		return $success;
+		return $engine->clearGroup($group);
 	}
 
 /**

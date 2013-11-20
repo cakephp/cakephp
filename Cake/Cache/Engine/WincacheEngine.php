@@ -57,10 +57,12 @@ class WincacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was successfully cached, false on failure
  */
-	public function write($key, $value, $duration) {
+	public function write($key, $value) {
+		$key = $this->_key($key);
+
+		$duration = $this->_config['duration'];
 		$expires = time() + $duration;
 
 		$data = array(
@@ -79,6 +81,8 @@ class WincacheEngine extends CacheEngine {
  *     there was an error fetching it
  */
 	public function read($key) {
+		$key = $this->_key($key);
+
 		$time = time();
 		$cachetime = intval(wincache_ucache_get($key . '_expires'));
 		if ($cachetime < $time || ($time + $this->_config['duration']) < $cachetime) {
@@ -95,6 +99,8 @@ class WincacheEngine extends CacheEngine {
  * @return New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return wincache_ucache_inc($key, $offset);
 	}
 
@@ -106,6 +112,8 @@ class WincacheEngine extends CacheEngine {
  * @return New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return wincache_ucache_dec($key, $offset);
 	}
 
@@ -116,6 +124,8 @@ class WincacheEngine extends CacheEngine {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
+		$key = $this->_key($key);
+
 		return wincache_ucache_delete($key);
 	}
 

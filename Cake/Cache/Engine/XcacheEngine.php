@@ -73,10 +73,12 @@ class XcacheEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was successfully cached, false on failure
  */
-	public function write($key, $value, $duration) {
+	public function write($key, $value) {
+		$key = $this->_key($key);
+
+		$duration = $this->_config['duration'];
 		$expires = time() + $duration;
 		xcache_set($key . '_expires', $expires, $duration);
 		return xcache_set($key, $value, $duration);
@@ -89,6 +91,8 @@ class XcacheEngine extends CacheEngine {
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	public function read($key) {
+		$key = $this->_key($key);
+
 		if (xcache_isset($key)) {
 			$time = time();
 			$cachetime = intval(xcache_get($key . '_expires'));
@@ -109,6 +113,8 @@ class XcacheEngine extends CacheEngine {
  * @return New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return xcache_inc($key, $offset);
 	}
 
@@ -121,6 +127,8 @@ class XcacheEngine extends CacheEngine {
  * @return New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return xcache_dec($key, $offset);
 	}
 
@@ -131,6 +139,8 @@ class XcacheEngine extends CacheEngine {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
+		$key = $this->_key($key);
+
 		return xcache_unset($key);
 	}
 

@@ -208,14 +208,16 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $value Data to be cached
- * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was successfully cached, false on failure
  * @see http://php.net/manual/en/memcache.set.php
  */
-	public function write($key, $value, $duration) {
+	public function write($key, $value) {
+		$duration = $this->_config['duration'];
 		if ($duration > 30 * DAY) {
 			$duration = 0;
 		}
+
+		$key = $this->_key($key);
 
 		return $this->_Memcached->set($key, $value, $duration);
 	}
@@ -227,6 +229,8 @@ class MemcachedEngine extends CacheEngine {
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	public function read($key) {
+		$key = $this->_key($key);
+
 		return $this->_Memcached->get($key);
 	}
 
@@ -239,6 +243,8 @@ class MemcachedEngine extends CacheEngine {
  * @throws Cake\Error\Exception when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return $this->_Memcached->increment($key, $offset);
 	}
 
@@ -251,6 +257,8 @@ class MemcachedEngine extends CacheEngine {
  * @throws Cake\Error\Exception when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {
+		$key = $this->_key($key);
+
 		return $this->_Memcached->decrement($key, $offset);
 	}
 
@@ -261,6 +269,8 @@ class MemcachedEngine extends CacheEngine {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
+		$key = $this->_key($key);
+
 		return $this->_Memcached->delete($key);
 	}
 

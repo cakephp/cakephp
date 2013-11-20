@@ -25,7 +25,7 @@ use Cake\Cache\CacheEngine;
 
 class TestAppCacheEngine extends CacheEngine {
 
-	public function write($key, $value, $duration) {
+	public function write($key, $value) {
 		if ($key === 'fail') {
 			return false;
 		}

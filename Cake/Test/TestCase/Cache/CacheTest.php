@@ -332,6 +332,18 @@ class CacheTest extends TestCase {
 	}
 
 /**
+ * testWriteEmptyValues method
+ *
+ * @expectedException InvalidArgumentException
+ * @expectedExceptionMessage An empty value is not valid as a cache key
+ * @return void
+ */
+	public function testWriteEmptyKey() {
+		$this->_configCache();
+		Cache::write(null, 'not null', 'tests');
+	}
+
+/**
  * Test that failed writes cause errors to be triggered.
  *
  * @return void

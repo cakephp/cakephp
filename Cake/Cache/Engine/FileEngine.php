@@ -117,13 +117,14 @@ class FileEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param mixed $data Data to be cached
- * @param integer $duration How long to cache the data, in seconds
  * @return boolean True if the data was successfully cached, false on failure
  */
-	public function write($key, $data, $duration) {
+	public function write($key, $data) {
 		if ($data === '' || !$this->_init) {
 			return false;
 		}
+
+		$key = $this->_key($key);
 
 		if ($this->_setKey($key, true) === false) {
 			return false;
@@ -143,6 +144,7 @@ class FileEngine extends CacheEngine {
 			}
 		}
 
+		$duration = $this->_config['duration'];
 		$expires = time() + $duration;
 		$contents = $expires . $lineBreak . $data . $lineBreak;
 
@@ -167,6 +169,8 @@ class FileEngine extends CacheEngine {
  * @return mixed The cached data, or false if the data doesn't exist, has expired, or if there was an error fetching it
  */
 	public function read($key) {
+		$key = $this->_key($key);
+
 		if (!$this->_init || $this->_setKey($key) === false) {
 			return false;
 		}
@@ -215,9 +219,12 @@ class FileEngine extends CacheEngine {
  * @return boolean True if the value was successfully deleted, false if it didn't exist or couldn't be removed
  */
 	public function delete($key) {
+		$key = $this->_key($key);
+
 		if ($this->_setKey($key) === false || !$this->_init) {
 			return false;
 		}
+
 		$path = $this->_File->getRealPath();
 		$this->_File = null;
 
