@@ -197,8 +197,7 @@ class Cache {
 			return false;
 		}
 
-		$key = $engine->key($key);
-		if (!$key || is_resource($value)) {
+		if (is_resource($value)) {
 			return false;
 		}
 
@@ -240,11 +239,6 @@ class Cache {
 			return false;
 		}
 
-		$key = $engine->key($key);
-		if (!$key) {
-			return false;
-		}
-
 		return $engine->read($key);
 	}
 
@@ -263,8 +257,7 @@ class Cache {
 			return false;
 		}
 
-		$key = $engine->key($key);
-		if (!$key || !is_int($offset) || $offset < 0) {
+		if (!is_int($offset) || $offset < 0) {
 			return false;
 		}
 
@@ -286,8 +279,7 @@ class Cache {
 			return false;
 		}
 
-		$key = $engine->key($key);
-		if (!$key || !is_int($offset) || $offset < 0) {
+		if (!is_int($offset) || $offset < 0) {
 			return false;
 		}
 
@@ -314,11 +306,6 @@ class Cache {
 	public static function delete($key, $config = 'default') {
 		$engine = static::engine($config);
 		if (!$engine) {
-			return false;
-		}
-
-		$key = $engine->key($key);
-		if (!$key) {
 			return false;
 		}
 
