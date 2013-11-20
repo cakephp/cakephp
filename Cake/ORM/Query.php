@@ -620,17 +620,23 @@ class Query extends DatabaseQuery {
 /**
  * Return the COUNT(*) for for the query.
  *
- * This method will replace the selected fields with a COUNT(*)
- * erase any configured mapReduce functions and execute the query
- * returning the number of rows.
+ * If the query does not contain GROUP BY or map reduce functions, then
+ * this method will replace the selected fields with a COUNT(*), and the resulting
+ * count will be returned.
+ *
+ * If the query does contain GROUP BY or map reduce functions, then it
+ * will be executed, and the number of rows in the ResultSet will be returned.
  *
  * @return integer
  */
 	public function count() {
-		$query = $this->select(['count' => $this->func()->count('*')], true)
-			->hydrate(false);
-		$query->mapReduce(null, null, true);
-		return $query->first()['count'];
+		if ($this->clause('group') === [] && $this->mapReduce() === []) {
+			$this->select(['count' => $this->func()->count('*')], true)
+				->hydrate(false);
+			return $this->first()['count'];
+		}
+		$results = $this->execute();
+		return count($results);
 	}
 
 /**

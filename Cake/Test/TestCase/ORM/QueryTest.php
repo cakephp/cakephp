@@ -1403,4 +1403,15 @@ class QueryTest extends TestCase {
 		$this->assertEquals(['count' => 2], $result->one());
 	}
 
+/**
+ * Test that count() returns correct results with group by.
+ */
+	public function testCountWithGroup() {
+		$table = TableRegistry::get('articles');
+		$query = $table->find('all')
+			->group(['published']);
+		$result = $query->count();
+		$this->assertEquals(1, $result);
+	}
+
 }
