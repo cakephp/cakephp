@@ -202,8 +202,7 @@ class Cache {
 			return false;
 		}
 
-		$config = $engine->config();
-		$success = $engine->write($config['prefix'] . $key, $value, $config['duration']);
+		$success = $engine->write($key, $value);
 		if ($success === false && $value !== '') {
 			trigger_error(
 				__d('cake_dev',
@@ -246,8 +245,7 @@ class Cache {
 			return false;
 		}
 
-		$config = $engine->config();
-		return $engine->read($config['prefix'] . $key);
+		return $engine->read($key);
 	}
 
 /**
@@ -270,8 +268,7 @@ class Cache {
 			return false;
 		}
 
-		$config = $engine->config();
-		return $engine->increment($config['prefix'] . $key, $offset);
+		return $engine->increment($key, $offset);
 	}
 
 /**
@@ -294,8 +291,7 @@ class Cache {
 			return false;
 		}
 
-		$config = $engine->config();
-		return $engine->decrement($config['prefix'] . $key, $offset);
+		return $engine->decrement($key, $offset);
 	}
 
 /**
@@ -326,8 +322,7 @@ class Cache {
 			return false;
 		}
 
-		$config = $engine->config();
-		return $engine->delete($config['prefix'] . $key);
+		return $engine->delete($key);
 	}
 
 /**
