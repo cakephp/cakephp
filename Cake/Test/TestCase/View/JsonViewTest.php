@@ -178,7 +178,7 @@ class JsonViewTest extends TestCase {
 				json_encode('<tag> \'quote\' "double-quote" &', JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT)
 			),
 
-			// Test render with _jsonOptions null to be serialized.
+			// Test render with _jsonOptions = false to be serialized.
 			array(
 				array('noescape' => '<tag> \'quote\' "double-quote" &'),
 				'noescape',
