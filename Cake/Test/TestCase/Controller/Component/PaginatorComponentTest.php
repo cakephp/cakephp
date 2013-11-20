@@ -89,11 +89,7 @@ class PaginatorComponentTest extends TestCase {
 			->will($this->returnValue('Posts'));
 
 		$query = $this->_getMockFindQuery();
-		$this->Post->expects($this->at(1))
-			->method('find')
-			->will($this->returnValue($query));
-
-		$this->Post->expects($this->at(2))
+		$this->Post->expects($this->any())
 			->method('find')
 			->will($this->returnValue($query));
 
@@ -178,7 +174,7 @@ class PaginatorComponentTest extends TestCase {
  */
 	public function testDefaultPaginateParams() {
 		$settings = array(
-			'order' => 'PaginatorPosts.id DESC',
+			'order' => ['PaginatorPosts.id' => 'DESC'],
 			'maxLimit' => 10,
 		);
 
@@ -192,7 +188,7 @@ class PaginatorComponentTest extends TestCase {
 				'fields' => null,
 				'limit' => 10,
 				'page' => 1,
-				'order' => 'PaginatorPosts.id DESC'
+				'order' => ['PaginatorPosts.id' => 'DESC']
 			])
 			->will($this->returnValue($query));
 
@@ -496,7 +492,7 @@ class PaginatorComponentTest extends TestCase {
 		$options = array('sort' => 'body', 'direction' => 'asc');
 		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
 
-		$this->assertNull($result['order']);
+		$this->assertEquals([], $result['order']);
 	}
 
 /**
@@ -615,12 +611,7 @@ class PaginatorComponentTest extends TestCase {
 
 		$options = array('direction' => 'asc');
 		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
-		$this->assertFalse(isset($result['order']));
-
-		$options = array('order' => 'invalid desc');
-		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));
-
-		$this->assertEquals($options['order'], $result['order']);
+		$this->assertEquals([], $result['order']);
 	}
 
 /**
@@ -877,8 +868,9 @@ class PaginatorComponentTest extends TestCase {
 			->will($this->returnValue($results));
 
 		$query->expects($this->any())
-			->method('total')
+			->method('count')
 			->will($this->returnValue(2));
+
 		return $query;
 	}
 

@@ -32,13 +32,6 @@ use Cake\ORM\Table;
 class PaginatorComponent extends Component {
 
 /**
- * The current request instance.
- *
- * @var Cake\Network\Request
- */
-	public $request;
-
-/**
  * Default pagination settings.
  *
  * When calling paginate() these settings will be merged with the configuration
@@ -68,18 +61,6 @@ class PaginatorComponent extends Component {
 	);
 
 /**
- * Constructor
- *
- * @param ComponentRegistry $collection A ComponentRegistry this component can use to lazy load its components
- * @param array $settings Array of configuration settings.
- */
-	public function __construct(ComponentRegistry $collection, $settings = []) {
-		$settings = array_merge($this->_defaultConfig, (array)$settings);
-		$this->request = $collection->getController()->request;
-		parent::__construct($collection, $settings);
-	}
-
-/**
  * Handles automatic pagination of model records.
  *
  * ## Configuring pagination
@@ -106,7 +87,7 @@ class PaginatorComponent extends Component {
  *    'Articles' => [
  *      'limit' => 20,
  *      'maxLimit' => 100
- *    [,
+ *    ],
  *    'Comments' => [ ... ]
  *  ];
  *  $results = $paginator->paginate($table, $settings);
@@ -142,9 +123,6 @@ class PaginatorComponent extends Component {
 		$alias = $object->alias();
 
 		$options = $this->mergeOptions($alias, $settings);
-
-		// TODO perhaps move this until after the query has been created.
-		// Then we could look at the fields in the query.
 		$options = $this->validateSort($object, $options, $whitelist);
 		$options = $this->checkLimit($options);
 
@@ -181,7 +159,6 @@ class PaginatorComponent extends Component {
 		$query = $object->find($type, array_merge($parameters, $extra));
 
 		// TODO Validate sort and apply them here.
-
 		$results = $query->execute();
 		$numResults = count($results);
 
@@ -192,7 +169,8 @@ class PaginatorComponent extends Component {
 			$count = 0;
 		} else {
 			$parameters = compact('conditions');
-			$count = $object->find($type, array_merge($parameters, $extra))->count();
+			$query = $object->find($type, array_merge($parameters, $extra));
+			$count = $query->count();
 		}
 
 		$pageCount = intval(ceil($count / $limit));
@@ -201,6 +179,8 @@ class PaginatorComponent extends Component {
 		if ($requestedPage > $page) {
 			throw new Error\NotFoundException();
 		}
+
+		$request = $this->_registry->getController()->request;
 
 		if (!is_array($order)) {
 			$order = (array)$order;
@@ -219,11 +199,11 @@ class PaginatorComponent extends Component {
 			'limit' => $defaults['limit'] != $options['limit'] ? $options['limit'] : null,
 		);
 
-		if (!isset($this->request['paging'])) {
-			$this->request['paging'] = array();
+		if (!isset($request['paging'])) {
+			$request['paging'] = array();
 		}
-		$this->request['paging'] = array_merge(
-			(array)$this->request['paging'],
+		$request['paging'] = array_merge(
+			(array)$request['paging'],
 			array($alias => $paging)
 		);
 		return $results;
@@ -247,8 +227,8 @@ class PaginatorComponent extends Component {
  */
 	public function mergeOptions($alias, $settings) {
 		$defaults = $this->getDefaults($alias, $settings);
-		$request = $this->request->query;
-		$request = array_intersect_key($request, array_flip($this->whitelist));
+		$request = $this->_registry->getController()->request;
+		$request = array_intersect_key($request->query, array_flip($this->whitelist));
 		return array_merge($defaults, $request);
 	}
 
@@ -302,26 +282,28 @@ class PaginatorComponent extends Component {
 			}
 			$options['order'] = array($options['sort'] => $direction);
 		}
+		unset($options['sort'], $options['direction']);
 
-		if (empty($options['order']) || (isset($options['order']) && is_array($options['order']))) {
-			$options['order'] = null;
-			return $options;
+		if (empty($options['order'])) {
+			$options['order'] = [];
+		}
+		if (!is_array($options['order'])) {
+			$options['order'] = (array)$options['order'];
 		}
 
 		if (!empty($whitelist)) {
 			$field = key($options['order']);
 			$inWhitelist = in_array($field, $whitelist, true);
 			if (!$inWhitelist) {
-				$options['order'] = null;
+				$options['order'] = [];
 			}
 			return $options;
 		}
 
-		if (!empty($options['order']) && is_array($options['order'])) {
+		if (is_array($options['order'])) {
 			$tableAlias = $object->alias();
-			$order = array();
+			$order = [];
 
-			// TODO Remove associated field checks and rely on the whitelist.
 			foreach ($options['order'] as $key => $value) {
 				$field = $key;
 				$alias = $tableAlias;
@@ -332,16 +314,10 @@ class PaginatorComponent extends Component {
 
 				if ($correctAlias && $object->hasField($field)) {
 					$order[$tableAlias . '.' . $field] = $value;
-				} elseif ($correctAlias && $object->hasField($key, true)) {
-					$order[$field] = $value;
-				} elseif (isset($object->{$alias}) && $object->{$alias}->hasField($field, true)) {
-					// TODO fix associated sorting.
-					$order[$alias . '.' . $field] = $value;
 				}
 			}
 			$options['order'] = $order;
 		}
-		unset($options['sort'], $options['direction']);
 
 		return $options;
 	}
