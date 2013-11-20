@@ -25,7 +25,7 @@ use Cake\Network\Http\FormData\Part;
 use Cake\Utility\File;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
-use Cake\Utility\Validation;
+use Cake\Validation\Validation;
 use Cake\View\View;
 
 /**

@@ -27,6 +27,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
+use Cake\Validation\Validator;
 use Cake\Utility\Inflector;
 
 /**
@@ -133,6 +134,13 @@ class Table {
  * @var string
  */
 	protected $_entityClass;
+
+/**
+ * A list of validation objects indexed by name
+ *
+ * @var array
+ */
+	protected $_validators = [];
 
 /**
  * Initializes a new instance
@@ -735,6 +743,72 @@ class Table {
 	}
 
 /**
+ * Returns the validation rules tagged with $name. It is possible to have
+ * multiple different named validation sets, this is useful when you need
+ * to use varying rules when saving from different routines in your system.
+ *
+ * There are two different ways of creating and naming validation sets: by
+ * creating a new method inside your own Table subclass, or by building
+ * the validator object yourself and storing it using this method.
+ *
+ * For example, if you wish to create a validation set called 'forSubscription',
+ * you will need to create a method in your Table subclass as follows:
+ *
+ * {{{
+ * public function validationForSubscription($validator) {
+ *	return $validator
+ *	->add('email', 'valid-email', ['rule' => 'email'])
+ *	->add('password', 'valid', ['rule' => 'notEmpty']);
+ *	->validatePresence('username')
+ * }
+ * }}}
+ *
+ * Otherwise, you can build the object by yourself and store it in the Table object:
+ *
+ * {{{
+ * $validator = new \Cake\Validation\Validator($table);
+ * $validator
+ *	->add('email', 'valid-email', ['rule' => 'email'])
+ *	->add('password', 'valid', ['rule' => 'notEmpty'])
+ *	->allowEmpty('bio');
+ * $table->validator('forSubscription', $validator);
+ * }}}
+ *
+ * You can implement the method in `validationDefault` in your Table subclass
+ * should you wish to have a validation set that applies in cases where no other
+ * set is specified.
+ *
+ * @param string $name the name of the validation set to return
+ * @param \Cake\Validation\Validator $validator
+ * @return \Cake\Validation\Validator
+ */
+	public function validator($name = 'default', Validator $instance = null) {
+		if ($instance === null && isset($this->_validators[$name])) {
+			return $this->_validators[$name];
+		}
+
+		if ($instance !== null) {
+			return $this->_validators[$name] = $instance;
+		}
+
+		$validator = new Validator;
+		$validator = $this->{'validation' . ucfirst($name)}($validator);
+		return $this->_validators[$name] = $validator;
+	}
+
+/**
+ * Returns the default validator object. Subclasses can override this function
+ * to add a default validation set to the validator object.
+ *
+ * @param \Cake\Validation\Validator $validator The validator that can be modified to
+ * add some rules to it.
+ * @return \Cake\Validation\Validator
+ */
+	public function validationDefault(Validator $validator) {
+		return $validator;
+	}
+
+/**
  * Delete all matching rows.
  *
  * Deletes all rows matching the provided conditions.
@@ -788,9 +862,24 @@ class Table {
  * properties in the passed entity will be saved
  * - atomic: Whether to execute the save and callbacks inside a database
  * transaction (default: true)
+ * - validate: Whether or not validate the entity before saving, if validation
+ * fails, it will abort the save operation. If this key is set to a string value,
+ * the validator object registered in this table under the provided name will be
+ * used instead of the default one. (default:true)
  *
- * When saving, this method will trigger two events:
  *
+ * When saving, this method will trigger four events:
+ *
+ * - Model.beforeValidate: Will be triggered right before any validation is done
+ * for the passed entity if the validate key in $options is not set to false.
+ * Listeners will receive as arguments the entity, the options array and the
+ * validation object to be used for validating the entity. If the event is
+ * stopped the validation result will be set to the result of the event itself.
+ * - Model.afterValidate: Will be triggered right after the `validate()` method is
+ * called in the entity. Listeners will receive as arguments the entity, the
+ * options array and the validation object to be used for validating the entity.
+ * If the event is stopped the validation result will be set to the result of
+ * the event itself.
  * - Model.beforeSave: Will be triggered just before the list of fields to be
  * persisted is calculated. It receives both the entity and the options as
  * arguments. The options array is passed as an ArrayObject, so any changes in
@@ -815,7 +904,11 @@ class Table {
  * @return \Cake\ORM\Entity|boolean
  */
 	public function save(Entity $entity, array $options = []) {
-		$options = new \ArrayObject($options + ['atomic' => true, 'fieldList' => []]);
+		$options = new \ArrayObject($options + [
+			'atomic' => true,
+			'fieldList' => [],
+			'validate' => true
+		]);
 		if ($options['atomic']) {
 			$connection = $this->connection();
 			$success = $connection->transactional(function() use ($entity, $options) {
@@ -843,6 +936,10 @@ class Table {
 
 		if ($entity->isNew() === null) {
 			$entity->isNew(true);
+		}
+
+		if (!$this->_processValidation($entity, $options)) {
+			return false;
 		}
 
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
@@ -959,6 +1056,49 @@ class Table {
 			$success = $entity;
 		}
 		$statement->closeCursor();
+		return $success;
+	}
+
+/**
+ * Validates the $entity if the 'validate' key is not set to false in $options
+ * If not empty it will construct a default validation object or get one with
+ * the name passed in the key
+ *
+ * @param \Cake\ORM\Entity The entity to validate
+ * @param \ArrayObject $options
+ * @return boolean true if the entity is valid, false otherwise
+ */
+	protected function _processValidation($entity, $options) {
+		if (empty($options['validate'])) {
+			return true;
+		}
+
+		$type = is_string($options['validate']) ? $options['validate'] : 'default';
+		$validator = $this->validator($type);
+		$validator->provider('table', $this);
+		$validator->provider('entity', $entity);
+
+		$pass = compact('entity', 'options', 'validator');
+		$event = new Event('Model.beforeValidate', $this, $pass);
+		$this->getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return (bool)$event->result;
+		}
+
+		if (!count($validator)) {
+			return true;
+		}
+
+		$success = $entity->validate($validator);
+
+		$event = new Event('Model.afterValidate', $this, $pass);
+		$this->getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			$success = (bool)$event->result;
+		}
+
 		return $success;
 	}
 

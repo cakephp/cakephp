@@ -14,12 +14,12 @@
  * @since         CakePHP(tm) v 1.2.0.4206
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\Validation;
 
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\File;
-use Cake\Utility\Validation;
+use Cake\Validation\Validation;
 
 /**
  * CustomValidator class

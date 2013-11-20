@@ -21,6 +21,7 @@ use Cake\Database\ConnectionManager;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Validation\Validator;
 
 /**
  * Used to test correct class is instantiated when using TableRegistry::get();
@@ -1795,6 +1796,175 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($table->hasField('nope'), 'Should not be there.');
 		$this->assertTrue($table->hasField('title'), 'Should be there.');
 		$this->assertTrue($table->hasField('body'), 'Should be there.');
+	}
+
+/**
+ * Tests that there exists a default validator
+ *
+ * @return void
+ */
+	public function testValidatorDefault() {
+		$table = new Table();
+		$validator = $table->validator();
+		$this->assertInstanceOf('\Cake\Validation\Validator', $validator);
+		$default = $table->validator('default');
+		$this->assertSame($validator, $default);
+	}
+
+/**
+ * Tests that it is possible to define custom validator methods
+ *
+ * @return void
+ */
+	public function functionTestValidationWithDefiner() {
+		$table = $this->getMock('\Cake\ORM\Table', ['validationForOtherStuff']);
+		$table->expects($this->once())->method('validationForOtherStuff')
+			->will($this->returnArgument(0));
+		$other = $table->validator('forOtherStuff');
+		$this->assertInstanceOf('\Cake\Validation\Validator', $other);
+		$this->assertNotSame($other, $table->validator());
+	}
+
+/**
+ * Tests that it is possible to set a custom validator under a name
+ *
+ * @return void
+ */
+	public function testValidatorSetter() {
+		$table = new Table;
+		$validator = new \Cake\Validation\Validator;
+		$table->validator('other', $validator);
+		$this->assertSame($validator, $table->validator('other'));
+	}
+
+/**
+ * Tests saving with validation
+ *
+ * @return void
+ */
+	public function testSaveWithValidationError() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$table->validator()->validatePresence('password');
+		$this->assertFalse($table->save($entity));
+		$this->assertNotEmpty($entity->errors('password'));
+		$this->assertSame($entity, $table->validator()->provider('entity'));
+		$this->assertSame($table, $table->validator()->provider('table'));
+	}
+
+/**
+ * Tests saving with validation and field list
+ *
+ * @return void
+ */
+	public function testSaveWithValidationErrorAndFieldList() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$table->validator()->validatePresence('password');
+		$this->assertFalse($table->save($entity));
+		$this->assertNotEmpty($entity->errors('password'));
+	}
+
+/**
+ * Tests using a custom validation object when saving
+ *
+ * @return void
+ */
+	public function testSaveWithDifferentValidator() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$validator = (new Validator)->validatePresence('password');
+		$table->validator('custom', $validator);
+		$this->assertFalse($table->save($entity, ['validate' => 'custom']));
+		$this->assertNotEmpty($entity->errors('password'));
+
+		$this->assertSame($entity, $table->save($entity), 'default was not used');
+	}
+
+/**
+ * Tests saving with successful validation
+ *
+ * @return void
+ */
+	public function testSaveWithValidationSuccess() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'hey'
+		]);
+		$table = TableRegistry::get('users');
+		$table->validator()->validatePresence('password');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEmpty($entity->errors('password'));
+	}
+
+/**
+ * Tests beforeValidate event is triggered
+ *
+ * @return void
+ */
+	public function testBeforeValidate() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$table->getEventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
+			$this->assertSame($entity, $en);
+			$this->assertTrue($opt['crazy']);
+			$this->assertSame($ev->subject()->validator('default'), $val);
+			$val->validatePresence('password');
+		}, 'Model.beforeValidate');
+		$this->assertFalse($table->save($entity, ['crazy' => true]));
+		$this->assertNotEmpty($entity->errors('password'));
+	}
+
+/**
+ * Tests that beforeValidate can set the validation result
+ *
+ * @return void
+ */
+	public function testBeforeValidateSetResult() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser'
+		]);
+		$table = TableRegistry::get('users');
+		$table->getEventManager()->attach(function($ev, $en) {
+			$en->errors('username', 'Not good');
+			return false;
+		}, 'Model.beforeValidate');
+		$this->assertFalse($table->save($entity));
+		$this->assertEquals(['Not good'], $entity->errors('username'));
+	}
+
+/**
+ * Tests that afterValidate is triggered and can set a result
+ *
+ * @return void
+ */
+	public function testAfterValidate() {
+		$entity = new \Cake\ORM\Entity([
+			'username' => 'superuser',
+			'password' => 'hey'
+		]);
+		$table = TableRegistry::get('users');
+		$table->validator()->validatePresence('password');
+		$table->getEventManager()->attach(function($ev, $en, $opt, $val) use ($entity) {
+			$this->assertSame($entity, $en);
+			$this->assertTrue($opt['crazy']);
+			$this->assertSame($ev->subject()->validator('default'), $val);
+
+			$en->errors('username', 'Not good');
+			return false;
+		}, 'Model.afterValidate');
+
+		$this->assertFalse($table->save($entity, ['crazy' => true]));
+		$this->assertEmpty($entity->errors('password'));
+		$this->assertEquals(['Not good'], $entity->errors('username'));
 	}
 
 }

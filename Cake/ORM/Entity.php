@@ -18,6 +18,7 @@ namespace Cake\ORM;
 
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -61,6 +62,13 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * @var boolean
  */
 	protected $_persisted = null;
+
+/**
+ * List of errors per field as stored in this object
+ *
+ * @var array
+ */
+	protected $_errors = [];
 
 /**
  * Initializes the internal properties of this entity out of the
@@ -400,6 +408,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		}
 
 		$this->_dirty[$property] = true;
+		unset($this->_errors[$property]);
 		return true;
 	}
 
@@ -412,6 +421,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 	public function clean() {
 		$this->_dirty = [];
+		$this->_errors = [];
 	}
 
 /**
@@ -432,6 +442,73 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			return $this->_persisted;
 		}
 		return $this->_persisted = (bool)$new;
+	}
+
+/**
+ * Validates the internal properties using a validator object. The resulting
+ * errors will be copied inside this entity and can be retrieved using the
+ * `errors` method.
+ *
+ * This function returns true if there were no validation errors or false
+ * otherwise.
+ *
+ * @param \Cake\Validation\Validator $validator
+ * @return boolean
+ */
+	public function validate(Validator $validator) {
+		$data = $this->toArray();
+		$new = $this->isNew();
+		$this->errors($validator->errors($data, $new === null ? true : $new));
+		return empty($this->_errors);
+	}
+
+/**
+ * Sets the error messages for a field or a list of fields. When called
+ * without the second argument it returns the validation
+ * errors for the specified fields. If called with no arguments it returns
+ * all the validation error messages stored in this entity.
+ *
+ * ### Example
+ *
+ * {{{
+ * // Sets the error messages for a single field
+ * $entity->errors('salary', ['must be numeric', 'must be a positive number']);
+ *
+ * // Returns the error messages for a single field
+ * $entity->errors('salary');
+ *
+ * // Returns all error messages indexed by field name
+ * $entity->errors();
+ *
+ * // Sets the error messages for multiple fields at once
+ * $entity->errors(['salary' => ['message'], 'name' => ['another message']);
+ * }}}
+ *
+ * When used as a setter, this method will return this entity instance for method
+ * chaining.
+ *
+ * @param string|array $field
+ * @param string|array $errors The errors to be set for $field
+ * @return array|Entity
+ */
+	public function errors($field = null, $errors = null) {
+		if ($field === null) {
+			return $this->_errors;
+		}
+
+		if (is_string($field) && $errors === null) {
+			return isset($this->_errors[$field]) ? $this->_errors[$field] : [];
+		}
+
+		if (!is_array($field)) {
+			$field = [$field => $errors];
+		}
+
+		foreach ($field as $f => $error) {
+			$this->_errors[$f] = (array)$error;
+		}
+
+		return $this;
 	}
 
 }

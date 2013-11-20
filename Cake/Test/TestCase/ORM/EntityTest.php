@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 
 /**
  * Entity test case.
@@ -648,4 +649,100 @@ class EntityTest extends TestCase {
 		$this->assertEquals($expected, $entity->toArray());
 	}
 
+/**
+ * Tests that missing fields will not be passed as null to the validator
+ *
+ * @return void
+ */
+	public function testValidateMissingFields() {
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['getSomething'])
+			->disableOriginalConstructor()
+			->getMock();
+		$validator = $this->getMock('\Cake\Validation\Validator');
+		$entity->set('a', 'b');
+
+		$validator->expects($this->once())->method('errors')
+			->with(['a' => 'b'], true)
+			->will($this->returnValue(['a' => ['not valid']]));
+		$this->assertFalse($entity->validate($validator));
+		$this->assertEquals(['a' => ['not valid']], $entity->errors());
+	}
+
+/**
+ * Tests validate when the validator returns no errors
+ *
+ * @return void
+ */
+	public function testValidateSuccess() {
+		$validator = $this->getMock('\Cake\Validation\Validator');
+		$data = [
+			'a' => 'b',
+			'cool' => false,
+			'something' => true
+		];
+		$entity = new Entity($data);
+		$entity->isNew(true);
+
+		$validator->expects($this->once())->method('errors')
+			->with($data, true)
+			->will($this->returnValue([]));
+		$this->assertTrue($entity->validate($validator));
+		$this->assertEquals([], $entity->errors());
+	}
+
+/**
+ * Tests the errors method
+ *
+ * @return void
+ */
+	public function testErrors() {
+		$entity = new Entity;
+		$this->assertEmpty($entity->errors());
+		$this->assertSame($entity, $entity->errors('foo', 'bar'));
+		$this->assertEquals(['bar'], $entity->errors('foo'));
+
+		$entity->errors('foo', 'other error');
+		$this->assertEquals(['other error'], $entity->errors('foo'));
+
+		$entity->errors('bar', ['something', 'bad']);
+		$this->assertEquals(['something', 'bad'], $entity->errors('bar'));
+
+		$expected = ['foo' => ['other error'], 'bar' => ['something', 'bad']];
+		$this->assertEquals($expected, $entity->errors());
+
+		$errors = ['foo' => ['something'], 'bar' => 'else', 'baz' => ['error']];
+		$this->assertSame($entity, $entity->errors($errors));
+		$errors['bar'] = ['else'];
+		$this->assertEquals($errors, $entity->errors());
+	}
+
+/**
+ * Tests that changing the value of a property will remove errors
+ * stored for it
+ *
+ * @return void
+ */
+	public function testDirtyRemovesError() {
+		$entity = new Entity(['a' => 'b']);
+		$entity->errors('a', 'is not good');
+		$entity->set('a', 'c');
+		$this->assertEmpty($entity->errors('a'));
+
+		$entity->errors('a', 'is not good');
+		$entity->dirty('a', true);
+		$this->assertEmpty($entity->errors('a'));
+	}
+
+/**
+ * Tests that marking an entity as clean will remove errors too
+ *
+ * @return void
+ */
+	public function testCleanRemovesErrors() {
+		$entity = new Entity(['a' => 'b']);
+		$entity->errors('a', 'is not good');
+		$entity->clean();
+		$this->assertEmpty($entity->errors());
+	}
 }
