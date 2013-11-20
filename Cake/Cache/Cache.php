@@ -193,11 +193,7 @@ class Cache {
  */
 	public static function write($key, $value, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
-		if (is_resource($value)) {
+		if (!$engine || is_resource($value)) {
 			return false;
 		}
 
@@ -253,11 +249,7 @@ class Cache {
  */
 	public static function increment($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
-		if (!is_int($offset) || $offset < 0) {
+		if (!$engine || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 
@@ -275,11 +267,7 @@ class Cache {
  */
 	public static function decrement($key, $offset = 1, $config = 'default') {
 		$engine = static::engine($config);
-		if (!$engine) {
-			return false;
-		}
-
-		if (!is_int($offset) || $offset < 0) {
+		if (!$engine || !is_int($offset) || $offset < 0) {
 			return false;
 		}
 
@@ -341,8 +329,7 @@ class Cache {
 			return false;
 		}
 
-		$success = $engine->clearGroup($group);
-		return $success;
+		return $engine->clearGroup($group);
 	}
 
 /**
