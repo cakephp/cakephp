@@ -148,7 +148,11 @@ class JsonView extends View {
 
 		$jsonOptions = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT;
 		if (isset($this->viewVars['_jsonOptions'])) {
-			$jsonOptions = $this->viewVars['_jsonOptions'];
+			if ($this->viewVars['_jsonOptions'] === false) {
+				$jsonOptions = 0;
+			} else {
+				$jsonOptions = $this->viewVars['_jsonOptions'];
+			}
 		}
 
 		if (Configure::read('debug')) {
