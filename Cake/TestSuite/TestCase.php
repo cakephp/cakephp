@@ -470,14 +470,15 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 			list($description, $expressions, $itemNum) = $assertation;
 			$matches = false;
 			foreach ((array)$expressions as $expression) {
-				if (preg_match(sprintf('/^%s/s', $expression), $string, $match)) {
+				$expression = sprintf('/^%s/s', $expression);
+				if (preg_match($expression, $string, $match)) {
 					$matches = true;
 					$string = substr($string, strlen($match[0]));
 					break;
 				}
 			}
 			if (!$matches) {
-				$this->assertTrue(false, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
+				$this->assertRegExp($expression, $string, sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description));
 				if ($fullDebug) {
 					debug($string, true);
 					debug($regex, true);
