@@ -200,58 +200,6 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
- * test paginate() and virtualField interactions
- *
- * @return void
- */
-	public function testPaginateOrderVirtualField() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Controller = new PaginatorTestController($this->request);
-		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
-		$Controller->request->query = [];
-		$Controller->constructClasses();
-		$Controller->PaginatorControllerPost->virtualFields = array(
-			'offset_test' => 'PaginatorControllerPost.id + 1'
-		);
-
-		$Controller->Paginator->settings = array(
-			'fields' => array('id', 'title', 'offset_test'),
-			'order' => array('offset_test' => 'DESC'),
-			'maxLimit' => 10,
-		);
-		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEquals(array(4, 3, 2), Hash::extract($result, '{n}.PaginatorControllerPost.offset_test'));
-
-		$Controller->request->query = array('sort' => 'offset_test', 'direction' => 'asc');
-		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEquals(array(2, 3, 4), Hash::extract($result, '{n}.PaginatorControllerPost.offset_test'));
-	}
-
-/**
- * test paginate() and virtualField on joined model
- *
- * @return void
- */
-	public function testPaginateOrderVirtualFieldJoinedModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Controller = new PaginatorTestController($this->request);
-		$Controller->uses = array('PaginatorControllerPost');
-		$Controller->request->query = [];
-		$Controller->constructClasses();
-		$Controller->PaginatorControllerPost->recursive = 0;
-		$Controller->Paginator->settings = array(
-			'order' => array('PaginatorAuthor.joined_offset' => 'DESC'),
-			'maxLimit' => 10,
-		);
-		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEquals(array(4, 2, 2), Hash::extract($result, '{n}.PaginatorAuthor.joined_offset'));
-
-		$Controller->request->query = array('sort' => 'PaginatorAuthor.joined_offset', 'direction' => 'asc');
-		$result = $Controller->Paginator->paginate('PaginatorControllerPost');
-		$this->assertEquals(array(2, 2, 4), Hash::extract($result, '{n}.PaginatorAuthor.joined_offset'));
-	}
-
-/**
  * test that option merging prefers specific models
  *
  * @return void
@@ -515,61 +463,6 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
- * test that virtual fields work.
- *
- * @return void
- */
-	public function testValidateSortVirtualField() {
-		$model = $this->getMock('Cake\ORM\Table');
-		$model->expects($this->any())
-			->method('alias')
-			->will($this->returnValue('model'));
-
-		$model->expects($this->at(1))
-			->method('hasField')
-			->with('something')
-			->will($this->returnValue(false));
-
-		$model->expects($this->at(2))
-			->method('hasField')
-			->with('something', true)
-			->will($this->returnValue(true));
-
-		$options = array('sort' => 'something', 'direction' => 'desc');
-		$result = $this->Paginator->validateSort($model, $options);
-
-		$this->assertEquals('desc', $result['order']['something']);
-	}
-
-/**
- * test that sorting fields is alias specific
- *
- * @return void
- */
-	public function testValidateSortSharedFields() {
-		$model = $this->getMock('Cake\ORM\Table');
-		$model->expects($this->any())
-			->method('alias')
-			->will($this->returnValue('model'));
-		$model->Child = $this->getMock('Cake\ORM\Table');
-		$model->Child->expects($this->any())
-			->method('alias')
-			->will($this->returnValue('Child'));
-
-		$model->expects($this->never())
-			->method('hasField');
-
-		$model->Child->expects($this->at(0))
-			->method('hasField')
-			->with('something')
-			->will($this->returnValue(true));
-
-		$options = array('sort' => 'Child.something', 'direction' => 'desc');
-		$result = $this->Paginator->validateSort($model, $options);
-
-		$this->assertEquals('desc', $result['order']['Child.something']);
-	}
-/**
  * test that multiple sort works.
  *
  * @return void
@@ -675,51 +568,6 @@ class PaginatorComponentTest extends TestCase {
 		];
 		$this->Paginator->paginate($table, $settings);
 		$this->assertEquals(10, $this->request->params['paging']['PaginatorPosts']['limit']);
-	}
-
-/**
- * test paginate() and virtualField overlapping with real fields.
- *
- * @return void
- */
-	public function testPaginateOrderVirtualFieldSharedWithRealField() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Controller = new Controller($this->request);
-		$Controller->uses = array('PaginatorControllerPost', 'PaginatorControllerComment');
-		$Controller->constructClasses();
-		$Controller->PaginatorControllerComment->virtualFields = array(
-			'title' => 'PaginatorControllerComment.comment'
-		);
-		$Controller->PaginatorControllerComment->bindModel(array(
-			'belongsTo' => array(
-				'PaginatorControllerPost' => array(
-					'className' => 'PaginatorControllerPost',
-					'foreignKey' => 'article_id'
-				)
-			)
-		), false);
-
-		$Controller->paginate = array(
-			'fields' => array(
-				'PaginatorControllerComment.id',
-				'title',
-				'PaginatorControllerPost.title'
-			),
-		);
-		$Controller->request->params['named'] = array(
-			'sort' => 'PaginatorControllerPost.title',
-			'direction' => 'desc'
-		);
-		$result = Hash::extract(
-			$Controller->paginate('PaginatorControllerComment'),
-			'{n}.PaginatorControllerComment.id'
-		);
-		$result1 = array_splice($result, 0, 2);
-		sort($result1);
-		$this->assertEquals(array(5, 6), $result1);
-
-		sort($result);
-		$this->assertEquals(array(1, 2, 3, 4), $result);
 	}
 
 /**
