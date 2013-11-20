@@ -610,7 +610,8 @@ class PaginatorComponentTest extends TestCase {
 		$model->expects($this->any())
 			->method('alias')
 			->will($this->returnValue('model'));
-		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+		$model->expects($this->any())->method('hasField')
+			->will($this->returnValue(true));
 
 		$options = array('direction' => 'asc');
 		$result = $this->Paginator->validateSort($model, $options, array('title', 'id'));

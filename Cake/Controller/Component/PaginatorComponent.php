@@ -91,10 +91,10 @@ class PaginatorComponent extends Component {
  * Otherwise the top level configuration will be used.
  *
  * {{{
- *  $settings = array(
+ *  $settings = [
  *    'limit' => 20,
  *    'maxLimit' => 100
- *  );
+ *  ];
  *  $results = $paginator->paginate($table, $settings);
  * }}}
  *
@@ -102,13 +102,13 @@ class PaginatorComponent extends Component {
  * keying the settings with the Table alias.
  *
  * {{{
- *  $settings = array(
- *    'Posts' => array(
+ *  $settings = [
+ *    'Articles' => [
  *      'limit' => 20,
  *      'maxLimit' => 100
- *    ),
- *    'Comments' => array( ... )
- *  );
+ *    [,
+ *    'Comments' => [ ... ]
+ *  ];
  *  $results = $paginator->paginate($table, $settings);
  * }}}
  *
@@ -119,12 +119,12 @@ class PaginatorComponent extends Component {
  * You can paginate with any find type defined on your table using the `findType` option.
  *
  * {{{
- * $settings = array(
- *   'Post' => array(
- *     'findType' => 'popular'
- *   )
- * );
- * $results = $paginator->paginate($table, $settings);
+ *  $settings = array(
+ *    'Articles' => array(
+ *      'findType' => 'popular'
+ *    )
+ *  );
+ *  $results = $paginator->paginate($table, $settings);
  * }}}
  *
  * Would paginate using the `find('popular')` method.
@@ -303,7 +303,12 @@ class PaginatorComponent extends Component {
 			$options['order'] = array($options['sort'] => $direction);
 		}
 
-		if (!empty($whitelist) && isset($options['order']) && is_array($options['order'])) {
+		if (empty($options['order']) || (isset($options['order']) && is_array($options['order']))) {
+			$options['order'] = null;
+			return $options;
+		}
+
+		if (!empty($whitelist)) {
 			$field = key($options['order']);
 			$inWhitelist = in_array($field, $whitelist, true);
 			if (!$inWhitelist) {
