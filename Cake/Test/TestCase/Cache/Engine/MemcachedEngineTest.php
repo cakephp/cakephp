@@ -649,16 +649,16 @@ class MemcachedEngineTest extends TestCase {
  */
 	public function testLongDurationEqualToZero() {
 		$memcached = new TestMemcachedEngine();
-		$memcached->init(['compress' => false]);
+		$memcached->init(['prefix' => 'Foo_', 'compress' => false, 'duration' => 50 * DAY]);
 
 		$mock = $this->getMock('Memcached');
 		$memcached->setMemcached($mock);
 		$mock->expects($this->once())
 			->method('set')
-			->with('key', 'value', 0);
+			->with('Foo_key', 'value', 0);
 
 		$value = 'value';
-		$memcached->write('key', $value, 50 * DAY);
+		$memcached->write('key', $value);
 	}
 
 /**
