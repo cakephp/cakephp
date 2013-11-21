@@ -113,10 +113,7 @@ class PaginatorHelper extends Helper {
  * @return void
  */
 	public function beforeRender($event, $viewFile) {
-		$this->options['url'] = array_merge($this->request->params['pass']);
-		if (!empty($this->request->query)) {
-			$this->options['url']['?'] = $this->request->query;
-		}
+		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->query);
 	}
 
 /**

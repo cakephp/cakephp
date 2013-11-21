@@ -700,12 +700,12 @@ class PaginatorHelperTest extends TestCase {
 		);
 
 		$this->Paginator->request->params['pass'] = array(2);
-		$this->Paginator->request->query = array('foo' => 'bar', 'x' => 'y');
+		$this->Paginator->request->query = array('page' => 1, 'foo' => 'bar', 'x' => 'y');
 		$this->Paginator->beforeRender(null, 'posts/index');
 
 		$result = $this->Paginator->sort('title');
 		$expected = array(
-			'a' => array('href' => '/articles/index/2?sort=title&amp;direction=asc&amp;foo=bar&amp;x=y'),
+			'a' => array('href' => '/articles/index/2?foo=bar&amp;x=y&amp;sort=title&amp;direction=asc'),
 			'Title',
 			'/a'
 		);
