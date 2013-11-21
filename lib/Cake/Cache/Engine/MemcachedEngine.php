@@ -80,6 +80,11 @@ class MemcachedEngine extends CacheEngine {
 		if (!isset($settings['prefix'])) {
 			$settings['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
+
+		if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
+			$this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
+		}
+
 		$settings += array(
 			'engine' => 'Memcached',
 			'servers' => array('127.0.0.1'),
