@@ -147,6 +147,17 @@ class Controller extends Object implements EventListener {
 	protected $_responseClass = 'Cake\Network\Response';
 
 /**
+ * Settings for pagination.
+ *
+ * Used to pre-configure pagination preferences for the various
+ * tables your controller will be paginating.
+ *
+ * @var array
+ * @see Cake\Controller\Component\PaginatorComponent
+ */
+	public $paginate = [];
+
+/**
  * The name of the views subfolder containing views for this controller.
  *
  * @var string
@@ -176,6 +187,14 @@ class Controller extends Object implements EventListener {
  * @var string
  */
 	public $layout = 'default';
+
+/**
+ * The view theme to use.
+ *
+ * @see Cake\View\View::$theme
+ * @var string
+ */
+	public $theme = null;
 
 /**
  * Set to true to automatically render the view
@@ -364,16 +383,6 @@ class Controller extends Object implements EventListener {
  * @return boolean
  */
 	public function __isset($name) {
-		switch ($name) {
-			case 'base':
-			case 'here':
-			case 'webroot':
-			case 'data':
-			case 'action':
-			case 'params':
-				return true;
-		}
-
 		if (is_array($this->uses)) {
 			foreach ($this->uses as $modelClass) {
 				list($plugin, $class) = pluginSplit($modelClass, true);
@@ -392,42 +401,6 @@ class Controller extends Object implements EventListener {
 		}
 
 		return false;
-	}
-
-/**
- * Provides backwards compatibility access to the request object properties.
- * Also provides the params alias.
- *
- * @param string $name The name of the requested value
- * @return mixed The requested value for valid variables/aliases else null
- */
-	public function __get($name) {
-		switch ($name) {
-			case 'paginate':
-				return $this->Components->load('Paginator')->settings;
-		}
-
-		if (isset($this->{$name})) {
-			return $this->{$name};
-		}
-
-		return null;
-	}
-
-/**
- * Provides backwards compatibility access for setting values to the request object.
- *
- * @param string $name
- * @param mixed $value
- * @return void
- */
-	public function __set($name, $value) {
-		switch ($name) {
-			case 'paginate':
-				$this->Components->load('Paginator')->settings = $value;
-				return;
-		}
-		$this->{$name} = $value;
 	}
 
 /**
@@ -925,22 +898,28 @@ class Controller extends Object implements EventListener {
  * This method will also make the PaginatorHelper available in the view.
  *
  * @param Table|string $object Table to paginate (e.g: Table instance, or 'Model')
- * @param array $whitelist List of allowed options for paging. Use this list to
- *   disable certain URL parameters 
  * @return ORM\ResultSet Query results
  * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::paginate
  */
-	public function paginate($object = null, $whitelist = []) {
-		$try = [$object, $this->modelClass];
-		if (isset($this->uses[0])) {
-			$try[] = $this->uses[0];
+	public function paginate($object = null) {
+		if (is_object($object)) {
+			$table = $object;
 		}
-		foreach ($try as $tableName) {
-			if (!empty($tableName)) {
+
+		if (is_string($object) || $object === null) {
+			$try = [$object, $this->modelClass];
+			if (isset($this->uses[0])) {
+				$try[] = $this->uses[0];
+			}
+			foreach ($try as $tableName) {
+				if (empty($tableName)) {
+					continue;
+				}
 				$table = TableRegistry::get($tableName);
 				break;
 			}
 		}
+
 		$this->Paginator = $this->Components->load('Paginator');
 		if (
 			!in_array('Paginator', $this->helpers) &&
@@ -948,7 +927,7 @@ class Controller extends Object implements EventListener {
 		) {
 			$this->helpers[] = 'Paginator';
 		}
-		return $this->Paginator->paginate($table, $this->paginate, $whitelist);
+		return $this->Paginator->paginate($table, $this->paginate);
 	}
 
 /**
