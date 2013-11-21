@@ -851,15 +851,12 @@ class Table {
 	}
 
 /**
- * Persists an entity based on the fields that are marked as dirty on it and
- * matching the list of fields passed in the `fieldList` inside the options
- * array. Returns the same entity after a successful save or false in case
+ * Persists an entity based on the fields that are marked as dirty and
+ * returns the same entity after a successful save or false in case
  * of any error.
  *
  * The options array can receive the following keys:
  *
- * - fieldList: An array of field names that should be saved, if empty all
- * properties in the passed entity will be saved
  * - atomic: Whether to execute the save and callbacks inside a database
  * transaction (default: true)
  * - validate: Whether or not validate the entity before saving, if validation
@@ -906,7 +903,6 @@ class Table {
 	public function save(Entity $entity, array $options = []) {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
-			'fieldList' => [],
 			'validate' => true
 		]);
 		if ($options['atomic']) {
@@ -949,8 +945,7 @@ class Table {
 			return $event->result;
 		}
 
-		$list = $options['fieldList'] ?: $this->schema()->columns();
-		$data = $entity->extract($list, true);
+		$data = $entity->extract($this->schema()->columns(), true);
 		$keys = array_keys($data);
 
 		if ($entity->isNew()) {
