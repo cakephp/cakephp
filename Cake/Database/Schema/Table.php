@@ -78,8 +78,30 @@ class Table {
 		'precision' => null,
 		'null' => null,
 		'default' => null,
-		'fixed' => null,
 		'comment' => null,
+	];
+
+/**
+ * Additional type specific properties.
+ *
+ * @var array
+ */
+	protected $_columnExtras = [
+		'string' => [
+			'fixed' => null,
+		],
+		'integer' => [
+			'unsigned' => null,
+		],
+		'biginteger' => [
+			'unsigned' => null,
+		],
+		'decimal' => [
+			'unsigned' => null,
+		],
+		'float' => [
+			'unsigned' => null,
+		],
 	];
 
 /**
@@ -179,7 +201,9 @@ class Table {
  * - `default` The default value of the column.
  * - `null` Whether or not the column can hold nulls.
  * - `fixed` Whether or not the column is a fixed length column.
- *   this is only useful for string colums.
+ *   This is only present/valid with string columns.
+ * - `unsigned` Whether or not the column is an unsigned column.
+ *   This is only present/valid for integer, decimal, float columns.
  *
  * In addition to the above keys, the following keys are
  * implemented in some database dialects, but not all:
@@ -194,8 +218,12 @@ class Table {
 		if (is_string($attrs)) {
 			$attrs = ['type' => $attrs];
 		}
-		$attrs = array_intersect_key($attrs, $this->_columnKeys);
-		$this->_columns[$name] = $attrs + $this->_columnKeys;
+		$valid = $this->_columnKeys;
+		if (isset($this->_columnExtras[$attrs['type']])) {
+			$valid += $this->_columnExtras[$attrs['type']];
+		}
+		$attrs = array_intersect_key($attrs, $valid);
+		$this->_columns[$name] = $attrs + $valid;
 		return $this;
 	}
 
