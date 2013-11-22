@@ -3253,7 +3253,7 @@ class MysqlTest extends CakeTestCase {
 				),
 				'`testName` decimal UNSIGNED'
 			),
-			//set #7
+			//set #8
 			array(
 				array(
 					'name' => 'testName',
