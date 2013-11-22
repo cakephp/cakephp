@@ -689,8 +689,8 @@ class HttpSocket extends CakeSocket {
 		}
 		if (!empty($this->config['context']['ssl']['verify_host'])) {
 			$this->config['context']['ssl']['CN_match'] = $host;
-			unset($this->config['context']['ssl']['verify_host']);
 		}
+		unset($this->config['context']['ssl']['verify_host']);
 	}
 
 /**
