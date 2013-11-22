@@ -1201,7 +1201,7 @@ class QueryTest extends TestCase {
  * Tests selecting rows using a limit clause
  *
  * @return void
- **/
+ */
 	public function testSelectLimit() {
 		$query = new Query($this->connection);
 		$result = $query->select('id')->from('articles')->limit(1)->execute();
@@ -1221,7 +1221,7 @@ class QueryTest extends TestCase {
  * Tests selecting rows combining a limit and offset clause
  *
  * @return void
- **/
+ */
 	public function testSelectOffset() {
 		$query = new Query($this->connection);
 		$result = $query->select('id')->from('comments')
@@ -1250,6 +1250,36 @@ class QueryTest extends TestCase {
 		$this->assertCount(2, $result);
 		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+	}
+
+/**
+ * Test selecting rows using the page() method.
+ *
+ * @return void
+ */
+	public function testSelectPage() {
+		$query = new Query($this->connection);
+		$result = $query->select('id')->from('comments')
+			->limit(1)
+			->page(1)->execute();
+
+		$this->assertEquals(0, $query->clause('offset'));
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$result = $query->page(2)->execute();
+		$this->assertEquals(1, $query->clause('offset'));
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$query->select('id')->from('comments')->page(1);
+		$this->assertEquals(25, $query->clause('limit'));
+		$this->assertEquals(0, $query->clause('offset'));
+
+		$query->select('id')->from('comments')->page(2);
+		$this->assertEquals(25, $query->clause('limit'));
+		$this->assertEquals(25, $query->clause('offset'));
 	}
 
 /**

@@ -33,10 +33,6 @@ class PaginatorHelper extends Helper {
  *
  * The values that may be specified are:
  *
- * - `format` Format of the counter. Supported formats are 'range' and 'pages'
- *    and custom (default). In the default mode the supplied string is parsed and constants are replaced
- *    by their actual values.
- *    placeholders: %page%, %pages%, %current%, %count%, %start%, %end% .
  * - `url` Url of the action. See Router::url()
  * - `url['sort']`  the key that the recordset is sorted.
  * - `url['direction']` Direction of the sorting (default: 'asc').
@@ -117,10 +113,7 @@ class PaginatorHelper extends Helper {
  * @return void
  */
 	public function beforeRender($event, $viewFile) {
-		$this->options['url'] = array_merge($this->request->params['pass']);
-		if (!empty($this->request->query)) {
-			$this->options['url']['?'] = $this->request->query;
-		}
+		$this->options['url'] = array_merge($this->request->params['pass'], $this->request->query);
 	}
 
 /**
