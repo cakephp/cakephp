@@ -135,17 +135,17 @@ class ModelIntegrationTest extends ModelTestBase {
 	}
 
 /**
- * Tests that $cacheSources can only be disabled in the db using model settings, not enabled
+ * Tests that $cacheSources is restored despite the settings on the model.
  *
  * @return void
  */
-	public function testCacheSourcesDisabling() {
+	public function testCacheSourcesRestored() {
 		$this->loadFixtures('JoinA', 'JoinB', 'JoinAB', 'JoinC', 'JoinAC');
 		$this->db->cacheSources = true;
 		$TestModel = new JoinA();
 		$TestModel->cacheSources = false;
 		$TestModel->setSource('join_as');
-		$this->assertFalse($this->db->cacheSources);
+		$this->assertTrue($this->db->cacheSources);
 
 		$this->db->cacheSources = false;
 		$TestModel = new JoinA();

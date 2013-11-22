@@ -101,9 +101,15 @@ class MemcachedEngine extends CacheEngine {
 		if (!class_exists('Memcached')) {
 			return false;
 		}
+
 		if (!isset($config['prefix'])) {
 			$config['prefix'] = Inflector::slug(APP_DIR) . '_';
 		}
+
+		if (defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK) {
+			$this->_serializers['msgpack'] = Memcached::SERIALIZER_MSGPACK;
+		}
+
 		parent::init($config);
 
 		if (!is_array($this->_config['servers'])) {

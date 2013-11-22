@@ -1123,10 +1123,13 @@ class Model extends Object implements EventListener {
 	public function setSource($tableName) {
 		$this->setDataSource($this->useDbConfig);
 		$db = ConnectionManager::getDataSource($this->useDbConfig);
-		$db->cacheSources = ($this->cacheSources && $db->cacheSources);
 
 		if (method_exists($db, 'listSources')) {
+			$restore = $db->cacheSources;
+			$db->cacheSources = ($restore && $this->cacheSources);
 			$sources = $db->listSources();
+			$db->cacheSources = $restore;
+
 			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
 				throw new Error\MissingTableException(array(
 					'table' => $this->tablePrefix . $tableName,

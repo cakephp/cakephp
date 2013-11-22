@@ -1660,6 +1660,14 @@ class HtmlHelperTest extends TestCase {
 			)
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Html->request->webroot = '/testing/';
+		$result = $this->Html->meta('icon');
+		$expected = array(
+			'link' => array('href' => '/testing/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'icon'),
+			array('link' => array('href' => '/testing/favicon.ico', 'type' => 'image/x-icon', 'rel' => 'shortcut icon'))
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

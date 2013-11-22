@@ -230,6 +230,29 @@ class MemcachedEngineTest extends TestCase {
 	}
 
 /**
+ * testMsgpackSerializerSetting method
+ *
+ * @return void
+ */
+	public function testMsgpackSerializerSetting() {
+		$this->skipIf(
+			!defined('Memcached::HAVE_MSGPACK') || !Memcached::HAVE_MSGPACK,
+			'Memcached extension is not compiled with msgpack support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serialize' => 'msgpack'
+		);
+
+		$Memcached->init($settings);
+		$this->assertEquals(Memcached::SERIALIZER_MSGPACK, $Memcached->getMemcached()->getOption(Memcached::OPT_SERIALIZER));
+	}
+
+/**
  * testJsonSerializerThrowException method
  *
  * @return void
@@ -252,6 +275,31 @@ class MemcachedEngineTest extends TestCase {
 			'Cake\Error\Exception', 'Memcached extension is not compiled with json support'
 		);
 		$Memcached->init($config);
+	}
+
+/**
+ * testMsgpackSerializerThrowException method
+ *
+ * @return void
+ */
+	public function testMsgpackSerializerThrowException() {
+		$this->skipIf(
+			defined('Memcached::HAVE_MSGPACK') && Memcached::HAVE_MSGPACK,
+			'Memcached extension is compiled with msgpack support'
+		);
+
+		$Memcached = new TestMemcachedEngine();
+		$settings = array(
+			'engine' => 'Memcached',
+			'servers' => array('127.0.0.1:11211'),
+			'persistent' => false,
+			'serialize' => 'msgpack'
+		);
+
+		$this->setExpectedException(
+			'CacheException', 'msgpack is not a valid serializer engine for Memcached'
+		);
+		$Memcached->init($settings);
 	}
 
 /**
