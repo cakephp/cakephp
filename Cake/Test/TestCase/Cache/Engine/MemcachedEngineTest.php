@@ -297,7 +297,7 @@ class MemcachedEngineTest extends TestCase {
 		);
 
 		$this->setExpectedException(
-			'CacheException', 'msgpack is not a valid serializer engine for Memcached'
+			'Cake\Error\Exception', 'msgpack is not a valid serializer engine for Memcached'
 		);
 		$Memcached->init($settings);
 	}
