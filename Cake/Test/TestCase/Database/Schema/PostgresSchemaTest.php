@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -85,6 +83,7 @@ SQL;
  */
 	public static function convertColumnProvider() {
 		return [
+			// Timestamp
 			[
 				'TIMESTAMP',
 				['type' => 'datetime', 'length' => null]
@@ -93,6 +92,7 @@ SQL;
 				'TIMESTAMP WITHOUT TIME ZONE',
 				['type' => 'datetime', 'length' => null]
 			],
+			// Date & time
 			[
 				'DATE',
 				['type' => 'date', 'length' => null]
@@ -101,6 +101,7 @@ SQL;
 				'TIME',
 				['type' => 'time', 'length' => null]
 			],
+			// Integer
 			[
 				'SMALLINT',
 				['type' => 'integer', 'length' => 5]
@@ -118,6 +119,11 @@ SQL;
 				['type' => 'biginteger', 'length' => 20]
 			],
 			[
+				'BIGSERIAL',
+				['type' => 'biginteger', 'length' => 20]
+			],
+			// Decimal
+			[
 				'NUMERIC',
 				['type' => 'decimal', 'length' => null]
 			],
@@ -129,6 +135,7 @@ SQL;
 				'MONEY',
 				['type' => 'decimal', 'length' => null]
 			],
+			// String
 			[
 				'VARCHAR',
 				['type' => 'string', 'length' => null]
@@ -153,6 +160,7 @@ SQL;
 				'CHARACTER(10)',
 				['type' => 'string', 'fixed' => true, 'length' => 10]
 			],
+			// UUID
 			[
 				'UUID',
 				['type' => 'uuid', 'length' => null]
@@ -161,14 +169,17 @@ SQL;
 				'INET',
 				['type' => 'string', 'length' => 39]
 			],
+			// Text
 			[
 				'TEXT',
 				['type' => 'text', 'length' => null]
 			],
+			// Blob
 			[
 				'BYTEA',
 				['type' => 'binary', 'length' => null]
 			],
+			// Float
 			[
 				'REAL',
 				['type' => 'float', 'length' => null]
@@ -176,10 +187,6 @@ SQL;
 			[
 				'DOUBLE PRECISION',
 				['type' => 'float', 'length' => null]
-			],
-			[
-				'BIGSERIAL',
-				['type' => 'biginteger', 'length' => 20]
 			],
 		];
 	}

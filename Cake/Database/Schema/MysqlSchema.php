@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -21,13 +19,11 @@ use Cake\Database\Schema\Table;
 
 /**
  * Schema generation/reflection features for MySQL
- *
  */
 class MysqlSchema extends BaseSchema {
 
 /**
  * {@inheritdoc}
- *
  */
 	public function listTablesSql($config) {
 		return ['SHOW TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']), []];
@@ -35,7 +31,6 @@ class MysqlSchema extends BaseSchema {
 
 /**
  * {@inheritdoc}
- *
  */
 	public function describeTableSql($name, $config) {
 		return ['SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($name), []];
@@ -43,7 +38,6 @@ class MysqlSchema extends BaseSchema {
 
 /**
  * {@inheritdoc}
- *
  */
 	public function describeIndexSql($table, $config) {
 		return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($table), []];
@@ -59,7 +53,7 @@ class MysqlSchema extends BaseSchema {
  * @throws Cake\Database\Exception When column type cannot be parsed.
  */
 	protected function _convertColumn($column) {
-		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
+		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
 		if (empty($matches)) {
 			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
 		}
@@ -81,11 +75,13 @@ class MysqlSchema extends BaseSchema {
 		if (($col === 'tinyint' && $length === 1) || $col === 'boolean') {
 			return ['type' => 'boolean', 'length' => null];
 		}
+
+		$unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
 		if (strpos($col, 'bigint') !== false || $col === 'bigint') {
-			return ['type' => 'biginteger', 'length' => $length];
+			return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
 		}
 		if (strpos($col, 'int') !== false) {
-			return ['type' => 'integer', 'length' => $length];
+			return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
 		}
 		if ($col === 'char' && $length === 36) {
 			return ['type' => 'uuid', 'length' => null];
@@ -103,10 +99,20 @@ class MysqlSchema extends BaseSchema {
 			return ['type' => 'binary', 'length' => $length];
 		}
 		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false) {
-			return ['type' => 'float', 'length' => $length, 'precision' => $precision];
+			return [
+				'type' => 'float',
+				'length' => $length,
+				'precision' => $precision,
+				'unsigned' => $unsigned
+			];
 		}
 		if (strpos($col, 'decimal') !== false) {
-			return ['type' => 'decimal', 'length' => $length, 'precision' => $precision];
+			return [
+				'type' => 'decimal',
+				'length' => $length,
+				'precision' => $precision,
+				'unsigned' => $unsigned
+			];
 		}
 		return ['type' => 'text', 'length' => null];
 	}
@@ -280,6 +286,7 @@ class MysqlSchema extends BaseSchema {
 		if (in_array($data['type'], $hasLength, true) && isset($data['length'])) {
 			$out .= '(' . (int)$data['length'] . ')';
 		}
+
 		$hasPrecision = ['float', 'decimal'];
 		if (
 			in_array($data['type'], $hasPrecision, true) &&
@@ -287,6 +294,15 @@ class MysqlSchema extends BaseSchema {
 		) {
 			$out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
 		}
+
+		$hasUnsigned = ['float', 'decimal', 'integer', 'biginteger'];
+		if (
+			in_array($data['type'], $hasUnsigned, true) &&
+			isset($data['unsigned']) && $data['unsigned'] === true
+		) {
+			$out .= ' UNSIGNED';
+		}
+
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
 		}

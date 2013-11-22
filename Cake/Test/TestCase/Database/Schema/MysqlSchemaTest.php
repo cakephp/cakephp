@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -63,15 +61,23 @@ class MysqlSchemaTest extends TestCase {
 			],
 			[
 				'TINYINT(2)',
-				['type' => 'integer', 'length' => 2]
+				['type' => 'integer', 'length' => 2, 'unsigned' => false]
 			],
 			[
 				'INTEGER(11)',
-				['type' => 'integer', 'length' => 11]
+				['type' => 'integer', 'length' => 11, 'unsigned' => false]
+			],
+			[
+				'INTEGER(11) UNSIGNED',
+				['type' => 'integer', 'length' => 11, 'unsigned' => true]
 			],
 			[
 				'BIGINT',
-				['type' => 'biginteger', 'length' => null]
+				['type' => 'biginteger', 'length' => null, 'unsigned' => false]
+			],
+			[
+				'BIGINT UNSIGNED',
+				['type' => 'biginteger', 'length' => null, 'unsigned' => true]
 			],
 			[
 				'VARCHAR(255)',
@@ -99,23 +105,39 @@ class MysqlSchemaTest extends TestCase {
 			],
 			[
 				'FLOAT',
-				['type' => 'float', 'length' => null, 'precision' => null]
+				['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false]
 			],
 			[
 				'DOUBLE',
-				['type' => 'float', 'length' => null, 'precision' => null]
+				['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false]
+			],
+			[
+				'DOUBLE UNSIGNED',
+				['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => true]
+			],
+			[
+				'DECIMAL(11,2) UNSIGNED',
+				['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => true]
 			],
 			[
 				'DECIMAL(11,2)',
-				['type' => 'decimal', 'length' => 11, 'precision' => 2]
+				['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => false]
 			],
 			[
 				'FLOAT(11,2)',
-				['type' => 'float', 'length' => 11, 'precision' => 2]
+				['type' => 'float', 'length' => 11, 'precision' => 2, 'unsigned' => false]
+			],
+			[
+				'FLOAT(11,2) UNSIGNED',
+				['type' => 'float', 'length' => 11, 'precision' => 2, 'unsigned' => true]
 			],
 			[
 				'DOUBLE(10,4)',
-				['type' => 'float', 'length' => 10, 'precision' => 4]
+				['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => false]
+			],
+			[
+				'DOUBLE(10,4) UNSIGNED',
+				['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => true]
 			],
 		];
 	}
@@ -222,10 +244,10 @@ SQL;
 			'id' => [
 				'type' => 'biginteger',
 				'null' => false,
+				'unsigned' => false,
 				'default' => null,
 				'length' => 20,
 				'precision' => null,
-				'fixed' => null,
 				'comment' => null,
 			],
 			'title' => [
@@ -243,16 +265,15 @@ SQL;
 				'default' => null,
 				'length' => null,
 				'precision' => null,
-				'fixed' => null,
 				'comment' => null,
 			],
 			'author_id' => [
 				'type' => 'integer',
 				'null' => false,
+				'unsigned' => false,
 				'default' => null,
 				'length' => 11,
 				'precision' => null,
-				'fixed' => null,
 				'comment' => null,
 			],
 			'published' => [
@@ -261,7 +282,6 @@ SQL;
 				'default' => 0,
 				'length' => null,
 				'precision' => null,
-				'fixed' => null,
 				'comment' => null,
 			],
 			'allow_comments' => [
@@ -270,7 +290,6 @@ SQL;
 				'default' => 0,
 				'length' => null,
 				'precision' => null,
-				'fixed' => null,
 				'comment' => null,
 			],
 			'created' => [
@@ -279,7 +298,6 @@ SQL;
 				'default' => null,
 				'length' => null,
 				'precision' => null,
-				'fixed' => null,
 				'comment' => null,
 			],
 		];
@@ -394,8 +412,18 @@ SQL;
 			],
 			[
 				'post_id',
+				['type' => 'integer', 'length' => 11, 'unsigned' => true],
+				'`post_id` INTEGER(11) UNSIGNED'
+			],
+			[
+				'post_id',
 				['type' => 'biginteger', 'length' => 20],
 				'`post_id` BIGINT'
+			],
+			[
+				'post_id',
+				['type' => 'biginteger', 'length' => 20, 'unsigned' => true],
+				'`post_id` BIGINT UNSIGNED'
 			],
 			// Decimal
 			[
@@ -405,8 +433,8 @@ SQL;
 			],
 			[
 				'value',
-				['type' => 'decimal', 'length' => 11],
-				'`value` DECIMAL(11,0)'
+				['type' => 'decimal', 'length' => 11, 'unsigned' => true],
+				'`value` DECIMAL(11,0) UNSIGNED'
 			],
 			[
 				'value',
@@ -416,8 +444,13 @@ SQL;
 			// Float
 			[
 				'value',
-				['type' => 'float'],
+				['type' => 'float', 'unsigned'],
 				'`value` FLOAT'
+			],
+			[
+				'value',
+				['type' => 'float', 'unsigned' => true],
+				'`value` FLOAT UNSIGNED'
 			],
 			[
 				'value',

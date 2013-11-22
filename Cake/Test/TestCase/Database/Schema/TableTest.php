@@ -101,6 +101,36 @@ class TableTest extends TestCase {
 			'comment' => null,
 		];
 		$this->assertEquals($expected, $result);
+
+		$table->addColumn('author_id', [
+			'type' => 'integer'
+		]);
+		$result = $table->column('author_id');
+		$expected = [
+			'type' => 'integer',
+			'length' => null,
+			'precision' => null,
+			'default' => null,
+			'null' => null,
+			'unsigned' => null,
+			'comment' => null,
+		];
+		$this->assertEquals($expected, $result);
+
+		$table->addColumn('amount', [
+			'type' => 'decimal'
+		]);
+		$result = $table->column('amount');
+		$expected = [
+			'type' => 'decimal',
+			'length' => null,
+			'precision' => null,
+			'default' => null,
+			'null' => null,
+			'unsigned' => null,
+			'comment' => null,
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 /**

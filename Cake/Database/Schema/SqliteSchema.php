@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -42,7 +40,7 @@ class SqliteSchema extends BaseSchema {
  * @return array Array of column information.
  */
 	protected function _convertColumn($column) {
-		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
+		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
 		if (empty($matches)) {
 			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
 		}
@@ -51,26 +49,25 @@ class SqliteSchema extends BaseSchema {
 		if (isset($matches[2])) {
 			$length = (int)$matches[2];
 		}
+		$unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
 
 		if ($col === 'bigint') {
-			return ['type' => 'biginteger', 'length' => $length];
-		}
-		if (in_array($col, ['blob', 'clob'])) {
-			return ['type' => 'binary', 'length' => null];
-		}
-		if (in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
-			return ['type' => $col, 'length' => null];
+			return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
 		}
 		if (strpos($col, 'decimal') !== false) {
-			return ['type' => 'decimal', 'length' => null];
+			return ['type' => 'decimal', 'length' => null, 'unsigned' => $unsigned];
+		}
+		if (strpos($col, 'int') !== false) {
+			return ['type' => 'integer', 'length' => $length, 'unsigned' => $unsigned];
+		}
+		if (in_array($col, ['float', 'real', 'double'])) {
+			return ['type' => 'float', 'length' => null, 'unsigned' => $unsigned];
 		}
 
 		if (strpos($col, 'boolean') !== false) {
 			return ['type' => 'boolean', 'length' => null];
 		}
-		if (strpos($col, 'int') !== false) {
-			return ['type' => 'integer', 'length' => $length];
-		}
+
 		if ($col === 'char' && $length === 36) {
 			return ['type' => 'uuid', 'length' => null];
 		}
@@ -80,9 +77,14 @@ class SqliteSchema extends BaseSchema {
 		if (strpos($col, 'char') !== false) {
 			return ['type' => 'string', 'length' => $length];
 		}
-		if (in_array($col, ['float', 'real', 'double'])) {
-			return ['type' => 'float', 'length' => null];
+
+		if (in_array($col, ['blob', 'clob'])) {
+			return ['type' => 'binary', 'length' => null];
 		}
+		if (in_array($col, ['date', 'time', 'timestamp', 'datetime'])) {
+			return ['type' => $col, 'length' => null];
+		}
+
 		return ['type' => 'text', 'length' => null];
 	}
 
@@ -239,6 +241,14 @@ class SqliteSchema extends BaseSchema {
 		) {
 			$out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
 		}
+		$hasUnsigned = ['biginteger', 'integer', 'float', 'decimal'];
+		if (
+			in_array($data['type'], $hasUnsigned, true) &&
+			isset($data['unsigned']) && $data['unsigned'] === true
+		) {
+			$out .= ' UNSIGNED';
+		}
+
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
 		}
