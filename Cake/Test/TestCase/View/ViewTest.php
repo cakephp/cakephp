@@ -1003,19 +1003,6 @@ class ViewTest extends TestCase {
 		$this->assertTrue(isset($View->viewVars['content_for_layout']), 'content_for_layout should be a view var');
 		$this->assertTrue(isset($View->viewVars['scripts_for_layout']), 'scripts_for_layout should be a view var');
 
-		$this->PostsController->set('url', 'flash');
-		$this->PostsController->set('message', 'yo what up');
-		$this->PostsController->set('pause', 3);
-		$this->PostsController->set('page_title', 'yo what up');
-
-		$View = new TestView($this->PostsController);
-		$result = $View->render(false, 'flash');
-
-		$this->assertRegExp("/<title>yo what up<\/title>/", $result);
-		$this->assertRegExp("/<p><a href=\"flash\">yo what up<\/a><\/p>/", $result);
-
-		$this->assertTrue($View->render(false, 'flash'));
-
 		$this->PostsController->helpers = array('Session', 'Cache', 'Html');
 		$this->PostsController->constructClasses();
 		$this->PostsController->cacheAction = array('index' => 3600);
@@ -1026,7 +1013,6 @@ class ViewTest extends TestCase {
 		$result = $View->render('index');
 
 		$this->assertRegExp("/<meta http-equiv=\"Content-Type\" content=\"text\/html; charset=utf-8\" \/>\s*<title>/", $result);
-		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 		$this->assertRegExp("/<div id=\"content\">\s*posts index\s*<\/div>/", $result);
 	}
 

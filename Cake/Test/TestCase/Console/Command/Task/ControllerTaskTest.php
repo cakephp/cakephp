@@ -1,7 +1,5 @@
 <?php
 /**
- * ControllerTask Test Case
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -329,17 +327,6 @@ class ControllerTaskTest extends TestCase {
 		$this->assertContains('function admin_view($id = null)', $result);
 		$this->assertContains('function admin_edit($id = null)', $result);
 		$this->assertContains('function admin_delete($id = null)', $result);
-	}
-
-/**
- * Test baking with Controller::flash() or no sessions.
- *
- * @return void
- */
-	public function testBakeActionsWithNoSessions() {
-		$result = $this->Task->bakeActions('BakeArticles', null, false);
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'ActionsWithNoSessions.ctp');
-		$this->assertTextEquals($expected, $result);
 	}
 
 /**

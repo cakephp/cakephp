@@ -150,7 +150,6 @@ class ControllerTask extends BakeTask {
 
 		$helpers = $components = [];
 		$actions = '';
-		$wannaUseSession = 'y';
 		$wannaBakeAdminCrud = 'n';
 		$useDynamicScaffold = 'n';
 		$wannaBakeCrud = 'y';
@@ -175,21 +174,17 @@ class ControllerTask extends BakeTask {
 
 				$helpers = $this->doHelpers();
 				$components = $this->doComponents();
-
-				$wannaUseSession = $this->in(
-					__d('cake_console', "Would you like to use Session flash messages?"), ['y', 'n'], 'y'
-				);
 			}
 		} else {
 			list($wannaBakeCrud, $wannaBakeAdminCrud) = $this->_askAboutMethods();
 		}
 
 		if (strtolower($wannaBakeCrud) === 'y') {
-			$actions = $this->bakeActions($controllerName, null, strtolower($wannaUseSession) === 'y');
+			$actions = $this->bakeActions($controllerName, null);
 		}
 		if (strtolower($wannaBakeAdminCrud) === 'y') {
 			$admin = $this->Project->getPrefix();
-			$actions .= $this->bakeActions($controllerName, $admin, strtolower($wannaUseSession) === 'y');
+			$actions .= $this->bakeActions($controllerName, $admin);
 		}
 
 		$baked = false;
@@ -276,10 +271,9 @@ class ControllerTask extends BakeTask {
  *
  * @param string $controllerName Controller name
  * @param string $admin Admin route to use
- * @param boolean $wannaUseSession Set to true to use sessions, false otherwise
  * @return string Baked actions
  */
-	public function bakeActions($controllerName, $admin = null, $wannaUseSession = true) {
+	public function bakeActions($controllerName, $admin = null) {
 		$currentModelName = $modelImport = $this->_modelName($controllerName);
 		$plugin = $this->plugin;
 		if ($plugin) {
@@ -302,7 +296,7 @@ class ControllerTask extends BakeTask {
 
 		$this->Template->set(compact(
 			'plugin', 'admin', 'controllerPath', 'pluralName', 'singularName',
-			'singularHumanName', 'pluralHumanName', 'modelObj', 'wannaUseSession', 'currentModelName',
+			'singularHumanName', 'pluralHumanName', 'modelObj', 'currentModelName',
 			'displayField', 'primaryKey'
 		));
 		$actions = $this->Template->generate('actions', 'controller_actions');
