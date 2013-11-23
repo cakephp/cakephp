@@ -364,46 +364,6 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * testFlash method
- *
- * @return void
- */
-	public function testFlash() {
-		$request = new Request('controller_posts/index');
-		$request->webroot = '/';
-		$request->base = '/';
-
-		$Controller = new Controller($request, $this->getMock('Cake\Network\Response', array('_sendHeader')));
-		$Controller->flash('this should work', '/flash');
-		$result = $Controller->response->body();
-
-		$expected = '<!DOCTYPE html>
-		<html>
-		<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<title>this should work</title>
-		<style><!--
-		P { text-align:center; font:bold 1.1em sans-serif }
-		A { color:#444; text-decoration:none }
-		A:HOVER { text-decoration: underline; color:#44E }
-		--></style>
-		</head>
-		<body>
-		<p><a href="/flash">this should work</a></p>
-		</body>
-		</html>';
-		$result = str_replace(array("\t", "\r\n", "\n"), "", $result);
-		$expected = str_replace(array("\t", "\r\n", "\n"), "", $expected);
-		$this->assertEquals($expected, $result);
-
-		$Controller = new Controller($request);
-		$Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
-		$Controller->flash('this should work', '/flash', 1, 'ajax2');
-		$result = $Controller->response->body();
-		$this->assertRegExp('/Ajax!/', $result);
-	}
-
-/**
  * testRender method
  *
  * @return void
@@ -745,51 +705,6 @@ class ControllerTest extends TestCase {
 		$this->assertSame($expected, $TestController->request->data);
 		$this->assertSame('view', $TestController->request->params['action']);
 		$this->assertSame('view', $TestController->view);
-	}
-
-/**
- * testValidateErrors method
- *
- * @return void
- */
-	public function testValidateErrors() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		ClassRegistry::flush();
-		$request = new Request('controller_posts/index');
-
-		$TestController = new TestController($request);
-		$TestController->constructClasses();
-		$this->assertFalse($TestController->validateErrors());
-		$this->assertEquals(0, $TestController->validate());
-
-		$TestController->Comment->invalidate('some_field', 'error_message');
-		$TestController->Comment->invalidate('some_field2', 'error_message2');
-
-		$comment = new \TestApp\Model\Comment($request);
-		$comment->set('someVar', 'data');
-		$result = $TestController->validateErrors($comment);
-		$expected = array('some_field' => array('error_message'), 'some_field2' => array('error_message2'));
-		$this->assertSame($expected, $result);
-		$this->assertEquals(2, $TestController->validate($comment));
-	}
-
-/**
- * test that validateErrors works with any old model.
- *
- * @return void
- */
-	public function testValidateErrorsOnArbitraryModels() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		Configure::write('Config.language', 'eng');
-		$TestController = new TestController();
-
-		$Post = new \TestApp\Model\Post();
-		$Post->validate = array('title' => 'notEmpty');
-		$Post->set('title', '');
-		$result = $TestController->validateErrors($Post);
-
-		$expected = array('title' => array('The provided value is invalid'));
-		$this->assertEquals($expected, $result);
 	}
 
 /**
