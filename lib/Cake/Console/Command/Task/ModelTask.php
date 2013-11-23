@@ -940,6 +940,7 @@ class ModelTask extends BakeTask {
 			$this->err(__d('cake_console', 'Your database does not have any tables.'));
 			return $this->_stop();
 		}
+		sort($tables);
 		return $tables;
 	}
 
