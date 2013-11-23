@@ -1941,4 +1941,28 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['Not good'], $entity->errors('username'));
 	}
 
+/**
+ * Tests saving belongsTo association
+ *
+ * @group save
+ * @return void
+ */
+	public function testsSaveBelongsTo() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->author = new \Cake\ORM\Entity([
+			'name' => 'Jose',
+		]);
+
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->author->isNew());
+		$this->assertEquals(5, $entity->author->id);
+		$this->assertEquals(5, $entity->get('author_id'));
+	}
+
 }

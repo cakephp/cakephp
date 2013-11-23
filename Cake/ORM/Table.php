@@ -981,12 +981,12 @@ class Table {
 		$parents = $children = [];
 		foreach ($assocs as $assoc) {
 			$association = $this->association($assoc);
-			if (!$assoc) {
+			if (!$association) {
 				$msg = __d('cake_dev', '%s is not associated to %s', $this->alias(), $assoc);
-				throw new \InvalidArgumentException();
+				throw new \InvalidArgumentException($msg);
 			}
 	
-			if ($assoc->isOwningSide()) {
+			if ($association->isOwningSide()) {
 				$children[] = $assoc;
 			} else {
 				$parents[] = $assoc;
@@ -1002,6 +1002,7 @@ class Table {
 
 		foreach ($assocs as $alias) {
 			$association = $this->association($alias);
+			unset($options['associated']);
 			if (!$association->save($entity, $options)) {
 				return false;
 			}

@@ -106,6 +106,22 @@ class BelongsTo extends Association {
  * @see Table::save()
  */
 	public function save(Entity $entity, $options = []) {
+		$targetEntity = $entity->get($this->property());
+		if (!$targetEntity) {
+			return $entity;
+		}
+		
+		$table = $this->target();
+		$targetEntity = $table->save($targetEntity, $options);
+		if (!$targetEntity) {
+			return false;
+		}
+
+		$properties = array_combine(
+			(array)$this->foreignKey(),
+			$targetEntity->extract((array)$table->primaryKey())
+		);
+		$entity->set($properties);
 		return $entity;
 	}
 
