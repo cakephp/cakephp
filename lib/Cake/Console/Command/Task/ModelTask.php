@@ -861,7 +861,7 @@ class ModelTask extends BakeTask {
  * @return array
  */
 	public function listAll($useDbConfig = null) {
-		$this->_tables = (array)$this->getAllTables($useDbConfig);
+		$this->_tables = $this->getAllTables($useDbConfig);
 
 		$this->_modelNames = array();
 		$count = count($this->_tables);
