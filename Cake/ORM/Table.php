@@ -938,20 +938,24 @@ class Table {
 		if ($options['associated'] === true) {
 			$options['associated'] = array_keys($this->_associations);
 		}
-
 		$options['associated'] = array_filter((array)$options['associated']);
 
 		if (!$this->_processValidation($entity, $options)) {
 			return false;
 		}
 
-		list($parents, $children) = $this->_sortAssociationTypes($options['associated']);
-		$this->_saveAssociations($parents, $entity, $options);
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 
 		if ($event->isStopped()) {
 			return $event->result;
+		}
+
+		$originalOptions = $options->getArrayCopy();
+		list($parents, $children) = $this->_sortAssociationTypes($options['associated']);
+
+		if (!$this->_saveAssociations($parents, $entity, $originalOptions)) {
+			return false;
 		}
 
 		$data = $entity->extract($this->schema()->columns(), true);
@@ -967,7 +971,7 @@ class Table {
 			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 			$this->getEventManager()->dispatch($event);
 			$entity->isNew(false);
-			$this->_saveAssociations($children, $entity, $options);
+			$success = $this->_saveAssociations($children, $entity, $originalOptions);
 		}
 
 		return $success;
@@ -991,9 +995,9 @@ class Table {
 		return [$parents, $children];
 	}
 
-	protected function _saveAssociations($assocs, $entity, $options) {
+	protected function _saveAssociations($assocs, $entity, array $options) {
 		if (empty($assocs)) {
-			return;
+			return $entity;
 		}
 
 		foreach ($assocs as $alias) {
@@ -1002,6 +1006,8 @@ class Table {
 				return false;
 			}
 		}
+
+		return $entity;
 	}
 
 /**

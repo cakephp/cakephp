@@ -97,6 +97,19 @@ class BelongsTo extends Association {
 	}
 
 /**
+ * Proxies the saving operation for an entity to the target table
+ *
+ * @param \Cake\ORM\Entity $entity the data to be saved
+ * @param array|\ArrayObject $options
+ * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * the saved entity
+ * @see Table::save()
+ */
+	public function save(Entity $entity, $options = []) {
+		return $entity;
+	}
+
+/**
  * Returns a single or multiple conditions to be appended to the generated join
  * clause for getting the results on the target table.
  *

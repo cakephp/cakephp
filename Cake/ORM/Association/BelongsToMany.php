@@ -245,13 +245,26 @@ class BelongsToMany extends Association {
 	}
 
 /**
- * Returns boolean false, as none of the tables 'own' rows in the other side
- * of the association
+ * Returns boolean true, as both of the tables 'own' rows in the other side
+ * of the association via the joint table.
  *
  * @return boolean
  */
 	public function isOwningSide() {
-		return false;
+		return true;
+	}
+
+/**
+ * Proxies the saving operation for an entity to the target table
+ *
+ * @param \Cake\ORM\Entity $entity the data to be saved
+ * @param array|\ArrayObject $options
+ * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * the saved entity
+ * @see Table::save()
+ */
+	public function save(Entity $entity, $options = []) {
+		return $entity;
 	}
 
 /**

@@ -52,7 +52,7 @@ class AssociationTest extends \Cake\TestSuite\TestCase {
 		];
 		$this->association = $this->getMock(
 			'\Cake\ORM\Association',
-			['_options', 'attachTo', '_joinCondition', 'cascadeDelete'],
+			['_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide', 'save'],
 			['Foo', $config]
 		);
 	}

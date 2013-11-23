@@ -19,6 +19,7 @@ namespace Cake\ORM\Association;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
 use Cake\ORM\Association\ExternalAssociationTrait;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 
 /**
@@ -100,6 +101,19 @@ class HasMany extends Association {
  */
 	public function isOwningSide() {
 		return true;
+	}
+
+/**
+ * Proxies the saving operation for an entity to the target table
+ *
+ * @param \Cake\ORM\Entity $entity the data to be saved
+ * @param array|\ArrayObject $options
+ * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * the saved entity
+ * @see Table::save()
+ */
+	public function save(Entity $entity, $options = []) {
+		return $entity;
 	}
 
 }
