@@ -719,30 +719,6 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Parse beforeRedirect Response
- *
- * @param mixed $response Response from beforeRedirect callback
- * @param string|array $url The same value of beforeRedirect
- * @param integer $status The same value of beforeRedirect
- * @param boolean $exit The same value of beforeRedirect
- * @return array Array with keys url, status and exit
- */
-	protected function _parseBeforeRedirect($response, $url, $status, $exit) {
-		if (is_array($response) && array_key_exists(0, $response)) {
-			foreach ($response as $resp) {
-				if (is_array($resp) && isset($resp['url'])) {
-					extract($resp, EXTR_OVERWRITE);
-				} elseif ($resp !== null) {
-					$url = $resp;
-				}
-			}
-		} elseif (is_array($response)) {
-			extract($response, EXTR_OVERWRITE);
-		}
-		return compact('url', 'status', 'exit');
-	}
-
-/**
  * Internally redirects one action to another. Does not perform another HTTP request unlike Controller::redirect()
  *
  * Examples:
@@ -762,48 +738,6 @@ class Controller extends Object implements EventListener {
 		$args = func_get_args();
 		unset($args[0]);
 		return call_user_func_array(array(&$this, $action), $args);
-	}
-
-/**
- * Returns number of errors in a submitted FORM.
- *
- * @return integer Number of errors
- */
-	public function validate() {
-		$args = func_get_args();
-		$errors = call_user_func_array(array(&$this, 'validateErrors'), $args);
-
-		if ($errors === false) {
-			return 0;
-		}
-		return count($errors);
-	}
-
-/**
- * Validates models passed by parameters. Example:
- *
- * `$errors = $this->validateErrors($this->Article, $this->User);`
- *
- * @param mixed A list of models as a variable argument
- * @return array Validation errors, or false if none
- */
-	public function validateErrors() {
-		$objects = func_get_args();
-
-		if (empty($objects)) {
-			return false;
-		}
-
-		$errors = array();
-		foreach ($objects as $object) {
-			if (isset($this->{$object->alias})) {
-				$object = $this->{$object->alias};
-			}
-			$object->set($object->data);
-			$errors = array_merge($errors, $object->invalidFields());
-		}
-
-		return $this->validationErrors = (!empty($errors) ? $errors : false);
 	}
 
 /**
@@ -865,28 +799,6 @@ class Controller extends Object implements EventListener {
 			return Router::url($default, true);
 		}
 		return $referer;
-	}
-
-/**
- * Shows a message to the user for $pause seconds, then redirects to $url.
- * Uses flash.ctp as the default layout for the message.
- * Does not work if the current debug level is higher than 0.
- *
- * @param string $message Message to display to the user
- * @param string|array $url Relative string or array-based URL to redirect to after the time expires
- * @param integer $pause Time to show the message
- * @param string $layout Layout you want to use, defaults to 'flash'
- * @return void
- * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::flash
- * @deprecated Will be removed in 3.0. Use Session::setFlash().
- */
-	public function flash($message, $url, $pause = 1, $layout = 'flash') {
-		$this->autoRender = false;
-		$this->set('url', Router::url($url));
-		$this->set('message', $message);
-		$this->set('pause', $pause);
-		$this->set('page_title', $message);
-		$this->render(false, $layout);
 	}
 
 /**
