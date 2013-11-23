@@ -83,6 +83,16 @@ class HasOne extends Association {
 	}
 
 /**
+ * Returns boolean true, as target rows could not exist or would miss information
+ * should corresponding rows in source association not exist.
+ *
+ * @return boolean
+ */
+	public function isOwningSide() {
+		return true;
+	}
+
+/**
  * Returns a single or multiple conditions to be appended to the generated join
  * clause for getting the results on the target table.
  *

@@ -245,6 +245,16 @@ class BelongsToMany extends Association {
 	}
 
 /**
+ * Returns boolean false, as none of the tables 'own' rows in the other side
+ * of the association
+ *
+ * @return boolean
+ */
+	public function isOwningSide() {
+		return false;
+	}
+
+/**
  * Appends any conditions required to load the relevant set of records in the
  * target table query given a filter key and some filtering values.
  *

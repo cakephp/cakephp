@@ -92,4 +92,14 @@ class HasMany extends Association {
 		return $this->_resultInjector($fetchQuery, $resultMap);
 	}
 
+/**
+ * Returns boolean true, as target rows could not exist or would miss information
+ * should corresponding rows in source association not exist.
+ *
+ * @return boolean
+ */
+	public function isOwningSide() {
+		return true;
+	}
+
 }

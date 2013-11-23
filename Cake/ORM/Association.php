@@ -437,4 +437,25 @@ abstract class Association {
  */
 	public abstract function cascadeDelete(Entity $entity, $options = []);
 
+
+/**
+ * Returns whether or not the 'source' table is the owning side for this
+ * association. This means that rows in the 'target' table would miss important
+ * or required information if the row in 'source' did not exist.
+ *
+ * @return boolean
+ */
+	public abstract function isOwningSide();
+
+/**
+ * Proxies the saving operation for an entity to the target table
+ *
+ * @param \Cake\ORM\Entity $entity the data to be saved
+ * @param array|\ArrayObject $options
+ * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * the saved entity
+ * @see Table::save()
+ */
+	public abstract function save(Entity $entity, $options = []);
+
 }
