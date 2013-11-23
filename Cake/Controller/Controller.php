@@ -719,30 +719,6 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Parse beforeRedirect Response
- *
- * @param mixed $response Response from beforeRedirect callback
- * @param string|array $url The same value of beforeRedirect
- * @param integer $status The same value of beforeRedirect
- * @param boolean $exit The same value of beforeRedirect
- * @return array Array with keys url, status and exit
- */
-	protected function _parseBeforeRedirect($response, $url, $status, $exit) {
-		if (is_array($response) && array_key_exists(0, $response)) {
-			foreach ($response as $resp) {
-				if (is_array($resp) && isset($resp['url'])) {
-					extract($resp, EXTR_OVERWRITE);
-				} elseif ($resp !== null) {
-					$url = $resp;
-				}
-			}
-		} elseif (is_array($response)) {
-			extract($response, EXTR_OVERWRITE);
-		}
-		return compact('url', 'status', 'exit');
-	}
-
-/**
  * Internally redirects one action to another. Does not perform another HTTP request unlike Controller::redirect()
  *
  * Examples:
