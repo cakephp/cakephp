@@ -103,6 +103,22 @@ class HasOne extends Association {
  * @see Table::save()
  */
 	public function save(Entity $entity, $options = []) {
+		$targetEntity = $entity->get($this->property());
+		if (!$targetEntity) {
+			return $entity;
+		}
+
+		$properties = array_combine(
+			(array)$this->foreignKey(),
+			$entity->extract((array)$this->source()->primaryKey())
+		);
+		$targetEntity->set($properties);
+
+		if (!$this->target()->save($targetEntity, $options)) {
+			$targetEntity->unsetProperty(array_keys($properties));
+			return false;
+		}
+
 		return $entity;
 	}
 

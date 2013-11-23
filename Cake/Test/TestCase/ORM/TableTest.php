@@ -1994,4 +1994,60 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNotEmpty($entity->author->errors('name'));
 	}
 
+/**
+ * Tests saving hasOne association
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveHasOne() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->article = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+
+		$table = TableRegistry::get('authors');
+		$table->hasOne('articles');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->article->isNew());
+		$this->assertEquals(4, $entity->article->id);
+		$this->assertEquals(5, $entity->article->get('author_id'));
+		$this->assertFalse($entity->article->dirty('author_id'));
+	}
+
+/**
+ * Tests saving hasOne association and returning a validation error will
+ * abort the saving process
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveHasOneWithValidationError() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->article = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+
+		$table = TableRegistry::get('authors');
+		$table->hasOne('articles');
+		$table->association('articles')
+			->target()
+			->validator()
+			->add('title', 'num', ['rule' => 'numeric']);
+		$this->assertFalse($table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->article->isNew());
+		$this->assertNull($entity->article->id);
+		$this->assertNull($entity->article->get('author_id'));
+		$this->assertTrue($entity->article->dirty('author_id'));
+		$this->assertNotEMpty($entity->article->errors('title'));
+	}
+
 }

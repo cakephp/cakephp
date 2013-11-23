@@ -110,7 +110,7 @@ class BelongsTo extends Association {
 		if (!$targetEntity) {
 			return $entity;
 		}
-		
+
 		$table = $this->target();
 		$targetEntity = $table->save($targetEntity, $options);
 		if (!$targetEntity) {
