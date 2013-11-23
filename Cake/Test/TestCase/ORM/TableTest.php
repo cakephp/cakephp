@@ -1953,7 +1953,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'body' => 'A body'
 		]);
 		$entity->author = new \Cake\ORM\Entity([
-			'name' => 'Jose',
+			'name' => 'Jose'
 		]);
 
 		$table = TableRegistry::get('articles');
@@ -1963,6 +1963,35 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($entity->author->isNew());
 		$this->assertEquals(5, $entity->author->id);
 		$this->assertEquals(5, $entity->get('author_id'));
+	}
+
+/**
+ * Tests saving belongsTo association and get a validation error
+ *
+ * @group save
+ * @return void
+ */
+	public function testsSaveBelongsToWithValidationError() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->author = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+		$table->association('authors')
+			->target()
+			->validator()
+			->add('name', 'num', ['rule' => 'numeric']);
+
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertTrue($entity->author->isNew());
+		$this->assertNull($entity->get('author_id'));
+		$this->assertNotEmpty($entity->author->errors('name'));
 	}
 
 }
