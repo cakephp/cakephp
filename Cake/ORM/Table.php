@@ -903,7 +903,8 @@ class Table {
 	public function save(Entity $entity, array $options = []) {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
-			'validate' => true
+			'validate' => true,
+			'associated' => true
 		]);
 		if ($options['atomic']) {
 			$connection = $this->connection();
@@ -934,10 +935,18 @@ class Table {
 			$entity->isNew(true);
 		}
 
+		if ($options['associated'] === true) {
+			$options['associated'] = array_keys($this->_associations);
+		}
+
+		$options['associated'] = array_filter((array)$options['associated']);
+
 		if (!$this->_processValidation($entity, $options)) {
 			return false;
 		}
 
+		list($parents, $children) = $this->_sortAssociationTypes($options['associated']);
+		$this->_saveAssociations($parents, $entity, $options);
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 
@@ -958,9 +967,41 @@ class Table {
 			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 			$this->getEventManager()->dispatch($event);
 			$entity->isNew(false);
+			$this->_saveAssociations($children, $entity, $options);
 		}
 
 		return $success;
+	}
+
+	protected function _sortAssociationTypes($assocs) {
+		$parents = $children = [];
+		foreach ($assocs as $assoc) {
+			$association = $this->association($assoc);
+			if (!$assoc) {
+				$msg = __d('cake_dev', '%s is not associated to %s', $this->alias(), $assoc);
+				throw new \InvalidArgumentException();
+			}
+	
+			if ($assoc->isOwningSide()) {
+				$children[] = $assoc;
+			} else {
+				$parents[] = $assoc;
+			}
+		}
+		return [$parents, $children];
+	}
+
+	protected function _saveAssociations($assocs, $entity, $options) {
+		if (empty($assocs)) {
+			return;
+		}
+
+		foreach ($assocs as $alias) {
+			$association = $this->association($alias);
+			if (!$association->save($entity, $options)) {
+				return false;
+			}
+		}
 	}
 
 /**
