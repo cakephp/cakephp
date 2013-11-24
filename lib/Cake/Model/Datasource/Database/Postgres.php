@@ -45,7 +45,8 @@ class Postgres extends DboSource {
 		'database' => 'cake',
 		'schema' => 'public',
 		'port' => 5432,
-		'encoding' => ''
+		'encoding' => '',
+		'flags' => array()
 	);
 
 /**
@@ -110,7 +111,7 @@ class Postgres extends DboSource {
 		$config = $this->config;
 		$this->connected = false;
 
-		$flags = array(
+		$flags = $config['flags'] + array(
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);

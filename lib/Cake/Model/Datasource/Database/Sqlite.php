@@ -56,7 +56,8 @@ class Sqlite extends DboSource {
  */
 	protected $_baseConfig = array(
 		'persistent' => false,
-		'database' => null
+		'database' => null,
+		'flags' => array()
 	);
 
 /**
@@ -106,7 +107,7 @@ class Sqlite extends DboSource {
  */
 	public function connect() {
 		$config = $this->config;
-		$flags = array(
+		$flags = $config['flags'] + array(
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);

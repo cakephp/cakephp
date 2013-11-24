@@ -45,7 +45,8 @@ class Mysql extends DboSource {
 		'login' => 'root',
 		'password' => '',
 		'database' => 'cake',
-		'port' => '3306'
+		'port' => '3306',
+		'flags' => array()
 	);
 
 /**
@@ -145,7 +146,7 @@ class Mysql extends DboSource {
 		$config = $this->config;
 		$this->connected = false;
 
-		$flags = array(
+		$flags = $config['flags'] + array(
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
