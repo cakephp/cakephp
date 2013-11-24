@@ -960,8 +960,9 @@ class Table {
 
 		$data = $entity->extract($this->schema()->columns(), true);
 		$keys = array_keys($data);
+		$isNew = $entity->isNew();
 
-		if ($entity->isNew()) {
+		if ($isNew) {
 			$success = $this->_insert($entity, $data);
 		} else {
 			$success = $this->_update($entity, $data);
@@ -972,6 +973,11 @@ class Table {
 			$this->getEventManager()->dispatch($event);
 			$entity->isNew(false);
 			$success = $this->_saveAssociations($children, $entity, $originalOptions);
+		}
+
+		if (!$success && $isNew) {
+			$entity->unsetProperty($this->primaryKey());
+			$entity->isNew(true);
 		}
 
 		return $success;

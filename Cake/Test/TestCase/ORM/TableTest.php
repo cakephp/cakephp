@@ -2042,7 +2042,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('title', 'num', ['rule' => 'numeric']);
 		$this->assertFalse($table->save($entity));
-		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->isNew());
 		$this->assertTrue($entity->article->isNew());
 		$this->assertNull($entity->article->id);
 		$this->assertNull($entity->article->get('author_id'));
@@ -2050,4 +2050,76 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNotEMpty($entity->article->errors('title'));
 	}
 
+/**
+ * Tests saving multiple entities in a hasMany association
+ *
+ * @return void
+ */
+	public function testSaveHasMany() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->articles = [
+			new \Cake\ORM\Entity([
+				'title' => 'A Title',
+				'body' => 'A body'
+			]),
+			new \Cake\ORM\Entity([
+				'title' => 'Another Title',
+				'body' => 'Another body'
+			])
+		];
+
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->articles[0]->isNew());
+		$this->assertFalse($entity->articles[1]->isNew());
+		$this->assertEquals(4, $entity->articles[0]->id);
+		$this->assertEquals(5, $entity->articles[1]->id);
+		$this->assertEquals(5, $entity->articles[0]->author_id);
+		$this->assertEquals(5, $entity->articles[1]->author_id);
+	}
+
+/**
+ * Tests saving multiple entities in a hasMany association and getting and
+ * error while saving one of them. It should abort all the save operation
+ * when options are set to defaults
+ *
+ * @return void
+ */
+	public function testSaveHasManyWithErrorsAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->articles = [
+			new \Cake\ORM\Entity([
+				'title' => '1',
+				'body' => 'A body'
+			]),
+			new \Cake\ORM\Entity([
+				'title' => 'Another Title',
+				'body' => 'Another body'
+			])
+		];
+
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$table->association('articles')
+			->target()
+			->validator()
+			->add('title', 'num', ['rule' => 'numeric']);
+
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertNull($entity->articles[0]->isNew());
+		$this->assertNull($entity->articles[1]->isNew());
+		$this->assertNull($entity->articles[0]->id);
+		$this->assertNull($entity->articles[1]->id);
+		$this->assertNull($entity->articles[0]->author_id);
+		$this->assertNull($entity->articles[1]->author_id);
+		$this->assertEmpty($entity->articles[0]->errors());
+		$this->assertNotEmpty($entity->articles[1]->errors());
+	}
 }

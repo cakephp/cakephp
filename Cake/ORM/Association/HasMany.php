@@ -113,6 +113,43 @@ class HasMany extends Association {
  * @see Table::save()
  */
 	public function save(Entity $entity, $options = []) {
+		$targetEntities = $entity->get($this->property());
+		if (empty($targetEntities)) {
+			return $entity;
+		}
+
+		if (!is_array($targetEntities) && !($targetEntities instanceof \Traversable)) {
+			$name = $this->property();
+			$message = __d('cake_dev', 'Could not save %s, it cannot be traversed', $name);
+			throw new \InvalidArgumentException($message);
+		}
+
+		$properties = array_combine(
+			(array)$this->foreignKey(),
+			$entity->extract((array)$this->source()->primaryKey())
+		);
+		$target = $this->target();
+		$original = $targetEntities;
+
+		foreach ($targetEntities as $k => $targetEntity) {
+			if (!empty($options['atomic'])) {
+				$targetEntity = clone $targetEntity;
+			}
+
+			$targetEntity->set($properties);
+			if ($target->save($targetEntity, $options)) {
+				$targetEntities[$k] = $targetEntity;
+				continue;
+			}
+
+			if (!empty($options['atomic'])) {
+				$original[$k]->errors($targetEntity->errors());
+				$entity->set($this->property(), $original);
+				return false;
+			}
+		}
+
+		$entity->set($this->property(), $targetEntities);
 		return $entity;
 	}
 
