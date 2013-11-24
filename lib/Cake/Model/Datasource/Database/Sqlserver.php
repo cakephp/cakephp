@@ -78,6 +78,7 @@ class Sqlserver extends DboSource {
 		'password' => '',
 		'database' => 'cake',
 		'schema' => '',
+		'flags' => array()
 	);
 
 /**
@@ -119,7 +120,7 @@ class Sqlserver extends DboSource {
 		$config = $this->config;
 		$this->connected = false;
 
-		$flags = array(
+		$flags = $config['flags'] + array(
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
