@@ -953,8 +953,9 @@ class Table {
 
 		$originalOptions = $options->getArrayCopy();
 		list($parents, $children) = $this->_sortAssociationTypes($options['associated']);
+		$saved = $this->_saveAssociations($parents, $entity, $originalOptions);
 
-		if (!$this->_saveAssociations($parents, $entity, $originalOptions)) {
+		if (!$saved && $options['atomic']) {
 			return false;
 		}
 
@@ -969,10 +970,13 @@ class Table {
 		}
 
 		if ($success) {
-			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
-			$this->getEventManager()->dispatch($event);
-			$entity->isNew(false);
 			$success = $this->_saveAssociations($children, $entity, $originalOptions);
+			if ($success || !$options['atomic']) {
+				$success = $entity;
+				$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
+				$this->getEventManager()->dispatch($event);
+				$entity->isNew(false);
+			}
 		}
 
 		if (!$success && $isNew) {

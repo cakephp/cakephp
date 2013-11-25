@@ -2047,7 +2047,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->article->id);
 		$this->assertNull($entity->article->get('author_id'));
 		$this->assertTrue($entity->article->dirty('author_id'));
-		$this->assertNotEMpty($entity->article->errors('title'));
+		$this->assertNotEmpty($entity->article->errors('title'));
 	}
 
 /**
@@ -2160,6 +2160,68 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->articles[0]->id);
 		$this->assertEquals(5, $entity->articles[0]->author_id);
 		$this->assertEquals(5, $entity->articles[1]->author_id);
+	}
+
+/**
+ * Tests saving hasOne association and returning a validation error will
+ * not abort the saving process if atomic is set to false
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveHasOneWithValidationErrorNonAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->article = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+
+		$table = TableRegistry::get('authors');
+		$table->hasOne('articles');
+		$table->association('articles')
+			->target()
+			->validator()
+			->add('title', 'num', ['rule' => 'numeric']);
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->article->isNew());
+		$this->assertNull($entity->article->id);
+		$this->assertNull($entity->article->get('author_id'));
+		$this->assertTrue($entity->article->dirty('author_id'));
+		$this->assertNotEmpty($entity->article->errors('title'));
+	}
+
+/**
+ * Tests saving belongsTo association and get a validation error won't stop
+ * saving if atomic is set to false
+ *
+ * @group save
+ * @return void
+ */
+	public function testsSaveBelongsToWithValidationErrorNotAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->author = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+		$table->association('authors')
+			->target()
+			->validator()
+			->add('name', 'num', ['rule' => 'numeric']);
+
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->author->isNew());
+		$this->assertNull($entity->get('author_id'));
+		$this->assertNotEmpty($entity->author->errors('name'));
 	}
 
 }
