@@ -345,7 +345,13 @@ class DboSource extends DataSource {
 				return $this->_connection->quote($this->boolean($data, true), PDO::PARAM_BOOL);
 			case 'string':
 			case 'text':
-				return $this->_connection->quote($data, PDO::PARAM_STR);
+				if (preg_match('/(^".*"$)|(^\'.*\'$)/', $data) == 0) {
+					return $this->_connection->quote($data, PDO::PARAM_STR);
+				}
+				else
+				{
+					return $data;
+				}
 			default:
 				if ($data === '') {
 					return 'NULL';
