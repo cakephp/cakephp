@@ -2122,4 +2122,44 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEmpty($entity->articles[0]->errors());
 		$this->assertNotEmpty($entity->articles[1]->errors());
 	}
+
+/**
+ * Tests that it is possible to continue saving hasMany associations
+ * even if any of the records fail validation when atomic is set
+ * to false
+ *
+ * @return void
+ */
+	public function testSaveHasManyWithErrorsNonAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->articles = [
+			new \Cake\ORM\Entity([
+				'title' => 'A title',
+				'body' => 'A body'
+			]),
+			new \Cake\ORM\Entity([
+				'title' => '1',
+				'body' => 'Another body'
+			])
+		];
+
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$table->association('articles')
+			->target()
+			->validator()
+			->add('title', 'num', ['rule' => 'numeric']);
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->articles[0]->isNew());
+		$this->assertFalse($entity->articles[1]->isNew());
+		$this->assertEquals(4, $entity->articles[1]->id);
+		$this->assertNull($entity->articles[0]->id);
+		$this->assertEquals(5, $entity->articles[0]->author_id);
+		$this->assertEquals(5, $entity->articles[1]->author_id);
+	}
+
 }
