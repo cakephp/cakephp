@@ -381,7 +381,7 @@ class Mysql extends DboSource {
 		}
 
 		$alias = $joins = false;
-		$fields = $this->_prepareUpdateFields($model, $combined, empty($conditions), !empty($conditions));
+		$fields = $this->_prepareUpdateFields($model, $combined, !empty($combined), !empty($conditions));
 		$fields = implode(', ', $fields);
 		$table = $this->fullTableName($model);
 
