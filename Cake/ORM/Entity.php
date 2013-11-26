@@ -302,20 +302,20 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  *
  * @param array $properties The properties to hide.
  * @param boolean $reset The reset flag.
- * @return void
+ * @return Entity $this
  */
-	public function makeHidden($properties, $reset = false) {
+	public function hideProperties($properties) {
+		$this->_hidden = $properties;
+		return $this;
 	}
 
 /**
- * Remove properties from the hidden list.
+ * Get the list of hidden properties on this entity.
  *
- * The counterpart to this method is makeHidden().
- *
- * @param array $properties The properties to hide.
- * @return void
+ * @return array
  */
-	public function makeVisible($properties) {
+	public function hiddenProperties() {
+		return $this->_hidden;
 	}
 
 /**
