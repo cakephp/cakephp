@@ -722,7 +722,7 @@ class RssHelperTest extends CakeTestCase {
 		$item = array(
 			'title' => 'Title',
 			'dc:creator' => 'Alex',
-			'xy:description' => 'descriptive words'
+			'dc:description' => 'descriptive words'
 		);
 		$attributes = array(
 			'namespace' => array(
@@ -745,11 +745,11 @@ class RssHelperTest extends CakeTestCase {
 			),
 			'Alex',
 			'/dc:creator',
-			'xy:description' => array(
+			'dc:description' => array(
 				'xmlns:dc' => 'http://link.com'
 			),
 			'descriptive words',
-			'/xy:description',
+			'/dc:description',
 			'/item'
 		);
 		$this->assertTags($result, $expected, true);

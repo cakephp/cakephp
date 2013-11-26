@@ -29,6 +29,7 @@ App::uses('ProjectTask', 'Console/Command/Task');
 App::uses('DbConfigTask', 'Console/Command/Task');
 App::uses('Model', 'Model');
 App::uses('Controller', 'Controller');
+App::uses('AppController', 'Controller');
 
 /**
  * Test View Task Comment Model
