@@ -3232,14 +3232,17 @@ class DboSource extends DataSource {
 	protected function _buildFieldParameters($columnString, $columnData, $position) {
 		foreach ($this->fieldParameters as $paramName => $value) {
 			if (isset($columnData[$paramName]) && $value['position'] == $position) {
-				if (isset($value['options']) && !in_array($columnData[$paramName], $value['options'])) {
+				if (isset($value['options']) && !in_array($columnData[$paramName], $value['options'], true)) {
+					continue;
+				}
+				if (isset($value['types']) && !in_array($columnData['type'], $value['types'], true)) {
 					continue;
 				}
 				$val = $columnData[$paramName];
 				if ($value['quote']) {
 					$val = $this->value($val);
 				}
-				$columnString .= ' ' . $value['value'] . $value['join'] . $val;
+				$columnString .= ' ' . $value['value'] . (empty($value['noVal']) ? $value['join'] . $val : '');
 			}
 		}
 		return $columnString;

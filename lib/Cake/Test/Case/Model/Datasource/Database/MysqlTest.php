@@ -45,7 +45,7 @@ class MysqlTest extends CakeTestCase {
 	public $fixtures = array(
 		'core.apple', 'core.article', 'core.articles_tag', 'core.attachment', 'core.comment',
 		'core.sample', 'core.tag', 'core.user', 'core.post', 'core.author', 'core.data_test',
-		'core.binary_test', 'core.inno'
+		'core.binary_test', 'core.inno', 'core.unsigned'
 	);
 
 /**
@@ -3101,6 +3101,137 @@ class MysqlTest extends CakeTestCase {
 			'key'
 		);
 		$this->Dbo->buildColumn($data);
+	}
+
+/**
+ * Test `unsigned` field parameter
+ *
+ * @param array $data Column data
+ * @param string $expected Expected sql part
+ * 
+ * @return void
+ * 
+ * @dataProvider buildColumnUnsignedProvider
+ */
+	public function testBuildColumnUnsigned($data, $expected) {
+		$result = $this->Dbo->buildColumn($data);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Data provider testBuildColumnUnsigned method
+ *
+ * @return array
+ */
+	public function buildColumnUnsignedProvider() {
+		return array(
+			//set #0
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'integer',
+					'length' => 11,
+					'unsigned' => true
+				),
+				'`testName` int(11) UNSIGNED'
+			),
+			//set #1
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'biginteger',
+					'length' => 20,
+					'unsigned' => true
+				),
+				'`testName` bigint(20) UNSIGNED'
+			),
+			//set #2
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'float',
+					'unsigned' => true
+				),
+				'`testName` float UNSIGNED'
+			),
+			//set #3
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'string',
+					'length' => 255,
+					'unsigned' => true
+				),
+				'`testName` varchar(255)'
+			),
+			//set #4
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'date',
+					'unsigned' => true
+				),
+				'`testName` date'
+			),
+			//set #5
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'date',
+					'unsigned' => false
+				),
+				'`testName` date'
+			),
+			//set #6
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'integer',
+					'length' => 11,
+					'unsigned' => false
+				),
+				'`testName` int(11)'
+			),
+			//set #7
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'decimal',
+					'unsigned' => true
+				),
+				'`testName` decimal UNSIGNED'
+			),
+			//set #8
+			array(
+				array(
+					'name' => 'testName',
+					'type' => 'decimal',
+					'unsigned' => true,
+					'default' => 1
+				),
+				'`testName` decimal UNSIGNED DEFAULT 1'
+			)
+		);
+	}
+
+/**
+ * Test getting `unsigned` field parameter from DB
+ * 
+ * @return void
+ */
+	public function testSchemaUnsigned() {
+		$this->loadFixtures('Unsigned');
+		$Model = ClassRegistry::init('Model');
+		$Model->setSource('unsigned');
+		$types = $this->Dbo->fieldParameters['unsigned']['types'];
+		$schema = $Model->schema();
+		foreach ($types as $type) {
+			$this->assertArrayHasKey('unsigned', $schema['u' . $type]);
+			$this->assertTrue($schema['u' . $type]['unsigned']);
+			$this->assertArrayHasKey('unsigned', $schema[$type]);
+			$this->assertFalse($schema[$type]['unsigned']);
+		}
+		$this->assertArrayNotHasKey('unsigned', $schema['string']);
 	}
 
 /**
