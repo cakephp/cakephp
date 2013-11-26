@@ -319,6 +319,21 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	}
 
 /**
+ * Get the list of visible properties.
+ *
+ * The list of visible properties is all standard properties
+ * plus virtual properties minus hidden properties.
+ *
+ * @return array A list of properties that are 'visible' in all
+ *     representations.
+ */
+	public function visibleProperties() {
+		$properties = array_keys($this->_properties);
+		$properties = array_merge($properties, $this->_virtual);
+		return array_diff($properties, $this->_hidden);
+	}
+
+/**
  * Returns an array with all the properties that have been set
  * to this entity
  *
@@ -329,7 +344,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 	public function toArray() {
 		$result = [];
-		foreach ($this->_properties as $property => $value) {
+		foreach ($this->visibleProperties() as $property) {
 			$value = $this->get($property);
 			if (is_array($value) && isset($value[0]) && $value[0] instanceof self) {
 				$result[$property] = [];

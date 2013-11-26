@@ -649,6 +649,14 @@ class EntityTest extends TestCase {
 		$this->assertEquals($expected, $entity->toArray());
 	}
 
+	public function testToArrayHiddenProperties() {
+		$this->markTestIncomplete("not done");
+	}
+
+	public function testToArrayVirtualProperties() {
+		$this->markTestIncomplete("not done");
+	}
+
 /**
  * Tests that missing fields will not be passed as null to the validator
  *
@@ -745,4 +753,13 @@ class EntityTest extends TestCase {
 		$entity->clean();
 		$this->assertEmpty($entity->errors());
 	}
+
+	public function testHideProperties() {
+		$this->markTestIncomplete("not done");
+	}
+
+	public function testVisibleProperties() {
+		$this->markTestIncomplete("not done");
+	}
+
 }
