@@ -157,7 +157,7 @@ class BelongsToMany extends Association {
 
 		$options = ['conditions' => [$cond]] + compact('includeFields');
 		$this->target()
-			->association($this->pivot()->alias())
+			->association($pivot->alias())
 			->attachTo($query, $options);
 	}
 
