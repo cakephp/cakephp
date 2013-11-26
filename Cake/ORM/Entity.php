@@ -34,6 +34,23 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected $_properties = [];
 
 /**
+ * List of property names that should **not** be included in JSON or Array
+ * representations of this Entity.
+ *
+ * @var array
+ */
+	protected $_hidden = [];
+
+/**
+ * List of computed or virtual fields that **should** be included in JSON or array
+ * representations of this Entity. If a field is present in both _hidden and _virtual
+ * the field will **not** be in the array/json versions of the entity.
+ *
+ * @var array
+ */
+	protected $_virtual = [];
+
+/**
  * Holds the name of the class for the instance object
  *
  * @var string
@@ -278,6 +295,30 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	}
 
 /**
+ * Add additional properties to the hidden list.
+ *
+ * If the second argument is true, the hidden field list will be reset with
+ * the properties provided. The counterpart to this method is makeVisible()
+ *
+ * @param array $properties The properties to hide.
+ * @param boolean $reset The reset flag.
+ * @return void
+ */
+	public function makeHidden($properties, $reset = false) {
+	}
+
+/**
+ * Remove properties from the hidden list.
+ *
+ * The counterpart to this method is makeHidden().
+ *
+ * @param array $properties The properties to hide.
+ * @return void
+ */
+	public function makeVisible($properties) {
+	}
+
+/**
  * Returns an array with all the properties that have been set
  * to this entity
  *
@@ -302,6 +343,15 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			}
 		}
 		return $result;
+	}
+
+/**
+ * Returns the properties that will be serialized as json
+ *
+ * @return array
+ */
+	public function jsonSerialize() {
+		return $this->toArray();
 	}
 
 /**
@@ -357,15 +407,6 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			static::$_accessors[$this->_className] = array_flip(get_class_methods($this));
 		}
 		return isset(static::$_accessors[$this->_className][$method]);
-	}
-
-/**
- * Returns the properties that will be serialized as json
- *
- * @return array
- */
-	public function jsonSerialize() {
-		return $this->toArray();
 	}
 
 /**
