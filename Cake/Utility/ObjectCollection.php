@@ -108,7 +108,7 @@ abstract class ObjectCollection {
 				$subject = $event->subject();
 			}
 			foreach (array('break', 'breakOn', 'collectReturn', 'modParams') as $opt) {
-				if (isset($event->{$opt})) {
+				if (isset($event->{$opt}) && !is_scalar($event->{$opt})) {
 					$options[$opt] = $event->{$opt};
 				}
 			}
@@ -122,7 +122,7 @@ abstract class ObjectCollection {
 				'collectReturn' => false,
 				'modParams' => false
 			),
-			$options
+			is_array($options) ? $options : []
 		);
 		$collected = array();
 		$list = array_keys($this->_enabled);
