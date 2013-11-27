@@ -107,7 +107,7 @@ class DataSource extends Object {
 			return $this->_sources;
 		}
 
-		$key = ConnectionManager::getSourceName($this) . '_' . $this->config['database'] . '_list';
+		$key = $this->config['name'] . '_' . $this->config['database'] . '_list';
 		$key = preg_replace('/[^A-Za-z0-9_\-.+]/', '_', $key);
 		$sources = Cache::read($key, '_cake_model_');
 
@@ -308,7 +308,7 @@ class DataSource extends Object {
 			$this->_descriptions[$object] =& $data;
 		}
 
-		$key = ConnectionManager::getSourceName($this) . '_' . $object;
+		$key = $this->config['name'] . '_' . $object;
 		$cache = Cache::read($key, '_cake_model_');
 
 		if (empty($cache)) {
