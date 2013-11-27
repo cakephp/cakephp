@@ -649,12 +649,40 @@ class EntityTest extends TestCase {
 		$this->assertEquals($expected, $entity->toArray());
 	}
 
+/**
+ * Test that toArray respects hidden properties.
+ *
+ * @return void
+ */
 	public function testToArrayHiddenProperties() {
-		$this->markTestIncomplete("not done");
+		$data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+		$entity = new Entity($data);
+		$entity->hiddenProperties(['secret']);
+		$this->assertEquals(['name' => 'mark', 'id' => 1], $entity->toArray());
 	}
 
+/**
+ * Test toArray includes 'virtual' properties.
+ *
+ * @return void
+ */
 	public function testToArrayVirtualProperties() {
-		$this->markTestIncomplete("not done");
+		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->expects($this->any())
+			->method('getName')
+			->will($this->returnValue('Jose'));
+		$entity->set(['email' => 'mark@example.com']);
+
+		$entity->virtualProperties(['name']);
+		$expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
+		$this->assertEquals($expected, $entity->toArray());
+
+		$this->assertEquals(['name'], $entity->virtualProperties());
+
+		$entity->hiddenProperties(['name']);
+		$expected = ['email' => 'mark@example.com'];
+		$this->assertEquals($expected, $entity->toArray());
+		$this->assertEquals(['name'], $entity->hiddenProperties());
 	}
 
 /**
@@ -752,14 +780,6 @@ class EntityTest extends TestCase {
 		$entity->errors('a', 'is not good');
 		$entity->clean();
 		$this->assertEmpty($entity->errors());
-	}
-
-	public function testHideProperties() {
-		$this->markTestIncomplete("not done");
-	}
-
-	public function testVisibleProperties() {
-		$this->markTestIncomplete("not done");
 	}
 
 }

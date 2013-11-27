@@ -295,27 +295,37 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	}
 
 /**
- * Add additional properties to the hidden list.
+ * Get/Set the hidden properties on this entity.
  *
- * If the second argument is true, the hidden field list will be reset with
- * the properties provided. The counterpart to this method is makeVisible()
+ * If the properties argument is null, the currently hidden properties
+ * will be returned. Otherwise the hidden properties will be set.
  *
- * @param array $properties The properties to hide.
- * @param boolean $reset The reset flag.
- * @return Entity $this
+ * @param null|array Either an array of properties to hide or null to get properties
+ * @return array|Entity
  */
-	public function hideProperties($properties) {
+	public function hiddenProperties($properties = null) {
+		if ($properties === null) {
+			return $this->_hidden;
+		}
 		$this->_hidden = $properties;
 		return $this;
 	}
 
 /**
- * Get the list of hidden properties on this entity.
+ * Get/Set the virtual properties on this entity.
  *
- * @return array
+ * If the properties argument is null, the currently virtual properties
+ * will be returned. Otherwise the virtual properties will be set.
+ *
+ * @param null|array Either an array of properties to treat as virtual or null to get properties
+ * @return array|Entity
  */
-	public function hiddenProperties() {
-		return $this->_hidden;
+	public function virtualProperties($properties = null) {
+		if ($properties === null) {
+			return $this->_virtual;
+		}
+		$this->_virtual = $properties;
+		return $this;
 	}
 
 /**
