@@ -1124,11 +1124,13 @@ class Model extends Object implements EventListener {
  */
 	public function setSource($tableName) {
 		$this->setDataSource($this->useDbConfig);
-		$db = ConnectionManager::getDataSource($this->useDbConfig);
-		$db->cacheSources = ($this->cacheSources && $db->cacheSources);
+		$db = ConnectionManager::get($this->useDbConfig);
+		$dataSource = ConnectionManager::getDataSource($this->useDbConfig);
 
-		if (method_exists($db, 'listSources')) {
-			$sources = $db->listSources();
+		$dataSource->cacheSources = ($this->cacheSources && $dataSource->cacheSources);
+
+		if (method_exists($db->schemaCollection(), 'listTables')) {
+			$sources = $db->schemaCollection()->listTables();
 			if (is_array($sources) && !in_array(strtolower($this->tablePrefix . $tableName), array_map('strtolower', $sources))) {
 				throw new Error\MissingTableException(array(
 					'table' => $this->tablePrefix . $tableName,
@@ -3464,18 +3466,18 @@ class Model extends Object implements EventListener {
 			$this->useDbConfig = $dataSource;
 		}
 
-		$db = ConnectionManager::getDataSource($this->useDbConfig);
-		if (!empty($oldConfig) && isset($db->config['prefix'])) {
-			$oldDb = ConnectionManager::getDataSource($oldConfig);
+		$db = ConnectionManager::get($this->useDbConfig);
+		if (!empty($oldConfig) && isset($db->config()['prefix'])) {
+			$oldDb = ConnectionManager::get($oldConfig);
 
-			if (!isset($this->tablePrefix) || (!isset($oldDb->config['prefix']) || $this->tablePrefix == $oldDb->config['prefix'])) {
-				$this->tablePrefix = $db->config['prefix'];
+			if (!isset($this->tablePrefix) || (!isset($oldDb->config()['prefix']) || $this->tablePrefix == $oldDb->config()['prefix'])) {
+				$this->tablePrefix = $db->config()['prefix'];
 			}
-		} elseif (isset($db->config['prefix'])) {
-			$this->tablePrefix = $db->config['prefix'];
+		} elseif (isset($db->config()['prefix'])) {
+			$this->tablePrefix = $db->config()['prefix'];
 		}
 
-		$this->schemaName = $db->getSchemaName();
+		$this->schemaName = $db->config()['database'];
 	}
 
 /**
@@ -3585,7 +3587,7 @@ class Model extends Object implements EventListener {
  *  $query to continue with new $query
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforefind
  */
-	public function beforeFind($query) {
+	public function beforeFind(Event $event, $query) {
 		return true;
 	}
 
@@ -3598,7 +3600,7 @@ class Model extends Object implements EventListener {
  * @return mixed Result of the find operation
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#afterfind
  */
-	public function afterFind($results, $primary = false) {
+	public function afterFind(Event $event, $results, $primary = false) {
 		return $results;
 	}
 
@@ -3611,7 +3613,7 @@ class Model extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforesave
  * @see Model::save()
  */
-	public function beforeSave($options = array()) {
+	public function beforeSave(Event $event, $options = array()) {
 		return true;
 	}
 
@@ -3624,7 +3626,7 @@ class Model extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#aftersave
  * @see Model::save()
  */
-	public function afterSave($created, $options = array()) {
+	public function afterSave(Event $event, $created, $options = array()) {
 	}
 
 /**
@@ -3634,7 +3636,7 @@ class Model extends Object implements EventListener {
  * @return boolean True if the operation should continue, false if it should abort
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforedelete
  */
-	public function beforeDelete($cascade = true) {
+	public function beforeDelete(Event $event, $cascade = true) {
 		return true;
 	}
 
@@ -3644,7 +3646,7 @@ class Model extends Object implements EventListener {
  * @return void
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#afterdelete
  */
-	public function afterDelete() {
+	public function afterDelete(Event $event) {
 	}
 
 /**
@@ -3656,7 +3658,7 @@ class Model extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/models/callback-methods.html#beforevalidate
  * @see Model::save()
  */
-	public function beforeValidate($options = array()) {
+	public function beforeValidate(Event $event, $options = array()) {
 		return true;
 	}
 
@@ -3665,7 +3667,7 @@ class Model extends Object implements EventListener {
  *
  * @return void
  */
-	public function afterValidate() {
+	public function afterValidate(Event $event) {
 	}
 
 /**
