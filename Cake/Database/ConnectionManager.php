@@ -155,7 +155,14 @@ class ConnectionManager {
  * @deprecated Will be removed in 3.0 stable.
  */
 	public static function getDataSource($name) {
-		return static::get($name);
+		$db = static::get($name);
+		if ($datasource = get_class($db->config()['datasource'])) {
+			$token = explode('\\', $datasource);
+			$datasource = 'Migrations\\Model\\Datasource\\Database\\' . array_pop($token);
+			$datasource = new $datasource($db->config());
+		}
+
+		return $datasource;
 	}
 
 /**
