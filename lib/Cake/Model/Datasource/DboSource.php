@@ -2119,7 +2119,7 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = 'count';
 				}
-				if (is_object($Model) && $Model->isVirtualField($params[0])) {
+				if ($Model->isVirtualField($params[0])) {
 					$arg = $this->_quoteFields($Model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
@@ -2130,7 +2130,7 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = $params[0];
 				}
-				if (is_object($Model) && $Model->isVirtualField($params[0])) {
+				if ($Model->isVirtualField($params[0])) {
 					$arg = $this->_quoteFields($Model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
