@@ -1599,18 +1599,17 @@ class DboSource extends DataSource {
 					$this->getConstraint($type, $Model, $LinkModel, $association, array_merge($assocData, compact('external')))
 				);
 
-				$selfJoin = ($Model->name === $LinkModel->name);
-
-				if ($external && !$selfJoin) {
-					$modelAlias = $Model->alias;
-					foreach ($conditions as $key => $condition) {
-						if (is_numeric($key) && strpos($condition, $modelAlias . '.') !== false) {
-							unset($conditions[$key]);
+				if ($external) {
+					// Self join
+					if ($Model->name !== $LinkModel->name) {
+						$modelAlias = $Model->alias;
+						foreach ($conditions as $key => $condition) {
+							if (is_numeric($key) && strpos($condition, $modelAlias . '.') !== false) {
+								unset($conditions[$key]);
+							}
 						}
 					}
-				}
 
-				if ($external) {
 					$query = array_merge($assocData, array(
 						'conditions' => $conditions,
 						'table' => $this->fullTableName($LinkModel),
