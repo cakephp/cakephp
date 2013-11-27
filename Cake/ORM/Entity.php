@@ -34,6 +34,23 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected $_properties = [];
 
 /**
+ * List of property names that should **not** be included in JSON or Array
+ * representations of this Entity.
+ *
+ * @var array
+ */
+	protected $_hidden = [];
+
+/**
+ * List of computed or virtual fields that **should** be included in JSON or array
+ * representations of this Entity. If a field is present in both _hidden and _virtual
+ * the field will **not** be in the array/json versions of the entity.
+ *
+ * @var array
+ */
+	protected $_virtual = [];
+
+/**
  * Holds the name of the class for the instance object
  *
  * @var string
@@ -278,6 +295,55 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	}
 
 /**
+ * Get/Set the hidden properties on this entity.
+ *
+ * If the properties argument is null, the currently hidden properties
+ * will be returned. Otherwise the hidden properties will be set.
+ *
+ * @param null|array Either an array of properties to hide or null to get properties
+ * @return array|Entity
+ */
+	public function hiddenProperties($properties = null) {
+		if ($properties === null) {
+			return $this->_hidden;
+		}
+		$this->_hidden = $properties;
+		return $this;
+	}
+
+/**
+ * Get/Set the virtual properties on this entity.
+ *
+ * If the properties argument is null, the currently virtual properties
+ * will be returned. Otherwise the virtual properties will be set.
+ *
+ * @param null|array Either an array of properties to treat as virtual or null to get properties
+ * @return array|Entity
+ */
+	public function virtualProperties($properties = null) {
+		if ($properties === null) {
+			return $this->_virtual;
+		}
+		$this->_virtual = $properties;
+		return $this;
+	}
+
+/**
+ * Get the list of visible properties.
+ *
+ * The list of visible properties is all standard properties
+ * plus virtual properties minus hidden properties.
+ *
+ * @return array A list of properties that are 'visible' in all
+ *     representations.
+ */
+	public function visibleProperties() {
+		$properties = array_keys($this->_properties);
+		$properties = array_merge($properties, $this->_virtual);
+		return array_diff($properties, $this->_hidden);
+	}
+
+/**
  * Returns an array with all the properties that have been set
  * to this entity
  *
@@ -288,7 +354,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 	public function toArray() {
 		$result = [];
-		foreach ($this->_properties as $property => $value) {
+		foreach ($this->visibleProperties() as $property) {
 			$value = $this->get($property);
 			if (is_array($value) && isset($value[0]) && $value[0] instanceof self) {
 				$result[$property] = [];
@@ -302,6 +368,15 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			}
 		}
 		return $result;
+	}
+
+/**
+ * Returns the properties that will be serialized as JSON
+ *
+ * @return array
+ */
+	public function jsonSerialize() {
+		return $this->toArray();
 	}
 
 /**
@@ -357,15 +432,6 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			static::$_accessors[$this->_className] = array_flip(get_class_methods($this));
 		}
 		return isset(static::$_accessors[$this->_className][$method]);
-	}
-
-/**
- * Returns the properties that will be serialized as json
- *
- * @return array
- */
-	public function jsonSerialize() {
-		return $this->toArray();
 	}
 
 /**
