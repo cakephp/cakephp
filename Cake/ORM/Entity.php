@@ -371,7 +371,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	}
 
 /**
- * Returns the properties that will be serialized as json
+ * Returns the properties that will be serialized as JSON
  *
  * @return array
  */
