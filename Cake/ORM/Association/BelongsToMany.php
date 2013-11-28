@@ -285,19 +285,33 @@ class BelongsToMany extends Association {
 		}
 
 		$table = $this->target();
-		$persited = [];
-		foreach ($entities as $entity) {
-			$saved = $table->save($entity, $options);
-			if (!$saved && !empty($options['atomic'])) {
-				return false;
+		$original = $entities;
+		$persisted = [];
+
+		foreach ($entities as $k => $entity) {
+			if (!empty($options['atomic'])) {
+				$entity = clone $entity;
 			}
-			if ($saved) {
-				$persited[] = $saved;
+
+			if ($table->save($entity, $options)) {
+				$entities[$k] = $entity;
+				$persisted[] = $entity;
+				continue;
+			}
+
+			if (!empty($options['atomic'])) {
+				$original[$k]->errors($entity->errors());
+				return false;
 			}
 		}
 
-		$this->_saveLinks($parentEntity, $persited, $options);
+		$success = $this->_saveLinks($parentEntity, $persisted, $options);
+		if (!$success && !empty($options['atomic'])) {
+			$parentEntity->set($this->property(), $original);
+			return false;
+		}
 
+		$parentEntity->set($this->property(), $entities);
 		return $parentEntity;
 	}
 
@@ -314,7 +328,7 @@ class BelongsToMany extends Association {
 		$sourcePrimaryKey = (array)$source->primaryKey();
 		$jointProperty = $target->association($pivot->alias())->property();
 
-		foreach ($targetEntities as $e) {
+		foreach ($targetEntities as $k => $e) {
 			$joint = $e->get($property);
 			if (!$joint) {
 				$joint = new $entityClass;
@@ -334,6 +348,7 @@ class BelongsToMany extends Association {
 
 			if ($saved) {
 				$e->set($jointProperty, $joint);
+				$savedEntities[$k] = $e;
 			}
 		}
 

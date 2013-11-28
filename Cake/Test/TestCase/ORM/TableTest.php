@@ -2265,4 +2265,79 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(5, $entity->tags[1]->extraInfo->tag_id);
 	}
 
+/**
+ * Tests saving belongsToMany records with a validation error and atomic set
+ * to true
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToWithValidationErrorAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => '100'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$tags = $table->association('tags')
+			->target()
+			->validator()
+			->add('name', 'num', ['rule' => 'numeric']);
+
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertNull($entity->tags[0]->isNew());
+		$this->assertNull($entity->tags[1]->isNew());
+		$this->assertNull($entity->tags[0]->id);
+		$this->assertNull($entity->tags[1]->id);
+		$this->assertNull($entity->tags[0]->extraInfo);
+		$this->assertNull($entity->tags[1]->extraInfo);
+	}
+
+/**
+ * Tests saving belongsToMany records with a validation error and atomic set
+ * to false
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToWithValidationErrorNonAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => '100'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$tags = $table->association('tags')
+			->target()
+			->validator()
+			->add('name', 'num', ['rule' => 'numeric']);
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->tags[0]->isNew());
+		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertNull($entity->tags[0]->id);
+		$this->assertEquals(4, $entity->tags[1]->id);
+		$this->assertNull($entity->tags[0]->extraInfo);
+		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
+		$this->assertEquals(4, $entity->tags[1]->extraInfo->tag_id);
+	}
+
 }
