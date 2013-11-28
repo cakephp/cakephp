@@ -2225,11 +2225,44 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->validator()
 			->add('name', 'num', ['rule' => 'numeric']);
 
-		$this->assertSame($entity, $table->save($entity));
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
 		$this->assertFalse($entity->isNew());
 		$this->assertTrue($entity->author->isNew());
 		$this->assertNull($entity->get('author_id'));
 		$this->assertNotEmpty($entity->author->errors('name'));
+	}
+
+/**
+ * Tests saving belongsToMany records
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToMany() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => 'Another Something'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->tags[0]->isNew());
+		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertEquals(4, $entity->tags[0]->id);
+		$this->assertEquals(5, $entity->tags[1]->id);
+		$this->assertEquals(4, $entity->tags[0]->extraInfo->article_id);
+		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
+		$this->assertEquals(4, $entity->tags[0]->extraInfo->tag_id);
+		$this->assertEquals(5, $entity->tags[1]->extraInfo->tag_id);
 	}
 
 }

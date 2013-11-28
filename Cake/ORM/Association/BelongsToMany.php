@@ -266,7 +266,78 @@ class BelongsToMany extends Association {
  * @see Table::save()
  */
 	public function save(Entity $entity, $options = []) {
-		return $entity;
+		$property = $this->property();
+		$targetEntity = $entity->get($this->property());
+		$success = false;
+
+		if ($targetEntity) {
+			$success = $this->_saveTarget($entity, $targetEntity, $options);
+		}
+
+		return $success;
+	}
+
+	protected function _saveTarget($parentEntity, $entities, $options) {
+		if (!(is_array($entities) || $entities instanceof \Traversable)) {
+			$name = $this->property();
+			$message = __d('cake_dev', 'Could not save %s, it cannot be traversed', $name);
+			throw new \InvalidArgumentException($message);
+		}
+
+		$table = $this->target();
+		$persited = [];
+		foreach ($entities as $entity) {
+			$saved = $table->save($entity, $options);
+			if (!$saved && !empty($options['atomic'])) {
+				return false;
+			}
+			if ($saved) {
+				$persited[] = $saved;
+			}
+		}
+
+		$this->_saveLinks($parentEntity, $persited, $options);
+
+		return $parentEntity;
+	}
+
+	protected function _saveLinks($sourceEntity, $targetEntities, $options) {
+		$target = $this->target();
+		$pivot = $this->pivot();
+		$source = $this->source();
+		$entityClass = $pivot->entityClass();
+		$belongsTo = $pivot->association($target->alias());
+		$property = $belongsTo->property();
+		$foreignKey = (array)$this->foreignKey();
+		$assocForeignKey = (array)$belongsTo->foreignKey();
+		$targetPrimaryKey = (array)$target->primaryKey();
+		$sourcePrimaryKey = (array)$source->primaryKey();
+		$jointProperty = $target->association($pivot->alias())->property();
+
+		foreach ($targetEntities as $e) {
+			$joint = $e->get($property);
+			if (!$joint) {
+				$joint = new $entityClass;
+				$joint->isNew(true);
+			}
+
+			$joint->set(array_combine(
+				$foreignKey,
+				$sourceEntity->extract($sourcePrimaryKey)
+			));
+			$joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)));
+			$saved = $pivot->save($joint, $options);
+
+			if (!$saved && !empty($options['atomic'])) {
+				return false;
+			}
+
+			if ($saved) {
+				$e->set($jointProperty, $joint);
+			}
+		}
+
+		return true;
 	}
 
 /**
