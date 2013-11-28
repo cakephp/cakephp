@@ -129,7 +129,7 @@ abstract class Association {
  *
  * @var string
  */
-	protected $_property;
+	protected $_propertyName;
 
 /**
  * The strategy name to be used to fetch associated records. Some association
@@ -157,7 +157,7 @@ abstract class Association {
 			'sourceTable',
 			'targetTable',
 			'joinType',
-			'property'
+			'propertyName'
 		];
 		foreach ($defaults as $property) {
 			if (isset($options[$property])) {
@@ -306,12 +306,12 @@ abstract class Association {
  */
 	public function property($name = null) {
 		if ($name !== null) {
-			$this->_property = $name;
+			$this->_propertyName = $name;
 		}
-		if ($name === null && !$this->_property) {
-			$this->_property = Inflector::underscore($this->_name);
+		if ($name === null && !$this->_propertyName) {
+			$this->_propertyName = Inflector::underscore($this->_name);
 		}
-		return $this->_property;
+		return $this->_propertyName;
 	}
 
 /**
