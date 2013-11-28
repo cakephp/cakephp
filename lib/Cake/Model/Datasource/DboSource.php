@@ -2870,26 +2870,32 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Create a GROUP BY SQL clause
+ * Create a GROUP BY SQL clause.
  *
- * @param string $group Group By Condition
- * @param Model $model
- * @return string string condition or null
+ * @param string|array $fields Group By fields
+ * @param Model $Model
+ * @return string Group By clause or null.
  */
-	public function group($group, $model = null) {
-		if ($group) {
-			if (!is_array($group)) {
-				$group = array($group);
-			}
-			foreach ($group as $index => $key) {
-				if (is_object($model) && $model->isVirtualField($key)) {
-					$group[$index] = '(' . $model->getVirtualField($key) . ')';
+	public function group($fields, Model $Model = null) {
+		if (empty($fields)) {
+			return null;
+		}
+
+		if (!is_array($fields)) {
+			$fields = array($fields);
+		}
+
+		if (!empty($Model)) {
+			foreach ($fields as $index => $key) {
+				if ($Model->isVirtualField($key)) {
+					$fields[$index] = '(' . $Model->getVirtualField($key) . ')';
 				}
 			}
-			$group = implode(', ', $group);
-			return ' GROUP BY ' . $this->_quoteFields($group);
 		}
-		return null;
+
+		$fields = implode(', ', $fields);
+
+		return ' GROUP BY ' . $this->_quoteFields($fields);
 	}
 
 /**
