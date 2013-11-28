@@ -40,16 +40,21 @@ class SqliteSchema extends BaseSchema {
  * @return array Array of column information.
  */
 	protected function _convertColumn($column) {
-		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
+		preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
 			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
 		}
-		$col = strtolower($matches[1]);
-		$length = null;
-		if (isset($matches[2])) {
-			$length = (int)$matches[2];
+
+		$unsigned = false;
+		if (strtolower($matches[1]) === 'unsigned') {
+			$unsigned = true;
 		}
-		$unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
+
+		$col = strtolower($matches[2]);
+		$length = null;
+		if (isset($matches[3])) {
+			$length = (int)$matches[3];
+		}
 
 		if ($col === 'bigint') {
 			return ['type' => 'biginteger', 'length' => $length, 'unsigned' => $unsigned];
@@ -228,6 +233,14 @@ class SqliteSchema extends BaseSchema {
 		}
 
 		$out = $this->_driver->quoteIdentifier($name);
+		$hasUnsigned = ['biginteger', 'integer', 'float', 'decimal'];
+
+		if (
+			in_array($data['type'], $hasUnsigned, true) &&
+			isset($data['unsigned']) && $data['unsigned'] === true
+		) {
+			$out .= ' UNSIGNED';
+		}
 		$out .= $typeMap[$data['type']];
 
 		$hasLength = ['integer', 'string'];
@@ -240,13 +253,6 @@ class SqliteSchema extends BaseSchema {
 			(isset($data['length']) || isset($data['precision']))
 		) {
 			$out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
-		}
-		$hasUnsigned = ['biginteger', 'integer', 'float', 'decimal'];
-		if (
-			in_array($data['type'], $hasUnsigned, true) &&
-			isset($data['unsigned']) && $data['unsigned'] === true
-		) {
-			$out .= ' UNSIGNED';
 		}
 
 		if (isset($data['null']) && $data['null'] === false) {

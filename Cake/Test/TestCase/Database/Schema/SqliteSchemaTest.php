@@ -64,7 +64,7 @@ class SqliteSchemaTest extends TestCase {
 				['type' => 'biginteger', 'length' => null, 'unsigned' => false]
 			],
 			[
-				'BIGINT UNSIGNED',
+				'UNSIGNED BIGINT',
 				['type' => 'biginteger', 'length' => null, 'unsigned' => true]
 			],
 			[
@@ -88,7 +88,7 @@ class SqliteSchemaTest extends TestCase {
 				['type' => 'integer', 'length' => 11, 'unsigned' => false]
 			],
 			[
-				'INTEGER(11) UNSIGNED',
+				'UNSIGNED INTEGER(11)',
 				['type' => 'integer', 'length' => 11, 'unsigned' => true]
 			],
 			[
@@ -108,7 +108,7 @@ class SqliteSchemaTest extends TestCase {
 				['type' => 'float', 'length' => null, 'unsigned' => false]
 			],
 			[
-				'DOUBLE UNSIGNED',
+				'UNSIGNED DOUBLE',
 				['type' => 'float', 'length' => null, 'unsigned' => true]
 			],
 			[
@@ -120,7 +120,7 @@ class SqliteSchemaTest extends TestCase {
 				['type' => 'decimal', 'length' => null, 'unsigned' => false]
 			],
 			[
-				'DECIMAL(11,2) UNSIGNED',
+				'UNSIGNED DECIMAL(11,2)',
 				['type' => 'decimal', 'length' => null, 'unsigned' => true]
 			],
 		];
@@ -391,7 +391,7 @@ SQL;
 			[
 				'post_id',
 				['type' => 'biginteger', 'length' => 20, 'unsigned' => true],
-				'"post_id" BIGINT UNSIGNED'
+				'"post_id" UNSIGNED BIGINT'
 			],
 			// Decimal
 			[
@@ -407,7 +407,7 @@ SQL;
 			[
 				'value',
 				['type' => 'decimal', 'length' => 11, 'unsigned' => true],
-				'"value" DECIMAL(11,0) UNSIGNED'
+				'"value" UNSIGNED DECIMAL(11,0)'
 			],
 			[
 				'value',
@@ -428,7 +428,7 @@ SQL;
 			[
 				'value',
 				['type' => 'float', 'length' => 11, 'precision' => 3, 'unsigned' => true],
-				'"value" FLOAT(11,3) UNSIGNED'
+				'"value" UNSIGNED FLOAT(11,3)'
 			],
 			// Boolean
 			[
