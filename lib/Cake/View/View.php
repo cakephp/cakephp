@@ -1094,7 +1094,7 @@ class View extends Object {
  * Return all possible paths to find view files in order
  *
  * @param string $plugin Optional plugin name to scan for view files.
- * @param boolean $cached Set to true to force a refresh of view paths.
+ * @param boolean $cached Set to false to force a refresh of view paths. Default true.
  * @return array paths
  */
 	protected function _paths($plugin = null, $cached = true) {
