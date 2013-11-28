@@ -2201,7 +2201,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testsSaveBelongsToWithValidationErrorNotAtomic() {
+	public function testSaveBelongsToWithValidationErrorNotAtomic() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'

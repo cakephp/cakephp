@@ -972,10 +972,11 @@ class Table {
 		if ($success) {
 			$success = $this->_saveAssociations($children, $entity, $originalOptions);
 			if ($success || !$options['atomic']) {
-				$success = $entity;
+				$entity->clean();
 				$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 				$this->getEventManager()->dispatch($event);
 				$entity->isNew(false);
+				$success = $entity;
 			}
 		}
 
@@ -995,7 +996,7 @@ class Table {
 				$msg = __d('cake_dev', '%s is not associated to %s', $this->alias(), $assoc);
 				throw new \InvalidArgumentException($msg);
 			}
-	
+
 			if ($association->isOwningSide()) {
 				$children[] = $assoc;
 			} else {
@@ -1010,9 +1011,16 @@ class Table {
 			return $entity;
 		}
 
+		unset($options['associated']);
+
 		foreach ($assocs as $alias) {
 			$association = $this->association($alias);
-			unset($options['associated']);
+			$property = $association->property();
+
+			if (!$entity->dirty($property)) {
+				continue;
+			}
+
 			if (!$association->save($entity, $options)) {
 				return false;
 			}
@@ -1049,7 +1057,6 @@ class Table {
 			if ($id !== null) {
 				$entity->set($primary, $id);
 			}
-			$entity->clean();
 			$success = $entity;
 		}
 		$statement->closeCursor();
@@ -1105,7 +1112,6 @@ class Table {
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
-			$entity->clean();
 			$success = $entity;
 		}
 		$statement->closeCursor();
