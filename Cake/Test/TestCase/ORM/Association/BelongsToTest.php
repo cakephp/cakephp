@@ -40,6 +40,9 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'company_name' => ['type' => 'string'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id']]
+				]
 			]
 		]);
 		$this->client = TableRegistry::get('Clients', [
@@ -47,6 +50,9 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'id' => ['type' => 'integer'],
 				'client_name' => ['type' => 'string'],
 				'company_id' => ['type' => 'integer'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id']]
+				]
 			]
 		]);
 	}

@@ -226,12 +226,14 @@ class BelongsToMany extends Association {
  * @return boolean Success.
  */
 	public function cascadeDelete(Entity $entity, $options = []) {
-		$foreignKey = $this->foreignKey();
+		$foreignKey = (array)$this->foreignKey();
 		$primaryKey = $this->source()->primaryKey();
-		$conditions = [
-			$foreignKey => $entity->get($primaryKey)
-		];
-		// TODO fix multi-column primary keys.
+		$conditions = [];
+
+		if ($primaryKey) {
+			$conditions = array_combine($foreignKey, $entity->extract((array)$primaryKey));
+		}
+
 		$conditions = array_merge($conditions, $this->conditions());
 
 		$table = $this->pivot();

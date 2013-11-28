@@ -95,7 +95,7 @@ class Table {
  *
  * @var string
  */
-	protected $_primaryKey = 'id';
+	protected $_primaryKey;
 
 /**
  * The name of the field that represents a human readable representation of a row
@@ -303,9 +303,22 @@ class Table {
 			}
 			return $this->_schema;
 		}
+
 		if (is_array($schema)) {
+			$constraints = [];
+
+			if (isset($schema['_constraints'])) {
+				$constraints = $schema['_constraints'];
+				unset($schema['_constraints']);
+			}
+
 			$schema = new Schema($this->table(), $schema);
+
+			foreach ($constraints as $name => $value) {
+				$schema->addConstraint($name, $value);
+			}
 		}
+
 		return $this->_schema = $schema;
 	}
 
@@ -332,6 +345,10 @@ class Table {
 	public function primaryKey($key = null) {
 		if ($key !== null) {
 			$this->_primaryKey = $key;
+		}
+		if ($this->_primaryKey === null) {
+			$key = current((array)$this->schema()->primaryKey());
+			$this->_primaryKey = $key ?: null;
 		}
 		return $this->_primaryKey;
 	}
@@ -1051,10 +1068,10 @@ class Table {
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
-			if (!isset($data[$primary])) {
+			if ($primary && !isset($data[$primary])) {
 				$id = $statement->lastInsertId($this->table(), $primary);
 			}
-			if ($id !== null) {
+			if ($primary && $id !== null) {
 				$entity->set($primary, $id);
 			}
 			$success = $entity;

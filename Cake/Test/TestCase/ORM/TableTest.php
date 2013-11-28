@@ -128,7 +128,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testPrimaryKey() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'id' => ['type' => 'integer'],
+				'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+			]
+		]);
 		$this->assertEquals('id', $table->primaryKey());
 		$table->primaryKey('thingID');
 		$this->assertEquals('thingID', $table->primaryKey());
@@ -176,7 +182,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'table' => 'users',
 			'schema' => [
 				'id' => ['type' => 'string'],
-				'foo' => ['type' => 'string']
+				'foo' => ['type' => 'string'],
+				'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 			]
 		]);
 		$this->assertEquals('id', $table->displayField());
@@ -192,7 +199,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'table' => 'users',
 			'schema' => [
 				'id' => ['type' => 'string'],
-				'foo' => ['type' => 'string']
+				'foo' => ['type' => 'string'],
+				'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 			]
 		]);
 		$this->assertEquals('id', $table->displayField());
