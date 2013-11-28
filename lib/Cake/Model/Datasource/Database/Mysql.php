@@ -85,7 +85,13 @@ class Mysql extends DboSource {
 	public $fieldParameters = array(
 		'charset' => array('value' => 'CHARACTER SET', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault'),
 		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => ' ', 'column' => 'Collation', 'position' => 'beforeDefault'),
-		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault')
+		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault'),
+		'unsigned' => array(
+			'value' => 'UNSIGNED', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault',
+			'noVal' => true,
+			'options' => array(true),
+			'types' => array('integer', 'float', 'decimal', 'biginteger')
+		)
 	);
 
 /**
@@ -340,8 +346,11 @@ class Mysql extends DboSource {
 				'type' => $this->column($column->Type),
 				'null' => ($column->Null === 'YES' ? true : false),
 				'default' => $column->Default,
-				'length' => $this->length($column->Type),
+				'length' => $this->length($column->Type)
 			);
+			if (in_array($fields[$column->Field]['type'], $this->fieldParameters['unsigned']['types'], true)) {
+				$fields[$column->Field]['unsigned'] = $this->_unsigned($column->Type);
+			}
 			if (!empty($column->Key) && isset($this->index[$column->Key])) {
 				$fields[$column->Field]['key'] = $this->index[$column->Key];
 			}
@@ -791,6 +800,16 @@ class Mysql extends DboSource {
  */
 	public function nestedTransactionSupported() {
 		return $this->useNestedTransactions && version_compare($this->getVersion(), '4.1', '>=');
+	}
+
+/**
+ * Check if column type is unsigned
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return bool True if column is unsigned, false otherwise
+ */
+	protected function _unsigned($real) {
+		return strpos(strtolower($real), 'unsigned') !== false;
 	}
 
 }
