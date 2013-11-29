@@ -263,6 +263,8 @@ class BelongsToMany extends Association {
  * @param array|\ArrayObject $options
  * @return boolean|Entity false if $entity could not be saved, otherwise it returns
  * the saved entity
+ * @throws \InvalidArgumentException if the property representing the association
+ * in the parent entity cannot be traversed
  * @see Table::save()
  */
 	public function save(Entity $entity, $options = []) {
@@ -277,7 +279,21 @@ class BelongsToMany extends Association {
 		return $success;
 	}
 
-	protected function _saveTarget($parentEntity, $entities, $options) {
+/**
+ * Persists each of the entities into the target table and creates links between
+ * the parent entity and each one of the saved target entities.
+ *
+ * @param \Cake\ORM\Entity $parentEntity the source entity containing the target
+ * entities to be saved.
+ * @param array|\Traversable list of entities to persist in target table and to
+ * link to the parent entity
+ * @param array $options list of options accepted by Table::save()
+ * @throws \InvalidArgumentException if the property representing the association
+ * in the parent entity cannot be traversed
+ * @return \Cake\ORM\Entity|boolean The parent entity after all links have been
+ * created if no errors happened, false otherwise
+ */
+	protected function _saveTarget(Entity $parentEntity, $entities, $options) {
 		if (!(is_array($entities) || $entities instanceof \Traversable)) {
 			$name = $this->property();
 			$message = __d('cake_dev', 'Could not save %s, it cannot be traversed', $name);
@@ -315,7 +331,16 @@ class BelongsToMany extends Association {
 		return $parentEntity;
 	}
 
-	protected function _saveLinks($sourceEntity, $targetEntities, $options) {
+/**
+ * Creates links between the source entity and each of the passed target entities
+ *
+ * @param \Cake\ORM\Entity $sourceEntity the entity from source table in this
+ * association
+ * @param array list of entities to link to link to the source entity using the
+ * pivot table
+ * @return boolean success
+ */
+	protected function _saveLinks(Entity $sourceEntity, $targetEntities, $options) {
 		$target = $this->target();
 		$pivot = $this->pivot();
 		$source = $this->source();
