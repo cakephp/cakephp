@@ -277,6 +277,78 @@ class TimestampBehaviorTest extends TestCase {
 	}
 
 /**
+ * testTouch
+ *
+ * @return void
+ */
+	public function testTouch() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$this->Behavior = new TimestampBehavior($table, ['refreshTimestamp' => false]);
+		$ts = new \DateTime('2000-01-01');
+		$this->Behavior->timestamp($ts);
+
+		$entity = new Entity(['username' => 'timestamp test']);
+		$return = $this->Behavior->touch($entity);
+		$this->assertTrue($return, 'touch is expected to return true if it sets a field value');
+		$this->assertSame(
+			$ts->format('Y-m-d H:i:s'),
+			$entity->modified->format('Y-m-d H:i:s'),
+			'Modified field is expected to be updated'
+		);
+		$this->assertNull($entity->created, 'Created field is NOT expected to change');
+	}
+
+/**
+ * testTouchNoop
+ *
+ * @return void
+ */
+	public function testTouchNoop() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$config = [
+			'refreshTimestamp' => false,
+			'events' => [
+				'Model.beforeSave' => [
+					'created' => 'new',
+				]
+			]
+		];
+
+		$this->Behavior = new TimestampBehavior($table, $config);
+		$ts = new \DateTime('2000-01-01');
+		$this->Behavior->timestamp($ts);
+
+		$entity = new Entity(['username' => 'timestamp test']);
+		$return = $this->Behavior->touch($entity);
+		$this->assertFalse($return, 'touch is expected to do nothing and return false');
+		$this->assertNull($entity->modified, 'Modified field is NOT expected to change');
+		$this->assertNull($entity->created, 'Created field is NOT expected to change');
+	}
+
+/**
+ * testTouchCustomEvent
+ *
+ * @return void
+ */
+	public function testTouchCustomEvent() {
+		$table = $this->getMock('Cake\ORM\Table');
+		$settings = ['events' => ['Something.special' => ['date_specialed' => 'always']], 'refreshTimestamp' => false];
+		$this->Behavior = new TimestampBehavior($table, $settings);
+		$ts = new \DateTime('2000-01-01');
+		$this->Behavior->timestamp($ts);
+
+		$entity = new Entity(['username' => 'timestamp test']);
+		$return = $this->Behavior->touch($entity, 'Something.special');
+		$this->assertTrue($return, 'touch is expected to return true if it sets a field value');
+		$this->assertSame(
+			$ts->format('Y-m-d H:i:s'),
+			$entity->date_specialed->format('Y-m-d H:i:s'),
+			'Modified field is expected to be updated'
+		);
+		$this->assertNull($entity->created, 'Created field is NOT expected to change');
+	}
+
+/**
  * Test that calling save, triggers an insert including the created and updated field values
  *
  * @return void
