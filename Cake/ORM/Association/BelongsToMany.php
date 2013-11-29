@@ -346,10 +346,7 @@ class BelongsToMany extends Association {
 				return false;
 			}
 
-			if ($saved) {
-				$e->set($jointProperty, $joint);
-				$savedEntities[$k] = $e;
-			}
+			$e->set($jointProperty, $joint);
 		}
 
 		return true;

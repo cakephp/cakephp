@@ -2300,6 +2300,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->tags[1]->id);
 		$this->assertNull($entity->tags[0]->extraInfo);
 		$this->assertNull($entity->tags[1]->extraInfo);
+		$this->assertEmpty($entity->tags[0]->errors('name'));
+		$this->assertNotEmpty($entity->tags[1]->errors('name'));
 	}
 
 /**
@@ -2338,6 +2340,82 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->tags[0]->extraInfo);
 		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
 		$this->assertEquals(4, $entity->tags[1]->extraInfo->tag_id);
+	}
+
+/**
+ * Tests saving belongsToMany records with a validation error in a joint entity
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToWithValidationErrorInJointEntity() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => '100'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$table->association('tags')
+			->pivot()
+			->validator()
+			->add('article_id', 'num', ['rule' => ['comparison', '>', 4]]);
+
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertNull($entity->tags[0]->isNew());
+		$this->assertNull($entity->tags[1]->isNew());
+		$this->assertNull($entity->tags[0]->id);
+		$this->assertNull($entity->tags[1]->id);
+		$this->assertNull($entity->tags[0]->extraInfo);
+		$this->assertNull($entity->tags[1]->extraInfo);
+	}
+
+
+/**
+ * Tests saving belongsToMany records with a validation error in a joint entity
+ * and atomic set to false
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToWithValidationErrorInJointEntityNonAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => 'New one'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$table->association('tags')
+			->pivot()
+			->validator()
+			->add('tag_id', 'num', ['rule' => ['comparison', '>', 4]]);
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->tags[0]->isNew());
+		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertEquals(4, $entity->tags[0]->id);
+		$this->assertEquals(5, $entity->tags[1]->id);
+		$this->assertTrue($entity->tags[0]->extraInfo->isNew());
+		$this->assertNotEmpty($entity->tags[0]->extraInfo->errors());
+		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
+		$this->assertEquals(5, $entity->tags[1]->extraInfo->tag_id);
 	}
 
 }
