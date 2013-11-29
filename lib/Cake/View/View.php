@@ -254,6 +254,13 @@ class View extends Object {
 	protected $_paths = array();
 
 /**
+ * Holds an array of paths for plugins.
+ *
+ * @var array
+ */
+	protected $_pathsForPlugin = array();
+
+/**
  * Indicate that helpers have been loaded.
  *
  * @var boolean
@@ -1119,6 +1126,11 @@ class View extends Object {
 	protected function _paths($plugin = null, $cached = true) {
 		if ($plugin === null && $cached === true && !empty($this->_paths)) {
 			return $this->_paths;
+		}
+		if ($cached === true) {
+			if ($plugin !== null && !empty($this->_pathsForPlugin[$plugin])) {
+				return $this->_pathsForPlugin[$plugin];
+			}
 		}
 		$paths = array();
 		$viewPaths = App::path('View');
