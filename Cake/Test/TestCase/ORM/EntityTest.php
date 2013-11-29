@@ -464,11 +464,16 @@ class EntityTest extends TestCase {
 		$this->assertTrue($entity->dirty('title'));
 		$this->assertTrue($entity->dirty('author_id'));
 
+		$this->assertTrue($entity->dirty());
+
 		$entity->dirty('id', false);
 		$this->assertFalse($entity->dirty('id'));
 		$this->assertTrue($entity->dirty('title'));
 		$entity->dirty('title', false);
 		$this->assertFalse($entity->dirty('title'));
+		$this->assertTrue($entity->dirty());
+		$entity->dirty('author_id', false);
+		$this->assertFalse($entity->dirty());
 	}
 
 /**
