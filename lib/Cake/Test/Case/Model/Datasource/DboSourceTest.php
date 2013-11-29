@@ -975,14 +975,137 @@ class DboSourceTest extends CakeTestCase {
 
 		$ds = $Article->getDataSource();
 		$ds->cacheMethods = true;
+
 		$first = $ds->fields($Article);
 
 		$Article->schemaName = 'secondSchema';
-		$ds = $Article->getDataSource();
-		$ds->cacheMethods = true;
 		$second = $ds->fields($Article);
 
 		$this->assertEquals(2, count(DboSource::$methodCache['fields']));
+	}
+
+/**
+ * data provider for testSameFieldsCacheKey
+ *
+ * - One valid unqualified field
+ * - Multiple valid unqualified fields
+ *
+ * @return array
+ */
+	public function fieldsCacheKey() {
+		return array(
+			// One valid unqualified field
+			array(array(
+				// correct
+				'title',
+				array('title'),
+
+				// duplicated
+				'title, title',
+				array('title', 'title'),
+
+				// empty
+				'title, ',
+				'title,  ',
+				'title, 0',
+				array('title, '),
+				array('title,  '),
+				array('title, 0'),
+				array('title', ''),
+				array('title', ' '),
+				array('title', '  '),
+				array('title', '0'),
+				array('title', 0),
+				array('title', false),
+				array('title', null),
+
+				// empty + duplicated
+				'title, , title',
+				'title,  , title',
+				'title, 0, title',
+				array('title, , title'),
+				array('title,  , title'),
+				array('title, 0, title'),
+				array('title', '', 'title'),
+				array('title', ' ', 'title'),
+				array('title', '  ', 'title'),
+				array('title', '0', 'title'),
+				array('title', 0, 'title'),
+				array('title', false, 'title'),
+				array('title', null, 'title'),
+			)),
+
+			// Multiple valid unqualified fields
+			array(array(
+				// correct
+				'title, body',
+				array('title, body'),
+				array('title', 'body'),
+
+				// duplicated
+				'title, body, title',
+				array('title, body, title'),
+				array('title', 'body', 'title'),
+
+				// empty
+				'title, body, ',
+				'title, body,  ',
+				'title, body, 0',
+				array('title, body, '),
+				array('title, body,  '),
+				array('title, body, 0'),
+				array('title', 'body', ''),
+				array('title', 'body', ' '),
+				array('title', 'body', '  '),
+				array('title', 'body', '0'),
+				array('title', 'body', 0),
+				array('title', 'body', false),
+				array('title', 'body', null),
+
+				// empty + duplicated
+				'title, body, , title',
+				'title, body,  , title',
+				'title, body, 0, title',
+				array('title, body, , title'),
+				array('title, body,  , title'),
+				array('title, body, 0, title'),
+				array('title', 'body', '', 'title'),
+				array('title', 'body', ' ', 'title'),
+				array('title', 'body', '  ', 'title'),
+				array('title', 'body', '0', 'title'),
+				array('title', 'body', 0, 'title'),
+				array('title', 'body', false, 'title'),
+				array('title', 'body', null, 'title'),
+			))
+		);
+	}
+
+/**
+ * Test that fields() method builds the same cache key.
+ *
+ * Build the same cache key when the fields:
+ *  - is a string containing fields separated by comma.
+ *  - is an array with one element being a string containing fields separated by comma.
+ *  - is an array containing fields.
+ *
+ * In every case, the cache key will be the same when:
+ *  - fields (which can contain expressions) are duplicated.
+ *  - fields are empty.
+ *
+ * @dataProvider fieldsCacheKey
+ * @return void
+ */
+	public function testSameFieldsCacheKey($fieldsList) {
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+
+		foreach ($fieldsList as $fields) {
+			$this->testDb->fields($Article, null, $fields);
+		}
+
+		$this->assertEquals(1, count(DboSource::$methodCache['fields']));
 	}
 
 /**
@@ -1203,13 +1326,13 @@ class DboSourceTest extends CakeTestCase {
 				'table' => 'posts_tags',
 				'conditions' => array('PostsTag.post_id = Post.id')
 			), 'LEFT JOIN pre_posts_tags AS PostsTag ON (PostsTag.post_id = Post.id)'),
-				array(array(
-					'type' => 'LEFT',
-					'alias' => 'Stock',
-					'table' => '(SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id)',
-					'conditions' => 'Stock.article_id = Article.id'
-				), 'LEFT JOIN (SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id) AS Stock ON (Stock.article_id = Article.id)')
-			);
+			array(array(
+				'type' => 'LEFT',
+				'alias' => 'Stock',
+				'table' => '(SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id)',
+				'conditions' => 'Stock.article_id = Article.id'
+			), 'LEFT JOIN (SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id) AS Stock ON (Stock.article_id = Article.id)')
+		);
 	}
 
 /**

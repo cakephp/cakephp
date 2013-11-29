@@ -2373,9 +2373,11 @@ class DboSource extends DataSource {
 /**
  * Generates the fields list of an SQL query.
  *
+ * It also takes care of building virtual fields.
+ *
  * @param Model $Model
  * @param string $alias Alias table name
- * @param mixed $fields
+ * @param mixed $fields String or array containing fields, expressions are also allowed.
  * @param boolean $quote If false, returns fields array unquoted
  * @return array
  */
@@ -2383,7 +2385,34 @@ class DboSource extends DataSource {
 		if (empty($alias)) {
 			$alias = $Model->alias;
 		}
+
 		$virtualFields = $Model->getVirtualField();
+
+		$allFields = empty($fields);
+
+		if (!$allFields) {
+			if (is_array($fields)) {
+				if (count($fields) === 1) {
+					$field = reset($fields);
+					if (is_string($field) && strpos($field, ',') !== false) {
+						$fields = String::tokenize($field);
+					}
+					unset($field);
+				}
+			} elseif (is_string($fields)) {
+				$fields = String::tokenize($fields);
+			}
+
+			foreach ($fields as &$field) {
+				if (!is_object($field)) {
+					$field = trim($field);
+				}
+			}
+			unset($field);
+
+			$fields = array_values(array_unique(array_filter($fields), SORT_REGULAR)); // SORT_REGULAR because of expressions
+		}
+
 		$cacheKey = array(
 			$alias,
 			get_class($Model),
@@ -2396,16 +2425,15 @@ class DboSource extends DataSource {
 			$Model->table
 		);
 		$cacheKey = md5(serialize($cacheKey));
+
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
 		}
-		$allFields = empty($fields);
+
 		if ($allFields) {
 			$fields = array_keys($Model->schema());
-		} elseif (!is_array($fields)) {
-			$fields = String::tokenize($fields);
 		}
-		$fields = array_values(array_filter($fields));
+
 		$allFields = $allFields || in_array('*', $fields) || in_array($Model->alias . '.*', $fields);
 
 		$virtual = array();
