@@ -346,7 +346,6 @@ class BelongsToMany extends Association {
 		$source = $this->source();
 		$entityClass = $pivot->entityClass();
 		$belongsTo = $pivot->association($target->alias());
-		$property = $belongsTo->property();
 		$foreignKey = (array)$this->foreignKey();
 		$assocForeignKey = (array)$belongsTo->foreignKey();
 		$targetPrimaryKey = (array)$target->primaryKey();
@@ -354,7 +353,7 @@ class BelongsToMany extends Association {
 		$jointProperty = $target->association($pivot->alias())->property();
 
 		foreach ($targetEntities as $k => $e) {
-			$joint = $e->get($property);
+			$joint = $e->get($jointProperty);
 			if (!$joint) {
 				$joint = new $entityClass;
 				$joint->isNew(true);
@@ -372,6 +371,7 @@ class BelongsToMany extends Association {
 			}
 
 			$e->set($jointProperty, $joint);
+			$e->dirty($jointProperty, false);
 		}
 
 		return true;

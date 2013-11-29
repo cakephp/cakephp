@@ -2434,4 +2434,32 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($entity, $table->save($entity));
 	}
 
+/**
+ * Integration test to show how to append a new tag to an article
+ *
+ * @group save
+ * @return void
+ */
+	public function testBelongsToManyIntegration() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+		$tags = $article->tags;
+		$this->assertNotEmpty($tags);
+		$tags[] = new \TestApp\Model\Entity\Tag([
+			'name' => 'Something New'
+		]);
+		$article->tags = $tags;
+		$this->assertSame($article, $table->save($article));
+		$tags = $article->tags;
+		$this->assertCount(3, $tags);
+		$this->assertFalse($tags[2]->isNew());
+		$this->assertEquals(4, $tags[2]->id);
+		$this->assertEquals(1, $tags[2]->extraInfo->article_id);
+		$this->assertEquals(4, $tags[2]->extraInfo->tag_id);
+
+		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+		$this->assertEquals($tags, $article->tags);
+	}
+
 }
