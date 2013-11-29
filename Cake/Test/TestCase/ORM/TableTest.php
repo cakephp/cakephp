@@ -2418,4 +2418,20 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(5, $entity->tags[1]->extraInfo->tag_id);
 	}
 
+/**
+ * Tests that saving a persisted and clean entity will is a no-op
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveCleanEntity() {
+		$table = $this->getMock('\Cake\ORM\Table', ['_processSave']);
+		$entity = new \Cake\ORM\Entity(
+			['id' => 'foo'],
+			['markNew' => false, 'markClean' => true]
+		);
+		$table->expects($this->never())->method('_processSave');
+		$this->assertSame($entity, $table->save($entity));
+	}
+
 }

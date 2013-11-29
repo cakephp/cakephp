@@ -923,6 +923,11 @@ class Table {
 			'validate' => true,
 			'associated' => true
 		]);
+
+		if ($entity->isNew() === false && !$entity->dirty()) {
+			return $entity;
+		}
+
 		if ($options['atomic']) {
 			$connection = $this->connection();
 			$success = $connection->transactional(function() use ($entity, $options) {
