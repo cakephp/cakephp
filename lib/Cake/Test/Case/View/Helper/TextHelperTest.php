@@ -142,7 +142,27 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>(and some more text)';
 		$result = $this->Text->autoLink($text);
 		$this->assertEquals($expected, $result);
+	}
 
+/**
+ * Test mixing URLs and Email addresses in one confusing string.
+ *
+ * @return void
+ */
+	public function testAutoLinkMixed() {
+		$text = 'Text with a url/email http://example.com/store?email=mark@example.com and email.';
+		$expected = 'Text with a url/email <a href="http://example.com/store?email=mark@example.com">' .
+			'http://example.com/store?email=mark@example.com</a> and email.';
+		$result = $this->Text->autoLink($text);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test autoLink() and options.
+ *
+ * @return void
+ */
+	public function testAutoLinkOptions() {
 		$text = 'This is a test text with URL http://www.cakephp.org';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org" class="link">http://www.cakephp.org</a>';
 		$result = $this->Text->autoLink($text, array('class' => 'link'));
@@ -246,7 +266,7 @@ class TextHelperTest extends CakeTestCase {
 			array(
 				'Text with a partial http://www.küchenschöhn-not-working.de URL',
 				'Text with a partial <a href="http://www.küchenschöhn-not-working.de">http://www.küchenschöhn-not-working.de</a> URL'
-			)
+			),
 		);
 	}
 
