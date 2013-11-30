@@ -145,14 +145,10 @@ class TimestampBehavior extends Behavior {
 			return false;
 		}
 
-		$new = $entity->isNew() !== false;
 		$return = false;
 
 		foreach ($config['events'][$eventName] as $field => $when) {
-			if (
-				$when === 'always' ||
-				($when === 'existing' && !$new)
-			) {
+			if (in_array($when, ['always', 'existing'])) {
 				$return = true;
 				$entity->dirty($field, false);
 				$this->_updateField($entity, $field, $config['refreshTimestamp']);
