@@ -1266,6 +1266,13 @@ class Table {
 			return [$conditions, $order];
 		};
 
+		if ($hasOr !== false && $hasAnd !== false) {
+			throw new \Cake\Error\Exception(__d(
+				'cake_dev',
+				'Cannot mix "and" & "or" in a magic finder. Use find() instead.'
+			));
+		}
+
 		if ($hasOr === false && $hasAnd === false) {
 			list($conditions, $order) = $makeConditions([$fields], $args);
 		} elseif ($hasOr !== false) {

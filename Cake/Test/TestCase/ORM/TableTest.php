@@ -1958,7 +1958,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test magic findByXX method.
+ * Test magic findByXX errors on missing arguments.
  *
  * @expectedException Cake\Error\Exception
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
@@ -1971,7 +1971,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Test magic findByXX method.
+ * Test magic findByXX errors on missing arguments.
  *
  * @expectedException Cake\Error\Exception
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
@@ -1981,6 +1981,19 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('Users');
 
 		$table->findByUsernameAndId('garrett');
+	}
+
+/**
+ * Test magic findByXX errors when there is a mix of or & and.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
+ * @return void
+ */
+	public function testMagicFindErrorMixOfOperators() {
+		$table = TableRegistry::get('Users');
+
+		$table->findByUsernameAndIdOrPassword('garrett', 1, 'sekret');
 	}
 
 /**
