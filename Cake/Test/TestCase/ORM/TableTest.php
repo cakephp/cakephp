@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -2023,6 +2024,21 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result->clause('where'));
 	}
 
+/**
+ * Test setting order by clauses on magic finders.
+ *
+ * @return void
+ */
+	public function testMagicFindFirstOrderBy() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findByAuthorIdOrPublished(1, 'Y', ['id' => 'DESC']);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertEquals(1, $result->clause('limit'));
+		$expected = new OrderByExpression(['id' => 'DESC']);
+		$this->assertEquals($expected, $result->clause('order'));
+	}
+
 
 /**
  * Test magic findAllByXX method.
@@ -2034,7 +2050,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findAllByAuthorId(1);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$this->assertEquals(null, $result->clause('limit'));
+		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression(
 			['author_id' => 1],
 			['author_id' => 'integer'],
@@ -2053,7 +2069,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findAllByAuthorIdAndPublished(1, 'Y');
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$this->assertEquals(null, $result->clause('limit'));
+		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression(
 			['author_id' => 1, 'published' => 'Y']
 		);
@@ -2070,12 +2086,28 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findAllByAuthorIdOrPublished(1, 'Y');
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$this->assertEquals(null, $result->clause('limit'));
+		$this->assertNull($result->clause('limit'));
 		$expected = new QueryExpression();
 		$expected->add(
 			['or' => ['author_id' => 1, 'published' => 'Y']]
 		);
 		$this->assertEquals($expected, $result->clause('where'));
+		$this->assertNull($result->clause('order'));
+	}
+
+/**
+ * Test setting order by clauses on magic finders.
+ *
+ * @return void
+ */
+	public function testMagicFindAllOrderBy() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findAllByAuthorIdOrPublished(1, 'Y', ['id' => 'DESC']);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertNull($result->clause('limit'));
+		$expected = new OrderByExpression(['id' => 'DESC']);
+		$this->assertEquals($expected, $result->clause('order'));
 	}
 
 }
