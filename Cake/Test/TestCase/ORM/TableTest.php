@@ -1941,4 +1941,46 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['Not good'], $entity->errors('username'));
 	}
 
+/**
+ * Test magic findByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindFirst() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findByUsername('garrett');
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertEquals(1, $result->limit());
+		$this->assertEquals(['username' => 'garrett'], $result->clause('where'));
+
+		$result = $table->findByUsernameAndId('garrett', 4);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertEquals(1, $result->limit());
+		$this->assertEquals(['username' => 'garrett'], $result->clause('where'));
+	}
+
+/**
+ * Test magic findAllByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindAll() {
+		$table = TableRegistry::get('Articles');
+
+		$result = $table->findAllByAuthorId(1);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertEquals(null, $result->limit());
+		$this->assertEquals(['author_id' => '1'], $result->clause('where'));
+
+		$result = $table->findAllByAuthorIdOrPublished(1, 'Y');
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertEquals(null, $result->limit());
+		$expected = [
+			'author_id' => 1,
+			'published' => 'Y',
+		];
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
 }
