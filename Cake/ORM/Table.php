@@ -1226,13 +1226,15 @@ class Table {
 	}
 
 /**
- * Provides the magic findBy and findByAll methods.
+ * Provides the dynamic findBy and findByAll methods.
  *
  * @param string $method The method name that was fired.
  * @param array $args List of arguments passed to the function.
  * @return mixed.
+ * @throws Cake\Error\Exception when there are missing arguments, or when
+ *  and & or are combined.
  */
-	public function _magicFinder($method, $args) {
+	public function _dynamicFinder($method, $args) {
 		$method = Inflector::underscore($method);
 		$findType = 'first';
 		preg_match('/^find_([\w]+)_by_/', $method, $matches);
@@ -1299,7 +1301,7 @@ class Table {
 	}
 
 /**
- * Handles behavior delegation + magic finders.
+ * Handles behavior delegation + dynamic finders.
  *
  * If your Table uses any behaviors you can call them as if
  * they were on the table object.
@@ -1314,7 +1316,7 @@ class Table {
 			return $this->_behaviors->call($method, $args);
 		}
 		if (strpos($method, 'findBy') === 0 || strpos($method, 'findAllBy') === 0) {
-			return $this->_magicFinder($method, $args);
+			return $this->_dynamicFinder($method, $args);
 		}
 
 		throw new \BadMethodCallException(

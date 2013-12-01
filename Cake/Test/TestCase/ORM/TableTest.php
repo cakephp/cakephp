@@ -1947,7 +1947,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMagicFindFirst() {
+	public function testDynamicFindFirst() {
 		$table = TableRegistry::get('Users');
 
 		$result = $table->findByUsername('garrett');
@@ -1964,7 +1964,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
  * @return void
  */
-	public function testMagicFindError() {
+	public function testDynamicFindError() {
 		$table = TableRegistry::get('Users');
 
 		$table->findByUsername();
@@ -1977,7 +1977,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
  * @return void
  */
-	public function testMagicFindErrorMissingField() {
+	public function testDynamicFindErrorMissingField() {
 		$table = TableRegistry::get('Users');
 
 		$table->findByUsernameAndId('garrett');
@@ -1990,7 +1990,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
  * @return void
  */
-	public function testMagicFindErrorMixOfOperators() {
+	public function testDynamicFindErrorMixOfOperators() {
 		$table = TableRegistry::get('Users');
 
 		$table->findByUsernameAndIdOrPassword('garrett', 1, 'sekret');
@@ -2001,7 +2001,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMagicFindFirstAnd() {
+	public function testDynamicFindFirstAnd() {
 		$table = TableRegistry::get('Users');
 
 		$result = $table->findByUsernameAndId('garrett', 4);
@@ -2020,7 +2020,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMagicFindFirstOr() {
+	public function testDynamicFindFirstOr() {
 		$table = TableRegistry::get('Users');
 
 		$result = $table->findByUsernameOrId('garrett', 4);
@@ -2042,7 +2042,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMagicFindFirstOrderBy() {
+	public function testDynamicFindFirstOrderBy() {
 		$table = TableRegistry::get('Users');
 
 		$result = $table->findByAuthorIdOrPublished(1, 'Y', ['id' => 'DESC']);
@@ -2058,7 +2058,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMagicFindAll() {
+	public function testDynamicFindAll() {
 		$table = TableRegistry::get('Articles');
 
 		$result = $table->findAllByAuthorId(1);
@@ -2077,7 +2077,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMagicFindAllAnd() {
+	public function testDynamicFindAllAnd() {
 		$table = TableRegistry::get('Users');
 
 		$result = $table->findAllByAuthorIdAndPublished(1, 'Y');
@@ -2094,7 +2094,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMagicFindAllOr() {
+	public function testDynamicFindAllOr() {
 		$table = TableRegistry::get('Users');
 
 		$result = $table->findAllByAuthorIdOrPublished(1, 'Y');
@@ -2113,7 +2113,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMagicFindAllOrderBy() {
+	public function testDynamicFindAllOrderBy() {
 		$table = TableRegistry::get('Users');
 
 		$result = $table->findAllByAuthorIdOrPublished(1, 'Y', ['id' => 'DESC']);
