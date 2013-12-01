@@ -27,6 +27,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
+use Cake\ORM\Error\MissingEntityException;
 use Cake\Validation\Validator;
 use Cake\Utility\Inflector;
 
@@ -400,7 +401,7 @@ class Table {
 		}
 
 		if (!$this->_entityClass) {
-			throw new Error\MissingEntityException([$name]);
+			throw new MissingEntityException([$name]);
 		}
 
 		return $this->_entityClass;
@@ -1225,7 +1226,73 @@ class Table {
 	}
 
 /**
- * ## Behavior delegation
+ * Provides the magic findBy and findByAll methods.
+ *
+ * @param string $method The method name that was fired.
+ * @param array $args List of arguments passed to the function.
+ * @return mixed.
+ */
+	public function _magicFinder($method, $args) {
+		$method = Inflector::underscore($method);
+		$findType = 'first';
+		preg_match('/^find_([\w]+)_by_/', $method, $matches);
+		if (empty($matches)) {
+			// find_by_ is 8 characters.
+			$fields = substr($method, 8);
+		} else {
+			$fields = substr($method, strlen($matches[0]));
+			$findType = Inflector::variable($matches[1]);
+		}
+		$limit = null;
+		$conditions = [];
+		$hasOr = strpos($fields, '_or_');
+		$hasAnd = strpos($fields, '_and_');
+
+		$makeConditions = function($fields, $args) {
+			$order = null;
+			$conditions = [];
+			if (count($args) < count($fields)) {
+				throw new \Cake\Error\Exception(__d(
+					'cake_dev',
+					'Not enough arguments to magic finder. Got %s required %s',
+					count($args),
+					count($fields)
+				));
+			}
+			foreach ($fields as $field) {
+				$conditions[$field] = array_shift($args);
+			}
+			$order = array_shift($args);
+			return [$conditions, $order];
+		};
+
+		if ($hasOr === false && $hasAnd === false) {
+			list($conditions, $order) = $makeConditions([$fields], $args);
+		} elseif ($hasOr !== false) {
+			$fields = explode('_or_', $fields);
+			list($conditions, $order) = $makeConditions($fields, $args);
+			$conditions = [
+				'OR' => $conditions
+			];
+		} elseif ($hasAnd !== false) {
+			$fields = explode('_and_', $fields);
+			list($conditions, $order) = $makeConditions($fields, $args);
+		}
+
+		if ($findType === 'first') {
+			$findType = 'all';
+			$limit = 1;
+		}
+
+		return $this->find($findType, [
+			'conditions' => $conditions,
+			'order' => $order,
+			'limit' => $limit,
+		]);
+	}
+
+/**
+ * Handles behavior delegation + magic finders.
  *
  * If your Table uses any behaviors you can call them as if
  * they were on the table object.
@@ -1238,6 +1305,9 @@ class Table {
 	public function __call($method, $args) {
 		if ($this->_behaviors && $this->_behaviors->hasMethod($method)) {
 			return $this->_behaviors->call($method, $args);
+		}
+		if (strpos($method, 'findBy') === 0 || strpos($method, 'findAllBy') === 0) {
+			return $this->_magicFinder($method, $args);
 		}
 
 		throw new \BadMethodCallException(
