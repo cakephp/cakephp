@@ -38,7 +38,10 @@ class TimestampBehavior extends Behavior {
  */
 	protected static $_defaultConfig = [
 		'implementedFinders' => [],
-		'implementedMethods' => ['timestamp' => 'timestamp'],
+		'implementedMethods' => [
+			'timestamp' => 'timestamp',
+			'touch' => 'touch'
+		],
 		'events' => [
 			'Model.beforeSave' => [
 				'created' => 'new',
@@ -105,6 +108,8 @@ class TimestampBehavior extends Behavior {
  * Get or set the timestamp to be used
  *
  * Set the timestamp to the given DateTime object, or if not passed a new DateTime object
+ * If an explicit date time is passed, the config option `refreshTimestamp` is
+ * automatically set to false.
  *
  * @param \DateTime $ts
  * @param bool $refreshTimestamp
@@ -112,12 +117,45 @@ class TimestampBehavior extends Behavior {
  */
 	public function timestamp(\DateTime $ts = null, $refreshTimestamp = false) {
 		if ($ts) {
+			if ($this->_config['refreshTimestamp']) {
+				$this->_config['refreshTimestamp'] = false;
+			}
 			$this->_ts = $ts;
 		} elseif ($this->_ts === null || $refreshTimestamp) {
 			$this->_ts = new \DateTime();
 		}
 
 		return $this->_ts;
+	}
+
+/**
+ * Touch an entity
+ *
+ * Bumps timestamp fields for an entity. For any fields configured to be updated
+ * "always" or "existing", update the timestamp value. This method will overwrite
+ * any pre-existing value.
+ *
+ * @param Entity $entity
+ * @param string $eventName
+ * @return bool true if a field is updated, false if no action performed
+ */
+	public function touch(Entity $entity, $eventName = 'Model.beforeSave') {
+		$config = $this->config();
+		if (!isset($config['events'][$eventName])) {
+			return false;
+		}
+
+		$return = false;
+
+		foreach ($config['events'][$eventName] as $field => $when) {
+			if (in_array($when, ['always', 'existing'])) {
+				$return = true;
+				$entity->dirty($field, false);
+				$this->_updateField($entity, $field, $config['refreshTimestamp']);
+			}
+		}
+
+		return $return;
 	}
 
 /**
