@@ -1251,7 +1251,6 @@ class Table {
 		$hasAnd = strpos($fields, '_and_');
 
 		$makeConditions = function($fields, $args) {
-			$order = null;
 			$conditions = [];
 			if (count($args) < count($fields)) {
 				throw new \Cake\Error\Exception(__d(
@@ -1264,8 +1263,7 @@ class Table {
 			foreach ($fields as $field) {
 				$conditions[$field] = array_shift($args);
 			}
-			$order = array_shift($args);
-			return [$conditions, $order];
+			return $conditions;
 		};
 
 		if ($hasOr !== false && $hasAnd !== false) {
@@ -1276,16 +1274,15 @@ class Table {
 		}
 
 		if ($hasOr === false && $hasAnd === false) {
-			list($conditions, $order) = $makeConditions([$fields], $args);
+			$conditions = $makeConditions([$fields], $args);
 		} elseif ($hasOr !== false) {
 			$fields = explode('_or_', $fields);
-			list($conditions, $order) = $makeConditions($fields, $args);
 			$conditions = [
-				'OR' => $conditions
+				'OR' => $makeConditions($fields, $args)
 			];
 		} elseif ($hasAnd !== false) {
 			$fields = explode('_and_', $fields);
-			list($conditions, $order) = $makeConditions($fields, $args);
+			$conditions = $makeConditions($fields, $args);
 		}
 
 		if ($findType === 'first') {
@@ -1295,7 +1292,6 @@ class Table {
 
 		return $this->find($findType, [
 			'conditions' => $conditions,
-			'order' => $order,
 			'limit' => $limit,
 		]);
 	}
