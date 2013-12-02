@@ -1315,7 +1315,7 @@ class Table {
 		if ($this->_behaviors && $this->_behaviors->hasMethod($method)) {
 			return $this->_behaviors->call($method, $args);
 		}
-		if (strpos($method, 'findBy') === 0 || strpos($method, 'findAllBy') === 0) {
+		if (preg_match('/^find(?:\w+)?By/', $method) > 0) {
 			return $this->_dynamicFinder($method, $args);
 		}
 
