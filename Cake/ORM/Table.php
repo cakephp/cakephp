@@ -1236,16 +1236,15 @@ class Table {
  */
 	public function _dynamicFinder($method, $args) {
 		$method = Inflector::underscore($method);
-		$findType = 'first';
 		preg_match('/^find_([\w]+)_by_/', $method, $matches);
 		if (empty($matches)) {
 			// find_by_ is 8 characters.
 			$fields = substr($method, 8);
+			$findType = 'all';
 		} else {
 			$fields = substr($method, strlen($matches[0]));
 			$findType = Inflector::variable($matches[1]);
 		}
-		$limit = null;
 		$conditions = [];
 		$hasOr = strpos($fields, '_or_');
 		$hasAnd = strpos($fields, '_and_');
@@ -1285,14 +1284,8 @@ class Table {
 			$conditions = $makeConditions($fields, $args);
 		}
 
-		if ($findType === 'first') {
-			$findType = 'all';
-			$limit = 1;
-		}
-
 		return $this->find($findType, [
 			'conditions' => $conditions,
-			'limit' => $limit,
 		]);
 	}
 

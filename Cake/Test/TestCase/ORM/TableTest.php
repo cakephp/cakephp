@@ -1947,12 +1947,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testMagicFindFirst() {
+	public function testMagicFindDefaultToAll() {
 		$table = TableRegistry::get('Users');
 
 		$result = $table->findByUsername('garrett');
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$this->assertEquals(1, $result->clause('limit'));
 		$expected = new QueryExpression(['username' => 'garrett'], ['username' => 'string']);
 		$this->assertEquals($expected, $result->clause('where'));
 	}
@@ -2006,7 +2005,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsernameAndId('garrett', 4);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$this->assertEquals(1, $result->clause('limit'));
 		$expected = new QueryExpression(
 			['username' => 'garrett', 'id' => 4],
 			['username' => 'string', 'id' => 'integer'],
@@ -2025,7 +2023,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$result = $table->findByUsernameOrId('garrett', 4);
 		$this->assertInstanceOf('Cake\ORM\Query', $result);
-		$this->assertEquals(1, $result->clause('limit'));
 		$expected = new QueryExpression();
 		$expected->add([
 			'OR' => [
