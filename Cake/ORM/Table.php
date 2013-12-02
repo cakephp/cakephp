@@ -44,6 +44,22 @@ use Cake\Utility\Inflector;
  * The primary way to retrieve data is using Table::find(). See that method
  * for more information.
  *
+ * ### Dynamic finders
+ *
+ * In addition to the standard find($type) finder methods, CakePHP provides dynamic
+ * finder methods. These methods allow you to easily set basic conditions up. For example
+ * to filter users by username you would call
+ *
+ * {{{
+ * $query = $users->findByUsername('mark');
+ * }}}
+ *
+ * You can also combine conditions on multiple fields using either `Or` or `And`:
+ *
+ * {{{
+ * $query = $users->findByUsernameOrEmail('mark', 'mark@example.org');
+ * }}}
+ *
  * ### Bulk updates/deletes
  *
  * You can use Table::updateAll() and Table::deleteAll() to do bulk updates/deletes.
