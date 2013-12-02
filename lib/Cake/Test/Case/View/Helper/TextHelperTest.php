@@ -142,7 +142,27 @@ class TextHelperTest extends CakeTestCase {
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org">http://www.cakephp.org</a>(and some more text)';
 		$result = $this->Text->autoLink($text);
 		$this->assertEquals($expected, $result);
+	}
 
+/**
+ * Test mixing URLs and Email addresses in one confusing string.
+ *
+ * @return void
+ */
+	public function testAutoLinkMixed() {
+		$text = 'Text with a url/email http://example.com/store?email=mark@example.com and email.';
+		$expected = 'Text with a url/email <a href="http://example.com/store?email=mark@example.com">' .
+			'http://example.com/store?email=mark@example.com</a> and email.';
+		$result = $this->Text->autoLink($text);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test autoLink() and options.
+ *
+ * @return void
+ */
+	public function testAutoLinkOptions() {
 		$text = 'This is a test text with URL http://www.cakephp.org';
 		$expected = 'This is a test text with URL <a href="http://www.cakephp.org" class="link">http://www.cakephp.org</a>';
 		$result = $this->Text->autoLink($text, array('class' => 'link'));
@@ -246,7 +266,7 @@ class TextHelperTest extends CakeTestCase {
 			array(
 				'Text with a partial http://www.küchenschöhn-not-working.de URL',
 				'Text with a partial <a href="http://www.küchenschöhn-not-working.de">http://www.küchenschöhn-not-working.de</a> URL'
-			)
+			),
 		);
 	}
 
@@ -343,10 +363,25 @@ class TextHelperTest extends CakeTestCase {
 		$result = $this->Text->autoLinkUrls($text);
 		$this->assertEquals($expected, $result);
 
-		$text = 'Text with email@example.com address';
-		$expected = 'Text with <a href="mailto:email@example.com"\s*>email@example.com</a> address';
+		$text = 'email@example.com address';
+		$expected = '<a href="mailto:email@example.com">email@example.com</a> address';
 		$result = $this->Text->autoLinkEmails($text);
-		$this->assertRegExp('#^' . $expected . '$#', $result);
+		$this->assertEquals($expected, $result);
+
+		$text = 'email@example.com address';
+		$expected = '<a href="mailto:email@example.com">email@example.com</a> address';
+		$result = $this->Text->autoLinkEmails($text);
+		$this->assertEquals($expected, $result);
+
+		$text = '(email@example.com) address';
+		$expected = '(<a href="mailto:email@example.com">email@example.com</a>) address';
+		$result = $this->Text->autoLinkEmails($text);
+		$this->assertEquals($expected, $result);
+
+		$text = 'Text with email@example.com address';
+		$expected = 'Text with <a href="mailto:email@example.com">email@example.com</a> address';
+		$result = $this->Text->autoLinkEmails($text);
+		$this->assertEquals($expected, $result);
 
 		$text = "Text with o'hare._-bob@example.com address";
 		$expected = 'Text with <a href="mailto:o&#039;hare._-bob@example.com">o&#039;hare._-bob@example.com</a> address';
@@ -354,19 +389,19 @@ class TextHelperTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$text = 'Text with email@example.com address';
-		$expected = 'Text with <a href="mailto:email@example.com" \s*class="link">email@example.com</a> address';
+		$expected = 'Text with <a href="mailto:email@example.com" class="link">email@example.com</a> address';
 		$result = $this->Text->autoLinkEmails($text, array('class' => 'link'));
-		$this->assertRegExp('#^' . $expected . '$#', $result);
+		$this->assertEquals($expected, $result);
 
 		$text = 'Text with düsentrieb@küchenschöhn-not-working.de address';
 		$expected = 'Text with <a href="mailto:düsentrieb@küchenschöhn-not-working.de">düsentrieb@küchenschöhn-not-working.de</a> address';
 		$result = $this->Text->autoLinkEmails($text);
-		$this->assertRegExp('#^' . $expected . '$#', $result);
+		$this->assertEquals($expected, $result);
 
 		$text = 'Text with me@subdomain.küchenschöhn.de address';
 		$expected = 'Text with <a href="mailto:me@subdomain.küchenschöhn.de">me@subdomain.küchenschöhn.de</a> address';
 		$result = $this->Text->autoLinkEmails($text);
-		$this->assertRegExp('#^' . $expected . '$#', $result);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

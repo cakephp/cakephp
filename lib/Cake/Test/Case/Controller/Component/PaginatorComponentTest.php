@@ -919,7 +919,6 @@ class PaginatorComponentTest extends CakeTestCase {
 /**
  * testOutOfRangePageNumberAndPageCountZero
  *
- * @expectedException NotFoundException
  * @return void
  */
 	public function testOutOfRangePageNumberAndPageCountZero() {
@@ -933,7 +932,17 @@ class PaginatorComponentTest extends CakeTestCase {
 		$Controller->paginate = array(
 			'conditions' => array('PaginatorControllerPost.id >' => 100)
 		);
-		$Controller->Paginator->paginate('PaginatorControllerPost');
+
+		try {
+			$Controller->Paginator->paginate('PaginatorControllerPost');
+			$this->fail();
+		} catch (NotFoundException $e) {
+			$this->assertEquals(
+				1,
+				$Controller->request->params['paging']['PaginatorControllerPost']['page'],
+				'Page number should not be 0'
+			);
+		}
 	}
 
 /**
