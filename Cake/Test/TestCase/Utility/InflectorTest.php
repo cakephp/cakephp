@@ -249,6 +249,9 @@ class InflectorTest extends TestCase {
 		$result = Inflector::slug('posts/view/한국어/page:1/sort:asc');
 		$expected = 'posts_view_한국어_page_1_sort_asc';
 		$this->assertEquals($expected, $result);
+
+		$result = Inflector::slug("non\xc2\xa0breaking\xc2\xa0space");
+		$this->assertEquals('non_breaking_space', $result);
 	}
 
 /**

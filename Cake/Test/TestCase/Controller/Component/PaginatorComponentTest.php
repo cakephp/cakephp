@@ -399,14 +399,22 @@ class PaginatorComponentTest extends TestCase {
 /**
  * Test that a really large page number gets clamped to the max page size.
  *
- * @expectedException Cake\Error\NotFoundException
  * @return void
  */
 	public function testOutOfRangePageNumberGetsClamped() {
 		$this->request->query['page'] = 3000;
 
 		$table = TableRegistry::get('PaginatorPosts');
-		$this->Paginator->paginate($table);
+		try {
+			$this->Paginator->paginate($table);
+			$this->fail('No exception raised');
+		} catch (\Cake\Error\NotFoundException $e) {
+			$this->assertEquals(
+				1,
+				$this->request->params['paging']['PaginatorPosts']['page'],
+				'Page number should not be 0'
+			);
+		}
 	}
 
 /**
