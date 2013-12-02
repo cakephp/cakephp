@@ -2462,4 +2462,111 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($tags, $article->tags);
 	}
 
+/**
+ * Tests that it is possible to do a deep save and control what associations get saved,
+ * while having control of the options passed to each level of the save
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveDeepAssociationOptions() {
+		$articles = $this->getMock(
+			'\Cake\ORM\Table',
+			['_insert'],
+			[['table' => 'articles', 'connection' => $this->connection]]
+		);
+		$authors = $this->getMock(
+			'\Cake\ORM\Table',
+			['_insert', '_processValidation'],
+			[['table' => 'authors', 'connection' => $this->connection]]
+		);
+		$supervisors = $this->getMock(
+			'\Cake\ORM\Table',
+			['_insert', '_processValidation'],
+			[[
+				'table' => 'authors',
+				'alias' => 'supervisors',
+				'connection' => $this->connection
+			]]
+		);
+		$tags = $this->getMock(
+			'\Cake\ORM\Table',
+			['_insert'],
+			[['table' => 'tags', 'connection' => $this->connection]]
+		);
+
+		$articles->belongsTo('authors', ['targetTable' => $authors]);
+		$authors->hasOne('supervisors', ['targetTable' => $supervisors]);
+		$supervisors->belongsToMany('tags', ['targetTable' => $tags]);
+
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'bar',
+			'author' => new \Cake\ORM\Entity([
+				'name' => 'Juan',
+				'supervisor' => new \Cake\ORM\Entity(['name' => 'Marc']),
+				'tags' => [
+					new \Cake\ORM\Entity(['name' => 'foo'])
+				]
+			]),
+		]);
+		$entity->isNew(true);
+		$entity->author->isNew(true);
+		$entity->author->supervisor->isNew(true);
+		$entity->author->tags[0]->isNew(true);
+
+		$articles->expects($this->once())
+			->method('_insert')
+			->with($entity, ['title' => 'bar'])
+			->will($this->returnValue($entity));
+
+		$authors->expects($this->once())
+			->method('_insert')
+			->with($entity->author, ['name' => 'Juan'])
+			->will($this->returnValue($entity->author));
+
+		$options = new \ArrayObject([
+			'validate' => 'special',
+			'atomic' => true,
+			'associated' => ['supervisors' => [
+				'atomic' => false, 'validate' => false, 'associated' => false
+			]]
+		]);
+		$authors->expects($this->once())
+			->method('_processValidation')
+			->with($entity->author, $options)
+			->will($this->returnValue(true));
+
+		$supervisors->expects($this->once())
+			->method('_insert')
+			->with($entity->author->supervisor, ['name' => 'Marc'])
+			->will($this->returnValue($entity->author->supervisor));
+
+		$options = new \ArrayObject([
+			'validate' => false,
+			'atomic' => false,
+			'associated' => []
+		]);
+		$supervisors->expects($this->once())
+			->method('_processValidation')
+			->with($entity->author->supervisor, $options)
+			->will($this->returnValue(true));
+
+		$tags->expects($this->never())->method('_insert');
+
+		$this->assertSame($entity, $articles->save($entity, [
+			'associated' => [
+				'authors' => [
+					'validate' => 'special',
+					'associated' => [
+						'supervisors' => [
+							'atomic' => false,
+							'validate' => false,
+							'associated' => false
+						]
+					]
+				]
+			]
+		]));
+	}
+
 }

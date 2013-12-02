@@ -1012,7 +1012,11 @@ class Table {
 
 	protected function _sortAssociationTypes($assocs) {
 		$parents = $children = [];
-		foreach ($assocs as $assoc) {
+		foreach ($assocs as $key => $assoc) {
+			if (!is_string($assoc)) {
+				$assoc = $key;
+			}
+
 			$association = $this->association($assoc);
 			if (!$association) {
 				$msg = __d('cake_dev', '%s is not associated to %s', $this->alias(), $assoc);
@@ -1033,6 +1037,7 @@ class Table {
 			return $entity;
 		}
 
+		$associated = $options['associated'];
 		unset($options['associated']);
 
 		foreach ($assocs as $alias) {
@@ -1041,6 +1046,10 @@ class Table {
 
 			if (!$entity->dirty($property)) {
 				continue;
+			}
+
+			if (isset($associated[$alias])) {
+				$options = (array)$associated[$alias] + $options;
 			}
 
 			if (!$association->save($entity, $options)) {
