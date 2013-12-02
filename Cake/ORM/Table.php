@@ -1010,6 +1010,17 @@ class Table {
 		return $success;
 	}
 
+/**
+ * Auxiliary method used to sort out which associations are defined in this table
+ * as the owning side and which not based on a list of provided aliases.
+ *
+ * @param array $assocs list of association aliases
+ * @throws \InvalidArgumentException if one of the provided aliases is not an
+ * actual association defined for this table
+ * @return array with two values, first one contain associations which target
+ * is the owning side (or parent associations) and second value is an array of
+ * associations aliases for which this table is the owning side.
+ */
 	protected function _sortAssociationTypes($assocs) {
 		$parents = $children = [];
 		foreach ($assocs as $key => $assoc) {
@@ -1032,6 +1043,20 @@ class Table {
 		return [$parents, $children];
 	}
 
+/**
+ * Runs through a list of aliases and for each of them calls the `save()` method
+ * on the corresponding association objects passing $entity and $options as values.
+ * If the alias for one of the associations contains an array as values in $assocs,
+ * $options will me merge to this value before passed to the save operation.
+ *
+ *
+ * @param array $assocs list of association aliases.
+ * @param \Cake\ORM\Entity $entity the entity belonging to this table and maybe
+ * containing associated entities.
+ * @param array $options options to be passed to the save operation
+ * @return boolean|\Cake\ORM\Entity The saved source entity on success, false
+ * otherwise
+ */
 	protected function _saveAssociations($assocs, $entity, array $options) {
 		if (empty($assocs)) {
 			return $entity;
