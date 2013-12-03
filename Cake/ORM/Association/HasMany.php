@@ -104,10 +104,14 @@ class HasMany extends Association {
 	}
 
 /**
- * Proxies the saving operation for an entity to the target table
+ * Takes an entity from the source table and looks if there is a field
+ * matching the property name for this association. Found entity will be
+ * saved on the target table for this association by passing supplied
+ * `$options`
  *
- * @param \Cake\ORM\Entity $entity the data to be saved
- * @param array|\ArrayObject $options
+ * @param \Cake\ORM\Entity $entity an entity from the source table
+ * @param array|\ArrayObject $options options to be passed to the save method in
+ * the target table
  * @return boolean|Entity false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()

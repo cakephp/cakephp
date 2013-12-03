@@ -257,14 +257,22 @@ class BelongsToMany extends Association {
 	}
 
 /**
- * Proxies the saving operation for an entity to the target table
+ * Takes an entity from the source table and looks if there is a field
+ * matching the property name for this association. Found entity will be
+ * saved on the target table for this association by passing supplied
+ * `$options`
  *
- * @param \Cake\ORM\Entity $entity the data to be saved
- * @param array|\ArrayObject $options
- * @return boolean|Entity false if $entity could not be saved, otherwise it returns
- * the saved entity
+ * Using this save function will only create new links between each side
+ * of this association. It will no destroy existing ones even though they
+ * may not be present in the array of entities to be saved.
+ *
+ * @param \Cake\ORM\Entity $entity an entity from the source table
+ * @param array|\ArrayObject $options options to be passed to the save method in
+ * the target table
  * @throws \InvalidArgumentException if the property representing the association
  * in the parent entity cannot be traversed
+ * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * the saved entity
  * @see Table::save()
  */
 	public function save(Entity $entity, $options = []) {
