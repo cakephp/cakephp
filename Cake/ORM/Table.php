@@ -27,6 +27,7 @@ use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
+use Cake\ORM\Error\MissingEntityException;
 use Cake\Validation\Validator;
 use Cake\Utility\Inflector;
 
@@ -43,6 +44,22 @@ use Cake\Utility\Inflector;
  * The primary way to retrieve data is using Table::find(). See that method
  * for more information.
  *
+ * ### Dynamic finders
+ *
+ * In addition to the standard find($type) finder methods, CakePHP provides dynamic
+ * finder methods. These methods allow you to easily set basic conditions up. For example
+ * to filter users by username you would call
+ *
+ * {{{
+ * $query = $users->findByUsername('mark');
+ * }}}
+ *
+ * You can also combine conditions on multiple fields using either `Or` or `And`:
+ *
+ * {{{
+ * $query = $users->findByUsernameOrEmail('mark', 'mark@example.org');
+ * }}}
+ *
  * ### Bulk updates/deletes
  *
  * You can use Table::updateAll() and Table::deleteAll() to do bulk updates/deletes.
@@ -53,9 +70,19 @@ use Cake\Utility\Inflector;
  * Table objects provide a few callbacks/events you can hook into to augment/replace
  * find operations. Each event uses the standard event subsystem in CakePHP
  *
- * - beforeFind($event, $query, $options) - Fired before each find operation. By stopping
+ * - `beforeFind($event, $query, $options)` - Fired before each find operation. By stopping
  *   the event and supplying a return value you can bypass the find operation entirely. Any
  *   changes done to the $query instance will be retained for the rest of the find.
+ * - `beforeValidate($event, $entity, $options, $validator)` - Fired before an entity is validated.
+ *   By stopping this event, you can abort the validate + save operations.
+ * - `afterValidate($event, $entity, $options, $validator)` - Fired after an entity is validated.
+ * - `beforeSave($event, $entity, $options)` - Fired before each entity is saved. Stopping this
+ *   event will abort the save operation. When the event is stopped the result of the event will
+ *   be returned.
+ * - `afterSave($event, $entity, $options)` - Fired after an entity is saved.
+ * - `beforeDelete($event, $entity, $options)` - Fired before an entity is deleted.
+ *   By stopping this event you will abort the delete operation.
+ * - `afterDelete($event, $entity, $options)` - Fired after an entity has been deleted.
  *
  * @see Cake\Event\EventManager for reference on the events system.
  */
@@ -390,7 +417,7 @@ class Table {
 		}
 
 		if (!$this->_entityClass) {
-			throw new Error\MissingEntityException([$name]);
+			throw new MissingEntityException([$name]);
 		}
 
 		return $this->_entityClass;
@@ -1215,7 +1242,71 @@ class Table {
 	}
 
 /**
- * ## Behavior delegation
+ * Provides the dynamic findBy and findByAll methods.
+ *
+ * @param string $method The method name that was fired.
+ * @param array $args List of arguments passed to the function.
+ * @return mixed.
+ * @throws Cake\Error\Exception when there are missing arguments, or when
+ *  and & or are combined.
+ */
+	public function _dynamicFinder($method, $args) {
+		$method = Inflector::underscore($method);
+		preg_match('/^find_([\w]+)_by_/', $method, $matches);
+		if (empty($matches)) {
+			// find_by_ is 8 characters.
+			$fields = substr($method, 8);
+			$findType = 'all';
+		} else {
+			$fields = substr($method, strlen($matches[0]));
+			$findType = Inflector::variable($matches[1]);
+		}
+		$conditions = [];
+		$hasOr = strpos($fields, '_or_');
+		$hasAnd = strpos($fields, '_and_');
+
+		$makeConditions = function($fields, $args) {
+			$conditions = [];
+			if (count($args) < count($fields)) {
+				throw new \Cake\Error\Exception(__d(
+					'cake_dev',
+					'Not enough arguments to magic finder. Got %s required %s',
+					count($args),
+					count($fields)
+				));
+			}
+			foreach ($fields as $field) {
+				$conditions[$field] = array_shift($args);
+			}
+			return $conditions;
+		};
+
+		if ($hasOr !== false && $hasAnd !== false) {
+			throw new \Cake\Error\Exception(__d(
+				'cake_dev',
+				'Cannot mix "and" & "or" in a magic finder. Use find() instead.'
+			));
+		}
+
+		if ($hasOr === false && $hasAnd === false) {
+			$conditions = $makeConditions([$fields], $args);
+		} elseif ($hasOr !== false) {
+			$fields = explode('_or_', $fields);
+			$conditions = [
+				'OR' => $makeConditions($fields, $args)
+			];
+		} elseif ($hasAnd !== false) {
+			$fields = explode('_and_', $fields);
+			$conditions = $makeConditions($fields, $args);
+		}
+
+		return $this->find($findType, [
+			'conditions' => $conditions,
+		]);
+	}
+
+/**
+ * Handles behavior delegation + dynamic finders.
  *
  * If your Table uses any behaviors you can call them as if
  * they were on the table object.
@@ -1228,6 +1319,9 @@ class Table {
 	public function __call($method, $args) {
 		if ($this->_behaviors && $this->_behaviors->hasMethod($method)) {
 			return $this->_behaviors->call($method, $args);
+		}
+		if (preg_match('/^find(?:\w+)?By/', $method) > 0) {
+			return $this->_dynamicFinder($method, $args);
 		}
 
 		throw new \BadMethodCallException(

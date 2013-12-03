@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -1939,6 +1940,153 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($table->save($entity, ['crazy' => true]));
 		$this->assertEmpty($entity->errors('password'));
 		$this->assertEquals(['Not good'], $entity->errors('username'));
+	}
+
+/**
+ * Test magic findByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindDefaultToAll() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findByUsername('garrett');
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$expected = new QueryExpression(['username' => 'garrett'], ['username' => 'string']);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findByXX errors on missing arguments.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
+ * @return void
+ */
+	public function testMagicFindError() {
+		$table = TableRegistry::get('Users');
+
+		$table->findByUsername();
+	}
+
+/**
+ * Test magic findByXX errors on missing arguments.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
+ * @return void
+ */
+	public function testMagicFindErrorMissingField() {
+		$table = TableRegistry::get('Users');
+
+		$table->findByUsernameAndId('garrett');
+	}
+
+/**
+ * Test magic findByXX errors when there is a mix of or & and.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
+ * @return void
+ */
+	public function testMagicFindErrorMixOfOperators() {
+		$table = TableRegistry::get('Users');
+
+		$table->findByUsernameAndIdOrPassword('garrett', 1, 'sekret');
+	}
+
+/**
+ * Test magic findByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindFirstAnd() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findByUsernameAndId('garrett', 4);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$expected = new QueryExpression(
+			['username' => 'garrett', 'id' => 4],
+			['username' => 'string', 'id' => 'integer'],
+			'AND'
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindFirstOr() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findByUsernameOrId('garrett', 4);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$expected = new QueryExpression();
+		$expected->add([
+			'OR' => [
+				'username' => 'garrett',
+				'id' => 4
+			]],
+			['username' => 'string', 'id' => 'integer']
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findAllByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindAll() {
+		$table = TableRegistry::get('Articles');
+
+		$result = $table->findAllByAuthorId(1);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertNull($result->clause('limit'));
+		$expected = new QueryExpression(
+			['author_id' => 1],
+			['author_id' => 'integer'],
+			'AND'
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findAllByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindAllAnd() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findAllByAuthorIdAndPublished(1, 'Y');
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertNull($result->clause('limit'));
+		$expected = new QueryExpression(
+			['author_id' => 1, 'published' => 'Y']
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findAllByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindAllOr() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findAllByAuthorIdOrPublished(1, 'Y');
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertNull($result->clause('limit'));
+		$expected = new QueryExpression();
+		$expected->add(
+			['or' => ['author_id' => 1, 'published' => 'Y']]
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+		$this->assertNull($result->clause('order'));
 	}
 
 }
