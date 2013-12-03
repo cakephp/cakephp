@@ -2453,14 +2453,7 @@ class DboSource extends DataSource {
 			$fields = array_values(array_diff($fields, $virtualFields));
 		}
 
-		if (!$quote) {
-			if (!empty($virtualFields)) {
-				$fields = array_merge($fields, $this->_constructVirtualFields($Model, $alias, $virtualFields));
-			}
-			return $fields;
-		}
-
-		if (!empty($fields) && !in_array($fields[0], array('*', 'COUNT(*)'))) {
+		if ($quote && !empty($fields) && !in_array($fields[0], array('*', 'COUNT(*)'))) {
 			foreach ($fields as $i => &$field) {
 				if (is_object($field) && isset($field->type) && $field->type === 'expression') {
 					// CakePHP expression

@@ -917,21 +917,55 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test that fields() is using methodCache()
+ * Test that fields() is using methodCache().
  *
  * @return void
  */
 	public function testFieldsUsingMethodCache() {
-		$this->testDb->cacheMethods = false;
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
 		DboTestSource::$methodCache = array();
-
 		$Article = ClassRegistry::init('Article');
+
 		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
-		$this->assertTrue(empty(DboTestSource::$methodCache['fields']), 'Cache not empty');
+
+		$this->assertEquals(3, count(DboTestSource::$methodCache['name']));
+		$this->assertEquals(1, count(DboTestSource::$methodCache['fields']));
 	}
 
 /**
- * test that fields() method cache detects datasource changes
+ * Test that fields() is using methodCache() when unquoted.
+ *
+ * @return void
+ */
+	public function testFieldsUsingMethodCacheUnquoted() {
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+
+		$this->testDb->fields($Article, null, array('title', 'body', 'published'), false);
+
+		$this->assertTrue(empty(DboTestSource::$methodCache['name']), 'Cache not empty');
+		$this->assertEquals(1, count(DboTestSource::$methodCache['fields']));
+	}
+
+/**
+ * Test that fields() is not using methodCache()
+ *
+ * @return void
+ */
+	public function testFieldsNotUsingMethodCache() {
+		$this->testDb->cacheMethods = false;
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+
+		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
+		$this->assertTrue(empty(DboTestSource::$methodCache), 'Cache not empty');
+	}
+
+/**
+ * Test that fields() method cache detects datasource changes.
  *
  * @return void
  */
@@ -961,7 +995,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test that fields() method cache detects schema name changes
+ * Test that fields() method cache detects schema name changes.
  *
  * @return void
  */
@@ -985,10 +1019,10 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * data provider for testSameFieldsCacheKey
+ * Data provider for testSameFieldsCacheKey.
  *
- * - One valid unqualified field
- * - Multiple valid unqualified fields
+ * - One valid unqualified field.
+ * - Multiple valid unqualified fields.
  *
  * @return array
  */
