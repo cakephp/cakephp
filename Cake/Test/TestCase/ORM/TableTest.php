@@ -2119,4 +2119,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($result->clause('order'));
 	}
 
+/**
+ * Test the behavior method.
+ *
+ * @return void
+ */
+	public function testBehaviorIntrospection() {
+		$table = TableRegistry::get('users');
+		$this->assertEquals([], $table->behaviors(), 'no loaded behaviors');
+
+		$table->addBehavior('Timestamp');
+		$this->assertEquals(['Timestamp'], $table->behaviors(), 'Should have loaded behavior');
+		$this->assertTrue($table->hasBehavior('Timestamp'), 'should be true on loaded behavior');
+		$this->assertFalse($table->hasBehavior('Tree'), 'should be false on unloaded behavior');
+	}
 }
