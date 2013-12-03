@@ -20,6 +20,7 @@ use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
 use Cake\Event\Event;
+use Cake\Event\EventListener;
 use Cake\Event\EventManager;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
@@ -86,7 +87,7 @@ use Cake\Utility\Inflector;
  *
  * @see Cake\Event\EventManager for reference on the events system.
  */
-class Table {
+class Table implements EventListener {
 
 /**
  * Name of the table as it can be found in the database
@@ -213,6 +214,7 @@ class Table {
 		$this->_eventManager = $eventManager ?: new EventManager();
 		$this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
 		$this->initialize($config);
+		$this->_eventManager->attach($this);
 	}
 
 /**
@@ -1327,6 +1329,36 @@ class Table {
 		throw new \BadMethodCallException(
 			__d('cake_dev', 'Unknown method "%s"', $method)
 		);
+	}
+
+/**
+ * Get the Model callbacks this table is interested in.
+ *
+ * By implementing the conventional methods a table class is assumed
+ * to be interested in the related event.
+ *
+ * Override this method if you need to add non-conventional event listeners.
+ * Or if you want you table to listen to non-standard events.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		$eventMap = [
+			'Model.beforeFind' => 'beforeFind',
+			'Model.beforeSave' => 'beforeSave',
+			'Model.afterSave' => 'afterSave',
+			'Model.beforeDelete' => 'beforeDelete',
+			'Model.afterDelete' => 'afterDelete',
+		];
+		$events = [];
+
+		foreach ($eventMap as $event => $method) {
+			if (!method_exists($this, $method)) {
+				continue;
+			}
+			$events[$event] = $method;
+		}
+		return $events;
 	}
 
 }

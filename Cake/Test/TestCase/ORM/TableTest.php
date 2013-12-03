@@ -772,6 +772,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 	}
 
+/**
+ * Test the default entityClass.
+ *
+ * @return void
+ */
 	public function testEntityClassDefault() {
 		$table = new Table();
 		$this->assertEquals('\Cake\ORM\Entity', $table->entityClass());
@@ -783,7 +788,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testRepositoryClassInAPP() {
+	public function testRepositoryClassInApp() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
 
 		if (!class_exists('TestApp\Model\Entity\TestUser')) {
@@ -1034,6 +1039,27 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query = $table->find('special');
 		$this->assertInstanceOf('Cake\ORM\Query', $query);
 		$this->assertNotEmpty($query->clause('where'));
+	}
+
+/**
+ * Test implementedEvents
+ *
+ * @return void
+ */
+	public function testImplementedEvents() {
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['beforeFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete']
+		);
+		$result = $table->implementedEvents();
+		$expected = [
+			'Model.beforeFind' => 'beforeFind',
+			'Model.beforeSave' => 'beforeSave',
+			'Model.afterSave' => 'afterSave',
+			'Model.beforeDelete' => 'beforeDelete',
+			'Model.afterDelete' => 'afterDelete',
+		];
+		$this->assertEquals($expected, $result, 'Events do not match.');
 	}
 
 /**
@@ -1670,7 +1696,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$options = new \ArrayObject(['atomic' => true]);
 
 		$mock = $this->getMock('Cake\Event\EventManager');
+
 		$mock->expects($this->at(0))
+			->method('attach');
+
+		$mock->expects($this->at(1))
 			->method('dispatch')
 			->with($this->logicalAnd(
 				$this->attributeEqualTo('_name', 'Model.beforeDelete'),
@@ -1680,7 +1710,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				)
 			));
 
-		$mock->expects($this->at(1))
+		$mock->expects($this->at(2))
 			->method('dispatch')
 			->with($this->logicalAnd(
 				$this->attributeEqualTo('_name', 'Model.afterDelete'),
