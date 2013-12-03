@@ -453,6 +453,28 @@ class Table implements EventListener {
 	}
 
 /**
+ * Get the list of Behaviors loaded.
+ *
+ * This method will return the *aliases* of the behaviors attached
+ * to this instance.
+ *
+ * @return array
+ */
+	public function behaviors() {
+		return $this->_behaviors->loaded();
+	}
+
+/**
+ * Check if a behavior with the given alias has been loaded.
+ *
+ * @param string $name The behavior alias to check.
+ * @return array
+ */
+	public function hasBehavior($name) {
+		return $this->_behaviors->loaded($name);
+	}
+
+/**
  * Returns a association objected configured for the specified alias if any
  *
  * @param string $name the alias used for the association
