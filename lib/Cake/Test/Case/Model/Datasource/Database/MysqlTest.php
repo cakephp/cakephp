@@ -2605,9 +2605,9 @@ class MysqlTest extends CakeTestCase {
 		$expected = array("`Node`.`created`", "CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name");
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Dbo->fields($this->Model, 'Post', "2.2,COUNT(*), SUM(Something.else) as sum, Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name,Post.title,Post.1,1.1");
+		$result = $this->Dbo->fields($this->Model, 'Post', "2.2,COUNT(*), SUM(Something.else) as sum, SUM(2.0) as sumx2, Node.created, CONCAT(REPEAT(' ', COUNT(Parent.name) - 1), Node.name) AS name,Post.title,Post.1,1.1");
 		$expected = array(
-			'2.2', 'COUNT(*)', 'SUM(`Something`.`else`) as sum', '`Node`.`created`',
+			'2.2', 'COUNT(*)', 'SUM(`Something`.`else`) as sum', 'SUM(2.0) as sumx2', '`Node`.`created`',
 			"CONCAT(REPEAT(' ', COUNT(`Parent`.`name`) - 1), Node.name) AS name", '`Post`.`title`', '`Post`.`1`', '1.1'
 		);
 		$this->assertEquals($expected, $result);
@@ -2645,6 +2645,10 @@ class MysqlTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->fields($this->Model, null, 'SUM(Thread.unread_buyer) AS ' . $this->Dbo->name('sum_unread_buyer'));
+		$expected = array('SUM(`Thread`.`unread_buyer`) AS `sum_unread_buyer`');
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->fields($this->Model, 'Thread', array('SUM(unread_buyer) AS ' . $this->Dbo->name('sum_unread_buyer')));
 		$expected = array('SUM(`Thread`.`unread_buyer`) AS `sum_unread_buyer`');
 		$this->assertEquals($expected, $result);
 
@@ -3279,6 +3283,7 @@ class MysqlTest extends CakeTestCase {
 			'comment_count' => 'SELECT COUNT(*) FROM ' . $commentsTable .
 				' WHERE Article.id = ' . $commentsTable . '.article_id'
 		);
+
 		$result = $this->Dbo->fields($Article);
 		$expected = array(
 			'`Article`.`id`',
@@ -3292,7 +3297,6 @@ class MysqlTest extends CakeTestCase {
 			'(1 + 1) AS  `Article__two`',
 			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS  `Article__comment_count`"
 		);
-
 		$this->assertEquals($expected, $result);
 
 		$result = $this->Dbo->fields($Article, null, array('this_moment', 'title'));

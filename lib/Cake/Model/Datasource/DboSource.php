@@ -2353,21 +2353,25 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Converts model virtual fields into sql expressions to be fetched later
+ * Converts model virtual fields into sql expressions to be fetched later.
  *
  * @param Model $Model
  * @param string $alias Alias table name
- * @param array $fields virtual fields to be used on query
+ * @param array $fields Virtual fields to be used on query.
  * @return array
  */
 	protected function _constructVirtualFields(Model $Model, $alias, $fields) {
-		$virtual = array();
+		$virtualFields = array();
 		foreach ($fields as $field) {
+			if (strpos($field, '.') !== false) {
+				$field = str_replace($Model->alias . '.', '', $field);
+			}
 			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
 			$expression = $this->_quoteFields($Model->getVirtualField($field));
-			$virtual[] = '(' . $expression . ") {$this->alias} {$virtualField}";
+			$virtualFields[] = '(' . $expression . ") {$this->alias} {$virtualField}";
 		}
-		return $virtual;
+
+		return $virtualFields;
 	}
 
 /**
@@ -2434,84 +2438,106 @@ class DboSource extends DataSource {
 			$fields = array_keys($Model->schema());
 		}
 
-		$allFields = $allFields || in_array('*', $fields) || in_array($Model->alias . '.*', $fields);
-
-		$virtual = array();
 		if (!empty($virtualFields)) {
-			$virtualKeys = array_keys($virtualFields);
-			foreach ($virtualKeys as $field) {
-				$virtualKeys[] = $Model->alias . '.' . $field;
-			}
-			$virtual = ($allFields) ? $virtualKeys : array_intersect($virtualKeys, $fields);
-			foreach ($virtual as $i => $field) {
-				if (strpos($field, '.') !== false) {
-					$virtual[$i] = str_replace($Model->alias . '.', '', $field);
+			$virtualFields = array_keys($virtualFields);
+
+			if (!$allFields && !(in_array('*', $fields) || in_array($Model->alias . '.*', $fields))) {
+				$qualifiedVirtualFields = $virtualFields;
+				foreach ($virtualFields as $field) {
+					$qualifiedVirtualFields[] = $Model->alias . '.' . $field;
 				}
-				$fields = array_diff($fields, array($field));
+
+				$virtualFields = array_intersect($qualifiedVirtualFields, $fields);
 			}
-			$fields = array_values($fields);
+
+			$fields = array_values(array_diff($fields, $virtualFields));
 		}
+
 		if (!$quote) {
-			if (!empty($virtual)) {
-				$fields = array_merge($fields, $this->_constructVirtualFields($Model, $alias, $virtual));
+			if (!empty($virtualFields)) {
+				$fields = array_merge($fields, $this->_constructVirtualFields($Model, $alias, $virtualFields));
 			}
 			return $fields;
 		}
-		$count = count($fields);
 
-		if ($count >= 1 && !in_array($fields[0], array('*', 'COUNT(*)'))) {
-			for ($i = 0; $i < $count; $i++) {
-				if (is_string($fields[$i]) && in_array($fields[$i], $virtual)) {
-					unset($fields[$i]);
+		if (!empty($fields) && !in_array($fields[0], array('*', 'COUNT(*)'))) {
+			foreach ($fields as $i => &$field) {
+				if (is_object($field) && isset($field->type) && $field->type === 'expression') {
+					// CakePHP expression
+
+					$field = $field->value;
+
+				} elseif (preg_match('/^\(.*\)\s(' . $this->alias . ').*/i', $field)) {
+					// SQL expression
+
 					continue;
-				}
-				if (is_object($fields[$i]) && isset($fields[$i]->type) && $fields[$i]->type === 'expression') {
-					$fields[$i] = $fields[$i]->value;
-				} elseif (preg_match('/^\(.*\)\s' . $this->alias . '.*/i', $fields[$i])) {
-					continue;
-				} elseif (!preg_match('/^.+\\(.*\\)/', $fields[$i])) {
+
+				} elseif (!preg_match('/^.+\\(.*\\)/', $field)) {
+					// SQL field
+
 					$prepend = '';
 
-					if (strpos($fields[$i], 'DISTINCT') !== false) {
-						$prepend = 'DISTINCT ';
-						$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
-					}
-					$dot = strpos($fields[$i], '.');
+					if (strpos($field, 'DISTINCT') !== false) {
+						// Distinct
 
-					if ($dot === false) {
-						$prefix = !(
-							strpos($fields[$i], ' ') !== false ||
-							strpos($fields[$i], '(') !== false
-						);
-						$fields[$i] = $this->name(($prefix ? $alias . '.' : '') . $fields[$i]);
-					} else {
-						if (strpos($fields[$i], ',') === false) {
-							$build = explode('.', $fields[$i]);
-							if (!Hash::numeric($build)) {
-								$fields[$i] = $this->name(implode('.', $build));
-							}
+						$prepend = 'DISTINCT ';
+						$field = trim(str_replace('DISTINCT', '', $field));
+					}
+
+					if (strpos($field, '.') === false) {
+						// Unqualified
+
+						if (strpos($field, ' ') === false && strpos($field, '(') === false) {
+							$field = $alias . '.' . $field;
+						}
+
+						$field = $this->name($field);
+
+					} elseif (strpos($field, ',') === false) {
+						$build = explode('.', $field);
+						if (!Hash::numeric($build)) {
+							// Qualified
+
+							$field = $this->name(implode('.', $build));
 						}
 					}
-					$fields[$i] = $prepend . $fields[$i];
-				} elseif (preg_match('/\(([\.\w]+)\)/', $fields[$i], $field)) {
-					if (isset($field[1])) {
-						if (strpos($field[1], '.') === false) {
-							$field[1] = $this->name($alias . '.' . $field[1]);
+
+					$field = $prepend . $field;
+
+				} elseif (preg_match('/\(([\.\w]+)\)/', $field, $match)) {
+					// SQL Function
+
+					if (isset($match[1])) {
+						if (strpos($match[1], '.') === false) {
+							// Unqualified
+
+							$match[0] = $this->name($alias . '.' . $match[1]);
+
 						} else {
-							$field[0] = explode('.', $field[1]);
-							if (!Hash::numeric($field[0])) {
-								$field[0] = implode('.', array_map(array(&$this, 'name'), $field[0]));
-								$fields[$i] = preg_replace('/\(' . $field[1] . '\)/', '(' . $field[0] . ')', $fields[$i], 1);
+							$match[0] = explode('.', $match[1]);
+							if (!Hash::numeric($match[0])) {
+								// Qualified
+
+								$match[0] = implode('.', array_map(array(&$this, 'name'), $match[0]));
+							} else {
+								// Numeric
+
+								$match[0] = $match[1];
 							}
 						}
+
+						$field = preg_replace('/\(' . $match[1] . '\)/', '(' . $match[0] . ')', $field, 1);
 					}
 				}
 			}
+			unset($field);
 		}
-		if (!empty($virtual)) {
-			$fields = array_merge($fields, $this->_constructVirtualFields($Model, $alias, $virtual));
+
+		if (!empty($virtualFields)) {
+			$fields = array_merge($fields, $this->_constructVirtualFields($Model, $alias, $virtualFields));
 		}
-		return $this->cacheMethod(__FUNCTION__, $cacheKey, array_unique($fields));
+
+		return $this->cacheMethod(__FUNCTION__, $cacheKey, $fields);
 	}
 
 /**
