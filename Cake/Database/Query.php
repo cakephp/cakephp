@@ -204,7 +204,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$query->_bindStatement($statement);
 		$statement->execute();
 
-		return $query->_decorateResults($statement);
+		return $query->_decorateStatement($statement);
 	}
 
 /**
@@ -1614,7 +1614,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param Cake\Database\Statement $statement to be decorated
  * @return Cake\Database\Statement\CallbackStatement
  */
-	protected function _decorateResults($statement) {
+	protected function _decorateStatement($statement) {
 		foreach ($this->_resultDecorators as $f) {
 			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
 		}

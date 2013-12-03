@@ -409,11 +409,11 @@ class Query extends DatabaseQuery {
 			return $this->_results;
 		}
 		if ($this->_useBufferedResults) {
-			return $this->_results = $this->_applyFormatters(
+			return $this->_results = $this->_decorateResults(
 				new BufferedResultSet($this, $this->executeStatement())
 			);
 		}
-		return $this->_applyFormatters(new ResultSet($this, $this->executeStatement()));
+		return $this->_decorateResults(new ResultSet($this, $this->executeStatement()));
 	}
 
 /**
@@ -666,7 +666,7 @@ class Query extends DatabaseQuery {
  * @param $results Cake\ORM\ResultCollectionTrait original results
  * @return Cake\ORM\ResultCollectionTrait
  */
-	protected function _applyFormatters($result) {
+	protected function _decorateResults($result) {
 		foreach ($this->_mapReduce as $functions) {
 			$result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
 		}
@@ -685,8 +685,8 @@ class Query extends DatabaseQuery {
  * @param Cake\Database\Statement $statement to be decorated
  * @return Cake\Database\Statement
  */
-	protected function _decorateResults($statement) {
-		$statement = parent::_decorateResults($statement);
+	protected function _decorateStatement($statement) {
+		$statement = parent::_decorateStatement($statement);
 		if ($this->_loadEagerly) {
 			if (!($statement instanceof BufferedStatement)) {
 				$statement = new BufferedStatement($statement, $this->connection()->driver());
