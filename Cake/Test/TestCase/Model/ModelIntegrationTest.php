@@ -2176,7 +2176,7 @@ class ModelIntegrationTest extends ModelTestBase {
 		} else {
 			$intLength = 11;
 		}
-		foreach (array('collate', 'charset', 'comment') as $type) {
+		foreach (array('collate', 'charset', 'comment', 'unsigned') as $type) {
 			foreach ($result as $i => $r) {
 				unset($result[$i][$type]);
 			}

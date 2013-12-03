@@ -77,10 +77,10 @@ class HasOne extends Association {
 		if ($name !== null) {
 			return parent::property($name);
 		}
-		if ($name === null && !$this->_property) {
-			$this->_property = Inflector::underscore(Inflector::singularize($this->_name));
+		if ($name === null && !$this->_propertyName) {
+			$this->_propertyName = Inflector::underscore(Inflector::singularize($this->_name));
 		}
-		return $this->_property;
+		return $this->_propertyName;
 	}
 
 /**

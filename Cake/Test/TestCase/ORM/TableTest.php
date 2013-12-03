@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -779,6 +780,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($expected, $query->toArray());
 	}
 
+/**
+ * Test the default entityClass.
+ *
+ * @return void
+ */
 	public function testEntityClassDefault() {
 		$table = new Table();
 		$this->assertEquals('\Cake\ORM\Entity', $table->entityClass());
@@ -790,7 +796,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testRepositoryClassInAPP() {
+	public function testRepositoryClassInApp() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
 
 		if (!class_exists('TestApp\Model\Entity\TestUser')) {
@@ -1041,6 +1047,27 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query = $table->find('special');
 		$this->assertInstanceOf('Cake\ORM\Query', $query);
 		$this->assertNotEmpty($query->clause('where'));
+	}
+
+/**
+ * Test implementedEvents
+ *
+ * @return void
+ */
+	public function testImplementedEvents() {
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['beforeFind', 'beforeSave', 'afterSave', 'beforeDelete', 'afterDelete']
+		);
+		$result = $table->implementedEvents();
+		$expected = [
+			'Model.beforeFind' => 'beforeFind',
+			'Model.beforeSave' => 'beforeSave',
+			'Model.afterSave' => 'afterSave',
+			'Model.beforeDelete' => 'beforeDelete',
+			'Model.afterDelete' => 'afterDelete',
+		];
+		$this->assertEquals($expected, $result, 'Events do not match.');
 	}
 
 /**
@@ -1677,7 +1704,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$options = new \ArrayObject(['atomic' => true]);
 
 		$mock = $this->getMock('Cake\Event\EventManager');
+
 		$mock->expects($this->at(0))
+			->method('attach');
+
+		$mock->expects($this->at(1))
 			->method('dispatch')
 			->with($this->logicalAnd(
 				$this->attributeEqualTo('_name', 'Model.beforeDelete'),
@@ -1687,7 +1718,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				)
 			));
 
-		$mock->expects($this->at(1))
+		$mock->expects($this->at(2))
 			->method('dispatch')
 			->with($this->logicalAnd(
 				$this->attributeEqualTo('_name', 'Model.afterDelete'),
@@ -1947,6 +1978,168 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($table->save($entity, ['crazy' => true]));
 		$this->assertEmpty($entity->errors('password'));
 		$this->assertEquals(['Not good'], $entity->errors('username'));
+	}
+
+/**
+ * Test magic findByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindDefaultToAll() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findByUsername('garrett');
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$expected = new QueryExpression(['username' => 'garrett'], ['username' => 'string']);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findByXX errors on missing arguments.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
+ * @return void
+ */
+	public function testMagicFindError() {
+		$table = TableRegistry::get('Users');
+
+		$table->findByUsername();
+	}
+
+/**
+ * Test magic findByXX errors on missing arguments.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
+ * @return void
+ */
+	public function testMagicFindErrorMissingField() {
+		$table = TableRegistry::get('Users');
+
+		$table->findByUsernameAndId('garrett');
+	}
+
+/**
+ * Test magic findByXX errors when there is a mix of or & and.
+ *
+ * @expectedException Cake\Error\Exception
+ * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
+ * @return void
+ */
+	public function testMagicFindErrorMixOfOperators() {
+		$table = TableRegistry::get('Users');
+
+		$table->findByUsernameAndIdOrPassword('garrett', 1, 'sekret');
+	}
+
+/**
+ * Test magic findByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindFirstAnd() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findByUsernameAndId('garrett', 4);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$expected = new QueryExpression(
+			['username' => 'garrett', 'id' => 4],
+			['username' => 'string', 'id' => 'integer'],
+			'AND'
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindFirstOr() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findByUsernameOrId('garrett', 4);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$expected = new QueryExpression();
+		$expected->add([
+			'OR' => [
+				'username' => 'garrett',
+				'id' => 4
+			]],
+			['username' => 'string', 'id' => 'integer']
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findAllByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindAll() {
+		$table = TableRegistry::get('Articles');
+
+		$result = $table->findAllByAuthorId(1);
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertNull($result->clause('limit'));
+		$expected = new QueryExpression(
+			['author_id' => 1],
+			['author_id' => 'integer'],
+			'AND'
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findAllByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindAllAnd() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findAllByAuthorIdAndPublished(1, 'Y');
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertNull($result->clause('limit'));
+		$expected = new QueryExpression(
+			['author_id' => 1, 'published' => 'Y']
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+	}
+
+/**
+ * Test magic findAllByXX method.
+ *
+ * @return void
+ */
+	public function testMagicFindAllOr() {
+		$table = TableRegistry::get('Users');
+
+		$result = $table->findAllByAuthorIdOrPublished(1, 'Y');
+		$this->assertInstanceOf('Cake\ORM\Query', $result);
+		$this->assertNull($result->clause('limit'));
+		$expected = new QueryExpression();
+		$expected->add(
+			['or' => ['author_id' => 1, 'published' => 'Y']]
+		);
+		$this->assertEquals($expected, $result->clause('where'));
+		$this->assertNull($result->clause('order'));
+	}
+
+/**
+ * Test the behavior method.
+ *
+ * @return void
+ */
+	public function testBehaviorIntrospection() {
+		$table = TableRegistry::get('users');
+		$this->assertEquals([], $table->behaviors(), 'no loaded behaviors');
+
+		$table->addBehavior('Timestamp');
+		$this->assertEquals(['Timestamp'], $table->behaviors(), 'Should have loaded behavior');
+		$this->assertTrue($table->hasBehavior('Timestamp'), 'should be true on loaded behavior');
+		$this->assertFalse($table->hasBehavior('Tree'), 'should be false on unloaded behavior');
 	}
 
 /**

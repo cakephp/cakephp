@@ -182,10 +182,6 @@ class PaginatorComponent extends Component {
 		$pageCount = intval(ceil($count / $limit));
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
-		if ($requestedPage > $page) {
-			throw new Error\NotFoundException();
-		}
-
 		$request = $this->_registry->getController()->request;
 
 		if (!is_array($order)) {
@@ -212,6 +208,11 @@ class PaginatorComponent extends Component {
 			(array)$request['paging'],
 			array($alias => $paging)
 		);
+
+		if ($requestedPage > $page) {
+			throw new Error\NotFoundException();
+		}
+
 		return $results;
 	}
 

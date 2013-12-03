@@ -106,22 +106,23 @@ class BelongsToMany extends Association {
 		if (is_string($table)) {
 			$table = TableRegistry::get($table);
 		}
+		$pivotAlias = $table->alias();
 
 		if (!$table->association($sAlias)) {
-			$table->belongsTo($sAlias)->target($this->source());
+			$table->belongsTo($sAlias)->target($source);
 		}
 
 		if (!$table->association($tAlias)) {
-			$table->belongsTo($tAlias)->target($this->target());
+			$table->belongsTo($tAlias)->target($target);
 		}
 
-		if (!$target->association($table->alias())) {
+		if (!$target->association($pivotAlias)) {
 			$target->belongsToMany($sAlias);
-			$target->hasMany($table->alias())->target($table);
+			$target->hasMany($pivotAlias)->target($table);
 		}
 
 		if (!$source->association($table->alias())) {
-			$source->hasMany($table->alias())->target($table);
+			$source->hasMany($pivotAlias)->target($table);
 		}
 
 		return $this->_pivotTable = $table;
@@ -156,7 +157,7 @@ class BelongsToMany extends Association {
 
 		$options = ['conditions' => [$cond]] + compact('includeFields');
 		$this->target()
-			->association($this->pivot()->alias())
+			->association($pivot->alias())
 			->attachTo($query, $options);
 	}
 

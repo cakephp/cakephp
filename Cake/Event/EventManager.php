@@ -118,7 +118,7 @@ class EventManager {
  * @return void
  */
 	protected function _attachSubscriber(EventListener $subscriber) {
-		foreach ($subscriber->implementedEvents() as $eventKey => $function) {
+		foreach ((array)$subscriber->implementedEvents() as $eventKey => $function) {
 			$options = array();
 			$method = $function;
 			if (is_array($function) && isset($function['callable'])) {

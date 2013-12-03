@@ -655,6 +655,42 @@ class EntityTest extends TestCase {
 	}
 
 /**
+ * Test that toArray respects hidden properties.
+ *
+ * @return void
+ */
+	public function testToArrayHiddenProperties() {
+		$data = ['secret' => 'sauce', 'name' => 'mark', 'id' => 1];
+		$entity = new Entity($data);
+		$entity->hiddenProperties(['secret']);
+		$this->assertEquals(['name' => 'mark', 'id' => 1], $entity->toArray());
+	}
+
+/**
+ * Test toArray includes 'virtual' properties.
+ *
+ * @return void
+ */
+	public function testToArrayVirtualProperties() {
+		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->expects($this->any())
+			->method('getName')
+			->will($this->returnValue('Jose'));
+		$entity->set(['email' => 'mark@example.com']);
+
+		$entity->virtualProperties(['name']);
+		$expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
+		$this->assertEquals($expected, $entity->toArray());
+
+		$this->assertEquals(['name'], $entity->virtualProperties());
+
+		$entity->hiddenProperties(['name']);
+		$expected = ['email' => 'mark@example.com'];
+		$this->assertEquals($expected, $entity->toArray());
+		$this->assertEquals(['name'], $entity->hiddenProperties());
+	}
+
+/**
  * Tests that missing fields will not be passed as null to the validator
  *
  * @return void
@@ -750,4 +786,5 @@ class EntityTest extends TestCase {
 		$entity->clean();
 		$this->assertEmpty($entity->errors());
 	}
+
 }
