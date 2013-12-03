@@ -595,7 +595,7 @@ class Table implements EventListener {
  *   and target tables in this association.
  * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
  *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
- *   When true pivot table records will be loaded and then deleted.
+ *   When true join/junction table records will be loaded and then deleted.
  * - conditions: array with a list of conditions to filter the join with
  * - sort: The order in which results for this association should be returned
  * - strategy: The strategy to be used for selecting results Either 'select'
