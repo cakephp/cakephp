@@ -2360,7 +2360,7 @@ class DboSource extends DataSource {
  * @param array $fields Virtual fields to be used on query.
  * @return array
  */
-	protected function _constructVirtualFields(Model $Model, $alias, $fields) {
+	protected function _buildVirtualFields(Model $Model, $alias, $fields) {
 		$virtualFields = array();
 		foreach ($fields as $field) {
 			if (strpos($field, '.') !== false) {
@@ -2527,7 +2527,7 @@ class DboSource extends DataSource {
 		}
 
 		if (!empty($virtualFields)) {
-			$fields = array_merge($fields, $this->_constructVirtualFields($Model, $alias, $virtualFields));
+			$fields = array_merge($fields, $this->_buildVirtualFields($Model, $alias, $virtualFields));
 		}
 
 		return $this->cacheMethod(__FUNCTION__, $cacheKey, $fields);
