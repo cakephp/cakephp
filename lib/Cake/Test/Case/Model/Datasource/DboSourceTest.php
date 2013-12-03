@@ -1069,6 +1069,47 @@ class DboSourceTest extends CakeTestCase {
 				array('title', null, 'title'),
 			)),
 
+			// One valid qualified field
+			array(array(
+				// correct
+				'Article.title',
+				array('Article.title'),
+
+				// duplicated
+				'Article.title, Article.title',
+				array('Article.title', 'Article.title'),
+
+				// empty
+				'Article.title, ',
+				'Article.title,  ',
+				'Article.title, 0',
+				array('Article.title, '),
+				array('Article.title,  '),
+				array('Article.title, 0'),
+				array('Article.title', ''),
+				array('Article.title', ' '),
+				array('Article.title', '  '),
+				array('Article.title', '0'),
+				array('Article.title', 0),
+				array('Article.title', false),
+				array('Article.title', null),
+
+				// empty + duplicated
+				'Article.title, , Article.title',
+				'Article.title,  , Article.title',
+				'Article.title, 0, Article.title',
+				array('Article.title, , Article.title'),
+				array('Article.title,  , Article.title'),
+				array('Article.title, 0, Article.title'),
+				array('Article.title', '', 'Article.title'),
+				array('Article.title', ' ', 'Article.title'),
+				array('Article.title', '  ', 'Article.title'),
+				array('Article.title', '0', 'Article.title'),
+				array('Article.title', 0, 'Article.title'),
+				array('Article.title', false, 'Article.title'),
+				array('Article.title', null, 'Article.title'),
+			)),
+
 			// Multiple valid unqualified fields
 			array(array(
 				// correct
@@ -1110,6 +1151,92 @@ class DboSourceTest extends CakeTestCase {
 				array('title', 'body', 0, 'title'),
 				array('title', 'body', false, 'title'),
 				array('title', 'body', null, 'title'),
+			)),
+
+			// Multiple valid qualified fields
+			array(array(
+				// correct
+				'Article.title, Article.body',
+				array('Article.title, Article.body'),
+				array('Article.title', 'Article.body'),
+
+				// duplicated
+				'Article.title, Article.body, Article.title',
+				array('Article.title, Article.body, Article.title'),
+				array('Article.title', 'Article.body', 'Article.title'),
+
+				// empty
+				'Article.title, Article.body, ',
+				'Article.title, Article.body,  ',
+				'Article.title, Article.body, 0',
+				array('Article.title, Article.body, '),
+				array('Article.title, Article.body,  '),
+				array('Article.title, Article.body, 0'),
+				array('Article.title', 'Article.body', ''),
+				array('Article.title', 'Article.body', ' '),
+				array('Article.title', 'Article.body', '  '),
+				array('Article.title', 'Article.body', '0'),
+				array('Article.title', 'Article.body', 0),
+				array('Article.title', 'Article.body', false),
+				array('Article.title', 'Article.body', null),
+
+				// empty + duplicated
+				'Article.title, Article.body, , Article.title',
+				'Article.title, Article.body,  , Article.title',
+				'Article.title, Article.body, 0, Article.title',
+				array('Article.title, Article.body, , Article.title'),
+				array('Article.title, Article.body,  , Article.title'),
+				array('Article.title, Article.body, 0, Article.title'),
+				array('Article.title', 'Article.body', '', 'Article.title'),
+				array('Article.title', 'Article.body', ' ', 'Article.title'),
+				array('Article.title', 'Article.body', '  ', 'Article.title'),
+				array('Article.title', 'Article.body', '0', 'Article.title'),
+				array('Article.title', 'Article.body', 0, 'Article.title'),
+				array('Article.title', 'Article.body', false, 'Article.title'),
+				array('Article.title', 'Article.body', null, 'Article.title'),
+			)),
+
+			// Multiple valid unqualified and qualified fields
+			array(array(
+				// correct
+				'Article.title, body',
+				array('Article.title, body'),
+				array('Article.title', 'body'),
+
+				// duplicated
+				'Article.title, body, Article.title',
+				array('Article.title, body, Article.title'),
+				array('Article.title', 'body', 'Article.title'),
+
+				// empty
+				'Article.title, body, ',
+				'Article.title, body,  ',
+				'Article.title, body, 0',
+				array('Article.title, body, '),
+				array('Article.title, body,  '),
+				array('Article.title, body, 0'),
+				array('Article.title', 'body', ''),
+				array('Article.title', 'body', ' '),
+				array('Article.title', 'body', '  '),
+				array('Article.title', 'body', '0'),
+				array('Article.title', 'body', 0),
+				array('Article.title', 'body', false),
+				array('Article.title', 'body', null),
+
+				// empty + duplicated
+				'Article.title, body, , Article.title',
+				'Article.title, body,  , Article.title',
+				'Article.title, body, 0, Article.title',
+				array('Article.title, body, , Article.title'),
+				array('Article.title, body,  , Article.title'),
+				array('Article.title, body, 0, Article.title'),
+				array('Article.title', 'body', '', 'Article.title'),
+				array('Article.title', 'body', ' ', 'Article.title'),
+				array('Article.title', 'body', '  ', 'Article.title'),
+				array('Article.title', 'body', '0', 'Article.title'),
+				array('Article.title', 'body', 0, 'Article.title'),
+				array('Article.title', 'body', false, 'Article.title'),
+				array('Article.title', 'body', null, 'Article.title'),
 			))
 		);
 	}
