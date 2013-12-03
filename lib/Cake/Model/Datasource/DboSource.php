@@ -2353,6 +2353,43 @@ class DboSource extends DataSource {
 	}
 
 /**
+ * Normalizes the fields list of an SQL query.
+ *
+ * It also takes care of removing duplicates and empty fields.
+ *
+ * Note: it does not deal with quoting or fully qualifying.
+ *
+ * @param mixed $fields String or array containing fields, expressions are also allowed.
+ * @return array
+ */
+	protected function _normalizeFields($fields = array()) {
+		if (is_array($fields) && count($fields) === 1) {
+			$field = reset($fields);
+			if (is_string($field) && strpos($field, ',') !== false) {
+				// Array with one string element
+
+				$fields = String::tokenize($field);
+			}
+			unset($field);
+
+		} elseif (is_string($fields)) {
+			// String
+
+			$fields = String::tokenize($fields);
+		}
+
+		// Array
+		foreach ($fields as &$field) {
+			if (!is_object($field)) {
+				$field = trim($field);
+			}
+		}
+		unset($field);
+
+		return array_values(array_unique(array_filter($fields), SORT_REGULAR)); // SORT_REGULAR because of expressions
+	}
+
+/**
  * Converts model virtual fields into sql expressions to be fetched later.
  *
  * @param Model $Model
@@ -2395,26 +2432,7 @@ class DboSource extends DataSource {
 		$allFields = empty($fields);
 
 		if (!$allFields) {
-			if (is_array($fields)) {
-				if (count($fields) === 1) {
-					$field = reset($fields);
-					if (is_string($field) && strpos($field, ',') !== false) {
-						$fields = String::tokenize($field);
-					}
-					unset($field);
-				}
-			} elseif (is_string($fields)) {
-				$fields = String::tokenize($fields);
-			}
-
-			foreach ($fields as &$field) {
-				if (!is_object($field)) {
-					$field = trim($field);
-				}
-			}
-			unset($field);
-
-			$fields = array_values(array_unique(array_filter($fields), SORT_REGULAR)); // SORT_REGULAR because of expressions
+			$fields = $this->_normalizeFields($fields);
 		}
 
 		$cacheKey = array(
