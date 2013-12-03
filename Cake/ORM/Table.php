@@ -872,6 +872,8 @@ class Table {
  * returns the same entity after a successful save or false in case
  * of any error.
  *
+ * ### Options
+ *
  * The options array can receive the following keys:
  *
  * - atomic: Whether to execute the save and callbacks inside a database
@@ -880,7 +882,15 @@ class Table {
  * fails, it will abort the save operation. If this key is set to a string value,
  * the validator object registered in this table under the provided name will be
  * used instead of the default one. (default:true)
+ * - associated: If true it will save all associated entities as they are found
+ * in the passed `$entity` whenever the property defined for the association
+ * is marked as dirty. Associated records are saved recursively unless told
+ * otherwise. If an array, it will be interpreted as the list of associations
+ * to be saved. It is possible to different options for saving on associated
+ * table objects using this key by making the custom options the array value.
+ * If false no associated records will be saved. (default: true)
  *
+ * ### Events
  *
  * When saving, this method will trigger four events:
  *
@@ -912,6 +922,26 @@ class Table {
  * inserted or updated in the database. It does that by checking the `isNew`
  * method on the entity, if no information can be found there, it will go
  * directly to the database to check the entity's status.
+ *
+ * ### Saving on associated tables
+ *
+ * This method will by default persist entities belonging to associated tables,
+ * whenever a dirty property matching the name of the property name set for an
+ * association in this table. It is possible to control what associations will
+ * be saved and to pass additional option for saving them.
+ *
+ * {{{
+ * $articles->save($entity, ['associated' => ['Comment']); // Only save comment assoc
+ *
+ * // Save the company, the employees and related addresses for each of them.
+ * // For employees use the 'special' validation group
+ * $companies->save($entity, [
+ * 'associated' => ['Employee' => ['associated' => ['Address'], 'validate' => 'special']
+ * ]);
+ *
+ * // Save no associations
+ * $articles->save($entity, ['associated' => false]);
+ * }}}
  *
  * @param \Cake\ORM\Entity the entity to be saved
  * @param array $options
