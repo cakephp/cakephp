@@ -35,13 +35,14 @@ class CommandTask extends Shell {
  */
 	public function getShellList() {
 		$skipFiles = ['AppShell'];
+		$hiddenCommands = ['CommandListShell', 'CompletionShell'];
 
 		$plugins = Plugin::loaded();
 		$shellList = array_fill_keys($plugins, null) + ['CORE' => null, 'app' => null];
 
 		$corePath = App::core('Console/Command');
 		$shells = App::objects('file', $corePath[0]);
-		$shells = array_diff($shells, $skipFiles);
+		$shells = array_diff($shells, $skipFiles, $hiddenCommands);
 		$this->_appendShells('CORE', $shells, $shellList);
 
 		$appShells = App::objects('Console/Command', null, false);
