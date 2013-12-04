@@ -38,7 +38,7 @@ class Mysql extends \Cake\Database\Driver {
 		'port' => '3306',
 		'flags' => [],
 		'encoding' => 'utf8',
-		'timezone' => 'UTC',
+		'timezone' => null,
 		'init' => [],
 		'dsn' => null
 	];
@@ -58,7 +58,9 @@ class Mysql extends \Cake\Database\Driver {
 			$config['timezone'] = '+0:00';
 		}
 
-		$config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
+		if (!empty($config['timezone'])) {
+			$config['init'][] = sprintf("SET time_zone = '%s'", $config['timezone']);
+		}
 
 		$config['flags'] += [
 			PDO::ATTR_PERSISTENT => $config['persistent'],
