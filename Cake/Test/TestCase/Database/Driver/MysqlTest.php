@@ -54,8 +54,8 @@ class MysqlTest extends TestCase {
 			'port' => '3306',
 			'flags' => [],
 			'encoding' => 'utf8',
-			'timezone' => '+0:00',
-			'init' => ["SET time_zone = '+0:00'"],
+			'timezone' => null,
+			'init' => [],
 			'dsn' => 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8'
 		];
 
@@ -63,7 +63,7 @@ class MysqlTest extends TestCase {
 			PDO::ATTR_PERSISTENT => true,
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::MYSQL_ATTR_INIT_COMMAND => "SET time_zone = '+0:00'"
+			PDO::MYSQL_ATTR_INIT_COMMAND => ''
 		];
 		$driver->expects($this->once())->method('_connect')
 			->with($expected);

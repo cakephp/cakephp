@@ -24,7 +24,7 @@ use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
 /**
- * Represents an M - N relationship where there exists a pivot - or join - table
+ * Represents an M - N relationship where there exists a junction - or join - table
  * that contains the association fields between the source and the target table.
  *
  * An example of a BelongsToMany association would be Article belongs to many Tags.
@@ -57,56 +57,56 @@ class BelongsToMany extends Association {
 	protected $_strategy = parent::STRATEGY_SELECT;
 
 /**
- * Pivot table instance
+ * Junction table instance
  *
  * @var Cake\ORM\Table
  */
-	protected $_pivotTable;
+	protected $_junctionTable;
 
 /**
- * The physical name of the pivot table
+ * Junction table name
  *
  * @var string
  */
-	protected $_joinTable;
+	protected $_junctionTableName;
 
 /**
  * The name of the hasMany association from the target table
- * to the pivot table
+ * to the junction table
  *
  * @var string
  */
-	protected $_pivotAssociationName;
+	protected $_junctionAssociationName;
 
 /**
- * Sets the table instance for the pivot relation. If no arguments
+ * Sets the table instance for the junction relation. If no arguments
  * are passed, the current configured table instance is returned
  *
  * @param string|Cake\ORM\Table $table Name or instance for the join table
  * @return Cake\ORM\Table
  */
-	public function pivot($table = null) {
+	public function junction($table = null) {
 		$target = $this->target();
 		$source = $this->source();
 		$sAlias = $source->alias();
 		$tAlias = $target->alias();
 
 		if ($table === null) {
-			if (empty($this->_pivotTable)) {
-				$tableName = $this->_joinTableName();
+			if (empty($this->_junctionTable)) {
+				$tableName = $this->_junctionTableName();
 				$tableAlias = Inflector::camelize($tableName);
 				$table = TableRegistry::get($tableAlias, [
 					'table' => $tableName
 				]);
 			} else {
-				return $this->_pivotTable;
+				return $this->_junctionTable;
 			}
 		}
 
 		if (is_string($table)) {
 			$table = TableRegistry::get($table);
 		}
-		$pivotAlias = $table->alias();
+		$junctionAlias = $table->alias();
 
 		if (!$table->association($sAlias)) {
 			$table->belongsTo($sAlias)->target($source);
@@ -116,16 +116,16 @@ class BelongsToMany extends Association {
 			$table->belongsTo($tAlias)->target($target);
 		}
 
-		if (!$target->association($pivotAlias)) {
+		if (!$target->association($junctionAlias)) {
 			$target->belongsToMany($sAlias);
-			$target->hasMany($pivotAlias)->target($table);
+			$target->hasMany($junctionAlias)->target($table);
 		}
 
 		if (!$source->association($table->alias())) {
-			$source->hasMany($pivotAlias)->target($table);
+			$source->hasMany($junctionAlias)->target($table);
 		}
 
-		return $this->_pivotTable = $table;
+		return $this->_junctionTable = $table;
 	}
 
 /**
@@ -147,8 +147,8 @@ class BelongsToMany extends Association {
  */
 	public function attachTo(Query $query, array $options = []) {
 		parent::attachTo($query, $options);
-		$pivot = $this->pivot();
-		$belongsTo = $pivot->association($this->source()->alias());
+		$junction = $this->junction();
+		$belongsTo = $junction->association($this->source()->alias());
 		$cond = $belongsTo->_joinCondition(['foreignKey' => $belongsTo->foreignKey()]);
 
 		if (isset($options['includeFields'])) {
@@ -157,12 +157,12 @@ class BelongsToMany extends Association {
 
 		$options = ['conditions' => [$cond]] + compact('includeFields');
 		$this->target()
-			->association($pivot->alias())
+			->association($junction->alias())
 			->attachTo($query, $options);
 	}
 
 /**
- * Return false as join conditions are defined in the pivot table
+ * Return false as join conditions are defined in the junction table
  *
  * @param array $options list of options passed to attachTo method
  * @return boolean false
@@ -210,7 +210,7 @@ class BelongsToMany extends Association {
 		$fetchQuery = $this->_buildQuery($options);
 		$resultMap = [];
 		$key = $options['foreignKey'];
-		$property = $this->target()->association($this->pivot()->alias())->property();
+		$property = $this->target()->association($this->junction()->alias())->property();
 
 		foreach ($fetchQuery->execute() as $result) {
 			$resultMap[$result[$property][$key]][] = $result;
@@ -220,7 +220,7 @@ class BelongsToMany extends Association {
 	}
 
 /**
- * Clear out the data in the join/pivot table for a given entity.
+ * Clear out the data in the junction table for a given entity.
  *
  * @param Cake\ORM\Entity $entity The entity that started the cascading delete.
  * @param array $options The options for the original delete.
@@ -237,7 +237,7 @@ class BelongsToMany extends Association {
 
 		$conditions = array_merge($conditions, $this->conditions());
 
-		$table = $this->pivot();
+		$table = $this->junction();
 		if ($this->_cascadeCallbacks) {
 			foreach ($table->find('all')->where($conditions) as $related) {
 				$table->delete($related, $options);
@@ -397,7 +397,7 @@ class BelongsToMany extends Association {
  */
 	protected function _addFilteringCondition($query, $key, $filter) {
 		return $query->contain([
-			$this->_pivotAssociationName() => [
+			$this->_junctionAssociationName() => [
 				'conditions' => [$key . ' in' => $filter],
 				'matching' => true
 			]
@@ -412,46 +412,46 @@ class BelongsToMany extends Association {
  * @return string
  */
 	protected function _linkField($options) {
-		return sprintf('%s.%s', $this->_pivotAssociationName(), $options['foreignKey']);
+		return sprintf('%s.%s', $this->_junctionAssociationName(), $options['foreignKey']);
 	}
 
 /**
- * Returns the name of the association from the target table to the pivot table,
+ * Returns the name of the association from the target table to the junction table,
  * this name is used to generate alias in the query and to later on retrieve the
  * results.
  *
  * @return string
  */
-	protected function _pivotAssociationName() {
-		if (!$this->_pivotAssociationName) {
-			$this->_pivotAssociationName = $this->target()
-				->association($this->pivot()->alias())
+	protected function _junctionAssociationName() {
+		if (!$this->_junctionAssociationName) {
+			$this->_junctionAssociationName = $this->target()
+				->association($this->junction()->alias())
 				->name();
 		}
-		return $this->_pivotAssociationName;
+		return $this->_junctionAssociationName;
 	}
 
 /**
- * Sets the name of the pivot table.
+ * Sets the name of the junction table.
  * If no arguments are passed the current configured name is returned. A default
  * name based of the associated tables will be generated if none found.
  *
  * @param string $name
  * @return string
  */
-	protected function _joinTableName($name = null) {
+	protected function _junctionTableName($name = null) {
 		if ($name === null) {
-			if (empty($this->_joinTable)) {
+			if (empty($this->_junctionTableName)) {
 				$aliases = array_map('\Cake\Utility\Inflector::underscore', [
 					$sAlias = $this->source()->alias(),
 					$tAlias = $this->target()->alias()
 				]);
 				sort($aliases);
-				$this->_joinTable = implode('_', $aliases);
+				$this->_junctionTableName = implode('_', $aliases);
 			}
-			return $this->_joinTable;
+			return $this->_junctionTableName;
 		}
-		return $this->_joinTable = $name;
+		return $this->_junctionTableName = $name;
 	}
 
 /**
@@ -462,10 +462,10 @@ class BelongsToMany extends Association {
  */
 	protected function _options(array $opts) {
 		if (!empty($opts['through'])) {
-			$this->pivot($opts['through']);
+			$this->junction($opts['through']);
 		}
 		if (!empty($opts['joinTable'])) {
-			$this->_joinTableName($opts['joinTable']);
+			$this->_junctionTableName($opts['joinTable']);
 		}
 		$this->_externalOptions($opts);
 	}

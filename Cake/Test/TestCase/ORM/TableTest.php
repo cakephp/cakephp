@@ -455,7 +455,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(['b' => 'c'], $belongsToMany->conditions());
 		$this->assertEquals(['foo' => 'asc'], $belongsToMany->sort());
 		$this->assertSame($table, $belongsToMany->source());
-		$this->assertSame('things_tags', $belongsToMany->pivot()->table());
+		$this->assertSame('things_tags', $belongsToMany->junction()->table());
 	}
 
 /**
@@ -895,7 +895,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that the correct table and entity are loaded for the pivot association in
+ * Tests that the correct table and entity are loaded for the join association in
  * a belongsToMany setup
  *
  * @return void
@@ -1689,8 +1689,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = $query->first();
 		$table->delete($entity);
 
-		$pivot = $table->association('tags')->pivot();
-		$query = $pivot->find('all')->where(['article_id' => 1]);
+		$junction = $table->association('tags')->junction();
+		$query = $junction->find('all')->where(['article_id' => 1]);
 		$this->assertNull($query->execute()->one(), 'Should not find any rows.');
 	}
 

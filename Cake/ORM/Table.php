@@ -29,8 +29,8 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
 use Cake\ORM\Error\MissingEntityException;
-use Cake\Validation\Validator;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 
 /**
  * Represents a single database table.
@@ -634,7 +634,7 @@ class Table implements EventListener {
  *   and target tables in this association.
  * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
  *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
- *   When true pivot table records will be loaded and then deleted.
+ *   When true join/junction table records will be loaded and then deleted.
  * - conditions: array with a list of conditions to filter the join with
  * - sort: The order in which results for this association should be returned
  * - strategy: The strategy to be used for selecting results Either 'select'
@@ -1424,7 +1424,7 @@ class Table implements EventListener {
  * @throws Cake\Error\Exception when there are missing arguments, or when
  *  and & or are combined.
  */
-	public function _dynamicFinder($method, $args) {
+	protected function _dynamicFinder($method, $args) {
 		$method = Inflector::underscore($method);
 		preg_match('/^find_([\w]+)_by_/', $method, $matches);
 		if (empty($matches)) {

@@ -39,7 +39,7 @@ class Postgres extends \Cake\Database\Driver {
 		'schema' => 'public',
 		'port' => 5432,
 		'encoding' => 'utf8',
-		'timezone' => 'UTC',
+		'timezone' => null,
 		'flags' => [],
 		'init' => [],
 		'dsn' => null

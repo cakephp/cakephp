@@ -107,27 +107,27 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
- * Tests the pivot method
+ * Tests the junction method
  *
  * @return void
  */
-	public function testPivot() {
+	public function testJunction() {
 		$assoc = new BelongsToMany('Test', [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag
 		]);
-		$pivot = $assoc->pivot();
-		$this->assertInstanceOf('\Cake\ORM\Table', $pivot);
-		$this->assertEquals('ArticlesTags', $pivot->alias());
-		$this->assertEquals('articles_tags', $pivot->table());
-		$this->assertSame($this->article, $pivot->association('Articles')->target());
-		$this->assertSame($this->tag, $pivot->association('Tags')->target());
+		$junction = $assoc->junction();
+		$this->assertInstanceOf('\Cake\ORM\Table', $junction);
+		$this->assertEquals('ArticlesTags', $junction->alias());
+		$this->assertEquals('articles_tags', $junction->table());
+		$this->assertSame($this->article, $junction->association('Articles')->target());
+		$this->assertSame($this->tag, $junction->association('Tags')->target());
 
 		$belongsTo = '\Cake\ORM\Association\BelongsTo';
-		$this->assertInstanceOf($belongsTo, $pivot->association('Articles'));
-		$this->assertInstanceOf($belongsTo, $pivot->association('Tags'));
+		$this->assertInstanceOf($belongsTo, $junction->association('Articles'));
+		$this->assertInstanceOf($belongsTo, $junction->association('Tags'));
 
-		$this->assertSame($pivot, $this->tag->association('ArticlesTags')->target());
+		$this->assertSame($junction, $this->tag->association('ArticlesTags')->target());
 		$this->assertSame($this->article, $this->tag->association('Articles')->target());
 
 		$hasMany = '\Cake\ORM\Association\HasMany';
@@ -135,13 +135,13 @@ class BelongsToManyTest extends TestCase {
 		$this->assertInstanceOf($belongsToMany, $this->tag->association('Articles'));
 		$this->assertInstanceOf($hasMany, $this->tag->association('ArticlesTags'));
 
-		$this->assertSame($pivot, $assoc->pivot());
-		$pivot2 = TableRegistry::get('Foos');
-		$assoc->pivot($pivot2);
-		$this->assertSame($pivot2, $assoc->pivot());
+		$this->assertSame($junction, $assoc->junction());
+		$junction2 = TableRegistry::get('Foos');
+		$assoc->junction($junction2);
+		$this->assertSame($junction2, $assoc->junction());
 
-		$assoc->pivot('ArticlesTags');
-		$this->assertSame($pivot, $assoc->pivot());
+		$assoc->junction('ArticlesTags');
+		$this->assertSame($junction, $assoc->junction());
 	}
 
 /**
@@ -149,15 +149,15 @@ class BelongsToManyTest extends TestCase {
  *
  * @return void
  */
-	public function testPivotWithDefaultTableName() {
+	public function testJunctionWithDefaultTableName() {
 		$assoc = new BelongsToMany('Test', [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
 			'joinTable' => 'tags_articles'
 		]);
-		$pivot = $assoc->pivot();
-		$this->assertEquals('TagsArticles', $pivot->alias());
-		$this->assertEquals('tags_articles', $pivot->table());
+		$junction = $assoc->junction();
+		$this->assertEquals('TagsArticles', $junction->alias());
+		$this->assertEquals('tags_articles', $junction->table());
 	}
 
 /**
@@ -575,7 +575,7 @@ class BelongsToManyTest extends TestCase {
 			'sort' => ['id' => 'ASC'],
 		];
 		$association = new BelongsToMany('Tags', $config);
-		$association->pivot($articleTag);
+		$association->junction($articleTag);
 
 		$articleTag->expects($this->once())
 			->method('deleteAll')
@@ -602,7 +602,7 @@ class BelongsToManyTest extends TestCase {
 			'cascadeCallbacks' => true,
 		];
 		$association = new BelongsToMany('Tag', $config);
-		$association->pivot($articleTag);
+		$association->junction($articleTag);
 
 		$articleTagOne = new Entity(['article_id' => 1, 'tag_id' => 2]);
 		$articleTagTwo = new Entity(['article_id' => 1, 'tag_id' => 4]);
