@@ -1149,16 +1149,17 @@ class Table implements EventListener {
 		foreach ($assocs as $alias) {
 			$association = $this->association($alias);
 			$property = $association->property();
+			$passOptions = $options;
 
 			if (!$entity->dirty($property)) {
 				continue;
 			}
 
 			if (isset($associated[$alias])) {
-				$options = (array)$associated[$alias] + $options;
+				$passOptions = (array)$associated[$alias] + $options;
 			}
 
-			if (!$association->save($entity, $options)) {
+			if (!$association->save($entity, $passOptions)) {
 				return false;
 			}
 		}
