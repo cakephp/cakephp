@@ -1115,7 +1115,7 @@ class Table implements EventListener {
 				throw new \InvalidArgumentException($msg);
 			}
 
-			if ($association->isOwningSide()) {
+			if ($association->isOwningSide($this)) {
 				$children[] = $assoc;
 			} else {
 				$parents[] = $assoc;

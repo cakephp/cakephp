@@ -253,7 +253,7 @@ class BelongsToMany extends Association {
  *
  * @return boolean
  */
-	public function isOwningSide() {
+	public function isOwningSide(Table $side) {
 		return true;
 	}
 

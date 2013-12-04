@@ -21,6 +21,7 @@ use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
 /**
@@ -84,13 +85,14 @@ class HasOne extends Association {
 	}
 
 /**
- * Returns boolean true, as target rows could not exist or would miss information
- * should corresponding rows in source association not exist.
+ * Returns whether or not the passed table is the owning side for this
+ * association. This means that rows in the 'target' table would miss important
+ * or required information if the row in 'source' did not exist.
  *
  * @return boolean
  */
-	public function isOwningSide() {
-		return true;
+	public function isOwningSide(Table $side) {
+		return $side === $this->source();
 	}
 
 /**

@@ -20,6 +20,7 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
 /**
@@ -87,13 +88,14 @@ class BelongsTo extends Association {
 	}
 
 /**
- * Returns boolean false, as rows in source table could not exist or would miss
- * important information should corresponding row in target table not exist.
+ * Returns whether or not the passed table is the owning side for this
+ * association. This means that rows in the 'target' table would miss important
+ * or required information if the row in 'source' did not exist.
  *
  * @return boolean
  */
-	public function isOwningSide() {
-		return false;
+	public function isOwningSide(Table $side) {
+		return $side === $this->target();
 	}
 
 /**

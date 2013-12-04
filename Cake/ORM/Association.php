@@ -438,13 +438,13 @@ abstract class Association {
 	public abstract function cascadeDelete(Entity $entity, $options = []);
 
 /**
- * Returns whether or not the 'source' table is the owning side for this
+ * Returns whether or not the passed table is the owning side for this
  * association. This means that rows in the 'target' table would miss important
  * or required information if the row in 'source' did not exist.
  *
  * @return boolean
  */
-	public abstract function isOwningSide();
+	public abstract function isOwningSide(Table $side);
 
 /**
  * Proxies the saving operation for an entity to the target table
