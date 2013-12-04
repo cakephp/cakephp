@@ -98,7 +98,7 @@ class BelongsTo extends Association {
 
 /**
  * Takes an entity from the source table and looks if there is a field
- * matching the property name for this association. Found entity will be
+ * matching the property name for this association. The found entity will be
  * saved on the target table for this association by passing supplied
  * `$options`
  *
