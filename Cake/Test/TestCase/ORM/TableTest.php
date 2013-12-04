@@ -2557,7 +2557,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('articles');
 		$table->belongsToMany('tags');
 		$table->association('tags')
-			->pivot()
+			->junction()
 			->validator()
 			->add('article_id', 'num', ['rule' => ['comparison', '>', 4]]);
 
@@ -2595,7 +2595,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('articles');
 		$table->belongsToMany('tags');
 		$table->association('tags')
-			->pivot()
+			->junction()
 			->validator()
 			->add('tag_id', 'num', ['rule' => ['comparison', '>', 4]]);
 

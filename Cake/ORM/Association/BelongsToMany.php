@@ -346,20 +346,20 @@ class BelongsToMany extends Association {
  * @param \Cake\ORM\Entity $sourceEntity the entity from source table in this
  * association
  * @param array list of entities to link to link to the source entity using the
- * pivot table
+ * junction table
  * @return boolean success
  */
 	protected function _saveLinks(Entity $sourceEntity, $targetEntities, $options) {
 		$target = $this->target();
-		$pivot = $this->pivot();
+		$junction = $this->junction();
 		$source = $this->source();
-		$entityClass = $pivot->entityClass();
-		$belongsTo = $pivot->association($target->alias());
+		$entityClass = $junction->entityClass();
+		$belongsTo = $junction->association($target->alias());
 		$foreignKey = (array)$this->foreignKey();
 		$assocForeignKey = (array)$belongsTo->foreignKey();
 		$targetPrimaryKey = (array)$target->primaryKey();
 		$sourcePrimaryKey = (array)$source->primaryKey();
-		$jointProperty = $target->association($pivot->alias())->property();
+		$jointProperty = $target->association($junction->alias())->property();
 
 		foreach ($targetEntities as $k => $e) {
 			$joint = $e->get($jointProperty);
@@ -373,7 +373,7 @@ class BelongsToMany extends Association {
 				$sourceEntity->extract($sourcePrimaryKey)
 			));
 			$joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)));
-			$saved = $pivot->save($joint, $options);
+			$saved = $junction->save($joint, $options);
 
 			if (!$saved && !empty($options['atomic'])) {
 				return false;
