@@ -1022,7 +1022,10 @@ class DboSourceTest extends CakeTestCase {
  * Data provider for testSameFieldsCacheKey.
  *
  * - One valid unqualified field.
+ * - One valid qualified field.
  * - Multiple valid unqualified fields.
+ * - Multiple valid qualified fields.
+ * - Empty field (all fields).
  *
  * @return array
  */
@@ -1237,6 +1240,12 @@ class DboSourceTest extends CakeTestCase {
 				array('Article.title', 'body', 0, 'Article.title'),
 				array('Article.title', 'body', false, 'Article.title'),
 				array('Article.title', 'body', null, 'Article.title'),
+			)),
+
+			// Empty field (all fields).
+			array(array(
+				'',
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'),
 			))
 		);
 	}

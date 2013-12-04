@@ -2390,7 +2390,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Converts model virtual fields into sql expressions to be fetched later.
+ * Converts model virtual fields into SQL expressions to be fetched later.
  *
  * @param Model $Model
  * @param string $alias Alias table name
@@ -2433,6 +2433,8 @@ class DboSource extends DataSource {
 
 		if (!$allFields) {
 			$fields = $this->_normalizeFields($fields);
+		} else {
+			$fields = array_keys($Model->schema());
 		}
 
 		$cacheKey = array(
@@ -2450,10 +2452,6 @@ class DboSource extends DataSource {
 
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
-		}
-
-		if ($allFields) {
-			$fields = array_keys($Model->schema());
 		}
 
 		if (!empty($virtualFields)) {
