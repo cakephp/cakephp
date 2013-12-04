@@ -43,7 +43,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			'schema' => 'public',
 			'port' => 5432,
 			'encoding' => 'utf8',
-			'timezone' => 'UTC',
+			'timezone' => null,
 			'flags' => [],
 			'init' => [],
 			'dsn' => 'pgsql:host=localhost;port=5432;dbname=cake'
@@ -65,8 +65,7 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 
 		$connection->expects($this->at(1))->method('exec')->with('SET NAMES utf8');
 		$connection->expects($this->at(3))->method('exec')->with('SET search_path TO public');
-		$connection->expects($this->at(5))->method('exec')->with('SET timezone = UTC');
-		$connection->expects($this->exactly(3))->method('exec');
+		$connection->expects($this->exactly(2))->method('exec');
 
 		$driver->expects($this->once())->method('_connect')
 			->with($expected);
