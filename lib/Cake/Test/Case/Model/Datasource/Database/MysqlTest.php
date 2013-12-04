@@ -3268,7 +3268,7 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
- * test fields generating usable virtual fields to use in query
+ * Test fields generating usable virtual fields to use in query.
  *
  * @return void
  */
@@ -3306,10 +3306,11 @@ class MysqlTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Dbo->fields($Article, null, array('Article.title', 'Article.this_moment'));
+		$result = $this->Dbo->fields($Article, null, array('Article.title', 'Article.this_moment', 'two'));
 		$expected = array(
 			'`Article`.`title`',
 			'(NOW()) AS  `Article__this_moment`',
+			'(1 + 1) AS  `Article__two`'
 		);
 		$this->assertEquals($expected, $result);
 
@@ -3335,6 +3336,31 @@ class MysqlTest extends CakeTestCase {
 			'(NOW()) AS  `Article__this_moment`',
 			'(1 + 1) AS  `Article__two`',
 			"(SELECT COUNT(*) FROM $commentsTable WHERE `Article`.`id` = `$commentsTable`.`article_id`) AS  `Article__comment_count`"
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test fields generating usable virtual fields, with objects made from DboSource::expression.
+ *
+ * @return void
+ */
+	public function testVirtualFieldsWithExpression() {
+		$this->Model = new TestModel;
+		$this->Model->virtualFields = array(
+			'this_moment' => 'NOW()',
+			'this_other_moment' => 'NOW()',
+			'two' => '1 + 1'
+		);
+		$expression = $this->Dbo->expression("CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col");
+
+		$result = $this->Dbo->fields($this->Model, null, array('id', $expression, 'this_moment', 'this_other_moment'));
+
+		$expected = array(
+			'`TestModel`.`id`',
+			"CASE Sample.id WHEN 1 THEN 'Id One' ELSE 'Other Id' END AS case_col",
+			'(NOW()) AS  `TestModel__this_moment`',
+			'(NOW()) AS  `TestModel__this_other_moment`',
 		);
 		$this->assertEquals($expected, $result);
 	}

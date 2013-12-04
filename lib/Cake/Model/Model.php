@@ -1495,27 +1495,63 @@ class Model extends Object implements CakeEventListener {
 	}
 
 /**
- * Returns the expression for a model virtual field
+ * Returns the expression for a model virtual field.
  *
  * @param string $field Name of field to look for
- * @return mixed If $field is string expression bound to virtual field $field
- *    If $field is null, returns an array of all model virtual fields
- *    or false if none $field exist.
+ * @return mixed If $field is not null, string expression containing the virtual field, or false otherwise.
+ *    If $field is null, returns an array of all model virtual fields.
  */
 	public function getVirtualField($field = null) {
 		if (!$field) {
-			return empty($this->virtualFields) ? false : $this->virtualFields;
+			return !empty($this->virtualFields) ? $this->virtualFields : array();
 		}
 
 		if ($this->isVirtualField($field)) {
 			if (strpos($field, '.') !== false) {
-				list(, $field) = pluginSplit($field);
+				list(, $field) = explode('.', $field);
 			}
 
 			return $this->virtualFields[$field];
 		}
 
 		return false;
+	}
+
+/**
+ * Extracts model virtual fields from a list of fields.
+ *
+ * The valid virtual fields are removed from the fields list.
+ *
+ * Note: unserialize/serialize is used because $fields can contain expressions.
+ *
+ * @param array $fields Fields used to extract the virtual fields from.
+ * @return array Array containing virtual fields
+ */
+	public function extractVirtualFields(&$fields) {
+		if (empty($fields)) {
+			return array();
+		}
+
+		if (empty($this->virtualFields)) {
+			return array();
+		}
+
+		$modelVirtualFields = $this->virtualFields;
+		$keys = array_keys($modelVirtualFields);
+
+		$virtualFields = array_combine($keys, $keys);
+		foreach ($virtualFields as $field) {
+			$virtualFields["{$field} "] = $this->alias . '.' . $field;
+		}
+
+		$serializedVirtualFields = array_map('serialize', $virtualFields);
+		$serializedFields = array_map('serialize', (array)$fields);
+		$serializedValidVirtualFields = array_intersect($serializedVirtualFields, (array)$serializedFields);
+
+		$fields = array_values(array_map('unserialize', array_diff($serializedFields, $serializedValidVirtualFields)));
+		$validVirtualFields = array_map('trim', array_keys(array_map('unserialize', $serializedValidVirtualFields)));
+
+		return array_intersect_key($modelVirtualFields, array_flip($validVirtualFields));
 	}
 
 /**

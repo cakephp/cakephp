@@ -786,6 +786,7 @@ class DboSource extends DataSource {
 
 /**
  * Returns a quoted name of $data for use in an SQL statement.
+ *
  * Strips fields out of SQL functions before quoting.
  *
  * Results of this method are stored in a memory cache. This improves performance, but
@@ -1970,6 +1971,7 @@ class DboSource extends DataSource {
 				$updates[] = $quoted . ' = NULL';
 				continue;
 			}
+
 			$update = $quoted . ' = ';
 
 			if ($quoteValues) {
@@ -1983,8 +1985,10 @@ class DboSource extends DataSource {
 			} else {
 				$update .= $value;
 			}
+
 			$updates[] = $update;
 		}
+
 		return $updates;
 	}
 
@@ -2009,6 +2013,7 @@ class DboSource extends DataSource {
 			$Model->onError();
 			return false;
 		}
+
 		return true;
 	}
 
@@ -2043,9 +2048,11 @@ class DboSource extends DataSource {
 					unset($conditions[$originalField]);
 				}
 			}
+
 			if ($noJoin === true) {
 				return $this->conditions($conditions);
 			}
+
 			$idList = $Model->find('all', array(
 				'fields' => "{$Model->alias}.{$Model->primaryKey}",
 				'conditions' => $conditions
@@ -2179,6 +2186,7 @@ class DboSource extends DataSource {
 		if ($this->fullDebug) {
 			$this->logQuery('BEGIN');
 		}
+
 		return $this->_transactionStarted = $this->_connection->beginTransaction();
 	}
 
@@ -2308,17 +2316,20 @@ class DboSource extends DataSource {
 		if (!empty($conditions)) {
 			return $conditions;
 		}
+
 		$exists = $Model->exists();
 		if (!$exists && $conditions !== null) {
 			return false;
 		} elseif (!$exists) {
 			return null;
 		}
+
 		$alias = $Model->alias;
 
 		if (!$useAlias) {
 			$alias = $this->fullTableName($Model, false);
 		}
+
 		return array("{$alias}.{$Model->primaryKey}" => $Model->getID());
 	}
 
@@ -2398,14 +2409,16 @@ class DboSource extends DataSource {
  * @return array
  */
 	protected function _buildVirtualFields(Model $Model, $alias, $fields) {
+		if (empty($fields)) {
+			return array();
+		}
+
 		$virtualFields = array();
-		foreach ($fields as $field) {
-			if (strpos($field, '.') !== false) {
-				$field = str_replace($Model->alias . '.', '', $field);
-			}
-			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
-			$expression = $this->_quoteFields($Model->getVirtualField($field));
-			$virtualFields[] = '(' . $expression . ") {$this->alias} {$virtualField}";
+		foreach ($fields as $field => $expression) {
+			$field = $this->name($alias . $this->virtualFieldSeparator . $field);
+			$expression = $this->_quoteFields($expression);
+
+			$virtualFields[] = '(' . $expression . ") {$this->alias} {$field}";
 		}
 
 		return $virtualFields;
@@ -2414,6 +2427,7 @@ class DboSource extends DataSource {
 /**
  * Generates the fields list of an SQL query.
  *
+ * If fields is empty, all Model fields will be used.
  * It also takes care of building virtual fields.
  *
  * @param Model $Model
@@ -2427,14 +2441,23 @@ class DboSource extends DataSource {
 			$alias = $Model->alias;
 		}
 
-		$virtualFields = $Model->getVirtualField();
-
 		$allFields = empty($fields);
 
-		if (!$allFields) {
-			$fields = $this->_normalizeFields($fields);
-		} else {
+		// Fields
+		if ($allFields) {
 			$fields = array_keys($Model->schema());
+		} else {
+			$fields = $this->_normalizeFields($fields);
+		}
+
+		// Virtual fields
+		if (!$allFields && !in_array('*', $fields) && !in_array($Model->alias . '.*', $fields)) {
+			$virtualFields = $Model->extractVirtualFields($fields);
+		} else {
+			$virtualFields = $Model->getVirtualField();
+		}
+		if (!empty($virtualFields)) {
+			$virtualFields = $this->_buildVirtualFields($Model, $alias, $virtualFields);
 		}
 
 		$cacheKey = array(
@@ -2452,21 +2475,6 @@ class DboSource extends DataSource {
 
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
 			return $return;
-		}
-
-		if (!empty($virtualFields)) {
-			$virtualFields = array_keys($virtualFields);
-
-			if (!$allFields && !(in_array('*', $fields) || in_array($Model->alias . '.*', $fields))) {
-				$qualifiedVirtualFields = $virtualFields;
-				foreach ($virtualFields as $field) {
-					$qualifiedVirtualFields[] = $Model->alias . '.' . $field;
-				}
-
-				$virtualFields = array_intersect($qualifiedVirtualFields, $fields);
-			}
-
-			$fields = array_values(array_diff($fields, $virtualFields));
 		}
 
 		if ($quote && !empty($fields) && !in_array($fields[0], array('*', 'COUNT(*)'))) {
@@ -2543,7 +2551,7 @@ class DboSource extends DataSource {
 		}
 
 		if (!empty($virtualFields)) {
-			$fields = array_merge($fields, $this->_buildVirtualFields($Model, $alias, $virtualFields));
+			$fields = array_merge($fields, $virtualFields);
 		}
 
 		return $this->cacheMethod(__FUNCTION__, $cacheKey, $fields);

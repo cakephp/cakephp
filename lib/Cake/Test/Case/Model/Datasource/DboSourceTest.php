@@ -1025,6 +1025,7 @@ class DboSourceTest extends CakeTestCase {
  * - One valid qualified field.
  * - Multiple valid unqualified fields.
  * - Multiple valid qualified fields.
+ * - Multiple valid unqualified and qualified fields.
  * - Empty field (all fields).
  *
  * @return array
@@ -1245,7 +1246,11 @@ class DboSourceTest extends CakeTestCase {
 			// Empty field (all fields).
 			array(array(
 				'',
+				'id, user_id, title, body, published, created, updated',
+				array('id, user_id, title, body, published, created, updated'),
 				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'),
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'),
+				array('id', false, null, '', '0', 0, 'id', 'user_id', 'title', 'body', 'published', 'created', 'updated'),
 			))
 		);
 	}
@@ -1270,6 +1275,328 @@ class DboSourceTest extends CakeTestCase {
 		Cache::delete('method_cache', '_cake_core_');
 		DboTestSource::$methodCache = array();
 		$Article = ClassRegistry::init('Article');
+
+		foreach ($fieldsList as $fields) {
+			$this->testDb->fields($Article, null, $fields);
+		}
+
+		$this->assertEquals(1, count(DboSource::$methodCache['fields']));
+	}
+
+/**
+ * Data provider for testSameVirtualFieldsCacheKey.
+ *
+ * - One valid unqualified virtual field.
+ * - One valid qualified virtual field.
+ * - Multiple valid unqualified virtual fields.
+ * - Multiple valid qualified virtual fields.
+ * - Multiple valid unqualified and qualified vitual fields.
+ * - One valid unqualified field.
+ * - One valid qualified field.
+ * - Multiple valid unqualified fields.
+ * - Multiple valid qualified fields.
+ * - Multiple valid unqualified and qualified fields.
+ * - Multiple valid unqualified and qualified fields, including qualified/unqualified virtual fields.
+ * - Empty field (all fields), including qualified/unqualified virtual fields.
+ *
+ * @return array
+ */
+	public function virtualFieldsCacheKey() {
+		return array(
+			// One valid unqualified virtual field
+			array(array(
+				// correct
+				'two',
+				array('two'),
+
+				// duplicated
+				'two, two',
+				array('two', 'two'),
+
+				// empty
+				'two, ',
+				'two,  ',
+				'two, 0',
+				array('two, '),
+				array('two,  '),
+				array('two, 0'),
+				array('two', ''),
+				array('two', ' '),
+				array('two', '  '),
+				array('two', '0'),
+				array('two', 0),
+				array('two', false),
+				array('two', null),
+
+				// empty + duplicated
+				'two, , two',
+				'two,  , two',
+				'two, 0, two',
+				array('two, , two'),
+				array('two,  , two'),
+				array('two, 0, two'),
+				array('two', '', 'two'),
+				array('two', ' ', 'two'),
+				array('two', '  ', 'two'),
+				array('two', '0', 'two'),
+				array('two', 0, 'two'),
+				array('two', false, 'two'),
+				array('two', null, 'two'),
+			)),
+
+			// One valid qualified virtual field
+			array(array(
+				// correct
+				'Article.two',
+				array('Article.two'),
+
+				// duplicated
+				'Article.two, Article.two',
+				array('Article.two', 'Article.two'),
+
+				// empty
+				'Article.two, ',
+				'Article.two,  ',
+				'Article.two, 0',
+				array('Article.two, '),
+				array('Article.two,  '),
+				array('Article.two, 0'),
+				array('Article.two', ''),
+				array('Article.two', ' '),
+				array('Article.two', '  '),
+				array('Article.two', '0'),
+				array('Article.two', 0),
+				array('Article.two', false),
+				array('Article.two', null),
+
+				// empty + duplicated
+				'Article.two, , Article.two',
+				'Article.two,  , Article.two',
+				'Article.two, 0, Article.two',
+				array('Article.two, , Article.two'),
+				array('Article.two,  , Article.two'),
+				array('Article.two, 0, Article.two'),
+				array('Article.two', '', 'Article.two'),
+				array('Article.two', ' ', 'Article.two'),
+				array('Article.two', '  ', 'Article.two'),
+				array('Article.two', '0', 'Article.two'),
+				array('Article.two', 0, 'Article.two'),
+				array('Article.two', false, 'Article.two'),
+				array('Article.two', null, 'Article.two'),
+			)),
+
+			// Multiple valid unqualified virtual fields
+			array(array(
+				// correct
+				'two, this_moment',
+				array('two, this_moment'),
+				array('two', 'this_moment'),
+
+				// duplicated
+				'two, this_moment, two',
+				array('two, this_moment, two'),
+				array('two', 'this_moment', 'two'),
+
+				// empty
+				'two, this_moment, ',
+				'two, this_moment,  ',
+				'two, this_moment, 0',
+				array('two, this_moment, '),
+				array('two, this_moment,  '),
+				array('two, this_moment, 0'),
+				array('two', 'this_moment', ''),
+				array('two', 'this_moment', ' '),
+				array('two', 'this_moment', '  '),
+				array('two', 'this_moment', '0'),
+				array('two', 'this_moment', 0),
+				array('two', 'this_moment', false),
+				array('two', 'this_moment', null),
+
+				// empty + duplicated
+				'two, this_moment, , two',
+				'two, this_moment,  , two',
+				'two, this_moment, 0, two',
+				array('two, this_moment, , two'),
+				array('two, this_moment,  , two'),
+				array('two, this_moment, 0, two'),
+				array('two', 'this_moment', '', 'two'),
+				array('two', 'this_moment', ' ', 'two'),
+				array('two', 'this_moment', '  ', 'two'),
+				array('two', 'this_moment', '0', 'two'),
+				array('two', 'this_moment', 0, 'two'),
+				array('two', 'this_moment', false, 'two'),
+				array('two', 'this_moment', null, 'two'),
+			)),
+
+			// Multiple valid qualified virtual fields
+			array(array(
+				// correct
+				'Article.two, Article.this_moment',
+				array('Article.two, Article.this_moment'),
+				array('Article.two', 'Article.this_moment'),
+
+				// duplicated
+				'Article.two, Article.this_moment, Article.two',
+				array('Article.two, Article.this_moment, Article.two'),
+				array('Article.two', 'Article.this_moment', 'Article.two'),
+
+				// empty
+				'Article.two, Article.this_moment, ',
+				'Article.two, Article.this_moment,  ',
+				'Article.two, Article.this_moment, 0',
+				array('Article.two, Article.this_moment, '),
+				array('Article.two, Article.this_moment,  '),
+				array('Article.two, Article.this_moment, 0'),
+				array('Article.two', 'Article.this_moment', ''),
+				array('Article.two', 'Article.this_moment', ' '),
+				array('Article.two', 'Article.this_moment', '  '),
+				array('Article.two', 'Article.this_moment', '0'),
+				array('Article.two', 'Article.this_moment', 0),
+				array('Article.two', 'Article.this_moment', false),
+				array('Article.two', 'Article.this_moment', null),
+
+				// empty + duplicated
+				'Article.two, Article.this_moment, , Article.two',
+				'Article.two, Article.this_moment,  , Article.two',
+				'Article.two, Article.this_moment, 0, Article.two',
+				array('Article.two, Article.this_moment, , Article.two'),
+				array('Article.two, Article.this_moment,  , Article.two'),
+				array('Article.two, Article.this_moment, 0, Article.two'),
+				array('Article.two', 'Article.this_moment', '', 'Article.two'),
+				array('Article.two', 'Article.this_moment', ' ', 'Article.two'),
+				array('Article.two', 'Article.this_moment', '  ', 'Article.two'),
+				array('Article.two', 'Article.this_moment', '0', 'Article.two'),
+				array('Article.two', 'Article.this_moment', 0, 'Article.two'),
+				array('Article.two', 'Article.this_moment', false, 'Article.two'),
+				array('Article.two', 'Article.this_moment', null, 'Article.two'),
+			)),
+
+			// Multiple valid unqualified and qualified virtual fields
+			array(array(
+				// correct
+				'Article.two, this_moment',
+				array('Article.two, this_moment'),
+				array('Article.two', 'this_moment'),
+
+				// duplicated
+				'Article.two, this_moment, Article.two',
+				array('Article.two, this_moment, Article.two'),
+				array('Article.two', 'this_moment', 'Article.two'),
+
+				// empty
+				'Article.two, this_moment, ',
+				'Article.two, this_moment,  ',
+				'Article.two, this_moment, 0',
+				array('Article.two, this_moment, '),
+				array('Article.two, this_moment,  '),
+				array('Article.two, this_moment, 0'),
+				array('Article.two', 'this_moment', ''),
+				array('Article.two', 'this_moment', ' '),
+				array('Article.two', 'this_moment', '  '),
+				array('Article.two', 'this_moment', '0'),
+				array('Article.two', 'this_moment', 0),
+				array('Article.two', 'this_moment', false),
+				array('Article.two', 'this_moment', null),
+
+				// empty + duplicated
+				'Article.two, this_moment, , Article.two',
+				'Article.two, this_moment,  , Article.two',
+				'Article.two, this_moment, 0, Article.two',
+				array('Article.two, this_moment, , Article.two'),
+				array('Article.two, this_moment,  , Article.two'),
+				array('Article.two, this_moment, 0, Article.two'),
+				array('Article.two', 'this_moment', '', 'Article.two'),
+				array('Article.two', 'this_moment', ' ', 'Article.two'),
+				array('Article.two', 'this_moment', '  ', 'Article.two'),
+				array('Article.two', 'this_moment', '0', 'Article.two'),
+				array('Article.two', 'this_moment', 0, 'Article.two'),
+				array('Article.two', 'this_moment', false, 'Article.two'),
+				array('Article.two', 'this_moment', null, 'Article.two'),
+			)),
+
+			// One valid unqualified field
+			array(array(
+				'title, 0, , title',
+				array('title, 0, , title'),
+				array('title', null, false, 0, '0', '', 'title'),
+			)),
+
+			// One valid qualified field
+			array(array(
+				'Article.title, 0, , Article.title',
+				array('Article.title, 0, , Article.title'),
+				array('Article.title', null, false, 0, '0', '', 'Article.title'),
+			)),
+
+			// Multiple valid unqualified fields
+			array(array(
+				'title, 0, , title, body',
+				array('title, body, 0, , title'),
+				array('title', null, 'body', false, 0, '0', '', 'title'),
+			)),
+
+			// Multiple valid qualified fields
+			array(array(
+				'Article.title, Article.body, 0, , Article.title',
+				array('Article.title, 0, Article.body, Article.title'),
+				array('Article.title', null, false, 'Article.body', 0, '0', '', 'Article.title'),
+			)),
+
+			// Multiple valid unqualified and qualified fields
+			array(array(
+				'Article.title, body, 0, , Article.title',
+				array('Article.title, 0, body, Article.title'),
+				array('Article.title', null, false, 'body', 0, '0', '', 'Article.title'),
+			)),
+
+			// Multiple valid unqualified and qualified fields, including qualified/unqualified virtual fields.
+			array(array(
+				'Article.title, body, 0, , Article.title',
+				array('Article.title, 0, body, Article.title'),
+				array('Article.title', null, false, 'body', 0, '0', '', 'Article.title'),
+			)),
+
+			// Empty field (all fields), including qualified/unqualified virtual fields.
+			array(array(
+				'',
+				'id, user_id, title, body, published, created, updated, this_moment, this_other_moment, two',
+				'id, user_id, title, body, published, created, updated, this_moment, this_other_moment, two, Article.this_moment, this_other_moment, two',
+				array('id, user_id, title, body, published, created, updated, this_moment, this_other_moment, two'),
+				array('id, user_id, title, body, published, created, updated, this_moment, this_other_moment, two, this_moment, this_other_moment, Article.two'),
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'this_moment', 'this_other_moment', 'two'),
+				array('id', 'id', '', false, null, 0, '0', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'this_moment', 'this_other_moment', 'two'),
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'this_moment', 'this_other_moment', 'two', 'Article.this_moment', 'Article.this_other_moment', 'Article.two'),
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'this_moment', 'this_other_moment', 'two', 'Article.this_moment', 'this_other_moment', 'Article.two'),
+			))
+		);
+	}
+
+/**
+ * Test that fields() method builds the same cache key when using virtual fields.
+ *
+ * Build the same cache key when the fields:
+ *  - is a string containing fields separated by comma.
+ *  - is an array with one element being a string containing fields separated by comma.
+ *  - is an array containing fields.
+ *
+ * In every case, the cache key will be the same when:
+ *  - fields (which can contain expressions) are duplicated.
+ *  - fields are empty.
+ *  - virtual fields are qualified or unqualified.
+ *
+ * @dataProvider virtualFieldsCacheKey
+ * @return void
+ */
+	public function testSameVirtualFieldsCacheKey($fieldsList) {
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+			'this_other_moment' => 'NOW()',
+			'two' => '1 + 1'
+		);
 
 		foreach ($fieldsList as $fields) {
 			$this->testDb->fields($Article, null, $fields);
