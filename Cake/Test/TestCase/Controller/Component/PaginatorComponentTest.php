@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Controller\Component;
 
-use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\ComponentRegistry;
+use Cake\Controller\Component\PaginatorComponent;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;

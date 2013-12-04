@@ -16,7 +16,7 @@
  * @since         CakePHP(tm) v 2.2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\ORM\Validaton;
+namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationRule;

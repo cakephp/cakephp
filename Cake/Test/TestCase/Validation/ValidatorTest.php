@@ -197,7 +197,6 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($validator->isEmptyAllowed('title', true));
 	}
 
-
 /**
  * Tests errors generated when a field is not allowed to be empty
  *
@@ -324,7 +323,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$errors = $validator->errors(['email' => '!', 'title' => 'bar']);
 		$expected = [
 			'email' => ['alpha' => 'The provided value is invalid'],
-			'title' => ['cool' =>  "That ain't cool, yo"]
+			'title' => ['cool' => "That ain't cool, yo"]
 		];
 		$this->assertEquals($expected, $errors);
 	}
@@ -357,7 +356,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$validator->provider('thing', $thing);
 		$errors = $validator->errors(['email' => '!', 'title' => 'bar']);
 		$expected = [
-			'title' => ['cool' =>  "That ain't cool, yo"]
+			'title' => ['cool' => "That ain't cool, yo"]
 		];
 		$this->assertEquals($expected, $errors);
 	}

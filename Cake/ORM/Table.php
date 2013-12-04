@@ -29,8 +29,8 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
 use Cake\ORM\Error\MissingEntityException;
-use Cake\Validation\Validator;
 use Cake\Utility\Inflector;
+use Cake\Validation\Validator;
 
 /**
  * Represents a single database table.
@@ -1274,7 +1274,7 @@ class Table implements EventListener {
  * @throws Cake\Error\Exception when there are missing arguments, or when
  *  and & or are combined.
  */
-	public function _dynamicFinder($method, $args) {
+	protected function _dynamicFinder($method, $args) {
 		$method = Inflector::underscore($method);
 		preg_match('/^find_([\w]+)_by_/', $method, $matches);
 		if (empty($matches)) {
