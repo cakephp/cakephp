@@ -4634,6 +4634,34 @@ class FormHelperTest extends CakeTestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select(
+			'Model.multi_field',
+			array('a>b' => 'first', 'a<b' => 'second', 'a"b' => 'third'),
+			array('multiple' => true)
+		);
+		$expected = array(
+			'input' => array(
+				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '',
+				'id' => 'ModelMultiField_'
+			),
+			array('select' => array('name' => 'data[Model][multi_field][]',
+				'multiple' => 'multiple', 'id' => 'ModelMultiField'
+			)),
+			array('option' => array('value' => 'a&gt;b')),
+			'first',
+			'/option',
+			array('option' => array('value' => 'a&lt;b')),
+			'second',
+			'/option',
+			array('option' => array(
+				'value' => 'a&quot;b'
+			)),
+			'third',
+			'/option',
+			'/select'
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**

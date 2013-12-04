@@ -2733,6 +2733,9 @@ class FormHelper extends AppHelper {
 						$item = $this->Html->useTag('checkboxmultiple', $name, $htmlOptions);
 						$select[] = $this->Html->div($attributes['class'], $item . $label);
 					} else {
+						if ($attributes['escape']) {
+							$name = h($name);
+						}
 						$select[] = $this->Html->useTag('selectoption', $name, $htmlOptions, $title);
 					}
 				}
