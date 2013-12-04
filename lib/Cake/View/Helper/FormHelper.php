@@ -1514,6 +1514,7 @@ class FormHelper extends AppHelper {
 			$value = $value ? 1 : 0;
 		}
 
+		$this->_domIdSuffixes = array();
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue, 'disabled' => false);
 
@@ -1524,9 +1525,7 @@ class FormHelper extends AppHelper {
 			if ($disabled && (!is_array($disabled) || in_array((string)$optValue, $disabled, !$isNumeric))) {
 				$optionsHere['disabled'] = true;
 			}
-			$tagName = Inflector::camelize(
-				$attributes['id'] . '_' . Inflector::slug($optValue)
-			);
+			$tagName = $attributes['id'] . $this->domIdSuffix($optValue);
 
 			if ($label) {
 				$labelOpts = is_array($label) ? $label : array();
