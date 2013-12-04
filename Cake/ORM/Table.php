@@ -121,7 +121,7 @@ class Table implements EventListener {
 /**
  * The name of the field that represents the primary key in the table
  *
- * @var string
+ * @var array
  */
 	protected $_primaryKey;
 
@@ -937,7 +937,7 @@ class Table implements EventListener {
  * in the passed `$entity` whenever the property defined for the association
  * is marked as dirty. Associated records are saved recursively unless told
  * otherwise. If an array, it will be interpreted as the list of associations
- * to be saved. It is possible to different options for saving on associated
+ * to be saved. It is possible to provide different options for saving on associated
  * table objects using this key by making the custom options the array value.
  * If false no associated records will be saved. (default: true)
  *
@@ -1128,7 +1128,7 @@ class Table implements EventListener {
  * Runs through a list of aliases and for each of them calls the `save()` method
  * on the corresponding association objects passing $entity and $options as values.
  * If the alias for one of the associations contains an array as values in $assocs,
- * $options will me merge to this value before passed to the save operation.
+ * $options will be merged to this value before passed to the save operation.
  *
  *
  * @param array $assocs list of association aliases.

@@ -264,7 +264,7 @@ class BelongsToMany extends Association {
  * `$options`
  *
  * Using this save function will only create new links between each side
- * of this association. It will no destroy existing ones even though they
+ * of this association. It will not destroy existing ones even though they
  * may not be present in the array of entities to be saved.
  *
  * @param \Cake\ORM\Entity $entity an entity from the source table

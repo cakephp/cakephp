@@ -475,7 +475,7 @@ class EntityTest extends TestCase {
 		$entity->dirty('author_id', false);
 		$this->assertFalse($entity->dirty());
 	}
-	
+
 /**
  * Tests dirty() when altering properties values and adding new ones
  *

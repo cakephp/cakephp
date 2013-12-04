@@ -457,7 +457,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * argument, it will return whether the property was modified or not
  * after the object creation.
  *
- * When called with no arguments it will return whether or not there is any
+ * When called with no arguments it will return whether or not there are any
  * dirty property in the entity
  *
  * @param string $property the field to set or check status for

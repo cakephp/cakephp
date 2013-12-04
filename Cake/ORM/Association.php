@@ -437,7 +437,6 @@ abstract class Association {
  */
 	public abstract function cascadeDelete(Entity $entity, $options = []);
 
-
 /**
  * Returns whether or not the 'source' table is the owning side for this
  * association. This means that rows in the 'target' table would miss important
