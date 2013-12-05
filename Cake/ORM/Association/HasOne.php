@@ -19,7 +19,9 @@ namespace Cake\ORM\Association;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
+use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
 /**
@@ -80,6 +82,50 @@ class HasOne extends Association {
 			$this->_propertyName = Inflector::underscore(Inflector::singularize($this->_name));
 		}
 		return $this->_propertyName;
+	}
+
+/**
+ * Returns whether or not the passed table is the owning side for this
+ * association. This means that rows in the 'target' table would miss important
+ * or required information if the row in 'source' did not exist.
+ *
+ * @return boolean
+ */
+	public function isOwningSide(Table $side) {
+		return $side === $this->source();
+	}
+
+/**
+ * Takes an entity from the source table and looks if there is a field
+ * matching the property name for this association. The found entity will be
+ * saved on the target table for this association by passing supplied
+ * `$options`
+ *
+ * @param \Cake\ORM\Entity $entity an entity from the source table
+ * @param array|\ArrayObject $options options to be passed to the save method in
+ * the target table
+ * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * the saved entity
+ * @see Table::save()
+ */
+	public function save(Entity $entity, $options = []) {
+		$targetEntity = $entity->get($this->property());
+		if (!$targetEntity) {
+			return $entity;
+		}
+
+		$properties = array_combine(
+			(array)$this->foreignKey(),
+			$entity->extract((array)$this->source()->primaryKey())
+		);
+		$targetEntity->set($properties);
+
+		if (!$this->target()->save($targetEntity, $options)) {
+			$targetEntity->unsetProperty(array_keys($properties));
+			return false;
+		}
+
+		return $entity;
 	}
 
 /**

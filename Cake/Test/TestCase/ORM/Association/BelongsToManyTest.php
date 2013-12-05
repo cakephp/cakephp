@@ -43,6 +43,9 @@ class BelongsToManyTest extends TestCase {
 		$this->tag->schema([
 			'id' => ['type' => 'integer'],
 			'name' => ['type' => 'string'],
+			'_constraints' => [
+				'primary' => ['type' => 'primary', 'columns' => ['id']]
+			]
 		]);
 		$this->article = $this->getMock(
 			'Cake\ORM\Table', ['find', 'delete'], [['alias' => 'Articles', 'table' => 'articles']]
@@ -50,6 +53,9 @@ class BelongsToManyTest extends TestCase {
 		$this->article->schema([
 			'id' => ['type' => 'integer'],
 			'name' => ['type' => 'string'],
+			'_constraints' => [
+				'primary' => ['type' => 'primary', 'columns' => ['id']]
+			]
 		]);
 		TableRegistry::set('Articles', $this->article);
 	}
@@ -171,7 +177,10 @@ class BelongsToManyTest extends TestCase {
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer']
+				'tag_id' => ['type' => 'integer'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
+				]
 			]
 		]);
 		$association = new BelongsToMany('Tags', $config);

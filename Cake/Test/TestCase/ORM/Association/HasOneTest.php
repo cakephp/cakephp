@@ -39,6 +39,9 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'username' => ['type' => 'string'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id']]
+				]
 			]
 		]);
 		$this->profile = TableRegistry::get('Profiles', [
@@ -46,6 +49,9 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 				'id' => ['type' => 'integer'],
 				'first_name' => ['type' => 'string'],
 				'user_id' => ['type' => 'integer'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id']]
+				]
 			]
 		]);
 	}

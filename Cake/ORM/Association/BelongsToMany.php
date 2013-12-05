@@ -227,12 +227,14 @@ class BelongsToMany extends Association {
  * @return boolean Success.
  */
 	public function cascadeDelete(Entity $entity, $options = []) {
-		$foreignKey = $this->foreignKey();
+		$foreignKey = (array)$this->foreignKey();
 		$primaryKey = $this->source()->primaryKey();
-		$conditions = [
-			$foreignKey => $entity->get($primaryKey)
-		];
-		// TODO fix multi-column primary keys.
+		$conditions = [];
+
+		if ($primaryKey) {
+			$conditions = array_combine($foreignKey, $entity->extract((array)$primaryKey));
+		}
+
 		$conditions = array_merge($conditions, $this->conditions());
 
 		$table = $this->junction();
@@ -243,6 +245,145 @@ class BelongsToMany extends Association {
 			return true;
 		}
 		return $table->deleteAll($conditions);
+	}
+
+/**
+ * Returns boolean true, as both of the tables 'own' rows in the other side
+ * of the association via the joint table.
+ *
+ * @return boolean
+ */
+	public function isOwningSide(Table $side) {
+		return true;
+	}
+
+/**
+ * Takes an entity from the source table and looks if there is a field
+ * matching the property name for this association. The found entity will be
+ * saved on the target table for this association by passing supplied
+ * `$options`
+ *
+ * Using this save function will only create new links between each side
+ * of this association. It will not destroy existing ones even though they
+ * may not be present in the array of entities to be saved.
+ *
+ * @param \Cake\ORM\Entity $entity an entity from the source table
+ * @param array|\ArrayObject $options options to be passed to the save method in
+ * the target table
+ * @throws \InvalidArgumentException if the property representing the association
+ * in the parent entity cannot be traversed
+ * @return boolean|Entity false if $entity could not be saved, otherwise it returns
+ * the saved entity
+ * @see Table::save()
+ */
+	public function save(Entity $entity, $options = []) {
+		$property = $this->property();
+		$targetEntity = $entity->get($this->property());
+		$success = false;
+
+		if ($targetEntity) {
+			$success = $this->_saveTarget($entity, $targetEntity, $options);
+		}
+
+		return $success;
+	}
+
+/**
+ * Persists each of the entities into the target table and creates links between
+ * the parent entity and each one of the saved target entities.
+ *
+ * @param \Cake\ORM\Entity $parentEntity the source entity containing the target
+ * entities to be saved.
+ * @param array|\Traversable list of entities to persist in target table and to
+ * link to the parent entity
+ * @param array $options list of options accepted by Table::save()
+ * @throws \InvalidArgumentException if the property representing the association
+ * in the parent entity cannot be traversed
+ * @return \Cake\ORM\Entity|boolean The parent entity after all links have been
+ * created if no errors happened, false otherwise
+ */
+	protected function _saveTarget(Entity $parentEntity, $entities, $options) {
+		if (!(is_array($entities) || $entities instanceof \Traversable)) {
+			$name = $this->property();
+			$message = __d('cake_dev', 'Could not save %s, it cannot be traversed', $name);
+			throw new \InvalidArgumentException($message);
+		}
+
+		$table = $this->target();
+		$original = $entities;
+		$persisted = [];
+
+		foreach ($entities as $k => $entity) {
+			if (!empty($options['atomic'])) {
+				$entity = clone $entity;
+			}
+
+			if ($table->save($entity, $options)) {
+				$entities[$k] = $entity;
+				$persisted[] = $entity;
+				continue;
+			}
+
+			if (!empty($options['atomic'])) {
+				$original[$k]->errors($entity->errors());
+				return false;
+			}
+		}
+
+		$success = $this->_saveLinks($parentEntity, $persisted, $options);
+		if (!$success && !empty($options['atomic'])) {
+			$parentEntity->set($this->property(), $original);
+			return false;
+		}
+
+		$parentEntity->set($this->property(), $entities);
+		return $parentEntity;
+	}
+
+/**
+ * Creates links between the source entity and each of the passed target entities
+ *
+ * @param \Cake\ORM\Entity $sourceEntity the entity from source table in this
+ * association
+ * @param array list of entities to link to link to the source entity using the
+ * junction table
+ * @return boolean success
+ */
+	protected function _saveLinks(Entity $sourceEntity, $targetEntities, $options) {
+		$target = $this->target();
+		$junction = $this->junction();
+		$source = $this->source();
+		$entityClass = $junction->entityClass();
+		$belongsTo = $junction->association($target->alias());
+		$foreignKey = (array)$this->foreignKey();
+		$assocForeignKey = (array)$belongsTo->foreignKey();
+		$targetPrimaryKey = (array)$target->primaryKey();
+		$sourcePrimaryKey = (array)$source->primaryKey();
+		$jointProperty = $target->association($junction->alias())->property();
+
+		foreach ($targetEntities as $k => $e) {
+			$joint = $e->get($jointProperty);
+			if (!$joint) {
+				$joint = new $entityClass;
+				$joint->isNew(true);
+			}
+
+			$joint->set(array_combine(
+				$foreignKey,
+				$sourceEntity->extract($sourcePrimaryKey)
+			));
+			$joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)));
+			$saved = $junction->save($joint, $options);
+
+			if (!$saved && !empty($options['atomic'])) {
+				return false;
+			}
+
+			$e->set($jointProperty, $joint);
+			$e->dirty($jointProperty, false);
+		}
+
+		return true;
 	}
 
 /**

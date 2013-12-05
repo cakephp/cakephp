@@ -457,13 +457,20 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * argument, it will return whether the property was modified or not
  * after the object creation.
  *
+ * When called with no arguments it will return whether or not there are any
+ * dirty property in the entity
+ *
  * @param string $property the field to set or check status for
  * @param null|boolean true means the property was changed, false means
  * it was not changed and null will make the function return current state
  * for that property
  * @return boolean whether the property was changed or not
  */
-	public function dirty($property, $isDirty = null) {
+	public function dirty($property = null, $isDirty = null) {
+		if ($property === null) {
+			return !empty($this->_dirty);
+		}
+
 		if ($isDirty === null) {
 			return isset($this->_dirty[$property]);
 		}

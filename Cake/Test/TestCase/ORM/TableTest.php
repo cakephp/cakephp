@@ -129,7 +129,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testPrimaryKey() {
-		$table = new Table(['table' => 'users']);
+		$table = new Table([
+			'table' => 'users',
+			'schema' => [
+				'id' => ['type' => 'integer'],
+				'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+			]
+		]);
 		$this->assertEquals('id', $table->primaryKey());
 		$table->primaryKey('thingID');
 		$this->assertEquals('thingID', $table->primaryKey());
@@ -177,7 +183,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'table' => 'users',
 			'schema' => [
 				'id' => ['type' => 'string'],
-				'foo' => ['type' => 'string']
+				'foo' => ['type' => 'string'],
+				'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 			]
 		]);
 		$this->assertEquals('id', $table->displayField());
@@ -193,7 +200,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'table' => 'users',
 			'schema' => [
 				'id' => ['type' => 'string'],
-				'foo' => ['type' => 'string']
+				'foo' => ['type' => 'string'],
+				'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 			]
 		]);
 		$this->assertEquals('id', $table->displayField());
@@ -2133,4 +2141,625 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertTrue($table->hasBehavior('Timestamp'), 'should be true on loaded behavior');
 		$this->assertFalse($table->hasBehavior('Tree'), 'should be false on unloaded behavior');
 	}
+
+/**
+ * Tests saving belongsTo association
+ *
+ * @group save
+ * @return void
+ */
+	public function testsSaveBelongsTo() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->author = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->author->isNew());
+		$this->assertEquals(5, $entity->author->id);
+		$this->assertEquals(5, $entity->get('author_id'));
+	}
+
+/**
+ * Tests saving belongsTo association and get a validation error
+ *
+ * @group save
+ * @return void
+ */
+	public function testsSaveBelongsToWithValidationError() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->author = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+		$table->association('authors')
+			->target()
+			->validator()
+			->add('name', 'num', ['rule' => 'numeric']);
+
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertTrue($entity->author->isNew());
+		$this->assertNull($entity->get('author_id'));
+		$this->assertNotEmpty($entity->author->errors('name'));
+	}
+
+/**
+ * Tests saving hasOne association
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveHasOne() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->article = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+
+		$table = TableRegistry::get('authors');
+		$table->hasOne('articles');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->article->isNew());
+		$this->assertEquals(4, $entity->article->id);
+		$this->assertEquals(5, $entity->article->get('author_id'));
+		$this->assertFalse($entity->article->dirty('author_id'));
+	}
+
+/**
+ * Tests saving hasOne association and returning a validation error will
+ * abort the saving process
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveHasOneWithValidationError() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->article = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+
+		$table = TableRegistry::get('authors');
+		$table->hasOne('articles');
+		$table->association('articles')
+			->target()
+			->validator()
+			->add('title', 'num', ['rule' => 'numeric']);
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertTrue($entity->article->isNew());
+		$this->assertNull($entity->article->id);
+		$this->assertNull($entity->article->get('author_id'));
+		$this->assertTrue($entity->article->dirty('author_id'));
+		$this->assertNotEmpty($entity->article->errors('title'));
+	}
+
+/**
+ * Tests saving multiple entities in a hasMany association
+ *
+ * @return void
+ */
+	public function testSaveHasMany() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->articles = [
+			new \Cake\ORM\Entity([
+				'title' => 'A Title',
+				'body' => 'A body'
+			]),
+			new \Cake\ORM\Entity([
+				'title' => 'Another Title',
+				'body' => 'Another body'
+			])
+		];
+
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->articles[0]->isNew());
+		$this->assertFalse($entity->articles[1]->isNew());
+		$this->assertEquals(4, $entity->articles[0]->id);
+		$this->assertEquals(5, $entity->articles[1]->id);
+		$this->assertEquals(5, $entity->articles[0]->author_id);
+		$this->assertEquals(5, $entity->articles[1]->author_id);
+	}
+
+/**
+ * Tests saving multiple entities in a hasMany association and getting and
+ * error while saving one of them. It should abort all the save operation
+ * when options are set to defaults
+ *
+ * @return void
+ */
+	public function testSaveHasManyWithErrorsAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->articles = [
+			new \Cake\ORM\Entity([
+				'title' => '1',
+				'body' => 'A body'
+			]),
+			new \Cake\ORM\Entity([
+				'title' => 'Another Title',
+				'body' => 'Another body'
+			])
+		];
+
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$table->association('articles')
+			->target()
+			->validator()
+			->add('title', 'num', ['rule' => 'numeric']);
+
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertNull($entity->articles[0]->isNew());
+		$this->assertNull($entity->articles[1]->isNew());
+		$this->assertNull($entity->articles[0]->id);
+		$this->assertNull($entity->articles[1]->id);
+		$this->assertNull($entity->articles[0]->author_id);
+		$this->assertNull($entity->articles[1]->author_id);
+		$this->assertEmpty($entity->articles[0]->errors());
+		$this->assertNotEmpty($entity->articles[1]->errors());
+	}
+
+/**
+ * Tests that it is possible to continue saving hasMany associations
+ * even if any of the records fail validation when atomic is set
+ * to false
+ *
+ * @return void
+ */
+	public function testSaveHasManyWithErrorsNonAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->articles = [
+			new \Cake\ORM\Entity([
+				'title' => 'A title',
+				'body' => 'A body'
+			]),
+			new \Cake\ORM\Entity([
+				'title' => '1',
+				'body' => 'Another body'
+			])
+		];
+
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$table->association('articles')
+			->target()
+			->validator()
+			->add('title', 'num', ['rule' => 'numeric']);
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->articles[0]->isNew());
+		$this->assertFalse($entity->articles[1]->isNew());
+		$this->assertEquals(4, $entity->articles[1]->id);
+		$this->assertNull($entity->articles[0]->id);
+		$this->assertEquals(5, $entity->articles[0]->author_id);
+		$this->assertEquals(5, $entity->articles[1]->author_id);
+	}
+
+/**
+ * Tests saving hasOne association and returning a validation error will
+ * not abort the saving process if atomic is set to false
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveHasOneWithValidationErrorNonAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+		$entity->article = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+
+		$table = TableRegistry::get('authors');
+		$table->hasOne('articles');
+		$table->association('articles')
+			->target()
+			->validator()
+			->add('title', 'num', ['rule' => 'numeric']);
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->article->isNew());
+		$this->assertNull($entity->article->id);
+		$this->assertNull($entity->article->get('author_id'));
+		$this->assertTrue($entity->article->dirty('author_id'));
+		$this->assertNotEmpty($entity->article->errors('title'));
+	}
+
+/**
+ * Tests saving belongsTo association and get a validation error won't stop
+ * saving if atomic is set to false
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToWithValidationErrorNotAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->author = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+		$table->association('authors')
+			->target()
+			->validator()
+			->add('name', 'num', ['rule' => 'numeric']);
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->author->isNew());
+		$this->assertNull($entity->get('author_id'));
+		$this->assertNotEmpty($entity->author->errors('name'));
+	}
+
+/**
+ * Tests saving belongsToMany records
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToMany() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => 'Another Something'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->tags[0]->isNew());
+		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertEquals(4, $entity->tags[0]->id);
+		$this->assertEquals(5, $entity->tags[1]->id);
+		$this->assertEquals(4, $entity->tags[0]->extraInfo->article_id);
+		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
+		$this->assertEquals(4, $entity->tags[0]->extraInfo->tag_id);
+		$this->assertEquals(5, $entity->tags[1]->extraInfo->tag_id);
+	}
+
+/**
+ * Tests saving belongsToMany records with a validation error and atomic set
+ * to true
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToWithValidationErrorAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => '100'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$tags = $table->association('tags')
+			->target()
+			->validator()
+			->add('name', 'num', ['rule' => 'numeric']);
+
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertNull($entity->tags[0]->isNew());
+		$this->assertNull($entity->tags[1]->isNew());
+		$this->assertNull($entity->tags[0]->id);
+		$this->assertNull($entity->tags[1]->id);
+		$this->assertNull($entity->tags[0]->extraInfo);
+		$this->assertNull($entity->tags[1]->extraInfo);
+		$this->assertEmpty($entity->tags[0]->errors('name'));
+		$this->assertNotEmpty($entity->tags[1]->errors('name'));
+	}
+
+/**
+ * Tests saving belongsToMany records with a validation error and atomic set
+ * to false
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToWithValidationErrorNonAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => '100'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$tags = $table->association('tags')
+			->target()
+			->validator()
+			->add('name', 'num', ['rule' => 'numeric']);
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertTrue($entity->tags[0]->isNew());
+		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertNull($entity->tags[0]->id);
+		$this->assertEquals(4, $entity->tags[1]->id);
+		$this->assertNull($entity->tags[0]->extraInfo);
+		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
+		$this->assertEquals(4, $entity->tags[1]->extraInfo->tag_id);
+	}
+
+/**
+ * Tests saving belongsToMany records with a validation error in a joint entity
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToWithValidationErrorInJointEntity() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => '100'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$table->association('tags')
+			->junction()
+			->validator()
+			->add('article_id', 'num', ['rule' => ['comparison', '>', 4]]);
+
+		$this->assertFalse($table->save($entity));
+		$this->assertTrue($entity->isNew());
+		$this->assertNull($entity->tags[0]->isNew());
+		$this->assertNull($entity->tags[1]->isNew());
+		$this->assertNull($entity->tags[0]->id);
+		$this->assertNull($entity->tags[1]->id);
+		$this->assertNull($entity->tags[0]->extraInfo);
+		$this->assertNull($entity->tags[1]->extraInfo);
+	}
+
+
+/**
+ * Tests saving belongsToMany records with a validation error in a joint entity
+ * and atomic set to false
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveBelongsToWithValidationErrorInJointEntityNonAtomic() {
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'A Title',
+			'body' => 'A body'
+		]);
+		$entity->tags = [
+			new \Cake\ORM\Entity([
+				'name' => 'Something New'
+			]),
+			new \Cake\ORM\Entity([
+				'name' => 'New one'
+			])
+		];
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$table->association('tags')
+			->junction()
+			->validator()
+			->add('tag_id', 'num', ['rule' => ['comparison', '>', 4]]);
+
+		$this->assertSame($entity, $table->save($entity, ['atomic' => false]));
+		$this->assertFalse($entity->isNew());
+		$this->assertFalse($entity->tags[0]->isNew());
+		$this->assertFalse($entity->tags[1]->isNew());
+		$this->assertEquals(4, $entity->tags[0]->id);
+		$this->assertEquals(5, $entity->tags[1]->id);
+		$this->assertTrue($entity->tags[0]->extraInfo->isNew());
+		$this->assertNotEmpty($entity->tags[0]->extraInfo->errors());
+		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
+		$this->assertEquals(5, $entity->tags[1]->extraInfo->tag_id);
+	}
+
+/**
+ * Tests that saving a persisted and clean entity will is a no-op
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveCleanEntity() {
+		$table = $this->getMock('\Cake\ORM\Table', ['_processSave']);
+		$entity = new \Cake\ORM\Entity(
+			['id' => 'foo'],
+			['markNew' => false, 'markClean' => true]
+		);
+		$table->expects($this->never())->method('_processSave');
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Integration test to show how to append a new tag to an article
+ *
+ * @group save
+ * @return void
+ */
+	public function testBelongsToManyIntegration() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+		$tags = $article->tags;
+		$this->assertNotEmpty($tags);
+		$tags[] = new \TestApp\Model\Entity\Tag([
+			'name' => 'Something New'
+		]);
+		$article->tags = $tags;
+		$this->assertSame($article, $table->save($article));
+		$tags = $article->tags;
+		$this->assertCount(3, $tags);
+		$this->assertFalse($tags[2]->isNew());
+		$this->assertEquals(4, $tags[2]->id);
+		$this->assertEquals(1, $tags[2]->extraInfo->article_id);
+		$this->assertEquals(4, $tags[2]->extraInfo->tag_id);
+
+		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+		$this->assertEquals($tags, $article->tags);
+	}
+
+/**
+ * Tests that it is possible to do a deep save and control what associations get saved,
+ * while having control of the options passed to each level of the save
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveDeepAssociationOptions() {
+		$articles = $this->getMock(
+			'\Cake\ORM\Table',
+			['_insert'],
+			[['table' => 'articles', 'connection' => $this->connection]]
+		);
+		$authors = $this->getMock(
+			'\Cake\ORM\Table',
+			['_insert', '_processValidation'],
+			[['table' => 'authors', 'connection' => $this->connection]]
+		);
+		$supervisors = $this->getMock(
+			'\Cake\ORM\Table',
+			['_insert', '_processValidation'],
+			[[
+				'table' => 'authors',
+				'alias' => 'supervisors',
+				'connection' => $this->connection
+			]]
+		);
+		$tags = $this->getMock(
+			'\Cake\ORM\Table',
+			['_insert'],
+			[['table' => 'tags', 'connection' => $this->connection]]
+		);
+
+		$articles->belongsTo('authors', ['targetTable' => $authors]);
+		$authors->hasOne('supervisors', ['targetTable' => $supervisors]);
+		$supervisors->belongsToMany('tags', ['targetTable' => $tags]);
+
+		$entity = new \Cake\ORM\Entity([
+			'title' => 'bar',
+			'author' => new \Cake\ORM\Entity([
+				'name' => 'Juan',
+				'supervisor' => new \Cake\ORM\Entity(['name' => 'Marc']),
+				'tags' => [
+					new \Cake\ORM\Entity(['name' => 'foo'])
+				]
+			]),
+		]);
+		$entity->isNew(true);
+		$entity->author->isNew(true);
+		$entity->author->supervisor->isNew(true);
+		$entity->author->tags[0]->isNew(true);
+
+		$articles->expects($this->once())
+			->method('_insert')
+			->with($entity, ['title' => 'bar'])
+			->will($this->returnValue($entity));
+
+		$authors->expects($this->once())
+			->method('_insert')
+			->with($entity->author, ['name' => 'Juan'])
+			->will($this->returnValue($entity->author));
+
+		$options = new \ArrayObject([
+			'validate' => 'special',
+			'atomic' => true,
+			'associated' => ['supervisors' => [
+				'atomic' => false, 'validate' => false, 'associated' => false
+			]]
+		]);
+		$authors->expects($this->once())
+			->method('_processValidation')
+			->with($entity->author, $options)
+			->will($this->returnValue(true));
+
+		$supervisors->expects($this->once())
+			->method('_insert')
+			->with($entity->author->supervisor, ['name' => 'Marc'])
+			->will($this->returnValue($entity->author->supervisor));
+
+		$options = new \ArrayObject([
+			'validate' => false,
+			'atomic' => false,
+			'associated' => []
+		]);
+		$supervisors->expects($this->once())
+			->method('_processValidation')
+			->with($entity->author->supervisor, $options)
+			->will($this->returnValue(true));
+
+		$tags->expects($this->never())->method('_insert');
+
+		$this->assertSame($entity, $articles->save($entity, [
+			'associated' => [
+				'authors' => [
+					'validate' => 'special',
+					'associated' => [
+						'supervisors' => [
+							'atomic' => false,
+							'validate' => false,
+							'associated' => false
+						]
+					]
+				]
+			]
+		]));
+	}
+
 }

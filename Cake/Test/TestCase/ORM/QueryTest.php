@@ -49,16 +49,27 @@ class QueryTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
-		$schema = ['id' => ['type' => 'integer']];
+		$schema = [
+			'id' => ['type' => 'integer'],
+			'_constraints' => [
+				'primary' => ['type' => 'primary', 'columns' => ['id']]
+			]
+		];
 		$schema1 = [
 			'id' => ['type' => 'integer'],
 			'name' => ['type' => 'string'],
-			'phone' => ['type' => 'string']
+			'phone' => ['type' => 'string'],
+			'_constraints' => [
+				'primary' => ['type' => 'primary', 'columns' => ['id']]
+			]
 		];
 		$schema2 = [
 			'id' => ['type' => 'integer'],
 			'total' => ['type' => 'string'],
-			'placed' => ['type' => 'datetime']
+			'placed' => ['type' => 'datetime'],
+			'_constraints' => [
+				'primary' => ['type' => 'primary', 'columns' => ['id']]
+			]
 		];
 
 		$this->table = $table = TableRegistry::get('foo', ['schema' => $schema]);

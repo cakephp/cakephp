@@ -40,6 +40,9 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'schema' => [
 				'id' => ['type' => 'integer'],
 				'username' => ['type' => 'string'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id']]
+				]
 			]
 		]);
 		$this->article = $this->getMock(
@@ -51,6 +54,9 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'id' => ['type' => 'integer'],
 			'title' => ['type' => 'string'],
 			'author_id' => ['type' => 'integer'],
+			'_constraints' => [
+				'primary' => ['type' => 'primary', 'columns' => ['id']]
+			]
 		]);
 	}
 

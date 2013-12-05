@@ -121,9 +121,9 @@ class Table implements EventListener {
 /**
  * The name of the field that represents the primary key in the table
  *
- * @var string
+ * @var array
  */
-	protected $_primaryKey = 'id';
+	protected $_primaryKey;
 
 /**
  * The name of the field that represents a human readable representation of a row
@@ -332,9 +332,22 @@ class Table implements EventListener {
 			}
 			return $this->_schema;
 		}
+
 		if (is_array($schema)) {
+			$constraints = [];
+
+			if (isset($schema['_constraints'])) {
+				$constraints = $schema['_constraints'];
+				unset($schema['_constraints']);
+			}
+
 			$schema = new Schema($this->table(), $schema);
+
+			foreach ($constraints as $name => $value) {
+				$schema->addConstraint($name, $value);
+			}
 		}
+
 		return $this->_schema = $schema;
 	}
 
@@ -361,6 +374,10 @@ class Table implements EventListener {
 	public function primaryKey($key = null) {
 		if ($key !== null) {
 			$this->_primaryKey = $key;
+		}
+		if ($this->_primaryKey === null) {
+			$key = current((array)$this->schema()->primaryKey());
+			$this->_primaryKey = $key ?: null;
 		}
 		return $this->_primaryKey;
 	}
@@ -906,6 +923,8 @@ class Table implements EventListener {
  * returns the same entity after a successful save or false in case
  * of any error.
  *
+ * ### Options
+ *
  * The options array can receive the following keys:
  *
  * - atomic: Whether to execute the save and callbacks inside a database
@@ -914,7 +933,15 @@ class Table implements EventListener {
  * fails, it will abort the save operation. If this key is set to a string value,
  * the validator object registered in this table under the provided name will be
  * used instead of the default one. (default:true)
+ * - associated: If true it will save all associated entities as they are found
+ * in the passed `$entity` whenever the property defined for the association
+ * is marked as dirty. Associated records are saved recursively unless told
+ * otherwise. If an array, it will be interpreted as the list of associations
+ * to be saved. It is possible to provide different options for saving on associated
+ * table objects using this key by making the custom options the array value.
+ * If false no associated records will be saved. (default: true)
  *
+ * ### Events
  *
  * When saving, this method will trigger four events:
  *
@@ -947,6 +974,26 @@ class Table implements EventListener {
  * method on the entity, if no information can be found there, it will go
  * directly to the database to check the entity's status.
  *
+ * ### Saving on associated tables
+ *
+ * This method will by default persist entities belonging to associated tables,
+ * whenever a dirty property matching the name of the property name set for an
+ * association in this table. It is possible to control what associations will
+ * be saved and to pass additional option for saving them.
+ *
+ * {{{
+ * $articles->save($entity, ['associated' => ['Comment']); // Only save comment assoc
+ *
+ * // Save the company, the employees and related addresses for each of them.
+ * // For employees use the 'special' validation group
+ * $companies->save($entity, [
+ * 'associated' => ['Employee' => ['associated' => ['Address'], 'validate' => 'special']
+ * ]);
+ *
+ * // Save no associations
+ * $articles->save($entity, ['associated' => false]);
+ * }}}
+ *
  * @param \Cake\ORM\Entity the entity to be saved
  * @param array $options
  * @return \Cake\ORM\Entity|boolean
@@ -954,8 +1001,14 @@ class Table implements EventListener {
 	public function save(Entity $entity, array $options = []) {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
-			'validate' => true
+			'validate' => true,
+			'associated' => true
 		]);
+
+		if ($entity->isNew() === false && !$entity->dirty()) {
+			return $entity;
+		}
+
 		if ($options['atomic']) {
 			$connection = $this->connection();
 			$success = $connection->transactional(function() use ($entity, $options) {
@@ -985,6 +1038,11 @@ class Table implements EventListener {
 			$entity->isNew(true);
 		}
 
+		if ($options['associated'] === true) {
+			$options['associated'] = array_keys($this->_associations);
+		}
+		$options['associated'] = array_filter((array)$options['associated']);
+
 		if (!$this->_processValidation($entity, $options)) {
 			return false;
 		}
@@ -996,22 +1054,117 @@ class Table implements EventListener {
 			return $event->result;
 		}
 
+		$originalOptions = $options->getArrayCopy();
+		list($parents, $children) = $this->_sortAssociationTypes($options['associated']);
+		$saved = $this->_saveAssociations($parents, $entity, $originalOptions);
+
+		if (!$saved && $options['atomic']) {
+			return false;
+		}
+
 		$data = $entity->extract($this->schema()->columns(), true);
 		$keys = array_keys($data);
+		$isNew = $entity->isNew();
 
-		if ($entity->isNew()) {
+		if ($isNew) {
 			$success = $this->_insert($entity, $data);
 		} else {
 			$success = $this->_update($entity, $data);
 		}
 
 		if ($success) {
-			$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
-			$this->getEventManager()->dispatch($event);
-			$entity->isNew(false);
+			$success = $this->_saveAssociations($children, $entity, $originalOptions);
+			if ($success || !$options['atomic']) {
+				$entity->clean();
+				$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
+				$this->getEventManager()->dispatch($event);
+				$entity->isNew(false);
+				$success = $entity;
+			}
+		}
+
+		if (!$success && $isNew) {
+			$entity->unsetProperty($this->primaryKey());
+			$entity->isNew(true);
 		}
 
 		return $success;
+	}
+
+/**
+ * Auxiliary method used to sort out which associations are defined in this table
+ * as the owning side and which not based on a list of provided aliases.
+ *
+ * @param array $assocs list of association aliases
+ * @throws \InvalidArgumentException if one of the provided aliases is not an
+ * actual association defined for this table
+ * @return array with two values, first one contain associations which target
+ * is the owning side (or parent associations) and second value is an array of
+ * associations aliases for which this table is the owning side.
+ */
+	protected function _sortAssociationTypes($assocs) {
+		$parents = $children = [];
+		foreach ($assocs as $key => $assoc) {
+			if (!is_string($assoc)) {
+				$assoc = $key;
+			}
+
+			$association = $this->association($assoc);
+			if (!$association) {
+				$msg = __d('cake_dev', '%s is not associated to %s', $this->alias(), $assoc);
+				throw new \InvalidArgumentException($msg);
+			}
+
+			if ($association->isOwningSide($this)) {
+				$children[] = $assoc;
+			} else {
+				$parents[] = $assoc;
+			}
+		}
+		return [$parents, $children];
+	}
+
+/**
+ * Runs through a list of aliases and for each of them calls the `save()` method
+ * on the corresponding association objects passing $entity and $options as values.
+ * If the alias for one of the associations contains an array as values in $assocs,
+ * $options will be merged to this value before passed to the save operation.
+ *
+ *
+ * @param array $assocs list of association aliases.
+ * @param \Cake\ORM\Entity $entity the entity belonging to this table and maybe
+ * containing associated entities.
+ * @param array $options options to be passed to the save operation
+ * @return boolean|\Cake\ORM\Entity The saved source entity on success, false
+ * otherwise
+ */
+	protected function _saveAssociations($assocs, $entity, array $options) {
+		if (empty($assocs)) {
+			return $entity;
+		}
+
+		$associated = $options['associated'];
+		unset($options['associated']);
+
+		foreach ($assocs as $alias) {
+			$association = $this->association($alias);
+			$property = $association->property();
+			$passOptions = $options;
+
+			if (!$entity->dirty($property)) {
+				continue;
+			}
+
+			if (isset($associated[$alias])) {
+				$passOptions = (array)$associated[$alias] + $options;
+			}
+
+			if (!$association->save($entity, $passOptions)) {
+				return false;
+			}
+		}
+
+		return $entity;
 	}
 
 /**
@@ -1036,13 +1189,12 @@ class Table implements EventListener {
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
-			if (!isset($data[$primary])) {
+			if ($primary && !isset($data[$primary])) {
 				$id = $statement->lastInsertId($this->table(), $primary);
 			}
-			if ($id !== null) {
+			if ($primary && $id !== null) {
 				$entity->set($primary, $id);
 			}
-			$entity->clean();
 			$success = $entity;
 		}
 		$statement->closeCursor();
@@ -1098,7 +1250,6 @@ class Table implements EventListener {
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
-			$entity->clean();
 			$success = $entity;
 		}
 		$statement->closeCursor();
