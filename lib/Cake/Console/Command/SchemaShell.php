@@ -457,11 +457,14 @@ class SchemaShell extends AppShell {
 	}
 
 /**
- * get the option parser
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
+
 		$plugin = array(
 			'short' => 'p',
 			'help' => __d('cake_console', 'The plugin to use.'),
@@ -515,58 +518,55 @@ class SchemaShell extends AppShell {
 			'boolean' => true
 		);
 
-		$parser = parent::getOptionParser();
 		$parser->description(
-			__d('cake_console',
-				'The Schema Shell generates a schema object from the database and updates the database from the schema.'
-			)
-		)->addSubcommand('view', array(
-			'help' => __d('cake_console', 'Read and output the contents of a schema file'),
-			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection'),
-				'arguments' => compact('name')
-			)
-		))->addSubcommand('generate', array(
-			'help' => __d('cake_console', 'Reads from --connection and writes to --path. Generate snapshots with -s'),
-			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force', 'models', 'exclude'),
-				'arguments' => array(
-					'snapshot' => array('help' => __d('cake_console', 'Generate a snapshot.'))
-				)
-			)
-		))->addSubcommand('dump', array(
-			'help' => __d('cake_console', 'Dump database SQL based on a schema file to stdout.'),
-			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'write'),
-				'arguments' => compact('name')
-			)
-		))->addSubcommand('create', array(
-			'help' => __d('cake_console', 'Drop and create tables based on the schema file.'),
-			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot', 'yes'),
-				'args' => array(
-					'name' => array(
-						'help' => __d('cake_console', 'Name of schema to use.')
-					),
-					'table' => array(
-						'help' => __d('cake_console', 'Only create the specified table.')
+				__d('cake_console', 'The Schema Shell generates a schema object from the database and updates the database from the schema.'))
+			->addSubcommand('view', array(
+				'help' => __d('cake_console', 'Read and output the contents of a schema file'),
+				'parser' => array(
+					'options' => compact('plugin', 'path', 'file', 'name', 'connection'),
+					'arguments' => compact('name')
+				)))
+			->addSubcommand('generate', array(
+				'help' => __d('cake_console', 'Reads from --connection and writes to --path. Generate snapshots with -s'),
+				'parser' => array(
+					'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'snapshot', 'force', 'models', 'exclude'),
+					'arguments' => array(
+						'snapshot' => array('help' => __d('cake_console', 'Generate a snapshot.'))
 					)
-				)
-			)
-		))->addSubcommand('update', array(
-			'help' => __d('cake_console', 'Alter the tables based on the schema file.'),
-			'parser' => array(
-				'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot', 'force', 'yes'),
-				'args' => array(
-					'name' => array(
-						'help' => __d('cake_console', 'Name of schema to use.')
-					),
-					'table' => array(
-						'help' => __d('cake_console', 'Only create the specified table.')
+				)))
+			->addSubcommand('dump', array(
+				'help' => __d('cake_console', 'Dump database SQL based on a schema file to stdout.'),
+				'parser' => array(
+					'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'write'),
+					'arguments' => compact('name')
+				)))
+			->addSubcommand('create', array(
+				'help' => __d('cake_console', 'Drop and create tables based on the schema file.'),
+				'parser' => array(
+					'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot', 'yes'),
+					'args' => array(
+						'name' => array(
+							'help' => __d('cake_console', 'Name of schema to use.')
+						),
+						'table' => array(
+							'help' => __d('cake_console', 'Only create the specified table.')
+						)
 					)
-				)
-			)
-		));
+				)))
+			->addSubcommand('update', array(
+				'help' => __d('cake_console', 'Alter the tables based on the schema file.'),
+				'parser' => array(
+					'options' => compact('plugin', 'path', 'file', 'name', 'connection', 'dry', 'snapshot', 'force', 'yes'),
+					'args' => array(
+						'name' => array(
+							'help' => __d('cake_console', 'Name of schema to use.')
+						),
+						'table' => array(
+							'help' => __d('cake_console', 'Only create the specified table.')
+						)
+					)
+				)));
+
 		return $parser;
 	}
 

@@ -100,20 +100,23 @@ class I18nShell extends AppShell {
 	}
 
 /**
- * Get and configure the Option parser
+ * Gets the option parser instance and configures it.
  *
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
-		return $parser->description(
-			__d('cake_console', 'I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.')
-			)->addSubcommand('initdb', array(
-				'help' => __d('cake_console', 'Initialize the i18n table.')
-			))->addSubcommand('extract', array(
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
+
+		$parser->description(
+				__d('cake_console', 'I18n Shell initializes i18n database table for your application and generates .pot files(s) with translations.'))
+			->addSubcommand('initdb', array(
+				'help' => __d('cake_console', 'Initialize the i18n table.')))
+			->addSubcommand('extract', array(
 				'help' => __d('cake_console', 'Extract the po translations from your application'),
-				'parser' => $this->Extract->getOptionParser()
-			));
+				'parser' => $this->Extract->getOptionParser()));
+
+		return $parser;
 	}
 
 }

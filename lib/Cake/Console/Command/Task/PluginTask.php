@@ -209,18 +209,21 @@ class PluginTask extends AppShell {
 	}
 
 /**
- * get the option parser for the plugin task
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
-		return $parser->description(__d('cake_console',
-			'Create the directory structure, AppModel and AppController classes for a new plugin. ' .
-			'Can create plugins in any of your bootstrapped plugin paths.'
-		))->addArgument('name', array(
-			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
-		));
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
+
+		$parser->description(
+				__d('cake_console',	'Create the directory structure, AppModel and AppController classes for a new plugin. ' .
+				'Can create plugins in any of your bootstrapped plugin paths.'))
+			->addArgument('name', array(
+				'help' => __d('cake_console', 'CamelCased name of the plugin to create.')));
+
+		return $parser;
 	}
 
 }

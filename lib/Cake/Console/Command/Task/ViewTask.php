@@ -412,38 +412,41 @@ class ViewTask extends BakeTask {
 	}
 
 /**
- * get the option parser for this task
+ * Gets the option parser instance and configures it.
  *
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
-		return $parser->description(
-			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.')
-		)->addArgument('controller', array(
-			'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')
-		))->addArgument('action', array(
-			'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")
-		))->addArgument('alias', array(
-			'help' => __d('cake_console', 'Will bake the template in <action> but create the filename after <alias>.')
-		))->addOption('plugin', array(
-			'short' => 'p',
-			'help' => __d('cake_console', 'Plugin to bake the view into.')
-		))->addOption('admin', array(
-			'help' => __d('cake_console', 'Set to only bake views for a prefix in Routing.prefixes'),
-			'boolean' => true
-		))->addOption('theme', array(
-			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
-		))->addOption('connection', array(
-			'short' => 'c',
-			'help' => __d('cake_console', 'The connection the connected model is on.')
-		))->addOption('force', array(
-			'short' => 'f',
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
-		))->addSubcommand('all', array(
-			'help' => __d('cake_console', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
-		))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
+
+		$parser->description(__d('cake_console', 'Bake views for a controller, using built-in or custom templates.'))
+			->addArgument('controller', array(
+				'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')))
+			->addArgument('action', array(
+				'help' => __d('cake_console', "Will bake a single action's file. core templates are (index, add, edit, view)")))
+			->addArgument('alias', array(
+				'help' => __d('cake_console', 'Will bake the template in <action> but create the filename after <alias>.')))
+			->addOption('plugin', array(
+				'short' => 'p',
+				'help' => __d('cake_console', 'Plugin to bake the view into.')))
+			->addOption('admin', array(
+				'help' => __d('cake_console', 'Set to only bake views for a prefix in Routing.prefixes'),
+				'boolean' => true))
+			->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')))
+			->addOption('connection', array(
+				'short' => 'c',
+				'help' => __d('cake_console', 'The connection the connected model is on.')))
+			->addOption('force', array(
+				'short' => 'f',
+				'help' => __d('cake_console', 'Force overwriting existing files without prompting.')))
+			->addSubcommand('all', array(
+				'help' => __d('cake_console', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')))
+			->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
+
+		return $parser;
 	}
 
 /**

@@ -120,13 +120,15 @@ class CommandListShell extends AppShell {
 	}
 
 /**
- * get the option parser
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
-		return $parser->description(__d('cake_console', 'Get the list of available shells for this CakePHP application.'))
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
+
+		$parser->description(__d('cake_console', 'Get the list of available shells for this CakePHP application.'))
 			->addOption('sort', array(
 				'help' => __d('cake_console', 'Does nothing (deprecated)'),
 				'boolean' => true
@@ -135,6 +137,8 @@ class CommandListShell extends AppShell {
 				'help' => __d('cake_console', 'Get the listing as XML.'),
 				'boolean' => true
 			));
+
+		return $parser;
 	}
 
 }

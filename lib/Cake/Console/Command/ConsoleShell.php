@@ -105,11 +105,14 @@ class ConsoleShell extends AppShell {
 	}
 
 /**
- * getOptionParser
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
+
 		$description = array(
 			'The interactive console is a tool for testing parts of your',
 			'app before you write code.',
@@ -177,7 +180,8 @@ class ConsoleShell extends AppShell {
 			'',
 			"\tRoutes show",
 		);
-		return parent::getOptionParser()
+
+		return $parser
 			->description($description)
 			->epilog($epilog);
 	}

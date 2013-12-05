@@ -32,16 +32,17 @@ App::uses('CakeTestLoader', 'TestSuite');
 class TestsuiteShell extends TestShell {
 
 /**
- * get the option parser for the test suite.
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
+
 		$parser->description(array(
 			__d('cake_console', 'The CakePHP Testsuite allows you to run test cases from the command line'),
-			__d('cake_console', "<warning>This shell is for backwards-compatibility only</warning>\nuse the test shell instead"),
-		));
+			__d('cake_console', "<warning>This shell is for backwards-compatibility only</warning>\nuse the test shell instead")));
 
 		return $parser;
 	}

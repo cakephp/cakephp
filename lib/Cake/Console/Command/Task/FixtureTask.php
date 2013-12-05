@@ -60,42 +60,47 @@ class FixtureTask extends BakeTask {
 	}
 
 /**
- * get the option parser.
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
-		return $parser->description(
-			__d('cake_console', 'Generate fixtures for use with the test suite. You can use `bake fixture all` to bake all fixtures.')
-		)->addArgument('name', array(
-			'help' => __d('cake_console', 'Name of the fixture to bake. Can use Plugin.name to bake plugin fixtures.')
-		))->addOption('count', array(
-			'help' => __d('cake_console', 'When using generated data, the number of records to include in the fixture(s).'),
-			'short' => 'n',
-			'default' => 10
-		))->addOption('connection', array(
-			'help' => __d('cake_console', 'Which database configuration to use for baking.'),
-			'short' => 'c',
-			'default' => 'default'
-		))->addOption('plugin', array(
-			'help' => __d('cake_console', 'CamelCased name of the plugin to bake fixtures for.'),
-			'short' => 'p',
-		))->addOption('schema', array(
-			'help' => __d('cake_console', 'Importing schema for fixtures rather than hardcoding it.'),
-			'short' => 's',
-			'boolean' => true
-		))->addOption('theme', array(
-			'short' => 't',
-			'help' => __d('cake_console', 'Theme to use when baking code.')
-		))->addOption('force', array(
-			'short' => 'f',
-			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
-		))->addOption('records', array(
-			'help' => __d('cake_console', 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10.'),
-			'short' => 'r',
-			'boolean' => true
-		))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
+
+		$parser->description(
+				__d('cake_console', 'Generate fixtures for use with the test suite. You can use `bake fixture all` to bake all fixtures.'))
+			->addArgument('name', array(
+				'help' => __d('cake_console', 'Name of the fixture to bake. Can use Plugin.name to bake plugin fixtures.')))
+			->addOption('count', array(
+				'help' => __d('cake_console', 'When using generated data, the number of records to include in the fixture(s).'),
+				'short' => 'n',
+				'default' => 10))
+			->addOption('connection', array(
+				'help' => __d('cake_console', 'Which database configuration to use for baking.'),
+				'short' => 'c',
+				'default' => 'default'))
+			->addOption('plugin', array(
+				'help' => __d('cake_console', 'CamelCased name of the plugin to bake fixtures for.'),
+				'short' => 'p'))
+			->addOption('schema', array(
+				'help' => __d('cake_console', 'Importing schema for fixtures rather than hardcoding it.'),
+				'short' => 's',
+				'boolean' => true))
+			->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')))
+			->addOption('force', array(
+				'short' => 'f',
+				'help' => __d('cake_console', 'Force overwriting existing files without prompting.')))
+			->addOption('records', array(
+				'help' => __d('cake_console', 'Used with --count and <name>/all commands to pull [n] records from the live tables, ' .
+					'where [n] is either --count or the default of 10.'),
+				'short' => 'r',
+				'boolean' => true))
+			->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
+
+		return $parser;
 	}
 
 /**
