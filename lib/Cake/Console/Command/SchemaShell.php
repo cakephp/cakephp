@@ -457,11 +457,13 @@ class SchemaShell extends AppShell {
 	}
 
 /**
- * get the option parser
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+
 		$plugin = array(
 			'short' => 'p',
 			'help' => __d('cake_console', 'The plugin to use.'),
@@ -515,11 +517,8 @@ class SchemaShell extends AppShell {
 			'boolean' => true
 		);
 
-		$parser = parent::getOptionParser();
 		$parser->description(
-			__d('cake_console',
-				'The Schema Shell generates a schema object from the database and updates the database from the schema.'
-			)
+			__d('cake_console', 'The Schema Shell generates a schema object from the database and updates the database from the schema.')
 		)->addSubcommand('view', array(
 			'help' => __d('cake_console', 'Read and output the contents of a schema file'),
 			'parser' => array(
@@ -567,6 +566,7 @@ class SchemaShell extends AppShell {
 				)
 			)
 		));
+
 		return $parser;
 	}
 

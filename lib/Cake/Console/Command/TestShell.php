@@ -38,20 +38,21 @@ class TestShell extends Shell {
 	protected $_dispatcher = null;
 
 /**
- * get the option parser for the test suite.
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = new ConsoleOptionParser($this->name);
-		$parser->description(array(
-			__d('cake_console', 'The CakePHP Testsuite allows you to run test cases from the command line'),
-		))->addArgument('category', array(
+
+		$parser->description(
+			__d('cake_console', 'The CakePHP Testsuite allows you to run test cases from the command line')
+		)->addArgument('category', array(
 			'help' => __d('cake_console', 'The category for the test, or test file, to test.'),
-			'required' => false,
+			'required' => false
 		))->addArgument('file', array(
 			'help' => __d('cake_console', 'The path to the file, or test file, to test.'),
-			'required' => false,
+			'required' => false
 		))->addOption('log-junit', array(
 			'help' => __d('cake_console', '<file> Log test execution in JUnit XML format to file.'),
 			'default' => false
@@ -153,9 +154,9 @@ class TestShell extends Shell {
 			'help' => __d('cake_console', 'key[=value] Sets a php.ini value.'),
 			'default' => false
 		))->addOption('fixture', array(
-			'help' => __d('cake_console', 'Choose a custom fixture manager.'),
+			'help' => __d('cake_console', 'Choose a custom fixture manager.')
 		))->addOption('debug', array(
-			'help' => __d('cake_console', 'More verbose output.'),
+			'help' => __d('cake_console', 'More verbose output.')
 		));
 
 		return $parser;

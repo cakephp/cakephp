@@ -779,11 +779,13 @@ class UpgradeShell extends AppShell {
 	}
 
 /**
- * get the option parser
+ * Gets the option parser instance and configures it.
  *
  * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
+		$parser = parent::getOptionParser();
+
 		$subcommandParser = array(
 			'options' => array(
 				'plugin' => array(
@@ -808,53 +810,45 @@ class UpgradeShell extends AppShell {
 			)
 		);
 
-		return parent::getOptionParser()
-			->description(__d('cake_console', "A shell to help automate upgrading from CakePHP 1.3 to 2.0. \n" .
-				"Be sure to have a backup of your application before running these commands."))
-			->addSubcommand('all', array(
-				'help' => __d('cake_console', 'Run all upgrade commands.'),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('tests', array(
-				'help' => __d('cake_console', 'Update tests class names to FooTest rather than FooTestCase.'),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('locations', array(
-				'help' => __d('cake_console', 'Move files and folders to their new homes.'),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('i18n', array(
-				'help' => __d('cake_console', 'Update the i18n translation method calls.'),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('helpers', array(
-				'help' => __d('cake_console', 'Update calls to helpers.'),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('basics', array(
-				'help' => __d('cake_console', 'Update removed basics functions to PHP native functions.'),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('request', array(
-				'help' => __d('cake_console', 'Update removed request access, and replace with $this->request.'),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('configure', array(
-				'help' => __d('cake_console', "Update Configure::read() to Configure::read('debug')"),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('constants', array(
-				'help' => __d('cake_console', "Replace Obsolete constants"),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('components', array(
-				'help' => __d('cake_console', 'Update components to extend Component class.'),
-				'parser' => $subcommandParser
-			))
-			->addSubcommand('exceptions', array(
-				'help' => __d('cake_console', 'Replace use of cakeError with exceptions.'),
-				'parser' => $subcommandParser
-			));
+		$parser->description(
+			__d('cake_console', "A shell to help automate upgrading from CakePHP 1.3 to 2.0. \n" .
+			"Be sure to have a backup of your application before running these commands."
+		))->addSubcommand('all', array(
+			'help' => __d('cake_console', 'Run all upgrade commands.'),
+			'parser' => $subcommandParser
+		))->addSubcommand('tests', array(
+			'help' => __d('cake_console', 'Update tests class names to FooTest rather than FooTestCase.'),
+			'parser' => $subcommandParser
+		))->addSubcommand('locations', array(
+			'help' => __d('cake_console', 'Move files and folders to their new homes.'),
+			'parser' => $subcommandParser
+		))->addSubcommand('i18n', array(
+			'help' => __d('cake_console', 'Update the i18n translation method calls.'),
+			'parser' => $subcommandParser
+		))->addSubcommand('helpers', array(
+			'help' => __d('cake_console', 'Update calls to helpers.'),
+			'parser' => $subcommandParser
+		))->addSubcommand('basics', array(
+			'help' => __d('cake_console', 'Update removed basics functions to PHP native functions.'),
+			'parser' => $subcommandParser
+		))->addSubcommand('request', array(
+			'help' => __d('cake_console', 'Update removed request access, and replace with $this->request.'),
+			'parser' => $subcommandParser
+		))->addSubcommand('configure', array(
+			'help' => __d('cake_console', "Update Configure::read() to Configure::read('debug')"),
+			'parser' => $subcommandParser
+		))->addSubcommand('constants', array(
+			'help' => __d('cake_console', "Replace Obsolete constants"),
+			'parser' => $subcommandParser
+		))->addSubcommand('components', array(
+			'help' => __d('cake_console', 'Update components to extend Component class.'),
+			'parser' => $subcommandParser
+		))->addSubcommand('exceptions', array(
+			'help' => __d('cake_console', 'Replace use of cakeError with exceptions.'),
+			'parser' => $subcommandParser
+		));
+
+		return $parser;
 	}
 
 }
