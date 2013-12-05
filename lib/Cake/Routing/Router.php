@@ -509,11 +509,11 @@ class Router {
 			$urlName = Inflector::underscore($name);
 			$plugin = Inflector::underscore($plugin);
 			if ($plugin && !$hasPrefix) {
-				$prefix = '/' . $plugin . '/';
+				$prefix = '/' . $plugin;
 			}
 
 			foreach (self::$_resourceMap as $params) {
-				$url = $prefix . $urlName . (($params['id']) ? '/:id' : '');
+				$url = $prefix . '/' . $urlName . (($params['id']) ? '/:id' : '');
 
 				Router::connect($url,
 					array(
