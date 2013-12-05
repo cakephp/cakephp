@@ -1606,6 +1606,34 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * Test that fields() method builds different cache keys when using virtual fields with the same key but different expressions.
+ *
+ * @return void
+ */
+	public function testDifferentVirtualFieldsCacheKey() {
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+		$fields = array(
+			'body',
+			'this_moment'
+		);
+
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+		);
+		$this->testDb->fields($Article, null, $fields);
+
+		$Article->virtualFields = array(
+			'this_moment' => 'LOCALTIMESTAMP()',
+		);
+		$this->testDb->fields($Article, null, $fields);
+
+		$this->assertEquals(2, count(DboSource::$methodCache['fields']));
+	}
+
+/**
  * Test that group works without a model
  *
  * @return void
