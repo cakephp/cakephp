@@ -458,12 +458,13 @@ class Shell extends Object {
  * Gets the option parser instance and configures it.
  * By overriding this method you can configure the ConsoleOptionParser before returning it.
  *
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::getOptionParser
  */
-	public function getOptionParser() {
+	public function getOptionParser($defaultOptions = true) {
 		$name = ($this->plugin ? $this->plugin . '.' : '') . $this->name;
-		$parser = new ConsoleOptionParser($name);
+		$parser = new ConsoleOptionParser($name, $defaultOptions);
 		return $parser;
 	}
 
