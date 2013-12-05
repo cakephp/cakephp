@@ -215,6 +215,20 @@ class RouterTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 		$this->assertEquals(array('test_plugin'), $resources);
+
+		$resources = Router::mapResources('Posts', array('prefix' => 'api'));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = Router::parse('/api/posts');
+		$expected = array(
+			'pass' => array(),
+			'named' => array(),
+			'plugin' => null,
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => 'GET'
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
