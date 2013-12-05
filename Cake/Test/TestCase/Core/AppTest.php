@@ -84,16 +84,19 @@ class AppTest extends TestCase {
 			['Also/Exists', 'In', 'App', true, 'TestApp\In\Also\ExistsApp'],
 			['Also', 'Exists/In', 'App', true, 'TestApp\Exists\In\AlsoApp'],
 			['Also', 'Exists/In/Subfolder', 'App', true, 'TestApp\Exists\In\Subfolder\AlsoApp'],
+			['No', 'Suffix', '', true, 'TestApp\Suffix\No'],
 
 			['MyPlugin.Exists', 'In', 'Suffix', true, 'MyPlugin\In\ExistsSuffix'],
 			['MyPlugin.Also/Exists', 'In', 'Suffix', true, 'MyPlugin\In\Also\ExistsSuffix'],
 			['MyPlugin.Also', 'Exists/In', 'Suffix', true, 'MyPlugin\Exists\In\AlsoSuffix'],
 			['MyPlugin.Also', 'Exists/In/Subfolder', 'Suffix', true, 'MyPlugin\Exists\In\Subfolder\AlsoSuffix'],
+			['MyPlugin.No', 'Suffix', '', true, 'MyPlugin\Suffix\No'],
 
 			['Exists', 'In', 'Cake', false, 'Cake\In\ExistsCake'],
 			['Also/Exists', 'In', 'Cake', false, 'Cake\In\Also\ExistsCake'],
 			['Also', 'Exists/In', 'Cake', false, 'Cake\Exists\In\AlsoCake'],
 			['Also', 'Exists/In/Subfolder', 'Cake', false, 'Cake\Exists\In\Subfolder\AlsoCake'],
+			['No', 'Suffix', '', false, 'Cake\Suffix\No'],
 
 			// Realistic examples returning nothing
 			['App', 'Core', 'Suffix'],
