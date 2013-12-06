@@ -230,7 +230,25 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * testLoadModel method
+ * test autoload modelClass
+ *
+ * @return void
+ */
+	public function testRepositoryAutoload() {
+		Configure::write('App.namespace', 'TestApp');
+		$request = new Request('controller_posts/index');
+		$response = $this->getMock('Cake\Network\Response');
+		$Controller = new Controller($request, $response);
+		$Controller->modelClass = 'Articles';
+
+		$this->assertInstanceOf(
+			'TestApp\Model\Repository\ArticlesTable',
+			$Controller->Articles
+		);
+	}
+
+/**
+ * testRepository method
  *
  * @return void
  */

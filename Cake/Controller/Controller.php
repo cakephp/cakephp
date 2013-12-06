@@ -361,15 +361,15 @@ class Controller extends Object implements EventListener {
  * @param string $name
  * @return boolean
  */
-	public function __isset($name) {
+	public function __get($name) {
 		if ($name === $this->modelClass) {
 			list($plugin, $class) = pluginSplit($name, true);
 			if (!$plugin) {
 				$plugin = $this->plugin ? $this->plugin . '.' : null;
 			}
-			return $this->repository($plugin . $this->modelClass);
+			$this->repository($plugin . $this->modelClass);
+			return $this->{$this->modelClass};
 		}
-
 		return false;
 	}
 
@@ -615,6 +615,10 @@ class Controller extends Object implements EventListener {
  * @throws Cake\Error\MissingModelException if the model class cannot be found.
  */
 	public function repository($modelClass = null, $type = 'Table') {
+		if (isset($this->{$modelClass})) {
+			return $this->{$modelClass};
+		}
+
 		if ($modelClass === null) {
 			$modelClass = $this->modelClass;
 		}
@@ -623,8 +627,6 @@ class Controller extends Object implements EventListener {
 
 		if ($type === 'Table') {
 			$this->{$modelClass} = TableRegistry::get($plugin . $modelClass);
-		} else {
-			$this->{$modelClass} = $this->_loadRepository($plugin . $modelClass, $type);
 		}
 		if (!$this->{$modelClass}) {
 			throw new Error\MissingModelException($modelClass);
