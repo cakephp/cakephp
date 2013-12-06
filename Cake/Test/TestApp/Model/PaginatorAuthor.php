@@ -26,25 +26,11 @@ use Cake\TestSuite\Fixture\TestModel;
 class PaginatorAuthor extends TestModel {
 
 /**
- * name property
- *
- * @var string 'PaginatorAuthor'
- */
-	public $name = 'PaginatorAuthor';
-
-/**
  * useTable property
  *
  * @var string 'authors'
  */
 	public $useTable = 'authors';
-
-/**
- * alias property
- *
- * @var string 'PaginatorAuthor'
- */
-	public $alias = 'PaginatorAuthor';
 
 /**
  * alias property

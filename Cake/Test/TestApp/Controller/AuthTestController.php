@@ -27,13 +27,6 @@ use Cake\Routing\Router;
 class AuthTestController extends Controller {
 
 /**
- * name property
- *
- * @var string 'AuthTest'
- */
-	public $name = 'AuthTest';
-
-/**
  * uses property
  *
  * @var array

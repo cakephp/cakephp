@@ -26,13 +26,6 @@ use Cake\TestSuite\Fixture\TestModel;
 class ControllerPaginatorModel extends TestModel {
 
 /**
- * name property
- *
- * @var string 'ControllerPaginateModel'
- */
-	public $name = 'ControllerPaginatorModel';
-
-/**
  * useTable property
  *
  * @var string 'comments'

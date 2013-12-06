@@ -27,13 +27,6 @@ use Cake\Event\Event;
 class AjaxAuthController extends Controller {
 
 /**
- * name property
- *
- * @var string 'AjaxAuth'
- */
-	public $name = 'AjaxAuth';
-
-/**
  * components property
  *
  * @var array

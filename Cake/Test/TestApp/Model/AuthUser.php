@@ -26,13 +26,6 @@ use Cake\TestSuite\Fixture\TestModel;
 class AuthUser extends TestModel {
 
 /**
- * name property
- *
- * @var string 'AuthUser'
- */
-	public $name = 'AuthUser';
-
-/**
  * useDbConfig property
  *
  * @var string 'test'

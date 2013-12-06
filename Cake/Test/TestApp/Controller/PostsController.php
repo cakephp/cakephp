@@ -22,8 +22,6 @@ use TestApp\Controller\AppController;
  */
 class PostsController extends AppController {
 
-	public $name = 'Posts';
-
 /**
  * Components array
  *

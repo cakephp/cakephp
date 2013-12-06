@@ -28,8 +28,6 @@ class TestPluginAuthors extends TestPluginAppModel {
 
 	public $useTable = 'authors';
 
-	public $name = 'TestPluginAuthors';
-
 	public $validate = array(
 		'field' => array(
 			'notEmpty' => array(

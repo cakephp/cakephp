@@ -23,13 +23,6 @@ use Cake\Event\Event;
 class SomePostsController extends Controller {
 
 /**
- * name property
- *
- * @var string 'SomePosts'
- */
-	public $name = 'SomePosts';
-
-/**
  * uses property
  *
  * @var array
