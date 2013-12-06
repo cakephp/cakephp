@@ -34,7 +34,7 @@ class MergeShell extends Shell {
 
 	public $tasks = array('DbConfig', 'Fixture');
 
-	public $uses = array('Comment');
+	public $modelClass = 'Articles';
 
 }
 
@@ -170,39 +170,39 @@ class ShellTest extends TestCase {
 
 		Plugin::load('TestPlugin');
 		$this->Shell->tasks = array('DbConfig' => array('one', 'two'));
-		$this->Shell->uses = array('TestPlugin.TestPluginPost');
+		$this->Shell->plugin = 'TestPlugin';
+		$this->Shell->modelClass = 'TestPluginComments';
 		$this->Shell->initialize();
 
-		$this->assertTrue(isset($this->Shell->TestPluginPost));
-		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', $this->Shell->TestPluginPost);
-		$this->assertEquals('TestPluginPost', $this->Shell->modelClass);
-		Plugin::unload('TestPlugin');
-
-		$this->Shell->uses = array('TestApp\Model\Comment');
-		$this->Shell->initialize();
-		$this->assertTrue(isset($this->Shell->Comment));
-		$this->assertInstanceOf('TestApp\Model\Comment', $this->Shell->Comment);
-		$this->assertEquals('TestApp\Model\Comment', $this->Shell->modelClass);
+		$this->assertTrue(isset($this->Shell->TestPluginComments));
+		$this->assertInstanceOf(
+			'TestPlugin\Model\Repository\TestPluginCommentsTable',
+			$this->Shell->TestPluginComments
+		);
 	}
 
 /**
- * testLoadModel method
+ * test repository method
  *
  * @return void
  */
-	public function testLoadModel() {
+	public function testRepository() {
 		Configure::write('App.namespace', 'TestApp');
 
 		$Shell = new MergeShell();
-		$this->assertEquals('Comment', $Shell->Comment->alias);
-		$this->assertInstanceOf('TestApp\Model\Comment', $Shell->Comment);
-		$this->assertEquals('Comment', $Shell->modelClass);
+		$this->assertInstanceOf(
+			'TestApp\Model\Repository\ArticlesTable',
+			$Shell->Articles
+		);
+		$this->assertEquals('Articles', $Shell->modelClass);
 
 		Plugin::load('TestPlugin');
-		$this->Shell->loadModel('TestPlugin.TestPluginPost');
-		$this->assertTrue(isset($this->Shell->TestPluginPost));
-		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', $this->Shell->TestPluginPost);
-		$this->assertEquals('TestPluginPost', $this->Shell->modelClass);
+		$this->Shell->repository('TestPlugin.TestPluginComments');
+		$this->assertTrue(isset($this->Shell->TestPluginComments));
+		$this->assertInstanceOf(
+			'TestPlugin\Model\Repository\TestPluginCommentsTable',
+			$this->Shell->TestPluginComments
+		);
 	}
 
 /**

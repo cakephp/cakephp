@@ -27,6 +27,7 @@ use Cake\Utility\ClassRegistry;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
+use Cake\Utility\RepositoryAwareTrait;
 use Cake\Utility\String;
 
 /**
@@ -36,6 +37,8 @@ use Cake\Utility\String;
 class Shell extends Object {
 
 	use MergeVariablesTrait;
+	use RepositoryAwareTrait;
+
 /**
  * Output constant making verbose shells.
  */
@@ -117,21 +120,6 @@ class Shell extends Object {
 	public $taskNames = [];
 
 /**
- * Contains models to load and instantiate
- *
- * @var array
- * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::$uses
- */
-	public $uses = [];
-
-/**
- * This shell's primary model class name, the first model in the $uses property
- *
- * @var string
- */
-	public $modelClass = null;
-
-/**
  * Task Collection for the command, used to create Tasks.
  *
  * @var TaskRegistry
@@ -179,6 +167,7 @@ class Shell extends Object {
 			list(, $class) = namespaceSplit(get_class($this));
 			$this->name = str_replace(['Shell', 'Task'], '', $class);
 		}
+		$this->_setModelClass($this->name);
 		$this->Tasks = new TaskRegistry($this);
 
 		$this->stdout = $stdout ? $stdout : new ConsoleOutput('php://stdout');
@@ -187,7 +176,7 @@ class Shell extends Object {
 
 		$this->_useLogger();
 		$this->_mergeVars(
-			['tasks', 'uses'],
+			['tasks'],
 			['associative' => ['tasks']]
 		);
 	}
@@ -201,7 +190,6 @@ class Shell extends Object {
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::initialize
  */
 	public function initialize() {
-		$this->_loadModels();
 		$this->loadTasks();
 	}
 
@@ -234,73 +222,19 @@ class Shell extends Object {
 	}
 
 /**
- * If $uses is an array load each of the models in the array
- *
- * @return boolean
- */
-	protected function _loadModels() {
-		if (is_array($this->uses)) {
-			list(, $this->modelClass) = pluginSplit(current($this->uses));
-			foreach ($this->uses as $modelClass) {
-				$this->loadModel($modelClass);
-			}
-		}
-		return true;
-	}
-
-/**
- * Lazy loads models using the loadModel() method if declared in $uses
+ * Lazy loads models using the repository() method if it matches modelClass
  *
  * @param string $name
  * @return void
  */
 	public function __isset($name) {
-		if (is_array($this->uses)) {
-			foreach ($this->uses as $modelClass) {
-				list(, $class) = pluginSplit($modelClass);
-				if ($name === $class) {
-					return $this->loadModel($modelClass);
-				}
-				list(, $class) = namespaceSplit($modelClass);
-				if ($name === $class) {
-					return $this->loadModel($class);
-				}
+		if ($name === $this->modelClass) {
+			list($plugin, $class) = pluginSplit($name, true);
+			if (!$plugin) {
+				$plugin = $this->plugin ? $this->plugin . '.' : null;
 			}
+			return $this->repository($plugin . $this->modelClass);
 		}
-	}
-
-/**
- * Loads and instantiates models required by this shell.
- *
- * @param string $modelClass Name of model class to load
- * @param mixed $id Initial ID the instanced model class should have
- * @return mixed true when single model found and instance created, error returned if model not found.
- * @throws Cake\Error\MissingModelException if the model class cannot be found.
- */
-	public function loadModel($modelClass = null, $id = null) {
-		if ($modelClass === null) {
-			$modelClass = $this->modelClass;
-		}
-
-		$this->uses = ($this->uses) ? (array)$this->uses : [];
-		if (!in_array($modelClass, $this->uses)) {
-			$this->uses[] = $modelClass;
-		}
-
-		list($plugin, $modelClass) = pluginSplit($modelClass, true);
-		if (!isset($this->modelClass)) {
-			$this->modelClass = $modelClass;
-		}
-
-		$this->{$modelClass} = ClassRegistry::init([
-			'class' => $plugin . $modelClass,
-			'alias' => $modelClass,
-			'id' => $id
-		]);
-		if (!$this->{$modelClass}) {
-			throw new Error\MissingModelException($modelClass);
-		}
-		return true;
 	}
 
 /**
