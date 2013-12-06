@@ -30,6 +30,7 @@ use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
+use Cake\Utility\RepositoryAwareTrait;
 use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
 
@@ -80,6 +81,7 @@ class Controller extends Object implements EventListener {
 
 	use MergeVariablesTrait;
 	use RequestActionTrait;
+	use RepositoryAwareTrait;
 	use ViewVarsTrait;
 
 /**
@@ -284,25 +286,6 @@ class Controller extends Object implements EventListener {
 	public $methods = array();
 
 /**
- * This controller's primary model class name, the Inflector::singularize()'ed version of
- * the controller's $name property.
- *
- * Example: For a controller named 'Comments', the modelClass would be 'Comment'
- *
- * @var string
- */
-	public $modelClass = null;
-
-/**
- * This controller's model key name, an underscored version of the controller's $modelClass property.
- *
- * Example: For a controller named 'ArticleComments', the modelKey would be 'article_comment'
- *
- * @var string
- */
-	public $modelKey = null;
-
-/**
  * Holds any validation errors produced by the last call of the validateErrors() method/
  *
  * @var array Validation errors, or false if none
@@ -338,8 +321,7 @@ class Controller extends Object implements EventListener {
 			$this->viewPath = $viewPath;
 		}
 
-		$this->modelClass = Inflector::singularize($this->name);
-		$this->modelKey = Inflector::underscore($this->modelClass);
+		$this->_setModelClass($this->name);
 
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Cake\Controller\Controller');
@@ -597,41 +579,6 @@ class Controller extends Object implements EventListener {
  */
 	public function shutdownProcess() {
 		$this->getEventManager()->dispatch(new Event('Controller.shutdown', $this));
-	}
-
-/**
- * Loads and constructs repository objects required by this controller.
- *
- * Typically used to load ORM Table objects as required. Can
- * also be used to load other types of repository objects your application uses.
- *
- * If a repository provider does not return an object a MissingModelException will
- * be thrown.
- *
- * @param string $modelClass Name of model class to load. Defaults to $this->modelClass
- * @param string $type The type of repository to load. Defaults to 'Table' which
- *   delegates to Cake\ORM\TableRegistry.
- * @return boolean True when single repository found and instance created.
- * @throws Cake\Error\MissingModelException if the model class cannot be found.
- */
-	public function repository($modelClass = null, $type = 'Table') {
-		if (isset($this->{$modelClass})) {
-			return $this->{$modelClass};
-		}
-
-		if ($modelClass === null) {
-			$modelClass = $this->modelClass;
-		}
-
-		list($plugin, $modelClass) = pluginSplit($modelClass, true);
-
-		if ($type === 'Table') {
-			$this->{$modelClass} = TableRegistry::get($plugin . $modelClass);
-		}
-		if (!$this->{$modelClass}) {
-			throw new Error\MissingModelException($modelClass);
-		}
-		return true;
 	}
 
 /**
