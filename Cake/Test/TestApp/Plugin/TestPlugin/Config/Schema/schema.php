@@ -27,8 +27,6 @@ use Cake\Model\Schema;
 
 class TestPluginAppSchema extends Schema {
 
-	public $name = 'TestPluginApp';
-
 	public $test_plugin_acos = array(
 		'id' => array('type' => 'integer', 'null' => false, 'default' => null, 'length' => 10, 'key' => 'primary'),
 		'parent_id' => array('type' => 'integer', 'null' => true, 'default' => null, 'length' => 10),

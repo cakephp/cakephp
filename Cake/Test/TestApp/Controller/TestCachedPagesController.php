@@ -10,13 +10,6 @@ use Cake\Controller\Controller;
 class TestCachedPagesController extends Controller {
 
 /**
- * name property
- *
- * @var string 'TestCachedPages'
- */
-	public $name = 'TestCachedPages';
-
-/**
  * uses property
  *
  * @var array

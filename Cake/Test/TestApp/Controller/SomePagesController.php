@@ -23,13 +23,6 @@ use Cake\Network\Response;
 class SomePagesController extends Controller {
 
 /**
- * name property
- *
- * @var string 'SomePages'
- */
-	public $name = 'SomePages';
-
-/**
  * uses property
  *
  * @var array

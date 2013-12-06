@@ -22,13 +22,6 @@ use Cake\TestSuite\Fixture\TestModel;
 class Article extends TestModel {
 
 /**
- * name property
- *
- * @var string 'Article'
- */
-	public $name = 'Article';
-
-/**
  * belongsTo property
  *
  * @var array

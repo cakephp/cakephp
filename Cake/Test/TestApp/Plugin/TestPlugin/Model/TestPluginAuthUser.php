@@ -24,13 +24,6 @@ namespace TestPlugin\Model;
 class TestPluginAuthUser extends TestPluginAppModel {
 
 /**
- * Name property
- *
- * @var string
- */
-	public $name = 'TestPluginAuthUser';
-
-/**
  * useTable property
  *
  * @var string

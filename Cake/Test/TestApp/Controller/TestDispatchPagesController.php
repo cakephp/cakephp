@@ -22,13 +22,6 @@ use Cake\Controller\Controller;
 class TestDispatchPagesController extends Controller {
 
 /**
- * name property
- *
- * @var string 'TestDispatchPages'
- */
-	public $name = 'TestDispatchPages';
-
-/**
  * uses property
  *
  * @var array
