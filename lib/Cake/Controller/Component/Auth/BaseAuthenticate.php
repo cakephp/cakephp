@@ -118,12 +118,10 @@ abstract class BaseAuthenticate {
 		}
 
 		$user = $result[$model];
-		if ($password) {
-			if (!$this->passwordHasher()->check($password, $user[$fields['password']])) {
-				return false;
-			}
-			unset($user[$fields['password']]);
+		if (!$this->passwordHasher()->check($password, $user[$fields['password']])) {
+			return false;
 		}
+		unset($user[$fields['password']]);
 
 		unset($result[$model]);
 		return array_merge($user, $result);
