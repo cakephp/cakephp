@@ -348,7 +348,7 @@ class Log {
 				count(array_intersect((array)$scope, $scopes)) > 0
 			);
 			if ($correctLevel && $inScope) {
-				$logger->write($level, $message);
+				$logger->write($level, $message, $scope);
 				$logged = true;
 			}
 		}

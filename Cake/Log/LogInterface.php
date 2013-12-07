@@ -28,7 +28,8 @@ interface LogInterface {
  *
  * @param string $type
  * @param string $message
+ * @param string|array $scope
  * @return void
  */
-	public function write($type, $message);
+	public function write($type, $message, $scope = []);
 }
