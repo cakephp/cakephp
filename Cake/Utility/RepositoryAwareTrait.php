@@ -48,11 +48,18 @@ trait RepositoryAwareTrait {
 /**
  * Set the modelClass and modelKey properties based on conventions.
  *
- * If the properties are already set they w
+ * If the properties are already set they will not be overwritten
+ *
+ * @param string $name
+ * @return void
  */
 	protected function _setModelClass($name) {
-		$this->modelClass = Inflector::singularize($this->name);
-		$this->modelKey = Inflector::underscore($this->modelClass);
+		if (empty($this->modelClass)) {
+			$this->modelClass = Inflector::singularize($this->name);
+		}
+		if (empty($this->modelKey)) {
+			$this->modelKey = Inflector::underscore($this->modelClass);
+		}
 	}
 /**
  * Loads and constructs repository objects required by this object

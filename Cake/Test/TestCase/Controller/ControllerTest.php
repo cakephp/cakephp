@@ -533,7 +533,11 @@ class ControllerTest extends TestCase {
 		$TestController = new AnotherTestController($request);
 		$TestController->constructClasses();
 
-		$this->assertEquals('AnotherTest', $TestController->modelClass);
+		$this->assertEquals(
+			'Post',
+			$TestController->modelClass,
+			'modelClass should not be overwritten when defined.'
+		);
 	}
 
 /**
