@@ -62,9 +62,9 @@ class CakeFixtureManagerTest extends CakeTestCase {
 		$fixtureManager = $this->fixtureManager;
 		$fixtureManagerReflection = new ReflectionClass($fixtureManager);
 
-		$_loadedProperty = $fixtureManagerReflection->getProperty('_loaded');
-		$_loadedProperty->setAccessible(true);
-		$_loadedProperty->setValue($fixtureManager, array('core.uuid' => $MockFixture));
+		$loadedProperty = $fixtureManagerReflection->getProperty('_loaded');
+		$loadedProperty->setAccessible(true);
+		$loadedProperty->setValue($fixtureManager, array('core.uuid' => $MockFixture));
 
 		$TestCase = $this->getMock('CakeTestCase');
 		$TestCase->fixtures = array('core.uuid');
@@ -89,9 +89,9 @@ class CakeFixtureManagerTest extends CakeTestCase {
 		$fixtureManager = $this->fixtureManager;
 		$fixtureManagerReflection = new ReflectionClass($fixtureManager);
 
-		$_fixtureMapProperty = $fixtureManagerReflection->getProperty('_fixtureMap');
-		$_fixtureMapProperty->setAccessible(true);
-		$_fixtureMapProperty->setValue($fixtureManager, array('UuidFixture' => $MockFixture));
+		$fixtureMapProperty = $fixtureManagerReflection->getProperty('_fixtureMap');
+		$fixtureMapProperty->setAccessible(true);
+		$fixtureMapProperty->setValue($fixtureManager, array('UuidFixture' => $MockFixture));
 
 		$dboMethods = array_diff(get_class_methods('DboSource'), array('enabled'));
 		$dboMethods[] = 'connect';
