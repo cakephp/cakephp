@@ -209,6 +209,7 @@ class CakeFixtureManager {
 				$db = ConnectionManager::getDataSource($fixture->useDbConfig);
 				$db->begin();
 				$this->_setupTable($fixture, $db, $test->dropTables);
+				$fixture->truncate($db);
 				$fixture->insert($db);
 				$db->commit();
 			}
