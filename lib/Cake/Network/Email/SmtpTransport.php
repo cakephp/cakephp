@@ -84,7 +84,7 @@ class SmtpTransport extends AbstractTransport {
 			'client' => null,
 			'tls' => false
 		);
-		$this->_config = array_merge($default, $this->_config, $config);
+		$this->_config = empty($config) ? $this->_config + $default : $config + $default;
 		return $this->_config;
 	}
 
@@ -136,13 +136,23 @@ class SmtpTransport extends AbstractTransport {
  */
 	protected function _auth() {
 		if (isset($this->_config['username']) && isset($this->_config['password'])) {
-			$authRequired = $this->_smtpSend('AUTH LOGIN', '334|503');
+			if(isset($this->_config['auth'])) {
+				$authRequired = $this->_smtpSend('AUTH '.$this->_config['auth'], '334|503');				
+			} else {
+				$authRequired = $this->_smtpSend('AUTH LOGIN', '334|503');
+			}
 			if ($authRequired == '334') {
-				if (!$this->_smtpSend(base64_encode($this->_config['username']), '334')) {
-					throw new SocketException(__d('cake_dev', 'SMTP server did not accept the username.'));
-				}
-				if (!$this->_smtpSend(base64_encode($this->_config['password']), '235')) {
-					throw new SocketException(__d('cake_dev', 'SMTP server did not accept the password.'));
+				if($this->_config['auth'] == 'PLAIN') {
+					if (!$this->_smtpSend(base64_encode("\0".$this->_config['username']."\0".$this->_config['password']), '235')) {
+						throw new SocketException(__d('cake_dev', 'SMTP server did not accept the username and/or password.'));
+					}
+				} else {
+					if (!$this->_smtpSend(base64_encode($this->_config['username']), '334')) {
+						throw new SocketException(__d('cake_dev', 'SMTP server did not accept the username.'));
+					}
+					if (!$this->_smtpSend(base64_encode($this->_config['password']), '235')) {
+						throw new SocketException(__d('cake_dev', 'SMTP server did not accept the password.'));
+					}
 				}
 			} elseif ($authRequired == '504') {
 				throw new SocketException(__d('cake_dev', 'SMTP authentication method not allowed, check if SMTP server requires TLS'));
@@ -229,7 +239,7 @@ class SmtpTransport extends AbstractTransport {
  * @throws SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {
-		if ($data !== null) {
+		if (!is_null($data)) {
 			$this->_socket->write($data . "\r\n");
 		}
 		while ($checkCode !== false) {
