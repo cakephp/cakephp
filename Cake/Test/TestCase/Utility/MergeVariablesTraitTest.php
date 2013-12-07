@@ -121,15 +121,4 @@ class MergeVariablesTraitTest extends TestCase {
 		$this->assertEquals(['test'], $object->hasBoolean);
 	}
 
-/**
- * Test that merging reversed works.
- *
- * @return void
- */
-	public function testMergeVariablesReversed() {
-		$object = new Grandchild();
-		$object->mergeVars(['listProperty'], ['reverse' => ['listProperty']]);
-		$expected = ['Four', 'Five', 'Two', 'Three', 'One'];
-		$this->assertSame($expected, $object->listProperty);
-	}
 }
