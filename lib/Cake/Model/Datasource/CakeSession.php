@@ -194,6 +194,7 @@ class CakeSession {
 		}
 
 		self::$error = false;
+		self::$valid = true;
 		return self::started();
 	}
 
@@ -426,9 +427,14 @@ class CakeSession {
  * @return void
  */
 	public static function destroy() {
-		self::start();
+		if (!self::started()) {
+			self::_startSession();
+		}
+
 		session_destroy();
-		self::clear();
+
+		$_SESSION = null;
+		self::$id = null;
 	}
 
 /**
@@ -439,7 +445,6 @@ class CakeSession {
 	public static function clear() {
 		$_SESSION = null;
 		self::$id = null;
-		self::start();
 		self::renew();
 	}
 
@@ -620,14 +625,11 @@ class CakeSession {
  * @return void
  */
 	protected static function _checkValid() {
-		if (!self::start()) {
-			self::$valid = false;
-			return false;
-		}
-		if ($config = self::read('Config')) {
+		$config = self::read('Config');
+		if ($config) {
 			$sessionConfig = Configure::read('Session');
 
-			if (self::_validAgentAndTime()) {
+			if (self::valid()) {
 				self::write('Config.time', self::$sessionTime);
 				if (isset($sessionConfig['autoRegenerate']) && $sessionConfig['autoRegenerate'] === true) {
 					$check = $config['countdown'];
@@ -639,18 +641,27 @@ class CakeSession {
 						self::write('Config.countdown', self::$requestCountdown);
 					}
 				}
-				self::$valid = true;
 			} else {
+				$_SESSION = array();
 				self::destroy();
-				self::$valid = false;
 				self::_setError(1, 'Session Highjacking Attempted !!!');
+				self::_startSession();
+				self::_writeConfig();
 			}
 		} else {
-			self::write('Config.userAgent', self::$_userAgent);
-			self::write('Config.time', self::$sessionTime);
-			self::write('Config.countdown', self::$requestCountdown);
-			self::$valid = true;
+			self::_writeConfig();
 		}
+	}
+
+/**
+ * Writes configuration variables to the session
+ *
+ * @return void
+ */
+	protected static function _writeConfig() {
+		self::write('Config.userAgent', self::$_userAgent);
+		self::write('Config.time', self::$sessionTime);
+		self::write('Config.countdown', self::$requestCountdown);
 	}
 
 /**
