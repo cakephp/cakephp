@@ -56,6 +56,7 @@ trait RepositoryAwareTrait {
 			$this->modelClass = Inflector::pluralize($name);
 		}
 	}
+
 /**
  * Loads and constructs repository objects required by this object
  *
