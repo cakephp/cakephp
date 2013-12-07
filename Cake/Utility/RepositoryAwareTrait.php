@@ -14,7 +14,7 @@
  */
 namespace Cake\Utility;
 
-use Cake\ORM\TableRegistry;
+use Cake\Error;
 use Cake\Utility\Inflector;
 
 /**
@@ -37,13 +37,11 @@ trait RepositoryAwareTrait {
 	public $modelClass;
 
 /**
- * This objects's repository key name, an underscored version of the objects's $modelClass property.
+ * A list of repository factory functions.
  *
- * Example: For an object named 'ArticleComments', the modelKey would be 'article_comment'
- *
- * @var string
+ * @var array
  */
-	public $modelKey;
+	protected $_repositoryFactories = [];
 
 /**
  * Set the modelClass and modelKey properties based on conventions.
@@ -55,10 +53,7 @@ trait RepositoryAwareTrait {
  */
 	protected function _setModelClass($name) {
 		if (empty($this->modelClass)) {
-			$this->modelClass = Inflector::singularize($this->name);
-		}
-		if (empty($this->modelKey)) {
-			$this->modelKey = Inflector::underscore($this->modelClass);
+			$this->modelClass = Inflector::pluralize($name);
 		}
 	}
 /**
@@ -87,14 +82,30 @@ trait RepositoryAwareTrait {
 
 		list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
-		if ($type === 'Table') {
-			$this->{$modelClass} = TableRegistry::get($plugin . $modelClass);
+		if (!isset($this->_repositoryFactories[$type])) {
+			throw new Error\Exception(__d(
+				'cake_dev',
+				'Unknown repository type "%s". Make sure you register a type before trying to use it.',
+				$type
+			));
 		}
-		// TODO add other providers
+		$factory = $this->_repositoryFactories[$type];
+		$this->{$modelClass} = $factory($plugin . $modelClass);
 		if (!$this->{$modelClass}) {
 			throw new Error\MissingModelException($modelClass);
 		}
 		return true;
+	}
+
+/**
+ * Register a callable to generate repositories of a given type.
+ *
+ * @param string $type The name of the repository type the factory function is for.
+ * @param callable $factory The factory function used to create instances.
+ * @return void
+ */
+	public function repositoryFactory($type, callable $factory) {
+		$this->_repositoryFactories[$type] = $factory;
 	}
 
 }

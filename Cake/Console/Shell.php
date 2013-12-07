@@ -168,6 +168,7 @@ class Shell extends Object {
 			$this->name = str_replace(['Shell', 'Task'], '', $class);
 		}
 		$this->_setModelClass($this->name);
+		$this->repositoryFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
 		$this->Tasks = new TaskRegistry($this);
 
 		$this->stdout = $stdout ? $stdout : new ConsoleOutput('php://stdout');

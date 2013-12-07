@@ -322,6 +322,7 @@ class Controller extends Object implements EventListener {
 		}
 
 		$this->_setModelClass($this->name);
+		$this->repositoryFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
 
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Cake\Controller\Controller');
