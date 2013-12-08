@@ -123,6 +123,13 @@ class CakeSession {
 	public static $requestCountdown = 10;
 
 /**
+ * Whether or not the init function in this class was already called
+ *
+ * @var boolean
+ */
+	protected static $_initialized = false;
+
+/**
  * Pseudo constructor.
  *
  * @param string $base The base path for the Session
@@ -130,15 +137,20 @@ class CakeSession {
  */
 	public static function init($base = null) {
 		self::$time = time();
-
 		$checkAgent = Configure::read('Session.checkAgent');
+
 		if (env('HTTP_USER_AGENT')) {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
+
 		self::_setPath($base);
 		self::_setHost(env('HTTP_HOST'));
 
-		register_shutdown_function('session_write_close');
+		if (!self::$_initialized) {
+			register_shutdown_function('session_write_close');
+		}
+
+		self::$_initialized = true;
 	}
 
 /**
@@ -183,10 +195,8 @@ class CakeSession {
 		if (self::started()) {
 			return true;
 		}
-		self::init();
+
 		$id = self::id();
-		session_write_close();
-		self::_configureSession();
 		self::_startSession();
 
 		if (!$id && self::started()) {
@@ -607,6 +617,10 @@ class CakeSession {
  * @return boolean Success
  */
 	protected static function _startSession() {
+		self::init();
+		session_write_close();
+		self::_configureSession();
+
 		if (headers_sent()) {
 			if (empty($_SESSION)) {
 				$_SESSION = array();
