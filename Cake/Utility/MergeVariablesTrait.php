@@ -67,7 +67,7 @@ trait MergeVariablesTrait {
  */
 	protected function _mergeProperty($property, $parentClasses, $options) {
 		$thisValue = $this->{$property};
-		$isAssoc =  false;
+		$isAssoc = false;
 		if (
 			isset($options['associative']) &&
 			in_array($property, (array)$options['associative'])

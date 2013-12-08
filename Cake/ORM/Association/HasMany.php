@@ -117,6 +117,7 @@ class HasMany extends Association {
  * @return boolean|Entity false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
+ * @throws \InvalidArgumentException when the association data cannot be traversed.
  */
 	public function save(Entity $entity, $options = []) {
 		$targetEntities = $entity->get($this->property());

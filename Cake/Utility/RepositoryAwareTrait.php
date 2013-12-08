@@ -27,10 +27,10 @@ use Cake\Utility\Inflector;
 trait RepositoryAwareTrait {
 
 /**
- * This object's primary model class name, the Inflector::singularize()'ed version of
+ * This object's primary model class name, the Inflector::pluralized()'ed version of
  * the object's $name property.
  *
- * Example: For a object named 'Comments', the modelClass would be 'Comment'
+ * Example: For a object named 'Comments', the modelClass would be 'Comments'
  *
  * @var string
  */
@@ -71,14 +71,15 @@ trait RepositoryAwareTrait {
  *   delegates to Cake\ORM\TableRegistry.
  * @return boolean True when single repository found and instance created.
  * @throws Cake\Error\MissingModelException if the model class cannot be found.
+ * @throws Cake\Error\Exception When using a type that has not been registered.
  */
 	public function repository($modelClass = null, $type = 'Table') {
-		if (isset($this->{$modelClass})) {
-			return $this->{$modelClass};
-		}
-
 		if ($modelClass === null) {
 			$modelClass = $this->modelClass;
+		}
+
+		if (isset($this->{$modelClass})) {
+			return true;
 		}
 
 		list($plugin, $modelClass) = pluginSplit($modelClass, true);

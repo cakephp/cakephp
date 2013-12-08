@@ -49,7 +49,7 @@ class ControllerTestAppController extends Controller {
  *
  * @var string
  */
-	public $modelClass = 'Post';
+	public $modelClass = 'Posts';
 
 /**
  * components property
@@ -83,7 +83,7 @@ class TestController extends ControllerTestAppController {
  *
  * @var string
  */
-	public $modelClass = 'Comment';
+	public $modelClass = 'Comments';
 
 /**
  * index method
