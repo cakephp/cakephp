@@ -431,7 +431,7 @@ class Table implements EventListener {
 		}
 
 		if ($name !== null) {
-			$class = App::classname($name, 'Model\Entity');
+			$class = App::classname($name, 'Model/Entity');
 			$this->_entityClass = $class;
 		}
 
