@@ -2303,6 +2303,16 @@ class RouterTest extends TestCase {
 			'lang' => 'eng',
 			'controller' => 'posts',
 			'action' => 'view',
+			1,
+			'?' => ['foo' => 'bar']
+		);
+		$result = Router::reverse($params);
+		$this->assertEquals('/eng/posts/view/1?foo=bar', $result);
+
+		$params = array(
+			'lang' => 'eng',
+			'controller' => 'posts',
+			'action' => 'view',
 			'pass' => array(1),
 			'url' => array('url' => 'eng/posts/view/1', 'foo' => 'bar', 'baz' => 'quu'),
 			'paging' => array(),
