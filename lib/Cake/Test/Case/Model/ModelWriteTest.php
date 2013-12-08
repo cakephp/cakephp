@@ -6256,7 +6256,7 @@ class ModelWriteTest extends BaseModelTest {
 
 		$TestModel->saveAssociated(array(
 			'Post' => array(
-				'title' => $db->expression('(SELECT "Post with Author")'),
+				'title' => $db->expression("(SELECT 'Post with Author')"),
 				'body' => 'This post will be saved with an author'
 			),
 			'Author' => array(
