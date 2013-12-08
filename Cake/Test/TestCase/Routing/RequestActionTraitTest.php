@@ -38,7 +38,6 @@ class RequestActionTraitTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		Configure::write('App.namespace', 'TestApp');
 		Configure::write('Security.salt', 'not-the-default');
 		$this->object = $this->getObjectForTrait('Cake\Routing\RequestActionTrait');
@@ -229,6 +228,13 @@ class RequestActionTraitTest extends TestCase {
 			['controller' => 'request_action', 'action' => 'query_pass'],
 			['query' => $query]
 		);
+		$this->assertEquals($query, $result);
+
+		$result = $this->object->requestAction([
+			'controller' => 'request_action',
+			'action' => 'query_pass',
+			'?' => $query
+		]);
 		$this->assertEquals($query, $result);
 
 		$result = $this->object->requestAction(

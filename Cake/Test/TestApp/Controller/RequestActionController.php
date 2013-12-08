@@ -24,18 +24,16 @@ namespace TestApp\Controller;
 class RequestActionController extends AppController {
 
 /**
- * uses property
+ * modelClass property
  *
- * @var array
- * @access public
+ * @var string
  */
-	public $uses = ['Post'];
+	public $modelClass = 'Posts';
 
 /**
  * test_request_action method
  *
- * @access public
- * @return void
+ * @return string
  */
 	public function test_request_action() {
 		return 'This is a test';
@@ -47,7 +45,7 @@ class RequestActionController extends AppController {
  * @param mixed $id
  * @param mixed $other
  * @access public
- * @return void
+ * @return string
  */
 	public function another_ra_test($id, $other) {
 		return $id + $other;
@@ -56,7 +54,7 @@ class RequestActionController extends AppController {
 /**
  * normal_request_action method
  *
- * @return void
+ * @return string
  */
 	public function normal_request_action() {
 		return 'Hello World';
@@ -65,7 +63,7 @@ class RequestActionController extends AppController {
 /**
  * returns $this->here
  *
- * @return void
+ * @return string
  */
 	public function return_here() {
 		return $this->here;
@@ -74,7 +72,7 @@ class RequestActionController extends AppController {
 /**
  * paginate_request_action method
  *
- * @return void
+ * @return boolean
  */
 	public function paginate_request_action() {
 		$data = $this->paginate();
@@ -108,6 +106,11 @@ class RequestActionController extends AppController {
 		return $this->request;
 	}
 
+/**
+ * param check method.
+ *
+ * @return void
+ */
 	public function param_check() {
 		$this->autoRender = false;
 		$content = '';
@@ -116,4 +119,5 @@ class RequestActionController extends AppController {
 		}
 		$this->response->body($content);
 	}
+
 }
