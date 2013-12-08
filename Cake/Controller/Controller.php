@@ -80,8 +80,8 @@ use Cake\View\View;
 class Controller extends Object implements EventListener {
 
 	use MergeVariablesTrait;
-	use RequestActionTrait;
 	use RepositoryAwareTrait;
+	use RequestActionTrait;
 	use ViewVarsTrait;
 
 /**
