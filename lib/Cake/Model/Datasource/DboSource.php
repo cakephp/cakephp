@@ -1644,15 +1644,21 @@ class DboSource extends DataSource {
 			return array();
 		}
 
+		// For hasOne and belongsTo associations (local, within same database)
+		$srcAlias = $model->alias;
+		if (!empty($assoc['through'])) {
+			$srcAlias = $assoc['through'];
+		}
+
 		switch (true) {
 			case ($assoc['external'] && $type === 'hasOne'):
 				return array("{$alias}.{$assoc['foreignKey']}" => '{$__cakeID__$}');
 			case ($assoc['external'] && $type === 'belongsTo'):
 				return array("{$alias}.{$linkModel->primaryKey}" => '{$__cakeForeignKey__$}');
 			case (!$assoc['external'] && $type === 'hasOne'):
-				return array("{$alias}.{$assoc['foreignKey']}" => $this->identifier("{$model->alias}.{$model->primaryKey}"));
+				return array("{$alias}.{$assoc['foreignKey']}" => $this->identifier("{$srcAlias}.{$model->primaryKey}"));
 			case (!$assoc['external'] && $type === 'belongsTo'):
-				return array("{$model->alias}.{$assoc['foreignKey']}" => $this->identifier("{$alias}.{$linkModel->primaryKey}"));
+				return array("{$srcAlias}.{$assoc['foreignKey']}" => $this->identifier("{$alias}.{$linkModel->primaryKey}"));
 			case ($type === 'hasMany'):
 				return array("{$alias}.{$assoc['foreignKey']}" => array('{$__cakeID__$}'));
 			case ($type === 'hasAndBelongsToMany'):
