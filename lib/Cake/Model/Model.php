@@ -550,8 +550,8 @@ class Model extends Object implements CakeEventListener {
  * @var array
  */
 	protected $_associationKeys = array(
-		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache'),
-		'hasOne' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'dependent'),
+		'belongsTo' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'counterCache', 'through'),
+		'hasOne' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'dependent', 'through'),
 		'hasMany' => array('className', 'foreignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'dependent', 'exclusive', 'finderQuery', 'counterQuery'),
 		'hasAndBelongsToMany' => array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery')
 	);

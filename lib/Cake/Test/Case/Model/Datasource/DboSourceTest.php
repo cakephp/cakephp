@@ -1227,6 +1227,140 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
+ * data provider for testChainDistantBelongsTo
+ *
+ * In effect, the following is given as input.
+ * {{{
+ * class LevelThree extends AppModel {
+ * public $belongsTo = array(
+ *	'LevelTwo' => array(
+ *		'className' => 'LevelTwo',
+ *		'foreignKey' => 'parent_id'
+ *	),
+ *	'LevelOne' => array(
+ *		'className' => 'LevelOne',
+ *		'foreignKey' => 'parent_id',
+ *		'through' => 'LevelTwo'
+ *	)
+ * );
+ * }}}
+ *
+ * @return array
+ */
+	public static function constraintsBelongsTo($schema) {
+		$db = new DboTestSource;
+		$modelLevelThree = new Model(array('name' => 'LevelThree'));
+		$modelLevelTwo = new Model(array('name' => 'LevelTwo'));
+		$modelLevelOne = new Model(array('name' => 'LevelOne'));
+		$params = array(
+			array(
+			'model' => $modelLevelThree,
+			'linkModel' => $modelLevelTwo,
+			'alias' => 'LevelTwo',
+			'assoc' => array('foreignKey' => 'parent_id')),
+
+			array(
+			'model' => $modelLevelThree,
+			'linkModel' => $modelLevelOne,
+			'alias' => 'LevelOne',
+			'assoc' => array('foreignKey' => 'parent_id', 'through' => 'LevelTwo')),
+		);
+		$results = array(
+			array("{$params[0]['model']->alias}.{$params[0]['assoc']['foreignKey']}" =>
+			$db->identifier("{$params[0]['alias']}.{$params[0]['linkModel']->primaryKey}")),
+			array("{$params[1]['assoc']['through']}.{$params[1]['assoc']['foreignKey']}" =>
+			$db->identifier("{$params[1]['alias']}.{$params[1]['linkModel']->primaryKey}"))
+		);
+
+		return array(
+			array($params[0], $results[0]),
+			array($params[1], $results[1])
+		);
+	}
+
+/**
+ * Test getConstraint('belongsTo')
+ * ensure that key 'through' chains distant belongsTo associations.
+ *
+ * @dataProvider constraintsBelongsTo
+ * @return void
+ */
+	public function testChainDistantBelongsTo($params, $expected) {
+		$db = new DboTestSource;
+		$db->config['prefix'] = 'pre_';
+		$result = $db->getConstraint('belongsTo', $params['model'], $params['linkModel'],
+			$params['alias'], $params['assoc']);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * data provider for testChainDistantHasOne
+ *
+ * In effect, the following is given as input.
+ * {{{
+ * class LevelOne extends AppModel {
+ * public $hasOne = array(
+ *	'LevelTwo' => array(
+ *		'className' => 'LevelTwo',
+ *		'foreignKey' => 'child_id'
+ *	),
+ *	'LevelThree' => array(
+ *		'className' => 'LevelThree',
+ *		'foreignKey' => 'child_id',
+ *		'through' => 'LevelTwo'
+ *	)
+ * );
+ * }}}
+ *
+ * @return array
+ */
+	public static function constraintsHasOne($schema) {
+		$db = new DboTestSource;
+		$modelLevelThree = new Model(array('name' => 'LevelThree'));
+		$modelLevelTwo = new Model(array('name' => 'LevelTwo'));
+		$modelLevelOne = new Model(array('name' => 'LevelOne'));
+		$params = array(
+			array(
+			'model' => $modelLevelOne,
+			'linkModel' => $modelLevelTwo,
+			'alias' => 'LevelTwo',
+			'assoc' => array('foreignKey' => 'child_id')),
+
+			array(
+			'model' => $modelLevelOne,
+			'linkModel' => $modelLevelThree,
+			'alias' => 'LevelThree',
+			'assoc' => array('foreignKey' => 'child_id', 'through' => 'LevelTwo')),
+		);
+		$results = array(
+			array("{$params[0]['alias']}.{$params[0]['assoc']['foreignKey']}" =>
+				$db->identifier("{$params[0]['model']->alias}.{$params[0]['model']->primaryKey}")),
+			array("{$params[1]['alias']}.{$params[1]['assoc']['foreignKey']}" =>
+				$db->identifier("{$params[1]['assoc']['through']}.{$params[1]['model']->primaryKey}"))
+		);
+
+		return array(
+			array($params[0], $results[0]),
+			array($params[1], $results[1])
+		);
+	}
+
+/**
+ * Test getConstraint('hasOne')
+ * ensure that key 'through' chains distant hasOne associations.
+ *
+ * @dataProvider constraintsHasOne
+ * @return void
+ */
+	public function testChainDistantHasOne($params, $expected) {
+		$db = new DboTestSource;
+		$db->config['prefix'] = 'pre_';
+		$result = $db->getConstraint('hasOne', $params['model'], $params['linkModel'],
+			$params['alias'], $params['assoc']);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test conditionKeysToString()
  *
  * @return void
