@@ -37,36 +37,80 @@ class AppTest extends TestCase {
 	}
 
 /**
- * testClassname method
+ * testClassname
+ *
+ * $checkCake and $existsInCake are derived from the input parameters
+ *
+ * @dataProvider classnameProvider
+ * @return void
+ */
+	public function testClassname($class, $type, $suffix = '', $existsInBase = false, $expected = false) {
+		Configure::write('App.namespace', 'TestApp');
+		$mock = $this->getMockClass('Cake\Core\App', ['_classExistsInBase']);
+
+		$mock::staticExpects($this->at(0))
+			->method('_classExistsInBase')
+			->will($this->returnValue($existsInBase));
+
+		$checkCake = (!$existsInBase || strpos('.', $class));
+		if ($checkCake) {
+			$existsInCake = (bool)$expected;
+			$mock::staticExpects($this->at(1))
+				->method('_classExistsInBase')
+				->will($this->returnValue($existsInCake));
+		}
+
+		$return = $mock::classname($class, $type, $suffix);
+		$this->assertSame($expected, $return);
+	}
+
+/**
+ * classnameProvider
+ *
+ * Return test permutations for testClassname method. Format:
+ * 	classname
+ *	type
+ *	suffix
+ *	existsInBase (Base meaning App or plugin namespace)
+ * 	expected return value
  *
  * @return void
  */
-	public function testClassname() {
-		Configure::write('App.namespace', 'TestApp');
+	public function classnameProvider() {
+		return [
+			['Does', 'Not', 'Exist'],
 
-		// Test core
-		$this->assertEquals('Cake\Core\App', App::classname('App', 'Core'));
-		$this->assertFalse(App::classname('App', 'Core', 'Suffix'));
+			['Exists', 'In', 'App', true, 'TestApp\In\ExistsApp'],
+			['Also/Exists', 'In', 'App', true, 'TestApp\In\Also\ExistsApp'],
+			['Also', 'Exists/In', 'App', true, 'TestApp\Exists\In\AlsoApp'],
+			['Also', 'Exists/In/Subfolder', 'App', true, 'TestApp\Exists\In\Subfolder\AlsoApp'],
+			['No', 'Suffix', '', true, 'TestApp\Suffix\No'],
 
-		// Assert prefix
-		$this->assertFalse(App::classname('Auth', 'Controller/Component'));
-		$this->assertEquals('Cake\Controller\Component\AuthComponent', App::classname('Auth', 'Controller/Component', 'Component'));
+			['MyPlugin.Exists', 'In', 'Suffix', true, 'MyPlugin\In\ExistsSuffix'],
+			['MyPlugin.Also/Exists', 'In', 'Suffix', true, 'MyPlugin\In\Also\ExistsSuffix'],
+			['MyPlugin.Also', 'Exists/In', 'Suffix', true, 'MyPlugin\Exists\In\AlsoSuffix'],
+			['MyPlugin.Also', 'Exists/In/Subfolder', 'Suffix', true, 'MyPlugin\Exists\In\Subfolder\AlsoSuffix'],
+			['MyPlugin.No', 'Suffix', '', true, 'MyPlugin\Suffix\No'],
 
-		// Test app
-		$this->assertEquals('TestApp\Controller\PagesController', App::classname('Pages', 'Controller', 'Controller'));
-		$this->assertFalse(App::classname('Unknown', 'Controller', 'Controller'));
+			['Exists', 'In', 'Cake', false, 'Cake\In\ExistsCake'],
+			['Also/Exists', 'In', 'Cake', false, 'Cake\In\Also\ExistsCake'],
+			['Also', 'Exists/In', 'Cake', false, 'Cake\Exists\In\AlsoCake'],
+			['Also', 'Exists/In/Subfolder', 'Cake', false, 'Cake\Exists\In\Subfolder\AlsoCake'],
+			['No', 'Suffix', '', false, 'Cake\Suffix\No'],
 
-		// Test plugin
-		Plugin::load('TestPlugin');
-		$this->assertEquals('TestPlugin\Utility\TestPluginEngine', App::classname('TestPlugin.TestPlugin', 'Utility', 'Engine'));
-		$this->assertFalse(App::classname('TestPlugin.Unknown', 'Utility'));
+			// Realistic examples returning nothing
+			['App', 'Core', 'Suffix'],
+			['Auth', 'Controller/Component'],
+			['Unknown', 'Controller', 'Controller'],
 
-		$this->assertFalse(Plugin::loaded('TestPluginTwo'), 'TestPluginTwo should not be loaded.');
-		// Test unknown plugin
-		$this->assertEquals(
-			'TestPluginTwo\Console\Command\ExampleShell',
-			App::classname('TestPluginTwo.Example', 'Console/Command', 'Shell')
-		);
+			// Real examples returning classnames
+			['App', 'Core', '', false, 'Cake\Core\App'],
+			['Auth', 'Controller/Component', 'Component', false, 'Cake\Controller\Component\AuthComponent'],
+			['File', 'Cache/Engine', 'Engine', false, 'Cake\Cache\Engine\FileEngine'],
+			['Command', 'Console/Command/Task', 'Task', false, 'Cake\Console\Command\Task\CommandTask'],
+			['Upgrade/Locations', 'Console/Command/Task', 'Task', false, 'Cake\Console\Command\Task\Upgrade\LocationsTask'],
+			['Pages', 'Controller', 'Controller', true, 'TestApp\Controller\PagesController'],
+		];
 	}
 
 /**

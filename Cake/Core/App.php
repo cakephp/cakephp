@@ -89,18 +89,31 @@ class App {
 		}
 		$base = rtrim($base, '\\');
 
-		$fullname = '\\' . str_replace('/', '\\', $type) . '\\' . $name . $suffix;
-		if (class_exists($base . $fullname)) {
+		$fullname = '\\' . str_replace('/', '\\', $type . '\\' . $name) . $suffix;
+
+		if (static::_classExistsInBase($fullname, $base)) {
 			return $base . $fullname;
 		}
 		if ($plugin) {
 			return false;
 		}
-
-		if (class_exists('Cake' . $fullname)) {
+		if (static::_classExistsInBase($fullname, 'Cake')) {
 			return 'Cake' . $fullname;
 		}
 		return false;
+	}
+
+/**
+ * _classExistsInBase
+ *
+ * Test isolation wrapper
+ *
+ * @param string $name
+ * @param string $namespace
+ * @return bool
+ */
+	protected static function _classExistsInBase($name, $namespace) {
+		return class_exists($namespace . $name);
 	}
 
 /**
