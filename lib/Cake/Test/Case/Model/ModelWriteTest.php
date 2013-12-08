@@ -6262,7 +6262,7 @@ class ModelWriteTest extends BaseModelTest {
 			'Author' => array(
 				'user' => 'bob',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf90'
-		)));
+		)), array('atomic' => false));
 
 		$result = $TestModel->find('first', array(
 			'order' => array('Post.id ' => 'DESC')
