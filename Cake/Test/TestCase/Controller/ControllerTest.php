@@ -534,7 +534,7 @@ class ControllerTest extends TestCase {
 		$TestController->constructClasses();
 
 		$this->assertEquals(
-			'Post',
+			'Posts',
 			$TestController->modelClass,
 			'modelClass should not be overwritten when defined.'
 		);
