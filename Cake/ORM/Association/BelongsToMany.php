@@ -387,6 +387,56 @@ class BelongsToMany extends Association {
 	}
 
 /**
+ * Associates the source entity to each of the target entities provided by
+ * creating links in the junction table. Both the source entity and each of
+ * the target entities are assumed to be already persisted, if the are marked
+ * as new or their status is unknown, an exception will be thrown.
+ *
+ * When using this method, all entities in `$targetEntities` will be appended to
+ * the source entity'property corresponding to this association object.
+ *
+ * This method does not check link uniqueness.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $newTags = $tags->find('relevant')->execute();
+ * $articles->association('tags')->link($article, $newTags);
+ * }}}
+ *
+ * `$article->get('tags')` will contain all tags in `$newTags` after liking
+ *
+ * @param \Cake\ORM\Entity $sourceEntity the row belonging to the `source` side
+ * of this association
+ * @param array $targetEntities list of entities belonging to the `target` side
+ * of this association
+ * @param array $options list of options to be passed to the save method
+ * @throws \InvalidArgumentException when any of the values in $targetEntities is
+ * detected to not be already persisted
+ * @return boolean true on success, false otherwise
+ */
+	public function link(Entity $sourceEntity, array $targetEntities, array $options = []) {
+		if ($sourceEntity->isNew() !== false) {
+			$error = __d('cake_dev', 'Source entity needs to be persisted before linking');
+			throw new \InvalidArgumentException($error);
+		}
+
+		$property = $this->property();
+		$links = $sourceEntity->get($property) ?: [];
+
+		foreach ($targetEntities as $entity) {
+			if ($entity->isNew() !== false) {
+				$error = __d('cake_dev', 'Cannot link not persisted entities');
+				throw new \InvalidArgumentException($error);
+			}
+			$links[] = $entity;
+		}
+
+		$sourceEntity->set($property, $links);
+		return $this->_saveLinks($sourceEntity, $targetEntities, $options);
+	}
+
+/**
  * Appends any conditions required to load the relevant set of records in the
  * target table query given a filter key and some filtering values.
  *

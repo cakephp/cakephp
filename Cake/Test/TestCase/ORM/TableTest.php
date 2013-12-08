@@ -2762,4 +2762,40 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		]));
 	}
 
+/**
+ * Integration test for linking entities with belongsToMany
+ *
+ * @return void
+ */
+	public function testLinkBelongsToMany() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$tagsTable = TableRegistry::get('tags');
+		$options = ['markNew' => false];
+
+		$article = new \Cake\ORM\Entity([
+			'id' => 1,
+		], $options);
+
+		$newTag = new \TestApp\Model\Entity\Tag([
+			'name' => 'Foo'
+		]);
+		$tags[] = new \TestApp\Model\Entity\Tag([
+			'id' => 3
+		], $options);
+		$tags[] = $newTag;
+
+		$tagsTable->save($newTag);
+		$table->association('tags')->link($article, $tags);
+
+		$this->assertEquals($article->tags, $tags);
+		foreach ($tags as $tag) {
+			$this->assertFalse($tag->isNew());
+		}
+
+		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+		$this->assertEquals($article->tags[2]->id, $tags[0]->id);
+		$this->assertEquals($article->tags[3], $tags[1]);
+	}
+
 }
