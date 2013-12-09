@@ -122,7 +122,7 @@ class CakeEventManager {
  * @return void
  */
 	protected function _attachSubscriber(CakeEventListener $subscriber) {
-		foreach ($subscriber->implementedEvents() as $eventKey => $function) {
+		foreach ((array)$subscriber->implementedEvents() as $eventKey => $function) {
 			$options = array();
 			$method = $function;
 			if (is_array($function) && isset($function['callable'])) {
@@ -197,7 +197,7 @@ class CakeEventManager {
  * @return void
  */
 	protected function _detachSubscriber(CakeEventListener $subscriber, $eventKey = null) {
-		$events = $subscriber->implementedEvents();
+		$events = (array)$subscriber->implementedEvents();
 		if (!empty($eventKey) && empty($events[$eventKey])) {
 			return;
 		} elseif (!empty($eventKey)) {

@@ -455,6 +455,70 @@ class ModelDeleteTest extends BaseModelTest {
 	}
 
 /**
+ * testDeleteAllMultipleRowsPerId method
+ *
+ * Ensure find done in deleteAll only returns distinct ids. A wacky combination
+ * of association and conditions can sometimes generate multiple rows per id.
+ *
+ * @return void
+ */
+	public function testDeleteAllMultipleRowsPerId() {
+		$this->loadFixtures('Article', 'User');
+
+		$TestModel = new Article();
+		$TestModel->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment'),
+			'hasAndBelongsToMany' => array('Tag')
+		), false);
+		$TestModel->bindModel(array(
+			'belongsTo' => array(
+				'User' => array(
+					'foreignKey' => false,
+					'conditions' => array(
+						'Article.user_id = 1'
+					)
+				)
+			)
+		), false);
+
+		$result = $TestModel->deleteAll(
+			array('Article.user_id' => array(1, 3)),
+			true,
+			true
+		);
+
+		$this->assertTrue($result);
+	}
+
+/**
+ * testDeleteAllWithOrderProperty
+ *
+ * Ensure find done in deleteAll works with models that has $order property set
+ *
+ * @return void
+ */
+	public function testDeleteAllWithOrderProperty() {
+		$this->loadFixtures('Article', 'User');
+
+		$TestModel = new Article();
+		$TestModel->order = 'Article.published desc';
+		$TestModel->unbindModel(array(
+			'belongsTo' => array('User'),
+			'hasMany' => array('Comment'),
+			'hasAndBelongsToMany' => array('Tag')
+		), false);
+
+		$result = $TestModel->deleteAll(
+			array('Article.user_id' => array(1, 3)),
+			true,
+			true
+		);
+
+		$this->assertTrue($result);
+	}
+
+/**
  * testRecursiveDel method
  *
  * @return void

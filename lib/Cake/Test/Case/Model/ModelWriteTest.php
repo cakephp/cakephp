@@ -6256,13 +6256,13 @@ class ModelWriteTest extends BaseModelTest {
 
 		$TestModel->saveAssociated(array(
 			'Post' => array(
-				'title' => $db->expression('(SELECT "Post with Author")'),
+				'title' => $db->expression("(SELECT 'Post with Author')"),
 				'body' => 'This post will be saved with an author'
 			),
 			'Author' => array(
 				'user' => 'bob',
 				'password' => '5f4dcc3b5aa765d61d8327deb882cf90'
-		)));
+		)), array('atomic' => false));
 
 		$result = $TestModel->find('first', array(
 			'order' => array('Post.id ' => 'DESC')
