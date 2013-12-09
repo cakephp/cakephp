@@ -24,9 +24,8 @@ use Cake\Log\Engine\BaseLog;
 class SyslogLog extends BaseLog {
 
 /**
- *
  * By default messages are formatted as:
- * type: message
+ * level: message
  *
  * To override the log format (e.g. to add your own info) define the format key when configuring
  * this logger
@@ -40,12 +39,12 @@ class SyslogLog extends BaseLog {
  * ## Example:
  *
  * {{{
- *	CakeLog::config('error', array(
+ *	Log::config('error', ]
  *		'engine' => 'Syslog',
- *		'types' => array('emergency', 'alert', 'critical', 'error'),
+ *		'levels' => ['emergency', 'alert', 'critical', 'error'],
  *		'format' => "%s: My-App - %s",
  *		'prefix' => 'Web Server 01'
- *	));
+ *	]);
  * }}}
  *
  * @var array
@@ -63,7 +62,7 @@ class SyslogLog extends BaseLog {
  *
  * @var array
  */
-	protected $_priorityMap = array(
+	protected $_levelMap = array(
 		'emergency' => LOG_EMERG,
 		'alert' => LOG_ALERT,
 		'critical' => LOG_CRIT,
@@ -95,16 +94,16 @@ class SyslogLog extends BaseLog {
 /**
  * Writes a message to syslog
  *
- * Map the $type back to a LOG_ constant value, split multi-line messages into multiple
+ * Map the $level back to a LOG_ constant value, split multi-line messages into multiple
  * log messages, pass all messages through the format defined in the configuration
  *
- * @param string $type The type of log you are making.
+ * @param string $level The severity level of log you are making.
  * @param string $message The message you want to log.
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean success of write.
  */
-	public function write($type, $message, $scope = []) {
+	public function write($level, $message, $scope = []) {
 		if (!$this->_open) {
 			$config = $this->_config;
 			$this->_open($config['prefix'], $config['flag'], $config['facility']);
@@ -112,13 +111,13 @@ class SyslogLog extends BaseLog {
 		}
 
 		$priority = LOG_DEBUG;
-		if (isset($this->_priorityMap[$type])) {
-			$priority = $this->_priorityMap[$type];
+		if (isset($this->_levelMap[$level])) {
+			$priority = $this->_levelMap[$level];
 		}
 
 		$messages = explode("\n", $message);
 		foreach ($messages as $message) {
-			$message = sprintf($this->_config['format'], $type, $message);
+			$message = sprintf($this->_config['format'], $level, $message);
 			$this->_write($priority, $message);
 		}
 

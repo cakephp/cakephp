@@ -118,15 +118,16 @@ class FileLog extends BaseLog {
 /**
  * Implements writing to log files.
  *
- * @param string $type The type of log you are making.
+ * @param string $level The severity level of the message being written.
+ *    See Cake\Log\Log::$_levels for list of possible levels.
  * @param string $message The message you want to log.
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean success of write.
  */
-	public function write($type, $message, $scope = []) {
-		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $message . "\n";
-		$filename = $this->_getFilename($type);
+	public function write($level, $message, $scope = []) {
+		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
+		$filename = $this->_getFilename($level);
 		if (!empty($this->_size)) {
 			$this->_rotateFile($filename);
 		}
@@ -151,20 +152,20 @@ class FileLog extends BaseLog {
 
 /**
  * Get filename
- * @param string $type The type of log.
+ * @param string $level The level of log.
  * @return string File name
  */
-	protected function _getFilename($type) {
+	protected function _getFilename($level) {
 		$debugTypes = array('notice', 'info', 'debug');
 
 		if (!empty($this->_file)) {
 			$filename = $this->_file;
-		} elseif ($type == 'error' || $type == 'warning') {
+		} elseif ($level == 'error' || $level == 'warning') {
 			$filename = 'error.log';
-		} elseif (in_array($type, $debugTypes)) {
+		} elseif (in_array($level, $debugTypes)) {
 			$filename = 'debug.log';
 		} else {
-			$filename = $type . '.log';
+			$filename = $level . '.log';
 		}
 
 		return $filename;

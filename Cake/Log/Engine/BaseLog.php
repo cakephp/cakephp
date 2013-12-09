@@ -65,7 +65,7 @@ abstract class BaseLog implements LogInterface {
 	}
 
 /**
- * Get the levls this logger is interested in.
+ * Get the levels this logger is interested in.
  *
  * @return array
  */

@@ -22,7 +22,6 @@ use Cake\Utility\Hash;
 
 /**
  * Console logging. Writes logs to console output.
- *
  */
 class ConsoleLog extends BaseLog {
 
@@ -38,7 +37,7 @@ class ConsoleLog extends BaseLog {
  *
  * Config
  *
- * - `types` string or array, levels the engine is interested in
+ * - `levels` string or array, levels the engine is interested in
  * - `scopes` string or array, scopes the engine is interested in
  * - `stream` the path to save logs on.
  * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
@@ -55,7 +54,7 @@ class ConsoleLog extends BaseLog {
 		}
 		$config = Hash::merge(array(
 			'stream' => 'php://stderr',
-			'types' => null,
+			'levels' => null,
 			'scopes' => array(),
 			'outputAs' => $outputAs,
 			), $this->_config);
@@ -73,15 +72,15 @@ class ConsoleLog extends BaseLog {
 /**
  * Implements writing to console.
  *
- * @param string $type The type of log you are making.
+ * @param string $level The severity level of log you are making.
  * @param string $message The message you want to log.
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean success of write.
  */
-	public function write($type, $message, $scope = []) {
-		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $message . "\n";
-		return $this->_output->write(sprintf('<%s>%s</%s>', $type, $output, $type), false);
+	public function write($level, $message, $scope = []) {
+		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($level) . ': ' . $message . "\n";
+		return $this->_output->write(sprintf('<%s>%s</%s>', $level, $output, $level), false);
 	}
 
 }
