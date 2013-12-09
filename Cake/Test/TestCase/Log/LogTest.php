@@ -407,6 +407,33 @@ class LogTest extends TestCase {
 	}
 
 /**
+ * testPassingScopeToEngine method
+ */
+	public function testPassingScopeToEngine() {
+		Configure::write('App.namespace', 'TestApp');
+
+		Log::reset();
+
+		Log::config('scope_test', [
+			'engine' => 'TestApp',
+			'types' => array('notice', 'info', 'debug'),
+			'scopes' => array('foo', 'bar'),
+		]);
+
+		$engine = Log::engine('scope_test');
+		$this->assertNull($engine->passedScope);
+
+		Log::write('debug', 'test message', 'foo');
+		$this->assertEquals('foo', $engine->passedScope);
+
+		Log::write('debug', 'test message', ['foo', 'bar']);
+		$this->assertEquals(['foo', 'bar'], $engine->passedScope);
+
+		$result = Log::write('debug', 'test message');
+		$this->assertFalse($result);
+	}
+
+/**
  * test convenience methods
  */
 	public function testConvenienceMethods() {

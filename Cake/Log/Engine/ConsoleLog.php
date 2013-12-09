@@ -75,9 +75,11 @@ class ConsoleLog extends BaseLog {
  *
  * @param string $type The type of log you are making.
  * @param string $message The message you want to log.
+ * @param string|array $scope The scope(s) a log message is being created in.
+ *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean success of write.
  */
-	public function write($type, $message) {
+	public function write($type, $message, $scope = []) {
 		$output = date('Y-m-d H:i:s') . ' ' . ucfirst($type) . ': ' . $message . "\n";
 		return $this->_output->write(sprintf('<%s>%s</%s>', $type, $output, $type), false);
 	}

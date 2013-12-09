@@ -24,7 +24,10 @@ use Cake\Log\Engine\BaseLog;
  */
 class TestAppLog extends BaseLog {
 
-	public function write($type, $message) {
+	public $passedScope = null;
+
+	public function write($type, $message, $scope = []) {
+		$this->passedScope = $scope;
 	}
 
 }
