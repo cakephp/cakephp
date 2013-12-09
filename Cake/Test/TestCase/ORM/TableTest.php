@@ -2571,7 +2571,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->tags[1]->extraInfo);
 	}
 
-
 /**
  * Tests saving belongsToMany records with a validation error in a joint entity
  * and atomic set to false

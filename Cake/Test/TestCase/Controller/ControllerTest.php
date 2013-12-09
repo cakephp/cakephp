@@ -45,11 +45,11 @@ class ControllerTestAppController extends Controller {
 	public $helpers = array('Html');
 
 /**
- * uses property
+ * modelClass property
  *
- * @var array
+ * @var string
  */
-	public $uses = ['Post'];
+	public $modelClass = 'Posts';
 
 /**
  * components property
@@ -79,11 +79,11 @@ class TestController extends ControllerTestAppController {
 	public $components = array('Security');
 
 /**
- * uses property
+ * modelClass property
  *
- * @var array
+ * @var string
  */
-	public $uses = array('Comment');
+	public $modelClass = 'Comments';
 
 /**
  * index method
@@ -230,47 +230,42 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * testLoadModel method
+ * test autoload modelClass
  *
  * @return void
  */
-	public function testLoadModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+	public function testRepositoryAutoload() {
 		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
 		$Controller = new Controller($request, $response);
+		$Controller->modelClass = 'Articles';
 
-		$this->assertFalse(isset($Controller->Post));
-
-		$result = $Controller->loadModel('Post');
-		$this->assertTrue($result);
-		$this->assertInstanceOf('TestApp\Model\Post', $Controller->Post);
-		$this->assertContains('Post', $Controller->uses);
-
-		ClassRegistry::flush();
-		unset($Controller);
+		$this->assertInstanceOf(
+			'TestApp\Model\Repository\ArticlesTable',
+			$Controller->Articles
+		);
 	}
 
 /**
- * Test loadModel() when uses = true.
+ * testRepository method
  *
  * @return void
  */
-	public function testLoadModelUsesTrue() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+	public function testRepository() {
 		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
 		$Controller = new Controller($request, $response);
-		$Controller->uses = true;
 
-		$Controller->loadModel('Post');
-		$this->assertInstanceOf('Post', $Controller->Post);
-		$this->assertContains('Post', $Controller->uses);
+		$this->assertFalse(isset($Controller->Articles));
 
-		ClassRegistry::flush();
-		unset($Controller);
+		$result = $Controller->repository('Articles');
+		$this->assertTrue($result);
+		$this->assertInstanceOf(
+			'TestApp\Model\Repository\ArticlesTable',
+			$Controller->Articles
+		);
 	}
 
 /**
@@ -279,53 +274,20 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testLoadModelInPlugins() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		Configure::write('App.namespace', 'TestApp');
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController();
 		$Controller->plugin = 'TestPlugin';
-		$Controller->uses = false;
 
-		$this->assertFalse(isset($Controller->Comment));
+		$this->assertFalse(isset($Controller->TestPluginComments));
 
-		$result = $Controller->loadModel('Comment');
+		$result = $Controller->repository('TestPlugin.TestPluginComments');
 		$this->assertTrue($result);
-		$this->assertInstanceOf('TestApp\Model\Comment', $Controller->Comment);
-		$this->assertTrue(in_array('Comment', $Controller->uses));
-
-		ClassRegistry::flush();
-		unset($Controller);
-	}
-
-/**
- * testConstructClasses method
- *
- * @return void
- */
-	public function testConstructClasses() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		Configure::write('App.namespace', 'TestApp');
-		$request = new Request('controller_posts/index');
-
-		$Controller = new Controller($request);
-		$Controller->uses = ['Post', 'Comment'];
-		$Controller->constructClasses();
-		$this->assertInstanceOf('TestApp\Model\Post', $Controller->Post);
-		$this->assertInstanceOf('TestApp\Model\Comment', $Controller->Comment);
-
-		$this->assertEquals('Comment', $Controller->Comment->name);
-
-		unset($Controller);
-
-		Plugin::load('TestPlugin');
-
-		$Controller = new Controller($request);
-		$Controller->uses = array('TestPlugin.TestPluginPost');
-		$Controller->constructClasses();
-
-		$this->assertTrue(isset($Controller->TestPluginPost));
-		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', $Controller->TestPluginPost);
+		$this->assertInstanceOf(
+			'TestPlugin\Model\Repository\TestPluginCommentsTable',
+			$Controller->TestPluginComments
+		);
 	}
 
 /**
@@ -338,29 +300,10 @@ class ControllerTest extends TestCase {
 		Plugin::load('TestPlugin');
 
 		$Controller = new TestPluginController(new Request(), new Response());
-		$Controller->uses = [];
 		$Controller->components[] = 'TestPlugin.Other';
 
 		$Controller->constructClasses();
 		$this->assertInstanceOf('TestPlugin\Controller\Component\OtherComponent', $Controller->Other);
-	}
-
-/**
- * testAliasName method
- *
- * @return void
- */
-	public function testAliasName() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$request = new Request('controller_posts/index');
-		$Controller = new Controller($request);
-		$Controller->uses = ['NameTest'];
-		$Controller->constructClasses();
-
-		$this->assertEquals('Name', $Controller->NameTest->name);
-		$this->assertEquals('Name', $Controller->NameTest->alias);
-
-		unset($Controller);
 	}
 
 /**
@@ -369,9 +312,8 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testRender() {
-		$this->markTestSkipped('Controller::loadModels() does not work right now.');
+		$this->markTestIncomplete('Need to sort out a few more things with the ORM first.');
 		Configure::write('App.namespace', 'TestApp');
-		ClassRegistry::flush();
 		Plugin::load('TestPlugin');
 
 		$request = new Request('controller_posts/index');
@@ -588,21 +530,13 @@ class ControllerTest extends TestCase {
 		];
 		$this->assertEquals($expected, $TestController->components);
 
-		$expected = array('Comment', 'Post');
-		$this->assertEquals(
-			$expected,
-			$TestController->uses,
-			'$uses was merged incorrectly, ControllerTestAppController models should be last.'
-		);
-
 		$TestController = new AnotherTestController($request);
 		$TestController->constructClasses();
 
-		$this->assertEquals('AnotherTest', $TestController->modelClass);
 		$this->assertEquals(
-			['AnotherTest', 'Post'],
-			$TestController->uses,
-			'Incorrect uses when controller does not define $uses.'
+			'Posts',
+			$TestController->modelClass,
+			'modelClass should not be overwritten when defined.'
 		);
 	}
 
@@ -632,27 +566,10 @@ class ControllerTest extends TestCase {
 		$request = new Request('controller_posts/index');
 
 		$Controller = new Controller($request);
-		$Controller->components = array();
-		$Controller->uses = array();
+		$Controller->components = [];
 		$Controller->constructClasses();
 
 		$this->assertFalse(isset($Controller->Session));
-	}
-
-/**
- * Ensure that $modelClass is correct even when Controller::$uses
- * has been iterated, eg: by a Component, or event handlers.
- *
- * @return void
- */
-	public function testMergeVarsModelClass() {
-		$request = new Request();
-
-		$Controller = new Controller($request);
-		$Controller->uses = array('Test', 'TestAlias');
-		$lastModel = end($Controller->uses);
-		$Controller->constructClasses();
-		$this->assertEquals($Controller->uses[0], $Controller->modelClass);
 	}
 
 /**

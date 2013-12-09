@@ -30,6 +30,7 @@ use Cake\Routing\Router;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
+use Cake\Utility\RepositoryAwareTrait;
 use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
 
@@ -79,6 +80,7 @@ use Cake\View\View;
 class Controller extends Object implements EventListener {
 
 	use MergeVariablesTrait;
+	use RepositoryAwareTrait;
 	use RequestActionTrait;
 	use ViewVarsTrait;
 
@@ -89,26 +91,6 @@ class Controller extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#controller-attributes
  */
 	public $name = null;
-
-/**
- * An array containing the class names of models this controller uses.
- *
- * Example: `public $uses = array('Product', 'Post', 'Comment');`
- *
- * Can be set to several values to express different options:
- *
- * - `true` Use the default inflected model name.
- * - `array()` Use only models defined in the parent class.
- * - `false` Use no models at all, do not merge with parent class either.
- * - `array('Post', 'Comment')` Use only the Post and Comment models. Models
- *   Will also be merged with the parent class.
- *
- * The default value is `true`.
- *
- * @var mixed A single name as a string or a list of names as an array.
- * @link http://book.cakephp.org/2.0/en/controllers.html#components-helpers-and-uses
- */
-	public $uses = true;
 
 /**
  * An array containing the names of helpers this controller uses. The array elements should
@@ -304,25 +286,6 @@ class Controller extends Object implements EventListener {
 	public $methods = array();
 
 /**
- * This controller's primary model class name, the Inflector::singularize()'ed version of
- * the controller's $name property.
- *
- * Example: For a controller named 'Comments', the modelClass would be 'Comment'
- *
- * @var string
- */
-	public $modelClass = null;
-
-/**
- * This controller's model key name, an underscored version of the controller's $modelClass property.
- *
- * Example: For a controller named 'ArticleComments', the modelKey would be 'article_comment'
- *
- * @var string
- */
-	public $modelKey = null;
-
-/**
  * Holds any validation errors produced by the last call of the validateErrors() method/
  *
  * @var array Validation errors, or false if none
@@ -358,8 +321,8 @@ class Controller extends Object implements EventListener {
 			$this->viewPath = $viewPath;
 		}
 
-		$this->modelClass = Inflector::singularize($this->name);
-		$this->modelKey = Inflector::underscore($this->modelClass);
+		$this->_setModelClass($this->name);
+		$this->repositoryFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
 
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Cake\Controller\Controller');
@@ -377,29 +340,19 @@ class Controller extends Object implements EventListener {
 
 /**
  * Provides backwards compatibility to avoid problems with empty and isset to alias properties.
- * Lazy loads models using the loadModel() method if declared in $uses
  *
  * @param string $name
  * @return boolean
  */
-	public function __isset($name) {
-		if (is_array($this->uses)) {
-			foreach ($this->uses as $modelClass) {
-				list($plugin, $class) = pluginSplit($modelClass, true);
-				if ($name === $class) {
-					return $this->loadModel($modelClass);
-				}
-			}
-		}
-
+	public function __get($name) {
 		if ($name === $this->modelClass) {
 			list($plugin, $class) = pluginSplit($name, true);
 			if (!$plugin) {
 				$plugin = $this->plugin ? $this->plugin . '.' : null;
 			}
-			return $this->loadModel($plugin . $this->modelClass);
+			$this->repository($plugin . $this->modelClass);
+			return $this->{$this->modelClass};
 		}
-
 		return false;
 	}
 
@@ -506,7 +459,7 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Merge components, helpers, and uses vars from
+ * Merge components, helpers vars from
  * parent classes.
  *
  * @return void
@@ -516,28 +469,10 @@ class Controller extends Object implements EventListener {
 		if (!empty($this->plugin)) {
 			$pluginDot = $this->plugin . '.';
 		}
-		if ($this->uses === null) {
-			$this->uses = false;
-		}
-		if ($this->uses === false) {
-			$this->uses = [];
-			$this->modelClass = '';
-		}
-		if ($this->uses === true) {
-			$this->uses = [$pluginDot . $this->modelClass];
-		}
 		$this->_mergeVars(
-			['components', 'helpers', 'uses'],
-			[
-				'associative' => ['components', 'helpers'],
-				'reverse' => ['uses']
-			]
+			['components', 'helpers'],
+			['associative' => ['components', 'helpers']]
 		);
-		$usesProperty = new \ReflectionProperty($this, 'uses');
-		if ($this->uses && $usesProperty->getDeclaringClass()->getName() !== get_class($this)) {
-			array_unshift($this->uses, $pluginDot . $this->modelClass);
-		}
-		$this->uses = array_unique($this->uses);
 	}
 
 /**
@@ -558,24 +493,19 @@ class Controller extends Object implements EventListener {
 /**
  * Loads Model and Component classes.
  *
- * Using the $uses and $components properties, classes are loaded
+ * Using the $components properties, classes are loaded
  * and components have their callbacks attached to the EventManager.
  * It is also at this time that Controller callbacks are bound.
  *
- * See Controller::loadModel(); for more information on how models are loaded.
+ * See Controller::repository(); for more information on how models are loaded.
  *
  * @return mixed true if models found and instance created.
- * @see Controller::loadModel()
+ * @see Controller::repository()
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::constructClasses
  * @throws MissingModelException
  */
 	public function constructClasses() {
 		$this->_mergeControllerVars();
-		if ($this->uses) {
-			$this->uses = (array)$this->uses;
-			list(, $this->modelClass) = pluginSplit(reset($this->uses));
-		}
-
 		$this->_loadComponents();
 		$this->getEventManager()->attach($this);
 		return true;
@@ -653,37 +583,6 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Loads and instantiates models required by this controller.
- * If the model is non existent, it will throw a missing database table error, as CakePHP generates
- * dynamic models for the time being.
- *
- * @param string $modelClass Name of model class to load.
- * @param integer|string $id Initial ID the instanced model class should have.
- * @return boolean True when single model found and instance created.
- * @throws Cake\Error\MissingModelException if the model class cannot be found.
- */
-	public function loadModel($modelClass = null, $id = null) {
-		if ($modelClass === null) {
-			$modelClass = $this->modelClass;
-		}
-
-		$this->uses = ($this->uses) ? (array)$this->uses : array();
-		if (!in_array($modelClass, $this->uses, true)) {
-			$this->uses[] = $modelClass;
-		}
-
-		list($plugin, $modelClass) = pluginSplit($modelClass, true);
-
-		$this->{$modelClass} = ClassRegistry::init(array(
-			'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
-		));
-		if (!$this->{$modelClass}) {
-			throw new Error\MissingModelException($modelClass);
-		}
-		return true;
-	}
-
-/**
  * Redirects to given $url, after turning off $this->autoRender.
  * Script execution is halted after the redirect.
  *
@@ -756,14 +655,6 @@ class Controller extends Object implements EventListener {
 			return $this->response;
 		}
 
-		if (!empty($this->uses) && is_array($this->uses)) {
-			foreach ($this->uses as $model) {
-				list(, $name) = pluginSplit($model);
-				$className = App::classname($model, 'Model');
-				$this->request->params['models'][$name] = compact('className');
-			}
-		}
-
 		$this->View = $this->_getViewObject();
 
 		$models = ClassRegistry::keys();
@@ -820,9 +711,6 @@ class Controller extends Object implements EventListener {
 
 		if (is_string($object) || $object === null) {
 			$try = [$object, $this->modelClass];
-			if (isset($this->uses[0])) {
-				$try[] = $this->uses[0];
-			}
 			foreach ($try as $tableName) {
 				if (empty($tableName)) {
 					continue;

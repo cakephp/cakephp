@@ -119,7 +119,7 @@ class Scaffold {
 		$this->redirect = array('action' => 'index');
 
 		$this->modelClass = $controller->modelClass;
-		$this->modelKey = $controller->modelKey;
+		$this->modelKey = Inflector::underscore($this->modelClass);
 
 		if (!is_object($this->controller->{$this->modelClass})) {
 			throw new Error\MissingModelException($this->modelClass);

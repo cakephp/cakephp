@@ -1,12 +1,12 @@
 <?php
 /**
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
- * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice.
  *
- * @copyright     Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
@@ -29,10 +29,6 @@ trait MergeVariablesTrait {
  *
  * - `associative` - A list of properties that should be treated as associative arrays.
  *   Properties in this list will be passed through Hash::normalize() before merging.
- * - `reverse` - A list of properties that should be merged in reverse.  Reverse merging
- *   allows the parent properties to follow the child classes.  Generally this option is only
- *   useful when merging list properties that need to maintain the child property values
- *   as the first elements in the merged list.
  *
  * @param array $properties An array of properties and the merge strategy for them.
  * @param array $options The options to use when merging properties.
@@ -71,18 +67,12 @@ trait MergeVariablesTrait {
  */
 	protected function _mergeProperty($property, $parentClasses, $options) {
 		$thisValue = $this->{$property};
-		$isAssoc = $isReversed = false;
+		$isAssoc = false;
 		if (
 			isset($options['associative']) &&
 			in_array($property, (array)$options['associative'])
 		) {
 			$isAssoc = true;
-		}
-		if (
-			isset($options['reverse']) &&
-			in_array($property, (array)$options['reverse'])
-		) {
-			$isReversed = true;
 		}
 
 		if ($isAssoc) {
@@ -100,11 +90,7 @@ trait MergeVariablesTrait {
 			if ($isAssoc) {
 				$parentProperty = Hash::normalize($parentProperty);
 			}
-			if ($isReversed) {
-				$thisValue = Hash::merge($thisValue, $parentProperty);
-			} else {
-				$thisValue = Hash::merge($parentProperty, $thisValue);
-			}
+			$thisValue = Hash::merge($parentProperty, $thisValue);
 		}
 		$this->{$property} = $thisValue;
 	}
