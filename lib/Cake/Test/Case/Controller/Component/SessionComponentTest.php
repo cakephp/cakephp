@@ -175,6 +175,7 @@ class SessionComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testSessionError() {
+		CakeSession::$lastError = null;
 		$Session = new SessionComponent($this->ComponentCollection);
 		$this->assertFalse($Session->error());
 	}
