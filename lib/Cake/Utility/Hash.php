@@ -130,7 +130,7 @@ class Hash {
 			if ($conditions) {
 				$filter = array();
 				foreach ($next as $item) {
-					if (self::_matches($item, $conditions)) {
+					if (is_array($item) && self::_matches($item, $conditions)) {
 						$filter[] = $item;
 					}
 				}
