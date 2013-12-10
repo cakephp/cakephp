@@ -325,12 +325,18 @@ class Log {
  * @param string|array $scope The scope(s) a log message is being created in.
  *    See Cake\Log\Log::config() for more information on logging scopes.
  * @return boolean Success
+ * @throws Cake\Error\Exception If invalid level is passed.
  */
 	public static function write($level, $message, $scope = array()) {
 		static::_init();
 		if (is_int($level) && isset(static::$_levels[$level])) {
 			$level = static::$_levels[$level];
 		}
+
+		if (!in_array($level, static::$_levels)) {
+			throw new Error\Exception(__d('cake_dev', 'Invalid log level "%s"', $level));
+		}
+
 		$logged = false;
 		foreach (static::$_registry->loaded() as $streamName) {
 			$logger = static::$_registry->{$streamName};
