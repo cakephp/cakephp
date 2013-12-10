@@ -356,12 +356,13 @@ class AclShell extends AppShell {
 	}
 
 /**
- * Get the option parser.
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
+ * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
 
 		$type = array(
 			'choices' => array('aro', 'aco'),
@@ -369,9 +370,8 @@ class AclShell extends AppShell {
 			'help' => __d('cake_console', 'Type of node to create.')
 		);
 
-		$parser->description(
-			__d('cake_console', 'A console tool for managing the DbAcl')
-			)->addSubcommand('create', array(
+		$parser->description(__d('cake_console', 'A console tool for managing the DbAcl'))
+			->addSubcommand('create', array(
 				'help' => __d('cake_console', 'Create a new ACL node'),
 				'parser' => array(
 					'description' => __d('cake_console', 'Creates a new ACL object <node> under the parent'),
@@ -387,8 +387,8 @@ class AclShell extends AppShell {
 							'required' => true
 						)
 					)
-				)
-			))->addSubcommand('delete', array(
+				)))
+			->addSubcommand('delete', array(
 				'help' => __d('cake_console', 'Deletes the ACL object with the given <node> reference'),
 				'parser' => array(
 					'description' => __d('cake_console', 'Delete an ACL node.'),
@@ -399,8 +399,8 @@ class AclShell extends AppShell {
 							'required' => true,
 						)
 					)
-				)
-			))->addSubcommand('setparent', array(
+				)))
+			->addSubcommand('setparent', array(
 				'help' => __d('cake_console', 'Moves the ACL node under a new parent.'),
 				'parser' => array(
 					'description' => __d('cake_console', 'Moves the ACL object specified by <node> beneath <parent>'),
@@ -415,8 +415,8 @@ class AclShell extends AppShell {
 							'required' => true
 						)
 					)
-				)
-			))->addSubcommand('getpath', array(
+				)))
+			->addSubcommand('getpath', array(
 				'help' => __d('cake_console', 'Print out the path to an ACL node.'),
 				'parser' => array(
 					'description' => array(
@@ -430,8 +430,8 @@ class AclShell extends AppShell {
 							'required' => true,
 						)
 					)
-				)
-			))->addSubcommand('check', array(
+				)))
+			->addSubcommand('check', array(
 				'help' => __d('cake_console', 'Check the permissions between an ACO and ARO.'),
 				'parser' => array(
 					'description' => array(
@@ -442,8 +442,8 @@ class AclShell extends AppShell {
 						'aco' => array('help' => __d('cake_console', 'ACO to check.'), 'required' => true),
 						'action' => array('help' => __d('cake_console', 'Action to check'), 'default' => 'all')
 					)
-				)
-			))->addSubcommand('grant', array(
+				)))
+			->addSubcommand('grant', array(
 				'help' => __d('cake_console', 'Grant an ARO permissions to an ACO.'),
 				'parser' => array(
 					'description' => array(
@@ -454,8 +454,8 @@ class AclShell extends AppShell {
 						'aco' => array('help' => __d('cake_console', 'ACO to grant access to.'), 'required' => true),
 						'action' => array('help' => __d('cake_console', 'Action to grant'), 'default' => 'all')
 					)
-				)
-			))->addSubcommand('deny', array(
+				)))
+			->addSubcommand('deny', array(
 				'help' => __d('cake_console', 'Deny an ARO permissions to an ACO.'),
 				'parser' => array(
 					'description' => array(
@@ -466,8 +466,8 @@ class AclShell extends AppShell {
 						'aco' => array('help' => __d('cake_console', 'ACO to deny.'), 'required' => true),
 						'action' => array('help' => __d('cake_console', 'Action to deny'), 'default' => 'all')
 					)
-				)
-			))->addSubcommand('inherit', array(
+				)))
+			->addSubcommand('inherit', array(
 				'help' => __d('cake_console', 'Inherit an ARO\'s parent permissions.'),
 				'parser' => array(
 					'description' => array(
@@ -478,8 +478,8 @@ class AclShell extends AppShell {
 						'aco' => array('help' => __d('cake_console', 'ACO to inherit permissions on.'), 'required' => true),
 						'action' => array('help' => __d('cake_console', 'Action to inherit'), 'default' => 'all')
 					)
-				)
-			))->addSubcommand('view', array(
+				)))
+			->addSubcommand('view', array(
 				'help' => __d('cake_console', 'View a tree or a single node\'s subtree.'),
 				'parser' => array(
 					'description' => array(
@@ -491,10 +491,10 @@ class AclShell extends AppShell {
 						'type' => $type,
 						'node' => array('help' => __d('cake_console', 'The optional node to view the subtree of.'))
 					)
-				)
-			))->addSubcommand('initdb', array(
-				'help' => __d('cake_console', 'Initialize the DbAcl tables. Uses this command : cake schema create DbAcl')
-			))->epilog(
+				)))
+			->addSubcommand('initdb', array(
+				'help' => __d('cake_console', 'Initialize the DbAcl tables. Uses this command : cake schema create DbAcl')))
+			->epilog(
 				array(
 					'Node and parent arguments can be in one of the following formats:',
 					'',
@@ -505,8 +505,8 @@ class AclShell extends AppShell {
 					"   i.e. <group>/<subgroup>/<parent>.",
 					'',
 					"To add a node at the root level, enter 'root' or '/' as the <parent> parameter."
-				)
-			);
+				));
+
 		return $parser;
 	}
 

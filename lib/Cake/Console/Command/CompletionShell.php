@@ -96,12 +96,13 @@ class CompletionShell extends AppShell {
 	}
 
 /**
- * getOptionParser for _this_ shell
+ * Gets the option parser instance and configures it.
  *
+ * @param boolean $defaultOptions Whether you want the verbose and quiet options set.
  * @return ConsoleOptionParser
  */
-	public function getOptionParser() {
-		$parser = parent::getOptionParser();
+	public function getOptionParser($defaultOptions = true) {
+		$parser = parent::getOptionParser($defaultOptions);
 
 		$parser->description(__d('cake_console', 'Used by shells like bash to autocomplete command name, options and arguments'))
 			->addSubcommand('commands', array(
@@ -136,8 +137,8 @@ class CompletionShell extends AppShell {
 			))->epilog(
 				array(
 					__d('cake_console', 'This command is not intended to be called manually'),
-				)
-			);
+				));
+
 		return $parser;
 	}
 
