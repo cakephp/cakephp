@@ -714,6 +714,7 @@ class BelongsToManyTest extends TestCase {
 			->will($this->returnValue($entity));
 
 		$this->assertTrue($assoc->link($entity, $tags, $saveOptions));
+		$this->assertSame($entity->test, $tags);
 	}
 
 }
