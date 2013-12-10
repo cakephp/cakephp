@@ -639,4 +639,81 @@ class BelongsToManyTest extends TestCase {
 		$association->cascadeDelete($entity);
 	}
 
+/**
+ * Test liking entities having a non persited source entity
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Source entity needs to be persisted before linking
+ * @return void
+ */
+	public function testLinkWithNotPersistedSource() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$entity = new Entity(['id' => 1]);
+		$tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
+		$assoc->link($entity, $tags);
+	}
+
+/**
+ * Test liking entities having a non persited target entity
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Cannot link not persisted entities
+ * @return void
+ */
+	public function testLinkWithNotPersistedTarget() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$entity = new Entity(['id' => 1], ['markNew' => false]);
+		$tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
+		$assoc->link($entity, $tags);
+	}
+
+/**
+ * Tests that liking entities will validate data and pass on to _saveLinks
+ *
+ * @return void
+ */
+	public function testLinkSuccess() {
+		$joint = $this->getMock('\Cake\ORM\Table', ['save'], [['alias' => 'ArticlesTags']]);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'through' => $joint,
+			'joinTable' => 'tags_articles'
+		];
+
+		$assoc = new BelongsToMany('Test', $config);
+		$opts = ['markNew' => false];
+		$entity = new Entity(['id' => 1], $opts);
+		$tags = [new Entity(['id' => 2], $opts), new Entity(['id' => 3], $opts)];
+		$saveOptions = ['foo' => 'bar'];
+
+		$joint->expects($this->at(0))
+			->method('save')
+			->with(
+				new Entity(['article_id' => 1, 'tag_id' => 2], ['markNew' => true]),
+				$saveOptions
+			)
+			->will($this->returnValue($entity));
+
+		$joint->expects($this->at(1))
+			->method('save')
+			->with(
+				new Entity(['article_id' => 1, 'tag_id' => 3], ['markNew' => true]),
+				$saveOptions
+			)
+			->will($this->returnValue($entity));
+
+		$this->assertTrue($assoc->link($entity, $tags, $saveOptions));
+	}
+
 }
