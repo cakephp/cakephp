@@ -22,7 +22,7 @@ use Cake\Log\LogInterface;
  */
 class TestPluginLog implements LogInterface {
 
-	public function write($type, $message, $scope = []) {
+	public function write($level, $message, $scope = []) {
 	}
 
 }
