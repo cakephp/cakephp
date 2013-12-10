@@ -1050,16 +1050,16 @@ class Time {
 		}
 
 		if ($group) {
-			$return = array();
+			$groupedIdentifiers = array();
 			foreach ($identifiers as $key => $tz) {
 				$item = explode('/', $tz, 2);
 				if (isset($item[1])) {
-					$return[$item[0]][$tz] = $item[1];
+					$groupedIdentifiers[$item[0]][$tz] = $item[1];
 				} else {
-					$return[$item[0]] = array($tz => $item[0]);
+					$groupedIdentifiers[$item[0]] = array($tz => $item[0]);
 				}
 			}
-			return $return;
+			return $groupedIdentifiers;
 		}
 		return array_combine($identifiers, $identifiers);
 	}
