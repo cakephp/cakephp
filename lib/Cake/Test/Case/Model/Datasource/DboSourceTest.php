@@ -917,21 +917,55 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test that fields() is using methodCache()
+ * Test that fields() is using methodCache().
  *
  * @return void
  */
 	public function testFieldsUsingMethodCache() {
-		$this->testDb->cacheMethods = false;
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
 		DboTestSource::$methodCache = array();
-
 		$Article = ClassRegistry::init('Article');
+
 		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
-		$this->assertTrue(empty(DboTestSource::$methodCache['fields']), 'Cache not empty');
+
+		$this->assertEquals(3, count(DboTestSource::$methodCache['name']));
+		$this->assertEquals(1, count(DboTestSource::$methodCache['fields']));
 	}
 
 /**
- * test that fields() method cache detects datasource changes
+ * Test that fields() is using methodCache() when unquoted.
+ *
+ * @return void
+ */
+	public function testFieldsUsingMethodCacheUnquoted() {
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+
+		$this->testDb->fields($Article, null, array('title', 'body', 'published'), false);
+
+		$this->assertTrue(empty(DboTestSource::$methodCache['name']), 'Cache not empty');
+		$this->assertEquals(1, count(DboTestSource::$methodCache['fields']));
+	}
+
+/**
+ * Test that fields() is not using methodCache()
+ *
+ * @return void
+ */
+	public function testFieldsNotUsingMethodCache() {
+		$this->testDb->cacheMethods = false;
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+
+		$this->testDb->fields($Article, null, array('title', 'body', 'published'));
+		$this->assertTrue(empty(DboTestSource::$methodCache), 'Cache not empty');
+	}
+
+/**
+ * Test that fields() method cache detects datasource changes.
  *
  * @return void
  */
@@ -961,7 +995,7 @@ class DboSourceTest extends CakeTestCase {
 	}
 
 /**
- * test that fields() method cache detects schema name changes
+ * Test that fields() method cache detects schema name changes.
  *
  * @return void
  */
@@ -975,12 +1009,626 @@ class DboSourceTest extends CakeTestCase {
 
 		$ds = $Article->getDataSource();
 		$ds->cacheMethods = true;
+
 		$first = $ds->fields($Article);
 
 		$Article->schemaName = 'secondSchema';
-		$ds = $Article->getDataSource();
-		$ds->cacheMethods = true;
 		$second = $ds->fields($Article);
+
+		$this->assertEquals(2, count(DboSource::$methodCache['fields']));
+	}
+
+/**
+ * Data provider for testSameFieldsCacheKey.
+ *
+ * - One valid unqualified field.
+ * - One valid qualified field.
+ * - Multiple valid unqualified fields.
+ * - Multiple valid qualified fields.
+ * - Multiple valid unqualified and qualified fields.
+ * - Empty field (all fields).
+ *
+ * @return array
+ */
+	public function fieldsCacheKey() {
+		return array(
+			// One valid unqualified field
+			array(array(
+				// correct
+				'title',
+				array('title'),
+
+				// duplicated
+				'title, title',
+				array('title', 'title'),
+
+				// empty
+				'title, ',
+				'title,  ',
+				'title, 0',
+				array('title, '),
+				array('title,  '),
+				array('title, 0'),
+				array('title', ''),
+				array('title', ' '),
+				array('title', '  '),
+				array('title', '0'),
+				array('title', 0),
+				array('title', false),
+				array('title', null),
+
+				// empty + duplicated
+				'title, , title',
+				'title,  , title',
+				'title, 0, title',
+				array('title, , title'),
+				array('title,  , title'),
+				array('title, 0, title'),
+				array('title', '', 'title'),
+				array('title', ' ', 'title'),
+				array('title', '  ', 'title'),
+				array('title', '0', 'title'),
+				array('title', 0, 'title'),
+				array('title', false, 'title'),
+				array('title', null, 'title'),
+			)),
+
+			// One valid qualified field
+			array(array(
+				// correct
+				'Article.title',
+				array('Article.title'),
+
+				// duplicated
+				'Article.title, Article.title',
+				array('Article.title', 'Article.title'),
+
+				// empty
+				'Article.title, ',
+				'Article.title,  ',
+				'Article.title, 0',
+				array('Article.title, '),
+				array('Article.title,  '),
+				array('Article.title, 0'),
+				array('Article.title', ''),
+				array('Article.title', ' '),
+				array('Article.title', '  '),
+				array('Article.title', '0'),
+				array('Article.title', 0),
+				array('Article.title', false),
+				array('Article.title', null),
+
+				// empty + duplicated
+				'Article.title, , Article.title',
+				'Article.title,  , Article.title',
+				'Article.title, 0, Article.title',
+				array('Article.title, , Article.title'),
+				array('Article.title,  , Article.title'),
+				array('Article.title, 0, Article.title'),
+				array('Article.title', '', 'Article.title'),
+				array('Article.title', ' ', 'Article.title'),
+				array('Article.title', '  ', 'Article.title'),
+				array('Article.title', '0', 'Article.title'),
+				array('Article.title', 0, 'Article.title'),
+				array('Article.title', false, 'Article.title'),
+				array('Article.title', null, 'Article.title'),
+			)),
+
+			// Multiple valid unqualified fields
+			array(array(
+				// correct
+				'title, body',
+				array('title, body'),
+				array('title', 'body'),
+
+				// duplicated
+				'title, body, title',
+				array('title, body, title'),
+				array('title', 'body', 'title'),
+
+				// empty
+				'title, body, ',
+				'title, body,  ',
+				'title, body, 0',
+				array('title, body, '),
+				array('title, body,  '),
+				array('title, body, 0'),
+				array('title', 'body', ''),
+				array('title', 'body', ' '),
+				array('title', 'body', '  '),
+				array('title', 'body', '0'),
+				array('title', 'body', 0),
+				array('title', 'body', false),
+				array('title', 'body', null),
+
+				// empty + duplicated
+				'title, body, , title',
+				'title, body,  , title',
+				'title, body, 0, title',
+				array('title, body, , title'),
+				array('title, body,  , title'),
+				array('title, body, 0, title'),
+				array('title', 'body', '', 'title'),
+				array('title', 'body', ' ', 'title'),
+				array('title', 'body', '  ', 'title'),
+				array('title', 'body', '0', 'title'),
+				array('title', 'body', 0, 'title'),
+				array('title', 'body', false, 'title'),
+				array('title', 'body', null, 'title'),
+			)),
+
+			// Multiple valid qualified fields
+			array(array(
+				// correct
+				'Article.title, Article.body',
+				array('Article.title, Article.body'),
+				array('Article.title', 'Article.body'),
+
+				// duplicated
+				'Article.title, Article.body, Article.title',
+				array('Article.title, Article.body, Article.title'),
+				array('Article.title', 'Article.body', 'Article.title'),
+
+				// empty
+				'Article.title, Article.body, ',
+				'Article.title, Article.body,  ',
+				'Article.title, Article.body, 0',
+				array('Article.title, Article.body, '),
+				array('Article.title, Article.body,  '),
+				array('Article.title, Article.body, 0'),
+				array('Article.title', 'Article.body', ''),
+				array('Article.title', 'Article.body', ' '),
+				array('Article.title', 'Article.body', '  '),
+				array('Article.title', 'Article.body', '0'),
+				array('Article.title', 'Article.body', 0),
+				array('Article.title', 'Article.body', false),
+				array('Article.title', 'Article.body', null),
+
+				// empty + duplicated
+				'Article.title, Article.body, , Article.title',
+				'Article.title, Article.body,  , Article.title',
+				'Article.title, Article.body, 0, Article.title',
+				array('Article.title, Article.body, , Article.title'),
+				array('Article.title, Article.body,  , Article.title'),
+				array('Article.title, Article.body, 0, Article.title'),
+				array('Article.title', 'Article.body', '', 'Article.title'),
+				array('Article.title', 'Article.body', ' ', 'Article.title'),
+				array('Article.title', 'Article.body', '  ', 'Article.title'),
+				array('Article.title', 'Article.body', '0', 'Article.title'),
+				array('Article.title', 'Article.body', 0, 'Article.title'),
+				array('Article.title', 'Article.body', false, 'Article.title'),
+				array('Article.title', 'Article.body', null, 'Article.title'),
+			)),
+
+			// Multiple valid unqualified and qualified fields
+			array(array(
+				// correct
+				'Article.title, body',
+				array('Article.title, body'),
+				array('Article.title', 'body'),
+
+				// duplicated
+				'Article.title, body, Article.title',
+				array('Article.title, body, Article.title'),
+				array('Article.title', 'body', 'Article.title'),
+
+				// empty
+				'Article.title, body, ',
+				'Article.title, body,  ',
+				'Article.title, body, 0',
+				array('Article.title, body, '),
+				array('Article.title, body,  '),
+				array('Article.title, body, 0'),
+				array('Article.title', 'body', ''),
+				array('Article.title', 'body', ' '),
+				array('Article.title', 'body', '  '),
+				array('Article.title', 'body', '0'),
+				array('Article.title', 'body', 0),
+				array('Article.title', 'body', false),
+				array('Article.title', 'body', null),
+
+				// empty + duplicated
+				'Article.title, body, , Article.title',
+				'Article.title, body,  , Article.title',
+				'Article.title, body, 0, Article.title',
+				array('Article.title, body, , Article.title'),
+				array('Article.title, body,  , Article.title'),
+				array('Article.title, body, 0, Article.title'),
+				array('Article.title', 'body', '', 'Article.title'),
+				array('Article.title', 'body', ' ', 'Article.title'),
+				array('Article.title', 'body', '  ', 'Article.title'),
+				array('Article.title', 'body', '0', 'Article.title'),
+				array('Article.title', 'body', 0, 'Article.title'),
+				array('Article.title', 'body', false, 'Article.title'),
+				array('Article.title', 'body', null, 'Article.title'),
+			)),
+
+			// Empty field (all fields).
+			array(array(
+				'',
+				'id, user_id, title, body, published, created, updated',
+				array('id, user_id, title, body, published, created, updated'),
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'),
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated'),
+				array('id', false, null, '', '0', 0, 'id', 'user_id', 'title', 'body', 'published', 'created', 'updated'),
+			))
+		);
+	}
+
+/**
+ * Test that fields() method builds the same cache key.
+ *
+ * Build the same cache key when the fields:
+ *  - is a string containing fields separated by comma.
+ *  - is an array with one element being a string containing fields separated by comma.
+ *  - is an array containing fields.
+ *
+ * In every case, the cache key will be the same when:
+ *  - fields (which can contain expressions) are duplicated.
+ *  - fields are empty.
+ *
+ * @dataProvider fieldsCacheKey
+ * @return void
+ */
+	public function testSameFieldsCacheKey($fieldsList) {
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+
+		foreach ($fieldsList as $fields) {
+			$this->testDb->fields($Article, null, $fields);
+		}
+
+		$this->assertEquals(1, count(DboSource::$methodCache['fields']));
+	}
+
+/**
+ * Data provider for testSameVirtualFieldsCacheKey.
+ *
+ * - One valid unqualified virtual field.
+ * - One valid qualified virtual field.
+ * - Multiple valid unqualified virtual fields.
+ * - Multiple valid qualified virtual fields.
+ * - Multiple valid unqualified and qualified vitual fields.
+ * - One valid unqualified field.
+ * - One valid qualified field.
+ * - Multiple valid unqualified fields.
+ * - Multiple valid qualified fields.
+ * - Multiple valid unqualified and qualified fields.
+ * - Multiple valid unqualified and qualified fields, including qualified/unqualified virtual fields.
+ * - Empty field (all fields), including qualified/unqualified virtual fields.
+ *
+ * @return array
+ */
+	public function virtualFieldsCacheKey() {
+		return array(
+			// One valid unqualified virtual field
+			array(array(
+				// correct
+				'two',
+				array('two'),
+
+				// duplicated
+				'two, two',
+				array('two', 'two'),
+
+				// empty
+				'two, ',
+				'two,  ',
+				'two, 0',
+				array('two, '),
+				array('two,  '),
+				array('two, 0'),
+				array('two', ''),
+				array('two', ' '),
+				array('two', '  '),
+				array('two', '0'),
+				array('two', 0),
+				array('two', false),
+				array('two', null),
+
+				// empty + duplicated
+				'two, , two',
+				'two,  , two',
+				'two, 0, two',
+				array('two, , two'),
+				array('two,  , two'),
+				array('two, 0, two'),
+				array('two', '', 'two'),
+				array('two', ' ', 'two'),
+				array('two', '  ', 'two'),
+				array('two', '0', 'two'),
+				array('two', 0, 'two'),
+				array('two', false, 'two'),
+				array('two', null, 'two'),
+			)),
+
+			// One valid qualified virtual field
+			array(array(
+				// correct
+				'Article.two',
+				array('Article.two'),
+
+				// duplicated
+				'Article.two, Article.two',
+				array('Article.two', 'Article.two'),
+
+				// empty
+				'Article.two, ',
+				'Article.two,  ',
+				'Article.two, 0',
+				array('Article.two, '),
+				array('Article.two,  '),
+				array('Article.two, 0'),
+				array('Article.two', ''),
+				array('Article.two', ' '),
+				array('Article.two', '  '),
+				array('Article.two', '0'),
+				array('Article.two', 0),
+				array('Article.two', false),
+				array('Article.two', null),
+
+				// empty + duplicated
+				'Article.two, , Article.two',
+				'Article.two,  , Article.two',
+				'Article.two, 0, Article.two',
+				array('Article.two, , Article.two'),
+				array('Article.two,  , Article.two'),
+				array('Article.two, 0, Article.two'),
+				array('Article.two', '', 'Article.two'),
+				array('Article.two', ' ', 'Article.two'),
+				array('Article.two', '  ', 'Article.two'),
+				array('Article.two', '0', 'Article.two'),
+				array('Article.two', 0, 'Article.two'),
+				array('Article.two', false, 'Article.two'),
+				array('Article.two', null, 'Article.two'),
+			)),
+
+			// Multiple valid unqualified virtual fields
+			array(array(
+				// correct
+				'two, this_moment',
+				array('two, this_moment'),
+				array('two', 'this_moment'),
+
+				// duplicated
+				'two, this_moment, two',
+				array('two, this_moment, two'),
+				array('two', 'this_moment', 'two'),
+
+				// empty
+				'two, this_moment, ',
+				'two, this_moment,  ',
+				'two, this_moment, 0',
+				array('two, this_moment, '),
+				array('two, this_moment,  '),
+				array('two, this_moment, 0'),
+				array('two', 'this_moment', ''),
+				array('two', 'this_moment', ' '),
+				array('two', 'this_moment', '  '),
+				array('two', 'this_moment', '0'),
+				array('two', 'this_moment', 0),
+				array('two', 'this_moment', false),
+				array('two', 'this_moment', null),
+
+				// empty + duplicated
+				'two, this_moment, , two',
+				'two, this_moment,  , two',
+				'two, this_moment, 0, two',
+				array('two, this_moment, , two'),
+				array('two, this_moment,  , two'),
+				array('two, this_moment, 0, two'),
+				array('two', 'this_moment', '', 'two'),
+				array('two', 'this_moment', ' ', 'two'),
+				array('two', 'this_moment', '  ', 'two'),
+				array('two', 'this_moment', '0', 'two'),
+				array('two', 'this_moment', 0, 'two'),
+				array('two', 'this_moment', false, 'two'),
+				array('two', 'this_moment', null, 'two'),
+			)),
+
+			// Multiple valid qualified virtual fields
+			array(array(
+				// correct
+				'Article.two, Article.this_moment',
+				array('Article.two, Article.this_moment'),
+				array('Article.two', 'Article.this_moment'),
+
+				// duplicated
+				'Article.two, Article.this_moment, Article.two',
+				array('Article.two, Article.this_moment, Article.two'),
+				array('Article.two', 'Article.this_moment', 'Article.two'),
+
+				// empty
+				'Article.two, Article.this_moment, ',
+				'Article.two, Article.this_moment,  ',
+				'Article.two, Article.this_moment, 0',
+				array('Article.two, Article.this_moment, '),
+				array('Article.two, Article.this_moment,  '),
+				array('Article.two, Article.this_moment, 0'),
+				array('Article.two', 'Article.this_moment', ''),
+				array('Article.two', 'Article.this_moment', ' '),
+				array('Article.two', 'Article.this_moment', '  '),
+				array('Article.two', 'Article.this_moment', '0'),
+				array('Article.two', 'Article.this_moment', 0),
+				array('Article.two', 'Article.this_moment', false),
+				array('Article.two', 'Article.this_moment', null),
+
+				// empty + duplicated
+				'Article.two, Article.this_moment, , Article.two',
+				'Article.two, Article.this_moment,  , Article.two',
+				'Article.two, Article.this_moment, 0, Article.two',
+				array('Article.two, Article.this_moment, , Article.two'),
+				array('Article.two, Article.this_moment,  , Article.two'),
+				array('Article.two, Article.this_moment, 0, Article.two'),
+				array('Article.two', 'Article.this_moment', '', 'Article.two'),
+				array('Article.two', 'Article.this_moment', ' ', 'Article.two'),
+				array('Article.two', 'Article.this_moment', '  ', 'Article.two'),
+				array('Article.two', 'Article.this_moment', '0', 'Article.two'),
+				array('Article.two', 'Article.this_moment', 0, 'Article.two'),
+				array('Article.two', 'Article.this_moment', false, 'Article.two'),
+				array('Article.two', 'Article.this_moment', null, 'Article.two'),
+			)),
+
+			// Multiple valid unqualified and qualified virtual fields
+			array(array(
+				// correct
+				'Article.two, this_moment',
+				array('Article.two, this_moment'),
+				array('Article.two', 'this_moment'),
+
+				// duplicated
+				'Article.two, this_moment, Article.two',
+				array('Article.two, this_moment, Article.two'),
+				array('Article.two', 'this_moment', 'Article.two'),
+
+				// empty
+				'Article.two, this_moment, ',
+				'Article.two, this_moment,  ',
+				'Article.two, this_moment, 0',
+				array('Article.two, this_moment, '),
+				array('Article.two, this_moment,  '),
+				array('Article.two, this_moment, 0'),
+				array('Article.two', 'this_moment', ''),
+				array('Article.two', 'this_moment', ' '),
+				array('Article.two', 'this_moment', '  '),
+				array('Article.two', 'this_moment', '0'),
+				array('Article.two', 'this_moment', 0),
+				array('Article.two', 'this_moment', false),
+				array('Article.two', 'this_moment', null),
+
+				// empty + duplicated
+				'Article.two, this_moment, , Article.two',
+				'Article.two, this_moment,  , Article.two',
+				'Article.two, this_moment, 0, Article.two',
+				array('Article.two, this_moment, , Article.two'),
+				array('Article.two, this_moment,  , Article.two'),
+				array('Article.two, this_moment, 0, Article.two'),
+				array('Article.two', 'this_moment', '', 'Article.two'),
+				array('Article.two', 'this_moment', ' ', 'Article.two'),
+				array('Article.two', 'this_moment', '  ', 'Article.two'),
+				array('Article.two', 'this_moment', '0', 'Article.two'),
+				array('Article.two', 'this_moment', 0, 'Article.two'),
+				array('Article.two', 'this_moment', false, 'Article.two'),
+				array('Article.two', 'this_moment', null, 'Article.two'),
+			)),
+
+			// One valid unqualified field
+			array(array(
+				'title, 0, , title',
+				array('title, 0, , title'),
+				array('title', null, false, 0, '0', '', 'title'),
+			)),
+
+			// One valid qualified field
+			array(array(
+				'Article.title, 0, , Article.title',
+				array('Article.title, 0, , Article.title'),
+				array('Article.title', null, false, 0, '0', '', 'Article.title'),
+			)),
+
+			// Multiple valid unqualified fields
+			array(array(
+				'title, 0, , title, body',
+				array('title, body, 0, , title'),
+				array('title', null, 'body', false, 0, '0', '', 'title'),
+			)),
+
+			// Multiple valid qualified fields
+			array(array(
+				'Article.title, Article.body, 0, , Article.title',
+				array('Article.title, 0, Article.body, Article.title'),
+				array('Article.title', null, false, 'Article.body', 0, '0', '', 'Article.title'),
+			)),
+
+			// Multiple valid unqualified and qualified fields
+			array(array(
+				'Article.title, body, 0, , Article.title',
+				array('Article.title, 0, body, Article.title'),
+				array('Article.title', null, false, 'body', 0, '0', '', 'Article.title'),
+			)),
+
+			// Multiple valid unqualified and qualified fields, including qualified/unqualified virtual fields.
+			array(array(
+				'Article.title, body, 0, , Article.title',
+				array('Article.title, 0, body, Article.title'),
+				array('Article.title', null, false, 'body', 0, '0', '', 'Article.title'),
+			)),
+
+			// Empty field (all fields), including qualified/unqualified virtual fields.
+			array(array(
+				'',
+				'id, user_id, title, body, published, created, updated, this_moment, this_other_moment, two',
+				'id, user_id, title, body, published, created, updated, this_moment, this_other_moment, two, Article.this_moment, this_other_moment, two',
+				array('id, user_id, title, body, published, created, updated, this_moment, this_other_moment, two'),
+				array('id, user_id, title, body, published, created, updated, this_moment, this_other_moment, two, this_moment, this_other_moment, Article.two'),
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'this_moment', 'this_other_moment', 'two'),
+				array('id', 'id', '', false, null, 0, '0', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'this_moment', 'this_other_moment', 'two'),
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'this_moment', 'this_other_moment', 'two', 'Article.this_moment', 'Article.this_other_moment', 'Article.two'),
+				array('id', 'user_id', 'title', 'body', 'published', 'created', 'updated', 'this_moment', 'this_other_moment', 'two', 'Article.this_moment', 'this_other_moment', 'Article.two'),
+			))
+		);
+	}
+
+/**
+ * Test that fields() method builds the same cache key when using virtual fields.
+ *
+ * Build the same cache key when the fields:
+ *  - is a string containing fields separated by comma.
+ *  - is an array with one element being a string containing fields separated by comma.
+ *  - is an array containing fields.
+ *
+ * In every case, the cache key will be the same when:
+ *  - fields (which can contain expressions) are duplicated.
+ *  - fields are empty.
+ *  - virtual fields are qualified or unqualified.
+ *
+ * @dataProvider virtualFieldsCacheKey
+ * @return void
+ */
+	public function testSameVirtualFieldsCacheKey($fieldsList) {
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+			'this_other_moment' => 'NOW()',
+			'two' => '1 + 1'
+		);
+
+		foreach ($fieldsList as $fields) {
+			$this->testDb->fields($Article, null, $fields);
+		}
+
+		$this->assertEquals(1, count(DboSource::$methodCache['fields']));
+	}
+
+/**
+ * Test that fields() method builds different cache keys when using virtual fields with the same key but different expressions.
+ *
+ * @return void
+ */
+	public function testDifferentVirtualFieldsCacheKey() {
+		$this->testDb->cacheMethods = true;
+		Cache::delete('method_cache', '_cake_core_');
+		DboTestSource::$methodCache = array();
+		$Article = ClassRegistry::init('Article');
+		$fields = array(
+			'body',
+			'this_moment'
+		);
+
+		$Article->virtualFields = array(
+			'this_moment' => 'NOW()',
+		);
+		$this->testDb->fields($Article, null, $fields);
+
+		$Article->virtualFields = array(
+			'this_moment' => 'LOCALTIMESTAMP()',
+		);
+		$this->testDb->fields($Article, null, $fields);
 
 		$this->assertEquals(2, count(DboSource::$methodCache['fields']));
 	}
@@ -1203,13 +1851,13 @@ class DboSourceTest extends CakeTestCase {
 				'table' => 'posts_tags',
 				'conditions' => array('PostsTag.post_id = Post.id')
 			), 'LEFT JOIN pre_posts_tags AS PostsTag ON (PostsTag.post_id = Post.id)'),
-				array(array(
-					'type' => 'LEFT',
-					'alias' => 'Stock',
-					'table' => '(SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id)',
-					'conditions' => 'Stock.article_id = Article.id'
-				), 'LEFT JOIN (SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id) AS Stock ON (Stock.article_id = Article.id)')
-			);
+			array(array(
+				'type' => 'LEFT',
+				'alias' => 'Stock',
+				'table' => '(SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id)',
+				'conditions' => 'Stock.article_id = Article.id'
+			), 'LEFT JOIN (SELECT Stock.article_id, sum(quantite) quantite FROM stocks AS Stock GROUP BY Stock.article_id) AS Stock ON (Stock.article_id = Article.id)')
+		);
 	}
 
 /**
