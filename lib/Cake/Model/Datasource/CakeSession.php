@@ -377,12 +377,10 @@ class CakeSession {
 		}
 		if ($name === null) {
 			return self::_returnSessionVars();
-		}
-		if (empty($name)) {
+		} elseif (empty($name)) {
 			return false;
 		}
 		$result = Hash::get($_SESSION, $name);
-
 		if (isset($result)) {
 			return $result;
 		}
