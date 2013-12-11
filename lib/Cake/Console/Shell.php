@@ -456,6 +456,7 @@ class Shell extends Object {
 
 /**
  * Gets the option parser instance and configures it.
+ *
  * By overriding this method you can configure the ConsoleOptionParser before returning it.
  *
  * @return ConsoleOptionParser

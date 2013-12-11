@@ -96,48 +96,48 @@ class CompletionShell extends AppShell {
 	}
 
 /**
- * getOptionParser for _this_ shell
+ * Gets the option parser instance and configures it.
  *
  * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
-		$parser->description(__d('cake_console', 'Used by shells like bash to autocomplete command name, options and arguments'))
-			->addSubcommand('commands', array(
-				'help' => __d('cake_console', 'Output a list of available commands'),
-				'parser' => array(
-					'description' => __d('cake_console', 'List all availables'),
-					'arguments' => array(
+		$parser->description(
+			__d('cake_console', 'Used by shells like bash to autocomplete command name, options and arguments')
+		)->addSubcommand('commands', array(
+			'help' => __d('cake_console', 'Output a list of available commands'),
+			'parser' => array(
+				'description' => __d('cake_console', 'List all availables'),
+				'arguments' => array(
+				)
+			)
+		))->addSubcommand('subcommands', array(
+			'help' => __d('cake_console', 'Output a list of available subcommands'),
+			'parser' => array(
+				'description' => __d('cake_console', 'List subcommands for a command'),
+				'arguments' => array(
+					'command' => array(
+						'help' => __d('cake_console', 'The command name'),
+						'required' => true,
 					)
 				)
-			))->addSubcommand('subcommands', array(
-				'help' => __d('cake_console', 'Output a list of available subcommands'),
-				'parser' => array(
-					'description' => __d('cake_console', 'List subcommands for a command'),
-					'arguments' => array(
-						'command' => array(
-							'help' => __d('cake_console', 'The command name'),
-							'required' => true,
-						)
+			)
+		))->addSubcommand('options', array(
+			'help' => __d('cake_console', 'Output a list of available options'),
+			'parser' => array(
+				'description' => __d('cake_console', 'List options'),
+				'arguments' => array(
+					'command' => array(
+						'help' => __d('cake_console', 'The command name'),
+						'required' => false,
 					)
 				)
-			))->addSubcommand('options', array(
-				'help' => __d('cake_console', 'Output a list of available options'),
-				'parser' => array(
-					'description' => __d('cake_console', 'List options'),
-					'arguments' => array(
-						'command' => array(
-							'help' => __d('cake_console', 'The command name'),
-							'required' => false,
-						)
-					)
-				)
-			))->epilog(
-				array(
-					__d('cake_console', 'This command is not intended to be called manually'),
-				)
-			);
+			)
+		))->epilog(
+			__d('cake_console', 'This command is not intended to be called manually')
+		);
+
 		return $parser;
 	}
 

@@ -999,31 +999,36 @@ class ModelTask extends BakeTask {
 	}
 
 /**
- * get the option parser.
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(
-				__d('cake_console', 'Bake models.')
-			)->addArgument('name', array(
-				'help' => __d('cake_console', 'Name of the model to bake. Can use Plugin.name to bake plugin models.')
-			))->addSubcommand('all', array(
-				'help' => __d('cake_console', 'Bake all model files with associations and validation.')
-			))->addOption('plugin', array(
-				'short' => 'p',
-				'help' => __d('cake_console', 'Plugin to bake the model into.')
-			))->addOption('theme', array(
-				'short' => 't',
-				'help' => __d('cake_console', 'Theme to use when baking code.')
-			))->addOption('connection', array(
-				'short' => 'c',
-				'help' => __d('cake_console', 'The connection the model table is on.')
-			))->addOption('force', array(
-				'short' => 'f',
-				'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
-			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
+
+		$parser->description(
+			__d('cake_console', 'Bake models.')
+		)->addArgument('name', array(
+			'help' => __d('cake_console', 'Name of the model to bake. Can use Plugin.name to bake plugin models.')
+		))->addSubcommand('all', array(
+			'help' => __d('cake_console', 'Bake all model files with associations and validation.')
+		))->addOption('plugin', array(
+			'short' => 'p',
+			'help' => __d('cake_console', 'Plugin to bake the model into.')
+		))->addOption('theme', array(
+			'short' => 't',
+			'help' => __d('cake_console', 'Theme to use when baking code.')
+		))->addOption('connection', array(
+			'short' => 'c',
+			'help' => __d('cake_console', 'The connection the model table is on.')
+		))->addOption('force', array(
+			'short' => 'f',
+			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
+		))->epilog(
+			__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.')
+		);
+
+		return $parser;
 	}
 
 /**

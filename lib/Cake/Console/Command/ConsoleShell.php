@@ -105,19 +105,19 @@ class ConsoleShell extends AppShell {
 	}
 
 /**
- * getOptionParser
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
-		$description = array(
+		$parser = parent::getOptionParser();
+
+		$parser->description(array(
 			'The interactive console is a tool for testing parts of your',
 			'app before you write code.',
 			'',
 			'See below for a list of supported commands.'
-		);
-
-		$epilog = array(
+		))->epilog(array(
 			'<info>Model testing</info>',
 			'',
 			'To test model results, use the name of your model without a leading $',
@@ -176,10 +176,9 @@ class ConsoleShell extends AppShell {
 			'To show all connected routes, do the following:',
 			'',
 			"\tRoutes show",
-		);
-		return parent::getOptionParser()
-			->description($description)
-			->epilog($epilog);
+		));
+
+		return $parser;
 	}
 /**
  * Prints the help message
