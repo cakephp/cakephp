@@ -213,7 +213,7 @@ class CookieComponentTest extends CakeTestCase {
 		$result = $this->Cookie->read('Testing');
 		$this->assertNull($result);
 
-		$this->Cookie->write('Testing','');
+		$this->Cookie->write('Testing', '');
 		$result = $this->Cookie->read('Testing');
 		$this->assertEquals('', $result);
 	}
