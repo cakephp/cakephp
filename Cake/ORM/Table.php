@@ -1509,10 +1509,13 @@ class Table implements EventListener {
  * Override this method if you want a table object to use custom
  * marshalling logic.
  *
+ * @param boolean $safe Whether or not this marshaller 
+ *   should be in safe mode.
  * @return Cake\ORM\Marhsaller;
+ * @see Cake\ORM\Marshaller
  */
-	public function marshaller() {
-		return new Marshaller($this);
+	public function marshaller($safe = false) {
+		return new Marshaller($this, $safe);
 	}
 
 /**
