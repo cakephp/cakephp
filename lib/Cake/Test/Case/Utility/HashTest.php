@@ -836,7 +836,7 @@ class HashTest extends CakeTestCase {
 	public function testExtractAttributeEqualityOnScalarValue() {
 		$data = array(
 			'Entity' => array(
-				'id' => 1 ,
+				'id' => 1,
 				'data1' => 'value',
 			)
 		);
