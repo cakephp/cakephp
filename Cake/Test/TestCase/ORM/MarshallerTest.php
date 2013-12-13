@@ -103,11 +103,11 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($data['body'], $result->body);
 		$this->assertEquals($data['author_id'], $result->author_id);
 
+		$this->assertNull($result->comments);
 		$this->assertInternalType('array', $result->Comments);
-		$this->assertCount(2, $result->Comments);
-		$this->assertInternalType('array', $result->Comments[0]);
-		$this->assertInternalType('array', $result->Comments[1]);
+		$this->assertEquals($data['Comments'], $result->Comments);
 
+		$this->assertNull($result->Users);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->user);
 		$this->assertEquals($data['Users']['username'], $result->user->username);
 		$this->assertEquals($data['Users']['password'], $result->user->password);
@@ -119,7 +119,36 @@ class MarshallerTest extends TestCase {
  * @return void
  */
 	public function testOneAssociationsMany() {
-		$this->markTestIncomplete('not done');
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'Comments' => [
+				['comment' => 'First post', 'user_id' => 2],
+				['comment' => 'Second post', 'user_id' => 2],
+			],
+			'Users' => [
+				'username' => 'mark',
+				'password' => 'secret'
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, ['Comments']);
+
+		$this->assertEquals($data['title'], $result->title);
+		$this->assertEquals($data['body'], $result->body);
+		$this->assertEquals($data['author_id'], $result->author_id);
+
+		$this->assertNull($result->Comments);
+		$this->assertInternalType('array', $result->comments);
+		$this->assertCount(2, $result->comments);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->comments[0]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->comments[1]);
+		$this->assertEquals($data['Comments'][0]['comment'], $result->comments[0]->comment);
+
+		$this->assertNull($result->user);
+		$this->assertInternalType('array', $result->Users);
+		$this->assertEquals($data['Users'], $result->Users);
 	}
 
 	public function testOneDeepAssociations() {

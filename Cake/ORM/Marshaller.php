@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\ORM\Association;
 use Cake\ORM\Table;
 use Cake\Utility\Hash;
 
@@ -55,17 +56,19 @@ class Marshaller {
  * Hydrate one entity and its associated data.
  *
  * @param array $data The data to hydrate.
- * @param array $associations The associations to include.
+ * @param array $include The associations to include.
  * @return Cake\ORM\Entity
  */
-	public function one(array $data, $associations = []) {
-		$associations = Hash::normalize($associations);
-		$class = $this->_table->entityClass();
-		$entity = new $class();
+	public function one(array $data, $include = []) {
+		$include = Hash::normalize($include);
+
+		$entityClass = $this->_table->entityClass();
+
+		$entity = new $entityClass();
 		foreach ($data as $key => $value) {
-			if (array_key_exists($key, $associations)) {
+			if (array_key_exists($key, $include)) {
 				$assoc = $this->_table->association($key);
-				$value = $this->_marshalAssociation($assoc, $value, $associations[$key]);
+				$value = $this->_marshalAssociation($assoc, $value, $include[$key]);
 				$entity->set($assoc->property(), $value);
 			} else {
 				$entity->set($key, $value);
@@ -79,21 +82,29 @@ class Marshaller {
  *
  * @return mixed
  */
-	protected function _marshalAssociation($assoc, $value, $associations) {
+	protected function _marshalAssociation($assoc, $value, $include) {
 		$targetTable = $assoc->target();
 		$marshaller = $targetTable->marshaller();
-		// TODO switch to one based on association type.
-		return $marshaller->one($value, (array)$associations);
+		if ($assoc->type() === Association::ONE_TO_ONE) {
+			return $marshaller->one($value, (array)$include);
+		} else {
+			return $marshaller->many($value, (array)$include);
+		}
 	}
 
 /**
  * Hydrate many entities and their associated data.
  *
  * @param array $data The data to hydrate.
- * @param array $associations The associations to include.
+ * @param array $include The associations to include.
  * @return array An array of hydrated records.
  */
-	public function many(array $data, $associations = []) {
+	public function many(array $data, $include = []) {
+		$output = [];
+		foreach ($data as $record) {
+			$output[] = $this->one($record, $include);
+		}
+		return $output;
 	}
 
 }
