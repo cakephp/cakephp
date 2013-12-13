@@ -2219,6 +2219,33 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests saving associations only saves associations
+ * if they are entities.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveOnlySaveAssociatedEntities() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+
+		// Not an entity.
+		$entity->article = [
+			'title' => 'A Title',
+			'body' => 'A body'
+		];
+
+		$table = TableRegistry::get('authors');
+		$table->hasOne('articles');
+
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertEmpty($entity->article);
+	}
+
+
+/**
  * Tests saving hasOne association and returning a validation error will
  * abort the saving process
  *

@@ -139,6 +139,10 @@ class HasMany extends Association {
 		$original = $targetEntities;
 
 		foreach ($targetEntities as $k => $targetEntity) {
+			if (!($targetEntity instanceof Entity)) {
+				continue;
+			}
+
 			if (!empty($options['atomic'])) {
 				$targetEntity = clone $targetEntity;
 			}
