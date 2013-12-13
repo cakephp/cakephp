@@ -1532,6 +1532,17 @@ class Table implements EventListener {
  * on the primary key data existing in the database when the entity
  * is saved. Until the entity is saved, it will be a detached record.
  *
+ * By default all the associations on this table will be hydrated. You can
+ * limit which associations are built, or include deeper associations
+ * using the associations parameter:
+ *
+ * {{{
+ * $articles = $this->Articles->newEntity(
+ *   $this->request->data(),
+ *   ['Tags', 'Comments' => ['User']]
+ * );
+ * }}}
+ *
  * @param array $data The data to build an entity with.
  * @param array $associations A whitelist of associations
  *   to hydrate. Defaults to all associations
@@ -1554,7 +1565,17 @@ class Table implements EventListener {
  * $articles = $this->Articles->newEntities($this->request->data());
  * }}}
  *
- * The hydrated entities can the be iterated and saved.
+ * The hydrated entities can then be iterated and saved. By default
+ * all the associations on this table will be hydrated. You can
+ * limit which associations are built, or include deeper associations
+ * using the associations parameter:
+ *
+ * {{{
+ * $articles = $this->Articles->newEntities(
+ *   $this->request->data(),
+ *   ['Tags', 'Comments' => ['User']]
+ * );
+ * }}}
  *
  * @param array $data The data to build an entity with.
  * @param array $associations A whitelist of associations
