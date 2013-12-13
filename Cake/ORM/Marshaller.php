@@ -66,8 +66,11 @@ class Marshaller {
 
 		$entity = new $entityClass();
 		foreach ($data as $key => $value) {
+			$assoc = null;
 			if (array_key_exists($key, $include)) {
 				$assoc = $this->_table->association($key);
+			}
+			if ($assoc) {
 				$value = $this->_marshalAssociation($assoc, $value, $include[$key]);
 				$entity->set($assoc->property(), $value);
 			} else {
