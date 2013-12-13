@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\ORM\Table;
+use Cake\Utility\Hash;
 
 /**
  * Contains logic to convert array data into entities.
@@ -58,6 +59,31 @@ class Marshaller {
  * @return Cake\ORM\Entity
  */
 	public function one(array $data, $associations = []) {
+		$associations = Hash::normalize($associations);
+		$class = $this->_table->entityClass();
+		$entity = new $class();
+		foreach ($data as $key => $value) {
+			if (array_key_exists($key, $associations)) {
+				$assoc = $this->_table->association($key);
+				$value = $this->_marshalAssociation($assoc, $value, $associations[$key]);
+				$entity->set($assoc->property(), $value);
+			} else {
+				$entity->set($key, $value);
+			}
+		}
+		return $entity;
+	}
+
+/**
+ * Create a new sub-marshaller and marshal the associated data.
+ *
+ * @return mixed
+ */
+	protected function _marshalAssociation($assoc, $value, $associations) {
+		$targetTable = $assoc->target();
+		$marshaller = $targetTable->marshaller();
+		// TODO switch to one based on association type.
+		return $marshaller->one($value, (array)$associations);
 	}
 
 /**
