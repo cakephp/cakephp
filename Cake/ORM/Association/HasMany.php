@@ -163,7 +163,7 @@ class HasMany extends Association {
 /**
  * Get the relationship type.
  *
- * @return string MANY_TO_ONE
+ * @return string
  */
 	public function type() {
 		return self::ONE_TO_MANY;
