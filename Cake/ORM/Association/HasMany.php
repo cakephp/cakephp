@@ -160,4 +160,13 @@ class HasMany extends Association {
 		return $entity;
 	}
 
+/**
+ * Get the relationship type.
+ *
+ * @return string MANY_TO_ONE
+ */
+	public function type() {
+		return self::ONE_TO_MANY;
+	}
+
 }

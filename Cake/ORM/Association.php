@@ -49,6 +49,12 @@ abstract class Association {
  */
 	const STRATEGY_SELECT = 'select';
 
+	const ONE_TO_ONE = 'oneToOne';
+
+	const ONE_TO_MANY = 'oneToMany';
+
+	const MANY_TO_MANY = 'manyToMany';
+
 /**
  * Name given to the association, it usually represents the alias
  * assigned to the target associated table
@@ -413,6 +419,15 @@ abstract class Association {
 			$row[$sourceAlias][$this->property()] = $row[$targetAlias];
 		}
 		return $row;
+	}
+
+/**
+ * Get the relationship type.
+ *
+ * @return string Constant of either ONE_TO_ONE, MANY_TO_ONE, or MANY_TO_MANY.
+ */
+	public function type() {
+		return self::ONE_TO_ONE;
 	}
 
 /**
