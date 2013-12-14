@@ -202,6 +202,23 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
+ * test write() with null & empty string value 
+ *
+ * @return void
+ */
+	public function testWriteWithNullEmptyString() {
+		$this->Cookie->type('aes');
+
+		$this->Cookie->write('Testing');
+		$result = $this->Cookie->read('Testing');
+		$this->assertNull($result);
+
+		$this->Cookie->write('Testing', '');
+		$result = $this->Cookie->read('Testing');
+		$this->assertEquals('', $result);
+	}
+
+/**
  * test that two write() calls use the expiry.
  *
  * @return void
