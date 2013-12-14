@@ -72,10 +72,9 @@ class Marshaller {
 			}
 			if ($assoc) {
 				$value = $this->_marshalAssociation($assoc, $value, $include[$key]);
-				$entity->set($assoc->property(), $value);
-			} else {
-				$entity->set($key, $value);
+				$key = $assoc->property();
 			}
+			$entity->set($key, $value);
 		}
 		return $entity;
 	}
@@ -90,9 +89,8 @@ class Marshaller {
 		$marshaller = $targetTable->marshaller();
 		if ($assoc->type() === Association::ONE_TO_ONE) {
 			return $marshaller->one($value, (array)$include);
-		} else {
-			return $marshaller->many($value, (array)$include);
 		}
+		return $marshaller->many($value, (array)$include);
 	}
 
 /**
