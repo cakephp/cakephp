@@ -416,24 +416,95 @@ class BelongsToMany extends Association {
  * @return boolean true on success, false otherwise
  */
 	public function link(Entity $sourceEntity, array $targetEntities, array $options = []) {
+		$this->_checkPersitenceStatus($sourceEntity, $targetEntities);
+		$property = $this->property();
+		$links = $sourceEntity->get($property) ?: [];
+		$links = array_merge($links, $targetEntities);
+		$sourceEntity->set($property, $links);
+		return $this->_saveLinks($sourceEntity, $targetEntities, $options);
+	}
+
+	public function unlink(Entity $sourceEntity, array $targetEntities) {
+		$this->_checkPersitenceStatus($sourceEntity, $targetEntities);
+		$property = $this->property();
+
+		$this->junction()->connection()->transactional(
+			function() use ($sourceEntity, $targetEntities) {
+				$links = $this->_collectJointEntities($sourceEntity, $targetEntities);
+				foreach ($links as $entity) {
+					$this->_junctionTable->delete($entity);
+				}
+			}
+		);
+
+		$links = $sourceEntity->get($property) ?: [];
+	}
+
+	protected function _checkPersitenceStatus($sourceEntity, array $targetEntities) {
 		if ($sourceEntity->isNew() !== false) {
 			$error = __d('cake_dev', 'Source entity needs to be persisted before linking');
 			throw new \InvalidArgumentException($error);
 		}
-
-		$property = $this->property();
-		$links = $sourceEntity->get($property) ?: [];
 
 		foreach ($targetEntities as $entity) {
 			if ($entity->isNew() !== false) {
 				$error = __d('cake_dev', 'Cannot link not persisted entities');
 				throw new \InvalidArgumentException($error);
 			}
-			$links[] = $entity;
 		}
 
-		$sourceEntity->set($property, $links);
-		return $this->_saveLinks($sourceEntity, $targetEntities, $options);
+		return true;
+	}
+
+	protected function _collectJointEntities($sourceEntity, $targetEntities) {
+		$target = $this->target();
+		$source = $this->source();
+		$junction = $this->junction();
+		$jointProperty = $target->association($junction->alias())->property();
+
+		$result = [];
+		$missing = [];
+
+		foreach ($targetEntities as $entity) {
+			$joint = $entity->get($jointProperty);
+
+			if (!$joint) {
+				$missing[] = $entity;
+				continue;
+			}
+
+			$joint->isNew(false);
+			$result[] = $joint;
+		}
+
+		if (empty($missing)) {
+			return $result;
+		}
+
+		$primary = (array)$target->primaryKey();
+		$keys = array_map(function($e) use ($primary) {
+			return $e->extract($primary);
+		}, $missing);
+
+		$conditions = [];
+		$belongsTo = $junction->association($target->alias());
+		$foreignKey = (array)$this->foreignKey();
+		$assocForeignKey = (array)$belongsTo->foreignKey();
+		$sourceKey = $sourceEntity->extract((array)$source->primaryKey());
+
+		foreach($keys as $key) {
+			$unions[] = $junction->find('all')
+				->where(array_combine($foreignKey, $sourceKey))
+				->andWhere(array_combine($assocForeignKey, $key))
+				->andWhere($belongsTo->conditions());
+		}
+
+		$query = array_shift($unions);
+		foreach ($unions as $q) {
+			$query->union($q);
+		}
+
+		return array_merge($result, $query->toArray());
 	}
 
 /**

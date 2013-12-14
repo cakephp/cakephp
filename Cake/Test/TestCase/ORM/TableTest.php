@@ -2798,4 +2798,19 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($article->tags[3], $tags[1]);
 	}
 
+	public function testUnlinkBelongsToMany() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$tagsTable = TableRegistry::get('tags');
+		$options = ['markNew' => false];
+
+		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
+		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
+
+		$table->association('tags')->unlink($article, $tags);
+		$left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+		$this->assertCount(1, $left->tags);
+		$this->assertEquals(2, $left->tags[0]->get('id'));
+	}
+
 }
