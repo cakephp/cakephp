@@ -424,7 +424,25 @@ class BelongsToMany extends Association {
 		return $this->_saveLinks($sourceEntity, $targetEntities, $options);
 	}
 
-	public function unlink(Entity $sourceEntity, array $targetEntities) {
+/**
+ * Removes all links between the passed source entity and each of the provided
+ * target entities. This method assumes that all passed objects are already persisted
+ * in the database and that each of them contain a primary key value.
+ *
+ * By default this method will also unset each of the entity objects stored inside
+ * the source entity.
+ *
+ * @param \Cake\ORM\Entity $sourceEntity an entity persisted in the source table for
+ * this association
+ * @param array $targetEntities list of entities persisted in the target table for
+ * this association
+ * @param boolean $cleanProperty whether or not to remove all the objects in $targetEntities
+ * that are stored in $sourceEntity
+ * @throws \InvalidArgumentException if non persisted entities are passed or if
+ * any of them is lacking a primary key value
+ * @return void
+ */
+	public function unlink(Entity $sourceEntity, array $targetEntities, $cleanProperty = true) {
 		$this->_checkPersitenceStatus($sourceEntity, $targetEntities);
 		$property = $this->property();
 
@@ -437,12 +455,35 @@ class BelongsToMany extends Association {
 			}
 		);
 
-		$links = $sourceEntity->get($property) ?: [];
+		$existing = $sourceEntity->get($property) ?: [];
+		if (!$cleanProperty || empty($existing)) {
+			return;
+		}
+
+		$storage = new \SplObjectStorage;
+		foreach ($targetEntities as $e) {
+			$storage->attach($e);
+		}
+
+		foreach ($existing as $k => $e) {
+			if ($storage->contains($e)) {
+				unset($existing[$k]);
+			}
+		}
+
+		$sourceEntity->set($property, array_values($existing));
+		$sourceEntity->dirty($property, false);
 	}
 
+/**
+ * Throws an exception should any of the passed entities is not persisted.
+ *
+ * @throws \InvalidArgumentException
+ * @return boolean
+ */
 	protected function _checkPersitenceStatus($sourceEntity, array $targetEntities) {
 		if ($sourceEntity->isNew() !== false) {
-			$error = __d('cake_dev', 'Source entity needs to be persisted before linking');
+			$error = __d('cake_dev', 'Source entity needs to be persisted before proceeding');
 			throw new \InvalidArgumentException($error);
 		}
 
@@ -456,6 +497,16 @@ class BelongsToMany extends Association {
 		return true;
 	}
 
+/**
+ * Returns the list of joint entities that exist between the source entity
+ * and each of the passed target entities
+ *
+ * @param \Cake\ORM\Entity $sourceEntity
+ * @param array $targetEntities
+ * @throws \InvalidArgumentException if any of the entities is lacking a primary
+ * key value
+ * @return array
+ */
 	protected function _collectJointEntities($sourceEntity, $targetEntities) {
 		$target = $this->target();
 		$source = $this->source();
