@@ -472,7 +472,7 @@ class CookieComponent extends Component {
 		if (is_array($value)) {
 			$value = $this->_implode($value);
 		}
-		if (!$this->_encrypted) {
+		if (!$this->_encrypted || !$value) {
 			return $value;
 		}
 		$prefix = "Q2FrZQ==.";
