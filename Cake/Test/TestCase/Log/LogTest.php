@@ -115,6 +115,17 @@ class LogTest extends TestCase {
 	}
 
 /**
+ * test config() with valid key name
+ *
+ * @expectedException Cake\Error\Exception
+ * @return void
+ */
+	public function testInvalidLevel() {
+		Log::config('myengine', array('engine' => 'File'));
+		Log::write('invalid', 'This will not be logged');
+	}
+
+/**
  * Provider for config() tests.
  *
  * @return array
