@@ -258,9 +258,11 @@ class SqliteSchema extends BaseSchema {
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
 		}
-		if ($data['type'] === 'integer' && $name == $table->primaryKey()[0]) {
+
+		if ($data['type'] === 'integer' && [$name] === (array)$table->primaryKey()) {
 			$out .= ' PRIMARY KEY AUTOINCREMENT';
 		}
+
 		if (isset($data['null']) && $data['null'] === true) {
 			$out .= ' DEFAULT NULL';
 			unset($data['default']);
