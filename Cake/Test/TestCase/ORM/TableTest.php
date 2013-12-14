@@ -2809,13 +2809,14 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tagsTable = TableRegistry::get('tags');
 		$options = ['markNew' => false];
 
-		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
-		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
+		$article = $table->find('all')
+			->where(['id' => 1])
+			->contain(['tags'])->first();
 
-		$table->association('tags')->unlink($article, $tags);
-		$left = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertCount(1, $left->tags);
-		$this->assertEquals(2, $left->tags[0]->get('id'));
+		$table->association('tags')->unlink($article, [$article->tags[0]]);
+		$this->assertCount(1, $article->tags);
+		$this->assertEquals(2, $article->tags[0]->get('id'));
+		$this->assertFalse($article->dirty('tags'));
 	}
 
 /**
