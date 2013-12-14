@@ -5028,6 +5028,23 @@ class ModelWriteTest extends BaseModelTest {
 	}
 
 /**
+ * Test SaveMany with validate=false.
+ *
+ * @return void
+ */
+	public function testSaveManyValidateFalse() {
+		$this->loadFixtures('Post');
+		$TestModel = new Post();
+		$TestModel->deleteAll(true);
+		$data = array(
+			array('id' => 1, 'author_id' => 1, 'title' => 'hi'),
+			array('id' => 2, 'author_id' => 1, 'title' => 'bye')
+		);
+		$result = $TestModel->saveAll($data, array('validate' => false));
+		$this->assertTrue($result);
+	}
+
+/**
  * Test SaveAssociated with Habtm relations
  *
  * @return void

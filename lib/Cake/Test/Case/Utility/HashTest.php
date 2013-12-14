@@ -669,6 +669,9 @@ class HashTest extends CakeTestCase {
 
 		$data = array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five');
 		$this->assertFalse(Hash::numeric(array_keys($data)));
+
+		$data = array(2.4, 1, 0, -1, -2);
+		$this->assertTrue(Hash::numeric($data));
 	}
 
 /**
@@ -830,6 +833,26 @@ class HashTest extends CakeTestCase {
 		$this->assertEquals(2, $result[1]['id']);
 		$this->assertEquals(4, $result[2]['id']);
 		$this->assertEquals(5, $result[3]['id']);
+	}
+
+/**
+ * Test that attribute matchers don't cause errors on scalar data.
+ *
+ * @return void
+ */
+	public function testExtractAttributeEqualityOnScalarValue() {
+		$data = array(
+			'Entity' => array(
+				'id' => 1,
+				'data1' => 'value',
+			)
+		);
+		$result = Hash::extract($data, 'Entity[id=1].data1');
+		$this->assertEquals(array('value'), $result);
+
+		$data = array('Entity' => false );
+		$result = Hash::extract($data, 'Entity[id=1].data1');
+		$this->assertEquals(array(), $result);
 	}
 
 /**
