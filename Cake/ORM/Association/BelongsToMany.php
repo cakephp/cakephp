@@ -461,6 +461,7 @@ class BelongsToMany extends Association {
 		$source = $this->source();
 		$junction = $this->junction();
 		$jointProperty = $target->association($junction->alias())->property();
+		$primary = (array)$target->primaryKey();
 
 		$result = [];
 		$missing = [];
@@ -469,7 +470,7 @@ class BelongsToMany extends Association {
 			$joint = $entity->get($jointProperty);
 
 			if (!$joint) {
-				$missing[] = $entity;
+				$missing[] = $entity->extract($primary);
 				continue;
 			}
 
@@ -481,18 +482,12 @@ class BelongsToMany extends Association {
 			return $result;
 		}
 
-		$primary = (array)$target->primaryKey();
-		$keys = array_map(function($e) use ($primary) {
-			return $e->extract($primary);
-		}, $missing);
-
-		$conditions = [];
 		$belongsTo = $junction->association($target->alias());
 		$foreignKey = (array)$this->foreignKey();
 		$assocForeignKey = (array)$belongsTo->foreignKey();
 		$sourceKey = $sourceEntity->extract((array)$source->primaryKey());
 
-		foreach($keys as $key) {
+		foreach($missing as $key) {
 			$unions[] = $junction->find('all')
 				->where(array_combine($foreignKey, $sourceKey))
 				->andWhere(array_combine($assocForeignKey, $key))
