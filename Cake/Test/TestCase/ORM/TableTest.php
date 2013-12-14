@@ -2865,4 +2865,26 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($left->tags);
 	}
 
+/**
+ * Integration test to show how to replace records from a belongsToMany
+ *
+ * @return void
+ */
+	public function testReplacelinksBelongsToManyMultiple() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$tagsTable = TableRegistry::get('tags');
+		$options = ['markNew' => false];
+
+		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
+		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
+		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
+
+		$table->association('tags')->replaceLinks($article, $tags);
+		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+		$this->assertCount(2, $article->tags);
+		$this->assertEquals(2, $article->tags[0]->id);
+		$this->assertEquals(3, $article->tags[1]->id);
+	}
+
 }

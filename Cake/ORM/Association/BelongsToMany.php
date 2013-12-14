@@ -475,6 +475,82 @@ class BelongsToMany extends Association {
 		$sourceEntity->dirty($property, false);
 	}
 
+	public function replaceLinks(Entity $sourceEntity, array $targetEntities, array $options = []) {
+		$primaryKey = (array)$this->source()->primaryKey();
+		$primaryValue = $sourceEntity->extract($primaryKey);
+
+		if (empty($primaryValue)) {
+			throw new \InvalidArgumentException;
+		}
+
+		$target = $this->target();
+		$junction = $this->junction();
+		$foreignKey = (array)$this->foreignKey();
+		$existing = $junction->find('all')
+			->where(array_combine($foreignKey, $primaryValue))
+			->andWHere($this->conditions());
+
+		$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
+		$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
+
+		$jointProperty = $target->association($junction->alias())->property();
+		$sourceEntity->set($jointProperty, []);
+		$this->link($sourceEntity, $inserts, $options);
+		$sourceEntity->set($jointProperty, $targetEntities);
+		$sourceEntity->dirty($jointProperty, false);
+	}
+
+	protected function _diffLinks($existing, $jointEntities, $targetEntities) {
+		$junction = $this->junction();
+		$target = $this->target();
+		$belongsTo = $junction->association($target->alias());
+		$foreignKey = (array)$this->foreignKey();
+		$assocForeignKey = (array)$belongsTo->foreignKey();
+
+		$keys = array_merge($foreignKey, $assocForeignKey);
+		$deletes = $indexed = $present = [];
+
+		foreach ($jointEntities as $i => $entity) {
+			$indexed[$i] = $entity->extract($keys);
+			$present[$i] = array_values($entity->extract($assocForeignKey));
+		}
+
+		foreach ($existing as $result) {
+			$result = $result->extract($keys);
+			$found = false;
+			foreach ($indexed as $i => $data) {
+				if ($result === $data) {
+					unset($indexed[$i]);
+					$found = true;
+					break;
+				}
+			}
+
+			if (!$found) {
+				$deletes[] = $result;
+			}
+		}
+
+		if ($deletes) {
+			$deletes = ['OR' => $deletes];
+			$deletes[] = $this->conditions();
+			$junction->deleteAll($deletes);
+		}
+
+		$primary = (array)$target->primaryKey();
+		foreach ($targetEntities as $k => $entity) {
+			$key = array_values($entity->extract($primary));
+			foreach ($present as $i => $data) {
+				if ($key === $data) {
+					unset($targetEntities[$k], $present[$i]);
+					break;
+				}
+			}
+		}
+
+		return array_values($targetEntities);
+	}
+
 /**
  * Throws an exception should any of the passed entities is not persisted.
  *
