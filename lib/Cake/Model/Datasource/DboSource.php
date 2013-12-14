@@ -1713,14 +1713,14 @@ class DboSource extends DataSource {
  * Returns a conditions array for the constraint between two models
  *
  * @param string $type Association type
- * @param Model $model Model object
+ * @param Model $Model Model object
  * @param string $linkModel
  * @param string $alias
  * @param array $assoc
  * @param string $alias2
- * @return array Conditions array defining the constraint between $model and $association
+ * @return array Conditions array defining the constraint between $Model and $association
  */
-	public function getConstraint($type, $model, $linkModel, $alias, $assoc, $alias2 = null) {
+	public function getConstraint($type, Model $Model, $linkModel, $alias, $assoc, $alias2 = null) {
 		$assoc += array('external' => false);
 
 		if (empty($assoc['foreignKey'])) {
@@ -1734,7 +1734,7 @@ class DboSource extends DataSource {
 				);
 			case ($type === 'hasOne' && !$assoc['external']):
 				return array(
-					"{$alias}.{$assoc['foreignKey']}" => $this->identifier("{$model->alias}.{$model->primaryKey}")
+					"{$alias}.{$assoc['foreignKey']}" => $this->identifier("{$Model->alias}.{$Model->primaryKey}")
 				);
 			case ($type === 'belongsTo' && $assoc['external']):
 				return array(
@@ -1742,7 +1742,7 @@ class DboSource extends DataSource {
 				);
 			case ($type === 'belongsTo' && !$assoc['external']):
 				return array(
-					"{$model->alias}.{$assoc['foreignKey']}" => $this->identifier("{$alias}.{$linkModel->primaryKey}")
+					"{$Model->alias}.{$assoc['foreignKey']}" => $this->identifier("{$alias}.{$linkModel->primaryKey}")
 				);
 			case ($type === 'hasMany'):
 				return array(
@@ -1794,11 +1794,11 @@ class DboSource extends DataSource {
  * Builds and generates an SQL statement from an array. Handles final clean-up before conversion.
  *
  * @param array $query An array defining an SQL query
- * @param Model $model The model object which initiated the query
+ * @param Model $Model The model object which initiated the query
  * @return string An executable SQL statement
  * @see DboSource::renderStatement()
  */
-	public function buildStatement($query, $model) {
+	public function buildStatement($query, Model $Model) {
 		$query = array_merge($this->_queryDefaults, $query);
 
 		if (!empty($query['joins'])) {
@@ -1811,14 +1811,14 @@ class DboSource extends DataSource {
 		}
 
 		return $this->renderStatement('select', array(
-			'conditions' => $this->conditions($query['conditions'], true, true, $model),
+			'conditions' => $this->conditions($query['conditions'], true, true, $Model),
 			'fields' => implode(', ', $query['fields']),
 			'table' => $query['table'],
 			'alias' => $this->alias . $this->name($query['alias']),
-			'order' => $this->order($query['order'], 'ASC', $model),
+			'order' => $this->order($query['order'], 'ASC', $Model),
 			'limit' => $this->limit($query['limit'], $query['offset']),
 			'joins' => implode(' ', $query['joins']),
-			'group' => $this->group($query['group'], $model)
+			'group' => $this->group($query['group'], $Model)
 		));
 	}
 
@@ -1911,24 +1911,24 @@ class DboSource extends DataSource {
  * Generates and executes an SQL UPDATE statement for given model, fields, and values.
  * For databases that do not support aliases in UPDATE queries.
  *
- * @param Model $model
+ * @param Model $Model
  * @param array $fields
  * @param array $values
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function update(Model $model, $fields = array(), $values = null, $conditions = null) {
+	public function update(Model $Model, $fields = array(), $values = null, $conditions = null) {
 		if (!$values) {
 			$combined = $fields;
 		} else {
 			$combined = array_combine($fields, $values);
 		}
 
-		$fields = implode(', ', $this->_prepareUpdateFields($model, $combined, empty($conditions)));
+		$fields = implode(', ', $this->_prepareUpdateFields($Model, $combined, empty($conditions)));
 
 		$alias = $joins = null;
-		$table = $this->fullTableName($model);
-		$conditions = $this->_matchRecords($model, $conditions);
+		$table = $this->fullTableName($Model);
+		$conditions = $this->_matchRecords($Model, $conditions);
 
 		if ($conditions === false) {
 			return false;
@@ -1936,7 +1936,7 @@ class DboSource extends DataSource {
 		$query = compact('table', 'alias', 'joins', 'fields', 'conditions');
 
 		if (!$this->execute($this->renderStatement('update', $query))) {
-			$model->onError();
+			$Model->onError();
 			return false;
 		}
 		return true;
@@ -1945,22 +1945,22 @@ class DboSource extends DataSource {
 /**
  * Quotes and prepares fields and values for an SQL UPDATE statement
  *
- * @param Model $model
+ * @param Model $Model
  * @param array $fields
  * @param boolean $quoteValues If values should be quoted, or treated as SQL snippets
  * @param boolean $alias Include the model alias in the field name
  * @return array Fields and values, quoted and prepared
  */
-	protected function _prepareUpdateFields(Model $model, $fields, $quoteValues = true, $alias = false) {
-		$quotedAlias = $this->startQuote . $model->alias . $this->endQuote;
+	protected function _prepareUpdateFields(Model $Model, $fields, $quoteValues = true, $alias = false) {
+		$quotedAlias = $this->startQuote . $Model->alias . $this->endQuote;
 
 		$updates = array();
 		foreach ($fields as $field => $value) {
 			if ($alias && strpos($field, '.') === false) {
-				$quoted = $model->escapeField($field);
+				$quoted = $Model->escapeField($field);
 			} elseif (!$alias && strpos($field, '.') !== false) {
 				$quoted = $this->name(str_replace($quotedAlias . '.', '', str_replace(
-					$model->alias . '.', '', $field
+					$Model->alias . '.', '', $field
 				)));
 			} else {
 				$quoted = $this->name($field);
@@ -1973,12 +1973,12 @@ class DboSource extends DataSource {
 			$update = $quoted . ' = ';
 
 			if ($quoteValues) {
-				$update .= $this->value($value, $model->getColumnType($field));
-			} elseif ($model->getColumnType($field) === 'boolean' && (is_int($value) || is_bool($value))) {
+				$update .= $this->value($value, $Model->getColumnType($field));
+			} elseif ($Model->getColumnType($field) === 'boolean' && (is_int($value) || is_bool($value))) {
 				$update .= $this->boolean($value, true);
 			} elseif (!$alias) {
 				$update .= str_replace($quotedAlias . '.', '', str_replace(
-					$model->alias . '.', '', $value
+					$Model->alias . '.', '', $value
 				));
 			} else {
 				$update .= $value;
@@ -1992,21 +1992,21 @@ class DboSource extends DataSource {
  * Generates and executes an SQL DELETE statement.
  * For databases that do not support aliases in UPDATE queries.
  *
- * @param Model $model
+ * @param Model $Model
  * @param mixed $conditions
  * @return boolean Success
  */
-	public function delete(Model $model, $conditions = null) {
+	public function delete(Model $Model, $conditions = null) {
 		$alias = $joins = null;
-		$table = $this->fullTableName($model);
-		$conditions = $this->_matchRecords($model, $conditions);
+		$table = $this->fullTableName($Model);
+		$conditions = $this->_matchRecords($Model, $conditions);
 
 		if ($conditions === false) {
 			return false;
 		}
 
 		if ($this->execute($this->renderStatement('delete', compact('alias', 'table', 'joins', 'conditions'))) === false) {
-			$model->onError();
+			$Model->onError();
 			return false;
 		}
 		return true;
@@ -2016,15 +2016,15 @@ class DboSource extends DataSource {
  * Gets a list of record IDs for the given conditions. Used for multi-record updates and deletes
  * in databases that do not support aliases in UPDATE/DELETE queries.
  *
- * @param Model $model
+ * @param Model $Model
  * @param mixed $conditions
  * @return array List of record IDs
  */
-	protected function _matchRecords(Model $model, $conditions = null) {
+	protected function _matchRecords(Model $Model, $conditions = null) {
 		if ($conditions === true) {
 			$conditions = $this->conditions(true);
 		} elseif ($conditions === null) {
-			$conditions = $this->conditions($this->defaultConditions($model, $conditions, false), true, true, $model);
+			$conditions = $this->conditions($this->defaultConditions($Model, $conditions, false), true, true, $Model);
 		} else {
 			$noJoin = true;
 			foreach ($conditions as $field => $value) {
@@ -2034,7 +2034,7 @@ class DboSource extends DataSource {
 					$field = ltrim($field, $this->startQuote);
 					$field = rtrim($field, $this->endQuote);
 				}
-				if (!$model->hasField($field)) {
+				if (!$Model->hasField($field)) {
 					$noJoin = false;
 					break;
 				}
@@ -2046,8 +2046,8 @@ class DboSource extends DataSource {
 			if ($noJoin === true) {
 				return $this->conditions($conditions);
 			}
-			$idList = $model->find('all', array(
-				'fields' => "{$model->alias}.{$model->primaryKey}",
+			$idList = $Model->find('all', array(
+				'fields' => "{$Model->alias}.{$Model->primaryKey}",
 				'conditions' => $conditions
 			));
 
@@ -2055,7 +2055,7 @@ class DboSource extends DataSource {
 				return false;
 			}
 			$conditions = $this->conditions(array(
-				$model->primaryKey => Hash::extract($idList, "{n}.{$model->alias}.{$model->primaryKey}")
+				$Model->primaryKey => Hash::extract($idList, "{n}.{$Model->alias}.{$Model->primaryKey}")
 			));
 		}
 		return $conditions;
@@ -2103,12 +2103,12 @@ class DboSource extends DataSource {
 /**
  * Returns an SQL calculation, i.e. COUNT() or MAX()
  *
- * @param Model $model
+ * @param Model $Model
  * @param string $func Lowercase name of SQL function, i.e. 'count' or 'max'
  * @param array $params Function parameters (any values must be quoted manually)
  * @return string An SQL calculation function
  */
-	public function calculate(Model $model, $func, $params = array()) {
+	public function calculate(Model $Model, $func, $params = array()) {
 		$params = (array)$params;
 
 		switch (strtolower($func)) {
@@ -2119,8 +2119,8 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = 'count';
 				}
-				if (is_object($model) && $model->isVirtualField($params[0])) {
-					$arg = $this->_quoteFields($model->getVirtualField($params[0]));
+				if ($Model->isVirtualField($params[0])) {
+					$arg = $this->_quoteFields($Model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
 				}
@@ -2130,8 +2130,8 @@ class DboSource extends DataSource {
 				if (!isset($params[1])) {
 					$params[1] = $params[0];
 				}
-				if (is_object($model) && $model->isVirtualField($params[0])) {
-					$arg = $this->_quoteFields($model->getVirtualField($params[0]));
+				if ($Model->isVirtualField($params[0])) {
+					$arg = $this->_quoteFields($Model->getVirtualField($params[0]));
 				} else {
 					$arg = $this->name($params[0]);
 				}
@@ -2295,7 +2295,7 @@ class DboSource extends DataSource {
  * If conditions are supplied then they will be returned. If a model doesn't exist and no conditions
  * were provided either null or false will be returned based on what was input.
  *
- * @param Model $model
+ * @param Model $Model
  * @param string|array|boolean $conditions Array of conditions, conditions string, null or false. If an array of conditions,
  *   or string conditions those conditions will be returned. With other values the model's existence will be checked.
  *   If the model doesn't exist a null or false will be returned depending on the input value.
@@ -2304,35 +2304,35 @@ class DboSource extends DataSource {
  * @see DboSource::update()
  * @see DboSource::conditions()
  */
-	public function defaultConditions(Model $model, $conditions, $useAlias = true) {
+	public function defaultConditions(Model $Model, $conditions, $useAlias = true) {
 		if (!empty($conditions)) {
 			return $conditions;
 		}
-		$exists = $model->exists();
+		$exists = $Model->exists();
 		if (!$exists && $conditions !== null) {
 			return false;
 		} elseif (!$exists) {
 			return null;
 		}
-		$alias = $model->alias;
+		$alias = $Model->alias;
 
 		if (!$useAlias) {
-			$alias = $this->fullTableName($model, false);
+			$alias = $this->fullTableName($Model, false);
 		}
-		return array("{$alias}.{$model->primaryKey}" => $model->getID());
+		return array("{$alias}.{$Model->primaryKey}" => $Model->getID());
 	}
 
 /**
  * Returns a key formatted like a string Model.fieldname(i.e. Post.title, or Country.name)
  *
- * @param Model $model
+ * @param Model $Model
  * @param string $key
  * @param string $assoc
  * @return string
  */
-	public function resolveKey(Model $model, $key, $assoc = null) {
+	public function resolveKey(Model $Model, $key, $assoc = null) {
 		if (strpos('.', $key) !== false) {
-			return $this->name($model->alias) . '.' . $this->name($key);
+			return $this->name($Model->alias) . '.' . $this->name($key);
 		}
 		return $key;
 	}
@@ -2355,16 +2355,16 @@ class DboSource extends DataSource {
 /**
  * Converts model virtual fields into sql expressions to be fetched later
  *
- * @param Model $model
+ * @param Model $Model
  * @param string $alias Alias table name
  * @param array $fields virtual fields to be used on query
  * @return array
  */
-	protected function _constructVirtualFields(Model $model, $alias, $fields) {
+	protected function _constructVirtualFields(Model $Model, $alias, $fields) {
 		$virtual = array();
 		foreach ($fields as $field) {
 			$virtualField = $this->name($alias . $this->virtualFieldSeparator . $field);
-			$expression = $this->_quoteFields($model->getVirtualField($field));
+			$expression = $this->_quoteFields($Model->getVirtualField($field));
 			$virtual[] = '(' . $expression . ") {$this->alias} {$virtualField}";
 		}
 		return $virtual;
@@ -2373,27 +2373,27 @@ class DboSource extends DataSource {
 /**
  * Generates the fields list of an SQL query.
  *
- * @param Model $model
+ * @param Model $Model
  * @param string $alias Alias table name
  * @param mixed $fields
  * @param boolean $quote If false, returns fields array unquoted
  * @return array
  */
-	public function fields(Model $model, $alias = null, $fields = array(), $quote = true) {
+	public function fields(Model $Model, $alias = null, $fields = array(), $quote = true) {
 		if (empty($alias)) {
-			$alias = $model->alias;
+			$alias = $Model->alias;
 		}
-		$virtualFields = $model->getVirtualField();
+		$virtualFields = $Model->getVirtualField();
 		$cacheKey = array(
 			$alias,
-			get_class($model),
-			$model->alias,
+			get_class($Model),
+			$Model->alias,
 			$virtualFields,
 			$fields,
 			$quote,
 			ConnectionManager::getSourceName($this),
-			$model->schemaName,
-			$model->table
+			$Model->schemaName,
+			$Model->table
 		);
 		$cacheKey = md5(serialize($cacheKey));
 		if ($return = $this->cacheMethod(__FUNCTION__, $cacheKey)) {
@@ -2401,23 +2401,23 @@ class DboSource extends DataSource {
 		}
 		$allFields = empty($fields);
 		if ($allFields) {
-			$fields = array_keys($model->schema());
+			$fields = array_keys($Model->schema());
 		} elseif (!is_array($fields)) {
 			$fields = String::tokenize($fields);
 		}
 		$fields = array_values(array_filter($fields));
-		$allFields = $allFields || in_array('*', $fields) || in_array($model->alias . '.*', $fields);
+		$allFields = $allFields || in_array('*', $fields) || in_array($Model->alias . '.*', $fields);
 
 		$virtual = array();
 		if (!empty($virtualFields)) {
 			$virtualKeys = array_keys($virtualFields);
 			foreach ($virtualKeys as $field) {
-				$virtualKeys[] = $model->alias . '.' . $field;
+				$virtualKeys[] = $Model->alias . '.' . $field;
 			}
 			$virtual = ($allFields) ? $virtualKeys : array_intersect($virtualKeys, $fields);
 			foreach ($virtual as $i => $field) {
 				if (strpos($field, '.') !== false) {
-					$virtual[$i] = str_replace($model->alias . '.', '', $field);
+					$virtual[$i] = str_replace($Model->alias . '.', '', $field);
 				}
 				$fields = array_diff($fields, array($field));
 			}
@@ -2425,7 +2425,7 @@ class DboSource extends DataSource {
 		}
 		if (!$quote) {
 			if (!empty($virtual)) {
-				$fields = array_merge($fields, $this->_constructVirtualFields($model, $alias, $virtual));
+				$fields = array_merge($fields, $this->_constructVirtualFields($Model, $alias, $virtual));
 			}
 			return $fields;
 		}
@@ -2481,7 +2481,7 @@ class DboSource extends DataSource {
 			}
 		}
 		if (!empty($virtual)) {
-			$fields = array_merge($fields, $this->_constructVirtualFields($model, $alias, $virtual));
+			$fields = array_merge($fields, $this->_constructVirtualFields($Model, $alias, $virtual));
 		}
 		return $this->cacheMethod(__FUNCTION__, $cacheKey, array_unique($fields));
 	}
@@ -2498,10 +2498,10 @@ class DboSource extends DataSource {
  * @param mixed $conditions Array or string of conditions, or any value.
  * @param boolean $quoteValues If true, values should be quoted
  * @param boolean $where If true, "WHERE " will be prepended to the return value
- * @param Model $model A reference to the Model instance making the query
+ * @param Model $Model A reference to the Model instance making the query
  * @return string SQL fragment
  */
-	public function conditions($conditions, $quoteValues = true, $where = true, $model = null) {
+	public function conditions($conditions, $quoteValues = true, $where = true, Model $Model = null) {
 		$clause = $out = '';
 
 		if ($where) {
@@ -2509,13 +2509,14 @@ class DboSource extends DataSource {
 		}
 
 		if (is_array($conditions) && !empty($conditions)) {
-			$out = $this->conditionKeysToString($conditions, $quoteValues, $model);
+			$out = $this->conditionKeysToString($conditions, $quoteValues, $Model);
 
 			if (empty($out)) {
 				return $clause . ' 1 = 1';
 			}
 			return $clause . implode(' AND ', $out);
 		}
+
 		if (is_bool($conditions)) {
 			return $clause . (int)$conditions . ' = 1';
 		}
@@ -2523,12 +2524,15 @@ class DboSource extends DataSource {
 		if (empty($conditions) || trim($conditions) === '') {
 			return $clause . '1 = 1';
 		}
+
 		$clauses = '/^WHERE\\x20|^GROUP\\x20BY\\x20|^HAVING\\x20|^ORDER\\x20BY\\x20/i';
 
 		if (preg_match($clauses, $conditions)) {
 			$clause = '';
 		}
+
 		$conditions = $this->_quoteFields($conditions);
+
 		return $clause . $conditions;
 	}
 
@@ -2537,10 +2541,10 @@ class DboSource extends DataSource {
  *
  * @param array $conditions Array or string of conditions
  * @param boolean $quoteValues If true, values should be quoted
- * @param Model $model A reference to the Model instance making the query
+ * @param Model $Model A reference to the Model instance making the query
  * @return string SQL fragment
  */
-	public function conditionKeysToString($conditions, $quoteValues = true, $model = null) {
+	public function conditionKeysToString($conditions, $quoteValues = true, Model $Model = null) {
 		$out = array();
 		$data = $columnType = null;
 		$bool = array('and', 'or', 'not', 'and not', 'or not', 'xor', '||', '&&');
@@ -2566,7 +2570,7 @@ class DboSource extends DataSource {
 				} else {
 					$key = $join;
 				}
-				$value = $this->conditionKeysToString($value, $quoteValues, $model);
+				$value = $this->conditionKeysToString($value, $quoteValues, $Model);
 
 				if (strpos($join, 'NOT') !== false) {
 					if (strtoupper(trim($key)) === 'NOT') {
@@ -2606,17 +2610,17 @@ class DboSource extends DataSource {
 						if ($count === 1 && !preg_match('/\s+(?:NOT|\!=)$/', $key)) {
 							$data = $this->_quoteFields($key) . ' = (';
 							if ($quoteValues) {
-								if (is_object($model)) {
-									$columnType = $model->getColumnType($key);
+								if ($Model !== null) {
+									$columnType = $Model->getColumnType($key);
 								}
 								$data .= implode(', ', $this->value($value, $columnType));
 							}
 							$data .= ')';
 						} else {
-							$data = $this->_parseKey($model, $key, $value);
+							$data = $this->_parseKey($key, $value, $Model);
 						}
 					} else {
-						$ret = $this->conditionKeysToString($value, $quoteValues, $model);
+						$ret = $this->conditionKeysToString($value, $quoteValues, $Model);
 						if (count($ret) > 1) {
 							$data = '(' . implode(') AND (', $ret) . ')';
 						} elseif (isset($ret[0])) {
@@ -2626,7 +2630,7 @@ class DboSource extends DataSource {
 				} elseif (is_numeric($key) && !empty($value)) {
 					$data = $this->_quoteFields($value);
 				} else {
-					$data = $this->_parseKey($model, trim($key), $value);
+					$data = $this->_parseKey(trim($key), $value, $Model);
 				}
 
 				if ($data) {
@@ -2642,12 +2646,12 @@ class DboSource extends DataSource {
  * Extracts a Model.field identifier and an SQL condition operator from a string, formats
  * and inserts values, and composes them into an SQL snippet.
  *
- * @param Model $model Model object initiating the query
  * @param string $key An SQL key snippet containing a field and optional SQL operator
  * @param mixed $value The value(s) to be inserted in the string
+ * @param Model $Model Model object initiating the query
  * @return string
  */
-	protected function _parseKey($model, $key, $value) {
+	protected function _parseKey($key, $value, Model $Model = null) {
 		$operatorMatch = '/^(((' . implode(')|(', $this->_sqlOps);
 		$operatorMatch .= ')\\x20?)|<[>=]?(?![^>]+>)\\x20?|[>=!]{1,3}(?!<)\\x20?)/is';
 		$bound = (strpos($key, '?') !== false || (is_array($value) && strpos($key, ':') !== false));
@@ -2666,17 +2670,22 @@ class DboSource extends DataSource {
 		}
 
 		$virtual = false;
-		if (is_object($model) && $model->isVirtualField($key)) {
-			$key = $this->_quoteFields($model->getVirtualField($key));
-			$virtual = true;
+		$type = null;
+
+		if ($Model !== null) {
+			if ($Model->isVirtualField($key)) {
+				$key = $this->_quoteFields($Model->getVirtualField($key));
+				$virtual = true;
+			}
+
+			$type = $Model->getColumnType($key);
 		}
 
-		$type = is_object($model) ? $model->getColumnType($key) : null;
 		$null = $value === null || (is_array($value) && empty($value));
 
 		if (strtolower($operator) === 'not') {
 			$data = $this->conditionKeysToString(
-				array($operator => array($key => $value)), true, $model
+				array($operator => array($key => $value)), true, $Model
 			);
 			return $data[0];
 		}
@@ -2798,14 +2807,16 @@ class DboSource extends DataSource {
  *
  * @param array|string $keys Field reference, as a key (i.e. Post.title)
  * @param string $direction Direction (ASC or DESC)
- * @param Model $model model reference (used to look for virtual field)
+ * @param Model $Model Model reference (used to look for virtual field)
  * @return string ORDER BY clause
  */
-	public function order($keys, $direction = 'ASC', $model = null) {
+	public function order($keys, $direction = 'ASC', Model $Model = null) {
 		if (!is_array($keys)) {
 			$keys = array($keys);
 		}
+
 		$keys = array_filter($keys);
+
 		$result = array();
 		while (!empty($keys)) {
 			list($key, $dir) = each($keys);
@@ -2819,6 +2830,7 @@ class DboSource extends DataSource {
 			if (is_string($key) && strpos($key, ',') !== false && !preg_match('/\(.+\,.+\)/', $key)) {
 				$key = array_map('trim', explode(',', $key));
 			}
+
 			if (is_array($key)) {
 				//Flatten the array
 				$key = array_reverse($key, true);
@@ -2842,50 +2854,65 @@ class DboSource extends DataSource {
 
 			$key = trim($key);
 
-			if (is_object($model) && $model->isVirtualField($key)) {
-				$key = '(' . $this->_quoteFields($model->getVirtualField($key)) . ')';
-			}
-			list($alias, $field) = pluginSplit($key);
-			if (is_object($model) && $alias !== $model->alias && is_object($model->{$alias}) && $model->{$alias}->isVirtualField($key)) {
-				$key = '(' . $this->_quoteFields($model->{$alias}->getVirtualField($key)) . ')';
+			if ($Model !== null) {
+				if ($Model->isVirtualField($key)) {
+					$key = '(' . $this->_quoteFields($Model->getVirtualField($key)) . ')';
+				}
+
+				list($alias, ) = pluginSplit($key);
+
+				if ($alias !== $Model->alias && is_object($Model->{$alias}) && $Model->{$alias}->isVirtualField($key)) {
+					$key = '(' . $this->_quoteFields($Model->{$alias}->getVirtualField($key)) . ')';
+				}
 			}
 
 			if (strpos($key, '.')) {
 				$key = preg_replace_callback('/([a-zA-Z0-9_-]{1,})\\.([a-zA-Z0-9_-]{1,})/', array(&$this, '_quoteMatchedField'), $key);
 			}
+
 			if (!preg_match('/\s/', $key) && strpos($key, '.') === false) {
 				$key = $this->name($key);
 			}
+
 			$key .= ' ' . trim($dir);
+
 			$result[] = $key;
 		}
+
 		if (!empty($result)) {
 			return ' ORDER BY ' . implode(', ', $result);
 		}
+
 		return '';
 	}
 
 /**
- * Create a GROUP BY SQL clause
+ * Create a GROUP BY SQL clause.
  *
- * @param string $group Group By Condition
- * @param Model $model
- * @return string string condition or null
+ * @param string|array $fields Group By fields
+ * @param Model $Model
+ * @return string Group By clause or null.
  */
-	public function group($group, $model = null) {
-		if ($group) {
-			if (!is_array($group)) {
-				$group = array($group);
-			}
-			foreach ($group as $index => $key) {
-				if (is_object($model) && $model->isVirtualField($key)) {
-					$group[$index] = '(' . $model->getVirtualField($key) . ')';
+	public function group($fields, Model $Model = null) {
+		if (empty($fields)) {
+			return null;
+		}
+
+		if (!is_array($fields)) {
+			$fields = array($fields);
+		}
+
+		if ($Model !== null) {
+			foreach ($fields as $index => $key) {
+				if ($Model->isVirtualField($key)) {
+					$fields[$index] = '(' . $Model->getVirtualField($key) . ')';
 				}
 			}
-			$group = implode(', ', $group);
-			return ' GROUP BY ' . $this->_quoteFields($group);
 		}
-		return null;
+
+		$fields = implode(', ', $fields);
+
+		return ' GROUP BY ' . $this->_quoteFields($fields);
 	}
 
 /**
