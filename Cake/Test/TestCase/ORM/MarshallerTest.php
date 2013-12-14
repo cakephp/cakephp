@@ -151,20 +151,95 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($data['Users'], $result->Users);
 	}
 
+/**
+ * Test one() with deeper associations.
+ *
+ * @return void
+ */
 	public function testOneDeepAssociations() {
-		$this->markTestIncomplete('not done');
+		$data = [
+			'comment' => 'First post',
+			'user_id' => 2,
+			'Articles' => [
+				'title' => 'Article title',
+				'body' => 'Article body',
+				'Users' => [
+					'username' => 'mark',
+					'password' => 'secret'
+				],
+			]
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->one($data, ['Articles' => ['Users']]);
+
+		$this->assertEquals(
+			$data['Articles']['title'],
+			$result->article->title
+		);
+		$this->assertEquals(
+			$data['Articles']['Users']['username'],
+			$result->article->user->username
+		);
+		$this->assertNull($result->article->Users);
+		$this->assertNull($result->Articles);
 	}
 
+/**
+ * Test many() with a simple set of data.
+ *
+ * @return void
+ */
 	public function testManySimple() {
-		$this->markTestIncomplete('not done');
+		$data = [
+			['comment' => 'First post', 'user_id' => 2],
+			['comment' => 'Second post', 'user_id' => 2],
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->many($data);
+
+		$this->assertCount(2, $result);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result[0]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result[1]);
+		$this->assertEquals($data[0]['comment'], $result[0]->comment);
+		$this->assertEquals($data[1]['comment'], $result[1]->comment);
 	}
 
+/**
+ * test many() with nested associations.
+ *
+ * @return void
+ */
 	public function testManyAssociations() {
-		$this->markTestIncomplete('not done');
-	}
+		$data = [
+			[
+				'comment' => 'First post',
+				'user_id' => 2,
+				'Users' => [
+					'username' => 'mark',
+				],
+			],
+			[
+				'comment' => 'Second post',
+				'user_id' => 2,
+				'Users' => [
+					'username' => 'jose',
+				],
+			],
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->many($data, ['Users']);
 
-	public function testManyDeepAssociations() {
-		$this->markTestIncomplete('not done');
+		$this->assertCount(2, $result);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result[0]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result[1]);
+		$this->assertEquals(
+			$data[0]['Users']['username'],
+			$result[0]->user->username
+		);
+		$this->assertEquals(
+			$data[1]['Users']['username'],
+			$result[1]->user->username
+		);
 	}
 
 }
