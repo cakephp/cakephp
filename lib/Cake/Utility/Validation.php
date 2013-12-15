@@ -263,7 +263,7 @@ class Validation {
  * Used when a custom regular expression is needed.
  *
  * @param string|array $check When used as a string, $regex must also be a valid regular expression.
- *								As and array: array('check' => value, 'regex' => 'valid regular expression')
+ *    As and array: array('check' => value, 'regex' => 'valid regular expression')
  * @param string $regex If $check is passed as a string, $regex must also be set to valid regular expression
  * @return boolean Success
  */
@@ -282,17 +282,21 @@ class Validation {
  * Date validation, determines if the string passed is a valid date.
  * keys that expect full month, day and year will validate leap years
  *
+ * ### Formats:
+ *
+ * - `dmy` 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
+ * - `mdy` 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
+ * - `ymd` 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
+ * - `dMy` 27 December 2006 or 27 Dec 2006
+ * - `Mdy` December 27, 2006 or Dec 27, 2006 comma is optional
+ * - `My` December 2006 or Dec 2006
+ * - `my` 12/2006 or 12/06 separators can be a space, period, dash, forward slash
+ * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
+ * - `y` 2006 just the year without any separators
+ *
  * @param string $check a valid date string
- * @param string|array $format Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
- *     Formats: dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
- *              mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
- *              ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
- *              dMy 27 December 2006 or 27 Dec 2006
- *              Mdy December 27, 2006 or Dec 27, 2006 comma is optional
- *              My December 2006 or Dec 2006
- *              my 12/2006 or 12/06 separators can be a space, period, dash, forward slash
- *              ym 2006/12 or 06/12 separators can be a space, period, dash, forward slash
- *              y 2006 just the year without any separators
+ * @param string|array $format Use a string or an array of the keys above.
+ *    Arrays should be passed as array('dmy', 'mdy', etc)
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
  */
@@ -341,20 +345,11 @@ class Validation {
 
 /**
  * Validates a datetime value
+ *
  * All values matching the "date" core validation rule, and the "time" one will be valid
  *
  * @param string $check Value to check
- * @param string|array $dateFormat Format of the date part
- * Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
- * ## Keys:
- *
- * - dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
- * - mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
- * - ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
- * - dMy 27 December 2006 or 27 Dec 2006
- * - Mdy December 27, 2006 or Dec 27, 2006 comma is optional
- * - My December 2006 or Dec 2006
- * - my 12/2006 separators can be a space, period, dash, forward slash
+ * @param string|array $dateFormat Format of the date part. See Validation::date for more information.
  * @param string $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
  * @return boolean True if the value is valid, false otherwise
  * @see Validation::date
