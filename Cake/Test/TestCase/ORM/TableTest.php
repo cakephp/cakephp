@@ -2879,13 +2879,16 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
+		$tags[] = new \TestApp\Model\Entity\Tag(['name' => 'foo']);
 
 		$table->association('tags')->replaceLinks($article, $tags);
 		$this->assertSame($tags, $article->tags);
 		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
-		$this->assertCount(2, $article->tags);
+		$this->assertCount(3, $article->tags);
 		$this->assertEquals(2, $article->tags[0]->id);
 		$this->assertEquals(3, $article->tags[1]->id);
+		$this->assertEquals(4, $article->tags[2]->id);
+		$this->assertEquals('foo', $article->tags[2]->name);
 	}
 
 /**

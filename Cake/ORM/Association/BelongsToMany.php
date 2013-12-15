@@ -493,8 +493,8 @@ class BelongsToMany extends Association {
 		$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
 
 		$property = $this->property();
-		$sourceEntity->set($property, []);
-		$this->link($sourceEntity, $inserts, $options);
+		$sourceEntity->set($property, $inserts);
+		$this->save($sourceEntity, $options + ['associated' => false]);
 		$sourceEntity->set($property, $targetEntities);
 		$sourceEntity->dirty($property, false);
 	}
