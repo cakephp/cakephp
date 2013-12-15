@@ -899,4 +899,23 @@ class BelongsToManyTest extends TestCase {
 		$this->assertEquals($tags, $entity->get('test'));
 	}
 
+/**
+ * Test liking entities having a non persited source entity
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Could not find primary key value for source entity
+ * @return void
+ */
+	public function testRplaceWithMissingPrimaryKey() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$entity = new Entity(['foo' => 1], ['markNew' => false]);
+		$tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
+		$assoc->replaceLinks($entity, $tags);
+	}
+
 }

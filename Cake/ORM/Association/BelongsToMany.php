@@ -484,8 +484,9 @@ class BelongsToMany extends Association {
 		$primaryKey = (array)$this->source()->primaryKey();
 		$primaryValue = $sourceEntity->extract($primaryKey);
 
-		if (empty($primaryValue)) {
-			throw new \InvalidArgumentException;
+		if (count(array_filter($primaryValue, 'strlen')) !== count($primaryKey)) {
+			$message = __d('cake_dev', 'Could not find primary key value for source entity');
+			throw new \InvalidArgumentException($message);
 		}
 
 		return $this->junction()->connection()->transactional(
