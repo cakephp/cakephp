@@ -290,8 +290,8 @@ class Validation {
  * 	            dMy 27 December 2006 or 27 Dec 2006
  * 	            Mdy December 27, 2006 or Dec 27, 2006 comma is optional
  * 	            My December 2006 or Dec 2006
- * 	            my 12/2006 separators can be a space, period, dash, forward slash
- * 	            ym 2006/12 separators can be a space, period, dash, forward slash
+ * 	            my 12/2006 or 12/06 separators can be a space, period, dash, forward slash
+ * 	            ym 2006/12 or 06/12 separators can be a space, period, dash, forward slash
  * 	            y 2006 just the year without any separators
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
@@ -304,6 +304,7 @@ class Validation {
 		$separator = '([- /.])';
 		$fourDigitYear = '(([1][9][0-9][0-9])|([2][0-9][0-9][0-9]))';
 		$twoDigitYear = '([0-9]{2})';
+		$year = '(?:' . $fourDigitYear . '|' . $twoDigitYear . ')';
 
 		$regex['dmy'] = '%^(?:(?:31(\\/|-|\\.|\\x20)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)' .
 			$separator . '(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29' .
@@ -325,8 +326,8 @@ class Validation {
 		$regex['My'] = '%^(Jan(uary)?|Feb(ruary)?|Ma(r(ch)?|y)|Apr(il)?|Ju((ly?)|(ne?))|Aug(ust)?|Oct(ober)?|(Sep(?=\\b|t)t?|Nov|Dec)(ember)?)' .
 			$separator . '((1[6-9]|[2-9]\\d)\\d{2})$%';
 
-		$regex['my'] = '%^(' . $month . $separator . $fourDigitYear . ')$%';
-		$regex['ym'] = '%^(' . $fourDigitYear . $separator . $month  . ')$%';
+		$regex['my'] = '%^(' . $month . $separator . $year . ')$%';
+		$regex['ym'] = '%^(' . $year . $separator . $month  . ')$%';
 		$regex['y'] = '%^(' . $fourDigitYear . ')$%';
 
 		$format = (is_array($format)) ? array_values($format) : array($format);
