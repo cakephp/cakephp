@@ -542,8 +542,12 @@ class SessionTest extends TestCase {
 				'engine' => 'TestAppLibSession'
 			)
 		));
-		TestCakeSession::destroy();
+
+		TestCakeSession::start();
 		$this->assertTrue(TestCakeSession::started());
+
+		TestCakeSession::destroy();
+		$this->assertFalse(TestCakeSession::started());
 	}
 
 /**
@@ -562,8 +566,11 @@ class SessionTest extends TestCase {
 			)
 		));
 
-		TestCakeSession::destroy();
+		TestCakeSession::start();
 		$this->assertTrue(TestCakeSession::started());
+
+		TestCakeSession::destroy();
+		$this->assertFalse(TestCakeSession::started());
 	}
 
 /**
@@ -741,6 +748,32 @@ class SessionTest extends TestCase {
 		TestCakeSession::start();
 		$this->assertEquals(600, Configure::read('Session.cookieTimeout'));
 		$this->assertEquals(400, Configure::read('Session.timeout'));
+	}
+
+/**
+ * Proves that invalid sessions will be destroyed and re-created
+ * if invalid
+ *
+ * @return void
+ */
+	public function testInvalidSessionRenew() {
+		TestCakeSession::start();
+		$this->assertNotEmpty($_SESSION['Config']);
+		$data = $_SESSION;
+
+		session_write_close();
+		$_SESSION = null;
+
+		TestCakeSession::start();
+		$this->assertEquals($data, $_SESSION);
+		TestCakeSession::write('Foo', 'Bar');
+
+		session_write_close();
+		$_SESSION = null;
+
+		TestCakeSession::userAgent('bogus!');
+		TestCakeSession::start();
+		$this->assertNotEquals($data, $_SESSION);
 	}
 
 }

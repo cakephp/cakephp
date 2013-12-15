@@ -222,6 +222,7 @@ class FixtureManager {
 				$db->transactional(function($db) use ($fixtures, $test) {
 					foreach ($fixtures as $fixture) {
 						$this->_setupTable($fixture, $db, $test->dropTables);
+						$fixture->truncate($db);
 						$fixture->insert($db);
 					}
 				});

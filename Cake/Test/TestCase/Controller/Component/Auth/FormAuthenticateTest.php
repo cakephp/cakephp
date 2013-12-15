@@ -120,6 +120,39 @@ class FormAuthenticateTest extends TestCase {
 	}
 
 /**
+ * Test for password as empty string with _checkFields() call skipped
+ * Refs https://github.com/cakephp/cakephp/pull/2441
+ *
+ * @return void
+ */
+	public function testAuthenticatePasswordIsEmptyString() {
+		$request = new Request('posts/index', false);
+		$request->data = array(
+			'Users' => array(
+				'username' => 'mariano',
+				'password' => ''
+		));
+
+		$this->auth = $this->getMock(
+			'Cake\Controller\Component\Auth\FormAuthenticate',
+			array('_checkFields'),
+			array(
+				$this->Collection,
+				array(
+					'userModel' => 'Users'
+				)
+			)
+		);
+
+		// Simulate that check for ensuring password is not empty is missing.
+		$this->auth->expects($this->once())
+			->method('_checkFields')
+			->will($this->returnValue(true));
+
+		$this->assertFalse($this->auth->authenticate($request, $this->response));
+	}
+
+/**
  * test authenticate field is not string
  *
  * @return void

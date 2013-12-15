@@ -175,6 +175,36 @@ class CookieComponentTest extends TestCase {
 	}
 
 /**
+ * test write() Encrypted data with null & empty string & boolean value 
+ *
+ * @return void
+ */
+	public function testWriteWithNullEmptyString() {
+		$this->Cookie->type('aes');
+		$this->Cookie->key = 'qSI232qs*&sXOw!adre@34SAv!@*(XSL#$%)asGb$@11~_+!@#HKis~#^';
+
+		$this->Cookie->write('Testing');
+		$result = $this->Cookie->read('Testing');
+		$this->assertNull($result);
+
+		$this->Cookie->write('Testing', '');
+		$result = $this->Cookie->read('Testing');
+		$this->assertEquals('', $result);
+
+		$this->Cookie->write('Testing', false);
+		$result = $this->Cookie->read('Testing');
+		$this->assertFalse($result);
+
+		$this->Cookie->write('Testing', 1);
+		$result = $this->Cookie->read('Testing');
+		$this->assertEquals(1, $result);
+
+		$this->Cookie->write('Testing', '0');
+		$result = $this->Cookie->read('Testing');
+		$this->assertEquals('0', $result);
+	}
+
+/**
  * test that two write() calls use the expiry.
  *
  * @return void

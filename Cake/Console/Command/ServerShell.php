@@ -134,29 +134,25 @@ class ServerShell extends Shell {
 	}
 
 /**
- * Get and configure the optionparser.
+ * Gets the option parser instance and configures it.
  *
  * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 
-		$parser->addOption('host', [
-			'short' => 'H',
-			'help' => __d('cake_console', 'ServerHost')
-		]);
-		$parser->addOption('port', [
-			'short' => 'p',
-			'help' => __d('cake_console', 'ListenPort')
-		]);
-		$parser->addOption('document_root', [
-			'short' => 'd',
-			'help' => __d('cake_console', 'DocumentRoot')
-		]);
-
 		$parser->description([
 			__d('cake_console', 'PHP Built-in Server for CakePHP'),
 			__d('cake_console', '<warning>[WARN] Don\'t use this at the production environment</warning>'),
+		])->addOption('host', [
+			'short' => 'H',
+			'help' => __d('cake_console', 'ServerHost')
+		])->addOption('port', [
+			'short' => 'p',
+			'help' => __d('cake_console', 'ListenPort')
+		])->addOption('document_root', [
+			'short' => 'd',
+			'help' => __d('cake_console', 'DocumentRoot')
 		]);
 
 		return $parser;

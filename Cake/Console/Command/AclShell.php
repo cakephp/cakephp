@@ -358,9 +358,9 @@ class AclShell extends Shell {
 	}
 
 /**
- * Get the option parser.
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
@@ -373,142 +373,142 @@ class AclShell extends Shell {
 
 		$parser->description(
 			__d('cake_console', 'A console tool for managing the DbAcl')
-			)->addSubcommand('create', [
-				'help' => __d('cake_console', 'Create a new ACL node'),
-				'parser' => [
-					'description' => __d('cake_console', 'Creates a new ACL object <node> under the parent'),
-					'epilog' => __d('cake_console', 'You can use `root` as the parent when creating nodes to create top level nodes.'),
-					'arguments' => [
-						'type' => $type,
-						'parent' => [
-							'help' => __d('cake_console', 'The node selector for the parent.'),
-							'required' => true
-						],
-						'alias' => [
-							'help' => __d('cake_console', 'The alias to use for the newly created node.'),
-							'required' => true
-						]
-					]
-				]
-			])->addSubcommand('delete', [
-				'help' => __d('cake_console', 'Deletes the ACL object with the given <node> reference'),
-				'parser' => [
-					'description' => __d('cake_console', 'Delete an ACL node.'),
-					'arguments' => [
-						'type' => $type,
-						'node' => [
-							'help' => __d('cake_console', 'The node identifier to delete.'),
-							'required' => true,
-						]
-					]
-				]
-			])->addSubcommand('setparent', [
-				'help' => __d('cake_console', 'Moves the ACL node under a new parent.'),
-				'parser' => [
-					'description' => __d('cake_console', 'Moves the ACL object specified by <node> beneath <parent>'),
-					'arguments' => [
-						'type' => $type,
-						'node' => [
-							'help' => __d('cake_console', 'The node to move'),
-							'required' => true,
-						],
-						'parent' => [
-							'help' => __d('cake_console', 'The new parent for <node>.'),
-							'required' => true
-						]
-					]
-				]
-			])->addSubcommand('getpath', [
-				'help' => __d('cake_console', 'Print out the path to an ACL node.'),
-				'parser' => [
-					'description' => [
-						__d('cake_console', "Returns the path to the ACL object specified by <node>."),
-						__d('cake_console', "This command is useful in determining the inheritance of permissions for a certain object in the tree.")
+		)->addSubcommand('create', [
+			'help' => __d('cake_console', 'Create a new ACL node'),
+			'parser' => [
+				'description' => __d('cake_console', 'Creates a new ACL object <node> under the parent'),
+				'epilog' => __d('cake_console', 'You can use `root` as the parent when creating nodes to create top level nodes.'),
+				'arguments' => [
+					'type' => $type,
+					'parent' => [
+						'help' => __d('cake_console', 'The node selector for the parent.'),
+						'required' => true
 					],
-					'arguments' => [
-						'type' => $type,
-						'node' => [
-							'help' => __d('cake_console', 'The node to get the path of'),
-							'required' => true,
-						]
+					'alias' => [
+						'help' => __d('cake_console', 'The alias to use for the newly created node.'),
+						'required' => true
 					]
 				]
-			])->addSubcommand('check', [
-				'help' => __d('cake_console', 'Check the permissions between an ACO and ARO.'),
-				'parser' => [
-					'description' => [
-						__d('cake_console', 'Use this command to check ACL permissions.')
+			]
+		])->addSubcommand('delete', [
+			'help' => __d('cake_console', 'Deletes the ACL object with the given <node> reference'),
+			'parser' => [
+				'description' => __d('cake_console', 'Delete an ACL node.'),
+				'arguments' => [
+					'type' => $type,
+					'node' => [
+						'help' => __d('cake_console', 'The node identifier to delete.'),
+						'required' => true,
+					]
+				]
+			]
+		])->addSubcommand('setparent', [
+			'help' => __d('cake_console', 'Moves the ACL node under a new parent.'),
+			'parser' => [
+				'description' => __d('cake_console', 'Moves the ACL object specified by <node> beneath <parent>'),
+				'arguments' => [
+					'type' => $type,
+					'node' => [
+						'help' => __d('cake_console', 'The node to move'),
+						'required' => true,
 					],
-					'arguments' => [
-						'aro' => ['help' => __d('cake_console', 'ARO to check.'), 'required' => true],
-						'aco' => ['help' => __d('cake_console', 'ACO to check.'), 'required' => true],
-						'action' => ['help' => __d('cake_console', 'Action to check'), 'default' => 'all']
+					'parent' => [
+						'help' => __d('cake_console', 'The new parent for <node>.'),
+						'required' => true
 					]
 				]
-			])->addSubcommand('grant', [
-				'help' => __d('cake_console', 'Grant an ARO permissions to an ACO.'),
-				'parser' => [
-					'description' => [
-						__d('cake_console', 'Use this command to grant ACL permissions. Once executed, the ARO specified (and its children, if any) will have ALLOW access to the specified ACO action (and the ACO\'s children, if any).')
-					],
-					'arguments' => [
-						'aro' => ['help' => __d('cake_console', 'ARO to grant permission to.'), 'required' => true],
-						'aco' => ['help' => __d('cake_console', 'ACO to grant access to.'), 'required' => true],
-						'action' => ['help' => __d('cake_console', 'Action to grant'), 'default' => 'all']
+			]
+		])->addSubcommand('getpath', [
+			'help' => __d('cake_console', 'Print out the path to an ACL node.'),
+			'parser' => [
+				'description' => [
+					__d('cake_console', "Returns the path to the ACL object specified by <node>."),
+					__d('cake_console', "This command is useful in determining the inheritance of permissions for a certain object in the tree.")
+				],
+				'arguments' => [
+					'type' => $type,
+					'node' => [
+						'help' => __d('cake_console', 'The node to get the path of'),
+						'required' => true,
 					]
 				]
-			])->addSubcommand('deny', [
-				'help' => __d('cake_console', 'Deny an ARO permissions to an ACO.'),
-				'parser' => [
-					'description' => [
-						__d('cake_console', 'Use this command to deny ACL permissions. Once executed, the ARO specified (and its children, if any) will have DENY access to the specified ACO action (and the ACO\'s children, if any).')
-					],
-					'arguments' => [
-						'aro' => ['help' => __d('cake_console', 'ARO to deny.'), 'required' => true],
-						'aco' => ['help' => __d('cake_console', 'ACO to deny.'), 'required' => true],
-						'action' => ['help' => __d('cake_console', 'Action to deny'), 'default' => 'all']
-					]
+			]
+		])->addSubcommand('check', [
+			'help' => __d('cake_console', 'Check the permissions between an ACO and ARO.'),
+			'parser' => [
+				'description' => [
+					__d('cake_console', 'Use this command to check ACL permissions.')
+				],
+				'arguments' => [
+					'aro' => ['help' => __d('cake_console', 'ARO to check.'), 'required' => true],
+					'aco' => ['help' => __d('cake_console', 'ACO to check.'), 'required' => true],
+					'action' => ['help' => __d('cake_console', 'Action to check'), 'default' => 'all']
 				]
-			])->addSubcommand('inherit', [
-				'help' => __d('cake_console', 'Inherit an ARO\'s parent permissions.'),
-				'parser' => [
-					'description' => [
-						__d('cake_console', "Use this command to force a child ARO object to inherit its permissions settings from its parent.")
-					],
-					'arguments' => [
-						'aro' => ['help' => __d('cake_console', 'ARO to have permissions inherit.'), 'required' => true],
-						'aco' => ['help' => __d('cake_console', 'ACO to inherit permissions on.'), 'required' => true],
-						'action' => ['help' => __d('cake_console', 'Action to inherit'), 'default' => 'all']
-					]
+			]
+		])->addSubcommand('grant', [
+			'help' => __d('cake_console', 'Grant an ARO permissions to an ACO.'),
+			'parser' => [
+				'description' => [
+					__d('cake_console', 'Use this command to grant ACL permissions. Once executed, the ARO specified (and its children, if any) will have ALLOW access to the specified ACO action (and the ACO\'s children, if any).')
+				],
+				'arguments' => [
+					'aro' => ['help' => __d('cake_console', 'ARO to grant permission to.'), 'required' => true],
+					'aco' => ['help' => __d('cake_console', 'ACO to grant access to.'), 'required' => true],
+					'action' => ['help' => __d('cake_console', 'Action to grant'), 'default' => 'all']
 				]
-			])->addSubcommand('view', [
-				'help' => __d('cake_console', 'View a tree or a single node\'s subtree.'),
-				'parser' => [
-					'description' => [
-						__d('cake_console', "The view command will return the ARO or ACO tree."),
-						__d('cake_console', "The optional node parameter allows you to return"),
-						__d('cake_console', "only a portion of the requested tree.")
-					],
-					'arguments' => [
-						'type' => $type,
-						'node' => ['help' => __d('cake_console', 'The optional node to view the subtree of.')]
-					]
+			]
+		])->addSubcommand('deny', [
+			'help' => __d('cake_console', 'Deny an ARO permissions to an ACO.'),
+			'parser' => [
+				'description' => [
+					__d('cake_console', 'Use this command to deny ACL permissions. Once executed, the ARO specified (and its children, if any) will have DENY access to the specified ACO action (and the ACO\'s children, if any).')
+				],
+				'arguments' => [
+					'aro' => ['help' => __d('cake_console', 'ARO to deny.'), 'required' => true],
+					'aco' => ['help' => __d('cake_console', 'ACO to deny.'), 'required' => true],
+					'action' => ['help' => __d('cake_console', 'Action to deny'), 'default' => 'all']
 				]
-			])->addSubcommand('initdb', [
-				'help' => __d('cake_console', 'Initialize the DbAcl tables. Uses this command : cake schema create DbAcl')
-			])->epilog(
-				[
-					'Node and parent arguments can be in one of the following formats:',
-					'',
-					' - <model>.<id> - The node will be bound to a specific record of the given model.',
-					'',
-					' - <alias> - The node will be given a string alias (or path, in the case of <parent>)',
-					"   i.e. 'John'. When used with <parent>, this takes the form of an alias path,",
-					"   i.e. <group>/<subgroup>/<parent>.",
-					'',
-					"To add a node at the root level, enter 'root' or '/' as the <parent> parameter."
+			]
+		])->addSubcommand('inherit', [
+			'help' => __d('cake_console', 'Inherit an ARO\'s parent permissions.'),
+			'parser' => [
+				'description' => [
+					__d('cake_console', "Use this command to force a child ARO object to inherit its permissions settings from its parent.")
+				],
+				'arguments' => [
+					'aro' => ['help' => __d('cake_console', 'ARO to have permissions inherit.'), 'required' => true],
+					'aco' => ['help' => __d('cake_console', 'ACO to inherit permissions on.'), 'required' => true],
+					'action' => ['help' => __d('cake_console', 'Action to inherit'), 'default' => 'all']
 				]
-			);
+			]
+		])->addSubcommand('view', [
+			'help' => __d('cake_console', 'View a tree or a single node\'s subtree.'),
+			'parser' => [
+				'description' => [
+					__d('cake_console', "The view command will return the ARO or ACO tree."),
+					__d('cake_console', "The optional node parameter allows you to return"),
+					__d('cake_console', "only a portion of the requested tree.")
+				],
+				'arguments' => [
+					'type' => $type,
+					'node' => ['help' => __d('cake_console', 'The optional node to view the subtree of.')]
+				]
+			]
+		])->addSubcommand('initdb', [
+			'help' => __d('cake_console', 'Initialize the DbAcl tables. Uses this command : cake schema create DbAcl')
+		])->epilog(
+			[
+				'Node and parent arguments can be in one of the following formats:',
+				'',
+				' - <model>.<id> - The node will be bound to a specific record of the given model.',
+				'',
+				' - <alias> - The node will be given a string alias (or path, in the case of <parent>)',
+				"   i.e. 'John'. When used with <parent>, this takes the form of an alias path,",
+				"   i.e. <group>/<subgroup>/<parent>.",
+				'',
+				"To add a node at the root level, enter 'root' or '/' as the <parent> parameter."
+			]
+		);
 		return $parser;
 	}
 

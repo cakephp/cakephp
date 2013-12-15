@@ -134,6 +134,7 @@ class SessionComponentTest extends TestCase {
  * @return void
  */
 	public function testSessionError() {
+		Session::$lastError = null;
 		$Session = new SessionComponent($this->ComponentRegistry);
 		$this->assertFalse($Session->error());
 	}

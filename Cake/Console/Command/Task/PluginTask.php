@@ -212,18 +212,20 @@ class PluginTask extends Shell {
 	}
 
 /**
- * get the option parser for the plugin task
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(__d('cake_console',
+		$parser->description(__d('cake_console',
 			'Create the directory structure, AppModel and AppController classes for a new plugin. ' .
 			'Can create plugins in any of your bootstrapped plugin paths.'
 		))->addArgument('name', [
 			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
 		]);
+
+		return $parser;
 	}
 
 }

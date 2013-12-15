@@ -299,52 +299,52 @@ class ExtractTask extends Shell {
 	}
 
 /**
- * Get & configure the option parser
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(__d('cake_console', 'CakePHP Language String Extraction:'))
-			->addOption('app', ['help' => __d('cake_console', 'Directory where your application is located.')])
-			->addOption('paths', ['help' => __d('cake_console', 'Comma separated list of paths.')])
-			->addOption('merge', [
-				'help' => __d('cake_console', 'Merge all domain and category strings into the default.po file.'),
-				'choices' => ['yes', 'no']
-			])
-			->addOption('output', ['help' => __d('cake_console', 'Full path to output directory.')])
-			->addOption('files', ['help' => __d('cake_console', 'Comma separated list of files.')])
-			->addOption('exclude-plugins', [
-				'boolean' => true,
-				'default' => true,
-				'help' => __d('cake_console', 'Ignores all files in plugins if this command is run inside from the same app directory.')
-			])
-			->addOption('plugin', [
-				'help' => __d('cake_console', 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.')
-			])
-			->addOption('ignore-model-validation', [
-				'boolean' => true,
-				'default' => false,
-				'help' => __d('cake_console', 'Ignores validation messages in the $validate property.' .
-					' If this flag is not set and the command is run from the same app directory,' .
-					' all messages in model validation rules will be extracted as tokens.')
-			])
-			->addOption('validation-domain', [
-				'help' => __d('cake_console', 'If set to a value, the localization domain to be used for model validation messages.')
-			])
-			->addOption('exclude', [
-				'help' => __d('cake_console', 'Comma separated list of directories to exclude.' .
-					' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
-			])
-			->addOption('overwrite', [
-				'boolean' => true,
-				'default' => false,
-				'help' => __d('cake_console', 'Always overwrite existing .pot files.')
-			])
-			->addOption('extract-core', [
-				'help' => __d('cake_console', 'Extract messages from the CakePHP core libs.'),
-				'choices' => ['yes', 'no']
-			]);
+		$parser->description(
+			__d('cake_console', 'CakePHP Language String Extraction:')
+		)->addOption('app', [
+			'help' => __d('cake_console', 'Directory where your application is located.')
+		])->addOption('paths', [
+			'help' => __d('cake_console', 'Comma separated list of paths.')
+		])->addOption('merge', [
+			'help' => __d('cake_console', 'Merge all domain and category strings into the default.po file.'),
+			'choices' => ['yes', 'no']
+		])->addOption('output', [
+			'help' => __d('cake_console', 'Full path to output directory.')
+		])->addOption('files', [
+			'help' => __d('cake_console', 'Comma separated list of files.')
+		])->addOption('exclude-plugins', [
+			'boolean' => true,
+			'default' => true,
+			'help' => __d('cake_console', 'Ignores all files in plugins if this command is run inside from the same app directory.')
+		])->addOption('plugin', [
+			'help' => __d('cake_console', 'Extracts tokens only from the plugin specified and puts the result in the plugin\'s Locale directory.')
+		])->addOption('ignore-model-validation', [
+			'boolean' => true,
+			'default' => false,
+			'help' => __d('cake_console', 'Ignores validation messages in the $validate property.' .
+				' If this flag is not set and the command is run from the same app directory,' .
+				' all messages in model validation rules will be extracted as tokens.')
+		])->addOption('validation-domain', [
+			'help' => __d('cake_console', 'If set to a value, the localization domain to be used for model validation messages.')
+		])->addOption('exclude', [
+			'help' => __d('cake_console', 'Comma separated list of directories to exclude.' .
+				' Any path containing a path segment with the provided values will be skipped. E.g. test,vendors')
+		])->addOption('overwrite', [
+			'boolean' => true,
+			'default' => false,
+			'help' => __d('cake_console', 'Always overwrite existing .pot files.')
+		])->addOption('extract-core', [
+			'help' => __d('cake_console', 'Extract messages from the CakePHP core libs.'),
+			'choices' => ['yes', 'no']
+		]);
+
+		return $parser;
 	}
 
 /**

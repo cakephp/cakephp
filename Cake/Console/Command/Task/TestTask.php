@@ -565,34 +565,40 @@ class TestTask extends BakeTask {
 	}
 
 /**
- * get the option parser.
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(__d('cake_console', 'Bake test case skeletons for classes.'))
-			->addArgument('type', [
-				'help' => __d('cake_console', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
-				'choices' => [
-					'Controller', 'controller',
-					'Model', 'model',
-					'Helper', 'helper',
-					'Component', 'component',
-					'Behavior', 'behavior'
-				]
-			])->addArgument('name', [
-				'help' => __d('cake_console', 'An existing class to bake tests for.')
-			])->addOption('theme', [
-				'short' => 't',
-				'help' => __d('cake_console', 'Theme to use when baking code.')
-			])->addOption('plugin', [
-				'short' => 'p',
-				'help' => __d('cake_console', 'CamelCased name of the plugin to bake tests for.')
-			])->addOption('force', [
-				'short' => 'f',
-				'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
-			])->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
+
+		$parser->description(
+			__d('cake_console', 'Bake test case skeletons for classes.')
+		)->addArgument('type', [
+			'help' => __d('cake_console', 'Type of class to bake, can be any of the following: controller, model, helper, component or behavior.'),
+			'choices' => [
+				'Controller', 'controller',
+				'Model', 'model',
+				'Helper', 'helper',
+				'Component', 'component',
+				'Behavior', 'behavior'
+			]
+		])->addArgument('name', [
+			'help' => __d('cake_console', 'An existing class to bake tests for.')
+		])->addOption('theme', [
+			'short' => 't',
+			'help' => __d('cake_console', 'Theme to use when baking code.')
+		])->addOption('plugin', [
+			'short' => 'p',
+			'help' => __d('cake_console', 'CamelCased name of the plugin to bake tests for.')
+		])->addOption('force', [
+			'short' => 'f',
+			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
+		])->epilog(
+			__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.')
+		);
+
+		return $parser;
 	}
 
 }

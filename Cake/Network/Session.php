@@ -109,6 +109,13 @@ class Session {
 	protected static $_requestCountdown = 10;
 
 /**
+ * Whether or not the init function in this class was already called
+ *
+ * @var boolean
+ */
+	protected static $_initialized = false;
+
+/**
  * Pseudo constructor.
  *
  * @param string $base The base path for the Session
@@ -116,15 +123,20 @@ class Session {
  */
 	public static function init($base = null) {
 		static::$time = time();
-
 		$checkAgent = Configure::read('Session.checkAgent');
+
 		if (env('HTTP_USER_AGENT')) {
 			static::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
 		}
+
 		static::_setPath($base);
 		static::_setHost(env('HTTP_HOST'));
 
-		register_shutdown_function('session_write_close');
+		if (!self::$_initialized) {
+			register_shutdown_function('session_write_close');
+		}
+
+		self::$_initialized = true;
 	}
 
 /**
@@ -169,10 +181,8 @@ class Session {
 		if (static::started()) {
 			return true;
 		}
-		static::init();
+
 		$id = static::id();
-		session_write_close();
-		static::_configureSession();
 		static::_startSession();
 
 		if (!$id && static::started()) {
@@ -180,6 +190,7 @@ class Session {
 		}
 
 		static::$error = false;
+		static::$valid = true;
 		return static::started();
 	}
 
@@ -412,9 +423,14 @@ class Session {
  * @return void
  */
 	public static function destroy() {
-		self::start();
+		if (!self::started()) {
+			self::_startSession();
+		}
+
 		session_destroy();
-		self::clear();
+
+		$_SESSION = null;
+		self::$id = null;
 	}
 
 /**
@@ -425,7 +441,6 @@ class Session {
 	public static function clear() {
 		$_SESSION = null;
 		static::$id = null;
-		static::start();
 		static::renew();
 	}
 
@@ -593,6 +608,10 @@ class Session {
  * @return boolean Success
  */
 	protected static function _startSession() {
+		self::init();
+		session_write_close();
+		self::_configureSession();
+
 		if (headers_sent()) {
 			if (empty($_SESSION)) {
 				$_SESSION = array();
@@ -611,19 +630,11 @@ class Session {
  * @return void
  */
 	protected static function _checkValid() {
-		if (!static::start()) {
-			static::$valid = false;
-			return false;
-		}
+		$config = static::read('Config');
+		if ($config) {
+			$sessionConfig = Configure::read('Session');
 
-		$sessionConfig = Configure::read('Session');
-		$requestCountdown = static::$_requestCountdown;
-		if (isset($sessionConfig['requestCountdown'])) {
-			$requestCountdown = $sessionConfig['requestCountdown'];
-		}
-
-		if ($config = static::read('Config')) {
-			if (static::_validAgentAndTime()) {
+			if (static::valid()) {
 				static::write('Config.time', static::$sessionTime);
 				if (isset($sessionConfig['autoRegenerate']) && $sessionConfig['autoRegenerate'] === true) {
 					$check = $config['countdown'];
@@ -635,18 +646,27 @@ class Session {
 						static::write('Config.countdown', $requestCountdown);
 					}
 				}
-				static::$valid = true;
 			} else {
+				$_SESSION = array();
 				static::destroy();
-				static::$valid = false;
 				static::_setError(1, 'Session Highjacking Attempted !!!');
+				static::_startSession();
+				static::_writeConfig();
 			}
 		} else {
-			static::write('Config.userAgent', static::$_userAgent);
-			static::write('Config.time', static::$sessionTime);
-			static::write('Config.countdown', $requestCountdown);
-			static::$valid = true;
+			static::_writeConfig();
 		}
+	}
+
+/**
+ * Writes configuration variables to the session
+ *
+ * @return void
+ */
+	protected static function _writeConfig() {
+		self::write('Config.userAgent', self::$_userAgent);
+		self::write('Config.time', self::$sessionTime);
+		self::write('Config.countdown', self::$_requestCountdown);
 	}
 
 /**

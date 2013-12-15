@@ -22,6 +22,7 @@ use Cake\Console\Command\Task\TemplateTask;
 use Cake\Console\Command\Task\TestTask;
 use Cake\Controller\Controller;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Model\Model;
 use Cake\TestSuite\TestCase;
@@ -440,20 +441,24 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeComponentTest() {
+		Configure::write('App.namespace', 'TestApp');
 		$this->Task->expects($this->once())->method('createFile')->will($this->returnValue(true));
 
-		$result = $this->Task->bake('Component', 'Example');
+		$result = $this->Task->bake('Component', 'Apple');
 
 		$this->assertContains('use Cake\Controller\ComponentRegistry', $result);
-		$this->assertContains('use App\Controller\Component\ExampleComponent', $result);
-		$this->assertContains('class ExampleComponentTest extends TestCase', $result);
+		$this->assertContains('use TestApp\Controller\Component\AppleComponent', $result);
+		$this->assertContains('class AppleComponentTest extends TestCase', $result);
 
 		$this->assertContains('function setUp()', $result);
 		$this->assertContains("\$registry = new ComponentRegistry()", $result);
-		$this->assertContains("\$this->Example = new ExampleComponent(\$registry)", $result);
+		$this->assertContains("\$this->Apple = new AppleComponent(\$registry)", $result);
+
+		$this->assertContains('function testStartup()', $result);
+		$this->assertContains('$this->markTestIncomplete(\'testStartup not implemented.\')', $result);
 
 		$this->assertContains('function tearDown()', $result);
-		$this->assertContains('unset($this->Example)', $result);
+		$this->assertContains('unset($this->Apple)', $result);
 	}
 
 /**

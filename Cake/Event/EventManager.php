@@ -193,7 +193,7 @@ class EventManager {
  * @return void
  */
 	protected function _detachSubscriber(EventListener $subscriber, $eventKey = null) {
-		$events = $subscriber->implementedEvents();
+		$events = (array)$subscriber->implementedEvents();
 		if (!empty($eventKey) && empty($events[$eventKey])) {
 			return;
 		} elseif (!empty($eventKey)) {

@@ -357,15 +357,18 @@ class DbConfigTask extends Shell {
 	}
 
 /**
- * get the option parser
+ * Gets the option parser instance and configures it.
  *
  * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(
-				__d('cake_console', 'Bake new database configuration settings.')
-			);
+
+		$parser->description(
+			__d('cake_console', 'Bake new database configuration settings.')
+		);
+
+		return $parser;
 	}
 
 }

@@ -208,14 +208,15 @@ class BakeShell extends Shell {
 	}
 
 /**
- * get the option parser.
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(__d('cake_console',
-			'The Bake script generates controllers, views and models for your application.' .
+
+		$parser->description(
+			__d('cake_console', 'The Bake script generates controllers, views and models for your application.' .
 			' If run with no command line arguments, Bake guides the user through the class creation process.' .
 			' You can customize the generation process by telling Bake where different parts of your application are using command line arguments.'
 		))->addSubcommand('all', [
@@ -252,6 +253,8 @@ class BakeShell extends Shell {
 			'short' => 't',
 			'help' => __d('cake_console', 'Theme to use when baking code.')
 		]);
+
+		return $parser;
 	}
 
 }

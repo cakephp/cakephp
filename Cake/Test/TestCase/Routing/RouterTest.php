@@ -257,6 +257,20 @@ class RouterTest extends TestCase {
 		);
 		$this->assertEquals($expected, $result);
 		$this->assertEquals(array('test_plugin'), $resources);
+
+		$resources = Router::mapResources('Posts', array('prefix' => 'api'));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = Router::parse('/api/posts');
+		$expected = array(
+			'pass' => array(),
+			'plugin' => null,
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => 'GET',
+			'prefix' => 'api',
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**

@@ -123,7 +123,7 @@ class Hash {
 			if ($conditions) {
 				$filter = array();
 				foreach ($next as $item) {
-					if (static::_matches($item, $conditions)) {
+					if (is_array($item) && static::_matches($item, $conditions)) {
 						$filter[] = $item;
 					}
 				}
@@ -664,9 +664,7 @@ class Hash {
 		if (empty($data)) {
 			return false;
 		}
-		$values = array_values($data);
-		$str = implode('', $values);
-		return (bool)ctype_digit($str);
+		return $data === array_filter($data, 'is_numeric');
 	}
 
 /**

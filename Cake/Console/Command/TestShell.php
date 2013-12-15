@@ -40,9 +40,9 @@ class TestShell extends Shell {
 	protected $_dispatcher = null;
 
 /**
- * get the option parser for the test suite.
+ * Gets the option parser instance and configures it.
  *
- * @return void
+ * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = new ConsoleOptionParser($this->name);

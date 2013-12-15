@@ -413,13 +413,14 @@ class ViewTask extends BakeTask {
 	}
 
 /**
- * get the option parser for this task
+ * Gets the option parser instance and configures it.
  *
  * @return ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
-		return $parser->description(
+
+		$parser->description(
 			__d('cake_console', 'Bake views for a controller, using built-in or custom templates.')
 		)->addArgument('controller', [
 			'help' => __d('cake_console', 'Name of the controller views to bake. Can be Plugin.name as a shortcut for plugin baking.')
@@ -444,7 +445,11 @@ class ViewTask extends BakeTask {
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addSubcommand('all', [
 			'help' => __d('cake_console', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
-		])->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));
+		])->epilog(
+			__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.')
+		);
+
+		return $parser;
 	}
 
 /**
