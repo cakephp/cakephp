@@ -977,7 +977,6 @@ class BelongsToManyTest extends TestCase {
 		];
 		$query1->setResult(new \ArrayIterator($existing));
 
-
 		$opts = ['markNew' => false];
 		$tags = [
 			new Entity(['id' => 2], $opts),
@@ -987,7 +986,7 @@ class BelongsToManyTest extends TestCase {
 		$entity = new Entity(['id' => 1, 'test' => $tags], $opts);
 
 		$jointEntities = [
-			new Entity(['article_id' => 1, 'tag_id' => 2]),
+			new Entity(['article_id' => 1, 'tag_id' => 2])
 		];
 		$assoc->expects($this->once())->method('_collectJointEntities')
 			->with($entity, $tags)

@@ -2571,7 +2571,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->tags[1]->extraInfo);
 	}
 
-
 /**
  * Tests saving belongsToMany records with a validation error in a joint entity
  * and atomic set to false
@@ -2830,7 +2829,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tagsTable = TableRegistry::get('tags');
 		$options = ['markNew' => false];
 
-		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
+		$article = new \Cake\ORM\Entity(['id' => 1], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
 
@@ -2851,7 +2850,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tagsTable = TableRegistry::get('tags');
 		$options = ['markNew' => false];
 
-		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
+		$article = new \Cake\ORM\Entity(['id' => 1], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
 
@@ -2876,7 +2875,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tagsTable = TableRegistry::get('tags');
 		$options = ['markNew' => false];
 
-		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
+		$article = new \Cake\ORM\Entity(['id' => 1], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['name' => 'foo']);
@@ -2902,7 +2901,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tagsTable = TableRegistry::get('tags');
 		$options = ['markNew' => false];
 
-		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
+		$article = new \Cake\ORM\Entity(['id' => 1], $options);
 		$tags = [];
 
 		$table->association('tags')->replaceLinks($article, $tags);
@@ -2923,7 +2922,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tagsTable = TableRegistry::get('tags');
 		$options = ['markNew' => false];
 
-		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
+		$article = new \Cake\ORM\Entity(['id' => 1], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag([
 			'id' => 2,
 			'extraInfo' => new \Cake\ORM\Entity([
