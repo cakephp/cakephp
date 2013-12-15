@@ -437,6 +437,16 @@ class BelongsToMany extends Association {
  * By default this method will also unset each of the entity objects stored inside
  * the source entity.
  *
+ * ###Example:
+ *
+ * {{{
+ * $article->tags = [$tag1, $tag2, $tag3, $tag4];
+ * $tags = [$tag1, $tag2, $tag3];
+ * $articles->association('tags')->unlink($article, [$tag1, $tag2, $tag3]);
+ * }}}
+ *
+ * `$article->get('tags')` will contain only `[$tag4]` after deleting in the database
+ *
  * @param \Cake\ORM\Entity $sourceEntity an entity persisted in the source table for
  * this association
  * @param array $targetEntities list of entities persisted in the target table for
@@ -480,6 +490,55 @@ class BelongsToMany extends Association {
 		$sourceEntity->dirty($property, false);
 	}
 
+/**
+ * Replaces existing association links between the source entity and the target
+ * with the ones passed. This method does a smart cleanup, links that are already
+ * persisted and present in `$targetEntities` will not be deleted, new links will
+ * be created for the passed target entities that are not already in the database
+ * and the rest will be removed.
+ *
+ * For example, if an article is linked to tags 'cake' and 'framework' and you pass
+ * to this method an array containing the entities for tags 'cake', 'php' and 'awesome',
+ * only the link for cake will be kept in database, the link for 'framework' will be
+ * deleted and the links for 'php' and 'awesome' will be created.
+ *
+ * Existing links are not delete and created again, they are either left untouched
+ * or updated so that potential extra information stored in the joint row is not
+ * lost. Updating the link row can be done by making sure the corresponding passed
+ * target entity contains the joint property with its primary key and any extra
+ * information to be stored.
+ *
+ * On success, the passed `$sourceEntity` will contain `$targetEntities` as  value
+ * in the corresponding property for this association.
+ *
+ * This method assumes that links between both the source entity and each of the
+ * target entities are unique. That is, for any given row in the source table there
+ * can only be one link in the junction table pointing to any other given row in
+ * the target table.
+ *
+ * Additional options for new links to be saved can be passed in the third argument,
+ * check `Table::save()` for information on the accepted options.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $article->tags = [$tag1, $tag2, $tag3, $tag4];
+ * $articles->save($article);
+ * $tags = [$tag1, $tag3];
+ * $articles->association('tags')->replaceLinks($article, $tags);
+ * }}}
+ *
+ * `$article->get('tags')` will contain only `[$tag1, $tag3]` at the end
+ *
+ * @param \Cake\ORM\Entity $sourceEntity an entity persisted in the source table for
+ * this association
+ * @param array $targetEntities list of entities from the target table to be linked
+ * @param array $options list of options to be passed to `save` persisting or
+ * updating new links
+ * @throws \InvalidArgumentException if non persisted entities are passed or if
+ * any of them is lacking a primary key value
+ * @return boolean success
+ */
 	public function replaceLinks(Entity $sourceEntity, array $targetEntities, array $options = []) {
 		$primaryKey = (array)$this->source()->primaryKey();
 		$primaryValue = $sourceEntity->extract($primaryKey);
@@ -514,6 +573,17 @@ class BelongsToMany extends Association {
 		);
 	}
 
+/**
+ * Helper method used to delete the difference between the links passed in
+ * `$existing` and `$jointEntities`. This method will return the values from
+ * `$targetEntities` that were not deleted from calculating the difference.
+ *
+ * @param \Cake\ORM\Query $existing a query for getting existing links
+ * @param array $jointEntities link entities that should be persisted
+ * @param array $targetEntities entities in target table that are related to
+ * the `$jointEntitites`
+ * @return array
+ */
 	protected function _diffLinks($existing, $jointEntities, $targetEntities) {
 		$junction = $this->junction();
 		$target = $this->target();
