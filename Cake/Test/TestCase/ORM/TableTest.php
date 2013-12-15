@@ -2888,4 +2888,54 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(3, $article->tags[1]->id);
 	}
 
+/**
+ * Integration test to show how remove all links from a belongsToMany
+ *
+ * @return void
+ */
+	public function testReplacelinksBelongsToManyWithEmpty() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$tagsTable = TableRegistry::get('tags');
+		$options = ['markNew' => false];
+
+		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
+		$tags = [];
+
+		$table->association('tags')->replaceLinks($article, $tags);
+		$this->assertSame($tags, $article->tags);
+		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+		$this->assertNull($article->tags);
+	}
+
+/**
+ * Integration test to show how to replace records from a belongsToMany
+ * passing the joint property along in the target entity
+ *
+ * @return void
+ */
+	public function testReplacelinksBelongsToManyWithJoint() {
+		$table = TableRegistry::get('articles');
+		$table->belongsToMany('tags');
+		$tagsTable = TableRegistry::get('tags');
+		$options = ['markNew' => false];
+
+		$article = new \Cake\ORM\Entity(['id' => 1,], $options);
+		$tags[] = new \TestApp\Model\Entity\Tag([
+			'id' => 2,
+			'extraInfo' => new \Cake\ORM\Entity([
+				'article_id' => 1,
+				'tag_id' => 2,
+			])
+		], $options);
+		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
+
+		$table->association('tags')->replaceLinks($article, $tags);
+		$this->assertSame($tags, $article->tags);
+		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
+		$this->assertCount(2, $article->tags);
+		$this->assertEquals(2, $article->tags[0]->id);
+		$this->assertEquals(3, $article->tags[1]->id);
+	}
+
 }
