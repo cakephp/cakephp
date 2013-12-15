@@ -2870,7 +2870,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testReplacelinksBelongsToManyMultiple() {
+	public function testReplacelinksBelongsToMany() {
 		$table = TableRegistry::get('articles');
 		$table->belongsToMany('tags');
 		$tagsTable = TableRegistry::get('tags');
@@ -2881,6 +2881,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 3], $options);
 
 		$table->association('tags')->replaceLinks($article, $tags);
+		$this->assertSame($tags, $article->tags);
 		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
 		$this->assertCount(2, $article->tags);
 		$this->assertEquals(2, $article->tags[0]->id);

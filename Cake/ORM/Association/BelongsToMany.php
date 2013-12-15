@@ -483,7 +483,6 @@ class BelongsToMany extends Association {
 			throw new \InvalidArgumentException;
 		}
 
-		$target = $this->target();
 		$junction = $this->junction();
 		$foreignKey = (array)$this->foreignKey();
 		$existing = $junction->find('all')
@@ -493,11 +492,11 @@ class BelongsToMany extends Association {
 		$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
 		$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
 
-		$jointProperty = $target->association($junction->alias())->property();
-		$sourceEntity->set($jointProperty, []);
+		$property = $this->property();
+		$sourceEntity->set($property, []);
 		$this->link($sourceEntity, $inserts, $options);
-		$sourceEntity->set($jointProperty, $targetEntities);
-		$sourceEntity->dirty($jointProperty, false);
+		$sourceEntity->set($property, $targetEntities);
+		$sourceEntity->dirty($property, false);
 	}
 
 	protected function _diffLinks($existing, $jointEntities, $targetEntities) {
@@ -516,10 +515,10 @@ class BelongsToMany extends Association {
 		}
 
 		foreach ($existing as $result) {
-			$result = $result->extract($keys);
+			$fields = $result->extract($keys);
 			$found = false;
 			foreach ($indexed as $i => $data) {
-				if ($result === $data) {
+				if ($fields === $data) {
 					unset($indexed[$i]);
 					$found = true;
 					break;
@@ -531,20 +530,21 @@ class BelongsToMany extends Association {
 			}
 		}
 
-		if ($deletes) {
-			$deletes = ['OR' => $deletes];
-			$deletes[] = $this->conditions();
-			$junction->deleteAll($deletes);
-		}
-
 		$primary = (array)$target->primaryKey();
+		$jointProperty = $target->association($junction->alias())->property();
 		foreach ($targetEntities as $k => $entity) {
 			$key = array_values($entity->extract($primary));
 			foreach ($present as $i => $data) {
-				if ($key === $data) {
+				if ($key === $data && !$entity->get($jointProperty)) {
 					unset($targetEntities[$k], $present[$i]);
 					break;
 				}
+			}
+		}
+
+		if ($deletes) {
+			foreach ($deletes as $entity) {
+				$junction->delete($entity);
 			}
 		}
 
