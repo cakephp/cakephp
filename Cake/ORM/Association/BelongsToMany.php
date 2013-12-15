@@ -421,7 +421,12 @@ class BelongsToMany extends Association {
 		$links = $sourceEntity->get($property) ?: [];
 		$links = array_merge($links, $targetEntities);
 		$sourceEntity->set($property, $links);
-		return $this->_saveLinks($sourceEntity, $targetEntities, $options);
+
+		return $this->junction()->connection()->transactional(
+			function() use ($sourceEntity, $targetEntities, $options) {
+				return $this->_saveLinks($sourceEntity, $targetEntities, $options);
+			}
+		);
 	}
 
 /**
@@ -483,7 +488,7 @@ class BelongsToMany extends Association {
 			throw new \InvalidArgumentException;
 		}
 
-		$this->junction()->connection()->transactional(
+		return $this->junction()->connection()->transactional(
 			function() use ($sourceEntity, $targetEntities, $primaryValue, $options) {
 				$foreignKey = (array)$this->foreignKey();
 				$existing = $this->_junctionTable->find('all')
@@ -495,10 +500,14 @@ class BelongsToMany extends Association {
 
 				$property = $this->property();
 				$sourceEntity->set($property, $inserts);
-				if ($this->save($sourceEntity, $options + ['associated' => false])) {
-					$sourceEntity->set($property, $targetEntities);
-					$sourceEntity->dirty($property, false);
+
+				if ($inserts && !$this->save($sourceEntity, $options + ['associated' => false])) {
+					return false;
 				}
+
+				$sourceEntity->set($property, $targetEntities);
+				$sourceEntity->dirty($property, false);
+				return true;
 			}
 		);
 	}

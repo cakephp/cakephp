@@ -683,7 +683,12 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testLinkSuccess() {
-		$joint = $this->getMock('\Cake\ORM\Table', ['save'], [['alias' => 'ArticlesTags']]);
+		$connection = \Cake\Database\ConnectionManager::get('test');
+		$joint = $this->getMock(
+			'\Cake\ORM\Table',
+			['save'],
+			[['alias' => 'ArticlesTags', 'connection' => $connection]]
+		);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
