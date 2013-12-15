@@ -62,9 +62,14 @@ class Marshaller {
 	public function one(array $data, $include = []) {
 		$include = Hash::normalize($include);
 
+		$tableName = $this->_table->alias();
 		$entityClass = $this->_table->entityClass();
-
 		$entity = new $entityClass();
+
+		if (isset($data[$tableName])) {
+			$data = $data[$tableName];
+		}
+
 		foreach ($data as $key => $value) {
 			$assoc = null;
 			if (array_key_exists($key, $include)) {

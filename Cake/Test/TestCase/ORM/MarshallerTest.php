@@ -78,6 +78,33 @@ class MarshallerTest extends TestCase {
 	}
 
 /**
+ * test one() with a wrapping model name.
+ *
+ * @return void
+ */
+	public function testOneWithAdditionalName() {
+		$data = [
+			'Articles' => [
+				'title' => 'My title',
+				'body' => 'My content',
+				'author_id' => 1,
+				'not_in_schema' => true,
+				'Users' => [
+					'username' => 'mark',
+				]
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, ['Users']);
+
+		$this->assertInstanceOf('Cake\ORM\Entity', $result);
+		$this->assertTrue($result->dirty(), 'Should be a dirty entity.');
+		$this->assertNull($result->isNew(), 'Should be detached');
+		$this->assertEquals($data['Articles']['title'], $result->title);
+		$this->assertEquals($data['Articles']['Users']['username'], $result->user->username);
+	}
+
+/**
  * test one() with association data.
  *
  * @return void
