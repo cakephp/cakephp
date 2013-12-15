@@ -303,9 +303,7 @@ class Security {
  */
 	public static function encrypt($plain, $key, $hmacSalt = null) {
 		self::_checkKey($key, 'encrypt()');
-		if (empty($plain)) {
-			throw new CakeException(__d('cake_dev', 'The data to encrypt cannot be empty.'));
-		}
+
 		if ($hmacSalt === null) {
 			$hmacSalt = Configure::read('Security.salt');
 		}
