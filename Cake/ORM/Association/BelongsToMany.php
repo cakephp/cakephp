@@ -699,7 +699,7 @@ class BelongsToMany extends Association {
 		$assocForeignKey = (array)$belongsTo->foreignKey();
 		$sourceKey = $sourceEntity->extract((array)$source->primaryKey());
 
-		foreach($missing as $key) {
+		foreach ($missing as $key) {
 			$unions[] = $junction->find('all')
 				->where(array_combine($foreignKey, $sourceKey))
 				->andWhere(array_combine($assocForeignKey, $key))
