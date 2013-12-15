@@ -202,11 +202,11 @@ class CookieComponentTest extends CakeTestCase {
 	}
 
 /**
- * test write() Encrypted data with null & empty string & boolean value 
+ * test write() encrypted data with falsey value
  *
  * @return void
  */
-	public function testWriteWithNullEmptyString() {
+	public function testWriteWithFalseyValue() {
 		$this->Cookie->type('aes');
 		$this->Cookie->key = 'qSI232qs*&sXOw!adre@34SAv!@*(XSL#$%)asGb$@11~_+!@#HKis~#^';
 
@@ -228,7 +228,11 @@ class CookieComponentTest extends CakeTestCase {
 
 		$this->Cookie->write('Testing', '0');
 		$result = $this->Cookie->read('Testing');
-		$this->assertEquals('0', $result);
+		$this->assertSame('0', $result);
+
+		$this->Cookie->write('Testing', 0);
+		$result = $this->Cookie->read('Testing');
+		$this->assertSame(0, $result);
 	}
 
 /**
