@@ -284,15 +284,15 @@ class Validation {
  *
  * @param string $check a valid date string
  * @param string|array $format Use a string or an array of the keys below. Arrays should be passed as array('dmy', 'mdy', etc)
- * 	      Keys: dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
- * 	            mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
- * 	            ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
- * 	            dMy 27 December 2006 or 27 Dec 2006
- * 	            Mdy December 27, 2006 or Dec 27, 2006 comma is optional
- * 	            My December 2006 or Dec 2006
- * 	            my 12/2006 or 12/06 separators can be a space, period, dash, forward slash
- * 	            ym 2006/12 or 06/12 separators can be a space, period, dash, forward slash
- * 	            y 2006 just the year without any separators
+ *     Formats: dmy 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
+ *              mdy 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
+ *              ymd 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
+ *              dMy 27 December 2006 or 27 Dec 2006
+ *              Mdy December 27, 2006 or Dec 27, 2006 comma is optional
+ *              My December 2006 or Dec 2006
+ *              my 12/2006 or 12/06 separators can be a space, period, dash, forward slash
+ *              ym 2006/12 or 06/12 separators can be a space, period, dash, forward slash
+ *              y 2006 just the year without any separators
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
  */
