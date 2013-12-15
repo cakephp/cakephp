@@ -492,9 +492,10 @@ class BelongsToMany extends Association {
 		return $this->junction()->connection()->transactional(
 			function() use ($sourceEntity, $targetEntities, $primaryValue, $options) {
 				$foreignKey = (array)$this->foreignKey();
+				$belongsTo = $this->_junctionTable->association($this->target()->alias());
 				$existing = $this->_junctionTable->find('all')
 					->where(array_combine($foreignKey, $primaryValue))
-					->andWHere($this->conditions());
+					->andWHere($belongsTo->conditions());
 
 				$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
 				$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
