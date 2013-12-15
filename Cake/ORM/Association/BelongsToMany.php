@@ -483,20 +483,24 @@ class BelongsToMany extends Association {
 			throw new \InvalidArgumentException;
 		}
 
-		$junction = $this->junction();
-		$foreignKey = (array)$this->foreignKey();
-		$existing = $junction->find('all')
-			->where(array_combine($foreignKey, $primaryValue))
-			->andWHere($this->conditions());
+		$this->junction()->connection()->transactional(
+			function() use ($sourceEntity, $targetEntities, $primaryValue, $options) {
+				$foreignKey = (array)$this->foreignKey();
+				$existing = $this->_junctionTable->find('all')
+					->where(array_combine($foreignKey, $primaryValue))
+					->andWHere($this->conditions());
 
-		$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
-		$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
+				$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
+				$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
 
-		$property = $this->property();
-		$sourceEntity->set($property, $inserts);
-		$this->save($sourceEntity, $options + ['associated' => false]);
-		$sourceEntity->set($property, $targetEntities);
-		$sourceEntity->dirty($property, false);
+				$property = $this->property();
+				$sourceEntity->set($property, $inserts);
+				if ($this->save($sourceEntity, $options + ['associated' => false])) {
+					$sourceEntity->set($property, $targetEntities);
+					$sourceEntity->dirty($property, false);
+				}
+			}
+		);
 	}
 
 	protected function _diffLinks($existing, $jointEntities, $targetEntities) {
