@@ -640,7 +640,7 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
- * Test liking entities having a non persited source entity
+ * Test linking entities having a non persisted source entity
  *
  * @expectedException \InvalidArgumentException
  * @expectedExceptionMessage Source entity needs to be persisted before proceeding
