@@ -907,7 +907,7 @@ class BelongsToManyTest extends TestCase {
  * @expectedExceptionMessage Could not find primary key value for source entity
  * @return void
  */
-	public function testRplaceWithMissingPrimaryKey() {
+	public function testReplaceWithMissingPrimaryKey() {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,

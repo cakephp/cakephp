@@ -393,7 +393,7 @@ class BelongsToMany extends Association {
  * as new or their status is unknown, an exception will be thrown.
  *
  * When using this method, all entities in `$targetEntities` will be appended to
- * the source entity'property corresponding to this association object.
+ * the source entity's property corresponding to this association object.
  *
  * This method does not check link uniqueness.
  *
@@ -442,7 +442,7 @@ class BelongsToMany extends Association {
  * {{{
  * $article->tags = [$tag1, $tag2, $tag3, $tag4];
  * $tags = [$tag1, $tag2, $tag3];
- * $articles->association('tags')->unlink($article, [$tag1, $tag2, $tag3]);
+ * $articles->association('tags')->unlink($article, $tags);
  * }}}
  *
  * `$article->get('tags')` will contain only `[$tag4]` after deleting in the database
@@ -502,7 +502,7 @@ class BelongsToMany extends Association {
  * only the link for cake will be kept in database, the link for 'framework' will be
  * deleted and the links for 'php' and 'awesome' will be created.
  *
- * Existing links are not delete and created again, they are either left untouched
+ * Existing links are not deleted and created again, they are either left untouched
  * or updated so that potential extra information stored in the joint row is not
  * lost. Updating the link row can be done by making sure the corresponding passed
  * target entity contains the joint property with its primary key and any extra
@@ -554,7 +554,7 @@ class BelongsToMany extends Association {
 				$belongsTo = $this->_junctionTable->association($this->target()->alias());
 				$existing = $this->_junctionTable->find('all')
 					->where(array_combine($foreignKey, $primaryValue))
-					->andWHere($belongsTo->conditions());
+					->andWhere($belongsTo->conditions());
 
 				$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
 				$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
