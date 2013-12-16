@@ -329,6 +329,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		if ($this->_hydrate && !($results instanceof Entity)) {
 			$results = new $this->_entityClass($results, $options);
 		}
+
 		return $results;
 	}
 

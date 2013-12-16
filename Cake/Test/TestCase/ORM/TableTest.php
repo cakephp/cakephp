@@ -908,7 +908,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInstanceOf('TestApp\Model\Entity\Tag', $result->tags[0]);
 		$this->assertInstanceOf(
 			'TestApp\Model\Entity\ArticlesTag',
-			$result->tags[0]->extraInfo
+			$result->tags[0]->_joinData
 		);
 	}
 
@@ -934,7 +934,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			$this->assertFalse($article->author->dirty('name'));
 			$this->assertFalse($article->dirty('tag'));
 			if ($article->tag) {
-				$this->assertFalse($article->tag[0]->extraInfo->dirty('tag_id'));
+				$this->assertFalse($article->tag[0]->_joinData->dirty('tag_id'));
 			}
 		}
 	}
@@ -954,7 +954,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			$this->assertFalse($article->isNew());
 			foreach ((array)$article->tag as $tag) {
 				$this->assertFalse($tag->isNew());
-				$this->assertFalse($tag->extraInfo->isNew());
+				$this->assertFalse($tag->_joinData->isNew());
 			}
 		}
 	}
@@ -2452,10 +2452,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($entity->tags[1]->isNew());
 		$this->assertEquals(4, $entity->tags[0]->id);
 		$this->assertEquals(5, $entity->tags[1]->id);
-		$this->assertEquals(4, $entity->tags[0]->extraInfo->article_id);
-		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
-		$this->assertEquals(4, $entity->tags[0]->extraInfo->tag_id);
-		$this->assertEquals(5, $entity->tags[1]->extraInfo->tag_id);
+		$this->assertEquals(4, $entity->tags[0]->_joinData->article_id);
+		$this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
+		$this->assertEquals(4, $entity->tags[0]->_joinData->tag_id);
+		$this->assertEquals(5, $entity->tags[1]->_joinData->tag_id);
 	}
 
 /**
@@ -2491,8 +2491,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->tags[1]->isNew());
 		$this->assertNull($entity->tags[0]->id);
 		$this->assertNull($entity->tags[1]->id);
-		$this->assertNull($entity->tags[0]->extraInfo);
-		$this->assertNull($entity->tags[1]->extraInfo);
+		$this->assertNull($entity->tags[0]->_joinData);
+		$this->assertNull($entity->tags[1]->_joinData);
 		$this->assertEmpty($entity->tags[0]->errors('name'));
 		$this->assertNotEmpty($entity->tags[1]->errors('name'));
 	}
@@ -2530,9 +2530,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($entity->tags[1]->isNew());
 		$this->assertNull($entity->tags[0]->id);
 		$this->assertEquals(4, $entity->tags[1]->id);
-		$this->assertNull($entity->tags[0]->extraInfo);
-		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
-		$this->assertEquals(4, $entity->tags[1]->extraInfo->tag_id);
+		$this->assertNull($entity->tags[0]->_joinData);
+		$this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
+		$this->assertEquals(4, $entity->tags[1]->_joinData->tag_id);
 	}
 
 /**
@@ -2567,8 +2567,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->tags[1]->isNew());
 		$this->assertNull($entity->tags[0]->id);
 		$this->assertNull($entity->tags[1]->id);
-		$this->assertNull($entity->tags[0]->extraInfo);
-		$this->assertNull($entity->tags[1]->extraInfo);
+		$this->assertNull($entity->tags[0]->_joinData);
+		$this->assertNull($entity->tags[1]->_joinData);
 	}
 
 /**
@@ -2604,10 +2604,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($entity->tags[1]->isNew());
 		$this->assertEquals(4, $entity->tags[0]->id);
 		$this->assertEquals(5, $entity->tags[1]->id);
-		$this->assertTrue($entity->tags[0]->extraInfo->isNew());
-		$this->assertNotEmpty($entity->tags[0]->extraInfo->errors());
-		$this->assertEquals(4, $entity->tags[1]->extraInfo->article_id);
-		$this->assertEquals(5, $entity->tags[1]->extraInfo->tag_id);
+		$this->assertTrue($entity->tags[0]->_joinData->isNew());
+		$this->assertNotEmpty($entity->tags[0]->_joinData->errors());
+		$this->assertEquals(4, $entity->tags[1]->_joinData->article_id);
+		$this->assertEquals(5, $entity->tags[1]->_joinData->tag_id);
 	}
 
 /**
@@ -2647,8 +2647,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(3, $tags);
 		$this->assertFalse($tags[2]->isNew());
 		$this->assertEquals(4, $tags[2]->id);
-		$this->assertEquals(1, $tags[2]->extraInfo->article_id);
-		$this->assertEquals(4, $tags[2]->extraInfo->tag_id);
+		$this->assertEquals(1, $tags[2]->_joinData->article_id);
+		$this->assertEquals(4, $tags[2]->_joinData->tag_id);
 
 		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
 		$this->assertEquals($tags, $article->tags);
@@ -2854,7 +2854,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 1], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag(['id' => 2], $options);
 
-		$tags[1]->extraInfo = new \Cake\ORM\Entity([
+		$tags[1]->_joinData = new \Cake\ORM\Entity([
 			'article_id' => 1,
 			'tag_id' => 2
 		]);
@@ -2925,7 +2925,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$article = new \Cake\ORM\Entity(['id' => 1], $options);
 		$tags[] = new \TestApp\Model\Entity\Tag([
 			'id' => 2,
-			'extraInfo' => new \Cake\ORM\Entity([
+			'_joinData' => new \Cake\ORM\Entity([
 				'article_id' => 1,
 				'tag_id' => 2,
 			])
