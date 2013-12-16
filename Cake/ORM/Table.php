@@ -27,6 +27,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
 use Cake\ORM\Error\MissingEntityException;
+use Cake\ORM\Marshaller;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 
@@ -1500,6 +1501,92 @@ class Table implements EventListener {
 		throw new \BadMethodCallException(
 			__d('cake_dev', 'Unknown method "%s"', $method)
 		);
+	}
+
+/**
+ * Get the object used to marshal/convert array data into objects.
+ *
+ * Override this method if you want a table object to use custom
+ * marshalling logic.
+ *
+ * @param boolean $safe Whether or not this marshaller 
+ *   should be in safe mode.
+ * @return Cake\ORM\Marhsaller;
+ * @see Cake\ORM\Marshaller
+ */
+	public function marshaller($safe = false) {
+		return new Marshaller($this, $safe);
+	}
+
+/**
+ * Create a new entity + associated entities from an array.
+ *
+ * This is most useful when hydrating request data back into entities.
+ * For example, in your controller code:
+ *
+ * {{{
+ * $article = $this->Articles->newEntity($this->request->data());
+ * }}}
+ *
+ * The hydrated entity will correctly do an insert/update based
+ * on the primary key data existing in the database when the entity
+ * is saved. Until the entity is saved, it will be a detached record.
+ *
+ * By default all the associations on this table will be hydrated. You can
+ * limit which associations are built, or include deeper associations
+ * using the associations parameter:
+ *
+ * {{{
+ * $articles = $this->Articles->newEntity(
+ *   $this->request->data(),
+ *   ['Tags', 'Comments' => ['Users']]
+ * );
+ * }}}
+ *
+ * @param array $data The data to build an entity with.
+ * @param array $associations A whitelist of associations
+ *   to hydrate. Defaults to all associations
+ */
+	public function newEntity(array $data, $associations = null) {
+		if ($associations === null) {
+			$associations = array_keys($this->_associations);
+		}
+		$marshaller = $this->marshaller();
+		return $marshaller->one($data, $associations);
+	}
+
+/**
+ * Create a list of entities + associated entities from an array.
+ *
+ * This is most useful when hydrating request data back into entities.
+ * For example, in your controller code:
+ *
+ * {{{
+ * $articles = $this->Articles->newEntities($this->request->data());
+ * }}}
+ *
+ * The hydrated entities can then be iterated and saved. By default
+ * all the associations on this table will be hydrated. You can
+ * limit which associations are built, or include deeper associations
+ * using the associations parameter:
+ *
+ * {{{
+ * $articles = $this->Articles->newEntities(
+ *   $this->request->data(),
+ *   ['Tags', 'Comments' => ['Users']]
+ * );
+ * }}}
+ *
+ * @param array $data The data to build an entity with.
+ * @param array $associations A whitelist of associations
+ *   to hydrate. Defaults to all associations
+ */
+	public function newEntities(array $data, $associations = null) {
+		if ($associations === null) {
+			$associations = array_keys($this->_associations);
+		}
+		$marshaller = $this->marshaller();
+		return $marshaller->many($data, $associations);
 	}
 
 /**
