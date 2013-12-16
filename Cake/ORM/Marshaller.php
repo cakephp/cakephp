@@ -16,7 +16,6 @@ namespace Cake\ORM;
 
 use Cake\ORM\Association;
 use Cake\ORM\Table;
-use Cake\Utility\Hash;
 
 /**
  * Contains logic to convert array data into entities.
@@ -53,6 +52,30 @@ class Marshaller {
 	}
 
 /**
+ * Build the map of property => association names.
+ *
+ * @param array $include The array of included associations.
+ * @return array
+ */
+	protected function _buildPropertyMap($include) {
+		$map = [];
+		foreach ($include as $key => $nested) {
+			if (is_int($key) && is_scalar($nested)) {
+				$key = $nested;
+				$nested = [];
+			}
+			$assoc = $this->_table->association($key);
+			if ($assoc) {
+				$map[$assoc->property()] = [
+					'association' => $assoc,
+					'nested' => $nested
+				];
+			}
+		}
+		return $map;
+	}
+
+/**
  * Hydrate one entity and its associated data.
  *
  * @param array $data The data to hydrate.
@@ -60,7 +83,7 @@ class Marshaller {
  * @return Cake\ORM\Entity
  */
 	public function one(array $data, $include = []) {
-		$include = Hash::normalize($include);
+		$propertyMap = $this->_buildPropertyMap($include);
 
 		$tableName = $this->_table->alias();
 		$entityClass = $this->_table->entityClass();
@@ -72,12 +95,13 @@ class Marshaller {
 
 		foreach ($data as $key => $value) {
 			$assoc = null;
-			if (array_key_exists($key, $include)) {
-				$assoc = $this->_table->association($key);
+			$nested = [];
+			if (isset($propertyMap[$key])) {
+				$assoc = $propertyMap[$key]['association'];
+				$nested = $propertyMap[$key]['nested'];
 			}
 			if ($assoc) {
-				$value = $this->_marshalAssociation($assoc, $value, $include[$key]);
-				$key = $assoc->property();
+				$value = $this->_marshalAssociation($assoc, $value, $nested);
 			}
 			$entity->set($key, $value);
 		}

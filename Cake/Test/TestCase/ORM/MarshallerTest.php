@@ -89,7 +89,7 @@ class MarshallerTest extends TestCase {
 				'body' => 'My content',
 				'author_id' => 1,
 				'not_in_schema' => true,
-				'Users' => [
+				'user' => [
 					'username' => 'mark',
 				]
 			]
@@ -101,7 +101,7 @@ class MarshallerTest extends TestCase {
 		$this->assertTrue($result->dirty(), 'Should be a dirty entity.');
 		$this->assertNull($result->isNew(), 'Should be detached');
 		$this->assertEquals($data['Articles']['title'], $result->title);
-		$this->assertEquals($data['Articles']['Users']['username'], $result->user->username);
+		$this->assertEquals($data['Articles']['user']['username'], $result->user->username);
 	}
 
 /**
@@ -114,11 +114,11 @@ class MarshallerTest extends TestCase {
 			'title' => 'My title',
 			'body' => 'My content',
 			'author_id' => 1,
-			'Comments' => [
+			'comments' => [
 				['comment' => 'First post', 'user_id' => 2],
 				['comment' => 'Second post', 'user_id' => 2],
 			],
-			'Users' => [
+			'user' => [
 				'username' => 'mark',
 				'password' => 'secret'
 			]
@@ -130,14 +130,12 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($data['body'], $result->body);
 		$this->assertEquals($data['author_id'], $result->author_id);
 
-		$this->assertNull($result->comments);
-		$this->assertInternalType('array', $result->Comments);
-		$this->assertEquals($data['Comments'], $result->Comments);
+		$this->assertInternalType('array', $result->comments);
+		$this->assertEquals($data['comments'], $result->comments);
 
-		$this->assertNull($result->Users);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->user);
-		$this->assertEquals($data['Users']['username'], $result->user->username);
-		$this->assertEquals($data['Users']['password'], $result->user->password);
+		$this->assertEquals($data['user']['username'], $result->user->username);
+		$this->assertEquals($data['user']['password'], $result->user->password);
 	}
 
 /**
@@ -150,11 +148,11 @@ class MarshallerTest extends TestCase {
 			'title' => 'My title',
 			'body' => 'My content',
 			'author_id' => 1,
-			'Comments' => [
+			'comments' => [
 				['comment' => 'First post', 'user_id' => 2],
 				['comment' => 'Second post', 'user_id' => 2],
 			],
-			'Users' => [
+			'user' => [
 				'username' => 'mark',
 				'password' => 'secret'
 			]
@@ -166,16 +164,14 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($data['body'], $result->body);
 		$this->assertEquals($data['author_id'], $result->author_id);
 
-		$this->assertNull($result->Comments);
 		$this->assertInternalType('array', $result->comments);
 		$this->assertCount(2, $result->comments);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->comments[0]);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->comments[1]);
-		$this->assertEquals($data['Comments'][0]['comment'], $result->comments[0]->comment);
+		$this->assertEquals($data['comments'][0]['comment'], $result->comments[0]->comment);
 
-		$this->assertNull($result->user);
-		$this->assertInternalType('array', $result->Users);
-		$this->assertEquals($data['Users'], $result->Users);
+		$this->assertInternalType('array', $result->user);
+		$this->assertEquals($data['user'], $result->user);
 	}
 
 /**
@@ -187,10 +183,10 @@ class MarshallerTest extends TestCase {
 		$data = [
 			'comment' => 'First post',
 			'user_id' => 2,
-			'Articles' => [
+			'article' => [
 				'title' => 'Article title',
 				'body' => 'Article body',
-				'Users' => [
+				'user' => [
 					'username' => 'mark',
 					'password' => 'secret'
 				],
@@ -200,15 +196,13 @@ class MarshallerTest extends TestCase {
 		$result = $marshall->one($data, ['Articles' => ['Users']]);
 
 		$this->assertEquals(
-			$data['Articles']['title'],
+			$data['article']['title'],
 			$result->article->title
 		);
 		$this->assertEquals(
-			$data['Articles']['Users']['username'],
+			$data['article']['user']['username'],
 			$result->article->user->username
 		);
-		$this->assertNull($result->article->Users);
-		$this->assertNull($result->Articles);
 	}
 
 /**
@@ -241,14 +235,14 @@ class MarshallerTest extends TestCase {
 			[
 				'comment' => 'First post',
 				'user_id' => 2,
-				'Users' => [
+				'user' => [
 					'username' => 'mark',
 				],
 			],
 			[
 				'comment' => 'Second post',
 				'user_id' => 2,
-				'Users' => [
+				'user' => [
 					'username' => 'jose',
 				],
 			],
@@ -260,11 +254,11 @@ class MarshallerTest extends TestCase {
 		$this->assertInstanceOf('Cake\ORM\Entity', $result[0]);
 		$this->assertInstanceOf('Cake\ORM\Entity', $result[1]);
 		$this->assertEquals(
-			$data[0]['Users']['username'],
+			$data[0]['user']['username'],
 			$result[0]->user->username
 		);
 		$this->assertEquals(
-			$data[1]['Users']['username'],
+			$data[1]['user']['username'],
 			$result[1]->user->username
 		);
 	}
