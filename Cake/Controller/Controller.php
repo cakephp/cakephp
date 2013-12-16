@@ -27,7 +27,6 @@ use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\RepositoryAwareTrait;
@@ -656,16 +655,6 @@ class Controller extends Object implements EventListener {
 		}
 
 		$this->View = $this->_getViewObject();
-
-		$models = ClassRegistry::keys();
-		foreach ($models as $currentModel) {
-			$currentObject = ClassRegistry::getObject($currentModel);
-			if ($currentObject instanceof \Cake\Model\Model) {
-				$className = get_class($currentObject);
-				$this->request->params['models'][$currentObject->alias] = compact('className');
-				$this->View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
-			}
-		}
 
 		$this->autoRender = false;
 		$this->response->body($this->View->render($view, $layout));

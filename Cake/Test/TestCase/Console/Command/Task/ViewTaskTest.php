@@ -23,21 +23,21 @@ use Cake\Console\Command\Task\ViewTask;
 use Cake\Controller\Controller;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Model\Model;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 /**
  * Test View Task Comment Model
  *
  */
-class ViewTaskComment extends Model {
+class ViewTaskCommentsTable extends Table {
 
 /**
  * Table name
  *
  * @var string
  */
-	public $useTable = 'comments';
+	public $_table = 'comments';
 
 /**
  * Belongs To Associations
@@ -56,14 +56,14 @@ class ViewTaskComment extends Model {
  * Test View Task Article Model
  *
  */
-class ViewTaskArticle extends Model {
+class ViewTaskArticlesTable extends Table {
 
 /**
  * Table name
  *
  * @var string
  */
-	public $useTable = 'articles';
+	public $_table = 'articles';
 }
 
 /**
@@ -72,7 +72,7 @@ class ViewTaskArticle extends Model {
  */
 class ViewTaskCommentsController extends Controller {
 
-	public $modelClass = 'Cake\Model\ViewTaskComments';
+	public $modelClass = 'Cake\Model\Repository\ViewTaskCommentsTable';
 
 /**
  * Testing public controller action
@@ -162,8 +162,8 @@ class ViewTaskArticlesController extends Controller {
 // Alias classes
 class_alias(__NAMESPACE__ . '\ViewTaskArticlesController', 'Cake\Controller\ViewTaskArticlesController');
 class_alias(__NAMESPACE__ . '\ViewTaskCommentsController', 'Cake\Controller\ViewTaskCommentsController');
-class_alias(__NAMESPACE__ . '\ViewTaskComment', 'Cake\Model\ViewTaskComments');
-class_alias(__NAMESPACE__ . '\ViewTaskArticle', 'Cake\Model\ViewTaskArticle');
+class_alias(__NAMESPACE__ . '\ViewTaskCommentsTable', 'Cake\Model\Repository\ViewTaskCommentsTable');
+class_alias(__NAMESPACE__ . '\ViewTaskArticlesTable', 'Cake\Model\Repostiory\ViewTaskArticlesTable');
 
 /**
  * ViewTaskTest class

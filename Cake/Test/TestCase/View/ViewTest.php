@@ -24,7 +24,6 @@ use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -953,7 +952,6 @@ class ViewTest extends TestCase {
 		$this->PostsController->set('variable', 'values');
 
 		$View = new View($this->PostsController);
-		ClassRegistry::addObject('afterView', $View);
 
 		$content = 'This is my view output';
 		$result = $View->renderLayout($content, 'default');

@@ -19,11 +19,10 @@ namespace Cake\Test\TestCase\View;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Model\Model;
 use Cake\Network\Request;
+use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\View\Helper;
 use Cake\View\View;
 
@@ -31,14 +30,7 @@ use Cake\View\View;
  * HelperTestPost class
  *
  */
-class HelperTestPost extends Model {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class HelperTestPostsTable extends Table {
 
 /**
  * schema method
@@ -70,14 +62,7 @@ class HelperTestPost extends Model {
  * HelperTestComment class
  *
  */
-class HelperTestComment extends Model {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class HelperTestCommentsTable extends Table {
 
 /**
  * schema method
@@ -103,14 +88,7 @@ class HelperTestComment extends Model {
  * HelperTestTag class
  *
  */
-class HelperTestTag extends Model {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class HelperTestTagsTable extends Table {
 
 /**
  * schema method
@@ -133,14 +111,7 @@ class HelperTestTag extends Model {
  * HelperTestPostsTag class
  *
  */
-class HelperTestPostsTag extends Model {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class HelperTestPostsTagsTable extends Table {
 
 /**
  * schema method
@@ -205,16 +176,11 @@ class HelperTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		ClassRegistry::flush();
 		Router::reload();
 		$null = null;
 		$this->View = new View($null);
 		$this->Helper = new Helper($this->View);
 		$this->Helper->request = new Request();
-
-		ClassRegistry::addObject('HelperTestPost', new HelperTestPost());
-		ClassRegistry::addObject('HelperTestComment', new HelperTestComment());
-		ClassRegistry::addObject('HelperTestTag', new HelperTestTag());
 	}
 
 /**

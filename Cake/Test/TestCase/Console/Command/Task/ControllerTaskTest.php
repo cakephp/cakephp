@@ -19,8 +19,7 @@ use Cake\Console\Command\Task\TemplateTask;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Model\Model;
-use Cake\Model\Schema;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\View\Helper;
@@ -29,7 +28,7 @@ use Cake\View\Helper;
  * Class BakeArticle
  *
  */
-class BakeArticle extends Model {
+class BakeArticlesTable extends Table {
 
 	public $hasMany = array('BakeComment');
 
@@ -37,7 +36,10 @@ class BakeArticle extends Model {
 
 }
 
-class_alias('Cake\Test\TestCase\Console\Command\Task\BakeArticle', 'Cake\Model\BakeArticle');
+class_alias(
+	'Cake\Test\TestCase\Console\Command\Task\BakeArticlesTable',
+	'Cake\Model\Repository\BakeArticlesTable'
+);
 
 /**
  * ControllerTaskTest class

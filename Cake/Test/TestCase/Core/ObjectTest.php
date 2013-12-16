@@ -23,7 +23,6 @@ use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Log\Log;
 use Cake\Routing\Router;
-use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -156,18 +155,6 @@ class TestObject extends Object {
 	public function set($properties = array()) {
 		return parent::_set($properties);
 	}
-
-}
-
-/**
- * ObjectTestModel class
- *
- */
-class ObjectTestModel extends TestModel {
-
-	public $useTable = false;
-
-	public $name = 'ObjectTestModel';
 
 }
 

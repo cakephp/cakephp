@@ -17,60 +17,9 @@
 namespace Cake\Test\TestCase\Utility;
 
 use Cake\Core\Configure;
-use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Xml;
 
-/**
- * Article class
- *
- */
-class XmlArticle extends TestModel {
-
-/**
- * name property
- *
- * @var string
- */
-	public $name = 'Article';
-
-/**
- * belongsTo property
- *
- * @var array
- */
-	public $belongsTo = array(
-		'User' => array(
-			'className' => 'XmlUser',
-			'foreignKey' => 'user_id'
-		)
-	);
-}
-
-/**
- * User class
- *
- */
-class XmlUser extends TestModel {
-
-/**
- * name property
- *
- * @var string
- */
-	public $name = 'User';
-
-/**
- * hasMany property
- *
- * @var array
- */
-	public $hasMany = array(
-		'Article' => array(
-			'className' => 'XmlArticle'
-		)
-	);
-}
 
 /**
  * XmlTest class
