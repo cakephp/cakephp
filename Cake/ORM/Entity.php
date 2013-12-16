@@ -73,12 +73,12 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected static $_accessors = [];
 
 /**
- * Indicates whether or not this entity has already been persisted.
+ * Indicates whether or not this entity is yet to be persisted.
  * A null value indicates an unknown persistence status
  *
  * @var boolean
  */
-	protected $_persisted = null;
+	protected $_new = null;
 
 /**
  * List of errors per field as stored in this object
@@ -512,9 +512,9 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 	public function isNew($new = null) {
 		if ($new === null) {
-			return $this->_persisted;
+			return $this->_new;
 		}
-		return $this->_persisted = (bool)$new;
+		return $this->_new = (bool)$new;
 	}
 
 /**

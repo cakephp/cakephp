@@ -396,6 +396,334 @@ class BelongsToMany extends Association {
 	}
 
 /**
+ * Associates the source entity to each of the target entities provided by
+ * creating links in the junction table. Both the source entity and each of
+ * the target entities are assumed to be already persisted, if the are marked
+ * as new or their status is unknown, an exception will be thrown.
+ *
+ * When using this method, all entities in `$targetEntities` will be appended to
+ * the source entity's property corresponding to this association object.
+ *
+ * This method does not check link uniqueness.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $newTags = $tags->find('relevant')->execute();
+ * $articles->association('tags')->link($article, $newTags);
+ * }}}
+ *
+ * `$article->get('tags')` will contain all tags in `$newTags` after liking
+ *
+ * @param \Cake\ORM\Entity $sourceEntity the row belonging to the `source` side
+ * of this association
+ * @param array $targetEntities list of entities belonging to the `target` side
+ * of this association
+ * @param array $options list of options to be passed to the save method
+ * @throws \InvalidArgumentException when any of the values in $targetEntities is
+ * detected to not be already persisted
+ * @return boolean true on success, false otherwise
+ */
+	public function link(Entity $sourceEntity, array $targetEntities, array $options = []) {
+		$this->_checkPersitenceStatus($sourceEntity, $targetEntities);
+		$property = $this->property();
+		$links = $sourceEntity->get($property) ?: [];
+		$links = array_merge($links, $targetEntities);
+		$sourceEntity->set($property, $links);
+
+		return $this->junction()->connection()->transactional(
+			function() use ($sourceEntity, $targetEntities, $options) {
+				return $this->_saveLinks($sourceEntity, $targetEntities, $options);
+			}
+		);
+	}
+
+/**
+ * Removes all links between the passed source entity and each of the provided
+ * target entities. This method assumes that all passed objects are already persisted
+ * in the database and that each of them contain a primary key value.
+ *
+ * By default this method will also unset each of the entity objects stored inside
+ * the source entity.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $article->tags = [$tag1, $tag2, $tag3, $tag4];
+ * $tags = [$tag1, $tag2, $tag3];
+ * $articles->association('tags')->unlink($article, $tags);
+ * }}}
+ *
+ * `$article->get('tags')` will contain only `[$tag4]` after deleting in the database
+ *
+ * @param \Cake\ORM\Entity $sourceEntity an entity persisted in the source table for
+ * this association
+ * @param array $targetEntities list of entities persisted in the target table for
+ * this association
+ * @param boolean $cleanProperty whether or not to remove all the objects in $targetEntities
+ * that are stored in $sourceEntity
+ * @throws \InvalidArgumentException if non persisted entities are passed or if
+ * any of them is lacking a primary key value
+ * @return void
+ */
+	public function unlink(Entity $sourceEntity, array $targetEntities, $cleanProperty = true) {
+		$this->_checkPersitenceStatus($sourceEntity, $targetEntities);
+		$property = $this->property();
+
+		$this->junction()->connection()->transactional(
+			function() use ($sourceEntity, $targetEntities) {
+				$links = $this->_collectJointEntities($sourceEntity, $targetEntities);
+				foreach ($links as $entity) {
+					$this->_junctionTable->delete($entity);
+				}
+			}
+		);
+
+		$existing = $sourceEntity->get($property) ?: [];
+		if (!$cleanProperty || empty($existing)) {
+			return;
+		}
+
+		$storage = new \SplObjectStorage;
+		foreach ($targetEntities as $e) {
+			$storage->attach($e);
+		}
+
+		foreach ($existing as $k => $e) {
+			if ($storage->contains($e)) {
+				unset($existing[$k]);
+			}
+		}
+
+		$sourceEntity->set($property, array_values($existing));
+		$sourceEntity->dirty($property, false);
+	}
+
+/**
+ * Replaces existing association links between the source entity and the target
+ * with the ones passed. This method does a smart cleanup, links that are already
+ * persisted and present in `$targetEntities` will not be deleted, new links will
+ * be created for the passed target entities that are not already in the database
+ * and the rest will be removed.
+ *
+ * For example, if an article is linked to tags 'cake' and 'framework' and you pass
+ * to this method an array containing the entities for tags 'cake', 'php' and 'awesome',
+ * only the link for cake will be kept in database, the link for 'framework' will be
+ * deleted and the links for 'php' and 'awesome' will be created.
+ *
+ * Existing links are not deleted and created again, they are either left untouched
+ * or updated so that potential extra information stored in the joint row is not
+ * lost. Updating the link row can be done by making sure the corresponding passed
+ * target entity contains the joint property with its primary key and any extra
+ * information to be stored.
+ *
+ * On success, the passed `$sourceEntity` will contain `$targetEntities` as  value
+ * in the corresponding property for this association.
+ *
+ * This method assumes that links between both the source entity and each of the
+ * target entities are unique. That is, for any given row in the source table there
+ * can only be one link in the junction table pointing to any other given row in
+ * the target table.
+ *
+ * Additional options for new links to be saved can be passed in the third argument,
+ * check `Table::save()` for information on the accepted options.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $article->tags = [$tag1, $tag2, $tag3, $tag4];
+ * $articles->save($article);
+ * $tags = [$tag1, $tag3];
+ * $articles->association('tags')->replaceLinks($article, $tags);
+ * }}}
+ *
+ * `$article->get('tags')` will contain only `[$tag1, $tag3]` at the end
+ *
+ * @param \Cake\ORM\Entity $sourceEntity an entity persisted in the source table for
+ * this association
+ * @param array $targetEntities list of entities from the target table to be linked
+ * @param array $options list of options to be passed to `save` persisting or
+ * updating new links
+ * @throws \InvalidArgumentException if non persisted entities are passed or if
+ * any of them is lacking a primary key value
+ * @return boolean success
+ */
+	public function replaceLinks(Entity $sourceEntity, array $targetEntities, array $options = []) {
+		$primaryKey = (array)$this->source()->primaryKey();
+		$primaryValue = $sourceEntity->extract($primaryKey);
+
+		if (count(array_filter($primaryValue, 'strlen')) !== count($primaryKey)) {
+			$message = __d('cake_dev', 'Could not find primary key value for source entity');
+			throw new \InvalidArgumentException($message);
+		}
+
+		return $this->junction()->connection()->transactional(
+			function() use ($sourceEntity, $targetEntities, $primaryValue, $options) {
+				$foreignKey = (array)$this->foreignKey();
+				$belongsTo = $this->_junctionTable->association($this->target()->alias());
+				$existing = $this->_junctionTable->find('all')
+					->where(array_combine($foreignKey, $primaryValue))
+					->andWhere($belongsTo->conditions());
+
+				$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
+				$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
+
+				$property = $this->property();
+				$sourceEntity->set($property, $inserts);
+
+				if ($inserts && !$this->save($sourceEntity, $options + ['associated' => false])) {
+					return false;
+				}
+
+				$sourceEntity->set($property, $targetEntities);
+				$sourceEntity->dirty($property, false);
+				return true;
+			}
+		);
+	}
+
+/**
+ * Helper method used to delete the difference between the links passed in
+ * `$existing` and `$jointEntities`. This method will return the values from
+ * `$targetEntities` that were not deleted from calculating the difference.
+ *
+ * @param \Cake\ORM\Query $existing a query for getting existing links
+ * @param array $jointEntities link entities that should be persisted
+ * @param array $targetEntities entities in target table that are related to
+ * the `$jointEntitites`
+ * @return array
+ */
+	protected function _diffLinks($existing, $jointEntities, $targetEntities) {
+		$junction = $this->junction();
+		$target = $this->target();
+		$belongsTo = $junction->association($target->alias());
+		$foreignKey = (array)$this->foreignKey();
+		$assocForeignKey = (array)$belongsTo->foreignKey();
+
+		$keys = array_merge($foreignKey, $assocForeignKey);
+		$deletes = $indexed = $present = [];
+
+		foreach ($jointEntities as $i => $entity) {
+			$indexed[$i] = $entity->extract($keys);
+			$present[$i] = array_values($entity->extract($assocForeignKey));
+		}
+
+		foreach ($existing as $result) {
+			$fields = $result->extract($keys);
+			$found = false;
+			foreach ($indexed as $i => $data) {
+				if ($fields === $data) {
+					unset($indexed[$i]);
+					$found = true;
+					break;
+				}
+			}
+
+			if (!$found) {
+				$deletes[] = $result;
+			}
+		}
+
+		$primary = (array)$target->primaryKey();
+		$jointProperty = $target->association($junction->alias())->property();
+		foreach ($targetEntities as $k => $entity) {
+			$key = array_values($entity->extract($primary));
+			foreach ($present as $i => $data) {
+				if ($key === $data && !$entity->get($jointProperty)) {
+					unset($targetEntities[$k], $present[$i]);
+					break;
+				}
+			}
+		}
+
+		if ($deletes) {
+			foreach ($deletes as $entity) {
+				$junction->delete($entity);
+			}
+		}
+
+		return array_values($targetEntities);
+	}
+
+/**
+ * Throws an exception should any of the passed entities is not persisted.
+ *
+ * @throws \InvalidArgumentException
+ * @return boolean
+ */
+	protected function _checkPersitenceStatus($sourceEntity, array $targetEntities) {
+		if ($sourceEntity->isNew() !== false) {
+			$error = __d('cake_dev', 'Source entity needs to be persisted before proceeding');
+			throw new \InvalidArgumentException($error);
+		}
+
+		foreach ($targetEntities as $entity) {
+			if ($entity->isNew() !== false) {
+				$error = __d('cake_dev', 'Cannot link not persisted entities');
+				throw new \InvalidArgumentException($error);
+			}
+		}
+
+		return true;
+	}
+
+/**
+ * Returns the list of joint entities that exist between the source entity
+ * and each of the passed target entities
+ *
+ * @param \Cake\ORM\Entity $sourceEntity
+ * @param array $targetEntities
+ * @throws \InvalidArgumentException if any of the entities is lacking a primary
+ * key value
+ * @return array
+ */
+	protected function _collectJointEntities($sourceEntity, $targetEntities) {
+		$target = $this->target();
+		$source = $this->source();
+		$junction = $this->junction();
+		$jointProperty = $target->association($junction->alias())->property();
+		$primary = (array)$target->primaryKey();
+
+		$result = [];
+		$missing = [];
+
+		foreach ($targetEntities as $entity) {
+			$joint = $entity->get($jointProperty);
+
+			if (!$joint) {
+				$missing[] = $entity->extract($primary);
+				continue;
+			}
+
+			$joint->isNew(false);
+			$result[] = $joint;
+		}
+
+		if (empty($missing)) {
+			return $result;
+		}
+
+		$belongsTo = $junction->association($target->alias());
+		$foreignKey = (array)$this->foreignKey();
+		$assocForeignKey = (array)$belongsTo->foreignKey();
+		$sourceKey = $sourceEntity->extract((array)$source->primaryKey());
+
+		foreach ($missing as $key) {
+			$unions[] = $junction->find('all')
+				->where(array_combine($foreignKey, $sourceKey))
+				->andWhere(array_combine($assocForeignKey, $key))
+				->andWhere($belongsTo->conditions());
+		}
+
+		$query = array_shift($unions);
+		foreach ($unions as $q) {
+			$query->union($q);
+		}
+
+		return array_merge($result, $query->toArray());
+	}
+
+/**
  * Appends any conditions required to load the relevant set of records in the
  * target table query given a filter key and some filtering values.
  *

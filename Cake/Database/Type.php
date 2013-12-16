@@ -17,7 +17,6 @@
 namespace Cake\Database;
 
 use Cake\Database\Driver;
-use Exception;
 use PDO;
 
 /**

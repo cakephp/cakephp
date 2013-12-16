@@ -639,4 +639,378 @@ class BelongsToManyTest extends TestCase {
 		$association->cascadeDelete($entity);
 	}
 
+/**
+ * Test linking entities having a non persisted source entity
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Source entity needs to be persisted before proceeding
+ * @return void
+ */
+	public function testLinkWithNotPersistedSource() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$entity = new Entity(['id' => 1]);
+		$tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
+		$assoc->link($entity, $tags);
+	}
+
+/**
+ * Test liking entities having a non persited target entity
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Cannot link not persisted entities
+ * @return void
+ */
+	public function testLinkWithNotPersistedTarget() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$entity = new Entity(['id' => 1], ['markNew' => false]);
+		$tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
+		$assoc->link($entity, $tags);
+	}
+
+/**
+ * Tests that liking entities will validate data and pass on to _saveLinks
+ *
+ * @return void
+ */
+	public function testLinkSuccess() {
+		$connection = \Cake\Database\ConnectionManager::get('test');
+		$joint = $this->getMock(
+			'\Cake\ORM\Table',
+			['save'],
+			[['alias' => 'ArticlesTags', 'connection' => $connection]]
+		);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'through' => $joint,
+			'joinTable' => 'tags_articles'
+		];
+
+		$assoc = new BelongsToMany('Test', $config);
+		$opts = ['markNew' => false];
+		$entity = new Entity(['id' => 1], $opts);
+		$tags = [new Entity(['id' => 2], $opts), new Entity(['id' => 3], $opts)];
+		$saveOptions = ['foo' => 'bar'];
+
+		$joint->expects($this->at(0))
+			->method('save')
+			->with(
+				new Entity(['article_id' => 1, 'tag_id' => 2], ['markNew' => true]),
+				$saveOptions
+			)
+			->will($this->returnValue($entity));
+
+		$joint->expects($this->at(1))
+			->method('save')
+			->with(
+				new Entity(['article_id' => 1, 'tag_id' => 3], ['markNew' => true]),
+				$saveOptions
+			)
+			->will($this->returnValue($entity));
+
+		$this->assertTrue($assoc->link($entity, $tags, $saveOptions));
+		$this->assertSame($entity->test, $tags);
+	}
+
+/**
+ * Test liking entities having a non persited source entity
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Source entity needs to be persisted before proceeding
+ * @return void
+ */
+	public function testUnlinkWithNotPersistedSource() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$entity = new Entity(['id' => 1]);
+		$tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
+		$assoc->unlink($entity, $tags);
+	}
+
+/**
+ * Test liking entities having a non persited target entity
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Cannot link not persisted entities
+ * @return void
+ */
+	public function testUnlinkWithNotPersistedTarget() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$entity = new Entity(['id' => 1], ['markNew' => false]);
+		$tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
+		$assoc->unlink($entity, $tags);
+	}
+
+/**
+ * Tests that unlinking calls the right methods
+ *
+ * @return void
+ */
+	public function testUnlinkSuccess() {
+		$connection = \Cake\Database\ConnectionManager::get('test');
+		$joint = $this->getMock(
+			'\Cake\ORM\Table',
+			['delete', 'find'],
+			[['alias' => 'ArticlesTags', 'connection' => $connection]]
+		);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'through' => $joint,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$assoc
+			->junction()
+			->association('tags')
+			->conditions(['foo' => 1]);
+
+		$query1 = $this->getMock('\Cake\ORM\Query', [], [$connection, $joint]);
+		$query2 = $this->getMock('\Cake\ORM\Query', [], [$connection, $joint]);
+
+		$joint->expects($this->at(0))->method('find')
+			->with('all')
+			->will($this->returnValue($query1));
+
+		$joint->expects($this->at(1))->method('find')
+			->with('all')
+			->will($this->returnValue($query2));
+
+		$query1->expects($this->once())
+			->method('where')
+			->with(['article_id' => 1])
+			->will($this->returnSelf());
+		$query1->expects($this->at(1))
+			->method('andWhere')
+			->with(['tag_id' => 2])
+			->will($this->returnSelf());
+		$query1->expects($this->at(2))
+			->method('andWhere')
+			->with(['foo' => 1])
+			->will($this->returnSelf());
+		$query1->expects($this->once())
+			->method('union')
+			->with($query2)
+			->will($this->returnSelf());
+
+		$query2->expects($this->once())
+			->method('where')
+			->with(['article_id' => 1])
+			->will($this->returnSelf());
+		$query2->expects($this->at(1))
+			->method('andWhere')
+			->with(['tag_id' => 3])
+			->will($this->returnSelf());
+		$query2->expects($this->at(2))
+			->method('andWhere')
+			->with(['foo' => 1])
+			->will($this->returnSelf());
+
+		$jointEntities = [
+			new Entity(['article_id' => 1, 'tag_id' => 2]),
+			new Entity(['article_id' => 1, 'tag_id' => 3])
+		];
+
+		$query1->expects($this->once())
+			->method('toArray')
+			->will($this->returnValue($jointEntities));
+
+		$opts = ['markNew' => false];
+		$tags = [new Entity(['id' => 2], $opts), new Entity(['id' => 3], $opts)];
+		$entity = new Entity(['id' => 1, 'test' => $tags], $opts);
+
+		$joint->expects($this->at(2))
+			->method('delete')
+			->with($jointEntities[0]);
+
+		$joint->expects($this->at(3))
+			->method('delete')
+			->with($jointEntities[1]);
+
+		$assoc->unlink($entity, $tags);
+		$this->assertEmpty($entity->get('test'));
+	}
+
+/**
+ * Tests that unlinking with last parameter set to false
+ * will not remove entities from the association property
+ *
+ * @return void
+ */
+	public function testUnlinkWithoutPropertyClean() {
+		$connection = \Cake\Database\ConnectionManager::get('test');
+		$joint = $this->getMock(
+			'\Cake\ORM\Table',
+			['delete', 'find'],
+			[['alias' => 'ArticlesTags', 'connection' => $connection]]
+		);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'through' => $joint,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$assoc
+			->junction()
+			->association('tags')
+			->conditions(['foo' => 1]);
+
+		$joint->expects($this->never())->method('find');
+		$opts = ['markNew' => false];
+		$jointEntities = [
+			new Entity(['article_id' => 1, 'tag_id' => 2]),
+			new Entity(['article_id' => 1, 'tag_id' => 3])
+		];
+		$tags = [
+			new Entity(['id' => 2, 'articles_tags' => $jointEntities[0]], $opts),
+			new Entity(['id' => 3, 'articles_tags' => $jointEntities[1]], $opts)
+		];
+		$entity = new Entity(['id' => 1, 'test' => $tags], $opts);
+
+		$joint->expects($this->at(0))
+			->method('delete')
+			->with($jointEntities[0]);
+
+		$joint->expects($this->at(1))
+			->method('delete')
+			->with($jointEntities[1]);
+
+		$assoc->unlink($entity, $tags, false);
+		$this->assertEquals($tags, $entity->get('test'));
+	}
+
+/**
+ * Tests that replaceLink requires the sourceEntity to have primaryKey values
+ * for the source entity
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Could not find primary key value for source entity
+ * @return void
+ */
+	public function testReplaceWithMissingPrimaryKey() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = new BelongsToMany('Test', $config);
+		$entity = new Entity(['foo' => 1], ['markNew' => false]);
+		$tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
+		$assoc->replaceLinks($entity, $tags);
+	}
+
+/**
+ * Tests that replaceLinks will delete entities not present in the passed
+ * array, maintain those are already persisted and were passed and also
+ * insert the rest.
+ *
+ * @return void
+ */
+	public function testReplaceLinkSuccess() {
+		$connection = \Cake\Database\ConnectionManager::get('test');
+		$joint = $this->getMock(
+			'\Cake\ORM\Table',
+			['delete', 'find'],
+			[['alias' => 'ArticlesTags', 'connection' => $connection]]
+		);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'through' => $joint,
+			'joinTable' => 'tags_articles'
+		];
+		$assoc = $this->getMock(
+			'\Cake\ORM\Association\BelongsToMany',
+			['_collectJointEntities', 'save'],
+			['tags', $config]
+		);
+
+		$assoc
+			->junction()
+			->association('tags')
+			->conditions(['foo' => 1]);
+
+		$query1 = $this->getMock(
+			'\Cake\ORM\Query',
+			['where', 'andWhere', 'addDefaultTypes'],
+			[$connection, $joint]
+		);
+
+		$joint->expects($this->at(0))->method('find')
+			->with('all')
+			->will($this->returnValue($query1));
+
+		$query1->expects($this->once())
+			->method('where')
+			->with(['article_id' => 1])
+			->will($this->returnSelf());
+		$query1->expects($this->at(1))
+			->method('andWhere')
+			->with(['foo' => 1])
+			->will($this->returnSelf());
+
+		$existing = [
+			new Entity(['article_id' => 1, 'tag_id' => 2]),
+			new Entity(['article_id' => 1, 'tag_id' => 4]),
+			new Entity(['article_id' => 1, 'tag_id' => 5]),
+			new Entity(['article_id' => 1, 'tag_id' => 6])
+		];
+		$query1->setResult(new \ArrayIterator($existing));
+
+		$opts = ['markNew' => false];
+		$tags = [
+			new Entity(['id' => 2], $opts),
+			new Entity(['id' => 3], $opts),
+			new Entity(['id' => 6, 'articlesTag' => new Entity(['bar' => 'baz'])])
+		];
+		$entity = new Entity(['id' => 1, 'test' => $tags], $opts);
+
+		$jointEntities = [
+			new Entity(['article_id' => 1, 'tag_id' => 2])
+		];
+		$assoc->expects($this->once())->method('_collectJointEntities')
+			->with($entity, $tags)
+			->will($this->returnValue($jointEntities));
+
+		$joint->expects($this->at(1))
+			->method('delete')
+			->with($existing[1]);
+		$joint->expects($this->at(2))
+			->method('delete')
+			->with($existing[2]);
+
+		$options = ['foo' => 'bar'];
+		$assoc->expects($this->once())
+			->method('save')
+			->with($entity, $options + ['associated' => false])
+			->will($this->returnCallback(function($entity) use ($tags) {
+				$this->assertSame([$tags[1], $tags[2]], $entity->get('tags'));
+				return true;
+			}));
+
+		$assoc->replaceLinks($entity, $tags, $options);
+		$this->assertSame($tags, $entity->tags);
+		$this->assertFalse($entity->dirty('tags'));
+	}
+
 }

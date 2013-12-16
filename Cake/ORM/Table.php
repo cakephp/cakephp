@@ -1348,6 +1348,8 @@ class Table implements EventListener {
  *
  * @param Entity $entity The entity to delete.
  * @param ArrayObject $options The options for the delete.
+ * @throws \InvalidArgumentException if there are no primary key values of the
+ * passed entity
  * @return boolean success
  */
 	protected function _processDelete($entity, $options) {
@@ -1366,6 +1368,11 @@ class Table implements EventListener {
 		}
 		$primaryKey = (array)$this->primaryKey();
 		$conditions = (array)$entity->extract($primaryKey);
+
+		if (!array_filter($conditions, 'strlen')) {
+			$msg = __d('cake_dev', 'Deleting requires a primary key value');
+			throw new \InvalidArgumentException($msg);
+		}
 
 		$query = $this->_buildQuery();
 		$statement = $query->delete($this->table())
