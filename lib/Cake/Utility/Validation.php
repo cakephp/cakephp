@@ -331,7 +331,7 @@ class Validation {
 			$separator . '((1[6-9]|[2-9]\\d)\\d{2})$%';
 
 		$regex['my'] = '%^(' . $month . $separator . $year . ')$%';
-		$regex['ym'] = '%^(' . $year . $separator . $month  . ')$%';
+		$regex['ym'] = '%^(' . $year . $separator . $month . ')$%';
 		$regex['y'] = '%^(' . $fourDigitYear . ')$%';
 
 		$format = (is_array($format)) ? array_values($format) : array($format);
