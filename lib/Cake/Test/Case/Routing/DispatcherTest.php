@@ -1223,6 +1223,13 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertFalse($request->params['altered']);
 		$this->assertEquals(500, $response->statusCode());
 		$this->assertNull($dispatcher->controller);
+
+		$settings = array('service' => 'google.com');
+		Configure::write('Dispatcher.filters', array(
+			'TestDispatcherFilter' => $settings
+		));
+		$dispatcher = new TestDispatcher();
+		$this->assertEquals(dispatcher->settings, settings)
 	}
 
 /**

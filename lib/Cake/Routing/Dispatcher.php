@@ -95,7 +95,12 @@ class Dispatcher implements CakeEventListener {
 			return;
 		}
 
-		foreach ($filters as $filter) {
+		foreach ($filters as $index => $filter) {
+			$settings = array();
+			if (is_array($filter) && !is_int($index)) {
+				$settings = $filter;
+				$filter = $index;
+			}
 			if (is_string($filter)) {
 				$filter = array('callable' => $filter);
 			}
@@ -105,7 +110,7 @@ class Dispatcher implements CakeEventListener {
 				if (!class_exists($callable)) {
 					throw new MissingDispatcherFilterException($callable);
 				}
-				$manager->attach(new $callable);
+				$manager->attach(new $callable($settings));
 			} else {
 				$on = strtolower($filter['on']);
 				$options = array();
