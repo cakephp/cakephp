@@ -1229,7 +1229,7 @@ class DispatcherTest extends CakeTestCase {
 			'TestDispatcherFilter' => $settings
 		));
 		$dispatcher = new TestDispatcher();
-		$this->assertEquals($dispatcher->settings, $settings)
+		$this->assertEquals($dispatcher->settings, $settings);
 	}
 
 /**
