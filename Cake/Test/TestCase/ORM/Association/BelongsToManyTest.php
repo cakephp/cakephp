@@ -950,7 +950,7 @@ class BelongsToManyTest extends TestCase {
 		];
 		$assoc = $this->getMock(
 			'\Cake\ORM\Association\BelongsToMany',
-			['_collectJointEntities', 'save'],
+			['_collectJointEntities', '_saveTarget'],
 			['tags', $config]
 		);
 
@@ -1010,10 +1010,10 @@ class BelongsToManyTest extends TestCase {
 
 		$options = ['foo' => 'bar'];
 		$assoc->expects($this->once())
-			->method('save')
-			->with($entity, $options + ['associated' => false])
-			->will($this->returnCallback(function($entity) use ($tags) {
-				$this->assertSame([$tags[1], $tags[2]], $entity->get('tags'));
+			->method('_saveTarget')
+			->with($entity, [$tags[1], $tags[2]], $options + ['associated' => false])
+			->will($this->returnCallback(function($entity, $inserts) use ($tags) {
+				$this->assertSame([$tags[1], $tags[2]], $inserts);
 				return true;
 			}));
 

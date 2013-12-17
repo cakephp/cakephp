@@ -36,6 +36,20 @@ class BelongsToMany extends Association {
 	}
 
 /**
+ * Saving strategy that will only append to the links set
+ *
+ * @var string
+ */
+	const SAVE_APPEND = 'append';
+
+/**
+ * Saving strategy that will replace the links with the provided set
+ *
+ * @var string
+ */
+	const SAVE_REPLACE = 'replace';
+
+/**
  * Whether this association can be expressed directly in a query join
  *
  * @var boolean
@@ -85,6 +99,13 @@ class BelongsToMany extends Association {
  * @var string
  */
 	protected $_junctionProperty = '_joinData';
+
+/**
+ * Saving strategy to be used by this association
+ *
+ * @var string
+ */
+	protected $_saveStrategy = self::SAVE_APPEND;
 
 /**
  * Sets the table instance for the junction relation. If no arguments
@@ -283,14 +304,38 @@ class BelongsToMany extends Association {
 	}
 
 /**
+ * Sets the strategy that should be used for saving. If called with no
+ * arguments, it will return the currently configured strategy
+ *
+ * @param string $strategy the strategy name to be used
+ * @throws \InvalidArgumentException if an invalid strategy name is passed
+ * @return string the strategy to be used for saving
+ */
+	public function saveStrategy($strategy = null) {
+		if ($strategy === null) {
+			return $this->_saveStrategy;
+		}
+		if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
+			$msg = __d('cake_dev', 'Invalid save strategy "%s"', $strategy);
+			throw new \InvalidArgumentException($msg);
+		}
+		return $this->_strategy = $strategy;
+	}
+
+/**
  * Takes an entity from the source table and looks if there is a field
  * matching the property name for this association. The found entity will be
  * saved on the target table for this association by passing supplied
  * `$options`
  *
- * Using this save function will only create new links between each side
- * of this association. It will not destroy existing ones even though they
- * may not be present in the array of entities to be saved.
+ * When using the 'append' strategy, this function will only create new links
+ * between each side of this association. It will not destroy existing ones even
+ * though they may not be present in the array of entities to be saved.
+ *
+ * When using the 'replace' strategy, existing links will be removed and new ones
+ * will be created in between both tables in the association. If there exists
+ * links in the database to some of the entities intended to be saved by this method,
+ * they will be updated, not deleted.
  *
  * @param \Cake\ORM\Entity $entity an entity from the source table
  * @param array|\ArrayObject $options options to be passed to the save method in
@@ -300,17 +345,26 @@ class BelongsToMany extends Association {
  * @return boolean|Entity false if $entity could not be saved, otherwise it returns
  * the saved entity
  * @see Table::save()
+ * @see BelongsToMany::replaceLinks()
  */
 	public function save(Entity $entity, $options = []) {
 		$property = $this->property();
 		$targetEntity = $entity->get($this->property());
-		$success = false;
+		$strategy = $this->saveStrategy();
 
-		if ($targetEntity) {
-			$success = $this->_saveTarget($entity, $targetEntity, $options);
+		if (!$targetEntity) {
+			return false;
 		}
 
-		return $success;
+		if ($strategy === self::SAVE_APPEND) {
+			return $this->_saveTarget($entity, $targetEntity, $options);
+		}
+
+		if ($this->replaceLinks($entity, $targetEntity, $options)) {
+			return $entity;
+		}
+
+		return false;
 	}
 
 /**
@@ -583,14 +637,13 @@ class BelongsToMany extends Association {
 
 				$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
 				$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
+				$options += ['associated' => false];
 
-				$property = $this->property();
-				$sourceEntity->set($property, $inserts);
-
-				if ($inserts && !$this->save($sourceEntity, $options + ['associated' => false])) {
+				if ($inserts && !$this->_saveTarget($sourceEntity, $inserts, $options)) {
 					return false;
 				}
 
+				$property = $this->property();
 				$sourceEntity->set($property, $targetEntities);
 				$sourceEntity->dirty($property, false);
 				return true;
@@ -819,6 +872,9 @@ class BelongsToMany extends Association {
 		}
 		if (!empty($opts['joinTable'])) {
 			$this->_junctionTableName($opts['joinTable']);
+		}
+		if (!empty($opts['saveStrategy'])) {
+			$this->saveStrategy($opts['saveStrategy']);
 		}
 		$this->_externalOptions($opts);
 	}
