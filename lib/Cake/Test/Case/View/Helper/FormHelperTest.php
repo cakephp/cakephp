@@ -2852,6 +2852,34 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test that inferred types do not override developer input
+ *
+ * @return void
+ */
+	public function testInputMagicTypeDoesNotOverride() {
+		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('Model.user', array('type' => 'checkbox'));
+		$expected = array(
+			'div' => array('class' => 'input checkbox'),
+			array('input' => array(
+				'type' => 'hidden',
+				'name' => 'data[Model][user]',
+				'id' => 'ModelUser_',
+				'value' => 0,
+			)),
+			array('input' => array(
+				'name' => 'data[Model][user]',
+				'type' => 'checkbox',
+				'id' => 'ModelUser',
+				'value' => 1
+			)),
+			'label' => array('for' => 'ModelUser'), 'User', '/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test that magic input() selects are created for type=number
  *
  * @return void

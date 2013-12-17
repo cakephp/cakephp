@@ -1082,7 +1082,7 @@ class FormHelper extends AppHelper {
 			$options = $this->_magicOptions($options);
 		}
 
-		if (in_array($options['type'], array('checkbox', 'radio', 'select'))) {
+		if (in_array($options['type'], array('radio', 'select'))) {
 			$options = $this->_optionsOptions($options);
 		}
 
