@@ -161,6 +161,41 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
+ * Tests saveStrategy
+ *
+ * @return void
+ */
+	public function testSaveStrategy() {
+		$assoc = new BelongsToMany('Test');
+		$this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->saveStrategy());
+		$assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
+		$this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->saveStrategy());
+		$assoc->saveStrategy(BelongsToMany::SAVE_APPEND);
+		$this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->saveStrategy());
+	}
+
+/**
+ * Tests that it is possible to pass the save strategy in the constructor
+ *
+ * @return void
+ */
+	public function testSaveStrategyInOptions() {
+		$assoc = new BelongsToMany('Test', ['saveStrategy' => BelongsToMany::SAVE_REPLACE]);
+		$this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->saveStrategy());
+	}
+
+/**
+ * Tests that passing an invalid strategy will throw an exception
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Invalid save strategy "depsert"
+ * @return void
+ */
+	public function testSaveStrategyInvalid() {
+		$assoc = new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
+	}
+
+/**
  * Tests that the correct join and fields are attached to a query depending on
  * the association config
  *

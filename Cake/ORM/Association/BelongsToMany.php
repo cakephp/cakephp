@@ -319,7 +319,7 @@ class BelongsToMany extends Association {
 			$msg = __d('cake_dev', 'Invalid save strategy "%s"', $strategy);
 			throw new \InvalidArgumentException($msg);
 		}
-		return $this->_strategy = $strategy;
+		return $this->_saveStrategy = $strategy;
 	}
 
 /**
