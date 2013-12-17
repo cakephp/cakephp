@@ -399,21 +399,6 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * testToBeInheritedGuardmethods method
- *
- * @return void
- */
-	public function testToBeInheritedGuardmethods() {
-		$request = new Request('controller_posts/index');
-
-		$Controller = new Controller($request, $this->getMock('Cake\Network\Response'));
-		$this->assertTrue($Controller->beforeScaffold(''));
-		$this->assertTrue($Controller->afterScaffoldSave(''));
-		$this->assertTrue($Controller->afterScaffoldSaveError(''));
-		$this->assertFalse($Controller->scaffoldError(''));
-	}
-
-/**
  * Generates status codes for redirect test.
  *
  * @return void
