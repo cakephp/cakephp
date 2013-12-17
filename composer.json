@@ -26,6 +26,9 @@
         "phpunit/phpunit": "3.7.*",
         "cakephp/debug_kit" : "2.2.*"
     },
+    "config": {
+        "vendor-dir": "vendors"
+    },
     "bin": [
         "lib/Cake/Console/cake"
     ]

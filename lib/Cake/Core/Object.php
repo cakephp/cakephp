@@ -17,7 +17,7 @@
 App::uses('CakeLog', 'Log');
 App::uses('Dispatcher', 'Routing');
 App::uses('Router', 'Routing');
-App::uses('Set', 'Utility');
+App::uses('CakeSet', 'Utility');
 App::uses('CakeLog', 'Log');
 
 /**

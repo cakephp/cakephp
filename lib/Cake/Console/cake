@@ -37,5 +37,11 @@ canonicalize() {
 CONSOLE=$(dirname -- "$(canonicalize "$0")")
 APP=`pwd`
 
-exec php -q "$CONSOLE"/cake.php -working "$APP" "$@"
+php --version | grep HipHop
+if [ $? -eq 0 ]; then
+	exec php "$CONSOLE"/cake.php -working "$APP" "$@"
+else
+	exec php -q "$CONSOLE"/cake.php -working "$APP" "$@"
+fi
+
 exit

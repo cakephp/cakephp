@@ -20,6 +20,7 @@ App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
 App::uses('Mysql', 'Model/Datasource/Database');
 App::uses('CakeSchema', 'Model');
+App::uses('CakeSet', 'Utility');
 
 require_once dirname(dirname(dirname(__FILE__))) . DS . 'models.php';
 
@@ -3708,10 +3709,10 @@ class MysqlTest extends CakeTestCase {
 			'recursive' => 1
 		));
 
-		$this->assertTrue(Set::matches('/Article[id=1]', $result));
-		$this->assertTrue(Set::matches('/Comment[id=1]', $result));
-		$this->assertTrue(Set::matches('/Comment[id=2]', $result));
-		$this->assertFalse(Set::matches('/Comment[id=10]', $result));
+		$this->assertTrue(CakeSet::matches('/Article[id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/Comment[id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/Comment[id=2]', $result));
+		$this->assertFalse(CakeSet::matches('/Comment[id=10]', $result));
 	}
 
 /**

@@ -20,6 +20,7 @@ App::uses('ConsoleOutput', 'Console');
 App::uses('ConsoleInput', 'Console');
 App::uses('ConsoleInputSubcommand', 'Console');
 App::uses('ConsoleOptionParser', 'Console');
+App::uses('CakeString', 'Utility');
 App::uses('ClassRegistry', 'Utility');
 App::uses('File', 'Utility');
 App::uses('ClassRegistry', 'Utility');
@@ -569,11 +570,11 @@ class Shell extends Object {
  * @param string $text Text the text to format.
  * @param string|integer|array $options Array of options to use, or an integer to wrap the text to.
  * @return string Wrapped / indented text
- * @see String::wrap()
+ * @see CakeString::wrap()
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell::wrapText
  */
 	public function wrapText($text, $options = array()) {
-		return String::wrap($text, $options);
+		return CakeString::wrap($text, $options);
 	}
 
 /**
