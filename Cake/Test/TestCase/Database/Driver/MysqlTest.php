@@ -63,7 +63,6 @@ class MysqlTest extends TestCase {
 			PDO::ATTR_PERSISTENT => true,
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::MYSQL_ATTR_INIT_COMMAND => ''
 		];
 		$driver->expects($this->once())->method('_connect')
 			->with($expected);
