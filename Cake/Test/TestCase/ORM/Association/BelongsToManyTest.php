@@ -1057,4 +1057,56 @@ class BelongsToManyTest extends TestCase {
 		$this->assertFalse($entity->dirty('tags'));
 	}
 
+/**
+ * Tests saving with replace strategy returning true
+ *
+ * @return void
+ */
+	public function testSaveWithReplace() {
+		$assoc = $this->getMock(
+			'\Cake\ORM\Association\BelongsToMany',
+			['replaceLinks'],
+			['tags']
+		);
+		$entity = new Entity([
+			'id' =>1,
+			'tags' => [
+				new Entity(['name' => 'foo'])
+			]
+		]);
+
+		$options = ['foo' => 'bar'];
+		$assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
+		$assoc->expects($this->once())->method('replaceLinks')
+			->with($entity, $entity->tags, $options)
+			->will($this->returnValue(true));
+		$this->assertSame($entity, $assoc->save($entity, $options));
+	}
+
+/**
+ * Tests saving with replace strategy returning true
+ *
+ * @return void
+ */
+	public function testSaveWithReplaceReturnFalse() {
+		$assoc = $this->getMock(
+			'\Cake\ORM\Association\BelongsToMany',
+			['replaceLinks'],
+			['tags']
+		);
+		$entity = new Entity([
+			'id' =>1,
+			'tags' => [
+				new Entity(['name' => 'foo'])
+			]
+		]);
+
+		$options = ['foo' => 'bar'];
+		$assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
+		$assoc->expects($this->once())->method('replaceLinks')
+			->with($entity, $entity->tags, $options)
+			->will($this->returnValue(false));
+		$this->assertSame(false, $assoc->save($entity, $options));
+	}
+
 }
