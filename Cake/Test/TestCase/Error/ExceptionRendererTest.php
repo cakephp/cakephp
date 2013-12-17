@@ -25,22 +25,7 @@ use Cake\Error\ExceptionRenderer;
 use Cake\Event\Event;
 use Cake\Network\Request;
 use Cake\Routing\Router;
-use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
-
-/**
- * Short description for class.
- *
- */
-class AuthBlueberryUser extends TestModel {
-
-/**
- * useTable property
- *
- * @var string
- */
-	public $useTable = false;
-}
 
 /**
  * BlueberryComponent class

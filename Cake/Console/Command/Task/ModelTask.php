@@ -19,7 +19,7 @@ namespace Cake\Console\Command\Task;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Database\ConnectionManager;
-use Cake\Model\Model;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
@@ -146,8 +146,14 @@ class ModelTask extends BakeTask {
 		if (!$table) {
 			$table = Inflector::tableize($className);
 		}
-		$object = new Model(['name' => $className, 'table' => $table, 'ds' => $this->connection]);
-		$fields = $object->schema(true);
+		throw new \Exception('Baking models does not work currently.');
+
+		$object = TableRegistry::get($className, [
+			'name' => $className,
+			'table' => $table,
+			'ds' => $this->connection
+		]);
+		$fields = $object->schema();
 		foreach ($fields as $name => $field) {
 			if (isset($field['key']) && $field['key'] === 'primary') {
 				$object->primaryKey = $name;
@@ -201,6 +207,8 @@ class ModelTask extends BakeTask {
 		if (empty($this->connection)) {
 			$this->connection = $this->DbConfig->getConfig();
 		}
+		throw new \Exception('Baking models does not work yet.');
+
 		$currentModelName = $this->getName();
 		$useTable = $this->getTable($currentModelName);
 		$db = ConnectionManager::getDataSource($this->connection);
@@ -591,7 +599,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of in progress associations
  * @return array Associations with belongsTo added in.
  */
-	public function findBelongsTo(Model $model, $associations) {
+	public function findBelongsTo($model, $associations) {
 		$fieldNames = array_keys($model->schema(true));
 		foreach ($fieldNames as $fieldName) {
 			$offset = strpos($fieldName, '_id');
@@ -620,7 +628,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of in progress associations
  * @return array Associations with hasOne and hasMany added in.
  */
-	public function findHasOneAndMany(Model $model, $associations) {
+	public function findHasOneAndMany($model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->_tables as $otherTable) {
 			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
@@ -663,7 +671,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of in-progress associations
  * @return array Associations with hasAndBelongsToMany added in.
  */
-	public function findHasAndBelongsToMany(Model $model, $associations) {
+	public function findHasAndBelongsToMany($model, $associations) {
 		$foreignKey = $this->_modelKey($model->name);
 		foreach ($this->_tables as $otherTable) {
 			$tableName = null;
@@ -696,7 +704,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of associations to be confirmed.
  * @return array Array of confirmed associations
  */
-	public function confirmAssociations(Model $model, $associations) {
+	public function confirmAssociations($model, $associations) {
 		foreach ($associations as $type => $settings) {
 			if (!empty($associations[$type])) {
 				foreach ($associations[$type] as $i => $assoc) {
@@ -722,7 +730,7 @@ class ModelTask extends BakeTask {
  * @param array $associations Array of associations.
  * @return array Array of associations.
  */
-	public function doMoreAssociations(Model $model, $associations) {
+	public function doMoreAssociations($model, $associations) {
 		$prompt = __d('cake_console', 'Would you like to define some additional model associations?');
 		$wannaDoMoreAssoc = $this->in($prompt, ['y', 'n'], 'n');
 		$possibleKeys = $this->_generatePossibleKeys();

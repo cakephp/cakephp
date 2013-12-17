@@ -20,10 +20,9 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Model\Model;
 use Cake\Network\Request;
+use Cake\ORM\Table;
 use Cake\Routing\Router;
-use Cake\TestSuite\Fixture\TestModel;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Security;
@@ -49,14 +48,7 @@ class ContactTestController extends Controller {
  * Contact class
  *
  */
-class Contact extends TestModel {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class ContactsTable extends Table {
 
 /**
  * Default schema
@@ -149,14 +141,7 @@ class Contact extends TestModel {
  * ContactTagsContact class
  *
  */
-class ContactTagsContact extends TestModel {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class ContactTagsContactsTable extends Table {
 
 /**
  * Default schema
@@ -185,7 +170,7 @@ class ContactTagsContact extends TestModel {
  * ContactNonStandardPk class
  *
  */
-class ContactNonStandardPk extends Contact {
+class ContactNonStandardPk extends ContactsTable {
 
 /**
  * primaryKey property
@@ -212,14 +197,7 @@ class ContactNonStandardPk extends Contact {
  * ContactTag class
  *
  */
-class ContactTag extends Model {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class ContactTagsTable extends Table {
 
 /**
  * schema definition
@@ -238,14 +216,7 @@ class ContactTag extends Model {
  * UserForm class
  *
  */
-class UserForm extends TestModel {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class UserFormsTable extends Table {
 
 /**
  * hasMany property
@@ -277,14 +248,7 @@ class UserForm extends TestModel {
  * OpenidUrl class
  *
  */
-class OpenidUrl extends TestModel {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class OpenidUrlsTable extends Table {
 
 /**
  * belongsTo property
@@ -331,14 +295,7 @@ class OpenidUrl extends TestModel {
  * ValidateUser class
  *
  */
-class ValidateUser extends TestModel {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class ValidateUsersTable extends Table {
 
 /**
  * hasOne property
@@ -380,7 +337,7 @@ class ValidateUser extends TestModel {
  * ValidateProfile class
  *
  */
-class ValidateProfile extends TestModel {
+class ValidateProfilesTable extends Table {
 
 /**
  * useTable property
@@ -438,14 +395,7 @@ class ValidateProfile extends TestModel {
  * ValidateItem class
  *
  */
-class ValidateItem extends TestModel {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class ValidateItemsTable extends Table {
 
 /**
  * schema property
@@ -486,14 +436,7 @@ class ValidateItem extends TestModel {
  * TestMail class
  *
  */
-class TestMail extends TestModel {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
+class TestMailsTable extends Table {
 
 }
 

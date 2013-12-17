@@ -16,7 +16,7 @@ namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Error;
-use Cake\Utility\ClassRegistry;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\Security;
@@ -142,30 +142,14 @@ class FormHelper extends Helper {
 			return $this->_models[$model];
 		}
 
-		if (ClassRegistry::isKeySet($model)) {
-			$object = ClassRegistry::getObject($model);
-		} elseif (isset($this->request->params['models'][$model])) {
-			$plugin = $this->request->params['models'][$model]['plugin'];
-			$plugin .= ($plugin) ? '.' : null;
-			$object = ClassRegistry::init(array(
-				'class' => $plugin . $this->request->params['models'][$model]['className'],
-				'alias' => $model
-			));
-		} elseif (ClassRegistry::isKeySet($this->defaultModel)) {
-			$defaultObject = ClassRegistry::getObject($this->defaultModel);
-			if ($defaultObject && in_array($model, array_keys($defaultObject->getAssociated()), true) && isset($defaultObject->{$model})) {
-				$object = $defaultObject->{$model};
-			}
-		} else {
-			$object = ClassRegistry::init($model, true);
-		}
+		$object = TableRegistry::get($model);
 
 		$this->_models[$model] = $object;
 		if (!$object) {
 			return null;
 		}
 
-		$this->fieldset[$model] = array('fields' => null, 'key' => $object->primaryKey, 'validates' => null);
+		$this->fieldset[$model] = array('fields' => null, 'key' => $object->primaryKey(), 'validates' => null);
 		return $object;
 	}
 
@@ -196,7 +180,7 @@ class FormHelper extends Helper {
 		}
 
 		if ($key === 'key') {
-			return $this->fieldset[$model]['key'] = $object->primaryKey;
+			return $this->fieldset[$model]['key'] = $object->primaryKey();
 		}
 
 		if ($key === 'fields') {

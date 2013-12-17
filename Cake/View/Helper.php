@@ -20,7 +20,6 @@ use Cake\Core\Object;
 use Cake\Core\Plugin;
 use Cake\Event\EventListener;
 use Cake\Routing\Router;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 
@@ -690,11 +689,6 @@ class Helper extends Object implements EventListener {
 		$habtmKey = $this->field();
 		if (empty($result) && isset($data[$habtmKey][$habtmKey]) && is_array($data[$habtmKey])) {
 			$result = $data[$habtmKey][$habtmKey];
-		} elseif (empty($result) && isset($data[$habtmKey]) && is_array($data[$habtmKey])) {
-			if (ClassRegistry::isKeySet($habtmKey)) {
-				$model = ClassRegistry::getObject($habtmKey);
-				$result = $this->_selectedArray($data[$habtmKey], $model->primaryKey);
-			}
 		}
 
 		if (is_array($options)) {

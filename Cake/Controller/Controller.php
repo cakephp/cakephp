@@ -27,7 +27,6 @@ use Cake\Network\Response;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
 use Cake\Utility\RepositoryAwareTrait;
@@ -270,14 +269,6 @@ class Controller extends Object implements EventListener {
 	public $passedArgs = array();
 
 /**
- * Triggers Scaffolding
- *
- * @var mixed
- * @link http://book.cakephp.org/2.0/en/controllers/scaffolding.html
- */
-	public $scaffold = false;
-
-/**
  * Holds current methods of the controller. This is a list of all the methods reachable
  * via URL. Modifying this array, will allow you to change which methods can be reached.
  *
@@ -411,9 +402,6 @@ class Controller extends Object implements EventListener {
 			return $method->invokeArgs($this, $request->params['pass']);
 
 		} catch (\ReflectionException $e) {
-			if ($this->scaffold !== false) {
-				return $this->_getScaffold($request);
-			}
 			throw new Error\MissingActionException(array(
 				'controller' => $this->name . "Controller",
 				'action' => $request->params['action'],
@@ -446,16 +434,6 @@ class Controller extends Object implements EventListener {
 			}
 		}
 		return $privateAction;
-	}
-
-/**
- * Returns a scaffold object to use for dynamically scaffolded controllers.
- *
- * @param Cake\Network\Request $request
- * @return Scaffold
- */
-	protected function _getScaffold(Request $request) {
-		return new Scaffold($this, $request);
 	}
 
 /**
@@ -657,16 +635,6 @@ class Controller extends Object implements EventListener {
 
 		$this->View = $this->_getViewObject();
 
-		$models = ClassRegistry::keys();
-		foreach ($models as $currentModel) {
-			$currentObject = ClassRegistry::getObject($currentModel);
-			if ($currentObject instanceof \Cake\Model\Model) {
-				$className = get_class($currentObject);
-				$this->request->params['models'][$currentObject->alias] = compact('className');
-				$this->View->validationErrors[$currentObject->alias] =& $currentObject->validationErrors;
-			}
-		}
-
 		$this->autoRender = false;
 		$this->response->body($this->View->render($view, $layout));
 		return $this->response;
@@ -783,52 +751,6 @@ class Controller extends Object implements EventListener {
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function afterFilter(Event $event) {
-	}
-
-/**
- * This method should be overridden in child classes.
- *
- * @param string $method name of method called example index, edit, etc.
- * @return boolean Success
- * @link http://book.cakephp.org/2.0/en/controllers.html#callbacks
- */
-	public function beforeScaffold($method) {
-		return true;
-	}
-
-/**
- * This method should be overridden in child classes.
- *
- * @param string $method name of method called either edit or update.
- * @return boolean Success
- * @link http://book.cakephp.org/2.0/en/controllers.html#callbacks
- */
-	public function afterScaffoldSave($method) {
-		return true;
-	}
-
-/**
- * This method should be overridden in child classes.
- *
- * @param string $method name of method called either edit or update.
- * @return boolean Success
- * @link http://book.cakephp.org/2.0/en/controllers.html#callbacks
- */
-	public function afterScaffoldSaveError($method) {
-		return true;
-	}
-
-/**
- * This method should be overridden in child classes.
- * If not it will render a scaffold error.
- * Method MUST return true in child classes
- *
- * @param string $method name of method called example index, edit, etc.
- * @return boolean Success
- * @link http://book.cakephp.org/2.0/en/controllers.html#callbacks
- */
-	public function scaffoldError($method) {
-		return false;
 	}
 
 /**

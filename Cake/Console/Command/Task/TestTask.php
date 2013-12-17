@@ -21,7 +21,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Error;
-use Cake\Utility\ClassRegistry;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
 /**
@@ -287,10 +287,10 @@ class TestTask extends BakeTask {
  * @return object And instance of the class that is going to be tested.
  */
 	public function buildTestSubject($type, $class) {
-		ClassRegistry::flush();
+		TableRegistry::clear();
 		$class = $this->getRealClassName($type, $class);
 		if (strtolower($type) === 'model') {
-			$instance = ClassRegistry::init($class);
+			$instance = TableRegistry::get($class);
 		} else {
 			$instance = new $class();
 		}

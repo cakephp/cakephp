@@ -22,13 +22,12 @@ use Cake\Controller\Controller;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Model\Model;
+use Cake\ORM\Table;
 use Cake\Routing\Router;
 use Cake\TestSuite\Reporter\HtmlReporter;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 
-require_once dirname(__DIR__) . DS . 'Model/models.php';
 
 /**
  * AppController class
