@@ -1,8 +1,8 @@
 <div class="users form">
 <!--nocache-->
-	<?php echo $this->Form->create('User'); ?>
+	<?php echo $this->Form->create(false); ?>
 		<fieldset>
-	 		<legend><?php echo __('Add User'); ?></legend>
+			<legend><?php echo __('Add User'); ?></legend>
 		<?php
 			echo $this->Form->input('username');
 			echo $this->Form->input('email');

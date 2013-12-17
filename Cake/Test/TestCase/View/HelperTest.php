@@ -498,16 +498,6 @@ class HelperTest extends TestCase {
 
 		$this->Helper->request->data = array(
 			'HelperTestTag' => array(
-				array('id' => 3),
-				array('id' => 5)
-			)
-		);
-		$this->Helper->setEntity('HelperTestTag.HelperTestTag');
-		$result = $this->Helper->value('HelperTestTag.HelperTestTag');
-		$this->assertEquals(array(3 => 3, 5 => 5), $result);
-
-		$this->Helper->request->data = array(
-			'HelperTestTag' => array(
 				'body' => '',
 				'title' => 'winning'
 			),

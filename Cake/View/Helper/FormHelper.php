@@ -180,7 +180,7 @@ class FormHelper extends Helper {
 		}
 
 		if ($key === 'key') {
-			return $this->fieldset[$model]['key'] = $object->primaryKey;
+			return $this->fieldset[$model]['key'] = $object->primaryKey();
 		}
 
 		if ($key === 'fields') {
