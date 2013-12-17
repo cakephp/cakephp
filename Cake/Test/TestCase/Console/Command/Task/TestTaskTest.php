@@ -32,7 +32,7 @@ use Cake\Utility\ClassRegistry;
  * Test Article model
  *
  */
-class TestTaskArticles extends Table {
+class TestTaskArticlesTable extends Table {
 
 /**
  * Table name to use
@@ -243,7 +243,7 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testMethodIntrospection() {
-		$result = $this->Task->getTestableMethods(__NAMESPACE__ . '\TestTaskArticle');
+		$result = $this->Task->getTestableMethods(__NAMESPACE__ . '\TestTaskArticlesTable');
 		$expected = array('dosomething', 'dosomethingelse');
 		$this->assertEquals($expected, array_map('strtolower', $result));
 	}
