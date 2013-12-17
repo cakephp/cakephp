@@ -173,8 +173,8 @@ class AppTest extends TestCase {
 		$result = App::objects('View/Helper', null, false);
 		$this->assertContains('BananaHelper', $result);
 
-		$result = App::objects('Model', null, false);
-		$this->assertContains('Article', $result);
+		$result = App::objects('Model/Repository', null, false);
+		$this->assertContains('ArticlesTable', $result);
 
 		$result = App::objects('file');
 		$this->assertFalse($result);
@@ -214,8 +214,8 @@ class AppTest extends TestCase {
 	public function testListObjectsInPlugin() {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
-		$result = App::objects('TestPlugin.Model');
-		$this->assertTrue(in_array('TestPluginPost', $result));
+		$result = App::objects('TestPlugin.Model/Repository');
+		$this->assertContains('TestPluginCommentsTable', $result);
 
 		$result = App::objects('TestPlugin.Model/Behavior');
 		$this->assertTrue(in_array('PersisterOneBehavior', $result));
@@ -230,9 +230,9 @@ class AppTest extends TestCase {
 		$result = App::objects('TestPluginTwo.Model/Behavior');
 		$this->assertSame(array(), $result);
 
-		$result = App::objects('Model', null, false);
-		$this->assertTrue(in_array('Comment', $result));
-		$this->assertTrue(in_array('Post', $result));
+		$result = App::objects('Model/Repository', null, false);
+		$this->assertContains('PostsTable', $result);
+		$this->assertContains('ArticlesTable', $result);
 	}
 
 /**
