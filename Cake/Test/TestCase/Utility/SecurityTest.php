@@ -294,16 +294,27 @@ class SecurityTest extends TestCase {
 	}
 
 /**
- * Test that empty data cause errors
+ * Test encrypting falsey data
  *
- * @expectedException Cake\Error\Exception
- * @expectedExceptionMessage The data to encrypt cannot be empty.
  * @return void
  */
-	public function testEncryptInvalidData() {
-		$txt = '';
+	public function testEncryptDecryptFalseyData() {
 		$key = 'This is a key that is long enough to be ok.';
-		Security::encrypt($txt, $key);
+
+		$result = Security::encrypt('', $key);
+		$this->assertSame('', Security::decrypt($result, $key));
+
+		$result = Security::encrypt(false, $key);
+		$this->assertSame('', Security::decrypt($result, $key));
+
+		$result = Security::encrypt(null, $key);
+		$this->assertSame('', Security::decrypt($result, $key));
+
+		$result = Security::encrypt(0, $key);
+		$this->assertSame('0', Security::decrypt($result, $key));
+
+		$result = Security::encrypt('0', $key);
+		$this->assertSame('0', Security::decrypt($result, $key));
 	}
 
 /**
