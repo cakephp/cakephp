@@ -65,9 +65,12 @@ class Mysql extends \Cake\Database\Driver {
 		$config['flags'] += [
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
-			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-			PDO::MYSQL_ATTR_INIT_COMMAND => implode(';', (array)$config['init'])
+			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		];
+
+		if ($config['init']) {
+			$config['flags'] += [PDO::MYSQL_ATTR_INIT_COMMAND => implode(';', (array)$config['init'])];
+		}
 
 		if (!empty($config['ssl_key']) && !empty($config['ssl_cert'])) {
 			$config['flags'][PDO::MYSQL_ATTR_SSL_KEY] = $config['ssl_key'];
