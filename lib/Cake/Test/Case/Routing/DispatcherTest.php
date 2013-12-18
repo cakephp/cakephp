@@ -1269,9 +1269,9 @@ class DispatcherTest extends CakeTestCase {
 		));
 		Configure::write('App.baseUrl', '/index.php');
 		$Dispatcher = new TestDispatcher();
-		$url = new CakeRequest('pages/home');
-		$response = $this->getMock('CakeResponse');
-		$Dispatcher->dispatch($url, $response, array('return' => 1));
+		$url = new CakeRequest('/');
+		$response = $this->getMock('CakeResponse', array('send'));
+		$Dispatcher->dispatch($url, $response);
 		$settings = $url->param('settings');
 		$this->assertEquals($settings, array('service' => 'google.com'));
 	}
