@@ -515,7 +515,7 @@ class TestFilterDispatcher extends DispatcherFilter {
 	public function beforeDispatch(CakeEvent $event) {
 		$response = $event->data['request'];
 		$response->addParams(array('settings' => $this->settings));
-		return $response;
+		return null;
 	}
 
 /**
