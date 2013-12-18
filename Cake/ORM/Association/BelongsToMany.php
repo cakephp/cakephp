@@ -105,7 +105,7 @@ class BelongsToMany extends Association {
  *
  * @var string
  */
-	protected $_saveStrategy = self::SAVE_APPEND;
+	protected $_saveStrategy = self::SAVE_REPLACE;
 
 /**
  * Sets the table instance for the junction relation. If no arguments
@@ -644,7 +644,13 @@ class BelongsToMany extends Association {
 				}
 
 				$property = $this->property();
-				$sourceEntity->set($property, $targetEntities);
+				$inserted = array_combine(
+					array_keys($inserts),
+					(array)$sourceEntity->get($property)
+				);
+				$targetEntities = $inserted + $targetEntities;
+				ksort($targetEntities);
+				$sourceEntity->set($property, array_values($targetEntities));
 				$sourceEntity->dirty($property, false);
 				return true;
 			}
@@ -711,7 +717,7 @@ class BelongsToMany extends Association {
 			}
 		}
 
-		return array_values($targetEntities);
+		return $targetEntities;
 	}
 
 /**

@@ -167,11 +167,11 @@ class BelongsToManyTest extends TestCase {
  */
 	public function testSaveStrategy() {
 		$assoc = new BelongsToMany('Test');
-		$this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->saveStrategy());
-		$assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
 		$this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->saveStrategy());
 		$assoc->saveStrategy(BelongsToMany::SAVE_APPEND);
 		$this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->saveStrategy());
+		$assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
+		$this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->saveStrategy());
 	}
 
 /**
@@ -180,8 +180,8 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testSaveStrategyInOptions() {
-		$assoc = new BelongsToMany('Test', ['saveStrategy' => BelongsToMany::SAVE_REPLACE]);
-		$this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->saveStrategy());
+		$assoc = new BelongsToMany('Test', ['saveStrategy' => BelongsToMany::SAVE_APPEND]);
+		$this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->saveStrategy());
 	}
 
 /**
@@ -1046,9 +1046,10 @@ class BelongsToManyTest extends TestCase {
 		$options = ['foo' => 'bar'];
 		$assoc->expects($this->once())
 			->method('_saveTarget')
-			->with($entity, [$tags[1], $tags[2]], $options + ['associated' => false])
+			->with($entity, [1 => $tags[1], 2 => $tags[2]], $options + ['associated' => false])
 			->will($this->returnCallback(function($entity, $inserts) use ($tags) {
-				$this->assertSame([$tags[1], $tags[2]], $inserts);
+				$this->assertSame([1 => $tags[1], 2 => $tags[2]], $inserts);
+				$entity->tags = $inserts;
 				return true;
 			}));
 

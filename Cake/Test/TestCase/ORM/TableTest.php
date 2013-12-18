@@ -2881,7 +2881,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$tags[] = new \TestApp\Model\Entity\Tag(['name' => 'foo']);
 
 		$table->association('tags')->replaceLinks($article, $tags);
-		$this->assertSame($tags, $article->tags);
+		$this->assertEquals(2, $article->tags[0]->id);
+		$this->assertEquals(3, $article->tags[1]->id);
+		$this->assertEquals(4, $article->tags[2]->id);
+
 		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
 		$this->assertCount(3, $article->tags);
 		$this->assertEquals(2, $article->tags[0]->id);
