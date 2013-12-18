@@ -526,6 +526,7 @@ class TestFilterDispatcher extends DispatcherFilter {
  */
 	public function afterDispatch(CakeEvent $event) {
 	}
+
 }
 
 /**
@@ -1269,10 +1270,11 @@ class DispatcherTest extends CakeTestCase {
 		App::build(array(
 			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
 		));
+		Configure::write('App.baseUrl', '/index.php');
 		$Dispatcher = new Dispatcher();
 		$url = new CakeRequest('pages/home/*');
 		$response = $this->getMock('CakeResponse');
-		$Dispatcher->dispatch($url, $response);
+		$Dispatcher->dispatch($url, $response, array('return' => 1));
 		$settings = $url->param('settings');
 		$this->assertEquals($settings, array('service' => 'google.com'));
 	}
