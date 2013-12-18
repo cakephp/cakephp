@@ -619,16 +619,18 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
 		$association = new BelongsToMany('Tags', $config);
 		$association->junction($articleTag);
+		$this->article
+			->association($articleTag->alias())
+			->conditions(['click_count' => 3]);
 
 		$articleTag->expects($this->once())
 			->method('deleteAll')
 			->with([
-				'Tags.name' => 'foo',
+				'click_count' => 3,
 				'article_id' => 1
 			]);
 
@@ -646,11 +648,13 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tags.name' => 'foo'],
 			'cascadeCallbacks' => true,
 		];
 		$association = new BelongsToMany('Tag', $config);
 		$association->junction($articleTag);
+		$this->article
+			->association($articleTag->alias())
+			->conditions(['click_count' => 3]);
 
 		$articleTagOne = new Entity(['article_id' => 1, 'tag_id' => 2]);
 		$articleTagTwo = new Entity(['article_id' => 1, 'tag_id' => 4]);
@@ -660,9 +664,13 @@ class BelongsToManyTest extends TestCase {
 		]);
 
 		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
-		$query->expects($this->once())
+		$query->expects($this->at(0))
 			->method('where')
-			->with(['Tags.name' => 'foo', 'article_id' => 1])
+			->with(['click_count' => 3])
+			->will($this->returnSelf());
+		$query->expects($this->at(1))
+			->method('where')
+			->with(['article_id' => 1])
 			->will($this->returnSelf());
 
 		$query->expects($this->any())
@@ -991,9 +999,8 @@ class BelongsToManyTest extends TestCase {
 			['tags', $config]
 		);
 
-		$assoc
-			->junction()
-			->association('tags')
+		$this->article
+			->association('ArticlesTags')
 			->conditions(['foo' => 1]);
 
 		$query1 = $this->getMock(
@@ -1006,13 +1013,13 @@ class BelongsToManyTest extends TestCase {
 			->with('all')
 			->will($this->returnValue($query1));
 
-		$query1->expects($this->once())
+		$query1->expects($this->at(0))
 			->method('where')
-			->with(['article_id' => 1])
+			->with(['foo' => 1])
 			->will($this->returnSelf());
 		$query1->expects($this->at(1))
-			->method('andWhere')
-			->with(['foo' => 1])
+			->method('where')
+			->with(['article_id' => 1])
 			->will($this->returnSelf());
 
 		$existing = [
