@@ -332,10 +332,10 @@ class BelongsToMany extends Association {
  * between each side of this association. It will not destroy existing ones even
  * though they may not be present in the array of entities to be saved.
  *
- * When using the 'replace' strategy, existing links will be removed and new ones
- * will be created in between both tables in the association. If there exists
- * links in the database to some of the entities intended to be saved by this method,
- * they will be updated, not deleted.
+ * When using the 'replace' strategy, existing links will be removed and new links
+ * will be created in the joint table. If there exists links in the database to some
+ * of the entities intended to be saved by this method, they will be updated,
+ * not deleted.
  *
  * @param \Cake\ORM\Entity $entity an entity from the source table
  * @param array|\ArrayObject $options options to be passed to the save method in

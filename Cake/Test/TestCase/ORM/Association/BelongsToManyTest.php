@@ -1106,7 +1106,7 @@ class BelongsToManyTest extends TestCase {
 		$assoc->expects($this->once())->method('replaceLinks')
 			->with($entity, $entity->tags, $options)
 			->will($this->returnValue(false));
-		$this->assertSame(false, $assoc->save($entity, $options));
+		$this->assertFalse($assoc->save($entity, $options));
 	}
 
 }
