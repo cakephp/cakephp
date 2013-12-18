@@ -779,15 +779,15 @@ class BelongsToMany extends Association {
 		}
 
 		$belongsTo = $junction->association($target->alias());
+		$hasMany = $source->association($junction->alias());
 		$foreignKey = (array)$this->foreignKey();
 		$assocForeignKey = (array)$belongsTo->foreignKey();
 		$sourceKey = $sourceEntity->extract((array)$source->primaryKey());
 
 		foreach ($missing as $key) {
-			$unions[] = $junction->find('all')
+			$unions[] = $hasMany->find('all')
 				->where(array_combine($foreignKey, $sourceKey))
-				->andWhere(array_combine($assocForeignKey, $key))
-				->andWhere($belongsTo->conditions());
+				->andWhere(array_combine($assocForeignKey, $key));
 		}
 
 		$query = array_shift($unions);
