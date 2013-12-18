@@ -398,8 +398,11 @@ class BelongsToManyTest extends TestCase {
 			])
 			->will($this->returnSelf());
 
-		$query->expects($this->once())->method('where')
+		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
+			->will($this->returnValue($query));
+		$query->expects($this->at(1))->method('where')
+			->with([])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('order')
@@ -452,11 +455,12 @@ class BelongsToManyTest extends TestCase {
 			])
 			->will($this->returnSelf());
 
-		$query->expects($this->once())->method('where')
-			->with([
-				'Tags.name' => 'foo',
-				'Tags.id !=' => 3
-			])
+		$query->expects($this->at(0))->method('where')
+			->with(['Tags.name' => 'foo'])
+			->will($this->returnValue($query));
+
+		$query->expects($this->at(1))->method('where')
+			->with(['Tags.id !=' => 3])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('order')
@@ -510,7 +514,7 @@ class BelongsToManyTest extends TestCase {
 			->will($this->returnValue($query));
 		$query->expects($this->any())->method('contain')->will($this->returnSelf());
 
-		$query->expects($this->once())->method('where')->will($this->returnSelf());
+		$query->expects($this->exactly(2))->method('where')->will($this->returnSelf());
 
 		$association->eagerLoader([
 			'keys' => $keys,
@@ -560,10 +564,6 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('where')
-			->with(['Tags.name' => 'foo'])
-			->will($this->returnSelf());
-
 		$expected = clone $parent;
 		$joins = $expected->join();
 		unset($joins[1]);
@@ -572,8 +572,12 @@ class BelongsToManyTest extends TestCase {
 			->select('ArticlesTags.article_id', true)
 			->join($joins, [], true);
 
-		$query->expects($this->once())->method('where')
+		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
+			->will($this->returnValue($query));
+
+		$query->expects($this->at(1))->method('where')
+			->with([])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('contain')

@@ -174,7 +174,6 @@ trait ExternalAssociationTrait {
 	protected function _buildQuery($options) {
 		$target = $this->target();
 		$alias = $target->alias();
-		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
 		$key = $this->_linkField($options);
 
 		$filter = $options['keys'];
@@ -182,7 +181,7 @@ trait ExternalAssociationTrait {
 			$filter = $this->_buildSubquery($options['query'], $key);
 		}
 
-		$fetchQuery = $target
+		$fetchQuery = $this
 			->find('all')
 			->where($options['conditions'])
 			->hydrate($options['query']->hydrate());

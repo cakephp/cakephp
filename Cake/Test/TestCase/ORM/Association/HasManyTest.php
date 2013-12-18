@@ -175,8 +175,12 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('where')
+		$query->expects($this->at(0))->method('where')
 			->with(['Articles.is_active' => true])
+			->will($this->returnValue($query));
+
+		$query->expects($this->at(1))->method('where')
+			->with([])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('andWhere')
@@ -220,8 +224,12 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('where')
-			->with(['Articles.is_active' => true, 'Articles.id !=' => 3])
+		$query->expects($this->at(0))->method('where')
+			->with(['Articles.is_active' => true])
+			->will($this->returnValue($query));
+
+		$query->expects($this->at(1))->method('where')
+			->with(['Articles.id !=' => 3])
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('andWhere')
@@ -316,7 +324,10 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('where')
+		$query->expects($this->at(0))->method('where')
+			->with([])
+			->will($this->returnValue($query));
+		$query->expects($this->at(1))->method('where')
 			->with([])
 			->will($this->returnValue($query));
 
