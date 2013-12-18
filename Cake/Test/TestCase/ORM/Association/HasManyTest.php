@@ -504,9 +504,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		]);
 
 		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
-		$query->expects($this->once())
+		$query->expects($this->at(0))
 			->method('where')
-			->with(['Articles.is_active' => true, 'author_id' => 1])
+			->with(['Articles.is_active' => true])
+			->will($this->returnSelf());
+		$query->expects($this->at(1))
+			->method('where')
+			->with(['author_id' => 1])
 			->will($this->returnSelf());
 		$query->expects($this->any())
 			->method('getIterator')
