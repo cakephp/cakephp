@@ -285,6 +285,7 @@ class BelongsToManyTest extends TestCase {
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock('Cake\ORM\Query', ['execute', 'contain'], [null, null]);
+
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
@@ -303,18 +304,20 @@ class BelongsToManyTest extends TestCase {
 			])
 			->will($this->returnSelf());
 
+		$query->hydrate(false);
+
 		$callable = $association->eagerLoader(compact('keys', 'query'));
 		$row = ['Articles__id' => 1, 'title' => 'article 1'];
 		$result = $callable($row);
 		$row['Tags__Tags'] = [
-			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]]
+			['id' => 1, 'name' => 'foo', '_joinData' => ['article_id' => 1]]
 		];
 		$this->assertEquals($row, $result);
 
 		$row = ['Articles__id' => 2, 'title' => 'article 2'];
 		$result = $callable($row);
 		$row['Tags__Tags'] = [
-			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
+			['id' => 2, 'name' => 'bar', '_joinData' => ['article_id' => 2]]
 		];
 		$this->assertEquals($row, $result);
 	}
@@ -367,6 +370,8 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('order')
 			->with(['id' => 'ASC'])
 			->will($this->returnValue($query));
+
+		$query->hydrate(false);
 
 		$association->eagerLoader(compact('keys', 'query'));
 	}
@@ -429,6 +434,8 @@ class BelongsToManyTest extends TestCase {
 				'ArticlesTags__article_id' => 'ArticlesTags.article_id'
 			])
 			->will($this->returnValue($query));
+
+		$query->hydrate(false);
 
 		$association->eagerLoader([
 			'conditions' => ['Tags.id !=' => 3],
@@ -500,12 +507,14 @@ class BelongsToManyTest extends TestCase {
 		$parent = (new Query(null, null))
 			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
 			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
+		$parent->hydrate(false);
 
 		$query = $this->getMock(
 			'Cake\ORM\Query',
 			['execute', 'where', 'andWhere', 'order', 'select', 'contain'],
 			[null, null]
 		);
+		$query->hydrate(false);
 
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
@@ -547,14 +556,14 @@ class BelongsToManyTest extends TestCase {
 		]);
 
 		$row['Tags__Tags'] = [
-			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]]
+			['id' => 1, 'name' => 'foo', '_joinData' => ['article_id' => 1]]
 		];
 		$row['Articles__id'] = 1;
 		$result = $callable($row);
 		$this->assertEquals($row, $result);
 
 		$row['Tags__Tags'] = [
-			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
+			['id' => 2, 'name' => 'bar', '_joinData' => ['article_id' => 2]]
 		];
 		$row['Articles__id'] = 2;
 		$result = $callable($row);
@@ -882,8 +891,8 @@ class BelongsToManyTest extends TestCase {
 			new Entity(['article_id' => 1, 'tag_id' => 3])
 		];
 		$tags = [
-			new Entity(['id' => 2, 'articles_tags' => $jointEntities[0]], $opts),
-			new Entity(['id' => 3, 'articles_tags' => $jointEntities[1]], $opts)
+			new Entity(['id' => 2, '_joinData' => $jointEntities[0]], $opts),
+			new Entity(['id' => 3, '_joinData' => $jointEntities[1]], $opts)
 		];
 		$entity = new Entity(['id' => 1, 'test' => $tags], $opts);
 

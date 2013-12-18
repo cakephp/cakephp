@@ -79,6 +79,14 @@ class BelongsToMany extends Association {
 	protected $_junctionAssociationName;
 
 /**
+ * The name of the property to be set containing data from the junction table
+ * once a record from the target table is hydrated
+ *
+ * @var string
+ */
+	protected $_junctionProperty = '_joinData';
+
+/**
  * Sets the table instance for the junction relation. If no arguments
  * are passed, the current configured table instance is returned
  *
@@ -220,9 +228,17 @@ class BelongsToMany extends Association {
 		$resultMap = [];
 		$key = $options['foreignKey'];
 		$property = $this->target()->association($this->junction()->alias())->property();
+		$hydrated = $fetchQuery->hydrate();
 
 		foreach ($fetchQuery->execute() as $result) {
-			$resultMap[$result[$property][$key]][] = $result;
+			$result[$this->_junctionProperty] = $result[$property];
+			unset($result[$property]);
+
+			if ($hydrated) {
+				$result->dirty($this->_junctionProperty, false);
+			}
+
+			$resultMap[$result[$this->_junctionProperty][$key]][] = $result;
 		}
 
 		return $this->_resultInjector($fetchQuery, $resultMap);
@@ -368,7 +384,7 @@ class BelongsToMany extends Association {
 		$assocForeignKey = (array)$belongsTo->foreignKey();
 		$targetPrimaryKey = (array)$target->primaryKey();
 		$sourcePrimaryKey = (array)$source->primaryKey();
-		$jointProperty = $target->association($junction->alias())->property();
+		$jointProperty = $this->_junctionProperty;
 
 		foreach ($targetEntities as $k => $e) {
 			$joint = $e->get($jointProperty);
@@ -625,7 +641,7 @@ class BelongsToMany extends Association {
 		}
 
 		$primary = (array)$target->primaryKey();
-		$jointProperty = $target->association($junction->alias())->property();
+		$jointProperty = $this->_junctionProperty;
 		foreach ($targetEntities as $k => $entity) {
 			$key = array_values($entity->extract($primary));
 			foreach ($present as $i => $data) {
@@ -681,7 +697,7 @@ class BelongsToMany extends Association {
 		$target = $this->target();
 		$source = $this->source();
 		$junction = $this->junction();
-		$jointProperty = $target->association($junction->alias())->property();
+		$jointProperty = $this->_junctionProperty;
 		$primary = (array)$target->primaryKey();
 
 		$result = [];
