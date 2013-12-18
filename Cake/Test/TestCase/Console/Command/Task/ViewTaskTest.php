@@ -37,7 +37,7 @@ class ViewTaskCommentsTable extends Table {
  *
  * @var string
  */
-	public $_table = 'comments';
+	protected $_table = 'comments';
 
 /**
  * Belongs To Associations
@@ -63,7 +63,7 @@ class ViewTaskArticlesTable extends Table {
  *
  * @var string
  */
-	public $_table = 'articles';
+	protected $_table = 'articles';
 }
 
 /**

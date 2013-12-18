@@ -39,7 +39,7 @@ class TestTaskArticlesTable extends Table {
  *
  * @var string
  */
-	public $_table = 'articles';
+	protected $_table = 'articles';
 
 /**
  * HasMany Associations
@@ -139,7 +139,7 @@ class TestTaskComment extends TestTaskAppModel {
  *
  * @var string
  */
-	public $_table = 'comments';
+	protected $_table = 'comments';
 
 /**
  * Belongs To Associations

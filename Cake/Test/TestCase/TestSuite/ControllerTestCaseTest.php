@@ -28,7 +28,6 @@ use Cake\TestSuite\Reporter\HtmlReporter;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 
-
 /**
  * AppController class
  *
