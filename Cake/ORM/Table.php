@@ -640,6 +640,10 @@ class Table implements EventListener {
  *   or 'subquery'. If subquery is selected the query used to return results
  *   in the source table will be used as conditions for getting rows in the
  *   target table.
+ * - saveStrategy: Either 'append' or 'replace'. Indicates the mode to be used
+ *   for saving associated entities. The former will only create new links
+ *   between both side of the relation and the latter will do a wipe and
+ *   replace to create the links between the passed entities when saving.
  *
  * This method will return the association object that was built.
  *
@@ -1516,7 +1520,7 @@ class Table implements EventListener {
  * Override this method if you want a table object to use custom
  * marshalling logic.
  *
- * @param boolean $safe Whether or not this marshaller 
+ * @param boolean $safe Whether or not this marshaller
  *   should be in safe mode.
  * @return Cake\ORM\Marhsaller;
  * @see Cake\ORM\Marshaller

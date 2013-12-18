@@ -161,6 +161,41 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
+ * Tests saveStrategy
+ *
+ * @return void
+ */
+	public function testSaveStrategy() {
+		$assoc = new BelongsToMany('Test');
+		$this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->saveStrategy());
+		$assoc->saveStrategy(BelongsToMany::SAVE_APPEND);
+		$this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->saveStrategy());
+		$assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
+		$this->assertEquals(BelongsToMany::SAVE_REPLACE, $assoc->saveStrategy());
+	}
+
+/**
+ * Tests that it is possible to pass the save strategy in the constructor
+ *
+ * @return void
+ */
+	public function testSaveStrategyInOptions() {
+		$assoc = new BelongsToMany('Test', ['saveStrategy' => BelongsToMany::SAVE_APPEND]);
+		$this->assertEquals(BelongsToMany::SAVE_APPEND, $assoc->saveStrategy());
+	}
+
+/**
+ * Tests that passing an invalid strategy will throw an exception
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Invalid save strategy "depsert"
+ * @return void
+ */
+	public function testSaveStrategyInvalid() {
+		$assoc = new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
+	}
+
+/**
  * Tests that the correct join and fields are attached to a query depending on
  * the association config
  *
@@ -950,7 +985,7 @@ class BelongsToManyTest extends TestCase {
 		];
 		$assoc = $this->getMock(
 			'\Cake\ORM\Association\BelongsToMany',
-			['_collectJointEntities', 'save'],
+			['_collectJointEntities', '_saveTarget'],
 			['tags', $config]
 		);
 
@@ -1010,16 +1045,69 @@ class BelongsToManyTest extends TestCase {
 
 		$options = ['foo' => 'bar'];
 		$assoc->expects($this->once())
-			->method('save')
-			->with($entity, $options + ['associated' => false])
-			->will($this->returnCallback(function($entity) use ($tags) {
-				$this->assertSame([$tags[1], $tags[2]], $entity->get('tags'));
+			->method('_saveTarget')
+			->with($entity, [1 => $tags[1], 2 => $tags[2]], $options + ['associated' => false])
+			->will($this->returnCallback(function($entity, $inserts) use ($tags) {
+				$this->assertSame([1 => $tags[1], 2 => $tags[2]], $inserts);
+				$entity->tags = $inserts;
 				return true;
 			}));
 
 		$assoc->replaceLinks($entity, $tags, $options);
 		$this->assertSame($tags, $entity->tags);
 		$this->assertFalse($entity->dirty('tags'));
+	}
+
+/**
+ * Tests saving with replace strategy returning true
+ *
+ * @return void
+ */
+	public function testSaveWithReplace() {
+		$assoc = $this->getMock(
+			'\Cake\ORM\Association\BelongsToMany',
+			['replaceLinks'],
+			['tags']
+		);
+		$entity = new Entity([
+			'id' =>1,
+			'tags' => [
+				new Entity(['name' => 'foo'])
+			]
+		]);
+
+		$options = ['foo' => 'bar'];
+		$assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
+		$assoc->expects($this->once())->method('replaceLinks')
+			->with($entity, $entity->tags, $options)
+			->will($this->returnValue(true));
+		$this->assertSame($entity, $assoc->save($entity, $options));
+	}
+
+/**
+ * Tests saving with replace strategy returning true
+ *
+ * @return void
+ */
+	public function testSaveWithReplaceReturnFalse() {
+		$assoc = $this->getMock(
+			'\Cake\ORM\Association\BelongsToMany',
+			['replaceLinks'],
+			['tags']
+		);
+		$entity = new Entity([
+			'id' =>1,
+			'tags' => [
+				new Entity(['name' => 'foo'])
+			]
+		]);
+
+		$options = ['foo' => 'bar'];
+		$assoc->saveStrategy(BelongsToMany::SAVE_REPLACE);
+		$assoc->expects($this->once())->method('replaceLinks')
+			->with($entity, $entity->tags, $options)
+			->will($this->returnValue(false));
+		$this->assertFalse($assoc->save($entity, $options));
 	}
 
 }
