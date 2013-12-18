@@ -1267,12 +1267,9 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('Dispatcher.filters', array(
 			'TestFilterDispatcher' => array('service' => 'google.com')
 		));
-		App::build(array(
-			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
-		));
 		Configure::write('App.baseUrl', '/index.php');
-		$Dispatcher = new Dispatcher();
-		$url = new CakeRequest('pages/home/*');
+		$Dispatcher = new TestDispatcher();
+		$url = new CakeRequest('pages/home');
 		$response = $this->getMock('CakeResponse');
 		$Dispatcher->dispatch($url, $response, array('return' => 1));
 		$settings = $url->param('settings');
