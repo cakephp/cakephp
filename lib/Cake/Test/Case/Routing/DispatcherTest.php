@@ -504,7 +504,7 @@ class TimesheetsController extends Controller {
  */
 class TestFilterDispatcher extends DispatcherFilter {
 
-	public $priority = 7;
+	public $priority = 10;
 
 /**
  * TestFilterDispatcher::beforeDispatch()
@@ -513,6 +513,7 @@ class TestFilterDispatcher extends DispatcherFilter {
  * @return CakeResponse|boolean
  */
 	public function beforeDispatch(CakeEvent $event) {
+		$event->stopPropagation();
 		$response = $event->data['request'];
 		$response->addParams(array('settings' => $this->settings));
 		return null;
@@ -1267,11 +1268,11 @@ class DispatcherTest extends CakeTestCase {
 		Configure::write('Dispatcher.filters', array(
 			'TestFilterDispatcher' => array('service' => 'google.com')
 		));
-		Configure::write('App.baseUrl', '/index.php');
-		$Dispatcher = new TestDispatcher();
-		$url = new CakeRequest('/');
-		$response = $this->getMock('CakeResponse', array('send'));
-		$Dispatcher->dispatch($url, $response);
+		
+		$Dispatcher = new Dispatcher();
+		$url = new CakeRequest('some_pages/index');
+		$response = $this->getMock('CakeResponse');
+		$Dispatcher->dispatch($url, $response, array('return' => 1));
 		$settings = $url->param('settings');
 		$this->assertEquals($settings, array('service' => 'google.com'));
 	}
