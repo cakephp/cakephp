@@ -47,7 +47,7 @@ abstract class DispatcherFilter implements CakeEventListener {
  * @param string $setting Configuration settings for the filter.
  */
 	public function __construct($settings = array()) {
-		$this->settings = $settings;
+		$this->settings = Hash::merge($this->settings, $settings);
 	}
 
 /**

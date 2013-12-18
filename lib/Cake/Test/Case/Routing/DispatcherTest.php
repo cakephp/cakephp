@@ -17,6 +17,7 @@
  */
 
 App::uses('Dispatcher', 'Routing');
+App::uses('DispatcherFilter', 'Routing');
 
 if (!class_exists('AppController', false)) {
 	require_once CAKE . 'Test' . DS . 'test_app' . DS . 'Controller' . DS . 'AppController.php';
@@ -494,6 +495,37 @@ class TimesheetsController extends Controller {
 		return true;
 	}
 
+}
+
+/**
+ * TestFilterDispatcher class
+ *
+ * @package       Cake.Test.Case.Routing
+ */
+class TestFilterDispatcher extends DispatcherFilter {
+
+	public $priority = 7;
+
+/**
+ * TestFilterDispatcher::beforeDispatch()
+ * 
+ * @param mixed $event
+ * @return CakeResponse|boolean
+ */
+	public function beforeDispatch(CakeEvent $event) {
+		$response = $event->data['request'];
+		$response->addParams(array('settings' => $this->settings));
+		return $response;
+	}
+
+/**
+ * TestFilterDispatcher::afterDispatch()
+ * 
+ * @param mixed $event
+ * @return mixed boolean to stop the event dispatching or null to continue
+ */
+	public function afterDispatch(CakeEvent $event) {
+	}
 }
 
 /**
@@ -1223,13 +1255,26 @@ class DispatcherTest extends CakeTestCase {
 		$this->assertFalse($request->params['altered']);
 		$this->assertEquals(500, $response->statusCode());
 		$this->assertNull($dispatcher->controller);
+	}
 
-		$settings = array('service' => 'google.com');
+/**
+ * Tests that it is possible to attach filter with config classes to the dispatch cycle
+ *
+ * @return void
+ */
+	public function testDispatcherFilterSettings() {
 		Configure::write('Dispatcher.filters', array(
-			'TestDispatcherFilter' => $settings
+			'TestFilterDispatcher' => array('service' => 'google.com')
 		));
-		$dispatcher = new TestDispatcher();
-		$this->assertEquals($dispatcher->settings, $settings);
+		App::build(array(
+			'View' => array(CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS)
+		));
+		$Dispatcher = new Dispatcher();
+		$url = new CakeRequest('pages/home/*');
+		$response = $this->getMock('CakeResponse');
+		$Dispatcher->dispatch($url, $response);
+		$settings = $url->param('settings');
+		$this->assertEquals($settings, array('service' => 'google.com'));
 	}
 
 /**
