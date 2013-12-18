@@ -569,6 +569,38 @@ class PostgresTest extends CakeTestCase {
 	}
 
 /**
+ * testCakeSchemaBegserial method
+ *
+ * Test that schema generated postgresql queries are valid.
+ *
+ * @return void
+ */
+	public function testCakeSchemaBigserial() {
+		$db1 = ConnectionManager::getDataSource('test');
+		$db1->cacheSources = false;
+
+		$db1->rawQuery('CREATE TABLE ' . $db1->fullTableName('bigserial_tests') . ' (
+			"id" bigserial NOT NULL,
+			"varchar" character varying(40) NOT NULL,
+			PRIMARY KEY ("id")
+		)');
+
+		$schema = new CakeSchema(array('connection' => 'test'));
+		$result = $schema->read(array(
+			'connection' => 'test',
+			'models' => array('BigserialTest')
+		));
+		$schema->tables = array(
+			'bigserial_tests' => $result['tables']['missing']['bigserial_tests']
+		);
+		$result = $db1->createSchema($schema, 'bigserial_tests');
+
+		$this->assertContains('"id" bigserial NOT NULL,', $result);
+
+		$db1->query('DROP TABLE ' . $db1->fullTableName('bigserial_tests'));
+	}
+
+/**
  * Test index generation from table info.
  *
  * @return void
