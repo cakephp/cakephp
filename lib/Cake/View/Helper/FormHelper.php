@@ -2391,10 +2391,6 @@ class FormHelper extends AppHelper {
 		$round = $attributes['round'];
 		$attributes = array_diff_key($attributes, $defaults);
 
-		if ($timeFormat == 12 && $hour == 12) {
-			$hour = 0;
-		}
-
 		if (!empty($interval) && $interval > 1 && !empty($min)) {
 			$current = new DateTime();
 			if ($year !== null) {

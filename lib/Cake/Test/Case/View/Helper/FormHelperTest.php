@@ -2348,6 +2348,43 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test time with selected values around 12:xx:xx
+ *
+ * @return void
+ */
+	public function testTimeSelectedWithIntervalTwelve() {
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'timeFormat' => 12,
+			'interval' => 15,
+			'selected' => '00:00:00'
+		));
+		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+		$this->assertContains('<option value="am" selected="selected">am</option>', $result);
+
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'timeFormat' => 12,
+			'interval' => 15,
+			'selected' => '12:00:00'
+		));
+		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'timeFormat' => 12,
+			'interval' => 15,
+			'selected' => '12:15:00'
+		));
+		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
+		$this->assertContains('<option value="15" selected="selected">15</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+	}
+
+/**
  * Test interval & timeFormat = 12
  *
  * @return void
