@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\ORM\Association;
 use Cake\ORM\Entity;
+use Cake\ORM\Table;
 
 /**
  * A container/collection for association classes.
@@ -25,6 +26,11 @@ use Cake\ORM\Entity;
  */
 class Associations {
 
+/**
+ * Stored associations
+ *
+ * @var array
+ */
 	protected $_items = [];
 
 /**
@@ -62,16 +68,133 @@ class Associations {
 		return isset($this->_items[strtolower($alias)]);
 	}
 
+/**
+ * Drop/remove an association.
+ *
+ * Once removed the association will not longer be reachable
+ *
+ * @param string The alias name.
+ * @return void
+ */
 	public function drop($alias) {
+		unset($this->_items[strtolower($alias)]);
 	}
 
-	public function saveParents(Entity $entity, $associations, $options) {
+/**
+ * Save all the associations that are parents of the given entity.
+ *
+ * Parent associations include any association where the given table
+ * is the owning side.
+ *
+ * @param Table $table The table entity is for.
+ * @param Entity $entity The entity to save associated data for.
+ * @param array $associations The list of associations to save parents from.
+ *   associations not in this list will not be saved.
+ * @param array $options The options for the save operation.
+ * @return Entity modified entity
+ * @throws new \InvalidArgumentExceptio when an unknown alias is used.
+ */
+	public function saveParents(Table $table, Entity $entity, $associations, $options = []) {
+		if (empty($associations)) {
+			return $entity;
+		}
+		foreach ($associations as $alias => $nested) {
+			if (is_int($alias)) {
+				$alias = $nested;
+				$nested = [];
+			}
+			$relation = $this->get($alias);
+			if (!$relation) {
+				$msg = __d(
+					'cake_dev',
+					'Cannot save %s, it is not associated to %s',
+					$alias,
+					$table->alias()
+				);
+				throw new \InvalidArgumentException($msg);
+			}
+			if ($relation->isOwningSide($table)) {
+				continue;
+			}
+			if (!empty($nested)) {
+				$options = (array)$nested + $options;
+			}
+			$this->_save($relation, $entity, $options);
+		}
+		return $entity;
 	}
 
-	protected function saveChildren(Entity $entity, $associations, $options) {
+/**
+ * Save all the associations that are children of the given entity.
+ *
+ * Child associations include any association where the given table
+ * is not the owning side.
+ *
+ * @param Table $table The table entity is for.
+ * @param Entity $entity The entity to save associated data for.
+ * @param Entity $entity The entity to save associated data for.
+ * @param array $associations The list of associations to save children from.
+ *   associations not in this list will not be saved.
+ * @param array $options The options for the save operation.
+ * @return boolean success
+ */
+	public function saveChildren(Table $table, Entity $entity, $associations, $options) {
+		if (empty($associations)) {
+			return $entity;
+		}
+		foreach ($associations as $alias => $nested) {
+			if (is_int($alias)) {
+				$alias = $nested;
+				$nested = [];
+			}
+			$relation = $this->get($alias);
+			if (!$relation) {
+				$msg = __d(
+					'cake_dev',
+					'Cannot save %s, it is not associated to %s',
+					$alias,
+					$table->alias()
+				);
+				throw new \InvalidArgumentException($msg);
+			}
+			if (!$relation->isOwningSide($table)) {
+				continue;
+			}
+			if (!empty($nested)) {
+				$options = (array)$nested + $options;
+			}
+			$this->_save($relation, $entity, $options);
+		}
+		return $entity;
 	}
 
+/**
+ * Helper method for saving an association's data.
+ *
+ * @param Association $association
+ * @param Entity $entity
+ * @param array $options
+ * @return void
+ */
+	protected function _save($association, $entity, $options) {
+		$property = $association->property();
+		if (!$entity->dirty($property)) {
+			return;
+		}
+		$association->save($entity, $options);
+	}
+
+/**
+ * Cascade a delete across the various associations.
+ *
+ * @param Entity $entity The entity to delete associations for.
+ * @param array $options The options used in the delete operation.
+ * @return void
+ */
 	public function cascadeDelete(Entity $entity, $options) {
+		foreach ($this->_items as $assoc) {
+			$assoc->cascadeDelete($entity, $options);
+		}
 	}
 
 }

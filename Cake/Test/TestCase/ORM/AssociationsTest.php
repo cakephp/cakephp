@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Associations;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -54,4 +55,163 @@ class AssociationsTest extends TestCase {
 		$this->assertSame($belongsTo, $this->associations->get('Users'));
 	}
 
+/**
+ * test cascading deletes.
+ *
+ * @return void
+ */
+	public function testCascadeDelete() {
+		$mockOne = $this->getMock('Cake\ORM\Association\BelongsTo', [], [[]]);
+		$mockTwo = $this->getMock('Cake\ORM\Association\HasMany', [], [[]]);
+
+		$entity = new Entity();
+		$options = ['option' => 'value'];
+		$this->associations->add('One', $mockOne);
+		$this->associations->add('Two', $mockTwo);
+
+		$mockOne->expects($this->once())
+			->method('cascadeDelete')
+			->with($entity, $options);
+
+		$mockTwo->expects($this->once())
+			->method('cascadeDelete')
+			->with($entity, $options);
+
+		$this->associations->cascadeDelete($entity, $options);
+	}
+
+/**
+ * Test saving parent associations
+ *
+ * @return void
+ */
+	public function testSaveParents() {
+		$table = $this->getMock('Cake\ORM\Table', [], [[]]);
+		$mockOne = $this->getMock(
+			'Cake\ORM\Association\BelongsTo',
+			['save'],
+			['Parent', [
+				'sourceTable' => $table,
+			]]);
+		$mockTwo = $this->getMock(
+			'Cake\ORM\Association\HasMany',
+			['save'],
+			['Child', [
+				'sourceTable' => $table
+			]]);
+
+		$this->associations->add('Parent', $mockOne);
+		$this->associations->add('Child', $mockTwo);
+
+		$entity = new Entity();
+		$entity->set('parent', ['key' => 'value']);
+		$entity->set('child', ['key' => 'value']);
+
+		$options = ['option' => 'value'];
+
+		$mockOne->expects($this->once())
+			->method('save')
+			->with($entity, $options);
+
+		$mockTwo->expects($this->never())
+			->method('save');
+
+		$result = $this->associations->saveParents(
+			$table,
+			$entity,
+			['Parent', 'Child'],
+			$options
+		);
+		$this->assertSame($entity, $result);
+	}
+
+/**
+ * Test saving filtered parent associations.
+ *
+ * @return void
+ */
+	public function testSaveParentsFiltered() {
+		$table = $this->getMock('Cake\ORM\Table', [], [[]]);
+		$mockOne = $this->getMock(
+			'Cake\ORM\Association\BelongsTo',
+			['save'],
+			['Parents', [
+				'sourceTable' => $table,
+			]]);
+		$mockTwo = $this->getMock(
+			'Cake\ORM\Association\BelongsTo',
+			['save'],
+			['Categories', [
+				'sourceTable' => $table
+			]]);
+
+		$this->associations->add('Parents', $mockOne);
+		$this->associations->add('Categories', $mockTwo);
+
+		$entity = new Entity();
+		$entity->set('parent', ['key' => 'value']);
+		$entity->set('category', ['key' => 'value']);
+
+		$options = ['atomic' => true];
+
+		$mockOne->expects($this->once())
+			->method('save')
+			->with($entity, ['atomic' => true, 'associated' => ['Others']]);
+
+		$mockTwo->expects($this->never())
+			->method('save');
+
+		$result = $this->associations->saveParents(
+			$table,
+			$entity,
+			['Parents' => ['associated' => ['Others']]],
+			$options
+		);
+		$this->assertSame($entity, $result);
+	}
+
+/**
+ * Test saving filtered child associations.
+ *
+ * @return void
+ */
+	public function testSaveChildrenFiltered() {
+		$table = $this->getMock('Cake\ORM\Table', [], [[]]);
+		$mockOne = $this->getMock(
+			'Cake\ORM\Association\HasMany',
+			['save'],
+			['Comments', [
+				'sourceTable' => $table,
+			]]);
+		$mockTwo = $this->getMock(
+			'Cake\ORM\Association\HasOne',
+			['save'],
+			['Profiles', [
+				'sourceTable' => $table
+			]]);
+
+		$this->associations->add('Comments', $mockOne);
+		$this->associations->add('Profiles', $mockTwo);
+
+		$entity = new Entity();
+		$entity->set('comments', ['key' => 'value']);
+		$entity->set('profile', ['key' => 'value']);
+
+		$options = ['atomic' => true];
+
+		$mockOne->expects($this->once())
+			->method('save')
+			->with($entity, $options + ['associated' => ['Other']]);
+
+		$mockTwo->expects($this->never())
+			->method('save');
+
+		$result = $this->associations->saveChildren(
+			$table,
+			$entity,
+			['Comments' => ['associated' => ['Other']]],
+			$options
+		);
+		$this->assertSame($entity, $result);
+	}
 }
