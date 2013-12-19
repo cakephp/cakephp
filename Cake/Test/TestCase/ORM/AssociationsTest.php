@@ -214,4 +214,28 @@ class AssociationsTest extends TestCase {
 		);
 		$this->assertSame($entity, $result);
 	}
+
+/**
+ * Test exceptional case.
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Cannot save Profiles, it is not associated to Users
+ */
+	public function testErrorOnUnknownAlias() {
+		$table = $this->getMock(
+			'Cake\ORM\Table',
+			['save'],
+			[['alias' => 'Users']]);
+
+		$entity = new Entity();
+		$entity->set('profile', ['key' => 'value']);
+
+		$this->associations->saveChildren(
+			$table,
+			$entity,
+			['Profiles'],
+			['atomic' => true]
+		);
+	}
+
 }

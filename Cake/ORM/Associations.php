@@ -91,8 +91,7 @@ class Associations {
  * @param array $associations The list of associations to save parents from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.
- * @return Entity modified entity
- * @throws new \InvalidArgumentExceptio when an unknown alias is used.
+ * @return Entity Modified entity
  */
 	public function saveParents(Table $table, Entity $entity, $associations, $options = []) {
 		if (empty($associations)) {
@@ -113,7 +112,7 @@ class Associations {
  * @param array $associations The list of associations to save children from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.
- * @return boolean success
+ * @return Entity Modified entity
  */
 	public function saveChildren(Table $table, Entity $entity, $associations, $options) {
 		if (empty($associations)) {
@@ -131,7 +130,8 @@ class Associations {
  * @param array $options Original options
  * @param boolean $owningSide Compared with association classes'
  *   isOwningSide method.
- * @return void
+ * @return Entity modified entity.
+ * @throws new \InvalidArgumentException When an unknown alias is used.
  */
 	protected function _saveAssociations($table, $entity, $associations, $options, $owningSide) {
 		foreach ($associations as $alias => $nested) {
