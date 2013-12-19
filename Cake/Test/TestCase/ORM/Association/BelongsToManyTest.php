@@ -398,13 +398,16 @@ class BelongsToManyTest extends TestCase {
 			])
 			->will($this->returnSelf());
 
-		$query->expects($this->once())->method('where')
+		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
+		$query->expects($this->at(1))->method('where')
+			->with([])
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('order')
 			->with(['id' => 'ASC'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->hydrate(false);
 
@@ -452,23 +455,24 @@ class BelongsToManyTest extends TestCase {
 			])
 			->will($this->returnSelf());
 
-		$query->expects($this->once())->method('where')
-			->with([
-				'Tags.name' => 'foo',
-				'Tags.id !=' => 3
-			])
-			->will($this->returnValue($query));
+		$query->expects($this->at(0))->method('where')
+			->with(['Tags.name' => 'foo'])
+			->will($this->returnSelf());
+
+		$query->expects($this->at(1))->method('where')
+			->with(['Tags.id !=' => 3])
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('order')
 			->with(['name' => 'DESC'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('select')
 			->with([
 				'Tags__name' => 'Tags.name',
 				'ArticlesTags__article_id' => 'ArticlesTags.article_id'
 			])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->hydrate(false);
 
@@ -510,7 +514,7 @@ class BelongsToManyTest extends TestCase {
 			->will($this->returnValue($query));
 		$query->expects($this->any())->method('contain')->will($this->returnSelf());
 
-		$query->expects($this->once())->method('where')->will($this->returnSelf());
+		$query->expects($this->exactly(2))->method('where')->will($this->returnSelf());
 
 		$association->eagerLoader([
 			'keys' => $keys,
@@ -560,10 +564,6 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('where')
-			->with(['Tags.name' => 'foo'])
-			->will($this->returnSelf());
-
 		$expected = clone $parent;
 		$joins = $expected->join();
 		unset($joins[1]);
@@ -572,9 +572,13 @@ class BelongsToManyTest extends TestCase {
 			->select('ArticlesTags.article_id', true)
 			->join($joins, [], true);
 
-		$query->expects($this->once())->method('where')
+		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
+
+		$query->expects($this->at(1))->method('where')
+			->with([])
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('contain')
 			->with([
@@ -615,16 +619,18 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
 		$association = new BelongsToMany('Tags', $config);
 		$association->junction($articleTag);
+		$this->article
+			->association($articleTag->alias())
+			->conditions(['click_count' => 3]);
 
 		$articleTag->expects($this->once())
 			->method('deleteAll')
 			->with([
-				'Tags.name' => 'foo',
+				'click_count' => 3,
 				'article_id' => 1
 			]);
 
@@ -642,11 +648,13 @@ class BelongsToManyTest extends TestCase {
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
-			'conditions' => ['Tags.name' => 'foo'],
 			'cascadeCallbacks' => true,
 		];
 		$association = new BelongsToMany('Tag', $config);
 		$association->junction($articleTag);
+		$this->article
+			->association($articleTag->alias())
+			->conditions(['click_count' => 3]);
 
 		$articleTagOne = new Entity(['article_id' => 1, 'tag_id' => 2]);
 		$articleTagTwo = new Entity(['article_id' => 1, 'tag_id' => 4]);
@@ -656,9 +664,13 @@ class BelongsToManyTest extends TestCase {
 		]);
 
 		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
-		$query->expects($this->once())
+		$query->expects($this->at(0))
 			->method('where')
-			->with(['Tags.name' => 'foo', 'article_id' => 1])
+			->with(['click_count' => 3])
+			->will($this->returnSelf());
+		$query->expects($this->at(1))
+			->method('where')
+			->with(['article_id' => 1])
 			->will($this->returnSelf());
 
 		$query->expects($this->any())
@@ -822,10 +834,8 @@ class BelongsToManyTest extends TestCase {
 			'through' => $joint,
 			'joinTable' => 'tags_articles'
 		];
-		$assoc = new BelongsToMany('Test', $config);
-		$assoc
-			->junction()
-			->association('tags')
+		$assoc = $this->article->belongsToMany('Test', $config);
+		$this->article->association('ArticlesTags')
 			->conditions(['foo' => 1]);
 
 		$query1 = $this->getMock('\Cake\ORM\Query', [], [$connection, $joint]);
@@ -839,34 +849,34 @@ class BelongsToManyTest extends TestCase {
 			->with('all')
 			->will($this->returnValue($query2));
 
-		$query1->expects($this->once())
+		$query1->expects($this->at(0))
+			->method('where')
+			->with(['foo' => 1])
+			->will($this->returnSelf());
+		$query1->expects($this->at(1))
 			->method('where')
 			->with(['article_id' => 1])
 			->will($this->returnSelf());
-		$query1->expects($this->at(1))
-			->method('andWhere')
-			->with(['tag_id' => 2])
-			->will($this->returnSelf());
 		$query1->expects($this->at(2))
 			->method('andWhere')
-			->with(['foo' => 1])
+			->with(['tag_id' => 2])
 			->will($this->returnSelf());
 		$query1->expects($this->once())
 			->method('union')
 			->with($query2)
 			->will($this->returnSelf());
 
-		$query2->expects($this->once())
+		$query2->expects($this->at(0))
+			->method('where')
+			->with(['foo' => 1])
+			->will($this->returnSelf());
+		$query2->expects($this->at(1))
 			->method('where')
 			->with(['article_id' => 1])
 			->will($this->returnSelf());
-		$query2->expects($this->at(1))
-			->method('andWhere')
-			->with(['tag_id' => 3])
-			->will($this->returnSelf());
 		$query2->expects($this->at(2))
 			->method('andWhere')
-			->with(['foo' => 1])
+			->with(['tag_id' => 3])
 			->will($this->returnSelf());
 
 		$jointEntities = [
@@ -989,9 +999,8 @@ class BelongsToManyTest extends TestCase {
 			['tags', $config]
 		);
 
-		$assoc
-			->junction()
-			->association('tags')
+		$this->article
+			->association('ArticlesTags')
 			->conditions(['foo' => 1]);
 
 		$query1 = $this->getMock(
@@ -1004,13 +1013,13 @@ class BelongsToManyTest extends TestCase {
 			->with('all')
 			->will($this->returnValue($query1));
 
-		$query1->expects($this->once())
+		$query1->expects($this->at(0))
 			->method('where')
-			->with(['article_id' => 1])
+			->with(['foo' => 1])
 			->will($this->returnSelf());
 		$query1->expects($this->at(1))
-			->method('andWhere')
-			->with(['foo' => 1])
+			->method('where')
+			->with(['article_id' => 1])
 			->will($this->returnSelf());
 
 		$existing = [

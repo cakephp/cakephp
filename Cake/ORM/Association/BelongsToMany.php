@@ -281,15 +281,17 @@ class BelongsToMany extends Association {
 			$conditions = array_combine($foreignKey, $entity->extract((array)$primaryKey));
 		}
 
-		$conditions = array_merge($conditions, $this->conditions());
 
 		$table = $this->junction();
+		$hasMany = $this->source()->association($table->alias());
 		if ($this->_cascadeCallbacks) {
-			foreach ($table->find('all')->where($conditions) as $related) {
+			foreach ($hasMany->find('all')->where($conditions) as $related) {
 				$table->delete($related, $options);
 			}
 			return true;
 		}
+
+		$conditions = array_merge($conditions, $hasMany->conditions());
 		return $table->deleteAll($conditions);
 	}
 
@@ -630,10 +632,9 @@ class BelongsToMany extends Association {
 		return $this->junction()->connection()->transactional(
 			function() use ($sourceEntity, $targetEntities, $primaryValue, $options) {
 				$foreignKey = (array)$this->foreignKey();
-				$belongsTo = $this->_junctionTable->association($this->target()->alias());
-				$existing = $this->_junctionTable->find('all')
-					->where(array_combine($foreignKey, $primaryValue))
-					->andWhere($belongsTo->conditions());
+				$hasMany = $this->source()->association($this->_junctionTable->alias());
+				$existing = $hasMany->find('all')
+					->where(array_combine($foreignKey, $primaryValue));
 
 				$jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
 				$inserts = $this->_diffLinks($existing, $jointEntities, $targetEntities);
@@ -779,15 +780,15 @@ class BelongsToMany extends Association {
 		}
 
 		$belongsTo = $junction->association($target->alias());
+		$hasMany = $source->association($junction->alias());
 		$foreignKey = (array)$this->foreignKey();
 		$assocForeignKey = (array)$belongsTo->foreignKey();
 		$sourceKey = $sourceEntity->extract((array)$source->primaryKey());
 
 		foreach ($missing as $key) {
-			$unions[] = $junction->find('all')
+			$unions[] = $hasMany->find('all')
 				->where(array_combine($foreignKey, $sourceKey))
-				->andWhere(array_combine($assocForeignKey, $key))
-				->andWhere($belongsTo->conditions());
+				->andWhere(array_combine($assocForeignKey, $key));
 		}
 
 		$query = array_shift($unions);
