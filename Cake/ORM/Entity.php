@@ -88,6 +88,14 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected $_errors = [];
 
 /**
+ * List of properties in this entity that can be set safely
+ * an empty array means "all"
+ *
+ * @var array
+ */
+	protected $_accessible = [];
+
+/**
  * Initializes the internal properties of this entity out of the
  * keys in an array
  *
@@ -230,6 +238,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			}
 			$this->_properties[$p] = $value;
 		}
+
 		return $this;
 	}
 
@@ -579,6 +588,27 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 
 		foreach ($field as $f => $error) {
 			$this->_errors[$f] = (array)$error;
+		}
+
+		return $this;
+	}
+
+	public function accessible($property, $set = null) {
+		if ($set === null && empty($this->_accessible)) {
+			return true;
+		}
+
+		if ($set === null) {
+			return !isset($this->_accessible[$property]) || $this->_accessible[$property];
+		}
+
+		if ($property === '*') {
+			$this->_accessible = [];
+			return $this;
+		}
+
+		foreach ((array)$property as $prop) {
+			$this->_accessible[$prop] = (bool)$set;
 		}
 
 		return $this;

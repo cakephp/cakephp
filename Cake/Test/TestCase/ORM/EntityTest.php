@@ -787,4 +787,54 @@ class EntityTest extends TestCase {
 		$this->assertEmpty($entity->errors());
 	}
 
+/**
+ * Tests accessible() method as a getter and setter
+ *
+ * @return void
+ */
+	public function testAccessible() {
+		$entity = new Entity;
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+
+		$this->assertSame($entity, $entity->accessible('foo', false));
+		$this->assertFalse($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+
+		$this->assertSame($entity, $entity->accessible('bar', false));
+		$this->assertFalse($entity->accessible('foo'));
+		$this->assertFalse($entity->accessible('bar'));
+
+		$this->assertSame($entity, $entity->accessible('foo', true));
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertFalse($entity->accessible('bar'));
+
+		$this->assertSame($entity, $entity->accessible('bar', true));
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+	}
+
+/**
+ * Tests that an array can be used to set
+ *
+ * @return void
+ */
+	public function testAccessibleAsArray() {
+		$entity = new Entity;
+		$entity->accessible(['foo', 'bar', 'baz'], false);
+		$this->assertFalse($entity->accessible('foo'));
+		$this->assertFalse($entity->accessible('bar'));
+		$this->assertFalse($entity->accessible('baz'));
+
+		$entity->accessible('foo', true);
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertFalse($entity->accessible('bar'));
+		$this->assertFalse($entity->accessible('baz'));
+
+		$entity->accessible(['foo', 'bar', 'baz'], true);
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+		$this->assertTrue($entity->accessible('baz'));
+	}
+
 }
