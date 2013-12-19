@@ -400,14 +400,14 @@ class BelongsToManyTest extends TestCase {
 
 		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 		$query->expects($this->at(1))->method('where')
 			->with([])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('order')
 			->with(['id' => 'ASC'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->hydrate(false);
 
@@ -457,22 +457,22 @@ class BelongsToManyTest extends TestCase {
 
 		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->at(1))->method('where')
 			->with(['Tags.id !=' => 3])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('order')
 			->with(['name' => 'DESC'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('select')
 			->with([
 				'Tags__name' => 'Tags.name',
 				'ArticlesTags__article_id' => 'ArticlesTags.article_id'
 			])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->hydrate(false);
 
@@ -574,11 +574,11 @@ class BelongsToManyTest extends TestCase {
 
 		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->at(1))->method('where')
 			->with([])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('contain')
 			->with([
