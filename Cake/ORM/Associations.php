@@ -98,30 +98,7 @@ class Associations {
 		if (empty($associations)) {
 			return $entity;
 		}
-		foreach ($associations as $alias => $nested) {
-			if (is_int($alias)) {
-				$alias = $nested;
-				$nested = [];
-			}
-			$relation = $this->get($alias);
-			if (!$relation) {
-				$msg = __d(
-					'cake_dev',
-					'Cannot save %s, it is not associated to %s',
-					$alias,
-					$table->alias()
-				);
-				throw new \InvalidArgumentException($msg);
-			}
-			if ($relation->isOwningSide($table)) {
-				continue;
-			}
-			if (!empty($nested)) {
-				$options = (array)$nested + $options;
-			}
-			$this->_save($relation, $entity, $options);
-		}
-		return $entity;
+		return $this->_saveAssociations($table, $entity, $associations, $options, false);
 	}
 
 /**
@@ -142,6 +119,21 @@ class Associations {
 		if (empty($associations)) {
 			return $entity;
 		}
+		return $this->_saveAssociations($table, $entity, $associations, $options, true);
+	}
+
+/**
+ * Helper method for saving an association's data.
+ *
+ * @param Table $table The table the save is currently operating on
+ * @param Entity $entity The entity to save
+ * @param array $associations Array of associations to save.
+ * @param array $options Original options
+ * @param boolean $owningSide Compared with association classes'
+ *   isOwningSide method.
+ * @return void
+ */
+	protected function _saveAssociations($table, $entity, $associations, $options, $owningSide) {
 		foreach ($associations as $alias => $nested) {
 			if (is_int($alias)) {
 				$alias = $nested;
@@ -157,13 +149,10 @@ class Associations {
 				);
 				throw new \InvalidArgumentException($msg);
 			}
-			if (!$relation->isOwningSide($table)) {
+			if ($relation->isOwningSide($table) !== $owningSide) {
 				continue;
 			}
-			if (!empty($nested)) {
-				$options = (array)$nested + $options;
-			}
-			$this->_save($relation, $entity, $options);
+			$this->_save($relation, $entity, $nested, $options);
 		}
 		return $entity;
 	}
@@ -171,15 +160,18 @@ class Associations {
 /**
  * Helper method for saving an association's data.
  *
- * @param Association $association
- * @param Entity $entity
- * @param array $options
+ * @param Association $association The association object to save with.
+ * @param Entity $entity The entity to save
+ * @param array $nested Options for deeper associations
+ * @param array $options Original options
  * @return void
  */
-	protected function _save($association, $entity, $options) {
-		$property = $association->property();
-		if (!$entity->dirty($property)) {
+	protected function _save($association, $entity, $nested, $options) {
+		if (!$entity->dirty($association->property())) {
 			return;
+		}
+		if (!empty($nested)) {
+			$options = (array)$nested + $options;
 		}
 		$association->save($entity, $options);
 	}
