@@ -567,7 +567,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testCascadeDelete() {
-		$articleTag = $this->getMock('Cake\ORM\Table', ['deleteAll'], [], '', false);
+		$articleTag = $this->getMock('Cake\ORM\Table', ['deleteAll'], []);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
@@ -594,7 +594,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testCascadeDeleteWithCallbacks() {
-		$articleTag = $this->getMock('Cake\ORM\Table', ['find', 'delete'], [], '', false);
+		$articleTag = $this->getMock('Cake\ORM\Table', ['find', 'delete'], []);
 		$config = [
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,

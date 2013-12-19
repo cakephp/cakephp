@@ -47,7 +47,7 @@ class AssociationsTest extends TestCase {
 		$this->assertNull($this->associations->get('Users'));
 
 		$belongsTo = new BelongsTo([]);
-		$this->assertNull($this->associations->add('Users', $belongsTo));
+		$this->assertSame($belongsTo, $this->associations->add('Users', $belongsTo));
 		$this->assertTrue($this->associations->has('users'));
 		$this->assertTrue($this->associations->has('Users'));
 
@@ -77,7 +77,7 @@ class AssociationsTest extends TestCase {
 			->method('cascadeDelete')
 			->with($entity, $options);
 
-		$this->associations->cascadeDelete($entity, $options);
+		$this->assertNull($this->associations->cascadeDelete($entity, $options));
 	}
 
 /**
@@ -111,7 +111,8 @@ class AssociationsTest extends TestCase {
 
 		$mockOne->expects($this->once())
 			->method('save')
-			->with($entity, $options);
+			->with($entity, $options)
+			->will($this->returnValue(true));
 
 		$mockTwo->expects($this->never())
 			->method('save');
@@ -122,7 +123,7 @@ class AssociationsTest extends TestCase {
 			['Parent', 'Child'],
 			$options
 		);
-		$this->assertSame($entity, $result);
+		$this->assertTrue($result, 'Save should work.');
 	}
 
 /**
@@ -156,7 +157,8 @@ class AssociationsTest extends TestCase {
 
 		$mockOne->expects($this->once())
 			->method('save')
-			->with($entity, ['atomic' => true, 'associated' => ['Others']]);
+			->with($entity, ['atomic' => true, 'associated' => ['Others']])
+			->will($this->returnValue(true));
 
 		$mockTwo->expects($this->never())
 			->method('save');
@@ -167,7 +169,7 @@ class AssociationsTest extends TestCase {
 			['Parents' => ['associated' => ['Others']]],
 			$options
 		);
-		$this->assertSame($entity, $result);
+		$this->assertTrue($result, 'Save should work.');
 	}
 
 /**
@@ -201,7 +203,8 @@ class AssociationsTest extends TestCase {
 
 		$mockOne->expects($this->once())
 			->method('save')
-			->with($entity, $options + ['associated' => ['Other']]);
+			->with($entity, $options + ['associated' => ['Other']])
+			->will($this->returnValue(true));
 
 		$mockTwo->expects($this->never())
 			->method('save');
@@ -212,7 +215,7 @@ class AssociationsTest extends TestCase {
 			['Comments' => ['associated' => ['Other']]],
 			$options
 		);
-		$this->assertSame($entity, $result);
+		$this->assertTrue($result, 'Should succeed.');
 	}
 
 /**

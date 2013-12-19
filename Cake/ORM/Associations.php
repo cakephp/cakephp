@@ -41,7 +41,7 @@ class Associations {
  * @return void
  */
 	public function add($alias, Association $association) {
-		$this->_items[strtolower($alias)] = $association;
+		return $this->_items[strtolower($alias)] = $association;
 	}
 
 /**
@@ -69,6 +69,15 @@ class Associations {
 	}
 
 /**
+ * Get the names of all the associations in the collection.
+ *
+ * @return array
+ */
+	public function keys() {
+		return array_keys($this->_items);
+	}
+
+/**
  * Drop/remove an association.
  *
  * Once removed the association will not longer be reachable
@@ -91,11 +100,11 @@ class Associations {
  * @param array $associations The list of associations to save parents from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.
- * @return Entity Modified entity
+ * @return boolean Success
  */
 	public function saveParents(Table $table, Entity $entity, $associations, $options = []) {
 		if (empty($associations)) {
-			return $entity;
+			return true;
 		}
 		return $this->_saveAssociations($table, $entity, $associations, $options, false);
 	}
@@ -112,11 +121,11 @@ class Associations {
  * @param array $associations The list of associations to save children from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.
- * @return Entity Modified entity
+ * @return boolean Success
  */
 	public function saveChildren(Table $table, Entity $entity, $associations, $options) {
 		if (empty($associations)) {
-			return $entity;
+			return true;
 		}
 		return $this->_saveAssociations($table, $entity, $associations, $options, true);
 	}
@@ -130,7 +139,7 @@ class Associations {
  * @param array $options Original options
  * @param boolean $owningSide Compared with association classes'
  *   isOwningSide method.
- * @return Entity modified entity.
+ * @return boolean Success
  * @throws new \InvalidArgumentException When an unknown alias is used.
  */
 	protected function _saveAssociations($table, $entity, $associations, $options, $owningSide) {
@@ -152,9 +161,11 @@ class Associations {
 			if ($relation->isOwningSide($table) !== $owningSide) {
 				continue;
 			}
-			$this->_save($relation, $entity, $nested, $options);
+			if (!$this->_save($relation, $entity, $nested, $options)) {
+				return false;
+			}
 		}
-		return $entity;
+		return true;
 	}
 
 /**
@@ -164,7 +175,7 @@ class Associations {
  * @param Entity $entity The entity to save
  * @param array $nested Options for deeper associations
  * @param array $options Original options
- * @return void
+ * @return boolean Success
  */
 	protected function _save($association, $entity, $nested, $options) {
 		if (!$entity->dirty($association->property())) {
@@ -173,7 +184,7 @@ class Associations {
 		if (!empty($nested)) {
 			$options = (array)$nested + $options;
 		}
-		$association->save($entity, $options);
+		return (bool)$association->save($entity, $options);
 	}
 
 /**
