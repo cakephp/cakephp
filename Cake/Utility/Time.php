@@ -282,7 +282,7 @@ class Time {
 			$date = intval($dateString);
 		} elseif (
 			$dateString instanceof \DateTime &&
-			$dateString->getTimezone()->getName() != date_default_timezone_get()
+			$dateString->getTimezone()->getName() !== date_default_timezone_get()
 		) {
 			$clone = clone $dateString;
 			$clone->setTimezone(new \DateTimeZone(date_default_timezone_get()));
