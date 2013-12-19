@@ -78,6 +78,18 @@ class Associations {
 	}
 
 /**
+ * Get an array of associations matching a specific type.
+ *
+ * @return array
+ */
+	public function type($class) {
+		$out = array_filter($this->_items, function ($assoc) use ($class) {
+			return strpos(get_class($assoc), $class) !== false;
+		});
+		return array_values($out);
+	}
+
+/**
  * Drop/remove an association.
  *
  * Once removed the association will not longer be reachable
@@ -85,7 +97,7 @@ class Associations {
  * @param string The alias name.
  * @return void
  */
-	public function drop($alias) {
+	public function remove($alias) {
 		unset($this->_items[strtolower($alias)]);
 	}
 

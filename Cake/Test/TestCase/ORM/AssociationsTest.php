@@ -39,7 +39,7 @@ class AssociationsTest extends TestCase {
  *
  * @return void
  */
-	public function testAddHasAndGet() {
+	public function testAddHasRemoveAndGet() {
 		$this->assertFalse($this->associations->has('users'));
 		$this->assertFalse($this->associations->has('Users'));
 
@@ -53,6 +53,39 @@ class AssociationsTest extends TestCase {
 
 		$this->assertSame($belongsTo, $this->associations->get('users'));
 		$this->assertSame($belongsTo, $this->associations->get('Users'));
+
+		$this->assertNull($this->associations->remove('Users'));
+
+		$this->assertFalse($this->associations->has('users'));
+		$this->assertFalse($this->associations->has('Users'));
+		$this->assertNull($this->associations->get('users'));
+		$this->assertNull($this->associations->get('Users'));
+	}
+
+/**
+ * Test keys()
+ *
+ * @return void
+ */
+	public function testKeys() {
+		$belongsTo = new BelongsTo([]);
+		$this->associations->add('Users', $belongsTo);
+		$this->associations->add('Categories', $belongsTo);
+		$this->assertEquals(['users', 'categories'], $this->associations->keys());
+
+		$this->associations->remove('Categories');
+		$this->assertEquals(['users'], $this->associations->keys());
+	}
+
+/**
+ * Test getting association names by type.
+ */
+	public function testType() {
+		$belongsTo = new BelongsTo([]);
+		$this->associations->add('Users', $belongsTo);
+
+		$this->assertSame([$belongsTo], $this->associations->type('BelongsTo'));
+		$this->assertSame([], $this->associations->type('HasMany'));
 	}
 
 /**
