@@ -1094,7 +1094,7 @@ class Table implements EventListener {
 				$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 				$this->getEventManager()->dispatch($event);
 				$entity->isNew(false);
-				$success = $entity;
+				$success = true;
 			}
 		}
 
@@ -1102,8 +1102,10 @@ class Table implements EventListener {
 			$entity->unsetProperty($this->primaryKey());
 			$entity->isNew(true);
 		}
-
-		return $success;
+		if ($success) {
+			return $entity;
+		}
+		return false;
 	}
 
 /**

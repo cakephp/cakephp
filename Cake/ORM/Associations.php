@@ -143,6 +143,7 @@ class Associations {
  * @throws new \InvalidArgumentException When an unknown alias is used.
  */
 	protected function _saveAssociations($table, $entity, $associations, $options, $owningSide) {
+		unset($options['associated']);
 		foreach ($associations as $alias => $nested) {
 			if (is_int($alias)) {
 				$alias = $nested;
@@ -179,7 +180,7 @@ class Associations {
  */
 	protected function _save($association, $entity, $nested, $options) {
 		if (!$entity->dirty($association->property())) {
-			return;
+			return true;
 		}
 		if (!empty($nested)) {
 			$options = (array)$nested + $options;
