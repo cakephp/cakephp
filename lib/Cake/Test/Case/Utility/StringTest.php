@@ -303,6 +303,10 @@ class StringTest extends CakeTestCase {
 		$result = String::tokenize('tagA "single tag" tagB', ' ', '"', '"');
 		$expected = array('tagA', '"single tag"', 'tagB');
 		$this->assertEquals($expected, $result);
+
+		$result = String::tokenize('');
+		$expected = array();
+		$this->assertEquals($expected, $result);
 	}
 
 	public function testReplaceWithQuestionMarkInString() {
