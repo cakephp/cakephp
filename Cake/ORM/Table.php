@@ -669,11 +669,17 @@ class Table implements EventListener {
  * Each find() will trigger a `Model.beforeFind` event for all attached
  * listeners. Any listener can set a valid result set using $query
  *
- * @param string $type the type of query to perform
+ * @param string|array $type the type of query to perform, if an array is passed,
+ * it will be interpreted as the `$options` parameter
  * @param array $options
  * @return \Cake\ORM\Query
  */
-	public function find($type, $options = []) {
+	public function find($type = 'all', $options = []) {
+		if (!is_string($type)) {
+			$options = $type;
+			$type = 'all';
+		}
+
 		$query = $this->_buildQuery();
 		$query->select()->applyOptions($options);
 		return $this->callFinder($type, $query, $options);
