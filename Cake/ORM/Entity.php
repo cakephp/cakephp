@@ -618,16 +618,42 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		return $this;
 	}
 
+/**
+ * Stores whether or not a property value can be changed or set in this entity.
+ * The special property '*' can also be marked as accessible or protected, meaning
+ * that any other property specified before will take its value. For example
+ * `$entity->accessible('*', true)`  means that any property not specified already
+ * will be accessible by default.
+ *
+ * You can also call this method with an array of properties, in which case they
+ * will each take the accessibility value specified in the second argument.
+ *
+ * ### Example:
+ *
+ * {{{
+ * $entity->accessible('id', true); // Mark id as not protected
+ * $entity->accessible('author_id', true); // Mark author_id as protected
+ * $entity->accessible(['id', 'user_id'], true); // Mark both properties as accessible
+ * $entity->accessible('*', false); // Mark all properties as protected
+ * }}}
+ *
+ * When called without the second param it will return whether or not the property
+ * can be set.
+ *
+ * ### Example:
+ *
+ * {{{
+ * $entity->accessible('id'); // Returns whether it can be set or not
+ * }}}
+ *
+ * @param string|array single or list of properties to change its accessibility
+ * @param boolean $set true marks the property as accessible, false will
+ * mark it as protected.
+ * @return Entity|boolean
+ */
 	public function accessible($property, $set = null) {
 		if ($set === null) {
 			return !empty($this->_accessible[$property]) || !empty($this->_accessible['*']);
-		}
-
-		if ($set === null) {
-			if (is_bool($this->_accessible)) {
-				return $this->_accessible;
-			}
-			return !isset($this->_accessible[$property]) || $this->_accessible[$property];
 		}
 
 		if ($property === '*') {
