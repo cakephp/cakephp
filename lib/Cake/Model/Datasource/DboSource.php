@@ -1711,51 +1711,53 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Returns a conditions array for the constraint between two models
+ * Returns a conditions array for the constraint between two models.
  *
- * @param string $type Association type
- * @param Model $Model Model object
- * @param string $linkModel
- * @param string $alias
- * @param array $assoc
- * @param string $alias2
- * @return array Conditions array defining the constraint between $Model and $association
+ * @param string $type Association type.
+ * @param Model $Model Primary Model object.
+ * @param Model $LinkModel Linked model object.
+ * @param string $association Association name.
+ * @param array $assocData Association data.
+ * @param string $association2 HABTM association name.
+ * @return array Conditions array defining the constraint between $Model and $LinkModel.
  */
-	public function getConstraint($type, Model $Model, $linkModel, $alias, $assoc, $alias2 = null) {
-		$assoc += array('external' => false);
+	public function getConstraint($type, Model $Model, Model $LinkModel, $association, $assocData, $association2 = null) {
+		$assocData += array('external' => false);
 
-		if (empty($assoc['foreignKey'])) {
+		if (empty($assocData['foreignKey'])) {
 			return array();
 		}
 
-		switch (true) {
-			case ($type === 'hasOne' && $assoc['external']):
-				return array(
-					"{$alias}.{$assoc['foreignKey']}" => '{$__cakeID__$}'
-				);
-			case ($type === 'hasOne' && !$assoc['external']):
-				return array(
-					"{$alias}.{$assoc['foreignKey']}" => $this->identifier("{$Model->alias}.{$Model->primaryKey}")
-				);
-			case ($type === 'belongsTo' && $assoc['external']):
-				return array(
-					"{$alias}.{$linkModel->primaryKey}" => '{$__cakeForeignKey__$}'
-				);
-			case ($type === 'belongsTo' && !$assoc['external']):
-				return array(
-					"{$Model->alias}.{$assoc['foreignKey']}" => $this->identifier("{$alias}.{$linkModel->primaryKey}")
-				);
-			case ($type === 'hasMany'):
-				return array(
-					"{$alias}.{$assoc['foreignKey']}" => array('{$__cakeID__$}')
-				);
-			case ($type === 'hasAndBelongsToMany'):
+		switch ($type) {
+			case 'hasOne':
+				if ($assocData['external']) {
+					return array(
+						"{$association}.{$assocData['foreignKey']}" => '{$__cakeID__$}'
+					);
+				} else {
+					return array(
+						"{$association}.{$assocData['foreignKey']}" => $this->identifier("{$Model->alias}.{$Model->primaryKey}")
+					);
+				}
+			case 'belongsTo':
+				if ($assocData['external']) {
+					return array(
+						"{$association}.{$LinkModel->primaryKey}" => '{$__cakeForeignKey__$}'
+					);
+				} else {
+					return array(
+						"{$Model->alias}.{$assocData['foreignKey']}" => $this->identifier("{$association}.{$LinkModel->primaryKey}")
+					);
+				}
+			case 'hasMany':
+				return array("{$association}.{$assocData['foreignKey']}" => array('{$__cakeID__$}'));
+			case 'hasAndBelongsToMany':
 				return array(
 					array(
-						"{$alias}.{$assoc['foreignKey']}" => '{$__cakeID__$}'
+						"{$association}.{$assocData['foreignKey']}" => '{$__cakeID__$}'
 					),
 					array(
-						"{$alias}.{$assoc['associationForeignKey']}" => $this->identifier("{$alias2}.{$linkModel->primaryKey}")
+						"{$association}.{$assocData['associationForeignKey']}" => $this->identifier("{$association2}.{$LinkModel->primaryKey}")
 					)
 				);
 		}
