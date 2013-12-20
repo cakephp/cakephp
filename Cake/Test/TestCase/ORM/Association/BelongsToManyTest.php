@@ -1034,7 +1034,7 @@ class BelongsToManyTest extends TestCase {
 		$tags = [
 			new Entity(['id' => 2], $opts),
 			new Entity(['id' => 3], $opts),
-			new Entity(['id' => 6, 'articlesTag' => new Entity(['bar' => 'baz'])])
+			new Entity(['id' => 6])
 		];
 		$entity = new Entity(['id' => 1, 'test' => $tags], $opts);
 
