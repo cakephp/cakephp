@@ -94,7 +94,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  *
  * The special property '*' can also be mapped, meaning that any other property
  * not defined in the map will take its value. For example, `'*' => true`
- * means that any property not defin
+ * means that any property not defined in the map will be accessible by default
  *
  * @var array
  */
