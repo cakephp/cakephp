@@ -2390,6 +2390,43 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test time with selected values around 12:xx:xx
+ *
+ * @return void
+ */
+	public function testTimeSelectedWithIntervalTwelve() {
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'timeFormat' => 12,
+			'interval' => 15,
+			'selected' => '00:00:00'
+		));
+		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+		$this->assertContains('<option value="am" selected="selected">am</option>', $result);
+
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'timeFormat' => 12,
+			'interval' => 15,
+			'selected' => '12:00:00'
+		));
+		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
+		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+
+		$result = $this->Form->input('Model.start_time', array(
+			'type' => 'time',
+			'timeFormat' => 12,
+			'interval' => 15,
+			'selected' => '12:15:00'
+		));
+		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
+		$this->assertContains('<option value="15" selected="selected">15</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+	}
+
+/**
  * Test interval & timeFormat = 12
  *
  * @return void
@@ -2888,6 +2925,34 @@ class FormHelperTest extends CakeTestCase {
 			array('option' => array('value' => 'value')), 'good', '/option',
 			array('option' => array('value' => 'other')), 'bad', '/option',
 			'/select',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that inferred types do not override developer input
+ *
+ * @return void
+ */
+	public function testInputMagicTypeDoesNotOverride() {
+		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
+		$result = $this->Form->input('Model.user', array('type' => 'checkbox'));
+		$expected = array(
+			'div' => array('class' => 'input checkbox'),
+			array('input' => array(
+				'type' => 'hidden',
+				'name' => 'data[Model][user]',
+				'id' => 'ModelUser_',
+				'value' => 0,
+			)),
+			array('input' => array(
+				'name' => 'data[Model][user]',
+				'type' => 'checkbox',
+				'id' => 'ModelUser',
+				'value' => 1
+			)),
+			'label' => array('for' => 'ModelUser'), 'User', '/label',
 			'/div'
 		);
 		$this->assertTags($result, $expected);

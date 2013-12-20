@@ -1142,7 +1142,9 @@ class Model extends Object implements CakeEventListener {
 				));
 			}
 
-			$this->_schema = null;
+			if ($sources) {
+				$this->_schema = null;
+			}
 		}
 
 		$this->table = $this->useTable = $tableName;
