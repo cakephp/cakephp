@@ -88,8 +88,13 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected $_errors = [];
 
 /**
- * List of properties in this entity that can be set safely
- * an empty array means "all"
+ * Map of properties in this entity that can be safely assigned, each
+ * property name points to a boolean indicating its status. An empty array
+ * means no properties are accessible
+ *
+ * The special property '*' can also be mapped, meaning that any other property
+ * not defined in the map will take its value. For example, `'*' => true`
+ * means that any property not defin
  *
  * @var array
  */
@@ -110,15 +115,20 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * - useSetters: whether use internal setters for properties or not
  * - markClean: whether to mark all properties as clean after setting them
  * - markNew: whether this instance has not yet been persisted
+ * - safe: whether to prevent inaccessible properties from being set (default: false)
  */
 	public function __construct(array $properties = [], array $options = []) {
 		$options += [
 			'useSetters' => true,
 			'markClean' => false,
-			'markNew' => null
+			'markNew' => null,
+			'safe' => false
 		];
 		$this->_className = get_class($this);
-		$this->set($properties, $options['useSetters']);
+		$this->set($properties, [
+			'setter' => $options['useSetters'],
+			'safe' => $options['safe']
+		]);
 
 		if ($options['markClean']) {
 			$this->clean();
@@ -192,32 +202,47 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * }}
  *
  * Some times it is handy to bypass setter functions in this entity when assigning
- * properties. You can achieve this by setting the third argument to false when
- * assigning a single property or the second param when using an array of
- * properties.
+ * properties. You can achieve this by disabling the `setter` option using the
+ * `$options` parameter
  *
  * ### Example:
  *
- * ``$entity->set('name', 'Andrew', false);``
+ * ``$entity->set('name', 'Andrew', ['setter' => false]);``
  *
- * ``$entity->set(['name' => 'Andrew', 'id' => 1], false);``
+ * ``$entity->set(['name' => 'Andrew', 'id' => 1], ['setter' => false]);``
+ *
+ * Mass assignment should be treated carefully when accepting user input, for this
+ * case you can tell this method to only set property that are marked as accessible
+ * by setting the `safe` options in the `$options` parameter
+ *
+ * ### Example:
+ *
+ * ``$entity->set('name', 'Andrew', ['safe' => true]);``
+ *
+ * ``$entity->set(['name' => 'Andrew', 'id' => 1], ['safe' => true]);``
  *
  * @param string|array $property the name of property to set or a list of
  * properties with their respective values
- * @param mixed|boolean $value the value to set to the property or a boolean
- * signifying whether to use internal setter functions or not
- * @param boolean $useSetters whether to use setter functions in this object
- * or bypass them
+ * @param mixed|array $value the value to set to the property or an array if the
+ * first argument is also an array, in which case will be treated as $options
+ * @param array $options options to be used for setting the property. Allowed option
+ * keys are `setter` and `safe`
  * @return \Cake\ORM\Entity
  */
-	public function set($property, $value = true, $useSetters = true) {
+	public function set($property, $value = null, $options = []) {
 		if (is_string($property)) {
 			$property = [$property => $value];
 		} else {
-			$useSetters = $value;
+			$options = (array)$value;
 		}
 
+		$options += ['setter' => true, 'safe' => false];
+
 		foreach ($property as $p => $value) {
+			if ($options['safe'] === true && !$this->accessible($property)) {
+				continue;
+			}
+
 			$markDirty = true;
 			if (isset($this->_properties[$p])) {
 				$markDirty = $value !== $this->_properties[$p];
@@ -227,7 +252,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 				$this->dirty($p, true);
 			}
 
-			if (!$useSetters) {
+			if (!$options['setter']) {
 				$this->_properties[$p] = $value;
 				continue;
 			}
@@ -594,16 +619,22 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	}
 
 	public function accessible($property, $set = null) {
-		if ($set === null && empty($this->_accessible)) {
-			return true;
+		if ($set === null) {
+			return !empty($this->_accessible[$property]) || !empty($this->_accessible['*']);
 		}
 
 		if ($set === null) {
+			if (is_bool($this->_accessible)) {
+				return $this->_accessible;
+			}
 			return !isset($this->_accessible[$property]) || $this->_accessible[$property];
 		}
 
 		if ($property === '*') {
-			$this->_accessible = [];
+			$this->_accessible = array_map(function($p) use ($set) {
+				return (bool)$set;
+			}, $this->_accessible);
+			$this->_accessible['*'] = (bool)$set;
 			return $this;
 		}
 
