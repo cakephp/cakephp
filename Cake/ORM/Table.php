@@ -508,6 +508,15 @@ class Table implements EventListener {
 	}
 
 /**
+ * Get the associations collection for this table.
+ *
+ * @return Cake\ORM\Associations
+ */
+	public function associations() {
+		return $this->_associated;
+	}
+
+/**
  * Creates a new BelongsTo association between this table and a target
  * table. A "belongs to" association is a N-1 relationship where this table
  * is the N side, and where there is a single associated record in the target
