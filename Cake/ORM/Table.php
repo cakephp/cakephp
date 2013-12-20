@@ -20,6 +20,7 @@ use Cake\Database\Type;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
+use Cake\ORM\Associations;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -132,12 +133,11 @@ class Table implements EventListener {
 	protected $_displayField;
 
 /**
- * The list of associations for this table. Indexed by association name,
- * values are Association object instances.
+ * The associations container for this Table.
  *
- * @var array
+ * @var Cake\ORM\Associations
  */
-	protected $_associations = [];
+	protected $_associated;
 
 /**
  * EventManager for this table.
@@ -210,8 +210,14 @@ class Table implements EventListener {
 		if (!empty($config['behaviors'])) {
 			$behaviors = $config['behaviors'];
 		}
+		$associations = null;
+		if (!empty($config['associations'])) {
+			$associations = $config['associations'];
+		}
 		$this->_eventManager = $eventManager ?: new EventManager();
+		$this->_associated = $associations ?: new Associations();
 		$this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
+
 		$this->initialize($config);
 		$this->_eventManager->attach($this);
 	}
@@ -497,11 +503,7 @@ class Table implements EventListener {
  * @return Cake\ORM\Association
  */
 	public function association($name) {
-		$name = strtolower($name);
-		if (isset($this->_associations[$name])) {
-			return $this->_associations[$name];
-		}
-		return null;
+		return $this->_associated->get($name);
 	}
 
 /**
@@ -533,7 +535,7 @@ class Table implements EventListener {
 	public function belongsTo($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsTo($associated, $options);
-		return $this->_associations[strtolower($association->name())] = $association;
+		return $this->_associated->add($association->name(), $association);
 	}
 
 /**
@@ -570,7 +572,7 @@ class Table implements EventListener {
 	public function hasOne($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasOne($associated, $options);
-		return $this->_associations[strtolower($association->name())] = $association;
+		return $this->_associated->add($association->name(), $association);
 	}
 
 /**
@@ -611,7 +613,7 @@ class Table implements EventListener {
 	public function hasMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasMany($associated, $options);
-		return $this->_associations[strtolower($association->name())] = $association;
+		return $this->_associated->add($association->name(), $association);
 	}
 
 /**
@@ -655,7 +657,7 @@ class Table implements EventListener {
 	public function belongsToMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsToMany($associated, $options);
-		return $this->_associations[strtolower($association->name())] = $association;
+		return $this->_associated->add($association->name(), $association);
 	}
 
 /**
@@ -985,12 +987,18 @@ class Table implements EventListener {
  * be saved and to pass additional option for saving them.
  *
  * {{{
- * $articles->save($entity, ['associated' => ['Comment']); // Only save comment assoc
+ * // Only save the comments association
+ * $articles->save($entity, ['associated' => ['Comments']);
  *
  * // Save the company, the employees and related addresses for each of them.
  * // For employees use the 'special' validation group
  * $companies->save($entity, [
- * 'associated' => ['Employee' => ['associated' => ['Address'], 'validate' => 'special']
+ *   'associated' => [
+ *     'Employees' => [
+ *       'associated' => ['Addresses'],
+ *       'validate' => 'special'
+ *     ]
+ *   ]
  * ]);
  *
  * // Save no associations
@@ -1042,7 +1050,7 @@ class Table implements EventListener {
 		}
 
 		if ($options['associated'] === true) {
-			$options['associated'] = array_keys($this->_associations);
+			$options['associated'] = $this->_associated->keys();
 		}
 		$options['associated'] = array_filter((array)$options['associated']);
 
@@ -1057,9 +1065,12 @@ class Table implements EventListener {
 			return $event->result;
 		}
 
-		$originalOptions = $options->getArrayCopy();
-		list($parents, $children) = $this->_sortAssociationTypes($options['associated']);
-		$saved = $this->_saveAssociations($parents, $entity, $originalOptions);
+		$saved = $this->_associated->saveParents(
+			$this,
+			$entity,
+			$options['associated'],
+			$options->getArrayCopy()
+		);
 
 		if (!$saved && $options['atomic']) {
 			return false;
@@ -1076,13 +1087,18 @@ class Table implements EventListener {
 		}
 
 		if ($success) {
-			$success = $this->_saveAssociations($children, $entity, $originalOptions);
+			$success = $this->_associated->saveChildren(
+				$this,
+				$entity,
+				$options['associated'],
+				$options->getArrayCopy()
+			);
 			if ($success || !$options['atomic']) {
 				$entity->clean();
 				$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 				$this->getEventManager()->dispatch($event);
 				$entity->isNew(false);
-				$success = $entity;
+				$success = true;
 			}
 		}
 
@@ -1090,84 +1106,10 @@ class Table implements EventListener {
 			$entity->unsetProperty($this->primaryKey());
 			$entity->isNew(true);
 		}
-
-		return $success;
-	}
-
-/**
- * Auxiliary method used to sort out which associations are defined in this table
- * as the owning side and which not based on a list of provided aliases.
- *
- * @param array $assocs list of association aliases
- * @throws \InvalidArgumentException if one of the provided aliases is not an
- * actual association defined for this table
- * @return array with two values, first one contain associations which target
- * is the owning side (or parent associations) and second value is an array of
- * associations aliases for which this table is the owning side.
- */
-	protected function _sortAssociationTypes($assocs) {
-		$parents = $children = [];
-		foreach ($assocs as $key => $assoc) {
-			if (!is_string($assoc)) {
-				$assoc = $key;
-			}
-
-			$association = $this->association($assoc);
-			if (!$association) {
-				$msg = __d('cake_dev', '%s is not associated to %s', $this->alias(), $assoc);
-				throw new \InvalidArgumentException($msg);
-			}
-
-			if ($association->isOwningSide($this)) {
-				$children[] = $assoc;
-			} else {
-				$parents[] = $assoc;
-			}
-		}
-		return [$parents, $children];
-	}
-
-/**
- * Runs through a list of aliases and for each of them calls the `save()` method
- * on the corresponding association objects passing $entity and $options as values.
- * If the alias for one of the associations contains an array as values in $assocs,
- * $options will be merged to this value before passed to the save operation.
- *
- *
- * @param array $assocs list of association aliases.
- * @param \Cake\ORM\Entity $entity the entity belonging to this table and maybe
- * containing associated entities.
- * @param array $options options to be passed to the save operation
- * @return boolean|\Cake\ORM\Entity The saved source entity on success, false
- * otherwise
- */
-	protected function _saveAssociations($assocs, $entity, array $options) {
-		if (empty($assocs)) {
+		if ($success) {
 			return $entity;
 		}
-
-		$associated = $options['associated'];
-		unset($options['associated']);
-
-		foreach ($assocs as $alias) {
-			$association = $this->association($alias);
-			$property = $association->property();
-			$passOptions = $options;
-
-			if (!$entity->dirty($property)) {
-				continue;
-			}
-
-			if (isset($associated[$alias])) {
-				$passOptions = (array)$associated[$alias] + $options;
-			}
-
-			if (!$association->save($entity, $passOptions)) {
-				return false;
-			}
-		}
-
-		return $entity;
+		return false;
 	}
 
 /**
@@ -1388,9 +1330,7 @@ class Table implements EventListener {
 			return $success;
 		}
 
-		foreach ($this->_associations as $assoc) {
-			$assoc->cascadeDelete($entity, $options->getArrayCopy());
-		}
+		$this->_associated->cascadeDelete($entity, $options->getArrayCopy());
 
 		$event = new Event('Model.afterDelete', $this, [
 			'entity' => $entity,
@@ -1560,7 +1500,7 @@ class Table implements EventListener {
  */
 	public function newEntity(array $data, $associations = null) {
 		if ($associations === null) {
-			$associations = array_keys($this->_associations);
+			$associations = $this->_associated->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->one($data, $associations);
@@ -1594,7 +1534,7 @@ class Table implements EventListener {
  */
 	public function newEntities(array $data, $associations = null) {
 		if ($associations === null) {
-			$associations = array_keys($this->_associations);
+			$associations = $this->_associated->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->many($data, $associations);
