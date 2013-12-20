@@ -239,7 +239,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		$options += ['setter' => true, 'safe' => false];
 
 		foreach ($property as $p => $value) {
-			if ($options['safe'] === true && !$this->accessible($property)) {
+			if ($options['safe'] === true && !$this->accessible($p)) {
 				continue;
 			}
 

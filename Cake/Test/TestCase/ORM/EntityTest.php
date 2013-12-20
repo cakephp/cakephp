@@ -879,4 +879,42 @@ class EntityTest extends TestCase {
 		$this->assertTrue($entity->accessible('newOne2'));
 	}
 
+/**
+ * Tests that only accessible properties can be set
+ *
+ * @return void
+ */
+	public function testSetWithAccessible() {
+		$entity = new Entity(['foo' => 1, 'bar' => 2]);
+		$options = ['safe' => true];
+		$entity->accessible('foo', true);
+		$entity->set('bar', 3, $options);
+		$entity->set('foo', 4, $options);
+		$this->assertEquals(2, $entity->get('bar'));
+		$this->assertEquals(4, $entity->get('foo'));
+
+		$entity->accessible('bar', true);
+		$entity->set('bar', 3, $options);
+		$this->assertEquals(3, $entity->get('bar'));
+	}
+
+/**
+ * Tests that only accessible properties can be set
+ *
+ * @return void
+ */
+	public function testSetWithAccessibleWithArray() {
+		$entity = new Entity(['foo' => 1, 'bar' => 2]);
+		$options = ['safe' => true];
+		$entity->accessible('foo', true);
+		$entity->set(['bar' => 3, 'foo' => 4], $options);
+		$this->assertEquals(2, $entity->get('bar'));
+		$this->assertEquals(4, $entity->get('foo'));
+
+		$entity->accessible('bar', true);
+		$entity->set(['bar' => 3, 'foo' => 5], $options);
+		$this->assertEquals(3, $entity->get('bar'));
+		$this->assertEquals(5, $entity->get('foo'));
+	}
+
 }
