@@ -42,18 +42,19 @@ trait DependentDeleteTrait {
 		$foreignKey = $this->foreignKey();
 		$primaryKey = $this->source()->primaryKey();
 
+		// TODO fix multi-column primary keys.
 		$conditions = [
 			$foreignKey => $entity->get($primaryKey)
 		];
-		// TODO fix multi-column primary keys.
-		$conditions = array_merge($conditions, $this->conditions());
 
 		if ($this->_cascadeCallbacks) {
-			foreach ($table->find('all')->where($conditions) as $related) {
+			foreach ($this->find('all')->where($conditions) as $related) {
 				$table->delete($related, $options);
 			}
 			return true;
 		}
+
+		$conditions = array_merge($conditions, $this->conditions());
 		return $table->deleteAll($conditions);
 	}
 }

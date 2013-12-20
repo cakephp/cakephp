@@ -175,17 +175,21 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('where')
+		$query->expects($this->at(0))->method('where')
 			->with(['Articles.is_active' => true])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
+
+		$query->expects($this->at(1))->method('where')
+			->with([])
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('andWhere')
 			->with(['Articles.author_id IN' => $keys])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('order')
 			->with(['id' => 'ASC'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$association->eagerLoader(compact('keys', 'query'));
 	}
@@ -220,30 +224,34 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('where')
-			->with(['Articles.is_active' => true, 'Articles.id !=' => 3])
-			->will($this->returnValue($query));
+		$query->expects($this->at(0))->method('where')
+			->with(['Articles.is_active' => true])
+			->will($this->returnSelf());
+
+		$query->expects($this->at(1))->method('where')
+			->with(['Articles.id !=' => 3])
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('andWhere')
 			->with(['Articles.author_id IN' => $keys])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('order')
 			->with(['title' => 'DESC'])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('select')
 			->with([
 				'Articles__title' => 'Articles.title',
 				'Articles__author_id' => 'Articles.author_id'
 			])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$query->expects($this->once())->method('contain')
 			->with([
 				'Categories' => ['fields' => ['a', 'b']],
 			])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$association->eagerLoader([
 			'conditions' => ['Articles.id !=' => 3],
@@ -316,9 +324,12 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('where')
+		$query->expects($this->at(0))->method('where')
 			->with([])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
+		$query->expects($this->at(1))->method('where')
+			->with([])
+			->will($this->returnSelf());
 
 		$expected = clone $parent;
 		$joins = $expected->join();
@@ -329,7 +340,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->join($joins, [], true);
 		$query->expects($this->once())->method('andWhere')
 			->with(['Articles.author_id IN' => $expected])
-			->will($this->returnValue($query));
+			->will($this->returnSelf());
 
 		$callable = $association->eagerLoader([
 			'query' => $parent, 'strategy' => HasMany::STRATEGY_SUBQUERY, 'keys' => []
@@ -493,9 +504,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		]);
 
 		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
-		$query->expects($this->once())
+		$query->expects($this->at(0))
 			->method('where')
-			->with(['Articles.is_active' => true, 'author_id' => 1])
+			->with(['Articles.is_active' => true])
+			->will($this->returnSelf());
+		$query->expects($this->at(1))
+			->method('where')
+			->with(['author_id' => 1])
 			->will($this->returnSelf());
 		$query->expects($this->any())
 			->method('getIterator')
