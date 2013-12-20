@@ -1046,11 +1046,11 @@ class DboSource extends DataSource {
 			$Model->recursive = $recursive;
 		}
 
-		$bypass = false;
 		if (!empty($queryData['fields'])) {
-			$bypass = true;
+			$noAssocFields = true;
 			$queryData['fields'] = $this->fields($Model, null, $queryData['fields']);
 		} else {
+			$noAssocFields = false;
 			$queryData['fields'] = $this->fields($Model);
 		}
 
@@ -1076,7 +1076,7 @@ class DboSource extends DataSource {
 					continue;
 				}
 
-				if ($bypass) {
+				if ($noAssocFields) {
 					$assocData['fields'] = false;
 				}
 
