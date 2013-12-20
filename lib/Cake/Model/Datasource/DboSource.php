@@ -1028,7 +1028,7 @@ class DboSource extends DataSource {
  * Reads record(s) from the database.
  *
  * @param Model $Model A Model object that the query is for.
- * @param array $queryData An array of queryData information containing keys similar to Model::find()
+ * @param array $queryData An array of queryData information containing keys similar to Model::find().
  * @param integer $recursive Number of levels of association
  * @return mixed boolean false on error/failure. An array of results on success.
  */
@@ -1194,11 +1194,11 @@ class DboSource extends DataSource {
 /**
  * Queries associations. Used to fetch results on recursive models.
  *
- * @param Model $Model Primary Model object
- * @param Model $LinkModel Linked model that
+ * @param Model $Model Primary Model object.
+ * @param Model $LinkModel Linked model object.
  * @param string $type Association type, one of the model association types ie. hasMany
- * @param string $association
- * @param array $assocData
+ * @param string $association Association name.
+ * @param array $assocData Association data.
  * @param array $queryData
  * @param boolean $external Whether or not the association query is on an external datasource.
  * @param array $resultSet Existing results
@@ -1514,7 +1514,7 @@ class DboSource extends DataSource {
  * When no fields are set, all the $Model fields are returned.
  *
  * @param Model $Model
- * @param array $queryData
+ * @param array $queryData Query data already processed.
  * @return array Array containing SQL fields.
  */
 	public function prepareFields(Model $Model, $queryData) {
@@ -1543,7 +1543,7 @@ class DboSource extends DataSource {
  * This is merely a convenient wrapper to DboSource::buildStatement().
  *
  * @param Model $Model
- * @param array $queryData
+ * @param array $queryData Query data already processed.
  * @return string String containing an SQL statement.
  * @see DboSource::buildStatement()
  */
@@ -1569,12 +1569,14 @@ class DboSource extends DataSource {
 /**
  * Generates an array representing a query or part of a query from a single model or two associated models.
  *
- * @param Model $Model
- * @param Model $LinkModel
+ * Builds a string containing an SQL statement template.
+ *
+ * @param Model $Model Primary Model object.
+ * @param Model $LinkModel Linked model object.
  * @param string $type Association type, one of the model association types ie. hasMany
  * @param string $association
- * @param array $assocData
- * @param array $queryData
+ * @param array $assocData Association data.
+ * @param array $queryData Query data already processed.
  * @param boolean $external Whether or not the association query is on an external datasource.
  * @return mixed
  *   True. when $external is false and association $type is 'hasOne' or 'belongsTo'.
@@ -1764,10 +1766,10 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Builds and generates a JOIN statement from an array. Handles final clean-up before conversion.
+ * Builds and generates a JOIN condition from an array. Handles final clean-up before conversion.
  *
- * @param array $join An array defining a JOIN statement in a query
- * @return string An SQL JOIN statement to be used in a query
+ * @param array $join An array defining a JOIN condition in a query.
+ * @return string An SQL JOIN condition to be used in a query.
  * @see DboSource::renderJoinStatement()
  * @see DboSource::buildStatement()
  */
@@ -2055,15 +2057,17 @@ class DboSource extends DataSource {
 			if (empty($idList)) {
 				return false;
 			}
+
 			$conditions = $this->conditions(array(
 				$Model->primaryKey => Hash::extract($idList, "{n}.{$Model->alias}.{$Model->primaryKey}")
 			));
 		}
+
 		return $conditions;
 	}
 
 /**
- * Returns an array of SQL JOIN fragments from a model's associations
+ * Returns an array of SQL JOIN conditions from a model's associations.
  *
  * @param Model $Model
  * @return array
