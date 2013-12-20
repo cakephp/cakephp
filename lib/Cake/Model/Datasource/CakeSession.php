@@ -222,7 +222,7 @@ class CakeSession {
  * @return boolean True if variable is there
  */
 	public static function check($name = null) {
-		if (!self::start()) {
+		if (!isset($_COOKIE[session_name()]) || !self::start()) {
 			return false;
 		}
 		if (empty($name)) {
@@ -372,7 +372,7 @@ class CakeSession {
  * @return mixed The value of the session variable
  */
 	public static function read($name = null) {
-		if (!self::start()) {
+		if (!isset($_COOKIE[session_name()]) || !self::start()) {
 			return false;
 		}
 		if ($name === null) {
