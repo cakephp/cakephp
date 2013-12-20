@@ -2941,4 +2941,46 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(3, $article->tags[1]->id);
 	}
 
+/**
+ * Tests that it is possible to call find with no arguments
+ *
+ * @return void
+ */
+	public function testSimplifiedFind() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['callFinder'],
+			[[
+				'connection' => $this->connection,
+				'schema' => ['id' => ['type' => 'integer']]
+			]]
+		);
+
+		$query = (new \Cake\ORM\Query($this->connection, $table))->select();
+		$table->expects($this->once())->method('callFinder')
+			->with('all', $query, []);
+		$table->find();
+	}
+
+/**
+ * Tests that it is possible to pass the conditions as first argument in find
+ *
+ * @return void
+ */
+	public function testFindFirstParamAsArray() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['callFinder'],
+			[[
+				'connection' => $this->connection,
+				'schema' => ['id' => ['type' => 'integer']]
+			]]
+		);
+
+		$query = (new \Cake\ORM\Query($this->connection, $table))->select(['id']);
+		$table->expects($this->once())->method('callFinder')
+			->with('all', $query, ['fields' => ['id']]);
+		$table->find(['fields' => ['id']]);
+	}
+
 }
