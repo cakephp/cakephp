@@ -115,19 +115,19 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * - useSetters: whether use internal setters for properties or not
  * - markClean: whether to mark all properties as clean after setting them
  * - markNew: whether this instance has not yet been persisted
- * - safe: whether to prevent inaccessible properties from being set (default: false)
+ * - guard: whether to prevent inaccessible properties from being set (default: false)
  */
 	public function __construct(array $properties = [], array $options = []) {
 		$options += [
 			'useSetters' => true,
 			'markClean' => false,
 			'markNew' => null,
-			'safe' => false
+			'guard' => false
 		];
 		$this->_className = get_class($this);
 		$this->set($properties, [
 			'setter' => $options['useSetters'],
-			'safe' => $options['safe']
+			'guard' => $options['guard']
 		]);
 
 		if ($options['markClean']) {
@@ -213,20 +213,20 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  *
  * Mass assignment should be treated carefully when accepting user input, for this
  * case you can tell this method to only set property that are marked as accessible
- * by setting the `safe` options in the `$options` parameter
+ * by setting the `guard` options in the `$options` parameter
  *
  * ### Example:
  *
- * ``$entity->set('name', 'Andrew', ['safe' => true]);``
+ * ``$entity->set('name', 'Andrew', ['guard' => true]);``
  *
- * ``$entity->set(['name' => 'Andrew', 'id' => 1], ['safe' => true]);``
+ * ``$entity->set(['name' => 'Andrew', 'id' => 1], ['guard' => true]);``
  *
  * @param string|array $property the name of property to set or a list of
  * properties with their respective values
  * @param mixed|array $value the value to set to the property or an array if the
  * first argument is also an array, in which case will be treated as $options
  * @param array $options options to be used for setting the property. Allowed option
- * keys are `setter` and `safe`
+ * keys are `setter` and `guard`
  * @return \Cake\ORM\Entity
  */
 	public function set($property, $value = null, $options = []) {
@@ -236,10 +236,10 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			$options = (array)$value;
 		}
 
-		$options += ['setter' => true, 'safe' => false];
+		$options += ['setter' => true, 'guard' => false];
 
 		foreach ($property as $p => $value) {
-			if ($options['safe'] === true && !$this->accessible($p)) {
+			if ($options['guard'] === true && !$this->accessible($p)) {
 				continue;
 			}
 

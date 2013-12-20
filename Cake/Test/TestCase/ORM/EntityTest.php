@@ -132,31 +132,31 @@ class EntityTest extends TestCase {
 			->getMock();
 		$entity->expects($this->at(0))
 			->method('set')
-			->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'safe' => false]);
+			->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false]);
 
 		$entity->expects($this->at(1))
 			->method('set')
-			->with(['foo' => 'bar'], ['setter' => false, 'safe' => false]);
+			->with(['foo' => 'bar'], ['setter' => false, 'guard' => false]);
 
 		$entity->__construct(['a' => 'b', 'c' => 'd']);
 		$entity->__construct(['foo' => 'bar'], ['useSetters' => false]);
 	}
 
 /**
- * Tests that the constructor will set initial properties and pass the safe
+ * Tests that the constructor will set initial properties and pass the guard
  * option along
  *
  * @return void
  */
-	public function testConstructorWithSafe() {
+	public function testConstructorWithGuard() {
 		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
 			->setMethods(['set'])
 			->disableOriginalConstructor()
 			->getMock();
 		$entity->expects($this->once())
 			->method('set')
-			->with(['foo' => 'bar'], ['setter' => true, 'safe' => true]);
-		$entity->__construct(['foo' => 'bar'], ['safe' => true]);
+			->with(['foo' => 'bar'], ['setter' => true, 'guard' => true]);
+		$entity->__construct(['foo' => 'bar'], ['guard' => true]);
 	}
 
 /**
@@ -886,7 +886,7 @@ class EntityTest extends TestCase {
  */
 	public function testSetWithAccessible() {
 		$entity = new Entity(['foo' => 1, 'bar' => 2]);
-		$options = ['safe' => true];
+		$options = ['guard' => true];
 		$entity->accessible('foo', true);
 		$entity->set('bar', 3, $options);
 		$entity->set('foo', 4, $options);
@@ -905,7 +905,7 @@ class EntityTest extends TestCase {
  */
 	public function testSetWithAccessibleWithArray() {
 		$entity = new Entity(['foo' => 1, 'bar' => 2]);
-		$options = ['safe' => true];
+		$options = ['guard' => true];
 		$entity->accessible('foo', true);
 		$entity->set(['bar' => 3, 'foo' => 4], $options);
 		$this->assertEquals(2, $entity->get('bar'));
