@@ -1197,13 +1197,13 @@ class DboSource extends DataSource {
  *
  * @param Model $Model Primary Model object.
  * @param Model $LinkModel Linked model object.
- * @param string $type Association type, one of the model association types ie. hasMany
+ * @param string $type Association type, one of the model association types ie. hasMany.
  * @param string $association Association name.
  * @param array $assocData Association data.
- * @param array $queryData
+ * @param array $queryData An array of queryData information containing keys similar to Model::find().
  * @param boolean $external Whether or not the association query is on an external datasource.
- * @param array $resultSet Existing results
- * @param integer $recursive Number of levels of association
+ * @param array $resultSet Existing results.
+ * @param integer $recursive Number of levels of association.
  * @param array $stack
  * @return mixed
  * @throws CakeException when results cannot be created.
@@ -1367,10 +1367,10 @@ class DboSource extends DataSource {
 /**
  * A more efficient way to fetch associations.
  *
- * @param Model $Model Primary model object
- * @param string $query Association query
- * @param array $ids Array of IDs of associated records
- * @return array Association results
+ * @param Model $Model Primary model object.
+ * @param string $query Association query template.
+ * @param array $ids Array of IDs of associated records.
+ * @return array Association results.
  */
 	public function fetchAssociated(Model $Model, $query, $ids) {
 		$query = str_replace('{$__cakeID__$}', implode(', ', $ids), $query);
@@ -1383,10 +1383,10 @@ class DboSource extends DataSource {
 /**
  * Merge the results of hasMany relations.
  *
- * @param array $resultSet Data to merge into
- * @param array $merge Data to merge
- * @param string $association Name of Model being Merged
- * @param Model $Model Model being merged onto
+ * @param array $resultSet Data to merge into.
+ * @param array $merge Data to merge.
+ * @param string $association Name of Model being merged.
+ * @param Model $Model Model being merged onto.
  * @return void
  */
 	protected function _mergeHasMany(&$resultSet, $merge, $association, $Model) {
@@ -1515,7 +1515,7 @@ class DboSource extends DataSource {
  * When no fields are set, all the $Model fields are returned.
  *
  * @param Model $Model
- * @param array $queryData Query data already processed.
+ * @param array $queryData An array of queryData information containing keys similar to Model::find().
  * @return array Array containing SQL fields.
  */
 	public function prepareFields(Model $Model, $queryData) {
@@ -1544,7 +1544,7 @@ class DboSource extends DataSource {
  * This is merely a convenient wrapper to DboSource::buildStatement().
  *
  * @param Model $Model
- * @param array $queryData Query data already processed.
+ * @param array $queryData An array of queryData information containing keys similar to Model::find().
  * @return string String containing an SQL statement.
  * @see DboSource::buildStatement()
  */
@@ -1574,10 +1574,10 @@ class DboSource extends DataSource {
  *
  * @param Model $Model Primary Model object.
  * @param Model $LinkModel Linked model object.
- * @param string $type Association type, one of the model association types ie. hasMany
- * @param string $association
+ * @param string $type Association type, one of the model association types ie. hasMany.
+ * @param string $association Association name.
  * @param array $assocData Association data.
- * @param array $queryData Query data already processed.
+ * @param array $queryData An array of queryData information containing keys similar to Model::find().
  * @param boolean $external Whether or not the association query is on an external datasource.
  * @return mixed
  *   String representing a query.
@@ -1884,7 +1884,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Merges a mixed set of string/array conditions
+ * Merges a mixed set of string/array conditions.
  *
  * @param mixed $query
  * @param mixed $assoc
