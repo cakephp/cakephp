@@ -2963,27 +2963,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that it is possible to pass the conditions as first argument in find
- *
- * @return void
- */
-	public function testFindFirstParamAsArray() {
-		$table = $this->getMock(
-			'\Cake\ORM\Table',
-			['callFinder'],
-			[[
-				'connection' => $this->connection,
-				'schema' => ['id' => ['type' => 'integer']]
-			]]
-		);
-
-		$query = (new \Cake\ORM\Query($this->connection, $table))->select(['id']);
-		$table->expects($this->once())->method('callFinder')
-			->with('all', $query, ['fields' => ['id']]);
-		$table->find(['fields' => ['id']]);
-	}
-
-/**
  * Test that get() will use the primary key for searching and return the first
  * entity found
  *
