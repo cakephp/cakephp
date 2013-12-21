@@ -565,6 +565,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	public function validate(Validator $validator) {
 		$data = $this->toArray();
 		$new = $this->isNew();
+		$validator->provider('entity', $this);
 		$this->errors($validator->errors($data, $new === null ? true : $new));
 		return empty($this->_errors);
 	}

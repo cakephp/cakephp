@@ -910,11 +910,13 @@ class Table implements EventListener {
 		}
 
 		if ($instance !== null) {
+			$instance->provider('table', $this);
 			return $this->_validators[$name] = $instance;
 		}
 
 		$validator = new Validator;
 		$validator = $this->{'validation' . ucfirst($name)}($validator);
+		$validator->provider('table', $this);
 		return $this->_validators[$name] = $validator;
 	}
 
@@ -1266,9 +1268,6 @@ class Table implements EventListener {
 
 		$type = is_string($options['validate']) ? $options['validate'] : 'default';
 		$validator = $this->validator($type);
-		$validator->provider('table', $this);
-		$validator->provider('entity', $entity);
-
 		$pass = compact('entity', 'options', 'validator');
 		$event = new Event('Model.beforeValidate', $this, $pass);
 		$this->getEventManager()->dispatch($event);

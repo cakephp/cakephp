@@ -720,6 +720,9 @@ class EntityTest extends TestCase {
 		$validator = $this->getMock('\Cake\Validation\Validator');
 		$entity->set('a', 'b');
 
+		$validator->expects($this->once())
+			->method('provider')
+			->with('entity', $entity);
 		$validator->expects($this->once())->method('errors')
 			->with(['a' => 'b'], true)
 			->will($this->returnValue(['a' => ['not valid']]));
@@ -742,6 +745,9 @@ class EntityTest extends TestCase {
 		$entity = new Entity($data);
 		$entity->isNew(true);
 
+		$validator->expects($this->once())
+			->method('provider')
+			->with('entity', $entity);
 		$validator->expects($this->once())->method('errors')
 			->with($data, true)
 			->will($this->returnValue([]));
