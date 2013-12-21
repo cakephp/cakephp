@@ -1079,6 +1079,7 @@ class DboSource extends DataSource {
 				if ($bypass) {
 					$assocData['fields'] = false;
 				}
+
 				$external = isset($assocData['external']);
 
 				if ($this->generateAssociationQuery($Model, $LinkModel, $type, $assoc, $assocData, $queryData, $external) === true) {
@@ -1148,9 +1149,9 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Passes association results through afterFind filters of corresponding model.
+ * Passes association results through afterFind filters of the corresponding model.
  *
- * The primary model is always filtered.
+ * The primary model is always excluded, because the filtering is later done by Model::_filterResults().
  *
  * @param array $results Reference of resultset to be filtered
  * @param Model $Model Instance of model to operate against
@@ -1588,7 +1589,7 @@ class DboSource extends DataSource {
 			return $assocData['finderQuery'];
 		}
 
-		if (in_array($type, array('hasMany', 'hasAndBelongsToMany'))) {
+		if ($type === 'hasMany' || $type === 'hasAndBelongsToMany') {
 			if (empty($assocData['offset']) && !empty($assocData['page'])) {
 				$assocData['offset'] = ($assocData['page'] - 1) * $assocData['limit'];
 			}
@@ -1603,7 +1604,7 @@ class DboSource extends DataSource {
 				);
 
 				if ($external) {
-					// Self join
+					// Not self join
 					if ($Model->name !== $LinkModel->name) {
 						$modelAlias = $Model->alias;
 						foreach ($conditions as $key => $condition) {
