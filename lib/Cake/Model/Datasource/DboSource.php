@@ -1042,7 +1042,7 @@ class DboSource extends DataSource {
 		}
 
 		if ($recursive !== null) {
-			$_recursive = $Model->recursive;
+			$modelRecursive = $Model->recursive;
 			$Model->recursive = $recursive;
 		}
 
@@ -1054,17 +1054,22 @@ class DboSource extends DataSource {
 			$queryData['fields'] = $this->fields($Model);
 		}
 
-		$_associations = $Model->associations();
+		if ($Model->recursive === -1) {
+			// Primary model data only, no joins.
+			$associations = array();
 
-		if ($Model->recursive == -1) {
-			$_associations = array();
-		} elseif ($Model->recursive === 0) {
-			unset($_associations[2], $_associations[3]);
+		} else {
+			$associations = $Model->associations();
+
+			if ($Model->recursive === 0) {
+				// Primary model data and its domain.
+				unset($associations[2], $associations[3]);
+			}
 		}
 
 		// Generate hasOne and belongsTo associations inside $queryData
 		$linkedModels = array();
-		foreach ($_associations as $type) {
+		foreach ($associations as $type) {
 			if ($type !== 'hasOne' && $type !== 'belongsTo') {
 				continue;
 			}
@@ -1113,7 +1118,7 @@ class DboSource extends DataSource {
 				$joined[$Model->alias] = (array)Hash::extract($queryData['joins'], '{n}.alias');
 			}
 
-			foreach ($_associations as $type) {
+			foreach ($associations as $type) {
 				foreach ($Model->{$type} as $assoc => $assocData) {
 					$LinkModel = $Model->{$assoc};
 
@@ -1142,7 +1147,7 @@ class DboSource extends DataSource {
 		}
 
 		if ($recursive !== null) {
-			$Model->recursive = $_recursive;
+			$Model->recursive = $modelRecursive;
 		}
 
 		return $resultSet;
