@@ -1079,7 +1079,7 @@ class BelongsToManyTest extends TestCase {
 			['tags']
 		);
 		$entity = new Entity([
-			'id' =>1,
+			'id' => 1,
 			'tags' => [
 				new Entity(['name' => 'foo'])
 			]
@@ -1105,7 +1105,7 @@ class BelongsToManyTest extends TestCase {
 			['tags']
 		);
 		$entity = new Entity([
-			'id' =>1,
+			'id' => 1,
 			'tags' => [
 				new Entity(['name' => 'foo'])
 			]

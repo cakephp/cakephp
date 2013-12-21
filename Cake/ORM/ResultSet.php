@@ -309,7 +309,12 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$results[$defaultAlias]
 		);
 
-		$options = ['useSetters' => false, 'markClean' => true, 'markNew' => false];
+		$options = [
+			'useSetters' => false,
+			'markClean' => true,
+			'markNew' => false,
+			'guard' => false
+		];
 		foreach (array_reverse($this->_associationMap) as $alias => $assoc) {
 			if (!isset($results[$alias])) {
 				continue;
