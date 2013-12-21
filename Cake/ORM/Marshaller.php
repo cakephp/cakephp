@@ -96,13 +96,9 @@ class Marshaller {
 		}
 
 		foreach ($data as $key => $value) {
-			$assoc = null;
-			$nested = [];
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
 				$nested = $propertyMap[$key]['nested'];
-			}
-			if ($assoc) {
 				$value = $this->_marshalAssociation($assoc, $value, $nested);
 			}
 			$entity->set($key, $value);
