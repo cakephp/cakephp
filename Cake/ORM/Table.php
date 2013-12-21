@@ -1558,6 +1558,8 @@ class Table implements EventListener {
 			'Model.afterSave' => 'afterSave',
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
+			'Model.beforeValidate' => 'beforeValidate',
+			'Model.afterValidate' => 'afterValidate',
 		];
 		$events = [];
 
