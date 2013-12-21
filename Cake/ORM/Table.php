@@ -826,7 +826,7 @@ class Table implements EventListener {
 			throw new RecordNotFoundException(__d(
 				'cake_dev', 'Record "%s" not found in table "%s"',
 				implode(',', (array)$primaryKey),
-				$this->alias()
+				$this->table()
 			));
 		}
 

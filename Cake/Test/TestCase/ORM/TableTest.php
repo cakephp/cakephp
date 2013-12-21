@@ -3020,7 +3020,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['callFinder', '_buildQuery'],
 			[[
 				'connection' => $this->connection,
-				'alias' => 'articles',
+				'table' => 'articles',
 				'schema' => [
 					'id' => ['type' => 'integer'],
 					'bar' => ['type' => 'integer'],
