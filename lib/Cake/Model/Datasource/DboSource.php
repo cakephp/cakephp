@@ -1303,6 +1303,7 @@ class DboSource extends DataSource {
 
 		$modelAlias = $Model->alias;
 		$primaryKey = $Model->primaryKey;
+		$selfJoin = ($Model->name === $LinkModel->name);
 
 		foreach ($resultSet as &$row) {
 			if ($type === 'hasOne' || $type === 'belongsTo' || $type === 'hasMany') {
@@ -1324,8 +1325,6 @@ class DboSource extends DataSource {
 					}
 				}
 			}
-
-			$selfJoin = ($Model->name === $LinkModel->name);
 
 			if (!empty($assocResultSet) && is_array($assocResultSet)) {
 				if ($recursive > 0) {
