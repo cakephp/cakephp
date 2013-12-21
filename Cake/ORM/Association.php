@@ -433,12 +433,13 @@ abstract class Association {
  * and modifies the query accordingly based of this association
  * configuration
  *
- * @param string $type
- * @param array $options options for query
+ * @param string|array $type the type of query to perform, if an array is passed,
+ * it will be interpreted as the `$options` parameter
+ * @param array $options
  * @see \Cake\ORM\Table::find()
  * @return \Cake\ORM\Query
  */
-	public function find($type, $options = []) {
+	public function find($type = 'all', $options = []) {
 		return $this->target()
 			->find($type, $options)
 			->where($this->conditions());

@@ -2941,4 +2941,115 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(3, $article->tags[1]->id);
 	}
 
+/**
+ * Tests that it is possible to call find with no arguments
+ *
+ * @return void
+ */
+	public function testSimplifiedFind() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['callFinder'],
+			[[
+				'connection' => $this->connection,
+				'schema' => ['id' => ['type' => 'integer']]
+			]]
+		);
+
+		$query = (new \Cake\ORM\Query($this->connection, $table))->select();
+		$table->expects($this->once())->method('callFinder')
+			->with('all', $query, []);
+		$table->find();
+	}
+
+/**
+ * Test that get() will use the primary key for searching and return the first
+ * entity found
+ *
+ * @return void
+ */
+	public function testGet() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['callFinder', '_buildQuery'],
+			[[
+				'connection' => $this->connection,
+				'schema' => [
+					'id' => ['type' => 'integer'],
+					'bar' => ['type' => 'integer'],
+					'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]]
+				]
+			]]
+		);
+
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['addDefaultTypes', 'first', 'applyOptions', 'where'],
+			[$this->connection, $table]
+		);
+
+		$entity = new \Cake\ORM\Entity;
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+		$table->expects($this->once())->method('callFinder')
+			->with('all', $query, ['fields' => ['id']])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('applyOptions')
+			->with(['fields' => ['id']])
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('where')
+			->with(['bar' => 10])
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('first')
+			->will($this->returnValue($entity));
+		$result = $table->get(10, ['fields' => ['id']]);
+		$this->assertSame($entity, $result);
+	}
+
+/**
+ * Tests that get() will throw an exception if the record was not found
+ *
+ * @expectedException \Cake\ORM\Error\RecordNotFoundException
+ * @expectedExceptionMessage Record "10" not found in table "articles"
+ * @return void
+ */
+	public function testGetException() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['callFinder', '_buildQuery'],
+			[[
+				'connection' => $this->connection,
+				'table' => 'articles',
+				'schema' => [
+					'id' => ['type' => 'integer'],
+					'bar' => ['type' => 'integer'],
+					'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]]
+				]
+			]]
+		);
+
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['addDefaultTypes', 'first', 'applyOptions', 'where'],
+			[$this->connection, $table]
+		);
+
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+		$table->expects($this->once())->method('callFinder')
+			->with('all', $query, ['contain' => ['foo']])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('applyOptions')
+			->with(['contain' => ['foo']])
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('where')
+			->with(['bar' => 10])
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('first')
+			->will($this->returnValue(false));
+		$result = $table->get(10, ['contain' => ['foo']]);
+	}
+
 }

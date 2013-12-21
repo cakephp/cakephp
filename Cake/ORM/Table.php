@@ -28,6 +28,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
 use Cake\ORM\Error\MissingEntityException;
+use Cake\ORM\Error\RecordNotFoundException;
 use Cake\ORM\Marshaller;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -670,10 +671,22 @@ class Table implements EventListener {
  * listeners. Any listener can set a valid result set using $query
  *
  * @param string $type the type of query to perform
- * @param array $options
+ * @param array $options An array that will be passed to Query::applyOptions
+ * By default it allows the following keys:
+ * - fields
+ * - conditions
+ * - order
+ * - limit
+ * - offset
+ * - page
+ * - order
+ * - group
+ * - having
+ * - contain
+ * - join
  * @return \Cake\ORM\Query
  */
-	public function find($type, $options = []) {
+	public function find($type = 'all', $options = []) {
 		$query = $this->_buildQuery();
 		$query->select()->applyOptions($options);
 		return $this->callFinder($type, $query, $options);
@@ -782,6 +795,42 @@ class Table implements EventListener {
 		}
 
 		return $query;
+	}
+
+/**
+ * Returns a single record after finding it by its primary key, if no record is
+ * found this method throws an exception.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $id = 10;
+ * $article = $articles->get($id);
+ *
+ * $article = $articles->get($id, ['contain' => ['Comments]]);
+ * }}}
+ *
+ * @param mixed primary key value to find
+ * @param array $options options accepted by `Table::find()`
+ * @throws \Cake\ORM\Error\RecordNotFoundException if the record with such id
+ * could not be found
+ * @return \Cake\ORM\Entity
+ * @see Table::find()
+ */
+	public function get($primaryKey, $options = []) {
+		$key = (array)$this->primaryKey();
+		$conditions = array_combine($key, (array)$primaryKey);
+		$entity = $this->find('all', $options)->where($conditions)->first();
+
+		if (!$entity) {
+			throw new RecordNotFoundException(__d(
+				'cake_dev', 'Record "%s" not found in table "%s"',
+				implode(',', (array)$primaryKey),
+				$this->table()
+			));
+		}
+
+		return $entity;
 	}
 
 /**
