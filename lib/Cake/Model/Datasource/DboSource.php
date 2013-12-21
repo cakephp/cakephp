@@ -1307,20 +1307,20 @@ class DboSource extends DataSource {
 
 		foreach ($resultSet as &$row) {
 			if ($type === 'hasOne' || $type === 'belongsTo' || $type === 'hasMany') {
-				$query = $this->insertQueryData($queryTemplate, $row, $association, $Model, $stack);
-
 				$assocResultSet = array();
-				if ($query !== false) {
-					if (
-						($type === 'hasOne' || $type === 'belongsTo') &&
-						isset($row[$LinkModel->alias], $joined[$Model->alias]) &&
-						in_array($LinkModel->alias, $joined[$Model->alias])
-					) {
-						$joinedData = Hash::filter($row[$LinkModel->alias]);
-						if (!empty($joinedData)) {
-							$assocResultSet[0] = array($LinkModel->alias => $row[$LinkModel->alias]);
-						}
-					} else {
+
+				if (
+					($type === 'hasOne' || $type === 'belongsTo') &&
+					isset($row[$LinkModel->alias], $joined[$Model->alias]) &&
+					in_array($LinkModel->alias, $joined[$Model->alias])
+				) {
+					$joinedData = Hash::filter($row[$LinkModel->alias]);
+					if (!empty($joinedData)) {
+						$assocResultSet[0] = array($LinkModel->alias => $row[$LinkModel->alias]);
+					}
+				} else {
+					$query = $this->insertQueryData($queryTemplate, $row, $association, $Model, $stack);
+					if ($query !== false) {
 						$assocResultSet = $this->fetchAll($query, $Model->cacheQueries);
 					}
 				}

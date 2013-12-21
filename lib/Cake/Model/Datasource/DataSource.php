@@ -318,10 +318,10 @@ class DataSource extends Object {
  *
  * @param string $query Query string needing replacements done.
  * @param array $data Array of data with values that will be inserted in placeholders.
- * @param string $association Name of association model being replaced
- * @param Model $Model Model instance
+ * @param string $association Name of association model being replaced.
+ * @param Model $Model Model instance.
  * @param array $stack
- * @return string String of query data with placeholders replaced.
+ * @return mixed String of query data with placeholders replaced, or false on failure.
  */
 	public function insertQueryData($query, $data, $association, Model $Model, $stack) {
 		$keys = array('{$__cakeID__$}', '{$__cakeForeignKey__$}');
