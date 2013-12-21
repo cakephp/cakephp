@@ -1158,17 +1158,17 @@ class DboSource extends DataSource {
  *
  * The primary model is always excluded, because the filtering is later done by Model::_filterResults().
  *
- * @param array $results Reference of resultset to be filtered
- * @param Model $Model Instance of model to operate against
- * @param array $filtered List of classes already filtered, to be skipped
- * @return array Array of results that have been filtered through $Model->afterFind
+ * @param array $resultSet Reference of resultset to be filtered.
+ * @param Model $Model Instance of model to operate against.
+ * @param array $filtered List of classes already filtered, to be skipped.
+ * @return array Array of results that have been filtered through $Model->afterFind.
  */
-	protected function _filterResults(&$results, Model $Model, $filtered = array()) {
-		if (!is_array($results)) {
+	protected function _filterResults(&$resultSet, Model $Model, $filtered = array()) {
+		if (!is_array($resultSet)) {
 			return array();
 		}
 
-		$current = reset($results);
+		$current = reset($resultSet);
 		if (!is_array($current)) {
 			return array();
 		}
@@ -1184,12 +1184,12 @@ class DboSource extends DataSource {
 			$LinkedModel = $Model->{$className};
 			$filtering[] = $className;
 
-			foreach ($results as $key => &$result) {
+			foreach ($resultSet as $key => &$result) {
 				$data = $LinkedModel->afterFind(array(array($className => $result[$className])), false);
 				if (isset($data[0][$className])) {
 					$result[$className] = $data[0][$className];
 				} else {
-					unset($results[$key]);
+					unset($resultSet[$key]);
 				}
 			}
 		}
