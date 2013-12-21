@@ -28,6 +28,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
 use Cake\ORM\Error\MissingEntityException;
+use Cake\ORM\Error\RecordNotFoundException;
 use Cake\ORM\Marshaller;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -816,7 +817,7 @@ class Table implements EventListener {
 		$entity = $this->find('all', $options)->where($conditions)->first();
 
 		if (!$entity) {
-			throw new Error\RecordNotFoundException(__d(
+			throw new RecordNotFoundException(__d(
 				'cake_dev', 'Record "%s" not found in table "%s"',
 				implode(',', (array)$primaryKey),
 				$this->alias()
