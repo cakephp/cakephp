@@ -346,10 +346,15 @@ class Hash {
 		} elseif (!empty($valuePath)) {
 			$vals = self::extract($data, $valuePath);
 		}
+		if (empty($vals)) {
+			$vals = array_fill(0, count($keys), null);
+		}
 
-		$count = count($keys);
-		for ($i = 0; $i < $count; $i++) {
-			$vals[$i] = isset($vals[$i]) ? $vals[$i] : null;
+		if (count($keys) !== count($vals)) {
+			throw new CakeException(__d(
+				'cake_dev',
+				'Hash::combine() needs an equal number of keys + values.'
+			));
 		}
 
 		if ($groupPath !== null) {
