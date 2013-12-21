@@ -1490,7 +1490,7 @@ class Table implements EventListener {
  * {{{
  * $articles = $this->Articles->newEntity(
  *   $this->request->data(),
- *   ['Tags', 'Comments' => ['Users']]
+ *   ['Tags', 'Comments' => ['associated' => ['Users']]]
  * );
  * }}}
  *
@@ -1524,7 +1524,7 @@ class Table implements EventListener {
  * {{{
  * $articles = $this->Articles->newEntities(
  *   $this->request->data(),
- *   ['Tags', 'Comments' => ['Users']]
+ *   ['Tags', 'Comments' => ['associated' => ['Users']]]
  * );
  * }}}
  *
