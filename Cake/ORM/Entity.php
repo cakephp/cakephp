@@ -563,7 +563,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * @return boolean
  */
 	public function validate(Validator $validator) {
-		$data = $this->toArray();
+		$data = $this->_properties;
 		$new = $this->isNew();
 		$validator->provider('entity', $this);
 		$this->errors($validator->errors($data, $new === null ? true : $new));
