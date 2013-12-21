@@ -794,9 +794,19 @@ class Table implements EventListener {
  * Returns a single record after finding it by its primary key, if no record is
  * found this method throws an exception.
  *
+ * ###Example:
+ *
+ * {{{
+ * $id = 10;
+ * $article = $articles->get($id);
+ *
+ * $article = $articles->get($id, ['contain' => ['Comments]]);
+ * }}}
+ *
  * @param mixed primary key value to find
  * @param array $options options accepted by `Table::find()`
- * @throws \Cake\ORM\RecordNotFoundException
+ * @throws \Cake\ORM\RecordNotFoundException if the record with such id could not
+ * be found
  * @return \Cake\ORM\Entity
  * @see Table::find()
  */
@@ -806,7 +816,11 @@ class Table implements EventListener {
 		$entity = $this->find('all', $options)->where($conditions)->first();
 
 		if (!$entity) {
-			throw new Error\RecordNotFoundException;
+			throw new Error\RecordNotFoundException(__d(
+				'cake_dev', 'Record "%s" not found in table "%s"',
+				implode(',', (array)$primaryKey),
+				$this->alias()
+			));
 		}
 
 		return $entity;
