@@ -1568,7 +1568,7 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Generates an array representing a query or part of a query from a single model or two associated models.
+ * Generates a query or part of a query from a single model or two associated models.
  *
  * Builds a string containing an SQL statement template.
  *
@@ -1580,6 +1580,7 @@ class DboSource extends DataSource {
  * @param array $queryData Query data already processed.
  * @param boolean $external Whether or not the association query is on an external datasource.
  * @return mixed
+ *   String representing a query.
  *   True. when $external is false and association $type is 'hasOne' or 'belongsTo'.
  */
 	public function generateAssociationQuery(Model $Model, Model $LinkModel, $type, $association, $assocData, &$queryData, $external) {
@@ -1797,9 +1798,9 @@ class DboSource extends DataSource {
 /**
  * Builds and generates an SQL statement from an array. Handles final clean-up before conversion.
  *
- * @param array $query An array defining an SQL query
- * @param Model $Model The model object which initiated the query
- * @return string An executable SQL statement
+ * @param array $query An array defining an SQL query.
+ * @param Model $Model The model object which initiated the query.
+ * @return string An executable SQL statement.
  * @see DboSource::renderStatement()
  */
 	public function buildStatement($query, Model $Model) {
