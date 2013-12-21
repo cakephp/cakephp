@@ -281,7 +281,6 @@ class BelongsToMany extends Association {
 			$conditions = array_combine($foreignKey, $entity->extract((array)$primaryKey));
 		}
 
-
 		$table = $this->junction();
 		$hasMany = $this->source()->association($table->alias());
 		if ($this->_cascadeCallbacks) {
