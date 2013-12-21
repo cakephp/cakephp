@@ -64,6 +64,7 @@ class Marshaller {
 				$key = $nested;
 				$nested = [];
 			}
+			$nested = isset($nested['associated']) ? $nested['associated'] : [];
 			$assoc = $this->_table->association($key);
 			if ($assoc) {
 				$map[$assoc->property()] = [
@@ -81,6 +82,7 @@ class Marshaller {
  * @param array $data The data to hydrate.
  * @param array $include The associations to include.
  * @return Cake\ORM\Entity
+ * @see Cake\ORM\Table::newEntity()
  */
 	public function one(array $data, $include = []) {
 		$propertyMap = $this->_buildPropertyMap($include);
@@ -128,6 +130,7 @@ class Marshaller {
  * @param array $data The data to hydrate.
  * @param array $include The associations to include.
  * @return array An array of hydrated records.
+ * @see Cake\ORM\Table::newEntities()
  */
 	public function many(array $data, $include = []) {
 		$output = [];

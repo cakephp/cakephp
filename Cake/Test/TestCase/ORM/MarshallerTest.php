@@ -193,7 +193,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->comments);
-		$result = $marshall->one($data, ['Articles' => ['Users']]);
+		$result = $marshall->one($data, ['Articles' => ['associated' => ['Users']]]);
 
 		$this->assertEquals(
 			$data['article']['title'],
