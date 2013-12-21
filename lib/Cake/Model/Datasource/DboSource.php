@@ -1042,29 +1042,34 @@ class DboSource extends DataSource {
 		}
 
 		if ($recursive !== null) {
-			$_recursive = $Model->recursive;
+			$modelRecursive = $Model->recursive;
 			$Model->recursive = $recursive;
 		}
 
-		$bypass = false;
 		if (!empty($queryData['fields'])) {
-			$bypass = true;
+			$noAssocFields = true;
 			$queryData['fields'] = $this->fields($Model, null, $queryData['fields']);
 		} else {
+			$noAssocFields = false;
 			$queryData['fields'] = $this->fields($Model);
 		}
 
-		$_associations = $Model->associations();
+		if ($Model->recursive === -1) {
+			// Primary model data only, no joins.
+			$associations = array();
 
-		if ($Model->recursive == -1) {
-			$_associations = array();
-		} elseif ($Model->recursive === 0) {
-			unset($_associations[2], $_associations[3]);
+		} else {
+			$associations = $Model->associations();
+
+			if ($Model->recursive === 0) {
+				// Primary model data and its domain.
+				unset($associations[2], $associations[3]);
+			}
 		}
 
 		// Generate hasOne and belongsTo associations inside $queryData
 		$linkedModels = array();
-		foreach ($_associations as $type) {
+		foreach ($associations as $type) {
 			if ($type !== 'hasOne' && $type !== 'belongsTo') {
 				continue;
 			}
@@ -1076,7 +1081,7 @@ class DboSource extends DataSource {
 					continue;
 				}
 
-				if ($bypass) {
+				if ($noAssocFields) {
 					$assocData['fields'] = false;
 				}
 
@@ -1113,7 +1118,7 @@ class DboSource extends DataSource {
 				$joined[$Model->alias] = (array)Hash::extract($queryData['joins'], '{n}.alias');
 			}
 
-			foreach ($_associations as $type) {
+			foreach ($associations as $type) {
 				foreach ($Model->{$type} as $assoc => $assocData) {
 					$LinkModel = $Model->{$assoc};
 
@@ -1142,7 +1147,7 @@ class DboSource extends DataSource {
 		}
 
 		if ($recursive !== null) {
-			$Model->recursive = $_recursive;
+			$Model->recursive = $modelRecursive;
 		}
 
 		return $resultSet;
@@ -1153,17 +1158,17 @@ class DboSource extends DataSource {
  *
  * The primary model is always excluded, because the filtering is later done by Model::_filterResults().
  *
- * @param array $results Reference of resultset to be filtered
- * @param Model $Model Instance of model to operate against
- * @param array $filtered List of classes already filtered, to be skipped
- * @return array Array of results that have been filtered through $Model->afterFind
+ * @param array $resultSet Reference of resultset to be filtered.
+ * @param Model $Model Instance of model to operate against.
+ * @param array $filtered List of classes already filtered, to be skipped.
+ * @return array Array of results that have been filtered through $Model->afterFind.
  */
-	protected function _filterResults(&$results, Model $Model, $filtered = array()) {
-		if (!is_array($results)) {
+	protected function _filterResults(&$resultSet, Model $Model, $filtered = array()) {
+		if (!is_array($resultSet)) {
 			return array();
 		}
 
-		$current = reset($results);
+		$current = reset($resultSet);
 		if (!is_array($current)) {
 			return array();
 		}
@@ -1179,12 +1184,12 @@ class DboSource extends DataSource {
 			$LinkedModel = $Model->{$className};
 			$filtering[] = $className;
 
-			foreach ($results as $key => &$result) {
+			foreach ($resultSet as $key => &$result) {
 				$data = $LinkedModel->afterFind(array(array($className => $result[$className])), false);
 				if (isset($data[0][$className])) {
 					$result[$className] = $data[0][$className];
 				} else {
-					unset($results[$key]);
+					unset($resultSet[$key]);
 				}
 			}
 		}
@@ -1193,7 +1198,15 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Queries associations. Used to fetch results on recursive models.
+ * Queries associations.
+ *
+ * Used to fetch results on recursive models.
+ *
+ * - 'hasMany' associations with no limit set:
+ *    Fetch, filter and merge is done recursively for every level.
+ *
+ * - 'hasAndBelongsToMany' associations:
+ *    Fetch and filter is done unaffected by the (recursive) level set.
  *
  * @param Model $Model Primary Model object.
  * @param Model $LinkModel Linked model object.
@@ -1214,8 +1227,8 @@ class DboSource extends DataSource {
 			unset($stack['_joined']);
 		}
 
-		$query = $this->generateAssociationQuery($Model, $LinkModel, $type, $association, $assocData, $queryData, $external);
-		if (empty($query)) {
+		$queryTemplate = $this->generateAssociationQuery($Model, $LinkModel, $type, $association, $assocData, $queryData, $external);
+		if (empty($queryTemplate)) {
 			return;
 		}
 
@@ -1224,19 +1237,22 @@ class DboSource extends DataSource {
 		}
 
 		if ($type === 'hasMany' && empty($assocData['limit']) && !empty($assocData['foreignKey'])) {
-			$ins = $fetch = array();
-			foreach ($resultSet as &$result) {
-				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $Model, $stack)) {
-					$ins[] = $in;
-				}
+			// 'hasMany' associations with no limit set.
+
+			$assocIds = array();
+			foreach ($resultSet as $result) {
+				$assocIds[] = $this->insertQueryData('{$__cakeID__$}', $result, $association, $Model, $stack);
+			}
+			$assocIds = array_filter($assocIds);
+
+			// Fetch
+			$assocResultSet = array();
+			if (!empty($assocIds)) {
+				$assocResultSet = $this->_fetchHasMany($Model, $queryTemplate, $assocIds);
 			}
 
-			if (!empty($ins)) {
-				$ins = array_unique($ins);
-				$fetch = $this->fetchAssociated($Model, $query, $ins);
-			}
-
-			if ($recursive > 0 && !empty($fetch) && is_array($fetch)) {
+			// Recursively query associations
+			if ($recursive > 0 && !empty($assocResultSet) && is_array($assocResultSet)) {
 				foreach ($LinkModel->associations() as $type1) {
 					foreach ($LinkModel->{$type1} as $assoc1 => $assocData1) {
 						$DeepModel = $LinkModel->{$assoc1};
@@ -1245,89 +1261,88 @@ class DboSource extends DataSource {
 
 						$db = $LinkModel->useDbConfig === $DeepModel->useDbConfig ? $this : $DeepModel->getDataSource();
 
-						$db->queryAssociation($LinkModel, $DeepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
+						$db->queryAssociation($LinkModel, $DeepModel, $type1, $assoc1, $assocData1, $queryData, true, $assocResultSet, $recursive - 1, $tmpStack);
 					}
 				}
 			}
 
+			// Filter
 			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-				$this->_filterResults($fetch, $Model);
+				$this->_filterResults($assocResultSet, $Model);
 			}
 
-			return $this->_mergeHasMany($resultSet, $fetch, $association, $Model);
+			// Merge
+			return $this->_mergeHasMany($resultSet, $assocResultSet, $association, $Model);
 
 		} elseif ($type === 'hasAndBelongsToMany') {
-			$ins = $fetch = array();
-			foreach ($resultSet as &$result) {
-				if ($in = $this->insertQueryData('{$__cakeID__$}', $result, $association, $Model, $stack)) {
-					$ins[] = $in;
-				}
+			// 'hasAndBelongsToMany' associations.
+
+			$assocIds = array();
+			foreach ($resultSet as $result) {
+				$assocIds[] = $this->insertQueryData('{$__cakeID__$}', $result, $association, $Model, $stack);
+			}
+			$assocIds = array_filter($assocIds);
+
+			// Fetch
+			$assocResultSet = array();
+			if (!empty($assocIds)) {
+				$assocResultSet = $this->_fetchHasAndBelongsToMany($Model, $queryTemplate, $assocIds, $association);
 			}
 
-			if (!empty($ins)) {
-				$ins = array_unique($ins);
-				if (count($ins) > 1) {
-					$query = str_replace('{$__cakeID__$}', '(' . implode(', ', $ins) . ')', $query);
-					$query = str_replace('= (', 'IN (', $query);
-				} else {
-					$query = str_replace('{$__cakeID__$}', $ins[0], $query);
-				}
-				$query = str_replace(' WHERE 1 = 1', '', $query);
-			}
-
-			$foreignKey = $Model->hasAndBelongsToMany[$association]['foreignKey'];
-			$joinKeys = array($foreignKey, $Model->hasAndBelongsToMany[$association]['associationForeignKey']);
-			list($with, $habtmFields) = $Model->joinModel($Model->hasAndBelongsToMany[$association]['with'], $joinKeys);
+			$habtmAssocData = $Model->hasAndBelongsToMany[$association];
+			$foreignKey = $habtmAssocData['foreignKey'];
+			$joinKeys = array($foreignKey, $habtmAssocData['associationForeignKey']);
+			list($with, $habtmFields) = $Model->joinModel($habtmAssocData['with'], $joinKeys);
 			$habtmFieldsCount = count($habtmFields);
-			$q = $this->insertQueryData($query, null, $association, $Model, $stack);
 
-			if ($q !== false) {
-				$fetch = $this->fetchAll($q, $Model->cacheQueries);
-			} else {
-				$fetch = null;
-			}
-
+			// Filter
 			if ($queryData['callbacks'] === true || $queryData['callbacks'] === 'after') {
-				$this->_filterResults($fetch, $Model);
+				$this->_filterResults($assocResultSet, $Model);
 			}
 		}
 
 		$modelAlias = $Model->alias;
 		$primaryKey = $Model->primaryKey;
+		$selfJoin = ($Model->name === $LinkModel->name);
 
 		foreach ($resultSet as &$row) {
-			if ($type !== 'hasAndBelongsToMany') {
-				$q = $this->insertQueryData($query, $row, $association, $Model, $stack);
+			if ($type === 'hasOne' || $type === 'belongsTo' || $type === 'hasMany') {
+				$assocResultSet = array();
 
-				$fetch = null;
-				if ($q !== false) {
-					$joinedData = array();
-					if (($type === 'belongsTo' || $type === 'hasOne') && isset($row[$LinkModel->alias], $joined[$Model->alias]) && in_array($LinkModel->alias, $joined[$Model->alias])) {
-						$joinedData = Hash::filter($row[$LinkModel->alias]);
-						if (!empty($joinedData)) {
-							$fetch[0] = array($LinkModel->alias => $row[$LinkModel->alias]);
-						}
-					} else {
-						$fetch = $this->fetchAll($q, $Model->cacheQueries);
+				if (
+					($type === 'hasOne' || $type === 'belongsTo') &&
+					isset($row[$LinkModel->alias], $joined[$Model->alias]) &&
+					in_array($LinkModel->alias, $joined[$Model->alias])
+				) {
+					$joinedData = Hash::filter($row[$LinkModel->alias]);
+					if (!empty($joinedData)) {
+						$assocResultSet[0] = array($LinkModel->alias => $row[$LinkModel->alias]);
+					}
+				} else {
+					$query = $this->insertQueryData($queryTemplate, $row, $association, $Model, $stack);
+					if ($query !== false) {
+						$assocResultSet = $this->fetchAll($query, $Model->cacheQueries);
 					}
 				}
 			}
 
-			$selfJoin = ($Model->name === $LinkModel->name);
-
-			if (!empty($fetch) && is_array($fetch)) {
+			if (!empty($assocResultSet) && is_array($assocResultSet)) {
 				if ($recursive > 0) {
 					foreach ($LinkModel->associations() as $type1) {
 						foreach ($LinkModel->{$type1} as $assoc1 => $assocData1) {
 							$DeepModel = $LinkModel->{$assoc1};
 
-							if ($type1 === 'belongsTo' || ($DeepModel->alias === $modelAlias && $type === 'belongsTo') || ($DeepModel->alias !== $modelAlias)) {
+							if (
+								$type1 === 'belongsTo' ||
+								($type === 'belongsTo' && $DeepModel->alias === $modelAlias) ||
+								($DeepModel->alias !== $modelAlias)
+							) {
 								$tmpStack = $stack;
 								$tmpStack[] = $assoc1;
 
 								$db = $LinkModel->useDbConfig === $DeepModel->useDbConfig ? $this : $DeepModel->getDataSource();
 
-								$db->queryAssociation($LinkModel, $DeepModel, $type1, $assoc1, $assocData1, $queryData, true, $fetch, $recursive - 1, $tmpStack);
+								$db->queryAssociation($LinkModel, $DeepModel, $type1, $assoc1, $assocData1, $queryData, true, $assocResultSet, $recursive - 1, $tmpStack);
 							}
 						}
 					}
@@ -1335,8 +1350,7 @@ class DboSource extends DataSource {
 
 				if ($type === 'hasAndBelongsToMany') {
 					$merge = array();
-
-					foreach ($fetch as $data) {
+					foreach ($assocResultSet as $data) {
 						if (isset($data[$with]) && $data[$with][$foreignKey] === $row[$modelAlias][$primaryKey]) {
 							if ($habtmFieldsCount <= 2) {
 								unset($data[$with]);
@@ -1344,13 +1358,14 @@ class DboSource extends DataSource {
 							$merge[] = $data;
 						}
 					}
+
 					if (empty($merge) && !isset($row[$association])) {
 						$row[$association] = $merge;
 					} else {
 						$this->_mergeAssociation($row, $merge, $association, $type);
 					}
 				} else {
-					$this->_mergeAssociation($row, $fetch, $association, $type, $selfJoin);
+					$this->_mergeAssociation($row, $assocResultSet, $association, $type, $selfJoin);
 				}
 
 				if ($type !== 'hasAndBelongsToMany' && isset($row[$association])) {
@@ -1365,18 +1380,59 @@ class DboSource extends DataSource {
 	}
 
 /**
- * A more efficient way to fetch associations.
+ * Fetch 'hasMany' associations.
+ *
+ * This is just a proxy to maintain BC.
+ *
+ * @param Model $Model Primary model object.
+ * @param string $query Association query template.
+ * @param array $ids Array of IDs of associated records.
+ * @return array Association results.
+ * @see DboSource::_fetchHasMany()
+ */
+	public function fetchAssociated(Model $Model, $query, $ids) {
+		return $this->_fetchHasMany($Model, $query, $ids);
+	}
+
+/**
+ * Fetch 'hasMany' associations.
  *
  * @param Model $Model Primary model object.
  * @param string $query Association query template.
  * @param array $ids Array of IDs of associated records.
  * @return array Association results.
  */
-	public function fetchAssociated(Model $Model, $query, $ids) {
+	protected function _fetchHasMany(Model $Model, $query, $ids) {
+		$ids = array_unique($ids);
+
 		$query = str_replace('{$__cakeID__$}', implode(', ', $ids), $query);
 		if (count($ids) > 1) {
 			$query = str_replace('= (', 'IN (', $query);
 		}
+
+		return $this->fetchAll($query, $Model->cacheQueries);
+	}
+
+/**
+ * Fetch 'hasAndBelongsToMany' associations.
+ *
+ * @param Model $Model Primary model object.
+ * @param string $query Association query.
+ * @param array $ids Array of IDs of associated records.
+ * @param string $association Association name.
+ * @return array Association results.
+ */
+	protected function _fetchHasAndBelongsToMany(Model $Model, $query, $ids, $association) {
+		$ids = array_unique($ids);
+
+		if (count($ids) > 1) {
+			$query = str_replace('{$__cakeID__$}', '(' . implode(', ', $ids) . ')', $query);
+			$query = str_replace('= (', 'IN (', $query);
+		} else {
+			$query = str_replace('{$__cakeID__$}', $ids[0], $query);
+		}
+		$query = str_replace(' WHERE 1 = 1', '', $query);
+
 		return $this->fetchAll($query, $Model->cacheQueries);
 	}
 
