@@ -1248,7 +1248,7 @@ class DboSource extends DataSource {
 			// Fetch
 			$assocResultSet = array();
 			if (!empty($assocIds)) {
-				$assocResultSet = $this->fetchHasMany($Model, $queryTemplate, $assocIds);
+				$assocResultSet = $this->_fetchHasMany($Model, $queryTemplate, $assocIds);
 			}
 
 			// Recursively query associations
@@ -1286,7 +1286,7 @@ class DboSource extends DataSource {
 			// Fetch
 			$assocResultSet = array();
 			if (!empty($assocIds)) {
-				$assocResultSet = $this->fetchHasAndBelongsToMany($Model, $queryTemplate, $assocIds, $association);
+				$assocResultSet = $this->_fetchHasAndBelongsToMany($Model, $queryTemplate, $assocIds, $association);
 			}
 
 			$habtmAssocData = $Model->hasAndBelongsToMany[$association];
@@ -1382,12 +1382,27 @@ class DboSource extends DataSource {
 /**
  * Fetch 'hasMany' associations.
  *
+ * This is just a proxy to maintain BC.
+ *
+ * @param Model $Model Primary model object.
+ * @param string $query Association query template.
+ * @param array $ids Array of IDs of associated records.
+ * @return array Association results.
+ * @see DboSource::_fetchHasMany()
+ */
+	public function fetchAssociated(Model $Model, $query, $ids) {
+		return $this->_fetchHasMany($Model, $query, $ids);
+	}
+
+/**
+ * Fetch 'hasMany' associations.
+ *
  * @param Model $Model Primary model object.
  * @param string $query Association query template.
  * @param array $ids Array of IDs of associated records.
  * @return array Association results.
  */
-	public function fetchHasMany(Model $Model, $query, $ids) {
+	protected function _fetchHasMany(Model $Model, $query, $ids) {
 		$ids = array_unique($ids);
 
 		$query = str_replace('{$__cakeID__$}', implode(', ', $ids), $query);
@@ -1407,7 +1422,7 @@ class DboSource extends DataSource {
  * @param string $association Association name.
  * @return array Association results.
  */
-	public function fetchHasAndBelongsToMany(Model $Model, $query, $ids, $association) {
+	protected function _fetchHasAndBelongsToMany(Model $Model, $query, $ids, $association) {
 		$ids = array_unique($ids);
 
 		if (count($ids) > 1) {
