@@ -72,6 +72,11 @@ class DATABASE_CONFIG {
 		//'encoding' => 'utf8',
 	);
 
+
+// NOTE: You are supposed to fill $default array above
+	
+	
+	
 	public $test = array(
 		'datasource' => 'Database/Mysql',
 		'persistent' => false,
