@@ -312,7 +312,7 @@ class Hash {
 		return $data;
 	}
 
-/**
+/*
  * Creates an associative array using `$keyPath` as the path to build its keys, and optionally
  * `$valuePath` as path to get the values. If `$valuePath` is not specified, all values will be initialized
  * to null (useful for Hash::merge). You can optionally group the values by what is obtained when
