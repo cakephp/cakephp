@@ -452,8 +452,8 @@ class BelongsToMany extends Association {
 			$joint->set(array_combine(
 				$foreignKey,
 				$sourceEntity->extract($sourcePrimaryKey)
-			));
-			$joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)));
+			), ['guard' => false]);
+			$joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)), ['guard' => false]);
 			$saved = $junction->save($joint, $options);
 
 			if (!$saved && !empty($options['atomic'])) {

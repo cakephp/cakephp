@@ -157,7 +157,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * @return void
  */
 	public function __set($property, $value) {
-		$this->set([$property => $value]);
+		$this->set($property, $value);
 	}
 
 /**
@@ -447,7 +447,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 
 	public function offsetSet($offset, $value) {
-		$this->set([$offset => $value]);
+		$this->set($offset, $value);
 	}
 
 /**
