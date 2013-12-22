@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association\HasOne;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -173,4 +174,29 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$association->attachTo($query, ['includeFields' => false]);
 	}
 
+/**
+ * Test that save() ignores non entity values.
+ *
+ * @return void
+ */
+	public function testSaveOnlyEntities() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->user,
+			'targetTable' => $mock,
+		];
+		$mock->expects($this->never())
+			->method('save');
+
+		$entity = new Entity([
+			'username' => 'Mark',
+			'email' => 'mark@example.com',
+			'profile' => ['twitter' => '@cakephp']
+		]);
+
+		$association = new HasOne('Profiles', $config);
+		$result = $association->save($entity);
+
+		$this->assertSame($result, $entity);
+	}
 }
