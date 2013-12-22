@@ -292,7 +292,7 @@ class Hash {
  * @param string $path A path expression to use to remove.
  * @return array The modified array.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::remove
- */
+*/
 	public static function remove(array $data, $path) {
 		$tokens = explode('.', $path);
 		if (strpos($path, '{') === false) {
@@ -325,6 +325,7 @@ class Hash {
  * @return array Combined array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::combine
  */
+ 
 	public static function combine(array $data, $keyPath, $valuePath = null, $groupPath = null) {
 		if (empty($data)) {
 			return array();
