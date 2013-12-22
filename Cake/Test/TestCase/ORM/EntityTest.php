@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -49,6 +47,8 @@ class EntityTest extends TestCase {
  */
 	public function testSetMultiplePropertiesNoSetters() {
 		$entity = new Entity;
+		$entity->accessible('*', true);
+
 		$entity->set(['foo' => 'bar', 'id' => 1]);
 		$this->assertEquals('bar', $entity->foo);
 		$this->assertSame(1, $entity->id);
@@ -83,6 +83,7 @@ class EntityTest extends TestCase {
  */
 	public function testMultipleWithSetter() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['setName', 'setStuff']);
+		$entity->accessible('*', true);
 		$entity->expects($this->once())->method('setName')
 			->with('Jones')
 			->will($this->returnCallback(function($name) {
@@ -107,6 +108,8 @@ class EntityTest extends TestCase {
  */
 	public function testBypassSetters() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['setName', 'setStuff']);
+		$entity->accessible('*', true);
+
 		$entity->expects($this->never())->method('setName');
 		$entity->expects($this->never())->method('setStuff');
 
@@ -372,14 +375,16 @@ class EntityTest extends TestCase {
  */
 	public function testSetArrayAccess() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['set']);
+		$entity->accessible('*', true);
+
 		$entity->expects($this->at(0))
 			->method('set')
-			->with(['foo' => 1])
+			->with('foo', 1)
 			->will($this->returnSelf());
 
 		$entity->expects($this->at(1))
 			->method('set')
-			->with(['bar' => 2])
+			->with('bar', 2)
 			->will($this->returnSelf());
 
 		$entity['foo'] = 1;
@@ -662,6 +667,7 @@ class EntityTest extends TestCase {
  */
 	public function testToArrayWithAccessor() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->accessible('*', true);
 		$entity->set(['name' => 'Mark', 'email' => 'mark@example.com']);
 		$entity->expects($this->any())
 			->method('getName')
@@ -690,6 +696,8 @@ class EntityTest extends TestCase {
  */
 	public function testToArrayVirtualProperties() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->accessible('*', true);
+
 		$entity->expects($this->any())
 			->method('getName')
 			->will($this->returnValue('Jose'));
@@ -717,6 +725,8 @@ class EntityTest extends TestCase {
 			->setMethods(['getSomething'])
 			->disableOriginalConstructor()
 			->getMock();
+		$entity->accessible('*', true);
+
 		$validator = $this->getMock('\Cake\Validation\Validator');
 		$entity->set('a', 'b');
 
