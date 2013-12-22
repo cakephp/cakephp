@@ -1069,7 +1069,7 @@ class FormHelper extends Helper {
 			$options = $this->_magicOptions($options);
 		}
 
-		if (in_array($options['type'], array('checkbox', 'radio', 'select'))) {
+		if (in_array($options['type'], array('radio', 'select'))) {
 			$options = $this->_optionsOptions($options);
 		}
 
@@ -2398,10 +2398,6 @@ class FormHelper extends Helper {
 		$monthNames = $attributes['monthNames'];
 		$round = $attributes['round'];
 		$attributes = array_diff_key($attributes, $defaults);
-
-		if ($timeFormat == 12 && $hour == 12) {
-			$hour = 0;
-		}
 
 		if (!empty($interval) && $interval > 1 && !empty($min)) {
 			$current = new \DateTime();

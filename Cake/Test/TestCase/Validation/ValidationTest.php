@@ -1414,14 +1414,16 @@ class ValidationTest extends TestCase {
  * @return void
  */
 	public function testDateMyNumeric() {
-		$this->assertTrue(Validation::date('12/2006', array('my')));
+		$this->assertTrue(Validation::date('01/2006', array('my')));
 		$this->assertTrue(Validation::date('12-2006', array('my')));
 		$this->assertTrue(Validation::date('12.2006', array('my')));
 		$this->assertTrue(Validation::date('12 2006', array('my')));
-		$this->assertFalse(Validation::date('12/06', array('my')));
-		$this->assertFalse(Validation::date('12-06', array('my')));
-		$this->assertFalse(Validation::date('12.06', array('my')));
-		$this->assertFalse(Validation::date('12 06', array('my')));
+		$this->assertTrue(Validation::date('01/06', array('my')));
+		$this->assertTrue(Validation::date('12-06', array('my')));
+		$this->assertTrue(Validation::date('12.06', array('my')));
+		$this->assertTrue(Validation::date('12 06', array('my')));
+		$this->assertFalse(Validation::date('13 06', array('my')));
+		$this->assertFalse(Validation::date('13 2006', array('my')));
 	}
 
 /**
@@ -1437,12 +1439,14 @@ class ValidationTest extends TestCase {
 		$this->assertTrue(Validation::date('2006 12', array('ym')));
 		$this->assertTrue(Validation::date('1900-01', array('ym')));
 		$this->assertTrue(Validation::date('2153-01', array('ym')));
+		$this->assertTrue(Validation::date('06/12', array('ym')));
+		$this->assertTrue(Validation::date('06-12', array('ym')));
+		$this->assertTrue(Validation::date('06-12', array('ym')));
+		$this->assertTrue(Validation::date('06 12', array('ym')));
 		$this->assertFalse(Validation::date('2006/12 ', array('ym')));
 		$this->assertFalse(Validation::date('2006/12/', array('ym')));
-		$this->assertFalse(Validation::date('06/12', array('ym')));
-		$this->assertFalse(Validation::date('06-12', array('ym')));
-		$this->assertFalse(Validation::date('06-12', array('ym')));
-		$this->assertFalse(Validation::date('06 12', array('ym')));
+		$this->assertFalse(Validation::date('06/12 ', array('ym')));
+		$this->assertFalse(Validation::date('06/13 ', array('ym')));
 	}
 
 /**

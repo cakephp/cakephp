@@ -25,7 +25,6 @@ use Cake\Network\Http\FormData\Part;
 use Cake\Utility\File;
 use Cake\Utility\Hash;
 use Cake\Utility\String;
-use Cake\Validation\Validation;
 use Cake\View\View;
 
 /**
@@ -338,7 +337,7 @@ class Email {
 
 /**
  * Regex for email validation
- * If null, it will use built in regex
+ * If null, filter_var() will be used.
  *
  * @var string
  */
@@ -579,9 +578,7 @@ class Email {
  */
 	protected function _setEmail($varName, $email, $name) {
 		if (!is_array($email)) {
-			if (!Validation::email($email, false, $this->_emailPattern)) {
-				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
-			}
+			$this->_validateEmail($email);
 			if ($name === null) {
 				$name = $email;
 			}
@@ -593,13 +590,28 @@ class Email {
 			if (is_int($key)) {
 				$key = $value;
 			}
-			if (!Validation::email($key, false, $this->_emailPattern)) {
-				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
-			}
+			$this->_validateEmail($key);
 			$list[$key] = $value;
 		}
 		$this->{$varName} = $list;
 		return $this;
+	}
+
+/**
+ * Validate email address
+ *
+ * @param string $email Email address to validate
+ * @return void
+ * @throws Cake\Error\SocketException If email address does not validate
+ */
+	protected function _validateEmail($email) {
+		$valid = (($this->_emailPattern !== null &&
+			preg_match($this->_emailPattern, $email)) ||
+			filter_var($email, FILTER_VALIDATE_EMAIL)
+		);
+		if (!$valid) {
+			throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
+		}
 	}
 
 /**
@@ -633,9 +645,7 @@ class Email {
  */
 	protected function _addEmail($varName, $email, $name) {
 		if (!is_array($email)) {
-			if (!Validation::email($email, false, $this->_emailPattern)) {
-				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
-			}
+			$this->_validateEmail($email);
 			if ($name === null) {
 				$name = $email;
 			}
@@ -647,9 +657,7 @@ class Email {
 			if (is_int($key)) {
 				$key = $value;
 			}
-			if (!Validation::email($key, false, $this->_emailPattern)) {
-				throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $key));
-			}
+			$this->_validateEmail($key);
 			$list[$key] = $value;
 		}
 		$this->{$varName} = array_merge($this->{$varName}, $list);
