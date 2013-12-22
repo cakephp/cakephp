@@ -14,10 +14,31 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+
+
+/**
+ * Test entity for mass assignment.
+ */
+class OpenEntity extends Entity {
+	protected $_accessible = [
+		'*' => true,
+	];
+}
+
+/**
+ * Test entity for mass assignment.
+ */
+class ProtectedArticle extends Entity {
+	protected $_accessible = [
+		'title' => true,
+		'body' => true
+	];
+}
 
 /**
  * Marshaller test case
@@ -38,8 +59,13 @@ class MarshallerTest extends TestCase {
 		$articles->hasMany('Comments');
 
 		$comments = TableRegistry::get('Comments');
+		$users = TableRegistry::get('Users');
 		$comments->belongsTo('Articles');
 		$comments->belongsTo('Users');
+
+		$articles->entityClass(__NAMESPACE__ . '\OpenEntity');
+		$comments->entityClass(__NAMESPACE__ . '\OpenEntity');
+		$users->entityClass(__NAMESPACE__ . '\OpenEntity');
 
 		$this->articles = $articles;
 		$this->comments = $comments;
@@ -75,6 +101,27 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($data, $result->toArray());
 		$this->assertTrue($result->dirty(), 'Should be a dirty entity.');
 		$this->assertNull($result->isNew(), 'Should be detached');
+	}
+
+/**
+ * Test one() follows mass-assignment rules.
+ *
+ * @return void
+ */
+	public function testOneAccessibleProperties() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'not_in_schema' => true
+		];
+		$this->articles->entityClass(__NAMESPACE__ . '\ProtectedArticle');
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, []);
+
+		$this->assertInstanceOf(__NAMESPACE__ . '\ProtectedArticle', $result);
+		$this->assertNull($result->author_id);
+		$this->assertNull($result->not_in_schema);
 	}
 
 /**
