@@ -127,7 +127,7 @@ class BelongsTo extends Association {
 			(array)$this->foreignKey(),
 			$targetEntity->extract((array)$table->primaryKey())
 		);
-		$entity->set($properties);
+		$entity->set($properties, ['guard' => false]);
 		return $entity;
 	}
 

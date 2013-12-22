@@ -2146,7 +2146,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testsSaveBelongsTo() {
+	public function testSaveBelongsTo() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'

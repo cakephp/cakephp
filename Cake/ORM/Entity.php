@@ -157,7 +157,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * @return void
  */
 	public function __set($property, $value) {
-		$this->set([$property => $value]);
+		$this->set($property, $value);
 	}
 
 /**
@@ -195,31 +195,35 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  *
  * ## Example:
  *
- * {{
- *	$entity->set(['name' => 'andrew', 'id' => 1]);
- *	echo $entity->name // prints andrew
- *	echo $entity->id // prints 1
- * }}
+ * {{{
+ * $entity->set(['name' => 'andrew', 'id' => 1]);
+ * echo $entity->name // prints andrew
+ * echo $entity->id // prints 1
+ * }}}
  *
  * Some times it is handy to bypass setter functions in this entity when assigning
  * properties. You can achieve this by disabling the `setter` option using the
- * `$options` parameter
+ * `$options` parameter:
  *
- * ### Example:
+ * {{{
+ * $entity->set('name', 'Andrew', ['setter' => false]);
+ * $entity->set(['name' => 'Andrew', 'id' => 1], ['setter' => false]);
+ * }}}
  *
- * ``$entity->set('name', 'Andrew', ['setter' => false]);``
+ * Mass assignment should be treated carefully when accepting user input, by default
+ * entities will guard all fields when properties are assigned in bulk. You can disable
+ * the guarding for a single set call with the `guard` option:
  *
- * ``$entity->set(['name' => 'Andrew', 'id' => 1], ['setter' => false]);``
+ * {{{
+ * $entity->set(['name' => 'Andrew', 'id' => 1], ['guard' => true]);
+ * }}}
  *
- * Mass assignment should be treated carefully when accepting user input, for this
- * case you can tell this method to only set property that are marked as accessible
- * by setting the `guard` options in the `$options` parameter
+ * You do not need to use the guard option when assigning properties individually:
  *
- * ### Example:
- *
- * ``$entity->set('name', 'Andrew', ['guard' => true]);``
- *
- * ``$entity->set(['name' => 'Andrew', 'id' => 1], ['guard' => true]);``
+ * {{{
+ * // No need to use the guard option.
+ * $entity->set('name', 'Andrew');
+ * }}}
  *
  * @param string|array $property the name of property to set or a list of
  * properties with their respective values
@@ -231,12 +235,14 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 	public function set($property, $value = null, $options = []) {
 		if (is_string($property)) {
+			$guard = false;
 			$property = [$property => $value];
 		} else {
+			$guard = true;
 			$options = (array)$value;
 		}
 
-		$options += ['setter' => true, 'guard' => false];
+		$options += ['setter' => true, 'guard' => $guard];
 
 		foreach ($property as $p => $value) {
 			if ($options['guard'] === true && !$this->accessible($p)) {
@@ -263,7 +269,6 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			}
 			$this->_properties[$p] = $value;
 		}
-
 		return $this;
 	}
 
@@ -442,7 +447,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 
 	public function offsetSet($offset, $value) {
-		$this->set([$offset => $value]);
+		$this->set($offset, $value);
 	}
 
 /**

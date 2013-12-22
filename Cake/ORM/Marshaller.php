@@ -95,6 +95,7 @@ class Marshaller {
 			$data = $data[$tableName];
 		}
 
+		$properties = [];
 		foreach ($data as $key => $value) {
 			$assoc = null;
 			$nested = [];
@@ -105,8 +106,9 @@ class Marshaller {
 			if ($assoc) {
 				$value = $this->_marshalAssociation($assoc, $value, $nested);
 			}
-			$entity->set($key, $value);
+			$properties[$key] = $value;
 		}
+		$entity->set($properties);
 		return $entity;
 	}
 
