@@ -1437,15 +1437,17 @@ class DboSource extends DataSource {
 	}
 
 /**
- * Merge the results of hasMany relations.
+ * Merge the results of 'hasMany' associations.
+ *
+ * Note: this function also deals with the formatting of the data.
  *
  * @param array $resultSet Data to merge into.
- * @param array $merge Data to merge.
+ * @param array $assocResultSet Data to merge.
  * @param string $association Name of Model being merged.
  * @param Model $Model Model being merged onto.
  * @return void
  */
-	protected function _mergeHasMany(&$resultSet, $merge, $association, $Model) {
+	protected function _mergeHasMany(&$resultSet, $assocResultSet, $association, Model $Model) {
 		$modelAlias = $Model->alias;
 		$primaryKey = $Model->primaryKey;
 		$foreignKey = $Model->hasMany[$association]['foreignKey'];
@@ -1458,7 +1460,7 @@ class DboSource extends DataSource {
 			$resultPrimaryKey = $result[$modelAlias][$primaryKey];
 
 			$merged = array();
-			foreach ($merge as $data) {
+			foreach ($assocResultSet as $data) {
 				if ($resultPrimaryKey !== $data[$association][$foreignKey]) {
 					continue;
 				}
@@ -1637,7 +1639,7 @@ class DboSource extends DataSource {
  * @param boolean $external Whether or not the association query is on an external datasource.
  * @return mixed
  *   String representing a query.
- *   True. when $external is false and association $type is 'hasOne' or 'belongsTo'.
+ *   True, when $external is false and association $type is 'hasOne' or 'belongsTo'.
  */
 	public function generateAssociationQuery(Model $Model, Model $LinkModel, $type, $association, $assocData, &$queryData, $external) {
 		$assocData = $this->_scrubQueryData($assocData);
