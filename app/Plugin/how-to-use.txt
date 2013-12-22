@@ -1,0 +1,1 @@
+Put plugins here. Not in /plugin folder, use /app/Plugin instead!
