@@ -927,4 +927,24 @@ class EntityTest extends TestCase {
 		$this->assertEquals(5, $entity->get('foo'));
 	}
 
+/**
+ * Test that accessible() and single property setting works.
+ *
+ * @return
+ */
+	public function testSetWithAccessibleSingleProperty() {
+		$entity = new Entity(['foo' => 1, 'bar' => 2]);
+		$entity->accessible('title', true);
+
+		$entity->set(['title' => 'test', 'body' => 'Nope']);
+		$this->assertEquals('test', $entity->title);
+		$this->assertNull($entity->body);
+
+		$entity->body = 'Yep';
+		$this->assertEquals('Yep', $entity->body, 'Single set should bypass guards.');
+
+		$entity->set('body', 'Yes');
+		$this->assertEquals('Yes', $entity->body, 'Single set should bypass guards.');
+	}
+
 }
