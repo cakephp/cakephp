@@ -199,8 +199,8 @@ class ContainableBehavior extends ModelBehavior {
 
 		if (!empty($mandatory[$Model->alias])) {
 			foreach ($mandatory[$Model->alias] as $field) {
-				if ($field === '--primaryKey--') {
-					$field = $Model->primaryKey;
+				if ($field == '--primaryKey--') {
+					$field = $Model->alias . '.' . $Model->primaryKey;
 				} elseif (preg_match('/^.+\.\-\-[^-]+\-\-$/', $field)) {
 					list($modelName, $field) = explode('.', $field);
 					if ($Model->useDbConfig == $Model->{$modelName}->useDbConfig) {
