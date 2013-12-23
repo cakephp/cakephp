@@ -297,6 +297,9 @@ class Cache {
  * @return boolean True if the data was successfully cached, false on failure
  */
 	public static function write($key, $value, $config = 'default') {
+		if ($value !== null && !is_numeric($value) && empty($value)) {
+			return false;
+		}
 		$settings = self::settings($config);
 
 		if (empty($settings)) {
