@@ -54,7 +54,7 @@ class EntityValidatorTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		TableRegistry::clear();
-		unset($this->articles, $this->comments);
+		unset($this->articles, $this->comments, $this->users);
 	}
 
 /**

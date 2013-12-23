@@ -14,21 +14,16 @@
  */
 namespace Cake\ORM;
 
-use Cake\ORM\Association;
-use Cake\ORM\Table;
-
 /**
- * Contains logic to convert array data into entities.
+ * Contains logic for validate entities and their associations
  *
- * Useful when converting request data into entities.
- *
- * @see Cake\ORM\Table::newEntity()
- * @see Cake\ORM\Table::newEntities()
+ * @see Cake\ORM\Table::validate()
+ * @see Cake\ORM\Table::validateMany()
  */
 class EntityValidator {
 
 /**
- * The table instance this marshaller is for.
+ * The table instance this validator is for.
  *
  * @var Cake\ORM\Table
  */
@@ -45,6 +40,7 @@ class EntityValidator {
  * Constructor.
  *
  * @param Cake\ORM\Table $table
+ * @param string $type The name of the validator to use as stored in the table
  */
 	public function __construct(Table $table, $type = 'default') {
 		$this->_table = $table;
@@ -78,7 +74,16 @@ class EntityValidator {
 		return $map;
 	}
 
-	public function one($entity, $include = []) {
+/**
+ * Validates a single entity by getting the correct validator object from
+ * the table and traverses associations passed in $include to validate them
+ * as well.
+ *
+ * @param \Cake\ORM\Entity $entity The entity to be validated
+ * @param array $include tree of associations to be validated
+ * @return boolean true if all validations passed, false otherwise
+ */
+	public function one(Entity $entity, $include = []) {
 		$propertyMap = $this->_buildPropertyMap($include);
 		$valid = true;
 
@@ -109,6 +114,14 @@ class EntityValidator {
 		return $valid;
 	}
 
+/**
+ * Validates a list of entities by getting the correct validator for the related
+ * table and traverses associations passed in $include to validate them as well.
+ *
+ * @param array $entities List of entitites to be validated
+ * @param array $include tree of associations to be validated
+ * @return boolean true if all validations passed, false otherwise
+ */
 	public function many(array $entities, $include = []) {
 		$valid = true;
 		foreach ($entities as $entity) {
