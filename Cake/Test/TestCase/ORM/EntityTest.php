@@ -782,6 +782,38 @@ class EntityTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to get errors for nested entities
+ *
+ * @return void
+ */
+	public function testErrorsDeep() {
+		$entity = new Entity;
+		$entity2 = new Entity;
+		$entity3 = new Entity;
+		$entity->set('foo', 'bar');
+		$entity->set('thing', 'baz');
+		$entity->set('user', $entity2);
+		$entity->set('owner', $entity3);
+
+		$entity->errors('thing', ['this is a mistake']);
+		$entity2->errors(['a' => ['error1'], 'b' => ['error2']]);
+		$entity3->errors(['c' => ['error3'], 'd' => ['error4']]);
+
+		$expected = ['a' => ['error1'], 'b' => ['error2']];
+		$this->assertEquals($expected, $entity->errors('user'));
+
+		$expected = ['c' => ['error3'], 'd' => ['error4']];
+		$this->assertEquals($expected, $entity->errors('owner'));
+
+		$entity->set('multiple', [$entity2, $entity3]);
+		$expected = [
+			['a' => ['error1'], 'b' => ['error2']],
+			['c' => ['error3'], 'd' => ['error4']]
+		];
+		$this->assertEquals($expected, $entity->errors('multiple'));
+	}
+
+/**
  * Tests that changing the value of a property will remove errors
  * stored for it
  *

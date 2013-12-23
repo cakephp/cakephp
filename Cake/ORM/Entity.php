@@ -605,7 +605,11 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		}
 
 		if (is_string($field) && $errors === null) {
-			return isset($this->_errors[$field]) ? $this->_errors[$field] : [];
+			$errors = isset($this->_errors[$field]) ? $this->_errors[$field] : [];
+			if (!$errors) {
+				$errors = $this->_nestedErrors($field);
+			}
+			return $errors;
 		}
 
 		if (!is_array($field)) {
@@ -617,6 +621,39 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		}
 
 		return $this;
+	}
+
+/**
+ * Auxiliary method for getting errors in nested entities
+ *
+ * @param string field the field in this entity to check for errors
+ * @return array errors in nested entity if any
+ */
+	protected function _nestedErrors($field) {
+		if (!isset($this->_properties[$field])) {
+			return [];
+		}
+
+		$value = $this->_properties[$field];
+		if (is_scalar($value) || (is_object($value) && !($value instanceof self))) {
+			return [];
+		}
+
+		if ($value instanceof self) {
+			return $value->errors();
+		}
+
+		$errors = [];
+		if (is_array($value) || $value instanceof \Traversable) {
+			foreach ($value as $k => $v) {
+				if (!($v instanceof self)) {
+					break;
+				}
+				$errors[$k] = $v->errors();
+			}
+		}
+
+		return $errors;
 	}
 
 /**
