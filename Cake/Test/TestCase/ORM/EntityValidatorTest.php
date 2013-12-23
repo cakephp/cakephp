@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\EntityValidator;
 use Cake\ORM\Entity;
+use Cake\ORM\EntityValidator;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
