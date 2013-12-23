@@ -1517,6 +1517,10 @@ class Table implements EventListener {
 		return new Marshaller($this, $safe);
 	}
 
+	public function entityValidator($type) {
+		return new EntityValidator($this, $type);
+	}
+
 /**
  * Create a new entity + associated entities from an array.
  *
@@ -1586,6 +1590,22 @@ class Table implements EventListener {
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->many($data, $associations);
+	}
+
+	public function validate($entity, $associations = null, $type = 'default') {
+		if ($associations === null) {
+			$associations = $this->_associated->keys();
+		}
+		$entityValidator = $this->entityValidator($type);
+		return $entityValidator->one($entity);
+	}
+
+	public function validateMany($entity, $associations = null, $type = 'default') {
+		if ($associations === null) {
+			$associations = $this->_associated->keys();
+		}
+		$entityValidator = $this->entityValidator($type);
+		return $entityValidator->many($entity);
 	}
 
 /**
