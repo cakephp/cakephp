@@ -14,6 +14,8 @@
  */
 namespace Cake\ORM;
 
+use Cake\Event\Event;
+
 /**
  * Contains logic for validate entities and their associations
  *
@@ -30,21 +32,12 @@ class EntityValidator {
 	protected $_table;
 
 /**
- * Validator type yo use
- *
- * @var string
- */
-	protected $_type;
-
-/**
  * Constructor.
  *
  * @param Cake\ORM\Table $table
- * @param string $type The name of the validator to use as stored in the table
  */
-	public function __construct(Table $table, $type = 'default') {
+	public function __construct(Table $table) {
 		$this->_table = $table;
-		$this->_type = $type;
 	}
 
 /**
@@ -54,63 +47,64 @@ class EntityValidator {
  * @return array
  */
 	protected function _buildPropertyMap($include) {
-		$map = [];
-		foreach ($include as $key => $nested) {
-			if (is_int($key) && is_scalar($nested)) {
-				$key = $nested;
-				$nested = [];
+		if (empty($include['associated'])) {
+			return [];
+		}
+
+		foreach ($include['associated'] as $key => $options) {
+			if (is_int($key) && is_scalar($options)) {
+				$key = $options;
+				$options = ['validate' => true, 'associated' => []];
 			}
-			$validate = isset($nested['validate']) ? $nested['validate'] : true;
-			$nested = isset($nested['associated']) ? $nested['associated'] : [];
+
+			$options += ['validate' => true, 'associated' => []];
 			$assoc = $this->_table->association($key);
 			if ($assoc) {
 				$map[$assoc->property()] = [
 					'association' => $assoc,
-					'nested' => $nested,
-					'validate' => $validate
+					'options' => $options
 				];
 			}
 		}
+
 		return $map;
 	}
 
 /**
  * Validates a single entity by getting the correct validator object from
- * the table and traverses associations passed in $include to validate them
+ * the table and traverses associations passed in $options to validate them
  * as well.
  *
  * @param \Cake\ORM\Entity $entity The entity to be validated
- * @param array $include tree of associations to be validated
+ * @param array $options options for validation, including an optional key of
+ * associations to also be validated.
  * @return boolean true if all validations passed, false otherwise
  */
-	public function one(Entity $entity, $include = []) {
-		$propertyMap = $this->_buildPropertyMap($include);
+	public function one(Entity $entity, $options = []) {
 		$valid = true;
+		$propertyMap = $this->_buildPropertyMap($options);
 
 		foreach ($propertyMap as $key => $assoc) {
 			$value = $entity->get($key);
-			$validate = $assoc['validate'];
-			$assoc = $assoc['association'];
-			$nested = $propertyMap[$key]['nested'];
+			$association = $assoc['association'];
 
-			if (!$value || !$validate) {
+			if (!$value) {
 				continue;
 			}
 
-			if ($validate === true) {
-				$validate = 'default';
-			}
-
-			$validator = $assoc->target()->entityValidator($validate);
-			if ($assoc->type() === Association::ONE_TO_ONE) {
-				$valid = $validator->one($value, $nested) && $valid;
+			$validator = $association->target()->entityValidator();
+			if ($association->type() === Association::ONE_TO_ONE) {
+				$valid = $validator->one($value, $assoc['options']) && $valid;
 			} else {
-				$valid = $validator->many($value, $nested) && $valid;
+				$valid = $validator->many($value, $assoc['options']) && $valid;
 			}
 		}
 
-		$validator = $this->_table->validator($this->_type);
-		$valid = $entity->validate($validator) && $valid;
+		if (!isset($options['validate'])) {
+			$options['validate'] = true;
+		}
+
+		$valid = $this->_processValidation($entity, $options) && $valid;
 		return $valid;
 	}
 
@@ -118,8 +112,9 @@ class EntityValidator {
  * Validates a list of entities by getting the correct validator for the related
  * table and traverses associations passed in $include to validate them as well.
  *
- * @param array $entities List of entitites to be validated
- * @param array $include tree of associations to be validated
+ * @param array $entities List of entities to be validated
+ * @param array $options options for validation, including an optional key of
+ * associations to also be validated.
  * @return boolean true if all validations passed, false otherwise
  */
 	public function many(array $entities, $include = []) {
@@ -128,6 +123,42 @@ class EntityValidator {
 			$valid = $this->one($entity, $include) && $valid;
 		}
 		return $valid;
+	}
+
+/**
+ * Validates the $entity if the 'validate' key is not set to false in $options
+ * If not empty it will construct a default validation object or get one with
+ * the name passed in the key
+ *
+ * @param \Cake\ORM\Entity The entity to validate
+ * @param \ArrayObject|array $options
+ * @return boolean true if the entity is valid, false otherwise
+ */
+	protected function _processValidation($entity, $options) {
+		$type = is_string($options['validate']) ? $options['validate'] : 'default';
+		$validator = $this->_table->validator($type);
+		$pass = compact('entity', 'options', 'validator');
+		$event = new Event('Model.beforeValidate', $this->_table, $pass);
+		$this->_table->getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			return (bool)$event->result;
+		}
+
+		if (!count($validator)) {
+			return true;
+		}
+
+		$success = $entity->validate($validator);
+
+		$event = new Event('Model.afterValidate', $this->_table, $pass);
+		$this->_table->getEventManager()->dispatch($event);
+
+		if ($event->isStopped()) {
+			$success = (bool)$event->result;
+		}
+
+		return $success;
 	}
 
 }

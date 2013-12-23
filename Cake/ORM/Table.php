@@ -1103,12 +1103,14 @@ class Table implements EventListener {
 		if ($options['associated'] === true) {
 			$options['associated'] = $this->_associated->keys();
 		}
-		$options['associated'] = array_filter((array)$options['associated']);
+		$associated = array_filter((array)$options['associated']);
+		$options['associated'] = [];
 
-		if (!$this->_processValidation($entity, $options)) {
+		if (!$this->validate($entity, $options)) {
 			return false;
 		}
 
+		$options['associated'] = $associated;
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 
@@ -1249,46 +1251,6 @@ class Table implements EventListener {
 			$success = $entity;
 		}
 		$statement->closeCursor();
-		return $success;
-	}
-
-/**
- * Validates the $entity if the 'validate' key is not set to false in $options
- * If not empty it will construct a default validation object or get one with
- * the name passed in the key
- *
- * @param \Cake\ORM\Entity The entity to validate
- * @param \ArrayObject $options
- * @return boolean true if the entity is valid, false otherwise
- */
-	protected function _processValidation($entity, $options) {
-		if (empty($options['validate'])) {
-			return true;
-		}
-
-		$type = is_string($options['validate']) ? $options['validate'] : 'default';
-		$validator = $this->validator($type);
-		$pass = compact('entity', 'options', 'validator');
-		$event = new Event('Model.beforeValidate', $this, $pass);
-		$this->getEventManager()->dispatch($event);
-
-		if ($event->isStopped()) {
-			return (bool)$event->result;
-		}
-
-		if (!count($validator)) {
-			return true;
-		}
-
-		$success = $entity->validate($validator);
-
-		$event = new Event('Model.afterValidate', $this, $pass);
-		$this->getEventManager()->dispatch($event);
-
-		if ($event->isStopped()) {
-			$success = (bool)$event->result;
-		}
-
 		return $success;
 	}
 
@@ -1517,8 +1479,8 @@ class Table implements EventListener {
 		return new Marshaller($this, $safe);
 	}
 
-	public function entityValidator($type) {
-		return new EntityValidator($this, $type);
+	public function entityValidator() {
+		return new EntityValidator($this);
 	}
 
 /**
@@ -1592,19 +1554,20 @@ class Table implements EventListener {
 		return $marshaller->many($data, $associations);
 	}
 
-	public function validate($entity, $associations = null, $type = 'default') {
-		if ($associations === null) {
-			$associations = $this->_associated->keys();
+	public function validate($entity, $options) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associated->keys();
 		}
-		$entityValidator = $this->entityValidator($type);
-		return $entityValidator->one($entity);
+
+		$entityValidator = $this->entityValidator();
+		return $entityValidator->one($entity, $options);
 	}
 
 	public function validateMany($entity, $associations = null, $type = 'default') {
 		if ($associations === null) {
 			$associations = $this->_associated->keys();
 		}
-		$entityValidator = $this->entityValidator($type);
+		$entityValidator = $this->entityValidator();
 		return $entityValidator->many($entity);
 	}
 

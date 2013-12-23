@@ -2670,12 +2670,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		);
 		$authors = $this->getMock(
 			'\Cake\ORM\Table',
-			['_insert', '_processValidation'],
+			['_insert', 'validate'],
 			[['table' => 'authors', 'connection' => $this->connection]]
 		);
 		$supervisors = $this->getMock(
 			'\Cake\ORM\Table',
-			['_insert', '_processValidation'],
+			['_insert', 'validate'],
 			[[
 				'table' => 'authors',
 				'alias' => 'supervisors',
@@ -2717,16 +2717,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with($entity->author, ['name' => 'Juan'])
 			->will($this->returnValue($entity->author));
 
-		$options = new \ArrayObject([
-			'validate' => 'special',
-			'atomic' => true,
-			'associated' => ['supervisors' => [
-				'atomic' => false, 'validate' => false, 'associated' => false
-			]]
-		]);
 		$authors->expects($this->once())
-			->method('_processValidation')
-			->with($entity->author, $options)
+			->method('validate')
+			->with($entity->author)
 			->will($this->returnValue(true));
 
 		$supervisors->expects($this->once())
@@ -2740,7 +2733,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'associated' => []
 		]);
 		$supervisors->expects($this->once())
-			->method('_processValidation')
+			->method('validate')
 			->with($entity->author->supervisor, $options)
 			->will($this->returnValue(true));
 

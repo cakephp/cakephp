@@ -68,6 +68,9 @@ class EntityValidatorTest extends TestCase {
 		$this->articles->validator('default', $validator);
 		$entityValidator = new EntityValidator($this->articles);
 
+		$validator->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
 		$entity->expects($this->once())
 			->method('validate')
 			->with($validator)
@@ -87,6 +90,9 @@ class EntityValidatorTest extends TestCase {
 		$this->articles->validator('default', $validator);
 		$entityValidator = new EntityValidator($this->articles);
 
+		$validator->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
 		$entity->expects($this->once())
 			->method('validate')
 			->with($validator)
@@ -112,6 +118,16 @@ class EntityValidatorTest extends TestCase {
 		$validator2 = $this->getMock('\Cake\Validation\Validator');
 		$validator3 = $this->getMock('\Cake\Validation\Validator');
 
+		$validator1->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
+		$validator2->expects($this->exactly(2))
+			->method('count')
+			->will($this->returnValue(1));
+		$validator3->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
+
 		$this->articles->validator('default', $validator1);
 		$this->comments->validator('default', $validator2);
 		$this->users->validator('default', $validator3);
@@ -138,7 +154,8 @@ class EntityValidatorTest extends TestCase {
 			->with($validator3)
 			->will($this->returnValue(true));
 
-		$this->assertTrue($entityValidator->one($article, ['Comments', 'Users']));
+		$options = ['associated' => ['Comments', 'Users']];
+		$this->assertTrue($entityValidator->one($article, $options));
 	}
 
 /**
@@ -157,6 +174,16 @@ class EntityValidatorTest extends TestCase {
 		$validator1 = $this->getMock('\Cake\Validation\Validator');
 		$validator2 = $this->getMock('\Cake\Validation\Validator');
 		$validator3 = $this->getMock('\Cake\Validation\Validator');
+
+		$validator1->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
+		$validator2->expects($this->exactly(2))
+			->method('count')
+			->will($this->returnValue(1));
+		$validator3->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
 
 		$this->articles->validator('default', $validator1);
 		$this->comments->validator('default', $validator2);
@@ -184,7 +211,8 @@ class EntityValidatorTest extends TestCase {
 			->with($validator3)
 			->will($this->returnValue(true));
 
-		$this->assertFalse($entityValidator->one($article, ['Comments', 'Users']));
+		$options = ['associated' => ['Comments', 'Users']];
+		$this->assertFalse($entityValidator->one($article, $options));
 	}
 
 /**
@@ -204,6 +232,16 @@ class EntityValidatorTest extends TestCase {
 		$validator1 = $this->getMock('\Cake\Validation\Validator');
 		$validator2 = $this->getMock('\Cake\Validation\Validator');
 		$validator3 = $this->getMock('\Cake\Validation\Validator');
+
+		$validator1->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
+		$validator2->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
+		$validator3->expects($this->once())
+			->method('count')
+			->will($this->returnValue(1));
 
 		$this->articles->validator('crazy', $validator1);
 		$this->comments->validator('default', $validator2);
@@ -226,9 +264,11 @@ class EntityValidatorTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$this->assertTrue($entityValidator->one($comment, [
-			'Articles' => [
-				'validate' => 'crazy',
-				'associated' => ['Users' => ['validate' => 'funky']]
+			'associated' => [
+				'Articles' => [
+					'validate' => 'crazy',
+					'associated' => ['Users' => ['validate' => 'funky']]
+				]
 			]
 		]));
 	}
@@ -246,6 +286,9 @@ class EntityValidatorTest extends TestCase {
 		$this->comments->validator('default', $validator);
 		$entityValidator = new EntityValidator($this->comments);
 
+		$validator->expects($this->exactly(2))
+			->method('count')
+			->will($this->returnValue(1));
 		$comment1->expects($this->once())
 			->method('validate')
 			->with($validator)
@@ -271,6 +314,10 @@ class EntityValidatorTest extends TestCase {
 		$data = [$comment1, $comment2];
 		$this->comments->validator('default', $validator);
 		$entityValidator = new EntityValidator($this->comments);
+
+		$validator->expects($this->exactly(2))
+			->method('count')
+			->will($this->returnValue(1));
 
 		$comment1->expects($this->once())
 			->method('validate')
