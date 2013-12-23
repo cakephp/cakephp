@@ -362,6 +362,7 @@ class Hash {
  * @param string $groupPath A dot-separated string.
  * @return array Combined array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::combine
+ * @throws CakeException CakeException When keys and values count is unequal.
  */
 	public static function combine(array $data, $keyPath, $valuePath = null, $groupPath = null) {
 		if (empty($data)) {
@@ -384,10 +385,15 @@ class Hash {
 		} elseif (!empty($valuePath)) {
 			$vals = static::extract($data, $valuePath);
 		}
+		if (empty($vals)) {
+			$vals = array_fill(0, count($keys), null);
+		}
 
-		$count = count($keys);
-		for ($i = 0; $i < $count; $i++) {
-			$vals[$i] = isset($vals[$i]) ? $vals[$i] : null;
+		if (count($keys) !== count($vals)) {
+			throw new CakeException(__d(
+				'cake_dev',
+				'Hash::combine() needs an equal number of keys + values.'
+			));
 		}
 
 		if ($groupPath !== null) {

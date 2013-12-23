@@ -604,18 +604,6 @@ class RequestTest extends TestCase {
 		$request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/some/path');
 		$result = $request->referer(false);
 		$this->assertSame(Configure::read('App.fullBaseUrl') . '/some/path', $result);
-
-		$request->env('HTTP_REFERER', Configure::read('App.fullBaseUrl') . '/recipes/add');
-		$result = $request->referer(true);
-		$this->assertSame('/recipes/add', $result);
-
-		$request->env('HTTP_X_FORWARDED_HOST', 'cakephp.org');
-		$result = $request->referer();
-		$this->assertSame(Configure::read('App.fullBaseUrl') . '/recipes/add', $result);
-
-		$request->trustProxy = true;
-		$result = $request->referer();
-		$this->assertSame('cakephp.org', $result);
 	}
 
 /**
@@ -716,9 +704,14 @@ class RequestTest extends TestCase {
  * @return void
  */
 	public function testHost() {
-		$request = new Request(['environment' => ['HTTP_HOST' => 'localhost']]);
-
+		$request = new Request(['environment' => [
+			'HTTP_HOST' => 'localhost',
+			'HTTP_X_FORWARDED_HOST' => 'cakephp.org',
+		]]);
 		$this->assertEquals('localhost', $request->host());
+
+		$request->trustProxy = true;
+		$this->assertEquals('cakephp.org', $request->host());
 	}
 
 /**
