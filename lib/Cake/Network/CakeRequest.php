@@ -385,7 +385,7 @@ class CakeRequest implements ArrayAccess {
  * Get the IP the client is using, or says they are using.
  *
  * @param boolean $safe Use safe = false when you think the user might manipulate their HTTP_CLIENT_IP
- *   header. Setting $safe = false will will also look at HTTP_X_FORWARDED_FOR
+ *   header. Setting $safe = false will also look at HTTP_X_FORWARDED_FOR
  * @return string The client IP.
  */
 	public function clientIp($safe = true) {
@@ -417,10 +417,6 @@ class CakeRequest implements ArrayAccess {
  */
 	public function referer($local = false) {
 		$ref = env('HTTP_REFERER');
-		$forwarded = env('HTTP_X_FORWARDED_HOST');
-		if ($forwarded) {
-			$ref = $forwarded;
-		}
 
 		$base = Configure::read('App.fullBaseUrl') . $this->webroot;
 		if (!empty($ref) && !empty($base)) {
@@ -678,9 +674,13 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the host that the request was handled on.
  *
+ * @param boolean $trustProxy Whether or not to trust the proxy host.
  * @return string
  */
-	public function host() {
+	public function host($trustProxy = false) {
+		if ($trustProxy) {
+			return env('HTTP_X_FORWARDED_HOST');
+		}
 		return env('HTTP_HOST');
 	}
 

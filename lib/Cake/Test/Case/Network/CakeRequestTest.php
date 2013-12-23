@@ -698,10 +698,6 @@ class CakeRequestTest extends CakeTestCase {
 		$_SERVER['HTTP_REFERER'] = Configure::read('App.fullBaseUrl') . '/recipes/add';
 		$result = $request->referer(true);
 		$this->assertSame($result, '/recipes/add');
-
-		$_SERVER['HTTP_X_FORWARDED_HOST'] = 'cakephp.org';
-		$result = $request->referer();
-		$this->assertSame($result, 'cakephp.org');
 	}
 
 /**
@@ -804,9 +800,11 @@ class CakeRequestTest extends CakeTestCase {
  */
 	public function testHost() {
 		$_SERVER['HTTP_HOST'] = 'localhost';
+		$_SERVER['HTTP_X_FORWARDED_HOST'] = 'cakephp.org';
 		$request = new CakeRequest('some/path');
 
 		$this->assertEquals('localhost', $request->host());
+		$this->assertEquals('cakephp.org', $request->host(true));
 	}
 
 /**
