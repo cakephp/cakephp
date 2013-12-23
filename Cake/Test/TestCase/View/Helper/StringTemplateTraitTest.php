@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -21,7 +19,7 @@ use Cake\View\Helper\StringTemplateTrait;
 use Cake\View\Helper\StringTemplate;
 
 /**
- * PaginatorHelperTest class
+ * StringTemplateTraitTest class
  *
  */
 class StringTemplateTraitTest extends TestCase {
@@ -29,19 +27,40 @@ class StringTemplateTraitTest extends TestCase {
 	use StringTemplateTrait;
 
 /**
+ * setUp method
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$templates = [
+			'text' => '<p>{{text}}</p>',
+		];
+		$this->_initStringTemplates($templates);
+	}
+
+/**
  * testInitStringTemplates
  *
  * @return void
  */
 	public function testInitStringTemplates() {
-		$templates = [
-			'text' => '<p>{{text}}</p>',
-		];
-		$this->_initStringTemplates($templates);
 		$result = $this->templates(null);
 		$this->assertEquals($result, [
 			'text' => '<p>{{text}}</p>'
 		]);
+	}
+
+/**
+ * testFormatStringTemplate
+ *
+ * @return void
+ */
+	public function testFormatStringTemplate() {
+		$result = $this->_formatStringTemplate('text', [
+			'text' => 'CakePHP'
+		]);
+		$this->assertEquals($result, '<p>CakePHP</p>');
 	}
 
 }
