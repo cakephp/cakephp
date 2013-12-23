@@ -72,7 +72,7 @@ class Table {
  *
  * @var array
  */
-	protected $_columnKeys = [
+	protected static $_columnKeys = [
 		'type' => null,
 		'length' => null,
 		'precision' => null,
@@ -86,7 +86,7 @@ class Table {
  *
  * @var array
  */
-	protected $_columnExtras = [
+	protected static $_columnExtras = [
 		'string' => [
 			'fixed' => null,
 		],
@@ -110,7 +110,7 @@ class Table {
  *
  * @var array
  */
-	protected $_indexKeys = [
+	protected static $_indexKeys = [
 		'type' => null,
 		'columns' => [],
 		'length' => [],
@@ -124,7 +124,7 @@ class Table {
  *
  * @var array
  */
-	protected $_validIndexTypes = [
+	protected static $_validIndexTypes = [
 		self::INDEX_INDEX,
 		self::INDEX_FULLTEXT,
 	];
@@ -134,7 +134,7 @@ class Table {
  *
  * @var array
  */
-	protected $_validConstraintTypes = [
+	protected static $_validConstraintTypes = [
 		self::CONSTRAINT_PRIMARY,
 		self::CONSTRAINT_UNIQUE,
 		self::CONSTRAINT_FOREIGN,
@@ -145,7 +145,7 @@ class Table {
  *
  * @var array
  */
-	protected $_validForeignKeyActions = [
+	protected static $_validForeignKeyActions = [
 		self::ACTION_CASCADE,
 		self::ACTION_SET_NULL,
 		self::ACTION_NO_ACTION,
@@ -218,9 +218,9 @@ class Table {
 		if (is_string($attrs)) {
 			$attrs = ['type' => $attrs];
 		}
-		$valid = $this->_columnKeys;
-		if (isset($this->_columnExtras[$attrs['type']])) {
-			$valid += $this->_columnExtras[$attrs['type']];
+		$valid = static::$_columnKeys;
+		if (isset(static::$_columnExtras[$attrs['type']])) {
+			$valid += static::$_columnExtras[$attrs['type']];
 		}
 		$attrs = array_intersect_key($attrs, $valid);
 		$this->_columns[$name] = $attrs + $valid;
@@ -282,11 +282,11 @@ class Table {
 		if (is_string($attrs)) {
 			$attrs = ['type' => $attrs];
 		}
-		$attrs = array_intersect_key($attrs, $this->_indexKeys);
-		$attrs = $attrs + $this->_indexKeys;
+		$attrs = array_intersect_key($attrs, static::$_indexKeys);
+		$attrs = $attrs + static::$_indexKeys;
 		unset($attrs['references'], $attrs['update'], $attrs['delete']);
 
-		if (!in_array($attrs['type'], $this->_validIndexTypes, true)) {
+		if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
 			throw new Exception(__d('cake_dev', 'Invalid index type "%s"', $attrs['type']));
 		}
 		if (empty($attrs['columns'])) {
@@ -332,7 +332,7 @@ class Table {
  */
 	public function primaryKey() {
 		foreach ($this->_constraints as $name => $data) {
-			if ($data['type'] === self::CONSTRAINT_PRIMARY) {
+			if ($data['type'] === static::CONSTRAINT_PRIMARY) {
 				return $data['columns'];
 			}
 		}
@@ -364,9 +364,9 @@ class Table {
 		if (is_string($attrs)) {
 			$attrs = ['type' => $attrs];
 		}
-		$attrs = array_intersect_key($attrs, $this->_indexKeys);
-		$attrs = $attrs + $this->_indexKeys;
-		if (!in_array($attrs['type'], $this->_validConstraintTypes, true)) {
+		$attrs = array_intersect_key($attrs, static::$_indexKeys);
+		$attrs = $attrs + static::$_indexKeys;
+		if (!in_array($attrs['type'], static::$_validConstraintTypes, true)) {
 			throw new Exception(__d('cake_dev', 'Invalid constraint type "%s"', $attrs['type']));
 		}
 		if (empty($attrs['columns'])) {
@@ -398,11 +398,11 @@ class Table {
 		if (count($attrs['references']) < 2) {
 			throw new Exception(__d('cake_dev', 'References must contain a table and column.'));
 		}
-		if (!in_array($attrs['update'], $this->_validForeignKeyActions)) {
-			throw new Exception(__d('cake_dev', 'Update action is invalid. Must be one of %s', implode(',', $this->_validForeignKeyActions)));
+		if (!in_array($attrs['update'], static::$_validForeignKeyActions)) {
+			throw new Exception(__d('cake_dev', 'Update action is invalid. Must be one of %s', implode(',', static::$_validForeignKeyActions)));
 		}
-		if (!in_array($attrs['delete'], $this->_validForeignKeyActions)) {
-			throw new Exception(__d('cake_dev', 'Delete action is invalid. Must be one of %s', implode(',', $this->_validForeignKeyActions)));
+		if (!in_array($attrs['delete'], static::$_validForeignKeyActions)) {
+			throw new Exception(__d('cake_dev', 'Delete action is invalid. Must be one of %s', implode(',', static::$_validForeignKeyActions)));
 		}
 		return $attrs;
 	}
