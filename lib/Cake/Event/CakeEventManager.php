@@ -72,7 +72,7 @@ class CakeEventManager {
 			self::$_generalManager = $manager;
 		}
 		if (empty(self::$_generalManager)) {
-			self::$_generalManager = new CakeEventManager;
+			self::$_generalManager = new CakeEventManager();
 		}
 
 		self::$_generalManager->_isGlobal = true;
