@@ -417,10 +417,6 @@ class CakeRequest implements ArrayAccess {
  */
 	public function referer($local = false) {
 		$ref = env('HTTP_REFERER');
-		$forwarded = env('HTTP_X_FORWARDED_HOST');
-		if ($forwarded) {
-			$ref = $forwarded;
-		}
 
 		$base = Configure::read('App.fullBaseUrl') . $this->webroot;
 		if (!empty($ref) && !empty($base)) {
@@ -667,9 +663,13 @@ class CakeRequest implements ArrayAccess {
 /**
  * Get the host that the request was handled on.
  *
+ * @param boolean $trustProxy Whether or not to trust the proxy host.
  * @return string
  */
-	public function host() {
+	public function host($trustProxy = false) {
+		if ($trustProxy) {
+			return env('HTTP_X_FORWARDED_HOST');
+		}
 		return env('HTTP_HOST');
 	}
 
