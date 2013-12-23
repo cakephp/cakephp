@@ -252,7 +252,6 @@ class CakeEventManager {
 			if ($result !== null) {
 				$event->result = $result;
 			}
-			continue;
 		}
 	}
 
