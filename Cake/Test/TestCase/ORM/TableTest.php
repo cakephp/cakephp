@@ -3048,4 +3048,98 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$result = $table->get(10, ['contain' => ['foo']]);
 	}
 
+/**
+ * Tests entityValidator
+ *
+ * @return void
+ */
+	public function testEntityValidator() {
+		$table = new Table;
+		$expected = new \Cake\ORM\EntityValidator($table);
+		$table->entityValidator();
+		$this->assertEquals($expected, $table->entityValidator());
+	}
+
+/**
+ * Tests that validate will call the entity validator with the correct
+ * options
+ *
+ * @return void
+ */
+	public function testValidateDefaultAssociations() {
+		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$table->belongsTo('users');
+		$table->hasMany('articles');
+		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
+		$entity = $table->newEntity([]);
+
+		$table->expects($this->once())->method('entityValidator')
+			->will($this->returnValue($entityValidator));
+		$entityValidator->expects($this->once())->method('one')
+			->with($entity, ['associated' => ['users', 'articles']])
+			->will($this->returnValue(true));
+		$this->assertTrue($table->validate($entity));
+	}
+
+/**
+ * Tests that validate will call the entity validator with the correct
+ * options
+ *
+ * @return void
+ */
+	public function testValidateWithCustomOptions() {
+		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
+		$entity = $table->newEntity([]);
+		$options = ['associated' => ['users'], 'validate' => 'foo'];
+
+		$table->expects($this->once())->method('entityValidator')
+			->will($this->returnValue($entityValidator));
+		$entityValidator->expects($this->once())->method('one')
+			->with($entity, $options)
+			->will($this->returnValue(false));
+		$this->assertFalse($table->validate($entity, $options));
+	}
+
+/**
+ * Tests that validateMany will call the entity validator with the correct
+ * options
+ *
+ * @return void
+ */
+	public function testValidateManyDefaultAssociaion() {
+		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$table->belongsTo('users');
+		$table->hasMany('articles');
+		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
+		$entities = ['a', 'b'];
+
+		$table->expects($this->once())->method('entityValidator')
+			->will($this->returnValue($entityValidator));
+		$entityValidator->expects($this->once())->method('many')
+			->with($entities, ['associated' => ['users', 'articles']])
+			->will($this->returnValue(true));
+		$this->assertTrue($table->validateMany($entities));
+	}
+
+/**
+ * Tests that validateMany will call the entity validator with the correct
+ * options
+ *
+ * @return void
+ */
+	public function testValidateManyWithCustomOptions() {
+		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
+		$entities = ['a', 'b', 'c'];
+		$options = ['associated' => ['users'], 'validate' => 'foo'];
+
+		$table->expects($this->once())->method('entityValidator')
+			->will($this->returnValue($entityValidator));
+		$entityValidator->expects($this->once())->method('many')
+			->with($entities, $options)
+			->will($this->returnValue(false));
+		$this->assertFalse($table->validateMany($entities, $options));
+	}
+
 }

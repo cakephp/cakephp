@@ -1604,7 +1604,7 @@ class Table implements EventListener {
  * - validate: The name of the validation set to use
  * - associated: map of association names to validate as well
  */
-	public function validate($entity, $options) {
+	public function validate($entity, $options = []) {
 		if (!isset($options['associated'])) {
 			$options['associated'] = $this->_associated->keys();
 		}
@@ -1654,7 +1654,7 @@ class Table implements EventListener {
  * - validate: The name of the validation set to use
  * - associated: map of association names to validate as well
  */
-	public function validateMany($entities, $options) {
+	public function validateMany($entities, $options = []) {
 		if (!isset($options['associated'])) {
 			$options['associated'] = $this->_associated->keys();
 		}
