@@ -131,7 +131,7 @@ class ClassRegistry {
 				if (empty($settings['alias'])) {
 					$settings['alias'] = $class;
 				}
-				$alias = $settings['alias'];
+				$alias = Inflector::camelize($settings['alias']);
 
 				$model = $_this->_duplicate($alias, $class);
 				if ($model) {

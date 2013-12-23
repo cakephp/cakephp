@@ -733,6 +733,7 @@ class Controller extends Object implements CakeEventListener {
 
 		list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
+		$modelClass = Inflector::camelize($modelClass);
 		$this->{$modelClass} = ClassRegistry::init(array(
 			'class' => $plugin . $modelClass, 'alias' => $modelClass, 'id' => $id
 		));
