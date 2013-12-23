@@ -1562,7 +1562,6 @@ class Table implements EventListener {
 		return $marshaller->many($data, $associations);
 	}
 
-
 /**
  * Validates a single entity based on the passed options and validates
  * any nested entity for this table associations as requested in the
