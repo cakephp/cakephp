@@ -3643,7 +3643,7 @@ class FormHelperTest extends CakeTestCase {
 			'/legend',
 			'input' => array(
 				'type' => 'hidden', 'name' => 'data[Model][field]',
-				'id' => 'ModelField_',  'value' => '',
+				'id' => 'ModelField_', 'value' => '',
 			),
 			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]',
 				'id' => 'ModelFieldAB', 'value' => 'a&gt;b')),
