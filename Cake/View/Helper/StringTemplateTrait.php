@@ -9,8 +9,8 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.2.0
- * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ * @since         CakePHP(tm) v 3.0.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace Cake\View\Helper;
 
@@ -65,8 +65,17 @@ trait StringTemplateTrait {
  * @param array $data The data to insert.
  * @return string
  */
-	protected function _formatStringTemplate($name, $data) {
+	public function formatTemplate($name, $data) {
 		return $this->_templater->format($name, $data);
+	}
+
+/**
+ * Returns the template engine object
+ *
+ * @return StringTemplate
+ */
+	protected function _getTemplater() {
+		return $this->_templater;
 	}
 
 }
