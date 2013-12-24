@@ -97,13 +97,9 @@ class Marshaller {
 
 		$properties = [];
 		foreach ($data as $key => $value) {
-			$assoc = null;
-			$nested = [];
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
 				$nested = $propertyMap[$key]['nested'];
-			}
-			if ($assoc) {
 				$value = $this->_marshalAssociation($assoc, $value, $nested);
 			}
 			$properties[$key] = $value;

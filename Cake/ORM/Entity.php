@@ -16,7 +16,6 @@
  */
 namespace Cake\ORM;
 
-use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 
@@ -568,8 +567,9 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * @return boolean
  */
 	public function validate(Validator $validator) {
-		$data = $this->toArray();
+		$data = $this->_properties;
 		$new = $this->isNew();
+		$validator->provider('entity', $this);
 		$this->errors($validator->errors($data, $new === null ? true : $new));
 		return empty($this->_errors);
 	}
@@ -609,7 +609,11 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		}
 
 		if (is_string($field) && $errors === null) {
-			return isset($this->_errors[$field]) ? $this->_errors[$field] : [];
+			$errors = isset($this->_errors[$field]) ? $this->_errors[$field] : [];
+			if (!$errors) {
+				$errors = $this->_nestedErrors($field);
+			}
+			return $errors;
 		}
 
 		if (!is_array($field)) {
@@ -621,6 +625,40 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		}
 
 		return $this;
+	}
+
+/**
+ * Auxiliary method for getting errors in nested entities
+ *
+ * @param string field the field in this entity to check for errors
+ * @return array errors in nested entity if any
+ */
+	protected function _nestedErrors($field) {
+		if (!isset($this->_properties[$field])) {
+			return [];
+		}
+
+		$value = $this->_properties[$field];
+		$errors = [];
+		if (is_array($value) || $value instanceof \Traversable) {
+			foreach ($value as $k => $v) {
+				if (!($v instanceof self)) {
+					break;
+				}
+				$errors[$k] = $v->errors();
+			}
+			return $errors;
+		}
+
+		if (is_scalar($value) || !($value instanceof self)) {
+			return [];
+		}
+
+		if ($value instanceof self) {
+			return $value->errors();
+		}
+
+		return [];
 	}
 
 /**

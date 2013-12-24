@@ -730,6 +730,9 @@ class EntityTest extends TestCase {
 		$validator = $this->getMock('\Cake\Validation\Validator');
 		$entity->set('a', 'b');
 
+		$validator->expects($this->once())
+			->method('provider')
+			->with('entity', $entity);
 		$validator->expects($this->once())->method('errors')
 			->with(['a' => 'b'], true)
 			->will($this->returnValue(['a' => ['not valid']]));
@@ -752,6 +755,9 @@ class EntityTest extends TestCase {
 		$entity = new Entity($data);
 		$entity->isNew(true);
 
+		$validator->expects($this->once())
+			->method('provider')
+			->with('entity', $entity);
 		$validator->expects($this->once())->method('errors')
 			->with($data, true)
 			->will($this->returnValue([]));
@@ -783,6 +789,38 @@ class EntityTest extends TestCase {
 		$this->assertSame($entity, $entity->errors($errors));
 		$errors['bar'] = ['else'];
 		$this->assertEquals($errors, $entity->errors());
+	}
+
+/**
+ * Tests that it is possible to get errors for nested entities
+ *
+ * @return void
+ */
+	public function testErrorsDeep() {
+		$entity2 = new Entity;
+		$entity3 = new Entity;
+		$entity = new Entity([
+			'foo' => 'bar',
+			'thing' => 'baz',
+			'user' => $entity2,
+			'owner' => $entity3
+		]);
+		$entity->errors('thing', ['this is a mistake']);
+		$entity2->errors(['a' => ['error1'], 'b' => ['error2']]);
+		$entity3->errors(['c' => ['error3'], 'd' => ['error4']]);
+
+		$expected = ['a' => ['error1'], 'b' => ['error2']];
+		$this->assertEquals($expected, $entity->errors('user'));
+
+		$expected = ['c' => ['error3'], 'd' => ['error4']];
+		$this->assertEquals($expected, $entity->errors('owner'));
+
+		$entity->set('multiple', [$entity2, $entity3]);
+		$expected = [
+			['a' => ['error1'], 'b' => ['error2']],
+			['c' => ['error3'], 'd' => ['error4']]
+		];
+		$this->assertEquals($expected, $entity->errors('multiple'));
 	}
 
 /**
