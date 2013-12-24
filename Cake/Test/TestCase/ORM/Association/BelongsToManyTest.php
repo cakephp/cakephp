@@ -1148,9 +1148,8 @@ class BelongsToManyTest extends TestCase {
 			]
 		]);
 
-		$mock->expects($this->once())
-			->method('save')
-			->with($entity->tags[1]);
+		$mock->expects($this->never())
+			->method('save');
 
 		$association = new BelongsToMany('Tags', $config);
 		$association->save($entity);

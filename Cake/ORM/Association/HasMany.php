@@ -140,7 +140,7 @@ class HasMany extends Association {
 
 		foreach ($targetEntities as $k => $targetEntity) {
 			if (!($targetEntity instanceof Entity)) {
-				continue;
+				break;
 			}
 
 			if (!empty($options['atomic'])) {

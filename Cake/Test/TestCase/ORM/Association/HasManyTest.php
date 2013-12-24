@@ -552,9 +552,8 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			]
 		]);
 
-		$mock->expects($this->once())
-			->method('save')
-			->with($entity->articles[1]);
+		$mock->expects($this->never())
+			->method('save');
 
 		$association = new HasMany('Articles', $config);
 		$association->save($entity);

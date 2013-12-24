@@ -2241,7 +2241,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertSame($entity, $table->save($entity));
 		$this->assertFalse($entity->isNew());
-		$this->assertEmpty($entity->article);
+		$this->assertInternalType('array', $entity->article);
 	}
 
 

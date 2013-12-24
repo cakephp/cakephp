@@ -395,7 +395,7 @@ class BelongsToMany extends Association {
 
 		foreach ($entities as $k => $entity) {
 			if (!($entity instanceof Entity)) {
-				continue;
+				break;
 			}
 
 			if (!empty($options['atomic'])) {
