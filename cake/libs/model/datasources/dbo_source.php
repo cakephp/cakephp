@@ -2157,9 +2157,19 @@ class DboSource extends DataSource {
 			$not = null;
 
 			if (is_array($value)) {
+				$valueCount = count($value);
 				$valueInsert = (
 					!empty($value) &&
-					(substr_count($key, '?') == count($value) || substr_count($key, ':') == count($value))
+					(
+						(
+							substr_count($key, '?') == $valueCount &&
+							preg_match("/(\?){".$valueCount."}/", $key) == 0
+						) ||
+						(
+							substr_count($key, ':') == $valueCount &&
+							preg_match("/(\:){".$valueCount."}/", $key) == 0
+						)
+					)
 				);
 			}
 
