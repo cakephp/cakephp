@@ -413,23 +413,19 @@ class TreeBehavior extends ModelBehavior {
  * @return array|boolean Array of data for the parent node
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::getParentNode
  */
-	public function getParentNode(Model $Model, $id = null, $fields = null, $recursive = null) {
+	public function getParentNode(Model $Model, $id = null, $fields = null, $recursion = null) {
 		if (is_array($id)) {
 			extract(array_merge(array('id' => null), $id));
 		}
-		$overrideRecursive = $recursive;
 		if (empty($id)) {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
-		if ($overrideRecursive !== null) {
-			$recursive = $overrideRecursive;
-		}
 		$parentId = $Model->find('first', array('conditions' => array($Model->primaryKey => $id), 'fields' => array($parent), 'recursive' => -1));
 
 		if ($parentId) {
 			$parentId = $parentId[$Model->alias][$parent];
-			$parent = $Model->find('first', array('conditions' => array($Model->escapeField() => $parentId), 'fields' => $fields, 'recursive' => $recursive));
+			$parent = $Model->find('first', array('conditions' => array($Model->escapeField() => $parentId), 'fields' => $fields, 'recursive' => $recursion));
 
 			return $parent;
 		}
@@ -446,19 +442,15 @@ class TreeBehavior extends ModelBehavior {
  * @return array Array of nodes from top most parent to current node
  * @link http://book.cakephp.org/2.0/en/core-libraries/behaviors/tree.html#TreeBehavior::getPath
  */
-	public function getPath(Model $Model, $id = null, $fields = null, $recursive = null) {
+	public function getPath(Model $Model, $id = null, $fields = null, $recursion = null) {
 		if (is_array($id)) {
 			extract(array_merge(array('id' => null), $id));
 		}
-		$overrideRecursive = $recursive;
 		if (empty($id)) {
 			$id = $Model->id;
 		}
 		extract($this->settings[$Model->alias]);
-		if ($overrideRecursive !== null) {
-			$recursive = $overrideRecursive;
-		}
-		$result = $Model->find('first', array('conditions' => array($Model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => $recursive));
+		$result = $Model->find('first', array('conditions' => array($Model->escapeField() => $id), 'fields' => array($left, $right), 'recursive' => $recursion));
 		if ($result) {
 			$result = array_values($result);
 		} else {
@@ -467,7 +459,7 @@ class TreeBehavior extends ModelBehavior {
 		$item = $result[0];
 		$results = $Model->find('all', array(
 			'conditions' => array($scope, $Model->escapeField($left) . ' <=' => $item[$left], $Model->escapeField($right) . ' >=' => $item[$right]),
-			'fields' => $fields, 'order' => array($Model->escapeField($left) => 'asc'), 'recursive' => $recursive
+			'fields' => $fields, 'order' => array($Model->escapeField($left) => 'asc'), 'recursive' => $recursion
 		));
 		return $results;
 	}
