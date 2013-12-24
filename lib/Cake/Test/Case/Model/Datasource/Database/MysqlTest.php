@@ -2507,6 +2507,25 @@ class MysqlTest extends CakeTestCase {
 	}
 
 /**
+ * test conditions() with replacements.
+ *
+ * @return void
+ */
+	public function testConditionsWithReplacements() {
+		$result = $this->Dbo->conditions(array(
+			'score BETWEEN :0 AND :1' => array(90.1, 95.7)
+		));
+		$expected = " WHERE `score` BETWEEN 90.1 AND 95.7";
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Dbo->conditions(array(
+			'score BETWEEN ? AND ?' => array(90.1, 95.7)
+		));
+		$expected = " WHERE `score` BETWEEN 90.1 AND 95.7";
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * Test that array conditions with only one element work.
  *
  * @return void
