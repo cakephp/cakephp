@@ -16,7 +16,6 @@
  */
 namespace Cake\ORM;
 
-use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 
