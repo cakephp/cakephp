@@ -243,7 +243,11 @@ class MarshallerTest extends TestCase {
 			],
 		];
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->one($data, ['Tags']);
+		$result = $marshall->one($data, [
+			'Tags' => [
+				'associated' => ['_joinData']
+			]
+		]);
 
 		$this->assertEquals($data['title'], $result->title);
 		$this->assertEquals($data['body'], $result->body);
@@ -252,8 +256,16 @@ class MarshallerTest extends TestCase {
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
 		$this->assertEquals($data['tags'][0]['tag'], $result->tags[0]->tag);
 
-		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData);
-		$this->assertEquals($data['tags'][0]['_joinData']['active'], $result->tags[0]->_joinData->active);
+		$this->assertInstanceOf(
+			'Cake\ORM\Entity',
+			$result->tags[0]->_joinData,
+			'_joinData should be an entity.'
+		);
+		$this->assertEquals(
+			$data['tags'][0]['_joinData']['active'],
+			$result->tags[0]->_joinData->active,
+			'_joinData should be an entity.'
+		);
 	}
 
 /**
