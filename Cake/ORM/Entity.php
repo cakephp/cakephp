@@ -635,14 +635,6 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		}
 
 		$value = $this->_properties[$field];
-		if (is_scalar($value) || (is_object($value) && !($value instanceof self))) {
-			return [];
-		}
-
-		if ($value instanceof self) {
-			return $value->errors();
-		}
-
 		$errors = [];
 		if (is_array($value) || $value instanceof \Traversable) {
 			foreach ($value as $k => $v) {
@@ -651,9 +643,18 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 				}
 				$errors[$k] = $v->errors();
 			}
+			return $errors;
 		}
 
-		return $errors;
+		if (is_scalar($value) || !($value instanceof self)) {
+			return [];
+		}
+
+		if ($value instanceof self) {
+			return $value->errors();
+		}
+
+		return [];
 	}
 
 /**

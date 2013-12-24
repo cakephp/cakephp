@@ -17,7 +17,7 @@ namespace Cake\ORM;
 use Cake\Event\Event;
 
 /**
- * Contains logic for validate entities and their associations
+ * Contains logic for validating entities and their associations
  *
  * @see Cake\ORM\Table::validate()
  * @see Cake\ORM\Table::validateMany()
@@ -54,7 +54,7 @@ class EntityValidator {
 		foreach ($include['associated'] as $key => $options) {
 			if (is_int($key) && is_scalar($options)) {
 				$key = $options;
-				$options = ['validate' => true, 'associated' => []];
+				$options = [];
 			}
 
 			$options += ['validate' => true, 'associated' => []];
@@ -104,8 +104,7 @@ class EntityValidator {
 			$options['validate'] = true;
 		}
 
-		$valid = $this->_processValidation($entity, $options) && $valid;
-		return $valid;
+		return $this->_processValidation($entity, $options) && $valid;
 	}
 
 /**

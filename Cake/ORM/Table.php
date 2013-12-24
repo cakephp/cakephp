@@ -1572,13 +1572,13 @@ class Table implements EventListener {
  * they are saved.
  *
  * {{{
- * $articles = $this->Articles->validate($article);
+ * $articles->validate($article);
  * }}}
  *
  * You can specify which validation set to use using the options array:
  *
  * {{{
- * $articles = $this->Users->validate($user, ['validate' => 'forSignup']);
+ * $users->validate($user, ['validate' => 'forSignup']);
  * }}}
  *
  * By default all the associations on this table will be validated if they can
@@ -1586,7 +1586,7 @@ class Table implements EventListener {
  * or include deeper associations using the options parameter
  *
  * {{{
- * $articles = $this->Articles->validate($article, [
+ * $articles->validate($article, [
  *	'associated' => [
  *		'Tags',
  *		'Comments' => [
@@ -1602,6 +1602,7 @@ class Table implements EventListener {
  * keys are accepted:
  * - validate: The name of the validation set to use
  * - associated: map of association names to validate as well
+ * @return boolean true if the passed entity and its associations are valid
  */
 	public function validate($entity, $options = []) {
 		if (!isset($options['associated'])) {
@@ -1622,13 +1623,13 @@ class Table implements EventListener {
  * saved.
  *
  * {{{
- * $articles = $this->Articles->validate([$article1, $article2]);
+ * $articles->validate([$article1, $article2]);
  * }}}
  *
  * You can specify which validation set to use using the options array:
  *
  * {{{
- * $articles = $this->Users->validate([$user1, $user2], ['validate' => 'forSignup']);
+ * $users->validate([$user1, $user2], ['validate' => 'forSignup']);
  * }}}
  *
  * By default all the associations on this table will be validated if they can
@@ -1636,7 +1637,7 @@ class Table implements EventListener {
  * or include deeper associations using the options parameter
  *
  * {{{
- * $articles = $this->Articles->validate([$article1, $article2], [
+ * $articles->validate([$article1, $article2], [
  *	'associated' => [
  *		'Tags',
  *		'Comments' => [
@@ -1652,6 +1653,7 @@ class Table implements EventListener {
  * keys are accepted:
  * - validate: The name of the validation set to use
  * - associated: map of association names to validate as well
+ * @return boolean true if the passed entities and their associations are valid
  */
 	public function validateMany($entities, $options = []) {
 		if (!isset($options['associated'])) {

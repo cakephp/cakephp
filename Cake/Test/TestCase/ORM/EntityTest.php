@@ -787,14 +787,14 @@ class EntityTest extends TestCase {
  * @return void
  */
 	public function testErrorsDeep() {
-		$entity = new Entity;
 		$entity2 = new Entity;
 		$entity3 = new Entity;
-		$entity->set('foo', 'bar');
-		$entity->set('thing', 'baz');
-		$entity->set('user', $entity2);
-		$entity->set('owner', $entity3);
-
+		$entity = new Entity([
+			'foo' => 'bar',
+			'thing' => 'baz',
+			'user' => $entity2,
+			'owner' => $entity3
+		]);
 		$entity->errors('thing', ['this is a mistake']);
 		$entity2->errors(['a' => ['error1'], 'b' => ['error2']]);
 		$entity3->errors(['c' => ['error3'], 'd' => ['error4']]);
