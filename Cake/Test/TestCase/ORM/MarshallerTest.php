@@ -57,15 +57,21 @@ class MarshallerTest extends TestCase {
 		$articles = TableRegistry::get('Articles');
 		$articles->belongsTo('Users');
 		$articles->hasMany('Comments');
+		$articles->belongsToMany('Tags');
 
 		$comments = TableRegistry::get('Comments');
 		$users = TableRegistry::get('Users');
+		$tags = TableRegistry::get('Tags');
+		$articleTags = TableRegistry::get('ArticlesTags');
+
 		$comments->belongsTo('Articles');
 		$comments->belongsTo('Users');
 
 		$articles->entityClass(__NAMESPACE__ . '\OpenEntity');
 		$comments->entityClass(__NAMESPACE__ . '\OpenEntity');
 		$users->entityClass(__NAMESPACE__ . '\OpenEntity');
+		$tags->entityClass(__NAMESPACE__ . '\OpenEntity');
+		$articleTags->entityClass(__NAMESPACE__ . '\OpenEntity');
 
 		$this->articles = $articles;
 		$this->comments = $comments;
@@ -219,6 +225,35 @@ class MarshallerTest extends TestCase {
 
 		$this->assertInternalType('array', $result->user);
 		$this->assertEquals($data['user'], $result->user);
+	}
+
+/**
+ * Test building the _joinData entity for belongstomany associations.
+ *
+ * @return void
+ */
+	public function testOneBelongsToManyJoinData() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'tags' => [
+				['tag' => 'news', '_joinData' => ['active' => 1]],
+				['tag' => 'cakephp', '_joinData' => ['active' => 0]],
+			],
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, ['Tags']);
+
+		$this->assertEquals($data['title'], $result->title);
+		$this->assertEquals($data['body'], $result->body);
+
+		$this->assertInternalType('array', $result->tags);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
+		$this->assertEquals($data['tags'][0]['tag'], $result->tags[0]->tag);
+
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]->_joinData);
+		$this->assertEquals($data['tags'][0]['_joinData']['active'], $result->tags[0]->_joinData->active);
 	}
 
 /**
