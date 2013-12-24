@@ -193,4 +193,30 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$this->assertTrue($association->cascadeDelete($entity));
 	}
 
+/**
+ * Test that save() ignores non entity values.
+ *
+ * @return void
+ */
+	public function testSaveOnlyEntities() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->client,
+			'targetTable' => $mock,
+		];
+		$mock->expects($this->never())
+			->method('save');
+
+		$entity = new Entity([
+			'title' => 'A Title',
+			'body' => 'A body',
+			'author' => ['name' => 'Jose']
+		]);
+
+		$association = new BelongsTo('Authors', $config);
+		$result = $association->save($entity);
+		$this->assertSame($result, $entity);
+		$this->assertNull($entity->author_id);
+	}
+
 }

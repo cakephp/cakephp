@@ -110,7 +110,7 @@ class HasOne extends Association {
  */
 	public function save(Entity $entity, $options = []) {
 		$targetEntity = $entity->get($this->property());
-		if (!$targetEntity) {
+		if (empty($targetEntity) || !($targetEntity instanceof Entity)) {
 			return $entity;
 		}
 

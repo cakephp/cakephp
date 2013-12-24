@@ -394,6 +394,10 @@ class BelongsToMany extends Association {
 		$persisted = [];
 
 		foreach ($entities as $k => $entity) {
+			if (!($entity instanceof Entity)) {
+				break;
+			}
+
 			if (!empty($options['atomic'])) {
 				$entity = clone $entity;
 			}
