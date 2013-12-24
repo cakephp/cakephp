@@ -24,8 +24,6 @@ use Cake\View\Helper\StringTemplate;
  */
 class StringTemplateTraitTest extends TestCase {
 
-	use StringTemplateTrait;
-
 /**
  * setUp method
  *
@@ -33,10 +31,7 @@ class StringTemplateTraitTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$templates = [
-			'text' => '<p>{{text}}</p>',
-		];
-		$this->_initStringTemplates($templates);
+		$this->Template = $this->getObjectForTrait('\Cake\View\Helper\StringTemplateTrait');
 	}
 
 /**
@@ -45,7 +40,12 @@ class StringTemplateTraitTest extends TestCase {
  * @return void
  */
 	public function testInitStringTemplates() {
-		$result = $this->templates(null);
+		$templates = [
+			'text' => '<p>{{text}}</p>',
+		];
+		$this->Template->initStringTemplates($templates);
+
+		$result = $this->Template->templates(null);
 		$this->assertEquals($result, [
 			'text' => '<p>{{text}}</p>'
 		]);
@@ -57,7 +57,11 @@ class StringTemplateTraitTest extends TestCase {
  * @return void
  */
 	public function testFormatStringTemplate() {
-		$result = $this->formatTemplate('text', [
+		$templates = [
+			'text' => '<p>{{text}}</p>',
+		];
+		$this->Template->initStringTemplates($templates);
+		$result = $this->Template->formatTemplate('text', [
 			'text' => 'CakePHP'
 		]);
 		$this->assertEquals($result, '<p>CakePHP</p>');
@@ -69,7 +73,11 @@ class StringTemplateTraitTest extends TestCase {
  * @return void
  */
 	public function testGetTemplater() {
-		$result = $this->_getTemplater();
+		$templates = [
+			'text' => '<p>{{text}}</p>',
+		];
+		$this->Template->initStringTemplates($templates);
+		$result = $this->Template->getTemplater();
 		$this->assertTrue(is_a($result, '\Cake\View\StringTemplate'));
 	}
 

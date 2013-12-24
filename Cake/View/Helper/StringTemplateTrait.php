@@ -36,7 +36,7 @@ trait StringTemplateTrait {
  * @param string $templateClass Class name of the template class to instantiate
  * @return void
  */
-	protected function _initStringTemplates($templates = [], $templateClass = '\Cake\View\StringTemplate') {
+	public function initStringTemplates($templates = [], $templateClass = '\Cake\View\StringTemplate') {
 		$this->_templater = new $templateClass();
 		$this->_templater->add($templates);
 		if (isset($this->settings['templates'])) {
@@ -74,7 +74,7 @@ trait StringTemplateTrait {
  *
  * @return StringTemplate
  */
-	protected function _getTemplater() {
+	public function getTemplater() {
 		return $this->_templater;
 	}
 

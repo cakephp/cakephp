@@ -77,7 +77,7 @@ class PaginatorHelper extends Helper {
  */
 	public function __construct(View $View, $settings = []) {
 		parent::__construct($View, $settings);
-		$this->_initStringTemplates($this->_defaultTemplates);
+		$this->initStringTemplates($this->_defaultTemplates);
 	}
 
 /**
