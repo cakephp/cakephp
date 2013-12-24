@@ -2765,16 +2765,36 @@ class DboSourceTest extends CakeTestCase {
 		$expected = " WHERE '2009-03-04' BETWEEN Model.field1 AND Model.field2";
 		$this->assertEqual($result, $expected);
 		
+		$result = $this->testDb->conditions(array('Model.field::integer' => 5));
+		$expected = " WHERE `Model`.`field::integer` = '5'"; // known bug
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->testDb->conditions(array('"Model"."field"::integer' => 5));
+		$expected = " WHERE \"Model\".\"field\"::integer = '5'";
+		$this->assertEqual($result, $expected);
+		
 		$result = $this->testDb->conditions(array('Model.field::integer' => array(5, 50, 500)));
 		$expected = " WHERE `Model`.`field`::integer IN ('5', '50', '500')";
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->testDb->conditions(array('"Model"."field"::integer' => array(5, 50, 500)));
+		$expected = " WHERE \"Model\".\"field\"::integer IN ('5', '50', '500')";
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->testDb->conditions(array('Model.field::integer' => array(5, 50)));
 		$expected = " WHERE `Model`.`field`::integer IN ('5', '50')";
 		$this->assertEqual($result, $expected);
 		
+		$result = $this->testDb->conditions(array('"Model"."field"::integer' => array(5, 50)));
+		$expected = " WHERE \"Model\".\"field\"::integer IN ('5', '50')";
+		$this->assertEqual($result, $expected);
+		
 		$result = $this->testDb->conditions(array('Model.field::integer BETWEEN ? AND ?' => array(5, 50)));
-		$expected = " WHERE `Model`.`field`::integer BETWEEN '5' AND '50'";
+		$expected = " WHERE `Model`.`field::integer` BETWEEN '5' AND '50'"; // known bug
+		$this->assertEqual($result, $expected);
+		
+		$result = $this->testDb->conditions(array('"Model"."field"::integer BETWEEN ? AND ?' => array(5, 50)));
+		$expected = " WHERE \"Model\".\"field\"::integer BETWEEN '5' AND '50'";
 		$this->assertEqual($result, $expected);
 	}
 
