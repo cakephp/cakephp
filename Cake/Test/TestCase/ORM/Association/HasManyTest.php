@@ -531,4 +531,32 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$this->assertTrue($association->cascadeDelete($entity));
 	}
 
+/**
+ * Test that save() ignores non entity values.
+ *
+ * @return void
+ */
+	public function testSaveOnlyEntities() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $mock,
+		];
+
+		$entity = new Entity([
+			'username' => 'Mark',
+			'email' => 'mark@example.com',
+			'articles' => [
+				['title' => 'First Post'],
+				new Entity(['title' => 'Second Post']),
+			]
+		]);
+
+		$mock->expects($this->once())
+			->method('save')
+			->with($entity->articles[1]);
+
+		$association = new HasMany('Articles', $config);
+		$association->save($entity);
+	}
 }
