@@ -129,7 +129,7 @@ class Collection extends IteratorIterator {
  *
  * {{{
  * $legalAge = (new Collection([24, 45, 60, 15]))->every(function($value, $key) {
- *	return $value > 21;
+ *	return $value >= 21;
  * });
  * }}}
  *
@@ -146,7 +146,33 @@ class Collection extends IteratorIterator {
 		return true;
 	}
 
+/**
+ * Returns true if any of the values in this collection pass the truth test
+ * provided in the callback.
+ *
+ * Each time the callback is executed it will receive the value of the element
+ * in the current iteration and  the key of the element as arguments, in that
+ * order.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $hasUnderAge = (new Collection([24, 45, 15]))->every(function($value, $key) {
+ *	return $value < 21;
+ * });
+ * }}}
+ *
+ * @param callable $c a callback function
+ * @return boolean true if for all elements in this collection the provided
+ * callback returns true, false otherwise
+ */
 	public function some(callable $c) {
+		foreach ($this as $key => $value) {
+			if ($c($value, $key) === true) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function contains(callable $c) {

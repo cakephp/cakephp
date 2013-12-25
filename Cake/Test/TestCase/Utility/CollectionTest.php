@@ -143,4 +143,49 @@ class CollectionTest extends TestCase {
 		$this->assertFalse($collection->every($callable));
 	}
 
+/**
+ * Tests some() when one of the calls return true
+ *
+ * @return void
+ */
+	public function testSomeReturnTrue() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$callable = $this->getMock('stdClass', ['__invoke']);
+		$callable->expects($this->at(0))
+			->method('__invoke')
+			->with(1, 'a')
+			->will($this->returnValue(false));
+		$callable->expects($this->at(1))
+			->method('__invoke')
+			->with(2, 'b')
+			->will($this->returnValue(true));
+		$callable->expects($this->exactly(2))->method('__invoke');
+		$this->assertTrue($collection->some($callable));
+	}
+
+/**
+ * Tests some() when none of the calls return true
+ *
+ * @return void
+ */
+	public function testSomeReturnFalse() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$callable = $this->getMock('stdClass', ['__invoke']);
+		$callable->expects($this->at(0))
+			->method('__invoke')
+			->with(1, 'a')
+			->will($this->returnValue(false));
+		$callable->expects($this->at(1))
+			->method('__invoke')
+			->with(2, 'b')
+			->will($this->returnValue(false));
+		$callable->expects($this->at(2))
+			->method('__invoke')
+			->with(3, 'c')
+			->will($this->returnValue(false));
+		$this->assertFalse($collection->some($callable));
+	}
+
 }
