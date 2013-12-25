@@ -61,4 +61,25 @@ class CollectionTest extends TestCase {
 			->with(3, 'c');
 		$collection->each($callable);
 	}
+
+/**
+ * Tests that it is possible to chain filter() as it returns a collection object
+ *
+ * @return void
+ */
+	public function testFilterChaining() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$callable = $this->getMock('stdClass', ['__invoke']);
+		$callable->expects($this->once())
+			->method('__invoke')
+			->with(3, 'c');
+		$filtered = $collection->filter(function ($value, $key, $iterator) {
+			return $value > 2;
+		});
+
+		$this->assertInstanceOf('\Cake\Utility\Collection', $filtered);
+		$filtered->each($callable);
+	}
+
 }

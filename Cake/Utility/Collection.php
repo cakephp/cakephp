@@ -14,9 +14,10 @@
  */
 namespace Cake\Utility;
 
-use \ArrayIterator;
-use \InvalidArgumentException;
-use \IteratorIterator;
+use ArrayIterator;
+use Cake\Utility\Iterator\FilterIterator;
+use InvalidArgumentException;
+use IteratorIterator;
 
 class Collection extends IteratorIterator {
 
@@ -59,8 +60,21 @@ class Collection extends IteratorIterator {
 		return $this;
 	}
 
-
+/**
+ * Looks through each value in the collection, and returns another collection with
+ * all the values that pass a truth test. Only the values for which the callback
+ * returns true will be present in the resulting collection.
+ *
+ * Each time the callback is executed it will receive the value of the element
+ * in the current iteration, the key of the element and the passed $items iterator
+ * as arguments, in that order.
+ *
+ * @param callable $c the method that will receive each of the elements and
+ * returns true whether or not they should be in the resulting collection.
+ * @return \Cake\Utility\Iterator\FilterIterator;
+ */
 	public function filter(callable $c) {
+		return new FilterIterator($this, $c);
 	}
 
 	public function some(callable $c) {
