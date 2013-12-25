@@ -16,7 +16,6 @@ namespace Cake\View\Helper;
 
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
-use Cake\View\StringTemplate;
 use Cake\View\View;
 
 /**
@@ -27,6 +26,8 @@ use Cake\View\View;
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/paginator.html
  */
 class PaginatorHelper extends Helper {
+
+	use StringTemplateTrait;
 
 /**
  * Holds the default options for pagination links
@@ -43,13 +44,6 @@ class PaginatorHelper extends Helper {
  * @var array
  */
 	public $options = [];
-
-/**
- * StringTemplate instance.
- *
- * @var Cake\View\StringTemplate
- */
-	protected $_templater;
 
 /**
  * The default templates used by PaginatorHelper.
@@ -83,12 +77,7 @@ class PaginatorHelper extends Helper {
  */
 	public function __construct(View $View, $settings = []) {
 		parent::__construct($View, $settings);
-
-		$this->_templater = new StringTemplate();
-		$this->_templater->add($this->_defaultTemplates);
-		if (isset($settings['templates'])) {
-			$this->_templater->load($settings['templates']);
-		}
+		$this->initStringTemplates($this->_defaultTemplates);
 	}
 
 /**
