@@ -119,6 +119,9 @@ class Marshaller {
 		if ($assoc->type() === Association::ONE_TO_ONE) {
 			return $marshaller->one($value, (array)$include);
 		}
+		if ($assoc->type() === Association::MANY_TO_MANY) {
+			return $marshaller->_belongsToMany($assoc, $value, (array)$include);
+		}
 		return $marshaller->many($value, (array)$include);
 	}
 
@@ -136,6 +139,40 @@ class Marshaller {
 			$output[] = $this->one($record, $include);
 		}
 		return $output;
+	}
+
+/**
+ * Marshalls data for belongsToMany associations.
+ *
+ * Builds the related entities and handles the special casing
+ * for junction table entities.
+ *
+ * @param Association $assoc The association to marshall.
+ * @param array $values The data to convert into entities.
+ * @param array $include The nested associations to convert.
+ * @return array An array of built entities.
+ */
+	protected function _belongsToMany(Association $assoc, array $data, $include = []) {
+		$records = $this->many($data, $include);
+		if (!in_array('_joinData', $include) && !isset($include['_joinData'])) {
+			return $records;
+		}
+
+		$joint = $assoc->junction();
+		$jointMarshaller = $joint->marshaller();
+
+		$nested = [];
+		if (isset($include['_joinData']['associated'])) {
+			$nested = (array)$include['_joinData']['associated'];
+		}
+
+		foreach ($records as $i => $record) {
+			if (isset($data[$i]['_joinData'])) {
+				$joinData = $jointMarshaller->one($data[$i]['_joinData'], $nested);
+				$record->set('_joinData', $joinData);
+			}
+		}
+		return $records;
 	}
 
 }
