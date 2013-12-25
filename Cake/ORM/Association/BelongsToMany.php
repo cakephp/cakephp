@@ -500,7 +500,7 @@ class BelongsToMany extends Association {
  * @return boolean true on success, false otherwise
  */
 	public function link(Entity $sourceEntity, array $targetEntities, array $options = []) {
-		$this->_checkPersitenceStatus($sourceEntity, $targetEntities);
+		$this->_checkPersistenceStatus($sourceEntity, $targetEntities);
 		$property = $this->property();
 		$links = $sourceEntity->get($property) ?: [];
 		$links = array_merge($links, $targetEntities);
@@ -542,7 +542,7 @@ class BelongsToMany extends Association {
  * @return void
  */
 	public function unlink(Entity $sourceEntity, array $targetEntities, $cleanProperty = true) {
-		$this->_checkPersitenceStatus($sourceEntity, $targetEntities);
+		$this->_checkPersistenceStatus($sourceEntity, $targetEntities);
 		$property = $this->property();
 
 		$this->junction()->connection()->transactional(
@@ -730,7 +730,7 @@ class BelongsToMany extends Association {
  * @throws \InvalidArgumentException
  * @return boolean
  */
-	protected function _checkPersitenceStatus($sourceEntity, array $targetEntities) {
+	protected function _checkPersistenceStatus($sourceEntity, array $targetEntities) {
 		if ($sourceEntity->isNew() !== false) {
 			$error = __d('cake_dev', 'Source entity needs to be persisted before proceeding');
 			throw new \InvalidArgumentException($error);
