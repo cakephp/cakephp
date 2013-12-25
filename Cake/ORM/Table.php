@@ -918,15 +918,13 @@ class Table implements EventListener {
 			return $this->_validators[$name];
 		}
 
-		if ($instance !== null) {
-			$instance->provider('table', $this);
-			return $this->_validators[$name] = $instance;
+		if ($instance === null) {
+			$instance = new Validator();
+			$instance = $this->{'validation' . ucfirst($name)}($instance);
 		}
 
-		$validator = new Validator;
-		$validator = $this->{'validation' . ucfirst($name)}($validator);
-		$validator->provider('table', $this);
-		return $this->_validators[$name] = $validator;
+		$instance->provider('table', $this);
+		return $this->_validators[$name] = $instance;
 	}
 
 /**
@@ -1632,13 +1630,13 @@ class Table implements EventListener {
  * saved.
  *
  * {{{
- * $articles->validate([$article1, $article2]);
+ * $articles->validateMany([$article1, $article2]);
  * }}}
  *
  * You can specify which validation set to use using the options array:
  *
  * {{{
- * $users->validate([$user1, $user2], ['validate' => 'forSignup']);
+ * $users->validateMany([$user1, $user2], ['validate' => 'forSignup']);
  * }}}
  *
  * By default all the associations on this table will be validated if they can
@@ -1646,7 +1644,7 @@ class Table implements EventListener {
  * or include deeper associations using the options parameter
  *
  * {{{
- * $articles->validate([$article1, $article2], [
+ * $articles->validateMany([$article1, $article2], [
  *	'associated' => [
  *		'Tags',
  *		'Comments' => [

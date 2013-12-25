@@ -47,10 +47,25 @@ abstract class Association {
  */
 	const STRATEGY_SELECT = 'select';
 
+/**
+ * Association type for one to one associations.
+ *
+ * @var string
+ */
 	const ONE_TO_ONE = 'oneToOne';
 
+/**
+ * Association type for one to many associations.
+ *
+ * @var string
+ */
 	const ONE_TO_MANY = 'oneToMany';
 
+/**
+ * Association type for many to many associations.
+ *
+ * @var string
+ */
 	const MANY_TO_MANY = 'manyToMany';
 
 /**

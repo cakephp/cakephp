@@ -650,10 +650,6 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 			return $errors;
 		}
 
-		if (is_scalar($value) || !($value instanceof self)) {
-			return [];
-		}
-
 		if ($value instanceof self) {
 			return $value->errors();
 		}

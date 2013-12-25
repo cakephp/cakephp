@@ -2247,7 +2247,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertInternalType('array', $entity->article);
 	}
 
-
 /**
  * Tests saving hasOne association and returning a validation error will
  * abort the saving process
