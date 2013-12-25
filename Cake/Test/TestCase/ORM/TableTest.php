@@ -1817,6 +1817,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testValidatorDefault() {
 		$table = new Table();
 		$validator = $table->validator();
+		$this->assertSame($table, $validator->provider('table'));
 		$this->assertInstanceOf('\Cake\Validation\Validator', $validator);
 		$default = $table->validator('default');
 		$this->assertSame($validator, $default);
@@ -1834,6 +1835,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$other = $table->validator('forOtherStuff');
 		$this->assertInstanceOf('\Cake\Validation\Validator', $other);
 		$this->assertNotSame($other, $table->validator());
+		$this->assertSame($table, $other->provider('table'));
 	}
 
 /**
@@ -1846,6 +1848,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$validator = new \Cake\Validation\Validator;
 		$table->validator('other', $validator);
 		$this->assertSame($validator, $table->validator('other'));
+		$this->assertSame($table, $validator->provider('table'));
 	}
 
 /**
@@ -2146,7 +2149,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @group save
  * @return void
  */
-	public function testsSaveBelongsTo() {
+	public function testSaveBelongsTo() {
 		$entity = new \Cake\ORM\Entity([
 			'title' => 'A Title',
 			'body' => 'A body'
@@ -2217,6 +2220,33 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals(5, $entity->article->get('author_id'));
 		$this->assertFalse($entity->article->dirty('author_id'));
 	}
+
+/**
+ * Tests saving associations only saves associations
+ * if they are entities.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveOnlySaveAssociatedEntities() {
+		$entity = new \Cake\ORM\Entity([
+			'name' => 'Jose'
+		]);
+
+		// Not an entity.
+		$entity->article = [
+			'title' => 'A Title',
+			'body' => 'A body'
+		];
+
+		$table = TableRegistry::get('authors');
+		$table->hasOne('articles');
+
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertFalse($entity->isNew());
+		$this->assertInternalType('array', $entity->article);
+	}
+
 
 /**
  * Tests saving hasOne association and returning a validation error will
@@ -2667,12 +2697,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		);
 		$authors = $this->getMock(
 			'\Cake\ORM\Table',
-			['_insert', '_processValidation'],
+			['_insert', 'validate'],
 			[['table' => 'authors', 'connection' => $this->connection]]
 		);
 		$supervisors = $this->getMock(
 			'\Cake\ORM\Table',
-			['_insert', '_processValidation'],
+			['_insert', 'validate'],
 			[[
 				'table' => 'authors',
 				'alias' => 'supervisors',
@@ -2714,16 +2744,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with($entity->author, ['name' => 'Juan'])
 			->will($this->returnValue($entity->author));
 
-		$options = new \ArrayObject([
-			'validate' => 'special',
-			'atomic' => true,
-			'associated' => ['supervisors' => [
-				'atomic' => false, 'validate' => false, 'associated' => false
-			]]
-		]);
 		$authors->expects($this->once())
-			->method('_processValidation')
-			->with($entity->author, $options)
+			->method('validate')
+			->with($entity->author)
 			->will($this->returnValue(true));
 
 		$supervisors->expects($this->once())
@@ -2737,7 +2760,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'associated' => []
 		]);
 		$supervisors->expects($this->once())
-			->method('_processValidation')
+			->method('validate')
 			->with($entity->author->supervisor, $options)
 			->will($this->returnValue(true));
 
@@ -2939,6 +2962,211 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(2, $article->tags);
 		$this->assertEquals(2, $article->tags[0]->id);
 		$this->assertEquals(3, $article->tags[1]->id);
+	}
+
+/**
+ * Tests that it is possible to call find with no arguments
+ *
+ * @return void
+ */
+	public function testSimplifiedFind() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['callFinder'],
+			[[
+				'connection' => $this->connection,
+				'schema' => ['id' => ['type' => 'integer']]
+			]]
+		);
+
+		$query = (new \Cake\ORM\Query($this->connection, $table))->select();
+		$table->expects($this->once())->method('callFinder')
+			->with('all', $query, []);
+		$table->find();
+	}
+
+/**
+ * Test that get() will use the primary key for searching and return the first
+ * entity found
+ *
+ * @return void
+ */
+	public function testGet() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['callFinder', '_buildQuery'],
+			[[
+				'connection' => $this->connection,
+				'schema' => [
+					'id' => ['type' => 'integer'],
+					'bar' => ['type' => 'integer'],
+					'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]]
+				]
+			]]
+		);
+
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['addDefaultTypes', 'first', 'applyOptions', 'where'],
+			[$this->connection, $table]
+		);
+
+		$entity = new \Cake\ORM\Entity;
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+		$table->expects($this->once())->method('callFinder')
+			->with('all', $query, ['fields' => ['id']])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('applyOptions')
+			->with(['fields' => ['id']])
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('where')
+			->with(['bar' => 10])
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('first')
+			->will($this->returnValue($entity));
+		$result = $table->get(10, ['fields' => ['id']]);
+		$this->assertSame($entity, $result);
+	}
+
+/**
+ * Tests that get() will throw an exception if the record was not found
+ *
+ * @expectedException \Cake\ORM\Error\RecordNotFoundException
+ * @expectedExceptionMessage Record "10" not found in table "articles"
+ * @return void
+ */
+	public function testGetException() {
+		$table = $this->getMock(
+			'\Cake\ORM\Table',
+			['callFinder', '_buildQuery'],
+			[[
+				'connection' => $this->connection,
+				'table' => 'articles',
+				'schema' => [
+					'id' => ['type' => 'integer'],
+					'bar' => ['type' => 'integer'],
+					'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]]
+				]
+			]]
+		);
+
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['addDefaultTypes', 'first', 'applyOptions', 'where'],
+			[$this->connection, $table]
+		);
+
+		$table->expects($this->once())->method('_buildQuery')
+			->will($this->returnValue($query));
+		$table->expects($this->once())->method('callFinder')
+			->with('all', $query, ['contain' => ['foo']])
+			->will($this->returnValue($query));
+
+		$query->expects($this->once())->method('applyOptions')
+			->with(['contain' => ['foo']])
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('where')
+			->with(['bar' => 10])
+			->will($this->returnSelf());
+		$query->expects($this->once())->method('first')
+			->will($this->returnValue(false));
+		$result = $table->get(10, ['contain' => ['foo']]);
+	}
+
+/**
+ * Tests entityValidator
+ *
+ * @return void
+ */
+	public function testEntityValidator() {
+		$table = new Table;
+		$expected = new \Cake\ORM\EntityValidator($table);
+		$table->entityValidator();
+		$this->assertEquals($expected, $table->entityValidator());
+	}
+
+/**
+ * Tests that validate will call the entity validator with the correct
+ * options
+ *
+ * @return void
+ */
+	public function testValidateDefaultAssociations() {
+		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$table->belongsTo('users');
+		$table->hasMany('articles');
+		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
+		$entity = $table->newEntity([]);
+
+		$table->expects($this->once())->method('entityValidator')
+			->will($this->returnValue($entityValidator));
+		$entityValidator->expects($this->once())->method('one')
+			->with($entity, ['associated' => ['users', 'articles']])
+			->will($this->returnValue(true));
+		$this->assertTrue($table->validate($entity));
+	}
+
+/**
+ * Tests that validate will call the entity validator with the correct
+ * options
+ *
+ * @return void
+ */
+	public function testValidateWithCustomOptions() {
+		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
+		$entity = $table->newEntity([]);
+		$options = ['associated' => ['users'], 'validate' => 'foo'];
+
+		$table->expects($this->once())->method('entityValidator')
+			->will($this->returnValue($entityValidator));
+		$entityValidator->expects($this->once())->method('one')
+			->with($entity, $options)
+			->will($this->returnValue(false));
+		$this->assertFalse($table->validate($entity, $options));
+	}
+
+/**
+ * Tests that validateMany will call the entity validator with the correct
+ * options
+ *
+ * @return void
+ */
+	public function testValidateManyDefaultAssociaion() {
+		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$table->belongsTo('users');
+		$table->hasMany('articles');
+		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
+		$entities = ['a', 'b'];
+
+		$table->expects($this->once())->method('entityValidator')
+			->will($this->returnValue($entityValidator));
+		$entityValidator->expects($this->once())->method('many')
+			->with($entities, ['associated' => ['users', 'articles']])
+			->will($this->returnValue(true));
+		$this->assertTrue($table->validateMany($entities));
+	}
+
+/**
+ * Tests that validateMany will call the entity validator with the correct
+ * options
+ *
+ * @return void
+ */
+	public function testValidateManyWithCustomOptions() {
+		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
+		$entities = ['a', 'b', 'c'];
+		$options = ['associated' => ['users'], 'validate' => 'foo'];
+
+		$table->expects($this->once())->method('entityValidator')
+			->will($this->returnValue($entityValidator));
+		$entityValidator->expects($this->once())->method('many')
+			->with($entities, $options)
+			->will($this->returnValue(false));
+		$this->assertFalse($table->validateMany($entities, $options));
 	}
 
 }

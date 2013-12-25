@@ -110,7 +110,7 @@ class HasOne extends Association {
  */
 	public function save(Entity $entity, $options = []) {
 		$targetEntity = $entity->get($this->property());
-		if (!$targetEntity) {
+		if (empty($targetEntity) || !($targetEntity instanceof Entity)) {
 			return $entity;
 		}
 
@@ -118,7 +118,7 @@ class HasOne extends Association {
 			(array)$this->foreignKey(),
 			$entity->extract((array)$this->source()->primaryKey())
 		);
-		$targetEntity->set($properties);
+		$targetEntity->set($properties, ['guard' => false]);
 
 		if (!$this->target()->save($targetEntity, $options)) {
 			$targetEntity->unsetProperty(array_keys($properties));

@@ -100,17 +100,17 @@ class String {
 
 /**
  * Tokenizes a string using $separator, ignoring any instance of $separator that appears between
- * $leftBound and $rightBound
+ * $leftBound and $rightBound.
  *
- * @param string $data The data to tokenize
+ * @param string $data The data to tokenize.
  * @param string $separator The token to split the data on.
  * @param string $leftBound The left boundary to ignore separators in.
  * @param string $rightBound The right boundary to ignore separators in.
- * @return array Array of tokens in $data.
+ * @return mixed Array of tokens in $data or original input if empty.
  */
 	public static function tokenize($data, $separator = ',', $leftBound = '(', $rightBound = ')') {
-		if (empty($data) || is_array($data)) {
-			return $data;
+		if (empty($data)) {
+			return array();
 		}
 
 		$depth = 0;

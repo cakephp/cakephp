@@ -281,7 +281,6 @@ class BelongsToMany extends Association {
 			$conditions = array_combine($foreignKey, $entity->extract((array)$primaryKey));
 		}
 
-
 		$table = $this->junction();
 		$hasMany = $this->source()->association($table->alias());
 		if ($this->_cascadeCallbacks) {
@@ -395,6 +394,10 @@ class BelongsToMany extends Association {
 		$persisted = [];
 
 		foreach ($entities as $k => $entity) {
+			if (!($entity instanceof Entity)) {
+				break;
+			}
+
 			if (!empty($options['atomic'])) {
 				$entity = clone $entity;
 			}
@@ -452,8 +455,8 @@ class BelongsToMany extends Association {
 			$joint->set(array_combine(
 				$foreignKey,
 				$sourceEntity->extract($sourcePrimaryKey)
-			));
-			$joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)));
+			), ['guard' => false]);
+			$joint->set(array_combine($assocForeignKey, $e->extract($targetPrimaryKey)), ['guard' => false]);
 			$saved = $junction->save($joint, $options);
 
 			if (!$saved && !empty($options['atomic'])) {

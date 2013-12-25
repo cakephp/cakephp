@@ -28,6 +28,7 @@ use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
 use Cake\ORM\Entity;
 use Cake\ORM\Error\MissingEntityException;
+use Cake\ORM\Error\RecordNotFoundException;
 use Cake\ORM\Marshaller;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
@@ -507,6 +508,15 @@ class Table implements EventListener {
 	}
 
 /**
+ * Get the associations collection for this table.
+ *
+ * @return Cake\ORM\Associations
+ */
+	public function associations() {
+		return $this->_associated;
+	}
+
+/**
  * Creates a new BelongsTo association between this table and a target
  * table. A "belongs to" association is a N-1 relationship where this table
  * is the N side, and where there is a single associated record in the target
@@ -670,10 +680,22 @@ class Table implements EventListener {
  * listeners. Any listener can set a valid result set using $query
  *
  * @param string $type the type of query to perform
- * @param array $options
+ * @param array $options An array that will be passed to Query::applyOptions
+ * By default it allows the following keys:
+ * - fields
+ * - conditions
+ * - order
+ * - limit
+ * - offset
+ * - page
+ * - order
+ * - group
+ * - having
+ * - contain
+ * - join
  * @return \Cake\ORM\Query
  */
-	public function find($type, $options = []) {
+	public function find($type = 'all', $options = []) {
 		$query = $this->_buildQuery();
 		$query->select()->applyOptions($options);
 		return $this->callFinder($type, $query, $options);
@@ -785,6 +807,42 @@ class Table implements EventListener {
 	}
 
 /**
+ * Returns a single record after finding it by its primary key, if no record is
+ * found this method throws an exception.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $id = 10;
+ * $article = $articles->get($id);
+ *
+ * $article = $articles->get($id, ['contain' => ['Comments]]);
+ * }}}
+ *
+ * @param mixed primary key value to find
+ * @param array $options options accepted by `Table::find()`
+ * @throws Cake\ORM\Error\RecordNotFoundException if the record with such id
+ * could not be found
+ * @return \Cake\ORM\Entity
+ * @see Table::find()
+ */
+	public function get($primaryKey, $options = []) {
+		$key = (array)$this->primaryKey();
+		$conditions = array_combine($key, (array)$primaryKey);
+		$entity = $this->find('all', $options)->where($conditions)->first();
+
+		if (!$entity) {
+			throw new RecordNotFoundException(__d(
+				'cake_dev', 'Record "%s" not found in table "%s"',
+				implode(',', (array)$primaryKey),
+				$this->table()
+			));
+		}
+
+		return $entity;
+	}
+
+/**
  * Creates a new Query instance for this table
  *
  * @return \Cake\ORM\Query
@@ -861,11 +919,13 @@ class Table implements EventListener {
 		}
 
 		if ($instance !== null) {
+			$instance->provider('table', $this);
 			return $this->_validators[$name] = $instance;
 		}
 
 		$validator = new Validator;
 		$validator = $this->{'validation' . ucfirst($name)}($validator);
+		$validator->provider('table', $this);
 		return $this->_validators[$name] = $validator;
 	}
 
@@ -1052,12 +1112,14 @@ class Table implements EventListener {
 		if ($options['associated'] === true) {
 			$options['associated'] = $this->_associated->keys();
 		}
-		$options['associated'] = array_filter((array)$options['associated']);
+		$associated = array_filter((array)$options['associated']);
+		$options['associated'] = [];
 
-		if (!$this->_processValidation($entity, $options)) {
+		if (!$this->validate($entity, $options)) {
 			return false;
 		}
 
+		$options['associated'] = $associated;
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 
@@ -1198,49 +1260,6 @@ class Table implements EventListener {
 			$success = $entity;
 		}
 		$statement->closeCursor();
-		return $success;
-	}
-
-/**
- * Validates the $entity if the 'validate' key is not set to false in $options
- * If not empty it will construct a default validation object or get one with
- * the name passed in the key
- *
- * @param \Cake\ORM\Entity The entity to validate
- * @param \ArrayObject $options
- * @return boolean true if the entity is valid, false otherwise
- */
-	protected function _processValidation($entity, $options) {
-		if (empty($options['validate'])) {
-			return true;
-		}
-
-		$type = is_string($options['validate']) ? $options['validate'] : 'default';
-		$validator = $this->validator($type);
-		$validator->provider('table', $this);
-		$validator->provider('entity', $entity);
-
-		$pass = compact('entity', 'options', 'validator');
-		$event = new Event('Model.beforeValidate', $this, $pass);
-		$this->getEventManager()->dispatch($event);
-
-		if ($event->isStopped()) {
-			return (bool)$event->result;
-		}
-
-		if (!count($validator)) {
-			return true;
-		}
-
-		$success = $entity->validate($validator);
-
-		$event = new Event('Model.afterValidate', $this, $pass);
-		$this->getEventManager()->dispatch($event);
-
-		if ($event->isStopped()) {
-			$success = (bool)$event->result;
-		}
-
 		return $success;
 	}
 
@@ -1470,6 +1489,18 @@ class Table implements EventListener {
 	}
 
 /**
+ * Returns a new instance of an EntityValidator that is configured to be used
+ * for entities generated by this table. An EntityValidator can be used to
+ * process validation rules on a single or multiple entities and any of its
+ * associated values.
+ *
+ * @return EntityValidator
+ */
+	public function entityValidator() {
+		return new EntityValidator($this);
+	}
+
+/**
  * Create a new entity + associated entities from an array.
  *
  * This is most useful when hydrating request data back into entities.
@@ -1490,7 +1521,7 @@ class Table implements EventListener {
  * {{{
  * $articles = $this->Articles->newEntity(
  *   $this->request->data(),
- *   ['Tags', 'Comments' => ['Users']]
+ *   ['Tags', 'Comments' => ['associated' => ['Users']]]
  * );
  * }}}
  *
@@ -1524,7 +1555,7 @@ class Table implements EventListener {
  * {{{
  * $articles = $this->Articles->newEntities(
  *   $this->request->data(),
- *   ['Tags', 'Comments' => ['Users']]
+ *   ['Tags', 'Comments' => ['associated' => ['Users']]]
  * );
  * }}}
  *
@@ -1538,6 +1569,108 @@ class Table implements EventListener {
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->many($data, $associations);
+	}
+
+/**
+ * Validates a single entity based on the passed options and validates
+ * any nested entity for this table associations as requested in the
+ * options array.
+ *
+ * Calling this function directly is mostly useful when you need to get
+ * validation errors for an entity and associated nested entities before
+ * they are saved.
+ *
+ * {{{
+ * $articles->validate($article);
+ * }}}
+ *
+ * You can specify which validation set to use using the options array:
+ *
+ * {{{
+ * $users->validate($user, ['validate' => 'forSignup']);
+ * }}}
+ *
+ * By default all the associations on this table will be validated if they can
+ * be found in the passed entity. You can limit which associations are built,
+ * or include deeper associations using the options parameter
+ *
+ * {{{
+ * $articles->validate($article, [
+ *	'associated' => [
+ *		'Tags',
+ *		'Comments' => [
+ *			'validate' => 'myCustomSet',
+ *			'associated' => ['Users']
+ *		]
+ *	]
+ * ]);
+ * }}}
+ *
+ * @param \Cake\ORM\Entity $entity The entity to be validated
+ * @param array $options A list of options to use while validating, the following
+ * keys are accepted:
+ * - validate: The name of the validation set to use
+ * - associated: map of association names to validate as well
+ * @return boolean true if the passed entity and its associations are valid
+ */
+	public function validate($entity, $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associated->keys();
+		}
+
+		$entityValidator = $this->entityValidator();
+		return $entityValidator->one($entity, $options);
+	}
+
+/**
+ * Validates a list of entities based on the passed options and validates
+ * any nested entity for this table associations as requested in the
+ * options array.
+ *
+ * Calling this function directly is mostly useful when you need to get
+ * validation errors for a list of entities and associations before they are
+ * saved.
+ *
+ * {{{
+ * $articles->validate([$article1, $article2]);
+ * }}}
+ *
+ * You can specify which validation set to use using the options array:
+ *
+ * {{{
+ * $users->validate([$user1, $user2], ['validate' => 'forSignup']);
+ * }}}
+ *
+ * By default all the associations on this table will be validated if they can
+ * be found in the passed entities. You can limit which associations are built,
+ * or include deeper associations using the options parameter
+ *
+ * {{{
+ * $articles->validate([$article1, $article2], [
+ *	'associated' => [
+ *		'Tags',
+ *		'Comments' => [
+ *			'validate' => 'myCustomSet',
+ *			'associated' => ['Users']
+ *		]
+ *	]
+ * ]);
+ * }}}
+ *
+ * @param array $entities The entities to be validated
+ * @param array $options A list of options to use while validating, the following
+ * keys are accepted:
+ * - validate: The name of the validation set to use
+ * - associated: map of association names to validate as well
+ * @return boolean true if the passed entities and their associations are valid
+ */
+	public function validateMany($entities, $options = []) {
+		if (!isset($options['associated'])) {
+			$options['associated'] = $this->_associated->keys();
+		}
+
+		$entityValidator = $this->entityValidator();
+		return $entityValidator->many($entities, $options);
 	}
 
 /**
@@ -1558,6 +1691,8 @@ class Table implements EventListener {
 			'Model.afterSave' => 'afterSave',
 			'Model.beforeDelete' => 'beforeDelete',
 			'Model.afterDelete' => 'afterDelete',
+			'Model.beforeValidate' => 'beforeValidate',
+			'Model.afterValidate' => 'afterValidate',
 		];
 		$events = [];
 

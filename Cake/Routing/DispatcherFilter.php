@@ -19,6 +19,7 @@ namespace Cake\Routing;
 
 use Cake\Event\Event;
 use Cake\Event\EventListener;
+use Cake\Utility\Hash;
 
 /**
  * This abstract class represents a filter to be applied to a dispatcher cycle. It acts as as
@@ -34,6 +35,22 @@ abstract class DispatcherFilter implements EventListener {
  * @var integer
  */
 	public $priority = 10;
+
+/**
+ * Settings for this filter
+ *
+ * @var array
+ */
+	public $settings = array();
+
+/**
+ * Constructor.
+ *
+ * @param string $setting Configuration settings for the filter.
+ */
+	public function __construct($settings = array()) {
+		$this->settings = Hash::merge($this->settings, $settings);
+	}
 
 /**
  * Returns the list of events this filter listens to.

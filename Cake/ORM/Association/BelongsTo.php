@@ -113,7 +113,7 @@ class BelongsTo extends Association {
  */
 	public function save(Entity $entity, $options = []) {
 		$targetEntity = $entity->get($this->property());
-		if (!$targetEntity) {
+		if (empty($targetEntity) || !($targetEntity instanceof Entity)) {
 			return $entity;
 		}
 
@@ -127,7 +127,7 @@ class BelongsTo extends Association {
 			(array)$this->foreignKey(),
 			$targetEntity->extract((array)$table->primaryKey())
 		);
-		$entity->set($properties);
+		$entity->set($properties, ['guard' => false]);
 		return $entity;
 	}
 

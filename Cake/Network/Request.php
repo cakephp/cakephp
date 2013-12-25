@@ -466,9 +466,6 @@ class Request implements \ArrayAccess {
  */
 	public function referer($local = false) {
 		$ref = $this->env('HTTP_REFERER');
-		if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_HOST')) {
-			$ref = $this->env('HTTP_X_FORWARDED_HOST');
-		}
 
 		$base = Configure::read('App.fullBaseUrl') . $this->webroot;
 		if (!empty($ref) && !empty($base)) {
@@ -726,6 +723,9 @@ class Request implements \ArrayAccess {
  * @return string
  */
 	public function host() {
+		if ($this->trustProxy && $this->env('HTTP_X_FORWARDED_HOST')) {
+			return $this->env('HTTP_X_FORWARDED_HOST');
+		}
 		return $this->env('HTTP_HOST');
 	}
 

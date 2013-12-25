@@ -16,7 +16,6 @@
  */
 namespace Cake\ORM;
 
-use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 
@@ -88,6 +87,19 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	protected $_errors = [];
 
 /**
+ * Map of properties in this entity that can be safely assigned, each
+ * property name points to a boolean indicating its status. An empty array
+ * means no properties are accessible
+ *
+ * The special property '*' can also be mapped, meaning that any other property
+ * not defined in the map will take its value. For example, `'*' => true`
+ * means that any property not defined in the map will be accessible by default
+ *
+ * @var array
+ */
+	protected $_accessible = [];
+
+/**
  * Initializes the internal properties of this entity out of the
  * keys in an array
  *
@@ -102,15 +114,20 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * - useSetters: whether use internal setters for properties or not
  * - markClean: whether to mark all properties as clean after setting them
  * - markNew: whether this instance has not yet been persisted
+ * - guard: whether to prevent inaccessible properties from being set (default: false)
  */
 	public function __construct(array $properties = [], array $options = []) {
 		$options += [
 			'useSetters' => true,
 			'markClean' => false,
-			'markNew' => null
+			'markNew' => null,
+			'guard' => false
 		];
 		$this->_className = get_class($this);
-		$this->set($properties, $options['useSetters']);
+		$this->set($properties, [
+			'setter' => $options['useSetters'],
+			'guard' => $options['guard']
+		]);
 
 		if ($options['markClean']) {
 			$this->clean();
@@ -139,7 +156,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * @return void
  */
 	public function __set($property, $value) {
-		$this->set([$property => $value]);
+		$this->set($property, $value);
 	}
 
 /**
@@ -177,39 +194,60 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  *
  * ## Example:
  *
- * {{
- *	$entity->set(['name' => 'andrew', 'id' => 1]);
- *	echo $entity->name // prints andrew
- *	echo $entity->id // prints 1
- * }}
+ * {{{
+ * $entity->set(['name' => 'andrew', 'id' => 1]);
+ * echo $entity->name // prints andrew
+ * echo $entity->id // prints 1
+ * }}}
  *
  * Some times it is handy to bypass setter functions in this entity when assigning
- * properties. You can achieve this by setting the third argument to false when
- * assigning a single property or the second param when using an array of
- * properties.
+ * properties. You can achieve this by disabling the `setter` option using the
+ * `$options` parameter:
  *
- * ### Example:
+ * {{{
+ * $entity->set('name', 'Andrew', ['setter' => false]);
+ * $entity->set(['name' => 'Andrew', 'id' => 1], ['setter' => false]);
+ * }}}
  *
- * ``$entity->set('name', 'Andrew', false);``
+ * Mass assignment should be treated carefully when accepting user input, by default
+ * entities will guard all fields when properties are assigned in bulk. You can disable
+ * the guarding for a single set call with the `guard` option:
  *
- * ``$entity->set(['name' => 'Andrew', 'id' => 1], false);``
+ * {{{
+ * $entity->set(['name' => 'Andrew', 'id' => 1], ['guard' => true]);
+ * }}}
+ *
+ * You do not need to use the guard option when assigning properties individually:
+ *
+ * {{{
+ * // No need to use the guard option.
+ * $entity->set('name', 'Andrew');
+ * }}}
  *
  * @param string|array $property the name of property to set or a list of
  * properties with their respective values
- * @param mixed|boolean $value the value to set to the property or a boolean
- * signifying whether to use internal setter functions or not
- * @param boolean $useSetters whether to use setter functions in this object
- * or bypass them
+ * @param mixed|array $value the value to set to the property or an array if the
+ * first argument is also an array, in which case will be treated as $options
+ * @param array $options options to be used for setting the property. Allowed option
+ * keys are `setter` and `guard`
  * @return \Cake\ORM\Entity
  */
-	public function set($property, $value = true, $useSetters = true) {
+	public function set($property, $value = null, $options = []) {
 		if (is_string($property)) {
+			$guard = false;
 			$property = [$property => $value];
 		} else {
-			$useSetters = $value;
+			$guard = true;
+			$options = (array)$value;
 		}
 
+		$options += ['setter' => true, 'guard' => $guard];
+
 		foreach ($property as $p => $value) {
+			if ($options['guard'] === true && !$this->accessible($p)) {
+				continue;
+			}
+
 			$markDirty = true;
 			if (isset($this->_properties[$p])) {
 				$markDirty = $value !== $this->_properties[$p];
@@ -219,7 +257,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 				$this->dirty($p, true);
 			}
 
-			if (!$useSetters) {
+			if (!$options['setter']) {
 				$this->_properties[$p] = $value;
 				continue;
 			}
@@ -408,7 +446,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  */
 
 	public function offsetSet($offset, $value) {
-		$this->set([$offset => $value]);
+		$this->set($offset, $value);
 	}
 
 /**
@@ -529,8 +567,9 @@ class Entity implements \ArrayAccess, \JsonSerializable {
  * @return boolean
  */
 	public function validate(Validator $validator) {
-		$data = $this->toArray();
+		$data = $this->_properties;
 		$new = $this->isNew();
+		$validator->provider('entity', $this);
 		$this->errors($validator->errors($data, $new === null ? true : $new));
 		return empty($this->_errors);
 	}
@@ -570,7 +609,11 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		}
 
 		if (is_string($field) && $errors === null) {
-			return isset($this->_errors[$field]) ? $this->_errors[$field] : [];
+			$errors = isset($this->_errors[$field]) ? $this->_errors[$field] : [];
+			if (!$errors) {
+				$errors = $this->_nestedErrors($field);
+			}
+			return $errors;
 		}
 
 		if (!is_array($field)) {
@@ -579,6 +622,93 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 
 		foreach ($field as $f => $error) {
 			$this->_errors[$f] = (array)$error;
+		}
+
+		return $this;
+	}
+
+/**
+ * Auxiliary method for getting errors in nested entities
+ *
+ * @param string field the field in this entity to check for errors
+ * @return array errors in nested entity if any
+ */
+	protected function _nestedErrors($field) {
+		if (!isset($this->_properties[$field])) {
+			return [];
+		}
+
+		$value = $this->_properties[$field];
+		$errors = [];
+		if (is_array($value) || $value instanceof \Traversable) {
+			foreach ($value as $k => $v) {
+				if (!($v instanceof self)) {
+					break;
+				}
+				$errors[$k] = $v->errors();
+			}
+			return $errors;
+		}
+
+		if (is_scalar($value) || !($value instanceof self)) {
+			return [];
+		}
+
+		if ($value instanceof self) {
+			return $value->errors();
+		}
+
+		return [];
+	}
+
+/**
+ * Stores whether or not a property value can be changed or set in this entity.
+ * The special property '*' can also be marked as accessible or protected, meaning
+ * that any other property specified before will take its value. For example
+ * `$entity->accessible('*', true)`  means that any property not specified already
+ * will be accessible by default.
+ *
+ * You can also call this method with an array of properties, in which case they
+ * will each take the accessibility value specified in the second argument.
+ *
+ * ### Example:
+ *
+ * {{{
+ * $entity->accessible('id', true); // Mark id as not protected
+ * $entity->accessible('author_id', true); // Mark author_id as protected
+ * $entity->accessible(['id', 'user_id'], true); // Mark both properties as accessible
+ * $entity->accessible('*', false); // Mark all properties as protected
+ * }}}
+ *
+ * When called without the second param it will return whether or not the property
+ * can be set.
+ *
+ * ### Example:
+ *
+ * {{{
+ * $entity->accessible('id'); // Returns whether it can be set or not
+ * }}}
+ *
+ * @param string|array single or list of properties to change its accessibility
+ * @param boolean $set true marks the property as accessible, false will
+ * mark it as protected.
+ * @return Entity|boolean
+ */
+	public function accessible($property, $set = null) {
+		if ($set === null) {
+			return !empty($this->_accessible[$property]) || !empty($this->_accessible['*']);
+		}
+
+		if ($property === '*') {
+			$this->_accessible = array_map(function($p) use ($set) {
+				return (bool)$set;
+			}, $this->_accessible);
+			$this->_accessible['*'] = (bool)$set;
+			return $this;
+		}
+
+		foreach ((array)$property as $prop) {
+			$this->_accessible[$prop] = (bool)$set;
 		}
 
 		return $this;

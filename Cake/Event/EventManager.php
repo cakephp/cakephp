@@ -70,7 +70,7 @@ class EventManager {
 			static::$_generalManager = $manager;
 		}
 		if (empty(static::$_generalManager)) {
-			static::$_generalManager = new EventManager;
+			static::$_generalManager = new EventManager();
 		}
 
 		static::$_generalManager->_isGlobal = true;
@@ -241,7 +241,6 @@ class EventManager {
 			if ($result !== null) {
 				$event->result = $result;
 			}
-			continue;
 		}
 	}
 

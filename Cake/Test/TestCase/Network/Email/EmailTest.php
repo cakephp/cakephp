@@ -219,6 +219,9 @@ class EmailTest extends TestCase {
 		);
 		$this->assertSame($this->CakeEmail->to(), $expected);
 		$this->assertSame($this->CakeEmail, $result);
+
+		$this->setExpectedException('Cake\Error\SocketException');
+		$this->CakeEmail->to(array('cake@localhost', 'CakePHP'));
 	}
 
 /**

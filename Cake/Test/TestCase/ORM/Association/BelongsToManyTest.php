@@ -1079,7 +1079,7 @@ class BelongsToManyTest extends TestCase {
 			['tags']
 		);
 		$entity = new Entity([
-			'id' =>1,
+			'id' => 1,
 			'tags' => [
 				new Entity(['name' => 'foo'])
 			]
@@ -1105,7 +1105,7 @@ class BelongsToManyTest extends TestCase {
 			['tags']
 		);
 		$entity = new Entity([
-			'id' =>1,
+			'id' => 1,
 			'tags' => [
 				new Entity(['name' => 'foo'])
 			]
@@ -1117,6 +1117,42 @@ class BelongsToManyTest extends TestCase {
 			->with($entity, $entity->tags, $options)
 			->will($this->returnValue(false));
 		$this->assertFalse($assoc->save($entity, $options));
+	}
+
+/**
+ * Test that save() ignores non entity values.
+ *
+ * @return void
+ */
+	public function testSaveOnlyEntities() {
+		$connection = \Cake\Database\ConnectionManager::get('test');
+		$mock = $this->getMock(
+			'Cake\ORM\Table',
+			['save', 'schema'],
+			[['table' => 'tags', 'connection' => $connection]]
+		);
+		$mock->primaryKey('id');
+
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $mock,
+			'saveStrategy' => BelongsToMany::SAVE_APPEND,
+		];
+
+		$entity = new Entity([
+			'id' => 1,
+			'title' => 'First Post',
+			'tags' => [
+				['tag' => 'nope'],
+				new Entity(['tag' => 'cakephp']),
+			]
+		]);
+
+		$mock->expects($this->never())
+			->method('save');
+
+		$association = new BelongsToMany('Tags', $config);
+		$association->save($entity);
 	}
 
 }

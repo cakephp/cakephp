@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Associations;
+use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 

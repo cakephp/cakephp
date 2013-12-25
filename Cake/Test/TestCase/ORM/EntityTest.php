@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -49,6 +47,8 @@ class EntityTest extends TestCase {
  */
 	public function testSetMultiplePropertiesNoSetters() {
 		$entity = new Entity;
+		$entity->accessible('*', true);
+
 		$entity->set(['foo' => 'bar', 'id' => 1]);
 		$this->assertEquals('bar', $entity->foo);
 		$this->assertSame(1, $entity->id);
@@ -83,6 +83,7 @@ class EntityTest extends TestCase {
  */
 	public function testMultipleWithSetter() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['setName', 'setStuff']);
+		$entity->accessible('*', true);
 		$entity->expects($this->once())->method('setName')
 			->with('Jones')
 			->will($this->returnCallback(function($name) {
@@ -107,16 +108,18 @@ class EntityTest extends TestCase {
  */
 	public function testBypassSetters() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['setName', 'setStuff']);
+		$entity->accessible('*', true);
+
 		$entity->expects($this->never())->method('setName');
 		$entity->expects($this->never())->method('setStuff');
 
-		$entity->set('name', 'Jones', false);
+		$entity->set('name', 'Jones', ['setter' => false]);
 		$this->assertEquals('Jones', $entity->name);
 
-		$entity->set('stuff', 'Thing', false);
+		$entity->set('stuff', 'Thing', ['setter' => false]);
 		$this->assertEquals('Thing', $entity->stuff);
 
-		$entity->set(['name' => 'foo', 'stuff' => 'bar'], false);
+		$entity->set(['name' => 'foo', 'stuff' => 'bar'], ['setter' => false]);
 		$this->assertEquals('bar', $entity->stuff);
 	}
 
@@ -132,14 +135,31 @@ class EntityTest extends TestCase {
 			->getMock();
 		$entity->expects($this->at(0))
 			->method('set')
-			->with(['a' => 'b', 'c' => 'd'], true);
+			->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false]);
 
 		$entity->expects($this->at(1))
 			->method('set')
-			->with(['foo' => 'bar'], false);
+			->with(['foo' => 'bar'], ['setter' => false, 'guard' => false]);
 
 		$entity->__construct(['a' => 'b', 'c' => 'd']);
 		$entity->__construct(['foo' => 'bar'], ['useSetters' => false]);
+	}
+
+/**
+ * Tests that the constructor will set initial properties and pass the guard
+ * option along
+ *
+ * @return void
+ */
+	public function testConstructorWithGuard() {
+		$entity = $this->getMockBuilder('\Cake\ORM\Entity')
+			->setMethods(['set'])
+			->disableOriginalConstructor()
+			->getMock();
+		$entity->expects($this->once())
+			->method('set')
+			->with(['foo' => 'bar'], ['setter' => true, 'guard' => true]);
+		$entity->__construct(['foo' => 'bar'], ['guard' => true]);
 	}
 
 /**
@@ -355,14 +375,16 @@ class EntityTest extends TestCase {
  */
 	public function testSetArrayAccess() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['set']);
+		$entity->accessible('*', true);
+
 		$entity->expects($this->at(0))
 			->method('set')
-			->with(['foo' => 1])
+			->with('foo', 1)
 			->will($this->returnSelf());
 
 		$entity->expects($this->at(1))
 			->method('set')
-			->with(['bar' => 2])
+			->with('bar', 2)
 			->will($this->returnSelf());
 
 		$entity['foo'] = 1;
@@ -645,6 +667,7 @@ class EntityTest extends TestCase {
  */
 	public function testToArrayWithAccessor() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->accessible('*', true);
 		$entity->set(['name' => 'Mark', 'email' => 'mark@example.com']);
 		$entity->expects($this->any())
 			->method('getName')
@@ -673,6 +696,8 @@ class EntityTest extends TestCase {
  */
 	public function testToArrayVirtualProperties() {
 		$entity = $this->getMock('\Cake\ORM\Entity', ['getName']);
+		$entity->accessible('*', true);
+
 		$entity->expects($this->any())
 			->method('getName')
 			->will($this->returnValue('Jose'));
@@ -700,9 +725,14 @@ class EntityTest extends TestCase {
 			->setMethods(['getSomething'])
 			->disableOriginalConstructor()
 			->getMock();
+		$entity->accessible('*', true);
+
 		$validator = $this->getMock('\Cake\Validation\Validator');
 		$entity->set('a', 'b');
 
+		$validator->expects($this->once())
+			->method('provider')
+			->with('entity', $entity);
 		$validator->expects($this->once())->method('errors')
 			->with(['a' => 'b'], true)
 			->will($this->returnValue(['a' => ['not valid']]));
@@ -725,6 +755,9 @@ class EntityTest extends TestCase {
 		$entity = new Entity($data);
 		$entity->isNew(true);
 
+		$validator->expects($this->once())
+			->method('provider')
+			->with('entity', $entity);
 		$validator->expects($this->once())->method('errors')
 			->with($data, true)
 			->will($this->returnValue([]));
@@ -759,6 +792,38 @@ class EntityTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to get errors for nested entities
+ *
+ * @return void
+ */
+	public function testErrorsDeep() {
+		$entity2 = new Entity;
+		$entity3 = new Entity;
+		$entity = new Entity([
+			'foo' => 'bar',
+			'thing' => 'baz',
+			'user' => $entity2,
+			'owner' => $entity3
+		]);
+		$entity->errors('thing', ['this is a mistake']);
+		$entity2->errors(['a' => ['error1'], 'b' => ['error2']]);
+		$entity3->errors(['c' => ['error3'], 'd' => ['error4']]);
+
+		$expected = ['a' => ['error1'], 'b' => ['error2']];
+		$this->assertEquals($expected, $entity->errors('user'));
+
+		$expected = ['c' => ['error3'], 'd' => ['error4']];
+		$this->assertEquals($expected, $entity->errors('owner'));
+
+		$entity->set('multiple', [$entity2, $entity3]);
+		$expected = [
+			['a' => ['error1'], 'b' => ['error2']],
+			['c' => ['error3'], 'd' => ['error4']]
+		];
+		$this->assertEquals($expected, $entity->errors('multiple'));
+	}
+
+/**
  * Tests that changing the value of a property will remove errors
  * stored for it
  *
@@ -785,6 +850,139 @@ class EntityTest extends TestCase {
 		$entity->errors('a', 'is not good');
 		$entity->clean();
 		$this->assertEmpty($entity->errors());
+	}
+
+/**
+ * Tests accessible() method as a getter and setter
+ *
+ * @return void
+ */
+	public function testAccessible() {
+		$entity = new Entity;
+		$this->assertFalse($entity->accessible('foo'));
+		$this->assertFalse($entity->accessible('bar'));
+
+		$this->assertSame($entity, $entity->accessible('foo', true));
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertFalse($entity->accessible('bar'));
+
+		$this->assertSame($entity, $entity->accessible('bar', true));
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+
+		$this->assertSame($entity, $entity->accessible('foo', false));
+		$this->assertFalse($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+
+		$this->assertSame($entity, $entity->accessible('bar', false));
+		$this->assertFalse($entity->accessible('foo'));
+		$this->assertFalse($entity->accessible('bar'));
+	}
+
+/**
+ * Tests that an array can be used to set
+ *
+ * @return void
+ */
+	public function testAccessibleAsArray() {
+		$entity = new Entity;
+		$entity->accessible(['foo', 'bar', 'baz'], true);
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+		$this->assertTrue($entity->accessible('baz'));
+
+		$entity->accessible('foo', false);
+		$this->assertFalse($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+		$this->assertTrue($entity->accessible('baz'));
+
+		$entity->accessible(['foo', 'bar', 'baz'], false);
+		$this->assertFalse($entity->accessible('foo'));
+		$this->assertFalse($entity->accessible('bar'));
+		$this->assertFalse($entity->accessible('baz'));
+	}
+
+/**
+ * Tests that a wildcard can be used for setting accesible properties
+ *
+ * @return void
+ */
+	public function testAccessibleWildcard() {
+		$entity = new Entity;
+		$entity->accessible(['foo', 'bar', 'baz'], true);
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+		$this->assertTrue($entity->accessible('baz'));
+
+		$entity->accessible('*', false);
+		$this->assertFalse($entity->accessible('foo'));
+		$this->assertFalse($entity->accessible('bar'));
+		$this->assertFalse($entity->accessible('baz'));
+		$this->assertFalse($entity->accessible('newOne'));
+
+		$entity->accessible('*', true);
+		$this->assertTrue($entity->accessible('foo'));
+		$this->assertTrue($entity->accessible('bar'));
+		$this->assertTrue($entity->accessible('baz'));
+		$this->assertTrue($entity->accessible('newOne2'));
+	}
+
+/**
+ * Tests that only accessible properties can be set
+ *
+ * @return void
+ */
+	public function testSetWithAccessible() {
+		$entity = new Entity(['foo' => 1, 'bar' => 2]);
+		$options = ['guard' => true];
+		$entity->accessible('foo', true);
+		$entity->set('bar', 3, $options);
+		$entity->set('foo', 4, $options);
+		$this->assertEquals(2, $entity->get('bar'));
+		$this->assertEquals(4, $entity->get('foo'));
+
+		$entity->accessible('bar', true);
+		$entity->set('bar', 3, $options);
+		$this->assertEquals(3, $entity->get('bar'));
+	}
+
+/**
+ * Tests that only accessible properties can be set
+ *
+ * @return void
+ */
+	public function testSetWithAccessibleWithArray() {
+		$entity = new Entity(['foo' => 1, 'bar' => 2]);
+		$options = ['guard' => true];
+		$entity->accessible('foo', true);
+		$entity->set(['bar' => 3, 'foo' => 4], $options);
+		$this->assertEquals(2, $entity->get('bar'));
+		$this->assertEquals(4, $entity->get('foo'));
+
+		$entity->accessible('bar', true);
+		$entity->set(['bar' => 3, 'foo' => 5], $options);
+		$this->assertEquals(3, $entity->get('bar'));
+		$this->assertEquals(5, $entity->get('foo'));
+	}
+
+/**
+ * Test that accessible() and single property setting works.
+ *
+ * @return
+ */
+	public function testSetWithAccessibleSingleProperty() {
+		$entity = new Entity(['foo' => 1, 'bar' => 2]);
+		$entity->accessible('title', true);
+
+		$entity->set(['title' => 'test', 'body' => 'Nope']);
+		$this->assertEquals('test', $entity->title);
+		$this->assertNull($entity->body);
+
+		$entity->body = 'Yep';
+		$this->assertEquals('Yep', $entity->body, 'Single set should bypass guards.');
+
+		$entity->set('body', 'Yes');
+		$this->assertEquals('Yes', $entity->body, 'Single set should bypass guards.');
 	}
 
 }
