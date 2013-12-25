@@ -488,12 +488,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testUpdateAllFailure() {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
-			['_buildQuery'],
+			['query'],
 			[['table' => 'users']]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
-			->method('_buildQuery')
+			->method('query')
 			->will($this->returnValue($query));
 		$query->expects($this->once())
 			->method('executeStatement')
@@ -527,12 +527,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testDeleteAllFailure() {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
-			['_buildQuery'],
+			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
-			->method('_buildQuery')
+			->method('query')
 			->will($this->returnValue($query));
 		$query->expects($this->once())
 			->method('executeStatement')
@@ -548,12 +548,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testFindApplyOptions() {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
-			['_buildQuery'],
+			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock('Cake\ORM\Query', [], [$this->connection, $table]);
 		$table->expects($this->once())
-			->method('_buildQuery')
+			->method('query')
 			->will($this->returnValue($query));
 
 		$options = ['fields' => ['a', 'b'], 'connections' => ['a >' => 1]];
@@ -1225,7 +1225,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testAfterSaveNotCalled() {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['_buildQuery', 'exists'],
+			['query', 'exists'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock(
@@ -1242,7 +1242,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table->expects($this->once())->method('exists')
 			->will($this->returnValue(false));
-		$table->expects($this->once())->method('_buildQuery')
+		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('executeStatement')
@@ -1306,7 +1306,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$connection->driver(ConnectionManager::get('test')->driver());
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['_buildQuery', 'connection', 'exists'],
+			['query', 'connection', 'exists'],
 			[['table' => 'users']]
 		);
 		$query = $this->getMock(
@@ -1321,7 +1321,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 
-		$table->expects($this->once())->method('_buildQuery')
+		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 
 		$connection->expects($this->once())->method('begin');
@@ -1352,7 +1352,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$connection->driver(ConnectionManager::get('test')->driver());
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['_buildQuery', 'connection', 'exists'],
+			['query', 'connection', 'exists'],
 			[['table' => 'users']]
 		);
 		$query = $this->getMock(
@@ -1367,7 +1367,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->expects($this->any())->method('connection')
 			->will($this->returnValue($connection));
 
-		$table->expects($this->once())->method('_buildQuery')
+		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 
 		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
@@ -1532,7 +1532,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testSaveUpdatePrimaryKeyNotModified() {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['_buildQuery'],
+			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
 
@@ -1542,7 +1542,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			[null, $table]
 		);
 
-		$table->expects($this->once())->method('_buildQuery')
+		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 
 		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
@@ -1573,10 +1573,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testUpdateNoChange() {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['_buildQuery'],
+			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
-		$table->expects($this->never())->method('_buildQuery');
+		$table->expects($this->never())->method('query');
 		$entity = new \Cake\ORM\Entity([
 			'id' => 2,
 		], ['markNew' => false]);
@@ -1593,10 +1593,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testUpdateNoPrimaryButOtherKeys() {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['_buildQuery'],
+			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
-		$table->expects($this->never())->method('_buildQuery');
+		$table->expects($this->never())->method('query');
 		$entity = new \Cake\ORM\Entity([
 			'username' => 'mariano',
 		], ['markNew' => false]);
@@ -1786,11 +1786,11 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$table = $this->getMock(
 			'Cake\ORM\Table',
-			['_buildQuery'],
+			['query'],
 			[['connection' => $this->connection]]
 		);
 		$table->expects($this->never())
-			->method('_buildQuery');
+			->method('query');
 
 		$entity->isNew(true);
 		$result = $table->delete($entity);
@@ -2993,7 +2993,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testGet() {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['callFinder', '_buildQuery'],
+			['callFinder', 'query'],
 			[[
 				'connection' => $this->connection,
 				'schema' => [
@@ -3011,7 +3011,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		);
 
 		$entity = new \Cake\ORM\Entity;
-		$table->expects($this->once())->method('_buildQuery')
+		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 		$table->expects($this->once())->method('callFinder')
 			->with('all', $query, ['fields' => ['id']])
@@ -3039,7 +3039,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testGetException() {
 		$table = $this->getMock(
 			'\Cake\ORM\Table',
-			['callFinder', '_buildQuery'],
+			['callFinder', 'query'],
 			[[
 				'connection' => $this->connection,
 				'table' => 'articles',
@@ -3057,7 +3057,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			[$this->connection, $table]
 		);
 
-		$table->expects($this->once())->method('_buildQuery')
+		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 		$table->expects($this->once())->method('callFinder')
 			->with('all', $query, ['contain' => ['foo']])

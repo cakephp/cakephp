@@ -696,7 +696,7 @@ class Table implements EventListener {
  * @return \Cake\ORM\Query
  */
 	public function find($type = 'all', $options = []) {
-		$query = $this->_buildQuery();
+		$query = $this->query();
 		$query->select()->applyOptions($options);
 		return $this->callFinder($type, $query, $options);
 	}
@@ -847,7 +847,7 @@ class Table implements EventListener {
  *
  * @return \Cake\ORM\Query
  */
-	protected function _buildQuery() {
+	public function query() {
 		return new Query($this->connection(), $this);
 	}
 
@@ -863,7 +863,7 @@ class Table implements EventListener {
  * @return boolean Success Returns true if one or more rows are effected.
  */
 	public function updateAll($fields, $conditions) {
-		$query = $this->_buildQuery();
+		$query = $this->query();
 		$query->update($this->table())
 			->set($fields)
 			->where($conditions);
@@ -956,7 +956,7 @@ class Table implements EventListener {
  * @see Cake\ORM\Table::delete()
  */
 	public function deleteAll($conditions) {
-		$query = $this->_buildQuery();
+		$query = $this->query();
 		$query->delete($this->table())
 			->where($conditions);
 		$statement = $query->executeStatement();
@@ -1180,7 +1180,7 @@ class Table implements EventListener {
  * @return \Cake\ORM\Entity|boolean
  */
 	protected function _insert($entity, $data) {
-		$query = $this->_buildQuery();
+		$query = $this->query();
 
 		$primary = $this->primaryKey();
 		$id = $this->_newId($primary);
@@ -1247,7 +1247,7 @@ class Table implements EventListener {
 			throw new \InvalidArgumentException($message);
 		}
 
-		$query = $this->_buildQuery();
+		$query = $this->query();
 		$statement = $query->update($this->table())
 			->set($data)
 			->where($primaryKey)
@@ -1337,7 +1337,7 @@ class Table implements EventListener {
 			throw new \InvalidArgumentException($msg);
 		}
 
-		$query = $this->_buildQuery();
+		$query = $this->query();
 		$statement = $query->delete($this->table())
 			->where($conditions)
 			->executeStatement();
