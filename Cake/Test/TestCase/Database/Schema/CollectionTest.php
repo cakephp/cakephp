@@ -16,7 +16,9 @@
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Cache\Cache;
 use Cake\Core\Configure;
+use Cake\Database\Connection;
 use Cake\Database\ConnectionManager;
 use Cake\Database\Schema\Collection;
 use Cake\Database\Schema\Table;
@@ -26,6 +28,10 @@ use Cake\TestSuite\TestCase;
  * Test case for Collection
  */
 class CollectionTest extends TestCase {
+
+	public $fixtures = [
+		'core.user'
+	];
 
 /**
  * Setup function
@@ -59,6 +65,28 @@ class CollectionTest extends TestCase {
 	public function testDescribeIncorrectTable() {
 		$schema = new Collection($this->connection);
 		$this->assertNull($schema->describe('derp'));
+	}
+
+/**
+ * Tests that schema metadata is cached
+ *
+ * @return void
+ */
+	public function testDescribeCache() {
+		$table = $this->connection->schemaCollection()->describe('users');
+
+		$config = $this->connection->config();
+		$config['cacheMetadata'] = true;
+
+		$connection = new Connection($config);
+		$schema = new Collection($connection);
+
+		Cache::delete('test_users', '_cake_model_');
+		$result = $schema->describe('users');
+		$this->assertEquals($table, $result);
+
+		$result = Cache::read('test_users', '_cake_model_');
+		$this->assertEquals($table, $result);
 	}
 
 }
