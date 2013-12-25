@@ -929,7 +929,7 @@ class View extends Object {
 		$defaultPath = $paths[0];
 
 		if ($this->plugin) {
-			$pluginPaths = App::pluginPaths();
+			$pluginPaths = App::objects('Plugin');
 			foreach ($paths as $path) {
 				if (strpos($path, $pluginPaths[0]) === 0) {
 					$defaultPath = $path;
