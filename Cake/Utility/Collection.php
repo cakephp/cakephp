@@ -223,6 +223,24 @@ class Collection extends IteratorIterator {
 		return new ReplaceIterator($this, $c);
 	}
 
+/**
+ * Folds the values in this collection to a single value, as the result of
+ * applying the callback function to all elements. $zero is the initial state
+ * of the reduction, and each successive step should of it should be returned
+ * by the callback function.
+ *
+ * The callback function is
+ *
+ * @return void
+ */
+	public function reduce(callable $c, $zero) {
+		$result = $zero;
+		foreach ($this as $k => $value) {
+			$result = $c($result, $value, $k);
+		}
+		return $result;
+	}
+
 	public function mapReduce(callable $map, callable $reduce) {
 	}
 

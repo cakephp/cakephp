@@ -217,4 +217,28 @@ class CollectionTest extends TestCase {
 		$this->assertInstanceOf('\Cake\Utility\Iterator\ReplaceIterator', $map);
 		$this->assertEquals(['a' => 1, 'b' => 4, 'c' => 9], iterator_to_array($map));
 	}
+
+/**
+ * Tests reduce
+ *
+ * @return void
+ */
+	public function testReduce() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$callable = $this->getMock('stdClass', ['__invoke']);
+		$callable->expects($this->at(0))
+			->method('__invoke')
+			->with(10, 1, 'a')
+			->will($this->returnValue(11));
+		$callable->expects($this->at(1))
+			->method('__invoke')
+			->with(11, 2, 'b')
+			->will($this->returnValue(13));
+		$callable->expects($this->at(2))
+			->method('__invoke')
+			->with(13, 3, 'c')
+			->will($this->returnValue(16));
+		$this->assertEquals(16, $collection->reduce($callable, 10));
+	}
 }
