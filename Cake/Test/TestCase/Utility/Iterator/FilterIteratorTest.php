@@ -17,8 +17,17 @@ namespace Cake\Test\TestCase\Utility\Iterator;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Iterator\FilterIterator;
 
+/**
+ * FilterIterator test
+ *
+ */
 class FilterIteratorTest extends TestCase {
 
+/**
+ * Tests that the iterator works correctly
+ *
+ * @return void
+ */
 	public function testFilter() {
 		$items = new \ArrayIterator([1, 2, 3]);
 		$callable = $this->getMock('stdClass', ['__invoke']);

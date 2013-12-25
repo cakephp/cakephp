@@ -66,8 +66,18 @@ class Collection extends IteratorIterator {
  * returns true will be present in the resulting collection.
  *
  * Each time the callback is executed it will receive the value of the element
- * in the current iteration, the key of the element and the passed $items iterator
- * as arguments, in that order.
+ * in the current iteration, the key of the element and this collection as
+ * arguments, in that order.
+ *
+ * ##Example:
+ *
+ * Filtering even numbers in an array:
+ *
+ * {{{
+ * $collection = (new Collection([1, 2, 3]))->filter(function($value, $key) {
+ *	return $value % 2 === 0;
+ * });
+ * }}}
  *
  * @param callable $c the method that will receive each of the elements and
  * returns true whether or not they should be in the resulting collection.
