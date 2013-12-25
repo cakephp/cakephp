@@ -202,4 +202,19 @@ class CollectionTest extends TestCase {
 		$this->assertFalse($collection->contains('2'));
 	}
 
+/**
+ * Tests map
+ *
+ * @return void
+ */
+	public function testMap() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$map = $collection->map(function($v, $k, $it) use ($collection) {
+			$this->assertSame($collection, $it);
+			return $v * $v;
+		});
+		$this->assertInstanceOf('\Cake\Utility\Iterator\ReplaceIterator', $map);
+		$this->assertEquals(['a' => 1, 'b' => 4, 'c' => 9], iterator_to_array($map));
+	}
 }

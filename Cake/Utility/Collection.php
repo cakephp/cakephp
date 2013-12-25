@@ -16,6 +16,7 @@ namespace Cake\Utility;
 
 use ArrayIterator;
 use Cake\Utility\Iterator\FilterIterator;
+use Cake\Utility\Iterator\ReplaceIterator;
 use InvalidArgumentException;
 use IteratorIterator;
 
@@ -191,10 +192,43 @@ class Collection extends IteratorIterator {
 		return false;
 	}
 
+/**
+ * Creates an iterator from another iterator that will modify each of the values
+ * by converting them using a callback function.
+ */
+
+/**
+ * Returns another collection after modifying each of the values in this one using
+ * the provided callable.
+ *
+ * Each time the callback is executed it will receive the value of the element
+ * in the current iteration, the key of the element and this collection as
+ * arguments, in that order.
+ *
+ * ##Example:
+ *
+ * Getting a collection of booleans where true indicates if a person is female:
+ *
+ * {{{
+ * $collection = (new Collection($people))->filter(function($person, $key) {
+ *	return $person->sex === 'female';
+ * });
+ * }}}
+ *
+ * @param callable $c the method that will receive each of the elements and
+ * returns the new value for the key that is being iterated
+ * @return \Cake\Utility\Iterator\ReplaceIterator
+ */
+	public function map(callable $c) {
+		return new ReplaceIterator($this, $c);
+	}
+
 	public function mapReduce(callable $map, callable $reduce) {
 	}
 
+
 	public function extract($property) {
+
 	}
 
 	public function max() {

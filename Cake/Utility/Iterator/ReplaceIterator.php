@@ -15,31 +15,46 @@
 namespace Cake\Utility\Iterator;
 
 use Cake\Utility\Collection;
-use CallbackFilterIterator;
-use Iterator;
 
 /**
- * Creates a filtered iterator from another iterator. The filtering is done by
- * passing a callback function to each of the elements and taking them out if
- * it does not return true.
+ * Creates an iterator from another iterator that will modify each of the values
+ * by converting them using a callback function.
  */
-class FilterIterator extends Collection {
+class ReplaceIterator extends Collection {
 
 /**
- * Creates a filtered iterator using the callback to determine which items are
- * accepted or rejected.
+ * The callback function to be used to modify each of the values
+ *
+ * @var callable
+ */
+	protected $_callback;
+
+/**
+ * Creates an iterator from another iterator that will modify each of the values
+ * by converting them using a callback function.
  *
  * Each time the callback is executed it will receive the value of the element
  * in the current iteration, the key of the element and the passed $items iterator
  * as arguments, in that order.
  *
- * @param Iterator $items the items to be filtered
+ * @param array|\Traversable $items the items to be filtered
  * @param callable $callback
  * @return void
  */
-	public function __construct(Iterator $items, callable $callback) {
-		$wrapper = new CallbackFilterIterator($items, $callback);
-		parent::__construct($wrapper);
+	public function __construct($items, callable $callback) {
+		$this->_callback = $callback;
+		parent::__construct($items);
+	}
+
+/**
+ * Returns the value returned by the callback after passing the current value in
+ * the iteration
+ *
+ * @return mixed
+ */
+	public function current() {
+		$callback = $this->_callback;
+		return $callback(parent::current(), $this->key(), $this->getInnerIterator());
 	}
 
 }
