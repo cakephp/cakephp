@@ -78,7 +78,7 @@ class StringTemplateTraitTest extends TestCase {
 		];
 		$this->Template->initStringTemplates($templates);
 		$result = $this->Template->getTemplater();
-		$this->assertTrue(is_a($result, '\Cake\View\StringTemplate'));
+		$this->assertInstanceOf('\Cake\View\StringTemplate', $result);
 	}
 
 }
