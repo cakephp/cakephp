@@ -269,6 +269,59 @@ class MarshallerTest extends TestCase {
 	}
 
 /**
+ * Test marshalling nested associations on the _joinData structure.
+ *
+ * @return void
+ */
+	public function testOneBelongsToManyJoinDataAssociated() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'tags' => [
+				[
+					'tag' => 'news',
+					'_joinData' => [
+						'active' => 1,
+						'user' => ['username' => 'Bill'],
+					]
+				],
+				[
+					'tag' => 'cakephp',
+					'_joinData' => [
+						'active' => 0,
+						'user' => ['username' => 'Mark'],
+					]
+				],
+			],
+		];
+
+		$articlesTags = TableRegistry::get('ArticlesTags');
+		$articlesTags->belongsTo('Users');
+
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, [
+			'Tags' => [
+				'associated' => [
+					'_joinData' => ['associated' => ['Users']]
+				]
+			]
+		]);
+		$this->assertInstanceOf(
+			'Cake\ORM\Entity',
+			$result->tags[0]->_joinData->user,
+			'joinData should contain a user entity.'
+		);
+		$this->assertEquals('Bill', $result->tags[0]->_joinData->user->username);
+		$this->assertInstanceOf(
+			'Cake\ORM\Entity',
+			$result->tags[1]->_joinData->user,
+			'joinData should contain a user entity.'
+		);
+		$this->assertEquals('Mark', $result->tags[1]->_joinData->user->username);
+	}
+
+/**
  * Test one() with deeper associations.
  *
  * @return void

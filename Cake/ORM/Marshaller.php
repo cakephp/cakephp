@@ -153,16 +153,22 @@ class Marshaller {
  * @return array An array of built entities.
  */
 	protected function _belongsToMany(Association $assoc, array $data, $include = []) {
-		if (!in_array('_joinData', $include)) {
-			return $this->many($data, $include);
+		$records = $this->many($data, $include);
+		if (!in_array('_joinData', $include) && !isset($include['_joinData'])) {
+			return $records;
 		}
+
 		$joint = $assoc->junction();
 		$jointMarshaller = $joint->marshaller();
-		$records = $this->many($data, $include);
+
+		$nested = [];
+		if (isset($include['_joinData']['associated'])) {
+			$nested = (array)$include['_joinData']['associated'];
+		}
 
 		foreach ($records as $i => $record) {
 			if (isset($data[$i]['_joinData'])) {
-				$joinData = $jointMarshaller->one($data[$i]['_joinData'], $include);
+				$joinData = $jointMarshaller->one($data[$i]['_joinData'], $nested);
 				$record->set('_joinData', $joinData);
 			}
 		}
