@@ -188,4 +188,18 @@ class CollectionTest extends TestCase {
 		$this->assertFalse($collection->some($callable));
 	}
 
+/**
+ * Tests contains
+ *
+ * @return void
+ */
+	public function testContains() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$this->assertTrue($collection->contains(2));
+		$this->assertTrue($collection->contains(1));
+		$this->assertFalse($collection->contains(10));
+		$this->assertFalse($collection->contains('2'));
+	}
+
 }

@@ -175,7 +175,20 @@ class Collection extends IteratorIterator {
 		return false;
 	}
 
-	public function contains(callable $c) {
+/**
+ * Returns true if $value is present in this collection. Comparisons are made
+ * both by value and type.
+ *
+ * @param mixed $value the value to check for
+ * @return boolean true if $value is present in this collection
+ */
+	public function contains($value) {
+		foreach ($this as $v) {
+			if ($value === $v) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function mapReduce(callable $map, callable $reduce) {
