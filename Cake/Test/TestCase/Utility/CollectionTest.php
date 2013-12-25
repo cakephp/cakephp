@@ -97,4 +97,50 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(['a' => 1, 'b' => 2], iterator_to_array($result));
 		$this->assertInstanceOf('\Cake\Utility\Collection', $result);
 	}
+
+/**
+ * Tests every when the callback returns true for all elements
+ *
+ * @return void
+ */
+	public function testEveryReturnTrue() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$callable = $this->getMock('stdClass', ['__invoke']);
+		$callable->expects($this->at(0))
+			->method('__invoke')
+			->with(1, 'a')
+			->will($this->returnValue(true));
+		$callable->expects($this->at(1))
+			->method('__invoke')
+			->with(2, 'b')
+			->will($this->returnValue(true));
+		$callable->expects($this->at(2))
+			->method('__invoke')
+			->with(3, 'c')
+			->will($this->returnValue(true));
+		$this->assertTrue($collection->every($callable));
+	}
+
+/**
+ * Tests every when the callback returns false for one of the elements
+ *
+ * @return void
+ */
+	public function testEveryReturnFalse() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$callable = $this->getMock('stdClass', ['__invoke']);
+		$callable->expects($this->at(0))
+			->method('__invoke')
+			->with(1, 'a')
+			->will($this->returnValue(true));
+		$callable->expects($this->at(1))
+			->method('__invoke')
+			->with(2, 'b')
+			->will($this->returnValue(false));
+		$callable->expects($this->exactly(2))->method('__invoke');
+		$this->assertFalse($collection->every($callable));
+	}
+
 }
