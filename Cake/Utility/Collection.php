@@ -71,7 +71,8 @@ class Collection extends IteratorIterator {
  *
  * ##Example:
  *
- * Filtering even numbers in an array:
+ * Filtering odd numbers in an array, at the end only the value 2 will
+ * be present in the resulting collection:
  *
  * {{{
  * $collection = (new Collection([1, 2, 3]))->filter(function($value, $key) {
@@ -85,6 +86,35 @@ class Collection extends IteratorIterator {
  */
 	public function filter(callable $c) {
 		return new FilterIterator($this, $c);
+	}
+
+/**
+ * Looks through each value in the collection, and returns another collection with
+ * all the values that do not pass a truth test. This is the opposite of `filter`.
+ *
+ * Each time the callback is executed it will receive the value of the element
+ * in the current iteration, the key of the element and this collection as
+ * arguments, in that order.
+ *
+ * ##Example:
+ *
+ * Filtering even numbers in an array, at the end only values 1 and 3 will
+ * be present in the resulting collection:
+ *
+ * {{{
+ * $collection = (new Collection([1, 2, 3]))->filter(function($value, $key) {
+ *	return $value % 2 === 0;
+ * });
+ * }}}
+ *
+ * @param callable $c the method that will receive each of the elements and
+ * returns true whether or not they should be out of the resulting collection.
+ * @return \Cake\Utility\Iterator\FilterIterator;
+ */
+	public function reject(callable $c) {
+		return new FilterIterator($this, function ($key, $value, $items) use ($c) {
+			return !$c($key, $value, $items);
+		});
 	}
 
 	public function some(callable $c) {

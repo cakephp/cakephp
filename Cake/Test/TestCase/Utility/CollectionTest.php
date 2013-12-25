@@ -82,4 +82,19 @@ class CollectionTest extends TestCase {
 		$filtered->each($callable);
 	}
 
+/**
+ * Tests reject
+ *
+ * @return void
+ */
+	public function testReject() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$result = $collection->reject(function ($v, $k, $items) use ($collection) {
+			$this->assertSame($collection, $items);
+			return $v > 2;
+		});
+		$this->assertEquals(['a' => 1, 'b' => 2], iterator_to_array($result));
+		$this->assertInstanceOf('\Cake\Utility\Collection', $result);
+	}
 }
