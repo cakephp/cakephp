@@ -12,15 +12,13 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-
 namespace Cake\Utility;
 
 use \ArrayIterator;
 use \InvalidArgumentException;
+use \IteratorIterator;
 
-class Collection {
-
-	protected $_iterator;
+class Collection extends IteratorIterator {
 
 	public function __construct($items) {
 		if (is_array($items)) {
@@ -30,15 +28,37 @@ class Collection {
 		if (!($items instanceof \Traversable)) {
 			throw new InvalidArgumentException;
 		}
-
-		$this->_iterator = $items;
+		parent::__construct($items);
 	}
 
+	public function getIterator() {
+		return $this->_iterator;
+	}
+
+/**
+ * Executes the passed callable for each of the elements in this collection
+ * and passes both the value and key for them on each step.
+ * Returns the same collection for chaining.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $collection = (new Collection($items))->each(function($value, $key) {
+ *	echo "Element $key: $value";
+ * });
+ * }}}
+ *
+ * @param callable $c callable function that will receive each of the elements
+ * in this collection
+ * @return \Cake\Utility\Collection
+ */
 	public function each(callable $c) {
+		foreach ($this as $k => $v) {
+			$c($v, $k);
+		}
+		return $this;
 	}
 
-	public function mapReduce(callable $map, callable $reduce) {
-	}
 
 	public function filter(callable $c) {
 	}
@@ -50,6 +70,9 @@ class Collection {
 	}
 
 	public function contains(callable $c) {
+	}
+
+	public function mapReduce(callable $map, callable $reduce) {
 	}
 
 	public function extract($property) {
