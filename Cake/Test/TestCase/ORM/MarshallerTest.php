@@ -20,24 +20,27 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
-
 /**
  * Test entity for mass assignment.
  */
 class OpenEntity extends Entity {
+
 	protected $_accessible = [
 		'*' => true,
 	];
+
 }
 
 /**
  * Test entity for mass assignment.
  */
 class ProtectedArticle extends Entity {
+
 	protected $_accessible = [
 		'title' => true,
 		'body' => true
 	];
+
 }
 
 /**
