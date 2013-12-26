@@ -867,7 +867,7 @@ class Table implements EventListener {
 		$query->update($this->table())
 			->set($fields)
 			->where($conditions);
-		$statement = $query->executeStatement();
+		$statement = $query->execute();
 		$success = $statement->rowCount() > 0;
 		$statement->closeCursor();
 		return $success;
@@ -959,7 +959,7 @@ class Table implements EventListener {
 		$query = $this->query();
 		$query->delete($this->table())
 			->where($conditions);
-		$statement = $query->executeStatement();
+		$statement = $query->execute();
 		$success = $statement->rowCount() > 0;
 		$statement->closeCursor();
 		return $success;
@@ -1190,7 +1190,7 @@ class Table implements EventListener {
 
 		$statement = $query->insert($this->table(), array_keys($data))
 			->values($data)
-			->executeStatement();
+			->execute();
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
@@ -1251,7 +1251,7 @@ class Table implements EventListener {
 		$statement = $query->update($this->table())
 			->set($data)
 			->where($primaryKey)
-			->executeStatement();
+			->execute();
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
@@ -1340,7 +1340,7 @@ class Table implements EventListener {
 		$query = $this->query();
 		$statement = $query->delete($this->table())
 			->where($conditions)
-			->executeStatement();
+			->execute();
 
 		$success = $statement->rowCount() > 0;
 		if (!$success) {

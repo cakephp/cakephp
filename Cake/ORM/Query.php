@@ -394,36 +394,46 @@ class Query extends DatabaseQuery {
  * Compiles the SQL representation of this query and executes it using the
  * provided connection object. Returns a ResultSet iterator object.
  *
+ * This method fires the `Model.beforeFind` event and processes the
+ * callback results.
+ *
  * If a result set was set using setResult() that ResultSet will be returned.
  *
  * Resulting object is traversable, so it can be used in any loop as you would
  * with an array.
  *
- * @return Cake\ORM\ResultCollectionTrait
+ * @return Cake\ORM\ResultCollectionTrait|Cake\Database\StatementInterface
+ *   A result set will be returned for select queries. For insert, delete and update
+ *   queries a statement will be returned.
  */
 	public function execute() {
-		$table = $this->repository();
-		$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
-		$table->getEventManager()->dispatch($event);
+		if ($this->_type === 'select' || $this->_type === null) {
+			$table = $this->repository();
+			$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
+			$table->getEventManager()->dispatch($event);
+			return $this->getResults();
+		}
+		return $this->_executeStatement();
+	}
+
+/**
+ * Get the result set for this query.
+ *
+ * Will return either the results set through setResult(), or execute the underlying statement
+ * and return the ResultSet object ready for streaming of results.
+ *
+ * @return Cake\ORM\ResultCollectionTrait
+ */
+	public function getResults() {
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
 		if ($this->_useBufferedResults) {
 			return $this->_results = $this->_decorateResults(
-				new BufferedResultSet($this, $this->executeStatement())
+				new BufferedResultSet($this, $this->_executeStatement())
 			);
 		}
-		return $this->_decorateResults(new ResultSet($this, $this->executeStatement()));
-	}
-
-/**
- * Compiles the SQL representation of this query and executes it using
- * the provided connection object.
- *
- * @return Cake\Database\StatementInterface
- */
-	public function executeStatement() {
-		return parent::execute();
+		return $this->_decorateResults(new ResultSet($this, $this->_executeStatement()));
 	}
 
 /**

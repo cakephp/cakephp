@@ -196,9 +196,21 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Resulting statement is traversable, so it can be used in any loop as you would
  * with an array.
  *
+ * This method can be overridden in query subclasses to decorate behavior
+ * around query execution.
+ *
  * @return Cake\Database\StatementInterface
  */
 	public function execute() {
+		return $this->_executeStatement();
+	}
+
+/**
+ * Internal implementation of statement execution.
+ *
+ * @return Cake\Database\StatementInterface
+ */
+	protected function _executeStatement() {
 		$query = $this->_transformQuery();
 		$statement = $this->_connection->prepare($query->sql());
 		$query->_bindStatement($statement);
@@ -546,7 +558,9 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * {{{
  *	$query->join([
  *		'a' => [
- *			'table' => 'authors', 'type' => 'LEFT', 'conditions' => 'a.id = b.author_id'
+ *			'table' => 'authors',
+ *			'type' => 'LEFT',
+ *			'conditions' => 'a.id = b.author_id'
  *		]
  *	]);
  *  // Produces LEFT JOIN authors a ON (a.id = b.author_id)
@@ -557,10 +571,14 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * {{{
  *	$query->join([
  *		'a' => [
- *			'table' => 'authors', 'type' => 'LEFT', 'conditions' => 'a.id = b.author_id'
+ *			'table' => 'authors',
+ *			'type' => 'LEFT',
+ *			'conditions' => 'a.id = b.author_id'
  *		],
  *		'p' => [
- *			'table' => 'products', 'type' => 'INNER', 'conditions' => 'a.owner_id = p.id
+ *			'table' => 'products',
+ *			'type' => 'INNER',
+ *			'conditions' => 'a.owner_id = p.id
  *		]
  *	]);
  *	// LEFT JOIN authors a ON (a.id = b.author_id)

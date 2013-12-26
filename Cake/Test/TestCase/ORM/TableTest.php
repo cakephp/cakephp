@@ -491,12 +491,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['query'],
 			[['table' => 'users']]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['_executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
 			->method('query')
 			->will($this->returnValue($query));
 		$query->expects($this->once())
-			->method('executeStatement')
+			->method('_executeStatement')
 			->will($this->throwException(new \Cake\Database\Exception('Not good')));
 		$table->updateAll(['username' => 'mark'], []);
 	}
@@ -530,12 +530,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['executeStatement'], [$this->connection, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['_executeStatement'], [$this->connection, null]);
 		$table->expects($this->once())
 			->method('query')
 			->will($this->returnValue($query));
 		$query->expects($this->once())
-			->method('executeStatement')
+			->method('_executeStatement')
 			->will($this->throwException(new \Cake\Database\Exception('Not good')));
 		$table->deleteAll(['id >' => 4]);
 	}
@@ -1230,7 +1230,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		);
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['executeStatement', 'addDefaultTypes'],
+			['_executeStatement', 'addDefaultTypes'],
 			[null, $table]
 		);
 		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
@@ -1245,7 +1245,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 
-		$query->expects($this->once())->method('executeStatement')
+		$query->expects($this->once())->method('_executeStatement')
 			->will($this->returnValue($statement));
 
 		$statement->expects($this->once())->method('rowCount')
@@ -1311,7 +1311,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		);
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['executeStatement', 'addDefaultTypes'],
+			['_executeStatement', 'addDefaultTypes'],
 			[null, $table]
 		);
 
@@ -1326,7 +1326,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$connection->expects($this->once())->method('begin');
 		$connection->expects($this->once())->method('rollback');
-		$query->expects($this->once())->method('executeStatement')
+		$query->expects($this->once())->method('_executeStatement')
 			->will($this->throwException(new \PDOException));
 
 		$data = new \Cake\ORM\Entity([
@@ -1357,7 +1357,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		);
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['executeStatement', 'addDefaultTypes'],
+			['_executeStatement', 'addDefaultTypes'],
 			[null, $table]
 		);
 
@@ -1375,7 +1375,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue(0));
 		$connection->expects($this->once())->method('begin');
 		$connection->expects($this->once())->method('rollback');
-		$query->expects($this->once())->method('executeStatement')
+		$query->expects($this->once())->method('_executeStatement')
 			->will($this->returnValue($statement));
 
 		$data = new \Cake\ORM\Entity([
@@ -1538,7 +1538,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['executeStatement', 'addDefaultTypes', 'set'],
+			['_executeStatement', 'addDefaultTypes', 'set'],
 			[null, $table]
 		);
 
@@ -1549,7 +1549,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$statement->expects($this->once())->method('rowCount')
 			->will($this->returnValue(1));
 
-		$query->expects($this->once())->method('executeStatement')
+		$query->expects($this->once())->method('_executeStatement')
 			->will($this->returnValue($statement));
 
 		$query->expects($this->once())->method('set')
