@@ -14,6 +14,7 @@
  */
 namespace Cake\Utility;
 
+use Cake\Utility\Collection;
 use Cake\Utility\Iterator\ExtractIterator;
 use Cake\Utility\Iterator\FilterIterator;
 use Cake\Utility\Iterator\ReplaceIterator;
@@ -22,6 +23,9 @@ use Cake\Utility\MapReduce;
 use LimitIterator;
 
 
+/**
+ * Offers a handful of method to manipulate iterators
+ */
 trait CollectionTrait {
 
 /**
@@ -352,7 +356,7 @@ trait CollectionTrait {
  * @return \Cake\Utility\Collection
  */
 	public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC) {
-		return new self(new SortIterator($this, $callback, $dir, $type));
+		return new Collection(new SortIterator($this, $callback, $dir, $type));
 	}
 
 /**
@@ -402,7 +406,7 @@ trait CollectionTrait {
 		foreach ($this as $value) {
 			$group[$callback($value)][] = $value;
 		}
-		return new self($group);
+		return new Collection($group);
 	}
 
 /**
@@ -448,7 +452,7 @@ trait CollectionTrait {
 		foreach ($this as $value) {
 			$group[$callback($value)] = $value;
 		}
-		return new self($group);
+		return new Collection($group);
 	}
 
 /**
@@ -497,7 +501,7 @@ trait CollectionTrait {
 		$reducer = function ($key, $values, $mr) {
 			$mr->emit(count($values), $key);
 		};
-		return new self(new MapReduce($this, $mapper, $reducer));
+		return new Collection(new MapReduce($this, $mapper, $reducer));
 	}
 
 /**
@@ -509,7 +513,7 @@ trait CollectionTrait {
 	public function shuffle() {
 		$elements = iterator_to_array($this);
 		shuffle($elements);
-		return new self($elements);
+		return new Collection($elements);
 	}
 
 /**
@@ -521,7 +525,7 @@ trait CollectionTrait {
  * @return \Cake\Utility\Collection
  */
 	public function sample($size = 10) {
-		return new self(new LimitIterator($this, 0, $size));
+		return new Collection(new LimitIterator($this, 0, $size));
 	}
 
 /**
@@ -565,4 +569,3 @@ trait CollectionTrait {
 	}
 
 }
-
