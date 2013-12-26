@@ -456,5 +456,18 @@ class CollectionTest extends TestCase {
 		}
 	}
 
+/**
+ * Tests sample
+ *
+ * @return void
+ */
+	public function testSample() {
+		$data = [1, 2, 3, 4];
+		$collection = (new Collection($data))->sample(2);
+		$this->assertEquals(2, count(iterator_to_array($collection)));
 
+		foreach ($collection as $value) {
+			$this->assertContains($value, $data);
+		}
+	}
 }

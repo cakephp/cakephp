@@ -22,6 +22,7 @@ use Cake\Utility\Iterator\SortIterator;
 use Cake\Utility\MapReduce;
 use InvalidArgumentException;
 use IteratorIterator;
+use LimitIterator;
 
 class Collection extends IteratorIterator {
 
@@ -528,7 +529,16 @@ class Collection extends IteratorIterator {
 		return new self($elements);
 	}
 
-	public function sample($size) {
+/**
+ * Returns a new collection with maximum $size random elements
+ * from this collection
+ *
+ * @param integer $size the maximum number of elements to randomly
+ * take from this collection
+ * @return \Cake\Utility\Collection
+ */
+	public function sample($size = 10) {
+		return new self(new LimitIterator($this, 0, $size));
 	}
 
 /**
