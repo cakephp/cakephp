@@ -2164,7 +2164,7 @@ class DboSource extends DataSource {
 						substr_count($key, '?') == $valueCount ||
 						(
 							substr_count($key, ':') == $valueCount &&
-							preg_match("/(\:){" . $valueCount . "}/", $key) == 0
+							preg_match("/(\:){" . $valueCount . "}/", $key) === 0
 						)
 					)
 				);
