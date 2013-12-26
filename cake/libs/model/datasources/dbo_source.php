@@ -2161,13 +2161,10 @@ class DboSource extends DataSource {
 				$valueInsert = (
 					!empty($value) &&
 					(
-						(
-							substr_count($key, '?') == $valueCount &&
-							preg_match("/(\?){".$valueCount."}/", $key) == 0
-						) ||
+						substr_count($key, '?') == $valueCount ||
 						(
 							substr_count($key, ':') == $valueCount &&
-							preg_match("/(\:){".$valueCount."}/", $key) == 0
+							preg_match("/(\:){" . $valueCount . "}/", $key) == 0
 						)
 					)
 				);
