@@ -415,4 +415,30 @@ class CollectionTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($grouped));
 	}
 
+/**
+ * Tests countBy
+ *
+ * @return void
+ */
+	public function testCountBy() {
+		$items = [
+			['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+			['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+			['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+		];
+		$collection = new Collection($items);
+		$grouped = $collection->countBy('parent_id');
+		$expected = [
+			10 => 2,
+			11 => 1
+		];
+		$this->assertEquals($expected, iterator_to_array($grouped));
+		$this->assertInstanceOf('\Cake\Utility\Collection', $grouped);
+
+		$grouped = $collection->countBy(function($element) {
+			return $element['parent_id'];
+		});
+		$this->assertEquals($expected, iterator_to_array($grouped));
+	}
+
 }

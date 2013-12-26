@@ -19,6 +19,7 @@ use Cake\Utility\Iterator\ExtractIterator;
 use Cake\Utility\Iterator\FilterIterator;
 use Cake\Utility\Iterator\ReplaceIterator;
 use Cake\Utility\Iterator\SortIterator;
+use Cake\Utility\MapReduce;
 use InvalidArgumentException;
 use IteratorIterator;
 
@@ -395,7 +396,7 @@ class Collection extends IteratorIterator {
  *	return $e['parent_id'];
  * });
  *
- * //Result will look like
+ * //Result will look like this when converted to array
  * [
  *	10 => [
  *		['id' => 1, 'name' => 'foo', 'parent_id' => 10],
@@ -445,7 +446,7 @@ class Collection extends IteratorIterator {
  *	return $e['id'];
  * });
  *
- * //Result will look like
+ * //Result will look like this when converted to array
  * [
  *	1 => ['id' => 1, 'name' => 'foo'],
  *	3 => ['id' => 3, 'name' => 'baz'],
@@ -466,7 +467,53 @@ class Collection extends IteratorIterator {
 		return new self($group);
 	}
 
-	public function countBy($property) {
+/**
+ * Sorts a list into groups and returns a count for the number of elements
+ * in each group. Similar to groupBy, but instead of returning a list of values,
+ * returns a count for the number of values in that group.
+ *
+ * When $callback is a string it should be a property name to extract or
+ * a dot separated path of properties that should be followed to get the last
+ * one in the path.
+ *
+  * ###Example:
+ *
+ * {{{
+ * $items = [
+ *	['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+ *	['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+ *	['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+ * ];
+ *
+ * $group = (new Collection($items))->countBy('parent_id');
+ *
+ * //Or
+ * $group = (new Collection($items))->countBy(function($e) {
+ *	return $e['parent_id'];
+ * });
+ *
+ * //Result will look like this when converted to array
+ * [
+ *	10 => 2,
+ *	11 => 1
+ * ];
+ * }}}
+ *
+ * @param callable|string the callback or column name to use for indexing
+ * or a function returning the indexing key out of the provided element
+ * @return \Cake\Utility\Collection
+ */
+	public function countBy($callback) {
+		$callback = $this->_propertyExtractor($callback);
+
+		$mapper = function($key, $value, $mr) use ($callback) {
+			$mr->emitIntermediate($callback($value), $value);
+		};
+
+		$reducer = function ($key, $values, $mr) {
+			$mr->emit(count($values), $key);
+		};
+		return new self(new MapReduce($this, $mapper, $reducer));
 	}
 
 	public function shuffle() {
