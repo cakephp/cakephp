@@ -84,7 +84,7 @@ class MapReduceTest extends TestCase {
 	}
 
 /**
- * Tests that a reducer is required when there are intermediate resutls
+ * Tests that a reducer is required when there are intermediate results
  *
  * @expectedException \LogicException
  * @return void

@@ -368,5 +368,51 @@ class CollectionTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($grouped));
 	}
 
+/**
+ * Tests indexBy
+ *
+ * @return void
+ */
+	public function testIndexBy() {
+		$items = [
+			['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+			['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+			['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+		];
+		$collection = new Collection($items);
+		$grouped = $collection->indexBy('id');
+		$expected = [
+			1 => ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+			3 => ['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+			2 => ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+		];
+		$this->assertEquals($expected, iterator_to_array($grouped));
+		$this->assertInstanceOf('\Cake\Utility\Collection', $grouped);
+
+		$grouped = $collection->indexBy(function($element) {
+			return $element['id'];
+		});
+		$this->assertEquals($expected, iterator_to_array($grouped));
+	}
+
+/**
+ * Tests indexBy with a deep property
+ *
+ * @return void
+ */
+	public function testIndexByDeep() {
+		$items = [
+			['id' => 1, 'name' => 'foo', 'thing' => ['parent_id' => 10]],
+			['id' => 2, 'name' => 'bar', 'thing' => ['parent_id' => 11]],
+			['id' => 3, 'name' => 'baz', 'thing' => ['parent_id' => 10]],
+		];
+		$collection = new Collection($items);
+		$grouped = $collection->indexBy('thing.parent_id');
+		$expected = [
+			10 => ['id' => 3, 'name' => 'baz', 'thing' => ['parent_id' => 10]],
+			11 => ['id' => 2, 'name' => 'bar', 'thing' => ['parent_id' => 11]],
+		];
+		$this->assertEquals($expected, iterator_to_array($grouped));
+	}
 
 }

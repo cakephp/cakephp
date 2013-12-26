@@ -420,7 +420,50 @@ class Collection extends IteratorIterator {
 		return new self($group);
 	}
 
-	public function indexBy($property) {
+/**
+ * Given a list, and an callback function that returns a key for each element
+ * in the list (or a property name) returns an object with an index of each item.
+ * Just like groupBy, but for when you know your keys are unique.
+ *
+ * When $callback is a string it should be a property name to extract or
+ * a dot separated path of properties that should be followed to get the last
+ * one in the path.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $items = [
+ *	['id' => 1, 'name' => 'foo'],
+ *	['id' => 2, 'name' => 'bar'],
+ *	['id' => 3, 'name' => 'baz'],
+ * ];
+ *
+ * $indexed = (new Collection($items))->indexBy('id');
+ *
+ * //Or
+ * $indexed = (new Collection($items))->indexBy(function($e) {
+ *	return $e['id'];
+ * });
+ *
+ * //Result will look like
+ * [
+ *	1 => ['id' => 1, 'name' => 'foo'],
+ *	3 => ['id' => 3, 'name' => 'baz'],
+ *	2 => ['id' => 2, 'name' => 'bar'],
+ * ];
+ * }}}
+ *
+ * @param callable|string the callback or column name to use for indexing
+ * or a function returning the indexing key out of the provided element
+ * @return \Cake\Utility\Collection
+ */
+	public function indexBy($callback) {
+		$callback = $this->_propertyExtractor($callback);
+		$group = [];
+		foreach ($this as $value) {
+			$group[$callback($value)] = $value;
+		}
+		return new self($group);
 	}
 
 	public function countBy($property) {
