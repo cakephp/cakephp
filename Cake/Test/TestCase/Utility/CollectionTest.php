@@ -277,4 +277,24 @@ class CollectionTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($map));
 	}
 
+/**
+ * Tests max
+ *
+ * @return void
+ */
+	public function testMax() {
+		$items = [
+			['a' => ['b' => ['c' => 4]]],
+			['a' => ['b' => ['c' => 10]]],
+			['a' => ['b' => ['c' => 6]]]
+		];
+		$collection = new Collection($items);
+		$this->assertEquals(['a' => ['b' => ['c' => 10]]], $collection->max('a.b.c'));
+
+		$callback = function($e) {
+			return sin($e['a']['b']['c']);
+		};
+		$this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
+	}
+
 }

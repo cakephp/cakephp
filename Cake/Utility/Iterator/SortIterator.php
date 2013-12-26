@@ -140,6 +140,21 @@ class SortIterator extends SplHeap {
 	}
 
 /**
+ * Returns the top of the heap. Rewinds the iterator if the heap is empty.
+ *
+ * @return mixed
+ */
+	public function top() {
+		if ($this->isEmpty()) {
+			$this->rewind();
+		}
+		if ($this->isEmpty()) {
+			return null;
+		}
+		return parent::top();
+	}
+
+/**
  * SplHeap removes elements upon iteration. Implementing rewind so that
  * this iterator can be reused, at least at a cost.
  *

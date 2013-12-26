@@ -273,7 +273,28 @@ class Collection extends IteratorIterator {
 		return new ExtractIterator($this, $matcher);
 	}
 
-	public function max(callable $c) {
+/**
+ * Returns the top element in this collection after being sorted by a property.
+ * Check method sortBy for information on the callback and $type parameters
+ *
+ * ###Examples:
+ *
+ * {{{
+ *	$max = $collection->max('age');
+ *  $max = $collection->max('user.salary');
+ *  $max = $collection->max(function($e) {
+ *		return $e->get('user')->get('salary');
+ *  });
+ * }}}
+ *
+ * @param callable|string the callback or column name to use for sorting
+ * @param integer $type the type of comparison to perform, either SORT_STRING
+ * SORT_NUMERIC or SORT_NATURAL
+ * @see \Cake\Utility\Collection::sortBy()
+ */
+	public function max($callback, $type = SORT_NUMERIC) {
+		$sorted = new SortIterator($this, $callback, SORT_DESC, $type);
+		return $sorted->top();
 	}
 
 	public function min() {

@@ -186,4 +186,20 @@ class SortIteratorTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($sorted));
 	}
 
+/**
+ * Tests top
+ *
+ * @return void
+ */
+	public function testTop() {
+		$items = new ArrayObject([3, 5, 1, 2, 4]);
+		$identity = function($a) {
+			return $a;
+		};
+		$sorted = new SortIterator($items, $identity);
+		$this->assertEquals(5, $sorted->top());
+
+		$sorted = new SortIterator([], $identity);
+		$this->assertNull($sorted->top());
+	}
 }
