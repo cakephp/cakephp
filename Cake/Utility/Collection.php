@@ -23,7 +23,7 @@ use Cake\Utility\Iterator\SortIterator;
 use Cake\Utility\MapReduce;
 use InvalidArgumentException;
 use IteratorIterator;
-use \JsonSerializable;
+use JsonSerializable;
 use LimitIterator;
 
 /**

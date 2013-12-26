@@ -463,7 +463,7 @@ trait CollectionTrait {
  * a dot separated path of properties that should be followed to get the last
  * one in the path.
  *
-  * ###Example:
+ * ###Example:
  *
  * {{{
  * $items = [
