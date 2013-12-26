@@ -399,12 +399,11 @@ class Cache {
  *
  * Examples:
  *
- * Using a Closure to provide data, assume $this is a Model:
+ * Using a Closure to provide data, assume `$this` is a Table object:
  *
  * {{{
- * $model = $this;
- * $results = Cache::remember('all_articles', function() use ($model) {
- *      return $model->find('all');
+ * $results = Cache::remember('all_articles', function() {
+ *      return $this->find('all');
  * });
  * }}}
  *
