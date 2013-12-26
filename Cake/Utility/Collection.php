@@ -370,7 +370,54 @@ class Collection extends IteratorIterator {
 		return new self(new SortIterator($this, $callback, $dir, $type));
 	}
 
-	public function groupBy($property) {
+/**
+ * Splits a collection into sets, grouped by the result of running each value
+ * through the callback. If $callback is is a string instead of a callable,
+ * groups by the property named by $callback on each of the values.
+ *
+ * When $callback is a string it should be a property name to extract or
+ * a dot separated path of properties that should be followed to get the last
+ * one in the path.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $items = [
+ *	['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+ *	['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+ *	['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+ * ];
+ *
+ * $group = (new Collection($items))->groupBy('parent_id');
+ *
+ * //Or
+ * $group = (new Collection($items))->groupBy(function($e) {
+ *	return $e['parent_id'];
+ * });
+ *
+ * //Result will look like
+ * [
+ *	10 => [
+ *		['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+ *		['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+ *	],
+ *	11 => [
+ *		['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+ *	]
+ * ];
+ * }}}
+ *
+ * @param callable|string the callback or column name to use for grouping
+ * or a function returning the grouping key out of the provided element
+ * @return \Cake\Utility\Collection
+ */
+	public function groupBy($callback) {
+		$callback = $this->_propertyExtractor($callback);
+		$group = [];
+		foreach ($this as $value) {
+			$group[$callback($value)][] = $value;
+		}
+		return new self($group);
 	}
 
 	public function indexBy($property) {
@@ -383,6 +430,46 @@ class Collection extends IteratorIterator {
 	}
 
 	public function sample($size) {
+	}
+
+/**
+ * Returns a callable that can be used to extract a property or column from
+ * an array or object based on a dot separated path.
+ *
+ * @param string|callable $callback A dot separated path of column to follow
+ * so that the final one can be returned or a callable that will take care
+ * of doing that.
+ * @return callable
+ */
+	protected function _propertyExtractor($callback) {
+		if (is_string($callback)) {
+			$path = $path = explode('.', $callback);
+			$callback = function($element) use ($path) {
+				return $this->_extract($element, $path);
+			};
+		}
+
+		return $callback;
+	}
+
+/**
+ * Returns a column from $data that can be extracted
+ * by iterating over the column names contained in $path
+ *
+ * @param array|\ArrayAccess $data
+ * @param array $path
+ * @return mixed
+ */
+	protected function _extract($data, $path) {
+		$value = null;
+		foreach ($path as $column) {
+			if (!isset($data[$column])) {
+				return null;
+			}
+			$value = $data[$column];
+			$data = $value;
+		}
+		return $value;
 	}
 
 }

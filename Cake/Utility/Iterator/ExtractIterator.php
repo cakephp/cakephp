@@ -65,15 +65,7 @@ class ExtractIterator extends Collection {
  */
 	public function current() {
 		$current = parent::current();
-		$value = null;
-		foreach ($this->_path as $column) {
-			if (!isset($current[$column])) {
-				return null;
-			}
-			$value = $current[$column];
-			$current = $value;
-		}
-		return $value;
+		return $this->_extract($current, $this->_path);
 	}
 
 }
