@@ -20,6 +20,7 @@ use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
 use Cake\Event\Event;
+use Cake\Utility\MapReduce;
 
 /**
  * Extends the base Query class to provide new methods related to association
