@@ -18,6 +18,7 @@ use ArrayIterator;
 use Cake\Utility\Iterator\ExtractIterator;
 use Cake\Utility\Iterator\FilterIterator;
 use Cake\Utility\Iterator\ReplaceIterator;
+use Cake\Utility\Iterator\SortIterator;
 use InvalidArgumentException;
 use IteratorIterator;
 
@@ -272,13 +273,50 @@ class Collection extends IteratorIterator {
 		return new ExtractIterator($this, $matcher);
 	}
 
-	public function max() {
+	public function max(callable $c) {
 	}
 
 	public function min() {
 	}
 
-	public function sortBy($property) {
+/**
+ * Returns a sorted iterator out of the elements in this colletion,
+ * ranked in ascending order by the results of running each value through a
+ * callback. $callback can also be a string representing the column or property
+ * name.
+ *
+ * The callback will receive as first argument each of the elements in $items,
+ * the value returned in the callback will be used as the value for sorting such
+ * element. Please not that the callback function could be called more than once
+ * per element.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $items = $collection->sortBy(function($user) {
+ *	return $user->age;
+ * });
+ *
+ * //alternatively
+ * $items = $collection->sortBy('age');
+ *
+ * //or use a property path
+ * $items = $collection->sortBy('department.name');
+ *
+ * // output all user name order by their age in descending order
+ * foreach ($items as $user) {
+ *	echo $user->name;
+ * }
+ * }}}
+ *
+ * @param callable|string the callback or column name to use for sorting
+ * @param integer $dir either SORT_DESC or SORT_ASC
+ * @param integer $type the type of comparison to perform, either SORT_STRING
+ * SORT_NUMERIC or SORT_NATURAL
+ * @return \Cake\Utility\Collection
+ */
+	public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC) {
+		return new self(new SortIterator($this, $callback, $dir, $type));
 	}
 
 	public function groupBy($property) {

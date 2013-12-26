@@ -54,11 +54,11 @@ class SortIteratorTest extends TestCase {
 			return sin($a);
 		};
 		$sorted = new SortIterator($items, $callback);
-		$expected = array_combine(range(4, 0), [2, 1, 3, 5, 4]);
+		$expected = array_combine(range(4, 0), [3, 2, 1, 5, 4]);
 		$this->assertEquals($expected, iterator_to_array($sorted));
 
 		$sorted = new SortIterator($items, $callback, SORT_ASC);
-		$expected = array_combine(range(4, 0), [4, 5, 3, 1, 2]);
+		$expected = array_combine(range(4, 0), [5, 4, 2, 1, 3]);
 		$this->assertEquals($expected, iterator_to_array($sorted));
 	}
 
@@ -130,6 +130,60 @@ class SortIteratorTest extends TestCase {
 		];
 		$this->assertEquals($expected, iterator_to_array($sorted));
 		$this->assertEquals($expected, iterator_to_array($sorted), 'Iterator should rewind');
+	}
+
+/**
+ * Tests sorting a complex structure with natural sort with string callback
+ *
+ * @return void
+ */
+	public function testSortComplexNaturalWithPath() {
+		$items = new ArrayObject([
+			['foo' => 'foo_1', 'bar' => 'a'],
+			['foo' => 'foo_10', 'bar' => 'a'],
+			['foo' => 'foo_2', 'bar' => 'a'],
+			['foo' => 'foo_13', 'bar' => 'a'],
+		]);
+		$sorted = new SortIterator($items, 'foo', SORT_DESC, SORT_NATURAL);
+		$expected = [
+			3 => ['foo' => 'foo_13', 'bar' => 'a'],
+			2 => ['foo' => 'foo_10', 'bar' => 'a'],
+			1 => ['foo' => 'foo_2', 'bar' => 'a'],
+			0 => ['foo' => 'foo_1', 'bar' => 'a'],
+		];
+		$this->assertEquals($expected, iterator_to_array($sorted));
+
+		$sorted = new SortIterator($items, 'foo', SORT_ASC, SORT_NATURAL);
+		$expected = [
+			3 => ['foo' => 'foo_1', 'bar' => 'a'],
+			2 => ['foo' => 'foo_2', 'bar' => 'a'],
+			1 => ['foo' => 'foo_10', 'bar' => 'a'],
+			0 => ['foo' => 'foo_13', 'bar' => 'a'],
+		];
+		$this->assertEquals($expected, iterator_to_array($sorted));
+		$this->assertEquals($expected, iterator_to_array($sorted), 'Iterator should rewind');
+	}
+
+/**
+ * Tests sorting a complex structure with a deep path
+ *
+ * @return void
+ */
+	public function testSortComplexDeepPath() {
+		$items = new ArrayObject([
+			['foo' => ['bar' => 1], 'bar' => 'a'],
+			['foo' => ['bar' => 12], 'bar' => 'a'],
+			['foo' => ['bar' => 10], 'bar' => 'a'],
+			['foo' => ['bar' => 2], 'bar' => 'a'],
+		]);
+		$sorted = new SortIterator($items, 'foo.bar', SORT_ASC, SORT_NUMERIC);
+		$expected = [
+			3 => ['foo' => ['bar' => 1], 'bar' => 'a'],
+			2 => ['foo' => ['bar' => 2], 'bar' => 'a'],
+			1 => ['foo' => ['bar' => 10], 'bar' => 'a'],
+			0 => ['foo' => ['bar' => 12], 'bar' => 'a'],
+		];
+		$this->assertEquals($expected, iterator_to_array($sorted));
 	}
 
 }

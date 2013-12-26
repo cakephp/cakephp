@@ -77,18 +77,35 @@ class SortIterator extends SplHeap {
  * per element.
  *
  * @param array|\Traversable $items The values to sort
- * @param callable $callback A function used to return the actual value to be
- * compared
+ * @param callable|string $callback A function used to return the actual value to
+ * be compared. It can also be a string representing the path to use to fetch a
+ * column or property in each element
  * @param integer $dir either SORT_DESC or SORT_ASC
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @return void
  */
-	public function __construct($items = [], callable $c, $dir = SORT_DESC, $type = SORT_STRING) {
+	public function __construct($items = [], $c, $dir = SORT_DESC, $type = SORT_NUMERIC) {
 		$this->_items = $items;
-		$this->_callback = $c;
 		$this->_dir = $dir;
 		$this->_type = $type;
+
+		if (is_string($c)) {
+			$path = explode('.', $c);
+			$c = function($current) use ($path) {
+				$value = null;
+				foreach ($path as $column) {
+					if (!isset($current[$column])) {
+						return null;
+					}
+					$value = $current[$column];
+					$current = $value;
+				}
+				return $value;
+			};
+		}
+
+		$this->_callback = $c;
 	}
 
 /**

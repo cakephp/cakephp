@@ -255,4 +255,26 @@ class CollectionTest extends TestCase {
 		$this->assertEquals([1, null], iterator_to_array($map));
 	}
 
+/**
+ * Tests sort
+ *
+ * @return void
+ */
+	public function testSortString() {
+		$items = [
+			['a' => ['b' => ['c' => 4]]],
+			['a' => ['b' => ['c' => 10]]],
+			['a' => ['b' => ['c' => 6]]]
+		];
+		$collection = new Collection($items);
+		$map = $collection->sortBy('a.b.c');
+		$this->assertInstanceOf('\Cake\Utility\Collection', $map);
+		$expected = [
+			2 => ['a' => ['b' => ['c' => 10]]],
+			1 =>['a' => ['b' => ['c' => 6]]],
+			0 => ['a' => ['b' => ['c' => 4]]],
+		];
+		$this->assertEquals($expected, iterator_to_array($map));
+	}
+
 }
