@@ -23,13 +23,14 @@ use Cake\Utility\Iterator\SortIterator;
 use Cake\Utility\MapReduce;
 use InvalidArgumentException;
 use IteratorIterator;
+use \JsonSerializable;
 use LimitIterator;
 
 /**
  * A collection is an immutable list of elements with a handful of functions to
  * iterate, group, transform and extract information from it.
  */
-class Collection extends IteratorIterator {
+class Collection extends IteratorIterator implements JsonSerializable {
 
 	use CollectionTrait;
 

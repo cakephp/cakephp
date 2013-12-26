@@ -22,7 +22,6 @@ use Cake\Utility\Iterator\SortIterator;
 use Cake\Utility\MapReduce;
 use LimitIterator;
 
-
 /**
  * Offers a handful of method to manipulate iterators
  */
@@ -526,6 +525,26 @@ trait CollectionTrait {
  */
 	public function sample($size = 10) {
 		return new Collection(new LimitIterator($this, 0, $size));
+	}
+
+/**
+ * Returns an array representation of the results
+ *
+ * @return array
+ */
+	public function toArray() {
+		return iterator_to_array($this);
+	}
+
+/**
+ * Convert a result set into JSON.
+ *
+ * Part of JsonSerializable interface.
+ *
+ * @return array The data to convert to JSON
+ */
+	public function jsonSerialize() {
+		return $this->toArray();
 	}
 
 /**

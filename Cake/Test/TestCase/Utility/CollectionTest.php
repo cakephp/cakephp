@@ -17,6 +17,10 @@ namespace Cake\Test\TestCase\Utility;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Collection;
 
+/**
+ * CollectionTest
+ *
+ */
 class CollectionTest extends TestCase {
 
 /**
