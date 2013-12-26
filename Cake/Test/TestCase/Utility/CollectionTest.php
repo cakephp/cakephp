@@ -474,4 +474,27 @@ class CollectionTest extends TestCase {
 			$this->assertContains($value, $data);
 		}
 	}
+
+/**
+ * Test toArray method
+ *
+ * @return void
+ */
+	public function testToArray() {
+		$data = [1, 2, 3, 4];
+		$collection = new Collection($data);
+		$this->assertEquals($data, $collection->toArray());
+	}
+
+/**
+ * Test json enconding
+ *
+ * @return void
+ */
+	public function testToJson() {
+		$data = [1, 2, 3, 4];
+		$collection = new Collection($data);
+		$this->assertEquals(json_encode($data), json_encode($collection));
+	}
+
 }
