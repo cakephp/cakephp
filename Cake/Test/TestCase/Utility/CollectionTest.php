@@ -297,4 +297,19 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->max($callback));
 	}
 
+/**
+ * Tests min
+ *
+ * @return void
+ */
+	public function testMin() {
+		$items = [
+			['a' => ['b' => ['c' => 4]]],
+			['a' => ['b' => ['c' => 10]]],
+			['a' => ['b' => ['c' => 6]]]
+		];
+		$collection = new Collection($items);
+		$this->assertEquals(['a' => ['b' => ['c' => 4]]], $collection->min('a.b.c'));
+	}
+
 }

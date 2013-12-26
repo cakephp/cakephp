@@ -280,11 +280,15 @@ class Collection extends IteratorIterator {
  * ###Examples:
  *
  * {{{
- *	$max = $collection->max('age');
- *  $max = $collection->max('user.salary');
- *  $max = $collection->max(function($e) {
- *		return $e->get('user')->get('salary');
- *  });
+ * //For a collection of employees
+ * $max = $collection->max('age');
+ * $max = $collection->max('user.salary');
+ * $max = $collection->max(function($e) {
+ *	return $e->get('user')->get('salary');
+ * });
+ *
+ * //Display employee name
+ * echo $max->name;
  * }}}
  *
  * @param callable|string the callback or column name to use for sorting
@@ -297,7 +301,33 @@ class Collection extends IteratorIterator {
 		return $sorted->top();
 	}
 
-	public function min() {
+/**
+ * Returns the bottom element in this collection after being sorted by a property.
+ * Check method sortBy for information on the callback and $type parameters
+ *
+ * ###Examples:
+ *
+ * {{{
+ * //For a collection of employees
+ * $min = $collection->min('age');
+ * $min = $collection->min('user.salary');
+ * $min = $collection->min(function($e) {
+ *	return $e->get('user')->get('salary');
+ * });
+ *
+ * //Display employee name
+ * echo $min->name;
+ * }}}
+ *
+ *
+ * @param callable|string the callback or column name to use for sorting
+ * @param integer $type the type of comparison to perform, either SORT_STRING
+ * SORT_NUMERIC or SORT_NATURAL
+ * @see \Cake\Utility\Collection::sortBy()
+ */
+	public function min($callback, $type = SORT_NUMERIC) {
+		$sorted = new SortIterator($this, $callback, SORT_ASC, $type);
+		return $sorted->top();
 	}
 
 /**
