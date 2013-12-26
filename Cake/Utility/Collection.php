@@ -15,6 +15,7 @@
 namespace Cake\Utility;
 
 use ArrayIterator;
+use Cake\Utility\Iterator\ExtractIterator;
 use Cake\Utility\Iterator\FilterIterator;
 use Cake\Utility\Iterator\ReplaceIterator;
 use InvalidArgumentException;
@@ -241,12 +242,34 @@ class Collection extends IteratorIterator {
 		return $result;
 	}
 
-	public function mapReduce(callable $map, callable $reduce) {
-	}
-
-
-	public function extract($property) {
-
+/**
+ * Returns a new collection containing the column or property value found in each
+ * of th elements, as requested in the $matcher param.
+ *
+ * The matcher can be a string with a property name to extract or a dot separated
+ * path of properties that should be followed to get the last one in the path.
+ *
+ * If a column or property could not be found for a particular element in the
+ * collection, that position is filled with null.
+ *
+ * ### Example:
+ *
+ * Extract the user name for all comments in the array:
+ *
+ * {{{
+ * $items = [
+ *	['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
+ *	['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
+ * ];
+ * $extractor = new ExtractIterator($items, 'comment.user.name'');
+ * }}}
+ *
+ * @param string $path a dot separated string symbolizing the path to follow
+ * inside the hierarchy of each value so that the column can be extracted.
+ * @return \Cake\Utility\Iterator\ExtractIterator
+ */
+	public function extract($matcher) {
+		return new ExtractIterator($this, $matcher);
 	}
 
 	public function max() {

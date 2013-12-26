@@ -241,4 +241,18 @@ class CollectionTest extends TestCase {
 			->will($this->returnValue(16));
 		$this->assertEquals(16, $collection->reduce($callable, 10));
 	}
+
+/**
+ * Tests extract
+ *
+ * @return void
+ */
+	public function testExtract() {
+		$items = [['a' => ['b' => ['c' => 1]]], 2];
+		$collection = new Collection($items);
+		$map = $collection->extract('a.b.c');
+		$this->assertInstanceOf('\Cake\Utility\Iterator\ExtractIterator', $map);
+		$this->assertEquals([1, null], iterator_to_array($map));
+	}
+
 }
