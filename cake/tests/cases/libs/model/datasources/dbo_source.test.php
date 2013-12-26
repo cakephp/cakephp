@@ -2766,7 +2766,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->testDb->conditions(array('Model.field::integer' => 5));
-		$expected = " WHERE `Model`.`field::integer` = '5'"; // known bug
+		$expected = " WHERE `Model`.`field::integer` = '5'";
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->testDb->conditions(array('"Model"."field"::integer' => 5));
@@ -2790,7 +2790,7 @@ class DboSourceTest extends CakeTestCase {
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->testDb->conditions(array('Model.field::integer BETWEEN ? AND ?' => array(5, 50)));
-		$expected = " WHERE `Model`.`field::integer` BETWEEN '5' AND '50'"; // known bug
+		$expected = " WHERE `Model`.`field::integer` BETWEEN '5' AND '50'";
 		$this->assertEqual($result, $expected);
 		
 		$result = $this->testDb->conditions(array('"Model"."field"::integer BETWEEN ? AND ?' => array(5, 50)));
