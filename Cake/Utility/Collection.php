@@ -24,8 +24,18 @@ use InvalidArgumentException;
 use IteratorIterator;
 use LimitIterator;
 
+/**
+ * A collection is an immutable list of elements with a handful of functions to
+ * iterate, group, transform and extract information from it.
+ */
 class Collection extends IteratorIterator {
 
+/**
+ * Constructor. You can provide an array or any traversable object
+ *
+ * @param array|\Traversable $items
+ * @return void
+ */
 	public function __construct($items) {
 		if (is_array($items)) {
 			$items = new ArrayIterator($items);
@@ -37,6 +47,11 @@ class Collection extends IteratorIterator {
 		parent::__construct($items);
 	}
 
+/**
+ * Returns the iterator with this collection's elements
+ *
+ * @return \Traversable
+ */
 	public function getIterator() {
 		return $this->_iterator;
 	}
