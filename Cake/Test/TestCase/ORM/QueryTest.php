@@ -860,6 +860,7 @@ class QueryTest extends TestCase {
  */
 	public function testSetResult() {
 		$query = new Query($this->connection, $this->table);
+
 		$stmt = $this->getMock('Cake\Database\StatementInterface');
 		$results = new ResultSet($query, $stmt);
 		$query->setResult($results);
@@ -1055,7 +1056,7 @@ class QueryTest extends TestCase {
  */
 	public function testResultsAreWrappedInMapReduce() {
 		$params = [$this->connection, $this->table];
-		$query = $this->getMock('\Cake\ORM\Query', ['executeStatement'], $params);
+		$query = $this->getMock('\Cake\ORM\Query', ['_executeStatement'], $params);
 
 		$statement = $this->getMock('\Database\StatementInterface', ['fetch', 'closeCursor']);
 		$statement->expects($this->exactly(3))
@@ -1063,7 +1064,7 @@ class QueryTest extends TestCase {
 			->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));
 
 		$query->expects($this->once())
-			->method('executeStatement')
+			->method('_executeStatement')
 			->will($this->returnValue($statement));
 
 		$query->mapReduce(function($k, $v, $mr) {
@@ -1416,6 +1417,8 @@ class QueryTest extends TestCase {
 
 /**
  * Test that count() returns correct results with group by.
+ *
+ * @return void
  */
 	public function testCountWithGroup() {
 		$table = TableRegistry::get('articles');
@@ -1423,6 +1426,45 @@ class QueryTest extends TestCase {
 			->group(['published']);
 		$result = $query->count();
 		$this->assertEquals(1, $result);
+	}
+
+/**
+ * Test that there is no beforeFind event with update queries.
+ *
+ * @return void
+ */
+	public function testUpdateNoBeforeFind() {
+		$table = TableRegistry::get('articles');
+		$table->getEventManager()->attach(function() {
+			$this->fail('No callback should be fired');
+		}, 'Model.beforeFind');
+
+		$query = $table->query()
+			->update($table->table())
+			->set(['title' => 'First']);
+
+		$result = $query->execute();
+		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+		$this->assertTrue($result->rowCount() > 0);
+	}
+
+/**
+ * Test that there is no beforeFind event with delete queries.
+ *
+ * @return void
+ */
+	public function testDeleteNoBeforeFind() {
+		$table = TableRegistry::get('articles');
+		$table->getEventManager()->attach(function() {
+			$this->fail('No callback should be fired');
+		}, 'Model.beforeFind');
+
+		$query = $table->query()
+			->delete($table->table());
+
+		$result = $query->execute();
+		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+		$this->assertTrue($result->rowCount() > 0);
 	}
 
 }
