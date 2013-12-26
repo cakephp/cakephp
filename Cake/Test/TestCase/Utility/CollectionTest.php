@@ -441,4 +441,20 @@ class CollectionTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($grouped));
 	}
 
+/**
+ * Tests shuffle
+ *
+ * @return void
+ */
+	public function testShuffle() {
+		$data = [1, 2, 3, 4];
+		$collection = (new Collection($data))->shuffle();
+		$this->assertEquals(count($data), count(iterator_to_array($collection)));
+
+		foreach ($collection as $value) {
+			$this->assertContains($value, $data);
+		}
+	}
+
+
 }

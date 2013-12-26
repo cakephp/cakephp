@@ -516,7 +516,16 @@ class Collection extends IteratorIterator {
 		return new self(new MapReduce($this, $mapper, $reducer));
 	}
 
+/**
+ * Returns a new collection with the elements placed in a random order,
+ * this function does not preserve the original keys in the collection.
+ *
+ * @return \Cake\Utility\Collection
+ */
 	public function shuffle() {
+		$elements = iterator_to_array($this);
+		shuffle($elements);
+		return new self($elements);
 	}
 
 	public function sample($size) {
