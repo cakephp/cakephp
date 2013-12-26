@@ -1449,7 +1449,7 @@ class QueryTest extends TestCase {
 		$union = (new Query($this->connection))
 			->select(['id', 'title'])
 			->from(['c' => 'articles']);
-		$query->select(['id', 'comment'], true)->union($union, false, true);
+		$query->select(['id', 'comment'], true)->union($union, true);
 		$result = $query->execute();
 		$this->assertCount(self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
 		$this->assertEquals($rows, $result->fetchAll());
@@ -1477,7 +1477,7 @@ class QueryTest extends TestCase {
 			->where(['id ' => 1])
 			->order(['id' => 'desc']);
 
-		$query->select(['foo' => 'id', 'bar' => 'comment'])->union($union, true);
+		$query->select(['foo' => 'id', 'bar' => 'comment'])->unionAll($union);
 		$result = $query->execute();
 		$this->assertCount(1 + self::COMMENT_COUNT + self::ARTICLE_COUNT, $result);
 		$this->assertNotEquals($rows, $result->fetchAll());

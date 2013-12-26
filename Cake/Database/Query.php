@@ -1163,7 +1163,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * required by calling multiple times this method with different queries.
  *
  * By default, the UNION operator will remove duplicate rows, if you wish to include
- * every row for all queries, set the second argument to true.
+ * every row for all queries, use unionAll()
  *
  * ## Examples
  *
@@ -1176,9 +1176,33 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * ``SELECT id, name FROM things d UNION SELECT id, title FROM articles a``
  *
+ * @param string|Query $query full SQL query to be used in UNION operator
+ * @param boolean $overwrite whether to reset the list of queries to be operated or not
+ * @return Query
+ */
+	public function union($query, $overwrite = false) {
+		if ($overwrite) {
+			$this->_parts['union'] = [];
+		}
+		$this->_parts['union'][] = [
+			'all' => false,
+			'query' => $query
+		];
+		$this->_dirty();
+		return $this;
+	}
+
+/**
+ * Adds a complete query to be used in conjunction with the UNION ALL operator with
+ * this query. This is used to combine the result set of this query with the one
+ * that will be returned by the passed query. You can add as many queries as you
+ * required by calling multiple times this method with different queries.
+ *
+ * Unlike UNION, UNION ALL will not remove duplicate rows.
+ *
  * {{{
- *	$union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
- *	$query->select(['id', 'name'])->from(['d' => 'things'])->union($union, true);
+ * $union = (new Query($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+ * $query->select(['id', 'name'])->from(['d' => 'things'])->unionAll($union);
  * }}}
  *
  * Will produce:
@@ -1186,15 +1210,17 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * ``SELECT id, name FROM things d UNION ALL SELECT id, title FROM articles a``
  *
  * @param string|Query $query full SQL query to be used in UNION operator
- * @param boolean $all whether to use UNION ALL or not
  * @param boolean $overwrite whether to reset the list of queries to be operated or not
  * @return Query
  */
-	public function union($query, $all = false, $overwrite = false) {
+	public function unionAll($query, $overwrite = false) {
 		if ($overwrite) {
 			$this->_parts['union'] = [];
 		}
-		$this->_parts['union'][] = compact('all', 'query');
+		$this->_parts['union'][] = [
+			'all' => true,
+			'query' => $query
+		];
 		$this->_dirty();
 		return $this;
 	}
