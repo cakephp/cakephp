@@ -323,7 +323,7 @@ trait CollectionTrait {
  * name.
  *
  * The callback will receive as its first argument each of the elements in $items,
- *the value returned by the callback will be used as the value for sorting such
+ * the value returned by the callback will be used as the value for sorting such
  * element. Please note that the callback function could be called more than once
  * per element.
  *
