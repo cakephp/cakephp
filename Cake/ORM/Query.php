@@ -20,7 +20,7 @@ use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
 use Cake\Event\Event;
-use Cake\Utility\MapReduce;
+use Cake\Collection\Iterator\MapReduce;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -590,7 +590,7 @@ class Query extends DatabaseQuery {
  * @param callable $reducer
  * @param boolean $overwrite
  * @return Cake\ORM\Query|array
- * @see Cake\ORM\MapReduce for details on how to use emit data to the map reducer.
+ * @see Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
  */
 	public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false) {
 		if ($overwrite) {

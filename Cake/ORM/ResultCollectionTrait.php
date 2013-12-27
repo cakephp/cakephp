@@ -16,9 +16,9 @@
  */
 namespace Cake\ORM;
 
-use \Cake\Utility\CollectionTrait;
-use \Iterator;
-use \Serializable;
+use Cake\Collection\CollectionTrait;
+use Iterator;
+use Serializable;
 
 /**
  * Common set of methods that any specific ResultSet implementation

@@ -12,14 +12,14 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Utility;
+namespace Cake\Collection;
 
-use Cake\Utility\Collection;
-use Cake\Utility\Iterator\ExtractIterator;
-use Cake\Utility\Iterator\FilterIterator;
-use Cake\Utility\Iterator\ReplaceIterator;
-use Cake\Utility\Iterator\SortIterator;
-use Cake\Utility\MapReduce;
+use Cake\Collection\Collection;
+use Cake\Collection\Iterator\ExtractIterator;
+use Cake\Collection\Iterator\FilterIterator;
+use Cake\Collection\Iterator\MapReduce;
+use Cake\Collection\Iterator\ReplaceIterator;
+use Cake\Collection\Iterator\SortIterator;
 use LimitIterator;
 
 /**

@@ -12,9 +12,9 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Utility\Iterator;
+namespace Cake\Collection\Iterator;
 
-use Cake\Utility\Collection;
+use Cake\Collection\Collection;
 use CallbackFilterIterator;
 use Iterator;
 

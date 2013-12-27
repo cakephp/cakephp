@@ -11,11 +11,11 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\Collection\Iterator;
 
-use Cake\Utility\MapReduce;
+use ArrayIterator;
+use Cake\Collection\Iterator\MapReduce;
 use Cake\TestSuite\TestCase;
-use \ArrayIterator;
 
 /**
  * Tests MapReduce class

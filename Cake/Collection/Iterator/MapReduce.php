@@ -11,10 +11,10 @@
  * @link          http://cakephp.org CakePHP(tm) Project
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Utility;
+namespace Cake\Collection\Iterator;
 
-use \ArrayIterator;
-use \IteratorAggregate;
+use ArrayIterator;
+use IteratorAggregate;
 
 /**
  * Implements a simplistic version of the popular Map-Reduce algorithm. Acts

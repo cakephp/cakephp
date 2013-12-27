@@ -12,10 +12,10 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Utility;
+namespace Cake\Collection;
 
 use ArrayIterator;
-use Cake\Utility\CollectionTrait;
+use Cake\Collection\CollectionTrait;
 use InvalidArgumentException;
 use IteratorIterator;
 use JsonSerializable;

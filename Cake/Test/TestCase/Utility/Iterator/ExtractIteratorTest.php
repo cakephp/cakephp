@@ -12,11 +12,11 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Utility\Iterator;
+namespace Cake\Test\TestCase\Collection\Iterator;
 
 use ArrayObject;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Iterator\ExtractIterator;
+use Cake\Collection\Iterator\ExtractIterator;
 
 /**
  * ExtractIterator Test

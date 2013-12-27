@@ -12,10 +12,10 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Utility;
+namespace Cake\Test\TestCase\Collection;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Collection;
+use Cake\Collection\Collection;
 
 /**
  * CollectionTest
@@ -82,7 +82,7 @@ class CollectionTest extends TestCase {
 			return $value > 2;
 		});
 
-		$this->assertInstanceOf('\Cake\Utility\Collection', $filtered);
+		$this->assertInstanceOf('\Cake\Collection\Collection', $filtered);
 		$filtered->each($callable);
 	}
 
@@ -99,7 +99,7 @@ class CollectionTest extends TestCase {
 			return $v > 2;
 		});
 		$this->assertEquals(['a' => 1, 'b' => 2], iterator_to_array($result));
-		$this->assertInstanceOf('\Cake\Utility\Collection', $result);
+		$this->assertInstanceOf('\Cake\Collection\Collection', $result);
 	}
 
 /**
@@ -218,7 +218,7 @@ class CollectionTest extends TestCase {
 			$this->assertSame($collection, $it);
 			return $v * $v;
 		});
-		$this->assertInstanceOf('\Cake\Utility\Iterator\ReplaceIterator', $map);
+		$this->assertInstanceOf('\Cake\Collection\Iterator\ReplaceIterator', $map);
 		$this->assertEquals(['a' => 1, 'b' => 4, 'c' => 9], iterator_to_array($map));
 	}
 
@@ -255,7 +255,7 @@ class CollectionTest extends TestCase {
 		$items = [['a' => ['b' => ['c' => 1]]], 2];
 		$collection = new Collection($items);
 		$map = $collection->extract('a.b.c');
-		$this->assertInstanceOf('\Cake\Utility\Iterator\ExtractIterator', $map);
+		$this->assertInstanceOf('\Cake\Collection\Iterator\ExtractIterator', $map);
 		$this->assertEquals([1, null], iterator_to_array($map));
 	}
 
@@ -272,7 +272,7 @@ class CollectionTest extends TestCase {
 		];
 		$collection = new Collection($items);
 		$map = $collection->sortBy('a.b.c');
-		$this->assertInstanceOf('\Cake\Utility\Collection', $map);
+		$this->assertInstanceOf('\Cake\Collection\Collection', $map);
 		$expected = [
 			2 => ['a' => ['b' => ['c' => 10]]],
 			1 =>['a' => ['b' => ['c' => 6]]],
@@ -339,7 +339,7 @@ class CollectionTest extends TestCase {
 			]
 		];
 		$this->assertEquals($expected, iterator_to_array($grouped));
-		$this->assertInstanceOf('\Cake\Utility\Collection', $grouped);
+		$this->assertInstanceOf('\Cake\Collection\Collection', $grouped);
 
 		$grouped = $collection->groupBy(function($element) {
 			return $element['parent_id'];
@@ -391,7 +391,7 @@ class CollectionTest extends TestCase {
 			2 => ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
 		];
 		$this->assertEquals($expected, iterator_to_array($grouped));
-		$this->assertInstanceOf('\Cake\Utility\Collection', $grouped);
+		$this->assertInstanceOf('\Cake\Collection\Collection', $grouped);
 
 		$grouped = $collection->indexBy(function($element) {
 			return $element['id'];
@@ -437,7 +437,7 @@ class CollectionTest extends TestCase {
 			11 => 1
 		];
 		$this->assertEquals($expected, iterator_to_array($grouped));
-		$this->assertInstanceOf('\Cake\Utility\Collection', $grouped);
+		$this->assertInstanceOf('\Cake\Collection\Collection', $grouped);
 
 		$grouped = $collection->countBy(function($element) {
 			return $element['parent_id'];
