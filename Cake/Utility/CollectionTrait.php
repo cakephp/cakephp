@@ -93,7 +93,7 @@ trait CollectionTrait {
  * be present in the resulting collection:
  *
  * {{{
- * $collection = (new Collection([1, 2, 3]))->filter(function($value, $key) {
+ * $collection = (new Collection([1, 2, 3]))->reject(function($value, $key) {
  *	return $value % 2 === 0;
  * });
  * }}}
@@ -119,8 +119,8 @@ trait CollectionTrait {
  * ###Example:
  *
  * {{{
- * $legalAge = (new Collection([24, 45, 60, 15]))->every(function($value, $key) {
- *	return $value >= 21;
+ * $overTwentyOne = (new Collection([24, 45, 60, 15]))->every(function($value, $key) {
+ *	return $value > 21;
  * });
  * }}}
  *
@@ -142,13 +142,13 @@ trait CollectionTrait {
  * provided in the callback.
  *
  * Each time the callback is executed it will receive the value of the element
- * in the current iteration and  the key of the element as arguments, in that
+ * in the current iteration and the key of the element as arguments, in that
  * order.
  *
  * ###Example:
  *
  * {{{
- * $hasUnderAge = (new Collection([24, 45, 15]))->every(function($value, $key) {
+ * $hasYoungPeople = (new Collection([24, 45, 15]))->every(function($value, $key) {
  *	return $value < 21;
  * });
  * }}}
@@ -183,11 +183,6 @@ trait CollectionTrait {
 	}
 
 /**
- * Creates an iterator from another iterator that will modify each of the values
- * by converting them using a callback function.
- */
-
-/**
  * Returns another collection after modifying each of the values in this one using
  * the provided callable.
  *
@@ -200,8 +195,8 @@ trait CollectionTrait {
  * Getting a collection of booleans where true indicates if a person is female:
  *
  * {{{
- * $collection = (new Collection($people))->filter(function($person, $key) {
- *	return $person->sex === 'female';
+ * $collection = (new Collection($people))->map(function($person, $key) {
+ *	return $person->gender === 'female';
  * });
  * }}}
  *
@@ -250,7 +245,10 @@ trait CollectionTrait {
  *	['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
  *	['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
  * ];
- * $extractor = new ExtractIterator($items, 'comment.user.name'');
+ * $extracted = (new Collection($items))->extract('comment.user.name');
+ *
+ * //Result will look like this when converted to array
+ * ['Mark', 'Renan']
  * }}}
  *
  * @param string $path a dot separated string symbolizing the path to follow
@@ -263,7 +261,7 @@ trait CollectionTrait {
 
 /**
  * Returns the top element in this collection after being sorted by a property.
- * Check method sortBy for information on the callback and $type parameters
+ * Check the sortBy method for information on the callback and $type parameters
  *
  * ###Examples:
  *
@@ -291,7 +289,7 @@ trait CollectionTrait {
 
 /**
  * Returns the bottom element in this collection after being sorted by a property.
- * Check method sortBy for information on the callback and $type parameters
+ * Check the sortBy method for information on the callback and $type parameters
  *
  * ###Examples:
  *
@@ -324,9 +322,9 @@ trait CollectionTrait {
  * callback. $callback can also be a string representing the column or property
  * name.
  *
- * The callback will receive as first argument each of the elements in $items,
- * the value returned in the callback will be used as the value for sorting such
- * element. Please not that the callback function could be called more than once
+ * The callback will receive as its first argument each of the elements in $items,
+ *the value returned by the callback will be used as the value for sorting such
+ * element. Please note that the callback function could be called more than once
  * per element.
  *
  * ###Example:
@@ -409,8 +407,8 @@ trait CollectionTrait {
 	}
 
 /**
- * Given a list, and an callback function that returns a key for each element
- * in the list (or a property name) returns an object with an index of each item.
+ * Given a list and a callback function that returns a key for each element
+ * in the list (or a property name), returns an object with an index of each item.
  * Just like groupBy, but for when you know your keys are unique.
  *
  * When $callback is a string it should be a property name to extract or
@@ -524,7 +522,7 @@ trait CollectionTrait {
  * @return \Cake\Utility\Collection
  */
 	public function sample($size = 10) {
-		return new Collection(new LimitIterator($this, 0, $size));
+		return new Collection(new LimitIterator($this->shuffle(), 0, $size));
 	}
 
 /**

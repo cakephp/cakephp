@@ -30,7 +30,6 @@ class ExtractIterator extends Collection {
  */
 	protected $_path;
 
-
 /**
  * Creates the iterator that will return the requested property for each value
  * in the collection expressed in $path
