@@ -51,9 +51,8 @@ class DatabaseSession implements SessionHandlerInterface {
 		$modelAlias = Configure::read('Session.handler.model');
 
 		if (empty($modelAlias)) {
-			$this->_table = TableRegistry::get('Sessions', [
-				'table' => 'cake_sessions',
-			]);
+			$config = TableRegistry::exists('Sessions') ? [] : ['table' => 'cake_sessions'];
+			$this->_table = TableRegistry::get('Sessions', $config);
 		} else {
 			$this->_table = TableRegistry::get($modelAlias);
 		}
