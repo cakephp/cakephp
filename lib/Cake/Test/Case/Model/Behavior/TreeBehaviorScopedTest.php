@@ -131,6 +131,29 @@ class TreeBehaviorScopedTest extends CakeTestCase {
 	}
 
 /**
+ * testSaveWithParentAndInvalidScope method
+ *
+ * Attempting to save an invalid data should not trigger an `Undefined offset`
+ * error
+ *
+ * @return void
+ */
+	public function testSaveWithParentAndInvalidScope() {
+		$this->Tree = new FlagTree();
+		$this->Tree->order = null;
+		$data = $this->Tree->create(array(
+			'name' => 'Flag',
+		));
+		$tree = $this->Tree->save($data);
+		$this->Tree->Behaviors->load('Tree', array(
+			'scope' => array('FlagTree.flag' => 100)
+		));
+		$tree['FlagTree']['parent_id'] = 1;
+		$result = $this->Tree->save($tree);
+		$this->assertFalse($result);
+	}
+
+/**
  * testMoveUpWithScope method
  *
  * @return void
