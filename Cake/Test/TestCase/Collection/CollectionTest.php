@@ -507,4 +507,33 @@ class CollectionTest extends TestCase {
 	public function testInvalidConstructorArgument() {
 		new Collection('Derp');
 	}
+
+/**
+ * Tests take method
+ *
+ * @return void
+ */
+	public function testTake() {
+		$data = [1, 2, 3, 4];
+		$collection = new Collection($data);
+
+		$taken = $collection->take(2);
+		$this->assertEquals([1, 2], $taken->toArray());
+
+		$taken = $collection->take(3);
+		$this->assertEquals([1, 2, 3], $taken->toArray());
+
+		$taken = $collection->take(500);
+		$this->assertEquals([1, 2, 3, 4], $taken->toArray());
+
+		$taken = $collection->take(1);
+		$this->assertEquals([1], $taken->toArray());
+
+		$taken = $collection->take();
+		$this->assertEquals([1], $taken->toArray());
+
+		$taken = $collection->take(2, 2);
+		$this->assertEquals([2 => 3, 3 => 4], $taken->toArray());
+	}
+
 }

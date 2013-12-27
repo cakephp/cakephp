@@ -526,6 +526,20 @@ trait CollectionTrait {
 	}
 
 /**
+ * Returns a new collection with maximum $size elements in the internal
+ * order this collection was created. If a second parameter is passed, it
+ * will determine from what position to start taking elements.
+ *
+ * @param integer $size the maximum number of elements to take from
+ * this collection
+ * @param integer $from A positional offset from where to take the elements
+ * @return \Cake\Collection\Collection
+ */
+	public function take($size = 1, $from = 0) {
+		return new Collection(new LimitIterator($this, $from, $size));
+	}
+
+/**
  * Returns an array representation of the results
  *
  * @return array
