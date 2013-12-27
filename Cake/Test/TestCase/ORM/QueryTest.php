@@ -211,7 +211,7 @@ class QueryTest extends TestCase {
 			]
 		];
 
-		$table = TableRegistry::get('foo', ['schema' => ['id' => ['type' => 'integer']]]);
+		$table = TableRegistry::get('foo');
 		$query = new Query($this->connection, $table);
 
 		$query->select('foo.id')->contain($contains)->sql();

@@ -237,9 +237,11 @@ abstract class Association {
 		}
 
 		if ($table === null) {
-			$this->_targetTable = TableRegistry::get($this->_name, [
-				'className' => $this->_className,
-			]);
+			$config = [];
+			if (!TableRegistry::exists($this->_name)) {
+				$config = ['className' => $this->_className];
+			}
+			$this->_targetTable = TableRegistry::get($this->_name, $config);
 		}
 		return $this->_targetTable;
 	}
