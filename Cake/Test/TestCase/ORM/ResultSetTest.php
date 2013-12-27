@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\Core\Configure;
 use Cake\Database\ConnectionManager;
+use Cake\ORM\Entity;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
@@ -191,4 +192,24 @@ class ResultSetTest extends TestCase {
 		$this->assertCount(3, $results, 'Should be countable and 3');
 	}
 
+/**
+ * Integration test to show methods from CollectionTrait work
+ *
+ * @return void
+ */
+	public function testGroupBy() {
+		$query = $this->table->find('all');
+		$results = $query->execute()->groupBy('author_id')->toArray();
+		$options = ['markNew' => false, 'markClean' => true];
+		$expected = [
+			1 => [
+				new Entity($this->fixtureData[0], $options),
+				new Entity($this->fixtureData[2], $options)
+			],
+			3 => [
+				new Entity($this->fixtureData[1], $options),
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
 }

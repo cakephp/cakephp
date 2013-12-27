@@ -16,9 +16,9 @@
  */
 namespace Cake\ORM;
 
-use \Iterator;
-use \JsonSerializable;
-use \Serializable;
+use Cake\Collection\CollectionTrait;
+use Iterator;
+use Serializable;
 
 /**
  * Common set of methods that any specific ResultSet implementation
@@ -26,14 +26,7 @@ use \Serializable;
  */
 trait ResultCollectionTrait {
 
-/**
- * Returns an array representation of the results
- *
- * @return array
- */
-	public function toArray() {
-		return iterator_to_array($this);
-	}
+	use CollectionTrait;
 
 /**
  * Serialize a resultset.
@@ -56,17 +49,6 @@ trait ResultCollectionTrait {
  */
 	public function unserialize($serialized) {
 		$this->_results = unserialize($serialized);
-	}
-
-/**
- * Convert a result set into JSON.
- *
- * Part of JsonSerializable interface.
- *
- * @return array The data to convert to JSON
- */
-	public function jsonSerialize() {
-		return $this->toArray();
 	}
 
 }
