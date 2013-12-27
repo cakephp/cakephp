@@ -153,6 +153,10 @@ class Marshaller {
  * @return array An array of built entities.
  */
 	protected function _belongsToMany(Association $assoc, array $data, $include = []) {
+		if (isset($data['_ids']) && is_array($data['_ids'])) {
+			return $this->_loadBelongsToMany($assoc, $data['_ids']);
+		}
+
 		$records = $this->many($data, $include);
 		if (!in_array('_joinData', $include) && !isset($include['_joinData'])) {
 			return $records;
@@ -173,6 +177,24 @@ class Marshaller {
 			}
 		}
 		return $records;
+	}
+
+/**
+ * Loads a list of belongs to many from ids.
+ *
+ * @param Association $assoc The association class for the belongsToMany association.
+ * @param array $ids The list of ids to load.
+ * @return array An array of entities.
+ */
+	protected function _loadBelongsToMany($assoc, $ids) {
+		$target = $assoc->target();
+		$primaryKey = (array)$target->primaryKey();
+		if (count($primaryKey) > 1) {
+			return [];
+		}
+		return $assoc->find('all')
+			->where([$primaryKey[0] . ' IN' => $ids])
+			->toArray();
 	}
 
 }
