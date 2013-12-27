@@ -42,7 +42,7 @@ trait CollectionTrait {
  *
  * @param callable $c callable function that will receive each of the elements
  * in this collection
- * @return \Cake\Utility\Collection
+ * @return \Cake\Collection\Collection
  */
 	public function each(callable $c) {
 		foreach ($this as $k => $v) {
@@ -73,7 +73,7 @@ trait CollectionTrait {
  *
  * @param callable $c the method that will receive each of the elements and
  * returns true whether or not they should be in the resulting collection.
- * @return \Cake\Utility\Iterator\FilterIterator;
+ * @return \Cake\Collection\Iterator\FilterIterator;
  */
 	public function filter(callable $c) {
 		return new FilterIterator($this, $c);
@@ -100,7 +100,7 @@ trait CollectionTrait {
  *
  * @param callable $c the method that will receive each of the elements and
  * returns true whether or not they should be out of the resulting collection.
- * @return \Cake\Utility\Iterator\FilterIterator;
+ * @return \Cake\Collection\Iterator\FilterIterator;
  */
 	public function reject(callable $c) {
 		return new FilterIterator($this, function ($key, $value, $items) use ($c) {
@@ -202,7 +202,7 @@ trait CollectionTrait {
  *
  * @param callable $c the method that will receive each of the elements and
  * returns the new value for the key that is being iterated
- * @return \Cake\Utility\Iterator\ReplaceIterator
+ * @return \Cake\Collection\Iterator\ReplaceIterator
  */
 	public function map(callable $c) {
 		return new ReplaceIterator($this, $c);
@@ -253,7 +253,7 @@ trait CollectionTrait {
  *
  * @param string $path a dot separated string symbolizing the path to follow
  * inside the hierarchy of each value so that the column can be extracted.
- * @return \Cake\Utility\Iterator\ExtractIterator
+ * @return \Cake\Collection\Iterator\ExtractIterator
  */
 	public function extract($matcher) {
 		return new ExtractIterator($this, $matcher);
@@ -280,7 +280,7 @@ trait CollectionTrait {
  * @param callable|string the callback or column name to use for sorting
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
- * @see \Cake\Utility\Collection::sortBy()
+ * @see \Cake\Collection\Collection::sortBy()
  */
 	public function max($callback, $type = SORT_NUMERIC) {
 		$sorted = new SortIterator($this, $callback, SORT_DESC, $type);
@@ -309,7 +309,7 @@ trait CollectionTrait {
  * @param callable|string the callback or column name to use for sorting
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
- * @see \Cake\Utility\Collection::sortBy()
+ * @see \Cake\Collection\Collection::sortBy()
  */
 	public function min($callback, $type = SORT_NUMERIC) {
 		$sorted = new SortIterator($this, $callback, SORT_ASC, $type);
@@ -350,7 +350,7 @@ trait CollectionTrait {
  * @param integer $dir either SORT_DESC or SORT_ASC
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
- * @return \Cake\Utility\Collection
+ * @return \Cake\Collection\Collection
  */
 	public function sortBy($callback, $dir = SORT_DESC, $type = SORT_NUMERIC) {
 		return new Collection(new SortIterator($this, $callback, $dir, $type));
@@ -395,7 +395,7 @@ trait CollectionTrait {
  *
  * @param callable|string the callback or column name to use for grouping
  * or a function returning the grouping key out of the provided element
- * @return \Cake\Utility\Collection
+ * @return \Cake\Collection\Collection
  */
 	public function groupBy($callback) {
 		$callback = $this->_propertyExtractor($callback);
@@ -441,7 +441,7 @@ trait CollectionTrait {
  *
  * @param callable|string the callback or column name to use for indexing
  * or a function returning the indexing key out of the provided element
- * @return \Cake\Utility\Collection
+ * @return \Cake\Collection\Collection
  */
 	public function indexBy($callback) {
 		$callback = $this->_propertyExtractor($callback);
@@ -486,7 +486,7 @@ trait CollectionTrait {
  *
  * @param callable|string the callback or column name to use for indexing
  * or a function returning the indexing key out of the provided element
- * @return \Cake\Utility\Collection
+ * @return \Cake\Collection\Collection
  */
 	public function countBy($callback) {
 		$callback = $this->_propertyExtractor($callback);
@@ -505,7 +505,7 @@ trait CollectionTrait {
  * Returns a new collection with the elements placed in a random order,
  * this function does not preserve the original keys in the collection.
  *
- * @return \Cake\Utility\Collection
+ * @return \Cake\Collection\Collection
  */
 	public function shuffle() {
 		$elements = iterator_to_array($this);
@@ -519,7 +519,7 @@ trait CollectionTrait {
  *
  * @param integer $size the maximum number of elements to randomly
  * take from this collection
- * @return \Cake\Utility\Collection
+ * @return \Cake\Collection\Collection
  */
 	public function sample($size = 10) {
 		return new Collection(new LimitIterator($this->shuffle(), 0, $size));
