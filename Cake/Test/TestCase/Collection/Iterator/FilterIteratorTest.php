@@ -12,10 +12,10 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Utility\Iterator;
+namespace Cake\Test\TestCase\Collection\Iterator;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Iterator\FilterIterator;
+use Cake\Collection\Iterator\FilterIterator;
 
 /**
  * FilterIterator test
