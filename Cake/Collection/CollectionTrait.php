@@ -540,6 +540,50 @@ trait CollectionTrait {
 	}
 
 /**
+ * Looks through each value in the list, returning a Collection  of all the
+ * values that contain all of the key-value pairs listed in $conditions.
+ *
+ * ###Example:
+ *
+ * {{{
+ * $items = [
+ *	['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
+ *	['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
+ * ];
+ *
+ * $extracted = (new Collection($items))->match(['user.name' => 'Renan']);
+ *
+ * //Result will look like this when converted to array
+ * [
+ *	['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
+ * ]
+ * }}}
+ *
+ * @param array $conditions a key-value list of conditions where the key is
+ * a property path as accepted by `Collection::extract`, and the value the
+ * condition against with each element will be matched
+ * @return \Cake\Collection\Collection
+ */
+	public function match(array $conditions) {
+		$matchers = [];
+		foreach ($conditions as $property => $value) {
+			$extractor = $this->_propertyExtractor($property);
+			$matchers[] = function($v) use ($extractor, $value) {
+				return $extractor($v) == $value;
+			};
+		}
+
+		$filter = function($value) use ($matchers) {
+			$valid = true;
+			foreach ($matchers as $match) {
+				$valid = $valid && $match($value);
+			}
+			return $valid;
+		};
+		return $this->filter($filter);
+	}
+
+/**
  * Returns an array representation of the results
  *
  * @return array

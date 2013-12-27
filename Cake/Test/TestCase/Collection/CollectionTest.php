@@ -536,4 +536,32 @@ class CollectionTest extends TestCase {
 		$this->assertEquals([2 => 3, 3 => 4], $taken->toArray());
 	}
 
+/**
+ * Tests match
+ *
+ * @return void
+ */
+	public function testMatch() {
+		$items = [
+			['id' => 1, 'name' => 'foo', 'thing' => ['parent_id' => 10]],
+			['id' => 2, 'name' => 'bar', 'thing' => ['parent_id' => 11]],
+			['id' => 3, 'name' => 'baz', 'thing' => ['parent_id' => 10]],
+		];
+		$collection = new Collection($items);
+		$matched = $collection->match(['thing.parent_id' => 10, 'name' => 'baz']);
+		$this->assertEquals([2 => $items[2]], $matched->toArray());
+
+		$matched = $collection->match(['thing.parent_id' => 10]);
+		$this->assertEquals(
+			[0 => $items[0], 2 => $items[2]],
+			$matched->toArray()
+		);
+
+		$matched = $collection->match(['thing.parent_id' => 500]);
+		$this->assertEquals([], $matched->toArray());
+
+		$matched = $collection->match(['parent_id' => 10, 'name' => 'baz']);
+		$this->assertEquals([], $matched->toArray());
+	}
+
 }
