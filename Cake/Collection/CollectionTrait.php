@@ -228,7 +228,7 @@ trait CollectionTrait {
 
 /**
  * Returns a new collection containing the column or property value found in each
- * of th elements, as requested in the $matcher param.
+ * of the elements, as requested in the $matcher param.
  *
  * The matcher can be a string with a property name to extract or a dot separated
  * path of properties that should be followed to get the last one in the path.
@@ -559,9 +559,9 @@ trait CollectionTrait {
  * ]
  * }}}
  *
- * @param array $conditions a key-value list of conditions where the key is
- * a property path as accepted by `Collection::extract`, and the value the
- * condition against with each element will be matched
+ * @param array $conditions a key-value list of conditions where
+ * the key is a property path as accepted by `Collection::extract,
+ * and the value the condition against with each element will be matched
  * @return \Cake\Collection\Collection
  */
 	public function match(array $conditions) {
@@ -603,10 +603,14 @@ trait CollectionTrait {
 /**
  * Returns an array representation of the results
  *
+ * @param boolean $preserveKeys whether to use the keys returned by this
+ * collection as the array keys. Keep in mind that it is valid for iterators
+ * to return the same key for different elements, setting this value to false
+ * can help getting all items if keys are not important in the result.
  * @return array
  */
-	public function toArray() {
-		return iterator_to_array($this);
+	public function toArray($preserveKeys = true) {
+		return iterator_to_array($this, $preserveKeys);
 	}
 
 /**

@@ -588,4 +588,20 @@ class CollectionTest extends TestCase {
 			$matched
 		);
 	}
+
+/**
+ * Tests the append method
+ *
+ * @return void
+ */
+	public function testAppend() {
+		$collection = new Collection([1, 2, 3]);
+		$combined = $collection->append([4, 5, 6]);
+		$this->assertEquals([1, 2, 3, 4, 5, 6], $combined->toArray(false));
+
+		$collection = new Collection(['a' => 1, 'b' => 2]);
+		$combined = $collection->append(['c' => 3, 'a' => 4]);
+		$this->assertEquals(['a' => 4, 'b' => 2, 'c' => 3], $combined->toArray());
+	}
+
 }
