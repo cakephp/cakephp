@@ -540,7 +540,7 @@ trait CollectionTrait {
 	}
 
 /**
- * Looks through each value in the list, returning a Collection  of all the
+ * Looks through each value in the list, returning a Collection of all the
  * values that contain all of the key-value pairs listed in $conditions.
  *
  * ###Example:
@@ -581,6 +581,23 @@ trait CollectionTrait {
 			return $valid;
 		};
 		return $this->filter($filter);
+	}
+
+/**
+ * Returns the first result matching all of the key-value pairs listed in
+ * conditions.
+ *
+ * @param array $conditions a key-value list of conditions where the key is
+ * a property path as accepted by `Collection::extract`, and the value the
+ * condition against with each element will be matched
+ * @see \Cake\Collection\Collection::match()
+ * @return mixed
+ */
+	public function firstMatch(array $conditions) {
+		foreach ($this->match($conditions)->take(1) as $result) {
+			return $result;
+		}
+		return null;
 	}
 
 /**
