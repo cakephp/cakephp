@@ -19,6 +19,7 @@ namespace Cake\ORM;
 use Cake\Core\App;
 use Cake\Database\ConnectionManager;
 use Cake\Utility\Inflector;
+use RuntimeException;
 
 /**
  * Provides a registry/factory for Table objects.
@@ -72,7 +73,7 @@ class TableRegistry {
  * Stores a list of options to be used when instantiating an object
  * with a matching alias.
  *
- * The options that can be stored are those that are recognized by `build()`
+ * The options that can be stored are those that are recognized by `get()`
  * If second argument is omitted, it will return the current settings
  * for $alias.
  *
@@ -82,6 +83,7 @@ class TableRegistry {
  * @param string $alias Name of the alias
  * @param null|array $options list of options for the alias
  * @return array The config data.
+ * @throws RuntimeException When you attempt to configure an existing table instance.
  */
 	public static function config($alias = null, $options = null) {
 		if ($alias === null) {
@@ -92,6 +94,13 @@ class TableRegistry {
 		}
 		if ($options === null) {
 			return isset(static::$_config[$alias]) ? static::$_config[$alias] : [];
+		}
+		if (isset(static::$_instances[$alias])) {
+			throw new RuntimeException(__d(
+				'cake_dev',
+				'You cannot configure "%s", it has already been constructed.',
+				$alias
+			));
 		}
 		return static::$_config[$alias] = $options;
 	}
@@ -124,9 +133,18 @@ class TableRegistry {
  * @param array $options The options you want to build the table with.
  *   If a table has already been loaded the options will be ignored.
  * @return Cake\Database\Table
+ * @throws RuntimeException When you try to configure an alias that already exists.
  */
 	public static function get($alias, $options = []) {
-		if (isset(static::$_instances[$alias])) {
+		$exists = isset(static::$_instances[$alias]);
+		if ($exists && !empty($options)) {
+			throw new RuntimeException(__d(
+				'cake_dev',
+				'You cannot configure "%s", it already exists in the registry.',
+				$alias
+			));
+		}
+		if ($exists) {
 			return static::$_instances[$alias];
 		}
 
@@ -147,6 +165,16 @@ class TableRegistry {
 			$options['connection'] = ConnectionManager::get($connectionName);
 		}
 		return static::$_instances[$alias] = new $options['className']($options);
+	}
+
+/**
+ * Check to see if an instance exists in the registry.
+ *
+ * @param string $alias The alias to check for.
+ * @return boolean
+ */
+	public static function exists($alias) {
+		return isset(static::$_instances[$alias]);
 	}
 
 /**

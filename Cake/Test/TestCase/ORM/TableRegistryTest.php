@@ -83,6 +83,33 @@ class TableRegistryTest extends TestCase {
 	}
 
 /**
+ * Test calling config() on existing instances throws an error.
+ *
+ * @expectedException RuntimeException
+ * @expectedExceptionMessage You cannot configure "Users", it has already been constructed.
+ * @return void
+ */
+	public function testConfigOnDefinedInstance() {
+		$users = TableRegistry::get('Users');
+		TableRegistry::config('Users', ['table' => 'my_users']);
+	}
+
+/**
+ * Test the exists() method.
+ *
+ * @return void
+ */
+	public function testExists() {
+		$this->assertFalse(TableRegistry::exists('Articles'));
+
+		TableRegistry::config('Articles', ['table' => 'articles']);
+		$this->assertFalse(TableRegistry::exists('Articles'));
+
+		TableRegistry::get('Articles', ['table' => 'articles']);
+		$this->assertTrue(TableRegistry::exists('Articles'));
+	}
+
+/**
  * Test getting instances from the registry.
  *
  * @return void
@@ -94,9 +121,7 @@ class TableRegistryTest extends TestCase {
 		$this->assertInstanceOf('Cake\ORM\Table', $result);
 		$this->assertEquals('my_articles', $result->table());
 
-		$result2 = TableRegistry::get('Articles', [
-			'table' => 'herp_derp',
-		]);
+		$result2 = TableRegistry::get('Articles');
 		$this->assertSame($result, $result2);
 		$this->assertEquals('my_articles', $result->table());
 	}
@@ -112,6 +137,18 @@ class TableRegistryTest extends TestCase {
 		]);
 		$result = TableRegistry::get('Articles');
 		$this->assertEquals('my_articles', $result->table(), 'Should use config() data.');
+	}
+
+/**
+ * Test get with config throws an exception if the alias exists already.
+ *
+ * @expectedException RuntimeException
+ * @expectedExceptionMessage You cannot configure "Users", it already exists in the registry.
+ * @return void
+ */
+	public function testGetExistingWithConfigData() {
+		$users = TableRegistry::get('Users');
+		TableRegistry::get('Users', ['table' => 'my_users']);
 	}
 
 /**

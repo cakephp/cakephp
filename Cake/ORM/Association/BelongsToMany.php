@@ -124,9 +124,12 @@ class BelongsToMany extends Association {
 			if (empty($this->_junctionTable)) {
 				$tableName = $this->_junctionTableName();
 				$tableAlias = Inflector::camelize($tableName);
-				$table = TableRegistry::get($tableAlias, [
-					'table' => $tableName
-				]);
+
+				$config = [];
+				if (!TableRegistry::exists($tableAlias)) {
+					$config = ['table' => $tableName];
+				}
+				$table = TableRegistry::get($tableAlias, $config);
 			} else {
 				return $this->_junctionTable;
 			}
