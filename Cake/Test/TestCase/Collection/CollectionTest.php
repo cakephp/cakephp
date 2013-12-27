@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Collection;
 
-use Cake\TestSuite\TestCase;
 use Cake\Collection\Collection;
+use Cake\TestSuite\TestCase;
 
 /**
  * CollectionTest
@@ -275,7 +275,7 @@ class CollectionTest extends TestCase {
 		$this->assertInstanceOf('\Cake\Collection\Collection', $map);
 		$expected = [
 			2 => ['a' => ['b' => ['c' => 10]]],
-			1 =>['a' => ['b' => ['c' => 6]]],
+			1 => ['a' => ['b' => ['c' => 6]]],
 			0 => ['a' => ['b' => ['c' => 4]]],
 		];
 		$this->assertEquals($expected, iterator_to_array($map));

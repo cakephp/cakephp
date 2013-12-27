@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Collection\Iterator;
 
-use Cake\TestSuite\TestCase;
 use Cake\Collection\Iterator\FilterIterator;
+use Cake\TestSuite\TestCase;
 
 /**
  * FilterIterator test

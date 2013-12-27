@@ -15,8 +15,8 @@
 namespace Cake\Test\TestCase\Collection\Iterator;
 
 use ArrayObject;
-use Cake\TestSuite\TestCase;
 use Cake\Collection\Iterator\SortIterator;
+use Cake\TestSuite\TestCase;
 
 /**
  * SortIterator Test

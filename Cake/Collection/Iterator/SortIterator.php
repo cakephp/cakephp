@@ -85,7 +85,7 @@ class SortIterator extends SplHeap {
  * SORT_NUMERIC or SORT_NATURAL
  * @return void
  */
-	public function __construct($items = [], $c, $dir = SORT_DESC, $type = SORT_NUMERIC) {
+	public function __construct($items, $c, $dir = SORT_DESC, $type = SORT_NUMERIC) {
 		$this->_items = $items;
 		$this->_dir = $dir;
 		$this->_type = $type;

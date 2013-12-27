@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Collection\Iterator;
 
-use Cake\TestSuite\TestCase;
 use Cake\Collection\Iterator\ReplaceIterator;
+use Cake\TestSuite\TestCase;
 
 /**
  * ReplaceIterator Test
