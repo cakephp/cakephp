@@ -16,6 +16,7 @@
  */
 namespace Cake\Database\Schema;
 
+use Cake\Cache\Cache;
 use Cake\Database\Connection;
 use Cake\Database\Exception;
 use Cake\Database\Schema\Table;
@@ -71,12 +72,24 @@ class Collection {
 /**
  * Get the column metadata for a table.
  *
+ * Caching will be applied if `cacheMetadata` key is present in the Connection
+ * configuration options. Defaults to _cake_model_ when true.
+ *
  * @param string $name The name of the table to describe.
  * @return Cake\Database\Schema\Table Object with column metadata.
  * @throws Cake\Database\Exception when table cannot be described.
  */
 	public function describe($name) {
 		$config = $this->_connection->config();
+
+		if (!empty($config['cacheMetadata'])) {
+			$cacheConfig = ($config['cacheMetadata'] === true) ? '_cake_model_' : $config['cacheMetadata'];
+			$cacheKey = $this->_connection->configName() . '_' . $name;
+			$cached = Cache::read($cacheKey, $cacheConfig);
+			if ($cached !== false) {
+				return $cached;
+			}
+		}
 
 		list($sql, $params) = $this->_dialect->describeTableSql($name, $config);
 		$statement = $this->_executeSql($sql, $params);
@@ -101,6 +114,10 @@ class Collection {
 			$this->_dialect->convertForeignKeyDescription($table, $row);
 		}
 		$statement->closeCursor();
+
+		if (!empty($config['cacheMetadata'])) {
+			Cache::write($cacheKey, $table, $cacheConfig);
+		}
 		return $table;
 	}
 
