@@ -48,7 +48,7 @@ class ProtectedArticle extends Entity {
  */
 class MarshallerTest extends TestCase {
 
-	public $fixtures = ['core.article', 'core.user', 'core.comment'];
+	public $fixtures = ['core.tag', 'core.article', 'core.user', 'core.comment'];
 
 /**
  * setup
@@ -411,6 +411,26 @@ class MarshallerTest extends TestCase {
 			$data[1]['user']['username'],
 			$result[1]->user->username
 		);
+	}
+
+/**
+ * Test generating a list of entities from a list of ids.
+ *
+ * @return void
+ */
+	public function testOneGenerateBelongsToManyEntitiesFromIds() {
+		$data = [
+			'title' => 'Haz tags',
+			'body' => 'Some content here',
+			'tags' => ['_ids' => [1, 2, 3]]
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->one($data, ['Tags']);
+
+		$this->assertCount(3, $result->tags);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
 	}
 
 }
