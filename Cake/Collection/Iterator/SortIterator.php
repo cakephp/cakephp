@@ -14,6 +14,7 @@
  */
 namespace Cake\Collection\Iterator;
 
+use Cake\Collection\ExtractTrait;
 use SplHeap;
 
 /**
@@ -37,6 +38,8 @@ use SplHeap;
  * This iterator does not preserve the keys passed in the original elements.
  */
 class SortIterator extends SplHeap {
+
+	use ExtractTrait;
 
 /**
  * Original items passed to this iterator
@@ -89,23 +92,7 @@ class SortIterator extends SplHeap {
 		$this->_items = $items;
 		$this->_dir = $dir;
 		$this->_type = $type;
-
-		if (is_string($c)) {
-			$path = explode('.', $c);
-			$c = function($current) use ($path) {
-				$value = null;
-				foreach ($path as $column) {
-					if (!isset($current[$column])) {
-						return null;
-					}
-					$value = $current[$column];
-					$current = $value;
-				}
-				return $value;
-			};
-		}
-
-		$this->_callback = $c;
+		$this->_callback = $this->_propertyExtractor($c);
 	}
 
 /**
