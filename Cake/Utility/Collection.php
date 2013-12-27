@@ -16,15 +16,9 @@ namespace Cake\Utility;
 
 use ArrayIterator;
 use Cake\Utility\CollectionTrait;
-use Cake\Utility\Iterator\ExtractIterator;
-use Cake\Utility\Iterator\FilterIterator;
-use Cake\Utility\Iterator\ReplaceIterator;
-use Cake\Utility\Iterator\SortIterator;
-use Cake\Utility\MapReduce;
 use InvalidArgumentException;
 use IteratorIterator;
 use JsonSerializable;
-use LimitIterator;
 
 /**
  * A collection is an immutable list of elements with a handful of functions to
@@ -46,8 +40,10 @@ class Collection extends IteratorIterator implements JsonSerializable {
 		}
 
 		if (!($items instanceof \Traversable)) {
-			throw new InvalidArgumentException;
+			$msg = __d('cake_dev', 'Only array or \Traversable are allowed for Collection');
+			throw new InvalidArgumentException($msg);
 		}
+
 		parent::__construct($items);
 	}
 

@@ -497,4 +497,14 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(json_encode($data), json_encode($collection));
 	}
 
+/**
+ * Tests that only arrays and Traversables are allowed in the constructor
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage Only array or \Traversable are allowed for Collection
+ * @return void
+ */
+	public function testInvalidConstructorArgument() {
+		new Collection('Derp');
+	}
 }
