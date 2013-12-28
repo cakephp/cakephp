@@ -401,29 +401,43 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * Executes this query and returns a results iterator. This function is required
+ * for implementing the IteratorAggregate interface and allows the query to be
+ * iterated without having to call execute() manually, thus making it look like
+ * a result set instead of the query itself.
+ *
+ * @return Iterator
+ */
+	public function getIterator() {
+		if (empty($this->_iterator) || $this->_dirty) {
+			$this->_iterator = $this->all();
+		}
+		return $this->_iterator;
+	}
+
+/**
+ * Fetch the results for this query.
+ *
  * Compiles the SQL representation of this query and executes it using the
  * provided connection object. Returns a ResultSet iterator object.
  *
- * This method fires the `Model.beforeFind` event and processes the
- * callback results.
+ * ResultSet is a travesable object that implements the methods found
+ * on Cake\Collection\Collection.
  *
- * If a result set was set using setResult() that ResultSet will be returned.
- *
- * Resulting object is traversable, so it can be used in any loop as you would
- * with an array.
- *
- * @return Cake\ORM\ResultCollectionTrait|Cake\Database\StatementInterface
- *   A result set will be returned for select queries. For insert, delete and update
- *   queries a statement will be returned.
+ * @return Cake\ORM\ResultCollectionTrait
+ * @throws RuntimeException if this method is called on a non-select Query.
  */
-	public function execute() {
-		if ($this->_type === 'select') {
-			$table = $this->repository();
-			$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
-			$table->getEventManager()->dispatch($event);
-			return $this->getResults();
+	public function all() {
+		if ($this->_type !== 'select') {
+			throw new \RuntimeException(__d(
+				'cake_dev',
+				'You cannot call all() on a non-select query. Use execute() instead.'
+			));
 		}
-		return $this->_executeStatement();
+		$table = $this->repository();
+		$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
+		$table->getEventManager()->dispatch($event);
+		return $this->getResults();
 	}
 
 /**
@@ -440,7 +454,7 @@ class Query extends DatabaseQuery {
 		}
 
 		$this->_results = $this->_decorateResults(
-			new ResultSet($this, $this->_executeStatement())
+			new ResultSet($this, $this->execute())
 		);
 
 		return $this->_results;
@@ -452,7 +466,7 @@ class Query extends DatabaseQuery {
  * @return array
  */
 	public function toArray() {
-		return $this->execute()->toArray();
+		return $this->all()->toArray();
 	}
 
 /**
@@ -637,8 +651,13 @@ class Query extends DatabaseQuery {
 			$this->limit(1);
 		}
 		$this->bufferResults();
+<<<<<<< HEAD
 		$this->_results = $this->execute();
 		return $this->_results->first();
+=======
+		$this->_results = $this->all();
+		return $this->_results->one();
+>>>>>>> Separate execute() into 2 methods.
 	}
 
 /**

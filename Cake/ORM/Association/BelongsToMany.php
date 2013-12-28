@@ -254,7 +254,7 @@ class BelongsToMany extends Association {
 		$property = $this->target()->association($this->junction()->alias())->property();
 		$hydrated = $fetchQuery->hydrate();
 
-		foreach ($fetchQuery->execute() as $result) {
+		foreach ($fetchQuery->all() as $result) {
 			$result[$this->_junctionProperty] = $result[$property];
 			unset($result[$property]);
 

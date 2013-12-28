@@ -350,7 +350,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			$query->limit(1);
 		}, 'Model.beforeFind');
 
-		$result = $table->find('all')->execute();
+		$result = $table->find('all')->all();
 		$this->assertCount(1, $result, 'Should only have 1 record, limit 1 applied.');
 	}
 
@@ -373,7 +373,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$query = $table->find('all');
 		$query->limit(1);
-		$this->assertEquals($expected, $query->execute());
+		$this->assertEquals($expected, $query->all());
 	}
 
 /**
@@ -491,13 +491,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['_executeStatement'], [$this->connection, $table]);
+		$query = $this->getMock('Cake\ORM\Query', ['execute'], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('query')
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())
-			->method('_executeStatement')
+			->method('execute')
 			->will($this->throwException(new \Cake\Database\Exception('Not good')));
 
 		$table->updateAll(['username' => 'mark'], []);
@@ -532,13 +532,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['_executeStatement'], [$this->connection, $table]);
+		$query = $this->getMock('Cake\ORM\Query', ['execute'], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('query')
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())
-			->method('_executeStatement')
+			->method('execute')
 			->will($this->throwException(new \Cake\Database\Exception('Not good')));
 
 		$table->deleteAll(['id >' => 4]);
@@ -1234,7 +1234,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		);
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['_executeStatement', 'addDefaultTypes'],
+			['execute', 'addDefaultTypes'],
 			[null, $table]
 		);
 		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
@@ -1249,7 +1249,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->expects($this->once())->method('query')
 			->will($this->returnValue($query));
 
-		$query->expects($this->once())->method('_executeStatement')
+		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($statement));
 
 		$statement->expects($this->once())->method('rowCount')
@@ -1315,7 +1315,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		);
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['_executeStatement', 'addDefaultTypes'],
+			['execute', 'addDefaultTypes'],
 			[null, $table]
 		);
 
@@ -1330,7 +1330,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$connection->expects($this->once())->method('begin');
 		$connection->expects($this->once())->method('rollback');
-		$query->expects($this->once())->method('_executeStatement')
+		$query->expects($this->once())->method('execute')
 			->will($this->throwException(new \PDOException));
 
 		$data = new \Cake\ORM\Entity([
@@ -1361,7 +1361,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		);
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['_executeStatement', 'addDefaultTypes'],
+			['execute', 'addDefaultTypes'],
 			[null, $table]
 		);
 
@@ -1375,11 +1375,13 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
-		$statement->expects($this->once())->method('rowCount')
+		$statement->expects($this->once())
+			->method('rowCount')
 			->will($this->returnValue(0));
 		$connection->expects($this->once())->method('begin');
 		$connection->expects($this->once())->method('rollback');
-		$query->expects($this->once())->method('_executeStatement')
+		$query->expects($this->once())
+			->method('execute')
 			->will($this->returnValue($statement));
 
 		$data = new \Cake\ORM\Entity([
@@ -1542,7 +1544,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['_executeStatement', 'addDefaultTypes', 'set'],
+			['execute', 'addDefaultTypes', 'set'],
 			[null, $table]
 		);
 
@@ -1553,7 +1555,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$statement->expects($this->once())->method('rowCount')
 			->will($this->returnValue(1));
 
-		$query->expects($this->once())->method('_executeStatement')
+		$query->expects($this->once())->method('execute')
 			->will($this->returnValue($statement));
 
 		$query->expects($this->once())->method('set')
@@ -1652,7 +1654,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				'author_id' => $entity->id
 			]
 		]);
-		$this->assertNull($query->execute()->first(), 'Should not find any rows.');
+		$this->assertNull($query->all()->first(), 'Should not find any rows.');
 	}
 
 /**
@@ -1693,7 +1695,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$junction = $table->association('tags')->junction();
 		$query = $junction->find('all')->where(['article_id' => 1]);
-		$this->assertNull($query->execute()->first(), 'Should not find any rows.');
+		$this->assertNull($query->all()->first(), 'Should not find any rows.');
 	}
 
 /**

@@ -864,7 +864,7 @@ class QueryTest extends TestCase {
 		$stmt = $this->getMock('Cake\Database\StatementInterface');
 		$results = new ResultSet($query, $stmt);
 		$query->setResult($results);
-		$this->assertSame($results, $query->execute());
+		$this->assertSame($results, $query->all());
 	}
 
 /**
@@ -1040,7 +1040,7 @@ class QueryTest extends TestCase {
  */
 	public function testResultsAreWrappedInMapReduce() {
 		$params = [$this->connection, $this->table];
-		$query = $this->getMock('\Cake\ORM\Query', ['_executeStatement'], $params);
+		$query = $this->getMock('\Cake\ORM\Query', ['execute'], $params);
 
 		$statement = $this->getMock('\Database\StatementInterface', ['fetch', 'closeCursor']);
 		$statement->expects($this->exactly(3))
@@ -1048,7 +1048,7 @@ class QueryTest extends TestCase {
 			->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));
 
 		$query->expects($this->once())
-			->method('_executeStatement')
+			->method('execute')
 			->will($this->returnValue($statement));
 
 		$query->mapReduce(function($k, $v, $mr) {
@@ -1063,7 +1063,7 @@ class QueryTest extends TestCase {
 			}
 		);
 
-		$this->assertEquals([2, 3], iterator_to_array($query->execute()));
+		$this->assertEquals([2, 3], iterator_to_array($query->all()));
 	}
 
 /**
@@ -1107,9 +1107,9 @@ class QueryTest extends TestCase {
 		$query->select(['id'])->toArray();
 
 		$first = $query->hydrate(false)->first();
-		$resultSet = $query->execute();
+		$resultSet = $query->all();
 		$this->assertEquals(['id' => 1], $first);
-		$this->assertSame($resultSet, $query->execute());
+		$this->assertSame($resultSet, $query->all());
 	}
 
 /**
@@ -1143,7 +1143,7 @@ class QueryTest extends TestCase {
 	public function testHydrateSimple() {
 		$table = TableRegistry::get('articles', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
-		$results = $query->select()->execute()->toArray();
+		$results = $query->select()->toArray();
 
 		$this->assertCount(3, $results);
 		foreach ($results as $r) {
@@ -1301,7 +1301,7 @@ class QueryTest extends TestCase {
 			'entityClass' => '\\' . $class
 		]);
 		$query = new Query($this->connection, $table);
-		$results = $query->select()->execute()->toArray();
+		$results = $query->select()->toArray();
 
 		$this->assertCount(3, $results);
 		foreach ($results as $r) {
@@ -1395,7 +1395,7 @@ class QueryTest extends TestCase {
 		$result = $query->count();
 		$this->assertEquals(2, $result);
 
-		$result = $query->execute();
+		$result = $query->all();
 		$this->assertEquals(['count' => 2], $result->first());
 	}
 

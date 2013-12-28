@@ -319,15 +319,19 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$query = $this->getMock('Cake\ORM\Query', ['execute', 'contain'], [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['all', 'contain'], [null, null]);
 
-		$this->tag->expects($this->once())->method('find')->with('all')
+		$this->tag->expects($this->once())
+			->method('find')
+			->with('all')
 			->will($this->returnValue($query));
+
 		$results = [
 			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
 			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())
+			->method('all')
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('contain')
@@ -378,18 +382,22 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$methods = ['execute', 'contain', 'where', 'order'];
+		$methods = ['all', 'contain', 'where', 'order'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
-		$this->tag->expects($this->once())->method('find')->with('all')
+		$this->tag->expects($this->once())
+			->method('find')
+			->with('all')
 			->will($this->returnValue($query));
 		$results = [
 			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
 			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())
+			->method('all')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')
+		$query->expects($this->once())
+			->method('contain')
 			->with([
 				'ArticlesTags' => [
 					'conditions' => ['ArticlesTags.article_id in' => $keys],
@@ -435,7 +443,7 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$methods = ['execute', 'contain', 'where', 'order', 'select'];
+		$methods = ['all', 'contain', 'where', 'order', 'select'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
@@ -443,7 +451,7 @@ class BelongsToManyTest extends TestCase {
 			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
 			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())->method('all')
 			->will($this->returnValue($results));
 
 		$query->expects($this->once())->method('contain')
@@ -508,9 +516,11 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$methods = ['execute', 'contain', 'where', 'order', 'select'];
+		$methods = ['all', 'contain', 'where', 'order', 'select'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
-		$this->tag->expects($this->once())->method('find')->with('all')
+		$this->tag->expects($this->once())
+			->method('find')
+			->with('all')
 			->will($this->returnValue($query));
 		$query->expects($this->any())->method('contain')->will($this->returnSelf());
 
@@ -550,18 +560,21 @@ class BelongsToManyTest extends TestCase {
 
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['execute', 'where', 'andWhere', 'order', 'select', 'contain'],
+			['all', 'where', 'andWhere', 'order', 'select', 'contain'],
 			[null, null]
 		);
 		$query->hydrate(false);
 
-		$this->tag->expects($this->once())->method('find')->with('all')
+		$this->tag->expects($this->once())
+			->method('find')
+			->with('all')
 			->will($this->returnValue($query));
 		$results = [
 			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
 			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
 		];
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())
+			->method('all')
 			->will($this->returnValue($results));
 
 		$expected = clone $parent;
