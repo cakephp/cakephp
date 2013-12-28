@@ -1111,7 +1111,7 @@ class QueryTest extends TestCase {
 
 		$first = $query->hydrate(false)->first();
 		$this->assertEquals(['id' => 1], $first);
-		$this->assertNull($query->clause('limit'));
+		$this->assertEquals(1, $query->clause('limit'));
 	}
 
 /**

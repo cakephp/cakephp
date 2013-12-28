@@ -56,13 +56,6 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	protected $_index = 0;
 
 /**
- * Points to the last record number that was fetched
- *
- * @var integer
- */
-	protected $_lastIndex = -1;
-
-/**
  * Last record fetched from the statement
  *
  * @var array
@@ -153,7 +146,6 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  */
 	public function next() {
 		$this->_index++;
-		$this->_lastIndex = $this->_index;
 	}
 
 /**
@@ -181,11 +173,20 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return boolean
  */
 	public function valid() {
+		if (isset($this->_results[$this->_index])) {
+			$this->_current = $this->_results[$this->_index];
+			return true;
+		}
+
 		$this->_current = $this->_fetchResult();
 		$valid = $this->_current !== false;
 
 		if (!$valid && $this->_statement) {
 			$this->_statement->closeCursor();
+		}
+
+		if ($valid) {
+			$this->_bufferResult($this->_current);
 		}
 
 		return $valid;
@@ -265,12 +266,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return mixed
  */
 	protected function _fetchResult() {
-		if (!empty($this->_results) && isset($this->_results[$this->_index])) {
-			return $this->_results[$this->_index];
-		}
-		if (!empty($this->_results)) {
+		if (!$this->_statement) {
 			return false;
 		}
+
 		$row = $this->_statement->fetch('assoc');
 		if ($row === false) {
 			return $row;
@@ -364,6 +363,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		}
 
 		return $values;
+	}
+
+	protected function _bufferResult($result) {
+		$this->_results[] = $result;
 	}
 
 }

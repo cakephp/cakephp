@@ -42,7 +42,7 @@ class BufferedResultSetTest extends TestCase {
  * @return void
  */
 	public function testRewind() {
-		return;
+		$this->markTestIncomplete();
 		$query = $this->table->find('all');
 		$results = $query->bufferResults()->execute();
 		$first = $second = [];

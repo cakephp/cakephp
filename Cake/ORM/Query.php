@@ -429,7 +429,12 @@ class Query extends DatabaseQuery {
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
-		return $this->_decorateResults(new ResultSet($this, $this->_executeStatement()));
+
+		$this->_results = $this->_decorateResults(
+			new ResultSet($this, $this->_executeStatement())
+		);
+
+		return $this->_results;
 	}
 
 /**
@@ -662,6 +667,8 @@ class Query extends DatabaseQuery {
 		if ($enable === null) {
 			return $this->_hydrate;
 		}
+
+		$this->_dirty();
 		$this->_hydrate = (bool)$enable;
 		return $this;
 	}
@@ -918,6 +925,17 @@ class Query extends DatabaseQuery {
  */
 	public function find($finder, $options = []) {
 		return $this->repository()->callFinder($finder, $this, $options);
+	}
+
+/**
+ * Marks a query as dirty, removing any preprocessed information
+ * from in memory caching such as previous results
+ *
+ * @return void
+ */
+	public function _dirty() {
+		$this->_results = null;
+		parent::_dirty();
 	}
 
 }
