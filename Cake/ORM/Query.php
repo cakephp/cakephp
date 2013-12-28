@@ -100,7 +100,7 @@ class Query extends DatabaseQuery {
  *
  * @var boolean
  */
-	protected $_useBufferedResults = false;
+	protected $_useBufferedResults = true;
 
 /**
  * List of map-reduce routines that should be applied over the query
