@@ -1294,6 +1294,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string $table The table name to insert into.
  * @param array $columns The columns to insert into.
+ * @param array $types A map between columns & their datatypes.
  * @return Query
  */
 	public function insert($table, $columns, $types = []) {
