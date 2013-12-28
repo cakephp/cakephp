@@ -947,4 +947,51 @@ class Query extends DatabaseQuery {
 		parent::_dirty();
 	}
 
+/**
+ * Create an update query.
+ *
+ * This changes the query type to be 'update'.
+ * Can be combined with set() and where() methods to create update queries.
+ *
+ * @param string $table Unused parameter.
+ * @return Query
+ */
+	public function update($table = null) {
+		$table = $this->repository()->table();
+		return parent::update($table);
+	}
+
+/**
+ * Create a delete query.
+ *
+ * This changes the query type to be 'delete'.
+ * Can be combined with the where() method to create delete queries.
+ *
+ * @param string $table Unused parameter.
+ * @return Query
+ */
+	public function delete($table = null) {
+		$table = $this->repository()->table();
+		return parent::delete($table);
+	}
+
+/**
+ * Create an insert query.
+ *
+ * This changes the query type to be 'insert'.
+ * Note calling this method will reset any data previously set
+ * with Query::values()
+ *
+ * Can be combined with the where() method to create delete queries.
+ *
+ * @param array $columns The columns to insert into.
+ * @param array $types A map between columns & their datatypes.
+ * @param array $unused An unused parameter from the parent class' interface
+ * @return Query
+ */
+	public function insert($columns, $types = [], $unused = []) {
+		$table = $this->repository()->table();
+		return parent::insert($table, $columns, $types);
+	}
+
 }

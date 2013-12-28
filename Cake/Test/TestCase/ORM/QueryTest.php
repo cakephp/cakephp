@@ -1413,40 +1413,53 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test that there is no beforeFind event with update queries.
+ * Test update method.
  *
  * @return void
  */
-	public function testUpdateNoBeforeFind() {
+	public function testUpdate() {
 		$table = TableRegistry::get('articles');
-		$table->getEventManager()->attach(function() {
-			$this->fail('No callback should be fired');
-		}, 'Model.beforeFind');
 
-		$query = $table->query()
-			->update($table->table())
-			->set(['title' => 'First']);
+		$result = $table->query()
+			->update()
+			->set(['title' => 'First'])
+			->execute();
 
-		$result = $query->execute();
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
 		$this->assertTrue($result->rowCount() > 0);
 	}
 
 /**
- * Test that there is no beforeFind event with delete queries.
+ * Test insert method.
  *
  * @return void
  */
-	public function testDeleteNoBeforeFind() {
+	public function testInsert() {
 		$table = TableRegistry::get('articles');
-		$table->getEventManager()->attach(function() {
-			$this->fail('No callback should be fired');
-		}, 'Model.beforeFind');
 
-		$query = $table->query()
-			->delete($table->table());
+		$result = $table->query()
+			->insert(['title'])
+			->values(['title' => 'First'])
+			->values(['title' => 'Second'])
+			->execute();
 
-		$result = $query->execute();
+		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+		$this->assertEquals(2, $result->rowCount());
+	}
+
+/**
+ * Test delete method.
+ *
+ * @return void
+ */
+	public function testDelete() {
+		$table = TableRegistry::get('articles');
+
+		$result = $table->query()
+			->delete()
+			->where(['id >=' => 1])
+			->execute();
+
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
 		$this->assertTrue($result->rowCount() > 0);
 	}
