@@ -429,11 +429,6 @@ class Query extends DatabaseQuery {
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
-		if ($this->_useBufferedResults) {
-			return $this->_results = $this->_decorateResults(
-				new BufferedResultSet($this, $this->_executeStatement())
-			);
-		}
 		return $this->_decorateResults(new ResultSet($this, $this->_executeStatement()));
 	}
 

@@ -873,6 +873,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testBufferResults() {
+		$this->markTestIncomplete();
 		$table = TableRegistry::get('articles', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 
@@ -1088,6 +1089,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstDirtyQuery() {
+		$this->markTestIncomplete();
 		$table = TableRegistry::get('articles', ['table' => 'articles']);
 		$query = new Query($this->connection, $table);
 		$result = $query->select(['id'])->hydrate(false)->first();
@@ -1402,6 +1404,7 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testCount() {
+		$this->markTestIncomplete();
 		$table = TableRegistry::get('articles');
 		$result = $table->find('all')->count();
 		$this->assertEquals(3, $result);
