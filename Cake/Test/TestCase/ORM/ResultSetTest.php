@@ -71,8 +71,6 @@ class ResultSetTest extends TestCase {
 /**
  * Test that streaming results cannot be rewound
  *
- *
- * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testRewindStreaming() {
@@ -82,6 +80,7 @@ class ResultSetTest extends TestCase {
 		foreach ($results as $result) {
 			$first[] = $result;
 		}
+		$this->setExpectedException('Cake\Database\Exception');
 		foreach ($results as $result) {
 			$second[] = $result;
 		}
