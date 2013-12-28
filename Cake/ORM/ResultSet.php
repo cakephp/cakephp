@@ -16,6 +16,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
 use \Countable;
@@ -32,7 +33,7 @@ use \Serializable;
  */
 class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
-	use ResultCollectionTrait;
+	use CollectionTrait;
 
 /**
  * Original query from where results where generated
@@ -201,6 +202,29 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		}
 
 		return $valid;
+	}
+
+/**
+ * Serialize a resultset.
+ *
+ * Part of Serializable interface.
+ *
+ * @return string Serialized object
+ */
+	public function serialize() {
+		return serialize($this->toArray());
+	}
+
+/**
+ * Unserialize a resultset.
+ *
+ * Part of Serializable interface.
+ *
+ * @param string Serialized object
+ * @return ResultSet The hydrated result set.
+ */
+	public function unserialize($serialized) {
+		$this->_results = unserialize($serialized);
 	}
 
 /**
