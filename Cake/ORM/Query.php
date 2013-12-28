@@ -358,19 +358,28 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Enable buffered results.
+ * Enable/Disable buffered results.
  *
  * When enabled the ResultSet returned by this Query will be
  * buffered. This enables you to iterate a ResultSet multiple times, or
  * both cache and iterate the ResultSet.
  *
- * This mode will consume more memory as the result set will stay in memory
- * until the ResultSet if freed.
+ * When disabled it will consume less memory as fetched results are not
+ * remembered in the ResultSet.
  *
- * @return Query The query instance;
+ * If called with no arguments, it will return whether or not buffering is
+ * enabled.
+ *
+ * @param boolean $enable whether or not to enable buffering
+ * @return boolean|Query
  */
-	public function bufferResults() {
-		$this->_useBufferedResults = true;
+	public function bufferResults($enable = null) {
+		if ($enable === null) {
+			return $this->_useBufferedResults;
+		}
+
+		$this->_dirty();
+		$this->_useBufferedResults = (bool)$enable;
 		return $this;
 	}
 

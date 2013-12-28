@@ -106,6 +106,13 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	protected $_entityClass;
 
 /**
+ * Whether or not to buffer results fetched from the statement
+ *
+ * @var boolean
+ */
+	protected $_useBuffering;
+
+/**
  * Constructor
  *
  * @param Query from where results come
@@ -119,6 +126,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		$this->_calculateAssociationMap();
 		$this->_hydrate = $this->_query->hydrate();
 		$this->_entityClass = $query->repository()->entityClass();
+		$this->_useBuffering = $query->bufferResults();
 	}
 
 /**
@@ -365,8 +373,16 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		return $values;
 	}
 
+/**
+ * Conditionally buffer the passed result
+ *
+ * @param array $result the result fetch from the database
+ * @return void
+ */
 	protected function _bufferResult($result) {
-		$this->_results[] = $result;
+		if ($this->_useBuffering) {
+			$this->_results[] = $result;
+		}
 	}
 
 }
