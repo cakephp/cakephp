@@ -417,7 +417,7 @@ class Query extends DatabaseQuery {
  *   queries a statement will be returned.
  */
 	public function execute() {
-		if ($this->_type === 'select' || $this->_type === null) {
+		if ($this->_type === 'select') {
 			$table = $this->repository();
 			$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
 			$table->getEventManager()->dispatch($event);
