@@ -638,7 +638,7 @@ class Query extends DatabaseQuery {
 		}
 		$this->bufferResults();
 		$this->_results = $this->execute();
-		return $this->_results->one();
+		return $this->_results->first();
 	}
 
 /**

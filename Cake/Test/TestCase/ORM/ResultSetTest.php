@@ -154,36 +154,36 @@ class ResultSetTest extends TestCase {
 	}
 
 /**
- * Test one() method with a statement backed result set.
+ * Test first() method with a statement backed result set.
  *
  * @return void
  */
-	public function testOne() {
+	public function testFirst() {
 		$query = $this->table->find('all');
 		$results = $query->hydrate(false)->execute();
 
-		$row = $results->one();
+		$row = $results->first();
 		$this->assertEquals($this->fixtureData[0], $row);
 
-		$row = $results->one();
+		$row = $results->first();
 		$this->assertEquals($this->fixtureData[0], $row);
 	}
 
 /**
- * Test one() method with a result set that has been unserialized
+ * Test first() method with a result set that has been unserialized
  *
  * @return void
  */
-	public function testOneAfterSerialize() {
+	public function testFirstAfterSerialize() {
 		$query = $this->table->find('all');
 		$results = $query->hydrate(false)->execute();
 		$results = unserialize(serialize($results));
 
-		$row = $results->one();
+		$row = $results->first();
 		$this->assertEquals($this->fixtureData[0], $row);
 
-		$this->assertNull($results->one(), 'No more rows.');
-		$this->assertNull($results->one(), 'No more rows.');
+		$this->assertNull($results->first(), 'No more rows.');
+		$this->assertNull($results->first(), 'No more rows.');
 	}
 
 /**

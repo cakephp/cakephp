@@ -604,6 +604,17 @@ trait CollectionTrait {
 	}
 
 /**
+ * Returns the first result in this collection
+ *
+ * @return mixed The first value in the collection will be returned.
+ */
+	public function first() {
+		foreach ($this->take(1) as $result) {
+			return $result;
+		}
+	}
+
+/**
  * Returns a new collection as the result of concatenating the list of elements
  * in this collection with the passed list of elements
  *

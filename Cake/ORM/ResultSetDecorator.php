@@ -16,12 +16,13 @@
  */
 namespace Cake\ORM;
 
-use \ArrayIterator;
-use \Countable;
-use \IteratorAggregate;
-use \JsonSerializable;
-use \Serializable;
-use \Traversable;
+use ArrayIterator;
+use Cake\Collection\Collection;
+use Countable;
+use IteratorIterator;
+use JsonSerializable;
+use Serializable;
+use Traversable;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
@@ -29,55 +30,7 @@ use \Traversable;
  *
  * @return void
  */
-class ResultSetDecorator implements Countable, IteratorAggregate, Serializable, JsonSerializable {
-
-	use ResultCollectionTrait;
-
-/**
- * Holds the records after an instance of this object has been unserialized
- *
- * @var array
- */
-	protected $_results;
-
-/**
- * Constructor
- *
- * @param Traversable $results
- */
-	public function __construct(Traversable $results) {
-		$this->_results = $results;
-	}
-
-/**
- * Returns the inner iterator this decorator is wrapping
- *
- * @return \Iterator
- */
-	public function getIterator() {
-		if (is_array($this->_results)) {
-			$this->_results = new ArrayIterator($this->_results);
-		}
-		return $this->_results;
-	}
-
-/**
- * Get a single result from the results.
- *
- * Calling this method will convert the underlying data into
- * an array and will return the first result in the data set.
- *
- * @return mixed The first value in the results will be returned.
- */
-	public function one() {
-		if (!is_array($this->_results)) {
-			$this->_results = iterator_to_array($this->_results);
-		}
-		if (count($this->_results) < 1) {
-			return false;
-		}
-		return current($this->_results);
-	}
+class ResultSetDecorator extends Collection implements Countable, Serializable, JsonSerializable {
 
 /**
  * Make this object countable.
@@ -89,10 +42,30 @@ class ResultSetDecorator implements Countable, IteratorAggregate, Serializable, 
  * @return integer.
  */
 	public function count() {
-		if (!is_array($this->_results)) {
-			$this->_results = iterator_to_array($this->_results);
-		}
-		return count($this->_results);
+		return count(iterator_to_array($this));
+	}
+
+/**
+ * Serialize a resultset.
+ *
+ * Part of Serializable interface.
+ *
+ * @return string Serialized object
+ */
+	public function serialize() {
+		return serialize($this->toArray());
+	}
+
+/**
+ * Unserialize a resultset.
+ *
+ * Part of Serializable interface.
+ *
+ * @param string Serialized object
+ * @return ResultSet The hydrated result set.
+ */
+	public function unserialize($serialized) {
+		parent::__construct(unserialize($serialized));
 	}
 
 }
