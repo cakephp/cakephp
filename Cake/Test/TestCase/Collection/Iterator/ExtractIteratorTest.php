@@ -31,7 +31,7 @@ class ExtractIteratorTest extends TestCase {
  */
 	public function testExtractFromArrayShallow() {
 		$items = [
-			['a' => 1, 'b' =>2],
+			['a' => 1, 'b' => 2],
 			['a' => 3, 'b' => 4]
 		];
 		$extractor = new ExtractIterator($items, 'a');
@@ -51,7 +51,7 @@ class ExtractIteratorTest extends TestCase {
  */
 	public function testExtractFromObjectShallow() {
 		$items = [
-			new ArrayObject(['a' => 1, 'b' =>2]),
+			new ArrayObject(['a' => 1, 'b' => 2]),
 			new ArrayObject(['a' => 3, 'b' => 4])
 		];
 		$extractor = new ExtractIterator($items, 'a');
@@ -71,10 +71,10 @@ class ExtractIteratorTest extends TestCase {
  */
 	public function testExtractFromArrayDeep() {
 		$items = [
-			['a' => ['b' => ['c' => 10]], 'b' =>2],
+			['a' => ['b' => ['c' => 10]], 'b' => 2],
 			['a' => ['b' => ['d' => 15]], 'b' => 4],
 			['a' => ['x' => ['z' => 20]], 'b' => 4],
-			['a' => ['b' => ['c' => 25]], 'b' =>2],
+			['a' => ['b' => ['c' => 25]], 'b' => 2],
 		];
 		$extractor = new ExtractIterator($items, 'a.b.c');
 		$this->assertEquals([10, null, null, 25], iterator_to_array($extractor));

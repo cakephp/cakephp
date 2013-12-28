@@ -16,11 +16,11 @@
  */
 namespace Cake\ORM;
 
+use Cake\Collection\Iterator\MapReduce;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
 use Cake\Event\Event;
-use Cake\Collection\Iterator\MapReduce;
 
 /**
  * Extends the base Query class to provide new methods related to association

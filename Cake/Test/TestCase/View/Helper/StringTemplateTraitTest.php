@@ -14,9 +14,9 @@
  */
 namespace Cake\Test\TestCase\View\Helper;
 
+use Cake\TestSuite\TestCase;
 use Cake\View\Helper\StringTemplate;
 use Cake\View\Helper\StringTemplateTrait;
-use Cake\TestSuite\TestCase;
 
 /**
  * StringTemplateTraitTest class

@@ -96,7 +96,6 @@ class SortIteratorTest extends TestCase {
 		$this->assertEquals($expected, iterator_to_array($sorted));
 	}
 
-
 /**
  * Tests sorting a complex structure with natural sort
  *
