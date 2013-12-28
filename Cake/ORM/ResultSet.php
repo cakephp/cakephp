@@ -159,20 +159,23 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Rewind a ResultSet.
  *
- * Not implemented, Use a BufferedResultSet for a rewindable
- * ResultSet.
- *
  * @throws Cake\Database\Exception
+ * @return void
  */
 	public function rewind() {
 		if ($this->_index == 0) {
 			return;
 		}
-		$msg = __d(
-			'cake_dev',
-			'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.'
-		);
-		throw new Exception($msg);
+
+		if (!$this->_useBuffering) {
+			$msg = __d(
+				'cake_dev',
+				'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.'
+			);
+			throw new Exception($msg);
+		}
+
+		$this->_index = 0;
 	}
 
 /**

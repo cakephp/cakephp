@@ -54,7 +54,6 @@ class ResultSetTest extends TestCase {
 /**
  * Test that result sets can be rewound and re-used.
  *
- * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testRewind() {
@@ -68,6 +67,26 @@ class ResultSetTest extends TestCase {
 			$second[] = $result;
 		}
 	}
+
+/**
+ * Test that streaming results cannot be rewound
+ *
+ *
+ * @expectedException Cake\Database\Exception
+ * @return void
+ */
+	public function testRewindStreaming() {
+		$query = $this->table->find('all')->bufferResults(false);
+		$results = $query->execute();
+		$first = $second = [];
+		foreach ($results as $result) {
+			$first[] = $result;
+		}
+		foreach ($results as $result) {
+			$second[] = $result;
+		}
+	}
+
 
 /**
  * An integration test for testing serialize and unserialize features.
@@ -212,4 +231,5 @@ class ResultSetTest extends TestCase {
 		];
 		$this->assertEquals($expected, $results);
 	}
+
 }
