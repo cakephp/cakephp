@@ -111,7 +111,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  *
  * @var boolean
  */
-	protected $_useBuffering;
+	protected $_useBuffering = true;
 
 /**
  * Constructor
@@ -212,7 +212,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return string Serialized object
  */
 	public function serialize() {
-		return serialize($this->toArray());
+		while($this->valid()) {
+			$this->next();
+		}
+		return serialize($this->_results);
 	}
 
 /**

@@ -87,7 +87,6 @@ class ResultSetTest extends TestCase {
 		}
 	}
 
-
 /**
  * An integration test for testing serialize and unserialize features.
  *
