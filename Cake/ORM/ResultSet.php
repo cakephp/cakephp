@@ -16,6 +16,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Collection\CollectionTrait;
 use Cake\Database\Exception;
 use Cake\Database\Type;
 use \Countable;
@@ -32,7 +33,7 @@ use \Serializable;
  */
 class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
-	use ResultCollectionTrait;
+	use CollectionTrait;
 
 /**
  * Original query from where results where generated
@@ -54,13 +55,6 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @var integer
  */
 	protected $_index = 0;
-
-/**
- * Points to the last record number that was fetched
- *
- * @var integer
- */
-	protected $_lastIndex = -1;
 
 /**
  * Last record fetched from the statement
@@ -113,6 +107,13 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	protected $_entityClass;
 
 /**
+ * Whether or not to buffer results fetched from the statement
+ *
+ * @var boolean
+ */
+	protected $_useBuffering = true;
+
+/**
  * Constructor
  *
  * @param Query from where results come
@@ -126,6 +127,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		$this->_calculateAssociationMap();
 		$this->_hydrate = $this->_query->hydrate();
 		$this->_entityClass = $query->repository()->entityClass();
+		$this->_useBuffering = $query->bufferResults();
 	}
 
 /**
@@ -153,26 +155,28 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  */
 	public function next() {
 		$this->_index++;
-		$this->_lastIndex = $this->_index;
 	}
 
 /**
  * Rewind a ResultSet.
  *
- * Not implemented, Use a BufferedResultSet for a rewindable
- * ResultSet.
- *
  * @throws Cake\Database\Exception
+ * @return void
  */
 	public function rewind() {
 		if ($this->_index == 0) {
 			return;
 		}
-		$msg = __d(
-			'cake_dev',
-			'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.'
-		);
-		throw new Exception($msg);
+
+		if (!$this->_useBuffering) {
+			$msg = __d(
+				'cake_dev',
+				'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.'
+			);
+			throw new Exception($msg);
+		}
+
+		$this->_index = 0;
 	}
 
 /**
@@ -181,6 +185,11 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return boolean
  */
 	public function valid() {
+		if (isset($this->_results[$this->_index])) {
+			$this->_current = $this->_results[$this->_index];
+			return true;
+		}
+
 		$this->_current = $this->_fetchResult();
 		$valid = $this->_current !== false;
 
@@ -188,7 +197,37 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$this->_statement->closeCursor();
 		}
 
+		if ($valid) {
+			$this->_bufferResult($this->_current);
+		}
+
 		return $valid;
+	}
+
+/**
+ * Serialize a resultset.
+ *
+ * Part of Serializable interface.
+ *
+ * @return string Serialized object
+ */
+	public function serialize() {
+		while($this->valid()) {
+			$this->next();
+		}
+		return serialize($this->_results);
+	}
+
+/**
+ * Unserialize a resultset.
+ *
+ * Part of Serializable interface.
+ *
+ * @param string Serialized object
+ * @return ResultSet The hydrated result set.
+ */
+	public function unserialize($serialized) {
+		$this->_results = unserialize($serialized);
 	}
 
 /**
@@ -201,7 +240,11 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  *
  * @return array|object
  */
-	public function one() {
+	public function first() {
+		if (isset($this->_results[0])) {
+			return $this->_results[0];
+		}
+
 		if ($this->valid()) {
 			if ($this->_statement) {
 				$this->_statement->closeCursor();
@@ -265,12 +308,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return mixed
  */
 	protected function _fetchResult() {
-		if (!empty($this->_results) && isset($this->_results[$this->_index])) {
-			return $this->_results[$this->_index];
-		}
-		if (!empty($this->_results)) {
+		if (!$this->_statement) {
 			return false;
 		}
+
 		$row = $this->_statement->fetch('assoc');
 		if ($row === false) {
 			return $row;
@@ -364,6 +405,18 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		}
 
 		return $values;
+	}
+
+/**
+ * Conditionally buffer the passed result
+ *
+ * @param array $result the result fetch from the database
+ * @return void
+ */
+	protected function _bufferResult($result) {
+		if ($this->_useBuffering) {
+			$this->_results[] = $result;
+		}
 	}
 
 }

@@ -100,7 +100,7 @@ class Query extends DatabaseQuery {
  *
  * @var boolean
  */
-	protected $_useBufferedResults = false;
+	protected $_useBufferedResults = true;
 
 /**
  * List of map-reduce routines that should be applied over the query
@@ -358,19 +358,28 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Enable buffered results.
+ * Enable/Disable buffered results.
  *
  * When enabled the ResultSet returned by this Query will be
  * buffered. This enables you to iterate a ResultSet multiple times, or
  * both cache and iterate the ResultSet.
  *
- * This mode will consume more memory as the result set will stay in memory
- * until the ResultSet if freed.
+ * When disabled it will consume less memory as fetched results are not
+ * remembered in the ResultSet.
  *
- * @return Query The query instance;
+ * If called with no arguments, it will return whether or not buffering is
+ * enabled.
+ *
+ * @param boolean $enable whether or not to enable buffering
+ * @return boolean|Query
  */
-	public function bufferResults() {
-		$this->_useBufferedResults = true;
+	public function bufferResults($enable = null) {
+		if ($enable === null) {
+			return $this->_useBufferedResults;
+		}
+
+		$this->_dirty();
+		$this->_useBufferedResults = (bool)$enable;
 		return $this;
 	}
 
@@ -429,12 +438,12 @@ class Query extends DatabaseQuery {
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
-		if ($this->_useBufferedResults) {
-			return $this->_results = $this->_decorateResults(
-				new BufferedResultSet($this, $this->_executeStatement())
-			);
-		}
-		return $this->_decorateResults(new ResultSet($this, $this->_executeStatement()));
+
+		$this->_results = $this->_decorateResults(
+			new ResultSet($this, $this->_executeStatement())
+		);
+
+		return $this->_results;
 	}
 
 /**
@@ -629,7 +638,7 @@ class Query extends DatabaseQuery {
 		}
 		$this->bufferResults();
 		$this->_results = $this->execute();
-		return $this->_results->one();
+		return $this->_results->first();
 	}
 
 /**
@@ -667,6 +676,8 @@ class Query extends DatabaseQuery {
 		if ($enable === null) {
 			return $this->_hydrate;
 		}
+
+		$this->_dirty();
 		$this->_hydrate = (bool)$enable;
 		return $this;
 	}
@@ -923,6 +934,17 @@ class Query extends DatabaseQuery {
  */
 	public function find($finder, $options = []) {
 		return $this->repository()->callFinder($finder, $this, $options);
+	}
+
+/**
+ * Marks a query as dirty, removing any preprocessed information
+ * from in memory caching such as previous results
+ *
+ * @return void
+ */
+	public function _dirty() {
+		$this->_results = null;
+		parent::_dirty();
 	}
 
 }

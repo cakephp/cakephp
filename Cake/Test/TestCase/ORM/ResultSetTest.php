@@ -54,7 +54,6 @@ class ResultSetTest extends TestCase {
 /**
  * Test that result sets can be rewound and re-used.
  *
- * @expectedException Cake\Database\Exception
  * @return void
  */
 	public function testRewind() {
@@ -64,6 +63,24 @@ class ResultSetTest extends TestCase {
 		foreach ($results as $result) {
 			$first[] = $result;
 		}
+		foreach ($results as $result) {
+			$second[] = $result;
+		}
+	}
+
+/**
+ * Test that streaming results cannot be rewound
+ *
+ * @return void
+ */
+	public function testRewindStreaming() {
+		$query = $this->table->find('all')->bufferResults(false);
+		$results = $query->execute();
+		$first = $second = [];
+		foreach ($results as $result) {
+			$first[] = $result;
+		}
+		$this->setExpectedException('Cake\Database\Exception');
 		foreach ($results as $result) {
 			$second[] = $result;
 		}
@@ -135,36 +152,36 @@ class ResultSetTest extends TestCase {
 	}
 
 /**
- * Test one() method with a statement backed result set.
+ * Test first() method with a statement backed result set.
  *
  * @return void
  */
-	public function testOne() {
+	public function testFirst() {
 		$query = $this->table->find('all');
 		$results = $query->hydrate(false)->execute();
 
-		$row = $results->one();
+		$row = $results->first();
 		$this->assertEquals($this->fixtureData[0], $row);
 
-		$this->assertNull($results->one(), 'No more rows.');
-		$this->assertNull($results->one(), 'No more rows.');
+		$row = $results->first();
+		$this->assertEquals($this->fixtureData[0], $row);
 	}
 
 /**
- * Test one() method with a result set that has been unserialized
+ * Test first() method with a result set that has been unserialized
  *
  * @return void
  */
-	public function testOneAfterSerialize() {
+	public function testFirstAfterSerialize() {
 		$query = $this->table->find('all');
 		$results = $query->hydrate(false)->execute();
 		$results = unserialize(serialize($results));
 
-		$row = $results->one();
+		$row = $results->first();
 		$this->assertEquals($this->fixtureData[0], $row);
 
-		$this->assertNull($results->one(), 'No more rows.');
-		$this->assertNull($results->one(), 'No more rows.');
+		$this->assertSame($row, $results->first());
+		$this->assertSame($row, $results->first());
 	}
 
 /**
@@ -212,4 +229,5 @@ class ResultSetTest extends TestCase {
 		];
 		$this->assertEquals($expected, $results);
 	}
+
 }

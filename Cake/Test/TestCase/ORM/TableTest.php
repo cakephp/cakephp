@@ -1648,7 +1648,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 				'author_id' => $entity->id
 			]
 		]);
-		$this->assertNull($query->execute()->one(), 'Should not find any rows.');
+		$this->assertNull($query->execute()->first(), 'Should not find any rows.');
 	}
 
 /**
@@ -1689,7 +1689,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$junction = $table->association('tags')->junction();
 		$query = $junction->find('all')->where(['article_id' => 1]);
-		$this->assertNull($query->execute()->one(), 'Should not find any rows.');
+		$this->assertNull($query->execute()->first(), 'Should not find any rows.');
 	}
 
 /**

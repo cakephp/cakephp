@@ -868,22 +868,6 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Test enabling buffering of results.
- *
- * @return void
- */
-	public function testBufferResults() {
-		$table = TableRegistry::get('articles', ['table' => 'articles']);
-		$query = new Query($this->connection, $table);
-
-		$result = $query->select()->bufferResults();
-		$this->assertSame($query, $result, 'Query should be the same');
-		$result = $query->execute();
-		$this->assertInstanceOf('Cake\ORM\BufferedResultSet', $result);
-		$result->toArray();
-	}
-
-/**
  * Tests that applying array options to a query will convert them
  * to equivalent function calls with the correspondent array values
  *
@@ -1109,7 +1093,7 @@ class QueryTest extends TestCase {
 
 		$first = $query->hydrate(false)->first();
 		$this->assertEquals(['id' => 1], $first);
-		$this->assertNull($query->clause('limit'));
+		$this->assertEquals(1, $query->clause('limit'));
 	}
 
 /**
@@ -1412,7 +1396,7 @@ class QueryTest extends TestCase {
 		$this->assertEquals(2, $result);
 
 		$result = $query->execute();
-		$this->assertEquals(['count' => 2], $result->one());
+		$this->assertEquals(['count' => 2], $result->first());
 	}
 
 /**

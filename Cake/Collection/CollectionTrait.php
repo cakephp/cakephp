@@ -597,10 +597,18 @@ trait CollectionTrait {
  * @return mixed
  */
 	public function firstMatch(array $conditions) {
-		foreach ($this->match($conditions)->take(1) as $result) {
+		return $this->match($conditions)->first();
+	}
+
+/**
+ * Returns the first result in this collection
+ *
+ * @return mixed The first value in the collection will be returned.
+ */
+	public function first() {
+		foreach ($this->take(1) as $result) {
 			return $result;
 		}
-		return null;
 	}
 
 /**

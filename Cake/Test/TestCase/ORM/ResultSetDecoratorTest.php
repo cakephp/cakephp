@@ -71,16 +71,16 @@ class ResultSetDecoratorTest extends TestCase {
 	}
 
 /**
- * Test the one() method which is part of the ResultSet duck type.
+ * Test the first() method which is part of the ResultSet duck type.
  *
  * @return void
  */
-	public function testOne() {
+	public function testFirst() {
 		$data = new \ArrayIterator([1, 2, 3]);
 		$decorator = new ResultSetDecorator($data);
 
-		$this->assertEquals(1, $decorator->one());
-		$this->assertEquals(1, $decorator->one());
+		$this->assertEquals(1, $decorator->first());
+		$this->assertEquals(1, $decorator->first());
 	}
 
 /**
