@@ -214,6 +214,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return array|object
  */
 	public function first() {
+		if (isset($this->_results[0])) {
+			return $this->_results[0];
+		}
+
 		if ($this->valid()) {
 			if ($this->_statement) {
 				$this->_statement->closeCursor();

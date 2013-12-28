@@ -182,8 +182,8 @@ class ResultSetTest extends TestCase {
 		$row = $results->first();
 		$this->assertEquals($this->fixtureData[0], $row);
 
-		$this->assertNull($results->first(), 'No more rows.');
-		$this->assertNull($results->first(), 'No more rows.');
+		$this->assertSame($row, $results->first());
+		$this->assertSame($row, $results->first());
 	}
 
 /**
