@@ -14,7 +14,6 @@
  */
 namespace Cake\Collection;
 
-use AppendIterator;
 use ArrayIterator;
 use Cake\Collection\CollectionTrait;
 use InvalidArgumentException;
@@ -56,20 +55,6 @@ class Collection extends IteratorIterator implements JsonSerializable {
  */
 	public function getIterator() {
 		return $this->_iterator;
-	}
-
-/**
- * Returns a new collection as the result of concatenating the list of elements
- * in this collection with the passed list of elements
- *
- * @param array|\Traversable
- * @return \Cake\Collection\Collection
- */
-	public function append($items) {
-		$list = new AppendIterator;
-		$list->append($this);
-		$list->append(new self($items));
-		return new self($list);
 	}
 
 }

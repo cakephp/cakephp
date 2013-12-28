@@ -14,6 +14,7 @@
  */
 namespace Cake\Collection;
 
+use AppendIterator;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
@@ -600,6 +601,20 @@ trait CollectionTrait {
 			return $result;
 		}
 		return null;
+	}
+
+/**
+ * Returns a new collection as the result of concatenating the list of elements
+ * in this collection with the passed list of elements
+ *
+ * @param array|\Traversable
+ * @return \Cake\Collection\Collection
+ */
+	public function append($items) {
+		$list = new AppendIterator;
+		$list->append($this);
+		$list->append(new Collection($items));
+		return new Collection($list);
 	}
 
 /**
