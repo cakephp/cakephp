@@ -51,6 +51,7 @@ class CollectionTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->connection);
+		Cache::clear(true, '_cake_model_');
 	}
 
 /**
