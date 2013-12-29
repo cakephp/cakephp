@@ -649,4 +649,40 @@ trait CollectionTrait {
 		return $this->toArray();
 	}
 
+/**
+ * Iterates once all elements in this collection and executes all stacked
+ * operations of them, finally it returns a new collection with the result.
+ * This is useful for converting non-rewindable internal iterators into
+ * a collection that can be rewound and used multiple times.
+ *
+ * A common use case is to re-use the same variable for calculating different
+ * data. In those cases it may be helpful and more performant to first compile
+ * a collection and then apply more operations to it.
+ *
+ * ### Example:
+ *
+ * {{{
+ * $collection->map($mapper)->sortBy('age')->extract('name');
+ * $compiled = $collection->compile();
+ * $isJohnHere = $compiled->some($johnMatcher);
+ * $allButJohn = $compiled->filter($johnMatcher);
+ * }}}
+ *
+ * In the above example, had the collection not been compiled before, the
+ * iterations for `map`, `sortBy` and `extract` would've been executed twice:
+ * once for getting `$isJohnHere` and once for `$allButJohn`
+ *
+ * You can think of this method as a way to create save points for complex
+ * calculations in a collection.
+ *
+ * @param boolean $preserveKeys whether to use the keys returned by this
+ * collection as the array keys. Keep in mind that it is valid for iterators
+ * to return the same key for different elements, setting this value to false
+ * can help getting all items if keys are not important in the result.
+ * @return \Cake\Collection\Collection
+ */
+	public function compile($preserveKeys = true) {
+		return new Collection($this->toArray($preserveKeys));
+	}
+
 }

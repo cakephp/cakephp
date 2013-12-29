@@ -604,4 +604,31 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(['a' => 4, 'b' => 2, 'c' => 3], $combined->toArray());
 	}
 
+/**
+ * Tests that by calling compile internal iteration operations are not done
+ * more than once
+ *
+ * @return void
+ */
+	public function testCompile() {
+		$items = ['a' => 1, 'b' => 2, 'c' => 3];
+		$collection = new Collection($items);
+		$callable = $this->getMock('stdClass', ['__invoke']);
+		$callable->expects($this->at(0))
+			->method('__invoke')
+			->with(1, 'a')
+			->will($this->returnValue(4));
+		$callable->expects($this->at(1))
+			->method('__invoke')
+			->with(2, 'b')
+			->will($this->returnValue(5));
+		$callable->expects($this->at(2))
+			->method('__invoke')
+			->with(3, 'c')
+			->will($this->returnValue(6));
+		$compiled = $collection->map($callable)->compile();
+		$this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
+		$this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
+	}
+
 }
