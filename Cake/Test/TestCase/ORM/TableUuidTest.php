@@ -21,13 +21,14 @@ use Cake\Database\ConnectionManager;
 use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\TestSuite\TestCase;
 use Cake\Utility\String;
 
 /**
  * Integration tests for Table class with uuid primary keys.
  *
  */
-class UuidTableTest extends \Cake\TestSuite\TestCase {
+class TableUuidTest extends TestCase {
 
 /**
  * Fixtures
