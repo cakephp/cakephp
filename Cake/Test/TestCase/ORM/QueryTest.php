@@ -1464,4 +1464,74 @@ class QueryTest extends TestCase {
 		$this->assertTrue($result->rowCount() > 0);
 	}
 
+/**
+ * Provides a list of collection methods that can be proxied
+ * from the query
+ *
+ * @return array
+ */
+	public function collectionMethodsProvider() {
+		$identity = function($a) {
+			return $a;
+		};
+		return [
+			['filter', $identity],
+			['reject', $identity],
+			['every', $identity],
+			['some', $identity],
+			['contains', $identity],
+			['map', $identity],
+			['reduce', $identity],
+			['extract', $identity],
+			['max', $identity],
+			['min', $identity],
+			['sortBy', $identity],
+			['groupBy', $identity],
+			['countBy', $identity],
+			['shuffle', $identity],
+			['sample', $identity],
+			['take', 1],
+			['append', new \ArrayIterator],
+			['compile', 1],
+		];
+	}
+
+/**
+ * Tests that query can proxy collection methods
+ *
+ * @dataProvider collectionMethodsProvider
+ * @return void
+ */
+	public function testCollectionProxy($method, $arg) {
+		$query = $this->getMock(
+			'\Cake\ORM\Query', ['getResults'],
+			[$this->connection, $this->table]
+		);
+		$query->select();
+		$resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, null]);
+		$query->expects($this->once())
+			->method('getResults')
+			->will($this->returnValue($resultSet));
+		$resultSet->expects($this->once())
+			->method($method)
+			->with($arg, 'extra')
+			->will($this->returnValue(new \Cake\Collection\Collection([])));
+		$this->assertInstanceOf(
+			'\Cake\Collection\Collection',
+			$query->{$method}($arg, 'extra')
+		);
+	}
+
+/**
+ * Tests that calling an inexistent method in query throws an
+ * exception
+ *
+ * @expectedException \BadMethodCallException
+ * @expectedExceptionMessage Unknown method "derpFilter"
+ * @return void
+ */
+	public function testCollectionProxyBadMethod() {
+		TableRegistry::get('articles')->find('all')->derpFilter();
+	}
+
 }
