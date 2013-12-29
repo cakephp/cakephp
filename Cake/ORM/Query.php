@@ -942,7 +942,7 @@ class Query extends DatabaseQuery {
  *
  * @return void
  */
-	public function _dirty() {
+	protected function _dirty() {
 		$this->_results = null;
 		parent::_dirty();
 	}

@@ -212,7 +212,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return string Serialized object
  */
 	public function serialize() {
-		while($this->valid()) {
+		while ($this->valid()) {
 			$this->next();
 		}
 		return serialize($this->_results);
