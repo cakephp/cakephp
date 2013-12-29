@@ -994,4 +994,26 @@ class Query extends DatabaseQuery {
 		return parent::insert($columns, $types);
 	}
 
+/**
+ * Enables calling methods from the ResultSet as if they were from this class
+ *
+ * @param string $method the method to call
+ * @param array $arguments list of arguments for the method to call
+ * @return mixed
+ * @throws \BadMethodCallException if no such method exists in ResultSet
+ */
+	public function __call($method, $arguments) {
+		if ($this->type() === 'select') {
+			$resultSetClass = __NAMESPACE__ . '\ResultSetDecorator';
+			if (in_array($method, get_class_methods($resultSetClass))) {
+				$object = $this->execute();
+				return call_user_func_array([$object, $method], $arguments);
+			}
+		}
+
+		throw new \BadMethodCallException(
+			__d('cake_dev', 'Unknown method "%s"', $method)
+		);
+	}
+
 }
