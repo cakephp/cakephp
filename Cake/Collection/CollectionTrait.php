@@ -668,9 +668,9 @@ trait CollectionTrait {
  * $allButJohn = $compiled->filter($johnMatcher);
  * }}}
  *
- * In the above example, had not the collection compiled before, the iterations
- * for `map`, `sortBy` and `extract` would've been executed twice: once for
- * getting `$isJohnHere` and once for `$allButJohn`
+ * In the above example, had the collection not been compiled before, the
+ * iterations for `map`, `sortBy` and `extract` would've been executed twice:
+ * once for getting `$isJohnHere` and once for `$allButJohn`
  *
  * You can think of this method as a way to create save points for complex
  * calculations in a collection.
