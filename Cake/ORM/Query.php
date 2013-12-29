@@ -986,12 +986,12 @@ class Query extends DatabaseQuery {
  *
  * @param array $columns The columns to insert into.
  * @param array $types A map between columns & their datatypes.
- * @param array $unused An unused parameter from the parent class' interface
  * @return Query
  */
-	public function insert($columns, $types = [], $unused = []) {
+	public function insert($columns, $types = []) {
 		$table = $this->repository()->table();
-		return parent::insert($table, $columns, $types);
+		$this->into($table);
+		return parent::insert($columns, $types);
 	}
 
 }

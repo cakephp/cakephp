@@ -164,7 +164,7 @@ class IdentifierQuoter {
 				$column = $this->_driver->quoteIdentifier($column);
 			}
 		}
-		$query->insert($table, $columns);
+		$query->insert($columns)->into($table);
 	}
 
 /**

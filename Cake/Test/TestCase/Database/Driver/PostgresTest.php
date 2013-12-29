@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -150,13 +148,18 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			[['log' => false]]
 		);
 		$query = new \Cake\Database\Query($connection);
-		$query->insert('articles', ['id', 'title'])->values([1, 'foo']);
+		$query->insert(['id', 'title'])
+			->into('articles')
+			->values([1, 'foo']);
 		$translator = $driver->queryTranslator('insert');
 		$query = $translator($query);
 		$this->assertEquals('RETURNING *', $query->clause('epilog'));
 
 		$query = new \Cake\Database\Query($connection);
-		$query->insert('articles', ['id', 'title'])->values([1, 'foo'])->epilog('FOO');
+		$query->insert(['id', 'title'])
+			->into('articles')
+			->values([1, 'foo'])
+			->epilog('FOO');
 		$query = $translator($query);
 		$this->assertEquals('FOO', $query->clause('epilog'));
 	}

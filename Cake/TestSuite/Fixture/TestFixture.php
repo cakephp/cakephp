@@ -276,7 +276,8 @@ class TestFixture {
 		if (isset($this->records) && !empty($this->records)) {
 			list($fields, $values, $types) = $this->_getRecords();
 			$query = $db->newQuery()
-				->insert($this->table, $fields, $types);
+				->insert($fields, $types)
+				->into($this->table);
 
 			foreach ($values as $row) {
 				$query->values($row);
