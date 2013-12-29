@@ -1292,19 +1292,32 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Note calling this method will reset any data previously set
  * with Query::values()
  *
- * @param string $table The table name to insert into.
  * @param array $columns The columns to insert into.
+ * @param array $types A map between columns & their datatypes.
  * @return Query
  */
-	public function insert($table, $columns, $types = []) {
+	public function insert($columns, $types = []) {
 		$this->_dirty();
 		$this->_type = 'insert';
-		$this->_parts['insert'] = [$table, $columns];
+		$this->_parts['insert'][1] = $columns;
 
 		if (!$this->_parts['values']) {
 			$this->_parts['values'] = new ValuesExpression($columns, $types + $this->defaultTypes());
 		}
 
+		return $this;
+	}
+
+/**
+ * Set the table name for insert queries.
+ *
+ * @param string $table The table name to insert into.
+ * @return Query
+ */
+	public function into($table) {
+		$this->_dirty();
+		$this->_type = 'insert';
+		$this->_parts['insert'][0] = $table;
 		return $this;
 	}
 

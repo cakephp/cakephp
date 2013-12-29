@@ -386,7 +386,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	protected function _processRules(ValidationSet $rules, $value, $newRecord) {
 		$errors = [];
-		$this->provider('default'); // Loading default provider in case there is none
+		// Loading default provider in case there is none
+		$this->provider('default');
 		foreach ($rules as $name => $rule) {
 			$result = $rule->process($value, $this->_providers, $newRecord);
 			if ($result === true) {

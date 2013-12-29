@@ -864,7 +864,7 @@ class Table implements EventListener {
  */
 	public function updateAll($fields, $conditions) {
 		$query = $this->query();
-		$query->update($this->table())
+		$query->update()
 			->set($fields)
 			->where($conditions);
 		$statement = $query->execute();
@@ -957,7 +957,7 @@ class Table implements EventListener {
  */
 	public function deleteAll($conditions) {
 		$query = $this->query();
-		$query->delete($this->table())
+		$query->delete()
 			->where($conditions);
 		$statement = $query->execute();
 		$success = $statement->rowCount() > 0;
@@ -1188,7 +1188,7 @@ class Table implements EventListener {
 			$data[$primary] = $id;
 		}
 
-		$statement = $query->insert($this->table(), array_keys($data))
+		$statement = $query->insert(array_keys($data))
 			->values($data)
 			->execute();
 
@@ -1248,7 +1248,7 @@ class Table implements EventListener {
 		}
 
 		$query = $this->query();
-		$statement = $query->update($this->table())
+		$statement = $query->update()
 			->set($data)
 			->where($primaryKey)
 			->execute();
@@ -1338,7 +1338,7 @@ class Table implements EventListener {
 		}
 
 		$query = $this->query();
-		$statement = $query->delete($this->table())
+		$statement = $query->delete()
 			->where($conditions)
 			->execute();
 

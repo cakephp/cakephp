@@ -489,15 +489,17 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
 			['query'],
-			[['table' => 'users']]
+			[['table' => 'users', 'connection' => $this->connection]]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['_executeStatement'], [$this->connection, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['_executeStatement'], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('query')
 			->will($this->returnValue($query));
+
 		$query->expects($this->once())
 			->method('_executeStatement')
 			->will($this->throwException(new \Cake\Database\Exception('Not good')));
+
 		$table->updateAll(['username' => 'mark'], []);
 	}
 
@@ -530,13 +532,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			['query'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
-		$query = $this->getMock('Cake\ORM\Query', ['_executeStatement'], [$this->connection, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['_executeStatement'], [$this->connection, $table]);
 		$table->expects($this->once())
 			->method('query')
 			->will($this->returnValue($query));
+
 		$query->expects($this->once())
 			->method('_executeStatement')
 			->will($this->throwException(new \Cake\Database\Exception('Not good')));
+
 		$table->deleteAll(['id >' => 4]);
 	}
 

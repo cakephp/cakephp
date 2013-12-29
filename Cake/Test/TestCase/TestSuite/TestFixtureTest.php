@@ -234,22 +234,28 @@ class TestFixtureTest extends TestCase {
 
 		$query->expects($this->once())
 			->method('insert')
-			->with('articles', ['name', 'created'], ['string', 'datetime'])
+			->with(['name', 'created'], ['string', 'datetime'])
 			->will($this->returnSelf());
+
+		$query->expects($this->once())
+			->method('into')
+			->with('articles')
+			->will($this->returnSelf());
+
 		$expected = [
 			['name' => 'Gandalf', 'created' => '2009-04-28 19:20:00'],
 			['name' => 'Captain Picard', 'created' => '2009-04-28 19:20:00'],
 			['name' => 'Chewbacca', 'created' => '2009-04-28 19:20:00']
 		];
-		$query->expects($this->at(1))
+		$query->expects($this->at(2))
 			->method('values')
 			->with($expected[0])
 			->will($this->returnSelf());
-		$query->expects($this->at(2))
+		$query->expects($this->at(3))
 			->method('values')
 			->with($expected[1])
 			->will($this->returnSelf());
-		$query->expects($this->at(3))
+		$query->expects($this->at(4))
 			->method('values')
 			->with($expected[2])
 			->will($this->returnSelf());
@@ -279,7 +285,12 @@ class TestFixtureTest extends TestCase {
 
 		$query->expects($this->once())
 			->method('insert')
-			->with('strings', ['name', 'email', 'age'], ['string', 'string', 'integer'])
+			->with(['name', 'email', 'age'], ['string', 'string', 'integer'])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())
+			->method('into')
+			->with('strings')
 			->will($this->returnSelf());
 
 		$expected = [
@@ -287,15 +298,15 @@ class TestFixtureTest extends TestCase {
 			['name' => 'John Doe', 'email' => 'john.doe@email.com', 'age' => 20],
 			['name' => 'Jane Doe', 'email' => 'jane.doe@email.com', 'age' => 30],
 		];
-		$query->expects($this->at(1))
+		$query->expects($this->at(2))
 			->method('values')
 			->with($expected[0])
 			->will($this->returnSelf());
-		$query->expects($this->at(2))
+		$query->expects($this->at(3))
 			->method('values')
 			->with($expected[1])
 			->will($this->returnSelf());
-		$query->expects($this->at(3))
+		$query->expects($this->at(4))
 			->method('values')
 			->with($expected[2])
 			->will($this->returnSelf());

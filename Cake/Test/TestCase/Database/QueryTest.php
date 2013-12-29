@@ -1702,7 +1702,8 @@ class QueryTest extends TestCase {
  */
 	public function testInsertSimple() {
 		$query = new Query($this->connection);
-		$query->insert('articles', ['title', 'body'])
+		$query->insert(['title', 'body'])
+			->into('articles')
 			->values([
 				'title' => 'mark',
 				'body' => 'test insert'
@@ -1738,7 +1739,8 @@ class QueryTest extends TestCase {
  */
 	public function testInsertSparseRow() {
 		$query = new Query($this->connection);
-		$query->insert('articles', ['title', 'body'])
+		$query->insert(['title', 'body'])
+			->into('articles')
 			->values([
 				'title' => 'mark',
 			]);
@@ -1772,7 +1774,8 @@ class QueryTest extends TestCase {
  */
 	public function testInsertMultipleRowsSparse() {
 		$query = new Query($this->connection);
-		$query->insert('articles', ['title', 'body'])
+		$query->insert(['title', 'body'])
+			->into('articles')
 			->values([
 				'body' => 'test insert'
 			])
@@ -1814,10 +1817,10 @@ class QueryTest extends TestCase {
 
 		$query = new Query($this->connection);
 		$query->insert(
-			'articles',
 			['title', 'body', 'author_id'],
 			['title' => 'string', 'body' => 'string', 'author_id' => 'integer']
 		)
+		->into('articles')
 		->values($select);
 
 		$result = $query->sql();
@@ -1853,7 +1856,8 @@ class QueryTest extends TestCase {
  */
 	public function testInsertFailureMixingTypesArrayFirst() {
 		$query = new Query($this->connection);
-		$query->insert('articles', ['name'])
+		$query->insert(['name'])
+			->into('articles')
 			->values(['name' => 'mark'])
 			->values(new Query($this->connection));
 	}
@@ -1865,7 +1869,8 @@ class QueryTest extends TestCase {
  */
 	public function testInsertFailureMixingTypesQueryFirst() {
 		$query = new Query($this->connection);
-		$query->insert('articles', ['name'])
+		$query->insert(['name'])
+			->into('articles')
 			->values(new Query($this->connection))
 			->values(['name' => 'mark']);
 	}
@@ -2015,7 +2020,8 @@ class QueryTest extends TestCase {
 	public function testAppendInsert() {
 		$query = new Query($this->connection);
 		$sql = $query
-			->insert('articles', ['id', 'title'])
+			->insert(['id', 'title'])
+			->into('articles')
 			->values([1, 'a title'])
 			->epilog('RETURNING id')
 			->sql();
@@ -2197,13 +2203,15 @@ class QueryTest extends TestCase {
 	public function testQuotingInsert() {
 		$this->connection->driver()->autoQuoting(true);
 		$query = new Query($this->connection);
-		$sql = $query->insert('foo', ['bar', 'baz'])
+		$sql = $query->insert(['bar', 'baz'])
+			->into('foo')
 			->where(['something' => 'value'])
 			->sql();
 		$this->assertQuotedQuery('INSERT INTO <foo> \(<bar>, <baz>\)', $sql);
 
 		$query = new Query($this->connection);
-		$sql = $query->insert('foo', [$query->newExpr()->add('bar')])
+		$sql = $query->insert([$query->newExpr()->add('bar')])
+			->into('foo')
 			->where(['something' => 'value'])
 			->sql();
 		$this->assertQuotedQuery('INSERT INTO <foo> \(\(bar\)\)', $sql);

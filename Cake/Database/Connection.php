@@ -269,7 +269,8 @@ class Connection {
  */
 	public function insert($table, array $data, array $types = []) {
 		$columns = array_keys($data);
-		return $this->newQuery()->insert($table, $columns, $types)
+		return $this->newQuery()->insert($columns, $types)
+			->into($table)
 			->values($data)
 			->execute();
 	}
