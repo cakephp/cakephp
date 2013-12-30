@@ -498,11 +498,16 @@ class FormHelper extends AppHelper {
  * array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
  * }}}
  *
+ * If $secureAttributes is set, these html attributes will be merged into the hidden input tags generated for the
+ * Security Component. This is especially useful to set HTML5 attributes like 'form'
+ *
  * @param string|array $options as a string will use $options as the value of button,
+ * @param array $secureAttributes will be passed as html attributes into the hidden input elements generated for the
+ *   Security Component.
  * @return string a closing FORM tag optional submit button.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#closing-the-form
  */
-	public function end($options = null) {
+	public function end($options = null, $secureAttributes = array()) {
 		$out = null;
 		$submit = null;
 
@@ -524,7 +529,7 @@ class FormHelper extends AppHelper {
 			isset($this->request['_Token']) &&
 			!empty($this->request['_Token'])
 		) {
-			$out .= $this->secure($this->fields);
+			$out .= $this->secure($this->fields, $secureAttributes);
 			$this->fields = array();
 		}
 		$this->setEntity(null);
@@ -538,17 +543,26 @@ class FormHelper extends AppHelper {
 /**
  * Generates a hidden field with a security hash based on the fields used in the form.
  *
- * @param array $fields The list of fields to use when generating the hash
+ * If $secureAttributes is set, these html attributes will be merged into the hidden input tags generated for the
+ * Security Component. This is especially useful to set HTML5 attributes like 'form'.
+ *
+ * @param array|null $fields If set specifies the list of fields to use when generating the hash, else $this->fields is being used.
+ * @param array $secureAttributes will be passed as html attributes into the hidden input elements generated for the
+ *   Security Component.
  * @return string A hidden input field with a security hash
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::secure
  */
-	public function secure($fields = array()) {
+	public function secure($fields = array(), $secureAttributes = array()) {
+		
 		if (!isset($this->request['_Token']) || empty($this->request['_Token'])) {
 			return;
 		}
 		$locked = array();
 		$unlockedFields = $this->_unlockedFields;
 
+		if (empty($fields) && !empty($this->fields)) {
+			$fields = $this->fields;
+		}
 		foreach ($fields as $key => $value) {
 			if (!is_int($key)) {
 				$locked[$key] = $value;
@@ -565,14 +579,16 @@ class FormHelper extends AppHelper {
 		$unlocked = implode($unlockedFields, '|');
 		$fields = Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt'), 'sha1');
 
-		$out = $this->hidden('_Token.fields', array(
+		$tokenFields = array_merge($secureAttributes, array(
 			'value' => urlencode($fields . ':' . $locked),
-			'id' => 'TokenFields' . mt_rand()
+			'id' => 'TokenFields' . mt_rand(),
 		));
-		$out .= $this->hidden('_Token.unlocked', array(
+		$out = $this->hidden('_Token.fields', $tokenFields);
+		$tokenUnlocked = array_merge($secureAttributes, array(
 			'value' => urlencode($unlocked),
-			'id' => 'TokenUnlocked' . mt_rand()
+			'id' => 'TokenUnlocked' . mt_rand(),
 		));
+		$out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
 		return $this->Html->useTag('hiddenblock', $out);
 	}
 
