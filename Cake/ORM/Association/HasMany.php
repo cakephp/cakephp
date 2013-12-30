@@ -87,7 +87,7 @@ class HasMany extends Association {
 		$fetchQuery = $this->_buildQuery($options);
 		$resultMap = [];
 		$key = $options['foreignKey'];
-		foreach ($fetchQuery->execute() as $result) {
+		foreach ($fetchQuery->all() as $result) {
 			$resultMap[$result[$key]][] = $result;
 		}
 

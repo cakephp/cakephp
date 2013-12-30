@@ -202,15 +202,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @return Cake\Database\StatementInterface
  */
 	public function execute() {
-		return $this->_executeStatement();
-	}
-
-/**
- * Internal implementation of statement execution.
- *
- * @return Cake\Database\StatementInterface
- */
-	protected function _executeStatement() {
 		$query = $this->_transformQuery();
 		$statement = $this->_connection->prepare($query->sql());
 		$query->_bindStatement($statement);

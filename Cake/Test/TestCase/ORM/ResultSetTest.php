@@ -58,7 +58,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testRewind() {
 		$query = $this->table->find('all');
-		$results = $query->execute();
+		$results = $query->all();
 		$first = $second = [];
 		foreach ($results as $result) {
 			$first[] = $result;
@@ -75,7 +75,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testRewindStreaming() {
 		$query = $this->table->find('all')->bufferResults(false);
-		$results = $query->execute();
+		$results = $query->all();
 		$first = $second = [];
 		foreach ($results as $result) {
 			$first[] = $result;
@@ -96,11 +96,11 @@ class ResultSetTest extends TestCase {
  */
 	public function testSerialization() {
 		$query = $this->table->find('all');
-		$results = $query->execute();
+		$results = $query->all();
 		$expected = $results->toArray();
 
 		$query2 = $this->table->find('all');
-		$results2 = $query2->execute();
+		$results2 = $query2->all();
 		$serialized = serialize($results2);
 		$outcome = unserialize($serialized);
 		$this->assertEquals($expected, $outcome->toArray());
@@ -113,7 +113,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testIteratorAfterSerializationNoHydration() {
 		$query = $this->table->find('all')->hydrate(false);
-		$results = unserialize(serialize($query->execute()));
+		$results = unserialize(serialize($query->all()));
 
 		// Use a loop to test Iterator implementation
 		foreach ($results as $i => $row) {
@@ -128,7 +128,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testIteratorAfterSerializationHydrated() {
 		$query = $this->table->find('all');
-		$results = unserialize(serialize($query->execute()));
+		$results = unserialize(serialize($query->all()));
 
 		// Use a loop to test Iterator implementation
 		foreach ($results as $i => $row) {
@@ -145,7 +145,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testJsonSerialize() {
 		$query = $this->table->find('all');
-		$results = $query->execute();
+		$results = $query->all();
 
 		$expected = json_encode($this->fixtureData);
 		$this->assertEquals($expected, json_encode($results));
@@ -158,7 +158,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testFirst() {
 		$query = $this->table->find('all');
-		$results = $query->hydrate(false)->execute();
+		$results = $query->hydrate(false)->all();
 
 		$row = $results->first();
 		$this->assertEquals($this->fixtureData[0], $row);
@@ -174,7 +174,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testFirstAfterSerialize() {
 		$query = $this->table->find('all');
-		$results = $query->hydrate(false)->execute();
+		$results = $query->hydrate(false)->all();
 		$results = unserialize(serialize($results));
 
 		$row = $results->first();
@@ -191,7 +191,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testCount() {
 		$query = $this->table->find('all');
-		$results = $query->execute();
+		$results = $query->all();
 
 		$this->assertCount(3, $results, 'Should be countable and 3');
 	}
@@ -203,7 +203,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testCountAfterSerialize() {
 		$query = $this->table->find('all');
-		$results = $query->execute();
+		$results = $query->all();
 		$results = unserialize(serialize($results));
 
 		$this->assertCount(3, $results, 'Should be countable and 3');
@@ -216,7 +216,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testGroupBy() {
 		$query = $this->table->find('all');
-		$results = $query->execute()->groupBy('author_id')->toArray();
+		$results = $query->all()->groupBy('author_id')->toArray();
 		$options = ['markNew' => false, 'markClean' => true];
 		$expected = [
 			1 => [

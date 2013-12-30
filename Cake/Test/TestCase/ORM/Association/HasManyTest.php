@@ -119,14 +119,14 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new HasMany('Articles', $config);
 		$keys = [1, 2, 3, 4];
-		$query = $this->getMock('Cake\ORM\Query', ['execute'], [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['all'], [null, null]);
 		$this->article->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 		];
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())->method('all')
 			->will($this->returnValue($results));
 
 		$callable = $association->eagerLoader(compact('keys', 'query'));
@@ -162,7 +162,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['execute', 'where', 'andWhere', 'order'],
+			['all', 'where', 'andWhere', 'order'],
 			[null, null]
 		);
 		$this->article->expects($this->once())->method('find')->with('all')
@@ -172,7 +172,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 		];
 
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())->method('all')
 			->will($this->returnValue($results));
 
 		$query->expects($this->at(0))->method('where')
@@ -211,7 +211,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['execute', 'where', 'andWhere', 'order', 'select', 'contain'],
+			['all', 'where', 'andWhere', 'order', 'select', 'contain'],
 			[null, null]
 		);
 		$this->article->expects($this->once())->method('find')->with('all')
@@ -221,7 +221,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 		];
 
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())->method('all')
 			->will($this->returnValue($results));
 
 		$query->expects($this->at(0))->method('where')
@@ -281,7 +281,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['execute'],
+			['all'],
 			[null, null]
 		);
 		$this->article->expects($this->once())->method('find')->with('all')
@@ -311,7 +311,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['execute', 'where', 'andWhere', 'order', 'select', 'contain'],
+			['all', 'where', 'andWhere', 'order', 'select', 'contain'],
 			[null, null]
 		);
 
@@ -321,7 +321,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
 			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
 		];
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())->method('all')
 			->will($this->returnValue($results));
 
 		$query->expects($this->at(0))->method('where')
