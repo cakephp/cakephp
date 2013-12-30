@@ -428,7 +428,7 @@ class Query extends DatabaseQuery {
  * @throws RuntimeException if this method is called on a non-select Query.
  */
 	public function all() {
-		if ($this->_type !== 'select') {
+		if ($this->_type !== 'select' && $this->_type !== null) {
 			throw new \RuntimeException(__d(
 				'cake_dev',
 				'You cannot call all() on a non-select query. Use execute() instead.'
