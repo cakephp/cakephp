@@ -651,13 +651,8 @@ class Query extends DatabaseQuery {
 			$this->limit(1);
 		}
 		$this->bufferResults();
-<<<<<<< HEAD
-		$this->_results = $this->execute();
-		return $this->_results->first();
-=======
 		$this->_results = $this->all();
-		return $this->_results->one();
->>>>>>> Separate execute() into 2 methods.
+		return $this->_results->first();
 	}
 
 /**
@@ -1025,8 +1020,8 @@ class Query extends DatabaseQuery {
 		if ($this->type() === 'select') {
 			$resultSetClass = __NAMESPACE__ . '\ResultSetDecorator';
 			if (in_array($method, get_class_methods($resultSetClass))) {
-				$object = $this->execute();
-				return call_user_func_array([$object, $method], $arguments);
+				$results = $this->all();
+				return call_user_func_array([$results, $method], $arguments);
 			}
 		}
 

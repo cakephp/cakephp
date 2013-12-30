@@ -75,7 +75,7 @@ class ResultSetTest extends TestCase {
  */
 	public function testRewindStreaming() {
 		$query = $this->table->find('all')->bufferResults(false);
-		$results = $query->execute();
+		$results = $query->all();
 		$first = $second = [];
 		foreach ($results as $result) {
 			$first[] = $result;
