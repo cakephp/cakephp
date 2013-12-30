@@ -722,7 +722,7 @@ class PaginatorComponentTest extends TestCase {
  * @return Query
  */
 	protected function _getMockFindQuery() {
-		$query = $this->getMock('Cake\ORM\Query', ['total', 'execute'], [], '', false);
+		$query = $this->getMock('Cake\ORM\Query', ['total', 'all'], [], '', false);
 
 		$results = $this->getMock('Cake\ORM\ResultSet', [], [], '', false);
 		$results->expects($this->any())
@@ -730,7 +730,7 @@ class PaginatorComponentTest extends TestCase {
 			->will($this->returnValue(2));
 
 		$query->expects($this->any())
-			->method('execute')
+			->method('all')
 			->will($this->returnValue($results));
 
 		$query->expects($this->any())

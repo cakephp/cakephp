@@ -164,7 +164,7 @@ class PaginatorComponent extends Component {
 		$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
 		$query = $object->find($type, array_merge($parameters, $extra));
 
-		$results = $query->execute();
+		$results = $query->all();
 		$numResults = count($results);
 
 		$defaults = $this->getDefaults($alias, $settings);
