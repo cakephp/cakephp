@@ -8872,7 +8872,7 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->end('', array('form' => 'MyTestFormWithSupportForSecurityComponent'));
 		$expected = array(
 			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => ''),
+			'input' => array('type' => 'submit', 'value' => '', 'form' => 'MyTestFormWithSupportForSecurityComponent'),
 			'/div',
 			'/form'
 		);
