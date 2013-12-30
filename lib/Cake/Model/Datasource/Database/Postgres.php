@@ -127,7 +127,7 @@ class Postgres extends DboSource {
 				$this->setEncoding($config['encoding']);
 			}
 			if (!empty($config['schema'])) {
-				$this->_execute('SET search_path TO ' . $config['schema']);
+				$this->_execute('SET search_path TO "' . $config['schema'] . '"');
 			}
 			if (!empty($config['settings'])) {
 				foreach ($config['settings'] as $key => $value) {
