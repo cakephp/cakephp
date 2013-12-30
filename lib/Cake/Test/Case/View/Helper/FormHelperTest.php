@@ -8869,6 +8869,15 @@ class FormHelperTest extends CakeTestCase {
 	public function testFormEnd() {
 		$this->assertEquals('</form>', $this->Form->end());
 
+		$result = $this->Form->end('', array('form' => 'MyTestFormWithSupportForSecurityComponent'));
+		$expected = array(
+			'div' => array('class' => 'submit'),
+			'input' => array('type' => 'submit', 'value' => ''),
+			'/div',
+			'/form'
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Form->end('');
 		$expected = array(
 			'div' => array('class' => 'submit'),
