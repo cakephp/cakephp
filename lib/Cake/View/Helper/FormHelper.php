@@ -575,12 +575,12 @@ class FormHelper extends AppHelper {
 		$unlocked = implode($unlockedFields, '|');
 		$fields = Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt'), 'sha1');
 
-		$tokenFields = array_merge((array)$secureAttributes, array(
+		$tokenFields = array_merge($secureAttributes, array(
 			'value' => urlencode($fields . ':' . $locked),
 			'id' => 'TokenFields' . mt_rand(),
 		));
 		$out = $this->hidden('_Token.fields', $tokenFields);
-		$tokenUnlocked = array_merge((array)$secureAttributes, array(
+		$tokenUnlocked = array_merge($secureAttributes, array(
 			'value' => urlencode($unlocked),
 			'id' => 'TokenUnlocked' . mt_rand(),
 		));
