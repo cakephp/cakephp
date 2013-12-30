@@ -5,6 +5,7 @@ php:
   - 5.3
   - 5.4
   - 5.5
+  - hhvm
 
 env:
   - DB=mysql
@@ -12,6 +13,8 @@ env:
   - DB=sqlite
 
 matrix:
+  allow_failures:
+    - php: hhvm
   include:
     - php: 5.4
       env:
@@ -31,6 +34,7 @@ before_script:
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
   - phpenv rehash
   - set +H
+  - sh -c "php --version|grep HipHop; if [ $? -eq 0 ]; then composer install; echo \"App::import('Vendor', array('file' => 'autoload'));\" >> app/Config/bootstrap.php; fi"
   - echo "<?php
     class DATABASE_CONFIG {
     private \$identities = array(

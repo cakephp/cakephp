@@ -14,6 +14,7 @@
  */
 
 App::uses('AppShell', 'Console/Command');
+App::uses('CakeString', 'Utility');
 App::uses('File', 'Utility');
 App::uses('Folder', 'Utility');
 App::uses('CakeSchema', 'Model');
@@ -125,7 +126,7 @@ class SchemaShell extends AppShell {
 		if ($this->params['force']) {
 			$options['models'] = false;
 		} elseif (!empty($this->params['models'])) {
-			$options['models'] = String::tokenize($this->params['models']);
+			$options['models'] = CakeString::tokenize($this->params['models']);
 		}
 
 		$snapshot = false;
@@ -154,7 +155,7 @@ class SchemaShell extends AppShell {
 		Configure::write('Cache.disable', $cacheDisable);
 
 		if (!empty($this->params['exclude']) && !empty($content)) {
-			$excluded = String::tokenize($this->params['exclude']);
+			$excluded = CakeString::tokenize($this->params['exclude']);
 			foreach ($excluded as $table) {
 				unset($content['tables'][$table]);
 			}

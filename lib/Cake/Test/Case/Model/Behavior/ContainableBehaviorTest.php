@@ -18,6 +18,7 @@
 
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
+App::uses('CakeSet', 'Utility');
 
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
@@ -83,7 +84,7 @@ class ContainableBehaviorTest extends CakeTestCase {
  */
 	public function testContainments() {
 		$r = $this->_containments($this->Article, array('Comment' => array('conditions' => array('Comment.user_id' => 2))));
-		$this->assertTrue(Set::matches('/Article/keep/Comment/conditions[Comment.user_id=2]', $r));
+		$this->assertTrue(CakeSet::matches('/Article/keep/Comment/conditions[Comment.user_id=2]', $r));
 
 		$r = $this->_containments($this->User, array(
 			'ArticleFeatured' => array(
@@ -100,25 +101,25 @@ class ContainableBehaviorTest extends CakeTestCase {
 				'conditions' => array('Comment' => array('user_id' => 2)),
 			),
 		));
-		$this->assertTrue(Set::matches('/User', $r));
-		$this->assertTrue(Set::matches('/Comment', $r));
-		$this->assertTrue(Set::matches('/Article/keep/Comment/conditions/Comment[user_id=2]', $r));
+		$this->assertTrue(CakeSet::matches('/User', $r));
+		$this->assertTrue(CakeSet::matches('/Comment', $r));
+		$this->assertTrue(CakeSet::matches('/Article/keep/Comment/conditions/Comment[user_id=2]', $r));
 
 		$r = $this->_containments($this->Article, array('Comment(comment, published)' => 'Attachment(attachment)', 'User(user)'));
-		$this->assertTrue(Set::matches('/Comment', $r));
-		$this->assertTrue(Set::matches('/User', $r));
-		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
-		$this->assertTrue(Set::matches('/Article/keep/User', $r));
+		$this->assertTrue(CakeSet::matches('/Comment', $r));
+		$this->assertTrue(CakeSet::matches('/User', $r));
+		$this->assertTrue(CakeSet::matches('/Article/keep/Comment', $r));
+		$this->assertTrue(CakeSet::matches('/Article/keep/User', $r));
 		$this->assertEquals(array('comment', 'published'), Hash::extract($r, 'Article.keep.Comment.fields'));
 		$this->assertEquals(array('user'), Hash::extract($r, 'Article.keep.User.fields'));
-		$this->assertTrue(Set::matches('/Comment/keep/Attachment', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/keep/Attachment', $r));
 		$this->assertEquals(array('attachment'), Hash::extract($r, 'Comment.keep.Attachment.fields'));
 
 		$r = $this->_containments($this->Article, array('Comment' => array('limit' => 1)));
 		$this->assertEquals(array('Comment', 'Article'), array_keys($r));
 		$result = Hash::extract($r, 'Comment[keep]');
 		$this->assertEquals(array('keep' => array()), array_shift($result));
-		$this->assertTrue(Set::matches('/Article/keep/Comment', $r));
+		$this->assertTrue(CakeSet::matches('/Article/keep/Comment', $r));
 		$result = Hash::extract($r, 'Article.keep');
 		$this->assertEquals(array('limit' => 1), array_shift($result));
 
@@ -137,12 +138,12 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$r = $this->_containments($this->Tag, array('Article' => array('User' => array('Comment' => array(
 			'Attachment' => array('conditions' => array('Attachment.id >' => 1))
 		)))));
-		$this->assertTrue(Set::matches('/Attachment', $r));
-		$this->assertTrue(Set::matches('/Comment/keep/Attachment/conditions', $r));
+		$this->assertTrue(CakeSet::matches('/Attachment', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/keep/Attachment/conditions', $r));
 		$this->assertEquals(array('Attachment.id >' => 1), $r['Comment']['keep']['Attachment']['conditions']);
-		$this->assertTrue(Set::matches('/User/keep/Comment', $r));
-		$this->assertTrue(Set::matches('/Article/keep/User', $r));
-		$this->assertTrue(Set::matches('/Tag/keep/Article', $r));
+		$this->assertTrue(CakeSet::matches('/User/keep/Comment', $r));
+		$this->assertTrue(CakeSet::matches('/Article/keep/User', $r));
+		$this->assertTrue(CakeSet::matches('/Tag/keep/Article', $r));
 	}
 
 /**
@@ -172,24 +173,24 @@ class ContainableBehaviorTest extends CakeTestCase {
  */
 	public function testBeforeFind() {
 		$r = $this->Article->find('all', array('contain' => array('Comment')));
-		$this->assertFalse(Set::matches('/User', $r));
-		$this->assertTrue(Set::matches('/Comment', $r));
-		$this->assertFalse(Set::matches('/Comment/User', $r));
+		$this->assertFalse(CakeSet::matches('/User', $r));
+		$this->assertTrue(CakeSet::matches('/Comment', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/User', $r));
 
 		$r = $this->Article->find('all', array('contain' => 'Comment.User'));
-		$this->assertTrue(Set::matches('/Comment/User', $r));
-		$this->assertFalse(Set::matches('/Comment/Article', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/User', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/Article', $r));
 
 		$r = $this->Article->find('all', array('contain' => array('Comment' => array('User', 'Article'))));
-		$this->assertTrue(Set::matches('/Comment/User', $r));
-		$this->assertTrue(Set::matches('/Comment/Article', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/User', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/Article', $r));
 
 		$r = $this->Article->find('all', array('contain' => array('Comment' => array('conditions' => array('Comment.user_id' => 2)))));
-		$this->assertFalse(Set::matches('/Comment[user_id!=2]', $r));
-		$this->assertTrue(Set::matches('/Comment[user_id=2]', $r));
+		$this->assertFalse(CakeSet::matches('/Comment[user_id!=2]', $r));
+		$this->assertTrue(CakeSet::matches('/Comment[user_id=2]', $r));
 
 		$r = $this->Article->find('all', array('contain' => array('Comment.user_id = 2')));
-		$this->assertFalse(Set::matches('/Comment[user_id!=2]', $r));
+		$this->assertFalse(CakeSet::matches('/Comment[user_id!=2]', $r));
 
 		$r = $this->Article->find('all', array('contain' => 'Comment.id DESC'));
 		$ids = $descIds = Hash::extract($r, 'Comment[1].id');
@@ -197,43 +198,43 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->assertEquals($ids, $descIds);
 
 		$r = $this->Article->find('all', array('contain' => 'Comment'));
-		$this->assertTrue(Set::matches('/Comment[user_id!=2]', $r));
+		$this->assertTrue(CakeSet::matches('/Comment[user_id!=2]', $r));
 
 		$r = $this->Article->find('all', array('contain' => array('Comment' => array('fields' => 'comment'))));
-		$this->assertFalse(Set::matches('/Comment/created', $r));
-		$this->assertTrue(Set::matches('/Comment/comment', $r));
-		$this->assertFalse(Set::matches('/Comment/updated', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/created', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/comment', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/updated', $r));
 
 		$r = $this->Article->find('all', array('contain' => array('Comment' => array('fields' => array('comment', 'updated')))));
-		$this->assertFalse(Set::matches('/Comment/created', $r));
-		$this->assertTrue(Set::matches('/Comment/comment', $r));
-		$this->assertTrue(Set::matches('/Comment/updated', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/created', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/comment', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/updated', $r));
 
 		$r = $this->Article->find('all', array('contain' => array('Comment' => array('comment', 'updated'))));
-		$this->assertFalse(Set::matches('/Comment/created', $r));
-		$this->assertTrue(Set::matches('/Comment/comment', $r));
-		$this->assertTrue(Set::matches('/Comment/updated', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/created', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/comment', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/updated', $r));
 
 		$r = $this->Article->find('all', array('contain' => array('Comment(comment,updated)')));
-		$this->assertFalse(Set::matches('/Comment/created', $r));
-		$this->assertTrue(Set::matches('/Comment/comment', $r));
-		$this->assertTrue(Set::matches('/Comment/updated', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/created', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/comment', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/updated', $r));
 
 		$r = $this->Article->find('all', array('contain' => 'Comment.created'));
-		$this->assertTrue(Set::matches('/Comment/created', $r));
-		$this->assertFalse(Set::matches('/Comment/comment', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/created', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/comment', $r));
 
 		$r = $this->Article->find('all', array('contain' => array('User.Article(title)', 'Comment(comment)')));
-		$this->assertFalse(Set::matches('/Comment/Article', $r));
-		$this->assertFalse(Set::matches('/Comment/User', $r));
-		$this->assertTrue(Set::matches('/Comment/comment', $r));
-		$this->assertFalse(Set::matches('/Comment/created', $r));
-		$this->assertTrue(Set::matches('/User/Article/title', $r));
-		$this->assertFalse(Set::matches('/User/Article/created', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/Article', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/User', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/comment', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/created', $r));
+		$this->assertTrue(CakeSet::matches('/User/Article/title', $r));
+		$this->assertFalse(CakeSet::matches('/User/Article/created', $r));
 
 		$r = $this->Article->find('all', array('contain' => array()));
-		$this->assertFalse(Set::matches('/User', $r));
-		$this->assertFalse(Set::matches('/Comment', $r));
+		$this->assertFalse(CakeSet::matches('/User', $r));
+		$this->assertFalse(CakeSet::matches('/Comment', $r));
 	}
 
 /**
@@ -254,11 +255,11 @@ class ContainableBehaviorTest extends CakeTestCase {
 	public function testContain() {
 		$this->Article->contain('Comment.User');
 		$r = $this->Article->find('all');
-		$this->assertTrue(Set::matches('/Comment/User', $r));
-		$this->assertFalse(Set::matches('/Comment/Article', $r));
+		$this->assertTrue(CakeSet::matches('/Comment/User', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/Article', $r));
 
 		$r = $this->Article->find('all');
-		$this->assertFalse(Set::matches('/Comment/User', $r));
+		$this->assertFalse(CakeSet::matches('/Comment/User', $r));
 	}
 
 /**
@@ -1998,16 +1999,16 @@ class ContainableBehaviorTest extends CakeTestCase {
 			)
 		)));
 
-		$this->assertTrue(Set::matches('/User[id=1]', $r));
-		$this->assertFalse(Set::matches('/Article', $r) || Set::matches('/Comment', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured', $r));
-		$this->assertFalse(Set::matches('/ArticleFeatured/User', $r) || Set::matches('/ArticleFeatured/Comment', $r) || Set::matches('/ArticleFeatured/Tag', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured/Featured', $r));
-		$this->assertFalse(Set::matches('/ArticleFeatured/Featured/ArticleFeatured', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured/Featured/Category', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured/Featured[id=1]', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured/Featured[id=1]/Category[id=1]', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured/Featured[id=1]/Category[name=Category 1]', $r));
+		$this->assertTrue(CakeSet::matches('/User[id=1]', $r));
+		$this->assertFalse(CakeSet::matches('/Article', $r) || CakeSet::matches('/Comment', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured', $r));
+		$this->assertFalse(CakeSet::matches('/ArticleFeatured/User', $r) || CakeSet::matches('/ArticleFeatured/Comment', $r) || CakeSet::matches('/ArticleFeatured/Tag', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured/Featured', $r));
+		$this->assertFalse(CakeSet::matches('/ArticleFeatured/Featured/ArticleFeatured', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured/Featured/Category', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured/Featured[id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured/Featured[id=1]/Category[id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured/Featured[id=1]/Category[name=Category 1]', $r));
 
 		$r = $this->User->find('all', array('contain' => array(
 			'ArticleFeatured' => array(
@@ -2019,15 +2020,15 @@ class ContainableBehaviorTest extends CakeTestCase {
 			)
 		)));
 
-		$this->assertTrue(Set::matches('/User[id=1]', $r));
-		$this->assertFalse(Set::matches('/Article', $r) || Set::matches('/Comment', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured', $r));
-		$this->assertFalse(Set::matches('/ArticleFeatured/User', $r) || Set::matches('/ArticleFeatured/Comment', $r) || Set::matches('/ArticleFeatured/Tag', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured/Featured', $r));
-		$this->assertFalse(Set::matches('/ArticleFeatured/Featured/ArticleFeatured', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured/Featured/Category', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured/Featured[id=1]', $r));
-		$this->assertTrue(Set::matches('/ArticleFeatured/Featured[id=1]/Category[name=Category 1]', $r));
+		$this->assertTrue(CakeSet::matches('/User[id=1]', $r));
+		$this->assertFalse(CakeSet::matches('/Article', $r) || CakeSet::matches('/Comment', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured', $r));
+		$this->assertFalse(CakeSet::matches('/ArticleFeatured/User', $r) || CakeSet::matches('/ArticleFeatured/Comment', $r) || CakeSet::matches('/ArticleFeatured/Tag', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured/Featured', $r));
+		$this->assertFalse(CakeSet::matches('/ArticleFeatured/Featured/ArticleFeatured', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured/Featured/Category', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured/Featured[id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/ArticleFeatured/Featured[id=1]/Category[name=Category 1]', $r));
 
 		$result = $this->User->find('all', array('contain' => array(
 			'ArticleFeatured' => array(
@@ -3213,9 +3214,9 @@ class ContainableBehaviorTest extends CakeTestCase {
 			'Article.Tag' => array('conditions' => array('created >=' => '2007-03-18 12:24'))
 		)));
 
-		$this->assertTrue(Set::matches('/User[id=1]', $result));
-		$this->assertFalse(Set::matches('/Article[id=1]/Tag[id=1]', $result));
-		$this->assertTrue(Set::matches('/Article[id=1]/Tag[id=2]', $result));
+		$this->assertTrue(CakeSet::matches('/User[id=1]', $result));
+		$this->assertFalse(CakeSet::matches('/Article[id=1]/Tag[id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/Article[id=1]/Tag[id=2]', $result));
 		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['conditions']));
 
 		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['order']));
@@ -3224,9 +3225,9 @@ class ContainableBehaviorTest extends CakeTestCase {
 			'Article.Tag' => array('order' => 'created DESC')
 		)));
 
-		$this->assertTrue(Set::matches('/User[id=1]', $result));
-		$this->assertTrue(Set::matches('/Article[id=1]/Tag[id=1]', $result));
-		$this->assertTrue(Set::matches('/Article[id=1]/Tag[id=2]', $result));
+		$this->assertTrue(CakeSet::matches('/User[id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/Article[id=1]/Tag[id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/Article[id=1]/Tag[id=2]', $result));
 		$this->assertTrue(empty($this->User->Article->hasAndBelongsToMany['Tag']['order']));
 	}
 
@@ -3326,16 +3327,16 @@ class ContainableBehaviorTest extends CakeTestCase {
 		$this->Article->bindModel(array('hasMany' => array('Comment'), 'belongsTo' => array('User')), false);
 
 		$r = $this->Article->find('all', array('contain' => array('Comment(comment)', 'User(user)'), 'fields' => array('title')));
-		$this->assertTrue(Set::matches('/Article[id=1]', $r));
-		$this->assertTrue(Set::matches('/User[id=1]', $r));
-		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
-		$this->assertFalse(Set::matches('/Comment[id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/Article[id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/User[id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/Comment[article_id=1]', $r));
+		$this->assertFalse(CakeSet::matches('/Comment[id=1]', $r));
 
 		$r = $this->Article->find('all');
-		$this->assertTrue(Set::matches('/Article[id=1]', $r));
-		$this->assertTrue(Set::matches('/User[id=1]', $r));
-		$this->assertTrue(Set::matches('/Comment[article_id=1]', $r));
-		$this->assertTrue(Set::matches('/Comment[id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/Article[id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/User[id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/Comment[article_id=1]', $r));
+		$this->assertTrue(CakeSet::matches('/Comment[id=1]', $r));
 
 		$this->Article->bindModel(array('hasAndBelongsToMany' => array('Tag')), false);
 
@@ -3372,16 +3373,16 @@ class ContainableBehaviorTest extends CakeTestCase {
 
 		$this->Article->contain(false, array('User' => array('fields' => 'user'), 'Comment'));
 		$result = $this->Article->find('all');
-		$this->assertTrue(Set::matches('/Article[id=1]', $result));
-		$this->assertTrue(Set::matches('/User[user=mariano]', $result));
-		$this->assertTrue(Set::matches('/Comment[article_id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/Article[id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/User[user=mariano]', $result));
+		$this->assertTrue(CakeSet::matches('/Comment[article_id=1]', $result));
 		$this->Article->resetBindings();
 
 		$this->Article->contain(false, array('User' => array('fields' => array('user')), 'Comment'));
 		$result = $this->Article->find('all');
-		$this->assertTrue(Set::matches('/Article[id=1]', $result));
-		$this->assertTrue(Set::matches('/User[user=mariano]', $result));
-		$this->assertTrue(Set::matches('/Comment[article_id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/Article[id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/User[user=mariano]', $result));
+		$this->assertTrue(CakeSet::matches('/Comment[article_id=1]', $result));
 		$this->Article->resetBindings();
 	}
 

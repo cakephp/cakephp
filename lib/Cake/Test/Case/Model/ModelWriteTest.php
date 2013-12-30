@@ -20,6 +20,7 @@ App::uses('MockTransactionDboSource', 'Model/Datasource');
 App::uses('MockTransactionAssociatedDboSource', 'Model/Datasource');
 App::uses('MockManyTransactionDboSource', 'Model/Datasource');
 App::uses('MockAssociatedTransactionDboSource', 'Model/Datasource');
+App::uses('CakeSet', 'Utility');
 
 require_once dirname(__FILE__) . DS . 'ModelTestBase.php';
 
@@ -2886,19 +2887,19 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Something->read();
 
 		$this->assertEquals(3, count($result['SomethingElse']));
-		$this->assertTrue(Set::matches('/Something[id=4]', $result));
+		$this->assertTrue(CakeSet::matches('/Something[id=4]', $result));
 
-		$this->assertTrue(Set::matches('/SomethingElse[id=1]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[something_else_id=1]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[doomed=1]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=1]/JoinThing[something_else_id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=1]/JoinThing[doomed=1]', $result));
 
-		$this->assertTrue(Set::matches('/SomethingElse[id=2]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[something_else_id=2]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[doomed=0]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=2]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=2]/JoinThing[something_else_id=2]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=2]/JoinThing[doomed=0]', $result));
 
-		$this->assertTrue(Set::matches('/SomethingElse[id=3]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=3]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
 	}
 
 /**
@@ -4423,10 +4424,10 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => array('This field cannot be left blank')));
-		$transactionWorked = Set::matches('/Post[1][title=Baleeted First Post]', $result);
+		$transactionWorked = CakeSet::matches('/Post[1][title=Baleeted First Post]', $result);
 		if (!$transactionWorked) {
-			$this->assertTrue(Set::matches('/Post[1][title=Un-Baleeted First Post]', $result));
-			$this->assertTrue(Set::matches('/Post[2][title=Just update the title]', $result));
+			$this->assertTrue(CakeSet::matches('/Post[1][title=Un-Baleeted First Post]', $result));
+			$this->assertTrue(CakeSet::matches('/Post[2][title=Just update the title]', $result));
 		}
 
 		$this->assertEquals($errors, $TestModel->validationErrors);
@@ -5103,19 +5104,19 @@ class ModelWriteTest extends BaseModelTest {
 		$result = $Something->read();
 
 		$this->assertEquals(3, count($result['SomethingElse']));
-		$this->assertTrue(Set::matches('/Something[id=4]', $result));
+		$this->assertTrue(CakeSet::matches('/Something[id=4]', $result));
 
-		$this->assertTrue(Set::matches('/SomethingElse[id=1]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[something_else_id=1]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=1]/JoinThing[doomed=1]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=1]/JoinThing[something_else_id=1]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=1]/JoinThing[doomed=1]', $result));
 
-		$this->assertTrue(Set::matches('/SomethingElse[id=2]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[something_else_id=2]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=2]/JoinThing[doomed=0]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=2]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=2]/JoinThing[something_else_id=2]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=2]/JoinThing[doomed=0]', $result));
 
-		$this->assertTrue(Set::matches('/SomethingElse[id=3]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
-		$this->assertTrue(Set::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=3]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=3]/JoinThing[something_else_id=3]', $result));
+		$this->assertTrue(CakeSet::matches('/SomethingElse[id=3]/JoinThing[doomed=1]', $result));
 	}
 
 /**
@@ -5877,10 +5878,10 @@ class ModelWriteTest extends BaseModelTest {
 
 		$result = $TestModel->find('all', array('recursive' => -1, 'order' => 'Post.id ASC'));
 		$errors = array(1 => array('title' => array('This field cannot be left blank')));
-		$transactionWorked = Set::matches('/Post[1][title=Baleeted First Post]', $result);
+		$transactionWorked = CakeSet::matches('/Post[1][title=Baleeted First Post]', $result);
 		if (!$transactionWorked) {
-			$this->assertTrue(Set::matches('/Post[1][title=Un-Baleeted First Post]', $result));
-			$this->assertTrue(Set::matches('/Post[2][title=Just update the title]', $result));
+			$this->assertTrue(CakeSet::matches('/Post[1][title=Un-Baleeted First Post]', $result));
+			$this->assertTrue(CakeSet::matches('/Post[2][title=Just update the title]', $result));
 		}
 
 		$this->assertEquals($errors, $TestModel->validationErrors);

@@ -18,9 +18,10 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
+App::uses('CakeSet', 'Utility');
 App::uses('ClassRegistry', 'Utility');
 App::uses('Validation', 'Utility');
-App::uses('String', 'Utility');
+App::uses('CakeString', 'Utility');
 App::uses('Hash', 'Utility');
 App::uses('BehaviorCollection', 'Model');
 App::uses('ModelBehavior', 'Model');
@@ -1173,7 +1174,7 @@ class Model extends Object implements CakeEventListener {
 			if ($one instanceof SimpleXMLElement || $one instanceof DOMNode) {
 				$one = $this->_normalizeXmlData(Xml::toArray($one));
 			} else {
-				$one = Set::reverse($one);
+				$one = CakeSet::reverse($one);
 			}
 		}
 
@@ -1823,9 +1824,9 @@ class Model extends Object implements CakeEventListener {
 				if (empty($this->data[$this->alias][$this->primaryKey]) && $this->_isUUIDField($this->primaryKey)) {
 					if (array_key_exists($this->primaryKey, $this->data[$this->alias])) {
 						$j = array_search($this->primaryKey, $fields);
-						$values[$j] = String::uuid();
+						$values[$j] = CakeString::uuid();
 					} else {
-						list($fields[], $values[]) = array($this->primaryKey, String::uuid());
+						list($fields[], $values[]) = array($this->primaryKey, CakeString::uuid());
 					}
 				}
 
@@ -1935,7 +1936,7 @@ class Model extends Object implements CakeEventListener {
 					$values = array($id, $row);
 
 					if ($isUUID && $primaryAdded) {
-						$values[] = String::uuid();
+						$values[] = CakeString::uuid();
 					}
 
 					$newValues[$row] = $values;
@@ -3068,7 +3069,7 @@ class Model extends Object implements CakeEventListener {
 				$list = array("{n}.{$this->alias}.{$this->primaryKey}", "{n}.{$this->alias}.{$this->displayField}", null);
 			} else {
 				if (!is_array($query['fields'])) {
-					$query['fields'] = String::tokenize($query['fields']);
+					$query['fields'] = CakeString::tokenize($query['fields']);
 				}
 
 				if (count($query['fields']) === 1) {

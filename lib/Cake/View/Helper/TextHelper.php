@@ -29,7 +29,7 @@ App::uses('Hash', 'Utility');
  * @package       Cake.View.Helper
  * @property      HtmlHelper $Html
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/text.html
- * @see String
+ * @see CakeString
  */
 class TextHelper extends AppHelper {
 
@@ -49,7 +49,7 @@ class TextHelper extends AppHelper {
 	protected $_placeholders = array();
 
 /**
- * String utility instance
+ * CakeString utility instance
  *
  * @var stdClass
  */
@@ -60,7 +60,7 @@ class TextHelper extends AppHelper {
  *
  * ### Settings:
  *
- * - `engine` Class name to use to replace String functionality.
+ * - `engine` Class name to use to replace CakeString functionality.
  *            The class needs to be placed in the `Utility` directory.
  *
  * @param View $View the view object the helper is attached to.
@@ -68,7 +68,7 @@ class TextHelper extends AppHelper {
  * @throws CakeException when the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
-		$settings = Hash::merge(array('engine' => 'String'), $settings);
+		$settings = Hash::merge(array('engine' => 'CakeString'), $settings);
 		parent::__construct($View, $settings);
 		list($plugin, $engineClass) = pluginSplit($settings['engine'], true);
 		App::uses($engineClass, $plugin . 'Utility');
@@ -80,7 +80,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * Call methods from String utility class
+ * Call methods from CakeString utility class
  * @return mixed Whatever is returned by called method, or false on failure
  */
 	public function __call($method, $params) {
@@ -215,7 +215,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * @see String::highlight()
+ * @see CakeString::highlight()
  *
  * @param string $text Text to search the phrase in
  * @param string $phrase The phrase that will be searched
@@ -251,7 +251,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * @see String::stripLinks()
+ * @see CakeString::stripLinks()
  *
  * @param string $text Text
  * @return string The text without links
@@ -262,7 +262,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * @see String::truncate()
+ * @see CakeString::truncate()
  *
  * @param string $text String to truncate.
  * @param integer $length Length of returned string, including ellipsis.
@@ -275,7 +275,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * @see String::excerpt()
+ * @see CakeString::excerpt()
  *
  * @param string $text String to search the phrase in
  * @param string $phrase Phrase that will be searched for
@@ -289,7 +289,7 @@ class TextHelper extends AppHelper {
 	}
 
 /**
- * @see String::toList()
+ * @see CakeString::toList()
  *
  * @param array $list The list to be joined
  * @param string $and The word used to join the last and second last items together with. Defaults to 'and'

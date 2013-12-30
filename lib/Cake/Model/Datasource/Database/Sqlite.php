@@ -17,7 +17,7 @@
  */
 
 App::uses('DboSource', 'Model/Datasource');
-App::uses('String', 'Utility');
+App::uses('CakeString', 'Utility');
 
 /**
  * DBO implementation for the SQLite3 DBMS.
@@ -303,7 +303,7 @@ class Sqlite extends DboSource {
 			$last = strripos($querystring, 'FROM');
 			if ($last !== false) {
 				$selectpart = substr($querystring, 7, $last - 8);
-				$selects = String::tokenize($selectpart, ',', '(', ')');
+				$selects = CakeString::tokenize($selectpart, ',', '(', ')');
 			}
 		} elseif (strpos($querystring, 'PRAGMA table_info') === 0) {
 			$selects = array('cid', 'name', 'type', 'notnull', 'dflt_value', 'pk');
