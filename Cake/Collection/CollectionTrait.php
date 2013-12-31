@@ -494,11 +494,11 @@ trait CollectionTrait {
 	public function countBy($callback) {
 		$callback = $this->_propertyExtractor($callback);
 
-		$mapper = function($key, $value, $mr) use ($callback) {
-			$mr->emitIntermediate($callback($value), $value);
+		$mapper = function($value, $key, $mr) use ($callback) {
+			$mr->emitIntermediate($value, $callback($value));
 		};
 
-		$reducer = function ($key, $values, $mr) {
+		$reducer = function ($values, $key, $mr) {
 			$mr->emit(count($values), $key);
 		};
 		return new Collection(new MapReduce($this, $mapper, $reducer));

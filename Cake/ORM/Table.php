@@ -739,7 +739,7 @@ class Table implements EventListener {
 			'valueField' => $this->displayField(),
 			'groupField' => false
 		];
-		$mapper = function($key, $row, $mapReduce) use ($options) {
+		$mapper = function($row, $key, $mapReduce) use ($options) {
 			$rowKey = $options['idField'];
 			$rowVal = $options['valueField'];
 			if (!($options['groupField'])) {
@@ -748,10 +748,10 @@ class Table implements EventListener {
 			}
 
 			$key = $row[$options['groupField']];
-			$mapReduce->emitIntermediate($key, [$row[$rowKey] => $row[$rowVal]]);
+			$mapReduce->emitIntermediate([$row[$rowKey] => $row[$rowVal]], $key);
 		};
 
-		$reducer = function($key, $values, $mapReduce) {
+		$reducer = function($values, $key, $mapReduce) {
 			$result = [];
 			foreach ($values as $value) {
 				$result += $value;
@@ -776,13 +776,13 @@ class Table implements EventListener {
 	public function findThreaded(Query $query, array $options = []) {
 		$parents = [];
 		$hydrate = $query->hydrate();
-		$mapper = function($key, $row, $mapReduce) use (&$parents) {
+		$mapper = function($row, $key, $mapReduce) use (&$parents) {
 			$row['children'] = [];
 			$parents[$row['id']] =& $row;
-			$mapReduce->emitIntermediate($row['parent_id'], $row['id']);
+			$mapReduce->emitIntermediate($row['id'], $row['parent_id']);
 		};
 
-		$reducer = function($key, $values, $mapReduce) use (&$parents, $hydrate) {
+		$reducer = function($values, $key, $mapReduce) use (&$parents, $hydrate) {
 			if (empty($key) || !isset($parents[$key])) {
 				foreach ($values as $id) {
 					$parents[$id] = $hydrate ? $parents[$id] : new \ArrayObject($parents[$id]);
@@ -798,7 +798,7 @@ class Table implements EventListener {
 
 		$query->mapReduce($mapper, $reducer);
 		if (!$hydrate) {
-			$query->mapReduce(function($key, $row, $mapReduce) {
+			$query->mapReduce(function($row, $key, $mapReduce) {
 				$mapReduce->emit($row->getArrayCopy());
 			});
 		}

@@ -84,12 +84,12 @@ class MapReduce implements IteratorAggregate {
  *
  * {{{
  *	$data = new \ArrayObject([1, 2, 3, 4, 5, 3]);
- *	$mapper = function ($key, $value, $mr) {
+ *	$mapper = function ($value, $key, $mr) {
  *		$type = ($value % 2 === 0) ? 'even' : 'odd';
- *		$mr->emitIntermediate($type, $value);
+ *		$mr->emitIntermediate($value, $type);
  *	};
  *
- *	$reducer = function ($type, $numbers, $mr) {
+ *	$reducer = function ($numbers, $type, $mr) {
  *		$mr->emit(array_unique($numbers), $type);
  *	};
  *	$results = new MapReduce($data, $mapper, $reducer);
@@ -103,11 +103,12 @@ class MapReduce implements IteratorAggregate {
  *
  * @param \Traversable $data the original data to be processed
  * @param callable $mapper the mapper callback. This function will receive 3 arguments.
- * The first one is the current results key, second the current value and third is
+ * The first one is the current value, second the current results key and third is
  * this class instance so you can call the result emitters.
  * @param callable $reducer the reducer callback. This function will receive 3 arguments.
- * The first one is a bucket name that was mapped before, second one is the list
- * of values inside the bucket and third one is an instance of this class.
+ * The first one is the list of values inside a bucket, second one is the name
+ * of the bucket that was created during the mapping phase and third one is an
+ * instance of this class.
  * @return void
  */
 	public function __construct(\Traversable $data, callable $mapper, callable $reducer = null) {
@@ -133,11 +134,11 @@ class MapReduce implements IteratorAggregate {
  * Appends a new record to the bucket labelled with $key, usually as a result
  * of mapping a single record from the original data.
  *
- * @param string $bucket the name of the bucket where to put the record
  * @param mixed $value the record itself to store in the bucket
+ * @param string $bucket the name of the bucket where to put the record
  * @return void
  */
-	public function emitIntermediate($bucket, $value) {
+	public function emitIntermediate($value, $bucket) {
 		$this->_intermediate[$bucket][] = $value;
 	}
 
@@ -166,7 +167,7 @@ class MapReduce implements IteratorAggregate {
 	protected function _execute() {
 		$mapper = $this->_mapper;
 		foreach ($this->_data as $key => $value) {
-			$mapper($key, $value, $this);
+			$mapper($value, $key, $this);
 		}
 		$this->_data = null;
 
@@ -176,7 +177,7 @@ class MapReduce implements IteratorAggregate {
 
 		$reducer = $this->_reducer;
 		foreach ($this->_intermediate as $key => $list) {
-			$reducer($key, $list, $this);
+			$reducer($list, $key, $this);
 		}
 		$this->_intermediate = [];
 		$this->_executed = true;
