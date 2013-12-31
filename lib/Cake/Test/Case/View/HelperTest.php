@@ -852,6 +852,16 @@ class HelperTest extends CakeTestCase {
 	}
 
 /**
+ * testDomId method
+ *
+ * @return void
+ */
+	public function testDomId() {
+		$result = $this->Helper->domId('Foo.bar');
+		$this->assertEquals('FooBar', $result);
+	}
+
+/**
  * testMultiDimensionalField method
  *
  * @return void

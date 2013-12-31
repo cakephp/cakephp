@@ -212,7 +212,7 @@ class TreeBehavior extends ModelBehavior {
 					'fields' => array($Model->primaryKey, $parent, $left, $right), 'recursive' => $recursive)
 				);
 
-				if ($values === false) {
+				if (empty($values)) {
 					return false;
 				}
 				list($node) = array_values($values);
