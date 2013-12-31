@@ -1051,14 +1051,14 @@ class QueryTest extends TestCase {
 			->method('execute')
 			->will($this->returnValue($statement));
 
-		$query->mapReduce(function($k, $v, $mr) {
+		$query->mapReduce(function($v, $k, $mr) {
 			$mr->emit($v['a']);
 		});
 		$query->mapReduce(
-			function($k, $v, $mr) {
-				$mr->emitIntermediate($k, $v);
+			function($v, $k, $mr) {
+				$mr->emitIntermediate($v, $k);
 			},
-			function($k, $v, $mr) {
+			function($v, $k, $mr) {
 				$mr->emit($v[0] + 1);
 			}
 		);
@@ -1118,10 +1118,10 @@ class QueryTest extends TestCase {
  * @return void
  */
 	public function testFirstMapReduce() {
-		$map = function($key, $row, $mapReduce) {
-			$mapReduce->emitIntermediate('id', $row['id']);
+		$map = function($row, $key, $mapReduce) {
+			$mapReduce->emitIntermediate($row['id'], 'id');
 		};
-		$reduce = function($key, $values, $mapReduce) {
+		$reduce = function($values, $key, $mapReduce) {
 			$mapReduce->emit(array_sum($values));
 		};
 
