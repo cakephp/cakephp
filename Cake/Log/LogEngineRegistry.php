@@ -50,7 +50,7 @@ class LogEngineRegistry extends ObjectRegistry {
  * @throws Cake\Error\Exception
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new Error\Exception(__d('cake_dev', 'Could not load class %s', $class));
+		throw new Error\Exception(sprintf('Could not load class %s', $class));
 	}
 
 /**
@@ -77,10 +77,9 @@ class LogEngineRegistry extends ObjectRegistry {
 			return $instance;
 		}
 
-		throw new Error\Exception(__d(
-			'cake_dev',
+		throw new Error\Exception(
 			'Loggers must implement Cake\Log\LogInterface.'
-		));
+		);
 	}
 
 /**

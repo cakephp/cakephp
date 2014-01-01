@@ -96,8 +96,7 @@ class TableRegistry {
 			return isset(static::$_config[$alias]) ? static::$_config[$alias] : [];
 		}
 		if (isset(static::$_instances[$alias])) {
-			throw new RuntimeException(__d(
-				'cake_dev',
+			throw new RuntimeException(sprintf(
 				'You cannot configure "%s", it has already been constructed.',
 				$alias
 			));
@@ -138,8 +137,7 @@ class TableRegistry {
 	public static function get($alias, $options = []) {
 		$exists = isset(static::$_instances[$alias]);
 		if ($exists && !empty($options)) {
-			throw new RuntimeException(__d(
-				'cake_dev',
+			throw new RuntimeException(sprintf(
 				'You cannot configure "%s", it already exists in the registry.',
 				$alias
 			));

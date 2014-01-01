@@ -284,10 +284,10 @@ class Configure {
 	public static function dump($key, $config = 'default', $keys = []) {
 		$engine = static::_getEngine($config);
 		if (!$engine) {
-			throw new Error\ConfigureException(__d('cake_dev', 'There is no "%s" config engine.', $config));
+			throw new Error\ConfigureException(sprintf('There is no "%s" config engine.', $config));
 		}
 		if (!method_exists($engine, 'dump')) {
-			throw new Error\ConfigureException(__d('cake_dev', 'The "%s" config engine, does not have a %s method.', $config, 'dump()'));
+			throw new Error\ConfigureException(sprintf('The "%s" config engine, does not have a dump() method.', $config));
 		}
 		$values = static::$_values;
 		if (!empty($keys) && is_array($keys)) {

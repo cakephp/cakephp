@@ -555,7 +555,7 @@ class FileTest extends TestCase {
 			$caller = $trace[0]['function'];
 			$shortPath = dirname($tmpFile);
 
-			$message = __d('cake_dev', '[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
+			$message = sprintf('[FileTest] Skipping %s because "%s" not writeable!', $caller, $shortPath);
 			$this->markTestSkipped($message);
 		}
 		return false;

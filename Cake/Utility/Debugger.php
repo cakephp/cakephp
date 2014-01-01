@@ -627,7 +627,7 @@ class Debugger {
 			return $self->_outputFormat;
 		}
 		if ($format !== false && !isset($self->_templates[$format])) {
-			throw new Error\Exception(__d('cake_dev', 'Invalid Debugger output format.'));
+			throw new Error\Exception('Invalid Debugger output format.');
 		}
 		$self->_outputFormat = $format;
 	}
@@ -843,7 +843,7 @@ class Debugger {
  */
 	public static function checkSecurityKeys() {
 		if (Configure::read('Security.salt') === '__SALT__') {
-			trigger_error(__d('cake_dev', 'Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'APP/Config/app.php'), E_USER_NOTICE);
+			trigger_error(sprintf('Please change the value of %s in %s to a salt value specific to your application.', '\'Security.salt\'', 'APP/Config/app.php'), E_USER_NOTICE);
 		}
 	}
 

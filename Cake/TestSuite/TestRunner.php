@@ -99,7 +99,7 @@ class TestRunner extends \PHPUnit_TextUI_TestRunner {
 			if (class_exists($class)) {
 				return new $class;
 			}
-			throw new \RuntimeException(__d('cake_dev', 'Could not find fixture manager %s.', $arguments['fixtureManager']));
+			throw new \RuntimeException(sprintf('Could not find fixture manager %s.', $arguments['fixtureManager']));
 		}
 		$class = App::classname('FixtureManager', 'TestSuite/Fixture');
 		return new $class();

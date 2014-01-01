@@ -429,10 +429,9 @@ class Query extends DatabaseQuery {
  */
 	public function all() {
 		if ($this->_type !== 'select' && $this->_type !== null) {
-			throw new \RuntimeException(__d(
-				'cake_dev',
+			throw new \RuntimeException(
 				'You cannot call all() on a non-select query. Use execute() instead.'
-			));
+			);
 		}
 		$table = $this->repository();
 		$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
@@ -1025,7 +1024,7 @@ class Query extends DatabaseQuery {
 		}
 
 		throw new \BadMethodCallException(
-			__d('cake_dev', 'Unknown method "%s"', $method)
+			sprintf('Unknown method "%s"', $method)
 		);
 	}
 

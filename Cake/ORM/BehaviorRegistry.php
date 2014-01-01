@@ -137,8 +137,7 @@ class BehaviorRegistry extends ObjectRegistry {
 		foreach ($finders as $finder => $methodName) {
 			if (isset($this->_finderMap[$finder])) {
 				$duplicate = $this->_finderMap[$finder];
-				$error = __d(
-					'cake_dev',
+				$error = sprintf(
 					'%s contains duplicate finder "%s" which is already provided by "%s"',
 					$class,
 					$finder,
@@ -152,8 +151,7 @@ class BehaviorRegistry extends ObjectRegistry {
 		foreach ($methods as $method => $methodName) {
 			if (isset($this->_methodMap[$method])) {
 				$duplicate = $this->_methodMap[$method];
-				$error = __d(
-					'cake_dev',
+				$error = sprintf(
 					'%s contains duplicate method "%s" which is already provided by "%s"',
 					$class,
 					$method,
@@ -210,7 +208,7 @@ class BehaviorRegistry extends ObjectRegistry {
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Error\Exception(__d('cake_dev', 'Cannot call "%s" it does not belong to any attached behavior.', $method));
+		throw new Error\Exception(sprintf('Cannot call "%s" it does not belong to any attached behavior.', $method));
 	}
 
 /**
@@ -229,7 +227,7 @@ class BehaviorRegistry extends ObjectRegistry {
 			return call_user_func_array([$this->_loaded[$behavior], $callMethod], $args);
 		}
 
-		throw new Error\Exception(__d('cake_dev', 'Cannot call finder "%s" it does not belong to any attached behavior.', $type));
+		throw new Error\Exception(sprintf('Cannot call finder "%s" it does not belong to any attached behavior.', $type));
 	}
 
 }

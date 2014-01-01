@@ -1209,12 +1209,12 @@ class HtmlHelper extends Helper {
 				$engine = $configFile[1];
 			}
 		} else {
-			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Wrong "configFile" configuration.'));
+			throw new Error\ConfigureException('Cannot load the configuration file. Wrong "configFile" configuration.');
 		}
 
 		$engineClass = App::classname(Inflector::camelize($engine), 'Configure/Engine', 'Config');
 		if (!$engineClass) {
-			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load the configuration file. Unknown engine.'));
+			throw new Error\ConfigureException('Cannot load the configuration file. Unknown engine.');
 		}
 
 		$engineObj = new $engineClass($path);

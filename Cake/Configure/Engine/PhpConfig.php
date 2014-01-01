@@ -62,17 +62,17 @@ class PhpConfig implements ConfigEngineInterface {
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load configuration files with ../ in them.'));
+			throw new Error\ConfigureException('Cannot load configuration files with ../ in them.');
 		}
 
 		$file = $this->_getFilePath($key);
 		if (!is_file($file)) {
-			throw new Error\ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
+			throw new Error\ConfigureException(sprintf('Could not load configuration file: %s', $file));
 		}
 
 		include $file;
 		if (!isset($config)) {
-			throw new Error\ConfigureException(__d('cake_dev', 'No variable %s found in %s', '$config', $file));
+			throw new Error\ConfigureException(sprintf('No variable $config found in %s', $file));
 		}
 		return $config;
 	}

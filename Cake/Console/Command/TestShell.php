@@ -173,7 +173,7 @@ class TestShell extends Shell {
 		$this->_dispatcher = new TestSuiteDispatcher();
 		$sucess = $this->_dispatcher->loadTestFramework();
 		if (!$sucess) {
-			throw new \Exception(__d('cake_dev', 'Please install PHPUnit framework <info>(http://www.phpunit.de)</info>'));
+			throw new \Exception('Please install PHPUnit framework <info>(http://www.phpunit.de)</info>');
 		}
 	}
 
@@ -369,7 +369,7 @@ class TestShell extends Shell {
 					return $testCase;
 				}
 
-				throw new \Exception(__d('cake_dev', 'Test case %s cannot be run via this shell', $testFile));
+				throw new \Exception(sprintf('Test case %s cannot be run via this shell', $testFile));
 			}
 		}
 
@@ -382,7 +382,7 @@ class TestShell extends Shell {
 			$testFile = CAKE . 'Test/TestCase/' . $testCase . 'Test.php';
 
 			if (!file_exists($testFile) && $throwOnMissingFile) {
-				throw new \Exception(__d('cake_dev', 'Test case %s not found', $testFile));
+				throw new \Exception(sprintf('Test case %s not found', $testFile));
 			}
 
 			return $testCase;
@@ -399,7 +399,7 @@ class TestShell extends Shell {
 		}
 
 		if (!file_exists($testFile) && $throwOnMissingFile) {
-			throw new \Exception(__d('cake_dev', 'Test case %s not found', $testFile));
+			throw new \Exception(sprintf('Test case %s not found', $testFile));
 		}
 
 		$testCase = substr($testFile, 0, -8);

@@ -61,7 +61,7 @@ class Oauth {
 				break;
 
 			default:
-				throw new Error\Exception(__d('cake_dev', 'Unknown Oauth signature method %s', $credentials['method']));
+				throw new Error\Exception(sprintf('Unknown Oauth signature method %s', $credentials['method']));
 
 		}
 		$request->header('Authorization', $value);
@@ -166,7 +166,7 @@ class Oauth {
 	protected function _normalizedUrl($url) {
 		$parts = parse_url($url);
 		if (!$parts) {
-			throw new Error\Exception(__d('cake_dev', 'Unable to parse URL'));
+			throw new Error\Exception('Unable to parse URL');
 		}
 		$scheme = strtolower($parts['scheme'] ?: 'http');
 		$defaultPorts = [

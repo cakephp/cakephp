@@ -181,7 +181,7 @@ class Router {
 			$routeClass != 'Cake\Routing\Route\Route' &&
 			(!class_exists($routeClass) || !is_subclass_of($routeClass, 'Cake\Routing\Route\Route'))
 		) {
-			throw new Error\Exception(__d('cake_dev', 'Route class not found, or route class is not a subclass of Cake\Routing\Route\Route'));
+			throw new Error\Exception('Route class not found, or route class is not a subclass of Cake\Routing\Route\Route');
 		}
 		return $routeClass;
 	}
@@ -787,8 +787,7 @@ class Router {
 			// named route.
 			$route = static::$_routes->get($url);
 			if (!$route) {
-				throw new Error\Exception(__d(
-					'cake_dev',
+				throw new Error\Exception(sprintf(
 					'No route matching the name "%s" was found.',
 					$url
 				));

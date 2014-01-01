@@ -426,7 +426,7 @@ class Client {
 			'xml' => 'application/xml',
 		];
 		if (!isset($typeMap[$type])) {
-			throw new Error\Exception(__d('cake_dev', 'Unknown type alias.'));
+			throw new Error\Exception('Unknown type alias.');
 		}
 		return [
 			'Accept' => $typeMap[$type],
@@ -485,7 +485,7 @@ class Client {
 		$class = App::className($name, 'Network/Http/Auth');
 		if (!$class) {
 			throw new Error\Exception(
-				__d('cake_dev', 'Invalid authentication type %s', $name)
+				sprintf('Invalid authentication type %s', $name)
 			);
 		}
 		return new $class($this, $options);

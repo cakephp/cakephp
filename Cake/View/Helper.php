@@ -197,7 +197,7 @@ class Helper extends Object implements EventListener {
  * @return void
  */
 	public function __call($method, $params) {
-		trigger_error(__d('cake_dev', 'Method %1$s::%2$s does not exist', get_class($this), $method), E_USER_WARNING);
+		trigger_error(sprintf('Method %1$s::%2$s does not exist', get_class($this), $method), E_USER_WARNING);
 	}
 
 /**

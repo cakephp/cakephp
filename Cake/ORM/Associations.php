@@ -163,8 +163,7 @@ class Associations {
 			}
 			$relation = $this->get($alias);
 			if (!$relation) {
-				$msg = __d(
-					'cake_dev',
+				$msg = sprintf(
 					'Cannot save %s, it is not associated to %s',
 					$alias,
 					$table->alias()

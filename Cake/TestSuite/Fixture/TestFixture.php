@@ -97,8 +97,7 @@ class TestFixture {
 		if (!empty($this->connection)) {
 			$connection = $this->connection;
 			if (strpos($connection, 'test') !== 0) {
-				$message = __d(
-					'cake_dev',
+				$message = sprintf(
 					'Invalid datasource name "%s" for "%s" fixture. Fixture datasource names must begin with "test".',
 					$connection,
 					$this->name
@@ -148,7 +147,7 @@ class TestFixture {
 			}
 			// Trigger errors on deprecated usage.
 			if (is_array($data) && isset($data['key'])) {
-				$msg = __d('cake_dev', 'Usage of the `key` options in columns is not supported. Try using the upgrade shell to migrate your fixtures.`');
+				$msg = 'Usage of the `key` options in columns is not supported. Try using the upgrade shell to migrate your fixtures.`';
 				trigger_error($msg, E_USER_NOTICE);
 			}
 			$this->_schema->addColumn($field, $data);
@@ -161,7 +160,7 @@ class TestFixture {
 		if (!empty($this->fields['_indexes'])) {
 			// Trigger errors on deprecated usage.
 			if (empty($data['type'])) {
-				$msg = __d('cake_dev', 'Indexes must define a type. Try using the upgrade shell to migrate your fixtures.');
+				$msg = 'Indexes must define a type. Try using the upgrade shell to migrate your fixtures.';
 				trigger_error($msg, E_USER_NOTICE);
 			}
 			foreach ($this->fields['_indexes'] as $name => $data) {
@@ -189,7 +188,7 @@ class TestFixture {
 		);
 
 		if (empty($import['table'])) {
-			throw new Error\Exception(__d('cake_dev', 'Cannot import from undefined table.'));
+			throw new Error\Exception('Cannot import from undefined table.');
 		}
 
 		$db = ConnectionManager::get($import['connection']);
@@ -230,8 +229,7 @@ class TestFixture {
 			}
 			$this->created[] = $db->configName();
 		} catch (\Exception $e) {
-			$msg = __d(
-				'cake_dev',
+			$msg = sprintf(
 				'Fixture creation for "%s" failed "%s"',
 				$this->table,
 				$e->getMessage()

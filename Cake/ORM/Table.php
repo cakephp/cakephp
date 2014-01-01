@@ -832,8 +832,8 @@ class Table implements EventListener {
 		$entity = $this->find('all', $options)->where($conditions)->first();
 
 		if (!$entity) {
-			throw new RecordNotFoundException(__d(
-				'cake_dev', 'Record "%s" not found in table "%s"',
+			throw new RecordNotFoundException(sprintf(
+				'Record "%s" not found in table "%s"',
 				implode(',', (array)$primaryKey),
 				$this->table()
 			));
@@ -1243,7 +1243,7 @@ class Table implements EventListener {
 
 		$filtered = array_filter($primaryKey, 'strlen');
 		if (count($filtered) < count($primaryKey)) {
-			$message = __d('cake_dev', 'A primary key value is needed for updating');
+			$message = 'A primary key value is needed for updating';
 			throw new \InvalidArgumentException($message);
 		}
 
@@ -1333,7 +1333,7 @@ class Table implements EventListener {
 		$conditions = (array)$entity->extract($primaryKey);
 
 		if (!array_filter($conditions, 'strlen')) {
-			$msg = __d('cake_dev', 'Deleting requires a primary key value');
+			$msg = 'Deleting requires a primary key value';
 			throw new \InvalidArgumentException($msg);
 		}
 
@@ -1381,7 +1381,7 @@ class Table implements EventListener {
 		}
 
 		throw new \BadMethodCallException(
-			__d('cake_dev', 'Unknown finder method "%s"', $type)
+			sprintf('Unknown finder method "%s"', $type)
 		);
 	}
 
@@ -1412,8 +1412,7 @@ class Table implements EventListener {
 		$makeConditions = function($fields, $args) {
 			$conditions = [];
 			if (count($args) < count($fields)) {
-				throw new \Cake\Error\Exception(__d(
-					'cake_dev',
+				throw new \Cake\Error\Exception(sprintf(
 					'Not enough arguments to magic finder. Got %s required %s',
 					count($args),
 					count($fields)
@@ -1426,10 +1425,9 @@ class Table implements EventListener {
 		};
 
 		if ($hasOr !== false && $hasAnd !== false) {
-			throw new \Cake\Error\Exception(__d(
-				'cake_dev',
+			throw new \Cake\Error\Exception(
 				'Cannot mix "and" & "or" in a magic finder. Use find() instead.'
-			));
+			);
 		}
 
 		if ($hasOr === false && $hasAnd === false) {
@@ -1469,7 +1467,7 @@ class Table implements EventListener {
 		}
 
 		throw new \BadMethodCallException(
-			__d('cake_dev', 'Unknown method "%s"', $method)
+			sprintf('Unknown method "%s"', $method)
 		);
 	}
 

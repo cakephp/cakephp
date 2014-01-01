@@ -139,8 +139,7 @@ class Security {
  */
 	public static function setCost($cost) {
 		if ($cost < 4 || $cost > 31) {
-			throw new Error\Exception(__d(
-				'cake_dev',
+			throw new Error\Exception(vsprintf(
 				'Invalid value, cost must be between %s and %s',
 				array(4, 31)
 			));
@@ -159,13 +158,13 @@ class Security {
  */
 	public static function rijndael($text, $key, $operation) {
 		if (empty($key)) {
-			throw new Error\Exception(__d('cake_dev', 'You cannot use an empty key for %s', 'Security::rijndael()'));
+			throw new Error\Exception('You cannot use an empty key for Security::rijndael()');
 		}
 		if (empty($operation) || !in_array($operation, array('encrypt', 'decrypt'))) {
-			throw new Error\Exception(__d('cake_dev', 'You must specify the operation for %s, either encrypt or decrypt', 'Security::rijndael()'));
+			throw new Error\Exception('You must specify the operation for Security::rijndael(), either encrypt or decrypt');
 		}
 		if (strlen($key) < 32) {
-			throw new Error\Exception(__d('cake_dev', 'You must use a key larger than 32 bytes for %s', 'Security::rijndael()'));
+			throw new Error\Exception('You must use a key larger than 32 bytes for Security::rijndael()');
 		}
 		$algorithm = MCRYPT_RIJNDAEL_256;
 		$mode = MCRYPT_MODE_CBC;
@@ -214,10 +213,9 @@ class Security {
 		}
 
 		if ($salt === true || strpos($salt, '$2y$') !== 0 || strlen($salt) < 29) {
-			throw new Error\Exception(__d(
-				'cake_dev',
-				'Invalid salt: %s for %s Please visit http://www.php.net/crypt and read the appropriate section for building %s salts.',
-				array($salt, 'blowfish', 'blowfish')
+			throw new Error\Exception(sprintf(
+				'Invalid salt: %s for blowfish Please visit http://www.php.net/crypt and read the appropriate section for building blowfish salts.',
+				$salt
 			));
 		}
 		return crypt($password, $salt);
@@ -266,7 +264,7 @@ class Security {
  */
 	protected static function _checkKey($key, $method) {
 		if (strlen($key) < 32) {
-			throw new Error\Exception(__d('cake_dev', 'Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method));
+			throw new Error\Exception(sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method));
 		}
 	}
 
@@ -282,7 +280,7 @@ class Security {
 	public static function decrypt($cipher, $key, $hmacSalt = null) {
 		self::_checkKey($key, 'decrypt()');
 		if (empty($cipher)) {
-			throw new Error\Exception(__d('cake_dev', 'The data to decrypt cannot be empty.'));
+			throw new Error\Exception('The data to decrypt cannot be empty.');
 		}
 		if ($hmacSalt === null) {
 			$hmacSalt = Configure::read('Security.salt');

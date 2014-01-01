@@ -401,7 +401,7 @@ class CookieComponent extends Component {
 			'aes'
 		];
 		if (!in_array($type, $availableTypes)) {
-			throw new Error\Exception(__d('cake_dev', 'You must use rijndael, or aes for cookie encryption type'));
+			throw new Error\Exception('You must use rijndael, or aes for cookie encryption type');
 		}
 		$this->_type = $type;
 	}

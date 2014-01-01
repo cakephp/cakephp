@@ -488,7 +488,7 @@ class Session {
 				foreach ($sessionConfig['ini'] as $setting => $value) {
 					if (ini_set($setting, $value) === false) {
 						throw new Error\Exception(sprintf(
-							__d('cake_dev', 'Unable to configure the session, setting %s failed.'),
+							sprintf('Unable to configure the session, setting %s failed.'),
 							$setting
 						));
 					}
@@ -523,13 +523,13 @@ class Session {
 	protected static function _getHandler($class) {
 		$class = App::className($class, 'Network/Session');
 		if (!class_exists($class)) {
-			throw new Error\Exception(__d('cake_dev', 'Could not load %s to handle the session.', $class));
+			throw new Error\Exception(sprintf('Could not load %s to handle the session.', $class));
 		}
 		$handler = new $class();
 		if ($handler instanceof SessionHandlerInterface) {
 			return $handler;
 		}
-		throw new Error\Exception(__d('cake_dev', 'Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.'));
+		throw new Error\Exception('Chosen SessionHandler does not implement SessionHandlerInterface, it cannot be used with an engine key.');
 	}
 
 /**

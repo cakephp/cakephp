@@ -172,7 +172,7 @@ class MapReduce implements IteratorAggregate {
 		$this->_data = null;
 
 		if (!empty($this->_intermediate) && empty($this->_reducer)) {
-			throw new \LogicException(__d('cake_dev', 'No reducer function was provided'));
+			throw new \LogicException('No reducer function was provided');
 		}
 
 		$reducer = $this->_reducer;

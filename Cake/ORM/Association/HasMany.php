@@ -127,7 +127,7 @@ class HasMany extends Association {
 
 		if (!is_array($targetEntities) && !($targetEntities instanceof \Traversable)) {
 			$name = $this->property();
-			$message = __d('cake_dev', 'Could not save %s, it cannot be traversed', $name);
+			$message = sprintf('Could not save %s, it cannot be traversed', $name);
 			throw new \InvalidArgumentException($message);
 		}
 

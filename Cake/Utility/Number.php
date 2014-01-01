@@ -161,7 +161,7 @@ class Number {
 		if ($default !== false) {
 			return $default;
 		}
-		throw new Error\Exception(__d('cake_dev', 'No unit type.'));
+		throw new Error\Exception('No unit type.');
 	}
 
 /**

@@ -99,7 +99,7 @@ class ConnectionManager {
 	public static function alias($from, $to) {
 		if (empty(static::$_config[$to]) && empty(static::$_config[$from])) {
 			throw new Error\MissingDatasourceConfigException(
-				__d('cake_dev', 'Cannot create alias of "%s" as it does not exist.', $from)
+				sprintf('Cannot create alias of "%s" as it does not exist.', $from)
 			);
 		}
 		static::$_aliasMap[$to] = $from;

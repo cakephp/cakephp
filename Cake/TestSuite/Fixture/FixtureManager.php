@@ -151,7 +151,7 @@ class FixtureManager {
 				$this->_loaded[$fixture] = new $className();
 				$this->_fixtureMap[$base] = $this->_loaded[$fixture];
 			} else {
-				throw new \UnexpectedValueException(__d('cake_dev', 'Referenced fixture class %s not found', $className));
+				throw new \UnexpectedValueException(sprintf('Referenced fixture class %s not found', $className));
 			}
 		}
 	}
@@ -228,7 +228,7 @@ class FixtureManager {
 				});
 			}
 		} catch (\PDOException $e) {
-			$msg = __d('cake_dev', 'Unable to insert fixtures for "%s" test case. %s', get_class($test), $e->getMessage());
+			$msg = sprintf('Unable to insert fixtures for "%s" test case. %s', get_class($test), $e->getMessage());
 			throw new Error\Exception($msg);
 		}
 	}
@@ -273,7 +273,7 @@ class FixtureManager {
 			$fixture->truncate($db);
 			$fixture->insert($db);
 		} else {
-			throw new \UnexpectedValueException(__d('cake_dev', 'Referenced fixture class %s not found', $name));
+			throw new \UnexpectedValueException(sprintf('Referenced fixture class %s not found', $name));
 		}
 	}
 

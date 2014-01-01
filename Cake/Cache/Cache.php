@@ -118,7 +118,7 @@ class Cache {
 			static::$_registry = new CacheRegistry();
 		}
 		if (empty(static::$_config[$name]['className'])) {
-			throw new Error\Exception(__d('cake_dev', 'The "%s" cache configuration does not exist.', $name));
+			throw new Error\Exception(sprintf('The "%s" cache configuration does not exist.', $name));
 		}
 
 		$config = static::$_config[$name];
@@ -200,7 +200,7 @@ class Cache {
 		$success = $engine->write($key, $value);
 		if ($success === false && $value !== '') {
 			trigger_error(
-				__d('cake_dev',
+				sprintf(
 					"%s cache was unable to write '%s' to %s cache",
 					$config,
 					$key,
@@ -356,7 +356,7 @@ class Cache {
 			return [$group => self::$_groups[$group]];
 		}
 
-		throw new Error\Exception(__d('cake_dev', 'Invalid cache group %s', $group));
+		throw new Error\Exception(sprintf('Invalid cache group %s', $group));
 	}
 
 /**

@@ -37,14 +37,14 @@ if (empty($plugin)) {
 }
 
 ?>
-<h2><?= __d('cake_dev', 'Missing Controller'); ?></h2>
+<h2>Missing Controller</h2>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', '%s could not be found.', '<em>' . h($pluginDot . $class) . 'Controller</em>'); ?>
+	<strong>Error: </strong>
+	<?= sprintf('<em>%sController</em> could not be found.', h($pluginDot . $class)); ?>
 </p>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . h($class) . 'Controller</em>', $path); ?>
+	<strong>Error: </strong>
+	<?= sprintf('Create the class <em>%sController</em> below in file: %s', h($class), $path); ?>
 </p>
 <pre>
 &lt;?php
@@ -57,8 +57,8 @@ class <?= h($class) . 'Controller extends ' . h($plugin); ?>AppController {
 }
 </pre>
 <p class="notice">
-	<strong><?= __d('cake_dev', 'Notice'); ?>: </strong>
-	<?= __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_controller.ctp'); ?>
+	<strong>Notice: </strong>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_controller.ctp'); ?>
 </p>
 
 <?= $this->element('exception_stack_trace'); ?>

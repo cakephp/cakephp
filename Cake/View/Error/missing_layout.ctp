@@ -15,18 +15,18 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<h2><?= __d('cake_dev', 'Missing Layout'); ?></h2>
+<h2>Missing Layout</h2>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', 'The layout file %s can not be found or does not exist.', '<em>' . h($file) . '</em>'); ?>
+	<strong>Error: </strong>
+	<?= sprintf('The layout file <em>%s</em> can not be found or does not exist.', h($file)); ?>
 </p>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', 'Confirm you have created the file: %s', '<em>' . h($file) . '</em>'); ?>
+	<strong>Error: </strong>
+	<?= sprintf('Confirm you have created the file: <em>%s</em>', h($file)); ?>
 </p>
 <p class="notice">
-	<strong><?= __d('cake_dev', 'Notice'); ?>: </strong>
-	<?= __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_layout.ctp'); ?>
+	<strong>Notice: </strong>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_layout.ctp'); ?>
 </p>
 
 <?= $this->element('exception_stack_trace'); ?>

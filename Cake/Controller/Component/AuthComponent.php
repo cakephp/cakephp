@@ -494,10 +494,10 @@ class AuthComponent extends Component {
 		foreach ($config as $class => $settings) {
 			$className = App::classname($class, 'Controller/Component/Auth', 'Authorize');
 			if (!class_exists($className)) {
-				throw new Error\Exception(__d('cake_dev', 'Authorization adapter "%s" was not found.', $class));
+				throw new Error\Exception(sprintf('Authorization adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authorize')) {
-				throw new Error\Exception(__d('cake_dev', 'Authorization objects must implement an %s method.', 'authorize()'));
+				throw new Error\Exception('Authorization objects must implement an authorize() method.');
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authorizeObjects[] = new $className($this->_registry, $settings);
@@ -770,10 +770,10 @@ class AuthComponent extends Component {
 		foreach ($config as $class => $settings) {
 			$className = App::classname($class, 'Controller/Component/Auth', 'Authenticate');
 			if (!class_exists($className)) {
-				throw new Error\Exception(__d('cake_dev', 'Authentication adapter "%s" was not found.', $class));
+				throw new Error\Exception(sprintf('Authentication adapter "%s" was not found.', $class));
 			}
 			if (!method_exists($className, 'authenticate')) {
-				throw new Error\Exception(__d('cake_dev', 'Authentication objects must implement an %s method.', 'authenticate()'));
+				throw new Error\Exception('Authentication objects must implement an authenticate() method.');
 			}
 			$settings = array_merge($global, (array)$settings);
 			$this->_authenticateObjects[] = new $className($this->_registry, $settings);
