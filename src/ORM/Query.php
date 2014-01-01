@@ -114,6 +114,14 @@ class Query extends DatabaseQuery {
 	protected $_mapReduce = [];
 
 /**
+ * List of formatter classes or callbacks that will post-process the
+ * results when fetched
+ *
+ * @var array
+ */
+	protected $_formatters = [];
+
+/**
  * Holds any custom options passed using applyOptions that could not be processed
  * by any method in this class.
  *
@@ -787,6 +795,17 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
+	public function formatResults(callable $formatter = null, $overwrite = false) {
+		if ($overwrite) {
+			$this->_formatters = [];
+		}
+		if ($formatter === null) {
+			return $this->_formatters;
+		}
+		$this->_formatters[] = $formatter;
+		return $this;
+	}
+
 /**
  * Returns the first result out of executing this query, if the query has not been
  * executed before, it will set the limit clause to 1 for performance reasons.
@@ -860,6 +879,15 @@ class Query extends DatabaseQuery {
 		if (!empty($this->_mapReduce)) {
 			$result = new ResultSetDecorator($result);
 		}
+
+		foreach ($this->_formatters as $formatter) {
+			$result = $formatter($this, $result);
+		}
+
+		if (!empty($this->_formatters) && !($result instanceof ResultSetDecorator)) {
+			$result = new ResultSetDecorator($result);
+		}
+
 		return $result;
 	}
 
