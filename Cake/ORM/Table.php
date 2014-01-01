@@ -697,7 +697,7 @@ class Table implements EventListener {
  */
 	public function find($type = 'all', $options = []) {
 		$query = $this->query();
-		$query->select()->applyOptions($options);
+		$query->select();
 		return $this->callFinder($type, $query, $options);
 	}
 
@@ -1369,6 +1369,8 @@ class Table implements EventListener {
  * @throws \BadMethodCallException
  */
 	public function callFinder($type, Query $query, $options = []) {
+		$query->applyOptions($options);
+		$options = $query->getOptions();
 		$finder = 'find' . ucfirst($type);
 		if (method_exists($this, $finder)) {
 			return $this->{$finder}($query, $options);

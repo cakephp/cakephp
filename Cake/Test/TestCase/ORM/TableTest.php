@@ -552,7 +552,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testFindApplyOptions() {
 		$table = $this->getMock(
 			'Cake\ORM\Table',
-			['query'],
+			['query', 'findAll'],
 			[['table' => 'users', 'connection' => $this->connection]]
 		);
 		$query = $this->getMock('Cake\ORM\Query', [], [$this->connection, $table]);
@@ -564,9 +564,15 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->any())
 			->method('select')
 			->will($this->returnSelf());
+
+		$query->expects($this->once())->method('getOptions')
+			->will($this->returnValue(['connections' => ['a >' => 1]]));
 		$query->expects($this->once())
 			->method('applyOptions')
 			->with($options);
+
+		$table->expects($this->once())->method('findAll')
+			->with($query, ['connections' => ['a >' => 1]]);
 		$table->find('all', $options);
 	}
 
@@ -3012,7 +3018,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['addDefaultTypes', 'first', 'applyOptions', 'where'],
+			['addDefaultTypes', 'first', 'where'],
 			[$this->connection, $table]
 		);
 
@@ -3023,9 +3029,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with('all', $query, ['fields' => ['id']])
 			->will($this->returnValue($query));
 
-		$query->expects($this->once())->method('applyOptions')
-			->with(['fields' => ['id']])
-			->will($this->returnSelf());
 		$query->expects($this->once())->method('where')
 			->with(['bar' => 10])
 			->will($this->returnSelf());
@@ -3059,7 +3062,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$query = $this->getMock(
 			'\Cake\ORM\Query',
-			['addDefaultTypes', 'first', 'applyOptions', 'where'],
+			['addDefaultTypes', 'first', 'where'],
 			[$this->connection, $table]
 		);
 
@@ -3069,9 +3072,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with('all', $query, ['contain' => ['foo']])
 			->will($this->returnValue($query));
 
-		$query->expects($this->once())->method('applyOptions')
-			->with(['contain' => ['foo']])
-			->will($this->returnSelf());
 		$query->expects($this->once())->method('where')
 			->with(['bar' => 10])
 			->will($this->returnSelf());
