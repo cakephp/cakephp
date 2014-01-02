@@ -1534,4 +1534,17 @@ class QueryTest extends TestCase {
 		TableRegistry::get('articles')->find('all')->derpFilter();
 	}
 
+/**
+ * cache() should fail on non select queries.
+ *
+ * @expectedException RuntimeException
+ * @return void
+ */
+	public function testCacheErrorOnNonSelect() {
+		$table = TableRegistry::get('articles', ['table' => 'articles']);
+		$query = new Query($this->connection, $table);
+		$query->insert(['test']);
+		$query->cache('my_key');
+	}
+
 }

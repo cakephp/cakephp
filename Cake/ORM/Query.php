@@ -21,6 +21,8 @@ use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
 use Cake\Event\Event;
+use Cake\ORM\QueryCacher;
+use Cake\ORM\Table;
 
 /**
  * Extends the base Query class to provide new methods related to association
@@ -124,6 +126,13 @@ class Query extends DatabaseQuery {
  * @var boolean
  */
 	protected $_hydrate = true;
+
+/**
+ * A query cacher instance if this query has caching enabled.
+ *
+ * @var Cake\ORM\QueryCacher
+ */
+	protected $_cache;
 
 /**
  * @param Cake\Database\Connection $connection
@@ -401,6 +410,56 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * Enable result caching for this query.
+ *
+ * If a query has caching enabled, it will do the following when executed:
+ *
+ * - Check the cache for $key. If there are results no SQL will be executed.
+ *   Instead the cached results will be returned.
+ * - When the cached data is stale/missing the result set will be cached as the query
+ *   is executed.
+ *
+ * ## Usage
+ *
+ * {{{
+ * // Simple string key + config
+ * $query->cache('my_key', 'db_results');
+ *
+ * // Function to generate key.
+ * $query->cache(function($q) {
+ *   $key = serialize($q->clause('select'));
+ *   $key .= serialize($q->clause('where'));
+ *   return md5($key);
+ * });
+ *
+ * // Using a pre-built cache engine.
+ * $query->cache('my_key', $engine);
+ *
+ *
+ * // Disable caching
+ * $query->cache(false);
+ * }}}
+ *
+ * @param false|string|Closure $key Either the cache key or a function to generate the cache key.
+ *   When using a function, this query instance will be supplied as an argument.
+ * @param string|CacheEngine $config Either the name of the cache config to use, or
+ *   a cache config instance.
+ * @return Query The query instance.
+ * @throws \RuntimeException When you attempt to cache a non-select query.
+ */
+	public function cache($key, $config = 'default') {
+		if ($this->_type !== 'select' && $this->_type !== null) {
+			throw new \RuntimeException('You cannot cache the results of non-select queries.');
+		}
+		if ($key === false) {
+			$this->_cache = null;
+			return $this;
+		}
+		$this->_cache = new QueryCacher($key, $config);
+		return $this;
+	}
+
+/**
  * Executes this query and returns a results iterator. This function is required
  * for implementing the IteratorAggregate interface and allows the query to be
  * iterated without having to call execute() manually, thus making it look like
@@ -451,11 +510,15 @@ class Query extends DatabaseQuery {
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
-
-		$this->_results = $this->_decorateResults(
-			new ResultSet($this, $this->execute())
-		);
-
+		if ($this->_cache) {
+			$results = $this->_cache->fetch($this);
+		}
+		if (!isset($results)) {
+			$results = $this->_decorateResults(
+				new ResultSet($this, $this->execute())
+			);
+		}
+		$this->_results = $results;
 		return $this->_results;
 	}
 
