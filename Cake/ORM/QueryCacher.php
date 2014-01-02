@@ -16,7 +16,10 @@
  */
 namespace Cake\ORM;
 
+use Cake\Cache\Cache;
+use Cake\Cache\CacheEngine;
 use Cake\ORM\Query;
+use RuntimeException;
 
 /**
  * Handles caching queries and loading results from the cache.
@@ -34,7 +37,14 @@ class QueryCacher {
  * @param string|CacheEngine $config
  */
 	public function __construct($key, $config) {
+		if (!is_string($key) && !is_callable($key)) {
+			throw new RuntimeException('Cache keys must be strings or callables.');
+		}
 		$this->_key = $key;
+
+		if (!is_string($config) && !($config instanceof CacheEngine)) {
+			throw new RuntimeException('Cache configs must be strings or CacheEngine instances.');
+		}
 		$this->_config = $config;
 	}
 
@@ -45,6 +55,44 @@ class QueryCacher {
  * @return ResultSet|null Either the cached results or null.
  */
 	public function fetch(Query $query) {
+		$key = $this->_resolveKey($query);
+		$storage = $this->_resolveCacher();
+		$result = $storage->read($key);
+		if (empty($result)) {
+			return null;
+		}
+		return $result;
+	}
+
+/**
+ * Get/generate the cache key.
+ *
+ * @param Query $query
+ * @return string
+ */
+	protected function _resolveKey($query) {
+		if (is_string($this->_key)) {
+			return $this->_key;
+		}
+		$func = $this->_key;
+		$key = $func($query);
+		if (!is_string($key)) {
+			$msg = sprintf('Cache key functions must return a string. Got %s.', var_export($key, true));
+			throw new RuntimeException($msg);
+		}
+		return $key;
+	}
+
+/**
+ * Get the cache engine.
+ *
+ * @return Cake\Cache\CacheEngine
+ */
+	protected function _resolveCacher() {
+		if (is_string($this->_config)) {
+			return Cache::engine($this->_config);
+		}
+		return $this->_config;
 	}
 
 }
