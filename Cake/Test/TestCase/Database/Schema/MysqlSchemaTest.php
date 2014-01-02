@@ -427,6 +427,16 @@ SQL;
 				['type' => 'biginteger', 'length' => 20, 'unsigned' => true],
 				'`post_id` BIGINT UNSIGNED'
 			],
+			[
+				'post_id',
+				['type' => 'integer', 'length' => 20, 'autoIncrement' => true],
+				'`post_id` INTEGER(20) AUTO_INCREMENT'
+			],
+			[
+				'post_id',
+				['type' => 'biginteger', 'length' => 20, 'autoIncrement' => true],
+				'`post_id` BIGINT AUTO_INCREMENT'
+			],
 			// Decimal
 			[
 				'value',
