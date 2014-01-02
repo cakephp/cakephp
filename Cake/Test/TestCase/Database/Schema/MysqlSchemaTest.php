@@ -249,6 +249,7 @@ SQL;
 				'length' => 20,
 				'precision' => null,
 				'comment' => null,
+				'autoIncrement' => true,
 			],
 			'title' => [
 				'type' => 'string',
@@ -275,6 +276,7 @@ SQL;
 				'length' => 11,
 				'precision' => null,
 				'comment' => null,
+				'autoIncrement' => null,
 			],
 			'published' => [
 				'type' => 'boolean',
@@ -704,6 +706,69 @@ CREATE TABLE `posts` (
 `created` DATETIME,
 PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci
+SQL;
+		$result = $table->createSql($connection);
+		$this->assertCount(1, $result);
+		$this->assertEquals($expected, $result[0]);
+	}
+
+/**
+ * Test primary key generation & auto-increment.
+ *
+ * @return void
+ */
+	public function testCreateSqlCompositeIntegerKey() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+
+		$table = (new Table('articles_tags'))
+			->addColumn('article_id', [
+				'type' => 'integer',
+				'null' => false
+			])
+			->addColumn('tag_id', [
+				'type' => 'integer',
+				'null' => false,
+			])
+			->addConstraint('primary', [
+				'type' => 'primary',
+				'columns' => ['article_id', 'tag_id']
+			]);
+
+		$expected = <<<SQL
+CREATE TABLE `articles_tags` (
+`article_id` INTEGER NOT NULL,
+`tag_id` INTEGER NOT NULL,
+PRIMARY KEY (`article_id`, `tag_id`)
+)
+SQL;
+		$result = $table->createSql($connection);
+		$this->assertCount(1, $result);
+		$this->assertEquals($expected, $result[0]);
+
+		$table = (new Table('composite_key'))
+			->addColumn('id', [
+				'type' => 'integer',
+				'null' => false,
+				'autoIncrement' => true
+			])
+			->addColumn('account_id', [
+				'type' => 'integer',
+				'null' => false,
+			])
+			->addConstraint('primary', [
+				'type' => 'primary',
+				'columns' => ['id', 'account_id']
+			]);
+
+		$expected = <<<SQL
+CREATE TABLE `composite_key` (
+`id` INTEGER NOT NULL AUTO_INCREMENT,
+`account_id` INTEGER NOT NULL,
+PRIMARY KEY (`id`, `account_id`)
+)
 SQL;
 		$result = $table->createSql($connection);
 		$this->assertCount(1, $result);

@@ -119,7 +119,6 @@ class MysqlSchema extends BaseSchema {
 
 /**
  * {@inheritdoc}
- *
  */
 	public function convertFieldDescription(Table $table, $row) {
 		$field = $this->_convertColumn($row['Type']);
@@ -129,12 +128,14 @@ class MysqlSchema extends BaseSchema {
 			'collate' => $row['Collation'],
 			'comment' => $row['Comment'],
 		];
+		if (isset($row['Extra']) && $row['Extra'] === 'auto_increment') {
+			$field['autoIncrement'] = true;
+		}
 		$table->addColumn($row['Field'], $field);
 	}
 
 /**
  * {@inheritdoc}
- *
  */
 	public function convertIndexDescription(Table $table, $row) {
 		$type = null;
@@ -306,7 +307,10 @@ class MysqlSchema extends BaseSchema {
 		if (isset($data['null']) && $data['null'] === false) {
 			$out .= ' NOT NULL';
 		}
-		if (in_array($data['type'], ['integer', 'biginteger']) && in_array($name, (array)$table->primaryKey())) {
+		if (
+			in_array($data['type'], ['integer', 'biginteger']) &&
+			([$name] == (array)$table->primaryKey() || $data['autoIncrement'] === true)
+		) {
 			$out .= ' AUTO_INCREMENT';
 		}
 		if (isset($data['null']) && $data['null'] === true) {
