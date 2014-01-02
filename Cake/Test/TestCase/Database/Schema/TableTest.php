@@ -114,6 +114,7 @@ class TableTest extends TestCase {
 			'null' => null,
 			'unsigned' => null,
 			'comment' => null,
+			'autoIncrement' => null,
 		];
 		$this->assertEquals($expected, $result);
 

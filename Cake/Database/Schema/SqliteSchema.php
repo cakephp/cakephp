@@ -125,6 +125,7 @@ class SqliteSchema extends BaseSchema {
 		];
 		if ($row['pk'] == true) {
 			$field['null'] = false;
+			$field['autoIncrement'] = true;
 		}
 		$table->addColumn($row['name'], $field);
 		if ($row['pk'] == true) {

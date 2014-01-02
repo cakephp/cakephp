@@ -32,7 +32,9 @@ class ArticlesTagFixture extends TestFixture {
 	public $fields = array(
 		'article_id' => ['type' => 'integer', 'null' => false],
 		'tag_id' => ['type' => 'integer', 'null' => false],
-		'_constraints' => ['UNIQUE_TAG2' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]]
+		'_constraints' => [
+			'UNIQUE_TAG2' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
+		]
 	);
 
 /**

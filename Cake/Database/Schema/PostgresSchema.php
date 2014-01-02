@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -203,6 +201,17 @@ class PostgresSchema extends BaseSchema {
 				'type' => $type,
 				'columns' => $columns
 			]);
+
+			// If there is only one column in the primary key and it is integery, 
+			// make it autoincrement.
+			$columnDef = $table->column($columns[0]);
+			if (
+				count($columns) === 1 &&
+				in_array($columnDef['type'], ['integer', 'biginteger'])
+			) {
+				$columnDef['autoIncrement'] = true;
+				$table->addColumn($columns[0], $columnDef);
+			}
 			return;
 		}
 		$table->addIndex($name, [
@@ -284,7 +293,6 @@ class PostgresSchema extends BaseSchema {
 		$data = $table->column($name);
 		$out = $this->_driver->quoteIdentifier($name);
 		$typeMap = [
-			'biginteger' => ' BIGINT',
 			'boolean' => ' BOOLEAN',
 			'binary' => ' BYTEA',
 			'float' => ' FLOAT',
@@ -301,10 +309,10 @@ class PostgresSchema extends BaseSchema {
 			$out .= $typeMap[$data['type']];
 		}
 
-		if ($data['type'] === 'integer') {
-			$type = ' INTEGER';
-			if (in_array($name, (array)$table->primaryKey())) {
-				$type = ' SERIAL';
+		if ($data['type'] === 'integer' || $data['type'] === 'biginteger') {
+			$type = $data['type'] === 'integer' ? ' INTEGER' : ' BIGINT';
+			if ([$name] === $table->primaryKey() || $data['autoIncrement'] === true) {
+				$type = $data['type'] === 'integer' ? ' SERIAL' : ' BIGSERIAL';
 				unset($data['null'], $data['default']);
 			}
 			$out .= $type;
