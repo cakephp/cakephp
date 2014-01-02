@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -27,7 +25,8 @@ use Cake\Database\Exception;
  * methods.
  *
  * Once created Table instances can be added to
- * Schema\Collection objects.
+ * Schema\Collection objects. They can also be converted into SQL using the
+ * createSql(), dropSql() and truncateSql() methods.
  */
 class Table {
 
@@ -92,9 +91,11 @@ class Table {
 		],
 		'integer' => [
 			'unsigned' => null,
+			'autoIncrement' => null,
 		],
 		'biginteger' => [
 			'unsigned' => null,
+			'autoIncrement' => null,
 		],
 		'decimal' => [
 			'unsigned' => null,
