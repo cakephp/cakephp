@@ -198,23 +198,11 @@ class QueryTest extends TestCase {
 
 /**
  * Tests setting containments using dot notation, additionaly proves that options
- * are not overwritten whn combining dot notation and array notation
+ * are not overwritten when combining dot notation and array notation
  *
  * @return void
  */
 	public function testContainDotNotation() {
-		$contains = [
-			'clients' => [
-				'orders' => [
-					'orderTypes',
-					'stuff' => ['stuffTypes']
-				],
-				'companies' => [
-					'foreignKey' => 'organization_id',
-					'categories'
-				]
-			]
-		];
 		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
 		$query->contain([
 			'clients.orders.stuff',
@@ -240,6 +228,38 @@ class QueryTest extends TestCase {
 
 		$expected['clients']['orders'] += ['fields' => ['a', 'b']];
 		$expected['clients'] += ['sort' => ['a' => 'desc']];
+		$this->assertEquals($expected, $query->contain());
+	}
+
+/**
+ * Tests that it is possible to pass a function as the array value for contain
+ *
+ * @return void
+ */
+	public function testContainClosure() {
+		$builder = function($query) {
+		};
+		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
+		$query->contain([
+			'clients.orders.stuff' => ['fields' => ['a']],
+			'clients' => $builder
+		]);
+
+		$expected = new \ArrayObject([
+			'clients' => [
+				'orders' => [
+					'stuff' => ['fields' => ['a']]
+				],
+				'queryBuilder' => $builder
+			]
+		]);
+		$this->assertEquals($expected, $query->contain());
+
+		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
+		$query->contain([
+			'clients.orders.stuff' => ['fields' => ['a']],
+			'clients' => ['queryBuilder' => $builder]
+		]);
 		$this->assertEquals($expected, $query->contain());
 	}
 

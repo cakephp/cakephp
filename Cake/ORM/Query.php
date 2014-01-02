@@ -81,7 +81,8 @@ class Query extends DatabaseQuery {
 		'conditions' => 1,
 		'fields' => 1,
 		'sort' => 1,
-		'matching' => 1
+		'matching' => 1,
+		'queryBuilder' => 1
 	];
 
 /**
@@ -341,6 +342,10 @@ class Query extends DatabaseQuery {
 
 			if (is_array($options)) {
 				$options = $this->_reformatContain($options, []);
+			}
+
+			if ($options instanceof \Closure) {
+				$options = ['queryBuilder' => $options];
 			}
 
 			$pointer += [$table => []];
