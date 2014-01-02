@@ -298,7 +298,7 @@ class Query extends DatabaseQuery {
 		}
 
 		$old = $this->_containments->getArrayCopy();
-		$associations = array_merge($old, $this->_reformatContain($associations));
+		$associations = $this->_reformatContain($associations, $old);
 		$this->_containments->exchangeArray($associations);
 		$this->_normalizedContainments = null;
 		$this->_dirty();
@@ -307,22 +307,46 @@ class Query extends DatabaseQuery {
 
 /**
  * Formats the containments array so that associations are always set as keys
- * in the array.
+ * in the array. This funciton merges the original associations array with
+ * the new associations provided
  *
  * @param array $associations user provided containments array
+ * @param array $original The original containments array to merge
+ * with the new one
  * @return array
  */
-	protected function _reformatContain($associations) {
-		$result = [];
+	protected function _reformatContain($associations, $original) {
+		$result = $original;
+
 		foreach ((array)$associations as $table => $options) {
+			$pointer =& $result;
 			if (is_int($table)) {
 				$table = $options;
 				$options = [];
-			} elseif (is_array($options) && !isset($this->_containOptions[$table])) {
-				$options = $this->_reformatContain($options);
 			}
-			$result[$table] = $options;
+
+			if (isset($this->_containOptions[$table])) {
+				$pointer[$table] = $options;
+				continue;
+			}
+
+			if (strpos($table, '.')) {
+				$path = explode('.', $table);
+				$table = array_pop($path);
+				foreach ($path as $t) {
+					$pointer += [$t => []];
+					$pointer =& $pointer[$t];
+				}
+			}
+
+			if (is_array($options)) {
+				$options = $this->_reformatContain($options, []);
+			}
+
+			$pointer += [$table => []];
+			$pointer[$table] = $options + $pointer[$table];
 		}
+
 		return $result;
 	}
 

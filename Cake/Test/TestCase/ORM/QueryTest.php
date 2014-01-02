@@ -197,6 +197,53 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests setting containments using dot notation, additionaly proves that options
+ * are not overwritten whn combining dot notation and array notation
+ *
+ * @return void
+ */
+	public function testContainDotNotation() {
+		$contains = [
+			'clients' => [
+				'orders' => [
+					'orderTypes',
+					'stuff' => ['stuffTypes']
+				],
+				'companies' => [
+					'foreignKey' => 'organization_id',
+					'categories'
+				]
+			]
+		];
+		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
+		$query->contain([
+			'clients.orders.stuff',
+			'clients.companies.categories' => ['conditions' => ['a >' => 1]]
+		]);
+		$expected = new \ArrayObject([
+			'clients' => [
+				'orders' => [
+					'stuff' => []
+				],
+				'companies' => [
+					'categories' => [
+						'conditions' => ['a >' => 1]
+					]
+				]
+			]
+		]);
+		$this->assertEquals($expected, $query->contain());
+		$query->contain([
+			'clients.orders' => ['fields' => ['a', 'b']],
+			'clients' => ['sort' => ['a' => 'desc']],
+		]);
+
+		$expected['clients']['orders'] += ['fields' => ['a', 'b']];
+		$expected['clients'] += ['sort' => ['a' => 'desc']];
+		$this->assertEquals($expected, $query->contain());
+	}
+
+/**
  * Test that fields for contained models are aliased and added to the select clause
  *
  * @return void
