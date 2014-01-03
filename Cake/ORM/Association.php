@@ -393,6 +393,7 @@ abstract class Association {
 			'includeFields' => true,
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
+			'fields' => [],
 			'type' => $this->joinType(),
 			'table' => $target->table()
 		];
@@ -403,6 +404,14 @@ abstract class Association {
 			if ($joinCondition) {
 				$options['conditions'][] = $joinCondition;
 			}
+		}
+
+		$options['conditions'] = $query->newExpr()->add($options['conditions']);
+
+		if (!empty($options['queryBuilder'])) {
+			$newQuery = $options['queryBuilder']($target->query());
+			$options['fields'] = $newQuery->clause('select') ?: $options['fields'];
+			$options['conditions']->add($newQuery->clause('where'));
 		}
 
 		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];

@@ -249,6 +249,11 @@ class BelongsToMany extends Association {
 			'strategy' => $this->strategy()
 		];
 		$fetchQuery = $this->_buildQuery($options);
+
+		if (!empty($options['queryBuilder'])) {
+			$fetchQuery = $options['queryBuilder']($fetchQuery);
+		}
+
 		$resultMap = [];
 		$key = $options['foreignKey'];
 		$property = $this->target()->association($this->junction()->alias())->property();

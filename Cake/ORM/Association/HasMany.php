@@ -85,6 +85,11 @@ class HasMany extends Association {
 			'strategy' => $this->strategy()
 		];
 		$fetchQuery = $this->_buildQuery($options);
+
+		if (!empty($options['queryBuilder'])) {
+			$fetchQuery = $options['queryBuilder']($fetchQuery);
+		}
+
 		$resultMap = [];
 		$key = $options['foreignKey'];
 		foreach ($fetchQuery->all() as $result) {

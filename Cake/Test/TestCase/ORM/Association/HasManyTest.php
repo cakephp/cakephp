@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -378,10 +379,10 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$association = new HasMany('Articles', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Articles' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field]
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
@@ -409,9 +410,9 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$association = new HasMany('Articles', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Articles' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Articles.is_active' => false
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
@@ -444,10 +445,10 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$association = new HasMany('Articles', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Articles' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field]
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]

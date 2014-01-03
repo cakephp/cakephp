@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -95,10 +96,10 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$field = new IdentifierExpression('Clients.company_id');
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				],
+				]),
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]
@@ -125,9 +126,9 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$association = new BelongsTo('Companies', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Companies.is_active' => false
-				],
+				]),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -160,10 +161,10 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$field = new IdentifierExpression('Clients.company_id');
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				],
+				]),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]

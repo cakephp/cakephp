@@ -125,9 +125,9 @@ class QueryTest extends TestCase {
 			->with(['clients' => [
 				'table' => 'clients',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['clients.id' => new IdentifierExpression('foo.client_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -135,9 +135,9 @@ class QueryTest extends TestCase {
 			->with(['orders' => [
 				'table' => 'orders',
 				'type' => 'INNER',
-				'conditions' => [
+				'conditions' =>  new QueryExpression([
 					['clients.id' => new IdentifierExpression('orders.client_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -145,9 +145,9 @@ class QueryTest extends TestCase {
 			->with(['orderTypes' => [
 				'table' => 'order_types',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' =>  new QueryExpression([
 					['orderTypes.id' => new IdentifierExpression('orders.order_type_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -155,9 +155,9 @@ class QueryTest extends TestCase {
 			->with(['stuff' => [
 				'table' => 'things',
 				'type' => 'INNER',
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['orders.id' => new IdentifierExpression('stuff.order_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -165,9 +165,9 @@ class QueryTest extends TestCase {
 			->with(['stuffTypes' => [
 				'table' => 'stuff_types',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -175,9 +175,9 @@ class QueryTest extends TestCase {
 			->with(['companies' => [
 				'table' => 'organizations',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' =>  new QueryExpression([
 					['companies.id' => new IdentifierExpression('clients.organization_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -185,9 +185,9 @@ class QueryTest extends TestCase {
 			->with(['categories' => [
 				'table' => 'categories',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['categories.id' => new IdentifierExpression('companies.category_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
