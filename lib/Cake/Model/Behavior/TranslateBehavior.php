@@ -305,7 +305,9 @@ class TranslateBehavior extends ModelBehavior {
 					}
 				} else {
 					$value = '';
-					if (!empty($row[$Model->alias][$aliasVirtual])) {
+					if (is_numeric($row[$Model->alias][$aliasVirtual])) {
+						$value = $row[$Model->alias][$aliasVirtual];	
+					} elseif (!empty($row[$Model->alias][$aliasVirtual])) {
 						$value = $row[$Model->alias][$aliasVirtual];
 					}
 					$row[$Model->alias][$aliasField] = $value;
