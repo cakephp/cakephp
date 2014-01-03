@@ -183,8 +183,8 @@ class CacheHelperTest extends TestCase {
 
 		$contents = file_get_contents($filename);
 		$this->assertRegExp('/if \(is_writable\(TMP\)\)\:/', $contents);
-		$this->assertRegExp('/php echo \$variable/', $contents);
-		$this->assertRegExp('/php echo microtime()/', $contents);
+		$this->assertRegExp('/= \$variable/', $contents);
+		$this->assertRegExp('/= microtime()/', $contents);
 		$this->assertNotRegExp('/cake:nocache/', $contents);
 
 		unlink($filename);
@@ -305,7 +305,7 @@ class CacheHelperTest extends TestCase {
 		$contents = file_get_contents($filename);
 		$this->assertRegExp('/\$this\-\>viewVars/', $contents);
 		$this->assertRegExp('/extract\(\$this\-\>viewVars, EXTR_SKIP\);/', $contents);
-		$this->assertRegExp('/php echo \$variable/', $contents);
+		$this->assertRegExp('/= \$variable/', $contents);
 
 		unlink($filename);
 	}
@@ -621,7 +621,7 @@ class CacheHelperTest extends TestCase {
 			'<\?php \$x\+\+; \?>\s*' .
 			'View Content\s*' .
 			'<\?php \$y = 1; \?>\s*' .
-			'<\?php echo \'cached count is: \' . \$x; \?>\s*' .
+			'<\?= \'cached count is: \' . \$x; \?>\s*' .
 			'@', $contents);
 		unlink($filename);
 	}
