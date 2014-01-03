@@ -19,6 +19,7 @@ namespace Cake\ORM;
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
 use Cake\ORM\Query;
+use Cake\ORM\ResultSet;
 use RuntimeException;
 
 /**
@@ -62,6 +63,19 @@ class QueryCacher {
 			return null;
 		}
 		return $result;
+	}
+
+/**
+ * Store the result set into the cache.
+ *
+ * @param Query $query The query the cache read is for.
+ * @param ResultSet The result set to store.
+ * @return void
+ */
+	public function store(Query $query, ResultSet $results) {
+		$key = $this->_resolveKey($query);
+		$storage = $this->_resolveCacher();
+		return $storage->write($key, $results);
 	}
 
 /**

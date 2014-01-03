@@ -1547,4 +1547,57 @@ class QueryTest extends TestCase {
 		$query->cache('my_key');
 	}
 
+/**
+ * Integration test for query caching.
+ *
+ * @return void
+ */
+	public function testCacheReadIntegration() {
+		$query = $this->getMock(
+			'\Cake\ORM\Query', ['execute'],
+			[$this->connection, $this->table]
+		);
+		$resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, null]);
+
+		$query->expects($this->never())
+			->method('execute');
+
+		$cacher = $this->getMock('Cake\Cache\CacheEngine');
+		$cacher->expects($this->once())
+			->method('read')
+			->with('my_key')
+			->will($this->returnValue($resultSet));
+
+		$query->cache('my_key', $cacher)
+			->where(['id' => 1]);
+
+		$results = $query->all();
+		$this->assertSame($resultSet, $results);
+	}
+
+/**
+ * Integration test for query caching.
+ *
+ * @return void
+ */
+	public function testCacheWriteIntegration() {
+		$table = TableRegistry::get('Articles');
+		$query = new Query($this->connection, $table);
+
+		$query->select(['id', 'title']);
+
+		$cacher = $this->getMock('Cake\Cache\CacheEngine');
+		$cacher->expects($this->once())
+			->method('write')
+			->with(
+				'my_key',
+				$this->isInstanceOf('Cake\ORM\ResultSet')
+			);
+
+		$query->cache('my_key', $cacher)
+			->where(['id' => 1]);
+
+		$query->all();
+	}
+
 }

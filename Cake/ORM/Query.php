@@ -517,6 +517,9 @@ class Query extends DatabaseQuery {
 			$results = $this->_decorateResults(
 				new ResultSet($this, $this->execute())
 			);
+			if ($this->_cache) {
+				$this->_cache->store($this, $results);
+			}
 		}
 		$this->_results = $results;
 		return $this->_results;
