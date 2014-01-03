@@ -1,1 +1,1 @@
-This is the TestsAppsController index view <?php echo isset($var) ? $var : ''; ?>
+This is the TestsAppsController index view <?= isset($var) ? $var : ''; ?>

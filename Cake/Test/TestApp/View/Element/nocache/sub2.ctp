@@ -1,6 +1,6 @@
 <!--nocache-->
 	<?php $barfoo = 'in sub2'; ?>
-	<?php echo $barfoo; ?>
+	<?= $barfoo; ?>
 <!--/nocache-->
 
-<?php echo 'printing: "' . $barfoo . '"'; ?>
+<?= 'printing: "' . $barfoo . '"'; ?>

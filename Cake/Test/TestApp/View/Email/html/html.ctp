@@ -10,6 +10,6 @@ use Cake\Network\Email\Email;
 }</code></pre>
 <table>
 <th align="right" valign="top"
-        style="font-weight: bold">The tag is across multiple lines - <?php echo str_repeat('x', Email::LINE_LENGTH_MUST); ?></th>
+        style="font-weight: bold">The tag is across multiple lines - <?= str_repeat('x', Email::LINE_LENGTH_MUST); ?></th>
 </table>
-<p>Some more <?php echo str_repeat('x', Email::LINE_LENGTH_MUST); ?> <b>Bold</b> test.</p>
+<p>Some more <?= str_repeat('x', Email::LINE_LENGTH_MUST); ?> <b>Bold</b> test.</p>

@@ -17,44 +17,44 @@
 ?>
 
 /**
- * <?php echo $admin ?>index method
+ * <?= $admin ?>index method
  *
  * @return void
  */
-	public function <?php echo $admin ?>index() {
-		$this-><?php echo $currentModelName ?>->recursive = 0;
-		$this->set('<?php echo $pluralName ?>', $this->paginate());
+	public function <?= $admin ?>index() {
+		$this-><?= $currentModelName ?>->recursive = 0;
+		$this->set('<?= $pluralName ?>', $this->paginate());
 	}
 
 /**
- * <?php echo $admin ?>view method
+ * <?= $admin ?>view method
  *
  * @throws NotFoundException
  * @param string $id
  * @return void
  */
-	public function <?php echo $admin ?>view($id = null) {
-		if (!$this-><?php echo $currentModelName; ?>->exists($id)) {
-			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
+	public function <?= $admin ?>view($id = null) {
+		if (!$this-><?= $currentModelName; ?>->exists($id)) {
+			throw new NotFoundException(__('Invalid <?= strtolower($singularHumanName); ?>'));
 		}
-		$options = ['conditions' => ['<?php echo $currentModelName; ?>.' . $this-><?php echo $currentModelName; ?>->primaryKey => $id]];
-		$this->set('<?php echo $singularName; ?>', $this-><?php echo $currentModelName; ?>->find('first', $options));
+		$options = ['conditions' => ['<?= $currentModelName; ?>.' . $this-><?= $currentModelName; ?>->primaryKey => $id]];
+		$this->set('<?= $singularName; ?>', $this-><?= $currentModelName; ?>->find('first', $options));
 	}
 
 <?php $compact = []; ?>
 /**
- * <?php echo $admin ?>add method
+ * <?= $admin ?>add method
  *
  * @return void
  */
-	public function <?php echo $admin ?>add() {
+	public function <?= $admin ?>add() {
 		if ($this->request->is('post')) {
-			$this-><?php echo $currentModelName; ?>->create();
-			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
-				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved.'));
+			$this-><?= $currentModelName; ?>->create();
+			if ($this-><?= $currentModelName; ?>->save($this->request->data)) {
+				$this->Session->setFlash(__('The <?= strtolower($singularHumanName); ?> has been saved.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The <?= strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
 			}
 		}
 <?php
@@ -76,26 +76,26 @@
 
 <?php $compact = []; ?>
 /**
- * <?php echo $admin ?>edit method
+ * <?= $admin ?>edit method
  *
  * @throws NotFoundException
  * @param string $id
  * @return void
  */
-	public function <?php echo $admin; ?>edit($id = null) {
-		if (!$this-><?php echo $currentModelName; ?>->exists($id)) {
-			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
+	public function <?= $admin; ?>edit($id = null) {
+		if (!$this-><?= $currentModelName; ?>->exists($id)) {
+			throw new NotFoundException(__('Invalid <?= strtolower($singularHumanName); ?>'));
 		}
 		if ($this->request->is(['post', 'put'])) {
-			if ($this-><?php echo $currentModelName; ?>->save($this->request->data)) {
-				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been saved.'));
+			if ($this-><?= $currentModelName; ?>->save($this->request->data)) {
+				$this->Session->setFlash(__('The <?= strtolower($singularHumanName); ?> has been saved.'));
 				return $this->redirect(['action' => 'index']);
 			} else {
-				$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
+				$this->Session->setFlash(__('The <?= strtolower($singularHumanName); ?> could not be saved. Please, try again.'));
 			}
 		} else {
-			$options = ['conditions' => ['<?php echo $currentModelName; ?>.' . $this-><?php echo $currentModelName; ?>->primaryKey => $id]];
-			$this->request->data = $this-><?php echo $currentModelName; ?>->find('first', $options);
+			$options = ['conditions' => ['<?= $currentModelName; ?>.' . $this-><?= $currentModelName; ?>->primaryKey => $id]];
+			$this->request->data = $this-><?= $currentModelName; ?>->find('first', $options);
 		}
 <?php
 		foreach (['belongsTo', 'hasAndBelongsToMany'] as $assoc):
@@ -115,22 +115,22 @@
 	}
 
 /**
- * <?php echo $admin ?>delete method
+ * <?= $admin ?>delete method
  *
  * @throws NotFoundException
  * @param string $id
  * @return void
  */
-	public function <?php echo $admin; ?>delete($id = null) {
-		$this-><?php echo $currentModelName; ?>->id = $id;
-		if (!$this-><?php echo $currentModelName; ?>->exists()) {
-			throw new NotFoundException(__('Invalid <?php echo strtolower($singularHumanName); ?>'));
+	public function <?= $admin; ?>delete($id = null) {
+		$this-><?= $currentModelName; ?>->id = $id;
+		if (!$this-><?= $currentModelName; ?>->exists()) {
+			throw new NotFoundException(__('Invalid <?= strtolower($singularHumanName); ?>'));
 		}
 		$this->request->onlyAllow('post', 'delete');
-		if ($this-><?php echo $currentModelName; ?>->delete()) {
-			$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> has been deleted.'));
+		if ($this-><?= $currentModelName; ?>->delete()) {
+			$this->Session->setFlash(__('The <?= strtolower($singularHumanName); ?> has been deleted.'));
 		} else {
-			$this->Session->setFlash(__('The <?php echo strtolower($singularHumanName); ?> could not be deleted. Please, try again.'));
+			$this->Session->setFlash(__('The <?= strtolower($singularHumanName); ?> could not be deleted. Please, try again.'));
 		}
 		return $this->redirect(['action' => 'index']);
 	}

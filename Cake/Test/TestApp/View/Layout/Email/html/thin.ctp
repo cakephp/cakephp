@@ -2,11 +2,11 @@
 
 <html>
 <head>
-	<title><?php echo $title_for_layout; ?></title>
+	<title><?= $title_for_layout; ?></title>
 </head>
 
 <body>
-	<?php echo $this->fetch('content'); ?>
+	<?= $this->fetch('content'); ?>
 
 	<p>This email was sent using the CakePHP Framework</p>
 </body>

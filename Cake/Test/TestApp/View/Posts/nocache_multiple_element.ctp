@@ -1,9 +1,9 @@
 <!--nocache-->
-	<?php echo $foo; ?>
+	<?= $foo; ?>
 <!--/nocache-->
 
 <!--nocache-->
-	<?php echo $bar; ?>
+	<?= $bar; ?>
 <!--/nocache-->
 
-<?php echo $this->element('nocache/sub1'); ?>
+<?= $this->element('nocache/sub1'); ?>

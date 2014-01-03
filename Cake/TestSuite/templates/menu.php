@@ -21,7 +21,7 @@
 	<li>
 		<span style="font-size: 18px">App</span>
 		<ul>
-			<li><a href='<?php echo $cases; ?>'>Tests</a></li>
+			<li><a href='<?= $cases; ?>'>Tests</a></li>
 		</ul>
 	</li>
 <?php if (!empty($plugins)): ?>
@@ -30,7 +30,7 @@
 	<?php foreach ($plugins as $plugin) : ?>
 			<ul>
 				<li style="padding-top: 10px">
-					<span  style="font-size: 18px"><?php echo $plugin; ?></span>
+					<span  style="font-size: 18px"><?= $plugin; ?></span>
 					<ul>
 						<li><?php printf('<a href="%s&amp;plugin=%s">Tests</a>', $cases, $plugin); ?></li>
 					</ul>
@@ -42,7 +42,7 @@
 	<li style="padding-top: 10px">
 		<span style="font-size: 18px">Core</span>
 		<ul>
-			<li><a href='<?php echo $cases; ?>&amp;core=true'>Tests</a></li>
+			<li><a href='<?= $cases; ?>&amp;core=true'>Tests</a></li>
 		</ul>
 	</li>
 </ul>

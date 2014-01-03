@@ -22,7 +22,7 @@ echo "<?php\n";
 echo "App::uses('{$plugin}AppController', '{$pluginPath}Controller');\n";
 ?>
 /**
- * <?php echo $controllerName; ?> Controller
+ * <?= $controllerName; ?> Controller
  *
 <?php
 if (!$isScaffold) {
@@ -36,7 +36,7 @@ if (!$isScaffold) {
 }
 ?>
  */
-class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>AppController {
+class <?= $controllerName; ?>Controller extends <?= $plugin; ?>AppController {
 
 <?php if ($isScaffold): ?>
 /**

@@ -15,14 +15,14 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<h2><?php echo __d('cake_dev', 'Missing Datasource Configuration'); ?></h2>
+<h2><?= __d('cake_dev', 'Missing Datasource Configuration'); ?></h2>
 <p class="error">
-	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'The datasource configuration %1$s was not found in datasources.php.', '<em>' . h($config) . '</em>'); ?>
+	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
+	<?= __d('cake_dev', 'The datasource configuration %1$s was not found in datasources.php.', '<em>' . h($config) . '</em>'); ?>
 </p>
 <p class="notice">
-	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_datasource_config.ctp'); ?>
+	<strong><?= __d('cake_dev', 'Notice'); ?>: </strong>
+	<?= __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_datasource_config.ctp'); ?>
 </p>
 
-<?php echo $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace'); ?>

@@ -22,7 +22,7 @@ echo "<?php\n";
 echo "App::uses('{$plugin}AppModel', '{$pluginPath}Model');\n";
 ?>
 /**
- * <?php echo $name ?> Model
+ * <?= $name ?> Model
  *
 <?php
 foreach (['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany'] as $assocType) {
@@ -34,7 +34,7 @@ foreach (['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany'] as $assocType
 }
 ?>
  */
-class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
+class <?= $name ?> extends <?= $plugin; ?>AppModel {
 
 <?php if ($useDbConfig !== 'default'): ?>
 /**
@@ -42,7 +42,7 @@ class <?php echo $name ?> extends <?php echo $plugin; ?>AppModel {
  *
  * @var string
  */
-	public $useDbConfig = '<?php echo $useDbConfig; ?>';
+	public $useDbConfig = '<?= $useDbConfig; ?>';
 
 <?php endif;
 
@@ -58,7 +58,7 @@ if ($primaryKey !== 'id'): ?>
  *
  * @var string
  */
-	public $primaryKey = '<?php echo $primaryKey; ?>';
+	public $primaryKey = '<?= $primaryKey; ?>';
 
 <?php endif;
 
@@ -68,7 +68,7 @@ if ($displayField): ?>
  *
  * @var string
  */
-	public $displayField = '<?php echo $displayField; ?>';
+	public $displayField = '<?= $displayField; ?>';
 
 <?php endif;
 
@@ -78,7 +78,7 @@ if (!empty($actsAs)): ?>
  *
  * @var array
  */
-	public $actsAs = [<?php echo "\n\t"; foreach ($actsAs as $behavior): echo "\t"; var_export($behavior); echo ",\n\t"; endforeach; ?>];
+	public $actsAs = [<?= "\n\t"; foreach ($actsAs as $behavior): echo "\t"; var_export($behavior); echo ",\n\t"; endforeach; ?>];
 
 <?php endif;
 

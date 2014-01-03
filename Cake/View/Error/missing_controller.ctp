@@ -37,14 +37,14 @@ if (empty($plugin)) {
 }
 
 ?>
-<h2><?php echo __d('cake_dev', 'Missing Controller'); ?></h2>
+<h2><?= __d('cake_dev', 'Missing Controller'); ?></h2>
 <p class="error">
-	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', '%s could not be found.', '<em>' . h($pluginDot . $class) . 'Controller</em>'); ?>
+	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
+	<?= __d('cake_dev', '%s could not be found.', '<em>' . h($pluginDot . $class) . 'Controller</em>'); ?>
 </p>
 <p class="error">
-	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . h($class) . 'Controller</em>', $path); ?>
+	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
+	<?= __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . h($class) . 'Controller</em>', $path); ?>
 </p>
 <pre>
 &lt;?php
@@ -52,13 +52,13 @@ namespace <?= h($namespace); ?>\Controller<?= h($prefixNs); ?>;
 
 use <?= h($namespace); ?>\Controller\AppController;
 
-class <?php echo h($class) . 'Controller extends ' . h($plugin); ?>AppController {
+class <?= h($class) . 'Controller extends ' . h($plugin); ?>AppController {
 
 }
 </pre>
 <p class="notice">
-	<strong><?php echo __d('cake_dev', 'Notice'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_controller.ctp'); ?>
+	<strong><?= __d('cake_dev', 'Notice'); ?>: </strong>
+	<?= __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_controller.ctp'); ?>
 </p>
 
-<?php echo $this->element('exception_stack_trace'); ?>
+<?= $this->element('exception_stack_trace'); ?>

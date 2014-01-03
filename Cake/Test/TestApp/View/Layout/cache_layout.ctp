@@ -1,13 +1,13 @@
 <p>This is regular text</p>
 <!--nocache-->
-	<?php echo microtime(); ?>
+	<?= microtime(); ?>
 <!--/nocache-->
 
-<?php echo $this->fetch('content'); ?>
+<?= $this->fetch('content'); ?>
 
-<?php echo $superman; ?>
+<?= $superman; ?>
 
 <!--nocache-->
-	<?php echo $variable; ?>
+	<?= $variable; ?>
 <!--/nocache-->
 <p>Additional regular text.</p>

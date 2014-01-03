@@ -1,1 +1,1 @@
-Here is your value: <?php echo $value; ?>
+Here is your value: <?= $value; ?>

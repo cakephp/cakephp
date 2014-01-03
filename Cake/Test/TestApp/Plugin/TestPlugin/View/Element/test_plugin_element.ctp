@@ -1,1 +1,1 @@
-<?php echo 'this is the test set using View::$plugin plugin element'; ?>
+<?= 'this is the test set using View::$plugin plugin element'; ?>
