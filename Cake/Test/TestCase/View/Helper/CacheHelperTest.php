@@ -125,8 +125,8 @@ class CacheHelperTest extends TestCase {
 		$this->assertTrue(file_exists($filename));
 
 		$contents = file_get_contents($filename);
-		$this->assertContains('<?php echo $variable', $contents);
-		$this->assertContains('<?php echo microtime()', $contents);
+		$this->assertContains('<?= $variable', $contents);
+		$this->assertContains('<?= microtime()', $contents);
 		$this->assertContains('clark kent', $result);
 
 		unlink($filename);

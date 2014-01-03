@@ -350,7 +350,7 @@ class CacheHelper extends Helper {
 				$this->loadHelpers();
 				extract($this->viewVars, EXTR_SKIP);
 		?>';
-		$content = preg_replace("/(<\\?xml)/", "<?php echo '$1'; ?>", $content);
+		$content = preg_replace("/(<\\?xml)/", "<?= '$1'; ?>", $content);
 		$file .= $content;
 		return cache('views/' . $cache, $file, $timestamp);
 	}

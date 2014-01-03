@@ -19,16 +19,16 @@
 
 echo "<?php\n";
 ?>
-<?php echo '<?php' . "\n"; ?>
-namespace <?php echo $namespace; ?>\Test\Fixture;
+<?= '<?php' . "\n"; ?>
+namespace <?= $namespace; ?>\Test\Fixture;
 
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * <?php echo $model; ?>Fixture
+ * <?= $model; ?>Fixture
  *
  */
-class <?php echo $model; ?>Fixture extends TestFixture {
+class <?= $model; ?>Fixture extends TestFixture {
 
 <?php if ($table): ?>
 /**
@@ -36,7 +36,7 @@ class <?php echo $model; ?>Fixture extends TestFixture {
  *
  * @var string
  */
-	public $table = '<?php echo $table; ?>';
+	public $table = '<?= $table; ?>';
 
 <?php endif; ?>
 <?php if ($import): ?>
@@ -45,7 +45,7 @@ class <?php echo $model; ?>Fixture extends TestFixture {
  *
  * @var array
  */
-	public $import = <?php echo $import; ?>;
+	public $import = <?= $import; ?>;
 
 <?php endif; ?>
 <?php if ($schema): ?>
@@ -54,7 +54,7 @@ class <?php echo $model; ?>Fixture extends TestFixture {
  *
  * @var array
  */
-	public $fields = <?php echo $schema; ?>;
+	public $fields = <?= $schema; ?>;
 
 <?php endif; ?>
 <?php if ($records): ?>
@@ -63,7 +63,7 @@ class <?php echo $model; ?>Fixture extends TestFixture {
  *
  * @var array
  */
-	public $records = <?php echo $records; ?>;
+	public $records = <?= $records; ?>;
 
 <?php endif; ?>
 }

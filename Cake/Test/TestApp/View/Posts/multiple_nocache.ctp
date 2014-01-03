@@ -1,15 +1,15 @@
 --view start--
 <!--nocache-->
-	<?php echo $batman ?>
+	<?= $batman ?>
 <!--/nocache-->
 
 this view has 3 nocache blocks
 
 <!--nocache-->
-	<?php echo $spiderman; ?>
+	<?= $spiderman; ?>
 <!--/nocache-->
 
 <!--nocache-->
-	<?php echo 'some string'; ?>
+	<?= 'some string'; ?>
 <!--/nocache-->
 --view end--

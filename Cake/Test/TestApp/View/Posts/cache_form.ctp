@@ -1,14 +1,14 @@
 <div class="users form">
 <!--nocache-->
-	<?php echo $this->Form->create(false); ?>
+	<?= $this->Form->create(false); ?>
 		<fieldset>
-			<legend><?php echo __('Add User'); ?></legend>
+			<legend><?= __('Add User'); ?></legend>
 		<?php
 			echo $this->Form->input('username');
 			echo $this->Form->input('email');
 			echo $this->Form->input('password');
 		?>
 		</fieldset>
-	<?php echo $this->Form->end('Submit'); ?>
+	<?= $this->Form->end('Submit'); ?>
 <!--/nocache-->
 </div>

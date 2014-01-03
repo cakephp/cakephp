@@ -1,4 +1,4 @@
 
-<?php echo $this->fetch('content'); ?>
+<?= $this->fetch('content'); ?>
 
 This email was sent using the TestPlugin.

@@ -1,1 +1,1 @@
-<p>Here is your value: <b><?php echo $value; ?></b></p>
+<p>Here is your value: <b><?= $value; ?></b></p>
