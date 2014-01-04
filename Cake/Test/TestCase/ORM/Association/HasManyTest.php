@@ -362,6 +362,59 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that eager loader accepts a queryBuilder option
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithQueryBuilder() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'strategy' => 'select'
+		];
+		$association = new HasMany('Articles', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['all', 'select', 'join', 'where'],
+			[null, null]
+		);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+
+		$query->expects($this->once())->method('all')
+			->will($this->returnValue($results));
+
+		$query->expects($this->any())->method('select')
+			->will($this->returnSelf());
+		$query->expects($this->at(2))->method('select')
+			->with(['a', 'b'])
+			->will($this->returnSelf());
+
+		$query->expects($this->any())->method('join')
+			->will($this->returnSelf());
+		$query->expects($this->at(6))->method('join')
+			->with('foo')
+			->will($this->returnSelf());
+
+		$query->expects($this->any())->method('where')
+			->will($this->returnSelf());
+		$query->expects($this->at(4))->method('where')
+			->with(['a' => 1])
+			->will($this->returnSelf());
+
+		$queryBuilder = function($query) {
+			return $query->select(['a', 'b'])->join('foo')->where(['a' => 1]);
+		};
+
+		$callable = $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
+	}
+
+/**
  * Tests that the correct join and fields are attached to a query depending on
  * the association config
  *
