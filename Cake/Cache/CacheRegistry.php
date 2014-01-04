@@ -83,7 +83,7 @@ class CacheRegistry extends ObjectRegistry {
 
 		if (!$instance->init($config)) {
 			throw new Error\Exception(
-				sprintf('Cache engine %s is not properly configured.', $class)
+				sprintf('Cache engine %s is not properly configured.', get_class($instance))
 			);
 		}
 

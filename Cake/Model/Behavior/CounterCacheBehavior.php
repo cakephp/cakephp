@@ -76,6 +76,7 @@ use Cake\Utility\Inflector;
  *     ]
  * ]
  * }}}
+ *
  */
 class CounterCacheBehavior extends Behavior {
 
