@@ -247,7 +247,7 @@ class BelongsToMany extends Association {
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
 			'sort' => $this->sort(),
-			'strategy' => $this->strategy(),
+			'strategy' => $this->strategy()
 		];
 
 		$queryBuilder = false;
