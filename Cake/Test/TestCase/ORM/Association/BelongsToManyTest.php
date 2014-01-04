@@ -302,6 +302,66 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
+ * Tests that by supplying a query builder function, it is possible to add fields
+ * and conditions to an association
+ *
+ * @return void
+ */
+	public function testAttachToWithQueryBuilder() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'conditions' => ['Tags.name' => 'cake']
+		];
+		TableRegistry::get('ArticlesTags', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer']
+			]
+		]);
+		$association = new BelongsToMany('Tags', $config);
+		$query->expects($this->at(0))->method('join')->with([
+			'Tags' => [
+				'conditions' => new QueryExpression([
+					'Tags.name' => 'cake',
+					new QueryExpression(['a' => 1])
+				]),
+				'type' => 'INNER',
+				'table' => 'tags'
+			]
+		]);
+
+		$field1 = new IdentifierExpression('ArticlesTags.article_id');
+		$field2 = new IdentifierExpression('ArticlesTags.tag_id');
+
+		$query->expects($this->at(2))->method('join')->with([
+			'ArticlesTags' => [
+				'conditions' => new QueryExpression([
+					['Articles.id' => $field1],
+					['Tags.id' => $field2]
+				]),
+				'type' => 'INNER',
+				'table' => 'articles_tags'
+			]
+		]);
+
+		$query->expects($this->once())->method('select')
+			->with([
+				'Tags__a' => 'Tags.a',
+				'Tags__b' => 'Tags.b'
+			]);
+		$builder = function($q) {
+			return $q->select(['a', 'b'])->where(['a' => 1]);
+		};
+		$association->attachTo($query, [
+			'includeFields' => false,
+			'queryBuilder' => $builder
+		]);
+	}
+
+/**
  * Test the eager loader method with no extra options
  *
  * @return void

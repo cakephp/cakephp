@@ -187,6 +187,7 @@ class BelongsToMany extends Association {
 			$includeFields = $options['includeFields'];
 		}
 
+		unset($options['queryBuilder']);
 		$options = ['conditions' => [$cond]] + compact('includeFields');
 		$this->target()
 			->association($junction->alias())
