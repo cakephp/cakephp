@@ -142,7 +142,7 @@ class FileLog extends BaseLog {
 		static $selfError = false;
 		if (!$selfError && !$exists && !chmod($pathname, (int)$this->_config['mask'])) {
 			$selfError = true;
-			trigger_error(sprintf(
+			trigger_error(vsprintf(
 				'Could not apply permission mask "%s" on log file "%s"',
 				array($this->_config['mask'], $pathname)), E_USER_WARNING);
 			$selfError = false;
