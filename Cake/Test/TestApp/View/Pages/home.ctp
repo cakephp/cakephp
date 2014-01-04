@@ -11,132 +11,99 @@ if (Configure::read('debug') == 0):
 	throw new Error\NotFoundException();
 endif;
 ?>
-<h2><?= __d('cake_dev', 'Release Notes for CakePHP %s.', Configure::version()); ?></h2>
+<h2><?= sprintf('Release Notes for CakePHP %s.', Configure::version()); ?></h2>
 <p>
-	<a href="http://cakephp.org/changelogs/<?= Configure::version(); ?>"><?= __d('cake_dev', 'Read the changelog'); ?> </a>
+	<a href="http://cakephp.org/changelogs/<?= Configure::version(); ?>">Read the changelog</a>
 </p>
-<?php
-if (file_exists(WWW_ROOT . 'css' . DS . 'cake.generic.css')):
-?>
+
+<?php if (file_exists(WWW_ROOT . 'css' . DS . 'cake.generic.css')): ?>
 <p id="url-rewriting-warning" style="background-color:#e32; color:#fff;">
-	<?= __d('cake_dev', 'URL rewriting is not properly configured on your server.'); ?>
+	URL rewriting is not properly configured on your server.
 	1) <a target="_blank" href="http://book.cakephp.org/2.0/en/installation/url-rewriting.html" style="color:#fff;">Help me configure it</a>
 	2) <a target="_blank" href="http://book.cakephp.org/2.0/en/development/configuration.html#cakephp-core-configuration" style="color:#fff;">I don't / can't use URL rewriting</a>
 </p>
-<?php
-endif;
-?>
-<p>
-<?php
-	if (version_compare(PHP_VERSION, '5.4.3', '>=')):
-		echo '<span class="notice success">';
-			echo __d('cake_dev', 'Your version of PHP is 5.4.3 or higher.');
-		echo '</span>';
-	else:
-		echo '<span class="notice">';
-			echo __d('cake_dev', 'Your version of PHP is too low. You need PHP 5.4.3 or higher to use CakePHP.');
-		echo '</span>';
-	endif;
-?>
-</p>
-<p>
-<?php
-	if (extension_loaded('mbstring')):
-		echo '<span class="notice success">';
-			echo __d('cake_dev', 'Your version of PHP has mbstring extension loaded.');
-		echo '</span>';
-	else:
-		echo '<span class="notice">';
-			echo __d('cake_dev', 'Your version of PHP does NOT have the mbstring extension loaded.');
-		echo '</span>';
-	endif;
-?>
-</p>
-<p>
-	<?php
-		if (is_writable(TMP)):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your tmp directory is writable.');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your tmp directory is NOT writable.');
-			echo '</span>';
-		endif;
-	?>
-</p>
-<p>
-	<?php
-		$engine = Cache::engine('_cake_model_');
-		$settings = $engine ? $engine->config() : false;
-		if (!empty($settings)):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'The %s is being used for core caching. To change the config edit APP/Config/cache.php', '<em>'. $settings['engine'] . 'Engine</em>');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your cache is NOT working. Please check the settings in APP/Config/cache.php');
-			echo '</span>';
-		endif;
-	?>
-</p>
-<p>
-	<?php
-		$filePresent = null;
-		if (file_exists(APP . 'Config/datasources.php')):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'Your datasources configuration file is present.');
-				$filePresent = true;
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'Your datasources configuration file is NOT present.');
-				echo '<br/>';
-				echo __d('cake_dev', 'Rename APP/Config/datasources.default.php to APP/Config/datasources.php');
-			echo '</span>';
-		endif;
-	?>
-</p>
-<?php
-	if (!Validation::alphaNumeric('cakephp')):
-		echo '<p><span class="notice">';
-			echo __d('cake_dev', 'PCRE has not been compiled with Unicode support.');
-			echo '<br/>';
-			echo __d('cake_dev', 'Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring');
-		echo '</span></p>';
-	endif;
-?>
+<?php endif; ?>
 
 <p>
-	<?php
-		if (Plugin::loaded('DebugKit')):
-			echo '<span class="notice success">';
-				echo __d('cake_dev', 'DebugKit plugin is present');
-			echo '</span>';
-		else:
-			echo '<span class="notice">';
-				echo __d('cake_dev', 'DebugKit is not installed. It will help you inspect and debug different aspects of your application.');
-				echo '<br/>';
-				echo __d('cake_dev', 'You can install it from %s', $this->Html->link('GitHub', 'https://github.com/cakephp/debug_kit'));
-			echo '</span>';
-		endif;
-	?>
+<?php if (version_compare(PHP_VERSION, '5.4.3', '>=')): ?>
+	<span class="notice success">Your version of PHP is 5.4.3 or higher</span>
+<?php else: ?>
+	<span class="notice">Your version of PHP is too low. You need PHP 5.4.3 or higher to use CakePHP.</span>
+<?php endif; ?>
 </p>
 
-<h3><?= __d('cake_dev', 'Editing this Page'); ?></h3>
+<p>
+<?php if (extension_loaded('mbstring')): ?>
+	<span class="notice success">Your version of PHP has mbstring extension loaded.</span>
+<?php else: ?>
+	<span class="notice">Your version of PHP does NOT have the mbstring extension loaded.</span>
+<?php endif; ?>
+</p>
+
+<p>
+<?php if (is_writable(TMP)): ?>
+	<span class="notice success">Your tmp directory is writable.</span>
+<?php else: ?>
+	<span class="notice">Your tmp directory is NOT writable.</span>
+<?php endif; ?>
+</p>
+
 <p>
 <?php
-echo __d('cake_dev', 'To change the content of this page, edit: APP/View/Pages/home.ctp.<br />
+$engine = Cache::engine('_cake_model_');
+$settings = $engine ? $engine->config() : false;
+if (!empty($settings)): ?>
+	<span class="notice success">The <em><?= $settings['engine'] ?>Engine</em> is being used for core caching. To change the config edit APP/Config/cache.php</span>
+<?php else: ?>
+	<span class="notice">Your cache is NOT working. Please check the settings in APP/Config/cache.php</span>
+<?php endif; ?>
+</p>
+
+<p>
+<?php
+if (file_exists(APP . 'Config/datasources.php')): ?>
+	<span class="notice success">Your datasources configuration file is present.</span>
+<?php else: ?>
+	<span class="notice">
+	Your datasources configuration file is NOT present.
+	<br/>
+	Rename APP/Config/datasources.default.php to APP/Config/datasources.php
+	</span>
+<?php endif; ?>
+</p>
+
+<?php if (!Validation::alphaNumeric('cakephp')): ?>
+	<p><span class="notice">'
+		PCRE has not been compiled with Unicode support.';
+		<br/>
+		Recompile PCRE with Unicode support by adding <code>--enable-unicode-properties</code> when configuring
+	</span></p>
+<?php endif; ?>
+
+<p>
+<?php if (Plugin::loaded('DebugKit')): ?>
+	<span class="notice success">DebugKit plugin is present</span>
+<?php else: ?>
+	<span class="notice">';
+		DebugKit is not installed. It will help you inspect and debug different aspects of your application.
+		<br/>
+		You can install it from <?= $this->Html->link('GitHub', 'https://github.com/cakephp/debug_kit'); ?>
+		</span>
+<?php endif; ?>
+</p>
+
+<h3>Editing this Page</h3>
+<p>
+To change the content of this page, edit: APP/View/Pages/home.ctp.<br />
 To change its layout, edit: APP/View/Layout/default.ctp.<br />
-You can also add some CSS styles for your pages at: APP/webroot/css.');
-?>
+You can also add some CSS styles for your pages at: APP/webroot/css.;
 </p>
 
-<h3><?= __d('cake_dev', 'Getting Started'); ?></h3>
+<h3>Getting Started</h3>
 <p>
 	<?php
 		echo $this->Html->link(
-			sprintf('<strong>%s</strong> %s', __d('cake_dev', 'New'), __d('cake_dev', 'CakePHP 2.0 Docs')),
+			'<strong>New</strong> CakePHP 2.0 Docs',
 			'http://book.cakephp.org/2.0/en/',
 			array('target' => '_blank', 'escape' => false)
 		);
@@ -145,62 +112,62 @@ You can also add some CSS styles for your pages at: APP/webroot/css.');
 <p>
 	<?php
 		echo $this->Html->link(
-			__d('cake_dev', 'The 15 min Blog Tutorial'),
+			'The 15 min Blog Tutorial',
 			'http://book.cakephp.org/2.0/en/tutorials-and-examples/blog/blog.html',
 			array('target' => '_blank', 'escape' => false)
 		);
 	?>
 </p>
 
-<h3><?= __d('cake_dev', 'Official Plugins'); ?></h3>
+<h3>Official Plugins</h3>
 <p>
 <ul>
 	<li>
 		<?= $this->Html->link('DebugKit', 'https://github.com/cakephp/debug_kit') ?>:
-		<?= __d('cake_dev', 'provides a debugging toolbar and enhanced debugging tools for CakePHP applications.'); ?>
+		provides a debugging toolbar and enhanced debugging tools for CakePHP application.
 	</li>
 	<li>
 		<?= $this->Html->link('Localized', 'https://github.com/cakephp/localized') ?>:
-		<?= __d('cake_dev', 'contains various localized validation classes and translations for specific countries'); ?>
+		contains various localized validation classes and translations for specific countries
 	</li>
 </ul>
 </p>
 
-<h3><?= __d('cake_dev', 'More about CakePHP'); ?></h3>
+<h3>More about CakePHP</h3>
 <p>
-<?= __d('cake_dev', 'CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.'); ?>
+CakePHP is a rapid development framework for PHP which uses commonly known design patterns like Active Record, Association Data Mapping, Front Controller and MVC.
 </p>
 <p>
-<?= __d('cake_dev', 'Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.'); ?>
+Our primary goal is to provide a structured framework that enables PHP users at all levels to rapidly develop robust web applications, without any loss to flexibility.
 </p>
 
-<ul>
+<ul
 	<li><a href="http://cakephp.org">CakePHP</a>
-	<ul><li><?= __d('cake_dev', 'The Rapid Development Framework'); ?></li></ul></li>
-	<li><a href="http://book.cakephp.org"><?= __d('cake_dev', 'CakePHP Documentation'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'Your Rapid Development Cookbook'); ?></li></ul></li>
-	<li><a href="http://api.cakephp.org"><?= __d('cake_dev', 'CakePHP API'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'Quick API Reference'); ?></li></ul></li>
-	<li><a href="http://bakery.cakephp.org"><?= __d('cake_dev', 'The Bakery'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'Everything CakePHP'); ?></li></ul></li>
-	<li><a href="http://plugins.cakephp.org"><?= __d('cake_dev', 'CakePHP Plugins'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'A comprehensive list of all CakePHP plugins created by the community'); ?></li></ul></li>
-	<li><a href="http://community.cakephp.org"><?= __d('cake_dev', 'CakePHP Community Center'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'Everything related to the CakePHP community in one place'); ?></li></ul></li>
-	<li><a href="https://groups.google.com/group/cake-php"><?= __d('cake_dev', 'CakePHP Google Group'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'Community mailing list'); ?></li></ul></li>
+	<ul><li>The Rapid Development Framework</li></ul></li>
+	<li><a href="http://book.cakephp.org">CakePHP Documentation </a>
+	<ul><li>Your Rapid Development Cookbook</li></ul></li>
+	<li><a href="http://api.cakephp.org">CakePHP API </a>
+	<ul><li>Quick API Reference</li></ul></li>
+	<li><a href="http://bakery.cakephp.org">The Bakery </a>
+	<ul><li>Everything CakePHP</li></ul></li>
+	<li><a href="http://plugins.cakephp.org">CakePHP Plugins </a>
+	<ul><li>A comprehensive list of all CakePHP plugins created by the community</li></ul></li>
+	<li><a href="http://community.cakephp.org">CakePHP Community Center </a>
+	<ul><li>Everything related to the CakePHP community in one place</li></ul></li>
+	<li><a href="https://groups.google.com/group/cake-php">CakePHP Google Group </a>
+	<ul><li>Community mailing list</li></ul></li>
 	<li><a href="irc://irc.freenode.net/cakephp">irc.freenode.net #cakephp</a>
-	<ul><li><?= __d('cake_dev', 'Live chat about CakePHP'); ?></li></ul></li>
-	<li><a href="https://github.com/cakephp/"><?= __d('cake_dev', 'CakePHP Code'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'Find the CakePHP code on GitHub and contribute to the framework'); ?></li></ul></li>
-	<li><a href="https://github.com/cakephp/cakephp/issues"><?= __d('cake_dev', 'CakePHP Issues'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'CakePHP Issues'); ?></li></ul></li>
-	<li><a href="https://github.com/cakephp/cakephp/wiki#roadmaps"><?= __d('cake_dev', 'CakePHP Roadmaps'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'CakePHP Roadmaps'); ?></li></ul></li>
-	<li><a href="http://training.cakephp.org"><?= __d('cake_dev', 'Training'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'Join a live session and get skilled with the framework'); ?></li></ul></li>
-	<li><a href="http://cakefest.org"><?= __d('cake_dev', 'CakeFest'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'Don\'t miss our annual CakePHP conference'); ?></li></ul></li>
-	<li><a href="http://cakefoundation.org"><?= __d('cake_dev', 'Cake Software Foundation'); ?> </a>
-	<ul><li><?= __d('cake_dev', 'Promoting development related to CakePHP'); ?></li></ul></li>
+	<ul><li>Live chat about CakePHP</li></ul></li>
+	<li><a href="https://github.com/cakephp/">CakePHP Code </a>
+	<ul><li>Find the CakePHP code on GitHub and contribute to the framework</li></ul></li>
+	<li><a href="https://github.com/cakephp/cakephp/issues">CakePHP Issues </a>
+	<ul><li>CakePHP Issues</li></ul></li>
+	<li><a href="https://github.com/cakephp/cakephp/wiki#roadmaps">CakePHP Roadmaps </a>
+	<ul><li>CakePHP Roadmaps</li></ul></li>
+	<li><a href="http://training.cakephp.org">Training </a>
+	<ul><li>Join a live session and get skilled with the framework</li></ul></li>
+	<li><a href="http://cakefest.org">CakeFest </a>
+	<ul><li>Don\'t miss our annual CakePHP conference</li></ul></li>
+	<li><a href="http://cakefoundation.org">Cake Software Foundation </a>
+	<ul><li>Promoting development related to CakePHP</li></ul></li>
 </ul>

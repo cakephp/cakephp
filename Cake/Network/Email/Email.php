@@ -385,7 +385,7 @@ class Email {
 		if ($email === null) {
 			return $this->_from;
 		}
-		return $this->_setEmailSingle('_from', $email, $name, __d('cake_dev', 'From requires only 1 email address.'));
+		return $this->_setEmailSingle('_from', $email, $name, 'From requires only 1 email address.');
 	}
 
 /**
@@ -400,7 +400,7 @@ class Email {
 		if ($email === null) {
 			return $this->_sender;
 		}
-		return $this->_setEmailSingle('_sender', $email, $name, __d('cake_dev', 'Sender requires only 1 email address.'));
+		return $this->_setEmailSingle('_sender', $email, $name, 'Sender requires only 1 email address.');
 	}
 
 /**
@@ -415,7 +415,7 @@ class Email {
 		if ($email === null) {
 			return $this->_replyTo;
 		}
-		return $this->_setEmailSingle('_replyTo', $email, $name, __d('cake_dev', 'Reply-To requires only 1 email address.'));
+		return $this->_setEmailSingle('_replyTo', $email, $name, 'Reply-To requires only 1 email address.');
 	}
 
 /**
@@ -430,7 +430,7 @@ class Email {
 		if ($email === null) {
 			return $this->_readReceipt;
 		}
-		return $this->_setEmailSingle('_readReceipt', $email, $name, __d('cake_dev', 'Disposition-Notification-To requires only 1 email address.'));
+		return $this->_setEmailSingle('_readReceipt', $email, $name, 'Disposition-Notification-To requires only 1 email address.');
 	}
 
 /**
@@ -445,7 +445,7 @@ class Email {
 		if ($email === null) {
 			return $this->_returnPath;
 		}
-		return $this->_setEmailSingle('_returnPath', $email, $name, __d('cake_dev', 'Return-Path requires only 1 email address.'));
+		return $this->_setEmailSingle('_returnPath', $email, $name, 'Return-Path requires only 1 email address.');
 	}
 
 /**
@@ -610,7 +610,7 @@ class Email {
 			filter_var($email, FILTER_VALIDATE_EMAIL)
 		);
 		if (!$valid) {
-			throw new Error\SocketException(__d('cake_dev', 'Invalid email: "%s"', $email));
+			throw new Error\SocketException(sprintf('Invalid email: "%s"', $email));
 		}
 	}
 
@@ -687,7 +687,7 @@ class Email {
  */
 	public function setHeaders($headers) {
 		if (!is_array($headers)) {
-			throw new Error\SocketException(__d('cake_dev', '$headers should be an array.'));
+			throw new Error\SocketException('$headers should be an array.');
 		}
 		$this->_headers = $headers;
 		return $this;
@@ -702,7 +702,7 @@ class Email {
  */
 	public function addHeaders($headers) {
 		if (!is_array($headers)) {
-			throw new Error\SocketException(__d('cake_dev', '$headers should be an array.'));
+			throw new Error\SocketException('$headers should be an array.');
 		}
 		$this->_headers = array_merge($this->_headers, $headers);
 		return $this;
@@ -907,7 +907,7 @@ class Email {
 			return $this->_emailFormat;
 		}
 		if (!in_array($format, $this->_emailFormatAvailable)) {
-			throw new Error\SocketException(__d('cake_dev', 'Format not available.'));
+			throw new Error\SocketException('Format not available.');
 		}
 		$this->_emailFormat = $format;
 		return $this;
@@ -935,7 +935,7 @@ class Email {
 			$transport = $name;
 		}
 		if (!method_exists($transport, 'send')) {
-			throw new Error\SocketException(__d('cake_dev', 'The "%s" do not have send method.', get_class($transport)));
+			throw new Error\SocketException(sprintf('The "%s" do not have send method.', get_class($transport)));
 		}
 
 		$this->_transport = $transport;
@@ -951,15 +951,15 @@ class Email {
  */
 	protected function _constructTransport($name) {
 		if (!isset(static::$_transportConfig[$name]['className'])) {
-			throw new Error\Exception(__d('cake_dev', 'Transport config "%s" is missing.', $name));
+			throw new Error\Exception(sprintf('Transport config "%s" is missing.', $name));
 		}
 
 		$config = static::$_transportConfig[$name];
 		$classname = App::classname($config['className'], 'Network/Email', 'Transport');
 		if (!$classname) {
-			throw new Error\Exception(__d('cake_dev', 'Transport class "%s" not found.', $name));
+			throw new Error\Exception(sprintf('Transport class "%s" not found.', $name));
 		} elseif (!method_exists($classname, 'send')) {
-			throw new Error\Exception(__d('cake_dev', 'The "%s" does not have a %s method.', $classname, 'send()'));
+			throw new Error\Exception(sprintf('The "%s" does not have a send() method.', $classname));
 		}
 
 		unset($config['className']);
@@ -981,7 +981,7 @@ class Email {
 			$this->_messageId = $message;
 		} else {
 			if (!preg_match('/^\<.+@.+\>$/', $message)) {
-				throw new Error\SocketException(__d('cake_dev', 'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'));
+				throw new Error\SocketException('Invalid format to Message-ID. The text should be something like "<uuid@server.com>"');
 			}
 			$this->_messageId = $message;
 		}
@@ -1060,16 +1060,16 @@ class Email {
 			}
 			if (!isset($fileInfo['file'])) {
 				if (!isset($fileInfo['data'])) {
-					throw new Error\SocketException(__d('cake_dev', 'No file or data specified.'));
+					throw new Error\SocketException('No file or data specified.');
 				}
 				if (is_int($name)) {
-					throw new Error\SocketException(__d('cake_dev', 'No filename specified.'));
+					throw new Error\SocketException('No filename specified.');
 				}
 				$fileInfo['data'] = chunk_split(base64_encode($fileInfo['data']), 76, "\r\n");
 			} else {
 				$fileInfo['file'] = realpath($fileInfo['file']);
 				if ($fileInfo['file'] === false || !file_exists($fileInfo['file'])) {
-					throw new Error\SocketException(__d('cake_dev', 'File not found: "%s"', $fileInfo['file']));
+					throw new Error\SocketException('File not found: "%s"', $fileInfo['file']);
 				}
 				if (is_int($name)) {
 					$name = basename($fileInfo['file']);
@@ -1147,7 +1147,7 @@ class Email {
 			return;
 		}
 		if (isset(static::$_transportConfig[$key])) {
-			throw new Error\Exception(__d('cake_dev', 'Cannot modify an existing config "%s"', $key));
+			throw new Error\Exception(sprintf('Cannot modify an existing config "%s"', $key));
 		}
 		if (is_object($config)) {
 			$config = ['className' => $config];
@@ -1192,10 +1192,10 @@ class Email {
  */
 	public function send($content = null) {
 		if (empty($this->_from)) {
-			throw new Error\SocketException(__d('cake_dev', 'From is not specified.'));
+			throw new Error\SocketException('From is not specified.');
 		}
 		if (empty($this->_to) && empty($this->_cc) && empty($this->_bcc)) {
-			throw new Error\SocketException(__d('cake_dev', 'You need specify one destination on to, cc or bcc.'));
+			throw new Error\SocketException('You need specify one destination on to, cc or bcc.');
 		}
 
 		if (is_array($content)) {
@@ -1271,7 +1271,7 @@ class Email {
 			$name = $config;
 			$config = static::config($name);
 			if (empty($config)) {
-				throw new Error\Exception(__d('cake_dev', 'Unknown email configuration "%s".', $name));
+				throw new Error\Exception(sprintf('Unknown email configuration "%s".', $name));
 			}
 			unset($name);
 		}

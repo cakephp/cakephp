@@ -288,15 +288,15 @@ class Table {
 		unset($attrs['references'], $attrs['update'], $attrs['delete']);
 
 		if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
-			throw new Exception(__d('cake_dev', 'Invalid index type "%s"', $attrs['type']));
+			throw new Exception(sprintf('Invalid index type "%s"', $attrs['type']));
 		}
 		if (empty($attrs['columns'])) {
-			throw new Exception(__d('cake_dev', 'Indexes must define columns.'));
+			throw new Exception('Indexes must define columns.');
 		}
 		$attrs['columns'] = (array)$attrs['columns'];
 		foreach ($attrs['columns'] as $field) {
 			if (empty($this->_columns[$field])) {
-				throw new Exception(__d('cake_dev', 'Columns used in indexes must already exist.'));
+				throw new Exception('Columns used in indexes must already exist.');
 			}
 		}
 		$this->_indexes[$name] = $attrs;
@@ -368,15 +368,15 @@ class Table {
 		$attrs = array_intersect_key($attrs, static::$_indexKeys);
 		$attrs = $attrs + static::$_indexKeys;
 		if (!in_array($attrs['type'], static::$_validConstraintTypes, true)) {
-			throw new Exception(__d('cake_dev', 'Invalid constraint type "%s"', $attrs['type']));
+			throw new Exception(sprintf('Invalid constraint type "%s"', $attrs['type']));
 		}
 		if (empty($attrs['columns'])) {
-			throw new Exception(__d('cake_dev', 'Constraints must define columns.'));
+			throw new Exception('Constraints must define columns.');
 		}
 		$attrs['columns'] = (array)$attrs['columns'];
 		foreach ($attrs['columns'] as $field) {
 			if (empty($this->_columns[$field])) {
-				throw new Exception(__d('cake_dev', 'Columns used in constraints must already exist.'));
+				throw new Exception('Columns used in constraints must already exist.');
 			}
 		}
 		if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
@@ -397,13 +397,13 @@ class Table {
  */
 	protected function _checkForeignKey($attrs) {
 		if (count($attrs['references']) < 2) {
-			throw new Exception(__d('cake_dev', 'References must contain a table and column.'));
+			throw new Exception('References must contain a table and column.');
 		}
 		if (!in_array($attrs['update'], static::$_validForeignKeyActions)) {
-			throw new Exception(__d('cake_dev', 'Update action is invalid. Must be one of %s', implode(',', static::$_validForeignKeyActions)));
+			throw new Exception(sprintf('Update action is invalid. Must be one of %s', implode(',', static::$_validForeignKeyActions)));
 		}
 		if (!in_array($attrs['delete'], static::$_validForeignKeyActions)) {
-			throw new Exception(__d('cake_dev', 'Delete action is invalid. Must be one of %s', implode(',', static::$_validForeignKeyActions)));
+			throw new Exception(sprintf('Delete action is invalid. Must be one of %s', implode(',', static::$_validForeignKeyActions)));
 		}
 		return $attrs;
 	}

@@ -270,8 +270,8 @@ class HtmlReporter extends BaseReporter {
 		}
 
 		echo "</pre></div>\n";
-		echo "<div class='msg'>" . __d('cake_dev', 'Test case: %s', $testName) . "</div>\n";
-		echo "<div class='msg'>" . __d('cake_dev', 'Stack trace:') . '<br />' . $trace . "</div>\n";
+		echo "<div class='msg'>" . sprintf('Test case: %s', $testName) . "</div>\n";
+		echo "<div class='msg'>" . 'Stack trace:' . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
 
@@ -309,8 +309,8 @@ class HtmlReporter extends BaseReporter {
 		echo "<span>" . get_class($message) . "</span>";
 
 		echo "<div class='msg'>" . $this->_htmlEntities($message->getMessage()) . "</div>\n";
-		echo "<div class='msg'>" . __d('cake_dev', 'Test case: %s', $testName) . "</div>\n";
-		echo "<div class='msg'>" . __d('cake_dev', 'Stack trace:') . '<br />' . $trace . "</div>\n";
+		echo "<div class='msg'>" . sprintf('Test case: %s', $testName) . "</div>\n";
+		echo "<div class='msg'>" . 'Stack trace:' . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
 	}
 
@@ -379,7 +379,7 @@ class HtmlReporter extends BaseReporter {
 		if (!$this->_headerSent) {
 			echo $this->paintHeader();
 		}
-		echo '<h2>' . __d('cake_dev', 'Running  %s', $suite->getName()) . '</h2>';
+		echo '<h2>' . sprintf('Running  %s', $suite->getName()) . '</h2>';
 	}
 
 }

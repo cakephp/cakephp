@@ -406,7 +406,7 @@ class View extends Object {
 			list ($plugin, $name) = pluginSplit($name, true);
 			$name = str_replace('/', DS, $name);
 			$file = $plugin . 'Element' . DS . $name . $this->ext;
-			trigger_error(__d('cake_dev', 'Element Not Found: %s', $file), E_USER_NOTICE);
+			trigger_error(sprintf('Element Not Found: %s', $file), E_USER_NOTICE);
 		}
 	}
 
@@ -691,8 +691,7 @@ class View extends Object {
 						list($plugin, $name) = $this->pluginSplit($name);
 						$paths = $this->_paths($plugin);
 						$defaultPath = $paths[0] . 'Element' . DS;
-						throw new \LogicException(__d(
-							'cake_dev',
+						throw new \LogicException(sprintf(
 							'You cannot extend an element which does not exist (%s).',
 							$defaultPath . $name . $this->ext
 						));
@@ -707,10 +706,10 @@ class View extends Object {
 		}
 
 		if ($parent == $this->_current) {
-			throw new \LogicException(__d('cake_dev', 'You cannot have views extend themselves.'));
+			throw new \LogicException('You cannot have views extend themselves.');
 		}
 		if (isset($this->_parents[$parent]) && $this->_parents[$parent] == $this->_current) {
-			throw new \LogicException(__d('cake_dev', 'You cannot have views extend in a loop.'));
+			throw new \LogicException('You cannot have views extend in a loop.');
 		}
 		$this->_parents[$this->_current] = $parent;
 	}
@@ -845,7 +844,7 @@ class View extends Object {
 		$remainingBlocks = count($this->Blocks->unclosed());
 
 		if ($initialBlocks !== $remainingBlocks) {
-			throw new Error\Exception(__d('cake_dev', 'The "%s" block was left open. Blocks are not allowed to cross files.', $this->Blocks->active()));
+			throw new Error\Exception(sprintf('The "%s" block was left open. Blocks are not allowed to cross files.', $this->Blocks->active()));
 		}
 		return $content;
 	}

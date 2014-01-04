@@ -70,7 +70,7 @@ class AclComponent extends Component {
 		if (!class_exists($classname)) {
 			$classname = App::classname($name, 'Controller/Component/Acl');
 			if (!$classname) {
-				throw new Error\Exception(__d('cake_dev', 'Could not find %s.', $name));
+				throw new Error\Exception(sprintf('Could not find %s.', $name));
 			}
 		}
 		$this->adapter($classname);
@@ -94,7 +94,7 @@ class AclComponent extends Component {
 				$adapter = new $adapter();
 			}
 			if (!$adapter instanceof AclInterface) {
-				throw new Error\Exception(__d('cake_dev', 'AclComponent adapters must implement AclInterface'));
+				throw new Error\Exception('AclComponent adapters must implement AclInterface');
 			}
 			$this->_Instance = $adapter;
 			$this->_Instance->initialize($this);

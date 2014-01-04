@@ -78,7 +78,7 @@ class TimestampBehavior extends Behavior {
 		foreach ($config['events'][$eventName] as $field => $when) {
 			if (!in_array($when, ['always', 'new', 'existing'])) {
 				throw new \UnexpectedValueException(
-					__d('cake_dev', 'When should be one of "always", "new" or "existing". The passed value "%s" is invalid', $when)
+					sprintf('When should be one of "always", "new" or "existing". The passed value "%s" is invalid', $when)
 				);
 			}
 			if (

@@ -159,7 +159,7 @@ class Behavior implements EventListener {
 
 			foreach ($this->_config[$key] as $method) {
 				if (!is_callable([$this, $method])) {
-					throw new Exception(__d('cake_dev', 'The method %s is not callable on class %s', $method, get_class($this)));
+					throw new Exception(sprintf('The method %s is not callable on class %s', $method, get_class($this)));
 				}
 			}
 		}

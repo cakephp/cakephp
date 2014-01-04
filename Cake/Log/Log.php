@@ -334,7 +334,7 @@ class Log {
 		}
 
 		if (!in_array($level, static::$_levels)) {
-			throw new Error\Exception(__d('cake_dev', 'Invalid log level "%s"', $level));
+			throw new Error\Exception(sprintf('Invalid log level "%s"', $level));
 		}
 
 		$logged = false;

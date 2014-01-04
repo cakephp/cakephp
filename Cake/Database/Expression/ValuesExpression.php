@@ -84,7 +84,7 @@ class ValuesExpression implements ExpressionInterface {
 			($this->_query && is_array($data))
 		) {
 			throw new Error\Exception(
-				__d('cake_dev', 'You cannot mix subqueries and array data in inserts.')
+				'You cannot mix subqueries and array data in inserts.'
 			);
 		}
 		if ($data instanceof Query) {

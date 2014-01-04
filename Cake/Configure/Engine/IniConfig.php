@@ -99,12 +99,12 @@ class IniConfig implements ConfigEngineInterface {
  */
 	public function read($key) {
 		if (strpos($key, '..') !== false) {
-			throw new Error\ConfigureException(__d('cake_dev', 'Cannot load configuration files with ../ in them.'));
+			throw new Error\ConfigureException('Cannot load configuration files with ../ in them.');
 		}
 
 		$file = $this->_getFilePath($key);
 		if (!is_file($file)) {
-			throw new Error\ConfigureException(__d('cake_dev', 'Could not load configuration file: %s', $file));
+			throw new Error\ConfigureException(sprintf('Could not load configuration file: %s', $file));
 		}
 
 		$contents = parse_ini_file($file, true);

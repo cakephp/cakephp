@@ -200,7 +200,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  */
 	public function loadFixtures() {
 		if (empty($this->fixtureManager)) {
-			throw new \Exception(__d('cake_dev', 'No fixture manager to load the test fixture'));
+			throw new \Exception('No fixture manager to load the test fixture');
 		}
 		$args = func_get_args();
 		foreach ($args as $class) {

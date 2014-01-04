@@ -621,7 +621,7 @@ class Response {
 			return $this->_status;
 		}
 		if (!isset($this->_statusCodes[$code])) {
-			throw new Error\Exception(__d('cake_dev', 'Unknown status code'));
+			throw new Error\Exception('Unknown status code');
 		}
 		return $this->_status = $code;
 	}
@@ -665,7 +665,7 @@ class Response {
 			$codes = array_keys($code);
 			$min = min($codes);
 			if (!is_int($min) || $min < 100 || max($codes) > 999) {
-				throw new Error\Exception(__d('cake_dev', 'Invalid status code'));
+				throw new Error\Exception('Invalid status code');
 			}
 			$this->_statusCodes = $code + $this->_statusCodes;
 			return true;
@@ -1265,7 +1265,7 @@ class Response {
 		$file = new File($path);
 		if (!$file->exists() || !$file->readable()) {
 			if (Configure::read('debug')) {
-				throw new Error\NotFoundException(__d('cake_dev', 'The requested file %s was not found or not readable', $path));
+				throw new Error\NotFoundException(sprintf('The requested file %s was not found or not readable', $path));
 			}
 			throw new Error\NotFoundException(__d('cake', 'The requested file was not found'));
 		}

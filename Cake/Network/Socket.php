@@ -301,7 +301,7 @@ class Socket {
 			$buffer = fread($this->connection, $length);
 			$info = stream_get_meta_data($this->connection);
 			if ($info['timed_out']) {
-				$this->setLastError(E_WARNING, __d('cake_dev', 'Connection timed out'));
+				$this->setLastError(E_WARNING, 'Connection timed out');
 				return false;
 			}
 			return $buffer;
@@ -368,7 +368,7 @@ class Socket {
  */
 	public function enableCrypto($type, $clientOrServer = 'client', $enable = true) {
 		if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
-			throw new \InvalidArgumentException(__d('cake_dev', 'Invalid encryption scheme chosen'));
+			throw new \InvalidArgumentException('Invalid encryption scheme chosen');
 		}
 		$enableCryptoResult = false;
 		try {
@@ -381,7 +381,7 @@ class Socket {
 			$this->encrypted = $enable;
 			return true;
 		}
-		$errorMessage = __d('cake_dev', 'Unable to perform enableCrypto operation on the current socket');
+		$errorMessage = 'Unable to perform enableCrypto operation on the current socket';
 		$this->setLastError(null, $errorMessage);
 		throw new Error\SocketException($errorMessage);
 	}

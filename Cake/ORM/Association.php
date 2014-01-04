@@ -350,7 +350,7 @@ abstract class Association {
 			$valid = [self::STRATEGY_JOIN, self::STRATEGY_SELECT, self::STRATEGY_SUBQUERY];
 			if (!in_array($name, $valid)) {
 				throw new \InvalidArgumentException(
-					sprintf(__d('cake_dev', 'Invalid strategy "%s" was provided'), $name)
+					sprintf('Invalid strategy "%s" was provided', $name)
 				);
 			}
 			$this->_strategy = $name;

@@ -495,7 +495,7 @@ class Request implements \ArrayAccess {
 			$type = strtolower(substr($name, 2));
 			return $this->is($type);
 		}
-		throw new Error\Exception(__d('cake_dev', 'Method %s does not exist', $name));
+		throw new Error\Exception(sprintf('Method %s does not exist', $name));
 	}
 
 /**

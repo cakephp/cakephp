@@ -99,7 +99,7 @@ class Type {
 			return static::$_builtTypes[$name] = new static($name);
 		}
 		if (!isset(static::$_types[$name])) {
-			throw new \InvalidArgumentException(__d('cake_dev', 'Unknown type "%s"', $name));
+			throw new \InvalidArgumentException(sprintf('Unknown type "%s"', $name));
 		}
 		return static::$_builtTypes[$name] = new static::$_types[$name]($name);
 	}

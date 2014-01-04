@@ -494,7 +494,7 @@ class ExceptionRendererTest extends TestCase {
 				)),
 				array(
 					'/<h2>Missing Method in PostsController<\/h2>/',
-					'/<em>PostsController::<\/em><em>index\(\)<\/em>/'
+					'/<em>PostsController::index\(\)<\/em>/'
 				),
 				404
 			),
@@ -502,7 +502,7 @@ class ExceptionRendererTest extends TestCase {
 				new Error\PrivateActionException(array('controller' => 'PostsController', 'action' => '_secretSauce')),
 				array(
 					'/<h2>Private Method in PostsController<\/h2>/',
-					'/<em>PostsController::<\/em><em>_secretSauce\(\)<\/em>/'
+					'/<em>PostsController::_secretSauce\(\)<\/em>/'
 				),
 				404
 			),

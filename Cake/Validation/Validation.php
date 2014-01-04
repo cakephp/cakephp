@@ -250,7 +250,7 @@ class Validation {
 				}
 				break;
 			default:
-				static::$errors[] = __d('cake_dev', 'You must define the $operator parameter for %s', 'Validation::comparison()');
+				static::$errors[] = 'You must define the $operator parameter for Validation::comparison()';
 		}
 		return false;
 	}
@@ -268,7 +268,7 @@ class Validation {
 			extract(static::_defaults($check));
 		}
 		if ($regex === null) {
-			static::$errors[] = __d('cake_dev', 'You must define a regular expression for %s', 'Validation::custom()');
+			static::$errors[] = 'You must define a regular expression for Validation::custom()';
 			return false;
 		}
 		return static::_check($check, $regex);
@@ -839,11 +839,11 @@ class Validation {
 	protected static function _pass($method, $check, $classPrefix) {
 		$className = App::classname($classPrefix, 'Validation', 'Validation');
 		if (!$className) {
-			trigger_error(__d('cake_dev', 'Could not find class for validation, unable to complete validation.'), E_USER_WARNING);
+			trigger_error('Could not find class for validation, unable to complete validation.', E_USER_WARNING);
 			return false;
 		}
 		if (!method_exists($className, $method)) {
-			trigger_error(__d('cake_dev', 'Method %s does not exist on %s unable to complete validation.', $method, $className), E_USER_WARNING);
+			trigger_error(sprintf('Method %s does not exist on %s unable to complete validation.', $method, $className), E_USER_WARNING);
 			return false;
 		}
 		$check = (array)$check;
@@ -937,7 +937,7 @@ class Validation {
 		$mime = $File->mime();
 
 		if ($mime === false) {
-			throw new Exception(__d('cake_dev', 'Can not determine the mimetype.'));
+			throw new Exception('Can not determine the mimetype.');
 		}
 		return in_array($mime, $mimeTypes);
 	}

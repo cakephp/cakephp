@@ -41,7 +41,7 @@ class Collection extends IteratorIterator implements JsonSerializable {
 		}
 
 		if (!($items instanceof \Traversable)) {
-			$msg = __d('cake_dev', 'Only array or \Traversable are allowed for Collection');
+			$msg = 'Only array or \Traversable are allowed for Collection';
 			throw new InvalidArgumentException($msg);
 		}
 

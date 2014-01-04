@@ -577,7 +577,7 @@ class RssHelperTest extends TestCase {
  */
 	public function testItemEnclosureLength() {
 		if (!is_writable(WWW_ROOT)) {
-			$this->markTestSkipped(__d('cake_dev', 'Webroot is not writable.'));
+			$this->markTestSkipped('Webroot is not writable.');
 		}
 		$testExists = is_dir(WWW_ROOT . 'tests');
 

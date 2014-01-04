@@ -42,7 +42,7 @@ class SqliteSchema extends BaseSchema {
 	protected function _convertColumn($column) {
 		preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
 		if (empty($matches)) {
-			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+			throw new Exception(sprintf('Unable to parse column type from "%s"', $column));
 		}
 
 		$unsigned = false;
@@ -230,7 +230,7 @@ class SqliteSchema extends BaseSchema {
 			'timestamp' => ' TIMESTAMP',
 		];
 		if (!isset($typeMap[$data['type']])) {
-			throw new Exception(__d('cake_dev', 'Unknown column type for "%s"', $name));
+			throw new Exception(sprintf('Unknown column type for "%s"', $name));
 		}
 
 		$out = $this->_driver->quoteIdentifier($name);

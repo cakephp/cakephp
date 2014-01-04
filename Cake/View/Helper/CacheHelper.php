@@ -162,8 +162,7 @@ class CacheHelper extends Helper {
 			try {
 				$this->_writeFile($cached, $cacheTime, $useCallbacks);
 			} catch (Exception $e) {
-				$message = __d(
-					'cake_dev',
+				$message = sprintf(
 					'Unable to write view cache file: "%s" for "%s"',
 					$e->getMessage(),
 					$this->request->here

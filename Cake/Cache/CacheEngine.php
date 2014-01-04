@@ -205,7 +205,7 @@ abstract class CacheEngine {
 	protected function _key($key) {
 		$key = $this->key($key);
 		if (!$key) {
-			throw new \InvalidArgumentException(__d('cake_dev', 'An empty value is not valid as a cache key'));
+			throw new \InvalidArgumentException('An empty value is not valid as a cache key');
 		}
 
 		return $this->_config['prefix'] . $key;

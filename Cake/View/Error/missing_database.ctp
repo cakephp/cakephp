@@ -15,18 +15,18 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<h2><?= __d('cake_dev', 'Missing Database Connection'); ?></h2>
+<h2>Missing Database Connection</h2>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', 'Scaffold requires a database connection'); ?>
+	<strong>Error: </strong>
+	Scaffold requires a database connection
 </p>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', 'Confirm you have created the file: %s', APP_DIR . DS . 'Config' . DS . 'datasources.php'); ?>
+	<strong>Error: </strong>
+	<?= sprintf('Confirm you have created the file: %s', APP_DIR . DS . 'Config' . DS . 'datasources.php'); ?>
 </p>
 <p class="notice">
-	<strong><?= __d('cake_dev', 'Notice'); ?>: </strong>
-	<?= __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_database.ctp'); ?>
+	<strong>Notice: </strong>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_database.ctp'); ?>
 </p>
 
 <?= $this->element('exception_stack_trace'); ?>

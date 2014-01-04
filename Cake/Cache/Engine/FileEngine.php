@@ -328,7 +328,7 @@ class FileEngine extends CacheEngine {
  * @throws Cake\Error\Exception
  */
 	public function decrement($key, $offset = 1) {
-		throw new Error\Exception(__d('cake_dev', 'Files cannot be atomically decremented.'));
+		throw new Error\Exception('Files cannot be atomically decremented.');
 	}
 
 /**
@@ -340,7 +340,7 @@ class FileEngine extends CacheEngine {
  * @throws Cake\Error\Exception
  */
 	public function increment($key, $offset = 1) {
-		throw new Error\Exception(__d('cake_dev', 'Files cannot be atomically incremented.'));
+		throw new Error\Exception('Files cannot be atomically incremented.');
 	}
 
 /**
@@ -377,9 +377,10 @@ class FileEngine extends CacheEngine {
 			unset($path);
 
 			if (!$exists && !chmod($this->_File->getPathname(), (int)$this->_config['mask'])) {
-				trigger_error(__d(
-					'cake_dev', 'Could not apply permission mask "%s" on cache file "%s"',
-					[$this->_File->getPathname(), $this->_config['mask']]), E_USER_WARNING);
+				trigger_error(sprintf(
+					'Could not apply permission mask "%s" on cache file "%s"',
+					$this->_File->getPathname(), $this->_config['mask']
+				), E_USER_WARNING);
 			}
 		}
 		return true;
@@ -400,7 +401,7 @@ class FileEngine extends CacheEngine {
 		}
 		if ($this->_init && !($dir->isDir() && $dir->isWritable())) {
 			$this->_init = false;
-			trigger_error(__d('cake_dev', '%s is not writable', $this->_config['path']), E_USER_WARNING);
+			trigger_error(sprintf('%s is not writable', $this->_config['path']), E_USER_WARNING);
 			return false;
 		}
 		return true;

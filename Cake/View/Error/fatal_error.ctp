@@ -16,20 +16,20 @@
  */
 
 ?>
-<h2><?= __d('cake_dev', 'Fatal Error'); ?></h2>
+<h2>Fatal Error</h2>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
+	<strong>Error: </strong>
 	<?= h($error->getMessage()); ?>
 	<br>
 
-	<strong><?= __d('cake_dev', 'File'); ?>: </strong>
+	<strong>File</strong>
 	<?= h($error->getFile()); ?>
 	<br>
 
-	<strong><?= __d('cake_dev', 'Line'); ?>: </strong>
+	<strong>Line: </strong>
 	<?= h($error->getLine()); ?>
 </p>
 <p class="notice">
-	<strong><?= __d('cake_dev', 'Notice'); ?>: </strong>
-	<?= __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'fatal_error.ctp'); ?>
+	<strong>Notice: </strong>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'fatal_error.ctp'); ?>
 </p>

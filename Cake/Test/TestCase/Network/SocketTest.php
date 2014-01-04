@@ -179,7 +179,7 @@ class SocketTest extends TestCase {
 			$this->Socket = new Socket($config);
 			$this->assertTrue($this->Socket->connect());
 			$this->assertEquals(null, $this->Socket->read(26));
-			$this->assertEquals('2: ' . __d('cake_dev', 'Connection timed out'), $this->Socket->lastError());
+			$this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
 		} catch (Error\SocketException $e) {
 			$this->markTestSkipped('Cannot test network, skipping.');
 		}
@@ -199,7 +199,7 @@ class SocketTest extends TestCase {
 			$config = array('host' => '127.0.0.1', 'timeout' => 0.00001);
 			$this->Socket = new Socket($config);
 			$this->assertFalse($this->Socket->read(1024 * 1024));
-			$this->assertEquals('2: ' . __d('cake_dev', 'Connection timed out'), $this->Socket->lastError());
+			$this->assertEquals('2: ' . 'Connection timed out', $this->Socket->lastError());
 		} catch (Error\SocketException $e) {
 			$this->markTestSkipped('Cannot test network, skipping.');
 		}

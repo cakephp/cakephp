@@ -76,7 +76,7 @@ class TextHelper extends Helper {
 		if ($engineClass) {
 			$this->_engine = new $engineClass($settings);
 		} else {
-			throw new Error\Exception(__d('cake_dev', 'Class for %s could not be found', $settings['engine']));
+			throw new Error\Exception(sprintf('Class for %s could not be found', $settings['engine']));
 		}
 	}
 

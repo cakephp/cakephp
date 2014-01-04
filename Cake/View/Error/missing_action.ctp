@@ -31,13 +31,13 @@ if (empty($plugin)) {
 	$path = Plugin::path($plugin) . 'Controller' . DS . $prefix . DS . h($class) . '.php';
 }
 ?>
-<h2><?= __d('cake_dev', 'Missing Method in %s', h($controller)); ?></h2> <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', 'The action %1$s is not defined in controller %2$s', '<em>' . h($action) . '</em>', '<em>' . h($controller) . '</em>'); ?>
+<h2><?= sprintf('Missing Method in %s', h($controller)); ?></h2> <p class="error">
+	<strong>Error: </strong>
+	<?= sprintf('The action <em>%s</em> is not defined in controller <em>%s</em>', h($action), h($controller)); ?>
 </p>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', 'Create %1$s%2$s in file: %3$s.', '<em>' . h($controller) . '::</em>', '<em>' . h($action) . '()</em>', $path); ?>
+	<strong>Error: </strong>
+	<?= sprintf('Create <em>%s::%s()</em> in file: %s.', h($controller),  h($action), $path); ?>
 </p>
 <pre>
 &lt;?php
@@ -55,7 +55,7 @@ class <?= h($controller); ?> extends AppController {
 }
 </pre>
 <p class="notice">
-	<strong><?= __d('cake_dev', 'Notice'); ?>: </strong>
-	<?= __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_action.ctp'); ?>
+	<strong>Notice: </strong>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_action.ctp'); ?>
 </p>
 <?= $this->element('exception_stack_trace'); ?>

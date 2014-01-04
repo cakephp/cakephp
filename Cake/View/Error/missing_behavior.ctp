@@ -18,14 +18,14 @@ use Cake\Core\Plugin;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 ?>
-<h2><?= __d('cake_dev', 'Missing Behavior'); ?></h2>
+<h2>Missing Behavior</h2>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', '%s could not be found.', '<em>' . h($pluginDot . $class) . '</em>'); ?>
+	<strong>Error: </strong>
+	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
 </p>
 <p class="error">
-	<strong><?= __d('cake_dev', 'Error'); ?>: </strong>
-	<?= __d('cake_dev', 'Create the class %s below in file: %s', '<em>' . h($class) . '</em>', (empty($plugin) ? APP_DIR . DS : Plugin::path($plugin)) . 'Model' . DS . 'Behavior' . DS . h($class) . '.php'); ?>
+	<strong>Error: </strong>
+	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), (empty($plugin) ? APP_DIR . DS : Plugin::path($plugin)) . 'Model' . DS . 'Behavior' . DS . h($class) . '.php'); ?>
 </p>
 <pre>
 &lt;?php
@@ -34,8 +34,8 @@ class <?= h($class); ?> extends ModelBehavior {
 }
 </pre>
 <p class="notice">
-	<strong><?= __d('cake_dev', 'Notice'); ?>: </strong>
-	<?= __d('cake_dev', 'If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_behavior.ctp'); ?>
+	<strong>Notice: </strong>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_behavior.ctp'); ?>
 </p>
 
 <?= $this->element('exception_stack_trace'); ?>

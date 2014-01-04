@@ -55,7 +55,7 @@ class MysqlSchema extends BaseSchema {
 	protected function _convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
 		if (empty($matches)) {
-			throw new Exception(__d('cake_dev', 'Unable to parse column type from "%s"', $column));
+			throw new Exception(sprintf('Unable to parse column type from "%s"', $column));
 		}
 
 		$col = strtolower($matches[1]);

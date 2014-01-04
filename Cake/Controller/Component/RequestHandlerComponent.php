@@ -631,7 +631,7 @@ class RequestHandlerComponent extends Component {
  */
 	public function addInputType($type, $handler) {
 		if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {
-			throw new Error\Exception(__d('cake_dev', 'You must give a handler callback.'));
+			throw new Error\Exception('You must give a handler callback.');
 		}
 		$this->_inputTypeMap[$type] = $handler;
 	}

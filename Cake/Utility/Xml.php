@@ -107,16 +107,16 @@ class Xml {
 				$socket = new Client(['redirect' => 10]);
 				$response = $socket->get($input);
 				if (!$response->isOk()) {
-					throw new Error\XmlException(__d('cake_dev', 'XML cannot be read.'));
+					throw new Error\XmlException('XML cannot be read.');
 				}
 				return static::_loadXml($response->body, $options);
 			} catch (Error\SocketException $e) {
-				throw new Error\XmlException(__d('cake_dev', 'XML cannot be read.'));
+				throw new Error\XmlException('XML cannot be read.');
 			}
 		} elseif (!is_string($input)) {
-			throw new Error\XmlException(__d('cake_dev', 'Invalid input.'));
+			throw new Error\XmlException('Invalid input.');
 		}
-		throw new Error\XmlException(__d('cake_dev', 'XML cannot be read.'));
+		throw new Error\XmlException('XML cannot be read.');
 	}
 
 /**
@@ -148,7 +148,7 @@ class Xml {
 		}
 		libxml_use_internal_errors($internalErrors);
 		if ($xml === null) {
-			throw new Error\XmlException(__d('cake_dev', 'Xml cannot be read.'));
+			throw new Error\XmlException('Xml cannot be read.');
 		}
 		return $xml;
 	}
@@ -193,11 +193,11 @@ class Xml {
  */
 	public static function fromArray($input, $options = array()) {
 		if (!is_array($input) || count($input) !== 1) {
-			throw new Error\XmlException(__d('cake_dev', 'Invalid input.'));
+			throw new Error\XmlException('Invalid input.');
 		}
 		$key = key($input);
 		if (is_int($key)) {
-			throw new Error\XmlException(__d('cake_dev', 'The key of input must be alphanumeric'));
+			throw new Error\XmlException('The key of input must be alphanumeric');
 		}
 
 		if (!is_array($options)) {
@@ -274,7 +274,7 @@ class Xml {
 					}
 				} else {
 					if ($key[0] === '@') {
-						throw new Error\XmlException(__d('cake_dev', 'Invalid array'));
+						throw new Error\XmlException('Invalid array');
 					}
 					if (is_numeric(implode('', array_keys($value)))) { // List
 						foreach ($value as $item) {
@@ -287,7 +287,7 @@ class Xml {
 					}
 				}
 			} else {
-				throw new Error\XmlException(__d('cake_dev', 'Invalid array'));
+				throw new Error\XmlException('Invalid array');
 			}
 		}
 	}
@@ -338,7 +338,7 @@ class Xml {
 			$obj = simplexml_import_dom($obj);
 		}
 		if (!($obj instanceof \SimpleXMLElement)) {
-			throw new Error\XmlException(__d('cake_dev', 'The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.'));
+			throw new Error\XmlException('The input is not instance of SimpleXMLElement, DOMDocument or DOMNode.');
 		}
 		$result = array();
 		$namespaces = array_merge(array('' => ''), $obj->getNamespaces(true));

@@ -383,11 +383,11 @@ class Folder {
 			//@codingStandardsIgnoreStart
 			if (@chmod($path, intval($mode, 8))) {
 				//@codingStandardsIgnoreEnd
-				$this->_messages[] = __d('cake_dev', '%s changed to %s', $path, $mode);
+				$this->_messages[] = sprintf('%s changed to %s', $path, $mode);
 				return true;
 			}
 
-			$this->_errors[] = __d('cake_dev', '%s NOT changed to %s', $path, $mode);
+			$this->_errors[] = sprintf('%s NOT changed to %s', $path, $mode);
 			return false;
 		}
 
@@ -406,9 +406,9 @@ class Folder {
 					//@codingStandardsIgnoreStart
 					if (@chmod($fullpath, intval($mode, 8))) {
 						//@codingStandardsIgnoreEnd
-						$this->_messages[] = __d('cake_dev', '%s changed to %s', $fullpath, $mode);
+						$this->_messages[] = sprintf('%s changed to %s', $fullpath, $mode);
 					} else {
-						$this->_errors[] = __d('cake_dev', '%s NOT changed to %s', $fullpath, $mode);
+						$this->_errors[] = sprintf('%s NOT changed to %s', $fullpath, $mode);
 					}
 				}
 			}
@@ -504,7 +504,7 @@ class Folder {
 		}
 
 		if (is_file($pathname)) {
-			$this->_errors[] = __d('cake_dev', '%s is a file', $pathname);
+			$this->_errors[] = sprintf('%s is a file', $pathname);
 			return false;
 		}
 		$pathname = rtrim($pathname, DS);
@@ -515,11 +515,11 @@ class Folder {
 				$old = umask(0);
 				if (mkdir($pathname, $mode)) {
 					umask($old);
-					$this->_messages[] = __d('cake_dev', '%s created', $pathname);
+					$this->_messages[] = sprintf('%s created', $pathname);
 					return true;
 				}
 				umask($old);
-				$this->_errors[] = __d('cake_dev', '%s NOT created', $pathname);
+				$this->_errors[] = sprintf('%s NOT created', $pathname);
 				return false;
 			}
 		}
@@ -591,17 +591,17 @@ class Folder {
 					//@codingStandardsIgnoreStart
 					if (@unlink($filePath)) {
 						//@codingStandardsIgnoreEnd
-						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
+						$this->_messages[] = sprintf('%s removed', $filePath);
 					} else {
-						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
+						$this->_errors[] = sprintf('%s NOT removed', $filePath);
 					}
 				} elseif ($item->isDir() && !$item->isDot()) {
 					//@codingStandardsIgnoreStart
 					if (@rmdir($filePath)) {
 						//@codingStandardsIgnoreEnd
-						$this->_messages[] = __d('cake_dev', '%s removed', $filePath);
+						$this->_messages[] = sprintf('%s removed', $filePath);
 					} else {
-						$this->_errors[] = __d('cake_dev', '%s NOT removed', $filePath);
+						$this->_errors[] = sprintf('%s NOT removed', $filePath);
 						return false;
 					}
 				}
@@ -611,9 +611,9 @@ class Folder {
 			//@codingStandardsIgnoreStart
 			if (@rmdir($path)) {
 				//@codingStandardsIgnoreEnd
-				$this->_messages[] = __d('cake_dev', '%s removed', $path);
+				$this->_messages[] = sprintf('%s removed', $path);
 			} else {
-				$this->_errors[] = __d('cake_dev', '%s NOT removed', $path);
+				$this->_errors[] = sprintf('%s NOT removed', $path);
 				return false;
 			}
 		}
@@ -651,7 +651,7 @@ class Folder {
 		$mode = $options['mode'];
 
 		if (!$this->cd($fromDir)) {
-			$this->_errors[] = __d('cake_dev', '%s not found', $fromDir);
+			$this->_errors[] = sprintf('%s not found', $fromDir);
 			return false;
 		}
 
@@ -660,7 +660,7 @@ class Folder {
 		}
 
 		if (!is_writable($toDir)) {
-			$this->_errors[] = __d('cake_dev', '%s not writable', $toDir);
+			$this->_errors[] = sprintf('%s not writable', $toDir);
 			return false;
 		}
 
@@ -676,9 +676,9 @@ class Folder {
 						if (copy($from, $to)) {
 							chmod($to, intval($mode, 8));
 							touch($to, filemtime($from));
-							$this->_messages[] = __d('cake_dev', '%s copied to %s', $from, $to);
+							$this->_messages[] = sprintf('%s copied to %s', $from, $to);
 						} else {
-							$this->_errors[] = __d('cake_dev', '%s NOT copied to %s', $from, $to);
+							$this->_errors[] = sprintf('%s NOT copied to %s', $from, $to);
 						}
 					}
 
@@ -693,11 +693,11 @@ class Folder {
 							$old = umask(0);
 							chmod($to, $mode);
 							umask($old);
-							$this->_messages[] = __d('cake_dev', '%s created', $to);
+							$this->_messages[] = sprintf('%s created', $to);
 							$options = array_merge($options, array('to' => $to, 'from' => $from));
 							$this->copy($options);
 						} else {
-							$this->_errors[] = __d('cake_dev', '%s not created', $to);
+							$this->_errors[] = sprintf('%s not created', $to);
 						}
 					} elseif (is_dir($from) && $options['scheme'] == Folder::MERGE) {
 						$options = array_merge($options, array('to' => $to, 'from' => $from));

@@ -1327,12 +1327,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	public function values($data) {
 		if ($this->_type !== 'insert') {
 			throw new Exception(
-				__d('cake_dev', 'You cannot add values before defining columns to use.')
+				'You cannot add values before defining columns to use.'
 			);
 		}
 		if (empty($this->_parts['insert'])) {
 			throw new Exception(
-				__d('cake_dev', 'You cannot add values before defining columns to use.')
+				'You cannot add values before defining columns to use.'
 			);
 		}
 

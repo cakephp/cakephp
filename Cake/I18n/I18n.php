@@ -177,7 +177,7 @@ class I18n {
 			$domain = static::$defaultDomain;
 		}
 		if ($domain === '') {
-			throw new Error\Exception(__d('cake_dev', 'You cannot use "" as a domain.'));
+			throw new Error\Exception('You cannot use "" as a domain.');
 		}
 
 		$_this->domain = $domain . '_' . $_this->l10n->lang;
@@ -216,7 +216,7 @@ class I18n {
 						$trans = $trans[$plurals];
 					} else {
 						trigger_error(
-							__d('cake_dev',
+							sprintf(
 								'Missing plural form translation for "%s" in "%s" domain, "%s" locale. ' .
 								' Check your po file for correct plurals and valid Plural-Forms header.',
 								$singular,

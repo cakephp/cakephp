@@ -169,10 +169,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		}
 
 		if (!$this->_useBuffering) {
-			$msg = __d(
-				'cake_dev',
-				'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.'
-			);
+			$msg = 'You cannot rewind an un-buffered ResultSet. Use Query::bufferResults() to get a buffered ResultSet.';
 			throw new Exception($msg);
 		}
 

@@ -390,10 +390,9 @@ class Hash {
 		}
 
 		if (count($keys) !== count($vals)) {
-			throw new \RuntimeException(__d(
-				'cake_dev',
+			throw new \RuntimeException(
 				'Hash::combine() needs an equal number of keys + values.'
-			));
+			);
 		}
 
 		if ($groupPath !== null) {

@@ -86,50 +86,6 @@ class ExtractTaskTest extends TestCase {
 
 		$this->assertFalse(file_exists($this->path . DS . 'cake.pot'));
 
-		$pattern = '/"Content-Type\: text\/plain; charset\=utf-8/';
-		$this->assertRegExp($pattern, $result);
-		$pattern = '/"Content-Transfer-Encoding\: 8bit/';
-		$this->assertRegExp($pattern, $result);
-		$pattern = '/"Plural-Forms\: nplurals\=INTEGER; plural\=EXPRESSION;/';
-		$this->assertRegExp($pattern, $result);
-
-		// home.ctp
-		$pattern = '/msgid "Your tmp directory is writable."\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/msgid "Your tmp directory is NOT writable."\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/msgid "The %s is being used for core caching. To change the config edit ';
-		$pattern .= 'APP\/Config\/cache.php"\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/msgid "Your cache is NOT working. Please check ';
-		$pattern .= 'the settings in APP\/Config\/cache.php"\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/msgid "Your datasources configuration file is present."\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/msgid "Your datasources configuration file is NOT present."\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/msgid "Rename APP\/Config\/datasources.default.php to ';
-		$pattern .= 'APP\/Config\/datasources.php"\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/msgid "Editing this Page"\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/msgid "To change the content of this page, edit: APP\/View\/Pages\/home\.ctp/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/To change its layout, edit: APP\/View\/Layout\/default\.ctp\./s';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/You can also add some CSS styles for your pages at: APP\/webroot\/css\."/';
-		$this->assertRegExp($pattern, $result);
-
 		// extract.ctp
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:\d+;\d+\n';
 		$pattern .= 'msgid "You have %d new message."\nmsgid_plural "You have %d new messages."/';
@@ -140,11 +96,6 @@ class ExtractTaskTest extends TestCase {
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
 		$pattern .= 'msgid "You deleted %d message."\nmsgid_plural "You deleted %d messages."/';
-		$this->assertRegExp($pattern, $result);
-
-		$pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:\d+\n';
-		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:\d+\nmsgid "';
@@ -433,9 +384,6 @@ class ExtractTaskTest extends TestCase {
 
 		$pattern = '/msgid "Yesterday, %s"\nmsgstr ""\n/';
 		$this->assertRegExp($pattern, $result);
-
-		$this->assertTrue(file_exists($this->path . DS . 'cake_dev.pot'));
-		$result = file_get_contents($this->path . DS . 'cake_dev.pot');
 
 		$pattern = '/#: Console\/Templates\//';
 		$this->assertNotRegExp($pattern, $result);

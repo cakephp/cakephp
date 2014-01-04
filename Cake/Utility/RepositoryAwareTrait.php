@@ -85,8 +85,7 @@ trait RepositoryAwareTrait {
 		list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
 		if (!isset($this->_repositoryFactories[$type])) {
-			throw new Error\Exception(__d(
-				'cake_dev',
+			throw new Error\Exception(sprintf(
 				'Unknown repository type "%s". Make sure you register a type before trying to use it.',
 				$type
 			));

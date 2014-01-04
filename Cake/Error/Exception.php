@@ -52,7 +52,7 @@ class Exception extends BaseException {
 	public function __construct($message, $code = 500) {
 		if (is_array($message)) {
 			$this->_attributes = $message;
-			$message = __d('cake_dev', $this->_messageTemplate, $message);
+			$message = vsprintf($this->_messageTemplate, $message);
 		}
 		parent::__construct($message, $code);
 	}

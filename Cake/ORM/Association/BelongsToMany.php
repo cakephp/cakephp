@@ -320,7 +320,7 @@ class BelongsToMany extends Association {
 			return $this->_saveStrategy;
 		}
 		if (!in_array($strategy, [self::SAVE_APPEND, self::SAVE_REPLACE])) {
-			$msg = __d('cake_dev', 'Invalid save strategy "%s"', $strategy);
+			$msg = sprintf('Invalid save strategy "%s"', $strategy);
 			throw new \InvalidArgumentException($msg);
 		}
 		return $this->_saveStrategy = $strategy;
@@ -388,7 +388,7 @@ class BelongsToMany extends Association {
 	protected function _saveTarget(Entity $parentEntity, $entities, $options) {
 		if (!(is_array($entities) || $entities instanceof \Traversable)) {
 			$name = $this->property();
-			$message = __d('cake_dev', 'Could not save %s, it cannot be traversed', $name);
+			$message = sprintf('Could not save %s, it cannot be traversed', $name);
 			throw new \InvalidArgumentException($message);
 		}
 
@@ -631,7 +631,7 @@ class BelongsToMany extends Association {
 		$primaryValue = $sourceEntity->extract($primaryKey);
 
 		if (count(array_filter($primaryValue, 'strlen')) !== count($primaryKey)) {
-			$message = __d('cake_dev', 'Could not find primary key value for source entity');
+			$message = 'Could not find primary key value for source entity';
 			throw new \InvalidArgumentException($message);
 		}
 
@@ -735,13 +735,13 @@ class BelongsToMany extends Association {
  */
 	protected function _checkPersistenceStatus($sourceEntity, array $targetEntities) {
 		if ($sourceEntity->isNew() !== false) {
-			$error = __d('cake_dev', 'Source entity needs to be persisted before proceeding');
+			$error = 'Source entity needs to be persisted before proceeding';
 			throw new \InvalidArgumentException($error);
 		}
 
 		foreach ($targetEntities as $entity) {
 			if ($entity->isNew() !== false) {
-				$error = __d('cake_dev', 'Cannot link not persisted entities');
+				$error = 'Cannot link not persisted entities';
 				throw new \InvalidArgumentException($error);
 			}
 		}

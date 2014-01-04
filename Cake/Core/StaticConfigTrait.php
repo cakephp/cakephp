@@ -74,7 +74,7 @@ trait StaticConfigTrait {
 			return;
 		}
 		if (isset(static::$_config[$key])) {
-			throw new Error\Exception(__d('cake_dev', 'Cannot reconfigure existing key "%s"', $key));
+			throw new Error\Exception(sprintf('Cannot reconfigure existing key "%s"', $key));
 		}
 		if (is_object($config)) {
 			$config = ['className' => $config];

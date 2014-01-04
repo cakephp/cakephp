@@ -1570,7 +1570,7 @@ class FormHelper extends Helper {
 	public function __call($method, $params) {
 		$options = array();
 		if (empty($params)) {
-			throw new Error\Exception(__d('cake_dev', 'Missing field name for FormHelper::%s', $method));
+			throw new Error\Exception(sprintf('Missing field name for FormHelper::%s', $method));
 		}
 		if (isset($params[1])) {
 			$options = $params[1];
