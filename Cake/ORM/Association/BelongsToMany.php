@@ -247,12 +247,18 @@ class BelongsToMany extends Association {
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
 			'sort' => $this->sort(),
-			'strategy' => $this->strategy()
+			'strategy' => $this->strategy(),
 		];
-		$fetchQuery = $this->_buildQuery($options);
 
+		$queryBuilder = false;
 		if (!empty($options['queryBuilder'])) {
-			$fetchQuery = $options['queryBuilder']($fetchQuery);
+			$queryBuilder = $options['queryBuilder'];
+			unset($options['queryBuilder']);
+		}
+
+		$fetchQuery = $this->_buildQuery($options);
+		if ($queryBuilder) {
+			$fetchQuery = $queryBuilder($fetchQuery);
 		}
 
 		$resultMap = [];

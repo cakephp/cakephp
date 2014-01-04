@@ -411,7 +411,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			return $query->select(['a', 'b'])->join('foo')->where(['a' => 1]);
 		};
 
-		$callable = $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
+		$association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
 	}
 
 /**

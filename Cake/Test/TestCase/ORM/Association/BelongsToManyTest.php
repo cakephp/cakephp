@@ -684,6 +684,71 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
+ * Tests eagerLoader with queryBuilder
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithQueryBuilder() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+		];
+		TableRegistry::get('ArticlesTags', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer']
+			]
+		]);
+		$association = new BelongsToMany('Tags', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['all', 'contain', 'andWhere', 'limit'],
+			[null, null]
+		);
+
+		$this->tag->expects($this->once())
+			->method('find')
+			->with('all')
+			->will($this->returnValue($query));
+
+		$results = [
+			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
+		];
+		$query->expects($this->once())
+			->method('all')
+			->will($this->returnValue($results));
+
+		$query->expects($this->once())->method('contain')
+			->with([
+				'ArticlesTags' => [
+					'conditions' => ['ArticlesTags.article_id in' => $keys],
+					'matching' => true
+				]
+			])
+			->will($this->returnSelf());
+
+		$query->hydrate(false);
+
+		$query->expects($this->once())
+			->method('andWhere')
+			->with(['foo' => 1])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())
+			->method('limit')
+			->with(1)
+			->will($this->returnSelf());
+
+		$queryBuilder = function($q) {
+			return $q->andWhere(['foo' => 1])->limit(1);
+		};
+		$association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
+	}
+
+/**
  * Test cascading deletes.
  *
  * @return void
