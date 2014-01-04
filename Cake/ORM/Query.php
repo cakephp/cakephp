@@ -308,7 +308,7 @@ class Query extends DatabaseQuery {
 
 /**
  * Formats the containments array so that associations are always set as keys
- * in the array. This funciton merges the original associations array with
+ * in the array. This function merges the original associations array with
  * the new associations provided
  *
  * @param array $associations user provided containments array

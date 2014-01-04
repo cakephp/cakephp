@@ -197,7 +197,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests setting containments using dot notation, additionaly proves that options
+ * Tests setting containments using dot notation, additionally proves that options
  * are not overwritten when combining dot notation and array notation
  *
  * @return void
