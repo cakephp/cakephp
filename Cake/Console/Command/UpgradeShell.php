@@ -489,32 +489,32 @@ class UpgradeShell extends Shell {
 			$patterns = [
 				[
 					'Replace assertEqual() with assertEquals()',
-					'#\$this-\>assertEqual\(\#i',
+					'#\$this-\>assertEqual\(#i',
 					'$this->assertEquals(',
 				],
 				[
 					'Replace assertNotEqual() with assertNotEquals()',
-					'#\$this-\>assertNotEqual\(\#i',
+					'#\$this-\>assertNotEqual\(#i',
 					'$this->assertNotEquals(',
 				],
 				[
 					'Replace assertIdentical() with assertSame()',
-					'#\$this-\>assertIdentical\(\#i',
+					'#\$this-\>assertIdentical\(#i',
 					'$this->assertSame(',
 				],
 				[
 					'Replace assertNotIdentical() with assertNotSame()',
-					'#\$this-\>assertNotIdentical\(\#i',
+					'#\$this-\>assertNotIdentical\(#i',
 					'$this->assertNotSame(',
 				],
 				[
 					'Replace assertPattern() with assertRegExp()',
-					'#\$this-\>assertPattern\(\#i',
+					'#\$this-\>assertPattern\(#i',
 					'$this->assertRegExp(',
 				],
 				[
 					'Replace assertNoPattern() with assertNotRegExp()',
-					'#\$this-\>assertNoPattern\(\#i',
+					'#\$this-\>assertNoPattern\(#i',
 					'$this->assertNotRegExp(',
 				],
 				[
