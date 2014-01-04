@@ -458,6 +458,43 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that by supplying a query builder function, it is possible to add fields
+ * and conditions to an association
+ *
+ * @return void
+ */
+	public function testAttachToWithQueryBuilder() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true]
+		];
+		$field = new IdentifierExpression('Articles.author_id');
+		$association = new HasMany('Articles', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Articles' => [
+				'conditions' => new QueryExpression([
+					'Articles.is_active' => true,
+					['Authors.id' => $field],
+					new QueryExpression(['a' => 1])
+				]),
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->once())->method('select')
+			->with([
+				'Articles__a' => 'Articles.a',
+				'Articles__b' => 'Articles.b'
+			]);
+		$builder = function($q) {
+			return $q->select(['a', 'b'])->where(['a' => 1]);
+		};
+		$association->attachTo($query, ['queryBuilder' => $builder]);
+	}
+
+/**
  * Test cascading deletes.
  *
  * @return void
