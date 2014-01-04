@@ -68,7 +68,9 @@ class Object {
 			case 5:
 				return $this->{$method}($params[0], $params[1], $params[2], $params[3], $params[4]);
 			default:
+				// @codingStandardsIgnoreStart
 				return call_user_func_array([&$this, $method], $params);
+				// @codingStandardsIgnoreEnd
 		}
 	}
 

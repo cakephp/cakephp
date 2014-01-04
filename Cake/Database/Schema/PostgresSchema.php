@@ -202,7 +202,7 @@ class PostgresSchema extends BaseSchema {
 				'columns' => $columns
 			]);
 
-			// If there is only one column in the primary key and it is integery, 
+			// If there is only one column in the primary key and it is integery,
 			// make it autoincrement.
 			$columnDef = $table->column($columns[0]);
 			if (
