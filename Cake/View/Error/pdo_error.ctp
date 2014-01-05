@@ -19,7 +19,7 @@ use Cake\Utility\Debugger;
 <h2>Database Error</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= $name; ?>
+	<?= $message; ?>
 </p>
 <?php if (!empty($error->queryString)) : ?>
 	<p class="notice">

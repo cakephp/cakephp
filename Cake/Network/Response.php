@@ -300,6 +300,7 @@ class Response {
 		'vcf' => 'text/x-vcard',
 		'vtt' => 'text/vtt',
 		'mkv' => 'video/x-matroska',
+		'pkpass' => 'application/vnd.apple.pkpass'
 	);
 
 /**

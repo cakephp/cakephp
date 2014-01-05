@@ -115,6 +115,13 @@ class FormHelper extends Helper {
 	public $validationErrors = array();
 
 /**
+ * Holds already used DOM ID suffixes to avoid collisions with multiple form field elements.
+ *
+ * @var array
+ */
+	protected $_domIdSuffixes = array();
+
+/**
  * Copies the validationErrors variable from the View object into this instance
  *
  * @param View $View The View this helper is being attached to.
@@ -441,7 +448,7 @@ class FormHelper extends Helper {
 
 /**
  * Return a CSRF input if the request data is present.
- * Used to secure forms in conjunction with CsrfComponent & 
+ * Used to secure forms in conjunction with CsrfComponent &
  * SecurityComponent
  *
  * @return string
@@ -1497,6 +1504,7 @@ class FormHelper extends Helper {
 			$value = $value ? 1 : 0;
 		}
 
+		$this->_domIdSuffixes = array();
 		foreach ($options as $optValue => $optTitle) {
 			$optionsHere = array('value' => $optValue, 'disabled' => false);
 
@@ -1507,9 +1515,7 @@ class FormHelper extends Helper {
 			if ($disabled && (!is_array($disabled) || in_array((string)$optValue, $disabled, !$isNumeric))) {
 				$optionsHere['disabled'] = true;
 			}
-			$tagName = Inflector::camelize(
-				$attributes['id'] . '_' . Inflector::slug($optValue)
-			);
+			$tagName = $attributes['id'] . $this->domIdSuffix($optValue);
 
 			if ($label) {
 				$labelOpts = is_array($label) ? $label : array();
@@ -2074,6 +2080,34 @@ class FormHelper extends Helper {
 	}
 
 /**
+ * Generates a valid DOM ID suffix from a string.
+ * Also avoids collisions when multiple values are coverted to the same suffix by
+ * appending a numeric value.
+ *
+ * For pre-HTML5 IDs only characters like a-z 0-9 - _ are valid. HTML5 doesn't have that
+ * limitation, but to avoid layout issues it still filters out some sensitive chars.
+ *
+ * @param string $value The value that should be transferred into a DOM ID suffix.
+ * @param string $type Doctype to use. Defaults to html5. Anything else will use limited chars.
+ * @return string DOM ID
+ */
+	public function domIdSuffix($value, $type = 'html5') {
+		if ($type === 'html5') {
+			$value = str_replace(array('<', '>', ' ', '"', '\''), '_', $value);
+		} else {
+			$value = preg_replace('~[^\\pL\d-_]+~u', '_', $value);
+		}
+		$value = Inflector::camelize($value);
+		$count = 1;
+		$suffix = $value;
+		while (in_array($suffix, $this->_domIdSuffixes)) {
+			$suffix = $value . $count++;
+		}
+		$this->_domIdSuffixes[] = $suffix;
+		return $suffix;
+	}
+
+/**
  * Returns a SELECT element for days.
  *
  * ### Attributes:
@@ -2613,6 +2647,7 @@ class FormHelper extends Helper {
 		$selectedIsEmpty = ($attributes['value'] === '' || $attributes['value'] === null);
 		$selectedIsArray = is_array($attributes['value']);
 
+		$this->_domIdSuffixes = array();
 		foreach ($elements as $name => $title) {
 			$htmlOptions = array();
 			if (is_array($title) && (!isset($title['name']) || !isset($title['value']))) {
@@ -2681,7 +2716,7 @@ class FormHelper extends Helper {
 					if ($attributes['style'] === 'checkbox') {
 						$htmlOptions['value'] = $name;
 
-						$tagName = $attributes['id'] . Inflector::camelize(Inflector::slug($name));
+						$tagName = $attributes['id'] . $this->domIdSuffix($name);
 						$htmlOptions['id'] = $tagName;
 						$label = array('for' => $tagName);
 
@@ -2700,6 +2735,9 @@ class FormHelper extends Helper {
 						$item = $this->Html->useTag('checkboxmultiple', $name, $htmlOptions);
 						$select[] = $this->Html->div($attributes['class'], $item . $label);
 					} else {
+						if ($attributes['escape']) {
+							$name = h($name);
+						}
 						$select[] = $this->Html->useTag('selectoption', $name, $htmlOptions, $title);
 					}
 				}
