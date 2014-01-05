@@ -24,7 +24,7 @@
 		The set of files we're going to package
 		Exclude the cli scripts, as they get installed separately.
 	 -->
-	<fileset id="libs" dir="./lib/Cake">
+	<fileset id="libs" dir="./Cake">
 		<include name="**" />
 		<exclude name="Console/cake.bat" />
 		<exclude name="Console/cake.php" />
@@ -34,14 +34,14 @@
 	<!--
 		CLI scripts to package and install
 	-->
-	<fileset id="cli" dir="./lib/Cake/Console">
+	<fileset id="cli" dir="./Cake/Console">
 		<include name="cake.bat" />
 		<include name="cake.php" />
 		<include name="cake" />
 	</fileset>
 
-	<fileset id="non-tests" dir="./lib/Cake">
-		<exclude name=".lib/Cake/Test" />
+	<fileset id="non-tests" dir="./Cake">
+		<exclude name="./Cake/Test" />
 	</fileset>
 
 	<!-- start fresh each time.  Remove the dist and build dirs -->
@@ -137,7 +137,7 @@
 			<dependencies>
 				<php minimum_version="5.4.3" />
 				<pear minimum_version="1.9.0" recommended_version="1.9.4" />
-				<package name="PHPUnit" channel="pear.phpunit.de" minimum_version="3.5.0" type="optional" />
+				<package name="PHPUnit" channel="pear.phpunit.de" minimum_version="3.7.0" type="optional" />
 			</dependencies>
 			<dirroles key="bin">script</dirroles>
 			<dirroles key="Cake/Test">php</dirroles>
