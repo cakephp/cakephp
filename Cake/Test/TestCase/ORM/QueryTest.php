@@ -918,6 +918,45 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to filter by deep associations
+ *
+ * @return void
+ */
+	public function testMatchingDotNotation() {
+		$query = new Query($this->connection, $this->table);
+		$table = TableRegistry::get('authors');
+		TableRegistry::get('articles');
+		$table->hasMany('articles');
+		TableRegistry::get('articles')->belongsToMany('tags');
+
+		$results = $query->repository($table)
+			->select()
+			->hydrate(false)
+			->matching('articles.tags', function($q) {
+				return $q->where(['tags.id' => 2]);
+			})
+			->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'name' => 'mariano',
+				'articles' => [
+					'id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'author_id' => 1,
+					'published' => 'Y',
+					'tags' => [
+						'id' => 2,
+						'name' => 'tag2'
+					]
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
  * Test setResult()
  *
  * @return void
