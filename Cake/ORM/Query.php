@@ -192,9 +192,9 @@ class Query extends DatabaseQuery {
  *	$query->contain(['Category', 'Tag']);
  * }}}
  *
- * Associations can be arbitrarily nested using arrays, this allows this object to
- * calculate joins or any additional queries that must be executed to bring the
- * required associated data.
+ * Associations can be arbitrarily nested using dot notation or nested arrays,
+ * this allows this object to calculate joins or any additional queries that
+ * must be executed to bring the required associated data.
  *
  * ### Example:
  *
@@ -203,7 +203,7 @@ class Query extends DatabaseQuery {
  *	$query->contain(['Product' => ['Manufacturer', 'Distributor']);
  *
  *	// For an author query, load his region, state and country
- *	$query->contain(['Region' => ['State' => 'Country']);
+ *	$query->contain('Regions.States.Countries');
  * }}}
  *
  * Each association might define special options when eager loaded, the allowed
@@ -247,19 +247,6 @@ class Query extends DatabaseQuery {
  * The resulting ArrayObject will always have association aliases as keys, and
  * options as values, if no options are passed, the values will be set to an empty
  * array
- *
- * ### Example:
- *
- * {{{
- *	// Set some associations
- *	$query->contain(['Article', 'Author' => ['fields' => ['Author.name']);
- *
- *  // Let's now add another field to Author
- *	$query->contain()['Author']['fields'][] = 'Author.email';
- *
- *	// Let's also add Article's tags
- *	$query->contain()['Article']['Tag'] = [];
- * }}}
  *
  * Please note that when modifying directly the containments array, you are
  * required to maintain the structure. That is, association names as keys
