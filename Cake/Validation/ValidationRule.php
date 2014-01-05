@@ -106,8 +106,9 @@ class ValidationRule {
  * callable for the configured scope
  */
 	public function process($value, $providers, array $context = []) {
-		$context += ['data' => [], 'newRecord' => true];
-		if ($this->_skip($context['newRecord'], $providers)) {
+		$context += ['data' => [], 'newRecord' => true, 'providers' => $providers];
+
+		if ($this->_skip($context)) {
 			return true;
 		}
 
@@ -128,10 +129,10 @@ class ValidationRule {
 		}
 
 		if ($this->_pass) {
-			$args = array_merge([$value], $this->_pass, [$providers]);
+			$args = array_merge([$value], $this->_pass, [$context]);
 			$result = call_user_func_array($callable, $args);
 		} else {
-			$result = $callable($value, $providers);
+			$result = $callable($value, $context);
 		}
 
 		if ($result === false) {
@@ -143,17 +144,22 @@ class ValidationRule {
 /**
  * Checks if the validation rule should be skipped
  *
- * @param boolean $newRecord whether the rule to be processed is new or pre-existent
- * @param array $providers associative array with objects or class names that will
- * be passed as the last argument for the validation method
+ * @param array $context A key value list of data that could be used as context
+ * during validation. Recognized keys are:
+ * - newRecord: (boolean) whether or not the data to be validated belongs to a
+ *   new record
+ * - data: The full data that was passed to the validation process
+ * - providers associative array with objects or class names that will
+ *   be passed as the last argument for the validation method
  * @return boolean True if the ValidationRule should be skipped
  */
-	protected function _skip($newRecord, $providers) {
+	protected function _skip($context) {
 		if (is_callable($this->_on)) {
 			$function = $this->_on;
-			return !$function($providers);
+			return !$function($context);
 		}
 
+		$newRecord = $context['newRecord'];
 		if (!empty($this->_on)) {
 			if ($this->_on === 'create' && !$newRecord || $this->_on === 'update' && $newRecord) {
 				return true;

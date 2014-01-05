@@ -309,13 +309,21 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 
 		$thing = $this->getMock('\stdClass', ['isCool']);
 		$thing->expects($this->once())->method('isCool')
-			->will($this->returnCallback(function($data, $providers) use ($thing) {
+			->will($this->returnCallback(function($data, $context) use ($thing) {
 				$this->assertEquals('bar', $data);
 				$expected = [
 					'default' => new \Cake\Validation\RulesProvider,
 					'thing' => $thing
 				];
-				$this->assertEquals($expected, $providers);
+				$expected = [
+					'newRecord' => true,
+					'providers' => $expected,
+					'data' => [
+						'email' => '!',
+						'title' => 'bar'
+					]
+				];
+				$this->assertEquals($expected, $context);
 				return "That ain't cool, yo";
 			}));
 
@@ -342,7 +350,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		]);
 		$thing = $this->getMock('\stdClass', ['isCool']);
 		$thing->expects($this->once())->method('isCool')
-			->will($this->returnCallback(function($data, $a, $b, $providers) use ($thing) {
+			->will($this->returnCallback(function($data, $a, $b, $context) use ($thing) {
 				$this->assertEquals('bar', $data);
 				$this->assertEquals('and', $a);
 				$this->assertEquals('awesome', $b);
@@ -350,7 +358,15 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 					'default' => new \Cake\Validation\RulesProvider,
 					'thing' => $thing
 				];
-				$this->assertEquals($expected, $providers);
+				$expected = [
+					'newRecord' => true,
+					'providers' => $expected,
+					'data' => [
+						'email' => '!',
+						'title' => 'bar'
+					]
+				];
+				$this->assertEquals($expected, $context);
 				return "That ain't cool, yo";
 			}));
 		$validator->provider('thing', $thing);
