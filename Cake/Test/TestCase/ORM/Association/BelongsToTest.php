@@ -193,7 +193,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field],
-					 new QueryExpression(['a' => 1])
+					new QueryExpression(['a' => 1])
 				]),
 				'type' => 'LEFT',
 				'table' => 'companies',

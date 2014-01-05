@@ -135,7 +135,7 @@ class QueryTest extends TestCase {
 			->with(['orders' => [
 				'table' => 'orders',
 				'type' => 'INNER',
-				'conditions' =>  new QueryExpression([
+				'conditions' => new QueryExpression([
 					['clients.id' => new IdentifierExpression('orders.client_id')]
 				])
 			]])
@@ -145,7 +145,7 @@ class QueryTest extends TestCase {
 			->with(['orderTypes' => [
 				'table' => 'order_types',
 				'type' => 'LEFT',
-				'conditions' =>  new QueryExpression([
+				'conditions' => new QueryExpression([
 					['orderTypes.id' => new IdentifierExpression('orders.order_type_id')]
 				])
 			]])
@@ -175,7 +175,7 @@ class QueryTest extends TestCase {
 			->with(['companies' => [
 				'table' => 'organizations',
 				'type' => 'LEFT',
-				'conditions' =>  new QueryExpression([
+				'conditions' => new QueryExpression([
 					['companies.id' => new IdentifierExpression('clients.organization_id')]
 				])
 			]])
