@@ -239,15 +239,6 @@ class Query extends DatabaseQuery {
  *		]
  *	]);
  *
- *	// Bring only articles that were tagged with 'cake'
- *	$query->contain([
- *		'Tag' => [
- *			'matching' => true,
- *			'conditions' => ['Tag.name' => 'cake']
- *		]
- *	]);
- * }}}
- *
  * If called with no arguments, this function will return an ArrayObject with
  * with the list of previously configured associations to be contained in the
  * result. This object can be modified directly as the reference is kept inside
@@ -304,6 +295,61 @@ class Query extends DatabaseQuery {
 		$this->_normalizedContainments = null;
 		$this->_dirty();
 		return $this;
+	}
+
+/**
+ * Adds filtering conditions to this query to only bring rows that have a relation
+ * to another from an associated table, based on conditions in the associated table.
+ *
+ * This function will add entries in the ``contain`` graph.
+ *
+ * ### Example:
+ *
+ * {{{
+ *  // Bring only articles that were tagged with 'cake'
+ *	$query->matching('Tags', function($q) {
+ *		return $q->where(['name' => 'cake']);
+ *	);
+ * }}}
+ *
+ * It is possible to filter by deep associations by using dot notation:
+ *
+ * ### Example:
+ *
+ * {{{
+ *  // Bring only articles that were commented by 'markstory'
+ *	$query->matching('Comments.Users', function($q) {
+ *		return $q->where(['username' => 'markstory']);
+ *	);
+ * }}}
+ *
+ * As this function will create ``INNER JOIN``, you might want to consider
+ * calling ``distinct`` on this query as you might get duplicate rows if
+ * your conditions don't filter them already. This might be the case, for example,
+ * of the same user commenting more than once in the same article.
+ *
+ * ### Example:
+ *
+ * {{{
+ *  // Bring unique articles that were commented by 'markstory'
+ *	$query->distinct(['Articles.id'])
+ *	->matching('Comments.Users', function($q) {
+ *		return $q->where(['username' => 'markstory']);
+ *	);
+ * }}}
+ *
+ * Please note that the query passed to the closure will only accept calling
+ * ``select``, ``where``, ``andWhere`` and ``orWhere`` on it. If you wish to
+ * add more complex clauses you can do it directly in the main query.
+ *
+ * @param string $assoc The association to filter by
+ * @param callable $builder a function that will receive a pre-made query object
+ * that can be used to add custom conditions or selecting some fields
+ * @return Query
+ */
+	public function matching($assoc, callable $builder = null) {
+		$options = ['queryBuilder' => $builder, 'matching' => true];
+		return $this->contain([$assoc => array_filter($options)]);
 	}
 
 /**
