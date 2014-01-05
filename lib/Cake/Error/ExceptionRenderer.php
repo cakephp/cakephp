@@ -91,7 +91,7 @@ class ExceptionRenderer {
 	public function __construct(Exception $exception) {
 		$this->controller = $this->_getController($exception);
 
-		if (method_exists($this->controller, 'apperror')) {
+		if (method_exists($this->controller, 'appError')) {
 			return $this->controller->appError($exception);
 		}
 		$method = $template = Inflector::variable(str_replace('Exception', '', get_class($exception)));
