@@ -16,6 +16,7 @@
  */
 namespace Cake\Validation;
 
+use Cake\Validation\RulesProvider;
 use Cake\Validation\ValidationSet;
 
 /**
@@ -128,7 +129,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 				return $this->_providers[$name];
 			}
 			if ($name === 'default') {
-				return $this->_providers[$name] = '\Cake\Validation\Validation';
+				return $this->_providers[$name] = new RulesProvider;
 			}
 			return null;
 		}

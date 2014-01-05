@@ -270,7 +270,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertSame($validator, $validator->provider('bar', $another));
 		$this->assertSame($another, $validator->provider('bar'));
 
-		$this->assertEquals('\Cake\Validation\Validation', $validator->provider('default'));
+		$this->assertEquals(new \Cake\Validation\RulesProvider, $validator->provider('default'));
 	}
 
 /**
@@ -312,7 +312,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnCallback(function($data, $providers) use ($thing) {
 				$this->assertEquals('bar', $data);
 				$expected = [
-					'default' => '\Cake\Validation\Validation',
+					'default' => new \Cake\Validation\RulesProvider,
 					'thing' => $thing
 				];
 				$this->assertEquals($expected, $providers);
@@ -347,7 +347,7 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 				$this->assertEquals('and', $a);
 				$this->assertEquals('awesome', $b);
 				$expected = [
-					'default' => '\Cake\Validation\Validation',
+					'default' => new \Cake\Validation\RulesProvider,
 					'thing' => $thing
 				];
 				$this->assertEquals($expected, $providers);
