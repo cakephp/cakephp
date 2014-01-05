@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -95,10 +96,10 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$field = new IdentifierExpression('Profiles.user_id');
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -127,9 +128,9 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$association = new HasOne('Profiles', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Profiles.is_active' => false
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
@@ -162,16 +163,53 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$field = new IdentifierExpression('Profiles.user_id');
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'profiles'
 			]
 		]);
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that by supplying a query builder function, it is possible to add fields
+ * and conditions to an association
+ *
+ * @return void
+ */
+	public function testAttachToWithQueryBuilder() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->user,
+			'targetTable' => $this->profile,
+			'conditions' => ['Profiles.is_active' => true]
+		];
+		$association = new HasOne('Profiles', $config);
+		$field = new IdentifierExpression('Profiles.user_id');
+		$query->expects($this->once())->method('join')->with([
+			'Profiles' => [
+				'conditions' => new QueryExpression([
+					'Profiles.is_active' => true,
+					['Users.id' => $field],
+					new QueryExpression(['a' => 1])
+				]),
+				'type' => 'INNER',
+				'table' => 'profiles'
+			]
+		]);
+		$query->expects($this->once())->method('select')
+			->with([
+				'Profiles__a' => 'Profiles.a',
+				'Profiles__b' => 'Profiles.b'
+			]);
+		$builder = function($q) {
+			return $q->select(['a', 'b'])->where(['a' => 1]);
+		};
+		$association->attachTo($query, ['queryBuilder' => $builder]);
 	}
 
 /**

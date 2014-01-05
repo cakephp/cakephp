@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -361,6 +362,59 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that eager loader accepts a queryBuilder option
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithQueryBuilder() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'strategy' => 'select'
+		];
+		$association = new HasMany('Articles', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['all', 'select', 'join', 'where'],
+			[null, null]
+		);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+
+		$query->expects($this->once())->method('all')
+			->will($this->returnValue($results));
+
+		$query->expects($this->any())->method('select')
+			->will($this->returnSelf());
+		$query->expects($this->at(2))->method('select')
+			->with(['a', 'b'])
+			->will($this->returnSelf());
+
+		$query->expects($this->any())->method('join')
+			->will($this->returnSelf());
+		$query->expects($this->at(6))->method('join')
+			->with('foo')
+			->will($this->returnSelf());
+
+		$query->expects($this->any())->method('where')
+			->will($this->returnSelf());
+		$query->expects($this->at(4))->method('where')
+			->with(['a' => 1])
+			->will($this->returnSelf());
+
+		$queryBuilder = function($query) {
+			return $query->select(['a', 'b'])->join('foo')->where(['a' => 1]);
+		};
+
+		$association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
+	}
+
+/**
  * Tests that the correct join and fields are attached to a query depending on
  * the association config
  *
@@ -378,10 +432,10 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$association = new HasMany('Articles', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Articles' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field]
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
@@ -409,9 +463,9 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$association = new HasMany('Articles', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Articles' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Articles.is_active' => false
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
@@ -444,16 +498,53 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$association = new HasMany('Articles', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Articles' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Articles.is_active' => true,
 					['Authors.id' => $field]
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'articles'
 			]
 		]);
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that by supplying a query builder function, it is possible to add fields
+ * and conditions to an association
+ *
+ * @return void
+ */
+	public function testAttachToWithQueryBuilder() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true]
+		];
+		$field = new IdentifierExpression('Articles.author_id');
+		$association = new HasMany('Articles', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Articles' => [
+				'conditions' => new QueryExpression([
+					'Articles.is_active' => true,
+					['Authors.id' => $field],
+					new QueryExpression(['a' => 1])
+				]),
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->once())->method('select')
+			->with([
+				'Articles__a' => 'Articles.a',
+				'Articles__b' => 'Articles.b'
+			]);
+		$builder = function($q) {
+			return $q->select(['a', 'b'])->where(['a' => 1]);
+		};
+		$association->attachTo($query, ['queryBuilder' => $builder]);
 	}
 
 /**

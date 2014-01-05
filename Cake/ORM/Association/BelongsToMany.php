@@ -187,6 +187,7 @@ class BelongsToMany extends Association {
 			$includeFields = $options['includeFields'];
 		}
 
+		unset($options['queryBuilder']);
 		$options = ['conditions' => [$cond]] + compact('includeFields');
 		$this->target()
 			->association($junction->alias())
@@ -248,7 +249,18 @@ class BelongsToMany extends Association {
 			'sort' => $this->sort(),
 			'strategy' => $this->strategy()
 		];
+
+		$queryBuilder = false;
+		if (!empty($options['queryBuilder'])) {
+			$queryBuilder = $options['queryBuilder'];
+			unset($options['queryBuilder']);
+		}
+
 		$fetchQuery = $this->_buildQuery($options);
+		if ($queryBuilder) {
+			$fetchQuery = $queryBuilder($fetchQuery);
+		}
+
 		$resultMap = [];
 		$key = $options['foreignKey'];
 		$property = $this->target()->association($this->junction()->alias())->property();

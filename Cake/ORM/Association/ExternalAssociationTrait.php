@@ -205,6 +205,10 @@ trait ExternalAssociationTrait {
 			$fetchQuery->contain($options['contain']);
 		}
 
+		if (!empty($options['queryBuilder'])) {
+			$options['queryBuilder']($fetchQuery);
+		}
+
 		return $fetchQuery;
 	}
 

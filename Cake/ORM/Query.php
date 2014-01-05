@@ -83,7 +83,8 @@ class Query extends DatabaseQuery {
 		'conditions' => 1,
 		'fields' => 1,
 		'sort' => 1,
-		'matching' => 1
+		'matching' => 1,
+		'queryBuilder' => 1
 	];
 
 /**
@@ -200,9 +201,9 @@ class Query extends DatabaseQuery {
  *	$query->contain(['Category', 'Tag']);
  * }}}
  *
- * Associations can be arbitrarily nested using arrays, this allows this object to
- * calculate joins or any additional queries that must be executed to bring the
- * required associated data.
+ * Associations can be arbitrarily nested using dot notation or nested arrays,
+ * this allows this object to calculate joins or any additional queries that
+ * must be executed to bring the required associated data.
  *
  * ### Example:
  *
@@ -210,8 +211,26 @@ class Query extends DatabaseQuery {
  *	// Eager load the product info, and for each product load other 2 associations
  *	$query->contain(['Product' => ['Manufacturer', 'Distributor']);
  *
+ *	// Which is equivalent to calling
+ *	$query->contain(['Products.Manufactures', 'Products.Distributors']);
+ *
  *	// For an author query, load his region, state and country
- *	$query->contain(['Region' => ['State' => 'Country']);
+ *	$query->contain('Regions.States.Countries');
+ * }}}
+ *
+ * It is possible to control the conditions and fields selected for each of the
+ * contained associations:
+ *
+ * ### Example:
+ *
+ * {{{
+ *	$query->contain(['Tags' => function($q) {
+ *		return $q->where(['Tags.is_popular' => true]);
+ *	}]);
+ *
+ *	$query->contain(['Products.Manufactures' => function($q) {
+ *		return $q->select(['name'])->where(['Manufactures.active' => true]);
+ *	}]);
  * }}}
  *
  * Each association might define special options when eager loaded, the allowed
@@ -219,42 +238,28 @@ class Query extends DatabaseQuery {
  *
  * - foreignKey: Used to set a different field to match both tables, if set to false
  *   no join conditions will be generated automatically
- * - conditions: An array of conditions that will be passed to either a query or
- *   join conditions. See `where` method for the valid format.
  * - fields: An array with the fields that should be fetched from the association
- * - sort: for associations that are not joined directly, the order they should
- *   appear in the resulting set
- * - matching: A boolean indicating if the parent association records should be
- *   filtered by those matching the conditions in the target association.
+ * - queryBuilder: Equivalent to passing a callable instead of an options array
  *
  * ### Example:
  *
  * {{{
  *  // Set options for the articles that will be eagerly loaded for an author
  *	$query->contain([
- *		'Article' => [
- *			'field' => ['title'],
- *			'conditions' => ['read_count >' => 100],
- *			'sort' => ['published' => 'DESC']
+ *		'Articles' => [
+ *			'fields' => ['title']
  *		]
  *	]);
  *
  *	// Use special join conditions for getting an article author's 'likes'
  *	$query->contain([
- *		'Like' => [
+ *		'Likes' => [
  *			'foreignKey' => false,
- *			'conditions' => ['Article.author_id = Like.user_id']
+ *			'queryBuilder' => function($q) {
+ *				return $q->where(...); // Add full filtering conditions
+ *			}
  *		]
  *	]);
- *
- *	// Bring only articles that were tagged with 'cake'
- *	$query->contain([
- *		'Tag' => [
- *			'matching' => true,
- *			'conditions' => ['Tag.name' => 'cake']
- *		]
- *	]);
- * }}}
  *
  * If called with no arguments, this function will return an ArrayObject with
  * with the list of previously configured associations to be contained in the
@@ -264,19 +269,6 @@ class Query extends DatabaseQuery {
  * The resulting ArrayObject will always have association aliases as keys, and
  * options as values, if no options are passed, the values will be set to an empty
  * array
- *
- * ### Example:
- *
- * {{{
- *	// Set some associations
- *	$query->contain(['Article', 'Author' => ['fields' => ['Author.name']);
- *
- *  // Let's now add another field to Author
- *	$query->contain()['Author']['fields'][] = 'Author.email';
- *
- *	// Let's also add Article's tags
- *	$query->contain()['Article']['Tag'] = [];
- * }}}
  *
  * Please note that when modifying directly the containments array, you are
  * required to maintain the structure. That is, association names as keys
@@ -307,7 +299,7 @@ class Query extends DatabaseQuery {
 		}
 
 		$old = $this->_containments->getArrayCopy();
-		$associations = array_merge($old, $this->_reformatContain($associations));
+		$associations = $this->_reformatContain($associations, $old);
 		$this->_containments->exchangeArray($associations);
 		$this->_normalizedContainments = null;
 		$this->_dirty();
@@ -315,23 +307,116 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * Adds filtering conditions to this query to only bring rows that have a relation
+ * to another from an associated table, based on conditions in the associated table.
+ *
+ * This function will add entries in the ``contain`` graph.
+ *
+ * ### Example:
+ *
+ * {{{
+ *  // Bring only articles that were tagged with 'cake'
+ *	$query->matching('Tags', function($q) {
+ *		return $q->where(['name' => 'cake']);
+ *	);
+ * }}}
+ *
+ * It is possible to filter by deep associations by using dot notation:
+ *
+ * ### Example:
+ *
+ * {{{
+ *  // Bring only articles that were commented by 'markstory'
+ *	$query->matching('Comments.Users', function($q) {
+ *		return $q->where(['username' => 'markstory']);
+ *	);
+ * }}}
+ *
+ * As this function will create ``INNER JOIN``, you might want to consider
+ * calling ``distinct`` on this query as you might get duplicate rows if
+ * your conditions don't filter them already. This might be the case, for example,
+ * of the same user commenting more than once in the same article.
+ *
+ * ### Example:
+ *
+ * {{{
+ *  // Bring unique articles that were commented by 'markstory'
+ *	$query->distinct(['Articles.id'])
+ *	->matching('Comments.Users', function($q) {
+ *		return $q->where(['username' => 'markstory']);
+ *	);
+ * }}}
+ *
+ * Please note that the query passed to the closure will only accept calling
+ * ``select``, ``where``, ``andWhere`` and ``orWhere`` on it. If you wish to
+ * add more complex clauses you can do it directly in the main query.
+ *
+ * @param string $assoc The association to filter by
+ * @param callable $builder a function that will receive a pre-made query object
+ * that can be used to add custom conditions or selecting some fields
+ * @return Query
+ */
+	public function matching($assoc, callable $builder = null) {
+		$assocs = explode('.', $assoc);
+		$last = array_pop($assocs);
+		$containments = [];
+		$pointer =& $containments;
+
+		foreach ($assocs as $name) {
+			$pointer[$name] = ['matching' => true];
+			$pointer =& $pointer[$name];
+		}
+
+		$pointer[$last] = ['queryBuilder' => $builder, 'matching' => true];
+		return $this->contain($containments);
+	}
+
+/**
  * Formats the containments array so that associations are always set as keys
- * in the array.
+ * in the array. This function merges the original associations array with
+ * the new associations provided
  *
  * @param array $associations user provided containments array
+ * @param array $original The original containments array to merge
+ * with the new one
  * @return array
  */
-	protected function _reformatContain($associations) {
-		$result = [];
+	protected function _reformatContain($associations, $original) {
+		$result = $original;
+
 		foreach ((array)$associations as $table => $options) {
+			$pointer =& $result;
 			if (is_int($table)) {
 				$table = $options;
 				$options = [];
-			} elseif (is_array($options) && !isset($this->_containOptions[$table])) {
-				$options = $this->_reformatContain($options);
 			}
-			$result[$table] = $options;
+
+			if (isset($this->_containOptions[$table])) {
+				$pointer[$table] = $options;
+				continue;
+			}
+
+			if (strpos($table, '.')) {
+				$path = explode('.', $table);
+				$table = array_pop($path);
+				foreach ($path as $t) {
+					$pointer += [$t => []];
+					$pointer =& $pointer[$t];
+				}
+			}
+
+			if (is_array($options)) {
+				$options = $this->_reformatContain($options, []);
+			}
+
+			if ($options instanceof \Closure) {
+				$options = ['queryBuilder' => $options];
+			}
+
+			$pointer += [$table => []];
+			$pointer[$table] = $options + $pointer[$table];
 		}
+
 		return $result;
 	}
 

@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -95,10 +96,10 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$field = new IdentifierExpression('Clients.company_id');
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				],
+				]),
 				'table' => 'companies',
 				'type' => 'LEFT'
 			]
@@ -125,9 +126,9 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$association = new BelongsTo('Companies', $config);
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Companies.is_active' => false
-				],
+				]),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
@@ -160,16 +161,53 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$field = new IdentifierExpression('Clients.company_id');
 		$query->expects($this->once())->method('join')->with([
 			'Companies' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Companies.is_active' => true,
 					['Companies.id' => $field]
-				],
+				]),
 				'type' => 'LEFT',
 				'table' => 'companies',
 			]
 		]);
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that by passing a query builder function it is possible to add fields and
+ * conditions to an association
+ *
+ * @return void
+ */
+	public function testAttachToWithQueryBuilder() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company,
+			'conditions' => ['Companies.is_active' => true]
+		];
+		$association = new BelongsTo('Companies', $config);
+		$field = new IdentifierExpression('Clients.company_id');
+		$query->expects($this->once())->method('join')->with([
+			'Companies' => [
+				'conditions' => new QueryExpression([
+					'Companies.is_active' => true,
+					['Companies.id' => $field],
+					 new QueryExpression(['a' => 1])
+				]),
+				'type' => 'LEFT',
+				'table' => 'companies',
+			]
+		]);
+		$query->expects($this->once())->method('select')
+			->with([
+				'Companies__a' => 'Companies.a',
+				'Companies__b' => 'Companies.b'
+			]);
+		$builder = function($q) {
+			return $q->select(['a', 'b'])->where(['a' => 1]);
+		};
+		$association->attachTo($query, ['queryBuilder' => $builder]);
 	}
 
 /**

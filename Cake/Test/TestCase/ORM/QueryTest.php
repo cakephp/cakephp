@@ -125,9 +125,9 @@ class QueryTest extends TestCase {
 			->with(['clients' => [
 				'table' => 'clients',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['clients.id' => new IdentifierExpression('foo.client_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -135,9 +135,9 @@ class QueryTest extends TestCase {
 			->with(['orders' => [
 				'table' => 'orders',
 				'type' => 'INNER',
-				'conditions' => [
+				'conditions' =>  new QueryExpression([
 					['clients.id' => new IdentifierExpression('orders.client_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -145,9 +145,9 @@ class QueryTest extends TestCase {
 			->with(['orderTypes' => [
 				'table' => 'order_types',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' =>  new QueryExpression([
 					['orderTypes.id' => new IdentifierExpression('orders.order_type_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -155,9 +155,9 @@ class QueryTest extends TestCase {
 			->with(['stuff' => [
 				'table' => 'things',
 				'type' => 'INNER',
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['orders.id' => new IdentifierExpression('stuff.order_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -165,9 +165,9 @@ class QueryTest extends TestCase {
 			->with(['stuffTypes' => [
 				'table' => 'stuff_types',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -175,9 +175,9 @@ class QueryTest extends TestCase {
 			->with(['companies' => [
 				'table' => 'organizations',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' =>  new QueryExpression([
 					['companies.id' => new IdentifierExpression('clients.organization_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
@@ -185,15 +185,82 @@ class QueryTest extends TestCase {
 			->with(['categories' => [
 				'table' => 'categories',
 				'type' => 'LEFT',
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['categories.id' => new IdentifierExpression('companies.category_id')]
-				]
+				])
 			]])
 			->will($this->returnValue($query));
 
 		$s = $query
 			->select('foo.id')
 			->contain($contains)->sql();
+	}
+
+/**
+ * Tests setting containments using dot notation, additionally proves that options
+ * are not overwritten when combining dot notation and array notation
+ *
+ * @return void
+ */
+	public function testContainDotNotation() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
+		$query->contain([
+			'clients.orders.stuff',
+			'clients.companies.categories' => ['conditions' => ['a >' => 1]]
+		]);
+		$expected = new \ArrayObject([
+			'clients' => [
+				'orders' => [
+					'stuff' => []
+				],
+				'companies' => [
+					'categories' => [
+						'conditions' => ['a >' => 1]
+					]
+				]
+			]
+		]);
+		$this->assertEquals($expected, $query->contain());
+		$query->contain([
+			'clients.orders' => ['fields' => ['a', 'b']],
+			'clients' => ['sort' => ['a' => 'desc']],
+		]);
+
+		$expected['clients']['orders'] += ['fields' => ['a', 'b']];
+		$expected['clients'] += ['sort' => ['a' => 'desc']];
+		$this->assertEquals($expected, $query->contain());
+	}
+
+/**
+ * Tests that it is possible to pass a function as the array value for contain
+ *
+ * @return void
+ */
+	public function testContainClosure() {
+		$builder = function($query) {
+		};
+		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
+		$query->contain([
+			'clients.orders.stuff' => ['fields' => ['a']],
+			'clients' => $builder
+		]);
+
+		$expected = new \ArrayObject([
+			'clients' => [
+				'orders' => [
+					'stuff' => ['fields' => ['a']]
+				],
+				'queryBuilder' => $builder
+			]
+		]);
+		$this->assertEquals($expected, $query->contain());
+
+		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
+		$query->contain([
+			'clients.orders.stuff' => ['fields' => ['a']],
+			'clients' => ['queryBuilder' => $builder]
+		]);
+		$this->assertEquals($expected, $query->contain());
 	}
 
 /**
@@ -770,10 +837,9 @@ class QueryTest extends TestCase {
 		$results = $query->repository($table)
 			->select()
 			->hydrate(false)
-			->contain(['articles' => [
-				'matching' => true,
-				'conditions' => ['articles.id' => 2]
-			]])
+			->matching('articles', function($q) {
+				return $q->where(['articles.id' => 2]);
+			})
 			->toArray();
 		$expected = [
 			[
@@ -808,10 +874,9 @@ class QueryTest extends TestCase {
 		$table->belongsToMany('Tags');
 
 		$results = $query->repository($table)->select()
-			->contain(['Tags' => [
-				'matching' => true,
-				'conditions' => ['Tags.id' => 3]
-			]])
+			->matching('Tags', function($q) {
+				return $q->where(['Tags.id' => 3]);
+			})
 			->hydrate(false)
 			->toArray();
 		$expected = [
@@ -831,10 +896,9 @@ class QueryTest extends TestCase {
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->contain(['Tags' => [
-				'matching' => true,
-				'conditions' => ['Tags.name' => 'tag2']]
-			])
+			->matching('Tags', function($q) {
+				return $q->where(['Tags.name' => 'tag2']);
+			})
 			->hydrate(false)
 			->toArray();
 		$expected = [
@@ -847,6 +911,45 @@ class QueryTest extends TestCase {
 				'tags' => [
 					'id' => 2,
 					'name' => 'tag2'
+				]
+			]
+		];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that it is possible to filter by deep associations
+ *
+ * @return void
+ */
+	public function testMatchingDotNotation() {
+		$query = new Query($this->connection, $this->table);
+		$table = TableRegistry::get('authors');
+		TableRegistry::get('articles');
+		$table->hasMany('articles');
+		TableRegistry::get('articles')->belongsToMany('tags');
+
+		$results = $query->repository($table)
+			->select()
+			->hydrate(false)
+			->matching('articles.tags', function($q) {
+				return $q->where(['tags.id' => 2]);
+			})
+			->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'name' => 'mariano',
+				'articles' => [
+					'id' => 1,
+					'title' => 'First Article',
+					'body' => 'First Article Body',
+					'author_id' => 1,
+					'published' => 'Y',
+					'tags' => [
+						'id' => 2,
+						'name' => 'tag2'
+					]
 				]
 			]
 		];

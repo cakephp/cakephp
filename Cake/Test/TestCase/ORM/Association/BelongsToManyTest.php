@@ -17,6 +17,7 @@
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -221,9 +222,9 @@ class BelongsToManyTest extends TestCase {
 		$association = new BelongsToMany('Tags', $config);
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -234,10 +235,10 @@ class BelongsToManyTest extends TestCase {
 
 		$query->expects($this->at(2))->method('join')->with([
 			'ArticlesTags' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]
@@ -275,9 +276,9 @@ class BelongsToManyTest extends TestCase {
 		$association = new BelongsToMany('Tags', $config);
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -288,16 +289,76 @@ class BelongsToManyTest extends TestCase {
 
 		$query->expects($this->at(1))->method('join')->with([
 			'ArticlesTags' => [
-				'conditions' => [
+				'conditions' => new QueryExpression([
 					['Articles.id' => $field1],
 					['Tags.id' => $field2]
-				],
+				]),
 				'type' => 'INNER',
 				'table' => 'articles_tags'
 			]
 		]);
 		$query->expects($this->never())->method('select');
 		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that by supplying a query builder function, it is possible to add fields
+ * and conditions to an association
+ *
+ * @return void
+ */
+	public function testAttachToWithQueryBuilder() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'conditions' => ['Tags.name' => 'cake']
+		];
+		TableRegistry::get('ArticlesTags', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer']
+			]
+		]);
+		$association = new BelongsToMany('Tags', $config);
+		$query->expects($this->at(0))->method('join')->with([
+			'Tags' => [
+				'conditions' => new QueryExpression([
+					'Tags.name' => 'cake',
+					new QueryExpression(['a' => 1])
+				]),
+				'type' => 'INNER',
+				'table' => 'tags'
+			]
+		]);
+
+		$field1 = new IdentifierExpression('ArticlesTags.article_id');
+		$field2 = new IdentifierExpression('ArticlesTags.tag_id');
+
+		$query->expects($this->at(2))->method('join')->with([
+			'ArticlesTags' => [
+				'conditions' => new QueryExpression([
+					['Articles.id' => $field1],
+					['Tags.id' => $field2]
+				]),
+				'type' => 'INNER',
+				'table' => 'articles_tags'
+			]
+		]);
+
+		$query->expects($this->once())->method('select')
+			->with([
+				'Tags__a' => 'Tags.a',
+				'Tags__b' => 'Tags.b'
+			]);
+		$builder = function($q) {
+			return $q->select(['a', 'b'])->where(['a' => 1]);
+		};
+		$association->attachTo($query, [
+			'includeFields' => false,
+			'queryBuilder' => $builder
+		]);
 	}
 
 /**
@@ -620,6 +681,71 @@ class BelongsToManyTest extends TestCase {
 		$row['Articles__id'] = 2;
 		$result = $callable($row);
 		$this->assertEquals($row, $result);
+	}
+
+/**
+ * Tests eagerLoader with queryBuilder
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithQueryBuilder() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+		];
+		TableRegistry::get('ArticlesTags', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer']
+			]
+		]);
+		$association = new BelongsToMany('Tags', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['all', 'contain', 'andWhere', 'limit'],
+			[null, null]
+		);
+
+		$this->tag->expects($this->once())
+			->method('find')
+			->with('all')
+			->will($this->returnValue($query));
+
+		$results = [
+			['id' => 1, 'name' => 'foo', 'articles_tags' => ['article_id' => 1]],
+			['id' => 2, 'name' => 'bar', 'articles_tags' => ['article_id' => 2]]
+		];
+		$query->expects($this->once())
+			->method('all')
+			->will($this->returnValue($results));
+
+		$query->expects($this->once())->method('contain')
+			->with([
+				'ArticlesTags' => [
+					'conditions' => ['ArticlesTags.article_id in' => $keys],
+					'matching' => true
+				]
+			])
+			->will($this->returnSelf());
+
+		$query->hydrate(false);
+
+		$query->expects($this->once())
+			->method('andWhere')
+			->with(['foo' => 1])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())
+			->method('limit')
+			->with(1)
+			->will($this->returnSelf());
+
+		$queryBuilder = function($q) {
+			return $q->andWhere(['foo' => 1])->limit(1);
+		};
+		$association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
 	}
 
 /**
