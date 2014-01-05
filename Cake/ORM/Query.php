@@ -348,8 +348,18 @@ class Query extends DatabaseQuery {
  * @return Query
  */
 	public function matching($assoc, callable $builder = null) {
-		$options = ['queryBuilder' => $builder, 'matching' => true];
-		return $this->contain([$assoc => array_filter($options)]);
+		$assocs = explode('.', $assoc);
+		$last = array_pop($assocs);
+		$containments = [];
+		$pointer =& $containments;
+
+		foreach ($assocs as $name) {
+			$pointer[$name] = ['matching' => true];
+			$pointer =& $pointer[$name];
+		}
+
+		$pointer[$last] = ['queryBuilder' => $builder, 'matching' => true];
+		return $this->contain($containments);
 	}
 
 /**

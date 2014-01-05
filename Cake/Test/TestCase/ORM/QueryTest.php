@@ -837,10 +837,9 @@ class QueryTest extends TestCase {
 		$results = $query->repository($table)
 			->select()
 			->hydrate(false)
-			->contain(['articles' => [
-				'matching' => true,
-				'conditions' => ['articles.id' => 2]
-			]])
+			->matching('articles', function($q) {
+				return $q->where(['articles.id' => 2]);
+			})
 			->toArray();
 		$expected = [
 			[
@@ -875,10 +874,9 @@ class QueryTest extends TestCase {
 		$table->belongsToMany('Tags');
 
 		$results = $query->repository($table)->select()
-			->contain(['Tags' => [
-				'matching' => true,
-				'conditions' => ['Tags.id' => 3]
-			]])
+			->matching('Tags', function($q) {
+				return $q->where(['Tags.id' => 3]);
+			})
 			->hydrate(false)
 			->toArray();
 		$expected = [
@@ -898,10 +896,9 @@ class QueryTest extends TestCase {
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
-			->contain(['Tags' => [
-				'matching' => true,
-				'conditions' => ['Tags.name' => 'tag2']]
-			])
+			->matching('Tags', function($q) {
+				return $q->where(['Tags.name' => 'tag2']);
+			})
 			->hydrate(false)
 			->toArray();
 		$expected = [
