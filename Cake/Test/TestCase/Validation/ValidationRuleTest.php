@@ -63,17 +63,18 @@ class ValidationRuleTest extends TestCase {
 		$data = 'some data';
 		$providers = ['default' => $this];
 
+		$context = ['newRecord' => true];
 		$Rule = new ValidationRule(['rule' => 'myTestRule']);
-		$this->assertFalse($Rule->process($data, $providers, true));
+		$this->assertFalse($Rule->process($data, $providers, $context));
 
 		$Rule = new ValidationRule(['rule' => 'myTestRule2']);
-		$this->assertTrue($Rule->process($data, $providers, true));
+		$this->assertTrue($Rule->process($data, $providers, $context));
 
 		$Rule = new ValidationRule(['rule' => 'myTestRule3']);
-		$this->assertEquals('string', $Rule->process($data, $providers, true));
+		$this->assertEquals('string', $Rule->process($data, $providers, $context));
 
 		$Rule = new ValidationRule(['rule' => 'myTestRule', 'message' => 'foo']);
-		$this->assertEquals('foo', $Rule->process($data, $providers, true));
+		$this->assertEquals('foo', $Rule->process($data, $providers, $context));
 	}
 
 /**
@@ -89,7 +90,7 @@ class ValidationRuleTest extends TestCase {
 		$providers = ['default' => $this];
 
 		$Rule = new ValidationRule($def);
-		$Rule->process($data, $providers, true);
+		$Rule->process($data, $providers, ['newRecord' => true]);
 	}
 
 /**
@@ -105,19 +106,19 @@ class ValidationRuleTest extends TestCase {
 			'rule' => 'myTestRule',
 			'on' => 'create'
 		]);
-		$this->assertFalse($Rule->process($data, $providers, true));
+		$this->assertFalse($Rule->process($data, $providers, ['newRecord' => true]));
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
 			'on' => 'update'
 		]);
-		$this->assertTrue($Rule->process($data, $providers, true));
+		$this->assertTrue($Rule->process($data, $providers, ['newRecord' => true]));
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
 			'on' => 'update'
 		]);
-		$this->assertFalse($Rule->process($data, $providers, false));
+		$this->assertFalse($Rule->process($data, $providers, ['newRecord' => false]));
 	}
 
 /**
@@ -131,20 +132,22 @@ class ValidationRuleTest extends TestCase {
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
-			'on' => function($s) use ($providers) {
-				$this->assertEquals($providers, $s);
+			'on' => function($context) use ($providers) {
+				$expected = compact('providers') + ['newRecord' => true, 'data' => []];
+				$this->assertEquals($expected, $context);
 				return true;
 			}
 		]);
-		$this->assertFalse($Rule->process($data, $providers, true));
+		$this->assertFalse($Rule->process($data, $providers, ['newRecord' => true]));
 
 		$Rule = new ValidationRule([
 			'rule' => 'myTestRule',
-			'on' => function($s) use ($providers) {
-				$this->assertEquals($providers, $s);
+			'on' => function($context) use ($providers) {
+				$expected = compact('providers') + ['newRecord' => true, 'data' => []];
+				$this->assertEquals($expected, $context);
 				return false;
 			}
 		]);
-		$this->assertTrue($Rule->process($data, $providers, true));
+		$this->assertTrue($Rule->process($data, $providers, ['newRecord' => true]));
 	}
 }

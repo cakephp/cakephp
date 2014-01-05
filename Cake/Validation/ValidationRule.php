@@ -93,17 +93,22 @@ class ValidationRule {
  * a boolean indicating whether the rule passed or not. If a string is returned
  * it is assumed that the rule failed and the error message was given as a result.
  *
- * @param mixed $data The data to validate
+ * @param mixed $value The data to validate
  * @param array $providers associative array with objects or class names that will
  * be passed as the last argument for the validation method
- * @param boolean $newRecord whether or not the data to be validated belongs to
- * a new record
+ * @param array $context A key value list of data that could be used as context
+ * during validation. Recognized keys are:
+ * - newRecord: (boolean) whether or not the data to be validated belongs to a
+ *   new record
+ * - data: The full data that was passed to the validation process
  * @return boolean|string
  * @throws \InvalidArgumentException when the supplied rule is not a valid
  * callable for the configured scope
  */
-	public function process($data, $providers, $newRecord) {
-		if ($this->_skip($newRecord, $providers)) {
+	public function process($value, $providers, array $context = []) {
+		$context += ['data' => [], 'newRecord' => true, 'providers' => $providers];
+
+		if ($this->_skip($context)) {
 			return true;
 		}
 
@@ -124,10 +129,10 @@ class ValidationRule {
 		}
 
 		if ($this->_pass) {
-			$args = array_merge([$data], $this->_pass, [$providers]);
+			$args = array_merge([$value], $this->_pass, [$context]);
 			$result = call_user_func_array($callable, $args);
 		} else {
-			$result = $callable($data, $providers);
+			$result = $callable($value, $context);
 		}
 
 		if ($result === false) {
@@ -139,17 +144,22 @@ class ValidationRule {
 /**
  * Checks if the validation rule should be skipped
  *
- * @param boolean $newRecord whether the rule to be processed is new or pre-existent
- * @param array $providers associative array with objects or class names that will
- * be passed as the last argument for the validation method
+ * @param array $context A key value list of data that could be used as context
+ * during validation. Recognized keys are:
+ * - newRecord: (boolean) whether or not the data to be validated belongs to a
+ *   new record
+ * - data: The full data that was passed to the validation process
+ * - providers associative array with objects or class names that will
+ *   be passed as the last argument for the validation method
  * @return boolean True if the ValidationRule should be skipped
  */
-	protected function _skip($newRecord, $providers) {
+	protected function _skip($context) {
 		if (is_callable($this->_on)) {
 			$function = $this->_on;
-			return !$function($providers);
+			return !$function($context);
 		}
 
+		$newRecord = $context['newRecord'];
 		if (!empty($this->_on)) {
 			if ($this->_on === 'create' && !$newRecord || $this->_on === 'update' && $newRecord) {
 				return true;
