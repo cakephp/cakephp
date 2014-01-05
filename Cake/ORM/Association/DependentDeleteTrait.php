@@ -42,7 +42,6 @@ trait DependentDeleteTrait {
 		$foreignKey = $this->foreignKey();
 		$primaryKey = $this->source()->primaryKey();
 
-		// TODO fix multi-column primary keys.
 		$conditions = [
 			$foreignKey => $entity->get($primaryKey)
 		];

@@ -264,6 +264,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 		return $this->add([$field . ' NOT IN' => $values], $type ? [$field => $type] : []);
 	}
 
+// @codingStandardsIgnoreStart
 /**
  * Returns a new QueryExpresion object containing all the conditions passed
  * and set up the conjunction to be "AND"
@@ -295,6 +296,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 		}
 		return new self($conditions, $types, 'OR');
 	}
+// @codingStandardsIgnoreEnd
 
 /**
  * Adds a new set of conditions to this level of the tree and negates

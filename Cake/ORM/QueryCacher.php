@@ -36,6 +36,7 @@ class QueryCacher {
  *
  * @param string|Closure $key
  * @param string|CacheEngine $config
+ * @throws RuntimeException
  */
 	public function __construct($key, $config) {
 		if (!is_string($key) && !is_callable($key)) {
@@ -83,6 +84,7 @@ class QueryCacher {
  *
  * @param Query $query
  * @return string
+ * @throws RuntimeException
  */
 	protected function _resolveKey($query) {
 		if (is_string($this->_key)) {
