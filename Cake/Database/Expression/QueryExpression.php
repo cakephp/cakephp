@@ -266,6 +266,15 @@ class QueryExpression implements ExpressionInterface, Countable {
 		return $this->add([$field . ' NOT IN' => $values], $type ? [$field => $type] : []);
 	}
 
+/**
+ * Returns a new QueryExpresion object containing all the conditions passed
+ * and set up the conjunction to be "AND"
+ *
+ * @param string|array|QueryExpression $conditions to be joined with AND
+ * @param array $types associative array of fields pointing to the type of the
+ * values that are being passed. Used for correctly binding values to statements.
+ * @return \Cake\Database\Expression\QueryExpression
+ */
 	public function and_($conditions, $types = []) {
 		if (is_callable($conditions)) {
 			return $conditions(new self);
@@ -273,6 +282,15 @@ class QueryExpression implements ExpressionInterface, Countable {
 		return new self($conditions, $types);
 	}
 
+/**
+ * Returns a new QueryExpresion object containing all the conditions passed
+ * and set up the conjunction to be "OR"
+ *
+ * @param string|array|QueryExpression $conditions to be joined with OR
+ * @param array $types associative array of fields pointing to the type of the
+ * values that are being passed. Used for correctly binding values to statements.
+ * @return \Cake\Database\Expression\QueryExpression
+ */
 	public function or_($conditions, $types = []) {
 		if (is_callable($conditions)) {
 			return $conditions(new self([], [], 'OR'));
