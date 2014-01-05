@@ -202,8 +202,26 @@ class Query extends DatabaseQuery {
  *	// Eager load the product info, and for each product load other 2 associations
  *	$query->contain(['Product' => ['Manufacturer', 'Distributor']);
  *
+ *	// Which is equivalent to calling
+ *	$query->contain(['Products.Manufactures', 'Products.Distributors']);
+ *
  *	// For an author query, load his region, state and country
  *	$query->contain('Regions.States.Countries');
+ * }}}
+ *
+ * It is possible to control the conditions and fields selected for each of the
+ * contained associations:
+ *
+ * ### Example:
+ *
+ * {{{
+ *	$query->contain(['Tags' => function($q) {
+ *		return $q->where(['Tags.is_popular' => true]);
+ *	}]);
+ *
+ *	$query->contain(['Products.Manufactures' => function($q) {
+ *		return $q->select(['name'])->where(['Manufactures.active' => true]);
+ *	}]);
  * }}}
  *
  * Each association might define special options when eager loaded, the allowed
@@ -211,31 +229,26 @@ class Query extends DatabaseQuery {
  *
  * - foreignKey: Used to set a different field to match both tables, if set to false
  *   no join conditions will be generated automatically
- * - conditions: An array of conditions that will be passed to either a query or
- *   join conditions. See `where` method for the valid format.
  * - fields: An array with the fields that should be fetched from the association
- * - sort: for associations that are not joined directly, the order they should
- *   appear in the resulting set
- * - matching: A boolean indicating if the parent association records should be
- *   filtered by those matching the conditions in the target association.
+ * - queryBuilder: Equivalent to passing a callable instead of an options array
  *
  * ### Example:
  *
  * {{{
  *  // Set options for the articles that will be eagerly loaded for an author
  *	$query->contain([
- *		'Article' => [
- *			'field' => ['title'],
- *			'conditions' => ['read_count >' => 100],
- *			'sort' => ['published' => 'DESC']
+ *		'Articles' => [
+ *			'fields' => ['title']
  *		]
  *	]);
  *
  *	// Use special join conditions for getting an article author's 'likes'
  *	$query->contain([
- *		'Like' => [
+ *		'Likes' => [
  *			'foreignKey' => false,
- *			'conditions' => ['Article.author_id = Like.user_id']
+ *			'queryBuilder' => function($q) {
+ *				return $q->where(...); // Add full filtering conditions
+ *			}
  *		]
  *	]);
  *
