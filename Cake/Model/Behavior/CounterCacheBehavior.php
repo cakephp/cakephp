@@ -92,10 +92,10 @@ class CounterCacheBehavior extends Behavior {
  * Constructor
  *
  * @param Table $table The table this behavior is attached to.
- * @param array $settings The settings for this behavior.
+ * @param array $config The config for this behavior.
  */
-	public function __construct(Table $table, array $settings = []) {
-		parent::__construct($table, $settings);
+	public function __construct(Table $table, array $config = []) {
+		parent::__construct($table, $config);
 		$this->_table = $table;
 	}
 
@@ -133,7 +133,7 @@ class CounterCacheBehavior extends Behavior {
  * @return void
  */
 	protected function _processAssociations(Event $event, Entity $entity) {
-		foreach ($this->_settings as $assoc => $settings) {
+		foreach ($this->_config as $assoc => $settings) {
 			$assoc = $this->_table->association($assoc);
 			$this->_processAssociation($event, $entity, $assoc, $settings);
 		}
