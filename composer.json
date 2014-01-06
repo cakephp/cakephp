@@ -27,7 +27,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Cake\\": "Cake"
+            "Cake\\": "Cake",
+            "Cake\\Test\\": "Test"
         }
     },
     "bin": [
