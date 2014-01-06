@@ -15,9 +15,6 @@
 	<testsuites>
 		<testsuite name="CakePHP Test Suite">
 			<directory>./Cake/Test/TestCase/</directory>
-			<exclude>./Cake/Test/TestCase/Model/</exclude>
-			<exclude>./Cake/Test/TestCase/Database/</exclude>
-			<exclude>./Cake/Test/TestCase/ORM/</exclude>
 		</testsuite>
 		<testsuite name="Database Test Suite">
 			<file>./Cake/Test/TestCase/DatabaseSuite.php</file>
