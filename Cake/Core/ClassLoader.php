@@ -104,7 +104,11 @@ class ClassLoader {
  * @return boolean
  */
 	public function loadClass($className) {
-		if (substr($className, 0, $this->_namespaceLength) !== $this->_namespace) {
+		if (strpos($className, 'Cake\\Test\\') === 0) {
+			$className = substr($className, 5);
+		} elseif (strpos($className, 'App\\Test\\') === 0) {
+			$className = substr($className, 4);
+		} elseif (substr($className, 0, $this->_namespaceLength) !== $this->_namespace) {
 			return false;
 		}
 		$path = $this->_path . DS . str_replace('\\', DS, $className) . $this->_fileExtension;

@@ -26,8 +26,9 @@
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {
-        "psr-0": {
-            "Cake\\": "."
+        "psr-4": {
+            "Cake\\": "Cake",
+            "Cake\\Test\\": "Test"
         }
     },
     "bin": [

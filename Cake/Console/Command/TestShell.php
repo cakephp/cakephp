@@ -379,7 +379,7 @@ class TestShell extends Shell {
 			$testCase = str_replace(DS, '/', $file);
 			$testCase = preg_replace('@.*lib/Cake/@', '', $file);
 			$testCase[0] = strtoupper($testCase[0]);
-			$testFile = CAKE . 'Test/TestCase/' . $testCase . 'Test.php';
+			$testFile = ROOT . '/Test/TestCase/' . $testCase . 'Test.php';
 
 			if (!file_exists($testFile) && $throwOnMissingFile) {
 				throw new \Exception(sprintf('Test case %s not found', $testFile));
@@ -428,7 +428,7 @@ class TestShell extends Shell {
 		if (strpos($file, APP) !== false) {
 			return 'app';
 		}
-		if (file_exists(CAKE . $file) || strpos($file, CAKE) !== false) {
+		if (file_exists(ROOT . DS . $file) || strpos($file, ROOT . DS) !== false) {
 			return 'core';
 		}
 		return 'app';
