@@ -1703,4 +1703,29 @@ class QueryTest extends TestCase {
 		$query->all();
 	}
 
+
+/**
+ * Integration test to show filtering associations using contain and a closure
+ *
+ * @return void
+ */
+	public function testContainWithClosure() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$query = new Query($this->connection, $table);
+		$query
+			->select()
+			->contain(['articles' => function($q) {
+				return $q->where(['articles.id' => 1]);
+			}]);
+
+		$ids = [];
+		foreach ($query as $entity) {
+			foreach ((array)$entity->articles as $article) {
+				$ids[] = $article->id;
+			}
+		}
+		$this->assertEquals([1], array_unique($ids));
+	}
+
 }

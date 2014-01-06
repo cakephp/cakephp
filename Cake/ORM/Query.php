@@ -293,7 +293,8 @@ class Query extends DatabaseQuery {
 		}
 
 		$associations = (array)$associations;
-		if (isset(current($associations)['instance'])) {
+		$current = current($associations);
+		if (is_array($current) && isset($current['instance'])) {
 			$this->_containments = $this->_normalizedContainments = $associations;
 			return $this;
 		}
