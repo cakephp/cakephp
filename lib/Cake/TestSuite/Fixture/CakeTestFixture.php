@@ -280,7 +280,7 @@ class CakeTestFixture {
 				foreach ($this->records as $record) {
 					$merge = array_values(array_merge($default, $record));
 					if (count($fields) !== count($merge)) {
-						throw new CakeException('Fixure invalid: Count of fields does not match count of values');
+						throw new CakeException('Fixture invalid: Count of fields does not match count of values');
 					}
 					$values[] = $merge;
 				}
