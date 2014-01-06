@@ -501,13 +501,13 @@ class UpgradeShell extends AppShell {
 	}
 
 /**
- * Update controllers.
+ * Update controller redirects.
  *
  * - Make redirect statements return early.
  *
  * @return void
  */
-	public function controllers() {
+	public function controller_redirects() {
 		$this->_paths = App::Path('Controller');
 		if (!empty($this->params['plugin'])) {
 			$this->_paths = App::Path('Controller', $this->params['plugin']);
@@ -863,8 +863,8 @@ class UpgradeShell extends AppShell {
 		))->addSubcommand('constants', array(
 			'help' => __d('cake_console', "Replace Obsolete constants"),
 			'parser' => $subcommandParser
-		))->addSubcommand('controllers', array(
-			'help' => __d('cake_console', 'Update controllers.'),
+		))->addSubcommand('controller_redirects', array(
+			'help' => __d('cake_console', 'Return early on controller redirect calls.'),
 			'parser' => $subcommandParser
 		))->addSubcommand('components', array(
 			'help' => __d('cake_console', 'Update components to extend Component class.'),
