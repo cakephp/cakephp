@@ -1703,7 +1703,6 @@ class QueryTest extends TestCase {
 		$query->all();
 	}
 
-
 /**
  * Integration test to show filtering associations using contain and a closure
  *
