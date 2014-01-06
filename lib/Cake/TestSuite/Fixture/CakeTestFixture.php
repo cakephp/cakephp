@@ -265,7 +265,7 @@ class CakeTestFixture {
  *
  * @param DboSource $db An instance of the database into which the records will be inserted
  * @return boolean on success or if there are no records to insert, or false on failure
- * @throws CakeException if count of values and fields does not match.
+ * @throws CakeException if counts of values and fields do not match.
  */
 	public function insert($db) {
 		if (!isset($this->_insert)) {
@@ -286,7 +286,6 @@ class CakeTestFixture {
 				}
 				$nested = $db->useNestedTransactions;
 				$db->useNestedTransactions = false;
-
 				$result = $db->insertMulti($this->table, $fields, $values);
 				if (
 					$this->primaryKey &&
