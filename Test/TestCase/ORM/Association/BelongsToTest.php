@@ -257,4 +257,38 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->author_id);
 	}
 
+/**
+ * Tests that using belongs to with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKey() {
+		$this->company->primaryKey(['id', 'tenant_id']);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => ['company_id', 'company_tenant_id'],
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company,
+			'conditions' => ['Companies.is_active' => true]
+		];
+		$association = new BelongsTo('Companies', $config);
+		$field1 = new IdentifierExpression('Clients.company_id');
+		$field2 = new IdentifierExpression('Clients.company_tenant_id');
+		$query->expects($this->once())->method('join')->with([
+			'Companies' => [
+				'conditions' => new QueryExpression([
+					'Companies.is_active' => true,
+					['Companies.id' => $field1, 'Companies.tenant_id' => $field2]
+				]),
+				'table' => 'companies',
+				'type' => 'LEFT'
+			]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Companies__id' => 'Companies.id',
+			'Companies__company_name' => 'Companies.company_name'
+		]);
+		$association->attachTo($query);
+	}
 }
