@@ -210,6 +210,10 @@ class SelectBoxTest extends TestCase {
 			'/select'
 		];
 		$this->assertTags($result, $expected);
+
+		$data['value'] = false;
+		$result = $select->render($data);
+		$this->assertTags($result, $expected);
 	}
 
 }
