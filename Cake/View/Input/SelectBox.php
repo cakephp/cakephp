@@ -72,17 +72,24 @@ class SelectBox {
 
 	protected function _renderOptions($data) {
 		$out = [];
-		if (!empty($data['empty'])) {
-			// TODO
+		if (!isset($data['options'])) {
+			$data['options'] = [];
 		}
-		if (empty($data['options'])) {
+		$options = $data['options'];
+
+		if (!empty($data['empty'])) {
+			$value = $data['empty'] === true ? '' : $data['empty'];
+			$empty = ['' => $value];
+			$options = $empty + $options;
+		}
+		if (empty($options)) {
 			return $out;
 		}
 
 		$selected = isset($data['value']) ? $data['value'] : null;
 		$selectedArray = is_array($selected);
 
-		foreach ($data['options'] as $key => $val) {
+		foreach ($options as $key => $val) {
 			$template = 'option';
 			$strict = !is_numeric($key);
 
