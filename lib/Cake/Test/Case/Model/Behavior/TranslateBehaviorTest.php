@@ -355,6 +355,31 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * Test loading fields with 0 as the translated value.
+ */
+	public function testFetchTranslationsWithZero() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$model = new TranslatedItem();
+		$translateModel = $model->translateModel();
+		$translateModel->updateAll(array('content' => '"0"'));
+		$model->locale = 'eng';
+
+		$result = $model->read(null, 1);
+		$expected = array(
+			'TranslatedItem' => array(
+				'id' => 1,
+				'slug' => 'first_translated',
+				'locale' => 'eng',
+				'title' => '0',
+				'content' => '0',
+				'translated_article_id' => 1,
+			)
+		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * testLocaleMultiple method
  *
  * @return void
