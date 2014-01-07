@@ -971,7 +971,7 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->numbers(true);
 		$expected = array(
-			array('li' => array('class' => 'first')), array('a' => array('href' => '/index', 'rel' => 'first')), 'first', '/a', '/li',
+			array('li' => array('class' => 'first')), array('a' => array('href' => '/index')), 'first', '/a', '/li',
 			array('li' => array('class' => 'ellipsis')), '...', '/li',
 			array('li' => array()), array('a' => array('href' => '/index?page=4')), '4', '/a', '/li',
 			array('li' => array()), array('a' => array('href' => '/index?page=5')), '5', '/a', '/li',
@@ -983,7 +983,7 @@ class PaginatorHelperTest extends TestCase {
 			array('li' => array()), array('a' => array('href' => '/index?page=11')), '11', '/a', '/li',
 			array('li' => array()), array('a' => array('href' => '/index?page=12')), '12', '/a', '/li',
 			array('li' => array('class' => 'ellipsis')), '...', '/li',
-			array('li' => array('class' => 'last')), array('a' => array('href' => '/index?page=15', 'rel' => 'last')), 'last', '/a', '/li',
+			array('li' => array('class' => 'last')), array('a' => array('href' => '/index?page=15')), 'last', '/a', '/li',
 		);
 		$this->assertTags($result, $expected);
 
@@ -1439,7 +1439,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->first('<<');
 		$expected = array(
 			'li' => array('class' => 'first'),
-			'a' => array('href' => '/index', 'rel' => 'first'),
+			'a' => array('href' => '/index'),
 			'&lt;&lt;',
 			'/a',
 			'/li'
@@ -1494,7 +1494,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->first('first', ['model' => 'Client']);
 		$expected = array(
 			'li' => array('class' => 'first'),
-			'a' => array('href' => '/index', 'rel' => 'first'),
+			'a' => array('href' => '/index'),
 			'first',
 			'/a',
 			'/li'
@@ -1531,7 +1531,7 @@ class PaginatorHelperTest extends TestCase {
 		$expected = array(
 			'li' => ['class' => 'first'],
 			array('a' => array(
-				'href' => Configure::read('App.fullBaseUrl') . '/index?sort=Article.title&amp;direction=DESC', 'rel' => 'first'
+				'href' => Configure::read('App.fullBaseUrl') . '/index?sort=Article.title&amp;direction=DESC'
 			)),
 			'&lt;&lt; first',
 			'/a',
@@ -1550,7 +1550,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->first();
 		$expected = array(
 			'li' => ['class' => 'first'],
-			'a' => array('href' => '/index', 'rel' => 'first'),
+			'a' => array('href' => '/index'),
 			'&lt;&lt; first',
 			'/a',
 			'/li'
@@ -1606,7 +1606,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->last();
 		$expected = array(
 			'li' => ['class' => 'last'],
-			'a' => array('href' => '/index?page=7', 'rel' => 'last'),
+			'a' => array('href' => '/index?page=7'),
 			'last &gt;&gt;',
 			'/a',
 			'/li'
@@ -1664,7 +1664,6 @@ class PaginatorHelperTest extends TestCase {
 			'li' => ['class' => 'last'],
 			'a' => array(
 				'href' => '/index?page=15&amp;sort=Client.name&amp;direction=DESC',
-				'rel' => 'last'
 			),
 				'last &gt;&gt;', '/a',
 			'/li',
@@ -1713,7 +1712,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->last('last', ['model' => 'Client']);
 		$expected = array(
 			'li' => array('class' => 'last'),
-			'a' => array('href' => '/index?page=5', 'rel' => 'last'),
+			'a' => array('href' => '/index?page=5'),
 			'last',
 			'/a',
 			'/li'
