@@ -406,39 +406,6 @@ class TimeTest extends TestCase {
 	}
 
 /**
- * testNiceShort method
- *
- * @return void
- */
-	public function testNiceShort() {
-		$time = time();
-		$this->assertEquals('Today, ' . date('H:i', $time), $this->Time->niceShort($time));
-
-		$time = time() - DAY;
-		$this->assertEquals('Yesterday, ' . date('H:i', $time), $this->Time->niceShort($time));
-
-		$time = time() + DAY;
-		$this->assertEquals('Tomorrow, ' . date('H:i', $time), $this->Time->niceShort($time));
-
-		$time = strtotime('+6 days');
-		$this->assertEquals('On ' . date('l F d, H:i', $time), $this->Time->niceShort($time));
-
-		$time = strtotime('-6 days');
-		$this->assertEquals(date('l F d, H:i', $time), $this->Time->niceShort($time));
-
-		date_default_timezone_set('Europe/London');
-		$result = $this->Time->niceShort('2005-01-15 10:00:00', new \DateTimeZone('Europe/Brussels'));
-		$this->assertEquals('Jan 15th 2005, 11:00', $result);
-
-		date_default_timezone_set('UTC');
-		$result = $this->Time->niceShort(null, 'America/New_York');
-		$expected = $this->Time->niceShort(time(), 'America/New_York');
-		$this->assertEquals($expected, $result);
-
-		$this->_restoreSystemTimezone();
-	}
-
-/**
  * testDaysAsSql method
  *
  * @return void

@@ -48,15 +48,6 @@ class Time {
 	public static $wordFormat = 'j/n/y';
 
 /**
- * The format to use when formatting a time using `Cake\Utility\Time::niceShort()`
- * and the difference is between 3 and 7 days
- *
- * @var string
- * @see Cake\Utility\Time::niceShort()
- */
-	public static $niceShortFormat = '%B %d, %H:%M';
-
-/**
  * The format to use when formatting a time using `Cake\Utility\Time::timeAgoInWords()`
  * and the difference is less than `Cake\Utility\Time::$wordEnd`
  *
@@ -330,62 +321,6 @@ class Time {
 			$format = static::$niceFormat;
 		}
 		return static::_strftime(static::convertSpecifiers($format, $date), $date);
-	}
-
-/**
- * Returns a formatted descriptive date string for given datetime string.
- *
- * If the given date is today, the returned string could be "Today, 16:54".
- * If the given date is tomorrow, the returned string could be "Tomorrow, 16:54".
- * If the given date was yesterday, the returned string could be "Yesterday, 16:54".
- * If the given date is within next or last week, the returned string could be "On Thursday, 16:54".
- * If $dateString's year is the current year, the returned string does not
- * include mention of the year.
- *
- * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
- * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
- * @return string Described, relative date string
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::niceShort
- */
-	public static function niceShort($dateString = null, $timezone = null) {
-		if (!$dateString) {
-			$dateTime = new \DateTime;
-			$dateString = $dateTime->getTimestamp();
-		}
-		$date = static::fromString($dateString, $timezone);
-
-		if (static::isToday($dateString, $timezone)) {
-			return __d('cake', 'Today, %s', static::_strftime("%H:%M", $date));
-		}
-		if (static::wasYesterday($dateString, $timezone)) {
-			return __d('cake', 'Yesterday, %s', static::_strftime("%H:%M", $date));
-		}
-		if (static::isTomorrow($dateString, $timezone)) {
-			return __d('cake', 'Tomorrow, %s', static::_strftime("%H:%M", $date));
-		}
-
-		$d = static::_strftime("%w", $date);
-		$day = array(
-			__d('cake', 'Sunday'),
-			__d('cake', 'Monday'),
-			__d('cake', 'Tuesday'),
-			__d('cake', 'Wednesday'),
-			__d('cake', 'Thursday'),
-			__d('cake', 'Friday'),
-			__d('cake', 'Saturday')
-		);
-		if (static::wasWithinLast('7 days', $dateString, $timezone)) {
-			return sprintf('%s %s', $day[$d], static::_strftime(static::$niceShortFormat, $date));
-		}
-		if (static::isWithinNext('7 days', $dateString, $timezone)) {
-			return __d('cake', 'On %s %s', $day[$d], static::_strftime(static::$niceShortFormat, $date));
-		}
-
-		$y = '';
-		if (!static::isThisYear($date)) {
-			$y = ' %Y';
-		}
-		return static::_strftime(static::convertSpecifiers("%b %eS{$y}, %H:%M", $date), $date);
 	}
 
 /**
