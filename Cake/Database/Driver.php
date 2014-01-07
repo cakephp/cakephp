@@ -144,6 +144,39 @@ abstract class Driver {
 	}
 
 /**
+ * Returns a callable function that will be used to transform a passed Query object.
+ * This function, in turn, will return an instance of a Query object that has been
+ * transformed to accommodate any specificities of the SQL dialect in use.
+ *
+ * @param string $type the type of query to be transformed
+ * (select, insert, update, delete)
+ * @return callable
+ */
+	public abstract function queryTranslator($type);
+
+/**
+ * Get the schema dialect.
+ *
+ * Used by Cake\Database\Schema package to reflect schema and
+ * generate schema.
+ *
+ * If all the tables that use this Driver specify their
+ * own schemas, then this may return null.
+ *
+ * @return Cake\Database\Schema\BaseSchema
+ */
+	public abstract function schemaDialect();
+
+/**
+ * Quotes a database identifier (a column name, table name, etc..) to
+ * be used safely in queries without the risk of using reserved words
+ *
+ * @param string $identifier
+ * @return string
+ */
+	public abstract function quoteIdentifier($identifier);
+
+/**
  * Escapes values for use in schema definitions.
  *
  * @param mixed $value The value to escape.

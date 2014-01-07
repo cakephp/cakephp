@@ -80,4 +80,40 @@ class TestSource extends Driver {
 	public function quote($value, $type) {
 	}
 
+/**
+ * Returns a callable function that will be used to transform a passed Query object.
+ * This function, in turn, will return an instance of a Query object that has been
+ * transformed to accommodate any specificities of the SQL dialect in use.
+ *
+ * @param string $type the type of query to be transformed
+ * (select, insert, update, delete)
+ * @return callable
+ */
+	public function queryTranslator($type) {
+	}
+
+/**
+ * Get the schema dialect.
+ *
+ * Used by Cake\Database\Schema package to reflect schema and
+ * generate schema.
+ *
+ * If all the tables that use this Driver specify their
+ * own schemas, then this may return null.
+ *
+ * @return Cake\Database\Schema\BaseSchema
+ */
+	public function schemaDialect() {
+	}
+
+/**
+ * Quotes a database identifier (a column name, table name, etc..) to
+ * be used safely in queries without the risk of using reserved words
+ *
+ * @param string $identifier
+ * @return string
+ */
+	public function quoteIdentifier($identifier) {
+	}
+
 }

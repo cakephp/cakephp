@@ -504,7 +504,7 @@ class Connection {
 
 /**
  * Quotes a database identifier (a column name, table name, etc..) to
- * be used safely in queries without the risk of using reserver words
+ * be used safely in queries without the risk of using reserved words
  *
  * @param string $identifier
  * @return string
