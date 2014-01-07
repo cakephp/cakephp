@@ -382,9 +382,6 @@ class ExtractTaskTest extends TestCase {
 		$this->assertTrue(file_exists($this->path . DS . 'cake.pot'));
 		$result = file_get_contents($this->path . DS . 'cake.pot');
 
-		$pattern = '/msgid "Yesterday, %s"\nmsgstr ""\n/';
-		$this->assertRegExp($pattern, $result);
-
 		$pattern = '/#: Console\/Templates\//';
 		$this->assertNotRegExp($pattern, $result);
 
