@@ -15,7 +15,6 @@
 namespace Cake\Test\TestCase\View\Input;
 
 use Cake\TestSuite\TestCase;
-use Cake\View\Input\Context;
 use Cake\View\Input\SelectBox;
 use Cake\View\StringTemplate;
 
@@ -43,8 +42,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderNoOptions() {
-		$context = new Context();
-		$select = new SelectBox($this->templates, $context);
+		$select = new SelectBox($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
@@ -64,8 +62,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$context = new Context();
-		$select = new SelectBox($this->templates, $context);
+		$select = new SelectBox($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
@@ -87,8 +84,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderSelected() {
-		$context = new Context();
-		$select = new SelectBox($this->templates, $context);
+		$select = new SelectBox($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
@@ -175,7 +171,7 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderEmptyOption() {
-		$select = new SelectBox($this->templates, $context);
+		$select = new SelectBox($this->templates);
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',

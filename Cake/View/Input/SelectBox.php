@@ -14,7 +14,6 @@
  */
 namespace Cake\View\Input;
 
-use Cake\View\Input\Context;
 use Cake\View\StringTemplate;
 
 /**
@@ -48,11 +47,9 @@ class SelectBox {
 	protected $_minimizedAttributeFormat = '%s="%s"';
 
 	protected $_templates;
-	protected $_context;
 
-	public function __construct($templates, $context) {
+	public function __construct($templates) {
 		$this->_templates = $templates;
-		$this->_context = $context;
 	}
 
 	public function render($data) {
