@@ -88,13 +88,8 @@ class SelectBox {
 
 		foreach ($options as $key => $val) {
 			$template = 'option';
-			$strict = !is_numeric($key);
-
-			if (
-				isset($selected) &&
-				(!$selectedArray && (string)$key === (string)$selected) ||
-				($selectedArray && in_array((string)$key, $selected, $strict))
-			) {
+			$isSelected = $this->_isSelected($key, $selected);
+			if ($isSelected) {
 				$template = 'optionSelected';
 			}
 
@@ -104,6 +99,18 @@ class SelectBox {
 			]);
 		}
 		return $out;
+	}
+
+	protected function _isSelected($key, $selected) {
+		if ($selected === null) {
+			return false;
+		}
+		$isArray = is_array($selected);
+		if (!$isArray) {
+			return (string)$key === (string)$selected;
+		}
+		$strict = !is_numeric($key);
+		return in_array((string)$key, $selected, $strict);
 	}
 
 	protected function _parseAttributes($options, $exclude = null) {

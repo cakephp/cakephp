@@ -200,11 +200,36 @@ class SelectBoxTest extends TestCase {
 	}
 
 /**
- * test rendering a disabled element
+ * test rendering a totally disabled element
  *
  * @return void
  */
 	public function testRenderDisabled() {
+		$select = new SelectBox($this->templates);
+		$data = [
+			'disabled' => true,
+			'name' => 'Birds[name]',
+			'options' => ['a' => 'Albatross', 'b' => 'Budgie']
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+				'disabled' => 'disabled',
+			],
+			['option' => ['value' => 'a']], 'Albatross', '/option',
+			['option' => ['value' => 'b']], 'Budgie', '/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test rendering a disabled element
+ *
+ * @return void
+ */
+	public function testRenderDisabledMultiple() {
 		$this->markTestIncomplete('Not done');
 	}
 
