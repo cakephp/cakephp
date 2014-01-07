@@ -157,7 +157,7 @@ abstract class Driver {
 /**
  * Get the schema dialect.
  *
- * Used by Cake\Schema package to reflect schema and
+ * Used by Cake\Database\Schema package to reflect schema and
  * generate schema.
  *
  * If all the tables that use this Driver specify their
@@ -169,7 +169,7 @@ abstract class Driver {
 
 /**
  * Quotes a database identifier (a column name, table name, etc..) to
- * be used safely in queries without the risk of using reserver words
+ * be used safely in queries without the risk of using reserved words
  *
  * @param string $identifier
  * @return string
