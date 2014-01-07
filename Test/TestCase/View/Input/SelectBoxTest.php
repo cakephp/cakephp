@@ -26,8 +26,7 @@ class SelectBoxTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$templates = [
-			'select' => '<select name="{{name}}" {{attrs}}>{{content}}</select>',
-			'selectMultiple' => '<select name="{{name}}" multiple="multiple" {{attrs}}>{{content}}</select>',
+			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
 			'option' => '<option value="{{name}}">{{value}}</option>',
 			'optionSelected' => '<option value="{{name}}" selected="selected">{{value}}</option>',
 			'optgroup' => '<optgroup label="{{label}}">{{content}}</optgroup>',
@@ -126,7 +125,25 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderMultipleSelect() {
-		$this->markTestIncomplete('Not done');
+		$select = new SelectBox($this->templates);
+		$data = [
+			'id' => 'BirdName',
+			'name' => 'Birds[name]',
+			'multiple' => true,
+			'options' => ['a' => 'Albatross', 'b' => 'Budgie']
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+				'id' => 'BirdName',
+				'multiple' => 'multiple',
+			],
+			['option' => ['value' => 'a']], 'Albatross', '/option',
+			['option' => ['value' => 'b']], 'Budgie', '/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -135,7 +152,33 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderMultipleSelected() {
-		$this->markTestIncomplete('Not done');
+		$select = new SelectBox($this->templates);
+		$data = [
+			'multiple' => true,
+			'id' => 'BirdName',
+			'name' => 'Birds[name]',
+			'value' => ['1', '2', 'burp'],
+			'options' => [
+				1 => 'one',
+				'1x' => 'one x',
+				'2' => 'two',
+				'2x' => 'two x',
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+				'multiple' => 'multiple',
+				'id' => 'BirdName'
+			],
+			['option' => ['value' => '1', 'selected' => 'selected']], 'one', '/option',
+			['option' => ['value' => '1x']], 'one x', '/option',
+			['option' => ['value' => '2', 'selected' => 'selected']], 'two', '/option',
+			['option' => ['value' => '2x']], 'two x', '/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
