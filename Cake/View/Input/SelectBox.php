@@ -59,6 +59,10 @@ class SelectBox {
 		$options = $this->_renderOptions($data);
 		$name = $data['name'];
 		unset($data['name'], $data['options'], $data['empty'], $data['value']);
+		if (isset($data['disabled']) && is_array($data['disabled'])) {
+			unset($data['disabled']);
+		}
+
 		$attrs = $this->_parseAttributes($data);
 		return $this->_templates->format('select', [
 			'name' => $name,
@@ -84,13 +88,20 @@ class SelectBox {
 		}
 
 		$selected = isset($data['value']) ? $data['value'] : null;
-		$selectedArray = is_array($selected);
+		$disabled = null;
+		if (isset($data['disabled']) && is_array($data['disabled'])) {
+			$disabled = $data['disabled'];
+		}
 
 		foreach ($options as $key => $val) {
 			$template = 'option';
 			$isSelected = $this->_isSelected($key, $selected);
+			$isDisabled = $this->_isDisabled($key, $disabled);
 			if ($isSelected) {
-				$template = 'optionSelected';
+				$template .= 'Selected';
+			}
+			if ($isDisabled) {
+				$template .= 'Disabled';
 			}
 
 			$out[] = $this->_templates->format($template, [
@@ -111,6 +122,14 @@ class SelectBox {
 		}
 		$strict = !is_numeric($key);
 		return in_array((string)$key, $selected, $strict);
+	}
+
+	protected function _isDisabled($key, $disabled) {
+		if ($disabled === null) {
+			return false;
+		}
+		$strict = !is_numeric($key);
+		return in_array((string)$key, $disabled, $strict);
 	}
 
 	protected function _parseAttributes($options, $exclude = null) {

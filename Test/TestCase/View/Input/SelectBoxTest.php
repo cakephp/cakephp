@@ -29,6 +29,8 @@ class SelectBoxTest extends TestCase {
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
 			'option' => '<option value="{{name}}">{{value}}</option>',
 			'optionSelected' => '<option value="{{name}}" selected="selected">{{value}}</option>',
+			'optionDisabled' => '<option value="{{name}}" disabled="disabled">{{value}}</option>',
+			'optionSelectedDisabled' => '<option value="{{name}}" selected="selected" disabled="disabled">{{value}}</option>',
 			'optgroup' => '<optgroup label="{{label}}">{{content}}</optgroup>',
 		];
 		$this->templates = new StringTemplate();
@@ -209,7 +211,8 @@ class SelectBoxTest extends TestCase {
 		$data = [
 			'disabled' => true,
 			'name' => 'Birds[name]',
-			'options' => ['a' => 'Albatross', 'b' => 'Budgie']
+			'options' => ['a' => 'Albatross', 'b' => 'Budgie'],
+			'value' => 'a',
 		];
 		$result = $select->render($data);
 		$expected = [
@@ -217,7 +220,7 @@ class SelectBoxTest extends TestCase {
 				'name' => 'Birds[name]',
 				'disabled' => 'disabled',
 			],
-			['option' => ['value' => 'a']], 'Albatross', '/option',
+			['option' => ['value' => 'a', 'selected' => 'selected']], 'Albatross', '/option',
 			['option' => ['value' => 'b']], 'Budgie', '/option',
 			'/select'
 		];
@@ -230,7 +233,34 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderDisabledMultiple() {
-		$this->markTestIncomplete('Not done');
+		$select = new SelectBox($this->templates);
+		$data = [
+			'disabled' => ['a', 'c'],
+			'value' => 'a',
+			'name' => 'Birds[name]',
+			'options' => [
+				'a' => 'Albatross',
+				'b' => 'Budgie',
+				'c' => 'Canary',
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+			],
+			['option' => ['value' => 'a', 'selected' => 'selected', 'disabled' => 'disabled']],
+			'Albatross',
+			'/option',
+			['option' => ['value' => 'b']],
+			'Budgie',
+			'/option',
+			['option' => ['value' => 'c', 'disabled' => 'disabled']],
+			'Canary',
+			'/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -282,6 +312,15 @@ class SelectBoxTest extends TestCase {
 		$data['value'] = false;
 		$result = $select->render($data);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test rendering with disabling escaping.
+ *
+ * @return void
+ */
+	public function testRenderEscapingOption() {
+		$this->markTestIncomplete('Not done');
 	}
 
 }
