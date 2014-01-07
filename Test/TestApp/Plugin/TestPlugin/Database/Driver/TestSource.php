@@ -89,7 +89,8 @@ class TestSource extends Driver {
  * (select, insert, update, delete)
  * @return callable
  */
-	public function queryTranslator($type);
+	public function queryTranslator($type) {
+	}
 
 /**
  * Get the schema dialect.
@@ -102,7 +103,8 @@ class TestSource extends Driver {
  *
  * @return Cake\Database\Schema\BaseSchema
  */
-	public function schemaDialect();
+	public function schemaDialect() {
+	}
 
 /**
  * Quotes a database identifier (a column name, table name, etc..) to
@@ -111,6 +113,7 @@ class TestSource extends Driver {
  * @param string $identifier
  * @return string
  */
-	public function quoteIdentifier($identifier);
+	public function quoteIdentifier($identifier) {
+	}
 
 }
