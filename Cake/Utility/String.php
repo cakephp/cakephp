@@ -505,7 +505,7 @@ class String {
  *
  * ### Options:
  *
- * - `ellipsis` Will be used as Ending and appended to the trimmed string (`ending` is deprecated)
+ * - `ellipsis` Will be used as ending and appended to the trimmed string
  * - `exact` If false, $text will not be cut mid-word
  * - `html` If true, HTML tags would be handled correctly
  *
@@ -519,9 +519,7 @@ class String {
 		$default = array(
 			'ellipsis' => '...', 'exact' => true, 'html' => false
 		);
-		if (isset($options['ending'])) {
-			$default['ellipsis'] = $options['ending'];
-		} elseif (!empty($options['html']) && Configure::read('App.encoding') === 'UTF-8') {
+		if (!empty($options['html']) && Configure::read('App.encoding') === 'UTF-8') {
 			$default['ellipsis'] = "\xe2\x80\xa6";
 		}
 		$options = array_merge($default, $options);
