@@ -821,7 +821,7 @@ class Query extends DatabaseQuery {
 		if ($this->clause('group') === [] && $this->mapReduce() === []) {
 			$this->select(['count' => $this->func()->count('*')], true)
 				->hydrate(false);
-			return $this->first()['count'];
+			return (int)$this->first()['count'];
 		}
 		$results = $this->execute();
 		return count($results);
