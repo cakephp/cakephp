@@ -258,7 +258,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that using belongs to with a table having a multi column primary
+ * Tests that using belongsto with a table having a multi column primary
  * key will work if the foreign key is passed
  *
  * @return void
@@ -293,7 +293,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
- * Tests that using belongs to with a table having a multi column primary
+ * Tests that using belongsto with a table having a multi column primary
  * key will work if the foreign key is passed
  *
  * @expectedException \RuntimeException
@@ -312,4 +312,5 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$association = new BelongsTo('Companies', $config);
 		$association->attachTo($query);
 	}
+
 }

@@ -511,6 +511,61 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that using hasMany with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKey() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$this->author->primaryKey(['id', 'site_id']);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true],
+			'foreignKey' => ['author_id', 'author_site_id']
+		];
+		$field1 = new IdentifierExpression('Articles.author_id');
+		$field2 = new IdentifierExpression('Articles.author_site_id');
+		$association = new HasMany('Articles', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Articles' => [
+				'conditions' => new QueryExpression([
+					'Articles.is_active' => true,
+					['Authors.id' => $field1, 'Authors.site_id' => $field2]
+				]),
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that using hasMany with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Cannot match provided foreignKey, got 1 columns expected 2
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKeyMistmatch() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$this->author->primaryKey(['id', 'site_id']);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true],
+			'foreignKey' => 'author_id'
+		];
+		$field1 = new IdentifierExpression('Articles.author_id');
+		$field2 = new IdentifierExpression('Articles.author_site_id');
+		$association = new HasMany('Articles', $config);
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
  * Tests that by supplying a query builder function, it is possible to add fields
  * and conditions to an association
  *
@@ -649,4 +704,5 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$association = new HasMany('Articles', $config);
 		$association->save($entity);
 	}
+
 }
