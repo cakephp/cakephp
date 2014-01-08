@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -1491,12 +1489,12 @@ class QueryTest extends TestCase {
 	public function testCount() {
 		$table = TableRegistry::get('articles');
 		$result = $table->find('all')->count();
-		$this->assertEquals(3, $result);
+		$this->assertSame(3, $result);
 
 		$query = $table->find('all')
 			->where(['id >' => 1]);
 		$result = $query->count();
-		$this->assertEquals(2, $result);
+		$this->assertSame(2, $result);
 
 		$result = $query->all();
 		$this->assertEquals(['count' => 2], $result->first());
