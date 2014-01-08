@@ -84,7 +84,7 @@ abstract class Association {
 	protected $_canBeJoined = false;
 
 /**
- * The className of the target table object
+ * The class name of the target table object
  *
  * @var string
  */
@@ -107,7 +107,7 @@ abstract class Association {
 
 /**
  * Whether the records on the target table are dependent on the source table,
- * often used to indicate that records should be removed is the owning record in
+ * often used to indicate that records should be removed if the owning record in
  * the source table is deleted.
  *
  * @var boolean
@@ -248,7 +248,7 @@ abstract class Association {
 
 /**
  * Sets a list of conditions to be always included when fetching records from
- * the target association. If no parameters are passed current list is returned
+ * the target association. If no parameters are passed the current list is returned
  *
  * @param array $conditions list of conditions to be used
  * @see Cake\Database\Query::where() for examples on the format of the array
@@ -263,7 +263,7 @@ abstract class Association {
 
 /**
  * Sets the name of the field representing the foreign key to the target table.
- * If no parameters are passed current field is returned
+ * If no parameters are passed the current field is returned
  *
  * @param string $key the key to be used to link both tables together
  * @return string
@@ -278,10 +278,10 @@ abstract class Association {
 /**
  * Sets whether the records on the target table are dependent on the source table.
  *
- * This is primarily used to indicate that records should be removed is the owning record in
+ * This is primarily used to indicate that records should be removed if the owning record in
  * the source table is deleted.
  *
- * If no parameters are passed current setting is returned.
+ * If no parameters are passed the current setting is returned.
  *
  * @param boolean $dependent
  * @return boolean
@@ -305,7 +305,7 @@ abstract class Association {
 
 /**
  * Sets the type of join to be used when adding the association to a query.
- * If no arguments are passed, currently configured type is returned.
+ * If no arguments are passed, the currently configured type is returned.
  *
  * @param string $type the join type to be used (e.g. INNER)
  * @return string
@@ -320,7 +320,7 @@ abstract class Association {
 /**
  * Sets the property name that should be filled with data from the target table
  * in the source table record.
- * If no arguments are passed, currently configured type is returned.
+ * If no arguments are passed, the currently configured type is returned.
  *
  * @param string $name
  * @return string
@@ -339,7 +339,7 @@ abstract class Association {
  * Sets the strategy name to be used to fetch associated records. Keep in mind
  * that some association types might not implement but a default strategy,
  * rendering any changes to this setting void.
- * If no arguments are passed, currently configured strategy is returned.
+ * If no arguments are passed, the currently configured strategy is returned.
  *
  * @param string $name
  * @return string
@@ -472,7 +472,7 @@ abstract class Association {
 	}
 
 /**
- * Returns a single or multiple conditions to be appended to the generated join
+ * Returns a single or multiple condition(s) to be appended to the generated join
  * clause for getting the results on the target table. If false is returned then
  * it will not attach any new conditions to the join clause
  *
