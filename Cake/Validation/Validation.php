@@ -634,7 +634,6 @@ class Validation {
 			switch ($country) {
 				case 'us':
 				case 'ca':
-				case 'can': // deprecated three-letter-code
 				case 'all':
 					// includes all NANPA members.
 					// see http://en.wikipedia.org/wiki/North_American_Numbering_Plan#List_of_NANPA_countries_and_territories

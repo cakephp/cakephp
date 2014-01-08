@@ -606,7 +606,7 @@ class AuthComponent extends Component {
 			$this->Session->renew();
 			$this->Session->write(static::$sessionKey, $user);
 		}
-		return $this->loggedIn();
+		return (bool)$this->user();
 	}
 
 /**
@@ -779,15 +779,6 @@ class AuthComponent extends Component {
 			$this->_authenticateObjects[] = new $className($this->_registry, $settings);
 		}
 		return $this->_authenticateObjects;
-	}
-
-/**
- * Check whether or not the current user has data in the session, and is considered logged in.
- *
- * @return boolean true if the user is logged in, false otherwise
- */
-	public function loggedIn() {
-		return (bool)$this->user();
 	}
 
 /**

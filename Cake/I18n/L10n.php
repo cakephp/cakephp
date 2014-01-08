@@ -57,8 +57,7 @@ class L10n {
  * Default language.
  *
  * If config value 'Config.language' is set in an application this will be set
- * as a fall back else if DEFAULT_LANGUAGE it defined it will be used.
- * Constant DEFAULT_LANGUAGE has been deprecated in 2.4
+ * as a fall back.
  *
  * @var string
  */
@@ -349,7 +348,7 @@ class L10n {
  * If $language is null it attempt to get settings from L10n::_autoLanguage(); if this fails
  * the method will get the settings from L10n::_setLanguage();
  *
- * @param string $language Language (if null will use DEFAULT_LANGUAGE if defined)
+ * @param string $language Language (if null will use config value 'Config.language' if set)
  * @return mixed
  */
 	public function get($language = null) {

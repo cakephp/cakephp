@@ -504,22 +504,6 @@ Isaacson</strong>", aquí os dejamos la dirección de amazon donde
 podeís adquirirla.</span></p>
 <p><span style="font-size: medium;"><a>... </a></span></p>';
 		$this->assertEquals($expected, $result);
-
-		// test deprecated `ending` (`ellipsis` taking precedence if both are defined)
-		$result = $this->Text->truncate($text1, 31, array(
-			'ending' => '.',
-			'exact' => false,
-		));
-		$expected = 'The quick brown fox jumps.';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Text->truncate($text1, 31, array(
-			'ellipsis' => '..',
-			'ending' => '.',
-			'exact' => false,
-		));
-		$expected = 'The quick brown fox jumps..';
-		$this->assertEquals($expected, $result);
 	}
 
 /**

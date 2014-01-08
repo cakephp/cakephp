@@ -131,10 +131,7 @@ class CommandListShell extends Shell {
 
 		$parser->description(
 			__d('cake_console', 'Get the list of available shells for this CakePHP application.')
-		)->addOption('sort', [
-			'help' => __d('cake_console', 'Does nothing (deprecated)'),
-			'boolean' => true
-		])->addOption('xml', [
+		)->addOption('xml', [
 			'help' => __d('cake_console', 'Get the listing as XML.'),
 			'boolean' => true
 		]);

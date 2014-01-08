@@ -177,7 +177,7 @@ class AuthComponentTest extends TestCase {
 		$result = $this->Auth->login();
 		$this->assertTrue($result);
 
-		$this->assertTrue($this->Auth->loggedIn());
+		$this->assertTrue((bool)$this->Auth->user());
 		$this->assertEquals($user, $this->Auth->user());
 	}
 
@@ -1075,7 +1075,7 @@ class AuthComponentTest extends TestCase {
  * @return void
  */
 	public function testLoginWithUserData() {
-		$this->assertFalse($this->Auth->loggedIn());
+		$this->assertFalse((bool)$this->Auth->user());
 
 		$user = array(
 			'username' => 'mariano',
@@ -1084,7 +1084,7 @@ class AuthComponentTest extends TestCase {
 			'updated' => new \DateTime('2007-03-17 01:18:31')
 		);
 		$this->assertTrue($this->Auth->login($user));
-		$this->assertTrue($this->Auth->loggedIn());
+		$this->assertTrue((bool)$this->Auth->user());
 		$this->assertEquals($user['username'], $this->Auth->user('username'));
 	}
 
