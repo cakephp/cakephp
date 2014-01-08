@@ -51,11 +51,15 @@ define('TEST_APP', ROOT . '/Test/TestApp/');
 
 require CORE_PATH . 'Cake/Core/ClassLoader.php';
 
-(new Cake\Core\ClassLoader('Cake', ROOT))->register();
-(new Cake\Core\ClassLoader('TestApp', ROOT . '/Test'))->register();
-(new Cake\Core\ClassLoader('TestPlugin', CORE_TESTS . 'TestApp/Plugin/'))->register();
-(new Cake\Core\ClassLoader('TestPluginTwo', CORE_TESTS . 'TestApp/Plugin/'))->register();
-(new Cake\Core\ClassLoader('PluginJs', CORE_TESTS . 'TestApp/Plugin/'))->register();
+$loader = new Cake\Core\ClassLoader;
+$loader->register();
+
+$loader->addNamespace('Cake', ROOT . '/Cake');
+$loader->addNamespace('Cake\Test', ROOT . '/Test');
+$loader->addNamespace('TestApp', ROOT . '/Test/TestApp');
+$loader->addNamespace('TestPlugin', CORE_TESTS . 'TestApp/Plugin/TestPlugin');
+$loader->addNamespace('TestPluginTwo', CORE_TESTS . 'TestApp/Plugin/TestPluginTwo');
+$loader->addNamespace('PluginJs', CORE_TESTS . 'TestApp/Plugin/PluginJs');
 
 require CORE_PATH . 'Cake/bootstrap.php';
 

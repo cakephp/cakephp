@@ -22,65 +22,15 @@ namespace Cake\Core;
 class ClassLoader {
 
 /**
- * File extension
+ * An associative array where the key is a namespace prefix and the value
+ * is an array of base directories for classes in that namespace.
  *
- * @var string
+ * @var array
  */
-	protected $_fileExtension;
+	protected $_prefixes = [];
 
 /**
- * The path a given namespace maps to.
- *
- * @var string
- */
-	protected $_path;
-
-/**
- * Registered namespace
- *
- * @var string
- */
-	protected $_namespace;
-
-/**
- * Store the namespace length for performance
- *
- * @var integer
- */
-	protected $_namespaceLength;
-
-/**
- * Constructor
- *
- * @param string $ns The _namespace to use.
- */
-	public function __construct($ns = null, $path = null, $fileExtension = '.php') {
-		$this->_namespace = rtrim($ns, '\\') . '\\';
-		$this->_namespaceLength = strlen($this->_namespace);
-		$this->_path = $path;
-		$this->_fileExtension = '.php';
-	}
-
-/**
- * Gets the base include path for all class files in the _namespace of this class loader.
- *
- * @return string
- */
-	public function getIncludePath() {
-		return $this->_includePath;
-	}
-
-/**
- * Gets the file extension of class files in the _namespace of this class loader.
- *
- * @return string
- */
-	public function getFileExtension() {
-		return $this->_fileExtension;
-	}
-
-/**
- * Installs this class loader on the SPL autoload stack.
+ * Register loader with SPL autoloader stack.
  *
  * @return void
  */
@@ -89,33 +39,96 @@ class ClassLoader {
 	}
 
 /**
- * Uninstalls this class loader from the SPL autoloader stack.
+ * Adds a base directory for a namespace prefix.
  *
+ * @param string $prefix The namespace prefix.
+ * @param string $baseDir A base directory for class files in the
+ * namespace.
+ * @param bool $prepend If true, prepend the base directory to the stack
+ * instead of appending it; this causes it to be searched first rather
+ * than last.
  * @return void
  */
-	public function unregister() {
-		spl_autoload_unregister([$this, 'loadClass']);
+	public function addNamespace($prefix, $baseDir, $prepend = false) {
+		$prefix = trim($prefix, '\\') . '\\';
+
+		$baseDir = rtrim($baseDir, '/') . DIRECTORY_SEPARATOR;
+		$baseDir = rtrim($baseDir, DIRECTORY_SEPARATOR) . '/';
+
+		if (!isset($this->_prefixes[$prefix])) {
+			$this->_prefixes[$prefix] = [];
+		}
+
+		if ($prepend) {
+			array_unshift($this->_prefixes[$prefix], $baseDir);
+		} else {
+			array_push($this->_prefixes[$prefix], $baseDir);
+		}
 	}
 
 /**
- * Loads the given class or interface.
+ * Loads the class file for a given class name.
  *
- * @param string $className The name of the class to load.
- * @return boolean
+ * @param string $class The fully-qualified class name.
+ * @return mixed The mapped file name on success, or boolean false on
+ * failure.
  */
-	public function loadClass($className) {
-		if (strpos($className, 'Cake\\Test\\') === 0) {
-			$className = substr($className, 5);
-		} elseif (strpos($className, 'App\\Test\\') === 0) {
-			$className = substr($className, 4);
-		} elseif (substr($className, 0, $this->_namespaceLength) !== $this->_namespace) {
+	public function loadClass($class) {
+		$prefix = $class;
+
+		while (($pos = strrpos($prefix, '\\')) !== false) {
+			$prefix = substr($class, 0, $pos + 1);
+			$relativeClass = substr($class, $pos + 1);
+
+			$mappedFile = $this->_loadMappedFile($prefix, $relativeClass);
+			if ($mappedFile) {
+				return $mappedFile;
+			}
+
+			$prefix = rtrim($prefix, '\\');
+		}
+
+		return false;
+	}
+
+/**
+ * Load the mapped file for a namespace prefix and relative class.
+ *
+ * @param string $prefix The namespace prefix.
+ * @param string $relativeClass The relative class name.
+ * @return mixed Boolean false if no mapped file can be loaded, or the
+ * name of the mapped file that was loaded.
+ */
+	protected function _loadMappedFile($prefix, $relativeClass) {
+		if (!isset($this->_prefixes[$prefix])) {
 			return false;
 		}
-		$path = $this->_path . DS . str_replace('\\', DS, $className) . $this->_fileExtension;
-		if (!file_exists($path)) {
-			return false;
+
+		foreach ($this->_prefixes[$prefix] as $baseDir) {
+			$file = $baseDir .
+				str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
+			$file = $baseDir . str_replace('\\', '/', $relativeClass) . '.php';
+
+			if ($this->_requireFile($file)) {
+				return $file;
+			}
 		}
-		return require $path;
+
+		return false;
+	}
+
+/**
+ * If a file exists, require it from the file system.
+ *
+ * @param string $file The file to require.
+ * @return bool True if the file exists, false if not.
+ */
+	protected function _requireFile($file) {
+		if (file_exists($file)) {
+			require $file;
+			return true;
+		}
+		return false;
 	}
 
 }
