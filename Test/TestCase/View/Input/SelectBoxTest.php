@@ -28,7 +28,7 @@ class SelectBoxTest extends TestCase {
 		$templates = [
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
 			'option' => '<option value="{{name}}"{{attrs}}>{{value}}</option>',
-			'optgroup' => '<optgroup label="{{label}}">{{content}}</optgroup>',
+			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 		];
 		$this->templates = new StringTemplate();
 		$this->templates->add($templates);
@@ -279,6 +279,45 @@ class SelectBoxTest extends TestCase {
 		];
 		$this->assertTags($result, $expected);
 	}
+
+/**
+ * test rendering with option groups
+ *
+ * @return void
+ */
+	public function testRenderOptionGroupsWithAttributes() {
+		$select = new SelectBox($this->templates);
+		$data = [
+			'name' => 'Birds[name]',
+			'options' => [
+				[
+					'name' => 'Mammal',
+					'data-foo' => 'bar',
+					'options' => [
+						'beaver' => 'Beaver',
+						'elk' => 'Elk',
+					]
+				]
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+			],
+			['optgroup' => ['data-foo' => 'bar', 'label' => 'Mammal']],
+			['option' => ['value' => 'beaver']],
+			'Beaver',
+			'/option',
+			['option' => ['value' => 'elk']],
+			'Elk',
+			'/option',
+			'/optgroup',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
+	}
+
 
 /**
  * test rendering with option groups with traversable nodes

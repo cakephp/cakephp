@@ -57,6 +57,59 @@ class SelectBox {
  *   empty option.
  * - `escape` - Set to false to disable HTML escaping.
  *
+ * ### Options format
+ *
+ * The options option can take a variety of data format depending on
+ * the complexity of HTML you want generated.
+ *
+ * You can generate simple options using a basic associative array:
+ *
+ * {{{
+ * 'options' => ['elk' => 'Elk', 'beaver' => 'Beaver']
+ * }}}
+ *
+ * If you need to define additional attributes on your option elements
+ * you can use the complex form for options:
+ *
+ * {{{
+ * 'options' => [
+ *   ['name' => 'elk', 'value' => 'Elk', 'data-foo' => 'bar'],
+ * ]
+ * }}}
+ *
+ * This form **requires** that both the `name` and `value` keys be defined.
+ * If either is not set options will not be generated correctly.
+ *
+ * If you need to define option groups you can do those using nested arrays:
+ *
+ * {{{
+ * 'options' => [
+ *  'Mammals' => [
+ *    'elk' => 'Elk',
+ *    'beaver' => 'Beaver'
+ *  ]
+ * ]
+ * }}}
+ *
+ * And finally, if you need to put attributes on your optgroup elements you
+ * can do that with a more complex nested array form:
+ *
+ * {{{
+ * 'options' => [
+ *   [
+ *     'name' => 'Mammals',
+ *     'data-id' => 1,
+ *     'options' => [
+ *       'elk' => 'Elk',
+ *       'beaver' => 'Beaver'
+ *     ]
+ *  ],
+ * ]
+ * }}}
+ *
+ * You are free to mix each of the forms in the same option set, and
+ * nest complex types as required.
+ *
  * @param array $data Data to render with.
  * @return string A generated select box.
  * @throws \RuntimeException when the name attribute is empty.
@@ -96,7 +149,6 @@ class SelectBox {
  * @return array
  */
 	protected function _renderContent($data) {
-		$out = [];
 		$options = $data['options'];
 
 		if ($options instanceof Traversable) {
@@ -108,7 +160,7 @@ class SelectBox {
 			$options = ['' => $value] + $options;
 		}
 		if (empty($options)) {
-			return $out;
+			return [];
 		}
 
 		$selected = isset($data['value']) ? $data['value'] : null;
@@ -117,6 +169,28 @@ class SelectBox {
 			$disabled = $data['disabled'];
 		}
 		return $this->_renderOptions($options, $disabled, $selected, $data['escape']);
+	}
+
+/**
+ * Render the contents of an optgroup element.
+ *
+ * @param array $optgroup The opt group data.
+ */
+	protected function _renderOptgroup($label, $optgroup, $disabled, $selected, $escape) {
+		$opts = $optgroup;
+		$attrs = [];
+		if (isset($optgroup['options'], $optgroup['name'])) {
+			$opts = $optgroup['options'];
+			$label = $optgroup['name'];
+			$attrs = $optgroup;
+		}
+		$groupOptions = $this->_renderOptions($opts, $disabled, $selected, $escape);
+
+		return $this->_templates->format('optgroup', [
+			'label' => $escape ? h($label) : $label,
+			'content' => implode('', $groupOptions),
+			'attrs' => $this->_templates->formatAttributes($attrs, ['name', 'options']),
+		]);
 	}
 
 /**
@@ -134,12 +208,12 @@ class SelectBox {
 		$out = [];
 		foreach ($options as $key => $val) {
 			// Option groups
-			if (!is_int($key) && is_array($val) || $val instanceof Traversable) {
-				$groupOptions = $this->_renderOptions($val, $disabled, $selected, $escape);
-				$out[] = $this->_templates->format('optgroup', [
-					'label' => $escape ? h($key) : $key,
-					'content' => implode('', $groupOptions)
-				]);
+			$arrayVal = (is_array($val) || $val instanceof Traversable);
+			if (
+				(!is_int($key) && $arrayVal) ||
+				(is_int($key) && $arrayVal && isset($val['options']))
+			) {
+				$out[] = $this->_renderOptgroup($key, $val, $disabled, $selected, $escape);
 				continue;
 			}
 
