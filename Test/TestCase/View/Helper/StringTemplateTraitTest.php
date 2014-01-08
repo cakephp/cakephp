@@ -47,6 +47,8 @@ class StringTemplateTraitTest extends TestCase {
 
 		$result = $this->Template->templates(null);
 		$this->assertEquals($result, [
+			'attribute' => '{{name}}="{{value}}"',
+			'compactAttribute' => '{{name}}="{{value}}"',
 			'text' => '<p>{{text}}</p>'
 		]);
 	}
