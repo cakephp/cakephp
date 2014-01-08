@@ -101,8 +101,7 @@ class SelectBox {
 
 		if (!empty($data['empty'])) {
 			$value = $data['empty'] === true ? '' : $data['empty'];
-			$empty = ['' => $value];
-			$options = $empty + $options;
+			$options = ['' => $value] + $options;
 		}
 		if (empty($options)) {
 			return $out;
@@ -130,34 +129,37 @@ class SelectBox {
 	protected function _renderOptions($options, $disabled, $selected, $escape) {
 		$out = [];
 		foreach ($options as $key => $val) {
+			// Option groups
 			if (!is_int($key) && is_array($val) || $val instanceof Traversable) {
 				$groupOptions = $this->_renderOptions($val, $disabled, $selected, $escape);
 				$out[] = $this->_templates->format('optgroup', [
 					'label' => $escape ? h($key) : $key,
 					'content' => implode('', $groupOptions)
 				]);
-			} else {
-				$optAttrs = [
-					'name' => $key,
-					'value' => $val,
-				];
-				if (is_array($val) && isset($optAttrs['name'], $optAttrs['value'])) {
-					$optAttrs = $val;
-				}
-				if ($this->_isSelected($key, $selected)) {
-					$optAttrs['selected'] = true;
-				}
-				if ($this->_isDisabled($key, $disabled)) {
-					$optAttrs['disabled'] = true;
-				}
-				$optAttrs['escape'] = $escape;
-
-				$out[] = $this->_templates->format('option', [
-					'name' => $escape ? h($optAttrs['name']) : $optAttrs['name'],
-					'value' => $escape ? h($optAttrs['value']) : $optAttrs['value'],
-					'attrs' => $this->_templates->formatAttributes($optAttrs, ['name', 'value']),
-				]);
+				continue;
 			}
+
+			// Basic options
+			$optAttrs = [
+				'name' => $key,
+				'value' => $val,
+			];
+			if (is_array($val) && isset($optAttrs['name'], $optAttrs['value'])) {
+				$optAttrs = $val;
+			}
+			if ($this->_isSelected($key, $selected)) {
+				$optAttrs['selected'] = true;
+			}
+			if ($this->_isDisabled($key, $disabled)) {
+				$optAttrs['disabled'] = true;
+			}
+			$optAttrs['escape'] = $escape;
+
+			$out[] = $this->_templates->format('option', [
+				'name' => $escape ? h($optAttrs['name']) : $optAttrs['name'],
+				'value' => $escape ? h($optAttrs['value']) : $optAttrs['value'],
+				'attrs' => $this->_templates->formatAttributes($optAttrs, ['name', 'value']),
+			]);
 		}
 		return $out;
 	}
