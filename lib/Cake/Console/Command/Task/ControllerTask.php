@@ -128,8 +128,8 @@ class ControllerTask extends BakeTask {
 			}
 		}
 		
-		if ($controllersCreated === 0) {
-			$this->out(__d('cake_console', 'No Controllers were baked, Models need to exisit before Controllers can be baked.', $admin));			
+		if (!$controllersCreated) {
+			$this->out(__d('cake_console', 'No Controllers were baked, Models need to exist before Controllers can be baked.', $admin));			
 		}
 	}
 
