@@ -18,15 +18,47 @@ use Cake\View\StringTemplate;
 
 /**
  * Input widget class for generating a selectbox.
+ *
+ * This class is intended as an internal implementation detail
+ * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
 class SelectBox {
 
+/**
+ * Template instance.
+ *
+ * @var Cake\View\StringTemplate
+ */
 	protected $_templates;
 
+/**
+ * Constructor
+ *
+ * @param Cake\View\StringTemplate $templates
+ */
 	public function __construct($templates) {
 		$this->_templates = $templates;
 	}
 
+/**
+ * Render a select box form input.
+ *
+ * Render a select box input given a set of data. Supported keys
+ * are:
+ *
+ * - `name` - Set the input name.
+ * - `options` - An array of options.
+ * - `disabled` - Either true or an array of options to disable.
+ *    When true, the select element will be disabled.
+ * - `value` - Either a string or an array of options to mark as selected.
+ * - `empty` - Set to true to add an empty option at the top of the
+ *   option elements. Set to a string to define the display value of the
+ *   empty option.
+ * - `escape` - Set to false to disable HTML escaping.
+ *
+ * @param array $data Data to render with.
+ * @return string A generated select box.
+ */
 	public function render($data) {
 		$data += [
 			'name' => '',
@@ -55,6 +87,12 @@ class SelectBox {
 		]);
 	}
 
+/**
+ * Render the contents of the select element.
+ *
+ * @param array $data The context for rendering a select.
+ * @return array
+ */
 	protected function _renderContent($data) {
 		$out = [];
 		$options = $data['options'];
@@ -76,7 +114,19 @@ class SelectBox {
 		return $this->_renderOptions($options, $disabled, $selected, $data['escape']);
 	}
 
+/**
+ * Render a set of options.
+ *
+ * Will recursively call itself when option groups are in use.
+ *
+ * @param array $options The options to render.
+ * @param array|null $disabled The options to disable.
+ * @param array|string|null $selected The options to select.
+ * @param boolean $escape Toggle HTML escaping.
+ * @return array Option elements.
+ */
 	protected function _renderOptions($options, $disabled, $selected, $escape) {
+		$out = [];
 		foreach ($options as $key => $val) {
 			if (is_array($val)) {
 				$groupOptions = $this->_renderOptions($val, $disabled, $selected, $escape);
@@ -104,6 +154,13 @@ class SelectBox {
 		return $out;
 	}
 
+/**
+ * Helper method for deciding what options are selected.
+ *
+ * @param string $key The key to test.
+ * @param array|string|null The selected values.
+ * @return boolean
+ */
 	protected function _isSelected($key, $selected) {
 		if ($selected === null) {
 			return false;
@@ -116,6 +173,13 @@ class SelectBox {
 		return in_array((string)$key, $selected, $strict);
 	}
 
+/**
+ * Helper method for deciding what options are disabled.
+ *
+ * @param string $key The key to test.
+ * @param array|null The disabled values.
+ * @return boolean
+ */
 	protected function _isDisabled($key, $disabled) {
 		if ($disabled === null) {
 			return false;
