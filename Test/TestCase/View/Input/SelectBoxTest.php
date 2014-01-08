@@ -77,6 +77,36 @@ class SelectBoxTest extends TestCase {
 	}
 
 /**
+ * test complex option rendering
+ *
+ * @return void
+ */
+	public function testRenderComplex() {
+		$select = new SelectBox($this->templates);
+		$data = [
+			'id' => 'BirdName',
+			'name' => 'Birds[name]',
+			'options' => [
+				['name' => 'a', 'value' => 'Albatross'],
+				['name' => 'b', 'value' => 'Budgie', 'data-foo' => 'bar'],
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
+			['option' => ['value' => 'a']],
+			'Albatross',
+			'/option',
+			['option' => ['value' => 'b', 'data-foo' => 'bar']],
+			'Budgie',
+			'/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
+	}
+
+
+/**
  * test rendering with a selected value
  *
  * @return void

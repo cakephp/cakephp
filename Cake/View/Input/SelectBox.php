@@ -130,14 +130,20 @@ class SelectBox {
 	protected function _renderOptions($options, $disabled, $selected, $escape) {
 		$out = [];
 		foreach ($options as $key => $val) {
-			if (is_array($val) || $val instanceof Traversable) {
+			if (!is_int($key) && is_array($val) || $val instanceof Traversable) {
 				$groupOptions = $this->_renderOptions($val, $disabled, $selected, $escape);
 				$out[] = $this->_templates->format('optgroup', [
 					'label' => $escape ? h($key) : $key,
 					'content' => implode('', $groupOptions)
 				]);
 			} else {
-				$optAttrs = [];
+				$optAttrs = [
+					'name' => $key,
+					'value' => $val,
+				];
+				if (is_array($val) && isset($optAttrs['name'], $optAttrs['value'])) {
+					$optAttrs = $val;
+				}
 				if ($this->_isSelected($key, $selected)) {
 					$optAttrs['selected'] = true;
 				}
@@ -147,9 +153,9 @@ class SelectBox {
 				$optAttrs['escape'] = $escape;
 
 				$out[] = $this->_templates->format('option', [
-					'name' => $escape ? h($key) : $key,
-					'value' => $escape ? h($val) : $val,
-					'attrs' => $this->_templates->formatAttributes($optAttrs),
+					'name' => $escape ? h($optAttrs['name']) : $optAttrs['name'],
+					'value' => $escape ? h($optAttrs['value']) : $optAttrs['value'],
+					'attrs' => $this->_templates->formatAttributes($optAttrs, ['name', 'value']),
 				]);
 			}
 		}
