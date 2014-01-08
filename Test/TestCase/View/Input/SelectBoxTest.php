@@ -230,6 +230,50 @@ class SelectBoxTest extends TestCase {
 	}
 
 /**
+ * test rendering with option groups with traversable nodes
+ *
+ * @return void
+ */
+	public function testRenderOptionGroupsTraversable() {
+		$select = new SelectBox($this->templates);
+		$mammals = new \ArrayObject(['beaver' => 'Beaver', 'elk' => 'Elk']);
+		$data = [
+			'name' => 'Birds[name]',
+			'options' => [
+				'Mammal' => $mammals,
+				'Bird' => [
+					'budgie' => 'Budgie',
+					'eagle' => 'Eagle',
+				]
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+			],
+			['optgroup' => ['label' => 'Mammal']],
+			['option' => ['value' => 'beaver']],
+			'Beaver',
+			'/option',
+			['option' => ['value' => 'elk']],
+			'Elk',
+			'/option',
+			'/optgroup',
+			['optgroup' => ['label' => 'Bird']],
+			['option' => ['value' => 'budgie']],
+			'Budgie',
+			'/option',
+			['option' => ['value' => 'eagle']],
+			'Eagle',
+			'/option',
+			'/optgroup',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test rendering option groups and selected values
  *
  * @return void

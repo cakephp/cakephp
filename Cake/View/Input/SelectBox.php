@@ -15,6 +15,7 @@
 namespace Cake\View\Input;
 
 use Cake\View\StringTemplate;
+use Traversable;
 
 /**
  * Input widget class for generating a selectbox.
@@ -129,7 +130,7 @@ class SelectBox {
 	protected function _renderOptions($options, $disabled, $selected, $escape) {
 		$out = [];
 		foreach ($options as $key => $val) {
-			if (is_array($val)) {
+			if (is_array($val) || $val instanceof Traversable) {
 				$groupOptions = $this->_renderOptions($val, $disabled, $selected, $escape);
 				$out[] = $this->_templates->format('optgroup', [
 					'label' => $escape ? h($key) : $key,
