@@ -77,6 +77,30 @@ class SelectBoxTest extends TestCase {
 	}
 
 /**
+ * test simple iterator rendering
+ *
+ * @return void
+ */
+	public function testRenderSimpleIterator() {
+		$select = new SelectBox($this->templates);
+		$options = new \ArrayObject(['a' => 'Albatross', 'b' => 'Budgie']);
+		$data = [
+			'name' => 'Birds[name]',
+			'options' => $options,
+			'empty' => true
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => ['name' => 'Birds[name]'],
+			['option' => ['value' => '']], '/option',
+			['option' => ['value' => 'a']], 'Albatross', '/option',
+			['option' => ['value' => 'b']], 'Budgie', '/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test complex option rendering
  *
  * @return void

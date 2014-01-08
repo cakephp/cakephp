@@ -99,6 +99,10 @@ class SelectBox {
 		$out = [];
 		$options = $data['options'];
 
+		if ($options instanceof Traversable) {
+			$options = iterator_to_array($options);
+		}
+
 		if (!empty($data['empty'])) {
 			$value = $data['empty'] === true ? '' : $data['empty'];
 			$options = ['' => $value] + $options;
