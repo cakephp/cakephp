@@ -291,4 +291,25 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		]);
 		$association->attachTo($query);
 	}
+
+/**
+ * Tests that using belongs to with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Cannot match provided foreignKey, got 1 columns expected 2
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKeyMistmatch() {
+		$this->company->primaryKey(['id', 'tenant_id']);
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company,
+			'conditions' => ['Companies.is_active' => true]
+		];
+		$association = new BelongsTo('Companies', $config);
+		$association->attachTo($query);
+	}
 }
