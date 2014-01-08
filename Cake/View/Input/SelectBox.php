@@ -56,7 +56,7 @@ class SelectBox {
 		if (empty($data['name'])) {
 			throw new \RuntimeException('Cannot make inputs with empty name attributes.');
 		}
-		$options = $this->_renderOptions($data);
+		$options = $this->_renderContent($data);
 		$name = $data['name'];
 		unset($data['name'], $data['options'], $data['empty'], $data['value']);
 		if (isset($data['disabled']) && is_array($data['disabled'])) {
@@ -71,7 +71,7 @@ class SelectBox {
 		]);
 	}
 
-	protected function _renderOptions($data) {
+	protected function _renderContent($data) {
 		$out = [];
 		if (!isset($data['options'])) {
 			$data['options'] = [];
@@ -92,22 +92,33 @@ class SelectBox {
 		if (isset($data['disabled']) && is_array($data['disabled'])) {
 			$disabled = $data['disabled'];
 		}
+		return $this->_renderOptions($options, $disabled, $selected);
+	}
 
+	protected function _renderOptions($options, $disabled, $selected) {
 		foreach ($options as $key => $val) {
-			$template = 'option';
-			$isSelected = $this->_isSelected($key, $selected);
-			$isDisabled = $this->_isDisabled($key, $disabled);
-			if ($isSelected) {
-				$template .= 'Selected';
-			}
-			if ($isDisabled) {
-				$template .= 'Disabled';
-			}
+			if (is_array($val)) {
+				$groupOptions = $this->_renderOptions($val, $disabled, $selected);
+				$out[] = $this->_templates->format('optgroup', [
+					'label' => $key,
+					'content' => implode('', $groupOptions)
+				]);
+			} else {
+				$template = 'option';
+				$isSelected = $this->_isSelected($key, $selected);
+				$isDisabled = $this->_isDisabled($key, $disabled);
+				if ($isSelected) {
+					$template .= 'Selected';
+				}
+				if ($isDisabled) {
+					$template .= 'Disabled';
+				}
 
-			$out[] = $this->_templates->format($template, [
-				'name' => $key,
-				'value' => $val
-			]);
+				$out[] = $this->_templates->format($template, [
+					'name' => $key,
+					'value' => $val
+				]);
+			}
 		}
 		return $out;
 	}
@@ -156,6 +167,8 @@ class SelectBox {
 /**
  * Formats an individual attribute, and returns the string value of the composed attribute.
  * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
+ *
+ * TODO MOVE TO StringTemplate class?
  *
  * @param string $key The name of the attribute to create
  * @param string $value The value of the attribute to create.

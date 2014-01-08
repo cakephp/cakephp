@@ -189,7 +189,44 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderOptionGroups() {
-		$this->markTestIncomplete('Not done');
+		$select = new SelectBox($this->templates);
+		$data = [
+			'name' => 'Birds[name]',
+			'options' => [
+				'Mammal' => [
+					'beaver' => 'Beaver',
+					'elk' => 'Elk',
+				],
+				'Bird' => [
+					'budgie' => 'Budgie',
+					'eagle' => 'Eagle',
+				]
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+			],
+			['optgroup' => ['label' => 'Mammal']],
+			['option' => ['value' => 'beaver']],
+			'Beaver',
+			'/option',
+			['option' => ['value' => 'elk']],
+			'Elk',
+			'/option',
+			'/optgroup',
+			['optgroup' => ['label' => 'Bird']],
+			['option' => ['value' => 'budgie']],
+			'Budgie',
+			'/option',
+			['option' => ['value' => 'eagle']],
+			'Eagle',
+			'/option',
+			'/optgroup',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -197,8 +234,40 @@ class SelectBoxTest extends TestCase {
  *
  * @return void
  */
-	public function testRenderOptionGroupsSelected() {
-		$this->markTestIncomplete('Not done');
+	public function testRenderOptionGroupsSelectedAndDisabled() {
+		$select = new SelectBox($this->templates);
+		$data = [
+			'name' => 'Birds[name]',
+			'value' => ['1', '2', 'burp'],
+			'disabled' => ['1x', '2x', 'nope'],
+			'options' => [
+				'ones' => [
+					1 => 'one',
+					'1x' => 'one x',
+				],
+				'twos' => [
+					'2' => 'two',
+					'2x' => 'two x',
+				]
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+			],
+
+			['optgroup' => ['label' => 'ones']],
+			['option' => ['value' => '1', 'selected' => 'selected']], 'one', '/option',
+			['option' => ['value' => '1x', 'disabled' => 'disabled']], 'one x', '/option',
+			'/optgroup',
+			['optgroup' => ['label' => 'twos']],
+			['option' => ['value' => '2', 'selected' => 'selected']], 'two', '/option',
+			['option' => ['value' => '2x', 'disabled' => 'disabled']], 'two x', '/option',
+			'/optgroup',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
