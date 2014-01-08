@@ -39,15 +39,13 @@ trait DependentDeleteTrait {
 			return true;
 		}
 		$table = $this->target();
-		$foreignKey = $this->foreignKey();
+		$foreignKey = (array)$this->foreignKey();
 		$primaryKey = $this->source()->primaryKey();
-
-		$conditions = [
-			$foreignKey => $entity->get($primaryKey)
-		];
+		$conditions = array_combine($foreignKey, $entity->extract($primaryKey));
 
 		if ($this->_cascadeCallbacks) {
-			foreach ($this->find('all')->where($conditions) as $related) {
+			$query = $this->find('all')->where($conditions)->bufferResults(false);
+			foreach ($query as $related) {
 				$table->delete($related, $options);
 			}
 			return true;

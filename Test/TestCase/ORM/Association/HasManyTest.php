@@ -661,6 +661,10 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->any())
 			->method('getIterator')
 			->will($this->returnValue($iterator));
+		$query->expects($this->once())
+			->method('bufferResults')
+			->with(false)
+			->will($this->returnSelf());
 
 		$this->article->expects($this->once())
 			->method('find')
