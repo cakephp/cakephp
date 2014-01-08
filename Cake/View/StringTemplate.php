@@ -148,8 +148,7 @@ class StringTemplate {
  * templates to change how attributes are formatted.
  *
  * @param array $options Array of options.
- * @param array $exclude Array of options to be excluded, the options here will not be part of the return.
- * @param string $insertBefore String to be inserted before options.
+ * @param null|array $exclude Array of options to be excluded, the options here will not be part of the return.
  * @return string Composed attributes.
  */
 	public function formatAttributes($options, $exclude = null) {
