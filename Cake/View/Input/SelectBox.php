@@ -53,12 +53,21 @@ class SelectBox {
 	}
 
 	public function render($data) {
+		$data += [
+			'name' => '',
+			'empty' => false,
+			'escape' => true,
+			'options' => [],
+			'disabled' => null,
+			'value' => null,
+		];
+
 		if (empty($data['name'])) {
 			throw new \RuntimeException('Cannot make inputs with empty name attributes.');
 		}
 		$options = $this->_renderContent($data);
 		$name = $data['name'];
-		unset($data['name'], $data['options'], $data['empty'], $data['value']);
+		unset($data['name'], $data['options'], $data['empty'], $data['value'], $data['escape']);
 		if (isset($data['disabled']) && is_array($data['disabled'])) {
 			unset($data['disabled']);
 		}
@@ -73,9 +82,6 @@ class SelectBox {
 
 	protected function _renderContent($data) {
 		$out = [];
-		if (!isset($data['options'])) {
-			$data['options'] = [];
-		}
 		$options = $data['options'];
 
 		if (!empty($data['empty'])) {
@@ -92,15 +98,15 @@ class SelectBox {
 		if (isset($data['disabled']) && is_array($data['disabled'])) {
 			$disabled = $data['disabled'];
 		}
-		return $this->_renderOptions($options, $disabled, $selected);
+		return $this->_renderOptions($options, $disabled, $selected, $data['escape']);
 	}
 
-	protected function _renderOptions($options, $disabled, $selected) {
+	protected function _renderOptions($options, $disabled, $selected, $escape) {
 		foreach ($options as $key => $val) {
 			if (is_array($val)) {
-				$groupOptions = $this->_renderOptions($val, $disabled, $selected);
+				$groupOptions = $this->_renderOptions($val, $disabled, $selected, $escape);
 				$out[] = $this->_templates->format('optgroup', [
-					'label' => $key,
+					'label' => $escape ? h($key) : $key,
 					'content' => implode('', $groupOptions)
 				]);
 			} else {
@@ -115,8 +121,8 @@ class SelectBox {
 				}
 
 				$out[] = $this->_templates->format($template, [
-					'name' => $key,
-					'value' => $val
+					'name' => $escape ? h($key) : $key,
+					'value' => $escape ? h($val) : $val,
 				]);
 			}
 		}

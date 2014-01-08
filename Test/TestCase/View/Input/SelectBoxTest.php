@@ -389,7 +389,51 @@ class SelectBoxTest extends TestCase {
  * @return void
  */
 	public function testRenderEscapingOption() {
-		$this->markTestIncomplete('Not done');
+		$select = new SelectBox($this->templates);
+		$data = [
+			'name' => 'Birds[name]',
+			'options' => [
+				'a' => '>Albatross',
+				'b' => '>Budgie',
+				'c' => '>Canary',
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+			],
+			['option' => ['value' => 'a']],
+			'&gt;Albatross',
+			'/option',
+			['option' => ['value' => 'b']],
+			'&gt;Budgie',
+			'/option',
+			['option' => ['value' => 'c']],
+			'&gt;Canary',
+			'/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
+
+		$data = [
+			'escape' => false,
+			'name' => 'Birds[name]',
+			'options' => [
+				'>a' => '>Albatross',
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+			],
+			['option' => ['value' => '>a']],
+			'>Albatross',
+			'/option',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
 	}
 
 }
