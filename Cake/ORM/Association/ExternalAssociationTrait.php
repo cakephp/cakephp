@@ -147,13 +147,16 @@ trait ExternalAssociationTrait {
  */
 	protected function _resultInjector($fetchQuery, $resultMap) {
 		$source = $this->source();
-		$sourceKey = key($fetchQuery->aliasField(
-			$source->primaryKey(),
-			$source->alias()
-		));
+		$sAlias = $source->alias();
+		$tAlias = $this->target()->alias();
 
-		$alias = $this->target()->alias();
-		$nestKey = $alias . '__' . $alias;
+		$sourceKeys = [];
+		foreach ($source->primaryKey() as $key) {
+			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
+		}
+
+		$sourceKey = implode(';', $sourceKeys);
+		$nestKey = $tAlias . '__' . $tAlias;
 		return function($row) use ($resultMap, $sourceKey, $nestKey) {
 			if (isset($resultMap[$row[$sourceKey]])) {
 				$row[$nestKey] = $resultMap[$row[$sourceKey]];
