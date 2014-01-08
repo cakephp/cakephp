@@ -21,31 +21,6 @@ use Cake\View\StringTemplate;
  */
 class SelectBox {
 
-/**
- * Minimized attributes
- *
- * @var array
- */
-	protected $_minimizedAttributes = array(
-		'compact', 'checked', 'declare', 'readonly', 'disabled', 'selected',
-		'defer', 'ismap', 'nohref', 'noshade', 'nowrap', 'multiple', 'noresize',
-		'autoplay', 'controls', 'loop', 'muted', 'required', 'novalidate', 'formnovalidate'
-	);
-
-/**
- * Format to attribute
- *
- * @var string
- */
-	protected $_attributeFormat = '%s="%s"';
-
-/**
- * Format to attribute
- *
- * @var string
- */
-	protected $_minimizedAttributeFormat = '%s="%s"';
-
 	protected $_templates;
 
 	public function __construct($templates) {
@@ -72,7 +47,7 @@ class SelectBox {
 			unset($data['disabled']);
 		}
 
-		$attrs = $this->_parseAttributes($data);
+		$attrs = $this->_templates->formatAttributes($data);
 		return $this->_templates->format('select', [
 			'name' => $name,
 			'attrs' => $attrs,
@@ -147,57 +122,6 @@ class SelectBox {
 		}
 		$strict = !is_numeric($key);
 		return in_array((string)$key, $disabled, $strict);
-	}
-
-	protected function _parseAttributes($options, $exclude = null) {
-		$insertBefore = ' ';
-		$options = (array)$options + array('escape' => true);
-
-		if (!is_array($exclude)) {
-			$exclude = array();
-		}
-
-		$exclude = array('escape' => true) + array_flip($exclude);
-		$escape = $options['escape'];
-		$attributes = array();
-
-		foreach ($options as $key => $value) {
-			if (!isset($exclude[$key]) && $value !== false && $value !== null) {
-				$attributes[] = $this->_formatAttribute($key, $value, $escape);
-			}
-		}
-		$out = implode(' ', $attributes);
-		return $out ? $insertBefore . $out : '';
-	}
-
-/**
- * Formats an individual attribute, and returns the string value of the composed attribute.
- * Works with minimized attributes that have the same value as their name such as 'disabled' and 'checked'
- *
- * TODO MOVE TO StringTemplate class?
- *
- * @param string $key The name of the attribute to create
- * @param string $value The value of the attribute to create.
- * @param boolean $escape Define if the value must be escaped
- * @return string The composed attribute.
- * @deprecated This method will be moved to HtmlHelper in 3.0
- */
-	protected function _formatAttribute($key, $value, $escape = true) {
-		if (is_array($value)) {
-			$value = implode(' ', $value);
-		}
-		if (is_numeric($key)) {
-			return sprintf($this->_minimizedAttributeFormat, $value, $value);
-		}
-		$truthy = array(1, '1', true, 'true', $key);
-		$isMinimized = in_array($key, $this->_minimizedAttributes);
-		if ($isMinimized && in_array($value, $truthy, true)) {
-			return sprintf($this->_minimizedAttributeFormat, $key, $key);
-		}
-		if ($isMinimized) {
-			return '';
-		}
-		return sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
 	}
 
 }
