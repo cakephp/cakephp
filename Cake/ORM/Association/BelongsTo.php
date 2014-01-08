@@ -137,6 +137,8 @@ class BelongsTo extends Association {
  *
  * @param array $options list of options passed to attachTo method
  * @return array
+ * @throws \RuntimeException if the number of columns in the foreignKey do not
+ * match the number of columns in the target table primaryKey
  */
 	protected function _joinCondition(array $options) {
 		$conditions = [];
