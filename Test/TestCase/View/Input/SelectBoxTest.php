@@ -27,10 +27,7 @@ class SelectBoxTest extends TestCase {
 		parent::setUp();
 		$templates = [
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
-			'option' => '<option value="{{name}}">{{value}}</option>',
-			'optionSelected' => '<option value="{{name}}" selected="selected">{{value}}</option>',
-			'optionDisabled' => '<option value="{{name}}" disabled="disabled">{{value}}</option>',
-			'optionSelectedDisabled' => '<option value="{{name}}" selected="selected" disabled="disabled">{{value}}</option>',
+			'option' => '<option value="{{name}}"{{attrs}}>{{value}}</option>',
 			'optgroup' => '<optgroup label="{{label}}">{{content}}</optgroup>',
 		];
 		$this->templates = new StringTemplate();

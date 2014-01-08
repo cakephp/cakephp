@@ -137,19 +137,19 @@ class SelectBox {
 					'content' => implode('', $groupOptions)
 				]);
 			} else {
-				$template = 'option';
-				$isSelected = $this->_isSelected($key, $selected);
-				$isDisabled = $this->_isDisabled($key, $disabled);
-				if ($isSelected) {
-					$template .= 'Selected';
+				$optAttrs = [];
+				if ($this->_isSelected($key, $selected)) {
+					$optAttrs['selected'] = true;
 				}
-				if ($isDisabled) {
-					$template .= 'Disabled';
+				if ($this->_isDisabled($key, $disabled)) {
+					$optAttrs['disabled'] = true;
 				}
+				$optAttrs['escape'] = $escape;
 
-				$out[] = $this->_templates->format($template, [
+				$out[] = $this->_templates->format('option', [
 					'name' => $escape ? h($key) : $key,
 					'value' => $escape ? h($val) : $val,
+					'attrs' => $this->_templates->formatAttributes($optAttrs),
 				]);
 			}
 		}
