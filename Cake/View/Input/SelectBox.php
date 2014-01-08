@@ -58,6 +58,7 @@ class SelectBox {
  *
  * @param array $data Data to render with.
  * @return string A generated select box.
+ * @throws \RuntimeException when the name attribute is empty.
  */
 	public function render($data) {
 		$data += [
