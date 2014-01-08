@@ -362,7 +362,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 		$model = new TranslatedItem();
 		$translateModel = $model->translateModel();
-		$translateModel->updateAll(array('content' => '"0"'));
+		$translateModel->updateAll(array('content' => "'0'"));
 		$model->locale = 'eng';
 
 		$result = $model->read(null, 1);
