@@ -71,7 +71,12 @@ class Radio {
 		$options = (array)$data['options'];
 		$escape = $data['escape'];
 		foreach ($options as $val => $text) {
-			$radio = ['value' => $val];
+			if (is_int($val) && isset($text['text'], $text['value'])) {
+				$radio = $text;
+				$text = $radio['text'];
+			} else {
+				$radio = ['value' => $val, 'text' => $text];
+			}
 			$radio['name'] = $data['name'];
 
 			if (empty($radio['id'])) {
@@ -80,14 +85,14 @@ class Radio {
 
 			$labelAttrs = ['for' => $radio['id'], 'escape' => $escape];
 			$label = $this->_templates->format('label', [
-				'text' => $escape ? h($text) : $text,
+				'text' => $escape ? h($radio['text']) : $radio['text'],
 				'attrs' => $this->_templates->formatAttributes($labelAttrs),
 			]);
 
 			$input = $this->_templates->format('radio', [
 				'name' => $radio['name'],
-				'value' => $escape ? h($val) : $val,
-				'attrs' => $this->_templates->formatAttributes($radio, ['value', 'name']),
+				'value' => $escape ? h($radio['value']) : $radio['value'],
+				'attrs' => $this->_templates->formatAttributes($radio, ['name', 'value', 'text']),
 			]);
 
 			$opts[] = $this->_templates->format('radioContainer', [

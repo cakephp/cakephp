@@ -69,8 +69,43 @@ class RadioTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test rendering inputs with the complex option form.
+ *
+ * @return void
+ */
 	public function testRenderComplex() {
-		$this->markTestIncomplete();
+		$radio = new Radio($this->templates);
+		$data = [
+			'name' => 'Crayons[color]',
+			'options' => [
+				['value' => 'r', 'text' => 'Red', 'id' => 'my_id'],
+				['value' => 'b', 'text' => 'Black', 'id' => 'my_id_2', 'data-test' => 'test'],
+			]
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Crayons[color]',
+				'value' => 'r',
+				'id' => 'my_id'
+			]],
+			['label' => ['for' => 'my_id']],
+			'Red',
+			'/label',
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Crayons[color]',
+				'value' => 'b',
+				'id' => 'my_id_2',
+				'data-test' => 'test'
+			]],
+			['label' => ['for' => 'my_id_2']],
+			'Black',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 	public function testRenderSelected() {
