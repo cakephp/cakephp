@@ -3753,7 +3753,7 @@ class ContainableBehaviorTest extends CakeTestCase {
 			'hasAndBelongsToMany' => array()
 		), $expected);
 		foreach ($expected as $binding => $expect) {
-			$this->assertEquals(array_keys($Model->$binding), $expect);
+			$this->assertEquals($expect, array_keys($Model->$binding));
 		}
 	}
 }
