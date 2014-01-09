@@ -27,6 +27,7 @@ class SelectBoxTest extends TestCase {
 		parent::setUp();
 		$templates = [
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
+			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 			'option' => '<option value="{{name}}"{{attrs}}>{{value}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 		];
@@ -188,7 +189,7 @@ class SelectBoxTest extends TestCase {
 		$result = $select->render($data);
 		$expected = [
 			'select' => [
-				'name' => 'Birds[name]',
+				'name' => 'Birds[name][]',
 				'id' => 'BirdName',
 				'multiple' => 'multiple',
 			],
@@ -209,7 +210,7 @@ class SelectBoxTest extends TestCase {
 		$data = [
 			'multiple' => true,
 			'id' => 'BirdName',
-			'name' => 'Birds[name]',
+			'name' => 'Birds[name][]',
 			'value' => ['1', '2', 'burp'],
 			'options' => [
 				1 => 'one',
@@ -221,7 +222,7 @@ class SelectBoxTest extends TestCase {
 		$result = $select->render($data);
 		$expected = [
 			'select' => [
-				'name' => 'Birds[name]',
+				'name' => 'Birds[name][]',
 				'multiple' => 'multiple',
 				'id' => 'BirdName'
 			],

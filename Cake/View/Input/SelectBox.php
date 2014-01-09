@@ -134,8 +134,13 @@ class SelectBox {
 			unset($data['disabled']);
 		}
 
+		$template = 'select';
+		if (!empty($data['multiple'])) {
+			$template = 'selectMultiple';
+			unset($data['multiple']);
+		}
 		$attrs = $this->_templates->formatAttributes($data);
-		return $this->_templates->format('select', [
+		return $this->_templates->format($template, [
 			'name' => $name,
 			'attrs' => $attrs,
 			'content' => implode('', $options),
