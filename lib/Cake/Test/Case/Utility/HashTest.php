@@ -531,7 +531,7 @@ class HashTest extends CakeTestCase {
 			'Validator',
 			'Transactional'
 		);
-		$this->assertEquals(Hash::merge($a, $b), $expected);
+		$this->assertEquals($expected, Hash::merge($a, $b));
 	}
 
 /**
@@ -1461,7 +1461,7 @@ class HashTest extends CakeTestCase {
 			2 => array('Item' => array('id' => 3, 'title' => 'third')),
 			4 => array('Item' => array('id' => 5, 'title' => 'fifth')),
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
