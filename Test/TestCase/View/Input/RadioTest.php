@@ -108,18 +108,138 @@ class RadioTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * test render() and selected inputs.
+ *
+ * @return void
+ */
 	public function testRenderSelected() {
-		$this->markTestIncomplete();
+		$radio = new Radio($this->templates);
+		$data = [
+			'name' => 'Versions[ver]',
+			'value' => '1',
+			'options' => [
+				1 => 'one',
+				'1x' => 'one x',
+				'2' => 'two',
+			]
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'id' => 'Versions_ver_1',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1',
+				'checked' => 'checked'
+			]],
+			['label' => ['for' => 'Versions_ver_1']],
+			'one',
+			'/label',
+			['input' => [
+				'id' => 'Versions_ver_1x',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1x'
+			]],
+			['label' => ['for' => 'Versions_ver_1x']],
+			'one x',
+			'/label',
+			['input' => [
+				'id' => 'Versions_ver_2',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '2'
+			]],
+			['label' => ['for' => 'Versions_ver_2']],
+			'two',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test rendering with disable inputs
+ *
+ * @return void
+ */
 	public function testRenderDisabled() {
-		$this->markTestIncomplete();
+		$radio = new Radio($this->templates);
+		$data = [
+			'name' => 'Versions[ver]',
+			'options' => [
+				1 => 'one',
+				'1x' => 'one x',
+				'2' => 'two',
+			],
+			'disabled' => true,
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'id' => 'Versions_ver_1',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1',
+				'disabled' => 'disabled'
+			]],
+			['label' => ['for' => 'Versions_ver_1']],
+			'one',
+			'/label',
+			['input' => [
+				'id' => 'Versions_ver_1x',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1x',
+				'disabled' => 'disabled'
+			]],
+			['label' => ['for' => 'Versions_ver_1x']],
+			'one x',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
+
+		$data['disabled'] = ['1'];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'id' => 'Versions_ver_1',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1',
+				'disabled' => 'disabled'
+			]],
+			['label' => ['for' => 'Versions_ver_1']],
+			'one',
+			'/label',
+			['input' => [
+				'id' => 'Versions_ver_1x',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1x',
+			]],
+			['label' => ['for' => 'Versions_ver_1x']],
+			'one x',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test rendering with label options.
+ *
+ * @return void
+ */
 	public function testRenderLabelOptions() {
 		$this->markTestIncomplete();
 	}
 
+/**
+ * Ensure that the input + label are composed with
+ * a template.
+ *
+ * @return void
+ */
 	public function testRenderContainerTemplate() {
 		$this->markTestIncomplete();
 	}

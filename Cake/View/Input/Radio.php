@@ -83,6 +83,14 @@ class Radio {
 				$radio['id'] = Inflector::slug($radio['name'] . '_' . $radio['value']);
 			}
 
+			if (isset($data['value']) && strval($data['value']) === strval($radio['value'])) {
+				$radio['checked'] = true;
+			}
+
+			if ($this->_isDisabled($radio, $data['disabled'])) {
+				$radio['disabled'] = true;
+			}
+
 			$labelAttrs = ['for' => $radio['id'], 'escape' => $escape];
 			$label = $this->_templates->format('label', [
 				'text' => $escape ? h($radio['text']) : $radio['text'],
@@ -101,6 +109,24 @@ class Radio {
 			]);
 		}
 		return implode('', $opts);
+	}
+
+/**
+ * Disabled attribute detection.
+ *
+ * @param array $radio
+ * @param array|null|true $disabled
+ * @return boolean
+ */
+	protected function _isDisabled($radio, $disabled) {
+		if (!$disabled) {
+			return false;
+		}
+		if ($disabled === true) {
+			return true;
+		}
+		$isNumeric = is_numeric($radio['value']);
+		return (!is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric));
 	}
 
 }
