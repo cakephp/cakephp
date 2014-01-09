@@ -86,6 +86,8 @@ class StringTemplateTest extends TestCase {
  * @return void
  */
 	public function testLoad() {
+		$this->template->remove('attribute');
+		$this->template->remove('compactAttribute');
 		$this->assertEquals([], $this->template->get());
 		$this->assertNull($this->template->load('test_templates'));
 		$this->assertEquals('<a href="{{url}}">{{text}}</a>', $this->template->get('link'));
@@ -110,6 +112,69 @@ class StringTemplateTest extends TestCase {
  */
 	public function testLoadErrorNoFile() {
 		$this->template->load('no_such_file');
+	}
+
+/**
+ * Test formatting compact attributes.
+ *
+ * @return void
+ */
+	public function testFormatAttributesCompact() {
+		$attrs = ['disabled' => true, 'selected' => 1, 'checked' => '1', 'multiple' => 'multiple'];
+		$result = $this->template->formatAttributes($attrs);
+		$this->assertEquals(
+			' disabled="disabled" selected="selected" checked="checked" multiple="multiple"',
+			$result
+		);
+
+		$attrs = ['disabled' => false, 'selected' => 0, 'checked' => '0', 'multiple' => null];
+		$result = $this->template->formatAttributes($attrs);
+		$this->assertEquals(
+			'',
+			$result
+		);
+	}
+
+/**
+ * Test formatting normal attributes.
+ *
+ * @return void
+ */
+	public function testFormatAttributes() {
+		$attrs = ['name' => 'bruce', 'data-hero' => '<batman>'];
+		$result = $this->template->formatAttributes($attrs);
+		$this->assertEquals(
+			' name="bruce" data-hero="&lt;batman&gt;"',
+			$result
+		);
+
+		$attrs = ['escape' => false, 'name' => 'bruce', 'data-hero' => '<batman>'];
+		$result = $this->template->formatAttributes($attrs);
+		$this->assertEquals(
+			' name="bruce" data-hero="<batman>"',
+			$result
+		);
+
+		$attrs = ['name' => 'bruce', 'data-hero' => '<batman>'];
+		$result = $this->template->formatAttributes($attrs, ['name']);
+		$this->assertEquals(
+			' data-hero="&lt;batman&gt;"',
+			$result
+		);
+	}
+
+/**
+ * Test formatting array attributes.
+ *
+ * @return void
+ */
+	public function testFormatAttributesArray() {
+		$attrs = ['name' => ['bruce', 'wayne']];
+		$result = $this->template->formatAttributes($attrs);
+		$this->assertEquals(
+			' name="bruce wayne"',
+			$result
+		);
 	}
 
 }
