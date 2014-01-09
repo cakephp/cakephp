@@ -1294,4 +1294,26 @@ class BelongsToManyTest extends TestCase {
 		$association->save($entity);
 	}
 
+/**
+ * Tests that targetForeignKey() returns the correct configured value
+ *
+ * @return void
+ */
+	public function testTargetForeignKey() {
+		$assoc = new BelongsToMany('Test', [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag
+		]);
+		$this->assertEquals('tag_id', $assoc->targetForeignKey());
+		$assoc->targetForeignKey('another_key');
+		$this->assertEquals('another_key', $assoc->targetForeignKey());
+
+		$assoc = new BelongsToMany('Test', [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'targetForeignKey' => 'foo'
+		]);
+		$this->assertEquals('foo', $assoc->targetForeignKey());
+	}
+
 }

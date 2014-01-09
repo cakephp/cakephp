@@ -108,6 +108,31 @@ class BelongsToMany extends Association {
 	protected $_saveStrategy = self::SAVE_REPLACE;
 
 /**
+ * The name of the field representing the foreign key to the target table
+ *
+ * @var string|array
+ */
+	protected $_targetForeignKey;
+
+/**
+ * Sets the name of the field representing the foreign key to the target table.
+ * If no parameters are passed current field is returned
+ *
+ * @param string $key the key to be used to link both tables together
+ * @return string
+ */
+	public function targetForeignKey($key = null) {
+		if ($key === null) {
+			if ($this->_targetForeignKey === null) {
+				$key = Inflector::singularize($this->target()->alias());
+				$this->_targetForeignKey = Inflector::underscore($key) . '_id';
+			}
+			return $this->_targetForeignKey;
+		}
+		return $this->_targetForeignKey = $key;
+	}
+
+/**
  * Sets the table instance for the junction relation. If no arguments
  * are passed, the current configured table instance is returned
  *
@@ -900,6 +925,9 @@ class BelongsToMany extends Association {
 		}
 		if (!empty($opts['saveStrategy'])) {
 			$this->saveStrategy($opts['saveStrategy']);
+		}
+		if (!empty($opts['targetForeignKey'])) {
+			$this->targetForeignKey($opts['targetForeignKey']);
 		}
 		$this->_externalOptions($opts);
 	}

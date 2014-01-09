@@ -45,7 +45,7 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * Sets the name of the field representing the foreign key to the target table.
+ * Sets the name of the field representing the foreign key to the source table.
  * If no parameters are passed current field is returned
  *
  * @param string $key the key to be used to link both tables together

@@ -91,7 +91,7 @@ abstract class Association {
 	protected $_className;
 
 /**
- * The name of the field representing the foreign key to the target table
+ * The name of the field representing the foreign key to the table to load
  *
  * @var string|array
  */
