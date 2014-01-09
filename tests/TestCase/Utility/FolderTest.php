@@ -101,10 +101,10 @@ class FolderTest extends TestCase {
 		$result = Folder::isSlashTerm($inside);
 		$this->assertTrue($result);
 
-		$result = $Folder->realpath('Test/');
-		$this->assertEquals($path . DS . 'Test' . DS, $result);
+		$result = $Folder->realpath('tests/');
+		$this->assertEquals($path . DS . 'tests' . DS, $result);
 
-		$result = $Folder->inPath('Test' . DS);
+		$result = $Folder->inPath('tests' . DS);
 		$this->assertTrue($result);
 
 		$result = $Folder->inPath(DS . 'non-existing' . $inside);
@@ -594,8 +594,8 @@ class FolderTest extends TestCase {
 		$result = $Folder->inCakePath($path);
 		$this->assertFalse($result);
 
-		$path = DS . 'Cake' . DS . 'Config';
-		$Folder->cd(ROOT . DS . 'Cake' . DS . 'Config');
+		$path = DS . 'src' . DS . 'Config';
+		$Folder->cd(ROOT . DS . 'src' . DS . 'Config');
 		$result = $Folder->inCakePath($path);
 		$this->assertTrue($result);
 	}

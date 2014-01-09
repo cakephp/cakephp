@@ -29,17 +29,17 @@ define('SESSIONS', TMP . 'sessions' . DS);
 
 define('CAKE_CORE_INCLUDE_PATH', ROOT);
 define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
-define('CAKE', CORE_PATH . 'Cake' . DS);
-define('CORE_TESTS', ROOT . DS . 'Test' . DS);
+define('CAKE', CORE_PATH . 'src' . DS);
+define('CORE_TESTS', CORE_PATH . 'tests' . DS);
 define('CORE_TEST_CASES', CORE_TESTS . 'TestCase');
 define('LOG_ERROR', LOG_ERR);
 
 // Point app constants to the test app.
-define('APP', ROOT . '/Test/TestApp/');
+define('APP', CORE_TESTS . 'TestApp' . DS);
 define('WWW_ROOT', APP . WEBROOT_DIR . DS);
 define('TESTS', APP . 'Test' . DS);
 
-define('TEST_APP', ROOT . '/Test/TestApp/');
+define('TEST_APP', APP);
 
 //@codingStandardsIgnoreStart
 @mkdir(LOGS);
@@ -49,19 +49,19 @@ define('TEST_APP', ROOT . '/Test/TestApp/');
 @mkdir(CACHE . 'models');
 //@codingStandardsIgnoreEnd
 
-require CORE_PATH . 'Cake/Core/ClassLoader.php';
+require CAKE . 'Core/ClassLoader.php';
 
 $loader = new Cake\Core\ClassLoader;
 $loader->register();
 
-$loader->addNamespace('Cake', ROOT . '/Cake');
-$loader->addNamespace('Cake\Test', ROOT . '/Test');
-$loader->addNamespace('TestApp', ROOT . '/Test/TestApp');
-$loader->addNamespace('TestPlugin', CORE_TESTS . 'TestApp/Plugin/TestPlugin');
-$loader->addNamespace('TestPluginTwo', CORE_TESTS . 'TestApp/Plugin/TestPluginTwo');
-$loader->addNamespace('PluginJs', CORE_TESTS . 'TestApp/Plugin/PluginJs');
+$loader->addNamespace('Cake', CAKE);
+$loader->addNamespace('Cake\Test', CORE_TESTS);
+$loader->addNamespace('TestApp', TEST_APP);
+$loader->addNamespace('TestPlugin', TEST_APP . 'Plugin/TestPlugin');
+$loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin/TestPluginTwo');
+$loader->addNamespace('PluginJs', TEST_APP . 'Plugin/PluginJs');
 
-require CORE_PATH . 'Cake/bootstrap.php';
+require CAKE . 'bootstrap.php';
 
 mb_internal_encoding('UTF-8');
 

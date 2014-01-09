@@ -290,7 +290,7 @@ class DebuggerTest extends TestCase {
  */
 	public function testTrimPath() {
 		$this->assertEquals('APP/', Debugger::trimPath(APP));
-		$this->assertEquals('CORE' . DS . 'Cake' . DS, Debugger::trimPath(CAKE));
+		$this->assertEquals('CORE' . DS . 'src' . DS, Debugger::trimPath(CAKE));
 		$this->assertEquals('Some/Other/Path', Debugger::trimPath('Some/Other/Path'));
 	}
 
