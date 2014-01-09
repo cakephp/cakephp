@@ -543,7 +543,7 @@ class Folder {
 			} elseif (is_dir($stack[$i])) {
 				$dir = dir($stack[$i]);
 				if ($dir) {
-					while (false !== ($entry = $dir->read())) {
+					while (($entry = $dir->read()) !== false) {
 						if ($entry === '.' || $entry === '..') {
 							continue;
 						}
