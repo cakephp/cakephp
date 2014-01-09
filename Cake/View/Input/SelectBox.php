@@ -73,11 +73,11 @@ class SelectBox {
  *
  * {{{
  * 'options' => [
- *   ['name' => 'elk', 'value' => 'Elk', 'data-foo' => 'bar'],
+ *   ['value' => 'elk', 'text' => 'Elk', 'data-foo' => 'bar'],
  * ]
  * }}}
  *
- * This form **requires** that both the `name` and `value` keys be defined.
+ * This form **requires** that both the `value` and `text` keys be defined.
  * If either is not set options will not be generated correctly.
  *
  * If you need to define option groups you can do those using nested arrays:
@@ -97,7 +97,7 @@ class SelectBox {
  * {{{
  * 'options' => [
  *   [
- *     'name' => 'Mammals',
+ *     'text' => 'Mammals',
  *     'data-id' => 1,
  *     'options' => [
  *       'elk' => 'Elk',
@@ -184,9 +184,9 @@ class SelectBox {
 	protected function _renderOptgroup($label, $optgroup, $disabled, $selected, $escape) {
 		$opts = $optgroup;
 		$attrs = [];
-		if (isset($optgroup['options'], $optgroup['name'])) {
+		if (isset($optgroup['options'], $optgroup['text'])) {
 			$opts = $optgroup['options'];
-			$label = $optgroup['name'];
+			$label = $optgroup['text'];
 			$attrs = $optgroup;
 		}
 		$groupOptions = $this->_renderOptions($opts, $disabled, $selected, $escape);
@@ -194,7 +194,7 @@ class SelectBox {
 		return $this->_templates->format('optgroup', [
 			'label' => $escape ? h($label) : $label,
 			'content' => implode('', $groupOptions),
-			'attrs' => $this->_templates->formatAttributes($attrs, ['name', 'options']),
+			'attrs' => $this->_templates->formatAttributes($attrs, ['text', 'options']),
 		]);
 	}
 
@@ -224,10 +224,10 @@ class SelectBox {
 
 			// Basic options
 			$optAttrs = [
-				'name' => $key,
-				'value' => $val,
+				'value' => $key,
+				'text' => $val,
 			];
-			if (is_array($val) && isset($optAttrs['name'], $optAttrs['value'])) {
+			if (is_array($val) && isset($optAttrs['text'], $optAttrs['value'])) {
 				$optAttrs = $val;
 			}
 			if ($this->_isSelected($key, $selected)) {
@@ -239,9 +239,9 @@ class SelectBox {
 			$optAttrs['escape'] = $escape;
 
 			$out[] = $this->_templates->format('option', [
-				'name' => $escape ? h($optAttrs['name']) : $optAttrs['name'],
 				'value' => $escape ? h($optAttrs['value']) : $optAttrs['value'],
-				'attrs' => $this->_templates->formatAttributes($optAttrs, ['name', 'value']),
+				'text' => $escape ? h($optAttrs['text']) : $optAttrs['text'],
+				'attrs' => $this->_templates->formatAttributes($optAttrs, ['text', 'value']),
 			]);
 		}
 		return $out;

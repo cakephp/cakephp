@@ -28,7 +28,7 @@ class SelectBoxTest extends TestCase {
 		$templates = [
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
 			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
-			'option' => '<option value="{{name}}"{{attrs}}>{{value}}</option>',
+			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 		];
 		$this->templates = new StringTemplate();
@@ -112,8 +112,8 @@ class SelectBoxTest extends TestCase {
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
 			'options' => [
-				['name' => 'a', 'value' => 'Albatross'],
-				['name' => 'b', 'value' => 'Budgie', 'data-foo' => 'bar'],
+				['value' => 'a', 'text' => 'Albatross'],
+				['value' => 'b', 'text' => 'Budgie', 'data-foo' => 'bar'],
 			]
 		];
 		$result = $select->render($data);
@@ -210,7 +210,7 @@ class SelectBoxTest extends TestCase {
 		$data = [
 			'multiple' => true,
 			'id' => 'BirdName',
-			'name' => 'Birds[name][]',
+			'name' => 'Birds[name]',
 			'value' => ['1', '2', 'burp'],
 			'options' => [
 				1 => 'one',
@@ -292,7 +292,7 @@ class SelectBoxTest extends TestCase {
 			'name' => 'Birds[name]',
 			'options' => [
 				[
-					'name' => 'Mammal',
+					'text' => 'Mammal',
 					'data-foo' => 'bar',
 					'options' => [
 						'beaver' => 'Beaver',
