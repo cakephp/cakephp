@@ -213,6 +213,58 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that using hasOne with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKey() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->user,
+			'targetTable' => $this->profile,
+			'conditions' => ['Profiles.is_active' => true],
+			'foreignKey' => ['user_id', 'user_site_id']
+		];
+		$this->user->primaryKey(['id', 'site_id']);
+		$association = new HasOne('Profiles', $config);
+		$field1 = new IdentifierExpression('Profiles.user_id');
+		$field2 = new IdentifierExpression('Profiles.user_site_id');
+		$query->expects($this->once())->method('join')->with([
+			'Profiles' => [
+				'conditions' => new QueryExpression([
+					'Profiles.is_active' => true,
+					['Users.id' => $field1, 'Users.site_id' => $field2],
+				]),
+				'type' => 'INNER',
+				'table' => 'profiles'
+			]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that using hasOne with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Cannot match provided foreignKey, got 1 columns expected 2
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKeyMistmatch() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->user,
+			'targetTable' => $this->profile,
+			'conditions' => ['Profiles.is_active' => true],
+		];
+		$this->user->primaryKey(['id', 'site_id']);
+		$association = new HasOne('Profiles', $config);
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
  * Test that save() ignores non entity values.
  *
  * @return void

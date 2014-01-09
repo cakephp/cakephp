@@ -145,7 +145,7 @@ class BelongsTo extends Association {
 		$tAlias = $this->target()->alias();
 		$sAlias = $this->_sourceTable->alias();
 		$foreignKey = (array)$options['foreignKey'];
-		$primaryKey = $this->_targetTable->primaryKey();
+		$primaryKey = (array)$this->_targetTable->primaryKey();
 
 		if (count($foreignKey) !== count($primaryKey)) {
 			$msg = 'Cannot match provided foreignKey, got %d columns expected %d';

@@ -40,7 +40,7 @@ trait DependentDeleteTrait {
 		}
 		$table = $this->target();
 		$foreignKey = (array)$this->foreignKey();
-		$primaryKey = $this->source()->primaryKey();
+		$primaryKey = (array)$this->source()->primaryKey();
 		$conditions = array_combine($foreignKey, $entity->extract($primaryKey));
 
 		if ($this->_cascadeCallbacks) {

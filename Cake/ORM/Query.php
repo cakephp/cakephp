@@ -1042,7 +1042,7 @@ class Query extends DatabaseQuery {
 			if ($meta['instance']->requiresKeys($meta['config'])) {
 				$alias = $source->alias();
 				$pkFields = [];
-				foreach($source->primaryKey() as $key) {
+				foreach ((array)$source->primaryKey() as $key) {
 					$pkFields[] = key($this->aliasField($key, $alias));
 				}
 				$collectKeys[] = [$alias, $pkFields, count($pkFields) === 1];

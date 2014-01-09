@@ -829,7 +829,7 @@ class Table implements EventListener {
  */
 	public function get($primaryKey, $options = []) {
 		$key = (array)$this->primaryKey();
-		$conditions = array_combine($key, (array)$primaryKey);
+		$conditions = array_combine($key, $primaryKey);
 		$entity = $this->find('all', $options)->where($conditions)->first();
 
 		if (!$entity) {
