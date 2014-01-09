@@ -231,7 +231,66 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderLabelOptions() {
-		$this->markTestIncomplete();
+		$radio = new Radio($this->templates);
+		$data = [
+			'name' => 'Versions[ver]',
+			'options' => [
+				1 => 'one',
+				'1x' => 'one x',
+				'2' => 'two',
+			],
+			'label' => false,
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'id' => 'Versions_ver_1',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1',
+			]],
+			['input' => [
+				'id' => 'Versions_ver_1x',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1x',
+			]],
+		];
+		$this->assertTags($result, $expected);
+
+		$data = [
+			'name' => 'Versions[ver]',
+			'options' => [
+				1 => 'one',
+				'1x' => 'one x',
+				'2' => 'two',
+			],
+			'label' => [
+				'class' => 'my-class',
+			]
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'id' => 'Versions_ver_1',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1',
+			]],
+			['label' => ['class' => 'my-class', 'for' => 'Versions_ver_1']],
+			'one',
+			'/label',
+			['input' => [
+				'id' => 'Versions_ver_1x',
+				'name' => 'Versions[ver]',
+				'type' => 'radio',
+				'value' => '1x',
+			]],
+			['label' => ['class' => 'my-class', 'for' => 'Versions_ver_1x']],
+			'one x',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**

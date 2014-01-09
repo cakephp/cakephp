@@ -91,11 +91,7 @@ class Radio {
 				$radio['disabled'] = true;
 			}
 
-			$labelAttrs = ['for' => $radio['id'], 'escape' => $escape];
-			$label = $this->_templates->format('label', [
-				'text' => $escape ? h($radio['text']) : $radio['text'],
-				'attrs' => $this->_templates->formatAttributes($labelAttrs),
-			]);
+			$label = $this->_renderLabel($radio, $data['label'], $escape);
 
 			$input = $this->_templates->format('radio', [
 				'name' => $radio['name'],
@@ -127,6 +123,19 @@ class Radio {
 		}
 		$isNumeric = is_numeric($radio['value']);
 		return (!is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric));
+	}
+
+	protected function _renderLabel($radio, $label, $escape) {
+		if (!$label) {
+			return false;
+		}
+		$labelAttrs = is_array($label) ? $label : [];
+		$labelAttrs += ['for' => $radio['id'], 'escape' => $escape];
+
+		return $this->_templates->format('label', [
+			'text' => $escape ? h($radio['text']) : $radio['text'],
+			'attrs' => $this->_templates->formatAttributes($labelAttrs),
+		]);
 	}
 
 }
