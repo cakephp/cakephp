@@ -142,7 +142,9 @@ class Plugin {
 		}
 
 		if ($config['autoload'] === true) {
-			(new ClassLoader($config['namespace'], dirname($config['path'])))->register();
+			$loader = new ClassLoader;
+			$loader->register();
+			$loader->addNamespace($config['namespace'], $config['path']);
 		}
 	}
 

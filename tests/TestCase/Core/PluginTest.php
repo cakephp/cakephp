@@ -104,7 +104,7 @@ class PluginTest extends TestCase {
 		$this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
 		Plugin::load('TestPluginThree', [
 			'namespace' => 'Company\TestPluginThree',
-			'path' => TEST_APP . 'Plugin/TestPluginThree',
+			'path' => TEST_APP . 'Plugin/Company/TestPluginThree',
 			'autoload' => true,
 		]);
 		$this->assertTrue(

@@ -5,7 +5,7 @@
 	processIsolation="false"
 	stopOnFailure="false"
 	syntaxCheck="false"
-	bootstrap="./Test/init.php"
+	bootstrap="./tests/init.php"
 	>
 	<php>
 		<ini name="memory_limit" value="-1"/>
@@ -14,14 +14,14 @@
 
 	<testsuites>
 		<testsuite name="CakePHP Test Suite">
-			<directory>./Test/TestCase/</directory>
+			<directory>./tests/TestCase/</directory>
 		</testsuite>
 		<testsuite name="Database Test Suite">
-			<file>./Test/TestCase/DatabaseSuite.php</file>
+			<file>./tests/TestCase/DatabaseSuite.php</file>
 		</testsuite>
 	</testsuites>
 	<listeners>
-		<listener class="\Cake\TestSuite\Fixture\FixtureInjector" file="./Cake/TestSuite/Fixture/FixtureInjector.php">
+		<listener class="\Cake\TestSuite\Fixture\FixtureInjector" file="./src/TestSuite/Fixture/FixtureInjector.php">
 			<arguments>
 				<object class="\Cake\TestSuite\Fixture\FixtureManager" />
 			</arguments>
