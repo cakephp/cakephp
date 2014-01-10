@@ -119,7 +119,7 @@ class AppTest extends TestCase {
  * @return void
  */
 	public function testPathWithPlugins() {
-		$basepath = CORE_TESTS . 'TestApp' . DS . 'Plugin' . DS;
+		$basepath = TEST_APP . 'Plugin' . DS;
 		Plugin::load('TestPlugin');
 
 		$result = App::path('Controller', 'TestPlugin');
@@ -195,7 +195,7 @@ class AppTest extends TestCase {
  * Make sure that .svn and friends are excluded from App::objects('Plugin')
  */
 	public function testListObjectsIgnoreDotDirectories() {
-		$path = CORE_TESTS . 'TestApp/Plugin/';
+		$path = TEST_APP . 'Plugin/';
 
 		$this->skipIf(!is_writable($path), $path . ' is not writable.');
 
@@ -244,11 +244,11 @@ class AppTest extends TestCase {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
 		$path = App::pluginPath('TestPlugin');
-		$expected = CORE_TESTS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
 		$this->assertEquals($expected, $path);
 
 		$path = App::pluginPath('TestPluginTwo');
-		$expected = CORE_TESTS . 'TestApp' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
 		$this->assertEquals($expected, $path);
 	}
 
@@ -259,11 +259,11 @@ class AppTest extends TestCase {
  */
 	public function testThemePath() {
 		$path = App::themePath('test_theme');
-		$expected = CORE_TESTS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
+		$expected = TEST_APP . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
 		$this->assertEquals($expected, $path);
 
 		$path = App::themePath('TestTheme');
-		$expected = CORE_TESTS . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
+		$expected = TEST_APP . 'TestApp' . DS . 'View' . DS . 'Themed' . DS . 'TestTheme' . DS;
 		$this->assertEquals($expected, $path);
 	}
 

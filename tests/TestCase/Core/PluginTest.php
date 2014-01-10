@@ -220,10 +220,10 @@ class PluginTest extends TestCase {
  */
 	public function testPath() {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
-		$expected = CORE_TESTS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
 		$this->assertEquals(Plugin::path('TestPlugin'), $expected);
 
-		$expected = CORE_TESTS . 'TestApp' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
+		$expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
 		$this->assertEquals(Plugin::path('TestPluginTwo'), $expected);
 	}
 
