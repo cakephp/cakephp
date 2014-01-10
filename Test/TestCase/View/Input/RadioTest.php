@@ -300,7 +300,27 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderContainerTemplate() {
-		$this->markTestIncomplete();
+		$this->templates->add([
+			'radioContainer' => '<div class="radio">{{input}}{{label}}</div>'
+		]);
+		$radio = new Radio($this->templates);
+		$data = [
+			'name' => 'Versions[ver]',
+			'options' => [
+				1 => 'one',
+				'1x' => 'one x',
+				'2' => 'two',
+			],
+		];
+		$result = $radio->render($data);
+		$this->assertContains(
+			'<div class="radio"><input type="radio"',
+			$result
+		);
+		$this->assertContains(
+			'</label></div>',
+			$result
+		);
 	}
 
 }
