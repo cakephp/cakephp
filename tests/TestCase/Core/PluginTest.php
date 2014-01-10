@@ -104,7 +104,7 @@ class PluginTest extends TestCase {
 		$this->assertFalse(class_exists('Company\TestPluginThree\Utility\Hello'));
 		Plugin::load('TestPluginThree', [
 			'namespace' => 'Company\TestPluginThree',
-			'path' => TEST_APP . 'Plugin/Company/TestPluginThree',
+			'path' => TEST_APP . 'plugins/Company/TestPluginThree',
 			'autoload' => true,
 		]);
 		$this->assertTrue(
@@ -220,10 +220,10 @@ class PluginTest extends TestCase {
  */
 	public function testPath() {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
-		$expected = CORE_TESTS . 'TestApp' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
+		$expected = TEST_APP . 'plugins' . DS . 'TestPlugin' . DS;
 		$this->assertEquals(Plugin::path('TestPlugin'), $expected);
 
-		$expected = CORE_TESTS . 'TestApp' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
+		$expected = TEST_APP . 'plugins' . DS . 'TestPluginTwo' . DS;
 		$this->assertEquals(Plugin::path('TestPluginTwo'), $expected);
 	}
 

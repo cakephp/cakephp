@@ -757,71 +757,71 @@ class DispatcherTest extends TestCase {
 		return array(
 			array(
 				'theme/test_theme/flash/theme_test.swf',
-				'View/Themed/TestTheme/webroot/flash/theme_test.swf'
+				'src/View/Themed/TestTheme/webroot/flash/theme_test.swf'
 			),
 			array(
 				'theme/test_theme/pdfs/theme_test.pdf',
-				'View/Themed/TestTheme/webroot/pdfs/theme_test.pdf'
+				'src/View/Themed/TestTheme/webroot/pdfs/theme_test.pdf'
 			),
 			array(
 				'theme/test_theme/img/test.jpg',
-				'View/Themed/TestTheme/webroot/img/test.jpg'
+				'src/View/Themed/TestTheme/webroot/img/test.jpg'
 			),
 			array(
 				'theme/test_theme/css/test_asset.css',
-				'View/Themed/TestTheme/webroot/css/test_asset.css'
+				'src/View/Themed/TestTheme/webroot/css/test_asset.css'
 			),
 			array(
 				'theme/test_theme/js/theme.js',
-				'View/Themed/TestTheme/webroot/js/theme.js'
+				'src/View/Themed/TestTheme/webroot/js/theme.js'
 			),
 			array(
 				'theme/test_theme/js/one/theme_one.js',
-				'View/Themed/TestTheme/webroot/js/one/theme_one.js'
+				'src/View/Themed/TestTheme/webroot/js/one/theme_one.js'
 			),
 			array(
 				'theme/test_theme/space%20image.text',
-				'View/Themed/TestTheme/webroot/space image.text'
+				'src/View/Themed/TestTheme/webroot/space image.text'
 			),
 			array(
 				'test_plugin/root.js',
-				'Plugin/TestPlugin/webroot/root.js'
+				'plugins/TestPlugin/webroot/root.js'
 			),
 			array(
 				'test_plugin/flash/plugin_test.swf',
-				'Plugin/TestPlugin/webroot/flash/plugin_test.swf'
+				'plugins/TestPlugin/webroot/flash/plugin_test.swf'
 			),
 			array(
 				'test_plugin/pdfs/plugin_test.pdf',
-				'Plugin/TestPlugin/webroot/pdfs/plugin_test.pdf'
+				'plugins/TestPlugin/webroot/pdfs/plugin_test.pdf'
 			),
 			array(
 				'test_plugin/js/test_plugin/test.js',
-				'Plugin/TestPlugin/webroot/js/test_plugin/test.js'
+				'plugins/TestPlugin/webroot/js/test_plugin/test.js'
 			),
 			array(
 				'test_plugin/css/test_plugin_asset.css',
-				'Plugin/TestPlugin/webroot/css/test_plugin_asset.css'
+				'plugins/TestPlugin/webroot/css/test_plugin_asset.css'
 			),
 			array(
 				'test_plugin/img/cake.icon.gif',
-				'Plugin/TestPlugin/webroot/img/cake.icon.gif'
+				'plugins/TestPlugin/webroot/img/cake.icon.gif'
 			),
 			array(
 				'plugin_js/js/plugin_js.js',
-				'Plugin/PluginJs/webroot/js/plugin_js.js'
+				'plugins/PluginJs/webroot/js/plugin_js.js'
 			),
 			array(
 				'plugin_js/js/one/plugin_one.js',
-				'Plugin/PluginJs/webroot/js/one/plugin_one.js'
+				'plugins/PluginJs/webroot/js/one/plugin_one.js'
 			),
 			array(
 				'test_plugin/css/unknown.extension',
-				'Plugin/TestPlugin/webroot/css/unknown.extension'
+				'plugins/TestPlugin/webroot/css/unknown.extension'
 			),
 			array(
 				'test_plugin/css/theme_one.htc',
-				'Plugin/TestPlugin/webroot/css/theme_one.htc'
+				'plugins/TestPlugin/webroot/css/theme_one.htc'
 			),
 		);
 	}
@@ -845,7 +845,7 @@ class DispatcherTest extends TestCase {
 		$Dispatcher->dispatch(new Request($url), $response);
 		$result = ob_get_clean();
 
-		$path = CORE_TESTS . 'TestApp/' . str_replace('/', DS, $file);
+		$path = TEST_APP . str_replace('/', DS, $file);
 		$file = file_get_contents($path);
 		$this->assertEquals($file, $result);
 

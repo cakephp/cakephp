@@ -90,7 +90,7 @@ class ProjectTaskTest extends TestCase {
  * @return void
  */
 	protected function _cloneRoutes() {
-		$File = new File(CORE_TESTS . 'TestApp/Config/routes.php');
+		$File = new File(TEST_APP . 'src/Config/routes.php');
 		$contents = $File->read();
 
 		mkdir(TMP . 'BakeTestApp/Config/', 0777, true);

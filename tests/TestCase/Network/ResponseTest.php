@@ -1089,7 +1089,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CORE_TESTS . 'TestApp/vendor/css/test_asset.css');
+		$response->file(TEST_APP . 'vendor/css/test_asset.css');
 
 		ob_start();
 		$result = $response->send();
@@ -1144,7 +1144,7 @@ class ResponseTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$response->file(
-			CORE_TESTS . 'TestApp' . DS . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+			TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
 			array(
 				'name' => 'something_special.css',
 				'download' => true,
@@ -1206,7 +1206,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CORE_TESTS . 'TestApp/Config/no_section.ini');
+		$response->file(TEST_APP . 'src/Config/no_section.ini');
 
 		ob_start();
 		$result = $response->send();
@@ -1270,7 +1270,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CORE_TESTS . 'TestApp/Config/no_section.ini');
+		$response->file(TEST_APP . 'src/Config/no_section.ini');
 
 		ob_start();
 		$result = $response->send();
@@ -1334,7 +1334,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CORE_TESTS . 'TestApp/Config/no_section.ini', array(
+		$response->file(TEST_APP . 'src/Config/no_section.ini', array(
 			'name' => 'config.ini'
 		));
 
@@ -1375,7 +1375,7 @@ class ResponseTest extends TestCase {
 		$response->expects($this->never())
 			->method('download');
 
-		$response->file(CORE_TESTS . 'TestApp/Config/no_section.ini', array(
+		$response->file(TEST_APP . 'src/Config/no_section.ini', array(
 			'download' => false
 		));
 
@@ -1413,7 +1413,7 @@ class ResponseTest extends TestCase {
 		$response->expects($this->once())->method('_clearBuffer');
 		$response->expects($this->never())->method('_flushBuffer');
 
-		$response->file(CORE_TESTS . 'TestApp/vendor/css/test_asset.css');
+		$response->file(TEST_APP . 'vendor/css/test_asset.css');
 
 		$result = $response->send();
 		$this->assertNull($result);
@@ -1445,7 +1445,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CORE_TESTS . 'TestApp/vendor/img/test_2.JPG');
+		$response->file(TEST_APP . 'vendor/img/test_2.JPG');
 	}
 
 /**
@@ -1474,7 +1474,7 @@ class ResponseTest extends TestCase {
 			->method('_isActive')
 			->will($this->returnValue(true));
 
-		$response->file(CORE_TESTS . 'TestApp/vendor/img/test_2.JPG');
+		$response->file(TEST_APP . 'vendor/img/test_2.JPG');
 	}
 
 /**
@@ -1542,7 +1542,7 @@ class ResponseTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$response->file(
-			CORE_TESTS . 'TestApp' . DS . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+			TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
 			array('download' => true)
 		);
 
@@ -1599,7 +1599,7 @@ class ResponseTest extends TestCase {
 			->will($this->returnValue(true));
 
 		$response->file(
-			CORE_TESTS . 'TestApp' . DS . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+			TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
 			array('download' => true)
 		);
 
@@ -1647,7 +1647,7 @@ class ResponseTest extends TestCase {
 			));
 
 		$response->file(
-			CORE_TESTS . 'TestApp' . DS . 'vendor' . DS . 'css' . DS . 'test_asset.css',
+			TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
 			array('download' => true)
 		);
 

@@ -886,7 +886,7 @@ XML;
 		);
 		$this->assertEquals($expected, Xml::toArray($xmlRequest));
 
-		$xmlResponse = Xml::build(CORE_TESTS . 'Fixture/soap_response.xml');
+		$xmlResponse = Xml::build(CORE_TESTS . DS . 'Fixture/soap_response.xml');
 		$expected = array(
 			'Envelope' => array(
 				'@soap:encodingStyle' => 'http://www.w3.org/2001/12/soap-encoding',

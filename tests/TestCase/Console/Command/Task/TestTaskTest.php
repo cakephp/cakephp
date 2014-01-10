@@ -592,7 +592,7 @@ class TestTaskTest extends TestCase {
  * @return void
  */
 	public function testInteractiveWithPlugin() {
-		$testApp = CORE_TESTS . 'TestApp/Plugin/';
+		$testApp = TEST_APP . 'plugins/';
 		Plugin::load('TestPlugin');
 
 		$this->Task->plugin = 'TestPlugin';
