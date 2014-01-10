@@ -1507,8 +1507,8 @@ class ModelIntegrationTest extends BaseModelTest {
 				'conditions' => '', 'fields' => '', 'order' => '', 'counterCache' => ''
 			)
 		);
-		$this->assertSame($TestModel->belongsTo, $expected);
-		$this->assertSame($TestFakeModel->belongsTo, $expected);
+		$this->assertSame($expected, $TestModel->belongsTo);
+		$this->assertSame($expected, $TestFakeModel->belongsTo);
 
 		$this->assertEquals('User', $TestModel->User->name);
 		$this->assertEquals('User', $TestFakeModel->User->name);
@@ -1525,8 +1525,8 @@ class ModelIntegrationTest extends BaseModelTest {
 				'dependent' => ''
 		));
 
-		$this->assertSame($TestModel->hasOne, $expected);
-		$this->assertSame($TestFakeModel->hasOne, $expected);
+		$this->assertSame($expected, $TestModel->hasOne);
+		$this->assertSame($expected, $TestFakeModel->hasOne);
 
 		$this->assertEquals('Featured', $TestModel->Featured->name);
 		$this->assertEquals('Featured', $TestFakeModel->Featured->name);
@@ -1546,8 +1546,8 @@ class ModelIntegrationTest extends BaseModelTest {
 				'counterQuery' => ''
 		));
 
-		$this->assertSame($TestModel->hasMany, $expected);
-		$this->assertSame($TestFakeModel->hasMany, $expected);
+		$this->assertSame($expected, $TestModel->hasMany);
+		$this->assertSame($expected, $TestFakeModel->hasMany);
 
 		$this->assertEquals('Comment', $TestModel->Comment->name);
 		$this->assertEquals('Comment', $TestFakeModel->Comment->name);
@@ -1569,8 +1569,8 @@ class ModelIntegrationTest extends BaseModelTest {
 				'finderQuery' => '',
 		));
 
-		$this->assertSame($TestModel->hasAndBelongsToMany, $expected);
-		$this->assertSame($TestFakeModel->hasAndBelongsToMany, $expected);
+		$this->assertSame($expected, $TestModel->hasAndBelongsToMany);
+		$this->assertSame($expected, $TestFakeModel->hasAndBelongsToMany);
 
 		$this->assertEquals('Tag', $TestModel->Tag->name);
 		$this->assertEquals('Tag', $TestFakeModel->Tag->name);

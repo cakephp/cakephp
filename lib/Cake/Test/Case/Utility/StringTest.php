@@ -656,7 +656,7 @@ podeís adquirirla.</span></p>
 		$this->assertEquals($this->Text->highlight($text3, array('strong', 'what'), $options), $text3);
 
 		$expected = '<b>What</b> a <b>strong</b> mouse: <img src="what-a-strong-mouse.png" alt="What a strong mouse!" />';
-		$this->assertEquals($this->Text->highlight($text4, array('strong', 'what'), $options), $expected);
+		$this->assertEquals($expected, $this->Text->highlight($text4, array('strong', 'what'), $options));
 	}
 
 /**
