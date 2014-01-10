@@ -66,10 +66,17 @@ class Radio {
 			'value' => null,
 			'escape' => true,
 			'label' => true,
+			'empty' => false,
 		];
 		$opts = [];
 		$options = (array)$data['options'];
 		$escape = $data['escape'];
+		if (!empty($data['empty'])) {
+			$empty = $data['empty'] === true ? 'empty' : $data['empty'];
+			$options = ['' => $empty] + $options;
+		}
+		unset($data['empty']);
+
 		foreach ($options as $val => $text) {
 			if (is_int($val) && isset($text['text'], $text['value'])) {
 				$radio = $text;

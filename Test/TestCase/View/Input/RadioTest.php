@@ -109,6 +109,66 @@ class RadioTest extends TestCase {
 	}
 
 /**
+ * Test rendering the empty option.
+ *
+ * @return void
+ */
+	public function testRenderEmptyOption() {
+		$radio = new Radio($this->templates);
+		$data = [
+			'name' => 'Crayons[color]',
+			'options' => ['r' => 'Red'],
+			'empty' => true,
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Crayons[color]',
+				'value' => '',
+				'id' => 'Crayons_color'
+			]],
+			['label' => ['for' => 'Crayons_color']],
+			'empty',
+			'/label',
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Crayons[color]',
+				'value' => 'r',
+				'id' => 'Crayons_color_r'
+			]],
+			['label' => ['for' => 'Crayons_color_r']],
+			'Red',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
+
+		$data['empty'] = 'Choose one';
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Crayons[color]',
+				'value' => '',
+				'id' => 'Crayons_color'
+			]],
+			['label' => ['for' => 'Crayons_color']],
+			'Choose one',
+			'/label',
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Crayons[color]',
+				'value' => 'r',
+				'id' => 'Crayons_color_r'
+			]],
+			['label' => ['for' => 'Crayons_color_r']],
+			'Red',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test render() and selected inputs.
  *
  * @return void
