@@ -222,7 +222,8 @@ class BelongsToMany extends Association {
 
 		unset($options['queryBuilder']);
 		$options = ['conditions' => [$cond]] + compact('includeFields');
-		$this->target()
+		$options['foreignKey'] = $this->targetForeignKey();
+		$this->_targetTable
 			->association($junction->alias())
 			->attachTo($query, $options);
 	}

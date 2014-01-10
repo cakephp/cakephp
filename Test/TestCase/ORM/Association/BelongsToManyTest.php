@@ -362,6 +362,53 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
+ * Tests that using belongsToMany with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKey() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'conditions' => ['Tags.name' => 'cake'],
+			'foreignKey' => ['article_id', 'article_site_id'],
+			'targetForeignKey' => ['tag_id', 'tag_site_id']
+		];
+		$this->article->primaryKey(['id', 'site_id']);
+		$this->tag->primaryKey(['id', 'my_site_id']);
+		$association = new BelongsToMany('Tags', $config);
+		$query->expects($this->at(0))->method('join')->with([
+			'Tags' => [
+				'conditions' => new QueryExpression([
+					'Tags.name' => 'cake'
+				]),
+				'type' => 'INNER',
+				'table' => 'tags'
+			]
+		]);
+
+		$fieldA = new IdentifierExpression('ArticlesTags.article_id');
+		$fieldB = new IdentifierExpression('ArticlesTags.article_site_id');
+		$fieldC = new IdentifierExpression('ArticlesTags.tag_id');
+		$fieldD = new IdentifierExpression('ArticlesTags.tag_site_id');
+
+		$query->expects($this->at(1))->method('join')->with([
+			'ArticlesTags' => [
+				'conditions' => new QueryExpression([
+					['Articles.id' => $fieldA, 'Articles.site_id' => $fieldB],
+					['Tags.id' => $fieldC, 'Tags.my_site_id' => $fieldD]
+				]),
+				'type' => 'INNER',
+				'table' => 'articles_tags'
+			]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
  * Test the eager loader method with no extra options
  *
  * @return void
