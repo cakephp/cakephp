@@ -32,6 +32,6 @@
         }
     },
     "bin": [
-        "src/Cake/Console/cake"
+        "src/Console/cake"
     ]
 }
