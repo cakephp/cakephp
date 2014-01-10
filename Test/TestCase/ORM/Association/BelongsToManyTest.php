@@ -1316,4 +1316,26 @@ class BelongsToManyTest extends TestCase {
 		$this->assertEquals('foo', $assoc->targetForeignKey());
 	}
 
+/**
+ * Tests that custom foreignKeys are properly trasmitted to involved associations
+ * when they are customized
+ *
+ * @return void
+ */
+	public function testJunctionWithCustomForeignKeys() {
+		$assoc = new BelongsToMany('Test', [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'foreignKey' => 'Art',
+			'targetForeignKey' => 'Tag'
+		]);
+		$junction = $assoc->junction();
+		$this->assertEquals('Art', $junction->association('Articles')->foreignKey());
+		$this->assertEquals('Tag', $junction->association('Tags')->foreignKey());
+
+		$inverseRelation = $this->tag->association('Articles');
+		$this->assertEquals('Tag', $inverseRelation->foreignKey());
+		$this->assertEquals('Art', $inverseRelation->targetForeignKey());
+	}
+
 }

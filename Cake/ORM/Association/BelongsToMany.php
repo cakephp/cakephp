@@ -166,15 +166,23 @@ class BelongsToMany extends Association {
 		$junctionAlias = $table->alias();
 
 		if (!$table->association($sAlias)) {
-			$table->belongsTo($sAlias)->target($source);
+			$table
+				->belongsTo($sAlias, ['foreignKey' => $this->foreignKey()])
+				->target($source);
 		}
 
 		if (!$table->association($tAlias)) {
-			$table->belongsTo($tAlias)->target($target);
+			$table
+				->belongsTo($tAlias, ['foreignKey' => $this->targetForeignKey()])
+				->target($target);
 		}
 
 		if (!$target->association($junctionAlias)) {
-			$target->belongsToMany($sAlias);
+			$target->belongsToMany($sAlias, [
+				'sourceTable' => $source,
+				'foreignKey' => $this->targetForeignKey(),
+				'targetForeignKey' => $this->foreignKey()
+			]);
 			$target->hasMany($junctionAlias)->target($table);
 		}
 
