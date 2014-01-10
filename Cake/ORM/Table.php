@@ -1181,27 +1181,27 @@ class Table implements EventListener {
  * @return \Cake\ORM\Entity|boolean
  */
 	protected function _insert($entity, $data) {
-		$query = $this->query();
+		$primary = (array)$this->primaryKey();
+		$keys = array_fill(0, count($primary), null);
+		$id = (array)$this->_newId($primary) + $keys;
+		$primary = array_combine($primary, $id);
+		$data = array_filter($primary, 'strlen') + $data;
 
-		$primary = $this->primaryKey();
-		$id = $this->_newId($primary);
-		if ($id !== null) {
-			$data[$primary] = $id;
-		}
-
-		$statement = $query->insert(array_keys($data))
+		$statement = $this->query()->insert(array_keys($data))
 			->values($data)
 			->execute();
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
-			if ($primary && !isset($data[$primary])) {
-				$id = $statement->lastInsertId($this->table(), $primary);
-			}
-			if ($primary && $id !== null) {
-				$entity->set($primary, $id);
-			}
 			$success = $entity;
+			$entity->set($primary, ['guard' => false]);
+			foreach ($primary as $key => $value) {
+				if (!isset($data[$key])) {
+					$id = $statement->lastInsertId($this->table(), $key);
+					$entity->set($key, $id);
+					break;
+				}
+			}
 		}
 		$statement->closeCursor();
 		return $success;
@@ -1214,14 +1214,14 @@ class Table implements EventListener {
  * value if possible. You can override this method if you have specific requirements
  * for id generation.
  *
- * @param string $primary The primary key column to get a new ID for.
+ * @param array $primary The primary key columns to get a new ID for.
  * @return null|mixed Either null or the new primary key value.
  */
 	protected function _newId($primary) {
-		if (!$primary) {
+		if (!$primary || count((array)$primary) > 1)  {
 			return null;
 		}
-		$typeName = $this->schema()->columnType($primary);
+		$typeName = $this->schema()->columnType($primary[0]);
 		$type = Type::build($typeName);
 		return $type->newId();
 	}
