@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -58,18 +56,17 @@ class Comparison extends QueryExpression {
  * @return void
  */
 	public function __construct($field, $value, $type, $conjuntion) {
-		$this->_field = $field;
-		$this->_value = $value;
+		$this->field($field);
+		$this->value($value);
 		$this->type($conjuntion);
 
 		if (is_string($type)) {
 			$this->_type = $type;
 		}
+
 		if (is_string($field) && isset($types[$this->_field])) {
 			$this->_type = current($types);
 		}
-
-		$this->_conditions[$field] = $value;
 	}
 
 /**

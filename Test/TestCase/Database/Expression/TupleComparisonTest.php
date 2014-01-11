@@ -1,6 +1,5 @@
 <?php
 /**
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -15,36 +14,29 @@
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
-use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
 /**
- * Tests IdentifierExpression class
+ * Tests TupleComparison class
  *
  **/
-class IdentifierExpressionTest extends TestCase {
+class TupleComparisonTest extends TestCase {
 
 /**
- * Tests getting and setting the field
- *
- * @return
- */
-	public function testGetAndSet() {
-		$expression = new IdentifierExpression('foo');
-		$this->assertEquals('foo', $expression->getIdentifier());
-		$expression->setIdentifier('bar');
-		$this->assertEquals('bar', $expression->getIdentifier());
-	}
-
-/**
- * Tests converting to sql
+ * Tests generating a function with no arguments
  *
  * @return void
  */
-	public function testSQL() {
-		$expression = new IdentifierExpression('foo');
-		$this->assertEquals('foo', $expression->sql(new ValueBinder));
+	public function testsSimpleTuple() {
+		$f = new TupleComparison(['field1', 'field2'], [1, 2], ['integer', 'integer'], '=');
+		$binder = new ValueBinder;
+		$this->assertEquals('(field1, field2) = (:c0, :c1)', $f->sql($binder));
+		$this->assertSame(1, $binder->bindings()[':c0']['value']);
+		$this->assertSame(2, $binder->bindings()[':c1']['value']);
+		$this->assertSame('integer', $binder->bindings()[':c0']['type']);
+		$this->assertSame('integer', $binder->bindings()[':c1']['type']);
 	}
 
 }
