@@ -74,7 +74,6 @@ class Radio {
 			$options = (array)$data['options'];
 		}
 
-		$escape = $data['escape'];
 		if (!empty($data['empty'])) {
 			$empty = $data['empty'] === true ? 'empty' : $data['empty'];
 			$options = ['' => $empty] + $options;
@@ -83,38 +82,7 @@ class Radio {
 
 		$opts = [];
 		foreach ($options as $val => $text) {
-			if (is_int($val) && isset($text['text'], $text['value'])) {
-				$radio = $text;
-				$text = $radio['text'];
-			} else {
-				$radio = ['value' => $val, 'text' => $text];
-			}
-			$radio['name'] = $data['name'];
-
-			if (empty($radio['id'])) {
-				$radio['id'] = Inflector::slug($radio['name'] . '_' . $radio['value']);
-			}
-
-			if (isset($data['value']) && strval($data['value']) === strval($radio['value'])) {
-				$radio['checked'] = true;
-			}
-
-			if ($this->_isDisabled($radio, $data['disabled'])) {
-				$radio['disabled'] = true;
-			}
-
-			$label = $this->_renderLabel($radio, $data['label'], $escape);
-
-			$input = $this->_templates->format('radio', [
-				'name' => $radio['name'],
-				'value' => $escape ? h($radio['value']) : $radio['value'],
-				'attrs' => $this->_templates->formatAttributes($radio, ['name', 'value', 'text']),
-			]);
-
-			$opts[] = $this->_templates->format('radioContainer', [
-				'input' => $input,
-				'label' => $label,
-			]);
+			$opts[] = $this->_renderInput($val, $text, $data);
 		}
 		return implode('', $opts);
 	}
@@ -135,6 +103,50 @@ class Radio {
 		}
 		$isNumeric = is_numeric($radio['value']);
 		return (!is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric));
+	}
+
+/**
+ * Renders a single radio input and label.
+ *
+ * @param string|int $val The value of the radio input.
+ * @param string|array $text The label text, or complex radio type.
+ * @param array $data Additional options for input generation.
+ * @return string.
+ */
+	protected function _renderInput($val, $text, $data) {
+		$escape = $data['escape'];
+		if (is_int($val) && isset($text['text'], $text['value'])) {
+			$radio = $text;
+			$text = $radio['text'];
+		} else {
+			$radio = ['value' => $val, 'text' => $text];
+		}
+		$radio['name'] = $data['name'];
+
+		if (empty($radio['id'])) {
+			$radio['id'] = Inflector::slug($radio['name'] . '_' . $radio['value']);
+		}
+
+		if (isset($data['value']) && strval($data['value']) === strval($radio['value'])) {
+			$radio['checked'] = true;
+		}
+
+		if ($this->_isDisabled($radio, $data['disabled'])) {
+			$radio['disabled'] = true;
+		}
+
+		$label = $this->_renderLabel($radio, $data['label'], $escape);
+
+		$input = $this->_templates->format('radio', [
+			'name' => $radio['name'],
+			'value' => $escape ? h($radio['value']) : $radio['value'],
+			'attrs' => $this->_templates->formatAttributes($radio, ['name', 'value', 'text']),
+		]);
+
+		return $this->_templates->format('radioContainer', [
+			'input' => $input,
+			'label' => $label,
+		]);
 	}
 
 /**
