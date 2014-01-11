@@ -68,10 +68,7 @@ class FixtureManager {
 		if (!is_array($test->fixtures)) {
 			$test->fixtures = array_map('trim', explode(',', $test->fixtures));
 		}
-		if (isset($test->fixtures)) {
-			$this->_loadFixtures($test->fixtures);
-		}
-
+		$this->_loadFixtures($test);
 		$this->_processed[get_class($test)] = true;
 	}
 
@@ -120,14 +117,15 @@ class FixtureManager {
 /**
  * Looks for fixture files and instantiates the classes accordingly
  *
- * @param array $fixtures the fixture names to load using the notation {type}.{name}
+ * @param Cake\TestSuite\Testcase $test The test suite to load fixtures for.
  * @return void
  * @throws UnexpectedValueException when a referenced fixture does not exist.
  */
-	protected function _loadFixtures($fixtures) {
-		foreach ($fixtures as $fixture) {
-			$fixtureFile = null;
-			$fixtureIndex = $fixture;
+	protected function _loadFixtures($test) {
+		if (empty($test->fixtures)) {
+			return;
+		}
+		foreach ($test->fixtures as $fixture) {
 			if (isset($this->_loaded[$fixture])) {
 				continue;
 			}
@@ -151,7 +149,13 @@ class FixtureManager {
 				$this->_loaded[$fixture] = new $className();
 				$this->_fixtureMap[$base] = $this->_loaded[$fixture];
 			} else {
-				throw new \UnexpectedValueException(sprintf('Referenced fixture class %s not found', $className));
+				$msg = sprintf(
+					'Referenced fixture class "%s" not found. Fixture "%s" was referenced in test case "%s".',
+					$className,
+					$fixture,
+					get_class($test)
+				);
+				throw new \UnexpectedValueException($msg);
 			}
 		}
 	}
