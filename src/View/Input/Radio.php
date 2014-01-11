@@ -137,6 +137,17 @@ class Radio {
 		return (!is_array($disabled) || in_array((string)$radio['value'], $disabled, !$isNumeric));
 	}
 
+/**
+ * Renders a label element for a given radio button.
+ *
+ * In the future this might be refactored into a separate widget as other
+ * input types (multi-checkboxes) will also need labels generated.
+ *
+ * @param array $radio The input properties.
+ * @param false|string|array $label The properties for a label.
+ * @param boolean $escape Whether or not to HTML escape the label.
+ * @return string Generated label.
+ */
 	protected function _renderLabel($radio, $label, $escape) {
 		if (!$label) {
 			return false;
