@@ -68,7 +68,12 @@ class Radio {
 			'label' => true,
 			'empty' => false,
 		];
-		$options = (array)$data['options'];
+		if ($data['options'] instanceof Traversable) {
+			$options = iterator_to_array($data['options']);
+		} else {
+			$options = (array)$data['options'];
+		}
+
 		$escape = $data['escape'];
 		if (!empty($data['empty'])) {
 			$empty = $data['empty'] === true ? 'empty' : $data['empty'];

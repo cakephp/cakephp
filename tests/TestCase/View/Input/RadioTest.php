@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View\Input;
 
+use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
 use Cake\View\Input\Radio;
 use Cake\View\StringTemplate;
@@ -66,6 +67,13 @@ class RadioTest extends TestCase {
 			'Black',
 			'/label',
 		];
+		$this->assertTags($result, $expected);
+
+		$data = [
+			'name' => 'Crayons[color]',
+			'options' => new Collection(['r' => 'Red', 'b' => 'Black'])
+		];
+		$result = $radio->render($data);
 		$this->assertTags($result, $expected);
 	}
 
