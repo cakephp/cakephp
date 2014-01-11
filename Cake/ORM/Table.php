@@ -1185,7 +1185,8 @@ class Table implements EventListener {
 		$keys = array_fill(0, count($primary), null);
 		$id = (array)$this->_newId($primary) + $keys;
 		$primary = array_combine($primary, $id);
-		$data = array_filter($primary, 'strlen') + $data;
+		$filteredKeys = array_filter($primary, 'strlen');
+		$data = $filteredKeys + $data;
 
 		$statement = $this->query()->insert(array_keys($data))
 			->values($data)
@@ -1194,8 +1195,8 @@ class Table implements EventListener {
 		$success = false;
 		if ($statement->rowCount() > 0) {
 			$success = $entity;
-			$entity->set($primary, ['guard' => false]);
-			foreach ($primary as $key => $value) {
+			$entity->set($filteredKeys, ['guard' => false]);
+			foreach ($primary as $key => $v) {
 				if (!isset($data[$key])) {
 					$id = $statement->lastInsertId($this->table(), $key);
 					$entity->set($key, $id);
