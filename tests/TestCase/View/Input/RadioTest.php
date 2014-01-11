@@ -177,6 +177,36 @@ class RadioTest extends TestCase {
 	}
 
 /**
+ * Test rendering the input inside the label.
+ *
+ * @return void
+ */
+	public function testRenderInputInsideLabel() {
+		$this->templates->add([
+			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
+			'radioContainer' => '{{label}}',
+		]);
+		$radio = new Radio($this->templates);
+		$data = [
+			'name' => 'Crayons[color]',
+			'options' => ['r' => 'Red'],
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['label' => ['for' => 'Crayons_color_r']],
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Crayons[color]',
+				'value' => 'r',
+				'id' => 'Crayons_color_r'
+			]],
+			'Red',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test render() and selected inputs.
  *
  * @return void

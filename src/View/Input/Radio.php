@@ -36,6 +36,16 @@ class Radio {
 /**
  * Constructor
  *
+ * This class uses a few templates:
+ *
+ * - `radio` Used to generate the input for a radio button.
+ *   Can use the following variables `name`, `value`, `attrs`.
+ * - `label` Used to generate the label for a radio button.
+ *   Can use the following variables `attrs`, `text` and `input`.
+ * - `radioContainer` Used to generate the container element for
+ *   the radio + input element. Can use the `input` and `label`
+ *   variables.
+ *
  * @param Cake\View\StringTemplate $templates
  */
 	public function __construct($templates) {
@@ -135,13 +145,18 @@ class Radio {
 			$radio['disabled'] = true;
 		}
 
-		$label = $this->_renderLabel($radio, $data['label'], $escape);
-
 		$input = $this->_templates->format('radio', [
 			'name' => $radio['name'],
 			'value' => $escape ? h($radio['value']) : $radio['value'],
 			'attrs' => $this->_templates->formatAttributes($radio, ['name', 'value', 'text']),
 		]);
+
+		$label = $this->_renderLabel(
+			$radio,
+			$data['label'],
+			$input,
+			$escape
+		);
 
 		return $this->_templates->format('radioContainer', [
 			'input' => $input,
@@ -157,10 +172,11 @@ class Radio {
  *
  * @param array $radio The input properties.
  * @param false|string|array $label The properties for a label.
+ * @param string $input The input widget.
  * @param boolean $escape Whether or not to HTML escape the label.
  * @return string Generated label.
  */
-	protected function _renderLabel($radio, $label, $escape) {
+	protected function _renderLabel($radio, $label, $input, $escape) {
 		if (!$label) {
 			return false;
 		}
@@ -169,6 +185,7 @@ class Radio {
 
 		return $this->_templates->format('label', [
 			'text' => $escape ? h($radio['text']) : $radio['text'],
+			'input' => $input,
 			'attrs' => $this->_templates->formatAttributes($labelAttrs),
 		]);
 	}
