@@ -51,7 +51,7 @@ class Radio {
  * - `options` - An array of options. See below for more information.
  * - `disabled` - Either true or an array of inputs to disable.
  *    When true, the select element will be disabled.
- * - `value` - A string  of the option to mark as selected.
+ * - `value` - A string of the option to mark as selected.
  * - `label` - Either false to disable label generation, or
  *   an array of attributes for all labels.
  *
@@ -68,7 +68,6 @@ class Radio {
 			'label' => true,
 			'empty' => false,
 		];
-		$opts = [];
 		$options = (array)$data['options'];
 		$escape = $data['escape'];
 		if (!empty($data['empty'])) {
@@ -77,6 +76,7 @@ class Radio {
 		}
 		unset($data['empty']);
 
+		$opts = [];
 		foreach ($options as $val => $text) {
 			if (is_int($val) && isset($text['text'], $text['value'])) {
 				$radio = $text;
