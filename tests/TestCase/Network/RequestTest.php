@@ -1164,7 +1164,7 @@ class RequestTest extends TestCase {
 		Configure::write('App.baseUrl', false);
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['PHP_SELF'] = '/urlencode me/App/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/urlencode me/webroot/index.php';
 		$_SERVER['PATH_INFO'] = '/posts/view/1';
 
 		$request = Request::createFromGlobals();
@@ -1173,7 +1173,7 @@ class RequestTest extends TestCase {
 		$this->assertEquals('posts/view/1', $request->url);
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['PHP_SELF'] = '/1.2.x.x/App/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/1.2.x.x/webroot/index.php';
 		$_SERVER['PATH_INFO'] = '/posts/view/1';
 
 		$request = Request::createFromGlobals();
@@ -1181,7 +1181,7 @@ class RequestTest extends TestCase {
 		$this->assertEquals('/1.2.x.x/', $request->webroot);
 		$this->assertEquals('posts/view/1', $request->url);
 
-		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/App/webroot';
+		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches/1.2.x.x/webroot';
 		$_SERVER['PHP_SELF'] = '/index.php';
 		$_SERVER['PATH_INFO'] = '/posts/add';
 		$request = Request::createFromGlobals();
@@ -1198,7 +1198,7 @@ class RequestTest extends TestCase {
 		$this->assertEquals('/', $request->webroot);
 
 		$_SERVER['DOCUMENT_ROOT'] = '/some/apps/where';
-		$_SERVER['PHP_SELF'] = '/App/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/webroot/index.php';
 		$request = Request::createFromGlobals();
 
 		$this->assertEquals('', $request->base);
@@ -1207,21 +1207,21 @@ class RequestTest extends TestCase {
 		Configure::write('App.dir', 'auth');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/cake/repo/branches';
-		$_SERVER['PHP_SELF'] = '/demos/auth/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/demos/webroot/index.php';
 
 		$request = Request::createFromGlobals();
 
-		$this->assertEquals('/demos/auth', $request->base);
-		$this->assertEquals('/demos/auth/', $request->webroot);
+		$this->assertEquals('/demos', $request->base);
+		$this->assertEquals('/demos/', $request->webroot);
 
 		Configure::write('App.dir', 'code');
 
 		$_SERVER['DOCUMENT_ROOT'] = '/Library/WebServer/Documents';
-		$_SERVER['PHP_SELF'] = '/clients/PewterReport/code/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/clients/PewterReport/webroot/index.php';
 		$request = Request::createFromGlobals();
 
-		$this->assertEquals('/clients/PewterReport/code', $request->base);
-		$this->assertEquals('/clients/PewterReport/code/', $request->webroot);
+		$this->assertEquals('/clients/PewterReport', $request->base);
+		$this->assertEquals('/clients/PewterReport/', $request->webroot);
 	}
 
 /**
@@ -1248,8 +1248,8 @@ class RequestTest extends TestCase {
 		$_SERVER['PHP_SELF'] = '/newaffiliate/index.php';
 		$request = Request::createFromGlobals();
 
-		$this->assertEquals('/newaffiliate', $request->base);
-		$this->assertEquals('/newaffiliate/', $request->webroot);
+		$this->assertEquals('', $request->base);
+		$this->assertEquals('/', $request->webroot);
 	}
 
 /**
@@ -1265,8 +1265,8 @@ class RequestTest extends TestCase {
  * @link https://cakephp.lighthouseapp.com/projects/42648-cakephp/tickets/3318
  */
 	public function testBaseUrlWithModRewriteAndIndexPhp() {
-		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php';
-		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php';
+		$_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php';
 		unset($_SERVER['PATH_INFO']);
 		$request = Request::createFromGlobals();
 
@@ -1275,8 +1275,8 @@ class RequestTest extends TestCase {
 		$this->assertEquals('', $request->url);
 		$this->assertEquals('/cakephp/', $request->here);
 
-		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php/';
-		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php/';
+		$_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/';
+		$_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/';
 		$_SERVER['PATH_INFO'] = '/';
 		$request = Request::createFromGlobals();
 
@@ -1285,8 +1285,8 @@ class RequestTest extends TestCase {
 		$this->assertEquals('', $request->url);
 		$this->assertEquals('/cakephp/', $request->here);
 
-		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php/apples';
-		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php/apples';
+		$_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/apples';
+		$_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/apples';
 		$_SERVER['PATH_INFO'] = '/apples';
 		$request = Request::createFromGlobals();
 
@@ -1295,8 +1295,8 @@ class RequestTest extends TestCase {
 		$this->assertEquals('apples', $request->url);
 		$this->assertEquals('/cakephp/apples', $request->here);
 
-		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php/melons/share/';
-		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php/melons/share/';
+		$_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/melons/share/';
+		$_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/melons/share/';
 		$_SERVER['PATH_INFO'] = '/melons/share/';
 		$request = Request::createFromGlobals();
 
@@ -1305,8 +1305,8 @@ class RequestTest extends TestCase {
 		$this->assertEquals('melons/share/', $request->url);
 		$this->assertEquals('/cakephp/melons/share/', $request->here);
 
-		$_SERVER['REQUEST_URI'] = '/cakephp/App/webroot/index.php/bananas/eat/tasty_banana';
-		$_SERVER['PHP_SELF'] = '/cakephp/App/webroot/index.php/bananas/eat/tasty_banana';
+		$_SERVER['REQUEST_URI'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
+		$_SERVER['PHP_SELF'] = '/cakephp/webroot/index.php/bananas/eat/tasty_banana';
 		$_SERVER['PATH_INFO'] = '/bananas/eat/tasty_banana';
 		$request = Request::createFromGlobals();
 
@@ -1336,7 +1336,7 @@ class RequestTest extends TestCase {
 
 		$request = Request::createFromGlobals();
 		$this->assertEquals('/cake/index.php', $request->base);
-		$this->assertEquals('/cake/App/webroot/', $request->webroot);
+		$this->assertEquals('/cake/webroot/', $request->webroot);
 		$this->assertEquals('posts/index', $request->url);
 	}
 
@@ -1378,7 +1378,7 @@ class RequestTest extends TestCase {
 		$request = Request::createFromGlobals();
 
 		$this->assertEquals('/CakeBB/index.php', $request->base);
-		$this->assertEquals('/CakeBB/App/webroot/', $request->webroot);
+		$this->assertEquals('/CakeBB/webroot/', $request->webroot);
 
 		Configure::write('App.baseUrl', '/dbhauser/index.php');
 		$_SERVER['DOCUMENT_ROOT'] = '/kunden/homepages/4/d181710652/htdocs/joomla';
@@ -1386,7 +1386,7 @@ class RequestTest extends TestCase {
 		$request = Request::createFromGlobals();
 
 		$this->assertEquals('/dbhauser/index.php', $request->base);
-		$this->assertEquals('/dbhauser/App/webroot/', $request->webroot);
+		$this->assertEquals('/dbhauser/webroot/', $request->webroot);
 	}
 
 /**
@@ -1401,7 +1401,7 @@ class RequestTest extends TestCase {
 
 		$request = Request::createFromGlobals();
 		$this->assertEquals('/index.php', $request->base);
-		$this->assertEquals('/App/webroot/', $request->webroot);
+		$this->assertEquals('/webroot/', $request->webroot);
 	}
 
 /**
@@ -1416,7 +1416,7 @@ class RequestTest extends TestCase {
 
 		$request = Request::createFromGlobals();
 		$this->assertEquals('/approval/index.php', $request->base);
-		$this->assertEquals('/approval/App/webroot/', $request->webroot);
+		$this->assertEquals('/approval/webroot/', $request->webroot);
 
 		Configure::write('App.baseUrl', '/webrootable/index.php');
 		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/';
@@ -1424,7 +1424,7 @@ class RequestTest extends TestCase {
 
 		$request = Request::createFromGlobals();
 		$this->assertEquals('/webrootable/index.php', $request->base);
-		$this->assertEquals('/webrootable/App/webroot/', $request->webroot);
+		$this->assertEquals('/webrootable/webroot/', $request->webroot);
 	}
 
 /**
@@ -1434,8 +1434,8 @@ class RequestTest extends TestCase {
  */
 	public function testBaseUrlNoRewriteWebrootIndex() {
 		Configure::write('App.baseUrl', '/index.php');
-		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev/App/webroot';
-		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/App/webroot/index.php';
+		$_SERVER['DOCUMENT_ROOT'] = '/Users/markstory/Sites/cake_dev/webroot';
+		$_SERVER['SCRIPT_FILENAME'] = '/Users/markstory/Sites/cake_dev/webroot/index.php';
 
 		$request = Request::createFromGlobals();
 		$this->assertEquals('/index.php', $request->base);
@@ -1451,7 +1451,7 @@ class RequestTest extends TestCase {
 	public function testGetParamsWithDot() {
 		$_GET = array();
 		$_GET['/posts/index/add_add'] = '';
-		$_SERVER['PHP_SELF'] = '/cake_dev/App/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
 		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
 
 		$request = Request::createFromGlobals();
@@ -1466,7 +1466,7 @@ class RequestTest extends TestCase {
 	public function testGetParamWithUrlencodedElement() {
 		$_GET = array();
 		$_GET['/posts/add/∂∂'] = '';
-		$_SERVER['PHP_SELF'] = '/cake_dev/App/webroot/index.php';
+		$_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
 		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
 
 		$request = Request::createFromGlobals();
@@ -1486,7 +1486,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/index.php',
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
@@ -1505,7 +1505,7 @@ class RequestTest extends TestCase {
 				),
 				array(
 					'base' => '/index.php',
-					'webroot' => '/App/webroot/',
+					'webroot' => '/webroot/',
 					'url' => ''
 				),
 			),
@@ -1515,7 +1515,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/index.php?',
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
@@ -1531,7 +1531,7 @@ class RequestTest extends TestCase {
 				array(
 					'url' => 'posts/add',
 					'base' => '/index.php?',
-					'webroot' => '/App/webroot/'
+					'webroot' => '/webroot/'
 				)
 			),
 			array(
@@ -1540,7 +1540,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/site/index.php',
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot',
 					),
 					'SERVER' => array(
@@ -1559,7 +1559,7 @@ class RequestTest extends TestCase {
 				array(
 					'url' => '',
 					'base' => '/site/index.php',
-					'webroot' => '/site/App/webroot/'
+					'webroot' => '/site/webroot/'
 				),
 			),
 			array(
@@ -1568,7 +1568,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/site/index.php',
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'GET' => array('/posts/add' => ''),
@@ -1588,7 +1588,7 @@ class RequestTest extends TestCase {
 				array(
 					'url' => 'posts/add',
 					'base' => '/site/index.php',
-					'webroot' => '/site/App/webroot/'
+					'webroot' => '/site/webroot/'
 				)
 			),
 			array(
@@ -1597,7 +1597,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/index.php',
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
@@ -1622,7 +1622,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/index.php',
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
@@ -1647,7 +1647,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/site/index.php',
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
@@ -1663,7 +1663,7 @@ class RequestTest extends TestCase {
 				array(
 					'url' => 'posts/index',
 					'base' => '/site/index.php',
-					'webroot' => '/site/App/webroot/',
+					'webroot' => '/site/webroot/',
 				),
 			),
 			array(
@@ -1672,7 +1672,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/site/index.php',
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
@@ -1687,7 +1687,7 @@ class RequestTest extends TestCase {
 				array(
 					'url' => '',
 					'base' => '/site/index.php',
-					'webroot' => '/site/App/webroot/',
+					'webroot' => '/site/webroot/',
 				),
 			),
 			array(
@@ -1696,7 +1696,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => '/site/index.php',
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'GET' => array('a' => 'b', 'c' => 'd'),
@@ -1715,7 +1715,7 @@ class RequestTest extends TestCase {
 					'urlParams' => array('a' => 'b', 'c' => 'd'),
 					'url' => 'posts/index',
 					'base' => '/site/index.php',
-					'webroot' => '/site/App/webroot/',
+					'webroot' => '/site/webroot/',
 				),
 			),
 			array(
@@ -1724,7 +1724,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => false,
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
@@ -1732,8 +1732,8 @@ class RequestTest extends TestCase {
 						'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
 						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
 						'REQUEST_URI' => '/site/',
-						'SCRIPT_NAME' => '/site/App/webroot/index.php',
-						'PHP_SELF' => '/site/App/webroot/index.php',
+						'SCRIPT_NAME' => '/site/webroot/index.php',
+						'PHP_SELF' => '/site/webroot/index.php',
 					),
 				),
 				array(
@@ -1748,15 +1748,15 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => false,
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
 						'SERVER_NAME' => 'localhost',
 						'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
 						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
-						'SCRIPT_NAME' => '/site/App/webroot/index.php',
-						'PHP_SELF' => '/site/App/webroot/index.php',
+						'SCRIPT_NAME' => '/site/webroot/index.php',
+						'PHP_SELF' => '/site/webroot/index.php',
 						'PATH_INFO' => null,
 						'REQUEST_URI' => null,
 					),
@@ -1773,13 +1773,13 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => false,
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
 						'SERVER_NAME' => 'localhost',
-						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
-						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/webroot',
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/webroot/index.php',
 						'SCRIPT_NAME' => '/index.php',
 						'PHP_SELF' => '/index.php',
 						'PATH_INFO' => null,
@@ -1798,7 +1798,7 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => false,
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'SERVER' => array(
@@ -1806,8 +1806,8 @@ class RequestTest extends TestCase {
 						'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
 						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/index.php',
 						'REQUEST_URI' => '/site/posts/index',
-						'SCRIPT_NAME' => '/site/App/webroot/index.php',
-						'PHP_SELF' => '/site/App/webroot/index.php',
+						'SCRIPT_NAME' => '/site/webroot/index.php',
+						'PHP_SELF' => '/site/webroot/index.php',
 					),
 				),
 				array(
@@ -1822,14 +1822,14 @@ class RequestTest extends TestCase {
 					'App' => array(
 						'base' => false,
 						'baseUrl' => false,
-						'dir' => 'App',
+						'dir' => 'TestApp',
 						'webroot' => 'webroot'
 					),
 					'GET' => array('/posts/add' => ''),
 					'SERVER' => array(
 						'SERVER_NAME' => 'localhost',
-						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/App/webroot',
-						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents/site/webroot',
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/webroot/index.php',
 						'SCRIPT_NAME' => '/index.php',
 						'QUERY_STRING' => '/posts/add&',
 						'PHP_SELF' => '/index.php',
