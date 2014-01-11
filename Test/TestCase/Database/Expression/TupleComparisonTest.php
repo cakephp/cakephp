@@ -69,5 +69,25 @@ class TupleComparisonTest extends TestCase {
 		$this->assertSame(2, $binder->bindings()[':c1']['value']);
 	}
 
+/**
+ * Tests generating tuples using the IN conjunction
+ *
+ * @return void
+ */
+	public function testTupleWithInComparison() {
+		$value1 = new QueryExpression(['a' => 1]);
+		$f = new TupleComparison(
+			['field1', 'field2'],
+			[[1, 2], [3, 4]],
+			['integer', 'integer'],
+			'IN'
+		);
+		$binder = new ValueBinder;
+		$this->assertEquals('(field1, field2) IN ((:c0,:c1), (:c2,:c3))', $f->sql($binder));
+		$this->assertSame(1, $binder->bindings()[':c0']['value']);
+		$this->assertSame(2, $binder->bindings()[':c1']['value']);
+		$this->assertSame(3, $binder->bindings()[':c2']['value']);
+		$this->assertSame(4, $binder->bindings()[':c3']['value']);
+	}
 
 }

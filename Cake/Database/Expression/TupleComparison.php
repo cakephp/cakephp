@@ -45,26 +45,40 @@ class TupleComparison extends Comparison {
  */
 	public function sql(ValueBinder $generator) {
 		$template = '(%s) %s (%s)';
-		$values = $fields = [];
+		$fields = [];
 
 		foreach ((array)$this->getField() as $field) {
 			$fields[] = $field instanceof ExpressionInterface ? $field->sql($generator) : $field;
 		}
 
+		$values = $this->_extractValues($generator);
+
+		$field = implode(', ', $fields);
+		return sprintf($template, $field, $this->_conjunction, $values);
+	}
+
+	protected function _extractValues($generator) {
+		$values = [];
 		foreach ($this->getValue() as $i => $value) {
 			if ($value instanceof ExpressionInterface) {
 				$values[] = $value->sql($generator);
 				continue;
 			}
-			$values[] = $this->_bindValue(
-				$generator,
-				$value,
-				isset($this->_type[$i]) ? $this->_type[$i] : null
-			);
+
+			$multi = in_array(strtolower($this->_conjunction), ['in', 'not in']);
+			$type = isset($this->_type[$i]) ? $this->_type[$i] : null;
+
+			if ($multi || strpos($type, '[]') !== false) {
+				$type = str_replace('[]', '', $type);
+				$value = $this->_flattenValue($value, $generator, $type);
+				$values[] = "($value)";
+				continue;
+			}
+
+			$values[] = $this->_bindValue($generator, $value, $type);
 		}
 
-		$field = implode(', ', $fields);
-		return sprintf($template, $field, $this->_conjunction, implode(', ', $values));
+		return implode(', ', $values);
 	}
 
 }
