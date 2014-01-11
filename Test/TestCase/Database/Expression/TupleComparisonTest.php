@@ -75,7 +75,6 @@ class TupleComparisonTest extends TestCase {
  * @return void
  */
 	public function testTupleWithInComparison() {
-		$value1 = new QueryExpression(['a' => 1]);
 		$f = new TupleComparison(
 			['field1', 'field2'],
 			[[1, 2], [3, 4]],
@@ -88,6 +87,40 @@ class TupleComparisonTest extends TestCase {
 		$this->assertSame(2, $binder->bindings()[':c1']['value']);
 		$this->assertSame(3, $binder->bindings()[':c2']['value']);
 		$this->assertSame(4, $binder->bindings()[':c3']['value']);
+	}
+
+/**
+ * Tests traversing
+ *
+ * @return void
+ */
+	public function testTraverse() {
+		$value1 = new QueryExpression(['a' => 1]);
+		$field2 = new QueryExpression(['b' => 2]);
+		$f = new TupleComparison(['field1', $field2], [$value1, 2], ['integer', 'integer'], '=');
+		$binder = new ValueBinder;
+		$expressions = [];
+
+		$collector = function($e) use (&$expressions) {
+			$expressions[] = $e;
+		};
+
+		$f->traverse($collector);
+		$this->assertCount(4, $expressions);
+		$this->assertSame($field2, $expressions[0]);
+		$this->assertSame($value1, $expressions[2]);
+
+		$f = new TupleComparison(
+			['field1', $field2],
+			[[1, 2], [3, $value1]],
+			['integer', 'integer'],
+			'IN'
+		);
+		$expressions = [];
+		$f->traverse($collector);
+		$this->assertCount(4, $expressions);
+		$this->assertSame($field2, $expressions[0]);
+		$this->assertSame($value1, $expressions[2]);
 	}
 
 }

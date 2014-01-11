@@ -51,13 +51,20 @@ class TupleComparison extends Comparison {
 			$fields[] = $field instanceof ExpressionInterface ? $field->sql($generator) : $field;
 		}
 
-		$values = $this->_extractValues($generator);
+		$values = $this->_stringifyValues($generator);
 
 		$field = implode(', ', $fields);
 		return sprintf($template, $field, $this->_conjunction, $values);
 	}
 
-	protected function _extractValues($generator) {
+/**
+ * Returns a string with the values as placeholders in a string to be used
+ * for the SQL version of this expression
+ *
+ * @param \Cake\Database\ValueBiender $generator
+ * @return string
+ */
+	protected function _stringifyValues($generator) {
 		$values = [];
 		foreach ($this->getValue() as $i => $value) {
 			if ($value instanceof ExpressionInterface) {
@@ -65,10 +72,8 @@ class TupleComparison extends Comparison {
 				continue;
 			}
 
-			$multi = in_array(strtolower($this->_conjunction), ['in', 'not in']);
 			$type = isset($this->_type[$i]) ? $this->_type[$i] : null;
-
-			if ($multi || strpos($type, '[]') !== false) {
+			if ($this->_isMulti($i, $type)) {
 				$type = str_replace('[]', '', $type);
 				$value = $this->_flattenValue($value, $generator, $type);
 				$values[] = "($value)";
@@ -79,6 +84,58 @@ class TupleComparison extends Comparison {
 		}
 
 		return implode(', ', $values);
+	}
+
+/*
+ * Traverses the tree of expressions stored in this object, visiting first
+ * expressions in the left hand side and the the rest.
+ *
+ * Callback function receives as only argument an instance of a ExpresisonInterface
+ *
+ * @param callable $callable
+ * @return void
+ */
+	public function traverse(callable $callable) {
+		foreach ($this->getField() as $field) {
+			$this->_traverseValue($field, $callable);
+		}
+		foreach ($this->getValue() as $i => $value) {
+			$type = isset($this->_type[$i]) ? $this->_type[$i] : null;
+			if ($this->_isMulti($type)) {
+				foreach ($value as $v) {
+					$this->_traverseValue($v, $callable);
+				}
+			} else {
+				$this->_traverseValue($value, $callable);
+			}
+		}
+	}
+
+/**
+ * Conditionally executes the callback for the passed value if
+ * it is an ExpressionInterface
+ *
+ * @param mixed $value
+ * @Param callable $callable
+ * @return void
+ */
+	protected function _traverseValue($value, $callable) {
+		if ($value instanceof ExpressionInterface) {
+			$callable($value);
+			$value->traverse($callable);
+		}
+	}
+
+/**
+ * Determines if each of the values in this expressions is a tuple in
+ * itself
+ *
+ * @param string $type the type to bind for values
+ * @return boolean
+ */
+	protected function _isMulti($type) {
+		$multi = in_array(strtolower($this->_conjunction), ['in', 'not in']);
+		return $multi || strpos($type, '[]') !== false;
 	}
 
 }
