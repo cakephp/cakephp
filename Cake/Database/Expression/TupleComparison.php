@@ -14,7 +14,8 @@
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\Expression\Compariso;
+use Cake\Database\Expression\Comparison;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 
 /**
@@ -44,15 +45,25 @@ class TupleComparison extends Comparison {
  */
 	public function sql(ValueBinder $generator) {
 		$template = '(%s) %s (%s)';
-		$values = [];
+		$values = $fields = [];
+
+		foreach ((array)$this->getField() as $field) {
+			$fields[] = $field instanceof ExpressionInterface ? $field->sql($generator) : $field;
+		}
+
 		foreach ($this->getValue() as $i => $value) {
+			if ($value instanceof ExpressionInterface) {
+				$values[] = $value->sql($generator);
+				continue;
+			}
 			$values[] = $this->_bindValue(
 				$generator,
 				$value,
 				isset($this->_type[$i]) ? $this->_type[$i] : null
 			);
 		}
-		$field = implode(', ', (array)$this->getField());
+
+		$field = implode(', ', $fields);
 		return sprintf($template, $field, $this->_conjunction, implode(', ', $values));
 	}
 

@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\Database\Expression;
 
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 
@@ -38,5 +39,35 @@ class TupleComparisonTest extends TestCase {
 		$this->assertSame('integer', $binder->bindings()[':c0']['type']);
 		$this->assertSame('integer', $binder->bindings()[':c1']['type']);
 	}
+
+/**
+ * Tests generating tuples in the fields side containing expressions
+ *
+ * @return void
+ */
+	public function testTupleWithExpressionFields() {
+		$field1 = new QueryExpression(['a' => 1]);
+		$f = new TupleComparison([$field1, 'field2'], [4, 5], ['integer', 'integer'], '>');
+		$binder = new ValueBinder;
+		$this->assertEquals('(a = :c0, field2) > (:c1, :c2)', $f->sql($binder));
+		$this->assertSame(1, $binder->bindings()[':c0']['value']);
+		$this->assertSame(4, $binder->bindings()[':c1']['value']);
+		$this->assertSame(5, $binder->bindings()[':c2']['value']);
+	}
+
+/**
+ * Tests generating tuples in the values side containing expressions
+ *
+ * @return void
+ */
+	public function testTupleWithExpressionValues() {
+		$value1 = new QueryExpression(['a' => 1]);
+		$f = new TupleComparison(['field1', 'field2'], [$value1, 2], ['integer', 'integer'], '=');
+		$binder = new ValueBinder;
+		$this->assertEquals('(field1, field2) = (a = :c0, :c1)', $f->sql($binder));
+		$this->assertSame(1, $binder->bindings()[':c0']['value']);
+		$this->assertSame(2, $binder->bindings()[':c1']['value']);
+	}
+
 
 }
