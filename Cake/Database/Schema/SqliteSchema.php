@@ -129,10 +129,12 @@ class SqliteSchema extends BaseSchema {
 		}
 		$table->addColumn($row['name'], $field);
 		if ($row['pk'] == true) {
-			$table->addConstraint('primary', [
+			$constraint = (array)$table->constraint('primary') + [
 				'type' => Table::CONSTRAINT_PRIMARY,
-				'columns' => [$row['name']]
-			]);
+				'columns' => []
+			];
+			$constraint['columns'] = array_merge($constraint['columns'], [$row['name']]);
+			$table->addConstraint('primary', $constraint);
 		}
 	}
 

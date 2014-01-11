@@ -155,6 +155,37 @@ class SqliteSchemaTest extends TestCase {
 	}
 
 /**
+ * Tests converting multiple rows into a primary constraint with multiple
+ * columns
+ *
+ * @return void
+ */
+	public function testCovenrtCompositPrimaryKey() {
+		$driver = $this->getMock('Cake\Database\Driver\Sqlite');
+		$dialect = new SqliteSchema($driver);
+
+		$field1 = [
+			'pk' => true,
+			'name' => 'field1',
+			'type' => 'INTEGER(11)',
+			'notnull' => false,
+			'dflt_value' => 0,
+		];
+		$field2 = [
+			'pk' => true,
+			'name' => 'field2',
+			'type' => 'INTEGER(11)',
+			'notnull' => false,
+			'dflt_value' => 1,
+		];
+
+		$table = new \Cake\Database\Schema\Table('table');
+		$dialect->convertFieldDescription($table, $field1);
+		$dialect->convertFieldDescription($table, $field2);
+		$this->assertEquals(['field1', 'field2'], $table->primaryKey());
+	}
+
+/**
  * Creates tables for testing listTables/describe()
  *
  * @param Connection $connection
