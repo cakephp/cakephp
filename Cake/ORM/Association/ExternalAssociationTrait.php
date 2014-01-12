@@ -180,6 +180,16 @@ trait ExternalAssociationTrait {
 		};
 	}
 
+/**
+ * Returns a callable to be used for each row in a query result set
+ * for injecting the eager loaded rows when the matching needs to
+ * be done with multiple foreign keys
+ *
+ * @param array $resultMap a keyed arrays containing the target table
+ * @param array $sourceKeys an array witha aliased keys to match
+ * @param string $nestKey the key under which results should be nested
+ * @return \Closure
+ */
 	protected function _multiKeysInjector($resultMap, $sourceKeys, $nestKey) {
 		return function($row) use ($resultMap, $sourceKeys, $nestKey) {
 			$values = [];
