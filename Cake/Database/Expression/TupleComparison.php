@@ -35,8 +35,8 @@ class TupleComparison extends Comparison {
  * @return void
  */
 	public function __construct($fields, $values, $types = [], $conjuntion = '=') {
-		parent::__construct($fields, $value, $type, $conjuntion);
-		$this->_type = (array)$type;
+		parent::__construct($fields, $values, $types, $conjuntion);
+		$this->_type = (array)$types;
 	}
 
 /**
