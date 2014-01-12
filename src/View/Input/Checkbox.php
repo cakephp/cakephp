@@ -53,9 +53,11 @@ class Checkbox {
 		if ($this->_isChecked($data)) {
 			$data['checked'] = true;
 		}
+		unset($data['selected']);
+
 		$attrs = $this->_templates->formatAttributes(
 			$data,
-			['name', 'value', 'selected']
+			['name', 'value']
 		);
 
 		return $this->_templates->format('checkbox', [
