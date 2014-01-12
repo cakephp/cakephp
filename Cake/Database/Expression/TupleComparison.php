@@ -19,21 +19,23 @@ use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 
 /**
- *
+ * This expression represents SQL fragments that are use for comparing one tuple
+ * to another, one tuple to a set of other tuples or one tuple to an expression
  */
 class TupleComparison extends Comparison {
 
 /**
  * Constructor
  *
- * @param string $field the field name to compare to a value
- * @param mixed $value the value to be used in comparison
- * @param string $type the type name used to cast the value
+ * @param string $fields the fields to use to form a tuple
+ * @param array|ExpressionInterface $values the values to use to form a tuple
+ * @param array $types the types names to use for casting each of the values, only
+ * one type per position in the value array in needed
  * @param string $conjunction the operator used for comparing field and value
  * @return void
  */
-	public function __construct($field, $value, $type = [], $conjuntion = '=') {
-		parent::__construct($field, $value, $type, $conjuntion);
+	public function __construct($fields, $values, $types = [], $conjuntion = '=') {
+		parent::__construct($fields, $value, $type, $conjuntion);
 		$this->_type = (array)$type;
 	}
 
