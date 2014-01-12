@@ -415,6 +415,48 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test the eager loader method with no extra options
+ *
+ * @return void
+ */
+	public function testEagerLoaderMultipleKeys() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'strategy' => 'select',
+			'foreignKey' => ['author_id', 'site_id']
+		];
+
+		$this->author->primaryKey(['id', 'site_id']);
+		$association = new HasMany('Articles', $config);
+		$keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
+		$query = $this->getMock('Cake\ORM\Query', ['all'], [null, null]);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20]
+		];
+		$query->expects($this->once())->method('all')
+			->will($this->returnValue($results));
+
+		$callable = $association->eagerLoader(compact('keys', 'query'));
+		$row = ['Authors__id' => 2, 'Authors__site_id' => 10, 'username' => 'author 1'];
+		$result = $callable($row);
+		$row['Articles__Articles'] = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10]
+		];
+		$this->assertEquals($row, $result);
+
+		$row = ['Authors__id' => 1, 'username' => 'author 2', 'Authors__site_id' => 20];
+		$result = $callable($row);
+		$row['Articles__Articles'] = [
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20]
+		];
+		$this->assertEquals($row, $result);
+	}
+
+/**
  * Tests that the correct join and fields are attached to a query depending on
  * the association config
  *

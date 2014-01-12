@@ -17,6 +17,7 @@
 namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
@@ -164,11 +165,31 @@ trait ExternalAssociationTrait {
 			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
 		}
 
-		$sourceKey = implode(';', $sourceKeys);
 		$nestKey = $tAlias . '__' . $tAlias;
+
+		if (count($sourceKeys) > 1) {
+			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
+		}
+
+		$sourceKey = $sourceKeys[0];
 		return function($row) use ($resultMap, $sourceKey, $nestKey) {
 			if (isset($resultMap[$row[$sourceKey]])) {
 				$row[$nestKey] = $resultMap[$row[$sourceKey]];
+			}
+			return $row;
+		};
+	}
+
+	protected function _multiKeysInjector($resultMap, $sourceKeys, $nestKey) {
+		return function($row) use ($resultMap, $sourceKeys, $nestKey) {
+			$values = [];
+			foreach ($sourceKeys as $key) {
+				$values[] = $row[$key];
+			}
+
+			$key = implode(';', $values);
+			if (isset($resultMap[$key])) {
+				$row[$nestKey] = $resultMap[$key];
 			}
 			return $row;
 		};
@@ -234,6 +255,10 @@ trait ExternalAssociationTrait {
  * @return \Cake\ORM\Query
  */
 	protected function _addFilteringCondition($query, $key, $filter) {
+		if (is_array($key)) {
+			$tuple = new TupleComparison($key, $filter, [], 'IN');
+			return $query->andWhere($tuple);
+		}
 		return $query->andWhere([$key . ' IN' => $filter]);
 	}
 
@@ -245,7 +270,18 @@ trait ExternalAssociationTrait {
  * @return string
  */
 	protected function _linkField($options) {
-		return sprintf('%s.%s', $this->name(), $options['foreignKey']);
+		$links = [];
+		$name = $this->name();
+
+		foreach ((array)$options['foreignKey'] as $key) {
+			$links[] = sprintf('%s.%s', $name, $key);
+		}
+
+		if (count($links) === 1) {
+			return $links[0];
+		}
+
+		return $links;
 	}
 
 /**
