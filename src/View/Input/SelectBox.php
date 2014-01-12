@@ -51,7 +51,7 @@ class SelectBox {
  * - `options` - An array of options.
  * - `disabled` - Either true or an array of options to disable.
  *    When true, the select element will be disabled.
- * - `value` - Either a string or an array of options to mark as selected.
+ * - `selected` - Either a string or an array of options to mark as selected.
  * - `empty` - Set to true to add an empty option at the top of the
  *   option elements. Set to a string to define the display value of the
  *   empty option.
@@ -121,7 +121,7 @@ class SelectBox {
 			'escape' => true,
 			'options' => [],
 			'disabled' => null,
-			'value' => null,
+			'selected' => null,
 		];
 
 		if (empty($data['name'])) {
@@ -129,7 +129,7 @@ class SelectBox {
 		}
 		$options = $this->_renderContent($data);
 		$name = $data['name'];
-		unset($data['name'], $data['options'], $data['empty'], $data['value'], $data['escape']);
+		unset($data['name'], $data['options'], $data['empty'], $data['selected'], $data['escape']);
 		if (isset($data['disabled']) && is_array($data['disabled'])) {
 			unset($data['disabled']);
 		}
@@ -168,7 +168,7 @@ class SelectBox {
 			return [];
 		}
 
-		$selected = isset($data['value']) ? $data['value'] : null;
+		$selected = isset($data['selected']) ? $data['selected'] : null;
 		$disabled = null;
 		if (isset($data['disabled']) && is_array($data['disabled'])) {
 			$disabled = $data['disabled'];

@@ -141,7 +141,7 @@ class SelectBoxTest extends TestCase {
 		$data = [
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
-			'value' => '1',
+			'selected' => '1',
 			'options' => [
 				1 => 'one',
 				'1x' => 'one x',
@@ -160,7 +160,7 @@ class SelectBoxTest extends TestCase {
 		];
 		$this->assertTags($result, $expected);
 
-		$data['value'] = 2;
+		$data['selected'] = 2;
 		$result = $select->render($data);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
@@ -211,7 +211,7 @@ class SelectBoxTest extends TestCase {
 			'multiple' => true,
 			'id' => 'BirdName',
 			'name' => 'Birds[name]',
-			'value' => ['1', '2', 'burp'],
+			'selected' => ['1', '2', 'burp'],
 			'options' => [
 				1 => 'one',
 				'1x' => 'one x',
@@ -373,7 +373,7 @@ class SelectBoxTest extends TestCase {
 		$select = new SelectBox($this->templates);
 		$data = [
 			'name' => 'Birds[name]',
-			'value' => ['1', '2', 'burp'],
+			'selected' => ['1', '2', 'burp'],
 			'disabled' => ['1x', '2x', 'nope'],
 			'options' => [
 				'ones' => [
@@ -416,7 +416,7 @@ class SelectBoxTest extends TestCase {
 			'disabled' => true,
 			'name' => 'Birds[name]',
 			'options' => ['a' => 'Albatross', 'b' => 'Budgie'],
-			'value' => 'a',
+			'selected' => 'a',
 		];
 		$result = $select->render($data);
 		$expected = [
@@ -440,7 +440,7 @@ class SelectBoxTest extends TestCase {
 		$select = new SelectBox($this->templates);
 		$data = [
 			'disabled' => ['a', 'c'],
-			'value' => 'a',
+			'selected' => 'a',
 			'name' => 'Birds[name]',
 			'options' => [
 				'a' => 'Albatross',
@@ -502,7 +502,7 @@ class SelectBoxTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$data['empty'] = 'empty';
-		$data['value'] = '';
+		$data['selected'] = '';
 		$result = $select->render($data);
 		$expected = [
 			'select' => ['name' => 'Birds[name]', 'id' => 'BirdName'],
@@ -513,7 +513,7 @@ class SelectBoxTest extends TestCase {
 		];
 		$this->assertTags($result, $expected);
 
-		$data['value'] = false;
+		$data['selected'] = false;
 		$result = $select->render($data);
 		$this->assertTags($result, $expected);
 	}
