@@ -66,7 +66,13 @@ class TupleComparison extends Comparison {
  */
 	protected function _stringifyValues($generator) {
 		$values = [];
-		foreach ($this->getValue() as $i => $value) {
+		$parts = $this->getValue();
+
+		if ($parts instanceof ExpressionInterface) {
+			return $parts->sql($generator);
+		}
+
+		foreach ($parts as $i => $value) {
 			if ($value instanceof ExpressionInterface) {
 				$values[] = $value->sql($generator);
 				continue;

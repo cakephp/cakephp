@@ -123,4 +123,17 @@ class TupleComparisonTest extends TestCase {
 		$this->assertSame($value1, $expressions[2]);
 	}
 
+/**
+ * Tests that a single ExpressionInteface can be used as the value for
+ * comparison
+ *
+ * @return void
+ */
+	public function testValueAsSingleExpression() {
+		$value = new QueryExpression('SELECT 1, 1');
+		$f = new TupleComparison(['field1', 'field2'], $value);
+		$binder = new ValueBinder;
+		$this->assertEquals('(field1, field2) = (SELECT 1, 1)', $f->sql($binder));
+	}
+
 }
