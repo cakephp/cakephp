@@ -165,5 +165,4 @@ class CheckboxTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
-
 }

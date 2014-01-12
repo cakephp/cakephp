@@ -14,8 +14,6 @@
  */
 namespace Cake\View\Input;
 
-use Cake\View\StringTemplate;
-
 /**
  * Input widget for creating checkbox widgets.
  */
@@ -40,7 +38,17 @@ class Checkbox {
 /**
  * Render a checkbox element.
  *
+ * Data supports the following keys:
+ *
+ * - `name` - The name of the input.
+ * - `value` - The value attribute. Defaults to '1'.
+ * - `checked` - Whether or not the checkbox should be checked.
+ * - `disabled` - Whether or not the checkbox should be disabled.
+ *
+ * Any other attributes passed in will be treated as HTML attributes.
+ *
  * @param array $data The data to create a checkbox with.
+ * @return string Generated HTML string.
  */
 	public function render($data) {
 		$data += [
