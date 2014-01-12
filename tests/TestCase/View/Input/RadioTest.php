@@ -215,7 +215,7 @@ class RadioTest extends TestCase {
 		$radio = new Radio($this->templates);
 		$data = [
 			'name' => 'Versions[ver]',
-			'value' => '1',
+			'selected' => '1',
 			'options' => [
 				1 => 'one',
 				'1x' => 'one x',

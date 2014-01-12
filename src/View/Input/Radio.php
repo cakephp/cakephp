@@ -61,7 +61,7 @@ class Radio {
  * - `options` - An array of options. See below for more information.
  * - `disabled` - Either true or an array of inputs to disable.
  *    When true, the select element will be disabled.
- * - `value` - A string of the option to mark as selected.
+ * - `selected` - A string of the option to mark as selected.
  * - `label` - Either false to disable label generation, or
  *   an array of attributes for all labels.
  *
@@ -73,7 +73,7 @@ class Radio {
 			'name' => '',
 			'options' => [],
 			'disabled' => null,
-			'value' => null,
+			'selected' => null,
 			'escape' => true,
 			'label' => true,
 			'empty' => false,
@@ -137,7 +137,7 @@ class Radio {
 			$radio['id'] = Inflector::slug($radio['name'] . '_' . $radio['value']);
 		}
 
-		if (isset($data['value']) && strval($data['value']) === strval($radio['value'])) {
+		if (isset($data['selected']) && strval($data['selected']) === strval($radio['value'])) {
 			$radio['checked'] = true;
 		}
 
