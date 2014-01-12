@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -430,7 +431,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$this->author->primaryKey(['id', 'site_id']);
 		$association = new HasMany('Articles', $config);
 		$keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-		$query = $this->getMock('Cake\ORM\Query', ['all'], [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['all', 'andWhere'], [null, null]);
 		$this->article->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
 		$results = [
@@ -439,6 +440,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		];
 		$query->expects($this->once())->method('all')
 			->will($this->returnValue($results));
+
+		$tuple = new TupleComparison(
+			['Articles.author_id', 'Articles.site_id'], $keys, [], 'IN'
+		);
+		$query->expects($this->once())->method('andWhere')
+			->with($tuple)
+			->will($this->returnSelf());
 
 		$callable = $association->eagerLoader(compact('keys', 'query'));
 		$row = ['Authors__id' => 2, 'Authors__site_id' => 10, 'username' => 'author 1'];
