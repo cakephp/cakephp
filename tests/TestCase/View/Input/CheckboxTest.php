@@ -54,7 +54,7 @@ class CheckboxTest extends TestCase {
 
 		$data = [
 			'name' => 'Comment[spam]',
-			'value' => 99
+			'value' => 99,
 		];
 		$result = $checkbox->render($data);
 		$expected = [
@@ -112,6 +112,58 @@ class CheckboxTest extends TestCase {
 			]
 		];
 		$this->assertTags($result, $expected);
+
+		$data = [
+			'name' => 'Comment[spam]',
+			'value' => 1,
+			'selected' => 1,
+		];
+		$result = $checkbox->render($data);
+		$this->assertTags($result, $expected);
+
+		$data['selected'] = '1';
+		$result = $checkbox->render($data);
+		$this->assertTags($result, $expected);
+
+		$data = [
+			'name' => 'Comment[spam]',
+			'value' => 1,
+			'selected' => '1x',
+		];
+		$result = $checkbox->render($data);
+		$expected = [
+			'input' => [
+				'type' => 'checkbox',
+				'name' => 'Comment[spam]',
+				'value' => 1,
+			]
+		];
+		$this->assertTags($result, $expected);
 	}
+
+/**
+ * Test rendering checked checkboxes with value.
+ *
+ * @return void
+ */
+	public function testRenderCheckedValue() {
+		$checkbox = new Checkbox($this->templates);
+		$data = [
+			'name' => 'Comment[spam]',
+			'value' => 1,
+			'checked' => 1,
+		];
+		$result = $checkbox->render($data);
+		$expected = [
+			'input' => [
+				'type' => 'checkbox',
+				'name' => 'Comment[spam]',
+				'value' => 1,
+				'checked' => 'checked',
+			]
+		];
+		$this->assertTags($result, $expected);
+	}
+
 
 }

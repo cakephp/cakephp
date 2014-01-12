@@ -46,12 +46,16 @@ class Checkbox {
 		$data += [
 			'name' => '',
 			'value' => 1,
+			'selected' => null,
 			'checked' => false,
 			'disabled' => false,
 		];
+		if ($this->_isChecked($data)) {
+			$data['checked'] = true;
+		}
 		$attrs = $this->_templates->formatAttributes(
 			$data,
-			['name', 'value']
+			['name', 'value', 'selected']
 		);
 
 		return $this->_templates->format('checkbox', [
@@ -59,6 +63,22 @@ class Checkbox {
 			'value' => $data['value'],
 			'attrs' => $attrs
 		]);
+	}
+
+/**
+ * Check whether or not the checkbox should be checked.
+ *
+ * @param array $data Data to look at and determine checked state.
+ * @return boolean
+ */
+	protected function _isChecked($data) {
+		if (!empty($data['checked'])) {
+			return true;
+		}
+		if ((string)$data['selected'] === (string)$data['value']) {
+			return true;
+		}
+		return false;
 	}
 
 }
