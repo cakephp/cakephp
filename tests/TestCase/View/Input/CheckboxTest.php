@@ -116,19 +116,19 @@ class CheckboxTest extends TestCase {
 		$data = [
 			'name' => 'Comment[spam]',
 			'value' => 1,
-			'selected' => 1,
+			'val' => 1,
 		];
 		$result = $checkbox->render($data);
 		$this->assertTags($result, $expected);
 
-		$data['selected'] = '1';
+		$data['val'] = '1';
 		$result = $checkbox->render($data);
 		$this->assertTags($result, $expected);
 
 		$data = [
 			'name' => 'Comment[spam]',
 			'value' => 1,
-			'selected' => '1x',
+			'val' => '1x',
 		];
 		$result = $checkbox->render($data);
 		$expected = [

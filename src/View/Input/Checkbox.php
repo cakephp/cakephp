@@ -42,7 +42,8 @@ class Checkbox {
  *
  * - `name` - The name of the input.
  * - `value` - The value attribute. Defaults to '1'.
- * - `checked` - Whether or not the checkbox should be checked.
+ * - `val` - The current value. If it matches `value` the checkbox will be checked.
+ *   You can also use the 'checked' attribute to make the checkbox checked.
  * - `disabled` - Whether or not the checkbox should be disabled.
  *
  * Any other attributes passed in will be treated as HTML attributes.
@@ -54,14 +55,14 @@ class Checkbox {
 		$data += [
 			'name' => '',
 			'value' => 1,
-			'selected' => null,
+			'val' => null,
 			'checked' => false,
 			'disabled' => false,
 		];
 		if ($this->_isChecked($data)) {
 			$data['checked'] = true;
 		}
-		unset($data['selected']);
+		unset($data['val']);
 
 		$attrs = $this->_templates->formatAttributes(
 			$data,
@@ -85,7 +86,7 @@ class Checkbox {
 		if (!empty($data['checked'])) {
 			return true;
 		}
-		if ((string)$data['selected'] === (string)$data['value']) {
+		if ((string)$data['val'] === (string)$data['value']) {
 			return true;
 		}
 		return false;
