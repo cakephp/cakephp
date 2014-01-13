@@ -162,12 +162,12 @@ class Comparison extends QueryExpression {
  *
  * @param array|\Traversable $value the value to flatten
  * @param ValueBinder $generator
- * @param string $type the type to cast values to
+ * @param string|array $type the type to cast values to
  * @return string
  */
 	protected function _flattenValue($value, $generator, $type = null) {
 		$parts = [];
-		foreach ($value as $v) {
+		foreach ($value as $k => $v) {
 			$parts[] = $this->_bindValue($generator, $v, $type);
 		}
 		return implode(',', $parts);

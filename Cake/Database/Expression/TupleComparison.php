@@ -80,15 +80,24 @@ class TupleComparison extends Comparison {
 				continue;
 			}
 
-			$type = isset($this->_type[$i]) ? $this->_type[$i] : null;
-			if ($this->_isMulti($i, $type)) {
-				$type = str_replace('[]', '', $type);
-				$value = $this->_flattenValue($value, $generator, $type);
-				$values[] = "($value)";
+			$type = $this->_type;
+			$multiType = is_array($type);
+			$isMulti = $this->_isMulti($i, $type);
+			$type = $isMulti ? str_replace('[]', '', $type) : $type;
+
+			if ($isMulti) {
+				$bound = [];
+				foreach ($value as $k => $val) {
+					$valType = $multiType ? $type[$k] : $type;
+					$bound[] = $this->_bindValue($generator, $val, $valType);
+				}
+
+				$values[] = sprintf('(%s)', implode(',', $bound));
 				continue;
 			}
 
-			$values[] = $this->_bindValue($generator, $value, $type);
+			$type = $valType = $multiType ? $type[$i] : $type;
+			$values[] = $this->_bindValue($generator, $value, $valType);
 		}
 
 		return implode(', ', $values);

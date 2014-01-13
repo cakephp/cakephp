@@ -266,8 +266,14 @@ trait ExternalAssociationTrait {
  */
 	protected function _addFilteringCondition($query, $key, $filter) {
 		if (is_array($key)) {
-			$tuple = new TupleComparison($key, $filter, [], 'IN');
-			return $query->andWhere($tuple);
+			$types = [];
+			$defaults = $query->defaultTypes();
+			foreach ($key as $k) {
+				if (isset($defaults[$k])) {
+					$types[] = $defaults[$k];
+				}
+			}
+			return $query->andWhere(new TupleComparison($key, $filter, $types, 'IN'));
 		}
 		return $query->andWhere([$key . ' IN' => $filter]);
 	}
