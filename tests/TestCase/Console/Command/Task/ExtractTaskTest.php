@@ -72,7 +72,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExecute() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CORE_TESTS . 'TestApp/View/Pages';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/View/Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->expects($this->never())->method('err');
@@ -131,7 +131,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractCategory() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CORE_TESTS . 'TestApp' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'View' . DS . 'Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['merge'] = 'no';
@@ -156,7 +156,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractWithExclude() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CORE_TESTS . 'TestApp/View';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/View';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude'] = 'Pages,Layout';
 		$this->Task->params['extract-core'] = 'no';
@@ -184,8 +184,8 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] =
-			CORE_TESTS . 'TestApp/View/Pages,' .
-			CORE_TESTS . 'TestApp/View/Posts';
+			TEST_APP . 'TestApp/View/Pages,' .
+			TEST_APP . 'TestApp/View/Posts';
 
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
@@ -216,7 +216,7 @@ class ExtractTaskTest extends TestCase {
 			->method('_isExtractingApp')
 			->will($this->returnValue(true));
 
-		$this->Task->params['paths'] = CORE_TESTS . 'TestApp/';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude-plugins'] = true;
 
@@ -272,7 +272,7 @@ class ExtractTaskTest extends TestCase {
 			->method('_isExtractingApp')
 			->will($this->returnValue(true));
 
-		$this->Task->params['paths'] = CORE_TESTS . 'TestApp/';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['exclude-plugins'] = true;
@@ -351,7 +351,7 @@ class ExtractTaskTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CORE_TESTS . 'TestApp/';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['overwrite'] = true;
@@ -374,7 +374,7 @@ class ExtractTaskTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = CORE_TESTS . 'TestApp/';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'yes';
 

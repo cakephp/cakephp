@@ -19,7 +19,7 @@ use Cake\Log\Log;
 
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', dirname(__DIR__));
-define('APP_DIR', 'App');
+define('APP_DIR', 'TestApp');
 define('WEBROOT_DIR', 'webroot');
 
 define('TMP', sys_get_temp_dir() . DS);
@@ -32,14 +32,13 @@ define('CORE_PATH', CAKE_CORE_INCLUDE_PATH . DS);
 define('CAKE', CORE_PATH . 'src' . DS);
 define('CORE_TESTS', CORE_PATH . 'tests' . DS);
 define('CORE_TEST_CASES', CORE_TESTS . 'TestCase');
+define('TEST_APP', CORE_TESTS . 'test_app' . DS);
 define('LOG_ERROR', LOG_ERR);
 
 // Point app constants to the test app.
-define('APP', CORE_TESTS . 'TestApp' . DS);
-define('WWW_ROOT', APP . WEBROOT_DIR . DS);
-define('TESTS', APP . 'Test' . DS);
-
-define('TEST_APP', APP);
+define('APP', TEST_APP . 'TestApp' . DS);
+define('WWW_ROOT', TEST_APP . WEBROOT_DIR . DS);
+define('TESTS', TEST_APP . 'tests' . DS);
 
 //@codingStandardsIgnoreStart
 @mkdir(LOGS);
@@ -56,7 +55,7 @@ $loader->register();
 
 $loader->addNamespace('Cake', CAKE);
 $loader->addNamespace('Cake\Test', CORE_TESTS);
-$loader->addNamespace('TestApp', TEST_APP);
+$loader->addNamespace('TestApp', APP);
 $loader->addNamespace('TestPlugin', TEST_APP . 'Plugin/TestPlugin');
 $loader->addNamespace('TestPluginTwo', TEST_APP . 'Plugin/TestPluginTwo');
 $loader->addNamespace('PluginJs', TEST_APP . 'Plugin/PluginJs');
@@ -80,7 +79,7 @@ Configure::write('App', [
 	'cssBaseUrl' => 'css/',
 	'paths' => [
 		'plugins' => [TEST_APP . 'Plugin/'],
-		'views' => [TEST_APP . 'View/']
+		'views' => [APP . 'View/']
 	]
 ]);
 

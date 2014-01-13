@@ -346,14 +346,11 @@ class Request implements \ArrayAccess {
 		if (!$baseUrl) {
 			$base = dirname(env('PHP_SELF'));
 
-			$indexPos = strpos($base, '/webroot/index.php');
+			$indexPos = strpos($base, '/' . $webroot . '/index.php');
 			if ($indexPos !== false) {
-				$base = substr($base, 0, $indexPos) . '/webroot';
+				$base = substr($base, 0, $indexPos) . '/' . $webroot;
 			}
-			if ($webroot === 'webroot' && $webroot === basename($base)) {
-				$base = dirname($base);
-			}
-			if ($dir === 'App' && $dir === basename($base)) {
+			if ($webroot === basename($base)) {
 				$base = dirname($base);
 			}
 
@@ -373,12 +370,9 @@ class Request implements \ArrayAccess {
 		$webrootDir = $base . '/';
 
 		$docRoot = env('DOCUMENT_ROOT');
-		$docRootContainsWebroot = strpos($docRoot, $dir . DS . $webroot);
+		$docRootContainsWebroot = strpos($docRoot, $webroot);
 
 		if (!empty($base) || !$docRootContainsWebroot) {
-			if (strpos($webrootDir, '/' . $dir . '/') === false) {
-				$webrootDir .= $dir . '/';
-			}
 			if (strpos($webrootDir, '/' . $webroot . '/') === false) {
 				$webrootDir .= $webroot . '/';
 			}

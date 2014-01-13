@@ -265,7 +265,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadWithMerge() {
-		Configure::config('test', new PhpConfig(CORE_TESTS . 'TestApp/Config/'));
+		Configure::config('test', new PhpConfig(TEST_APP . 'TestApp/Config/'));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -288,7 +288,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadNoMerge() {
-		Configure::config('test', new PhpConfig(CORE_TESTS . 'TestApp/Config/'));
+		Configure::config('test', new PhpConfig(TEST_APP . 'TestApp/Config/'));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -313,13 +313,13 @@ class ConfigureTest extends TestCase {
 		Plugin::load('TestPlugin');
 		$result = Configure::load('TestPlugin.load', 'test');
 		$this->assertTrue($result);
-		$expected = '/test_app/plugins/test_plugin/config/load.php';
+		$expected = '/test_app/Plugin/TestPlugin/Config/load.php';
 		$config = Configure::read('plugin_load');
 		$this->assertEquals($expected, $config);
 
 		$result = Configure::load('TestPlugin.more.load', 'test');
 		$this->assertTrue($result);
-		$expected = '/test_app/plugins/test_plugin/config/more.load.php';
+		$expected = '/test_app/Plugin/TestPlugin/Config/more.load.php';
 		$config = Configure::read('plugin_more_load');
 		$this->assertEquals($expected, $config);
 		Plugin::unload();

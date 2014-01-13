@@ -527,7 +527,7 @@ class HtmlHelperTest extends TestCase {
  */
 	public function testThemeAssetsInMainWebrootPath() {
 		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', CORE_TESTS . 'TestApp/webroot/');
+		Configure::write('App.www_root', TEST_APP . 'webroot/');
 
 		$this->Html->theme = 'test_theme';
 		$result = $this->Html->css('webroot_test');
@@ -2079,7 +2079,7 @@ class HtmlHelperTest extends TestCase {
  */
 
 	public function testLoadConfig() {
-		$path = CORE_TESTS . 'TestApp/Config/';
+		$path = TEST_APP . 'TestApp/Config/';
 
 		$result = $this->Html->loadConfig('htmlhelper_tags', $path);
 		$expected = array(
@@ -2120,7 +2120,7 @@ class HtmlHelperTest extends TestCase {
  * @expectedException Cake\Error\ConfigureException
  */
 	public function testLoadConfigWrongEngine() {
-		$path = CORE_TESTS . 'TestApp/Config/';
+		$path = TEST_APP . 'TestApp/Config/';
 		$this->Html->loadConfig(array('htmlhelper_tags', 'wrong_engine'), $path);
 	}
 

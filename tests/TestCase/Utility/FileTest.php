@@ -529,7 +529,7 @@ class FileTest extends TestCase {
  */
 	public function testMime() {
 		$this->skipIf(!function_exists('finfo_open') && !function_exists('mime_content_type'), 'Not able to read mime type');
-		$path = CORE_TESTS . 'TestApp/webroot/img/cake.power.gif';
+		$path = TEST_APP . 'webroot/img/cake.power.gif';
 		$file = new File($path);
 		$expected = 'image/gif';
 		if (function_exists('mime_content_type') && false === mime_content_type($file->pwd())) {
@@ -567,7 +567,7 @@ class FileTest extends TestCase {
  * @return void
  */
 	public function testReplaceText() {
-		$TestFile = new File(dirname(__FILE__) . '/../../TestApp/vendor/welcome.php');
+		$TestFile = new File(TEST_APP . 'vendor/welcome.php');
 		$TmpFile = new File(TMP . 'tests' . DS . 'cakephp.file.test.tmp');
 
 		// Copy the test file to the temporary location

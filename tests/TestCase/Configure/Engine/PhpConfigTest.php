@@ -54,7 +54,7 @@ class PhpConfigTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->path = CORE_TESTS . 'TestApp/Config' . DS;
+		$this->path = TEST_APP . 'TestApp/Config' . DS;
 	}
 
 /**

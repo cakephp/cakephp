@@ -15,4 +15,4 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$config['plugin_more_load'] = '/test_app/plugins/test_plugin/config/more.load.php';
+$config['plugin_load'] = '/test_app/Plugin/TestPlugin/Config/load.php';
