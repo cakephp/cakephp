@@ -1294,4 +1294,19 @@ class BelongsToManyTest extends TestCase {
 		$association->save($entity);
 	}
 
+/**
+ * Test that plugin names are omitted from property()
+ *
+ * @return void
+ */
+	public function testPropertyNoPlugin() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $mock,
+		];
+		$association = new BelongsToMany('Contacts.Tags', $config);
+		$this->assertEquals('tags', $association->property());
+	}
+
 }

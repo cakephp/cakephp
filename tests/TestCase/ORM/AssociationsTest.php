@@ -63,6 +63,21 @@ class AssociationsTest extends TestCase {
 	}
 
 /**
+ * Test associations with plugin names.
+ *
+ * @return void
+ */
+	public function testAddHasRemoveGetWithPlugin() {
+		$this->assertFalse($this->associations->has('Photos.Photos'));
+		$this->assertFalse($this->associations->has('Photos'));
+
+		$belongsTo = new BelongsTo([]);
+		$this->assertSame($belongsTo, $this->associations->add('Photos.Photos', $belongsTo));
+		$this->assertTrue($this->associations->has('Photos'));
+		$this->assertFalse($this->associations->has('Photos.Photos'));
+	}
+
+/**
  * Test keys()
  *
  * @return void
