@@ -265,7 +265,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadWithMerge() {
-		Configure::config('test', new PhpConfig(CORE_TESTS . 'TestApp/Config/'));
+		Configure::config('test', new PhpConfig(TEST_APP . 'src/Config/'));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);
@@ -288,7 +288,7 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testLoadNoMerge() {
-		Configure::config('test', new PhpConfig(CORE_TESTS . 'TestApp/Config/'));
+		Configure::config('test', new PhpConfig(TEST_APP . 'src/Config/'));
 
 		$result = Configure::load('var_test', 'test');
 		$this->assertTrue($result);

@@ -529,7 +529,7 @@ class FileTest extends TestCase {
  */
 	public function testMime() {
 		$this->skipIf(!function_exists('finfo_open') && !function_exists('mime_content_type'), 'Not able to read mime type');
-		$path = CORE_TESTS . 'TestApp/webroot/img/cake.power.gif';
+		$path = TEST_APP . 'webroot/img/cake.power.gif';
 		$file = new File($path);
 		$expected = 'image/gif';
 		if (function_exists('mime_content_type') && false === mime_content_type($file->pwd())) {

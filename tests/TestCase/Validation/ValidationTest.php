@@ -2396,7 +2396,7 @@ class ValidationTest extends TestCase {
  * @return void
  */
 	public function testFileSize() {
-		$image = CORE_TESTS . 'TestApp/webroot/img/cake.power.gif';
+		$image = TEST_APP . 'webroot/img/cake.power.gif';
 		$this->assertTrue(Validation::fileSize($image, '<', 1024));
 		$this->assertTrue(Validation::fileSize(array('tmp_name' => $image), 'isless', 1024));
 		$this->assertTrue(Validation::fileSize($image, '<', '1KB'));

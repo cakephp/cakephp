@@ -1083,7 +1083,7 @@ class EmailTest extends TestCase {
 		$this->CakeEmail->to('cake@cakephp.org');
 		$this->CakeEmail->subject('My title');
 		$this->CakeEmail->emailFormat('text');
-		$data = file_get_contents(CORE_TESTS . 'TestApp/webroot/img/cake.power.gif');
+		$data = file_get_contents(TEST_APP . 'webroot/img/cake.power.gif');
 		$this->CakeEmail->attachments(array('cake.icon.gif' => array(
 				'data' => $data,
 				'mimetype' => 'image/gif'

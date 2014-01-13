@@ -32,7 +32,7 @@ class IniAclTest extends TestCase {
  * @return void
  */
 	public function testCheck() {
-		$iniFile = CORE_TESTS . 'TestApp/Config/acl.ini.php';
+		$iniFile = TEST_APP . 'src/Config/acl.ini.php';
 
 		$Ini = new IniAcl();
 		$Ini->config = $Ini->readConfigFile($iniFile);
@@ -55,7 +55,7 @@ class IniAclTest extends TestCase {
  * @return void
  */
 	public function testCheckArray() {
-		$iniFile = CORE_TESTS . 'TestApp/Config/acl.ini.php';
+		$iniFile = TEST_APP . 'src/Config/acl.ini.php';
 
 		$Ini = new IniAcl();
 		$Ini->config = $Ini->readConfigFile($iniFile);
