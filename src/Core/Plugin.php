@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -25,7 +23,7 @@ use Cake\Utility\Inflector;
  *
  * It also can retrieve plugin paths and load their bootstrap and routes files.
  *
- * @link http://book.cakephp.org/2.0/en/plugins.html
+ * @link http://book.cakephp.org/3.0/en/plugins.html
  */
 class Plugin {
 
