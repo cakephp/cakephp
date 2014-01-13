@@ -257,4 +257,19 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$this->assertNull($entity->author_id);
 	}
 
+/**
+ * Test that plugin names are omitted from property()
+ *
+ * @return void
+ */
+	public function testPropertyNoPlugin() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->client,
+			'targetTable' => $mock,
+		];
+		$association = new BelongsTo('Contacts.Companies', $config);
+		$this->assertEquals('company', $association->property());
+	}
+
 }

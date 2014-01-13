@@ -649,4 +649,20 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$association = new HasMany('Articles', $config);
 		$association->save($entity);
 	}
+
+/**
+ * Test that plugin names are omitted from property()
+ *
+ * @return void
+ */
+	public function testPropertyNoPlugin() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $mock,
+		];
+		$association = new HasMany('Contacts.Addresses', $config);
+		$this->assertEquals('addresses', $association->property());
+	}
+
 }

@@ -237,4 +237,20 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 
 		$this->assertSame($result, $entity);
 	}
+
+/**
+ * Test that plugin names are omitted from property()
+ *
+ * @return void
+ */
+	public function testPropertyNoPlugin() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->user,
+			'targetTable' => $mock,
+		];
+		$association = new HasOne('Contacts.Profiles', $config);
+		$this->assertEquals('profile', $association->property());
+	}
+
 }
