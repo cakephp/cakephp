@@ -36,11 +36,15 @@ class Associations {
 /**
  * Add an association to the collection
  *
+ * If the alias added contains a `.` the part preceding the `.` will be dropped.
+ * This makes using plugins simpler as the Plugin.Class syntax is frequently used.
+ *
  * @param string $alias The association alias
  * @param Association The association to add.
- * @return void
+ * @return Association The association object being added.
  */
 	public function add($alias, Association $association) {
+		list($plugin, $alias) = pluginSplit($alias);
 		return $this->_items[strtolower($alias)] = $association;
 	}
 
