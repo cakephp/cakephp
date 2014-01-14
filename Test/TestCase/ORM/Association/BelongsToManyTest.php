@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -793,6 +794,105 @@ class BelongsToManyTest extends TestCase {
 			return $q->andWhere(['foo' => 1])->limit(1);
 		};
 		$association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
+	}
+
+/**
+ * Test the eager loader method with no extra options
+ *
+ * @return void
+ */
+	public function testEagerLoaderMultipleKeys() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'foreignKey' => ['article_id', 'site_id'],
+			'targetForeignKey' => ['tag_id', 'site_id']
+		];
+		$this->article->primaryKey(['id', 'site_id']);
+		$this->tag->primaryKey(['id', 'site_id']);
+		TableRegistry::get('ArticlesTags', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer'],
+				'site_id' => ['type' => 'integer'],
+			]
+		]);
+		$association = new BelongsToMany('Tags', $config);
+		$keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
+		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, null]);
+
+		$this->tag->expects($this->once())
+			->method('find')
+			->with('all')
+			->will($this->returnValue($query));
+
+		$results = [
+			[
+				'id' => 1,
+				'name' => 'foo',
+				'site_id' => 1,
+				'articles_tags' => [
+					'article_id' => 1,
+					'site_id' => 1
+				]
+			],
+			[
+				'id' => 2,
+				'name' => 'bar',
+				'site_id' => 2,
+				'articles_tags' => [
+					'article_id' => 2,
+					'site_id' => 2
+				]
+			]
+		];
+		$query->expects($this->once())
+			->method('all')
+			->will($this->returnValue($results));
+
+		$tuple = new TupleComparison(
+			['ArticlesTags.article_id', 'ArticlesTags.site_id'], $keys, [], 'IN'
+		);
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $tuple) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with($tuple)
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+			}));
+
+		$query->hydrate(false);
+
+		$callable = $association->eagerLoader(compact('keys', 'query'));
+		$row = ['Articles__id' => 1, 'title' => 'article 1', 'Articles__site_id' => 1];
+		$result = $callable($row);
+		$row['Tags__Tags'] = [
+			[
+				'id' => 1,
+				'name' => 'foo',
+				'site_id' => 1,
+				'_joinData' => ['article_id' => 1, 'site_id' => 1]
+			]
+		];
+		$this->assertEquals($row, $result);
+
+		$row = ['Articles__id' => 2, 'title' => 'article 2', 'Articles__site_id' => 2];
+		$result = $callable($row);
+		$row['Tags__Tags'] = [
+			[
+				'id' => 2,
+				'name' => 'bar',
+				'site_id' => 2,
+				'_joinData' => ['article_id' => 2, 'site_id' => 2]
+			]
+		];
+		$this->assertEquals($row, $result);
 	}
 
 /**

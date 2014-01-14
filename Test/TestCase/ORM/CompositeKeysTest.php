@@ -15,11 +15,7 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\ConnectionManager;
-use Cake\Database\Expression\IdentifierExpression;
-use Cake\Database\Expression\OrderByExpression;
-use Cake\Database\Expression\QueryExpression;
 use Cake\ORM\Query;
-use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
@@ -133,9 +129,8 @@ class CompositeKeyTest extends TestCase {
 	}
 
 /**
- * Tests that BelongsToMany associations are correctly eager loaded.
- * Also that the query object passes the correct parent model keys to the
- * association objects in order to perform eager loading with select strategy
+ * Tests that BelongsToMany associations are correctly eager loaded when multiple
+ * foreignKeys are used
  *
  * @dataProvider strategiesProvider
  * @return void
