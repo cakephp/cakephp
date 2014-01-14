@@ -74,7 +74,7 @@ class TextTest extends TestCase {
 		$data = [
 			'name' => 'my_input',
 			'type' => 'email',
-			'value' => 'Some <value>'
+			'val' => 'Some <value>'
 		];
 		$result = $text->render($data);
 		$expected = [

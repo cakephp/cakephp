@@ -15,7 +15,11 @@
 namespace Cake\View\Input;
 
 /**
- * Text input class.
+ * Basic input class.
+ *
+ * This input class can be used to render basic simple
+ * input elements like hidden, text, email, tel and other
+ * types.
  */
 class Text {
 
@@ -38,16 +42,27 @@ class Text {
 /**
  * Render a text widget or other simple widget like email/tel/number.
  *
+ * This method accepts a number of keys:
+ *
+ * - `name` The name attribute.
+ * - `val` The value attribute.
+ * - `escape` Set to false to disable escaping on all attributes.
+ *
+ * Any other keys provided in $data will be converted into HTML attributes.
+ *
  * @param array $data The data to build an input with.
  * @return string
  */
 	public function render($data) {
 		$data += [
 			'name' => '',
-			'value' => null,
+			'val' => null,
 			'type' => 'text',
 			'escape' => true,
 		];
+		$data['value'] = $data['val'];
+		unset($data['val']);
+
 		return $this->_templates->format('input', [
 			'name' => $data['name'],
 			'type' => $data['type'],
