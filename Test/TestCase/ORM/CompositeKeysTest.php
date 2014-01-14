@@ -34,7 +34,10 @@ class CompositeKeyTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = ['core.site_article', 'core.site_author'];
+	public $fixtures = [
+		'core.site_article', 'core.site_author', 'core.site_tag',
+		'core.site_articles_tag'
+	];
 
 /**
  * setUp method
@@ -62,7 +65,7 @@ class CompositeKeyTest extends TestCase {
  * @dataProvider strategiesProvider
  * @return void
  */
-	public function testHasManyEagerCompositeKeys($strategy) {
+	public function testHasManyEager($strategy) {
 		$table = TableRegistry::get('SiteAuthors');
 		TableRegistry::get('SiteArticles');
 		$table->hasMany('SiteArticles', [
@@ -127,6 +130,93 @@ class CompositeKeyTest extends TestCase {
 		unset($expected[0]['articles']);
 		$this->assertEquals($expected, $results);
 		$this->assertEquals($table->association('SiteArticles')->strategy(), $strategy);
+	}
+
+/**
+ * Tests that BelongsToMany associations are correctly eager loaded.
+ * Also that the query object passes the correct parent model keys to the
+ * association objects in order to perform eager loading with select strategy
+ *
+ * @dataProvider strategiesProvider
+ * @return void
+ **/
+	public function testBelongsToManyEager($strategy) {
+		$articles = TableRegistry::get('SiteArticles');
+		$tags = TableRegistry::get('SiteTags');
+		$junction = TableRegistry::get('SiteArticlesTags');
+		$articles->belongsToMany('SiteTags', [
+			'strategy' => $strategy,
+			'targetTable' => $tags,
+			'propertyName' => 'tags',
+			'through' => 'SiteArticlesTags',
+			'foreignKey' => ['article_id', 'site_id'],
+			'targetForeignKey' => ['tag_id', 'site_id']
+		]);
+		$query = new Query($this->connection, $articles);
+
+		$results = $query->select()->contain('SiteTags')->hydrate(false)->toArray();
+		$expected = [
+			[
+				'id' => 1,
+				'author_id' => 1,
+				'title' => 'First Article',
+				'body' => 'First Article Body',
+				'site_id' => 1,
+				'tags' => [
+					[
+						'id' => 1,
+						'name' => 'tag1',
+						'_joinData' => ['article_id' => 1, 'tag_id' => 1, 'site_id' => 1],
+						'site_id' => 1
+					],
+					[
+						'id' => 3,
+						'name' => 'tag3',
+						'_joinData' => ['article_id' => 1, 'tag_id' => 3, 'site_id' => 1],
+						'site_id' => 1
+					]
+				]
+			],
+			[
+				'id' => 2,
+				'title' => 'Second Article',
+				'body' => 'Second Article Body',
+				'author_id' => 3,
+				'site_id' => 2,
+				'tags' => [
+					[
+						'id' => 4,
+						'name' => 'tag4',
+						'_joinData' => ['article_id' => 2, 'tag_id' => 4, 'site_id' => 2],
+						'site_id' => 2
+					]
+				]
+			],
+			[
+				'id' => 3,
+				'title' => 'Third Article',
+				'body' => 'Third Article Body',
+				'author_id' => 1,
+				'site_id' => 2
+			],
+			[
+				'id' => 4,
+				'title' => 'Fourth Article',
+				'body' => 'Fourth Article Body',
+				'author_id' => 3,
+				'site_id' => 1,
+				'tags' => [
+					[
+						'id' => 1,
+						'name' => 'tag1',
+						'_joinData' => ['article_id' => 4, 'tag_id' => 1, 'site_id' => 1],
+						'site_id' => 1
+					]
+				]
+			],
+		];
+		$this->assertEquals($expected, $results);
+		$this->assertEquals($articles->association('SiteTags')->strategy(), $strategy);
 	}
 
 }

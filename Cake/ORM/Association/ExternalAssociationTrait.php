@@ -273,7 +273,8 @@ trait ExternalAssociationTrait {
 					$types[] = $defaults[$k];
 				}
 			}
-			return $query->andWhere(new TupleComparison($key, $filter, $types, 'IN'));
+			$query->andWhere(new TupleComparison($key, $filter, $types, 'IN'));
+			return $query;
 		}
 		return $query->andWhere([$key . ' IN' => $filter]);
 	}
