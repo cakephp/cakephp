@@ -858,7 +858,7 @@ class HelperTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$webRoot = Configure::read('App.www_root');
-		Configure::write('App.www_root', CAKE . 'Test/TestApp/webroot/');
+		Configure::write('App.www_root', TEST_APP . 'TestApp/webroot/');
 
 		$result = $this->Helper->webroot('/img/cake.power.gif');
 		$expected = '/theme/test_theme/img/cake.power.gif';

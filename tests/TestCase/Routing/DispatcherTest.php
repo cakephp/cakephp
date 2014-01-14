@@ -757,31 +757,31 @@ class DispatcherTest extends TestCase {
 		return array(
 			array(
 				'theme/test_theme/flash/theme_test.swf',
-				'TestApp/View/Themed/TestTheme/webroot/flash/theme_test.swf'
+				'TestApp/Template/Themed/TestTheme/webroot/flash/theme_test.swf'
 			),
 			array(
 				'theme/test_theme/pdfs/theme_test.pdf',
-				'TestApp/View/Themed/TestTheme/webroot/pdfs/theme_test.pdf'
+				'TestApp/Template/Themed/TestTheme/webroot/pdfs/theme_test.pdf'
 			),
 			array(
 				'theme/test_theme/img/test.jpg',
-				'TestApp/View/Themed/TestTheme/webroot/img/test.jpg'
+				'TestApp/Template/Themed/TestTheme/webroot/img/test.jpg'
 			),
 			array(
 				'theme/test_theme/css/test_asset.css',
-				'TestApp/View/Themed/TestTheme/webroot/css/test_asset.css'
+				'TestApp/Template/Themed/TestTheme/webroot/css/test_asset.css'
 			),
 			array(
 				'theme/test_theme/js/theme.js',
-				'TestApp/View/Themed/TestTheme/webroot/js/theme.js'
+				'TestApp/Template/Themed/TestTheme/webroot/js/theme.js'
 			),
 			array(
 				'theme/test_theme/js/one/theme_one.js',
-				'TestApp/View/Themed/TestTheme/webroot/js/one/theme_one.js'
+				'TestApp/Template/Themed/TestTheme/webroot/js/one/theme_one.js'
 			),
 			array(
 				'theme/test_theme/space%20image.text',
-				'TestApp/View/Themed/TestTheme/webroot/space image.text'
+				'TestApp/Template/Themed/TestTheme/webroot/space image.text'
 			),
 			array(
 				'test_plugin/root.js',
