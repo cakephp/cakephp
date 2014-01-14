@@ -18,6 +18,9 @@ namespace Cake\Database\Dialect;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\FunctionExpression;
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
 
@@ -55,7 +58,8 @@ trait SqliteDialectTrait {
 	protected function _expressionTranslators() {
 		$namespace = 'Cake\Database\Expression';
 		return [
-			$namespace . '\FunctionExpression' => '_transformFunctionExpression'
+			$namespace . '\FunctionExpression' => '_transformFunctionExpression',
+			$namespace . '\TupleComparison' => '_transformTupleComparison'
 		];
 	}
 
@@ -90,6 +94,52 @@ trait SqliteDialectTrait {
 				$expression->name('TIME')->add(["'now'" => 'literal']);
 				break;
 		}
+	}
+
+/**
+ * Receives a TupleExpression and changes it so that it conforms to this
+ * SQL dialect.
+ *
+ * @param Cake\Database\Expression\TupleComparison
+ * @return void
+ */
+	protected function _transformTupleComparison(TupleComparison $expression, $query) {
+		$fields = $expression->getField();
+
+		if (!is_array($fields)) {
+			return;
+		}
+
+		$value = $expression->getValue();
+		$op = $expression->type();
+
+		if ($value instanceof Query) {
+			$selected = array_values($value->clause('select'));
+			foreach ($fields as $i => $field) {
+				$value->andWhere([$field . " $op" => new IdentifierExpression($selected[$i])]);
+			}
+			$value->select(new IdentifierExpression(1), true);
+			$expression->field(new IdentifierExpression('1'));
+			$expression->type('=');
+			return;
+		}
+
+		$surrogate = $query->connection()
+			->newQuery()
+			->select(new IdentifierExpression('1'));
+
+		foreach ($value as $tuple) {
+			$surrogate->orWhere(function($exp) use ($fields, $tuple) {
+				foreach ($tuple as $i => $value) {
+					$exp->add([$fields[$i] => $value]);
+				}
+				return $exp;
+			});
+		}
+
+		$expression->field(new IdentifierExpression('1'));
+		$expression->value($surrogate);
+		$expression->type('=');
 	}
 
 /**

@@ -82,7 +82,7 @@ class TupleComparison extends Comparison {
 
 			$type = $this->_type;
 			$multiType = is_array($type);
-			$isMulti = $this->_isMulti($i, $type);
+			$isMulti = $this->isMulti($i, $type);
 			$type = $isMulti ? str_replace('[]', '', $type) : $type;
 
 			if ($isMulti) {
@@ -116,9 +116,17 @@ class TupleComparison extends Comparison {
 		foreach ($this->getField() as $field) {
 			$this->_traverseValue($field, $callable);
 		}
-		foreach ($this->getValue() as $i => $value) {
+
+		$value = $this->getValue();
+		if ($value instanceof ExpressionInterface) {
+			$callable($value);
+			$value->traverse($callable);
+			return;
+		}
+
+		foreach ($value as $i => $value) {
 			$type = isset($this->_type[$i]) ? $this->_type[$i] : null;
-			if ($this->_isMulti($type)) {
+			if ($this->isMulti()) {
 				foreach ($value as $v) {
 					$this->_traverseValue($v, $callable);
 				}
@@ -147,12 +155,10 @@ class TupleComparison extends Comparison {
  * Determines if each of the values in this expressions is a tuple in
  * itself
  *
- * @param string $type the type to bind for values
  * @return boolean
  */
-	protected function _isMulti($type) {
-		$multi = in_array(strtolower($this->_conjunction), ['in', 'not in']);
-		return $multi || strpos($type, '[]') !== false;
+	protected function isMulti() {
+		return in_array(strtolower($this->_conjunction), ['in', 'not in']);;
 	}
 
 }
