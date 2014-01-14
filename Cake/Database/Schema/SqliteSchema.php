@@ -23,13 +23,6 @@ use Cake\Database\Schema\Table;
 class SqliteSchema extends BaseSchema {
 
 /**
- * Whether or not this connection contains sequences
- *
- * @return boolean
- */
-	protected $_hasSequences;
-
-/**
  * Convert a column definition to the abstract types.
  *
  * The returned type will be a type that
@@ -375,9 +368,6 @@ class SqliteSchema extends BaseSchema {
  * @return void
  */
 	public function hasSequences() {
-		if ($this->_hasSequences !== null) {
-			return $this->_hasSequences;
-		}
 		$result = $this->_driver
 			->prepare('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"');
 		$result->execute();

@@ -189,9 +189,11 @@ class Marshaller {
 	protected function _loadBelongsToMany($assoc, $ids) {
 		$target = $assoc->target();
 		$primaryKey = (array)$target->primaryKey();
+
 		if (count($primaryKey) > 1) {
 			return [];
 		}
+
 		return $assoc->find('all')
 			->where([$primaryKey[0] . ' IN' => $ids])
 			->toArray();
