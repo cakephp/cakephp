@@ -428,7 +428,7 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$query = $this->getMock('Cake\ORM\Query', ['all', 'contain'], [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, null]);
 
 		$this->tag->expects($this->once())
 			->method('find')
@@ -443,14 +443,18 @@ class BelongsToManyTest extends TestCase {
 			->method('all')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $keys],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $keys])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$query->hydrate(false);
 
@@ -491,7 +495,7 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$methods = ['all', 'contain', 'where', 'order'];
+		$methods = ['all', 'matching', 'where', 'order'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())
 			->method('find')
@@ -505,15 +509,18 @@ class BelongsToManyTest extends TestCase {
 			->method('all')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())
-			->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $keys],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $keys])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
@@ -552,7 +559,7 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$methods = ['all', 'contain', 'where', 'order', 'select'];
+		$methods = ['all', 'matching', 'where', 'order', 'select'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
@@ -563,14 +570,18 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('all')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $keys],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $keys])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
@@ -669,7 +680,7 @@ class BelongsToManyTest extends TestCase {
 
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['all', 'where', 'andWhere', 'order', 'select', 'contain'],
+			['all', 'where', 'andWhere', 'order', 'select', 'matching'],
 			[null, null]
 		);
 		$query->hydrate(false);
@@ -702,14 +713,18 @@ class BelongsToManyTest extends TestCase {
 			->with([])
 			->will($this->returnSelf());
 
-		$query->expects($this->once())->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $expected],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $expected) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $expected])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$callable = $association->eagerLoader([
 			'query' => $parent, 'strategy' => BelongsToMany::STRATEGY_SUBQUERY,
@@ -752,7 +767,7 @@ class BelongsToManyTest extends TestCase {
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['all', 'contain', 'andWhere', 'limit'],
+			['all', 'matching', 'andWhere', 'limit'],
 			[null, null]
 		);
 
@@ -769,14 +784,18 @@ class BelongsToManyTest extends TestCase {
 			->method('all')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $keys],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $keys])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$query->hydrate(false);
 
