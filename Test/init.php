@@ -59,6 +59,7 @@ require CORE_PATH . 'Cake/Core/ClassLoader.php';
 
 require CORE_PATH . 'Cake/bootstrap.php';
 
+date_default_timezone_set('UTC');
 mb_internal_encoding('UTF-8');
 
 Configure::write('debug', 2);
@@ -98,7 +99,8 @@ ConnectionManager::config('test', [
 	'dsn' => getenv('db_dsn'),
 	'database' => getenv('db_database'),
 	'login' => getenv('db_login'),
-	'password' => getenv('db_password')
+	'password' => getenv('db_password'),
+	'timezone' => 'UTC'
 ]);
 
 Configure::write('Session', [
