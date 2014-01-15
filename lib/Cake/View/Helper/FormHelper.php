@@ -2825,7 +2825,11 @@ class FormHelper extends AppHelper {
 				if ($min > $max) {
 					list($min, $max) = array($max, $min);
 				}
-				if (!empty($options['value']) && (int)$options['value'] < $min) {
+				if (
+					!empty($options['value']) &&
+					(int)$options['value'] < $min &&
+					(int)$options['value'] > 0
+				) {
 					$min = (int)$options['value'];
 				} elseif (!empty($options['value']) && (int)$options['value'] > $max) {
 					$max = (int)$options['value'];
