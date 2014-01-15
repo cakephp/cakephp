@@ -49,6 +49,17 @@ class StringTemplate {
 	];
 
 /**
+ * Constructor.
+ *
+ * @param array $templates A set of templates to add.
+ */
+	public function __construct(array $templates = null) {
+		if ($templates) {
+			$this->add($templates);
+		}
+	}
+
+/**
  * Load a config file containing templates.
  *
  * Template files should define a `$config` variable containing

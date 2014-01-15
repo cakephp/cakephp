@@ -31,6 +31,19 @@ class StringTemplateTest extends TestCase {
 	}
 
 /**
+ * Test adding templates through the constructor.
+ *
+ * @return void
+ */
+	public function testConstructorAdd() {
+		$templates = [
+			'link' => '<a href="{{url}}">{{text}}</a>'
+		];
+		$template = new StringTemplate($templates);
+		$this->assertEquals($templates['link'], $template->get('link'));
+	}
+
+/**
  * test adding templates.
  *
  * @return void
