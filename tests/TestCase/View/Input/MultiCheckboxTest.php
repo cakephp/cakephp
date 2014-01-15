@@ -82,7 +82,28 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderEscaping() {
-		$this->markTestIncomplete();
+		$input = new MultiCheckbox($this->templates);
+		$data = [
+			'name' => 'Tags[id]',
+			'options' => [
+				'>' => '>>',
+			]
+		];
+		$result = $input->render($data);
+		$expected = [
+			['div' => ['class' => 'checkbox']],
+			['input' => [
+				'type' => 'checkbox',
+				'name' => 'Tags[id][]',
+				'value' => '&gt;',
+				'id' => 'tags-id',
+			]],
+			['label' => ['for' => 'tags-id']],
+			'&gt;&gt;',
+			'/label',
+			'/div',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**

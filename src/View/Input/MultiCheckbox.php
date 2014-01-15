@@ -32,6 +32,16 @@ class MultiCheckbox {
 /**
  * Render multi-checkbox widget.
  *
+ * Data supports the following options.
+ *
+ * - `name` The name attribute of the inputs to create.
+ *   `[]` will be appended to the name.
+ * - `options` An array of options to create checkboxes out of.
+ * - `val` Either a string/integer or array of values that should be
+ *   checked.
+ * - `disabled` Either a boolean or an array of checkboxes to disable.
+ * - `escape` Set to false to disable HTML escaping.
+ *
  * @param array $data
  * @return string
  */
@@ -78,7 +88,7 @@ class MultiCheckbox {
 	protected function _renderInput($checkbox) {
 		$input = $this->_templates->format('checkbox', [
 			'name' => $checkbox['name'] . '[]',
-			'value' => $checkbox['value'],
+			'value' => $checkbox['escape'] ? h($checkbox['value']) : $checkbox['value'],
 			'attrs' => $this->_templates->formatAttributes(
 				$checkbox,
 				['name', 'value', 'text']
