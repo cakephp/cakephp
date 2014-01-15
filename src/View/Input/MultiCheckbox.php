@@ -86,7 +86,7 @@ class MultiCheckbox {
 			'disabled' => null,
 			'val' => null,
 		];
-		$out= [];
+		$out = [];
 		foreach ($data['options'] as $key => $val) {
 			$checkbox = [
 				'value' => $key,
