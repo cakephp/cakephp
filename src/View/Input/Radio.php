@@ -15,7 +15,6 @@
 namespace Cake\View\Input;
 
 use Cake\Utility\Inflector;
-use Cake\View\StringTemplate;
 use Traversable;
 
 /**

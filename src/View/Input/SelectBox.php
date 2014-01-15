@@ -14,7 +14,6 @@
  */
 namespace Cake\View\Input;
 
-use Cake\View\StringTemplate;
 use Traversable;
 
 /**
