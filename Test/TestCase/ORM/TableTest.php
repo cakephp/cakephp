@@ -585,7 +585,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindListNoHydration() {
-		$this->markTestIncomplete();
 		$table = new Table([
 			'table' => 'users',
 			'connection' => $this->connection,
@@ -759,7 +758,6 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindListHydrated() {
-		$this->markTestIncomplete();
 		$table = new Table([
 			'table' => 'users',
 			'connection' => $this->connection,
