@@ -37,8 +37,7 @@ trait StringTemplateTrait {
  * @return void
  */
 	public function initStringTemplates($templates = [], $templateClass = '\Cake\View\StringTemplate') {
-		$this->_templater = new $templateClass();
-		$this->_templater->add($templates);
+		$this->_templater = new $templateClass($templates);
 		if (isset($this->settings['templates'])) {
 			$this->_templater->load($this->settings['templates']);
 		}
