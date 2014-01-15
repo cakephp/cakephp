@@ -23,6 +23,11 @@ use Cake\View\StringTemplate;
  */
 class SelectBoxTest extends TestCase {
 
+/**
+ * setup method.
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$templates = [

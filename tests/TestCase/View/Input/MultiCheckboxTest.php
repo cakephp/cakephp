@@ -23,6 +23,11 @@ use Cake\View\StringTemplate;
  */
 class MultiCheckboxTest extends TestCase {
 
+/**
+ * setup method.
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$templates = [
@@ -201,6 +206,9 @@ class MultiCheckboxTest extends TestCase {
 			'/label',
 			'/div',
 		];
+		$this->assertTags($result, $expected);
+
+		$data['disabled'] = ['1', '1x'];
 		$this->assertTags($result, $expected);
 
 		$data = [

@@ -24,6 +24,11 @@ use Cake\View\StringTemplate;
  */
 class RadioTest extends TestCase {
 
+/**
+ * setup method.
+ *
+ * @return void
+ */
 	public function setUp() {
 		parent::setUp();
 		$templates = [
