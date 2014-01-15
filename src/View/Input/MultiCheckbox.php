@@ -56,7 +56,7 @@ class MultiCheckbox {
 			$checkbox['escape'] = $data['escape'];
 
 			if ($this->_isSelected($key, $data['val'])) {
-				$checkbox['selected'] = true;
+				$checkbox['checked'] = true;
 			}
 			if ($this->_isDisabled($key, $data['disabled'])) {
 				$checkbox['disabled'] = true;
