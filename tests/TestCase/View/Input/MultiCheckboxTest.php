@@ -82,6 +82,50 @@ class MultiCheckboxTest extends TestCase {
 	}
 
 /**
+ * Test render complex and additional attributes.
+ *
+ * @return void
+ */
+	public function testRenderComplex() {
+		$input = new MultiCheckbox($this->templates);
+		$data = [
+			'name' => 'Tags[id]',
+			'options' => [
+				['value' => '1', 'text' => 'CakePHP', 'data-test' => 'val'],
+				['value' => '2', 'text' => 'Development', 'class' => 'custom'],
+			]
+		];
+		$result = $input->render($data);
+		$expected = [
+			['div' => ['class' => 'checkbox']],
+			['input' => [
+				'type' => 'checkbox',
+				'name' => 'Tags[id][]',
+				'value' => 1,
+				'id' => 'tags-id-1',
+				'data-test' => 'val',
+			]],
+			['label' => ['for' => 'tags-id-1']],
+			'CakePHP',
+			'/label',
+			'/div',
+			['div' => ['class' => 'checkbox']],
+			['input' => [
+				'type' => 'checkbox',
+				'name' => 'Tags[id][]',
+				'value' => 2,
+				'id' => 'tags-id-2',
+				'class' => 'custom',
+			]],
+			['label' => ['for' => 'tags-id-2']],
+			'Development',
+			'/label',
+			'/div',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test render escpaing options.
  *
  * @return void
