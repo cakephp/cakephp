@@ -107,15 +107,6 @@ class MultiCheckboxTest extends TestCase {
 	}
 
 /**
- * Test render complex options.
- *
- * @return void
- */
-	public function testRenderComplex() {
-		$this->markTestIncomplete();
-	}
-
-/**
  * Test render selected checkboxes.
  *
  * @return void

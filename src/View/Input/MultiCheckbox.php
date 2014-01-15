@@ -41,6 +41,7 @@ class MultiCheckbox {
  *   checked.
  * - `disabled` Either a boolean or an array of checkboxes to disable.
  * - `escape` Set to false to disable HTML escaping.
+ * - `options` An associative array of value=>labels to generate options for.
  *
  * @param array $data
  * @return string
