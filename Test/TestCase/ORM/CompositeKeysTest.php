@@ -15,10 +15,23 @@
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\ConnectionManager;
+use Cake\ORM\Entity;
+use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+
+/**
+ * Test entity for mass assignment.
+ */
+class OpenEntity extends Entity {
+
+	protected $_accessible = [
+		'*' => true
+	];
+
+}
 
 /**
  * Integration tetss for table operations involving composite keys
@@ -276,4 +289,46 @@ class CompositeKeyTest extends TestCase {
 		]);
 		$this->assertNull($query->all()->first(), 'Should not find any rows.');
 	}
+
+/**
+ * Test generating a list of entities from a list of composite ids
+ *
+ * @return void
+ */
+	public function testOneGenerateBelongsToManyEntitiesFromIds() {
+		$articles = TableRegistry::get('SiteArticles');
+		$articles->entityClass(__NAMESPACE__ . '\OpenEntity');
+		$tags = TableRegistry::get('SiteTags');
+		$junction = TableRegistry::get('SiteArticlesTags');
+		$articles->belongsToMany('SiteTags', [
+			'targetTable' => $tags,
+			'propertyName' => 'tags',
+			'through' => 'SiteArticlesTags',
+			'foreignKey' => ['article_id', 'site_id'],
+			'targetForeignKey' => ['tag_id', 'site_id']
+		]);
+
+		$data = [
+			'title' => 'Haz tags',
+			'body' => 'Some content here',
+			'tags' => ['_ids' => [[1,1], [2, 2], [3, 1]]]
+		];
+		$marshall = new Marshaller($articles);
+		$result = $marshall->one($data, ['SiteTags']);
+
+		$this->assertCount(3, $result->tags);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
+
+		$data = [
+			'title' => 'Haz tags',
+			'body' => 'Some content here',
+			'tags' => ['_ids' => [1, 2, 3]]
+		];
+		$marshall = new Marshaller($articles);
+		$result = $marshall->one($data, ['SiteTags']);
+		$this->assertEmpty($result->tags);
+	}
+
 }
