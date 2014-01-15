@@ -48,8 +48,13 @@ class TupleComparison extends Comparison {
 	public function sql(ValueBinder $generator) {
 		$template = '(%s) %s (%s)';
 		$fields = [];
+		$originalFields = $this->getField();
 
-		foreach ((array)$this->getField() as $field) {
+		if (!is_array($originalFields)) {
+			$originalFields = [$originalFields];
+		}
+
+		foreach ($originalFields as $field) {
 			$fields[] = $field instanceof ExpressionInterface ? $field->sql($generator) : $field;
 		}
 

@@ -112,21 +112,22 @@ trait SqliteDialectTrait {
 
 		$value = $expression->getValue();
 		$op = $expression->type();
+		$true = new QueryExpression('1');
 
 		if ($value instanceof Query) {
 			$selected = array_values($value->clause('select'));
 			foreach ($fields as $i => $field) {
 				$value->andWhere([$field . " $op" => new IdentifierExpression($selected[$i])]);
 			}
-			$value->select(new IdentifierExpression(1), true);
-			$expression->field(new IdentifierExpression('1'));
+			$value->select($true, true);
+			$expression->field($true);
 			$expression->type('=');
 			return;
 		}
 
 		$surrogate = $query->connection()
 			->newQuery()
-			->select(new IdentifierExpression('1'));
+			->select($true);
 
 		foreach ($value as $tuple) {
 			$surrogate->orWhere(function($exp) use ($fields, $tuple) {
@@ -137,7 +138,7 @@ trait SqliteDialectTrait {
 			});
 		}
 
-		$expression->field(new IdentifierExpression('1'));
+		$expression->field($true);
 		$expression->value($surrogate);
 		$expression->type('=');
 	}
