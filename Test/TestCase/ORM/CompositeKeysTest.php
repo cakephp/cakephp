@@ -214,4 +214,66 @@ class CompositeKeyTest extends TestCase {
 		$this->assertEquals($articles->association('SiteTags')->strategy(), $strategy);
 	}
 
+/**
+ * Tests that it is possible to insert a new row using the save method
+ * if the entity has composite primary key
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveNewEntity() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 5,
+			'site_id' => 1,
+			'title' => 'Fifth Article',
+			'body' => 'Fifth Article Body',
+			'author_id' => 3,
+		]);
+		$table = TableRegistry::get('SiteArticles');
+		$this->assertSame($entity, $table->save($entity));
+		$this->assertEquals($entity->id, 5);
+
+		$row = $table->find('all')->where(['id' => 5, 'site_id' => 1])->first();
+		$this->assertEquals($entity->toArray(), $row->toArray());
+	}
+
+/**
+ * Test simple delete with composite primary key
+ *
+ * @return void
+ */
+	public function testDelete() {
+		$table = TableRegistry::get('SiteAuthors');
+		$table->save(new \Cake\ORM\Entity(['id' => 1, 'site_id' => 2]));
+		$entity = $table->get([1, 1]);
+		$result = $table->delete($entity);
+		$this->assertTrue($result);
+
+		$this->assertEquals(4, $table->find('all')->count());
+		$this->assertEmpty($table->find()->where(['id' => 1, 'site_id' => 1])->first());
+	}
+
+/**
+ * Test delete with dependent records having composite keys
+ *
+ * @return void
+ */
+	public function testDeleteDependent() {
+		$table = TableRegistry::get('SiteAuthors');
+		$table->hasMany('SiteArticles', [
+			'foreignKey' => ['author_id', 'site_id'],
+			'dependent' => true,
+		]);
+
+		$entity = $table->get([3, 2]);
+		$result = $table->delete($entity);
+
+		$query = $table->association('SiteArticles')->find('all', [
+			'conditions' => [
+				'author_id' => $entity->id,
+				'site_id' => $entity->site_id
+			]
+		]);
+		$this->assertNull($query->all()->first(), 'Should not find any rows.');
+	}
 }
