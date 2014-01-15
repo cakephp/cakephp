@@ -36,8 +36,7 @@ class RadioTest extends TestCase {
 			'label' => '<label{{attrs}}>{{text}}</label>',
 			'radioContainer' => '{{input}}{{label}}',
 		];
-		$this->templates = new StringTemplate();
-		$this->templates->add($templates);
+		$this->templates = new StringTemplate($templates);
 	}
 
 /**

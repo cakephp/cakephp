@@ -36,8 +36,7 @@ class SelectBoxTest extends TestCase {
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 		];
-		$this->templates = new StringTemplate();
-		$this->templates->add($templates);
+		$this->templates = new StringTemplate($templates);
 	}
 
 /**

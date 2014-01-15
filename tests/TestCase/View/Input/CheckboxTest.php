@@ -33,8 +33,7 @@ class CheckboxTest extends TestCase {
 		$templates = [
 			'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 		];
-		$this->templates = new StringTemplate();
-		$this->templates->add($templates);
+		$this->templates = new StringTemplate($templates);
 	}
 
 /**

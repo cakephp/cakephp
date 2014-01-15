@@ -35,8 +35,7 @@ class MultiCheckboxTest extends TestCase {
 			'label' => '<label{{attrs}}>{{text}}</label>',
 			'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
 		];
-		$this->templates = new StringTemplate();
-		$this->templates->add($templates);
+		$this->templates = new StringTemplate($templates);
 	}
 
 /**
