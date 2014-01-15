@@ -16,8 +16,17 @@ namespace Cake\View\Input;
 
 use Cake\Utility\Inflector;
 
+/**
+ * Input widget class for generating multiple checkboxes.
+ *
+ */
 class MultiCheckbox {
 
+/**
+ * Template instance to use.
+ *
+ * @var Cake\View\StringTemplate
+ */
 	protected $_templates;
 
 /**
@@ -38,10 +47,33 @@ class MultiCheckbox {
  *   `[]` will be appended to the name.
  * - `options` An array of options to create checkboxes out of.
  * - `val` Either a string/integer or array of values that should be
- *   checked.
+ *   checked. Can also be a complex options set.
  * - `disabled` Either a boolean or an array of checkboxes to disable.
  * - `escape` Set to false to disable HTML escaping.
  * - `options` An associative array of value=>labels to generate options for.
+ *
+ * ### Options format
+ *
+ * The options option can take a variety of data format depending on
+ * the complexity of HTML you want generated.
+ *
+ * You can generate simple options using a basic associative array:
+ *
+ * {{{
+ * 'options' => ['elk' => 'Elk', 'beaver' => 'Beaver']
+ * }}}
+ *
+ * If you need to define additional attributes on your option elements
+ * you can use the complex form for options:
+ *
+ * {{{
+ * 'options' => [
+ *   ['value' => 'elk', 'text' => 'Elk', 'data-foo' => 'bar'],
+ * ]
+ * }}}
+ *
+ * This form **requires** that both the `value` and `text` keys be defined.
+ * If either is not set options will not be generated correctly.
  *
  * @param array $data
  * @return string
