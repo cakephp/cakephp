@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 /**
  * Test entity for mass assignment.
  */
-class OpenEntity extends Entity {
+class OpenArticleEntity extends Entity {
 
 	protected $_accessible = [
 		'*' => true
@@ -297,7 +297,7 @@ class CompositeKeyTest extends TestCase {
  */
 	public function testOneGenerateBelongsToManyEntitiesFromIds() {
 		$articles = TableRegistry::get('SiteArticles');
-		$articles->entityClass(__NAMESPACE__ . '\OpenEntity');
+		$articles->entityClass(__NAMESPACE__ . '\OpenArticleEntity');
 		$tags = TableRegistry::get('SiteTags');
 		$junction = TableRegistry::get('SiteArticlesTags');
 		$articles->belongsToMany('SiteTags', [

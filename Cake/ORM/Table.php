@@ -122,7 +122,7 @@ class Table implements EventListener {
 /**
  * The name of the field that represents the primary key in the table
  *
- * @var array
+ * @var string|array
  */
 	protected $_primaryKey;
 
@@ -375,14 +375,17 @@ class Table implements EventListener {
  * Returns the primary key field name or sets a new one
  *
  * @param string|array $key sets a new name to be used as primary key
- * @return array
+ * @return string|array
  */
 	public function primaryKey($key = null) {
 		if ($key !== null) {
-			$this->_primaryKey = (array)$key;
+			$this->_primaryKey = $key;
 		}
 		if ($this->_primaryKey === null) {
 			$key = (array)$this->schema()->primaryKey();
+			if (count($key) === 1) {
+				$key = $key[0];
+			}
 			$this->_primaryKey = $key;
 		}
 		return $this->_primaryKey;
@@ -400,7 +403,7 @@ class Table implements EventListener {
 		}
 		if ($this->_displayField === null) {
 			$schema = $this->schema();
-			$primary = $this->primaryKey();
+			$primary = (array)$this->primaryKey();
 			$this->_displayField = array_shift($primary);
 			if ($schema->column('title')) {
 				$this->_displayField = 'title';

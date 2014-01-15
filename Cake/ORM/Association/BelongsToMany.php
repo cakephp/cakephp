@@ -331,7 +331,7 @@ class BelongsToMany extends Association {
  */
 	public function cascadeDelete(Entity $entity, $options = []) {
 		$foreignKey = (array)$this->foreignKey();
-		$primaryKey = $this->source()->primaryKey();
+		$primaryKey = (array)$this->source()->primaryKey();
 		$conditions = [];
 
 		if ($primaryKey) {

@@ -198,7 +198,7 @@ class Marshaller {
 			}
 			$filter = new TupleComparison($primaryKey, $ids, [], 'IN');
 		} else {
-			$filter = [$primaryKey[0] . 'IN' => $ids];
+			$filter = [$primaryKey[0] . ' IN' => $ids];
 		}
 
 		return $assoc->find()->where($filter)->toArray();

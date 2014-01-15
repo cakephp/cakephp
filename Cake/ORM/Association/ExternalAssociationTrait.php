@@ -130,7 +130,7 @@ trait ExternalAssociationTrait {
 		$tAlias = $this->target()->alias();
 		$sAlias = $this->_sourceTable->alias();
 		$foreignKey = (array)$options['foreignKey'];
-		$primaryKey = $this->_sourceTable->primaryKey();
+		$primaryKey = (array)$this->_sourceTable->primaryKey();
 
 		if (count($foreignKey) !== count($primaryKey)) {
 			$msg = 'Cannot match provided foreignKey, got %d columns expected %d';
@@ -161,7 +161,7 @@ trait ExternalAssociationTrait {
 		$tAlias = $this->target()->alias();
 
 		$sourceKeys = [];
-		foreach ($source->primaryKey() as $key) {
+		foreach ((array)$source->primaryKey() as $key) {
 			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
 		}
 
