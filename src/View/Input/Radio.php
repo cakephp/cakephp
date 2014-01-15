@@ -134,7 +134,7 @@ class Radio {
 		$radio['name'] = $data['name'];
 
 		if (empty($radio['id'])) {
-			$radio['id'] = Inflector::slug($radio['name'] . '_' . $radio['value']);
+			$radio['id'] = mb_strtolower(Inflector::slug($radio['name'] . '_' . $radio['value'], '-'));
 		}
 
 		if (isset($data['val']) && strval($data['val']) === strval($radio['value'])) {

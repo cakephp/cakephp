@@ -52,18 +52,18 @@ class RadioTest extends TestCase {
 				'type' => 'radio',
 				'name' => 'Crayons[color]',
 				'value' => 'r',
-				'id' => 'Crayons_color_r'
+				'id' => 'crayons-color-r'
 			]],
-			['label' => ['for' => 'Crayons_color_r']],
+			['label' => ['for' => 'crayons-color-r']],
 			'Red',
 			'/label',
 			['input' => [
 				'type' => 'radio',
 				'name' => 'Crayons[color]',
 				'value' => 'b',
-				'id' => 'Crayons_color_b'
+				'id' => 'crayons-color-b'
 			]],
-			['label' => ['for' => 'Crayons_color_b']],
+			['label' => ['for' => 'crayons-color-b']],
 			'Black',
 			'/label',
 		];
@@ -134,18 +134,18 @@ class RadioTest extends TestCase {
 				'type' => 'radio',
 				'name' => 'Crayons[color]',
 				'value' => '',
-				'id' => 'Crayons_color'
+				'id' => 'crayons-color'
 			]],
-			['label' => ['for' => 'Crayons_color']],
+			['label' => ['for' => 'crayons-color']],
 			'empty',
 			'/label',
 			['input' => [
 				'type' => 'radio',
 				'name' => 'Crayons[color]',
 				'value' => 'r',
-				'id' => 'Crayons_color_r'
+				'id' => 'crayons-color-r'
 			]],
-			['label' => ['for' => 'Crayons_color_r']],
+			['label' => ['for' => 'crayons-color-r']],
 			'Red',
 			'/label',
 		];
@@ -158,18 +158,18 @@ class RadioTest extends TestCase {
 				'type' => 'radio',
 				'name' => 'Crayons[color]',
 				'value' => '',
-				'id' => 'Crayons_color'
+				'id' => 'crayons-color'
 			]],
-			['label' => ['for' => 'Crayons_color']],
+			['label' => ['for' => 'crayons-color']],
 			'Choose one',
 			'/label',
 			['input' => [
 				'type' => 'radio',
 				'name' => 'Crayons[color]',
 				'value' => 'r',
-				'id' => 'Crayons_color_r'
+				'id' => 'crayons-color-r'
 			]],
-			['label' => ['for' => 'Crayons_color_r']],
+			['label' => ['for' => 'crayons-color-r']],
 			'Red',
 			'/label',
 		];
@@ -193,12 +193,12 @@ class RadioTest extends TestCase {
 		];
 		$result = $radio->render($data);
 		$expected = [
-			['label' => ['for' => 'Crayons_color_r']],
+			['label' => ['for' => 'crayons-color-r']],
 			['input' => [
 				'type' => 'radio',
 				'name' => 'Crayons[color]',
 				'value' => 'r',
-				'id' => 'Crayons_color_r'
+				'id' => 'crayons-color-r'
 			]],
 			'Red',
 			'/label',
@@ -225,31 +225,31 @@ class RadioTest extends TestCase {
 		$result = $radio->render($data);
 		$expected = [
 			['input' => [
-				'id' => 'Versions_ver_1',
+				'id' => 'versions-ver-1',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1',
 				'checked' => 'checked'
 			]],
-			['label' => ['for' => 'Versions_ver_1']],
+			['label' => ['for' => 'versions-ver-1']],
 			'one',
 			'/label',
 			['input' => [
-				'id' => 'Versions_ver_1x',
+				'id' => 'versions-ver-1x',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1x'
 			]],
-			['label' => ['for' => 'Versions_ver_1x']],
+			['label' => ['for' => 'versions-ver-1x']],
 			'one x',
 			'/label',
 			['input' => [
-				'id' => 'Versions_ver_2',
+				'id' => 'versions-ver-2',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '2'
 			]],
-			['label' => ['for' => 'Versions_ver_2']],
+			['label' => ['for' => 'versions-ver-2']],
 			'two',
 			'/label',
 		];
@@ -275,23 +275,23 @@ class RadioTest extends TestCase {
 		$result = $radio->render($data);
 		$expected = [
 			['input' => [
-				'id' => 'Versions_ver_1',
+				'id' => 'versions-ver-1',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1',
 				'disabled' => 'disabled'
 			]],
-			['label' => ['for' => 'Versions_ver_1']],
+			['label' => ['for' => 'versions-ver-1']],
 			'one',
 			'/label',
 			['input' => [
-				'id' => 'Versions_ver_1x',
+				'id' => 'versions-ver-1x',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1x',
 				'disabled' => 'disabled'
 			]],
-			['label' => ['for' => 'Versions_ver_1x']],
+			['label' => ['for' => 'versions-ver-1x']],
 			'one x',
 			'/label',
 		];
@@ -301,22 +301,22 @@ class RadioTest extends TestCase {
 		$result = $radio->render($data);
 		$expected = [
 			['input' => [
-				'id' => 'Versions_ver_1',
+				'id' => 'versions-ver-1',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1',
 				'disabled' => 'disabled'
 			]],
-			['label' => ['for' => 'Versions_ver_1']],
+			['label' => ['for' => 'versions-ver-1']],
 			'one',
 			'/label',
 			['input' => [
-				'id' => 'Versions_ver_1x',
+				'id' => 'versions-ver-1x',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1x',
 			]],
-			['label' => ['for' => 'Versions_ver_1x']],
+			['label' => ['for' => 'versions-ver-1x']],
 			'one x',
 			'/label',
 		];
@@ -342,13 +342,13 @@ class RadioTest extends TestCase {
 		$result = $radio->render($data);
 		$expected = [
 			['input' => [
-				'id' => 'Versions_ver_1',
+				'id' => 'versions-ver-1',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1',
 			]],
 			['input' => [
-				'id' => 'Versions_ver_1x',
+				'id' => 'versions-ver-1x',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1x',
@@ -370,21 +370,21 @@ class RadioTest extends TestCase {
 		$result = $radio->render($data);
 		$expected = [
 			['input' => [
-				'id' => 'Versions_ver_1',
+				'id' => 'versions-ver-1',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1',
 			]],
-			['label' => ['class' => 'my-class', 'for' => 'Versions_ver_1']],
+			['label' => ['class' => 'my-class', 'for' => 'versions-ver-1']],
 			'one',
 			'/label',
 			['input' => [
-				'id' => 'Versions_ver_1x',
+				'id' => 'versions-ver-1x',
 				'name' => 'Versions[ver]',
 				'type' => 'radio',
 				'value' => '1x',
 			]],
-			['label' => ['class' => 'my-class', 'for' => 'Versions_ver_1x']],
+			['label' => ['class' => 'my-class', 'for' => 'versions-ver-1x']],
 			'one x',
 			'/label',
 		];
