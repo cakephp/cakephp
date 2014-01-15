@@ -128,8 +128,11 @@ class MultiCheckbox {
  * @return boolean
  */
 	protected function _isDisabled($key, $disabled) {
-		if ($disabled === null) {
+		if ($disabled === null || $disabled === false) {
 			return false;
+		}
+		if ($disabled === true) {
+			return true;
 		}
 		$strict = !is_numeric($key);
 		return in_array((string)$key, $disabled, $strict);

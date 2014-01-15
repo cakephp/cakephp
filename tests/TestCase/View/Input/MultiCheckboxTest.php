@@ -107,7 +107,8 @@ class MultiCheckboxTest extends TestCase {
 				1 => 'CakePHP',
 				'1x' => 'Development',
 			],
-			'val' => [1]
+			'val' => [1],
+			'disabled' => false
 		];
 		$result = $input->render($data);
 		$expected = [
@@ -152,7 +153,79 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderDisabled() {
-		$this->markTestIncomplete();
+		$input = new MultiCheckbox($this->templates);
+		$data = [
+			'name' => 'Tags[id]',
+			'options' => [
+				1 => 'CakePHP',
+				'1x' => 'Development',
+			],
+			'disabled' => true,
+		];
+		$result = $input->render($data);
+		$expected = [
+			['div' => ['class' => 'checkbox']],
+			['input' => [
+				'type' => 'checkbox',
+				'name' => 'Tags[id][]',
+				'value' => 1,
+				'id' => 'tags-id-1',
+				'disabled' => 'disabled'
+			]],
+			['label' => ['for' => 'tags-id-1']],
+			'CakePHP',
+			'/label',
+			'/div',
+			['div' => ['class' => 'checkbox']],
+			['input' => [
+				'type' => 'checkbox',
+				'name' => 'Tags[id][]',
+				'value' => '1x',
+				'id' => 'tags-id-1x',
+				'disabled' => 'disabled'
+			]],
+			['label' => ['for' => 'tags-id-1x']],
+			'Development',
+			'/label',
+			'/div',
+		];
+		$this->assertTags($result, $expected);
+
+		$data = [
+			'name' => 'Tags[id]',
+			'options' => [
+				1 => 'CakePHP',
+				'1x' => 'Development',
+			],
+			'disabled' => [1]
+		];
+		$result = $input->render($data);
+		$expected = [
+			['div' => ['class' => 'checkbox']],
+			['input' => [
+				'type' => 'checkbox',
+				'name' => 'Tags[id][]',
+				'value' => 1,
+				'id' => 'tags-id-1',
+				'disabled' => 'disabled'
+			]],
+			['label' => ['for' => 'tags-id-1']],
+			'CakePHP',
+			'/label',
+			'/div',
+			['div' => ['class' => 'checkbox']],
+			['input' => [
+				'type' => 'checkbox',
+				'name' => 'Tags[id][]',
+				'value' => '1x',
+				'id' => 'tags-id-1x',
+			]],
+			['label' => ['for' => 'tags-id-1x']],
+			'Development',
+			'/label',
+			'/div',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 }
