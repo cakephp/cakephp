@@ -186,7 +186,7 @@ trait ExternalAssociationTrait {
  * be done with multiple foreign keys
  *
  * @param array $resultMap a keyed arrays containing the target table
- * @param array $sourceKeys an array witha aliased keys to match
+ * @param array $sourceKeys an array with aliased keys to match
  * @param string $nestKey the key under which results should be nested
  * @return \Closure
  */

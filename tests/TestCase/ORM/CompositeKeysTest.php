@@ -76,7 +76,6 @@ class CompositeKeyTest extends TestCase {
  */
 	public function testHasManyEager($strategy) {
 		$table = TableRegistry::get('SiteAuthors');
-		TableRegistry::get('SiteArticles');
 		$table->hasMany('SiteArticles', [
 			'propertyName' => 'articles',
 			'strategy' => $strategy,

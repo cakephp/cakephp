@@ -160,7 +160,7 @@ class SqliteSchemaTest extends TestCase {
  *
  * @return void
  */
-	public function testCovenrtCompositPrimaryKey() {
+	public function testConvertCompositPrimaryKey() {
 		$driver = $this->getMock('Cake\Database\Driver\Sqlite');
 		$dialect = new SqliteSchema($driver);
 

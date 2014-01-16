@@ -110,9 +110,9 @@ class TupleComparison extends Comparison {
 
 /**
  * Traverses the tree of expressions stored in this object, visiting first
- * expressions in the left hand side and the the rest.
+ * expressions in the left hand side and then the rest.
  *
- * Callback function receives as only argument an instance of a ExpresisonInterface
+ * Callback function receives as its only argument an instance of an ExpresisonInterface
  *
  * @param callable $callable
  * @return void
