@@ -884,7 +884,7 @@ class BelongsToMany extends Association {
  */
 	protected function _linkField($options) {
 		$links = [];
-		$name =  $this->_junctionAssociationName();
+		$name = $this->_junctionAssociationName();
 
 		foreach ((array)$options['foreignKey'] as $key) {
 			$links[] = sprintf('%s.%s', $name, $key);

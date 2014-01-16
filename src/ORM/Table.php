@@ -1222,7 +1222,7 @@ class Table implements EventListener {
  * @return null|mixed Either null or the new primary key value.
  */
 	protected function _newId($primary) {
-		if (!$primary || count((array)$primary) > 1)  {
+		if (!$primary || count((array)$primary) > 1) {
 			return null;
 		}
 		$typeName = $this->schema()->columnType($primary[0]);

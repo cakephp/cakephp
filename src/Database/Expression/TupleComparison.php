@@ -14,8 +14,8 @@
  */
 namespace Cake\Database\Expression;
 
-use Cake\Database\Expression\Comparison;
 use Cake\Database\ExpressionInterface;
+use Cake\Database\Expression\Comparison;
 use Cake\Database\ValueBinder;
 
 /**
@@ -108,7 +108,7 @@ class TupleComparison extends Comparison {
 		return implode(', ', $values);
 	}
 
-/*
+/**
  * Traverses the tree of expressions stored in this object, visiting first
  * expressions in the left hand side and the the rest.
  *
@@ -162,8 +162,8 @@ class TupleComparison extends Comparison {
  *
  * @return boolean
  */
-	protected function isMulti() {
-		return in_array(strtolower($this->_conjunction), ['in', 'not in']);;
+	public function isMulti() {
+		return in_array(strtolower($this->_conjunction), ['in', 'not in']);
 	}
 
 }
