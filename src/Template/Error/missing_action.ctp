@@ -56,6 +56,6 @@ class <?= h($controller); ?> extends AppController {
 </pre>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_action.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_action.ctp'); ?>
 </p>
 <?= $this->element('exception_stack_trace'); ?>

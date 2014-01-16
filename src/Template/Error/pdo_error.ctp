@@ -33,6 +33,6 @@ use Cake\Utility\Debugger;
 <?php endif; ?>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'pdo_error.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'pdo_error.ctp'); ?>
 </p>
 <?= $this->element('exception_stack_trace'); ?>
