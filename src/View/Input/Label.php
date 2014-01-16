@@ -32,6 +32,11 @@ class Label {
 /**
  * Constructor.
  *
+ * This class uses the following template:
+ *
+ * - `label` Used to generate the label for a radio button.
+ *   Can use the following variables `attrs`, `text` and `input`.
+ *
  * @param Cake\View\StringTemplate $templates
  */
 	public function __construct($templates) {

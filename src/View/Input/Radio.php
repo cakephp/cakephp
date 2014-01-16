@@ -44,13 +44,12 @@ class Radio {
  *
  * - `radio` Used to generate the input for a radio button.
  *   Can use the following variables `name`, `value`, `attrs`.
- * - `label` Used to generate the label for a radio button.
- *   Can use the following variables `attrs`, `text` and `input`.
  * - `radioContainer` Used to generate the container element for
  *   the radio + input element. Can use the `input` and `label`
  *   variables.
  *
  * @param Cake\View\StringTemplate $templates
+ * @param Cake\View\Input\Label $label
  */
 	public function __construct($templates, $label) {
 		$this->_templates = $templates;
