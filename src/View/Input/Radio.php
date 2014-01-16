@@ -33,6 +33,11 @@ class Radio {
 	protected $_templates;
 
 /**
+ * @var Cake\View\Input\Label
+ */
+	protected $_label;
+
+/**
  * Constructor
  *
  * This class uses a few templates:
@@ -47,8 +52,9 @@ class Radio {
  *
  * @param Cake\View\StringTemplate $templates
  */
-	public function __construct($templates) {
+	public function __construct($templates, $label) {
 		$this->_templates = $templates;
+		$this->_label = $label;
 	}
 
 /**
@@ -180,13 +186,13 @@ class Radio {
 			return false;
 		}
 		$labelAttrs = is_array($label) ? $label : [];
-		$labelAttrs += ['for' => $radio['id'], 'escape' => $escape];
-
-		return $this->_templates->format('label', [
-			'text' => $escape ? h($radio['text']) : $radio['text'],
+		$labelAttrs += [
+			'for' => $radio['id'],
+			'escape' => $escape,
+			'text' => $radio['text'],
 			'input' => $input,
-			'attrs' => $this->_templates->formatAttributes($labelAttrs),
-		]);
+		];
+		return $this->_label->render($labelAttrs);
 	}
 
 }
