@@ -137,7 +137,7 @@ class Comparison extends QueryExpression {
 			$value = $this->_flattenValue($this->_value, $generator, $type);
 		} else {
 			$template = '%s %s %s';
-			$value = $this->_bindValue($generator, $this->_value, $this->_type);
+			$value = $this->_bindValue($this->_value, $generator, $this->_type);
 		}
 		return [$template, $value];
 	}
@@ -145,12 +145,12 @@ class Comparison extends QueryExpression {
 /**
  * Registers a value in the placeholder generator and returns the generated placeholder
  *
- * @param ValueBinder $generator
  * @param mixed $value
+ * @param ValueBinder $generator
  * @param string $type
  * @return string generated placeholder
  */
-	protected function _bindValue($generator, $value, $type) {
+	protected function _bindValue($value, $generator, $type) {
 		$placeholder = $generator->placeholder($this->_field);
 		$generator->bind($placeholder, $value, $type);
 		return $placeholder;
@@ -168,7 +168,7 @@ class Comparison extends QueryExpression {
 	protected function _flattenValue($value, $generator, $type = null) {
 		$parts = [];
 		foreach ($value as $k => $v) {
-			$parts[] = $this->_bindValue($generator, $v, $type);
+			$parts[] = $this->_bindValue($v, $generator, $type);
 		}
 		return implode(',', $parts);
 	}

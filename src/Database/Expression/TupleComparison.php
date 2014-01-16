@@ -19,7 +19,7 @@ use Cake\Database\Expression\Comparison;
 use Cake\Database\ValueBinder;
 
 /**
- * This expression represents SQL fragments that are use for comparing one tuple
+ * This expression represents SQL fragments that are used for comparing one tuple
  * to another, one tuple to a set of other tuples or one tuple to an expression
  */
 class TupleComparison extends Comparison {
@@ -101,7 +101,7 @@ class TupleComparison extends Comparison {
 				continue;
 			}
 
-			$type = $valType = $multiType && isset($type[$i]) ? $type[$i] : $type;
+			$valType = $multiType && isset($type[$i]) ? $type[$i] : $type;
 			$values[] = $this->_bindValue($generator, $value, $valType);
 		}
 
@@ -127,7 +127,7 @@ class TupleComparison extends Comparison {
  * Traverses the tree of expressions stored in this object, visiting first
  * expressions in the left hand side and then the rest.
  *
- * Callback function receives as its only argument an instance of an ExpresisonInterface
+ * Callback function receives as its only argument an instance of an ExpressoinInterface
  *
  * @param callable $callable
  * @return void
@@ -145,7 +145,6 @@ class TupleComparison extends Comparison {
 		}
 
 		foreach ($value as $i => $value) {
-			$type = isset($this->_type[$i]) ? $this->_type[$i] : null;
 			if ($this->isMulti()) {
 				foreach ($value as $v) {
 					$this->_traverseValue($v, $callable);
