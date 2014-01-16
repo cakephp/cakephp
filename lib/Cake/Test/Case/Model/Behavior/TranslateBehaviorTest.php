@@ -274,6 +274,36 @@ class TranslateBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+	
+/**
+ * testLocaleSingleCountWithConditions method
+ *
+ * @return void
+ */
+	public function testLocaleSingleCountWithConditions() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem();
+		$TestModel->locale = 'eng';
+		$result = $TestModel->find('all', array('conditions' => array('slug' => 'first_translated')));
+		$expected = array(
+			array(
+				'TranslatedItem' => array(
+					'id' => 1,
+					'slug' => 'first_translated',
+					'locale' => 'eng',
+					'title' => 'Title #1',
+					'content' => 'Content #1',
+					'translated_article_id' => 1,
+				)
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->find('count', array('conditions' => "TranslatedItem.slug = 'first_translated'"));
+		$expected = 1;
+		$this->assertEquals($expected, $result);
+	}	
 
 /**
  * testLocaleSingleAssociations method
