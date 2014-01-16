@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\View\Input;
 
 use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
+use Cake\View\Input\Label;
 use Cake\View\Input\Radio;
 use Cake\View\StringTemplate;
 
@@ -45,7 +46,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$radio = new Radio($this->templates);
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
 			'options' => ['r' => 'Red', 'b' => 'Black']
@@ -87,7 +89,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderComplex() {
-		$radio = new Radio($this->templates);
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
 			'options' => [
@@ -126,7 +129,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderEmptyOption() {
-		$radio = new Radio($this->templates);
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
 			'options' => ['r' => 'Red'],
@@ -190,7 +194,8 @@ class RadioTest extends TestCase {
 			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
 			'radioContainer' => '{{label}}',
 		]);
-		$radio = new Radio($this->templates);
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'Crayons[color]',
 			'options' => ['r' => 'Red'],
@@ -216,7 +221,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderSelected() {
-		$radio = new Radio($this->templates);
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'Versions[ver]',
 			'val' => '1',
@@ -266,7 +272,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderDisabled() {
-		$radio = new Radio($this->templates);
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'Versions[ver]',
 			'options' => [
@@ -333,7 +340,8 @@ class RadioTest extends TestCase {
  * @return void
  */
 	public function testRenderLabelOptions() {
-		$radio = new Radio($this->templates);
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'Versions[ver]',
 			'options' => [
@@ -405,7 +413,8 @@ class RadioTest extends TestCase {
 		$this->templates->add([
 			'radioContainer' => '<div class="radio">{{input}}{{label}}</div>'
 		]);
-		$radio = new Radio($this->templates);
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'Versions[ver]',
 			'options' => [

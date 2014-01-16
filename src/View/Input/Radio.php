@@ -33,22 +33,27 @@ class Radio {
 	protected $_templates;
 
 /**
+ * @var Cake\View\Input\Label
+ */
+	protected $_label;
+
+/**
  * Constructor
  *
  * This class uses a few templates:
  *
  * - `radio` Used to generate the input for a radio button.
  *   Can use the following variables `name`, `value`, `attrs`.
- * - `label` Used to generate the label for a radio button.
- *   Can use the following variables `attrs`, `text` and `input`.
  * - `radioContainer` Used to generate the container element for
  *   the radio + input element. Can use the `input` and `label`
  *   variables.
  *
  * @param Cake\View\StringTemplate $templates
+ * @param Cake\View\Input\Label $label
  */
-	public function __construct($templates) {
+	public function __construct($templates, $label) {
 		$this->_templates = $templates;
+		$this->_label = $label;
 	}
 
 /**
@@ -180,13 +185,13 @@ class Radio {
 			return false;
 		}
 		$labelAttrs = is_array($label) ? $label : [];
-		$labelAttrs += ['for' => $radio['id'], 'escape' => $escape];
-
-		return $this->_templates->format('label', [
-			'text' => $escape ? h($radio['text']) : $radio['text'],
+		$labelAttrs += [
+			'for' => $radio['id'],
+			'escape' => $escape,
+			'text' => $radio['text'],
 			'input' => $input,
-			'attrs' => $this->_templates->formatAttributes($labelAttrs),
-		]);
+		];
+		return $this->_label->render($labelAttrs);
 	}
 
 }

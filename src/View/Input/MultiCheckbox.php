@@ -30,12 +30,29 @@ class MultiCheckbox {
 	protected $_templates;
 
 /**
+ * Label widget instance.
+ *
+ * @var Cake\View\Input\Label
+ */
+	protected $_label;
+
+/**
  * Render multi-checkbox widget.
  *
+ * This class uses the following templates:
+ *
+ * - `checkbox` Renders checkbox input controls. Accepts
+ *   the `name`, `value` and `attrs` variables.
+ * - `checkboxContainer` Renders the containing div/element for
+ *   a checkbox and its label. Accepts the `input`, and `label`
+ *   variables.
+ *
  * @param Cake\View\StringTemplate $templates
+ * @param Cake\View\Input\Label $label
  */
-	public function __construct($templates) {
+	public function __construct($templates, $label) {
 		$this->_templates = $templates;
+		$this->_label = $label;
 	}
 
 /**
@@ -130,13 +147,11 @@ class MultiCheckbox {
 
 		$labelAttrs = [
 			'for' => $checkbox['id'],
-			'escape' => $checkbox['escape']
-		];
-		$label = $this->_templates->format('label', [
-			'text' => $checkbox['escape'] ? h($checkbox['text']) : $checkbox['text'],
+			'escape' => $checkbox['escape'],
+			'text' => $checkbox['text'],
 			'input' => $input,
-			'attrs' => $this->_templates->formatAttributes($labelAttrs)
-		]);
+		];
+		$label = $this->_label->render($labelAttrs);
 
 		return $this->_templates->format('checkboxContainer', [
 			'label' => $label,
