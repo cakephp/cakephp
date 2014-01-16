@@ -14,19 +14,25 @@
  * @since         CakePHP(tm) v 0.10.0.1076
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+use Cake\Utility\Debugger;
 ?>
-<h2>Missing Database Connection</h2>
+<h2>Database Error</h2>
 <p class="error">
 	<strong>Error: </strong>
-	Scaffold requires a database connection
+	<?= $message; ?>
 </p>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Confirm you have created the file: %s', APP_DIR . DS . 'Config' . DS . 'datasources.php'); ?>
-</p>
+<?php if (!empty($error->queryString)) : ?>
+	<p class="notice">
+		<strong>SQL Query: </strong>
+		<?= h($error->queryString); ?>
+	</p>
+<?php endif; ?>
+<?php if (!empty($error->params)) : ?>
+		<strong>SQL Query Params: </strong>
+		<?= Debugger::dump($error->params); ?>
+<?php endif; ?>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_database.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'pdo_error.ctp'); ?>
 </p>
-
 <?= $this->element('exception_stack_trace'); ?>

@@ -15,18 +15,14 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<h2>Missing Layout</h2>
+<h2><?= sprintf('Private Method in %s', $controller); ?></h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('The layout file <em>%s</em> can not be found or does not exist.', h($file)); ?>
-</p>
-<p class="error">
-	<strong>Error: </strong>
-	<?= sprintf('Confirm you have created the file: <em>%s</em>', h($file)); ?>
+	<?= sprintf('<em>%s::%s()</em> cannot be accessed directly.', h($controller), h($action)); ?>
 </p>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_layout.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'private_action.ctp'); ?>
 </p>
 
 <?= $this->element('exception_stack_trace'); ?>

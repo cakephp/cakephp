@@ -78,14 +78,20 @@ class UpgradeShell extends Shell {
 
 		$moves = [
 			'Test' . DS . 'Case' => 'Test' . DS . 'TestCase',
-			'View' . DS . 'Elements' => 'View' . DS . 'Element',
-			'View' . DS . 'Emails' => 'View' . DS . 'Email',
-			'View' . DS . 'Layouts' => 'View' . DS . 'Layout',
-			'View' . DS . 'Layout' . DS . 'Emails' => 'View' . DS . 'Layout' . DS . 'Email',
-			'View' . DS . 'Scaffolds' => 'View' . DS . 'Scaffold',
-			'View' . DS . 'Errors' => 'View' . DS . 'Error',
+			'View' . DS . 'Elements' => 'Template' . DS . 'Element',
+			'View' . DS . 'Emails' => 'Template' . DS . 'Email',
+			'View' . DS . 'Layouts' => 'Template' . DS . 'Layout',
+			'Template' . DS . 'Layout' . DS . 'Emails' => 'Template' . DS . 'Layout' . DS . 'Email',
+			'View' . DS . 'Scaffolds' => 'Template' . DS . 'Scaffold',
+			'View' . DS . 'Errors' => 'Template' . DS . 'Error',
+			'View' . DS . 'Themed' => 'Template' . DS . 'Themed',
 		];
 		$dry = $this->params['dryRun'];
+
+		$this->out('<info>Creating "Template" folder</info>');
+		if (!$dry) {
+			mkdir('Template');
+		}
 
 		foreach ($moves as $old => $new) {
 			$old = $path . DS . $old;

@@ -369,7 +369,7 @@ class View extends Object {
  * This realizes the concept of Elements, (or "partial layouts") and the $params array is used to send
  * data to be used in the element. Elements can be cached improving performance by using the `cache` option.
  *
- * @param string $name Name of template file in the/app/View/Element/ folder,
+ * @param string $name Name of template file in the/app/Template/Element/ folder,
  *   or `MyPlugin.template` to use the template element from MyPlugin. If the element
  *   is not found in the plugin, the normal view path cascade will be searched.
  * @param array $data Array of data to be made available to the rendered view (i.e. the Element)
@@ -413,7 +413,7 @@ class View extends Object {
 /**
  * Checks if an element exists
  *
- * @param string $name Name of template file in the /app/View/Element/ folder,
+ * @param string $name Name of template file in the /app/Template/Element/ folder,
  *   or `MyPlugin.template` to check the template element from MyPlugin. If the element
  *   is not found in the plugin, the normal view path cascade will be searched.
  * @return boolean Success
@@ -1038,8 +1038,8 @@ class View extends Object {
 			return $this->_paths;
 		}
 		$paths = array();
-		$viewPaths = App::path('View');
-		$corePaths = App::core('View');
+		$viewPaths = App::path('Template');
+		$corePaths = App::core('Template');
 
 		if (!empty($plugin)) {
 			$count = count($viewPaths);
@@ -1048,7 +1048,7 @@ class View extends Object {
 					$paths[] = $viewPaths[$i] . 'Plugin' . DS . $plugin . DS;
 				}
 			}
-			$paths = array_merge($paths, App::path('View', $plugin));
+			$paths = array_merge($paths, App::path('Template', $plugin));
 		}
 
 		$paths = array_unique(array_merge($paths, $viewPaths));

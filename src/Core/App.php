@@ -25,9 +25,9 @@ use Cake\Utility\Inflector;
  *
  * ### Adding paths
  *
- * Additional paths for Views and Plugins are configured with Configure now. See App/Config/app.php for an
- * example. The `App.paths.plugins` and `App.paths.views` variables are used to configure paths for plugins
- * and views respectively. All class based resources should be mapped using your application's autoloader.
+ * Additional paths for Templates and Plugins are configured with Configure now. See App/Config/app.php for an
+ * example. The `App.paths.plugins` and `App.paths.templates` variables are used to configure paths for plugins
+ * and templates respectively. All class based resources should be mapped using your application's autoloader.
  *
  * ### Inspecting loaded paths
  *
@@ -139,8 +139,8 @@ class App {
 		if ($type === 'Plugin') {
 			return (array)Configure::read('App.paths.plugins');
 		}
-		if (empty($plugin) && $type === 'View') {
-			return (array)Configure::read('App.paths.views');
+		if (empty($plugin) && $type === 'Template') {
+			return (array)Configure::read('App.paths.templates');
 		}
 		if (!empty($plugin)) {
 			return [static::pluginPath($plugin) . $type . DS];
@@ -178,7 +178,7 @@ class App {
  */
 	public static function themePath($theme) {
 		$themeDir = 'Themed' . DS . Inflector::camelize($theme);
-		$paths = static::path('View');
+		$paths = static::path('Template');
 		foreach ($paths as $path) {
 			if (is_dir($path . $themeDir)) {
 				return $path . $themeDir . DS;

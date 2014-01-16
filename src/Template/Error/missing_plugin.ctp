@@ -11,31 +11,34 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Core\Plugin;
-
-$pluginDot = empty($plugin) ? null : $plugin . '.';
 ?>
-<h2>Missing Helper</h2>
+<h2>Missing Plugin</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('<em>%s</em> could not be found.', h($pluginDot . $class)); ?>
+	<?= sprintf('The application is trying to load a file from the <em>%s</em> plugin', h($plugin)); ?>
 </p>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('Create the class <em>%s</em> below in file: %s', h($class), (empty($plugin) ? APP_DIR . DS : Plugin::path($plugin)) . 'View' . DS . 'Helper' . DS . h($class) . '.php'); ?>
+	<?= sprintf('Make sure your plugin %s is in the %s directory and was loaded', APP_DIR . DS . 'Plugin', h($plugin)); ?>
 </p>
 <pre>
 &lt;?php
-class <?= h($class); ?> extends AppHelper {
+Plugin::load('<?= h($plugin)?>');
 
-}
+</pre>
+<p class="notice">
+	<strong>Loading all plugins: </strong>
+	<?= sprintf('If you wish to load all plugins at once, use the following line in your %s file', APP_DIR . DS . 'Config' . DS . 'bootstrap.php'); ?>
+</p>
+<pre>
+Plugin::loadAll();
 </pre>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'missing_helper.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_plugin.ctp'); ?>
 </p>
 
 <?= $this->element('exception_stack_trace'); ?>

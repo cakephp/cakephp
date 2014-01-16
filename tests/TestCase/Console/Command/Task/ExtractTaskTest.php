@@ -72,7 +72,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExecute() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = TEST_APP . 'TestApp/View/Pages';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/Template/Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->expects($this->never())->method('err');
@@ -131,7 +131,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractCategory() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp' . DS . 'Template' . DS . 'Pages';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';
 		$this->Task->params['merge'] = 'no';
@@ -156,7 +156,7 @@ class ExtractTaskTest extends TestCase {
 	public function testExtractWithExclude() {
 		$this->Task->interactive = false;
 
-		$this->Task->params['paths'] = TEST_APP . 'TestApp/View';
+		$this->Task->params['paths'] = TEST_APP . 'TestApp/Template';
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['exclude'] = 'Pages,Layout';
 		$this->Task->params['extract-core'] = 'no';
@@ -184,8 +184,8 @@ class ExtractTaskTest extends TestCase {
 		$this->Task->interactive = false;
 
 		$this->Task->params['paths'] =
-			TEST_APP . 'TestApp/View/Pages,' .
-			TEST_APP . 'TestApp/View/Posts';
+			TEST_APP . 'TestApp/Template/Pages,' .
+			TEST_APP . 'TestApp/Template/Posts';
 
 		$this->Task->params['output'] = $this->path . DS;
 		$this->Task->params['extract-core'] = 'no';

@@ -15,14 +15,27 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 ?>
-<h2><?= sprintf('Private Method in %s', $controller); ?></h2>
+<h2>Missing Database Connection</h2>
 <p class="error">
 	<strong>Error: </strong>
-	<?= sprintf('<em>%s::%s()</em> cannot be accessed directly.', h($controller), h($action)); ?>
+	<?= sprintf('A Database connection using "%s" was missing or unable to connect.', h($class)); ?>
+	<br />
+	<?php
+	if (isset($message)):
+		echo sprintf('The database server returned this error: %s', h($message));
+	endif;
+	?>
 </p>
+<?php if (!$enabled) : ?>
+<p class="error">
+	<strong>Error: </strong>
+	<?= sprintf('%s driver is NOT enabled', h($class)); ?>
+</p>
+<?php endif; ?>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'private_action.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . basename(__FILE__)); ?>
 </p>
 
-<?= $this->element('exception_stack_trace'); ?>
+<?php
+echo $this->element('exception_stack_trace');

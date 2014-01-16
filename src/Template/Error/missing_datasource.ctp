@@ -11,25 +11,23 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 0.10.0.1076
+ * @since         CakePHP(tm) v 2.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+
+$pluginDot = empty($plugin) ? null : $plugin . '.';
 ?>
-<h2>Scaffold Error</h2>
+<h2>Missing Datasource</h2>
 <p class="error">
 	<strong>Error: </strong>
-	Method _scaffoldError in was not found in the controller
+	<?= sprintf('Datasource class <em>%s</em> could not be found.', h($pluginDot . $class)); ?>
+	<?php if (isset($message)):  ?>
+		<?= h($message); ?>
+	<?php endif; ?>
 </p>
 <p class="notice">
 	<strong>Notice: </strong>
-	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'View' . DS . 'Error' . DS . 'scaffold_error.ctp'); ?>
+	<?= sprintf('If you want to customize this error message, create %s', APP_DIR . DS . 'Template' . DS . 'Error' . DS . 'missing_datasource.ctp'); ?>
 </p>
-<pre>
-&lt;?php
-function _scaffoldError() {<br />
-
-}
-
-</pre>
 
 <?= $this->element('exception_stack_trace'); ?>
