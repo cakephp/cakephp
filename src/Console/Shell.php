@@ -27,7 +27,7 @@ use Cake\Utility\ClassRegistry;
 use Cake\Utility\File;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
-use Cake\Utility\RepositoryAwareTrait;
+use Cake\Utility\ModelAwareTrait;
 use Cake\Utility\String;
 
 /**
@@ -37,7 +37,7 @@ use Cake\Utility\String;
 class Shell extends Object {
 
 	use MergeVariablesTrait;
-	use RepositoryAwareTrait;
+	use ModelAwareTrait;
 
 /**
  * Output constant making verbose shells.
@@ -168,7 +168,7 @@ class Shell extends Object {
 			$this->name = str_replace(['Shell', 'Task'], '', $class);
 		}
 		$this->_setModelClass($this->name);
-		$this->repositoryFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
+		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
 		$this->Tasks = new TaskRegistry($this);
 
 		$this->stdout = $stdout ? $stdout : new ConsoleOutput('php://stdout');
@@ -223,7 +223,7 @@ class Shell extends Object {
 	}
 
 /**
- * Lazy loads models using the repository() method if it matches modelClass
+ * Lazy loads models using the loadModel() method if it matches modelClass
  *
  * @param string $name
  * @return void
@@ -234,7 +234,7 @@ class Shell extends Object {
 			if (!$plugin) {
 				$plugin = $this->plugin ? $this->plugin . '.' : null;
 			}
-			return $this->repository($plugin . $this->modelClass);
+			return $this->loadModel($plugin . $this->modelClass);
 		}
 	}
 

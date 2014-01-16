@@ -29,7 +29,7 @@ use Cake\Routing\RequestActionTrait;
 use Cake\Routing\Router;
 use Cake\Utility\Inflector;
 use Cake\Utility\MergeVariablesTrait;
-use Cake\Utility\RepositoryAwareTrait;
+use Cake\Utility\ModelAwareTrait;
 use Cake\Utility\ViewVarsTrait;
 use Cake\View\View;
 
@@ -79,7 +79,7 @@ use Cake\View\View;
 class Controller extends Object implements EventListener {
 
 	use MergeVariablesTrait;
-	use RepositoryAwareTrait;
+	use ModelAwareTrait;
 	use RequestActionTrait;
 	use ViewVarsTrait;
 
@@ -313,7 +313,7 @@ class Controller extends Object implements EventListener {
 		}
 
 		$this->_setModelClass($this->name);
-		$this->repositoryFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
+		$this->modelFactory('Table', ['Cake\ORM\TableRegistry', 'get']);
 
 		$childMethods = get_class_methods($this);
 		$parentMethods = get_class_methods('Cake\Controller\Controller');
@@ -341,7 +341,7 @@ class Controller extends Object implements EventListener {
 			if (!$plugin) {
 				$plugin = $this->plugin ? $this->plugin . '.' : null;
 			}
-			$this->repository($plugin . $this->modelClass);
+			$this->loadModel($plugin . $this->modelClass);
 			return $this->{$this->modelClass};
 		}
 		return false;
