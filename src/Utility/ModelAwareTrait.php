@@ -21,10 +21,10 @@ use Cake\Utility\Inflector;
  * Provides functionality for loading table classes
  * and other repositories onto properties of the host object.
  *
- * Example users of this trait are Cake\Controller\Controller and 
+ * Example users of this trait are Cake\Controller\Controller and
  * Cake\Console\Shell.
  */
-trait RepositoryAwareTrait {
+trait ModelAwareTrait {
 
 /**
  * This object's primary model class name, the Inflector::pluralized()'ed version of
@@ -37,11 +37,11 @@ trait RepositoryAwareTrait {
 	public $modelClass;
 
 /**
- * A list of repository factory functions.
+ * A list of model factory functions.
  *
  * @var array
  */
-	protected $_repositoryFactories = [];
+	protected $_modelFactories = [];
 
 /**
  * Set the modelClass and modelKey properties based on conventions.
@@ -73,7 +73,7 @@ trait RepositoryAwareTrait {
  * @throws Cake\Error\MissingModelException if the model class cannot be found.
  * @throws Cake\Error\Exception When using a type that has not been registered.
  */
-	public function repository($modelClass = null, $type = 'Table') {
+	public function loadModel($modelClass = null, $type = 'Table') {
 		if ($modelClass === null) {
 			$modelClass = $this->modelClass;
 		}
@@ -84,13 +84,13 @@ trait RepositoryAwareTrait {
 
 		list($plugin, $modelClass) = pluginSplit($modelClass, true);
 
-		if (!isset($this->_repositoryFactories[$type])) {
+		if (!isset($this->_modelFactories[$type])) {
 			throw new Error\Exception(sprintf(
 				'Unknown repository type "%s". Make sure you register a type before trying to use it.',
 				$type
 			));
 		}
-		$factory = $this->_repositoryFactories[$type];
+		$factory = $this->_modelFactories[$type];
 		$this->{$modelClass} = $factory($plugin . $modelClass);
 		if (!$this->{$modelClass}) {
 			throw new Error\MissingModelException($modelClass);
@@ -105,8 +105,8 @@ trait RepositoryAwareTrait {
  * @param callable $factory The factory function used to create instances.
  * @return void
  */
-	public function repositoryFactory($type, callable $factory) {
-		$this->_repositoryFactories[$type] = $factory;
+	public function modelFactory($type, callable $factory) {
+		$this->_modelFactories[$type] = $factory;
 	}
 
 }

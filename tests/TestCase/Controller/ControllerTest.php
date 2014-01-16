@@ -248,11 +248,11 @@ class ControllerTest extends TestCase {
 	}
 
 /**
- * testRepository method
+ * testLoadModel method
  *
  * @return void
  */
-	public function testRepository() {
+	public function testLoadModel() {
 		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
@@ -260,7 +260,7 @@ class ControllerTest extends TestCase {
 
 		$this->assertFalse(isset($Controller->Articles));
 
-		$result = $Controller->repository('Articles');
+		$result = $Controller->loadModel('Articles');
 		$this->assertTrue($result);
 		$this->assertInstanceOf(
 			'TestApp\Model\Repository\ArticlesTable',
@@ -282,7 +282,7 @@ class ControllerTest extends TestCase {
 
 		$this->assertFalse(isset($Controller->TestPluginComments));
 
-		$result = $Controller->repository('TestPlugin.TestPluginComments');
+		$result = $Controller->loadModel('TestPlugin.TestPluginComments');
 		$this->assertTrue($result);
 		$this->assertInstanceOf(
 			'TestPlugin\Model\Repository\TestPluginCommentsTable',

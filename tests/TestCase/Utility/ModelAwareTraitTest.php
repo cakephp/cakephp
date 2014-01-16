@@ -14,14 +14,14 @@
 namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\RepositoryAwareTrait;
+use Cake\Utility\ModelAwareTrait;
 
 /**
  * Testing stub.
  */
 class Stub {
 
-	use RepositoryAwareTrait;
+	use ModelAwareTrait;
 
 	public function setProps($name) {
 		$this->_setModelClass($name);
@@ -30,9 +30,9 @@ class Stub {
 }
 
 /**
- * RepositoryAwareTrait test case
+ * ModelAwareTrait test case
  */
-class RepositoryAwareTraitTest extends TestCase {
+class ModelAwareTraitTest extends TestCase {
 
 /**
  * Test set modelClass
@@ -48,38 +48,38 @@ class RepositoryAwareTraitTest extends TestCase {
 	}
 
 /**
- * test repository()
+ * test loadModel()
  *
  * @return void
  */
-	public function testRepository() {
+	public function testLoadModel() {
 		$stub = new Stub();
 		$stub->setProps('Articles');
-		$stub->repositoryFactory('Table', ['\Cake\ORM\TableRegistry', 'get']);
+		$stub->modelFactory('Table', ['\Cake\ORM\TableRegistry', 'get']);
 
-		$this->assertTrue($stub->repository());
+		$this->assertTrue($stub->loadModel());
 		$this->assertInstanceOf('Cake\ORM\Table', $stub->Articles);
 
-		$this->assertTrue($stub->repository('Comments'));
+		$this->assertTrue($stub->loadModel('Comments'));
 		$this->assertInstanceOf('Cake\ORM\Table', $stub->Comments);
 	}
 
 /**
- * test alternate repository factories.
+ * test alternate model factories.
  *
  * @return void
  */
-	public function testRepositoryFactory() {
+	public function testModelFactory() {
 		$stub = new Stub();
 		$stub->setProps('Articles');
 
-		$stub->repositoryFactory('Test', function($name) {
+		$stub->modelFactory('Test', function($name) {
 			$mock = new \StdClass();
 			$mock->name = $name;
 			return $mock;
 		});
 
-		$result = $stub->repository('Magic', 'Test');
+		$result = $stub->loadModel('Magic', 'Test');
 		$this->assertTrue($result);
 		$this->assertInstanceOf('\StdClass', $stub->Magic);
 		$this->assertEquals('Magic', $stub->Magic->name);

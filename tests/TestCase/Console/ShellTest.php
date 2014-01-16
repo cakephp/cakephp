@@ -182,11 +182,11 @@ class ShellTest extends TestCase {
 	}
 
 /**
- * test repository method
+ * test LoadModel method
  *
  * @return void
  */
-	public function testRepository() {
+	public function testLoadModel() {
 		Configure::write('App.namespace', 'TestApp');
 
 		$Shell = new MergeShell();
@@ -197,7 +197,7 @@ class ShellTest extends TestCase {
 		$this->assertEquals('Articles', $Shell->modelClass);
 
 		Plugin::load('TestPlugin');
-		$this->Shell->repository('TestPlugin.TestPluginComments');
+		$this->Shell->loadModel('TestPlugin.TestPluginComments');
 		$this->assertTrue(isset($this->Shell->TestPluginComments));
 		$this->assertInstanceOf(
 			'TestPlugin\Model\Repository\TestPluginCommentsTable',
