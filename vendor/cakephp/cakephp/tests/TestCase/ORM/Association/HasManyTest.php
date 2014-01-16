@@ -1,0 +1,668 @@
+<?php
+/**
+ * PHP Version 5.4
+ *
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP(tm) v 3.0.0
+ * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
+ */
+namespace Cake\Test\TestCase\ORM\Association;
+
+use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
+use Cake\ORM\Association\HasMany;
+use Cake\ORM\Entity;
+use Cake\ORM\Query;
+use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
+
+/**
+ * Tests HasMany class
+ *
+ */
+class HasManyTest extends \Cake\TestSuite\TestCase {
+
+/**
+ * Set up
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->author = TableRegistry::get('Authors', [
+			'schema' => [
+				'id' => ['type' => 'integer'],
+				'username' => ['type' => 'string'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id']]
+				]
+			]
+		]);
+		$this->article = $this->getMock(
+			'Cake\ORM\Table',
+			['find', 'deleteAll', 'delete'],
+			[['alias' => 'Articles', 'table' => 'articles']]
+		);
+		$this->article->schema([
+			'id' => ['type' => 'integer'],
+			'title' => ['type' => 'string'],
+			'author_id' => ['type' => 'integer'],
+			'_constraints' => [
+				'primary' => ['type' => 'primary', 'columns' => ['id']]
+			]
+		]);
+	}
+
+/**
+ * Tear down
+ *
+ * @return void
+ */
+	public function tearDown() {
+		parent::tearDown();
+		TableRegistry::clear();
+	}
+
+/**
+ * Tests that the association reports it can be joined
+ *
+ * @return void
+ */
+	public function testCanBeJoined() {
+		$assoc = new HasMany('Test');
+		$this->assertFalse($assoc->canBeJoined());
+	}
+
+/**
+ * Tests sort() method
+ *
+ * @return void
+ */
+	public function testSort() {
+		$assoc = new HasMany('Test');
+		$this->assertNull($assoc->sort());
+		$assoc->sort(['id' => 'ASC']);
+		$this->assertEquals(['id' => 'ASC'], $assoc->sort());
+	}
+
+/**
+ * Tests requiresKeys() method
+ *
+ * @return void
+ */
+	public function testRequiresKeys() {
+		$assoc = new HasMany('Test');
+		$this->assertTrue($assoc->requiresKeys());
+		$assoc->strategy(HasMany::STRATEGY_SUBQUERY);
+		$this->assertFalse($assoc->requiresKeys());
+		$assoc->strategy(HasMany::STRATEGY_SELECT);
+		$this->assertTrue($assoc->requiresKeys());
+	}
+
+/**
+ * Test the eager loader method with no extra options
+ *
+ * @return void
+ */
+	public function testEagerLoader() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'strategy' => 'select'
+		];
+		$association = new HasMany('Articles', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock('Cake\ORM\Query', ['all'], [null, null]);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+		$query->expects($this->once())->method('all')
+			->will($this->returnValue($results));
+
+		$callable = $association->eagerLoader(compact('keys', 'query'));
+		$row = ['Authors__id' => 1, 'username' => 'author 1'];
+		$result = $callable($row);
+		$row['Articles__Articles'] = [
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+			];
+		$this->assertEquals($row, $result);
+
+		$row = ['Authors__id' => 2, 'username' => 'author 2'];
+		$result = $callable($row);
+		$row['Articles__Articles'] = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
+			];
+		$this->assertEquals($row, $result);
+	}
+
+/**
+ * Test the eager loader method with default query clauses
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithDefaults() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true],
+			'sort' => ['id' => 'ASC'],
+			'strategy' => 'select'
+		];
+		$association = new HasMany('Articles', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['all', 'where', 'andWhere', 'order'],
+			[null, null]
+		);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+
+		$query->expects($this->once())->method('all')
+			->will($this->returnValue($results));
+
+		$query->expects($this->at(0))->method('where')
+			->with(['Articles.is_active' => true])
+			->will($this->returnSelf());
+
+		$query->expects($this->at(1))->method('where')
+			->with([])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())->method('andWhere')
+			->with(['Articles.author_id IN' => $keys])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())->method('order')
+			->with(['id' => 'ASC'])
+			->will($this->returnSelf());
+
+		$association->eagerLoader(compact('keys', 'query'));
+	}
+
+/**
+ * Test the eager loader method with overridden query clauses
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithOverrides() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true],
+			'sort' => ['id' => 'ASC'],
+			'strategy' => 'select'
+		];
+		$association = new HasMany('Articles', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['all', 'where', 'andWhere', 'order', 'select', 'contain'],
+			[null, null]
+		);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+
+		$query->expects($this->once())->method('all')
+			->will($this->returnValue($results));
+
+		$query->expects($this->at(0))->method('where')
+			->with(['Articles.is_active' => true])
+			->will($this->returnSelf());
+
+		$query->expects($this->at(1))->method('where')
+			->with(['Articles.id !=' => 3])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())->method('andWhere')
+			->with(['Articles.author_id IN' => $keys])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())->method('order')
+			->with(['title' => 'DESC'])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())->method('select')
+			->with([
+				'Articles__title' => 'Articles.title',
+				'Articles__author_id' => 'Articles.author_id'
+			])
+			->will($this->returnSelf());
+
+		$query->expects($this->once())->method('contain')
+			->with([
+				'Categories' => ['fields' => ['a', 'b']],
+			])
+			->will($this->returnSelf());
+
+		$association->eagerLoader([
+			'conditions' => ['Articles.id !=' => 3],
+			'sort' => ['title' => 'DESC'],
+			'fields' => ['title', 'author_id'],
+			'contain' => ['Categories' => ['fields' => ['a', 'b']]],
+			'keys' => $keys,
+			'query' => $query
+		]);
+	}
+
+/**
+ * Test that failing to add the foreignKey to the list of fields will throw an
+ * exception
+ *
+ * @expectedException \InvalidArgumentException
+ * @expectedExceptionMessage You are required to select the "Articles.author_id"
+ * @return void
+ */
+	public function testEagerLoaderFieldsException() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'strategy' => 'select'
+		];
+		$association = new HasMany('Articles', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['all'],
+			[null, null]
+		);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+
+		$association->eagerLoader([
+			'fields' => ['id', 'title'],
+			'keys' => $keys,
+			'query' => $query
+		]);
+	}
+
+/**
+ * Tests eager loading using subquery
+ *
+ * @return void
+ */
+	public function testEagerLoaderSubquery() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+		];
+		$association = new HasMany('Articles', $config);
+		$parent = (new Query(null, null))
+			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
+			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
+
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['all', 'where', 'andWhere', 'order', 'select', 'contain'],
+			[null, null]
+		);
+
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+		$query->expects($this->once())->method('all')
+			->will($this->returnValue($results));
+
+		$query->expects($this->at(0))->method('where')
+			->with([])
+			->will($this->returnSelf());
+		$query->expects($this->at(1))->method('where')
+			->with([])
+			->will($this->returnSelf());
+
+		$expected = clone $parent;
+		$joins = $expected->join();
+		unset($joins[1]);
+		$expected
+			->contain([], true)
+			->select('Articles.author_id', true)
+			->join($joins, [], true);
+		$query->expects($this->once())->method('andWhere')
+			->with(['Articles.author_id IN' => $expected])
+			->will($this->returnSelf());
+
+		$callable = $association->eagerLoader([
+			'query' => $parent, 'strategy' => HasMany::STRATEGY_SUBQUERY, 'keys' => []
+		]);
+		$row = ['Authors__id' => 1, 'username' => 'author 1'];
+		$result = $callable($row);
+		$row['Articles__Articles'] = [
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+		$this->assertEquals($row, $result);
+
+		$row = ['Authors__id' => 2, 'username' => 'author 2'];
+		$result = $callable($row);
+		$row['Articles__Articles'] = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2]
+		];
+		$this->assertEquals($row, $result);
+	}
+
+/**
+ * Tests that eager loader accepts a queryBuilder option
+ *
+ * @return void
+ */
+	public function testEagerLoaderWithQueryBuilder() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'strategy' => 'select'
+		];
+		$association = new HasMany('Articles', $config);
+		$keys = [1, 2, 3, 4];
+		$query = $this->getMock(
+			'Cake\ORM\Query',
+			['all', 'select', 'join', 'where'],
+			[null, null]
+		);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1]
+		];
+
+		$query->expects($this->once())->method('all')
+			->will($this->returnValue($results));
+
+		$query->expects($this->any())->method('select')
+			->will($this->returnSelf());
+		$query->expects($this->at(2))->method('select')
+			->with(['a', 'b'])
+			->will($this->returnSelf());
+
+		$query->expects($this->any())->method('join')
+			->will($this->returnSelf());
+		$query->expects($this->at(6))->method('join')
+			->with('foo')
+			->will($this->returnSelf());
+
+		$query->expects($this->any())->method('where')
+			->will($this->returnSelf());
+		$query->expects($this->at(4))->method('where')
+			->with(['a' => 1])
+			->will($this->returnSelf());
+
+		$queryBuilder = function($query) {
+			return $query->select(['a', 'b'])->join('foo')->where(['a' => 1]);
+		};
+
+		$association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
+	}
+
+/**
+ * Tests that the correct join and fields are attached to a query depending on
+ * the association config
+ *
+ * @return void
+ */
+	public function testAttachTo() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true]
+		];
+
+		$field = new IdentifierExpression('Articles.author_id');
+		$association = new HasMany('Articles', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Articles' => [
+				'conditions' => new QueryExpression([
+					'Articles.is_active' => true,
+					['Authors.id' => $field]
+				]),
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Articles__id' => 'Articles.id',
+			'Articles__title' => 'Articles.title',
+			'Articles__author_id' => 'Articles.author_id'
+		]);
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that default config defined in the association can be overridden
+ *
+ * @return void
+ */
+	public function testAttachToConfigOverride() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true]
+		];
+		$association = new HasMany('Articles', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Articles' => [
+				'conditions' => new QueryExpression([
+					'Articles.is_active' => false
+				]),
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Articles__title' => 'Articles.title'
+		]);
+
+		$override = [
+			'conditions' => ['Articles.is_active' => false],
+			'foreignKey' => false,
+			'fields' => ['title']
+		];
+		$association->attachTo($query, $override);
+	}
+
+/**
+ * Tests that it is possible to avoid fields inclusion for the associated table
+ *
+ * @return void
+ */
+	public function testAttachToNoFields() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true]
+		];
+		$field = new IdentifierExpression('Articles.author_id');
+		$association = new HasMany('Articles', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Articles' => [
+				'conditions' => new QueryExpression([
+					'Articles.is_active' => true,
+					['Authors.id' => $field]
+				]),
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that by supplying a query builder function, it is possible to add fields
+ * and conditions to an association
+ *
+ * @return void
+ */
+	public function testAttachToWithQueryBuilder() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true]
+		];
+		$field = new IdentifierExpression('Articles.author_id');
+		$association = new HasMany('Articles', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Articles' => [
+				'conditions' => new QueryExpression([
+					'Articles.is_active' => true,
+					['Authors.id' => $field],
+					new QueryExpression(['a' => 1])
+				]),
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->once())->method('select')
+			->with([
+				'Articles__a' => 'Articles.a',
+				'Articles__b' => 'Articles.b'
+			]);
+		$builder = function($q) {
+			return $q->select(['a', 'b'])->where(['a' => 1]);
+		};
+		$association->attachTo($query, ['queryBuilder' => $builder]);
+	}
+
+/**
+ * Test cascading deletes.
+ *
+ * @return void
+ */
+	public function testCascadeDelete() {
+		$config = [
+			'dependent' => true,
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true],
+		];
+		$association = new HasMany('Articles', $config);
+
+		$this->article->expects($this->once())
+			->method('deleteAll')
+			->with([
+				'Articles.is_active' => true,
+				'author_id' => 1
+			]);
+
+		$entity = new Entity(['id' => 1, 'name' => 'PHP']);
+		$association->cascadeDelete($entity);
+	}
+
+/**
+ * Test cascading delete with has many.
+ *
+ * @return void
+ */
+	public function testCascadeDeleteCallbacks() {
+		$config = [
+			'dependent' => true,
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true],
+			'cascadeCallbacks' => true,
+		];
+		$association = new HasMany('Articles', $config);
+
+		$articleOne = new Entity(['id' => 2, 'title' => 'test']);
+		$articleTwo = new Entity(['id' => 3, 'title' => 'testing']);
+		$iterator = new \ArrayIterator([
+			$articleOne,
+			$articleTwo
+		]);
+
+		$query = $this->getMock('\Cake\ORM\Query', [], [], '', false);
+		$query->expects($this->at(0))
+			->method('where')
+			->with(['Articles.is_active' => true])
+			->will($this->returnSelf());
+		$query->expects($this->at(1))
+			->method('where')
+			->with(['author_id' => 1])
+			->will($this->returnSelf());
+		$query->expects($this->any())
+			->method('getIterator')
+			->will($this->returnValue($iterator));
+
+		$this->article->expects($this->once())
+			->method('find')
+			->will($this->returnValue($query));
+
+		$this->article->expects($this->at(1))
+			->method('delete')
+			->with($articleOne, []);
+		$this->article->expects($this->at(2))
+			->method('delete')
+			->with($articleTwo, []);
+
+		$entity = new Entity(['id' => 1, 'name' => 'mark']);
+		$this->assertTrue($association->cascadeDelete($entity));
+	}
+
+/**
+ * Test that save() ignores non entity values.
+ *
+ * @return void
+ */
+	public function testSaveOnlyEntities() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $mock,
+		];
+
+		$entity = new Entity([
+			'username' => 'Mark',
+			'email' => 'mark@example.com',
+			'articles' => [
+				['title' => 'First Post'],
+				new Entity(['title' => 'Second Post']),
+			]
+		]);
+
+		$mock->expects($this->never())
+			->method('save');
+
+		$association = new HasMany('Articles', $config);
+		$association->save($entity);
+	}
+
+/**
+ * Test that plugin names are omitted from property()
+ *
+ * @return void
+ */
+	public function testPropertyNoPlugin() {
+		$mock = $this->getMock('Cake\ORM\Table', [], [], '', false);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $mock,
+		];
+		$association = new HasMany('Contacts.Addresses', $config);
+		$this->assertEquals('addresses', $association->property());
+	}
+
+}

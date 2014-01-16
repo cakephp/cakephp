@@ -1,0 +1,89 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP(tm) v 2.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Console;
+
+use Cake\Core\App;
+use Cake\Error;
+use Cake\Utility\ObjectRegistry;
+
+/**
+ * Registry for Tasks. Provides features
+ * for lazily loading tasks.
+ */
+class TaskRegistry extends ObjectRegistry {
+
+/**
+ * Shell to use to set params to tasks.
+ *
+ * @var Shell
+ */
+	protected $_Shell;
+
+/**
+ * Constructor
+ *
+ * @param Shell $Shell
+ */
+	public function __construct(Shell $Shell) {
+		$this->_Shell = $Shell;
+	}
+
+/**
+ * Resolve a task classname.
+ *
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
+ * @param string $class Partial classname to resolve.
+ * @return string|false Either the correct classname or false.
+ */
+	protected function _resolveClassName($class) {
+		return App::classname($class, 'Console/Command/Task', 'Task');
+	}
+
+/**
+ * Throws an exception when a task is missing.
+ *
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
+ * @param string $class The classname that is missing.
+ * @param string $plugin The plugin the task is missing in.
+ * @throws Cake\Error\MissingTaskException
+ */
+	protected function _throwMissingClassError($class, $plugin) {
+		throw new Error\MissingTaskException([
+			'class' => $class,
+			'plugin' => $plugin
+		]);
+	}
+
+/**
+ * Create the task instance.
+ *
+ * Part of the template method for Cake\Utility\ObjectRegistry::load()
+ *
+ * @param string $class The classname to create.
+ * @param string $alias The alias of the task.
+ * @param array $settings An array of settings to use for the task.
+ * @return Component The constructed task class.
+ */
+	protected function _create($class, $alias, $settings) {
+		return new $class(
+			$this->_Shell->stdout,
+			$this->_Shell->stderr,
+			$this->_Shell->stdin
+		);
+	}
+
+}
