@@ -1189,7 +1189,22 @@ class Table implements EventListener {
 		$id = (array)$this->_newId($primary) + $keys;
 		$primary = array_combine($primary, $id);
 		$filteredKeys = array_filter($primary, 'strlen');
+		$total = count($primary);
 		$data = $filteredKeys + $data;
+
+		if ($total > 1) {
+			foreach ($primary as $k => $v) {
+				if (!isset($data[$k])) {
+					$msg = 'Cannot insert row, some of the primary key values are missing. ';
+					$msg .= sprintf(
+						'Got (%s), expecting (%s)',
+						implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
+						implode(', ', array_keys($primary))
+					);
+					throw new \RuntimeException($msg);
+				}
+			}
+		}
 
 		$statement = $this->query()->insert(array_keys($data))
 			->values($data)

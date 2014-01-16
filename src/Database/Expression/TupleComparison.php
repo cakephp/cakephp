@@ -101,11 +101,26 @@ class TupleComparison extends Comparison {
 				continue;
 			}
 
-			$type = $valType = $multiType ? $type[$i] : $type;
+			$type = $valType = $multiType && isset($type[$i]) ? $type[$i] : $type;
 			$values[] = $this->_bindValue($generator, $value, $valType);
 		}
 
 		return implode(', ', $values);
+	}
+
+/**
+ * Registers a value in the placeholder generator and returns the generated
+ * placeholder
+ *
+ * @param \Cake\Database\ValueBinder $generator
+ * @param mixed $value
+ * @param string $type
+ * @return string generated placeholder
+ */
+	protected function _bindValue($generator, $value, $type) {
+		$placeholder = $generator->placeholder('tuple');
+		$generator->bind($placeholder, $value, $type);
+		return $placeholder;
 	}
 
 /**

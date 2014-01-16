@@ -250,6 +250,26 @@ class CompositeKeyTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to insert a new row using the save method
+ * if the entity has composite primary key
+ *
+ * @group save
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Cannot insert row, some of the primary key values are missing. Got (5, ), expecting (id, site_id)
+ * @return void
+ */
+	public function testSaveNewEntityMissingKey() {
+		$entity = new \Cake\ORM\Entity([
+			'id' => 5,
+			'title' => 'Fifth Article',
+			'body' => 'Fifth Article Body',
+			'author_id' => 3,
+		]);
+		$table = TableRegistry::get('SiteArticles');
+		$table->save($entity);
+	}
+
+/**
  * Test simple delete with composite primary key
  *
  * @return void
