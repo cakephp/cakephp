@@ -128,7 +128,7 @@ trait ExternalAssociationTrait {
 	protected function _joinCondition(array $options) {
 		$conditions = [];
 		$tAlias = $this->target()->alias();
-		$sAlias = $this->sourceTable()->alias();
+		$sAlias = $this->source()->alias();
 		$foreignKey = (array)$options['foreignKey'];
 		$primaryKey = (array)$this->_sourceTable->primaryKey();
 
