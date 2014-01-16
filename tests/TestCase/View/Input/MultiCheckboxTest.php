@@ -15,6 +15,7 @@
 namespace Cake\Test\TestCase\View\Input;
 
 use Cake\TestSuite\TestCase;
+use Cake\View\Input\Label;
 use Cake\View\Input\MultiCheckbox;
 use Cake\View\StringTemplate;
 
@@ -44,7 +45,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$input = new MultiCheckbox($this->templates);
+		$label = new Label($this->templates);
+		$input = new MultiCheckbox($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [
@@ -86,7 +88,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderComplex() {
-		$input = new MultiCheckbox($this->templates);
+		$label = new Label($this->templates);
+		$input = new MultiCheckbox($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [
@@ -130,7 +133,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderEscaping() {
-		$input = new MultiCheckbox($this->templates);
+		$label = new Label($this->templates);
+		$input = new MultiCheckbox($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [
@@ -160,7 +164,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderSelected() {
-		$input = new MultiCheckbox($this->templates);
+		$label = new Label($this->templates);
+		$input = new MultiCheckbox($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [
@@ -213,7 +218,8 @@ class MultiCheckboxTest extends TestCase {
  * @return void
  */
 	public function testRenderDisabled() {
-		$input = new MultiCheckbox($this->templates);
+		$label = new Label($this->templates);
+		$input = new MultiCheckbox($this->templates, $label);
 		$data = [
 			'name' => 'Tags[id]',
 			'options' => [
