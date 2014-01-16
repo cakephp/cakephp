@@ -91,9 +91,9 @@ abstract class Association {
 	protected $_className;
 
 /**
- * The name of the field representing the foreign key to the target table
+ * The name of the field representing the foreign key to the table to load
  *
- * @var string
+ * @var string|array
  */
 	protected $_foreignKey;
 
@@ -266,7 +266,7 @@ abstract class Association {
  * If no parameters are passed the current field is returned
  *
  * @param string $key the key to be used to link both tables together
- * @return string
+ * @return string|array
  */
 	public function foreignKey($key = null) {
 		if ($key !== null) {

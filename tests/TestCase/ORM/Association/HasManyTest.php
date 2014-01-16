@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -415,6 +416,55 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test the eager loader method with no extra options
+ *
+ * @return void
+ */
+	public function testEagerLoaderMultipleKeys() {
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'strategy' => 'select',
+			'foreignKey' => ['author_id', 'site_id']
+		];
+
+		$this->author->primaryKey(['id', 'site_id']);
+		$association = new HasMany('Articles', $config);
+		$keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
+		$query = $this->getMock('Cake\ORM\Query', ['all', 'andWhere'], [null, null]);
+		$this->article->expects($this->once())->method('find')->with('all')
+			->will($this->returnValue($query));
+		$results = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20]
+		];
+		$query->expects($this->once())->method('all')
+			->will($this->returnValue($results));
+
+		$tuple = new TupleComparison(
+			['Articles.author_id', 'Articles.site_id'], $keys, [], 'IN'
+		);
+		$query->expects($this->once())->method('andWhere')
+			->with($tuple)
+			->will($this->returnSelf());
+
+		$callable = $association->eagerLoader(compact('keys', 'query'));
+		$row = ['Authors__id' => 2, 'Authors__site_id' => 10, 'username' => 'author 1'];
+		$result = $callable($row);
+		$row['Articles__Articles'] = [
+			['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10]
+		];
+		$this->assertEquals($row, $result);
+
+		$row = ['Authors__id' => 1, 'username' => 'author 2', 'Authors__site_id' => 20];
+		$result = $callable($row);
+		$row['Articles__Articles'] = [
+			['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20]
+		];
+		$this->assertEquals($row, $result);
+	}
+
+/**
  * Tests that the correct join and fields are attached to a query depending on
  * the association config
  *
@@ -507,6 +557,61 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			]
 		]);
 		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that using hasMany with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKey() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$this->author->primaryKey(['id', 'site_id']);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true],
+			'foreignKey' => ['author_id', 'author_site_id']
+		];
+		$field1 = new IdentifierExpression('Articles.author_id');
+		$field2 = new IdentifierExpression('Articles.author_site_id');
+		$association = new HasMany('Articles', $config);
+		$query->expects($this->once())->method('join')->with([
+			'Articles' => [
+				'conditions' => new QueryExpression([
+					'Articles.is_active' => true,
+					['Authors.id' => $field1, 'Authors.site_id' => $field2]
+				]),
+				'type' => 'INNER',
+				'table' => 'articles'
+			]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
+ * Tests that using hasMany with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Cannot match provided foreignKey, got 1 columns expected 2
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKeyMistmatch() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$this->author->primaryKey(['id', 'site_id']);
+		$config = [
+			'sourceTable' => $this->author,
+			'targetTable' => $this->article,
+			'conditions' => ['Articles.is_active' => true],
+			'foreignKey' => 'author_id'
+		];
+		$field1 = new IdentifierExpression('Articles.author_id');
+		$field2 = new IdentifierExpression('Articles.author_site_id');
+		$association = new HasMany('Articles', $config);
 		$association->attachTo($query, ['includeFields' => false]);
 	}
 
@@ -606,6 +711,10 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->any())
 			->method('getIterator')
 			->will($this->returnValue($iterator));
+		$query->expects($this->once())
+			->method('bufferResults')
+			->with(false)
+			->will($this->returnSelf());
 
 		$this->article->expects($this->once())
 			->method('find')

@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Database\Expression\TupleComparison;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 
@@ -189,12 +190,18 @@ class Marshaller {
 	protected function _loadBelongsToMany($assoc, $ids) {
 		$target = $assoc->target();
 		$primaryKey = (array)$target->primaryKey();
-		if (count($primaryKey) > 1) {
-			return [];
+		$multi = count($primaryKey) > 1;
+
+		if ($multi) {
+			if (count(current($ids)) !== count($primaryKey)) {
+				return [];
+			}
+			$filter = new TupleComparison($primaryKey, $ids, [], 'IN');
+		} else {
+			$filter = [$primaryKey[0] . ' IN' => $ids];
 		}
-		return $assoc->find('all')
-			->where([$primaryKey[0] . ' IN' => $ids])
-			->toArray();
+
+		return $assoc->find()->where($filter)->toArray();
 	}
 
 }

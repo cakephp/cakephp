@@ -122,7 +122,7 @@ class Table implements EventListener {
 /**
  * The name of the field that represents the primary key in the table
  *
- * @var array
+ * @var string|array
  */
 	protected $_primaryKey;
 
@@ -374,16 +374,19 @@ class Table implements EventListener {
 /**
  * Returns the primary key field name or sets a new one
  *
- * @param string $key sets a new name to be used as primary key
- * @return string
+ * @param string|array $key sets a new name to be used as primary key
+ * @return string|array
  */
 	public function primaryKey($key = null) {
 		if ($key !== null) {
 			$this->_primaryKey = $key;
 		}
 		if ($this->_primaryKey === null) {
-			$key = current((array)$this->schema()->primaryKey());
-			$this->_primaryKey = $key ?: null;
+			$key = (array)$this->schema()->primaryKey();
+			if (count($key) === 1) {
+				$key = $key[0];
+			}
+			$this->_primaryKey = $key;
 		}
 		return $this->_primaryKey;
 	}
@@ -400,7 +403,8 @@ class Table implements EventListener {
 		}
 		if ($this->_displayField === null) {
 			$schema = $this->schema();
-			$this->_displayField = $this->primaryKey();
+			$primary = (array)$this->primaryKey();
+			$this->_displayField = array_shift($primary);
 			if ($schema->column('title')) {
 				$this->_displayField = 'title';
 			}
@@ -1180,27 +1184,43 @@ class Table implements EventListener {
  * @return \Cake\ORM\Entity|boolean
  */
 	protected function _insert($entity, $data) {
-		$query = $this->query();
+		$primary = (array)$this->primaryKey();
+		$keys = array_fill(0, count($primary), null);
+		$id = (array)$this->_newId($primary) + $keys;
+		$primary = array_combine($primary, $id);
+		$filteredKeys = array_filter($primary, 'strlen');
+		$total = count($primary);
+		$data = $filteredKeys + $data;
 
-		$primary = $this->primaryKey();
-		$id = $this->_newId($primary);
-		if ($id !== null) {
-			$data[$primary] = $id;
+		if ($total > 1) {
+			foreach ($primary as $k => $v) {
+				if (!isset($data[$k])) {
+					$msg = 'Cannot insert row, some of the primary key values are missing. ';
+					$msg .= sprintf(
+						'Got (%s), expecting (%s)',
+						implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
+						implode(', ', array_keys($primary))
+					);
+					throw new \RuntimeException($msg);
+				}
+			}
 		}
 
-		$statement = $query->insert(array_keys($data))
+		$statement = $this->query()->insert(array_keys($data))
 			->values($data)
 			->execute();
 
 		$success = false;
 		if ($statement->rowCount() > 0) {
-			if ($primary && !isset($data[$primary])) {
-				$id = $statement->lastInsertId($this->table(), $primary);
-			}
-			if ($primary && $id !== null) {
-				$entity->set($primary, $id);
-			}
 			$success = $entity;
+			$entity->set($filteredKeys, ['guard' => false]);
+			foreach ($primary as $key => $v) {
+				if (!isset($data[$key])) {
+					$id = $statement->lastInsertId($this->table(), $key);
+					$entity->set($key, $id);
+					break;
+				}
+			}
 		}
 		$statement->closeCursor();
 		return $success;
@@ -1213,14 +1233,14 @@ class Table implements EventListener {
  * value if possible. You can override this method if you have specific requirements
  * for id generation.
  *
- * @param string $primary The primary key column to get a new ID for.
+ * @param array $primary The primary key columns to get a new ID for.
  * @return null|mixed Either null or the new primary key value.
  */
 	protected function _newId($primary) {
-		if (!$primary) {
+		if (!$primary || count((array)$primary) > 1) {
 			return null;
 		}
-		$typeName = $this->schema()->columnType($primary);
+		$typeName = $this->schema()->columnType($primary[0]);
 		$type = Type::build($typeName);
 		return $type->newId();
 	}

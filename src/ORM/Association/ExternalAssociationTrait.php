@@ -17,6 +17,7 @@
 namespace Cake\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\ORM\Query;
 use Cake\Utility\Inflector;
 
@@ -45,7 +46,7 @@ trait ExternalAssociationTrait {
 	}
 
 /**
- * Sets the name of the field representing the foreign key to the target table.
+ * Sets the name of the field representing the foreign key to the source table.
  * If no parameters are passed current field is returned
  *
  * @param string $key the key to be used to link both tables together
@@ -121,19 +122,28 @@ trait ExternalAssociationTrait {
  *
  * @param array $options list of options passed to attachTo method
  * @return array
+ * @throws \RuntimeException if the number of columns in the foreignKey do not
+ * match the number of columns in the source table primaryKey
  */
 	protected function _joinCondition(array $options) {
-		$field = sprintf(
-			'%s.%s',
-			$this->_sourceTable->alias(),
-			$this->_sourceTable->primaryKey()
-		);
-		$value = new IdentifierExpression(sprintf(
-			'%s.%s',
-			$this->_targetTable->alias(),
-			$options['foreignKey']
-		));
-		return [$field => $value];
+		$conditions = [];
+		$tAlias = $this->target()->alias();
+		$sAlias = $this->source()->alias();
+		$foreignKey = (array)$options['foreignKey'];
+		$primaryKey = (array)$this->_sourceTable->primaryKey();
+
+		if (count($foreignKey) !== count($primaryKey)) {
+			$msg = 'Cannot match provided foreignKey, got %d columns expected %d';
+			throw new \RuntimeException(sprintf($msg, count($foreignKey), count($primaryKey)));
+		}
+
+		foreach ($foreignKey as $k => $f) {
+			$field = sprintf('%s.%s', $sAlias, $primaryKey[$k]);
+			$value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
+			$conditions[$field] = $value;
+		}
+
+		return $conditions;
 	}
 
 /**
@@ -147,16 +157,49 @@ trait ExternalAssociationTrait {
  */
 	protected function _resultInjector($fetchQuery, $resultMap) {
 		$source = $this->source();
-		$sourceKey = key($fetchQuery->aliasField(
-			$source->primaryKey(),
-			$source->alias()
-		));
+		$sAlias = $source->alias();
+		$tAlias = $this->target()->alias();
 
-		$alias = $this->target()->alias();
-		$nestKey = $alias . '__' . $alias;
+		$sourceKeys = [];
+		foreach ((array)$source->primaryKey() as $key) {
+			$sourceKeys[] = key($fetchQuery->aliasField($key, $sAlias));
+		}
+
+		$nestKey = $tAlias . '__' . $tAlias;
+
+		if (count($sourceKeys) > 1) {
+			return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
+		}
+
+		$sourceKey = $sourceKeys[0];
 		return function($row) use ($resultMap, $sourceKey, $nestKey) {
 			if (isset($resultMap[$row[$sourceKey]])) {
 				$row[$nestKey] = $resultMap[$row[$sourceKey]];
+			}
+			return $row;
+		};
+	}
+
+/**
+ * Returns a callable to be used for each row in a query result set
+ * for injecting the eager loaded rows when the matching needs to
+ * be done with multiple foreign keys
+ *
+ * @param array $resultMap a keyed arrays containing the target table
+ * @param array $sourceKeys an array with aliased keys to match
+ * @param string $nestKey the key under which results should be nested
+ * @return \Closure
+ */
+	protected function _multiKeysInjector($resultMap, $sourceKeys, $nestKey) {
+		return function($row) use ($resultMap, $sourceKeys, $nestKey) {
+			$values = [];
+			foreach ($sourceKeys as $key) {
+				$values[] = $row[$key];
+			}
+
+			$key = implode(';', $values);
+			if (isset($resultMap[$key])) {
+				$row[$nestKey] = $resultMap[$key];
 			}
 			return $row;
 		};
@@ -222,6 +265,17 @@ trait ExternalAssociationTrait {
  * @return \Cake\ORM\Query
  */
 	protected function _addFilteringCondition($query, $key, $filter) {
+		if (is_array($key)) {
+			$types = [];
+			$defaults = $query->defaultTypes();
+			foreach ($key as $k) {
+				if (isset($defaults[$k])) {
+					$types[] = $defaults[$k];
+				}
+			}
+			return $query->andWhere(new TupleComparison($key, $filter, $types, 'IN'));
+		}
+
 		return $query->andWhere([$key . ' IN' => $filter]);
 	}
 
@@ -233,7 +287,18 @@ trait ExternalAssociationTrait {
  * @return string
  */
 	protected function _linkField($options) {
-		return sprintf('%s.%s', $this->name(), $options['foreignKey']);
+		$links = [];
+		$name = $this->name();
+
+		foreach ((array)$options['foreignKey'] as $key) {
+			$links[] = sprintf('%s.%s', $name, $key);
+		}
+
+		if (count($links) === 1) {
+			return $links[0];
+		}
+
+		return $links;
 	}
 
 /**

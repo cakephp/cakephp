@@ -1923,6 +1923,7 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['d' => $query->func()->now('time')])
 			->execute();
+
 		$this->assertWithinMargin(
 			date('U'),
 			(new \DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),

@@ -1041,8 +1041,11 @@ class Query extends DatabaseQuery {
 			$source = $meta['instance']->source();
 			if ($meta['instance']->requiresKeys($meta['config'])) {
 				$alias = $source->alias();
-				$pkField = key($this->aliasField($source->primaryKey(), $alias));
-				$collectKeys[] = [$alias, $pkField];
+				$pkFields = [];
+				foreach ((array)$source->primaryKey() as $key) {
+					$pkFields[] = key($this->aliasField($key, $alias));
+				}
+				$collectKeys[] = [$alias, $pkFields, count($pkFields) === 1];
 			}
 		}
 
@@ -1050,9 +1053,19 @@ class Query extends DatabaseQuery {
 		if (!empty($collectKeys)) {
 			while ($result = $statement->fetch('assoc')) {
 				foreach ($collectKeys as $parts) {
-					$keys[$parts[0]][] = $result[$parts[1]];
+					if ($parts[2]) {
+						$keys[$parts[0]][] = $result[$parts[1][0]];
+						continue;
+					}
+
+					$collected = [];
+					foreach ($parts[1] as $key) {
+						$collected[] = $result[$key];
+					}
+					$keys[$parts[0]][] = $collected;
 				}
 			}
+
 			$statement->rewind();
 		}
 

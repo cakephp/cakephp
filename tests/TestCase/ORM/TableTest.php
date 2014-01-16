@@ -137,6 +137,9 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('id', $table->primaryKey());
 		$table->primaryKey('thingID');
 		$this->assertEquals('thingID', $table->primaryKey());
+
+		$table->primaryKey(['thingID', 'user_id']);
+		$this->assertEquals(['thingID', 'user_id'], $table->primaryKey());
 	}
 
 /**

@@ -1,6 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -91,9 +90,14 @@ class HasMany extends Association {
 		}
 
 		$resultMap = [];
-		$key = $options['foreignKey'];
+		$key = (array)$options['foreignKey'];
+
 		foreach ($fetchQuery->all() as $result) {
-			$resultMap[$result[$key]][] = $result;
+			$values = [];
+			foreach ($key as $k) {
+				$values[] = $result[$k];
+			}
+			$resultMap[implode(';', $values)][] = $result;
 		}
 
 		return $this->_resultInjector($fetchQuery, $resultMap);

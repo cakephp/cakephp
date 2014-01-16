@@ -82,10 +82,10 @@ trait SqlDialectTrait {
 				return $query;
 			}
 
-			$query->traverseExpressions(function($expression) use ($translators) {
+			$query->traverseExpressions(function($expression) use ($translators, $query) {
 				foreach ($translators as $class => $method) {
 					if ($expression instanceof $class) {
-						$this->{$method}($expression);
+						$this->{$method}($expression, $query);
 					}
 				}
 			});

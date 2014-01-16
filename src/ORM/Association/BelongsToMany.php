@@ -33,6 +33,7 @@ class BelongsToMany extends Association {
 
 	use ExternalAssociationTrait {
 		_options as _externalOptions;
+		_addFilteringCondition as _addExternalConditions;
 	}
 
 /**
@@ -108,6 +109,31 @@ class BelongsToMany extends Association {
 	protected $_saveStrategy = self::SAVE_REPLACE;
 
 /**
+ * The name of the field representing the foreign key to the target table
+ *
+ * @var string|array
+ */
+	protected $_targetForeignKey;
+
+/**
+ * Sets the name of the field representing the foreign key to the target table.
+ * If no parameters are passed current field is returned
+ *
+ * @param string $key the key to be used to link both tables together
+ * @return string
+ */
+	public function targetForeignKey($key = null) {
+		if ($key === null) {
+			if ($this->_targetForeignKey === null) {
+				$key = Inflector::singularize($this->target()->alias());
+				$this->_targetForeignKey = Inflector::underscore($key) . '_id';
+			}
+			return $this->_targetForeignKey;
+		}
+		return $this->_targetForeignKey = $key;
+	}
+
+/**
  * Sets the table instance for the junction relation. If no arguments
  * are passed, the current configured table instance is returned
  *
@@ -141,16 +167,27 @@ class BelongsToMany extends Association {
 		$junctionAlias = $table->alias();
 
 		if (!$table->association($sAlias)) {
-			$table->belongsTo($sAlias)->target($source);
+			$table
+				->belongsTo($sAlias, ['foreignKey' => $this->foreignKey()])
+				->target($source);
 		}
 
 		if (!$table->association($tAlias)) {
-			$table->belongsTo($tAlias)->target($target);
+			$table
+				->belongsTo($tAlias, ['foreignKey' => $this->targetForeignKey()])
+				->target($target);
 		}
 
 		if (!$target->association($junctionAlias)) {
-			$target->belongsToMany($sAlias);
-			$target->hasMany($junctionAlias)->target($table);
+			$target->belongsToMany($sAlias, [
+				'sourceTable' => $source,
+				'foreignKey' => $this->targetForeignKey(),
+				'targetForeignKey' => $this->foreignKey()
+			]);
+			$target->hasMany($junctionAlias, [
+				'targetTable' => $table,
+				'foreignKey' => $this->targetForeignKey(),
+			]);
 		}
 
 		if (!$source->association($table->alias())) {
@@ -189,7 +226,8 @@ class BelongsToMany extends Association {
 
 		unset($options['queryBuilder']);
 		$options = ['conditions' => [$cond]] + compact('includeFields');
-		$this->target()
+		$options['foreignKey'] = $this->targetForeignKey();
+		$this->_targetTable
 			->association($junction->alias())
 			->attachTo($query, $options);
 	}
@@ -262,7 +300,7 @@ class BelongsToMany extends Association {
 		}
 
 		$resultMap = [];
-		$key = $options['foreignKey'];
+		$key = (array)$options['foreignKey'];
 		$property = $this->target()->association($this->junction()->alias())->property();
 		$hydrated = $fetchQuery->hydrate();
 
@@ -274,7 +312,11 @@ class BelongsToMany extends Association {
 				$result->dirty($this->_junctionProperty, false);
 			}
 
-			$resultMap[$result[$this->_junctionProperty][$key]][] = $result;
+			$values = [];
+			foreach ($key as $k) {
+				$values[] = $result[$this->_junctionProperty][$k];
+			}
+			$resultMap[implode(';', $values)][] = $result;
 		}
 
 		return $this->_resultInjector($fetchQuery, $resultMap);
@@ -289,7 +331,7 @@ class BelongsToMany extends Association {
  */
 	public function cascadeDelete(Entity $entity, $options = []) {
 		$foreignKey = (array)$this->foreignKey();
-		$primaryKey = $this->source()->primaryKey();
+		$primaryKey = (array)$this->source()->primaryKey();
 		$conditions = [];
 
 		if ($primaryKey) {
@@ -827,12 +869,10 @@ class BelongsToMany extends Association {
  * @return \Cake\ORM\Query
  */
 	protected function _addFilteringCondition($query, $key, $filter) {
-		return $query->contain([
-			$this->_junctionAssociationName() => [
-				'conditions' => [$key . ' in' => $filter],
-				'matching' => true
-			]
-		]);
+		$name = $this->_junctionAssociationName();
+		return $query->matching($name, function($q) use ($key, $filter) {
+			return $this->_addExternalConditions($q, $key, $filter);
+		});
 	}
 
 /**
@@ -843,7 +883,18 @@ class BelongsToMany extends Association {
  * @return string
  */
 	protected function _linkField($options) {
-		return sprintf('%s.%s', $this->_junctionAssociationName(), $options['foreignKey']);
+		$links = [];
+		$name = $this->_junctionAssociationName();
+
+		foreach ((array)$options['foreignKey'] as $key) {
+			$links[] = sprintf('%s.%s', $name, $key);
+		}
+
+		if (count($links) === 1) {
+			return $links[0];
+		}
+
+		return $links;
 	}
 
 /**
@@ -892,16 +943,19 @@ class BelongsToMany extends Association {
  * @return void
  */
 	protected function _options(array $opts) {
-		if (!empty($opts['through'])) {
-			$this->junction($opts['through']);
+		$this->_externalOptions($opts);
+		if (!empty($opts['targetForeignKey'])) {
+			$this->targetForeignKey($opts['targetForeignKey']);
 		}
 		if (!empty($opts['joinTable'])) {
 			$this->_junctionTableName($opts['joinTable']);
 		}
+		if (!empty($opts['through'])) {
+			$this->junction($opts['through']);
+		}
 		if (!empty($opts['saveStrategy'])) {
 			$this->saveStrategy($opts['saveStrategy']);
 		}
-		$this->_externalOptions($opts);
 	}
 
 }

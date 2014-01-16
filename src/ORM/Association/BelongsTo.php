@@ -138,19 +138,28 @@ class BelongsTo extends Association {
  *
  * @param array $options list of options passed to attachTo method
  * @return array
+ * @throws \RuntimeException if the number of columns in the foreignKey do not
+ * match the number of columns in the target table primaryKey
  */
 	protected function _joinCondition(array $options) {
-		$field = sprintf(
-			'%s.%s',
-			$this->target()->alias(),
-			$this->_targetTable->primaryKey()
-		);
-		$value = new IdentifierExpression(sprintf(
-			'%s.%s',
-			$this->_sourceTable->alias(),
-			$options['foreignKey']
-		));
-		return [$field => $value];
+		$conditions = [];
+		$tAlias = $this->target()->alias();
+		$sAlias = $this->_sourceTable->alias();
+		$foreignKey = (array)$options['foreignKey'];
+		$primaryKey = (array)$this->_targetTable->primaryKey();
+
+		if (count($foreignKey) !== count($primaryKey)) {
+			$msg = 'Cannot match provided foreignKey, got %d columns expected %d';
+			throw new \RuntimeException(sprintf($msg, count($foreignKey), count($primaryKey)));
+		}
+
+		foreach ($foreignKey as $k => $f) {
+			$field = sprintf('%s.%s', $tAlias, $primaryKey[$k]);
+			$value = new IdentifierExpression(sprintf('%s.%s', $sAlias, $f));
+			$conditions[$field] = $value;
+		}
+
+		return $conditions;
 	}
 
 }

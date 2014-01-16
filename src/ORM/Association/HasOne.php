@@ -135,16 +135,28 @@ class HasOne extends Association {
  *
  * @param array $options list of options passed to attachTo method
  * @return array
+ * @throws \RuntimeException if the number of columns in the foreignKey do not
+ * match the number of columns in the source table primaryKey
  */
 	protected function _joinCondition(array $options) {
-		$field = sprintf('%s.%s',
-			$this->_sourceTable->alias(),
-			$this->_sourceTable->primaryKey()
-		);
-		$value = new IdentifierExpression(sprintf(
-			'%s.%s', $this->_targetTable->alias(), $options['foreignKey']
-		));
-		return [$field => $value];
+		$conditions = [];
+		$tAlias = $this->target()->alias();
+		$sAlias = $this->_sourceTable->alias();
+		$foreignKey = (array)$options['foreignKey'];
+		$primaryKey = (array)$this->_sourceTable->primaryKey();
+
+		if (count($foreignKey) !== count($primaryKey)) {
+			$msg = 'Cannot match provided foreignKey, got %d columns expected %d';
+			throw new \RuntimeException(sprintf($msg, count($foreignKey), count($primaryKey)));
+		}
+
+		foreach ($foreignKey as $k => $f) {
+			$field = sprintf('%s.%s', $sAlias, $primaryKey[$k]);
+			$value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
+			$conditions[$field] = $value;
+		}
+
+		return $conditions;
 	}
 
 }

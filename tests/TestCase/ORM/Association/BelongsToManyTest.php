@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -362,6 +363,53 @@ class BelongsToManyTest extends TestCase {
 	}
 
 /**
+ * Tests that using belongsToMany with a table having a multi column primary
+ * key will work if the foreign key is passed
+ *
+ * @return void
+ */
+	public function testAttachToMultiPrimaryKey() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'conditions' => ['Tags.name' => 'cake'],
+			'foreignKey' => ['article_id', 'article_site_id'],
+			'targetForeignKey' => ['tag_id', 'tag_site_id']
+		];
+		$this->article->primaryKey(['id', 'site_id']);
+		$this->tag->primaryKey(['id', 'my_site_id']);
+		$association = new BelongsToMany('Tags', $config);
+		$query->expects($this->at(0))->method('join')->with([
+			'Tags' => [
+				'conditions' => new QueryExpression([
+					'Tags.name' => 'cake'
+				]),
+				'type' => 'INNER',
+				'table' => 'tags'
+			]
+		]);
+
+		$fieldA = new IdentifierExpression('ArticlesTags.article_id');
+		$fieldB = new IdentifierExpression('ArticlesTags.article_site_id');
+		$fieldC = new IdentifierExpression('ArticlesTags.tag_id');
+		$fieldD = new IdentifierExpression('ArticlesTags.tag_site_id');
+
+		$query->expects($this->at(1))->method('join')->with([
+			'ArticlesTags' => [
+				'conditions' => new QueryExpression([
+					['Articles.id' => $fieldA, 'Articles.site_id' => $fieldB],
+					['Tags.id' => $fieldC, 'Tags.my_site_id' => $fieldD]
+				]),
+				'type' => 'INNER',
+				'table' => 'articles_tags'
+			]
+		]);
+		$query->expects($this->never())->method('select');
+		$association->attachTo($query, ['includeFields' => false]);
+	}
+
+/**
  * Test the eager loader method with no extra options
  *
  * @return void
@@ -380,7 +428,7 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$query = $this->getMock('Cake\ORM\Query', ['all', 'contain'], [null, null]);
+		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, null]);
 
 		$this->tag->expects($this->once())
 			->method('find')
@@ -395,14 +443,18 @@ class BelongsToManyTest extends TestCase {
 			->method('all')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $keys],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $keys])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$query->hydrate(false);
 
@@ -443,7 +495,7 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$methods = ['all', 'contain', 'where', 'order'];
+		$methods = ['all', 'matching', 'where', 'order'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())
 			->method('find')
@@ -457,15 +509,18 @@ class BelongsToManyTest extends TestCase {
 			->method('all')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())
-			->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $keys],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $keys])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
@@ -504,7 +559,7 @@ class BelongsToManyTest extends TestCase {
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
-		$methods = ['all', 'contain', 'where', 'order', 'select'];
+		$methods = ['all', 'matching', 'where', 'order', 'select'];
 		$query = $this->getMock('Cake\ORM\Query', $methods, [null, null]);
 		$this->tag->expects($this->once())->method('find')->with('all')
 			->will($this->returnValue($query));
@@ -515,14 +570,18 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->once())->method('all')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $keys],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $keys])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
@@ -621,7 +680,7 @@ class BelongsToManyTest extends TestCase {
 
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['all', 'where', 'andWhere', 'order', 'select', 'contain'],
+			['all', 'where', 'andWhere', 'order', 'select', 'matching'],
 			[null, null]
 		);
 		$query->hydrate(false);
@@ -654,14 +713,18 @@ class BelongsToManyTest extends TestCase {
 			->with([])
 			->will($this->returnSelf());
 
-		$query->expects($this->once())->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $expected],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $expected) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $expected])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$callable = $association->eagerLoader([
 			'query' => $parent, 'strategy' => BelongsToMany::STRATEGY_SUBQUERY,
@@ -704,7 +767,7 @@ class BelongsToManyTest extends TestCase {
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
 			'Cake\ORM\Query',
-			['all', 'contain', 'andWhere', 'limit'],
+			['all', 'matching', 'andWhere', 'limit'],
 			[null, null]
 		);
 
@@ -721,14 +784,18 @@ class BelongsToManyTest extends TestCase {
 			->method('all')
 			->will($this->returnValue($results));
 
-		$query->expects($this->once())->method('contain')
-			->with([
-				'ArticlesTags' => [
-					'conditions' => ['ArticlesTags.article_id in' => $keys],
-					'matching' => true
-				]
-			])
-			->will($this->returnSelf());
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $keys) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with(['ArticlesTags.article_id IN' => $keys])
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+		}));
 
 		$query->hydrate(false);
 
@@ -746,6 +813,105 @@ class BelongsToManyTest extends TestCase {
 			return $q->andWhere(['foo' => 1])->limit(1);
 		};
 		$association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
+	}
+
+/**
+ * Test the eager loader method with no extra options
+ *
+ * @return void
+ */
+	public function testEagerLoaderMultipleKeys() {
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'foreignKey' => ['article_id', 'site_id'],
+			'targetForeignKey' => ['tag_id', 'site_id']
+		];
+		$this->article->primaryKey(['id', 'site_id']);
+		$this->tag->primaryKey(['id', 'site_id']);
+		TableRegistry::get('ArticlesTags', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer'],
+				'site_id' => ['type' => 'integer'],
+			]
+		]);
+		$association = new BelongsToMany('Tags', $config);
+		$keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
+		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, null]);
+
+		$this->tag->expects($this->once())
+			->method('find')
+			->with('all')
+			->will($this->returnValue($query));
+
+		$results = [
+			[
+				'id' => 1,
+				'name' => 'foo',
+				'site_id' => 1,
+				'articles_tags' => [
+					'article_id' => 1,
+					'site_id' => 1
+				]
+			],
+			[
+				'id' => 2,
+				'name' => 'bar',
+				'site_id' => 2,
+				'articles_tags' => [
+					'article_id' => 2,
+					'site_id' => 2
+				]
+			]
+		];
+		$query->expects($this->once())
+			->method('all')
+			->will($this->returnValue($results));
+
+		$tuple = new TupleComparison(
+			['ArticlesTags.article_id', 'ArticlesTags.site_id'], $keys, [], 'IN'
+		);
+		$query->expects($this->once())->method('matching')
+			->will($this->returnCallback(function($alias, $callable) use ($query, $tuple) {
+				$this->assertEquals('ArticlesTags', $alias);
+				$q = $this->getMock('Cake\ORM\Query', [], [null, null]);
+
+				$q->expects($this->once())->method('andWhere')
+					->with($tuple)
+					->will($this->returnSelf());
+
+				$this->assertSame($q, $callable($q));
+				return $query;
+			}));
+
+		$query->hydrate(false);
+
+		$callable = $association->eagerLoader(compact('keys', 'query'));
+		$row = ['Articles__id' => 1, 'title' => 'article 1', 'Articles__site_id' => 1];
+		$result = $callable($row);
+		$row['Tags__Tags'] = [
+			[
+				'id' => 1,
+				'name' => 'foo',
+				'site_id' => 1,
+				'_joinData' => ['article_id' => 1, 'site_id' => 1]
+			]
+		];
+		$this->assertEquals($row, $result);
+
+		$row = ['Articles__id' => 2, 'title' => 'article 2', 'Articles__site_id' => 2];
+		$result = $callable($row);
+		$row['Tags__Tags'] = [
+			[
+				'id' => 2,
+				'name' => 'bar',
+				'site_id' => 2,
+				'_joinData' => ['article_id' => 2, 'site_id' => 2]
+			]
+		];
+		$this->assertEquals($row, $result);
 	}
 
 /**
@@ -1292,6 +1458,50 @@ class BelongsToManyTest extends TestCase {
 
 		$association = new BelongsToMany('Tags', $config);
 		$association->save($entity);
+	}
+
+/**
+ * Tests that targetForeignKey() returns the correct configured value
+ *
+ * @return void
+ */
+	public function testTargetForeignKey() {
+		$assoc = new BelongsToMany('Test', [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag
+		]);
+		$this->assertEquals('tag_id', $assoc->targetForeignKey());
+		$assoc->targetForeignKey('another_key');
+		$this->assertEquals('another_key', $assoc->targetForeignKey());
+
+		$assoc = new BelongsToMany('Test', [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'targetForeignKey' => 'foo'
+		]);
+		$this->assertEquals('foo', $assoc->targetForeignKey());
+	}
+
+/**
+ * Tests that custom foreignKeys are properly trasmitted to involved associations
+ * when they are customized
+ *
+ * @return void
+ */
+	public function testJunctionWithCustomForeignKeys() {
+		$assoc = new BelongsToMany('Test', [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+			'foreignKey' => 'Art',
+			'targetForeignKey' => 'Tag'
+		]);
+		$junction = $assoc->junction();
+		$this->assertEquals('Art', $junction->association('Articles')->foreignKey());
+		$this->assertEquals('Tag', $junction->association('Tags')->foreignKey());
+
+		$inverseRelation = $this->tag->association('Articles');
+		$this->assertEquals('Tag', $inverseRelation->foreignKey());
+		$this->assertEquals('Art', $inverseRelation->targetForeignKey());
 	}
 
 /**
