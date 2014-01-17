@@ -1103,6 +1103,18 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that saving a new empty entity does nothing.
+ *
+ * @group save
+ * @return void
+ */
+	public function testSaveNewEmptyEntity() {
+		$entity = new \Cake\ORM\Entity();
+		$table = TableRegistry::get('users');
+		$this->assertFalse($table->save($entity));
+	}
+
+/**
  * Tests that saving an entity will filter out properties that
  * are not present in the table schema when saving
  *

@@ -1189,10 +1189,9 @@ class Table implements EventListener {
 		$id = (array)$this->_newId($primary) + $keys;
 		$primary = array_combine($primary, $id);
 		$filteredKeys = array_filter($primary, 'strlen');
-		$total = count($primary);
 		$data = $filteredKeys + $data;
 
-		if ($total > 1) {
+		if (count($primary) > 1) {
 			foreach ($primary as $k => $v) {
 				if (!isset($data[$k])) {
 					$msg = 'Cannot insert row, some of the primary key values are missing. ';
@@ -1206,11 +1205,15 @@ class Table implements EventListener {
 			}
 		}
 
+		$success = false;
+		if (empty($data)) {
+			return $success;
+		}
+
 		$statement = $this->query()->insert(array_keys($data))
 			->values($data)
 			->execute();
 
-		$success = false;
 		if ($statement->rowCount() > 0) {
 			$success = $entity;
 			$entity->set($filteredKeys, ['guard' => false]);
@@ -1263,7 +1266,7 @@ class Table implements EventListener {
 
 		$filtered = array_filter($primaryKey, 'strlen');
 		if (count($filtered) < count($primaryKey)) {
-			$message = 'A primary key value is needed for updating';
+			$message = 'All primary key value(s) are needed for updating';
 			throw new \InvalidArgumentException($message);
 		}
 
