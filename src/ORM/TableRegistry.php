@@ -117,7 +117,7 @@ class TableRegistry {
  *
  * If $options does not contain `className` CakePHP will attempt to construct the
  * class name based on the alias. For example 'Users' would result in
- * `App\Model\Repository\UsersTable` being attempted. If this class does not exist,
+ * `App\Model\Table\UsersTable` being attempted. If this class does not exist,
  * then the default `Cake\ORM\Table` class will be used. By setting the `className`
  * option you can define the specific class to use. This className can
  * use a short class reference.
@@ -151,7 +151,7 @@ class TableRegistry {
 
 		if (empty($options['className'])) {
 			$class = Inflector::camelize($alias);
-			$className = App::classname($class, 'Model/Repository', 'Table');
+			$className = App::classname($class, 'Model/Table', 'Table');
 			$options['className'] = $className ?: 'Cake\ORM\Table';
 		}
 

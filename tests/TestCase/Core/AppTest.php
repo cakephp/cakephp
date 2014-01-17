@@ -173,7 +173,7 @@ class AppTest extends TestCase {
 		$result = App::objects('View/Helper', null, false);
 		$this->assertContains('BananaHelper', $result);
 
-		$result = App::objects('Model/Repository', null, false);
+		$result = App::objects('Model/Table', null, false);
 		$this->assertContains('ArticlesTable', $result);
 
 		$result = App::objects('file');
@@ -214,7 +214,7 @@ class AppTest extends TestCase {
 	public function testListObjectsInPlugin() {
 		Plugin::load(array('TestPlugin', 'TestPluginTwo'));
 
-		$result = App::objects('TestPlugin.Model/Repository');
+		$result = App::objects('TestPlugin.Model/Table');
 		$this->assertContains('TestPluginCommentsTable', $result);
 
 		$result = App::objects('TestPlugin.Model/Behavior');
@@ -230,7 +230,7 @@ class AppTest extends TestCase {
 		$result = App::objects('TestPluginTwo.Model/Behavior');
 		$this->assertSame(array(), $result);
 
-		$result = App::objects('Model/Repository', null, false);
+		$result = App::objects('Model/Table', null, false);
 		$this->assertContains('PostsTable', $result);
 		$this->assertContains('ArticlesTable', $result);
 	}

@@ -9,18 +9,20 @@
  * @since         CakePHP(tm) v 3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace TestApp\Model\Repository;
+namespace TestApp\Model\Table;
 
 use Cake\ORM\Table;
 
 /**
- * Author table class
+ * Article table class
  *
  */
-class AuthorsTable extends Table {
+class ArticlesTable extends Table {
 
 	public function initialize(array $config) {
-		$this->hasMany('articles');
+		$this->belongsTo('authors');
+		$this->belongsToMany('tags');
+		$this->hasMany('articlesTags');
 	}
 
 }

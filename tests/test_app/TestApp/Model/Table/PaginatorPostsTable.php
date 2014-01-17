@@ -11,7 +11,7 @@
  * @since         CakePHP v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace TestApp\Model\Repository;
+namespace TestApp\Model\Table;
 
 use Cake\ORM\Query;
 use Cake\ORM\Table;

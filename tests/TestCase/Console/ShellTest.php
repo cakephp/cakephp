@@ -176,7 +176,7 @@ class ShellTest extends TestCase {
 
 		$this->assertTrue(isset($this->Shell->TestPluginComments));
 		$this->assertInstanceOf(
-			'TestPlugin\Model\Repository\TestPluginCommentsTable',
+			'TestPlugin\Model\Table\TestPluginCommentsTable',
 			$this->Shell->TestPluginComments
 		);
 	}
@@ -191,7 +191,7 @@ class ShellTest extends TestCase {
 
 		$Shell = new MergeShell();
 		$this->assertInstanceOf(
-			'TestApp\Model\Repository\ArticlesTable',
+			'TestApp\Model\Table\ArticlesTable',
 			$Shell->Articles
 		);
 		$this->assertEquals('Articles', $Shell->modelClass);
@@ -200,7 +200,7 @@ class ShellTest extends TestCase {
 		$this->Shell->loadModel('TestPlugin.TestPluginComments');
 		$this->assertTrue(isset($this->Shell->TestPluginComments));
 		$this->assertInstanceOf(
-			'TestPlugin\Model\Repository\TestPluginCommentsTable',
+			'TestPlugin\Model\Table\TestPluginCommentsTable',
 			$this->Shell->TestPluginComments
 		);
 	}

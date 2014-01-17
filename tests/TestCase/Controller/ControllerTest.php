@@ -234,7 +234,7 @@ class ControllerTest extends TestCase {
  *
  * @return void
  */
-	public function testRepositoryAutoload() {
+	public function testTableAutoload() {
 		Configure::write('App.namespace', 'TestApp');
 		$request = new Request('controller_posts/index');
 		$response = $this->getMock('Cake\Network\Response');
@@ -242,7 +242,7 @@ class ControllerTest extends TestCase {
 		$Controller->modelClass = 'Articles';
 
 		$this->assertInstanceOf(
-			'TestApp\Model\Repository\ArticlesTable',
+			'TestApp\Model\Table\ArticlesTable',
 			$Controller->Articles
 		);
 	}
@@ -263,7 +263,7 @@ class ControllerTest extends TestCase {
 		$result = $Controller->loadModel('Articles');
 		$this->assertTrue($result);
 		$this->assertInstanceOf(
-			'TestApp\Model\Repository\ArticlesTable',
+			'TestApp\Model\Table\ArticlesTable',
 			$Controller->Articles
 		);
 	}
@@ -285,7 +285,7 @@ class ControllerTest extends TestCase {
 		$result = $Controller->loadModel('TestPlugin.TestPluginComments');
 		$this->assertTrue($result);
 		$this->assertInstanceOf(
-			'TestPlugin\Model\Repository\TestPluginCommentsTable',
+			'TestPlugin\Model\Table\TestPluginCommentsTable',
 			$Controller->TestPluginComments
 		);
 	}
