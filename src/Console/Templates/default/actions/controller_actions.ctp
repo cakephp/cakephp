@@ -59,7 +59,7 @@
 		}
 <?php
 	foreach (['belongsTo', 'hasAndBelongsToMany'] as $assoc):
-		foreach ($modelObj->{$assoc} as $associationName => $relation):
+		foreach ($modelObj->associations()->type($assoc) as $associationName => $relation):
 			if (!empty($associationName)):
 				$otherModelName = $this->_modelName($associationName);
 				$otherPluralName = $this->_pluralName($associationName);
@@ -99,7 +99,7 @@
 		}
 <?php
 		foreach (['belongsTo', 'hasAndBelongsToMany'] as $assoc):
-			foreach ($modelObj->{$assoc} as $associationName => $relation):
+			foreach ($modelObj->associations()->type($assoc) as $associationName => $relation):
 				if (!empty($associationName)):
 					$otherModelName = $this->_modelName($associationName);
 					$otherPluralName = $this->_pluralName($associationName);

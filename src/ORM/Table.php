@@ -372,6 +372,24 @@ class Table implements EventListener {
 	}
 
 /**
+ * Test to see if a Table has any of these specific fields/columns.
+ *
+ * Delegates to the schema object and checks for column presence
+ * using the Schema\Table instance.
+ *
+ * @param array $fields The fields to check for.
+ * @return boolean True if any field exists, false if it does not.
+ */
+	public function hasAnyFields($fields) {
+		foreach ($fields as $field) {
+			if ($this->hasField($field)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+/**
  * Returns the primary key field name or sets a new one
  *
  * @param string|array $key sets a new name to be used as primary key

@@ -19,10 +19,11 @@
 use Cake\Utility\Inflector;
 
 echo "<?php\n";
-echo "App::uses('{$plugin}AppModel', '{$pluginPath}Model');\n";
+echo "namespace App\Model\Repository;\n\n";
+echo "use Cake\ORM\Table;\n\n";
 ?>
 /**
- * <?= $name ?> Model
+ * <?= $name ?> Table
  *
 <?php
 foreach (['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany'] as $assocType) {
@@ -34,73 +35,34 @@ foreach (['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany'] as $assocType
 }
 ?>
  */
-class <?= $name ?> extends <?= $plugin; ?>AppModel {
-
+class <?= $className ?> extends <?= $plugin; ?>Table {
+	public function initialize(array $config) {
 <?php if ($useDbConfig !== 'default'): ?>
-/**
- * Use database config
- *
- * @var string
- */
-	public $useDbConfig = '<?= $useDbConfig; ?>';
-
+		// Use database config
+		$this->useDbConfig('<?= $useDbConfig; ?>');
 <?php endif;
 
-if ($useTable && $useTable !== Inflector::tableize($name)):
-	$table = "'$useTable'";
-	echo "/**\n * Use table\n *\n * @var mixed False or table name\n */\n";
-	echo "\tpublic \$useTable = $table;\n\n";
-endif;
+if ($useTable && $useTable !== Inflector::tableize($name)): ?>
+		// Use table: False or table name
+		$this->useTable('<?= $useTable; ?>');
+<?php endif;
 
 if ($primaryKey !== 'id'): ?>
-/**
- * Primary key field
- *
- * @var string
- */
-	public $primaryKey = '<?= $primaryKey; ?>';
-
+		// Primary key field(s)
+		$this->primaryKey('<?= $primaryKey; ?>');
 <?php endif;
 
 if ($displayField): ?>
-/**
- * Display field
- *
- * @var string
- */
-	public $displayField = '<?= $displayField; ?>';
-
+		// Display field
+		$this->displayField('<?= $displayField; ?>');
 <?php endif;
 
 if (!empty($actsAs)): ?>
-/**
- * Behaviors
- *
- * @var array
- */
-	public $actsAs = [<?= "\n\t"; foreach ($actsAs as $behavior): echo "\t"; var_export($behavior); echo ",\n\t"; endforeach; ?>];
-
+		// Add Behaviors
+		<?php foreach ($actsAs as $behavior): ?>
+		$this->addBehavior('<?= var_export($behavior); ?>');
+		<?php endforeach; ?>
 <?php endif;
-
-if (!empty($validate)):
-	echo "/**\n * Validation rules\n *\n * @var array\n */\n";
-	echo "\tpublic \$validate = [\n";
-	foreach ($validate as $field => $validations):
-		echo "\t\t'$field' => [\n";
-		foreach ($validations as $key => $validator):
-			echo "\t\t\t'$key' => [\n";
-			echo "\t\t\t\t'rule' => ['$validator'],\n";
-			echo "\t\t\t\t//'message' => 'Your custom message here',\n";
-			echo "\t\t\t\t//'allowEmpty' => false,\n";
-			echo "\t\t\t\t//'required' => false,\n";
-			echo "\t\t\t\t//'last' => false, // Stop validation after this rule\n";
-			echo "\t\t\t\t//'on' => 'create', // Limit validation to 'create' or 'update' operations\n";
-			echo "\t\t\t],\n";
-		endforeach;
-		echo "\t\t],\n";
-	endforeach;
-	echo "\t];\n";
-endif;
 
 foreach ($associations as $assoc):
 	if (!empty($assoc)):
@@ -116,9 +78,9 @@ foreach (['hasOne', 'belongsTo'] as $assocType):
 	if (!empty($associations[$assocType])):
 		$typeCount = count($associations[$assocType]);
 		echo "\n/**\n * $assocType associations\n *\n * @var array\n */";
-		echo "\n\tpublic \$$assocType = [";
 		foreach ($associations[$assocType] as $i => $relation):
-			$out = "\n\t\t'{$relation['alias']}' => [\n";
+			$out = "\n\t\t\$this->$assocType(";
+			$out .= "\n\t\t'{$relation['alias']}', [\n";
 			$out .= "\t\t\t'className' => '{$relation['className']}',\n";
 			$out .= "\t\t\t'foreignKey' => '{$relation['foreignKey']}',\n";
 			$out .= "\t\t\t'conditions' => '',\n";
@@ -128,9 +90,9 @@ foreach (['hasOne', 'belongsTo'] as $assocType):
 			if ($i + 1 < $typeCount) {
 				$out .= ",";
 			}
+			$out .= "\n\t);\n";
 			echo $out;
 		endforeach;
-		echo "\n\t);\n";
 	endif;
 endforeach;
 
@@ -186,4 +148,30 @@ if (!empty($associations['hasAndBelongsToMany'])):
 	echo "\n\t];\n\n";
 endif;
 ?>
+	}
+
+
+<?php if (!empty($validate)): ?>
+	// Validation rules
+	public function validationDefault($validator) {
+		$validator
+<?php foreach ($validate as $field => $validations): ?>
+			->add('<?= $field; ?>', [
+<?php foreach ($validations as $key => $validator): ?>
+				'<?= $key; ?>', [
+					'rule' => ['<?= $validator; ?>'],
+					//'message' => 'Your custom message here',
+					//'allowEmpty' => false,
+					//'required' => false,
+					//'last' => false, // Stop validation after this rule
+					//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				],
+<?php endforeach; ?>
+			]);
+<?php endforeach; ?>
+		return $validator;
+	}
+<?php endif; ?>
+
+
 }
