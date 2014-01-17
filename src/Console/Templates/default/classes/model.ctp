@@ -39,16 +39,16 @@ class <?= $className ?> extends <?= $plugin; ?>Table {
 	public function initialize(array $config) {
 <?php if ($useDbConfig !== 'default'): ?>
 		// Use database config
-		$$this->useDbConfig('<?= $useDbConfig; ?>');
+		$this->useDbConfig('<?= $useDbConfig; ?>');
 <?php endif;
 
 if ($useTable && $useTable !== Inflector::tableize($name)): ?>
-		// Use table - mixed False or table name
+		// Use table: False or table name
 		$this->useTable('<?= $useTable; ?>');
 <?php endif;
 
 if ($primaryKey !== 'id'): ?>
-		// Primary key field
+		// Primary key field(s)
 		$this->primaryKey('<?= $primaryKey; ?>');
 <?php endif;
 
@@ -58,8 +58,8 @@ if ($displayField): ?>
 <?php endif;
 
 if (!empty($actsAs)): ?>
+		// Add Behaviors
 		<?php foreach ($actsAs as $behavior): ?>
-		// Add Behavior
 		$this->addBehavior('<?= var_export($behavior); ?>');
 		<?php endforeach; ?>
 <?php endif;
