@@ -1182,6 +1182,8 @@ class Table implements EventListener {
  * @param \Cake\ORM\Entity the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
  * @return \Cake\ORM\Entity|boolean
+ * @throws \RuntimeException if not all the primary keys where supplied or could
+ * be generated when the table has composite primary keys
  */
 	protected function _insert($entity, $data) {
 		$primary = (array)$this->primaryKey();
