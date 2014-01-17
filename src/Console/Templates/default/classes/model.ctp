@@ -64,26 +64,6 @@ if (!empty($actsAs)): ?>
 		<?php endforeach; ?>
 <?php endif;
 
-if (!empty($validate)):
-	echo "/**\n * Validation rules\n *\n * @var array\n */\n";
-	echo "\t\t\$this->validate([\n";
-	foreach ($validate as $field => $validations):
-		echo "\t\t'$field' => [\n";
-		foreach ($validations as $key => $validator):
-			echo "\t\t\t'$key' => [\n";
-			echo "\t\t\t\t'rule' => ['$validator'],\n";
-			echo "\t\t\t\t//'message' => 'Your custom message here',\n";
-			echo "\t\t\t\t//'allowEmpty' => false,\n";
-			echo "\t\t\t\t//'required' => false,\n";
-			echo "\t\t\t\t//'last' => false, // Stop validation after this rule\n";
-			echo "\t\t\t\t//'on' => 'create', // Limit validation to 'create' or 'update' operations\n";
-			echo "\t\t\t],\n";
-		endforeach;
-		echo "\t\t],\n";
-	endforeach;
-	echo "\t]);\n";
-endif;
-
 foreach ($associations as $assoc):
 	if (!empty($assoc)):
 ?>
@@ -169,4 +149,29 @@ if (!empty($associations['hasAndBelongsToMany'])):
 endif;
 ?>
 	}
+
+
+<?php if (!empty($validate)): ?>
+	// Validation rules
+	public function validationDefault($validator) {
+		$validator
+<?php foreach ($validate as $field => $validations): ?>
+			->add('<?= $field; ?>', [
+<?php foreach ($validations as $key => $validator): ?>
+				'<?= $key; ?>', [
+					'rule' => ['<?= $validator; ?>'],
+					//'message' => 'Your custom message here',
+					//'allowEmpty' => false,
+					//'required' => false,
+					//'last' => false, // Stop validation after this rule
+					//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				],
+<?php endforeach; ?>
+			]);
+<?php endforeach; ?>
+		return $validator;
+	}
+<?php endif; ?>
+
+
 }
