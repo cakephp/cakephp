@@ -631,4 +631,49 @@ class CollectionTest extends TestCase {
 		$this->assertEquals(['a' => 4, 'b' => 5, 'c' => 6], $compiled->toArray());
 	}
 
+/**
+ * Tests the combine method
+ *
+ * @return void
+ */
+	public function testCombine() {
+		$items = [
+			['id' => 1, 'name' => 'foo', 'parent' => 'a'],
+			['id' => 2, 'name' => 'bar', 'parent' => 'b'],
+			['id' => 3, 'name' => 'baz', 'parent' => 'a']
+		];
+		$collection = (new Collection($items))->combine('id', 'name');
+		$expected = [1 => 'foo', 2 => 'bar', 3 => 'baz'];
+		$this->assertEquals($expected, $collection->toArray());
+
+		$expected = ['foo' => 1, 'bar' => 2, 'baz' => 3];
+		$collection = (new Collection($items))->combine('name', 'id');
+		$this->assertEquals($expected, $collection->toArray());
+
+		$collection = (new Collection($items))->combine('id', 'name', 'parent');
+		$expected = ['a' => [1 => 'foo', 3 => 'baz'], 'b' => [2 => 'bar']];
+		$this->assertEquals($expected, $collection->toArray());
+
+		$expected = [
+			'0-1' => ['foo-0-1' => '0-1-foo'],
+			'1-2' => ['bar-1-2' => '1-2-bar'],
+			'2-3' => ['baz-2-3' => '2-3-baz']
+		];
+		$collection = (new Collection($items))->combine(
+			function($value, $key) {
+				return $value['name'] . '-' . $key;
+			},
+			function($value, $key) {
+				return $key . '-' . $value['name'];
+			},
+			function($value, $key) {
+				return $key . '-' . $value['id'];
+			}
+		);
+		$this->assertEquals($expected, $collection->toArray());
+
+		$collection = (new Collection($items))->combine('id', 'crazy');
+		$this->assertEquals([1 => null, 2 => null, 3 => null], $collection->toArray());
+	}
+
 }

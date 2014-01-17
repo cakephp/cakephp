@@ -628,6 +628,80 @@ trait CollectionTrait {
 	}
 
 /**
+ * Returrns a new collection where the values extracted based on a value path
+ * and then indexed by a key path. Optionally this method can produce parent
+ * groups absed on a group property path.
+ *
+ * ### Examples:
+ *
+ * {{{
+ * $items = [
+ *	['id' => 1, 'name' => 'foo', 'parent' => 'a'],
+ *	['id' => 2, 'name' => 'bar', 'parent' => 'b'],
+ *	['id' => 3, 'name' => 'baz', 'parent' => 'a'],
+ * ];
+ *
+ * $combined = (new Collection($items))->combine('id', 'name');
+ *
+ * //Result will look like this when converted to array
+ * [
+ *	1 => 'foo',
+ *	2 => 'bar',
+ *	3 => 'baz,
+ * ];
+ *
+ * $combined = (new Collection($items))->combine('id', 'name', 'parent');
+ *
+ * //Result will look like this when converted to array
+ * [
+ *	'a' => [1 => 'foo', 3 => 'baz'],
+ *	'b' => [2 => 'bar']
+ * ];
+ * }}}
+ *
+ * @param callable|string $keyPath the column name path to use for indexing
+ * or a function returning the indexing key out of the provided element
+ * @param callable|string $valuePath the column name path to use as the array value
+ * or a function returning the value out of the provided element
+ * @param callable|string $valuePath the column name path to use as the parent
+ * grouping key or a function returning the key out of the provided element
+ * @return \Cake\Collection\Collection
+ */
+	public function combine($keyPath, $valuePath, $groupPath = null) {
+		$options = [
+			'keyPath' => $this->_propertyExtractor($keyPath),
+			'valuePath' => $this->_propertyExtractor($valuePath),
+			'groupPath' => $groupPath ? $this->_propertyExtractor($groupPath) : null
+		];
+
+		$mapper = function($value, $key, $mapReduce) use ($options) {
+			$rowKey = $options['keyPath'];
+			$rowVal = $options['valuePath'];
+
+			if (!($options['groupPath'])) {
+				$mapReduce->emit($rowVal($value, $key), $rowKey($value, $key));
+				return;
+			}
+
+			$key = $options['groupPath']($value, $key);
+			$mapReduce->emitIntermediate(
+				[$rowKey($value, $key) => $rowVal($value, $key)],
+				$key
+			);
+		};
+
+		$reducer = function($values, $key, $mapReduce) {
+			$result = [];
+			foreach ($values as $value) {
+				$result += $value;
+			}
+			$mapReduce->emit($result, $key);
+		};
+
+		return new Collection(new MapReduce($this, $mapper, $reducer));
+	}
+
+/**
  * Returns an array representation of the results
  *
  * @param boolean $preserveKeys whether to use the keys returned by this
