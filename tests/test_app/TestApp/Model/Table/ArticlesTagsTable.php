@@ -9,7 +9,7 @@
  * @since         CakePHP(tm) v 3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace TestApp\Model\Repository;
+namespace TestApp\Model\Table;
 
 use Cake\ORM\Table;
 
@@ -17,12 +17,11 @@ use Cake\ORM\Table;
  * Tag table class
  *
  */
-class TagsTable extends Table {
+class ArticlesTagsTable extends Table {
 
 	public function initialize(array $config) {
-		$this->belongsTo('authors');
-		$this->belongsToMany('articles');
-		$this->hasMany('articlesTags', ['propertyName' => 'extraInfo']);
+		$this->belongsTo('articles');
+		$this->belongsTo('tags');
 	}
 
 }

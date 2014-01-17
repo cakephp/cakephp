@@ -807,7 +807,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testRepositoryClassInApp() {
+	public function testTableClassInApp() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
 
 		if (!class_exists('TestApp\Model\Entity\TestUser')) {
@@ -824,7 +824,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testRepositoryClassInPlugin() {
+	public function testTableClassInPlugin() {
 		$class = $this->getMockClass('\Cake\ORM\Entity');
 
 		if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
@@ -846,7 +846,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @expectedExceptionMessage Entity class FooUser could not be found.
  * @return void
  */
-	public function testRepositoryClassNonExisting() {
+	public function testTableClassNonExisting() {
 		$table = new Table;
 		$this->assertFalse($table->entityClass('FooUser'));
 	}
@@ -857,8 +857,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testRepositoryClassConventionForAPP() {
-		$table = new \TestApp\Model\Repository\ArticlesTable;
+	public function testTableClassConventionForAPP() {
+		$table = new \TestApp\Model\Table\ArticlesTable;
 		$this->assertEquals('TestApp\Model\Entity\Article', $table->entityClass());
 	}
 
@@ -881,7 +881,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalBelongsToLoading() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$result = $table->find('all')->contain(['authors'])->first();
@@ -895,7 +895,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalHasManyLoading() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$result = $table->find('all')->contain(['authors' => ['articles']])->first();
@@ -912,7 +912,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testReciprocalBelongsToMany() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$result = $table->find('all')->contain(['tags'])->first();
@@ -929,7 +929,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindCleanEntities() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$results = $table->find('all')->contain(['tags', 'authors'])->toArray();
@@ -956,7 +956,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * @return void
  */
 	public function testFindPersistedEntities() {
-		$table = new \TestApp\Model\Repository\ArticlesTable([
+		$table = new \TestApp\Model\Table\ArticlesTable([
 			'connection' => $this->connection,
 		]);
 		$results = $table->find('all')->contain(['tags', 'authors'])->toArray();

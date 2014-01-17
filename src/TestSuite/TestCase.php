@@ -595,7 +595,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	public function getMockForModel($alias, $methods = array(), $options = array()) {
 		if (empty($options['className'])) {
 			$class = Inflector::camelize($alias);
-			$className = App::classname($class, 'Model/Repository', 'Table');
+			$className = App::classname($class, 'Model/Table', 'Table');
 			if (!$className) {
 				throw new \Cake\ORM\Error\MissingTableClassException(array($alias));
 			}

@@ -710,7 +710,7 @@ class PaginatorComponentTest extends TestCase {
  */
 	protected function _getMockPosts($methods = []) {
 		return $this->getMock(
-			'TestApp\Model\Repository\PaginatorPostsTable',
+			'TestApp\Model\Table\PaginatorPostsTable',
 			$methods,
 			[['connection' => ConnectionManager::get('test'), 'alias' => 'PaginatorPosts']]
 		);
