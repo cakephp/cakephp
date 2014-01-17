@@ -19,7 +19,12 @@
 use Cake\Utility\Inflector;
 
 echo "<?php\n";
-echo "App::uses('{$plugin}AppController', '{$pluginPath}Controller');\n";
+echo "namespace App\Controller;\n\n";
+echo "use Cake\Core\Configure;\n";
+echo "use Cake\Error;\n";
+echo "use Cake\Utility\Inflector;\n\n";
+echo "use Cake\ORM\Entity;\n";
+echo "use Cake\ORM\TableRegistry;\n\n";
 ?>
 /**
  * <?= $controllerName; ?> Controller

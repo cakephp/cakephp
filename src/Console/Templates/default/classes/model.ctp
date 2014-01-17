@@ -38,51 +38,30 @@ foreach (['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany'] as $assocType
 class <?= $className ?> extends <?= $plugin; ?>Table {
 	public function initialize(array $config) {
 <?php if ($useDbConfig !== 'default'): ?>
-/**
- * Use database config
- *
- * @var string
- */
-	public $useDbConfig = '<?= $useDbConfig; ?>';
-
+		// Use database config
+		$$this->useDbConfig('<?= $useDbConfig; ?>');
 <?php endif;
 
-if ($useTable && $useTable !== Inflector::tableize($name)):
-	$table = "'$useTable'";
-	echo "/**\n * Use table\n *\n * @var mixed False or table name\n */\n";
-	echo "\tpublic \$useTable = $table;\n\n";
-endif;
+if ($useTable && $useTable !== Inflector::tableize($name)): ?>
+		// Use table - mixed False or table name
+		$this->useTable('<?= $useTable; ?>');
+<?php endif;
 
 if ($primaryKey !== 'id'): ?>
-	/**
-	 * Primary key field
-	 *
-	 * @var string
-	 */
+		// Primary key field
 		$this->primaryKey('<?= $primaryKey; ?>');
-
 <?php endif;
 
 if ($displayField): ?>
-	/**
-	 * Display field
-	 *
-	 * @var string
-	 */
+		// Display field
 		$this->displayField('<?= $displayField; ?>');
-
 <?php endif;
 
 if (!empty($actsAs)): ?>
-	/**
-	 * Add Behavior
-	 *
-	 * @var string
-	 */
 		<?php foreach ($actsAs as $behavior): ?>
+		// Add Behavior
 		$this->addBehavior('<?= var_export($behavior); ?>');
 		<?php endforeach; ?>
-
 <?php endif;
 
 if (!empty($validate)):

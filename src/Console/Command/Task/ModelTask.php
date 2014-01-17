@@ -108,8 +108,8 @@ class ModelTask extends BakeTask {
 			$this->listAll($this->connection);
 			$useTable = $this->getTable($model);
 			$object = $this->_getTableObject($model, $useTable);
-			if ($this->bake($object, false)) {
-				temp. disable until model bake works
+			// if ($this->bake($object, false)) {
+				// temp. disable until model bake works
 				// if ($this->_checkUnitTest()) {
 				// 	$this->bakeFixture($model, $useTable);
 				// 	$this->bakeTest($model);
@@ -151,7 +151,6 @@ class ModelTask extends BakeTask {
 		if (!$table) {
 			$table = Inflector::tableize($className);
 		}
-		// throw new \Exception('Baking models does not work currently.');
 
 		$object = TableRegistry::get($className, [
 			'name' => $className,
@@ -212,7 +211,6 @@ class ModelTask extends BakeTask {
 		if (empty($this->connection)) {
 			$this->connection = $this->DbConfig->getConfig();
 		}
-		// throw new \Exception('Baking models does not work yet.');
 
 		$currentTableName = $this->getName();
 		$useTable = $this->getTable($currentTableName);
@@ -396,7 +394,7 @@ class ModelTask extends BakeTask {
  */
 	public function initValidations() {
 		$options = $choices = [];
-		$options = get_class_methods(new Validation);
+		$options = get_class_methods('Cake\Validation\Validation');
 		sort($options);
 		$default = 1;
 		foreach ($options as $option) {

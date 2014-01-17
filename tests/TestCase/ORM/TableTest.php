@@ -1825,6 +1825,19 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * test hasField()
+ *
+ * @return void
+ */
+	public function testHasAnyFields() {
+		$table = TableRegistry::get('articles');
+		$this->assertFalse($table->hasAnyFields(['nope']), 'Should not be there.');
+		$this->assertTrue($table->hasAnyFields(['title']), 'Should be there.');
+		$this->assertTrue($table->hasAnyFields(['title', 'body']), 'Should be there.');
+		$this->assertTrue($table->hasAnyFields(['nope', 'body']), 'Should be there.');
+	}
+
+/**
  * Tests that there exists a default validator
  *
  * @return void
