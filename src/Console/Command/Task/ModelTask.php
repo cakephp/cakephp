@@ -962,15 +962,14 @@ class ModelTask extends BakeTask {
 		$db = ConnectionManager::getDataSource($useDbConfig);
 		$db->cacheSources = false;
 		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
-		$collection = new Collection($db);
 		if ($usePrefix) {
-			foreach ($db->listSources() as $table) {
+			foreach ($db->schemaCollection()->listTables() as $table) {
 				if (!strncmp($table, $usePrefix, strlen($usePrefix))) {
 					$tables[] = substr($table, strlen($usePrefix));
 				}
 			}
 		} else {
-			$tables = $collection->listTables();
+			$tables = $db->schemaCollection()->listTables();
 		}
 		if (empty($tables)) {
 			$this->err(__d('cake_console', 'Your database does not have any tables.'));
