@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -1693,6 +1691,18 @@ class QueryTest extends TestCase {
 				'title' => 'mark',
 				'body' => 'test insert'
 			]);
+	}
+
+/**
+ * Inserting nothing should not generate an error.
+ *
+ * @expectedException RuntimeException
+ * @expectedExceptionMessage At least 1 column is required to perform an insert.
+ * @return void
+ */
+	public function testInsertNothing() {
+		$query = new Query($this->connection);
+		$query->insert([]);
 	}
 
 /**

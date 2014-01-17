@@ -1284,8 +1284,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $columns The columns to insert into.
  * @param array $types A map between columns & their datatypes.
  * @return Query
+ * @throws RuntimeException When there are 0 columns.
  */
 	public function insert($columns, $types = []) {
+		if (empty($columns)) {
+			throw new \RuntimeException('At least 1 column is required to perform an insert.');
+		}
 		$this->_dirty();
 		$this->_type = 'insert';
 		$this->_parts['insert'][1] = $columns;
