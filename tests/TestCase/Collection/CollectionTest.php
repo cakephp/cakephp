@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Collection;
 
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\TestSuite\TestCase;
 
@@ -775,6 +776,65 @@ class CollectionTest extends TestCase {
 					['id' => 10, 'parent_id' => 6, 'children' => []]
 				]
 			]
+		];
+		$this->assertEquals($expected, $collection->toArray());
+	}
+
+/**
+ * Tests the nest method with more than one level
+ *
+ * @return void
+ */
+	public function testNestObjects() {
+		$items = [
+			new ArrayObject(['id' => 1, 'parent_id' => null]),
+			new ArrayObject(['id' => 2, 'parent_id' => 1]),
+			new ArrayObject(['id' => 3, 'parent_id' => 2]),
+			new ArrayObject(['id' => 4, 'parent_id' => 2]),
+			new ArrayObject(['id' => 5, 'parent_id' => 3]),
+			new ArrayObject(['id' => 6, 'parent_id' => null]),
+			new ArrayObject(['id' => 7, 'parent_id' => 3]),
+			new ArrayObject(['id' => 8, 'parent_id' => 4]),
+			new ArrayObject(['id' => 9, 'parent_id' => 6]),
+			new ArrayObject(['id' => 10, 'parent_id' => 6])
+		];
+		$collection = (new Collection($items))->nest('id', 'parent_id');
+		$expected = [
+			new ArrayObject([
+				'id' => 1,
+				'parent_id' => null,
+				'children' => [
+					new ArrayObject([
+						'id' => 2,
+						'parent_id' => 1,
+						'children' => [
+							new ArrayObject([
+								'id' => 3,
+								'parent_id' => 2,
+								'children' => [
+									new ArrayObject(['id' => 5, 'parent_id' => 3, 'children' => []]),
+									new ArrayObject(['id' => 7, 'parent_id' => 3, 'children' => []])
+								]
+							]),
+							new ArrayObject([
+								'id' => 4,
+								'parent_id' => 2,
+								'children' => [
+									new ArrayObject(['id' => 8, 'parent_id' => 4, 'children' => []])
+								]
+							])
+						]
+					])
+				]
+			]),
+			new ArrayObject([
+				'id' => 6,
+				'parent_id' => null,
+				'children' => [
+					new ArrayObject(['id' => 9, 'parent_id' => 6, 'children' => []]),
+					new ArrayObject(['id' => 10, 'parent_id' => 6, 'children' => []])
+				]
+			])
 		];
 		$this->assertEquals($expected, $collection->toArray());
 	}
