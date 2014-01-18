@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Input;
 
+use Cake\View\Input\InputInterface;
 use Traversable;
 
 /**
@@ -22,7 +23,7 @@ use Traversable;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class SelectBox {
+class SelectBox implements InputInterface {
 
 /**
  * Template instance.
@@ -113,7 +114,7 @@ class SelectBox {
  * @return string A generated select box.
  * @throws \RuntimeException when the name attribute is empty.
  */
-	public function render($data) {
+	public function render(array $data) {
 		$data += [
 			'name' => '',
 			'empty' => false,

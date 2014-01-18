@@ -14,6 +14,8 @@
  */
 namespace Cake\View\Input;
 
+use Cake\View\Input\InputInterface;
+
 /**
  * Basic input class.
  *
@@ -21,7 +23,7 @@ namespace Cake\View\Input;
  * input elements like hidden, text, email, tel and other
  * types.
  */
-class Text {
+class Text implements InputInterface {
 
 /**
  * StringTemplate instance.
@@ -53,7 +55,7 @@ class Text {
  * @param array $data The data to build an input with.
  * @return string
  */
-	public function render($data) {
+	public function render(array $data) {
 		$data += [
 			'name' => '',
 			'val' => null,
