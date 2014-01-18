@@ -56,7 +56,9 @@ class InputRegistry {
  */
 	public function __construct(StringTemplate $templates, array $widgets = null) {
 		$this->_templates = $templates;
-		$this->add($widgets);
+		if (!empty($widgets)) {
+			$this->add($widgets);
+		}
 	}
 
 /**
@@ -114,12 +116,12 @@ class InputRegistry {
  *   implement InputInterface.
  */
 	protected function _resolveWidget($widget) {
-		if (!is_array($widget)) {
+		if (is_object($widget)) {
 			return $widget;
 		}
 		$class = array_shift($widget);
 		$className = App::classname($class, 'View/Input');
-		if ($className === false) {
+		if ($className === false || !class_exists($className)) {
 			throw new \RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
 		}
 		$reflection = new ReflectionClass($className);
