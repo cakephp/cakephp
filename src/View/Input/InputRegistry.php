@@ -39,7 +39,14 @@ class InputRegistry {
  *
  * @var array
  */
-	protected $_widgets = [];
+	protected $_widgets = [
+		'checkbox' => ['Cake\View\Input\Checkbox'],
+		'label' => ['Cake\View\Input\Label'],
+		'multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label'],
+		'radio' => ['Cake\View\Input\Radio', 'label'],
+		'select' => ['Cake\View\Input\SelectBox'],
+		'_default' => ['Cake\View\Input\Text'],
+	];
 
 /**
  * Templates to use.
@@ -105,6 +112,15 @@ class InputRegistry {
 		}
 		$this->_widgets[$name] = $this->_resolveWidget($this->_widgets[$name]);
 		return $this->_widgets[$name];
+	}
+
+/**
+ * Clear the registry and reset the widgets.
+ *
+ * @return void
+ */
+	public function clear() {
+		$this->_widgets = [];
 	}
 
 /**

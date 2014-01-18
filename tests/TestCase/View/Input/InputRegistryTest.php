@@ -101,6 +101,7 @@ class InputRegistryTestCase extends TestCase {
  */
 	public function testGetNoFallbackError() {
 		$inputs = new InputRegistry($this->templates);
+		$inputs->clear();
 		$inputs->get('foo');
 	}
 
@@ -111,6 +112,7 @@ class InputRegistryTestCase extends TestCase {
  */
 	public function testGetResolveDependency() {
 		$inputs = new InputRegistry($this->templates);
+		$inputs->clear();
 		$inputs->add([
 			'label' => ['Cake\View\Input\Label'],
 			'multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label']
@@ -141,6 +143,7 @@ class InputRegistryTestCase extends TestCase {
  */
 	public function testGetResolveDependencyMissingDependency() {
 		$inputs = new InputRegistry($this->templates);
+		$inputs->clear();
 		$inputs->add(['multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label']]);
 		$inputs->get('multicheckbox');
 	}
