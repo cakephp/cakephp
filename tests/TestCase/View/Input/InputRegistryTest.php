@@ -38,8 +38,26 @@ class InputRegistryTestCase extends TestCase {
  *
  * @return void
  */
+	public function testAddInConstructor() {
+		$widgets = [
+			'text' => ['Cake\View\Input\Text'],
+		];
+		$inputs = new InputRegistry($this->templates, $widgets);
+		$result = $inputs->get('text');
+		$this->assertInstanceOf('Cake\View\Input\Text', $result);
+	}
+
+/**
+ * Test adding new widgets.
+ *
+ * @return void
+ */
 	public function testAdd() {
-		$this->markTestIncomplete();
+		$inputs = new InputRegistry($this->templates);
+		$result = $inputs->add([
+			'text' => ['Cake\View\Input\Text'],
+		]);
+		$this->assertNull($result);
 	}
 
 /**
@@ -48,7 +66,13 @@ class InputRegistryTestCase extends TestCase {
  * @return void
  */
 	public function testGet() {
-		$this->markTestIncomplete();
+		$inputs = new InputRegistry($this->templates);
+		$inputs->add([
+			'text' => ['Cake\View\Input\Text'],
+		]);
+		$result = $inputs->get('text');
+		$this->assertInstanceOf('Cake\View\Input\Text', $result);
+		$this->assertSame($result, $inputs->get('text'));
 	}
 
 /**
@@ -57,7 +81,15 @@ class InputRegistryTestCase extends TestCase {
  * @return void
  */
 	public function testGetFallback() {
-		$this->markTestIncomplete();
+		$inputs = new InputRegistry($this->templates);
+		$inputs->add([
+			'_default' => ['Cake\View\Input\Text'],
+		]);
+		$result = $inputs->get('text');
+		$this->assertInstanceOf('Cake\View\Input\Text', $result);
+
+		$result2 = $inputs->get('hidden');
+		$this->assertSame($result, $result2);
 	}
 
 /**
@@ -84,7 +116,7 @@ class InputRegistryTestCase extends TestCase {
 			'multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label']
 		]);
 		$result = $inputs->get('multicheckbox');
-		$this->assertInstanceOf('CakeView\Input\MultiCheckbox', $result);
+		$this->assertInstanceOf('Cake\View\Input\MultiCheckbox', $result);
 	}
 
 /**
