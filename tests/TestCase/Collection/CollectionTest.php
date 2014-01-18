@@ -676,4 +676,107 @@ class CollectionTest extends TestCase {
 		$this->assertEquals([1 => null, 2 => null, 3 => null], $collection->toArray());
 	}
 
+/**
+ * Tests the nest method with only one level
+ *
+ * @return void
+ */
+	public function testNest() {
+		$items = [
+			['id' => 1, 'parent_id' => null],
+			['id' => 2, 'parent_id' => 1],
+			['id' => 3, 'parent_id' => 1],
+			['id' => 4, 'parent_id' => 1],
+			['id' => 5, 'parent_id' => 6],
+			['id' => 6, 'parent_id' => null],
+			['id' => 7, 'parent_id' => 1],
+			['id' => 8, 'parent_id' => 6],
+			['id' => 9, 'parent_id' => 6],
+			['id' => 10, 'parent_id' => 6]
+		];
+		$collection = (new Collection($items))->nest('id', 'parent_id');
+		$expected = [
+			[
+				'id' => 1,
+				'parent_id' => null,
+				'children' => [
+					['id' => 2, 'parent_id' => 1, 'children' => []],
+					['id' => 3, 'parent_id' => 1, 'children' => []],
+					['id' => 4, 'parent_id' => 1, 'children' => []],
+					['id' => 7, 'parent_id' => 1, 'children' => []]
+				]
+			],
+			[
+				'id' => 6,
+				'parent_id' => null,
+				'children' => [
+					['id' => 5, 'parent_id' => 6, 'children' => []],
+					['id' => 8, 'parent_id' => 6, 'children' => []],
+					['id' => 9, 'parent_id' => 6, 'children' => []],
+					['id' => 10, 'parent_id' => 6, 'children' => []]
+				]
+			]
+		];
+		$this->assertEquals($expected, $collection->toArray());
+	}
+
+/**
+ * Tests the nest method with more than one level
+ *
+ * @return void
+ */
+	public function testNestMultiLevel() {
+		$items = [
+			['id' => 1, 'parent_id' => null],
+			['id' => 2, 'parent_id' => 1],
+			['id' => 3, 'parent_id' => 2],
+			['id' => 4, 'parent_id' => 2],
+			['id' => 5, 'parent_id' => 3],
+			['id' => 6, 'parent_id' => null],
+			['id' => 7, 'parent_id' => 3],
+			['id' => 8, 'parent_id' => 4],
+			['id' => 9, 'parent_id' => 6],
+			['id' => 10, 'parent_id' => 6]
+		];
+		$collection = (new Collection($items))->nest('id', 'parent_id');
+		$expected = [
+			[
+				'id' => 1,
+				'parent_id' => null,
+				'children' => [
+					[
+						'id' => 2,
+						'parent_id' => 1,
+						'children' => [
+							[
+								'id' => 3,
+								'parent_id' => 2,
+								'children' => [
+									['id' => 5, 'parent_id' => 3, 'children' => []],
+									['id' => 7, 'parent_id' => 3, 'children' => []]
+								]
+							],
+							[
+								'id' => 4,
+								'parent_id' => 2,
+								'children' => [
+									['id' => 8, 'parent_id' => 4, 'children' => []]
+								]
+							]
+						]
+					]
+				]
+			],
+			[
+				'id' => 6,
+				'parent_id' => null,
+				'children' => [
+					['id' => 9, 'parent_id' => 6, 'children' => []],
+					['id' => 10, 'parent_id' => 6, 'children' => []]
+				]
+			]
+		];
+		$this->assertEquals($expected, $collection->toArray());
+	}
+
 }

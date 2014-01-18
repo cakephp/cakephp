@@ -15,6 +15,7 @@
 namespace Cake\Collection;
 
 use AppendIterator;
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
@@ -699,6 +700,54 @@ trait CollectionTrait {
 		};
 
 		return new Collection(new MapReduce($this, $mapper, $reducer));
+	}
+
+/**
+ * Returns a new collection where the values are nested in a tree-like structure
+ * based on an id property path and a parent id property path.
+ *
+ * @param callable|string $idPath the column name path to use for determining
+ * whther an element is parent of another
+ * @param callable|string $parentPath the column name path to use for determining
+ * whther an element is child of another
+ * @return \Cake\Collection\Collection
+ */
+	public function nest($idPath, $parentPath) {
+		$parents = [];
+		$idPath = $this->_propertyExtractor($idPath);
+		$parentPath = $this->_propertyExtractor($parentPath);
+		$isObject = !is_array($this->first());
+
+		$mapper = function($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath) {
+			$row['children'] = [];
+			$id = $idPath($row, $key);
+			$parentId = $parentPath($row, $key);
+			$parents[$id] =& $row;
+			$mapReduce->emitIntermediate($id, $parentId);
+		};
+
+		$reducer = function($values, $key, $mapReduce) use (&$parents, $isObject) {
+			if (empty($key) || !isset($parents[$key])) {
+				foreach ($values as $id) {
+					$parents[$id] = $isObject ? $parents[$id] : new ArrayObject($parents[$id]);
+					$mapReduce->emit($parents[$id]);
+				}
+				return;
+			}
+
+			foreach ($values as $id) {
+				$parents[$key]['children'][] =& $parents[$id];
+			}
+		};
+
+		$collection = new MapReduce($this, $mapper, $reducer);
+		if (!$isObject) {
+			$collection = (new Collection($collection))->map(function($value) {
+				return (array)$value;
+			});
+		}
+
+		return new Collection($collection);
 	}
 
 /**
