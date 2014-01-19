@@ -88,7 +88,7 @@ class InputRegistry {
  * @return void
  */
 	public function add(array $widgets) {
-		$this->_widgets = array_merge($this->_widgets, $widgets);
+		$this->_widgets = $widgets + $this->_widgets;
 	}
 
 /**
@@ -140,12 +140,16 @@ class InputRegistry {
 		if ($className === false || !class_exists($className)) {
 			throw new \RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
 		}
-		$reflection = new ReflectionClass($className);
-		$arguments = [$this->_templates];
-		foreach ($widget as $requirement) {
-			$arguments[] = $this->get($requirement);
+		if (count($widget)) {
+			$reflection = new ReflectionClass($className);
+			$arguments = [$this->_templates];
+			foreach ($widget as $requirement) {
+				$arguments[] = $this->get($requirement);
+			}
+			$instance = $reflection->newInstanceArgs($arguments);
+		} else {
+			$instance = new $className($this->_templates);
 		}
-		$instance = $reflection->newInstanceArgs($arguments);
 		if (!($instance instanceof InputInterface)) {
 			throw new \RuntimeException(sprintf('"%s" does not implement the InputInterface', $className));
 		}
