@@ -15,7 +15,7 @@
 namespace Cake\View\Input;
 
 use Cake\Utility\Inflector;
-use Cake\View\InputInterface;
+use Cake\View\Input\InputInterface;
 use Traversable;
 
 /**
