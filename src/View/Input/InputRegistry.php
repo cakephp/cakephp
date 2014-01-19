@@ -61,7 +61,7 @@ class InputRegistry {
  * @param StringTemplate $templates Templates instance to use.
  * @param array $widgets See add() method for more information.
  */
-	public function __construct(StringTemplate $templates, array $widgets = null) {
+	public function __construct(StringTemplate $templates, array $widgets = []) {
 		$this->_templates = $templates;
 		if (!empty($widgets)) {
 			$this->add($widgets);
