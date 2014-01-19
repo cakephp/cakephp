@@ -35,6 +35,13 @@ class Plugin {
 	protected static $_plugins = [];
 
 /**
+ * Class loader instance
+ *
+ * @var \Cake\Core\ClassLoader
+ */
+	protected static $_loader;
+
+/**
  * Loads a plugin and optionally loads bootstrapping,
  * routing files or runs a initialization function.
  *
@@ -140,9 +147,11 @@ class Plugin {
 		}
 
 		if ($config['autoload'] === true) {
-			$loader = new ClassLoader;
-			$loader->register();
-			$loader->addNamespace($config['namespace'], $config['path']);
+			if (empty(static::$_loader)) {
+				static::$_loader = new ClassLoader;
+				static::$_loader->register();
+			}
+			static::$_loader->addNamespace($config['namespace'], $config['path']);
 		}
 	}
 
