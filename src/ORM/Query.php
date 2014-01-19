@@ -795,6 +795,45 @@ class Query extends DatabaseQuery {
 		return $this;
 	}
 
+/**
+ * Registers a new formatter callback function that is to be executed when the results
+ * are tried to be fetched from the database.
+ *
+ * Formatting callbacks will get as first parameter a `ResultSetDecorator` that
+ * can be traversed and modified at will. AS second parameter, the formatting
+ * callback will receive this query instance.
+ *
+ * Callbacks are required to return an iterator object, which will be used as
+ * the return value for this query's result. Formatter functions are applied
+ * after all the `MapReduce` routines for this query have been executed.
+ *
+ * If the first argument is set to null, it will return the list of previously
+ * registered map reduce routines.
+ *
+ * If the second argument is set to true, it will erase previous map reducers
+ * and replace it with the arguments passed.
+ *
+ * ### Example:
+ *
+ * {{{
+ * //Return all results from the table indexed by id
+ * $query->select(['id', 'name'])->formatResults(function($results, $query) {
+ *	return $results->indexBy('id');
+ * });
+ *
+ * //Add a new column to the ResultSet
+ * $query->select(['id', 'name'])->formatResults(function($results, $query) {
+ *	return $results->map(function($row) {
+ *		$row['age'] = $row['birth_date']->diff(new DateTime)->y;
+ *		return $row;
+ *	});
+ * });
+ * }}}
+ *
+ * @param callable $formatter
+ * @param boolean $overwrite
+ * @return Cake\ORM\Query|array
+ */
 	public function formatResults(callable $formatter = null, $overwrite = false) {
 		if ($overwrite) {
 			$this->_formatters = [];
