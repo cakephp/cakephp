@@ -14,13 +14,15 @@
  */
 namespace Cake\View\Input;
 
+use Cake\View\Input\InputInterface;
+
 /**
  * Form 'widget' for creating labels.
  *
  * Generally this element is used by other widgets,
  * and FormHelper itself.
  */
-class Label {
+class Label implements InputInterface {
 
 /**
  * Templates
@@ -57,7 +59,7 @@ class Label {
  * @param array $data
  * @return string
  */
-	public function render($data) {
+	public function render(array $data) {
 		$data += [
 			'text' => '',
 			'input' => '',

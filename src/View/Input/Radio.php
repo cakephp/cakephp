@@ -15,6 +15,7 @@
 namespace Cake\View\Input;
 
 use Cake\Utility\Inflector;
+use Cake\View\Input\InputInterface;
 use Traversable;
 
 /**
@@ -23,7 +24,7 @@ use Traversable;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class Radio {
+class Radio implements InputInterface {
 
 /**
  * Template instance.
@@ -72,7 +73,7 @@ class Radio {
  * @param array $data The data to build radio buttons with.
  * @return string
  */
-	public function render($data) {
+	public function render(array $data) {
 		$data += [
 			'name' => '',
 			'options' => [],

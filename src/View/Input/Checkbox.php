@@ -14,10 +14,12 @@
  */
 namespace Cake\View\Input;
 
+use Cake\View\Input\InputInterface;
+
 /**
  * Input widget for creating checkbox widgets.
  */
-class Checkbox {
+class Checkbox implements InputInterface {
 
 /**
  * Template instance.
@@ -51,7 +53,7 @@ class Checkbox {
  * @param array $data The data to create a checkbox with.
  * @return string Generated HTML string.
  */
-	public function render($data) {
+	public function render(array $data) {
 		$data += [
 			'name' => '',
 			'value' => 1,

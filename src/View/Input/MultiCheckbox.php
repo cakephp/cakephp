@@ -15,12 +15,13 @@
 namespace Cake\View\Input;
 
 use Cake\Utility\Inflector;
+use Cake\View\Input\InputInterface;
 
 /**
  * Input widget class for generating multiple checkboxes.
  *
  */
-class MultiCheckbox {
+class MultiCheckbox implements InputInterface {
 
 /**
  * Template instance to use.
@@ -95,7 +96,7 @@ class MultiCheckbox {
  * @param array $data
  * @return string
  */
-	public function render($data) {
+	public function render(array $data) {
 		$data += [
 			'name' => '',
 			'escape' => true,
