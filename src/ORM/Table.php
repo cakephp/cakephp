@@ -727,11 +727,47 @@ class Table implements EventListener {
  *
  * The results of this finder will be in the following form:
  *
- *	[
+ * {{{
+ * [
+ *	1 => 'value for id 1',
+ *	2 => 'value for id 2',
+ *	4 => 'value for id 4'
+ * ]
+ * }}}
+ *
+ * You can specify which property will be used as the key and which as value
+ * by using the `$options` array, when not specified, it will use the results
+ * of calling `primaryKey` and `displayField` respectively in this table:
+ *
+ * {{{
+ * $table->find('list', [
+ *	'idField' => 'name',
+ *	'valueField' => 'age'
+ * ]);
+ * }}}
+ *
+ * Results can be put together in bigger groups when they share a property, you
+ * can customize the property to use for grouping by setting `groupField`:
+ *
+ * {{{
+ * $table->find('list', [
+ *	'groupField' => 'category_id',
+ * ]);
+ * }}}
+ *
+ * When using a `groupField` results will be returned in this format:
+ *
+ * {{{
+ * [
+ *	'group_1' => [
  *		1 => 'value for id 1',
  *		2 => 'value for id 2',
+ *	]
+ *	'group_2' => [
  *		4 => 'value for id 4'
  *	]
+ * ]
+ * }}}
  *
  * @param \Cake\ORM\Query $query
  * @param array $options
