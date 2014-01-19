@@ -350,4 +350,54 @@ class CompositeKeyTest extends TestCase {
 		$this->assertEmpty($result->tags);
 	}
 
+/**
+ * Tests find('list') with composite keys
+ *
+ * @return void
+ */
+	public function testFindCompositeKeys() {
+		$table = new Table([
+			'table' => 'site_authors',
+			'connection' => $this->connection,
+		]);
+		$table->displayField('name');
+		$query = $table->find('list')
+			->hydrate(false)
+			->order('id');
+		$expected = [
+			'1;1' => 'mark',
+			'2;2' => 'juan',
+			'3;2' => 'jose',
+			'4;1' => 'andy'
+		];
+		$this->assertEquals($expected, $query->toArray());
+
+		$table->displayField(['name', 'site_id']);
+		$query = $table->find('list')
+			->hydrate(false)
+			->order('id');
+		$expected = [
+			'1;1' => 'mark;1',
+			'2;2' => 'juan;2',
+			'3;2' => 'jose;2',
+			'4;1' => 'andy;1'
+		];
+		$this->assertEquals($expected, $query->toArray());
+
+		$query = $table->find('list', ['groupField' => ['site_id', 'site_id']])
+			->hydrate(false)
+			->order('id');
+		$expected = [
+			'1;1' => [
+				'1;1' => 'mark;1',
+				'4;1' => 'andy;1'
+			],
+			'2;2' => [
+				'2;2' => 'juan;2',
+				'3;2' => 'jose;2'
+			]
+		];
+		$this->assertEquals($expected, $query->toArray());
+	}
+
 }

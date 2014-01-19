@@ -779,6 +779,10 @@ class Table implements EventListener {
 			'valueField' => $this->displayField(),
 			'groupField' => null
 		];
+		$options = $this->_setFieldMatchers(
+			$options,
+			['idField', 'valueField', 'groupField']
+		);
 
 		return $query->formatResults(function($results) use ($options) {
 			return $results->combine(
@@ -817,10 +821,48 @@ class Table implements EventListener {
 			'idField' => $this->primaryKey(),
 			'parentField' => 'parent_id',
 		];
+		$options = $this->_setFieldMatchers($options, ['idField', 'parentField']);
 
 		return $query->formatResults(function($results) use ($options) {
 			return $results->nest($options['idField'], $options['parentField']);
 		});
+	}
+
+/**
+ * Out of an options array, check if the keys described in `$keys` are arrays
+ * and change the values for closures that will concatenate the each of the
+ * properties in the value array when passed a row.
+ *
+ * This is an auxiliary function used for result formatters that can accept
+ * composite keys when comparing values.
+ *
+ * @param array $options the original options passed to a finder
+ * @param array $keys the keys to check in $options to build matchers from
+ * the associated value
+ * @return array
+ */
+	protected function _setFieldMatchers($options, $keys) {
+		foreach ($keys as $field) {
+			if (!is_array($options[$field])) {
+				continue;
+			}
+
+			if (count($options[$field]) === 1) {
+				$options[$field] = current($options[$field]);
+				continue;
+			}
+
+			$fields = $options[$field];
+			$options[$field] = function($row) use ($fields) {
+				$matches = [];
+				foreach ($fields as $field) {
+					$matches[] = $row[$field];
+				}
+				return implode(';', $matches);
+			};
+		}
+
+		return $options;
 	}
 
 /**
