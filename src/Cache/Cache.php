@@ -412,6 +412,9 @@ class Cache {
  *   the cache key is empty. Can be any callable type supported by your PHP.
  * @param string $config The cache configuration to use for this operation.
  *   Defaults to default.
+ * @return mixed If the key is found: the cached data, false if the data
+ *   missing/expired, or an error.  If the key is not found: boolean of the
+ *   success of the write
  */
 	public static function remember($key, $callable, $config = 'default') {
 		$existing = self::read($key, $config);

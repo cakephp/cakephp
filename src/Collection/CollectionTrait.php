@@ -214,11 +214,11 @@ trait CollectionTrait {
 /**
  * Folds the values in this collection to a single value, as the result of
  * applying the callback function to all elements. $zero is the initial state
- * of the reduction, and each successive step should of it should be returned
+ * of the reduction, and each successive step of it should be returned
  * by the callback function.
  *
- * The callback function is
- *
+ * @param callable $c The callback function to be called
+ * @param mixed $zero The state of reduction
  * @return void
  */
 	public function reduce(callable $c, $zero) {
@@ -284,6 +284,7 @@ trait CollectionTrait {
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @see \Cake\Collection\Collection::sortBy()
+ * @return mixed The value of the top element in the collection
  */
 	public function max($callback, $type = SORT_NUMERIC) {
 		$sorted = new SortIterator($this, $callback, SORT_DESC, $type);
@@ -313,6 +314,7 @@ trait CollectionTrait {
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @see \Cake\Collection\Collection::sortBy()
+ * @return mixed The value of the bottom element in the collection
  */
 	public function min($callback, $type = SORT_NUMERIC) {
 		$sorted = new SortIterator($this, $callback, SORT_ASC, $type);

@@ -142,6 +142,7 @@ class ModelTask extends BakeTask {
  * @param string $className Name of class you want model to be.
  * @param string $table Table name
  * @return Model Model instance
+ * @throws \Exception Will throw this until baking models works
  */
 	protected function _getModelObject($className, $table = null) {
 		if (!$table) {
@@ -195,6 +196,7 @@ class ModelTask extends BakeTask {
  * Handles interactive baking
  *
  * @return boolean
+ * @throws \Exception Will throw this until baking models works
  */
 	protected function _interactive() {
 		$this->hr();
