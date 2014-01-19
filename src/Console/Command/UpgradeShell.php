@@ -210,7 +210,8 @@ class UpgradeShell extends Shell {
  * Replace all the App::uses() calls with `use`.
  *
  * @param string $file The file to search and replace.
- * @param boolean $dryRun Whether or not to do the thing.
+ * @param boolean $dryRun Whether or not to do the thing
+ * @return mixed Replacement of uses call
  */
 	protected function _replaceUses($file) {
 		$pattern = '#App::uses\([\'"]([a-z0-9_]+)[\'"],\s*[\'"]([a-z0-9/_]+)(?:\.([a-z0-9/_]+))?[\'"]\)#i';
@@ -260,6 +261,7 @@ class UpgradeShell extends Shell {
  * Strips the Cake prefix off of classes that no longer have it.
  *
  * @param array $matches
+ * @return array Class names with Cake prefixes removed
  */
 	protected function _mapClassName($matches) {
 		$rename = [
@@ -546,7 +548,8 @@ class UpgradeShell extends Shell {
 
 /**
  * Filter paths to remove webroot, Plugin, tmp directories.
- *
+ * @param array $paths A list of directory paths
+ * @param array $directories A list of directories to exlcude
  * @return array
  */
 	protected function _filterPaths($paths, $directories) {
@@ -563,6 +566,7 @@ class UpgradeShell extends Shell {
 /**
  * Adds the namespace to a given file.
  *
+ * @param string $path The path of the file's location
  * @param string $filePath The file to add a namespace to.
  * @param string $ns The base namespace to use.
  * @param boolean $dry Whether or not to operate in dry-run mode.
@@ -609,6 +613,7 @@ class UpgradeShell extends Shell {
  * Searches the paths and finds files based on extension.
  *
  * @param string $extensions
+ * @param array $exclude An array if filenames to exlcude
  * @return void
  */
 	protected function _findFiles($extensions = '', $exclude = []) {
