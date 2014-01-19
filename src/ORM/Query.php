@@ -881,7 +881,7 @@ class Query extends DatabaseQuery {
 		}
 
 		foreach ($this->_formatters as $formatter) {
-			$result = $formatter($this, $result);
+			$result = $formatter($result, $this);
 		}
 
 		if (!empty($this->_formatters) && !($result instanceof ResultSetDecorator)) {

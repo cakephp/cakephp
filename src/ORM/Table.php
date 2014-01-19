@@ -741,29 +741,16 @@ class Table implements EventListener {
 		$options += [
 			'idField' => $this->primaryKey(),
 			'valueField' => $this->displayField(),
-			'groupField' => false
+			'groupField' => null
 		];
-		$mapper = function($row, $key, $mapReduce) use ($options) {
-			$rowKey = $options['idField'];
-			$rowVal = $options['valueField'];
-			if (!($options['groupField'])) {
-				$mapReduce->emit($row[$rowVal], $row[$rowKey]);
-				return;
-			}
 
-			$key = $row[$options['groupField']];
-			$mapReduce->emitIntermediate([$row[$rowKey] => $row[$rowVal]], $key);
-		};
-
-		$reducer = function($values, $key, $mapReduce) {
-			$result = [];
-			foreach ($values as $value) {
-				$result += $value;
-			}
-			$mapReduce->emit($result, $key);
-		};
-
-		return $query->mapReduce($mapper, $reducer);
+		return $query->formatResults(function($results) use ($options) {
+			return $results->combine(
+				$options['idField'],
+				$options['valueField'],
+				$options['groupField']
+			);
+		});
 	}
 
 /**
@@ -778,36 +765,14 @@ class Table implements EventListener {
  * @return \Cake\ORM\Query
  */
 	public function findThreaded(Query $query, array $options = []) {
-		$parents = [];
-		$hydrate = $query->hydrate();
-		$mapper = function($row, $key, $mapReduce) use (&$parents) {
-			$row['children'] = [];
-			$parents[$row['id']] =& $row;
-			$mapReduce->emitIntermediate($row['id'], $row['parent_id']);
-		};
+		$options += [
+			'idField' => $this->primaryKey(),
+			'parentField' => 'parent_id',
+		];
 
-		$reducer = function($values, $key, $mapReduce) use (&$parents, $hydrate) {
-			if (empty($key) || !isset($parents[$key])) {
-				foreach ($values as $id) {
-					$parents[$id] = $hydrate ? $parents[$id] : new \ArrayObject($parents[$id]);
-					$mapReduce->emit($parents[$id]);
-				}
-				return;
-			}
-
-			foreach ($values as $id) {
-				$parents[$key]['children'][] =& $parents[$id];
-			}
-		};
-
-		$query->mapReduce($mapper, $reducer);
-		if (!$hydrate) {
-			$query->mapReduce(function($row, $key, $mapReduce) {
-				$mapReduce->emit($row->getArrayCopy());
-			});
-		}
-
-		return $query;
+		return $query->formatResults(function($results) use ($options) {
+			return $results->nest($options['idField'], $options['parentField']);
+		});
 	}
 
 /**

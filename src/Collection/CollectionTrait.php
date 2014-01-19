@@ -716,7 +716,7 @@ trait CollectionTrait {
 		$parents = [];
 		$idPath = $this->_propertyExtractor($idPath);
 		$parentPath = $this->_propertyExtractor($parentPath);
-		$isObject = !is_array($this->first());
+		$isObject = !is_array((new Collection($this))->first());
 
 		$mapper = function($row, $key, $mapReduce) use (&$parents, $idPath, $parentPath) {
 			$row['children'] = [];
