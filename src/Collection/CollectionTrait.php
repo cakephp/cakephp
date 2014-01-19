@@ -707,9 +707,9 @@ trait CollectionTrait {
  * based on an id property path and a parent id property path.
  *
  * @param callable|string $idPath the column name path to use for determining
- * whther an element is parent of another
+ * whether an element is parent of another
  * @param callable|string $parentPath the column name path to use for determining
- * whther an element is child of another
+ * whether an element is child of another
  * @return \Cake\Collection\Collection
  */
 	public function nest($idPath, $parentPath) {
