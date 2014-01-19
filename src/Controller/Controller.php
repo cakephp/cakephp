@@ -384,8 +384,7 @@ class Controller extends Object implements EventListener {
  * @param Cake\Network\Request $request
  * @return mixed The resulting response.
  * @throws Cake\Error\PrivateActionException When actions are not public or prefixed by _
- * @throws Cake\Error\MissingActionException When actions are not defined and scaffolding is
- *    not enabled.
+ * @throws Cake\Error\MissingActionException When actions are not defined.
  */
 	public function invokeAction(Request $request) {
 		try {
