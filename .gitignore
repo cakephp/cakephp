@@ -1,8 +1,5 @@
 # User specific & automatically generated files #
 #################################################
-/build
-/dist
-/tags
 /composer.lock
 /phpunit.xml
 /vendor
