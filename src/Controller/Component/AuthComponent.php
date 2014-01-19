@@ -288,12 +288,7 @@ class AuthComponent extends Component {
 		$methods = array_flip(array_map('strtolower', $controller->methods));
 		$action = strtolower($controller->request->params['action']);
 
-		$isMissingAction = (
-			$controller->scaffold === false &&
-			!isset($methods[$action])
-		);
-
-		if ($isMissingAction) {
+		if (!isset($methods[$action])) {
 			return true;
 		}
 

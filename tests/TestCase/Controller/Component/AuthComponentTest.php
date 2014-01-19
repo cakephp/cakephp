@@ -130,10 +130,6 @@ class AuthComponentTest extends TestCase {
 		$this->Controller->name = 'Post';
 		$this->Controller->request['action'] = 'thisdoesnotexist';
 		$this->assertTrue($this->Controller->Auth->startup($event));
-
-		$this->Controller->scaffold = null;
-		$this->Controller->request['action'] = 'index';
-		$this->assertFalse($this->Controller->Auth->startup($event));
 	}
 
 /**
