@@ -24,12 +24,21 @@ use Cake\Database\Schema\Table;
  */
 class SqlserverSchema extends BaseSchema {
 
+	const DEFAULT_SCHEMA_NAME = 'dbo';
+
 /**
  * {@inheritdoc}
  *
  */
 	public function listTablesSql($config) {
-		return ['SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES ORDER BY TABLE_NAME', []];
+		$sql = '
+			SELECT TABLE_NAME
+			FROM INFORMATION_SCHEMA.TABLES
+			WHERE TABLE_SCHEMA = ?
+			ORDER BY TABLE_NAME
+		';
+		$schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+		return [$sql, [$schema]];
 	}
 
 /**
@@ -43,10 +52,11 @@ class SqlserverSchema extends BaseSchema {
 			CHARACTER_MAXIMUM_LENGTH AS [char_length],
 			'' AS [comment], ORDINAL_POSITION AS [ordinal_position]
 		FROM INFORMATION_SCHEMA.COLUMNS
-		WHERE TABLE_NAME = ?
+		WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
 		ORDER BY ordinal_position";
 
-		return [$sql, [$name]];
+		$schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+		return [$sql, [$name, $schema]];
 	}
 
 /**
@@ -161,15 +171,17 @@ class SqlserverSchema extends BaseSchema {
 				AC.[name] AS [column_name],  
 				I.[is_unique], I.[is_primary_key], 
 				I.[is_unique_constraint]
-			FROM sys.[tables] AS T  
+			FROM sys.[tables] AS T
+			INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
 			INNER JOIN sys.[indexes] I ON T.[object_id] = I.[object_id]  
 			INNER JOIN sys.[index_columns] IC ON I.[object_id] = IC.[object_id] AND I.[index_id] = IC.[index_id]
 			INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id] 
-			WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ?
+			WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND S.[name] = ?
 			ORDER BY I.[index_id], IC.[index_column_id]
 		";
 
-		return [$sql, [$table]];
+		$schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+		return [$sql, [$table, $schema]];
 	}
 
 /**
@@ -223,12 +235,14 @@ class SqlserverSchema extends BaseSchema {
 			INNER JOIN sys.foreign_key_columns FKC ON FKC.constraint_object_id = FK.object_id
 			INNER JOIN sys.tables T ON T.object_id = FKC.parent_object_id
 			INNER JOIN sys.tables RT ON RT.object_id = FKC.referenced_object_id
+			INNER JOIN sys.schemas S ON S.schema_id = T.schema_id AND S.schema_id = RT.schema_id
 			INNER JOIN sys.columns C ON C.column_id = FKC.parent_column_id AND C.object_id = FKC.parent_object_id
 			INNER JOIN sys.columns RC ON RC.column_id = FKC.referenced_column_id AND RC.object_id = FKC.referenced_object_id
-			WHERE FK.is_ms_shipped = 0 AND T.name = ?
+			WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?
 		";
 
-		return [$sql, [$table]];
+		$schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+		return [$sql, [$table, $schema]];
 	}
 
 /**
