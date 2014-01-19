@@ -876,7 +876,8 @@ class Query extends DatabaseQuery {
  * @return integer
  */
 	public function count() {
-		if ($this->clause('group') === [] && $this->mapReduce() === []) {
+		$noFormatters = $this->mapReduce() === [] && empty($this->_formatters);
+		if ($this->clause('group') === [] && $noFormatters) {
 			$this->select(['count' => $this->func()->count('*')], true)
 				->hydrate(false);
 			return (int)$this->first()['count'];
