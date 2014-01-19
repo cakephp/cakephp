@@ -209,7 +209,8 @@ SQL;
 				'default' => null,
 				'length' => 20,
 				'precision' => null,
-				'fixed' => null,
+				'unsigned' => null,
+				'autoIncrement' => null,
 				'comment' => null,
 			],
 			'title' => [
@@ -236,7 +237,8 @@ SQL;
 				'default' => null,
 				'length' => 10,
 				'precision' => null,
-				'fixed' => null,
+				'unsigned' => null,
+				'autoIncrement' => null,
 				'comment' => null,
 			],
 			'published' => [
@@ -245,7 +247,6 @@ SQL;
 				'default' => 0,
 				'length' => null,
 				'precision' => null,
-				'fixed' => null,
 				'comment' => null,
 			],
 			'views' => [
@@ -254,7 +255,8 @@ SQL;
 				'default' => 0,
 				'length' => 5,
 				'precision' => null,
-				'fixed' => null,
+				'unsigned' => null,
+				'autoIncrement' => null,
 				'comment' => null,
 			],
 			'created' => [
@@ -263,13 +265,12 @@ SQL;
 				'default' => null,
 				'length' => null,
 				'precision' => null,
-				'fixed' => null,
 				'comment' => null,
 			],
 		];
 		$this->assertEquals(['id'], $result->primaryKey());
 		foreach ($expected as $field => $definition) {
-			$this->assertEquals($definition, $result->column($field));
+			$this->assertEquals($definition, $result->column($field), 'Failed to match field ' . $field);
 		}
 	}
 
@@ -569,7 +570,7 @@ SQL;
 		$result = $table->createSql($connection);
 
 		$this->assertCount(2, $result);
-		$this->assertEquals($expected, $result[0]);
+		$this->assertEquals(str_replace("\r\n", "\n", $expected), str_replace("\r\n", "\n", $result[0]));
 		$this->assertEquals(
 			'CREATE INDEX [title_idx] ON [schema_articles] ([title])',
 			$result[1]
