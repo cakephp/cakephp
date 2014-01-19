@@ -285,7 +285,9 @@ class TranslateBehaviorTest extends CakeTestCase {
 
 		$TestModel = new TranslatedItem();
 		$TestModel->locale = 'eng';
-		$result = $TestModel->find('all', array('conditions' => array('slug' => 'first_translated')));
+		$result = $TestModel->find('all', array(
+			'conditions' => array('slug' => 'first_translated')
+		));
 		$expected = array(
 			array(
 				'TranslatedItem' => array(
@@ -300,10 +302,12 @@ class TranslateBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $TestModel->find('count', array('conditions' => "TranslatedItem.slug = 'first_translated'"));
+		$result = $TestModel->find('count', array(
+			'conditions' => array('slug' => 'first_translated')
+		));
 		$expected = 1;
 		$this->assertEquals($expected, $result);
-	}	
+	}
 
 /**
  * testLocaleSingleAssociations method
