@@ -196,7 +196,7 @@ class Connection {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string $sql
+ * @param string|Cake\Database\Query $sql
  * @return \Cake\Database\Statement
  */
 	public function prepare($sql) {
