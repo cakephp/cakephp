@@ -727,11 +727,47 @@ class Table implements EventListener {
  *
  * The results of this finder will be in the following form:
  *
- *	[
+ * {{{
+ * [
+ *	1 => 'value for id 1',
+ *	2 => 'value for id 2',
+ *	4 => 'value for id 4'
+ * ]
+ * }}}
+ *
+ * You can specify which property will be used as the key and which as value
+ * by using the `$options` array, when not specified, it will use the results
+ * of calling `primaryKey` and `displayField` respectively in this table:
+ *
+ * {{{
+ * $table->find('list', [
+ *	'idField' => 'name',
+ *	'valueField' => 'age'
+ * ]);
+ * }}}
+ *
+ * Results can be put together in bigger groups when they share a property, you
+ * can customize the property to use for grouping by setting `groupField`:
+ *
+ * {{{
+ * $table->find('list', [
+ *	'groupField' => 'category_id',
+ * ]);
+ * }}}
+ *
+ * When using a `groupField` results will be returned in this format:
+ *
+ * {{{
+ * [
+ *	'group_1' => [
  *		1 => 'value for id 1',
  *		2 => 'value for id 2',
+ *	]
+ *	'group_2' => [
  *		4 => 'value for id 4'
  *	]
+ * ]
+ * }}}
  *
  * @param \Cake\ORM\Query $query
  * @param array $options
@@ -741,29 +777,20 @@ class Table implements EventListener {
 		$options += [
 			'idField' => $this->primaryKey(),
 			'valueField' => $this->displayField(),
-			'groupField' => false
+			'groupField' => null
 		];
-		$mapper = function($row, $key, $mapReduce) use ($options) {
-			$rowKey = $options['idField'];
-			$rowVal = $options['valueField'];
-			if (!($options['groupField'])) {
-				$mapReduce->emit($row[$rowVal], $row[$rowKey]);
-				return;
-			}
+		$options = $this->_setFieldMatchers(
+			$options,
+			['idField', 'valueField', 'groupField']
+		);
 
-			$key = $row[$options['groupField']];
-			$mapReduce->emitIntermediate([$row[$rowKey] => $row[$rowVal]], $key);
-		};
-
-		$reducer = function($values, $key, $mapReduce) {
-			$result = [];
-			foreach ($values as $value) {
-				$result += $value;
-			}
-			$mapReduce->emit($result, $key);
-		};
-
-		return $query->mapReduce($mapper, $reducer);
+		return $query->formatResults(function($results) use ($options) {
+			return $results->combine(
+				$options['idField'],
+				$options['valueField'],
+				$options['groupField']
+			);
+		});
 	}
 
 /**
@@ -773,41 +800,69 @@ class Table implements EventListener {
  * Values belonging to a parent row based on their parent_id value will be
  * recursively nested inside the parent row values using the `children` property
  *
+ * You can customize what fields are used for nesting results, by default the
+ * primary key and the `parent_id` fields are used. If you you wish to change
+ * these defaults you need to provide the keys `idField` or `parentField` in
+ * `$options`:
+ *
+ * {{{
+ * $table->find('threaded', [
+ *	'idField' => 'id',
+ *	'parentField' => 'ancestor_id'
+ * ]);
+ * }}}
+ *
  * @param \Cake\ORM\Query $query
  * @param array $options
  * @return \Cake\ORM\Query
  */
 	public function findThreaded(Query $query, array $options = []) {
-		$parents = [];
-		$hydrate = $query->hydrate();
-		$mapper = function($row, $key, $mapReduce) use (&$parents) {
-			$row['children'] = [];
-			$parents[$row['id']] =& $row;
-			$mapReduce->emitIntermediate($row['id'], $row['parent_id']);
-		};
+		$options += [
+			'idField' => $this->primaryKey(),
+			'parentField' => 'parent_id',
+		];
+		$options = $this->_setFieldMatchers($options, ['idField', 'parentField']);
 
-		$reducer = function($values, $key, $mapReduce) use (&$parents, $hydrate) {
-			if (empty($key) || !isset($parents[$key])) {
-				foreach ($values as $id) {
-					$parents[$id] = $hydrate ? $parents[$id] : new \ArrayObject($parents[$id]);
-					$mapReduce->emit($parents[$id]);
+		return $query->formatResults(function($results) use ($options) {
+			return $results->nest($options['idField'], $options['parentField']);
+		});
+	}
+
+/**
+ * Out of an options array, check if the keys described in `$keys` are arrays
+ * and change the values for closures that will concatenate the each of the
+ * properties in the value array when passed a row.
+ *
+ * This is an auxiliary function used for result formatters that can accept
+ * composite keys when comparing values.
+ *
+ * @param array $options the original options passed to a finder
+ * @param array $keys the keys to check in $options to build matchers from
+ * the associated value
+ * @return array
+ */
+	protected function _setFieldMatchers($options, $keys) {
+		foreach ($keys as $field) {
+			if (!is_array($options[$field])) {
+				continue;
+			}
+
+			if (count($options[$field]) === 1) {
+				$options[$field] = current($options[$field]);
+				continue;
+			}
+
+			$fields = $options[$field];
+			$options[$field] = function($row) use ($fields) {
+				$matches = [];
+				foreach ($fields as $field) {
+					$matches[] = $row[$field];
 				}
-				return;
-			}
-
-			foreach ($values as $id) {
-				$parents[$key]['children'][] =& $parents[$id];
-			}
-		};
-
-		$query->mapReduce($mapper, $reducer);
-		if (!$hydrate) {
-			$query->mapReduce(function($row, $key, $mapReduce) {
-				$mapReduce->emit($row->getArrayCopy());
-			});
+				return implode(';', $matches);
+			};
 		}
 
-		return $query;
+		return $options;
 	}
 
 /**

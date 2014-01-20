@@ -114,6 +114,14 @@ class Query extends DatabaseQuery {
 	protected $_mapReduce = [];
 
 /**
+ * List of formatter classes or callbacks that will post-process the
+ * results when fetched
+ *
+ * @var array
+ */
+	protected $_formatters = [];
+
+/**
  * Holds any custom options passed using applyOptions that could not be processed
  * by any method in this class.
  *
@@ -788,6 +796,56 @@ class Query extends DatabaseQuery {
 	}
 
 /**
+ * Registers a new formatter callback function that is to be executed when the results
+ * are tried to be fetched from the database.
+ *
+ * Formatting callbacks will get as first parameter a `ResultSetDecorator` that
+ * can be traversed and modified at will. As the second parameter, the formatting
+ * callback will receive this query instance.
+ *
+ * Callbacks are required to return an iterator object, which will be used as
+ * the return value for this query's result. Formatter functions are applied
+ * after all the `MapReduce` routines for this query have been executed.
+ *
+ * If the first argument is set to null, it will return the list of previously
+ * registered map reduce routines.
+ *
+ * If the second argument is set to true, it will erase previous formatters
+ * and replace them with the passed first argument.
+ *
+ * ### Example:
+ *
+ * {{{
+ * //Return all results from the table indexed by id
+ * $query->select(['id', 'name'])->formatResults(function($results, $query) {
+ *	return $results->indexBy('id');
+ * });
+ *
+ * //Add a new column to the ResultSet
+ * $query->select(['name', 'birth_date'])->formatResults(function($results, $query) {
+ *	return $results->map(function($row) {
+ *		$row['age'] = $row['birth_date']->diff(new DateTime)->y;
+ *		return $row;
+ *	});
+ * });
+ * }}}
+ *
+ * @param callable $formatter
+ * @param boolean $overwrite
+ * @return Cake\ORM\Query|array
+ */
+	public function formatResults(callable $formatter = null, $overwrite = false) {
+		if ($overwrite) {
+			$this->_formatters = [];
+		}
+		if ($formatter === null) {
+			return $this->_formatters;
+		}
+		$this->_formatters[] = $formatter;
+		return $this;
+	}
+
+/**
  * Returns the first result out of executing this query, if the query has not been
  * executed before, it will set the limit clause to 1 for performance reasons.
  *
@@ -818,7 +876,8 @@ class Query extends DatabaseQuery {
  * @return integer
  */
 	public function count() {
-		if ($this->clause('group') === [] && $this->mapReduce() === []) {
+		$noFormatters = $this->mapReduce() === [] && empty($this->_formatters);
+		if ($this->clause('group') === [] && $noFormatters) {
 			$this->select(['count' => $this->func()->count('*')], true)
 				->hydrate(false);
 			return (int)$this->first()['count'];
@@ -860,6 +919,15 @@ class Query extends DatabaseQuery {
 		if (!empty($this->_mapReduce)) {
 			$result = new ResultSetDecorator($result);
 		}
+
+		foreach ($this->_formatters as $formatter) {
+			$result = $formatter($result, $this);
+		}
+
+		if (!empty($this->_formatters) && !($result instanceof ResultSetDecorator)) {
+			$result = new ResultSetDecorator($result);
+		}
+
 		return $result;
 	}
 

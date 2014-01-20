@@ -1724,4 +1724,69 @@ class QueryTest extends TestCase {
 		$this->assertEquals([1], array_unique($ids));
 	}
 
+/**
+ * Tests the formatResults method
+ *
+ * @return void
+ */
+	public function testFormatResults() {
+		$callback1 = function() {
+		};
+		$callback2 = function() {
+		};
+		$table = TableRegistry::get('authors');
+		$query = new Query($this->connection, $table);
+		$this->assertSame($query, $query->formatResults($callback1));
+		$this->assertSame([$callback1], $query->formatResults());
+		$this->assertSame($query, $query->formatResults($callback2));
+		$this->assertSame([$callback1, $callback2], $query->formatResults());
+		$query->formatResults($callback2, true);
+		$this->assertSame([$callback2], $query->formatResults());
+		$query->formatResults(null, true);
+		$this->assertSame([], $query->formatResults());
+	}
+
+/**
+ * Test fetching results from a qurey with a custom formatter
+ *
+ * @return void
+ */
+	public function testQueryWithFormatter() {
+		$table = TableRegistry::get('authors');
+		$query = new Query($this->connection, $table);
+		$query->select()->formatResults(function($results, $q) use ($query) {
+			$this->assertSame($query, $q);
+			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
+			return $results->indexBy('id');
+		});
+		$this->assertEquals([1, 2, 3, 4], array_keys($query->toArray()));
+	}
+
+/**
+ * Test fetching results from a qurey with a two custom formatters
+ *
+ * @return void
+ */
+	public function testQueryWithStackedFormatters() {
+		$table = TableRegistry::get('authors');
+		$query = new Query($this->connection, $table);
+		$query->select()->formatResults(function($results, $q) use ($query) {
+			$this->assertSame($query, $q);
+			$this->assertInstanceOf('\Cake\ORM\ResultSet', $results);
+			return $results->indexBy('id');
+		});
+
+		$query->formatResults(function($results) {
+			return $results->extract('name');
+		});
+
+		$expected = [
+			1 => 'mariano',
+			2 => 'nate',
+			3 => 'larry',
+			4 => 'garrett'
+		];
+		$this->assertEquals($expected, $query->toArray());
+	}
+
 }

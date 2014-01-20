@@ -350,4 +350,144 @@ class CompositeKeyTest extends TestCase {
 		$this->assertEmpty($result->tags);
 	}
 
+/**
+ * Tests find('list') with composite keys
+ *
+ * @return void
+ */
+	public function testFindListCompositeKeys() {
+		$table = new Table([
+			'table' => 'site_authors',
+			'connection' => $this->connection,
+		]);
+		$table->displayField('name');
+		$query = $table->find('list')
+			->hydrate(false)
+			->order('id');
+		$expected = [
+			'1;1' => 'mark',
+			'2;2' => 'juan',
+			'3;2' => 'jose',
+			'4;1' => 'andy'
+		];
+		$this->assertEquals($expected, $query->toArray());
+
+		$table->displayField(['name', 'site_id']);
+		$query = $table->find('list')
+			->hydrate(false)
+			->order('id');
+		$expected = [
+			'1;1' => 'mark;1',
+			'2;2' => 'juan;2',
+			'3;2' => 'jose;2',
+			'4;1' => 'andy;1'
+		];
+		$this->assertEquals($expected, $query->toArray());
+
+		$query = $table->find('list', ['groupField' => ['site_id', 'site_id']])
+			->hydrate(false)
+			->order('id');
+		$expected = [
+			'1;1' => [
+				'1;1' => 'mark;1',
+				'4;1' => 'andy;1'
+			],
+			'2;2' => [
+				'2;2' => 'juan;2',
+				'3;2' => 'jose;2'
+			]
+		];
+		$this->assertEquals($expected, $query->toArray());
+	}
+
+/**
+ * Tests find('threaded') with composite keys
+ *
+ * @return void
+ */
+	public function testFindThreadedCompositeKeys() {
+		$table = TableRegistry::get('SiteAuthors');
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['_addDefaultFields', 'execute'],
+			[null, $table]
+		);
+
+		$items = new \Cake\ORM\ResultSetDecorator([
+			['id' => 1, 'name' => 'a', 'site_id' => 1,  'parent_id' => null],
+			['id' => 2, 'name' => 'a', 'site_id' => 2,  'parent_id' => null],
+			['id' => 3, 'name' => 'a', 'site_id' => 1,  'parent_id' => 1],
+			['id' => 4, 'name' => 'a', 'site_id' => 2,  'parent_id' => 2],
+			['id' => 5, 'name' => 'a', 'site_id' => 2,  'parent_id' => 4],
+			['id' => 6, 'name' => 'a', 'site_id' => 1,  'parent_id' => 2],
+			['id' => 7, 'name' => 'a', 'site_id' => 1,  'parent_id' => 3],
+			['id' => 8, 'name' => 'a', 'site_id' => 2,  'parent_id' => 4],
+		]);
+		$query->find('threaded', ['parentField' => ['parent_id', 'site_id']]);
+		$formatter = $query->formatResults()[0];
+
+		$expected = [
+			[
+				'id' => 1,
+				'name' => 'a',
+				'site_id' => 1,
+				'parent_id' => null,
+				'children' => [
+					[
+						'id' => 3,
+						'name' => 'a',
+						'site_id' => 1,
+						'parent_id' => 1,
+						'children' => [
+							[
+								'id' => 7,
+								'name' => 'a',
+								'site_id' => 1,
+								'parent_id' => 3,
+								'children' => []
+							]
+						]
+					]
+				]
+			],
+			[
+				'id' => 2,
+				'name' => 'a',
+				'site_id' => 2,
+				'parent_id' => null,
+				'children' => [
+					[
+						'id' => 4,
+						'name' => 'a',
+						'site_id' => 2,
+						'parent_id' => 2,
+						'children' => [
+							[
+								'id' => 5,
+								'name' => 'a',
+								'site_id' => 2,
+								'parent_id' => 4,
+								'children' => []
+							],
+							[
+								'id' => 8,
+								'name' => 'a',
+								'site_id' => 2,
+								'parent_id' => 4,
+								'children' => []
+							]
+						]
+					]
+				]
+			],
+			[
+				'id' => 6,
+				'name' => 'a',
+				'site_id' => 1,
+				'parent_id' => 2,
+				'children' => []
+			]
+		];
+		$this->assertEquals($expected, $formatter($items)->toArray());
+	}
 }
