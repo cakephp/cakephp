@@ -15,13 +15,13 @@
 namespace Cake\Test\TestCase\View\Input;
 
 use Cake\TestSuite\TestCase;
-use Cake\View\Input\Text;
+use Cake\View\Input\Basic;
 use Cake\View\StringTemplate;
 
 /**
- * Text input test.
+ * Basic input test.
  */
-class TextTest extends TestCase {
+class BasicTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
@@ -37,7 +37,7 @@ class TextTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$text = new Text($this->templates);
+		$text = new Basic($this->templates);
 		$result = $text->render(['name' => 'my_input']);
 		$expected = [
 			'input' => ['type' => 'text', 'name' => 'my_input']
@@ -51,7 +51,7 @@ class TextTest extends TestCase {
  * @return void
  */
 	public function testRenderType() {
-		$text = new Text($this->templates);
+		$text = new Basic($this->templates);
 		$data = [
 			'name' => 'my_input',
 			'type' => 'email',
@@ -69,7 +69,7 @@ class TextTest extends TestCase {
  * @return void
  */
 	public function testRenderWithValue() {
-		$text = new Text($this->templates);
+		$text = new Basic($this->templates);
 		$data = [
 			'name' => 'my_input',
 			'type' => 'email',
@@ -92,7 +92,7 @@ class TextTest extends TestCase {
  * @return void
  */
 	public function testRenderAttributes() {
-		$text = new Text($this->templates);
+		$text = new Basic($this->templates);
 		$data = [
 			'name' => 'my_input',
 			'type' => 'email',

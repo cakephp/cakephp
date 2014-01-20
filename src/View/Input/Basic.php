@@ -23,7 +23,7 @@ use Cake\View\Input\InputInterface;
  * input elements like hidden, text, email, tel and other
  * types.
  */
-class Text implements InputInterface {
+class Basic implements InputInterface {
 
 /**
  * StringTemplate instance.

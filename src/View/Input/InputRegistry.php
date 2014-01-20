@@ -45,7 +45,7 @@ class InputRegistry {
 		'multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label'],
 		'radio' => ['Cake\View\Input\Radio', 'label'],
 		'select' => ['Cake\View\Input\SelectBox'],
-		'_default' => ['Cake\View\Input\Text'],
+		'_default' => ['Cake\View\Input\Basic'],
 	];
 
 /**
