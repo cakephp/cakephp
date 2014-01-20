@@ -120,6 +120,11 @@ class ConnectionTest extends TestCase {
 		$result = $this->connection->prepare($sql);
 		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
 		$this->assertEquals($sql, $result->queryString);
+
+		$query = $this->connection->newQuery()->select('1 + 1');
+		$result = $this->connection->prepare($query);
+		$this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+		$this->assertEquals($sql, $result->queryString);
 	}
 
 /**
