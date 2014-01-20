@@ -201,7 +201,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  */
 	public function execute() {
 		$query = $this->_transformQuery();
-		$statement = $this->_connection->prepare($query->sql());
+		$statement = $this->_connection->prepare($query);
 		$query->_bindStatement($statement);
 		$statement->execute();
 

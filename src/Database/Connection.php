@@ -196,10 +196,13 @@ class Connection {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string $sql
+ * @param string|Cake\Database\Query $sql
  * @return \Cake\Database\Statement
  */
 	public function prepare($sql) {
+		if ($sql instanceof Query) {
+			$sql = $sql->sql();
+		}
 		$statement = $this->_driver->prepare($sql);
 
 		if ($this->_logQueries) {
