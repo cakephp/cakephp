@@ -92,10 +92,10 @@ abstract class Driver {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string $sql
+ * @param string|Cake\Database\Query $query
  * @return Cake\Database\Statement
  */
-	public abstract function prepare($sql);
+	public abstract function prepare($query);
 
 /**
  * Starts a transaction

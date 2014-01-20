@@ -200,9 +200,6 @@ class Connection {
  * @return \Cake\Database\Statement
  */
 	public function prepare($sql) {
-		if ($sql instanceof Query) {
-			$sql = $sql->sql();
-		}
 		$statement = $this->_driver->prepare($sql);
 
 		if ($this->_logQueries) {
