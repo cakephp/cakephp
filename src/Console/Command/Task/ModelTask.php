@@ -81,7 +81,7 @@ class ModelTask extends BakeTask {
  * @return void
  */
 	public function initialize() {
-		$this->path = current(App::path('Model'.DS.'Repository'));
+		$this->path = current(App::path('Model'));
 	}
 
 /**
@@ -734,6 +734,7 @@ class ModelTask extends BakeTask {
  * @return array Array of associations.
  */
 	public function doMoreAssociations($model, $associations) {
+		return []; // this method is not ready for prime time
 		$prompt = __d('cake_console', 'Would you like to define some additional model associations?');
 		$wannaDoMoreAssoc = $this->in($prompt, ['y', 'n'], 'n');
 		$possibleKeys = $this->_generatePossibleKeys();
@@ -810,12 +811,12 @@ class ModelTask extends BakeTask {
 		$possible = [];
 		foreach ($this->_tables as $otherTable) {
 			$tempOtherTable = new Table(['table' => $otherTable, 'ds' => $this->connection]);
-			$modelFieldsTemp = $tempOtherTable->schema();
-			foreach ($modelFieldsTemp as $fieldName => $field) {
-				if ($field['type'] === 'integer' || $field['type'] === 'string') {
-					$possible[$otherTable][] = $fieldName;
-				}
-			}
+			// $modelFieldsTemp = $tempOtherTable->schema();
+			// foreach ($modelFieldsTemp as $fieldName => $field) {
+			// 	if ($field['type'] === 'integer' || $field['type'] === 'string') {
+			// 		$possible[$otherTable][] = $fieldName;
+			// 	}
+			// }
 		}
 		return $possible;
 	}
@@ -828,29 +829,33 @@ class ModelTask extends BakeTask {
  * @return string
  */
 	public function bake($name, $data = []) {
-		if ($name instanceof Table) {
+		$out = $this->bakeTableClass($name, $data);
+		$out .= $this->bakeEntityClass($name, $data);
+		return $out;
+	}
+
+	private function bakeTableClass($table, $data = []) {
+		if ($table instanceof Table) {
 			if (!$data) {
 				$data = [];
-				$data['associations'] = $this->doAssociations($name);
-				$data['validate'] = $this->doValidation($name);
-				$data['actsAs'] = $this->doActsAs($name);
+				$data['associations'] = $this->doAssociations($table);
+				$data['validate'] = $this->doValidation($table);
+				$data['actsAs'] = $this->doActsAs($table);
 			}
-			$data['primaryKey'] = $name->primaryKey();
-			$data['useTable'] = $name->table;
-			$data['useDbConfig'] = $name->useDbConfig;
-			$data['name'] = $name = $name->name;
+			$data['primaryKey'] = (array)$table->primaryKey();
+			$data['table'] = $table->table;
+			$data['name'] = $table = $table->name;
 		} else {
-			$data['name'] = $name;
+			$data['name'] = $table;
 		}
-		$data['className'] = $className = Inflector::pluralize($name) . 'Table';
+		$data['className'] = $className = Inflector::pluralize($table) . 'Table';
 
 		$defaults = [
 			'associations' => [],
 			'actsAs' => [],
 			'validate' => [],
-			'primaryKey' => 'id',
-			'useTable' => null,
-			'useDbConfig' => 'default',
+			'primaryKey' => ['id'],
+			'table' => null,
 			'displayField' => null
 		];
 		$data = array_merge($defaults, $data);
@@ -865,11 +870,41 @@ class ModelTask extends BakeTask {
 			'plugin' => $this->plugin,
 			'pluginPath' => $pluginPath
 		]);
-		$out = $this->Template->generate('classes', 'model');
+		$out = $this->Template->generate('classes', 'table');
 
-		$path = $this->getPath();
+		$path = $this->getPath().DS.'Table'.DS;
 		$filename = $path . $className . '.php';
-		$this->out("\n" . __d('cake_console', 'Baking model class for %s...', $className), 1, Shell::QUIET);
+		$this->out("\n" . __d('cake_console', 'Baking table class for %s...', $className), 1, Shell::QUIET);
+		$this->createFile($filename, $out);
+		TableRegistry::clear();
+		return $out;
+	}
+
+	private function bakeEntityClass($table, $data = []) {
+		if ($table instanceof Table) {
+			if (!$data) {
+				$data = [];
+			}
+			$data['name'] = $table->name;
+		} else {
+			$data['name'] = $table;
+		}
+
+		$pluginPath = '';
+		if ($this->plugin) {
+			$pluginPath = $this->plugin . '.';
+		}
+
+		$this->Template->set($data);
+		$this->Template->set([
+			'plugin' => $this->plugin,
+			'pluginPath' => $pluginPath
+		]);
+		$out = $this->Template->generate('classes', 'entity');
+
+		$path = $this->getPath().DS.'Entity'.DS;
+		$filename = $path . $data['name'] . '.php';
+		$this->out("\n" . __d('cake_console', 'Baking entity class for %s...', $data['name']), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
 		TableRegistry::clear();
 		return $out;

@@ -19,14 +19,14 @@
 use Cake\Utility\Inflector;
 
 echo "<?php\n";
-echo "namespace App\Model\Repository;\n\n";
+echo "namespace App\Model\Table;\n\n";
 echo "use Cake\ORM\Table;\n\n";
 ?>
 /**
  * <?= $name ?> Table
  *
 <?php
-foreach (['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany'] as $assocType) {
+foreach (['hasOne', 'belongsTo', 'hasMany', 'belongsToMany'] as $assocType) {
 	if (!empty($associations[$assocType])) {
 		foreach ($associations[$assocType] as $relation) {
 			echo " * @property {$relation['className']} \${$relation['alias']}\n";
@@ -37,14 +37,9 @@ foreach (['hasOne', 'belongsTo', 'hasMany', 'hasAndBelongsToMany'] as $assocType
  */
 class <?= $className ?> extends <?= $plugin; ?>Table {
 	public function initialize(array $config) {
-<?php if ($useDbConfig !== 'default'): ?>
-		// Use database config
-		$this->useDbConfig('<?= $useDbConfig; ?>');
-<?php endif;
-
-if ($useTable && $useTable !== Inflector::tableize($name)): ?>
+<?php if ($useTable && $useTable !== Inflector::tableize($name)): ?>
 		// Use table: False or table name
-		$this->useTable('<?= $useTable; ?>');
+		$this->table('<?= $useTable; ?>');
 <?php endif;
 
 if ($primaryKey !== 'id'): ?>
@@ -76,32 +71,24 @@ endforeach;
 
 foreach (['hasOne', 'belongsTo'] as $assocType):
 	if (!empty($associations[$assocType])):
-		$typeCount = count($associations[$assocType]);
-		echo "\n/**\n * $assocType associations\n *\n * @var array\n */";
+		echo "\n// $assocType associations";
 		foreach ($associations[$assocType] as $i => $relation):
-			$out = "\n\t\t\$this->$assocType(";
-			$out .= "\n\t\t'{$relation['alias']}', [\n";
+			$out = "\n\t\t\$this->$assocType('{$relation['alias']}', [\n";
 			$out .= "\t\t\t'className' => '{$relation['className']}',\n";
 			$out .= "\t\t\t'foreignKey' => '{$relation['foreignKey']}',\n";
 			$out .= "\t\t\t'conditions' => '',\n";
 			$out .= "\t\t\t'fields' => '',\n";
 			$out .= "\t\t\t'order' => ''\n";
-			$out .= "\t\t]";
-			if ($i + 1 < $typeCount) {
-				$out .= ",";
-			}
-			$out .= "\n\t);\n";
+			$out .= "\t\t]);\n";
 			echo $out;
 		endforeach;
 	endif;
 endforeach;
 
 if (!empty($associations['hasMany'])):
-	$belongsToCount = count($associations['hasMany']);
-	echo "\n/**\n * hasMany associations\n *\n * @var array\n */";
-	echo "\n\tpublic \$hasMany = [";
+	echo "\n// hasMany associations";
 	foreach ($associations['hasMany'] as $i => $relation):
-		$out = "\n\t\t'{$relation['alias']}' => [\n";
+		$out = "\n\t\t\$this->hasMany('{$relation['alias']}', [\n";
 		$out .= "\t\t\t'className' => '{$relation['className']}',\n";
 		$out .= "\t\t\t'foreignKey' => '{$relation['foreignKey']}',\n";
 		$out .= "\t\t\t'dependent' => false,\n";
@@ -113,21 +100,15 @@ if (!empty($associations['hasMany'])):
 		$out .= "\t\t\t'exclusive' => '',\n";
 		$out .= "\t\t\t'finderQuery' => '',\n";
 		$out .= "\t\t\t'counterQuery' => ''\n";
-		$out .= "\t\t]";
-		if ($i + 1 < $belongsToCount) {
-			$out .= ",";
-		}
+		$out .= "\t\t]);\n\n";
 		echo $out;
 	endforeach;
-	echo "\n\t];\n\n";
 endif;
 
-if (!empty($associations['hasAndBelongsToMany'])):
-	$habtmCount = count($associations['hasAndBelongsToMany']);
-	echo "\n/**\n * hasAndBelongsToMany associations\n *\n * @var array\n */";
-	echo "\n\tpublic \$hasAndBelongsToMany = [";
-	foreach ($associations['hasAndBelongsToMany'] as $i => $relation):
-		$out = "\n\t\t'{$relation['alias']}' => [\n";
+if (!empty($associations['belongsToMany'])):
+	echo "\n// belongsToMany associations";
+	foreach ($associations['belongsToMany'] as $i => $relation):
+		$out = "\n\t\t\$this->belongsToMany('{$relation['alias']}', [\n";
 		$out .= "\t\t\t'className' => '{$relation['className']}',\n";
 		$out .= "\t\t\t'joinTable' => '{$relation['joinTable']}',\n";
 		$out .= "\t\t\t'foreignKey' => '{$relation['foreignKey']}',\n";
@@ -139,13 +120,9 @@ if (!empty($associations['hasAndBelongsToMany'])):
 		$out .= "\t\t\t'limit' => '',\n";
 		$out .= "\t\t\t'offset' => '',\n";
 		$out .= "\t\t\t'finderQuery' => '',\n";
-		$out .= "\t\t]";
-		if ($i + 1 < $habtmCount) {
-			$out .= ",";
-		}
+		$out .= "\t\t]);\n\n";
 		echo $out;
 	endforeach;
-	echo "\n\t];\n\n";
 endif;
 ?>
 	}
@@ -154,9 +131,8 @@ endif;
 <?php if (!empty($validate)): ?>
 	// Validation rules
 	public function validationDefault($validator) {
-		$validator
 <?php foreach ($validate as $field => $validations): ?>
-			->add('<?= $field; ?>', [
+		$validator->add('<?= $field; ?>', [
 <?php foreach ($validations as $key => $validator): ?>
 				'<?= $key; ?>', [
 					'rule' => ['<?= $validator; ?>'],
