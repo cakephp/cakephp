@@ -800,7 +800,7 @@ class Query extends DatabaseQuery {
  * are tried to be fetched from the database.
  *
  * Formatting callbacks will get as first parameter a `ResultSetDecorator` that
- * can be traversed and modified at will. AS second parameter, the formatting
+ * can be traversed and modified at will. As the second parameter, the formatting
  * callback will receive this query instance.
  *
  * Callbacks are required to return an iterator object, which will be used as
@@ -810,8 +810,8 @@ class Query extends DatabaseQuery {
  * If the first argument is set to null, it will return the list of previously
  * registered map reduce routines.
  *
- * If the second argument is set to true, it will erase previous map reducers
- * and replace it with the arguments passed.
+ * If the second argument is set to true, it will erase previous formatters
+ * and replace them with the passed first argument.
  *
  * ### Example:
  *
@@ -822,7 +822,7 @@ class Query extends DatabaseQuery {
  * });
  *
  * //Add a new column to the ResultSet
- * $query->select(['id', 'name'])->formatResults(function($results, $query) {
+ * $query->select(['name', 'bith_date'])->formatResults(function($results, $query) {
  *	return $results->map(function($row) {
  *		$row['age'] = $row['birth_date']->diff(new DateTime)->y;
  *		return $row;

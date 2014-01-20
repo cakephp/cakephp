@@ -629,9 +629,9 @@ trait CollectionTrait {
 	}
 
 /**
- * Returrns a new collection where the values extracted based on a value path
+ * Returns a new collection where the values extracted based on a value path
  * and then indexed by a key path. Optionally this method can produce parent
- * groups absed on a group property path.
+ * groups based on a group property path.
  *
  * ### Examples:
  *
