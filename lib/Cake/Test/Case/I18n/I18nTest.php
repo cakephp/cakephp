@@ -17,6 +17,7 @@
  */
 
 App::uses('I18n', 'I18n');
+App::uses('CakeSession', 'Model/Datasource');
 
 /**
  * I18nTest class
@@ -1517,7 +1518,7 @@ class I18nTest extends CakeTestCase {
  * @return void
  */
 	public function testSetLanguageWithSession() {
-		$_SESSION['Config']['language'] = 'po';
+		CakeSession::write('Config.language', 'po');
 		$singular = $this->_singular();
 		$this->assertEquals('Po (translated)', $singular);
 
@@ -1548,7 +1549,7 @@ class I18nTest extends CakeTestCase {
 		$this->assertTrue(in_array('23 everything else (po translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (po translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (po translated)', $plurals));
-		unset($_SESSION['Config']['language']);
+		CakeSession::delete('Config.language');
 	}
 
 /**
