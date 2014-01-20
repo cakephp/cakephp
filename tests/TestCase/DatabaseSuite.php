@@ -36,6 +36,7 @@ class DatabaseSuite extends TestSuite {
 		$suite = new TestSuite('Database related tests');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'Database');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'ORM');
+		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'Model');
 
 		$permutations = [
 			'Identifier Quoting' => function() {

@@ -15,6 +15,10 @@
 	<testsuites>
 		<testsuite name="CakePHP Test Suite">
 			<directory>./tests/TestCase/</directory>
+			<!-- Excludes are required in order to let DabaseSuite decorate the tests -->
+			<exclude>./tests/TestCase/Model/</exclude>
+			<exclude>./tests/TestCase/Database/</exclude>
+			<exclude>./tests/TestCase/ORM/</exclude>
 		</testsuite>
 		<testsuite name="Database Test Suite">
 			<file>./tests/TestCase/DatabaseSuite.php</file>
