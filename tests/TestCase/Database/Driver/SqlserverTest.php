@@ -82,4 +82,53 @@ class SqlserverTest extends \Cake\TestSuite\TestCase {
 		$driver->connect();
 	}
 
+/**
+ * Test select with limit only
+ *
+ * @return void
+ */
+	public function testSelectLimit() {
+		$driver = $this->getMock(
+			'Cake\Database\Driver\Sqlserver',
+			['_connect', 'connection'],
+			[['dsn' => 'foo']]
+		);
+		$connection = $this->getMock(
+			'\Cake\Database\Connection',
+			['connect', 'driver'],
+			[['log' => false]]
+		);
+		$connection
+			->expects($this->any())
+			->method('driver')
+			->will($this->returnValue($driver));
+
+		$query = new \Cake\Database\Query($connection);
+		$query->select(['id', 'title'])
+			->from('articles')
+			->order(['id'])
+			->offset(10);
+		$this->assertEquals('SELECT id, title FROM articles ORDER BY id OFFSET 10 ROWS', $query->sql());
+
+		$query = new \Cake\Database\Query($connection);
+		$query->select(['id', 'title'])
+			->from('articles')
+			->order(['id'])
+			->limit(10)
+			->offset(50);
+		$this->assertEquals('SELECT id, title FROM articles ORDER BY id OFFSET 50 ROWS FETCH FIRST 10 ROWS ONLY', $query->sql());
+
+		$query = new \Cake\Database\Query($connection);
+		$query->select(['id', 'title'])
+			->from('articles')
+			->offset(10);
+		$this->assertEquals('SELECT id, title FROM articles ORDER BY (SELECT NULL) OFFSET 10 ROWS', $query->sql());
+
+		$query = new \Cake\Database\Query($connection);
+		$query->select(['id', 'title'])
+			->from('articles')
+			->limit(10);
+		$this->assertEquals('SELECT TOP 10 id, title FROM articles', $query->sql());
+	}
+
 }

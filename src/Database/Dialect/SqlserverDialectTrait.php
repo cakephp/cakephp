@@ -41,6 +41,48 @@ trait SqlserverDialectTrait {
 	protected $_endQuote = ']';
 
 /**
+ * Modify the limit/offset to TSQL
+ *
+ * @param Cake\Database\Query $query The query to translate
+ * @return Cake\Database\Query The modified query
+ */
+	protected function _selectQueryTranslator($query) {
+		$limit = $query->clause('limit');
+		$offset = $query->clause('offset');
+
+		if ($limit && $offset === null) {
+			// @todo implement TOP
+			$query->clause('order') || $query->order([$query->connection()->newQuery()->select(['NULL'])]);
+			throw new \Cake\Error\NotImplementedException();
+		}
+
+		if ($offset) {
+			$offsetSql = sprintf('%d ROWS', $offset);
+			if ($limit) {
+				$offsetSql .= sprintf(' FETCH FIRST %d ROWS ONLY', $limit);
+			}
+			$query->offset($query->newExpr()->add($offsetSql));
+			$query->limit(null);
+
+			$query->clause('order') || $query->order([$query->connection()->newQuery()->select(['NULL'])]);
+		}
+
+		return $query;
+	}
+
+/**
+ * Check identify before insert
+ *
+ * @param Cake\Database\Query $query
+ * @return Cake\Database\Query
+ */
+	protected function _insertQueryTranslator($query) {
+		// @todo check primary key and than execute: SET IDENTITY_INSERT [table] ON (before) and OFF after the insert
+		// @see https://github.com/cakephp/cakephp/blob/master/lib/Cake/Model/Datasource/Database/Sqlserver.php#L345
+		return $query;
+	}
+
+/**
  * Returns an dictionary of expressions to be transformed when compiling a Query
  * to SQL. Array keys are method names to be called in this class
  *
