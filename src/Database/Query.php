@@ -60,6 +60,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		'values' => [],
 		'select' => [],
 		'distinct' => false,
+		'modifier' => [],
 		'from' => [],
 		'join' => [],
 		'where' => null,
@@ -425,6 +426,36 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
+ * Adds a single or multiple SELECT modifiers to be used in the SELECT.
+ *
+ * By default this function will append any passed argument to the list of modifiers
+ * to be applied, unless the second argument is set to true.
+ *
+ * ### Example:
+ *
+ * {{{
+ *  // Ignore cache query in MySQL
+ *	$query->select(['name', 'city'])->from('products')->modifier('SQL_NO_CACHE');
+ *	// It will produce the SQL: SELECT SQL_NO_CACHE name, city FROM products
+ *
+ *  // Or with multiple modifiers
+ *	$query->select(['name', 'city'])->from('products')->modifier(['HIGH_PRIORITY', 'SQL_NO_CACHE']);
+ *	// It will produce the SQL: SELECT HIGH_PRIORITY SQL_NO_CACHE name, city FROM products
+ * }}}
+ *
+ * @param array|ExpressionInterface|string $modifiers modifiers to be applied to the query
+ * @param boolean $overwrite whether to reset order with field list or not
+ * @return Query
+ */
+	public function modifier($modifiers, $overwrite = false) {
+		if ($overwrite) {
+			$this->_parts['modifier'] = [];
+		}
+		$this->_parts['modifier'] = array_merge($this->_parts['modifier'], (array)$modifiers);
+		return $this;
+	}
+
+/**
  * Helper function used to build the string representation of a SELECT clause,
  * it constructs the field list taking care of aliasing and
  * converting expression objects to string. This function also constructs the
@@ -436,8 +467,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  */
 	protected function _buildSelectPart($parts, $generator) {
 		$driver = $this->_connection->driver();
-		$select = 'SELECT %s%s';
-		$distinct = null;
+		$select = 'SELECT %s%s%s';
+		$distinct = $modifiers = null;
 		$normalized = [];
 		$parts = $this->_stringifyExpressions($parts, $generator);
 		foreach ($parts as $k => $p) {
@@ -455,8 +486,12 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$distinct = $this->_stringifyExpressions($this->_parts['distinct'], $generator);
 			$distinct = sprintf('DISTINCT ON (%s) ', implode(', ', $distinct));
 		}
+		if ($this->_parts['modifier']) {
+			$modifiers = $this->_stringifyExpressions($this->_parts['modifier'], $generator);
+			$modifiers = implode(' ', $modifiers) . ' ';
+		}
 
-		return sprintf($select, $distinct, implode(', ', $normalized));
+		return sprintf($select, $distinct, $modifiers, implode(', ', $normalized));
 	}
 
 /**
