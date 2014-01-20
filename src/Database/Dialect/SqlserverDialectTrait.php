@@ -52,7 +52,6 @@ trait SqlserverDialectTrait {
 
 		if ($limit && $offset === null) {
 			// @todo implement TOP
-			$query->clause('order') || $query->order([$query->connection()->newQuery()->select(['NULL'])]);
 			throw new \Cake\Error\NotImplementedException();
 		}
 
@@ -64,7 +63,9 @@ trait SqlserverDialectTrait {
 			$query->offset($query->newExpr()->add($offsetSql));
 			$query->limit(null);
 
-			$query->clause('order') || $query->order([$query->connection()->newQuery()->select(['NULL'])]);
+			if (!$query->clause('order')) {
+				$query->order([(string)$query->connection()->newQuery()->select(['NULL'])]);
+			}
 		}
 
 		return $query;
