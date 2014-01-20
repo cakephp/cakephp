@@ -428,10 +428,10 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Adds a single or multiple SELECT modifiers to be used in the SELECT.
  *
- * By default this function will append any passed argument to the list of fields
- * to be selected, unless the second argument is set to true.
+ * By default this function will append any passed argument to the list of modifiers
+ * to be applied, unless the second argument is set to true.
  *
- * ##Examples:
+ * ### Example:
  *
  * {{{
  *  // Ignore cache query in MySQL
@@ -443,7 +443,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	// It will produce the SQL: SELECT HIGH_PRIORITY SQL_NO_CACHE name, city FROM products
  * }}}
  *
- * @param array|ExpressionInterface|string $fields fields to be added to the list
+ * @param array|ExpressionInterface|string $modifiers modifiers to be applied to the query
  * @param boolean $overwrite whether to reset order with field list or not
  * @return Query
  */
