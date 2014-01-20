@@ -822,7 +822,7 @@ class Query extends DatabaseQuery {
  * });
  *
  * //Add a new column to the ResultSet
- * $query->select(['name', 'bith_date'])->formatResults(function($results, $query) {
+ * $query->select(['name', 'birth_date'])->formatResults(function($results, $query) {
  *	return $results->map(function($row) {
  *		$row['age'] = $row['birth_date']->diff(new DateTime)->y;
  *		return $row;
