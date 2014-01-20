@@ -40,11 +40,14 @@ class InputRegistry {
  * @var array
  */
 	protected $_widgets = [
+		'button' => ['Cake\View\Input\Button'],
 		'checkbox' => ['Cake\View\Input\Checkbox'],
+		'file' => ['Cake\View\Input\File'],
 		'label' => ['Cake\View\Input\Label'],
 		'multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label'],
 		'radio' => ['Cake\View\Input\Radio', 'label'],
 		'select' => ['Cake\View\Input\SelectBox'],
+		'textarea' => ['Cake\View\Input\Textarea'],
 		'_default' => ['Cake\View\Input\Basic'],
 	];
 
