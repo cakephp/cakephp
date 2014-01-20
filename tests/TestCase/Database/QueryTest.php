@@ -1076,6 +1076,36 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Test use of modifiers in the query
+ *
+ * Testing the generated SQL since the modifiers are usually different per driver
+ *
+ * @return void
+ */
+	public function testSelectModifiers() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['city', 'state', 'country'])
+			->from(['addresses'])
+			->modifier('DISTINCTROW');
+		$this->assertSame('SELECT DISTINCTROW city, state, country FROM addresses', $result->sql());
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['city', 'state', 'country'])
+			->from(['addresses'])
+			->modifier(['DISTINCTROW', 'SQL_NO_CACHE']);
+		$this->assertSame('SELECT DISTINCTROW SQL_NO_CACHE city, state, country FROM addresses', $result->sql());
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['city', 'state', 'country'])
+			->from(['addresses'])
+			->modifier(['TOP 10']);
+		$this->assertSame('SELECT TOP 10 city, state, country FROM addresses', $result->sql());
+	}
+
+/**
  * Tests that having() behaves pretty much the same as the where() method
  *
  * @return void
