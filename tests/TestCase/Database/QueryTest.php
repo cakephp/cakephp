@@ -1088,14 +1088,22 @@ class QueryTest extends TestCase {
 			->select(['city', 'state', 'country'])
 			->from(['addresses'])
 			->modifier('DISTINCTROW');
-		$this->assertSame('SELECT DISTINCTROW city, state, country FROM addresses', $result->sql());
+		$this->assertQuotedQuery(
+			'SELECT DISTINCTROW <city>, <state>, <country> FROM <addresses>',
+			$result->sql(),
+			true
+		);
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['city', 'state', 'country'])
 			->from(['addresses'])
 			->modifier(['DISTINCTROW', 'SQL_NO_CACHE']);
-		$this->assertSame('SELECT DISTINCTROW SQL_NO_CACHE city, state, country FROM addresses', $result->sql());
+		$this->assertQuotedQuery(
+			'SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <addresses>',
+			$result->sql(),
+			true
+		);
 
 		$query = new Query($this->connection);
 		$result = $query
@@ -1103,14 +1111,22 @@ class QueryTest extends TestCase {
 			->from(['addresses'])
 			->modifier('DISTINCTROW')
 			->modifier('SQL_NO_CACHE');
-		$this->assertSame('SELECT DISTINCTROW SQL_NO_CACHE city, state, country FROM addresses', $result->sql());
+		$this->assertQuotedQuery(
+			'SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <addresses>',
+			$result->sql(),
+			true
+		);
 
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['city', 'state', 'country'])
 			->from(['addresses'])
 			->modifier(['TOP 10']);
-		$this->assertSame('SELECT TOP 10 city, state, country FROM addresses', $result->sql());
+		$this->assertQuotedQuery(
+			'SELECT TOP 10 <city>, <state>, <country> FROM <addresses>',
+			$result->sql(),
+			true
+		);
 	}
 
 /**
