@@ -1101,6 +1101,14 @@ class QueryTest extends TestCase {
 		$result = $query
 			->select(['city', 'state', 'country'])
 			->from(['addresses'])
+			->modifier('DISTINCTROW')
+			->modifier('SQL_NO_CACHE');
+		$this->assertSame('SELECT DISTINCTROW SQL_NO_CACHE city, state, country FROM addresses', $result->sql());
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['city', 'state', 'country'])
+			->from(['addresses'])
 			->modifier(['TOP 10']);
 		$this->assertSame('SELECT TOP 10 city, state, country FROM addresses', $result->sql());
 	}
