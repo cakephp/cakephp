@@ -1257,7 +1257,7 @@ class CakeResponse {
  * ### Any URI
  * e.g `cors($request, '*');`
  *
- * ### Any of URI
+ * ### Whitelist of URIs
  * e.g `cors($request, array('http://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
  *
  * @param CakeRequest $request Request object
