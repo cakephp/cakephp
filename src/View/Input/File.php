@@ -45,7 +45,7 @@ class File implements InputInterface {
  * Unlike other input objects the `val` property will be specifically
  * ignored.
  *
- * @param array $data The data to build a textarea with.
+ * @param array $data The data to build a file input with.
  * @return string HTML elements.
  */
 	public function render(array $data) {
