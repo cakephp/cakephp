@@ -40,11 +40,11 @@ class InputRegistryTestCase extends TestCase {
  */
 	public function testAddInConstructor() {
 		$widgets = [
-			'text' => ['Cake\View\Input\Text'],
+			'text' => ['Cake\View\Input\Basic'],
 		];
 		$inputs = new InputRegistry($this->templates, $widgets);
 		$result = $inputs->get('text');
-		$this->assertInstanceOf('Cake\View\Input\Text', $result);
+		$this->assertInstanceOf('Cake\View\Input\Basic', $result);
 	}
 
 /**
@@ -55,7 +55,7 @@ class InputRegistryTestCase extends TestCase {
 	public function testAdd() {
 		$inputs = new InputRegistry($this->templates);
 		$result = $inputs->add([
-			'text' => ['Cake\View\Input\Text'],
+			'text' => ['Cake\View\Input\Basic'],
 		]);
 		$this->assertNull($result);
 	}
@@ -68,10 +68,10 @@ class InputRegistryTestCase extends TestCase {
 	public function testGet() {
 		$inputs = new InputRegistry($this->templates);
 		$inputs->add([
-			'text' => ['Cake\View\Input\Text'],
+			'text' => ['Cake\View\Input\Basic'],
 		]);
 		$result = $inputs->get('text');
-		$this->assertInstanceOf('Cake\View\Input\Text', $result);
+		$this->assertInstanceOf('Cake\View\Input\Basic', $result);
 		$this->assertSame($result, $inputs->get('text'));
 	}
 
@@ -83,10 +83,10 @@ class InputRegistryTestCase extends TestCase {
 	public function testGetFallback() {
 		$inputs = new InputRegistry($this->templates);
 		$inputs->add([
-			'_default' => ['Cake\View\Input\Text'],
+			'_default' => ['Cake\View\Input\Basic'],
 		]);
 		$result = $inputs->get('text');
-		$this->assertInstanceOf('Cake\View\Input\Text', $result);
+		$this->assertInstanceOf('Cake\View\Input\Basic', $result);
 
 		$result2 = $inputs->get('hidden');
 		$this->assertSame($result, $result2);

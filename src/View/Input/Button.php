@@ -17,13 +17,13 @@ namespace Cake\View\Input;
 use Cake\View\Input\InputInterface;
 
 /**
- * Basic input class.
+ * Button input class
  *
- * This input class can be used to render basic simple
- * input elements like hidden, text, email, tel and other
- * types.
+ * This input class can be used to render button elements.
+ * If you need to make basic submit inputs with type=submit,
+ * use the Basic input widget.
  */
-class Text implements InputInterface {
+class Button implements InputInterface {
 
 /**
  * StringTemplate instance.
@@ -42,13 +42,14 @@ class Text implements InputInterface {
 	}
 
 /**
- * Render a text widget or other simple widget like email/tel/number.
+ * Render a button.
  *
  * This method accepts a number of keys:
  *
- * - `name` The name attribute.
- * - `val` The value attribute.
- * - `escape` Set to false to disable escaping on all attributes.
+ * - `text` The text of the button. Unlike all other form controls, buttons
+ *   do not escape their contents by default.
+ * - `escape` Set to true to enable escaping on all attributes.
+ * - `type` The button type defaults to 'submit'.
  *
  * Any other keys provided in $data will be converted into HTML attributes.
  *
@@ -57,21 +58,14 @@ class Text implements InputInterface {
  */
 	public function render(array $data) {
 		$data += [
-			'name' => '',
-			'val' => null,
-			'type' => 'text',
-			'escape' => true,
+			'text' => '',
+			'type' => 'submit',
+			'escape' => false,
 		];
-		$data['value'] = $data['val'];
-		unset($data['val']);
-
-		return $this->_templates->format('input', [
-			'name' => $data['name'],
+		return $this->_templates->format('button', [
+			'text' => $data['escape'] ? h($data['text']) : $data['text'],
 			'type' => $data['type'],
-			'attrs' => $this->_templates->formatAttributes(
-				$data,
-				['name', 'type']
-			),
+			'attrs' => $this->_templates->formatAttributes($data, ['type', 'text']),
 		]);
 	}
 

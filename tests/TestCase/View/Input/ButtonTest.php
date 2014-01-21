@@ -15,18 +15,18 @@
 namespace Cake\Test\TestCase\View\Input;
 
 use Cake\TestSuite\TestCase;
-use Cake\View\Input\Text;
+use Cake\View\Input\Button;
 use Cake\View\StringTemplate;
 
 /**
- * Text input test.
+ * Basic input test.
  */
-class TextTest extends TestCase {
+class ButtonTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
 		$templates = [
-			'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
+			'button' => '<button type="{{type}}"{{attrs}}>{{text}}</button>',
 		];
 		$this->templates = new StringTemplate($templates);
 	}
@@ -37,10 +37,11 @@ class TextTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$text = new Text($this->templates);
-		$result = $text->render(['name' => 'my_input']);
+		$button = new Button($this->templates);
+		$result = $button->render(['name' => 'my_input']);
 		$expected = [
-			'input' => ['type' => 'text', 'name' => 'my_input']
+			'button' => ['type' => 'submit', 'name' => 'my_input'],
+			'/button'
 		];
 		$this->assertTags($result, $expected);
 	}
@@ -51,37 +52,45 @@ class TextTest extends TestCase {
  * @return void
  */
 	public function testRenderType() {
-		$text = new Text($this->templates);
+		$button = new Button($this->templates);
 		$data = [
 			'name' => 'my_input',
-			'type' => 'email',
+			'type' => 'button',
+			'text' => 'Some button'
 		];
-		$result = $text->render($data);
+		$result = $button->render($data);
 		$expected = [
-			'input' => ['type' => 'email', 'name' => 'my_input']
+			'button' => ['type' => 'button', 'name' => 'my_input'],
+			'Some button',
+			'/button'
 		];
 		$this->assertTags($result, $expected);
 	}
 
 /**
- * Test render with a value
+ * Test render with a text
  *
  * @return void
  */
-	public function testRenderWithValue() {
-		$text = new Text($this->templates);
+	public function testRenderWithText() {
+		$button = new Button($this->templates);
 		$data = [
-			'name' => 'my_input',
-			'type' => 'email',
-			'val' => 'Some <value>'
+			'text' => 'Some <value>'
 		];
-		$result = $text->render($data);
+		$result = $button->render($data);
 		$expected = [
-			'input' => [
-				'type' => 'email',
-				'name' => 'my_input',
-				'value' => 'Some &lt;value&gt;'
-			]
+			'button' => ['type' => 'submit'],
+			'Some <value>',
+			'/button'
+		];
+		$this->assertTags($result, $expected);
+
+		$data['escape'] = true;
+		$result = $button->render($data);
+		$expected = [
+			'button' => ['type' => 'submit'],
+			'Some &lt;value&gt;',
+			'/button'
 		];
 		$this->assertTags($result, $expected);
 	}
@@ -92,21 +101,23 @@ class TextTest extends TestCase {
  * @return void
  */
 	public function testRenderAttributes() {
-		$text = new Text($this->templates);
+		$button = new Button($this->templates);
 		$data = [
 			'name' => 'my_input',
-			'type' => 'email',
-			'class' => 'form-control',
+			'text' => 'Go',
+			'class' => 'btn',
 			'required' => true
 		];
-		$result = $text->render($data);
+		$result = $button->render($data);
 		$expected = [
-			'input' => [
-				'type' => 'email',
+			'button' => [
+				'type' => 'submit',
 				'name' => 'my_input',
-				'class' => 'form-control',
-				'required' => 'required',
-			]
+				'class' => 'btn',
+				'required' => 'required'
+			],
+			'Go',
+			'/button'
 		];
 		$this->assertTags($result, $expected);
 	}
