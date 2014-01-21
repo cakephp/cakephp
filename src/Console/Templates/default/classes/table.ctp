@@ -1,6 +1,6 @@
 <?php
 /**
- * Model template file.
+ * Model/Table template file.
  *
  * Used by bake to create new Model files.
  *
@@ -13,7 +13,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 1.3
+ * @since         CakePHP(tm) v 3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 use Cake\Utility\Inflector;
