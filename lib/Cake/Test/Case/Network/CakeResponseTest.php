@@ -1066,13 +1066,16 @@ class CakeResponseTest extends CakeTestCase {
  *
  * @dataProvider corsData
  * @param CakeRequest $request
+ * @param string $origin
  * @param string|array $domains
  * @param string|array $methods
  * @param string|boolean $expectedOrigin
  * @param string|boolean $expectedMethods
  * @return void
  */
-	public function testCors($request, $domains, $methods, $expectedOrigin, $expectedMethods) {
+	public function testCors($request, $origin, $domains, $methods, $expectedOrigin, $expectedMethods) {
+		$_SERVER['HTTP_ORIGIN'] = $origin;
+
 		$response = $this->getMock('CakeResponse', array('header'));
 		if ($expectedOrigin === false) {
 			$response->expects($this->never())
@@ -1091,6 +1094,7 @@ class CakeResponseTest extends CakeTestCase {
 		}
 
 		$response->cors($request, $domains, $methods);
+		unset($_SERVER['HTTP_ORIGIN']);
 	}
 
 /**
@@ -1099,38 +1103,31 @@ class CakeResponseTest extends CakeTestCase {
  * @return array
  */
 	public function corsData() {
-		$fooRequest = $this->getMock('CakeRequest', array('header'));
-		$fooRequest::staticExpects($this->any())
-			->method('header')
-			->with('Origin')
-			->will($this->returnValue('http://www.foo.com'));
+		$fooRequest = new CakeRequest();
 
-		$secureRequest = $this->getMock('CakeRequest', array('header', 'is'));
-		$secureRequest::staticExpects($this->any())
-			->method('header')
-			->with('Origin')
-			->will($this->returnValue('https://www.bar.com'));
+		$secureRequest = $this->getMock('CakeRequest', array('is'));
 		$secureRequest->expects($this->any())
 			->method('is')
 			->with('ssl')
 			->will($this->returnValue(true));
 
 		return array(
-			array($fooRequest, '*', '', '*', false),
-			array($fooRequest, 'www.foo.com', '', 'http://www.foo.com', false),
-			array($fooRequest, '*.foo.com', '', 'http://www.foo.com', false),
-			array($fooRequest, 'http://*.foo.com', '', 'http://www.foo.com', false),
-			array($fooRequest, 'https://www.foo.com', '', false, false),
-			array($fooRequest, 'https://*.foo.com', '', false, false),
-			array($fooRequest, array('*.bar.com', '*.foo.com'), '', 'http://www.foo.com', false),
+			array($fooRequest, null, '*', '', false, false),
+			array($fooRequest, 'http://www.foo.com', '*', '', '*', false),
+			array($fooRequest, 'http://www.foo.com', 'www.foo.com', '', 'http://www.foo.com', false),
+			array($fooRequest, 'http://www.foo.com', '*.foo.com', '', 'http://www.foo.com', false),
+			array($fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', 'http://www.foo.com', false),
+			array($fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', false, false),
+			array($fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', false, false),
+			array($fooRequest, 'http://www.foo.com', array('*.bar.com', '*.foo.com'), '', 'http://www.foo.com', false),
 
-			array($secureRequest, 'www.bar.com', '', 'https://www.bar.com', false),
-			array($secureRequest, 'http://www.bar.com', '', false, false),
-			array($secureRequest, '*.bar.com', '', 'https://www.bar.com', false),
+			array($secureRequest, 'https://www.bar.com', 'www.bar.com', '', 'https://www.bar.com', false),
+			array($secureRequest, 'https://www.bar.com', 'http://www.bar.com', '', false, false),
+			array($secureRequest, 'https://www.bar.com', '*.bar.com', '', 'https://www.bar.com', false),
 
-			array($fooRequest, '*', 'GET', '*', 'GET'),
-			array($fooRequest, '*.foo.com', 'GET', 'http://www.foo.com', 'GET'),
-			array($fooRequest, '*.foo.com', array('GET', 'POST'), 'http://www.foo.com', 'GET, POST'),
+			array($fooRequest, 'http://www.foo.com', '*', 'GET', '*', 'GET'),
+			array($fooRequest, 'http://www.foo.com', '*.foo.com', 'GET', 'http://www.foo.com', 'GET'),
+			array($fooRequest, 'http://www.foo.com', '*.foo.com', array('GET', 'POST'), 'http://www.foo.com', 'GET, POST'),
 		);
 	}
 
