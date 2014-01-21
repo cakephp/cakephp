@@ -14,6 +14,7 @@
  */
 namespace Cake\View\Input;
 
+use Cake\View\Input\InputInterface;
 use Cake\View\StringTemplate;
 use Cake\Utility\Time;
 
@@ -23,14 +24,21 @@ use Cake\Utility\Time;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class DateTime {
+class DateTime implements InputInterface {
+
+/**
+ * Select box widget.
+ *
+ * @var Cake\View\Input\Select;
+ */
+	protected $_select;
 
 /**
  * List of inputs that can be rendered
  *
  * @var array
  */
-	public $selects = [
+	protected $_selects = [
 		'year',
 		'month',
 		'day',
@@ -47,28 +55,13 @@ class DateTime {
 	protected $_templates;
 
 /**
- * Deconstructed date
- *
- * @var array
- */
-	protected $_date = [
-		'year' => null,
-		'month' => null,
-		'day' => null,
-		'hour' => null,
-		'minute' => null,
-		'second' => null,
-	];
-
-/**
  * Constructor
  *
- * @param \Cake\View\StringTemplate $templates
- * @param \Cake\View\Input\SelectBox $SelectBox
- * @return \Cake\View\Input\DateTime
+ * @param Cake\View\StringTemplate $templates
+ * @param Cake\View\Input\SelectBox $selectBox
  */
-	public function __construct(StringTemplate $templates, SelectBox $SelectBox) {
-		$this->SelectBox = $SelectBox;
+	public function __construct($templates, $selectBox) {
+		$this->_select = $selectBox;
 		$this->_templates = $templates;
 	}
 
@@ -77,7 +70,7 @@ class DateTime {
  *
  * - `name` - Set the input name.
  * - `disabled` - Either true or an array of options to disable.
- * - `value` - A date time string, integer or DateTime object
+ * - `val` - A date time string, integer or DateTime object
  * - `empty` - Set to true to add an empty option at the top of the
  *   option elements. Set to a string to define the display value of the
  *   empty option.
@@ -87,18 +80,17 @@ class DateTime {
  * - `hour` - Array of options for the hour select box.
  * - `minute` - Array of options for the minute select box.
  * - `second` - Array of options for the second select box.
- * - `timeZone` - Timezone string or DateTimeZone object.
  *
  * @param array $data Data to render with.
  * @return string A generated select box.
  * @throws \RuntimeException when the name attribute is empty.
  */
-	public function render($data = []) {
+	public function render(array $data) {
 		$data += [
 			'name' => 'data',
 			'empty' => false,
 			'disabled' => null,
-			'value' => new \DateTime(),
+			'val' => new \DateTime(),
 			'year' => [],
 			'month' => [
 				'names' => false,
@@ -109,19 +101,16 @@ class DateTime {
 			'hour' => [],
 			'minute' => [],
 			'second' => [],
-			'timeZone' => null
 		];
 
-		if (!empty($data['value'])) {
-			$this->_deconstuctDate($data['value'], $data['timeZone']);
-		}
+		$selected = $this->_deconstuctDate($data['val']);
 
 		$templateOptions = [];
-		foreach ($this->selects as $select) {
+		foreach ($this->_selects as $select) {
 			if ($data[$select] !== false) {
 				$method = $select . 'Select';
-				$data[$select]['name'] = $data['name'] . "['" . $select . "']";
-				$data[$select]['value'] = $this->_date[$select];
+				$data[$select]['name'] = $data['name'] . "[" . $select . "]";
+				$data[$select]['val'] = $selected[$select];
 				$data[$select]['empty'] = $data['empty'];
 				$data[$select]['disabled'] = $data['disabled'];
 				$data[$select] += $data[$select];
@@ -129,7 +118,7 @@ class DateTime {
 			}
 			unset($data[$select]);
 		}
-		unset($data['name'], $data['empty'], $data['disabled'], $data['value'], $data['timeZone']);
+		unset($data['name'], $data['empty'], $data['disabled'], $data['val']);
 		$templateOptions['attrs'] = $this->_templates->formatAttributes($data);
 		return $this->_templates->format('dateWidget', $templateOptions);
 	}
@@ -137,18 +126,33 @@ class DateTime {
 /**
  * Deconstructs the passed date value into all time units
  *
- * @param string|integer|DateTime $date
- * @param string|DateTimeZone
+ * @param string|integer|array|DateTime $value
  * @return array
  */
-	protected function _deconstuctDate($date, $timeZone = null) {
-		$this->_date = [
-			'year' => Time::format($date, '%Y', null, $timeZone),
-			'month' => Time::format($date, '%m', null, $timeZone),
-			'day' => Time::format($date, '%d', null, $timeZone),
-			'hour' => Time::format($date, '%H', null, $timeZone),
-			'minute' => Time::format($date, '%M', null, $timeZone),
-			'second' => Time::format($date, '%S', null, $timeZone),
+	protected function _deconstuctDate($value) {
+		if (is_string($value)) {
+			$date = new \DateTime($value);
+		} elseif (is_int($value)) {
+			$date = new \DateTime('@' . $value);
+		} elseif (is_array($value)) {
+			$date = new \DateTime();
+			if (isset($value['year'], $value['month'], $value['day'])) {
+				$date->setDate($value['year'], $value['month'], $value['day']);
+			}
+			if (isset($value['hour'], $value['minute'], $value['second'])) {
+				$date->setTime($value['hour'], $value['minute'], $value['second']);
+			}
+		} else {
+			$date = $value;
+		}
+
+		return [
+			'year' => $date->format('Y'),
+			'month' => $date->format('m'),
+			'day' => $date->format('d'),
+			'hour' => $date->format('H'),
+			'minute' => $date->format('i'),
+			'second' => $date->format('s')
 		];
 	}
 
@@ -161,7 +165,7 @@ class DateTime {
 	public function yearSelect($options = []) {
 		$options += [
 			'name' => 'data[year]',
-			'value' => null,
+			'val' => null,
 			'start' => date('Y', strtotime('-5 years')),
 			'end' => date('Y', strtotime('+5 years')),
 			'options' => []
@@ -171,7 +175,7 @@ class DateTime {
 			$options['options'] = $this->_generateNumbers($options['start'], $options['end']);
 		}
 
-		return $this->SelectBox->render($options);
+		return $this->_select->render($options);
 	}
 
 /**
@@ -184,7 +188,7 @@ class DateTime {
 		$options += [
 			'name' => 'data[month]',
 			'names' => false,
-			'value' => null,
+			'val' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true
 		];
@@ -198,7 +202,7 @@ class DateTime {
 		}
 
 		unset($options['leadingZeroKey'], $options['leadingZeroValue'], $options['names']);
-		return $this->SelectBox->render($options);
+		return $this->_select->render($options);
 	}
 
 /**
@@ -210,21 +214,14 @@ class DateTime {
 	public function daySelect($options = []) {
 		$options += [
 			'name' => 'data[day]',
-			'names' => false,
-			'value' => null,
+			'val' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
 		];
+		$options['options'] = $this->_generateNumbers(1, 31, $options);
 
-		if ($options['names'] === true) {
-			$options['options'] = $this->_getDayNames($options['leadingZeroKey']);
-		} else {
-			$options['options'] = $this->_generateNumbers(1, 7, $options);
-		}
-
-		$options['value'] = Time::format($options['value'], '%d');
 		unset($options['names'], $options['leadingZeroKey'], $options['leadingZeroValue']);
-		return $this->SelectBox->render($options);
+		return $this->_select->render($options);
 	}
 
 /**
@@ -236,14 +233,14 @@ class DateTime {
 	public function hourSelect($options = []) {
 		$options += [
 			'name' => 'data[hour]',
-			'value' => null,
+			'val' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
 			'options' => $this->_generateNumbers(1, 24)
 		];
 
 		unset($options['leadingZeroKey'], $options['leadingZeroValue']);
-		return $this->SelectBox->render($options);
+		return $this->_select->render($options);
 	}
 
 /**
@@ -255,14 +252,14 @@ class DateTime {
 	public function minuteSelect($options = []) {
 		$options += [
 			'name' => 'data[minute]',
-			'value' => null,
+			'val' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
 			'options' => $this->_generateNumbers(1, 60)
 		];
 
 		unset($options['leadingZeroKey'], $options['leadingZeroValue']);
-		return $this->SelectBox->render($options);
+		return $this->_select->render($options);
 	}
 
 /**
@@ -274,14 +271,14 @@ class DateTime {
 	public function secondSelect($options = []) {
 		$options += [
 			'name' => 'data[second]',
-			'value' => null,
+			'val' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
 			'options' => $this->_generateNumbers(1, 60)
 		];
 
 		unset($options['leadingZeroKey'], $options['leadingZeroValue']);
-		return $this->SelectBox->render($options);
+		return $this->_select->render($options);
 	}
 
 /**
@@ -315,35 +312,6 @@ class DateTime {
 		}
 
 		return $months;
-	}
-
-/**
- * Returns a translated list of day names
- *
- * @todo find a way to define the first day of week
- * @param boolean $leadingZero
- * @return array
- */
-	protected function _getDayNames($leadingZero = true) {
-		$days = [
-			'01' => __d('cake', 'Monday'),
-			'02' => __d('cake', 'Tuesday'),
-			'03' => __d('cake', 'Wednesday'),
-			'04' => __d('cake', 'Thursday'),
-			'05' => __d('cake', 'Friday'),
-			'06' => __d('cake', 'Saturday'),
-			'07' => __d('cake', 'Sunday'),
-		];
-
-		if ($leadingZero === false) {
-			$i = 1;
-			foreach ($days as $key => $name) {
-				$days[$i++] = $name;
-				unset($days[$key]);
-			}
-		}
-
-		return $days;
 	}
 
 /**
