@@ -53,7 +53,7 @@ class Button implements InputInterface {
  *
  * Any other keys provided in $data will be converted into HTML attributes.
  *
- * @param array $data The data to build an input with.
+ * @param array $data The data to build a button with.
  * @return string
  */
 	public function render(array $data) {
