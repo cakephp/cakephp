@@ -84,6 +84,67 @@ class DateTimeTest extends TestCase {
 		$this->assertContains('<option value="45" selected="selected">45</option>', $result);
 	}
 
+	public function testRenderEmptyValues() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderYearWidget() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderYearWidgetOrdering() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderYearWidgetMinAndMax() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderYearWidgetValueOutOfBounds() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderMonthWidget() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderMonthWidgetWithNames() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderDayWidget() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderHourWidget() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderHourWidget24() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderMinuteWidget() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderMinuteWidgetInterval() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderMinuteWidgetIntervalRounding() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderSecondsWidget() {
+		$this->markTestIncomplete();
+	}
+
+	public function testRenderMeridianWidget() {
+		$this->markTestIncomplete();
+	}
+
+
 /**
  * testGenerateNumbers
  *
@@ -130,73 +191,6 @@ class DateTimeTest extends TestCase {
 			3 => '3'
 		);
 		$this->assertEquals($result, $expected);
-	}
-
-/**
- * testYearSelect
- *
- * @return void
- */
-	public function testYearSelect() {
-		$result = $this->DateTime->yearSelect();
-		$this->markTestIncomplete();
-	}
-
-/**
- * testMonthSelect
- *
- * @return void
- */
-	public function testMonthSelect() {
-		$result = $this->DateTime->monthSelect();
-		$expected = '<select name="data[month]"><option value="01">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option><option value="08">08</option><option value="09">09</option><option value="10">10</option><option value="11">11</option><option value="12">12</option></select>';
-		$this->assertEquals($result, $expected);
-
-		$result = $this->DateTime->monthSelect([
-			'names' => true,
-		]);
-		$this->markTestIncomplete();
-	}
-
-/**
- * testDaySelect
- *
- * @return void
- */
-	public function testDaySelect() {
-		$result = $this->DateTime->daySelect();
-		$expected = '<select name="data[day]"><option value="01" selected="selected">01</option><option value="02">02</option><option value="03">03</option><option value="04">04</option><option value="05">05</option><option value="06">06</option><option value="07">07</option></select>';
-		$this->markTestIncomplete();
-	}
-
-/**
- * testHourSelect
- *
- * @return void
- */
-	public function testHourSelect() {
-		$result = $this->DateTime->hourSelect();
-		$this->markTestIncomplete();
-	}
-
-/**
- * testHourSelect
- *
- * @return void
- */
-	public function testMinuteSelect() {
-		$result = $this->DateTime->minuteSelect();
-		$this->markTestIncomplete();
-	}
-
-/**
- * testHourSelect
- *
- * @return void
- */
-	public function testSecondSelect() {
-		$result = $this->DateTime->secondSelect();
-		$this->markTestIncomplete();
 	}
 
 }
