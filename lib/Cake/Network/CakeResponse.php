@@ -1271,7 +1271,7 @@ class CakeResponse {
 			return;
 		}
 
-		$allowedDomains = $this->normalizeCorsDomains((array)$allowedDomains, $request->is('ssl'));
+		$allowedDomains = $this->_normalizeCorsDomains((array)$allowedDomains, $request->is('ssl'));
 		foreach ($allowedDomains as $domain) {
 			if (!preg_match($domain['preg'], $origin)) {
 				continue;
@@ -1289,7 +1289,7 @@ class CakeResponse {
  * @param boolean $requestIsSSL
  * @return array
  */
-	protected function normalizeCorsDomains($domains, $requestIsSSL = false) {
+	protected function _normalizeCorsDomains($domains, $requestIsSSL = false) {
 		$result = array();
 		foreach ($domains as $domain) {
 			if ($domain === '*') {
