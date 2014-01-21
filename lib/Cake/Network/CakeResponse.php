@@ -1263,9 +1263,10 @@ class CakeResponse {
  * @param CakeRequest $request Request object
  * @param string|array $allowedDomains List of allowed domains, see method description for more details
  * @param string|array $allowedMethods List of HTTP verbs allowed
+ * @param string|array $allowedHeaders List of HTTP headers allowed
  * @return void
  */
-	public function cors(CakeRequest $request, $allowedDomains, $allowedMethods = array()) {
+	public function cors(CakeRequest $request, $allowedDomains, $allowedMethods = array(), $allowedHeaders = array()) {
 		$origin = $request->header('Origin');
 		if (!$origin) {
 			return;
@@ -1278,6 +1279,7 @@ class CakeResponse {
 			}
 			$this->header('Access-Control-Allow-Origin', $domain['original'] === '*' ? '*' : $origin);
 			$allowedMethods && $this->header('Access-Control-Allow-Methods', implode(', ', (array)$allowedMethods));
+			$allowedHeaders && $this->header('Access-Control-Allow-Headers', implode(', ', (array)$allowedHeaders));
 			break;
 		}
 	}
