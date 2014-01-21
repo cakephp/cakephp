@@ -1266,7 +1266,7 @@ class CakeResponse {
  * @return void
  */
 	public function cors(CakeRequest $request, $allowedDomains, $allowedMethods = array()) {
-		$origin = $request::header('Origin');
+		$origin = $request->header('Origin');
 		if (!$origin) {
 			return;
 		}
