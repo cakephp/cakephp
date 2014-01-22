@@ -80,7 +80,7 @@ class Number {
 	);
 
 /**
- * Default currency used by CakeNumber::currency()
+ * Default currency used by Number::currency()
  *
  * @var string
  */

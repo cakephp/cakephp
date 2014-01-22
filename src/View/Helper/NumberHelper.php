@@ -66,6 +66,7 @@ class NumberHelper extends Helper {
 
 /**
  * Call methods from Cake\Utility\Number utility class
+ *
  * @return mixed Whatever is returned by called method, or false on failure
  */
 	public function __call($method, $params) {
@@ -73,6 +74,8 @@ class NumberHelper extends Helper {
 	}
 
 /**
+ * Formats a number with a level of precision.
+ *
  * @see: Cake\Utility\Number::precision()
  *
  * @param float $number A floating point number.
@@ -85,6 +88,8 @@ class NumberHelper extends Helper {
 	}
 
 /**
+ * Returns a formatted-for-humans file size.
+ *
  * @see: Cake\Utility\Number::toReadableSize()
  *
  * @param integer $size Size in bytes
@@ -96,6 +101,12 @@ class NumberHelper extends Helper {
 	}
 
 /**
+ * Formats a number into a percentage string.
+ *
+ * Options:
+ *
+ * - `multiply`: Multiply the input value by 100 for decimal percentages.
+ *
  * @see: Cake\Utility\Number::toPercentage()
  *
  * @param float $number A floating point number
@@ -109,6 +120,8 @@ class NumberHelper extends Helper {
 	}
 
 /**
+ * Formats a number into a currency format.
+ *
  * @see: Cake\Utility\Number::format()
  *
  * @param float $number A floating point number
@@ -122,12 +135,41 @@ class NumberHelper extends Helper {
 	}
 
 /**
+ * Formats a number into a currency format.
+ *
+ * ### Options
+ *
+ * - `wholeSymbol` - The currency symbol to use for whole numbers,
+ *   greater than 1, or less than -1.
+ * - `wholePosition` - The position the whole symbol should be placed
+ *   valid options are 'before' & 'after'.
+ * - `fractionSymbol` - The currency symbol to use for fractional numbers.
+ * - `fractionPosition` - The position the fraction symbol should be placed
+ *   valid options are 'before' & 'after'.
+ * - `before` - The currency symbol to place before whole numbers
+ *   ie. '$'. `before` is an alias for `wholeSymbol`.
+ * - `after` - The currency symbol to place after decimal numbers
+ *   ie. 'c'. Set to boolean false to use no decimal symbol.
+ *   eg. 0.35 => $0.35. `after` is an alias for `fractionSymbol`
+ * - `zero` - The text to use for zero values, can be a
+ *   string or a number. ie. 0, 'Free!'
+ * - `places` - Number of decimal places to use. ie. 2
+ * - `fractionExponent` - Fraction exponent of this specific currency. Defaults to 2.
+ * - `thousands` - Thousands separator ie. ','
+ * - `decimals` - Decimal separator symbol ie. '.'
+ * - `negative` - Symbol for negative numbers. If equal to '()',
+ *   the number will be wrapped with ( and )
+ * - `escape` - Should the output be escaped for html special characters.
+ *   The default value for this option is controlled by the currency settings.
+ *   By default all currencies contain utf-8 symbols and don't need this changed. If you require
+ *   non HTML encoded symbols you will need to update the settings with the correct bytes.
+ *
  * @see: Cake\Utility\Number::currency()
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
  *   set at least 'before' and 'after' options.
- * 'USD' is the default currency, use CakeNumber::defaultCurrency() to change this default.
+ * 'USD' is the default currency, use Number::defaultCurrency() to change this default.
  * @param array $options
  * @return string Number formatted as a currency.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::currency
@@ -137,6 +179,18 @@ class NumberHelper extends Helper {
 	}
 
 /**
+ * Add a currency format to the Number helper. Makes reusing
+ * currency formats easier.
+ *
+ * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}
+ *
+ * You can now use `NOK` as a shortform when formatting currency amounts.
+ *
+ * {{{ $number->currency($value, 'NOK'); }}}
+ *
+ * Added formats are merged with the defaults defined in Cake\Utility\Number::$_currencyDefaults
+ * See Cake\Utility\Number::currency() for more information on the various options and their function.
+ *
  * @see: Cake\Utility\Number::addFormat()
  *
  * @param string $formatName The format name to be used in the future.
@@ -150,7 +204,8 @@ class NumberHelper extends Helper {
 	}
 
 /**
- * @see CakeNumber::defaultCurrency()
+ * Getter/setter for default currency
+ * @see  Cake\Utility\Number::defaultCurrency()
  *
  * @param string $currency The currency to be used in the future.
  * @return void

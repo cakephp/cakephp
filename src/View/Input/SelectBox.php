@@ -179,7 +179,12 @@ class SelectBox implements InputInterface {
 /**
  * Render the contents of an optgroup element.
  *
+ * @param string $label The optgroup label text
  * @param array $optgroup The opt group data.
+ * @param array|null $disabled The options to disable.
+ * @param array|string|null $selected The options to select.
+ * @param boolean $escape Toggle HTML escaping
+ * @return string Formatted template string
  */
 	protected function _renderOptgroup($label, $optgroup, $disabled, $selected, $escape) {
 		$opts = $optgroup;

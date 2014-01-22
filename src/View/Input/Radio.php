@@ -34,6 +34,8 @@ class Radio implements InputInterface {
 	protected $_templates;
 
 /**
+ * Label instance.
+ * 
  * @var Cake\View\Input\Label
  */
 	protected $_label;
@@ -126,7 +128,7 @@ class Radio implements InputInterface {
  * @param string|int $val The value of the radio input.
  * @param string|array $text The label text, or complex radio type.
  * @param array $data Additional options for input generation.
- * @return string.
+ * @return string
  */
 	protected function _renderInput($val, $text, $data) {
 		$escape = $data['escape'];
