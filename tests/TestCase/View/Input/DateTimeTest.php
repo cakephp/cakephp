@@ -150,6 +150,7 @@ class DateTimeTest extends TestCase {
 			'year' => [
 				'start' => 2013,
 				'end' => 2015,
+				'order' => 'desc',
 			],
 			'month' => false,
 			'day' => false,
@@ -167,10 +168,29 @@ class DateTimeTest extends TestCase {
 			'/select',
 		];
 		$this->assertTags($result, $expected);
-	}
 
-	public function testRenderYearWidgetMinAndMax() {
-		$this->markTestIncomplete();
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => [
+				'start' => 2013,
+				'end' => 2015,
+				'order' => 'asc'
+			],
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[year]'],
+			['option' => ['value' => '2015']], '2015', '/option',
+			['option' => ['value' => '2014', 'selected' => 'selected']], '2014', '/option',
+			['option' => ['value' => '2013']], '2013', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 	public function testRenderYearWidgetValueOutOfBounds() {
