@@ -150,7 +150,7 @@ class TimeHelper extends Helper {
 /**
  * Returns a partial SQL string to search for all records between two times
  * occurring on the same day.
-  *
+ *
  * @see Cake\Utility\Time::dayAsSql()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
