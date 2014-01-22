@@ -36,7 +36,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	use CollectionTrait;
 
 /**
- * Original query from where results where generated
+ * Original query from where results were generated
  *
  * @var Query
  */
@@ -133,6 +133,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Returns the current record in the result iterator
  *
+ * Part of Iterator interface.
+ *
  * @return array|object
  */
 	public function current() {
@@ -141,6 +143,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
 /**
  * Returns the key of the current record in the iterator
+ *
+ * Part of Iterator interface.
  *
  * @return integer
  */
@@ -151,6 +155,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Advances the iterator pointer to the next record
  *
+ * Part of Iterator interface.
+ *
  * @return void
  */
 	public function next() {
@@ -159,6 +165,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
 /**
  * Rewind a ResultSet.
+ *
+ * Part of Iterator interface.
  *
  * @throws Cake\Database\Exception
  * @return void
@@ -178,6 +186,8 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
 /**
  * Whether there are more results to be fetched from the iterator
+ *
+ * Part of Iterator interface.
  *
  * @return boolean
  */
@@ -257,7 +267,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Gives the number of rows in the result set.
  *
- * Part of the countable interface.
+ * Part of the Countable interface.
  *
  * @return integer
  */
