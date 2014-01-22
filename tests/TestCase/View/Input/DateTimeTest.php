@@ -43,7 +43,7 @@ class DateTimeTest extends TestCase {
 			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
-			'dateWidget' => '{{year}}-{{month}}-{{day}} {{hour}}:{{minute}}:{{second}}'
+			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}'
 		];
 		$this->templates = new StringTemplate($templates);
 		$this->selectBox = new SelectBox($this->templates);
@@ -251,12 +251,75 @@ class DateTimeTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test rendering the month widget
+ *
+ * @return void
+ */
 	public function testRenderMonthWidget() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-09-01 12:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[month]'],
+			['option' => ['value' => '01']], '01', '/option',
+			['option' => ['value' => '02']], '02', '/option',
+			['option' => ['value' => '03']], '03', '/option',
+			['option' => ['value' => '04']], '04', '/option',
+			['option' => ['value' => '05']], '05', '/option',
+			['option' => ['value' => '06']], '06', '/option',
+			['option' => ['value' => '07']], '07', '/option',
+			['option' => ['value' => '08']], '08', '/option',
+			['option' => ['value' => '09', 'selected' => 'selected']], '09', '/option',
+			['option' => ['value' => '10']], '10', '/option',
+			['option' => ['value' => '11']], '11', '/option',
+			['option' => ['value' => '12']], '12', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test rendering month widget with names.
+ *
+ * @return void
+ */
 	public function testRenderMonthWidgetWithNames() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-09-01 12:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'month' => ['data-foo' => 'test', 'names' => true],
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[month]', 'data-foo' => 'test'],
+			['option' => ['value' => '01']], 'January', '/option',
+			['option' => ['value' => '02']], 'February', '/option',
+			['option' => ['value' => '03']], 'March', '/option',
+			['option' => ['value' => '04']], 'April', '/option',
+			['option' => ['value' => '05']], 'May', '/option',
+			['option' => ['value' => '06']], 'June', '/option',
+			['option' => ['value' => '07']], 'July', '/option',
+			['option' => ['value' => '08']], 'August', '/option',
+			['option' => ['value' => '09', 'selected' => 'selected']], 'September', '/option',
+			['option' => ['value' => '10']], 'October', '/option',
+			['option' => ['value' => '11']], 'November', '/option',
+			['option' => ['value' => '12']], 'December', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 	public function testRenderDayWidget() {

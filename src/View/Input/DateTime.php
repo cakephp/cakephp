@@ -103,20 +103,22 @@ class DateTime implements InputInterface {
 
 		$templateOptions = [];
 		foreach ($this->_selects as $select) {
-			if ($data[$select] !== false) {
-				$method = $select . 'Select';
-				$data[$select]['name'] = $data['name'] . "[" . $select . "]";
-				$data[$select]['val'] = $selected[$select];
-
-				if (!isset($data[$select]['empty'])) {
-					$data[$select]['empty'] = $data['empty'];
-				}
-				if (!isset($data[$select]['disabled'])) {
-					$data[$select]['disabled'] = $data['disabled'];
-				}
-
-				$templateOptions[$select] = $this->{$method}($data[$select]);
+			if ($data[$select] === false || $data[$select] === null) {
+				$templateOptions[$select] = '';
+				unset($data[$select]);
+				continue;
 			}
+			$method = $select . 'Select';
+			$data[$select]['name'] = $data['name'] . "[" . $select . "]";
+			$data[$select]['val'] = $selected[$select];
+
+			if (!isset($data[$select]['empty'])) {
+				$data[$select]['empty'] = $data['empty'];
+			}
+			if (!isset($data[$select]['disabled'])) {
+				$data[$select]['disabled'] = $data['disabled'];
+			}
+			$templateOptions[$select] = $this->{$method}($data[$select]);
 			unset($data[$select]);
 		}
 		unset($data['name'], $data['empty'], $data['disabled'], $data['val']);
