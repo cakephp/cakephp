@@ -179,6 +179,9 @@ class DateTime implements InputInterface {
 			'options' => []
 		];
 
+		$options['start'] = min($options['val'], $options['start']);
+		$options['end'] = max($options['val'], $options['end']);
+
 		if (empty($options['options'])) {
 			$options['options'] = $this->_generateNumbers($options['start'], $options['end']);
 		}

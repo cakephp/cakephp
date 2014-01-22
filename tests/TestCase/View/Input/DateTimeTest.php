@@ -193,8 +193,62 @@ class DateTimeTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test that a selected value outside of the chosen
+ * year boundary is also included as an option.
+ *
+ * @return void
+ */
 	public function testRenderYearWidgetValueOutOfBounds() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-01-01 12:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => [
+				'start' => 2013,
+				'end' => 2015,
+			],
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[year]'],
+			['option' => ['value' => '2010', 'selected' => 'selected']], '2010', '/option',
+			['option' => ['value' => '2011']], '2011', '/option',
+			['option' => ['value' => '2012']], '2012', '/option',
+			['option' => ['value' => '2013']], '2013', '/option',
+			['option' => ['value' => '2014']], '2014', '/option',
+			['option' => ['value' => '2015']], '2015', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
+
+		$now = new \DateTime('2013-01-01 12:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => [
+				'start' => 2010,
+				'end' => 2011,
+			],
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[year]'],
+			['option' => ['value' => '2010']], '2010', '/option',
+			['option' => ['value' => '2011']], '2011', '/option',
+			['option' => ['value' => '2012']], '2012', '/option',
+			['option' => ['value' => '2013', 'selected' => 'selected']], '2013', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 	public function testRenderMonthWidget() {
