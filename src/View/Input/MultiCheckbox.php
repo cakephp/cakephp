@@ -134,6 +134,7 @@ class MultiCheckbox implements InputInterface {
 /**
  * Render a single checkbox & wrapper.
  *
+ * @param array $checkbox An array containing checkbox key/value option pairs
  * @return string
  */
 	protected function _renderInput($checkbox) {
