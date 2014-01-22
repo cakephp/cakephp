@@ -43,7 +43,7 @@ class DateTimeTest extends TestCase {
 			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
-			'dateWidget' => '<div{{attrs}}>{{year}}-{{month}}-{{day}} {{hour}}:{{minute}}:{{second}}</div>'
+			'dateWidget' => '{{year}}-{{month}}-{{day}} {{hour}}:{{minute}}:{{second}}'
 		];
 		$this->templates = new StringTemplate($templates);
 		$this->selectBox = new SelectBox($this->templates);
@@ -91,15 +91,12 @@ class DateTimeTest extends TestCase {
  */
 	public function testRenderEmptyValues() {
 		$result = $this->DateTime->render([
-			'empty' => [
-				'year' => 'YEAR',
-				'month' => 'MONTH',
-				'day' => 'DAY',
-				'hour' => 'HOUR',
-				'minute' => 'MINUTE',
-				'second' => 'SECOND',
-				'meridian' => 'MERIDIAN',
-			]
+			'year' => ['empty' => 'YEAR'],
+			'month' => ['empty' => 'MONTH'],
+			'day' => ['empty' => 'DAY'],
+			'hour' => ['empty' => 'HOUR'],
+			'minute' => ['empty' => 'MINUTE'],
+			'second' => ['empty' => 'SECOND'],
 		]);
 		$this->assertContains('<option value="" selected="selected">YEAR</option>', $result);
 		$this->assertContains('<option value="" selected="selected">MONTH</option>', $result);
@@ -109,12 +106,67 @@ class DateTimeTest extends TestCase {
 		$this->assertContains('<option value="" selected="selected">SECOND</option>', $result);
 	}
 
-	public function testRenderYearWidget() {
-		$this->markTestIncomplete();
+/**
+ * Test rendering the default year widget.
+ *
+ * @return void
+ */
+	public function testRenderYearWidgetDefaultRange() {
+		$now = new \DateTime();
+		$result = $this->DateTime->render([
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$year = $now->format('Y');
+		$format = '<option value="%s" selected="selected">%s</option>';
+		$this->assertContains(sprintf($format, $year, $year), $result);
+
+		$format = '<option value="%s">%s</option>';
+		$maxYear = $now->format('Y') + 5;
+		$minYear = $now->format('Y') - 5;
+		$this->assertContains(sprintf($format, $maxYear, $maxYear), $result);
+		$this->assertContains(sprintf($format, $minYear, $minYear), $result);
+
+		$nope = $now->format('Y') + 6;
+		$this->assertNotContains(sprintf($format, $nope, $nope), $result);
+
+		$nope = $now->format('Y') - 6;
+		$this->assertNotContains(sprintf($format, $nope, $nope), $result);
 	}
 
+/**
+ * Test ordering of year options.
+ *
+ * @return void
+ */
 	public function testRenderYearWidgetOrdering() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2014-01-01 12:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => [
+				'start' => 2013,
+				'end' => 2015,
+			],
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+			'orderYear' => 'asc',
+		]);
+		$expected = [
+			'select' => ['name' => 'date[year]'],
+			['option' => ['value' => '2013']], '2013', '/option',
+			['option' => ['value' => '2014', 'selected' => 'selected']], '2014', '/option',
+			['option' => ['value' => '2015']], '2015', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 	public function testRenderYearWidgetMinAndMax() {

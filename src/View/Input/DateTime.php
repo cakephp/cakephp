@@ -79,7 +79,7 @@ class DateTime implements InputInterface {
  * - `day` - Array of options for the day select box.
  * - `hour` - Array of options for the hour select box.
  * - `minute` - Array of options for the minute select box.
- * - `second` - Array of options for the second select box.
+ * - `second` - Set to true to enable the seconds input. Defaults to false.
  *
  * @param array $data Data to render with.
  * @return string A generated select box.
@@ -87,17 +87,13 @@ class DateTime implements InputInterface {
  */
 	public function render(array $data) {
 		$data += [
-			'name' => 'data',
+			'name' => '',
 			'empty' => false,
 			'disabled' => null,
 			'val' => null,
 			'year' => [],
-			'month' => [
-				'names' => false,
-			],
-			'day' => [
-				'names' => false,
-			],
+			'month' => [],
+			'day' => [],
 			'hour' => [],
 			'minute' => [],
 			'second' => [],
@@ -112,14 +108,13 @@ class DateTime implements InputInterface {
 				$data[$select]['name'] = $data['name'] . "[" . $select . "]";
 				$data[$select]['val'] = $selected[$select];
 
-				if (is_bool($data['empty'])) {
+				if (!isset($data[$select]['empty'])) {
 					$data[$select]['empty'] = $data['empty'];
 				}
-				if (isset($data['empty'][$select])) {
-					$data[$select]['empty'] = $data['empty'][$select];
+				if (!isset($data[$select]['disabled'])) {
+					$data[$select]['disabled'] = $data['disabled'];
 				}
-				$data[$select]['disabled'] = $data['disabled'];
-				$data[$select] += $data[$select];
+
 				$templateOptions[$select] = $this->{$method}($data[$select]);
 			}
 			unset($data[$select]);
@@ -176,17 +171,21 @@ class DateTime implements InputInterface {
  */
 	public function yearSelect($options = []) {
 		$options += [
-			'name' => 'data[year]',
+			'name' => '',
 			'val' => null,
 			'start' => date('Y', strtotime('-5 years')),
 			'end' => date('Y', strtotime('+5 years')),
+			'order' => 'desc',
 			'options' => []
 		];
 
 		if (empty($options['options'])) {
 			$options['options'] = $this->_generateNumbers($options['start'], $options['end']);
 		}
-
+		if ($options['order'] === 'asc') {
+			$options['options'] = array_reverse($options['options'], true);
+		}
+		unset($options['start'], $options['end'], $options['order']);
 		return $this->_select->render($options);
 	}
 
@@ -198,7 +197,7 @@ class DateTime implements InputInterface {
  */
 	public function monthSelect($options = []) {
 		$options += [
-			'name' => 'data[month]',
+			'name' => '',
 			'names' => false,
 			'val' => null,
 			'leadingZeroKey' => true,
@@ -225,7 +224,7 @@ class DateTime implements InputInterface {
  */
 	public function daySelect($options = []) {
 		$options += [
-			'name' => 'data[day]',
+			'name' => '',
 			'val' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
@@ -244,7 +243,7 @@ class DateTime implements InputInterface {
  */
 	public function hourSelect($options = []) {
 		$options += [
-			'name' => 'data[hour]',
+			'name' => '',
 			'val' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
@@ -263,7 +262,7 @@ class DateTime implements InputInterface {
  */
 	public function minuteSelect($options = []) {
 		$options += [
-			'name' => 'data[minute]',
+			'name' => '',
 			'val' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
@@ -282,7 +281,7 @@ class DateTime implements InputInterface {
  */
 	public function secondSelect($options = []) {
 		$options += [
-			'name' => 'data[second]',
+			'name' => '',
 			'val' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
