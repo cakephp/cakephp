@@ -84,8 +84,29 @@ class DateTimeTest extends TestCase {
 		$this->assertContains('<option value="45" selected="selected">45</option>', $result);
 	}
 
+/**
+ * Test rendering widgets with empty values.
+ *
+ * @retun void
+ */
 	public function testRenderEmptyValues() {
-		$this->markTestIncomplete();
+		$result = $this->DateTime->render([
+			'empty' => [
+				'year' => 'YEAR',
+				'month' => 'MONTH',
+				'day' => 'DAY',
+				'hour' => 'HOUR',
+				'minute' => 'MINUTE',
+				'second' => 'SECOND',
+				'meridian' => 'MERIDIAN',
+			]
+		]);
+		$this->assertContains('<option value="" selected="selected">YEAR</option>', $result);
+		$this->assertContains('<option value="" selected="selected">MONTH</option>', $result);
+		$this->assertContains('<option value="" selected="selected">DAY</option>', $result);
+		$this->assertContains('<option value="" selected="selected">HOUR</option>', $result);
+		$this->assertContains('<option value="" selected="selected">MINUTE</option>', $result);
+		$this->assertContains('<option value="" selected="selected">SECOND</option>', $result);
 	}
 
 	public function testRenderYearWidget() {
@@ -143,7 +164,6 @@ class DateTimeTest extends TestCase {
 	public function testRenderMeridianWidget() {
 		$this->markTestIncomplete();
 	}
-
 
 /**
  * testGenerateNumbers

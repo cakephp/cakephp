@@ -90,7 +90,7 @@ class DateTime implements InputInterface {
 			'name' => 'data',
 			'empty' => false,
 			'disabled' => null,
-			'val' => new \DateTime(),
+			'val' => null,
 			'year' => [],
 			'month' => [
 				'names' => false,
@@ -111,7 +111,13 @@ class DateTime implements InputInterface {
 				$method = $select . 'Select';
 				$data[$select]['name'] = $data['name'] . "[" . $select . "]";
 				$data[$select]['val'] = $selected[$select];
-				$data[$select]['empty'] = $data['empty'];
+
+				if (is_bool($data['empty'])) {
+					$data[$select]['empty'] = $data['empty'];
+				}
+				if (isset($data['empty'][$select])) {
+					$data[$select]['empty'] = $data['empty'][$select];
+				}
 				$data[$select]['disabled'] = $data['disabled'];
 				$data[$select] += $data[$select];
 				$templateOptions[$select] = $this->{$method}($data[$select]);
@@ -130,6 +136,12 @@ class DateTime implements InputInterface {
  * @return array
  */
 	protected function _deconstuctDate($value) {
+		if (empty($value)) {
+			return [
+				'year' => '', 'month' => '', 'day' => '',
+				'hour' => '', 'minute' => '', 'second' => ''
+			];
+		}
 		if (is_string($value)) {
 			$date = new \DateTime($value);
 		} elseif (is_int($value)) {
