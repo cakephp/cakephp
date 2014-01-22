@@ -66,10 +66,10 @@ trait ExternalAssociationTrait {
 /**
  * Sets the sort order in which target records should be returned.
  * If no arguments are passed the currently configured value is returned
- *
- * @return string
+ * @param mixed $sort A find() compatible order clause
+ * @return mixed
  */
-	function sort($sort = null) {
+	public function sort($sort = null) {
 		if ($sort !== null) {
 			$this->_sort = $sort;
 		}
@@ -283,7 +283,7 @@ trait ExternalAssociationTrait {
  * Generates a string used as a table field that contains the values upon
  * which the filter should be applied
  *
- * params array $options
+ * @param array $options
  * @return string
  */
 	protected function _linkField($options) {
@@ -325,8 +325,8 @@ trait ExternalAssociationTrait {
 
 /**
  * Parse extra options passed in the constructor.
- * @param array $opts original list of options passed in constructor
  *
+ * @param array $opts original list of options passed in constructor
  * @return void
  */
 	protected function _options(array $opts) {
