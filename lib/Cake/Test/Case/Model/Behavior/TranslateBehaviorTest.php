@@ -274,7 +274,7 @@ class TranslateBehaviorTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
-	
+
 /**
  * testLocaleSingleCountWithConditions method
  *
