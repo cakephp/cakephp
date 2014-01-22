@@ -541,18 +541,9 @@ class CakeSession {
 		}
 
 		self::init();
+		self::_configureSession();
 
-		$sessionConfig = Configure::read('Session');
-		if (isset($sessionConfig['ini']['session.name'])) {
-			return self::$_cookieName = $sessionConfig['ini']['session.name'];
-		}
-
-		$defaults = self::_defaultConfig($sessionConfig['defaults']);
-		if ($defaults) {
-			return self::$_cookieName = $defaults['cookie'];
-		}
-
-		return self::$_cookieName = ini_get('session.name');
+		return self::$_cookieName = session_name();
 	}
 
 /**
