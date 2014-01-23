@@ -99,7 +99,7 @@ class DateTime implements InputInterface {
 			'second' => [],
 		];
 
-		$selected = $this->_deconstuctDate($data['val']);
+		$selected = $this->_deconstuctDate($data['val'], $data);
 
 		$templateOptions = [];
 		foreach ($this->_selects as $select) {
@@ -130,9 +130,10 @@ class DateTime implements InputInterface {
  * Deconstructs the passed date value into all time units
  *
  * @param string|integer|array|DateTime $value
+ * @param array $options Options for conversion.
  * @return array
  */
-	protected function _deconstuctDate($value) {
+	protected function _deconstuctDate($value, $options) {
 		if (empty($value)) {
 			return [
 				'year' => '', 'month' => '', 'day' => '',
@@ -152,7 +153,12 @@ class DateTime implements InputInterface {
 				$date->setTime($value['hour'], $value['minute'], $value['second']);
 			}
 		} else {
-			$date = $value;
+			$date = clone $value;
+		}
+
+		if (isset($options['minute']['interval'])) {
+			$change = $this->_adjustValue($date->format('i'), $options['minute']);
+			$date->modify($change > 0 ? "+$change minutes" : "$change minutes");
 		}
 
 		return [
@@ -163,6 +169,29 @@ class DateTime implements InputInterface {
 			'minute' => $date->format('i'),
 			'second' => $date->format('s')
 		];
+	}
+
+/**
+ * Adjust $value based on rounding settings.
+ *
+ * @param int $value The value to adjust.
+ * @param array The options containing interval and possibly round.
+ * @return integer The amount to adjust $value by.
+ */
+	protected function _adjustValue($value, $options) {
+		$options += ['interval' => 1, 'round' => null];
+		$changeValue = $value * (1 / $options['interval']);
+		switch ($options['round']) {
+			case 'up':
+				$changeValue = ceil($changeValue);
+				break;
+			case 'down':
+				$changeValue = floor($changeValue);
+				break;
+			default:
+				$changeValue = round($changeValue);
+		}
+		return ($changeValue * $options['interval']) - $value;
 	}
 
 /**
@@ -279,12 +308,21 @@ class DateTime implements InputInterface {
 		$options += [
 			'name' => '',
 			'val' => null,
+			'interval' => 1,
+			'round' => 'up',
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
-			'options' => $this->_generateNumbers(1, 60)
 		];
+		if (empty($options['options'])) {
+			$options['options'] = $this->_generateNumbers(0, 59, $options);
+		}
 
-		unset($options['leadingZeroKey'], $options['leadingZeroValue']);
+		unset(
+			$options['leadingZeroKey'],
+			$options['leadingZeroValue'],
+			$options['interval'],
+			$options['round']
+		);
 		return $this->_select->render($options);
 	}
 
@@ -343,30 +381,37 @@ class DateTime implements InputInterface {
 /**
  * Generates a range of numbers
  *
+ * ### Options
+ *
+ * - leadingZeroKey - Set to true to add a leading 0 to single digit keys.
+ * - leadingZeroValue - Set to true to add a leading 0 to single digit values.
+ * - interval - The interval to generate numbers for. Defaults to 1.
+ *
  * @param integer $start Start of the range of numbers to generate
  * @param integer $end End of the range of numbers to generate
  * @param array $options
  * @return array
  */
-	protected function _generateNumbers($start = 1, $end = 31, $options = []) {
+	protected function _generateNumbers($start, $end, $options = []) {
 		$options += [
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
+			'interval' => 1
 		];
 
 		$numbers = [];
-		for ($i = $start; $i <= $end; $i++) {
-			$key = $i;
-			$value = $i;
-			if ($i < 10) {
-				if ($options['leadingZeroKey'] === true) {
-					$key = '0' . $key;
-				}
-				if ($options['leadingZeroValue'] === true) {
-					$value = '0' . $value;
-				}
+		$i = $start;
+		while ($i <= $end) {
+			$key = (string)$i;
+			$value = (string)$i;
+			if ($options['leadingZeroKey'] === true) {
+				$key = sprintf('%02d', $key);
 			}
-			$numbers[(string)$key] = (string)$value;
+			if ($options['leadingZeroValue'] === true) {
+				$value = sprintf('%02d', $value);
+			}
+			$numbers[$key] = $value;
+			$i += $options['interval'];
 		}
 		return $numbers;
 	}

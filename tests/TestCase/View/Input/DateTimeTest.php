@@ -491,7 +491,7 @@ class DateTimeTest extends TestCase {
 		]);
 		$this->assertContains('<select name="date[minute]" data-foo="test">', $result);
 		$this->assertContains(
-			'<option value="01">01</option>',
+			'<option value="00">00</option>',
 			$result,
 			'contains 1'
 		);
@@ -506,22 +506,134 @@ class DateTimeTest extends TestCase {
 			'selected value present'
 		);
 		$this->assertContains(
-			'<option value="60">60</option>',
+			'<option value="59">59</option>',
 			$result,
-			'contains 60'
+			'contains 59'
 		);
-		$this->assertNotContains('value="0"', $result, 'No zero value');
-		$this->assertNotContains('value="61"', $result, 'No 61 value');
+		$this->assertNotContains('value="60"', $result, 'No 60 value');
 	}
 
+/**
+ * Test minutes with interval values.
+ *
+ * @return void
+ */
 	public function testRenderMinuteWidgetInterval() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-09-09 13:23:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => [
+				'interval' => 5
+			],
+			'second' => false,
+			'val' => $now,
+		]);
+		$this->assertContains('<select name="date[minute]">', $result);
+		$this->assertContains(
+			'<option value="00">00</option>',
+			$result,
+			'contains 0'
+		);
+		$this->assertContains(
+			'<option value="05">05</option>',
+			$result,
+			'contains 05'
+		);
+		$this->assertContains(
+			'<option value="25" selected="selected">25</option>',
+			$result,
+			'selected value present'
+		);
+		$this->assertContains(
+			'<option value="55">55</option>',
+			$result,
+			'contains 59'
+		);
+		$this->assertNotContains('value="2"', $result, 'No 2 value');
+		$this->assertNotContains('value="23"', $result, 'No 23 value');
+		$this->assertNotContains('value="58"', $result, 'No 58 value');
+		$this->assertNotContains('value="59"', $result, 'No 59 value');
+		$this->assertNotContains('value="60"', $result, 'No 60 value');
 	}
 
+/**
+ * Test rounding up and down.
+ *
+ * @return void
+ */
 	public function testRenderMinuteWidgetIntervalRounding() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-09-09 13:22:00');
+		$data = [
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => [
+				'interval' => 5,
+				'round' => 'up',
+			],
+			'second' => false,
+			'val' => $now,
+		];
+		$result = $this->DateTime->render($data);
+		$this->assertContains(
+			'<option value="25" selected="selected">25</option>',
+			$result,
+			'selected value present'
+		);
+		$this->assertNotContains('value="23"', $result, 'No 23 value');
+
+		$data['minute']['round'] = 'down';
+		$result = $this->DateTime->render($data);
+		$this->assertContains(
+			'<option value="20" selected="selected">20</option>',
+			$result,
+			'selected value present'
+		);
+		$this->assertNotContains('value="23"', $result, 'No 23 value');
 	}
 
+/**
+ * Test that minute interval rounding can effect hours and days.
+ *
+ * @return void
+ */
+	public function testMinuteIntervalHourRollover() {
+		$now = new \DateTime('2010-09-09 23:58:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'minute' => [
+				'interval' => 5,
+				'round' => 'up',
+			],
+			'second' => false,
+			'val' => $now,
+		]);
+
+		$this->assertContains(
+			'<option value="00" selected="selected">00</option>',
+			$result,
+			'selected minute present'
+		);
+		$this->assertContains(
+			'<option value="10" selected="selected">10</option>',
+			$result,
+			'selected day present'
+		);
+	}
+
+/**
+ * Test render seconds basic.
+ *
+ * @return void
+ */
 	public function testRenderSecondsWidget() {
 		$now = new \DateTime('2010-09-09 13:00:25');
 		$result = $this->DateTime->render([
@@ -561,6 +673,11 @@ class DateTimeTest extends TestCase {
 		$this->assertNotContains('value="61"', $result, 'No 61 value');
 	}
 
+/**
+ * Test the merdian select.
+ *
+ * @return void
+ */
 	public function testRenderMeridianWidget() {
 		$this->markTestIncomplete();
 	}
