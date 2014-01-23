@@ -116,7 +116,7 @@ class PaginatorComponentTest extends TestCase {
 		);
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery();
-		$table->expects($this->at(0))
+		$table->expects($this->once())
 			->method('find')
 			->with('all', [
 				'conditions' => [],
@@ -126,15 +126,6 @@ class PaginatorComponentTest extends TestCase {
 				'limit' => 10,
 				'order' => ['PaginatorPosts.id' => 'ASC'],
 				'page' => 1,
-			])
-			->will($this->returnValue($query));
-
-		$table->expects($this->at(1))
-			->method('find')
-			->with('all', [
-				'conditions' => [],
-				'contain' => ['PaginatorAuthor'],
-				'group' => 'PaginatorPosts.published',
 			])
 			->will($this->returnValue($query));
 
@@ -180,7 +171,7 @@ class PaginatorComponentTest extends TestCase {
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery();
 
-		$table->expects($this->at(0))
+		$table->expects($this->once())
 			->method('find')
 			->with('all', [
 				'conditions' => [],
@@ -189,10 +180,6 @@ class PaginatorComponentTest extends TestCase {
 				'page' => 1,
 				'order' => ['PaginatorPosts.id' => 'DESC']
 			])
-			->will($this->returnValue($query));
-
-		$table->expects($this->at(1))
-			->method('find')
 			->will($this->returnValue($query));
 
 		$this->Paginator->paginate($table, $settings);
@@ -351,7 +338,7 @@ class PaginatorComponentTest extends TestCase {
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery();
 
-		$table->expects($this->at(0))
+		$table->expects($this->once())
 			->method('find')
 			->with('all', [
 				'fields' => null,
@@ -360,10 +347,6 @@ class PaginatorComponentTest extends TestCase {
 				'page' => 1,
 				'order' => ['PaginatorPosts.id' => 'asc'],
 			])
-			->will($this->returnValue($query));
-
-		$table->expects($this->at(1))
-			->method('find')
 			->will($this->returnValue($query));
 
 		$this->request->query = [
@@ -682,7 +665,7 @@ class PaginatorComponentTest extends TestCase {
 		);
 		$table = $this->_getMockPosts(['find']);
 		$query = $this->_getMockFindQuery();
-		$table->expects($this->at(0))
+		$table->expects($this->once())
 			->method('find')
 			->with('published', [
 				'conditions' => [],
@@ -690,13 +673,6 @@ class PaginatorComponentTest extends TestCase {
 				'limit' => 2,
 				'fields' => null,
 				'page' => 1,
-			])
-			->will($this->returnValue($query));
-
-		$table->expects($this->at(1))
-			->method('find')
-			->with('published', [
-				'conditions' => [],
 			])
 			->will($this->returnValue($query));
 
@@ -722,10 +698,13 @@ class PaginatorComponentTest extends TestCase {
  * @return Query
  */
 	protected function _getMockFindQuery() {
-		$query = $this->getMock('Cake\ORM\Query', ['total', 'all'], [], '', false);
+		$query = $this->getMockBuilder('Cake\ORM\Query')
+			->setMethods(['total', 'all', 'count'])
+			->disableOriginalConstructor()
+			->getMock();
 
 		$results = $this->getMock('Cake\ORM\ResultSet', [], [], '', false);
-		$results->expects($this->any())
+		$query->expects($this->any())
 			->method('count')
 			->will($this->returnValue(2));
 
