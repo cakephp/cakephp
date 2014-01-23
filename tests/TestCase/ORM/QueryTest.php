@@ -1516,11 +1516,12 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that it is possible to provide
+ * Tests that it is possible to provide a callback for calculating the count
+ * of a query
  *
  * @return void
  */
-	public function testCountWuthCustomCounter() {
+	public function testCountWithCustomCounter() {
 		$table = TableRegistry::get('articles');
 		$query = $table->find('all');
 		$query

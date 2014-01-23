@@ -910,7 +910,7 @@ class Query extends DatabaseQuery {
  * count, for example removing unnecessary joins, removing group by or just return
  * an estimated number of rows.
  *
- * The callback will receive as first argument a  clone of this query and not this
+ * The callback will receive as first argument a clone of this query and not this
  * query itself.
  *
  * @param callable $counter
