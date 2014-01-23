@@ -34,6 +34,21 @@ use Cake\ORM\Table;
 class Query extends DatabaseQuery {
 
 /**
+ * Indicates that the operation should append to the list
+ */
+	const APPEND = 0;
+
+/**
+ * Indicates that the operation should prepend to the list
+ */
+	const PREPEND = 1;
+
+/**
+ * Indicates that the operation should overwrite the list
+ */
+	const OVERWRITE = true;
+
+/**
  * Instance of a table object this query is bound to
  *
  * @var \Cake\ORM\Table
@@ -841,16 +856,22 @@ class Query extends DatabaseQuery {
  * }}}
  *
  * @param callable $formatter
- * @param boolean $overwrite
+ * @param boolean|integer $mode
  * @return Cake\ORM\Query|array
  */
-	public function formatResults(callable $formatter = null, $overwrite = false) {
-		if ($overwrite) {
+	public function formatResults(callable $formatter = null, $mode = self::APPEND) {
+		if ($mode === self::OVERWRITE) {
 			$this->_formatters = [];
 		}
 		if ($formatter === null) {
 			return $this->_formatters;
 		}
+
+		if ($mode === self::PREPEND) {
+			array_unshift($this->_formatters, $formatter);
+			return $this;
+		}
+
 		$this->_formatters[] = $formatter;
 		return $this;
 	}
