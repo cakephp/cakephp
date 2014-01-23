@@ -97,8 +97,9 @@ class TranslateBehavior extends Behavior {
 					'_locale' => $locale
 				], $options);
 			}
-			$row->clean();
 
+			$row->clean();
+			unset($row['_i18n']);
 			return $row;
 		});
 	}

@@ -53,5 +53,33 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertSame($expected, $results);
 	}
 
+/**
+ * Tests that overriding fields with the translate behavior works when
+ * using conditions and that all other columns are preserved
+ *
+ * @return void
+ */
+	public function testFindSingleLocaleWithConditions() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate');
+		$table->locale('eng');
+		$results = $table->find()
+			->where(['id' => 2])
+			->all();
+
+		$this->assertCount(1, $results);
+		$row = $results->first();
+
+		$expected = [
+			'id' => 2,
+			'title' => 'Title #2',
+			'body' => 'Content #2',
+			'author_id' => 3,
+			'published' => 'Y',
+			'_locale' => 'eng'
+		];
+		$this->assertEquals($expected, $row->toArray());
+	}
+
 }
 
