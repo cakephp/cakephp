@@ -1516,6 +1516,27 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to provide
+ *
+ * @return void
+ */
+	public function testCountWuthCustomCounter() {
+		$table = TableRegistry::get('articles');
+		$query = $table->find('all');
+		$query
+			->select(['author_id', 's' => $query->func()->sum('id')])
+			->where(['id >' => 2])
+			->group(['author_id'])
+			->counter(function($q) use ($query) {
+				$this->assertNotSame($q, $query);
+				return $q->select([], true)->group([], true)->count();
+			});
+
+		$result = $query->count();
+		$this->assertEquals(1, $result);
+	}
+
+/**
  * Test update method.
  *
  * @return void

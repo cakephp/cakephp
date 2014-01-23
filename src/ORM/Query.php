@@ -144,6 +144,14 @@ class Query extends DatabaseQuery {
 	protected $_cache;
 
 /**
+ * A callable function that can be used to calculate the total amount of
+ * records this query will match when not using `limit`
+ *
+ * @var callable
+ */
+	protected $_counter;
+
+/**
  * Constuctor
  *
  * @param Cake\Database\Connection $connection
@@ -873,17 +881,44 @@ class Query extends DatabaseQuery {
 	public function count() {
 		$query = clone $this;
 		$query->limit(null);
+		$query->offset(null);
+		$counter = $this->_counter;
+
+		if ($counter) {
+			$query->counter(null);
+			return (int)$counter($query);
+		}
 
 		// Forcing at least one field to be selected
 		$query->select($query->newExpr()->add('1'));
 		$statement = $this->connection()->newQuery()
 			->select(['count' => $query->func()->count('*')])
-			->from(['source' => $query])
+			->from(['count_source' => $query])
 			->execute();
 		$result = $statement->fetch('assoc')['count'];
 
 		$statement->closeCursor();
 		return (int)$result;
+	}
+
+/**
+ * Registers a callable function that will be executed when the `count` method in
+ * this query is called. The return value for the function will be set as the
+ * return value of the `count` method.
+ *
+ * This is particularly useful when you need to optimize a query for returning the
+ * count, for example removing unnecessary joins, removing group by or just return
+ * an estimated number of rows.
+ *
+ * The callback will receive as first argument a  clone of this query and not this
+ * query itself.
+ *
+ * @param callable $counter
+ * @return Cake\ORM\Query
+ */
+	public function counter($counter) {
+		$this->_counter = $counter;
+		return $this;
 	}
 
 /**
