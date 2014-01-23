@@ -19,6 +19,7 @@ use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 
 class TranslateBehavior extends Behavior {
 
@@ -40,7 +41,8 @@ class TranslateBehavior extends Behavior {
  */
 	protected static $_defaultConfig = [
 		'implementedFinders' => [],
-		'implementedMethods' => ['locale' => 'locale']
+		'implementedMethods' => ['locale' => 'locale'],
+		'fields' => []
 	];
 
 /**
@@ -52,24 +54,53 @@ class TranslateBehavior extends Behavior {
 	public function __construct(Table $table, array $config = []) {
 		parent::__construct($table, $config);
 		$this->_table = $table;
+		$this->setupAssociations();
+	}
 
-		$table->hasMany('I18n', [
-			'strategy' => 'subquery',
-			'foreignKey' => 'foreign_key',
-			'conditions' => ['I18n.model' => $table->alias()],
-			'propertyName' => '_i18n'
-		]);
+	public function setupAssociations() {
+		$alias = $this->_table->alias();
+		foreach ($this->config()['fields'] as $field) {
+			$name = $field . '_translation';
+			$target = TableRegistry::get($name, [
+				'table' => 'i18n'
+			]);
+
+			$this->_table->hasOne($name, [
+				'targetTable' => $target,
+				'foreignKey' => 'foreign_key',
+				'joinType' => 'LEFT',
+				'conditions' => [
+					$name . '.model' => $alias,
+					$name . '.field' => $field,
+				],
+				'propertyName' => $field . '_translation'
+			]);
+		}
 	}
 
 	public function beforeFind(Event $event, $query) {
-		$locale = (array)$this->locale();
-		$query->contain(['I18n' => function($q) use ($locale) {
-			if ($locale) {
-				$q->where(['I18n.locale IN' => $locale]);
-			}
+		$fields = $this->config()['fields'];
 
+		if (empty($fields)) {
+			return;
+		}
+
+		$locale = (array)$this->locale();
+		if (!$locale) {
+			return;
+		}
+
+		$conditions = function($q) use ($locale) {
+			$q->where([$q->repository()->alias() . '.locale IN' => $locale]);
 			return $q;
-		}]);
+		};
+
+		$contain = [];
+		foreach ($fields as $field) {
+			$contain[$field . '_translation'] = $conditions;
+		}
+
+		$query->contain($contain);
 
 		if (count($locale) === 1) {
 			$locale = current($locale);
@@ -88,18 +119,24 @@ class TranslateBehavior extends Behavior {
 
 	protected function _rowMapper($results, $locale) {
 		return $results->map(function($row) use ($locale) {
-			$translations = (array)$row->get('_i18n');
 			$options = ['setter' => false, 'guard' => false];
 
-			foreach ($translations as $field) {
+			foreach ($this->config()['fields'] as $field) {
+				$name = $field . '_translation';
+				$translation = $row->get($name);
+
+				if (!$translation) {
+					continue;
+				}
+
 				$row->set([
-					$field->get('field') => $field->get('content'),
+					$field => $translation->get('content'),
 					'_locale' => $locale
 				], $options);
+				unset($row[$name]);
 			}
 
 			$row->clean();
-			unset($row['_i18n']);
 			return $row;
 		});
 	}

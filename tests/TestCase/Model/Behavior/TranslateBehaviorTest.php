@@ -42,7 +42,7 @@ class TranslateBehaviorTest extends TestCase {
  */
 	public function testFindSingleLocale() {
 		$table = TableRegistry::get('Articles');
-		$table->addBehavior('Translate');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
 		$table->locale('eng');
 		$results = $table->find()->combine('title', 'body', 'id')->toArray();
 		$expected = [
@@ -62,9 +62,10 @@ class TranslateBehaviorTest extends TestCase {
 	public function testFindSingleLocaleWithConditions() {
 		$table = TableRegistry::get('Articles');
 		$table->addBehavior('Translate');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
 		$table->locale('eng');
 		$results = $table->find()
-			->where(['id' => 2])
+			->where(['Articles.id' => 2])
 			->all();
 
 		$this->assertCount(1, $results);
