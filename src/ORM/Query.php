@@ -1041,7 +1041,6 @@ class Query extends DatabaseQuery {
 
 		foreach ($this->_resolveJoins($this->_table, $contain) as $options) {
 			$table = $options['instance']->target();
-			$alias = $table->alias();
 			$this->_addJoin($options['instance'], $options['config']);
 			foreach ($options['associations'] as $relation => $meta) {
 				if ($meta['instance'] && !$meta['canBeJoined']) {
@@ -1127,7 +1126,7 @@ class Query extends DatabaseQuery {
  */
 	protected function _eagerLoad($statement) {
 		$keys = $this->_collectKeys($statement);
-		foreach ($this->_loadEagerly as $association => $meta) {
+		foreach ($this->_loadEagerly as $meta) {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
 			$keys = isset($keys[$alias]) ? $keys[$alias] : null;
@@ -1150,7 +1149,7 @@ class Query extends DatabaseQuery {
  */
 	protected function _collectKeys($statement) {
 		$collectKeys = [];
-		foreach ($this->_loadEagerly as $association => $meta) {
+		foreach ($this->_loadEagerly as $meta) {
 			$source = $meta['instance']->source();
 			if ($meta['instance']->requiresKeys($meta['config'])) {
 				$alias = $source->alias();
