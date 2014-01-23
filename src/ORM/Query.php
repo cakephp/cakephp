@@ -868,18 +868,22 @@ class Query extends DatabaseQuery {
 /**
  * Return the COUNT(*) for for the query.
  *
- * If the query does not contain GROUP BY or map reduce functions, then
- * this method will replace the selected fields with a COUNT(*), and the resulting
- * count will be returned.
- *
  * @return integer
  */
 	public function count() {
 		$query = clone $this;
-		$query->select(['count' => $this->func()->count('*')])->hydrate(false);
-		$query->mapReduce(null, null, true);
-		$query->formatResults(null, true);
-		return (int)$query->first()['count'];
+		$query->limit(null);
+
+		// Forcing at least one field to be selected
+		$query->select($query->newExpr()->add('1'));
+		$statement = $this->connection()->newQuery()
+			->select(['count' => $query->func()->count('*')])
+			->from(['source' => $query])
+			->execute();
+		$result = $statement->fetch('assoc')['count'];
+
+		$statement->closeCursor();
+		return (int)$result;
 	}
 
 /**
