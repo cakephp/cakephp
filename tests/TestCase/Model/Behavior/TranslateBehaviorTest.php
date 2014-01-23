@@ -82,5 +82,34 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $row->toArray());
 	}
 
+/**
+ * Tests that translating fields work when other formatters are used
+ *
+ * @return void
+ */
+	public function testFindList() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('eng');
+
+		$results = $table->find('list')->toArray();
+		$expected = [1 => 'Title #1', 2 => 'Title #2', 3 => 'Title #3'];
+		$this->assertSame($expected, $results);
+	}
+
+/**
+ * Tests that the query count return the correct results
+ *
+ * @return void
+ */
+	public function testFindCount() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('eng');
+
+		$this->assertEquals(3, $table->find()->count());
+	}
 }
 

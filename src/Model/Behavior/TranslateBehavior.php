@@ -54,16 +54,14 @@ class TranslateBehavior extends Behavior {
 	public function __construct(Table $table, array $config = []) {
 		parent::__construct($table, $config);
 		$this->_table = $table;
-		$this->setupAssociations();
 	}
 
-	public function setupAssociations() {
+	public function setupFieldAssociations() {
 		$alias = $this->_table->alias();
 		foreach ($this->config()['fields'] as $field) {
 			$name = $field . '_translation';
-			$target = TableRegistry::get($name, [
-				'table' => 'i18n'
-			]);
+			$target = TableRegistry::get($name);
+			$target->table('i18n');
 
 			$this->_table->hasOne($name, [
 				'targetTable' => $target,
@@ -86,13 +84,15 @@ class TranslateBehavior extends Behavior {
 		}
 
 		$locale = (array)$this->locale();
-		if (!$locale) {
+		if (!$locale || count($locale) > 1) {
 			return;
 		}
 
+		$this->setupFieldAssociations();
 		$conditions = function($q) use ($locale) {
-			$q->where([$q->repository()->alias() . '.locale IN' => $locale]);
-			return $q;
+			return $q
+				->select(['id', 'content'])
+				->where([$q->repository()->alias() . '.locale IN' => $locale]);
 		};
 
 		$contain = [];
@@ -101,13 +101,10 @@ class TranslateBehavior extends Behavior {
 		}
 
 		$query->contain($contain);
-
-		if (count($locale) === 1) {
-			$locale = current($locale);
-			$query->formatResults(function($results) use ($locale) {
-				return $this->_rowMapper($results, $locale);
-			});
-		}
+		$locale = current($locale);
+		$query->formatResults(function($results) use ($locale) {
+			return $this->_rowMapper($results, $locale);
+		}, $query::PREPEND);
 	}
 
 	public function locale($locale = null) {
