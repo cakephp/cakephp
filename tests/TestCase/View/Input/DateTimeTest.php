@@ -470,8 +470,48 @@ class DateTimeTest extends TestCase {
 		$this->assertNotContains('value="0"', $result, 'No zero hour');
 	}
 
+/**
+ * Test rendering the minute widget with no options.
+ *
+ * @return void
+ */
 	public function testRenderMinuteWidget() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-09-09 13:25:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => [
+				'data-foo' => 'test',
+			],
+			'second' => false,
+			'val' => $now,
+		]);
+		$this->assertContains('<select name="date[minute]" data-foo="test">', $result);
+		$this->assertContains(
+			'<option value="01">01</option>',
+			$result,
+			'contains 1'
+		);
+		$this->assertContains(
+			'<option value="05">05</option>',
+			$result,
+			'contains 05'
+		);
+		$this->assertContains(
+			'<option value="25" selected="selected">25</option>',
+			$result,
+			'selected value present'
+		);
+		$this->assertContains(
+			'<option value="60">60</option>',
+			$result,
+			'contains 60'
+		);
+		$this->assertNotContains('value="0"', $result, 'No zero value');
+		$this->assertNotContains('value="61"', $result, 'No 61 value');
 	}
 
 	public function testRenderMinuteWidgetInterval() {
@@ -483,7 +523,42 @@ class DateTimeTest extends TestCase {
 	}
 
 	public function testRenderSecondsWidget() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-09-09 13:00:25');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => [
+				'data-foo' => 'test',
+			],
+			'val' => $now,
+		]);
+		$this->assertContains('<select name="date[second]" data-foo="test">', $result);
+		$this->assertContains(
+			'<option value="01">01</option>',
+			$result,
+			'contains 1'
+		);
+		$this->assertContains(
+			'<option value="05">05</option>',
+			$result,
+			'contains 05'
+		);
+		$this->assertContains(
+			'<option value="25" selected="selected">25</option>',
+			$result,
+			'selected value present'
+		);
+		$this->assertContains(
+			'<option value="60">60</option>',
+			$result,
+			'contains 60'
+		);
+		$this->assertNotContains('value="0"', $result, 'No zero value');
+		$this->assertNotContains('value="61"', $result, 'No 61 value');
 	}
 
 	public function testRenderMeridianWidget() {
