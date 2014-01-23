@@ -206,7 +206,7 @@ class DateTime implements InputInterface {
 			'names' => false,
 			'val' => null,
 			'leadingZeroKey' => true,
-			'leadingZeroValue' => true
+			'leadingZeroValue' => false
 		];
 
 		if (empty($options['options'])) {
@@ -232,7 +232,7 @@ class DateTime implements InputInterface {
 			'name' => '',
 			'val' => null,
 			'leadingZeroKey' => true,
-			'leadingZeroValue' => true,
+			'leadingZeroValue' => false,
 		];
 		$options['options'] = $this->_generateNumbers(1, 31, $options);
 
@@ -250,12 +250,22 @@ class DateTime implements InputInterface {
 		$options += [
 			'name' => '',
 			'val' => null,
+			'format' => 24,
 			'leadingZeroKey' => true,
-			'leadingZeroValue' => true,
-			'options' => $this->_generateNumbers(1, 24)
+			'leadingZeroValue' => false,
 		];
+		$is24 = $options['format'] == 24;
 
-		unset($options['leadingZeroKey'], $options['leadingZeroValue']);
+		if (!$is24 && $options['val'] > 12) {
+			$options['val'] = sprintf('%02d', $options['val'] - 12);
+		}
+
+		if (empty($options['options'])) {
+			$end = $is24 ? 24 : 12;
+			$options['options'] = $this->_generateNumbers(1, $end, $options);
+		}
+
+		unset($options['format'], $options['leadingZeroKey'], $options['leadingZeroValue']);
 		return $this->_select->render($options);
 	}
 

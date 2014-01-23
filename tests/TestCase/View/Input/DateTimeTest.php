@@ -77,7 +77,7 @@ class DateTimeTest extends TestCase {
 	public function testRenderSelected($selected) {
 		$result = $this->DateTime->render(['val' => $selected]);
 		$this->assertContains('<option value="2014" selected="selected">2014</option>', $result);
-		$this->assertContains('<option value="01" selected="selected">01</option>', $result);
+		$this->assertContains('<option value="01" selected="selected">1</option>', $result);
 		$this->assertContains('<option value="20" selected="selected">20</option>', $result);
 		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
 		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
@@ -150,6 +150,7 @@ class DateTimeTest extends TestCase {
 			'year' => [
 				'start' => 2013,
 				'end' => 2015,
+				'data-foo' => 'test',
 				'order' => 'desc',
 			],
 			'month' => false,
@@ -161,7 +162,7 @@ class DateTimeTest extends TestCase {
 			'orderYear' => 'asc',
 		]);
 		$expected = [
-			'select' => ['name' => 'date[year]'],
+			'select' => ['name' => 'date[year]', 'data-foo' => 'test'],
 			['option' => ['value' => '2013']], '2013', '/option',
 			['option' => ['value' => '2014', 'selected' => 'selected']], '2014', '/option',
 			['option' => ['value' => '2015']], '2015', '/option',
@@ -269,15 +270,15 @@ class DateTimeTest extends TestCase {
 		]);
 		$expected = [
 			'select' => ['name' => 'date[month]'],
-			['option' => ['value' => '01']], '01', '/option',
-			['option' => ['value' => '02']], '02', '/option',
-			['option' => ['value' => '03']], '03', '/option',
-			['option' => ['value' => '04']], '04', '/option',
-			['option' => ['value' => '05']], '05', '/option',
-			['option' => ['value' => '06']], '06', '/option',
-			['option' => ['value' => '07']], '07', '/option',
-			['option' => ['value' => '08']], '08', '/option',
-			['option' => ['value' => '09', 'selected' => 'selected']], '09', '/option',
+			['option' => ['value' => '01']], '1', '/option',
+			['option' => ['value' => '02']], '2', '/option',
+			['option' => ['value' => '03']], '3', '/option',
+			['option' => ['value' => '04']], '4', '/option',
+			['option' => ['value' => '05']], '5', '/option',
+			['option' => ['value' => '06']], '6', '/option',
+			['option' => ['value' => '07']], '7', '/option',
+			['option' => ['value' => '08']], '8', '/option',
+			['option' => ['value' => '09', 'selected' => 'selected']], '9', '/option',
 			['option' => ['value' => '10']], '10', '/option',
 			['option' => ['value' => '11']], '11', '/option',
 			['option' => ['value' => '12']], '12', '/option',
@@ -322,16 +323,151 @@ class DateTimeTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test rendering the day widget.
+ *
+ * @return void
+ */
 	public function testRenderDayWidget() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-09-09 12:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => [
+				'data-foo' => 'test',
+			],
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[day]', 'data-foo' => 'test'],
+			['option' => ['value' => '01']], '1', '/option',
+			['option' => ['value' => '02']], '2', '/option',
+			['option' => ['value' => '03']], '3', '/option',
+			['option' => ['value' => '04']], '4', '/option',
+			['option' => ['value' => '05']], '5', '/option',
+			['option' => ['value' => '06']], '6', '/option',
+			['option' => ['value' => '07']], '7', '/option',
+			['option' => ['value' => '08']], '8', '/option',
+			['option' => ['value' => '09', 'selected' => 'selected']], '9', '/option',
+			['option' => ['value' => '10']], '10', '/option',
+			['option' => ['value' => '11']], '11', '/option',
+			['option' => ['value' => '12']], '12', '/option',
+			['option' => ['value' => '13']], '13', '/option',
+			['option' => ['value' => '14']], '14', '/option',
+			['option' => ['value' => '15']], '15', '/option',
+			['option' => ['value' => '16']], '16', '/option',
+			['option' => ['value' => '17']], '17', '/option',
+			['option' => ['value' => '18']], '18', '/option',
+			['option' => ['value' => '19']], '19', '/option',
+			['option' => ['value' => '20']], '20', '/option',
+			['option' => ['value' => '21']], '21', '/option',
+			['option' => ['value' => '22']], '22', '/option',
+			['option' => ['value' => '23']], '23', '/option',
+			['option' => ['value' => '24']], '24', '/option',
+			['option' => ['value' => '25']], '25', '/option',
+			['option' => ['value' => '26']], '26', '/option',
+			['option' => ['value' => '27']], '27', '/option',
+			['option' => ['value' => '28']], '28', '/option',
+			['option' => ['value' => '29']], '29', '/option',
+			['option' => ['value' => '30']], '30', '/option',
+			['option' => ['value' => '31']], '31', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
 	}
 
-	public function testRenderHourWidget() {
-		$this->markTestIncomplete();
-	}
-
+/**
+ * Test rendering the hour picker in 24 hour mode.
+ *
+ * @return void
+ */
 	public function testRenderHourWidget24() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-09-09 13:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => [
+				'data-foo' => 'test'
+			],
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$this->assertContains('<select name="date[hour]" data-foo="test">', $result);
+		$this->assertContains(
+			'<option value="01">1</option>',
+			$result,
+			'contain 1 am'
+		);
+		$this->assertContains(
+			'<option value="05">5</option>',
+			$result,
+			'contain 5 am'
+		);
+		$this->assertContains(
+			'<option value="13" selected="selected">13</option>',
+			$result,
+			'selected value present'
+		);
+		$this->assertContains(
+			'<option value="24">24</option>',
+			$result,
+			'contains 24 hours'
+		);
+		$this->assertNotContains('date[day]', $result, 'No day select.');
+		$this->assertNotContains('value="0"', $result, 'No zero hour');
+		$this->assertNotContains('value="25"', $result, 'No 25th hour');
+	}
+
+/**
+ * Test rendering the hour widget in 12 hour mode.
+ *
+ * @return void
+ */
+	public function testRenderHourWidget12() {
+		$now = new \DateTime('2010-09-09 13:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => [
+				'format' => 12,
+				'data-foo' => 'test'
+			],
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$this->assertContains('<select name="date[hour]" data-foo="test">', $result);
+		$this->assertContains(
+			'<option value="01" selected="selected">1</option>',
+			$result,
+			'contain 1pm selected'
+		);
+		$this->assertContains(
+			'<option value="05">5</option>',
+			$result,
+			'contain 5'
+		);
+		$this->assertContains(
+			'<option value="12">12</option>',
+			$result,
+			'contain 12'
+		);
+		$this->assertNotContains(
+			'<option value="13">13</option>',
+			$result,
+			'selected value present'
+		);
+		$this->assertNotContains('date[day]', $result, 'No day select.');
+		$this->assertNotContains('value="0"', $result, 'No zero hour');
 	}
 
 	public function testRenderMinuteWidget() {
