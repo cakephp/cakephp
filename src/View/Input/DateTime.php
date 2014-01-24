@@ -45,6 +45,7 @@ class DateTime implements InputInterface {
 		'hour',
 		'minute',
 		'second',
+		'meridian',
 	];
 
 /**
@@ -83,7 +84,7 @@ class DateTime implements InputInterface {
  *
  * @param array $data Data to render with.
  * @return string A generated select box.
- * @throws \RuntimeException when the name attribute is empty.
+ * @throws \RuntimeException When option data is invalid.
  */
 	public function render(array $data) {
 		$data += [
@@ -97,9 +98,17 @@ class DateTime implements InputInterface {
 			'hour' => [],
 			'minute' => [],
 			'second' => [],
+			'meridian' => null,
 		];
 
 		$selected = $this->_deconstuctDate($data['val'], $data);
+
+		if (!isset($data['meridian']) &&
+			isset($data['hour']['format']) &&
+			$data['hour']['format'] == 12
+		) {
+			$data['meridian'] = [];
+		}
 
 		$templateOptions = [];
 		foreach ($this->_selects as $select) {
@@ -107,6 +116,12 @@ class DateTime implements InputInterface {
 				$templateOptions[$select] = '';
 				unset($data[$select]);
 				continue;
+			}
+			if (!is_array($data[$select])) {
+				throw \RuntimeException(sprintf(
+					'Options for "%s" must be an array|false|null',
+					$select
+				));
 			}
 			$method = $select . 'Select';
 			$data[$select]['name'] = $data['name'] . "[" . $select . "]";
@@ -167,7 +182,8 @@ class DateTime implements InputInterface {
 			'day' => $date->format('d'),
 			'hour' => $date->format('H'),
 			'minute' => $date->format('i'),
-			'second' => $date->format('s')
+			'second' => $date->format('s'),
+			'meridian' => $date->format('a'),
 		];
 	}
 
@@ -342,6 +358,21 @@ class DateTime implements InputInterface {
 		];
 
 		unset($options['leadingZeroKey'], $options['leadingZeroValue']);
+		return $this->_select->render($options);
+	}
+
+/**
+ * Generates a meridian select
+ *
+ * @param array $options
+ * @return string
+ */
+	public function meridianSelect($options = []) {
+		$options += [
+			'name' => '',
+			'val' => null,
+			'options' => ['am' => 'am', 'pm' => 'pm']
+		];
 		return $this->_select->render($options);
 	}
 

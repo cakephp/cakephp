@@ -43,7 +43,7 @@ class DateTimeTest extends TestCase {
 			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
-			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}'
+			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}'
 		];
 		$this->templates = new StringTemplate($templates);
 		$this->selectBox = new SelectBox($this->templates);
@@ -423,6 +423,8 @@ class DateTimeTest extends TestCase {
 		$this->assertNotContains('date[day]', $result, 'No day select.');
 		$this->assertNotContains('value="0"', $result, 'No zero hour');
 		$this->assertNotContains('value="25"', $result, 'No 25th hour');
+		$this->assertNotContains('<select name="date[meridian]">', $result);
+		$this->assertNotContains('<option value="pm" selected="selected">pm</option>', $result);
 	}
 
 /**
@@ -468,6 +470,9 @@ class DateTimeTest extends TestCase {
 		);
 		$this->assertNotContains('date[day]', $result, 'No day select.');
 		$this->assertNotContains('value="0"', $result, 'No zero hour');
+
+		$this->assertContains('<select name="date[meridian]">', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
 	}
 
 /**
@@ -679,7 +684,45 @@ class DateTimeTest extends TestCase {
  * @return void
  */
 	public function testRenderMeridianWidget() {
-		$this->markTestIncomplete();
+		$now = new \DateTime('2010-09-09 13:00:25');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'meridian' => [],
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[meridian]'],
+			['option' => ['value' => 'am']], 'am', '/option',
+			['option' => ['value' => 'pm', 'selected' => 'selected']], 'pm', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
+
+		$now = new \DateTime('2010-09-09 09:00:25');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'meridian' => [],
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[meridian]'],
+			['option' => ['value' => 'am', 'selected' => 'selected']], 'am', '/option',
+			['option' => ['value' => 'pm']], 'pm', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
