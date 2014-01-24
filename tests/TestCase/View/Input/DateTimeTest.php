@@ -89,6 +89,7 @@ class DateTimeTest extends TestCase {
 			'hour' => ['empty' => 'HOUR'],
 			'minute' => ['empty' => 'MINUTE'],
 			'second' => ['empty' => 'SECOND'],
+			'meridian' => ['empty' => 'MERIDIAN'],
 		]);
 		$this->assertContains('<option value="" selected="selected">YEAR</option>', $result);
 		$this->assertContains('<option value="" selected="selected">MONTH</option>', $result);
@@ -96,6 +97,7 @@ class DateTimeTest extends TestCase {
 		$this->assertContains('<option value="" selected="selected">HOUR</option>', $result);
 		$this->assertContains('<option value="" selected="selected">MINUTE</option>', $result);
 		$this->assertContains('<option value="" selected="selected">SECOND</option>', $result);
+		$this->assertContains('<option value="" selected="selected">MERIDIAN</option>', $result);
 	}
 
 /**
