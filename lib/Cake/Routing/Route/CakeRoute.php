@@ -235,7 +235,7 @@ class CakeRoute {
 
 		foreach ($this->keys as $key) {
 			if (isset($route[$key])) {
-				$route[$key] = rawurldecode($route[$key]);
+				$route[$key] = $route[$key];
 			}
 		}
 
@@ -247,7 +247,7 @@ class CakeRoute {
 		}
 
 		if (isset($route['_trailing_'])) {
-			$route['pass'][] = rawurldecode($route['_trailing_']);
+			$route['pass'][] = $route['_trailing_'];
 			unset($route['_trailing_']);
 		}
 
