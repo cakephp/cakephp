@@ -75,6 +75,12 @@ class DateTime implements InputInterface {
  * - `empty` - Set to true to add an empty option at the top of the
  *   option elements. Set to a string to define the display value of the
  *   empty option.
+ *
+ * In addtion to the above options, the following options allow you to control
+ * which input elements are generated. By setting any option to false you can disable
+ * that input picker. In addition each picker allows you to set additional options
+ * that are set as HTML properties on the picker.
+ *
  * - `year` - Array of options for the year select box.
  * - `month` - Array of options for the month select box.
  * - `day` - Array of options for the day select box.
@@ -83,6 +89,21 @@ class DateTime implements InputInterface {
  * - `second` - Set to true to enable the seconds input. Defaults to false.
  * - `meridian` - Set to true to enable the meridian input. Defaults to false.
  *   The meridian will be enabled automatically if you chose a 12 hour format.
+ *
+ * The `year` option accepts the `start` and `end` options. These let you control
+ * the year range that is generated. It defaults to +-5 years from today.
+ *
+ * The `month` option accepts the `name` option which allows you to get month
+ * names instead of month numbers.
+ *
+ * The `hour` option allows you to set the `format` option which accepts
+ * 12 or 24, allowing you to indicate which hour format you want.
+ *
+ * The `minute` option allows you to define the following options:
+ *
+ * - `interval` The interval to round options to.
+ * - `round` Accepts `up` or `down`. Defines which direction the current value
+ *   should be rounded to match the select options.
  *
  * @param array $data Data to render with.
  * @return string A generated select box.
