@@ -39,7 +39,7 @@ class ResultSetDecorator extends Collection implements Countable, Serializable, 
  * will convert the underlying traversable object into an array and
  * get the count of the underlying data.
  *
- * @return integer.
+ * @return integer
  */
 	public function count() {
 		return count(iterator_to_array($this));
@@ -62,7 +62,6 @@ class ResultSetDecorator extends Collection implements Countable, Serializable, 
  * Part of Serializable interface.
  *
  * @param string Serialized object
- * @return ResultSet The hydrated result set.
  */
 	public function unserialize($serialized) {
 		parent::__construct(unserialize($serialized));

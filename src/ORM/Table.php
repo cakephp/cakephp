@@ -1470,7 +1470,7 @@ class Table implements EventListener {
  *
  * @param string $method The method name that was fired.
  * @param array $args List of arguments passed to the function.
- * @return mixed.
+ * @return mixed
  * @throws Cake\Error\Exception when there are missing arguments, or when
  *  and & or are combined.
  */
@@ -1559,7 +1559,7 @@ class Table implements EventListener {
  *
  * @param boolean $safe Whether or not this marshaller
  *   should be in safe mode.
- * @return Cake\ORM\Marhsaller;
+ * @return Cake\ORM\Marhsaller
  * @see Cake\ORM\Marshaller
  */
 	public function marshaller($safe = false) {
@@ -1606,6 +1606,7 @@ class Table implements EventListener {
  * @param array $data The data to build an entity with.
  * @param array $associations A whitelist of associations
  *   to hydrate. Defaults to all associations
+ * @return Cake\ORM\Entity
  */
 	public function newEntity(array $data, $associations = null) {
 		if ($associations === null) {
@@ -1640,6 +1641,7 @@ class Table implements EventListener {
  * @param array $data The data to build an entity with.
  * @param array $associations A whitelist of associations
  *   to hydrate. Defaults to all associations
+ * @return array An array of hydrated records.
  */
 	public function newEntities(array $data, $associations = null) {
 		if ($associations === null) {

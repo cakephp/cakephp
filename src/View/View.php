@@ -294,16 +294,22 @@ class View extends Object {
 
 /**
  * Constant for view file type 'view'
+ *
+ * @var string
  */
 	const TYPE_VIEW = 'view';
 
 /**
  * Constant for view file type 'element'
+ *
+ * @var string
  */
 	const TYPE_ELEMENT = 'element';
 
 /**
  * Constant for view file type 'layout'
+ *
+ * @var string
  */
 	const TYPE_LAYOUT = 'layout';
 

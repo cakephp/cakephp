@@ -218,7 +218,7 @@ class Route {
  * for a route. This will compile a route if it has not
  * already been compiled.
  *
- * @return string.
+ * @return string
  */
 	public function getName() {
 		if (!empty($this->_name)) {

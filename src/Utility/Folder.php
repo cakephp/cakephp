@@ -25,7 +25,7 @@ class Folder {
  * Default scheme for Folder::copy
  * Recursively merges subfolders with the same name
  *
- * @constant MERGE
+ * @var string
  */
 	const MERGE = 'merge';
 
@@ -33,7 +33,7 @@ class Folder {
  * Overwrite scheme for Folder::copy
  * subfolders with the same name will be replaced
  *
- * @constant OVERWRITE
+ * @var string
  */
 	const OVERWRITE = 'overwrite';
 
@@ -41,7 +41,7 @@ class Folder {
  * Skip scheme for Folder::copy
  * if a subfolder with the same name exists it will be skipped
  *
- * @constant SKIP
+ * @var string
  */
 	const SKIP = 'skip';
 
