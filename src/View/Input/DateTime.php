@@ -146,7 +146,7 @@ class DateTime implements InputInterface {
 					$select
 				));
 			}
-			$method = $select . 'Select';
+			$method = "_{$select}Select";
 			$data[$select]['name'] = $data['name'] . "[" . $select . "]";
 			$data[$select]['val'] = $selected[$select];
 
@@ -239,7 +239,7 @@ class DateTime implements InputInterface {
  * @param array $options
  * @return string
  */
-	public function yearSelect($options = []) {
+	protected function _yearSelect($options = []) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -268,7 +268,7 @@ class DateTime implements InputInterface {
  * @param array $options
  * @return string
  */
-	public function monthSelect($options = []) {
+	protected function _monthSelect($options = []) {
 		$options += [
 			'name' => '',
 			'names' => false,
@@ -295,7 +295,7 @@ class DateTime implements InputInterface {
  * @param array $options
  * @return string
  */
-	public function daySelect($options = []) {
+	protected function _daySelect($options = []) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -314,7 +314,7 @@ class DateTime implements InputInterface {
  * @param array $options
  * @return string
  */
-	public function hourSelect($options = []) {
+	protected function _hourSelect($options = []) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -343,7 +343,7 @@ class DateTime implements InputInterface {
  * @param array $options
  * @return string
  */
-	public function minuteSelect($options = []) {
+	protected function _minuteSelect($options = []) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -371,7 +371,7 @@ class DateTime implements InputInterface {
  * @param array $options
  * @return string
  */
-	public function secondSelect($options = []) {
+	protected function _secondSelect($options = []) {
 		$options += [
 			'name' => '',
 			'val' => null,
@@ -390,7 +390,7 @@ class DateTime implements InputInterface {
  * @param array $options
  * @return string
  */
-	public function meridianSelect($options = []) {
+	protected function _meridianSelect($options = []) {
 		$options += [
 			'name' => '',
 			'val' => null,

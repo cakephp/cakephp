@@ -15,16 +15,9 @@
 namespace Cake\Test\TestCase\View\Input;
 
 use Cake\TestSuite\TestCase;
+use Cake\View\Input\DateTime;
 use Cake\View\Input\SelectBox;
 use Cake\View\StringTemplate;
-
-class DateTime extends \Cake\View\Input\DateTime {
-
-	public function generateNumbers($start = 1, $end = 31, $options = []) {
-		return parent::_generateNumbers($start, $end, $options);
-	}
-
-}
 
 /**
  * DateTime input test case
@@ -723,54 +716,6 @@ class DateTimeTest extends TestCase {
 			'/select',
 		];
 		$this->assertTags($result, $expected);
-	}
-
-/**
- * testGenerateNumbers
- *
- * @return void
- */
-	public function testGenerateNumbers() {
-		$result = $this->DateTime->generateNumbers(1, 3);
-		$expected = array(
-			'01' => '01',
-			'02' => '02',
-			'03' => '03'
-		);
-		$this->assertEquals($result, $expected);
-
-		$result = $this->DateTime->generateNumbers(1, 3, [
-			'leadingZeroKey' => false
-		]);
-		$expected = array(
-			1 => '01',
-			2 => '02',
-			3 => '03'
-		);
-		$this->assertEquals($result, $expected);
-
-		$result = $this->DateTime->generateNumbers(1, 5, [
-			'leadingZeroValue' => false
-		]);
-		$expected = array(
-			'01' => '1',
-			'02' => '2',
-			'03' => '3',
-			'04' => '4',
-			'05' => '5'
-		);
-		$this->assertEquals($result, $expected);
-
-		$result = $this->DateTime->generateNumbers(1, 3, [
-			'leadingZeroValue' => false,
-			'leadingZeroKey' => false
-		]);
-		$expected = array(
-			1 => '1',
-			2 => '2',
-			3 => '3'
-		);
-		$this->assertEquals($result, $expected);
 	}
 
 }
