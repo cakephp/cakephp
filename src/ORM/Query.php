@@ -882,6 +882,8 @@ class Query extends DatabaseQuery {
 		$query = clone $this;
 		$query->limit(null);
 		$query->offset(null);
+		$query->mapReduce(null, null, true);
+		$query->formatResults(null, true);
 		$counter = $this->_counter;
 
 		if ($counter) {
@@ -889,10 +891,18 @@ class Query extends DatabaseQuery {
 			return (int)$counter($query);
 		}
 
+		$count = ['count' => $query->func()->count('*')];
+		if (!count($query->clause('group')) && !$query->clause('distinct')) {
+			return (int)$query
+				->select($count, true)
+				->hydrate(false)
+				->first()['count'];
+		}
+
 		// Forcing at least one field to be selected
 		$query->select($query->newExpr()->add('1'));
 		$statement = $this->connection()->newQuery()
-			->select(['count' => $query->func()->count('*')])
+			->select($count)
 			->from(['count_source' => $query])
 			->execute();
 		$result = $statement->fetch('assoc')['count'];
