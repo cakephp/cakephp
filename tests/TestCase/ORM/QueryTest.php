@@ -1491,12 +1491,14 @@ class QueryTest extends TestCase {
 		$this->assertSame(3, $result);
 
 		$query = $table->find('all')
-			->where(['id >' => 1]);
+			->where(['id >' => 1])
+			->limit(1);
 		$result = $query->count();
 		$this->assertSame(2, $result);
 
 		$result = $query->all();
-		$this->assertEquals(['count' => 2], $result->first());
+		$this->assertCount(1, $result);
+		$this->assertEquals(2, $result->first()->id);
 	}
 
 /**
@@ -1506,8 +1508,31 @@ class QueryTest extends TestCase {
  */
 	public function testCountWithGroup() {
 		$table = TableRegistry::get('articles');
-		$query = $table->find('all')
-			->group(['published']);
+		$query = $table->find('all');
+		$query->select(['author_id', 's' => $query->func()->sum('id')])
+			->group(['author_id']);
+		$result = $query->count();
+		$this->assertEquals(2, $result);
+	}
+
+/**
+ * Tests that it is possible to provide a callback for calculating the count
+ * of a query
+ *
+ * @return void
+ */
+	public function testCountWithCustomCounter() {
+		$table = TableRegistry::get('articles');
+		$query = $table->find('all');
+		$query
+			->select(['author_id', 's' => $query->func()->sum('id')])
+			->where(['id >' => 2])
+			->group(['author_id'])
+			->counter(function($q) use ($query) {
+				$this->assertNotSame($q, $query);
+				return $q->select([], true)->group([], true)->count();
+			});
+
 		$result = $query->count();
 		$this->assertEquals(1, $result);
 	}

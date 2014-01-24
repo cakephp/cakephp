@@ -173,8 +173,6 @@ class PaginatorComponent extends Component {
 		if (!$numResults) {
 			$count = 0;
 		} else {
-			$parameters = compact('conditions');
-			$query = $object->find($type, array_merge($parameters, $extra));
 			$count = $query->count();
 		}
 

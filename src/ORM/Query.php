@@ -144,6 +144,14 @@ class Query extends DatabaseQuery {
 	protected $_cache;
 
 /**
+ * A callable function that can be used to calculate the total amount of
+ * records this query will match when not using `limit`
+ *
+ * @var callable
+ */
+	protected $_counter;
+
+/**
  * Constuctor
  *
  * @param Cake\Database\Connection $connection
@@ -868,24 +876,59 @@ class Query extends DatabaseQuery {
 /**
  * Return the COUNT(*) for for the query.
  *
- * If the query does not contain GROUP BY or map reduce functions, then
- * this method will replace the selected fields with a COUNT(*), and the resulting
- * count will be returned.
- *
- * If the query does contain GROUP BY or map reduce functions, then it
- * will be executed, and the number of rows in the ResultSet will be returned.
- *
  * @return integer
  */
 	public function count() {
-		$noFormatters = $this->mapReduce() === [] && empty($this->_formatters);
-		if ($this->clause('group') === [] && $noFormatters) {
-			$this->select(['count' => $this->func()->count('*')], true)
-				->hydrate(false);
-			return (int)$this->first()['count'];
+		$query = clone $this;
+		$query->limit(null);
+		$query->offset(null);
+		$query->mapReduce(null, null, true);
+		$query->formatResults(null, true);
+		$counter = $this->_counter;
+
+		if ($counter) {
+			$query->counter(null);
+			return (int)$counter($query);
 		}
-		$results = $this->execute();
-		return count($results);
+
+		$count = ['count' => $query->func()->count('*')];
+		if (!count($query->clause('group')) && !$query->clause('distinct')) {
+			return (int)$query
+				->select($count, true)
+				->hydrate(false)
+				->first()['count'];
+		}
+
+		// Forcing at least one field to be selected
+		$query->select($query->newExpr()->add('1'));
+		$statement = $this->connection()->newQuery()
+			->select($count)
+			->from(['count_source' => $query])
+			->execute();
+		$result = $statement->fetch('assoc')['count'];
+
+		$statement->closeCursor();
+		return (int)$result;
+	}
+
+/**
+ * Registers a callable function that will be executed when the `count` method in
+ * this query is called. The return value for the function will be set as the
+ * return value of the `count` method.
+ *
+ * This is particularly useful when you need to optimize a query for returning the
+ * count, for example removing unnecessary joins, removing group by or just return
+ * an estimated number of rows.
+ *
+ * The callback will receive as first argument a clone of this query and not this
+ * query itself.
+ *
+ * @param callable $counter
+ * @return Cake\ORM\Query
+ */
+	public function counter($counter) {
+		$this->_counter = $counter;
+		return $this;
 	}
 
 /**
