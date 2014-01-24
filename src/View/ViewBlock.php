@@ -30,14 +30,14 @@ class ViewBlock {
 /**
  * Append content
  *
- * @constant APPEND
+ * @var string
  */
 	const APPEND = 'append';
 
 /**
  * Prepend content
  *
- * @constant PREPEND
+ * @var string
  */
 	const PREPEND = 'prepend';
 

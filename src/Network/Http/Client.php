@@ -296,6 +296,7 @@ class Client {
  *
  * @param string $method HTTP method.
  * @param string $url URL to request.
+ * @return Cake\Network\Http\Response
  */
 	protected function _doRequest($method, $url, $data, $options) {
 		$request = $this->_createRequest(

@@ -82,7 +82,6 @@ abstract class DispatcherFilter implements EventListener {
  *
  * @param Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
  *    keys in the data property.
- * @return Cake\Network\Response|boolean
  */
 	public function beforeDispatch(Event $event) {
 	}
@@ -97,7 +96,6 @@ abstract class DispatcherFilter implements EventListener {
  *
  * @param Cake\Event\Event $event container object having the `request` and  `response`
  *    keys in the data property.
- * @return mixed boolean to stop the event dispatching or null to continue
  */
 	public function afterDispatch(Event $event) {
 	}

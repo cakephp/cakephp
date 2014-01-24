@@ -144,6 +144,8 @@ class Query extends DatabaseQuery {
 	protected $_cache;
 
 /**
+ * Constuctor
+ *
  * @param Cake\Database\Connection $connection
  * @param Cake\ORM\Table $table
  */
@@ -908,7 +910,7 @@ class Query extends DatabaseQuery {
 /**
  * Decorates the ResultSet iterator with MapReduce routines
  *
- * @param $results Cake\ORM\ResultCollectionTrait original results
+ * @param $result Cake\ORM\ResultCollectionTrait original results
  * @return Cake\ORM\ResultCollectionTrait
  */
 	protected function _decorateResults($result) {

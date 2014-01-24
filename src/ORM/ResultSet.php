@@ -231,7 +231,6 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * Part of Serializable interface.
  *
  * @param string Serialized object
- * @return ResultSet The hydrated result set.
  */
 	public function unserialize($serialized) {
 		$this->_results = unserialize($serialized);

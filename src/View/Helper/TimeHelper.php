@@ -291,6 +291,8 @@ class TimeHelper extends Helper {
 	}
 
 /**
+ * Formats date for RSS feeds
+ *
  * @see Cake\Utility\Time::toRSS()
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
