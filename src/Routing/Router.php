@@ -112,7 +112,7 @@ class Router {
 	const ID = '[0-9]+';
 
 /**
-  * Regular expression for UUIds
+  * Regular expression for UUIDs
   *
   * @var string
   */
