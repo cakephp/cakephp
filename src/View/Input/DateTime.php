@@ -81,6 +81,8 @@ class DateTime implements InputInterface {
  * - `hour` - Array of options for the hour select box.
  * - `minute` - Array of options for the minute select box.
  * - `second` - Set to true to enable the seconds input. Defaults to false.
+ * - `meridian` - Set to true to enable the meridian input. Defaults to false.
+ *   The meridian will be enabled automatically if you chose a 12 hour format.
  *
  * @param array $data Data to render with.
  * @return string A generated select box.
