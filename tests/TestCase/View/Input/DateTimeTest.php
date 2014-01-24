@@ -33,7 +33,6 @@ class DateTimeTest extends TestCase {
 		parent::setUp();
 		$templates = [
 			'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
-			'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 			'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 			'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 			'dateWidget' => '{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}{{meridian}}'

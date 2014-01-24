@@ -175,7 +175,8 @@ class DateTime implements InputInterface {
 		if (empty($value)) {
 			return [
 				'year' => '', 'month' => '', 'day' => '',
-				'hour' => '', 'minute' => '', 'second' => ''
+				'hour' => '', 'minute' => '', 'second' => '',
+				'meridian' => '',
 			];
 		}
 		if (is_string($value)) {
