@@ -114,6 +114,11 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals(3, $table->find()->count());
 	}
 
+/**
+ * Tests that it is possible to get all translated fields at once
+ *
+ * @return void
+ */
 	public function testFindTranslations() {
 		$table = TableRegistry::get('Articles');
 		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
@@ -146,6 +151,84 @@ class TranslateBehaviorTest extends TestCase {
 			}, $translations);
 		});
 		$this->assertEquals($expected, $translations->toArray());
+
+		$expected = [
+			1 => ['First Article' => 'First Article Body'],
+			2 => ['Second Article' => 'Second Article Body'],
+			3 => ['Third Article' => 'Third Article Body']
+		];
+
+		$grouped = $results->combine('title', 'body', 'id');
+		$this->assertEquals($expected, $grouped->toArray());
+	}
+
+/**
+ * Tests that it is possible to request just a few translations
+ *
+ * @return void
+ */
+	public function testFindFilteredTranslations() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$results = $table->find('translations', ['locales' => ['deu', 'cze']]);
+		$expected = [
+			[
+				'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
+				'cze' => ['title' => 'Titulek #1', 'body' => 'Obsah #1', 'locale' => 'cze']
+			],
+			[
+				'deu' => ['title' => 'Titel #2', 'body' => 'Inhalt #2', 'locale' => 'deu'],
+				'cze' => ['title' => 'Titulek #2', 'body' => 'Obsah #2', 'locale' => 'cze']
+			],
+			[
+				'deu' => ['title' => 'Titel #3', 'body' => 'Inhalt #3', 'locale' => 'deu'],
+				'cze' => ['title' => 'Titulek #3', 'body' => 'Obsah #3', 'locale' => 'cze']
+			]
+		];
+
+		$translations = $results->map(function($row) {
+			$translations = $row->get('_translations');
+			if (!$translations) {
+				return [];
+			}
+			return array_map(function($t) {
+				return $t->toArray();
+			}, $translations);
+		});
+		$this->assertEquals($expected, $translations->toArray());
+
+		$expected = [
+			1 => ['First Article' => 'First Article Body'],
+			2 => ['Second Article' => 'Second Article Body'],
+			3 => ['Third Article' => 'Third Article Body']
+		];
+
+		$grouped = $results->combine('title', 'body', 'id');
+		$this->assertEquals($expected, $grouped->toArray());
+	}
+
+/**
+ * Tests that it is possible to combine find('list') and find('translations')
+ *
+ * @return void
+ */
+	public function testFindTranslationsList() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$results = $table
+			->find('list', [
+				'idField' => 'title',
+				'valueField' => '_translations.deu.title',
+				'groupField' => 'id'
+			])
+			->find('translations', ['locales' => ['deu']]);
+
+		$expected = [
+			1 => ['First Article' => 'Titel #1'],
+			2 => ['Second Article' => 'Titel #2'],
+			3 => ['Third Article' => 'Titel #3']
+		];
+		$this->assertEquals($expected, $results->toArray());
 	}
 
 }

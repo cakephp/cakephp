@@ -128,7 +128,7 @@ class TranslateBehavior extends Behavior {
 			}])
 			->formatResults(function($results) {
 				return $this->_groupTranslations($results);
-			});
+			}, $query::PREPEND);
 	}
 
 	protected function _rowMapper($results, $locale) {
