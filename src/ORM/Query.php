@@ -914,20 +914,19 @@ class Query extends DatabaseQuery {
 
 		$count = ['count' => $query->func()->count('*')];
 		if (!count($query->clause('group')) && !$query->clause('distinct')) {
-			return (int)$query
+			$statement = $query
 				->select($count, true)
-				->hydrate(false)
-				->first()['count'];
+				->execute();
+		} else {
+			// Forcing at least one field to be selected
+			$query->select($query->newExpr()->add('1'));
+			$statement = $this->connection()->newQuery()
+				->select($count)
+				->from(['count_source' => $query])
+				->execute();
 		}
 
-		// Forcing at least one field to be selected
-		$query->select($query->newExpr()->add('1'));
-		$statement = $this->connection()->newQuery()
-			->select($count)
-			->from(['count_source' => $query])
-			->execute();
 		$result = $statement->fetch('assoc')['count'];
-
 		$statement->closeCursor();
 		return (int)$result;
 	}
