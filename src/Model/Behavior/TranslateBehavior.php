@@ -40,7 +40,7 @@ class TranslateBehavior extends Behavior {
  * @var array
  */
 	protected static $_defaultConfig = [
-		'implementedFinders' => [],
+		'implementedFinders' => ['translations' => 'findTranslations'],
 		'implementedMethods' => ['locale' => 'locale'],
 		'fields' => []
 	];
@@ -54,11 +54,13 @@ class TranslateBehavior extends Behavior {
 	public function __construct(Table $table, array $config = []) {
 		parent::__construct($table, $config);
 		$this->_table = $table;
+		$fields = $this->config()['fields'];
+		$this->setupFieldAssociations($fields);
 	}
 
-	public function setupFieldAssociations() {
+	public function setupFieldAssociations($fields) {
 		$alias = $this->_table->alias();
-		foreach ($this->config()['fields'] as $field) {
+		foreach ($fields as $field) {
 			$name = $field . '_translation';
 			$target = TableRegistry::get($name);
 			$target->table('i18n');
@@ -74,34 +76,35 @@ class TranslateBehavior extends Behavior {
 				'propertyName' => $field . '_translation'
 			]);
 		}
+
+		$this->_table->hasMany('I18n', [
+			'foreignKey' => 'foreign_key',
+			'strategy' => 'subquery',
+			'conditions' => ['I18n.model' => $alias],
+			'propertyName' => '_i18n'
+		]);
 	}
 
 	public function beforeFind(Event $event, $query) {
-		$fields = $this->config()['fields'];
+		$locale = $this->locale();
 
-		if (empty($fields)) {
+		if (empty($locale)) {
 			return;
 		}
 
-		$locale = (array)$this->locale();
-		if (!$locale || count($locale) > 1) {
-			return;
-		}
-
-		$this->setupFieldAssociations();
 		$conditions = function($q) use ($locale) {
 			return $q
 				->select(['id', 'content'])
-				->where([$q->repository()->alias() . '.locale IN' => $locale]);
+				->where([$q->repository()->alias() . '.locale' => $locale]);
 		};
 
 		$contain = [];
+		$fields = $this->config()['fields'];
 		foreach ($fields as $field) {
 			$contain[$field . '_translation'] = $conditions;
 		}
 
 		$query->contain($contain);
-		$locale = current($locale);
 		$query->formatResults(function($results) use ($locale) {
 			return $this->_rowMapper($results, $locale);
 		}, $query::PREPEND);
@@ -111,7 +114,21 @@ class TranslateBehavior extends Behavior {
 		if ($locale === null) {
 			return $this->_locale;
 		}
-		return $this->_locale = $locale;
+		return $this->_locale = (string)$locale;
+	}
+
+	public function findTranslations($query, $options) {
+		$locales = isset($options['locales']) ? $options['locales'] : [];
+		return $query
+			->contain(['I18n' => function($q) use ($locales) {
+				if ($locales) {
+					$q->where(['I18n.locale IN' => $locales]);
+				}
+				return $q;
+			}])
+			->formatResults(function($results) {
+				return $this->_groupTranslations($results);
+			});
 	}
 
 	protected function _rowMapper($results, $locale) {
@@ -134,6 +151,28 @@ class TranslateBehavior extends Behavior {
 			}
 
 			$row->clean();
+			return $row;
+		});
+	}
+
+	protected function _groupTranslations($results) {
+		return $results->map(function($row) {
+			$translations = (array)$row->get('_i18n');
+			$grouped = new Collection($translations);
+
+			$result = [];
+			foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
+				$translation = new Entity($keys + ['locale' => $locale], [
+					'markNew' => false,
+					'useSetters' => false,
+					'markClean' => true
+				]);
+				$result[$locale] = $translation;
+			}
+
+			$options = ['setter' => false, 'guard' => false];
+			$row->set('_translations', $result, $options);
+			unset($row['_i18n']);
 			return $row;
 		});
 	}

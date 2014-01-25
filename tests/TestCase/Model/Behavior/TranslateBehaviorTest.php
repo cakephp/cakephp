@@ -35,6 +35,11 @@ class TranslateBehaviorTest extends TestCase {
 		'core.article'
 	];
 
+	public function tearDown() {
+		parent::tearDown();
+		TableRegistry::clear();
+	}
+
 /**
  * Tests that fields from a translated model are overriden
  *
@@ -61,7 +66,6 @@ class TranslateBehaviorTest extends TestCase {
  */
 	public function testFindSingleLocaleWithConditions() {
 		$table = TableRegistry::get('Articles');
-		$table->addBehavior('Translate');
 		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
 		$table->locale('eng');
 		$results = $table->find()
@@ -89,7 +93,6 @@ class TranslateBehaviorTest extends TestCase {
  */
 	public function testFindList() {
 		$table = TableRegistry::get('Articles');
-		$table->addBehavior('Translate');
 		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
 		$table->locale('eng');
 
@@ -105,11 +108,45 @@ class TranslateBehaviorTest extends TestCase {
  */
 	public function testFindCount() {
 		$table = TableRegistry::get('Articles');
-		$table->addBehavior('Translate');
 		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
 		$table->locale('eng');
 
 		$this->assertEquals(3, $table->find()->count());
 	}
+
+	public function testFindTranslations() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$results = $table->find('translations');
+		$expected = [
+			[
+				'eng' => ['title' => 'Title #1', 'body' => 'Content #1', 'locale' => 'eng'],
+				'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
+				'cze' => ['title' => 'Titulek #1', 'body' => 'Obsah #1', 'locale' => 'cze']
+			],
+			[
+				'eng' => ['title' => 'Title #2', 'body' => 'Content #2', 'locale' => 'eng'],
+				'deu' => ['title' => 'Titel #2', 'body' => 'Inhalt #2', 'locale' => 'deu'],
+				'cze' => ['title' => 'Titulek #2', 'body' => 'Obsah #2', 'locale' => 'cze']
+			],
+			[
+				'eng' => ['title' => 'Title #3', 'body' => 'Content #3', 'locale' => 'eng'],
+				'deu' => ['title' => 'Titel #3', 'body' => 'Inhalt #3', 'locale' => 'deu'],
+				'cze' => ['title' => 'Titulek #3', 'body' => 'Obsah #3', 'locale' => 'cze']
+			]
+		];
+
+		$translations = $results->map(function($row) {
+			$translations = $row->get('_translations');
+			if (!$translations) {
+				return [];
+			}
+			return array_map(function($t) {
+				return $t->toArray();
+			}, $translations);
+		});
+		$this->assertEquals($expected, $translations->toArray());
+	}
+
 }
 
