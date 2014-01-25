@@ -611,9 +611,6 @@ class Query extends DatabaseQuery {
 				'You cannot call all() on a non-select query. Use execute() instead.'
 			);
 		}
-		$table = $this->repository();
-		$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
-		$table->getEventManager()->dispatch($event);
 		return $this->getResults();
 	}
 
@@ -629,6 +626,15 @@ class Query extends DatabaseQuery {
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
+
+		$table = $this->repository();
+		$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
+		$table->getEventManager()->dispatch($event);
+
+		if (isset($this->_results)) {
+			return $this->_results;
+		}
+
 		if ($this->_cache) {
 			$results = $this->_cache->fetch($this);
 		}

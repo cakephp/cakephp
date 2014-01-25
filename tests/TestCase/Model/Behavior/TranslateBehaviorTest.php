@@ -231,5 +231,50 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $results->toArray());
 	}
 
-}
+/**
+ * Tests that you can both override fields and find all translations
+ *
+ * @return void
+ */
+	public function testFindTranslationsWithFieldOverriding() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('cze');
+		$results = $table->find('translations', ['locales' => ['deu', 'cze']]);
+		$expected = [
+			[
+				'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
+				'cze' => ['title' => 'Titulek #1', 'body' => 'Obsah #1', 'locale' => 'cze']
+			],
+			[
+				'deu' => ['title' => 'Titel #2', 'body' => 'Inhalt #2', 'locale' => 'deu'],
+				'cze' => ['title' => 'Titulek #2', 'body' => 'Obsah #2', 'locale' => 'cze']
+			],
+			[
+				'deu' => ['title' => 'Titel #3', 'body' => 'Inhalt #3', 'locale' => 'deu'],
+				'cze' => ['title' => 'Titulek #3', 'body' => 'Obsah #3', 'locale' => 'cze']
+			]
+		];
 
+		$translations = $results->map(function($row) {
+			$translations = $row->get('_translations');
+			if (!$translations) {
+				return [];
+			}
+			return array_map(function($t) {
+				return $t->toArray();
+			}, $translations);
+		});
+		$this->assertEquals($expected, $translations->toArray());
+
+		$expected = [
+			1 => ['Titulek #1' => 'Obsah #1'],
+			2 => ['Titulek #2' => 'Obsah #2'],
+			3 => ['Titulek #3' => 'Obsah #3']
+		];
+
+		$grouped = $results->combine('title', 'body', 'id');
+		$this->assertEquals($expected, $grouped->toArray());
+	}
+
+}
