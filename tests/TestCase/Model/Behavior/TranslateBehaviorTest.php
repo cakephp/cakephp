@@ -308,4 +308,20 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $list->combine('id', 'comment')->toArray());
 	}
 
+	public function testTranslationsHasMany() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->hasMany('Comments');
+		$comments = $table->hasMany('Comments')->target();
+		$comments->addBehavior('Translate', ['fields' => ['comment']]);
+
+		$results = $table->find('translations')->contain(['Comments' => function($q) {
+			return $q->find('translations')->select(['id', 'comment', 'article_id']);
+		}]);
+
+
+		$article = $results->first();
+		debug(json_encode($article, JSON_PRETTY_PRINT));
+	}
+
 }
