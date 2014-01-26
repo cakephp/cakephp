@@ -264,6 +264,7 @@ class PaginatorHelper extends AppHelper {
  *
  * ### Options:
  *
+ * - `url` Allows sending routing parameters such as controllers, actions or passed arguments.
  * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()
@@ -289,6 +290,7 @@ class PaginatorHelper extends AppHelper {
  *
  * ### Options:
  *
+ * - `url` Allows sending routing parameters such as controllers, actions or passed arguments.
  * - `tag` The tag wrapping tag you want to use, defaults to 'span'. Set this to false to disable this option
  * - `escape` Whether you want the contents html entity encoded, defaults to true
  * - `model` The model to use, defaults to PaginatorHelper::defaultModel()

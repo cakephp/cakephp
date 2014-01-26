@@ -282,7 +282,11 @@ class SchemaShell extends AppShell {
 			$this->out(__d('cake_console', 'Performing a dry run.'));
 		}
 
-		$options = array('name' => $name, 'plugin' => $plugin);
+		$options = array(
+			'name' => $name,
+			'plugin' => $plugin,
+			'connection' => $this->params['connection'],
+		);
 		if (!empty($this->params['snapshot'])) {
 			$fileName = rtrim($this->Schema->file, '.php');
 			$options['file'] = $fileName . '_' . $this->params['snapshot'] . '.php';
