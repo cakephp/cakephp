@@ -233,12 +233,6 @@ class CakeRoute {
 			$route[$key] = $value;
 		}
 
-		foreach ($this->keys as $key) {
-			if (isset($route[$key])) {
-				$route[$key] = $route[$key];
-			}
-		}
-
 		if (isset($route['_args_'])) {
 			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
@@ -297,8 +291,6 @@ class CakeRoute {
 			$separatorIsPresent = strpos($param, $namedConfig['separator']) !== false;
 			if ((!isset($this->options['named']) || !empty($this->options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($namedConfig['separator'], $param, 2);
-				$key = $key;
-				$val = $val;
 				$hasRule = isset($rules[$key]);
 				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$this->_matchNamed($val, $rules[$key], $context));
 				if ($passIt) {
