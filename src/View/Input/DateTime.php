@@ -320,21 +320,39 @@ class DateTime implements InputInterface {
 			'name' => '',
 			'val' => null,
 			'format' => 24,
+			'start' => null,
+			'end' => null,
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => false,
 		];
 		$is24 = $options['format'] == 24;
+
+		$defaultEnd = $is24 ? 24 : 12;
+
+		$options['start'] = max(1, $options['start']);
+
+		$options['end'] = min($defaultEnd, $options['end']);
+		if ($options['end'] === null) {
+			$options['end'] = $defaultEnd;
+		}
 
 		if (!$is24 && $options['val'] > 12) {
 			$options['val'] = sprintf('%02d', $options['val'] - 12);
 		}
 
 		if (empty($options['options'])) {
-			$end = $is24 ? 24 : 12;
-			$options['options'] = $this->_generateNumbers(1, $end, $options);
+			$options['options'] = $this->_generateNumbers(
+				$options['start'],
+				$options['end'],
+				$options
+			);
 		}
 
-		unset($options['format'], $options['leadingZeroKey'], $options['leadingZeroValue']);
+		unset(
+			$options['end'], $options['start'],
+			$options['format'], $options['leadingZeroKey'],
+			$options['leadingZeroValue']
+		);
 		return $this->_select->render($options);
 	}
 

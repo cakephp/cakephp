@@ -379,6 +379,49 @@ class DateTimeTest extends TestCase {
  *
  * @return void
  */
+	public function testRenderHourWidget24StartAndEnd() {
+		$now = new \DateTime('2010-09-09 13:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => [
+				'start' => 8,
+				'end' => 16
+			],
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$this->assertContains('<select name="date[hour]">', $result);
+		$this->assertNotContains(
+			'<option value="01">1</option>',
+			$result,
+			'no 1 am'
+		);
+		$this->assertNotContains(
+			'<option value="07">7</option>',
+			$result,
+			'contain 7'
+		);
+		$this->assertContains(
+			'<option value="13" selected="selected">13</option>',
+			$result,
+			'selected value present'
+		);
+		$this->assertNotContains(
+			'<option value="17">17</option>',
+			$result,
+			'contains 17 hours'
+		);
+	}
+
+/**
+ * Test rendering the hour picker in 24 hour mode.
+ *
+ * @return void
+ */
 	public function testRenderHourWidget24() {
 		$now = new \DateTime('2010-09-09 13:00:00');
 		$result = $this->DateTime->render([
@@ -467,6 +510,54 @@ class DateTimeTest extends TestCase {
 
 		$this->assertContains('<select name="date[meridian]">', $result);
 		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+	}
+
+/**
+ * Test rendering the hour picker in 12 hour mode.
+ *
+ * @return void
+ */
+	public function testRenderHourWidget12StartAndEnd() {
+		$now = new \DateTime('2010-09-09 13:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => [
+				'start' => 8,
+				'end' => 12
+			],
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$this->assertContains('<select name="date[hour]">', $result);
+		$this->assertContains(
+			'<option value="08">8</option>',
+			$result,
+			'contains 8am'
+		);
+		$this->assertContains(
+			'<option value="12">12</option>',
+			$result,
+			'contains 8am'
+		);
+		$this->assertNotContains(
+			'<option value="01">1</option>',
+			$result,
+			'no 1 am'
+		);
+		$this->assertNotContains(
+			'<option value="07">7</option>',
+			$result,
+			'contain 7'
+		);
+		$this->assertNotContains(
+			'<option value="13" selected="selected">13</option>',
+			$result,
+			'selected value present'
+		);
 	}
 
 /**
