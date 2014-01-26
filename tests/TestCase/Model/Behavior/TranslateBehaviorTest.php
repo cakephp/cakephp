@@ -315,9 +315,12 @@ class TranslateBehaviorTest extends TestCase {
 		$comments = $table->hasMany('Comments')->target();
 		$comments->addBehavior('Translate', ['fields' => ['comment']]);
 
-		$results = $table->find('translations')->contain(['Comments' => function($q) {
-			return $q->find('translations')->select(['id', 'comment', 'article_id']);
-		}]);
+		$results = $table->find('translations')->contain([
+			'Comments' => function($q) {
+				debug(\Cake\Utility\Debugger::trace());
+				return $q->find('translations')->select(['id', 'comment', 'article_id']);
+			}
+		]);
 
 
 		$article = $results->first();
