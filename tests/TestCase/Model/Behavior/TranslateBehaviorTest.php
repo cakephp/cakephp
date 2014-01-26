@@ -34,7 +34,8 @@ class TranslateBehaviorTest extends TestCase {
 	public $fixtures = [
 		'core.translate',
 		'core.article',
-		'core.comment'
+		'core.comment',
+		'core.author'
 	];
 
 	public function tearDown() {
@@ -391,6 +392,22 @@ class TranslateBehaviorTest extends TestCase {
 
 		$this->assertEquals('Titulek #1', $results->first()->title);
 		$this->assertEquals('Obsah #1', $results->first()->body);
+	}
+
+	public function testFindSingleLocaleBelongsto() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$authors = $table->belongsTo('Authors')->target();
+		$authors->addBehavior('Translate', ['fields' => ['name']]);
+
+		$table->locale('eng');
+		$authors->locale('eng');
+
+		$results = $table->find()->contain(['Authors' => function($q) {
+			return $q->select(['id', 'name']);
+		}]);
+
+		debug(json_encode($results->first()->author));
 	}
 
 }

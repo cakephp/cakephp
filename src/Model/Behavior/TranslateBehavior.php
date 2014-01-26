@@ -89,7 +89,7 @@ class TranslateBehavior extends Behavior {
 	public function setupFieldAssociations($fields) {
 		$alias = $this->_table->alias();
 		foreach ($fields as $field) {
-			$name = $field . '_translation';
+			$name = $this->_table->alias() . '_' . $field . '_translation';
 			$target = TableRegistry::get($name);
 			$target->table('i18n');
 
@@ -137,8 +137,9 @@ class TranslateBehavior extends Behavior {
 
 		$contain = [];
 		$fields = $this->config()['fields'];
+		$alias = $this->_table->alias();
 		foreach ($fields as $field) {
-			$contain[$field . '_translation'] = $conditions;
+			$contain[$alias . '_' . $field . '_translation'] = $conditions;
 		}
 
 		$query->contain($contain);
