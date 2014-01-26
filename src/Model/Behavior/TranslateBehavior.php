@@ -21,6 +21,18 @@ use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 
+/**
+ * This behavior provides a way to translate dynamic data by keeping translations
+ * in a separate table linked to the original record from another one. Translated
+ * fields can be configured to override those in the main table when fetched or
+ * put aside into another property for the same entity.
+ *
+ * If you wish to override fields, you need to call the `locale` method in this
+ * behavior for setting the language you want to fetch from the translations table.
+ *
+ * If you want to bring all or certain languages for each of the fetched records,
+ * you can use the custom `translations` finders that is exposed to the table.
+ */
 class TranslateBehavior extends Behavior {
 
 /**
@@ -30,12 +42,18 @@ class TranslateBehavior extends Behavior {
  */
 	protected $_table;
 
+/**
+ * The locale name that will be used to override fields in the bound table
+ * from the translations table
+ *
+ * @var string
+ */
 	protected $_locale;
 
 /**
  * Default config
  *
- * These are merged with user-provided config when the behavior is used.
+ * These are merged with user-provided configuration when the behavior is used.
  *
  * @var array
  */
@@ -58,6 +76,16 @@ class TranslateBehavior extends Behavior {
 		$this->setupFieldAssociations($fields);
 	}
 
+/**
+ * Creates the associations between the bound table and every field passed to
+ * this method.
+ *
+ * Additionally it creates a `I18n` HasMany association that will be
+ * used for fetching all translations for each record in the bound table
+ *
+ * @param array $fields list of fields to create associations for
+ * @return void
+ */
 	public function setupFieldAssociations($fields) {
 		$alias = $this->_table->alias();
 		foreach ($fields as $field) {
@@ -85,6 +113,15 @@ class TranslateBehavior extends Behavior {
 		]);
 	}
 
+/**
+ * Callback method that listens to the `beforeFind` event in the bound
+ * table. It modifies the passed query by eager loading the translated fields
+ * and adding a formatter to copy the values into the main table records.
+ *
+ * @param \Cake\Event\Event $event
+ * @param \Cake\ORM\Query $query
+ * @return void
+ */
 	public function beforeFind(Event $event, $query) {
 		$locale = $this->locale();
 
@@ -110,6 +147,14 @@ class TranslateBehavior extends Behavior {
 		}, $query::PREPEND);
 	}
 
+/**
+ * Sets all future finds for the bound table to also fetch translated fields for
+ * the passed locale. If no value is passed, it returns the currently configured
+ * locale
+ *
+ * @param string $locale The locale to use for fetching translated records
+ * @return string
+ */
 	public function locale($locale = null) {
 		if ($locale === null) {
 			return $this->_locale;
@@ -117,6 +162,28 @@ class TranslateBehavior extends Behavior {
 		return $this->_locale = (string)$locale;
 	}
 
+/**
+ * Custom finder method used to retrieve all translations for he found records.
+ * Fetched translations can be filtered by locale by passing the `locales` key
+ * in the options array.
+ *
+ * Translated values will be found for each entity under the property `_translations`,
+ * containing an array indexed by locale name.
+ *
+ * ### Example:
+ *
+ * {{{
+ * $article = $articles->find('translations', ['locales' => ['eng', 'deu'])->first();
+ * $englishTranslatedFields = $article->get('_translations')['eng'];
+ * }}}
+ *
+ * If the `locales` array is not passed, it will bring all translations found
+ * for each record.
+ *
+ * @param \Cake\ORM\Query $query the original query to modify
+ * @param array $options
+ * @return \Cake\ORM\Query
+ */
 	public function findTranslations($query, $options) {
 		$locales = isset($options['locales']) ? $options['locales'] : [];
 		return $query
@@ -131,6 +198,14 @@ class TranslateBehavior extends Behavior {
 			}, $query::PREPEND);
 	}
 
+/**
+ * Modifies the results from a table find in order to merge the translated fields
+ * into each entity for a given locale.
+ *
+ * @param \Cake\ORM\ResultSetDecorator $results
+ * @param string $locale
+ * @return \Cake\Collection\Collection
+ */
 	protected function _rowMapper($results, $locale) {
 		return $results->map(function($row) use ($locale) {
 			$options = ['setter' => false, 'guard' => false];
@@ -155,6 +230,13 @@ class TranslateBehavior extends Behavior {
 		});
 	}
 
+/**
+ * Modifies the results from a table find in order to merge full translation records
+ * into each entity under the `_translations` key
+ *
+ * @param \Cake\ORM\ResultSetDecorator $results
+ * @return \Cake\Collection\Collection
+ */
 	protected function _groupTranslations($results) {
 		return $results->map(function($row) {
 			$translations = (array)$row->get('_i18n');
