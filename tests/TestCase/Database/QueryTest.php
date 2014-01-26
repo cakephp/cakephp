@@ -846,6 +846,92 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that calling "in" and "notIn" will cast the passed values to an array
+ *
+ * @return void
+ */
+	public function testInValueCast() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function($exp) {
+				return $exp->in('created', '2007-03-18 10:45:23', 'datetime');
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function($exp) {
+				return $exp->notIn('created', '2007-03-18 10:45:23', 'datetime');
+			})
+			->execute();
+		$this->assertCount(5, $result);
+		$this->assertEquals(['id' => 2], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 3], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 4], $result->fetch('assoc'));
+		$this->assertEquals(['id' => 5], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function($exp, $q) {
+				return $exp->in(
+					'created',
+					$q->newExpr()->add("'2007-03-18 10:45:23'"),
+					'datetime'
+				);
+			})
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(function($exp, $q) {
+				return $exp->notIn(
+					'created',
+					$q->newExpr()->add("'2007-03-18 10:45:23'"),
+					'datetime'
+				);
+			})
+			->execute();
+		$this->assertCount(5, $result);
+	}
+
+/**
+ * Tests that calling "in" and "notIn" will cast the passed values to an array
+ *
+ * @return void
+ */
+	public function testInValueCast2() {
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['created IN' => '2007-03-18 10:45:23'])
+			->execute();
+		$this->assertCount(1, $result);
+		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
+
+		$query = new Query($this->connection);
+		$result = $query
+			->select(['id'])
+			->from('comments')
+			->where(['created NOT IN' => '2007-03-18 10:45:23'])
+			->execute();
+		$this->assertCount(5, $result);
+	}
+
+/**
  * Tests nesting query expressions both using arrays and closures
  *
  * @return void

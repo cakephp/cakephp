@@ -109,7 +109,7 @@ class QueryExpression implements ExpressionInterface, Countable {
 			return $this;
 		}
 
-		if ($conditions instanceof self && count($conditions) > 0) {
+		if ($conditions instanceof ExpressionInterface) {
 			$this->_conditions[] = $conditions;
 			return $this;
 		}
@@ -129,7 +129,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function eq($field, $value, $type = null) {
-		return $this->add([$field => $value], $type ? [$field => $type] : []);
+		return $this->add(new Comparison($field, $value, $type, '='));
 	}
 
 /**
@@ -143,7 +143,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function notEq($field, $value, $type = null) {
-		return $this->add([$field . ' !=' => $value], $type ? [$field => $type] : []);
+		return $this->add(new Comparison($field, $value, $type, '!='));
 	}
 
 /**
@@ -155,7 +155,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function gt($field, $value, $type = null) {
-		return $this->add([$field . ' >' => $value], $type ? [$field => $type] : []);
+		return $this->add(new Comparison($field, $value, $type, '>'));
 	}
 
 /**
@@ -167,7 +167,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function lt($field, $value, $type = null) {
-		return $this->add([$field . ' <' => $value], $type ? [$field => $type] : []);
+		return $this->add(new Comparison($field, $value, $type, '<'));
 	}
 
 /**
@@ -179,7 +179,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function gte($field, $value, $type = null) {
-		return $this->add([$field . ' >=' => $value], $type ? [$field => $type] : []);
+		return $this->add(new Comparison($field, $value, $type, '>='));
 	}
 
 /**
@@ -191,7 +191,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function lte($field, $value, $type = null) {
-		return $this->add([$field . ' <=' => $value], $type ? [$field => $type] : []);
+		return $this->add(new Comparison($field, $value, $type, '<='));
 	}
 
 /**
@@ -223,7 +223,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function like($field, $value, $type = null) {
-		return $this->add([$field . ' LIKE' => $value], $type ? [$field => $type] : []);
+		return $this->add(new Comparison($field, $value, $type, 'LIKE'));
 	}
 
 /**
@@ -235,7 +235,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function notLike($field, $value, $type = null) {
-		return $this->add([$field . ' NOT LIKE' => $value], $type ? [$field => $type] : []);
+		return $this->add(new Comparison($field, $value, $type, 'NOT LIKE'));
 	}
 
 /**
@@ -248,7 +248,10 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function in($field, $values, $type = null) {
-		return $this->add([$field . ' IN' => $values], $type ? [$field => $type] : []);
+		$type = $type ?: 'string';
+		$type .= '[]';
+		$values = $values instanceof ExpressionInterface ? $values : (array)$values;
+		return $this->add(new Comparison($field, $values, $type, 'IN'));
 	}
 
 /**
@@ -261,7 +264,10 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @return QueryExpression
  */
 	public function notIn($field, $values, $type = null) {
-		return $this->add([$field . ' NOT IN' => $values], $type ? [$field => $type] : []);
+		$type = $type ?: 'string';
+		$type .= '[]';
+		$values = $values instanceof ExpressionInterface ? $values : (array)$values;
+		return $this->add(new Comparison($field, $values, $type, 'NOT IN'));
 	}
 
 // @codingStandardsIgnoreStart
@@ -472,6 +478,11 @@ class QueryExpression implements ExpressionInterface, Countable {
 			$type .= $typeMultiple ? null : '[]';
 			$operator = $operator == '=' ? 'IN' : $operator;
 			$operator = $operator == '!=' ? 'NOT IN' : $operator;
+			$typeMultiple = true;
+		}
+
+		if ($typeMultiple) {
+			$value = $value instanceof ExpressionInterface ? $value : (array)$value;
 		}
 
 		return new Comparison($expression, $value, $type, $operator);
