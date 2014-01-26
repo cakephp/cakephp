@@ -96,8 +96,15 @@ class DateTime implements InputInterface {
  * The `month` option accepts the `name` option which allows you to get month
  * names instead of month numbers.
  *
- * The `hour` option allows you to set the `format` option which accepts
- * 12 or 24, allowing you to indicate which hour format you want.
+ * The `hour` option allows you to set the following options:
+ *
+ * - `format` option which accepts 12 or 24, allowing 
+ *   you to indicate which hour format you want.
+ * - `start` The hour to start the options at.
+ * - `end` The hour to stop the options at.
+ *
+ * The start and end options are dependent on the format used. If the
+ * value is out of the start/end range it will not be included.
  *
  * The `minute` option allows you to define the following options:
  *
