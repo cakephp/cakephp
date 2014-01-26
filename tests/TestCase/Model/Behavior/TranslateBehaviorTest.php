@@ -42,6 +42,24 @@ class TranslateBehaviorTest extends TestCase {
 		TableRegistry::clear();
 	}
 
+
+/**
+ * Returns an array with all the translations found for a set of records
+ *
+ * @return Collection
+ */
+	protected function _extractTranslations($data) {
+		return (new Collection($data))->map(function($row) {
+			$translations = $row->get('_translations');
+			if (!$translations) {
+				return [];
+			}
+			return array_map(function($t) {
+				return $t->toArray();
+			}, $translations);
+		});
+	}
+
 /**
  * Tests that fields from a translated model are overriden
  *
@@ -143,17 +161,8 @@ class TranslateBehaviorTest extends TestCase {
 			]
 		];
 
-		$translations = $results->map(function($row) {
-			$translations = $row->get('_translations');
-			if (!$translations) {
-				return [];
-			}
-			return array_map(function($t) {
-				return $t->toArray();
-			}, $translations);
-		});
+		$translations = $this->_extractTranslations($results);
 		$this->assertEquals($expected, $translations->toArray());
-
 		$expected = [
 			1 => ['First Article' => 'First Article Body'],
 			2 => ['Second Article' => 'Second Article Body'],
@@ -188,15 +197,7 @@ class TranslateBehaviorTest extends TestCase {
 			]
 		];
 
-		$translations = $results->map(function($row) {
-			$translations = $row->get('_translations');
-			if (!$translations) {
-				return [];
-			}
-			return array_map(function($t) {
-				return $t->toArray();
-			}, $translations);
-		});
+		$translations = $this->_extractTranslations($results);
 		$this->assertEquals($expected, $translations->toArray());
 
 		$expected = [
@@ -258,15 +259,7 @@ class TranslateBehaviorTest extends TestCase {
 			]
 		];
 
-		$translations = $results->map(function($row) {
-			$translations = $row->get('_translations');
-			if (!$translations) {
-				return [];
-			}
-			return array_map(function($t) {
-				return $t->toArray();
-			}, $translations);
-		});
+		$translations = $this->_extractTranslations($results);
 		$this->assertEquals($expected, $translations->toArray());
 
 		$expected = [
@@ -308,6 +301,11 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $list->combine('id', 'comment')->toArray());
 	}
 
+/**
+ * Test that it is possible to bring translations from hasMany relations
+ *
+ * @return void
+ */
 	public function testTranslationsHasMany() {
 		$table = TableRegistry::get('Articles');
 		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
@@ -317,14 +315,29 @@ class TranslateBehaviorTest extends TestCase {
 
 		$results = $table->find('translations')->contain([
 			'Comments' => function($q) {
-				debug(\Cake\Utility\Debugger::trace());
 				return $q->find('translations')->select(['id', 'comment', 'article_id']);
 			}
 		]);
 
+		$comments = $results->first()->comments;
+		$expected = [
+			[
+				'eng' => ['comment' => 'Comment #1', 'locale' => 'eng']
+			],
+			[
+				'eng' => ['comment' => 'Comment #2', 'locale' => 'eng']
+			],
+			[
+				'eng' => ['comment' => 'Comment #3', 'locale' => 'eng']
+			],
+			[
+				'eng' => ['comment' => 'Comment #4', 'locale' => 'eng'],
+				'spa' => ['comment' => 'Comentario #4', 'locale' => 'spa']
+			]
+		];
 
-		$article = $results->first();
-		debug(json_encode($article, JSON_PRETTY_PRINT));
+		$translations = $this->_extractTranslations($comments);
+		$this->assertEquals($expected, $translations->toArray());
 	}
 
 }
