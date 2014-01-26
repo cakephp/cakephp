@@ -307,7 +307,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			'targetTable' => $this->article,
 		];
 		$association = new HasMany('Articles', $config);
-		$parent = (new Query(null, null))
+		$parent = (new Query(null, $this->author))
 			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
 			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
 
@@ -338,7 +338,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		unset($joins[1]);
 		$expected
 			->contain([], true)
-			->select('Articles.author_id', true)
+			->select(['Authors__id' => 'Authors.id'], true)
 			->join($joins, [], true);
 		$query->expects($this->once())->method('andWhere')
 			->with(['Articles.author_id IN' => $expected])
