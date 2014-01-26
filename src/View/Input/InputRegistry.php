@@ -48,6 +48,7 @@ class InputRegistry {
 		'radio' => ['Cake\View\Input\Radio', 'label'],
 		'select' => ['Cake\View\Input\SelectBox'],
 		'textarea' => ['Cake\View\Input\Textarea'],
+		'datetime' => ['Cake\View\Input\DateTime', 'select'],
 		'_default' => ['Cake\View\Input\Basic'],
 	];
 
