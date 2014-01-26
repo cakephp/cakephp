@@ -340,4 +340,57 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $translations->toArray());
 	}
 
+/**
+ * Tests that it is possible to both override fields with a translation and
+ * also find separately other translations
+ *
+ * @return void
+ */
+	public function testTranslationsHasManyWithOverride() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->hasMany('Comments');
+		$comments = $table->hasMany('Comments')->target();
+		$comments->addBehavior('Translate', ['fields' => ['comment']]);
+
+		$table->locale('cze');
+		$comments->locale('eng');
+		$results = $table->find('translations')->contain([
+			'Comments' => function($q) {
+				return $q->find('translations')->select(['id', 'comment', 'article_id']);
+			}
+		]);
+
+		$comments = $results->first()->comments;
+		$expected = [
+			1 => 'Comment #1',
+			2 => 'Comment #2',
+			3 => 'Comment #3',
+			4 => 'Comment #4'
+		];
+		$list = new Collection($comments);
+		$this->assertEquals($expected, $list->combine('id', 'comment')->toArray());
+
+		$expected = [
+			[
+				'eng' => ['comment' => 'Comment #1', 'locale' => 'eng']
+			],
+			[
+				'eng' => ['comment' => 'Comment #2', 'locale' => 'eng']
+			],
+			[
+				'eng' => ['comment' => 'Comment #3', 'locale' => 'eng']
+			],
+			[
+				'eng' => ['comment' => 'Comment #4', 'locale' => 'eng'],
+				'spa' => ['comment' => 'Comentario #4', 'locale' => 'spa']
+			]
+		];
+		$translations = $this->_extractTranslations($comments);
+		$this->assertEquals($expected, $translations->toArray());
+
+		$this->assertEquals('Titulek #1', $results->first()->title);
+		$this->assertEquals('Obsah #1', $results->first()->body);
+	}
+
 }
