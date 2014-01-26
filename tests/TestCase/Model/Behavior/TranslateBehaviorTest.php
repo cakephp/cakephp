@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\Model\Behavior;
 
+use Cake\Collection\Collection;
 use Cake\Event\Event;
 use Cake\Model\Behavior\TranslateBehavior;
 use Cake\ORM\Entity;
@@ -32,7 +33,8 @@ class TranslateBehaviorTest extends TestCase {
  */
 	public $fixtures = [
 		'core.translate',
-		'core.article'
+		'core.article',
+		'core.comment'
 	];
 
 	public function tearDown() {
@@ -275,6 +277,35 @@ class TranslateBehaviorTest extends TestCase {
 
 		$grouped = $results->combine('title', 'body', 'id');
 		$this->assertEquals($expected, $grouped->toArray());
+	}
+
+/**
+ * Tests that fields can be overriden in a hasMany association
+ *
+ * @return void
+ */
+	public function testFindSingleLocaleHasMany() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->hasMany('Comments');
+		$comments = $table->hasMany('Comments')->target();
+		$comments->addBehavior('Translate', ['fields' => ['comment']]);
+
+		$table->locale('eng');
+		$comments->locale('eng');
+
+		$results = $table->find()->contain(['Comments' => function($q) {
+			return $q->select(['id', 'comment', 'article_id']);
+		}]);
+
+		$list = new Collection($results->first()->comments);
+		$expected = [
+			1 => 'Comment #1',
+			2 => 'Comment #2',
+			3 => 'Comment #3',
+			4 => 'Comment #4'
+		];
+		$this->assertEquals($expected, $list->combine('id', 'comment')->toArray());
 	}
 
 }
