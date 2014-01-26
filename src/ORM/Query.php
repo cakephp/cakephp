@@ -1151,11 +1151,11 @@ class Query extends DatabaseQuery {
  * @return CallbackStatement $statement modified statement with extra loaders
  */
 	protected function _eagerLoad($statement) {
-		$keys = $this->_collectKeys($statement);
+		$collected = $this->_collectKeys($statement);
 		foreach ($this->_loadEagerly as $meta) {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
-			$keys = isset($keys[$alias]) ? $keys[$alias] : null;
+			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
 			$f = $meta['instance']->eagerLoader(
 				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
 			);
@@ -1183,7 +1183,7 @@ class Query extends DatabaseQuery {
 				foreach ((array)$source->primaryKey() as $key) {
 					$pkFields[] = key($this->aliasField($key, $alias));
 				}
-				$collectKeys[] = [$alias, $pkFields, count($pkFields) === 1];
+				$collectKeys[$alias] = [$alias, $pkFields, count($pkFields) === 1];
 			}
 		}
 

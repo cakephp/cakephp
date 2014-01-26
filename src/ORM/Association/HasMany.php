@@ -83,10 +83,15 @@ class HasMany extends Association {
 			'sort' => $this->sort(),
 			'strategy' => $this->strategy()
 		];
-		$fetchQuery = $this->_buildQuery($options);
 
 		if (!empty($options['queryBuilder'])) {
-			$fetchQuery = $options['queryBuilder']($fetchQuery);
+			$queryBuilder = $options['queryBuilder'];
+			unset($options['queryBuilder']);
+		}
+
+		$fetchQuery = $this->_buildQuery($options);
+		if ($queryBuilder) {
+			$fetchQuery = $queryBuilder($fetchQuery);
 		}
 
 		$resultMap = [];
