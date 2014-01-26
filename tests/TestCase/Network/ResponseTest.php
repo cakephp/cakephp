@@ -66,6 +66,21 @@ class ResponseTest extends TestCase {
 		$this->assertEquals('my-custom-charset', $response->charset());
 		$this->assertEquals('audio/mpeg', $response->type());
 		$this->assertEquals(203, $response->statusCode());
+
+		$options = array(
+			'body' => 'This is the body',
+			'charset' => 'my-custom-charset',
+			'type' => 'mp3',
+			'status' => '422',
+			'statusCodes' => array(
+				422 => 'Unprocessable Entity'
+			)
+		);
+		$response = new Response($options);
+		$this->assertEquals($options['body'], $response->body());
+		$this->assertEquals($options['charset'], $response->charset());
+		$this->assertEquals($response->getMimeType($options['type']), $response->type());
+		$this->assertEquals($options['status'], $response->statusCode());
 	}
 
 /**

@@ -266,7 +266,7 @@ class Request implements \ArrayAccess {
  * @return void
  */
 	protected function _processGet($query) {
-		unset($query['/' . str_replace('.', '_', urldecode($this->url))]);
+		unset($query[$this->base . '/' . str_replace('.', '_', urldecode($this->url))]);
 		if (strpos($this->url, '?') !== false) {
 			list(, $querystr) = explode('?', $this->url);
 			parse_str($querystr, $queryArgs);

@@ -6270,6 +6270,25 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * testDateTime all zeros
+ *
+ * @return void
+ */
+	public function testDateTimeAllZeros() {
+		$result = $this->Form->dateTime('Contact.date',
+			'DMY',
+			false,
+			array(
+				'empty' => array('day' => '-', 'month' => '-', 'year' => '-'),
+				'value' => '0000-00-00'
+			)
+		);
+
+		$this->assertRegExp('/<option value="">-<\/option>/', $result);
+		$this->assertNotRegExp('/<option value="0" selected="selected">0<\/option>/', $result);
+	}
+
+/**
  * testDateTimeEmptyAsArray
  *
  * @return void

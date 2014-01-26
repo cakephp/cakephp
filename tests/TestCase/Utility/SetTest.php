@@ -183,7 +183,7 @@ class SetTest extends TestCase {
 		$expected = array('users' => array('lisa' => array('id' => 5, 'pw' => 'you-will-never-guess', 'age' => 25, 'pet' => 'dog')), 'cakephp', 'ice-cream', 'chocolate');
 		$this->assertEquals($expected, Set::merge($a, $b, $c));
 
-		$this->assertEquals(Set::merge($a, $b, array(), $c), $expected);
+		$this->assertEquals($expected, Set::merge($a, $b, array(), $c));
 
 		$r = Set::merge($a, $b, $c);
 		$this->assertEquals($expected, $r);
@@ -1734,7 +1734,7 @@ class SetTest extends TestCase {
 		$this->assertFalse(Set::check($set, 'Session Test'));
 
 		$expected = array('Session Test' => array('Test Case' => 'test'));
-		$this->assertEquals(Set::insert(array(), 'Session Test.Test Case', "test"), $expected);
+		$this->assertEquals($expected, Set::insert(array(), 'Session Test.Test Case', "test"));
 		$this->assertTrue(Set::check($expected, 'Session Test.Test Case'));
 	}
 

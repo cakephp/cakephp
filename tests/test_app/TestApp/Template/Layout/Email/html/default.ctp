@@ -2,7 +2,7 @@
 
 <html>
 <head>
-	<title><?= $title_for_layout; ?></title>
+	<title><?= $this->fetch('title'); ?></title>
 </head>
 
 <body>

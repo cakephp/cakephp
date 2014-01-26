@@ -79,8 +79,7 @@ class Debugger {
 			'traceLine' => '{:reference} - {:path}, line {:line}',
 			'trace' => "Trace:\n{:trace}\n",
 			'context' => "Context:\n{:context}\n",
-		),
-		'log' => array(),
+		)
 	);
 
 /**

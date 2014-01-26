@@ -9,14 +9,14 @@ $cakeDescription = 'CakePHP: the rapid development php framework';
 	<?= $this->Html->charset(); ?>
 	<title>
 		<?= $cakeDescription ?>:
-		<?= $title_for_layout; ?>
+		<?= $this->fetch('title'); ?>
 	</title>
 	<?php
 		echo $this->Html->meta('icon');
 
 		echo $this->Html->css('cake.generic');
 
-		echo $scripts_for_layout;
+		echo $this->fetch('script');
 	?>
 </head>
 <body>

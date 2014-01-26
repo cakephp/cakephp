@@ -307,12 +307,6 @@ class Route {
 			$route[$key] = $value;
 		}
 
-		foreach ($this->keys as $key) {
-			if (isset($route[$key])) {
-				$route[$key] = rawurldecode($route[$key]);
-			}
-		}
-
 		if (isset($route['_args_'])) {
 			$pass = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
@@ -320,7 +314,7 @@ class Route {
 		}
 
 		if (isset($route['_trailing_'])) {
-			$route['pass'][] = rawurldecode($route['_trailing_']);
+			$route['pass'][] = $route['_trailing_'];
 			unset($route['_trailing_']);
 		}
 

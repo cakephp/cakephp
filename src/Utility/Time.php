@@ -73,7 +73,7 @@ class Time {
 	public static $wordEnd = '+1 month';
 
 /**
- * Temporary variable containing timestamp value, used internally convertSpecifiers()
+ * Temporary variable containing the timestamp value, used internally in convertSpecifiers()
  *
  * @var integer
  */

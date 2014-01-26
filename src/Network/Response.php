@@ -380,6 +380,7 @@ class Response {
  *
  * @param array $options list of parameters to setup the response. Possible values are:
  *	- body: the response text that should be sent to the client
+ *	- statusCodes: additional allowable response codes
  *	- status: the HTTP status code to respond with
  *	- type: a complete mime-type string or an extension mapped in this class
  *	- charset: the charset for the response body
@@ -387,6 +388,9 @@ class Response {
 	public function __construct(array $options = array()) {
 		if (isset($options['body'])) {
 			$this->body($options['body']);
+		}
+		if (isset($options['statusCodes'])) {
+			$this->httpCodes($options['statusCodes']);
 		}
 		if (isset($options['status'])) {
 			$this->statusCode($options['status']);

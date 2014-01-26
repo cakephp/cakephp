@@ -1451,10 +1451,18 @@ class RequestTest extends TestCase {
 	public function testGetParamsWithDot() {
 		$_GET = array();
 		$_GET['/posts/index/add_add'] = '';
+		$_SERVER['PHP_SELF'] = '/webroot/index.php';
+		$_SERVER['REQUEST_URI'] = '/posts/index/add.add';
+		$request = Request::createFromGlobals();
+		$this->assertEquals('', $request->base);
+		$this->assertEquals(array(), $request->query);
+
+		$_GET = array();
+		$_GET['/cake_dev/posts/index/add_add'] = '';
 		$_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
 		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/index/add.add';
-
 		$request = Request::createFromGlobals();
+		$this->assertEquals('/cake_dev', $request->base);
 		$this->assertEquals(array(), $request->query);
 	}
 
@@ -1466,10 +1474,18 @@ class RequestTest extends TestCase {
 	public function testGetParamWithUrlencodedElement() {
 		$_GET = array();
 		$_GET['/posts/add/∂∂'] = '';
+		$_SERVER['PHP_SELF'] = '/webroot/index.php';
+		$_SERVER['REQUEST_URI'] = '/posts/add/%E2%88%82%E2%88%82';
+		$request = Request::createFromGlobals();
+		$this->assertEquals('', $request->base);
+		$this->assertEquals(array(), $request->query);
+
+		$_GET = array();
+		$_GET['/cake_dev/posts/add/∂∂'] = '';
 		$_SERVER['PHP_SELF'] = '/cake_dev/webroot/index.php';
 		$_SERVER['REQUEST_URI'] = '/cake_dev/posts/add/%E2%88%82%E2%88%82';
-
 		$request = Request::createFromGlobals();
+		$this->assertEquals('/cake_dev', $request->base);
 		$this->assertEquals(array(), $request->query);
 	}
 
@@ -1841,6 +1857,34 @@ class RequestTest extends TestCase {
 					'url' => 'posts/add',
 					'base' => '',
 					'webroot' => '/',
+					'urlParams' => array()
+				),
+			),
+			array(
+				'Nginx - w/rewrite, document root set above top level cake dir, request root, no PATH_INFO, base parameter set',
+				array(
+					'App' => array(
+						'base' => false,
+						'baseUrl' => false,
+						'dir' => 'app',
+						'webroot' => 'webroot'
+					),
+					'GET' => array('/site/posts/add' => ''),
+					'SERVER' => array(
+						'SERVER_NAME' => 'localhost',
+						'DOCUMENT_ROOT' => '/Library/WebServer/Documents',
+						'SCRIPT_FILENAME' => '/Library/WebServer/Documents/site/App/webroot/index.php',
+						'SCRIPT_NAME' => '/site/app/webroot/index.php',
+						'QUERY_STRING' => '/site/posts/add&',
+						'PHP_SELF' => '/site/webroot/index.php',
+						'PATH_INFO' => null,
+						'REQUEST_URI' => '/site/posts/add',
+					),
+				),
+				array(
+					'url' => 'posts/add',
+					'base' => '/site',
+					'webroot' => '/site/',
 					'urlParams' => array()
 				),
 			),
