@@ -14,9 +14,9 @@
  */
 namespace Cake\View\Input;
 
+use Cake\Utility\Time;
 use Cake\View\Input\InputInterface;
 use Cake\View\StringTemplate;
-use Cake\Utility\Time;
 
 /**
  * Input widget class for generating a date time input widget.
