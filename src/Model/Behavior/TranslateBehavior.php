@@ -256,6 +256,7 @@ class TranslateBehavior extends Behavior {
 			$options = ['setter' => false, 'guard' => false];
 			$row->set('_translations', $result, $options);
 			unset($row['_i18n']);
+			$row->clean();
 			return $row;
 		});
 	}

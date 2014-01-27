@@ -396,9 +396,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 			->with(['a', 'b'])
 			->will($this->returnSelf());
 
-		$query->expects($this->any())->method('join')
-			->will($this->returnSelf());
-		$query->expects($this->at(6))->method('join')
+		$query->expects($this->at(3))->method('join')
 			->with('foo')
 			->will($this->returnSelf());
 

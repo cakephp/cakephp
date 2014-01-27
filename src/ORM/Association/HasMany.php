@@ -84,6 +84,7 @@ class HasMany extends Association {
 			'strategy' => $this->strategy()
 		];
 
+		$queryBuilder = false;
 		if (!empty($options['queryBuilder'])) {
 			$queryBuilder = $options['queryBuilder'];
 			unset($options['queryBuilder']);
