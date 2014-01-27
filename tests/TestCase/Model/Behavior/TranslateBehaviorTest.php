@@ -79,6 +79,23 @@ class TranslateBehaviorTest extends TestCase {
 	}
 
 /**
+ * Tests that fields from a translated model are not overriden if translation
+ * is null
+ *
+ * @return void
+ */
+	public function testFindSingleLocaleWithNullTranslation() {
+		$table = TableRegistry::get('Comments');
+		$table->addBehavior('Translate', ['fields' => ['comment']]);
+		$table->locale('spa');
+		$results = $table->find()
+			->where(['Comments.id' => 6])
+			->combine('id', 'comment')->toArray();
+		$expected = [6 => 'Second Comment for Second Article'];
+		$this->assertSame($expected, $results);
+	}
+
+/**
  * Tests that overriding fields with the translate behavior works when
  * using conditions and that all other columns are preserved
  *

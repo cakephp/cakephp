@@ -219,7 +219,11 @@ class TranslateBehavior extends Behavior {
 					continue;
 				}
 
-				$row->set($field, $translation->get('content'), $options);
+				$content = $translation->get('content');
+				if ($content !== null) {
+					$row->set($field, $content, $options);
+				}
+
 				unset($row[$name]);
 			}
 
