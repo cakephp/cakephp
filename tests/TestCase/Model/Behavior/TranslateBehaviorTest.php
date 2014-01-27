@@ -43,7 +43,6 @@ class TranslateBehaviorTest extends TestCase {
 		TableRegistry::clear();
 	}
 
-
 /**
  * Returns an array with all the translations found for a set of records
  *

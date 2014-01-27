@@ -164,7 +164,7 @@ class TranslateBehavior extends Behavior {
 	}
 
 /**
- * Custom finder method used to retrieve all translations for he found records.
+ * Custom finder method used to retrieve all translations for the found records.
  * Fetched translations can be filtered by locale by passing the `locales` key
  * in the options array.
  *
@@ -219,13 +219,11 @@ class TranslateBehavior extends Behavior {
 					continue;
 				}
 
-				$row->set([
-					$field => $translation->get('content'),
-					'_locale' => $locale
-				], $options);
+				$row->set($field, $translation->get('content'), $options);
 				unset($row[$name]);
 			}
 
+			$row->set('_locale', $locale, $options);
 			$row->clean();
 			return $row;
 		});
