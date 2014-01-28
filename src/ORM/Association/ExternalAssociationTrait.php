@@ -320,7 +320,8 @@ trait ExternalAssociationTrait {
 			}
 		}
 		$filterQuery->join($joins, [], true);
-		return $filterQuery->select($foreignKey, true);
+		$fields = $query->aliasFields((array)$query->repository()->primaryKey());
+		return $filterQuery->select($fields, true);
 	}
 
 /**

@@ -34,6 +34,27 @@ use Cake\ORM\Table;
 class Query extends DatabaseQuery {
 
 /**
+ * Indicates that the operation should append to the list
+ *
+ * @var integer
+ */
+	const APPEND = 0;
+
+/**
+ * Indicates that the operation should prepend to the list
+ *
+ * @var integer
+ */
+	const PREPEND = 1;
+
+/**
+ * Indicates that the operation should overwrite the list
+ *
+ * @var boolean
+ */
+	const OVERWRITE = true;
+
+/**
  * Instance of a table object this query is bound to
  *
  * @var \Cake\ORM\Table
@@ -596,9 +617,6 @@ class Query extends DatabaseQuery {
 				'You cannot call all() on a non-select query. Use execute() instead.'
 			);
 		}
-		$table = $this->repository();
-		$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
-		$table->getEventManager()->dispatch($event);
 		return $this->getResults();
 	}
 
@@ -614,6 +632,15 @@ class Query extends DatabaseQuery {
 		if (isset($this->_results)) {
 			return $this->_results;
 		}
+
+		$table = $this->repository();
+		$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
+		$table->getEventManager()->dispatch($event);
+
+		if (isset($this->_results)) {
+			return $this->_results;
+		}
+
 		if ($this->_cache) {
 			$results = $this->_cache->fetch($this);
 		}
@@ -841,16 +868,22 @@ class Query extends DatabaseQuery {
  * }}}
  *
  * @param callable $formatter
- * @param boolean $overwrite
+ * @param boolean|integer $mode
  * @return Cake\ORM\Query|array
  */
-	public function formatResults(callable $formatter = null, $overwrite = false) {
-		if ($overwrite) {
+	public function formatResults(callable $formatter = null, $mode = self::APPEND) {
+		if ($mode === self::OVERWRITE) {
 			$this->_formatters = [];
 		}
 		if ($formatter === null) {
 			return $this->_formatters;
 		}
+
+		if ($mode === self::PREPEND) {
+			array_unshift($this->_formatters, $formatter);
+			return $this;
+		}
+
 		$this->_formatters[] = $formatter;
 		return $this;
 	}
@@ -893,20 +926,19 @@ class Query extends DatabaseQuery {
 
 		$count = ['count' => $query->func()->count('*')];
 		if (!count($query->clause('group')) && !$query->clause('distinct')) {
-			return (int)$query
+			$statement = $query
 				->select($count, true)
-				->hydrate(false)
-				->first()['count'];
+				->execute();
+		} else {
+			// Forcing at least one field to be selected
+			$query->select($query->newExpr()->add('1'));
+			$statement = $this->connection()->newQuery()
+				->select($count)
+				->from(['count_source' => $query])
+				->execute();
 		}
 
-		// Forcing at least one field to be selected
-		$query->select($query->newExpr()->add('1'));
-		$statement = $this->connection()->newQuery()
-			->select($count)
-			->from(['count_source' => $query])
-			->execute();
 		$result = $statement->fetch('assoc')['count'];
-
 		$statement->closeCursor();
 		return (int)$result;
 	}
@@ -1041,7 +1073,6 @@ class Query extends DatabaseQuery {
 
 		foreach ($this->_resolveJoins($this->_table, $contain) as $options) {
 			$table = $options['instance']->target();
-			$alias = $table->alias();
 			$this->_addJoin($options['instance'], $options['config']);
 			foreach ($options['associations'] as $relation => $meta) {
 				if ($meta['instance'] && !$meta['canBeJoined']) {
@@ -1126,11 +1157,11 @@ class Query extends DatabaseQuery {
  * @return CallbackStatement $statement modified statement with extra loaders
  */
 	protected function _eagerLoad($statement) {
-		$keys = $this->_collectKeys($statement);
-		foreach ($this->_loadEagerly as $association => $meta) {
+		$collected = $this->_collectKeys($statement);
+		foreach ($this->_loadEagerly as $meta) {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
-			$keys = isset($keys[$alias]) ? $keys[$alias] : null;
+			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
 			$f = $meta['instance']->eagerLoader(
 				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
 			);
@@ -1150,7 +1181,7 @@ class Query extends DatabaseQuery {
  */
 	protected function _collectKeys($statement) {
 		$collectKeys = [];
-		foreach ($this->_loadEagerly as $association => $meta) {
+		foreach ($this->_loadEagerly as $meta) {
 			$source = $meta['instance']->source();
 			if ($meta['instance']->requiresKeys($meta['config'])) {
 				$alias = $source->alias();
@@ -1158,7 +1189,7 @@ class Query extends DatabaseQuery {
 				foreach ((array)$source->primaryKey() as $key) {
 					$pkFields[] = key($this->aliasField($key, $alias));
 				}
-				$collectKeys[] = [$alias, $pkFields, count($pkFields) === 1];
+				$collectKeys[$alias] = [$alias, $pkFields, count($pkFields) === 1];
 			}
 		}
 

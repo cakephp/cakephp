@@ -669,11 +669,14 @@ class BelongsToManyTest extends TestCase {
 			'table' => 'articles_tags',
 			'schema' => [
 				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer']
+				'tag_id' => ['type' => 'integer'],
+				'_constraints' => [
+					'PK' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
+				]
 			]
 		]);
 		$association = new BelongsToMany('Tags', $config);
-		$parent = (new Query(null, null))
+		$parent = (new Query(null, $this->article))
 			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
 			->join(['bar' => ['table' => 'bar', 'type' => 'left', 'conditions' => []]]);
 		$parent->hydrate(false);
@@ -681,8 +684,9 @@ class BelongsToManyTest extends TestCase {
 		$query = $this->getMock(
 			'Cake\ORM\Query',
 			['all', 'where', 'andWhere', 'order', 'select', 'matching'],
-			[null, null]
+			[null, $this->article]
 		);
+
 		$query->hydrate(false);
 
 		$this->tag->expects($this->once())
@@ -702,7 +706,7 @@ class BelongsToManyTest extends TestCase {
 		unset($joins[1]);
 		$expected
 			->contain([], true)
-			->select('ArticlesTags.article_id', true)
+			->select(['Articles__id' => 'Articles.id'], true)
 			->join($joins, [], true);
 
 		$query->expects($this->at(0))->method('where')

@@ -1769,6 +1769,10 @@ class QueryTest extends TestCase {
 		$this->assertSame([$callback2], $query->formatResults());
 		$query->formatResults(null, true);
 		$this->assertSame([], $query->formatResults());
+
+		$query->formatResults($callback1);
+		$query->formatResults($callback2, $query::PREPEND);
+		$this->assertSame([$callback2, $callback1], $query->formatResults());
 	}
 
 /**
