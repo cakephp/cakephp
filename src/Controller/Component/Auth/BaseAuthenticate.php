@@ -196,8 +196,6 @@ abstract class BaseAuthenticate {
  *
  * @param Cake\Network\Request $request A request object.
  * @param Cake\Network\Response $response A response object.
- * @return mixed Either true to indicate the unauthenticated request has been
- *  dealt with and no more action is required by AuthComponent or void (default).
  */
 	public function unauthenticated(Request $request, Response $response) {
 	}

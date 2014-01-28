@@ -196,7 +196,6 @@ class RequestHandlerComponent extends Component {
  *   to the $data property of the controller, which can then be saved to a model object.
  *
  * @param Event $event The startup event that was fired.
- * @param Controller $controller A reference to the controller
  * @return void
  */
 	public function startup(Event $event) {
@@ -278,7 +277,6 @@ class RequestHandlerComponent extends Component {
  * "304 Not Modified" header.
  *
  * @param Event $event The Controller.beforeRender event.
- * @param Controller $controller
  * @return boolean false if the render process should be aborted
  */
 	public function beforeRender(Event $event) {

@@ -154,7 +154,6 @@ class IdentifierQuoter {
  * Quotes the table name and columns for an insert query
  *
  * @param Query $query
- * @return Query
  */
 	protected function _quoteInsert($query) {
 		list($table, $columns) = $query->clause('insert');

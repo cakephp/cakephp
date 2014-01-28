@@ -133,7 +133,6 @@ class Associations {
  *
  * @param Table $table The table entity is for.
  * @param Entity $entity The entity to save associated data for.
- * @param Entity $entity The entity to save associated data for.
  * @param array $associations The list of associations to save children from.
  *   associations not in this list will not be saved.
  * @param array $options The options for the save operation.

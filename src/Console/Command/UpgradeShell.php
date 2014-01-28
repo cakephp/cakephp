@@ -210,8 +210,6 @@ class UpgradeShell extends Shell {
  * Replace all the App::uses() calls with `use`.
  *
  * @param string $file The file to search and replace.
- * @param boolean $dryRun Whether or not to do the thing
- * @return mixed Replacement of uses call
  */
 	protected function _replaceUses($file) {
 		$pattern = '#App::uses\([\'"]([a-z0-9_]+)[\'"],\s*[\'"]([a-z0-9/_]+)(?:\.([a-z0-9/_]+))?[\'"]\)#i';
