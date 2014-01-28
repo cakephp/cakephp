@@ -43,6 +43,38 @@ class DateTimeTest extends TestCase {
 	}
 
 /**
+ * Data provider for testing various types of invalid selected values.
+ *
+ * @return array
+ */
+	public static function invalidSelectedValuesProvider() {
+		$date = new \DateTime('2014-01-20 12:30:45');
+		return [
+			'string' => ['Bag of poop'],
+			'int' => [-1],
+			'array' => [[
+				'derp' => 'hurt'
+			]]
+		];
+	}
+
+/**
+ * test rendering selected values.
+ *
+ * @dataProvider selectedValuesProvider
+ * @return void
+ */
+	public function testRenderSelectedInvalid($selected) {
+		$result = $this->DateTime->render(['val' => $selected]);
+		$now = new \DateTime();
+		$format = '<option value="%s" selected="selected">%s</option>';
+		$this->assertContains(
+			sprintf($format, $now->format('Y'), $now->format('Y')), 
+			$result
+		);
+	}
+
+/**
  * Data provider for testing various acceptable selected values.
  *
  * @return array

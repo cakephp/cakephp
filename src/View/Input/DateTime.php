@@ -186,20 +186,24 @@ class DateTime implements InputInterface {
 				'meridian' => '',
 			];
 		}
-		if (is_string($value)) {
-			$date = new \DateTime($value);
-		} elseif (is_int($value)) {
-			$date = new \DateTime('@' . $value);
-		} elseif (is_array($value)) {
+		try {
+			if (is_string($value)) {
+				$date = new \DateTime($value);
+			} elseif (is_int($value)) {
+				$date = new \DateTime('@' . $value);
+			} elseif (is_array($value)) {
+				$date = new \DateTime();
+				if (isset($value['year'], $value['month'], $value['day'])) {
+					$date->setDate($value['year'], $value['month'], $value['day']);
+				}
+				if (isset($value['hour'], $value['minute'], $value['second'])) {
+					$date->setTime($value['hour'], $value['minute'], $value['second']);
+				}
+			} else {
+				$date = clone $value;
+			}
+		} catch (\Exception $e) {
 			$date = new \DateTime();
-			if (isset($value['year'], $value['month'], $value['day'])) {
-				$date->setDate($value['year'], $value['month'], $value['day']);
-			}
-			if (isset($value['hour'], $value['minute'], $value['second'])) {
-				$date->setTime($value['hour'], $value['minute'], $value['second']);
-			}
-		} else {
-			$date = clone $value;
 		}
 
 		if (isset($options['minute']['interval'])) {
