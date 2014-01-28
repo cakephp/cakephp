@@ -999,7 +999,7 @@ class QueryTest extends TestCase {
 		$expected = new QueryExpression(['a > b']);
 		$result = $query->clause('join');
 		$this->assertEquals([
-			['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
+			'table_a' => ['alias' => 'table_a', 'type' => 'INNER', 'conditions' => $expected]
 		], $result);
 
 		$expected = new OrderByExpression(['a' => 'ASC']);
@@ -1816,6 +1816,25 @@ class QueryTest extends TestCase {
 			4 => 'garrett'
 		];
 		$this->assertEquals($expected, $query->toArray());
+	}
+
+/**
+ * Tests that getting results from a query having a contained association
+ * will no attach joins twice if count() is called on it afterwards
+ *
+ * @return void
+ */
+	public function testCountWithContainCallingAll() {
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+		$query = $table->find()
+			->select(['id', 'title'])
+			->contain('authors')
+			->limit(2);
+
+		$results = $query->all();
+		$this->assertCount(2, $results);
+		$this->assertEquals(3, $query->count());
 	}
 
 }

@@ -335,7 +335,7 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 
 		$expected = clone $parent;
 		$joins = $expected->join();
-		unset($joins[1]);
+		unset($joins['bar']);
 		$expected
 			->contain([], true)
 			->select(['Authors__id' => 'Authors.id'], true)

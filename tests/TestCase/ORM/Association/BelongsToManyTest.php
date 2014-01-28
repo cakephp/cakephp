@@ -703,7 +703,7 @@ class BelongsToManyTest extends TestCase {
 
 		$expected = clone $parent;
 		$joins = $expected->join();
-		unset($joins[1]);
+		unset($joins['bar']);
 		$expected
 			->contain([], true)
 			->select(['Articles__id' => 'Articles.id'], true)

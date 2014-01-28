@@ -659,6 +659,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 		$types += $this->defaultTypes();
 		$joins = [];
+		$i = count($this->_parts['join']);
 		foreach ($tables as $alias => $t) {
 			if (!is_array($t)) {
 				$t = ['table' => $t, 'conditions' => $this->newExpr()];
@@ -666,13 +667,14 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			if (!($t['conditions']) instanceof ExpressionInterface) {
 				$t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
 			}
-			$joins[] = $t + ['type' => 'INNER', 'alias' => is_string($alias) ? $alias : null];
+			$alias = is_string($alias) ? $alias : null;
+			$joins[$alias ?: $i++] = $t + ['type' => 'INNER', 'alias' => $alias];
 		}
 
 		if ($overwrite) {
 			$this->_parts['join'] = $joins;
 		} else {
-			$this->_parts['join'] = array_merge($this->_parts['join'], array_values($joins));
+			$this->_parts['join'] = array_merge($this->_parts['join'], $joins);
 		}
 
 		$this->_dirty();
