@@ -131,7 +131,7 @@ class DateTime implements InputInterface {
 			'meridian' => null,
 		];
 
-		$selected = $this->_deconstuctDate($data['val'], $data);
+		$selected = $this->_deconstructDate($data['val'], $data);
 
 		if (!isset($data['meridian']) &&
 			isset($data['hour']['format']) &&
@@ -178,7 +178,7 @@ class DateTime implements InputInterface {
  * @param array $options Options for conversion.
  * @return array
  */
-	protected function _deconstuctDate($value, $options) {
+	protected function _deconstructDate($value, $options) {
 		if (empty($value)) {
 			return [
 				'year' => '', 'month' => '', 'day' => '',
