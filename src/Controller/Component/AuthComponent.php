@@ -44,6 +44,8 @@ class AuthComponent extends Component {
 
 /**
  * Constant for 'all'
+ *
+ * @var string
  */
 	const ALL = 'all';
 
