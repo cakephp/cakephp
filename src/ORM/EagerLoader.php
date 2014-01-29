@@ -35,7 +35,7 @@ class EagerLoader {
  *
  * @var array
  */
-	protected $_normalizedContainments;
+	protected $_normalized;
 
 /**
  * List of options accepted by associations in contain()
@@ -72,14 +72,14 @@ class EagerLoader {
 		$associations = (array)$associations;
 		$current = current($associations);
 		if (is_array($current) && isset($current['instance'])) {
-			$this->_containments = $this->_normalizedContainments = $associations;
+			$this->_containments = $this->_normalized = $associations;
 			return;
 		}
 
 		$old = $this->_containments->getArrayCopy();
 		$associations = $this->_reformatContain($associations, $old);
 		$this->_containments->exchangeArray($associations);
-		$this->_normalizedContainments = null;
+		$this->_normalized = null;
 	}
 
 	public function matching($assoc, callable $builder = null) {
@@ -146,7 +146,6 @@ class EagerLoader {
 		return $result;
 	}
 
-
 /**
  * Returns the fully normalized array of associations that should be eagerly
  * loaded. The normalized array will restructure the original one by sorting
@@ -158,8 +157,8 @@ class EagerLoader {
  * @return array
  */
 	public function normalizedContainments() {
-		if ($this->_normalizedContainments !== null || empty($this->_containments)) {
-			return $this->_normalizedContainments;
+		if ($this->_normalized !== null || empty($this->_containments)) {
+			return $this->_normalized;
 		}
 
 		$contain = [];
@@ -175,7 +174,7 @@ class EagerLoader {
 			);
 		}
 
-		return $this->_normalizedContainments = $contain;
+		return $this->_normalized = $contain;
 	}
 
 /**
@@ -195,8 +194,7 @@ class EagerLoader {
 			}
 		}
 
-		foreach ($this->_resolveJoins($this->_table, $contain) as $options) {
-			$table = $options['instance']->target();
+		foreach ($this->_resolveJoins($contain) as $options) {
 			$config = $options['config'] + ['includeFields' => $includeFields];
 			$options['instance']->attachTo($query, $config);
 			foreach ($options['associations'] as $relation => $meta) {
@@ -239,24 +237,23 @@ class EagerLoader {
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
 		}
+
 		return $config;
 	}
 
 /**
  * Helper function used to compile a list of all associations that can be
- * joined in this query.
+ * joined in the query.
  *
- * @param Table $source the owning side of the association
  * @param array $associations list of associations for $source
  * @return array
  */
-	protected function _resolveJoins($source, $associations) {
+	protected function _resolveJoins($associations) {
 		$result = [];
 		foreach ($associations as $table => $options) {
-			$associated = $options['instance'];
 			if ($options['canBeJoined']) {
 				$result[$table] = $options;
-				$result += $this->_resolveJoins($associated->target(), $options['associations']);
+				$result += $this->_resolveJoins($options['associations']);
 			}
 		}
 		return $result;
