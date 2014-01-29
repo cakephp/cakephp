@@ -1062,6 +1062,82 @@ class CakeResponseTest extends CakeTestCase {
 	}
 
 /**
+ * Test CORS
+ *
+ * @dataProvider corsData
+ * @param CakeRequest $request
+ * @param string $origin
+ * @param string|array $domains
+ * @param string|array $methods
+ * @param string|array $headers
+ * @param string|boolean $expectedOrigin
+ * @param string|boolean $expectedMethods
+ * @param string|boolean $expectedHeaders
+ * @return void
+ */
+	public function testCors($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false) {
+		$_SERVER['HTTP_ORIGIN'] = $origin;
+
+		$response = $this->getMock('CakeResponse', array('header'));
+
+		$method = $response->expects(!$expectedOrigin ? $this->never() : $this->at(0))->method('header');
+		$expectedOrigin && $method->with('Access-Control-Allow-Origin', $expectedOrigin ? $expectedOrigin : $this->anything());
+
+		$i = 1;
+		if ($expectedMethods) {
+			$response->expects($this->at($i++))
+				->method('header')
+				->with('Access-Control-Allow-Methods', $expectedMethods ? $expectedMethods : $this->anything());
+		}
+		if ($expectedHeaders) {
+			$response->expects($this->at($i++))
+				->method('header')
+				->with('Access-Control-Allow-Headers', $expectedHeaders ? $expectedHeaders : $this->anything());
+		}
+
+		$response->cors($request, $domains, $methods, $headers);
+		unset($_SERVER['HTTP_ORIGIN']);
+	}
+
+/**
+ * Feed for testCors
+ *
+ * @return array
+ */
+	public function corsData() {
+		$fooRequest = new CakeRequest();
+
+		$secureRequest = $this->getMock('CakeRequest', array('is'));
+		$secureRequest->expects($this->any())
+			->method('is')
+			->with('ssl')
+			->will($this->returnValue(true));
+
+		return array(
+			array($fooRequest, null, '*', '', '', false, false),
+			array($fooRequest, 'http://www.foo.com', '*', '', '', '*', false),
+			array($fooRequest, 'http://www.foo.com', 'www.foo.com', '', '', 'http://www.foo.com', false),
+			array($fooRequest, 'http://www.foo.com', '*.foo.com', '', '', 'http://www.foo.com', false),
+			array($fooRequest, 'http://www.foo.com', 'http://*.foo.com', '', '', 'http://www.foo.com', false),
+			array($fooRequest, 'http://www.foo.com', 'https://www.foo.com', '', '', false, false),
+			array($fooRequest, 'http://www.foo.com', 'https://*.foo.com', '', '', false, false),
+			array($fooRequest, 'http://www.foo.com', array('*.bar.com', '*.foo.com'), '', '', 'http://www.foo.com', false),
+
+			array($secureRequest, 'https://www.bar.com', 'www.bar.com', '', '', 'https://www.bar.com', false),
+			array($secureRequest, 'https://www.bar.com', 'http://www.bar.com', '', '', false, false),
+			array($secureRequest, 'https://www.bar.com', '*.bar.com', '', '', 'https://www.bar.com', false),
+
+			array($fooRequest, 'http://www.foo.com', '*', 'GET', '', '*', 'GET'),
+			array($fooRequest, 'http://www.foo.com', '*.foo.com', 'GET', '', 'http://www.foo.com', 'GET'),
+			array($fooRequest, 'http://www.foo.com', '*.foo.com', array('GET', 'POST'), '', 'http://www.foo.com', 'GET, POST'),
+
+			array($fooRequest, 'http://www.foo.com', '*', '', 'X-CakePHP', '*', false, 'X-CakePHP'),
+			array($fooRequest, 'http://www.foo.com', '*', '', array('X-CakePHP', 'X-MyApp'), '*', false, 'X-CakePHP, X-MyApp'),
+			array($fooRequest, 'http://www.foo.com', '*', array('GET', 'OPTIONS'), array('X-CakePHP', 'X-MyApp'), '*', 'GET, OPTIONS', 'X-CakePHP, X-MyApp'),
+		);
+	}
+
+/**
  * testFileNotFound
  *
  * @expectedException NotFoundException
