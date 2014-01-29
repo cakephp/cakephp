@@ -104,8 +104,12 @@ abstract class BaseAuthenticate {
 		if (!empty($this->settings['scope'])) {
 			$conditions = array_merge($conditions, $this->settings['scope']);
 		}
-
-		$result = ClassRegistry::init($userModel)->find('first', array(
+		
+		$UserModel = ClassRegistry::init($userModel);
+		if (!empty($this->settings['contain'])) {
+			$UserModel->Behaviors->load('Containable');
+		}
+		$result = $UserModel->find('first', array(
 			'conditions' => $conditions,
 			'recursive' => $this->settings['recursive'],
 			'contain' => $this->settings['contain'],
