@@ -736,6 +736,7 @@ class Controller extends Object implements EventListener {
  *   false to stop redirection event,
  *   string controllers a new redirection URL or
  *   array with the keys url, status and exit to be used by the redirect method.
+ * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRedirect(Event $event, $url, $status = null, $exit = true) {
@@ -745,6 +746,7 @@ class Controller extends Object implements EventListener {
  * Called after the controller action is run and rendered.
  *
  * @param Event $event An Event instance
+ * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function afterFilter(Event $event) {

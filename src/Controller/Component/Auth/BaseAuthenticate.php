@@ -192,10 +192,13 @@ abstract class BaseAuthenticate {
 	}
 
 /**
- * Handle unauthenticated access attempt.
+ * Handle unauthenticated access attempt. In implementation, will return true to indicate
+ * the unauthenticated request has been dealt with and no more action is required by
+ * AuthComponent or void (default).
  *
  * @param Cake\Network\Request $request A request object.
  * @param Cake\Network\Response $response A response object.
+ * @return void
  */
 	public function unauthenticated(Request $request, Response $response) {
 	}
