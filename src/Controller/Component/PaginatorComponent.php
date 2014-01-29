@@ -305,28 +305,26 @@ class PaginatorComponent extends Component {
 			return $options;
 		}
 
-		if (is_array($options['order'])) {
-			$tableAlias = $object->alias();
-			$order = [];
+		$tableAlias = $object->alias();
+		$order = [];
 
-			foreach ($options['order'] as $key => $value) {
-				$field = $key;
-				$alias = $tableAlias;
-				if (is_numeric($key)){
-					$order[] = $value;
-				}else{
-					if (strpos($key, '.') !== false) {
-						list($alias, $field) = explode('.', $key);
-					}
-					$correctAlias = ($tableAlias == $alias);
+		foreach ($options['order'] as $key => $value) {
+			$field = $key;
+			$alias = $tableAlias;
+			if (is_numeric($key)){
+				$order[] = $value;
+			}else{
+				if (strpos($key, '.') !== false) {
+					list($alias, $field) = explode('.', $key);
+				}
+				$correctAlias = ($tableAlias == $alias);
 
-					if ($correctAlias && $object->hasField($field)) {
-						$order[$tableAlias . '.' . $field] = $value;
-					}
+				if ($correctAlias && $object->hasField($field)) {
+					$order[$tableAlias . '.' . $field] = $value;
 				}
 			}
-			$options['order'] = $order;
 		}
+		$options['order'] = $order;
 
 		return $options;
 	}
