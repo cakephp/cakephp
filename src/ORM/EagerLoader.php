@@ -14,6 +14,8 @@
  */
 namespace Cake\ORM;
 
+use Cake\ORM\Table;
+use Cake\ORM\Query;
 use Closure;
 
 /**
@@ -148,15 +150,17 @@ class EagerLoader {
 
 /**
  * Returns the fully normalized array of associations that should be eagerly
- * loaded. The normalized array will restructure the original one by sorting
- * all associations under one key and special options under another.
+ * loaded for a table. The normalized array will restructure the original array
+ * by sorting all associations under one key and special options under another.
  *
  * Additionally it will set an 'instance' key per association containing the
  * association instance from the corresponding source table
  *
+ * @param \Cake\ORM\Table $repository The table containing the association that
+ * will be normalized
  * @return array
  */
-	public function normalizedContainments() {
+	public function normalized(Table $repository) {
 		if ($this->_normalized !== null || empty($this->_containments)) {
 			return $this->_normalized;
 		}
@@ -168,7 +172,7 @@ class EagerLoader {
 				break;
 			}
 			$contain[$table] = $this->_normalizeContain(
-				$this->_table,
+				$repository,
 				$table,
 				$options
 			);
@@ -187,7 +191,7 @@ class EagerLoader {
 			return;
 		}
 
-		$contain = $this->normalizedContainments();
+		$contain = $this->normalized($query->repository());
 		foreach ($contain as $relation => $meta) {
 			if ($meta['instance'] && !$meta['canBeJoined']) {
 				$this->_loadEagerly[$relation] = $meta;

@@ -309,12 +309,10 @@ class Query extends DatabaseQuery {
  * @return \ArrayObject|Query
  */
 	public function contain($associations = null, $override = false) {
+		$result = $this->eagerLoader()->contain($associations, $override);
 		if ($associations !== null || $override) {
 			$this->_dirty();
-			return $this;
 		}
-
-		$result = $this->eagerLoader()->contain($associations, $override);
 		if ($associations === null) {
 			return $result;
 		}
