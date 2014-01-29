@@ -903,11 +903,13 @@ class Query extends DatabaseQuery {
  */
 	protected function _decorateStatement($statement) {
 		$statement = parent::_decorateStatement($statement);
-		if ($this->_loadEagerly) {
+		$loader = $this->eagerLoader();
+
+		if ($loader->hasExternal($this->repository())) {
 			if (!($statement instanceof BufferedStatement)) {
 				$statement = new BufferedStatement($statement, $this->connection()->driver());
 			}
-			$statement = $this->eagerLoader()->eagerLoad($statement);
+			$statement = $loader->eagerLoad($statement);
 		}
 
 		return $statement;

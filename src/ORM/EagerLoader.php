@@ -100,6 +100,40 @@ class EagerLoader {
 	}
 
 /**
+ * Returns the fully normalized array of associations that should be eagerly
+ * loaded for a table. The normalized array will restructure the original array
+ * by sorting all associations under one key and special options under another.
+ *
+ * Additionally it will set an 'instance' key per association containing the
+ * association instance from the corresponding source table
+ *
+ * @param \Cake\ORM\Table $repository The table containing the association that
+ * will be normalized
+ * @return array
+ */
+	public function normalized(Table $repository) {
+		if ($this->_normalized !== null || empty($this->_containments)) {
+			return $this->_normalized;
+		}
+
+		$contain = [];
+		foreach ($this->_containments as $table => $options) {
+			if (!empty($options['instance'])) {
+				$contain = (array)$this->_containments;
+				break;
+			}
+			$contain[$table] = $this->_normalizeContain($repository, $table, $options);
+		}
+
+		return $this->_normalized = $contain;
+	}
+
+	public function hasExternal(Table $repository) {
+		$this->normalized($repository);
+		return !empty($this->_loadEagerly);
+	}
+
+/**
  * Formats the containments array so that associations are always set as keys
  * in the array. This function merges the original associations array with
  * the new associations provided
@@ -149,63 +183,18 @@ class EagerLoader {
 	}
 
 /**
- * Returns the fully normalized array of associations that should be eagerly
- * loaded for a table. The normalized array will restructure the original array
- * by sorting all associations under one key and special options under another.
- *
- * Additionally it will set an 'instance' key per association containing the
- * association instance from the corresponding source table
- *
- * @param \Cake\ORM\Table $repository The table containing the association that
- * will be normalized
- * @return array
- */
-	public function normalized(Table $repository) {
-		if ($this->_normalized !== null || empty($this->_containments)) {
-			return $this->_normalized;
-		}
-
-		$contain = [];
-		foreach ($this->_containments as $table => $options) {
-			if (!empty($options['instance'])) {
-				$contain = (array)$this->_containments;
-				break;
-			}
-			$contain[$table] = $this->_normalizeContain(
-				$repository,
-				$table,
-				$options
-			);
-		}
-
-		return $this->_normalized = $contain;
-	}
-
-/**
  *
  * @return void
  */
 	public function attachAssociations($query, $includeFields) {
-		$this->_loadEagerly = [];
 		if (empty($this->_containments)) {
 			return;
 		}
 
 		$contain = $this->normalized($query->repository());
-		foreach ($contain as $relation => $meta) {
-			if ($meta['instance'] && !$meta['canBeJoined']) {
-				$this->_loadEagerly[$relation] = $meta;
-			}
-		}
-
 		foreach ($this->_resolveJoins($contain) as $options) {
 			$config = $options['config'] + ['includeFields' => $includeFields];
 			$options['instance']->attachTo($query, $config);
-			foreach ($options['associations'] as $relation => $meta) {
-				if ($meta['instance'] && !$meta['canBeJoined']) {
-					$this->_loadEagerly[$relation] = $meta;
-				}
-			}
 		}
 	}
 
@@ -237,6 +226,10 @@ class EagerLoader {
 			'config' => array_diff_key($options, $extra)
 		];
 		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
+
+		if (!$config['canBeJoined']) {
+			$this->_loadEagerly[$alias] = $config;
+		}
 
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
