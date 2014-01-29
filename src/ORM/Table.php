@@ -887,10 +887,9 @@ class Table implements EventListener {
  */
 	public function get($primaryKey, $options = []) {
 		$key = (array)$this->primaryKey();
-		if (!empty($this->_alias)) {
-			foreach($key as $index => $keyname){
-				$key[$index] = $this->_alias . '.' . $keyname;
-			}
+		$alias = $this->alias();
+		foreach ($key as $index => $keyname) {
+			$key[$index] = $alias . '.' . $keyname;
 		}
 		$conditions = array_combine($key, (array)$primaryKey);
 		$entity = $this->find('all', $options)->where($conditions)->first();

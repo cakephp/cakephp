@@ -3045,7 +3045,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('where')
-			->with(['bar' => 10])
+			->with([$table->alias() . '.bar' => 10])
 			->will($this->returnSelf());
 		$query->expects($this->once())->method('first')
 			->will($this->returnValue($entity));
@@ -3088,7 +3088,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$query->expects($this->once())->method('where')
-			->with(['bar' => 10])
+			->with([$table->alias() . '.bar' => 10])
 			->will($this->returnSelf());
 		$query->expects($this->once())->method('first')
 			->will($this->returnValue(false));
