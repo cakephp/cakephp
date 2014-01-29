@@ -525,6 +525,7 @@ class ExtractTask extends AppShell {
 				$msgid = $rule;
 			}
 			if ($msgid) {
+				$msgid = $this->_formatString(sprintf("'%s'", $msgid));
 				$details = array(
 					'file' => $file,
 					'line' => 'validation for field ' . $field

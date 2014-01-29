@@ -351,6 +351,9 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$pattern = '#msgid "Post body is super required"#';
 		$this->assertRegExp($pattern, $result);
+
+		$this->assertContains('msgid "double \\"quoted\\" validation"', $result, 'Strings with quotes not handled correctly');
+		$this->assertContains("msgid \"single 'quoted' validation\"", $result, 'Strings with quotes not handled correctly');
 	}
 
 /**
