@@ -73,6 +73,10 @@ class EagerLoader {
 			return $this->_containments;
 		}
 
+		if (empty($associations)) {
+			return;
+		}
+
 		$associations = (array)$associations;
 		$current = current($associations);
 		if (is_array($current) && isset($current['instance'])) {
@@ -274,12 +278,7 @@ class EagerLoader {
 		}
 
 		$driver = $query->connection()->driver();
-
-		if (!($statement instanceof BufferedStatement)) {
-			$statement = new BufferedStatement($statement, $driver);
-		}
-
-		$collected = $this->_collectKeys($statement);
+		list($collected, $statement) = $this->_collectKeys($query, $statement);
 		foreach ($this->_loadEagerly as $meta) {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
@@ -301,7 +300,7 @@ class EagerLoader {
  * @param BufferedStatement $statement
  * @return array
  */
-	protected function _collectKeys($statement) {
+	protected function _collectKeys($query, $statement) {
 		$collectKeys = [];
 		foreach ($this->_loadEagerly as $meta) {
 			$source = $meta['instance']->source();
@@ -309,32 +308,41 @@ class EagerLoader {
 				$alias = $source->alias();
 				$pkFields = [];
 				foreach ((array)$source->primaryKey() as $key) {
-					$pkFields[] = key($this->aliasField($key, $alias));
+					$pkFields[] = key($query->aliasField($key, $alias));
 				}
 				$collectKeys[$alias] = [$alias, $pkFields, count($pkFields) === 1];
 			}
 		}
 
-		$keys = [];
-		if (!empty($collectKeys)) {
-			while ($result = $statement->fetch('assoc')) {
-				foreach ($collectKeys as $parts) {
-					if ($parts[2]) {
-						$keys[$parts[0]][] = $result[$parts[1][0]];
-						continue;
-					}
-
-					$collected = [];
-					foreach ($parts[1] as $key) {
-						$collected[] = $result[$key];
-					}
-					$keys[$parts[0]][] = $collected;
-				}
-			}
-
-			$statement->rewind();
+		if (empty($collectKeys)) {
+			return [[], $statement];
 		}
 
+		if (!($statement instanceof BufferedStatement)) {
+			$statement = new BufferedStatement($statement, $query->connection()->driver());
+		}
+
+		return [$this->_groupKeys($statement, $collectKeys), $statement];
+	}
+
+	protected function _groupKeys($statement, $collectKeys) {
+		$keys = [];
+		while ($result = $statement->fetch('assoc')) {
+			foreach ($collectKeys as $parts) {
+				if ($parts[2]) {
+					$keys[$parts[0]][] = $result[$parts[1][0]];
+					continue;
+				}
+
+				$collected = [];
+				foreach ($parts[1] as $key) {
+					$collected[] = $result[$key];
+				}
+				$keys[$parts[0]][] = $collected;
+			}
+		}
+
+		$statement->rewind();
 		return $keys;
 	}
 
