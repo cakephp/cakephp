@@ -313,7 +313,7 @@ class PaginatorComponent extends Component {
 			$alias = $tableAlias;
 			if (is_numeric($key)){
 				$order[] = $value;
-			}else{
+			} else {
 				if (strpos($key, '.') !== false) {
 					list($alias, $field) = explode('.', $key);
 				}
