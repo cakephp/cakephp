@@ -488,6 +488,48 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * test that string order are used by paginator
+ *
+ * @return void
+ */
+	public function testValidateSortWithString() {
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array(
+			'order' => 'model.author_id DESC'
+		);
+		$result = $this->Paginator->validateSort($model, $options);
+		$expected = 'model.author_id DESC';
+
+		$this->assertEquals($expected, $result['order']);
+	}
+
+/**
+ * test that numeric array order are used by paginator
+ *
+ * @return void
+ */
+	public function testValidateSortWithNumericArray() {
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array(
+			'order' => array('model.author_id DESC')
+		);
+		$result = $this->Paginator->validateSort($model, $options);
+		$expected = array('model.author_id DESC');
+
+		$this->assertEquals($expected, $result['order']);
+	}
+
+/**
  * Test that no sort doesn't trigger an error.
  *
  * @return void
