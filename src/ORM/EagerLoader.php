@@ -179,12 +179,10 @@ class EagerLoader {
 	}
 
 /**
- * Helper function used to add the required joins for associations defined using
- * `contain()`
  *
  * @return void
  */
-	protected function _addContainments() {
+	public function attachAssociations($query, $includeFields) {
 		$this->_loadEagerly = [];
 		if (empty($this->_containments)) {
 			return;
@@ -199,7 +197,8 @@ class EagerLoader {
 
 		foreach ($this->_resolveJoins($this->_table, $contain) as $options) {
 			$table = $options['instance']->target();
-			$this->_addJoin($options['instance'], $options['config']);
+			$config = $options['config'] + ['includeFields' => $includeFields];
+			$options['instance']->attachTo($query, $config);
 			foreach ($options['associations'] as $relation => $meta) {
 				if ($meta['instance'] && !$meta['canBeJoined']) {
 					$this->_loadEagerly[$relation] = $meta;
@@ -261,6 +260,29 @@ class EagerLoader {
 			}
 		}
 		return $result;
+	}
+
+/**
+ * Helper method that will calculate those associations that cannot be joined
+ * directly in this query and will setup the required extra queries for fetching
+ * the extra data.
+ *
+ * @param Statement $statement original query statement
+ * @return CallbackStatement $statement modified statement with extra loaders
+ */
+	public function eagerLoad($statement) {
+		$collected = $this->_collectKeys($statement);
+		foreach ($this->_loadEagerly as $meta) {
+			$contain = $meta['associations'];
+			$alias = $meta['instance']->source()->alias();
+			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
+			$f = $meta['instance']->eagerLoader(
+				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
+			);
+			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
+		}
+
+		return $statement;
 	}
 
 /**

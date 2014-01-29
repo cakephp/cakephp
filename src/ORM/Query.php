@@ -19,6 +19,7 @@ use Cake\Database\Query as DatabaseQuery;
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
 use Cake\Event\Event;
+use Cake\ORM\EagerLoader;
 use Cake\ORM\QueryCacher;
 use Cake\ORM\Table;
 
@@ -132,6 +133,14 @@ class Query extends DatabaseQuery {
 	protected $_counter;
 
 /**
+ * Instance of a class responsible for storing association containments and
+ * for eager loading them when this query is executed
+ *
+ * @var \Cake\ORM\EagerLoader
+ */
+	protected $_eagerLoader;
+
+/**
  * Constuctor
  *
  * @param Cake\Database\Connection $connection
@@ -140,7 +149,6 @@ class Query extends DatabaseQuery {
 	public function __construct($connection, $table) {
 		$this->connection($connection);
 		$this->repository($table);
-		$this->_eagerLoader = new EagerLoader;
 	}
 
 /**
@@ -182,6 +190,25 @@ class Query extends DatabaseQuery {
 		}
 		$this->defaultTypes($this->defaultTypes() + $fields);
 
+		return $this;
+	}
+
+/**
+ * Sets the instance of the eager loader class to use for loading associations
+ * and storing containments. If called with no arguments, it will return the
+ * currently configured instance.
+ *
+ * @param \Cake\ORM\EagerLoader $instance
+ * @return \Cake\ORM\Eager|\Cake\ORM\Query
+ */
+	public function eagerLoader(EagerLoader $instance = null) {
+		if ($instance === null) {
+			if ($this->_eagerLoader === null) {
+				$this->_eagerLoader = new EagerLoader;
+			}
+			return $this->_eagerLoader;
+		}
+		$this->_eagerLoader = $instance;
 		return $this;
 	}
 
@@ -287,7 +314,7 @@ class Query extends DatabaseQuery {
 			return $this;
 		}
 
-		$result = $this->_eagerLoader->contain($associations, $override);
+		$result = $this->eagerLoader()->contain($associations, $override);
 		if ($associations === null) {
 			return $result;
 		}
@@ -346,7 +373,7 @@ class Query extends DatabaseQuery {
  * @return Query
  */
 	public function matching($assoc, callable $builder = null) {
-		$this->_eagerLoader->matching($assoc, $builder);
+		$this->eagerLoader()->matching($assoc, $builder);
 		$this->_dirty();
 		return $this;
 	}
@@ -882,7 +909,7 @@ class Query extends DatabaseQuery {
 			if (!($statement instanceof BufferedStatement)) {
 				$statement = new BufferedStatement($statement, $this->connection()->driver());
 			}
-			$statement = $this->_eagerLoad($statement);
+			$statement = $this->eagerLoader()->eagerLoad($statement);
 		}
 
 		return $statement;
@@ -907,43 +934,9 @@ class Query extends DatabaseQuery {
 				$this->from([$this->_table->alias() => $this->_table->table()]);
 			}
 			$this->_addDefaultFields();
-			$this->_addContainments();
+			$this->eagerLoader()->attachAssociations($this, !$this->_hasFields);
 		}
 		return parent::_transformQuery();
-	}
-
-/**
- * Adds a join based on a particular association and some custom options
- *
- * @param Association $association
- * @param array $options
- * @return void
- */
-	protected function _addJoin($association, $options) {
-		$association->attachTo($this, $options + ['includeFields' => !$this->_hasFields]);
-	}
-
-/**
- * Helper method that will calculate those associations that cannot be joined
- * directly in this query and will setup the required extra queries for fetching
- * the extra data.
- *
- * @param Statement $statement original query statement
- * @return CallbackStatement $statement modified statement with extra loaders
- */
-	protected function _eagerLoad($statement) {
-		$collected = $this->_collectKeys($statement);
-		foreach ($this->_loadEagerly as $meta) {
-			$contain = $meta['associations'];
-			$alias = $meta['instance']->source()->alias();
-			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
-			$f = $meta['instance']->eagerLoader(
-				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
-			);
-			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
-		}
-
-		return $statement;
 	}
 
 /**
