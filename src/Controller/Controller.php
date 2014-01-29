@@ -733,10 +733,10 @@ class Controller extends Object implements EventListener {
  *     or an absolute URL
  * @param integer $status Optional HTTP status code (eg: 404)
  * @param boolean $exit If true, exit() will be called after the redirect
- * @return mixed
  *   false to stop redirection event,
  *   string controllers a new redirection URL or
  *   array with the keys url, status and exit to be used by the redirect method.
+ * @return void
  * @link http://book.cakephp.org/2.0/en/controllers.html#request-life-cycle-callbacks
  */
 	public function beforeRedirect(Event $event, $url, $status = null, $exit = true) {

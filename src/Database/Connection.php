@@ -86,7 +86,6 @@ class Connection {
  * Constructor
  *
  * @param array $config configuration for connecting to database
- * @return self
  */
 	public function __construct($config) {
 		$this->_config = $config;
