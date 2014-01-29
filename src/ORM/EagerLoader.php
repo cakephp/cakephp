@@ -14,6 +14,8 @@
  */
 namespace Cake\ORM;
 
+use Cake\Database\Statement\BufferedStatement;
+use Cake\Database\Statement\CallbackStatement;
 use Cake\ORM\Table;
 use Cake\ORM\Query;
 use Closure;
@@ -261,19 +263,31 @@ class EagerLoader {
  * directly in this query and will setup the required extra queries for fetching
  * the extra data.
  *
- * @param Statement $statement original query statement
+ * @param \Cake\ORM\Query $query The query for which to eage load external
+ * associations
+ * @param Statement $statement The statement created after executing the $query
  * @return CallbackStatement $statement modified statement with extra loaders
  */
-	public function eagerLoad($statement) {
+	public function eagerLoad($query, $statement) {
+		if (!$this->hasExternal($query->repository())) {
+			return $statement;
+		}
+
+		$driver = $query->connection()->driver();
+
+		if (!($statement instanceof BufferedStatement)) {
+			$statement = new BufferedStatement($statement, $driver);
+		}
+
 		$collected = $this->_collectKeys($statement);
 		foreach ($this->_loadEagerly as $meta) {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
 			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
 			$f = $meta['instance']->eagerLoader(
-				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
+				$meta['config'] + ['query' => $query, 'contain' => $contain, 'keys' => $keys]
 			);
-			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
+			$statement = new CallbackStatement($statement, $driver, $f);
 		}
 
 		return $statement;

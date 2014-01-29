@@ -16,8 +16,6 @@ namespace Cake\ORM;
 
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Database\Query as DatabaseQuery;
-use Cake\Database\Statement\BufferedStatement;
-use Cake\Database\Statement\CallbackStatement;
 use Cake\Event\Event;
 use Cake\ORM\EagerLoader;
 use Cake\ORM\QueryCacher;
@@ -903,16 +901,7 @@ class Query extends DatabaseQuery {
  */
 	protected function _decorateStatement($statement) {
 		$statement = parent::_decorateStatement($statement);
-		$loader = $this->eagerLoader();
-
-		if ($loader->hasExternal($this->repository())) {
-			if (!($statement instanceof BufferedStatement)) {
-				$statement = new BufferedStatement($statement, $this->connection()->driver());
-			}
-			$statement = $loader->eagerLoad($statement);
-		}
-
-		return $statement;
+		return $this->eagerLoader()->eagerLoad($this, $statement);
 	}
 
 /**
