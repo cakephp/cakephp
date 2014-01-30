@@ -681,7 +681,7 @@ class Set {
  *
  * @param mixed $list Where to insert into
  * @param mixed $path A dot-separated string.
- * @param array $data Data to insert
+ * @param mixed $data Data to insert
  * @return array
  * @access public
  * @static
