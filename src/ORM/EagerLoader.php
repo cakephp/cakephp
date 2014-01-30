@@ -109,6 +109,18 @@ class EagerLoader {
 		return $this->_containments = $associations;
 	}
 
+/**
+ * Adds a new association to the list that will be used to filter the results of
+ * any given query based on the results of finding records for that association.
+ * You can pass a dot separated path of associations to this method as its first
+ * parameter, this will translate in setting all those associations with the
+ * `matching` option.
+ *
+ * @param string A single association or a dot separated path of associations.
+ * @param callable $builder the callback function to be used for setting extra
+ * options to the filtering query
+ * @return array The resulting containments array
+ */
 	public function matching($assoc, callable $builder = null) {
 		$assocs = explode('.', $assoc);
 		$last = array_pop($assocs);
@@ -153,7 +165,16 @@ class EagerLoader {
 		return $this->_normalized = $contain;
 	}
 
-	public function hasExternal(Table $repository) {
+/**
+ * Returns whether or not there are associations that need to be loaded by
+ * decorating results from a query and executing a separate one for ijecting
+ * them.
+ *
+ * @param \Cake\ORM\Table The table containing the associations described in
+ * the `contain` array
+ * @return boolean
+ */
+	protected function _hasExternal(Table $repository) {
 		$this->normalized($repository);
 		return !empty($this->_loadExternal);
 	}
@@ -208,10 +229,18 @@ class EagerLoader {
 	}
 
 /**
+ * Modifies the passed query to apply joins or any other transformation required
+ * in order to eager load the associations described in the `contain` array.
+ * This method will not modify the query for loading external associations, i.e.
+ * those that cannot be loaded without executing a separate query.
  *
+ * @param \Cake\ORM\Query The query to be modified
+ * @param boolean $includeFields whether to append all fields from the associations
+ * to the passed query. This can be overridden according to the settings defined
+ * per association in the containments array
  * @return void
  */
-	public function attachAssociations($query, $includeFields) {
+	public function attachAssociations(Query $query, $includeFields) {
 		if (empty($this->_containments)) {
 			return;
 		}
@@ -285,13 +314,13 @@ class EagerLoader {
  * Decorates the passed statement object in order to inject data form associations
  * that cannot be joined directly.
  *
- * @param \Cake\ORM\Query $query The query for which to eage load external
+ * @param \Cake\ORM\Query $query The query for which to eager load external
  * associations
  * @param Statement $statement The statement created after executing the $query
  * @return CallbackStatement $statement modified statement with extra loaders
  */
 	public function eagerLoad($query, $statement) {
-		if (!$this->hasExternal($query->repository())) {
+		if (!$this->_hasExternal($query->repository())) {
 			return $statement;
 		}
 
@@ -343,6 +372,14 @@ class EagerLoader {
 		return [$this->_groupKeys($statement, $collectKeys), $statement];
 	}
 
+/**
+ * Helper function used to iterate an statement and extract the columns
+ * defined in $collectKeys
+ *
+ * @param \Cake\Database\StatementInterface $statement
+ * @param array $collectKeys
+ * @return array
+ */
 	protected function _groupKeys($statement, $collectKeys) {
 		$keys = [];
 		while ($result = $statement->fetch('assoc')) {
