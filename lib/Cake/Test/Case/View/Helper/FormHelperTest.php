@@ -353,6 +353,8 @@ class ValidateUser extends CakeTestModel {
 		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'balance' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
 		'cost_decimal' => array('type' => 'decimal', 'null' => false, 'length' => '6,3'),
+		'ratio' => array('type' => 'decimal', 'null' => false, 'length' => '10,6'),
+		'population' => array('type' => 'decimal', 'null' => false, 'length' => '15,0'),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
@@ -1912,6 +1914,28 @@ class FormHelperTest extends CakeTestCase {
 			'Cost Decimal',
 			'/label',
 			'input' => array('name', 'type' => 'number', 'step' => '0.001', 'id'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('ValidateUser.ratio');
+		$expected = array(
+			'div' => array('class'),
+			'label' => array('for'),
+			'Ratio',
+			'/label',
+			'input' => array('name', 'type' => 'number', 'step' => '0.000001', 'id'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('ValidateUser.population');
+		$expected = array(
+			'div' => array('class'),
+			'label' => array('for'),
+			'Population',
+			'/label',
+			'input' => array('name', 'type' => 'number', 'step' => '1', 'id'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
