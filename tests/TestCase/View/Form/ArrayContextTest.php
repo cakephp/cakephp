@@ -147,4 +147,46 @@ class ArrayContextTest extends TestCase {
 		$this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.floaty'));
 	}
 
+/**
+ * Test fetching errors.
+ *
+ * @return void
+ */
+	public function testError() {
+		$context = new ArrayContext($this->request, [
+			'errors' => [
+				'Comments' => [
+					'comment' => ['Comment is required'],
+					'empty' => [],
+					'user_id' => 'A valid userid is required',
+				]
+			]
+		]);
+		$this->assertEquals(['Comment is required'], $context->error('Comments.comment'));
+		$this->assertEquals('A valid userid is required', $context->error('Comments.user_id'));
+		$this->assertEquals([], $context->error('Comments.empty'));
+		$this->assertNull($context->error('Comments.not_there'));
+	}
+
+/**
+ * Test checking errors.
+ *
+ * @return void
+ */
+	public function testHasError() {
+		$context = new ArrayContext($this->request, [
+			'errors' => [
+				'Comments' => [
+					'comment' => ['Comment is required'],
+					'empty' => [],
+					'user_id' => 'A valid userid is required',
+				]
+			]
+		]);
+		$this->assertFalse($context->hasError('Comments.not_there'));
+		$this->assertFalse($context->hasError('Comments.empty'));
+		$this->assertTrue($context->hasError('Comments.user_id'));
+		$this->assertTrue($context->hasError('Comments.comment'));
+	}
+
 }

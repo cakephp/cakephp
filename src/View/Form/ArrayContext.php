@@ -25,13 +25,16 @@ use Cake\Utility\Hash;
  * Important keys:
  *
  * - `defaults` The default values for fields. These values
- *   will be used when there is no request data set.
+ *   will be used when there is no request data set. Data should be nested following
+ *   the dot separated paths you access your fields with.
  * - `required` A nested array of fields, relationships and boolean
  *   flags to indicate a field is required.
- * - `schema` An array of data that emulate the structures that
+ * - `schema` An array of data that emulate the column structures that
  *   Cake\Database\Schema\Table uses. This array allows you to control
  *   the inferred type for fields and allows auto generation of attributes
  *   like maxlength, step and other HTML attributes.
+ * - `errors` An array of validation errors. Errors should be nested following
+ *   the dot separated paths you access your fields with.
  */
 class ArrayContext {
 
@@ -61,6 +64,7 @@ class ArrayContext {
 			'schema' => [],
 			'required' => [],
 			'defaults' => [],
+			'errors' => [],
 		];
 		$this->_context = $context;
 	}
@@ -130,6 +134,33 @@ class ArrayContext {
 		$schema = Hash::get($this->_context['schema'], $field);
 		$whitelist = ['length' => null, 'precision' => null];
 		return array_intersect_key($schema, $whitelist);
+	}
+
+/**
+ * Check whether or not a field has an error attached to it
+ *
+ * @param string $field A dot separated path to check errors on.
+ * @return boolean Returns true if the errors for the field are not empty.
+ */
+	public function hasError($field) {
+		if (empty($this->_context['errors'])) {
+			return false;
+		}
+		return (bool)Hash::check($this->_context['errors'], $field);
+	}
+
+/**
+ * Get the errors for a given field
+ *
+ * @param string $field A dot separated path to check errors on.
+ * @return mixed Either a string or an array of errors. Null
+ *  will be returned when the field path is undefined.
+ */
+	public function error($field) {
+		if (empty($this->_context['errors'])) {
+			return null;
+		}
+		return Hash::get($this->_context['errors'], $field);
 	}
 
 }
