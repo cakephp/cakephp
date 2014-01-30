@@ -95,6 +95,11 @@ class ArrayContext {
  * @return boolean
  */
 	public function isRequired($field) {
+		if (!is_array($this->_context['required'])) {
+			return false;
+		}
+		$required = Hash::get($this->_context['required'], $field);
+		return (bool)$required;
 	}
 
 /**
@@ -105,7 +110,11 @@ class ArrayContext {
  * @see Cake\Database\Type
  */
 	public function type($field) {
-
+		if (!is_array($this->_context['schema'])) {
+			return false;
+		}
+		$schema = Hash::get($this->_context['schema'], $field);
+		return isset($schema['type']) ? $schema['type'] : null;
 	}
 
 /**
@@ -115,7 +124,12 @@ class ArrayContext {
  * @return array An array of data describing the additional attributes on a field.
  */
 	public function attributes($field) {
-
+		if (!is_array($this->_context['schema'])) {
+			return [];
+		}
+		$schema = Hash::get($this->_context['schema'], $field);
+		$whitelist = ['length' => null, 'precision' => null];
+		return array_intersect_key($schema, $whitelist);
 	}
 
 }

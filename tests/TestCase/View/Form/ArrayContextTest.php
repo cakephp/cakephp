@@ -67,24 +67,84 @@ class ArrayContextTest extends TestCase {
 		$this->assertNull($context->val('Comments.field'));
 	}
 
+/**
+ * Test isRequired
+ *
+ * @return void
+ */
 	public function testIsRequired() {
-		$this->markTestIncomplete();
+		$context = new ArrayContext($this->request, [
+			'required' => [
+				'Comments' => [
+					'required' => true,
+					'nope' => false
+				]
+			]
+		]);
+		$this->assertTrue($context->isRequired('Comments.required'));
+		$this->assertFalse($context->isRequired('Comments.nope'));
+		$this->assertFalse($context->isRequired('Articles.id'));
 	}
 
+/**
+ * Test isRequired when the required key is omitted
+ *
+ * @return void
+ */
 	public function testIsRequiredUndefined() {
-		$this->markTestIncomplete();
+		$context = new ArrayContext($this->request, []);
+		$this->assertFalse($context->isRequired('Comments.field'));
 	}
 
-	public function testIsType() {
-		$this->markTestIncomplete();
+/**
+ * Test the type method.
+ *
+ * @return void
+ */
+	public function testType() {
+		$context = new ArrayContext($this->request, [
+			'schema' => [
+				'Comments' => [
+					'id' => ['type' => 'integer'],
+					'comment' => ['length' => 255]
+				]
+			]
+		]);
+		$this->assertNull($context->type('Comments.undefined'));
+		$this->assertEquals('integer', $context->type('Comments.id'));
+		$this->assertNull($context->type('Comments.comment'));
 	}
 
+/**
+ * Test the type method when the data is missing.
+ *
+ * @return void
+ */
 	public function testIsTypeUndefined() {
-		$this->markTestIncomplete();
+		$context = new ArrayContext($this->request, []);
+		$this->assertNull($context->type('Comments.undefined'));
 	}
 
+/**
+ * Test fetching attributes.
+ *
+ * @return void
+ */
 	public function testAttributes() {
-		$this->markTestIncomplete();
+		$context = new ArrayContext($this->request, [
+			'schema' => [
+				'Comments' => [
+					'id' => ['type' => 'integer'],
+					'comment' => ['type' => 'string', 'length' => 255],
+					'decimal' => ['type' => 'decimal', 'precision' => 2, 'length' => 5],
+					'floaty' => ['type' => 'float', 'precision' => 2, 'length' => 5],
+				]
+			]
+		]);
+		$this->assertEquals([], $context->attributes('Comments.id'));
+		$this->assertEquals(['length' => 255], $context->attributes('Comments.comment'));
+		$this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.decimal'));
+		$this->assertEquals(['precision' => 2, 'length' => 5], $context->attributes('Comments.floaty'));
 	}
 
 }
