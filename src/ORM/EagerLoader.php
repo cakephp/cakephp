@@ -319,7 +319,7 @@ class EagerLoader {
  * @param Statement $statement The statement created after executing the $query
  * @return CallbackStatement $statement modified statement with extra loaders
  */
-	public function eagerLoad($query, $statement) {
+	public function loadExternal($query, $statement) {
 		if (!$this->_hasExternal($query->repository())) {
 			return $statement;
 		}

@@ -896,7 +896,7 @@ class Query extends DatabaseQuery {
  */
 	protected function _decorateStatement($statement) {
 		$statement = parent::_decorateStatement($statement);
-		return $this->eagerLoader()->eagerLoad($this, $statement);
+		return $this->eagerLoader()->loadExternal($this, $statement);
 	}
 
 /**
