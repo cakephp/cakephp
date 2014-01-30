@@ -285,18 +285,9 @@ class Query extends DatabaseQuery {
  *		]
  *	]);
  *
- * If called with no arguments, this function will return an ArrayObject with
+ * If called with no arguments, this function will return an array with
  * with the list of previously configured associations to be contained in the
- * result. This object can be modified directly as the reference is kept inside
- * the query.
- *
- * The resulting ArrayObject will always have association aliases as keys, and
- * options as values, if no options are passed, the values will be set to an empty
- * array
- *
- * Please note that when modifying directly the containments array, you are
- * required to maintain the structure. That is, association names as keys
- * having array values. Failing to do so will result in an error
+ * result.
  *
  * If called with an empty first argument and $override is set to true, the
  * previous list will be emptied.
@@ -304,7 +295,7 @@ class Query extends DatabaseQuery {
  * @param array|string $associations list of table aliases to be queried
  * @param boolean $override whether override previous list with the one passed
  * defaults to merging previous list with the new one.
- * @return \ArrayObject|Query
+ * @return array|\Cake\ORM\Query
  */
 	public function contain($associations = null, $override = false) {
 		if (empty($associations) && $override) {

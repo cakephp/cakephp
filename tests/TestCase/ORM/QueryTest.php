@@ -205,7 +205,7 @@ class QueryTest extends TestCase {
 			'clients.orders.stuff',
 			'clients.companies.categories' => ['conditions' => ['a >' => 1]]
 		]);
-		$expected = new \ArrayObject([
+		$expected = [
 			'clients' => [
 				'orders' => [
 					'stuff' => []
@@ -216,7 +216,7 @@ class QueryTest extends TestCase {
 					]
 				]
 			]
-		]);
+		];
 		$this->assertEquals($expected, $query->contain());
 		$query->contain([
 			'clients.orders' => ['fields' => ['a', 'b']],
@@ -242,14 +242,14 @@ class QueryTest extends TestCase {
 			'clients' => $builder
 		]);
 
-		$expected = new \ArrayObject([
+		$expected = [
 			'clients' => [
 				'orders' => [
 					'stuff' => ['fields' => ['a']]
 				],
 				'queryBuilder' => $builder
 			]
-		]);
+		];
 		$this->assertEquals($expected, $query->contain());
 
 		$query = $this->getMock('\Cake\ORM\Query', ['join'], [$this->connection, $this->table]);
@@ -1011,7 +1011,7 @@ class QueryTest extends TestCase {
 		$expected = new QueryExpression($options['having']);
 		$this->assertEquals($expected, $query->clause('having'));
 
-		$expected = new \ArrayObject(['table_a' => ['table_b' => []]]);
+		$expected = ['table_a' => ['table_b' => []]];
 		$this->assertEquals($expected, $query->contain());
 	}
 

@@ -29,7 +29,7 @@ class EagerLoader {
  * Nested array describing the association to be fetched
  * and the options to apply for each of them, if any
  *
- * @var \ArrayObject
+ * @var array
  */
 	protected $_containments;
 
@@ -66,7 +66,7 @@ class EagerLoader {
 
 	public function contain($associations = null, $override = false) {
 		if ($this->_containments === null || $override) {
-			$this->_containments = new \ArrayObject;
+			$this->_containments = [];
 			$this->_normalized = null;
 		}
 
@@ -85,9 +85,8 @@ class EagerLoader {
 			return;
 		}
 
-		$old = $this->_containments->getArrayCopy();
-		$associations = $this->_reformatContain($associations, $old);
-		$this->_containments->exchangeArray($associations);
+		$associations = $this->_reformatContain($associations, $this->_containments);
+		$this->_containments = $associations;
 		$this->_normalized = null;
 	}
 
