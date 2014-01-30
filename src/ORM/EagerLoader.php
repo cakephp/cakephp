@@ -67,7 +67,6 @@ class EagerLoader {
  */
 	protected $_loadExternal = [];
 
-
 /**
  * Sets the list of associations that should be eagerly loaded along for a
  * specific table using when a query is provided. The list of associated tables
