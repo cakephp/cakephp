@@ -925,10 +925,10 @@ class Validation {
 	}
 
 /**
- * Checks the mime type of a file. Comparison is case sensitive.
+ * Checks the mime type of a file.
  *
  * @param string|array $check
- * @param array $mimeTypes to check for
+ * @param array|string $mimeTypes Array of mime types or regex pattern to check.
  * @return boolean Success
  * @throws CakeException when mime type can not be determined.
  */
@@ -943,6 +943,11 @@ class Validation {
 		if ($mime === false) {
 			throw new CakeException(__d('cake_dev', 'Can not determine the mimetype.'));
 		}
+
+		if (is_string($mimeTypes)) {
+			return self::_check($mime, $mimeTypes);
+		}
+
 		return in_array($mime, $mimeTypes);
 	}
 
