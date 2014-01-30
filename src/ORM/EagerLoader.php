@@ -233,12 +233,12 @@ class EagerLoader {
 		];
 		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
 
-		if (!$config['canBeJoined']) {
-			$this->_loadEagerly[$alias] = $config;
-		}
-
 		foreach ($extra as $t => $assoc) {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
+		}
+
+		if (!$config['canBeJoined']) {
+			$this->_loadEagerly[$alias] = $config;
 		}
 
 		return $config;
@@ -263,9 +263,8 @@ class EagerLoader {
 	}
 
 /**
- * Helper method that will calculate those associations that cannot be joined
- * directly in this query and will setup the required extra queries for fetching
- * the extra data.
+ * Decorates the passed statement object in order to inject data form associations
+ * that cannot be joined directly.
  *
  * @param \Cake\ORM\Query $query The query for which to eage load external
  * associations
