@@ -1261,13 +1261,13 @@ class Response {
  * ### Whitelist of URIs
  * e.g `cors($request, array('http://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
  *
- * @param CakeRequest $request Request object
+ * @param Cake\Network\Request $request Request object
  * @param string|array $allowedDomains List of allowed domains, see method description for more details
  * @param string|array $allowedMethods List of HTTP verbs allowed
  * @param string|array $allowedHeaders List of HTTP headers allowed
  * @return void
  */
-	public function cors(CakeRequest $request, $allowedDomains, $allowedMethods = array(), $allowedHeaders = array()) {
+	public function cors(Request $request, $allowedDomains, $allowedMethods = array(), $allowedHeaders = array()) {
 		$origin = $request->header('Origin');
 		if (!$origin) {
 			return;

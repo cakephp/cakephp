@@ -1065,7 +1065,7 @@ class ResponseTest extends TestCase {
  * Test CORS
  *
  * @dataProvider corsData
- * @param CakeRequest $request
+ * @param Request $request
  * @param string $origin
  * @param string|array $domains
  * @param string|array $methods
@@ -1076,9 +1076,9 @@ class ResponseTest extends TestCase {
  * @return void
  */
 	public function testCors($request, $origin, $domains, $methods, $headers, $expectedOrigin, $expectedMethods = false, $expectedHeaders = false) {
-		$_SERVER['HTTP_ORIGIN'] = $origin;
+		$request->env('HTTP_ORIGIN', $origin);
 
-		$response = $this->getMock('CakeResponse', array('header'));
+		$response = $this->getMock('Cake\Network\Response', array('header'));
 
 		$method = $response->expects(!$expectedOrigin ? $this->never() : $this->at(0))->method('header');
 		$expectedOrigin && $method->with('Access-Control-Allow-Origin', $expectedOrigin ? $expectedOrigin : $this->anything());
@@ -1105,9 +1105,9 @@ class ResponseTest extends TestCase {
  * @return array
  */
 	public function corsData() {
-		$fooRequest = new CakeRequest();
+		$fooRequest = new Request();
 
-		$secureRequest = $this->getMock('CakeRequest', array('is'));
+		$secureRequest = $this->getMock('Cake\Network\Request', array('is'));
 		$secureRequest->expects($this->any())
 			->method('is')
 			->with('ssl')
