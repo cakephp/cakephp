@@ -311,7 +311,7 @@ class PaginatorComponent extends Component {
 		foreach ($options['order'] as $key => $value) {
 			$field = $key;
 			$alias = $tableAlias;
-			if (is_numeric($key)){
+			if (is_numeric($key)) {
 				$order[] = $value;
 			} else {
 				if (strpos($key, '.') !== false) {

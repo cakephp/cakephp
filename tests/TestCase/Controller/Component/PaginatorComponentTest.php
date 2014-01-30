@@ -488,7 +488,7 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
- * test that string order are used by paginator
+ * Tests that order strings can used by Paginator
  *
  * @return void
  */
