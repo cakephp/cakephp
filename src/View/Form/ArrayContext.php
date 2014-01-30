@@ -9,7 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
- * @since         CakePHP(tm) v 2.0
+ * @since         CakePHP(tm) v 3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View\Form;
@@ -35,11 +35,33 @@ use Cake\Utility\Hash;
  */
 class ArrayContext {
 
+/**
+ * The request object.
+ *
+ * @var Cake\Network\Request
+ */
 	protected $_request;
+
+/**
+ * Context data for this object.
+ *
+ * @var array
+ */
 	protected $_context;
 
+/**
+ * Constructor.
+ *
+ * @param Cake\Network\Request
+ * @param array
+ */
 	public function __construct(Request $request, array $context) {
 		$this->_request = $request;
+		$context += [
+			'schema' => [],
+			'required' => [],
+			'defaults' => [],
+		];
 		$this->_context = $context;
 	}
 
@@ -54,6 +76,14 @@ class ArrayContext {
  * @return mixed
  */
 	public function val($field) {
+		$val = $this->_request->data($field);
+		if ($val !== null) {
+			return $val;
+		}
+		if (empty($this->_context['defaults']) || !is_array($this->_context['defaults'])) {
+			return null;
+		}
+		return Hash::get($this->_context['defaults'], $field);
 	}
 
 /**

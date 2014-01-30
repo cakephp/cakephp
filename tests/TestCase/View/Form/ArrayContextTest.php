@@ -1,0 +1,90 @@
+<?php
+/**
+ * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
+ * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP(tm) v 3.0
+ * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Test\TestCase\View\Form;
+
+use Cake\Network\Request;
+use Cake\TestSuite\TestCase;
+use Cake\View\Form\ArrayContext;
+
+/**
+ * Array context test case.
+ */
+class ArrayContextTest extends TestCase {
+
+/**
+ * setup method.
+ *
+ * @return void
+ */
+	public function setUp() {
+		parent::setUp();
+		$this->request = new Request();
+	}
+
+/**
+ * Test reading values from the request & defaults.
+ */
+	public function testValPresent() {
+		$this->request->data = [
+			'Articles' => [
+				'title' => 'New title',
+				'body' => 'My copy',
+			]
+		];
+		$context = new ArrayContext($this->request, [
+			'defaults' => [
+				'Articles' => [
+					'title' => 'Default value',
+					'published' => 0
+				]
+			]
+		]);
+		$this->assertEquals('New title', $context->val('Articles.title'));
+		$this->assertEquals('My copy', $context->val('Articles.body'));
+		$this->assertEquals(0, $context->val('Articles.published'));
+		$this->assertNull($context->val('Articles.nope'));
+	}
+
+/**
+ * Test getting values when the request and defaults are missing.
+ *
+ * @return void
+ */
+	public function testValMissing() {
+		$context = new ArrayContext($this->request, []);
+		$this->assertNull($context->val('Comments.field'));
+	}
+
+	public function testIsRequired() {
+		$this->markTestIncomplete();
+	}
+
+	public function testIsRequiredUndefined() {
+		$this->markTestIncomplete();
+	}
+
+	public function testIsType() {
+		$this->markTestIncomplete();
+	}
+
+	public function testIsTypeUndefined() {
+		$this->markTestIncomplete();
+	}
+
+	public function testAttributes() {
+		$this->markTestIncomplete();
+	}
+
+}
