@@ -1012,7 +1012,7 @@ class HttpSocket extends CakeSocket {
  * Resets the state of this HttpSocket instance to it's initial state (before Object::__construct got executed) or does
  * the same thing partially for the request and the response property only.
  *
- * @param boolean $full If set to false only HttpSocket::response and HttpSocket::request are reseted
+ * @param boolean $full If set to false only HttpSocket::response and HttpSocket::request are reset
  * @return boolean True on success
  */
 	public function reset($full = true) {

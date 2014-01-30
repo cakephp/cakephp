@@ -232,6 +232,32 @@ class TranslateBehaviorTest extends CakeTestCase {
 			)
 		);
 		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->field('title', array('TranslatedItem.id' => 1));
+		$expected = 'Title #1';
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->read('title', 1);
+		$expected = array(
+			'TranslatedItem' => array(
+				'id' => 1,
+				'slug' => 'first_translated',
+				'locale' => 'eng',
+				'title' => 'Title #1',
+				'translated_article_id' => 1,
+			)
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = $TestModel->read('id, title', 1);
+		$expected = array(
+			'TranslatedItem' => array(
+				'id' => 1,
+				'locale' => 'eng',
+				'title' => 'Title #1',
+			)
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
