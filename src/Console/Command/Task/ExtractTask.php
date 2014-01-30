@@ -527,6 +527,7 @@ class ExtractTask extends Shell {
 				$msgid = $rule;
 			}
 			if ($msgid) {
+				$msgid = $this->_formatString(sprintf("'%s'", $msgid));
 				$details = [
 					'file' => $file,
 					'line' => 'validation for field ' . $field

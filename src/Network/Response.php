@@ -1242,6 +1242,75 @@ class Response {
 	}
 
 /**
+ * Setup access for origin and methods on cross origin requests
+ *
+ * This method allow multiple ways to setup the domains, see the examples
+ *
+ * ### Full URI
+ * e.g `cors($request, 'http://www.cakephp.org');`
+ *
+ * ### URI with wildcard
+ * e.g `cors($request, 'http://*.cakephp.org');`
+ *
+ * ### Ignoring the requested protocol
+ * e.g `cors($request, 'www.cakephp.org');`
+ *
+ * ### Any URI
+ * e.g `cors($request, '*');`
+ *
+ * ### Whitelist of URIs
+ * e.g `cors($request, array('http://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
+ *
+ * @param CakeRequest $request Request object
+ * @param string|array $allowedDomains List of allowed domains, see method description for more details
+ * @param string|array $allowedMethods List of HTTP verbs allowed
+ * @param string|array $allowedHeaders List of HTTP headers allowed
+ * @return void
+ */
+	public function cors(CakeRequest $request, $allowedDomains, $allowedMethods = array(), $allowedHeaders = array()) {
+		$origin = $request->header('Origin');
+		if (!$origin) {
+			return;
+		}
+
+		$allowedDomains = $this->_normalizeCorsDomains((array)$allowedDomains, $request->is('ssl'));
+		foreach ($allowedDomains as $domain) {
+			if (!preg_match($domain['preg'], $origin)) {
+				continue;
+			}
+			$this->header('Access-Control-Allow-Origin', $domain['original'] === '*' ? '*' : $origin);
+			$allowedMethods && $this->header('Access-Control-Allow-Methods', implode(', ', (array)$allowedMethods));
+			$allowedHeaders && $this->header('Access-Control-Allow-Headers', implode(', ', (array)$allowedHeaders));
+			break;
+		}
+	}
+
+/**
+ * Normalize the origin to regular expressions and put in an array format
+ *
+ * @param array $domains
+ * @param boolean $requestIsSSL
+ * @return array
+ */
+	protected function _normalizeCorsDomains($domains, $requestIsSSL = false) {
+		$result = array();
+		foreach ($domains as $domain) {
+			if ($domain === '*') {
+				$result[] = array('preg' => '@.@', 'original' => '*');
+				continue;
+			}
+
+			$original = $preg = $domain;
+			if (strpos($domain, '://') === false) {
+				$preg = ($requestIsSSL ? 'https://' : 'http://') . $domain;
+			}
+			$preg = '@' . str_replace('*', '.*', $domain) . '@';
+			$result[] = compact('original', 'preg');
+		}
+		return $result;
+	}
+
+/**
  * Setup for display or download the given file.
  *
  * If $_SERVER['HTTP_RANGE'] is set a slice of the file will be
