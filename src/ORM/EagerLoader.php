@@ -67,6 +67,7 @@ class EagerLoader {
 	public function contain($associations = null, $override = false) {
 		if ($this->_containments === null || $override) {
 			$this->_containments = new \ArrayObject;
+			$this->_normalized = null;
 		}
 
 		if ($associations === null) {
