@@ -29,7 +29,7 @@
 		<exclude name="Console/cake.bat" />
 		<exclude name="Console/cake.php" />
 		<exclude name="Console/cake" />
-		<exclude name="./lib/Cake/Test" />
+		<exclude name="Test/**" />
 	</fileset>
 
 	<!--
