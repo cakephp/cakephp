@@ -1173,7 +1173,8 @@ class FormHelper extends AppHelper {
 				!isset($options['step'])
 			) {
 				if ($type === 'decimal') {
-					$options['step'] = pow(10, -1 * substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1));
+					$decimalPlaces = substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1);
+					$options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
 				} elseif ($type === 'float') {
 					$options['step'] = 'any';
 				}
