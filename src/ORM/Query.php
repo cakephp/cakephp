@@ -302,7 +302,7 @@ class Query extends DatabaseQuery {
 			$this->_eagerLoader = null;
 		}
 
-		$result = $this->eagerLoader()->contain($associations, $override);
+		$result = $this->eagerLoader()->contain($associations);
 		if ($associations !== null || $override) {
 			$this->_dirty();
 		}

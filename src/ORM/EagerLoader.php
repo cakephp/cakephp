@@ -21,7 +21,10 @@ use Cake\ORM\Query;
 use Closure;
 
 /**
- *
+ * Exposes the methods for storing the associations that should be eager loaded
+ * for a table once a query is provided and delegates the job of creating the
+ * required joins and decorating the results so that those associations can be
+ * part of the result set.
  */
 class EagerLoader {
 
@@ -31,7 +34,7 @@ class EagerLoader {
  *
  * @var array
  */
-	protected $_containments;
+	protected $_containments = [];
 
 /**
  * Contains a nested array with the compiled containments tree
@@ -58,24 +61,40 @@ class EagerLoader {
 	];
 
 /**
- * A list of associations that should be eagerly loaded
+ * A list of associations that should be loaded with a separate query
  *
  * @var array
  */
-	protected $_loadEagerly = [];
+	protected $_loadExternal = [];
 
-	public function contain($associations = null, $override = false) {
-		if ($this->_containments === null || $override) {
-			$this->_containments = [];
-			$this->_normalized = null;
-		}
 
-		if ($associations === null) {
-			return $this->_containments;
-		}
-
+/**
+ * Sets the list of associations that should be eagerly loaded along for a
+ * specific table using when a query is provided. The list of associated tables
+ * passed to this method must have been previously set as associations using the
+ * Table API.
+ *
+ * Associations can be arbitrarily nested using dot notation or nested arrays,
+ * this allows this object to calculate joins or any additional queries that
+ * must be executed to bring the required associated data.
+ *
+ * Accepted options per passed association:
+ *
+ * - foreignKey: Used to set a different field to match both tables, if set to false
+ *   no join conditions will be generated automatically
+ * - fields: An array with the fields that should be fetched from the association
+ * - queryBuilder: Equivalent to passing a callable instead of an options array
+ * - matching: Whether to inform the association class that it should filter the
+ *  main query by the results fetched by that class.
+ *
+ * @param array|string $associations list of table aliases to be queried.
+ * When this method is called multiple times it will merge previous list with
+ * the new one.
+ * @return array
+ */
+	public function contain($associations = []) {
 		if (empty($associations)) {
-			return;
+			return $this->_containments;
 		}
 
 		$associations = (array)$associations;
@@ -86,8 +105,8 @@ class EagerLoader {
 		}
 
 		$associations = $this->_reformatContain($associations, $this->_containments);
-		$this->_containments = $associations;
 		$this->_normalized = null;
+		return $this->_containments = $associations;
 	}
 
 	public function matching($assoc, callable $builder = null) {
@@ -136,7 +155,7 @@ class EagerLoader {
 
 	public function hasExternal(Table $repository) {
 		$this->normalized($repository);
-		return !empty($this->_loadEagerly);
+		return !empty($this->_loadExternal);
 	}
 
 /**
@@ -238,7 +257,7 @@ class EagerLoader {
 		}
 
 		if (!$config['canBeJoined']) {
-			$this->_loadEagerly[$alias] = $config;
+			$this->_loadExternal[$alias] = $config;
 		}
 
 		return $config;
@@ -278,7 +297,7 @@ class EagerLoader {
 
 		$driver = $query->connection()->driver();
 		list($collected, $statement) = $this->_collectKeys($query, $statement);
-		foreach ($this->_loadEagerly as $meta) {
+		foreach ($this->_loadExternal as $meta) {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
 			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
@@ -301,7 +320,7 @@ class EagerLoader {
  */
 	protected function _collectKeys($query, $statement) {
 		$collectKeys = [];
-		foreach ($this->_loadEagerly as $meta) {
+		foreach ($this->_loadExternal as $meta) {
 			$source = $meta['instance']->source();
 			if ($meta['instance']->requiresKeys($meta['config'])) {
 				$alias = $source->alias();
