@@ -355,6 +355,7 @@ class BelongsToMany extends Association {
  * Returns boolean true, as both of the tables 'own' rows in the other side
  * of the association via the joint table.
  *
+ * @param \Cake\ORM\Table $side The potential Table with ownership
  * @return boolean
  */
 	public function isOwningSide(Table $side) {

@@ -83,7 +83,7 @@ class TestFixture {
 /**
  * The Cake\Database\Schema\Table for this fixture.
  *
- * @var Cake\Database\Schema\Table;
+ * @var Cake\Database\Schema\Table
  */
 	protected $_schema;
 

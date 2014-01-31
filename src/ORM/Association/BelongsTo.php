@@ -93,6 +93,7 @@ class BelongsTo extends Association {
  * association. This means that rows in the 'target' table would miss important
  * or required information if the row in 'source' did not exist.
  *
+ * @param \Cake\ORM\Table $side The potential Table with ownership
  * @return boolean
  */
 	public function isOwningSide(Table $side) {

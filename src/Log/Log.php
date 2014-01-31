@@ -269,7 +269,7 @@ class Log {
  * Get a logging engine.
  *
  * @param string $name Key name of a configured adapter to get.
- * @return $mixed instance of BaseLog or false if not found
+ * @return mixed Instance of BaseLog or false if not found
  */
 	public static function engine($name) {
 		static::_init();

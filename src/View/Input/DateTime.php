@@ -29,7 +29,7 @@ class DateTime implements InputInterface {
 /**
  * Select box widget.
  *
- * @var Cake\View\Input\Select;
+ * @var Cake\View\Input\Select
  */
 	protected $_select;
 

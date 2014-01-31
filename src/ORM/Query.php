@@ -985,7 +985,7 @@ class Query extends DatabaseQuery {
 /**
  * Decorates the ResultSet iterator with MapReduce routines
  *
- * @param $result Cake\ORM\ResultCollectionTrait original results
+ * @param Cake\ORM\ResultCollectionTrait $result Original results
  * @return Cake\ORM\ResultCollectionTrait
  */
 	protected function _decorateResults($result) {

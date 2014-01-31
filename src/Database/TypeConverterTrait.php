@@ -22,7 +22,7 @@ trait TypeConverterTrait {
  * Converts a give value to a suitable database value based on type
  * and return relevant internal statement type
  *
- * @param mixed value
+ * @param mixed $value
  * @param string $type
  * @return array list containing converted value and internal type
  */

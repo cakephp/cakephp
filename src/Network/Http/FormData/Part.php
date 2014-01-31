@@ -105,7 +105,7 @@ class Part {
  * Get/set the contentId for a part.
  *
  * @param null|string $id The content id.
- * @return mixed.
+ * @return mixed
  */
 	public function contentId($id = null) {
 		if ($id === null) {
