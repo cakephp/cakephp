@@ -39,7 +39,7 @@ class Collection {
 /**
  * Schema dialect instance.
  *
- * @var
+ * @var Cake\Database\Schema\BaseSchema
  */
 	protected $_dialect;
 

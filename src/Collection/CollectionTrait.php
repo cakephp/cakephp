@@ -77,7 +77,7 @@ trait CollectionTrait {
  *
  * @param callable $c the method that will receive each of the elements and
  * returns true whether or not they should be in the resulting collection.
- * @return \Cake\Collection\Iterator\FilterIterator;
+ * @return \Cake\Collection\Iterator\FilterIterator
  */
 	public function filter(callable $c) {
 		return new FilterIterator($this, $c);
@@ -104,7 +104,7 @@ trait CollectionTrait {
  *
  * @param callable $c the method that will receive each of the elements and
  * returns true whether or not they should be out of the resulting collection.
- * @return \Cake\Collection\Iterator\FilterIterator;
+ * @return \Cake\Collection\Iterator\FilterIterator
  */
 	public function reject(callable $c) {
 		return new FilterIterator($this, function ($key, $value, $items) use ($c) {

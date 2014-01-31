@@ -1119,7 +1119,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Pages should start at 1.
  *
  * @param integer $num The page number you want.
- * @reutrn Query
+ * @return Query
  */
 	public function page($page) {
 		$limit = $this->clause('limit');
@@ -1455,7 +1455,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	->epilog('RETURNING id');
  * }}}
  *
- * @params string|QueryExpression the expression to be appended
+ * @param string|QueryExpression the expression to be appended
  * @return Query
  */
 	public function epilog($expression = null) {
