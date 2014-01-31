@@ -21,10 +21,10 @@ namespace Cake\Validation;
 class RulesProvider {
 
 /**
-  * The class to proxy, defaults to \Cake\Validation\Validation in construction
-  *
-  * @var object
-  */
+ * The class to proxy, defaults to \Cake\Validation\Validation in construction
+ *
+ * @var object
+ */
 	protected $_class;
 
 /**
