@@ -186,7 +186,7 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
- * test that default sort and default direction are injectect into request
+ * test that default sort and default direction are injected into request
  *
  * @return void
  */

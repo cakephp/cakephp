@@ -735,7 +735,7 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
- * Test that url generated doesn't include default sort & direction
+ * Test that generated URLs don't include sort and direction parameters
  *
  * @return void
  */
