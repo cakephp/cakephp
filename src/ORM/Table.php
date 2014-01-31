@@ -1612,7 +1612,7 @@ class Table implements EventListener {
  *   to hydrate. Defaults to all associations
  * @return Cake\ORM\Entity
  */
-	public function newEntity(array $data, $associations = null) {
+	public function newEntity(array $data = [], $associations = null) {
 		if ($associations === null) {
 			$associations = $this->_associated->keys();
 		}
