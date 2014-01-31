@@ -16,8 +16,8 @@ namespace Cake\ORM;
 
 use Cake\Database\Statement\BufferedStatement;
 use Cake\Database\Statement\CallbackStatement;
-use Cake\ORM\Table;
 use Cake\ORM\Query;
+use Cake\ORM\Table;
 use Closure;
 
 /**
