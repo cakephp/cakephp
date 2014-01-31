@@ -259,16 +259,18 @@ class CakeEventManager {
  * @return array
  */
 	public function listeners($eventKey) {
-		$globalListeners = array();
 		if (!$this->_isGlobal) {
 			$globalListeners = self::instance()->prioritisedListeners($eventKey);
+		} else {
+			$globalListeners = $this->prioritisedListeners($eventKey);
 		}
+		$listeners = array_merge($this->_listeners, self::instance()->_listeners);
 
-		if (empty($this->_listeners[$eventKey]) && empty($globalListeners)) {
+		if (empty($listeners[$eventKey]) && empty($globalListeners)) {
 			return array();
 		}
 
-		$listeners = $this->_listeners[$eventKey];
+		$listeners = $listeners[$eventKey];
 		foreach ($globalListeners as $priority => $priorityQ) {
 			if (!empty($listeners[$priority])) {
 				$listeners[$priority] = array_merge($priorityQ, $listeners[$priority]);
