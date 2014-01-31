@@ -488,6 +488,27 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * Tests that order strings can used by Paginator
+ *
+ * @return void
+ */
+	public function testValidateSortWithString() {
+		$model = $this->getMock('Cake\ORM\Table');
+		$model->expects($this->any())
+			->method('alias')
+			->will($this->returnValue('model'));
+		$model->expects($this->any())->method('hasField')->will($this->returnValue(true));
+
+		$options = array(
+			'order' => 'model.author_id DESC'
+		);
+		$result = $this->Paginator->validateSort($model, $options);
+		$expected = 'model.author_id DESC';
+
+		$this->assertEquals($expected, $result['order']);
+	}
+
+/**
  * Test that no sort doesn't trigger an error.
  *
  * @return void
