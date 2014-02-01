@@ -270,17 +270,16 @@ class EagerLoaderTest extends TestCase {
 		$query = new Query($this->connection, $table);
 		$loader = new EagerLoader;
 		$loader->contain($contains);
-		$query->select('foo.id')->sql();
+		$query->select('foo.id');
 		$loader->attachAssociations($query, true);
 
 		$select = $query->clause('select');
 		$expected = [
-			'foo__id' => 'foo.id', 'clients__name' => 'clients.name',
+			'foo.id', 'clients__name' => 'clients.name',
 			'clients__company_id' => 'clients.company_id',
 			'clients__telephone' => 'clients.telephone',
 			'orders__total' => 'orders.total', 'orders__placed' => 'orders.placed'
 		];
-		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
 	}
 
