@@ -18,9 +18,10 @@ use Cake\Network\Request;
 use Cake\Utility\Hash;
 
 /**
- * Provides a basic array based context provider for FormHelper
- * this adapter is useful in testing or when you have forms backed by
- * by simple array data structures.
+ * Provides a basic array based context provider for FormHelper.
+ *
+ * This adapter is useful in testing or when you have forms backed by
+ * simple array data structures.
  *
  * Important keys:
  *
@@ -110,12 +111,12 @@ class ArrayContext {
  * Get the abstract field type for a given field name.
  *
  * @param string $field A dot separated path to get a schema type for.
- * @return string An abstract data type.
+ * @return null|string An abstract data type or null.
  * @see Cake\Database\Type
  */
 	public function type($field) {
 		if (!is_array($this->_context['schema'])) {
-			return false;
+			return null;
 		}
 		$schema = Hash::get($this->_context['schema'], $field);
 		return isset($schema['type']) ? $schema['type'] : null;
@@ -124,7 +125,7 @@ class ArrayContext {
 /**
  * Get an associative array of other attributes for a field name.
  *
- * @param string $field A dot separated path to get a additional data on.
+ * @param string $field A dot separated path to get additional data on.
  * @return array An array of data describing the additional attributes on a field.
  */
 	public function attributes($field) {
@@ -154,7 +155,7 @@ class ArrayContext {
  *
  * @param string $field A dot separated path to check errors on.
  * @return mixed Either a string or an array of errors. Null
- *  will be returned when the field path is undefined.
+ *   will be returned when the field path is undefined.
  */
 	public function error($field) {
 		if (empty($this->_context['errors'])) {
