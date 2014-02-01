@@ -114,7 +114,6 @@ class CakeSessionTest extends CakeTestCase {
 			'cookieTimeout' => 120,
 			'ini' => array(),
 		));
-		TestCakeSession::init();
 	}
 
 /**
