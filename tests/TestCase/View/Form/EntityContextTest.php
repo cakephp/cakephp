@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\View\Form;
 
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
 use Cake\View\Form\EntityContext;
@@ -120,6 +121,49 @@ class EntityContextTest extends TestCase {
 
 		$result = $context->val('Articles.comments.0.nope.no_way');
 		$this->assertNull($result);
+	}
+
+/**
+ * Test isRequired in basic scenarios.
+ *
+ * @return void
+ */
+	public function testIsRequired() {
+		$articles = TableRegistry::get('Articles');
+
+		$validator = $articles->validator();
+		$validator->add('title', 'minlength', [
+			'rule' => ['minlength', 10]
+		])
+		->add('body', 'maxlength', [
+			'rule' => ['maxlength', 1000]
+		])->allowEmpty('body');
+
+		$context = new EntityContext($this->request, [
+			'entity' => new Entity(),
+			'table' => 'Articles',
+			'validator' => $validator
+		]);
+
+		$this->assertTrue($context->isRequired('Articles.title'));
+		$this->assertTrue($context->isRequired('title'));
+		$this->assertFalse($context->isRequired('Articles.body'));
+		$this->assertFalse($context->isRequired('body'));
+
+		$this->assertFalse($context->isRequired('Herp.derp.derp'));
+		$this->assertFalse($context->isRequired('nope'));
+	}
+
+	public function testIsRequiredCustomValidationMethod() {
+		$this->markTestIncomplete();
+	}
+
+	public function testIsRequiredAssociated() {
+		$this->markTestIncomplete();
+	}
+
+	public function testIsRequiredAssociatedValidator() {
+		$this->markTestIncomplete();
 	}
 
 }

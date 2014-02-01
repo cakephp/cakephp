@@ -54,7 +54,20 @@ class EntityContext {
  */
 	protected $_context;
 
+/**
+ * The plural name of the top level entity/table object.
+ *
+ * @var string
+ */
 	protected $_pluralName;
+
+/**
+ * A dictionary of validators and their
+ * related tables.
+ *
+ * @var array
+ */
+	protected $_validators = [];
 
 /**
  * Constructor.
@@ -80,11 +93,16 @@ class EntityContext {
  * @return void
  */
 	protected function _prepare() {
+		$table = null;
 		// TODO handle the other cases (string, array, instance)
 		if (is_string($this->_context['table'])) {
 			$plural = $this->_context['table'];
 		}
 		$this->_pluralName = $plural;
+
+		if (is_object($this->_context['validator'])) {
+			$this->_validators['_default'] = $this->_context['validator'];
+		}
 	}
 
 /**
@@ -100,24 +118,46 @@ class EntityContext {
 			return null;
 		}
 		$parts = explode('.', $field);
+		$entity = $this->_getEntity($parts);
+		if (!$entity) {
+			return null;
+		}
+		return $entity->get(array_pop($parts));
+	}
 
-		// Remove the model name if present.
-		if (count($parts) > 1 && $parts[0] === $this->_pluralName) {
-			array_shift($parts);
+/**
+ * Fetch the leaf entity for the given path.
+ *
+ * This method will traverse the given path and find the leaf
+ * entity. If the path does not contain a leaf entity false
+ * will be returned.
+ *
+ * @param array $path The path to traverse to find the leaf entity.
+ * @return boolean|Entity Either the leaf entity or false.
+ */
+	protected function _getEntity($path) {
+		$entity = $this->_context['entity'];
+		if (count($path) === 1) {
+			return $entity;
 		}
 
-		$val = $this->_context['entity'];
-		foreach ($parts as $prop) {
-			$val = $this->_getProp($val, $prop);
+		// Remove the Table name if present.
+		if (count($path) > 1 && $path[0] === $this->_pluralName) {
+			array_shift($path);
+		}
+
+		foreach ($path as $prop) {
+			$next = $this->_getProp($entity, $prop);
 			if (
-				!is_array($val) &&
-				!($val instanceof Traversable) &&
-				!($val instanceof Entity)
+				!is_array($next) &&
+				!($next instanceof Traversable) &&
+				!($next instanceof Entity)
 			) {
-				return $val;
+				return $entity;
 			}
+			$entity = $next;
 		}
-		return $val;
+		return false;
 	}
 
 /**
@@ -138,7 +178,49 @@ class EntityContext {
 		return $target->get($field);
 	}
 
+
+/**
+ * Check if a field should be marked as required.
+ *
+ * @param string $field The dot separated path to the field you want to check.
+ * @return boolean
+ */
 	public function isRequired($field) {
+		if (empty($this->_context['validator'])) {
+			return false;
+		}
+		$parts = explode('.', $field);
+		$entity = $this->_getEntity($parts);
+		if (!$entity) {
+			return false;
+		}
+
+		$field = array_pop($parts);
+		$validator = $this->_getValidator($entity);
+		if (!$validator->hasField($field)) {
+			return false;
+		}
+		$allowed = $validator->isEmptyAllowed($field, $entity->isNew());
+		return $allowed === false;
+	}
+
+/**
+ * Get the validator associated to an entity based on naming
+ * conventions.
+ *
+ * If no match is found the `_root` validator will be used.
+ *
+ * @param Cake\ORM\Entity $entity
+ * @return Validator
+ */
+	protected function _getValidator($entity) {
+		list($ns, $entityClass) = namespaceSplit(get_class($entity));
+		if (isset($this->_validators[$entityClass])) {
+			return $this->_validators[$entityClass];
+		}
+		if (isset($this->_validators['_default'])) {
+			return $this->_validators['_default'];
+		}
 	}
 
 	public function type($field) {
