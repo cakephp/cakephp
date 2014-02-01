@@ -284,8 +284,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return void
  */
 	protected function _calculateAssociationMap() {
-		$contain = $this->_query->normalizedContainments();
-
+		$contain = $this->_query->eagerLoader()->normalized($this->_defaultTable);
 		if (!$contain) {
 			return;
 		}
