@@ -16,6 +16,7 @@ namespace Cake\View\Form;
 
 use Cake\Network\Request;
 use Cake\ORM\Entity;
+use Cake\ORM\TableRegistry;
 use Cake\Validation\Validator;
 use Traversable;
 
@@ -70,6 +71,13 @@ class EntityContext {
 	protected $_validators = [];
 
 /**
+ * A dictionary of tables
+ *
+ * @var array
+ */
+	protected $_tables = [];
+
+/**
  * Constructor.
  *
  * @param Cake\Network\Request
@@ -98,11 +106,16 @@ class EntityContext {
 		if (is_string($this->_context['table'])) {
 			$plural = $this->_context['table'];
 		}
-		$this->_pluralName = $plural;
+		$table = TableRegistry::get($plural);
 
 		if (is_object($this->_context['validator'])) {
 			$this->_validators['_default'] = $this->_context['validator'];
+		} elseif (is_string($this->_context['validator'])) {
+			$this->_validators['_default'] = $table->validator($this->_context['validator']);
 		}
+
+		$this->_pluralName = $plural;
+		$this->_tables[$plural] = $table;
 	}
 
 /**
