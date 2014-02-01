@@ -19,6 +19,7 @@ use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Network\Request;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
 
 /**
@@ -124,37 +125,6 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
- * Test isRequired in basic scenarios.
- *
- * @return void
- */
-	public function testIsRequired() {
-		$articles = TableRegistry::get('Articles');
-
-		$validator = $articles->validator();
-		$validator->add('title', 'minlength', [
-			'rule' => ['minlength', 10]
-		])
-		->add('body', 'maxlength', [
-			'rule' => ['maxlength', 1000]
-		])->allowEmpty('body');
-
-		$context = new EntityContext($this->request, [
-			'entity' => new Entity(),
-			'table' => 'Articles',
-			'validator' => $validator
-		]);
-
-		$this->assertTrue($context->isRequired('Articles.title'));
-		$this->assertTrue($context->isRequired('title'));
-		$this->assertFalse($context->isRequired('Articles.body'));
-		$this->assertFalse($context->isRequired('body'));
-
-		$this->assertFalse($context->isRequired('Herp.derp.derp'));
-		$this->assertFalse($context->isRequired('nope'));
-	}
-
-/**
  * Test validator as a string.
  *
  * @return void
@@ -180,14 +150,135 @@ class EntityContextTest extends TestCase {
 		$this->assertTrue($context->isRequired('title'));
 		$this->assertFalse($context->isRequired('Articles.body'));
 		$this->assertFalse($context->isRequired('body'));
+
+		$this->assertFalse($context->isRequired('Herp.derp.derp'));
+		$this->assertFalse($context->isRequired('nope'));
 	}
 
-	public function testIsRequiredAssociated() {
-		$this->markTestIncomplete();
+/**
+ * Test isRequired on associated entities.
+ *
+ * @return void
+ */
+	public function testIsRequiredAssociatedHasMany() {
+		$articles = TableRegistry::get('Articles');
+		$articles->hasMany('Comments');
+		$comments = TableRegistry::get('Comments');
+
+		$validator = $articles->validator();
+		$validator->add('title', 'minlength', [
+			'rule' => ['minlength', 10]
+		]);
+
+		$validator = $comments->validator();
+		$validator->add('comment', 'length', [
+			'rule' => ['minlength', 10]
+		]);
+
+		$row = new Entity([
+			'title' => 'My title',
+			'comments' => [
+				new Entity(['comment' => 'First comment']),
+				new Entity(['comment' => 'Second comment']),
+			]
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+			'validator' => 'default',
+		]);
+
+		// $this->assertTrue($context->isRequired('Articles.title'));
+		// $this->assertFalse($context->isRequired('Articles.body'));
+
+		$this->assertTrue($context->isRequired('comments.0.comment'));
+		$this->assertTrue($context->isRequired('Articles.comments.0.comment'));
+
+		$this->assertFalse($context->isRequired('comments.0.other'));
+		$this->assertFalse($context->isRequired('Articles.comments.0.other'));
 	}
 
+/**
+ * Test isRequired on associated entities with custom validators.
+ *
+ * @return void
+ */
 	public function testIsRequiredAssociatedValidator() {
-		$this->markTestIncomplete();
+		$articles = TableRegistry::get('Articles');
+		$articles->hasMany('Comments');
+		$comments = TableRegistry::get('Comments');
+
+		$validator = new Validator();
+		$validator->add('title', 'minlength', [
+			'rule' => ['minlength', 10]
+		]);
+		$articles->validator('create', $validator);
+
+		$validator = new Validator();
+		$validator->add('comment', 'length', [
+			'rule' => ['minlength', 10]
+		]);
+		$comments->validator('custom', $validator);
+
+		$row = new Entity([
+			'title' => 'My title',
+			'comments' => [
+				new Entity(['comment' => 'First comment']),
+				new Entity(['comment' => 'Second comment']),
+			]
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+			'validator' => [
+				'Articles' => 'create',
+				'Comments' => 'custom'
+			]
+		]);
+
+		$this->assertTrue($context->isRequired('title'));
+		$this->assertFalse($context->isRequired('body'));
+		$this->assertTrue($context->isRequired('comments.0.comment'));
+		$this->assertTrue($context->isRequired('comments.1.comment'));
+	}
+
+/**
+ * Test isRequired on associated entities.
+ *
+ * @return void
+ */
+	public function testIsRequiredAssociatedBelongsTo() {
+		$articles = TableRegistry::get('Articles');
+		$articles->belongsTo('Users');
+		$users = TableRegistry::get('Users');
+
+		$validator = new Validator();
+		$validator->add('title', 'minlength', [
+			'rule' => ['minlength', 10]
+		]);
+		$articles->validator('create', $validator);
+
+		$validator = new Validator();
+		$validator->add('username', 'length', [
+			'rule' => ['minlength', 10]
+		]);
+		$users->validator('custom', $validator);
+
+		$row = new Entity([
+			'title' => 'My title',
+			'user' => new Entity(['username' => 'Mark']),
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+			'validator' => [
+				'Articles' => 'create',
+				'Users' => 'custom'
+			]
+		]);
+
+		$this->assertTrue($context->isRequired('user.username'));
+		$this->assertFalse($context->isRequired('user.first_name'));
 	}
 
 }

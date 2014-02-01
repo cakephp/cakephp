@@ -63,6 +63,20 @@ class AssociationsTest extends TestCase {
 	}
 
 /**
+ * Test getting associations by property.
+ *
+ * @return void
+ */
+	public function testGetByProperty() {
+		$belongsTo = new BelongsTo('Users', []);
+		$this->assertEquals('user', $belongsTo->property());
+		$this->associations->add('Users', $belongsTo);
+		$this->assertNull($this->associations->get('user'));
+
+		$this->assertSame($belongsTo, $this->associations->getByProperty('user'));
+	}
+
+/**
  * Test associations with plugin names.
  *
  * @return void

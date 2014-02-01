@@ -17,6 +17,7 @@ namespace Cake\View\Form;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use Traversable;
 
@@ -33,11 +34,10 @@ use Traversable;
  *   from, an array of table instances in the case of an form spanning
  *   multiple entities, or the name(s) of the table.
  *   If this is null the table name(s) will be determined using conventions.
- *   This table object will be used to fetch the schema and
- *   validation information.
  * - `validator` Either the Validation\Validator to use, or the name of the
  *   validation method to call on the table object. For example 'default'.
- *   Defaults to 'default'.
+ *   Defaults to 'default'. Can be an array of table alias=>validators when
+ *   dealing with associated forms.
  */
 class EntityContext {
 
@@ -56,19 +56,11 @@ class EntityContext {
 	protected $_context;
 
 /**
- * The plural name of the top level entity/table object.
+ * The name of the top level entity/table object.
  *
  * @var string
  */
-	protected $_pluralName;
-
-/**
- * A dictionary of validators and their
- * related tables.
- *
- * @var array
- */
-	protected $_validators = [];
+	protected $_rootName;
 
 /**
  * A dictionary of tables
@@ -87,9 +79,8 @@ class EntityContext {
 		$this->_request = $request;
 		$context += [
 			'entity' => null,
-			'schema' => null,
 			'table' => null,
-			'validator' => null
+			'validator' => [],
 		];
 		$this->_context = $context;
 		$this->_prepare();
@@ -101,21 +92,12 @@ class EntityContext {
  * @return void
  */
 	protected function _prepare() {
-		$table = null;
-		// TODO handle the other cases (string, array, instance)
-		if (is_string($this->_context['table'])) {
-			$plural = $this->_context['table'];
+		$table = $this->_context['table'];
+		if (is_string($table)) {
+			$table = TableRegistry::get($table);
 		}
-		$table = TableRegistry::get($plural);
-
-		if (is_object($this->_context['validator'])) {
-			$this->_validators['_default'] = $this->_context['validator'];
-		} elseif (is_string($this->_context['validator'])) {
-			$this->_validators['_default'] = $table->validator($this->_context['validator']);
-		}
-
-		$this->_pluralName = $plural;
-		$this->_tables[$plural] = $table;
+		$alias = $this->_rootName = $table->alias();
+		$this->_tables[$alias] = $table;
 	}
 
 /**
@@ -131,7 +113,7 @@ class EntityContext {
 			return null;
 		}
 		$parts = explode('.', $field);
-		$entity = $this->_getEntity($parts);
+		list($entity, $prop) = $this->_getEntity($parts);
 		if (!$entity) {
 			return null;
 		}
@@ -146,19 +128,20 @@ class EntityContext {
  * will be returned.
  *
  * @param array $path The path to traverse to find the leaf entity.
- * @return boolean|Entity Either the leaf entity or false.
+ * @return array
  */
 	protected function _getEntity($path) {
 		$entity = $this->_context['entity'];
 		if (count($path) === 1) {
-			return $entity;
+			return [$entity, $this->_rootName];
 		}
 
 		// Remove the Table name if present.
-		if (count($path) > 1 && $path[0] === $this->_pluralName) {
+		if (count($path) > 1 && $path[0] === $this->_rootName) {
 			array_shift($path);
 		}
 
+		$lastProp = $this->_rootName;
 		foreach ($path as $prop) {
 			$next = $this->_getProp($entity, $prop);
 			if (
@@ -166,11 +149,14 @@ class EntityContext {
 				!($next instanceof Traversable) &&
 				!($next instanceof Entity)
 			) {
-				return $entity;
+				return [$entity, $lastProp];
+			}
+			if (!is_numeric($prop)) {
+				$lastProp = $prop;
 			}
 			$entity = $next;
 		}
-		return false;
+		return [false, false];
 	}
 
 /**
@@ -191,7 +177,6 @@ class EntityContext {
 		return $target->get($field);
 	}
 
-
 /**
  * Check if a field should be marked as required.
  *
@@ -203,13 +188,17 @@ class EntityContext {
 			return false;
 		}
 		$parts = explode('.', $field);
-		$entity = $this->_getEntity($parts);
+		list($entity, $prop) = $this->_getEntity($parts);
 		if (!$entity) {
 			return false;
 		}
 
+		$validator = $this->_getValidator($prop);
+		if (!$validator) {
+			return false;
+		}
+
 		$field = array_pop($parts);
-		$validator = $this->_getValidator($entity);
 		if (!$validator->hasField($field)) {
 			return false;
 		}
@@ -221,19 +210,44 @@ class EntityContext {
  * Get the validator associated to an entity based on naming
  * conventions.
  *
- * If no match is found the `_root` validator will be used.
- *
- * @param Cake\ORM\Entity $entity
- * @return Validator
+ * @param string $entity The entity name to get a validator for.
+ * @return Validator|false
  */
 	protected function _getValidator($entity) {
-		list($ns, $entityClass) = namespaceSplit(get_class($entity));
-		if (isset($this->_validators[$entityClass])) {
-			return $this->_validators[$entityClass];
+		$table = $this->_getTable($entity);
+		$alias = $table->alias();
+
+		$method = 'default';
+		if (is_string($this->_context['validator'])) {
+			$method = $this->_context['validator'];
+		} elseif (isset($this->_context['validator'][$alias])){
+			$method = $this->_context['validator'][$alias];
 		}
-		if (isset($this->_validators['_default'])) {
-			return $this->_validators['_default'];
+		return $table->validator($method);
+	}
+
+/**
+ * Get the table instance
+ *
+ * @param string $prop The property name to get a table for.
+ * @return Cake\ORM\Table The table instance.
+ */
+	protected function _getTable($prop) {
+		if (isset($this->_tables[$prop])) {
+			return $this->_tables[$prop];
 		}
+		$root = $this->_tables[$this->_rootName];
+		$assoc = $root->associations()->getByProperty($prop);
+
+		// No assoc, use the default table to prevent
+		// downstream failures.
+		if (!$assoc) {
+			return $root;
+		}
+
+		$target = $assoc->target();
+		$this->_tables[$prop] = $target;
+		return $target;
 	}
 
 	public function type($field) {
