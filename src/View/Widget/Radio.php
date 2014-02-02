@@ -15,7 +15,7 @@
 namespace Cake\View\Widget;
 
 use Cake\Utility\Inflector;
-use Cake\View\Widget\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 use Traversable;
 
 /**
@@ -24,7 +24,7 @@ use Traversable;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class Radio implements InputInterface {
+class Radio implements WidgetInterface {
 
 /**
  * Template instance.

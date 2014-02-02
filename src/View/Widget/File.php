@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\View\Widget\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Input widget class for generating a file upload control.
@@ -22,7 +22,7 @@ use Cake\View\Widget\InputInterface;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class File implements InputInterface {
+class File implements WidgetInterface {
 
 /**
  * Constructor

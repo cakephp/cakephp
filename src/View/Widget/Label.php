@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\View\Widget\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Form 'widget' for creating labels.
@@ -22,7 +22,7 @@ use Cake\View\Widget\InputInterface;
  * Generally this element is used by other widgets,
  * and FormHelper itself.
  */
-class Label implements InputInterface {
+class Label implements WidgetInterface {
 
 /**
  * Templates

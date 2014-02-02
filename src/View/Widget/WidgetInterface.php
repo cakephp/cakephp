@@ -17,7 +17,7 @@ namespace Cake\View\Widget;
 /**
  * Interface for input widgets.
  */
-interface InputInterface {
+interface WidgetInterface {
 
 /**
  * Converts the $data into one or many HTML elements.

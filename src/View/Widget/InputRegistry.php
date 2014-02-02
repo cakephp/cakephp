@@ -16,7 +16,7 @@ namespace Cake\View\Widget;
 
 use Cake\Core\App;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 use \ReflectionClass;
 
 /**
@@ -104,7 +104,7 @@ class InputRegistry {
  * the `_default` widget is undefined.
  *
  * @param string $name The widget name to get.
- * @return mixed InputInterface widget interface class.
+ * @return mixed WidgetInterface widget interface class.
  * @throws \RuntimeException when widget is undefined.
  */
 	public function get($name) {
@@ -131,9 +131,9 @@ class InputRegistry {
  * Resolves a widget spec into an instance.
  *
  * @param mixed $widget The widget to get
- * @return InputInterface
+ * @return WidgetInterface
  * @throws \RuntimeException when class cannot be loaded or does not
- *   implement InputInterface.
+ *   implement WidgetInterface.
  */
 	protected function _resolveWidget($widget) {
 		if (is_object($widget)) {
@@ -154,8 +154,8 @@ class InputRegistry {
 		} else {
 			$instance = new $className($this->_templates);
 		}
-		if (!($instance instanceof InputInterface)) {
-			throw new \RuntimeException(sprintf('"%s" does not implement the InputInterface', $className));
+		if (!($instance instanceof WidgetInterface)) {
+			throw new \RuntimeException(sprintf('"%s" does not implement the WidgetInterface', $className));
 		}
 		return $instance;
 	}

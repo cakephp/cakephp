@@ -14,12 +14,12 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\View\Widget\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Input widget for creating checkbox widgets.
  */
-class Checkbox implements InputInterface {
+class Checkbox implements WidgetInterface {
 
 /**
  * Template instance.

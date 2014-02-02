@@ -15,13 +15,13 @@
 namespace Cake\View\Widget;
 
 use Cake\Utility\Inflector;
-use Cake\View\Widget\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Input widget class for generating multiple checkboxes.
  *
  */
-class MultiCheckbox implements InputInterface {
+class MultiCheckbox implements WidgetInterface {
 
 /**
  * Template instance to use.

@@ -16,7 +16,7 @@ namespace Cake\View\Widget;
 
 use Cake\Utility\Time;
 use Cake\View\StringTemplate;
-use Cake\View\Widget\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Input widget class for generating a date time input widget.
@@ -24,7 +24,7 @@ use Cake\View\Widget\InputInterface;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class DateTime implements InputInterface {
+class DateTime implements WidgetInterface {
 
 /**
  * Select box widget.

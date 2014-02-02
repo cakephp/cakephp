@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\View\Widget\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Basic input class.
@@ -23,7 +23,7 @@ use Cake\View\Widget\InputInterface;
  * input elements like hidden, text, email, tel and other
  * types.
  */
-class Basic implements InputInterface {
+class Basic implements WidgetInterface {
 
 /**
  * StringTemplate instance.
