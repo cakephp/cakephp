@@ -134,7 +134,6 @@ class SelectBoxTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
-
 /**
  * test rendering with a selected value
  *
@@ -322,7 +321,6 @@ class SelectBoxTest extends TestCase {
 		];
 		$this->assertTags($result, $expected);
 	}
-
 
 /**
  * test rendering with option groups with traversable nodes

@@ -69,7 +69,7 @@ class DateTimeTest extends TestCase {
 		$now = new \DateTime();
 		$format = '<option value="%s" selected="selected">%s</option>';
 		$this->assertContains(
-			sprintf($format, $now->format('Y'), $now->format('Y')), 
+			sprintf($format, $now->format('Y'), $now->format('Y')),
 			$result
 		);
 	}
