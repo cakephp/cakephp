@@ -12,10 +12,10 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
 use Cake\Utility\Inflector;
-use Cake\View\Input\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 use Traversable;
 
 /**
@@ -24,7 +24,7 @@ use Traversable;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class Radio implements InputInterface {
+class Radio implements WidgetInterface {
 
 /**
  * Template instance.
@@ -35,8 +35,8 @@ class Radio implements InputInterface {
 
 /**
  * Label instance.
- * 
- * @var Cake\View\Input\Label
+ *
+ * @var Cake\View\Widget\Label
  */
 	protected $_label;
 
@@ -52,7 +52,7 @@ class Radio implements InputInterface {
  *   variables.
  *
  * @param Cake\View\StringTemplate $templates
- * @param Cake\View\Input\Label $label
+ * @param Cake\View\Widget\Label $label
  */
 	public function __construct($templates, $label) {
 		$this->_templates = $templates;

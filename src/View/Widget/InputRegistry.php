@@ -12,11 +12,11 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
 use Cake\Core\App;
-use Cake\View\Input\InputInterface;
 use Cake\View\StringTemplate;
+use Cake\View\Widget\WidgetInterface;
 use \ReflectionClass;
 
 /**
@@ -40,16 +40,16 @@ class InputRegistry {
  * @var array
  */
 	protected $_widgets = [
-		'button' => ['Cake\View\Input\Button'],
-		'checkbox' => ['Cake\View\Input\Checkbox'],
-		'file' => ['Cake\View\Input\File'],
-		'label' => ['Cake\View\Input\Label'],
-		'multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label'],
-		'radio' => ['Cake\View\Input\Radio', 'label'],
-		'select' => ['Cake\View\Input\SelectBox'],
-		'textarea' => ['Cake\View\Input\Textarea'],
-		'datetime' => ['Cake\View\Input\DateTime', 'select'],
-		'_default' => ['Cake\View\Input\Basic'],
+		'button' => ['Cake\View\Widget\Button'],
+		'checkbox' => ['Cake\View\Widget\Checkbox'],
+		'file' => ['Cake\View\Widget\File'],
+		'label' => ['Cake\View\Widget\Label'],
+		'multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'label'],
+		'radio' => ['Cake\View\Widget\Radio', 'label'],
+		'select' => ['Cake\View\Widget\SelectBox'],
+		'textarea' => ['Cake\View\Widget\Textarea'],
+		'datetime' => ['Cake\View\Widget\DateTime', 'select'],
+		'_default' => ['Cake\View\Widget\Basic'],
 	];
 
 /**
@@ -104,7 +104,7 @@ class InputRegistry {
  * the `_default` widget is undefined.
  *
  * @param string $name The widget name to get.
- * @return mixed InputInterface widget interface class.
+ * @return mixed WidgetInterface widget interface class.
  * @throws \RuntimeException when widget is undefined.
  */
 	public function get($name) {
@@ -131,9 +131,9 @@ class InputRegistry {
  * Resolves a widget spec into an instance.
  *
  * @param mixed $widget The widget to get
- * @return InputInterface
+ * @return WidgetInterface
  * @throws \RuntimeException when class cannot be loaded or does not
- *   implement InputInterface.
+ *   implement WidgetInterface.
  */
 	protected function _resolveWidget($widget) {
 		if (is_object($widget)) {
@@ -154,8 +154,8 @@ class InputRegistry {
 		} else {
 			$instance = new $className($this->_templates);
 		}
-		if (!($instance instanceof InputInterface)) {
-			throw new \RuntimeException(sprintf('"%s" does not implement the InputInterface', $className));
+		if (!($instance instanceof WidgetInterface)) {
+			throw new \RuntimeException(sprintf('"%s" does not implement the WidgetInterface', $className));
 		}
 		return $instance;
 	}

@@ -12,11 +12,11 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
 use Cake\Utility\Time;
-use Cake\View\Input\InputInterface;
 use Cake\View\StringTemplate;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Input widget class for generating a date time input widget.
@@ -24,12 +24,12 @@ use Cake\View\StringTemplate;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class DateTime implements InputInterface {
+class DateTime implements WidgetInterface {
 
 /**
  * Select box widget.
  *
- * @var Cake\View\Input\Select
+ * @var Cake\View\Widget\Select
  */
 	protected $_select;
 
@@ -59,7 +59,7 @@ class DateTime implements InputInterface {
  * Constructor
  *
  * @param Cake\View\StringTemplate $templates
- * @param Cake\View\Input\SelectBox $selectBox
+ * @param Cake\View\Widget\SelectBox $selectBox
  */
 	public function __construct($templates, $selectBox) {
 		$this->_select = $selectBox;
@@ -98,7 +98,7 @@ class DateTime implements InputInterface {
  *
  * The `hour` option allows you to set the following options:
  *
- * - `format` option which accepts 12 or 24, allowing 
+ * - `format` option which accepts 12 or 24, allowing
  *   you to indicate which hour format you want.
  * - `start` The hour to start the options at.
  * - `end` The hour to stop the options at.

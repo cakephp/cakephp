@@ -12,9 +12,9 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
-use Cake\View\Input\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Form 'widget' for creating labels.
@@ -22,7 +22,7 @@ use Cake\View\Input\InputInterface;
  * Generally this element is used by other widgets,
  * and FormHelper itself.
  */
-class Label implements InputInterface {
+class Label implements WidgetInterface {
 
 /**
  * Templates

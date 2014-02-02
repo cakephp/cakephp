@@ -12,18 +12,18 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
-use Cake\View\Input\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
- * Button input class
+ * Basic input class.
  *
- * This input class can be used to render button elements.
- * If you need to make basic submit inputs with type=submit,
- * use the Basic input widget.
+ * This input class can be used to render basic simple
+ * input elements like hidden, text, email, tel and other
+ * types.
  */
-class Button implements InputInterface {
+class Basic implements WidgetInterface {
 
 /**
  * StringTemplate instance.
@@ -42,30 +42,36 @@ class Button implements InputInterface {
 	}
 
 /**
- * Render a button.
+ * Render a text widget or other simple widget like email/tel/number.
  *
  * This method accepts a number of keys:
  *
- * - `text` The text of the button. Unlike all other form controls, buttons
- *   do not escape their contents by default.
- * - `escape` Set to true to enable escaping on all attributes.
- * - `type` The button type defaults to 'submit'.
+ * - `name` The name attribute.
+ * - `val` The value attribute.
+ * - `escape` Set to false to disable escaping on all attributes.
  *
  * Any other keys provided in $data will be converted into HTML attributes.
  *
- * @param array $data The data to build a button with.
+ * @param array $data The data to build an input with.
  * @return string
  */
 	public function render(array $data) {
 		$data += [
-			'text' => '',
-			'type' => 'submit',
-			'escape' => false,
+			'name' => '',
+			'val' => null,
+			'type' => 'text',
+			'escape' => true,
 		];
-		return $this->_templates->format('button', [
-			'text' => $data['escape'] ? h($data['text']) : $data['text'],
+		$data['value'] = $data['val'];
+		unset($data['val']);
+
+		return $this->_templates->format('input', [
+			'name' => $data['name'],
 			'type' => $data['type'],
-			'attrs' => $this->_templates->formatAttributes($data, ['type', 'text']),
+			'attrs' => $this->_templates->formatAttributes(
+				$data,
+				['name', 'type']
+			),
 		]);
 	}
 

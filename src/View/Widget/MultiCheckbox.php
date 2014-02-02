@@ -12,16 +12,16 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
 use Cake\Utility\Inflector;
-use Cake\View\Input\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Input widget class for generating multiple checkboxes.
  *
  */
-class MultiCheckbox implements InputInterface {
+class MultiCheckbox implements WidgetInterface {
 
 /**
  * Template instance to use.
@@ -33,7 +33,7 @@ class MultiCheckbox implements InputInterface {
 /**
  * Label widget instance.
  *
- * @var Cake\View\Input\Label
+ * @var Cake\View\Widget\Label
  */
 	protected $_label;
 
@@ -49,7 +49,7 @@ class MultiCheckbox implements InputInterface {
  *   variables.
  *
  * @param Cake\View\StringTemplate $templates
- * @param Cake\View\Input\Label $label
+ * @param Cake\View\Widget\Label $label
  */
 	public function __construct($templates, $label) {
 		$this->_templates = $templates;

@@ -12,11 +12,11 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\View\Input;
+namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
-use Cake\View\Input\InputRegistry;
 use Cake\View\StringTemplate;
+use Cake\View\Widget\InputRegistry;
 
 /**
  * InputRegistry test case
@@ -40,11 +40,11 @@ class InputRegistryTestCase extends TestCase {
  */
 	public function testAddInConstructor() {
 		$widgets = [
-			'text' => ['Cake\View\Input\Basic'],
+			'text' => ['Cake\View\Widget\Basic'],
 		];
 		$inputs = new InputRegistry($this->templates, $widgets);
 		$result = $inputs->get('text');
-		$this->assertInstanceOf('Cake\View\Input\Basic', $result);
+		$this->assertInstanceOf('Cake\View\Widget\Basic', $result);
 	}
 
 /**
@@ -55,7 +55,7 @@ class InputRegistryTestCase extends TestCase {
 	public function testAdd() {
 		$inputs = new InputRegistry($this->templates);
 		$result = $inputs->add([
-			'text' => ['Cake\View\Input\Basic'],
+			'text' => ['Cake\View\Widget\Basic'],
 		]);
 		$this->assertNull($result);
 	}
@@ -68,10 +68,10 @@ class InputRegistryTestCase extends TestCase {
 	public function testGet() {
 		$inputs = new InputRegistry($this->templates);
 		$inputs->add([
-			'text' => ['Cake\View\Input\Basic'],
+			'text' => ['Cake\View\Widget\Basic'],
 		]);
 		$result = $inputs->get('text');
-		$this->assertInstanceOf('Cake\View\Input\Basic', $result);
+		$this->assertInstanceOf('Cake\View\Widget\Basic', $result);
 		$this->assertSame($result, $inputs->get('text'));
 	}
 
@@ -83,10 +83,10 @@ class InputRegistryTestCase extends TestCase {
 	public function testGetFallback() {
 		$inputs = new InputRegistry($this->templates);
 		$inputs->add([
-			'_default' => ['Cake\View\Input\Basic'],
+			'_default' => ['Cake\View\Widget\Basic'],
 		]);
 		$result = $inputs->get('text');
-		$this->assertInstanceOf('Cake\View\Input\Basic', $result);
+		$this->assertInstanceOf('Cake\View\Widget\Basic', $result);
 
 		$result2 = $inputs->get('hidden');
 		$this->assertSame($result, $result2);
@@ -114,11 +114,11 @@ class InputRegistryTestCase extends TestCase {
 		$inputs = new InputRegistry($this->templates);
 		$inputs->clear();
 		$inputs->add([
-			'label' => ['Cake\View\Input\Label'],
-			'multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label']
+			'label' => ['Cake\View\Widget\Label'],
+			'multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'label']
 		]);
 		$result = $inputs->get('multicheckbox');
-		$this->assertInstanceOf('Cake\View\Input\MultiCheckbox', $result);
+		$this->assertInstanceOf('Cake\View\Widget\MultiCheckbox', $result);
 	}
 
 /**
@@ -144,7 +144,7 @@ class InputRegistryTestCase extends TestCase {
 	public function testGetResolveDependencyMissingDependency() {
 		$inputs = new InputRegistry($this->templates);
 		$inputs->clear();
-		$inputs->add(['multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label']]);
+		$inputs->add(['multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'label']]);
 		$inputs->get('multicheckbox');
 	}
 

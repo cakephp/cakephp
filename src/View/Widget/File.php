@@ -12,9 +12,9 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
-use Cake\View\Input\InputInterface;
+use Cake\View\Widget\WidgetInterface;
 
 /**
  * Input widget class for generating a file upload control.
@@ -22,7 +22,7 @@ use Cake\View\Input\InputInterface;
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class File implements InputInterface {
+class File implements WidgetInterface {
 
 /**
  * Constructor
