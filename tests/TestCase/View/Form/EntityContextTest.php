@@ -297,6 +297,21 @@ class EntityContextTest extends TestCase {
 			'entity' => $row,
 			'table' => 'Articles',
 		]);
+
+		$expected = [
+			'length' => 255, 'precision' => null
+		];
+		$this->assertEquals($expected, $context->attributes('title'));
+
+		$expected = [
+			'length' => null, 'precision' => null
+		];
+		$this->assertEquals($expected, $context->attributes('body'));
+
+		$expected = [
+			'length' => 10, 'precision' => 3
+		];
+		$this->assertEquals($expected, $context->attributes('user.rating'));
 	}
 
 /**
@@ -321,7 +336,8 @@ class EntityContextTest extends TestCase {
 		$users->schema([
 			'id' => ['type' => 'integer', 'length' => 11],
 			'username' => ['type' => 'string', 'length' => 255],
-			'bio' => ['type' => 'text']
+			'bio' => ['type' => 'text'],
+			'rating' => ['type' => 'decimal', 'length' => 10, 'precision' => 3],
 		]);
 
 		$validator = new Validator();

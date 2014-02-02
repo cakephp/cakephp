@@ -267,7 +267,22 @@ class EntityContext {
 		return $table->schema()->columnType($column);
 	}
 
+/**
+ * Get an associative array of other attributes for a field name.
+ *
+ * @param string $field A dot separated path to get additional data on.
+ * @return array An array of data describing the additional attributes on a field.
+ */
 	public function attributes($field) {
+		$parts = explode('.', $field);
+		list($entity, $prop) = $this->_getEntity($parts);
+		if (!$entity) {
+			return null;
+		}
+		$table = $this->_getTable($prop);
+		$column = $table->schema()->column(array_pop($parts));
+		$whitelist = ['length' => null, 'precision' => null];
+		return array_intersect_key($column, $whitelist);
 	}
 
 	public function hasError($field) {
