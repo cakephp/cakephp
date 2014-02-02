@@ -130,20 +130,12 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testIsRequiredStringValidator() {
-		$articles = TableRegistry::get('Articles');
-
-		$validator = $articles->validator();
-		$validator->add('title', 'minlength', [
-			'rule' => ['minlength', 10]
-		])
-		->add('body', 'maxlength', [
-			'rule' => ['maxlength', 1000]
-		])->allowEmpty('body');
+		$this->_setupTables();
 
 		$context = new EntityContext($this->request, [
 			'entity' => new Entity(),
 			'table' => 'Articles',
-			'validator' => 'default',
+			'validator' => 'create',
 		]);
 
 		$this->assertTrue($context->isRequired('Articles.title'));
@@ -161,18 +153,12 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testIsRequiredAssociatedHasMany() {
-		$articles = TableRegistry::get('Articles');
-		$articles->hasMany('Comments');
+		$this->_setupTables();
+
 		$comments = TableRegistry::get('Comments');
-
-		$validator = $articles->validator();
-		$validator->add('title', 'minlength', [
-			'rule' => ['minlength', 10]
-		]);
-
 		$validator = $comments->validator();
-		$validator->add('comment', 'length', [
-			'rule' => ['minlength', 10]
+		$validator->add('user_id', 'number', [
+			'rule' => 'numeric',
 		]);
 
 		$row = new Entity([
@@ -188,11 +174,8 @@ class EntityContextTest extends TestCase {
 			'validator' => 'default',
 		]);
 
-		// $this->assertTrue($context->isRequired('Articles.title'));
-		// $this->assertFalse($context->isRequired('Articles.body'));
-
-		$this->assertTrue($context->isRequired('comments.0.comment'));
-		$this->assertTrue($context->isRequired('Articles.comments.0.comment'));
+		$this->assertTrue($context->isRequired('comments.0.user_id'));
+		$this->assertTrue($context->isRequired('Articles.comments.0.user_id'));
 
 		$this->assertFalse($context->isRequired('comments.0.other'));
 		$this->assertFalse($context->isRequired('Articles.comments.0.other'));
@@ -204,21 +187,7 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testIsRequiredAssociatedValidator() {
-		$articles = TableRegistry::get('Articles');
-		$articles->hasMany('Comments');
-		$comments = TableRegistry::get('Comments');
-
-		$validator = new Validator();
-		$validator->add('title', 'minlength', [
-			'rule' => ['minlength', 10]
-		]);
-		$articles->validator('create', $validator);
-
-		$validator = new Validator();
-		$validator->add('comment', 'length', [
-			'rule' => ['minlength', 10]
-		]);
-		$comments->validator('custom', $validator);
+		$this->_setupTables();
 
 		$row = new Entity([
 			'title' => 'My title',
@@ -248,21 +217,7 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testIsRequiredAssociatedBelongsTo() {
-		$articles = TableRegistry::get('Articles');
-		$articles->belongsTo('Users');
-		$users = TableRegistry::get('Users');
-
-		$validator = new Validator();
-		$validator->add('title', 'minlength', [
-			'rule' => ['minlength', 10]
-		]);
-		$articles->validator('create', $validator);
-
-		$validator = new Validator();
-		$validator->add('username', 'length', [
-			'rule' => ['minlength', 10]
-		]);
-		$users->validator('custom', $validator);
+		$this->_setupTables();
 
 		$row = new Entity([
 			'title' => 'My title',
@@ -287,12 +242,7 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testType() {
-		$articles = TableRegistry::get('Articles');
-		$articles->schema([
-			'title' => ['type' => 'string'],
-			'body' => ['type' => 'text'],
-			'user_id' => ['type' => 'integer']
-		]);
+		$this->_setupTables();
 
 		$row = new Entity([
 			'title' => 'My title',
@@ -315,18 +265,7 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testTypeAssociated() {
-		$articles = TableRegistry::get('Articles');
-		$articles->belongsTo('Users');
-		$users = TableRegistry::get('Users');
-
-		$articles->schema([
-			'title' => ['type' => 'string'],
-			'body' => ['type' => 'text']
-		]);
-		$users->schema([
-			'username' => ['type' => 'string'],
-			'bio' => ['type' => 'text']
-		]);
+		$this->_setupTables();
 
 		$row = new Entity([
 			'title' => 'My title',
@@ -340,6 +279,71 @@ class EntityContextTest extends TestCase {
 		$this->assertEquals('string', $context->type('user.username'));
 		$this->assertEquals('text', $context->type('user.bio'));
 		$this->assertNull($context->type('user.nope'));
+	}
+
+/**
+ * Test attributes for fields.
+ *
+ * @return void
+ */
+	public function testAttributes() {
+		$this->_setupTables();
+
+		$row = new Entity([
+			'title' => 'My title',
+			'user' => new Entity(['username' => 'Mark']),
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+	}
+
+/**
+ * Setup tables for tests.
+ *
+ * @return void
+ */
+	protected function _setupTables() {
+		$articles = TableRegistry::get('Articles');
+		$articles->belongsTo('Users');
+		$articles->hasMany('Comments');
+
+		$comments = TableRegistry::get('Comments');
+		$users = TableRegistry::get('Users');
+
+		$articles->schema([
+			'id' => ['type' => 'integer', 'length' => 11, 'null' => false],
+			'title' => ['type' => 'string', 'length' => 255],
+			'user_id' => ['type' => 'integer', 'length' => 11, 'null' => false],
+			'body' => ['type' => 'text']
+		]);
+		$users->schema([
+			'id' => ['type' => 'integer', 'length' => 11],
+			'username' => ['type' => 'string', 'length' => 255],
+			'bio' => ['type' => 'text']
+		]);
+
+		$validator = new Validator();
+		$validator->add('title', 'minlength', [
+			'rule' => ['minlength', 10]
+		])
+		->add('body', 'maxlength', [
+			'rule' => ['maxlength', 1000]
+		])->allowEmpty('body');
+		$articles->validator('create', $validator);
+
+		$validator = new Validator();
+		$validator->add('username', 'length', [
+			'rule' => ['minlength', 10]
+		]);
+		$users->validator('custom', $validator);
+
+		$validator = new Validator();
+		$validator->add('comment', 'length', [
+			'rule' => ['minlength', 10]
+		]);
+		$comments->validator('custom', $validator);
 	}
 
 }
