@@ -410,14 +410,14 @@ abstract class Association {
 
 		$options['conditions'] = $query->newExpr()->add($options['conditions']);
 		$extraOptions = [];
+		$dummy = $target->query();
 
 		if (!empty($options['queryBuilder'])) {
-			$newQuery = $options['queryBuilder']($target->query());
-			$options['fields'] = $newQuery->clause('select') ?: $options['fields'];
-			$options['conditions']->add($newQuery->clause('where') ?: []);
-			$extraOptions = $newQuery->getOptions();
+			$dummy = $options['queryBuilder']($dummy);
 		}
 
+		$this->_dispatchBeforeFind($dummy);
+		$options = $this->_copyAttributes($dummy, $options);
 		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
 		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
 
@@ -431,8 +431,6 @@ abstract class Association {
 		if (!empty($options['fields'])) {
 			$query->select($query->aliasFields($options['fields'], $target->alias()));
 		}
-
-		$this->_dispatchBeforeFind($query, $extraOptions);
 	}
 
 /**
@@ -482,13 +480,20 @@ abstract class Association {
  * attaching to
  *
  * @param \Cake\ORM\Query $query the query this association is attaching itself to
- * @param array $options extra options to passed to the association
  * @return void
  */
-	protected function _dispatchBeforeFind($query, $options) {
+	protected function _dispatchBeforeFind($query) {
 		$table = $this->target();
+		$options = $query->getOptions();
 		$event = new Event('Model.beforeFind', $table, [$query, $options, false]);
 		$table->getEventManager()->dispatch($event);
+	}
+
+	protected function _copyAttributes($query, $options) {
+		debug($query->contain());
+		$options['fields'] = $query->clause('select') ?: $options['fields'];
+		$options['conditions']->add($query->clause('where') ?: []);
+		return $options;
 	}
 
 /**

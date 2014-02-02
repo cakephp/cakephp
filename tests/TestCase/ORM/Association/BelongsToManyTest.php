@@ -60,6 +60,16 @@ class BelongsToManyTest extends TestCase {
 			]
 		]);
 		TableRegistry::set('Articles', $this->article);
+		TableRegistry::get('ArticlesTags', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
+				]
+			]
+		]);
 	}
 
 /**
@@ -210,16 +220,6 @@ class BelongsToManyTest extends TestCase {
 			'targetTable' => $this->tag,
 			'conditions' => ['Tags.name' => 'cake']
 		];
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer'],
-				'_constraints' => [
-					'primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
-				]
-			]
-		]);
 		$association = new BelongsToMany('Tags', $config);
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
@@ -267,13 +267,6 @@ class BelongsToManyTest extends TestCase {
 			'targetTable' => $this->tag,
 			'conditions' => ['Tags.name' => 'cake']
 		];
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer']
-			]
-		]);
 		$association = new BelongsToMany('Tags', $config);
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
@@ -315,13 +308,6 @@ class BelongsToManyTest extends TestCase {
 			'targetTable' => $this->tag,
 			'conditions' => ['Tags.name' => 'cake']
 		];
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer']
-			]
-		]);
 		$association = new BelongsToMany('Tags', $config);
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
@@ -419,13 +405,6 @@ class BelongsToManyTest extends TestCase {
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
 		];
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer']
-			]
-		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock('Cake\ORM\Query', ['all', 'matching'], [null, null]);
@@ -486,13 +465,6 @@ class BelongsToManyTest extends TestCase {
 			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer']
-			]
-		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['all', 'matching', 'where', 'order'];
@@ -550,13 +522,6 @@ class BelongsToManyTest extends TestCase {
 			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer']
-			]
-		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['all', 'matching', 'where', 'order', 'select'];
@@ -627,13 +592,6 @@ class BelongsToManyTest extends TestCase {
 			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer']
-			]
-		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$methods = ['all', 'contain', 'where', 'order', 'select'];
@@ -665,16 +623,6 @@ class BelongsToManyTest extends TestCase {
 			'conditions' => ['Tags.name' => 'foo'],
 			'sort' => ['id' => 'ASC'],
 		];
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer'],
-				'_constraints' => [
-					'PK' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
-				]
-			]
-		]);
 		$association = new BelongsToMany('Tags', $config);
 		$parent = (new Query(null, $this->article))
 			->join(['foo' => ['table' => 'foo', 'type' => 'inner', 'conditions' => []]])
@@ -760,13 +708,6 @@ class BelongsToManyTest extends TestCase {
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
 		];
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer']
-			]
-		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [1, 2, 3, 4];
 		$query = $this->getMock(
@@ -833,13 +774,12 @@ class BelongsToManyTest extends TestCase {
 		];
 		$this->article->primaryKey(['id', 'site_id']);
 		$this->tag->primaryKey(['id', 'site_id']);
-		TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer'],
-				'site_id' => ['type' => 'integer'],
-			]
+
+		$table= TableRegistry::get('ArticlesTags');
+		$table->schema([
+			'article_id' => ['type' => 'integer'],
+			'tag_id' => ['type' => 'integer'],
+			'site_id' => ['type' => 'integer'],
 		]);
 		$association = new BelongsToMany('Tags', $config);
 		$keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
@@ -1535,26 +1475,19 @@ class BelongsToManyTest extends TestCase {
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
 		];
-		$table = TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer'],
-				'_constraints' => [
-					'primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
-				]
-			]
-		]);
+		$table = TableRegistry::get('ArticlesTags');
 		$association = new BelongsToMany('Tags', $config);
 		$listener = $this->getMock('stdClass', ['__invoke']);
 		$this->tag->getEventManager()->attach($listener, 'Model.beforeFind');
+		$newQuery = $this->tag->query();
 		$listener->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $query, [], false);
+			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery, [], false);
 
 		$listener2 = $this->getMock('stdClass', ['__invoke']);
 		$table->getEventManager()->attach($listener2, 'Model.beforeFind');
+		$newQuery2 = $table->query();
 		$listener2->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $query, [], false);
+			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery2, [], false);
 
 		$association->attachTo($query);
 	}
@@ -1571,27 +1504,20 @@ class BelongsToManyTest extends TestCase {
 			'sourceTable' => $this->article,
 			'targetTable' => $this->tag,
 		];
-		$table = TableRegistry::get('ArticlesTags', [
-			'table' => 'articles_tags',
-			'schema' => [
-				'article_id' => ['type' => 'integer'],
-				'tag_id' => ['type' => 'integer'],
-				'_constraints' => [
-					'primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
-				]
-			]
-		]);
+		$table = TableRegistry::get('ArticlesTags');
 		$association = new BelongsToMany('Tags', $config);
 		$listener = $this->getMock('stdClass', ['__invoke']);
 		$this->tag->getEventManager()->attach($listener, 'Model.beforeFind');
 		$opts = ['somthing' => 'more'];
+		$newQuery = $this->tag->query()->applyOptions($opts);
 		$listener->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $query, $opts, false);
+			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery, $opts, false);
 
 		$listener2 = $this->getMock('stdClass', ['__invoke']);
 		$table->getEventManager()->attach($listener2, 'Model.beforeFind');
+		$newQuery2 = $table->query();
 		$listener2->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $query, [], false);
+			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery2, [], false);
 
 		$association->attachTo($query, ['queryBuilder' => function($q) {
 			return $q->applyOptions(['somthing' => 'more']);
