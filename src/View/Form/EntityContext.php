@@ -250,7 +250,22 @@ class EntityContext {
 		return $target;
 	}
 
+/**
+ * Get the abstract field type for a given field name.
+ *
+ * @param string $field A dot separated path to get a schema type for.
+ * @return null|string An abstract data type or null.
+ * @see Cake\Database\Type
+ */
 	public function type($field) {
+		$parts = explode('.', $field);
+		list($entity, $prop) = $this->_getEntity($parts);
+		if (!$entity) {
+			return null;
+		}
+		$table = $this->_getTable($prop);
+		$column = array_pop($parts);
+		return $table->schema()->columnType($column);
 	}
 
 	public function attributes($field) {

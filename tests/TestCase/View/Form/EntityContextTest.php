@@ -281,4 +281,65 @@ class EntityContextTest extends TestCase {
 		$this->assertFalse($context->isRequired('user.first_name'));
 	}
 
+/**
+ * Test type() basic
+ *
+ * @return void
+ */
+	public function testType() {
+		$articles = TableRegistry::get('Articles');
+		$articles->schema([
+			'title' => ['type' => 'string'],
+			'body' => ['type' => 'text'],
+			'user_id' => ['type' => 'integer']
+		]);
+
+		$row = new Entity([
+			'title' => 'My title',
+			'body' => 'Some content',
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$this->assertEquals('string', $context->type('title'));
+		$this->assertEquals('text', $context->type('body'));
+		$this->assertEquals('integer', $context->type('user_id'));
+		$this->assertNull($context->type('nope'));
+	}
+
+/**
+ * Test getting types for associated records.
+ *
+ * @return void
+ */
+	public function testTypeAssociated() {
+		$articles = TableRegistry::get('Articles');
+		$articles->belongsTo('Users');
+		$users = TableRegistry::get('Users');
+
+		$articles->schema([
+			'title' => ['type' => 'string'],
+			'body' => ['type' => 'text']
+		]);
+		$users->schema([
+			'username' => ['type' => 'string'],
+			'bio' => ['type' => 'text']
+		]);
+
+		$row = new Entity([
+			'title' => 'My title',
+			'user' => new Entity(['username' => 'Mark']),
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$this->assertEquals('string', $context->type('user.username'));
+		$this->assertEquals('text', $context->type('user.bio'));
+		$this->assertNull($context->type('user.nope'));
+	}
+
 }
