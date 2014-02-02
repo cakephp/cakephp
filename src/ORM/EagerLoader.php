@@ -244,11 +244,28 @@ class EagerLoader {
 			return;
 		}
 
-		$contain = $this->normalized($query->repository());
-		foreach ($this->_resolveJoins($contain) as $options) {
+		$repository = $query->repository();
+		foreach ($this->attachableAssociations($repository) as $options) {
 			$config = $options['config'] + ['includeFields' => $includeFields];
 			$options['instance']->attachTo($query, $config);
 		}
+	}
+
+/**
+ * Returns an array with the associations that can be fetched using a single query,
+ * the array keys are the association aliases and the values will contain an array
+ * with the following keys:
+ *
+ * - instance: the association object instance
+ * - config: the options set for fetching such association
+ *
+ * @param \Cake\ORM\Table $repository The table containing the associations to be
+ * attached
+ * @return array
+ */
+	public function attachableAssociations(Table $repository) {
+		$contain = $this->normalized($repository);
+		return $this->_resolveJoins($contain);
 	}
 
 /**
@@ -284,10 +301,6 @@ class EagerLoader {
 			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
 		}
 
-		if (!$config['canBeJoined']) {
-			$this->_loadExternal[$alias] = $config;
-		}
-
 		return $config;
 	}
 
@@ -304,6 +317,8 @@ class EagerLoader {
 			if ($options['canBeJoined']) {
 				$result[$table] = $options;
 				$result += $this->_resolveJoins($options['associations']);
+			} else {
+				$this->_loadExternal[$table] = $options;
 			}
 		}
 		return $result;
