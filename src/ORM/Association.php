@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -408,11 +409,13 @@ abstract class Association {
 		}
 
 		$options['conditions'] = $query->newExpr()->add($options['conditions']);
+		$extraOptions = [];
 
 		if (!empty($options['queryBuilder'])) {
 			$newQuery = $options['queryBuilder']($target->query());
 			$options['fields'] = $newQuery->clause('select') ?: $options['fields'];
 			$options['conditions']->add($newQuery->clause('where') ?: []);
+			$extraOptions = $newQuery->getOptions();
 		}
 
 		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
@@ -428,6 +431,8 @@ abstract class Association {
 		if (!empty($options['fields'])) {
 			$query->select($query->aliasFields($options['fields'], $target->alias()));
 		}
+
+		$this->_dispatchBeforeFind($query, $extraOptions);
 	}
 
 /**
@@ -470,6 +475,20 @@ abstract class Association {
 		return $this->target()
 			->find($type, $options)
 			->where($this->conditions());
+	}
+
+/**
+ * Triggers beforeFind on the target table for the query this association is
+ * attaching to
+ *
+ * @param \Cake\ORM\Query $query the query this association is attaching itself to
+ * @param array $options extra options to passed to the association
+ * @return void
+ */
+	protected function _dispatchBeforeFind($query, $options) {
+		$table = $this->target();
+		$event = new Event('Model.beforeFind', $table, [$query, $options, false]);
+		$table->getEventManager()->dispatch($event);
 	}
 
 /**
