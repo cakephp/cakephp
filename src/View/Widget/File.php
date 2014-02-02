@@ -12,17 +12,17 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
-use Cake\View\Input\InputInterface;
+use Cake\View\Widget\InputInterface;
 
 /**
- * Input widget class for generating a textarea control.
+ * Input widget class for generating a file upload control.
  *
  * This class is intended as an internal implementation detail
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
-class Textarea implements InputInterface {
+class File implements InputInterface {
 
 /**
  * Constructor
@@ -34,28 +34,28 @@ class Textarea implements InputInterface {
 	}
 
 /**
- * Render a text area form widget.
+ * Render a file upload form widget.
  *
  * Data supports the following keys:
  *
  * - `name` - Set the input name.
- * - `val` - A string of the option to mark as selected.
  * - `escape` - Set to false to disable HTML escaping.
  *
  * All other keys will be converted into HTML attributes.
+ * Unlike other input objects the `val` property will be specifically
+ * ignored.
  *
- * @param array $data The data to build a textarea with.
+ * @param array $data The data to build a file input with.
  * @return string HTML elements.
  */
 	public function render(array $data) {
 		$data += [
-			'val' => '',
 			'name' => '',
 			'escape' => true,
 		];
-		return $this->_templates->format('textarea', [
+		unset($data['val']);
+		return $this->_templates->format('fileinput', [
 			'name' => $data['name'],
-			'value' => $data['escape'] ? h($data['val']) : $data['val'],
 			'attrs' => $this->_templates->formatAttributes(
 				$data, ['name', 'val']
 			)

@@ -12,7 +12,7 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
 /**
  * Interface for input widgets.

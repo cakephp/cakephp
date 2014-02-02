@@ -12,12 +12,12 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\View\Input;
+namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
-use Cake\View\Input\Label;
-use Cake\View\Input\MultiCheckbox;
 use Cake\View\StringTemplate;
+use Cake\View\Widget\Label;
+use Cake\View\Widget\MultiCheckbox;
 
 /**
  * MultiCheckbox test case.

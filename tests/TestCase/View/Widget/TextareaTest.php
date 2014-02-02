@@ -12,16 +12,16 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\View\Input;
+namespace Cake\Test\TestCase\View\Widget;
 
 use Cake\TestSuite\TestCase;
-use Cake\View\Input\File;
 use Cake\View\StringTemplate;
+use Cake\View\Widget\Textarea;
 
 /**
- * File input test.
+ * Textarea input test.
  */
-class FileTest extends TestCase {
+class TextareaTest extends TestCase {
 
 /**
  * setup
@@ -31,7 +31,7 @@ class FileTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$templates = [
-			'fileinput' => '<input type="file" name="{{name}}"{{attrs}}>',
+			'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 		];
 		$this->templates = new StringTemplate($templates);
 	}
@@ -42,10 +42,11 @@ class FileTest extends TestCase {
  * @return void
  */
 	public function testRenderSimple() {
-		$input = new File($this->templates);
-		$result = $input->render(['name' => 'image']);
+		$input = new Textarea($this->templates);
+		$result = $input->render(['name' => 'comment']);
 		$expected = [
-			'input' => ['type' => 'file', 'name' => 'image'],
+			'textarea' => ['name' => 'comment'],
+			'/textarea',
 		];
 		$this->assertTags($result, $expected);
 	}
@@ -55,12 +56,23 @@ class FileTest extends TestCase {
  *
  * @return void
  */
-	public function testRenderAttributes() {
-		$input = new File($this->templates);
-		$data = ['name' => 'image', 'required' => true, 'val' => 'nope'];
+	public function testRenderWithValue() {
+		$input = new Textarea($this->templates);
+		$data = ['name' => 'comment', 'data-foo' => '<val>', 'val' => 'some <html>'];
 		$result = $input->render($data);
 		$expected = [
-			'input' => ['type' => 'file', 'required' => 'required', 'name' => 'image'],
+			'textarea' => ['name' => 'comment', 'data-foo' => '&lt;val&gt;'],
+			'some &lt;html&gt;',
+			'/textarea',
+		];
+		$this->assertTags($result, $expected);
+
+		$data['escape'] = false;
+		$result = $input->render($data);
+		$expected = [
+			'textarea' => ['name' => 'comment', 'data-foo' => '<val>'],
+			'some <html>',
+			'/textarea',
 		];
 		$this->assertTags($result, $expected);
 	}

@@ -12,11 +12,11 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
 use Cake\Core\App;
-use Cake\View\Input\InputInterface;
 use Cake\View\StringTemplate;
+use Cake\View\Widget\InputInterface;
 use \ReflectionClass;
 
 /**
@@ -40,16 +40,16 @@ class InputRegistry {
  * @var array
  */
 	protected $_widgets = [
-		'button' => ['Cake\View\Input\Button'],
-		'checkbox' => ['Cake\View\Input\Checkbox'],
-		'file' => ['Cake\View\Input\File'],
-		'label' => ['Cake\View\Input\Label'],
-		'multicheckbox' => ['Cake\View\Input\MultiCheckbox', 'label'],
-		'radio' => ['Cake\View\Input\Radio', 'label'],
-		'select' => ['Cake\View\Input\SelectBox'],
-		'textarea' => ['Cake\View\Input\Textarea'],
-		'datetime' => ['Cake\View\Input\DateTime', 'select'],
-		'_default' => ['Cake\View\Input\Basic'],
+		'button' => ['Cake\View\Widget\Button'],
+		'checkbox' => ['Cake\View\Widget\Checkbox'],
+		'file' => ['Cake\View\Widget\File'],
+		'label' => ['Cake\View\Widget\Label'],
+		'multicheckbox' => ['Cake\View\Widget\MultiCheckbox', 'label'],
+		'radio' => ['Cake\View\Widget\Radio', 'label'],
+		'select' => ['Cake\View\Widget\SelectBox'],
+		'textarea' => ['Cake\View\Widget\Textarea'],
+		'datetime' => ['Cake\View\Widget\DateTime', 'select'],
+		'_default' => ['Cake\View\Widget\Basic'],
 	];
 
 /**

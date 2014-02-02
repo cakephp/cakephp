@@ -12,9 +12,9 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Input;
+namespace Cake\View\Widget;
 
-use Cake\View\Input\InputInterface;
+use Cake\View\Widget\InputInterface;
 
 /**
  * Basic input class.
