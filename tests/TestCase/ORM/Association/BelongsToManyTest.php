@@ -1523,4 +1523,80 @@ class BelongsToManyTest extends TestCase {
 		$this->assertEquals('tags', $association->property());
 	}
 
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFind() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+		];
+		$table = TableRegistry::get('ArticlesTags', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
+				]
+			]
+		]);
+		$association = new BelongsToMany('Tags', $config);
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->tag->getEventManager()->attach($listener, 'Model.beforeFind');
+		$listener->expects($this->once())->method('__invoke')
+			->with($this->isInstanceOf('\Cake\Event\Event'), $query, [], false);
+
+		$listener2 = $this->getMock('stdClass', ['__invoke']);
+		$table->getEventManager()->attach($listener2, 'Model.beforeFind');
+		$listener2->expects($this->once())->method('__invoke')
+			->with($this->isInstanceOf('\Cake\Event\Event'), $query, [], false);
+
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFindExtraOptions() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'sourceTable' => $this->article,
+			'targetTable' => $this->tag,
+		];
+		$table = TableRegistry::get('ArticlesTags', [
+			'table' => 'articles_tags',
+			'schema' => [
+				'article_id' => ['type' => 'integer'],
+				'tag_id' => ['type' => 'integer'],
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['article_id', 'tag_id']]
+				]
+			]
+		]);
+		$association = new BelongsToMany('Tags', $config);
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->tag->getEventManager()->attach($listener, 'Model.beforeFind');
+		$opts = ['somthing' => 'more'];
+		$listener->expects($this->once())->method('__invoke')
+			->with($this->isInstanceOf('\Cake\Event\Event'), $query, $opts, false);
+
+		$listener2 = $this->getMock('stdClass', ['__invoke']);
+		$table->getEventManager()->attach($listener2, 'Model.beforeFind');
+		$listener2->expects($this->once())->method('__invoke')
+			->with($this->isInstanceOf('\Cake\Event\Event'), $query, [], false);
+
+		$association->attachTo($query, ['queryBuilder' => function($q) {
+			return $q->applyOptions(['somthing' => 'more']);
+		}]);
+	}
+
+
 }

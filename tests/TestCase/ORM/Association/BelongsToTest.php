@@ -373,5 +373,4 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		}]);
 	}
 
-
 }

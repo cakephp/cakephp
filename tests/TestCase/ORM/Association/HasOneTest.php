@@ -305,4 +305,49 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals('profile', $association->property());
 	}
 
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFind() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'user_id',
+			'sourceTable' => $this->user,
+			'targetTable' => $this->profile,
+		];
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->profile->getEventManager()->attach($listener, 'Model.beforeFind');
+		$association = new HasOne('Profiles', $config);
+		$listener->expects($this->once())->method('__invoke')
+			->with($this->isInstanceOf('\Cake\Event\Event'), $query, [], false);
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFindExtraOptions() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'user_id',
+			'sourceTable' => $this->user,
+			'targetTable' => $this->profile,
+		];
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->profile->getEventManager()->attach($listener, 'Model.beforeFind');
+		$association = new HasOne('Profiles', $config);
+		$opts = ['something' => 'more'];
+		$listener->expects($this->once())->method('__invoke')
+			->with($this->isInstanceOf('\Cake\Event\Event'), $query, $opts, false);
+		$association->attachTo($query, ['queryBuilder' => function($q) {
+			return $q->applyOptions(['something' => 'more']);
+		}]);
+	}
+
 }
