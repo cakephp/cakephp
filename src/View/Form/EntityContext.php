@@ -219,7 +219,7 @@ class EntityContext {
 		$method = 'default';
 		if (is_string($this->_context['validator'])) {
 			$method = $this->_context['validator'];
-		} elseif (isset($this->_context['validator'][$alias])){
+		} elseif (isset($this->_context['validator'][$alias])) {
 			$method = $this->_context['validator'][$alias];
 		}
 		return $table->validator($method);
