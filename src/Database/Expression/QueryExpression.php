@@ -489,38 +489,6 @@ class QueryExpression implements ExpressionInterface, Countable {
 	}
 
 /**
- * Replaces placeholders that are bound for values with array types,
- * it does so by generating multiple new placeholders and joining them
- * with commas.
- *
- * @return void
- */
-	protected function _replaceArrays() {
-		$replacements = [];
-		foreach ($this->_bindings as $n => $b) {
-			if (strpos($b['type'], '[]') === false) {
-				continue;
-			}
-			$token = ':' . $b['placeholder'];
-			$replacements[$token] = $this->_bindMultiplePlaceholders(
-				$b['placeholder'],
-				$b['value'],
-				$b['type']
-			);
-			unset($this->_bindings[$n]);
-		}
-
-		foreach ($this->_conditions as $k => $condition) {
-			if (!is_string($condition)) {
-				continue;
-			}
-			foreach ($replacements as $token => $r) {
-				$this->_conditions[$k] = str_replace($token, $r, $condition);
-			}
-		}
-	}
-
-/**
  * Returns an array of placeholders that will have a bound value corresponding
  * to each value in the first argument.
  *
