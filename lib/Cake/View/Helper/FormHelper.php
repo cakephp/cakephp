@@ -2083,7 +2083,7 @@ class FormHelper extends AppHelper {
  */
 	public function domIdSuffix($value, $type = 'html5') {
 		if ($type === 'html5') {
-			$value = str_replace(array('<', '>', ' ', '"', '\''), '_', $value);
+			$value = str_replace(array('@', '<', '>', ' ', '"', '\''), '_', $value);
 		} else {
 			$value = preg_replace('~[^\\pL\d-_]+~u', '_', $value);
 		}
