@@ -315,6 +315,89 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test hasError
+ *
+ * @return void
+ */
+	public function testHasError() {
+		$this->_setupTables();
+
+		$row = new Entity([
+			'title' => 'My title',
+			'user' => new Entity(['username' => 'Mark']),
+		]);
+		$row->errors('title', []);
+		$row->errors('body', 'Gotta have one');
+		$row->errors('user_id', ['Required field']);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$this->assertFalse($context->hasError('title'));
+		$this->assertFalse($context->hasError('nope'));
+		$this->assertTrue($context->hasError('body'));
+		$this->assertTrue($context->hasError('user_id'));
+	}
+
+/**
+ * Test hasError on associated records
+ *
+ * @return void
+ */
+	public function testHasErrorAssociated() {
+		$this->_setupTables();
+
+		$row = new Entity([
+			'title' => 'My title',
+			'user' => new Entity(['username' => 'Mark']),
+		]);
+		$row->errors('title', []);
+		$row->errors('body', 'Gotta have one');
+		$row->user->errors('username', ['Required']);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$this->assertTrue($context->hasError('user.username'));
+		$this->assertFalse($context->hasError('user.nope'));
+		$this->assertFalse($context->hasError('no.nope'));
+	}
+
+/**
+ * Test error
+ *
+ * @return void
+ */
+	public function testError() {
+		$this->_setupTables();
+
+		$row = new Entity([
+			'title' => 'My title',
+			'user' => new Entity(['username' => 'Mark']),
+		]);
+		$row->errors('title', []);
+		$row->errors('body', 'Gotta have one');
+		$row->errors('user_id', ['Required field']);
+
+		$row->user->errors('username', ['Required']);
+
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$this->assertEquals([], $context->error('title'));
+
+		$expected = ['Gotta have one'];
+		$this->assertEquals($expected, $context->error('body'));
+
+		$expected = ['Required'];
+		$this->assertEquals($expected, $context->error('user.username'));
+	}
+
+/**
  * Setup tables for tests.
  *
  * @return void

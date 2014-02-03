@@ -285,10 +285,37 @@ class EntityContext {
 		return array_intersect_key($column, $whitelist);
 	}
 
+/**
+ * Check whether or not a field has an error attached to it
+ *
+ * @param string $field A dot separated path to check errors on.
+ * @return boolean Returns true if the errors for the field are not empty.
+ */
 	public function hasError($field) {
+		$parts = explode('.', $field);
+		list($entity, $prop) = $this->_getEntity($parts);
+		if (!$entity) {
+			return false;
+		}
+		$errors = $entity->errors(array_pop($parts));
+		return !empty($errors);
 	}
 
+
+/**
+ * Get the errors for a given field
+ *
+ * @param string $field A dot separated path to check errors on.
+ * @return array|null Either an array of errors. Null will be returned when the
+ *   field path is undefined or there is no error.
+ */
 	public function error($field) {
+		$parts = explode('.', $field);
+		list($entity, $prop) = $this->_getEntity($parts);
+		if (!$entity) {
+			return false;
+		}
+		return $entity->errors(array_pop($parts));
 	}
 
 }
