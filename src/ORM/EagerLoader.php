@@ -89,7 +89,7 @@ class EagerLoader {
  * @param array|string $associations list of table aliases to be queried.
  * When this method is called multiple times it will merge previous list with
  * the new one.
- * @return array
+ * @return array|void
  */
 	public function contain($associations = []) {
 		if (empty($associations)) {
@@ -115,7 +115,7 @@ class EagerLoader {
  * parameter, this will translate in setting all those associations with the
  * `matching` option.
  *
- * @param string A single association or a dot separated path of associations.
+ * @param string $assoc A single association or a dot separated path of associations.
  * @param callable $builder the callback function to be used for setting extra
  * options to the filtering query
  * @return array The resulting containments array
@@ -166,10 +166,10 @@ class EagerLoader {
 
 /**
  * Returns whether or not there are associations that need to be loaded by
- * decorating results from a query and executing a separate one for ijecting
+ * decorating results from a query and executing a separate one for injecting
  * them.
  *
- * @param \Cake\ORM\Table The table containing the associations described in
+ * @param \Cake\ORM\Table $repository The table containing the associations described in
  * the `contain` array
  * @return boolean
  */
@@ -233,7 +233,7 @@ class EagerLoader {
  * This method will not modify the query for loading external associations, i.e.
  * those that cannot be loaded without executing a separate query.
  *
- * @param \Cake\ORM\Query The query to be modified
+ * @param \Cake\ORM\Query $query The query to be modified
  * @param boolean $includeFields whether to append all fields from the associations
  * to the passed query. This can be overridden according to the settings defined
  * per association in the containments array
@@ -342,7 +342,7 @@ class EagerLoader {
  * Helper function used to return the keys from the query records that will be used
  * to eagerly load associations.
  *
- *
+ * @param \Cake\ORM\Query $query
  * @param BufferedStatement $statement
  * @return array
  */
