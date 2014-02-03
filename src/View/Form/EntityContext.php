@@ -301,19 +301,17 @@ class EntityContext {
 		return !empty($errors);
 	}
 
-
 /**
  * Get the errors for a given field
  *
  * @param string $field A dot separated path to check errors on.
- * @return array|null Either an array of errors. Null will be returned when the
- *   field path is undefined or there is no error.
+ * @return array An array of errors.
  */
 	public function error($field) {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
 		if (!$entity) {
-			return false;
+			return [];
 		}
 		return $entity->errors(array_pop($parts));
 	}
