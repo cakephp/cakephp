@@ -30,7 +30,7 @@ use Traversable;
  *
  * - `entity` The entity this context is operating on.
  * - `table` Either the ORM\Table instance to fetch schema/validators
- *   from, an array of table instances in the case of an form spanning
+ *   from, an array of table instances in the case of a form spanning
  *   multiple entities, or the name(s) of the table.
  *   If this is null the table name(s) will be determined using conventions.
  * - `validator` Either the Validation\Validator to use, or the name of the
@@ -163,7 +163,7 @@ class EntityContext {
  *
  * @param mixed $target The entity/array/collection to fetch $field from.
  * @param string $field The next field to fetch.
- * @return mixed.
+ * @return mixed
  */
 	protected function _getProp($target, $field) {
 		if (is_array($target) || $target instanceof Traversable) {
@@ -277,7 +277,7 @@ class EntityContext {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
 		if (!$entity) {
-			return null;
+			return [];
 		}
 		$table = $this->_getTable($prop);
 		$column = $table->schema()->column(array_pop($parts));
