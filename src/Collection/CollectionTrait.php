@@ -255,7 +255,7 @@ trait CollectionTrait {
  * ['Mark', 'Renan']
  * }}}
  *
- * @param string $path a dot separated string symbolizing the path to follow
+ * @param string $matcher a dot separated string symbolizing the path to follow
  * inside the hierarchy of each value so that the column can be extracted.
  * @return \Cake\Collection\Iterator\ExtractIterator
  */
@@ -281,7 +281,7 @@ trait CollectionTrait {
  * echo $max->name;
  * }}}
  *
- * @param callable|string the callback or column name to use for sorting
+ * @param callable|string $callback the callback or column name to use for sorting
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @see \Cake\Collection\Collection::sortBy()
@@ -311,7 +311,7 @@ trait CollectionTrait {
  * }}}
  *
  *
- * @param callable|string the callback or column name to use for sorting
+ * @param callable|string $callback the callback or column name to use for sorting
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  * @see \Cake\Collection\Collection::sortBy()
@@ -352,7 +352,7 @@ trait CollectionTrait {
  * }
  * }}}
  *
- * @param callable|string the callback or column name to use for sorting
+ * @param callable|string $callback the callback or column name to use for sorting
  * @param integer $dir either SORT_DESC or SORT_ASC
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
@@ -399,7 +399,7 @@ trait CollectionTrait {
  * ];
  * }}}
  *
- * @param callable|string the callback or column name to use for grouping
+ * @param callable|string $callback the callback or column name to use for grouping
  * or a function returning the grouping key out of the provided element
  * @return \Cake\Collection\Collection
  */
@@ -445,7 +445,7 @@ trait CollectionTrait {
  * ];
  * }}}
  *
- * @param callable|string the callback or column name to use for indexing
+ * @param callable|string $callback the callback or column name to use for indexing
  * or a function returning the indexing key out of the provided element
  * @return \Cake\Collection\Collection
  */
@@ -490,7 +490,7 @@ trait CollectionTrait {
  * ];
  * }}}
  *
- * @param callable|string the callback or column name to use for indexing
+ * @param callable|string $callback the callback or column name to use for indexing
  * or a function returning the indexing key out of the provided element
  * @return \Cake\Collection\Collection
  */
@@ -618,7 +618,7 @@ trait CollectionTrait {
  * Returns a new collection as the result of concatenating the list of elements
  * in this collection with the passed list of elements
  *
- * @param array|\Traversable
+ * @param array|\Traversable $items
  * @return \Cake\Collection\Collection
  */
 	public function append($items) {
