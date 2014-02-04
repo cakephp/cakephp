@@ -169,10 +169,9 @@ class PaginatorComponent extends Component {
 
 		$defaults = $this->getDefaults($alias, $settings);
 		unset($defaults[0]);
+		$count = 0;
 
-		if (!$numResults) {
-			$count = 0;
-		} else {
+		if ($numResults) {
 			$count = $query->count();
 		}
 
@@ -184,9 +183,10 @@ class PaginatorComponent extends Component {
 		if (!is_array($order)) {
 			$order = (array)$order;
 		}
+
 		reset($order);
 		$sortDefault = $directionDefault = false;
-		if (isset($defaults['order']) && count($defaults['order']) && count($defaults['order']) == 1){
+		if (!empty($defaults['order']) && count($defaults['order']) == 1) {
 			$sortDefault = key($defaults['order']);
 			$directionDefault = current($defaults['order']);
 		}
