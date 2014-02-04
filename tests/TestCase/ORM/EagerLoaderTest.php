@@ -328,6 +328,50 @@ class EagerLoaderTest extends TestCase {
 	}
 
 /**
+ * Tests that the path for gettings to a deep assocition is materialized in an
+ * array key
+ *
+ * @return void
+ */
+	public function testNormalizedPath() {
+		$contains = [
+			'clients' => [
+			'orders' => [
+					'orderTypes',
+					'stuff' => ['stuffTypes']
+				],
+			'companies' => [
+					'categories'
+				]
+			]
+		];
+
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['join'],
+			[$this->connection, $this->table]
+		);
+
+		$loader = new EagerLoader;
+		$loader->contain($contains);
+		$normalized = $loader->normalized($this->table);
+		$this->assertEquals('clients', $normalized['clients']['path']);
+
+		$assocs =  $normalized['clients']['associations'];
+		$this->assertEquals('clients.orders', $assocs['orders']['path']);
+
+		$assocs =  $assocs['orders']['associations'];
+		$this->assertEquals('clients.orders.orderTypes', $assocs['orderTypes']['path']);
+		$this->assertEquals('clients.orders.stuff', $assocs['stuff']['path']);
+
+		$assocs =  $assocs['stuff']['associations'];
+		$this->assertEquals(
+			'clients.orders.stuff.stuffTypes',
+			$assocs['stuffTypes']['path']
+		);
+	}
+
+/**
  * Helper function sued to quoted both keys and values in an array in case
  * the test suite is running with auto quoting enabled
  *
