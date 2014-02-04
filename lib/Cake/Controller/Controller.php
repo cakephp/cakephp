@@ -761,8 +761,7 @@ class Controller extends Object implements CakeEventListener {
             		}
         	}
         	else {
-        		//load this model class
-        		$this->loadModel();
+        		throw new InvalidArgumentException('loadModels function requires a model name.');
         	}
         	return true;
     	}
