@@ -1508,7 +1508,7 @@ class BelongsToManyTest extends TestCase {
 		$association = new BelongsToMany('Tags', $config);
 		$listener = $this->getMock('stdClass', ['__invoke']);
 		$this->tag->getEventManager()->attach($listener, 'Model.beforeFind');
-		$opts = ['somthing' => 'more'];
+		$opts = ['something' => 'more'];
 		$newQuery = $this->tag->query()->applyOptions($opts);
 		$listener->expects($this->once())->method('__invoke')
 			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery, $opts, false);
@@ -1520,7 +1520,7 @@ class BelongsToManyTest extends TestCase {
 			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery2, [], false);
 
 		$association->attachTo($query, ['queryBuilder' => function($q) {
-			return $q->applyOptions(['somthing' => 'more']);
+			return $q->applyOptions(['something' => 'more']);
 		}]);
 	}
 

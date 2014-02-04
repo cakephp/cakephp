@@ -271,7 +271,7 @@ class EagerLoaderTest extends TestCase {
 		$loader = new EagerLoader;
 		$loader->contain($contains);
 		$query->select('foo.id');
-		$loader->attachAssociations($query, true);
+		$loader->attachAssociations($query, $table, true);
 
 		$select = $query->clause('select');
 		$expected = [

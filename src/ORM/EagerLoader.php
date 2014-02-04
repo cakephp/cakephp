@@ -153,12 +153,17 @@ class EagerLoader {
 		}
 
 		$contain = [];
-		foreach ($this->_containments as $table => $options) {
+		foreach ($this->_containments as $alias => $options) {
 			if (!empty($options['instance'])) {
 				$contain = (array)$this->_containments;
 				break;
 			}
-			$contain[$table] = $this->_normalizeContain($repository, $table, $options);
+			$contain[$alias] = $this->_normalizeContain(
+				$repository,
+				$alias,
+				$options,
+				$alias
+			);
 		}
 
 		return $this->_normalized = $contain;
@@ -234,17 +239,17 @@ class EagerLoader {
  * those that cannot be loaded without executing a separate query.
  *
  * @param \Cake\ORM\Query $query The query to be modified
+ * @param \Cake\ORM\Table $repository The repository containing the associations
  * @param boolean $includeFields whether to append all fields from the associations
  * to the passed query. This can be overridden according to the settings defined
  * per association in the containments array
  * @return void
  */
-	public function attachAssociations(Query $query, $includeFields) {
+	public function attachAssociations(Query $query, Table $repository, $includeFields) {
 		if (empty($this->_containments)) {
 			return;
 		}
 
-		$repository = $query->repository();
 		foreach ($this->attachableAssociations($repository) as $options) {
 			$config = $options['config'] + ['includeFields' => $includeFields];
 			$options['instance']->attachTo($query, $config);
@@ -275,10 +280,11 @@ class EagerLoader {
  * @param Table $parent owning side of the association
  * @param string $alias name of the association to be loaded
  * @param array $options list of extra options to use for this association
+ * @param string $path A dot separated string of associations that lead to this `$alias`
  * @return array normalized associations
  * @throws \InvalidArgumentException When containments refer to associations that do not exist.
  */
-	protected function _normalizeContain(Table $parent, $alias, $options) {
+	protected function _normalizeContain(Table $parent, $alias, $options, $path) {
 		$defaults = $this->_containOptions;
 		$instance = $parent->association($alias);
 		if (!$instance) {
@@ -293,12 +299,14 @@ class EagerLoader {
 		$config = [
 			'associations' => [],
 			'instance' => $instance,
-			'config' => array_diff_key($options, $extra)
+			'config' => array_diff_key($options, $extra),
+			'path' => $path
 		];
 		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
 
 		foreach ($extra as $t => $assoc) {
-			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
+			$step = $path . '.' . $t;
+			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc, $step);
 		}
 
 		return $config;

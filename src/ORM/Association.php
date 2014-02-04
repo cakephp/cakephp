@@ -390,7 +390,6 @@ abstract class Association {
  */
 	public function attachTo(Query $query, array $options = []) {
 		$target = $this->target();
-		$source = $this->source();
 		$options += [
 			'includeFields' => true,
 			'foreignKey' => $this->foreignKey(),
@@ -409,7 +408,6 @@ abstract class Association {
 		}
 
 		$options['conditions'] = $query->newExpr()->add($options['conditions']);
-		$extraOptions = [];
 		$dummy = $target->query();
 
 		if (!empty($options['queryBuilder'])) {
@@ -417,20 +415,7 @@ abstract class Association {
 		}
 
 		$this->_dispatchBeforeFind($dummy);
-		$options = $this->_copyAttributes($dummy, $options);
-		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
-
-		if (empty($options['fields'])) {
-			$f = isset($options['fields']) ? $options['fields'] : null;
-			if ($options['includeFields'] && ($f === null || $f !== false)) {
-				$options['fields'] = $target->schema()->columns();
-			}
-		}
-
-		if (!empty($options['fields'])) {
-			$query->select($query->aliasFields($options['fields'], $target->alias()));
-		}
+		$this->_copyAttributes($query, $dummy, $options);
 	}
 
 /**
@@ -489,11 +474,23 @@ abstract class Association {
 		$table->getEventManager()->dispatch($event);
 	}
 
-	protected function _copyAttributes($query, $options) {
-		debug($query->contain());
-		$options['fields'] = $query->clause('select') ?: $options['fields'];
-		$options['conditions']->add($query->clause('where') ?: []);
-		return $options;
+	protected function _copyAttributes($query, $surrogate, $options) {
+		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
+		$options['conditions']->add($surrogate->clause('where') ?: []);
+		$target = $this->_targetTable;
+		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
+
+		$options['fields'] = $surrogate->clause('select') ?: $options['fields'];
+		if (empty($options['fields'])) {
+			$f = isset($options['fields']) ? $options['fields'] : null;
+			if ($options['includeFields'] && ($f === null || $f !== false)) {
+				$options['fields'] = $target->schema()->columns();
+			}
+		}
+
+		if (!empty($options['fields'])) {
+			$query->select($query->aliasFields($options['fields'], $target->alias()));
+		}
 	}
 
 /**
