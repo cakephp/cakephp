@@ -185,6 +185,12 @@ class PaginatorComponent extends Component {
 			$order = (array)$order;
 		}
 		reset($order);
+		$sortDefault = $directionDefault = false;
+		if (isset($defaults['order']) && count($defaults['order']) && count($defaults['order']) == 1){
+			$sortDefault = key($defaults['order']);
+			$directionDefault = current($defaults['order']);
+		}
+
 		$paging = array(
 			'findType' => $type,
 			'page' => $page,
@@ -196,6 +202,8 @@ class PaginatorComponent extends Component {
 			'sort' => key($order),
 			'direction' => current($order),
 			'limit' => $defaults['limit'] != $options['limit'] ? $options['limit'] : null,
+			'sortDefault' => $sortDefault,
+			'directionDefault' => $directionDefault
 		);
 
 		if (!isset($request['paging'])) {

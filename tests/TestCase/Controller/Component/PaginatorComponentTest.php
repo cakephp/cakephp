@@ -186,6 +186,36 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * test that default sort and default direction are injected into request
+ *
+ * @return void
+ */
+	public function testDefaultPaginateParamsIntoRequest() {
+		$settings = array(
+			'order' => ['PaginatorPosts.id' => 'DESC'],
+			'maxLimit' => 10,
+		);
+
+		$table = $this->_getMockPosts(['find']);
+		$query = $this->_getMockFindQuery();
+
+		$table->expects($this->once())
+			->method('find')
+			->with('all', [
+				'conditions' => [],
+				'fields' => null,
+				'limit' => 10,
+				'page' => 1,
+				'order' => ['PaginatorPosts.id' => 'DESC']
+			])
+			->will($this->returnValue($query));
+
+		$this->Paginator->paginate($table, $settings);
+		$this->assertEquals('PaginatorPosts.id', $this->request->params['paging']['PaginatorPosts']['sortDefault']);
+		$this->assertEquals('DESC', $this->request->params['paging']['PaginatorPosts']['directionDefault']);
+	}
+
+/**
  * test that option merging prefers specific models
  *
  * @return void
