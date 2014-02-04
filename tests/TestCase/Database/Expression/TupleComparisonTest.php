@@ -14,8 +14,8 @@
  */
 namespace Cake\Test\TestCase\Database\Expression;
 
-use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
 

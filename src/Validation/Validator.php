@@ -113,6 +113,16 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	}
 
 /**
+ * Check whether or not a validator contains any rules for the given field.
+ *
+ * @param string $name The field name to check.
+ * @return boolean
+ */
+	public function hasField($name) {
+		return isset($this->_fields[$name]);
+	}
+
+/**
  * Associates an object to a name so it can be used as a provider. Providers are
  * objects or class names that can contain methods used during validation of for
  * deciding whether a validation rule can be applied. All validation methods,

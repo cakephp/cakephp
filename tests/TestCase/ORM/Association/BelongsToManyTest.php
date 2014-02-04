@@ -454,7 +454,7 @@ class BelongsToManyTest extends TestCase {
 
 				$this->assertSame($q, $callable($q));
 				return $query;
-		}));
+			}));
 
 		$query->hydrate(false);
 
@@ -520,7 +520,7 @@ class BelongsToManyTest extends TestCase {
 
 				$this->assertSame($q, $callable($q));
 				return $query;
-		}));
+			}));
 
 		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
@@ -581,7 +581,7 @@ class BelongsToManyTest extends TestCase {
 
 				$this->assertSame($q, $callable($q));
 				return $query;
-		}));
+			}));
 
 		$query->expects($this->at(0))->method('where')
 			->with(['Tags.name' => 'foo'])
@@ -728,7 +728,7 @@ class BelongsToManyTest extends TestCase {
 
 				$this->assertSame($q, $callable($q));
 				return $query;
-		}));
+			}));
 
 		$callable = $association->eagerLoader([
 			'query' => $parent, 'strategy' => BelongsToMany::STRATEGY_SUBQUERY,
@@ -799,7 +799,7 @@ class BelongsToManyTest extends TestCase {
 
 				$this->assertSame($q, $callable($q));
 				return $query;
-		}));
+			}));
 
 		$query->hydrate(false);
 

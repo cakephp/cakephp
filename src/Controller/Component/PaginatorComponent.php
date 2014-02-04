@@ -301,7 +301,7 @@ class PaginatorComponent extends Component {
 			$options['order'] = [];
 		}
 		if (!is_array($options['order'])) {
-			$options['order'] = (array)$options['order'];
+			return $options;
 		}
 
 		if (!empty($options['sortWhitelist'])) {
@@ -313,13 +313,15 @@ class PaginatorComponent extends Component {
 			return $options;
 		}
 
-		if (is_array($options['order'])) {
-			$tableAlias = $object->alias();
-			$order = [];
+		$tableAlias = $object->alias();
+		$order = [];
 
-			foreach ($options['order'] as $key => $value) {
-				$field = $key;
-				$alias = $tableAlias;
+		foreach ($options['order'] as $key => $value) {
+			$field = $key;
+			$alias = $tableAlias;
+			if (is_numeric($key)) {
+				$order[] = $value;
+			} else {
 				if (strpos($key, '.') !== false) {
 					list($alias, $field) = explode('.', $key);
 				}
@@ -329,8 +331,8 @@ class PaginatorComponent extends Component {
 					$order[$tableAlias . '.' . $field] = $value;
 				}
 			}
-			$options['order'] = $order;
 		}
+		$options['order'] = $order;
 
 		return $options;
 	}

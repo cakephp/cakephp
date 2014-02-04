@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,9 +16,8 @@ namespace Cake\ORM;
 
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Database\Query as DatabaseQuery;
-use Cake\Database\Statement\BufferedStatement;
-use Cake\Database\Statement\CallbackStatement;
 use Cake\Event\Event;
+use Cake\ORM\EagerLoader;
 use Cake\ORM\QueryCacher;
 use Cake\ORM\Table;
 
@@ -62,51 +59,12 @@ class Query extends DatabaseQuery {
 	protected $_table;
 
 /**
- * Nested array describing the association to be fetched
- * and the options to apply for each of them, if any
- *
- * @var \ArrayObject
- */
-	protected $_containments;
-
-/**
- * Contains a nested array with the compiled containments tree
- * This is a normalized version of the user provided containments array.
- *
- * @var array
- */
-	protected $_normalizedContainments;
-
-/**
  * Whether the user select any fields before being executed, this is used
  * to determined if any fields should be automatically be selected.
  *
  * @var boolean
  */
 	protected $_hasFields;
-
-/**
- * A list of associations that should be eagerly loaded
- *
- * @var array
- */
-	protected $_loadEagerly = [];
-
-/**
- * List of options accepted by associations in contain()
- * index by key for faster access
- *
- * @var array
- */
-	protected $_containOptions = [
-		'associations' => 1,
-		'foreignKey' => 1,
-		'conditions' => 1,
-		'fields' => 1,
-		'sort' => 1,
-		'matching' => 1,
-		'queryBuilder' => 1
-	];
 
 /**
  * A ResultSet.
@@ -173,6 +131,14 @@ class Query extends DatabaseQuery {
 	protected $_counter;
 
 /**
+ * Instance of a class responsible for storing association containments and
+ * for eager loading them when this query is executed
+ *
+ * @var \Cake\ORM\EagerLoader
+ */
+	protected $_eagerLoader;
+
+/**
  * Constuctor
  *
  * @param Cake\Database\Connection $connection
@@ -222,6 +188,25 @@ class Query extends DatabaseQuery {
 		}
 		$this->defaultTypes($this->defaultTypes() + $fields);
 
+		return $this;
+	}
+
+/**
+ * Sets the instance of the eager loader class to use for loading associations
+ * and storing containments. If called with no arguments, it will return the
+ * currently configured instance.
+ *
+ * @param \Cake\ORM\EagerLoader $instance
+ * @return \Cake\ORM\Eager|\Cake\ORM\Query
+ */
+	public function eagerLoader(EagerLoader $instance = null) {
+		if ($instance === null) {
+			if ($this->_eagerLoader === null) {
+				$this->_eagerLoader = new EagerLoader;
+			}
+			return $this->_eagerLoader;
+		}
+		$this->_eagerLoader = $instance;
 		return $this;
 	}
 
@@ -300,18 +285,9 @@ class Query extends DatabaseQuery {
  *		]
  *	]);
  *
- * If called with no arguments, this function will return an ArrayObject with
+ * If called with no arguments, this function will return an array with
  * with the list of previously configured associations to be contained in the
- * result. This object can be modified directly as the reference is kept inside
- * the query.
- *
- * The resulting ArrayObject will always have association aliases as keys, and
- * options as values, if no options are passed, the values will be set to an empty
- * array
- *
- * Please note that when modifying directly the containments array, you are
- * required to maintain the structure. That is, association names as keys
- * having array values. Failing to do so will result in an error
+ * result.
  *
  * If called with an empty first argument and $override is set to true, the
  * previous list will be emptied.
@@ -319,30 +295,21 @@ class Query extends DatabaseQuery {
  * @param array|string $associations list of table aliases to be queried
  * @param boolean $override whether override previous list with the one passed
  * defaults to merging previous list with the new one.
- * @return \ArrayObject|Query
+ * @return array|\Cake\ORM\Query
  */
 	public function contain($associations = null, $override = false) {
-		if ($this->_containments === null || $override) {
+		if (empty($associations) && $override) {
+			$this->_eagerLoader = null;
+		}
+
+		$result = $this->eagerLoader()->contain($associations);
+		if ($associations !== null || $override) {
 			$this->_dirty();
-			$this->_containments = new \ArrayObject;
 		}
-
 		if ($associations === null) {
-			return $this->_containments;
+			return $result;
 		}
 
-		$associations = (array)$associations;
-		$current = current($associations);
-		if (is_array($current) && isset($current['instance'])) {
-			$this->_containments = $this->_normalizedContainments = $associations;
-			return $this;
-		}
-
-		$old = $this->_containments->getArrayCopy();
-		$associations = $this->_reformatContain($associations, $old);
-		$this->_containments->exchangeArray($associations);
-		$this->_normalizedContainments = null;
-		$this->_dirty();
 		return $this;
 	}
 
@@ -397,98 +364,9 @@ class Query extends DatabaseQuery {
  * @return Query
  */
 	public function matching($assoc, callable $builder = null) {
-		$assocs = explode('.', $assoc);
-		$last = array_pop($assocs);
-		$containments = [];
-		$pointer =& $containments;
-
-		foreach ($assocs as $name) {
-			$pointer[$name] = ['matching' => true];
-			$pointer =& $pointer[$name];
-		}
-
-		$pointer[$last] = ['queryBuilder' => $builder, 'matching' => true];
-		return $this->contain($containments);
-	}
-
-/**
- * Formats the containments array so that associations are always set as keys
- * in the array. This function merges the original associations array with
- * the new associations provided
- *
- * @param array $associations user provided containments array
- * @param array $original The original containments array to merge
- * with the new one
- * @return array
- */
-	protected function _reformatContain($associations, $original) {
-		$result = $original;
-
-		foreach ((array)$associations as $table => $options) {
-			$pointer =& $result;
-			if (is_int($table)) {
-				$table = $options;
-				$options = [];
-			}
-
-			if (isset($this->_containOptions[$table])) {
-				$pointer[$table] = $options;
-				continue;
-			}
-
-			if (strpos($table, '.')) {
-				$path = explode('.', $table);
-				$table = array_pop($path);
-				foreach ($path as $t) {
-					$pointer += [$t => []];
-					$pointer =& $pointer[$t];
-				}
-			}
-
-			if (is_array($options)) {
-				$options = $this->_reformatContain($options, []);
-			}
-
-			if ($options instanceof \Closure) {
-				$options = ['queryBuilder' => $options];
-			}
-
-			$pointer += [$table => []];
-			$pointer[$table] = $options + $pointer[$table];
-		}
-
-		return $result;
-	}
-
-/**
- * Returns the fully normalized array of associations that should be eagerly
- * loaded. The normalized array will restructure the original one by sorting
- * all associations under one key and special options under another.
- *
- * Additionally it will set an 'instance' key per association containing the
- * association instance from the corresponding source table
- *
- * @return array
- */
-	public function normalizedContainments() {
-		if ($this->_normalizedContainments !== null || empty($this->_containments)) {
-			return $this->_normalizedContainments;
-		}
-
-		$contain = [];
-		foreach ($this->_containments as $table => $options) {
-			if (!empty($options['instance'])) {
-				$contain = (array)$this->_containments;
-				break;
-			}
-			$contain[$table] = $this->_normalizeContain(
-				$this->_table,
-				$table,
-				$options
-			);
-		}
-
-		return $this->_normalizedContainments = $contain;
+		$this->eagerLoader()->matching($assoc, $builder);
+		$this->_dirty();
+		return $this;
 	}
 
 /**
@@ -1018,14 +896,7 @@ class Query extends DatabaseQuery {
  */
 	protected function _decorateStatement($statement) {
 		$statement = parent::_decorateStatement($statement);
-		if ($this->_loadEagerly) {
-			if (!($statement instanceof BufferedStatement)) {
-				$statement = new BufferedStatement($statement, $this->connection()->driver());
-			}
-			$statement = $this->_eagerLoad($statement);
-		}
-
-		return $statement;
+		return $this->eagerLoader()->loadExternal($this, $statement);
 	}
 
 /**
@@ -1047,173 +918,9 @@ class Query extends DatabaseQuery {
 				$this->from([$this->_table->alias() => $this->_table->table()]);
 			}
 			$this->_addDefaultFields();
-			$this->_addContainments();
+			$this->eagerLoader()->attachAssociations($this, !$this->_hasFields);
 		}
 		return parent::_transformQuery();
-	}
-
-/**
- * Helper function used to add the required joins for associations defined using
- * `contain()`
- *
- * @return void
- */
-	protected function _addContainments() {
-		$this->_loadEagerly = [];
-		if (empty($this->_containments)) {
-			return;
-		}
-
-		$contain = $this->normalizedContainments();
-		foreach ($contain as $relation => $meta) {
-			if ($meta['instance'] && !$meta['canBeJoined']) {
-				$this->_loadEagerly[$relation] = $meta;
-			}
-		}
-
-		foreach ($this->_resolveJoins($this->_table, $contain) as $options) {
-			$table = $options['instance']->target();
-			$this->_addJoin($options['instance'], $options['config']);
-			foreach ($options['associations'] as $relation => $meta) {
-				if ($meta['instance'] && !$meta['canBeJoined']) {
-					$this->_loadEagerly[$relation] = $meta;
-				}
-			}
-		}
-	}
-
-/**
- * Auxiliary function responsible for fully normalizing deep associations defined
- * using `contain()`
- *
- * @param Table $parent owning side of the association
- * @param string $alias name of the association to be loaded
- * @param array $options list of extra options to use for this association
- * @return array normalized associations
- * @throws \InvalidArgumentException When containments refer to associations that do not exist.
- */
-	protected function _normalizeContain(Table $parent, $alias, $options) {
-		$defaults = $this->_containOptions;
-		$instance = $parent->association($alias);
-		if (!$instance) {
-			throw new \InvalidArgumentException(
-				sprintf('%s is not associated with %s', $parent->alias(), $alias)
-			);
-		}
-
-		$table = $instance->target();
-
-		$extra = array_diff_key($options, $defaults);
-		$config = [
-			'associations' => [],
-			'instance' => $instance,
-			'config' => array_diff_key($options, $extra)
-		];
-		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
-
-		foreach ($extra as $t => $assoc) {
-			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
-		}
-		return $config;
-	}
-
-/**
- * Helper function used to compile a list of all associations that can be
- * joined in this query.
- *
- * @param Table $source the owning side of the association
- * @param array $associations list of associations for $source
- * @return array
- */
-	protected function _resolveJoins($source, $associations) {
-		$result = [];
-		foreach ($associations as $table => $options) {
-			$associated = $options['instance'];
-			if ($options['canBeJoined']) {
-				$result[$table] = $options;
-				$result += $this->_resolveJoins($associated->target(), $options['associations']);
-			}
-		}
-		return $result;
-	}
-
-/**
- * Adds a join based on a particular association and some custom options
- *
- * @param Association $association
- * @param array $options
- * @return void
- */
-	protected function _addJoin($association, $options) {
-		$association->attachTo($this, $options + ['includeFields' => !$this->_hasFields]);
-	}
-
-/**
- * Helper method that will calculate those associations that cannot be joined
- * directly in this query and will setup the required extra queries for fetching
- * the extra data.
- *
- * @param Statement $statement original query statement
- * @return CallbackStatement $statement modified statement with extra loaders
- */
-	protected function _eagerLoad($statement) {
-		$collected = $this->_collectKeys($statement);
-		foreach ($this->_loadEagerly as $meta) {
-			$contain = $meta['associations'];
-			$alias = $meta['instance']->source()->alias();
-			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
-			$f = $meta['instance']->eagerLoader(
-				$meta['config'] + ['query' => $this, 'contain' => $contain, 'keys' => $keys]
-			);
-			$statement = new CallbackStatement($statement, $this->connection()->driver(), $f);
-		}
-
-		return $statement;
-	}
-
-/**
- * Helper function used to return the keys from the query records that will be used
- * to eagerly load associations.
- *
- *
- * @param BufferedStatement $statement
- * @return array
- */
-	protected function _collectKeys($statement) {
-		$collectKeys = [];
-		foreach ($this->_loadEagerly as $meta) {
-			$source = $meta['instance']->source();
-			if ($meta['instance']->requiresKeys($meta['config'])) {
-				$alias = $source->alias();
-				$pkFields = [];
-				foreach ((array)$source->primaryKey() as $key) {
-					$pkFields[] = key($this->aliasField($key, $alias));
-				}
-				$collectKeys[$alias] = [$alias, $pkFields, count($pkFields) === 1];
-			}
-		}
-
-		$keys = [];
-		if (!empty($collectKeys)) {
-			while ($result = $statement->fetch('assoc')) {
-				foreach ($collectKeys as $parts) {
-					if ($parts[2]) {
-						$keys[$parts[0]][] = $result[$parts[1][0]];
-						continue;
-					}
-
-					$collected = [];
-					foreach ($parts[1] as $key) {
-						$collected[] = $result[$key];
-					}
-					$keys[$parts[0]][] = $collected;
-				}
-			}
-
-			$statement->rewind();
-		}
-
-		return $keys;
 	}
 
 /**

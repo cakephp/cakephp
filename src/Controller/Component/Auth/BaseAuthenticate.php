@@ -39,7 +39,7 @@ abstract class BaseAuthenticate {
  * - `contain` Extra models to contain and store in session.
  * - `passwordHasher` Password hasher class. Can be a string specifying class name
  *    or an array containing `className` key, any other keys will be passed as
- *    settings to the class. Defaults to 'Simple'.
+ *    settings to the class. Defaults to 'Blowfish'.
  *
  * @var array
  */

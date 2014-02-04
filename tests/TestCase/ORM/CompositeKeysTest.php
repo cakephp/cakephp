@@ -330,7 +330,7 @@ class CompositeKeyTest extends TestCase {
 		$data = [
 			'title' => 'Haz tags',
 			'body' => 'Some content here',
-			'tags' => ['_ids' => [[1,1], [2, 2], [3, 1]]]
+			'tags' => ['_ids' => [[1, 1], [2, 2], [3, 1]]]
 		];
 		$marshall = new Marshaller($articles);
 		$result = $marshall->one($data, ['SiteTags']);
@@ -414,14 +414,14 @@ class CompositeKeyTest extends TestCase {
 		);
 
 		$items = new \Cake\ORM\ResultSetDecorator([
-			['id' => 1, 'name' => 'a', 'site_id' => 1,  'parent_id' => null],
-			['id' => 2, 'name' => 'a', 'site_id' => 2,  'parent_id' => null],
-			['id' => 3, 'name' => 'a', 'site_id' => 1,  'parent_id' => 1],
-			['id' => 4, 'name' => 'a', 'site_id' => 2,  'parent_id' => 2],
-			['id' => 5, 'name' => 'a', 'site_id' => 2,  'parent_id' => 4],
-			['id' => 6, 'name' => 'a', 'site_id' => 1,  'parent_id' => 2],
-			['id' => 7, 'name' => 'a', 'site_id' => 1,  'parent_id' => 3],
-			['id' => 8, 'name' => 'a', 'site_id' => 2,  'parent_id' => 4],
+			['id' => 1, 'name' => 'a', 'site_id' => 1, 'parent_id' => null],
+			['id' => 2, 'name' => 'a', 'site_id' => 2, 'parent_id' => null],
+			['id' => 3, 'name' => 'a', 'site_id' => 1, 'parent_id' => 1],
+			['id' => 4, 'name' => 'a', 'site_id' => 2, 'parent_id' => 2],
+			['id' => 5, 'name' => 'a', 'site_id' => 2, 'parent_id' => 4],
+			['id' => 6, 'name' => 'a', 'site_id' => 1, 'parent_id' => 2],
+			['id' => 7, 'name' => 'a', 'site_id' => 1, 'parent_id' => 3],
+			['id' => 8, 'name' => 'a', 'site_id' => 2, 'parent_id' => 4],
 		]);
 		$query->find('threaded', ['parentField' => ['parent_id', 'site_id']]);
 		$formatter = $query->formatResults()[0];

@@ -862,7 +862,6 @@ class QueryTest extends TestCase {
 		$this->assertCount(1, $result);
 		$this->assertEquals(['id' => 1], $result->fetch('assoc'));
 
-
 		$query = new Query($this->connection);
 		$result = $query
 			->select(['id'])
