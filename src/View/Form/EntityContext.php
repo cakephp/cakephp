@@ -287,13 +287,7 @@ class EntityContext {
  * @return boolean Returns true if the errors for the field are not empty.
  */
 	public function hasError($field) {
-		$parts = explode('.', $field);
-		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return false;
-		}
-		$errors = $entity->errors(array_pop($parts));
-		return !empty($errors);
+		return $this->error($field) !== [];
 	}
 
 /**
