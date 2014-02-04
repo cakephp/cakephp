@@ -741,6 +741,31 @@ class Controller extends Object implements CakeEventListener {
 		}
 		return true;
 	}
+	
+ /**
+ * load and instantiate multiple models with a unique function
+ * 
+ * @param   a variable-length argument list containing Model names
+ *          Example:
+ *          loadModels('Product', 'Category', 'Client');
+ * @return  true when all models found and instances created, error returned if a model not found.
+ * @throws  MissingModelException if a model class cannot be found.
+ */
+    	public function loadModels() {
+        	$numargs = func_num_args();
+        	if($numargs > 0) {
+            
+            		$arg_list = func_get_args();
+            		for($i = 0; $i < $numargs; $i++) {    
+                		$this->loadModel($arg_list[$i]);
+            		}
+        	}
+        	else {
+        		throw new InvalidArgumentException('loadModels function requires a model name.');
+        	}
+        	return true;
+    	}
+
 
 /**
  * Redirects to given $url, after turning off $this->autoRender.
