@@ -153,6 +153,9 @@ class ArrayContextTest extends TestCase {
  * @return void
  */
 	public function testError() {
+		$context = new ArrayContext($this->request, []);
+		$this->assertEquals([], $context->error('Comments.empty'));
+
 		$context = new ArrayContext($this->request, [
 			'errors' => [
 				'Comments' => [

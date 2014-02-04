@@ -154,12 +154,12 @@ class ArrayContext {
  * Get the errors for a given field
  *
  * @param string $field A dot separated path to check errors on.
- * @return mixed Either a string or an array of errors. Null
- *   will be returned when the field path is undefined.
+ * @return array An array of errors, an empty array will be returned when the
+ *    context has no errors.
  */
 	public function error($field) {
 		if (empty($this->_context['errors'])) {
-			return null;
+			return [];
 		}
 		return Hash::get($this->_context['errors'], $field);
 	}

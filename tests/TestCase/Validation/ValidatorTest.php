@@ -50,9 +50,12 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
  */
 	public function testFieldDefault() {
 		$validator = new Validator;
+		$this->assertFalse($validator->hasField('foo'));
+
 		$field = $validator->field('foo');
 		$this->assertInstanceOf('\Cake\Validation\ValidationSet', $field);
 		$this->assertCount(0, $field);
+		$this->assertTrue($validator->hasField('foo'));
 	}
 
 /**

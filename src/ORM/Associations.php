@@ -63,6 +63,21 @@ class Associations {
 	}
 
 /**
+ * Fetch an association by property name.
+ *
+ * @param string $prop The property to find an association by.
+ * @return Association|null Either the association or null.
+ */
+	public function getByProperty($prop) {
+		foreach ($this->_items as $assoc) {
+			if ($assoc->property() === $prop) {
+				return $assoc;
+			}
+		}
+		return null;
+	}
+
+/**
  * Check for an attached association by name.
  *
  * @param string $alias The association alias to get.
