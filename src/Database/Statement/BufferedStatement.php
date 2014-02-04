@@ -29,6 +29,7 @@ class BufferedStatement extends StatementDecorator {
 /**
  * Constructor
  *
+ * @param Cake\Database\Driver instance $driver
  * @param Statement implementation such as PDOStatement
  * @return void
  */
@@ -37,6 +38,9 @@ class BufferedStatement extends StatementDecorator {
 		$this->_reset();
 	}
 
+	/**
+	* @param array $params list of values to be bound to query
+	*/
 	public function execute($params = null) {
 		$this->_reset();
 		return parent::execute($params);

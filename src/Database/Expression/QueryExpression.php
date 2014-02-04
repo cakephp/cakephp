@@ -456,7 +456,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @param string $field The value from with the actual field and operator will
  * be extracted.
  * @param mixed $value The value to be bound to a placeholder for the field
- * $param array $types List of types where the field can be found so the value
+ * @param array $types List of types where the field can be found so the value
  * can be converted accordingly.
  * @return string|QueryExpression
  */

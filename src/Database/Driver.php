@@ -78,6 +78,7 @@ abstract class Driver {
  * Returns correct connection resource or object that is internally used
  * If first argument is passed,
  *
+ * @param null|PDO instance $connection
  * @return void
  */
 	public abstract function connection($connection = null);
@@ -130,6 +131,8 @@ abstract class Driver {
 /**
  * Returns a value in a safe representation to be used in a query string
  *
+ * @param mixed $value
+ * @param string $type Type to be used for determining kind of quoting to perform
  * @return string
  */
 	public abstract function quote($value, $type);
@@ -208,7 +211,7 @@ abstract class Driver {
  * Returns last id generated for a table or sequence in database
  *
  * @param string $table table name or sequence to get last insert value from
- * @param string column the name of the column representing the primary key
+ * @param string $column the name of the column representing the primary key
  * @return string|integer
  */
 	public function lastInsertId($table = null, $column = null) {

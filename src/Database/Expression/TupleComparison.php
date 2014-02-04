@@ -160,7 +160,7 @@ class TupleComparison extends Comparison {
  * it is an ExpressionInterface
  *
  * @param mixed $value
- * @Param callable $callable
+ * @param callable $callable
  * @return void
  */
 	protected function _traverseValue($value, $callable) {
