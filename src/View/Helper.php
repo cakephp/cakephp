@@ -517,9 +517,18 @@ class Helper extends Object implements EventListener {
 
 		$this->_association = null;
 
+		$fields = array();
+		if (isset($this->fieldset[$this->_modelScope]['fields'])) {
+			if(is_array($this->fieldset[$this->_modelScope]['fields'])) {
+				$fields = $this->fieldset[$this->_modelScope]['fields'];
+			} else {
+				$fields = $this->fieldset[$this->_modelScope]['fields']->columns();
+			}
+		}
+
 		$isHabtm = (
-			isset($this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type']) &&
-			$this->fieldset[$this->_modelScope]['fields'][$parts[0]]['type'] === 'multiple'
+			isset($fields[$parts[0]]['type']) &&
+			$fields[$parts[0]]['type'] === 'multiple'
 		);
 
 		// habtm models are special

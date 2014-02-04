@@ -193,9 +193,14 @@ class FormHelper extends Helper {
 		if ($key === 'fields') {
 			if (!isset($this->fieldset[$model]['fields'])) {
 				$this->fieldset[$model]['fields'] = $object->schema();
-				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
-					$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
+				if (isset($object->hasAndBelongsToMany)) {
+					foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
+						$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
+					}
 				}
+			}
+			if (is_object($this->fieldset[$model]['fields'])) {
+				$this->fieldset[$model]['fields'] = $this->fieldset[$model]['fields']->columns();
 			}
 			if ($field === null || $field === false) {
 				return $this->fieldset[$model]['fields'];
