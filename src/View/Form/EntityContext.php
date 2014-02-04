@@ -135,11 +135,6 @@ class EntityContext {
 			return [$entity, $this->_rootName];
 		}
 
-		// Remove the Table name if present.
-		if (count($path) > 1 && $path[0] === $this->_rootName) {
-			array_shift($path);
-		}
-
 		$lastProp = $this->_rootName;
 		foreach ($path as $prop) {
 			$next = $this->_getProp($entity, $prop);

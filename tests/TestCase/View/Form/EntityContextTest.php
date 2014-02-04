@@ -58,20 +58,11 @@ class EntityContextTest extends TestCase {
 			'entity' => $row,
 			'table' => 'Articles',
 		]);
-		$result = $context->val('Articles.title');
-		$this->assertEquals($row->title, $result);
-
 		$result = $context->val('title');
 		$this->assertEquals($row->title, $result);
 
-		$result = $context->val('Articles.body');
-		$this->assertEquals($row->body, $result);
-
 		$result = $context->val('body');
 		$this->assertEquals($row->body, $result);
-
-		$result = $context->val('Articles.nope');
-		$this->assertNull($result);
 
 		$result = $context->val('nope');
 		$this->assertNull($result);
@@ -99,28 +90,19 @@ class EntityContextTest extends TestCase {
 			'table' => 'Articles',
 		]);
 
-		$result = $context->val('Articles.user.fname');
-		$this->assertEquals($row->user->fname, $result);
-
 		$result = $context->val('user.fname');
 		$this->assertEquals($row->user->fname, $result);
-
-		$result = $context->val('Articles.comments.0.comment');
-		$this->assertEquals($row->comments[0]->comment, $result);
 
 		$result = $context->val('comments.0.comment');
 		$this->assertEquals($row->comments[0]->comment, $result);
 
-		$result = $context->val('Articles.comments.1.comment');
-		$this->assertEquals($row->comments[1]->comment, $result);
-
 		$result = $context->val('comments.1.comment');
 		$this->assertEquals($row->comments[1]->comment, $result);
 
-		$result = $context->val('Articles.comments.0.nope');
+		$result = $context->val('comments.0.nope');
 		$this->assertNull($result);
 
-		$result = $context->val('Articles.comments.0.nope.no_way');
+		$result = $context->val('comments.0.nope.no_way');
 		$this->assertNull($result);
 	}
 
@@ -138,9 +120,7 @@ class EntityContextTest extends TestCase {
 			'validator' => 'create',
 		]);
 
-		$this->assertTrue($context->isRequired('Articles.title'));
 		$this->assertTrue($context->isRequired('title'));
-		$this->assertFalse($context->isRequired('Articles.body'));
 		$this->assertFalse($context->isRequired('body'));
 
 		$this->assertFalse($context->isRequired('Herp.derp.derp'));
@@ -175,10 +155,7 @@ class EntityContextTest extends TestCase {
 		]);
 
 		$this->assertTrue($context->isRequired('comments.0.user_id'));
-		$this->assertTrue($context->isRequired('Articles.comments.0.user_id'));
-
 		$this->assertFalse($context->isRequired('comments.0.other'));
-		$this->assertFalse($context->isRequired('Articles.comments.0.other'));
 	}
 
 /**
