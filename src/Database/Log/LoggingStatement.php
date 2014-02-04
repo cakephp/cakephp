@@ -19,7 +19,7 @@ namespace Cake\Database\Log;
 use Cake\Database\Statement\StatementDecorator;
 
 /**
- * Statement decorator used to 
+ * Statement decorator used to
  *
  * @return void
  */
@@ -43,7 +43,7 @@ class LoggingStatement extends StatementDecorator {
  * Wrapper for the execute function to calculate time spent
  * and log the query afterwards.
  *
- * $param array $params list of values to be bound to query
+ * @param array $params list of values to be bound to query
  * @return boolean true on success, false otherwise
  */
 	public function execute($params = null) {
@@ -67,7 +67,7 @@ class LoggingStatement extends StatementDecorator {
  * @param string|integer $column name or param position to be bound
  * @param mixed $value the value to bind to variable in query
  * @param string|integer $type PDO type or name of configured Type class
- * @return void 
+ * @return void
  */
 	public function bindValue($column, $value, $type = 'string') {
 		parent::bindValue($column, $value, $type);

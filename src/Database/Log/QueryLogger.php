@@ -55,6 +55,7 @@ class QueryLogger {
  * Helper function used to replace query placeholders by the real
  * params used to execute the query
  *
+ * @param LoggedQuery $query
  * @return string
  */
 	protected function _interpolate($query) {
