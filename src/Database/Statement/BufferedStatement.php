@@ -16,6 +16,12 @@
  */
 namespace Cake\Database\Statement;
 
+/**
+ * A statement decorator that implements buffered results.
+ *
+ * This statement decorator will save fetched results in memory, allowing
+ * the iterator to be rewound and reused.
+ */
 class BufferedStatement extends StatementDecorator {
 
 	protected $_count = 0;
@@ -38,14 +44,19 @@ class BufferedStatement extends StatementDecorator {
 		$this->_reset();
 	}
 
-	/**
-	* @param array $params list of values to be bound to query
-	*/
+/**
+ * Execute the statement and return the results.
+ *
+ * @param array $params list of values to be bound to query
+ */
 	public function execute($params = null) {
 		$this->_reset();
 		return parent::execute($params);
 	}
 
+/**
+ * {@inheritDoc}
+ */
 	public function fetch($type = 'num') {
 		if ($this->_allFetched) {
 			$row = ($this->_counter < $this->_count) ? $this->_records[$this->_counter++] : false;
@@ -67,6 +78,9 @@ class BufferedStatement extends StatementDecorator {
 		return $this->_records[] = $record;
 	}
 
+/**
+ * {@inheritDoc}
+ */
 	public function fetchAll($type = 'num') {
 		if ($this->_allFetched) {
 			return $this->_records;
@@ -79,6 +93,9 @@ class BufferedStatement extends StatementDecorator {
 		return $this->_records;
 	}
 
+/**
+ * {@inheritDoc}
+ */
 	public function rowCount() {
 		if (!$this->_allFetched) {
 			$counter = $this->_counter;
@@ -89,6 +106,9 @@ class BufferedStatement extends StatementDecorator {
 		return $this->_count;
 	}
 
+/**
+ * {@inheritDoc}
+ */
 	public function rewind() {
 		$this->_counter = 0;
 	}
