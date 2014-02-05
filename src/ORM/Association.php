@@ -492,15 +492,26 @@ abstract class Association {
 			$query->select($query->aliasFields($options['fields'], $target->alias()));
 		}
 
-		foreach ($surrogate->formatResults() as $callable) {
-			$query->formatResults(function($results) use ($callable) {
-				$property = $this->property();
-				$extracted = $callable($results->extract($property))->compile();
-				return $results->insert($property, $extracted);
-			});
+		
+		$this->_formatAssociationResults($query, $surrogate, $options);
+		$this->_bindNewAssociations($query, $surrogate, $options);
+	}
+
+	protected function _formatAssociationResults($query, $surrogate, $options) {
+		$formatters = $surrogate->formatResults();
+
+		if (!$formatters) {
+			return;
 		}
 
-		$this->_bindNewAssociations($query, $surrogate, $options);
+		$query->formatResults(function($results) use ($formatters) {
+			$property = $this->property();
+			$extracted = $results->extract($property)->compile();
+			foreach ($formatters as $callable) {
+				$extracted = new ResultSetDecorator($callable($extracted));
+			}
+			return $results->insert($property, $extracted);
+		});
 	}
 
 	protected function _bindNewAssociations($query, $surrogate, $options) {
