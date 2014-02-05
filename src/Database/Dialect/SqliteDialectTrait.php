@@ -149,6 +149,7 @@ trait SqliteDialectTrait {
  *
  * The way SQLite works with multi insert is by having multiple select statements
  * joined with UNION.
+ *
  * @param Cake\Database\Query $query The query to translate
  * @return Query
  */
