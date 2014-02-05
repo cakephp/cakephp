@@ -491,6 +491,30 @@ abstract class Association {
 		if (!empty($options['fields'])) {
 			$query->select($query->aliasFields($options['fields'], $target->alias()));
 		}
+
+		foreach ($surrogate->formatResults() as $callable) {
+			$query->formatResults(function($results) use ($callable) {
+				$property = $this->property();
+				$extracted = $callable($results->extract($property))->compile();
+				return $results->insert($property, $extracted);
+			});
+		}
+
+		$this->_bindNewAssociations($query, $surrogate, $options);
+	}
+
+	protected function _bindNewAssociations($query, $surrogate, $options) {
+		$contain = $surrogate->contain();
+		$target = $this->_targetTable;
+		if ($contain) {
+			$loader = $surrogate->eagerLoader();
+			$loader->attachAssociations($query, $target, $options['includeFields']);
+			$newBinds = [];
+			foreach ($contain as $alias => $value) {
+				$newBinds[$options['path'] . '.' . $alias] = $value;
+			}
+			$query->contain($newBinds);
+		}
 	}
 
 /**

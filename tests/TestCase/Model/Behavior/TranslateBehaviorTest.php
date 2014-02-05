@@ -410,4 +410,50 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals('Obsah #1', $results->first()->body);
 	}
 
+/**
+ * Tests that it is possible to translate belongsTo associations
+ *
+ * @return void
+ */
+	public function testFindSingleLocaleBelongsto() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$authors = $table->belongsTo('Authors')->target();
+		$authors->addBehavior('Translate', ['fields' => ['name']]);
+
+		$table->locale('eng');
+		$authors->locale('eng');
+
+		$results = $table->find()
+			->select(['title', 'body'])
+			->contain(['Authors' => function($q) {
+				return $q->select(['id', 'name']);
+			}]);
+
+		$expected = [
+			[
+				'title' => 'Title #1',
+				'body' => 'Content #1',
+				'author' => ['id' => 1, 'name' => 'May-rianoh', '_locale' => 'eng'],
+				'_locale' => 'eng'
+			],
+			[
+				'title' => 'Title #2',
+				'body' => 'Content #2',
+				'author' => ['id' => 3, 'name' => 'larry', '_locale' => 'eng'],
+				'_locale' => 'eng'
+			],
+			[
+				'title' => 'Title #3',
+				'body' => 'Content #3',
+				'author' => ['id' => 1, 'name' => 'May-rianoh', '_locale' => 'eng'],
+				'_locale' => 'eng'
+			]
+		];
+		$results = array_map(function($r) {
+			return $r->toArray();
+		}, $results->toArray());
+		$this->assertEquals($expected, $results);
+	}
+
 }

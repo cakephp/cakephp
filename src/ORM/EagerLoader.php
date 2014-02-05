@@ -251,7 +251,10 @@ class EagerLoader {
 		}
 
 		foreach ($this->attachableAssociations($repository) as $options) {
-			$config = $options['config'] + ['includeFields' => $includeFields];
+			$config = $options['config'] + [
+				'path' => $options['path'],
+				'includeFields' => $includeFields
+			];
 			$options['instance']->attachTo($query, $config);
 		}
 	}

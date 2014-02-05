@@ -22,6 +22,7 @@ use Cake\Collection\Iterator\FilterIterator;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\Collection\Iterator\SortIterator;
+use Cake\Collection\Iterator\SyncIterator;
 use LimitIterator;
 
 /**
@@ -748,6 +749,28 @@ trait CollectionTrait {
 		}
 
 		return new Collection($collection);
+	}
+
+	public function insert($path, $values) {
+		$iterator = new SyncIterator($this, new Collection($values));
+		$collection = new Collection($iterator);
+		$path = explode('.', $path);
+		$target = array_pop($path);
+
+		return $collection->map(function($values) use ($path, $target) {
+			list($row, $insert) = $values;
+			$pointer =& $row;
+
+			foreach ($path as $step) {
+				if (!isset($pointer[$step])) {
+					return $row;
+				}
+				$pointer =& $pointer[$step];
+			}
+
+			$pointer[$target] = $insert;
+			return $row;
+		});
 	}
 
 /**
