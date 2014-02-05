@@ -445,12 +445,12 @@ class View extends Object {
  *
  * @param string $view Name of view file to use
  * @param string $layout Layout to use.
- * @return string Rendered Element
+ * @return string|null Rendered content or null if content already rendered and returned earlier.
  * @throws CakeException If there is an error in the view.
  */
 	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
-			return true;
+			return;
 		}
 		$this->Blocks->set('content', '');
 

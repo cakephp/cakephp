@@ -80,8 +80,7 @@ class MediaViewTest extends CakeTestCase {
 		$this->MediaView->response->expects($this->once())
 			->method('send');
 
-		$result = $this->MediaView->render();
-		$this->assertTrue($result);
+		$this->MediaView->render();
 	}
 
 /**
@@ -119,8 +118,7 @@ class MediaViewTest extends CakeTestCase {
 		$this->MediaView->response->expects($this->once())
 			->method('send');
 
-		$result = $this->MediaView->render();
-		$this->assertTrue($result);
+		$this->MediaView->render();
 	}
 
 /**
