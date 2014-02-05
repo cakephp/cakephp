@@ -97,12 +97,6 @@ class EagerLoader {
 		}
 
 		$associations = (array)$associations;
-		$current = current($associations);
-		if (is_array($current) && isset($current['instance'])) {
-			$this->_containments = $this->_normalized = $associations;
-			return;
-		}
-
 		$associations = $this->_reformatContain($associations, $this->_containments);
 		$this->_normalized = $this->_loadExternal = null;
 		return $this->_containments = $associations;
@@ -204,6 +198,7 @@ class EagerLoader {
 			}
 
 			if (is_array($options)) {
+				$options =  isset($options['config']) ? $options['config'] : $options;
 				$options = $this->_reformatContain($options, []);
 			}
 
