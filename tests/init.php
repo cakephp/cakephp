@@ -35,6 +35,17 @@ define('CORE_TEST_CASES', CORE_TESTS . 'TestCase');
 define('TEST_APP', CORE_TESTS . 'test_app' . DS);
 define('LOG_ERROR', LOG_ERR);
 
+/**
+ * Basic defines for timing functions.
+ */
+define('SECOND', 1);
+define('MINUTE', 60);
+define('HOUR', 3600);
+define('DAY', 86400);
+define('WEEK', 604800);
+define('MONTH', 2592000);
+define('YEAR', 31536000);
+
 // Point app constants to the test app.
 define('APP', TEST_APP . 'TestApp' . DS);
 define('WWW_ROOT', TEST_APP . WEBROOT_DIR . DS);
