@@ -23,6 +23,12 @@ use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
 
 /**
+ * Test stub.
+ */
+class Article extends Entity {
+}
+
+/**
  * Entity context test case.
  */
 class EntityContextTest extends TestCase {
@@ -42,6 +48,29 @@ class EntityContextTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->request = new Request();
+	}
+
+/**
+ * Test operations that lack a table argument.
+ *
+ * @return void
+ */
+	public function testOperationsNoTableArg() {
+		$row = new Article([
+			'title' => 'Test entity',
+			'body' => 'Something new'
+		]);
+		$row->errors('title', ['Title is required.']);
+
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+		]);
+
+		$result = $context->val('title');
+		$this->assertEquals($row->title, $result);
+
+		$result = $context->error('title');
+		$this->assertEquals($row->errors('title'), $result);
 	}
 
 /**

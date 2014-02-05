@@ -17,6 +17,7 @@ namespace Cake\View\Form;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use Traversable;
 
@@ -92,8 +93,20 @@ class EntityContext {
  */
 	protected function _prepare() {
 		$table = $this->_context['table'];
+		if (empty($table)) {
+			$entity = $this->_context['entity'];
+			if ($entity instanceof Entity) {
+				list($ns, $entityClass) = namespaceSplit(get_class($entity));
+				$table = Inflector::pluralize($entityClass);
+			}
+		}
 		if (is_string($table)) {
 			$table = TableRegistry::get($table);
+		}
+		if (!is_object($table)) {
+			throw new \RuntimeException(
+				'Unable to find table class for current entity'
+			);
 		}
 		$alias = $this->_rootName = $table->alias();
 		$this->_tables[$alias] = $table;
