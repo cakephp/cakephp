@@ -14,6 +14,7 @@
  */
 namespace Cake\Test\TestCase\View\Form;
 
+use Cake\Collection\Collection;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -21,6 +22,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
+use ArrayObject;
 
 /**
  * Test stub.
@@ -71,6 +73,125 @@ class EntityContextTest extends TestCase {
 
 		$result = $context->error('title');
 		$this->assertEquals($row->errors('title'), $result);
+	}
+
+/**
+ * Data provider for testing collections.
+ *
+ * @return array
+ */
+	public static function collectionProvider() {
+		$one = new Entity([
+			'title' => 'First post',
+			'body' => 'Stuff',
+			'user' => new Entity(['username' => 'mark'])
+		]);
+		$one->errors('title', 'Required field');
+
+		$two = new Entity([
+			'title' => 'Second post',
+			'body' => 'Some text',
+			'user' => new Entity(['username' => 'jose'])
+		]);
+		$two->errors('body', 'Not long enough');
+
+		return [
+			'array' => [[$one, $two]],
+			'basic iterator' => [new ArrayObject([$one, $two])],
+			'collection' => [new Collection([$one, $two])],
+		];
+	}
+
+/**
+ * Test operations on a collection of entities.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testValOnCollections($collection) {
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+			'table' => 'Articles',
+		]);
+
+		$result = $context->val('0.title');
+		$this->assertEquals('First post', $result);
+
+		$result = $context->val('0.user.username');
+		$this->assertEquals('mark', $result);
+
+		$result = $context->val('1.title');
+		$this->assertEquals('Second post', $result);
+
+		$result = $context->val('1.user.username');
+		$this->assertEquals('jose', $result);
+	}
+
+/**
+ * Test error operations on a collection of entities.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testErrorsOnCollections($collection) {
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+			'table' => 'Articles',
+		]);
+
+		$this->assertTrue($context->hasError('0.title'));
+		$this->assertEquals(['Required field'], $context->error('0.title'));
+		$this->assertFalse($context->hasError('0.body'));
+
+		$this->assertFalse($context->hasError('1.title'));
+		$this->assertEquals(['Not long enough'], $context->error('1.body'));
+		$this->assertTrue($context->hasError('1.body'));
+	}
+
+/**
+ * Test schema operations on a collection of entities.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testSchemaOnCollections($collection) {
+		$this->_setupTables();
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+			'table' => 'Articles',
+		]);
+
+		$this->assertEquals('string', $context->type('0.title'));
+		$this->assertEquals('text', $context->type('1.body'));
+		$this->assertEquals('string', $context->type('0.user.username'));
+		$this->assertEquals('string', $context->type('1.user.username'));
+		$this->assertNull($context->type('0.nope'));
+
+		$expected = ['length' => 255, 'precision' => null];
+		$this->assertEquals($expected, $context->attributes('0.user.username'));
+	}
+
+/**
+ * Test validation operations on a collection of entities.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testValidatorsOnCollections($collection) {
+		$this->_setupTables();
+
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+			'table' => 'Articles',
+			'validator' => [
+				'Articles' => 'create',
+				'Users' => 'custom',
+			]
+		]);
+
+		$this->assertTrue($context->isRequired('0.title'));
+		$this->assertFalse($context->isRequired('1.body'));
+		$this->assertTrue($context->isRequired('0.user.username'));
 	}
 
 /**
