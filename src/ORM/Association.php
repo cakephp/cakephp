@@ -415,7 +415,14 @@ abstract class Association {
 		}
 
 		$this->_dispatchBeforeFind($dummy);
-		$this->_copyAttributes($query, $dummy, $options);
+
+		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
+		$options['conditions']->add($dummy->clause('where') ?: []);
+		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
+	
+		$this->_appendFields($query, $dummy, $options);
+		$this->_formatAssociationResults($query, $dummy);
+		$this->_bindNewAssociations($query, $dummy, $options);
 	}
 
 /**
@@ -474,13 +481,9 @@ abstract class Association {
 		$table->getEventManager()->dispatch($event);
 	}
 
-	protected function _copyAttributes($query, $surrogate, $options) {
-		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$options['conditions']->add($surrogate->clause('where') ?: []);
-		$target = $this->_targetTable;
-		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
-
+	protected function _appendFields($query, $surrogate, $options) {
 		$options['fields'] = $surrogate->clause('select') ?: $options['fields'];
+		$target = $this->_targetTable;
 		if (empty($options['fields'])) {
 			$f = isset($options['fields']) ? $options['fields'] : null;
 			if ($options['includeFields'] && ($f === null || $f !== false)) {
@@ -491,13 +494,9 @@ abstract class Association {
 		if (!empty($options['fields'])) {
 			$query->select($query->aliasFields($options['fields'], $target->alias()));
 		}
-
-		
-		$this->_formatAssociationResults($query, $surrogate, $options);
-		$this->_bindNewAssociations($query, $surrogate, $options);
 	}
 
-	protected function _formatAssociationResults($query, $surrogate, $options) {
+	protected function _formatAssociationResults($query, $surrogate) {
 		$formatters = $surrogate->formatResults();
 
 		if (!$formatters) {
@@ -517,15 +516,18 @@ abstract class Association {
 	protected function _bindNewAssociations($query, $surrogate, $options) {
 		$contain = $surrogate->contain();
 		$target = $this->_targetTable;
-		if ($contain) {
-			$loader = $surrogate->eagerLoader();
-			$loader->attachAssociations($query, $target, $options['includeFields']);
-			$newBinds = [];
-			foreach ($contain as $alias => $value) {
-				$newBinds[$options['path'] . '.' . $alias] = $value;
-			}
-			$query->contain($newBinds);
+
+		if (!$contain) {
+			return;
 		}
+
+		$loader = $surrogate->eagerLoader();
+		$loader->attachAssociations($query, $target, $options['includeFields']);
+		$newBinds = [];
+		foreach ($contain as $alias => $value) {
+			$newBinds[$options['path'] . '.' . $alias] = $value;
+		}
+		$query->contain($newBinds);
 	}
 
 /**

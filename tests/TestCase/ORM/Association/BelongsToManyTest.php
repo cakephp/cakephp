@@ -1479,15 +1479,23 @@ class BelongsToManyTest extends TestCase {
 		$association = new BelongsToMany('Tags', $config);
 		$listener = $this->getMock('stdClass', ['__invoke']);
 		$this->tag->getEventManager()->attach($listener, 'Model.beforeFind');
-		$newQuery = $this->tag->query();
 		$listener->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery, [], false);
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				[],
+				false
+			);
 
 		$listener2 = $this->getMock('stdClass', ['__invoke']);
 		$table->getEventManager()->attach($listener2, 'Model.beforeFind');
-		$newQuery2 = $table->query();
 		$listener2->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery2, [], false);
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				[],
+				false
+			);
 
 		$association->attachTo($query);
 	}
@@ -1509,15 +1517,23 @@ class BelongsToManyTest extends TestCase {
 		$listener = $this->getMock('stdClass', ['__invoke']);
 		$this->tag->getEventManager()->attach($listener, 'Model.beforeFind');
 		$opts = ['something' => 'more'];
-		$newQuery = $this->tag->query()->applyOptions($opts);
 		$listener->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery, $opts, false);
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				$opts,
+				false
+			);
 
 		$listener2 = $this->getMock('stdClass', ['__invoke']);
 		$table->getEventManager()->attach($listener2, 'Model.beforeFind');
-		$newQuery2 = $table->query();
 		$listener2->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $newQuery2, [], false);
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				[],
+				false
+			);
 
 		$association->attachTo($query, ['queryBuilder' => function($q) {
 			return $q->applyOptions(['something' => 'more']);

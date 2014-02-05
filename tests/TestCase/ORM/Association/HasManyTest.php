@@ -788,9 +788,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$listener = $this->getMock('stdClass', ['__invoke']);
 		$association = new HasMany('Articles', $config);
 		$this->article->getEventManager()->attach($listener, 'Model.beforeFind');
-		$dummy = $this->article->query();
 		$listener->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $dummy, [], false);
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				[],
+				false
+			);
 		$association->attachTo($query);
 	}
 
@@ -811,9 +815,13 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$association = new HasMany('Articles', $config);
 		$this->article->getEventManager()->attach($listener, 'Model.beforeFind');
 		$opts = ['something' => 'more'];
-		$dummy = $this->article->query()->applyOptions($opts);
 		$listener->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $dummy, $opts, false);
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				$opts,
+				false
+			);
 		$association->attachTo($query, ['queryBuilder' => function($q) {
 			return $q->applyOptions(['something' => 'more']);
 		}]);

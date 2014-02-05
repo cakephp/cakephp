@@ -344,9 +344,13 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$listener = $this->getMock('stdClass', ['__invoke']);
 		$this->company->getEventManager()->attach($listener, 'Model.beforeFind');
 		$association = new BelongsTo('Companies', $config);
-		$dummy = $this->company->query();
 		$listener->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $dummy, [], false);
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				[],
+				false
+			);
 		$association->attachTo($query);
 	}
 
@@ -367,9 +371,13 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		$this->company->getEventManager()->attach($listener, 'Model.beforeFind');
 		$association = new BelongsTo('Companies', $config);
 		$options = ['something' => 'more'];
-		$dummy = $this->company->query()->applyOptions($options);
 		$listener->expects($this->once())->method('__invoke')
-			->with($this->isInstanceOf('\Cake\Event\Event'), $dummy, $options, false);
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				$options,
+				false
+			);
 		$association->attachTo($query, ['queryBuilder' => function($q) {
 			return $q->applyOptions(['something' => 'more']);
 		}]);
