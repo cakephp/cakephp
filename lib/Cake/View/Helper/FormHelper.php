@@ -1407,14 +1407,11 @@ class FormHelper extends AppHelper {
 			unset($options['default']);
 		}
 
-		$options += array('required' => false);
+		$options += array('value' => 1, 'required' => false);
 		$options = $this->_initInputField($fieldName, $options) + array('hiddenField' => true);
 		$value = current($this->value($valueOptions));
 		$output = '';
 
-		if (empty($options['value'])) {
-			$options['value'] = 1;
-		}
 		if (
 			(!isset($options['checked']) && !empty($value) && $value == $options['value']) ||
 			!empty($options['checked'])
@@ -2103,14 +2100,14 @@ class FormHelper extends AppHelper {
  * limitation, but to avoid layout issues it still filters out some sensitive chars.
  *
  * @param string $value The value that should be transferred into a DOM ID suffix.
- * @param string $type Doctype to use. Defaults to html5. Anything else will use limited chars.
+ * @param string $type Doctype to use. Defaults to html4.
  * @return string DOM ID
  */
-	public function domIdSuffix($value, $type = 'html5') {
+	public function domIdSuffix($value, $type = 'html4') {
 		if ($type === 'html5') {
-			$value = str_replace(array('<', '>', ' ', '"', '\''), '_', $value);
+			$value = str_replace(array('@', '<', '>', ' ', '"', '\''), '_', $value);
 		} else {
-			$value = preg_replace('~[^\\pL\d-_]+~u', '_', $value);
+			$value = Inflector::camelize(Inflector::slug($value));
 		}
 		$value = Inflector::camelize($value);
 		$count = 1;
