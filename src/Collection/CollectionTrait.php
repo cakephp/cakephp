@@ -751,6 +751,42 @@ trait CollectionTrait {
 		return new Collection($collection);
 	}
 
+/**
+ * Returns a new collection containing each of the elements found in `$values` as
+ * a property inside the corresponding elements in this collection. The property
+ * where the values will be inserted is described by the `$path` parameter.
+ *
+ * The $path can be a string with a property name or a dot separated path of
+ * properties that should be followed to get the last one in the path.
+ *
+ * If a column or property could not be found for a particular element in the
+ * collection as part of the path, the element will be kept unchanged.
+ *
+ * ### Example:
+ *
+ * Insert ages into a collection containing users:
+ *
+ * {{{
+ * $items = [
+ *	['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
+ *	['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan']]
+ * ];
+ * $ages = [25, 28];
+ * $inserted = (new Collection($items))->insert('comment.user.age', $ages);
+ *
+ * //Result will look like this when converted to array
+ * [
+ *	['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark', 'age' => 25]],
+ *	['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan', 'age' => 28]]
+ * ];
+ * }}}
+ *
+ * @param string $path a dot separated string symbolizing the path to follow
+ * inside the hierarchy of each value so that the value can be inserted
+ * @param array|\Traversable The values to be inserted at the specified path,
+ * values are matched with the elements in this collection by its positional index.
+ * @return \Cake\Collection\Iterator\InsertIterator
+ */
 	public function insert($path, $values) {
 		return new InsertIterator($this, $path, $values);
 	}
