@@ -16,6 +16,7 @@ namespace Cake\ORM;
 
 use Cake\Event\Event;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -387,6 +388,8 @@ abstract class Association {
  * @param Query $query the query to be altered to include the target table data
  * @param array $options Any extra options or overrides to be taken in account
  * @return void
+ * @throws \RuntimeException if the query builder passed does not return a query
+ * object
  */
 	public function attachTo(Query $query, array $options = []) {
 		$target = $this->target();
@@ -412,6 +415,12 @@ abstract class Association {
 
 		if (!empty($options['queryBuilder'])) {
 			$dummy = $options['queryBuilder']($dummy);
+			if (!($dummy instanceof Query)) {
+				throw new \RuntimeException(sprintf(
+					'Query builder for association "%s" did not return a query',
+					$this->name()
+				));
+			}
 		}
 
 		$this->_dispatchBeforeFind($dummy);
@@ -510,7 +519,7 @@ abstract class Association {
 				$extracted = new ResultSetDecorator($callable($extracted));
 			}
 			return $results->insert($property, $extracted);
-		});
+		}, Query::PREPEND);
 	}
 
 	protected function _bindNewAssociations($query, $surrogate, $options) {

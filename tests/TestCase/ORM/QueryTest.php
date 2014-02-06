@@ -1580,4 +1580,32 @@ class QueryTest extends TestCase {
 		$this->assertEquals(3, $query->count());
 	}
 
+/**
+ * Tests that it is possible to apply formatters inside the query builder
+ * for belongsTo associations
+ *
+ * @return void
+ */
+	public function testFormatBelongsToRecords() {
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+
+		$query = $table->find()
+			->contain(['authors' => function($q) {
+				return $q->formatResults(function($authors) {
+					return $authors->map(function($author) {
+						$author->idCopy = $author->id;
+						return $author;
+					});
+				});
+			}]);
+	
+		$query->formatResults(function($results) {
+			return $results->combine('id', 'author.idCopy');
+		});
+		$results = $query->toArray();
+		$expected = [1 => 1, 2 => 3, 3 => 1];
+		$this->assertEquals($expected, $results);
+	}
+
 }
