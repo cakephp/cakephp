@@ -25,6 +25,7 @@ use Traversable;
 
 /**
  * Provides a form context around a single entity and its relations.
+ * It also can be used as context around an array or iterator of entities.
  *
  * This class lets FormHelper interface with entities or collections
  * of entities.
@@ -35,7 +36,8 @@ use Traversable;
  * - `table` Either the ORM\Table instance to fetch schema/validators
  *   from, an array of table instances in the case of a form spanning
  *   multiple entities, or the name(s) of the table.
- *   If this is null the table name(s) will be determined using conventions.
+ *   If this is null the table name(s) will be determined using naming
+ *   conventions.
  * - `validator` Either the Validation\Validator to use, or the name of the
  *   validation method to call on the table object. For example 'default'.
  *   Defaults to 'default'. Can be an array of table alias=>validators when
