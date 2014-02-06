@@ -24,6 +24,9 @@ use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Query;
 use Cake\Database\SqlDialectTrait;
 
+/**
+ * Sql dialect trait
+ */
 trait SqliteDialectTrait {
 
 	use SqlDialectTrait;
@@ -100,7 +103,8 @@ trait SqliteDialectTrait {
  * Receives a TupleExpression and changes it so that it conforms to this
  * SQL dialect.
  *
- * @param Cake\Database\Expression\TupleComparison
+ * @param Cake\Database\Expression\TupleComparison $expression
+ * @param Cake\Database\Query $query
  * @return void
  */
 	protected function _transformTupleComparison(TupleComparison $expression, $query) {

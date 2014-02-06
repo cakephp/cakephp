@@ -24,6 +24,10 @@ namespace Cake\Database\Statement;
  */
 class BufferedStatement extends StatementDecorator {
 
+/**
+ * Records count
+ * @var integer
+ */
 	protected $_count = 0;
 
 /**
@@ -33,13 +37,17 @@ class BufferedStatement extends StatementDecorator {
  */
 	protected $_records = [];
 
- /**
+/**
  * If true, all rows were fetched
  *
  * @var boolean
  */
 	protected $_allFetched = true;
 
+/**
+ * Current record pointer
+ * @var integer
+ */
 	protected $_counter = 0;
 
 /**

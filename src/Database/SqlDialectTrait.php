@@ -16,6 +16,9 @@
  */
 namespace Cake\Database;
 
+/**
+ * Sql dialect trait
+ */
 trait SqlDialectTrait {
 
 /**

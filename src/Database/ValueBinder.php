@@ -16,6 +16,9 @@
  */
 namespace Cake\Database;
 
+/**
+ * Value binder class manages list of values bound to conditions.
+ */
 class ValueBinder {
 
 /**

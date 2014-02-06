@@ -16,6 +16,9 @@
  */
 namespace Cake\Database;
 
+/**
+ * Type converter trait
+ */
 trait TypeConverterTrait {
 
 /**

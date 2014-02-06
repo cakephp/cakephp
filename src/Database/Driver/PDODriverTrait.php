@@ -20,6 +20,9 @@ use Cake\Database\Query;
 use Cake\Database\Statement\PDOStatement;
 use PDO;
 
+/**
+ * PDO driver trait
+ */
 trait PDODriverTrait {
 
 /**
