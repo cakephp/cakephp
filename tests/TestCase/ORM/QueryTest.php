@@ -1592,20 +1592,28 @@ class QueryTest extends TestCase {
 
 		$query = $table->find()
 			->contain(['authors' => function($q) {
-				return $q->formatResults(function($authors) {
-					return $authors->map(function($author) {
-						$author->idCopy = $author->id;
-						return $author;
+				return $q
+					->formatResults(function($authors) {
+						return $authors->map(function($author) {
+							$author->idCopy = $author->id;
+							return $author;
+						});
+					})
+					->formatResults(function($authors) {
+						return $authors->map(function($author) {
+							$author->idCopy = $author->idCopy + 2;
+							return $author;
+						});
 					});
-				});
 			}]);
 	
 		$query->formatResults(function($results) {
 			return $results->combine('id', 'author.idCopy');
 		});
 		$results = $query->toArray();
-		$expected = [1 => 1, 2 => 3, 3 => 1];
+		$expected = [1 => 3, 2 => 5, 3 => 3];
 		$this->assertEquals($expected, $results);
 	}
+
 
 }
