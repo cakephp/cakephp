@@ -104,6 +104,7 @@ class Oauth {
  *
  * @param Request $request
  * @param array $credentials
+ * @return string
  */
 	protected function _hmacSha1($request, $credentials) {
 		$nonce = isset($credentials['nonce']) ? $credentials['nonce'] : uniqid();

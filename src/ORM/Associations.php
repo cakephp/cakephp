@@ -99,6 +99,7 @@ class Associations {
 /**
  * Get an array of associations matching a specific type.
  *
+ * @param string $class
  * @return array
  */
 	public function type($class) {

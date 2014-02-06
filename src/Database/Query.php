@@ -1579,6 +1579,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	});
  * }}}
  *
+ * @param null|callable $callback
+ * @param boolean $overwrite
  * @return Query
  */
 	public function decorateResults($callback, $overwrite = false) {

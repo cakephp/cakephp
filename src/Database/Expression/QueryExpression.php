@@ -492,6 +492,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * Returns an array of placeholders that will have a bound value corresponding
  * to each value in the first argument.
  *
+ * @param string $field database field to be used to bind values
  * @param array $values
  * @param string $type the type to be used to bind the values
  * @return array

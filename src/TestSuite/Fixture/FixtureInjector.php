@@ -40,6 +40,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Constructor. Save internally the reference to the passed fixture manager
  *
+ * @param Cake\TestSuite\Fixture\FixtureManager $manager
  * @return void
  */
 	public function __construct(FixtureManager $manager) {
@@ -76,6 +77,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
+ * @param PHPUnit_Framework_Test $test
+ * @param Exception $e
+ * @param float $time
  * @return void
  */
 	public function addError(PHPUnit_Framework_Test $test, Exception $e, $time) {
@@ -84,6 +88,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
+ * @param PHPUnit_Framework_Test $test
+ * @param PHPUnit_Framework_AssertionFailedError $e
+ * @param float $time
  * @return void
  */
 	public function addFailure(PHPUnit_Framework_Test $test, PHPUnit_Framework_AssertionFailedError $e, $time) {
@@ -92,6 +99,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
+ * @param PHPUnit_Framework_Test $test
+ * @param PHPUnit_Framework_AssertionFailedError $e
+ * @param float $time
  * @return void
  */
 	public function addIncompleteTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
@@ -100,6 +110,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
+ * @param PHPUnit_Framework_Test $test
+ * @param Exception $e
+ * @param float $time
  * @return void
  */
 	public function addSkippedTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
@@ -108,6 +121,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
+ * @param PHPUnit_Framework_Test $test
  * @return void
  */
 	public function startTest(PHPUnit_Framework_Test $test) {
@@ -116,6 +130,8 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
+ * @param PHPUnit_Framework_Test $test
+ * @param float $time
  * @return void
  */
 	public function endTest(PHPUnit_Framework_Test $test, $time) {

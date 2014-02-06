@@ -263,6 +263,7 @@ class Request implements \ArrayAccess {
 /**
  * Process the GET parameters and move things into the object.
  *
+ * @param array $query Contains querystring data such as `pag`
  * @return void
  */
 	protected function _processGet($query) {
@@ -280,6 +281,7 @@ class Request implements \ArrayAccess {
  * by PHP. Following that, REQUEST_URI, PHP_SELF, HTTP_X_REWRITE_URL and argv are checked in that order.
  * Each of these server variables have the base path, and query strings stripped off
  *
+ * @param array $config
  * @return string URI The CakePHP request path that is being accessed.
  */
 	protected static function _url($config) {
