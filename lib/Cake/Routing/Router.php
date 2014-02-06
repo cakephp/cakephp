@@ -269,6 +269,9 @@ class Router {
  *
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
+ * 
+ * $defaults is merged with the results of parsing the request URL to form the final routing destination and its
+ * parameters. This destination is expressed as an associative array by Router. See the output of {@link parse()}.
  *
  * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass`
  * have special meaning in the $options array.
@@ -304,6 +307,7 @@ class Router {
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
  * @see routes
+ * @see parse().
  * @return array Array of routes
  * @throws RouterException
  */
