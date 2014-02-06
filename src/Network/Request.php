@@ -27,7 +27,6 @@ use Cake\Utility\Hash;
  * Has both an Array and Object interface. You can access framework parameters using indexes:
  *
  * `$request['controller']` or `$request->controller`.
- *
  */
 class Request implements \ArrayAccess {
 
@@ -106,7 +105,7 @@ class Request implements \ArrayAccess {
  * Only set to true if your application runs behind load balancers/proxies
  * that you control.
  *
- * @param boolean
+ * @var boolean
  */
 	public $trustProxy = false;
 

@@ -2,8 +2,6 @@
 /**
  * PrivateActionException class
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright 2005-2012, Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -20,12 +18,23 @@ namespace Cake\Error;
 /**
  * Private Action exception - used when a controller action
  * starts with a  `_`.
- *
  */
 class PrivateActionException extends Exception {
 
+/**
+ * Message template.
+ *
+ * @var string
+ */
 	protected $_messageTemplate = 'Private Action %s::%s() is not directly accessible.';
 
+/**
+ * Constructor
+ *
+ * @param string $message Excception message
+ * @param integer $code Exception code
+ * @param \Exception $previous Previous exception
+ */
 	public function __construct($message, $code = 404, Exception $previous = null) {
 		parent::__construct($message, $code, $previous);
 	}

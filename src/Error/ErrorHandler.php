@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP 5
+ * ErrorHandler class
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -20,7 +20,6 @@ use Cake\Core\App;
 use Cake\Utility\Debugger;
 
 /**
- *
  * Error Handler provides basic error and exception handling for your application. It captures and
  * handles all unhandled exceptions and errors. Displays helpful framework errors when debug > 1.
  *
