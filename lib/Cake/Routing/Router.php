@@ -245,19 +245,19 @@ class Router {
  * Connects a new Route in the router.
  *
  * Routes are a way of connecting request URLs to objects in your application. At their core routes
- * are a set or regular expressions that are used to match requests to destinations.
+ * are a set of regular expressions that are used to match requests to destinations.
  *
  * Examples:
  *
  * `Router::connect('/:controller/:action/*');`
  *
- * The first parameter will be used as a controller name while the second is used as the action name.
+ * The first token ':controller' will be used as a controller name while the second is used as the action name.
  * the '/*' syntax makes this route greedy in that it will match requests like `/posts/index` as well as requests
  * like `/posts/edit/1/foo/bar`.
  *
  * `Router::connect('/home-page', array('controller' => 'pages', 'action' => 'display', 'home'));`
  *
- * The above shows the use of route parameter defaults. And providing routing parameters for a static route.
+ * The above shows the use of route parameter defaults, and providing routing parameters for a static route.
  *
  * {{{
  * Router::connect(
