@@ -839,4 +839,20 @@ class CollectionTest extends TestCase {
 		$this->assertEquals($expected, $collection->toArray());
 	}
 
+/**
+ * Tests insert
+ *
+ * @return void
+ */
+	public function testInsert() {
+		$items = [['a' => 1], ['b' => 2]];
+		$collection = new Collection($items);
+		$iterator = $collection->insert('c', [3, 4]);
+		$this->assertInstanceOf('\Cake\Collection\Iterator\InsertIterator', $iterator);
+		$this->assertEquals(
+			[['a' => 1, 'c' => 3], ['b' => 2, 'c' => 4]],
+			iterator_to_array($iterator)
+		);
+	}
+
 }
