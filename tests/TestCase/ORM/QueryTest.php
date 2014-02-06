@@ -1615,5 +1615,45 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $results);
 	}
 
+/**
+ * Tests it is possible to apply formatters to deep relations.
+ *
+ * @return void
+ */
+	public function testFormatDeepAssocationRecords() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles');
+		$table->association('Articles')->target()->belongsTo('Authors');
 
+		$builder = function($q) {
+			return $q
+				->formatResults(function($results) {
+					return $results->map(function($result) {
+						$result->idCopy = $result->id;
+						return $result;
+					});
+				})
+				->formatResults(function($results) {
+					return $results->map(function($result) {
+						$result->idCopy = $result->idCopy + 2;
+						return $result;
+					});
+				});
+		};
+		$query = $table->find()
+			->contain(['Articles' => $builder, 'Articles.Authors' => $builder]);
+		$query->formatResults(function($results) {
+			return $results->map(function($row) {
+				return sprintf(
+					'%s - %s - %s',
+					$row->tag_id,
+					$row->article->idCopy,
+					$row->article->author->idCopy
+				);
+			});
+		});
+
+		$expected = ['1 - 3 - 3', '2 - 3 - 3', '1 - 4 - 5', '3 - 4 - 5'];
+		$this->assertEquals($expected, $query->toArray());
+	}
 }

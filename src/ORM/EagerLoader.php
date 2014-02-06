@@ -156,7 +156,7 @@ class EagerLoader {
 				$repository,
 				$alias,
 				$options,
-				$alias
+				[]
 			);
 		}
 
@@ -233,7 +233,8 @@ class EagerLoader {
 
 		foreach ($this->attachableAssociations($repository) as $options) {
 			$config = $options['config'] + [
-				'path' => $options['path'],
+				'aliasPath' => $options['aliasPath'],
+				'propertyPath' => $options['propertyPath'],
 				'includeFields' => $includeFields
 			];
 			$options['instance']->attachTo($query, $config);
@@ -285,11 +286,13 @@ class EagerLoader {
  * @param Table $parent owning side of the association
  * @param string $alias name of the association to be loaded
  * @param array $options list of extra options to use for this association
- * @param string $path A dot separated string of associations that lead to this `$alias`
+ * @param array $paths A list of dot separated strings signifying associations that
+ * lead to this `$alias` and the path to follow in entities to fetch a record of each
+ * the association
  * @return array normalized associations
  * @throws \InvalidArgumentException When containments refer to associations that do not exist.
  */
-	protected function _normalizeContain(Table $parent, $alias, $options, $path) {
+	protected function _normalizeContain(Table $parent, $alias, $options, $paths) {
 		$defaults = $this->_containOptions;
 		$instance = $parent->association($alias);
 		if (!$instance) {
@@ -298,6 +301,10 @@ class EagerLoader {
 			);
 		}
 
+		$paths += ['aliasPath' => '', 'propertyPath' => ''];
+		$paths['aliasPath'] .= '.' . $alias;
+		$paths['propertyPath'] .= '.' . $instance->property();
+
 		$table = $instance->target();
 
 		$extra = array_diff_key($options, $defaults);
@@ -305,13 +312,13 @@ class EagerLoader {
 			'associations' => [],
 			'instance' => $instance,
 			'config' => array_diff_key($options, $extra),
-			'path' => $path
+			'aliasPath' => trim($paths['aliasPath'], '.'),
+			'propertyPath' => trim($paths['propertyPath'], '.'),
 		];
 		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
 
 		foreach ($extra as $t => $assoc) {
-			$step = $path . '.' . $t;
-			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc, $step);
+			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc, $paths);
 		}
 
 		return $config;

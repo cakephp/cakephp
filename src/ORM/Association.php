@@ -430,7 +430,7 @@ abstract class Association {
 		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
 	
 		$this->_appendFields($query, $dummy, $options);
-		$this->_formatAssociationResults($query, $dummy);
+		$this->_formatAssociationResults($query, $dummy, $options);
 		$this->_bindNewAssociations($query, $dummy, $options);
 	}
 
@@ -505,15 +505,15 @@ abstract class Association {
 		}
 	}
 
-	protected function _formatAssociationResults($query, $surrogate) {
+	protected function _formatAssociationResults($query, $surrogate, $options) {
 		$formatters = $surrogate->formatResults();
 
 		if (!$formatters) {
 			return;
 		}
-
-		$query->formatResults(function($results) use ($formatters) {
-			$property = $this->property();
+		
+		$property = $options['propertyPath'];
+		$query->formatResults(function($results) use ($formatters, $property){
 			$extracted = $results->extract($property)->compile();
 			foreach ($formatters as $callable) {
 				$extracted = new ResultSetDecorator($callable($extracted));
@@ -534,7 +534,7 @@ abstract class Association {
 		$loader->attachAssociations($query, $target, $options['includeFields']);
 		$newBinds = [];
 		foreach ($contain as $alias => $value) {
-			$newBinds[$options['path'] . '.' . $alias] = $value;
+			$newBinds[$options['aliasPath'] . '.' . $alias] = $value;
 		}
 		$query->contain($newBinds);
 	}
