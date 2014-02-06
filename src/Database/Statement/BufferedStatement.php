@@ -24,7 +24,7 @@ namespace Cake\Database\Statement;
  */
 class BufferedStatement extends StatementDecorator {
 
- protected $_count = 0;
+ 	protected $_count = 0;
 
 /**
  * Array of results
