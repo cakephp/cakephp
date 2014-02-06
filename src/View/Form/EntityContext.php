@@ -19,6 +19,8 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use IteratorAggregate;
+use IteratorIterator;
 use Traversable;
 
 /**
@@ -89,12 +91,31 @@ class EntityContext {
 /**
  * Prepare some additional data from the context.
  *
+ * If the table option was provided to the constructor and it
+ * was a string, ORM\TableRegistry will be used to get the correct table instance.
+ *
+ * If an object is provided as the table option, it will be used as is.
+ *
+ * If no table option is provided, the table name will be derived based on
+ * naming conventions. This inference will work with a number of common objects
+ * like arrays, Collection objects and ResultSets.
+ *
  * @return void
+ * @throws \RuntimeException When a table object cannot be located/inferred.
  */
 	protected function _prepare() {
 		$table = $this->_context['table'];
 		if (empty($table)) {
 			$entity = $this->_context['entity'];
+			if ($entity instanceof IteratorAggregate) {
+				$entity = $entity->getIterator()->current();
+			} elseif ($entity instanceof IteratorIterator) {
+				$entity = $entity->getInnerIterator()->current();
+			} elseif ($entity instanceof Traversable) {
+				$entity = $entity->current();
+			} elseif (is_array($entity)) {
+				$entity = current($entity);
+			}
 			if ($entity instanceof Entity) {
 				list($ns, $entityClass) = namespaceSplit(get_class($entity));
 				$table = Inflector::pluralize($entityClass);
@@ -103,6 +124,7 @@ class EntityContext {
 		if (is_string($table)) {
 			$table = TableRegistry::get($table);
 		}
+
 		if (!is_object($table)) {
 			throw new \RuntimeException(
 				'Unable to find table class for current entity'

@@ -22,6 +22,7 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
+use ArrayIterator;
 use ArrayObject;
 
 /**
@@ -76,6 +77,24 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test collection operations that lack a table argument.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testCollectionOperationsNoTableArg($collection) {
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+		]);
+
+		$result = $context->val('0.title');
+		$this->assertEquals('First post', $result);
+
+		$result = $context->error('1.body');
+		$this->assertEquals(['Not long enough'], $result);
+	}
+
+/**
  * Data provider for testing collections.
  *
  * @return array
@@ -98,6 +117,7 @@ class EntityContextTest extends TestCase {
 		return [
 			'array' => [[$one, $two]],
 			'basic iterator' => [new ArrayObject([$one, $two])],
+			'array iterator' => [new ArrayIterator([$one, $two])],
 			'collection' => [new Collection([$one, $two])],
 		];
 	}
