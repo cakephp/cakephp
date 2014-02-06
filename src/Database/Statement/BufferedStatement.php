@@ -116,16 +116,16 @@ class BufferedStatement extends StatementDecorator {
 		return $this->_count;
 	}
 
-	/**
-	* Rewind the _counter property
-	*/
+/**
+ * Rewind the _counter property
+ */
 	public function rewind() {
 		$this->_counter = 0;
 	}
 
-	/**
-	* Reset all properties
-	*/
+/**
+ * Reset all properties
+ */
 	protected function _reset() {
 		$this->_count = $this->_counter = 0;
 		$this->_records = [];
