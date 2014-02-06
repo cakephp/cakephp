@@ -129,4 +129,3 @@ class InsertIterator extends Collection {
 	}
 
 }
-
