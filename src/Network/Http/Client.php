@@ -106,7 +106,7 @@ class Client {
 /**
  * List of cookies from responses made with this client.
  *
- * Cookies are indexed by the cookie's domain or 
+ * Cookies are indexed by the cookie's domain or
  * request host name.
  *
  * @var Cake\Network\Http\Cookies
@@ -197,7 +197,7 @@ class Client {
  *
  * The $data argument supports a special `_content` key
  * for providing a request body in a GET request. This is
- * generally not used but services like ElasticSearch use 
+ * generally not used but services like ElasticSearch use
  * this feature.
  *
  * @param string $url The url or path you want to request.
@@ -296,6 +296,8 @@ class Client {
  *
  * @param string $method HTTP method.
  * @param string $url URL to request.
+ * @param mixed $data The request body.
+ * @param array $options The options to use. Contains auth, proxy etc.
  * @return Cake\Network\Http\Response
  */
 	protected function _doRequest($method, $url, $data, $options) {

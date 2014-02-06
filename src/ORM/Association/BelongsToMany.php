@@ -489,6 +489,7 @@ class BelongsToMany extends Association {
  * association
  * @param array list of entities to link to link to the source entity using the
  * junction table
+ * @param array $options list of options accepted by Table::save()
  * @return boolean success
  */
 	protected function _saveLinks(Entity $sourceEntity, $targetEntities, $options) {
@@ -786,6 +787,10 @@ class BelongsToMany extends Association {
  * Throws an exception should any of the passed entities is not persisted.
  *
  * @throws \InvalidArgumentException
+ * @param \Cake\ORM\Entity $sourceEntity the row belonging to the `source` side
+ * of this association
+ * @param array $targetEntities list of entities belonging to the `target` side
+ * of this association
  * @return boolean
  */
 	protected function _checkPersistenceStatus($sourceEntity, array $targetEntities) {
@@ -880,7 +885,7 @@ class BelongsToMany extends Association {
  * Generates a string used as a table field that contains the values upon
  * which the filter should be applied
  *
- * params array $options
+ * @param array $options
  * @return string
  */
 	protected function _linkField($options) {

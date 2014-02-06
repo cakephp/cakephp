@@ -80,6 +80,7 @@ trait ExternalAssociationTrait {
  * Returns true if the eager loading process will require a set of parent table's
  * primary keys in order to use them as a filter in the finder query.
  *
+ * @param array $options
  * @return boolean true if a list of keys will be required
  */
 	public function requiresKeys($options = []) {

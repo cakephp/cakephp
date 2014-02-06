@@ -327,6 +327,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Correctly nest results keys including those coming from associations
  *
+ * @param mixed|boolean $row array containing columns and values or false if there is no results
  * @return array
  */
 	protected function _groupResult($row) {

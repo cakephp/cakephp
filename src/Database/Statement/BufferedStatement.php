@@ -24,10 +24,20 @@ namespace Cake\Database\Statement;
  */
 class BufferedStatement extends StatementDecorator {
 
-	protected $_count = 0;
+ protected $_count = 0;
 
+/**
+ * Array of results
+ *
+ * @var array
+ */
 	protected $_records = [];
 
+ /**
+ * If true, all rows were fetched
+ *
+ * @var boolean
+ */
 	protected $_allFetched = true;
 
 	protected $_counter = 0;
@@ -106,13 +116,16 @@ class BufferedStatement extends StatementDecorator {
 		return $this->_count;
 	}
 
-/**
- * {@inheritDoc}
- */
+	/**
+	* Rewind the _counter property
+	*/
 	public function rewind() {
 		$this->_counter = 0;
 	}
 
+	/**
+	* Reset all properties
+	*/
 	protected function _reset() {
 		$this->_count = $this->_counter = 0;
 		$this->_records = [];

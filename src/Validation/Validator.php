@@ -131,6 +131,8 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * If called with no arguments, it will return the provider stored under that name if
  * it exists, otherwise it returns this instance of chaining.
  *
+ * @param string $name
+ * @param null|object|string $object
  * @return Validator|object|string
  */
 	public function provider($name, $object = null) {

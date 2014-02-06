@@ -500,8 +500,9 @@ class Route {
  * Composes the string URL using the template
  * used to create the route.
  *
- * @param array $params The params to convert to a string url.
- * @param array $pass The additional passed arguments.
+ * @param array $params The params to convert to a string url
+ * @param array $pass The additional passed arguments
+ * @param array $query An array of parameters
  * @return string Composed route string.
  */
 	protected function _writeUrl($params, $pass = array(), $query = array()) {

@@ -127,6 +127,8 @@ class BehaviorRegistry extends ObjectRegistry {
  * declared on Cake\ORM\Behavior
  *
  * @param Cake\ORM\Behavior $instance
+ * @param string $class The classname that is missing.
+ * @param string $alias The alias of the object.
  * @return void
  * @throws Cake\Error\Exception when duplicate methods are connected.
  */

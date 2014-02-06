@@ -113,6 +113,9 @@ class Marshaller {
 /**
  * Create a new sub-marshaller and marshal the associated data.
  *
+ * @param Cake\ORM\Association $assoc
+ * @param array $value The data to hydrate
+ * @param array $include The associations to include.
  * @return mixed
  */
 	protected function _marshalAssociation($assoc, $value, $include) {
