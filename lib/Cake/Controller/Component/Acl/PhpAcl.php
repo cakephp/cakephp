@@ -26,11 +26,15 @@ class PhpAcl extends Object implements AclInterface {
 
 /**
  * Constant for deny
+ *
+ * @var boolean
  */
 	const DENY = false;
 
 /**
  * Constant for allow
+ *
+ * @var boolean
  */
 	const ALLOW = true;
 
@@ -364,6 +368,8 @@ class PhpAro {
 /**
  * role to resolve to when a provided ARO is not listed in
  * the internal tree
+ *
+ * @var string
  */
 	const DEFAULT_ROLE = 'Role/default';
 
