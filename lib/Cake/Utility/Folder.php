@@ -27,6 +27,8 @@ class Folder {
  * Recursively merges subfolders with the same name
  *
  * @constant MERGE
+ *
+ * @var string
  */
 	const MERGE = 'merge';
 
@@ -35,6 +37,8 @@ class Folder {
  * subfolders with the same name will be replaced
  *
  * @constant OVERWRITE
+ *
+ * @var string
  */
 	const OVERWRITE = 'overwrite';
 
@@ -43,6 +47,8 @@ class Folder {
  * if a subfolder with the same name exists it will be skipped
  *
  * @constant SKIP
+ *
+ * @var string
  */
 	const SKIP = 'skip';
 

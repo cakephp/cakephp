@@ -87,6 +87,7 @@ class ExceptionRenderer {
  * code error depending on the code used to construct the error.
  *
  * @param Exception $exception Exception
+ * @return void
  */
 	public function __construct(Exception $exception) {
 		$this->controller = $this->_getController($exception);

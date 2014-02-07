@@ -29,6 +29,8 @@ class ViewBlock {
  * Append content
  *
  * @constant APPEND
+ *
+ * @var string
  */
 	const APPEND = 'append';
 
@@ -36,6 +38,8 @@ class ViewBlock {
  * Prepend content
  *
  * @constant PREPEND
+ *
+ * @var string
  */
 	const PREPEND = 'prepend';
 

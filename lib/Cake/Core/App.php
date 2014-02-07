@@ -67,6 +67,8 @@ class App {
  * Append paths
  *
  * @constant APPEND
+ *
+ * @var string
  */
 	const APPEND = 'append';
 
@@ -74,6 +76,8 @@ class App {
  * Prepend paths
  *
  * @constant PREPEND
+ *
+ * @var string
  */
 	const PREPEND = 'prepend';
 
@@ -81,6 +85,8 @@ class App {
  * Register package
  *
  * @constant REGISTER
+ *
+ * @var string
  */
 	const REGISTER = 'register';
 
@@ -88,6 +94,8 @@ class App {
  * Reset paths instead of merging
  *
  * @constant RESET
+ *
+ * @var boolean
  */
 	const RESET = true;
 

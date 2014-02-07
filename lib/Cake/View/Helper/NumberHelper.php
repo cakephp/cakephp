@@ -73,7 +73,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::precision()
+ * Formats a number with a level of precision.
  *
  * @param float $number A floating point number.
  * @param integer $precision The precision of the returned number.
@@ -85,7 +85,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::toReadableSize()
+ * Returns a formatted-for-humans file size.
  *
  * @param integer $size Size in bytes
  * @return string Human readable size
@@ -96,7 +96,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::toPercentage()
+ * - `multiply`: Multiply the input value by 100 for decimal percentages.
  *
  * @param float $number A floating point number
  * @param integer $precision The precision of the returned number
@@ -109,7 +109,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::format()
+ * Formats a number into a currency format.
  *
  * @param float $number A floating point number
  * @param integer $options If integer then places, if string then before, if (,.-) then use it
@@ -122,7 +122,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::currency()
+ * Formats a number into a currency format.
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
@@ -137,7 +137,17 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::addFormat()
+ * Add a currency format to the Number helper. Makes reusing
+ * currency formats easier.
+ *
+ * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}
+ *
+ * You can now use `NOK` as a shortform when formatting currency amounts.
+ *
+ * {{{ $number->currency($value, 'NOK'); }}}
+ *
+ * Added formats are merged with the defaults defined in Cake\Utility\Number::$_currencyDefaults
+ * See Cake\Utility\Number::currency() for more information on the various options and their function.
  *
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
@@ -150,7 +160,7 @@ class NumberHelper extends AppHelper {
 	}
 
 /**
- * @see CakeNumber::defaultCurrency()
+ * Getter/setter for default currency
  *
  * @param string $currency The currency to be used in the future.
  * @return void
