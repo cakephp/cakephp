@@ -85,14 +85,45 @@ class Router {
 	protected static $_validExtensions = array();
 
 /**
- * 'Constant' regular expression definitions for named route elements
+ * Regular expression for action names
  *
+ * @var string
  */
 	const ACTION = 'index|show|add|create|edit|update|remove|del|delete|view|item';
+
+/**
+ * Regular expression for years
+ *
+ * @var string
+ */
 	const YEAR = '[12][0-9]{3}';
+
+/**
+ * Regular expression for months
+ *
+ * @var string
+ */
 	const MONTH = '0[1-9]|1[012]';
+
+/**
+ * Regular expression for days
+ *
+ * @var string
+ */
 	const DAY = '0[1-9]|[12][0-9]|3[01]';
+
+/**
+ * Regular expression for auto increment IDs
+ *
+ * @var string
+ */
 	const ID = '[0-9]+';
+
+/**
+ * Regular expression for UUIDs
+ *
+ * @var string
+ */
 	const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
 /**
@@ -269,7 +300,7 @@ class Router {
  *
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
- * 
+ *
  * $defaults is merged with the results of parsing the request URL to form the final routing destination and its
  * parameters. This destination is expressed as an associative array by Router. See the output of {@link parse()}.
  *

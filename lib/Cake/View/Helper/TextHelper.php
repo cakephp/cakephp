@@ -215,6 +215,9 @@ class TextHelper extends AppHelper {
 	}
 
 /**
+ * Highlights a given phrase in a text. You can specify any expression in highlighter that
+ * may include the \1 expression to include the $phrase found.
+ *
  * @see String::highlight()
  *
  * @param string $text Text to search the phrase in
@@ -251,6 +254,8 @@ class TextHelper extends AppHelper {
 	}
 
 /**
+ * Strips given text of all links (<a href=....)
+ *
  * @see String::stripLinks()
  *
  * @param string $text Text
@@ -262,6 +267,16 @@ class TextHelper extends AppHelper {
 	}
 
 /**
+ * Truncates text starting from the end.
+ *
+ * Cuts a string to the length of $length and replaces the first characters
+ * with the ellipsis if the text is longer than length.
+ *
+ * ### Options:
+ *
+ * - `ellipsis` Will be used as Beginning and prepended to the trimmed string
+ * - `exact` If false, $text will not be cut mid-word
+ *
  * @see String::truncate()
  *
  * @param string $text String to truncate.
@@ -275,6 +290,9 @@ class TextHelper extends AppHelper {
 	}
 
 /**
+ * Extracts an excerpt from the text surrounding the phrase with a number of characters on each side
+ * determined by radius.
+ *
  * @see String::excerpt()
  *
  * @param string $text String to search the phrase in
@@ -289,6 +307,8 @@ class TextHelper extends AppHelper {
 	}
 
 /**
+ * Creates a comma separated list where the last two items are joined with 'and', forming natural English
+ *
  * @see String::toList()
  *
  * @param array $list The list to be joined

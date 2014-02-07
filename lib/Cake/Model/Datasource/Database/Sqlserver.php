@@ -103,6 +103,8 @@ class Sqlserver extends DboSource {
 /**
  * Magic column name used to provide pagination support for SQLServer 2008
  * which lacks proper limit/offset support.
+ *
+ * @var string
  */
 	const ROW_COUNTER = '_cake_page_rownum_';
 

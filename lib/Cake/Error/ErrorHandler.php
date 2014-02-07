@@ -1,6 +1,6 @@
 <?php
 /**
- * Error handler
+ * ErrorHandler class
  *
  * Provides Error Capturing for Framework errors.
  *
