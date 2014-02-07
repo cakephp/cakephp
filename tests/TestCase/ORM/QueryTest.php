@@ -1656,4 +1656,38 @@ class QueryTest extends TestCase {
 		$expected = ['1 - 3 - 3', '2 - 3 - 3', '1 - 4 - 5', '3 - 4 - 5'];
 		$this->assertEquals($expected, $query->toArray());
 	}
+
+/**
+ * Tests that formatters cna be applied to deep associaitons that are fetched using
+ * additional queries
+ *
+ * @return void
+ */
+	public function testFormatDeepDistantAssociationRecords() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$articles = $table->association('articles')->target();
+		$articles->hasMany('articlesTags');
+		$articles->association('articlesTags')->target()->belongsTo('tags');
+
+		$query = $table->find()->contain(['articles.articlesTags.tags' => function($q) {
+			return $q->formatResults(function($results) {
+				return $results->map(function($tag) {
+					$tag->name .= ' - visited';
+					return $tag;
+				});
+			});
+		}]);
+
+		$query->mapReduce(function($row, $key, $mr) {
+			foreach ((array)$row->articles as $article) {
+				foreach ((array)$article->articles_tags as $articleTag) {
+					$mr->emit($articleTag->tag->name);
+				}
+			}
+		});
+		$expected = ['tag1 - visited', 'tag2 - visited', 'tag1 - visited', 'tag3 - visited'];
+		$this->assertEquals($expected, $query->toArray());
+	}
+
 }

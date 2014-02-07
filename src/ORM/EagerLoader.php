@@ -198,7 +198,9 @@ class EagerLoader {
 			}
 
 			if (is_array($options)) {
-				$options =  isset($options['config']) ? $options['config'] : $options;
+				$options = isset($options['config']) ?
+					$options['config'] + $options['associations'] :
+					$options;
 				$options = $this->_reformatContain($options, []);
 			}
 
