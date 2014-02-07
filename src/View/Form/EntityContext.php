@@ -150,9 +150,6 @@ class EntityContext {
 		}
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return null;
-		}
 		return $entity->get(array_pop($parts));
 	}
 
@@ -187,7 +184,10 @@ class EntityContext {
 			}
 			$entity = $next;
 		}
-		return [false, false];
+		throw \RuntimeException(sprintf(
+			'Unable to fetch property "%s"',
+			implode(".", $path)
+		));
 	}
 
 /**
@@ -220,15 +220,8 @@ class EntityContext {
 		}
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return false;
-		}
 
 		$validator = $this->_getValidator($prop);
-		if (!$validator) {
-			return false;
-		}
-
 		$field = array_pop($parts);
 		if (!$validator->hasField($field)) {
 			return false;
@@ -242,7 +235,7 @@ class EntityContext {
  * conventions.
  *
  * @param string $entity The entity name to get a validator for.
- * @return Validator|false
+ * @return Validator
  */
 	protected function _getValidator($entity) {
 		$table = $this->_getTable($entity);
@@ -291,9 +284,6 @@ class EntityContext {
 	public function type($field) {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return null;
-		}
 		$table = $this->_getTable($prop);
 		$column = array_pop($parts);
 		return $table->schema()->columnType($column);
@@ -308,9 +298,6 @@ class EntityContext {
 	public function attributes($field) {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return [];
-		}
 		$table = $this->_getTable($prop);
 		$column = $table->schema()->column(array_pop($parts));
 		$whitelist = ['length' => null, 'precision' => null];
@@ -336,9 +323,6 @@ class EntityContext {
 	public function error($field) {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return [];
-		}
 		return $entity->errors(array_pop($parts));
 	}
 

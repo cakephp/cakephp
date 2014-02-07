@@ -54,6 +54,19 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test an invalid table scope throws an error.
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Unable to find table class for current entity
+ */
+	public function testInvalidTable() {
+		$row = new \StdClass();
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+		]);
+	}
+
+/**
  * Test operations that lack a table argument.
  *
  * @return void
@@ -295,6 +308,7 @@ class EntityContextTest extends TestCase {
 
 		$this->assertFalse($context->isRequired('Herp.derp.derp'));
 		$this->assertFalse($context->isRequired('nope'));
+		$this->assertFalse($context->isRequired(''));
 	}
 
 /**
@@ -326,6 +340,8 @@ class EntityContextTest extends TestCase {
 
 		$this->assertTrue($context->isRequired('comments.0.user_id'));
 		$this->assertFalse($context->isRequired('comments.0.other'));
+		$this->assertFalse($context->isRequired('user.0.other'));
+		$this->assertFalse($context->isRequired(''));
 	}
 
 /**
