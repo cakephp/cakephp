@@ -107,6 +107,7 @@ class EntityContextTest extends TestCase {
 
 		$result = $context->error('title');
 		$this->assertEquals($row->errors('title'), $result);
+		$this->assertTrue($context->hasError('title'));
 	}
 
 /**
