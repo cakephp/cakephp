@@ -91,7 +91,6 @@ class Router {
  */
 	const ACTION = 'index|show|add|create|edit|update|remove|del|delete|view|item';
 
-
 /**
  * Regular expression for years
  *
