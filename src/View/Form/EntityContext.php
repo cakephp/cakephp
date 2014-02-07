@@ -323,6 +323,9 @@ class EntityContext {
 	public function error($field) {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
+		if (!$entity) {
+			return [];
+		}
 		return $entity->errors(array_pop($parts));
 	}
 

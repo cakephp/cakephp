@@ -67,6 +67,26 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test operations with no entity.
+ *
+ * @return void
+ */
+	public function testOperationsNoEntity() {
+		$context = new EntityContext($this->request, [
+			'table' => 'Articles'
+		]);
+
+		$this->assertNull($context->val('title'));
+		$this->assertFalse($context->isRequired('title'));
+		$this->assertFalse($context->hasError('title'));
+		$this->assertEquals('string', $context->type('title'));
+		$this->assertEquals([], $context->error('title'));
+		$this->assertEquals(
+			['length' => null, 'precision' => null],
+			$context->attributes('title'));
+	}
+
+/**
  * Test operations that lack a table argument.
  *
  * @return void
