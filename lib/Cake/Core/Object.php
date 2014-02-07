@@ -152,6 +152,8 @@ class Object {
  *
  * @param string $msg Log message
  * @param integer $type Error type constant. Defined in app/Config/core.php.
+ * @param null|string|array $scope The scope(s) a log message is being created in.
+ *    See CakeLog::config() for more information on logging scopes.
  * @return boolean Success of log write
  */
 	public function log($msg, $type = LOG_ERR, $scope = null) {
