@@ -510,6 +510,43 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test registering a new widget class.
+ *
+ * @return void
+ */
+	public function testAddWidget() {
+		$this->markTestIncomplete();
+	}
+
+/**
+ * Test registering an invalid widget class.
+ *
+ * @expectedException \RuntimeException
+ * @return void
+ */
+	public function testAddWidgetInvalid() {
+		$this->markTestIncomplete();
+	}
+
+/**
+ * Test adding a new context class.
+ *
+ * @return void
+ */
+	public function testContextClass() {
+		$this->markTestIncomplete();
+	}
+
+/**
+ * Test context selection in create()
+ *
+ * @return void
+ */
+	public function testCreateContextSelection() {
+		$this->markTestIncomplete();
+	}
+
+/**
  * testFormCreateWithSecurity method
  *
  * Test form->create() with security key.
