@@ -22,9 +22,9 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Security;
 use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
@@ -470,14 +470,12 @@ class FormHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Need to revisit once models work again.');
 
 		Configure::write('Config.language', 'eng');
 		Configure::write('App.base', '');
 		Configure::write('App.namespace', 'Cake\Test\TestCase\View\Helper');
 		Configure::delete('Asset');
-		$this->Controller = new ContactTestController();
-		$this->View = new View($this->Controller);
+		$this->View = new View(null);
 
 		$this->Form = new FormHelper($this->View);
 		$this->Form->Html = new HtmlHelper($this->View);
@@ -486,14 +484,6 @@ class FormHelperTest extends TestCase {
 		$this->Form->request['action'] = 'add';
 		$this->Form->request->webroot = '';
 		$this->Form->request->base = '';
-
-		ClassRegistry::addObject('Contact', new Contact());
-		ClassRegistry::addObject('ContactNonStandardPk', new ContactNonStandardPk());
-		ClassRegistry::addObject('OpenidUrl', new OpenidUrl());
-		ClassRegistry::addObject('User', new UserForm());
-		ClassRegistry::addObject('ValidateItem', new ValidateItem());
-		ClassRegistry::addObject('ValidateUser', new ValidateUser());
-		ClassRegistry::addObject('ValidateProfile', new ValidateProfile());
 
 		$this->dateRegex = array(
 			'daysRegex' => 'preg:/(?:<option value="0?([\d]+)">\\1<\/option>[\r\n]*)*/',
@@ -527,6 +517,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateWithSecurity() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
@@ -554,6 +545,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateEndGetNoSecurity() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array('type' => 'get', 'url' => '/contacts/add'));
@@ -569,6 +561,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateClearingFields() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->fields = array('model_id');
 		$this->Form->create('Contact');
 		$this->assertEquals(array(), $this->Form->fields);
@@ -580,6 +573,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testValidateHashNoModel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'foo';
 		$result = $this->Form->secure(array('anything'));
 		$this->assertRegExp('/540ac9c60d323c22bafe997b72c0790f39a8bdef/', $result);
@@ -591,6 +585,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDuplicateFieldNameResolution() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->create('ValidateUser');
 		$this->assertEquals(array('ValidateUser'), $this->Form->entity());
 
@@ -619,6 +614,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testNoCheckboxLocking() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'foo';
 		$this->assertSame(array(), $this->Form->fields);
 
@@ -634,6 +630,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityFields() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$fields = array('Model.password', 'Model.username', 'Model.valid' => '0');
 
@@ -682,7 +679,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextFieldGenerationForFloats() {
-		$model = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$model->setSchema(array('foo' => array(
 			'type' => 'float',
 			'null' => false,
@@ -730,7 +727,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextFieldTypeNumberGenerationForIntegers() {
-		$model = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$model->setSchema(array('foo' => array(
 			'type' => 'integer',
 			'null' => false,
@@ -760,7 +757,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFileUploadFieldTypeGenerationForBinaries() {
-		$model = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$model->setSchema(array('foo' => array(
 			'type' => 'binary',
 			'null' => false,
@@ -792,6 +789,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityMultipleFields() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 
 		$fields = array(
@@ -828,6 +826,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityMultipleSubmitButtons() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 
@@ -872,6 +871,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurityButtonNestedNamed() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 
@@ -887,6 +887,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecuritySubmitNestedNamed() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 
@@ -902,6 +903,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecuritySubmitImageNoName() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 
@@ -922,6 +924,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecuritySubmitImageName() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 
@@ -944,6 +947,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityMultipleInputFields() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 		$this->Form->create('Addresses');
@@ -991,6 +995,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityArrayFields() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 
@@ -1010,6 +1015,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityMultipleInputDisabledFields() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 		$this->Form->request->params['_Token'] = array(
@@ -1058,6 +1064,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityInputUnlockedFields() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 		$this->Form->request['_Token'] = array(
@@ -1105,6 +1112,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecureWithCustomNameAttribute() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$this->Form->text('UserForm.published', array('name' => 'User[custom]'));
@@ -1122,6 +1130,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredInput() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
@@ -1230,6 +1239,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecuredInputCustomName() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 
@@ -1254,6 +1264,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredFileInput() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 
@@ -1271,6 +1282,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredMultipleSelect() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'one', '2' => 'two');
@@ -1290,6 +1302,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredRadio() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'option1', '2' => 'option2');
@@ -1305,6 +1318,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredAndDisabledNotAssoc() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$this->Form->select('Model.select', array(1, 2), array('disabled'));
@@ -1327,6 +1341,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredAndDisabled() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$this->Form->checkbox('Model.checkbox', array('disabled' => true));
@@ -1354,6 +1369,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDisableSecurityUsingForm() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->Form->request['_Token'] = array(
 			'disabledFields' => array()
@@ -1381,6 +1397,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testUnlockFieldAddsToList() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->Form->request['_Token'] = array(
 			'unlockedFields' => array()
@@ -1399,6 +1416,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testUnlockFieldRemovingFromFields() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->Form->request['_Token'] = array(
 			'unlockedFields' => array()
@@ -1421,7 +1439,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTagIsInvalid() {
-		$Contact = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
 
 		$this->Form->setEntity('Contact.0.email');
@@ -1443,7 +1461,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTagIsInvalidSaveMany() {
-		$Contact = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
 
 		$this->Form->create('Contact');
@@ -1463,7 +1481,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPasswordValidation() {
-		$Contact = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Contact->validationErrors['password'] = array('Please provide a password');
 
 		$result = $this->Form->input('Contact.password');
@@ -1504,6 +1522,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testEmptyErrorValidation() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->validationErrors['Contact']['password'] = '';
 
 		$result = $this->Form->input('Contact.password');
@@ -1544,6 +1563,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testEmptyInputErrorValidation() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->validationErrors['Contact']['password'] = 'Please provide a password';
 
 		$result = $this->Form->input('Contact.password', array('error' => ''));
@@ -1586,8 +1606,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationAssociated() {
-		$this->UserForm = ClassRegistry::getObject('UserForm');
-		$this->UserForm->OpenidUrl = ClassRegistry::getObject('OpenidUrl');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 
 		$data = array(
 			'UserForm' => array('name' => 'user'),
@@ -1627,8 +1646,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationAssociatedFirstLevel() {
-		$this->ValidateUser = ClassRegistry::getObject('ValidateUser');
-		$this->ValidateUser->ValidateProfile = ClassRegistry::getObject('ValidateProfile');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 
 		$data = array(
 			'ValidateUser' => array('name' => 'mariano'),
@@ -1677,9 +1695,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationAssociatedSecondLevel() {
-		$this->ValidateUser = ClassRegistry::getObject('ValidateUser');
-		$this->ValidateUser->ValidateProfile = ClassRegistry::getObject('ValidateProfile');
-		$this->ValidateUser->ValidateProfile->ValidateItem = ClassRegistry::getObject('ValidateItem');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 
 		$data = array(
 			'ValidateUser' => array('name' => 'mariano'),
@@ -1735,7 +1751,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationMultiRecord() {
-		$Contact = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Contact->validationErrors[2] = array(
 			'name' => array('The provided value is invalid')
 		);
@@ -1765,7 +1781,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMultipleInputValidation() {
-		$Address = ClassRegistry::init(array('class' => 'Address', 'table' => false, 'ds' => 'test'));
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Address->validationErrors[0] = array(
 			'title' => array('This field cannot be empty'),
 			'first_name' => array('This field cannot be empty')
@@ -1842,6 +1858,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInput() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('ValidateUser.balance');
 		$expected = array(
 			'div' => array('class'),
@@ -2012,7 +2029,6 @@ class FormHelperTest extends TestCase {
 
 		unset($this->Form->request->data);
 
-		$Contact = ClassRegistry::getObject('Contact');
 		$Contact->validationErrors['field'] = array('Badness!');
 		$result = $this->Form->input('Contact.field');
 		$expected = array(
@@ -2177,6 +2193,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputZero() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('User');
 		$result = $this->Form->input('0');
 		$expected = array(
@@ -2194,6 +2211,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputCheckbox() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => true));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
@@ -2249,6 +2267,7 @@ class FormHelperTest extends TestCase {
  *
  */
 	public function testInputTime() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 		$result = $this->Form->input('Contact.created', array('type' => 'time', 'timeFormat' => 24));
 		$result = explode(':', $result);
@@ -2310,6 +2329,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTimeSelectedWithInterval() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.start_time', array(
 			'type' => 'time',
 			'interval' => 15,
@@ -2365,6 +2385,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTimeSelectedWithIntervalTwelve() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.start_time', array(
 			'type' => 'time',
 			'timeFormat' => 12,
@@ -2402,6 +2423,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputTimeWithIntervalAnd12HourFormat() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.start_time', array(
 			'type' => 'time',
 			'timeFormat' => 12,
@@ -2459,6 +2481,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputDatetime() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 		$result = $this->Form->input('prueba', array(
 			'type' => 'datetime', 'timeFormat' => 24, 'dateFormat' => 'DMY', 'minYear' => 2008,
@@ -2547,6 +2570,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputCheckboxesInLoop() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		for ($i = 1; $i < 5; $i++) {
 			$result = $this->Form->input("Contact.{$i}.email", array('type' => 'checkbox', 'value' => $i));
 			$expected = array(
@@ -2568,6 +2592,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputCheckboxWithDisabledElements() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three');
 		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => 'disabled', 'options' => $options));
 
@@ -2667,6 +2692,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputWithLeadingInteger() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->text('0.Node.title');
 		$expected = array(
 			'input' => array('name' => '0[Node][title]', 'id' => '0NodeTitle', 'type' => 'text')
@@ -2680,6 +2706,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputSelectType() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('email', array(
 			'options' => array('è' => 'Firést', 'é' => 'Secoènd'), 'empty' => true)
 		);
@@ -2852,6 +2879,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputWithNonStandardPrimaryKeyMakesHidden() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('User');
 		$this->Form->fieldset = array(
 			'User' => array(
@@ -2875,6 +2903,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputOverridingMagicSelectType() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'text'));
 		$expected = array(
@@ -2906,6 +2935,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMagicTypeDoesNotOverride() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user', array('type' => 'checkbox'));
 		$expected = array(
@@ -2934,6 +2964,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMagicSelectForTypeNumber() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['balances'] = array(0 => 'nothing', 1 => 'some', 100 => 'a lot');
 		$this->Form->request->data = array('ValidateUser' => array('balance' => 1));
 		$result = $this->Form->input('ValidateUser.balance');
@@ -2964,6 +2995,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMagicSelectChangeToRadio() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'radio'));
 		$this->assertRegExp('/input type="radio"/', $result);
@@ -2975,6 +3007,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputWithMatchingFieldAndModelName() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('User');
 		$this->Form->fieldset = array(
 			'User' => array(
@@ -3004,6 +3037,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormInputs() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('Cake\Test\TestCase\View\Helper\Contact');
 		$result = $this->Form->inputs('The Legend');
 		$expected = array(
@@ -3244,6 +3278,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputsPluginModel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->loadFixtures('Post');
 		Plugin::load('TestPlugin');
 		$this->Form->request['models'] = array(
@@ -3255,8 +3290,6 @@ class FormHelperTest extends TestCase {
 		$this->assertContains('TestPluginPost[id]', $result);
 		$this->assertContains('TestPluginPost[author_id]', $result);
 		$this->assertContains('TestPluginPost[title]', $result);
-		$this->assertTrue(ClassRegistry::isKeySet('TestPluginPost'));
-		$this->assertFalse(ClassRegistry::isKeySet('TestPlugin'));
 		$this->assertEquals('TestPluginPost', $this->Form->model());
 	}
 
@@ -3268,6 +3301,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectAsCheckbox() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array('multiple' => 'checkbox', 'value' => array(0, 1)));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
@@ -3313,6 +3347,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testLabel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->text('Person.name');
 		$result = $this->Form->label();
 		$this->assertTags($result, array('label' => array('for' => 'PersonName'), 'Name', '/label'));
@@ -3348,6 +3383,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextbox() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->text('Model.field');
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'id' => 'ModelField')));
 
@@ -3361,7 +3397,6 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->text('Model.text');
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[text]', 'value' => 'test &lt;strong&gt;HTML&lt;/strong&gt; values', 'id' => 'ModelText')));
 
-		$Contact = ClassRegistry::getObject('Contact');
 		$Contact->validationErrors['text'] = array(true);
 		$this->Form->request->data['Contact']['text'] = 'test';
 		$result = $this->Form->text('Contact.text', array('id' => 'theID'));
@@ -3383,6 +3418,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDefaultValue() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data['Model']['field'] = 'test';
 		$result = $this->Form->text('Model.field', array('default' => 'default value'));
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'value' => 'test', 'id' => 'ModelField')));
@@ -3400,6 +3436,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxDefaultValue() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data['Model']['field'] = false;
 		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
 		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField')));
@@ -3425,7 +3462,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testError() {
-		$Contact = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Contact->validationErrors['field'] = array(1);
 		$result = $this->Form->error('Contact.field');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field Field', '/div'));
@@ -3528,8 +3565,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputErrorEscape() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('ValidateProfile');
-		$ValidateProfile = ClassRegistry::getObject('ValidateProfile');
 		$ValidateProfile->validationErrors['city'] = array('required<br>');
 		$result = $this->Form->input('city', array('error' => array('attributes' => array('escape' => true))));
 		$this->assertRegExp('/required&lt;br&gt;/', $result);
@@ -3546,7 +3583,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPassword() {
-		$Contact = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->password('Contact.field');
 		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Contact[field]', 'id' => 'ContactField')));
 
@@ -3564,6 +3601,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRadio() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->radio('Model.field', array('option A'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
@@ -3740,6 +3778,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRadioBetween() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->radio(
 			'Model.field',
 			array('option A', 'option B'),
@@ -3893,6 +3932,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRadioOptionWithBooleanishValues() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$expected = array(
 			'fieldset' => array(),
 			'legend' => array(),
@@ -3973,6 +4013,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRadioDisabled() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->radio(
 			'Model.field',
 			array('option A', 'option B'),
@@ -4118,6 +4159,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRadioHiddenInputDisabling() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.1.field', array(
 				'type' => 'radio',
 				'options' => array('option A'),
@@ -4150,6 +4192,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRadioAddEmptyOption() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.1.field', array(
 			'type' => 'radio',
 			'options' => array('option A'),
@@ -4215,6 +4258,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRadioLabelArray() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.field', array(
 			'type' => 'radio',
 			'legend' => false,
@@ -4235,6 +4279,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRadioWithCreate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('Model');
 		$result = $this->Form->radio('recipient',
 			array('1' => '1', '2' => '2', '3' => '3'),
@@ -4256,6 +4301,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDomIdSuffix() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->domIdSuffix('1 string with 1$-dollar signs');
 		$this->assertEquals('1StringWith1DollarSigns', $result);
 
@@ -4275,6 +4321,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDomIdSuffixCollisionResolvement() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->domIdSuffix('a>b');
 		$this->assertEquals('AB', $result);
 
@@ -4302,6 +4349,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelect() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select('Model.field', array());
 		$expected = array(
 			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
@@ -4469,6 +4517,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectOptionGroupEscaping() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array(
 			'>< Key' => array(
 				1 => 'One',
@@ -4510,6 +4559,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectWithNullAttributes() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select('Model.field', array('first', 'second'), array('empty' => false));
 		$expected = array(
 			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
@@ -4532,6 +4582,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testNestedSelect() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select(
 			'Model.field',
 			array(1 => 'One', 2 => 'Two', 'Three' => array(
@@ -4594,6 +4645,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultiple() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array('first', 'second', 'third');
 		$result = $this->Form->select(
 			'Model.multi_field', $options, array('multiple' => true)
@@ -4770,6 +4822,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleWithDisabledElements() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
 		$disabled = array(2, 3);
 		$result = $this->Form->select('Contact.multiple', $options, array('multiple' => 'multiple', 'disabled' => $disabled));
@@ -4865,6 +4918,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectWithDisabledElements() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
 		$disabled = array(2, 3);
 		$result = $this->Form->select('Model.field', $options, array('disabled' => $disabled));
@@ -4953,6 +5007,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHabtmSelectBox() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['contactTags'] = array(
 			1 => 'blue',
 			2 => 'red',
@@ -5043,6 +5098,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleCheckboxes() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select(
 			'Model.multi_field',
 			array('first', 'second', 'third'),
@@ -5257,6 +5313,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleCheckboxDiv() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select(
 			'Model.tags',
 			array('first', 'second'),
@@ -5293,7 +5350,6 @@ class FormHelperTest extends TestCase {
 		));
 		$this->assertTags($result, $expected);
 
-		$Contact = ClassRegistry::getObject('Contact');
 		$Contact->validationErrors['tags'] = 'Select atleast one option';
 		$result = $this->Form->input('Contact.tags', array(
 			'options' => array('one'),
@@ -5337,6 +5393,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleCheckboxSecurity() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 
@@ -5358,6 +5415,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleSecureWithNoOptions() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testkey';
 		$this->assertEquals(array(), $this->Form->fields);
 
@@ -5375,6 +5433,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectNoSecureWithNoOptions() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testkey';
 		$this->assertEquals(array(), $this->Form->fields);
 
@@ -5400,6 +5459,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMultipleCheckboxes() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.multi_field', array(
 			'options' => array('first', 'second', 'third'),
 			'multiple' => 'checkbox'
@@ -5507,6 +5567,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectHiddenFieldOmission() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select('Model.multi_field',
 			array('first', 'second'),
 			array('multiple' => 'checkbox', 'hiddenField' => false, 'value' => null)
@@ -5560,6 +5621,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectCheckboxMultipleOverrideName() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('category', array(
 			'type' => 'select',
 			'multiple' => 'checkbox',
@@ -5588,6 +5650,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectCheckboxMultipleId() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select(
 			'Model.multi_field',
 			array('first', 'second', 'third'),
@@ -5637,6 +5700,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckbox() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->checkbox('Model.field');
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
@@ -5651,7 +5715,6 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$Contact = ClassRegistry::getObject('Contact');
 		$Contact->validationErrors['field'] = 1;
 		$this->Form->request->data['Contact']['field'] = 'myvalue';
 		$result = $this->Form->checkbox('Contact.field', array('id' => 'theID', 'value' => 'myvalue'));
@@ -5721,6 +5784,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxCustomNameAttribute() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->checkbox('Test.test', array('name' => 'myField'));
 		$expected = array(
 				'input' => array('type' => 'hidden', 'name' => 'myField', 'value' => '0', 'id' => 'TestTest_'),
@@ -5735,6 +5799,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxCheckedOption() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->checkbox('Model.field', array('checked' => 'checked'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
@@ -5778,6 +5843,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxDisabling() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->checkbox('Account.show_name', array('disabled' => 'disabled'));
 		$expected = array(
 			array('input' => array('type' => 'hidden', 'name' => 'Account[show_name]', 'value' => '0', 'id' => 'AccountShowName_', 'disabled' => 'disabled')),
@@ -5800,6 +5866,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxHiddenField() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('UserForm.something', array(
 			'type' => 'checkbox',
 			'hiddenField' => false
@@ -5877,6 +5944,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTime() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 
 		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('empty' => false));
@@ -6253,6 +6321,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeRounding() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data['Contact'] = array(
 			'date' => array(
 				'day' => '13',
@@ -6280,6 +6349,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeNoErrorsOnEmptyData() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data['Contact'] = array(
 			'date' => array(
 				'day' => '',
@@ -6300,6 +6370,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDatetimeWithDefault() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array('value' => '2009-06-01 11:15:30'));
 		$this->assertRegExp('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="01"[^<>]+selected="selected"[^>]*>1<\/option>/', $result);
@@ -6319,6 +6390,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeWithBogusData() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array('value' => 'CURRENT_TIMESTAMP'));
 		$this->assertNotRegExp('/selected="selected">\d/', $result);
 	}
@@ -6329,6 +6401,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeAllZeros() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->dateTime('Contact.date',
 			'DMY',
 			false,
@@ -6348,6 +6421,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeEmptyAsArray() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->dateTime('Contact.date',
 			'DMY',
 			'12',
@@ -6389,6 +6463,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormDateTimeMulti() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 
 		$result = $this->Form->dateTime('Contact.1.updated');
@@ -6477,6 +6552,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeLabelIdMatchesFirstInput() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.date', array('type' => 'date'));
 		$this->assertContains('label for="ModelDateMonth"', $result);
 
@@ -6493,6 +6569,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMonth() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->month('Model.field');
 		$expected = array(
 			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
@@ -6580,6 +6657,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDay() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 
 		$result = $this->Form->day('Model.field', array('value' => false));
@@ -6690,6 +6768,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMinute() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 
 		$result = $this->Form->minute('Model.field');
@@ -6782,6 +6861,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHour() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 
 		$result = $this->Form->hour('Model.field', false);
@@ -6880,6 +6960,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testYear() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->year('Model.field', 2006, 2007);
 		$expected = array(
 			array('select' => array('name' => 'Model[field][year]', 'id' => 'ModelFieldYear')),
@@ -7062,6 +7143,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testYearAutoExpandRange() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data['User']['birthday'] = '1930-10-10';
 		$result = $this->Form->year('User.birthday');
 		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
@@ -7097,6 +7179,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputDate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data = array(
 			'User' => array(
 				'month_year' => array('month' => date('m')),
@@ -7160,6 +7243,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputDateMaxYear() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data = array();
 		$this->Form->create('User');
 		$result = $this->Form->input('birthday',
@@ -7181,6 +7265,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextArea() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data = array('Model' => array('field' => 'some test data'));
 		$result = $this->Form->textarea('Model.field');
 		$expected = array(
@@ -7232,6 +7317,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextAreaWithStupidCharacters() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->loadFixtures('Post');
 		$result = $this->Form->input('Post.content', array(
 			'label' => 'Current Text', 'value' => "GREAT®", 'rows' => '15', 'cols' => '75'
@@ -7255,7 +7341,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHiddenField() {
-		$Contact = ClassRegistry::getObject('Contact');
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$Contact->validationErrors['field'] = 1;
 		$this->Form->request->data['Contact']['field'] = 'test';
 		$result = $this->Form->hidden('Contact.field', array('id' => 'theID'));
@@ -7270,6 +7356,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFileUploadField() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->file('Model.upload');
 		$this->assertTags($result, array('input' => array('type' => 'file', 'name' => 'Model[upload]', 'id' => 'ModelUpload')));
 
@@ -7296,6 +7383,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFileUploadOnOtherModel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('ValidateUser', array('type' => 'file'));
 		$result = $this->Form->file('ValidateProfile.city');
 		$expected = array(
@@ -7310,6 +7398,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testButton() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->button('Hi');
 		$this->assertTags($result, array('button' => array('type' => 'submit'), 'Hi', '/button'));
 
@@ -7335,6 +7424,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testButtonUnlockedByDefault() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'secured';
 		$this->Form->button('Save', array('name' => 'save'));
 		$this->Form->button('Clear');
@@ -7349,6 +7439,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostButton() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postButton('Hi', '/controller/action');
 		$this->assertTags($result, array(
 			'form' => array('method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8'),
@@ -7371,6 +7462,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurePostButton() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testkey';
 
 		$result = $this->Form->postButton('Delete', '/posts/delete/1');
@@ -7400,6 +7492,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostLink() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
 		$this->assertTags($result, array(
 			'form' => array(
@@ -7492,6 +7585,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostLinkAfterGetForm() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_Token']['key'] = 'testkey';
 		$this->Form->create('User', array('type' => 'get'));
 		$this->Form->end();
@@ -7521,6 +7615,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurePostLink() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testkey';
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
@@ -7549,6 +7644,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostLinkFormBuffer() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('inline' => false));
 		$this->assertTags($result, array(
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
@@ -7617,6 +7713,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSubmitButton() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->submit('');
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -7714,6 +7811,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSubmitImage() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->submit('http://example.com/cake.power.gif');
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -7794,6 +7892,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSubmitUnlockedByDefault() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'secured';
 		$this->Form->submit('Go go');
 		$this->Form->submit('Save', array('name' => 'save'));
@@ -7808,6 +7907,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSubmitImageTimestamp() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Form->submit('cake.power.gif');
@@ -7825,6 +7925,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->create('Contact');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
@@ -8000,6 +8101,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateOnSubmit() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data = array();
 		$this->Form->request['controller'] = 'contacts';
 		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
@@ -8044,6 +8146,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateAutoUrl() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request['action'] = 'delete';
 		$this->Form->request->here = '/contacts/delete/10';
 		$this->Form->request->base = '';
@@ -8066,6 +8169,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateCustomRoute() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 
@@ -8088,6 +8192,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateWithInputDefaults() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('User', array(
 			'inputDefaults' => array(
 				'div' => false,
@@ -8140,6 +8245,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateWithAcceptCharset() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->create('UserForm', array(
 				'type' => 'post', 'action' => 'login', 'encoding' => 'iso-8859-1'
 			)
@@ -8161,6 +8267,7 @@ class FormHelperTest extends TestCase {
  *
  */
 	public function testCreateQuerystringrequest() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array(
 			'type' => 'post',
@@ -8213,6 +8320,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateWithMultipleIdInData() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 
 		$this->Form->request->data['Contact']['id'] = array(1, 2);
@@ -8237,6 +8345,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreatePassedArgs() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$this->Form->request->data['Contact']['id'] = 1;
 		$result = $this->Form->create('Contact', array(
@@ -8267,6 +8376,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testGetFormCreate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact', array('type' => 'get'));
 		$this->assertTags($result, array('form' => array(
@@ -8297,6 +8407,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testGetFormWithFalseModel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$this->Form->request['controller'] = 'contact_test';
 		$result = $this->Form->create(false, array('type' => 'get', 'url' => array('controller' => 'contact_test')));
@@ -8320,6 +8431,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeWithGetForms() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 		$this->Form->create('Contact', array('type' => 'get'));
 		$result = $this->Form->datetime('created');
@@ -8340,6 +8452,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testEditFormWithData() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data = array('Person' => array(
 			'id' => 1,
 			'first_name' => 'Nate',
@@ -8374,6 +8487,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormInputRequiredDetection() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('Contact');
 
 		$result = $this->Form->input('Contact.non_existing');
@@ -8604,7 +8718,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormInputRequiredDetectionModelValidator() {
-		ClassRegistry::getObject('ContactTag')->validator()->add('iwillberequired', 'required', array('rule' => 'notEmpty'));
+		$this->markTestIncomplete('Need to revisit once models work again.');
 
 		$this->Form->create('ContactTag');
 		$result = $this->Form->input('ContactTag.iwillberequired');
@@ -8630,6 +8744,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormMagicInput() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact');
 		$expected = array(
@@ -8801,6 +8916,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testForMagicInputNonExistingNorValidated() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact');
 		$expected = array(
@@ -8862,6 +8978,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormMagicInputLabel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$result = $this->Form->create('Contact');
 		$expected = array(
@@ -8984,6 +9101,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormEnd() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->assertEquals('</form>', $this->Form->end());
 
 		$result = $this->Form->end('');
@@ -9067,6 +9185,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMultipleFormWithIdFields() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('UserForm');
 
 		$result = $this->Form->input('id');
@@ -9093,6 +9212,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDbLessModel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('TestMail');
 
 		$result = $this->Form->input('name');
@@ -9109,7 +9229,6 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		ClassRegistry::init('TestMail');
 		$this->Form->create('TestMail');
 		$result = $this->Form->input('name');
 		$expected = array(
@@ -9132,6 +9251,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testBrokenness() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		/*
 		 * #4 This test has two parents and four children. By default (as of r7117) both
 		 * parents are show but the first parent is missing a child. This is the inconsistency
@@ -9218,6 +9338,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMultiRecordForm() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('ValidateProfile');
 		$this->Form->request->data['ValidateProfile'][1]['ValidateItem'][2]['name'] = 'Value';
 		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.name');
@@ -9272,7 +9393,6 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$ValidateProfile = ClassRegistry::getObject('ValidateProfile');
 		$ValidateProfile->validationErrors[1]['ValidateItem'][2]['profile_id'] = 'Error';
 		$this->Form->request->data['ValidateProfile'][1]['ValidateItem'][2]['profile_id'] = '1';
 		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.profile_id');
@@ -9301,8 +9421,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMultiRecordFormValidationErrors() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('ValidateProfile');
-		$ValidateProfile = ClassRegistry::getObject('ValidateProfile');
 		$ValidateProfile->validationErrors[2]['ValidateItem'][1]['name'] = array('Error in field name');
 		$result = $this->Form->error('ValidateProfile.2.ValidateItem.1.name');
 		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
@@ -9321,8 +9441,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSaveManyRecordFormValidationErrors() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('ValidateUser');
-		$ValidateUser = ClassRegistry::getObject('ValidateUser');
 		$ValidateUser->validationErrors[0]['ValidateItem']['name'] = array('Error in field name');
 
 		$result = $this->Form->error('0.ValidateUser.ValidateItem.name');
@@ -9339,6 +9459,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputTemplate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Contact.email', array(
 			'type' => 'text', 'format' => array('input')
 		));
@@ -9437,6 +9558,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHtml5Inputs() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->email('User.email');
 		$expected = array(
 			'input' => array('type' => 'email', 'name' => 'User[email]', 'id' => 'UserEmail')
@@ -9474,6 +9596,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHtml5InputException() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->email();
 	}
 
@@ -9483,6 +9606,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testIntrospectModelFromRequest() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->loadFixtures('Post');
 		App::build(array(
 			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
@@ -9495,10 +9619,7 @@ class FormHelperTest extends TestCase {
 			)
 		);
 
-		$this->assertFalse(ClassRegistry::isKeySet('TestPluginPost'));
 		$this->Form->create('TestPluginPost');
-		$this->assertTrue(ClassRegistry::isKeySet('TestPluginPost'));
-		$this->assertInstanceOf('TestPlugin\Model\TestPluginPost', ClassRegistry::getObject('TestPluginPost'));
 
 		Plugin::unload();
 	}
@@ -9509,6 +9630,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCustomValidationErrors() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->validationErrors['Thing']['field'] = 'Badness!';
 		$result = $this->Form->error('Thing.field', null, array('wrap' => false));
 		$this->assertEquals('Badness!', $result);
@@ -9520,6 +9642,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRequiredOnCreate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('Contact');
 
 		$result = $this->Form->input('Contact.imrequiredonupdate');
@@ -9608,6 +9731,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRequiredOnUpdate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data['Contact']['id'] = 1;
 		$this->Form->create('Contact');
 
@@ -9676,6 +9800,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputDefaults() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->create('Contact');
 
 		$this->Form->inputDefaults(array(
