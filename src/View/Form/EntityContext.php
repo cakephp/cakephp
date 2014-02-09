@@ -155,6 +155,7 @@ class EntityContext {
  *
  * @param array $path The path to traverse to find the leaf entity.
  * @return array
+ * @throws \RuntimeException When properties cannot be read.
  */
 	protected function _getEntity($path) {
 		$entity = $this->_context['entity'];

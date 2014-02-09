@@ -14,6 +14,8 @@
  */
 namespace Cake\Test\TestCase\View\Form;
 
+use ArrayIterator;
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
@@ -22,8 +24,6 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
-use ArrayIterator;
-use ArrayObject;
 
 /**
  * Test stub.
