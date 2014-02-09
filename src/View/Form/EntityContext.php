@@ -14,13 +14,12 @@
  */
 namespace Cake\View\Form;
 
+use Cake\Collection\Collection;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
-use IteratorAggregate;
-use IteratorIterator;
 use Traversable;
 
 /**
@@ -109,14 +108,8 @@ class EntityContext {
 		$table = $this->_context['table'];
 		if (empty($table)) {
 			$entity = $this->_context['entity'];
-			if ($entity instanceof IteratorAggregate) {
-				$entity = $entity->getIterator()->current();
-			} elseif ($entity instanceof IteratorIterator) {
-				$entity = $entity->getInnerIterator()->current();
-			} elseif ($entity instanceof Traversable) {
-				$entity = $entity->current();
-			} elseif (is_array($entity)) {
-				$entity = current($entity);
+			if (is_array($entity) || $entity instanceof Traversable) {
+				$entity = (new Collection($entity))->first();
 			}
 			if ($entity instanceof Entity) {
 				list($ns, $entityClass) = namespaceSplit(get_class($entity));
