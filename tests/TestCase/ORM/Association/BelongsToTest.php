@@ -211,6 +211,39 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that by passing the matching option to `attachTo` the association
+ * is joinned using `INNER`
+ *
+ * @return void
+ */
+	public function testAttachToMAtching() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company,
+			'conditions' => ['Companies.is_active' => true]
+		];
+		$association = new BelongsTo('Companies', $config);
+		$field = new IdentifierExpression('Clients.company_id');
+		$query->expects($this->once())->method('join')->with([
+			'Companies' => [
+				'conditions' => new QueryExpression([
+					'Companies.is_active' => true,
+					['Companies.id' => $field]
+				]),
+				'table' => 'companies',
+				'type' => 'INNER'
+			]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Companies__id' => 'Companies.id',
+			'Companies__company_name' => 'Companies.company_name'
+		]);
+		$association->attachTo($query, ['matching' => true]);
+	}
+
+/**
  * Test the cascading delete of BelongsTo.
  *
  * @return void
