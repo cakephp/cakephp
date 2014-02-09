@@ -288,9 +288,10 @@ class EagerLoader {
  * @param Table $parent owning side of the association
  * @param string $alias name of the association to be loaded
  * @param array $options list of extra options to use for this association
- * @param array $paths A list of dot separated strings signifying associations that
- * lead to this `$alias` and the path to follow in entities to fetch a record of each
- * the association
+ * @param array $paths An array with to values, the first one is a list of dot
+ * separated strings representing associations that lead to this `$alias` in the
+ * chain of associaitons to be loaded. The second value is the path to follow in
+ * entities' properties to fetch a record of the corresponding association.
  * @return array normalized associations
  * @throws \InvalidArgumentException When containments refer to associations that do not exist.
  */
