@@ -542,7 +542,7 @@ abstract class Association {
 		}
 
 		$property = $options['propertyPath'];
-		$query->formatResults(function($results) use ($formatters, $property){
+		$query->formatResults(function($results) use ($formatters, $property) {
 			$extracted = $results->extract($property)->compile();
 			foreach ($formatters as $callable) {
 				$extracted = new ResultSetDecorator($callable($extracted));
@@ -552,7 +552,6 @@ abstract class Association {
 	}
 
 /**
- *
  * Applies all attachable associations to `$query` out of the containments found
  * in the `$surrogate` query.
  *
