@@ -488,4 +488,24 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 		$this->assertCount(2, $validator);
 	}
 
+
+/**
+ * Tests adding rules via alternative syntax
+ *
+ * @return void
+ */
+	public function testMulitple() {
+		$validator = new Validator;
+		$validator->add('title', [
+			'notEmpty' => [
+				'rule' => 'notEmpty'],
+			'length' => [
+				'rule' => [
+					'minLength',
+					10],
+				'message' => 'Titles need to be at least 10 characters long',]]);
+		$set = $validator->field('title');
+		$this->assertInstanceOf('\Cake\Validation\ValidationSet', $set);
+		$this->assertCount(2, $set);
+	}
 }

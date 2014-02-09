@@ -249,11 +249,12 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * @return Validator this instance
  */
 	public function add($field, $name, $rule = []) {
-		$rules = $rule;
 		$field = $this->field($field);
 
 		if (!is_array($name)) {
 			$rules = [$name => $rule];
+		} else {
+			$rules = $name;
 		}
 
 		foreach ($rules as $name => $rule) {
