@@ -14,6 +14,9 @@
  */
 namespace Cake\Test\TestCase\View\Form;
 
+use ArrayIterator;
+use ArrayObject;
+use Cake\Collection\Collection;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
@@ -21,6 +24,12 @@ use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
+
+/**
+ * Test stub.
+ */
+class Article extends Entity {
+}
 
 /**
  * Entity context test case.
@@ -42,6 +51,202 @@ class EntityContextTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->request = new Request();
+	}
+
+/**
+ * Test an invalid table scope throws an error.
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Unable to find table class for current entity
+ */
+	public function testInvalidTable() {
+		$row = new \StdClass();
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+		]);
+	}
+
+/**
+ * Test operations with no entity.
+ *
+ * @return void
+ */
+	public function testOperationsNoEntity() {
+		$context = new EntityContext($this->request, [
+			'table' => 'Articles'
+		]);
+
+		$this->assertNull($context->val('title'));
+		$this->assertFalse($context->isRequired('title'));
+		$this->assertFalse($context->hasError('title'));
+		$this->assertEquals('string', $context->type('title'));
+		$this->assertEquals([], $context->error('title'));
+		$this->assertEquals(
+			['length' => null, 'precision' => null],
+			$context->attributes('title')
+		);
+	}
+
+/**
+ * Test operations that lack a table argument.
+ *
+ * @return void
+ */
+	public function testOperationsNoTableArg() {
+		$row = new Article([
+			'title' => 'Test entity',
+			'body' => 'Something new'
+		]);
+		$row->errors('title', ['Title is required.']);
+
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+		]);
+
+		$result = $context->val('title');
+		$this->assertEquals($row->title, $result);
+
+		$result = $context->error('title');
+		$this->assertEquals($row->errors('title'), $result);
+		$this->assertTrue($context->hasError('title'));
+	}
+
+/**
+ * Test collection operations that lack a table argument.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testCollectionOperationsNoTableArg($collection) {
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+		]);
+
+		$result = $context->val('0.title');
+		$this->assertEquals('First post', $result);
+
+		$result = $context->error('1.body');
+		$this->assertEquals(['Not long enough'], $result);
+	}
+
+/**
+ * Data provider for testing collections.
+ *
+ * @return array
+ */
+	public static function collectionProvider() {
+		$one = new Entity([
+			'title' => 'First post',
+			'body' => 'Stuff',
+			'user' => new Entity(['username' => 'mark'])
+		]);
+		$one->errors('title', 'Required field');
+
+		$two = new Entity([
+			'title' => 'Second post',
+			'body' => 'Some text',
+			'user' => new Entity(['username' => 'jose'])
+		]);
+		$two->errors('body', 'Not long enough');
+
+		return [
+			'array' => [[$one, $two]],
+			'basic iterator' => [new ArrayObject([$one, $two])],
+			'array iterator' => [new ArrayIterator([$one, $two])],
+			'collection' => [new Collection([$one, $two])],
+		];
+	}
+
+/**
+ * Test operations on a collection of entities.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testValOnCollections($collection) {
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+			'table' => 'Articles',
+		]);
+
+		$result = $context->val('0.title');
+		$this->assertEquals('First post', $result);
+
+		$result = $context->val('0.user.username');
+		$this->assertEquals('mark', $result);
+
+		$result = $context->val('1.title');
+		$this->assertEquals('Second post', $result);
+
+		$result = $context->val('1.user.username');
+		$this->assertEquals('jose', $result);
+	}
+
+/**
+ * Test error operations on a collection of entities.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testErrorsOnCollections($collection) {
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+			'table' => 'Articles',
+		]);
+
+		$this->assertTrue($context->hasError('0.title'));
+		$this->assertEquals(['Required field'], $context->error('0.title'));
+		$this->assertFalse($context->hasError('0.body'));
+
+		$this->assertFalse($context->hasError('1.title'));
+		$this->assertEquals(['Not long enough'], $context->error('1.body'));
+		$this->assertTrue($context->hasError('1.body'));
+	}
+
+/**
+ * Test schema operations on a collection of entities.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testSchemaOnCollections($collection) {
+		$this->_setupTables();
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+			'table' => 'Articles',
+		]);
+
+		$this->assertEquals('string', $context->type('0.title'));
+		$this->assertEquals('text', $context->type('1.body'));
+		$this->assertEquals('string', $context->type('0.user.username'));
+		$this->assertEquals('string', $context->type('1.user.username'));
+		$this->assertNull($context->type('0.nope'));
+
+		$expected = ['length' => 255, 'precision' => null];
+		$this->assertEquals($expected, $context->attributes('0.user.username'));
+	}
+
+/**
+ * Test validation operations on a collection of entities.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testValidatorsOnCollections($collection) {
+		$this->_setupTables();
+
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+			'table' => 'Articles',
+			'validator' => [
+				'Articles' => 'create',
+				'Users' => 'custom',
+			]
+		]);
+
+		$this->assertTrue($context->isRequired('0.title'));
+		$this->assertFalse($context->isRequired('1.body'));
+		$this->assertTrue($context->isRequired('0.user.username'));
 	}
 
 /**
@@ -107,6 +312,35 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test reading values from associated entities.
+ *
+ * @return void
+ */
+	public function testValAssociatedHasMany() {
+		$row = new Entity([
+			'title' => 'First post',
+			'user' => new Entity([
+				'username' => 'mark',
+				'fname' => 'Mark',
+				'articles' => [
+					new Entity(['title' => 'First post']),
+					new Entity(['title' => 'Second post']),
+				]
+			]),
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$result = $context->val('user.articles.0.title');
+		$this->assertEquals('First post', $result);
+
+		$result = $context->val('user.articles.1.title');
+		$this->assertEquals('Second post', $result);
+	}
+
+/**
  * Test validator as a string.
  *
  * @return void
@@ -125,6 +359,7 @@ class EntityContextTest extends TestCase {
 
 		$this->assertFalse($context->isRequired('Herp.derp.derp'));
 		$this->assertFalse($context->isRequired('nope'));
+		$this->assertFalse($context->isRequired(''));
 	}
 
 /**
@@ -156,6 +391,8 @@ class EntityContextTest extends TestCase {
 
 		$this->assertTrue($context->isRequired('comments.0.user_id'));
 		$this->assertFalse($context->isRequired('comments.0.other'));
+		$this->assertFalse($context->isRequired('user.0.other'));
+		$this->assertFalse($context->isRequired(''));
 	}
 
 /**
@@ -386,6 +623,7 @@ class EntityContextTest extends TestCase {
 
 		$comments = TableRegistry::get('Comments');
 		$users = TableRegistry::get('Users');
+		$users->hasMany('Articles');
 
 		$articles->schema([
 			'id' => ['type' => 'integer', 'length' => 11, 'null' => false],

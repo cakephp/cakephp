@@ -14,14 +14,17 @@
  */
 namespace Cake\View\Form;
 
+use Cake\Collection\Collection;
 use Cake\Network\Request;
 use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
+use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
 use Traversable;
 
 /**
  * Provides a form context around a single entity and its relations.
+ * It also can be used as context around an array or iterator of entities.
  *
  * This class lets FormHelper interface with entities or collections
  * of entities.
@@ -32,7 +35,8 @@ use Traversable;
  * - `table` Either the ORM\Table instance to fetch schema/validators
  *   from, an array of table instances in the case of a form spanning
  *   multiple entities, or the name(s) of the table.
- *   If this is null the table name(s) will be determined using conventions.
+ *   If this is null the table name(s) will be determined using naming
+ *   conventions.
  * - `validator` Either the Validation\Validator to use, or the name of the
  *   validation method to call on the table object. For example 'default'.
  *   Defaults to 'default'. Can be an array of table alias=>validators when
@@ -88,12 +92,38 @@ class EntityContext {
 /**
  * Prepare some additional data from the context.
  *
+ * If the table option was provided to the constructor and it
+ * was a string, ORM\TableRegistry will be used to get the correct table instance.
+ *
+ * If an object is provided as the table option, it will be used as is.
+ *
+ * If no table option is provided, the table name will be derived based on
+ * naming conventions. This inference will work with a number of common objects
+ * like arrays, Collection objects and ResultSets.
+ *
  * @return void
+ * @throws \RuntimeException When a table object cannot be located/inferred.
  */
 	protected function _prepare() {
 		$table = $this->_context['table'];
+		if (empty($table)) {
+			$entity = $this->_context['entity'];
+			if (is_array($entity) || $entity instanceof Traversable) {
+				$entity = (new Collection($entity))->first();
+			}
+			if ($entity instanceof Entity) {
+				list($ns, $entityClass) = namespaceSplit(get_class($entity));
+				$table = Inflector::pluralize($entityClass);
+			}
+		}
 		if (is_string($table)) {
 			$table = TableRegistry::get($table);
+		}
+
+		if (!is_object($table)) {
+			throw new \RuntimeException(
+				'Unable to find table class for current entity'
+			);
 		}
 		$alias = $this->_rootName = $table->alias();
 		$this->_tables[$alias] = $table;
@@ -113,9 +143,6 @@ class EntityContext {
 		}
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return null;
-		}
 		return $entity->get(array_pop($parts));
 	}
 
@@ -128,6 +155,7 @@ class EntityContext {
  *
  * @param array $path The path to traverse to find the leaf entity.
  * @return array
+ * @throws \RuntimeException When properties cannot be read.
  */
 	protected function _getEntity($path) {
 		$entity = $this->_context['entity'];
@@ -150,7 +178,10 @@ class EntityContext {
 			}
 			$entity = $next;
 		}
-		return [false, false];
+		throw \RuntimeException(sprintf(
+			'Unable to fetch property "%s"',
+			implode(".", $path)
+		));
 	}
 
 /**
@@ -183,15 +214,8 @@ class EntityContext {
 		}
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return false;
-		}
 
 		$validator = $this->_getValidator($prop);
-		if (!$validator) {
-			return false;
-		}
-
 		$field = array_pop($parts);
 		if (!$validator->hasField($field)) {
 			return false;
@@ -205,7 +229,7 @@ class EntityContext {
  * conventions.
  *
  * @param string $entity The entity name to get a validator for.
- * @return Validator|false
+ * @return Validator
  */
 	protected function _getValidator($entity) {
 		$table = $this->_getTable($entity);
@@ -254,9 +278,6 @@ class EntityContext {
 	public function type($field) {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return null;
-		}
 		$table = $this->_getTable($prop);
 		$column = array_pop($parts);
 		return $table->schema()->columnType($column);
@@ -271,9 +292,6 @@ class EntityContext {
 	public function attributes($field) {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return [];
-		}
 		$table = $this->_getTable($prop);
 		$column = $table->schema()->column(array_pop($parts));
 		$whitelist = ['length' => null, 'precision' => null];
