@@ -2942,4 +2942,33 @@ class FormHelper extends Helper {
 		return $this->_inputDefaults;
 	}
 
+/**
+ * Add a new widget to FormHelper.
+ *
+ * Allows you to add or replace widget instances with custom code.
+ *
+ * @param string $name The name of the widget. e.g. 'text'.
+ * @param array|WidgetInterface Either a string class name or an object
+ *    implementing the WidgetInterface.
+ * @return void
+ */
+	public function addWidget($name, $spec) {
+	}
+
+/**
+ * Render a named widget.
+ *
+ * This is a lower level method. For built-in widgets, you should be using
+ * methods like `text`, `hidden`, and `radio`. If you are using additional
+ * widgets you should use this method render the widget without the label
+ * or wrapping div.
+ *
+ * @param string $name The name of the widget. e.g. 'text'.
+ * @param array $attrs The attributes for rendering the input.
+ * @return void
+ */
+	public function widget($name, $data) {
+
+	}
+
 }
