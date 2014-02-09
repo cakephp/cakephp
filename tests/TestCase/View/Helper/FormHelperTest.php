@@ -510,12 +510,22 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Test registering a new widget class.
+ * Test registering a new widget class and rendering it.
  *
  * @return void
  */
-	public function testAddWidget() {
-		$this->markTestIncomplete();
+	public function testAddWidgetAndRenderWidget() {
+		$data = [
+			'val' => 1
+		];
+		$mock = $this->getMock('Cake\View\Widget\WidgetInterface');
+		$this->assertNull($this->Form->addWidget('test', $mock));
+		$mock->expects($this->once())
+			->method('render')
+			->with($data)
+			->will($this->returnValue('HTML'));
+		$result = $this->Form->widget('test', $data);
+		$this->assertEquals('HTML', $result);
 	}
 
 /**
@@ -525,7 +535,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testAddWidgetInvalid() {
-		$this->markTestIncomplete();
+		$mock = new \StdClass();
+		$this->Form->addWidget('test', $mock);
+		$this->Form->widget('test');
 	}
 
 /**
@@ -533,17 +545,46 @@ class FormHelperTest extends TestCase {
  *
  * @return void
  */
-	public function testContextClass() {
-		$this->markTestIncomplete();
+	public function testContextClassMatching() {
+		$context = 'My data';
+		$this->Form->addContextProvider('test', function ($request, $data) use ($context) {
+			$this->assertInstanceOf('Cake\Network\Request', $request);
+			$this->assertEquals($context, $data);
+			return new \StdObject();
+		});
+		$this->Form->create($context);
 	}
 
 /**
- * Test context selection in create()
+ * Provides context options for create().
  *
+ * @return array
+ */
+	public function contextSelectionProvider() {
+		$entity = $this->getMock('Cake\ORM\Entity');
+		$collection = $this->getMock('Cake\Collection\Collection', [], [[$entity]]);
+		$data = [
+			'schema' => [
+				'title' => ['type' => 'string']
+			]
+		];
+
+		return [
+			'entity' => [$entity, 'Cake\View\Form\EntityContext'],
+			'collection' => [$collection, 'Cake\View\Form\EntityContext'],
+			'array' => [$data, 'Cake\View\Form\ArrayContext'],
+			'none' => [null, 'Cake\View\Form\NullContext'],
+			'false' => [false, 'Cake\View\Form\NullContext'],
+		];
+	}
+
+/**
+ * Test default context selection in create()
+ *
+ * @dataProvider contextSelectionProvider
  * @return void
  */
-	public function testCreateContextSelection() {
-		$this->markTestIncomplete();
+	public function testCreateContextSelectionBuiltIn($data, $class) {
 	}
 
 /**
