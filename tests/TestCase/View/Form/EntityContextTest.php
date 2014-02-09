@@ -312,6 +312,35 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test reading values from associated entities.
+ *
+ * @return void
+ */
+	public function testValAssociatedHasMany() {
+		$row = new Entity([
+			'title' => 'First post',
+			'user' => new Entity([
+				'username' => 'mark',
+				'fname' => 'Mark',
+				'articles' => [
+					new Entity(['title' => 'First post']),
+					new Entity(['title' => 'Second post']),
+				]
+			]),
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$result = $context->val('user.articles.0.title');
+		$this->assertEquals('First post', $result);
+
+		$result = $context->val('user.articles.1.title');
+		$this->assertEquals('Second post', $result);
+	}
+
+/**
  * Test validator as a string.
  *
  * @return void
@@ -594,6 +623,7 @@ class EntityContextTest extends TestCase {
 
 		$comments = TableRegistry::get('Comments');
 		$users = TableRegistry::get('Users');
+		$users->hasMany('Articles');
 
 		$articles->schema([
 			'id' => ['type' => 'integer', 'length' => 11, 'null' => false],
