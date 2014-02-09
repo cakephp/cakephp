@@ -386,6 +386,11 @@ abstract class Association {
  * - type: The type of join to be used (e.g. INNER)
  * - matching: Indicates whether the query records should be filtered based on
  *   the records found on this association. This will force a 'INNER JOIN'
+ * - aliasPath: A dot separated string representing the path of association names
+ *   followed from the passed query main table to this association.
+ * - propertyPath: A dot separated string representing the path of association
+ *   properties to be followed from the passed query main entity to this
+ *   association
  *
  * @param Query $query the query to be altered to include the target table data
  * @param array $options Any extra options or overrides to be taken in account
@@ -492,6 +497,15 @@ abstract class Association {
 		$table->getEventManager()->dispatch($event);
 	}
 
+/**
+ * Helper function used to conditionally append fields to the select clause of
+ * a query from the fields found in another query object.
+ *
+ * @param \Cake\ORM\Query $query the query that will get the fields appended to
+ * @param \Cake\ORM\Query $surrogate the query having the fields to be copied from
+ * @param array $options options passed to the method `attachTo`
+ * @return void
+ */
 	protected function _appendFields($query, $surrogate, $options) {
 		$options['fields'] = $surrogate->clause('select') ?: $options['fields'];
 		$target = $this->_targetTable;
@@ -507,6 +521,19 @@ abstract class Association {
 		}
 	}
 
+/**
+ * Adds a formatter function to the passed `$query` if the `$surrogate` query
+ * declares any other formatter. Since the `$surrogate` query correspond to
+ * the associated target table, the resulting formatter will be the result of
+ * applying the surrogate formatters to only the property corresponding to
+ * such table.
+ *
+ * @param \Cake\ORM\Query $query the query that will get the formatter applied to
+ * @param \Cake\ORM\Query $surrogate the query having formatters for the associated
+ * target table.
+ * @param array $options options passed to the method `attachTo`
+ * @return void
+ */
 	protected function _formatAssociationResults($query, $surrogate, $options) {
 		$formatters = $surrogate->formatResults();
 
@@ -524,6 +551,20 @@ abstract class Association {
 		}, Query::PREPEND);
 	}
 
+/**
+ *
+ * Applies all attachable associations to `$query` out of the containments found
+ * in the `$surrogate` query.
+ *
+ * Copies all contained associations from the `$surrogate` query into the
+ * passed `$query`. Containments are altered so that thy respect the associations
+ * chain from which they originated.
+ *
+ * @param \Cake\ORM\Query $query the query that will get the associations attached to
+ * @param \Cake\ORM\Query $surrogate the query having the containments to be attached
+ * @param array $options options passed to the method `attachTo`
+ * @return void
+ */
 	protected function _bindNewAssociations($query, $surrogate, $options) {
 		$contain = $surrogate->contain();
 		$target = $this->_targetTable;
