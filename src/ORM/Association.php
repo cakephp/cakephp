@@ -435,7 +435,7 @@ abstract class Association {
 		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
 		$options['conditions']->add($dummy->clause('where') ?: []);
 		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
-	
+
 		$this->_appendFields($query, $dummy, $options);
 		$this->_formatAssociationResults($query, $dummy, $options);
 		$this->_bindNewAssociations($query, $dummy, $options);
@@ -540,7 +540,7 @@ abstract class Association {
 		if (!$formatters) {
 			return;
 		}
-		
+
 		$property = $options['propertyPath'];
 		$query->formatResults(function($results) use ($formatters, $property){
 			$extracted = $results->extract($property)->compile();

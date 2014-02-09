@@ -358,17 +358,17 @@ class EagerLoaderTest extends TestCase {
 		$this->assertEquals('clients', $normalized['clients']['aliasPath']);
 		$this->assertEquals('client', $normalized['clients']['propertyPath']);
 
-		$assocs =  $normalized['clients']['associations'];
+		$assocs = $normalized['clients']['associations'];
 		$this->assertEquals('clients.orders', $assocs['orders']['aliasPath']);
 		$this->assertEquals('client.order', $assocs['orders']['propertyPath']);
 
-		$assocs =  $assocs['orders']['associations'];
+		$assocs = $assocs['orders']['associations'];
 		$this->assertEquals('clients.orders.orderTypes', $assocs['orderTypes']['aliasPath']);
 		$this->assertEquals('client.order.order_type', $assocs['orderTypes']['propertyPath']);
 		$this->assertEquals('clients.orders.stuff', $assocs['stuff']['aliasPath']);
 		$this->assertEquals('client.order.stuff', $assocs['stuff']['propertyPath']);
 
-		$assocs =  $assocs['stuff']['associations'];
+		$assocs = $assocs['stuff']['associations'];
 		$this->assertEquals(
 			'clients.orders.stuff.stuffTypes',
 			$assocs['stuffTypes']['aliasPath']

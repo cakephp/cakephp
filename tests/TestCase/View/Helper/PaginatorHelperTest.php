@@ -755,7 +755,7 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->next('Next');
 		$expected = array(
 			'li' => array('class' => 'next'),
-			'a'  => array('rel' => 'next', 'href' => '/articles/index?page=2'),
+			'a' => array('rel' => 'next', 'href' => '/articles/index?page=2'),
 			'Next',
 			'/a',
 			'/li'

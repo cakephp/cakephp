@@ -19,10 +19,10 @@ use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
+use Cake\Collection\Iterator\InsertIterator;
 use Cake\Collection\Iterator\MapReduce;
 use Cake\Collection\Iterator\ReplaceIterator;
 use Cake\Collection\Iterator\SortIterator;
-use Cake\Collection\Iterator\InsertIterator;
 use LimitIterator;
 
 /**

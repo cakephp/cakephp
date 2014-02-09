@@ -1606,7 +1606,7 @@ class QueryTest extends TestCase {
 						});
 					});
 			}]);
-	
+
 		$query->formatResults(function($results) {
 			return $results->combine('id', 'author.idCopy');
 		});

@@ -775,7 +775,7 @@ class BelongsToManyTest extends TestCase {
 		$this->article->primaryKey(['id', 'site_id']);
 		$this->tag->primaryKey(['id', 'site_id']);
 
-		$table= TableRegistry::get('ArticlesTags');
+		$table = TableRegistry::get('ArticlesTags');
 		$table->schema([
 			'article_id' => ['type' => 'integer'],
 			'tag_id' => ['type' => 'integer'],
@@ -1539,6 +1539,5 @@ class BelongsToManyTest extends TestCase {
 			return $q->applyOptions(['something' => 'more']);
 		}]);
 	}
-
 
 }
