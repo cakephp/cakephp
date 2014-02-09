@@ -216,7 +216,7 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
  *
  * @return void
  */
-	public function testAttachToMAtching() {
+	public function testAttachToMatching() {
 		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
 		$config = [
 			'foreignKey' => 'company_id',

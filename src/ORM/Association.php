@@ -556,7 +556,7 @@ abstract class Association {
  * in the `$surrogate` query.
  *
  * Copies all contained associations from the `$surrogate` query into the
- * passed `$query`. Containments are altered so that thy respect the associations
+ * passed `$query`. Containments are altered so that they respect the associations
  * chain from which they originated.
  *
  * @param \Cake\ORM\Query $query the query that will get the associations attached to
