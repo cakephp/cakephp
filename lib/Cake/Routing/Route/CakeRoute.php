@@ -169,7 +169,7 @@ class CakeRoute {
 		$this->_compiledRoute = '#^' . $parsed . '[/]*$#';
 		$this->keys = $names;
 
-		// Remove defaults that are also keys. They can cause match failures
+		// Remove defaults that are also keys. They can cause match failures.
 		foreach ($this->keys as $key) {
 			unset($this->defaults[$key]);
 		}
@@ -188,9 +188,13 @@ class CakeRoute {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
+		
+		// parse the URL into a associative array of tokens.
 		if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
 			return false;
 		}
+		
+		// apply header based filters, return false if required headers are not set.
 		foreach ($this->defaults as $key => $val) {
 			$key = (string)$key;
 			if ($key[0] === '[' && preg_match('/^\[(\w+)\]$/', $key, $header)) {
@@ -214,6 +218,8 @@ class CakeRoute {
 				}
 			}
 		}
+		
+		// unset indexed keys in route.
 		array_shift($route);
 		$count = count($this->keys);
 		for ($i = 0; $i <= $count; $i++) {
@@ -221,7 +227,7 @@ class CakeRoute {
 		}
 		$route['pass'] = $route['named'] = array();
 
-		// Assign defaults, set passed args to pass
+		// set default name and pass params in $route array.
 		foreach ($this->defaults as $key => $value) {
 			if (isset($route[$key])) {
 				continue;
@@ -233,6 +239,7 @@ class CakeRoute {
 			$route[$key] = $value;
 		}
 
+		// set name and pass parameters extracted from URL.
 		if (isset($route['_args_'])) {
 			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
@@ -245,7 +252,7 @@ class CakeRoute {
 			unset($route['_trailing_']);
 		}
 
-		// restructure 'pass' key route params
+		// add values to pass array from keyed values in $route according to 'pass' option.
 		if (isset($this->options['pass'])) {
 			$j = count($this->options['pass']);
 			while ($j--) {
