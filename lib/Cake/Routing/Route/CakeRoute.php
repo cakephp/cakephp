@@ -490,7 +490,7 @@ class CakeRoute {
 			$prefixed = $params['prefix'] . '_';
 		}
 		if (isset($prefixed, $params['action']) && strpos($params['action'], $prefixed) === 0) {
-			$params['action'] = substr($params['action'], strlen($prefixed) );
+			$params['action'] = substr($params['action'], strlen($prefixed));
 			unset($params['prefix']);
 		}
 
