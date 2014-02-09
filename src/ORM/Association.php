@@ -384,6 +384,8 @@ abstract class Association {
  *   will be merged with any conditions originally configured for this association
  * - fields: a list of fields in the target table to include in the result
  * - type: The type of join to be used (e.g. INNER)
+ * - matching: Indicates whether the query records should be filtered based on
+ *   the records found on this association. This will force a 'INNER JOIN'
  *
  * @param Query $query the query to be altered to include the target table data
  * @param array $options Any extra options or overrides to be taken in account
@@ -398,7 +400,7 @@ abstract class Association {
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
 			'fields' => [],
-			'type' => $this->joinType(),
+			'type' => empty($options['matching']) ? $this->joinType() : 'INNER',
 			'table' => $target->table()
 		];
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);

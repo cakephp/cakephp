@@ -1690,4 +1690,47 @@ class QueryTest extends TestCase {
 		$this->assertEquals($expected, $query->toArray());
 	}
 
+/**
+ * Tests that it is possible to attach more association when using a query
+ * builder for other associaitons
+ *
+ * @return void
+ */
+	public function testContainInAssociationQuery() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles');
+		$table->association('Articles')->target()->belongsTo('Authors');
+
+		$query = $table->find()->contain(['Articles' => function($q) {
+			return $q->contain('Authors');
+		}]);
+		$results = $query->extract('article.author.name')->toArray();
+		$expected = ['mariano', 'mariano', 'larry', 'larry'];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that it is possible to apply more `matching` conditions inside query
+ * builders for associations
+ *
+ * @return void
+ */
+	public function testContainInAssociationMatching() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$articles = $table->association('articles')->target();
+		$articles->hasMany('articlesTags');
+		$articles->association('articlesTags')->target()->belongsTo('tags');
+
+		$query = $table->find()->matching('articles.articlesTags', function($q) {
+			return $q->matching('tags', function($q) {
+				return $q->where(['tags.name' => 'tag3']);
+			});
+		});
+
+		$results = $query->toArray();
+		$this->assertCount(1, $results);
+		$this->assertEquals('tag3', $results[0]->articles->articles_tags->tag->name);
+	}
+
 }
