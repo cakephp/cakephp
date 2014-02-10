@@ -505,6 +505,7 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals(1, $article->get('id'));
 		$article->set('title', 'Le titre');
 		$table->save($article);
+		$this->assertEquals('fra', $article->get('_locale'));
 
 		$article = $table->find()->first();
 		$this->assertEquals(1, $article->get('id'));
@@ -518,6 +519,33 @@ class TranslateBehaviorTest extends TestCase {
 		$article = $table->find()->first();
 		$this->assertEquals('Un autre titre', $article->get('title'));
 		$this->assertEquals('Le contenu', $article->get('body'));
+	}
+
+/**
+ * Tests that it is possible to use the _locale property to specify the language
+ * to use for saving an entity
+ *
+ * @return void
+ */
+	public function testUpdateTranslationWithLocaleInEntity() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$article->set('_locale', 'fra');
+		$article->set('title', 'Le titre');
+		$table->save($article);
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('First Article', $article->get('title'));
+		$this->assertEquals('First Article Body', $article->get('body'));
+
+		$table->locale('fra');
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('Le titre', $article->get('title'));
+		$this->assertEquals('First Article Body', $article->get('body'));
 	}
 
 }

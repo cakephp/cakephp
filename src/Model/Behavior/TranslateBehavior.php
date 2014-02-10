@@ -149,7 +149,7 @@ class TranslateBehavior extends Behavior {
 	}
 
 	public function beforeSave(Event $event, $entity) {
-		$locale = $this->locale();
+		$locale = $entity->get('_locale') ?: $this->locale();
 
 		if (!$locale) {
 			return;
@@ -180,6 +180,8 @@ class TranslateBehavior extends Behavior {
 		}
 
 		$entity->set('_i18n', array_values($modified + $new));
+		$entity->set('_locale', $locale, ['setter' => false]);
+		$entity->dirty('_locale', false);
 
 		foreach ($fields as $field) {
 			$entity->dirty($field, false);
