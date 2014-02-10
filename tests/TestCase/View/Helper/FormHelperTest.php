@@ -553,12 +553,27 @@ class FormHelperTest extends TestCase {
  *
  * @return void
  */
-	public function testContextClassMatching() {
+	public function testAddContextProvider() {
 		$context = 'My data';
 		$this->Form->addContextProvider('test', function ($request, $data) use ($context) {
 			$this->assertInstanceOf('Cake\Network\Request', $request);
-			$this->assertEquals($context, $data);
-			return new \StdObject();
+			$this->assertEquals($context, $data['entity']);
+			return $this->getMock('Cake\View\Form\ContextInterface');
+		});
+		$this->Form->create($context);
+	}
+
+/**
+ * Test adding an invalid context class.
+ *
+ * @expectedException RuntimeException
+ * @expectedExceptionMessage Context objects must implement Cake\View\Form\ContextInterface
+ * @return void
+ */
+	public function testAddContextProviderInvalid() {
+		$context = 'My data';
+		$this->Form->addContextProvider('test', function ($request, $data) use ($context) {
+			return new \StdClass();
 		});
 		$this->Form->create($context);
 	}

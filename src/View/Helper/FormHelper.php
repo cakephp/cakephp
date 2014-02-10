@@ -22,6 +22,7 @@ use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\Security;
 use Cake\View\Form\ArrayContext;
+use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper;
@@ -203,10 +204,6 @@ class FormHelper extends Helper {
 			) {
 				return new EntityContext($request, $data);
 			}
-		});
-
-		$this->addContextProvider('_default', function ($request, $data) {
-			return new NullContext($request, (array)$data);
 		});
 	}
 
@@ -2908,20 +2905,29 @@ class FormHelper extends Helper {
 /**
  * Find the matching context provider for the data.
  *
- * If no type can be matched the default provider will be returned.
+ * If no type can be matched a NullContext will be returned.
  *
  * @param mixed $data The data to get a context provider for.
  * @return mixed Context provider.
+ * @throws RuntimeException when the context class does not implement the
+ *   ContextInterface.
  */
 	protected function _buildContext($data) {
 		foreach ($this->_contextProviders as $key => $check) {
 			$context = $check($this->request, $data);
 			if ($context) {
-				return $context;
+				break;
 			}
 		}
-		$check = $this->_contextProviders['_default'];
-		return $check($this->request, $data);
+		if (!isset($context)) {
+			$context = new NullContext($this->request, $data);
+		}
+		if (!($context instanceof ContextInterface)) {
+			throw new \RuntimeException(
+				'Context objects must implement Cake\View\Form\ContextInterface'
+			);
+		}
+		return $context;
 	}
 
 /**
