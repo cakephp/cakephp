@@ -21,6 +21,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Network\Request;
+use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Routing\Router;
@@ -29,6 +30,13 @@ use Cake\Utility\Security;
 use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
+
+
+/**
+ * Test stub.
+ */
+class Article extends Entity {
+}
 
 /**
  * ContactTestController class
@@ -454,7 +462,7 @@ class FormHelperTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post');
+	public $fixtures = array('core.article');
 
 /**
  * Do not load the fixtures by default
@@ -562,7 +570,7 @@ class FormHelperTest extends TestCase {
  */
 	public function contextSelectionProvider() {
 		$entity = $this->getMock('Cake\ORM\Entity');
-		$collection = $this->getMock('Cake\Collection\Collection', [], [[$entity]]);
+		$collection = $this->getMock('Cake\Collection\Collection', ['extract'], [[$entity]]);
 		$data = [
 			'schema' => [
 				'title' => ['type' => 'string']
@@ -585,6 +593,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateContextSelectionBuiltIn($data, $class) {
+		$this->Form->create($data);
+		$this->assertInstanceOf($class, $this->Form->context());
 	}
 
 /**
@@ -595,10 +605,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateWithSecurity() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+		$this->markTestIncomplete();
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
+		$article = new Article();
+		$result = $this->Form->create($article, [
+			'url' => '/contacts/add',
+			'context' => ['table' => 'Articles']
+		]);
 		$expected = array(
 			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding, 'id' => 'ContactAddForm'),
 			'div' => array('style' => 'display:none;'),

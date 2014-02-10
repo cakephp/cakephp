@@ -26,6 +26,7 @@ use Cake\View\Form\EntityContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper;
 use Cake\View\StringTemplate;
+use Cake\View\Helper\StringTemplateTrait;
 use Cake\View\View;
 use Cake\View\Widget\InputRegistry;
 use DateTime;
@@ -40,6 +41,8 @@ use Traversable;
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html
  */
 class FormHelper extends Helper {
+
+	use StringTemplateTrait;
 
 /**
  * Other helpers used by FormHelper
@@ -136,13 +139,6 @@ class FormHelper extends Helper {
 	protected $_registry;
 
 /**
- * Template formatter for the helper.
- *
- * @var Cake\View\StringTemplate
- */
-	protected $_templates;
-
-/**
  * Context for the current form.
  *
  * @var Cake\View\Form\Context
@@ -158,6 +154,16 @@ class FormHelper extends Helper {
 	protected $_contextProviders;
 
 /**
+ * Default templates the FormHelper uses.
+ *
+ * @var array
+ */
+	protected $_defaultTemplates = [
+		'formstart' => '<form {{attrs}}>',
+		'formend' => '</form>',
+	];
+
+/**
  * Copies the validationErrors variable from the View object into this instance
  *
  * @param View $View The View this helper is being attached to.
@@ -165,35 +171,43 @@ class FormHelper extends Helper {
  */
 	public function __construct(View $View, $settings = array()) {
 		$settings += ['widgets' => [], 'templates' => null, 'registry' => null];
-		if (is_array($settings['templates'])) {
-			$settings['templates'] = new StringTemplate($settings['templates']);
-		}
-		$this->_templates = $settings['templates'] ?: new StringTemplate();
+		parent::__construct($View, $settings);
 
+		$this->initStringTemplates($this->_defaultTemplates);
 		if (empty($settings['registry'])) {
-			$settings['registry'] = new InputRegistry($this->_templates, $settings['widgets']);
+			$settings['registry'] = new InputRegistry($this->_templater, $settings['widgets']);
 		}
 		$this->_registry = $settings['registry'];
+		unset($this->settings['registry']);
 
+		$this->_addDefaultContextProviders();
+	}
+
+/**
+ * Add the default suite of context providers provided by CakePHP.
+ *
+ * @return void
+ */
+	protected function _addDefaultContextProviders() {
 		$this->addContextProvider('array', function ($request, $data) {
-			if (is_array($data) && isset($data['schema'])) {
-				return new ArrayContext($request, $data);
+			if (is_array($data['entity']) && isset($data['entity']['schema'])) {
+				return new ArrayContext($request, $data['entity']);
 			}
 		});
+
 		$this->addContextProvider('orm', function ($request, $data) {
 			if (
-				$data instanceof Entity ||
-				$data instanceof Traversable ||
-				(is_array($data) && !isset($data['schema']))
+				$data['entity'] instanceof Entity ||
+				$data['entity'] instanceof Traversable ||
+				(is_array($data['entity']) && !isset($data['entity']['schema']))
 			) {
 				return new EntityContext($request, $data);
 			}
 		});
+
 		$this->addContextProvider('_default', function ($request, $data) {
 			return new NullContext($request, (array)$data);
 		});
-
-		parent::__construct($View, $settings);
 	}
 
 /**
@@ -262,34 +276,26 @@ class FormHelper extends Helper {
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
  */
-	public function create($model = null, $options = array()) {
-		$created = $id = $key = false;
+	public function create($model = null, $options = []) {
+		$id = $key = false;
 		$append = '';
 
-		$this->_context = $this->_buildContext($model);
-
-		// TODO implement 'isNew' on context classes.
-		if ($model !== false && $key) {
-			$recordExists = (
-				isset($this->request->data[$model]) &&
-				!empty($this->request->data[$model][$key]) &&
-				!is_array($this->request->data[$model][$key])
-			);
-
-			if ($recordExists) {
-				$created = true;
-				$id = $this->request->data[$model][$key];
-			}
+		if (empty($options['context'])) {
+			$options['context'] = [];
 		}
+		$options['context']['entity'] = $model;
+		$this->_context = $this->_buildContext($options['context']);
+		unset($options['context']);
 
-		$options = array_merge(array(
-			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
+		$isCreate = $this->_context->isCreate();
+
+		$options = array_merge([
+			'type' => (!$isCreate && empty($options['action'])) ? 'put' : 'post',
 			'action' => null,
 			'url' => null,
 			'default' => true,
 			'encoding' => strtolower(Configure::read('App.encoding')),
-			),
-		$options);
+			], $options);
 
 		if (!isset($options['id'])) {
 			$domId = isset($options['action']) ? $options['action'] : $this->request['action'];
@@ -299,12 +305,9 @@ class FormHelper extends Helper {
 		if ($options['action'] === null && $options['url'] === null) {
 			$options['action'] = $this->request->here(false);
 		} elseif (empty($options['url']) || is_array($options['url'])) {
+			// TODO restore convention around model->controller name.
 			if (empty($options['url']['controller'])) {
-				if (!empty($model)) {
-					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
-				} elseif (!empty($this->request->params['controller'])) {
-					$options['url']['controller'] = Inflector::underscore($this->request->params['controller']);
-				}
+				$options['url']['controller'] = Inflector::underscore($this->request->params['controller']);
 			}
 			if (empty($options['action'])) {
 				$options['action'] = $this->request->params['action'];
@@ -319,7 +322,9 @@ class FormHelper extends Helper {
 				'controller' => $this->_View->viewPath,
 				'action' => $options['action'],
 			);
-			$options['action'] = array_merge($actionDefaults, (array)$options['url']);
+			$options['action'] = (array)$options['url'] + $actionDefaults;
+
+			// TODO add primary key handling
 			if (empty($options['action'][0]) && !empty($id)) {
 				$options['action'][0] = $id;
 			}
@@ -339,7 +344,9 @@ class FormHelper extends Helper {
 			case 'put':
 			case 'delete':
 				$append .= $this->hidden('_method', array(
-					'name' => '_method', 'value' => strtoupper($options['type']), 'id' => null,
+					'name' => '_method',
+					'value' => strtoupper($options['type']),
+					'id' => null,
 					'secure' => static::SECURE_SKIP
 				));
 			default:
@@ -347,7 +354,7 @@ class FormHelper extends Helper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-		$action = $this->url($options['action']);
+		$htmlAttributes['action'] = $this->url($options['action']);
 		unset($options['type'], $options['action']);
 
 		if (!$options['default']) {
@@ -373,8 +380,9 @@ class FormHelper extends Helper {
 		if (!empty($append)) {
 			$append = $this->Html->useTag('hiddenblock', $append);
 		}
-
-		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
+		return $this->_templater->format('formstart', [
+			'attrs' => $this->_templater->formatAttributes($htmlAttributes)
+		]) . $append;
 	}
 
 /**
