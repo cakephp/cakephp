@@ -328,10 +328,11 @@ class FormHelper extends Helper {
 				break;
 			case 'file':
 				$htmlAttributes['enctype'] = 'multipart/form-data';
-				$options['type'] = ($created) ? 'put' : 'post';
+				$options['type'] = ($isCreate) ? 'post' : 'put';
 			case 'post':
 			case 'put':
 			case 'delete':
+			case 'patch':
 				$append .= $this->hidden('_method', array(
 					'name' => '_method',
 					'value' => strtoupper($options['type']),
