@@ -81,20 +81,6 @@ class PaginatorHelper extends Helper {
 	}
 
 /**
- * Get/set templates to use.
- *
- * @param string|null|array $templates null or string allow reading templates. An array
- *   allows templates to be added.
- * @return void|string|array
- */
-	public function templates($templates = null) {
-		if ($templates === null || is_string($templates)) {
-			return $this->_templater->get($templates);
-		}
-		return $this->_templater->add($templates);
-	}
-
-/**
  * Before render callback. Overridden to merge passed args with URL options.
  *
  * @param Cake\Event\Event $event The event instance.
