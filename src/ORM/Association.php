@@ -14,7 +14,9 @@
  */
 namespace Cake\ORM;
 
+use Cake\Event\Event;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
@@ -382,20 +384,28 @@ abstract class Association {
  *   will be merged with any conditions originally configured for this association
  * - fields: a list of fields in the target table to include in the result
  * - type: The type of join to be used (e.g. INNER)
+ * - matching: Indicates whether the query records should be filtered based on
+ *   the records found on this association. This will force a 'INNER JOIN'
+ * - aliasPath: A dot separated string representing the path of association names
+ *   followed from the passed query main table to this association.
+ * - propertyPath: A dot separated string representing the path of association
+ *   properties to be followed from the passed query main entity to this
+ *   association
  *
  * @param Query $query the query to be altered to include the target table data
  * @param array $options Any extra options or overrides to be taken in account
  * @return void
+ * @throws \RuntimeException if the query builder passed does not return a query
+ * object
  */
 	public function attachTo(Query $query, array $options = []) {
 		$target = $this->target();
-		$source = $this->source();
 		$options += [
 			'includeFields' => true,
 			'foreignKey' => $this->foreignKey(),
 			'conditions' => [],
 			'fields' => [],
-			'type' => $this->joinType(),
+			'type' => empty($options['matching']) ? $this->joinType() : 'INNER',
 			'table' => $target->table()
 		];
 		$options['conditions'] = array_merge($this->conditions(), $options['conditions']);
@@ -408,26 +418,27 @@ abstract class Association {
 		}
 
 		$options['conditions'] = $query->newExpr()->add($options['conditions']);
+		$dummy = $target->query();
 
 		if (!empty($options['queryBuilder'])) {
-			$newQuery = $options['queryBuilder']($target->query());
-			$options['fields'] = $newQuery->clause('select') ?: $options['fields'];
-			$options['conditions']->add($newQuery->clause('where') ?: []);
-		}
-
-		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
-
-		if (empty($options['fields'])) {
-			$f = isset($options['fields']) ? $options['fields'] : null;
-			if ($options['includeFields'] && ($f === null || $f !== false)) {
-				$options['fields'] = $target->schema()->columns();
+			$dummy = $options['queryBuilder']($dummy);
+			if (!($dummy instanceof Query)) {
+				throw new \RuntimeException(sprintf(
+					'Query builder for association "%s" did not return a query',
+					$this->name()
+				));
 			}
 		}
 
-		if (!empty($options['fields'])) {
-			$query->select($query->aliasFields($options['fields'], $target->alias()));
-		}
+		$this->_dispatchBeforeFind($dummy);
+
+		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
+		$options['conditions']->add($dummy->clause('where') ?: []);
+		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
+
+		$this->_appendFields($query, $dummy, $options);
+		$this->_formatAssociationResults($query, $dummy, $options);
+		$this->_bindNewAssociations($query, $dummy, $options);
 	}
 
 /**
@@ -470,6 +481,104 @@ abstract class Association {
 		return $this->target()
 			->find($type, $options)
 			->where($this->conditions());
+	}
+
+/**
+ * Triggers beforeFind on the target table for the query this association is
+ * attaching to
+ *
+ * @param \Cake\ORM\Query $query the query this association is attaching itself to
+ * @return void
+ */
+	protected function _dispatchBeforeFind($query) {
+		$table = $this->target();
+		$options = $query->getOptions();
+		$event = new Event('Model.beforeFind', $table, [$query, $options, false]);
+		$table->getEventManager()->dispatch($event);
+	}
+
+/**
+ * Helper function used to conditionally append fields to the select clause of
+ * a query from the fields found in another query object.
+ *
+ * @param \Cake\ORM\Query $query the query that will get the fields appended to
+ * @param \Cake\ORM\Query $surrogate the query having the fields to be copied from
+ * @param array $options options passed to the method `attachTo`
+ * @return void
+ */
+	protected function _appendFields($query, $surrogate, $options) {
+		$options['fields'] = $surrogate->clause('select') ?: $options['fields'];
+		$target = $this->_targetTable;
+		if (empty($options['fields'])) {
+			$f = isset($options['fields']) ? $options['fields'] : null;
+			if ($options['includeFields'] && ($f === null || $f !== false)) {
+				$options['fields'] = $target->schema()->columns();
+			}
+		}
+
+		if (!empty($options['fields'])) {
+			$query->select($query->aliasFields($options['fields'], $target->alias()));
+		}
+	}
+
+/**
+ * Adds a formatter function to the passed `$query` if the `$surrogate` query
+ * declares any other formatter. Since the `$surrogate` query correspond to
+ * the associated target table, the resulting formatter will be the result of
+ * applying the surrogate formatters to only the property corresponding to
+ * such table.
+ *
+ * @param \Cake\ORM\Query $query the query that will get the formatter applied to
+ * @param \Cake\ORM\Query $surrogate the query having formatters for the associated
+ * target table.
+ * @param array $options options passed to the method `attachTo`
+ * @return void
+ */
+	protected function _formatAssociationResults($query, $surrogate, $options) {
+		$formatters = $surrogate->formatResults();
+
+		if (!$formatters) {
+			return;
+		}
+
+		$property = $options['propertyPath'];
+		$query->formatResults(function($results) use ($formatters, $property) {
+			$extracted = $results->extract($property)->compile();
+			foreach ($formatters as $callable) {
+				$extracted = new ResultSetDecorator($callable($extracted));
+			}
+			return $results->insert($property, $extracted);
+		}, Query::PREPEND);
+	}
+
+/**
+ * Applies all attachable associations to `$query` out of the containments found
+ * in the `$surrogate` query.
+ *
+ * Copies all contained associations from the `$surrogate` query into the
+ * passed `$query`. Containments are altered so that they respect the associations
+ * chain from which they originated.
+ *
+ * @param \Cake\ORM\Query $query the query that will get the associations attached to
+ * @param \Cake\ORM\Query $surrogate the query having the containments to be attached
+ * @param array $options options passed to the method `attachTo`
+ * @return void
+ */
+	protected function _bindNewAssociations($query, $surrogate, $options) {
+		$contain = $surrogate->contain();
+		$target = $this->_targetTable;
+
+		if (!$contain) {
+			return;
+		}
+
+		$loader = $surrogate->eagerLoader();
+		$loader->attachAssociations($query, $target, $options['includeFields']);
+		$newBinds = [];
+		foreach ($contain as $alias => $value) {
+			$newBinds[$options['aliasPath'] . '.' . $alias] = $value;
+		}
+		$query->contain($newBinds);
 	}
 
 /**

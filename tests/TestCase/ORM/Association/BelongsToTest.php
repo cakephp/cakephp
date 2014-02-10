@@ -211,6 +211,39 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that by passing the matching option to `attachTo` the association
+ * is joinned using `INNER`
+ *
+ * @return void
+ */
+	public function testAttachToMatching() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company,
+			'conditions' => ['Companies.is_active' => true]
+		];
+		$association = new BelongsTo('Companies', $config);
+		$field = new IdentifierExpression('Clients.company_id');
+		$query->expects($this->once())->method('join')->with([
+			'Companies' => [
+				'conditions' => new QueryExpression([
+					'Companies.is_active' => true,
+					['Companies.id' => $field]
+				]),
+				'table' => 'companies',
+				'type' => 'INNER'
+			]
+		]);
+		$query->expects($this->once())->method('select')->with([
+			'Companies__id' => 'Companies.id',
+			'Companies__company_name' => 'Companies.company_name'
+		]);
+		$association->attachTo($query, ['matching' => true]);
+	}
+
+/**
  * Test the cascading delete of BelongsTo.
  *
  * @return void
@@ -326,6 +359,61 @@ class BelongsToTest extends \Cake\TestSuite\TestCase {
 		];
 		$association = new BelongsTo('Contacts.Companies', $config);
 		$this->assertEquals('company', $association->property());
+	}
+
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFind() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company
+		];
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+		$association = new BelongsTo('Companies', $config);
+		$listener->expects($this->once())->method('__invoke')
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				[],
+				false
+			);
+		$association->attachTo($query);
+	}
+
+/**
+ * Tests that attaching an association to a query will trigger beforeFind
+ * for the target table
+ *
+ * @return void
+ */
+	public function testAttachToBeforeFindExtraOptions() {
+		$query = $this->getMock('\Cake\ORM\Query', ['join', 'select'], [null, null]);
+		$config = [
+			'foreignKey' => 'company_id',
+			'sourceTable' => $this->client,
+			'targetTable' => $this->company
+		];
+		$listener = $this->getMock('stdClass', ['__invoke']);
+		$this->company->getEventManager()->attach($listener, 'Model.beforeFind');
+		$association = new BelongsTo('Companies', $config);
+		$options = ['something' => 'more'];
+		$listener->expects($this->once())->method('__invoke')
+			->with(
+				$this->isInstanceOf('\Cake\Event\Event'),
+				$this->isInstanceOf('\Cake\ORM\Query'),
+				$options,
+				false
+			);
+		$association->attachTo($query, ['queryBuilder' => function($q) {
+			return $q->applyOptions(['something' => 'more']);
+		}]);
 	}
 
 }

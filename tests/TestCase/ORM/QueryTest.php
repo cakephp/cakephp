@@ -1580,4 +1580,157 @@ class QueryTest extends TestCase {
 		$this->assertEquals(3, $query->count());
 	}
 
+/**
+ * Tests that it is possible to apply formatters inside the query builder
+ * for belongsTo associations
+ *
+ * @return void
+ */
+	public function testFormatBelongsToRecords() {
+		$table = TableRegistry::get('articles');
+		$table->belongsTo('authors');
+
+		$query = $table->find()
+			->contain(['authors' => function($q) {
+				return $q
+					->formatResults(function($authors) {
+						return $authors->map(function($author) {
+							$author->idCopy = $author->id;
+							return $author;
+						});
+					})
+					->formatResults(function($authors) {
+						return $authors->map(function($author) {
+							$author->idCopy = $author->idCopy + 2;
+							return $author;
+						});
+					});
+			}]);
+
+		$query->formatResults(function($results) {
+			return $results->combine('id', 'author.idCopy');
+		});
+		$results = $query->toArray();
+		$expected = [1 => 3, 2 => 5, 3 => 3];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests it is possible to apply formatters to deep relations.
+ *
+ * @return void
+ */
+	public function testFormatDeepAssocationRecords() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles');
+		$table->association('Articles')->target()->belongsTo('Authors');
+
+		$builder = function($q) {
+			return $q
+				->formatResults(function($results) {
+					return $results->map(function($result) {
+						$result->idCopy = $result->id;
+						return $result;
+					});
+				})
+				->formatResults(function($results) {
+					return $results->map(function($result) {
+						$result->idCopy = $result->idCopy + 2;
+						return $result;
+					});
+				});
+		};
+		$query = $table->find()
+			->contain(['Articles' => $builder, 'Articles.Authors' => $builder]);
+		$query->formatResults(function($results) {
+			return $results->map(function($row) {
+				return sprintf(
+					'%s - %s - %s',
+					$row->tag_id,
+					$row->article->idCopy,
+					$row->article->author->idCopy
+				);
+			});
+		});
+
+		$expected = ['1 - 3 - 3', '2 - 3 - 3', '1 - 4 - 5', '3 - 4 - 5'];
+		$this->assertEquals($expected, $query->toArray());
+	}
+
+/**
+ * Tests that formatters cna be applied to deep associaitons that are fetched using
+ * additional queries
+ *
+ * @return void
+ */
+	public function testFormatDeepDistantAssociationRecords() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$articles = $table->association('articles')->target();
+		$articles->hasMany('articlesTags');
+		$articles->association('articlesTags')->target()->belongsTo('tags');
+
+		$query = $table->find()->contain(['articles.articlesTags.tags' => function($q) {
+			return $q->formatResults(function($results) {
+				return $results->map(function($tag) {
+					$tag->name .= ' - visited';
+					return $tag;
+				});
+			});
+		}]);
+
+		$query->mapReduce(function($row, $key, $mr) {
+			foreach ((array)$row->articles as $article) {
+				foreach ((array)$article->articles_tags as $articleTag) {
+					$mr->emit($articleTag->tag->name);
+				}
+			}
+		});
+		$expected = ['tag1 - visited', 'tag2 - visited', 'tag1 - visited', 'tag3 - visited'];
+		$this->assertEquals($expected, $query->toArray());
+	}
+
+/**
+ * Tests that it is possible to attach more association when using a query
+ * builder for other associaitons
+ *
+ * @return void
+ */
+	public function testContainInAssociationQuery() {
+		$table = TableRegistry::get('ArticlesTags');
+		$table->belongsTo('Articles');
+		$table->association('Articles')->target()->belongsTo('Authors');
+
+		$query = $table->find()->contain(['Articles' => function($q) {
+			return $q->contain('Authors');
+		}]);
+		$results = $query->extract('article.author.name')->toArray();
+		$expected = ['mariano', 'mariano', 'larry', 'larry'];
+		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that it is possible to apply more `matching` conditions inside query
+ * builders for associations
+ *
+ * @return void
+ */
+	public function testContainInAssociationMatching() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$articles = $table->association('articles')->target();
+		$articles->hasMany('articlesTags');
+		$articles->association('articlesTags')->target()->belongsTo('tags');
+
+		$query = $table->find()->matching('articles.articlesTags', function($q) {
+			return $q->matching('tags', function($q) {
+				return $q->where(['tags.name' => 'tag3']);
+			});
+		});
+
+		$results = $query->toArray();
+		$this->assertCount(1, $results);
+		$this->assertEquals('tag3', $results[0]->articles->articles_tags->tag->name);
+	}
+
 }

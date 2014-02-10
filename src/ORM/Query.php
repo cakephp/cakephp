@@ -512,7 +512,7 @@ class Query extends DatabaseQuery {
 		}
 
 		$table = $this->repository();
-		$event = new Event('Model.beforeFind', $table, [$this, $this->_options]);
+		$event = new Event('Model.beforeFind', $table, [$this, $this->_options, true]);
 		$table->getEventManager()->dispatch($event);
 
 		if (isset($this->_results)) {
@@ -918,7 +918,7 @@ class Query extends DatabaseQuery {
 				$this->from([$this->_table->alias() => $this->_table->table()]);
 			}
 			$this->_addDefaultFields();
-			$this->eagerLoader()->attachAssociations($this, !$this->_hasFields);
+			$this->eagerLoader()->attachAssociations($this, $this->_table, !$this->_hasFields);
 		}
 		return parent::_transformQuery();
 	}

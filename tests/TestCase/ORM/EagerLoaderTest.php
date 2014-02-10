@@ -271,7 +271,7 @@ class EagerLoaderTest extends TestCase {
 		$loader = new EagerLoader;
 		$loader->contain($contains);
 		$query->select('foo.id');
-		$loader->attachAssociations($query, true);
+		$loader->attachAssociations($query, $table, true);
 
 		$select = $query->clause('select');
 		$expected = [
@@ -325,6 +325,58 @@ class EagerLoaderTest extends TestCase {
 		];
 		$expected = $this->_quoteArray($expected);
 		$this->assertEquals($expected, $select);
+	}
+
+/**
+ * Tests that the path for gettings to a deep assocition is materialized in an
+ * array key
+ *
+ * @return void
+ */
+	public function testNormalizedPath() {
+		$contains = [
+			'clients' => [
+			'orders' => [
+					'orderTypes',
+					'stuff' => ['stuffTypes']
+				],
+			'companies' => [
+					'categories'
+				]
+			]
+		];
+
+		$query = $this->getMock(
+			'\Cake\ORM\Query',
+			['join'],
+			[$this->connection, $this->table]
+		);
+
+		$loader = new EagerLoader;
+		$loader->contain($contains);
+		$normalized = $loader->normalized($this->table);
+		$this->assertEquals('clients', $normalized['clients']['aliasPath']);
+		$this->assertEquals('client', $normalized['clients']['propertyPath']);
+
+		$assocs = $normalized['clients']['associations'];
+		$this->assertEquals('clients.orders', $assocs['orders']['aliasPath']);
+		$this->assertEquals('client.order', $assocs['orders']['propertyPath']);
+
+		$assocs = $assocs['orders']['associations'];
+		$this->assertEquals('clients.orders.orderTypes', $assocs['orderTypes']['aliasPath']);
+		$this->assertEquals('client.order.order_type', $assocs['orderTypes']['propertyPath']);
+		$this->assertEquals('clients.orders.stuff', $assocs['stuff']['aliasPath']);
+		$this->assertEquals('client.order.stuff', $assocs['stuff']['propertyPath']);
+
+		$assocs = $assocs['stuff']['associations'];
+		$this->assertEquals(
+			'clients.orders.stuff.stuffTypes',
+			$assocs['stuffTypes']['aliasPath']
+		);
+		$this->assertEquals(
+			'client.order.stuff.stuff_type',
+			$assocs['stuffTypes']['propertyPath']
+		);
 	}
 
 /**

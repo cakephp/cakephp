@@ -97,14 +97,8 @@ class EagerLoader {
 		}
 
 		$associations = (array)$associations;
-		$current = current($associations);
-		if (is_array($current) && isset($current['instance'])) {
-			$this->_containments = $this->_normalized = $associations;
-			return;
-		}
-
 		$associations = $this->_reformatContain($associations, $this->_containments);
-		$this->_normalized = null;
+		$this->_normalized = $this->_loadExternal = null;
 		return $this->_containments = $associations;
 	}
 
@@ -149,33 +143,24 @@ class EagerLoader {
  */
 	public function normalized(Table $repository) {
 		if ($this->_normalized !== null || empty($this->_containments)) {
-			return $this->_normalized;
+			return (array)$this->_normalized;
 		}
 
 		$contain = [];
-		foreach ($this->_containments as $table => $options) {
+		foreach ($this->_containments as $alias => $options) {
 			if (!empty($options['instance'])) {
 				$contain = (array)$this->_containments;
 				break;
 			}
-			$contain[$table] = $this->_normalizeContain($repository, $table, $options);
+			$contain[$alias] = $this->_normalizeContain(
+				$repository,
+				$alias,
+				$options,
+				[]
+			);
 		}
 
 		return $this->_normalized = $contain;
-	}
-
-/**
- * Returns whether or not there are associations that need to be loaded by
- * decorating results from a query and executing a separate one for injecting
- * them.
- *
- * @param \Cake\ORM\Table $repository The table containing the associations described in
- * the `contain` array
- * @return boolean
- */
-	protected function _hasExternal(Table $repository) {
-		$this->normalized($repository);
-		return !empty($this->_loadExternal);
 	}
 
 /**
@@ -213,6 +198,9 @@ class EagerLoader {
 			}
 
 			if (is_array($options)) {
+				$options = isset($options['config']) ?
+					$options['config'] + $options['associations'] :
+					$options;
 				$options = $this->_reformatContain($options, []);
 			}
 
@@ -234,21 +222,63 @@ class EagerLoader {
  * those that cannot be loaded without executing a separate query.
  *
  * @param \Cake\ORM\Query $query The query to be modified
+ * @param \Cake\ORM\Table $repository The repository containing the associations
  * @param boolean $includeFields whether to append all fields from the associations
  * to the passed query. This can be overridden according to the settings defined
  * per association in the containments array
  * @return void
  */
-	public function attachAssociations(Query $query, $includeFields) {
+	public function attachAssociations(Query $query, Table $repository, $includeFields) {
 		if (empty($this->_containments)) {
 			return;
 		}
 
-		$contain = $this->normalized($query->repository());
-		foreach ($this->_resolveJoins($contain) as $options) {
-			$config = $options['config'] + ['includeFields' => $includeFields];
+		foreach ($this->attachableAssociations($repository) as $options) {
+			$config = $options['config'] + [
+				'aliasPath' => $options['aliasPath'],
+				'propertyPath' => $options['propertyPath'],
+				'includeFields' => $includeFields
+			];
 			$options['instance']->attachTo($query, $config);
 		}
+	}
+
+/**
+ * Returns an array with the associations that can be fetched using a single query,
+ * the array keys are the association aliases and the values will contain an array
+ * with the following keys:
+ *
+ * - instance: the association object instance
+ * - config: the options set for fetching such association
+ *
+ * @param \Cake\ORM\Table $repository The table containing the associations to be
+ * attached
+ * @return array
+ */
+	public function attachableAssociations(Table $repository) {
+		$contain = $this->normalized($repository);
+		return $this->_resolveJoins($contain);
+	}
+
+/**
+ * Returns an array with the associations that need to be fetched using a
+ * separate query, each array value will contain the following keys:
+ *
+ * - instance: the association object instance
+ * - config: the options set for fetching such association
+ *
+ * @param \Cake\ORM\Table $repository The table containing the associations
+ * to be loaded
+ * @return array
+ */
+	public function externalAssociations(Table $repository) {
+		if ($this->_loadExternal) {
+			return $this->_loadExternal;
+		}
+
+		$contain = $this->normalized($repository);
+		$this->_resolveJoins($contain);
+		return $this->_loadExternal;
 	}
 
 /**
@@ -258,10 +288,14 @@ class EagerLoader {
  * @param Table $parent owning side of the association
  * @param string $alias name of the association to be loaded
  * @param array $options list of extra options to use for this association
+ * @param array $paths An array with to values, the first one is a list of dot
+ * separated strings representing associations that lead to this `$alias` in the
+ * chain of associaitons to be loaded. The second value is the path to follow in
+ * entities' properties to fetch a record of the corresponding association.
  * @return array normalized associations
  * @throws \InvalidArgumentException When containments refer to associations that do not exist.
  */
-	protected function _normalizeContain(Table $parent, $alias, $options) {
+	protected function _normalizeContain(Table $parent, $alias, $options, $paths) {
 		$defaults = $this->_containOptions;
 		$instance = $parent->association($alias);
 		if (!$instance) {
@@ -270,22 +304,24 @@ class EagerLoader {
 			);
 		}
 
+		$paths += ['aliasPath' => '', 'propertyPath' => ''];
+		$paths['aliasPath'] .= '.' . $alias;
+		$paths['propertyPath'] .= '.' . $instance->property();
+
 		$table = $instance->target();
 
 		$extra = array_diff_key($options, $defaults);
 		$config = [
 			'associations' => [],
 			'instance' => $instance,
-			'config' => array_diff_key($options, $extra)
+			'config' => array_diff_key($options, $extra),
+			'aliasPath' => trim($paths['aliasPath'], '.'),
+			'propertyPath' => trim($paths['propertyPath'], '.'),
 		];
 		$config['canBeJoined'] = $instance->canBeJoined($config['config']);
 
 		foreach ($extra as $t => $assoc) {
-			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc);
-		}
-
-		if (!$config['canBeJoined']) {
-			$this->_loadExternal[$alias] = $config;
+			$config['associations'][$t] = $this->_normalizeContain($table, $t, $assoc, $paths);
 		}
 
 		return $config;
@@ -304,6 +340,8 @@ class EagerLoader {
 			if ($options['canBeJoined']) {
 				$result[$table] = $options;
 				$result += $this->_resolveJoins($options['associations']);
+			} else {
+				$this->_loadExternal[] = $options;
 			}
 		}
 		return $result;
@@ -319,13 +357,14 @@ class EagerLoader {
  * @return CallbackStatement $statement modified statement with extra loaders
  */
 	public function loadExternal($query, $statement) {
-		if (!$this->_hasExternal($query->repository())) {
+		$external = $this->externalAssociations($query->repository());
+		if (empty($external)) {
 			return $statement;
 		}
 
 		$driver = $query->connection()->driver();
-		list($collected, $statement) = $this->_collectKeys($query, $statement);
-		foreach ($this->_loadExternal as $meta) {
+		list($collected, $statement) = $this->_collectKeys($external, $query, $statement);
+		foreach ($external as $meta) {
 			$contain = $meta['associations'];
 			$alias = $meta['instance']->source()->alias();
 			$keys = isset($collected[$alias]) ? $collected[$alias] : null;
@@ -342,13 +381,14 @@ class EagerLoader {
  * Helper function used to return the keys from the query records that will be used
  * to eagerly load associations.
  *
- * @param \Cake\ORM\Query $query
+ * @param array $external the list of external associations to be loaded
+ * @param \Cake\ORM\Query $query The query from which the results where generated
  * @param BufferedStatement $statement
  * @return array
  */
-	protected function _collectKeys($query, $statement) {
+	protected function _collectKeys($external, $query, $statement) {
 		$collectKeys = [];
-		foreach ($this->_loadExternal as $meta) {
+		foreach ($external as $meta) {
 			$source = $meta['instance']->source();
 			if ($meta['instance']->requiresKeys($meta['config'])) {
 				$alias = $source->alias();
