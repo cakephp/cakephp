@@ -159,7 +159,7 @@ class FormHelper extends Helper {
  * @var array
  */
 	protected $_defaultTemplates = [
-		'formstart' => '<form {{attrs}}>',
+		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
 	];
 
@@ -296,11 +296,6 @@ class FormHelper extends Helper {
 			'default' => true,
 			'encoding' => strtolower(Configure::read('App.encoding')),
 			], $options);
-
-		if (!isset($options['id'])) {
-			$domId = isset($options['action']) ? $options['action'] : $this->request['action'];
-			$options['id'] = $this->domId($domId . 'Form');
-		}
 
 		if ($options['action'] === null && $options['url'] === null) {
 			$options['action'] = $this->request->here(false);

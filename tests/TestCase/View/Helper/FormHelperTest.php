@@ -605,16 +605,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateWithSecurity() {
-		$this->markTestIncomplete();
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$article = new Article();
 		$result = $this->Form->create($article, [
 			'url' => '/contacts/add',
-			'context' => ['table' => 'Articles']
 		]);
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding, 'id' => 'ContactAddForm'),
+			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding),
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
@@ -624,7 +622,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->create('Contact', array('url' => '/contacts/add', 'id' => 'MyForm'));
+		$result = $this->Form->create($article, ['url' => '/contacts/add', 'id' => 'MyForm']);
 		$expected['form']['id'] = 'MyForm';
 		$this->assertTags($result, $expected);
 	}
