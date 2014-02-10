@@ -392,6 +392,11 @@ class UpgradeShell extends AppShell {
 				'/(\$this->action\b(?!\())/',
 				'$this->request->action'
 			),
+			array(
+				'$this->request->onlyAllow() -> $this->request->allowMethod()',
+				'/\$this->request->onlyAllow\(/',
+				'$this->request->allowMethod('
+			)
 		);
 		$this->_filesRegexpUpdate($patterns);
 	}
