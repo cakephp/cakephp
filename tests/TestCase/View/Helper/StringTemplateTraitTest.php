@@ -54,6 +54,25 @@ class StringTemplateTraitTest extends TestCase {
 	}
 
 /**
+ * test settings['templates']
+ *
+ * @return void
+ */
+	public function testInitStringTemplatesArrayForm() {
+		$this->Template->settings['templates'] = [
+			'text' => '<p>{{text}}</p>',
+		];
+		$this->Template->initStringTemplates();
+
+		$result = $this->Template->templates(null);
+		$this->assertEquals($result, [
+			'attribute' => '{{name}}="{{value}}"',
+			'compactAttribute' => '{{name}}="{{value}}"',
+			'text' => '<p>{{text}}</p>'
+		]);
+	}
+
+/**
  * testFormatStringTemplate
  *
  * @return void
