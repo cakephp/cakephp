@@ -15,6 +15,7 @@
 namespace Cake\View\Form;
 
 use Cake\Network\Request;
+use Cake\View\Form\ContextInterface;
 
 /**
  * Provides a context provider that does nothing.
@@ -22,7 +23,7 @@ use Cake\Network\Request;
  * This context provider simply fulfils the interface requirements
  * that FormHelper has and allows access to the request data.
  */
-class NullContext {
+class NullContext implements ContextInterface {
 
 /**
  * The request object.
@@ -42,86 +43,56 @@ class NullContext {
 	}
 
 /**
- * Get the fields used in the context as a primary key.
- *
- * @return array
+ * {@inheritDoc}
  */
 	public function primaryKey() {
 		return [];
 	}
 
 /**
- * Returns whether or not this form is for a create operation.
- *
- * @return boolean
+ * {@inheritDoc}
  */
 	public function isCreate() {
 		return true;
 	}
 
 /**
- * Get the current value for a given field.
- *
- * This method will coalesce the current request data and the 'defaults'
- * array.
- *
- * @param string $field A dot separated path to the field a value
- *   is needed for.
- * @return mixed
+ * {@inheritDoc}
  */
 	public function val($field) {
 		return $this->_request->data($field);
 	}
 
 /**
- * Check if a given field is 'required'.
- *
- * In this context class, this is simply defined by the 'required' array.
- *
- * @param string $field A dot separated path to check required-ness for.
- * @return boolean
+ * {@inheritDoc}
  */
 	public function isRequired($field) {
 		return false;
 	}
 
 /**
- * Get the abstract field type for a given field name.
- *
- * @param string $field A dot separated path to get a schema type for.
- * @return null|string An abstract data type or null.
- * @see Cake\Database\Type
+ * {@inheritDoc}
  */
 	public function type($field) {
 		return null;
 	}
 
 /**
- * Get an associative array of other attributes for a field name.
- *
- * @param string $field A dot separated path to get additional data on.
- * @return array An array of data describing the additional attributes on a field.
+ * {@inheritDoc}
  */
 	public function attributes($field) {
 		return [];
 	}
 
 /**
- * Check whether or not a field has an error attached to it
- *
- * @param string $field A dot separated path to check errors on.
- * @return boolean Returns true if the errors for the field are not empty.
+ * {@inheritDoc}
  */
 	public function hasError($field) {
 		return false;
 	}
 
 /**
- * Get the errors for a given field
- *
- * @param string $field A dot separated path to check errors on.
- * @return array An array of errors, an empty array will be returned when the
- *    context has no errors.
+ * {@inheritDoc}
  */
 	public function error($field) {
 		return [];

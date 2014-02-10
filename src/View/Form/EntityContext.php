@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use Cake\View\Form\ContextInterface;
 use Traversable;
 
 /**
@@ -42,7 +43,7 @@ use Traversable;
  *   Defaults to 'default'. Can be an array of table alias=>validators when
  *   dealing with associated forms.
  */
-class EntityContext {
+class EntityContext implements ContextInterface {
 
 /**
  * The request object.

@@ -56,7 +56,7 @@ use Cake\Utility\Hash;
  *    ]
  *  ];
  */
-class ArrayContext {
+class ArrayContext implements ContextInterface {
 
 /**
  * The request object.
