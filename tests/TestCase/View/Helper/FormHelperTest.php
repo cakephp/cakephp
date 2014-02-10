@@ -598,6 +598,513 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * test the create() method
+ *
+ * @return void
+ */
+	public function testCreate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$result = $this->Form->create('Contact');
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->create('Contact', array('type' => 'GET'));
+		$expected = array('form' => array(
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
+			'accept-charset' => $encoding
+		));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->create('Contact', array('type' => 'get'));
+		$expected = array('form' => array(
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
+			'accept-charset' => $encoding
+		));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->create('Contact', array('type' => 'put'));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->create('Contact', array('type' => 'file'));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
+				'accept-charset' => $encoding, 'enctype' => 'multipart/form-data'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Contact']['id'] = 1;
+		$this->Form->request->here = '/contacts/edit/1';
+		$this->Form->request['action'] = 'edit';
+		$result = $this->Form->create('Contact');
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Contact']['id'] = 1;
+		$this->Form->request->here = '/contacts/edit/1';
+		$this->Form->request['action'] = 'edit';
+		$result = $this->Form->create('Contact', array('type' => 'file'));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
+				'accept-charset' => $encoding, 'enctype' => 'multipart/form-data'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['ContactNonStandardPk']['pk'] = 1;
+		$result = $this->Form->create('ContactNonStandardPk', array('url' => array('action' => 'edit')));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactNonStandardPkEditForm', 'method' => 'post',
+				'action' => '/contact_non_standard_pks/edit/1', 'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->create('Contact', array('id' => 'TestId'));
+		$expected = array(
+			'form' => array(
+				'id' => 'TestId', 'method' => 'post', 'action' => '/contacts/edit/1',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request['action'] = 'add';
+		$result = $this->Form->create('User', array('url' => array('action' => 'login')));
+		$expected = array(
+			'form' => array(
+				'id' => 'UserAddForm', 'method' => 'post', 'action' => '/users/login',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->create('User', array('action' => 'login'));
+		$expected = array(
+			'form' => array(
+				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/users/login',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->create('User', array('url' => '/users/login'));
+		$expected = array(
+			'form' => array('method' => 'post', 'action' => '/users/login', 'accept-charset' => $encoding, 'id' => 'UserAddForm'),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request['controller'] = 'pages';
+		$result = $this->Form->create('User', array('action' => 'signup'));
+		$expected = array(
+			'form' => array(
+				'id' => 'UserSignupForm', 'method' => 'post', 'action' => '/users/signup',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data = array();
+		$this->Form->request['controller'] = 'contacts';
+		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
+		$result = $this->Form->create(array('url' => array('action' => 'index', 'param')));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/index/param',
+				'accept-charset' => 'utf-8'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test the onsubmit option for create()
+ *
+ * @return void
+ */
+	public function testCreateOnSubmit() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$this->Form->request->data = array();
+		$this->Form->request['controller'] = 'contacts';
+		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
+		$result = $this->Form->create(array('url' => array('action' => 'index', 'param'), 'default' => false));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post', 'onsubmit' => 'event.returnValue = false; return false;', 'action' => '/contacts/index/param',
+				'accept-charset' => 'utf-8'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data = array();
+		$this->Form->request['controller'] = 'contacts';
+		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
+		$result = $this->Form->create(array(
+			'url' => array('action' => 'index', 'param'),
+			'default' => false,
+			'onsubmit' => 'someFunction();'
+		));
+
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm', 'method' => 'post',
+				'onsubmit' => 'someFunction();event.returnValue = false; return false;',
+				'action' => '/contacts/index/param',
+				'accept-charset' => 'utf-8'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test create() with automatic url generation
+ *
+ * @return void
+ */
+	public function testCreateAutoUrl() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$this->Form->request['action'] = 'delete';
+		$this->Form->request->here = '/contacts/delete/10';
+		$this->Form->request->base = '';
+		$result = $this->Form->create('Contact');
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactDeleteForm', 'method' => 'post', 'action' => '/contacts/delete/10',
+				'accept-charset' => 'utf-8'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test create() with a custom route
+ *
+ * @return void
+ */
+	public function testCreateCustomRoute() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
+		$encoding = strtolower(Configure::read('App.encoding'));
+
+		$result = $this->Form->create('User', array('action' => 'login'));
+		$expected = array(
+			'form' => array(
+				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/login',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test that inputDefaults are stored and used.
+ *
+ * @return void
+ */
+	public function testCreateWithInputDefaults() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$this->Form->create('User', array(
+			'inputDefaults' => array(
+				'div' => false,
+				'label' => false,
+				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error')),
+				'format' => array('before', 'label', 'between', 'input', 'after', 'error')
+			)
+		));
+		$result = $this->Form->input('username');
+		$expected = array(
+			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername')
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('username', array('div' => true, 'label' => 'username'));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'UserUsername'), 'username', '/label',
+			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('username', array('label' => 'Username', 'format' => array('input', 'label')));
+		$expected = array(
+			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
+			'label' => array('for' => 'UserUsername'), 'Username', '/label',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->create('User', array(
+			'inputDefaults' => array(
+				'div' => false,
+				'label' => array('class' => 'nice', 'for' => 'changed'),
+			)
+		));
+		$result = $this->Form->input('username', array('div' => true));
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'changed', 'class' => 'nice'), 'Username', '/label',
+			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test automatic accept-charset overriding
+ *
+ * @return void
+ */
+	public function testCreateWithAcceptCharset() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$result = $this->Form->create('UserForm', array(
+				'type' => 'post', 'action' => 'login', 'encoding' => 'iso-8859-1'
+			)
+		);
+		$expected = array(
+			'form' => array(
+				'method' => 'post', 'action' => '/user_forms/login', 'id' => 'UserFormLoginForm',
+				'accept-charset' => 'iso-8859-1'
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test base form URL when url param is passed with multiple parameters (&)
+ *
+ */
+	public function testCreateQuerystringrequest() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$result = $this->Form->create('Contact', array(
+			'type' => 'post',
+			'escape' => false,
+			'url' => array(
+				'controller' => 'controller',
+				'action' => 'action',
+				'?' => array('param1' => 'value1', 'param2' => 'value2')
+			)
+		));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm',
+				'method' => 'post',
+				'action' => '/controller/action?param1=value1&amp;param2=value2',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->create('Contact', array(
+			'type' => 'post',
+			'url' => array(
+				'controller' => 'controller',
+				'action' => 'action',
+				'?' => array('param1' => 'value1', 'param2' => 'value2')
+			)
+		));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm',
+				'method' => 'post',
+				'action' => '/controller/action?param1=value1&amp;param2=value2',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test that create() doesn't cause errors by multiple id's being in the primary key
+ * as could happen with multiple select or checkboxes.
+ *
+ * @return void
+ */
+	public function testCreateWithMultipleIdInData() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$encoding = strtolower(Configure::read('App.encoding'));
+
+		$this->Form->request->data['Contact']['id'] = array(1, 2);
+		$result = $this->Form->create('Contact');
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm',
+				'method' => 'post',
+				'action' => '/contacts/add',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test that create() doesn't add in extra passed params.
+ *
+ * @return void
+ */
+	public function testCreatePassedArgs() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$this->Form->request->data['Contact']['id'] = 1;
+		$result = $this->Form->create('Contact', array(
+			'type' => 'post',
+			'escape' => false,
+			'url' => array(
+				'action' => 'edit',
+				'myparam'
+			)
+		));
+		$expected = array(
+			'form' => array(
+				'id' => 'ContactAddForm',
+				'method' => 'post',
+				'action' => '/contacts/edit/myparam',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test creating a get form, and get form inputs.
+ *
+ * @return void
+ */
+	public function testGetFormCreate() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$result = $this->Form->create('Contact', array('type' => 'get'));
+		$this->assertTags($result, array('form' => array(
+			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
+			'accept-charset' => $encoding
+		)));
+
+		$result = $this->Form->text('Contact.name');
+		$this->assertTags($result, array('input' => array(
+			'name' => 'name', 'type' => 'text', 'id' => 'ContactName',
+		)));
+
+		$result = $this->Form->password('password');
+		$this->assertTags($result, array('input' => array(
+			'name' => 'password', 'type' => 'password', 'id' => 'ContactPassword'
+		)));
+		$this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
+
+		$result = $this->Form->text('user_form');
+		$this->assertTags($result, array('input' => array(
+			'name' => 'user_form', 'type' => 'text', 'id' => 'ContactUserForm'
+		)));
+	}
+
+/**
+ * test get form, and inputs when the model param is false
+ *
+ * @return void
+ */
+	public function testGetFormWithFalseModel() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$encoding = strtolower(Configure::read('App.encoding'));
+		$this->Form->request['controller'] = 'contact_test';
+		$result = $this->Form->create(false, array('type' => 'get', 'url' => array('controller' => 'contact_test')));
+
+		$expected = array('form' => array(
+			'id' => 'addForm', 'method' => 'get', 'action' => '/contact_test/add',
+			'accept-charset' => $encoding
+		));
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->text('reason');
+		$expected = array(
+			'input' => array('type' => 'text', 'name' => 'reason', 'id' => 'reason')
+		);
+		$this->assertTags($result, $expected);
+	}
+
+
+/**
  * testFormCreateWithSecurity method
  *
  * Test form->create() with security key.
@@ -635,10 +1142,13 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateEndGetNoSecurity() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact', array('type' => 'get', 'url' => '/contacts/add'));
+		$article = new Article();
+		$result = $this->Form->create($article, [
+			'type' => 'get',
+			'url' => '/contacts/add'
+		]);
 		$this->assertNotContains('testKey', $result);
 
 		$result = $this->Form->end('Save');
@@ -651,9 +1161,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateClearingFields() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->fields = array('model_id');
-		$this->Form->create('Contact');
+		$this->Form->create(new Article());
 		$this->assertEquals(array(), $this->Form->fields);
 	}
 
@@ -1234,6 +1743,28 @@ class FormHelperTest extends TestCase {
 				'value' => 'testKey', 'id' => 'preg:/Token\d+/'
 			)),
 			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('ValidateUser.ratio');
+		$expected = array(
+			'div' => array('class'),
+			'label' => array('for'),
+			'Ratio',
+			'/label',
+			'input' => array('name', 'type' => 'number', 'step' => '0.000001', 'id'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('ValidateUser.population');
+		$expected = array(
+			'div' => array('class'),
+			'label' => array('for'),
+			'Population',
+			'/label',
+			'input' => array('name', 'type' => 'number', 'step' => '1', 'id'),
+			'/div',
 		);
 		$this->assertTags($result, $expected);
 
@@ -1971,28 +2502,6 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('ValidateUser.ratio');
-		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'Ratio',
-			'/label',
-			'input' => array('name', 'type' => 'number', 'step' => '0.000001', 'id'),
-			'/div',
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('ValidateUser.population');
-		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'Population',
-			'/label',
-			'input' => array('name', 'type' => 'number', 'step' => '1', 'id'),
-			'/div',
-		);
-		$this->assertTags($result, $expected);
-
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = array(
 			'div' => array('class' => 'input email'),
@@ -2714,7 +3223,14 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => true, 'options' => $options));
+		$result = $this->Form->radio('Model.field', array('1/2' => 'half'));
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1/2', 'id' => 'ModelField12')),
+			'label' => array('for' => 'ModelField12'),
+			'half',
+			'/label'
+		);
 		$this->assertTags($result, $expected);
 
 		$disabled = array('2', 3);
@@ -3420,8 +3936,8 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1/2', 'id' => 'ModelMultiField12')),
-			array('label' => array('for' => 'ModelMultiField12')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1/2', 'id' => 'ModelMultiField1/22')),
+			array('label' => array('for' => 'ModelMultiField1/22')),
 			'half',
 			'/label',
 			'/div',
@@ -3705,8 +4221,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->radio('Model.field', array('1/2' => 'half'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1/2', 'id' => 'ModelField12')),
-			'label' => array('for' => 'ModelField12'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1/2', 'id' => 'ModelField1/2')),
+			'label' => array('for' => 'ModelField1/2'),
 			'half',
 			'/label'
 		);
@@ -4331,6 +4847,7 @@ class FormHelperTest extends TestCase {
 				'/fieldset',
 			'/div'
 		);
+
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Model.1.field', array(
@@ -4393,16 +4910,16 @@ class FormHelperTest extends TestCase {
 	public function testDomIdSuffix() {
 		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->domIdSuffix('1 string with 1$-dollar signs');
-		$this->assertEquals('1StringWith1DollarSigns', $result);
-
-		$result = $this->Form->domIdSuffix('<abc x="foo" y=\'bar\'>');
-		$this->assertEquals('AbcXFooYBar', $result);
-
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar signs', 'html5');
 		$this->assertEquals('1StringWith1$-dollarSigns', $result);
 
-		$result = $this->Form->domIdSuffix('<abc x="foo" y=\'bar\'>', 'html5');
+		$result = $this->Form->domIdSuffix('<abc x="foo" y=\'bar\'>');
 		$this->assertEquals('AbcX=FooY=Bar', $result);
+
+		$result = $this->Form->domIdSuffix('1 string with 1$-dollar signs', 'xhtml');
+		$this->assertEquals('1StringWith1-dollarSigns', $result);
+
+		$result = $this->Form->domIdSuffix('<abc x="foo" y=\'bar\'>', 'xhtml');
+		$this->assertEquals('AbcXFooYBar', $result);
 	}
 
 /**
@@ -4421,14 +4938,14 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->domIdSuffix('a\'b');
 		$this->assertEquals('AB2', $result);
 
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar');
-		$this->assertEquals('1StringWith1Dollar', $result);
+		$result = $this->Form->domIdSuffix('1 string with 1$-dollar', 'xhtml');
+		$this->assertEquals('1StringWith1-dollar', $result);
 
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar');
-		$this->assertEquals('1StringWith1Dollar1', $result);
+		$result = $this->Form->domIdSuffix('1 string with 1€-dollar', 'xhtml');
+		$this->assertEquals('1StringWith1-dollar1', $result);
 
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar');
-		$this->assertEquals('1StringWith1Dollar2', $result);
+		$result = $this->Form->domIdSuffix('1 string with 1$-dollar', 'xhtml');
+		$this->assertEquals('1StringWith1-dollar2', $result);
 	}
 
 /**
@@ -4785,6 +5302,44 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+/**
+ * Test that a checkbox can have 0 for the value and 1 for the hidden input.
+ *
+ * @return void
+ */
+	public function testCheckboxZeroValue() {
+		$result = $this->Form->input('User.get_spam', array(
+			'type' => 'checkbox',
+			'value' => '0',
+			'hiddenField' => '1',
+		));
+		$expected = array(
+			'div' => array('class' => 'input checkbox'),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[User][get_spam]',
+				'value' => '1', 'id' => 'UserGetSpam_'
+			)),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[User][get_spam]',
+				'value' => '0', 'id' => 'UserGetSpam'
+			)),
+			'label' => array('for' => 'UserGetSpam'),
+			'Get Spam',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * testDateTime method
+ *
+ * Test generation of date/time select elements
+ *
+ * @return void
+ */
+	public function testDateTime() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select(
 			'Model.multi_field', $options, array('multiple' => true, 'value' => array(0, 1))
 		);
@@ -5329,32 +5884,31 @@ class FormHelperTest extends TestCase {
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
-				'value' => 'a+', 'id' => 'ModelMultiFieldA2'
+				'value' => 'a+', 'id' => 'ModelMultiFieldA+'
 			)),
-			array('label' => array('for' => 'ModelMultiFieldA2')),
+			array('label' => array('for' => 'ModelMultiFieldA+')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
-				'value' => 'a++', 'id' => 'ModelMultiFieldA1'
+				'value' => 'a++', 'id' => 'ModelMultiFieldA++'
 			)),
-			array('label' => array('for' => 'ModelMultiFieldA1')),
+			array('label' => array('for' => 'ModelMultiFieldA++')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
-				'value' => 'a+++', 'id' => 'ModelMultiFieldA'
+				'value' => 'a+++', 'id' => 'ModelMultiFieldA+++'
 			)),
-			array('label' => array('for' => 'ModelMultiFieldA')),
+			array('label' => array('for' => 'ModelMultiFieldA+++')),
 			'third',
 			'/label',
 			'/div'
 		);
-
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select(
@@ -5991,35 +6545,6 @@ class FormHelperTest extends TestCase {
 			)),
 			'label' => array('for' => 'UserFormSomething'),
 			'Something',
-			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test that a checkbox can have 0 for the value and 1 for the hidden input.
- *
- * @return void
- */
-	public function testCheckboxZeroValue() {
-		$result = $this->Form->input('User.get_spam', array(
-			'type' => 'checkbox',
-			'value' => '0',
-			'hiddenField' => '1',
-		));
-		$expected = array(
-			'div' => array('class' => 'input checkbox'),
-			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[User][get_spam]',
-				'value' => '1', 'id' => 'UserGetSpam_'
-			)),
-			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[User][get_spam]',
-				'value' => '0', 'id' => 'UserGetSpam'
-			)),
-			'label' => array('for' => 'UserGetSpam'),
-			'Get Spam',
 			'/label',
 			'/div'
 		);
@@ -8005,512 +8530,6 @@ class FormHelperTest extends TestCase {
 			'div' => array('class' => 'submit'),
 			'input' => array('type' => 'image', 'src' => 'preg:/img\/cake\.power\.gif\?\d*/'),
 			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test the create() method
- *
- * @return void
- */
-	public function testCreate() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->create('Contact');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'preg:/display\s*\:\s*none;\s*/'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->create('Contact', array('type' => 'GET'));
-		$expected = array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
-			'accept-charset' => $encoding
-		));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->create('Contact', array('type' => 'get'));
-		$expected = array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
-			'accept-charset' => $encoding
-		));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->create('Contact', array('type' => 'put'));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->create('Contact', array('type' => 'file'));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
-				'accept-charset' => $encoding, 'enctype' => 'multipart/form-data'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['id'] = 1;
-		$this->Form->request->here = '/contacts/edit/1';
-		$this->Form->request['action'] = 'edit';
-		$result = $this->Form->create('Contact');
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['id'] = 1;
-		$this->Form->request->here = '/contacts/edit/1';
-		$this->Form->request['action'] = 'edit';
-		$result = $this->Form->create('Contact', array('type' => 'file'));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
-				'accept-charset' => $encoding, 'enctype' => 'multipart/form-data'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['ContactNonStandardPk']['pk'] = 1;
-		$result = $this->Form->create('ContactNonStandardPk', array('url' => array('action' => 'edit')));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactNonStandardPkEditForm', 'method' => 'post',
-				'action' => '/contact_non_standard_pks/edit/1', 'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->create('Contact', array('id' => 'TestId'));
-		$expected = array(
-			'form' => array(
-				'id' => 'TestId', 'method' => 'post', 'action' => '/contacts/edit/1',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request['action'] = 'add';
-		$result = $this->Form->create('User', array('url' => array('action' => 'login')));
-		$expected = array(
-			'form' => array(
-				'id' => 'UserAddForm', 'method' => 'post', 'action' => '/users/login',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->create('User', array('action' => 'login'));
-		$expected = array(
-			'form' => array(
-				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/users/login',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->create('User', array('url' => '/users/login'));
-		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/users/login', 'accept-charset' => $encoding, 'id' => 'UserAddForm'),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request['controller'] = 'pages';
-		$result = $this->Form->create('User', array('action' => 'signup'));
-		$expected = array(
-			'form' => array(
-				'id' => 'UserSignupForm', 'method' => 'post', 'action' => '/users/signup',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data = array();
-		$this->Form->request['controller'] = 'contacts';
-		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
-		$result = $this->Form->create(array('url' => array('action' => 'index', 'param')));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/index/param',
-				'accept-charset' => 'utf-8'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test the onsubmit option for create()
- *
- * @return void
- */
-	public function testCreateOnSubmit() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->data = array();
-		$this->Form->request['controller'] = 'contacts';
-		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
-		$result = $this->Form->create(array('url' => array('action' => 'index', 'param'), 'default' => false));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'onsubmit' => 'event.returnValue = false; return false;', 'action' => '/contacts/index/param',
-				'accept-charset' => 'utf-8'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data = array();
-		$this->Form->request['controller'] = 'contacts';
-		$this->Form->request['models'] = array('Contact' => array('plugin' => null, 'className' => 'Contact'));
-		$result = $this->Form->create(array(
-			'url' => array('action' => 'index', 'param'),
-			'default' => false,
-			'onsubmit' => 'someFunction();'
-		));
-
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post',
-				'onsubmit' => 'someFunction();event.returnValue = false; return false;',
-				'action' => '/contacts/index/param',
-				'accept-charset' => 'utf-8'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test create() with automatic url generation
- *
- * @return void
- */
-	public function testCreateAutoUrl() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request['action'] = 'delete';
-		$this->Form->request->here = '/contacts/delete/10';
-		$this->Form->request->base = '';
-		$result = $this->Form->create('Contact');
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactDeleteForm', 'method' => 'post', 'action' => '/contacts/delete/10',
-				'accept-charset' => 'utf-8'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test create() with a custom route
- *
- * @return void
- */
-	public function testCreateCustomRoute() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
-		$encoding = strtolower(Configure::read('App.encoding'));
-
-		$result = $this->Form->create('User', array('action' => 'login'));
-		$expected = array(
-			'form' => array(
-				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/login',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test that inputDefaults are stored and used.
- *
- * @return void
- */
-	public function testCreateWithInputDefaults() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('User', array(
-			'inputDefaults' => array(
-				'div' => false,
-				'label' => false,
-				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error')),
-				'format' => array('before', 'label', 'between', 'input', 'after', 'error')
-			)
-		));
-		$result = $this->Form->input('username');
-		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername')
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('username', array('div' => true, 'label' => 'username'));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserUsername'), 'username', '/label',
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('username', array('label' => 'Username', 'format' => array('input', 'label')));
-		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
-			'label' => array('for' => 'UserUsername'), 'Username', '/label',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->create('User', array(
-			'inputDefaults' => array(
-				'div' => false,
-				'label' => array('class' => 'nice', 'for' => 'changed'),
-			)
-		));
-		$result = $this->Form->input('username', array('div' => true));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'changed', 'class' => 'nice'), 'Username', '/label',
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test automatic accept-charset overriding
- *
- * @return void
- */
-	public function testCreateWithAcceptCharset() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->create('UserForm', array(
-				'type' => 'post', 'action' => 'login', 'encoding' => 'iso-8859-1'
-			)
-		);
-		$expected = array(
-			'form' => array(
-				'method' => 'post', 'action' => '/user_forms/login', 'id' => 'UserFormLoginForm',
-				'accept-charset' => 'iso-8859-1'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test base form URL when url param is passed with multiple parameters (&)
- *
- */
-	public function testCreateQuerystringrequest() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact', array(
-			'type' => 'post',
-			'escape' => false,
-			'url' => array(
-				'controller' => 'controller',
-				'action' => 'action',
-				'?' => array('param1' => 'value1', 'param2' => 'value2')
-			)
-		));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm',
-				'method' => 'post',
-				'action' => '/controller/action?param1=value1&amp;param2=value2',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->create('Contact', array(
-			'type' => 'post',
-			'url' => array(
-				'controller' => 'controller',
-				'action' => 'action',
-				'?' => array('param1' => 'value1', 'param2' => 'value2')
-			)
-		));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm',
-				'method' => 'post',
-				'action' => '/controller/action?param1=value1&amp;param2=value2',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test that create() doesn't cause errors by multiple id's being in the primary key
- * as could happen with multiple select or checkboxes.
- *
- * @return void
- */
-	public function testCreateWithMultipleIdInData() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-
-		$this->Form->request->data['Contact']['id'] = array(1, 2);
-		$result = $this->Form->create('Contact');
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm',
-				'method' => 'post',
-				'action' => '/contacts/add',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test that create() doesn't add in extra passed params.
- *
- * @return void
- */
-	public function testCreatePassedArgs() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$this->Form->request->data['Contact']['id'] = 1;
-		$result = $this->Form->create('Contact', array(
-			'type' => 'post',
-			'escape' => false,
-			'url' => array(
-				'action' => 'edit',
-				'myparam'
-			)
-		));
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm',
-				'method' => 'post',
-				'action' => '/contacts/edit/myparam',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test creating a get form, and get form inputs.
- *
- * @return void
- */
-	public function testGetFormCreate() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact', array('type' => 'get'));
-		$this->assertTags($result, array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
-			'accept-charset' => $encoding
-		)));
-
-		$result = $this->Form->text('Contact.name');
-		$this->assertTags($result, array('input' => array(
-			'name' => 'name', 'type' => 'text', 'id' => 'ContactName',
-		)));
-
-		$result = $this->Form->password('password');
-		$this->assertTags($result, array('input' => array(
-			'name' => 'password', 'type' => 'password', 'id' => 'ContactPassword'
-		)));
-		$this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
-
-		$result = $this->Form->text('user_form');
-		$this->assertTags($result, array('input' => array(
-			'name' => 'user_form', 'type' => 'text', 'id' => 'ContactUserForm'
-		)));
-	}
-
-/**
- * test get form, and inputs when the model param is false
- *
- * @return void
- */
-	public function testGetFormWithFalseModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$this->Form->request['controller'] = 'contact_test';
-		$result = $this->Form->create(false, array('type' => 'get', 'url' => array('controller' => 'contact_test')));
-
-		$expected = array('form' => array(
-			'id' => 'addForm', 'method' => 'get', 'action' => '/contact_test/add',
-			'accept-charset' => $encoding
-		));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->text('reason');
-		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'reason', 'id' => 'reason')
 		);
 		$this->assertTags($result, $expected);
 	}
