@@ -274,7 +274,6 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
  */
 	public function create($model = null, $options = []) {
-		$id = $key = false;
 		$append = '';
 
 		if (empty($options['context'])) {
@@ -287,7 +286,7 @@ class FormHelper extends Helper {
 		$isCreate = $this->_context->isCreate();
 
 		$options = array_merge([
-			'type' => (!$isCreate && empty($options['action'])) ? 'put' : 'post',
+			'type' => !$isCreate ? 'put' : 'post',
 			'action' => null,
 			'url' => null,
 			'default' => true,
@@ -297,29 +296,27 @@ class FormHelper extends Helper {
 		if ($options['action'] === null && $options['url'] === null) {
 			$options['action'] = $this->request->here(false);
 		} elseif (empty($options['url']) || is_array($options['url'])) {
-			// TODO restore convention around model->controller name.
-			if (empty($options['url']['controller'])) {
-				$options['url']['controller'] = Inflector::underscore($this->request->params['controller']);
-			}
-			if (empty($options['action'])) {
-				$options['action'] = $this->request->params['action'];
+			if (isset($options['action']) && empty($options['url']['action'])) {
+				$options['url']['action'] = $options['action'];
 			}
 
-			$plugin = null;
-			if ($this->plugin) {
-				$plugin = Inflector::underscore($this->plugin);
-			}
+			$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
 			$actionDefaults = array(
 				'plugin' => $plugin,
-				'controller' => $this->_View->viewPath,
-				'action' => $options['action'],
+				'controller' => Inflector::underscore($this->request->params['controller']),
+				'action' => $this->request->params['action'],
 			);
+
 			$options['action'] = (array)$options['url'] + $actionDefaults;
 
-			// TODO add primary key handling
-			if (empty($options['action'][0]) && !empty($id)) {
+			$pk = $this->_context->primaryKey();
+			if (count($pk)) {
+				$id = $this->_context->val($pk[0]);
+			}
+			if (empty($options['action'][0]) && isset($id)) {
 				$options['action'][0] = $id;
 			}
+
 		} elseif (is_string($options['url'])) {
 			$options['action'] = $options['url'];
 		}

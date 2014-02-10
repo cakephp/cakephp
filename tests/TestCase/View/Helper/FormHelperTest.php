@@ -487,8 +487,9 @@ class FormHelperTest extends TestCase {
 
 		$this->Form = new FormHelper($this->View);
 		$this->Form->Html = new HtmlHelper($this->View);
-		$this->Form->request = new Request('contacts/add');
-		$this->Form->request->here = '/contacts/add';
+		$this->Form->request = new Request('articles/add');
+		$this->Form->request->here = '/articles/add';
+		$this->Form->request['controller'] = 'articles';
 		$this->Form->request['action'] = 'add';
 		$this->Form->request->webroot = '';
 		$this->Form->request->base = '';
@@ -501,6 +502,21 @@ class FormHelperTest extends TestCase {
 			'minutesRegex' => 'preg:/(?:<option value="([\d]+)">0?\\1<\/option>[\r\n]*)*/',
 			'meridianRegex' => 'preg:/(?:<option value="(am|pm)">\\1<\/option>[\r\n]*)*/',
 		);
+
+		$this->article = [
+			'schema' => [
+				'id' => ['type' => 'integer'],
+				'author_id' => ['type' => 'integer', 'null' => true],
+				'title' => ['type' => 'string', 'null' => true],
+				'body' => 'text',
+				'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
+				'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+			],
+			'required' => [
+				'author_id' => true,
+				'title' => true,
+			]
+		];
 
 		Configure::write('Security.salt', 'foo!');
 		Router::connect('/:controller', array('action' => 'index'));
@@ -617,9 +633,8 @@ class FormHelperTest extends TestCase {
  *
  * @return void
  */
-	public function testCreate() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->create('Contact');
+	public function testCreateTypeOptions() {
+		$result = $this->Form->create(false);
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
 			'form' => array(
@@ -632,21 +647,21 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->create('Contact', array('type' => 'GET'));
+		$result = $this->Form->create(false, array('type' => 'GET'));
 		$expected = array('form' => array(
 			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
 			'accept-charset' => $encoding
 		));
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->create('Contact', array('type' => 'get'));
+		$result = $this->Form->create(false, array('type' => 'get'));
 		$expected = array('form' => array(
 			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
 			'accept-charset' => $encoding
 		));
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->create('Contact', array('type' => 'put'));
+		$result = $this->Form->create(false, array('type' => 'put'));
 		$expected = array(
 			'form' => array(
 				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
@@ -658,7 +673,19 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->create('Contact', array('type' => 'file'));
+		$result = $this->Form->create(false, array('type' => 'patch'));
+		$expected = array(
+			'form' => array(
+				'method' => 'post', 'action' => '/articles/add',
+				'accept-charset' => $encoding
+			),
+			'div' => array('style' => 'display:none;'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PATCH'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->create(false, array('type' => 'file'));
 		$expected = array(
 			'form' => array(
 				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
@@ -669,11 +696,17 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
 
-		$this->Form->request->data['Contact']['id'] = 1;
-		$this->Form->request->here = '/contacts/edit/1';
-		$this->Form->request['action'] = 'edit';
-		$result = $this->Form->create('Contact');
+/**
+ * Test opening a form for an update operation.
+ *
+ * @return void
+ */
+	public function testCreateUpdateForm() {
+		$encoding = strtolower(Configure::read('App.encoding'));
+
+		$result = $this->Form->create($this->article);
 		$expected = array(
 			'form' => array(
 				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
@@ -688,7 +721,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['id'] = 1;
 		$this->Form->request->here = '/contacts/edit/1';
 		$this->Form->request['action'] = 'edit';
-		$result = $this->Form->create('Contact', array('type' => 'file'));
+		$result = $this->Form->create($this->article, array('type' => 'file'));
 		$expected = array(
 			'form' => array(
 				'id' => 'ContactEditForm', 'method' => 'post', 'action' => '/contacts/edit/1',
@@ -726,48 +759,36 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request['action'] = 'add';
-		$result = $this->Form->create('User', array('url' => array('action' => 'login')));
+		$result = $this->Form->create($this->article, array('url' => array('action' => 'publish')));
 		$expected = array(
 			'form' => array(
-				'id' => 'UserAddForm', 'method' => 'post', 'action' => '/users/login',
+				'method' => 'post', 'action' => '/articles/publish/1',
 				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->create('User', array('action' => 'login'));
-		$expected = array(
-			'form' => array(
-				'id' => 'UserLoginForm', 'method' => 'post', 'action' => '/users/login',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->create('User', array('url' => '/users/login'));
+		$result = $this->Form->create($this->article, array('url' => '/articles/publish'));
 		$expected = array(
 			'form' => array('method' => 'post', 'action' => '/users/login', 'accept-charset' => $encoding, 'id' => 'UserAddForm'),
 			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
 		$this->Form->request['controller'] = 'pages';
-		$result = $this->Form->create('User', array('action' => 'signup'));
+		$result = $this->Form->create($this->article, array('action' => 'signup'));
 		$expected = array(
 			'form' => array(
-				'id' => 'UserSignupForm', 'method' => 'post', 'action' => '/users/signup',
+				'method' => 'post', 'action' => '/pages/signup/1',
 				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
+			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'PUT'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
