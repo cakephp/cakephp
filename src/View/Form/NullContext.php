@@ -42,6 +42,15 @@ class NullContext {
 	}
 
 /**
+ * Returns whether or not this form is for a create operation.
+ *
+ * @return boolean
+ */
+	public function isCreate() {
+		return true;
+	}
+
+/**
  * Get the current value for a given field.
  *
  * This method will coalesce the current request data and the 'defaults'

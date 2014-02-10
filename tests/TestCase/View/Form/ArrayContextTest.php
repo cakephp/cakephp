@@ -34,6 +34,26 @@ class ArrayContextTest extends TestCase {
 	}
 
 /**
+ * Test the isCreate method.
+ *
+ * @return void
+ */
+	public function testIsCreate() {
+		$context = new ArrayContext($this->request, []);
+		$this->assertTrue($context->isCreate());
+
+		$context = new ArrayContext($this->request, [
+			'create' => false,
+		]);
+		$this->assertFalse($context->isCreate());
+
+		$context = new ArrayContext($this->request, [
+			'create' => true,
+		]);
+		$this->assertTrue($context->isCreate());
+	}
+
+/**
  * Test reading values from the request & defaults.
  */
 	public function testValPresent() {

@@ -36,6 +36,8 @@ use Cake\Utility\Hash;
  *   like maxlength, step and other HTML attributes.
  * - `errors` An array of validation errors. Errors should be nested following
  *   the dot separated paths you access your fields with.
+ * - `isCreate` A boolean that indicates whether or not this form should
+ *   be treated as a create operation. If false this form will be an update.
  */
 class ArrayContext {
 
@@ -66,8 +68,18 @@ class ArrayContext {
 			'required' => [],
 			'defaults' => [],
 			'errors' => [],
+			'create' => true,
 		];
 		$this->_context = $context;
+	}
+
+/**
+ * Returns whether or not this form is for a create operation.
+ *
+ * @return boolean
+ */
+	public function isCreate() {
+		return (bool)$this->_context['create'];
 	}
 
 /**
