@@ -79,11 +79,11 @@ class ArrayContextTest extends TestCase {
 			],
 		];
 		$context = new ArrayContext($this->request, $data);
-		$this->assertFalse($context->isCreate());
+		$this->assertTrue($context->isCreate());
 
 		$data['defaults'] = ['id' => 2];
 		$context = new ArrayContext($this->request, $data);
-		$this->assertTrue($context->isCreate());
+		$this->assertFalse($context->isCreate());
 	}
 
 /**
