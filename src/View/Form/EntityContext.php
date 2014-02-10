@@ -130,6 +130,19 @@ class EntityContext {
 	}
 
 /**
+ * Get the primary key data for the context.
+ *
+ * Gets the primary key columns from the root entity's schema.
+ *
+ * @return boolean
+ */
+	public function primaryKey() {
+		$table = $this->_tables[$this->_rootName];
+		$schema = $table->schema();
+		return $schema->primaryKey();
+	}
+
+/**
  * Check whether or not this form is a create or update.
  *
  * If the context is for a single entity, the entity's isNew() method will

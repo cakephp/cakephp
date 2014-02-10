@@ -33,11 +33,28 @@ use Cake\Utility\Hash;
  * - `schema` An array of data that emulate the column structures that
  *   Cake\Database\Schema\Table uses. This array allows you to control
  *   the inferred type for fields and allows auto generation of attributes
- *   like maxlength, step and other HTML attributes.
+ *   like maxlength, step and other HTML attributes. If you want
+ *   primary key/id detection to work. Make sure you have provided a `_constraints`
+ *   array that contains `primary`. See below for an exmaple.
  * - `errors` An array of validation errors. Errors should be nested following
  *   the dot separated paths you access your fields with.
- * - `isCreate` A boolean that indicates whether or not this form should
- *   be treated as a create operation. If false this form will be an update.
+ *
+ *  ### Example
+ *
+ *  {{{
+ *  $data = [
+ *    'schema' => [
+ *      'id' => ['type' => 'integer'],
+ *      'title' => ['type' => 'string', 'length' => 255],
+ *      '_constraints' => [
+ *        'primary' => ['type' => 'primary', 'columns' => ['id']]
+ *      ]
+ *    ],
+ *    'defaults' => [
+ *      'id' => 1,
+ *      'title' => 'First post!',
+ *    ]
+ *  ];
  */
 class ArrayContext {
 
@@ -68,18 +85,47 @@ class ArrayContext {
 			'required' => [],
 			'defaults' => [],
 			'errors' => [],
-			'create' => true,
 		];
 		$this->_context = $context;
 	}
 
 /**
+ * Get the fields used in the context as a primary key.
+ *
+ * @return array
+ */
+	public function primaryKey() {
+		if (
+			empty($this->_context['schema']['_constraints']) ||
+			!is_array($this->_context['schema']['_constraints'])
+		) {
+			return [];
+		}
+		foreach ($this->_context['schema']['_constraints'] as $data) {
+			if (isset($data['type']) && $data['type'] === 'primary') {
+				return isset($data['columns']) ? (array)$data['columns'] : [];
+			}
+		}
+		return [];
+	}
+
+/**
  * Returns whether or not this form is for a create operation.
+ *
+ * For this method to return true, both the primary key constraint
+ * must be defined in the 'schema' data, and the 'defaults' data must
+ * contain a value for all fields in the key.
  *
  * @return boolean
  */
 	public function isCreate() {
-		return (bool)$this->_context['create'];
+		$primary = $this->primaryKey();
+		foreach ($primary as $column) {
+			if (!isset($this->_context['defaults'][$column])) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 /**

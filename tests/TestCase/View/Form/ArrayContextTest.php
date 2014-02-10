@@ -34,6 +34,35 @@ class ArrayContextTest extends TestCase {
 	}
 
 /**
+ * Test getting the primary key.
+ *
+ * @return void
+ */
+	public function testPrimaryKey() {
+		$context = new ArrayContext($this->request, []);
+		$this->assertEquals([], $context->primaryKey());
+
+		$context = new ArrayContext($this->request, [
+			'schema' => [
+				'_constraints' => 'mistake',
+			]
+		]);
+		$this->assertEquals([], $context->primaryKey());
+
+		$data = [
+			'schema' => [
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id']]
+				]
+			],
+		];
+		$context = new ArrayContext($this->request, $data);
+
+		$expected = ['id'];
+		$this->assertEquals($expected, $context->primaryKey());
+	}
+
+/**
  * Test the isCreate method.
  *
  * @return void
@@ -42,14 +71,18 @@ class ArrayContextTest extends TestCase {
 		$context = new ArrayContext($this->request, []);
 		$this->assertTrue($context->isCreate());
 
-		$context = new ArrayContext($this->request, [
-			'create' => false,
-		]);
+		$data = [
+			'schema' => [
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id']]
+				]
+			],
+		];
+		$context = new ArrayContext($this->request, $data);
 		$this->assertFalse($context->isCreate());
 
-		$context = new ArrayContext($this->request, [
-			'create' => true,
-		]);
+		$data['defaults'] = ['id' => 2];
+		$context = new ArrayContext($this->request, $data);
 		$this->assertTrue($context->isCreate());
 	}
 

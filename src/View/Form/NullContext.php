@@ -42,6 +42,15 @@ class NullContext {
 	}
 
 /**
+ * Get the fields used in the context as a primary key.
+ *
+ * @return array
+ */
+	public function primaryKey() {
+		return [];
+	}
+
+/**
  * Returns whether or not this form is for a create operation.
  *
  * @return boolean
