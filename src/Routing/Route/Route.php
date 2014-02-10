@@ -224,6 +224,9 @@ class Route {
 		if (!empty($this->_name)) {
 			return $this->_name;
 		}
+		if (!$this->compiled()) {
+			$this->compile();
+		}
 		$name = '';
 		if (isset($this->defaults['plugin'])) {
 			$name = $this->defaults['plugin'] . '.';
