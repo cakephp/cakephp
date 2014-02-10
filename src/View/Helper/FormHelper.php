@@ -252,23 +252,23 @@ class FormHelper extends Helper {
  *
  * ### Options:
  *
- * - `type` Form method defaults to POST
- * - `action`  The controller action the form submits to, (optional).
- * - `url`  The URL the form submits to. Can be a string or a URL array. If you use 'url'
+ * - `type` Form method defaults to autodetecting based on the form context. If
+ *   the form context's isCreate() method returns false, a PUT request will be done.
+ * - `action` The controller action the form submits to, (optional). Use this option if you
+ *   don't need to change the controller from the current request's controller.
+ * - `url` The URL the form submits to. Can be a string or a URL array. If you use 'url'
  *    you should leave 'action' undefined.
- * - `default`  Allows for the creation of Ajax forms. Set this to false to prevent the default event handler.
+ * - `default` Allows for the creation of Ajax forms. Set this to false to prevent the default event handler.
  *   Will create an onsubmit attribute if it doesn't not exist. If it does, default action suppression
  *   will be appended.
  * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
- * - `inputDefaults` set the default $options for FormHelper::input(). Any options that would
- *   be set when using FormHelper::input() can be set here. Options set with `inputDefaults`
- *   can be overridden when calling input()
  * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
+ * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
+ *   option that allows you to set the specific Table class the form should be based on.
  *
- * @param mixed $model The model name for which the form is being defined. Should
- *   include the plugin name for plugin models. e.g. `ContactManager.Contact`.
- *   If an array is passed and $options argument is empty, the array will be used as options.
- *   If `false` no model is used.
+ * @param mixed $model The context for which the form is being defined. Can
+ *   be an ORM entity, ORM resultset, or an array of meta data. You can use false or null
+ *   to make a model-less form.
  * @param array $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
