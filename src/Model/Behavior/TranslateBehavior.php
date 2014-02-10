@@ -14,6 +14,7 @@
  */
 namespace Cake\Model\Behavior;
 
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
@@ -148,7 +149,16 @@ class TranslateBehavior extends Behavior {
 		}, $query::PREPEND);
 	}
 
-	public function beforeSave(Event $event, $entity, $options) {
+/**
+ * Modifies the entity before it is saved so that translated fields are persisted
+ * in the database too.
+ *
+ * @param \Cake\Event\Event the beforeSave event that was fired
+ * @param \Cake\ORM\Entity the entity that is going to be saved
+ * @param \ArrayObject $options the options passed to the save method
+ * @return void
+ */
+	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
 		$locale = $entity->get('_locale') ?: $this->locale();
 
 		if (!$locale) {
