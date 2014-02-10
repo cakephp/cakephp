@@ -148,13 +148,15 @@ class TranslateBehavior extends Behavior {
 		}, $query::PREPEND);
 	}
 
-	public function beforeSave(Event $event, $entity) {
+	public function beforeSave(Event $event, $entity, $options) {
 		$locale = $entity->get('_locale') ?: $this->locale();
 
 		if (!$locale) {
 			return;
 		}
 
+		$newOptions = ['I18n' => ['validate' => false]];
+		$options['associated'] =  $newOptions + $options['associated'];
 		$values = $entity->extract($this->config()['fields'], true);
 		$fields = array_keys($values);
 		$key = $entity->get(current((array)$this->_table->primaryKey()));
@@ -162,6 +164,7 @@ class TranslateBehavior extends Behavior {
 		$preexistent = TableRegistry::get('I18n')->find()
 			->select(['id', 'field'])
 			->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key])
+			->bufferResults(false)
 			->indexBy('field');
 
 		$modified = [];

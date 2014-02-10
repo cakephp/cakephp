@@ -548,4 +548,25 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals('First Article Body', $article->get('body'));
 	}
 
+/**
+ * Tests that translations are added to the whitelist of associations to be
+ * saved
+ *
+ * @return void
+ */
+	public function testSaveTranslationWithAssociationWhitelist() {
+		$table = TableRegistry::get('Articles');
+		$table->hasMany('Comments');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('fra');
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$article->set('title', 'Le titre');
+		$table->save($article, ['associated' => ['Comments']]);
+
+		$article = $table->find()->first();
+		$this->assertEquals('Le titre', $article->get('title'));
+	}
+
 }
