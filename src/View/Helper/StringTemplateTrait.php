@@ -38,8 +38,14 @@ trait StringTemplateTrait {
  */
 	public function initStringTemplates($templates = [], $templateClass = '\Cake\View\StringTemplate') {
 		$this->_templater = new $templateClass($templates);
-		if (isset($this->settings['templates'])) {
+		if (empty($this->settings['templates'])) {
+			return;
+		}
+		if (is_string($this->settings['templates'])) {
 			$this->_templater->load($this->settings['templates']);
+		}
+		if (is_array($this->settings['templates'])) {
+			$this->_templater->add($this->settings['templates']);
 		}
 	}
 

@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 use Cake\Validation\Validator;
+use Cake\View\Form\ContextInterface;
 use Traversable;
 
 /**
@@ -42,7 +43,7 @@ use Traversable;
  *   Defaults to 'default'. Can be an array of table alias=>validators when
  *   dealing with associated forms.
  */
-class EntityContext {
+class EntityContext implements ContextInterface {
 
 /**
  * The request object.
@@ -127,6 +128,41 @@ class EntityContext {
 		}
 		$alias = $this->_rootName = $table->alias();
 		$this->_tables[$alias] = $table;
+	}
+
+/**
+ * Get the primary key data for the context.
+ *
+ * Gets the primary key columns from the root entity's schema.
+ *
+ * @return boolean
+ */
+	public function primaryKey() {
+		$table = $this->_tables[$this->_rootName];
+		$schema = $table->schema();
+		return $schema->primaryKey();
+	}
+
+/**
+ * Check whether or not this form is a create or update.
+ *
+ * If the context is for a single entity, the entity's isNew() method will
+ * be used. If isNew() returns null, a create operation will be assumed.
+ *
+ * If the context is for a collection or array the first object in the
+ * collection will be used.
+ *
+ * @return boolean
+ */
+	public function isCreate() {
+		$entity = $this->_context['entity'];
+		if (is_array($entity) || $entity instanceof Traversable) {
+			$entity = (new Collection($entity))->first();
+		}
+		if ($entity instanceof Entity) {
+			return $entity->isNew() !== false;
+		}
+		return true;
 	}
 
 /**

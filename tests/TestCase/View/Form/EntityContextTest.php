@@ -54,6 +54,51 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test getting primary key data.
+ *
+ * @return void
+ */
+	public function testPrimaryKey() {
+		$row = new Article();
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+		]);
+		$this->assertEquals(['id'], $context->primaryKey());
+	}
+
+/**
+ * Test isCreate on a single entity.
+ *
+ * @return void
+ */
+	public function testIsCreateSingle() {
+		$row = new Entity();
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+		]);
+		$this->assertTrue($context->isCreate());
+
+		$row->isNew(false);
+		$this->assertFalse($context->isCreate());
+
+		$row->isNew(true);
+		$this->assertTrue($context->isCreate());
+	}
+
+/**
+ * Test isCreate on a collection.
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testIsCreateCollection($collection) {
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+		]);
+		$this->assertTrue($context->isCreate());
+	}
+
+/**
  * Test an invalid table scope throws an error.
  *
  * @expectedException \RuntimeException
