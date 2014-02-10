@@ -171,8 +171,9 @@ class TranslateBehavior extends Behavior {
 		}
 
 		$new = array_diff_key($values, $modified);
+		$model = $this->_table->alias();
 		foreach ($new as $field => $content) {
-			$new[$field] = new Entity(compact('locale', 'field', 'content'), [
+			$new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
 				'useSetters' => false,
 				'markNew' => true
 			]);

@@ -491,4 +491,33 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals('A translated body', $article->get('body'));
 	}
 
+/**
+ * Tests adding new translation to a record
+ *
+ * @return void
+ */
+	public function testInsertNewTranslations() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('fra');
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$article->set('title', 'Le titre');
+		$table->save($article);
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('Le titre', $article->get('title'));
+		$this->assertEquals('First Article Body', $article->get('body'));
+
+		$article->set('title', 'Un autre titre');
+		$article->set('body', 'Le contenu');
+		$table->save($article);
+
+		$article = $table->find()->first();
+		$this->assertEquals('Un autre titre', $article->get('title'));
+		$this->assertEquals('Le contenu', $article->get('body'));
+	}
+
 }
