@@ -148,6 +148,43 @@ class TranslateBehavior extends Behavior {
 		}, $query::PREPEND);
 	}
 
+	public function beforeSave(Event $event, $entity) {
+		$locale = $this->locale();
+
+		if (!$locale) {
+			return;
+		}
+
+		$values = $entity->extract($this->config()['fields'], true);
+		$fields = array_keys($values);
+		$key = $entity->get(current((array)$this->_table->primaryKey()));
+
+		$preexistent = TableRegistry::get('I18n')->find()
+			->select(['id', 'field'])
+			->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key])
+			->indexBy('field');
+
+		$modified = [];
+		foreach ($preexistent as $field => $translation) {
+			$translation->set('content', $values[$field]);
+			$modified[$field] = $translation;
+		}
+
+		$new = array_diff_key($values, $modified);
+		foreach ($new as $field => $content) {
+			$new[$field] = new Entity(compact('locale', 'field', 'content'), [
+				'useSetters' => false,
+				'markNew' => true
+			]);
+		}
+
+		$entity->set('_i18n', array_values($modified + $new));
+
+		foreach ($fields as $field) {
+			$entity->dirty($field, false);
+		}
+	}
+
 /**
  * Sets all future finds for the bound table to also fetch translated fields for
  * the passed locale. If no value is passed, it returns the currently configured

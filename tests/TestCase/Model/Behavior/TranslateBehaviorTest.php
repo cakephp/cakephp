@@ -456,4 +456,39 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals($expected, $results);
 	}
 
+/**
+ * Tests that updating an existing record translations work
+ *
+ * @return void
+ */
+	public function testUpdateSingleLocale() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('eng');
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$article->set('title', 'New translated article');
+		$table->save($article);
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('New translated article', $article->get('title'));
+		$this->assertEquals('Content #1', $article->get('body'));
+
+		$table->locale(false);
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('First Article', $article->get('title'));
+
+		$table->locale('eng');
+		$article->set('title', 'Wow, such translated article');
+		$article->set('body', 'A translated body');
+		$table->save($article);
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('Wow, such translated article', $article->get('title'));
+		$this->assertEquals('A translated body', $article->get('body'));
+	}
+
 }
