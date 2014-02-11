@@ -162,6 +162,7 @@ class FormHelper extends Helper {
 	protected $_defaultTemplates = [
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
+		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
 	];
 
 /**
@@ -368,9 +369,9 @@ class FormHelper extends Helper {
 		}
 
 		if (!empty($append)) {
-			$append = $this->Html->useTag('hiddenblock', $append);
+			$append = $this->formatTemplate('hiddenblock', ['content' => $append]);
 		}
-		return $this->_templater->format('formstart', [
+		return $this->formatTemplate('formstart', [
 			'attrs' => $this->_templater->formatAttributes($htmlAttributes)
 		]) . $append;
 	}
