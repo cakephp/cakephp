@@ -168,7 +168,7 @@ class FormHelper extends Helper {
 /**
  * Copies the validationErrors variable from the View object into this instance
  *
- * @param View $View The View this helper is being attached to.
+ * @param Cake\View\View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper.
  */
 	public function __construct(View $View, $settings = array()) {
@@ -286,41 +286,15 @@ class FormHelper extends Helper {
 
 		$isCreate = $this->_context->isCreate();
 
-		$options = array_merge([
-			'type' => !$isCreate ? 'put' : 'post',
+		$options = $options + [
+			'type' => $isCreate ? 'post' : 'put',
 			'action' => null,
 			'url' => null,
 			'default' => true,
 			'encoding' => strtolower(Configure::read('App.encoding')),
-			], $options);
+		];
 
-		if ($options['action'] === null && $options['url'] === null) {
-			$options['action'] = $this->request->here(false);
-		} elseif (empty($options['url']) || is_array($options['url'])) {
-			if (isset($options['action']) && empty($options['url']['action'])) {
-				$options['url']['action'] = $options['action'];
-			}
-
-			$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
-			$actionDefaults = array(
-				'plugin' => $plugin,
-				'controller' => Inflector::underscore($this->request->params['controller']),
-				'action' => $this->request->params['action'],
-			);
-
-			$options['action'] = (array)$options['url'] + $actionDefaults;
-
-			$pk = $this->_context->primaryKey();
-			if (count($pk)) {
-				$id = $this->_context->val($pk[0]);
-			}
-			if (empty($options['action'][0]) && isset($id)) {
-				$options['action'][0] = $id;
-			}
-
-		} elseif (is_string($options['url'])) {
-			$options['action'] = $options['url'];
-		}
+		$options['action'] = $this->_formUrl($options);
 		unset($options['url']);
 
 		switch (strtolower($options['type'])) {
@@ -346,7 +320,6 @@ class FormHelper extends Helper {
 		$this->requestType = strtolower($options['type']);
 
 		$htmlAttributes['action'] = $this->url($options['action']);
-		unset($options['type'], $options['action']);
 
 		if (!$options['default']) {
 			if (!isset($options['onsubmit'])) {
@@ -354,12 +327,11 @@ class FormHelper extends Helper {
 			}
 			$htmlAttributes['onsubmit'] = $options['onsubmit'] . 'event.returnValue = false; return false;';
 		}
-		unset($options['default']);
 
 		if (!empty($options['encoding'])) {
 			$htmlAttributes['accept-charset'] = $options['encoding'];
-			unset($options['encoding']);
 		}
+		unset($options['type'], $options['action'], $options['encoding'], $options['default']);
 
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
@@ -374,6 +346,44 @@ class FormHelper extends Helper {
 		return $this->formatTemplate('formstart', [
 			'attrs' => $this->_templater->formatAttributes($htmlAttributes)
 		]) . $append;
+	}
+
+/**
+ * Create the URL for a form based on the options.
+ *
+ * @param array $options An array of options from create()
+ * @return string The action attribute for the form.
+ */
+	protected function _formUrl($options) {
+		if ($options['action'] === null && $options['url'] === null) {
+			return $this->request->here(false);
+		}
+		if (empty($options['url']) || is_array($options['url'])) {
+			if (isset($options['action']) && empty($options['url']['action'])) {
+				$options['url']['action'] = $options['action'];
+			}
+
+			$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
+			$actionDefaults = [
+				'plugin' => $plugin,
+				'controller' => Inflector::underscore($this->request->params['controller']),
+				'action' => $this->request->params['action'],
+			];
+
+			$action = (array)$options['url'] + $actionDefaults;
+
+			$pk = $this->_context->primaryKey();
+			if (count($pk)) {
+				$id = $this->_context->val($pk[0]);
+			}
+			if (empty($action[0]) && isset($id)) {
+				$action[0] = $id;
+			}
+			return $action;
+		}
+		if (is_string($options['url'])) {
+			return $options['url'];
+		}
 	}
 
 /**
@@ -2895,7 +2905,7 @@ class FormHelper extends Helper {
  *
  * If there is no active form null will be returned.
  *
- * @return null|object The context for the form.
+ * @return null|Cake\View\Form\ContextInterface The context for the form.
  */
 	public function context() {
 		return $this->_context;
