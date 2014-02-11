@@ -1991,11 +1991,13 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * testParsingWithPrefixes method
+ * testParsingWithLiteralPrefixes method
  *
  * @return void
  */
-	public function testParsingWithPrefixes() {
+	public function testParsingWithLiteralPrefixes() {
+		Configure::write('Routing.prefixes', array());
+		Router::reload();
 		$adminParams = array('prefix' => 'admin');
 		Router::connect('/admin/:controller', $adminParams);
 		Router::connect('/admin/:controller/:action', $adminParams);
@@ -2024,7 +2026,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::prefixes();
-		$expected = array('admin');
+		$expected = array();
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
