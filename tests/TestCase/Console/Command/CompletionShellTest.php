@@ -112,7 +112,7 @@ class CompletionShellTest extends TestCase {
 		$this->Shell->runCommand('commands', array());
 		$output = $this->Shell->stdout->output;
 
-		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome bake i18n server test upgrade sample\n";
+		$expected = "TestPlugin.example TestPluginTwo.example TestPluginTwo.welcome bake i18n server test sample\n";
 		$this->assertEquals($expected, $output);
 	}
 
