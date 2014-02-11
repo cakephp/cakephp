@@ -188,12 +188,12 @@ class CakeRoute {
 		if (!$this->compiled()) {
 			$this->compile();
 		}
-		
+
 		// parse the URL into a associative array of tokens.
 		if (!preg_match($this->_compiledRoute, urldecode($url), $route)) {
 			return false;
 		}
-		
+
 		// apply header based filters, return false if required headers are not set.
 		foreach ($this->defaults as $key => $val) {
 			$key = (string)$key;
@@ -218,7 +218,7 @@ class CakeRoute {
 				}
 			}
 		}
-		
+
 		// unset indexed keys in route.
 		array_shift($route);
 		$count = count($this->keys);
