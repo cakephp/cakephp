@@ -2272,14 +2272,12 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
 
 		// test that the first route is matched
-		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
 		Router::connect('/government', $url);
 		Router::parse('/government');
 		$route = Router::requestRoute();
 		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
 
 		// test that an unmatched route does not change the current route
-		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
 		Router::connect('/actor', $url);
 		Router::parse('/government');
 		$route = Router::requestRoute();

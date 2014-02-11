@@ -243,7 +243,6 @@ class ControllerMergeVarsTest extends CakeTestCase {
 	public function testMergeVarsModelClass() {
 		$Controller = new MergeVariablescontroller();
 		$Controller->uses = array('Test', 'TestAlias');
-		$lastModel = end($Controller->uses);
 		$Controller->constructClasses();
 		$this->assertEquals($Controller->uses[0], $Controller->modelClass);
 	}

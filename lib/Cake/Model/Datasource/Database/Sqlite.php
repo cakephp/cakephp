@@ -250,9 +250,8 @@ class Sqlite extends DboSource {
 		}
 
 		$col = strtolower(str_replace(')', '', $real));
-		$limit = null;
 		if (strpos($col, '(') !== false) {
-			list($col, $limit) = explode('(', $col);
+			list($col) = explode('(', $col);
 		}
 
 		$standard = array(

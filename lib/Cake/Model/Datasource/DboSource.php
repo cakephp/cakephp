@@ -2734,7 +2734,7 @@ class DboSource extends DataSource {
 			if (is_object($model) && $model->isVirtualField($key)) {
 				$key = '(' . $this->_quoteFields($model->getVirtualField($key)) . ')';
 			}
-			list($alias, $field) = pluginSplit($key);
+			list($alias) = pluginSplit($key);
 			if (is_object($model) && $alias !== $model->alias && is_object($model->{$alias}) && $model->{$alias}->isVirtualField($key)) {
 				$key = '(' . $this->_quoteFields($model->{$alias}->getVirtualField($key)) . ')';
 			}
@@ -2832,7 +2832,7 @@ class DboSource extends DataSource {
 			'int' => 1, 'tinyint' => 1, 'smallint' => 1, 'mediumint' => 1, 'integer' => 1, 'bigint' => 1
 		);
 
-		list($real, $type, $length, $offset, $sign, $zerofill) = $result;
+		list($real, $type, $length, $offset, $sign) = $result;
 		$typeArr = $type;
 		$type = $type[0];
 		$length = $length[0];
@@ -3241,13 +3241,12 @@ class DboSource extends DataSource {
 		}
 
 		$isAllFloat = $isAllInt = true;
-		$containsFloat = $containsInt = $containsString = false;
+		$containsInt = $containsString = false;
 		foreach ($value as $valElement) {
 			$valElement = trim($valElement);
 			if (!is_float($valElement) && !preg_match('/^[\d]+\.[\d]+$/', $valElement)) {
 				$isAllFloat = false;
 			} else {
-				$containsFloat = true;
 				continue;
 			}
 			if (!is_int($valElement) && !preg_match('/^[\d]+$/', $valElement)) {

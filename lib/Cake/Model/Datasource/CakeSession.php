@@ -135,7 +135,6 @@ class CakeSession {
  */
 	public static function init($base = null) {
 		self::$time = time();
-		$checkAgent = Configure::read('Session.checkAgent');
 
 		if (env('HTTP_USER_AGENT')) {
 			self::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));
