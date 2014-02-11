@@ -141,7 +141,7 @@ class Router {
 	);
 
 /**
- * Stores all information necessary to decide what named arguments are parsed under what conditions.
+ * Stores the configuration for deciding what named arguments are parsed under what conditions.
  *
  * @var string
  */
@@ -307,15 +307,15 @@ class Router {
  * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass`
  * have special meaning in the $options array.
  *
- * - `pass` is used to define which of the routed parameters should be shifted into the pass array. Adding a
- *   parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
- * - `persist` is used to define which route parameters should be automatically included when generating
+ * - `pass` array is used to define which of the routed parameters should be copied into the pass array. Adding a
+ *   parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`.
+ * - `persist` array is used to define which route parameters should be automatically included when generating
  *   new URLs. You can override persistent parameters by redefining them in a URL or remove them by
  *   setting the parameter to `false`. Ex. `'persist' => array('lang')`
- * - `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
+ * - `routeClass` string is used to extend and change how individual routes parse requests and handle reverse routing,
  *   via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
- * - `named` is used to configure named parameters at the route level. This key uses the same options
- *   as Router::connectNamed()
+ * - `named` array is used to configure named parameters at the route level. This key is the same options
+ *   as the first parameter, `$named`, to Router::connectNamed().
  *
  * You can also add additional conditions for matching routes to the $defaults array.
  * The following conditions can be used:
