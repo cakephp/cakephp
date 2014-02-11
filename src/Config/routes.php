@@ -42,40 +42,33 @@ use Cake\Utility\Inflector;
  *
  * You can disable the connection of default routes by deleting the require inside APP/Config/routes.php.
  */
+
 $prefixes = Router::prefixes();
-
-if ($plugins = Plugin::loaded()) {
-	foreach ($plugins as $key => $value) {
-		$plugins[$key] = Inflector::underscore($value);
-	}
-	$pluginPattern = implode('|', $plugins);
-	$match = ['plugin' => $pluginPattern];
-	$shortParams = [
-		'routeClass' => 'Cake\Routing\Route\PluginShortRoute',
-		'plugin' => $pluginPattern,
-		'_name' => '_plugin._controller:index',
-	];
-
-	foreach ($prefixes as $prefix) {
-		$params = ['prefix' => $prefix];
-		$indexParams = $params + ['action' => 'index'];
-		Router::connect("/{$prefix}/:plugin", $indexParams, $shortParams);
-		Router::connect("/{$prefix}/:plugin/:controller", $indexParams, $match);
-		Router::connect("/{$prefix}/:plugin/:controller/:action/*", $params, $match);
-	}
-	Router::connect('/:plugin', ['action' => 'index'], $shortParams);
-	Router::connect('/:plugin/:controller', ['action' => 'index'], $match);
-	Router::connect('/:plugin/:controller/:action/*', [], $match);
+$prefixPattern = implode('|', $prefixes);
+$plugins = Plugin::loaded();
+foreach ($plugins as $key => $value) {
+	$plugins[$key] = Inflector::underscore($value);
 }
+$pluginPattern = implode('|', $plugins);
+$indexParams = ['action' => 'index'];
+$match = ['prefix' => $prefixPattern, 'plugin' => $pluginPattern];
 
-foreach ($prefixes as $prefix) {
-	$params = ['prefix' => $prefix];
-	$indexParams = $params + ['action' => 'index'];
-	Router::connect("/{$prefix}/:controller", $indexParams);
-	Router::connect("/{$prefix}/:controller/:action/*", $params);
+if($prefixPattern && $pluginPattern) {
+	Router::connect("/:prefix/:plugin", $indexParams, $match + ['routeClass' => 'Cake\Routing\Route\PluginShortRoute']);
+	Router::connect("/:prefix/:plugin/:controller", $indexParams, $match);
+	Router::connect("/:prefix/:plugin/:controller/:action/*", [], $match);
+}
+else if($pluginPattern) {
+	Router::connect("/:plugin", $indexParams, $match + ['routeClass' => 'Cake\Routing\Route\PluginShortRoute']);
+	Router::connect("/:plugin/:controller", $indexParams, $match);
+	Router::connect("/:plugin/:controller/:action/*", [], $match);
+}
+else if($prefixPattern) {
+	Router::connect("/:prefix", $indexParams, $match );
+	Router::connect("/:prefix/:controller", $indexParams, $match);
+	Router::connect("/:prefix/:controller/:action/*", [], $match);
 }
 Router::connect('/:controller', ['action' => 'index']);
 Router::connect('/:controller/:action/*');
 
-unset($params, $indexParams, $prefix, $prefixes, $shortParams, $match,
-	$pluginPattern, $plugins, $key, $value);
+unset($prefixes, $prefixPattern, $plugins, $pluginPattern, $indexParams, $match);

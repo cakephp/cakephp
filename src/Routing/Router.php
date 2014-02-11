@@ -301,6 +301,7 @@ class Router {
  * - `_name` Used to define a specific name for routes. This can be used to optimize
  *   reverse routing lookups. If undefined a name will be generated for each
  *   connected route.
+ * - `_ext` todo explain.
  *
  * You can also add additional conditions for matching routes to the $defaults array.
  * The following conditions can be used:
@@ -328,14 +329,6 @@ class Router {
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
 		static::$initialized = true;
-
-		if (!empty($defaults['prefix'])) {
-			static::$_prefixes[] = $defaults['prefix'];
-			static::$_prefixes = array_keys(array_flip(static::$_prefixes));
-		}
-		if (empty($defaults['prefix'])) {
-			unset($defaults['prefix']);
-		}
 
 		$defaults += array('plugin' => null);
 		if (empty($options['action'])) {
@@ -397,7 +390,8 @@ class Router {
 	}
 
 /**
- * Creates REST resource routes for the given controller(s).
+ * Generate REST resource routes for the given controller(s). A quick way to generate a default routes to a set
+ *  of REST resources (controller(s)).
  *
  * ### Usage
  *
@@ -795,12 +789,9 @@ class Router {
 				$url['action'] = $params['action'];
 			}
 
-			// Keep the current prefix around, or remove it if its falsey
-			if (!empty($params['prefix']) && !isset($url['prefix'])) {
+			// Keep the current prefix around if none set.
+			if (isset($params['prefix']) && !isset($url['prefix'])) {
 				$url['prefix'] = $params['prefix'];
-			}
-			if (empty($url['prefix'])) {
-				unset($url['prefix']);
 			}
 
 			$url += array(

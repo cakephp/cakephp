@@ -447,7 +447,6 @@ class Route {
 			return false;
 		}
 
-		$prefixes = Router::prefixes();
 		$pass = array();
 		$query = array();
 
