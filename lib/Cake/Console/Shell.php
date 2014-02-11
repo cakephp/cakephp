@@ -33,16 +33,22 @@ class Shell extends Object {
 
 /**
  * Output constant making verbose shells.
+ *
+ * @var integer
  */
 	const VERBOSE = 2;
 
 /**
  * Output constant for making normal shells.
+ *
+ * @var integer
  */
 	const NORMAL = 1;
 
 /**
  * Output constants for making quiet shells.
+ *
+ * @var integer
  */
 	const QUIET = 0;
 

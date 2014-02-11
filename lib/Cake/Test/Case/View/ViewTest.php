@@ -1024,7 +1024,7 @@ class ViewTest extends CakeTestCase {
 		$this->assertRegExp("/<title>yo what up<\/title>/", $result);
 		$this->assertRegExp("/<p><a href=\"flash\">yo what up<\/a><\/p>/", $result);
 
-		$this->assertTrue($View->render(false, 'flash'));
+		$this->assertNull($View->render(false, 'flash'));
 
 		$this->PostsController->helpers = array('Session', 'Cache', 'Html');
 		$this->PostsController->constructClasses();
