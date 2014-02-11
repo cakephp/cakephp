@@ -31,7 +31,6 @@ use Cake\View\Helper\FormHelper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
 
-
 /**
  * Test stub.
  */
@@ -1105,7 +1104,6 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 	}
-
 
 /**
  * testFormCreateWithSecurity method
