@@ -227,7 +227,7 @@ class CakeRoute {
 		}
 		$route['pass'] = $route['named'] = array();
 
-		// set default name and pass params in $route array.
+		// copy the default name and pass params into $route array.
 		foreach ($this->defaults as $key => $value) {
 			if (isset($route[$key])) {
 				continue;
