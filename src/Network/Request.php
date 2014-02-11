@@ -1010,23 +1010,23 @@ class Request implements \ArrayAccess {
 	}
 
 /**
- * Only allow certain HTTP request methods, if the request method does not match
+ * Allow only certain HTTP request methods, if the request method does not match
  * a 405 error will be shown and the required "Allow" response header will be set.
  *
  * Example:
  *
- * $this->request->onlyAllow('post', 'delete');
+ * $this->request->allowMethod('post', 'delete');
  * or
- * $this->request->onlyAllow(array('post', 'delete'));
+ * $this->request->allowMethod(array('post', 'delete'));
  *
  * If the request would be GET, response header "Allow: POST, DELETE" will be set
- * and a 405 error will be returned
+ * and a 405 error will be returned.
  *
- * @param string|array $methods Allowed HTTP request methods
+ * @param string|array $methods Allowed HTTP request methods.
  * @return boolean true
  * @throws Cake\Error\MethodNotAllowedException
  */
-	public function onlyAllow($methods) {
+	public function allowMethod($methods) {
 		if (!is_array($methods)) {
 			$methods = func_get_args();
 		}

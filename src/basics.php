@@ -278,7 +278,7 @@ if (!function_exists('am')) {
  * Merge a group of arrays, accepts an unlimited amount of parameters
  *
  * @return array All array parameters merged into one
- * @link http://book.cakephp.org/2.0/en/development/debugging.html#am
+ * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#am
  */
 	function am() {
 		$r = array();

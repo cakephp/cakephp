@@ -317,6 +317,8 @@ class ValidateUsersTable extends Table {
 		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'balance' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
 		'cost_decimal' => array('type' => 'decimal', 'null' => false, 'length' => '6,3'),
+		'ratio' => array('type' => 'decimal', 'null' => false, 'length' => '10,6'),
+		'population' => array('type' => 'decimal', 'null' => false, 'length' => '15,0'),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
 	);
@@ -1862,6 +1864,28 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
+		$result = $this->Form->input('ValidateUser.ratio');
+		$expected = array(
+			'div' => array('class'),
+			'label' => array('for'),
+			'Ratio',
+			'/label',
+			'input' => array('name', 'type' => 'number', 'step' => '0.000001', 'id'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('ValidateUser.population');
+		$expected = array(
+			'div' => array('class'),
+			'label' => array('for'),
+			'Population',
+			'/label',
+			'input' => array('name', 'type' => 'number', 'step' => '1', 'id'),
+			'/div',
+		);
+		$this->assertTags($result, $expected);
+
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = array(
 			'div' => array('class' => 'input email'),
@@ -3272,8 +3296,8 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1/2', 'id' => 'ModelMultiField1/22')),
-			array('label' => array('for' => 'ModelMultiField1/22')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1/2', 'id' => 'ModelMultiField12')),
+			array('label' => array('for' => 'ModelMultiField12')),
 			'half',
 			'/label',
 			'/div',
@@ -3553,8 +3577,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->radio('Model.field', array('1/2' => 'half'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1/2', 'id' => 'ModelField1/2')),
-			'label' => array('for' => 'ModelField1/2'),
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1/2', 'id' => 'ModelField12')),
+			'label' => array('for' => 'ModelField12'),
 			'half',
 			'/label'
 		);
@@ -4233,16 +4257,16 @@ class FormHelperTest extends TestCase {
  */
 	public function testDomIdSuffix() {
 		$result = $this->Form->domIdSuffix('1 string with 1$-dollar signs');
-		$this->assertEquals('1StringWith1$-dollarSigns', $result);
+		$this->assertEquals('1StringWith1DollarSigns', $result);
 
 		$result = $this->Form->domIdSuffix('<abc x="foo" y=\'bar\'>');
-		$this->assertEquals('AbcX=FooY=Bar', $result);
-
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar signs', 'xhtml');
-		$this->assertEquals('1StringWith1-dollarSigns', $result);
-
-		$result = $this->Form->domIdSuffix('<abc x="foo" y=\'bar\'>', 'xhtml');
 		$this->assertEquals('AbcXFooYBar', $result);
+
+		$result = $this->Form->domIdSuffix('1 string with 1$-dollar signs', 'html5');
+		$this->assertEquals('1StringWith1$-dollarSigns', $result);
+
+		$result = $this->Form->domIdSuffix('<abc x="foo" y=\'bar\'>', 'html5');
+		$this->assertEquals('AbcX=FooY=Bar', $result);
 	}
 
 /**
@@ -4260,14 +4284,14 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->domIdSuffix('a\'b');
 		$this->assertEquals('AB2', $result);
 
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar', 'xhtml');
-		$this->assertEquals('1StringWith1-dollar', $result);
+		$result = $this->Form->domIdSuffix('1 string with 1$-dollar');
+		$this->assertEquals('1StringWith1Dollar', $result);
 
-		$result = $this->Form->domIdSuffix('1 string with 1€-dollar', 'xhtml');
-		$this->assertEquals('1StringWith1-dollar1', $result);
+		$result = $this->Form->domIdSuffix('1 string with 1$-dollar');
+		$this->assertEquals('1StringWith1Dollar1', $result);
 
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar', 'xhtml');
-		$this->assertEquals('1StringWith1-dollar2', $result);
+		$result = $this->Form->domIdSuffix('1 string with 1$-dollar');
+		$this->assertEquals('1StringWith1Dollar2', $result);
 	}
 
 /**
@@ -5159,31 +5183,32 @@ class FormHelperTest extends TestCase {
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
-				'value' => 'a+', 'id' => 'ModelMultiFieldA+'
+				'value' => 'a+', 'id' => 'ModelMultiFieldA2'
 			)),
-			array('label' => array('for' => 'ModelMultiFieldA+')),
+			array('label' => array('for' => 'ModelMultiFieldA2')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
-				'value' => 'a++', 'id' => 'ModelMultiFieldA++'
+				'value' => 'a++', 'id' => 'ModelMultiFieldA1'
 			)),
-			array('label' => array('for' => 'ModelMultiFieldA++')),
+			array('label' => array('for' => 'ModelMultiFieldA1')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'data[Model][multi_field][]',
-				'value' => 'a+++', 'id' => 'ModelMultiFieldA+++'
+				'value' => 'a+++', 'id' => 'ModelMultiFieldA'
 			)),
-			array('label' => array('for' => 'ModelMultiFieldA+++')),
+			array('label' => array('for' => 'ModelMultiFieldA')),
 			'third',
 			'/label',
 			'/div'
 		);
+
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select(
@@ -5809,6 +5834,35 @@ class FormHelperTest extends TestCase {
 			)),
 			'label' => array('for' => 'UserFormSomething'),
 			'Something',
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that a checkbox can have 0 for the value and 1 for the hidden input.
+ *
+ * @return void
+ */
+	public function testCheckboxZeroValue() {
+		$result = $this->Form->input('User.get_spam', array(
+			'type' => 'checkbox',
+			'value' => '0',
+			'hiddenField' => '1',
+		));
+		$expected = array(
+			'div' => array('class' => 'input checkbox'),
+			array('input' => array(
+				'type' => 'hidden', 'name' => 'data[User][get_spam]',
+				'value' => '1', 'id' => 'UserGetSpam_'
+			)),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'data[User][get_spam]',
+				'value' => '0', 'id' => 'UserGetSpam'
+			)),
+			'label' => array('for' => 'UserGetSpam'),
+			'Get Spam',
 			'/label',
 			'/div'
 		);

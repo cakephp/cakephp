@@ -1001,6 +1001,13 @@ class ViewTest extends TestCase {
 		$this->assertTrue(isset($View->viewVars['content_for_layout']), 'content_for_layout should be a view var');
 		$this->assertTrue(isset($View->viewVars['scripts_for_layout']), 'scripts_for_layout should be a view var');
 
+		$View = new TestView($this->PostsController);
+		$result = $View->render(false, 'ajax2');
+
+		$this->assertRegExp('/Ajax\!/', $result);
+
+		$this->assertNull($View->render(false, 'ajax2'));
+
 		$this->PostsController->helpers = array('Session', 'Cache', 'Html');
 		$this->PostsController->constructClasses();
 		$this->PostsController->cacheAction = array('index' => 3600);

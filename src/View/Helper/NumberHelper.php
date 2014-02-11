@@ -76,7 +76,7 @@ class NumberHelper extends Helper {
 /**
  * Formats a number with a level of precision.
  *
- * @see: Cake\Utility\Number::precision()
+ * @see Cake\Utility\Number::precision()
  *
  * @param float $number A floating point number.
  * @param integer $precision The precision of the returned number.
@@ -90,7 +90,7 @@ class NumberHelper extends Helper {
 /**
  * Returns a formatted-for-humans file size.
  *
- * @see: Cake\Utility\Number::toReadableSize()
+ * @see Cake\Utility\Number::toReadableSize()
  *
  * @param integer $size Size in bytes
  * @return string Human readable size
@@ -107,7 +107,7 @@ class NumberHelper extends Helper {
  *
  * - `multiply`: Multiply the input value by 100 for decimal percentages.
  *
- * @see: Cake\Utility\Number::toPercentage()
+ * @see Cake\Utility\Number::toPercentage()
  *
  * @param float $number A floating point number
  * @param integer $precision The precision of the returned number
@@ -122,7 +122,7 @@ class NumberHelper extends Helper {
 /**
  * Formats a number into a currency format.
  *
- * @see: Cake\Utility\Number::format()
+ * @see Cake\Utility\Number::format()
  *
  * @param float $number A floating point number
  * @param integer $options If integer then places, if string then before, if (,.-) then use it
@@ -164,7 +164,7 @@ class NumberHelper extends Helper {
  *   By default all currencies contain utf-8 symbols and don't need this changed. If you require
  *   non HTML encoded symbols you will need to update the settings with the correct bytes.
  *
- * @see: Cake\Utility\Number::currency()
+ * @see Cake\Utility\Number::currency()
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
@@ -182,16 +182,16 @@ class NumberHelper extends Helper {
  * Add a currency format to the Number helper. Makes reusing
  * currency formats easier.
  *
- * {{{ $number->addFormat('NOK', array('before' => 'Kr. ')); }}}
+ * {{{ $this->Number->addFormat('NOK', array('before' => 'Kr. ')); }}}
  *
  * You can now use `NOK` as a shortform when formatting currency amounts.
  *
- * {{{ $number->currency($value, 'NOK'); }}}
+ * {{{ $this->Number->currency($value, 'NOK'); }}}
  *
  * Added formats are merged with the defaults defined in Cake\Utility\Number::$_currencyDefaults
  * See Cake\Utility\Number::currency() for more information on the various options and their function.
  *
- * @see: Cake\Utility\Number::addFormat()
+ * @see Cake\Utility\Number::addFormat()
  *
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
@@ -205,6 +205,7 @@ class NumberHelper extends Helper {
 
 /**
  * Getter/setter for default currency
+ *
  * @see  Cake\Utility\Number::defaultCurrency()
  *
  * @param string $currency The currency to be used in the future.

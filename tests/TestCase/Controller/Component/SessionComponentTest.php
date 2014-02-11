@@ -94,10 +94,6 @@ class SessionComponentTest extends TestCase {
 		Configure::write('App.namespace', 'TestApp');
 		Router::connect('/:controller/:action');
 
-		$Session = new SessionComponent($this->ComponentRegistry);
-		$Session->check('Test');
-		$this->assertTrue(isset($_SESSION));
-
 		$Controller = new Controller();
 		$Session = new SessionComponent($this->ComponentRegistry);
 		$expected = $Session->id();
@@ -233,7 +229,7 @@ class SessionComponentTest extends TestCase {
 	public function testSessionId() {
 		unset($_SESSION);
 		$Session = new SessionComponent($this->ComponentRegistry);
-		$Session->check('test');
+		Session::start();
 		$this->assertEquals(session_id(), $Session->id());
 	}
 

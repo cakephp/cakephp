@@ -116,6 +116,13 @@ class Session {
 	protected static $_initialized = false;
 
 /**
+ * Session cookie name
+ *
+ * @var string
+ */
+	protected static $_cookieName = null;
+
+/**
  * Pseudo constructor.
  *
  * @param string $base The base path for the Session
@@ -132,11 +139,11 @@ class Session {
 		static::_setPath($base);
 		static::_setHost(env('HTTP_HOST'));
 
-		if (!self::$_initialized) {
+		if (!static::$_initialized) {
 			register_shutdown_function('session_write_close');
 		}
 
-		self::$_initialized = true;
+		static::$_initialized = true;
 	}
 
 /**
@@ -210,12 +217,10 @@ class Session {
  * @return boolean True if variable is there
  */
 	public static function check($name = null) {
-		if (!static::start()) {
+		if (empty($name) || !static::_hasSession() || !static::start()) {
 			return false;
 		}
-		if (empty($name)) {
-			return false;
-		}
+
 		return Hash::get($_SESSION, $name) !== null;
 	}
 
@@ -309,7 +314,7 @@ class Session {
  * @return boolean Success
  */
 	public static function valid() {
-		if (static::read('Config')) {
+		if (static::start() && static::read('Config')) {
 			if (static::_validAgentAndTime() && static::$error === false) {
 				static::$valid = true;
 			} else {
@@ -357,17 +362,18 @@ class Session {
  * Returns given session variable, or all of them, if no parameters given.
  *
  * @param string|array $name The name of the session variable (or a path as sent to Set.extract)
- * @return mixed The value of the session variable
+ * @return mixed The value of the session variable, null if session not available,
+ *   session not started, or provided name not found in the session.
  */
 	public static function read($name = null) {
-		if (!static::start()) {
+		if (empty($name) && $name !== null) {
 			return false;
+		}
+		if (!static::_hasSession() || !static::start()) {
+			return null;
 		}
 		if ($name === null) {
 			return static::_returnSessionVars();
-		}
-		if (empty($name)) {
-			return false;
 		}
 		$result = Hash::get($_SESSION, $name);
 
@@ -398,12 +404,10 @@ class Session {
  * @return boolean True if the write was successful, false if the write failed
  */
 	public static function write($name, $value = null) {
-		if (!static::start()) {
+		if (empty($name) || !static::start()) {
 			return false;
 		}
-		if (empty($name)) {
-			return false;
-		}
+
 		$write = $name;
 		if (!is_array($name)) {
 			$write = array($name => $value);
@@ -423,14 +427,15 @@ class Session {
  * @return void
  */
 	public static function destroy() {
-		if (!self::started()) {
-			self::_startSession();
+		if (!static::started()) {
+			static::_startSession();
 		}
 
 		session_destroy();
 
 		$_SESSION = null;
-		self::$id = null;
+		static::$id = null;
+		static::$_cookieName = null;
 	}
 
 /**
@@ -470,9 +475,12 @@ class Session {
 		if (!isset($sessionConfig['ini']['session.cookie_lifetime'])) {
 			$sessionConfig['ini']['session.cookie_lifetime'] = $sessionConfig['cookieTimeout'] * 60;
 		}
+
 		if (!isset($sessionConfig['ini']['session.name'])) {
 			$sessionConfig['ini']['session.name'] = $sessionConfig['cookie'];
 		}
+		static::$_cookieName = $sessionConfig['ini']['session.name'];
+
 		if (!empty($sessionConfig['handler'])) {
 			$sessionConfig['ini']['session.save_handler'] = 'user';
 		}
@@ -511,6 +519,30 @@ class Session {
 		}
 		Configure::write('Session', $sessionConfig);
 		static::$sessionTime = static::$time + ($sessionConfig['timeout'] * 60);
+	}
+
+/**
+ * Get session cookie name.
+ *
+ * @return string
+ */
+	protected static function _cookieName() {
+		if (static::$_cookieName !== null) {
+			return static::$_cookieName;
+		}
+
+		static::init();
+		static::_configureSession();
+
+		return static::$_cookieName = session_name();
+	}
+
+/**
+ * Returns whether a session exists
+ * @return boolean
+ */
+	protected static function _hasSession() {
+		return static::started() || isset($_COOKIE[static::_cookieName()]);
 	}
 
 /**
@@ -608,9 +640,9 @@ class Session {
  * @return boolean Success
  */
 	protected static function _startSession() {
-		self::init();
+		static::init();
 		session_write_close();
-		self::_configureSession();
+		static::_configureSession();
 
 		if (headers_sent()) {
 			if (empty($_SESSION)) {
@@ -664,9 +696,9 @@ class Session {
  * @return void
  */
 	protected static function _writeConfig() {
-		self::write('Config.userAgent', self::$_userAgent);
-		self::write('Config.time', self::$sessionTime);
-		self::write('Config.countdown', self::$_requestCountdown);
+		static::write('Config.userAgent', static::$_userAgent);
+		static::write('Config.time', static::$sessionTime);
+		static::write('Config.countdown', static::$_requestCountdown);
 	}
 
 /**

@@ -476,4 +476,24 @@ class EventManagerTest extends TestCase {
 		EventManager::instance(new EventManager());
 	}
 
+/**
+ * test callback
+ */
+	public function onMyEvent($event) {
+		$event->data['callback'] = 'ok';
+	}
+
+/**
+ * Tests events dispatched by a local manager can be handled by
+ * handler registered in the global event manager
+ */
+	public function testDispatchLocalHandledByGlobal() {
+		$callback = array($this, 'onMyEvent');
+		EventManager::instance()->attach($callback, 'my_event');
+		$manager = new EventManager();
+		$event = new Event('my_event', $manager);
+		$manager->dispatch($event);
+		$this->assertEquals('ok', $event->data['callback']);
+	}
+
 }

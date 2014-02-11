@@ -1519,7 +1519,8 @@ class I18nTest extends TestCase {
  */
 	public function testSetLanguageWithSession() {
 		Session::start();
-		$_SESSION['Config']['language'] = 'po';
+		Session::write('Config.language', 'po');
+
 		$singular = $this->_singular();
 		$this->assertEquals('Po (translated)', $singular);
 
@@ -1550,7 +1551,7 @@ class I18nTest extends TestCase {
 		$this->assertTrue(in_array('23 everything else (po translated)', $plurals));
 		$this->assertTrue(in_array('24 everything else (po translated)', $plurals));
 		$this->assertTrue(in_array('25 everything else (po translated)', $plurals));
-		unset($_SESSION['Config']['language']);
+		Session::delete('Config.language');
 	}
 
 /**

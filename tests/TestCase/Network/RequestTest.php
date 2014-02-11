@@ -2209,42 +2209,42 @@ XML;
 	}
 
 /**
- * TestOnlyAllow
+ * TestAllowMethod
  *
  * @return void
  */
-	public function testOnlyAllow() {
+	public function testAllowMethod() {
 		$request = new Request(['environment' => [
 			'url' => '/posts/edit/1',
 			'REQUEST_METHOD' => 'PUT'
 		]]);
 
-		$this->assertTrue($request->onlyAllow(array('put')));
+		$this->assertTrue($request->allowMethod(array('put')));
 
 		$request->env('REQUEST_METHOD', 'DELETE');
-		$this->assertTrue($request->onlyAllow('post', 'delete'));
+		$this->assertTrue($request->allowMethod('post', 'delete'));
 	}
 
 /**
- * Test onlyAllow throwing exception
+ * Test allowMethod throwing exception
  *
  * @return void
  */
-	public function testOnlyAllowException() {
+	public function testAllowMethodException() {
 		$request = new Request([
 			'url' => '/posts/edit/1',
 			'environment' => ['REQUEST_METHOD' => 'PUT']
 		]);
 
 		try {
-			$request->onlyAllow('POST', 'DELETE');
+			$request->allowMethod('POST', 'DELETE');
 			$this->fail('An expected exception has not been raised.');
 		} catch (Error\MethodNotAllowedException $e) {
 			$this->assertEquals(array('Allow' => 'POST, DELETE'), $e->responseHeader());
 		}
 
 		$this->setExpectedException('Cake\Error\MethodNotAllowedException');
-		$request->onlyAllow('POST');
+		$request->allowMethod('POST');
 	}
 
 /**

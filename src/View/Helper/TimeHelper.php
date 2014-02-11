@@ -305,7 +305,7 @@ class TimeHelper extends Helper {
 	}
 
 /**
- * * Formats date for RSS feeds
+ * Formats date for RSS feeds
  *
  * @see Cake\Utility\Time::timeAgoInWords()
  *
@@ -408,10 +408,10 @@ class TimeHelper extends Helper {
  * Create localized & formatted time:
  *
  * {{{
- *   Cake\Utility\Time::format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
- *   Cake\Utility\Time::format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
- *   Cake\Utility\Time::format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
- *   Cake\Utility\Time::format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
+ *   $this->Time->format('2012-02-15', '%m-%d-%Y'); // returns 02-15-2012
+ *   $this->Time->format('2012-02-15 23:01:01', '%c'); // returns preferred date and time based on configured locale
+ *   $this->Time->format('0000-00-00', '%d-%m-%Y', 'N/A'); // return N/A becuase an invalid date was passed
+ *   $this->Time->format('2012-02-15 23:01:01', '%c', 'N/A', 'America/New_York'); // converts passed date to timezone
  * }}}
  *
  * @see Cake\Utility\Time::format()

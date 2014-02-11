@@ -180,6 +180,14 @@ class ControllerTask extends BakeTask {
 
 				$helpers = $this->doHelpers();
 				$components = $this->doComponents();
+
+				$wannaUseSession = $this->in(
+					__d('cake_console', "Would you like to use Session flash messages?"), array('y', 'n'), 'y'
+				);
+
+				if (strtolower($wannaUseSession) === 'y') {
+					array_push($components, 'Session');
+				}
 			}
 		} else {
 			list($wannaBakeCrud, $wannaBakeAdminCrud) = $this->_askAboutMethods();
