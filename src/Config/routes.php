@@ -52,14 +52,16 @@ foreach ($plugins as $key => $value) {
 $pluginPattern = implode('|', $plugins);
 $indexParams = ['action' => 'index'];
 $match = ['prefix' => $prefixPattern, 'plugin' => $pluginPattern];
+$pluginShortMatch = $match + ['routeClass' => 'Cake\Routing\Route\PluginShortRoute',
+	'_name' => '_plugin._controller:index'];
 
 if($prefixPattern && $pluginPattern) {
-	Router::connect("/:prefix/:plugin", $indexParams, $match + ['routeClass' => 'Cake\Routing\Route\PluginShortRoute']);
+	Router::connect("/:prefix/:plugin", $indexParams, $pluginShortMatch);
 	Router::connect("/:prefix/:plugin/:controller", $indexParams, $match);
 	Router::connect("/:prefix/:plugin/:controller/:action/*", [], $match);
 }
 else if($pluginPattern) {
-	Router::connect("/:plugin", $indexParams, $match + ['routeClass' => 'Cake\Routing\Route\PluginShortRoute']);
+	Router::connect("/:plugin", $indexParams, $pluginShortMatch);
 	Router::connect("/:plugin/:controller", $indexParams, $match);
 	Router::connect("/:plugin/:controller/:action/*", [], $match);
 }
