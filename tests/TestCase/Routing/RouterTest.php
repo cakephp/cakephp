@@ -1846,21 +1846,36 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that setting a prefix to false is ignored, as its generally user error.
+ * Test that setting a prefix to is just like setting any other default route parameter.
  *
  * @return void
  */
-	public function testPrefixFalseIgnored() {
+	public function testPrefixJustADefault() {
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 
 		Router::connect('/cache_css/*', array('prefix' => false, 'controller' => 'asset_compress', 'action' => 'get'));
 
 		$url = Router::url(array('controller' => 'asset_compress', 'action' => 'get', 'test'));
-		$expected = '/cache_css/test';
+		$expected = '/';
 		$this->assertEquals($expected, $url);
 
 		$url = Router::url(array('prefix' => false, 'controller' => 'asset_compress', 'action' => 'get', 'test'));
+		$expected = '/cache_css/test';
+		$this->assertEquals($expected, $url);
+
+		Router::reload();
+		Router::connect('/cache_css/*', array('prefix' => false, 'anything' => false, 'controller' => 'asset_compress', 'action' => 'get'));
+
+		$url = Router::url(array('controller' => 'asset_compress', 'action' => 'get', 'test'));
+		$expected = '/';
+		$this->assertEquals($expected, $url);
+
+		$url = Router::url(array('prefix' => false, 'controller' => 'asset_compress', 'action' => 'get', 'test'));
+		$expected = '/';
+		$this->assertEquals($expected, $url);
+
+		$url = Router::url(array('prefix' => false, 'anything' => false, 'controller' => 'asset_compress', 'action' => 'get', 'test'));
 		$expected = '/cache_css/test';
 		$this->assertEquals($expected, $url);
 	}
