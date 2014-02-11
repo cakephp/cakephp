@@ -5304,6 +5304,7 @@ class FormHelperTest extends TestCase {
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+	}
 
 /**
  * Test that a checkbox can have 0 for the value and 1 for the hidden input.
@@ -5311,6 +5312,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxZeroValue() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('User.get_spam', array(
 			'type' => 'checkbox',
 			'value' => '0',
@@ -5330,136 +5332,6 @@ class FormHelperTest extends TestCase {
 			'Get Spam',
 			'/label',
 			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * testDateTime method
- *
- * Test generation of date/time select elements
- *
- * @return void
- */
-	public function testDateTime() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->select(
-			'Model.multi_field', $options, array('multiple' => true, 'value' => array(0, 1))
-		);
-		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
-			),
-			'select' => array(
-				'name' => 'Model[multi_field][]', 'id' => 'ModelMultiField',
-				'multiple' => 'multiple'
-			),
-			array('option' => array('value' => '0', 'selected' => 'selected')),
-			'first',
-			'/option',
-			array('option' => array('value' => '1', 'selected' => 'selected')),
-			'second',
-			'/option',
-			array('option' => array('value' => '2')),
-			'third',
-			'/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->select(
-			'Model.multi_field', $options, array('multiple' => false, 'value' => array(0, 1))
-		);
-		$expected = array(
-			'select' => array(
-				'name' => 'Model[multi_field]', 'id' => 'ModelMultiField'
-			),
-			array('option' => array('value' => '0', 'selected' => 'selected')),
-			'first',
-			'/option',
-			array('option' => array('value' => '1', 'selected' => 'selected')),
-			'second',
-			'/option',
-			array('option' => array('value' => '2')),
-			'third',
-			'/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
-		$selected = array('2', '3x');
-		$result = $this->Form->select(
-			'Model.multi_field', $options, array('multiple' => true, 'value' => $selected)
-		);
-		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
-			),
-			'select' => array(
-				'name' => 'Model[multi_field][]', 'multiple' => 'multiple', 'id' => 'ModelMultiField'
-			),
-			array('option' => array('value' => '1')),
-			'One',
-			'/option',
-			array('option' => array('value' => '2', 'selected' => 'selected')),
-			'Two',
-			'/option',
-			array('option' => array('value' => '3')),
-			'Three',
-			'/option',
-			array('option' => array('value' => '3x', 'selected' => 'selected')),
-			'Stringy',
-			'/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->select('Contact.required_one', array(
-			'1' => 'option A',
-			'2' => 'option B'
-		), array('multiple' => true));
-		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Contact][required_one]', 'value' => '', 'id' => 'ContactRequiredOne_'
-			),
-			'select' => array(
-				'name' => 'data[Contact][required_one][]',
-				'id' => 'ContactRequiredOne',
-				'required' => 'required',
-				'multiple' => 'multiple'
-			),
-			array('option' => array('value' => '1')), 'option A', '/option',
-			array('option' => array('value' => '2')), 'option B', '/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->select(
-			'Model.multi_field',
-			array('a>b' => 'first', 'a<b' => 'second', 'a"b' => 'third'),
-			array('multiple' => true)
-		);
-		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][multi_field]', 'value' => '',
-				'id' => 'ModelMultiField_'
-			),
-			array('select' => array('name' => 'data[Model][multi_field][]',
-				'multiple' => 'multiple', 'id' => 'ModelMultiField'
-			)),
-			array('option' => array('value' => 'a&gt;b')),
-			'first',
-			'/option',
-			array('option' => array('value' => 'a&lt;b')),
-			'second',
-			'/option',
-			array('option' => array(
-				'value' => 'a&quot;b'
-			)),
-			'third',
-			'/option',
-			'/select'
 		);
 		$this->assertTags($result, $expected);
 	}
