@@ -1846,7 +1846,7 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that setting a prefix to is just like setting any other default route parameter.
+ * Test that setting a prefix is just like setting any other default route parameter.
  *
  * @return void
  */
