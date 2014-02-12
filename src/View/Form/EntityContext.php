@@ -67,6 +67,14 @@ class EntityContext implements ContextInterface {
 	protected $_rootName;
 
 /**
+ * Boolean to track whether or not the entity is a
+ * collection.
+ *
+ * @var boolean
+ */
+	protected $_isCollection = false;
+
+/**
  * A dictionary of tables
  *
  * @var array
@@ -107,8 +115,8 @@ class EntityContext implements ContextInterface {
  */
 	protected function _prepare() {
 		$table = $this->_context['table'];
+		$entity = $this->_context['entity'];
 		if (empty($table)) {
-			$entity = $this->_context['entity'];
 			if (is_array($entity) || $entity instanceof Traversable) {
 				$entity = (new Collection($entity))->first();
 			}
@@ -126,6 +134,10 @@ class EntityContext implements ContextInterface {
 				'Unable to find table class for current entity'
 			);
 		}
+		$this->_isCollection = (
+			is_array($entity) ||
+			$entity instanceof Traversable
+		);
 		$alias = $this->_rootName = $table->alias();
 		$this->_tables[$alias] = $table;
 	}
@@ -178,8 +190,11 @@ class EntityContext implements ContextInterface {
 			return null;
 		}
 		$parts = explode('.', $field);
-		list($entity, $prop) = $this->_getEntity($parts);
-		return $entity->get(array_pop($parts));
+		list($entity) = $this->_getEntity($parts);
+		if ($entity instanceof Entity) {
+			return $entity->get(array_pop($parts));
+		}
+		return null;
 	}
 
 /**
@@ -194,8 +209,12 @@ class EntityContext implements ContextInterface {
  * @throws \RuntimeException When properties cannot be read.
  */
 	protected function _getEntity($path) {
+		$oneElement = count($path) === 1;
+		if ($oneElement && $this->_isCollection) {
+			return [false, false];
+		}
 		$entity = $this->_context['entity'];
-		if (count($path) === 1) {
+		if ($oneElement) {
 			return [$entity, $this->_rootName];
 		}
 
@@ -228,14 +247,20 @@ class EntityContext implements ContextInterface {
  * @return mixed
  */
 	protected function _getProp($target, $field) {
-		if (is_array($target) || $target instanceof Traversable) {
+		if (is_array($target) && isset($target[$field])) {
+			return $target[$field];
+		}
+		if ($target instanceof Entity) {
+			return $target->get($field);
+		}
+		if ($target instanceof Traversable) {
 			foreach ($target as $i => $val) {
 				if ($i == $field) {
 					return $val;
 				}
 			}
+			return false;
 		}
-		return $target->get($field);
 	}
 
 /**
@@ -251,12 +276,17 @@ class EntityContext implements ContextInterface {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
 
+		$isNew = true;
+		if ($entity instanceof Entity) {
+			$isNew = $entity->isNew();
+		}
+
 		$validator = $this->_getValidator($prop);
 		$field = array_pop($parts);
 		if (!$validator->hasField($field)) {
 			return false;
 		}
-		$allowed = $validator->isEmptyAllowed($field, $entity->isNew());
+		$allowed = $validator->isEmptyAllowed($field, $isNew);
 		return $allowed === false;
 	}
 
@@ -353,10 +383,11 @@ class EntityContext implements ContextInterface {
 	public function error($field) {
 		$parts = explode('.', $field);
 		list($entity, $prop) = $this->_getEntity($parts);
-		if (!$entity) {
-			return [];
+
+		if ($entity instanceof Entity) {
+			return $entity->errors(array_pop($parts));
 		}
-		return $entity->errors(array_pop($parts));
+		return [];
 	}
 
 }
