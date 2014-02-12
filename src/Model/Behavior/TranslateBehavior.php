@@ -166,7 +166,7 @@ class TranslateBehavior extends Behavior {
 		}
 
 		$newOptions = ['I18n' => ['validate' => false]];
-		$options['associated'] =  $newOptions + $options['associated'];
+		$options['associated'] = $newOptions + $options['associated'];
 		$values = $entity->extract($this->config()['fields'], true);
 		$fields = array_keys($values);
 		$key = $entity->get(current((array)$this->_table->primaryKey()));
