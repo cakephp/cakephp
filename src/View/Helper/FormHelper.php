@@ -16,13 +16,22 @@ namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Error;
+use Cake\ORM\Entity;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\Utility\Security;
+use Cake\View\Form\ArrayContext;
+use Cake\View\Form\ContextInterface;
+use Cake\View\Form\EntityContext;
+use Cake\View\Form\NullContext;
 use Cake\View\Helper;
+use Cake\View\Helper\StringTemplateTrait;
+use Cake\View\StringTemplate;
 use Cake\View\View;
-use \DateTime;
+use Cake\View\Widget\InputRegistry;
+use DateTime;
+use Traversable;
 
 /**
  * Form helper library.
@@ -33,6 +42,8 @@ use \DateTime;
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html
  */
 class FormHelper extends Helper {
+
+	use StringTemplateTrait;
 
 /**
  * Other helpers used by FormHelper
@@ -122,113 +133,94 @@ class FormHelper extends Helper {
 	protected $_domIdSuffixes = array();
 
 /**
+ * Registry for input widgets.
+ *
+ * @var Cake\View\Widget\InputRegistry
+ */
+	protected $_registry;
+
+/**
+ * Context for the current form.
+ *
+ * @var Cake\View\Form\Context
+ */
+	protected $_context;
+
+/**
+ * Context provider methods.
+ *
+ * @var array
+ * @see addContextProvider
+ */
+	protected $_contextProviders;
+
+/**
+ * Default templates the FormHelper uses.
+ *
+ * @var array
+ */
+	protected $_defaultTemplates = [
+		'formstart' => '<form{{attrs}}>',
+		'formend' => '</form>',
+		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
+	];
+
+/**
  * Copies the validationErrors variable from the View object into this instance
  *
- * @param View $View The View this helper is being attached to.
+ * @param Cake\View\View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper.
  */
 	public function __construct(View $View, $settings = array()) {
+		$settings += ['widgets' => [], 'templates' => null, 'registry' => null];
 		parent::__construct($View, $settings);
-		$this->validationErrors =& $View->validationErrors;
+
+		$this->initStringTemplates($this->_defaultTemplates);
+		$this->inputRegistry($settings['registry'], $settings['widgets']);
+		unset($this->settings['widgets'], $this->settings['registry']);
+
+		$this->_addDefaultContextProviders();
 	}
 
 /**
- * Guess the location for a model based on its name and tries to create a new instance
- * or get an already created instance of the model
+ * Set the input registry the helper will use.
  *
- * @param string $model
- * @return Model model instance
+ * @param Cake\View\Widget\InputRegistry $instance The registry instance to set.
+ * @param array $widgets An array of widgets
+ * @return Cake\View\Widget\InputRegistry
  */
-	protected function _getModel($model) {
-		$object = null;
-		if (!$model || $model === 'Model') {
-			return $object;
+	public function inputRegistry(InputRegistry $instance = null, $widgets = []) {
+		if ($instance === null) {
+			if ($this->_registry === null) {
+				$this->_registry = new InputRegistry($this->_templater, $widgets);
+			}
+			return $this->_registry;
 		}
-
-		if (array_key_exists($model, $this->_models)) {
-			return $this->_models[$model];
-		}
-
-		$object = TableRegistry::get($model);
-
-		$this->_models[$model] = $object;
-		if (!$object) {
-			return null;
-		}
-
-		$this->fieldset[$model] = array('fields' => null, 'key' => $object->primaryKey(), 'validates' => null);
-		return $object;
+		$this->_registry = $instance;
+		return $this->_registry;
 	}
 
 /**
- * Inspects the model properties to extract information from them.
- * Currently it can extract information from the the fields, the primary key and required fields
+ * Add the default suite of context providers provided by CakePHP.
  *
- * The $key parameter accepts the following list of values:
- *
- * - key: Returns the name of the primary key for the model
- * - fields: Returns the model schema
- * - validates: returns the list of fields that are required
- * - errors: returns the list of validation errors
- *
- * If the $field parameter is passed if will return the information for that sole field.
- *
- * `$this->_introspectModel('Post', 'fields', 'title');` will return the schema information for title column
- *
- * @param string $model name of the model to extract information from
- * @param string $key name of the special information key to obtain (key, fields, validates, errors)
- * @param string $field name of the model field to get information from
- * @return mixed information extracted for the special key and field in a model
+ * @return void
  */
-	protected function _introspectModel($model, $key, $field = null) {
-		$object = $this->_getModel($model);
-		if (!$object) {
-			return;
-		}
-
-		if ($key === 'key') {
-			return $this->fieldset[$model]['key'] = $object->primaryKey();
-		}
-
-		if ($key === 'fields') {
-			if (!isset($this->fieldset[$model]['fields'])) {
-				$this->fieldset[$model]['fields'] = $object->schema();
-				foreach ($object->hasAndBelongsToMany as $alias => $assocData) {
-					$this->fieldset[$object->alias]['fields'][$alias] = array('type' => 'multiple');
-				}
+	protected function _addDefaultContextProviders() {
+		$this->addContextProvider('array', function ($request, $data) {
+			if (is_array($data['entity']) && isset($data['entity']['schema'])) {
+				return new ArrayContext($request, $data['entity']);
 			}
-			if ($field === null || $field === false) {
-				return $this->fieldset[$model]['fields'];
-			} elseif (isset($this->fieldset[$model]['fields'][$field])) {
-				return $this->fieldset[$model]['fields'][$field];
-			}
-			return isset($object->hasAndBelongsToMany[$field]) ? array('type' => 'multiple') : null;
-		}
+		});
 
-		if ($key === 'errors' && !isset($this->validationErrors[$model])) {
-			$this->validationErrors[$model] =& $object->validationErrors;
-			return $this->validationErrors[$model];
-		} elseif ($key === 'errors' && isset($this->validationErrors[$model])) {
-			return $this->validationErrors[$model];
-		}
-
-		if ($key === 'validates' && !isset($this->fieldset[$model]['validates'])) {
-			$validates = array();
-			foreach ($object->validator() as $validateField => $validateProperties) {
-				if ($this->_isRequiredField($validateProperties)) {
-					$validates[$validateField] = true;
-				}
+		$this->addContextProvider('orm', function ($request, $data) {
+			if (
+				$data['entity'] instanceof Entity ||
+				$data['entity'] instanceof Traversable ||
+				(is_array($data['entity']) && !isset($data['entity']['schema']))
+			) {
+				return new EntityContext($request, $data);
 			}
-			$this->fieldset[$model]['validates'] = $validates;
-		}
-
-		if ($key === 'validates') {
-			if (empty($field)) {
-				return $this->fieldset[$model]['validates'];
-			}
-			return isset($this->fieldset[$model]['validates'][$field]) ?
-				$this->fieldset[$model]['validates'] : null;
-		}
+		});
 	}
 
 /**
@@ -268,19 +260,7 @@ class FormHelper extends Helper {
 			array_splice($entity, 1, 0, $model);
 			$model = array_shift($entity);
 		}
-
-		$errors = array();
-		if (!empty($entity) && isset($this->validationErrors[$model])) {
-			$errors = $this->validationErrors[$model];
-		}
-		if (!empty($entity) && empty($errors)) {
-			$errors = $this->_introspectModel($model, 'errors');
-		}
-		if (empty($errors)) {
-			return false;
-		}
-		$errors = Hash::get($errors, implode('.', $entity));
-		return $errors === null ? false : $errors;
+		return false;
 	}
 
 /**
@@ -288,109 +268,48 @@ class FormHelper extends Helper {
  *
  * ### Options:
  *
- * - `type` Form method defaults to POST
- * - `action`  The controller action the form submits to, (optional).
- * - `url`  The URL the form submits to. Can be a string or a URL array. If you use 'url'
+ * - `type` Form method defaults to autodetecting based on the form context. If
+ *   the form context's isCreate() method returns false, a PUT request will be done.
+ * - `action` The controller action the form submits to, (optional). Use this option if you
+ *   don't need to change the controller from the current request's controller.
+ * - `url` The URL the form submits to. Can be a string or a URL array. If you use 'url'
  *    you should leave 'action' undefined.
- * - `default`  Allows for the creation of Ajax forms. Set this to false to prevent the default event handler.
+ * - `default` Allows for the creation of Ajax forms. Set this to false to prevent the default event handler.
  *   Will create an onsubmit attribute if it doesn't not exist. If it does, default action suppression
  *   will be appended.
  * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
- * - `inputDefaults` set the default $options for FormHelper::input(). Any options that would
- *   be set when using FormHelper::input() can be set here. Options set with `inputDefaults`
- *   can be overridden when calling input()
  * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
+ * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
+ *   option that allows you to set the specific Table class the form should be based on.
  *
- * @param mixed $model The model name for which the form is being defined. Should
- *   include the plugin name for plugin models. e.g. `ContactManager.Contact`.
- *   If an array is passed and $options argument is empty, the array will be used as options.
- *   If `false` no model is used.
+ * @param mixed $model The context for which the form is being defined. Can
+ *   be an ORM entity, ORM resultset, or an array of meta data. You can use false or null
+ *   to make a model-less form.
  * @param array $options An array of html attributes and options.
  * @return string An formatted opening FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-create
  */
-	public function create($model = null, $options = array()) {
-		$created = $id = false;
+	public function create($model = null, $options = []) {
 		$append = '';
 
-		if (is_array($model) && empty($options)) {
-			$options = $model;
-			$model = null;
+		if (empty($options['context'])) {
+			$options['context'] = [];
 		}
+		$options['context']['entity'] = $model;
+		$this->_context = $this->_buildContext($options['context']);
+		unset($options['context']);
 
-		if (empty($model) && $model !== false && !empty($this->request->params['models'])) {
-			$model = key($this->request->params['models']);
-		} elseif (empty($model) && empty($this->request->params['models'])) {
-			$model = false;
-		}
-		$this->defaultModel = $model;
+		$isCreate = $this->_context->isCreate();
 
-		$key = null;
-		if ($model !== false) {
-			list($plugin, $model) = pluginSplit($model, true);
-			$key = $this->_introspectModel($plugin . $model, 'key');
-			$this->setEntity($model, true);
-		}
-
-		if ($model !== false && $key) {
-			$recordExists = (
-				isset($this->request->data[$model]) &&
-				!empty($this->request->data[$model][$key]) &&
-				!is_array($this->request->data[$model][$key])
-			);
-
-			if ($recordExists) {
-				$created = true;
-				$id = $this->request->data[$model][$key];
-			}
-		}
-
-		$options = array_merge(array(
-			'type' => ($created && empty($options['action'])) ? 'put' : 'post',
+		$options = $options + [
+			'type' => $isCreate ? 'post' : 'put',
 			'action' => null,
 			'url' => null,
 			'default' => true,
 			'encoding' => strtolower(Configure::read('App.encoding')),
-			'inputDefaults' => array()),
-		$options);
-		$this->inputDefaults($options['inputDefaults']);
-		unset($options['inputDefaults']);
+		];
 
-		if (!isset($options['id'])) {
-			$domId = isset($options['action']) ? $options['action'] : $this->request['action'];
-			$options['id'] = $this->domId($domId . 'Form');
-		}
-
-		if ($options['action'] === null && $options['url'] === null) {
-			$options['action'] = $this->request->here(false);
-		} elseif (empty($options['url']) || is_array($options['url'])) {
-			if (empty($options['url']['controller'])) {
-				if (!empty($model)) {
-					$options['url']['controller'] = Inflector::underscore(Inflector::pluralize($model));
-				} elseif (!empty($this->request->params['controller'])) {
-					$options['url']['controller'] = Inflector::underscore($this->request->params['controller']);
-				}
-			}
-			if (empty($options['action'])) {
-				$options['action'] = $this->request->params['action'];
-			}
-
-			$plugin = null;
-			if ($this->plugin) {
-				$plugin = Inflector::underscore($this->plugin);
-			}
-			$actionDefaults = array(
-				'plugin' => $plugin,
-				'controller' => $this->_View->viewPath,
-				'action' => $options['action'],
-			);
-			$options['action'] = array_merge($actionDefaults, (array)$options['url']);
-			if (empty($options['action'][0]) && !empty($id)) {
-				$options['action'][0] = $id;
-			}
-		} elseif (is_string($options['url'])) {
-			$options['action'] = $options['url'];
-		}
+		$options['action'] = $this->_formUrl($options);
 		unset($options['url']);
 
 		switch (strtolower($options['type'])) {
@@ -399,12 +318,15 @@ class FormHelper extends Helper {
 				break;
 			case 'file':
 				$htmlAttributes['enctype'] = 'multipart/form-data';
-				$options['type'] = ($created) ? 'put' : 'post';
+				$options['type'] = ($isCreate) ? 'post' : 'put';
 			case 'post':
 			case 'put':
 			case 'delete':
+			case 'patch':
 				$append .= $this->hidden('_method', array(
-					'name' => '_method', 'value' => strtoupper($options['type']), 'id' => null,
+					'name' => '_method',
+					'value' => strtoupper($options['type']),
+					'id' => null,
 					'secure' => static::SECURE_SKIP
 				));
 			default:
@@ -412,8 +334,7 @@ class FormHelper extends Helper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-		$action = $this->url($options['action']);
-		unset($options['type'], $options['action']);
+		$htmlAttributes['action'] = $this->url($options['action']);
 
 		if (!$options['default']) {
 			if (!isset($options['onsubmit'])) {
@@ -421,12 +342,11 @@ class FormHelper extends Helper {
 			}
 			$htmlAttributes['onsubmit'] = $options['onsubmit'] . 'event.returnValue = false; return false;';
 		}
-		unset($options['default']);
 
 		if (!empty($options['encoding'])) {
 			$htmlAttributes['accept-charset'] = $options['encoding'];
-			unset($options['encoding']);
 		}
+		unset($options['type'], $options['action'], $options['encoding'], $options['default']);
 
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
@@ -436,14 +356,49 @@ class FormHelper extends Helper {
 		}
 
 		if (!empty($append)) {
-			$append = $this->Html->useTag('hiddenblock', $append);
+			$append = $this->formatTemplate('hiddenblock', ['content' => $append]);
 		}
+		return $this->formatTemplate('formstart', [
+			'attrs' => $this->_templater->formatAttributes($htmlAttributes)
+		]) . $append;
+	}
 
-		if ($model !== false) {
-			$this->setEntity($model, true);
-			$this->_introspectModel($model, 'fields');
+/**
+ * Create the URL for a form based on the options.
+ *
+ * @param array $options An array of options from create()
+ * @return string The action attribute for the form.
+ */
+	protected function _formUrl($options) {
+		if ($options['action'] === null && $options['url'] === null) {
+			return $this->request->here(false);
 		}
-		return $this->Html->useTag('form', $action, $htmlAttributes) . $append;
+		if (empty($options['url']) || is_array($options['url'])) {
+			if (isset($options['action']) && empty($options['url']['action'])) {
+				$options['url']['action'] = $options['action'];
+			}
+
+			$plugin = $this->plugin ? Inflector::underscore($this->plugin) : null;
+			$actionDefaults = [
+				'plugin' => $plugin,
+				'controller' => Inflector::underscore($this->request->params['controller']),
+				'action' => $this->request->params['action'],
+			];
+
+			$action = (array)$options['url'] + $actionDefaults;
+
+			$pk = $this->_context->primaryKey();
+			if (count($pk)) {
+				$id = $this->_context->val($pk[0]);
+			}
+			if (empty($action[0]) && isset($id)) {
+				$action[0] = $id;
+			}
+			return $action;
+		}
+		if (is_string($options['url'])) {
+			return $options['url'];
+		}
 	}
 
 /**
@@ -513,11 +468,10 @@ class FormHelper extends Helper {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
-		$this->setEntity(null);
 		$out .= $this->Html->useTag('formend');
 
-		$this->_View->modelScope = false;
 		$this->requestType = null;
+		$this->_context = null;
 		return $out;
 	}
 
@@ -2940,6 +2894,95 @@ class FormHelper extends Helper {
 			}
 		}
 		return $this->_inputDefaults;
+	}
+
+/**
+ * Add a new context type.
+ *
+ * Form context types allow FormHelper to interact with
+ * data providers that come from outside CakePHP. For example
+ * if you wanted to use an alternative ORM like Doctrine you could
+ * create and connect a new context class to allow FormHelper to
+ * read metadata from doctrine.
+ *
+ * @param string $type The type of context. This key
+ *   can be used to overwrite existing providers.
+ * @param callable $check A callable that returns a object
+ *   when the form context is the correct type.
+ * @return void
+ */
+	public function addContextProvider($name, callable $check) {
+		$this->_contextProviders[$name] = $check;
+	}
+
+/**
+ * Get the context instance for the current form set.
+ *
+ * If there is no active form null will be returned.
+ *
+ * @return null|Cake\View\Form\ContextInterface The context for the form.
+ */
+	public function context() {
+		return $this->_context;
+	}
+
+/**
+ * Find the matching context provider for the data.
+ *
+ * If no type can be matched a NullContext will be returned.
+ *
+ * @param mixed $data The data to get a context provider for.
+ * @return mixed Context provider.
+ * @throws RuntimeException when the context class does not implement the
+ *   ContextInterface.
+ */
+	protected function _buildContext($data) {
+		foreach ($this->_contextProviders as $key => $check) {
+			$context = $check($this->request, $data);
+			if ($context) {
+				break;
+			}
+		}
+		if (!isset($context)) {
+			$context = new NullContext($this->request, $data);
+		}
+		if (!($context instanceof ContextInterface)) {
+			throw new \RuntimeException(
+				'Context objects must implement Cake\View\Form\ContextInterface'
+			);
+		}
+		return $context;
+	}
+
+/**
+ * Add a new widget to FormHelper.
+ *
+ * Allows you to add or replace widget instances with custom code.
+ *
+ * @param string $name The name of the widget. e.g. 'text'.
+ * @param array|WidgetInterface Either a string class name or an object
+ *    implementing the WidgetInterface.
+ * @return void
+ */
+	public function addWidget($name, $spec) {
+		$this->_registry->add([$name => $spec]);
+	}
+
+/**
+ * Render a named widget.
+ *
+ * This is a lower level method. For built-in widgets, you should be using
+ * methods like `text`, `hidden`, and `radio`. If you are using additional
+ * widgets you should use this method render the widget without the label
+ * or wrapping div.
+ *
+ * @param string $name The name of the widget. e.g. 'text'.
+ * @param array $attrs The attributes for rendering the input.
+ * @return void
+ */
+	public function widget($name, array $data = []) {
+		$widget = $this->_registry->get($name);
+		return $widget->render($data);
 	}
 
 }

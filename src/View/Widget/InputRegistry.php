@@ -136,15 +136,25 @@ class InputRegistry {
  *   implement WidgetInterface.
  */
 	protected function _resolveWidget($widget) {
-		if (is_object($widget)) {
+		$type = gettype($widget);
+		if ($type === 'object' && $widget instanceof WidgetInterface) {
 			return $widget;
 		}
+		if ($type === 'object') {
+			throw new \RuntimeException(
+				'Input objects must implement Cake\View\Widget\WidgetInterface.'
+			);
+		}
+		if ($type === 'string') {
+			$widget = [$widget];
+		}
+
 		$class = array_shift($widget);
 		$className = App::classname($class, 'View/Input');
 		if ($className === false || !class_exists($className)) {
 			throw new \RuntimeException(sprintf('Unable to locate widget class "%s"', $class));
 		}
-		if (count($widget)) {
+		if ($type === 'array' && count($widget)) {
 			$reflection = new ReflectionClass($className);
 			$arguments = [$this->_templates];
 			foreach ($widget as $requirement) {

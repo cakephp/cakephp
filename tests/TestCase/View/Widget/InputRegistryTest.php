@@ -58,6 +58,31 @@ class InputRegistryTestCase extends TestCase {
 			'text' => ['Cake\View\Widget\Basic'],
 		]);
 		$this->assertNull($result);
+		$result = $inputs->get('text');
+		$this->assertInstanceOf('Cake\View\Widget\WidgetInterface', $result);
+
+		$inputs = new InputRegistry($this->templates);
+		$result = $inputs->add([
+			'hidden' => 'Cake\View\Widget\Basic',
+		]);
+		$this->assertNull($result);
+		$result = $inputs->get('hidden');
+		$this->assertInstanceOf('Cake\View\Widget\WidgetInterface', $result);
+	}
+
+/**
+ * Test adding an instance of an invalid type.
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Input objects must implement Cake\View\Widget\WidgetInterface
+ * @return void
+ */
+	public function testAddInvalidType() {
+		$inputs = new InputRegistry($this->templates);
+		$inputs->add([
+			'text' => new \StdClass()
+		]);
+		$inputs->get('text');
 	}
 
 /**
