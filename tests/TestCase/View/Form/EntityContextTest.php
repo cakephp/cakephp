@@ -225,6 +225,9 @@ class EntityContextTest extends TestCase {
 
 		$result = $context->val('1.user.username');
 		$this->assertEquals('jose', $result);
+
+		$this->assertNull($context->val('nope'));
+		$this->assertNull($context->val('99.title'));
 	}
 
 /**
@@ -246,6 +249,9 @@ class EntityContextTest extends TestCase {
 		$this->assertFalse($context->hasError('1.title'));
 		$this->assertEquals(['Not long enough'], $context->error('1.body'));
 		$this->assertTrue($context->hasError('1.body'));
+
+		$this->assertFalse($context->hasError('nope'));
+		$this->assertFalse($context->hasError('99.title'));
 	}
 
 /**
@@ -265,6 +271,7 @@ class EntityContextTest extends TestCase {
 		$this->assertEquals('text', $context->type('1.body'));
 		$this->assertEquals('string', $context->type('0.user.username'));
 		$this->assertEquals('string', $context->type('1.user.username'));
+		$this->assertEquals('string', $context->type('99.title'));
 		$this->assertNull($context->type('0.nope'));
 
 		$expected = ['length' => 255, 'precision' => null];
@@ -288,10 +295,14 @@ class EntityContextTest extends TestCase {
 				'Users' => 'custom',
 			]
 		]);
+		$this->assertFalse($context->isRequired('nope'));
 
 		$this->assertTrue($context->isRequired('0.title'));
-		$this->assertFalse($context->isRequired('1.body'));
 		$this->assertTrue($context->isRequired('0.user.username'));
+		$this->assertFalse($context->isRequired('1.body'));
+
+		$this->assertTrue($context->isRequired('99.title'));
+		$this->assertFalse($context->isRequired('99.nope'));
 	}
 
 /**
