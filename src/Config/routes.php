@@ -60,13 +60,12 @@ if($prefixPattern && $pluginPattern) {
 	Router::connect("/:prefix/:plugin/:controller", $indexParams, $match);
 	Router::connect("/:prefix/:plugin/:controller/:action/*", [], $match);
 }
-else if($pluginPattern) {
+if($pluginPattern) {
 	Router::connect("/:plugin", $indexParams, $pluginShortMatch);
 	Router::connect("/:plugin/:controller", $indexParams, $match);
 	Router::connect("/:plugin/:controller/:action/*", [], $match);
 }
-else if($prefixPattern) {
-	Router::connect("/:prefix", $indexParams, $match );
+if($prefixPattern) {
 	Router::connect("/:prefix/:controller", $indexParams, $match);
 	Router::connect("/:prefix/:controller/:action/*", [], $match);
 }
