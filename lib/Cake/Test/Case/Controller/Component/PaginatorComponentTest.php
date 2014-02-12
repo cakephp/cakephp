@@ -610,7 +610,7 @@ class PaginatorComponentTest extends CakeTestCase {
 
 		$Controller->PaginatorControllerPost->order = 'PaginatorControllerPost.id';
 		$result = $Controller->Paginator->validateSort($Controller->PaginatorControllerPost, array());
-		$this->assertEmpty($result['order']);
+		$this->assertArrayNotHasKey('order', $result);
 
 		$Controller->PaginatorControllerPost->order = array(
 			'PaginatorControllerPost.id',
