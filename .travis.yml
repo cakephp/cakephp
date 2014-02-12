@@ -9,6 +9,8 @@ env:
   - DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
   - DB=pgsql db_class='Cake\Database\Driver\Postgres' db_dsn='pgsql:host=127.0.0.1;dbname=cakephp_test' db_database="cakephp_test" db_login='postgres' db_password=''
   - DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
+  - PHPCS=1
+  - HHVM=1 DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
 
 services:
   - memcached
@@ -18,9 +20,6 @@ matrix:
     - php: hhvm
   include:
     - php: 5.4
-      env:
-        - PHPCS=1
-        - HHVM=1
 
 before_script:
   - sh -c "if [ '$PHPCS' != '1' ]; then sudo locale-gen de_DE; fi"
@@ -33,7 +32,7 @@ before_script:
   - sh -c "if [ '$PHPCS' != '1' ]; then sudo apt-get install lighttpd; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
-  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - sh -c "if [ '$PHPCS' = '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
   - phpenv rehash
   - set +H
 
