@@ -298,10 +298,11 @@ class Router {
  * - `routeClass` is used to extend and change how individual routes parse requests
  *   and handle reverse routing, via a custom routing class.
  *   Ex. `'routeClass' => 'SlugRoute'`
- * - `_name` Used to define a specific name for routes. This can be used to optimize
+ * - `_name` is used to define a specific name for routes. This can be used to optimize
  *   reverse routing lookups. If undefined a name will be generated for each
  *   connected route.
- * - `_ext` todo explain.
+ * - `_ext` an array of filename extensions that will be parsed out of the url if present.
+ *   See {@link Route::setExtensions()}.
  *
  * You can also add additional conditions for matching routes to the $defaults array.
  * The following conditions can be used:
