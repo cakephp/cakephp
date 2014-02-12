@@ -3,6 +3,7 @@ language: php
 php:
   - 5.4
   - 5.5
+  - hhvm
 
 env:
   - DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
@@ -13,10 +14,13 @@ services:
   - memcached
 
 matrix:
+  allow_failures:
+    - php: hhvm
   include:
     - php: 5.4
       env:
         - PHPCS=1
+        - HHVM=1
 
 before_script:
   - sh -c "if [ '$PHPCS' != '1' ]; then sudo locale-gen de_DE; fi"
@@ -34,7 +38,7 @@ before_script:
   - set +H
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ]; then phpunit --stderr; else phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
+    - sh -c "if [ '$PHPCS' != '1' ] && [ '$HHVM' != '1' ]; then phpunit --stderr; elif [ '$PHPCS' != '1' ] && [ '$HHVM' == 1 ]; then phpunit --testsuite HHVM; else phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
 
 notifications:
   email: false
