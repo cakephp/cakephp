@@ -55,17 +55,17 @@ $match = ['prefix' => $prefixPattern, 'plugin' => $pluginPattern];
 $pluginShortMatch = $match + ['routeClass' => 'Cake\Routing\Route\PluginShortRoute',
 	'_name' => '_plugin._controller:index'];
 
-if($prefixPattern && $pluginPattern) {
+if ($prefixPattern && $pluginPattern) {
 	Router::connect("/:prefix/:plugin", $indexParams, $pluginShortMatch);
 	Router::connect("/:prefix/:plugin/:controller", $indexParams, $match);
 	Router::connect("/:prefix/:plugin/:controller/:action/*", [], $match);
 }
-if($pluginPattern) {
+if ($pluginPattern) {
 	Router::connect("/:plugin", $indexParams, $pluginShortMatch);
 	Router::connect("/:plugin/:controller", $indexParams, $match);
 	Router::connect("/:plugin/:controller/:action/*", [], $match);
 }
-if($prefixPattern) {
+if ($prefixPattern) {
 	Router::connect("/:prefix/:controller", $indexParams, $match);
 	Router::connect("/:prefix/:controller/:action/*", [], $match);
 }
