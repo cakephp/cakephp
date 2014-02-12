@@ -390,8 +390,9 @@ class Router {
 	}
 
 /**
- * Generate REST resource routes for the given controller(s). A quick way to generate a default routes to a set
- *  of REST resources (controller(s)).
+ * Generate REST resource routes for the given controller(s).
+ *
+ * A quick way to generate a default routes to a set of REST resources (controller(s)).
  *
  * ### Usage
  *
