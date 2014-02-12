@@ -58,18 +58,18 @@ $pluginShortMatch = $match + [
 ];
 
 if ($prefixPattern && $pluginPattern) {
-	Router::connect("/:prefix/:plugin", $indexParams, $pluginShortMatch);
-	Router::connect("/:prefix/:plugin/:controller", $indexParams, $match);
-	Router::connect("/:prefix/:plugin/:controller/:action/*", [], $match);
+	Router::connect('/:prefix/:plugin', $indexParams, $pluginShortMatch);
+	Router::connect('/:prefix/:plugin/:controller', $indexParams, $match);
+	Router::connect('/:prefix/:plugin/:controller/:action/*', [], $match);
 }
 if ($pluginPattern) {
-	Router::connect("/:plugin", $indexParams, $pluginShortMatch);
-	Router::connect("/:plugin/:controller", $indexParams, $match);
-	Router::connect("/:plugin/:controller/:action/*", [], $match);
+	Router::connect('/:plugin', $indexParams, $pluginShortMatch);
+	Router::connect('/:plugin/:controller', $indexParams, $match);
+	Router::connect('/:plugin/:controller/:action/*', [], $match);
 }
 if ($prefixPattern) {
-	Router::connect("/:prefix/:controller", $indexParams, $match);
-	Router::connect("/:prefix/:controller/:action/*", [], $match);
+	Router::connect('/:prefix/:controller', $indexParams, $match);
+	Router::connect('/:prefix/:controller/:action/*', [], $match);
 }
 Router::connect('/:controller', ['action' => 'index']);
 Router::connect('/:controller/:action/*');
