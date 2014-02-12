@@ -428,7 +428,8 @@ class FormHelper extends Helper {
 			return '';
 		}
 		return $this->hidden('_csrfToken', array(
-			'value' => $this->request->params['_csrfToken'], 'id' => 'Token' . mt_rand(),
+			'value' => $this->request->params['_csrfToken'],
+			'id' => 'Token' . mt_rand(),
 			'secure' => static::SECURE_SKIP
 		));
 	}
@@ -2848,8 +2849,17 @@ class FormHelper extends Helper {
 			$options['disabled'] = true;
 		}
 
-		$options['val'] = $this->_context->val($field);
-		$options += $this->_context->attributes($field);
+		if (!isset($options['name'])) {
+			$options['name'] = $field;
+		}
+		if (isset($options['value']) && !isset($options['val'])) {
+			$options['val'] = $options['value'];
+			unset($options['value']);
+		}
+		if (!isset($options['val'])) {
+			$options['val'] = $this->_context->val($field);
+		}
+		$options += (array)$this->_context->attributes($field);
 
 		if ($this->_context->hasError($field)) {
 			$options = $this->addClass($options, $this->settings['errorClass']);
