@@ -7838,6 +7838,12 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'id' => 'theID', 'value' => 'test'))
 		);
+
+		$result = $this->Form->hidden('field', ['value' => 'my value']);
+		$expected = [
+			'input' => ['type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'value' => 'my value']
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
