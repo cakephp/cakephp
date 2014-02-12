@@ -88,7 +88,8 @@ class TupleComparison extends Comparison {
 			$type = $this->_type;
 			$multiType = is_array($type);
 			$isMulti = $this->isMulti($i, $type);
-			$type = $isMulti ? str_replace('[]', '', $type) : $type;
+			$type = $multiType ? $type : str_replace('[]', '', $type);
+			$type = $type ?: null;
 
 			if ($isMulti) {
 				$bound = [];

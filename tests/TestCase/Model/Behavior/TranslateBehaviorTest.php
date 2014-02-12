@@ -426,6 +426,7 @@ class TranslateBehaviorTest extends TestCase {
 
 		$results = $table->find()
 			->select(['title', 'body'])
+			->order(['title' => 'asc'])
 			->contain(['Authors' => function($q) {
 				return $q->select(['id', 'name']);
 			}]);
