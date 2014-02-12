@@ -176,13 +176,28 @@ class FormHelper extends Helper {
 		parent::__construct($View, $settings);
 
 		$this->initStringTemplates($this->_defaultTemplates);
-		if (empty($settings['registry'])) {
-			$settings['registry'] = new InputRegistry($this->_templater, $settings['widgets']);
-		}
-		$this->_registry = $settings['registry'];
-		unset($this->settings['registry']);
+		$this->inputRegistry($settings['registry'], $settings['widgets']);
+		unset($this->settings['widgets'], $this->settings['registry']);
 
 		$this->_addDefaultContextProviders();
+	}
+
+/**
+ * Set the input registry the helper will use.
+ *
+ * @param Cake\View\Widget\InputRegistry $instance The registry instance to set.
+ * @param array $widgets An array of widgets
+ * @return Cake\View\Widget\InputRegistry
+ */
+	public function inputRegistry(InputRegistry $instance = null, $widgets = []) {
+		if ($instance === null) {
+			if ($this->_registry === null) {
+				$this->_registry = new InputRegistry($this->_templater, $widgets);
+			}
+			return $this->_registry;
+		}
+		$this->_registry = $instance;
+		return $this->_registry;
 	}
 
 /**
