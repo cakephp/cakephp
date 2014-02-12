@@ -7829,12 +7829,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHiddenField() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors['field'] = 1;
-		$this->Form->request->data['Contact']['field'] = 'test';
-		$result = $this->Form->hidden('Contact.field', array('id' => 'theID'));
+		$this->article['errors'] = [
+			'field' => true
+		];
+		$this->Form->request->data['field'] = 'test';
+		$this->Form->create($this->article);
+		$result = $this->Form->hidden('field', array('id' => 'theID'));
 		$this->assertTags($result, array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'id' => 'theID', 'value' => 'test'))
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'id' => 'theID', 'value' => 'test'))
 		);
 	}
 
