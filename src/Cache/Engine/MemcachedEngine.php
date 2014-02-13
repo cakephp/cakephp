@@ -287,7 +287,6 @@ class MemcachedEngine extends CacheEngine {
  * @return boolean True if the cache was successfully cleared, false otherwise
  */
 	public function clear($check) {
-		$this->assertFalse(defined('HHVM_VERSION'), 'Remove me when travis updates hhvm to 2.5');
 		if ($check) {
 			return true;
 		}
