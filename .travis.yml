@@ -39,7 +39,7 @@ before_script:
   - set +H
 
 script:
-    - sh -c "if [ '$PHPCS' != '1' ] && [ '$HHVM' != '1' ]; then phpunit --stop-on-failure --stderr; elif [ '$PHPCS' != '1' ] && [ '$HHVM' = '1' ]; then phpunit --testsuite HHVM; else echo '1'; fi"
+    - sh -c "if [ '$PHPCS' != '1' ] && [ '$HHVM' != '1' ]; then phpunit --stop-on-failure --stderr; elif [ '$PHPCS' != '1' ] && [ '$HHVM' = '1' ]; then phpunit --testsuite HHVM; else echo 1; fi"
 
 notifications:
   email: false
