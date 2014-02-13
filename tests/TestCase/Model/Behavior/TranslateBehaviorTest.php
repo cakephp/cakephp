@@ -570,4 +570,21 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals('Le titre', $article->get('title'));
 	}
 
+/**
+ * Tests that after deleting a translated entity, all translations are also removed
+ *
+ * @return void
+ */
+	public function testDelete() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$article = $table->find()->first();
+		$this->assertTrue($table->delete($article));
+
+		$translations = TableRegistry::get('I18n')->find()
+			->where(['model' => 'Articles', 'foreign_key' => $article->id])
+			->count();
+		$this->assertEquals(0, $translations);
+	}
+
 }

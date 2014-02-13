@@ -202,6 +202,22 @@ class TranslateBehavior extends Behavior {
 	}
 
 /**
+ * Deletes all translation for the entity that was recently deleted
+ *
+ * @param \Cake\Event\Event the afterDelete event that was fired
+ * @param \Cake\ORM\Entity the entity that was recently deleted
+ * @return void
+ */
+	public function afterDelete(Event $event, Entity $entity) {
+		$primary = (array)$this->_table->primaryKey();
+		$key = $entity->get(current($primary));
+		TableRegistry::get('I18n')->deleteAll([
+			'foreign_key' => $key,
+			'model' => $this->_table->alias()
+		]);
+	}
+
+/**
  * Sets all future finds for the bound table to also fetch translated fields for
  * the passed locale. If no value is passed, it returns the currently configured
  * locale

@@ -1421,6 +1421,8 @@ class Table implements EventListener {
 			throw new \InvalidArgumentException($msg);
 		}
 
+		$this->_associated->cascadeDelete($entity, $options->getArrayCopy());
+
 		$query = $this->query();
 		$statement = $query->delete()
 			->where($conditions)
@@ -1430,8 +1432,6 @@ class Table implements EventListener {
 		if (!$success) {
 			return $success;
 		}
-
-		$this->_associated->cascadeDelete($entity, $options->getArrayCopy());
 
 		$event = new Event('Model.afterDelete', $this, [
 			'entity' => $entity,
