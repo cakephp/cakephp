@@ -10,7 +10,6 @@ env:
   - DB=pgsql db_class='Cake\Database\Driver\Postgres' db_dsn='pgsql:host=127.0.0.1;dbname=cakephp_test' db_database="cakephp_test" db_login='postgres' db_password=''
   - DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
   - PHPCS=1
-  - HHVM=1 DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
 
 services:
   - memcached
@@ -20,6 +19,15 @@ matrix:
     - php: hhvm
   include:
     - php: 5.4
+    - php: hhvm
+      env: HHVM=1
+  exclude:
+    - php: hhvm
+      env: DB=pgsql
+    - php: hhvm
+      env: PHPCS=1
+    - php: 5.4
+      env: PHPCS=1
 
 before_script:
   - sh -c "if [ '$PHPCS' != '1' ]; then sudo locale-gen de_DE; fi"
