@@ -7753,45 +7753,45 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextArea() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->data = array('Model' => array('field' => 'some test data'));
-		$result = $this->Form->textarea('Model.field');
+		$this->Form->request->data = array('field' => 'some test data');
+		$result = $this->Form->textarea('field');
 		$expected = array(
-			'textarea' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'textarea' => array('name' => 'field'),
 			'some test data',
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->textarea('Model.tmp');
+		$result = $this->Form->textarea('user.bio');
 		$expected = array(
-			'textarea' => array('name' => 'Model[tmp]', 'id' => 'ModelTmp'),
+			'textarea' => array('name' => 'user[bio]'),
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
-		$result = $this->Form->textarea('Model.field');
+		$this->Form->request->data = array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars');
+		$result = $this->Form->textarea('field');
 		$expected = array(
-			'textarea' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'textarea' => array('name' => 'field'),
 			htmlentities('some <strong>test</strong> data with <a href="#">HTML</a> chars'),
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
-		$result = $this->Form->textarea('Model.field', array('escape' => false));
+		$this->Form->request->data = [
+			'Model' => ['field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars']
+		];
+		$result = $this->Form->textarea('Model.field', ['escape' => false]);
 		$expected = array(
-			'textarea' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'textarea' => array('name' => 'Model[field]'),
 			'some <strong>test</strong> data with <a href="#">HTML</a> chars',
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data['Model']['0']['OtherModel']['field'] = null;
-		$result = $this->Form->textarea('Model.0.OtherModel.field');
+		$result = $this->Form->textarea('0.OtherModel.field');
 		$expected = array(
-			'textarea' => array('name' => 'Model[0][OtherModel][field]', 'id' => 'Model0OtherModelField'),
+			'textarea' => array('name' => '0[OtherModel][field]'),
 			'/textarea'
 		);
 		$this->assertTags($result, $expected);
@@ -7805,21 +7805,16 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextAreaWithStupidCharacters() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->loadFixtures('Post');
-		$result = $this->Form->input('Post.content', array(
-			'label' => 'Current Text', 'value' => "GREAT®", 'rows' => '15', 'cols' => '75'
-		));
-		$expected = array(
-			'div' => array('class' => 'input textarea'),
-				'label' => array('for' => 'PostContent'),
-					'Current Text',
-				'/label',
-				'textarea' => array('name' => 'Post[content]', 'id' => 'PostContent', 'rows' => '15', 'cols' => '75'),
-				'GREAT®',
-				'/textarea',
-			'/div'
-		);
+		$result = $this->Form->textarea('Post.content', [
+			'value' => "GREAT®",
+			'rows' => '15',
+			'cols' => '75'
+		]);
+		$expected = [
+			'textarea' => ['name' => 'Post[content]', 'rows' => '15', 'cols' => '75'],
+			'GREAT®',
+			'/textarea',
+		];
 		$this->assertTags($result, $expected);
 	}
 

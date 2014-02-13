@@ -173,6 +173,7 @@ class FormHelper extends Helper {
 		'formend' => '</form>',
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
 		'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
+		'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 	];
 
 /**
@@ -1568,14 +1569,18 @@ class FormHelper extends Helper {
 		$options = $this->_initInputField($fieldName, $options);
 		$value = null;
 
-		if (array_key_exists('value', $options)) {
-			$value = $options['value'];
+		if (array_key_exists('val', $options)) {
+			$value = $options['val'];
 			if (!array_key_exists('escape', $options) || $options['escape'] !== false) {
 				$value = h($value);
 			}
-			unset($options['value']);
 		}
-		return $this->Html->useTag('textarea', $options['name'], array_diff_key($options, array('type' => null, 'name' => null)), $value);
+		unset($options['val']);
+		return $this->formatTemplate('textarea', [
+			'name' => $options['name'],
+			'value' => $value,
+			'attrs' => $this->_templater->formatAttributes($options, ['name']),
+		]);
 	}
 
 /**
@@ -2852,7 +2857,9 @@ class FormHelper extends Helper {
 		}
 
 		if (!isset($options['name'])) {
-			$options['name'] = $field;
+			$parts = explode('.', $field);
+			$first = array_shift($parts);
+			$options['name'] = $first . ($parts ? '[' . implode('][', $parts) . ']' : '');
 		}
 		if (isset($options['value']) && !isset($options['val'])) {
 			$options['val'] = $options['value'];
