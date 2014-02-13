@@ -159,7 +159,7 @@ class SocketTest extends TestCase {
 		try {
 			$request = "GET / HTTP/1.1\r\nConnection: close\r\n\r\n";
 			$this->assertTrue((bool)$this->Socket->write($request));
-		} catch (SocketException $e) {
+		} catch (\Cake\Error\SocketException $e) {
 			$this->markTestSkipped('Cannot test network, skipping.');
 		}
 	}
@@ -237,7 +237,7 @@ class SocketTest extends TestCase {
 /**
  * testEncrypt
  *
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoSsl() {
@@ -317,7 +317,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoExceptionEnableTwice
  *
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testEnableCryptoExceptionEnableTwice() {
@@ -331,7 +331,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoExceptionDisableTwice
  *
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testEnableCryptoExceptionDisableTwice() {
