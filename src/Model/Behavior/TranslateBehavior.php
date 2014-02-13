@@ -61,7 +61,8 @@ class TranslateBehavior extends Behavior {
 	protected static $_defaultConfig = [
 		'implementedFinders' => ['translations' => 'findTranslations'],
 		'implementedMethods' => ['locale' => 'locale'],
-		'fields' => []
+		'fields' => [],
+		'translationTable' => 'i18n'
 	];
 
 /**
@@ -73,26 +74,27 @@ class TranslateBehavior extends Behavior {
 	public function __construct(Table $table, array $config = []) {
 		parent::__construct($table, $config);
 		$this->_table = $table;
-		$fields = $this->config()['fields'];
-		$this->setupFieldAssociations($fields);
+		$config = $this->config();
+		$this->setupFieldAssociations($config['fields'], $config['translationTable']);
 	}
 
 /**
  * Creates the associations between the bound table and every field passed to
  * this method.
  *
- * Additionally it creates a `I18n` HasMany association that will be
+ * Additionally it creates a `i18n` HasMany association that will be
  * used for fetching all translations for each record in the bound table
  *
  * @param array $fields list of fields to create associations for
+ * @param string $table the table name to use for storing each field translation
  * @return void
  */
-	public function setupFieldAssociations($fields) {
+	public function setupFieldAssociations($fields, $table) {
 		$alias = $this->_table->alias();
 		foreach ($fields as $field) {
 			$name = $this->_table->alias() . '_' . $field . '_translation';
 			$target = TableRegistry::get($name);
-			$target->table('i18n');
+			$target->table($table);
 
 			$this->_table->hasOne($name, [
 				'targetTable' => $target,
@@ -106,10 +108,10 @@ class TranslateBehavior extends Behavior {
 			]);
 		}
 
-		$this->_table->hasMany('I18n', [
+		$this->_table->hasMany($table, [
 			'foreignKey' => 'foreign_key',
 			'strategy' => 'subquery',
-			'conditions' => ['I18n.model' => $alias],
+			'conditions' => ["$table.model" => $alias],
 			'propertyName' => '_i18n'
 		]);
 	}
@@ -165,13 +167,14 @@ class TranslateBehavior extends Behavior {
 			return;
 		}
 
-		$newOptions = ['I18n' => ['validate' => false]];
+		$table = $this->config()['translationTable'];
+		$newOptions = [$table => ['validate' => false]];
 		$options['associated'] = $newOptions + $options['associated'];
 		$values = $entity->extract($this->config()['fields'], true);
 		$fields = array_keys($values);
 		$key = $entity->get(current((array)$this->_table->primaryKey()));
 
-		$preexistent = TableRegistry::get('I18n')->find()
+		$preexistent = TableRegistry::get($table)->find()
 			->select(['id', 'field'])
 			->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key])
 			->bufferResults(false)
@@ -211,7 +214,8 @@ class TranslateBehavior extends Behavior {
 	public function afterDelete(Event $event, Entity $entity) {
 		$primary = (array)$this->_table->primaryKey();
 		$key = $entity->get(current($primary));
-		TableRegistry::get('I18n')->deleteAll([
+		$table = $this->config()['translationTable'];
+		TableRegistry::get($table)->deleteAll([
 			'foreign_key' => $key,
 			'model' => $this->_table->alias()
 		]);
@@ -256,10 +260,11 @@ class TranslateBehavior extends Behavior {
  */
 	public function findTranslations($query, $options) {
 		$locales = isset($options['locales']) ? $options['locales'] : [];
+		$table = $this->config()['translationTable'];
 		return $query
-			->contain(['I18n' => function($q) use ($locales) {
+			->contain([$table => function($q) use ($locales, $table) {
 				if ($locales) {
-					$q->where(['I18n.locale IN' => $locales]);
+					$q->where(["$table.locale IN" => $locales]);
 				}
 				return $q;
 			}])
