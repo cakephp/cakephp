@@ -8,7 +8,6 @@ env:
   - DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
   - DB=pgsql db_class='Cake\Database\Driver\Postgres' db_dsn='pgsql:host=127.0.0.1;dbname=cakephp_test' db_database="cakephp_test" db_login='postgres' db_password=''
   - DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
-  - PHPCS=1
 
 services:
   - memcached
@@ -17,10 +16,9 @@ matrix:
   allow_failures:
     - php: hhvm
   fast_finish: true
-  exclude:
-    - php: 5.5
-      env: PHPCS=1
   include:
+    - php: 5.4
+      env: PHPCS=1
     - php: hhvm
       env: HHVM=1 DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
     - php: hhvm
@@ -42,7 +40,7 @@ before_script:
   - set +H
 
 script:
-    - sh -c "if [ '$PHPCS' != '1' ] && [ '$HHVM' != '1' ]; then phpunit --stop-on-failure --stderr; elif [ '$PHPCS' != '1' ] && [ '$HHVM' = '1' ]; then phpunit --testsuite HHVM; else echo '1'; fi"
+  - sh -c "if [ '$PHPCS' != '1' ] && [ '$HHVM' != '1' ]; then phpunit --stop-on-failure --stderr; elif [ '$PHPCS' != '1' ] && [ '$HHVM' = '1' ]; then phpunit --testsuite HHVM; else phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
 
 notifications:
   email: false
