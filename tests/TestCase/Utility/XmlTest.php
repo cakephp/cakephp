@@ -47,7 +47,6 @@ class XmlTest extends TestCase {
  * @return void
  */
 	public function setUp() {
-		$this->assertFalse(defined('HHVM_VERSION'), 'Causes segfault on HHVM');
 		parent::setUp();
 		$this->_appEncoding = Configure::read('App.encoding');
 		Configure::write('App.encoding', 'UTF-8');
@@ -137,6 +136,7 @@ class XmlTest extends TestCase {
  * @return void
  */
 	public function testBuildInvalidData($value) {
+		$this->assertFalse(defined('HHVM_VERSION') && !empty($value), 'Segfaults HHVM');
 		Xml::build($value);
 	}
 

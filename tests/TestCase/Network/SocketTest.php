@@ -242,6 +242,7 @@ class SocketTest extends TestCase {
  */
 	public function testEnableCryptoSocketExceptionNoSsl() {
 		$this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$configNoSslOrTls = array('host' => 'localhost', 'port' => 80, 'timeout' => 0.1);
 
 		// testing exception on no ssl socket server for ssl and tls methods
