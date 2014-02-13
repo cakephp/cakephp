@@ -811,6 +811,7 @@ SQL;
 			'\PDOStatement',
 			['execute', 'rowCount', 'closeCursor', 'fetch']
 		);
+		$statement->queryString = '';
 		$driver->connection()->expects($this->once())->method('prepare')
 			->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
 			->will($this->returnValue($statement));
@@ -841,6 +842,7 @@ SQL;
 			'\PDOStatement',
 			['execute', 'rowCount', 'closeCursor', 'fetch']
 		);
+		$statement->queryString = '';
 		$driver->connection()->expects($this->once())->method('prepare')
 			->with('SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"')
 			->will($this->returnValue($statement));

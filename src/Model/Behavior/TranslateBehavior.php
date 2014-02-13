@@ -169,7 +169,8 @@ class TranslateBehavior extends Behavior {
 		$options['associated'] = $newOptions + $options['associated'];
 		$values = $entity->extract($this->config()['fields'], true);
 		$fields = array_keys($values);
-		$key = $entity->get(current((array)$this->_table->primaryKey()));
+		$primaryKey = (array)$this->_table->primaryKey();
+		$key = $entity->get(current($primaryKey));
 
 		$preexistent = TableRegistry::get('I18n')->find()
 			->select(['id', 'field'])

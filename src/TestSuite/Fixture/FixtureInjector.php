@@ -137,4 +137,12 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 	public function endTest(PHPUnit_Framework_Test $test, $time) {
 	}
 
+/**
+ * Not Implemented
+ *
+ * @return void
+ */
+	public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time) {
+	}
+
 }
