@@ -3,7 +3,6 @@ language: php
 php:
   - 5.4
   - 5.5
-  - hhvm
 
 env:
   - DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
@@ -19,16 +18,10 @@ matrix:
     - php: hhvm
   fast_finish: true
   include:
-    - php: 5.4
-    - php: hhvm
-      env: HHVM=1
-  exclude:
-    - php: hhvm
-      env: DB=pgsql
-    - php: hhvm
-      env: PHPCS=1
-    - php: 5.4
-      env: PHPCS=1
+      -php: hhvm
+      env: HHVM=1 DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
+     -php: hhvm
+      env: HHVM=1 DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
 
 before_script:
   - sh -c "if [ '$PHPCS' != '1' ]; then sudo locale-gen de_DE; fi"
@@ -46,7 +39,7 @@ before_script:
   - set +H
 
 script:
-    - sh -c "if [ '$PHPCS' != '1' ] && [ '$HHVM' != '1' ]; then phpunit --stderr; elif [ '$PHPCS' != '1' ] && [ '$HHVM' = '1' ]; then phpunit --testsuite HHVM; else phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
+    - sh -c "if [ '$PHPCS' != '1' ] && [ '$HHVM' != '1' ]; then phpunit --stop-on-failure --stderr; elif [ '$PHPCS' != '1' ] && [ '$HHVM' = '1' ]; then phpunit --testsuite HHVM; else echo '1'; fi"
 
 notifications:
   email: false
