@@ -885,7 +885,10 @@ class QueryTest extends TestCase {
 		$params = [$this->connection, $this->table];
 		$query = $this->getMock('\Cake\ORM\Query', ['execute'], $params);
 
-		$statement = $this->getMock('\Database\StatementInterface', ['fetch', 'closeCursor']);
+		$statement = $this->getMock(
+			'\Database\StatementInterface',
+			['fetch', 'closeCursor', 'rowCount']
+		);
 		$statement->expects($this->exactly(3))
 			->method('fetch')
 			->will($this->onConsecutiveCalls(['a' => 1], ['a' => 2], false));

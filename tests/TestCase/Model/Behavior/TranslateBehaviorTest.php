@@ -426,6 +426,7 @@ class TranslateBehaviorTest extends TestCase {
 
 		$results = $table->find()
 			->select(['title', 'body'])
+			->order(['title' => 'asc'])
 			->contain(['Authors' => function($q) {
 				return $q->select(['id', 'name']);
 			}]);
@@ -454,6 +455,119 @@ class TranslateBehaviorTest extends TestCase {
 			return $r->toArray();
 		}, $results->toArray());
 		$this->assertEquals($expected, $results);
+	}
+
+/**
+ * Tests that updating an existing record translations work
+ *
+ * @return void
+ */
+	public function testUpdateSingleLocale() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('eng');
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$article->set('title', 'New translated article');
+		$table->save($article);
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('New translated article', $article->get('title'));
+		$this->assertEquals('Content #1', $article->get('body'));
+
+		$table->locale(false);
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('First Article', $article->get('title'));
+
+		$table->locale('eng');
+		$article->set('title', 'Wow, such translated article');
+		$article->set('body', 'A translated body');
+		$table->save($article);
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('Wow, such translated article', $article->get('title'));
+		$this->assertEquals('A translated body', $article->get('body'));
+	}
+
+/**
+ * Tests adding new translation to a record
+ *
+ * @return void
+ */
+	public function testInsertNewTranslations() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('fra');
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$article->set('title', 'Le titre');
+		$table->save($article);
+		$this->assertEquals('fra', $article->get('_locale'));
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('Le titre', $article->get('title'));
+		$this->assertEquals('First Article Body', $article->get('body'));
+
+		$article->set('title', 'Un autre titre');
+		$article->set('body', 'Le contenu');
+		$table->save($article);
+
+		$article = $table->find()->first();
+		$this->assertEquals('Un autre titre', $article->get('title'));
+		$this->assertEquals('Le contenu', $article->get('body'));
+	}
+
+/**
+ * Tests that it is possible to use the _locale property to specify the language
+ * to use for saving an entity
+ *
+ * @return void
+ */
+	public function testUpdateTranslationWithLocaleInEntity() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$article->set('_locale', 'fra');
+		$article->set('title', 'Le titre');
+		$table->save($article);
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('First Article', $article->get('title'));
+		$this->assertEquals('First Article Body', $article->get('body'));
+
+		$table->locale('fra');
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$this->assertEquals('Le titre', $article->get('title'));
+		$this->assertEquals('First Article Body', $article->get('body'));
+	}
+
+/**
+ * Tests that translations are added to the whitelist of associations to be
+ * saved
+ *
+ * @return void
+ */
+	public function testSaveTranslationWithAssociationWhitelist() {
+		$table = TableRegistry::get('Articles');
+		$table->hasMany('Comments');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$table->locale('fra');
+
+		$article = $table->find()->first();
+		$this->assertEquals(1, $article->get('id'));
+		$article->set('title', 'Le titre');
+		$table->save($article, ['associated' => ['Comments']]);
+
+		$article = $table->find()->first();
+		$this->assertEquals('Le titre', $article->get('title'));
 	}
 
 }

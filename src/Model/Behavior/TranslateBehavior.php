@@ -14,6 +14,7 @@
  */
 namespace Cake\Model\Behavior;
 
+use ArrayObject;
 use Cake\Collection\Collection;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
@@ -146,6 +147,58 @@ class TranslateBehavior extends Behavior {
 		$query->formatResults(function($results) use ($locale) {
 			return $this->_rowMapper($results, $locale);
 		}, $query::PREPEND);
+	}
+
+/**
+ * Modifies the entity before it is saved so that translated fields are persisted
+ * in the database too.
+ *
+ * @param \Cake\Event\Event the beforeSave event that was fired
+ * @param \Cake\ORM\Entity the entity that is going to be saved
+ * @param \ArrayObject $options the options passed to the save method
+ * @return void
+ */
+	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
+		$locale = $entity->get('_locale') ?: $this->locale();
+
+		if (!$locale) {
+			return;
+		}
+
+		$newOptions = ['I18n' => ['validate' => false]];
+		$options['associated'] = $newOptions + $options['associated'];
+		$values = $entity->extract($this->config()['fields'], true);
+		$fields = array_keys($values);
+		$key = $entity->get(current((array)$this->_table->primaryKey()));
+
+		$preexistent = TableRegistry::get('I18n')->find()
+			->select(['id', 'field'])
+			->where(['field IN' => $fields, 'locale' => $locale, 'foreign_key' => $key])
+			->bufferResults(false)
+			->indexBy('field');
+
+		$modified = [];
+		foreach ($preexistent as $field => $translation) {
+			$translation->set('content', $values[$field]);
+			$modified[$field] = $translation;
+		}
+
+		$new = array_diff_key($values, $modified);
+		$model = $this->_table->alias();
+		foreach ($new as $field => $content) {
+			$new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
+				'useSetters' => false,
+				'markNew' => true
+			]);
+		}
+
+		$entity->set('_i18n', array_values($modified + $new));
+		$entity->set('_locale', $locale, ['setter' => false]);
+		$entity->dirty('_locale', false);
+
+		foreach ($fields as $field) {
+			$entity->dirty($field, false);
+		}
 	}
 
 /**

@@ -780,8 +780,7 @@ class Query extends DatabaseQuery {
 		if ($this->_dirty) {
 			$this->limit(1);
 		}
-		$this->_results = $this->all();
-		return $this->_results->first();
+		return $this->all()->first();
 	}
 
 /**
