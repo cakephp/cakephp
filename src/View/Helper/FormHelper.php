@@ -306,10 +306,10 @@ class FormHelper extends Helper {
 			$options['context'] = [];
 		}
 		$options['context']['entity'] = $model;
-		$this->_context = $this->_buildContext($options['context']);
+		$context = $this->_getContext($options['context']);
 		unset($options['context']);
 
-		$isCreate = $this->_context->isCreate();
+		$isCreate = $context->isCreate();
 
 		$options = $options + [
 			'type' => $isCreate ? 'post' : 'put',
@@ -319,7 +319,7 @@ class FormHelper extends Helper {
 			'encoding' => strtolower(Configure::read('App.encoding')),
 		];
 
-		$options['action'] = $this->_formUrl($options);
+		$options['action'] = $this->_formUrl($context, $options);
 		unset($options['url']);
 
 		switch (strtolower($options['type'])) {
@@ -376,10 +376,11 @@ class FormHelper extends Helper {
 /**
  * Create the URL for a form based on the options.
  *
+ * @param Cake\View\Form\ContextInterface $context The context object to use.
  * @param array $options An array of options from create()
  * @return string The action attribute for the form.
  */
-	protected function _formUrl($options) {
+	protected function _formUrl($context, $options) {
 		if ($options['action'] === null && $options['url'] === null) {
 			return $this->request->here(false);
 		}
@@ -397,9 +398,9 @@ class FormHelper extends Helper {
 
 			$action = (array)$options['url'] + $actionDefaults;
 
-			$pk = $this->_context->primaryKey();
+			$pk = $context->primaryKey();
 			if (count($pk)) {
-				$id = $this->_context->val($pk[0]);
+				$id = $context->val($pk[0]);
 			}
 			if (empty($action[0]) && isset($id)) {
 				$action[0] = $id;
@@ -2842,6 +2843,7 @@ class FormHelper extends Helper {
 		} else {
 			$secure = (isset($this->request['_Token']) && !empty($this->request['_Token']));
 		}
+		$context = $this->_getContext();
 
 		$disabledIndex = array_search('disabled', $options, true);
 		if (is_int($disabledIndex)) {
@@ -2857,18 +2859,18 @@ class FormHelper extends Helper {
 			unset($options['value']);
 		}
 		if (!isset($options['val'])) {
-			$options['val'] = $this->_context->val($field);
+			$options['val'] = $context->val($field);
 		}
-		$options += (array)$this->_context->attributes($field);
+		$options += (array)$context->attributes($field);
 
-		if ($this->_context->hasError($field)) {
+		if ($context->hasError($field)) {
 			$options = $this->addClass($options, $this->settings['errorClass']);
 		}
 		if (!empty($options['disabled']) || $secure === static::SECURE_SKIP) {
 			return $options;
 		}
 
-		if (!isset($options['required']) && $this->_context->isRequired($field)) {
+		if (!isset($options['required']) && $context->isRequired($field)) {
 			$options['required'] = true;
 		}
 
@@ -2944,7 +2946,7 @@ class FormHelper extends Helper {
  * @return null|Cake\View\Form\ContextInterface The context for the form.
  */
 	public function context() {
-		return $this->_context;
+		return $this->_getContext();
 	}
 
 /**
@@ -2957,7 +2959,12 @@ class FormHelper extends Helper {
  * @throws RuntimeException when the context class does not implement the
  *   ContextInterface.
  */
-	protected function _buildContext($data) {
+	protected function _getContext($data = []) {
+		if (isset($this->_context) && empty($data)) {
+			return $this->_context;
+		}
+		$data += ['entity' => null];
+
 		foreach ($this->_contextProviders as $key => $check) {
 			$context = $check($this->request, $data);
 			if ($context) {
@@ -2972,7 +2979,7 @@ class FormHelper extends Helper {
 				'Context objects must implement Cake\View\Form\ContextInterface'
 			);
 		}
-		return $context;
+		return $this->_context = $context;
 	}
 
 /**
