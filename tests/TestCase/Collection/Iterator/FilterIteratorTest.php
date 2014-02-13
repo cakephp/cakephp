@@ -29,7 +29,7 @@ class FilterIteratorTest extends TestCase {
  * @return void
  */
 	public function testFilter() {
-		$this->skipIf(defined('HHVM_VERSION'), 'Broken on HHVM');
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$items = new \ArrayIterator([1, 2, 3]);
 		$callable = $this->getMock('stdClass', ['__invoke']);
 		$callable->expects($this->at(0))

@@ -40,7 +40,7 @@ before_script:
   - set +H
 
 script:
-  - sh -c "if [ '$PHPCS' != '1' ] && [ '$HHVM' != '1' ]; then phpunit --stderr; elif [ '$PHPCS' != '1' ] && [ '$HHVM' = '1' ]; then phpunit --testsuite HHVM; else phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
+  - sh -c "if [ '$PHPCS' != '1' ]; then phpunit --stderr; else phpcs -p --extensions=php --standard=CakePHP ./src ./tests; fi"
 
 notifications:
   email: false

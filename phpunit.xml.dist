@@ -23,18 +23,6 @@
 		<testsuite name="Database Test Suite">
 			<file>./tests/TestCase/DatabaseSuite.php</file>
 		</testsuite>
-		<testsuite name="HHVM">
-			<file>./tests/TestCase/DatabaseSuite.php</file>
-			<directory>./tests/TestCase/Collection</directory>
-			<directory>./tests/TestCase/Configure</directory>
-			<directory>./tests/TestCase/Controller</directory>
-			<directory>./tests/TestCase/Event</directory>
-			<directory>./tests/TestCase/I18n</directory>
-			<directory>./tests/TestCase/Log</directory>
-			<directory>./tests/TestCase/Routing</directory>
-			<directory>./tests/TestCase/TestSuite</directory>
-			<directory>./tests/TestCase/Validation</directory>
-		</testsuite>
 	</testsuites>
 	<listeners>
 		<listener class="\Cake\TestSuite\Fixture\FixtureInjector" file="./src/TestSuite/Fixture/FixtureInjector.php">

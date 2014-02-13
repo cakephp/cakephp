@@ -73,7 +73,7 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testFilterChaining() {
-		$this->skipIf(defined('HHVM_VERSION'), 'Broken on HHVM');
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$items = ['a' => 1, 'b' => 2, 'c' => 3];
 		$collection = new Collection($items);
 		$callable = $this->getMock('stdClass', ['__invoke']);
@@ -94,7 +94,7 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testReject() {
-		$this->skipIf(defined('HHVM_VERSION'), 'Broken on HHVM');
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$items = ['a' => 1, 'b' => 2, 'c' => 3];
 		$collection = new Collection($items);
 		$result = $collection->reject(function ($v, $k, $items) use ($collection) {
@@ -545,7 +545,7 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testMatch() {
-		$this->skipIf(defined('HHVM_VERSION'), 'Broken on HHVM');
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$items = [
 			['id' => 1, 'name' => 'foo', 'thing' => ['parent_id' => 10]],
 			['id' => 2, 'name' => 'bar', 'thing' => ['parent_id' => 11]],
@@ -574,7 +574,7 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testFirstMatch() {
-		$this->skipIf(defined('HHVM_VERSION'), 'Broken on HHVM');
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$items = [
 			['id' => 1, 'name' => 'foo', 'thing' => ['parent_id' => 10]],
 			['id' => 2, 'name' => 'bar', 'thing' => ['parent_id' => 11]],

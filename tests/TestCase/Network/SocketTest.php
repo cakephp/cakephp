@@ -257,6 +257,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoTls() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		$configNoSslOrTls = array('host' => 'localhost', 'port' => 80, 'timeout' => 0.1);
 
 		// testing exception on no ssl socket server for ssl and tls methods
@@ -288,6 +289,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoBadMode() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		// testing wrong encryption mode
 		$this->_connectSocketToSslTls();
 		$this->Socket->enableCrypto('doesntExistMode', 'server');
@@ -300,6 +302,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCrypto() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		// testing on ssl server
 		$this->_connectSocketToSslTls();
 		$this->assertTrue($this->Socket->enableCrypto('sslv3', 'client'));
@@ -318,6 +321,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoExceptionEnableTwice() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->Socket->enableCrypto('tls', 'client');
@@ -331,6 +335,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoExceptionDisableTwice() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->Socket->enableCrypto('tls', 'client', false);
@@ -342,6 +347,7 @@ class SocketTest extends TestCase {
  * @return void
  */
 	public function testEnableCryptoEnableStatus() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Broken on HHVM');
 		// testing on tls server
 		$this->_connectSocketToSslTls();
 		$this->assertFalse($this->Socket->encrypted);
