@@ -51,23 +51,25 @@ foreach ($plugins as $key => $value) {
 }
 $pluginPattern = implode('|', $plugins);
 $indexParams = ['action' => 'index'];
-$match = ['prefix' => $prefixPattern, 'plugin' => $pluginPattern];
-$pluginShortMatch = $match + [
+$pluginShortMatch = [
 	'routeClass' => 'Cake\Routing\Route\PluginShortRoute',
 	'_name' => '_plugin._controller:index'
 ];
 
 if ($prefixPattern && $pluginPattern) {
-	Router::connect('/:prefix/:plugin', $indexParams, $pluginShortMatch);
+	$match = ['prefix' => $prefixPattern, 'plugin' => $pluginPattern];
+	Router::connect('/:prefix/:plugin', $indexParams, $match + $pluginShortMatch);
 	Router::connect('/:prefix/:plugin/:controller', $indexParams, $match);
 	Router::connect('/:prefix/:plugin/:controller/:action/*', [], $match);
 }
 if ($pluginPattern) {
-	Router::connect('/:plugin', $indexParams, $pluginShortMatch);
+	$match = ['plugin' => $pluginPattern];
+	Router::connect('/:plugin', $indexParams, $match + $pluginShortMatch);
 	Router::connect('/:plugin/:controller', $indexParams, $match);
 	Router::connect('/:plugin/:controller/:action/*', [], $match);
 }
 if ($prefixPattern) {
+	$match = ['prefix' => $prefixPattern];
 	Router::connect('/:prefix/:controller', $indexParams, $match);
 	Router::connect('/:prefix/:controller/:action/*', [], $match);
 }
