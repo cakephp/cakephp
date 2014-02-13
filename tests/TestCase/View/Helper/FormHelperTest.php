@@ -599,7 +599,7 @@ class FormHelperTest extends TestCase {
  * @return array
  */
 	public function contextSelectionProvider() {
-		$entity = $this->getMock('Cake\ORM\Entity');
+		$entity = new Article();
 		$collection = $this->getMock('Cake\Collection\Collection', ['extract'], [[$entity]]);
 		$data = [
 			'schema' => [
@@ -623,6 +623,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateContextSelectionBuiltIn($data, $class) {
+		$this->loadFixtures('Article');
 		$this->Form->create($data);
 		$this->assertInstanceOf($class, $this->Form->context());
 	}
@@ -1115,12 +1116,11 @@ class FormHelperTest extends TestCase {
 	public function testCreateWithSecurity() {
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$article = new Article();
-		$result = $this->Form->create($article, [
-			'url' => '/contacts/add',
+		$result = $this->Form->create($this->article, [
+			'url' => '/articles/publish',
 		]);
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding),
+			'form' => array('method' => 'post', 'action' => '/articles/publish', 'accept-charset' => $encoding),
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
@@ -1130,7 +1130,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->create($article, ['url' => '/contacts/add', 'id' => 'MyForm']);
+		$result = $this->Form->create($this->article, ['url' => '/articles/publish', 'id' => 'MyForm']);
 		$expected['form']['id'] = 'MyForm';
 		$this->assertTags($result, $expected);
 	}
@@ -1163,7 +1163,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testCreateClearingFields() {
 		$this->Form->fields = array('model_id');
-		$this->Form->create(new Article());
+		$this->Form->create($this->article);
 		$this->assertEquals(array(), $this->Form->fields);
 	}
 
@@ -7829,13 +7829,21 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHiddenField() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors['field'] = 1;
-		$this->Form->request->data['Contact']['field'] = 'test';
-		$result = $this->Form->hidden('Contact.field', array('id' => 'theID'));
+		$this->article['errors'] = [
+			'field' => true
+		];
+		$this->Form->request->data['field'] = 'test';
+		$this->Form->create($this->article);
+		$result = $this->Form->hidden('field', array('id' => 'theID'));
 		$this->assertTags($result, array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'id' => 'theID', 'value' => 'test'))
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'id' => 'theID', 'value' => 'test'))
 		);
+
+		$result = $this->Form->hidden('field', ['value' => 'my value']);
+		$expected = [
+			'input' => ['type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'value' => 'my value']
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**

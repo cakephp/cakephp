@@ -63,6 +63,15 @@ class FormHelper extends Helper {
 	);
 
 /**
+ * Settings for the helper.
+ *
+ * @var array
+ */
+	public $settings = [
+		'errorClass' => 'form-error'
+	];
+
+/**
  * List of fields created, used with secure forms.
  *
  * @var array
@@ -163,6 +172,7 @@ class FormHelper extends Helper {
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
+		'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
 	];
 
 /**
@@ -418,7 +428,8 @@ class FormHelper extends Helper {
 			return '';
 		}
 		return $this->hidden('_csrfToken', array(
-			'value' => $this->request->params['_csrfToken'], 'id' => 'Token' . mt_rand(),
+			'value' => $this->request->params['_csrfToken'],
+			'id' => 'Token' . mt_rand(),
 			'secure' => static::SECURE_SKIP
 		));
 	}
@@ -1585,10 +1596,11 @@ class FormHelper extends Helper {
 		));
 
 		if ($secure === true) {
-			$this->_secure(true, null, '' . $options['value']);
+			$this->_secure(true, null, '' . $options['val']);
 		}
 
-		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => null)));
+		$options['type'] = 'hidden';
+		return $this->widget('hidden', $options);
 	}
 
 /**
@@ -2808,7 +2820,7 @@ class FormHelper extends Helper {
 
 /**
  * Sets field defaults and adds field to form security input hash.
- * Will also add a 'form-error' class if the field contains validation errors.
+ * Will also add the error class if the field contains validation errors.
  *
  * ### Options
  *
@@ -2823,7 +2835,7 @@ class FormHelper extends Helper {
  * @param array $options Array of options to append options into.
  * @return array Array of options for the input.
  */
-	protected function _initInputField($field, $options = array()) {
+	protected function _initInputField($field, $options = []) {
 		if (isset($options['secure'])) {
 			$secure = $options['secure'];
 			unset($options['secure']);
@@ -2837,26 +2849,35 @@ class FormHelper extends Helper {
 			$options['disabled'] = true;
 		}
 
-		$result = parent::_initInputField($field, $options);
-		if ($this->tagIsInvalid() !== false) {
-			$result = $this->addClass($result, 'form-error');
+		if (!isset($options['name'])) {
+			$options['name'] = $field;
 		}
-		if (!empty($result['disabled']) || $secure === static::SECURE_SKIP) {
-			return $result;
+		if (isset($options['value']) && !isset($options['val'])) {
+			$options['val'] = $options['value'];
+			unset($options['value']);
+		}
+		if (!isset($options['val'])) {
+			$options['val'] = $this->_context->val($field);
+		}
+		$options += (array)$this->_context->attributes($field);
+
+		if ($this->_context->hasError($field)) {
+			$options = $this->addClass($options, $this->settings['errorClass']);
+		}
+		if (!empty($options['disabled']) || $secure === static::SECURE_SKIP) {
+			return $options;
 		}
 
-		if (!isset($result['required']) &&
-			$this->_introspectModel($this->model(), 'validates', $this->field())
-		) {
-			$result['required'] = true;
+		if (!isset($options['required']) && $this->_context->isRequired($field)) {
+			$options['required'] = true;
 		}
 
 		if ($secure === self::SECURE_SKIP) {
-			return $result;
+			return $options;
 		}
 
 		$this->_secure($secure, $this->_secureFieldName($options));
-		return $result;
+		return $options;
 	}
 
 /**
@@ -2981,8 +3002,7 @@ class FormHelper extends Helper {
  * @return void
  */
 	public function widget($name, array $data = []) {
-		$widget = $this->_registry->get($name);
-		return $widget->render($data);
+		return $this->_registry->get($name)->render($data);
 	}
 
 }
