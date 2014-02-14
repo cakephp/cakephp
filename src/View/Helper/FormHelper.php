@@ -1539,7 +1539,7 @@ class FormHelper extends Helper {
  * @throws Cake\Error\Exception When there are no params for the method call.
  */
 	public function __call($method, $params) {
-		$options = array();
+		$options = [];
 		if (empty($params)) {
 			throw new Error\Exception(sprintf('Missing field name for FormHelper::%s', $method));
 		}
@@ -1550,7 +1550,7 @@ class FormHelper extends Helper {
 			$options['type'] = $method;
 		}
 		$options = $this->_initInputField($params[0], $options);
-		return $this->Html->useTag('input', $options['name'], array_diff_key($options, array('name' => null)));
+		return $this->widget($options['type'], $options);
 	}
 
 /**
@@ -2861,6 +2861,7 @@ class FormHelper extends Helper {
 			$first = array_shift($parts);
 			$options['name'] = $first . ($parts ? '[' . implode('][', $parts) . ']' : '');
 		}
+
 		if (isset($options['value']) && !isset($options['val'])) {
 			$options['val'] = $options['value'];
 			unset($options['value']);
@@ -2868,6 +2869,11 @@ class FormHelper extends Helper {
 		if (!isset($options['val'])) {
 			$options['val'] = $context->val($field);
 		}
+		if (!isset($options['val']) && isset($options['default'])) {
+			$options['val'] = $options['default'];
+		}
+		unset($options['default']);
+
 		$options += (array)$context->attributes($field);
 
 		if ($context->hasError($field)) {
