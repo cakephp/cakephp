@@ -9595,7 +9595,7 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Test accessing htm5 inputs through input().
+ * Test accessing html5 inputs through input().
  *
  * @return void
  */
