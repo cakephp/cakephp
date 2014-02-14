@@ -301,7 +301,7 @@ class Router {
  * - `_name` is used to define a specific name for routes. This can be used to optimize
  *   reverse routing lookups. If undefined a name will be generated for each
  *   connected route.
- * - `_ext` an array of filename extensions that will be parsed out of the url if present.
+ * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
  *   See {@link Route::setExtensions()}.
  *
  * You can also add additional conditions for matching routes to the $defaults array.
