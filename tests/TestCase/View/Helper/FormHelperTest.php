@@ -9569,32 +9569,43 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHtml5Inputs() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->email('User.email');
 		$expected = array(
-			'input' => array('type' => 'email', 'name' => 'User[email]', 'id' => 'UserEmail')
+			'input' => array('type' => 'email', 'name' => 'User[email]')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->search('User.query');
 		$expected = array(
-			'input' => array('type' => 'search', 'name' => 'User[query]', 'id' => 'UserQuery')
+			'input' => array('type' => 'search', 'name' => 'User[query]')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->search('User.query', array('value' => 'test'));
 		$expected = array(
-			'input' => array('type' => 'search', 'name' => 'User[query]', 'id' => 'UserQuery', 'value' => 'test')
+			'input' => array('type' => 'search', 'name' => 'User[query]', 'value' => 'test')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->search('User.query', array('type' => 'text', 'value' => 'test'));
 		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'User[query]', 'id' => 'UserQuery', 'value' => 'test')
+			'input' => array('type' => 'text', 'name' => 'User[query]', 'value' => 'test')
 		);
 		$this->assertTags($result, $expected);
+	}
 
-		$result = $this->Form->input('User.website', array('type' => 'url', 'value' => 'http://domain.tld', 'div' => false, 'label' => false));
+/**
+ * Test accessing htm5 inputs through input().
+ *
+ * @return void
+ */
+	public function testHtml5InputWithInput() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$result = $this->Form->input('User.website', array(
+			'type' => 'url',
+			'value' => 'http://domain.tld',
+			'div' => false,
+			'label' => false));
 		$expected = array(
 			'input' => array('type' => 'url', 'name' => 'User[website]', 'id' => 'UserWebsite', 'value' => 'http://domain.tld')
 		);
@@ -9602,12 +9613,12 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test errors when field name is missing.
  *
  * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHtml5InputException() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->email();
 	}
 
