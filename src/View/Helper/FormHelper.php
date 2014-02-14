@@ -2833,20 +2833,25 @@ class FormHelper extends Helper {
  * - `secure` - boolean whether or not the field should be added to the security fields.
  *   Disabling the field using the `disabled` option, will also omit the field from being
  *   part of the hashed key.
+ * - `default` - mixed - The value to use if there is no value in the form's context.
+ * - `disabled` - mixed - Either a boolean indicating disabled state, or the string in
+ *   a numerically indexed value.
  *
- * This method will convert a numerically indexed 'disabled' into a associative
- * value. FormHelper's internals expect associative options.
+ * This method will convert a numerically indexed 'disabled' into an associative
+ * array value. FormHelper's internals expect associative options.
+ *
+ * The output of this function is a more complete set of input attributes that
+ * can be passed to a form widget to generate the actual input.
  *
  * @param string $field Name of the field to initialize options for.
  * @param array $options Array of options to append options into.
  * @return array Array of options for the input.
  */
 	protected function _initInputField($field, $options = []) {
+		$secure = !empty($this->request['_Token']);
 		if (isset($options['secure'])) {
 			$secure = $options['secure'];
 			unset($options['secure']);
-		} else {
-			$secure = (isset($this->request['_Token']) && !empty($this->request['_Token']));
 		}
 		$context = $this->_getContext();
 
@@ -2864,7 +2869,6 @@ class FormHelper extends Helper {
 
 		if (isset($options['value']) && !isset($options['val'])) {
 			$options['val'] = $options['value'];
-			unset($options['value']);
 		}
 		if (!isset($options['val'])) {
 			$options['val'] = $context->val($field);
@@ -2872,7 +2876,7 @@ class FormHelper extends Helper {
 		if (!isset($options['val']) && isset($options['default'])) {
 			$options['val'] = $options['default'];
 		}
-		unset($options['default']);
+		unset($options['value'], $options['default']);
 
 		$options += (array)$context->attributes($field);
 
