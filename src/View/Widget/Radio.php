@@ -141,7 +141,7 @@ class Radio implements WidgetInterface {
 		$radio['name'] = $data['name'];
 
 		if (empty($radio['id'])) {
-			$radio['id'] = mb_strtolower(Inflector::slug($radio['name'] . '_' . $radio['value'], '-'));
+			$radio['id'] = $this->_id($radio);
 		}
 
 		if (isset($data['val']) && strval($data['val']) === strval($radio['value'])) {
@@ -196,5 +196,16 @@ class Radio implements WidgetInterface {
 		];
 		return $this->_label->render($labelAttrs);
 	}
+
+/**
+ * Generate an ID attribute for a radio button.
+ *
+ * Ensures that id's for a given set of fields are unique.
+ *
+ * @param array $radio The radio properties.
+ * @return string Generated id.
+ */
+	protected function _id($radio) {
+		return mb_strtolower(Inflector::slug($radio['name'] . '_' . $radio['value'], '-'));}
 
 }
