@@ -112,7 +112,8 @@ class TranslateBehavior extends Behavior {
 			'foreignKey' => 'foreign_key',
 			'strategy' => 'subquery',
 			'conditions' => ["$table.model" => $alias],
-			'propertyName' => '_i18n'
+			'propertyName' => '_i18n',
+			'dependent' => true
 		]);
 	}
 
@@ -215,23 +216,6 @@ class TranslateBehavior extends Behavior {
  */
 	public function afterSave(Event $event, Entity $entity) {
 		$entity->unsetProperty('_i18n');
-	}
-
-/**
- * Deletes all translation for the entity that was recently deleted
- *
- * @param \Cake\Event\Event the afterDelete event that was fired
- * @param \Cake\ORM\Entity the entity that was recently deleted
- * @return void
- */
-	public function afterDelete(Event $event, Entity $entity) {
-		$primary = (array)$this->_table->primaryKey();
-		$key = $entity->get(current($primary));
-		$table = $this->config()['translationTable'];
-		TableRegistry::get($table)->deleteAll([
-			'foreign_key' => $key,
-			'model' => $this->_table->alias()
-		]);
 	}
 
 /**
@@ -350,7 +334,7 @@ class TranslateBehavior extends Behavior {
 
 /**
  * Helper method used to generated multiple translated field entities
- * out fo the data found in the `_translations` property in the passed
+ * out of the data found in the `_translations` property in the passed
  * entity. The result will be put into its `_i18n` property
  *
  * @param \Cake\ORM\Entity $entity
@@ -403,7 +387,7 @@ class TranslateBehavior extends Behavior {
 
 /**
  * Returns the ids found for each of the condition arrays passed for the translations
- * table. Each records is index by the corresponding position to the conditions array
+ * table. Each records is indexed by the corresponding position to the conditions array
  *
  * @param array $ruleSet an array of arary of conditions to be used for finding each
  * @return array

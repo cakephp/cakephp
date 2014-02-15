@@ -24,7 +24,7 @@ trait TranslateTrait {
 
 /**
  * Returns the entity containing the translated fields for this object and for
- * the spedcified language. If the translation for the passed language is not
+ * the specified language. If the translation for the passed language is not
  * present, a new empty entity will be created so that values can be added to
  * it.
  *
