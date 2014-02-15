@@ -1170,17 +1170,14 @@ class Table implements EventListener {
 			$entity->isNew(true);
 		}
 
-		if ($options['associated'] === true) {
-			$options['associated'] = $this->_associated->keys();
-		}
-		$associated = array_filter((array)$options['associated']);
+		$associated = $options['associated'];
 		$options['associated'] = [];
 
 		if (!$this->validate($entity, $options)) {
 			return false;
 		}
 
-		$options['associated'] = $associated;
+		$options['associated'] = $this->_associated->normalizeKeys($associated);
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 

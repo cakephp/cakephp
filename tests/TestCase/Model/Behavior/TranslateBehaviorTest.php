@@ -597,6 +597,11 @@ class TranslateBehaviorTest extends TestCase {
 		$translations['eng']->set('body', 'Another body');
 		$article->set('_translations', $translations);
 		$table->save($article);
+
+		$article = $results = $table->find('translations')->first();
+		$translations = $article->get('_translations');
+		$this->assertEquals('Another title', $translations['deu']->get('title'));
+		$this->assertEquals('Another body', $translations['eng']->get('body'));
 	}
 
 }
