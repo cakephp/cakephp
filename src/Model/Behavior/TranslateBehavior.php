@@ -367,24 +367,40 @@ class TranslateBehavior extends Behavior {
 			return;
 		}
 
-		$association = $this->_table->association($this->config()['translationTable']);
-		$query = $association->find()->select('id')->where(array_shift($find));
-		foreach ($find as $conditions) {
-			$q = $association->find()->select('id')->where(array_shift($find));
-			$query->unionAll($q);
-		}
+		$results = $this->_findExistingTranslations($find);
+		$alias = $this->_table->alias();
 
-		foreach ($query->hydrate(false)->bufferResults(false) as $i => $row) {
-			if (!empty($row['id'])) {
-				$contents[$i]->set('id', $row['id'], ['setter' => false]);
+		foreach ($find as $i => $translation) {
+			if (!empty($results[$i])) {
+				$contents[$i]->set('id', $results[$i], ['setter' => false]);
 				$contents[$i]->isNew(false);
 			} else {
-				$contents[$i]->set($find[$i], ['setter' => false, 'guard' => false]);
+				$translation['model'] = $alias;
+				$contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
 				$contents[$i]->isNew(true);
 			}
 		}
 
 		$entity->set('_i18n', $contents);
+	}
+
+	protected function _findExistingTranslations($ruleSet) {
+		$association = $this->_table->association($this->config()['translationTable']);
+		$query = $association->find()
+			->select(['id', 'num' => 0])
+			->where(current($ruleSet))
+			->hydrate(false)
+			->bufferResults(false);
+
+		unset($ruleSet[0]);
+		foreach ($ruleSet as $i => $conditions) {
+			$q = $association->find()
+				->select(['id', 'num' => $i])
+				->where($conditions);
+			$query->unionAll($q);
+		}
+
+		return $query->combine('num', 'id')->toArray();
 	}
 
 }
