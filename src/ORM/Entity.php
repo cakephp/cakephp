@@ -248,14 +248,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 				continue;
 			}
 
-			$markDirty = true;
-			if (isset($this->_properties[$p])) {
-				$markDirty = $value !== $this->_properties[$p];
-			}
-
-			if ($markDirty) {
-				$this->dirty($p, true);
-			}
+			$this->dirty($p, true);
 
 			if (!$options['setter']) {
 				$this->_properties[$p] = $value;

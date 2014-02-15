@@ -507,13 +507,14 @@ class EntityTest extends TestCase {
 		$entity = new Entity([
 			'title' => 'Foo',
 		]);
+
 		$entity->dirty('title', false);
 		$this->assertFalse($entity->dirty('title'));
+
 		$entity->set('title', 'Foo');
-		$this->assertFalse($entity->dirty('title'));
+		$this->assertTrue($entity->dirty('title'));
+
 		$entity->set('title', 'Foo');
-		$this->assertFalse($entity->dirty('title'));
-		$entity->set('title', 'Something Else');
 		$this->assertTrue($entity->dirty('title'));
 
 		$entity->set('something', 'else');
