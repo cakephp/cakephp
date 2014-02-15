@@ -342,7 +342,7 @@ class TranslateBehavior extends Behavior {
 	protected function _bundleTranslatedFields($entity) {
 		$translations = (array)$entity->get('_translations');
 
-		if (empty($translations)) {
+		if (empty($translations) && !$entity->dirty('_translations')) {
 			return;
 		}
 
@@ -353,14 +353,13 @@ class TranslateBehavior extends Behavior {
 
 		foreach ($translations as $lang => $translation) {
 			foreach ($fields as $field) {
-				if ($translation->dirty($field)) {
-					$find[] = [
-						'locale' => $lang,
-						'field' => $field,
-						'foreign_key' => $key
-					];
-					$contents[] = $translation->get($field);
+				if (!$translation->dirty($field)) {
+					continue;
 				}
+				$find[] = ['locale' => $lang, 'field' => $field, 'foreign_key' => $key];
+				$contents[] = new Entity(['content' => $translation->get($field)], [
+					'useSetters' => false
+				]);
 			}
 		}
 
@@ -375,9 +374,17 @@ class TranslateBehavior extends Behavior {
 			$query->unionAll($q);
 		}
 
-		foreach ($query->hydrate(false)->bufferResults(false) as $row) {
-			debug($row);
+		foreach ($query->hydrate(false)->bufferResults(false) as $i => $row) {
+			if (!empty($row['id'])) {
+				$contents[$i]->set('id', $row['id'], ['setter' => false]);
+				$contents[$i]->isNew(false);
+			} else {
+				$contents[$i]->set($find[$i], ['setter' => false, 'guard' => false]);
+				$contents[$i]->isNew(true);
+			}
 		}
+
+		$entity->set('_i18n', $contents);
 	}
 
 }
