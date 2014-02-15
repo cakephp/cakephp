@@ -207,6 +207,17 @@ class TranslateBehavior extends Behavior {
 	}
 
 /**
+ * Unsets the temporary `_i18n` property after the entity has been saved
+ *
+ * @param \Cake\Event\Event the beforeSave event that was fired
+ * @param \Cake\ORM\Entity the entity that is going to be saved
+ * @return void
+ */
+	public function afterSave(Event $event, Entity $entity) {
+		$entity->unsetProperty('_i18n');
+	}
+
+/**
  * Deletes all translation for the entity that was recently deleted
  *
  * @param \Cake\Event\Event the afterDelete event that was fired
@@ -270,9 +281,7 @@ class TranslateBehavior extends Behavior {
 				}
 				return $q;
 			}])
-			->formatResults(function($results) {
-				return $this->_groupTranslations($results);
-			}, $query::PREPEND);
+			->formatResults([$this, 'groupTranslations'], $query::PREPEND);
 	}
 
 /**
@@ -316,7 +325,7 @@ class TranslateBehavior extends Behavior {
  * @param \Cake\ORM\ResultSetDecorator $results
  * @return \Cake\Collection\Collection
  */
-	protected function _groupTranslations($results) {
+	public function groupTranslations($results) {
 		return $results->map(function($row) {
 			$translations = (array)$row->get('_i18n');
 			$grouped = new Collection($translations);

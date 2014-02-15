@@ -470,6 +470,7 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals(1, $article->get('id'));
 		$article->set('title', 'New translated article');
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals(1, $article->get('id'));
@@ -485,6 +486,7 @@ class TranslateBehaviorTest extends TestCase {
 		$article->set('title', 'Wow, such translated article');
 		$article->set('body', 'A translated body');
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals(1, $article->get('id'));
@@ -516,6 +518,7 @@ class TranslateBehaviorTest extends TestCase {
 		$article->set('title', 'Un autre titre');
 		$article->set('body', 'Le contenu');
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals('Un autre titre', $article->get('title'));
@@ -536,6 +539,7 @@ class TranslateBehaviorTest extends TestCase {
 		$article->set('_locale', 'fra');
 		$article->set('title', 'Le titre');
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals(1, $article->get('id'));
@@ -565,6 +569,7 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals(1, $article->get('id'));
 		$article->set('title', 'Le titre');
 		$table->save($article, ['associated' => ['Comments']]);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals('Le titre', $article->get('title'));
@@ -603,6 +608,7 @@ class TranslateBehaviorTest extends TestCase {
 		$translations['eng']->set('body', 'Another body');
 		$article->set('_translations', $translations);
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $results = $table->find('translations')->first();
 		$translations = $article->get('_translations');
@@ -627,6 +633,7 @@ class TranslateBehaviorTest extends TestCase {
 		$translations['fre'] = new Entity(['title' => 'Titre']);
 		$article->set('_translations', $translations);
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $results = $table->find('translations')->first();
 		$translations = $article->get('_translations');
