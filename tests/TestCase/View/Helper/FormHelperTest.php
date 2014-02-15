@@ -4274,138 +4274,16 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->radio('Model.field', array('option A', 'option B'), array('name' => 'Model[custom]'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[custom]', 'value' => ''),
-			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '0', 'id' => 'model-field-0')),
-			array('label' => array('for' => 'model-field-0')),
+			array('input' => array('type' => 'hidden', 'name' => 'Model[custom]', 'value' => '')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '0', 'id' => 'model-custom-0')),
+			array('label' => array('for' => 'model-custom-0')),
 			'option A',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '1', 'id' => 'model-field-1')),
-			array('label' => array('for' => 'model-field-1')),
+			array('input' => array('type' => 'radio', 'name' => 'Model[custom]', 'value' => '1', 'id' => 'model-custom-1')),
+			array('label' => array('for' => 'model-custom-1')),
 			'option B',
 			'/label',
 		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->radio(
-			'Model.field',
-			array('a>b' => 'first', 'a<b' => 'second', 'a"b' => 'third')
-		);
-		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Model][field]',
-				'value' => '',
-			),
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]',
-				'id' => 'model-field-a-b', 'value' => 'a&gt;b')),
-			array('label' => array('for' => 'model-field-a-b')),
-			'first',
-			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]',
-				'id' => 'ModelFieldAB1', 'value' => 'a&lt;b')),
-			array('label' => array('for' => 'model-field-ab2')),
-			'second',
-			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'data[Model][field]',
-				'id' => 'model-field-ab2', 'value' => 'a&quot;b')),
-			array('label' => array('for' => 'model-field-ab2')),
-			'third',
-			'/label',
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test marking radio buttons as required.
- *
- * @return void
- */
-	public function testRadioRequired() {
-		$this->article['required'] = [
-			'published' => true,
-		];
-		$this->Form->create($this->article);
-
-		$result = $this->Form->radio('published', array('option A', 'optionB'));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'published', 'value' => ''),
-			array('input' => array('type' => 'radio', 'name' => 'published', 'value' => '0', 'id' => 'published-0', 'required' => 'required')),
-			'label' => array('for' => 'published-0'),
-			'option A',
-			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'published', 'value' => '1', 'id' => 'published-1', 'required' => 'required')),
-			'label' => array('for' => 'published-1'),
-			'option B',
-			'/label',
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test that radios with a 0 value are selected under the correct conditions.
- * Also ensure that values that are booleanish are handled correctly.
- *
- * @return void
- */
-	public function testRadioOptionWithBooleanishValues() {
-		$expected = array(
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
-			array('label' => array('for' => 'model-field-1')),
-			'Yes',
-			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0', 'checked' => 'checked')),
-			array('label' => array('for' => 'model-field-0')),
-			'No',
-			'/label',
-			'/fieldset'
-		);
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => '0'));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => 0));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => false));
-		$this->assertTags($result, $expected);
-
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => ''),
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
-			array('label' => array('for' => 'model-field-1')),
-			'Yes',
-			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
-			array('label' => array('for' => 'ModelField0')),
-			'No',
-			'/label',
-			'/fieldset'
-		);
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => null));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => ''));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'));
-		$this->assertTags($result, $expected);
-
-		$expected = array(
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'checked' => 'checked', 'value' => '1', 'id' => 'model-field-1')),
-			array('label' => array('for' => 'model-field-1')),
-			'Yes',
-			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
-			array('label' => array('for' => 'model-field-0')),
-			'No',
-			'/label',
-			'/fieldset'
-		);
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => 1));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => '1'));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->radio('Model.field', array('1' => 'Yes', '0' => 'No'), array('value' => true));
 		$this->assertTags($result, $expected);
 	}
 

@@ -78,6 +78,8 @@ class Radio implements WidgetInterface {
  * - `val` - A string of the option to mark as selected.
  * - `label` - Either false to disable label generation, or
  *   an array of attributes for all labels.
+ * - `required` - Set to true to add the required attribute
+ *   on all generated radios.
  *
  * @param array $data The data to build radio buttons with.
  * @return string
@@ -152,12 +154,19 @@ class Radio implements WidgetInterface {
 			$radio['id'] = $this->_id($radio);
 		}
 
+		if (isset($data['val']) && is_bool($data['val'])) {
+			$data['val'] = $data['val'] ? 1 : 0;
+		}
+
 		if (isset($data['val']) && strval($data['val']) === strval($radio['value'])) {
 			$radio['checked'] = true;
 		}
 
 		if ($this->_isDisabled($radio, $data['disabled'])) {
 			$radio['disabled'] = true;
+		}
+		if (!empty($data['required'])) {
+			$radio['required'] = true;
 		}
 
 		$input = $this->_templates->format('radio', [
