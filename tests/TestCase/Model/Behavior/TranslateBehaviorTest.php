@@ -587,4 +587,16 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals(0, $translations);
 	}
 
+	public function testSaveMultipleTranslations() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$article = $results = $table->find('translations')->first();
+
+		$translations = $article->get('_translations');
+		$translations['deu']->set('title', 'Another title');
+		$translations['eng']->set('body', 'Another body');
+		$article->set('_translations', $translations);
+		$table->save($article);
+	}
+
 }

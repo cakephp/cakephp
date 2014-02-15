@@ -162,14 +162,16 @@ class TranslateBehavior extends Behavior {
  */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
 		$locale = $entity->get('_locale') ?: $this->locale();
+		$table = $this->config()['translationTable'];
+		$newOptions = [$table => ['validate' => false]];
+		$options['associated'] = $newOptions + $options['associated'];
+
+		$this->_bundleTranslatedFields($entity);
 
 		if (!$locale) {
 			return;
 		}
 
-		$table = $this->config()['translationTable'];
-		$newOptions = [$table => ['validate' => false]];
-		$options['associated'] = $newOptions + $options['associated'];
 		$values = $entity->extract($this->config()['fields'], true);
 		$fields = array_keys($values);
 		$key = $entity->get(current((array)$this->_table->primaryKey()));
@@ -335,6 +337,47 @@ class TranslateBehavior extends Behavior {
 			$row->clean();
 			return $row;
 		});
+	}
+
+	protected function _bundleTranslatedFields($entity) {
+		$translations = (array)$entity->get('_translations');
+
+		if (empty($translations)) {
+			return;
+		}
+
+		$fields = $this->config()['fields'];
+		$primaryKey = (array)$this->_table->primaryKey();
+		$key = $entity->get(current($primaryKey));
+		$find = [];
+
+		foreach ($translations as $lang => $translation) {
+			foreach ($fields as $field) {
+				if ($translation->dirty($field)) {
+					$find[] = [
+						'locale' => $lang,
+						'field' => $field,
+						'foreign_key' => $key
+					];
+					$contents[] = $translation->get($field);
+				}
+			}
+		}
+
+		if (empty($find)) {
+			return;
+		}
+
+		$association = $this->_table->association($this->config()['translationTable']);
+		$query = $association->find()->select('id')->where(array_shift($find));
+		foreach ($find as $conditions) {
+			$q = $association->find()->select('id')->where(array_shift($find));
+			$query->unionAll($q);
+		}
+
+		foreach ($query->hydrate(false)->bufferResults(false) as $row) {
+			debug($row);
+		}
 	}
 
 }
