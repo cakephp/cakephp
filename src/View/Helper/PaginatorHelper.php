@@ -427,8 +427,8 @@ class PaginatorHelper extends Helper {
 			$url['page'] = null;
 		}
 		if (isset($paging['sortDefault'], $paging['directionDefault'], $url['sort'], $url['direction']) && $url['sort'] === $paging['sortDefault'] && $url['direction'] === $paging['directionDefault'] ) {
-			$url['sort'] = $url['direction'] = null;
-		}
+  			$url['sort'] = $url['direction'] = null;
+  		}
 		return parent::url($url);
 	}
 

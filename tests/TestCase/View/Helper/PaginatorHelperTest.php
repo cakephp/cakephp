@@ -544,6 +544,35 @@ class PaginatorHelperTest extends TestCase {
 	}
 
 /**
+ * Test that generated URLs work without sort defined within the request
+ *
+ * @return void
+ */
+	public function testDefaultSortAndNoSort() {
+		Router::setRequestInfo(array(
+			array('plugin' => null, 'controller' => 'articles', 'action' => 'index'),
+			array('base' => '/', 'here' => '/articles/', 'webroot' => '/')
+		));
+		$this->Paginator->request->params['paging'] = array(
+			'Article' => array(
+				'page' => 1, 'current' => 3, 'count' => 13,
+				'prevPage' => false, 'nextPage' => true, 'pageCount' => 8,
+				'sortDefault' => 'Article.title', 'directionDefault' => 'ASC',
+				'sort' => null
+			)
+		);
+		$result = $this->Paginator->next('Next');
+		$expected = array(
+			'li' => array('class' => 'next'),
+			'a' => array('rel' => 'next', 'href' => '/articles/index?page=2'),
+			'Next',
+			'/a',
+			'/li'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testUrlGeneration method
  *
  * @return void
@@ -559,6 +588,10 @@ class PaginatorHelperTest extends TestCase {
 
 		$result = $this->Paginator->url();
 		$this->assertEquals('/index', $result);
+
+		$file = fopen('/home/johan/test/log.txt', 'r+');
+
+		fwrite($file, $result);
 
 		$this->Paginator->request->params['paging']['Article']['page'] = 2;
 		$result = $this->Paginator->url();
