@@ -124,6 +124,42 @@ class RadioTest extends TestCase {
 	}
 
 /**
+ * Test that id suffixes are generated to not collide
+ *
+ * @return void
+ */
+	public function testRenderIdSuffixGeneration() {
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
+		$data = [
+			'name' => 'Thing[value]',
+			'options' => ['a>b' => 'First', 'a<b' => 'Second']
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Thing[value]',
+				'value' => 'a&gt;b',
+				'id' => 'thing-value-a-b'
+			]],
+			['label' => ['for' => 'thing-value-a-b']],
+			'First',
+			'/label',
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Thing[value]',
+				'value' => 'a&lt;b',
+				'id' => 'thing-value-a-b2',
+			]],
+			['label' => ['for' => 'thing-value-a-b2']],
+			'Second',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test rendering the empty option.
  *
  * @return void

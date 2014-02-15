@@ -41,6 +41,13 @@ class Radio implements WidgetInterface {
 	protected $_label;
 
 /**
+ * A list of id suffixes used in the current rendering.
+ *
+ * @var array
+ */
+	protected $_idSuffixes = [];
+
+/**
  * Constructor
  *
  * This class uses a few templates:
@@ -97,6 +104,7 @@ class Radio implements WidgetInterface {
 		}
 		unset($data['empty']);
 
+		$this->_idSuffixes = [];
 		$opts = [];
 		foreach ($options as $val => $text) {
 			$opts[] = $this->_renderInput($val, $text, $data);
@@ -206,6 +214,15 @@ class Radio implements WidgetInterface {
  * @return string Generated id.
  */
 	protected function _id($radio) {
-		return mb_strtolower(Inflector::slug($radio['name'] . '_' . $radio['value'], '-'));}
+		$value = mb_strtolower(Inflector::slug($radio['name'], '-'));
+		$idSuffix = mb_strtolower(str_replace(array('@', '<', '>', ' ', '"', '\''), '-', $radio['value']));
+		$count = 1;
+		$check = $idSuffix;
+		while (in_array($check, $this->_idSuffixes)) {
+			$check = $idSuffix . $count++;
+		}
+		$this->_idSuffixes[] = $check;
+		return trim($value . '-' . $check, '-');
+	}
 
 }
