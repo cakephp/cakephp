@@ -589,10 +589,6 @@ class PaginatorHelperTest extends TestCase {
 		$result = $this->Paginator->url();
 		$this->assertEquals('/index', $result);
 
-		$file = fopen('/home/johan/test/log.txt', 'r+');
-
-		fwrite($file, $result);
-
 		$this->Paginator->request->params['paging']['Article']['page'] = 2;
 		$result = $this->Paginator->url();
 		$this->assertEquals('/index?page=2', $result);
