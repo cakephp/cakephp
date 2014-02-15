@@ -12,7 +12,7 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\Model\Behavior;
+namespace Cake\Test\TestCase\Model\Behavior\Translate;
 
 use Cake\Model\Behavior\Translate\TranslateTrait;
 use Cake\ORM\Entity;
@@ -25,7 +25,7 @@ class TestEntity extends Entity {
 /**
  * Translate behavior test case
  */
-class TranslateBehaviorTest extends TestCase {
+class TranslateTraitTest extends TestCase {
 
 /**
  * Tests that missing translation entries are created automatically
