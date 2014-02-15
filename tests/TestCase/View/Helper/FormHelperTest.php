@@ -4293,141 +4293,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testRadioHiddenInputDisabling() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('Model.1.field', array(
-				'type' => 'radio',
-				'options' => array('option A'),
-				'hiddenField' => false
-			)
-		);
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-			'input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'Model1Field0'),
-			'label' => array('for' => 'Model1Field0'),
-			'option A',
-			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
 		$result = $this->Form->radio('Model.1.field', array('option A'), array('hiddenField' => false));
 		$expected = array(
-			'input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'Model1Field0'),
-			'label' => array('for' => 'Model1Field0'),
+			'input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'model-1-field-0'),
+			'label' => array('for' => 'model-1-field-0'),
 			'option A',
 			'/label'
 		);
 		$this->assertTags($result, $expected);
-	}
-
-/**
- * test adding an empty option for radio buttons
- *
- * @return void
- */
-	public function testRadioAddEmptyOption() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('Model.1.field', array(
-			'type' => 'radio',
-			'options' => array('option A'),
-			'empty' => true,
-			'hiddenField' => false
-		));
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-				'fieldset' => array(),
-					'legend' => array(),
-						'Field',
-					'/legend',
-					array('input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '', 'id' => 'Model1Field')),
-					array('label' => array('for' => 'Model1Field')),
-						__('empty'),
-					'/label',
-					array('input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'Model1Field0')),
-					array('label' => array('for' => 'Model1Field0')),
-						'option A',
-					'/label',
-				'/fieldset',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Model.1.field', array(
-			'type' => 'radio',
-			'options' => array('option A'),
-			'empty' => 'CustomEmptyLabel',
-			'hiddenField' => false
-		));
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-				'fieldset' => array(),
-					'legend' => array(),
-						'Field',
-					'/legend',
-					array('input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '', 'id' => 'Model1Field')),
-					array('label' => array('for' => 'Model1Field')),
-						'CustomEmptyLabel',
-					'/label',
-					array('input' => array('type' => 'radio', 'name' => 'Model[1][field]', 'value' => '0', 'id' => 'Model1Field0')),
-					array('label' => array('for' => 'Model1Field0')),
-						'option A',
-					'/label',
-				'/fieldset',
-			'/div'
-		);
-
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Model.1.field', array(
-			'type' => 'radio',
-			'options' => array('option A'),
-			'empty' => false,
-			'hiddenField' => false
-		));
-		$this->assertTextNotContains('"Model1Field"', $result);
-	}
-
-/**
- * Test that radio() accepts an array for label
- *
- * @return void
- */
-	public function testRadioLabelArray() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('Model.field', array(
-			'type' => 'radio',
-			'legend' => false,
-			'label' => array(
-				'class' => 'checkbox float-left',
-			),
-			'options' => array('1' => 'Option A', '2' => 'Option B.')
-		));
-		$this->assertTextContains(
-			'<label for="ModelField1" class="checkbox float-left">Option A</label>',
-			$result
-		);
-	}
-
-/**
- * Test that label id's match the input element id's when radio is called after create().
- *
- * @return void
- */
-	public function testRadioWithCreate() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('Model');
-		$result = $this->Form->radio('recipient',
-			array('1' => '1', '2' => '2', '3' => '3'),
-			array('legend' => false, 'value' => '1')
-		);
-		$this->assertTextNotContains(
-			'<label for="ModelModelRecipient1">1</label>',
-			$result
-		);
-		$this->assertTextContains(
-			'<label for="ModelRecipient1">1</label>',
-			$result
-		);
 	}
 
 /**
