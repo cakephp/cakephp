@@ -470,6 +470,7 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals(1, $article->get('id'));
 		$article->set('title', 'New translated article');
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals(1, $article->get('id'));
@@ -485,6 +486,7 @@ class TranslateBehaviorTest extends TestCase {
 		$article->set('title', 'Wow, such translated article');
 		$article->set('body', 'A translated body');
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals(1, $article->get('id'));
@@ -516,6 +518,7 @@ class TranslateBehaviorTest extends TestCase {
 		$article->set('title', 'Un autre titre');
 		$article->set('body', 'Le contenu');
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals('Un autre titre', $article->get('title'));
@@ -536,6 +539,7 @@ class TranslateBehaviorTest extends TestCase {
 		$article->set('_locale', 'fra');
 		$article->set('title', 'Le titre');
 		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals(1, $article->get('id'));
@@ -565,9 +569,78 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals(1, $article->get('id'));
 		$article->set('title', 'Le titre');
 		$table->save($article, ['associated' => ['Comments']]);
+		$this->assertNull($article->get('_i18n'));
 
 		$article = $table->find()->first();
 		$this->assertEquals('Le titre', $article->get('title'));
+	}
+
+/**
+ * Tests that after deleting a translated entity, all translations are also removed
+ *
+ * @return void
+ */
+	public function testDelete() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$article = $table->find()->first();
+		$this->assertTrue($table->delete($article));
+
+		$translations = TableRegistry::get('I18n')->find()
+			->where(['model' => 'Articles', 'foreign_key' => $article->id])
+			->count();
+		$this->assertEquals(0, $translations);
+	}
+
+/**
+ * Tests saving multiple translations at once when the translations already
+ * exist in the database
+ *
+ * @return void
+ */
+	public function testSaveMultipleTranslations() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$article = $results = $table->find('translations')->first();
+
+		$translations = $article->get('_translations');
+		$translations['deu']->set('title', 'Another title');
+		$translations['eng']->set('body', 'Another body');
+		$article->set('_translations', $translations);
+		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
+
+		$article = $results = $table->find('translations')->first();
+		$translations = $article->get('_translations');
+		$this->assertEquals('Another title', $translations['deu']->get('title'));
+		$this->assertEquals('Another body', $translations['eng']->get('body'));
+	}
+
+/**
+ * Tests saving multiple existing translations and adding new ones
+ *
+ * @return void
+ */
+	public function testSaveMultipleNewTranslations() {
+		$table = TableRegistry::get('Articles');
+		$table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+		$article = $results = $table->find('translations')->first();
+
+		$translations = $article->get('_translations');
+		$translations['deu']->set('title', 'Another title');
+		$translations['eng']->set('body', 'Another body');
+		$translations['spa'] = new Entity(['title' => 'Titulo']);
+		$translations['fre'] = new Entity(['title' => 'Titre']);
+		$article->set('_translations', $translations);
+		$table->save($article);
+		$this->assertNull($article->get('_i18n'));
+
+		$article = $results = $table->find('translations')->first();
+		$translations = $article->get('_translations');
+		$this->assertEquals('Another title', $translations['deu']->get('title'));
+		$this->assertEquals('Another body', $translations['eng']->get('body'));
+		$this->assertEquals('Titulo', $translations['spa']->get('title'));
+		$this->assertEquals('Titre', $translations['fre']->get('title'));
 	}
 
 }

@@ -1170,17 +1170,14 @@ class Table implements EventListener {
 			$entity->isNew(true);
 		}
 
-		if ($options['associated'] === true) {
-			$options['associated'] = $this->_associated->keys();
-		}
-		$associated = array_filter((array)$options['associated']);
+		$associated = $options['associated'];
 		$options['associated'] = [];
 
 		if (!$this->validate($entity, $options)) {
 			return false;
 		}
 
-		$options['associated'] = $associated;
+		$options['associated'] = $this->_associated->normalizeKeys($associated);
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 
@@ -1421,6 +1418,8 @@ class Table implements EventListener {
 			throw new \InvalidArgumentException($msg);
 		}
 
+		$this->_associated->cascadeDelete($entity, $options->getArrayCopy());
+
 		$query = $this->query();
 		$statement = $query->delete()
 			->where($conditions)
@@ -1430,8 +1429,6 @@ class Table implements EventListener {
 		if (!$success) {
 			return $success;
 		}
-
-		$this->_associated->cascadeDelete($entity, $options->getArrayCopy());
 
 		$event = new Event('Model.afterDelete', $this, [
 			'entity' => $entity,
