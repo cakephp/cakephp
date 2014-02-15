@@ -806,9 +806,9 @@ class QueryTest extends TestCase {
 			$query->mapReduce()
 		);
 
-		$this->assertEquals($query, $query->mapReduce($mapper1));
+		$this->assertEquals($query, $query->mapReduce($mapper2));
 		$result = $query->mapReduce();
-		$this->assertEquals(
+		$this->assertSame(
 			[
 				['mapper' => $mapper1, 'reducer' => null],
 				['mapper' => $mapper2, 'reducer' => null]

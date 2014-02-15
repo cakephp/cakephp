@@ -33,6 +33,7 @@ class RedisEngineTest extends TestCase {
  * @return void
  */
 	public function setUp() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		parent::setUp();
 		$this->skipIf(!class_exists('Redis'), 'Redis is not installed or configured properly.');
 
