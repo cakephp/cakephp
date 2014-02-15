@@ -635,4 +635,5 @@ class TranslateBehaviorTest extends TestCase {
 		$this->assertEquals('Titulo', $translations['spa']->get('title'));
 		$this->assertEquals('Titre', $translations['fre']->get('title'));
 	}
+
 }

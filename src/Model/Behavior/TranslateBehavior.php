@@ -339,6 +339,14 @@ class TranslateBehavior extends Behavior {
 		});
 	}
 
+/**
+ * Helper method used to generated multiple translated field entities
+ * out fo the data found in the `_translations` property in the passed
+ * entity. The result will be put into its `_i18n` property
+ *
+ * @param \Cake\ORM\Entity $entity
+ * @return void
+ */
 	protected function _bundleTranslatedFields($entity) {
 		$translations = (array)$entity->get('_translations');
 
@@ -384,6 +392,13 @@ class TranslateBehavior extends Behavior {
 		$entity->set('_i18n', $contents);
 	}
 
+/**
+ * Returns the ids found for each of the condition arrays passed for the translations
+ * table. Each records is index by the corresponding position to the conditions array
+ *
+ * @param array $ruleSet an array of arary of conditions to be used for finding each
+ * @return array
+ */
 	protected function _findExistingTranslations($ruleSet) {
 		$association = $this->_table->association($this->config()['translationTable']);
 		$query = $association->find()
