@@ -799,6 +799,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testInvokeActionPrefixProtection() {
+		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
 		Router::connect('/admin/:controller/:action/*', array('prefix' => 'admin'));
 

@@ -214,9 +214,7 @@ class Route {
 	}
 
 /**
- * Get the standardized plugin.controller:action name
- * for a route. This will compile a route if it has not
- * already been compiled.
+ * Get the standardized plugin.controller:action name for a route.
  *
  * @return string
  */
@@ -447,7 +445,6 @@ class Route {
 			return false;
 		}
 
-		$prefixes = Router::prefixes();
 		$pass = array();
 		$query = array();
 

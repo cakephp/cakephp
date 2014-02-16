@@ -1846,22 +1846,25 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * Test that setting a prefix to false is ignored, as its generally user error.
+ * Test that well known route parameters are passed through.
  *
  * @return void
  */
-	public function testPrefixFalseIgnored() {
+	public function testRouteParamDefaults() {
 		Configure::write('Routing.prefixes', array('admin'));
 		Router::reload();
+		Router::connect('/cache/*', array('prefix' => false, 'plugin' => true, 'controller' => 0, 'action' => 1));
 
-		Router::connect('/cache_css/*', array('prefix' => false, 'controller' => 'asset_compress', 'action' => 'get'));
-
-		$url = Router::url(array('controller' => 'asset_compress', 'action' => 'get', 'test'));
-		$expected = '/cache_css/test';
+		$url = Router::url(array('controller' => 0, 'action' => 1, 'test'));
+		$expected = '/';
 		$this->assertEquals($expected, $url);
 
-		$url = Router::url(array('prefix' => false, 'controller' => 'asset_compress', 'action' => 'get', 'test'));
-		$expected = '/cache_css/test';
+		$url = Router::url(array('prefix' => 1, 'controller' => 0, 'action' => 1, 'test'));
+		$expected = '/';
+		$this->assertEquals($expected, $url);
+
+		$url = Router::url(array('prefix' => 0, 'plugin' => 1, 'controller' => 0, 'action' => 1, 'test'));
+		$expected = '/cache/test';
 		$this->assertEquals($expected, $url);
 	}
 
@@ -1991,11 +1994,13 @@ class RouterTest extends TestCase {
 	}
 
 /**
- * testParsingWithPrefixes method
+ * testParsingWithLiteralPrefixes method
  *
  * @return void
  */
-	public function testParsingWithPrefixes() {
+	public function testParsingWithLiteralPrefixes() {
+		Configure::write('Routing.prefixes', array());
+		Router::reload();
 		$adminParams = array('prefix' => 'admin');
 		Router::connect('/admin/:controller', $adminParams);
 		Router::connect('/admin/:controller/:action', $adminParams);
@@ -2024,7 +2029,7 @@ class RouterTest extends TestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::prefixes();
-		$expected = array('admin');
+		$expected = array();
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
