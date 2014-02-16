@@ -107,6 +107,7 @@ class CommandListShellTest extends TestCase {
  * @return void
  */
 	public function testMainXml() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Remove when travis updates to hhvm 2.5');
 		$this->Shell->params['xml'] = true;
 		$this->Shell->main();
 

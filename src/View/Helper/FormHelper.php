@@ -63,6 +63,15 @@ class FormHelper extends Helper {
 	);
 
 /**
+ * Settings for the helper.
+ *
+ * @var array
+ */
+	public $settings = [
+		'errorClass' => 'form-error'
+	];
+
+/**
  * List of fields created, used with secure forms.
  *
  * @var array
@@ -163,6 +172,8 @@ class FormHelper extends Helper {
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
+		'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
+		'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 	];
 
 /**
@@ -296,10 +307,10 @@ class FormHelper extends Helper {
 			$options['context'] = [];
 		}
 		$options['context']['entity'] = $model;
-		$this->_context = $this->_buildContext($options['context']);
+		$context = $this->_getContext($options['context']);
 		unset($options['context']);
 
-		$isCreate = $this->_context->isCreate();
+		$isCreate = $context->isCreate();
 
 		$options = $options + [
 			'type' => $isCreate ? 'post' : 'put',
@@ -309,7 +320,7 @@ class FormHelper extends Helper {
 			'encoding' => strtolower(Configure::read('App.encoding')),
 		];
 
-		$options['action'] = $this->_formUrl($options);
+		$options['action'] = $this->_formUrl($context, $options);
 		unset($options['url']);
 
 		switch (strtolower($options['type'])) {
@@ -366,10 +377,11 @@ class FormHelper extends Helper {
 /**
  * Create the URL for a form based on the options.
  *
+ * @param Cake\View\Form\ContextInterface $context The context object to use.
  * @param array $options An array of options from create()
  * @return string The action attribute for the form.
  */
-	protected function _formUrl($options) {
+	protected function _formUrl($context, $options) {
 		if ($options['action'] === null && $options['url'] === null) {
 			return $this->request->here(false);
 		}
@@ -387,9 +399,9 @@ class FormHelper extends Helper {
 
 			$action = (array)$options['url'] + $actionDefaults;
 
-			$pk = $this->_context->primaryKey();
+			$pk = $context->primaryKey();
 			if (count($pk)) {
-				$id = $this->_context->val($pk[0]);
+				$id = $context->val($pk[0]);
 			}
 			if (empty($action[0]) && isset($id)) {
 				$action[0] = $id;
@@ -418,7 +430,8 @@ class FormHelper extends Helper {
 			return '';
 		}
 		return $this->hidden('_csrfToken', array(
-			'value' => $this->request->params['_csrfToken'], 'id' => 'Token' . mt_rand(),
+			'value' => $this->request->params['_csrfToken'],
+			'id' => 'Token' . mt_rand(),
 			'secure' => static::SECURE_SKIP
 		));
 	}
@@ -1526,7 +1539,7 @@ class FormHelper extends Helper {
  * @throws Cake\Error\Exception When there are no params for the method call.
  */
 	public function __call($method, $params) {
-		$options = array();
+		$options = [];
 		if (empty($params)) {
 			throw new Error\Exception(sprintf('Missing field name for FormHelper::%s', $method));
 		}
@@ -1537,7 +1550,7 @@ class FormHelper extends Helper {
 			$options['type'] = $method;
 		}
 		$options = $this->_initInputField($params[0], $options);
-		return $this->Html->useTag('input', $options['name'], array_diff_key($options, array('name' => null)));
+		return $this->widget($options['type'], $options);
 	}
 
 /**
@@ -1556,14 +1569,18 @@ class FormHelper extends Helper {
 		$options = $this->_initInputField($fieldName, $options);
 		$value = null;
 
-		if (array_key_exists('value', $options)) {
-			$value = $options['value'];
+		if (array_key_exists('val', $options)) {
+			$value = $options['val'];
 			if (!array_key_exists('escape', $options) || $options['escape'] !== false) {
 				$value = h($value);
 			}
-			unset($options['value']);
 		}
-		return $this->Html->useTag('textarea', $options['name'], array_diff_key($options, array('type' => null, 'name' => null)), $value);
+		unset($options['val']);
+		return $this->formatTemplate('textarea', [
+			'name' => $options['name'],
+			'value' => $value,
+			'attrs' => $this->_templater->formatAttributes($options, ['name']),
+		]);
 	}
 
 /**
@@ -1585,10 +1602,11 @@ class FormHelper extends Helper {
 		));
 
 		if ($secure === true) {
-			$this->_secure(true, null, '' . $options['value']);
+			$this->_secure(true, null, '' . $options['val']);
 		}
 
-		return $this->Html->useTag('hidden', $options['name'], array_diff_key($options, array('name' => null)));
+		$options['type'] = 'hidden';
+		return $this->widget('hidden', $options);
 	}
 
 /**
@@ -2808,28 +2826,34 @@ class FormHelper extends Helper {
 
 /**
  * Sets field defaults and adds field to form security input hash.
- * Will also add a 'form-error' class if the field contains validation errors.
+ * Will also add the error class if the field contains validation errors.
  *
  * ### Options
  *
  * - `secure` - boolean whether or not the field should be added to the security fields.
  *   Disabling the field using the `disabled` option, will also omit the field from being
  *   part of the hashed key.
+ * - `default` - mixed - The value to use if there is no value in the form's context.
+ * - `disabled` - mixed - Either a boolean indicating disabled state, or the string in
+ *   a numerically indexed value.
  *
- * This method will convert a numerically indexed 'disabled' into a associative
- * value. FormHelper's internals expect associative options.
+ * This method will convert a numerically indexed 'disabled' into an associative
+ * array value. FormHelper's internals expect associative options.
+ *
+ * The output of this function is a more complete set of input attributes that
+ * can be passed to a form widget to generate the actual input.
  *
  * @param string $field Name of the field to initialize options for.
  * @param array $options Array of options to append options into.
  * @return array Array of options for the input.
  */
-	protected function _initInputField($field, $options = array()) {
+	protected function _initInputField($field, $options = []) {
+		$secure = !empty($this->request['_Token']);
 		if (isset($options['secure'])) {
 			$secure = $options['secure'];
 			unset($options['secure']);
-		} else {
-			$secure = (isset($this->request['_Token']) && !empty($this->request['_Token']));
 		}
+		$context = $this->_getContext();
 
 		$disabledIndex = array_search('disabled', $options, true);
 		if (is_int($disabledIndex)) {
@@ -2837,26 +2861,42 @@ class FormHelper extends Helper {
 			$options['disabled'] = true;
 		}
 
-		$result = parent::_initInputField($field, $options);
-		if ($this->tagIsInvalid() !== false) {
-			$result = $this->addClass($result, 'form-error');
-		}
-		if (!empty($result['disabled']) || $secure === static::SECURE_SKIP) {
-			return $result;
+		if (!isset($options['name'])) {
+			$parts = explode('.', $field);
+			$first = array_shift($parts);
+			$options['name'] = $first . ($parts ? '[' . implode('][', $parts) . ']' : '');
 		}
 
-		if (!isset($result['required']) &&
-			$this->_introspectModel($this->model(), 'validates', $this->field())
-		) {
-			$result['required'] = true;
+		if (isset($options['value']) && !isset($options['val'])) {
+			$options['val'] = $options['value'];
+		}
+		if (!isset($options['val'])) {
+			$options['val'] = $context->val($field);
+		}
+		if (!isset($options['val']) && isset($options['default'])) {
+			$options['val'] = $options['default'];
+		}
+		unset($options['value'], $options['default']);
+
+		$options += (array)$context->attributes($field);
+
+		if ($context->hasError($field)) {
+			$options = $this->addClass($options, $this->settings['errorClass']);
+		}
+		if (!empty($options['disabled']) || $secure === static::SECURE_SKIP) {
+			return $options;
+		}
+
+		if (!isset($options['required']) && $context->isRequired($field)) {
+			$options['required'] = true;
 		}
 
 		if ($secure === self::SECURE_SKIP) {
-			return $result;
+			return $options;
 		}
 
 		$this->_secure($secure, $this->_secureFieldName($options));
-		return $result;
+		return $options;
 	}
 
 /**
@@ -2923,7 +2963,7 @@ class FormHelper extends Helper {
  * @return null|Cake\View\Form\ContextInterface The context for the form.
  */
 	public function context() {
-		return $this->_context;
+		return $this->_getContext();
 	}
 
 /**
@@ -2936,7 +2976,12 @@ class FormHelper extends Helper {
  * @throws RuntimeException when the context class does not implement the
  *   ContextInterface.
  */
-	protected function _buildContext($data) {
+	protected function _getContext($data = []) {
+		if (isset($this->_context) && empty($data)) {
+			return $this->_context;
+		}
+		$data += ['entity' => null];
+
 		foreach ($this->_contextProviders as $key => $check) {
 			$context = $check($this->request, $data);
 			if ($context) {
@@ -2951,7 +2996,7 @@ class FormHelper extends Helper {
 				'Context objects must implement Cake\View\Form\ContextInterface'
 			);
 		}
-		return $context;
+		return $this->_context = $context;
 	}
 
 /**
@@ -2981,8 +3026,7 @@ class FormHelper extends Helper {
  * @return void
  */
 	public function widget($name, array $data = []) {
-		$widget = $this->_registry->get($name);
-		return $widget->render($data);
+		return $this->_registry->get($name)->render($data);
 	}
 
 }

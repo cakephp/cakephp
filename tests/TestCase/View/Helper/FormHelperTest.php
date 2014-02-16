@@ -599,7 +599,7 @@ class FormHelperTest extends TestCase {
  * @return array
  */
 	public function contextSelectionProvider() {
-		$entity = $this->getMock('Cake\ORM\Entity');
+		$entity = new Article();
 		$collection = $this->getMock('Cake\Collection\Collection', ['extract'], [[$entity]]);
 		$data = [
 			'schema' => [
@@ -623,6 +623,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateContextSelectionBuiltIn($data, $class) {
+		$this->loadFixtures('Article');
 		$this->Form->create($data);
 		$this->assertInstanceOf($class, $this->Form->context());
 	}
@@ -1115,12 +1116,11 @@ class FormHelperTest extends TestCase {
 	public function testCreateWithSecurity() {
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$article = new Article();
-		$result = $this->Form->create($article, [
-			'url' => '/contacts/add',
+		$result = $this->Form->create($this->article, [
+			'url' => '/articles/publish',
 		]);
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding),
+			'form' => array('method' => 'post', 'action' => '/articles/publish', 'accept-charset' => $encoding),
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
@@ -1130,7 +1130,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->create($article, ['url' => '/contacts/add', 'id' => 'MyForm']);
+		$result = $this->Form->create($this->article, ['url' => '/articles/publish', 'id' => 'MyForm']);
 		$expected['form']['id'] = 'MyForm';
 		$this->assertTags($result, $expected);
 	}
@@ -1163,7 +1163,7 @@ class FormHelperTest extends TestCase {
  */
 	public function testCreateClearingFields() {
 		$this->Form->fields = array('model_id');
-		$this->Form->create(new Article());
+		$this->Form->create($this->article);
 		$this->assertEquals(array(), $this->Form->fields);
 	}
 
@@ -1280,12 +1280,14 @@ class FormHelperTest extends TestCase {
  */
 	public function testTextFieldGenerationForFloats() {
 		$this->markTestIncomplete('Need to revisit once models work again.');
-		$model->setSchema(array('foo' => array(
-			'type' => 'float',
-			'null' => false,
-			'default' => null,
-			'length' => 10
-		)));
+		$this->article['schema'] = [
+			'foo' => [
+				'type' => 'float',
+				'null' => false,
+				'default' => null,
+				'length' => 10
+			]
+		];
 
 		$this->Form->create('Contact');
 		$result = $this->Form->input('foo');
@@ -3299,10 +3301,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputWithLeadingInteger() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->text('0.Node.title');
 		$expected = array(
-			'input' => array('name' => '0[Node][title]', 'id' => '0NodeTitle', 'type' => 'text')
+			'input' => array('name' => '0[Node][title]', 'type' => 'text')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -3990,30 +3991,49 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextbox() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->text('Model.field');
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]')));
 
 		$result = $this->Form->text('Model.field', array('type' => 'password'));
-		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Model[field]', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Model[field]')));
 
 		$result = $this->Form->text('Model.field', array('id' => 'theID'));
 		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'id' => 'theID')));
+	}
+
+/**
+ * Test that text() hooks up with request data and error fields.
+ *
+ * @return void
+ */
+	public function testTextBoxDataAndError() {
+		$this->article['errors'] = [
+			'Contact' => ['text' => 'wrong']
+		];
+		$this->Form->create($this->article);
 
 		$this->Form->request->data['Model']['text'] = 'test <strong>HTML</strong> values';
 		$result = $this->Form->text('Model.text');
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[text]', 'value' => 'test &lt;strong&gt;HTML&lt;/strong&gt; values', 'id' => 'ModelText')));
+		$expected = [
+			'input' => [
+				'type' => 'text',
+				'name' => 'Model[text]',
+				'value' => 'test &lt;strong&gt;HTML&lt;/strong&gt; values',
+			]
+		];
+		$this->assertTags($result, $expected);
 
-		$Contact->validationErrors['text'] = array(true);
 		$this->Form->request->data['Contact']['text'] = 'test';
-		$result = $this->Form->text('Contact.text', array('id' => 'theID'));
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Contact[text]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
-
-		$this->Form->request->data['Model']['0']['OtherModel']['field'] = 'My value';
-		$result = $this->Form->text('Model.0.OtherModel.field', array('id' => 'myId'));
-		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'Model[0][OtherModel][field]', 'value' => 'My value', 'id' => 'myId')
-		);
+		$result = $this->Form->text('Contact.text', ['id' => 'theID']);
+		$expected = [
+			'input' => [
+				'type' => 'text',
+				'name' => 'Contact[text]',
+				'value' => 'test',
+				'id' => 'theID',
+				'class' => 'form-error'
+			]
+		];
 		$this->assertTags($result, $expected);
 	}
 
@@ -4024,15 +4044,16 @@ class FormHelperTest extends TestCase {
  *
  * @return void
  */
-	public function testDefaultValue() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+	public function testTextDefaultValue() {
 		$this->Form->request->data['Model']['field'] = 'test';
 		$result = $this->Form->text('Model.field', array('default' => 'default value'));
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'value' => 'test', 'id' => 'ModelField')));
+		$expected = ['input' => ['type' => 'text', 'name' => 'Model[field]', 'value' => 'test']];
+		$this->assertTags($result, $expected);
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->text('Model.field', array('default' => 'default value'));
-		$this->assertTags($result, array('input' => array('type' => 'text', 'name' => 'Model[field]', 'value' => 'default value', 'id' => 'ModelField')));
+		$expected = ['input' => ['type' => 'text', 'name' => 'Model[field]', 'value' => 'default value']];
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -4190,11 +4211,16 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPassword() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->password('Contact.field');
-		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Contact[field]', 'id' => 'ContactField')));
+		$this->article['errors'] = [
+			'Contact' => [
+				'passwd' => 1
+			]
+		];
+		$this->Form->create($this->article);
 
-		$Contact->validationErrors['passwd'] = 1;
+		$result = $this->Form->password('Contact.field');
+		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Contact[field]')));
+
 		$this->Form->request->data['Contact']['passwd'] = 'test';
 		$result = $this->Form->password('Contact.passwd', array('id' => 'theID'));
 		$this->assertTags($result, array('input' => array('type' => 'password', 'name' => 'Contact[passwd]', 'value' => 'test', 'id' => 'theID', 'class' => 'form-error')));
@@ -7753,45 +7779,45 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextArea() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->data = array('Model' => array('field' => 'some test data'));
-		$result = $this->Form->textarea('Model.field');
+		$this->Form->request->data = array('field' => 'some test data');
+		$result = $this->Form->textarea('field');
 		$expected = array(
-			'textarea' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'textarea' => array('name' => 'field'),
 			'some test data',
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->textarea('Model.tmp');
+		$result = $this->Form->textarea('user.bio');
 		$expected = array(
-			'textarea' => array('name' => 'Model[tmp]', 'id' => 'ModelTmp'),
+			'textarea' => array('name' => 'user[bio]'),
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
-		$result = $this->Form->textarea('Model.field');
+		$this->Form->request->data = array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars');
+		$result = $this->Form->textarea('field');
 		$expected = array(
-			'textarea' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'textarea' => array('name' => 'field'),
 			htmlentities('some <strong>test</strong> data with <a href="#">HTML</a> chars'),
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data = array('Model' => array('field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars'));
-		$result = $this->Form->textarea('Model.field', array('escape' => false));
+		$this->Form->request->data = [
+			'Model' => ['field' => 'some <strong>test</strong> data with <a href="#">HTML</a> chars']
+		];
+		$result = $this->Form->textarea('Model.field', ['escape' => false]);
 		$expected = array(
-			'textarea' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'textarea' => array('name' => 'Model[field]'),
 			'some <strong>test</strong> data with <a href="#">HTML</a> chars',
 			'/textarea',
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data['Model']['0']['OtherModel']['field'] = null;
-		$result = $this->Form->textarea('Model.0.OtherModel.field');
+		$result = $this->Form->textarea('0.OtherModel.field');
 		$expected = array(
-			'textarea' => array('name' => 'Model[0][OtherModel][field]', 'id' => 'Model0OtherModelField'),
+			'textarea' => array('name' => '0[OtherModel][field]'),
 			'/textarea'
 		);
 		$this->assertTags($result, $expected);
@@ -7805,21 +7831,16 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextAreaWithStupidCharacters() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->loadFixtures('Post');
-		$result = $this->Form->input('Post.content', array(
-			'label' => 'Current Text', 'value' => "GREAT®", 'rows' => '15', 'cols' => '75'
-		));
-		$expected = array(
-			'div' => array('class' => 'input textarea'),
-				'label' => array('for' => 'PostContent'),
-					'Current Text',
-				'/label',
-				'textarea' => array('name' => 'Post[content]', 'id' => 'PostContent', 'rows' => '15', 'cols' => '75'),
-				'GREAT®',
-				'/textarea',
-			'/div'
-		);
+		$result = $this->Form->textarea('Post.content', [
+			'value' => "GREAT®",
+			'rows' => '15',
+			'cols' => '75'
+		]);
+		$expected = [
+			'textarea' => ['name' => 'Post[content]', 'rows' => '15', 'cols' => '75'],
+			'GREAT®',
+			'/textarea',
+		];
 		$this->assertTags($result, $expected);
 	}
 
@@ -7829,13 +7850,21 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHiddenField() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors['field'] = 1;
-		$this->Form->request->data['Contact']['field'] = 'test';
-		$result = $this->Form->hidden('Contact.field', array('id' => 'theID'));
+		$this->article['errors'] = [
+			'field' => true
+		];
+		$this->Form->request->data['field'] = 'test';
+		$this->Form->create($this->article);
+		$result = $this->Form->hidden('field', array('id' => 'theID'));
 		$this->assertTags($result, array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'id' => 'theID', 'value' => 'test'))
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'id' => 'theID', 'value' => 'test'))
 		);
+
+		$result = $this->Form->hidden('field', ['value' => 'my value']);
+		$expected = [
+			'input' => ['type' => 'hidden', 'class' => 'form-error', 'name' => 'field', 'value' => 'my value']
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -9540,32 +9569,43 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHtml5Inputs() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->email('User.email');
 		$expected = array(
-			'input' => array('type' => 'email', 'name' => 'User[email]', 'id' => 'UserEmail')
+			'input' => array('type' => 'email', 'name' => 'User[email]')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->search('User.query');
 		$expected = array(
-			'input' => array('type' => 'search', 'name' => 'User[query]', 'id' => 'UserQuery')
+			'input' => array('type' => 'search', 'name' => 'User[query]')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->search('User.query', array('value' => 'test'));
 		$expected = array(
-			'input' => array('type' => 'search', 'name' => 'User[query]', 'id' => 'UserQuery', 'value' => 'test')
+			'input' => array('type' => 'search', 'name' => 'User[query]', 'value' => 'test')
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->search('User.query', array('type' => 'text', 'value' => 'test'));
 		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'User[query]', 'id' => 'UserQuery', 'value' => 'test')
+			'input' => array('type' => 'text', 'name' => 'User[query]', 'value' => 'test')
 		);
 		$this->assertTags($result, $expected);
+	}
 
-		$result = $this->Form->input('User.website', array('type' => 'url', 'value' => 'http://domain.tld', 'div' => false, 'label' => false));
+/**
+ * Test accessing htm5 inputs through input().
+ *
+ * @return void
+ */
+	public function testHtml5InputWithInput() {
+		$this->markTestIncomplete('Need to revisit once models work again.');
+		$result = $this->Form->input('User.website', array(
+			'type' => 'url',
+			'value' => 'http://domain.tld',
+			'div' => false,
+			'label' => false));
 		$expected = array(
 			'input' => array('type' => 'url', 'name' => 'User[website]', 'id' => 'UserWebsite', 'value' => 'http://domain.tld')
 		);
@@ -9573,12 +9613,12 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test errors when field name is missing.
  *
  * @expectedException Cake\Error\Exception
  * @return void
  */
 	public function testHtml5InputException() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->email();
 	}
 

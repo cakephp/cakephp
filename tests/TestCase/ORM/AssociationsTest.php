@@ -303,4 +303,24 @@ class AssociationsTest extends TestCase {
 		);
 	}
 
+/**
+ * Tests the normalizeKeys method
+ *
+ * @return void
+ */
+	public function testNormalizeKeys() {
+		$this->assertSame([], $this->associations->normalizeKeys([]));
+		$this->assertSame([], $this->associations->normalizeKeys(false));
+
+		$assocs = ['a', 'b', 'd' => ['something']];
+		$expected = ['a' => [], 'b' => [], 'd' => ['something']];
+		$this->assertSame($expected, $this->associations->normalizeKeys($assocs));
+
+		$belongsTo = new BelongsTo([]);
+		$this->associations->add('users', $belongsTo);
+		$this->associations->add('categories', $belongsTo);
+		$expected = ['users' => [], 'categories' => []];
+		$this->assertSame($expected, $this->associations->normalizeKeys(true));
+	}
+
 }

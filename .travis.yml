@@ -13,10 +13,16 @@ services:
   - memcached
 
 matrix:
+  allow_failures:
+    - php: hhvm
+  fast_finish: true
   include:
     - php: 5.4
-      env:
-        - PHPCS=1
+      env: PHPCS=1
+    - php: hhvm
+      env: HHVM=1 DB=sqlite db_class='Cake\Database\Driver\Sqlite' db_dsn='sqlite::memory:'
+    - php: hhvm
+      env: HHVM=1 DB=mysql db_class='Cake\Database\Driver\Mysql' db_dsn='mysql:host=0.0.0.0;dbname=cakephp_test' db_database='cakephp_test' db_login='travis' db_password=''
 
 before_script:
   - sh -c "if [ '$PHPCS' != '1' ]; then sudo locale-gen de_DE; fi"
@@ -29,7 +35,8 @@ before_script:
   - sh -c "if [ '$PHPCS' != '1' ]; then sudo apt-get install lighttpd; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
-  - echo "extension = memcached.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
+  - sh -c "if [ '$HHVM' = '1' ]; then wget -O - http://dl.hhvm.com/conf/hhvm.gpg.key | sudo apt-key add -; echo deb http://dl.hhvm.com/ubuntu precise main | sudo tee /etc/apt/sources.list.d/hhvm.list; sudo apt-get update; sudo apt-get install hhvm-nightly; fi"
   - phpenv rehash
   - set +H
 

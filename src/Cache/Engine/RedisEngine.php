@@ -237,7 +237,7 @@ class RedisEngine extends CacheEngine {
  * Disconnects from the redis server
  */
 	public function __destruct() {
-		if (!$this->_config['persistent']) {
+		if (empty($this->_config['persistent']) && $this->_Redis instanceof \Redis) {
 			$this->_Redis->close();
 		}
 	}

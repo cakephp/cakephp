@@ -313,6 +313,7 @@ trait ExternalAssociationTrait {
  */
 	protected function _buildSubquery($query, $foreignKey) {
 		$filterQuery = clone $query;
+		$filterQuery->limit(null);
 		$filterQuery->contain([], true);
 		$joins = $filterQuery->join();
 		foreach ($joins as $i => $join) {

@@ -232,7 +232,21 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$generator->resetCount();
 		}
 
-		$visitor = function($parts, $name) use (&$sql, $generator) {
+		$query = $this->_transformQuery();
+		$query->traverse($query->_sqlCompiler($sql, $generator));
+		return $sql;
+	}
+
+/**
+ * Returns a callable object that can be used to compile a SQL string representtion
+ * of this query
+ *
+ * @param string $sql initial sql string to append to
+ * @param \Cake\Database\ValueBinder The placeholder and value binder object
+ * @return \Closure
+ */
+	protected function _sqlCompiler(&$sql, $generator) {
+		return function($parts, $name) use (&$sql, $generator) {
 			if (!count($parts)) {
 				return;
 			}
@@ -245,10 +259,6 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			}
 			return $sql .= $this->{'_build' . ucfirst($name) . 'Part'}($parts, $generator);
 		};
-
-		$query = $this->_transformQuery();
-		$query->traverse($visitor->bindTo($query));
-		return $sql;
 	}
 
 /**

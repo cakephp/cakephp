@@ -190,7 +190,7 @@ class ArrayContext implements ContextInterface {
 		if (!is_array($this->_context['schema'])) {
 			return [];
 		}
-		$schema = Hash::get($this->_context['schema'], $field);
+		$schema = (array)Hash::get($this->_context['schema'], $field);
 		$whitelist = ['length' => null, 'precision' => null];
 		return array_intersect_key($schema, $whitelist);
 	}
