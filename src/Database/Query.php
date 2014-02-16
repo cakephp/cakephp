@@ -1424,14 +1424,18 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		if (empty($this->_parts['set'])) {
 			$this->_parts['set'] = $this->newExpr()->type(',');
 		}
-		if (is_array($key) || $key instanceof QueryExpression) {
-			$this->_parts['set']->add($key, (array)$value);
-		} else {
-			if (is_string($types)) {
-				$types = [$key => $types];
-			}
-			$this->_parts['set']->add([$key => $value], $types + $this->defaultTypes());
+
+		if (is_array($key) || $key instanceof ExpressionInterface) {
+			$types = (array)$value;
+			$this->_parts['set']->add($key, $types + $this->defaultTypes());
+			return $this;
 		}
+
+		if (is_string($types) && is_string($key)) {
+			$types = [$key => $types];
+		}
+		$this->_parts['set']->eq($key, $value, $types + $this->defaultTypes());
+
 		return $this;
 	}
 

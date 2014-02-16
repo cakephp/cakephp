@@ -1818,6 +1818,35 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Test update with array fields and types.
+ *
+ * @return void
+ */
+	public function testUpdateArrayFields() {
+		$query = new Query($this->connection);
+		$date = new \DateTime;
+		$query->update('comments')
+			->set(['comment' => 'mark', 'created' => $date], ['created' => 'date'])
+			->where(['id' => 1]);
+		$result = $query->sql();
+
+		$this->assertQuotedQuery(
+			'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
+			$result,
+			true
+		);
+
+		$this->assertQuotedQuery(' WHERE <id> = :c2$', $result, true);
+		$result = $query->execute();
+		$this->assertCount(1, $result);
+
+		$query = new Query($this->connection);
+		$result = $query->select('created')->from('comments')->where(['id' => 1])->execute();
+		$result = $result->fetchAll('assoc')[0]['created'];
+		$this->assertEquals($date->format('Y-m-d'), $result);
+	}
+
+/**
  * You cannot call values() before insert() it causes all sorts of pain.
  *
  * @expectedException Cake\Error\Exception
