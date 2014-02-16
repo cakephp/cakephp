@@ -455,18 +455,18 @@ TEXT;
 
 		Debugger::log('cool');
 		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
-		$this->assertRegExp("/'cool'/", $result);
+		$this->assertContains('DebuggerTest::testLog', $result);
+		$this->assertContains("'cool'", $result);
 
 		unlink(LOGS . 'debug.log');
 
 		Debugger::log(array('whatever', 'here'));
 		$result = file_get_contents(LOGS . 'debug.log');
-		$this->assertRegExp('/DebuggerTest\:\:testLog/i', $result);
-		$this->assertRegExp('/\[main\]/', $result);
-		$this->assertRegExp('/array/', $result);
-		$this->assertRegExp("/'whatever',/", $result);
-		$this->assertRegExp("/'here'/", $result);
+		$this->assertContains('DebuggerTest::testLog', $result);
+		$this->assertContains('[main]', $result);
+		$this->assertContains('array', $result);
+		$this->assertContains("'whatever',", $result);
+		$this->assertContains("'here'", $result);
 	}
 
 /**
