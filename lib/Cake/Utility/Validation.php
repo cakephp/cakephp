@@ -979,7 +979,7 @@ class Validation {
 			$check = $check['error'];
 		}
 
-		return $check === UPLOAD_ERR_OK;
+		return (int)$check === UPLOAD_ERR_OK;
 	}
 
 /**

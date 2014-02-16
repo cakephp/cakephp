@@ -2386,9 +2386,11 @@ class ValidationTest extends CakeTestCase {
 	public function testUploadError() {
 		$this->assertTrue(Validation::uploadError(0));
 		$this->assertTrue(Validation::uploadError(array('error' => 0)));
+		$this->assertTrue(Validation::uploadError(array('error' => '0')));
 
 		$this->assertFalse(Validation::uploadError(2));
 		$this->assertFalse(Validation::uploadError(array('error' => 2)));
+		$this->assertFalse(Validation::uploadError(array('error' => '2')));
 	}
 
 /**

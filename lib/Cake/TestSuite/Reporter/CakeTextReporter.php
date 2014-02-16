@@ -150,13 +150,10 @@ class CakeTextReporter extends CakeBaseReporter {
 		$plugin = $this->params['plugin'];
 
 		$buffer = "Core Test Cases:\n";
-		$urlExtra = '';
 		if ($app) {
 			$buffer = "App Test Cases:\n";
-			$urlExtra = '&app=true';
 		} elseif ($plugin) {
 			$buffer = Inflector::humanize($plugin) . " Test Cases:\n";
-			$urlExtra = '&plugin=' . $plugin;
 		}
 
 		if (count($testCases) < 1) {

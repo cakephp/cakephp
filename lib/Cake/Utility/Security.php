@@ -85,7 +85,7 @@ class Security {
  * you ensuring that each hashed password will have a *unique* salt.
  * - Comparing Hashes: Simply pass the originally hashed password as the salt.
  * The salt is prepended to the hash and php handles the parsing automagically.
- * For convenience the BlowfishAuthenticate adapter is available for use with
+ * For convenience the `BlowfishPasswordHasher` class is available for use with
  * the AuthComponent.
  * - Do NOT use a constant salt for blowfish!
  *

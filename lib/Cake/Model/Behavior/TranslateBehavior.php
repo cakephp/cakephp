@@ -279,7 +279,13 @@ class TranslateBehavior extends ModelBehavior {
  */
 	public function afterFind(Model $Model, $results, $primary = false) {
 		$Model->virtualFields = $this->runtime[$Model->alias]['virtualFields'];
+
 		$this->runtime[$Model->alias]['virtualFields'] = $this->runtime[$Model->alias]['fields'] = array();
+		if (!empty($this->runtime[$Model->alias]['restoreFields'])) {
+			$this->runtime[$Model->alias]['fields'] = $this->runtime[$Model->alias]['restoreFields'];
+			unset($this->runtime[$Model->alias]['restoreFields']);
+		}
+
 		$locale = $this->_getLocale($Model);
 
 		if (empty($locale) || empty($results) || empty($this->runtime[$Model->alias]['beforeFind'])) {
@@ -577,7 +583,10 @@ class TranslateBehavior extends ModelBehavior {
 		}
 		$associations = array();
 		$RuntimeModel = $this->translateModel($Model);
-		$default = array('className' => $RuntimeModel->alias, 'foreignKey' => 'foreign_key');
+		$default = array(
+			'className' => $RuntimeModel->alias,
+			'foreignKey' => 'foreign_key'
+		);
 
 		foreach ($fields as $key => $value) {
 			if (is_numeric($key)) {
@@ -592,7 +601,6 @@ class TranslateBehavior extends ModelBehavior {
 					__d('cake_dev', 'You cannot bind a translation named "name".')
 				);
 			}
-
 			$this->_removeField($Model, $field);
 
 			if ($association === null) {
@@ -604,6 +612,7 @@ class TranslateBehavior extends ModelBehavior {
 			} else {
 				if ($reset) {
 					$this->runtime[$Model->alias]['fields'][$field] = $association;
+					$this->runtime[$Model->alias]['restoreFields'][] = $field;
 				} else {
 					$this->settings[$Model->alias][$field] = $association;
 				}

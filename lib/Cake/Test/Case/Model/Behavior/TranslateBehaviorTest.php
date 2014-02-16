@@ -1058,6 +1058,29 @@ class TranslateBehaviorTest extends CakeTestCase {
 	}
 
 /**
+ * test restoring fields after temporary binds method
+ *
+ * @return void
+ */
+	public function testFieldsRestoreAfterBind() {
+		$this->loadFixtures('Translate', 'TranslatedItem');
+
+		$TestModel = new TranslatedItem();
+
+		$translations = array('title' => 'Title');
+		$TestModel->bindTranslation($translations);
+
+		$result = $TestModel->find('first');
+		$this->assertArrayHasKey('Title', $result);
+		$this->assertArrayHasKey('content', $result['Title'][0]);
+		$this->assertArrayNotHasKey('title', $result);
+
+		$result = $TestModel->find('first');
+		$this->assertArrayNotHasKey('Title', $result);
+		$this->assertEquals('Title #1', $result['TranslatedItem']['title']);
+	}
+
+/**
  * testAttachDetach method
  *
  * @return void

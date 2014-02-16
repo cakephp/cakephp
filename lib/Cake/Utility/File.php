@@ -558,7 +558,7 @@ class File {
 			if (!$finfo) {
 				return false;
 			}
-			list($type, $charset) = explode(';', $finfo);
+			list($type) = explode(';', $finfo);
 			return $type;
 		}
 		if (function_exists('mime_content_type')) {
