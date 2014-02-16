@@ -169,6 +169,7 @@ class FormHelper extends Helper {
  * @var array
  */
 	protected $_defaultTemplates = [
+		'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
@@ -566,10 +567,8 @@ class FormHelper extends Helper {
  * @param mixed $value Field value, if value should not be tampered with.
  * @return mixed|null Not used yet
  */
-	protected function _secure($lock, $field = null, $value = null) {
-		if (!$field) {
-			$field = $this->entity();
-		} elseif (is_string($field)) {
+	protected function _secure($lock, $field, $value = null) {
+		if (is_string($field)) {
 			$field = Hash::filter(explode('.', $field));
 		}
 
@@ -1356,27 +1355,18 @@ class FormHelper extends Helper {
  * @return string An HTML text input element.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  */
-	public function checkbox($fieldName, $options = array()) {
-		$valueOptions = array();
-		if (isset($options['default'])) {
-			$valueOptions['default'] = $options['default'];
-			unset($options['default']);
-		}
+	public function checkbox($fieldName, $options = []) {
+		$options += array('hiddenField' => true, 'value' => 1);
 
-		$options += array('value' => 1, 'required' => false);
-		$options = $this->_initInputField($fieldName, $options) + array('hiddenField' => true);
-		$value = current($this->value($valueOptions));
+		// Work around value=>val translations.
+		$value = $options['value'];
+		unset($options['value']);
+		$options = $this->_initInputField($fieldName, $options);
+		$options['value'] = $value;
+
 		$output = '';
-
-		if (
-			(!isset($options['checked']) && !empty($value) && $value == $options['value']) ||
-			!empty($options['checked'])
-		) {
-			$options['checked'] = 'checked';
-		}
 		if ($options['hiddenField']) {
 			$hiddenOptions = array(
-				'id' => $options['id'] . '_',
 				'name' => $options['name'],
 				'value' => ($options['hiddenField'] !== true ? $options['hiddenField'] : '0'),
 				'secure' => false
@@ -1387,8 +1377,7 @@ class FormHelper extends Helper {
 			$output = $this->hidden($fieldName, $hiddenOptions);
 		}
 		unset($options['hiddenField']);
-
-		return $output . $this->Html->useTag('checkbox', $options['name'], array_diff_key($options, array('name' => null)));
+		return $output . $this->widget('checkbox', $options);
 	}
 
 /**
@@ -1515,7 +1504,7 @@ class FormHelper extends Helper {
 		));
 
 		if ($secure === true) {
-			$this->_secure(true, null, '' . $options['val']);
+			$this->_secure(true, $options['name'], '' . $options['val']);
 		}
 
 		$options['type'] = 'hidden';
@@ -2761,7 +2750,7 @@ class FormHelper extends Helper {
  * @return array Array of options for the input.
  */
 	protected function _initInputField($field, $options = []) {
-		$secure = !empty($this->request['_Token']);
+		$secure = !empty($this->request->params['_Token']);
 		if (isset($options['secure'])) {
 			$secure = $options['secure'];
 			unset($options['secure']);
@@ -2821,11 +2810,15 @@ class FormHelper extends Helper {
  * @return string|null
  */
 	protected function _secureFieldName($options) {
-		if (isset($options['name'])) {
-			preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
-			if (isset($matches[1])) {
-				return $matches[1];
-			}
+		if (!isset($options['name'])) {
+			return null;
+		}
+		if (strpos($options['name'], '[') === false) {
+			return [$options['name']];
+		}
+		preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
+		if (isset($matches[1])) {
+			return $matches[1];
 		}
 		return null;
 	}

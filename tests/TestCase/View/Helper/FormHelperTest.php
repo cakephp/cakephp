@@ -1214,9 +1214,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testNoCheckboxLocking() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'foo';
-		$this->assertSame(array(), $this->Form->fields);
+		$this->Form->request->params['_Token'] = 'foo';
+		$this->assertSame([], $this->Form->fields);
 
 		$this->Form->checkbox('check', array('value' => '1'));
 		$this->assertSame($this->Form->fields, array('check'));
@@ -5617,80 +5616,52 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckbox() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->checkbox('Model.field');
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0'),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Model.field', array('id' => 'theID', 'value' => 'myvalue'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'theID_'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0'),
 			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => 'myvalue', 'id' => 'theID'))
 		);
 		$this->assertTags($result, $expected);
+	}
 
-		$Contact->validationErrors['field'] = 1;
-		$this->Form->request->data['Contact']['field'] = 'myvalue';
-		$result = $this->Form->checkbox('Contact.field', array('id' => 'theID', 'value' => 'myvalue'));
+/**
+ * Test checkbox being checked or having errors.
+ *
+ * @return void
+ */
+	public function testCheckboxCheckedAndError() {
+		$this->article['errors'] = [
+			'published' => true
+		];
+		$this->Form->request->data['published'] = 'myvalue';
+		$this->Form->create($this->article);
+
+		$result = $this->Form->checkbox('published', array('id' => 'theID', 'value' => 'myvalue'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'value' => '0', 'id' => 'theID_'),
-			array('input' => array('preg:/[^<]+/', 'value' => 'myvalue', 'id' => 'theID', 'checked' => 'checked', 'class' => 'form-error'))
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'published', 'value' => '0'),
+			array('input' => array(
+				'type' => 'checkbox',
+				'name' => 'published',
+				'value' => 'myvalue',
+				'id' => 'theID',
+				'checked' => 'checked',
+				'class' => 'form-error'
+			))
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->checkbox('Contact.field', array('value' => 'myvalue'));
+		$this->Form->request->data['published'] = '';
+		$result = $this->Form->checkbox('published');
 		$expected = array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'value' => '0', 'id' => 'ContactField_'),
-			array('input' => array('preg:/[^<]+/', 'value' => 'myvalue', 'id' => 'ContactField', 'checked' => 'checked', 'class' => 'form-error'))
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['field'] = '';
-		$result = $this->Form->checkbox('Contact.field', array('id' => 'theID'));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'Contact[field]', 'value' => '0', 'id' => 'theID_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Contact[field]', 'value' => '1', 'id' => 'theID', 'class' => 'form-error'))
-		);
-		$this->assertTags($result, $expected);
-
-		$Contact->validationErrors = array();
-		$result = $this->Form->checkbox('Contact.field', array('value' => 'myvalue'));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Contact[field]', 'value' => '0', 'id' => 'ContactField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Contact[field]', 'value' => 'myvalue', 'id' => 'ContactField'))
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['published'] = 1;
-		$result = $this->Form->checkbox('Contact.published', array('id' => 'theID'));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Contact[published]', 'value' => '0', 'id' => 'theID_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Contact[published]', 'value' => '1', 'id' => 'theID', 'checked' => 'checked'))
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['published'] = 0;
-		$result = $this->Form->checkbox('Contact.published', array('id' => 'theID'));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Contact[published]', 'value' => '0', 'id' => 'theID_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Contact[published]', 'value' => '1', 'id' => 'theID'))
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->checkbox('Model.CustomField.1.value');
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[CustomField][1][value]', 'value' => '0', 'id' => 'ModelCustomField1Value_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[CustomField][1][value]', 'value' => '1', 'id' => 'ModelCustomField1Value'))
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->checkbox('CustomField.1.value');
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'CustomField[1][value]', 'value' => '0', 'id' => 'CustomField1Value_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'CustomField[1][value]', 'value' => '1', 'id' => 'CustomField1Value'))
+			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'published', 'value' => '0'),
+			array('input' => array('type' => 'checkbox', 'name' => 'published', 'value' => '1', 'class' => 'form-error'))
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -5701,77 +5672,10 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxCustomNameAttribute() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->checkbox('Test.test', array('name' => 'myField'));
 		$expected = array(
-				'input' => array('type' => 'hidden', 'name' => 'myField', 'value' => '0', 'id' => 'TestTest_'),
-				array('input' => array('type' => 'checkbox', 'name' => 'myField', 'value' => '1', 'id' => 'TestTest'))
-			);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test the checked option for checkboxes.
- *
- * @return void
- */
-	public function testCheckboxCheckedOption() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->checkbox('Model.field', array('checked' => 'checked'));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->checkbox('Model.field', array('checked' => 1));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->checkbox('Model.field', array('checked' => true));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked'))
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->checkbox('Model.field', array('checked' => false));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField'))
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Model']['field'] = 1;
-		$result = $this->Form->checkbox('Model.field', array('checked' => false));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField'))
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test that disabled attribute works on both the checkbox and hidden input.
- *
- * @return void
- */
-	public function testCheckboxDisabling() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->checkbox('Account.show_name', array('disabled' => 'disabled'));
-		$expected = array(
-			array('input' => array('type' => 'hidden', 'name' => 'Account[show_name]', 'value' => '0', 'id' => 'AccountShowName_', 'disabled' => 'disabled')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Account[show_name]', 'value' => '1', 'id' => 'AccountShowName', 'disabled' => 'disabled'))
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->checkbox('Account.show_name', array('disabled' => false));
-		$expected = array(
-			array('input' => array('type' => 'hidden', 'name' => 'Account[show_name]', 'value' => '0', 'id' => 'AccountShowName_')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Account[show_name]', 'value' => '1', 'id' => 'AccountShowName'))
+			'input' => array('type' => 'hidden', 'name' => 'myField', 'value' => '0'),
+			array('input' => array('type' => 'checkbox', 'name' => 'myField', 'value' => '1'))
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -5783,43 +5687,31 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxHiddenField() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('UserForm.something', array(
-			'type' => 'checkbox',
+		$result = $this->Form->checkbox('UserForm.something', array(
 			'hiddenField' => false
 		));
 		$expected = array(
-			'div' => array('class' => 'input checkbox'),
-			array('input' => array(
-				'type' => 'checkbox', 'name' => 'UserForm[something]',
-				'value' => '1', 'id' => 'UserFormSomething'
-			)),
-			'label' => array('for' => 'UserFormSomething'),
-			'Something',
-			'/label',
-			'/div'
+			'input' => array(
+				'type' => 'checkbox',
+				'name' => 'UserForm[something]',
+				'value' => '1'
+			),
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('UserForm.something', array(
-			'type' => 'checkbox',
+		$result = $this->Form->checkbox('UserForm.something', array(
 			'value' => 'Y',
 			'hiddenField' => 'N',
 		));
 		$expected = array(
-			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => 'UserForm[something]',
-				'value' => 'N', 'id' => 'UserFormSomething_'
+				'value' => 'N'
 			)),
 			array('input' => array(
 				'type' => 'checkbox', 'name' => 'UserForm[something]',
-				'value' => 'Y', 'id' => 'UserFormSomething'
+				'value' => 'Y'
 			)),
-			'label' => array('for' => 'UserFormSomething'),
-			'Something',
-			'/label',
-			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
