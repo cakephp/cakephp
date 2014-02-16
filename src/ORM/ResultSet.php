@@ -114,6 +114,13 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	protected $_useBuffering = true;
 
 /**
+ * Holds the count of records in this result set
+ *
+ * @var integer
+ */
+	protected $_count;
+
+/**
  * Constructor
  *
  * @param Query from where results come
@@ -128,6 +135,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		$this->_hydrate = $this->_query->hydrate();
 		$this->_entityClass = $query->repository()->entityClass();
 		$this->_useBuffering = $query->bufferResults();
+
+		if ($statement) {
+			$this->count();
+		}
 	}
 
 /**
@@ -199,8 +210,9 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 
 		$this->_current = $this->_fetchResult();
 		$valid = $this->_current !== false;
+		$hasNext = $this->_index < $this->_count;
 
-		if (!$valid && $this->_statement) {
+		if ($this->_statement && !($valid && $hasNext)) {
 			$this->_statement->closeCursor();
 		}
 
@@ -271,10 +283,13 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @return integer
  */
 	public function count() {
-		if ($this->_statement) {
-			return $this->_statement->rowCount();
+		if ($this->_count !== null) {
+			return $this->_count;
 		}
-		return count($this->_results);
+		if ($this->_statement) {
+			return $this->_count = $this->_statement->rowCount();
+		}
+		return $this->_count = count($this->_results);
 	}
 
 /**

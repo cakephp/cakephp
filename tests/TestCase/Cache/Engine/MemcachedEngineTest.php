@@ -656,6 +656,7 @@ class MemcachedEngineTest extends TestCase {
  * @return void
  */
 	public function testClear() {
+		$this->assertFalse(defined('HHVM_VERSION'), 'Crashes HHVM');
 		Cache::config('memcached2', array(
 			'engine' => 'Memcached',
 			'prefix' => 'cake2_',

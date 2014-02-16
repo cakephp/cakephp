@@ -231,4 +231,33 @@ class Associations {
 		}
 	}
 
+/**
+ * Returns an associative array of association names out a mixed
+ * array. If true is passed, then it returns all association names
+ * in this collection.
+ *
+ * @param boolean|array $keys the list of association names to normalize
+ * @return array
+ */
+	public function normalizeKeys($keys) {
+		if ($keys === true) {
+			$keys = $this->keys();
+		}
+
+		if (empty($keys)) {
+			return [];
+		}
+
+		$result = [];
+		foreach ($keys as $key => $value) {
+			if (is_int($key)) {
+				$key = $value;
+				$value = [];
+			}
+			$result[$key] = $value;
+		}
+
+		return $result;
+	}
+
 }
