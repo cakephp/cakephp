@@ -703,4 +703,13 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 		return $this;
 	}
 
+/**
+ * Returns a string representation of this object in a humna readable format.
+ *
+ * @return string
+ */
+	public function __toString() {
+		return json_encode($this, JSON_PRETTY_PRINT);
+	}
+
 }
