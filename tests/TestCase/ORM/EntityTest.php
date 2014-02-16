@@ -986,4 +986,14 @@ class EntityTest extends TestCase {
 		$this->assertEquals('Yes', $entity->body, 'Single set should bypass guards.');
 	}
 
+/**
+ * Tests the entity's __toString method
+ *
+ * @return void
+ */
+	public function testToString() {
+		$entity = new Entity(['foo' => 1, 'bar' => 2]);
+		$this->assertEquals(json_encode($entity, JSON_PRETTY_PRINT), (string)$entity);
+	}
+
 }
