@@ -2869,14 +2869,15 @@ class FormHelper extends Helper {
 
 		if (isset($options['value']) && !isset($options['val'])) {
 			$options['val'] = $options['value'];
+			unset($options['value']);
 		}
 		if (!isset($options['val'])) {
 			$options['val'] = $context->val($field);
 		}
 		if (!isset($options['val']) && isset($options['default'])) {
 			$options['val'] = $options['default'];
+			unset($options['default']);
 		}
-		unset($options['value'], $options['default']);
 
 		$options += (array)$context->attributes($field);
 
