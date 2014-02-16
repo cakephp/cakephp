@@ -2778,8 +2778,8 @@ class FormHelper extends Helper {
 		}
 		if (!isset($options['val']) && isset($options['default'])) {
 			$options['val'] = $options['default'];
-			unset($options['default']);
 		}
+		unset($options['value'], $options['default']);
 
 		if ($context->hasError($field)) {
 			$options = $this->addClass($options, $this->settings['errorClass']);
