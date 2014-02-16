@@ -698,8 +698,9 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Returns a formatted LABEL element for HTML FORMs. Will automatically generate
- * a `for` attribute if one is not provided.
+ * Returns a formatted LABEL element for HTML forms.
+ *
+ * Will automatically generate a `for` attribute if one is not provided.
  *
  * ### Options
  *
@@ -734,7 +735,7 @@ class FormHelper extends Helper {
  *
  * {{{
  * echo $this->Form->label('Post.published', 'Publish', array(
- *		'for' => 'post-publish'
+ *   'for' => 'post-publish'
  * ));
  * <label for="post-publish">Publish</label>
  * }}}
@@ -747,11 +748,7 @@ class FormHelper extends Helper {
  * @return string The formatted LABEL element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::label
  */
-	public function label($fieldName = null, $text = null, $options = array()) {
-		if ($fieldName === null) {
-			$fieldName = implode('.', $this->entity());
-		}
-
+	public function label($fieldName, $text = null, $options = array()) {
 		if ($text === null) {
 			if (strpos($fieldName, '.') !== false) {
 				$fieldElements = explode('.', $fieldName);
@@ -775,8 +772,21 @@ class FormHelper extends Helper {
 		} else {
 			$labelFor = $this->domId($fieldName);
 		}
+		$attrs = $options + [
+			'for' => $labelFor,
+			'text' => $text,
+		];
+		return $this->widget('label', $attrs);
+	}
 
-		return $this->Html->useTag('label', $labelFor, $options, $text);
+/**
+ * Generate an ID suitable for use in an ID attribute.
+ *
+ * @param string $value The value to convert into an ID.
+ * @return string The generated id.
+ */
+	public function domId($value) {
+		return mb_strtolower(Inflector::slug($value, '-'));
 	}
 
 /**

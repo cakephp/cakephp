@@ -578,37 +578,6 @@ class Helper extends Object implements EventListener {
 	}
 
 /**
- * Generates a DOM ID for the selected element, if one is not set.
- * Uses the current View::entity() settings to generate a CamelCased id attribute.
- *
- * @param array|string $options Either an array of html attributes to add $id into, or a string
- *   with a view entity path to get a domId for.
- * @param string $id The name of the 'id' attribute.
- * @return mixed If $options was an array, an array will be returned with $id set. If a string
- *   was supplied, a string will be returned.
- */
-	public function domId($options = null, $id = 'id') {
-		if (is_array($options) && array_key_exists($id, $options) && $options[$id] === null) {
-			unset($options[$id]);
-			return $options;
-		} elseif (!is_array($options) && $options !== null) {
-			$this->setEntity($options);
-			return $this->domId();
-		}
-
-		$entity = $this->entity();
-		$model = array_shift($entity);
-		$dom = $model . implode('', array_map(array('Cake\Utility\Inflector', 'camelize'), $entity));
-
-		if (is_array($options) && !array_key_exists($id, $options)) {
-			$options[$id] = $dom;
-		} elseif ($options === null) {
-			return $dom;
-		}
-		return $options;
-	}
-
-/**
  * Gets the input field name for the current tag. Creates input name attributes
  * using CakePHP's `Model[field]` formatting.
  *

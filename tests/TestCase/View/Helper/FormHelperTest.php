@@ -3954,32 +3954,29 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testLabel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->text('Person.name');
-		$result = $this->Form->label();
-		$this->assertTags($result, array('label' => array('for' => 'PersonName'), 'Name', '/label'));
+		$result = $this->Form->label('Person.name');
+		$this->assertTags($result, array('label' => array('for' => 'person-name'), 'Name', '/label'));
 
-		$this->Form->text('Person.name');
-		$result = $this->Form->label();
-		$this->assertTags($result, array('label' => array('for' => 'PersonName'), 'Name', '/label'));
+		$result = $this->Form->label('Person.name');
+		$this->assertTags($result, array('label' => array('for' => 'person-name'), 'Name', '/label'));
 
 		$result = $this->Form->label('Person.first_name');
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName'), 'First Name', '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name'), 'First Name', '/label'));
 
 		$result = $this->Form->label('Person.first_name', 'Your first name');
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName'), 'Your first name', '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name'), 'Your first name', '/label'));
 
 		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class'));
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName', 'class' => 'my-class'), 'Your first name', '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name', 'class' => 'my-class'), 'Your first name', '/label'));
 
 		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class', 'id' => 'LabelID'));
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName', 'class' => 'my-class', 'id' => 'LabelID'), 'Your first name', '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name', 'class' => 'my-class', 'id' => 'LabelID'), 'Your first name', '/label'));
 
 		$result = $this->Form->label('Person.first_name', '');
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName'), '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name'), '/label'));
 
 		$result = $this->Form->label('Person.2.name', '');
-		$this->assertTags($result, array('label' => array('for' => 'Person2Name'), '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-2-name'), '/label'));
 	}
 
 /**
