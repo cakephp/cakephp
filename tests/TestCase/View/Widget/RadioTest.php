@@ -124,6 +124,144 @@ class RadioTest extends TestCase {
 	}
 
 /**
+ * Test that id suffixes are generated to not collide
+ *
+ * @return void
+ */
+	public function testRenderIdSuffixGeneration() {
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
+		$data = [
+			'name' => 'Thing[value]',
+			'options' => ['a>b' => 'First', 'a<b' => 'Second']
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Thing[value]',
+				'value' => 'a&gt;b',
+				'id' => 'thing-value-a-b'
+			]],
+			['label' => ['for' => 'thing-value-a-b']],
+			'First',
+			'/label',
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Thing[value]',
+				'value' => 'a&lt;b',
+				'id' => 'thing-value-a-b1',
+			]],
+			['label' => ['for' => 'thing-value-a-b1']],
+			'Second',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test rendering checks the right option with booleanish values.
+ *
+ * @return void
+ */
+	public function testRenderBooleanishValues() {
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
+		$data = [
+			'name' => 'Model[field]',
+			'options' => ['1' => 'Yes', '0' => 'No'],
+			'val' => '0'
+		];
+		$result = $radio->render($data);
+		$expected = array(
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
+			array('label' => array('for' => 'model-field-1')),
+			'Yes',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0', 'checked' => 'checked')),
+			array('label' => array('for' => 'model-field-0')),
+			'No',
+			'/label',
+		);
+		$this->assertTags($result, $expected);
+
+		$data['val'] = 0;
+		$result = $radio->render($data);
+		$this->assertTags($result, $expected);
+
+		$data['val'] = false;
+		$result = $radio->render($data);
+		$this->assertTags($result, $expected);
+
+		$expected = array(
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1')),
+			array('label' => array('for' => 'model-field-1')),
+			'Yes',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
+			array('label' => array('for' => 'model-field-0')),
+			'No',
+			'/label',
+		);
+		$data['val'] = null;
+		$result = $radio->render($data);
+		$this->assertTags($result, $expected);
+
+		$data['val'] = '';
+		$result = $radio->render($data);
+		$this->assertTags($result, $expected);
+
+		$expected = array(
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1', 'id' => 'model-field-1', 'checked' => 'checked')),
+			array('label' => array('for' => 'model-field-1')),
+			'Yes',
+			'/label',
+			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '0', 'id' => 'model-field-0')),
+			array('label' => array('for' => 'model-field-0')),
+			'No',
+			'/label',
+		);
+		$data['val'] = '1';
+		$result = $radio->render($data);
+		$this->assertTags($result, $expected);
+
+		$data['val'] = 1;
+		$result = $radio->render($data);
+		$this->assertTags($result, $expected);
+
+		$data['val'] = true;
+		$result = $radio->render($data);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test that render() works with the required attribute.
+ *
+ * @return void
+ */
+	public function testRenderRequired() {
+		$label = new Label($this->templates);
+		$radio = new Radio($this->templates, $label);
+		$data = [
+			'name' => 'published',
+			'options' => ['option A', 'option B'],
+			'required' => true
+		];
+		$result = $radio->render($data);
+		$expected = [
+			['input' => ['type' => 'radio', 'name' => 'published', 'value' => '0', 'id' => 'published-0', 'required' => 'required']],
+			['label' => ['for' => 'published-0']],
+			'option A',
+			'/label',
+			['input' => ['type' => 'radio', 'name' => 'published', 'value' => '1', 'id' => 'published-1', 'required' => 'required']],
+			['label' => ['for' => 'published-1']],
+			'option B',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test rendering the empty option.
  *
  * @return void
