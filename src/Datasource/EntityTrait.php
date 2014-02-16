@@ -189,7 +189,7 @@ trait EntityTrait {
  * first argument is also an array, in which case will be treated as $options
  * @param array $options options to be used for setting the property. Allowed option
  * keys are `setter` and `guard`
- * @return \Cake\ORM\Entity
+ * @return \Cake\Datasource\EntityInterface this object
  */
 	public function set($property, $value = null, $options = []) {
 		if (is_string($property)) {

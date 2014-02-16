@@ -14,7 +14,7 @@
  */
 namespace Cake\Datasource;
 
-use Cake\ORM\Entity;
+use Cake\Datasource\EntityInterface;
 
 /**
  * Describes the methods that any class representing a data storage should
@@ -54,7 +54,7 @@ interface RepositoryInterface {
  * @param array $options options accepted by `Table::find()`
  * @throws Cake\ORM\Error\RecordNotFoundException if the record with such id
  * could not be found
- * @return \Cake\ORM\Entity
+ * @return \Cake\Datasource\EntityInterface
  * @see RepositoryInterface::find()
  */
 	public function get($primaryKey, $options = []);
@@ -111,11 +111,11 @@ interface RepositoryInterface {
  * returns the same entity after a successful save or false in case
  * of any error.
  *
- * @param \Cake\ORM\Entity the entity to be saved
+ * @param \Cake\Datasource\EntityInterface the entity to be saved
  * @param array $options
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  */
-	public function save(Entity $entity, array $options = []);
+	public function save(EntityInterface $entity, array $options = []);
 
 /**
  * Delete a single entity.
@@ -123,11 +123,11 @@ interface RepositoryInterface {
  * Deletes an entity and possibly related associations from the database
  * based on the 'dependent' option used when defining the association.
  *
- * @param Entity $entity The entity to remove.
+ * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
  * @param array $options The options fo the delete.
  * @return boolean success
  */
-	public function delete(Entity $entity, array $options = []);
+	public function delete(EntityInterface $entity, array $options = []);
 
 /**
  * Create a new entity + associated entities from an array.
@@ -146,7 +146,7 @@ interface RepositoryInterface {
  * @param array $data The data to build an entity with.
  * @param array $associations A whitelist of associations
  *   to hydrate. Defaults to all associations
- * @return Cake\ORM\Entity
+ * @return Cake\Datasource\EntityInterface
  */
 	public function newEntity(array $data = [], $associations = null);
 

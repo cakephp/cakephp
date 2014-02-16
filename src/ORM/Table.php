@@ -27,7 +27,7 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
-use Cake\ORM\Entity;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Error\MissingEntityException;
 use Cake\ORM\Error\RecordNotFoundException;
 use Cake\ORM\Marshaller;
@@ -1080,7 +1080,7 @@ class Table implements RepositoryInterface, EventListener {
  * }}}
  *
  */
-	public function save(Entity $entity, array $options = []) {
+	public function save(EntityInterface $entity, array $options = []) {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
 			'validate' => true,
@@ -1106,9 +1106,9 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Performs the actual saving of an entity based on the passed options.
  *
- * @param \Cake\ORM\Entity the entity to be saved
+ * @param \Cake\Datasource\EntityInterface the entity to be saved
  * @param array $options
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  */
 	protected function _processSave($entity, $options) {
 		$primary = $entity->extract((array)$this->primaryKey());
@@ -1185,9 +1185,9 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Auxiliary function to handle the insert of an entity's data in the table
  *
- * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  * @throws \RuntimeException if not all the primary keys where supplied or could
  * be generated when the table has composite primary keys
  */
@@ -1259,9 +1259,9 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Auxiliary function to handle the update of an entity's data in the table
  *
- * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  * @throws \InvalidArgumentException When primary key data is missing.
  */
 	protected function _update($entity, $data) {
@@ -1316,7 +1316,7 @@ class Table implements RepositoryInterface, EventListener {
  * the options used in the delete operation.
  *
  */
-	public function delete(Entity $entity, array $options = []) {
+	public function delete(EntityInterface $entity, array $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true]);
 
 		$process = function() use ($entity, $options) {
@@ -1335,7 +1335,7 @@ class Table implements RepositoryInterface, EventListener {
  * Will delete the entity provided. Will remove rows from any
  * dependent associations, and clear out join tables for BelongsToMany associations.
  *
- * @param Entity $entity The entity to delete.
+ * @param \Cake\ORM\EntityInterface $entity The entity to delete.
  * @param ArrayObject $options The options for the delete.
  * @throws \InvalidArgumentException if there are no primary key values of the
  * passed entity
@@ -1605,7 +1605,7 @@ class Table implements RepositoryInterface, EventListener {
  * ]);
  * }}}
  *
- * @param \Cake\ORM\Entity $entity The entity to be validated
+ * @param \Cake\Datasource\EntityInterface $entity The entity to be validated
  * @param array $options A list of options to use while validating, the following
  * keys are accepted:
  * - validate: The name of the validation set to use
