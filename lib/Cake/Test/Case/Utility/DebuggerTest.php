@@ -470,6 +470,28 @@ TEXT;
 	}
 
 /**
+ * test log() depth
+ *
+ * @return void
+ */
+	public function testLogDepth() {
+		if (file_exists(LOGS . 'debug.log')) {
+			unlink(LOGS . 'debug.log');
+		}
+		CakeLog::config('file', array('engine' => 'File', 'path' => TMP . 'logs' . DS));
+
+		$val = [
+			'test' => ['key' => 'val']
+		];
+		Debugger::log($val, LOG_DEBUG, 0);
+		$result = file_get_contents(LOGS . 'debug.log');
+		$this->assertContains('DebuggerTest::testLog', $result);
+		$this->assertNotContains("/'val'/", $result);
+
+		unlink(LOGS . 'debug.log');
+	}
+
+/**
  * testDump method
  *
  * @return void
