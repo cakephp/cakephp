@@ -7272,7 +7272,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostLink() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
 		$this->assertTags($result, array(
 			'form' => array(
@@ -7326,7 +7325,7 @@ class FormHelperTest extends TestCase {
 		));
 
 		$result = $this->Form->postLink('Delete', '/posts/delete', array('data' => array('id' => 1)));
-		$this->assertContains('<input type="hidden" name="id" value="1"/>', $result);
+		$this->assertContains('<input type="hidden" name="id" value="1"', $result);
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('target' => '_blank'));
 		$this->assertTags($result, array(
@@ -7365,41 +7364,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostLinkAfterGetForm() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_Token']['key'] = 'testkey';
-		$this->Form->create('User', array('type' => 'get'));
+		$this->Form->request->params['_csrfToken'] = 'testkey';
+		$this->Form->request->params['_Token'] = 'val';
+
+		$this->Form->create($this->article, array('type' => 'get'));
 		$this->Form->end();
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
 		$this->assertTags($result, array(
-			'form' => array(
-				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
-			),
-			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
-			'div' => array('style' => 'display:none;'),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][fields]', 'value' => 'preg:/[\w\d%]+/')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][unlocked]', 'value' => '')),
-			'/div',
-			'/form',
-			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
-			'Delete',
-			'/a'
-		));
-	}
-
-/**
- * Test that postLink adds _Token fields.
- *
- * @return void
- */
-	public function testSecurePostLink() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testkey';
-
-		$result = $this->Form->postLink('Delete', '/posts/delete/1');
-		$expected = array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
 				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
@@ -7414,8 +7386,7 @@ class FormHelperTest extends TestCase {
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',
 			'/a'
-		);
-		$this->assertTags($result, $expected);
+		));
 	}
 
 /**
@@ -7424,7 +7395,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostLinkFormBuffer() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('inline' => false));
 		$this->assertTags($result, array(
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
