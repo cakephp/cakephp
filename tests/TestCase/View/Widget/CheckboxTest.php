@@ -146,16 +146,31 @@ class CheckboxTest extends TestCase {
 	}
 
 /**
+ * Data provider for checkbox values
+ *
+ * @return array
+ */
+	public static function checkedProvider() {
+		return [
+			['checked'],
+			['1'],
+			[1],
+			[true],
+		];
+	}
+
+/**
  * Test rendering checked checkboxes with value.
  *
+ * @dataProvider checkedProvider
  * @return void
  */
-	public function testRenderCheckedValue() {
+	public function testRenderCheckedValue($checked) {
 		$checkbox = new Checkbox($this->templates);
 		$data = [
 			'name' => 'Comment[spam]',
 			'value' => 1,
-			'checked' => 1,
+			'checked' => $checked,
 		];
 		$result = $checkbox->render($data);
 		$expected = [
