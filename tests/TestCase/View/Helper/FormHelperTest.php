@@ -4331,7 +4331,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelect() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select('Model.field', array());
 		$expected = array(
 			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
@@ -4499,7 +4498,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectOptionGroupEscaping() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array(
 			'>< Key' => array(
 				1 => 'One',
@@ -4541,7 +4539,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectWithNullAttributes() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select('Model.field', array('first', 'second'), array('empty' => false));
 		$expected = array(
 			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
@@ -4627,7 +4624,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultiple() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array('first', 'second', 'third');
 		$result = $this->Form->select(
 			'Model.multi_field', $options, array('multiple' => true)
@@ -4714,7 +4710,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleWithDisabledElements() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
 		$disabled = array(2, 3);
 		$result = $this->Form->select('Contact.multiple', $options, array('multiple' => 'multiple', 'disabled' => $disabled));
@@ -4810,7 +4805,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectWithDisabledElements() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
 		$disabled = array(2, 3);
 		$result = $this->Form->select('Model.field', $options, array('disabled' => $disabled));
@@ -5306,7 +5300,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleSecureWithNoOptions() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testkey';
 		$this->assertEquals(array(), $this->Form->fields);
 
@@ -5512,7 +5505,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectCheckboxMultipleOverrideName() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('category', array(
 			'type' => 'select',
 			'multiple' => 'checkbox',
