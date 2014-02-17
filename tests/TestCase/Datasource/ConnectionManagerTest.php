@@ -11,13 +11,16 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Database;
+namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Database\Driver\Sqlite;
 use Cake\TestSuite\TestCase;
+
+class FakeConnection {
+}
 
 /**
  * ConnectionManager Test
@@ -44,10 +47,11 @@ class ConnectionManagerTest extends TestCase {
 	public static function configProvider() {
 		return [
 			'Array of data using classname key.' => [[
-				'className' => 'Sqlite',
+				'className' => __NAMESPACE__ . '\FakeConnection',
+				'instance' => 'Sqlite',
 				'database' => ':memory:',
 			]],
-			'Direct instance' => [new Sqlite(['database' => ':memory:'])],
+			'Direct instance' => [new FakeConnection],
 		];
 	}
 
@@ -62,7 +66,7 @@ class ConnectionManagerTest extends TestCase {
 		ConnectionManager::config('test_variant', $settings);
 
 		$ds = ConnectionManager::get('test_variant');
-		$this->assertInstanceOf('Cake\Database\Connection', $ds);
+		$this->assertInstanceOf(__NAMESPACE__ . '\FakeConnection', $ds);
 		$this->assertContains('test_variant', ConnectionManager::configured());
 	}
 
