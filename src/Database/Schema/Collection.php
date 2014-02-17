@@ -51,7 +51,6 @@ class Collection {
  */
 	protected $_cache = false;
 
-
 /**
  * Constructor.
  *
