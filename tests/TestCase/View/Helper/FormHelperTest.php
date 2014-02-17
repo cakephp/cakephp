@@ -3166,28 +3166,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Test generating checkboxes in a loop.
- *
- * @return void
- */
-	public function testInputCheckboxesInLoop() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		for ($i = 1; $i < 5; $i++) {
-			$result = $this->Form->input("Contact.{$i}.email", array('type' => 'checkbox', 'value' => $i));
-			$expected = array(
-				'div' => array('class' => 'input checkbox'),
-				'input' => array('type' => 'hidden', 'name' => "Contact[{$i}][email]", 'value' => '0', 'id' => "Contact{$i}Email_"),
-				array('input' => array('type' => 'checkbox', 'name' => "Contact[{$i}][email]", 'value' => $i, 'id' => "Contact{$i}Email")),
-				'label' => array('for' => "Contact{$i}Email"),
-				'Email',
-				'/label',
-				'/div'
-			);
-			$this->assertTags($result, $expected);
-		}
-	}
-
-/**
  * Test generating checkboxes with disabled elements.
  *
  * @return void
