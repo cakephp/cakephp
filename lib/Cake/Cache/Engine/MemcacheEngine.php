@@ -211,7 +211,7 @@ class MemcacheEngine extends CacheEngine {
 					continue;
 				}
 
-				foreach ($this->_Memcache->getExtendedStats('cachedump', $slabId) as $stats) {
+				foreach ($this->_Memcache->getExtendedStats('cachedump', $slabId, 0) as $stats) {
 					if (!is_array($stats)) {
 						continue;
 					}
