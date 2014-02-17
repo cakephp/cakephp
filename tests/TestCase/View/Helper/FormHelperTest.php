@@ -1124,7 +1124,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testKey', 'id'
+				'type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testKey'
 			)),
 			'/div'
 		);
@@ -1244,7 +1244,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1261,7 +1261,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('class' => 'hidden'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1408,7 +1408,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1455,7 +1455,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => 'preg:/.+/', 'id' => 'preg:/TokenFields\d+/'
+				'value' => 'preg:/.+/'
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1579,7 +1579,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1646,7 +1646,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1696,7 +1696,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1845,7 +1845,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -7220,7 +7220,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postButton('Hi', '/controller/action');
 		$this->assertTags($result, array(
 			'form' => array('method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8'),
@@ -7234,7 +7233,7 @@ class FormHelperTest extends TestCase {
 		));
 
 		$result = $this->Form->postButton('Send', '/', array('data' => array('extra' => 'value')));
-		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"/>') !== false);
+		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"') !== false);
 	}
 
 /**
@@ -7243,8 +7242,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurePostButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testkey';
+		$this->Form->request->params['_Token'] = ['unlockedFields' => []];
 
 		$result = $this->Form->postButton('Delete', '/posts/delete/1');
 		$expected = array(
@@ -7253,14 +7252,14 @@ class FormHelperTest extends TestCase {
 			),
 			array('div' => array('style' => 'display:none;')),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey')),
 			'/div',
 			'button' => array('type' => 'submit'),
 			'Delete',
 			'/button',
 			array('div' => array('style' => 'display:none;')),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '')),
 			'/div',
 			'/form',
 		);
@@ -7380,8 +7379,8 @@ class FormHelperTest extends TestCase {
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
 			'div' => array('style' => 'display:none;'),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][fields]', 'value' => 'preg:/[\w\d%]+/')),
+			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][unlocked]', 'value' => '')),
 			'/div',
 			'/form',
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
@@ -7406,10 +7405,10 @@ class FormHelperTest extends TestCase {
 				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey')),
 			'div' => array('style' => 'display:none;'),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '')),
 			'/div',
 			'/form',
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),

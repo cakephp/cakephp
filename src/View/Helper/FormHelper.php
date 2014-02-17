@@ -436,7 +436,6 @@ class FormHelper extends Helper {
 		}
 		return $this->hidden('_csrfToken', array(
 			'value' => $this->request->params['_csrfToken'],
-			'id' => 'Token' . mt_rand(),
 			'secure' => static::SECURE_SKIP
 		));
 	}
@@ -525,11 +524,9 @@ class FormHelper extends Helper {
 
 		$out = $this->hidden('_Token.fields', array(
 			'value' => urlencode($fields . ':' . $locked),
-			'id' => 'TokenFields' . mt_rand()
 		));
 		$out .= $this->hidden('_Token.unlocked', array(
 			'value' => urlencode($unlocked),
-			'id' => 'TokenUnlocked' . mt_rand()
 		));
 		return $this->Html->useTag('hiddenblock', $out);
 	}
