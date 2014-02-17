@@ -64,8 +64,7 @@ class Button implements WidgetInterface {
 		];
 		return $this->_templates->format('button', [
 			'text' => $data['escape'] ? h($data['text']) : $data['text'],
-			'type' => $data['type'],
-			'attrs' => $this->_templates->formatAttributes($data, ['type', 'text']),
+			'attrs' => $this->_templates->formatAttributes($data, ['text']),
 		]);
 	}
 
