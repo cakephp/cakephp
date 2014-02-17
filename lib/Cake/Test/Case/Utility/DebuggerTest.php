@@ -480,9 +480,9 @@ TEXT;
 		}
 		CakeLog::config('file', array('engine' => 'File', 'path' => TMP . 'logs' . DS));
 
-		$val = [
-			'test' => ['key' => 'val']
-		];
+		$val = array(
+			'test' => array('key' => 'val')
+		);
 		Debugger::log($val, LOG_DEBUG, 0);
 		$result = file_get_contents(LOGS . 'debug.log');
 		$this->assertContains('DebuggerTest::testLog', $result);
