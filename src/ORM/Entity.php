@@ -704,7 +704,7 @@ class Entity implements \ArrayAccess, \JsonSerializable {
 	}
 
 /**
- * Returns a string representation of this object in a humna readable format.
+ * Returns a string representation of this object in an easier to read format.
  *
  * @return string
  */
