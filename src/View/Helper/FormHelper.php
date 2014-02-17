@@ -704,7 +704,7 @@ class FormHelper extends Helper {
  *
  * - `for` - Set the for attribute, if its not defined the for attribute
  *   will be generated from the $fieldName parameter using
- *   FormHelper::domId().
+ *   FormHelper::_domId().
  *
  * Examples:
  *
@@ -768,7 +768,7 @@ class FormHelper extends Helper {
 			$labelFor = $options['for'];
 			unset($options['for']);
 		} else {
-			$labelFor = $this->domId($fieldName);
+			$labelFor = $this->_domId($fieldName);
 		}
 		$attrs = $options + [
 			'for' => $labelFor,
@@ -783,7 +783,7 @@ class FormHelper extends Helper {
  * @param string $value The value to convert into an ID.
  * @return string The generated id.
  */
-	public function domId($value) {
+	protected function _domId($value) {
 		return mb_strtolower(Inflector::slug($value, '-'));
 	}
 
