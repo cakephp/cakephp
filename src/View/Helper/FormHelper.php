@@ -178,6 +178,7 @@ class FormHelper extends Helper {
 		'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
 		'radioContainer' => '{{input}}{{label}}',
 		'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
+		'button' => '<button type="{{type}}"{{attrs}}>{{text}}</button>'
 	];
 
 /**
@@ -1549,15 +1550,14 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::button
  */
 	public function button($title, $options = array()) {
-		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
-		if ($options['escape']) {
-			$title = h($title);
-		}
+		$options += array('secure' => false);
 		if (isset($options['name'])) {
 			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
 			$this->_secure($options['secure'], $name);
 		}
-		return $this->Html->useTag('button', $options, $title);
+		$options['text'] = $title;
+
+		return $this->widget('button', $options);
 	}
 
 /**
@@ -1578,10 +1578,10 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postButton
  */
 	public function postButton($title, $url, $options = array()) {
-		$out = $this->create(false, array('id' => false, 'url' => $url));
+		$out = $this->create(null, array('url' => $url));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
-				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
+				$out .= $this->hidden($key, array('value' => $value));
 			}
 			unset($options['data']);
 		}

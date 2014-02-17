@@ -7181,23 +7181,33 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->button('Hi');
-		$this->assertTags($result, array('button' => array('type' => 'submit'), 'Hi', '/button'));
+		$this->assertTags($result, array(
+			'button' => array('type' => 'submit'), 'Hi', '/button'
+		));
 
 		$result = $this->Form->button('Clear Form >', array('type' => 'reset'));
-		$this->assertTags($result, array('button' => array('type' => 'reset'), 'Clear Form >', '/button'));
+		$this->assertTags($result, array('button' => array(
+			'type' => 'reset'), 'Clear Form >', '/button'
+		));
 
-		$result = $this->Form->button('Clear Form >', array('type' => 'reset', 'id' => 'clearForm'));
-		$this->assertTags($result, array('button' => array('type' => 'reset', 'id' => 'clearForm'), 'Clear Form >', '/button'));
+		$result = $this->Form->button('Clear Form >', array(
+			'type' => 'reset', 'id' => 'clearForm'
+		));
+		$this->assertTags($result, array('button' => array(
+			'type' => 'reset', 'id' => 'clearForm'), 'Clear Form >', '/button'
+		));
 
-		$result = $this->Form->button('<Clear Form>', array('type' => 'reset', 'escape' => true));
-		$this->assertTags($result, array('button' => array('type' => 'reset'), '&lt;Clear Form&gt;', '/button'));
+		$result = $this->Form->button('<Clear Form>', array(
+			'type' => 'reset', 'escape' => true
+		));
+		$this->assertTags($result, array('button' => array(
+			'type' => 'reset'), '&lt;Clear Form&gt;', '/button'
+		));
 
-		$result = $this->Form->button('No type', array('type' => false));
-		$this->assertTags($result, array('button' => array(), 'No type', '/button'));
-
-		$result = $this->Form->button('Upload Text', array('onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false));
+		$result = $this->Form->button('Upload Text', array(
+			'onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false
+		));
 		$this->assertNotRegExp('/\&039/', $result);
 	}
 
@@ -7207,7 +7217,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testButtonUnlockedByDefault() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'secured';
 		$this->Form->button('Save', array('name' => 'save'));
 		$this->Form->button('Clear');
@@ -7222,7 +7231,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postButton('Hi', '/controller/action');
 		$this->assertTags($result, array(
 			'form' => array('method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8'),
@@ -7236,7 +7244,7 @@ class FormHelperTest extends TestCase {
 		));
 
 		$result = $this->Form->postButton('Send', '/', array('data' => array('extra' => 'value')));
-		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"/>') !== false);
+		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value">') !== false);
 	}
 
 /**
@@ -7245,7 +7253,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurePostButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testkey';
 
 		$result = $this->Form->postButton('Delete', '/posts/delete/1');
