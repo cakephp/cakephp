@@ -948,6 +948,9 @@ class Validation {
 			return self::_check($mime, $mimeTypes);
 		}
 
+		foreach ($mimeTypes as $key => $val) {
+			$mimeTypes[$key] = strtolower($val);
+		}
 		return in_array($mime, $mimeTypes);
 	}
 
