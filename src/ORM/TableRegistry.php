@@ -17,7 +17,7 @@
 namespace Cake\ORM;
 
 use Cake\Core\App;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Utility\Inflector;
 use RuntimeException;
 

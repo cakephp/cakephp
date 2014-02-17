@@ -16,7 +16,7 @@
  */
 namespace Cake\Test\TestCase;
 
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestPermutationDecorator;
 use Cake\TestSuite\TestSuite;
 

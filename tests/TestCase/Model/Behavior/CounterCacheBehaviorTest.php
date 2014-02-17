@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\Model\Behavior;
 
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Database\Query;
 use Cake\Event\Event;
 use Cake\Model\Behavior\CounterCacheBehavior;

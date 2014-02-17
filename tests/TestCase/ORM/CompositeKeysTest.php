@@ -14,7 +14,7 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Query;
