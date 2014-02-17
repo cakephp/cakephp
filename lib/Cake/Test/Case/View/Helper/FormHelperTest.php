@@ -690,7 +690,7 @@ class FormHelperTest extends CakeTestCase {
 		$key = 'testKey';
 		$fields = array('Model.password', 'Model.username', 'Model.valid' => '0');
 		$secureAttributes = array('form' => 'MyTestForm');
-		
+
 		$this->Form->request['_Token'] = array('key' => $key);
 		$result = $this->Form->secure($fields, $secureAttributes);
 
@@ -700,25 +700,6 @@ class FormHelperTest extends CakeTestCase {
 
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
-			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/',
-				'form' => 'MyTestForm',
-			)),
-			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[_Token][unlocked]',
-				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/',
-				'form' => 'MyTestForm',
-			)),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$path = CAKE . 'Test' . DS . 'test_app' . DS . 'Config' . DS;
-		$this->Form->Html->loadConfig('htmlhelper_tags', $path);
-		$result = $this->Form->secure($fields, $secureAttributes);
-		$expected = array(
-			'div' => array('class' => 'hidden'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => 'data[_Token][fields]',
 				'value' => $hash, 'id' => 'preg:/TokenFields\d+/',
@@ -9052,10 +9033,10 @@ class FormHelperTest extends CakeTestCase {
 	public function testFormEnd() {
 		$this->assertEquals('</form>', $this->Form->end());
 
-		$result = $this->Form->end('', array('form' => 'MyTestFormWithSupportForSecurityComponent'));
+		$result = $this->Form->end('', array('form' => 'form-name'));
 		$expected = array(
 			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => '', 'form' => 'MyTestFormWithSupportForSecurityComponent'),
+			'input' => array('type' => 'submit', 'value' => ''),
 			'/div',
 			'/form'
 		);
