@@ -55,6 +55,7 @@ use Cake\Utility\Hash;
  *      'title' => 'First post!',
  *    ]
  *  ];
+ *  }}}
  */
 class ArrayContext implements ContextInterface {
 
