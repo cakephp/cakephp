@@ -19,9 +19,9 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Database\Connection;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Schema\Collection;
 use Cake\Database\Schema\Table;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -75,15 +75,11 @@ class CollectionTest extends TestCase {
  * @return void
  */
 	public function testDescribeCache() {
+		$schema = $this->connection->schemaCollection();
 		$table = $this->connection->schemaCollection()->describe('users');
 
-		$config = $this->connection->config();
-		$config['cacheMetadata'] = true;
-
-		$connection = new Connection($config);
-		$schema = new Collection($connection);
-
 		Cache::delete('test_users', '_cake_model_');
+		$schema->cacheMetadata(true);
 		$result = $schema->describe('users');
 		$this->assertEquals($table, $result);
 

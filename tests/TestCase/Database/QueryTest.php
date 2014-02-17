@@ -15,9 +15,9 @@
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Query;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**

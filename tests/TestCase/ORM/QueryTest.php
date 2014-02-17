@@ -14,10 +14,10 @@
  */
 namespace Cake\Test\TestCase\ORM;
 
-use Cake\Database\ConnectionManager;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;

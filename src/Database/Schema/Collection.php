@@ -44,6 +44,15 @@ class Collection {
 	protected $_dialect;
 
 /**
+ * The name of the cache config key to use for caching table metadata,
+ * of false if disabled.
+ *
+ * @var string|boolean
+ */
+	protected $_cache = false;
+
+
+/**
  * Constructor.
  *
  * @param Cake\Database\Connection $connection
@@ -51,6 +60,11 @@ class Collection {
 	public function __construct(Connection $connection) {
 		$this->_connection = $connection;
 		$this->_dialect = $connection->driver()->schemaDialect();
+		$config = $this->_connection->config();
+
+		if (!empty($config['cacheMetadata'])) {
+			$this->cacheMetadata(true);
+		}
 	}
 
 /**
@@ -80,10 +94,8 @@ class Collection {
  * @throws Cake\Database\Exception when table cannot be described.
  */
 	public function describe($name) {
-		$config = $this->_connection->config();
-
-		if (!empty($config['cacheMetadata'])) {
-			$cacheConfig = ($config['cacheMetadata'] === true) ? '_cake_model_' : $config['cacheMetadata'];
+		$cacheConfig = $this->cacheMetadata();
+		if ($cacheConfig) {
 			$cacheKey = $this->_connection->configName() . '_' . $name;
 			$cached = Cache::read($cacheKey, $cacheConfig);
 			if ($cached !== false) {
@@ -91,6 +103,7 @@ class Collection {
 			}
 		}
 
+		$config = $this->_connection->config();
 		list($sql, $params) = $this->_dialect->describeTableSql($name, $config);
 		$statement = $this->_executeSql($sql, $params);
 		if (count($statement) === 0) {
@@ -115,10 +128,28 @@ class Collection {
 		}
 		$statement->closeCursor();
 
-		if (!empty($config['cacheMetadata'])) {
+		if (!empty($cacheConfig)) {
 			Cache::write($cacheKey, $table, $cacheConfig);
 		}
 		return $table;
+	}
+
+/**
+ * Sets the cache config name to use for caching table metadata, or
+ * disabels it if false is passed.
+ * If called with no arguments it returns the current configuration name.
+ *
+ * @param boolean $enable whether or not to enable caching
+ * @return string|boolean
+ */
+	public function cacheMetadata($enable = null) {
+		if ($enable === null) {
+			return $this->_cache;
+		}
+		if ($enable === true) {
+			$enable = '_cake_model_';
+		}
+		return $this->_cache = $enable;
 	}
 
 /**
