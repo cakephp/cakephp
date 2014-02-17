@@ -7178,7 +7178,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->button('Hi');
 		$this->assertTags($result, array('button' => array('type' => 'submit'), 'Hi', '/button'));
 
@@ -7194,7 +7193,10 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->button('No type', array('type' => false));
 		$this->assertTags($result, array('button' => array(), 'No type', '/button'));
 
-		$result = $this->Form->button('Upload Text', array('onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false));
+		$result = $this->Form->button('Upload Text', array(
+			'onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'",
+			'escape' => false
+		));
 		$this->assertNotRegExp('/\&039/', $result);
 	}
 
@@ -7204,7 +7206,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testButtonUnlockedByDefault() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'secured';
 		$this->Form->button('Save', array('name' => 'save'));
 		$this->Form->button('Clear');

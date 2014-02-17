@@ -169,6 +169,7 @@ class FormHelper extends Helper {
  * @var array
  */
 	protected $_defaultTemplates = [
+		'button' => '<button{{attrs}}>{{text}}</button>',
 		'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
@@ -1546,7 +1547,9 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Creates a `<button>` tag. The type attribute defaults to `type="submit"`
+ * Creates a `<button>` tag.
+ *
+ * The type attribute defaults to `type="submit"`
  * You can change it to a different value by using `$options['type']`.
  *
  * ### Options:
@@ -1560,14 +1563,14 @@ class FormHelper extends Helper {
  */
 	public function button($title, $options = array()) {
 		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
-		if ($options['escape']) {
-			$title = h($title);
-		}
 		if (isset($options['name'])) {
 			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
 			$this->_secure($options['secure'], $name);
 		}
-		return $this->Html->useTag('button', $options, $title);
+		unset($options['secure']);
+
+		$options['text'] = $title;
+		return $this->widget('button', $options);
 	}
 
 /**
