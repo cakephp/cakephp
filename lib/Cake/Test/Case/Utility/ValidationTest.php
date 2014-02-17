@@ -2356,11 +2356,14 @@ class ValidationTest extends CakeTestCase {
 	public function testMimeType() {
 		$image = CORE_PATH . 'Cake' . DS . 'Test' . DS . 'test_app' . DS . 'webroot' . DS . 'img' . DS . 'cake.power.gif';
 		$File = new File($image, false);
+
 		$this->skipIf(!$File->mime(), 'Cannot determine mimeType');
+
 		$this->assertTrue(Validation::mimeType($image, array('image/gif')));
 		$this->assertTrue(Validation::mimeType(array('tmp_name' => $image), array('image/gif')));
+		$this->assertTrue(Validation::mimeType(array('tmp_name' => $image), '#image/.+#'));
+		$this->assertTrue(Validation::mimeType($image, array('image/GIF')));
 
-		$this->assertFalse(Validation::mimeType($image, array('image/GIF')));
 		$this->assertFalse(Validation::mimeType($image, array('image/png')));
 		$this->assertFalse(Validation::mimeType(array('tmp_name' => $image), array('image/png')));
 	}
