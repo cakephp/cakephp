@@ -510,8 +510,13 @@ class CakeRequest implements ArrayAccess {
 		}
 		if (isset($detect['param'])) {
 			$key = $detect['param'];
-			$value = $detect['value'];
-			return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+			if (isset($detect['value'])) {
+				$value = $detect['value'];
+				return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+			}
+			if (isset($detect['options'])) {
+				return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+			}
 		}
 		if (isset($detect['callback']) && is_callable($detect['callback'])) {
 			return call_user_func($detect['callback'], $this);
@@ -570,7 +575,13 @@ class CakeRequest implements ArrayAccess {
  *
  * Allows for custom detectors on the request parameters.
  *
- * e.g `addDetector('post', array('param' => 'requested', 'value' => 1)`
+ * e.g `addDetector('requested', array('param' => 'requested', 'value' => 1)`
+ *
+ * You can also make parameter detectors that accept multiple values
+ * using the `options` key. This is useful when you want to check
+ * if a request parameter is in a list of options.
+ *
+ * `addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'csv'))`
  *
  * @param string $name The name of the detector.
  * @param array $options The options for the detector definition. See above.
@@ -898,23 +909,23 @@ class CakeRequest implements ArrayAccess {
 	}
 
 /**
- * Only allow certain HTTP request methods, if the request method does not match
+ * Allow only certain HTTP request methods. If the request method does not match
  * a 405 error will be shown and the required "Allow" response header will be set.
  *
  * Example:
  *
- * $this->request->onlyAllow('post', 'delete');
+ * $this->request->allowMethod('post', 'delete');
  * or
- * $this->request->onlyAllow(array('post', 'delete'));
+ * $this->request->allowMethod(array('post', 'delete'));
  *
  * If the request would be GET, response header "Allow: POST, DELETE" will be set
- * and a 405 error will be returned
+ * and a 405 error will be returned.
  *
- * @param string|array $methods Allowed HTTP request methods
+ * @param string|array $methods Allowed HTTP request methods.
  * @return boolean true
  * @throws MethodNotAllowedException
  */
-	public function onlyAllow($methods) {
+	public function allowMethod($methods) {
 		if (!is_array($methods)) {
 			$methods = func_get_args();
 		}
@@ -927,6 +938,22 @@ class CakeRequest implements ArrayAccess {
 		$e = new MethodNotAllowedException();
 		$e->responseHeader('Allow', $allowed);
 		throw $e;
+	}
+
+/**
+ * Alias of CakeRequest::allowMethod() for backwards compatibility.
+ *
+ * @see CakeRequest::allowMethod()
+ * @deprecated 2.5 Use CakeRequest::allowMethod() instead.
+ * @param string|array $methods Allowed HTTP request methods.
+ * @return boolean true
+ * @throws MethodNotAllowedException
+ */
+	public function onlyAllow($methods) {
+		if (!is_array($methods)) {
+			$methods = func_get_args();
+		}
+		return $this->allowMethod($methods);
 	}
 
 /**

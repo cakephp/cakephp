@@ -398,6 +398,41 @@ class BasicsTest extends CakeTestCase {
 	}
 
 /**
+ * testTranslatePercent
+ *
+ * @return void
+ */
+	public function testTranslatePercent() {
+		$result = __('%s are 100% real fruit', 'Apples');
+		$expected = 'Apples are 100% real fruit';
+		$this->assertEquals($expected, $result, 'Percent sign at end of word should be considered literal');
+
+		$result = __('%s are %d% real fruit', 'Apples', 100);
+		$expected = 'Apples are 100% real fruit';
+		$this->assertEquals($expected, $result, 'A digit marker should not be misinterpreted');
+
+		$result = __('%s are %s% real fruit', 'Apples', 100);
+		$expected = 'Apples are 100% real fruit';
+		$this->assertEquals($expected, $result, 'A string marker should not be misinterpreted');
+
+		$result = __('%nonsense %s', 'Apples');
+		$expected = '%nonsense Apples';
+		$this->assertEquals($expected, $result, 'A percent sign at the start of the string should be considered literal');
+
+		$result = __('%s are awesome%', 'Apples');
+		$expected = 'Apples are awesome%';
+		$this->assertEquals($expected, $result, 'A percent sign at the end of the string should be considered literal');
+
+		$result = __('%2$d %1$s entered the bowl', 'Apples', 2);
+		$expected = '2 Apples entered the bowl';
+		$this->assertEquals($expected, $result, 'Positional replacement markers should not be misinterpreted');
+
+		$result = __('%.2f% of all %s agree', 99.44444, 'Cats');
+		$expected = '99.44% of all Cats agree';
+		$this->assertEquals($expected, $result, 'significant-digit placeholder should not be misinterpreted');
+	}
+
+/**
  * test __n()
  *
  * @return void

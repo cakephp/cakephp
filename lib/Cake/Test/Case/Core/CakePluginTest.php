@@ -210,10 +210,10 @@ class CakePluginTest extends CakeTestCase {
 	public function testPath() {
 		CakePlugin::load(array('TestPlugin', 'TestPluginTwo'));
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPlugin' . DS;
-		$this->assertEquals(CakePlugin::path('TestPlugin'), $expected);
+		$this->assertEquals($expected, CakePlugin::path('TestPlugin'));
 
 		$expected = CAKE . 'Test' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS;
-		$this->assertEquals(CakePlugin::path('TestPluginTwo'), $expected);
+		$this->assertEquals($expected, CakePlugin::path('TestPluginTwo'));
 	}
 
 /**

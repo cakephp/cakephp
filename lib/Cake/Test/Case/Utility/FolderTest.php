@@ -344,11 +344,24 @@ class FolderTest extends CakeTestCase {
  * @return void
  */
 	public function testAddPathElement() {
+		$expected = DS . 'some' . DS . 'dir' . DS . 'another_path';
+
 		$result = Folder::addPathElement(DS . 'some' . DS . 'dir', 'another_path');
-		$this->assertEquals(DS . 'some' . DS . 'dir' . DS . 'another_path', $result);
+		$this->assertEquals($expected, $result);
 
 		$result = Folder::addPathElement(DS . 'some' . DS . 'dir' . DS, 'another_path');
-		$this->assertEquals(DS . 'some' . DS . 'dir' . DS . 'another_path', $result);
+		$this->assertEquals($expected, $result);
+
+		$result = Folder::addPathElement(DS . 'some' . DS . 'dir', array('another_path'));
+		$this->assertEquals($expected, $result);
+
+		$result = Folder::addPathElement(DS . 'some' . DS . 'dir' . DS, array('another_path'));
+		$this->assertEquals($expected, $result);
+
+		$expected = DS . 'some' . DS . 'dir' . DS . 'another_path' . DS . 'and' . DS . 'another';
+
+		$result = Folder::addPathElement(DS . 'some' . DS . 'dir', array('another_path', 'and', 'another'));
+		$this->assertEquals($expected, $result);
 	}
 
 /**

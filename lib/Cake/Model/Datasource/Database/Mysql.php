@@ -45,7 +45,8 @@ class Mysql extends DboSource {
 		'login' => 'root',
 		'password' => '',
 		'database' => 'cake',
-		'port' => '3306'
+		'port' => '3306',
+		'flags' => array()
 	);
 
 /**
@@ -84,7 +85,13 @@ class Mysql extends DboSource {
 	public $fieldParameters = array(
 		'charset' => array('value' => 'CHARACTER SET', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault'),
 		'collate' => array('value' => 'COLLATE', 'quote' => false, 'join' => ' ', 'column' => 'Collation', 'position' => 'beforeDefault'),
-		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault')
+		'comment' => array('value' => 'COMMENT', 'quote' => true, 'join' => ' ', 'column' => 'Comment', 'position' => 'afterDefault'),
+		'unsigned' => array(
+			'value' => 'UNSIGNED', 'quote' => false, 'join' => ' ', 'column' => false, 'position' => 'beforeDefault',
+			'noVal' => true,
+			'options' => array(true),
+			'types' => array('integer', 'float', 'decimal', 'biginteger')
+		)
 	);
 
 /**
@@ -110,6 +117,7 @@ class Mysql extends DboSource {
 		'biginteger' => array('name' => 'bigint', 'limit' => '20'),
 		'integer' => array('name' => 'int', 'limit' => '11', 'formatter' => 'intval'),
 		'float' => array('name' => 'float', 'formatter' => 'floatval'),
+		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time' => array('name' => 'time', 'format' => 'H:i:s', 'formatter' => 'date'),
@@ -144,7 +152,7 @@ class Mysql extends DboSource {
 		$config = $this->config;
 		$this->connected = false;
 
-		$flags = array(
+		$flags = $config['flags'] + array(
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
@@ -338,8 +346,11 @@ class Mysql extends DboSource {
 				'type' => $this->column($column->Type),
 				'null' => ($column->Null === 'YES' ? true : false),
 				'default' => $column->Default,
-				'length' => $this->length($column->Type),
+				'length' => $this->length($column->Type)
 			);
+			if (in_array($fields[$column->Field]['type'], $this->fieldParameters['unsigned']['types'], true)) {
+				$fields[$column->Field]['unsigned'] = $this->_unsigned($column->Type);
+			}
 			if (!empty($column->Key) && isset($this->index[$column->Key])) {
 				$fields[$column->Field]['key'] = $this->index[$column->Key];
 			}
@@ -761,8 +772,11 @@ class Mysql extends DboSource {
 		if (strpos($col, 'blob') !== false || $col === 'binary') {
 			return 'binary';
 		}
-		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false || strpos($col, 'decimal') !== false) {
+		if (strpos($col, 'float') !== false || strpos($col, 'double') !== false) {
 			return 'float';
+		}
+		if (strpos($col, 'decimal') !== false || strpos($col, 'numeric') !== false) {
+			return 'decimal';
 		}
 		if (strpos($col, 'enum') !== false) {
 			return "enum($vals)";
@@ -786,6 +800,16 @@ class Mysql extends DboSource {
  */
 	public function nestedTransactionSupported() {
 		return $this->useNestedTransactions && version_compare($this->getVersion(), '4.1', '>=');
+	}
+
+/**
+ * Check if column type is unsigned
+ *
+ * @param string $real Real database-layer column type (i.e. "varchar(255)")
+ * @return bool True if column is unsigned, false otherwise
+ */
+	protected function _unsigned($real) {
+		return strpos(strtolower($real), 'unsigned') !== false;
 	}
 
 }

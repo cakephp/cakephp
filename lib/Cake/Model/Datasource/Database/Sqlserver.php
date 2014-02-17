@@ -78,6 +78,7 @@ class Sqlserver extends DboSource {
 		'password' => '',
 		'database' => 'cake',
 		'schema' => '',
+		'flags' => array()
 	);
 
 /**
@@ -91,7 +92,10 @@ class Sqlserver extends DboSource {
 		'text' => array('name' => 'nvarchar', 'limit' => 'MAX'),
 		'integer' => array('name' => 'int', 'formatter' => 'intval'),
 		'biginteger' => array('name' => 'bigint'),
-		'float' => array('name' => 'numeric', 'formatter' => 'floatval'),
+		'numeric' => array('name' => 'decimal', 'formatter' => 'floatval'),
+		'decimal' => array('name' => 'decimal', 'formatter' => 'floatval'),
+		'float' => array('name' => 'float', 'formatter' => 'floatval'),
+		'real' => array('name' => 'float', 'formatter' => 'floatval'),
 		'datetime' => array('name' => 'datetime', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'timestamp' => array('name' => 'timestamp', 'format' => 'Y-m-d H:i:s', 'formatter' => 'date'),
 		'time' => array('name' => 'datetime', 'format' => 'H:i:s', 'formatter' => 'date'),
@@ -118,7 +122,7 @@ class Sqlserver extends DboSource {
 		$config = $this->config;
 		$this->connected = false;
 
-		$flags = array(
+		$flags = $config['flags'] + array(
 			PDO::ATTR_PERSISTENT => $config['persistent'],
 			PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 		);
@@ -441,8 +445,11 @@ class Sqlserver extends DboSource {
 		if (strpos($col, 'binary') !== false || $col === 'image') {
 			return 'binary';
 		}
-		if (in_array($col, array('float', 'real', 'decimal', 'numeric'))) {
+		if (in_array($col, array('float', 'real'))) {
 			return 'float';
+		}
+		if (in_array($col, array('decimal', 'numeric'))) {
+			return 'decimal';
 		}
 		return 'text';
 	}

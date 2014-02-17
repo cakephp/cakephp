@@ -28,7 +28,8 @@ App::uses('Scaffold', 'View');
  * and afford the web developer an early look at the data, and the possibility to over-ride
  * scaffolded actions with custom-made ones.
  *
- * @package       Cake.Controller
+ * @package Cake.Controller
+ * @deprecated Dynamic scaffolding will be removed and replaced in 3.0
  */
 class Scaffold {
 
