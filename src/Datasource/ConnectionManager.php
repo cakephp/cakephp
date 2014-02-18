@@ -89,7 +89,8 @@ class ConnectionManager {
  * @param string $from The connection to add an alias to.
  * @param string $to The alias to create. $from should return when loaded with get().
  * @return void
- * @throws Cake\Error\MissingDatasourceConfigException When aliasing a connection that does not exist.
+ * @throws Cake\Datasource\Error\MissingDatasourceConfigException When aliasing a
+ * connection that does not exist.
  */
 	public static function alias($from, $to) {
 		if (empty(static::$_config[$to]) && empty(static::$_config[$from])) {
@@ -123,7 +124,8 @@ class ConnectionManager {
  * @param string $name The connection name.
  * @param boolean $useAliases Set to false to not use aliased connections.
  * @return Connection A connection object.
- * @throws Cake\Error\MissingDatasourceConfigException When config data is missing.
+ * @throws Cake\Datasource\Error\MissingDatasourceConfigException When config
+ * data is missing.
  */
 	public static function get($name, $useAliases = true) {
 		if ($useAliases && isset(static::$_aliasMap[$name])) {
