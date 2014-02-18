@@ -175,7 +175,14 @@ class ViewTask extends BakeTask {
 		foreach ($tables as $table) {
 			$model = $this->_modelName($table);
 			$this->controllerName = $this->_controllerName($model);
-			App::uses($model, 'Model');
+			/*
+			 * Where to search the model
+			 */
+			$plugin = null;
+			if ($this->plugin) {
+				$plugin = $this->plugin . '.';
+			}
+			App::uses($model, $plugin . 'Model');
 			if (class_exists($model)) {
 				$vars = $this->_loadController();
 				if (!$actions) {
