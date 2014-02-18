@@ -176,6 +176,10 @@ class FormHelper extends Helper {
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
 		'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
 		'label' => '<label{{attrs}}>{{text}}</label>',
+		'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
+		'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
+		'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
+		'selectMultiple' => '<select name="{{name}}[]" multiple="multiple"{{attrs}}>{{content}}</select>',
 		'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
 		'radioContainer' => '{{input}}{{label}}',
 		'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
@@ -1801,15 +1805,12 @@ class FormHelper extends Helper {
  *
  * ### Attributes:
  *
- * - `showParents` - If included in the array and set to true, an additional option element
- *   will be added for the parent of each option group. You can set an option with the same name
- *   and it's key will be used for the value of the option.
  * - `multiple` - show a multiple select box. If set to 'checkbox' multiple checkboxes will be
  *   created instead.
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
- * - `value` The selected value of the input.
+ * - `val` The selected value of the input.
  * - `class` - When using multiple = checkbox the class name to apply to the divs. Defaults to 'checkbox'.
  * - `disabled` - Control the disabled attribute. When creating a select box, set to true to disable the
  *   select box. When creating checkboxes, `true` will disable all checkboxes. You can also set disabled
@@ -1836,9 +1837,6 @@ class FormHelper extends Helper {
  * $this->Form->select('Model.field', $options);
  * }}}
  *
- * In the above `2 => 'fred'` will not generate an option element. You should enable the `showParents`
- * attribute to show the fred option.
- *
  * If you have multiple options that need to have the same value attribute, you can
  * use an array of arrays to express this:
  *
@@ -1851,114 +1849,49 @@ class FormHelper extends Helper {
  *
  * @param string $fieldName Name attribute of the SELECT
  * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
- *	SELECT element
+ *   SELECT element
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
  */
-	public function select($fieldName, $options = array(), $attributes = array()) {
-		$select = array();
-		$style = null;
-		$tag = null;
-		$attributes += array(
-			'class' => null,
+	public function select($fieldName, $options = [], $attributes = []) {
+		$attributes += [
+			'disabled' => null,
 			'escape' => true,
-			'secure' => true,
-			'empty' => '',
-			'showParents' => false,
 			'hiddenField' => true,
-			'disabled' => false
-		);
+			'multiple' => null,
+			'secure' => true,
+			'empty' => isset($attributes['multiple']) ? false : true
+		];
 
-		$escapeOptions = $this->_extractOption('escape', $attributes);
-		$secure = $this->_extractOption('secure', $attributes);
-		$showEmpty = $this->_extractOption('empty', $attributes);
-		$showParents = $this->_extractOption('showParents', $attributes);
-		$hiddenField = $this->_extractOption('hiddenField', $attributes);
-		unset($attributes['escape'], $attributes['secure'], $attributes['empty'], $attributes['showParents'], $attributes['hiddenField']);
-		$id = $this->_extractOption('id', $attributes);
-
-		$attributes = $this->_initInputField($fieldName, array_merge(
-			(array)$attributes, array('secure' => static::SECURE_SKIP)
-		));
-
-		if (is_string($options) && isset($this->_options[$options])) {
-			$options = $this->_generateOptions($options);
-		} elseif (!is_array($options)) {
-			$options = array();
-		}
-		if (isset($attributes['type'])) {
-			unset($attributes['type']);
+		// Secure the field if there are options, or its a multi select.
+		// Single selects with no options don't submit, but multiselects do.
+		if (
+			$attributes['secure'] &&
+			empty($options) &&
+			empty($attributes['empty']) &&
+			empty($attributes['multiple'])
+		) {
+			$attributes['secure'] = false;
 		}
 
-		if (!empty($attributes['multiple'])) {
-			$style = ($attributes['multiple'] === 'checkbox') ? 'checkbox' : null;
-			$template = ($style) ? 'checkboxmultiplestart' : 'selectmultiplestart';
-			$tag = $template;
-			if ($hiddenField) {
-				$hiddenAttributes = array(
-					'value' => '',
-					'id' => $attributes['id'] . ($style ? '' : '_'),
-					'secure' => false,
-					'name' => $attributes['name']
-				);
-				$select[] = $this->hidden(null, $hiddenAttributes);
-			}
-		} else {
-			$tag = 'selectstart';
+		$attributes = $this->_initInputField($fieldName, $attributes);
+		$attributes['options'] = $options;
+
+		$hidden = '';
+		if ($attributes['multiple'] && $attributes['hiddenField']) {
+			$hiddenAttributes = array(
+				'value' => '',
+				'secure' => false,
+			);
+			$hidden = $this->hidden($fieldName, $hiddenAttributes);
 		}
+		unset($attributes['hiddenField']);
 
-		if ($tag === 'checkboxmultiplestart') {
-			unset($attributes['required']);
+		if ($attributes['multiple'] === 'checkbox') {
+			// TODO add multi-checkbox.
 		}
-
-		if (!empty($tag) || isset($template)) {
-			$hasOptions = (count($options) > 0 || $showEmpty);
-			// Secure the field if there are options, or its a multi select.
-			// Single selects with no options don't submit, but multiselects do.
-			if (
-				(!isset($secure) || $secure) &&
-				empty($attributes['disabled']) &&
-				(!empty($attributes['multiple']) || $hasOptions)
-			) {
-				$this->_secure(true, $this->_secureFieldName($attributes));
-			}
-			$select[] = $this->Html->useTag($tag, $attributes['name'], array_diff_key($attributes, array('name' => null, 'value' => null)));
-		}
-		$emptyMulti = (
-			$showEmpty !== null && $showEmpty !== false && !(
-				empty($showEmpty) && (isset($attributes) &&
-				array_key_exists('multiple', $attributes))
-			)
-		);
-
-		if ($emptyMulti) {
-			$showEmpty = ($showEmpty === true) ? '' : $showEmpty;
-			$options = array('' => $showEmpty) + $options;
-		}
-
-		if (!$id) {
-			$attributes['id'] = Inflector::camelize($attributes['id']);
-		}
-
-		$select = array_merge($select, $this->_selectOptions(
-			array_reverse($options, true),
-			array(),
-			$showParents,
-			array(
-				'escape' => $escapeOptions,
-				'style' => $style,
-				'name' => $attributes['name'],
-				'value' => $attributes['value'],
-				'class' => $attributes['class'],
-				'id' => $attributes['id'],
-				'disabled' => $attributes['disabled'],
-			)
-		));
-
-		$template = ($style === 'checkbox') ? 'checkboxmultipleend' : 'selectend';
-		$select[] = $this->Html->useTag($template);
-		return implode("\n", $select);
+		return $hidden . $this->widget('select', $attributes);
 	}
 
 /**
@@ -2826,11 +2759,11 @@ class FormHelper extends Helper {
 		if (strpos($options['name'], '[') === false) {
 			return [$options['name']];
 		}
-		preg_match_all('/\[(.*?)\]/', $options['name'], $matches);
-		if (isset($matches[1])) {
-			return $matches[1];
-		}
-		return null;
+		$parts = explode('[', $options['name']);
+		$parts = array_map(function($el) {
+			return trim($el, ']');
+		}, $parts);
+		return $parts;
 	}
 
 /**

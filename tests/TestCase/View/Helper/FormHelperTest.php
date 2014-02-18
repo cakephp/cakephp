@@ -4331,10 +4331,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelect() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select('Model.field', array());
 		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]'),
 			array('option' => array('value' => '')),
 			'/option',
 			'/select'
@@ -4344,7 +4343,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data = array('Model' => array('field' => 'value'));
 		$result = $this->Form->select('Model.field', array('value' => 'good', 'other' => 'bad'));
 		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]'),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value', 'selected' => 'selected')),
@@ -4360,7 +4359,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data = array();
 		$result = $this->Form->select('Model.field', array('value' => 'good', 'other' => 'bad'));
 		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]'),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value')),
@@ -4378,7 +4377,7 @@ class FormHelperTest extends TestCase {
 			array('empty' => false)
 		);
 		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]'),
 			array('option' => array('value' => 'first')),
 			'first &quot;html&quot; &lt;chars&gt;',
 			'/option',
@@ -4395,7 +4394,7 @@ class FormHelperTest extends TestCase {
 			array('escape' => false, 'empty' => false)
 		);
 		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]'),
 			array('option' => array('value' => 'first')),
 			'first "html" <chars>',
 			'/option',
@@ -4407,8 +4406,8 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$options = array(
-			array('value' => 'first', 'name' => 'First'),
-			array('value' => 'first', 'name' => 'Another First'),
+			array('value' => 'first', 'text' => 'First'),
+			array('value' => 'first', 'text' => 'Another First'),
 		);
 		$result = $this->Form->select(
 			'Model.field',
@@ -4416,7 +4415,7 @@ class FormHelperTest extends TestCase {
 			array('escape' => false, 'empty' => false)
 		);
 		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]'),
 			array('option' => array('value' => 'first')),
 			'First',
 			'/option',
@@ -4435,7 +4434,7 @@ class FormHelperTest extends TestCase {
 		);
 
 		$expected = array(
-			'select' => array('name' => 'Model[contact_id]', 'id' => 'ModelContactId'),
+			'select' => array('name' => 'Model[contact_id]'),
 			array('option' => array('value' => '')), 'pick something', '/option',
 			array('option' => array('value' => '228', 'selected' => 'selected')), '228 value', '/option',
 			array('option' => array('value' => '228-1')), '228-1 value', '/option',
@@ -4447,30 +4446,29 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = 0;
 		$result = $this->Form->select('Model.field', array('0' => 'No', '1' => 'Yes'));
 		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
+			'select' => array('name' => 'Model[field]'),
 			array('option' => array('value' => '')), '/option',
 			array('option' => array('value' => '0', 'selected' => 'selected')), 'No', '/option',
 			array('option' => array('value' => '1')), 'Yes', '/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
+	}
 
-		$this->Form->request->data['Model']['field'] = 50;
-		$result = $this->Form->select('Model.field', array('50f5c0cf' => 'Stringy', '50' => 'fifty'));
-		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
-			array('option' => array('value' => '')), '/option',
-			array('option' => array('value' => '50f5c0cf')), 'Stringy', '/option',
-			array('option' => array('value' => '50', 'selected' => 'selected')), 'fifty', '/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->select('Contact.required_one', array('option A'));
+/**
+ * test select() with required and disabled attributes.
+ *
+ * @return void
+ */
+	public function testSelectRequired() {
+		$this->article['required'] = [
+			'user_id' => true
+		];
+		$this->Form->create($this->article);
+		$result = $this->Form->select('user_id', array('option A'));
 		$expected = array(
 			'select' => array(
-				'name' => 'data[Contact][required_one]',
-				'id' => 'ContactRequiredOne',
+				'name' => 'user_id',
 				'required' => 'required'
 			),
 			array('option' => array('value' => '')), '/option',
@@ -4479,78 +4477,14 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->select('Contact.required_one', array('option A'), array('disabled' => true));
+		$result = $this->Form->select('user_id', array('option A'), array('disabled' => true));
 		$expected = array(
 			'select' => array(
-				'name' => 'data[Contact][required_one]',
-				'id' => 'ContactRequiredOne',
+				'name' => 'user_id',
 				'disabled' => 'disabled'
 			),
 			array('option' => array('value' => '')), '/option',
 			array('option' => array('value' => '0')), 'option A', '/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test that select() with optiongroups listens to the escape param.
- *
- * @return void
- */
-	public function testSelectOptionGroupEscaping() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$options = array(
-			'>< Key' => array(
-				1 => 'One',
-				2 => 'Two'
-			)
-		);
-		$result = $this->Form->select('Model.field', $options, array('empty' => false));
-		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
-			'optgroup' => array('label' => '&gt;&lt; Key'),
-			array('option' => array('value' => '1')), 'One', '/option',
-			array('option' => array('value' => '2')), 'Two', '/option',
-			'/optgroup',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$options = array(
-			'>< Key' => array(
-				1 => 'One',
-				2 => 'Two'
-			)
-		);
-		$result = $this->Form->select('Model.field', $options, array('empty' => false, 'escape' => false));
-		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
-			'optgroup' => array('label' => '>< Key'),
-			array('option' => array('value' => '1')), 'One', '/option',
-			array('option' => array('value' => '2')), 'Two', '/option',
-			'/optgroup',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Tests that FormHelper::select() allows null to be passed in the $attributes parameter
- *
- * @return void
- */
-	public function testSelectWithNullAttributes() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->select('Model.field', array('first', 'second'), array('empty' => false));
-		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
-			array('option' => array('value' => '0')),
-			'first',
-			'/option',
-			array('option' => array('value' => '1')),
-			'second',
-			'/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
@@ -4564,7 +4498,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testNestedSelect() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select(
 			'Model.field',
 			array(1 => 'One', 2 => 'Two', 'Three' => array(
@@ -4572,48 +4505,24 @@ class FormHelperTest extends TestCase {
 			)), array('empty' => false)
 		);
 		$expected = array(
-			'select' => array('name' => 'Model[field]',
-					'id' => 'ModelField'),
-					array('option' => array('value' => 1)),
-					'One',
-					'/option',
-					array('option' => array('value' => 2)),
-					'Two',
-					'/option',
-					array('optgroup' => array('label' => 'Three')),
-						array('option' => array('value' => 4)),
-						'Four',
-						'/option',
-						array('option' => array('value' => 5)),
-						'Five',
-						'/option',
-					'/optgroup',
-					'/select'
-					);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->select(
-			'Model.field',
-			array(1 => 'One', 2 => 'Two', 'Three' => array(3 => 'Three', 4 => 'Four')),
-			array('showParents' => true, 'empty' => false)
-		);
-
-		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
-				array('option' => array('value' => 1)),
-				'One',
+			'select' => array('name' => 'Model[field]'),
+			array('option' => array('value' => 1)),
+			'One',
+			'/option',
+			array('option' => array('value' => 2)),
+			'Two',
+			'/option',
+			array('optgroup' => array('label' => 'Three')),
+				array('option' => array('value' => 3)),
+				'Three',
 				'/option',
-				array('option' => array('value' => 2)),
-				'Two',
+				array('option' => array('value' => 4)),
+				'Four',
 				'/option',
-				array('optgroup' => array('label' => 'Three')),
-					array('option' => array('value' => 3)),
-					'Three',
-					'/option',
-					array('option' => array('value' => 4)),
-					'Four',
-					'/option',
-				'/optgroup',
+				array('option' => array('value' => 5)),
+				'Five',
+				'/option',
+			'/optgroup',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
@@ -4627,18 +4536,19 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultiple() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array('first', 'second', 'third');
 		$result = $this->Form->select(
-			'Model.multi_field', $options, array('multiple' => true)
+			'Model.multi_field',
+			$options,
+			array('multiple' => true)
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
+				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''
 			),
 			'select' => array(
 				'name' => 'Model[multi_field][]',
-				'id' => 'ModelMultiField', 'multiple' => 'multiple'
+				'multiple' => 'multiple'
 			),
 			array('option' => array('value' => '0')),
 			'first',
@@ -4654,26 +4564,9 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->select(
-			'Model.multi_field', $options, array('multiple' => 'multiple')
-		);
-		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField_'
-			),
-			'select' => array(
-				'name' => 'Model[multi_field][]',
-				'id' => 'ModelMultiField', 'multiple' => 'multiple'
-			),
-			array('option' => array('value' => '0')),
-			'first',
-			'/option',
-			array('option' => array('value' => '1')),
-			'second',
-			'/option',
-			array('option' => array('value' => '2')),
-			'third',
-			'/option',
-			'/select'
+			'Model.multi_field',
+			$options,
+			array('multiple' => 'multiple')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -4703,191 +4596,6 @@ class FormHelperTest extends TestCase {
 			'label' => array('for' => 'UserGetSpam'),
 			'Get Spam',
 			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test generating multiple select with disabled elements.
- *
- * @return void
- */
-	public function testSelectMultipleWithDisabledElements() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
-		$disabled = array(2, 3);
-		$result = $this->Form->select('Contact.multiple', $options, array('multiple' => 'multiple', 'disabled' => $disabled));
-		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'Contact[multiple]', 'value' => '', 'id' => 'ContactMultiple_'
-			),
-			'select' => array(
-				'name' => 'Contact[multiple][]', 'multiple' => 'multiple', 'id' => 'ContactMultiple'
-			),
-			array('option' => array('value' => '1')),
-			'One',
-			'/option',
-			array('option' => array('value' => '2', 'disabled' => 'disabled')),
-			'Two',
-			'/option',
-			array('option' => array('value' => '3', 'disabled' => 'disabled')),
-			'Three',
-			'/option',
-			array('option' => array('value' => '3x')),
-			'Stringy',
-			'/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
-		$disabled = array('2', '3x');
-		$result = $this->Form->input('Contact.multiple', array('multiple' => 'multiple', 'disabled' => $disabled, 'options' => $options));
-		$expected = array(
-			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => 'ContactMultiple')),
-			'Multiple',
-			'/label',
-			'input' => array(
-				'type' => 'hidden', 'name' => 'Contact[multiple]', 'value' => '', 'id' => 'ContactMultiple_'
-			),
-			'select' => array(
-				'name' => 'Contact[multiple][]', 'multiple' => 'multiple', 'id' => 'ContactMultiple'
-			),
-			array('option' => array('value' => '1')),
-			'One',
-			'/option',
-			array('option' => array('value' => '2', 'disabled' => 'disabled')),
-			'Two',
-			'/option',
-			array('option' => array('value' => '3')),
-			'Three',
-			'/option',
-			array('option' => array('value' => '3x', 'disabled' => 'disabled')),
-			'Stringy',
-			'/option',
-			'/select',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
-		$disabled = true;
-		$result = $this->Form->input('Contact.multiple', array('multiple' => 'multiple', 'disabled' => $disabled, 'options' => $options));
-		$expected = array(
-			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => 'ContactMultiple')),
-			'Multiple',
-			'/label',
-			'input' => array(
-				'type' => 'hidden', 'name' => 'data[Contact][multiple]', 'value' => '', 'id' => 'ContactMultiple_'
-			),
-			'select' => array(
-				'name' => 'data[Contact][multiple][]', 'disabled' => 'disabled', 'multiple' => 'multiple', 'id' => 'ContactMultiple'
-			),
-			array('option' => array('value' => '1')),
-			'One',
-			'/option',
-			array('option' => array('value' => '2')),
-			'Two',
-			'/option',
-			array('option' => array('value' => '3')),
-			'Three',
-			'/option',
-			array('option' => array('value' => '3x')),
-			'Stringy',
-			'/option',
-			'/select',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test generating select with disabled elements.
- *
- * @return void
- */
-	public function testSelectWithDisabledElements() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
-		$disabled = array(2, 3);
-		$result = $this->Form->select('Model.field', $options, array('disabled' => $disabled));
-		$expected = array(
-			'select' => array(
-				'name' => 'data[Model][field]', 'id' => 'ModelField'
-			),
-			array('option' => array('value' => '')),
-			'/option',
-			array('option' => array('value' => '1')),
-			'One',
-			'/option',
-			array('option' => array('value' => '2', 'disabled' => 'disabled')),
-			'Two',
-			'/option',
-			array('option' => array('value' => '3', 'disabled' => 'disabled')),
-			'Three',
-			'/option',
-			array('option' => array('value' => '3x')),
-			'Stringy',
-			'/option',
-			'/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
-		$disabled = array('2', '3x');
-		$result = $this->Form->input('Model.field', array('disabled' => $disabled, 'options' => $options));
-		$expected = array(
-			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => 'ModelField')),
-			'Field',
-			'/label',
-			'select' => array(
-				'name' => 'data[Model][field]', 'id' => 'ModelField'
-			),
-			array('option' => array('value' => '1')),
-			'One',
-			'/option',
-			array('option' => array('value' => '2', 'disabled' => 'disabled')),
-			'Two',
-			'/option',
-			array('option' => array('value' => '3')),
-			'Three',
-			'/option',
-			array('option' => array('value' => '3x', 'disabled' => 'disabled')),
-			'Stringy',
-			'/option',
-			'/select',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three', '3x' => 'Stringy');
-		$disabled = true;
-		$result = $this->Form->input('Model.field', array('disabled' => $disabled, 'options' => $options));
-		$expected = array(
-			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => 'ModelField')),
-			'Field',
-			'/label',
-			'select' => array(
-				'name' => 'data[Model][field]', 'id' => 'ModelField', 'disabled' => 'disabled'
-			),
-			array('option' => array('value' => '1')),
-			'One',
-			'/option',
-			array('option' => array('value' => '2')),
-			'Two',
-			'/option',
-			array('option' => array('value' => '3')),
-			'Three',
-			'/option',
-			array('option' => array('value' => '3x')),
-			'Stringy',
-			'/option',
-			'/select',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -5306,8 +5014,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleSecureWithNoOptions() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testkey';
+		$this->Form->request->params['_Token'] = 'testkey';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$this->Form->select(
