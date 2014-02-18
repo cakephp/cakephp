@@ -169,6 +169,7 @@ class FormHelper extends Helper {
  * @var array
  */
 	protected $_defaultTemplates = [
+		'button' => '<button{{attrs}}>{{text}}</button>',
 		'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
@@ -435,7 +436,6 @@ class FormHelper extends Helper {
 		}
 		return $this->hidden('_csrfToken', array(
 			'value' => $this->request->params['_csrfToken'],
-			'id' => 'Token' . mt_rand(),
 			'secure' => static::SECURE_SKIP
 		));
 	}
@@ -524,11 +524,9 @@ class FormHelper extends Helper {
 
 		$out = $this->hidden('_Token.fields', array(
 			'value' => urlencode($fields . ':' . $locked),
-			'id' => 'TokenFields' . mt_rand()
 		));
 		$out .= $this->hidden('_Token.unlocked', array(
 			'value' => urlencode($unlocked),
-			'id' => 'TokenUnlocked' . mt_rand()
 		));
 		return $this->Html->useTag('hiddenblock', $out);
 	}
@@ -698,14 +696,15 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Returns a formatted LABEL element for HTML FORMs. Will automatically generate
- * a `for` attribute if one is not provided.
+ * Returns a formatted LABEL element for HTML forms.
+ *
+ * Will automatically generate a `for` attribute if one is not provided.
  *
  * ### Options
  *
  * - `for` - Set the for attribute, if its not defined the for attribute
  *   will be generated from the $fieldName parameter using
- *   FormHelper::domId().
+ *   FormHelper::_domId().
  *
  * Examples:
  *
@@ -734,7 +733,7 @@ class FormHelper extends Helper {
  *
  * {{{
  * echo $this->Form->label('Post.published', 'Publish', array(
- *		'for' => 'post-publish'
+ *   'for' => 'post-publish'
  * ));
  * <label for="post-publish">Publish</label>
  * }}}
@@ -747,11 +746,7 @@ class FormHelper extends Helper {
  * @return string The formatted LABEL element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::label
  */
-	public function label($fieldName = null, $text = null, $options = array()) {
-		if ($fieldName === null) {
-			$fieldName = implode('.', $this->entity());
-		}
-
+	public function label($fieldName, $text = null, $options = array()) {
 		if ($text === null) {
 			if (strpos($fieldName, '.') !== false) {
 				$fieldElements = explode('.', $fieldName);
@@ -773,10 +768,23 @@ class FormHelper extends Helper {
 			$labelFor = $options['for'];
 			unset($options['for']);
 		} else {
-			$labelFor = $this->domId($fieldName);
+			$labelFor = $this->_domId($fieldName);
 		}
+		$attrs = $options + [
+			'for' => $labelFor,
+			'text' => $text,
+		];
+		return $this->widget('label', $attrs);
+	}
 
-		return $this->Html->useTag('label', $labelFor, $options, $text);
+/**
+ * Generate an ID suitable for use in an ID attribute.
+ *
+ * @param string $value The value to convert into an ID.
+ * @return string The generated id.
+ */
+	protected function _domId($value) {
+		return mb_strtolower(Inflector::slug($value, '-'));
 	}
 
 /**
@@ -1536,7 +1544,9 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Creates a `<button>` tag. The type attribute defaults to `type="submit"`
+ * Creates a `<button>` tag.
+ *
+ * The type attribute defaults to `type="submit"`
  * You can change it to a different value by using `$options['type']`.
  *
  * ### Options:
@@ -1550,14 +1560,14 @@ class FormHelper extends Helper {
  */
 	public function button($title, $options = array()) {
 		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
-		if ($options['escape']) {
-			$title = h($title);
-		}
 		if (isset($options['name'])) {
 			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
 			$this->_secure($options['secure'], $name);
 		}
-		return $this->Html->useTag('button', $options, $title);
+		unset($options['secure']);
+
+		$options['text'] = $title;
+		return $this->widget('button', $options);
 	}
 
 /**

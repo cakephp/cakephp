@@ -1124,7 +1124,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testKey', 'id'
+				'type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testKey'
 			)),
 			'/div'
 		);
@@ -1244,7 +1244,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1261,7 +1261,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('class' => 'hidden'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1408,7 +1408,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1455,7 +1455,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => 'preg:/.+/', 'id' => 'preg:/TokenFields\d+/'
+				'value' => 'preg:/.+/'
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1579,7 +1579,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1646,7 +1646,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1696,7 +1696,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -1845,7 +1845,7 @@ class FormHelperTest extends TestCase {
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash, 'id' => 'preg:/TokenFields\d+/'
+				'value' => $hash
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
@@ -3166,28 +3166,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Test generating checkboxes in a loop.
- *
- * @return void
- */
-	public function testInputCheckboxesInLoop() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		for ($i = 1; $i < 5; $i++) {
-			$result = $this->Form->input("Contact.{$i}.email", array('type' => 'checkbox', 'value' => $i));
-			$expected = array(
-				'div' => array('class' => 'input checkbox'),
-				'input' => array('type' => 'hidden', 'name' => "Contact[{$i}][email]", 'value' => '0', 'id' => "Contact{$i}Email_"),
-				array('input' => array('type' => 'checkbox', 'name' => "Contact[{$i}][email]", 'value' => $i, 'id' => "Contact{$i}Email")),
-				'label' => array('for' => "Contact{$i}Email"),
-				'Email',
-				'/label',
-				'/div'
-			);
-			$this->assertTags($result, $expected);
-		}
-	}
-
-/**
  * Test generating checkboxes with disabled elements.
  *
  * @return void
@@ -3954,32 +3932,29 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testLabel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->text('Person.name');
-		$result = $this->Form->label();
-		$this->assertTags($result, array('label' => array('for' => 'PersonName'), 'Name', '/label'));
+		$result = $this->Form->label('Person.name');
+		$this->assertTags($result, array('label' => array('for' => 'person-name'), 'Name', '/label'));
 
-		$this->Form->text('Person.name');
-		$result = $this->Form->label();
-		$this->assertTags($result, array('label' => array('for' => 'PersonName'), 'Name', '/label'));
+		$result = $this->Form->label('Person.name');
+		$this->assertTags($result, array('label' => array('for' => 'person-name'), 'Name', '/label'));
 
 		$result = $this->Form->label('Person.first_name');
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName'), 'First Name', '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name'), 'First Name', '/label'));
 
 		$result = $this->Form->label('Person.first_name', 'Your first name');
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName'), 'Your first name', '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name'), 'Your first name', '/label'));
 
 		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class'));
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName', 'class' => 'my-class'), 'Your first name', '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name', 'class' => 'my-class'), 'Your first name', '/label'));
 
 		$result = $this->Form->label('Person.first_name', 'Your first name', array('class' => 'my-class', 'id' => 'LabelID'));
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName', 'class' => 'my-class', 'id' => 'LabelID'), 'Your first name', '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name', 'class' => 'my-class', 'id' => 'LabelID'), 'Your first name', '/label'));
 
 		$result = $this->Form->label('Person.first_name', '');
-		$this->assertTags($result, array('label' => array('for' => 'PersonFirstName'), '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-first-name'), '/label'));
 
 		$result = $this->Form->label('Person.2.name', '');
-		$this->assertTags($result, array('label' => array('for' => 'Person2Name'), '/label'));
+		$this->assertTags($result, array('label' => array('for' => 'person-2-name'), '/label'));
 	}
 
 /**
@@ -7181,7 +7156,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->button('Hi');
 		$this->assertTags($result, array('button' => array('type' => 'submit'), 'Hi', '/button'));
 
@@ -7197,7 +7171,10 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->button('No type', array('type' => false));
 		$this->assertTags($result, array('button' => array(), 'No type', '/button'));
 
-		$result = $this->Form->button('Upload Text', array('onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'", 'escape' => false));
+		$result = $this->Form->button('Upload Text', array(
+			'onClick' => "$('#postAddForm').ajaxSubmit({target: '#postTextUpload', url: '/posts/text'});return false;'",
+			'escape' => false
+		));
 		$this->assertNotRegExp('/\&039/', $result);
 	}
 
@@ -7207,7 +7184,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testButtonUnlockedByDefault() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'secured';
 		$this->Form->button('Save', array('name' => 'save'));
 		$this->Form->button('Clear');
@@ -7222,7 +7198,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postButton('Hi', '/controller/action');
 		$this->assertTags($result, array(
 			'form' => array('method' => 'post', 'action' => '/controller/action', 'accept-charset' => 'utf-8'),
@@ -7236,7 +7211,7 @@ class FormHelperTest extends TestCase {
 		));
 
 		$result = $this->Form->postButton('Send', '/', array('data' => array('extra' => 'value')));
-		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"/>') !== false);
+		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"') !== false);
 	}
 
 /**
@@ -7245,8 +7220,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurePostButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testkey';
+		$this->Form->request->params['_Token'] = ['unlockedFields' => []];
 
 		$result = $this->Form->postButton('Delete', '/posts/delete/1');
 		$expected = array(
@@ -7255,14 +7230,14 @@ class FormHelperTest extends TestCase {
 			),
 			array('div' => array('style' => 'display:none;')),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey')),
 			'/div',
 			'button' => array('type' => 'submit'),
 			'Delete',
 			'/button',
 			array('div' => array('style' => 'display:none;')),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '')),
 			'/div',
 			'/form',
 		);
@@ -7275,7 +7250,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostLink() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
 		$this->assertTags($result, array(
 			'form' => array(
@@ -7329,7 +7303,7 @@ class FormHelperTest extends TestCase {
 		));
 
 		$result = $this->Form->postLink('Delete', '/posts/delete', array('data' => array('id' => 1)));
-		$this->assertContains('<input type="hidden" name="id" value="1"/>', $result);
+		$this->assertContains('<input type="hidden" name="id" value="1"', $result);
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('target' => '_blank'));
 		$this->assertTags($result, array(
@@ -7368,9 +7342,10 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostLinkAfterGetForm() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_Token']['key'] = 'testkey';
-		$this->Form->create('User', array('type' => 'get'));
+		$this->Form->request->params['_csrfToken'] = 'testkey';
+		$this->Form->request->params['_Token'] = 'val';
+
+		$this->Form->create($this->article, array('type' => 'get'));
 		$this->Form->end();
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/1');
@@ -7380,10 +7355,10 @@ class FormHelperTest extends TestCase {
 				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][key]', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey')),
 			'div' => array('style' => 'display:none;'),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
-			array('input' => array('type' => 'hidden', 'name' => 'data[_Token][unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/')),
+			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '')),
 			'/div',
 			'/form',
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
@@ -7393,41 +7368,11 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Test that postLink adds _Token fields.
- *
- * @return void
- */
-	public function testSecurePostLink() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testkey';
-
-		$result = $this->Form->postLink('Delete', '/posts/delete/1');
-		$expected = array(
-			'form' => array(
-				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
-			),
-			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
-			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey', 'id' => 'preg:/Token\d+/')),
-			'div' => array('style' => 'display:none;'),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[fields]', 'value' => 'preg:/[\w\d%]+/', 'id' => 'preg:/TokenFields\d+/')),
-			array('input' => array('type' => 'hidden', 'name' => '_Token[unlocked]', 'value' => '', 'id' => 'preg:/TokenUnlocked\d+/')),
-			'/div',
-			'/form',
-			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
-			'Delete',
-			'/a'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * Test that postLink adds form tags to view block
  *
  * @return void
  */
 	public function testPostLinkFormBuffer() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('inline' => false));
 		$this->assertTags($result, array(
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),

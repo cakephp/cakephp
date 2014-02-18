@@ -26,7 +26,7 @@ class ButtonTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$templates = [
-			'button' => '<button type="{{type}}"{{attrs}}>{{text}}</button>',
+			'button' => '<button{{attrs}}>{{text}}</button>',
 		];
 		$this->templates = new StringTemplate($templates);
 	}
