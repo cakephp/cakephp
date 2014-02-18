@@ -285,6 +285,51 @@ class SelectBoxTest extends TestCase {
 	}
 
 /**
+ * test rendering with option groups and escaping
+ *
+ * @return void
+ */
+	public function testRenderOptionGroupsEscape() {
+		$select = new SelectBox($this->templates);
+		$data = [
+			'name' => 'Birds[name]',
+			'options' => [
+				'>XSS<' => [
+					'1' => 'One>',
+				],
+			]
+		];
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+			],
+			['optgroup' => ['label' => '&gt;XSS&lt;']],
+			['option' => ['value' => '1']],
+			'One&gt;',
+			'/option',
+			'/optgroup',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
+
+		$data['escape'] = false;
+		$result = $select->render($data);
+		$expected = [
+			'select' => [
+				'name' => 'Birds[name]',
+			],
+			['optgroup' => ['label' => '>XSS<']],
+			['option' => ['value' => '1']],
+			'One>',
+			'/option',
+			'/optgroup',
+			'/select'
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test rendering with option groups
  *
  * @return void
