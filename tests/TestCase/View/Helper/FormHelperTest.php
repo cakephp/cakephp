@@ -1472,7 +1472,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurityButtonNestedNamed() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 
@@ -1925,13 +1924,11 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredRadio() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'option1', '2' => 'option2');
 
 		$this->Form->radio('Test.test', $options);
-		$expected = array('Test.test');
+		$expected = array('Test[test]' => '');
 		$this->assertEquals($expected, $this->Form->fields);
 	}
 
@@ -8030,82 +8027,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormEnd() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->assertEquals('</form>', $this->Form->end());
-
-		$result = $this->Form->end('');
-		$expected = array(
-			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => ''),
-			'/div',
-			'/form'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->end(array('label' => ''));
-		$expected = array(
-			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => ''),
-			'/div',
-			'/form'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->end('save');
-		$expected = array(
-			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => 'save'),
-			'/div',
-			'/form'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->end(array('label' => 'save'));
-		$expected = array(
-			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => 'save'),
-			'/div',
-			'/form'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->end(array('label' => 'save', 'name' => 'Whatever'));
-		$expected = array(
-			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => 'save', 'name' => 'Whatever'),
-			'/div',
-			'/form'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->end(array('name' => 'Whatever'));
-		$expected = array(
-			'div' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => 'Submit', 'name' => 'Whatever'),
-			'/div',
-			'/form'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->end(array('label' => 'save', 'name' => 'Whatever', 'div' => 'good'));
-		$expected = array(
-			'div' => array('class' => 'good'),
-			'input' => array('type' => 'submit', 'value' => 'save', 'name' => 'Whatever'),
-			'/div',
-			'/form'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->end(array(
-			'label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')
-		));
-		$expected = array(
-			'div' => array('class' => 'good'),
-			'input' => array('type' => 'submit', 'value' => 'save', 'name' => 'Whatever'),
-			'/div',
-			'/form'
-		);
-		$this->assertTags($result, $expected);
 	}
 
 /**
