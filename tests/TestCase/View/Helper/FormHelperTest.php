@@ -1472,7 +1472,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecurityButtonNestedNamed() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
 		$this->Form->request->params['_csrfToken'] = $key;
 
@@ -1925,13 +1924,11 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredRadio() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'option1', '2' => 'option2');
 
 		$this->Form->radio('Test.test', $options);
-		$expected = array('Test.test');
+		$expected = array('Test[test]' => '');
 		$this->assertEquals($expected, $this->Form->fields);
 	}
 
