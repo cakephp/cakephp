@@ -444,48 +444,21 @@ class FormHelper extends Helper {
  * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
  * input fields where appropriate.
  *
- * If $options is set a form submit button will be created. Options can be either a string or an array.
- *
- * {{{
- * array usage:
- *
- * array('label' => 'save'); value="save"
- * array('label' => 'save', 'name' => 'Whatever'); value="save" name="Whatever"
- * array('name' => 'Whatever'); value="Submit" name="Whatever"
- * array('label' => 'save', 'name' => 'Whatever', 'div' => 'good') <div class="good"> value="save" name="Whatever"
- * array('label' => 'save', 'name' => 'Whatever', 'div' => array('class' => 'good')); <div class="good"> value="save" name="Whatever"
- * }}}
- *
- * @param string|array $options as a string will use $options as the value of button,
- * @return string a closing FORM tag optional submit button.
+ * @return string A closing FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#closing-the-form
  */
-	public function end($options = null) {
-		$out = null;
-		$submit = null;
+	public function end() {
+		$out = '';
 
-		if ($options !== null) {
-			$submitOptions = array();
-			if (is_string($options)) {
-				$submit = $options;
-			} else {
-				if (isset($options['label'])) {
-					$submit = $options['label'];
-					unset($options['label']);
-				}
-				$submitOptions = $options;
-			}
-			$out .= $this->submit($submit, $submitOptions);
-		}
 		if (
 			$this->requestType !== 'get' &&
-			isset($this->request['_Token']) &&
 			!empty($this->request['_Token'])
 		) {
 			$out .= $this->secure($this->fields);
 			$this->fields = array();
 		}
-		$out .= $this->Html->useTag('formend');
+
+		$out .= $this->formatTemplate('formend', []);
 
 		$this->requestType = null;
 		$this->_context = null;
