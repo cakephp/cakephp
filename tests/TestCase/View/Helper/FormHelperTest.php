@@ -4498,7 +4498,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testNestedSelect() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->select(
 			'Model.field',
 			array(1 => 'One', 2 => 'Two', 'Three' => array(
@@ -4506,48 +4505,24 @@ class FormHelperTest extends TestCase {
 			)), array('empty' => false)
 		);
 		$expected = array(
-			'select' => array('name' => 'Model[field]',
-					'id' => 'ModelField'),
-					array('option' => array('value' => 1)),
-					'One',
-					'/option',
-					array('option' => array('value' => 2)),
-					'Two',
-					'/option',
-					array('optgroup' => array('label' => 'Three')),
-						array('option' => array('value' => 4)),
-						'Four',
-						'/option',
-						array('option' => array('value' => 5)),
-						'Five',
-						'/option',
-					'/optgroup',
-					'/select'
-					);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->select(
-			'Model.field',
-			array(1 => 'One', 2 => 'Two', 'Three' => array(3 => 'Three', 4 => 'Four')),
-			array('showParents' => true, 'empty' => false)
-		);
-
-		$expected = array(
-			'select' => array('name' => 'Model[field]', 'id' => 'ModelField'),
-				array('option' => array('value' => 1)),
-				'One',
+			'select' => array('name' => 'Model[field]'),
+			array('option' => array('value' => 1)),
+			'One',
+			'/option',
+			array('option' => array('value' => 2)),
+			'Two',
+			'/option',
+			array('optgroup' => array('label' => 'Three')),
+				array('option' => array('value' => 3)),
+				'Three',
 				'/option',
-				array('option' => array('value' => 2)),
-				'Two',
+				array('option' => array('value' => 4)),
+				'Four',
 				'/option',
-				array('optgroup' => array('label' => 'Three')),
-					array('option' => array('value' => 3)),
-					'Three',
-					'/option',
-					array('option' => array('value' => 4)),
-					'Four',
-					'/option',
-				'/optgroup',
+				array('option' => array('value' => 5)),
+				'Five',
+				'/option',
+			'/optgroup',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
