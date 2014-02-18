@@ -501,7 +501,7 @@ class FormHelper extends Helper {
 		$out .= $this->hidden('_Token.unlocked', array(
 			'value' => urlencode($unlocked),
 		));
-		return $this->Html->useTag('hiddenblock', $out);
+		return $this->formatTemplate('hiddenblock', ['content' => $out]);
 	}
 
 /**
@@ -1618,8 +1618,8 @@ class FormHelper extends Helper {
 		}
 
 		$formName = str_replace('.', '', uniqid('post_', true));
-		$formUrl = $this->url($url);
 		$formOptions = array(
+			'action' => $this->url($url),
 			'name' => $formName,
 			'id' => $formName,
 			'style' => 'display:none;',
@@ -1630,10 +1630,10 @@ class FormHelper extends Helper {
 			unset($options['target']);
 		}
 
-		$out = $this->Html->useTag('form', $formUrl, $formOptions);
-		$out .= $this->Html->useTag('hidden', '_method', array(
-			'value' => $requestMethod
-		));
+		$out = $this->formatTemplate('formstart', [
+			'attrs' => $this->_templater->formatAttributes($formOptions)
+		]);
+		$out .= $this->hidden('_method', ['value' => $requestMethod]);
 		$out .= $this->_csrfField();
 
 		$fields = array();
@@ -1645,7 +1645,7 @@ class FormHelper extends Helper {
 			unset($options['data']);
 		}
 		$out .= $this->secure($fields);
-		$out .= $this->Html->useTag('formend');
+		$out .= $this->formatTemplate('formend', []);
 
 		if ($options['block']) {
 			$this->_View->append($options['block'], $out);
