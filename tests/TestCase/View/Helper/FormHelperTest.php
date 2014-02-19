@@ -1173,8 +1173,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testValidateHashNoModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'foo';
+		$this->Form->request->params['_Token'] = 'foo';
+
 		$result = $this->Form->secure(array('anything'));
 		$this->assertRegExp('/540ac9c60d323c22bafe997b72c0790f39a8bdef/', $result);
 	}
@@ -1390,15 +1390,13 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityMultipleFields() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$key = 'testKey';
+		$this->Form->request->params['_Token'] = 'foo';
 
 		$fields = array(
 			'Model.0.password', 'Model.0.username', 'Model.0.hidden' => 'value',
 			'Model.0.valid' => '0', 'Model.1.password', 'Model.1.username',
 			'Model.1.hidden' => 'value', 'Model.1.valid' => '0'
 		);
-		$this->Form->request->params['_csrfToken'] = $key;
 		$result = $this->Form->secure($fields);
 
 		$hash = '51e3b55a6edd82020b3f29c9ae200e14bbeb7ee5%3AModel.0.hidden%7CModel.0.valid';
@@ -1412,7 +1410,7 @@ class FormHelperTest extends TestCase {
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
-				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+				'value' => ''
 			)),
 			'/div'
 		);
@@ -4988,8 +4986,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleCheckboxSecurity() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testKey';
+		$this->Form->request->params['_Token'] = 'foo';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$result = $this->Form->select(
