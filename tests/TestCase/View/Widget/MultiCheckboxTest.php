@@ -185,7 +185,7 @@ class MultiCheckboxTest extends TestCase {
 				'id' => 'tags-id-1',
 				'checked' => 'checked'
 			]],
-			['label' => ['for' => 'tags-id-1']],
+			['label' => ['class' => 'selected', 'for' => 'tags-id-1']],
 			'CakePHP',
 			'/label',
 			'/div',
