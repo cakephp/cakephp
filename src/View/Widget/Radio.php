@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\Utility\Inflector;
+use Cake\View\Widget\IdGeneratorTrait;
 use Cake\View\Widget\WidgetInterface;
 use Traversable;
 
@@ -25,6 +25,8 @@ use Traversable;
  * of Cake\View\Helper\FormHelper and is not intended for direct use.
  */
 class Radio implements WidgetInterface {
+
+	use IdGeneratorTrait;
 
 /**
  * Template instance.
@@ -39,13 +41,6 @@ class Radio implements WidgetInterface {
  * @var Cake\View\Widget\Label
  */
 	protected $_label;
-
-/**
- * A list of id suffixes used in the current rendering.
- *
- * @var array
- */
-	protected $_idSuffixes = [];
 
 /**
  * Constructor
@@ -106,7 +101,7 @@ class Radio implements WidgetInterface {
 		}
 		unset($data['empty']);
 
-		$this->_idSuffixes = [];
+		$this->_clearIds();
 		$opts = [];
 		foreach ($options as $val => $text) {
 			$opts[] = $this->_renderInput($val, $text, $data);
@@ -151,7 +146,7 @@ class Radio implements WidgetInterface {
 		$radio['name'] = $data['name'];
 
 		if (empty($radio['id'])) {
-			$radio['id'] = $this->_id($radio);
+			$radio['id'] = $this->_id($radio['name'], $radio['value']);
 		}
 
 		if (isset($data['val']) && is_bool($data['val'])) {
@@ -212,26 +207,6 @@ class Radio implements WidgetInterface {
 			'input' => $input,
 		];
 		return $this->_label->render($labelAttrs);
-	}
-
-/**
- * Generate an ID attribute for a radio button.
- *
- * Ensures that id's for a given set of fields are unique.
- *
- * @param array $radio The radio properties.
- * @return string Generated id.
- */
-	protected function _id($radio) {
-		$value = mb_strtolower(Inflector::slug($radio['name'], '-'));
-		$idSuffix = mb_strtolower(str_replace(array('@', '<', '>', ' ', '"', '\''), '-', $radio['value']));
-		$count = 1;
-		$check = $idSuffix;
-		while (in_array($check, $this->_idSuffixes)) {
-			$check = $idSuffix . $count++;
-		}
-		$this->_idSuffixes[] = $check;
-		return trim($value . '-' . $check, '-');
 	}
 
 }
