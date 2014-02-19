@@ -153,6 +153,9 @@ class MultiCheckbox implements WidgetInterface {
 			'text' => $checkbox['text'],
 			'input' => $input,
 		];
+		if (!empty($checkbox['checked']) && empty($labelAttrs['class'])) {
+			$labelAttrs['class'] = 'selected';
+		}
 		$label = $this->_label->render($labelAttrs);
 
 		return $this->_templates->format('checkboxContainer', [
