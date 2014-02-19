@@ -862,6 +862,8 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * {@inheritdoc}
  *
+ * @throws Cake\ORM\Error\RecordNotFoundException if no record can be found give
+ * such primary key value.
  */
 	public function get($primaryKey, $options = []) {
 		$key = (array)$this->primaryKey();
