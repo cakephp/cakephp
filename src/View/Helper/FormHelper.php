@@ -171,6 +171,7 @@ class FormHelper extends Helper {
 	protected $_defaultTemplates = [
 		'button' => '<button{{attrs}}>{{text}}</button>',
 		'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
+		'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
 		'file' => '<input type="file" name="{{name}}"{{attrs}}>',
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
@@ -1798,10 +1799,8 @@ class FormHelper extends Helper {
  *   that string is displayed as the empty element.
  * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
  * - `val` The selected value of the input.
- * - `class` - When using multiple = checkbox the class name to apply to the divs. Defaults to 'checkbox'.
  * - `disabled` - Control the disabled attribute. When creating a select box, set to true to disable the
- *   select box. When creating checkboxes, `true` will disable all checkboxes. You can also set disabled
- *   to a list of values you want to disable when creating checkboxes.
+ *   select box. Set to an array to disable specific option elements.
  *
  * ### Using options
  *
@@ -1840,6 +1839,7 @@ class FormHelper extends Helper {
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
+ * @see Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
  */
 	public function select($fieldName, $options = [], $attributes = []) {
 		$attributes += [
@@ -1850,6 +1850,11 @@ class FormHelper extends Helper {
 			'secure' => true,
 			'empty' => isset($attributes['multiple']) ? false : true
 		];
+
+		if ($attributes['multiple'] === 'checkbox') {
+			unset($attributes['multiple'], $attributes['empty']);
+			return $this->multiCheckbox($fieldName, $options, $attributes);
+		}
 
 		// Secure the field if there are options, or its a multi select.
 		// Single selects with no options don't submit, but multiselects do.
@@ -1868,17 +1873,58 @@ class FormHelper extends Helper {
 		$hidden = '';
 		if ($attributes['multiple'] && $attributes['hiddenField']) {
 			$hiddenAttributes = array(
+				'name' => $attributes['name'],
 				'value' => '',
 				'secure' => false,
 			);
 			$hidden = $this->hidden($fieldName, $hiddenAttributes);
 		}
 		unset($attributes['hiddenField']);
-
-		if ($attributes['multiple'] === 'checkbox') {
-			// TODO add multi-checkbox.
-		}
 		return $hidden . $this->widget('select', $attributes);
+	}
+
+/**
+ * Creates a set of checkboxes out of options.
+ *
+ * ### Options
+ *
+ * - `escape` - If true contents of options will be HTML entity encoded. Defaults to true.
+ * - `val` The selected value of the input.
+ * - `class` - When using multiple = checkbox the class name to apply to the divs. Defaults to 'checkbox'.
+ * - `disabled` - Control the disabled attribute. When creating checkboxes, `true` will disable all checkboxes.
+ *   You can also set disabled to a list of values you want to disable when creating checkboxes.
+ * - `hiddenField` - Set to false to remove the hidden field that ensures a value
+ *   is always submitted.
+ *
+ * Can be used in place of a select box with the multiple attribute.
+ *
+ * @param string $fieldName Name attribute of the SELECT
+ * @param array $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
+ *   checkboxes element.
+ * @param array $attributes The HTML attributes of the select element.
+ * @return string Formatted SELECT element
+ * @see Cake\View\Helper\FormHelper::select() for supported option formats.
+ */
+	public function multiCheckbox($fieldName, $options, $attributes = []) {
+		$attributes += [
+			'disabled' => null,
+			'escape' => true,
+			'hiddenField' => true,
+			'secure' => true,
+		];
+		$attributes = $this->_initInputField($fieldName, $attributes);
+		$attributes['options'] = $options;
+
+		$hidden = '';
+		if ($attributes['hiddenField']) {
+			$hiddenAttributes = array(
+				'name' => $attributes['name'],
+				'value' => '',
+				'secure' => false,
+			);
+			$hidden = $this->hidden($fieldName, $hiddenAttributes);
+		}
+		return $hidden . $this->widget('multicheckbox', $attributes);
 	}
 
 /**

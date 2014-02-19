@@ -3880,37 +3880,44 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectAsCheckbox() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->select('Model.multi_field', array('first', 'second', 'third'), array('multiple' => 'checkbox', 'value' => array(0, 1)));
+		$result = $this->Form->select(
+			'Model.multi_field',
+			array('first', 'second', 'third'),
+			array('multiple' => 'checkbox', 'value' => array(0, 1))
+		);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'checked' => 'checked', 'value' => '0', 'id' => 'ModelMultiField0')),
-			array('label' => array('for' => 'ModelMultiField0', 'class' => 'selected')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'checked' => 'checked', 'value' => '0', 'id' => 'model-multi-field-0')),
+			array('label' => array('for' => 'model-multi-field-0', 'class' => 'selected')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'checked' => 'checked', 'value' => '1', 'id' => 'ModelMultiField1')),
-			array('label' => array('for' => 'ModelMultiField1', 'class' => 'selected')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'checked' => 'checked', 'value' => '1', 'id' => 'model-multi-field-1')),
+			array('label' => array('for' => 'model-multi-field-1', 'class' => 'selected')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
-			array('label' => array('for' => 'ModelMultiField2')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'model-multi-field-2')),
+			array('label' => array('for' => 'model-multi-field-2')),
 			'third',
 			'/label',
 			'/div',
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->select('Model.multi_field', array('1/2' => 'half'), array('multiple' => 'checkbox'));
+		$result = $this->Form->select(
+			'Model.multi_field',
+			array('1/2' => 'half'),
+			array('multiple' => 'checkbox')
+		);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1/2', 'id' => 'ModelMultiField1/22')),
-			array('label' => array('for' => 'ModelMultiField1/22')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1/2', 'id' => 'model-multi-field-1-2')),
+			array('label' => array('for' => 'model-multi-field-1-2')),
 			'half',
 			'/label',
 			'/div',
@@ -5212,74 +5219,26 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectCheckboxMultipleOverrideName() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('category', array(
-			'type' => 'select',
+		$result = $this->Form->select('category', ['1', '2'], [
 			'multiple' => 'checkbox',
 			'name' => 'fish',
-			'options' => array('1', '2'),
-			'div' => false,
-			'label' => false,
-		));
+		]);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'fish', 'value' => '', 'id' => 'category'),
+			'input' => array('type' => 'hidden', 'name' => 'fish', 'value' => ''),
 			array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'fish[]', 'value' => '0', 'id' => 'Category0')),
-				array('label' => array('for' => 'Category0')), '1', '/label',
+				array('input' => array('type' => 'checkbox', 'name' => 'fish[]', 'value' => '0', 'id' => 'fish0')),
+				array('label' => array('for' => 'fish0')), '1', '/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'fish[]', 'value' => '1', 'id' => 'Category1')),
-				array('label' => array('for' => 'Category1')), '2', '/label',
+				array('input' => array('type' => 'checkbox', 'name' => 'fish[]', 'value' => '1', 'id' => 'fish1')),
+				array('label' => array('for' => 'fish1')), '2', '/label',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-	}
 
-/**
- * Test that 'id' overrides all the checkbox id's as well.
- *
- * @return void
- */
-	public function testSelectCheckboxMultipleId() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->select(
-			'Model.multi_field',
-			array('first', 'second', 'third'),
-			array('multiple' => 'checkbox', 'id' => 'CustomId')
-		);
-
-		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'CustomId'
-			),
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array(
-				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
-				'value' => '0', 'id' => 'CustomId0'
-			)),
-			array('label' => array('for' => 'CustomId0')),
-			'first',
-			'/label',
-			'/div',
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array(
-				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
-				'value' => '1', 'id' => 'CustomId1'
-			)),
-			array('label' => array('for' => 'CustomId1')),
-			'second',
-			'/label',
-			'/div',
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array(
-				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
-				'value' => '2', 'id' => 'CustomId2'
-			)),
-			array('label' => array('for' => 'CustomId2')),
-			'third',
-			'/label',
-			'/div'
-		);
+		$result = $this->Form->multiCheckbox('category', ['1', '2'], [
+			'name' => 'fish',
+		]);
 		$this->assertTags($result, $expected);
 	}
 
