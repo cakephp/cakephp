@@ -467,6 +467,29 @@ TEXT;
 	}
 
 /**
+ * test log() depth
+ *
+ * @return void
+ */
+	public function testLogDepth() {
+		$mock = $this->getMock('Cake\Log\Engine\BaseLog', ['write']);
+		Log::config('test', ['engine' => $mock]);
+
+		$mock->expects($this->at(0))
+			->method('write')
+			->with('debug', $this->logicalAnd(
+				$this->stringContains('DebuggerTest::testLog'),
+				$this->stringContains('test'),
+				$this->logicalNot($this->stringContains('val'))
+			));
+
+		$val = array(
+			'test' => array('key' => 'val')
+		);
+		Debugger::log($val, LOG_DEBUG, 0);
+	}
+
+/**
  * testDump method
  *
  * @return void

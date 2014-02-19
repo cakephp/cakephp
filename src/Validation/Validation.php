@@ -421,6 +421,11 @@ class Validation {
 				$regex = "/^{$sign}{$dnum}{$exp}$/";
 			}
 		}
+
+		// Workaround localized floats.
+		if (is_float($check)) {
+			$check = str_replace(',', '.', strval($check));
+		}
 		return static::_check($check, $regex);
 	}
 
@@ -920,10 +925,10 @@ class Validation {
 	}
 
 /**
- * Checks the mime type of a file. Comparison is case sensitive.
+ * Checks the mime type of a file.
  *
  * @param string|array $check
- * @param array $mimeTypes to check for
+ * @param array|string $mimeTypes Array of mime types or regex pattern to check.
  * @return boolean Success
  * @throws Cake\Error\Exception when mime type can not be determined.
  */
@@ -937,6 +942,14 @@ class Validation {
 
 		if ($mime === false) {
 			throw new Exception('Can not determine the mimetype.');
+		}
+
+		if (is_string($mimeTypes)) {
+			return self::_check($mime, $mimeTypes);
+		}
+
+		foreach ($mimeTypes as $key => $val) {
+			$mimeTypes[$key] = strtolower($val);
 		}
 		return in_array($mime, $mimeTypes);
 	}
@@ -974,7 +987,7 @@ class Validation {
 			$check = $check['error'];
 		}
 
-		return $check === UPLOAD_ERR_OK;
+		return (int)$check === UPLOAD_ERR_OK;
 	}
 
 /**

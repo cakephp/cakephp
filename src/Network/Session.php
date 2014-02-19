@@ -130,7 +130,6 @@ class Session {
  */
 	public static function init($base = null) {
 		static::$time = time();
-		$checkAgent = Configure::read('Session.checkAgent');
 
 		if (env('HTTP_USER_AGENT')) {
 			static::$_userAgent = md5(env('HTTP_USER_AGENT') . Configure::read('Security.salt'));

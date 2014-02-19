@@ -200,9 +200,9 @@ class FileEngineTest extends TestCase {
 		$this->_configCache(['duration' => 1]);
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$write = Cache::write('serialize_test1', $data, 'file_test');
-		$write = Cache::write('serialize_test2', $data, 'file_test');
-		$write = Cache::write('serialize_test3', $data, 'file_test');
+		Cache::write('serialize_test1', $data, 'file_test');
+		Cache::write('serialize_test2', $data, 'file_test');
+		Cache::write('serialize_test3', $data, 'file_test');
 		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test1'));
 		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test2'));
 		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test3'));
@@ -215,9 +215,9 @@ class FileEngineTest extends TestCase {
 		$this->assertFalse(file_exists(TMP . 'tests/cake_serialize_test3'));
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$write = Cache::write('serialize_test1', $data, 'file_test');
-		$write = Cache::write('serialize_test2', $data, 'file_test');
-		$write = Cache::write('serialize_test3', $data, 'file_test');
+		Cache::write('serialize_test1', $data, 'file_test');
+		Cache::write('serialize_test2', $data, 'file_test');
+		Cache::write('serialize_test3', $data, 'file_test');
 		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test1'));
 		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test2'));
 		$this->assertTrue(file_exists(TMP . 'tests/cake_serialize_test3'));
@@ -455,7 +455,7 @@ class FileEngineTest extends TestCase {
 		Cache::drop('mask_test');
 
 		Cache::config('mask_test', ['engine' => 'File', 'mask' => 0666, 'path' => TMP . 'tests']);
-		$write = Cache::write('masking_test', $data, 'mask_test');
+		Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
 		$expected = '0666';
 		$this->assertEquals($expected, $result);
@@ -463,7 +463,7 @@ class FileEngineTest extends TestCase {
 		Cache::drop('mask_test');
 
 		Cache::config('mask_test', ['engine' => 'File', 'mask' => 0644, 'path' => TMP . 'tests']);
-		$write = Cache::write('masking_test', $data, 'mask_test');
+		Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
 		$expected = '0644';
 		$this->assertEquals($expected, $result);
@@ -471,7 +471,7 @@ class FileEngineTest extends TestCase {
 		Cache::drop('mask_test');
 
 		Cache::config('mask_test', ['engine' => 'File', 'mask' => 0640, 'path' => TMP . 'tests']);
-		$write = Cache::write('masking_test', $data, 'mask_test');
+		Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests/cake_masking_test')), -4);
 		$expected = '0640';
 		$this->assertEquals($expected, $result);

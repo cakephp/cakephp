@@ -521,6 +521,9 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 
 /**
  * assert no errors
+ *
+ * @deprecated This is a compatiblity wrapper for 1.x. It will be removed in 3.0
+ * @return void
  */
 	protected function assertNoErrors() {
 	}
@@ -530,6 +533,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param mixed $expected the name of the Exception or error
  * @param string $message the text to display if the assertion is not correct
+ * @deprecated This is a compatiblity wrapper for 1.x. It will be removed in 3.0
  * @return void
  */
 	protected function expectError($expected = false, $message = '') {
@@ -544,6 +548,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param mixed $expected the name of the Exception
  * @param string $message the text to display if the assertion is not correct
+ * @deprecated This is a compatiblity wrapper for 1.x. It will be removed in 3.0
  * @return void
  */
 	protected function expectException($name = 'Exception', $message = '') {

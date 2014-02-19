@@ -1654,6 +1654,22 @@ class ValidationTest extends TestCase {
 	}
 
 /**
+ * Test localized floats with decimal.
+ *
+ * @return void
+ */
+	public function testDecimalLocaleSet() {
+		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affect the others tests.');
+		$restore = setlocale(LC_NUMERIC, 0);
+		$this->skipIf(setlocale(LC_NUMERIC, 'de_DE') === false, "The German locale isn't available.");
+
+		$this->assertTrue(Validation::decimal(1.54));
+		$this->assertTrue(Validation::decimal('1.54'));
+
+		setlocale(LC_NUMERIC, $restore);
+	}
+
+/**
  * testEmail method
  *
  * @return void
@@ -2355,11 +2371,14 @@ class ValidationTest extends TestCase {
 	public function testMimeType() {
 		$image = CORE_PATH . 'Cake/Test/TestApp/webroot/img/cake.power.gif';
 		$File = new File($image, false);
+
 		$this->skipIf(!$File->mime(), 'Cannot determine mimeType');
+
 		$this->assertTrue(Validation::mimeType($image, array('image/gif')));
 		$this->assertTrue(Validation::mimeType(array('tmp_name' => $image), array('image/gif')));
+		$this->assertTrue(Validation::mimeType(array('tmp_name' => $image), '#image/.+#'));
+		$this->assertTrue(Validation::mimeType($image, array('image/GIF')));
 
-		$this->assertFalse(Validation::mimeType($image, array('image/GIF')));
 		$this->assertFalse(Validation::mimeType($image, array('image/png')));
 		$this->assertFalse(Validation::mimeType(array('tmp_name' => $image), array('image/png')));
 	}
@@ -2385,9 +2404,11 @@ class ValidationTest extends TestCase {
 	public function testUploadError() {
 		$this->assertTrue(Validation::uploadError(0));
 		$this->assertTrue(Validation::uploadError(array('error' => 0)));
+		$this->assertTrue(Validation::uploadError(array('error' => '0')));
 
 		$this->assertFalse(Validation::uploadError(2));
 		$this->assertFalse(Validation::uploadError(array('error' => 2)));
+		$this->assertFalse(Validation::uploadError(array('error' => '2')));
 	}
 
 /**

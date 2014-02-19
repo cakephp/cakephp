@@ -448,17 +448,19 @@ class FormHelper extends Helper {
  * Closes an HTML form, cleans up values set by FormHelper::create(), and writes hidden
  * input fields where appropriate.
  *
+ * @param array $secureAttributes will be passed as html attributes into the hidden input elements generated for the
+ *   Security Component.
  * @return string A closing FORM tag.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#closing-the-form
  */
-	public function end() {
+	public function end($secureAttributes = []) {
 		$out = '';
 
 		if (
 			$this->requestType !== 'get' &&
 			!empty($this->request['_Token'])
 		) {
-			$out .= $this->secure($this->fields);
+			$out .= $this->secure($this->fields, $secureAttributes);
 			$this->fields = array();
 		}
 
@@ -470,19 +472,27 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Generates a hidden field with a security hash based on the fields used in the form.
+ * Generates a hidden field with a security hash based on the fields used in
+ * the form.
  *
- * @param array $fields The list of fields to use when generating the hash
+ * If $secureAttributes is set, these html attributes will be merged into
+ * the hidden input tags generated for the Security Component. This is
+ * especially useful to set HTML5 attributes like 'form'.
+ *
+ * @param array|null $fields If set specifies the list of fields to use when
+ *    generating the hash, else $this->fields is being used.
+ * @param array $secureAttributes will be passed as html attributes into the hidden
+ *    input elements generated for the Security Component.
  * @return string A hidden input field with a security hash
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::secure
  */
-	public function secure($fields = array()) {
+	public function secure($fields = array(), $secureAttributes = array()) {
 		if (!isset($this->request['_Token']) || empty($this->request['_Token'])) {
 			return;
 		}
 		$locked = array();
 		$unlockedFields = $this->_unlockedFields;
-
+		
 		foreach ($fields as $key => $value) {
 			if (!is_int($key)) {
 				$locked[$key] = $value;
@@ -499,12 +509,14 @@ class FormHelper extends Helper {
 		$unlocked = implode($unlockedFields, '|');
 		$fields = Security::hash(serialize($fields) . $unlocked . Configure::read('Security.salt'), 'sha1');
 
-		$out = $this->hidden('_Token.fields', array(
+		$tokenFields = array_merge($secureAttributes, array(
 			'value' => urlencode($fields . ':' . $locked),
 		));
-		$out .= $this->hidden('_Token.unlocked', array(
+		$out = $this->hidden('_Token.fields', $tokenFields);
+		$tokenUnlocked = array_merge($secureAttributes, array(
 			'value' => urlencode($unlocked),
 		));
+		$out .= $this->hidden('_Token.unlocked', $tokenUnlocked);
 		return $this->formatTemplate('hiddenblock', ['content' => $out]);
 	}
 

@@ -421,9 +421,8 @@ class FixtureTaskTest extends TestCase {
 		$this->Task->expects($this->at(1))->method('createFile')
 			->with($filename, $this->stringContains('<?php'));
 
-		$result = $this->Task->generateFixtureFile('Article', array());
-
-		$result = $this->Task->generateFixtureFile('Article', array());
+		$this->Task->generateFixtureFile('Article', array());
+		$this->Task->generateFixtureFile('Article', array());
 	}
 
 /**
