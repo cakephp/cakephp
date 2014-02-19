@@ -1886,14 +1886,13 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredFileInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$this->Form->file('Attachment.file');
 		$expected = array(
-			'Attachment.file.name', 'Attachment.file.type', 'Attachment.file.tmp_name',
-			'Attachment.file.error', 'Attachment.file.size'
+			'Attachment.file.name', 'Attachment.file.type',
+			'Attachment.file.tmp_name', 'Attachment.file.error',
+			'Attachment.file.size'
 		);
 		$this->assertEquals($expected, $this->Form->fields);
 	}
@@ -6818,25 +6817,21 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFileUploadField() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->file('Model.upload');
-		$this->assertTags($result, array('input' => array('type' => 'file', 'name' => 'Model[upload]', 'id' => 'ModelUpload')));
+		$expected = ['input' => ['type' => 'file', 'name' => 'Model[upload]']];
 
-		$this->Form->request->data['Model.upload'] = array("name" => "", "type" => "", "tmp_name" => "", "error" => 4, "size" => 0);
-		$result = $this->Form->input('Model.upload', array('type' => 'file'));
-		$expected = array(
-			'div' => array('class' => 'input file'),
-			'label' => array('for' => 'ModelUpload'),
-			'Upload',
-			'/label',
-			'input' => array('type' => 'file', 'name' => 'Model[upload]', 'id' => 'ModelUpload'),
-			'/div'
-		);
+		$result = $this->Form->file('Model.upload');
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Model']['upload'] = [
+			'name' => '', 'type' => '', 'tmp_name' => '',
+			'error' => 4, 'size' => 0
+		];
+		$result = $this->Form->file('Model.upload');
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['upload'] = 'no data should be set in value';
 		$result = $this->Form->file('Model.upload');
-		$this->assertTags($result, array('input' => array('type' => 'file', 'name' => 'Model[upload]', 'id' => 'ModelUpload')));
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -6845,11 +6840,10 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFileUploadOnOtherModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('ValidateUser', array('type' => 'file'));
+		$this->Form->create($this->article, array('type' => 'file'));
 		$result = $this->Form->file('ValidateProfile.city');
 		$expected = array(
-			'input' => array('type' => 'file', 'name' => 'ValidateProfile[city]', 'id' => 'ValidateProfileCity')
+			'input' => array('type' => 'file', 'name' => 'ValidateProfile[city]')
 		);
 		$this->assertTags($result, $expected);
 	}

@@ -31,7 +31,7 @@ class FileTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 		$templates = [
-			'fileinput' => '<input type="file" name="{{name}}"{{attrs}}>',
+			'file' => '<input type="file" name="{{name}}"{{attrs}}>',
 		];
 		$this->templates = new StringTemplate($templates);
 	}

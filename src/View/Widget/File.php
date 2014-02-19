@@ -54,7 +54,8 @@ class File implements WidgetInterface {
 			'escape' => true,
 		];
 		unset($data['val']);
-		return $this->_templates->format('fileinput', [
+
+		return $this->_templates->format('file', [
 			'name' => $data['name'],
 			'attrs' => $this->_templates->formatAttributes(
 				$data, ['name', 'val']

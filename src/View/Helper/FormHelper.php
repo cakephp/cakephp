@@ -171,6 +171,7 @@ class FormHelper extends Helper {
 	protected $_defaultTemplates = [
 		'button' => '<button{{attrs}}>{{text}}</button>',
 		'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
+		'file' => '<input type="file" name="{{name}}"{{attrs}}>',
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
@@ -492,7 +493,7 @@ class FormHelper extends Helper {
 		}
 		$locked = array();
 		$unlockedFields = $this->_unlockedFields;
-		
+
 		foreach ($fields as $key => $value) {
 			if (!is_int($key)) {
 				$locked[$key] = $value;
@@ -1522,14 +1523,15 @@ class FormHelper extends Helper {
 		$options['secure'] = static::SECURE_SKIP;
 
 		$options = $this->_initInputField($fieldName, $options);
-		$field = $this->entity();
 
 		foreach (array('name', 'type', 'tmp_name', 'error', 'size') as $suffix) {
-			$this->_secure($secure, array_merge($field, array($suffix)));
+			$this->_secure(
+				$secure,
+				$this->_secureFieldName(['name' => $options['name'] . '[' . $suffix . ']'])
+			);
 		}
 
-		$exclude = array('name' => null, 'value' => null);
-		return $this->Html->useTag('file', $options['name'], array_diff_key($options, $exclude));
+		return $this->widget('file', $options);
 	}
 
 /**
