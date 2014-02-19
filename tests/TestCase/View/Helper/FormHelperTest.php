@@ -1906,11 +1906,13 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredRadio() {
+		$this->Form->request->params['_Token'] = 'testKey';
+
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'option1', '2' => 'option2');
 
 		$this->Form->radio('Test.test', $options);
-		$expected = array('Test[test]' => '');
+		$expected = array('Test.test');
 		$this->assertEquals($expected, $this->Form->fields);
 	}
 
@@ -1920,7 +1922,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredAndDisabledNotAssoc() {
-		$this->Form->request->params['_csrfToken'] = 'testKey';
+		$this->Form->request->params['_Token'] = 'testKey';
 
 		$this->Form->select('Model.select', array(1, 2), array('disabled'));
 		$this->Form->checkbox('Model.checkbox', array('disabled'));
@@ -1942,7 +1944,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredAndDisabled() {
-		$this->Form->request->params['_csrfToken'] = 'testKey';
+		$this->Form->request->params['_Token'] = 'testKey';
 
 		$this->Form->checkbox('Model.checkbox', array('disabled' => true));
 		$this->Form->text('Model.text', array('disabled' => true));

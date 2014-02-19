@@ -1503,7 +1503,7 @@ class FormHelper extends Helper {
 		));
 
 		if ($secure === true) {
-			$this->_secure(true, $options['name'], '' . $options['val']);
+			$this->_secure(true, $this->_secureFieldName($options), $options['val']);
 		}
 
 		$options['type'] = 'hidden';
