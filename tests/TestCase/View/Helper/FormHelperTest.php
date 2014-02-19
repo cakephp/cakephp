@@ -926,14 +926,13 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateWithAcceptCharset() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->create('UserForm', array(
-				'type' => 'post', 'action' => 'login', 'encoding' => 'iso-8859-1'
+		$result = $this->Form->create($this->article, array(
+				'type' => 'post', 'action' => 'index', 'encoding' => 'iso-8859-1'
 			)
 		);
 		$expected = array(
 			'form' => array(
-				'method' => 'post', 'action' => '/user_forms/login', 'id' => 'UserFormLoginForm',
+				'method' => 'post', 'action' => '/articles',
 				'accept-charset' => 'iso-8859-1'
 			),
 			'div' => array('style' => 'display:none;'),
@@ -948,9 +947,8 @@ class FormHelperTest extends TestCase {
  *
  */
 	public function testCreateQuerystringrequest() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact', array(
+		$result = $this->Form->create($this->article, array(
 			'type' => 'post',
 			'escape' => false,
 			'url' => array(
@@ -961,7 +959,6 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm',
 				'method' => 'post',
 				'action' => '/controller/action?param1=value1&amp;param2=value2',
 				'accept-charset' => $encoding
@@ -972,7 +969,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->create('Contact', array(
+		$result = $this->Form->create($this->article, array(
 			'type' => 'post',
 			'url' => array(
 				'controller' => 'controller',
@@ -982,7 +979,6 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm',
 				'method' => 'post',
 				'action' => '/controller/action?param1=value1&amp;param2=value2',
 				'accept-charset' => $encoding
@@ -1001,16 +997,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreateWithMultipleIdInData() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 
-		$this->Form->request->data['Contact']['id'] = array(1, 2);
-		$result = $this->Form->create('Contact');
+		$this->Form->request->data['Article']['id'] = array(1, 2);
+		$result = $this->Form->create($this->article);
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm',
 				'method' => 'post',
-				'action' => '/contacts/add',
+				'action' => '/articles/add',
 				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
@@ -1026,10 +1020,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCreatePassedArgs() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$this->Form->request->data['Contact']['id'] = 1;
-		$result = $this->Form->create('Contact', array(
+		$this->Form->request->data['Article']['id'] = 1;
+		$result = $this->Form->create($this->article, array(
 			'type' => 'post',
 			'escape' => false,
 			'url' => array(
@@ -1039,9 +1032,8 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm',
 				'method' => 'post',
-				'action' => '/contacts/edit/myparam',
+				'action' => '/articles/edit/myparam',
 				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
@@ -1057,28 +1049,27 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testGetFormCreate() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact', array('type' => 'get'));
+		$result = $this->Form->create($this->article, array('type' => 'get'));
 		$this->assertTags($result, array('form' => array(
-			'id' => 'ContactAddForm', 'method' => 'get', 'action' => '/contacts/add',
+			'method' => 'get', 'action' => '/articles/add',
 			'accept-charset' => $encoding
 		)));
 
-		$result = $this->Form->text('Contact.name');
+		$result = $this->Form->text('title');
 		$this->assertTags($result, array('input' => array(
-			'name' => 'name', 'type' => 'text', 'id' => 'ContactName',
+			'name' => 'title', 'type' => 'text', 'required' => 'required'
 		)));
 
 		$result = $this->Form->password('password');
 		$this->assertTags($result, array('input' => array(
-			'name' => 'password', 'type' => 'password', 'id' => 'ContactPassword'
+			'name' => 'password', 'type' => 'password'
 		)));
 		$this->assertNotRegExp('/<input[^<>]+[^id|name|type|value]=[^<>]*>$/', $result);
 
 		$result = $this->Form->text('user_form');
 		$this->assertTags($result, array('input' => array(
-			'name' => 'user_form', 'type' => 'text', 'id' => 'ContactUserForm'
+			'name' => 'user_form', 'type' => 'text'
 		)));
 	}
 
@@ -1088,20 +1079,21 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testGetFormWithFalseModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$this->Form->request['controller'] = 'contact_test';
-		$result = $this->Form->create(false, array('type' => 'get', 'url' => array('controller' => 'contact_test')));
+		$result = $this->Form->create(false, array(
+			'type' => 'get', 'url' => array('controller' => 'contact_test')
+		));
 
 		$expected = array('form' => array(
-			'id' => 'addForm', 'method' => 'get', 'action' => '/contact_test/add',
+			'method' => 'get', 'action' => '/contact_test/add',
 			'accept-charset' => $encoding
 		));
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->text('reason');
 		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'reason', 'id' => 'reason')
+			'input' => array('type' => 'text', 'name' => 'reason')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -1485,11 +1477,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecuritySubmitNestedNamed() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$key = 'testKey';
-		$this->Form->request->params['_csrfToken'] = $key;
+		$this->Form->request->params['_Token'] = 'testKey';
 
-		$this->Form->create('Addresses');
+		$this->Form->create($this->article);
 		$this->Form->submit('Test', array('type' => 'submit', 'name' => 'Address[button]'));
 		$result = $this->Form->unlockField();
 		$this->assertEquals(array('Address.button'), $result);
@@ -1501,11 +1491,10 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecuritySubmitImageNoName() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$key = 'testKey';
-		$this->Form->request->params['_csrfToken'] = $key;
+		$this->Form->request->params['_Token'] = 'testKey';
 
-		$this->Form->create('User');
+		$this->Form->create(false);
 		$result = $this->Form->submit('save.png');
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -1522,11 +1511,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecuritySubmitImageName() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$key = 'testKey';
-		$this->Form->request->params['_csrfToken'] = $key;
+		$this->Form->request->params['_Token'] = 'testKey';
 
-		$this->Form->create('User');
+		$this->Form->create(null);
 		$result = $this->Form->submit('save.png', array('name' => 'test'));
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -1710,8 +1697,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecureWithCustomNameAttribute() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testKey';
+		$this->Form->request->params['_Token'] = 'testKey';
 
 		$this->Form->text('UserForm.published', array('name' => 'User[custom]'));
 		$this->assertEquals('User.custom', $this->Form->fields[0]);
@@ -1901,7 +1887,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredMultipleSelect() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 		$options = array('1' => 'one', '2' => 'two');
@@ -1935,7 +1920,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredAndDisabledNotAssoc() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$this->Form->select('Model.select', array(1, 2), array('disabled'));
@@ -1958,7 +1942,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredAndDisabled() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
 
 		$this->Form->checkbox('Model.checkbox', array('disabled' => true));
@@ -2014,12 +1997,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testUnlockFieldAddsToList() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->Form->request['_Token'] = array(
 			'unlockedFields' => array()
 		);
-		$this->Form->create('Contact');
 		$this->Form->unlockField('Contact.name');
 		$this->Form->text('Contact.name');
 
@@ -2033,20 +2013,18 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testUnlockFieldRemovingFromFields() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testKey';
 		$this->Form->request['_Token'] = array(
 			'unlockedFields' => array()
 		);
-		$this->Form->create('Contact');
-		$this->Form->hidden('Contact.id', array('value' => 1));
-		$this->Form->text('Contact.name');
+		$this->Form->create($this->article);
+		$this->Form->hidden('Article.id', array('value' => 1));
+		$this->Form->text('Article.title');
 
-		$this->assertEquals(1, $this->Form->fields['Contact.id'], 'Hidden input should be secured.');
-		$this->assertTrue(in_array('Contact.name', $this->Form->fields), 'Field should be secured.');
+		$this->assertEquals(1, $this->Form->fields['Article.id'], 'Hidden input should be secured.');
+		$this->assertTrue(in_array('Article.title', $this->Form->fields), 'Field should be secured.');
 
-		$this->Form->unlockField('Contact.name');
-		$this->Form->unlockField('Contact.id');
+		$this->Form->unlockField('Article.title');
+		$this->Form->unlockField('Article.id');
 		$this->assertEquals(array(), $this->Form->fields);
 	}
 
@@ -4039,22 +4017,21 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxDefaultValue() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data['Model']['field'] = false;
 		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1')));
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked')));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked')));
 
 		$this->Form->request->data['Model']['field'] = true;
 		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField', 'checked' => 'checked')));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked')));
 
 		unset($this->Form->request->data['Model']['field']);
 		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'id' => 'ModelField')));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1')));
 	}
 
 /**
@@ -6912,7 +6889,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSubmitButton() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->submit('');
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -7010,7 +6986,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSubmitImage() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->submit('http://example.com/cake.power.gif');
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -7091,8 +7066,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSubmitUnlockedByDefault() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'secured';
+		$this->Form->request->params['_Token'] = 'secured';
 		$this->Form->submit('Go go');
 		$this->Form->submit('Save', array('name' => 'save'));
 
@@ -7106,7 +7080,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSubmitImageTimestamp() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Form->submit('cake.power.gif');
