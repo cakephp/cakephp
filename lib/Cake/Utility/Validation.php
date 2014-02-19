@@ -425,6 +425,11 @@ class Validation {
 				$regex = "/^{$sign}{$dnum}{$exp}$/";
 			}
 		}
+
+		// Workaround localized floats.
+		if (is_float($check)) {
+			$check = str_replace(',', '.', strval($check));
+		}
 		return self::_check($check, $regex);
 	}
 
