@@ -331,9 +331,10 @@ class FormHelper extends Helper {
 			'encoding' => strtolower(Configure::read('App.encoding')),
 		];
 
-		$options['action'] = $this->_formUrl($context, $options);
-		unset($options['url']);
+		$action = $this->url($this->_formUrl($context, $options));
+		unset($options['url'], $options['action']);
 
+		$htmlAttributes = [];
 		switch (strtolower($options['type'])) {
 			case 'get':
 				$htmlAttributes['method'] = 'get';
@@ -356,8 +357,6 @@ class FormHelper extends Helper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-		$htmlAttributes['action'] = $this->url($options['action']);
-
 		if (!$options['default']) {
 			if (!isset($options['onsubmit'])) {
 				$options['onsubmit'] = '';
@@ -368,7 +367,7 @@ class FormHelper extends Helper {
 		if (!empty($options['encoding'])) {
 			$htmlAttributes['accept-charset'] = $options['encoding'];
 		}
-		unset($options['type'], $options['action'], $options['encoding'], $options['default']);
+		unset($options['type'], $options['encoding'], $options['default']);
 
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
@@ -380,8 +379,9 @@ class FormHelper extends Helper {
 		if (!empty($append)) {
 			$append = $this->formatTemplate('hiddenblock', ['content' => $append]);
 		}
+		$actionAttr = $this->_templater->formatAttributes(['action' => $action, 'escape' => false]);
 		return $this->formatTemplate('formstart', [
-			'attrs' => $this->_templater->formatAttributes($htmlAttributes)
+			'attrs' => $this->_templater->formatAttributes($htmlAttributes) . $actionAttr
 		]) . $append;
 	}
 
