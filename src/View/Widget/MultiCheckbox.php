@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\Utility\Inflector;
+use Cake\View\Widget\IdGeneratorTrait;
 use Cake\View\Widget\WidgetInterface;
 
 /**
@@ -22,6 +22,8 @@ use Cake\View\Widget\WidgetInterface;
  *
  */
 class MultiCheckbox implements WidgetInterface {
+
+	use IdGeneratorTrait;
 
 /**
  * Template instance to use.
@@ -105,6 +107,7 @@ class MultiCheckbox implements WidgetInterface {
 			'val' => null,
 		];
 		$out = [];
+		$this->_clearIds();
 		foreach ($data['options'] as $key => $val) {
 			$checkbox = [
 				'value' => $key,
@@ -123,7 +126,7 @@ class MultiCheckbox implements WidgetInterface {
 				$checkbox['disabled'] = true;
 			}
 			if (empty($checkbox['id'])) {
-				$checkbox['id'] = mb_strtolower(Inflector::slug($checkbox['name'] . $checkbox['value'], '-'));
+				$checkbox['id'] = $this->_id($checkbox['name'], $checkbox['value']);
 			}
 
 			$out[] = $this->_renderInput($checkbox);
