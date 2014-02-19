@@ -555,22 +555,6 @@ class ExceptionRendererTest extends TestCase {
 				500
 			),
 			array(
-				new Error\MissingDatasourceConfigException(array('config' => 'default')),
-				array(
-					'/<h2>Missing Datasource Configuration<\/h2>/',
-					'/The datasource configuration <em>default<\/em> was not found in datasources.php/'
-				),
-				500
-			),
-			array(
-				new Error\MissingDatasourceException(array('class' => 'MyDatasource', 'plugin' => 'MyPlugin')),
-				array(
-					'/<h2>Missing Datasource<\/h2>/',
-					'/Datasource class <em>MyPlugin.MyDatasource<\/em> could not be found/'
-				),
-				500
-			),
-			array(
 				new Error\MissingHelperException(array('class' => 'MyCustomHelper')),
 				array(
 					'/<h2>Missing Helper<\/h2>/',

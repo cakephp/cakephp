@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;
@@ -988,7 +989,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testLinkSuccess() {
-		$connection = \Cake\Database\ConnectionManager::get('test');
+		$connection = ConnectionManager::get('test');
 		$joint = $this->getMock(
 			'\Cake\ORM\Table',
 			['save'],
@@ -1071,7 +1072,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testUnlinkSuccess() {
-		$connection = \Cake\Database\ConnectionManager::get('test');
+		$connection = ConnectionManager::get('test');
 		$joint = $this->getMock(
 			'\Cake\ORM\Table',
 			['delete', 'find'],
@@ -1160,7 +1161,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testUnlinkWithoutPropertyClean() {
-		$connection = \Cake\Database\ConnectionManager::get('test');
+		$connection = ConnectionManager::get('test');
 		$joint = $this->getMock(
 			'\Cake\ORM\Table',
 			['delete', 'find'],
@@ -1230,7 +1231,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testReplaceLinkSuccess() {
-		$connection = \Cake\Database\ConnectionManager::get('test');
+		$connection = ConnectionManager::get('test');
 		$joint = $this->getMock(
 			'\Cake\ORM\Table',
 			['delete', 'find'],
@@ -1374,7 +1375,7 @@ class BelongsToManyTest extends TestCase {
  * @return void
  */
 	public function testSaveOnlyEntities() {
-		$connection = \Cake\Database\ConnectionManager::get('test');
+		$connection = ConnectionManager::get('test');
 		$mock = $this->getMock(
 			'Cake\ORM\Table',
 			['save', 'schema'],

@@ -1,7 +1,5 @@
 <?php
 /**
- * MissingDatasourceException class
- *
  * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
@@ -15,14 +13,15 @@
  * @since         CakePHP(tm) v 3.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Error;
+namespace Cake\Datasource\Error;
+
+use Cake\Error\Exception;
 
 /**
- * Used when a datasource cannot be found.
- *
+ * Exception class to be thrown when a datasource configuration is not found
  */
-class MissingDatasourceException extends Exception {
+class MissingDatasourceConfigException extends Exception {
 
-	protected $_messageTemplate = 'Datasource class %s could not be found. %s';
+	protected $_messageTemplate = 'The datasource configuration "%s" was not found.';
 
 }

@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,14 +12,11 @@
  * @since         CakePHP(tm) v 0.10.x.1402
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database;
+namespace Cake\Datasource;
 
-use Cake\Core\App;
-use Cake\Core\Configure;
 use Cake\Core\StaticConfigTrait;
-use Cake\Database\Connection;
-use Cake\Database\ConnectionRegistry;
-use Cake\Error;
+use Cake\Datasource\ConnectionRegistry;
+use Cake\Datasource\Error\MissingDatasourceConfigException;
 
 /**
  * Manages and loads instances of Connection
@@ -30,7 +25,7 @@ use Cake\Error;
  * a registry for the connections defined in an application.
  *
  * Provides an interface for loading and enumerating connections defined in
- * app/Config/datasources.php
+ * App/Config/app.php
  */
 class ConnectionManager {
 
@@ -94,11 +89,12 @@ class ConnectionManager {
  * @param string $from The connection to add an alias to.
  * @param string $to The alias to create. $from should return when loaded with get().
  * @return void
- * @throws Cake\Error\MissingDatasourceConfigException When aliasing a connection that does not exist.
+ * @throws Cake\Datasource\Error\MissingDatasourceConfigException When aliasing a
+ * connection that does not exist.
  */
 	public static function alias($from, $to) {
 		if (empty(static::$_config[$to]) && empty(static::$_config[$from])) {
-			throw new Error\MissingDatasourceConfigException(
+			throw new MissingDatasourceConfigException(
 				sprintf('Cannot create alias of "%s" as it does not exist.', $from)
 			);
 		}
@@ -128,7 +124,8 @@ class ConnectionManager {
  * @param string $name The connection name.
  * @param boolean $useAliases Set to false to not use aliased connections.
  * @return Connection A connection object.
- * @throws Cake\Error\MissingDatasourceConfigException When config data is missing.
+ * @throws Cake\Datasource\Error\MissingDatasourceConfigException When config
+ * data is missing.
  */
 	public static function get($name, $useAliases = true) {
 		if ($useAliases && isset(static::$_aliasMap[$name])) {
@@ -151,7 +148,7 @@ class ConnectionManager {
  *
  * @param string $name The name of the DataSource, as defined in app/Config/datasources.php
  * @return DataSource Instance
- * @throws Cake\Error\MissingDatasourceException
+ * @throws Cake\Error\MissingDatasourceConfigException
  * @deprecated Will be removed in 3.0 stable.
  */
 	public static function getDataSource($name) {

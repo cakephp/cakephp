@@ -20,7 +20,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Database\Connection;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Error;
 use Cake\TestSuite\Fixture\TestFixture;
 use Cake\TestSuite\TestCase;

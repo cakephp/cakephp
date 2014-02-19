@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Core\Configure;
 use Cake\Database\Connection;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -70,7 +70,7 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testMissingDriver() {
-		$connection = new Connection(['datasource' => '\Foo\InvalidDriver']);
+		$connection = new Connection(['driver' => '\Foo\InvalidDriver']);
 	}
 
 /**
@@ -82,7 +82,7 @@ class ConnectionTest extends TestCase {
  */
 	public function testDisabledDriver() {
 		$mock = $this->getMock('\Cake\Database\Connection\Driver', ['enabled'], [], 'DriverMock');
-		$connection = new Connection(['datasource' => $mock]);
+		$connection = new Connection(['driver' => $mock]);
 	}
 
 /**
@@ -572,7 +572,7 @@ class ConnectionTest extends TestCase {
 		$driver->expects($this->once())
 			->method('enabled')
 			->will($this->returnValue(true));
-		$connection = new Connection(['datasource' => $driver]);
+		$connection = new Connection(['driver' => $driver]);
 
 		$result = $connection->quoteIdentifier('name');
 		$expected = '"name"';
@@ -732,7 +732,7 @@ class ConnectionTest extends TestCase {
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect'],
-			[['datasource' => $driver]]
+			[['driver' => $driver]]
 		);
 
 		$logger = $this->getMock('\Cake\Database\Log\QueryLogger');
@@ -759,7 +759,7 @@ class ConnectionTest extends TestCase {
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'commit', 'begin'],
-			[['datasource' => $driver]]
+			[['driver' => $driver]]
 		);
 		$connection->expects($this->at(0))->method('begin');
 		$connection->expects($this->at(1))->method('commit');
@@ -781,7 +781,7 @@ class ConnectionTest extends TestCase {
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'commit', 'begin', 'rollback'],
-			[['datasource' => $driver]]
+			[['driver' => $driver]]
 		);
 		$connection->expects($this->at(0))->method('begin');
 		$connection->expects($this->at(1))->method('rollback');
@@ -806,7 +806,7 @@ class ConnectionTest extends TestCase {
 		$connection = $this->getMock(
 			'\Cake\Database\Connection',
 			['connect', 'commit', 'begin', 'rollback'],
-			[['datasource' => $driver]]
+			[['driver' => $driver]]
 		);
 		$connection->expects($this->at(0))->method('begin');
 		$connection->expects($this->at(1))->method('rollback');

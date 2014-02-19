@@ -17,6 +17,8 @@ namespace Cake\ORM;
 use Cake\Core\App;
 use Cake\Database\Schema\Table as Schema;
 use Cake\Database\Type;
+use Cake\Datasource\EntityInterface;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Event\Event;
 use Cake\Event\EventListener;
 use Cake\Event\EventManager;
@@ -26,7 +28,6 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\BehaviorRegistry;
-use Cake\ORM\Entity;
 use Cake\ORM\Error\MissingEntityException;
 use Cake\ORM\Error\RecordNotFoundException;
 use Cake\ORM\Marshaller;
@@ -88,7 +89,7 @@ use Cake\Validation\Validator;
  *
  * @see Cake\Event\EventManager for reference on the events system.
  */
-class Table implements EventListener {
+class Table implements RepositoryInterface, EventListener {
 
 /**
  * Name of the table as it can be found in the database
@@ -675,17 +676,10 @@ class Table implements EventListener {
 	}
 
 /**
- * Creates a new Query for this table and applies some defaults based on the
- * type of search that was selected.
+ * {@inheritdoc}
  *
- * ### Model.beforeFind event
+ * By default, `$options` will recognize the following keys:
  *
- * Each find() will trigger a `Model.beforeFind` event for all attached
- * listeners. Any listener can set a valid result set using $query
- *
- * @param string $type the type of query to perform
- * @param array $options An array that will be passed to Query::applyOptions
- * By default it allows the following keys:
  * - fields
  * - conditions
  * - order
@@ -866,24 +860,10 @@ class Table implements EventListener {
 	}
 
 /**
- * Returns a single record after finding it by its primary key, if no record is
- * found this method throws an exception.
+ * {@inheritdoc}
  *
- * ###Example:
- *
- * {{{
- * $id = 10;
- * $article = $articles->get($id);
- *
- * $article = $articles->get($id, ['contain' => ['Comments]]);
- * }}}
- *
- * @param mixed primary key value to find
- * @param array $options options accepted by `Table::find()`
- * @throws Cake\ORM\Error\RecordNotFoundException if the record with such id
- * could not be found
- * @return \Cake\ORM\Entity
- * @see Table::find()
+ * @throws Cake\ORM\Error\RecordNotFoundException if no record can be found give
+ * such primary key value.
  */
 	public function get($primaryKey, $options = []) {
 		$key = (array)$this->primaryKey();
@@ -906,24 +886,16 @@ class Table implements EventListener {
 	}
 
 /**
- * Creates a new Query instance for this table
+ * {@inheritdoc}
  *
- * @return \Cake\ORM\Query
  */
 	public function query() {
 		return new Query($this->connection(), $this);
 	}
 
 /**
- * Update all matching rows.
+ * {@inheritdoc}
  *
- * Sets the $fields to the provided values based on $conditions.
- * This method will *not* trigger beforeSave/afterSave events. If you need those
- * first load a collection of records and update them.
- *
- * @param array $fields A hash of field => new value.
- * @param array $conditions An array of conditions, similar to those used with find()
- * @return boolean Success Returns true if one or more rows are effected.
  */
 	public function updateAll($fields, $conditions) {
 		$query = $this->query();
@@ -1003,20 +975,8 @@ class Table implements EventListener {
 	}
 
 /**
- * Delete all matching rows.
+ * {@inheritdoc}
  *
- * Deletes all rows matching the provided conditions.
- *
- * This method will *not* trigger beforeDelete/afterDelete events. If you
- * need those first load a collection of records and delete them.
- *
- * This method will *not* execute on associations `cascade` attribute. You should
- * use database foreign keys + ON CASCADE rules if you need cascading deletes combined
- * with this method.
- *
- * @param array $conditions An array of conditions, similar to those used with find()
- * @return boolean Success Returns true if one or more rows are effected.
- * @see Cake\ORM\Table::delete()
  */
 	public function deleteAll($conditions) {
 		$query = $this->query();
@@ -1029,11 +989,8 @@ class Table implements EventListener {
 	}
 
 /**
- * Returns true if there is any row in this table matching the specified
- * conditions.
+ * {@inheritdoc}
  *
- * @param array $conditions list of conditions to pass to the query
- * @return boolean
  */
 	public function exists(array $conditions) {
 		return (bool)count($this->find('all')
@@ -1045,9 +1002,7 @@ class Table implements EventListener {
 	}
 
 /**
- * Persists an entity based on the fields that are marked as dirty and
- * returns the same entity after a successful save or false in case
- * of any error.
+ * {@inheritdoc}
  *
  * ### Options
  *
@@ -1126,11 +1081,8 @@ class Table implements EventListener {
  * $articles->save($entity, ['associated' => false]);
  * }}}
  *
- * @param \Cake\ORM\Entity the entity to be saved
- * @param array $options
- * @return \Cake\ORM\Entity|boolean
  */
-	public function save(Entity $entity, array $options = []) {
+	public function save(EntityInterface $entity, array $options = []) {
 		$options = new \ArrayObject($options + [
 			'atomic' => true,
 			'validate' => true,
@@ -1156,9 +1108,9 @@ class Table implements EventListener {
 /**
  * Performs the actual saving of an entity based on the passed options.
  *
- * @param \Cake\ORM\Entity the entity to be saved
+ * @param \Cake\Datasource\EntityInterface the entity to be saved
  * @param array $options
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  */
 	protected function _processSave($entity, $options) {
 		$primary = $entity->extract((array)$this->primaryKey());
@@ -1235,9 +1187,9 @@ class Table implements EventListener {
 /**
  * Auxiliary function to handle the insert of an entity's data in the table
  *
- * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  * @throws \RuntimeException if not all the primary keys where supplied or could
  * be generated when the table has composite primary keys
  */
@@ -1309,9 +1261,9 @@ class Table implements EventListener {
 /**
  * Auxiliary function to handle the update of an entity's data in the table
  *
- * @param \Cake\ORM\Entity the subject entity from were $data was extracted
+ * @param \Cake\Datasource\EntityInterface the subject entity from were $data was extracted
  * @param array $data The actual data that needs to be saved
- * @return \Cake\ORM\Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  * @throws \InvalidArgumentException When primary key data is missing.
  */
 	protected function _update($entity, $data) {
@@ -1343,10 +1295,8 @@ class Table implements EventListener {
 	}
 
 /**
- * Delete a single entity.
+ * {@inheritdoc}
  *
- * Deletes an entity and possibly related associations from the database
- * based on the 'dependent' option used when defining the association.
  * For HasMany and HasOne associations records will be removed based on
  * the dependent option. Join table records in BelongsToMany associations
  * will always be removed. You can use the `cascadeCallbacks` option
@@ -1367,11 +1317,8 @@ class Table implements EventListener {
  * for the duration of the callbacks, this allows listeners to modify
  * the options used in the delete operation.
  *
- * @param Entity $entity The entity to remove.
- * @param array $options The options fo the delete.
- * @return boolean success
  */
-	public function delete(Entity $entity, array $options = []) {
+	public function delete(EntityInterface $entity, array $options = []) {
 		$options = new \ArrayObject($options + ['atomic' => true]);
 
 		$process = function() use ($entity, $options) {
@@ -1390,7 +1337,7 @@ class Table implements EventListener {
  * Will delete the entity provided. Will remove rows from any
  * dependent associations, and clear out join tables for BelongsToMany associations.
  *
- * @param Entity $entity The entity to delete.
+ * @param \Cake\ORM\EntityInterface $entity The entity to delete.
  * @param ArrayObject $options The options for the delete.
  * @throws \InvalidArgumentException if there are no primary key values of the
  * passed entity
@@ -1580,18 +1527,7 @@ class Table implements EventListener {
 	}
 
 /**
- * Create a new entity + associated entities from an array.
- *
- * This is most useful when hydrating request data back into entities.
- * For example, in your controller code:
- *
- * {{{
- * $article = $this->Articles->newEntity($this->request->data());
- * }}}
- *
- * The hydrated entity will correctly do an insert/update based
- * on the primary key data existing in the database when the entity
- * is saved. Until the entity is saved, it will be a detached record.
+ * {@inheritdoc}
  *
  * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
@@ -1604,10 +1540,6 @@ class Table implements EventListener {
  * );
  * }}}
  *
- * @param array $data The data to build an entity with.
- * @param array $associations A whitelist of associations
- *   to hydrate. Defaults to all associations
- * @return Cake\ORM\Entity
  */
 	public function newEntity(array $data = [], $associations = null) {
 		if ($associations === null) {
@@ -1618,17 +1550,9 @@ class Table implements EventListener {
 	}
 
 /**
- * Create a list of entities + associated entities from an array.
+ * {@inheritdoc}
  *
- * This is most useful when hydrating request data back into entities.
- * For example, in your controller code:
- *
- * {{{
- * $articles = $this->Articles->newEntities($this->request->data());
- * }}}
- *
- * The hydrated entities can then be iterated and saved. By default
- * all the associations on this table will be hydrated. You can
+ * By default all the associations on this table will be hydrated. You can
  * limit which associations are built, or include deeper associations
  * using the associations parameter:
  *
@@ -1639,10 +1563,6 @@ class Table implements EventListener {
  * );
  * }}}
  *
- * @param array $data The data to build an entity with.
- * @param array $associations A whitelist of associations
- *   to hydrate. Defaults to all associations
- * @return array An array of hydrated records.
  */
 	public function newEntities(array $data, $associations = null) {
 		if ($associations === null) {
@@ -1687,7 +1607,7 @@ class Table implements EventListener {
  * ]);
  * }}}
  *
- * @param \Cake\ORM\Entity $entity The entity to be validated
+ * @param \Cake\Datasource\EntityInterface $entity The entity to be validated
  * @param array $options A list of options to use while validating, the following
  * keys are accepted:
  * - validate: The name of the validation set to use

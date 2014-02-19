@@ -11,13 +11,16 @@
  * @since         CakePHP(tm) v 1.2.0.5550
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Database;
+namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Core\App;
 use Cake\Core\Plugin;
-use Cake\Database\ConnectionManager;
 use Cake\Database\Driver\Sqlite;
+use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+
+class FakeConnection {
+}
 
 /**
  * ConnectionManager Test
@@ -44,10 +47,11 @@ class ConnectionManagerTest extends TestCase {
 	public static function configProvider() {
 		return [
 			'Array of data using classname key.' => [[
-				'className' => 'Sqlite',
+				'className' => __NAMESPACE__ . '\FakeConnection',
+				'instance' => 'Sqlite',
 				'database' => ':memory:',
 			]],
-			'Direct instance' => [new Sqlite(['database' => ':memory:'])],
+			'Direct instance' => [new FakeConnection],
 		];
 	}
 
@@ -62,14 +66,14 @@ class ConnectionManagerTest extends TestCase {
 		ConnectionManager::config('test_variant', $settings);
 
 		$ds = ConnectionManager::get('test_variant');
-		$this->assertInstanceOf('Cake\Database\Connection', $ds);
+		$this->assertInstanceOf(__NAMESPACE__ . '\FakeConnection', $ds);
 		$this->assertContains('test_variant', ConnectionManager::configured());
 	}
 
 /**
  * Test invalid classes cause exceptions
  *
- * @expectedException Cake\Database\Exception\MissingDriverException
+ * @expectedException Cake\Datasource\Error\MissingDatasourceException
  */
 	public function testConfigInvalidOptions() {
 		ConnectionManager::config('test_variant', [
@@ -87,7 +91,7 @@ class ConnectionManagerTest extends TestCase {
  */
 	public function testConfigDuplicateConfig() {
 		$settings = [
-			'className' => 'Sqlite',
+			'className' => __NAMESPACE__ . '\FakeConnection',
 			'database' => ':memory:',
 		];
 		ConnectionManager::config('test_variant', $settings);
@@ -142,7 +146,7 @@ class ConnectionManagerTest extends TestCase {
  */
 	public function testConfigured() {
 		ConnectionManager::config('test_variant', [
-			'className' => 'Sqlite',
+			'className' => __NAMESPACE__ . '\FakeConnection',
 			'database' => ':memory:'
 		]);
 		$results = ConnectionManager::configured();
@@ -157,12 +161,13 @@ class ConnectionManagerTest extends TestCase {
 	public function testGetPluginDataSource() {
 		Plugin::load('TestPlugin');
 		$name = 'test_variant';
-		$config = array('className' => 'TestPlugin.TestSource');
+		$config = array('className' => 'TestPlugin.TestSource', 'foo' => 'bar');
 		ConnectionManager::config($name, $config);
 		$connection = ConnectionManager::get($name);
 
-		$this->assertInstanceOf('Cake\Database\Connection', $connection);
-		$this->assertInstanceOf('TestPlugin\Database\Driver\TestSource', $connection->driver());
+		$this->assertInstanceOf('TestPlugin\Datasource\TestSource', $connection);
+		unset($config['className']);
+		$this->assertSame($config + ['name' => 'test_variant'], $connection->settings);
 	}
 
 /**
@@ -172,7 +177,7 @@ class ConnectionManagerTest extends TestCase {
  */
 	public function testDrop() {
 		ConnectionManager::config('test_variant', [
-			'className' => 'Sqlite',
+			'className' => __NAMESPACE__ . '\FakeConnection',
 			'database' => ':memory:'
 		]);
 		$result = ConnectionManager::configured();
@@ -192,7 +197,7 @@ class ConnectionManagerTest extends TestCase {
  */
 	public function testAlias() {
 		ConnectionManager::config('test_variant', [
-			'className' => 'Sqlite',
+			'className' => __NAMESPACE__ . '\FakeConnection',
 			'database' => ':memory:'
 		]);
 		ConnectionManager::alias('test_variant', 'other_name');
@@ -203,7 +208,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test alias() raises an error when aliasing an undefined connection.
  *
- * @expectedException Cake\Error\MissingDatasourceConfigException
+ * @expectedException Cake\Datasource\Error\MissingDatasourceConfigException
  * @return void
  */
 	public function testAliasError() {

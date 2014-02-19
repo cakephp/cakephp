@@ -17,7 +17,7 @@
 namespace Cake\Test\TestCase\Network\Session;
 
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Network\Session;
 use Cake\Network\Session\DatabaseSession;
 use Cake\ORM\Table;

@@ -14,12 +14,10 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database;
+namespace Cake\Datasource;
 
 use Cake\Core\App;
-use Cake\Database\Connection;
-use Cake\Database\Exception\MissingDriverException;
-use Cake\Error;
+use Cake\Datasource\Error\MissingDatasourceException;
 use Cake\Utility\ObjectRegistry;
 
 /**
@@ -41,7 +39,7 @@ class ConnectionRegistry extends ObjectRegistry {
 		if (is_object($class)) {
 			return $class;
 		}
-		return App::classname($class, 'Database/Driver');
+		return App::classname($class, 'Datasource');
 	}
 
 /**
@@ -51,24 +49,24 @@ class ConnectionRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the driver is missing in.
- * @throws Cake\Database\Exception\MissingDriverException
+ * @throws Cake\Datasource\Error\MissingDatasourceException
  */
 	protected function _throwMissingClassError($class, $plugin) {
-		throw new MissingDriverException([
+		throw new MissingDatasourceException([
 			'class' => $class,
 			'plugin' => $plugin,
 		]);
 	}
 
 /**
- * Create the connection object with the correct driver.
+ * Create the connection object with the correct settings.
  *
  * Part of the template method for Cake\Utility\ObjectRegistry::load()
  *
- * @param string|Driver $class The classname or object to make.
+ * @param string|object $class The classname or object to make.
  * @param string $alias The alias of the object.
  * @param array $settings An array of settings to use for the driver.
- * @return Connection A connection with the correct driver.
+ * @return object A connection with the correct settings.
  */
 	protected function _create($class, $alias, $settings) {
 		if (is_object($class)) {
@@ -76,11 +74,7 @@ class ConnectionRegistry extends ObjectRegistry {
 		}
 
 		unset($settings['className']);
-		if (!isset($instance)) {
-			$instance = new $class($settings);
-		}
-		$settings['datasource'] = $instance;
-		return new Connection($settings);
+		return new $class($settings);
 	}
 
 /**
