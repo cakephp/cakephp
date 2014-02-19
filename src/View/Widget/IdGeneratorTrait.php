@@ -48,7 +48,7 @@ trait IdGeneratorTrait {
  */
 	protected function _id($name, $val) {
 		$name = mb_strtolower(Inflector::slug($name, '-'));
-		$idSuffix = mb_strtolower(str_replace(array('@', '<', '>', ' ', '"', '\''), '-', $val));
+		$idSuffix = mb_strtolower(str_replace(array('/', '@', '<', '>', ' ', '"', '\''), '-', $val));
 		$count = 1;
 		$check = $idSuffix;
 		while (in_array($check, $this->_idSuffixes)) {
