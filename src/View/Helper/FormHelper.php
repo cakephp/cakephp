@@ -1848,7 +1848,7 @@ class FormHelper extends Helper {
 			'hiddenField' => true,
 			'multiple' => null,
 			'secure' => true,
-			'empty' => isset($attributes['multiple']) ? false : true
+			'empty' => false,
 		];
 
 		if ($attributes['multiple'] === 'checkbox') {

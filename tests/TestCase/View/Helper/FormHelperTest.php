@@ -4335,8 +4335,6 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->select('Model.field', array());
 		$expected = array(
 			'select' => array('name' => 'Model[field]'),
-			array('option' => array('value' => '')),
-			'/option',
 			'/select'
 		);
 		$this->assertTags($result, $expected);
@@ -4345,8 +4343,6 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->select('Model.field', array('value' => 'good', 'other' => 'bad'));
 		$expected = array(
 			'select' => array('name' => 'Model[field]'),
-			array('option' => array('value' => '')),
-			'/option',
 			array('option' => array('value' => 'value', 'selected' => 'selected')),
 			'good',
 			'/option',
@@ -4361,8 +4357,6 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->select('Model.field', array('value' => 'good', 'other' => 'bad'));
 		$expected = array(
 			'select' => array('name' => 'Model[field]'),
-			array('option' => array('value' => '')),
-			'/option',
 			array('option' => array('value' => 'value')),
 			'good',
 			'/option',
@@ -4448,7 +4442,6 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->select('Model.field', array('0' => 'No', '1' => 'Yes'));
 		$expected = array(
 			'select' => array('name' => 'Model[field]'),
-			array('option' => array('value' => '')), '/option',
 			array('option' => array('value' => '0', 'selected' => 'selected')), 'No', '/option',
 			array('option' => array('value' => '1')), 'Yes', '/option',
 			'/select'
@@ -4472,7 +4465,6 @@ class FormHelperTest extends TestCase {
 				'name' => 'user_id',
 				'required' => 'required'
 			),
-			array('option' => array('value' => '')), '/option',
 			array('option' => array('value' => '0')), 'option A', '/option',
 			'/select'
 		);
@@ -4484,7 +4476,6 @@ class FormHelperTest extends TestCase {
 				'name' => 'user_id',
 				'disabled' => 'disabled'
 			),
-			array('option' => array('value' => '')), '/option',
 			array('option' => array('value' => '0')), 'option A', '/option',
 			'/select'
 		);
@@ -4861,7 +4852,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleCheckboxSecurity() {
-		$this->Form->request->params['_Token'] = 'foo';
+		$this->Form->request->params['_Token'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$result = $this->Form->select(
@@ -4882,7 +4873,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectMultipleSecureWithNoOptions() {
-		$this->Form->request->params['_Token'] = 'testkey';
 		$this->assertEquals(array(), $this->Form->fields);
 
 		$this->Form->select(
@@ -4892,6 +4882,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertEquals(array('Model.select'), $this->Form->fields);
 	}
+
 /**
  * When a select box has no options it should not be added to the fields list
  * as it always fail post validation.
@@ -4899,22 +4890,21 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSelectNoSecureWithNoOptions() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testkey';
-		$this->assertEquals(array(), $this->Form->fields);
+		$this->Form->request->params['_Token'] = 'testkey';
+		$this->assertEquals([], $this->Form->fields);
 
 		$this->Form->select(
 			'Model.select',
-			array()
+			[]
 		);
-		$this->assertEquals(array(), $this->Form->fields);
+		$this->assertEquals([], $this->Form->fields);
 
 		$this->Form->select(
-			'Model.select',
-			array(),
-			array('empty' => true)
+			'Model.user_id',
+			[],
+			['empty' => true]
 		);
-		$this->assertEquals(array('Model.select'), $this->Form->fields);
+		$this->assertEquals(array('Model.user_id'), $this->Form->fields);
 	}
 
 /**
