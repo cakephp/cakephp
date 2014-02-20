@@ -56,7 +56,7 @@ class Query extends DatabaseQuery {
  *
  * @var \Cake\ORM\Table
  */
-	protected $_table;
+	protected $_repository;
 
 /**
  * Whether the user select any fields before being executed, this is used
@@ -148,8 +148,8 @@ class Query extends DatabaseQuery {
 		$this->connection($connection);
 		$this->repository($table);
 
-		if ($this->_table) {
-			$this->addDefaultTypes($this->_table);
+		if ($this->_repository) {
+			$this->addDefaultTypes($this->_repository);
 		}
 	}
 
@@ -165,9 +165,9 @@ class Query extends DatabaseQuery {
  */
 	public function repository(Table $table = null) {
 		if ($table === null) {
-			return $this->_table;
+			return $this->_repository;
 		}
-		$this->_table = $table;
+		$this->_repository = $table;
 		return $this;
 	}
 
@@ -914,10 +914,10 @@ class Query extends DatabaseQuery {
 		}
 		if ($this->_type === 'select') {
 			if (empty($this->_parts['from'])) {
-				$this->from([$this->_table->alias() => $this->_table->table()]);
+				$this->from([$this->_repository->alias() => $this->_repository->table()]);
 			}
 			$this->_addDefaultFields();
-			$this->eagerLoader()->attachAssociations($this, $this->_table, !$this->_hasFields);
+			$this->eagerLoader()->attachAssociations($this, $this->_repository, !$this->_hasFields);
 		}
 		return parent::_transformQuery();
 	}
