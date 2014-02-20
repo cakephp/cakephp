@@ -21,7 +21,6 @@ use Cake\Error;
 use Cake\Event\Event;
 use Cake\Routing\Dispatcher;
 use Cake\Routing\Router;
-use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 
@@ -317,7 +316,6 @@ abstract class ControllerTestCase extends TestCase {
 				'plugin' => $plugin
 			));
 		}
-		ClassRegistry::flush();
 
 		$mocks = array_merge_recursive(array(
 			'methods' => array('_stop'),
@@ -336,7 +334,6 @@ abstract class ControllerTestCase extends TestCase {
 		$controller->name = substr($controllerName, 0, -10);
 		$controller->Components->setController($controllerObj);
 
-		$config = ClassRegistry::config('Model');
 		foreach ($mocks['models'] as $model => $methods) {
 			if (is_string($methods)) {
 				$model = $methods;
@@ -345,7 +342,7 @@ abstract class ControllerTestCase extends TestCase {
 			if ($methods === true) {
 				$methods = array();
 			}
-			$this->getMockForModel($model, $methods, $config);
+			$this->getMockForModel($model, $methods);
 		}
 
 		foreach ($mocks['components'] as $component => $methods) {
