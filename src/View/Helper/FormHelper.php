@@ -172,6 +172,9 @@ class FormHelper extends Helper {
 		'button' => '<button{{attrs}}>{{text}}</button>',
 		'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 		'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
+		'error' => '<div class="error-message">{{content}}</div>',
+		'errorList' => '<ul>{{content}}</ul>',
+		'errorItem' => '<li>{{text}}</li>',
 		'file' => '<input type="file" name="{{name}}"{{attrs}}>',
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
@@ -597,38 +600,34 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Returns a formatted error message for given FORM field, NULL if no errors.
+ * Returns a formatted error message for given form field, '' if no errors.
+ *
+ * Uses the `error`, `errorList` and `errorItem` templates. The errorList and
+ * errorItem templates are used to format multiple error messages per field.
  *
  * ### Options:
  *
  * - `escape` boolean - Whether or not to html escape the contents of the error.
- * - `wrap` mixed - Whether or not the error message should be wrapped in a div. If a
- *   string, will be used as the HTML tag to use.
- * - `class` string - The class name for the error message
  *
  * @param string $field A field name, like "Modelname.fieldname"
- * @param string|array $text Error message as string or array of messages.
- *   If array contains `attributes` key it will be used as options for error container
- * @param array $options Rendering options for <div /> wrapper tag
- * @return string If there are errors this method returns an error message, otherwise null.
+ * @param string|array $text Error message as string or array of messages. If an array,
+ *   it should be a hash of key names => messages.
+ * @param array $options See above.
+ * @return string Formatted errors or ''.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::error
  */
-	public function error($field, $text = null, $options = array()) {
-		$defaults = array('wrap' => true, 'class' => 'error-message', 'escape' => true);
-		$options = array_merge($defaults, $options);
-		$this->setEntity($field);
+	public function error($field, $text = null, $options = []) {
+		$options += ['escape' => true];
 
-		$error = $this->tagIsInvalid();
-		if ($error === false) {
-			return null;
+		$context = $this->_getContext();
+		if (!$context->hasError($field)) {
+			return '';
 		}
+		$error = (array)$context->error($field);
+
 		if (is_array($text)) {
-			if (isset($text['attributes']) && is_array($text['attributes'])) {
-				$options = array_merge($options, $text['attributes']);
-				unset($text['attributes']);
-			}
-			$tmp = array();
-			foreach ($error as &$e) {
+			$tmp = [];
+			foreach ($error as $e) {
 				if (isset($text[$e])) {
 					$tmp[] = $text[$e];
 				} else {
@@ -641,50 +640,26 @@ class FormHelper extends Helper {
 		if ($text !== null) {
 			$error = $text;
 		}
-		if (is_array($error)) {
-			foreach ($error as &$e) {
-				if (is_numeric($e)) {
-					$e = __d('cake', 'Error in field %s', Inflector::humanize($this->field()));
-				}
-			}
-		}
+
 		if ($options['escape']) {
 			$error = h($error);
 			unset($options['escape']);
 		}
+
 		if (is_array($error)) {
 			if (count($error) > 1) {
-				$listParams = array();
-				if (isset($options['listOptions'])) {
-					if (is_string($options['listOptions'])) {
-						$listParams[] = $options['listOptions'];
-					} else {
-						if (isset($options['listOptions']['itemOptions'])) {
-							$listParams[] = $options['listOptions']['itemOptions'];
-							unset($options['listOptions']['itemOptions']);
-						} else {
-							$listParams[] = array();
-						}
-						if (isset($options['listOptions']['tag'])) {
-							$listParams[] = $options['listOptions']['tag'];
-							unset($options['listOptions']['tag']);
-						}
-						array_unshift($listParams, $options['listOptions']);
-					}
-					unset($options['listOptions']);
+				$errorText = [];
+				foreach ($error as $err) {
+					$errorText[] = $this->formatTemplate('errorItem', ['text' => $err]);
 				}
-				array_unshift($listParams, $error);
-				$error = call_user_func_array(array($this->Html, 'nestedList'), $listParams);
+				$error = $this->formatTemplate('errorList', [
+					'content' => implode('', $errorText)
+				]);
 			} else {
 				$error = array_pop($error);
 			}
 		}
-		if ($options['wrap']) {
-			$tag = is_string($options['wrap']) ? $options['wrap'] : 'div';
-			unset($options['wrap']);
-			return $this->Html->tag($tag, $error, $options);
-		}
-		return $error;
+		return $this->formatTemplate('error', ['content' => $error]);
 	}
 
 /**
