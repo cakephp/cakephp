@@ -581,8 +581,8 @@ class FormHelper extends Helper {
 /**
  * Returns a formatted error message for given form field, '' if no errors.
  *
- * Uses the `error`, `errorList` and `errorItem` templates. The errorList and
- * errorItem templates are used to format multiple error messages per field.
+ * Uses the `error`, `errorList` and `errorItem` templates. The `errorList` and
+ * `errorItem` templates are used to format multiple error messages per field.
  *
  * ### Options:
  *
