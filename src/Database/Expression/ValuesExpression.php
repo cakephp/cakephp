@@ -61,7 +61,6 @@ class ValuesExpression implements ExpressionInterface {
  *
  * @param array $columns The list of columns that are going to be part of the values.
  * @param array $types A dictionary of column -> type names
- * @return void
  */
 	public function __construct(array $columns, array $types = []) {
 		$this->_columns = $columns;

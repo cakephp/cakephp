@@ -30,7 +30,6 @@ class PDOStatement extends StatementDecorator {
  *
  * @param \PDOStatement original statement to be decorated
  * @param \Cake\Database\Driver instance $driver
- * @return void
  */
 	public function __construct(Statement $statement = null, $driver = null) {
 		$this->_statement = $statement;

@@ -57,7 +57,6 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @param string $conjunction the glue that will join all the string conditions at this
  * level of the expression tree. For example "AND", "OR", "XOR"...
  * @see QueryExpression::add() for more details on $conditions and $types
- * @return void
  */
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
 		$this->type(strtoupper($conjunction));

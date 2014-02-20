@@ -167,7 +167,6 @@ abstract class Association {
  *
  * @param string $name The name given to the association
  * @param array $options A list of properties to be set on this object
- * @return void
  */
 	public function __construct($name, array $options = []) {
 		$defaults = [

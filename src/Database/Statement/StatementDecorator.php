@@ -52,7 +52,6 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  *
  * @param Statement implementation such as PDOStatement
  * @param \Cake\Database\Driver instance $driver
- * @return void
  */
 	public function __construct($statement = null, $driver = null) {
 		$this->_statement = $statement;

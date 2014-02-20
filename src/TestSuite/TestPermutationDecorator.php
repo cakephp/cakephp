@@ -41,7 +41,6 @@ class TestPermutationDecorator extends PHPUnit_Extensions_TestDecorator {
  * @param \PHPUnit_Framework_Test The test or suite to decorate
  * @param array $permutation  An array containing callable methods that will
  * be executed before the test suite is run
- * @return void
  */
 	public function __construct(PHPUnit_Framework_Test $test, array $permutations) {
 		parent::__construct($test);

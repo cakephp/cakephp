@@ -187,7 +187,6 @@ class Table implements RepositoryInterface, EventListener {
  * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
  *
  * @param array config Lsit of options for this table
- * @return void
  */
 	public function __construct(array $config = []) {
 		if (!empty($config['table'])) {

@@ -36,7 +36,6 @@ class IdentifierExpression implements ExpressionInterface {
  * Constructor
  *
  * @param string $identifier The identifier this expression represents
- * @return void
  */
 	public function __construct($identifier) {
 		$this->setIdentifier($identifier);

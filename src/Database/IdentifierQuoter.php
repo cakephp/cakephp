@@ -37,7 +37,6 @@ class IdentifierQuoter {
  * Constructor
  *
  * @param \Cake\Database\Driver The driver instance used to do the identifier quoting
- * @return void
  */
 	public function __construct(Driver $driver) {
 		$this->_driver = $driver;

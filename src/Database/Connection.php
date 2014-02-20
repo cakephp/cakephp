@@ -103,8 +103,6 @@ class Connection {
  * Destructor
  *
  * Disconnects the driver to release the connection.
- *
- * @return void
  */
 	public function __destruct() {
 		unset($this->_driver);

@@ -50,7 +50,6 @@ abstract class Driver {
  * Constructor
  *
  * @param array $config The configuration for the driver.
- * @return void
  */
 	public function __construct($config = []) {
 		$config += $this->_baseConfig;
@@ -246,8 +245,6 @@ abstract class Driver {
 
 /**
  * Destructor
- *
- * @return void
  */
 	public function __destruct() {
 		$this->_connection = null;

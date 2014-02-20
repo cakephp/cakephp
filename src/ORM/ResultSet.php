@@ -125,7 +125,6 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  *
  * @param Query from where results come
  * @param \Cake\Database\StatementInterface $statement
- * @return void
  */
 	public function __construct($query, $statement) {
 		$this->_query = $query;

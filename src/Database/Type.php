@@ -78,7 +78,6 @@ class Type {
  * Constructor
  *
  * @param string $name The name identifying this type
- * @return void
  */
 	public function __construct($name = null) {
 		$this->_name = $name;

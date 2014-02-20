@@ -38,7 +38,6 @@ abstract class BaseSchema {
  * Constructor
  *
  * @param \Cake\Database\Driver $driver The driver to use.
- * @return void
  */
 	public function __construct(Driver $driver) {
 		$this->_driver = $driver;
