@@ -68,6 +68,14 @@ trait QueryTrait {
 	protected $_cache;
 
 /**
+ * Holds any custom options passed using applyOptions that could not be processed
+ * by any method in this class.
+ *
+ * @var array
+ */
+	protected $_options = [];
+
+/**
  * Returns the default table object that will be used by this query,
  * that is, the table that will appear in the from clause.
  *
@@ -310,6 +318,53 @@ trait QueryTrait {
 	}
 
 /**
+ * Returns an array with the custom options that were applied to this query
+ * and that were not already processed by another method in this class.
+ *
+ * ###Example:
+ *
+ * {{{
+ *	$query->applyOptions(['doABarrelRoll' => true, 'fields' => ['id', 'name']);
+ *	$query->getOptions(); // Returns ['doABarrelRoll' => true]
+ * }}}
+ *
+ * @see \Cake\ORM\Query::applyOptions() to read about the options that will
+ * be processed by this class and not returned by this function
+ * @return array
+ */
+	public function getOptions() {
+		return $this->_options;
+	}
+
+/**
+ * Enables calling methods from the result set as if they were from this class
+ *
+ * @param string $method the method to call
+ * @param array $arguments list of arguments for the method to call
+ * @return mixed
+ * @throws \BadMethodCallException if no such method exists in result set
+ */
+	public function __call($method, $arguments) {
+		$resultSetClass = $this->_decoratorClass();
+		if (in_array($method, get_class_methods($resultSetClass))) {
+			$results = $this->all();
+			return call_user_func_array([$results, $method], $arguments);
+		}
+		throw new \BadMethodCallException(
+			sprintf('Unknown method "%s"', $method)
+		);
+	}
+
+/**
+ * Populates or adds parts to current query clauses using an array.
+ * This is handy for passing all query clauses at once.
+ *
+ * @param array $options the options to be applied
+ * @return Cake\Datasource\QueryTrait this object
+ */
+	abstract public function applyOptions(array $options);
+
+/**
  * Executes this query and returns a traversable object containing the results
  *
  * @return \Traversable
@@ -323,23 +378,33 @@ trait QueryTrait {
  * @return \Cake\Datasoruce\ResultSetDecorator
  */
 	protected function _decorateResults($result) {
+		$decorator = $this->_decoratorClass();
 		foreach ($this->_mapReduce as $functions) {
 			$result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
 		}
 
 		if (!empty($this->_mapReduce)) {
-			$result = new ResultSetDecorator($result);
+			$result = new $decorator($result);
 		}
 
 		foreach ($this->_formatters as $formatter) {
 			$result = $formatter($result, $this);
 		}
 
-		if (!empty($this->_formatters) && !($result instanceof ResultSetDecorator)) {
-			$result = new ResultSetDecorator($result);
+		if (!empty($this->_formatters) && !($result instanceof $decorator)) {
+			$result = new $decorator($result);
 		}
 
 		return $result;
+	}
+
+/**
+ * Returns the name of the class to be used for decorating results
+ *
+ * @return string
+ */
+	protected function _decoratorClass() {
+		return 'Cake\Datasource\ResultSetDecorator';
 	}
 
 }

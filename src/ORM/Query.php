@@ -32,6 +32,7 @@ class Query extends DatabaseQuery {
 	use QueryTrait {
 		cache as private _cache;
 		all as private _all;
+		__call as private _call;
 	}
 
 /**
@@ -71,13 +72,6 @@ class Query extends DatabaseQuery {
  */
 	protected $_useBufferedResults = true;
 
-/**
- * Holds any custom options passed using applyOptions that could not be processed
- * by any method in this class.
- *
- * @var array
- */
-	protected $_options = [];
 
 /**
  * Whether to hydrate results into entity objects
@@ -463,25 +457,6 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Returns an array with the custom options that were applied to this query
- * and that were not already processed by another method in this class.
- *
- * ###Example:
- *
- * {{{
- *	$query->applyOptions(['doABarrelRoll' => true, 'fields' => ['id', 'name']);
- *	$query->getOptions(); // Returns ['doABarrelRoll' => true]
- * }}}
- *
- * @see \Cake\ORM\Query::applyOptions() to read about the options that will
- * be processed by this class and not returned by this function
- * @return array
- */
-	public function getOptions() {
-		return $this->_options;
-	}
-
-/**
  * Return the COUNT(*) for for the query.
  *
  * @return integer
@@ -730,24 +705,16 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Enables calling methods from the ResultSet as if they were from this class
+ * {@inheritdoc}
  *
- * @param string $method the method to call
- * @param array $arguments list of arguments for the method to call
- * @return mixed
- * @throws \BadMethodCallException if no such method exists in ResultSet
  */
 	public function __call($method, $arguments) {
 		if ($this->type() === 'select') {
-			$resultSetClass = 'Cake\Datasource\ResultSetDecorator';
-			if (in_array($method, get_class_methods($resultSetClass))) {
-				$results = $this->all();
-				return call_user_func_array([$results, $method], $arguments);
-			}
+			return $this->_call($method, $arguments);
 		}
 
 		throw new \BadMethodCallException(
-			sprintf('Unknown method "%s"', $method)
+			sprintf('Cannot call method "%s" on a "%s" query', $method, $this->type())
 		);
 	}
 
