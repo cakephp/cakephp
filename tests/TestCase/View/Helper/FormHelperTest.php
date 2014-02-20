@@ -2021,48 +2021,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testTagIsInvalid method
- *
- * @return void
- */
-	public function testTagIsInvalid() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
-
-		$this->Form->setEntity('Contact.0.email');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertEquals($expected, $result);
-
-		$this->Form->setEntity('Contact.1.email');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertFalse($result);
-
-		$this->Form->setEntity('Contact.0.name');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertFalse($result);
-	}
-
-/**
- * Test tagIsInvalid with validation errors from a saveMany
- *
- * @return void
- */
-	public function testTagIsInvalidSaveMany() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
-
-		$this->Form->create('Contact');
-
-		$this->Form->setEntity('0.email');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertEquals($expected, $result);
-
-		$this->Form->setEntity('0.Contact.email');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * Test validation errors.
  *
  * @return void
@@ -4002,31 +3960,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testCheckboxDefaultValue method
- *
- * Test default value setting on checkbox() method
- *
- * @return void
- */
-	public function testCheckboxDefaultValue() {
-		$this->Form->request->data['Model']['field'] = false;
-		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1')));
-
-		unset($this->Form->request->data['Model']['field']);
-		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked')));
-
-		$this->Form->request->data['Model']['field'] = true;
-		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked')));
-
-		unset($this->Form->request->data['Model']['field']);
-		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
-		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1')));
-	}
-
-/**
  * testError method
  *
  * Test field error generation
@@ -4034,45 +3967,70 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testError() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors['field'] = array(1);
-		$result = $this->Form->error('Contact.field');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field Field', '/div'));
+		$this->article['errors'] = [
+			'Article' => ['field' => 'email']
+		];
+		$this->Form->create($this->article);
 
-		$result = $this->Form->error('Contact.field', null, array('wrap' => false));
-		$this->assertEquals('Error in field Field', $result);
+		$result = $this->Form->error('Article.field');
+		$expected = [
+			['div' => ['class' => 'error-message']],
+			'email',
+			'/div',
+		];
+		$this->assertTags($result, $expected);
 
-		$Contact->validationErrors['field'] = array("This field contains invalid input");
-		$result = $this->Form->error('Contact.field', null, array('wrap' => false));
-		$this->assertEquals('This field contains invalid input', $result);
+		$result = $this->Form->error('Article.field', "<strong>Badness!</strong>");
+		$expected = [
+			['div' => ['class' => 'error-message']],
+			'&lt;strong&gt;Badness!&lt;/strong&gt;',
+			'/div',
+		];
+		$this->assertTags($result, $expected);
 
-		$Contact->validationErrors['field'] = array("This field contains invalid input");
-		$result = $this->Form->error('Contact.field', null, array('wrap' => 'span'));
-		$this->assertTags($result, array('span' => array('class' => 'error-message'), 'This field contains invalid input', '/span'));
+		$result = $this->Form->error('Article.field', "<strong>Badness!</strong>", ['escape' => false]);
+		$expected = [
+			['div' => ['class' => 'error-message']],
+			'<strong', 'Badness!', '/strong',
+			'/div',
+		];
+		$this->assertTags($result, $expected);
+	}
 
-		$result = $this->Form->error('Contact.field', 'There is an error fool!', array('wrap' => 'span'));
-		$this->assertTags($result, array('span' => array('class' => 'error-message'), 'There is an error fool!', '/span'));
+/**
+ * Test error with nested lists.
+ *
+ * @return void
+ */
+	public function testErrorMessages() {
+		$this->article['errors'] = [
+			'Article' => ['field' => 'email']
+		];
+		$this->Form->create($this->article);
 
-		$result = $this->Form->error('Contact.field', "<strong>Badness!</strong>", array('wrap' => false));
-		$this->assertEquals('&lt;strong&gt;Badness!&lt;/strong&gt;', $result);
-
-		$result = $this->Form->error('Contact.field', "<strong>Badness!</strong>", array('wrap' => false, 'escape' => true));
-		$this->assertEquals('&lt;strong&gt;Badness!&lt;/strong&gt;', $result);
-
-		$result = $this->Form->error('Contact.field', "<strong>Badness!</strong>", array('wrap' => false, 'escape' => false));
-		$this->assertEquals('<strong>Badness!</strong>', $result);
-
-		$Contact->validationErrors['field'] = array("email");
-		$result = $this->Form->error('Contact.field', array('attributes' => array('class' => 'field-error'), 'email' => 'No good!'));
+		$result = $this->Form->error('Article.field', array(
+			'email' => 'No good!'
+		));
 		$expected = array(
-			'div' => array('class' => 'field-error'),
+			'div' => array('class' => 'error-message'),
 			'No good!',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
 
-		$Contact->validationErrors['field'] = array('notEmpty', 'email', 'Something else');
-		$result = $this->Form->error('Contact.field', array(
+/**
+ * test error() with multiple messages.
+ *
+ * @return void
+ */
+	public function testErrorMultipleMessages() {
+		$this->article['errors'] = [
+			'field' => ['notEmpty', 'email', 'Something else']
+		];
+		$this->Form->create($this->article);
+
+		$result = $this->Form->error('field', array(
 			'notEmpty' => 'Cannot be empty',
 			'email' => 'No good!'
 		));
@@ -4082,49 +4040,6 @@ class FormHelperTest extends TestCase {
 					'<li', 'Cannot be empty', '/li',
 					'<li', 'No good!', '/li',
 					'<li', 'Something else', '/li',
-				'/ul',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		// Testing error messages list options
-		$Contact->validationErrors['field'] = array('notEmpty', 'email');
-
-		$result = $this->Form->error('Contact.field', null, array('listOptions' => 'ol'));
-		$expected = array(
-			'div' => array('class' => 'error-message'),
-				'ol' => array(),
-					'<li', 'notEmpty', '/li',
-					'<li', 'email', '/li',
-				'/ol',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->error('Contact.field', null, array('listOptions' => array('tag' => 'ol')));
-		$expected = array(
-			'div' => array('class' => 'error-message'),
-				'ol' => array(),
-					'<li', 'notEmpty', '/li',
-					'<li', 'email', '/li',
-				'/ol',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->error('Contact.field', null, array(
-			'listOptions' => array(
-				'class' => 'ul-class',
-				'itemOptions' => array(
-					'class' => 'li-class'
-				)
-			)
-		));
-		$expected = array(
-			'div' => array('class' => 'error-message'),
-				'ul' => array('class' => 'ul-class'),
-					array('li' => array('class' => 'li-class')), 'notEmpty', '/li',
-					array('li' => array('class' => 'li-class')), 'email', '/li',
 				'/ul',
 			'/div'
 		);
@@ -5049,6 +4964,31 @@ class FormHelperTest extends TestCase {
 			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => 'myvalue', 'id' => 'theID'))
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * testCheckboxDefaultValue method
+ *
+ * Test default value setting on checkbox() method
+ *
+ * @return void
+ */
+	public function testCheckboxDefaultValue() {
+		$this->Form->request->data['Model']['field'] = false;
+		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1')));
+
+		unset($this->Form->request->data['Model']['field']);
+		$result = $this->Form->checkbox('Model.field', array('default' => true, 'hiddenField' => false));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked')));
+
+		$this->Form->request->data['Model']['field'] = true;
+		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1', 'checked' => 'checked')));
+
+		unset($this->Form->request->data['Model']['field']);
+		$result = $this->Form->checkbox('Model.field', array('default' => false, 'hiddenField' => false));
+		$this->assertTags($result, array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => '1')));
 	}
 
 /**
