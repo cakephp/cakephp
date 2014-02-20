@@ -244,7 +244,7 @@ class ClientTest extends TestCase {
 /**
  * Test invalid authentication types throw exceptions.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testInvalidAuthenticationType() {
@@ -388,7 +388,7 @@ class ClientTest extends TestCase {
 /**
  * Test that exceptions are raised on invalid types.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testExceptionOnUnknownType() {

@@ -311,7 +311,7 @@ class BehaviorTest extends TestCase {
 /**
  * testVerifyImplementedFindersInvalid
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage The method findNotDefined is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
  *
  * @return void
@@ -348,7 +348,7 @@ class BehaviorTest extends TestCase {
 /**
  * testVerifyImplementedMethodsInvalid
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage The method iDoNotExist is not callable on class Cake\Test\TestCase\ORM\Test2Behavior
  *
  * @return void

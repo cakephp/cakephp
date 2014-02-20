@@ -179,7 +179,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  *
  * Part of Iterator interface.
  *
- * @throws Cake\Database\Exception
+ * @throws \Cake\Database\Exception
  * @return void
  */
 	public function rewind() {

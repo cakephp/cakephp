@@ -83,14 +83,14 @@ class TestFixture {
 /**
  * The Cake\Database\Schema\Table for this fixture.
  *
- * @var Cake\Database\Schema\Table
+ * @var \Cake\Database\Schema\Table
  */
 	protected $_schema;
 
 /**
  * Instantiate the fixture.
  *
- * @throws Cake\Error\Exception on invalid datasource usage.
+ * @throws \Cake\Error\Exception on invalid datasource usage.
  */
 	public function __construct() {
 		$connection = 'test';
@@ -112,7 +112,7 @@ class TestFixture {
  * Initialize the fixture.
  *
  * @return void
- * @throws Cake\Error\MissingModelException Whe importing from a model that does not exist.
+ * @throws \Cake\Error\MissingModelException Whe importing from a model that does not exist.
  */
 	public function init() {
 		if ($this->table === null) {
@@ -176,7 +176,7 @@ class TestFixture {
  * Build fixture schema from a table in another datasource.
  *
  * @return void
- * @throws Cake\Error\Exception when trying to import from an empty table.
+ * @throws \Cake\Error\Exception when trying to import from an empty table.
  */
 	protected function _schemaFromImport() {
 		if (!is_array($this->import)) {
@@ -200,8 +200,8 @@ class TestFixture {
 /**
  * Get/Set the Cake\Database\Schema\Table instance used by this fixture.
  *
- * @param Cake\Database\Schema\Table $schema The table to set.
- * @return Cake\Database\Schema\Table|null
+ * @param \Cake\Database\Schema\Table $schema The table to set.
+ * @return \Cake\Database\Schema\Table|null
  */
 	public function schema(Table $schema = null) {
 		if ($schema) {

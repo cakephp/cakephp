@@ -104,7 +104,7 @@ class Session {
  * This feature is only used when config value `Session.autoRegenerate` is set to true.
  *
  * @var integer
- * @see Cake\Network\Session::_checkValid()
+ * @see \Cake\Network\Session::_checkValid()
  */
 	protected static $_requestCountdown = 10;
 
@@ -454,7 +454,7 @@ class Session {
  * Sessions can be configured with a few shortcut names as well as have any number of ini settings declared.
  *
  * @return void
- * @throws Cake\Error\Exception Throws exceptions when ini_set() fails.
+ * @throws \Cake\Error\Exception Throws exceptions when ini_set() fails.
  */
 	protected static function _configureSession() {
 		$sessionConfig = Configure::read('Session');
@@ -549,7 +549,7 @@ class Session {
  *
  * @param string $class
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected static function _getHandler($class) {
 		$class = App::className($class, 'Network/Session');

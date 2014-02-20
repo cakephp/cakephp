@@ -1854,7 +1854,7 @@ class I18nTest extends TestCase {
 /**
  * Test that the '' domain causes exceptions.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testTranslateEmptyDomain() {

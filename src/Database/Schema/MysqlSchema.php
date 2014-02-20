@@ -50,7 +50,7 @@ class MysqlSchema extends BaseSchema {
  *
  * @param string $column The column type + length
  * @return array Array of column information.
- * @throws Cake\Database\Exception When column type cannot be parsed.
+ * @throws \Cake\Database\Exception When column type cannot be parsed.
  */
 	protected function _convertColumn($column) {
 		preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);

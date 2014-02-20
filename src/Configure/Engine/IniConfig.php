@@ -94,7 +94,7 @@ class IniConfig implements ConfigEngineInterface {
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix. The chosen file must be on the engine's path.
  * @return array Parsed configuration values.
- * @throws Cake\Error\ConfigureException when files don't exist.
+ * @throws \Cake\Error\ConfigureException when files don't exist.
  *  Or when files contain '..' as this could lead to abusive reads.
  */
 	public function read($key) {

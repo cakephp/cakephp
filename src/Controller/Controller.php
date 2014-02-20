@@ -107,7 +107,7 @@ class Controller extends Object implements EventListener {
  * This object contains all the information about a request and several methods for reading
  * additional information about the request.
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  * @link http://book.cakephp.org/2.0/en/controllers/request-response.html#Request
  */
 	public $request;
@@ -115,7 +115,7 @@ class Controller extends Object implements EventListener {
 /**
  * An instance of a Response object that contains information about the impending response
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  * @link http://book.cakephp.org/2.0/en/controllers/request-response.html#cakeresponse
  */
 	public $response;
@@ -134,7 +134,7 @@ class Controller extends Object implements EventListener {
  * tables your controller will be paginating.
  *
  * @var array
- * @see Cake\Controller\Component\PaginatorComponent
+ * @see \Cake\Controller\Component\PaginatorComponent
  */
 	public $paginate = [];
 
@@ -172,7 +172,7 @@ class Controller extends Object implements EventListener {
 /**
  * The view theme to use.
  *
- * @see Cake\View\View::$theme
+ * @see \Cake\View\View::$theme
  * @var string
  */
 	public $theme = null;
@@ -221,7 +221,7 @@ class Controller extends Object implements EventListener {
  * Instance of the View created during rendering. Won't be set until after
  * Controller::render() is called.
  *
- * @var Cake\View\View
+ * @var \Cake\View\View
  */
 	public $View;
 
@@ -287,16 +287,16 @@ class Controller extends Object implements EventListener {
  * Instance of the Cake\Event\EventManager this controller is using
  * to dispatch inner events.
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected $_eventManager = null;
 
 /**
  * Constructor.
  *
- * @param Cake\Network\Request $request Request object for this controller. Can be null for testing,
+ * @param \Cake\Network\Request $request Request object for this controller. Can be null for testing,
  *  but expect that features that use the request parameters will not work.
- * @param Cake\Network\Response $response Response object for this controller.
+ * @param \Cake\Network\Response $response Response object for this controller.
  */
 	public function __construct($request = null, $response = null) {
 		if ($this->name === null) {
@@ -358,7 +358,7 @@ class Controller extends Object implements EventListener {
  * - $this->autoRender - To false if $request->params['return'] == 1
  * - $this->passedArgs - The the combined results of params['named'] and params['pass]
  *
- * @param Cake\Network\Request $request
+ * @param \Cake\Network\Request $request
  * @return void
  */
 	public function setRequest(Request $request) {
@@ -381,10 +381,10 @@ class Controller extends Object implements EventListener {
  * Dispatches the controller action. Checks that the action
  * exists and isn't private.
  *
- * @param Cake\Network\Request $request
+ * @param \Cake\Network\Request $request
  * @return mixed The resulting response.
- * @throws Cake\Error\PrivateActionException When actions are not public or prefixed by _
- * @throws Cake\Error\MissingActionException When actions are not defined.
+ * @throws \Cake\Error\PrivateActionException When actions are not public or prefixed by _
+ * @throws \Cake\Error\MissingActionException When actions are not defined.
  */
 	public function invokeAction(Request $request) {
 		try {
@@ -415,7 +415,7 @@ class Controller extends Object implements EventListener {
  * or if the request is attempting to directly accessing a prefixed action.
  *
  * @param \ReflectionMethod $method The method to be invoked.
- * @param Cake\Network\Request $request The request to check.
+ * @param \Cake\Network\Request $request The request to check.
  * @return boolean
  */
 	protected function _isPrivateAction(\ReflectionMethod $method, Request $request) {
@@ -506,7 +506,7 @@ class Controller extends Object implements EventListener {
  * You can use this instance to register any new listeners or callbacks to the
  * controller events, or create your own events and trigger them at will.
  *
- * @return Cake\Event\EventManager
+ * @return \Cake\Event\EventManager
  */
 	public function getEventManager() {
 		if (empty($this->_eventManager)) {
@@ -520,7 +520,7 @@ class Controller extends Object implements EventListener {
  *
  * Useful for testing
  *
- * @param Cake\Event\EventManager $eventManager
+ * @param \Cake\Event\EventManager $eventManager
  * @return void
  */
 	public function setEventManager($eventManager) {
@@ -617,7 +617,7 @@ class Controller extends Object implements EventListener {
  *
  * @param string $view View to use for rendering
  * @param string $layout Layout to use
- * @return Cake\Network\Response A response object containing the rendered view.
+ * @return \Cake\Network\Response A response object containing the rendered view.
  * @link http://book.cakephp.org/2.0/en/controllers.html#Controller::render
  */
 	public function render($view = null, $layout = null) {

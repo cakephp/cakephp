@@ -139,8 +139,8 @@ class Connection {
  *
  * @param string|Driver $driver
  * @param array|null $config Either config for a new driver or null.
- * @throws Cake\Database\Exception\MissingDriverException When a driver class is missing.
- * @throws Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
+ * @throws \Cake\Database\Exception\MissingDriverException When a driver class is missing.
+ * @throws \Cake\Database\Exception\MissingExtensionException When a driver's PHP extension is missing.
  * @return Driver
  */
 	public function driver($driver = null, $config = null) {
@@ -162,7 +162,7 @@ class Connection {
 /**
  * Connects to the configured database
  *
- * @throws Cake\Database\Exception\MissingConnectionException if credentials are invalid
+ * @throws \Cake\Database\Exception\MissingConnectionException if credentials are invalid
  * @return boolean true on success or false if already connected.
  */
 	public function connect() {
@@ -195,7 +195,7 @@ class Connection {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string|Cake\Database\Query $sql
+ * @param string|\Cake\Database\Query $sql
  * @return \Cake\Database\Statement
  */
 	public function prepare($sql) {
@@ -252,7 +252,7 @@ class Connection {
 /**
  * Get a Schema\Collection object for this connection.
  *
- * @return Cake\Database\Schema\Collection
+ * @return \Cake\Database\Schema\Collection
  */
 	public function schemaCollection() {
 		return new \Cake\Database\Schema\Collection($this);

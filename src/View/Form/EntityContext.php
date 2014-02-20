@@ -48,7 +48,7 @@ class EntityContext implements ContextInterface {
 /**
  * The request object.
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	protected $_request;
 
@@ -84,7 +84,7 @@ class EntityContext implements ContextInterface {
 /**
  * Constructor.
  *
- * @param Cake\Network\Request
+ * @param \Cake\Network\Request
  * @param array
  */
 	public function __construct(Request $request, array $context) {
@@ -314,7 +314,7 @@ class EntityContext implements ContextInterface {
  * Get the table instance
  *
  * @param string $prop The property name to get a table for.
- * @return Cake\ORM\Table The table instance.
+ * @return \Cake\ORM\Table The table instance.
  */
 	protected function _getTable($prop) {
 		if (isset($this->_tables[$prop])) {
@@ -339,7 +339,7 @@ class EntityContext implements ContextInterface {
  *
  * @param string $field A dot separated path to get a schema type for.
  * @return null|string An abstract data type or null.
- * @see Cake\Database\Type
+ * @see \Cake\Database\Type
  */
 	public function type($field) {
 		$parts = explode('.', $field);

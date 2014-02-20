@@ -109,7 +109,7 @@ class Client {
  * Cookies are indexed by the cookie's domain or
  * request host name.
  *
- * @var Cake\Network\Http\Cookies
+ * @var \Cake\Network\Http\Cookies
  */
 	protected $_cookies;
 
@@ -117,7 +117,7 @@ class Client {
  * Adapter for sending requests. Defaults to
  * Cake\Network\Http\Stream
  *
- * @var Cake\Network\Http\Stream
+ * @var \Cake\Network\Http\Stream
  */
 	protected $_adapter;
 
@@ -186,7 +186,7 @@ class Client {
  *
  * Returns an array of cookie data arrays.
  *
- * @return Cake\Network\Http\Cookies
+ * @return \Cake\Network\Http\Cookies
  */
 	public function cookies() {
 		return $this->_cookies;
@@ -203,7 +203,7 @@ class Client {
  * @param string $url The url or path you want to request.
  * @param array $data The query data you want to send.
  * @param array $options Additional options for the request.
- * @return Cake\Network\Http\Response
+ * @return \Cake\Network\Http\Response
  */
 	public function get($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
@@ -227,7 +227,7 @@ class Client {
  * @param string $url The url or path you want to request.
  * @param array $data The post data you want to send.
  * @param array $options Additional options for the request.
- * @return Cake\Network\Http\Response
+ * @return \Cake\Network\Http\Response
  */
 	public function post($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
@@ -241,7 +241,7 @@ class Client {
  * @param string $url The url or path you want to request.
  * @param array $data The request data you want to send.
  * @param array $options Additional options for the request.
- * @return Cake\Network\Http\Response
+ * @return \Cake\Network\Http\Response
  */
 	public function put($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
@@ -255,7 +255,7 @@ class Client {
  * @param string $url The url or path you want to request.
  * @param array $data The request data you want to send.
  * @param array $options Additional options for the request.
- * @return Cake\Network\Http\Response
+ * @return \Cake\Network\Http\Response
  */
 	public function patch($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
@@ -269,7 +269,7 @@ class Client {
  * @param string $url The url or path you want to request.
  * @param array $data The request data you want to send.
  * @param array $options Additional options for the request.
- * @return Cake\Network\Http\Response
+ * @return \Cake\Network\Http\Response
  */
 	public function delete($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
@@ -283,7 +283,7 @@ class Client {
  * @param string $url The url or path you want to request.
  * @param array $data The query string data you want to send.
  * @param array $options Additional options for the request.
- * @return Cake\Network\Http\Response
+ * @return \Cake\Network\Http\Response
  */
 	public function head($url, $data = [], $options = []) {
 		$options = $this->_mergeOptions($options);
@@ -298,7 +298,7 @@ class Client {
  * @param string $url URL to request.
  * @param mixed $data The request body.
  * @param array $options The options to use. Contains auth, proxy etc.
- * @return Cake\Network\Http\Response
+ * @return \Cake\Network\Http\Response
  */
 	protected function _doRequest($method, $url, $data, $options) {
 		$request = $this->_createRequest(
@@ -326,9 +326,9 @@ class Client {
  * Used internally by other methods, but can also be used to send
  * handcrafted Request objects.
  *
- * @param Cake\Network\Http\Request $request The request to send.
+ * @param \Cake\Network\Http\Request $request The request to send.
  * @param array $options Additional options to use.
- * @return Cake\Network\Http\Response
+ * @return \Cake\Network\Http\Response
  */
 	public function send(Request $request, $options = []) {
 		$responses = $this->_adapter->send($request, $options);
@@ -383,7 +383,7 @@ class Client {
  * @param string $url The url including query string.
  * @param mixed $data The request body.
  * @param array $options The options to use. Contains auth, proxy etc.
- * @return Cake\Network\Http\Request
+ * @return \Cake\Network\Http\Request
  */
 	protected function _createRequest($method, $url, $data, $options) {
 		$request = new Request();
@@ -415,7 +415,7 @@ class Client {
  *
  * @param string $type short type alias or full mimetype.
  * @return array Headers to set on the request.
- * @throws Cake\Error\Exception When an unknown type alias is used.
+ * @throws \Cake\Error\Exception When an unknown type alias is used.
  */
 	protected function _typeHeaders($type) {
 		if (strpos($type, '/') !== false) {
@@ -478,7 +478,7 @@ class Client {
  * @param array $auth The authentication options to use.
  * @param array $options The overall request options to use.
  * @return mixed Authentication strategy instance.
- * @throws Cake\Error\Exception when an invalid stratgey is chosen.
+ * @throws \Cake\Error\Exception when an invalid stratgey is chosen.
  */
 	protected function _createAuth($auth, $options) {
 		if (empty($auth['type'])) {

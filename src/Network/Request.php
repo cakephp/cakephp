@@ -151,7 +151,7 @@ class Request implements \ArrayAccess {
  * Uses the $_GET, $_POST, $_FILES, $_COOKIE, $_SERVER, $_ENV and php://input data to construct
  * the request.
  *
- * @return Cake\Network\Request
+ * @return \Cake\Network\Request
  */
 	public static function createFromGlobals() {
 		list($base, $webroot) = static::_base();
@@ -483,7 +483,7 @@ class Request implements \ArrayAccess {
  * @param string $name The method called
  * @param array $params Array of parameters for the method call
  * @return mixed
- * @throws Cake\Error\Exception when an invalid method is called.
+ * @throws \Cake\Error\Exception when an invalid method is called.
  */
 	public function __call($name, $params) {
 		if (strpos($name, 'is') === 0) {
@@ -656,7 +656,7 @@ class Request implements \ArrayAccess {
  * Provides an easy way to modify, here, webroot and base.
  *
  * @param array $paths Array of paths to merge in
- * @return Cake\Network\Request the current object, you can chain this method.
+ * @return \Cake\Network\Request the current object, you can chain this method.
  */
 	public function addPaths($paths) {
 		foreach (array('webroot', 'here', 'base') as $element) {
@@ -993,7 +993,7 @@ class Request implements \ArrayAccess {
  *
  * @param string $key The key you want to read/write from/to.
  * @param string $value Value to set. Default null.
- * @return null|string|Cake\Network\Request Request instance if used as setter,
+ * @return null|string|\Cake\Network\Request Request instance if used as setter,
  *   if used as getter either the environment value, or null if the value doesn't exist.
  */
 	public function env($key, $value = null) {
@@ -1024,7 +1024,7 @@ class Request implements \ArrayAccess {
  *
  * @param string|array $methods Allowed HTTP request methods.
  * @return boolean true
- * @throws Cake\Error\MethodNotAllowedException
+ * @throws \Cake\Error\MethodNotAllowedException
  */
 	public function allowMethod($methods) {
 		if (!is_array($methods)) {

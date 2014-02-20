@@ -63,7 +63,7 @@ abstract class BaseCoverageReport {
  * Constructor
  *
  * @param array $coverage Array of coverage data from PHPUnit_Test_Result
- * @param Cake\TestSuite\Reporter\BaseReporter $reporter A reporter to use for the coverage report.
+ * @param \Cake\TestSuite\Reporter\BaseReporter $reporter A reporter to use for the coverage report.
  */
 	public function __construct($coverage, BaseReporter $reporter) {
 		$this->_rawCoverage = $coverage;
@@ -73,7 +73,7 @@ abstract class BaseCoverageReport {
 /**
  * Pulls params out of the reporter.
  *
- * @param Cake\TestSuite\Reporter\BaseReporter $reporter Reporter to suck params out of.
+ * @param \Cake\TestSuite\Reporter\BaseReporter $reporter Reporter to suck params out of.
  * @return void
  */
 	protected function _setParams(BaseReporter $reporter) {

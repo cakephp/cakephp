@@ -40,7 +40,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Constructor. Save internally the reference to the passed fixture manager
  *
- * @param Cake\TestSuite\Fixture\FixtureManager $manager
+ * @param \Cake\TestSuite\Fixture\FixtureManager $manager
  * @return void
  */
 	public function __construct(FixtureManager $manager) {

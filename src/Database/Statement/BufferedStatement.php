@@ -53,7 +53,7 @@ class BufferedStatement extends StatementDecorator {
 /**
  * Constructor
  *
- * @param Cake\Database\Driver instance $driver
+ * @param \Cake\Database\Driver instance $driver
  * @param Statement implementation such as PDOStatement
  * @return void
  */

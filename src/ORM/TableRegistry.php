@@ -131,7 +131,7 @@ class TableRegistry {
  * @param string $alias The alias you want to get.
  * @param array $options The options you want to build the table with.
  *   If a table has already been loaded the options will be ignored.
- * @return Cake\Database\Table
+ * @return \Cake\Database\Table
  * @throws RuntimeException When you try to configure an alias that already exists.
  */
 	public static function get($alias, $options = []) {
@@ -179,7 +179,7 @@ class TableRegistry {
  * Set an instance.
  *
  * @param string $alias The alias to set.
- * @param Cake\ORM\Table The table to set.
+ * @param \Cake\ORM\Table The table to set.
  * @return void
  */
 	public static function set($alias, Table $object) {

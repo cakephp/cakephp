@@ -8127,7 +8127,7 @@ class FormHelperTest extends TestCase {
 /**
  * Test errors when field name is missing.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testHtml5InputException() {

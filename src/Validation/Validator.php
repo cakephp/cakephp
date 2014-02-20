@@ -102,7 +102,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $name [optional] The fieldname to fetch.
  * @param \Cake\Validation\ValidationSet $set The set of rules for field
- * @return Cake\Validation\ValidationSet
+ * @return \Cake\Validation\ValidationSet
  */
 	public function field($name, ValidationSet $set = null) {
 		if (empty($this->_fields[$name])) {
@@ -153,7 +153,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Sets the I18n domain for validation messages. This method is chainable.
  *
  * @param string $validationDomain The validation domain to be used.
- * @return Cake\Validation
+ * @return \Cake\Validation
  */
 	public function setValidationDomain($validationDomain) {
 		$this->_validationDomain = $validationDomain;
@@ -174,7 +174,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns the rule set for a field
  *
  * @param string $field name of the field to check
- * @return Cake\Validation\ValidationSet
+ * @return \Cake\Validation\ValidationSet
  */
 	public function offsetGet($field) {
 		return $this->field($field);
@@ -184,7 +184,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Sets the rule set for a field
  *
  * @param string $field name of the field to set
- * @param array|Cake\Validation\ValidationSet $rules set of rules to apply to field
+ * @param array|\Cake\Validation\ValidationSet $rules set of rules to apply to field
  * @return void
  */
 	public function offsetSet($field, $rules) {
@@ -245,7 +245,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field The name of the field from wich the rule will be removed
  * @param array|string $name The alias for a single rule or multiple rules array
- * @param array|Cake\Validation\ValidationRule $rule the rule to add
+ * @param array|\Cake\Validation\ValidationRule $rule the rule to add
  * @return Validator this instance
  */
 	public function add($field, $name, $rule = []) {

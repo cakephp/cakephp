@@ -100,7 +100,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * as conditions.
  * @param array $types associative array of fields pointing to the type of the
  * values that are being passed. Used for correctly binding values to statements.
- * @see Cake\Database\Query::where() for examples on conditions
+ * @see \Cake\Database\Query::where() for examples on conditions
  * @return QueryExpression
  */
 	public function add($conditions, $types = []) {
@@ -336,7 +336,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * in their place placeholders are put and can be replaced by the quoted values
  * accordingly.
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {

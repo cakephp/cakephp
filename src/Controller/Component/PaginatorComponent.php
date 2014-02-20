@@ -129,7 +129,7 @@ class PaginatorComponent extends Component {
  * @param Table $object The table to paginate.
  * @param array $settings The settings/configuration used for pagination.
  * @return array Query results
- * @throws Cake\Error\NotFoundException
+ * @throws \Cake\Error\NotFoundException
  */
 	public function paginate($object, array $settings = []) {
 		$alias = $object->alias();

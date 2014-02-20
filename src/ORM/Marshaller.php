@@ -23,8 +23,8 @@ use Cake\ORM\Table;
  *
  * Useful when converting request data into entities.
  *
- * @see Cake\ORM\Table::newEntity()
- * @see Cake\ORM\Table::newEntities()
+ * @see \Cake\ORM\Table::newEntity()
+ * @see \Cake\ORM\Table::newEntities()
  */
 class Marshaller {
 
@@ -38,14 +38,14 @@ class Marshaller {
 /**
  * The table instance this marshaller is for.
  *
- * @var Cake\ORM\Table
+ * @var \Cake\ORM\Table
  */
 	protected $_table;
 
 /**
  * Constructor.
  *
- * @param Cake\ORM\Table $table
+ * @param \Cake\ORM\Table $table
  * @param boolean Whether or not this masrhaller is in safe mode
  */
 	public function __construct(Table $table, $safe = false) {
@@ -83,8 +83,8 @@ class Marshaller {
  *
  * @param array $data The data to hydrate.
  * @param array $include The associations to include.
- * @return Cake\ORM\Entity
- * @see Cake\ORM\Table::newEntity()
+ * @return \Cake\ORM\Entity
+ * @see \Cake\ORM\Table::newEntity()
  */
 	public function one(array $data, $include = []) {
 		$propertyMap = $this->_buildPropertyMap($include);
@@ -113,7 +113,7 @@ class Marshaller {
 /**
  * Create a new sub-marshaller and marshal the associated data.
  *
- * @param Cake\ORM\Association $assoc
+ * @param \Cake\ORM\Association $assoc
  * @param array $value The data to hydrate
  * @param array $include The associations to include.
  * @return mixed
@@ -136,7 +136,7 @@ class Marshaller {
  * @param array $data The data to hydrate.
  * @param array $include The associations to include.
  * @return array An array of hydrated records.
- * @see Cake\ORM\Table::newEntities()
+ * @see \Cake\ORM\Table::newEntities()
  */
 	public function many(array $data, $include = []) {
 		$output = [];

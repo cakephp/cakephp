@@ -96,7 +96,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 /**
  * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
 	public function getUser(Request $request) {
@@ -122,7 +122,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 /**
  * Gets the digest headers from the request/environment.
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return array Array of digest information.
  */
 	protected function _getDigest(Request $request) {
@@ -195,7 +195,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 /**
  * Generate the login headers
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return string Headers for logging in.
  */
 	public function loginHeaders(Request $request) {

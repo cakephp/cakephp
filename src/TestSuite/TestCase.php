@@ -32,7 +32,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * The class responsible for managing the creation, loading and removing of fixtures
  *
- * @var Cake\TestSuite\Fixture\FixtureManager
+ * @var \Cake\TestSuite\Fixture\FixtureManager
  */
 	public $fixtureManager = null;
 
@@ -193,7 +193,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * Chooses which fixtures to load for a given test
  *
  * @return void
- * @see Cake\TestSuite\TestCase::$autoFixtures
+ * @see \Cake\TestSuite\TestCase::$autoFixtures
  * @throws \Exception when no fixture manager is available.
  */
 	public function loadFixtures() {
@@ -592,7 +592,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $alias
  * @param mixed $methods
  * @param array $options
- * @throws Cake\ORM\Error\MissingTableClassException
+ * @throws \Cake\ORM\Error\MissingTableClassException
  * @return Model
  */
 	public function getMockForModel($alias, $methods = array(), $options = array()) {

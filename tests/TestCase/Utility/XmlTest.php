@@ -132,7 +132,7 @@ class XmlTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidDataProvider
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testBuildInvalidData($value) {
@@ -143,7 +143,7 @@ class XmlTest extends TestCase {
 /**
  * Test that building SimpleXmlElement with invalid XML causes the right exception.
  *
- * @expectedException Cake\Error\XmlException
+ * @expectedException \Cake\Error\XmlException
  * @return void
  */
 	public function testBuildInvalidDataSimpleXml() {
@@ -1070,7 +1070,7 @@ XML;
  * testToArrayFail method
  *
  * @dataProvider invalidToArrayDataProvider
- * @expectedException Cake\Error\XmlException
+ * @expectedException \Cake\Error\XmlException
  */
 	public function testToArrayFail($value) {
 		Xml::toArray($value);

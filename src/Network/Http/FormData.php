@@ -57,7 +57,7 @@ class FormData implements \Countable {
  *
  * @param string $name The name of the part.
  * @param string $value The value to add.
- * @return Cake\Network\Http\FormData\Part
+ * @return \Cake\Network\Http\FormData\Part
  */
 	public function newPart($name, $value) {
 		return new Part($name, $value);

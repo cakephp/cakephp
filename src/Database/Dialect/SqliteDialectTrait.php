@@ -70,7 +70,7 @@ trait SqliteDialectTrait {
  * Receives a FunctionExpression and changes it so that it conforms to this
  * SQL dialect.
  *
- * @param Cake\Database\Expression\FunctionExpression
+ * @param \Cake\Database\Expression\FunctionExpression
  * @return void
  */
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
@@ -103,8 +103,8 @@ trait SqliteDialectTrait {
  * Receives a TupleExpression and changes it so that it conforms to this
  * SQL dialect.
  *
- * @param Cake\Database\Expression\TupleComparison $expression
- * @param Cake\Database\Query $query
+ * @param \Cake\Database\Expression\TupleComparison $expression
+ * @param \Cake\Database\Query $query
  * @return void
  */
 	protected function _transformTupleComparison(TupleComparison $expression, $query) {
@@ -154,7 +154,7 @@ trait SqliteDialectTrait {
  * The way SQLite works with multi insert is by having multiple select statements
  * joined with UNION.
  *
- * @param Cake\Database\Query $query The query to translate
+ * @param \Cake\Database\Query $query The query to translate
  * @return Query
  */
 	protected function _insertQueryTranslator($query) {
@@ -197,7 +197,7 @@ trait SqliteDialectTrait {
  * Used by Cake\Database\Schema package to reflect schema and
  * generate schema.
  *
- * @return Cake\Database\Schema\SqliteSchema
+ * @return \Cake\Database\Schema\SqliteSchema
  */
 	public function schemaDialect() {
 		if (!$this->_schemaDialect) {

@@ -23,7 +23,7 @@ use SessionHandlerInterface;
 /**
  * CacheSession provides method for saving sessions into a Cache engine. Used with Session
  *
- * @see Cake\Model\Datasource\Session for configuration information.
+ * @see \Cake\Model\Datasource\Session for configuration information.
  */
 class CacheSession implements SessionHandlerInterface {
 

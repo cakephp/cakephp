@@ -136,7 +136,7 @@ class ConsoleInputArgument {
  *
  * @param string $value
  * @return boolean
- * @throws Cake\Error\ConsoleException
+ * @throws \Cake\Error\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {

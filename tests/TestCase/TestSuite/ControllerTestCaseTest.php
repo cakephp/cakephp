@@ -275,7 +275,7 @@ class ControllerTestCaseTest extends TestCase {
 /**
  * Tests not using loaded routes during tests
  *
- * @expectedException Cake\Error\MissingActionException
+ * @expectedException \Cake\Error\MissingActionException
  */
 	public function testSkipRoutes() {
 		Router::connect('/:controller/:action/*');

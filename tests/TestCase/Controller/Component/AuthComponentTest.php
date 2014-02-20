@@ -226,7 +226,7 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testIsAuthorizedMissingFile() {
@@ -313,7 +313,7 @@ class AuthComponentTest extends TestCase {
 	}
 
 /**
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testLoadAuthenticateNoFile() {
@@ -796,7 +796,7 @@ class AuthComponentTest extends TestCase {
 
 /**
  * Throw ForbiddenException if AuthComponent::$unauthorizedRedirect set to false
- * @expectedException Cake\Error\ForbiddenException
+ * @expectedException \Cake\Error\ForbiddenException
  * @return void
  */
 	public function testForbiddenException() {
@@ -1238,7 +1238,7 @@ class AuthComponentTest extends TestCase {
 /**
  * testStatelessAuthNoRedirect method
  *
- * @expectedException Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Error\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */

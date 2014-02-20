@@ -27,7 +27,7 @@ class Label implements WidgetInterface {
 /**
  * Templates
  *
- * @var Cake\View\StringTemplate
+ * @var \Cake\View\StringTemplate
  */
 	protected $_templates;
 
@@ -39,7 +39,7 @@ class Label implements WidgetInterface {
  * - `label` Used to generate the label for a radio button.
  *   Can use the following variables `attrs`, `text` and `input`.
  *
- * @param Cake\View\StringTemplate $templates
+ * @param \Cake\View\StringTemplate $templates
  */
 	public function __construct($templates) {
 		$this->_templates = $templates;

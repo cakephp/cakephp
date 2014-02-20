@@ -93,8 +93,8 @@ abstract class Driver {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string|Cake\Database\Query $query
- * @return Cake\Database\Statement
+ * @param string|\Cake\Database\Query $query
+ * @return \Cake\Database\Statement
  */
 	public abstract function prepare($query);
 
@@ -166,7 +166,7 @@ abstract class Driver {
  * If all the tables that use this Driver specify their
  * own schemas, then this may return null.
  *
- * @return Cake\Database\Schema\BaseSchema
+ * @return \Cake\Database\Schema\BaseSchema
  */
 	public abstract function schemaDialect();
 

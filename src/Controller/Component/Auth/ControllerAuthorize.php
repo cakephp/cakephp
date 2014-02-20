@@ -46,7 +46,7 @@ class ControllerAuthorize extends BaseAuthorize {
  *
  * @param Controller $controller null to get, a controller to set.
  * @return mixed
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function controller(Controller $controller = null) {
 		if ($controller) {
@@ -61,7 +61,7 @@ class ControllerAuthorize extends BaseAuthorize {
  * Checks user authorization using a controller callback.
  *
  * @param array $user Active user data
- * @param Cake\Network\Request $request
+ * @param \Cake\Network\Request $request
  * @return boolean
  */
 	public function authorize($user, Request $request) {

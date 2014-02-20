@@ -144,14 +144,14 @@ class FormHelper extends Helper {
 /**
  * Registry for input widgets.
  *
- * @var Cake\View\Widget\InputRegistry
+ * @var \Cake\View\Widget\InputRegistry
  */
 	protected $_registry;
 
 /**
  * Context for the current form.
  *
- * @var Cake\View\Form\Context
+ * @var \Cake\View\Form\Context
  */
 	protected $_context;
 
@@ -193,7 +193,7 @@ class FormHelper extends Helper {
 /**
  * Copies the validationErrors variable from the View object into this instance
  *
- * @param Cake\View\View $View The View this helper is being attached to.
+ * @param \Cake\View\View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper.
  */
 	public function __construct(View $View, $settings = array()) {
@@ -210,9 +210,9 @@ class FormHelper extends Helper {
 /**
  * Set the input registry the helper will use.
  *
- * @param Cake\View\Widget\InputRegistry $instance The registry instance to set.
+ * @param \Cake\View\Widget\InputRegistry $instance The registry instance to set.
  * @param array $widgets An array of widgets
- * @return Cake\View\Widget\InputRegistry
+ * @return \Cake\View\Widget\InputRegistry
  */
 	public function inputRegistry(InputRegistry $instance = null, $widgets = []) {
 		if ($instance === null) {
@@ -251,7 +251,7 @@ class FormHelper extends Helper {
 /**
  * Returns if a field is required to be filled based on validation properties from the validating object.
  *
- * @param Cake\Validation\ValidationSet $validationRules
+ * @param \Cake\Validation\ValidationSet $validationRules
  * @return boolean true if field is required to be filled, false otherwise
  */
 	protected function _isRequiredField($validationRules) {
@@ -371,7 +371,7 @@ class FormHelper extends Helper {
 /**
  * Create the URL for a form based on the options.
  *
- * @param Cake\View\Form\ContextInterface $context The context object to use.
+ * @param \Cake\View\Form\ContextInterface $context The context object to use.
  * @param array $options An array of options from create()
  * @return string The action attribute for the form.
  */
@@ -1392,7 +1392,7 @@ class FormHelper extends Helper {
  * @param string $method Method name / input type to make.
  * @param array $params Parameters for the method call
  * @return string Formatted input method.
- * @throws Cake\Error\Exception When there are no params for the method call.
+ * @throws \Cake\Error\Exception When there are no params for the method call.
  */
 	public function __call($method, $params) {
 		$options = [];
@@ -1781,7 +1781,7 @@ class FormHelper extends Helper {
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#options-for-select-checkbox-and-radio-inputs
- * @see Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
+ * @see \Cake\View\Helper\FormHelper::multiCheckbox() for creating multiple checkboxes.
  */
 	public function select($fieldName, $options = [], $attributes = []) {
 		$attributes += [
@@ -1845,7 +1845,7 @@ class FormHelper extends Helper {
  *   checkboxes element.
  * @param array $attributes The HTML attributes of the select element.
  * @return string Formatted SELECT element
- * @see Cake\View\Helper\FormHelper::select() for supported option formats.
+ * @see \Cake\View\Helper\FormHelper::select() for supported option formats.
  */
 	public function multiCheckbox($fieldName, $options, $attributes = []) {
 		$attributes += [
@@ -2785,7 +2785,7 @@ class FormHelper extends Helper {
  *
  * If there is no active form null will be returned.
  *
- * @return null|Cake\View\Form\ContextInterface The context for the form.
+ * @return null|\Cake\View\Form\ContextInterface The context for the form.
  */
 	public function context() {
 		return $this->_getContext();

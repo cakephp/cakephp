@@ -55,7 +55,7 @@ class InputRegistry {
 /**
  * Templates to use.
  *
- * @var Cake\View\StringTemplate
+ * @var \Cake\View\StringTemplate
  */
 	protected $_templates;
 

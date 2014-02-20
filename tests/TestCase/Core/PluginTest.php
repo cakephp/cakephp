@@ -207,7 +207,7 @@ class PluginTest extends TestCase {
  * Tests that Plugin::load() throws an exception on unknown plugin
  *
  * @return void
- * @expectedException Cake\Error\MissingPluginException
+ * @expectedException \Cake\Error\MissingPluginException
  */
 	public function testLoadNotFound() {
 		Plugin::load('MissingPlugin');
@@ -231,7 +231,7 @@ class PluginTest extends TestCase {
  * Tests that Plugin::path() throws an exception on unknown plugin
  *
  * @return void
- * @expectedException Cake\Error\MissingPluginException
+ * @expectedException \Cake\Error\MissingPluginException
  */
 	public function testPathNotFound() {
 		Plugin::path('TestPlugin');

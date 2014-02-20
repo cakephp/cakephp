@@ -162,7 +162,7 @@ class ConsoleOptionParserTest extends TestCase {
  * Test that adding an option using a two letter short value causes an exception.
  * As they will not parse correctly.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testAddOptionShortOneLetter() {
@@ -260,7 +260,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test parsing options that do not exist.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  */
 	public function testOptionThatDoesNotExist() {
 		$parser = new ConsoleOptionParser('test', false);
@@ -272,7 +272,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test parsing short options that do not exist.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  */
 	public function testShortOptionThatDoesNotExist() {
 		$parser = new ConsoleOptionParser('test', false);
@@ -284,7 +284,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test that options with choices enforce them.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testOptionWithChoices() {
@@ -373,7 +373,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test parsing arguments.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testParseArgumentTooMany() {
@@ -404,7 +404,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test that when there are not enough arguments an exception is raised
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testPositionalArgNotEnough() {
@@ -418,7 +418,7 @@ class ConsoleOptionParserTest extends TestCase {
 /**
  * test that arguments with choices enforce them.
  *
- * @expectedException Cake\Error\ConsoleException
+ * @expectedException \Cake\Error\ConsoleException
  * @return void
  */
 	public function testPositionalArgWithChoices() {

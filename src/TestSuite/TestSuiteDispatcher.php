@@ -70,7 +70,7 @@ class TestSuiteDispatcher {
 /**
  * reporter instance used for the request
  *
- * @var Cake\TestSuite\Reporter\BaseReporter
+ * @var \Cake\TestSuite\Reporter\BaseReporter
  */
 	protected static $_Reporter = null;
 

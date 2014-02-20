@@ -160,14 +160,14 @@ class CookieComponent extends Component {
 /**
  * A reference to the Controller's Cake\Network\Response object
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	protected $_response = null;
 
 /**
  * The request from the controller.
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	protected $_request;
 
@@ -393,7 +393,7 @@ class CookieComponent extends Component {
  *
  * @param string $type Encryption method
  * @return void
- * @throws Cake\Error\Exception When an unknown type is used.
+ * @throws \Cake\Error\Exception When an unknown type is used.
  */
 	public function type($type = 'aes') {
 		$availableTypes = [

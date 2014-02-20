@@ -50,8 +50,8 @@ class BasicAuthenticate extends BaseAuthenticate {
  * Authenticate a user using HTTP auth. Will use the configured User model and attempt a
  * login using HTTP auth.
  *
- * @param Cake\Network\Request $request The request to authenticate with.
- * @param Cake\Network\Response $response The response to add headers to.
+ * @param \Cake\Network\Request $request The request to authenticate with.
+ * @param \Cake\Network\Response $response The response to add headers to.
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	public function authenticate(Request $request, Response $response) {
@@ -61,7 +61,7 @@ class BasicAuthenticate extends BaseAuthenticate {
 /**
  * Get a user based on information in the request. Used by cookie-less auth for stateless clients.
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
 	public function getUser(Request $request) {
@@ -80,7 +80,7 @@ class BasicAuthenticate extends BaseAuthenticate {
  * @param CakeRequest $request A request object.
  * @param CakeResponse $response A response object.
  * @return void
- * @throws Cake\Error\UnauthorizedException
+ * @throws \Cake\Error\UnauthorizedException
  */
 	public function unauthenticated(Request $request, Response $response) {
 		$Exception = new Error\UnauthorizedException();
@@ -91,7 +91,7 @@ class BasicAuthenticate extends BaseAuthenticate {
 /**
  * Generate the login headers
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return string Headers for logging in.
  */
 	public function loginHeaders(Request $request) {

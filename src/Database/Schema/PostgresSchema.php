@@ -62,7 +62,7 @@ class PostgresSchema extends BaseSchema {
  * Cake\Database\Type can handle.
  *
  * @param string $column The column type + length
- * @throws Cake\Database\Exception when column cannot be parsed.
+ * @throws \Cake\Database\Exception when column cannot be parsed.
  * @return array Array of column information.
  */
 	protected function _convertColumn($column) {

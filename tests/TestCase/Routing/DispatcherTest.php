@@ -57,9 +57,9 @@ class TestDispatcher extends Dispatcher {
 /**
  * invoke method
  *
- * @param Cake\Controller\Controller $controller
- * @param Cake\Network\Request $request
- * @param Cake\Network\Response $response
+ * @param \Cake\Controller\Controller $controller
+ * @param \Cake\Network\Request $request
+ * @param \Cake\Network\Response $response
  * @return void
  */
 	protected function _invoke(Controller $controller, Request $request, Response $response) {
@@ -70,7 +70,7 @@ class TestDispatcher extends Dispatcher {
 /**
  * Helper function to test single method attaching for dispatcher filters
  *
- * @param Cake\Event\Event $event
+ * @param \Cake\Event\Event $event
  * @return void
  */
 	public function filterTest($event) {
@@ -80,7 +80,7 @@ class TestDispatcher extends Dispatcher {
 /**
  * Helper function to test single method attaching for dispatcher filters
  *
- * @param Cake\Event\Event
+ * @param \Cake\Event\Event
  * @return void
  */
 	public function filterTest2($event) {
@@ -335,7 +335,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingController method
  *
- * @expectedException Cake\Error\MissingControllerException
+ * @expectedException \Cake\Error\MissingControllerException
  * @expectedExceptionMessage Controller class SomeController could not be found.
  * @return void
  */
@@ -353,7 +353,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingControllerInterface method
  *
- * @expectedException Cake\Error\MissingControllerException
+ * @expectedException \Cake\Error\MissingControllerException
  * @expectedExceptionMessage Controller class DispatcherTestInterface could not be found.
  * @return void
  */
@@ -371,7 +371,7 @@ class DispatcherTest extends TestCase {
 /**
  * testMissingControllerInterface method
  *
- * @expectedException Cake\Error\MissingControllerException
+ * @expectedException \Cake\Error\MissingControllerException
  * @expectedExceptionMessage Controller class Abstract could not be found.
  * @return void
  */
@@ -611,7 +611,7 @@ class DispatcherTest extends TestCase {
 /**
  * Tests that attaching an inexistent class as filter will throw an exception
  *
- * @expectedException Cake\Error\MissingDispatcherFilterException
+ * @expectedException \Cake\Error\MissingDispatcherFilterException
  * @return void
  */
 	public function testDispatcherFilterSuscriberMissing() {

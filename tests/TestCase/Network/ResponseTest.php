@@ -110,7 +110,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the statusCode method
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testStatusCode() {
 		$response = new Response();
@@ -385,7 +385,7 @@ class ResponseTest extends TestCase {
 /**
  * Tests the httpCodes method
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testHttpCodes() {
 		$response = new Response();
@@ -1140,7 +1140,7 @@ class ResponseTest extends TestCase {
 /**
  * testFileNotFound
  *
- * @expectedException Cake\Error\NotFoundException
+ * @expectedException \Cake\Error\NotFoundException
  * @return void
  */
 	public function testFileNotFound() {

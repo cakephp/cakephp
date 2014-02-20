@@ -85,7 +85,7 @@ abstract class BaseAuthorize {
  * Checks user authorization.
  *
  * @param array $user Active user data
- * @param Cake\Network\Request $request
+ * @param \Cake\Network\Request $request
  * @return boolean
  */
 	abstract public function authorize($user, Request $request);
@@ -95,7 +95,7 @@ abstract class BaseAuthorize {
  *
  * @param Controller $controller null to get, a controller to set.
  * @return mixed
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function controller(Controller $controller = null) {
 		if ($controller) {
@@ -112,7 +112,7 @@ abstract class BaseAuthorize {
  * Get the action path for a given request. Primarily used by authorize objects
  * that need to get information about the plugin, controller, and action being invoked.
  *
- * @param Cake\Network\Request $request The request a path is needed for.
+ * @param \Cake\Network\Request $request The request a path is needed for.
  * @param string $path
  * @return string the action path for the given request.
  */

@@ -64,8 +64,8 @@ trait PostgresDialectTrait {
  * Modifies the original insert query to append a "RETURNING *" epilogue
  * so that the latest insert id can be retrieved
  *
- * @param Cake\Database\Query $query
- * @return Cake\Database\Query
+ * @param \Cake\Database\Query $query
+ * @return \Cake\Database\Query
  */
 	protected function _insertQueryTranslator($query) {
 		if (!$query->clause('epilog')) {
@@ -91,7 +91,7 @@ trait PostgresDialectTrait {
  * Receives a FunctionExpression and changes it so that it conforms to this
  * SQL dialect.
  *
- * @param Cake\Database\Expression\FunctionExpression
+ * @param \Cake\Database\Expression\FunctionExpression
  * @return void
  */
 	protected function _transformFunctionExpression(FunctionExpression $expression) {
@@ -128,7 +128,7 @@ trait PostgresDialectTrait {
  * Used by Cake\Database\Schema package to reflect schema and
  * generate schema.
  *
- * @return Cake\Database\Schema\PostgresSchema
+ * @return \Cake\Database\Schema\PostgresSchema
  */
 	public function schemaDialect() {
 		if (!$this->_schemaDialect) {

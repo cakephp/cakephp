@@ -65,7 +65,7 @@ class ConnectionTest extends TestCase {
 /**
  * Tests creating a connection using an invalid driver throws an exception
  *
- * @expectedException Cake\Database\Exception\MissingDriverException
+ * @expectedException \Cake\Database\Exception\MissingDriverException
  * @expectedExceptionMessage Database driver \Foo\InvalidDriver could not be found.
  * @return void
  */
@@ -76,7 +76,7 @@ class ConnectionTest extends TestCase {
 /**
  * Tests trying to use a disabled driver throws an exception
  *
- * @expectedException Cake\Database\Exception\MissingExtensionException
+ * @expectedException \Cake\Database\Exception\MissingExtensionException
  * @expectedExceptionMessage Database driver DriverMock cannot be used due to a missing PHP extension or unmet dependency
  * @return void
  */

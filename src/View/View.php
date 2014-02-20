@@ -199,14 +199,14 @@ class View extends Object {
  * This object contains all the information about a request and several methods for reading
  * additional information about the request.
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	public $request;
 
 /**
  * Reference to the Response object
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	public $response;
 
@@ -288,7 +288,7 @@ class View extends Object {
  * the controller, so it it possible to register view events in
  * the controller layer.
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected $_eventManager = null;
 
@@ -348,7 +348,7 @@ class View extends Object {
  * You can use this instance to register any new listeners or callbacks to the
  * controller events, or create your own events and trigger them at will.
  *
- * @return Cake\Event\EventManager
+ * @return \Cake\Event\EventManager
  */
 	public function getEventManager() {
 		if (empty($this->_eventManager)) {
@@ -362,7 +362,7 @@ class View extends Object {
  *
  * Primarily useful for testing.
  *
- * @param Cake\Event\EventManager $eventManager.
+ * @param \Cake\Event\EventManager $eventManager.
  * @return void
  */
 	public function setEventManager(EventManager $eventManager) {
@@ -448,7 +448,7 @@ class View extends Object {
  * @param string $view Name of view file to use
  * @param string $layout Layout to use.
  * @return string|null Rendered content or null if content already rendered and returned earlier.
- * @throws Cake\Error\Exception If there is an error in the view.
+ * @throws \Cake\Error\Exception If there is an error in the view.
  */
 	public function render($view = null, $layout = null) {
 		if ($this->hasRendered) {
@@ -494,7 +494,7 @@ class View extends Object {
  * @param string $content Content to render in a view, wrapped by the surrounding layout.
  * @param string $layout Layout name
  * @return mixed Rendered output, or false on error
- * @throws Cake\Error\Exception if there is an error in the view.
+ * @throws \Cake\Error\Exception if there is an error in the view.
  */
 	public function renderLayout($content, $layout = null) {
 		$layoutFileName = $this->_getLayoutFileName($layout);
@@ -825,7 +825,7 @@ class View extends Object {
  * @param string $viewFile Filename of the view
  * @param array $data Data to include in rendered view. If empty the current View::$viewVars will be used.
  * @return string Rendered output
- * @throws Cake\Error\Exception when a block is left open.
+ * @throws \Cake\Error\Exception when a block is left open.
  */
 	protected function _render($viewFile, $data = array()) {
 		if (empty($data)) {
@@ -900,7 +900,7 @@ class View extends Object {
  *
  * @param string $name Controller action to find template filename for
  * @return string Template filename
- * @throws Cake\Error\MissingViewException when a view file could not be found.
+ * @throws \Cake\Error\MissingViewException when a view file could not be found.
  */
 	protected function _getViewFileName($name = null) {
 		$subDir = null;
@@ -979,7 +979,7 @@ class View extends Object {
  *
  * @param string $name The name of the layout to find.
  * @return string Filename for layout file (.ctp).
- * @throws Cake\Error\MissingLayoutException when a layout cannot be located
+ * @throws \Cake\Error\MissingLayoutException when a layout cannot be located
  */
 	protected function _getLayoutFileName($name = null) {
 		if ($name === null) {

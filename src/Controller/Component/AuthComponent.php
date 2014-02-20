@@ -243,14 +243,14 @@ class AuthComponent extends Component {
 /**
  * Request object
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	public $request;
 
 /**
  * Response object
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	public $response;
 
@@ -399,7 +399,7 @@ class AuthComponent extends Component {
  *
  * @param Controller $controller A reference to the controller object
  * @return boolean Returns false
- * @throws Cake\Error\ForbiddenException
+ * @throws \Cake\Error\ForbiddenException
  * @see AuthComponent::$unauthorizedRedirect
  */
 	protected function _unauthorized(Controller $controller) {
@@ -447,7 +447,7 @@ class AuthComponent extends Component {
  * be authorized for the request.
  *
  * @param array $user The user to check the authorization of. If empty the user in the session will be used.
- * @param Cake\Network\Request $request The request to authenticate for. If empty, the current request will be used.
+ * @param \Cake\Network\Request $request The request to authenticate for. If empty, the current request will be used.
  * @return boolean True if $user is authorized, otherwise false
  */
 	public function isAuthorized($user = null, Request $request = null) {
@@ -475,7 +475,7 @@ class AuthComponent extends Component {
  * Loads the authorization objects configured.
  *
  * @return mixed Either null when authorize is empty, or the loaded authorization objects.
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function constructAuthorize() {
 		if (empty($this->authorize)) {
@@ -730,8 +730,8 @@ class AuthComponent extends Component {
  * Use the configured authentication adapters, and attempt to identify the user
  * by credentials contained in $request.
  *
- * @param Cake\Network\Request $request The request that contains authentication data.
- * @param Cake\Network\Response $response The response
+ * @param \Cake\Network\Request $request The request that contains authentication data.
+ * @param \Cake\Network\Response $response The response
  * @return array User record data, or false, if the user could not be identified.
  */
 	public function identify(Request $request, Response $response) {
@@ -751,7 +751,7 @@ class AuthComponent extends Component {
  * Loads the configured authentication objects.
  *
  * @return mixed either null on empty authenticate value, or an array of loaded objects.
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function constructAuthenticate() {
 		if (empty($this->authenticate)) {

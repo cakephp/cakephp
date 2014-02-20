@@ -99,7 +99,7 @@ class QueryCacher {
 /**
  * Get the cache engine.
  *
- * @return Cake\Cache\CacheEngine
+ * @return \Cake\Cache\CacheEngine
  */
 	protected function _resolveCacher() {
 		if (is_string($this->_config)) {

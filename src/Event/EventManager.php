@@ -36,7 +36,7 @@ class EventManager {
 /**
  * The globally available instance, used for dispatching events attached from any scope
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected static $_generalManager = null;
 
@@ -62,8 +62,8 @@ class EventManager {
  *
  * If called with the first parameter, it will be set as the globally available instance
  *
- * @param Cake\Event\EventManager $manager
- * @return Cake\Event\EventManager the global event manager
+ * @param \Cake\Event\EventManager $manager
+ * @return \Cake\Event\EventManager the global event manager
  */
 	public static function instance($manager = null) {
 		if ($manager instanceof EventManager) {
@@ -80,7 +80,7 @@ class EventManager {
 /**
  * Adds a new listener to an event.
  *
- * @param callback|Cake\Event\EventListener $callable PHP valid callback type or instance of Cake\Event\EventListener to be called
+ * @param callback|\Cake\Event\EventListener $callable PHP valid callback type or instance of Cake\Event\EventListener to be called
  * when the event named with $eventKey is triggered. If a Cake\Event\EventListener instance is passed, then the `implementedEvents`
  * method will be called on the object to register the declared events individually as methods to be managed by this class.
  * It is possible to define multiple event handlers per event name.
@@ -114,7 +114,7 @@ class EventManager {
  * Auxiliary function to attach all implemented callbacks of a Cake\Event\EventListener class instance
  * as individual methods on this manager
  *
- * @param Cake\Event\EventListener $subscriber
+ * @param \Cake\Event\EventListener $subscriber
  * @return void
  */
 	protected function _attachSubscriber(EventListener $subscriber) {
@@ -142,7 +142,7 @@ class EventManager {
  * from the return value of the `implementedEvents` method on a Cake\Event\EventListener
  *
  * @param array $function the array taken from a handler definition for an event
- * @param Cake\Event\EventListener $object The handler object
+ * @param \Cake\Event\EventListener $object The handler object
  * @return callback
  */
 	protected function _extractCallable($function, $object) {
@@ -158,7 +158,7 @@ class EventManager {
 /**
  * Removes a listener from the active listeners.
  *
- * @param callback|Cake\Event\EventListener $callable any valid PHP callback type or an instance of EventListener
+ * @param callback|\Cake\Event\EventListener $callable any valid PHP callback type or an instance of EventListener
  * @param string $eventKey The event unique identifier name with which the callback has been associated
  * @return void
  */
@@ -188,7 +188,7 @@ class EventManager {
 /**
  * Auxiliary function to help detach all listeners provided by an object implementing EventListener
  *
- * @param Cake\Event\EventListener $subscriber the subscriber to be detached
+ * @param \Cake\Event\EventListener $subscriber the subscriber to be detached
  * @param string $eventKey optional event key name to unsubscribe the listener from
  * @return void
  */
@@ -217,7 +217,7 @@ class EventManager {
 /**
  * Dispatches a new event to all configured listeners
  *
- * @param string|Cake\Event\Event $event the event key name or instance of Event
+ * @param string|\Cake\Event\Event $event the event key name or instance of Event
  * @return void
  */
 	public function dispatch($event) {

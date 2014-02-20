@@ -618,7 +618,7 @@ class Debugger {
  * @param string $format The format you want errors to be output as.
  *   Leave null to get the current format.
  * @return mixed Returns null when setting. Returns the current format when getting.
- * @throws Cake\Error\Exception when choosing a format that doesn't exist.
+ * @throws \Cake\Error\Exception when choosing a format that doesn't exist.
  */
 	public static function outputAs($format = null) {
 		$self = Debugger::getInstance();

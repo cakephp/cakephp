@@ -34,7 +34,7 @@ class Time {
  * `strftime` (http://php.net/manual/en/function.strftime.php)
  *
  * @var string
- * @see Cake\Utility\Time::format()
+ * @see \Cake\Utility\Time::format()
  */
 	public static $niceFormat = '%a, %b %eS %Y, %H:%M';
 
@@ -43,7 +43,7 @@ class Time {
  * and the difference is more than `Cake\Utility\Time::$wordEnd`
  *
  * @var string
- * @see Cake\Utility\Time::timeAgoInWords()
+ * @see \Cake\Utility\Time::timeAgoInWords()
  */
 	public static $wordFormat = 'j/n/y';
 
@@ -52,7 +52,7 @@ class Time {
  * and the difference is less than `Cake\Utility\Time::$wordEnd`
  *
  * @var array
- * @see Cake\Utility\Time::timeAgoInWords()
+ * @see \Cake\Utility\Time::timeAgoInWords()
  */
 	public static $wordAccuracy = array(
 		'year' => "day",
@@ -68,7 +68,7 @@ class Time {
  * The end of relative time telling
  *
  * @var string
- * @see Cake\Utility\Time::timeAgoInWords()
+ * @see \Cake\Utility\Time::timeAgoInWords()
  */
 	public static $wordEnd = '+1 month';
 
@@ -919,7 +919,7 @@ class Time {
  * @param string|DateTimeZone $timezone Timezone string or DateTimeZone object
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::format
- * @see Cake\Utility\Time::i18nFormat()
+ * @see \Cake\Utility\Time::i18nFormat()
  */
 	public static function format($date, $format = null, $default = false, $timezone = null) {
 		//Backwards compatible params re-order test

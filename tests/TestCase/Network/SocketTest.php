@@ -254,7 +254,7 @@ class SocketTest extends TestCase {
 /**
  * testEnableCryptoSocketExceptionNoTls
  *
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testEnableCryptoSocketExceptionNoTls() {

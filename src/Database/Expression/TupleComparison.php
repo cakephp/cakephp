@@ -42,7 +42,7 @@ class TupleComparison extends Comparison {
 /**
  * Convert the expression into a SQL fragment.
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {

@@ -94,7 +94,7 @@ class DigestAuthenticateTest extends TestCase {
 /**
  * test the authenticate method
  *
- * @expectedException Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Error\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */
@@ -179,7 +179,7 @@ DIGEST;
 /**
  * test scope failure.
  *
- * @expectedException Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Error\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */

@@ -79,7 +79,7 @@ class Helper extends Object implements EventListener {
 /**
  * Request object
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	public $request = null;
 

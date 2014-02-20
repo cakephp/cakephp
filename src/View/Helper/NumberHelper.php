@@ -30,14 +30,14 @@ use Cake\View\View;
  * Methods to make numbers more readable.
  *
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html
- * @see Cake\Utility\Number
+ * @see \Cake\Utility\Number
  */
 class NumberHelper extends Helper {
 
 /**
  * Cake\Utility\Number instance
  *
- * @var Cake\Utility\Number
+ * @var \Cake\Utility\Number
  */
 	protected $_engine = null;
 
@@ -51,7 +51,7 @@ class NumberHelper extends Helper {
  *
  * @param View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper
- * @throws Cake\Error\Exception When the engine class could not be found.
+ * @throws \Cake\Error\Exception When the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
 		$settings = Hash::merge(array('engine' => 'Cake\Utility\Number'), $settings);
@@ -76,7 +76,7 @@ class NumberHelper extends Helper {
 /**
  * Formats a number with a level of precision.
  *
- * @see Cake\Utility\Number::precision()
+ * @see \Cake\Utility\Number::precision()
  *
  * @param float $number A floating point number.
  * @param integer $precision The precision of the returned number.
@@ -90,7 +90,7 @@ class NumberHelper extends Helper {
 /**
  * Returns a formatted-for-humans file size.
  *
- * @see Cake\Utility\Number::toReadableSize()
+ * @see \Cake\Utility\Number::toReadableSize()
  *
  * @param integer $size Size in bytes
  * @return string Human readable size
@@ -107,7 +107,7 @@ class NumberHelper extends Helper {
  *
  * - `multiply`: Multiply the input value by 100 for decimal percentages.
  *
- * @see Cake\Utility\Number::toPercentage()
+ * @see \Cake\Utility\Number::toPercentage()
  *
  * @param float $number A floating point number
  * @param integer $precision The precision of the returned number
@@ -122,7 +122,7 @@ class NumberHelper extends Helper {
 /**
  * Formats a number into a currency format.
  *
- * @see Cake\Utility\Number::format()
+ * @see \Cake\Utility\Number::format()
  *
  * @param float $number A floating point number
  * @param integer $options If integer then places, if string then before, if (,.-) then use it
@@ -164,7 +164,7 @@ class NumberHelper extends Helper {
  *   By default all currencies contain utf-8 symbols and don't need this changed. If you require
  *   non HTML encoded symbols you will need to update the settings with the correct bytes.
  *
- * @see Cake\Utility\Number::currency()
+ * @see \Cake\Utility\Number::currency()
  *
  * @param float $number
  * @param string $currency Shortcut to default options. Valid values are 'USD', 'EUR', 'GBP', otherwise
@@ -191,7 +191,7 @@ class NumberHelper extends Helper {
  * Added formats are merged with the defaults defined in Cake\Utility\Number::$_currencyDefaults
  * See Cake\Utility\Number::currency() for more information on the various options and their function.
  *
- * @see Cake\Utility\Number::addFormat()
+ * @see \Cake\Utility\Number::addFormat()
  *
  * @param string $formatName The format name to be used in the future.
  * @param array $options The array of options for this format.
@@ -206,7 +206,7 @@ class NumberHelper extends Helper {
 /**
  * Getter/setter for default currency
  *
- * @see  Cake\Utility\Number::defaultCurrency()
+ * @see  \Cake\Utility\Number::defaultCurrency()
  *
  * @param string $currency The currency to be used in the future.
  * @return void

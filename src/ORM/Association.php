@@ -127,14 +127,14 @@ abstract class Association {
 /**
  * Source table instance
  *
- * @var Cake\ORM\Table
+ * @var \Cake\ORM\Table
  */
 	protected $_sourceTable;
 
 /**
  * Target table instance
  *
- * @var Cake\ORM\Table
+ * @var \Cake\ORM\Table
  */
 	protected $_targetTable;
 
@@ -213,8 +213,8 @@ abstract class Association {
  * Sets the table instance for the source side of the association. If no arguments
  * are passed, the current configured table instance is returned
  *
- * @param Cake\ORM\Table $table the instance to be assigned as source side
- * @return Cake\ORM\Table
+ * @param \Cake\ORM\Table $table the instance to be assigned as source side
+ * @return \Cake\ORM\Table
  */
 	public function source(Table $table = null) {
 		if ($table === null) {
@@ -227,8 +227,8 @@ abstract class Association {
  * Sets the table instance for the target side of the association. If no arguments
  * are passed, the current configured table instance is returned
  *
- * @param Cake\ORM\Table $table the instance to be assigned as target side
- * @return Cake\ORM\Table
+ * @param \Cake\ORM\Table $table the instance to be assigned as target side
+ * @return \Cake\ORM\Table
  */
 	public function target(Table $table = null) {
 		if ($table === null && $this->_targetTable) {
@@ -254,7 +254,7 @@ abstract class Association {
  * the target association. If no parameters are passed the current list is returned
  *
  * @param array $conditions list of conditions to be used
- * @see Cake\Database\Query::where() for examples on the format of the array
+ * @see \Cake\Database\Query::where() for examples on the format of the array
  * @return array
  */
 	public function conditions($conditions = null) {
@@ -598,7 +598,7 @@ abstract class Association {
  * Each implementing class should handle the cascaded delete as
  * required.
  *
- * @param Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param \Cake\ORM\Entity $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
  * @return boolean Success
  */

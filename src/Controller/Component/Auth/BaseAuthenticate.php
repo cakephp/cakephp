@@ -128,7 +128,7 @@ abstract class BaseAuthenticate {
  * Return password hasher object
  *
  * @return AbstractPasswordHasher Password hasher instance
- * @throws Cake\Error\Exception If password hasher class not found or
+ * @throws \Cake\Error\Exception If password hasher class not found or
  *   it does not extend AbstractPasswordHasher
  */
 	public function passwordHasher() {
@@ -161,8 +161,8 @@ abstract class BaseAuthenticate {
 /**
  * Authenticate a user based on the request information.
  *
- * @param Cake\Network\Request $request Request to get authentication information from.
- * @param Cake\Network\Response $response A response object that can have headers added.
+ * @param \Cake\Network\Request $request Request to get authentication information from.
+ * @param \Cake\Network\Response $response A response object that can have headers added.
  * @return mixed Either false on failure, or an array of user data on success.
  */
 	abstract public function authenticate(Request $request, Response $response);
@@ -184,7 +184,7 @@ abstract class BaseAuthenticate {
  * Get a user based on information in the request. Primarily used by stateless authentication
  * systems like basic and digest auth.
  *
- * @param Cake\Network\Request $request Request object.
+ * @param \Cake\Network\Request $request Request object.
  * @return mixed Either false or an array of user information
  */
 	public function getUser(Request $request) {
@@ -196,8 +196,8 @@ abstract class BaseAuthenticate {
  * the unauthenticated request has been dealt with and no more action is required by
  * AuthComponent or void (default).
  *
- * @param Cake\Network\Request $request A request object.
- * @param Cake\Network\Response $response A response object.
+ * @param \Cake\Network\Request $request A request object.
+ * @param \Cake\Network\Response $response A response object.
  * @return void
  */
 	public function unauthenticated(Request $request, Response $response) {

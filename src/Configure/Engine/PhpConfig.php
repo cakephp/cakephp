@@ -57,7 +57,7 @@ class PhpConfig implements ConfigEngineInterface {
  * @param string $key The identifier to read from. If the key has a . it will be treated
  *  as a plugin prefix.
  * @return array Parsed configuration values.
- * @throws Cake\Error\ConfigureException when files don't exist or they don't contain `$config`.
+ * @throws \Cake\Error\ConfigureException when files don't exist or they don't contain `$config`.
  *  Or when files contain '..' as this could lead to abusive reads.
  */
 	public function read($key) {

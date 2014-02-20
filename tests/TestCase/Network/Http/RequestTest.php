@@ -48,7 +48,7 @@ class RequestTest extends TestCase {
 /**
  * test invalid method.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testMethodInvalid() {

@@ -24,7 +24,7 @@ class UnaryExpression extends QueryExpression {
 /**
  * Converts the expression to its string representation
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {

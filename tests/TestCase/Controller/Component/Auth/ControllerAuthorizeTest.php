@@ -51,7 +51,7 @@ class ControllerAuthorizeTest extends TestCase {
 	}
 
 /**
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testControllerErrorOnMissingMethod() {
 		$this->auth->controller(new Controller());

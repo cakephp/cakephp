@@ -1849,7 +1849,7 @@ class QueryTest extends TestCase {
 /**
  * You cannot call values() before insert() it causes all sorts of pain.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testInsertValuesBeforeInsertFailure() {
@@ -2030,7 +2030,7 @@ class QueryTest extends TestCase {
 /**
  * Test that an exception is raised when mixing query + array types.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testInsertFailureMixingTypesArrayFirst() {
 		$query = new Query($this->connection);
@@ -2043,7 +2043,7 @@ class QueryTest extends TestCase {
 /**
  * Test that an exception is raised when mixing query + array types.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testInsertFailureMixingTypesQueryFirst() {
 		$query = new Query($this->connection);

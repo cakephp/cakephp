@@ -102,14 +102,14 @@ class I18n {
 /**
  * Request object instance
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	protected $_request = null;
 
 /**
  * Constructor, use I18n::getInstance() to get the i18n translation object.
  *
- * @param Cake\Network\Request $request Request object
+ * @param \Cake\Network\Request $request Request object
  */
 	public function __construct(Request $request) {
 		$this->_request = $request;
@@ -143,7 +143,7 @@ class I18n {
  * @param string $language Language to translate string to.
  *    If null it checks for language in session followed by Config.language configuration variable.
  * @return string translated string.
- * @throws Cake\Error\Exception When '' is provided as a domain.
+ * @throws \Cake\Error\Exception When '' is provided as a domain.
  */
 	public static function translate($singular, $plural = null, $domain = null, $category = 6, $count = null, $language = null) {
 		$_this = I18n::getInstance();

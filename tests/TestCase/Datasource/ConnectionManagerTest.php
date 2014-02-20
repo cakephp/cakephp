@@ -73,7 +73,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test invalid classes cause exceptions
  *
- * @expectedException Cake\Datasource\Error\MissingDatasourceException
+ * @expectedException \Cake\Datasource\Error\MissingDatasourceException
  */
 	public function testConfigInvalidOptions() {
 		ConnectionManager::config('test_variant', [
@@ -85,7 +85,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test for errors on duplicate config.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot reconfigure existing key "test_variant"
  * @return void
  */
@@ -101,7 +101,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test get() failing on missing config.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage The datasource configuration "test_variant" was not found.
  * @return void
  */
@@ -127,7 +127,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test loading connections without aliases
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage The datasource configuration "other_name" was not found.
  * @return void
  */
@@ -208,7 +208,7 @@ class ConnectionManagerTest extends TestCase {
 /**
  * Test alias() raises an error when aliasing an undefined connection.
  *
- * @expectedException Cake\Datasource\Error\MissingDatasourceConfigException
+ * @expectedException \Cake\Datasource\Error\MissingDatasourceConfigException
  * @return void
  */
 	public function testAliasError() {

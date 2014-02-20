@@ -233,7 +233,7 @@ class Type {
  * when entities are inserted.
  *
  * @return mixed A new primary key value.
- * @see Cake\Database\Type\UuidType
+ * @see \Cake\Database\Type\UuidType
  */
 	public function newId() {
 		return null;

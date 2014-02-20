@@ -486,7 +486,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test that exceptions from the Query bubble up.
  *
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  */
 	public function testUpdateAllFailure() {
 		$table = $this->getMock(
@@ -527,7 +527,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test that exceptions from the Query bubble up.
  *
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  */
 	public function testDeleteAllFailure() {
 		$table = $this->getMock(
@@ -842,7 +842,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
  * Tests that using a simple string for entityClass will throw an exception
  * when the class does not exist in the namespace
  *
- * @expectedException Cake\ORM\Error\MissingEntityException
+ * @expectedException \Cake\ORM\Error\MissingEntityException
  * @expectedExceptionMessage Entity class FooUser could not be found.
  * @return void
  */
@@ -1003,7 +1003,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Ensure exceptions are raised on missing behaviors.
  *
- * @expectedException Cake\Error\MissingBehaviorException
+ * @expectedException \Cake\Error\MissingBehaviorException
  */
 	public function testAddBehaviorMissing() {
 		$table = TableRegistry::get('article');
@@ -2025,7 +2025,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 0 required 1
  * @return void
  */
@@ -2038,7 +2038,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors on missing arguments.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Not enough arguments to magic finder. Got 1 required 2
  * @return void
  */
@@ -2051,7 +2051,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 /**
  * Test magic findByXX errors when there is a mix of or & and.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot mix "and" & "or" in a magic finder. Use find() instead.
  * @return void
  */

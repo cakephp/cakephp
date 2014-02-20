@@ -51,7 +51,7 @@ class SomePagesController extends Controller {
 /**
  * Test method for returning responses.
  *
- * @return Cake\Network\Response
+ * @return \Cake\Network\Response
  */
 	public function responseGenerator() {
 		return new Response(array('body' => 'new response'));

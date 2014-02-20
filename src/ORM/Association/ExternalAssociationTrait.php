@@ -151,7 +151,7 @@ trait ExternalAssociationTrait {
  * Returns a callable to be used for each row in a query result set
  * for injecting the eager loaded rows
  *
- * @param Cake\ORM\Query $fetchQuery the Query used to fetch results
+ * @param \Cake\ORM\Query $fetchQuery the Query used to fetch results
  * @param array $resultMap an array with the foreignKey as keys and
  * the corresponding target table results as value.
  * @return \Closure
@@ -212,7 +212,7 @@ trait ExternalAssociationTrait {
  * the source table
  *
  * @param array $options options accepted by eagerLoader()
- * @return Cake\ORM\Query
+ * @return \Cake\ORM\Query
  * @throws \InvalidArgumentException When a key is required for associations but not selected.
  */
 	protected function _buildQuery($options) {
@@ -307,9 +307,9 @@ trait ExternalAssociationTrait {
  * target table, it is constructed by cloning the original query that was used
  * to load records in the source table.
  *
- * @param Cake\ORM\Query $query the original query used to load source records
+ * @param \Cake\ORM\Query $query the original query used to load source records
  * @param strong $foreignKey the field to be selected in the query
- * @return Cake\ORM\Query
+ * @return \Cake\ORM\Query
  */
 	protected function _buildSubquery($query, $foreignKey) {
 		$filterQuery = clone $query;

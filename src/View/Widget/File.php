@@ -27,7 +27,7 @@ class File implements WidgetInterface {
 /**
  * Constructor
  *
- * @param Cake\View\StringTemplate $templates
+ * @param \Cake\View\StringTemplate $templates
  */
 	public function __construct($templates) {
 		$this->_templates = $templates;

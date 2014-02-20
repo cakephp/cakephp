@@ -62,7 +62,7 @@ class ArrayContext implements ContextInterface {
 /**
  * The request object.
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	protected $_request;
 
@@ -76,7 +76,7 @@ class ArrayContext implements ContextInterface {
 /**
  * Constructor.
  *
- * @param Cake\Network\Request
+ * @param \Cake\Network\Request
  * @param array
  */
 	public function __construct(Request $request, array $context) {
@@ -171,7 +171,7 @@ class ArrayContext implements ContextInterface {
  *
  * @param string $field A dot separated path to get a schema type for.
  * @return null|string An abstract data type or null.
- * @see Cake\Database\Type
+ * @see \Cake\Database\Type
  */
 	public function type($field) {
 		if (!is_array($this->_context['schema'])) {

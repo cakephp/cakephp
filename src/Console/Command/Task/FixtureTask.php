@@ -45,7 +45,7 @@ class FixtureTask extends BakeTask {
 /**
  * Schema instance
  *
- * @var Cake\Model\Schema
+ * @var \Cake\Model\Schema
  */
 	protected $_Schema = null;
 

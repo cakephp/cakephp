@@ -31,7 +31,7 @@ class ActionsAuthorize extends BaseAuthorize {
  * Authorize a user using the AclComponent.
  *
  * @param array $user The user to authorize
- * @param Cake\Network\Request $request The request needing authorization.
+ * @param \Cake\Network\Request $request The request needing authorization.
  * @return boolean
  */
 	public function authorize($user, Request $request) {

@@ -120,7 +120,7 @@ class StringTemplateTest extends TestCase {
 /**
  * Test that loading non-existing templates causes errors.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Could not load configuration file
  */
 	public function testLoadErrorNoFile() {

@@ -619,7 +619,7 @@ class Response {
  *
  * @param integer $code the HTTP status code
  * @return integer current status code
- * @throws Cake\Error\Exception When an unknown status code is reached.
+ * @throws \Cake\Error\Exception When an unknown status code is reached.
  */
 	public function statusCode($code = null) {
 		if ($code === null) {
@@ -660,7 +660,7 @@ class Response {
  *
  * @return mixed associative array of the HTTP codes as keys, and the message
  *    strings as values, or null of the given $code does not exist.
- * @throws Cake\Error\Exception If an attempt is made to add an invalid status code
+ * @throws \Cake\Error\Exception If an attempt is made to add an invalid status code
  */
 	public function httpCodes($code = null) {
 		if (empty($code)) {
@@ -1261,7 +1261,7 @@ class Response {
  * ### Whitelist of URIs
  * e.g `cors($request, array('http://www.cakephp.org', '*.google.com', 'https://myproject.github.io'));`
  *
- * @param Cake\Network\Request $request Request object
+ * @param \Cake\Network\Request $request Request object
  * @param string|array $allowedDomains List of allowed domains, see method description for more details
  * @param string|array $allowedMethods List of HTTP verbs allowed
  * @param string|array $allowedHeaders List of HTTP headers allowed
@@ -1324,7 +1324,7 @@ class Response {
  * @param string $path Path to file
  * @param array $options Options See above.
  * @return void
- * @throws Cake\Error\NotFoundException
+ * @throws \Cake\Error\NotFoundException
  */
 	public function file($path, $options = array()) {
 		$options += array(

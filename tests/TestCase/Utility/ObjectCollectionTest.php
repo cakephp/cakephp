@@ -341,7 +341,7 @@ class ObjectCollectionTest extends TestCase {
 /**
  * test that setting modParams to an index that doesn't exist doesn't cause errors.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testTriggerModParamsInvalidIndex() {

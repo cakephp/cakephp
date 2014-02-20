@@ -181,7 +181,7 @@ class BasicAuthenticateTest extends TestCase {
 /**
  * test scope failure.
  *
- * @expectedException Cake\Error\UnauthorizedException
+ * @expectedException \Cake\Error\UnauthorizedException
  * @expectedExceptionCode 401
  * @return void
  */

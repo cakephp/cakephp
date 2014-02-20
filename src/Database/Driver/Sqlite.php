@@ -85,8 +85,8 @@ class Sqlite extends \Cake\Database\Driver {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string|Cake\Database\Query $query
- * @return Cake\Database\Statement
+ * @param string|\Cake\Database\Query $query
+ * @return \Cake\Database\Statement
  */
 	public function prepare($query) {
 		$this->connect();

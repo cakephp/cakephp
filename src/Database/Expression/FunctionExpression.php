@@ -114,7 +114,7 @@ class FunctionExpression extends QueryExpression {
  * in their place placeholders are put and can be replaced by the quoted values
  * accordingly.
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {

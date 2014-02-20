@@ -61,7 +61,7 @@ class BelongsTo extends Association {
  *
  * BelongsTo associations are never cleared in a cascading delete scenario.
  *
- * @param Cake\ORM\Entity $entity The entity that started the cascaded delete.
+ * @param \Cake\ORM\Entity $entity The entity that started the cascaded delete.
  * @param array $options The options for the original delete.
  * @return boolean Success.
  */

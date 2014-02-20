@@ -30,14 +30,14 @@ abstract class BaseSchema {
 /**
  * The driver instance being used.
  *
- * @var Cake\Database\Driver
+ * @var \Cake\Database\Driver
  */
 	protected $_driver;
 
 /**
  * Constructor
  *
- * @param Cake\Database\Driver $driver The driver to use.
+ * @param \Cake\Database\Driver $driver The driver to use.
  * @return void
  */
 	public function __construct(Driver $driver) {
@@ -84,7 +84,7 @@ abstract class BaseSchema {
 /**
  * Generate the SQL to drop a table.
  *
- * @param Cake\Database\Schema\Table $table Table instance
+ * @param \Cake\Database\Schema\Table $table Table instance
  * @return array SQL statements to drop a table.
  */
 	public function dropTableSql(Table $table) {
@@ -134,7 +134,7 @@ abstract class BaseSchema {
 /**
  * Convert field description results into abstract schema fields.
  *
- * @param Cake\Database\Schema\Table $table The table object to append fields to.
+ * @param \Cake\Database\Schema\Table $table The table object to append fields to.
  * @param array $row The row data from `describeTableSql`.
  * @return void
  */
@@ -143,7 +143,7 @@ abstract class BaseSchema {
 /**
  * Convert an index description results into abstract schema indexes or constraints.
  *
- * @param Cake\Database\Schema\Table $table The table object to append
+ * @param \Cake\Database\Schema\Table $table The table object to append
  *    an index or constraint to.
  * @param array $row The row data from `describeIndexSql`.
  * @return void
@@ -153,7 +153,7 @@ abstract class BaseSchema {
 /**
  * Convert a foreign key description into constraints on the Table object.
  *
- * @param Cake\Database\Schema\Table $table The table object to append
+ * @param \Cake\Database\Schema\Table $table The table object to append
  *    a constraint to.
  * @param array $row The row data from `describeForeignKeySql`.
  * @return void
@@ -163,7 +163,7 @@ abstract class BaseSchema {
 /**
  * Generate the SQL to create a table.
  *
- * @param Cake\Database\Schema\Table $table Table instance.
+ * @param \Cake\Database\Schema\Table $table Table instance.
  * @param array $columns The columns to go inside the table.
  * @param array $constraints The constraints for the table.
  * @param array $indexes The indexes for the table.
@@ -174,7 +174,7 @@ abstract class BaseSchema {
 /**
  * Generate the SQL fragment for a single column in a table.
  *
- * @param Cake\Database\Schema\Table $table The table instance the column is in.
+ * @param \Cake\Database\Schema\Table $table The table instance the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
  */
@@ -183,7 +183,7 @@ abstract class BaseSchema {
 /**
  * Generate the SQL fragments for defining table constraints.
  *
- * @param Cake\Database\Schema\Table $table The table instance the column is in.
+ * @param \Cake\Database\Schema\Table $table The table instance the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
  */
@@ -192,7 +192,7 @@ abstract class BaseSchema {
 /**
  * Generate the SQL fragment for a single index in a table.
  *
- * @param Cake\Database\Schema\Table $table The table object the column is in.
+ * @param \Cake\Database\Schema\Table $table The table object the column is in.
  * @param string $name The name of the column.
  * @return string SQL fragment.
  */
@@ -201,7 +201,7 @@ abstract class BaseSchema {
 /**
  * Generate the SQL to truncate a table.
  *
- * @param Cake\Database\Schema\Table $table Table instance.
+ * @param \Cake\Database\Schema\Table $table Table instance.
  * @return array SQL statements to truncate a table.
  */
 	abstract public function truncateTableSql(Table $table);

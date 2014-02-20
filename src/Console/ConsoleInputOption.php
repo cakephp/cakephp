@@ -77,7 +77,7 @@ class ConsoleInputOption {
  * @param boolean $boolean Whether this option is a boolean option. Boolean options don't consume extra tokens
  * @param string $default The default value for this option.
  * @param array $choices Valid choices for this option.
- * @throws Cake\Error\ConsoleException
+ * @throws \Cake\Error\ConsoleException
  */
 	public function __construct($name, $short = null, $help = '', $boolean = false, $default = '', $choices = []) {
 		if (is_array($name) && isset($name['name'])) {
@@ -181,7 +181,7 @@ class ConsoleInputOption {
  *
  * @param string $value
  * @return boolean
- * @throws Cake\Error\ConsoleException
+ * @throws \Cake\Error\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {

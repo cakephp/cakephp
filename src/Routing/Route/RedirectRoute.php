@@ -29,7 +29,7 @@ class RedirectRoute extends Route {
 /**
  * A Response object
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	public $response = null;
 

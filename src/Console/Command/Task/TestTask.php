@@ -337,7 +337,7 @@ class TestTask extends BakeTask {
  * @param string $type The type of thing having a test generated.
  * @param string $plugin The plugin name.
  * @return string
- * @throws Cake\Error\Exception When invalid object types are requested.
+ * @throws \Cake\Error\Exception When invalid object types are requested.
  */
 	public function mapType($type, $plugin) {
 		$type = ucfirst($type);
@@ -357,7 +357,7 @@ class TestTask extends BakeTask {
  * @param string $type The type the class having a test
  *   generated for is in.
  * @return array Array of (class, type)
- * @throws Cake\Error\Exception on invalid types.
+ * @throws \Cake\Error\Exception on invalid types.
  */
 	public function getBaseType($type) {
 		if (empty($this->baseTypes[$type])) {

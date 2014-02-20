@@ -29,14 +29,14 @@ class IdentifierQuoter {
 /**
  * The driver instance used to do the identifier quoting
  *
- * @var Cake\Database\Driver
+ * @var \Cake\Database\Driver
  */
 	protected $_driver;
 
 /**
  * Constructor
  *
- * @param Cake\Database\Driver The driver instance used to do the identifier quoting
+ * @param \Cake\Database\Driver The driver instance used to do the identifier quoting
  * @return void
  */
 	public function __construct(Driver $driver) {

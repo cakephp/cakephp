@@ -109,7 +109,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test load() on undefined class
  *
- * @expectedException Cake\Error\MissingBehaviorException
+ * @expectedException \Cake\Error\MissingBehaviorException
  * @return void
  */
 	public function testLoadMissingClass() {
@@ -119,7 +119,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test load() duplicate method error
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage TestApp\Model\Behavior\DuplicateBehavior contains duplicate method "slugify"
  * @return void
  */
@@ -195,7 +195,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unknown methods.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot call "nope"
  */
 	public function testCallError() {
@@ -229,7 +229,7 @@ class BehaviorRegistryTest extends TestCase {
 /**
  * Test errors on unknown methods.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Cannot call finder "nope"
  */
 	public function testCallFinderError() {

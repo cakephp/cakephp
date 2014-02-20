@@ -133,7 +133,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectEhloTlsOnNonTlsServer method
  *
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testConnectEhloTlsOnNonTlsServer() {
@@ -153,7 +153,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectEhloNoTlsOnRequiredTlsServer method
  *
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testConnectEhloNoTlsOnRequiredTlsServer() {
@@ -192,7 +192,7 @@ class SmtpTransportTest extends TestCase {
 /**
  * testConnectFail method
  *
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testConnectFail() {

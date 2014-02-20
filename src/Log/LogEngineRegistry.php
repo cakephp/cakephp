@@ -47,7 +47,7 @@ class LogEngineRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the logger is missing in.
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\Exception(sprintf('Could not load class %s', $class));
@@ -61,7 +61,7 @@ class LogEngineRegistry extends ObjectRegistry {
  * @param string $alias The alias of the object.
  * @param array $settings An array of settings to use for the logger.
  * @return LogEngine The constructed logger class.
- * @throws Cake\Error\Exception when an object doesn't implement
+ * @throws \Cake\Error\Exception when an object doesn't implement
  *    the correct interface.
  */
 	protected function _create($class, $alias, $settings) {

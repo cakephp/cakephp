@@ -751,7 +751,7 @@ class NumberTest extends TestCase {
 /**
  * testFromReadableSize
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testFromReadableSizeException() {

@@ -74,7 +74,7 @@ class BelongsToMany extends Association {
 /**
  * Junction table instance
  *
- * @var Cake\ORM\Table
+ * @var \Cake\ORM\Table
  */
 	protected $_junctionTable;
 
@@ -137,8 +137,8 @@ class BelongsToMany extends Association {
  * Sets the table instance for the junction relation. If no arguments
  * are passed, the current configured table instance is returned
  *
- * @param string|Cake\ORM\Table $table Name or instance for the join table
- * @return Cake\ORM\Table
+ * @param string|\Cake\ORM\Table $table Name or instance for the join table
+ * @return \Cake\ORM\Table
  */
 	public function junction($table = null) {
 		$target = $this->target();
@@ -325,7 +325,7 @@ class BelongsToMany extends Association {
 /**
  * Clear out the data in the junction table for a given entity.
  *
- * @param Cake\ORM\Entity $entity The entity that started the cascading delete.
+ * @param \Cake\ORM\Entity $entity The entity that started the cascading delete.
  * @param array $options The options for the original delete.
  * @return boolean Success.
  */

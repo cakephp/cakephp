@@ -43,8 +43,8 @@ class AssetDispatcher extends DispatcherFilter {
 /**
  * Checks if a requested asset exists and sends it to the browser
  *
- * @param Cake\Event\Event $event containing the request and response object
- * @return Cake\Network\Response if the client is requesting a recognized asset, null otherwise
+ * @param \Cake\Event\Event $event containing the request and response object
+ * @return \Cake\Network\Response if the client is requesting a recognized asset, null otherwise
  */
 	public function beforeDispatch(Event $event) {
 		$request = $event->data['request'];
@@ -101,8 +101,8 @@ class AssetDispatcher extends DispatcherFilter {
 /**
  * Sends an asset file to the client
  *
- * @param Cake\Network\Request $request The request object to use.
- * @param Cake\Network\Response $response The response object to use.
+ * @param \Cake\Network\Request $request The request object to use.
+ * @param \Cake\Network\Response $response The response object to use.
  * @param string $assetFile Path to the asset file in the file system
  * @param string $ext The extension of the file to determine its mime type
  * @return void

@@ -69,7 +69,7 @@ class CsrfComponent extends Component {
  * RequestAction requests do not get checked, nor will
  * they set a cookie should it be missing.
  *
- * @param Cake\Event\Event $event
+ * @param \Cake\Event\Event $event
  * @return void
  */
 	public function startup(Event $event) {
@@ -101,8 +101,8 @@ class CsrfComponent extends Component {
  * Also sets the request->params['_csrfToken'] so the newly minted
  * token is available in the request data.
  *
- * @param Cake\Network\Request $request The request object.
- * @param Cake\Network\Response $response The response object.
+ * @param \Cake\Network\Request $request The request object.
+ * @param \Cake\Network\Response $response The response object.
  */
 	protected function _setCookie(Request $request, Response $response) {
 		$settings = $this->settings;
@@ -120,8 +120,8 @@ class CsrfComponent extends Component {
 /**
  * Validate the request data against the cookie token.
  *
- * @param Cake\Network\Request $request The request to validate against.
- * @throws Cake\Error\ForbiddenException when the CSRF token is invalid or missing.
+ * @param \Cake\Network\Request $request The request to validate against.
+ * @throws \Cake\Error\ForbiddenException when the CSRF token is invalid or missing.
  * @return void
  */
 	protected function _validateToken(Request $request) {

@@ -61,7 +61,7 @@ class CollectionTest extends TestCase {
  * Tests for positive describe() calls are in each platformSchema
  * test case.
  *
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  * @return void
  */
 	public function testDescribeIncorrectTable() {
