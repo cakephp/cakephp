@@ -147,6 +147,10 @@ class Query extends DatabaseQuery {
 	public function __construct($connection, $table) {
 		$this->connection($connection);
 		$this->repository($table);
+
+		if ($this->_table) {
+			$this->addDefaultTypes($this->_table);
+		}
 	}
 
 /**
@@ -164,7 +168,6 @@ class Query extends DatabaseQuery {
 			return $this->_table;
 		}
 		$this->_table = $table;
-		$this->addDefaultTypes($table);
 		return $this;
 	}
 
@@ -471,10 +474,7 @@ class Query extends DatabaseQuery {
  * @return Iterator
  */
 	public function getIterator() {
-		if (empty($this->_iterator) || $this->_dirty) {
-			$this->_iterator = $this->all();
-		}
-		return $this->_iterator;
+		return $this->all();
 	}
 
 /**
