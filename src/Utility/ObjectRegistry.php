@@ -93,7 +93,7 @@ abstract class ObjectRegistry {
  *
  * @param string $class The class that is missing.
  * @param string $plugin The plugin $class is missing from.
- * @throw Cake\Exception
+ * @throws \Cake\Error\Exception
  */
 	abstract protected function _throwMissingClassError($class, $plugin);
 
