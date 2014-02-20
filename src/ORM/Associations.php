@@ -171,7 +171,7 @@ class Associations {
  * @param boolean $owningSide Compared with association classes'
  *   isOwningSide method.
  * @return boolean Success
- * @throws InvalidArgumentException When an unknown alias is used.
+ * @throws \InvalidArgumentException When an unknown alias is used.
  */
 	protected function _saveAssociations($table, $entity, $associations, $options, $owningSide) {
 		unset($options['associated']);

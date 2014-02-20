@@ -2798,7 +2798,7 @@ class FormHelper extends Helper {
  *
  * @param mixed $data The data to get a context provider for.
  * @return mixed Context provider.
- * @throws RuntimeException when the context class does not implement the
+ * @throws \RuntimeException when the context class does not implement the
  *   ContextInterface.
  */
 	protected function _getContext($data = []) {

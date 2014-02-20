@@ -119,7 +119,7 @@ class FixtureManager {
  *
  * @param \Cake\TestSuite\Testcase $test The test suite to load fixtures for.
  * @return void
- * @throws UnexpectedValueException when a referenced fixture does not exist.
+ * @throws \UnexpectedValueException when a referenced fixture does not exist.
  */
 	protected function _loadFixtures($test) {
 		if (empty($test->fixtures)) {
@@ -265,7 +265,7 @@ class FixtureManager {
  * @param DataSource $db DataSource instance or leave null to get DataSource from the fixture
  * @param boolean $dropTables Whether or not tables should be dropped and re-created.
  * @return void
- * @throws UnexpectedValueException if $name is not a previously loaded class
+ * @throws \UnexpectedValueException if $name is not a previously loaded class
  */
 	public function loadSingle($name, $db = null, $dropTables = true) {
 		if (isset($this->_fixtureMap[$name])) {

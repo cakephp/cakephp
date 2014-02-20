@@ -93,7 +93,7 @@ class EventManager {
  * the order of insertion.
  *
  * @return void
- * @throws InvalidArgumentException When event key is missing or callable is not an
+ * @throws \InvalidArgumentException When event key is missing or callable is not an
  *   instance of Cake\Event\EventListener.
  */
 	public function attach($callable, $eventKey = null, $options = array()) {

@@ -690,8 +690,8 @@ class View extends Object {
  *
  * @param string $name The view or element to 'extend' the current one with.
  * @return void
- * @throws LogicException when you extend a view with itself or make extend loops.
- * @throws LogicException when you extend an element which doesn't exist
+ * @throws \LogicException when you extend a view with itself or make extend loops.
+ * @throws \LogicException when you extend an element which doesn't exist
  */
 	public function extend($name) {
 		if ($name[0] === '/' || $this->_currentType === static::TYPE_VIEW) {

@@ -50,8 +50,8 @@ class PagesController extends AppController {
  *
  * @param mixed What page to display
  * @return void
- * @throws \Cake\Error\NotFoundException When the view file could not be found
- *	or Cake\Error\MissingViewException in debug mode.
+ * @throws \Cake\Error\NotFoundException When the view file could not be found.
+ * @throws \Cake\Error\MissingViewException in debug mode.
  */
 	public function display() {
 		$path = func_get_args();

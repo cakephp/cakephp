@@ -200,7 +200,7 @@ abstract class CacheEngine {
  *
  * @param string $key the key passed over
  * @return mixed string $key or false
- * @throws InvalidArgumentException If key's value is empty
+ * @throws \InvalidArgumentException If key's value is empty
  */
 	protected function _key($key) {
 		$key = $this->key($key);

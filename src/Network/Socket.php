@@ -362,7 +362,7 @@ class Socket {
  * @param string $clientOrServer can be one of 'client', 'server'. Default is 'client'
  * @param boolean $enable enable or disable encryption. Default is true (enable)
  * @return boolean True on success
- * @throws InvalidArgumentException When an invalid encryption scheme is chosen.
+ * @throws \InvalidArgumentException When an invalid encryption scheme is chosen.
  * @throws \Cake\Error\SocketException When attempting to enable SSL/TLS fails
  * @see stream_socket_enable_crypto
  */

@@ -91,7 +91,7 @@ class TestRunner extends \PHPUnit_TextUI_TestRunner {
  *
  * @param array $arguments
  * @return mixed instance of a fixture manager.
- * @throws RuntimeException When fixture manager class cannot be loaded.
+ * @throws \RuntimeException When fixture manager class cannot be loaded.
  */
 	protected function _getFixtureManager($arguments) {
 		if (isset($arguments['fixtureManager'])) {
