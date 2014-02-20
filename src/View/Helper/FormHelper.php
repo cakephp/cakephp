@@ -575,8 +575,7 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::isFieldError
  */
 	public function isFieldError($field) {
-		$this->setEntity($field);
-		return (bool)$this->tagIsInvalid();
+		return $this->_getContext()->hasError($field);
 	}
 
 /**
