@@ -116,42 +116,6 @@ trait QueryTrait {
 	}
 
 /**
- * Get the result set for this query.
- *
- * Will return either the results set through setResult(), or execute this query
- * and return the ResultSetDecorator object ready for streaming of results.
- *
- * @return Cake\Datasource\ResultSetDecorator
- */
-	public function getResults() {
-		if (isset($this->_results)) {
-			return $this->_results;
-		}
-
-		$table = $this->repository();
-		$event = new Event('Model.beforeFind', $table, [$this, $this->_options, true]);
-		$table->getEventManager()->dispatch($event);
-
-		if (isset($this->_results)) {
-			return $this->_results;
-		}
-
-		if ($this->_cache) {
-			$results = $this->_cache->fetch($this);
-		}
-		if (!isset($results)) {
-			$results = $this->_decorateResults(
-				new ResultSet($this, $this->execute())
-			);
-			if ($this->_cache) {
-				$this->_cache->store($this, $results);
-			}
-		}
-		$this->_results = $results;
-		return $this->_results;
-	}
-
-/**
  * Enable result caching for this query.
  *
  * If a query has caching enabled, it will do the following when executed:
@@ -200,17 +164,40 @@ trait QueryTrait {
 /**
  * Fetch the results for this query.
  *
- * Compiles the SQL representation of this query and executes it using the
- * provided connection object. Returns a ResultSetDecorator iterator object.
+ * Will return either the results set through setResult(), or execute this query
+ * and return the ResultSetDecorator object ready for streaming of results.
  *
  * ResultSetDecorator is a travesable object that implements the methods found
  * on Cake\Collection\Collection.
  *
  * @return Cake\ORM\ResultSetDecorator
- * @throws RuntimeException if this method is called on a non-select Query.
  */
 	public function all() {
-		return $this->getResults();
+		if (isset($this->_results)) {
+			return $this->_results;
+		}
+
+		$table = $this->repository();
+		$event = new Event('Model.beforeFind', $table, [$this, $this->_options, true]);
+		$table->getEventManager()->dispatch($event);
+
+		if (isset($this->_results)) {
+			return $this->_results;
+		}
+
+		if ($this->_cache) {
+			$results = $this->_cache->fetch($this);
+		}
+		if (!isset($results)) {
+			$results = $this->_decorateResults(
+				new ResultSet($this, $this->execute())
+			);
+			if ($this->_cache) {
+				$this->_cache->store($this, $results);
+			}
+		}
+		$this->_results = $results;
+		return $this->_results;
 	}
 
 /**
@@ -238,7 +225,7 @@ trait QueryTrait {
  * @param callable $mapper
  * @param callable $reducer
  * @param boolean $overwrite
- * @return Cake\ORM\Query|array
+ * @return Cake\Datasource\QueryTrait|array
  * @see Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
  */
 	public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false) {
@@ -289,7 +276,7 @@ trait QueryTrait {
  *
  * @param callable $formatter
  * @param boolean|integer $mode
- * @return Cake\ORM\Query|array
+ * @return Cake\Datasource\QueryTrait|array
  */
 	public function formatResults(callable $formatter = null, $mode = self::APPEND) {
 		if ($mode === self::OVERWRITE) {
