@@ -331,9 +331,10 @@ class FormHelper extends Helper {
 			'encoding' => strtolower(Configure::read('App.encoding')),
 		];
 
-		$options['action'] = $this->_formUrl($context, $options);
-		unset($options['url']);
+		$action = $this->url($this->_formUrl($context, $options));
+		unset($options['url'], $options['action']);
 
+		$htmlAttributes = [];
 		switch (strtolower($options['type'])) {
 			case 'get':
 				$htmlAttributes['method'] = 'get';
@@ -356,8 +357,6 @@ class FormHelper extends Helper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-		$htmlAttributes['action'] = $this->url($options['action']);
-
 		if (!$options['default']) {
 			if (!isset($options['onsubmit'])) {
 				$options['onsubmit'] = '';
@@ -368,7 +367,7 @@ class FormHelper extends Helper {
 		if (!empty($options['encoding'])) {
 			$htmlAttributes['accept-charset'] = $options['encoding'];
 		}
-		unset($options['type'], $options['action'], $options['encoding'], $options['default']);
+		unset($options['type'], $options['encoding'], $options['default']);
 
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
@@ -380,8 +379,9 @@ class FormHelper extends Helper {
 		if (!empty($append)) {
 			$append = $this->formatTemplate('hiddenblock', ['content' => $append]);
 		}
+		$actionAttr = $this->_templater->formatAttributes(['action' => $action, 'escape' => false]);
 		return $this->formatTemplate('formstart', [
-			'attrs' => $this->_templater->formatAttributes($htmlAttributes)
+			'attrs' => $this->_templater->formatAttributes($htmlAttributes) . $actionAttr
 		]) . $append;
 	}
 
@@ -551,8 +551,9 @@ class FormHelper extends Helper {
  * Populates $this->fields
  *
  * @param boolean $lock Whether this field should be part of the validation
- *     or excluded as part of the unlockedFields.
- * @param string $field Reference to field to be secured. Should be dot separated to indicate nesting.
+ *   or excluded as part of the unlockedFields.
+ * @param string|array $field Reference to field to be secured. Can be dot
+ *   separated string to indicate nesting or array of fieldname parts.
  * @param mixed $value Field value, if value should not be tampered with.
  * @return mixed|null Not used yet
  */
@@ -1503,7 +1504,7 @@ class FormHelper extends Helper {
 		));
 
 		if ($secure === true) {
-			$this->_secure(true, $options['name'], '' . $options['val']);
+			$this->_secure(true, $this->_secureFieldName($options), $options['val']);
 		}
 
 		$options['type'] = 'hidden';
@@ -2780,10 +2781,12 @@ class FormHelper extends Helper {
  * Get the field name for use with _secure().
  *
  * Parses the name attribute to create a dot separated name value for use
- * in secured field hash.
+ * in secured field hash. If filename is of form Model[field] an array of
+ * fieldname parts like ['Model', 'field'] is returned.
  *
  * @param array $options An array of options possibly containing a name key.
- * @return string|null
+ * @return string|array|null Dot separated string like Foo.bar, array of filename
+ *   params like ['Model', 'field'] or null if options does not contain name.
  */
 	protected function _secureFieldName($options) {
 		if (!isset($options['name'])) {
