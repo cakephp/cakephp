@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,10 +12,10 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\Test\TestCase\ORM;
+namespace Cake\Test\TestCase\Datasource;
 
 use Cake\Cache\Cache;
-use Cake\ORM\QueryCacher;
+use Cake\Datasource\QueryCacher;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -57,7 +55,7 @@ class QueryCacherTest extends TestCase {
  */
 	public function testFetchFunctionKey() {
 		$this->_mockRead('my_key', 'A winner');
-		$query = $this->getMock('Cake\ORM\Query', [], [], '', false);
+		$query = $this->getMock('stdClass');
 
 		$cacher = new QueryCacher(function($q) use ($query) {
 			$this->assertSame($query, $q);
@@ -77,7 +75,7 @@ class QueryCacherTest extends TestCase {
  */
 	public function testFetchFunctionKeyNoString() {
 		$this->_mockRead('my_key', 'A winner');
-		$query = $this->getMock('Cake\ORM\Query', [], [], '', false);
+		$query = $this->getMock('stdClass');
 
 		$cacher = new QueryCacher(function($q) {
 			return false;
@@ -94,7 +92,7 @@ class QueryCacherTest extends TestCase {
 	public function testFetchCacheHitStringEngine() {
 		$this->_mockRead('my_key', 'A winner');
 		$cacher = new QueryCacher('my_key', 'queryCache');
-		$query = $this->getMock('Cake\ORM\Query', [], [], '', false);
+		$query = $this->getMock('stdClass');
 		$result = $cacher->fetch($query);
 		$this->assertEquals('A winner', $result);
 	}
@@ -107,7 +105,7 @@ class QueryCacherTest extends TestCase {
 	public function testFetchCacheHit() {
 		$this->_mockRead('my_key', 'A winner');
 		$cacher = new QueryCacher('my_key', $this->engine);
-		$query = $this->getMock('Cake\ORM\Query', [], [], '', false);
+		$query = $this->getMock('stdClass');
 		$result = $cacher->fetch($query);
 		$this->assertEquals('A winner', $result);
 	}
@@ -120,7 +118,7 @@ class QueryCacherTest extends TestCase {
 	public function testFetchCacheMiss() {
 		$this->_mockRead('my_key', false);
 		$cacher = new QueryCacher('my_key', $this->engine);
-		$query = $this->getMock('Cake\ORM\Query', [], [], '', false);
+		$query = $this->getMock('stdClass');
 		$result = $cacher->fetch($query);
 		$this->assertNull($result, 'Cache miss should not have an isset() return.');
 	}

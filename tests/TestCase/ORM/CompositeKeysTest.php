@@ -413,7 +413,7 @@ class CompositeKeyTest extends TestCase {
 			[null, $table]
 		);
 
-		$items = new \Cake\ORM\ResultSetDecorator([
+		$items = new \Cake\Datasource\ResultSetDecorator([
 			['id' => 1, 'name' => 'a', 'site_id' => 1, 'parent_id' => null],
 			['id' => 2, 'name' => 'a', 'site_id' => 2, 'parent_id' => null],
 			['id' => 3, 'name' => 'a', 'site_id' => 1, 'parent_id' => 1],

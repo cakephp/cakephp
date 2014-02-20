@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
 use Cake\ORM\Entity;
 use Cake\ORM\Query;

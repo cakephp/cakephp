@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -14,13 +12,12 @@
  * @since         CakePHP(tm) v 3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
-namespace Cake\ORM;
+namespace Cake\Datasource;
 
 use Cake\Cache\Cache;
 use Cake\Cache\CacheEngine;
-use Cake\ORM\Query;
-use Cake\ORM\ResultSet;
 use RuntimeException;
+use Traversable;
 
 /**
  * Handles caching queries and loading results from the cache.
@@ -53,10 +50,10 @@ class QueryCacher {
 /**
  * Load the cached results from the cache or run the query.
  *
- * @param Query $query The query the cache read is for.
+ * @param object $query The query the cache read is for.
  * @return ResultSet|null Either the cached results or null.
  */
-	public function fetch(Query $query) {
+	public function fetch($query) {
 		$key = $this->_resolveKey($query);
 		$storage = $this->_resolveCacher();
 		$result = $storage->read($key);
@@ -69,11 +66,11 @@ class QueryCacher {
 /**
  * Store the result set into the cache.
  *
- * @param Query $query The query the cache read is for.
- * @param ResultSet The result set to store.
+ * @param object $query The query the cache read is for.
+ * @param \Traversable The result set to store.
  * @return void
  */
-	public function store(Query $query, ResultSet $results) {
+	public function store($query, Traversable $results) {
 		$key = $this->_resolveKey($query);
 		$storage = $this->_resolveCacher();
 		return $storage->write($key, $results);
