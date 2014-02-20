@@ -2021,48 +2021,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testTagIsInvalid method
- *
- * @return void
- */
-	public function testTagIsInvalid() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
-
-		$this->Form->setEntity('Contact.0.email');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertEquals($expected, $result);
-
-		$this->Form->setEntity('Contact.1.email');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertFalse($result);
-
-		$this->Form->setEntity('Contact.0.name');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertFalse($result);
-	}
-
-/**
- * Test tagIsInvalid with validation errors from a saveMany
- *
- * @return void
- */
-	public function testTagIsInvalidSaveMany() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors[0]['email'] = $expected = array('Please provide an email');
-
-		$this->Form->create('Contact');
-
-		$this->Form->setEntity('0.email');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertEquals($expected, $result);
-
-		$this->Form->setEntity('0.Contact.email');
-		$result = $this->Form->tagIsInvalid();
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * Test validation errors.
  *
  * @return void
