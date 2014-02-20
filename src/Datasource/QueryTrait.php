@@ -19,7 +19,6 @@ use Cake\Datasource\QueryCacher;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetDecorator;
 use Cake\Event\Event;
-use Cake\ORM\ResultSet;
 
 /**
  * Contains the characteristics for an object that is attached to a repository and
@@ -189,9 +188,7 @@ trait QueryTrait {
 			$results = $this->_cache->fetch($this);
 		}
 		if (!isset($results)) {
-			$results = $this->_decorateResults(
-				new ResultSet($this, $this->execute())
-			);
+			$results = $this->_decorateResults($this->_execute());
 			if ($this->_cache) {
 				$this->_cache->store($this, $results);
 			}
@@ -311,6 +308,13 @@ trait QueryTrait {
 		}
 		return $this->all()->first();
 	}
+
+/**
+ * Executes this query and returns a traversable object containing the results
+ *
+ * @return \Traversable
+ */
+	abstract protected function _execute();
 
 /**
  * Decorates the results iterator with MapReduce routines and formatters

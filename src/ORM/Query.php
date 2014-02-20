@@ -17,6 +17,7 @@ namespace Cake\ORM;
 use Cake\Database\Query as DatabaseQuery;
 use Cake\Datasource\QueryTrait;
 use Cake\ORM\EagerLoader;
+use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 
 /**
@@ -581,6 +582,15 @@ class Query extends DatabaseQuery {
 			);
 		}
 		return $this->_all();
+	}
+
+/**
+ * Executes this query and returns a ResultSet object containing the results
+ *
+ * @return \Cake\ORM\ResultSet
+ */
+	protected function _execute() {
+		return new ResultSet($this, $this->execute());
 	}
 
 /**
