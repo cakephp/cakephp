@@ -22,9 +22,9 @@ use Traversable;
 /**
  * Handles caching queries and loading results from the cache.
  *
- * Used by Cake\ORM\Query internally.
+ * Used by Cake\Datasource\QueryTrait internally.
  *
- * @see Cake\ORM\Query::cache() for the public interface.
+ * @see Cake\Datasource\QueryTrait::cache() for the public interface.
  */
 class QueryCacher {
 

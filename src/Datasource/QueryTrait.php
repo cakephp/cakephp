@@ -40,7 +40,7 @@ trait QueryTrait {
  *
  * When set, query execution will be bypassed.
  *
- * @var Cake\ORM\ResultSet
+ * @var \Cake\Datasource\ResultSetDecorator
  * @see setResult()
  */
 	protected $_results;
@@ -186,13 +186,9 @@ trait QueryTrait {
  *   When using a function, this query instance will be supplied as an argument.
  * @param string|CacheEngine $config Either the name of the cache config to use, or
  *   a cache config instance.
- * @return Query The query instance.
- * @throws \RuntimeException When you attempt to cache a non-select query.
+ * @return QueryTrait This same object
  */
 	public function cache($key, $config = 'default') {
-		if ($this->_type !== 'select' && $this->_type !== null) {
-			throw new \RuntimeException('You cannot cache the results of non-select queries.');
-		}
 		if ($key === false) {
 			$this->_cache = null;
 			return $this;
@@ -205,20 +201,15 @@ trait QueryTrait {
  * Fetch the results for this query.
  *
  * Compiles the SQL representation of this query and executes it using the
- * provided connection object. Returns a ResultSet iterator object.
+ * provided connection object. Returns a ResultSetDecorator iterator object.
  *
- * ResultSet is a travesable object that implements the methods found
+ * ResultSetDecorator is a travesable object that implements the methods found
  * on Cake\Collection\Collection.
  *
- * @return Cake\ORM\ResultCollectionTrait
+ * @return Cake\ORM\ResultSetDecorator
  * @throws RuntimeException if this method is called on a non-select Query.
  */
 	public function all() {
-		if ($this->_type !== 'select' && $this->_type !== null) {
-			throw new \RuntimeException(
-				'You cannot call all() on a non-select query. Use execute() instead.'
-			);
-		}
 		return $this->getResults();
 	}
 

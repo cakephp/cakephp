@@ -28,7 +28,10 @@ use Cake\ORM\Table;
  */
 class Query extends DatabaseQuery {
 
-	use QueryTrait;
+	use QueryTrait {
+		cache as private _cache;
+		all as private _all;
+	}
 
 /**
  * Indicates that the operation should append to the list
@@ -551,6 +554,33 @@ class Query extends DatabaseQuery {
 		$this->_dirty();
 		$this->_hydrate = (bool)$enable;
 		return $this;
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ * @return Query The query instance.
+ * @throws \RuntimeException When you attempt to cache a non-select query.
+ */
+	public function cache($key, $config = 'default') {
+		if ($this->_type !== 'select' && $this->_type !== null) {
+			throw new \RuntimeException('You cannot cache the results of non-select queries.');
+		}
+		return $this->_cache($key, $config);
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ * @throws RuntimeException if this method is called on a non-select Query.
+ */
+	public function all() {
+		if ($this->_type !== 'select' && $this->_type !== null) {
+			throw new \RuntimeException(
+				'You cannot call all() on a non-select query. Use execute() instead.'
+			);
+		}
+		return $this->_all();
 	}
 
 /**
