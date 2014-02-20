@@ -72,7 +72,6 @@ class Query extends DatabaseQuery {
  */
 	protected $_useBufferedResults = true;
 
-
 /**
  * Whether to hydrate results into entity objects
  *
@@ -707,6 +706,7 @@ class Query extends DatabaseQuery {
 /**
  * {@inheritdoc}
  *
+ * @throws \BadMethodCallException if the method is called for a non-select query
  */
 	public function __call($method, $arguments) {
 		if ($this->type() === 'select') {
