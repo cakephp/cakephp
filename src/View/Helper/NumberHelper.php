@@ -67,6 +67,8 @@ class NumberHelper extends Helper {
 /**
  * Call methods from Cake\Utility\Number utility class
  *
+ * @param string $method Method to invoke
+ * @param array $params Array of params for the method.
  * @return mixed Whatever is returned by called method, or false on failure
  */
 	public function __call($method, $params) {

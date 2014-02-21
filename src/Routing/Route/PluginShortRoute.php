@@ -44,6 +44,9 @@ class PluginShortRoute extends Route {
  * are not the same the match is an auto fail.
  *
  * @param array $url Array of parameters to convert to a string.
+ * @param array $context An array of the current request context.
+ *   Contains information such as the current host, scheme, port, and base
+ *   directory.
  * @return mixed either false or a string URL.
  */
 	public function match($url, $context = array()) {

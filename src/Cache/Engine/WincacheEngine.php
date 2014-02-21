@@ -189,6 +189,7 @@ class WincacheEngine extends CacheEngine {
  * Increments the group value to simulate deletion of all keys under a group
  * old values will remain in storage until they expire.
  *
+ * @param string $group name of the group to be cleared
  * @return boolean success
  */
 	public function clearGroup($group) {
