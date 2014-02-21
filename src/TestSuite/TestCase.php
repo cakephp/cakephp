@@ -74,9 +74,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * If no TestResult object is passed a new one will be created.
  * This method is run for each test method in this class
  *
- * @param PHPUnit_Framework_TestResult $result
- * @return PHPUnit_Framework_TestResult
- * @throws InvalidArgumentException
+ * @param \PHPUnit_Framework_TestResult $result
+ * @return \PHPUnit_Framework_TestResult
  */
 	public function run(\PHPUnit_Framework_TestResult $result = null) {
 		if (!empty($this->fixtureManager)) {
@@ -212,7 +211,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $expected The expected value.
  * @param string $result The actual value.
- * @param message The message to use for failure.
+ * @param string message The message to use for failure.
  * @return boolean
  */
 	public function assertTextNotEquals($expected, $result, $message = '') {
@@ -227,7 +226,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $expected The expected value.
  * @param string $result The actual value.
- * @param message The message to use for failure.
+ * @param string message The message to use for failure.
  * @return boolean
  */
 	public function assertTextEquals($expected, $result, $message = '') {
@@ -546,7 +545,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 /**
  * Compatibility wrapper function for setExpectedException
  *
- * @param mixed $expected the name of the Exception
+ * @param mixed $name the name of the Exception
  * @param string $message the text to display if the assertion is not correct
  * @deprecated This is a compatiblity wrapper for 1.x. It will be removed in 3.0
  * @return void

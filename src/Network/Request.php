@@ -384,7 +384,7 @@ class Request implements \ArrayAccess {
 /**
  * Process uploaded files and move things onto the post data.
  *
- * @param array $data Post data to merge files onto.
+ * @param array $post Post data to merge files onto.
  * @param array $files Uploaded files to merge in.
  * @return array merged post + file data.
  */

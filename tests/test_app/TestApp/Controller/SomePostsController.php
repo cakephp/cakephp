@@ -39,6 +39,7 @@ class SomePostsController extends Controller {
 /**
  * beforeFilter method
  *
+ * @param Event $event
  * @return void
  */
 	public function beforeFilter(Event $event) {

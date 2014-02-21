@@ -2402,6 +2402,7 @@ class QueryTest extends TestCase {
  * @param string $table
  * @param integer $count
  * @param array $rows
+ * @param array $conditions
  * @return void
  */
 	public function assertTable($table, $count, $rows, $conditions = []) {

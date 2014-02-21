@@ -72,7 +72,7 @@ class App {
  * application/plugin, otherwise try to load from the CakePHP core
  *
  * @param string $class Classname
- * @param strign $type Type of class
+ * @param string $type Type of class
  * @param string $suffix Classname suffix
  * @return boolean|string False if the class is not found or namespaced classname
  */

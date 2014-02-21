@@ -280,7 +280,7 @@ class HtmlReporter extends BaseReporter {
  * trail of the nesting test suites below the
  * top level test.
  *
- * @param PHPUnit_Framework_Test test method that just passed
+ * @param \PHPUnit_Framework_Test test method that just passed
  * @param float $time time spent to run the test method
  * @return void
  */
@@ -301,14 +301,14 @@ class HtmlReporter extends BaseReporter {
  * @param mixed $test
  * @return void
  */
-	public function paintException($message, $test) {
-		$trace = $this->_getStackTrace($message);
+	public function paintException($exception, $test) {
+		$trace = $this->_getStackTrace($exception);
 		$testName = get_class($test) . '(' . $test->getName() . ')';
 
 		echo "<li class='fail'>\n";
-		echo "<span>" . get_class($message) . "</span>";
+		echo "<span>" . get_class($exception) . "</span>";
 
-		echo "<div class='msg'>" . $this->_htmlEntities($message->getMessage()) . "</div>\n";
+		echo "<div class='msg'>" . $this->_htmlEntities($exception->getMessage()) . "</div>\n";
 		echo "<div class='msg'>" . sprintf('Test case: %s', $testName) . "</div>\n";
 		echo "<div class='msg'>" . 'Stack trace:' . '<br />' . $trace . "</div>\n";
 		echo "</li>\n";
@@ -351,7 +351,7 @@ class HtmlReporter extends BaseReporter {
 /**
  * Gets a formatted stack trace.
  *
- * @param Exception $e Exception to get a stack trace for.
+ * @param \Exception $e Exception to get a stack trace for.
  * @return string Generated stack trace.
  */
 	protected function _getStackTrace(\Exception $e) {
@@ -372,7 +372,7 @@ class HtmlReporter extends BaseReporter {
 /**
  * A test suite started.
  *
- * @param PHPUnit_Framework_TestSuite $suite
+ * @param \PHPUnit_Framework_TestSuite $suite
  * @return void
  */
 	public function startTestSuite(\PHPUnit_Framework_TestSuite $suite) {

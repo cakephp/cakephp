@@ -92,7 +92,7 @@ trait ExternalAssociationTrait {
  * Correctly nests a result row associated values into the correct array keys inside the
  * source results.
  *
- * @param array $result
+ * @param array $row
  * @return array
  */
 	public function transformRow($row) {

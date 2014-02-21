@@ -82,7 +82,7 @@ class PhpAcl extends Object implements AclInterface {
 /**
  * Initialize method
  *
- * @param AclComponent $Component Component instance
+ * @param Component $Component Component instance
  * @return void
  */
 	public function initialize(Component $Component) {

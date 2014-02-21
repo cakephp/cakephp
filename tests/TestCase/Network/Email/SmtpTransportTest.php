@@ -30,7 +30,7 @@ class SmtpTestTransport extends SmtpTransport {
 /**
  * Helper to change the socket
  *
- * @param object $socket
+ * @param Socket $socket
  * @return void
  */
 	public function setSocket(Socket $socket) {

@@ -116,10 +116,10 @@ class EntityValidator {
  * associations to also be validated.
  * @return boolean true if all validations passed, false otherwise
  */
-	public function many(array $entities, $include = []) {
+	public function many(array $entities, $options = []) {
 		$valid = true;
 		foreach ($entities as $entity) {
-			$valid = $this->one($entity, $include) && $valid;
+			$valid = $this->one($entity, $options) && $valid;
 		}
 		return $valid;
 	}

@@ -33,7 +33,7 @@ class PrivateActionException extends Exception {
  *
  * @param string $message Excception message
  * @param integer $code Exception code
- * @param \Exception $previous Previous exception
+ * @param Exception $previous Previous exception
  */
 	public function __construct($message, $code = 404, Exception $previous = null) {
 		parent::__construct($message, $code, $previous);

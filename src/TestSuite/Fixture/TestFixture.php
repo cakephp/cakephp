@@ -313,7 +313,7 @@ class TestFixture {
  * Truncates the current fixture. Can be overwritten by classes extending
  * CakeFixture to trigger other events before / after truncate.
  *
- * @param Connection DboSource $db A reference to a db instance
+ * @param Connection $db A reference to a db instance
  * @return boolean
  */
 	public function truncate(Connection $db) {

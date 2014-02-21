@@ -186,17 +186,17 @@ class IniConfig implements ConfigEngineInterface {
  * @param mixed $value to export.
  * @return string String value for ini file.
  */
-	protected function _value($val) {
-		if ($val === null) {
+	protected function _value($value) {
+		if ($value === null) {
 			return 'null';
 		}
-		if ($val === true) {
+		if ($value === true) {
 			return 'true';
 		}
-		if ($val === false) {
+		if ($value === false) {
 			return 'false';
 		}
-		return (string)$val;
+		return (string)$value;
 	}
 
 /**

@@ -46,7 +46,7 @@ abstract class DispatcherFilter implements EventListener {
 /**
  * Constructor.
  *
- * @param string $setting Configuration settings for the filter.
+ * @param array $settings Configuration settings for the filter.
  */
 	public function __construct($settings = array()) {
 		$this->settings = Hash::merge($this->settings, $settings);

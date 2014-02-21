@@ -150,6 +150,7 @@ class TestObject extends Object {
 /**
  * undocumented function
  *
+ * @param array $properties
  * @return void
  */
 	public function set($properties = array()) {

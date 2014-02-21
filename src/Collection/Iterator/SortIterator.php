@@ -87,11 +87,11 @@ class SortIterator extends SplHeap {
  * @param integer $type the type of comparison to perform, either SORT_STRING
  * SORT_NUMERIC or SORT_NATURAL
  */
-	public function __construct($items, $c, $dir = SORT_DESC, $type = SORT_NUMERIC) {
+	public function __construct($items, $callback, $dir = SORT_DESC, $type = SORT_NUMERIC) {
 		$this->_items = $items;
 		$this->_dir = $dir;
 		$this->_type = $type;
-		$this->_callback = $this->_propertyExtractor($c);
+		$this->_callback = $this->_propertyExtractor($callback);
 	}
 
 /**

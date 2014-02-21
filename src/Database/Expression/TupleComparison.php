@@ -33,8 +33,8 @@ class TupleComparison extends Comparison {
  * one type per position in the value array in needed
  * @param string $conjunction the operator used for comparing field and value
  */
-	public function __construct($fields, $values, $types = [], $conjuntion = '=') {
-		parent::__construct($fields, $values, $types, $conjuntion);
+	public function __construct($fields, $values, $types = [], $conjunction = '=') {
+		parent::__construct($fields, $values, $types, $conjunction);
 		$this->_type = (array)$types;
 	}
 

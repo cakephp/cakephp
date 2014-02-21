@@ -707,7 +707,8 @@ class CookieComponentTest extends TestCase {
 /**
  * Helper method for generating old style encoded cookie values.
  *
- * @return string.
+ * @param array $array
+ * @return string
  */
 	protected function _oldImplode(array $array) {
 		$string = '';

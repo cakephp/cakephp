@@ -333,6 +333,7 @@ class ValidateUsersTable extends Table {
 /**
  * beforeValidate method
  *
+ * @param array $options
  * @return void
  */
 	public function beforeValidate($options = array()) {

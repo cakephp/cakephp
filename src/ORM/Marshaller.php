@@ -153,7 +153,7 @@ class Marshaller {
  * for junction table entities.
  *
  * @param Association $assoc The association to marshall.
- * @param array $values The data to convert into entities.
+ * @param array $data The data to convert into entities.
  * @param array $include The nested associations to convert.
  * @return array An array of built entities.
  */

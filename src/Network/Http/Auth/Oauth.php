@@ -33,7 +33,7 @@ class Oauth {
  * Add headers for Oauth authorization.
  *
  * @param Request $request
- * @param array $options
+ * @param array $credentials
  * @return void
  * @throws \Cake\Error\Exception On invalid signature types.
  */
@@ -228,7 +228,7 @@ class Oauth {
 /**
  * Builds the Oauth Authorization header value.
  *
- * @param array $values The oauth_* values to build
+ * @param array $data The oauth_* values to build
  * @return string
  */
 	protected function _buildAuth($data) {

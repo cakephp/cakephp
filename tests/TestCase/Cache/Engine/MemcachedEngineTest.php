@@ -69,6 +69,7 @@ class MemcachedEngineTest extends TestCase {
 /**
  * Helper method for testing.
  *
+ * @param array $config
  * @return void
  */
 	protected function _configCache($config = []) {

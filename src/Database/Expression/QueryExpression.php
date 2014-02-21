@@ -242,7 +242,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * "field IN (value1, value2)".
  *
  * @param string $field database field to be compared against value
- * @param array $value the value to be bound to $field for comparison
+ * @param array $values the value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */
@@ -258,7 +258,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * "field NOT IN (value1, value2)".
  *
  * @param string $field database field to be compared against value
- * @param array $value the value to be bound to $field for comparison
+ * @param array $values the value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */

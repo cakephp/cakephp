@@ -43,7 +43,8 @@ trait IdGeneratorTrait {
  *
  * Ensures that id's for a given set of fields are unique.
  *
- * @param array $radio The radio properties.
+ * @param string $name The ID attribute name.
+ * @param mixed $val The ID attribute value.
  * @return string Generated id.
  */
 	protected function _id($name, $val) {

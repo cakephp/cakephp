@@ -72,7 +72,7 @@ abstract class BaseAuthorize {
  * Constructor
  *
  * @param ComponentRegistry $registry The controller for this request.
- * @param string $settings An array of settings. This class does not use any settings.
+ * @param array $settings An array of settings. This class does not use any settings.
  */
 	public function __construct(ComponentRegistry $registry, $settings = array()) {
 		$this->_registry = $registry;

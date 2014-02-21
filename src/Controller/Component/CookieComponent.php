@@ -308,10 +308,10 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Returns true if given variable is set in cookie.
+ * Returns true if given key is set in the cookie.
  *
- * @param string $var Variable name to check for
- * @return boolean True if variable is there
+ * @param string $key Key to check for
+ * @return boolean True if the key exists
  */
 	public function check($key = null) {
 		if (empty($key)) {

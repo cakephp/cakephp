@@ -77,8 +77,8 @@ class BasicAuthenticate extends BaseAuthenticate {
 /**
  * Handles an unauthenticated access attempt by sending appropriate login headers
  *
- * @param CakeRequest $request A request object.
- * @param CakeResponse $response A response object.
+ * @param Request $request A request object.
+ * @param Response $response A response object.
  * @return void
  * @throws \Cake\Error\UnauthorizedException
  */

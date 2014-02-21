@@ -1129,13 +1129,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param integer $num The page number you want.
  * @return Query
  */
-	public function page($page) {
+	public function page($num) {
 		$limit = $this->clause('limit');
 		if ($limit === null) {
 			$limit = 25;
 			$this->limit($limit);
 		}
-		$this->offset(($page - 1) * $limit);
+		$this->offset(($num - 1) * $limit);
 		return $this;
 	}
 
@@ -1304,7 +1304,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Helper function used to covert ExpressionInterface objects inside an array
  * into their string representation
  *
- * @param array $expression list of strings and ExpressionInterface objects
+ * @param array $expressions list of strings and ExpressionInterface objects
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return array
  */
@@ -1673,7 +1673,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * will create as many placeholders as values are in it. For example "string[]"
  * will create several placeholders of type string.
  *
- * @param string|integer $token placeholder to be replaced with quoted version
+ * @param string|integer $param placeholder to be replaced with quoted version
  * of $value
  * @param mixed $value the value to be bound
  * @param string|integer $type the mapped type name, used for casting when sending

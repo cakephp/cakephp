@@ -865,7 +865,7 @@ class View extends Object {
 /**
  * Sandbox method to evaluate a template / view script in.
  *
- * @param string $viewFn Filename of the view
+ * @param string $viewFile Filename of the view
  * @param array $dataForView Data to include in rendered view.
  *    If empty the current View::$viewVars will be used.
  * @return string Rendered output

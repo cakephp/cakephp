@@ -110,7 +110,7 @@ class ValuesExpression implements ExpressionInterface {
  * Sets the values to be inserted. If no params are passed, then it returns
  * the currently stored values
  *
- * @param array $cols arrays with values to be inserted
+ * @param array $values arrays with values to be inserted
  * @return array|ValuesExpression
  */
 	public function values($values = null) {

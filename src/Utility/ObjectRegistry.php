@@ -57,7 +57,7 @@ abstract class ObjectRegistry {
  *
  * All calls to the `Email` component would use `AliasedEmail` instead.
  *
- * @param string $name The name/class of the object to load.
+ * @param string $objectName The name/class of the object to load.
  * @param array $settings Additional settings to use when loading the object.
  * @return mixed
  */

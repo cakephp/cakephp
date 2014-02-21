@@ -39,6 +39,7 @@ class PostgresSchemaTest extends TestCase {
 /**
  * Helper method for testing methods.
  *
+ * @param \Cake\Database\Connection $connection
  * @return void
  */
 	protected function _createTables($connection) {

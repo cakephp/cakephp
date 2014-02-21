@@ -74,7 +74,7 @@ class IdentifierExpression implements ExpressionInterface {
  * This method is a no-op, this is a leaf type of expression,
  * hence there is nothing to traverse
  *
- * @param callable $visitor
+ * @param callable $callable
  * @return void
  */
 	public function traverse(callable $callable) {

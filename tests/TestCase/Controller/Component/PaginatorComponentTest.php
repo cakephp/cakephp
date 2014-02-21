@@ -733,6 +733,7 @@ class PaginatorComponentTest extends TestCase {
 /**
  * Helper method for making mocks.
  *
+ * @param array $methods
  * @return Table
  */
 	protected function _getMockPosts($methods = []) {

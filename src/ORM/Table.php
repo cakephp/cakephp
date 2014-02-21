@@ -280,7 +280,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Returns the table alias or sets a new one
  *
- * @param string $table the new table alias
+ * @param string $alias the new table alias
  * @return string
  */
 	public function alias($alias = null) {
@@ -947,18 +947,18 @@ class Table implements RepositoryInterface, EventListener {
  * @param \Cake\Validation\Validator $validator
  * @return \Cake\Validation\Validator
  */
-	public function validator($name = 'default', Validator $instance = null) {
-		if ($instance === null && isset($this->_validators[$name])) {
+	public function validator($name = 'default', Validator $validator = null) {
+		if ($validator === null && isset($this->_validators[$name])) {
 			return $this->_validators[$name];
 		}
 
-		if ($instance === null) {
-			$instance = new Validator();
-			$instance = $this->{'validation' . ucfirst($name)}($instance);
+		if ($validator === null) {
+			$validator = new Validator();
+			$validator = $this->{'validation' . ucfirst($name)}($validator);
 		}
 
-		$instance->provider('table', $this);
-		return $this->_validators[$name] = $instance;
+		$validator->provider('table', $this);
+		return $this->_validators[$name] = $validator;
 	}
 
 /**
@@ -1391,7 +1391,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * @param string $type name of the finder to be called
  * @param \Cake\ORM\Query $query The query object to apply the finder options to
- * @param array $args List of options to pass to the finder
+ * @param array $options List of options to pass to the finder
  * @return \Cake\ORM\Query
  * @throws \BadMethodCallException
  */

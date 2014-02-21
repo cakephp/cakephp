@@ -104,7 +104,7 @@ class InputRegistry {
  * the `_default` widget is undefined.
  *
  * @param string $name The widget name to get.
- * @return mixed WidgetInterface widget interface class.
+ * @return WidgetInterface widget interface class.
  * @throws \RuntimeException when widget is undefined.
  */
 	public function get($name) {

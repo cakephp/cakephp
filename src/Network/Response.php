@@ -1034,14 +1034,14 @@ class Response {
  *
  * If no parameters are passed, current Etag header is returned.
  *
- * @param string $hash the unique has that identifies this response
+ * @param string $hash the unique hash that identifies this response
  * @param boolean $weak whether the response is semantically the same as
  *   other with the same hash or not
  * @return string
  */
-	public function etag($tag = null, $weak = false) {
-		if ($tag !== null) {
-			$this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $tag);
+	public function etag($hash = null, $weak = false) {
+		if ($hash !== null) {
+			$this->_headers['Etag'] = sprintf('%s"%s"', ($weak) ? 'W/' : null, $hash);
 		}
 		if (isset($this->_headers['Etag'])) {
 			return $this->_headers['Etag'];
@@ -1142,7 +1142,7 @@ class Response {
  * the Last-Modified etag response header before calling this method. Otherwise
  * a comparison will not be possible.
  *
- * @param CakeRequest $request Request object
+ * @param Request $request Request object
  * @return boolean whether the response was marked as not modified or not.
  */
 	public function checkNotModified(Request $request) {

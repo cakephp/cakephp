@@ -89,7 +89,7 @@ class TestController extends ControllerTestAppController {
  * index method
  *
  * @param mixed $testId
- * @param mixed $test2Id
+ * @param mixed $testTwoId
  * @return void
  */
 	public function index($testId, $testTwoId) {
@@ -103,7 +103,7 @@ class TestController extends ControllerTestAppController {
  * view method
  *
  * @param mixed $testId
- * @param mixed $test2Id
+ * @param mixed $testTwoId
  * @return void
  */
 	public function view($testId, $testTwoId) {
@@ -149,6 +149,7 @@ class TestComponent extends Component {
 /**
  * initialize method
  *
+ * @param Event $event
  * @return void
  */
 	public function initialize(Event $event) {
@@ -157,6 +158,7 @@ class TestComponent extends Component {
 /**
  * startup method
  *
+ * @param Event $event
  * @return void
  */
 	public function startup(Event $event) {
@@ -165,6 +167,7 @@ class TestComponent extends Component {
 /**
  * shutdown method
  *
+ * @param Event $event
  * @return void
  */
 	public function shutdown(Event $event) {
@@ -173,6 +176,7 @@ class TestComponent extends Component {
 /**
  * beforeRender callback
  *
+ * @param Event $event
  * @return void
  */
 	public function beforeRender(Event $event) {

@@ -54,10 +54,10 @@ class Comparison extends QueryExpression {
  * @param string $type the type name used to cast the value
  * @param string $conjunction the operator used for comparing field and value
  */
-	public function __construct($field, $value, $type, $conjuntion) {
+	public function __construct($field, $value, $type, $conjunction) {
 		$this->field($field);
 		$this->value($value);
-		$this->type($conjuntion);
+		$this->type($conjunction);
 
 		if (is_string($type)) {
 			$this->_type = $type;
