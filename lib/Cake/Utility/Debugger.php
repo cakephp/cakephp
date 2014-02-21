@@ -799,7 +799,7 @@ class Debugger {
 		if (isset($tpl['callback']) && is_callable($tpl['callback'])) {
 			return call_user_func($tpl['callback'], $data, compact('links', 'info'));
 		}
-		echo String::insert($tpl['error'], compact('links', 'info') + $data, $insertOpts);
+		return String::insert($tpl['error'], compact('links', 'info') + $data, $insertOpts);
 	}
 
 /**
