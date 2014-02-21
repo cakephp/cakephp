@@ -1375,13 +1375,13 @@ class QueryTest extends TestCase {
  */
 	public function testCollectionProxy($method, $arg) {
 		$query = $this->getMock(
-			'\Cake\ORM\Query', ['getResults'],
+			'\Cake\ORM\Query', ['all'],
 			[$this->connection, $this->table]
 		);
 		$query->select();
 		$resultSet = $this->getMock('\Cake\ORM\ResultSet', [], [$query, null]);
 		$query->expects($this->once())
-			->method('getResults')
+			->method('all')
 			->will($this->returnValue($resultSet));
 		$resultSet->expects($this->once())
 			->method($method)
