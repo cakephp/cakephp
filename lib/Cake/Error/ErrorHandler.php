@@ -216,7 +216,8 @@ class ErrorHandler {
 				'start' => 2,
 				'path' => Debugger::trimPath($file)
 			);
-			return Debugger::getInstance()->outputError($data);
+			echo $errorOutput = Debugger::getInstance()->outputError($data);
+			return $errorOutput;
 		}
 		$message = $error . ' (' . $code . '): ' . $description . ' in [' . $file . ', line ' . $line . ']';
 		if (!empty($errorConfig['trace'])) {
