@@ -1423,20 +1423,7 @@ class FormHelper extends Helper {
  */
 	public function textarea($fieldName, $options = array()) {
 		$options = $this->_initInputField($fieldName, $options);
-		$value = null;
-
-		if (array_key_exists('val', $options)) {
-			$value = $options['val'];
-			if (!array_key_exists('escape', $options) || $options['escape'] !== false) {
-				$value = h($value);
-			}
-		}
-		unset($options['val']);
-		return $this->formatTemplate('textarea', [
-			'name' => $options['name'],
-			'value' => $value,
-			'attrs' => $this->_templater->formatAttributes($options, ['name']),
-		]);
+		return $this->widget('textarea', $options);
 	}
 
 /**
