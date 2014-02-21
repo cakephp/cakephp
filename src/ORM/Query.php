@@ -711,12 +711,12 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Registers a new formatter callback function that is to be executed when the results
- * are tried to be fetched from the database.
+ * Registers a new formatter callback function that is to be executed when trying 
+ * to fetch the results from the database.
  *
- * Formatting callbacks will get as first parameter a `ResultSetDecorator` that
- * can be traversed and modified at will. As the second parameter, the formatting
- * callback will receive this query instance.
+ * Formatting callbacks will get a first parameter, a `ResultSetDecorator`, that
+ * can be traversed and modified at will. As for the second parameter, the
+ * formatting callback will receive this query instance.
  *
  * Callbacks are required to return an iterator object, which will be used as
  * the return value for this query's result. Formatter functions are applied
