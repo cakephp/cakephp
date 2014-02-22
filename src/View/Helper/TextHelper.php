@@ -67,7 +67,7 @@ class TextHelper extends Helper {
  *
  * @param View $View the view object the helper is attached to.
  * @param array $settings Settings array Settings array
- * @throws Cake\Error\Exception when the engine class could not be found.
+ * @throws \Cake\Error\Exception when the engine class could not be found.
  */
 	public function __construct(View $View, $settings = array()) {
 		$settings = Hash::merge(array('engine' => 'Cake\Utility\String'), $settings);
@@ -82,6 +82,9 @@ class TextHelper extends Helper {
 
 /**
  * Call methods from String utility class
+ *
+ * @param string $method Method to invoke
+ * @param array $params Array of params for the method.
  * @return mixed Whatever is returned by called method, or false on failure
  */
 	public function __call($method, $params) {

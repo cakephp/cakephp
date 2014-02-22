@@ -63,8 +63,8 @@ class DatabaseSession implements SessionHandlerInterface {
 /**
  * Method called on open of a database session.
  *
- * @param The path where to store/retrieve the session.
- * @param The session name.
+ * @param string $savePath The path where to store/retrieve the session.
+ * @param string $name The session name.
  * @return boolean Success
  */
 	public function open($savePath, $name) {

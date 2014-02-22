@@ -133,7 +133,7 @@ class Number {
  * @param string $size Size in human readable string like '5MB', '5M', '500B', '50kb' etc.
  * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
  * @return mixed Number of bytes as integer on success, `$default` on failure if not false
- * @throws Cake\Error\Exception On invalid Unit type.
+ * @throws \Cake\Error\Exception On invalid Unit type.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/number.html#NumberHelper::fromReadableSize
  */
 	public static function fromReadableSize($size, $default = false) {

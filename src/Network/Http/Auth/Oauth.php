@@ -33,9 +33,9 @@ class Oauth {
  * Add headers for Oauth authorization.
  *
  * @param Request $request
- * @param array $options
+ * @param array $credentials
  * @return void
- * @throws Cake\Error\Exception On invalid signature types.
+ * @throws \Cake\Error\Exception On invalid signature types.
  */
 	public function authentication(Request $request, $credentials) {
 		$hasKeys = isset(
@@ -162,7 +162,7 @@ class Oauth {
  *
  * @param string $url
  * @return string Normalized URL
- * @throws Cake\Error\Exception On invalid URLs
+ * @throws \Cake\Error\Exception On invalid URLs
  */
 	protected function _normalizedUrl($url) {
 		$parts = parse_url($url);
@@ -228,7 +228,7 @@ class Oauth {
 /**
  * Builds the Oauth Authorization header value.
  *
- * @param array $values The oauth_* values to build
+ * @param array $data The oauth_* values to build
  * @return string
  */
 	protected function _buildAuth($data) {

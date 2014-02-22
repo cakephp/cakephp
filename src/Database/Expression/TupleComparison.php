@@ -32,17 +32,16 @@ class TupleComparison extends Comparison {
  * @param array $types the types names to use for casting each of the values, only
  * one type per position in the value array in needed
  * @param string $conjunction the operator used for comparing field and value
- * @return void
  */
-	public function __construct($fields, $values, $types = [], $conjuntion = '=') {
-		parent::__construct($fields, $values, $types, $conjuntion);
+	public function __construct($fields, $values, $types = [], $conjunction = '=') {
+		parent::__construct($fields, $values, $types, $conjunction);
 		$this->_type = (array)$types;
 	}
 
 /**
  * Convert the expression into a SQL fragment.
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {

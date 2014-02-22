@@ -827,7 +827,7 @@ class RequestTest extends TestCase {
 /**
  * Test __call exceptions
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testMagicCallExceptionOnUnknownMethod() {

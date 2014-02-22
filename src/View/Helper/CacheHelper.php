@@ -65,7 +65,7 @@ class CacheHelper extends Helper {
 /**
  * Parses the view file and stores content for cache file building.
  *
- * @param Cake\Event\Event $event The event instance.
+ * @param \Cake\Event\Event $event The event instance.
  * @param string $viewFile
  * @param string $output The output for the file.
  * @return string Updated content.
@@ -79,7 +79,7 @@ class CacheHelper extends Helper {
 /**
  * Parses the layout file and stores content for cache file building.
  *
- * @param Cake\Event\Event $event The event instance.
+ * @param \Cake\Event\Event $event The event instance.
  * @param string $layoutFile
  * @return void
  */

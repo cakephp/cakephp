@@ -26,7 +26,7 @@ class DebugTransport extends AbstractTransport {
 /**
  * Send mail
  *
- * @param Cake\Network\Email\Email $email Cake Email
+ * @param \Cake\Network\Email\Email $email Cake Email
  * @return array
  */
 	public function send(Email $email) {

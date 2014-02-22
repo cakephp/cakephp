@@ -148,7 +148,7 @@ abstract class CacheEngine {
  * to decide whether actually delete the keys or just simulate it to achieve
  * the same result.
  *
- * @param string $groups name of the group to be cleared
+ * @param string $group name of the group to be cleared
  * @return boolean
  */
 	public function clearGroup($group) {
@@ -200,7 +200,7 @@ abstract class CacheEngine {
  *
  * @param string $key the key passed over
  * @return mixed string $key or false
- * @throws InvalidArgumentException If key's value is empty
+ * @throws \InvalidArgumentException If key's value is empty
  */
 	protected function _key($key) {
 		$key = $this->key($key);

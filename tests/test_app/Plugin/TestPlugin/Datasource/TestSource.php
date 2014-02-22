@@ -13,8 +13,6 @@ class TestSource {
 
 /**
  * Constructor
- *
- * @return void
  */
 	public function __construct(array $settings) {
 		$this->settings = $settings;

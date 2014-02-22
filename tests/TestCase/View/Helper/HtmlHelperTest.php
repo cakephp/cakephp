@@ -2107,7 +2107,7 @@ class HtmlHelperTest extends TestCase {
  * testLoadConfigWrongFile method
  *
  * @return void
- * @expectedException Cake\Error\ConfigureException
+ * @expectedException \Cake\Error\ConfigureException
  */
 	public function testLoadConfigWrongFile() {
 		$this->Html->loadConfig('wrong_file');
@@ -2117,7 +2117,7 @@ class HtmlHelperTest extends TestCase {
  * testLoadConfigWrongEngine method
  *
  * @return void
- * @expectedException Cake\Error\ConfigureException
+ * @expectedException \Cake\Error\ConfigureException
  */
 	public function testLoadConfigWrongEngine() {
 		$path = TEST_APP . 'TestApp/Config/';

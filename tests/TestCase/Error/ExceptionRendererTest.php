@@ -43,6 +43,7 @@ class BlueberryComponent extends Component {
 /**
  * initialize method
  *
+ * @param Event $event
  * @return void
  */
 	public function initialize(Event $event) {

@@ -124,7 +124,7 @@ class SecurityComponent extends Component {
 /**
  * Request object
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	public $request;
 
@@ -197,7 +197,7 @@ class SecurityComponent extends Component {
  * @return mixed If specified, controller blackHoleCallback's response, or no return otherwise
  * @see SecurityComponent::$blackHoleCallback
  * @link http://book.cakephp.org/2.0/en/core-libraries/components/security-component.html#handling-blackhole-callbacks
- * @throws Cake\Error\BadRequestException
+ * @throws \Cake\Error\BadRequestException
  */
 	public function blackHole(Controller $controller, $error = '') {
 		if (!$this->blackHoleCallback) {
@@ -363,7 +363,7 @@ class SecurityComponent extends Component {
 /**
  * Manually add CSRF token information into the provided request object.
  *
- * @param Cake\Network\Request $request The request object to add into.
+ * @param \Cake\Network\Request $request The request object to add into.
  * @return boolean
  */
 	public function generateToken(Request $request) {
@@ -397,7 +397,7 @@ class SecurityComponent extends Component {
  * @param string $method Method to execute
  * @param array $params Parameters to send to method
  * @return mixed Controller callback method's response
- * @throws Cake\Error\BadRequestException When a the blackholeCallback is not callable.
+ * @throws \Cake\Error\BadRequestException When a the blackholeCallback is not callable.
  */
 	protected function _callback(Controller $controller, $method, $params = array()) {
 		if (!is_callable(array($controller, $method))) {

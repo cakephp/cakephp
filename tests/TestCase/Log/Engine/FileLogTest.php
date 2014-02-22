@@ -183,6 +183,7 @@ class FileLogTest extends TestCase {
 /**
  * helper function to clears all log files in specified directory
  *
+ * @param string $dir
  * @return void
  */
 	protected function _deleteLogs($dir) {

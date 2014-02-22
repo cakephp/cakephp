@@ -40,8 +40,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Constructor. Save internally the reference to the passed fixture manager
  *
- * @param Cake\TestSuite\Fixture\FixtureManager $manager
- * @return void
+ * @param \Cake\TestSuite\Fixture\FixtureManager $manager
  */
 	public function __construct(FixtureManager $manager) {
 		$this->_fixtureManager = $manager;
@@ -100,7 +99,7 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
  * Not Implemented
  *
  * @param PHPUnit_Framework_Test $test
- * @param PHPUnit_Framework_AssertionFailedError $e
+ * @param Exception $e
  * @param float $time
  * @return void
  */
@@ -140,6 +139,9 @@ class FixtureInjector implements PHPUnit_Framework_TestListener {
 /**
  * Not Implemented
  *
+ * @param PHPUnit_Framework_Test $test
+ * @param Exception $e
+ * @param float $time
  * @return void
  */
 	public function addRiskyTest(PHPUnit_Framework_Test $test, Exception $e, $time) {

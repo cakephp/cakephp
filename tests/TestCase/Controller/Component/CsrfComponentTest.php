@@ -107,7 +107,7 @@ class CsrfComponentTest extends TestCase {
  * Test that the X-CSRF-Token works with the various http methods.
  *
  * @dataProvider httpMethodProvider
- * @expectedException Cake\Error\ForbiddenException
+ * @expectedException \Cake\Error\ForbiddenException
  * @return void
  */
 	public function testInvalidTokenInHeader($method) {
@@ -149,7 +149,7 @@ class CsrfComponentTest extends TestCase {
  * Test that request data works with the various http methods.
  *
  * @dataProvider httpMethodProvider
- * @expectedException Cake\Error\ForbiddenException
+ * @expectedException \Cake\Error\ForbiddenException
  * @return void
  */
 	public function testInvalidTokenRequestData($method) {

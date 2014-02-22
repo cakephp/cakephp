@@ -930,7 +930,7 @@ class Validation {
  * @param string|array $check
  * @param array|string $mimeTypes Array of mime types or regex pattern to check.
  * @return boolean Success
- * @throws Cake\Error\Exception when mime type can not be determined.
+ * @throws \Cake\Error\Exception when mime type can not be determined.
  */
 	public static function mimeType($check, $mimeTypes = array()) {
 		if (is_array($check) && isset($check['tmp_name'])) {

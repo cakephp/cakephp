@@ -82,7 +82,7 @@ class PhpAcl extends Object implements AclInterface {
 /**
  * Initialize method
  *
- * @param AclComponent $Component Component instance
+ * @param Component $Component Component instance
  * @return void
  */
 	public function initialize(Component $Component) {
@@ -102,7 +102,7 @@ class PhpAcl extends Object implements AclInterface {
  *
  * @param array $config configuration array, see docs
  * @return void
- * @throws Cake\Error\AclException When required keys are missing.
+ * @throws \Cake\Error\AclException When required keys are missing.
  */
 	public function build(array $config) {
 		if (empty($config['roles'])) {

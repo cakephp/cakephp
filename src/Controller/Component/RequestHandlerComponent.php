@@ -56,14 +56,14 @@ class RequestHandlerComponent extends Component {
 /**
  * Holds the reference to Controller::$request
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	public $request;
 
 /**
  * Holds the reference to Controller::$response
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	public $response;
 
@@ -247,7 +247,7 @@ class RequestHandlerComponent extends Component {
  *
  * @param Event $event The Controller.beforeRedirect event.
  * @param string|array $url A string or array containing the redirect location
- * @param Cake\Network\Response $response The response object.
+ * @param \Cake\Network\Response $response The response object.
  * @return void
  */
 	public function beforeRedirect(Event $event, $url, $response) {
@@ -625,7 +625,7 @@ class RequestHandlerComponent extends Component {
  *    be the handling callback, all other arguments should be additional parameters
  *    for the handler.
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function addInputType($type, $handler) {
 		if (!is_array($handler) || !isset($handler[0]) || !is_callable($handler[0])) {

@@ -37,14 +37,14 @@ class ComponentRegistry extends ObjectRegistry {
 /**
  * The event manager to bind components to.
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected $_eventManager = null;
 
 /**
  * Constructor.
  *
- * @param Cake\Controller\Controller $Controller
+ * @param \Cake\Controller\Controller $Controller
  */
 	public function __construct(Controller $Controller = null) {
 		if ($Controller) {
@@ -83,7 +83,7 @@ class ComponentRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the component is missing in.
- * @throws Cake\Error\MissingComponentException
+ * @throws \Cake\Error\MissingComponentException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingComponentException([

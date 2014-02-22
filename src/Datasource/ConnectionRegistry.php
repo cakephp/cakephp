@@ -23,7 +23,7 @@ use Cake\Utility\ObjectRegistry;
 /**
  * A registry object for connection instances.
  *
- * @see Cake\Database\ConnectionManager
+ * @see \Cake\Database\ConnectionManager
  */
 class ConnectionRegistry extends ObjectRegistry {
 
@@ -49,7 +49,7 @@ class ConnectionRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the driver is missing in.
- * @throws Cake\Datasource\Error\MissingDatasourceException
+ * @throws \Cake\Datasource\Error\MissingDatasourceException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new MissingDatasourceException([

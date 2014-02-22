@@ -34,8 +34,8 @@ class CallbackStatement extends StatementDecorator {
 /**
  * Constructor
  *
- * @param Cake\Database\StatementInterface $statement The statement to decorate.
- * @param Cake\Database\Driver $driver The driver instance used by the statement.
+ * @param \Cake\Database\StatementInterface $statement The statement to decorate.
+ * @param \Cake\Database\Driver $driver The driver instance used by the statement.
  * @param callable $callback The callback to apply to results before they are returned.
  */
 	public function __construct($statement, $driver, $callback) {

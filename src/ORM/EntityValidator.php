@@ -19,22 +19,22 @@ use Cake\Event\Event;
 /**
  * Contains logic for validating entities and their associations
  *
- * @see Cake\ORM\Table::validate()
- * @see Cake\ORM\Table::validateMany()
+ * @see \Cake\ORM\Table::validate()
+ * @see \Cake\ORM\Table::validateMany()
  */
 class EntityValidator {
 
 /**
  * The table instance this validator is for.
  *
- * @var Cake\ORM\Table
+ * @var \Cake\ORM\Table
  */
 	protected $_table;
 
 /**
  * Constructor.
  *
- * @param Cake\ORM\Table $table
+ * @param \Cake\ORM\Table $table
  */
 	public function __construct(Table $table) {
 		$this->_table = $table;
@@ -116,10 +116,10 @@ class EntityValidator {
  * associations to also be validated.
  * @return boolean true if all validations passed, false otherwise
  */
-	public function many(array $entities, $include = []) {
+	public function many(array $entities, $options = []) {
 		$valid = true;
 		foreach ($entities as $entity) {
-			$valid = $this->one($entity, $include) && $valid;
+			$valid = $this->one($entity, $options) && $valid;
 		}
 		return $valid;
 	}

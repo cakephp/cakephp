@@ -430,7 +430,7 @@ class Hash {
  * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
  *
  * @param array $data Source array from which to extract the data
- * @param string $paths An array containing one or more Hash::extract()-style key paths
+ * @param array $paths An array containing one or more Hash::extract()-style key paths
  * @param string $format Format string into which values will be inserted, see sprintf()
  * @return array An array of strings extracted from `$path` and formatted with `$format`
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::format
@@ -661,7 +661,7 @@ class Hash {
 /**
  * Checks to see if all the values in the array are numeric
  *
- * @param array $array The array to check.
+ * @param array $data The array to check.
  * @return boolean true if values are numeric, false otherwise
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::numeric
  */
@@ -679,7 +679,7 @@ class Hash {
  * If you have an un-even or heterogenous array, consider using Hash::maxDimensions()
  * to get the dimensions of the array.
  *
- * @param array $array Array to count dimensions on
+ * @param array $data Array to count dimensions on
  * @return integer The number of dimensions in $data
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::dimensions
  */

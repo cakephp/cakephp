@@ -35,7 +35,6 @@ class FilterIterator extends Collection {
  *
  * @param Iterator $items the items to be filtered
  * @param callable $callback
- * @return void
  */
 	public function __construct(Iterator $items, callable $callback) {
 		$wrapper = new CallbackFilterIterator($items, $callback);

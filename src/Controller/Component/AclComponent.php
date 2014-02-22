@@ -62,7 +62,7 @@ class AclComponent extends Component {
  *
  * @param ComponentRegistry $collection
  * @param array $settings
- * @throws Cake\Error\Exception when Acl.classname could not be loaded.
+ * @throws \Cake\Error\Exception when Acl.classname could not be loaded.
  */
 	public function __construct(ComponentRegistry $collection, $settings = array()) {
 		parent::__construct($collection, $settings);
@@ -86,7 +86,7 @@ class AclComponent extends Component {
  *
  * @param AclInterface|string $adapter Instance of AclInterface or a string name of the class to use. (optional)
  * @return AclInterface|void either null, or the adapter implementation.
- * @throws Cake\Error\Exception when the given class is not an instance of AclInterface
+ * @throws \Cake\Error\Exception when the given class is not an instance of AclInterface
  */
 	public function adapter($adapter = null) {
 		if ($adapter) {

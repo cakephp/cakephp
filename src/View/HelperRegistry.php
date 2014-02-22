@@ -38,7 +38,7 @@ class HelperRegistry extends ObjectRegistry {
  *
  * Helpers constructed by this object will be subscribed to this manager.
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected $_eventManager;
 
@@ -59,7 +59,7 @@ class HelperRegistry extends ObjectRegistry {
  *
  * @param string $helper The helper name to be loaded
  * @return boolean whether the helper could be loaded or not
- * @throws MissingHelperException When a helper could not be found.
+ * @throws \Cake\Error\MissingHelperException When a helper could not be found.
  *    App helpers are searched, and then plugin helpers.
  */
 	public function __isset($helper) {
@@ -118,7 +118,7 @@ class HelperRegistry extends ObjectRegistry {
  *
  * @param string $class The classname that is missing.
  * @param string $plugin The plugin the helper is missing in.
- * @throws Cake\Error\MissingHelperException
+ * @throws \Cake\Error\MissingHelperException
  */
 	protected function _throwMissingClassError($class, $plugin) {
 		throw new Error\MissingHelperException([

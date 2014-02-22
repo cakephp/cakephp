@@ -328,7 +328,7 @@ class Table {
  * @param string $name The name of the index.
  * @param array $attrs The attributes for the index.
  * @return Table $this
- * @throws Cake\Database\Exception
+ * @throws \Cake\Database\Exception
  */
 	public function addIndex($name, $attrs) {
 		if (is_string($attrs)) {
@@ -410,7 +410,7 @@ class Table {
  * @param string $name The name of the constraint.
  * @param array $attrs The attributes for the constraint.
  * @return Table $this
- * @throws Cake\Database\Exception
+ * @throws \Cake\Database\Exception
  */
 	public function addConstraint($name, $attrs) {
 		if (is_string($attrs)) {
@@ -444,7 +444,7 @@ class Table {
  *
  * @param array $attrs Attributes to set.
  * @return array
- * @throws Cake\Database\Exception When foreign key definition is not valid.
+ * @throws \Cake\Database\Exception When foreign key definition is not valid.
  */
 	protected function _checkForeignKey($attrs) {
 		if (count($attrs['references']) < 2) {

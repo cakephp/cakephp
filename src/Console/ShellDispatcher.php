@@ -87,7 +87,7 @@ class ShellDispatcher {
  * Defines current working environment.
  *
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected function _initEnvironment() {
 		if (!$this->_bootstrap()) {
@@ -132,7 +132,7 @@ class ShellDispatcher {
  * Dispatch a request.
  *
  * @return boolean
- * @throws Cake\Error\MissingShellMethodException
+ * @throws \Cake\Error\MissingShellMethodException
  */
 	protected function _dispatch() {
 		$shell = $this->shiftArgs();
@@ -184,7 +184,7 @@ class ShellDispatcher {
  *
  * @param string $shell Optionally the name of a plugin
  * @return mixed An object
- * @throws Cake\Error\MissingShellException when errors are encountered.
+ * @throws \Cake\Error\MissingShellException when errors are encountered.
  */
 	protected function _getShell($shell) {
 		list($plugin, $shell) = pluginSplit($shell);

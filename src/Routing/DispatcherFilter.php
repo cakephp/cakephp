@@ -46,7 +46,7 @@ abstract class DispatcherFilter implements EventListener {
 /**
  * Constructor.
  *
- * @param string $setting Configuration settings for the filter.
+ * @param array $settings Configuration settings for the filter.
  */
 	public function __construct($settings = array()) {
 		$this->settings = Hash::merge($this->settings, $settings);
@@ -80,7 +80,7 @@ abstract class DispatcherFilter implements EventListener {
  * If false is returned, the event will be stopped and no more listeners will be notified.
  * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
  *
- * @param Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
+ * @param \Cake\Event\Event $event container object having the `request`, `response` and `additionalParams`
  *    keys in the data property.
  */
 	public function beforeDispatch(Event $event) {
@@ -94,7 +94,7 @@ abstract class DispatcherFilter implements EventListener {
  * If false is returned, the event will be stopped and no more listeners will be notified.
  * Alternatively you can call `$event->stopPropagation()` to achieve the same result.
  *
- * @param Cake\Event\Event $event container object having the `request` and  `response`
+ * @param \Cake\Event\Event $event container object having the `request` and  `response`
  *    keys in the data property.
  */
 	public function afterDispatch(Event $event) {

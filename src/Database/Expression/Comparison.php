@@ -53,12 +53,11 @@ class Comparison extends QueryExpression {
  * @param mixed $value the value to be used in comparison
  * @param string $type the type name used to cast the value
  * @param string $conjunction the operator used for comparing field and value
- * @return void
  */
-	public function __construct($field, $value, $type, $conjuntion) {
+	public function __construct($field, $value, $type, $conjunction) {
 		$this->field($field);
 		$this->value($value);
-		$this->type($conjuntion);
+		$this->type($conjunction);
 
 		if (is_string($type)) {
 			$this->_type = $type;
@@ -110,7 +109,7 @@ class Comparison extends QueryExpression {
 /**
  * Convert the expression into a SQL fragment.
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {

@@ -98,8 +98,8 @@ class Query extends DatabaseQuery {
 /**
  * Constuctor
  *
- * @param Cake\Database\Connection $connection
- * @param Cake\ORM\Table $table
+ * @param \Cake\Database\Connection $connection
+ * @param \Cake\ORM\Table $table
  */
 	public function __construct($connection, $table) {
 		$this->connection($connection);
@@ -428,7 +428,7 @@ class Query extends DatabaseQuery {
  * - join: Maps to the join method
  * - join: Maps to the page method
  *
- * @return Cake\ORM\Query
+ * @return \Cake\ORM\Query
  */
 	public function applyOptions(array $options) {
 		$valid = [
@@ -505,7 +505,7 @@ class Query extends DatabaseQuery {
  * query itself.
  *
  * @param callable $counter
- * @return Cake\ORM\Query
+ * @return \Cake\ORM\Query
  */
 	public function counter($counter) {
 		$this->_counter = $counter;
@@ -572,8 +572,8 @@ class Query extends DatabaseQuery {
  * any registered callbacks. This will also setup the correct statement class
  * in order to eager load deep associations.
  *
- * @param Cake\Database\Statement $statement to be decorated
- * @return Cake\Database\Statement
+ * @param \Cake\Database\Statement $statement to be decorated
+ * @return \Cake\Database\Statement
  */
 	protected function _decorateStatement($statement) {
 		$statement = parent::_decorateStatement($statement);
@@ -587,7 +587,7 @@ class Query extends DatabaseQuery {
  * specified and applies the joins required to eager load associations defined
  * using `contain`
  *
- * @see Cake\Database\Query::execute()
+ * @see \Cake\Database\Query::execute()
  * @return Query
  */
 	protected function _transformQuery() {
@@ -638,8 +638,8 @@ class Query extends DatabaseQuery {
  *
  * @param string $finder The finder method to use.
  * @param array $options The options for the finder.
- * @return Cake\ORM\Query Returns a modified query.
- * @see Cake\ORM\Table::find()
+ * @return \Cake\ORM\Query Returns a modified query.
+ * @see \Cake\ORM\Table::find()
  */
 	public function find($finder, $options = []) {
 		return $this->repository()->callFinder($finder, $this, $options);

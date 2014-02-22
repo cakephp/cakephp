@@ -36,7 +36,6 @@ class IdentifierExpression implements ExpressionInterface {
  * Constructor
  *
  * @param string $identifier The identifier this expression represents
- * @return void
  */
 	public function __construct($identifier) {
 		$this->setIdentifier($identifier);
@@ -64,7 +63,7 @@ class IdentifierExpression implements ExpressionInterface {
 /**
  * Converts the expression to its string representation
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {
@@ -75,7 +74,7 @@ class IdentifierExpression implements ExpressionInterface {
  * This method is a no-op, this is a leaf type of expression,
  * hence there is nothing to traverse
  *
- * @param callable $visitor
+ * @param callable $callable
  * @return void
  */
 	public function traverse(callable $callable) {

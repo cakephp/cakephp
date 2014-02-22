@@ -160,14 +160,14 @@ class CookieComponent extends Component {
 /**
  * A reference to the Controller's Cake\Network\Response object
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	protected $_response = null;
 
 /**
  * The request from the controller.
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	protected $_request;
 
@@ -308,10 +308,10 @@ class CookieComponent extends Component {
 	}
 
 /**
- * Returns true if given variable is set in cookie.
+ * Returns true if given key is set in the cookie.
  *
- * @param string $var Variable name to check for
- * @return boolean True if variable is there
+ * @param string $key Key to check for
+ * @return boolean True if the key exists
  */
 	public function check($key = null) {
 		if (empty($key)) {
@@ -393,7 +393,7 @@ class CookieComponent extends Component {
  *
  * @param string $type Encryption method
  * @return void
- * @throws Cake\Error\Exception When an unknown type is used.
+ * @throws \Cake\Error\Exception When an unknown type is used.
  */
 	public function type($type = 'aes') {
 		$availableTypes = [

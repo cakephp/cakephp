@@ -24,9 +24,9 @@ namespace Cake\Utility;
  * from previous versions of CakePHP.
  *
  * @since CakePHP 3.0
- * @see Cake\Controller\ComponentRegistry
- * @see Cake\View\HelperRegistry
- * @see Cake\Console\TaskRegistry
+ * @see \Cake\Controller\ComponentRegistry
+ * @see \Cake\View\HelperRegistry
+ * @see \Cake\Console\TaskRegistry
  */
 abstract class ObjectRegistry {
 
@@ -57,7 +57,7 @@ abstract class ObjectRegistry {
  *
  * All calls to the `Email` component would use `AliasedEmail` instead.
  *
- * @param string $name The name/class of the object to load.
+ * @param string $objectName The name/class of the object to load.
  * @param array $settings Additional settings to use when loading the object.
  * @return mixed
  */
@@ -93,7 +93,7 @@ abstract class ObjectRegistry {
  *
  * @param string $class The class that is missing.
  * @param string $plugin The plugin $class is missing from.
- * @throw Cake\Exception
+ * @throws \Cake\Error\Exception
  */
 	abstract protected function _throwMissingClassError($class, $plugin);
 

@@ -52,7 +52,7 @@ interface RepositoryInterface {
  *
  * @param mixed primary key value to find
  * @param array $options options accepted by `Table::find()`
- * @throws Cake\ORM\Error\RecordNotFoundException if the record with such id
+ * @throws \Cake\ORM\Error\RecordNotFoundException if the record with such id
  * could not be found
  * @return \Cake\Datasource\EntityInterface
  * @see RepositoryInterface::find()
@@ -146,7 +146,7 @@ interface RepositoryInterface {
  * @param array $data The data to build an entity with.
  * @param array $associations A whitelist of associations
  *   to hydrate. Defaults to all associations
- * @return Cake\Datasource\EntityInterface
+ * @return \Cake\Datasource\EntityInterface
  */
 	public function newEntity(array $data = [], $associations = null);
 

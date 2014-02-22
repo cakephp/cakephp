@@ -87,7 +87,7 @@ use Cake\Validation\Validator;
  *   By stopping this event you will abort the delete operation.
  * - `afterDelete($event, $entity, $options)` - Fired after an entity has been deleted.
  *
- * @see Cake\Event\EventManager for reference on the events system.
+ * @see \Cake\Event\EventManager for reference on the events system.
  */
 class Table implements RepositoryInterface, EventListener {
 
@@ -137,7 +137,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * The associations container for this Table.
  *
- * @var Cake\ORM\Associations
+ * @var \Cake\ORM\Associations
  */
 	protected $_associated;
 
@@ -146,14 +146,14 @@ class Table implements RepositoryInterface, EventListener {
  *
  * All model/behavior callbacks will be dispatched on this manager.
  *
- * @var Cake\Event\EventManager
+ * @var \Cake\Event\EventManager
  */
 	protected $_eventManager;
 
 /**
  * BehaviorRegistry for this table
  *
- * @var Cake\ORM\BehaviorRegistry
+ * @var \Cake\ORM\BehaviorRegistry
  */
 	protected $_behaviors;
 
@@ -187,7 +187,6 @@ class Table implements RepositoryInterface, EventListener {
  * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
  *
  * @param array config Lsit of options for this table
- * @return void
  */
 	public function __construct(array $config = []) {
 		if (!empty($config['table'])) {
@@ -231,7 +230,7 @@ class Table implements RepositoryInterface, EventListener {
  * instance is created through the TableRegistry without a connection.
  *
  * @return string
- * @see Cake\ORM\TableRegistry::get()
+ * @see \Cake\ORM\TableRegistry::get()
  */
 	public static function defaultConnectionName() {
 		return 'default';
@@ -281,7 +280,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Returns the table alias or sets a new one
  *
- * @param string $table the new table alias
+ * @param string $alias the new table alias
  * @return string
  */
 	public function alias($alias = null) {
@@ -312,7 +311,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Get the event manager for this Table.
  *
- * @return Cake\Event\EventManager
+ * @return \Cake\Event\EventManager
  */
 	public function getEventManager() {
 		return $this->_eventManager;
@@ -474,7 +473,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param string $name The name of the behavior. Can be a short class reference.
  * @param array $options The options for the behavior to use.
  * @return void
- * @see Cake\ORM\Behavior
+ * @see \Cake\ORM\Behavior
  */
 	public function addBehavior($name, $options = []) {
 		$this->_behaviors->load($name, $options);
@@ -506,7 +505,7 @@ class Table implements RepositoryInterface, EventListener {
  * Returns a association objected configured for the specified alias if any
  *
  * @param string $name the alias used for the association
- * @return Cake\ORM\Association
+ * @return \Cake\ORM\Association
  */
 	public function association($name) {
 		return $this->_associated->get($name);
@@ -515,7 +514,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * Get the associations collection for this table.
  *
- * @return Cake\ORM\Associations
+ * @return \Cake\ORM\Associations
  */
 	public function associations() {
 		return $this->_associated;
@@ -545,7 +544,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
  * @param array $options list of options to configure the association definition
- * @return Cake\ORM\Association\BelongsTo
+ * @return \Cake\ORM\Association\BelongsTo
  */
 	public function belongsTo($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
@@ -582,7 +581,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
  * @param array $options list of options to configure the association definition
- * @return Cake\ORM\Association\HasOne
+ * @return \Cake\ORM\Association\HasOne
  */
 	public function hasOne($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
@@ -623,7 +622,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
  * @param array $options list of options to configure the association definition
- * @return Cake\ORM\Association\HasMany
+ * @return \Cake\ORM\Association\HasMany
  */
 	public function hasMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
@@ -667,7 +666,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param string $associated the alias for the target table. This is used to
  * uniquely identify the association
  * @param array $options list of options to configure the association definition
- * @return Cake\ORM\Association\BelongsToMany
+ * @return \Cake\ORM\Association\BelongsToMany
  */
 	public function belongsToMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
@@ -862,7 +861,7 @@ class Table implements RepositoryInterface, EventListener {
 /**
  * {@inheritdoc}
  *
- * @throws Cake\ORM\Error\RecordNotFoundException if no record can be found give
+ * @throws \Cake\ORM\Error\RecordNotFoundException if no record can be found give
  * such primary key value.
  */
 	public function get($primaryKey, $options = []) {
@@ -948,18 +947,18 @@ class Table implements RepositoryInterface, EventListener {
  * @param \Cake\Validation\Validator $validator
  * @return \Cake\Validation\Validator
  */
-	public function validator($name = 'default', Validator $instance = null) {
-		if ($instance === null && isset($this->_validators[$name])) {
+	public function validator($name = 'default', Validator $validator = null) {
+		if ($validator === null && isset($this->_validators[$name])) {
 			return $this->_validators[$name];
 		}
 
-		if ($instance === null) {
-			$instance = new Validator();
-			$instance = $this->{'validation' . ucfirst($name)}($instance);
+		if ($validator === null) {
+			$validator = new Validator();
+			$validator = $this->{'validation' . ucfirst($name)}($validator);
 		}
 
-		$instance->provider('table', $this);
-		return $this->_validators[$name] = $instance;
+		$validator->provider('table', $this);
+		return $this->_validators[$name] = $validator;
 	}
 
 /**
@@ -1392,7 +1391,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * @param string $type name of the finder to be called
  * @param \Cake\ORM\Query $query The query object to apply the finder options to
- * @param array $args List of options to pass to the finder
+ * @param array $options List of options to pass to the finder
  * @return \Cake\ORM\Query
  * @throws \BadMethodCallException
  */
@@ -1419,7 +1418,7 @@ class Table implements RepositoryInterface, EventListener {
  * @param string $method The method name that was fired.
  * @param array $args List of arguments passed to the function.
  * @return mixed
- * @throws Cake\Error\Exception when there are missing arguments, or when
+ * @throws \Cake\Error\Exception when there are missing arguments, or when
  *  and & or are combined.
  */
 	protected function _dynamicFinder($method, $args) {
@@ -1507,8 +1506,8 @@ class Table implements RepositoryInterface, EventListener {
  *
  * @param boolean $safe Whether or not this marshaller
  *   should be in safe mode.
- * @return Cake\ORM\Marhsaller
- * @see Cake\ORM\Marshaller
+ * @return \Cake\ORM\Marhsaller
+ * @see \Cake\ORM\Marshaller
  */
 	public function marshaller($safe = false) {
 		return new Marshaller($this, $safe);

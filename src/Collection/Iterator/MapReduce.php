@@ -109,7 +109,6 @@ class MapReduce implements IteratorAggregate {
  * The first one is the list of values inside a bucket, second one is the name
  * of the bucket that was created during the mapping phase and third one is an
  * instance of this class.
- * @return void
  */
 	public function __construct(\Traversable $data, callable $mapper, callable $reducer = null) {
 		$this->_data = $data;

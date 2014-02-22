@@ -89,7 +89,7 @@ class TestController extends ControllerTestAppController {
  * index method
  *
  * @param mixed $testId
- * @param mixed $test2Id
+ * @param mixed $testTwoId
  * @return void
  */
 	public function index($testId, $testTwoId) {
@@ -103,7 +103,7 @@ class TestController extends ControllerTestAppController {
  * view method
  *
  * @param mixed $testId
- * @param mixed $test2Id
+ * @param mixed $testTwoId
  * @return void
  */
 	public function view($testId, $testTwoId) {
@@ -149,6 +149,7 @@ class TestComponent extends Component {
 /**
  * initialize method
  *
+ * @param Event $event
  * @return void
  */
 	public function initialize(Event $event) {
@@ -157,6 +158,7 @@ class TestComponent extends Component {
 /**
  * startup method
  *
+ * @param Event $event
  * @return void
  */
 	public function startup(Event $event) {
@@ -165,6 +167,7 @@ class TestComponent extends Component {
 /**
  * shutdown method
  *
+ * @param Event $event
  * @return void
  */
 	public function shutdown(Event $event) {
@@ -173,6 +176,7 @@ class TestComponent extends Component {
 /**
  * beforeRender callback
  *
+ * @param Event $event
  * @return void
  */
 	public function beforeRender(Event $event) {
@@ -714,7 +718,7 @@ class ControllerTest extends TestCase {
 /**
  * testMissingAction method
  *
- * @expectedException Cake\Error\MissingActionException
+ * @expectedException \Cake\Error\MissingActionException
  * @expectedExceptionMessage Action TestController::missing() could not be found.
  * @return void
  */
@@ -730,7 +734,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking private methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::private_m() is not directly accessible.
  * @return void
  */
@@ -746,7 +750,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking protected methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::protected_m() is not directly accessible.
  * @return void
  */
@@ -762,7 +766,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking hidden methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::_hidden() is not directly accessible.
  * @return void
  */
@@ -778,7 +782,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking controller methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::redirect() is not directly accessible.
  * @return void
  */
@@ -794,7 +798,7 @@ class ControllerTest extends TestCase {
 /**
  * test invoking controller methods.
  *
- * @expectedException Cake\Error\PrivateActionException
+ * @expectedException \Cake\Error\PrivateActionException
  * @expectedExceptionMessage Private Action TestController::admin_add() is not directly accessible.
  * @return void
  */

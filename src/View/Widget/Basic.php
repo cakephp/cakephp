@@ -28,7 +28,7 @@ class Basic implements WidgetInterface {
 /**
  * StringTemplate instance.
  *
- * @var Cake\View\StringTemplate
+ * @var \Cake\View\StringTemplate
  */
 	protected $_templates;
 

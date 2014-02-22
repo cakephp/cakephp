@@ -77,7 +77,6 @@ class Part {
  * @param string $name The name of the data.
  * @param string $value The value of the data.
  * @param string $disposition The type of disposition to use, defaults to form-data.
- * @return void
  */
 	public function __construct($name, $value, $disposition = 'form-data') {
 		$this->_name = $name;

@@ -42,7 +42,7 @@ class FormAuthenticate extends BaseAuthenticate {
 /**
  * Checks the fields to ensure they are supplied.
  *
- * @param Cake\Network\Request $request The request that contains login information.
+ * @param \Cake\Network\Request $request The request that contains login information.
  * @param string $model The model used for login verification.
  * @param array $fields The fields to be checked.
  * @return boolean False if the fields have not been supplied. True if they exist.
@@ -65,8 +65,8 @@ class FormAuthenticate extends BaseAuthenticate {
  * to find POST data that is used to find a matching record in the `settings.userModel`. Will return false if
  * there is no post data, either username or password is missing, or if the scope conditions have not been met.
  *
- * @param Cake\Network\Request $request The request that contains login information.
- * @param Cake\Network\Response $response Unused response object.
+ * @param \Cake\Network\Request $request The request that contains login information.
+ * @param \Cake\Network\Response $response Unused response object.
  * @return mixed False on login failure.  An array of User data on success.
  */
 	public function authenticate(Request $request, Response $response) {

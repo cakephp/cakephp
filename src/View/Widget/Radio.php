@@ -31,14 +31,14 @@ class Radio implements WidgetInterface {
 /**
  * Template instance.
  *
- * @var Cake\View\StringTemplate
+ * @var \Cake\View\StringTemplate
  */
 	protected $_templates;
 
 /**
  * Label instance.
  *
- * @var Cake\View\Widget\Label
+ * @var \Cake\View\Widget\Label
  */
 	protected $_label;
 
@@ -53,8 +53,8 @@ class Radio implements WidgetInterface {
  *   the radio + input element. Can use the `input` and `label`
  *   variables.
  *
- * @param Cake\View\StringTemplate $templates
- * @param Cake\View\Widget\Label $label
+ * @param \Cake\View\StringTemplate $templates
+ * @param \Cake\View\Widget\Label $label
  */
 	public function __construct($templates, $label) {
 		$this->_templates = $templates;

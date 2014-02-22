@@ -42,7 +42,7 @@ class Router {
 /**
  * RouteCollection object containing all the connected routes.
  *
- * @var Cake\Routing\RouteCollection
+ * @var \Cake\Routing\RouteCollection
  */
 	protected static $_routes;
 
@@ -190,7 +190,7 @@ class Router {
  *
  * @param string $routeClass to set as default
  * @return mixed void|string
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public static function defaultRouteClass($routeClass = null) {
 		if ($routeClass === null) {
@@ -205,7 +205,7 @@ class Router {
  *
  * @param string $routeClass Route class name
  * @return string
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	protected static function _validateRouteClass($routeClass) {
 		if (
@@ -326,7 +326,7 @@ class Router {
  *   custom routing class.
  * @see routes
  * @return void
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public static function connect($route, $defaults = array(), $options = array()) {
 		static::$initialized = true;
@@ -511,7 +511,7 @@ class Router {
 /**
  * Set the route collection object Router should use.
  *
- * @param Cake\Routing\RouteCollection $routes
+ * @param \Cake\Routing\RouteCollection $routes
  * @return void
  */
 	public static function setRouteCollection(RouteCollection $routes) {
@@ -529,7 +529,7 @@ class Router {
  * Will accept either a Cake\Network\Request object or an array of arrays. Support for
  * accepting arrays may be removed in the future.
  *
- * @param Cake\Network\Request|array $request Parameters and path information or a Cake\Network\Request object.
+ * @param \Cake\Network\Request|array $request Parameters and path information or a Cake\Network\Request object.
  * @return void
  */
 	public static function setRequestInfo($request) {
@@ -553,7 +553,7 @@ class Router {
  * Push a request onto the request stack. Pushing a request
  * sets the request context used when generating URLs.
  *
- * @param Cake\Network\Request $request
+ * @param \Cake\Network\Request $request
  * @return void
  */
 	public static function pushRequest(Request $request) {
@@ -564,7 +564,7 @@ class Router {
 /**
  * Pops a request off of the request stack.  Used when doing requestAction
  *
- * @return Cake\Network\Request The request removed from the stack.
+ * @return \Cake\Network\Request The request removed from the stack.
  * @see Router::pushRequest()
  * @see Object::requestAction()
  */
@@ -582,7 +582,7 @@ class Router {
  * Get the either the current request object, or the first one.
  *
  * @param boolean $current Whether you want the request from the top of the stack or the first one.
- * @return Cake\Network\Request or null.
+ * @return \Cake\Network\Request or null.
  */
 	public static function getRequest($current = false) {
 		if ($current) {
@@ -707,7 +707,7 @@ class Router {
  *   If an array accepts the following keys.  If used with a named route you can provide
  *   a list of query string parameters.
  * @return string Full translated URL with base path.
- * @throws Cake\Error\Exception When the route name is not found
+ * @throws \Cake\Error\Exception When the route name is not found
  */
 	public static function url($url = null, $options = array()) {
 		if (!static::$initialized) {
@@ -874,7 +874,7 @@ class Router {
  * This will strip out 'autoRender', 'bare', 'requested', and 'return' param names as those
  * are used for CakePHP internals and should not normally be part of an output URL.
  *
- * @param Cake\Network\Request|array $params The params array or
+ * @param \Cake\Network\Request|array $params The params array or
  *     Cake\Network\Request object that needs to be reversed.
  * @param boolean $full Set to true to include the full URL including the
  *     protocol when reversing the URL.

@@ -49,8 +49,6 @@ class AuthTestController extends Controller {
 
 /**
  * construct method
- *
- * @return void
  */
 	public function __construct($request = null, $response = null) {
 		$request->addParams(Router::parse('/auth_test'));

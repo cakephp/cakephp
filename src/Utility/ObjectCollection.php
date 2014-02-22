@@ -86,14 +86,14 @@ abstract class ObjectCollection {
  *    Defaults to false.
  *
  *
- * @param string $callback|Cake\Event\Event Method to fire on all the objects. Its assumed all the objects implement
+ * @param string $callback|\Cake\Event\Event Method to fire on all the objects. Its assumed all the objects implement
  *   the method you are calling. If an instance of Cake\Event\Event is provided, then then Event name will parsed to
  *   get the callback name. This is done by getting the last word after any dot in the event name
  *   (eg. `Model.afterSave` event will trigger the `afterSave` callback)
  * @param array $params Array of parameters for the triggered callback.
  * @param array $options Array of options.
  * @return mixed Either the last result or all results if collectReturn is on.
- * @throws Cake\Error\Exception when modParams is used with an index that does not exist.
+ * @throws \Cake\Error\Exception when modParams is used with an index that does not exist.
  */
 	public function trigger($callback, $params = array(), $options = array()) {
 		if (empty($this->_enabled)) {

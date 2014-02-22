@@ -113,7 +113,7 @@ class ComponentRegistryTest extends TestCase {
 /**
  * test missingcomponent exception
  *
- * @expectedException Cake\Error\MissingComponentException
+ * @expectedException \Cake\Error\MissingComponentException
  * @return void
  */
 	public function testLoadMissingComponent() {

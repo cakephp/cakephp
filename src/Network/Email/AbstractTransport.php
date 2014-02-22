@@ -32,7 +32,7 @@ abstract class AbstractTransport {
 /**
  * Send mail
  *
- * @param Cake\Network\Email\Email $email
+ * @param \Cake\Network\Email\Email $email
  * @return array
  */
 	abstract public function send(Email $email);

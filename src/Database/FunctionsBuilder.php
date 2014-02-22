@@ -141,8 +141,8 @@ class FunctionsBuilder {
  * @param array $types list of types to bind to the arguments
  * @return FunctionExpression
  */
-	public function dateDiff($dates, $types = []) {
-		return $this->_build('DATEDIFF', $dates, $types);
+	public function dateDiff($args, $types = []) {
+		return $this->_build('DATEDIFF', $args, $types);
 	}
 
 /**

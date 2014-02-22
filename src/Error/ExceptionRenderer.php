@@ -171,7 +171,7 @@ class ExceptionRenderer {
 /**
  * Generic handler for the internal framework errors CakePHP can generate.
  *
- * @param Cake\Error\Exception $error
+ * @param \Cake\Error\Exception $error
  * @return void
  */
 	protected function _cakeError(Exception $error) {

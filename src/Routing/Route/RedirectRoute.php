@@ -29,7 +29,7 @@ class RedirectRoute extends Route {
 /**
  * A Response object
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	public $response = null;
 
@@ -116,7 +116,7 @@ class RedirectRoute extends Route {
  * Stop execution of the current script. Wraps exit() making
  * testing easier.
  *
- * @param integer|string $status see http://php.net/exit for values
+ * @param integer|string $code see http://php.net/exit for values
  * @return void
  */
 	protected function _stop($code = 0) {

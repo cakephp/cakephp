@@ -81,7 +81,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Gets a rule for a given name if exists
  *
  * @param string $name
- * @return Cake\Validation\ValidationRule
+ * @return \Cake\Validation\ValidationRule
  */
 	public function rule($name) {
 		if (!empty($this->_rules[$name])) {
@@ -133,7 +133,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * }}}
  *
  * @param string $name The name under which the rule should be unset
- * @return Cake\Validation\ValidationSet this instance
+ * @return \Cake\Validation\ValidationSet this instance
  */
 	public function remove($name) {
 		unset($this->_rules[$name]);
@@ -154,7 +154,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns a rule object by its index
  *
  * @param string $index name of the rule
- * @return Cake\Validation\ValidationRule
+ * @return \Cake\Validation\ValidationRule
  */
 	public function offsetGet($index) {
 		return $this->_rules[$index];
@@ -164,7 +164,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Sets or replace a validation rule
  *
  * @param string $index name of the rule
- * @param Cake\Validation\ValidationRule|array rule to add to $index
+ * @param \Cake\Validation\ValidationRule|array rule to add to $index
  * @return void
  */
 	public function offsetSet($index, $rule) {

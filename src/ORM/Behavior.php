@@ -87,8 +87,8 @@ use Cake\Event\EventListener;
  * }}}
  *
  *
- * @see Cake\ORM\Table::addBehavior()
- * @see Cake\Event\EventManager
+ * @see \Cake\ORM\Table::addBehavior()
+ * @see \Cake\Event\EventManager
  */
 class Behavior implements EventListener {
 
@@ -148,7 +148,7 @@ class Behavior implements EventListener {
  * Check that implemented* keys contain values pointing at callable
  *
  * @return void
- * @throws Cake\Error\Exception if config are invalid
+ * @throws \Cake\Error\Exception if config are invalid
  */
 	public function verifyConfig() {
 		$keys = ['implementedFinders', 'implementedMethods'];

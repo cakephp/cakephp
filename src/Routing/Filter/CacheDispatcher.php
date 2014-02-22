@@ -38,8 +38,8 @@ class CacheDispatcher extends DispatcherFilter {
 /**
  * Checks whether the response was cached and set the body accordingly.
  *
- * @param Cake\Event\Event $event containing the request and response object
- * @return Cake\NetworkResponse with cached content if found, null otherwise
+ * @param \Cake\Event\Event $event containing the request and response object
+ * @return \Cake\NetworkResponse with cached content if found, null otherwise
  */
 	public function beforeDispatch(Event $event) {
 		if (Configure::read('Cache.check') !== true) {

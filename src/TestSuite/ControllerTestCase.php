@@ -47,6 +47,8 @@ class ControllerTestDispatcher extends Dispatcher {
 /**
  * Returns the test controller
  *
+ * @param \Cake\Network\Request $request Request object
+ * @param \Cake\Network\Response $response Response for the controller.
  * @return Controller
  */
 	protected function _getController($request, $response) {
@@ -179,7 +181,7 @@ abstract class ControllerTestCase extends TestCase {
  * @param string $name The name of the function
  * @param array $arguments Array of arguments
  * @return the return of _testAction
- * @throws Cake\Error\BadMethodCallException when you call methods that don't exist.
+ * @throws \Cake\Error\BadMethodCallException when you call methods that don't exist.
  */
 	public function __call($name, $arguments) {
 		if ($name === 'testAction') {
@@ -304,8 +306,8 @@ abstract class ControllerTestCase extends TestCase {
  * @param string $controller Controller name
  * @param array $mocks List of classes and methods to mock
  * @return Controller Mocked controller
- * @throws Cake\Error\MissingControllerException When controllers could not be created.
- * @throws Cake\Error\MissingComponentException When components could not be created.
+ * @throws \Cake\Error\MissingControllerException When controllers could not be created.
+ * @throws \Cake\Error\MissingComponentException When components could not be created.
  */
 	public function generate($controller, $mocks = array()) {
 		$classname = App::classname($controller, 'Controller', 'Controller');

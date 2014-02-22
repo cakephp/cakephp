@@ -50,7 +50,6 @@ abstract class Driver {
  * Constructor
  *
  * @param array $config The configuration for the driver.
- * @return void
  */
 	public function __construct($config = []) {
 		$config += $this->_baseConfig;
@@ -93,8 +92,8 @@ abstract class Driver {
 /**
  * Prepares a sql statement to be executed
  *
- * @param string|Cake\Database\Query $query
- * @return Cake\Database\Statement
+ * @param string|\Cake\Database\Query $query
+ * @return \Cake\Database\Statement
  */
 	public abstract function prepare($query);
 
@@ -166,7 +165,7 @@ abstract class Driver {
  * If all the tables that use this Driver specify their
  * own schemas, then this may return null.
  *
- * @return Cake\Database\Schema\BaseSchema
+ * @return \Cake\Database\Schema\BaseSchema
  */
 	public abstract function schemaDialect();
 
@@ -246,8 +245,6 @@ abstract class Driver {
 
 /**
  * Destructor
- *
- * @return void
  */
 	public function __destruct() {
 		$this->_connection = null;

@@ -57,7 +57,6 @@ class QueryExpression implements ExpressionInterface, Countable {
  * @param string $conjunction the glue that will join all the string conditions at this
  * level of the expression tree. For example "AND", "OR", "XOR"...
  * @see QueryExpression::add() for more details on $conditions and $types
- * @return void
  */
 	public function __construct($conditions = [], $types = [], $conjunction = 'AND') {
 		$this->type(strtoupper($conjunction));
@@ -100,7 +99,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * as conditions.
  * @param array $types associative array of fields pointing to the type of the
  * values that are being passed. Used for correctly binding values to statements.
- * @see Cake\Database\Query::where() for examples on conditions
+ * @see \Cake\Database\Query::where() for examples on conditions
  * @return QueryExpression
  */
 	public function add($conditions, $types = []) {
@@ -243,7 +242,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * "field IN (value1, value2)".
  *
  * @param string $field database field to be compared against value
- * @param array $value the value to be bound to $field for comparison
+ * @param array $values the value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */
@@ -259,7 +258,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * "field NOT IN (value1, value2)".
  *
  * @param string $field database field to be compared against value
- * @param array $value the value to be bound to $field for comparison
+ * @param array $values the value to be bound to $field for comparison
  * @param string $type the type name for $value as configured using the Type map.
  * @return QueryExpression
  */
@@ -336,7 +335,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  * in their place placeholders are put and can be replaced by the quoted values
  * accordingly.
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {

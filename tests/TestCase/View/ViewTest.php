@@ -527,7 +527,7 @@ class ViewTest extends TestCase {
 /**
  * Test for missing views
  *
- * @expectedException Cake\Error\MissingViewException
+ * @expectedException \Cake\Error\MissingViewException
  * @return void
  */
 	public function testMissingView() {
@@ -556,7 +556,7 @@ class ViewTest extends TestCase {
 /**
  * Test for missing layouts
  *
- * @expectedException Cake\Error\MissingLayoutException
+ * @expectedException \Cake\Error\MissingLayoutException
  * @return void
  */
 	public function testMissingLayout() {
@@ -1167,7 +1167,7 @@ class ViewTest extends TestCase {
 /**
  * testBadExt method
  *
- * @expectedException Cake\Error\MissingViewException
+ * @expectedException \Cake\Error\MissingViewException
  * @return void
  */
 	public function testBadExt() {
@@ -1193,7 +1193,7 @@ class ViewTest extends TestCase {
 /**
  * testAltBadExt method
  *
- * @expectedException Cake\Error\MissingViewException
+ * @expectedException \Cake\Error\MissingViewException
  * @return void
  */
 	public function testAltBadExt() {
@@ -1467,7 +1467,7 @@ class ViewTest extends TestCase {
 /**
  * Test that starting the same block twice throws an exception
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testStartBlocksTwice() {
@@ -1479,7 +1479,7 @@ class ViewTest extends TestCase {
  * Test that an exception gets thrown when you leave a block open at the end
  * of a view.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testExceptionOnOpenBlock() {

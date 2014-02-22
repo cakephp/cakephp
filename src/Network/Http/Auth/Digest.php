@@ -27,14 +27,14 @@ class Digest {
 /**
  * Instance of Cake\Network\Http\Client
  *
- * @var Cake\Network\Http\Client
+ * @var \Cake\Network\Http\Client
  */
 	protected $_client;
 
 /**
  * Constructor
  *
- * @param Cake\Network\Http\Client $client
+ * @param \Cake\Network\Http\Client $client
  * @param array $options
  */
 	public function __construct(Client $client, $options = null) {

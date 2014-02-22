@@ -130,9 +130,9 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 /**
  * An error occurred.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  Exception              $e
- * @param  float                  $time
+ * @param \PHPUnit_Framework_Test $test
+ * @param \Exception $e
+ * @param float $time
  */
 	public function addError(\PHPUnit_Framework_Test $test, \Exception $e, $time) {
 		$this->paintException($e, $test);
@@ -141,9 +141,9 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 /**
  * A failure occurred.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  PHPUnit_Framework_AssertionFailedError $e
- * @param  float $time
+ * @param \PHPUnit_Framework_Test $test
+ * @param \PHPUnit_Framework_AssertionFailedError $e
+ * @param float $time
  */
 	public function addFailure(\PHPUnit_Framework_Test $test, \PHPUnit_Framework_AssertionFailedError $e, $time) {
 		$this->paintFail($e, $test);
@@ -152,9 +152,9 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 /**
  * Incomplete test.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  Exception $e
- * @param  float $time
+ * @param \PHPUnit_Framework_Test $test
+ * @param \Exception $e
+ * @param float $time
  */
 	public function addIncompleteTest(\PHPUnit_Framework_Test $test, \Exception $e, $time) {
 		$this->paintSkip($e, $test);
@@ -163,9 +163,9 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 /**
  * Skipped test.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  Exception $e
- * @param  float $time
+ * @param \PHPUnit_Framework_Test $test
+ * @param \Exception $e
+ * @param float $time
  */
 	public function addSkippedTest(\PHPUnit_Framework_Test $test, \Exception $e, $time) {
 		$this->paintSkip($e, $test);
@@ -174,7 +174,7 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 /**
  * A test suite started.
  *
- * @param  PHPUnit_Framework_TestSuite $suite
+ * @param \PHPUnit_Framework_TestSuite $suite
  */
 	public function startTestSuite(\PHPUnit_Framework_TestSuite $suite) {
 		if (!$this->_headerSent) {
@@ -186,7 +186,7 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 /**
  * A test suite ended.
  *
- * @param  PHPUnit_Framework_TestSuite $suite
+ * @param \PHPUnit_Framework_TestSuite $suite
  */
 	public function endTestSuite(\PHPUnit_Framework_TestSuite $suite) {
 	}
@@ -194,7 +194,7 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 /**
  * A test started.
  *
- * @param  PHPUnit_Framework_Test $test
+ * @param \PHPUnit_Framework_Test $test
  */
 	public function startTest(\PHPUnit_Framework_Test $test) {
 	}
@@ -202,8 +202,8 @@ class BaseReporter extends \PHPUnit_TextUI_ResultPrinter {
 /**
  * A test ended.
  *
- * @param  PHPUnit_Framework_Test $test
- * @param  float $time
+ * @param \PHPUnit_Framework_Test $test
+ * @param float $time
  */
 	public function endTest(\PHPUnit_Framework_Test $test, $time) {
 		$this->numAssertions += $test->getNumAssertions();

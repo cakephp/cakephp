@@ -175,7 +175,7 @@ class TableTest extends TestCase {
  * are added for fields that do not exist.
  *
  * @dataProvider addConstaintErrorProvider
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  * @return void
  */
 	public function testAddConstraintError($props) {
@@ -226,7 +226,7 @@ class TableTest extends TestCase {
  * are added for fields that do not exist.
  *
  * @dataProvider addIndexErrorProvider
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  * @return void
  */
 	public function testAddIndexError($props) {
@@ -345,7 +345,7 @@ class TableTest extends TestCase {
  * Add a foreign key constraint with bad data
  *
  * @dataProvider badForeignKeyProvider
- * @expectedException Cake\Database\Exception
+ * @expectedException \Cake\Database\Exception
  * @return void
  */
 	public function testAddConstraintForeignKeyBadData($data) {

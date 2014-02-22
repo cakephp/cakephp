@@ -56,7 +56,7 @@ class FixtureManager {
 /**
  * Inspects the test to look for unloaded fixtures and loads them
  *
- * @param Cake\TestSuite\TestCase $test the test case to inspect
+ * @param \Cake\TestSuite\TestCase $test the test case to inspect
  * @return void
  */
 	public function fixturize($test) {
@@ -117,9 +117,9 @@ class FixtureManager {
 /**
  * Looks for fixture files and instantiates the classes accordingly
  *
- * @param Cake\TestSuite\Testcase $test The test suite to load fixtures for.
+ * @param \Cake\TestSuite\Testcase $test The test suite to load fixtures for.
  * @return void
- * @throws UnexpectedValueException when a referenced fixture does not exist.
+ * @throws \UnexpectedValueException when a referenced fixture does not exist.
  */
 	protected function _loadFixtures($test) {
 		if (empty($test->fixtures)) {
@@ -163,7 +163,7 @@ class FixtureManager {
 /**
  * Runs the drop and create commands on the fixtures if necessary.
  *
- * @param Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
+ * @param \Cake\TestSuite\Fixture\TestFixture $fixture the fixture object to create
  * @param Connection $db the datasource instance to use
  * @param boolean $drop whether drop the fixture if it is already created or not
  * @return void
@@ -199,9 +199,9 @@ class FixtureManager {
 /**
  * Creates the fixtures tables and inserts data on them.
  *
- * @param Cake\TestSuite\TestCase $test the test to inspect for fixture loading
+ * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture loading
  * @return void
- * @throws Cake\Error\Exception When fixture records cannot be inserted.
+ * @throws \Cake\Error\Exception When fixture records cannot be inserted.
  */
 	public function load(TestCase $test) {
 		if (empty($test->fixtures)) {
@@ -240,7 +240,7 @@ class FixtureManager {
 /**
  * Truncates the fixtures tables
  *
- * @param Cake\TestSuite\TestCase $test the test to inspect for fixture unloading
+ * @param \Cake\TestSuite\TestCase $test the test to inspect for fixture unloading
  * @return void
  */
 	public function unload(TestCase $test) {
@@ -265,7 +265,7 @@ class FixtureManager {
  * @param DataSource $db DataSource instance or leave null to get DataSource from the fixture
  * @param boolean $dropTables Whether or not tables should be dropped and re-created.
  * @return void
- * @throws UnexpectedValueException if $name is not a previously loaded class
+ * @throws \UnexpectedValueException if $name is not a previously loaded class
  */
 	public function loadSingle($name, $db = null, $dropTables = true) {
 		if (isset($this->_fixtureMap[$name])) {

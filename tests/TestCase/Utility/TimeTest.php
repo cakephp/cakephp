@@ -61,7 +61,6 @@ class TimeTest extends TestCase {
 /**
  * Restored the original system timezone
  *
- * @param string $timezoneIdentifier Timezone string
  * @return void
  */
 	protected function _restoreSystemTimezone() {

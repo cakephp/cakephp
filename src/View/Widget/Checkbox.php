@@ -24,14 +24,14 @@ class Checkbox implements WidgetInterface {
 /**
  * Template instance.
  *
- * @var Cake\View\StringTemplate
+ * @var \Cake\View\StringTemplate
  */
 	protected $_templates;
 
 /**
  * Constructor
  *
- * @param Cake\View\StringTemplate $templates
+ * @param \Cake\View\StringTemplate $templates
  */
 	public function __construct($templates) {
 		$this->_templates = $templates;

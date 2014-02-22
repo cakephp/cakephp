@@ -32,7 +32,7 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
  *
  * @param mixed $loader
  * @param array $params list of options to be used for this run
- * @throws Cake\Error\MissingTestLoaderException When a loader class could not be found.
+ * @throws \Cake\Error\MissingTestLoaderException When a loader class could not be found.
  */
 	public function __construct($loader, $params = array()) {
 		if ($loader && !class_exists($loader)) {
@@ -108,7 +108,7 @@ class TestSuiteCommand extends \PHPUnit_TextUI_Command {
  * Create a runner for the command.
  *
  * @param mixed $loader The loader to be used for the test run.
- * @return Cake\TestSuite\TestRunner
+ * @return \Cake\TestSuite\TestRunner
  */
 	public function getRunner($loader) {
 		return new TestRunner($loader, $this->_params);

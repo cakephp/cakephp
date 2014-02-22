@@ -85,7 +85,7 @@ class SecurityTestController extends Controller {
  * redirect method
  *
  * @param string|array $url
- * @param mixed $code
+ * @param mixed $status
  * @param mixed $exit
  * @return void
  */
@@ -164,7 +164,7 @@ class SecurityComponentTest extends TestCase {
  * Test that requests are still blackholed when controller has incorrect
  * visibility keyword in the blackhole callback
  *
- * @expectedException Cake\Error\BadRequestException
+ * @expectedException \Cake\Error\BadRequestException
  */
 	public function testBlackholeWithBrokenCallback() {
 		$request = new Request('posts/index');
@@ -665,7 +665,7 @@ class SecurityComponentTest extends TestCase {
 /**
  * Test that validatePost fails when unlocked fields are changed.
  *
- * @return
+ * @return void
  */
 	public function testValidatePostFailDisabledFieldTampering() {
 		$event = new Event('Controller.startup', $this->Controller);

@@ -38,8 +38,8 @@ class ErrorController extends Controller {
 /**
  * Constructor
  *
- * @param Cake\Network\Request $request
- * @param Cake\Network\Response $response
+ * @param \Cake\Network\Request $request
+ * @param \Cake\Network\Response $response
  */
 	public function __construct($request = null, $response = null) {
 		parent::__construct($request, $response);

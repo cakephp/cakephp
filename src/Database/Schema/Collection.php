@@ -32,14 +32,14 @@ class Collection {
 /**
  * Connection object
  *
- * @var Cake\Database\Connection
+ * @var \Cake\Database\Connection
  */
 	protected $_connection;
 
 /**
  * Schema dialect instance.
  *
- * @var Cake\Database\Schema\BaseSchema
+ * @var \Cake\Database\Schema\BaseSchema
  */
 	protected $_dialect;
 
@@ -54,7 +54,7 @@ class Collection {
 /**
  * Constructor.
  *
- * @param Cake\Database\Connection $connection
+ * @param \Cake\Database\Connection $connection
  */
 	public function __construct(Connection $connection) {
 		$this->_connection = $connection;
@@ -89,8 +89,8 @@ class Collection {
  * configuration options. Defaults to _cake_model_ when true.
  *
  * @param string $name The name of the table to describe.
- * @return Cake\Database\Schema\Table Object with column metadata.
- * @throws Cake\Database\Exception when table cannot be described.
+ * @return \Cake\Database\Schema\Table Object with column metadata.
+ * @throws \Cake\Database\Exception when table cannot be described.
  */
 	public function describe($name) {
 		$cacheConfig = $this->cacheMetadata();
@@ -156,8 +156,8 @@ class Collection {
  *
  * @param string $sql The sql to run.
  * @param array $params Parameters for the statement.
- * @return Cake\Database\Statement Prepared statement
- * @throws Cake\Database\Exception on query failure.
+ * @return \Cake\Database\Statement Prepared statement
+ * @throws \Cake\Database\Exception on query failure.
  */
 	protected function _executeSql($sql, $params) {
 		try {

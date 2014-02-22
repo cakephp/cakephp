@@ -28,14 +28,14 @@ class MultiCheckbox implements WidgetInterface {
 /**
  * Template instance to use.
  *
- * @var Cake\View\StringTemplate
+ * @var \Cake\View\StringTemplate
  */
 	protected $_templates;
 
 /**
  * Label widget instance.
  *
- * @var Cake\View\Widget\Label
+ * @var \Cake\View\Widget\Label
  */
 	protected $_label;
 
@@ -50,8 +50,8 @@ class MultiCheckbox implements WidgetInterface {
  *   a checkbox and its label. Accepts the `input`, and `label`
  *   variables.
  *
- * @param Cake\View\StringTemplate $templates
- * @param Cake\View\Widget\Label $label
+ * @param \Cake\View\StringTemplate $templates
+ * @param \Cake\View\Widget\Label $label
  */
 	public function __construct($templates, $label) {
 		$this->_templates = $templates;

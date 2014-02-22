@@ -57,7 +57,7 @@ class RouteCollection implements \Countable {
  * Add a route to the collection.
  *
  * Appends the route to the list of routes, and the route hashtable.
- * @param Cake\Routing\Route\Route $route The route to add
+ * @param \Cake\Routing\Route\Route $route The route to add
  * @return void
  */
 	public function add(Route $route) {
@@ -238,7 +238,7 @@ class RouteCollection implements \Countable {
  * Populate the request context used to generate URL's
  * Generally set to the last/most recent request.
  *
- * @param Cake\Network\Request $request
+ * @param \Cake\Network\Request $request
  * @return void
  */
 	public function setContext(Request $request) {

@@ -28,7 +28,7 @@ class ConsoleLog extends BaseLog {
 /**
  * Output stream
  *
- * @var Cake\Console\ConsoleOutput
+ * @var \Cake\Console\ConsoleOutput
  */
 	protected $_output = null;
 
@@ -43,7 +43,7 @@ class ConsoleLog extends BaseLog {
  * - `outputAs` integer or ConsoleOutput::[RAW|PLAIN|COLOR]
  *
  * @param array $config Options for the FileLog, see above.
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public function __construct($config = array()) {
 		parent::__construct($config);

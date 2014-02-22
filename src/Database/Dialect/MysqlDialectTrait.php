@@ -53,7 +53,7 @@ trait MysqlDialectTrait {
  * Used by Cake\Database\Schema package to reflect schema and
  * generate schema.
  *
- * @return Cake\Database\Schema\MysqlSchema
+ * @return \Cake\Database\Schema\MysqlSchema
  */
 	public function schemaDialect() {
 		if (!$this->_schemaDialect) {

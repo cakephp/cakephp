@@ -57,7 +57,6 @@ class FunctionExpression extends QueryExpression {
  * If associative the key would be used as argument when value is 'literal'
  * @param array types associative array of types to be associated with the
  * passed arguments
- * @return void
  */
 	public function __construct($name, $params = [], $types = []) {
 		$this->_name = $name;
@@ -114,7 +113,7 @@ class FunctionExpression extends QueryExpression {
  * in their place placeholders are put and can be replaced by the quoted values
  * accordingly.
  *
- * @param Cake\Database\ValueBinder $generator Placeholder generator object
+ * @param \Cake\Database\ValueBinder $generator Placeholder generator object
  * @return string
  */
 	public function sql(ValueBinder $generator) {

@@ -46,7 +46,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashInvalidSalt method
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testHashInvalidSalt() {
@@ -56,7 +56,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashAnotherInvalidSalt
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testHashAnotherInvalidSalt() {
@@ -66,7 +66,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashYetAnotherInvalidSalt
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testHashYetAnotherInvalidSalt() {
@@ -76,7 +76,7 @@ class SecurityTest extends TestCase {
 /**
  * testHashInvalidCost method
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testHashInvalidCost() {
@@ -200,7 +200,7 @@ class SecurityTest extends TestCase {
 /**
  * testRijndaelInvalidOperation method
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testRijndaelInvalidOperation() {
@@ -212,7 +212,7 @@ class SecurityTest extends TestCase {
 /**
  * testRijndaelInvalidKey method
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testRijndaelInvalidKey() {
@@ -283,7 +283,7 @@ class SecurityTest extends TestCase {
 /**
  * Test that short keys cause errors
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Invalid key for encrypt(), key must be at least 256 bits (32 bytes) long.
  * @return void
  */
@@ -320,7 +320,7 @@ class SecurityTest extends TestCase {
 /**
  * Test that short keys cause errors
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Invalid key for decrypt(), key must be at least 256 bits (32 bytes) long.
  * @return void
  */
@@ -333,7 +333,7 @@ class SecurityTest extends TestCase {
 /**
  * Test that empty data cause errors
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage The data to decrypt cannot be empty.
  * @return void
  */

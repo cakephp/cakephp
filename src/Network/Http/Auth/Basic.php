@@ -41,8 +41,8 @@ class Basic {
 /**
  * Proxy Authentication
  *
- * @param HttpSocket $http
- * @param array $proxyInfo
+ * @param Request $request
+ * @param array $credentials
  * @return void
  * @see http://www.ietf.org/rfc/rfc2617.txt
  */

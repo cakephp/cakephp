@@ -28,14 +28,14 @@ class NullContext implements ContextInterface {
 /**
  * The request object.
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	protected $_request;
 
 /**
  * Constructor.
  *
- * @param Cake\Network\Request
+ * @param \Cake\Network\Request
  * @param array
  */
 	public function __construct(Request $request, array $context) {

@@ -433,7 +433,7 @@ class PaginatorComponentTest extends TestCase {
 /**
  * Test that a really REALLY large page number gets clamped to the max page size.
  *
- * @expectedException Cake\Error\NotFoundException
+ * @expectedException \Cake\Error\NotFoundException
  * @return void
  */
 	public function testOutOfVeryBigPageNumberGetsClamped() {
@@ -733,6 +733,7 @@ class PaginatorComponentTest extends TestCase {
 /**
  * Helper method for making mocks.
  *
+ * @param array $methods
  * @return Table
  */
 	protected function _getMockPosts($methods = []) {

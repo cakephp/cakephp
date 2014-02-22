@@ -136,7 +136,7 @@ class ConsoleInputArgument {
  *
  * @param string $value
  * @return boolean
- * @throws Cake\Error\ConsoleException
+ * @throws \Cake\Error\ConsoleException
  */
 	public function validChoice($value) {
 		if (empty($this->_choices)) {
@@ -154,8 +154,8 @@ class ConsoleInputArgument {
 /**
  * Append this arguments XML representation to the passed in SimpleXml object.
  *
- * @param SimpleXmlElement $parent The parent element.
- * @return SimpleXmlElement The parent with this argument appended.
+ * @param \SimpleXmlElement $parent The parent element.
+ * @return \SimpleXmlElement The parent with this argument appended.
  */
 	public function xml(\SimpleXmlElement $parent) {
 		$option = $parent->addChild('argument');

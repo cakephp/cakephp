@@ -245,7 +245,7 @@ class EmailTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidEmails
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testInvalidEmail($value) {
@@ -256,7 +256,7 @@ class EmailTest extends TestCase {
  * testBuildInvalidData
  *
  * @dataProvider invalidEmails
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testInvalidEmailAdd($value) {
@@ -449,7 +449,7 @@ class EmailTest extends TestCase {
  * testMessageIdInvalid method
  *
  * @return void
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  */
 	public function testMessageIdInvalid() {
 		$this->CakeEmail->messageId('my-email@localhost');
@@ -630,7 +630,7 @@ class EmailTest extends TestCase {
  * testInvalidHeaders
  *
  * @dataProvider invalidHeaders
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testInvalidHeaders($value) {
@@ -641,7 +641,7 @@ class EmailTest extends TestCase {
  * testInvalidAddHeaders
  *
  * @dataProvider invalidHeaders
- * @expectedException Cake\Error\SocketException
+ * @expectedException \Cake\Error\SocketException
  * @return void
  */
 	public function testInvalidAddHeaders($value) {
@@ -761,7 +761,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using unknown transports fails.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testTransportInvalid() {
 		$this->CakeEmail->transport('Invalid');
@@ -770,7 +770,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using classes with no send method fails.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testTransportInstanceInvalid() {
 		$this->CakeEmail->transport(new \StdClass());
@@ -819,7 +819,7 @@ class EmailTest extends TestCase {
 /**
  * Test that exceptions are raised when duplicate transports are configured.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  */
 	public function testConfigTransportErrorOnDuplicate() {
 		Email::dropTransport('debug');
@@ -875,7 +875,7 @@ class EmailTest extends TestCase {
 /**
  * Test that exceptions are raised on duplicate config set.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @return void
  */
 	public function testConfigErrorOnDuplicate() {
@@ -906,7 +906,7 @@ class EmailTest extends TestCase {
 /**
  * Test that using an invalid profile fails.
  *
- * @expectedException Cake\Error\Exception
+ * @expectedException \Cake\Error\Exception
  * @expectedExceptionMessage Unknown email configuration "derp".
  */
 	public function testProfileInvalid() {

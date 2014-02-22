@@ -38,7 +38,7 @@ class HtmlHelper extends Helper {
 /**
  * Reference to the Response object
  *
- * @var Cake\Network\Response
+ * @var \Cake\Network\Response
  */
 	public $response;
 
@@ -1191,7 +1191,7 @@ class HtmlHelper extends Helper {
  * @param string|array $configFile String with the config file (load using PhpConfig) or an array with file and engine name
  * @param string $path Path with config file
  * @return mixed False to error or loaded configs
- * @throws Cake\Error\ConfigureException
+ * @throws \Cake\Error\ConfigureException
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#changing-the-tags-output-by-htmlhelper
  */
 	public function loadConfig($configFile, $path = null) {

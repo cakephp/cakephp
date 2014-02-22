@@ -46,6 +46,7 @@ class TranslateBehaviorTest extends TestCase {
 /**
  * Returns an array with all the translations found for a set of records
  *
+ * @param array|\Traversable $data
  * @return Collection
  */
 	protected function _extractTranslations($data) {

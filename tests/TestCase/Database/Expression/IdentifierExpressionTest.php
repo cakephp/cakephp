@@ -28,7 +28,7 @@ class IdentifierExpressionTest extends TestCase {
 /**
  * Tests getting and setting the field
  *
- * @return
+ * @return void
  */
 	public function testGetAndSet() {
 		$expression = new IdentifierExpression('foo');

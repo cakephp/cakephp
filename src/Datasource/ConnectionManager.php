@@ -50,7 +50,7 @@ class ConnectionManager {
 /**
  * The ConnectionRegistry used by the manager.
  *
- * @var Cake\Database\ConnectionRegistry
+ * @var \Cake\Database\ConnectionRegistry
  */
 	protected static $_registry = null;
 
@@ -59,12 +59,12 @@ class ConnectionManager {
  *
  * The connection will not be constructed until it is first used.
  *
- * @see Cake\Core\StaticConfigTrait::config()
+ * @see \Cake\Core\StaticConfigTrait::config()
  *
  * @param string|array $key The name of the connection config, or an array of multiple configs.
  * @param array $config An array of name => config data for adapter.
  * @return mixed null when adding configuration and an array of configuration data when reading.
- * @throws Cake\Error\Exception When trying to modify an existing config.
+ * @throws \Cake\Error\Exception When trying to modify an existing config.
  */
 	public static function config($key, $config = null) {
 		if (is_array($config)) {
@@ -89,7 +89,7 @@ class ConnectionManager {
  * @param string $from The connection to add an alias to.
  * @param string $to The alias to create. $from should return when loaded with get().
  * @return void
- * @throws Cake\Datasource\Error\MissingDatasourceConfigException When aliasing a
+ * @throws \Cake\Datasource\Error\MissingDatasourceConfigException When aliasing a
  * connection that does not exist.
  */
 	public static function alias($from, $to) {
@@ -124,7 +124,7 @@ class ConnectionManager {
  * @param string $name The connection name.
  * @param boolean $useAliases Set to false to not use aliased connections.
  * @return Connection A connection object.
- * @throws Cake\Datasource\Error\MissingDatasourceConfigException When config
+ * @throws \Cake\Datasource\Error\MissingDatasourceConfigException When config
  * data is missing.
  */
 	public static function get($name, $useAliases = true) {
@@ -148,7 +148,7 @@ class ConnectionManager {
  *
  * @param string $name The name of the DataSource, as defined in app/Config/datasources.php
  * @return DataSource Instance
- * @throws Cake\Error\MissingDatasourceConfigException
+ * @throws \Cake\Error\MissingDatasourceConfigException
  * @deprecated Will be removed in 3.0 stable.
  */
 	public static function getDataSource($name) {

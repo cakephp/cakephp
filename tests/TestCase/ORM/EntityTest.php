@@ -969,7 +969,7 @@ class EntityTest extends TestCase {
 /**
  * Test that accessible() and single property setting works.
  *
- * @return
+ * @return void
  */
 	public function testSetWithAccessibleSingleProperty() {
 		$entity = new Entity(['foo' => 1, 'bar' => 2]);

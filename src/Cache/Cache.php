@@ -63,7 +63,7 @@ use Cake\Utility\Inflector;
  * @param string $name Name of the configuration
  * @param array $config Optional associative array of settings passed to the engine
  * @return array [engine, settings] on success, false on failure
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 class Cache {
 
@@ -103,7 +103,7 @@ class Cache {
 /**
  * Cache Registry used for creating and using cache adapters.
  *
- * @var Cake\Cache\CacheRegistry
+ * @var \Cake\Cache\CacheRegistry
  */
 	protected static $_registry;
 
@@ -111,7 +111,7 @@ class Cache {
  * Finds and builds the instance of the required engine class.
  *
  * @param string $name Name of the config array that needs an engine instance built
- * @throws Cake\Error\Exception When a cache engine cannot be created.
+ * @throws \Cake\Error\Exception When a cache engine cannot be created.
  */
 	protected static function _buildEngine($name) {
 		if (empty(static::$_registry)) {
@@ -140,7 +140,7 @@ class Cache {
  * triggered.
  *
  * @param string $config The configuration name you want an engine for.
- * @return Cake\Cache\Engine
+ * @return \Cake\Cache\Engine
  */
 	public static function engine($config) {
 		if (!static::$_enabled) {
@@ -345,7 +345,7 @@ class Cache {
  *
  * @param string $group group name or null to retrieve all group mappings
  * @return array map of group and all configuration that has the same group
- * @throws Cake\Error\Exception
+ * @throws \Cake\Error\Exception
  */
 	public static function groupConfigs($group = null) {
 		if ($group === null) {

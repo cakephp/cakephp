@@ -29,7 +29,7 @@ class DateTime implements WidgetInterface {
 /**
  * Select box widget.
  *
- * @var Cake\View\Widget\Select
+ * @var \Cake\View\Widget\Select
  */
 	protected $_select;
 
@@ -58,8 +58,8 @@ class DateTime implements WidgetInterface {
 /**
  * Constructor
  *
- * @param Cake\View\StringTemplate $templates
- * @param Cake\View\Widget\SelectBox $selectBox
+ * @param \Cake\View\StringTemplate $templates
+ * @param \Cake\View\Widget\SelectBox $selectBox
  */
 	public function __construct($templates, $selectBox) {
 		$this->_select = $selectBox;

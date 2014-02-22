@@ -40,7 +40,7 @@ class ValueBinder {
 /**
  * Associates a query placeholder to a value and a type
  *
- * @param string|integer $token placeholder to be replaced with quoted version
+ * @param string|integer $param placeholder to be replaced with quoted version
  * of $value
  * @param mixed $value the value to be bound
  * @param string|integer $type the mapped type name, used for casting when sending

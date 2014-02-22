@@ -155,10 +155,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Constructor
  *
- * @param Cake\Database\Connection $connection The connection
+ * @param \Cake\Database\Connection $connection The connection
  * object to be used for transforming and executing this query
- *
- * @return void
  */
 	public function __construct($connection) {
 		$this->connection($connection);
@@ -168,8 +166,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Sets the connection instance to be used for executing and transforming this query
  * When called with a null argument, it will return the current connection instance
  *
- * @param Cake\Database\Connection $connection instance
- * @return Query|Cake\Database\Connection
+ * @param \Cake\Database\Connection $connection instance
+ * @return Query|\Cake\Database\Connection
  */
 	public function connection($connection = null) {
 		if ($connection === null) {
@@ -198,7 +196,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * This method can be overridden in query subclasses to decorate behavior
  * around query execution.
  *
- * @return Cake\Database\StatementInterface
+ * @return \Cake\Database\StatementInterface
  */
 	public function execute() {
 		$query = $this->_transformQuery();
@@ -472,7 +470,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * DISTINCT clause for the query.
  *
  * @param array $parts list of fields to be transformed to string
- * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildSelectPart($parts, $generator) {
@@ -556,7 +554,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * converting expression objects to string.
  *
  * @param array $parts list of tables to be transformed to string
- * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildFromPart($parts, $generator) {
@@ -655,7 +653,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array|string $tables list of tables to be joined in the query
  * @param array $types associative array of type names used to bind values to query
  * @param boolean $overwrite whether to reset joins with passed list or not
- * @see Cake\Database\Type
+ * @see \Cake\Database\Type
  * @return Query
  */
 	public function join($tables = null, $types = [], $overwrite = false) {
@@ -698,7 +696,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * to be used
  *
  * @param array $parts list of joins to be transformed to string
- * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildJoinPart($parts, $generator) {
@@ -721,7 +719,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Helper function to generate SQL for SET expressions.
  *
  * @param array $parts List of keys & values to set.
- * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildSetPart($parts, $generator) {
@@ -848,8 +846,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
  * @param boolean $overwrite whether to reset conditions with passed list or not
- * @see Cake\Database\Type
- * @see Cake\Database\QueryExpression
+ * @see \Cake\Database\Type
+ * @see \Cake\Database\QueryExpression
  * @return Query
  */
 	public function where($conditions = null, $types = [], $overwrite = false) {
@@ -912,8 +910,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
- * @see Cake\Database\Query::where()
- * @see Cake\Database\Type
+ * @see \Cake\Database\Query::where()
+ * @see \Cake\Database\Type
  * @return Query
  */
 	public function andWhere($conditions, $types = []) {
@@ -973,8 +971,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
- * @see Cake\Database\Query::where()
- * @see Cake\Database\Type
+ * @see \Cake\Database\Query::where()
+ * @see \Cake\Database\Type
  * @return Query
  */
 	public function orWhere($conditions, $types = []) {
@@ -1076,7 +1074,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
  * @param boolean $overwrite whether to reset conditions with passed list or not
- * @see Cake\Database\Query::where()
+ * @see \Cake\Database\Query::where()
  * @return Query
  */
 	public function having($conditions = null, $types = [], $overwrite = false) {
@@ -1095,7 +1093,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
- * @see Cake\Database\Query::andWhere()
+ * @see \Cake\Database\Query::andWhere()
  * @return Query
  */
 	public function andHaving($conditions, $types = []) {
@@ -1111,7 +1109,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param string|array|ExpressionInterface|callback $conditions
  * @param array $types associative array of type names used to bind values to query
- * @see Cake\Database\Query::orWhere()
+ * @see \Cake\Database\Query::orWhere()
  * @return Query
  */
 	public function orHaving($conditions, $types = []) {
@@ -1131,13 +1129,13 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param integer $num The page number you want.
  * @return Query
  */
-	public function page($page) {
+	public function page($num) {
 		$limit = $this->clause('limit');
 		if ($limit === null) {
 			$limit = 25;
 			$this->limit($limit);
 		}
-		$this->offset(($page - 1) * $limit);
+		$this->offset(($num - 1) * $limit);
 		return $this;
 	}
 
@@ -1266,7 +1264,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * dialect.
  *
  * @param array $parts list of queries to be operated with UNION
- * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string
  */
 	protected function _buildUnionPart($parts, $generator) {
@@ -1282,7 +1280,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Builds the SQL fragment for INSERT INTO.
  *
  * @param array $parts
- * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string SQL fragment.
  */
 	protected function _buildInsertPart($parts, $generator) {
@@ -1295,7 +1293,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Builds the SQL fragment for INSERT INTO.
  *
  * @param array $parts
- * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return string SQL fragment.
  */
 	protected function _buildValuesPart($parts, $generator) {
@@ -1306,8 +1304,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Helper function used to covert ExpressionInterface objects inside an array
  * into their string representation
  *
- * @param array $expression list of strings and ExpressionInterface objects
- * @param Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
+ * @param array $expressions list of strings and ExpressionInterface objects
+ * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
  * @return array
  */
 	protected function _stringifyExpressions(array $expressions, ValueBinder $generator) {
@@ -1330,7 +1328,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * @param array $columns The columns to insert into.
  * @param array $types A map between columns & their datatypes.
  * @return Query
- * @throws RuntimeException When there are 0 columns.
+ * @throws \RuntimeException When there are 0 columns.
  */
 	public function insert($columns, $types = []) {
 		if (empty($columns)) {
@@ -1369,7 +1367,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param array|Query $data The data to insert.
  * @return Query
- * @throws Cake\Database\Exception if you try to set values before declaring columns.
+ * @throws \Cake\Database\Exception if you try to set values before declaring columns.
  *   Or if you try to set values on non-insert queries.
  */
 	public function values($data) {
@@ -1675,7 +1673,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * will create as many placeholders as values are in it. For example "string[]"
  * will create several placeholders of type string.
  *
- * @param string|integer $token placeholder to be replaced with quoted version
+ * @param string|integer $param placeholder to be replaced with quoted version
  * of $value
  * @param mixed $value the value to be bound
  * @param string|integer $type the mapped type name, used for casting when sending
@@ -1696,7 +1694,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * @param ValueBinder $binder new instance to be set. If no value is passed the
  * default one will be returned
- * @return Query|Cake\Database\ValueBinder
+ * @return Query|\Cake\Database\ValueBinder
  */
 	public function valueBinder($binder = null) {
 		if ($binder === null) {
@@ -1713,8 +1711,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Auxiliary function used to wrap the original statement from the driver with
  * any registered callbacks.
  *
- * @param Cake\Database\Statement $statement to be decorated
- * @return Cake\Database\Statement\CallbackStatement
+ * @param \Cake\Database\Statement $statement to be decorated
+ * @return \Cake\Database\Statement\CallbackStatement
  */
 	protected function _decorateStatement($statement) {
 		foreach ($this->_resultDecorators as $f) {
@@ -1755,7 +1753,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Traverses all QueryExpression objects stored in every relevant for this type
  * of query and binds every value to the statement object for each placeholder.
  *
- * @param Cake\Database\Statement $statement
+ * @param \Cake\Database\Statement $statement
  * @return void
  */
 	protected function _bindStatement($statement) {

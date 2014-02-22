@@ -80,7 +80,7 @@ class L10n {
 /**
  * Request object instance
  *
- * @var Cake\Network\Request
+ * @var \Cake\Network\Request
  */
 	protected $_request = null;
 
@@ -332,7 +332,7 @@ class L10n {
 /**
  * Class constructor
  *
- * @param Cake\Network\Request $request Request object
+ * @param \Cake\Network\Request $request Request object
  */
 	public function __construct(Request $request) {
 		$this->_request = $request;

@@ -167,7 +167,7 @@ class TestShell extends Shell {
  * Initialization method installs PHPUnit and loads all plugins
  *
  * @return void
- * @throws Exception
+ * @throws \Exception
  */
 	public function initialize() {
 		$this->_dispatcher = new TestSuiteDispatcher();
@@ -339,7 +339,7 @@ class TestShell extends Shell {
  * @param string $category
  * @param boolean $throwOnMissingFile
  * @return array [type, case]
- * @throws Exception
+ * @throws \Exception
  */
 	protected function _mapFileToCase($file, $category, $throwOnMissingFile = true) {
 		if (!$category || (substr($file, -4) !== '.php')) {
