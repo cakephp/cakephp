@@ -196,6 +196,13 @@ class DateTime implements WidgetInterface {
 				if (isset($value['year'], $value['month'], $value['day'])) {
 					$date->setDate($value['year'], $value['month'], $value['day']);
 				}
+				if (!isset($value['second'])) {
+					$value['second'] = 0;
+				}
+				if (isset($value['meridian'])) {
+					$isAm = strtolower($value['meridian']) === 'am';
+					$value['hour'] = $isAm ? $value['hour'] : $value['hour'] + 12;
+				}
 				if (isset($value['hour'], $value['minute'], $value['second'])) {
 					$date->setTime($value['hour'], $value['minute'], $value['second']);
 				}

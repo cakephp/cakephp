@@ -5237,35 +5237,38 @@ class FormHelperTest extends TestCase {
 		extract($this->dateRegex);
 		$now = strtotime('now');
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 5, 'value' => ''));
+		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array(
+			'interval' => 5,
+			'value' => ''
+		));
 		$expected = array(
-			array('select' => array('name' => 'Contact[date][day]')),
-			$daysRegex,
-			array('option' => array('value' => '')),
+			array('select' => array('name' => 'Contact[date][month]')),
+			$monthsRegex,
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			'*/select',
 
-			array('select' => array('name' => 'Contact[date][month]')),
-			$monthsRegex,
-			array('option' => array('value' => '')),
+			array('select' => array('name' => 'Contact[date][day]')),
+			$daysRegex,
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			'*/select',
 
 			array('select' => array('name' => 'Contact[date][year]')),
 			$yearsRegex,
-			array('option' => array('value' => '')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			'*/select',
 
 			array('select' => array('name' => 'Contact[date][hour]')),
 			$hoursRegex,
-			array('option' => array('value' => '')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			'*/select',
 
 			array('select' => array('name' => 'Contact[date][minute]')),
 			$minutesRegex,
-			array('option' => array('value' => '')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),
 			'00',
@@ -5277,15 +5280,8 @@ class FormHelperTest extends TestCase {
 			'10',
 			'/option',
 			'*/select',
-
-			array('select' => array('name' => 'Contact[date][meridian]')),
-			$meridianRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select'
 		);
 		$this->assertTags($result, $expected);
-		$this->assertNotRegExp('/<option[^<>]+value=""[^<>]+selected="selected"[^>]*>/', $result);
 	}
 
 /**
