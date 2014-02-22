@@ -68,7 +68,7 @@ class App {
 	protected static $_objectCacheChange = false;
 
 /**
- * Return the classname namespaced. This method check if the class is defined on the
+ * Return the classname namespaced. This method checks if the class is defined on the
  * application/plugin, otherwise try to load from the CakePHP core
  *
  * @param string $class Classname
