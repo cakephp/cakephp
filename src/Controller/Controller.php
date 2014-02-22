@@ -442,10 +442,6 @@ class Controller extends Object implements EventListener {
  * @return void
  */
 	protected function _mergeControllerVars() {
-		$pluginDot = null;
-		if (!empty($this->plugin)) {
-			$pluginDot = $this->plugin . '.';
-		}
 		$this->_mergeVars(
 			['components', 'helpers'],
 			['associative' => ['components', 'helpers']]
