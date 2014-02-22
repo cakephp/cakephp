@@ -78,7 +78,7 @@ class Response {
 	);
 
 /**
- * Holds known mime type mappings
+ * Holds type key to mime type mappings for known mime types.
  *
  * @var array
  */
@@ -300,7 +300,8 @@ class Response {
 		'vcf' => 'text/x-vcard',
 		'vtt' => 'text/vtt',
 		'mkv' => 'video/x-matroska',
-		'pkpass' => 'application/vnd.apple.pkpass'
+		'pkpass' => 'application/vnd.apple.pkpass',
+		'ajax' => 'text/html'
 	);
 
 /**

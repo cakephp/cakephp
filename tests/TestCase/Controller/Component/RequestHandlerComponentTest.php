@@ -93,13 +93,11 @@ class RequestHandlerComponentTest extends TestCase {
  */
 	public function testConstructorConfig() {
 		$config = array(
-			'ajaxLayout' => 'test_ajax',
 			'viewClassMap' => array('json' => 'MyPlugin.MyJson')
 		);
 		$controller = $this->getMock('Cake\Controller\Controller');
 		$collection = new ComponentRegistry($controller);
 		$requestHandler = new RequestHandlerComponent($collection, $config);
-		$this->assertEquals('test_ajax', $requestHandler->config('ajaxLayout'));
 		$this->assertEquals(array('json' => 'MyPlugin.MyJson'), $requestHandler->config('viewClassMap'));
 	}
 
@@ -295,7 +293,8 @@ class RequestHandlerComponentTest extends TestCase {
 		$result = $this->RequestHandler->viewClassMap();
 		$expected = array(
 			'json' => 'CustomJson',
-			'xml' => 'Xml'
+			'xml' => 'Xml',
+			'ajax' => 'Ajax'
 		);
 		$this->assertEquals($expected, $result);
 
@@ -303,6 +302,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$expected = array(
 			'json' => 'CustomJson',
 			'xml' => 'Xml',
+			'ajax' => 'Ajax',
 			'xls' => 'Excel.Excel'
 		);
 		$this->assertEquals($expected, $result);
@@ -334,14 +334,15 @@ class RequestHandlerComponentTest extends TestCase {
 	public function testAutoAjaxLayout() {
 		$event = new Event('Controller.startup', $this->Controller);
 		$_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+		$this->RequestHandler->initialize($event);
 		$this->RequestHandler->startup($event);
-		$this->assertEquals($this->Controller->layout, $this->RequestHandler->config('ajaxLayout'));
-
+		$this->assertEquals($this->Controller->viewClass, 'Cake\View\AjaxView');
+    
 		$this->_init();
 		$this->Controller->request->params['_ext'] = 'js';
 		$this->RequestHandler->initialize($event);
 		$this->RequestHandler->startup($event);
-		$this->assertNotEquals('ajax', $this->Controller->layout);
+		$this->assertNotEquals($this->Controller->viewClass, 'Cake\View\AjaxView');
 
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}

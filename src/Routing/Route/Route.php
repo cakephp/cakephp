@@ -337,8 +337,8 @@ class Route {
 	}
 
 /**
- * Removes the extension if the $url contains a known extension.
- * If there are no known extensions all extensions are supported.
+ * Removes the extension from $url if it contains a registered extension.
+ * If no registered extension is found, no extension is returned and the url is returned unmodified.
  *
  * @param string $url The url to parse.
  * @return array containing url, extension
