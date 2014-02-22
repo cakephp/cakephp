@@ -24,7 +24,7 @@ use Traversable;
  *
  * Used by Cake\Datasource\QueryTrait internally.
  *
- * @see Cake\Datasource\QueryTrait::cache() for the public interface.
+ * @see \Cake\Datasource\QueryTrait::cache() for the public interface.
  */
 class QueryCacher {
 

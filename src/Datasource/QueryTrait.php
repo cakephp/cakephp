@@ -63,7 +63,7 @@ trait QueryTrait {
 /**
  * A query cacher instance if this query has caching enabled.
  *
- * @var Cake\Datasource\QueryCacher
+ * @var \Cake\Datasource\QueryCacher
  */
 	protected $_cache;
 
@@ -102,8 +102,8 @@ trait QueryTrait {
  *
  * This method is most useful when combined with results stored in a persistent cache.
  *
- * @param Cake\ORM\ResultSet $results The results this query should return.
- * @return Query The query instance.
+ * @param \Cake\ORM\ResultSet $results The results this query should return.
+ * @return \Cake\ORM\Query The query instance.
  */
 	public function setResult($results) {
 		$this->_results = $results;
@@ -116,7 +116,7 @@ trait QueryTrait {
  * iterated without having to call execute() manually, thus making it look like
  * a result set instead of the query itself.
  *
- * @return Iterator
+ * @return \Iterator
  */
 	public function getIterator() {
 		return $this->all();
@@ -157,7 +157,7 @@ trait QueryTrait {
  *   When using a function, this query instance will be supplied as an argument.
  * @param string|CacheEngine $config Either the name of the cache config to use, or
  *   a cache config instance.
- * @return QueryTrait This same object
+ * @return \Cake\Datasource\QueryTrait This same object
  */
 	public function cache($key, $config = 'default') {
 		if ($key === false) {
@@ -177,7 +177,7 @@ trait QueryTrait {
  * ResultSetDecorator is a travesable object that implements the methods found
  * on Cake\Collection\Collection.
  *
- * @return Cake\ORM\ResultSetDecorator
+ * @return \Cake\ORM\ResultSetDecorator
  */
 	public function all() {
 		if (isset($this->_results)) {
@@ -230,8 +230,8 @@ trait QueryTrait {
  * @param callable $mapper
  * @param callable $reducer
  * @param boolean $overwrite
- * @return Cake\Datasource\QueryTrait|array
- * @see Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
+ * @return \Cake\Datasource\QueryTrait|array
+ * @see \Cake\Collection\Iterator\MapReduce for details on how to use emit data to the map reducer.
  */
 	public function mapReduce(callable $mapper = null, callable $reducer = null, $overwrite = false) {
 		if ($overwrite) {
@@ -281,7 +281,7 @@ trait QueryTrait {
  *
  * @param callable $formatter
  * @param boolean|integer $mode
- * @return Cake\Datasource\QueryTrait|array
+ * @return \Cake\Datasource\QueryTrait|array
  */
 	public function formatResults(callable $formatter = null, $mode = self::APPEND) {
 		if ($mode === self::OVERWRITE) {
@@ -360,7 +360,7 @@ trait QueryTrait {
  * This is handy for passing all query clauses at once.
  *
  * @param array $options the options to be applied
- * @return Cake\Datasource\QueryTrait this object
+ * @return \Cake\Datasource\QueryTrait this object
  */
 	abstract public function applyOptions(array $options);
 
