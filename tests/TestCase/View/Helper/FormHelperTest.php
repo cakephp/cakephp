@@ -4148,6 +4148,46 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * test generating radio input inside label ala twitter bootstrap
+ *
+ * @return void
+ */
+	public function testRadioInputInsideLabel() {
+		$this->Form->templates([
+			'label' => '<label{{attrs}}>{{input}}{{text}}</label>',
+			'radioContainer' => '{{label}}'
+		]);
+
+		$result = $this->Form->radio('Model.field', ['option A', 'option B']);
+		$expected = [
+			['input' => [
+				'type' => 'hidden',
+				'name' => 'Model[field]',
+				'value' => ''
+			]],
+			['label' => ['for' => 'model-field-0']],
+				['input' => [
+					'type' => 'radio',
+					'name' => 'Model[field]',
+					'value' => '0',
+					'id' => 'model-field-0'
+				]],
+				'option A',
+			'/label',
+			['label' => ['for' => 'model-field-1']],
+				['input' => [
+					'type' => 'radio',
+					'name' => 'Model[field]',
+					'value' => '1',
+					'id' => 'model-field-1'
+				]],
+				'option B',
+			'/label',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test disabling the hidden input for radio buttons
  *
  * @return void
