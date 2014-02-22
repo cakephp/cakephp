@@ -5127,7 +5127,7 @@ class FormHelperTest extends TestCase {
 	public function testDateTime() {
 		extract($this->dateRegex);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('empty' => false));
+		$result = $this->Form->dateTime('Contact.date', array('empty' => false));
 		$now = strtotime('now');
 		$expected = array(
 			array('select' => array('name' => 'Contact[date][month]')),
@@ -5184,7 +5184,7 @@ class FormHelperTest extends TestCase {
 		extract($this->dateRegex);
 		$now = strtotime('now');
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array(
+		$result = $this->Form->dateTime('Contact.date', array(
 			'empty' => true,
 		));
 		$expected = array(
@@ -5237,7 +5237,7 @@ class FormHelperTest extends TestCase {
 		extract($this->dateRegex);
 		$now = strtotime('now');
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array(
+		$result = $this->Form->dateTime('Contact.date', array(
 			'interval' => 5,
 			'value' => ''
 		));
@@ -5301,35 +5301,14 @@ class FormHelperTest extends TestCase {
 			)
 		);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 15));
+		$result = $this->Form->dateTime('Contact.date', array('interval' => 15));
 		$this->assertTextContains('<option value="15" selected="selected">15</option>', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 15, 'round' => 'up'));
+		$result = $this->Form->dateTime('Contact.date', array('interval' => 15, 'round' => 'up'));
 		$this->assertTextContains('<option value="30" selected="selected">30</option>', $result);
 
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('interval' => 5, 'round' => 'down'));
+		$result = $this->Form->dateTime('Contact.date', array('interval' => 5, 'round' => 'down'));
 		$this->assertTextContains('<option value="15" selected="selected">15</option>', $result);
-	}
-
-/**
- * Test that empty values don't trigger errors.
- *
- * @return void
- */
-	public function testDateTimeNoErrorsOnEmptyData() {
-		$this->markTestIncomplete('Need to revisit soon.');
-		$this->Form->request->data['Contact'] = array(
-			'date' => array(
-				'day' => '',
-				'month' => '',
-				'year' => '',
-				'hour' => '',
-				'minute' => '',
-				'meridian' => ''
-			)
-		);
-		$result = $this->Form->dateTime('Contact.date', 'DMY', '12', array('empty' => false));
-		$this->assertNotEmpty($result);
 	}
 
 /**
@@ -5339,12 +5318,12 @@ class FormHelperTest extends TestCase {
  */
 	public function testDatetimeWithDefault() {
 		$this->markTestIncomplete('Need to revisit soon.');
-		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array('value' => '2009-06-01 11:15:30'));
+		$result = $this->Form->dateTime('Contact.updated', array('value' => '2009-06-01 11:15:30'));
 		$this->assertRegExp('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="01"[^<>]+selected="selected"[^>]*>1<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="06"[^<>]+selected="selected"[^>]*>June<\/option>/', $result);
 
-		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array(
+		$result = $this->Form->dateTime('Contact.updated', array(
 			'default' => '2009-06-01 11:15:30'
 		));
 		$this->assertRegExp('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
@@ -5353,31 +5332,16 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * test that bogus non-date time data doesn't cause errors.
- *
- * @return void
- */
-	public function testDateTimeWithBogusData() {
-		$this->markTestIncomplete('Need to revisit soon.');
-		$result = $this->Form->dateTime('Contact.updated', 'DMY', '12', array('value' => 'CURRENT_TIMESTAMP'));
-		$this->assertNotRegExp('/selected="selected">\d/', $result);
-	}
-
-/**
  * testDateTime all zeros
  *
  * @return void
  */
 	public function testDateTimeAllZeros() {
-		$this->markTestIncomplete('Need to revisit soon.');
-		$result = $this->Form->dateTime('Contact.date',
-			'DMY',
-			false,
-			array(
-				'empty' => array('day' => '-', 'month' => '-', 'year' => '-'),
-				'value' => '0000-00-00'
-			)
-		);
+		$result = $this->Form->dateTime('Contact.date', array(
+			'timeFormat' => false,
+			'empty' => array('day' => '-', 'month' => '-', 'year' => '-'),
+			'value' => '0000-00-00'
+		));
 
 		$this->assertRegExp('/<option value="">-<\/option>/', $result);
 		$this->assertNotRegExp('/<option value="0" selected="selected">0<\/option>/', $result);
@@ -5389,16 +5353,16 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeEmptyAsArray() {
-		$this->markTestIncomplete('Need to revisit soon.');
-		$result = $this->Form->dateTime('Contact.date',
-			'DMY',
-			'12',
-			array(
-				'empty' => array('day' => 'DAY', 'month' => 'MONTH', 'year' => 'YEAR',
-					'hour' => 'HOUR', 'minute' => 'MINUTE', 'meridian' => false
-				)
+		$result = $this->Form->dateTime('Contact.date', array(
+			'empty' => array(
+				'day' => 'DAY',
+				'month' => 'MONTH',
+				'year' => 'YEAR',
+				'hour' => 'HOUR',
+				'minute' => 'MINUTE',
+				'meridian' => false
 			)
-		);
+		));
 
 		$this->assertRegExp('/<option value="">DAY<\/option>/', $result);
 		$this->assertRegExp('/<option value="">MONTH<\/option>/', $result);
@@ -5407,20 +5371,13 @@ class FormHelperTest extends TestCase {
 		$this->assertRegExp('/<option value="">MINUTE<\/option>/', $result);
 		$this->assertNotRegExp('/<option value=""><\/option>/', $result);
 
-		$result = $this->Form->dateTime('Contact.date',
-			'DMY',
-			'12',
-			array(
-				'empty' => array('day' => 'DAY', 'month' => 'MONTH', 'year' => 'YEAR')
-			)
-		);
+		$result = $this->Form->dateTime('Contact.date', array(
+			'empty' => array('day' => 'DAY', 'month' => 'MONTH', 'year' => 'YEAR')
+		));
 
 		$this->assertRegExp('/<option value="">DAY<\/option>/', $result);
 		$this->assertRegExp('/<option value="">MONTH<\/option>/', $result);
 		$this->assertRegExp('/<option value="">YEAR<\/option>/', $result);
-		$this->assertRegExp('/<select[^<>]+id="ContactDateHour">\s<option value=""><\/option>/', $result);
-		$this->assertRegExp('/<select[^<>]+id="ContactDateMin">\s<option value=""><\/option>/', $result);
-		$this->assertRegExp('/<select[^<>]+id="ContactDateMeridian">\s<option value=""><\/option>/', $result);
 	}
 
 /**
@@ -5431,86 +5388,15 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormDateTimeMulti() {
-		$this->markTestIncomplete('Need to revisit soon.');
 		extract($this->dateRegex);
 
 		$result = $this->Form->dateTime('Contact.1.updated');
-		$expected = array(
-			array('select' => array('name' => 'Contact[1][updated][day]', 'id' => 'Contact1UpdatedDay')),
-			$daysRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			'-',
-			array('select' => array('name' => 'Contact[1][updated][month]', 'id' => 'Contact1UpdatedMonth')),
-			$monthsRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			'-',
-			array('select' => array('name' => 'Contact[1][updated][year]', 'id' => 'Contact1UpdatedYear')),
-			$yearsRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			array('select' => array('name' => 'Contact[1][updated][hour]', 'id' => 'Contact1UpdatedHour')),
-			$hoursRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			':',
-			array('select' => array('name' => 'Contact[1][updated][min]', 'id' => 'Contact1UpdatedMin')),
-			$minutesRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			' ',
-			array('select' => array('name' => 'Contact[1][updated][meridian]', 'id' => 'Contact1UpdatedMeridian')),
-			$meridianRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->dateTime('Contact.2.updated');
-		$expected = array(
-			array('select' => array('name' => 'Contact[2][updated][day]', 'id' => 'Contact2UpdatedDay')),
-			$daysRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			'-',
-			array('select' => array('name' => 'Contact[2][updated][month]', 'id' => 'Contact2UpdatedMonth')),
-			$monthsRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			'-',
-			array('select' => array('name' => 'Contact[2][updated][year]', 'id' => 'Contact2UpdatedYear')),
-			$yearsRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			array('select' => array('name' => 'Contact[2][updated][hour]', 'id' => 'Contact2UpdatedHour')),
-			$hoursRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			':',
-			array('select' => array('name' => 'Contact[2][updated][min]', 'id' => 'Contact2UpdatedMin')),
-			$minutesRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select',
-			' ',
-			array('select' => array('name' => 'Contact[2][updated][meridian]', 'id' => 'Contact2UpdatedMeridian')),
-			$meridianRegex,
-			array('option' => array('value' => '')),
-			'/option',
-			'*/select'
-		);
-		$this->assertTags($result, $expected);
+		$this->assertContains('Contact[1][updated][month]', $result);
+		$this->assertContains('Contact[1][updated][day]', $result);
+		$this->assertContains('Contact[1][updated][year]', $result);
+		$this->assertContains('Contact[1][updated][hour]', $result);
+		$this->assertContains('Contact[1][updated][minute]', $result);
+		$this->assertContains('Contact[1][updated][meridian]', $result);
 	}
 
 /**

@@ -2117,6 +2117,13 @@ class FormHelper extends Helper {
  * - `round` - Set to `up` or `down` if you want to force rounding in either direction. Defaults to null.
  * - `value` | `default` The default value to be used by the input. A value in `$this->data`
  *   matching the field name will override this value. If no default is provided `time()` will be used.
+ * - `timeFormat` The time format to use, either 12 or 24.
+ * - `second` Set to true to enable seconds drop down.
+ *
+ * To control the order of inputs, and any elements/content between the inputs you
+ * can override the `dateWidget` template. By default the `dateWidget` template is:
+ *
+ * `{{month}}{{day}}{{year}}{{hour}}{{minute}}{{second}}{{meridian}}`
  *
  * @param string $fieldName Prefix name for the SELECT element
  * @param string $dateFormat DMY, MDY, YMD, or null to not generate date inputs.
@@ -2125,7 +2132,7 @@ class FormHelper extends Helper {
  * @return string Generated set of select boxes for the date and time formats chosen.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::dateTime
  */
-	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $attributes = array()) {
+	public function dateTime($fieldName, $attributes = array()) {
 		$attributes += [
 			'empty' => true,
 			'value' => null,
@@ -2134,119 +2141,13 @@ class FormHelper extends Helper {
 			'monthNames' => true,
 			'minYear' => null,
 			'maxYear' => null,
-			'timeFormat' => $timeFormat,
+			'timeFormat' => 12,
 			'second' => false,
 		];
 		$attributes = $this->_initInputField($fieldName, $attributes);
 		$attributes = $this->_dateTimeAttributes($attributes);
 
 		return $this->widget('datetime', $attributes);
-
-		if (!empty($interval) && $interval > 1 && !empty($min)) {
-			$current = new \DateTime();
-			if ($year !== null) {
-				$current->setDate($year, $month, $day);
-			}
-			if ($hour !== null) {
-				$current->setTime($hour, $min);
-			}
-			$changeValue = $min * (1 / $interval);
-			switch ($round) {
-				case 'up':
-					$changeValue = ceil($changeValue);
-					break;
-				case 'down':
-					$changeValue = floor($changeValue);
-					break;
-				default:
-					$changeValue = round($changeValue);
-			}
-			$change = ($changeValue * $interval) - $min;
-			$current->modify($change > 0 ? "+$change minutes" : "$change minutes");
-			$format = ($timeFormat == 12) ? 'Y m d h i a' : 'Y m d H i a';
-			$newTime = explode(' ', $current->format($format));
-			list($year, $month, $day, $hour, $min, $meridian) = $newTime;
-		}
-
-		$keys = array('Day', 'Month', 'Year', 'Hour', 'Minute', 'Meridian');
-		$attrs = array_fill_keys($keys, $attributes);
-
-		$hasId = isset($attributes['id']);
-		if ($hasId && is_array($attributes['id'])) {
-			// check for missing ones and build selectAttr for each element
-			$attributes['id'] += array(
-				'month' => '',
-				'year' => '',
-				'day' => '',
-				'hour' => '',
-				'minute' => '',
-				'meridian' => ''
-			);
-			foreach ($keys as $key) {
-				$attrs[$key]['id'] = $attributes['id'][strtolower($key)];
-			}
-		}
-		if ($hasId && is_string($attributes['id'])) {
-			// build out an array version
-			foreach ($keys as $key) {
-				$attrs[$key]['id'] = $attributes['id'] . $key;
-			}
-		}
-
-		if (is_array($attributes['empty'])) {
-			$attributes['empty'] += array(
-				'month' => true,
-				'year' => true,
-				'day' => true,
-				'hour' => true,
-				'minute' => true,
-				'meridian' => true
-			);
-			foreach ($keys as $key) {
-				$attrs[$key]['empty'] = $attributes['empty'][strtolower($key)];
-			}
-		}
-
-		$selects = array();
-		foreach (preg_split('//', $dateFormat, -1, PREG_SPLIT_NO_EMPTY) as $char) {
-			switch ($char) {
-				case 'Y':
-					$attrs['Year']['value'] = $year;
-					$selects[] = $this->year(
-						$fieldName, $minYear, $maxYear, $attrs['Year']
-					);
-					break;
-				case 'M':
-					$attrs['Month']['value'] = $month;
-					$attrs['Month']['monthNames'] = $monthNames;
-					$selects[] = $this->month($fieldName, $attrs['Month']);
-					break;
-				case 'D':
-					$attrs['Day']['value'] = $day;
-					$selects[] = $this->day($fieldName, $attrs['Day']);
-					break;
-			}
-		}
-		$opt = implode($separator, $selects);
-
-		$attrs['Minute']['interval'] = $interval;
-		switch ($timeFormat) {
-			case '24':
-				$attrs['Hour']['value'] = $hour;
-				$attrs['Minute']['value'] = $min;
-				$opt .= $this->hour($fieldName, true, $attrs['Hour']) . ':' .
-				$this->minute($fieldName, $attrs['Minute']);
-				break;
-			case '12':
-				$attrs['Hour']['value'] = $hour;
-				$attrs['Minute']['value'] = $min;
-				$attrs['Meridian']['value'] = $meridian;
-				$opt .= $this->hour($fieldName, false, $attrs['Hour']) . ':' .
-				$this->minute($fieldName, $attrs['Minute']) . ' ' .
-				$this->meridian($fieldName, $attrs['Meridian']);
-				break;
-		}
-		return $opt;
 	}
 
 /**
