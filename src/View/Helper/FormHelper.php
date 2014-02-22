@@ -141,6 +141,7 @@ class FormHelper extends Helper {
 		'button' => '<button{{attrs}}>{{text}}</button>',
 		'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
 		'checkboxContainer' => '<div class="checkbox">{{input}}{{label}}</div>',
+		'dateWidget' => '{{month}}{{day}}{{year}}{{hour}}{{minute}}{{second}}{{meridian}}',
 		'error' => '<div class="error-message">{{content}}</div>',
 		'errorList' => '<ul>{{content}}</ul>',
 		'errorItem' => '<li>{{text}}</li>',
@@ -2125,43 +2126,21 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::dateTime
  */
 	public function dateTime($fieldName, $dateFormat = 'DMY', $timeFormat = '12', $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		$year = $month = $day = $hour = $min = $meridian = null;
+		$attributes += [
+			'empty' => true,
+			'value' => null,
+			'interval' => 1,
+			'round' => null,
+			'monthNames' => true,
+			'minYear' => null,
+			'maxYear' => null,
+			'timeFormat' => $timeFormat,
+			'second' => false,
+		];
+		$attributes = $this->_initInputField($fieldName, $attributes);
+		$attributes = $this->_dateTimeAttributes($attributes);
 
-		if (empty($attributes['value'])) {
-			$attributes = $this->value($attributes, $fieldName);
-		}
-
-		if ($attributes['value'] === null && $attributes['empty'] != true) {
-			$attributes['value'] = time();
-			if (!empty($attributes['maxYear']) && $attributes['maxYear'] < date('Y')) {
-				$attributes['value'] = strtotime(date($attributes['maxYear'] . '-m-d'));
-			}
-		}
-
-		if (!empty($attributes['value'])) {
-			list($year, $month, $day, $hour, $min, $meridian) = $this->_getDateTimeValue(
-				$attributes['value'],
-				$timeFormat
-			);
-		}
-
-		$defaults = array(
-			'minYear' => null, 'maxYear' => null, 'separator' => '-',
-			'interval' => 1, 'monthNames' => true, 'round' => null
-		);
-		$attributes = array_merge($defaults, (array)$attributes);
-		if (isset($attributes['minuteInterval'])) {
-			$attributes['interval'] = $attributes['minuteInterval'];
-			unset($attributes['minuteInterval']);
-		}
-		$minYear = $attributes['minYear'];
-		$maxYear = $attributes['maxYear'];
-		$separator = $attributes['separator'];
-		$interval = $attributes['interval'];
-		$monthNames = $attributes['monthNames'];
-		$round = $attributes['round'];
-		$attributes = array_diff_key($attributes, $defaults);
+		return $this->widget('datetime', $attributes);
 
 		if (!empty($interval) && $interval > 1 && !empty($min)) {
 			$current = new \DateTime();
@@ -2268,6 +2247,66 @@ class FormHelper extends Helper {
 				break;
 		}
 		return $opt;
+	}
+
+/**
+ * Helper method for converting from FormHelper attributes data to widget format.
+ *
+ * @param array $attributes Attributes to convert.
+ * @return array Converted attributes.
+ */
+	protected function _dateTimeAttributes($attributes) {
+		$types = ['year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'];
+		foreach ($types as $type) {
+			if (!isset($attributes[$type])) {
+				$attributes[$type] = [];
+			}
+
+			// Pass empty boolean to each type.
+			if (
+				!empty($attributes['empty']) &&
+				is_bool($attributes['empty']) &&
+				is_array($attributes[$type])
+			) {
+				$attributes[$type]['empty'] = $attributes['empty'];
+			}
+
+			// Move empty options into each type array.
+			if (isset($attributes['empty'][$type])) {
+				$attributes[$type]['empty'] = $attributes['empty'][$type];
+			}
+		}
+		unset($attributes['empty']);
+
+		$hasYear = is_array($attributes['year']);
+		if ($hasYear && isset($attributes['minYear'])) {
+			$attributes['year']['start'] = $attributes['minYear'];
+		}
+		if ($hasYear && isset($attributes['maxYear'])) {
+			$attributes['year']['end'] = $attributes['maxYear'];
+		}
+		unset($attributes['minYear'], $attributes['maxYear']);
+
+		if (is_array($attributes['month'])) {
+			$attributes['month']['names'] = $attributes['monthNames'];
+		}
+		unset($attributes['monthNames']);
+
+		if (is_array($attributes['hour']) && isset($attributes['timeFormat'])) {
+			$attributes['hour']['format'] = $attributes['timeFormat'];
+		}
+		unset($attributes['timeFormat']);
+
+		if (is_array($attributes['minute'])) {
+			$attributes['minute']['interval'] = $attributes['interval'];
+			$attributes['minute']['round'] = $attributes['round'];
+		}
+		unset($attributes['interval'], $attributes['round']);
+
+		if (!isset($attributes['val'])) {
+			$attributes['val'] = new \DateTime();
+		}
+		return $attributes;
 	}
 
 /**
