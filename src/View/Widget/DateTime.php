@@ -261,9 +261,10 @@ class DateTime implements WidgetInterface {
 			'options' => []
 		];
 
-		$options['start'] = min($options['val'], $options['start']);
-		$options['end'] = max($options['val'], $options['end']);
-
+		if (!empty($options['val'])) {
+			$options['start'] = min($options['val'], $options['start']);
+			$options['end'] = max($options['val'], $options['end']);
+		}
 		if (empty($options['options'])) {
 			$options['options'] = $this->_generateNumbers($options['start'], $options['end']);
 		}
@@ -382,6 +383,7 @@ class DateTime implements WidgetInterface {
 			'leadingZeroKey' => true,
 			'leadingZeroValue' => true,
 		];
+		$options['interval'] = max($options['interval'], 1);
 		if (empty($options['options'])) {
 			$options['options'] = $this->_generateNumbers(0, 59, $options);
 		}
