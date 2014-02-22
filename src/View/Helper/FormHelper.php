@@ -1464,8 +1464,7 @@ class FormHelper extends Helper {
 	public function button($title, $options = array()) {
 		$options += array('type' => 'submit', 'escape' => false, 'secure' => false);
 		if (isset($options['name'])) {
-			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
-			$this->_secure($options['secure'], $name);
+			$this->_secure($options['secure'], $this->_secureFieldName($options));
 		}
 		unset($options['secure']);
 
@@ -1650,7 +1649,7 @@ class FormHelper extends Helper {
 
 		if (isset($options['name'])) {
 			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
-			$this->_secure($options['secure'], $name);
+			$this->_secure($options['secure'], $this->_secureFieldName($options));
 		}
 		unset($options['secure']);
 
