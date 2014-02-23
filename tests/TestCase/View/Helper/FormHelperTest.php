@@ -71,7 +71,8 @@ class ContactsTable extends Table {
 		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null),
-		'age' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => null)
+		'age' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => null),
+		'_constraints' => array('primary' => ['type' => 'primary', 'columns' => ['id']])
 	);
 
 /**
@@ -114,15 +115,6 @@ class ContactsTable extends Table {
 	);
 
 /**
- * schema method
- *
- * @return void
- */
-	public function setSchema($schema) {
-		$this->_schema = $schema;
-	}
-
-/**
  * hasAndBelongsToMany property
  *
  * @var array
@@ -142,6 +134,16 @@ class ContactsTable extends Table {
 	public $belongsTo = array(
 		'User' => array('className' => 'UserForm'
 	));
+
+/**
+ * Initializes the schema and validation rules.
+ *
+ * @return void
+ */
+	public function initialize(array $config) {
+		$this->schema($this->_schema);
+	}
+
 }
 
 /**
@@ -2424,7 +2426,7 @@ class FormHelperTest extends TestCase {
 			'label' => array('for'),
 			'Balance',
 			'/label',
-			'input' => array('name', 'type' => 'number', 'step'),
+			'input' => array('name', 'type' => 'number', 'id', 'step'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
@@ -2439,10 +2441,21 @@ class FormHelperTest extends TestCase {
 			'/div',
 		);
 		$this->assertTags($result, $expected);
+	}
 
+/**
+ * Tests the input method and passing custom options
+ *
+ * @return void
+ */
+	public function testInputCustomization() {
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = array(
-			'div' => array('class' => 'input email'),
+			'div' => array('class' => 'email'),
 			'label' => array('for' => 'custom'),
 			'Email',
 			'/label',
@@ -2454,36 +2467,31 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.email', array('div' => array('class' => false)));
+		$result = $this->Form->input('Contact.email', array(
+			'templates' => ['groupContainer' => '<div>{{content}}</div>']
+		));
 		$expected = array(
 			'<div',
-			'label' => array('for' => 'ContactEmail'),
+			'label' => array('for' => 'contact-email'),
 			'Email',
 			'/label',
 			array('input' => array(
 				'type' => 'email', 'name' => 'Contact[email]',
-				'id' => 'ContactEmail', 'maxlength' => 255
+				'id' => 'contact-email', 'maxlength' => 255
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->hidden('Contact.idontexist');
-		$expected = array('input' => array(
-				'type' => 'hidden', 'name' => 'Contact[idontexist]',
-				'id' => 'ContactIdontexist'
-		));
-		$this->assertTags($result, $expected);
-
 		$result = $this->Form->input('Contact.email', array('type' => 'text'));
 		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactEmail'),
+			'div' => array('class' => 'text'),
+			'label' => array('for' => 'contact-email'),
 			'Email',
 			'/label',
 			array('input' => array(
 				'type' => 'text', 'name' => 'Contact[email]',
-				'id' => 'ContactEmail'
+				'id' => 'contact-email', 'maxlength' => '255'
 			)),
 			'/div'
 		);

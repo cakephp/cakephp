@@ -859,10 +859,15 @@ class FormHelper extends Helper {
 			'label' => null,
 			'error' => null,
 			'selected' => null,
-			'options' => null
+			'options' => null,
+			'templates' => []
 		];
 		$options = $this->_parseOptions($fieldName, $options);
+		$options += ['id' => $this->_domId($fieldName)];
 
+		$originalTemplates = $this->templates();
+		$this->templates($options['templates']);
+		unset($options['templates']);
 		$label = $this->_getLabel($fieldName, $options);
 		if ($options['type'] !== 'radio') {
 			unset($options['label']);
@@ -877,13 +882,19 @@ class FormHelper extends Helper {
 		}
 
 		$input = $this->{$options['type']}($fieldName, $options);
+		$result = $this->formatTemplate('formGroup', compact('input', 'label'));
 
-		return $this->formatTemplate($template, [
-			'content' => $this->formatTemplate('formGroup', compact('input', 'label')),
-			'error' => $error,
-			'required' => null,
-			'type' => $options['type'],
-		]);
+		if ($options['type'] !== 'hidden') {
+			$result = $this->formatTemplate($template, [
+				'content' => $result,
+				'error' => $error,
+				'required' => null,
+				'type' => $options['type'],
+			]);
+		}
+
+		$this->templates($originalTemplates);
+		return $result;
 	}
 
 /**
@@ -918,6 +929,7 @@ class FormHelper extends Helper {
 		$internalType = $context->type($fieldName);
 		$map = $this->settings['typeMap'];
 		$type = isset($map[$internalType]) ? $map[$internalType] : 'text';
+		$fieldName = array_slice(explode('.', $fieldName), -1)[0];
 
 		switch (true) {
 			case isset($options['checked']) :
