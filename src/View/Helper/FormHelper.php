@@ -902,6 +902,7 @@ class FormHelper extends Helper {
 /**
  * Generates input options array
  *
+ * @param string $fieldName the name of the field to parse options for
  * @param array $options
  * @return array Options
  */
@@ -916,6 +917,15 @@ class FormHelper extends Helper {
 		return $options;
 	}
 
+/**
+ * Returns the input type that was guessed for the provided fieldName,
+ * based on the internal type it is associated too, its name and the
+ * variales that can be foudn in the view template
+ *
+ * @param string $fieldName the name of the field to guess a type for
+ * @param array $options the options passed to the input method
+ * @return string
+ */
 	protected function _inputType($fieldName, $options) {
 		$context = $this->_getContext();
 		$primaryKey = (array)$context->primaryKey();
@@ -952,8 +962,10 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Generates list of options for multiple select
+ * Selects the variable containing the options for a select field if present,
+ * and sets the value to the 'options' key in the options array.
  *
+ * @param string $fieldName the name of the field to find options for
  * @param array $options
  * @return array
  */
@@ -979,7 +991,10 @@ class FormHelper extends Helper {
 /**
  * Magically set option type and corresponding options
  *
+ * @param string $fieldName the name of the field to generate options for
  * @param array $options
+ * @param boolean $allowOverride whether or not it is allowed for this method to
+ * overwrite the 'type' key in options
  * @return array
  */
 	protected function _magicOptions($fieldName, $options, $allowOverride) {
