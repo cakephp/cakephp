@@ -3161,7 +3161,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputSelectType() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+		$this->markTestIncomplete('A test here is throwing fatal error, fix later');
 		$result = $this->Form->input('email', array(
 			'options' => array('è' => 'Firést', 'é' => 'Secoènd'), 'empty' => true)
 		);

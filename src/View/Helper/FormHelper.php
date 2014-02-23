@@ -883,7 +883,7 @@ class FormHelper extends Helper {
 		}
 
 		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
-		$input = $this->{$options['type']}($fieldName, $options);
+		$input = $this->_getInput($fieldName, $options);
 		$result = $this->formatTemplate($groupTemplate, compact('input', 'label'));
 
 		if ($options['type'] !== 'hidden') {
@@ -897,6 +897,24 @@ class FormHelper extends Helper {
 
 		$this->templates($originalTemplates);
 		return $result;
+	}
+
+/**
+ * Generates an input element
+ *
+ * @param string $fieldName the field name
+ * @param array $options The options for the input element
+ * @return string The generated input element
+ */
+	protected function _getInput($fieldName, $options) {
+		switch ($options['type']) {
+			case 'select':
+				$opts = $options['options'];
+				unset($options['options']);
+				return $this->select($fieldName, $opts, $options);
+			default:
+				return $this->{$options['type']}($fieldName, $options);
+		}
 	}
 
 /**
@@ -1675,7 +1693,7 @@ class FormHelper extends Helper {
 			);
 			$hidden = $this->hidden($fieldName, $hiddenAttributes);
 		}
-		unset($attributes['hiddenField']);
+		unset($attributes['hiddenField'], $attributes['type']);
 		return $hidden . $this->widget('select', $attributes);
 	}
 
