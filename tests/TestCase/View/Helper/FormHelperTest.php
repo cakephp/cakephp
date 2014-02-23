@@ -2499,13 +2499,13 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Contact.5.email', array('type' => 'text'));
 		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'Contact5Email'),
+			'div' => array('class' => 'text'),
+			'label' => array('for' => 'contact-5-email'),
 			'Email',
 			'/label',
 			array('input' => array(
 				'type' => 'text', 'name' => 'Contact[5][email]',
-				'id' => 'Contact5Email'
+				'id' => 'contact-5-email', 'maxlength' => '255'
 			)),
 			'/div'
 		);
@@ -2513,13 +2513,13 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Contact.password');
 		$expected = array(
-			'div' => array('class' => 'input password'),
-			'label' => array('for' => 'ContactPassword'),
+			'div' => array('class' => 'password'),
+			'label' => array('for' => 'contact-password'),
 			'Password',
 			'/label',
 			array('input' => array(
 				'type' => 'password', 'name' => 'Contact[password]',
-				'id' => 'ContactPassword'
+				'id' => 'contact-password'
 			)),
 			'/div'
 		);
@@ -2529,13 +2529,13 @@ class FormHelperTest extends TestCase {
 			'type' => 'file', 'class' => 'textbox'
 		));
 		$expected = array(
-			'div' => array('class' => 'input file'),
-			'label' => array('for' => 'ContactEmail'),
+			'div' => array('class' => 'file'),
+			'label' => array('for' => 'contact-email'),
 			'Email',
 			'/label',
 			array('input' => array(
 				'type' => 'file', 'name' => 'Contact[email]', 'class' => 'textbox',
-				'id' => 'ContactEmail'
+				'id' => 'contact-email'
 			)),
 			'/div'
 		);

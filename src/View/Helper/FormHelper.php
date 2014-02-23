@@ -1311,6 +1311,7 @@ class FormHelper extends Helper {
 			);
 		}
 
+		unset($options['type']);
 		return $this->widget('file', $options);
 	}
 
