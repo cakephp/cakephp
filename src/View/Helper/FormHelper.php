@@ -1858,19 +1858,22 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::day
  */
 	public function day($fieldName = null, $options = []) {
-		$options += array('empty' => true, 'value' => null);
-		$options = $this->_dateTimeSelected('day', $fieldName, $options);
+		$off = array_diff($this->_datetimeParts, ['day']);
+		$off = array_combine(
+			$off,
+			array_fill(0, count($off), false)
+		);
+		$options = $off + $options;
 
-		if (strlen($attributes['value']) > 2) {
-			$date = date_create($attributes['value']);
-			$attributes['value'] = null;
-			if ($date) {
-				$attributes['value'] = $date->format('d');
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
+		// If value is an integer reformat it.
+		if (isset($options['value']) && $options['value'] > 0 && $options['value'] < 31) {
+			$options['value'] = [
+				'year' => date('Y'),
+				'month' => date('m'),
+				'day' => (int)$options['value']
+			];
 		}
-		return $this->select($fieldName . ".day", $this->_generateOptions('day'), $options);
+		return $this->datetime($fieldName, $options);
 	}
 
 /**

@@ -5516,7 +5516,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->day('Model.field', array('value' => false));
 		$expected = array(
 			array('select' => array('name' => 'Model[field][day]')),
-			array('option' => array('value' => '')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
 			'1',
@@ -5552,27 +5552,6 @@ class FormHelperTest extends TestCase {
 
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->day('Model.field', array('value' => '10'));
-		$expected = array(
-			array('select' => array('name' => 'Model[field][day]')),
-			array('option' => array('value' => '')),
-			'/option',
-			array('option' => array('value' => '01')),
-			'1',
-			'/option',
-			array('option' => array('value' => '02')),
-			'2',
-			'/option',
-			$daysRegex,
-			array('option' => array('value' => '10', 'selected' => 'selected')),
-			'10',
-			'/option',
-			$daysRegex,
-			'/select',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Model']['field'] = '2006-10-10 23:12:32';
-		$result = $this->Form->day('Model.field', array('value' => true));
 		$expected = array(
 			array('select' => array('name' => 'Model[field][day]')),
 			array('option' => array('value' => '')),
