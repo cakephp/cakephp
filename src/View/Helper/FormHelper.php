@@ -1890,53 +1890,37 @@ class FormHelper extends Helper {
  * - `orderYear` - Ordering of year values in select options.
  *   Possible values 'asc', 'desc'. Default 'desc'
  * - `value` The selected value of the input.
+ * - `maxYear` The max year to appear in the select element.
+ * - `minYear` The min year to appear in the select element.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param integer $minYear First year in sequence
- * @param integer $maxYear Last year in sequence
- * @param array $attributes Attribute array for the select elements.
+ * @param array $options Options & attributes for the select elements.
  * @return string Completed year select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::year
  */
-	public function year($fieldName, $minYear = null, $maxYear = null, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				$year = null;
-				extract($value);
-				$attributes['value'] = $year;
-			} else {
-				if (empty($value)) {
-					if (!$attributes['empty'] && !$maxYear) {
-						$attributes['value'] = 'now';
-
-					} elseif (!$attributes['empty'] && $maxYear && !$attributes['value']) {
-						$attributes['value'] = $maxYear;
-					}
-				} else {
-					$attributes['value'] = $value;
-				}
-			}
-		}
-
-		if (strlen($attributes['value']) > 4 || $attributes['value'] === 'now') {
-			$date = date_create($attributes['value']);
-			$attributes['value'] = null;
-			if ($date) {
-				$attributes['value'] = $date->format('Y');
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
-		}
-		$yearOptions = array('value' => $attributes['value'], 'min' => $minYear, 'max' => $maxYear, 'order' => 'desc');
-		if (isset($attributes['orderYear'])) {
-			$yearOptions['order'] = $attributes['orderYear'];
-			unset($attributes['orderYear']);
-		}
-		return $this->select(
-			$fieldName . '.year', $this->_generateOptions('year', $yearOptions),
-			$attributes
+	public function year($fieldName, $options = []) {
+		$off = array_diff($this->_datetimeParts, ['year']);
+		$off = array_combine(
+			$off,
+			array_fill(0, count($off), false)
 		);
+		$options = $off + $options;
+
+		if (isset($options['value'])) {
+			$options['val'] = $options['value'];
+		}
+
+		// If value is an integer reformat it.
+		$len = isset($options['val']) ? strlen($options['val']) : 0;
+		if (isset($options['val']) && $len > 0 && $len < 5) {
+			$options['val'] = [
+				'year' => (int)$options['val'],
+				'month' => date('m'),
+				'day' => date('d')
+			];
+		}
+
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
@@ -2172,6 +2156,7 @@ class FormHelper extends Helper {
 			'monthNames' => true,
 			'minYear' => null,
 			'maxYear' => null,
+			'orderYear' => 'desc',
 			'timeFormat' => 12,
 			'second' => false,
 		];
@@ -2216,7 +2201,10 @@ class FormHelper extends Helper {
 		if ($hasYear && isset($options['maxYear'])) {
 			$options['year']['end'] = $options['maxYear'];
 		}
-		unset($options['minYear'], $options['maxYear']);
+		if ($hasYear && isset($options['orderYear'])) {
+			$options['year']['order'] = $options['orderYear'];
+		}
+		unset($options['minYear'], $options['maxYear'], $options['orderYear']);
 
 		if (is_array($options['month'])) {
 			$options['month']['names'] = $options['monthNames'];

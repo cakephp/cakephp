@@ -1943,7 +1943,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->textarea('Model.textarea', array('disabled' => true));
 		$this->Form->select('Model.select', array(1, 2), array('disabled' => true));
 		$this->Form->radio('Model.radio', array(1, 2), array('disabled' => array(1, 2)));
-		$this->Form->year('Model.year', null, null, array('disabled' => true));
+		$this->Form->year('Model.year', array('disabled' => true));
 		$this->Form->month('Model.month', array('disabled' => true));
 		$this->Form->day('Model.day', array('disabled' => true));
 		$this->Form->hour('Model.hour', false, array('disabled' => true));
@@ -5792,10 +5792,10 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testYear() {
-		$result = $this->Form->year('Model.field', ['minYear' => 2006, 'maxYear' => 2007]);
+		$result = $this->Form->year('Model.field', ['value' => '', 'minYear' => 2006, 'maxYear' => 2007]);
 		$expected = array(
 			array('select' => array('name' => 'Model[field][year]')),
-			array('option' => array('value' => '')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			array('option' => array('value' => '2007')),
 			'2007',
@@ -5808,13 +5808,14 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->year('Model.field', [
+			'value' => '',
 			'minYear' => 2006,
 			'maxYear' => 2007,
 			'orderYear' => 'asc'
 		]);
 		$expected = array(
 			array('select' => array('name' => 'Model[field][year]')),
-			array('option' => array('value' => '')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			array('option' => array('value' => '2006')),
 			'2006',
@@ -5829,8 +5830,8 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
 		$result = $this->Form->year('Contact.published', [
 			'empty' => false,
-			'maxYear' => 2006,
-			'minYear' => 2007,
+			'minYear' => 2006,
+			'maxYear' => 2007,
 		]);
 		$expected = array(
 			array('select' => array('name' => 'Contact[published][year]')),
@@ -5838,26 +5839,6 @@ class FormHelperTest extends TestCase {
 			'2007',
 			'/option',
 			array('option' => array('value' => '2006', 'selected' => 'selected')),
-			'2006',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', [
-			'minYear' => 2006,
-			'maxYear' => 2007,
-			'value' => 2007
-		]);
-		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]')),
-			array('option' => array('value' => '')),
-			'/option',
-			array('option' => array('value' => '2007', 'selected' => 'selected')),
-			'2007',
-			'/option',
-			array('option' => array('value' => '2006')),
 			'2006',
 			'/option',
 			'/select',
@@ -5871,13 +5852,12 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testYearAutoExpandRange() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data['User']['birthday'] = '1930-10-10';
 		$result = $this->Form->year('User.birthday');
 		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
 
 		$result = $matches[1];
-		$expected = range(date('Y') + 20, 1930);
+		$expected = range(date('Y') + 5, 1930);
 		$this->assertEquals($expected, $result);
 
 		$this->Form->request->data['Project']['release'] = '2050-10-10';
@@ -5885,11 +5865,14 @@ class FormHelperTest extends TestCase {
 		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
 
 		$result = $matches[1];
-		$expected = range(2050, date('Y') - 20);
+		$expected = range(2050, date('Y') - 5);
 		$this->assertEquals($expected, $result);
 
 		$this->Form->request->data['Project']['release'] = '1881-10-10';
-		$result = $this->Form->year('Project.release', 1890, 1900);
+		$result = $this->Form->year('Project.release', [
+			'minYear' => 1890,
+			'maxYear' => 1900
+		]);
 		preg_match_all('/<option value="([\d]+)"/', $result, $matches);
 
 		$result = $matches[1];
