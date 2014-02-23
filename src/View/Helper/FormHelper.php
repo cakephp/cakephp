@@ -165,8 +165,8 @@ class FormHelper extends Helper {
 		'radioContainer' => '{{input}}{{label}}',
 		'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 		'formGroup' => '{{label}}{{input}}',
-		'groupContainer' => '<div class="{{type}}{{required}}">{{content}}</div>',
-		'groupContainerError' => '<div class="{{type}}{{required}} error">{{content}}{{error}}</div>'
+		'groupContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
+		'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>'
 	];
 
 /**

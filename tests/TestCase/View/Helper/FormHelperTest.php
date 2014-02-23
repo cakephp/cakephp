@@ -2455,7 +2455,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = array(
-			'div' => array('class' => 'email'),
+			'div' => array('class' => 'input email'),
 			'label' => array('for' => 'custom'),
 			'Email',
 			'/label',
@@ -2485,7 +2485,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Contact.email', array('type' => 'text'));
 		$expected = array(
-			'div' => array('class' => 'text'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'contact-email'),
 			'Email',
 			'/label',
@@ -2499,7 +2499,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Contact.5.email', array('type' => 'text'));
 		$expected = array(
-			'div' => array('class' => 'text'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'contact-5-email'),
 			'Email',
 			'/label',
@@ -2513,7 +2513,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('Contact.password');
 		$expected = array(
-			'div' => array('class' => 'password'),
+			'div' => array('class' => 'input password'),
 			'label' => array('for' => 'contact-password'),
 			'Password',
 			'/label',
@@ -2529,7 +2529,7 @@ class FormHelperTest extends TestCase {
 			'type' => 'file', 'class' => 'textbox'
 		));
 		$expected = array(
-			'div' => array('class' => 'file'),
+			'div' => array('class' => 'input file'),
 			'label' => array('for' => 'contact-email'),
 			'Email',
 			'/label',
@@ -2545,7 +2545,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('Contact.phone');
 		$expected = array(
-			'div' => array('class' => 'tel'),
+			'div' => array('class' => 'input tel'),
 			'label' => array('for' => 'contact-phone'),
 			'Phone',
 			'/label',
@@ -2562,7 +2562,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->create();
 		$result = $this->Form->input('Model.0.OtherModel.field', array('id' => 'myId'));
 		$expected = array(
-			'div' => array('class' => 'text'),
+			'div' => array('class' => 'input text'),
 			'label' => array('for' => 'myId'),
 			'Field',
 			'/label',
@@ -2580,7 +2580,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('Contact.field');
 		$expected = array(
-			'div' => array('class' => 'text error'),
+			'div' => array('class' => 'input text error'),
 			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
@@ -2623,7 +2623,7 @@ class FormHelperTest extends TestCase {
 			)
 		));
 		$expected = array(
-			'div' => array('class' => 'text error'),
+			'div' => array('class' => 'input text error'),
 			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
@@ -2643,7 +2643,7 @@ class FormHelperTest extends TestCase {
 			)
 		));
 		$expected = array(
-			'div' => array('class' => 'text error'),
+			'div' => array('class' => 'input text error'),
 			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
