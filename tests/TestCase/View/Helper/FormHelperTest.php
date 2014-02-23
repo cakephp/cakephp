@@ -1946,7 +1946,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->year('Model.year', array('disabled' => true));
 		$this->Form->month('Model.month', array('disabled' => true));
 		$this->Form->day('Model.day', array('disabled' => true));
-		$this->Form->hour('Model.hour', false, array('disabled' => true));
+		$this->Form->hour('Model.hour', array('disabled' => true));
 		$this->Form->minute('Model.minute', array('disabled' => true));
 		$this->Form->meridian('Model.meridian', array('disabled' => true));
 
@@ -5693,13 +5693,12 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHour() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 
-		$result = $this->Form->hour('Model.field', false);
+		$result = $this->Form->hour('Model.field', ['value' => '']);
 		$expected = array(
-			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
-			array('option' => array('value' => '')),
+			array('select' => array('name' => 'Model[field][hour]')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
 			'1',
@@ -5713,9 +5712,9 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
-		$result = $this->Form->hour('Model.field', false);
+		$result = $this->Form->hour('Model.field', ['format' => 12]);
 		$expected = array(
-			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
+			array('select' => array('name' => 'Model[field][hour]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5733,16 +5732,16 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['field'] = '';
-		$result = $this->Form->hour('Model.field', true, array('value' => '23'));
+		$result = $this->Form->hour('Model.field', array('format' => 24, 'value' => '23'));
 		$this->assertContains('<option value="23" selected="selected">23</option>', $result);
 
-		$result = $this->Form->hour('Model.field', false, array('value' => '23'));
+		$result = $this->Form->hour('Model.field', array('format' => 12, 'value' => '23'));
 		$this->assertContains('<option value="11" selected="selected">11</option>', $result);
 
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
-		$result = $this->Form->hour('Model.field', true);
+		$result = $this->Form->hour('Model.field', ['format' => 24]);
 		$expected = array(
-			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
+			array('select' => array('name' => 'Model[field][hour]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00', 'selected' => 'selected')),
@@ -5760,15 +5759,15 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		unset($this->Form->request->data['Model']['field']);
-		$result = $this->Form->hour('Model.field', true, array('value' => 'now'));
+		$result = $this->Form->hour('Model.field', array('format' => 24, 'value' => 'now'));
 		$thisHour = date('H');
 		$optValue = date('G');
 		$this->assertRegExp('/<option value="' . $thisHour . '" selected="selected">' . $optValue . '<\/option>/', $result);
 
 		$this->Form->request->data['Model']['field'] = '2050-10-10 01:12:32';
-		$result = $this->Form->hour('Model.field', true);
+		$result = $this->Form->hour('Model.field', ['format' => 24]);
 		$expected = array(
-			array('select' => array('name' => 'Model[field][hour]', 'id' => 'ModelFieldHour')),
+			array('select' => array('name' => 'Model[field][hour]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),

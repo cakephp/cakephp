@@ -1961,44 +1961,27 @@ class FormHelper extends Helper {
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
+ * - `format` Set to 12 or 24 to use 12 or 24 hour formatting. Defaults to 12.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param boolean $format24Hours True for 24 hours format
  * @param array $attributes List of HTML attributes
  * @return string Completed hour select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::hour
  */
-	public function hour($fieldName, $format24Hours = false, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->_dateTimeSelected('hour', $fieldName, $attributes);
+	public function hour($fieldName, $options = []) {
+		$options += ['format' => 12];
+		$options = $this->_singleDatetime($options, 'hour');
 
-		if (strlen($attributes['value']) > 2) {
-			try {
-				$date = new DateTime($attributes['value']);
-				if ($format24Hours) {
-					$attributes['value'] = $date->format('H');
-				} else {
-					$attributes['value'] = $date->format('g');
-				}
-			} catch (Exception $e) {
-				$attributes['value'] = null;
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
-		}
+		$options['timeFormat'] = $options['format'];
+		unset($options['format']);
 
-		if ($attributes['value'] > 12 && !$format24Hours) {
-			$attributes['value'] -= 12;
+		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 24) {
+			$options['val'] = [
+				'hour' => (int)$options['val'],
+				'minute' => date('i'),
+			];
 		}
-		if (($attributes['value'] === 0 || $attributes['value'] === '00') && !$format24Hours) {
-			$attributes['value'] = 12;
-		}
-
-		return $this->select(
-			$fieldName . ".hour",
-			$this->_generateOptions($format24Hours ? 'hour24' : 'hour'),
-			$attributes
-		);
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
