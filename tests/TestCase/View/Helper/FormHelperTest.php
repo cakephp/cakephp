@@ -5423,10 +5423,10 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMonth() {
-		$result = $this->Form->month('Model.field');
+		$result = $this->Form->month('Model.field', ['value' => '']);
 		$expected = array(
 			array('select' => array('name' => 'Model[field][month]')),
-			array('option' => array('value' => '')),
+			array('option' => array('value' => '', 'selected' => 'selected')),
 			'/option',
 			array('option' => array('value' => '01')),
 			date('F', strtotime('2008-01-01 00:00:00')),
@@ -5438,10 +5438,10 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->month('Model.field', array('empty' => true));
+		$result = $this->Form->month('Model.field', ['empty' => true, 'value' => '']);
 		$expected = array(
 			array('select' => array('name' => 'Model[field][month]')),
-			array('option' => array('value' => '')),
+			array('option' => array('selected' => 'selected',  'value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
 			date('F', strtotime('2008-01-01 00:00:00')),
@@ -5453,30 +5453,31 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->month('Model.field', array('monthNames' => false));
+		$result = $this->Form->month('Model.field', ['value' => '', 'monthNames' => false]);
 		$expected = array(
 			array('select' => array('name' => 'Model[field][month]')),
-			array('option' => array('value' => '')),
+			array('option' => array('selected' => 'selected',  'value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
-			'01',
+			'1',
 			'/option',
 			array('option' => array('value' => '02')),
-			'02',
+			'2',
 			'/option',
 			'*/select',
 		);
 		$this->assertTags($result, $expected);
 
-		$monthNames = array(
+		$monthNames = [
 			'01' => 'Jan', '02' => 'Feb', '03' => 'Mar', '04' => 'Apr', '05' => 'May', '06' => 'Jun',
-			'07' => 'Jul', '08' => 'Aug', '09' => 'Sep', '10' => 'Oct', '11' => 'Nov', '12' => 'Dec');
-		$result = $this->Form->month('Model.field', array('monthNames' => $monthNames));
+			'07' => 'Jul', '08' => 'Aug', '09' => 'Sep', '10' => 'Oct', '11' => 'Nov', '12' => 'Dec'
+		];
+		$result = $this->Form->month('Model.field', array('value' => '1', 'monthNames' => $monthNames));
 		$expected = array(
 			array('select' => array('name' => 'Model[field][month]')),
 			array('option' => array('value' => '')),
 			'/option',
-			array('option' => array('value' => '01')),
+			array('option' => array('value' => '01', 'selected' => 'selected')),
 			'Jan',
 			'/option',
 			array('option' => array('value' => '02')),

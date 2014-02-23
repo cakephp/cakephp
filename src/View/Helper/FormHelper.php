@@ -1865,12 +1865,16 @@ class FormHelper extends Helper {
 		);
 		$options = $off + $options;
 
+		if (isset($options['value'])) {
+			$options['val'] = $options['value'];
+		}
+
 		// If value is an integer reformat it.
-		if (isset($options['value']) && $options['value'] > 0 && $options['value'] < 31) {
-			$options['value'] = [
+		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 31) {
+			$options['val'] = [
 				'year' => date('Y'),
 				'month' => date('m'),
-				'day' => (int)$options['value']
+				'day' => (int)$options['val']
 			];
 		}
 		return $this->datetime($fieldName, $options);
@@ -1938,7 +1942,7 @@ class FormHelper extends Helper {
 /**
  * Returns a SELECT element for months.
  *
- * ### Attributes:
+ * ### Options:
  *
  * - `monthNames` - If false, 2 digit numbers will be used instead of text.
  *   If a array, the given array will be used.
@@ -1947,33 +1951,30 @@ class FormHelper extends Helper {
  * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $attributes Attributes for the select element
+ * @param array $options Attributes for the select element
  * @return string A generated month select dropdown.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::month
  */
-	public function month($fieldName, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->_dateTimeSelected('month', $fieldName, $attributes);
-
-		if (strlen($attributes['value']) > 2) {
-			$date = date_create($attributes['value']);
-			$attributes['value'] = null;
-			if ($date) {
-				$attributes['value'] = $date->format('m');
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
-		}
-		$defaults = array('monthNames' => true);
-		$attributes = array_merge($defaults, (array)$attributes);
-		$monthNames = $attributes['monthNames'];
-		unset($attributes['monthNames']);
-
-		return $this->select(
-			$fieldName . ".month",
-			$this->_generateOptions('month', array('monthNames' => $monthNames)),
-			$attributes
+	public function month($fieldName, $options = array()) {
+		$off = array_diff($this->_datetimeParts, ['month']);
+		$off = array_combine(
+			$off,
+			array_fill(0, count($off), false)
 		);
+		$options = $off + $options;
+
+		if (isset($options['value'])) {
+			$options['val'] = $options['value'];
+		}
+
+		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 12) {
+			$options['val'] = [
+				'year' => date('Y'),
+				'month' => (int)$options['val'],
+				'day' => date('d')
+			];
+		}
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
