@@ -2541,26 +2541,28 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data = array('Contact' => array('phone' => 'Hello & World > weird chars'));
+		$entity = new Entity(['phone' => 'Hello & World > weird chars']);
+		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('Contact.phone');
 		$expected = array(
-			'div' => array('class' => 'input tel'),
-			'label' => array('for' => 'ContactPhone'),
+			'div' => array('class' => 'tel'),
+			'label' => array('for' => 'contact-phone'),
 			'Phone',
 			'/label',
 			array('input' => array(
 				'type' => 'tel', 'name' => 'Contact[phone]',
 				'value' => 'Hello &amp; World &gt; weird chars',
-				'id' => 'ContactPhone', 'maxlength' => 255
+				'id' => 'contact-phone', 'maxlength' => 255
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['0']['OtherModel']['field'] = 'My value';
+		$this->Form->create();
 		$result = $this->Form->input('Model.0.OtherModel.field', array('id' => 'myId'));
 		$expected = array(
-			'div' => array('class' => 'input text'),
+			'div' => array('class' => 'text'),
 			'label' => array('for' => 'myId'),
 			'Field',
 			'/label',
@@ -2574,16 +2576,17 @@ class FormHelperTest extends TestCase {
 
 		unset($this->Form->request->data);
 
-		$Contact->validationErrors['field'] = array('Badness!');
+		$entity->errors('field', 'Badness!');
+		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('Contact.field');
 		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
+			'div' => array('class' => 'text error'),
+			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
+				'id' => 'contact-field', 'class' => 'form-error'
 			),
 			array('div' => array('class' => 'error-message')),
 			'Badness!',
@@ -2593,15 +2596,18 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.field', array(
-			'div' => false, 'error' => array('attributes' => array('wrap' => 'span'))
+			'templates' => [
+				'groupContainerError' => '{{content}}{{error}}',
+				'error' => '<span class="error-message">{{content}}</span>'
+			]
 		));
 		$expected = array(
-			'label' => array('for' => 'ContactField'),
+			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
+				'id' => 'contact-field', 'class' => 'form-error'
 			),
 			array('span' => array('class' => 'error-message')),
 			'Badness!',
@@ -2609,88 +2615,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.field', array(
-			'type' => 'text', 'error' => array('attributes' => array('class' => 'error'))
-		));
-		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
-			'Field',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
-			),
-			array('div' => array('class' => 'error')),
-			'Badness!',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.field', array(
-			'div' => array('tag' => 'span'), 'error' => array('attributes' => array('wrap' => false))
-		));
-		$expected = array(
-			'span' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
-			'Field',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
-			),
-			'Badness!',
-			'/span'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.field', array('after' => 'A message to you, Rudy'));
-		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
-			'Field',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
-			),
-			'A message to you, Rudy',
-			array('div' => array('class' => 'error-message')),
-			'Badness!',
-			'/div',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->setEntity(null);
-		$this->Form->setEntity('Contact.field');
-		$result = $this->Form->input('Contact.field', array(
-			'after' => 'A message to you, Rudy', 'error' => false
-		));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactField'),
-			'Field',
-			'/label',
-			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'ContactField', 'class' => 'form-error'),
-			'A message to you, Rudy',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Object.field', array('after' => 'A message to you, Rudy'));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ObjectField'),
-			'Field',
-			'/label',
-			'input' => array('type' => 'text', 'name' => 'Object[field]', 'id' => 'ObjectField'),
-			'A message to you, Rudy',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$Contact->validationErrors['field'] = array('minLength');
+		$entity->errors('field', ['minLength']);
 		$result = $this->Form->input('Contact.field', array(
 			'error' => array(
 				'minLength' => 'Le login doit contenir au moins 2 caractères',
@@ -2698,11 +2623,11 @@ class FormHelperTest extends TestCase {
 			)
 		));
 		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
+			'div' => array('class' => 'text error'),
+			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'ContactField', 'class' => 'form-error'),
+			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'contact-field', 'class' => 'form-error'),
 			array('div' => array('class' => 'error-message')),
 			'Le login doit contenir au moins 2 caractères',
 			'/div',
@@ -2710,23 +2635,22 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$Contact->validationErrors['field'] = array('maxLength');
+		$entity->errors('field', ['maxLength']);
 		$result = $this->Form->input('Contact.field', array(
 			'error' => array(
-				'attributes' => array('wrap' => 'span', 'rel' => 'fake'),
 				'minLength' => 'Le login doit contenir au moins 2 caractères',
 				'maxLength' => 'login too large',
 			)
 		));
 		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
+			'div' => array('class' => 'text error'),
+			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'ContactField', 'class' => 'form-error'),
-			array('span' => array('class' => 'error-message', 'rel' => 'fake')),
+			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'contact-field', 'class' => 'form-error'),
+			array('div' => array('class' => 'error-message')),
 			'login too large',
-			'/span',
+			'/div',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
