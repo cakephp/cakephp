@@ -277,7 +277,7 @@ class DateTime implements WidgetInterface {
 		if (empty($options['options'])) {
 			$options['options'] = $this->_generateNumbers($options['start'], $options['end']);
 		}
-		if ($options['order'] === 'asc') {
+		if ($options['order'] === 'desc') {
 			$options['options'] = array_reverse($options['options'], true);
 		}
 		unset($options['start'], $options['end'], $options['order']);

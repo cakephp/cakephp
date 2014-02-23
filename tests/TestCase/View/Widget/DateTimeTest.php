@@ -221,7 +221,7 @@ class DateTimeTest extends TestCase {
 				'start' => 2013,
 				'end' => 2015,
 				'data-foo' => 'test',
-				'order' => 'desc',
+				'order' => 'asc',
 			],
 			'month' => false,
 			'day' => false,
@@ -245,7 +245,7 @@ class DateTimeTest extends TestCase {
 			'year' => [
 				'start' => 2013,
 				'end' => 2015,
-				'order' => 'asc'
+				'order' => 'desc'
 			],
 			'month' => false,
 			'day' => false,
@@ -287,12 +287,12 @@ class DateTimeTest extends TestCase {
 		]);
 		$expected = [
 			'select' => ['name' => 'date[year]'],
-			['option' => ['value' => '2010', 'selected' => 'selected']], '2010', '/option',
-			['option' => ['value' => '2011']], '2011', '/option',
-			['option' => ['value' => '2012']], '2012', '/option',
-			['option' => ['value' => '2013']], '2013', '/option',
-			['option' => ['value' => '2014']], '2014', '/option',
 			['option' => ['value' => '2015']], '2015', '/option',
+			['option' => ['value' => '2014']], '2014', '/option',
+			['option' => ['value' => '2013']], '2013', '/option',
+			['option' => ['value' => '2012']], '2012', '/option',
+			['option' => ['value' => '2011']], '2011', '/option',
+			['option' => ['value' => '2010', 'selected' => 'selected']], '2010', '/option',
 			'/select',
 		];
 		$this->assertTags($result, $expected);
@@ -313,10 +313,10 @@ class DateTimeTest extends TestCase {
 		]);
 		$expected = [
 			'select' => ['name' => 'date[year]'],
-			['option' => ['value' => '2010']], '2010', '/option',
-			['option' => ['value' => '2011']], '2011', '/option',
-			['option' => ['value' => '2012']], '2012', '/option',
 			['option' => ['value' => '2013', 'selected' => 'selected']], '2013', '/option',
+			['option' => ['value' => '2012']], '2012', '/option',
+			['option' => ['value' => '2011']], '2011', '/option',
+			['option' => ['value' => '2010']], '2010', '/option',
 			'/select',
 		];
 		$this->assertTags($result, $expected);
