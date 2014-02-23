@@ -3389,24 +3389,22 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMagicTypeDoesNotOverride() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user', array('type' => 'checkbox'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
 				'type' => 'hidden',
-				'name' => 'data[Model][user]',
-				'id' => 'ModelUser_',
+				'name' => 'Model[user]',
 				'value' => 0,
 			)),
 			array('input' => array(
-				'name' => 'data[Model][user]',
+				'name' => 'Model[user]',
 				'type' => 'checkbox',
-				'id' => 'ModelUser',
+				'id' => 'model-user',
 				'value' => 1
 			)),
-			'label' => array('for' => 'ModelUser'), 'User', '/label',
+			'label' => array('for' => 'model-user'), 'User', '/label',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
