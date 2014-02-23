@@ -541,6 +541,7 @@ class DateTimeTest extends TestCase {
 			'val' => $now,
 		]);
 		$this->assertContains('<select name="date[hour]" data-foo="test">', $result);
+		$this->assertContains('<option value="00">0</option>', $result);
 		$this->assertContains(
 			'<option value="01">1</option>',
 			$result,
@@ -556,16 +557,37 @@ class DateTimeTest extends TestCase {
 			$result,
 			'selected value present'
 		);
-		$this->assertContains(
-			'<option value="24">24</option>',
-			$result,
-			'contains 24 hours'
-		);
+		$this->assertContains('<option value="23">23</option>', $result);
 		$this->assertNotContains('date[day]', $result, 'No day select.');
 		$this->assertNotContains('value="0"', $result, 'No zero hour');
-		$this->assertNotContains('value="25"', $result, 'No 25th hour');
+		$this->assertNotContains('value="24"', $result, 'No 25th hour');
 		$this->assertNotContains('<select name="date[meridian]">', $result);
 		$this->assertNotContains('<option value="pm" selected="selected">pm</option>', $result);
+	}
+
+/**
+ * test selecting various options in 24 hr mode.
+ *
+ * @return void
+ */
+	public function testRenderHour24SelectedValues() {
+		$now = new \DateTime('2010-09-09 23:00:00');
+		$data = [
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => [],
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		];
+		$result = $this->DateTime->render($data);
+		$this->assertContains('<option value="23" selected="selected">23</option>', $result);
+
+		$data['val'] = '2010-09-09 23:00:00';
+		$result = $this->DateTime->render($data);
+		$this->assertContains('<option value="23" selected="selected">23</option>', $result);
 	}
 
 /**
