@@ -2404,8 +2404,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('ValidateUser.balance');
+		$this->Form->create('ValidateUsers');
+		$result = $this->Form->input('ValidateUsers.balance');
 		$expected = array(
 			'div' => array('class'),
 			'label' => array('for'),

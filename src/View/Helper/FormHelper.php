@@ -859,8 +859,7 @@ class FormHelper extends Helper {
 			'label' => null,
 			'error' => null,
 			'selected' => null,
-			'options' => null,
-			'templates' => []
+			'options' => null
 		];
 		$options = $this->_parseOptions($fieldName, $options);
 
@@ -870,58 +869,21 @@ class FormHelper extends Helper {
 		}
 
 		$template = 'groupContainer';
+		$error = null;
 		if ($options['type'] !== 'hidden' && $options['error'] !== false) {
-			$options['error'] = $this->error($fieldName, $error);
-			$template = 'groupContainerError';
+			$error = $this->error($fieldName, $options['error']);
+			$template = empty($error) ? $template : 'groupContainerError';
+			unset($options['error']);
 		}
 
-		$out['input'] = $this->_getInput($options);
+		$input = $this->{$options['type']}($fieldName, $options);
 
 		return $this->formatTemplate($template, [
-			'content' => $this->formatTemplate('formGroup', $out),
-			'error' => $options['error'],
+			'content' => $this->formatTemplate('formGroup', compact('input', 'label')),
+			'error' => $error,
+			'required' => null,
 			'type' => $options['type'],
 		]);
-	}
-
-/**
- * Generates an input element
- *
- * @param array $args The options for the input element
- * @return string The generated input element
- */
-	protected function _getInput($args) {
-		extract($args);
-		switch ($type) {
-			case 'hidden':
-				return $this->hidden($fieldName, $options);
-			case 'checkbox':
-				return $this->checkbox($fieldName, $options);
-			case 'radio':
-				return $this->radio($fieldName, $radioOptions, $options);
-			case 'file':
-				return $this->file($fieldName, $options);
-			case 'select':
-				$options += array('options' => array(), 'value' => $selected);
-				$list = $options['options'];
-				unset($options['options']);
-				return $this->select($fieldName, $list, $options);
-			case 'time':
-				$options['value'] = $selected;
-				return $this->dateTime($fieldName, null, $timeFormat, $options);
-			case 'date':
-				$options['value'] = $selected;
-				return $this->dateTime($fieldName, $dateFormat, null, $options);
-			case 'datetime':
-				$options['value'] = $selected;
-				return $this->dateTime($fieldName, $dateFormat, $timeFormat, $options);
-			case 'textarea':
-				return $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
-			case 'url':
-				return $this->text($fieldName, array('type' => 'url') + $options);
-			default:
-				return $this->{$type}($fieldName, $options);
-		}
 	}
 
 /**
@@ -931,16 +893,13 @@ class FormHelper extends Helper {
  * @return array Options
  */
 	protected function _parseOptions($fieldName, $options) {
-		if (!empty($options['type'])) {
+		$typePassed = true;
+		if (empty($options['type'])) {
+			$typePassed = false;
 			$options['type'] = $this->_inputType($fieldName, $options);
 		}
 
-		$options = $this->_magicOptions($fieldName, $options);
-
-		if (in_array(['datetime', 'date', 'time', 'select'], $options['type'])) {
-			$options += ['empty' => false];
-		}
-
+		$options = $this->_magicOptions($fieldName, $options, $typePassed);
 		return $options;
 	}
 
@@ -1009,7 +968,7 @@ class FormHelper extends Helper {
  * @param array $options
  * @return array
  */
-	protected function _magicOptions($fieldName, $options) {
+	protected function _magicOptions($fieldName, $options, $allowOverride) {
 		$context = $this->_getContext();
 		$type = $context->type($fieldName);
 		$fielDef = $context->attributes($fieldName);
@@ -1026,7 +985,8 @@ class FormHelper extends Helper {
 		// Missing HABTM
 		//...
 
-		if (in_array($options['type'], ['text', 'number', 'radio', 'select'])) {
+		$typesWithOptions = ['text', 'number', 'radio', 'select'];
+		if ($allowOverride && in_array($options['type'], $typesWithOptions)) {
 			$options = $this->_optionsOptions($fieldName, $options);
 		}
 
@@ -1041,6 +1001,10 @@ class FormHelper extends Helper {
 		$allowedTypes = ['text', 'email', 'tel', 'url', 'search'];
 		if ($autoLength && in_array($options['type'], $allowedTypes)) {
 			$options['maxlength'] = $fieldDef['length'];
+		}
+
+		if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {
+			$options += ['empty' => false];
 		}
 
 		return $options;
@@ -1096,7 +1060,7 @@ class FormHelper extends Helper {
  * @return string Generated label element
  */
 	protected function _inputLabel($fieldName, $label, $options) {
-		$labelAttributes = $this->domId(array(), 'for');
+		$labelAttributes = [];
 		$idKey = null;
 		if ($options['type'] === 'date' || $options['type'] === 'datetime') {
 			$firstInput = 'M';
