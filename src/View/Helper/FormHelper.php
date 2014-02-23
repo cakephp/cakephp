@@ -302,7 +302,6 @@ class FormHelper extends Helper {
 				$append .= $this->hidden('_method', array(
 					'name' => '_method',
 					'value' => strtoupper($options['type']),
-					'id' => null,
 					'secure' => static::SECURE_SKIP
 				));
 			default:
@@ -1491,10 +1490,10 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::postButton
  */
 	public function postButton($title, $url, $options = array()) {
-		$out = $this->create(false, array('id' => false, 'url' => $url));
+		$out = $this->create(false, array('url' => $url));
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
-				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
+				$out .= $this->hidden($key, array('value' => $value));
 			}
 			unset($options['data']);
 		}
@@ -1551,7 +1550,6 @@ class FormHelper extends Helper {
 		$formOptions = array(
 			'action' => $this->url($url),
 			'name' => $formName,
-			'id' => $formName,
 			'style' => 'display:none;',
 			'method' => 'post',
 		);
@@ -1570,7 +1568,7 @@ class FormHelper extends Helper {
 		if (isset($options['data']) && is_array($options['data'])) {
 			foreach ($options['data'] as $key => $value) {
 				$fields[$key] = $value;
-				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
+				$out .= $this->hidden($key, array('value' => $value));
 			}
 			unset($options['data']);
 		}
@@ -2206,95 +2204,6 @@ class FormHelper extends Helper {
 			$options['val'] = new \DateTime();
 		}
 		return $options;
-	}
-
-/**
- * Parse the value for a datetime selected value
- *
- * @param string|array $value The selected value.
- * @param integer $timeFormat The time format
- * @return array Array of selected value.
- */
-	protected function _getDateTimeValue($value, $timeFormat) {
-		$year = $month = $day = $hour = $min = $meridian = null;
-		if (is_array($value)) {
-			extract($value);
-			if ($meridian === 'pm') {
-				$hour += 12;
-			}
-			return array($year, $month, $day, $hour, $min, $meridian);
-		}
-
-		if (is_numeric($value)) {
-			$value = strftime('%Y-%m-%d %H:%M:%S', $value);
-		}
-		$meridian = 'am';
-		$pos = strpos($value, '-');
-		if ($pos !== false) {
-			$date = explode('-', $value);
-			$days = explode(' ', $date[2]);
-			$day = $days[0];
-			$month = $date[1];
-			$year = $date[0];
-		} else {
-			$days[1] = $value;
-		}
-
-		if (!empty($timeFormat)) {
-			$time = explode(':', $days[1]);
-
-			if ($time[0] >= 12) {
-				$meridian = 'pm';
-			}
-			$hour = $min = null;
-			if (isset($time[1])) {
-				$hour = $time[0];
-				$min = $time[1];
-			}
-		}
-		return array($year, $month, $day, $hour, $min, $meridian);
-	}
-
-/**
- * Gets the input field name for the current tag
- *
- * @param array $options
- * @param string $field
- * @param string $key
- * @return array
- */
-	protected function _name($options = array(), $field = null, $key = 'name') {
-		if ($this->requestType === 'get') {
-			if ($options === null) {
-				$options = array();
-			} elseif (is_string($options)) {
-				$field = $options;
-				$options = 0;
-			}
-
-			if (!empty($field)) {
-				$this->setEntity($field);
-			}
-
-			if (is_array($options) && isset($options[$key])) {
-				return $options;
-			}
-
-			$entity = $this->entity();
-			$model = $this->model();
-			$name = $model === $entity[0] && isset($entity[1]) ? $entity[1] : $entity[0];
-			$last = $entity[count($entity) - 1];
-			if (in_array($last, $this->_fieldSuffixes)) {
-				$name .= '[' . $last . ']';
-			}
-
-			if (is_array($options)) {
-				$options[$key] = $name;
-				return $options;
-			}
-			return $name;
-		}
-		return parent::_name($options, $field, $key);
 	}
 
 /**

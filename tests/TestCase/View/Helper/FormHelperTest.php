@@ -6348,7 +6348,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
@@ -6361,7 +6361,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'DELETE'),
 			'/form',
@@ -6374,7 +6374,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
@@ -6387,7 +6387,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
@@ -6403,7 +6403,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'target' => '_blank', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
@@ -6421,7 +6421,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/items/delete/10',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
@@ -6446,7 +6446,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array('type' => 'hidden', 'name' => '_csrfToken', 'value' => 'testkey')),
@@ -6478,7 +6478,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form'
@@ -6497,14 +6497,14 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form',
 			array(
 				'form' => array(
 					'method' => 'post', 'action' => '/posts/delete/2',
-					'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+					'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 				),
 			),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'DELETE')),
@@ -6522,7 +6522,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, array(
 			'form' => array(
 				'method' => 'post', 'action' => '/posts/delete/1',
-				'name' => 'preg:/post_\w+/', 'id' => 'preg:/post_\w+/', 'style' => 'display:none;'
+				'name' => 'preg:/post_\w+/', 'style' => 'display:none;'
 			),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
 			'/form'
