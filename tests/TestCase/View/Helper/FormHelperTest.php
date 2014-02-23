@@ -543,6 +543,7 @@ class FormHelperTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
+		TableRegistry::clear();
 	}
 
 /**
@@ -2662,13 +2663,15 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputZero() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('User');
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('0');
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'User0'), '/label',
-			'input' => array('type' => 'text', 'name' => 'User[0]', 'id' => 'User0'),
+			'label' => array('for' => '0'), '/label',
+			'input' => array('type' => 'text', 'name' => '0', 'id' => '0'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
