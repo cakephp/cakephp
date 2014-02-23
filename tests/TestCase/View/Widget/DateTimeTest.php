@@ -394,6 +394,34 @@ class DateTimeTest extends TestCase {
 	}
 
 /**
+ * Test rendering month widget with custom names.
+ *
+ * @return void
+ */
+	public function testRenderMonthWidgetWithCustomNames() {
+		$now = new \DateTime('2010-09-01 12:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'month' => [
+				'names' => ['01' => 'Jan', '02' => 'Feb']
+			],
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[month]'],
+			['option' => ['value' => '01']], 'Jan', '/option',
+			['option' => ['value' => '02']], 'Feb', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test rendering the day widget.
  *
  * @return void

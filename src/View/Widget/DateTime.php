@@ -302,6 +302,8 @@ class DateTime implements WidgetInterface {
 		if (empty($options['options'])) {
 			if ($options['names'] === true) {
 				$options['options'] = $this->_getMonthNames($options['leadingZeroKey']);
+			} elseif (is_array($options['names'])) {
+				$options['options'] = $options['names'];
 			} else {
 				$options['options'] = $this->_generateNumbers(1, 12, $options);
 			}
