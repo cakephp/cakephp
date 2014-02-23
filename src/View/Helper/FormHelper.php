@@ -68,7 +68,13 @@ class FormHelper extends Helper {
  * @var array
  */
 	public $settings = [
-		'errorClass' => 'form-error'
+		'errorClass' => 'form-error',
+		'typeMap' => [
+			'string' => 'text', 'datetime' => 'datetime', 'boolean' => 'checkbox',
+			'timestamp' => 'datetime', 'text' => 'textarea', 'time' => 'time',
+			'date' => 'date', 'float' => 'number', 'integer' => 'number',
+			'decimal' => 'number', 'binary' => 'file', 'uuid' => 'string'
+		]
 	];
 
 /**
@@ -856,7 +862,7 @@ class FormHelper extends Helper {
 			'options' => null,
 			'templates' => []
 		];
-		$options = $this->_parseOptions($options);
+		$options = $this->_parseOptions($fieldName, $options);
 
 		$label = $this->_getLabel($fieldName, $options);
 		if ($options['type'] !== 'radio') {
@@ -924,18 +930,12 @@ class FormHelper extends Helper {
  * @param array $options
  * @return array Options
  */
-	protected function _parseOptions($options) {
+	protected function _parseOptions($fieldName, $options) {
 		if (!empty($options['type'])) {
-			$options = $this->_magicOptions($options);
+			$options['type'] = $this->_inputType($fieldName, $options);
 		}
 
-		if (in_array($options['type'], ['radio', 'select'])) {
-			$options = $this->_optionsOptions($options);
-		}
-
-		if (isset($options['rows']) || isset($options['cols'])) {
-			$options['type'] = 'textarea';
-		}
+		$options = $this->_magicOptions($fieldName, $options);
 
 		if (in_array(['datetime', 'date', 'time', 'select'], $options['type'])) {
 			$options += ['empty' => false];
@@ -944,18 +944,53 @@ class FormHelper extends Helper {
 		return $options;
 	}
 
+	protected function _inputType($fieldName, $options) {
+		$context = $this->_getContext();
+		$primaryKey = $context->primaryKey();
+
+		if (in_array($fieldName, $primaryKey)) {
+			return 'hidden';
+		}
+
+		if (substr($fieldName, -3) === '_id') {
+			return 'select';
+		}
+
+		$internalType = $context->type($fieldName);
+		$map = $this->settings['typeMap'];
+		$type = isset($map[$internalType]) ? $map[$internalType] : 'text';
+
+		switch (true) {
+			case isset($options['checked']) :
+				return 'checkbox';
+			case isset($options['options']) :
+				return 'select';
+			case in_array($fieldName, ['passwd', 'password']) :
+				return 'password';
+			case in_array($fieldName, ['tel', 'telephone', 'phone']) :
+				return 'tel';
+			case $fieldName === 'email':
+				return 'email';
+			case isset($options['rows']) || isset($options['cols']) :
+				return 'textarea';
+		}
+
+		return $type;
+	}
+
 /**
  * Generates list of options for multiple select
  *
  * @param array $options
  * @return array
  */
-	protected function _optionsOptions($options) {
+	protected function _optionsOptions($fieldName, $options) {
 		if (isset($options['options'])) {
 			return $options;
 		}
+
 		$varName = Inflector::variable(
-			Inflector::pluralize(preg_replace('/_id$/', '', $this->field()))
+			Inflector::pluralize(preg_replace('/_id$/', '', $fieldName))
 		);
 		$varOptions = $this->_View->get($varName);
 		if (!is_array($varOptions)) {
@@ -974,70 +1009,40 @@ class FormHelper extends Helper {
  * @param array $options
  * @return array
  */
-	protected function _magicOptions($options) {
-		$modelKey = $this->model();
-		$fieldKey = $this->field();
-		$options['type'] = 'text';
-		if (isset($options['options'])) {
-			$options['type'] = 'select';
-		} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
-			$options['type'] = 'password';
-		} elseif (in_array($fieldKey, array('tel', 'telephone', 'phone'))) {
-			$options['type'] = 'tel';
-		} elseif ($fieldKey === 'email') {
-			$options['type'] = 'email';
-		} elseif (isset($options['checked'])) {
-			$options['type'] = 'checkbox';
-		} elseif ($fieldDef = $this->_introspectModel($modelKey, 'fields', $fieldKey)) {
-			$type = $fieldDef['type'];
-			$primaryKey = $this->fieldset[$modelKey]['key'];
-			$map = array(
-				'string' => 'text', 'datetime' => 'datetime',
-				'boolean' => 'checkbox', 'timestamp' => 'datetime',
-				'text' => 'textarea', 'time' => 'time',
-				'date' => 'date', 'float' => 'number',
-				'integer' => 'number', 'decimal' => 'number',
-				'binary' => 'file'
-			);
+	protected function _magicOptions($fieldName, $options) {
+		$context = $this->_getContext();
+		$type = $context->type($fieldName);
+		$fielDef = $context->attributes($fieldName);
 
-			if (isset($this->map[$type])) {
-				$options['type'] = $this->map[$type];
-			} elseif (isset($map[$type])) {
-				$options['type'] = $map[$type];
-			}
-			if ($fieldKey == $primaryKey) {
-				$options['type'] = 'hidden';
-			}
-			if (
-				$options['type'] === 'number' &&
-				!isset($options['step'])
-			) {
-				if ($type === 'decimal') {
-					$decimalPlaces = substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1);
-					$options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
-				} elseif ($type === 'float') {
-					$options['step'] = 'any';
-				}
+		if ($options['type'] === 'number' && !isset($options['step'])) {
+			if ($type === 'decimal') {
+				$decimalPlaces = substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1);
+				$options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+			} elseif ($type === 'float') {
+				$options['step'] = 'any';
 			}
 		}
 
-		if (preg_match('/_id$/', $fieldKey) && $options['type'] !== 'hidden') {
-			$options['type'] = 'select';
+		// Missing HABTM
+		//...
+
+		if (in_array($options['type'], ['text', 'number', 'radio', 'select'])) {
+			$options = $this->_optionsOptions($fieldName, $options);
 		}
 
-		if ($modelKey === $fieldKey) {
-			$options['type'] = 'select';
-			if (!isset($options['multiple'])) {
-				$options['multiple'] = 'multiple';
-			}
-		}
-		if (in_array($options['type'], array('text', 'number'))) {
-			$options = $this->_optionsOptions($options);
-		}
 		if ($options['type'] === 'select' && array_key_exists('step', $options)) {
 			unset($options['step']);
 		}
-		$options = $this->_maxLength($options);
+
+		$autoLength = !array_key_exists('maxlength', $options)
+			&& !empty($fieldDef['length'])
+			&& $options['type'] !== 'select';
+
+		$allowedTypes = ['text', 'email', 'tel', 'url', 'search'];
+		if ($autoLength && in_array($options['type'], $allowedTypes)) {
+			$options['maxlength'] = $fieldDef['length'];
+		}
+
 		return $options;
 	}
 
@@ -1062,28 +1067,6 @@ class FormHelper extends Helper {
 			return false;
 		}
 		return $this->_inputLabel($fieldName, $label, $options);
-	}
-
-/**
- * Calculates maxlength option
- *
- * @param array $options
- * @return array
- */
-	protected function _maxLength($options) {
-		$fieldDef = $this->_introspectModel($this->model(), 'fields', $this->field());
-		$autoLength = (
-			!array_key_exists('maxlength', $options) &&
-			isset($fieldDef['length']) &&
-			is_scalar($fieldDef['length']) &&
-			$options['type'] !== 'select'
-		);
-		if ($autoLength &&
-			in_array($options['type'], array('text', 'email', 'tel', 'url', 'search'))
-		) {
-			$options['maxlength'] = $fieldDef['length'];
-		}
-		return $options;
 	}
 
 /**
