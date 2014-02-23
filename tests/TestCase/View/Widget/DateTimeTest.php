@@ -48,8 +48,10 @@ class DateTimeTest extends TestCase {
  * @return array
  */
 	public static function invalidSelectedValuesProvider() {
-		$date = new \DateTime('2014-01-20 12:30:45');
 		return [
+			'null' => null,
+			'false' => false,
+			'true' => true,
 			'string' => ['Bag of poop'],
 			'int' => [-1],
 			'array' => [[

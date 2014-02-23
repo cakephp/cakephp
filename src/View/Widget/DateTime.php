@@ -189,6 +189,8 @@ class DateTime implements WidgetInterface {
 		try {
 			if (is_string($value)) {
 				$date = new \DateTime($value);
+			} elseif (is_bool($value) || $value === null) {
+				$date = new \DateTime();
 			} elseif (is_int($value)) {
 				$date = new \DateTime('@' . $value);
 			} elseif (is_array($value)) {
