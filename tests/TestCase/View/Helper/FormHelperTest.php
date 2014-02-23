@@ -3358,13 +3358,12 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputOverridingMagicSelectType() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ModelUserId'), 'User', '/label',
-			'input' => array('name' => 'Model[user_id]', 'type' => 'text', 'id' => 'ModelUserId'),
+			'label' => array('for' => 'model-user-id'), 'User', '/label',
+			'input' => array('name' => 'Model[user_id]', 'type' => 'text', 'id' => 'model-user-id'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -3374,8 +3373,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Model.type');
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ModelType'), 'Type', '/label',
-			'select' => array('name' => 'Model[type]', 'id' => 'ModelType'),
+			'label' => array('for' => 'model-type'), 'Type', '/label',
+			'select' => array('name' => 'Model[type]', 'id' => 'model-type'),
 			array('option' => array('value' => 'value')), 'good', '/option',
 			array('option' => array('value' => 'other')), 'bad', '/option',
 			'/select',

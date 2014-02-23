@@ -925,13 +925,13 @@ class FormHelper extends Helper {
  * @return array Options
  */
 	protected function _parseOptions($fieldName, $options) {
-		$typePassed = true;
+		$needsMagicType = false;
 		if (empty($options['type'])) {
-			$typePassed = false;
+			$needsMagicType = true;
 			$options['type'] = $this->_inputType($fieldName, $options);
 		}
 
-		$options = $this->_magicOptions($fieldName, $options, $typePassed);
+		$options = $this->_magicOptions($fieldName, $options, $needsMagicType);
 		return $options;
 	}
 
@@ -992,6 +992,7 @@ class FormHelper extends Helper {
 			return $options;
 		}
 
+		$fieldName = array_slice(explode('.', $fieldName), -1)[0];
 		$varName = Inflector::variable(
 			Inflector::pluralize(preg_replace('/_id$/', '', $fieldName))
 		);
