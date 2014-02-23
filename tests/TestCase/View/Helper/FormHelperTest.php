@@ -3416,16 +3416,19 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMagicSelectForTypeNumber() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+		TableRegistry::get('ValidateUsers', [
+			'className' => __NAMESPACE__ . '\ValidateUsersTable'
+		]);
+		$entity = new Entity(['balance' => 1]);
+		$this->Form->create($entity, ['context' => ['table' => 'ValidateUsers']]);
 		$this->View->viewVars['balances'] = array(0 => 'nothing', 1 => 'some', 100 => 'a lot');
-		$this->Form->request->data = array('ValidateUser' => array('balance' => 1));
 		$result = $this->Form->input('ValidateUser.balance');
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ValidateUserBalance'),
+			'label' => array('for' => 'validateuser-balance'),
 			'Balance',
 			'/label',
-			'select' => array('name' => 'ValidateUser[balance]', 'id' => 'ValidateUserBalance'),
+			'select' => array('name' => 'ValidateUser[balance]', 'id' => 'validateuser-balance'),
 			array('option' => array('value' => '0')),
 			'nothing',
 			'/option',
@@ -3447,7 +3450,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMagicSelectChangeToRadio() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'radio'));
 		$this->assertRegExp('/input type="radio"/', $result);
