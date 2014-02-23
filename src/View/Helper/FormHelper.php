@@ -63,6 +63,13 @@ class FormHelper extends Helper {
 	);
 
 /**
+ * The various pickers that make up a datetime picker.
+ *
+ * @var array
+ */
+	protected $_datetimeParts = ['year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'];
+
+/**
  * Settings for the helper.
  *
  * @var array
@@ -1839,20 +1846,20 @@ class FormHelper extends Helper {
 /**
  * Returns a SELECT element for days.
  *
- * ### Attributes:
+ * ### Options:
  *
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $attributes HTML attributes for the select element
+ * @param array $option Options & HTML attributes for the select element
  * @return string A generated day select box.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::day
  */
-	public function day($fieldName = null, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->_dateTimeSelected('day', $fieldName, $attributes);
+	public function day($fieldName = null, $options = []) {
+		$options += array('empty' => true, 'value' => null);
+		$options = $this->_dateTimeSelected('day', $fieldName, $options);
 
 		if (strlen($attributes['value']) > 2) {
 			$date = date_create($attributes['value']);
@@ -1863,7 +1870,7 @@ class FormHelper extends Helper {
 		} elseif ($attributes['value'] === false) {
 			$attributes['value'] = null;
 		}
-		return $this->select($fieldName . ".day", $this->_generateOptions('day'), $attributes);
+		return $this->select($fieldName . ".day", $this->_generateOptions('day'), $options);
 	}
 
 /**
@@ -2177,8 +2184,7 @@ class FormHelper extends Helper {
  * @return array Converted options.
  */
 	protected function _datetimeOptions($options) {
-		$types = ['year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'];
-		foreach ($types as $type) {
+		foreach ($this->_datetimeParts as $type) {
 			if (!isset($options[$type])) {
 				$options[$type] = [];
 			}

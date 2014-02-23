@@ -5511,12 +5511,11 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDay() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
 
 		$result = $this->Form->day('Model.field', array('value' => false));
 		$expected = array(
-			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
+			array('select' => array('name' => 'Model[field][day]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5533,7 +5532,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 23:12:32';
 		$result = $this->Form->day('Model.field');
 		$expected = array(
-			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
+			array('select' => array('name' => 'Model[field][day]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5554,7 +5553,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->day('Model.field', array('value' => '10'));
 		$expected = array(
-			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
+			array('select' => array('name' => 'Model[field][day]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5575,7 +5574,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 23:12:32';
 		$result = $this->Form->day('Model.field', array('value' => true));
 		$expected = array(
-			array('select' => array('name' => 'Model[field][day]', 'id' => 'ModelFieldDay')),
+			array('select' => array('name' => 'Model[field][day]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5597,7 +5596,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->day('Project.release');
 
 		$expected = array(
-			array('select' => array('name' => 'Project[release][day]', 'id' => 'ProjectReleaseDay')),
+			array('select' => array('name' => 'Project[release][day]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
