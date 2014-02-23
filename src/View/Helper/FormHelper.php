@@ -158,6 +158,9 @@ class FormHelper extends Helper {
 		'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
 		'radioContainer' => '{{input}}{{label}}',
 		'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
+		'formGroup' => '{{label}}{{input}}',
+		'groupContainer' => '<div class="{{type}}{{required}}">{{content}}</div>',
+		'groupContainerError' => '<div class="{{type}}{{required}} error">{{content}}{{error}}</div>'
 	];
 
 /**
@@ -845,71 +848,34 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#creating-form-elements
  */
 	public function input($fieldName, $options = array()) {
-		$this->setEntity($fieldName);
+		$options += [
+			'type' => null,
+			'label' => null,
+			'error' => null,
+			'selected' => null,
+			'options' => null,
+			'templates' => []
+		];
 		$options = $this->_parseOptions($options);
-
-		$divOptions = $this->_divOptions($options);
-		unset($options['div']);
-
-		if ($options['type'] === 'radio' && isset($options['options'])) {
-			$radioOptions = (array)$options['options'];
-			unset($options['options']);
-		}
 
 		$label = $this->_getLabel($fieldName, $options);
 		if ($options['type'] !== 'radio') {
 			unset($options['label']);
 		}
 
-		$error = $this->_extractOption('error', $options, null);
-		unset($options['error']);
-
-		$errorMessage = $this->_extractOption('errorMessage', $options, true);
-		unset($options['errorMessage']);
-
-		$selected = $this->_extractOption('selected', $options, null);
-		unset($options['selected']);
-
-		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time') {
-			$dateFormat = $this->_extractOption('dateFormat', $options, 'MDY');
-			$timeFormat = $this->_extractOption('timeFormat', $options, 12);
-			unset($options['dateFormat'], $options['timeFormat']);
+		$template = 'groupContainer';
+		if ($options['type'] !== 'hidden' && $options['error'] !== false) {
+			$options['error'] = $this->error($fieldName, $error);
+			$template = 'groupContainerError';
 		}
 
-		$type = $options['type'];
-		$out = array('before' => $options['before'], 'label' => $label, 'between' => $options['between'], 'after' => $options['after']);
-		$format = $this->_getFormat($options);
+		$out['input'] = $this->_getInput($options);
 
-		unset($options['type'], $options['before'], $options['between'], $options['after'], $options['format']);
-
-		$out['error'] = null;
-		if ($type !== 'hidden' && $error !== false) {
-			$errMsg = $this->error($fieldName, $error);
-			if ($errMsg) {
-				$divOptions = $this->addClass($divOptions, 'error');
-				if ($errorMessage) {
-					$out['error'] = $errMsg;
-				}
-			}
-		}
-
-		if ($type === 'radio' && isset($out['between'])) {
-			$options['between'] = $out['between'];
-			$out['between'] = null;
-		}
-		$out['input'] = $this->_getInput(compact('type', 'fieldName', 'options', 'radioOptions', 'selected', 'dateFormat', 'timeFormat'));
-
-		$output = '';
-		foreach ($format as $element) {
-			$output .= $out[$element];
-		}
-
-		if (!empty($divOptions['tag'])) {
-			$tag = $divOptions['tag'];
-			unset($divOptions['tag']);
-			$output = $this->Html->tag($tag, $output, $divOptions);
-		}
-		return $output;
+		return $this->formatTemplate($template, [
+			'content' => $this->formatTemplate('formGroup', $out),
+			'error' => $options['error'],
+			'type' => $options['type'],
+		]);
 	}
 
 /**
@@ -959,17 +925,11 @@ class FormHelper extends Helper {
  * @return array Options
  */
 	protected function _parseOptions($options) {
-		$options = array_merge(
-			array('before' => null, 'between' => null, 'after' => null, 'format' => null),
-			$this->_inputDefaults,
-			$options
-		);
-
-		if (!isset($options['type'])) {
+		if (!empty($options['type'])) {
 			$options = $this->_magicOptions($options);
 		}
 
-		if (in_array($options['type'], array('radio', 'select'))) {
+		if (in_array($options['type'], ['radio', 'select'])) {
 			$options = $this->_optionsOptions($options);
 		}
 
@@ -977,9 +937,10 @@ class FormHelper extends Helper {
 			$options['type'] = 'textarea';
 		}
 
-		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time' || $options['type'] === 'select') {
-			$options += array('empty' => false);
+		if (in_array(['datetime', 'date', 'time', 'select'], $options['type'])) {
+			$options += ['empty' => false];
 		}
+
 		return $options;
 	}
 
@@ -1081,25 +1042,6 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Generate format options
- *
- * @param array $options
- * @return array
- */
-	protected function _getFormat($options) {
-		if ($options['type'] === 'hidden') {
-			return array('input');
-		}
-		if (is_array($options['format']) && in_array('input', $options['format'])) {
-			return $options['format'];
-		}
-		if ($options['type'] === 'checkbox') {
-			return array('before', 'input', 'between', 'label', 'after', 'error');
-		}
-		return array('before', 'label', 'between', 'input', 'after', 'error');
-	}
-
-/**
  * Generate label for input
  *
  * @param string $fieldName
@@ -1142,40 +1084,6 @@ class FormHelper extends Helper {
 			$options['maxlength'] = $fieldDef['length'];
 		}
 		return $options;
-	}
-
-/**
- * Generate div options for input
- *
- * @param array $options
- * @return array
- */
-	protected function _divOptions($options) {
-		if ($options['type'] === 'hidden') {
-			return array();
-		}
-		$div = $this->_extractOption('div', $options, true);
-		if (!$div) {
-			return array();
-		}
-
-		$divOptions = array('class' => 'input');
-		$divOptions = $this->addClass($divOptions, $options['type']);
-		if (is_string($div)) {
-			$divOptions['class'] = $div;
-		} elseif (is_array($div)) {
-			$divOptions = array_merge($divOptions, $div);
-		}
-		if (
-			$this->_extractOption('required', $options) !== false &&
-			$this->_introspectModel($this->model(), 'validates', $this->field())
-		) {
-			$divOptions = $this->addClass($divOptions, 'required');
-		}
-		if (!isset($divOptions['tag'])) {
-			$divOptions['tag'] = 'div';
-		}
-		return $divOptions;
 	}
 
 /**
