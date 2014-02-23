@@ -2683,12 +2683,11 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputCheckbox() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => true));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0', 'id' => 'UserActive_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
+			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0'),
+			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked')),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2696,8 +2695,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => 1));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0', 'id' => 'UserActive_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
+			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0'),
+			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked')),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2705,8 +2704,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => '1'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0', 'id' => 'UserActive_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
+			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0'),
+			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked')),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2718,15 +2717,15 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'data[User][disabled]', 'value' => '0', 'id' => 'UserDisabled_'),
+			'input' => array('type' => 'hidden', 'name' => 'User[disabled]', 'value' => '0'),
 			array('input' => array(
 				'type' => 'checkbox',
-				'name' => 'data[User][disabled]',
+				'name' => 'User[disabled]',
 				'value' => '1',
-				'id' => 'UserDisabled',
+				'id' => 'user-disabled',
 				'data-foo' => 'disabled'
 			)),
-			'label' => array('for' => 'UserDisabled'),
+			'label' => array('for' => 'user-disabled'),
 			'Disabled',
 			'/label',
 			'/div'

@@ -165,6 +165,7 @@ class FormHelper extends Helper {
 		'radioContainer' => '{{input}}{{label}}',
 		'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
 		'formGroup' => '{{label}}{{input}}',
+		'checkboxFormGroup' => '{{input}}{{label}}',
 		'groupContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
 		'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>'
 	];
@@ -881,8 +882,9 @@ class FormHelper extends Helper {
 			unset($options['error']);
 		}
 
+		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
 		$input = $this->{$options['type']}($fieldName, $options);
-		$result = $this->formatTemplate('formGroup', compact('input', 'label'));
+		$result = $this->formatTemplate($groupTemplate, compact('input', 'label'));
 
 		if ($options['type'] !== 'hidden') {
 			$result = $this->formatTemplate($template, [
@@ -1167,7 +1169,7 @@ class FormHelper extends Helper {
 			}
 			$output = $this->hidden($fieldName, $hiddenOptions);
 		}
-		unset($options['hiddenField']);
+		unset($options['hiddenField'], $options['type']);
 		return $output . $this->widget('checkbox', $options);
 	}
 
