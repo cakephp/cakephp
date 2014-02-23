@@ -1844,6 +1844,27 @@ class FormHelper extends Helper {
 	}
 
 /**
+ * Helper method for the various single datetime component methods.
+ *
+ * @param array $options The options array.
+ * @param string $keep The option to not disable.
+ * @return array
+ */
+	protected function _singleDatetime($options, $keep) {
+		$off = array_diff($this->_datetimeParts, [$keep]);
+		$off = array_combine(
+			$off,
+			array_fill(0, count($off), false)
+		);
+		$options = $off + $options;
+
+		if (isset($options['value'])) {
+			$options['val'] = $options['value'];
+		}
+		return $options;
+	}
+
+/**
  * Returns a SELECT element for days.
  *
  * ### Options:
@@ -1858,18 +1879,8 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::day
  */
 	public function day($fieldName = null, $options = []) {
-		$off = array_diff($this->_datetimeParts, ['day']);
-		$off = array_combine(
-			$off,
-			array_fill(0, count($off), false)
-		);
-		$options = $off + $options;
+		$options = $this->_singleDatetime($options, 'day');
 
-		if (isset($options['value'])) {
-			$options['val'] = $options['value'];
-		}
-
-		// If value is an integer reformat it.
 		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 31) {
 			$options['val'] = [
 				'year' => date('Y'),
@@ -1899,18 +1910,8 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::year
  */
 	public function year($fieldName, $options = []) {
-		$off = array_diff($this->_datetimeParts, ['year']);
-		$off = array_combine(
-			$off,
-			array_fill(0, count($off), false)
-		);
-		$options = $off + $options;
+		$options = $this->_singleDatetime($options, 'year');
 
-		if (isset($options['value'])) {
-			$options['val'] = $options['value'];
-		}
-
-		// If value is an integer reformat it.
 		$len = isset($options['val']) ? strlen($options['val']) : 0;
 		if (isset($options['val']) && $len > 0 && $len < 5) {
 			$options['val'] = [
@@ -1940,16 +1941,7 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::month
  */
 	public function month($fieldName, $options = array()) {
-		$off = array_diff($this->_datetimeParts, ['month']);
-		$off = array_combine(
-			$off,
-			array_fill(0, count($off), false)
-		);
-		$options = $off + $options;
-
-		if (isset($options['value'])) {
-			$options['val'] = $options['value'];
-		}
+		$options = $this->_singleDatetime($options, 'month');
 
 		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 12) {
 			$options['val'] = [
