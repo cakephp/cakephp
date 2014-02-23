@@ -5602,10 +5602,10 @@ class FormHelperTest extends TestCase {
 	public function testMinute() {
 		extract($this->dateRegex);
 
-		$result = $this->Form->minute('Model.field');
+		$result = $this->Form->minute('Model.field', ['value' => '']);
 		$expected = array(
-			array('select' => array('name' => 'Model[field][min]')),
-			array('option' => array('value' => '')),
+			array('select' => array('name' => 'Model[field][minute]')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),
 			'00',
@@ -5624,7 +5624,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:12:32';
 		$result = $this->Form->minute('Model.field');
 		$expected = array(
-			array('select' => array('name' => 'Model[field][min]')),
+			array('select' => array('name' => 'Model[field][minute]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),
@@ -5648,8 +5648,8 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '';
 		$result = $this->Form->minute('Model.field', array('interval' => 5));
 		$expected = array(
-			array('select' => array('name' => 'Model[field][min]')),
-			array('option' => array('value' => '')),
+			array('select' => array('name' => 'Model[field][minute]')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),
 			'00',
@@ -5668,7 +5668,7 @@ class FormHelperTest extends TestCase {
 		$this->Form->request->data['Model']['field'] = '2006-10-10 00:10:32';
 		$result = $this->Form->minute('Model.field', array('interval' => 5));
 		$expected = array(
-			array('select' => array('name' => 'Model[field][min]')),
+			array('select' => array('name' => 'Model[field][minute]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '00')),

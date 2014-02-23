@@ -1992,35 +1992,25 @@ class FormHelper extends Helper {
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
+ * - `interval` The interval that minute options should be created at.
+ * - `round` How you want the value rounded when it does not fit neatly into an
+ *   interval. Accepts 'up', 'down', and null.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $attributes Array of Attributes
+ * @param array $options Array of options.
  * @return string Completed minute select input.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::minute
  */
-	public function minute($fieldName, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->_dateTimeSelected('min', $fieldName, $attributes);
+	public function minute($fieldName, $options = []) {
+		$options = $this->_singleDatetime($options, 'minute');
 
-		if (strlen($attributes['value']) > 2) {
-			$date = date_create($attributes['value']);
-			$attributes['value'] = null;
-			if ($date) {
-				$attributes['value'] = $date->format('i');
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
+		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 60) {
+			$options['val'] = [
+				'hour' => date('H'),
+				'minute' => (int)$options['val'],
+			];
 		}
-		$minuteOptions = array();
-
-		if (isset($attributes['interval'])) {
-			$minuteOptions['interval'] = $attributes['interval'];
-			unset($attributes['interval']);
-		}
-		return $this->select(
-			$fieldName . ".min", $this->_generateOptions('minute', $minuteOptions),
-			$attributes
-		);
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
