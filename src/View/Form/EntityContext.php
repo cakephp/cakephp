@@ -150,7 +150,7 @@ class EntityContext implements ContextInterface {
  * @return boolean
  */
 	public function primaryKey() {
-		return $this->_tables[$this->_rootName]->primaryKey();
+		return (array)$this->_tables[$this->_rootName]->primaryKey();
 	}
 
 /**
