@@ -5423,10 +5423,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMonth() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->month('Model.field');
 		$expected = array(
-			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
+			array('select' => array('name' => 'Model[field][month]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5441,7 +5440,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->month('Model.field', array('empty' => true));
 		$expected = array(
-			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
+			array('select' => array('name' => 'Model[field][month]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5456,7 +5455,7 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->month('Model.field', array('monthNames' => false));
 		$expected = array(
-			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
+			array('select' => array('name' => 'Model[field][month]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5474,7 +5473,7 @@ class FormHelperTest extends TestCase {
 			'07' => 'Jul', '08' => 'Aug', '09' => 'Sep', '10' => 'Oct', '11' => 'Nov', '12' => 'Dec');
 		$result = $this->Form->month('Model.field', array('monthNames' => $monthNames));
 		$expected = array(
-			array('select' => array('name' => 'Model[field][month]', 'id' => 'ModelFieldMonth')),
+			array('select' => array('name' => 'Model[field][month]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
@@ -5491,7 +5490,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->month('Project.release');
 
 		$expected = array(
-			array('select' => array('name' => 'Project[release][month]', 'id' => 'ProjectReleaseMonth')),
+			array('select' => array('name' => 'Project[release][month]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
