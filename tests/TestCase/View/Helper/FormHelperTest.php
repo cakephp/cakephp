@@ -5792,10 +5792,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testYear() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->year('Model.field', 2006, 2007);
+		$result = $this->Form->year('Model.field', ['minYear' => 2006, 'maxYear' => 2007]);
 		$expected = array(
-			array('select' => array('name' => 'Model[field][year]', 'id' => 'ModelFieldYear')),
+			array('select' => array('name' => 'Model[field][year]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '2007')),
@@ -5808,9 +5807,13 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->year('Model.field', 2006, 2007, array('orderYear' => 'asc'));
+		$result = $this->Form->year('Model.field', [
+			'minYear' => 2006,
+			'maxYear' => 2007,
+			'orderYear' => 'asc'
+		]);
 		$expected = array(
-			array('select' => array('name' => 'Model[field][year]', 'id' => 'ModelFieldYear')),
+			array('select' => array('name' => 'Model[field][year]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '2006')),
@@ -5818,31 +5821,19 @@ class FormHelperTest extends TestCase {
 			'/option',
 			array('option' => array('value' => '2007')),
 			'2007',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2007, array('class' => 'year'));
-		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear', 'class' => 'year')),
-			array('option' => array('value' => '')),
-			'/option',
-			array('option' => array('value' => '2007')),
-			'2007',
-			'/option',
-			array('option' => array('value' => '2006')),
-			'2006',
 			'/option',
 			'/select',
 		);
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false));
+		$result = $this->Form->year('Contact.published', [
+			'empty' => false,
+			'maxYear' => 2006,
+			'minYear' => 2007,
+		]);
 		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]')),
 			array('option' => array('value' => '2007')),
 			'2007',
 			'/option',
@@ -5854,39 +5845,13 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2007, array('value' => false));
+		$result = $this->Form->year('Contact.published', [
+			'minYear' => 2006,
+			'maxYear' => 2007,
+			'value' => 2007
+		]);
 		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
-			array('option' => array('value' => '')),
-			'/option',
-			array('option' => array('value' => '2007')),
-			'2007',
-			'/option',
-			array('option' => array('value' => '2006')),
-			'2006',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false, 'value' => false));
-		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
-			array('option' => array('value' => '2007')),
-			'2007',
-			'/option',
-			array('option' => array('value' => '2006', 'selected' => 'selected')),
-			'2006',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2007, array('value' => 2007));
-		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
+			array('select' => array('name' => 'Contact[published][year]')),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => '2007', 'selected' => 'selected')),
@@ -5898,75 +5863,6 @@ class FormHelperTest extends TestCase {
 			'/select',
 		);
 		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2007, array('empty' => false, 'value' => 2007));
-		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
-			array('option' => array('value' => '2007', 'selected' => 'selected')),
-			'2007',
-			'/option',
-			array('option' => array('value' => '2006')),
-			'2006',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['published'] = '';
-		$result = $this->Form->year('Contact.published', 2006, 2008, array('empty' => false, 'value' => 2007));
-		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
-			array('option' => array('value' => '2008')),
-			'2008',
-			'/option',
-			array('option' => array('value' => '2007', 'selected' => 'selected')),
-			'2007',
-			'/option',
-			array('option' => array('value' => '2006')),
-			'2006',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data['Contact']['published'] = '2006-10-10';
-		$result = $this->Form->year('Contact.published', 2006, 2008, array('empty' => false));
-		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
-			array('option' => array('value' => '2008')),
-			'2008',
-			'/option',
-			array('option' => array('value' => '2007')),
-			'2007',
-			'/option',
-			array('option' => array('value' => '2006', 'selected' => 'selected')),
-			'2006',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data = array();
-		$this->Form->create('Contact');
-		$result = $this->Form->year('published', 2006, 2008, array('empty' => false));
-		$expected = array(
-			array('select' => array('name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear')),
-			array('option' => array('value' => '2008')),
-			'2008',
-			'/option',
-			array('option' => array('value' => '2007')),
-			'2007',
-			'/option',
-			array('option' => array('value' => '2006')),
-			'2006',
-			'/option',
-			'/select',
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->year('published', array(), array(), array('empty' => false));
-		$this->assertContains('Contact[published][year]', $result);
 	}
 
 /**
