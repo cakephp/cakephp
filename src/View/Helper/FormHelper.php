@@ -905,7 +905,7 @@ class FormHelper extends Helper {
 
 	protected function _inputType($fieldName, $options) {
 		$context = $this->_getContext();
-		$primaryKey = $context->primaryKey();
+		$primaryKey = (array)$context->primaryKey();
 
 		if (in_array($fieldName, $primaryKey)) {
 			return 'hidden';
@@ -971,7 +971,7 @@ class FormHelper extends Helper {
 	protected function _magicOptions($fieldName, $options, $allowOverride) {
 		$context = $this->_getContext();
 		$type = $context->type($fieldName);
-		$fielDef = $context->attributes($fieldName);
+		$fieldDef = $context->attributes($fieldName);
 
 		if ($options['type'] === 'number' && !isset($options['step'])) {
 			if ($type === 'decimal') {

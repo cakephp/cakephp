@@ -327,8 +327,18 @@ class ValidateUsersTable extends Table {
 		'ratio' => array('type' => 'decimal', 'null' => false, 'length' => '10,6'),
 		'population' => array('type' => 'decimal', 'null' => false, 'length' => '15,0'),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null),
+		'_constraints' => array('primary' => ['type' => 'primary', 'columns' => ['id']])
 	);
+
+/**
+ * Initializes the schema
+ *
+ * @return void
+ */
+	public function initialize(array $config) {
+		$this->schema($this->_schema);
+	}
 
 /**
  * beforeValidate method
@@ -2404,14 +2414,17 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInput() {
-		$this->Form->create('ValidateUsers');
+		TableRegistry::get('ValidateUsers', [
+			'className' => __NAMESPACE__ . '\ValidateUsersTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'ValidateUsers']]);
 		$result = $this->Form->input('ValidateUsers.balance');
 		$expected = array(
 			'div' => array('class'),
 			'label' => array('for'),
 			'Balance',
 			'/label',
-			'input' => array('name', 'type' => 'number', 'id'),
+			'input' => array('name', 'type' => 'number', 'step'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
