@@ -53,16 +53,6 @@ class FormHelper extends Helper {
 	public $helpers = array('Html');
 
 /**
- * Options used by DateTime fields
- *
- * @var array
- */
-	protected $_options = array(
-		'day' => array(), 'minute' => array(), 'hour' => array(),
-		'month' => array(), 'year' => array(), 'meridian' => array()
-	);
-
-/**
  * The various pickers that make up a datetime picker.
  *
  * @var array
@@ -2014,31 +2004,6 @@ class FormHelper extends Helper {
 	}
 
 /**
- * Selects values for dateTime selects.
- *
- * @param string $select Name of element field. ex. 'day'
- * @param string $fieldName Name of fieldName being generated ex. Model.created
- * @param array $attributes Array of attributes, must contain 'empty' key.
- * @return array Attributes array with currently selected value.
- */
-	protected function _dateTimeSelected($select, $fieldName, $attributes) {
-		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				$attributes['value'] = isset($value[$select]) ? $value[$select] : null;
-			} else {
-				if (empty($value)) {
-					if (!$attributes['empty']) {
-						$attributes['value'] = 'now';
-					}
-				} else {
-					$attributes['value'] = $value;
-				}
-			}
-		}
-		return $attributes;
-	}
-
-/**
  * Returns a SELECT element for AM or PM.
  *
  * ### Attributes:
@@ -2172,113 +2137,6 @@ class FormHelper extends Helper {
 			$options['val'] = new \DateTime();
 		}
 		return $options;
-	}
-
-/**
- * Generates option lists for common <select /> menus
- *
- * @param string $name
- * @param array $options
- * @return array
- */
-	protected function _generateOptions($name, $options = array()) {
-		if (!empty($this->options[$name])) {
-			return $this->options[$name];
-		}
-		$data = array();
-
-		switch ($name) {
-			case 'minute':
-				if (isset($options['interval'])) {
-					$interval = $options['interval'];
-				} else {
-					$interval = 1;
-				}
-				$i = 0;
-				while ($i < 60) {
-					$data[sprintf('%02d', $i)] = sprintf('%02d', $i);
-					$i += $interval;
-				}
-				break;
-			case 'hour':
-				for ($i = 1; $i <= 12; $i++) {
-					$data[sprintf('%02d', $i)] = $i;
-				}
-				break;
-			case 'hour24':
-				for ($i = 0; $i <= 23; $i++) {
-					$data[sprintf('%02d', $i)] = $i;
-				}
-				break;
-			case 'meridian':
-				$data = array('am' => 'am', 'pm' => 'pm');
-				break;
-			case 'day':
-				$min = 1;
-				$max = 31;
-
-				if (isset($options['min'])) {
-					$min = $options['min'];
-				}
-				if (isset($options['max'])) {
-					$max = $options['max'];
-				}
-
-				for ($i = $min; $i <= $max; $i++) {
-					$data[sprintf('%02d', $i)] = $i;
-				}
-				break;
-			case 'month':
-				if ($options['monthNames'] === true) {
-					$data['01'] = __d('cake', 'January');
-					$data['02'] = __d('cake', 'February');
-					$data['03'] = __d('cake', 'March');
-					$data['04'] = __d('cake', 'April');
-					$data['05'] = __d('cake', 'May');
-					$data['06'] = __d('cake', 'June');
-					$data['07'] = __d('cake', 'July');
-					$data['08'] = __d('cake', 'August');
-					$data['09'] = __d('cake', 'September');
-					$data['10'] = __d('cake', 'October');
-					$data['11'] = __d('cake', 'November');
-					$data['12'] = __d('cake', 'December');
-				} elseif (is_array($options['monthNames'])) {
-					$data = $options['monthNames'];
-				} else {
-					for ($m = 1; $m <= 12; $m++) {
-						$data[sprintf("%02s", $m)] = strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
-					}
-				}
-				break;
-			case 'year':
-				$current = intval(date('Y'));
-
-				$min = !isset($options['min']) ? $current - 20 : (int)$options['min'];
-				$max = !isset($options['max']) ? $current + 20 : (int)$options['max'];
-
-				if ($min > $max) {
-					list($min, $max) = array($max, $min);
-				}
-				if (
-					!empty($options['value']) &&
-					(int)$options['value'] < $min &&
-					(int)$options['value'] > 0
-				) {
-					$min = (int)$options['value'];
-				} elseif (!empty($options['value']) && (int)$options['value'] > $max) {
-					$max = (int)$options['value'];
-				}
-
-				for ($i = $min; $i <= $max; $i++) {
-					$data[$i] = $i;
-				}
-				if ($options['order'] !== 'asc') {
-					$data = array_reverse($data, true);
-				}
-				break;
-		}
-		$this->_options[$name] = $data;
-		return $this->_options[$name];
 	}
 
 /**
