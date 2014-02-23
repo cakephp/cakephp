@@ -118,11 +118,18 @@ class DateTimeTest extends TestCase {
 			'year' => '2014', 'month' => '01', 'day' => '20',
 			'hour' => '12', 'minute' => '30'
 		];
-		$result = $this->DateTime->render(['val' => $selected]);
+		$result = $this->DateTime->render(['name' => 'created', 'val' => $selected]);
+		$this->assertContains('name="created[year]"', $result);
 		$this->assertContains('<option value="2014" selected="selected">2014</option>', $result);
+		$this->assertContains('name="created[month]"', $result);
 		$this->assertContains('<option value="01" selected="selected">1</option>', $result);
+		$this->assertContains('name="created[day]"', $result);
 		$this->assertContains('<option value="20" selected="selected">20</option>', $result);
+		$this->assertContains('name="created[hour]"', $result);
 		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
+		$this->assertContains('name="created[minute]"', $result);
+		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
+		$this->assertContains('name="created[second]"', $result);
 		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
 	}
 
