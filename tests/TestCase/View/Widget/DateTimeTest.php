@@ -617,6 +617,32 @@ class DateTimeTest extends TestCase {
 	}
 
 /**
+ * Test rendering hour widget in 12 hour mode at midnight.
+ *
+ * @return void
+ */
+	public function testRenderHourWidget12Midnight() {
+		$now = new \DateTime('2010-09-09 00:30:45');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => [
+				'format' => 12,
+			],
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$this->assertContains(
+			'<option value="12" selected="selected">12</option>',
+			$result,
+			'12 is selected'
+		);
+	}
+
+/**
  * Test rendering the hour picker in 12 hour mode.
  *
  * @return void

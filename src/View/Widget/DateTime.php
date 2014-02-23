@@ -351,7 +351,6 @@ class DateTime implements WidgetInterface {
 		$is24 = $options['format'] == 24;
 
 		$defaultEnd = $is24 ? 24 : 12;
-
 		$options['start'] = max(1, $options['start']);
 
 		$options['end'] = min($defaultEnd, $options['end']);
@@ -361,6 +360,9 @@ class DateTime implements WidgetInterface {
 
 		if (!$is24 && $options['val'] > 12) {
 			$options['val'] = sprintf('%02d', $options['val'] - 12);
+		}
+		if (!$is24 && $options['val'] == 0) {
+			$options['val'] = 12;
 		}
 
 		if (empty($options['options'])) {
