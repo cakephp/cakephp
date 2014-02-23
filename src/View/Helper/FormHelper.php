@@ -2104,7 +2104,7 @@ class FormHelper extends Helper {
 /**
  * Returns a set of SELECT elements for a full datetime setup: day, month and year, and then time.
  *
- * ### Attributes:
+ * ### Options:
  *
  * - `monthNames` If false, 2 digit numbers will be used instead of text.
  *   If a array, the given array will be used.
@@ -2126,14 +2126,12 @@ class FormHelper extends Helper {
  * `{{month}}{{day}}{{year}}{{hour}}{{minute}}{{second}}{{meridian}}`
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param string $dateFormat DMY, MDY, YMD, or null to not generate date inputs.
- * @param string $timeFormat 12, 24, or null to not generate time inputs.
- * @param array|string $attributes array of Attributes
+ * @param array $options Array of Options
  * @return string Generated set of select boxes for the date and time formats chosen.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::dateTime
  */
-	public function dateTime($fieldName, $attributes = array()) {
-		$attributes += [
+	public function dateTime($fieldName, $options = array()) {
+		$options += [
 			'empty' => true,
 			'value' => null,
 			'interval' => 1,
@@ -2144,70 +2142,70 @@ class FormHelper extends Helper {
 			'timeFormat' => 12,
 			'second' => false,
 		];
-		$attributes = $this->_initInputField($fieldName, $attributes);
-		$attributes = $this->_dateTimeAttributes($attributes);
+		$options = $this->_initInputField($fieldName, $options);
+		$options = $this->_datetimeOptions($options);
 
-		return $this->widget('datetime', $attributes);
+		return $this->widget('datetime', $options);
 	}
 
 /**
- * Helper method for converting from FormHelper attributes data to widget format.
+ * Helper method for converting from FormHelper options data to widget format.
  *
- * @param array $attributes Attributes to convert.
- * @return array Converted attributes.
+ * @param array $options Options to convert.
+ * @return array Converted options.
  */
-	protected function _dateTimeAttributes($attributes) {
+	protected function _datetimeOptions($options) {
 		$types = ['year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'];
 		foreach ($types as $type) {
-			if (!isset($attributes[$type])) {
-				$attributes[$type] = [];
+			if (!isset($options[$type])) {
+				$options[$type] = [];
 			}
 
 			// Pass empty boolean to each type.
 			if (
-				!empty($attributes['empty']) &&
-				is_bool($attributes['empty']) &&
-				is_array($attributes[$type])
+				!empty($options['empty']) &&
+				is_bool($options['empty']) &&
+				is_array($options[$type])
 			) {
-				$attributes[$type]['empty'] = $attributes['empty'];
+				$options[$type]['empty'] = $options['empty'];
 			}
 
 			// Move empty options into each type array.
-			if (isset($attributes['empty'][$type])) {
-				$attributes[$type]['empty'] = $attributes['empty'][$type];
+			if (isset($options['empty'][$type])) {
+				$options[$type]['empty'] = $options['empty'][$type];
 			}
 		}
-		unset($attributes['empty']);
+		unset($options['empty']);
 
-		$hasYear = is_array($attributes['year']);
-		if ($hasYear && isset($attributes['minYear'])) {
-			$attributes['year']['start'] = $attributes['minYear'];
+		$hasYear = is_array($options['year']);
+		if ($hasYear && isset($options['minYear'])) {
+			$options['year']['start'] = $options['minYear'];
 		}
-		if ($hasYear && isset($attributes['maxYear'])) {
-			$attributes['year']['end'] = $attributes['maxYear'];
+		if ($hasYear && isset($options['maxYear'])) {
+			$options['year']['end'] = $options['maxYear'];
 		}
-		unset($attributes['minYear'], $attributes['maxYear']);
+		unset($options['minYear'], $options['maxYear']);
 
-		if (is_array($attributes['month'])) {
-			$attributes['month']['names'] = $attributes['monthNames'];
+		if (is_array($options['month'])) {
+			$options['month']['names'] = $options['monthNames'];
 		}
-		unset($attributes['monthNames']);
+		unset($options['monthNames']);
 
-		if (is_array($attributes['hour']) && isset($attributes['timeFormat'])) {
-			$attributes['hour']['format'] = $attributes['timeFormat'];
+		if (is_array($options['hour']) && isset($options['timeFormat'])) {
+			$options['hour']['format'] = $options['timeFormat'];
 		}
-		unset($attributes['timeFormat']);
+		unset($options['timeFormat']);
 
-		if (is_array($attributes['minute'])) {
-			$attributes['minute']['interval'] = $attributes['interval'];
-			$attributes['minute']['round'] = $attributes['round'];
+		if (is_array($options['minute'])) {
+			$options['minute']['interval'] = $options['interval'];
+			$options['minute']['round'] = $options['round'];
 		}
-		unset($attributes['interval'], $attributes['round']);
+		unset($options['interval'], $options['round']);
 
-		if (!isset($attributes['val'])) {
-			$attributes['val'] = new \DateTime();
+		if (!isset($options['val'])) {
+			$options['val'] = new \DateTime();
 		}
-		return $attributes;
+		return $options;
 	}
 
 /**
