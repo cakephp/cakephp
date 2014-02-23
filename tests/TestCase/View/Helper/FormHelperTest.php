@@ -5687,6 +5687,29 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test generating an input for the meridian.
+ *
+ * @return void
+ */
+	public function testMeridian() {
+		extract($this->dateRegex);
+
+		$now = time();
+		$result = $this->Form->meridian('Model.field', ['value' => 'am']);
+		$expected = [
+			array('select' => array('name' => 'Model[field][meridian]')),
+			array('option' => array('value' => '')),
+			'/option',
+			$meridianRegex,
+			array('option' => array('value' => date('a', $now), 'selected' => 'selected')),
+			date('a', $now),
+			'/option',
+			'*/select'
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * testHour method
  *
  * @return void

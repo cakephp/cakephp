@@ -2048,39 +2048,20 @@ class FormHelper extends Helper {
  * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $attributes Array of Attributes
+ * @param array $options Array of options
  * @return string Completed meridian select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::meridian
  */
-	public function meridian($fieldName, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				$meridian = null;
-				extract($value);
-				$attributes['value'] = $meridian;
-			} else {
-				if (empty($value)) {
-					if (!$attributes['empty']) {
-						$attributes['value'] = date('a');
-					}
-				} else {
-					$date = date_create($attributes['value']);
-					$attributes['value'] = null;
-					if ($date) {
-						$attributes['value'] = $date->format('a');
-					}
-				}
-			}
-		}
+	public function meridian($fieldName, $options = array()) {
+		$options = $this->_singleDatetime($options, 'meridian');
 
-		if ($attributes['value'] === false) {
-			$attributes['value'] = null;
+		if (isset($options['val'])) {
+			$options['val'] = [
+				'hour' => date('H'),
+				'minute' => (int)$options['val'],
+			];
 		}
-		return $this->select(
-			$fieldName . ".meridian", $this->_generateOptions('meridian'),
-			$attributes
-		);
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
