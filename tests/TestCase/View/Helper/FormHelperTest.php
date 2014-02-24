@@ -1271,24 +1271,19 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextFieldTypeNumberGenerationForIntegers() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$model->setSchema(array('foo' => array(
-			'type' => 'integer',
-			'null' => false,
-			'default' => null,
-			'length' => null
-		)));
-
-		$this->Form->create('Contact');
-		$result = $this->Form->input('foo');
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
+		$result = $this->Form->input('age');
 		$expected = array(
 			'div' => array('class' => 'input number'),
-			'label' => array('for' => 'ContactFoo'),
-			'Foo',
+			'label' => array('for' => 'age'),
+			'Age',
 			'/label',
 			array('input' => array(
-				'type' => 'number', 'name' => 'Contact[foo]',
-				'id' => 'ContactFoo'
+				'type' => 'number', 'name' => 'age',
+				'id' => 'age'
 			)),
 			'/div'
 		);
