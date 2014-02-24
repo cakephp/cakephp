@@ -32,7 +32,7 @@ use \ReflectionClass;
  * Each widget should expect a StringTemplate instance as their first
  * argument. All other dependencies will be included after.
  */
-class InputRegistry {
+class WidgetRegistry {
 
 /**
  * Array of widgets + widget configuration.
