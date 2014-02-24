@@ -7202,61 +7202,48 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormMagicInputLabel() {
 		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact');
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
+		$this->Form->templates(['groupContainer' => '{{content}}']);
 
-		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => false));
-		$this->assertTags($result, array('input' => array(
-			'name' => 'Contact[name]', 'type' => 'text',
-			'id' => 'ContactName', 'maxlength' => '255')
-		));
-
-		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => 'My label'));
+		$result = $this->Form->input('Contacts.name', array('label' => 'My label'));
 		$expected = array(
-			'label' => array('for' => 'ContactName'),
+			'label' => array('for' => 'contacts-name'),
 			'My label',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
+				'type' => 'text', 'name' => 'Contacts[name]',
+				'id' => 'contacts-name', 'maxlength' => '255'
 			)
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.name', array(
-			'div' => false, 'label' => array('class' => 'mandatory')
+		$result = $this->Form->input('name', array(
+			'label' => array('class' => 'mandatory')
 		));
 		$expected = array(
-			'label' => array('for' => 'ContactName', 'class' => 'mandatory'),
+			'label' => array('for' => 'name', 'class' => 'mandatory'),
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
+				'type' => 'text', 'name' => 'name',
+				'id' => 'name', 'maxlength' => '255'
 			)
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.name', array(
+		$result = $this->Form->input('name', array(
 			'div' => false, 'label' => array('class' => 'mandatory', 'text' => 'My label')
 		));
 		$expected = array(
-			'label' => array('for' => 'ContactName', 'class' => 'mandatory'),
+			'label' => array('for' => 'name', 'class' => 'mandatory'),
 			'My label',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
+				'type' => 'text', 'name' => 'name',
+				'id' => 'name', 'maxlength' => '255'
 			)
 		);
 		$this->assertTags($result, $expected);
