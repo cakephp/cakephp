@@ -1296,24 +1296,26 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFileUploadFieldTypeGenerationForBinaries() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$model->setSchema(array('foo' => array(
+		$table = TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$table->schema(array('foo' => array(
 			'type' => 'binary',
 			'null' => false,
 			'default' => null,
 			'length' => 1024
 		)));
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
 
-		$this->Form->create('Contact');
 		$result = $this->Form->input('foo');
 		$expected = array(
 			'div' => array('class' => 'input file'),
-			'label' => array('for' => 'ContactFoo'),
+			'label' => array('for' => 'foo'),
 			'Foo',
 			'/label',
 			array('input' => array(
-				'type' => 'file', 'name' => 'data[Contact][foo]',
-				'id' => 'ContactFoo'
+				'type' => 'file', 'name' => 'foo',
+				'id' => 'foo'
 			)),
 			'/div'
 		);
