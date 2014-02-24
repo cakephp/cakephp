@@ -882,59 +882,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * test that inputDefaults are stored and used.
- *
- * @return void
- */
-	public function testCreateWithInputDefaults() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('User', array(
-			'inputDefaults' => array(
-				'div' => false,
-				'label' => false,
-				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error')),
-				'format' => array('before', 'label', 'between', 'input', 'after', 'error')
-			)
-		));
-		$result = $this->Form->input('username');
-		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername')
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('username', array('div' => true, 'label' => 'username'));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserUsername'), 'username', '/label',
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('username', array('label' => 'Username', 'format' => array('input', 'label')));
-		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
-			'label' => array('for' => 'UserUsername'), 'Username', '/label',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->create('User', array(
-			'inputDefaults' => array(
-				'div' => false,
-				'label' => array('class' => 'nice', 'for' => 'changed'),
-			)
-		));
-		$result = $this->Form->input('username', array('div' => true));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'changed', 'class' => 'nice'), 'Username', '/label',
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * test automatic accept-charset overriding
  *
  * @return void
