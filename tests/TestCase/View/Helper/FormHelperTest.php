@@ -7625,14 +7625,15 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHtml5InputWithInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('User.website', array(
+		$this->Form->create();
+		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$result = $this->Form->input('website', array(
 			'type' => 'url',
-			'value' => 'http://domain.tld',
-			'div' => false,
-			'label' => false));
+			'val' => 'http://domain.tld',
+			'label' => false
+		));
 		$expected = array(
-			'input' => array('type' => 'url', 'name' => 'User[website]', 'id' => 'UserWebsite', 'value' => 'http://domain.tld')
+			'input' => array('type' => 'url', 'name' => 'website', 'id' => 'website', 'value' => 'http://domain.tld')
 		);
 		$this->assertTags($result, $expected);
 	}
