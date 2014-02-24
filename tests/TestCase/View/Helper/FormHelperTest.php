@@ -7004,10 +7004,13 @@ class FormHelperTest extends TestCase {
 	public function testFormMagicInput() {
 		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact');
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$result = $this->Form->create([], ['context' => ['table' => 'Contacts']]);
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
+				'method' => 'post', 'action' => '/articles/add',
 				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
@@ -7019,12 +7022,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('name');
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactName'),
+			'label' => array('for' => 'name'),
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
+				'type' => 'text', 'name' => 'name',
+				'id' => 'name', 'maxlength' => '255'
 			),
 			'/div'
 		);
@@ -7033,61 +7036,23 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('non_existing_field_in_contact_model');
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactNonExistingFieldInContactModel'),
+			'label' => array('for' => 'non-existing-field-in-contact-model'),
 			'Non Existing Field In Contact Model',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[non_existing_field_in_contact_model]',
-				'id' => 'ContactNonExistingFieldInContactModel'
+				'type' => 'text', 'name' => 'non_existing_field_in_contact_model',
+				'id' => 'non-existing-field-in-contact-model'
 			),
 			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.street');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'AddressStreet'),
-			'Street',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Address[street]',
-				'id' => 'AddressStreet'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.non_existing_field_in_model');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'AddressNonExistingFieldInModel'),
-			'Non Existing Field In Model',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Address[non_existing_field_in_model]',
-				'id' => 'AddressNonExistingFieldInModel'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('name', array('div' => false));
-		$expected = array(
-			'label' => array('for' => 'ContactName'),
-			'Name',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
-			)
 		);
 		$this->assertTags($result, $expected);
 
 		extract($this->dateRegex);
 		$now = strtotime('now');
 
-		$result = $this->Form->input('Contact.published', array('div' => false));
+		$result = $this->Form->input('Contact.published', array(
+			'templates' => ['groupContainer' => '{{label}}{{input}}']
+		));
 		$expected = array(
 			'label' => array('for' => 'ContactPublishedMonth'),
 			'Published',
