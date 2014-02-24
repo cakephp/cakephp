@@ -29,7 +29,7 @@ use Cake\View\Helper;
 use Cake\View\Helper\StringTemplateTrait;
 use Cake\View\StringTemplate;
 use Cake\View\View;
-use Cake\View\Widget\InputRegistry;
+use Cake\View\Widget\WidgetRegistry;
 use DateTime;
 use Traversable;
 
@@ -113,7 +113,7 @@ class FormHelper extends Helper {
 /**
  * Registry for input widgets.
  *
- * @var \Cake\View\Widget\InputRegistry
+ * @var \Cake\View\Widget\WidgetRegistry
  */
 	protected $_registry;
 
@@ -180,14 +180,14 @@ class FormHelper extends Helper {
 /**
  * Set the input registry the helper will use.
  *
- * @param \Cake\View\Widget\InputRegistry $instance The registry instance to set.
+ * @param \Cake\View\Widget\WidgetRegistry $instance The registry instance to set.
  * @param array $widgets An array of widgets
- * @return \Cake\View\Widget\InputRegistry
+ * @return \Cake\View\Widget\WidgetRegistry
  */
-	public function inputRegistry(InputRegistry $instance = null, $widgets = []) {
+	public function inputRegistry(WidgetRegistry $instance = null, $widgets = []) {
 		if ($instance === null) {
 			if ($this->_registry === null) {
-				$this->_registry = new InputRegistry($this->_templater, $widgets);
+				$this->_registry = new WidgetRegistry($this->_templater, $widgets);
 			}
 			return $this->_registry;
 		}
