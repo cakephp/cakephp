@@ -164,7 +164,7 @@ class FormHelper extends Helper {
 	];
 
 /**
- * Construct the widgets and binds the defult context providers
+ * Construct the widgets and binds the default context providers
  *
  * @param \Cake\View\View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper.
@@ -852,7 +852,6 @@ class FormHelper extends Helper {
 			'type' => null,
 			'label' => null,
 			'error' => null,
-			'selected' => null,
 			'options' => null,
 			'templates' => []
 		];
