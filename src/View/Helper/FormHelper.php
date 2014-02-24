@@ -100,13 +100,6 @@ class FormHelper extends Helper {
 	public $requestType = null;
 
 /**
- * Persistent default options used by input(). Set by FormHelper::create().
- *
- * @var array
- */
-	protected $_inputDefaults = array();
-
-/**
  * An array of field names that have been excluded from
  * the Token hash used by SecurityComponent's validatePost method
  *
@@ -171,7 +164,7 @@ class FormHelper extends Helper {
 	];
 
 /**
- * Copies the validationErrors variable from the View object into this instance
+ * Construct the widgets and binds the defult context providers
  *
  * @param \Cake\View\View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper.
@@ -2408,24 +2401,6 @@ class FormHelper extends Helper {
 			return trim($el, ']');
 		}, $parts);
 		return $parts;
-	}
-
-/**
- * Set/Get inputDefaults for form elements
- *
- * @param array $defaults New default values
- * @param boolean Merge with current defaults
- * @return array inputDefaults
- */
-	public function inputDefaults($defaults = null, $merge = false) {
-		if ($defaults !== null) {
-			if ($merge) {
-				$this->_inputDefaults = array_merge($this->_inputDefaults, (array)$defaults);
-			} else {
-				$this->_inputDefaults = (array)$defaults;
-			}
-		}
-		return $this->_inputDefaults;
 	}
 
 /**

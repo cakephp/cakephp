@@ -7649,42 +7649,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Tests that a model can be loaded from the model names passed in the request object
- *
- * @return void
- */
-	public function testIntrospectModelFromRequest() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->loadFixtures('Post');
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
-		Plugin::load('TestPlugin');
-		$this->Form->request['models'] = array(
-			'TestPluginPost' => array(
-				'plugin' => 'TestPlugin',
-				'className' => 'TestPluginPost'
-			)
-		);
-
-		$this->Form->create('TestPluginPost');
-
-		Plugin::unload();
-	}
-
-/**
- * Tests that it is possible to set the validation errors directly in the helper for a field
- *
- * @return void
- */
-	public function testCustomValidationErrors() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->validationErrors['Thing']['field'] = 'Badness!';
-		$result = $this->Form->error('Thing.field', null, array('wrap' => false));
-		$this->assertEquals('Badness!', $result);
-	}
-
-/**
  * Tests that the 'on' key validates as expected on create
  *
  * @return void
@@ -7840,68 +7804,6 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test inputDefaults setter and getter
- *
- * @return void
- */
-	public function testInputDefaults() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('Contact');
-
-		$this->Form->inputDefaults(array(
-			'label' => false,
-			'div' => array(
-				'style' => 'color: #000;'
-			)
-		));
-		$result = $this->Form->input('Contact.field1');
-		$expected = array(
-			'div' => array('class' => 'input text', 'style' => 'color: #000;'),
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field1]',
-				'id' => 'ContactField1'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->inputDefaults(array(
-			'div' => false,
-			'label' => 'Label',
-		));
-		$result = $this->Form->input('Contact.field1');
-		$expected = array(
-			'label' => array('for' => 'ContactField1'),
-			'Label',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field1]',
-				'id' => 'ContactField1'
-			),
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->inputDefaults(array(
-			'label' => false,
-		), true);
-		$result = $this->Form->input('Contact.field1');
-		$expected = array(
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field1]',
-				'id' => 'ContactField1'
-			),
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->inputDefaults();
-		$expected = array(
-			'div' => false,
-			'label' => false,
-		);
-		$this->assertEquals($expected, $result);
 	}
 
 }
