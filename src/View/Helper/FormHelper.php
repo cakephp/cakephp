@@ -171,7 +171,7 @@ class FormHelper extends Helper {
 		parent::__construct($View, $settings);
 
 		$this->initStringTemplates($this->_defaultTemplates);
-		$this->inputRegistry($settings['registry'], $settings['widgets']);
+		$this->widgetRegistry($settings['registry'], $settings['widgets']);
 		unset($this->settings['widgets'], $this->settings['registry']);
 
 		$this->_addDefaultContextProviders();
@@ -184,7 +184,7 @@ class FormHelper extends Helper {
  * @param array $widgets An array of widgets
  * @return \Cake\View\Widget\WidgetRegistry
  */
-	public function inputRegistry(WidgetRegistry $instance = null, $widgets = []) {
+	public function widgetRegistry(WidgetRegistry $instance = null, $widgets = []) {
 		if ($instance === null) {
 			if ($this->_registry === null) {
 				$this->_registry = new WidgetRegistry($this->_templater, $widgets);
