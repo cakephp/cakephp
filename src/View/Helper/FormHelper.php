@@ -933,7 +933,7 @@ class FormHelper extends Helper {
 /**
  * Returns the input type that was guessed for the provided fieldName,
  * based on the internal type it is associated too, its name and the
- * variales that can be foudn in the view template
+ * variales that can be found in the view template
  *
  * @param string $fieldName the name of the field to guess a type for
  * @param array $options the options passed to the input method
