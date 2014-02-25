@@ -1163,35 +1163,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Tests that models with identical field names get resolved properly
- *
- * @return void
- */
-	public function testDuplicateFieldNameResolution() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->create('ValidateUser');
-		$this->assertEquals(array('ValidateUser'), $this->Form->entity());
-
-		$result = $this->Form->input('ValidateItem.name');
-		$this->assertEquals(array('ValidateItem', 'name'), $this->Form->entity());
-
-		$result = $this->Form->input('ValidateUser.name');
-		$this->assertEquals(array('ValidateUser', 'name'), $this->Form->entity());
-		$this->assertContains('name="ValidateUser[name]"', $result);
-		$this->assertContains('type="text"', $result);
-
-		$result = $this->Form->input('ValidateItem.name');
-		$this->assertEquals(array('ValidateItem', 'name'), $this->Form->entity());
-		$this->assertContains('name="ValidateItem[name]"', $result);
-		$this->assertContains('<textarea', $result);
-
-		$result = $this->Form->input('name');
-		$this->assertEquals(array('ValidateUser', 'name'), $this->Form->entity());
-		$this->assertContains('name="ValidateUser[name]"', $result);
-		$this->assertContains('type="text"', $result);
-	}
-
-/**
  * Tests that hidden fields generated for checkboxes don't get locked
  *
  * @return void
@@ -1212,11 +1183,9 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityFields() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$key = 'testKey';
 		$fields = array('Model.password', 'Model.username', 'Model.valid' => '0');
 
-		$this->Form->request->params['_csrfToken'] = $key;
+		$this->Form->request->params['_Token'] = 'testKey';
 		$result = $this->Form->secure($fields);
 
 		$hash = Security::hash(serialize($fields) . Configure::read('Security.salt'));
@@ -1226,29 +1195,14 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[fields]',
+				'type' => 'hidden',
+				'name' => '_Token[fields]',
 				'value' => $hash
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[unlocked]',
-				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
-			)),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$path = CAKE . 'Test/TestApp/Config/';
-		$this->Form->Html->loadConfig('htmlhelper_tags', $path);
-		$result = $this->Form->secure($fields);
-		$expected = array(
-			'div' => array('class' => 'hidden'),
-			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash
-			)),
-			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[unlocked]',
-				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+				'type' => 'hidden',
+				'name' => '_Token[unlocked]',
+				'value' => '',
 			)),
 			'/div'
 		);
@@ -1408,13 +1362,11 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityMultipleSubmitButtons() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$key = 'testKey';
-		$this->Form->request->params['_csrfToken'] = $key;
+		$this->Form->request->params['_Token'] = 'testKey';
 
-		$this->Form->create('Addresses');
-		$this->Form->input('Address.title');
-		$this->Form->input('Address.first_name');
+		$this->Form->create($this->article);
+		$this->Form->text('Address.title');
+		$this->Form->text('Address.first_name');
 
 		$result = $this->Form->submit('Save', array('name' => 'save'));
 		$expected = array(
@@ -1423,6 +1375,7 @@ class FormHelperTest extends TestCase {
 			'/div',
 		);
 		$this->assertTags($result, $expected);
+
 		$result = $this->Form->submit('Cancel', array('name' => 'cancel'));
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -1430,17 +1383,19 @@ class FormHelperTest extends TestCase {
 			'/div',
 		);
 		$this->assertTags($result, $expected);
-		$result = $this->Form->end(null);
 
+		$result = $this->Form->end();
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => 'preg:/.+/'
+				'type' => 'hidden',
+				'name' => '_Token[fields]',
+				'value'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[unlocked]',
-				'value' => 'cancel%7Csave', 'id' => 'preg:/TokenUnlocked\d+/'
+				'type' => 'hidden',
+				'name' => '_Token[unlocked]',
+				'value' => 'cancel%7Csave'
 			)),
 			'/div'
 		);
