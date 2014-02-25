@@ -1920,43 +1920,49 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Test validation errors.
+ * test error message display
  *
  * @return void
  */
-	public function testPasswordValidation() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors['password'] = array('Please provide a password');
+	public function testErrorMessageDisplay() {
+		$this->article['errors'] = [
+			'Article' => ['title' => 'error message']
+		];
+		$this->Form->create($this->article);
 
-		$result = $this->Form->input('Contact.password');
-		$expected = array(
-			'div' => array('class' => 'input password error'),
-			'label' => array('for' => 'ContactPassword'),
-			'Password',
+		$result = $this->Form->input('Article.title');
+		$expected = [
+			'div' => ['class' => 'input text error'],
+			'label' => ['for' => 'article-title'],
+			'Title',
 			'/label',
-			'input' => array(
-				'type' => 'password', 'name' => 'Contact[password]',
-				'id' => 'ContactPassword', 'class' => 'form-error'
-			),
-			array('div' => array('class' => 'error-message')),
-			'Please provide a password',
+			'input' => [
+				'type' => 'text', 'name' => 'Article[title]',
+				'id' => 'article-title', 'class' => 'form-error'
+			],
+			['div' => ['class' => 'error-message']],
+			'error message',
 			'/div',
 			'/div'
-		);
+		];
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.password', array('errorMessage' => false));
-		$expected = array(
-			'div' => array('class' => 'input password error'),
-			'label' => array('for' => 'ContactPassword'),
-			'Password',
+		$result = $this->Form->input('Article.title', [
+			'templates' => [
+				'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}</div>'
+			]
+		]);
+		$expected = [
+			'div' => ['class' => 'input text error'],
+			'label' => ['for' => 'article-title'],
+			'Title',
 			'/label',
-			'input' => array(
-				'type' => 'password', 'name' => 'Contact[password]',
-				'id' => 'ContactPassword', 'class' => 'form-error'
-			),
+			'input' => [
+				'type' => 'text', 'name' => 'Article[title]',
+				'id' => 'article-title', 'class' => 'form-error'
+			],
 			'/div'
-		);
+		];
 		$this->assertTags($result, $expected);
 	}
 
@@ -1966,38 +1972,26 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testEmptyErrorValidation() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->validationErrors['Contact']['password'] = '';
+		$this->article['errors'] = [
+			'Article' => ['title' => '']
+		];
+		$this->Form->create($this->article);
 
-		$result = $this->Form->input('Contact.password');
-		$expected = array(
-			'div' => array('class' => 'input password error'),
-			'label' => array('for' => 'ContactPassword'),
-			'Password',
+		$result = $this->Form->input('Article.title');
+		$expected = [
+			'div' => ['class' => 'input text error'],
+			'label' => ['for' => 'article-title'],
+			'Title',
 			'/label',
-			'input' => array(
-				'type' => 'password', 'name' => 'Contact[password]',
-				'id' => 'ContactPassword', 'class' => 'form-error'
-			),
-			array('div' => array('class' => 'error-message')),
-			array(),
+			'input' => [
+				'type' => 'text', 'name' => 'Article[title]',
+				'id' => 'article-title', 'class' => 'form-error'
+			],
+			['div' => ['class' => 'error-message']],
+			[],
 			'/div',
 			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.password', array('errorMessage' => false));
-		$expected = array(
-			'div' => array('class' => 'input password error'),
-			'label' => array('for' => 'ContactPassword'),
-			'Password',
-			'/label',
-			'input' => array(
-				'type' => 'password', 'name' => 'Contact[password]',
-				'id' => 'ContactPassword', 'class' => 'form-error'
-			),
-			'/div'
-		);
+		];
 		$this->assertTags($result, $expected);
 	}
 
@@ -2007,38 +2001,26 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testEmptyInputErrorValidation() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->validationErrors['Contact']['password'] = 'Please provide a password';
+		$this->article['errors'] = [
+			'Article' => ['title' => 'error message']
+		];
+		$this->Form->create($this->article);
 
-		$result = $this->Form->input('Contact.password', array('error' => ''));
-		$expected = array(
-			'div' => array('class' => 'input password error'),
-			'label' => array('for' => 'ContactPassword'),
-			'Password',
+		$result = $this->Form->input('Article.title', array('error' => ''));
+		$expected = [
+			'div' => ['class' => 'input text error'],
+			'label' => ['for' => 'article-title'],
+			'Title',
 			'/label',
-			'input' => array(
-				'type' => 'password', 'name' => 'Contact[password]',
-				'id' => 'ContactPassword', 'class' => 'form-error'
-			),
-			array('div' => array('class' => 'error-message')),
-			array(),
+			'input' => [
+				'type' => 'text', 'name' => 'Article[title]',
+				'id' => 'article-title', 'class' => 'form-error'
+			],
+			['div' => ['class' => 'error-message']],
+			[],
 			'/div',
 			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.password', array('error' => '', 'errorMessage' => false));
-		$expected = array(
-			'div' => array('class' => 'input password error'),
-			'label' => array('for' => 'ContactPassword'),
-			'Password',
-			'/label',
-			'input' => array(
-				'type' => 'password', 'name' => 'Contact[password]',
-				'id' => 'ContactPassword', 'class' => 'form-error'
-			),
-			'/div'
-		);
+		];
 		$this->assertTags($result, $expected);
 	}
 

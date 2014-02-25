@@ -827,7 +827,6 @@ class FormHelper extends Helper {
  * - `options` - For widgets that take options e.g. radio, select.
  * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting (field
  *    error and error messages).
- * - `errorMessage` - Boolean to control rendering error messages (field error will still occur).
  * - `empty` - String or boolean to enable empty select box options.
  * - `before` - Content to place before the label + input.
  * - `after` - Content to place after the label + input.
