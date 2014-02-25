@@ -5441,7 +5441,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->month('Model.field', ['empty' => true, 'value' => '']);
 		$expected = array(
 			array('select' => array('name' => 'Model[field][month]')),
-			array('option' => array('selected' => 'selected',  'value' => '')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
 			date('F', strtotime('2008-01-01 00:00:00')),
@@ -5456,7 +5456,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->month('Model.field', ['value' => '', 'monthNames' => false]);
 		$expected = array(
 			array('select' => array('name' => 'Model[field][month]')),
-			array('option' => array('selected' => 'selected',  'value' => '')),
+			array('option' => array('selected' => 'selected', 'value' => '')),
 			'/option',
 			array('option' => array('value' => '01')),
 			'1',
@@ -6186,7 +6186,7 @@ class FormHelperTest extends TestCase {
 		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"') !== false);
 	}
 
- /**
+/**
  * Test using postButton with N dimensional data.
  *
  * @return void
@@ -6327,7 +6327,7 @@ class FormHelperTest extends TestCase {
 		));
 	}
 
- /**
+/**
  * Test using postLink with N dimensional data.
  *
  * @return void
