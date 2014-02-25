@@ -422,10 +422,11 @@ class Validation {
 			}
 		}
 
-		// Workaround localized floats.
-		if (is_float($check)) {
-			$check = str_replace(',', '.', strval($check));
-		}
+		// account for localized floats.
+		$data = localeconv();
+		$check = str_replace($data['thousands_sep'], '', $check);
+		$check = str_replace($data['decimal_point'], '.', $check);
+
 		return static::_check($check, $regex);
 	}
 
