@@ -4148,52 +4148,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testDomIdSuffix method
- *
- * @return void
- */
-	public function testDomIdSuffix() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar signs');
-		$this->assertEquals('1StringWith1$-dollarSigns', $result);
-
-		$result = $this->Form->domIdSuffix('<abc x="foo" y=\'bar\'>');
-		$this->assertEquals('AbcX=FooY=Bar', $result);
-
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar signs', 'xhtml');
-		$this->assertEquals('1StringWith1-dollarSigns', $result);
-
-		$result = $this->Form->domIdSuffix('<abc x="foo" y=\'bar\'>', 'xhtml');
-		$this->assertEquals('AbcXFooYBar', $result);
-	}
-
-/**
- * testDomIdSuffixCollisionResolvement()
- *
- * @return void
- */
-	public function testDomIdSuffixCollisionResolvement() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->domIdSuffix('a>b');
-		$this->assertEquals('AB', $result);
-
-		$result = $this->Form->domIdSuffix('a<b');
-		$this->assertEquals('AB1', $result);
-
-		$result = $this->Form->domIdSuffix('a\'b');
-		$this->assertEquals('AB2', $result);
-
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar', 'xhtml');
-		$this->assertEquals('1StringWith1-dollar', $result);
-
-		$result = $this->Form->domIdSuffix('1 string with 1€-dollar', 'xhtml');
-		$this->assertEquals('1StringWith1-dollar1', $result);
-
-		$result = $this->Form->domIdSuffix('1 string with 1$-dollar', 'xhtml');
-		$this->assertEquals('1StringWith1-dollar2', $result);
-	}
-
-/**
  * testSelect method
  *
  * Test select element generation.
