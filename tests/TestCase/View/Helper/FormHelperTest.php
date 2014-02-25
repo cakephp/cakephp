@@ -1175,7 +1175,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextFieldGenerationForFloats() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->article['schema'] = [
 			'foo' => [
 				'type' => 'float',
@@ -1185,17 +1184,17 @@ class FormHelperTest extends TestCase {
 			]
 		];
 
-		$this->Form->create('Contact');
+		$this->Form->create($this->article);
 		$result = $this->Form->input('foo');
 		$expected = array(
 			'div' => array('class' => 'input number'),
-			'label' => array('for' => 'ContactFoo'),
+			'label' => array('for' => 'foo'),
 			'Foo',
 			'/label',
 			array('input' => array(
 				'type' => 'number',
-				'name' => 'Contact[foo]',
-				'id' => 'ContactFoo',
+				'name' => 'foo',
+				'id' => 'foo',
 				'step' => 'any'
 			)),
 			'/div'
@@ -1205,13 +1204,13 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('foo', array('step' => 0.5));
 		$expected = array(
 			'div' => array('class' => 'input number'),
-			'label' => array('for' => 'ContactFoo'),
+			'label' => array('for' => 'foo'),
 			'Foo',
 			'/label',
 			array('input' => array(
 				'type' => 'number',
-				'name' => 'Contact[foo]',
-				'id' => 'ContactFoo',
+				'name' => 'foo',
+				'id' => 'foo',
 				'step' => '0.5'
 			)),
 			'/div'
@@ -1435,10 +1434,8 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityMultipleInputFields() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$key = 'testKey';
-		$this->Form->request->params['_csrfToken'] = $key;
-		$this->Form->create('Addresses');
+		$this->Form->request->params['_Token'] = 'testKey';
+		$this->Form->create();
 
 		$this->Form->hidden('Addresses.0.id', array('value' => '123456'));
 		$this->Form->input('Addresses.0.title');
@@ -1470,7 +1467,7 @@ class FormHelperTest extends TestCase {
 			)),
 			array('input' => array(
 				'type' => 'hidden', 'name' => '_Token[unlocked]',
-				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+				'value' => ''
 			)),
 			'/div'
 		);
