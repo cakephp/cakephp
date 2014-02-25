@@ -1526,15 +1526,13 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityArrayFields() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$key = 'testKey';
-		$this->Form->request->params['_csrfToken'] = $key;
+		$this->Form->request->params['_Token'] = 'testKey';
 
 		$this->Form->create('Address');
-		$this->Form->input('Address.primary.1');
+		$this->Form->text('Address.primary.1');
 		$this->assertEquals('Address.primary', $this->Form->fields[0]);
 
-		$this->Form->input('Address.secondary.1.0');
+		$this->Form->text('Address.secondary.1.0');
 		$this->assertEquals('Address.secondary', $this->Form->fields[1]);
 	}
 
@@ -1546,28 +1544,25 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityMultipleInputDisabledFields() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$key = 'testKey';
-		$this->Form->request->params['_csrfToken'] = $key;
 		$this->Form->request->params['_Token'] = array(
 			'unlockedFields' => array('first_name', 'address')
 		);
 		$this->Form->create();
 
 		$this->Form->hidden('Addresses.0.id', array('value' => '123456'));
-		$this->Form->input('Addresses.0.title');
-		$this->Form->input('Addresses.0.first_name');
-		$this->Form->input('Addresses.0.last_name');
-		$this->Form->input('Addresses.0.address');
-		$this->Form->input('Addresses.0.city');
-		$this->Form->input('Addresses.0.phone');
+		$this->Form->text('Addresses.0.title');
+		$this->Form->text('Addresses.0.first_name');
+		$this->Form->text('Addresses.0.last_name');
+		$this->Form->text('Addresses.0.address');
+		$this->Form->text('Addresses.0.city');
+		$this->Form->text('Addresses.0.phone');
 		$this->Form->hidden('Addresses.1.id', array('value' => '654321'));
-		$this->Form->input('Addresses.1.title');
-		$this->Form->input('Addresses.1.first_name');
-		$this->Form->input('Addresses.1.last_name');
-		$this->Form->input('Addresses.1.address');
-		$this->Form->input('Addresses.1.city');
-		$this->Form->input('Addresses.1.phone');
+		$this->Form->text('Addresses.1.title');
+		$this->Form->text('Addresses.1.first_name');
+		$this->Form->text('Addresses.1.last_name');
+		$this->Form->text('Addresses.1.address');
+		$this->Form->text('Addresses.1.city');
+		$this->Form->text('Addresses.1.phone');
 
 		$result = $this->Form->secure($this->Form->fields);
 		$hash = '629b6536dcece48aa41a117045628ce602ccbbb2%3AAddresses.0.id%7CAddresses.1.id';
@@ -1575,12 +1570,14 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[fields]',
+				'type' => 'hidden',
+				'name' => '_Token[fields]',
 				'value' => $hash
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[unlocked]',
-				'value' => 'address%7Cfirst_name', 'id' => 'preg:/TokenUnlocked\d+/'
+				'type' => 'hidden',
+				'name' => '_Token[unlocked]',
+				'value' => 'address%7Cfirst_name',
 			)),
 			'/div'
 		);
@@ -1595,9 +1592,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecurityInputUnlockedFields() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$key = 'testKey';
-		$this->Form->request->params['_csrfToken'] = $key;
 		$this->Form->request['_Token'] = array(
 			'unlockedFields' => array('first_name', 'address')
 		);
@@ -1605,12 +1599,12 @@ class FormHelperTest extends TestCase {
 		$this->assertEquals($this->Form->request['_Token']['unlockedFields'], $this->Form->unlockField());
 
 		$this->Form->hidden('Addresses.id', array('value' => '123456'));
-		$this->Form->input('Addresses.title');
-		$this->Form->input('Addresses.first_name');
-		$this->Form->input('Addresses.last_name');
-		$this->Form->input('Addresses.address');
-		$this->Form->input('Addresses.city');
-		$this->Form->input('Addresses.phone');
+		$this->Form->text('Addresses.title');
+		$this->Form->text('Addresses.first_name');
+		$this->Form->text('Addresses.last_name');
+		$this->Form->text('Addresses.address');
+		$this->Form->text('Addresses.city');
+		$this->Form->text('Addresses.phone');
 
 		$result = $this->Form->fields;
 		$expected = array(
@@ -1625,12 +1619,14 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[fields]',
+				'type' => 'hidden',
+				'name' => '_Token[fields]',
 				'value' => $hash
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[unlocked]',
-				'value' => 'address%7Cfirst_name', 'id' => 'preg:/TokenUnlocked\d+/'
+				'type' => 'hidden',
+				'name' => '_Token[unlocked]',
+				'value' => 'address%7Cfirst_name',
 			)),
 			'/div'
 		);
@@ -1791,22 +1787,19 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testSecuredInputCustomName() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testKey';
+		$this->Form->request->params['_Token'] = 'testKey';
 		$this->assertEquals(array(), $this->Form->fields);
 
-		$this->Form->input('text_input', array(
-			'name' => 'data[Option][General.default_role]',
+		$this->Form->text('text_input', array(
+			'name' => 'Option[General.default_role]',
 		));
 		$expected = array('Option.General.default_role');
 		$this->assertEquals($expected, $this->Form->fields);
 
-		$this->Form->input('select_box', array(
-			'name' => 'data[Option][General.select_role]',
-			'type' => 'select',
-			'options' => array(1, 2),
-		));
-		$expected = array('Option.General.default_role', 'Option.General.select_role');
+		$this->Form->select('select_box', [1, 2], [
+			'name' => 'Option[General.select_role]',
+		]);
+		$expected = ['Option.General.default_role', 'Option.General.select_role'];
 		$this->assertEquals($expected, $this->Form->fields);
 	}
 
@@ -1917,25 +1910,21 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDisableSecurityUsingForm() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->params['_csrfToken'] = 'testKey';
-		$this->Form->request['_Token'] = array(
-			'disabledFields' => array()
-		);
+		$this->Form->request['_Token'] = [
+			'disabledFields' => []
+		];
 		$this->Form->create();
 
-		$this->Form->hidden('Addresses.id', array('value' => '123456'));
-		$this->Form->input('Addresses.title');
-		$this->Form->input('Addresses.first_name', array('secure' => false));
-		$this->Form->input('Addresses.city', array('type' => 'textarea', 'secure' => false));
-		$this->Form->input('Addresses.zip', array(
-			'type' => 'select', 'options' => array(1, 2), 'secure' => false
-		));
+		$this->Form->hidden('Addresses.id', ['value' => '123456']);
+		$this->Form->text('Addresses.title');
+		$this->Form->text('Addresses.first_name', ['secure' => false]);
+		$this->Form->textarea('Addresses.city', ['secure' => false]);
+		$this->Form->select('Addresses.zip', [1, 2], ['secure' => false]);
 
 		$result = $this->Form->fields;
-		$expected = array(
+		$expected = [
 			'Addresses.id' => '123456', 'Addresses.title',
-		);
+		];
 		$this->assertEquals($expected, $result);
 	}
 
