@@ -2622,92 +2622,41 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * test form->input() with datetime, date and time types
+ * test form->input() with datetime
  *
  * @return void
  */
 	public function testInputDatetime() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		extract($this->dateRegex);
+		$this->Form = $this->getMock(
+			'Cake\View\Helper\FormHelper',
+			['datetime'],
+			[new View(null)]
+		);
+		$this->Form->expects($this->once())->method('datetime')
+			->with('prueba', [
+				'type' => 'datetime',
+				'timeFormat' => 24,
+				'minYear' => 2008,
+				'maxYear' => 2011,
+				'interval' => 15,
+				'options' => null,
+				'empty' => false,
+				'id' => 'prueba'
+			])
+			->will($this->returnValue('This is it!'));
 		$result = $this->Form->input('prueba', array(
-			'type' => 'datetime', 'timeFormat' => 24, 'dateFormat' => 'DMY', 'minYear' => 2008,
-			'maxYear' => date('Y') + 1, 'interval' => 15
+			'type' => 'datetime', 'timeFormat' => 24, 'minYear' => 2008,
+			'maxYear' => 2011, 'interval' => 15
 		));
-		$result = explode(':', $result);
-		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
-		$this->assertNotRegExp('#<option value="50"[^>]*>50</option>#', $result[1]);
-		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result[1]);
-		$this->assertRegExp('#<option value="30"[^>]*>30</option>#', $result[1]);
-
-		//related to ticket #5013
-		$result = $this->Form->input('Contact.date', array(
-			'type' => 'date', 'class' => 'customClass', 'onChange' => 'function(){}'
-		));
-		$this->assertRegExp('/class="customClass"/', $result);
-		$this->assertRegExp('/onChange="function\(\)\{\}"/', $result);
-
-		$result = $this->Form->input('Contact.date', array(
-			'type' => 'date', 'id' => 'customId', 'onChange' => 'function(){}'
-		));
-		$this->assertRegExp('/id="customIdDay"/', $result);
-		$this->assertRegExp('/id="customIdMonth"/', $result);
-		$this->assertRegExp('/onChange="function\(\)\{\}"/', $result);
-
-		$result = $this->Form->input('Model.field', array(
-			'type' => 'datetime', 'timeFormat' => 24, 'id' => 'customID'
-		));
-		$this->assertRegExp('/id="customIDDay"/', $result);
-		$this->assertRegExp('/id="customIDHour"/', $result);
-		$result = explode('</select><select', $result);
-		$result = explode(':', $result[1]);
-		$this->assertRegExp('/option value="23"/', $result[0]);
-		$this->assertNotRegExp('/option value="24"/', $result[0]);
-
-		$result = $this->Form->input('Model.field', array(
-			'type' => 'datetime', 'timeFormat' => 12
-		));
-		$result = explode('</select><select', $result);
-		$result = explode(':', $result[1]);
-		$this->assertRegExp('/option value="12"/', $result[0]);
-		$this->assertNotRegExp('/option value="13"/', $result[0]);
-
-		$this->Form->request->data = array('Contact' => array('created' => null));
-		$result = $this->Form->input('Contact.created', array('empty' => 'Date Unknown'));
 		$expected = array(
-			'div' => array('class' => 'input date'),
-			'label' => array('for' => 'ContactCreatedMonth'),
-			'Created',
+			'div' => array('class' => 'input datetime'),
+			'label' => array('for' => 'prueba'),
+			'Prueba',
 			'/label',
-			array('select' => array('name' => 'Contact[created][month]', 'id' => 'ContactCreatedMonth')),
-			array('option' => array('value' => '')), 'Date Unknown', '/option',
-			$monthsRegex,
-			'/select', '-',
-			array('select' => array('name' => 'Contact[created][day]', 'id' => 'ContactCreatedDay')),
-			array('option' => array('value' => '')), 'Date Unknown', '/option',
-			$daysRegex,
-			'/select', '-',
-			array('select' => array('name' => 'Contact[created][year]', 'id' => 'ContactCreatedYear')),
-			array('option' => array('value' => '')), 'Date Unknown', '/option',
-			$yearsRegex,
-			'/select',
+			'This is it!',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-
-		$this->Form->request->data = array('Contact' => array('created' => null));
-		$result = $this->Form->input('Contact.created', array('type' => 'datetime', 'dateFormat' => 'NONE'));
-		$this->assertRegExp('/for\="ContactCreatedHour"/', $result);
-
-		$this->Form->request->data = array('Contact' => array('created' => null));
-		$result = $this->Form->input('Contact.created', array('type' => 'datetime', 'timeFormat' => 'NONE'));
-		$this->assertRegExp('/for\="ContactCreatedMonth"/', $result);
-
-		$result = $this->Form->input('Contact.created', array(
-			'type' => 'date',
-			'id' => array('day' => 'created-day', 'month' => 'created-month', 'year' => 'created-year'),
-			'timeFormat' => 'NONE'
-		));
-		$this->assertRegExp('/for\="created-month"/', $result);
 	}
 
 /**
