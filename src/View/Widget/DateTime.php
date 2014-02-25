@@ -189,6 +189,8 @@ class DateTime implements WidgetInterface {
 		try {
 			if (is_string($value)) {
 				$date = new \DateTime($value);
+			} elseif (is_bool($value) || $value === null) {
+				$date = new \DateTime();
 			} elseif (is_int($value)) {
 				$date = new \DateTime('@' . $value);
 			} elseif (is_array($value)) {
@@ -275,7 +277,7 @@ class DateTime implements WidgetInterface {
 		if (empty($options['options'])) {
 			$options['options'] = $this->_generateNumbers($options['start'], $options['end']);
 		}
-		if ($options['order'] === 'asc') {
+		if ($options['order'] === 'desc') {
 			$options['options'] = array_reverse($options['options'], true);
 		}
 		unset($options['start'], $options['end'], $options['order']);
@@ -300,6 +302,8 @@ class DateTime implements WidgetInterface {
 		if (empty($options['options'])) {
 			if ($options['names'] === true) {
 				$options['options'] = $this->_getMonthNames($options['leadingZeroKey']);
+			} elseif (is_array($options['names'])) {
+				$options['options'] = $options['names'];
 			} else {
 				$options['options'] = $this->_generateNumbers(1, 12, $options);
 			}
@@ -346,9 +350,9 @@ class DateTime implements WidgetInterface {
 		];
 		$is24 = $options['format'] == 24;
 
-		$defaultEnd = $is24 ? 24 : 12;
-
-		$options['start'] = max(1, $options['start']);
+		$defaultStart = $is24 ? 0 : 1;
+		$defaultEnd = $is24 ? 23 : 12;
+		$options['start'] = max($defaultStart, $options['start']);
 
 		$options['end'] = min($defaultEnd, $options['end']);
 		if ($options['end'] === null) {
@@ -357,6 +361,9 @@ class DateTime implements WidgetInterface {
 
 		if (!$is24 && $options['val'] > 12) {
 			$options['val'] = sprintf('%02d', $options['val'] - 12);
+		}
+		if (!$is24 && in_array($options['val'], ['00', '0', 0], true)) {
+			$options['val'] = 12;
 		}
 
 		if (empty($options['options'])) {

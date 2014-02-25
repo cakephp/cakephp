@@ -53,14 +53,11 @@ class FormHelper extends Helper {
 	public $helpers = array('Html');
 
 /**
- * Options used by DateTime fields
+ * The various pickers that make up a datetime picker.
  *
  * @var array
  */
-	protected $_options = array(
-		'day' => array(), 'minute' => array(), 'hour' => array(),
-		'month' => array(), 'year' => array(), 'meridian' => array()
-	);
+	protected $_datetimeParts = ['year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'];
 
 /**
  * Settings for the helper.
@@ -1837,33 +1834,51 @@ class FormHelper extends Helper {
 	}
 
 /**
+ * Helper method for the various single datetime component methods.
+ *
+ * @param array $options The options array.
+ * @param string $keep The option to not disable.
+ * @return array
+ */
+	protected function _singleDatetime($options, $keep) {
+		$off = array_diff($this->_datetimeParts, [$keep]);
+		$off = array_combine(
+			$off,
+			array_fill(0, count($off), false)
+		);
+		$options = $off + $options;
+
+		if (isset($options['value'])) {
+			$options['val'] = $options['value'];
+		}
+		return $options;
+	}
+
+/**
  * Returns a SELECT element for days.
  *
- * ### Attributes:
+ * ### Options:
  *
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $attributes HTML attributes for the select element
+ * @param array $option Options & HTML attributes for the select element
  * @return string A generated day select box.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::day
  */
-	public function day($fieldName = null, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->_dateTimeSelected('day', $fieldName, $attributes);
+	public function day($fieldName = null, $options = []) {
+		$options = $this->_singleDatetime($options, 'day');
 
-		if (strlen($attributes['value']) > 2) {
-			$date = date_create($attributes['value']);
-			$attributes['value'] = null;
-			if ($date) {
-				$attributes['value'] = $date->format('d');
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
+		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 31) {
+			$options['val'] = [
+				'year' => date('Y'),
+				'month' => date('m'),
+				'day' => (int)$options['val']
+			];
 		}
-		return $this->select($fieldName . ".day", $this->_generateOptions('day'), $attributes);
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
@@ -1876,59 +1891,33 @@ class FormHelper extends Helper {
  * - `orderYear` - Ordering of year values in select options.
  *   Possible values 'asc', 'desc'. Default 'desc'
  * - `value` The selected value of the input.
+ * - `maxYear` The max year to appear in the select element.
+ * - `minYear` The min year to appear in the select element.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param integer $minYear First year in sequence
- * @param integer $maxYear Last year in sequence
- * @param array $attributes Attribute array for the select elements.
+ * @param array $options Options & attributes for the select elements.
  * @return string Completed year select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::year
  */
-	public function year($fieldName, $minYear = null, $maxYear = null, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				$year = null;
-				extract($value);
-				$attributes['value'] = $year;
-			} else {
-				if (empty($value)) {
-					if (!$attributes['empty'] && !$maxYear) {
-						$attributes['value'] = 'now';
+	public function year($fieldName, $options = []) {
+		$options = $this->_singleDatetime($options, 'year');
 
-					} elseif (!$attributes['empty'] && $maxYear && !$attributes['value']) {
-						$attributes['value'] = $maxYear;
-					}
-				} else {
-					$attributes['value'] = $value;
-				}
-			}
+		$len = isset($options['val']) ? strlen($options['val']) : 0;
+		if (isset($options['val']) && $len > 0 && $len < 5) {
+			$options['val'] = [
+				'year' => (int)$options['val'],
+				'month' => date('m'),
+				'day' => date('d')
+			];
 		}
 
-		if (strlen($attributes['value']) > 4 || $attributes['value'] === 'now') {
-			$date = date_create($attributes['value']);
-			$attributes['value'] = null;
-			if ($date) {
-				$attributes['value'] = $date->format('Y');
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
-		}
-		$yearOptions = array('value' => $attributes['value'], 'min' => $minYear, 'max' => $maxYear, 'order' => 'desc');
-		if (isset($attributes['orderYear'])) {
-			$yearOptions['order'] = $attributes['orderYear'];
-			unset($attributes['orderYear']);
-		}
-		return $this->select(
-			$fieldName . '.year', $this->_generateOptions('year', $yearOptions),
-			$attributes
-		);
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
  * Returns a SELECT element for months.
  *
- * ### Attributes:
+ * ### Options:
  *
  * - `monthNames` - If false, 2 digit numbers will be used instead of text.
  *   If a array, the given array will be used.
@@ -1937,33 +1926,21 @@ class FormHelper extends Helper {
  * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $attributes Attributes for the select element
+ * @param array $options Attributes for the select element
  * @return string A generated month select dropdown.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::month
  */
-	public function month($fieldName, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->_dateTimeSelected('month', $fieldName, $attributes);
+	public function month($fieldName, $options = array()) {
+		$options = $this->_singleDatetime($options, 'month');
 
-		if (strlen($attributes['value']) > 2) {
-			$date = date_create($attributes['value']);
-			$attributes['value'] = null;
-			if ($date) {
-				$attributes['value'] = $date->format('m');
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
+		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 12) {
+			$options['val'] = [
+				'year' => date('Y'),
+				'month' => (int)$options['val'],
+				'day' => date('d')
+			];
 		}
-		$defaults = array('monthNames' => true);
-		$attributes = array_merge($defaults, (array)$attributes);
-		$monthNames = $attributes['monthNames'];
-		unset($attributes['monthNames']);
-
-		return $this->select(
-			$fieldName . ".month",
-			$this->_generateOptions('month', array('monthNames' => $monthNames)),
-			$attributes
-		);
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
@@ -1974,44 +1951,27 @@ class FormHelper extends Helper {
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
+ * - `format` Set to 12 or 24 to use 12 or 24 hour formatting. Defaults to 12.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param boolean $format24Hours True for 24 hours format
  * @param array $attributes List of HTML attributes
  * @return string Completed hour select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::hour
  */
-	public function hour($fieldName, $format24Hours = false, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->_dateTimeSelected('hour', $fieldName, $attributes);
+	public function hour($fieldName, $options = []) {
+		$options += ['format' => 12];
+		$options = $this->_singleDatetime($options, 'hour');
 
-		if (strlen($attributes['value']) > 2) {
-			try {
-				$date = new DateTime($attributes['value']);
-				if ($format24Hours) {
-					$attributes['value'] = $date->format('H');
-				} else {
-					$attributes['value'] = $date->format('g');
-				}
-			} catch (Exception $e) {
-				$attributes['value'] = null;
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
-		}
+		$options['timeFormat'] = $options['format'];
+		unset($options['format']);
 
-		if ($attributes['value'] > 12 && !$format24Hours) {
-			$attributes['value'] -= 12;
+		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 24) {
+			$options['val'] = [
+				'hour' => (int)$options['val'],
+				'minute' => date('i'),
+			];
 		}
-		if (($attributes['value'] === 0 || $attributes['value'] === '00') && !$format24Hours) {
-			$attributes['value'] = 12;
-		}
-
-		return $this->select(
-			$fieldName . ".hour",
-			$this->_generateOptions($format24Hours ? 'hour24' : 'hour'),
-			$attributes
-		);
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
@@ -2022,60 +1982,25 @@ class FormHelper extends Helper {
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `value` The selected value of the input.
+ * - `interval` The interval that minute options should be created at.
+ * - `round` How you want the value rounded when it does not fit neatly into an
+ *   interval. Accepts 'up', 'down', and null.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $attributes Array of Attributes
+ * @param array $options Array of options.
  * @return string Completed minute select input.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::minute
  */
-	public function minute($fieldName, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		$attributes = $this->_dateTimeSelected('min', $fieldName, $attributes);
+	public function minute($fieldName, $options = []) {
+		$options = $this->_singleDatetime($options, 'minute');
 
-		if (strlen($attributes['value']) > 2) {
-			$date = date_create($attributes['value']);
-			$attributes['value'] = null;
-			if ($date) {
-				$attributes['value'] = $date->format('i');
-			}
-		} elseif ($attributes['value'] === false) {
-			$attributes['value'] = null;
+		if (isset($options['val']) && $options['val'] > 0 && $options['val'] <= 60) {
+			$options['val'] = [
+				'hour' => date('H'),
+				'minute' => (int)$options['val'],
+			];
 		}
-		$minuteOptions = array();
-
-		if (isset($attributes['interval'])) {
-			$minuteOptions['interval'] = $attributes['interval'];
-			unset($attributes['interval']);
-		}
-		return $this->select(
-			$fieldName . ".min", $this->_generateOptions('minute', $minuteOptions),
-			$attributes
-		);
-	}
-
-/**
- * Selects values for dateTime selects.
- *
- * @param string $select Name of element field. ex. 'day'
- * @param string $fieldName Name of fieldName being generated ex. Model.created
- * @param array $attributes Array of attributes, must contain 'empty' key.
- * @return array Attributes array with currently selected value.
- */
-	protected function _dateTimeSelected($select, $fieldName, $attributes) {
-		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				$attributes['value'] = isset($value[$select]) ? $value[$select] : null;
-			} else {
-				if (empty($value)) {
-					if (!$attributes['empty']) {
-						$attributes['value'] = 'now';
-					}
-				} else {
-					$attributes['value'] = $value;
-				}
-			}
-		}
-		return $attributes;
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
@@ -2088,39 +2013,20 @@ class FormHelper extends Helper {
  * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $attributes Array of Attributes
+ * @param array $options Array of options
  * @return string Completed meridian select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::meridian
  */
-	public function meridian($fieldName, $attributes = array()) {
-		$attributes += array('empty' => true, 'value' => null);
-		if ((empty($attributes['value']) || $attributes['value'] === true) && $value = $this->value($fieldName)) {
-			if (is_array($value)) {
-				$meridian = null;
-				extract($value);
-				$attributes['value'] = $meridian;
-			} else {
-				if (empty($value)) {
-					if (!$attributes['empty']) {
-						$attributes['value'] = date('a');
-					}
-				} else {
-					$date = date_create($attributes['value']);
-					$attributes['value'] = null;
-					if ($date) {
-						$attributes['value'] = $date->format('a');
-					}
-				}
-			}
-		}
+	public function meridian($fieldName, $options = array()) {
+		$options = $this->_singleDatetime($options, 'meridian');
 
-		if ($attributes['value'] === false) {
-			$attributes['value'] = null;
+		if (isset($options['val'])) {
+			$options['val'] = [
+				'hour' => date('H'),
+				'minute' => (int)$options['val'],
+			];
 		}
-		return $this->select(
-			$fieldName . ".meridian", $this->_generateOptions('meridian'),
-			$attributes
-		);
+		return $this->datetime($fieldName, $options);
 	}
 
 /**
@@ -2161,6 +2067,7 @@ class FormHelper extends Helper {
 			'monthNames' => true,
 			'minYear' => null,
 			'maxYear' => null,
+			'orderYear' => 'desc',
 			'timeFormat' => 12,
 			'second' => false,
 		];
@@ -2177,8 +2084,7 @@ class FormHelper extends Helper {
  * @return array Converted options.
  */
 	protected function _datetimeOptions($options) {
-		$types = ['year', 'month', 'day', 'hour', 'minute', 'second', 'meridian'];
-		foreach ($types as $type) {
+		foreach ($this->_datetimeParts as $type) {
 			if (!isset($options[$type])) {
 				$options[$type] = [];
 			}
@@ -2206,7 +2112,10 @@ class FormHelper extends Helper {
 		if ($hasYear && isset($options['maxYear'])) {
 			$options['year']['end'] = $options['maxYear'];
 		}
-		unset($options['minYear'], $options['maxYear']);
+		if ($hasYear && isset($options['orderYear'])) {
+			$options['year']['order'] = $options['orderYear'];
+		}
+		unset($options['minYear'], $options['maxYear'], $options['orderYear']);
 
 		if (is_array($options['month'])) {
 			$options['month']['names'] = $options['monthNames'];
@@ -2228,113 +2137,6 @@ class FormHelper extends Helper {
 			$options['val'] = new \DateTime();
 		}
 		return $options;
-	}
-
-/**
- * Generates option lists for common <select /> menus
- *
- * @param string $name
- * @param array $options
- * @return array
- */
-	protected function _generateOptions($name, $options = array()) {
-		if (!empty($this->options[$name])) {
-			return $this->options[$name];
-		}
-		$data = array();
-
-		switch ($name) {
-			case 'minute':
-				if (isset($options['interval'])) {
-					$interval = $options['interval'];
-				} else {
-					$interval = 1;
-				}
-				$i = 0;
-				while ($i < 60) {
-					$data[sprintf('%02d', $i)] = sprintf('%02d', $i);
-					$i += $interval;
-				}
-				break;
-			case 'hour':
-				for ($i = 1; $i <= 12; $i++) {
-					$data[sprintf('%02d', $i)] = $i;
-				}
-				break;
-			case 'hour24':
-				for ($i = 0; $i <= 23; $i++) {
-					$data[sprintf('%02d', $i)] = $i;
-				}
-				break;
-			case 'meridian':
-				$data = array('am' => 'am', 'pm' => 'pm');
-				break;
-			case 'day':
-				$min = 1;
-				$max = 31;
-
-				if (isset($options['min'])) {
-					$min = $options['min'];
-				}
-				if (isset($options['max'])) {
-					$max = $options['max'];
-				}
-
-				for ($i = $min; $i <= $max; $i++) {
-					$data[sprintf('%02d', $i)] = $i;
-				}
-				break;
-			case 'month':
-				if ($options['monthNames'] === true) {
-					$data['01'] = __d('cake', 'January');
-					$data['02'] = __d('cake', 'February');
-					$data['03'] = __d('cake', 'March');
-					$data['04'] = __d('cake', 'April');
-					$data['05'] = __d('cake', 'May');
-					$data['06'] = __d('cake', 'June');
-					$data['07'] = __d('cake', 'July');
-					$data['08'] = __d('cake', 'August');
-					$data['09'] = __d('cake', 'September');
-					$data['10'] = __d('cake', 'October');
-					$data['11'] = __d('cake', 'November');
-					$data['12'] = __d('cake', 'December');
-				} elseif (is_array($options['monthNames'])) {
-					$data = $options['monthNames'];
-				} else {
-					for ($m = 1; $m <= 12; $m++) {
-						$data[sprintf("%02s", $m)] = strftime("%m", mktime(1, 1, 1, $m, 1, 1999));
-					}
-				}
-				break;
-			case 'year':
-				$current = intval(date('Y'));
-
-				$min = !isset($options['min']) ? $current - 20 : (int)$options['min'];
-				$max = !isset($options['max']) ? $current + 20 : (int)$options['max'];
-
-				if ($min > $max) {
-					list($min, $max) = array($max, $min);
-				}
-				if (
-					!empty($options['value']) &&
-					(int)$options['value'] < $min &&
-					(int)$options['value'] > 0
-				) {
-					$min = (int)$options['value'];
-				} elseif (!empty($options['value']) && (int)$options['value'] > $max) {
-					$max = (int)$options['value'];
-				}
-
-				for ($i = $min; $i <= $max; $i++) {
-					$data[$i] = $i;
-				}
-				if ($options['order'] !== 'asc') {
-					$data = array_reverse($data, true);
-				}
-				break;
-		}
-		$this->_options[$name] = $data;
-		return $this->_options[$name];
 	}
 
 /**

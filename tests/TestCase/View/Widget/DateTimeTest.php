@@ -48,8 +48,10 @@ class DateTimeTest extends TestCase {
  * @return array
  */
 	public static function invalidSelectedValuesProvider() {
-		$date = new \DateTime('2014-01-20 12:30:45');
 		return [
+			'null' => null,
+			'false' => false,
+			'true' => true,
 			'string' => ['Bag of poop'],
 			'int' => [-1],
 			'array' => [[
@@ -219,7 +221,7 @@ class DateTimeTest extends TestCase {
 				'start' => 2013,
 				'end' => 2015,
 				'data-foo' => 'test',
-				'order' => 'desc',
+				'order' => 'asc',
 			],
 			'month' => false,
 			'day' => false,
@@ -243,7 +245,7 @@ class DateTimeTest extends TestCase {
 			'year' => [
 				'start' => 2013,
 				'end' => 2015,
-				'order' => 'asc'
+				'order' => 'desc'
 			],
 			'month' => false,
 			'day' => false,
@@ -285,12 +287,12 @@ class DateTimeTest extends TestCase {
 		]);
 		$expected = [
 			'select' => ['name' => 'date[year]'],
-			['option' => ['value' => '2010', 'selected' => 'selected']], '2010', '/option',
-			['option' => ['value' => '2011']], '2011', '/option',
-			['option' => ['value' => '2012']], '2012', '/option',
-			['option' => ['value' => '2013']], '2013', '/option',
-			['option' => ['value' => '2014']], '2014', '/option',
 			['option' => ['value' => '2015']], '2015', '/option',
+			['option' => ['value' => '2014']], '2014', '/option',
+			['option' => ['value' => '2013']], '2013', '/option',
+			['option' => ['value' => '2012']], '2012', '/option',
+			['option' => ['value' => '2011']], '2011', '/option',
+			['option' => ['value' => '2010', 'selected' => 'selected']], '2010', '/option',
 			'/select',
 		];
 		$this->assertTags($result, $expected);
@@ -311,10 +313,10 @@ class DateTimeTest extends TestCase {
 		]);
 		$expected = [
 			'select' => ['name' => 'date[year]'],
-			['option' => ['value' => '2010']], '2010', '/option',
-			['option' => ['value' => '2011']], '2011', '/option',
-			['option' => ['value' => '2012']], '2012', '/option',
 			['option' => ['value' => '2013', 'selected' => 'selected']], '2013', '/option',
+			['option' => ['value' => '2012']], '2012', '/option',
+			['option' => ['value' => '2011']], '2011', '/option',
+			['option' => ['value' => '2010']], '2010', '/option',
 			'/select',
 		];
 		$this->assertTags($result, $expected);
@@ -386,6 +388,34 @@ class DateTimeTest extends TestCase {
 			['option' => ['value' => '10']], 'October', '/option',
 			['option' => ['value' => '11']], 'November', '/option',
 			['option' => ['value' => '12']], 'December', '/option',
+			'/select',
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test rendering month widget with custom names.
+ *
+ * @return void
+ */
+	public function testRenderMonthWidgetWithCustomNames() {
+		$now = new \DateTime('2010-09-01 12:00:00');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'day' => false,
+			'hour' => false,
+			'minute' => false,
+			'second' => false,
+			'month' => [
+				'names' => ['01' => 'Jan', '02' => 'Feb']
+			],
+			'val' => $now,
+		]);
+		$expected = [
+			'select' => ['name' => 'date[month]'],
+			['option' => ['value' => '01']], 'Jan', '/option',
+			['option' => ['value' => '02']], 'Feb', '/option',
 			'/select',
 		];
 		$this->assertTags($result, $expected);
@@ -511,6 +541,7 @@ class DateTimeTest extends TestCase {
 			'val' => $now,
 		]);
 		$this->assertContains('<select name="date[hour]" data-foo="test">', $result);
+		$this->assertContains('<option value="00">0</option>', $result);
 		$this->assertContains(
 			'<option value="01">1</option>',
 			$result,
@@ -526,16 +557,37 @@ class DateTimeTest extends TestCase {
 			$result,
 			'selected value present'
 		);
-		$this->assertContains(
-			'<option value="24">24</option>',
-			$result,
-			'contains 24 hours'
-		);
+		$this->assertContains('<option value="23">23</option>', $result);
 		$this->assertNotContains('date[day]', $result, 'No day select.');
 		$this->assertNotContains('value="0"', $result, 'No zero hour');
-		$this->assertNotContains('value="25"', $result, 'No 25th hour');
+		$this->assertNotContains('value="24"', $result, 'No 25th hour');
 		$this->assertNotContains('<select name="date[meridian]">', $result);
 		$this->assertNotContains('<option value="pm" selected="selected">pm</option>', $result);
+	}
+
+/**
+ * test selecting various options in 24 hr mode.
+ *
+ * @return void
+ */
+	public function testRenderHour24SelectedValues() {
+		$now = new \DateTime('2010-09-09 23:00:00');
+		$data = [
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => [],
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		];
+		$result = $this->DateTime->render($data);
+		$this->assertContains('<option value="23" selected="selected">23</option>', $result);
+
+		$data['val'] = '2010-09-09 23:00:00';
+		$result = $this->DateTime->render($data);
+		$this->assertContains('<option value="23" selected="selected">23</option>', $result);
 	}
 
 /**
@@ -584,6 +636,32 @@ class DateTimeTest extends TestCase {
 
 		$this->assertContains('<select name="date[meridian]">', $result);
 		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+	}
+
+/**
+ * Test rendering hour widget in 12 hour mode at midnight.
+ *
+ * @return void
+ */
+	public function testRenderHourWidget12Midnight() {
+		$now = new \DateTime('2010-09-09 00:30:45');
+		$result = $this->DateTime->render([
+			'name' => 'date',
+			'year' => false,
+			'month' => false,
+			'day' => false,
+			'hour' => [
+				'format' => 12,
+			],
+			'minute' => false,
+			'second' => false,
+			'val' => $now,
+		]);
+		$this->assertContains(
+			'<option value="12" selected="selected">12</option>',
+			$result,
+			'12 is selected'
+		);
 	}
 
 /**
