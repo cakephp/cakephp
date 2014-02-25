@@ -65,7 +65,13 @@ class FormHelper extends Helper {
  * @var array
  */
 	public $settings = [
-		'errorClass' => 'form-error'
+		'errorClass' => 'form-error',
+		'typeMap' => [
+			'string' => 'text', 'datetime' => 'datetime', 'boolean' => 'checkbox',
+			'timestamp' => 'datetime', 'text' => 'textarea', 'time' => 'time',
+			'date' => 'date', 'float' => 'number', 'integer' => 'number',
+			'decimal' => 'number', 'binary' => 'file', 'uuid' => 'string'
+		]
 	];
 
 /**
@@ -89,13 +95,6 @@ class FormHelper extends Helper {
  * @var string
  */
 	public $requestType = null;
-
-/**
- * Persistent default options used by input(). Set by FormHelper::create().
- *
- * @var array
- */
-	protected $_inputDefaults = array();
 
 /**
  * An array of field names that have been excluded from
@@ -155,10 +154,14 @@ class FormHelper extends Helper {
 		'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
 		'radioContainer' => '{{input}}{{label}}',
 		'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
+		'formGroup' => '{{label}}{{input}}',
+		'checkboxFormGroup' => '{{input}}{{label}}',
+		'groupContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
+		'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>'
 	];
 
 /**
- * Copies the validationErrors variable from the View object into this instance
+ * Construct the widgets and binds the default context providers
  *
  * @param \Cake\View\View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper.
@@ -841,156 +844,148 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#creating-form-elements
  */
 	public function input($fieldName, $options = array()) {
-		$this->setEntity($fieldName);
-		$options = $this->_parseOptions($options);
+		$options += [
+			'type' => null,
+			'label' => null,
+			'error' => null,
+			'options' => null,
+			'templates' => []
+		];
+		$options = $this->_parseOptions($fieldName, $options);
+		$options += ['id' => $this->_domId($fieldName)];
 
-		$divOptions = $this->_divOptions($options);
-		unset($options['div']);
-
-		if ($options['type'] === 'radio' && isset($options['options'])) {
-			$radioOptions = (array)$options['options'];
-			unset($options['options']);
-		}
-
+		$originalTemplates = $this->templates();
+		$this->templates($options['templates']);
+		unset($options['templates']);
 		$label = $this->_getLabel($fieldName, $options);
 		if ($options['type'] !== 'radio') {
 			unset($options['label']);
 		}
 
-		$error = $this->_extractOption('error', $options, null);
-		unset($options['error']);
-
-		$errorMessage = $this->_extractOption('errorMessage', $options, true);
-		unset($options['errorMessage']);
-
-		$selected = $this->_extractOption('selected', $options, null);
-		unset($options['selected']);
-
-		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time') {
-			$dateFormat = $this->_extractOption('dateFormat', $options, 'MDY');
-			$timeFormat = $this->_extractOption('timeFormat', $options, 12);
-			unset($options['dateFormat'], $options['timeFormat']);
+		$template = 'groupContainer';
+		$error = null;
+		if ($options['type'] !== 'hidden' && $options['error'] !== false) {
+			$error = $this->error($fieldName, $options['error']);
+			$template = empty($error) ? $template : 'groupContainerError';
+			unset($options['error']);
 		}
 
-		$type = $options['type'];
-		$out = array('before' => $options['before'], 'label' => $label, 'between' => $options['between'], 'after' => $options['after']);
-		$format = $this->_getFormat($options);
+		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
+		$input = $this->_getInput($fieldName, $options);
+		$result = $this->formatTemplate($groupTemplate, compact('input', 'label'));
 
-		unset($options['type'], $options['before'], $options['between'], $options['after'], $options['format']);
-
-		$out['error'] = null;
-		if ($type !== 'hidden' && $error !== false) {
-			$errMsg = $this->error($fieldName, $error);
-			if ($errMsg) {
-				$divOptions = $this->addClass($divOptions, 'error');
-				if ($errorMessage) {
-					$out['error'] = $errMsg;
-				}
-			}
+		if ($options['type'] !== 'hidden') {
+			$result = $this->formatTemplate($template, [
+				'content' => $result,
+				'error' => $error,
+				'required' => null,
+				'type' => $options['type'],
+			]);
 		}
 
-		if ($type === 'radio' && isset($out['between'])) {
-			$options['between'] = $out['between'];
-			$out['between'] = null;
-		}
-		$out['input'] = $this->_getInput(compact('type', 'fieldName', 'options', 'radioOptions', 'selected', 'dateFormat', 'timeFormat'));
-
-		$output = '';
-		foreach ($format as $element) {
-			$output .= $out[$element];
-		}
-
-		if (!empty($divOptions['tag'])) {
-			$tag = $divOptions['tag'];
-			unset($divOptions['tag']);
-			$output = $this->Html->tag($tag, $output, $divOptions);
-		}
-		return $output;
+		$this->templates($originalTemplates);
+		return $result;
 	}
 
 /**
  * Generates an input element
  *
- * @param array $args The options for the input element
+ * @param string $fieldName the field name
+ * @param array $options The options for the input element
  * @return string The generated input element
  */
-	protected function _getInput($args) {
-		extract($args);
-		switch ($type) {
-			case 'hidden':
-				return $this->hidden($fieldName, $options);
-			case 'checkbox':
-				return $this->checkbox($fieldName, $options);
-			case 'radio':
-				return $this->radio($fieldName, $radioOptions, $options);
-			case 'file':
-				return $this->file($fieldName, $options);
+	protected function _getInput($fieldName, $options) {
+		switch ($options['type']) {
 			case 'select':
-				$options += array('options' => array(), 'value' => $selected);
-				$list = $options['options'];
+				$opts = $options['options'];
 				unset($options['options']);
-				return $this->select($fieldName, $list, $options);
-			case 'time':
-				$options['value'] = $selected;
-				return $this->dateTime($fieldName, null, $timeFormat, $options);
-			case 'date':
-				$options['value'] = $selected;
-				return $this->dateTime($fieldName, $dateFormat, null, $options);
-			case 'datetime':
-				$options['value'] = $selected;
-				return $this->dateTime($fieldName, $dateFormat, $timeFormat, $options);
-			case 'textarea':
-				return $this->textarea($fieldName, $options + array('cols' => '30', 'rows' => '6'));
+				return $this->select($fieldName, $opts, $options);
 			case 'url':
-				return $this->text($fieldName, array('type' => 'url') + $options);
+				$options = $this->_initInputField($fieldName, $options);
+				return $this->widget($options['type'], $options);
 			default:
-				return $this->{$type}($fieldName, $options);
+				return $this->{$options['type']}($fieldName, $options);
 		}
 	}
 
 /**
  * Generates input options array
  *
+ * @param string $fieldName the name of the field to parse options for
  * @param array $options
  * @return array Options
  */
-	protected function _parseOptions($options) {
-		$options = array_merge(
-			array('before' => null, 'between' => null, 'after' => null, 'format' => null),
-			$this->_inputDefaults,
-			$options
-		);
-
-		if (!isset($options['type'])) {
-			$options = $this->_magicOptions($options);
+	protected function _parseOptions($fieldName, $options) {
+		$needsMagicType = false;
+		if (empty($options['type'])) {
+			$needsMagicType = true;
+			$options['type'] = $this->_inputType($fieldName, $options);
 		}
 
-		if (in_array($options['type'], array('radio', 'select'))) {
-			$options = $this->_optionsOptions($options);
-		}
-
-		if (isset($options['rows']) || isset($options['cols'])) {
-			$options['type'] = 'textarea';
-		}
-
-		if ($options['type'] === 'datetime' || $options['type'] === 'date' || $options['type'] === 'time' || $options['type'] === 'select') {
-			$options += array('empty' => false);
-		}
+		$options = $this->_magicOptions($fieldName, $options, $needsMagicType);
 		return $options;
 	}
 
 /**
- * Generates list of options for multiple select
+ * Returns the input type that was guessed for the provided fieldName,
+ * based on the internal type it is associated too, its name and the
+ * variales that can be found in the view template
  *
+ * @param string $fieldName the name of the field to guess a type for
+ * @param array $options the options passed to the input method
+ * @return string
+ */
+	protected function _inputType($fieldName, $options) {
+		$context = $this->_getContext();
+		$primaryKey = (array)$context->primaryKey();
+
+		if (in_array($fieldName, $primaryKey)) {
+			return 'hidden';
+		}
+
+		if (substr($fieldName, -3) === '_id') {
+			return 'select';
+		}
+
+		$internalType = $context->type($fieldName);
+		$map = $this->settings['typeMap'];
+		$type = isset($map[$internalType]) ? $map[$internalType] : 'text';
+		$fieldName = array_slice(explode('.', $fieldName), -1)[0];
+
+		switch (true) {
+			case isset($options['checked']) :
+				return 'checkbox';
+			case isset($options['options']) :
+				return 'select';
+			case in_array($fieldName, ['passwd', 'password']) :
+				return 'password';
+			case in_array($fieldName, ['tel', 'telephone', 'phone']) :
+				return 'tel';
+			case $fieldName === 'email':
+				return 'email';
+			case isset($options['rows']) || isset($options['cols']) :
+				return 'textarea';
+		}
+
+		return $type;
+	}
+
+/**
+ * Selects the variable containing the options for a select field if present,
+ * and sets the value to the 'options' key in the options array.
+ *
+ * @param string $fieldName the name of the field to find options for
  * @param array $options
  * @return array
  */
-	protected function _optionsOptions($options) {
+	protected function _optionsOptions($fieldName, $options) {
 		if (isset($options['options'])) {
 			return $options;
 		}
+
+		$fieldName = array_slice(explode('.', $fieldName), -1)[0];
 		$varName = Inflector::variable(
-			Inflector::pluralize(preg_replace('/_id$/', '', $this->field()))
+			Inflector::pluralize(preg_replace('/_id$/', '', $fieldName))
 		);
 		$varOptions = $this->_View->get($varName);
 		if (!is_array($varOptions)) {
@@ -1006,93 +1001,52 @@ class FormHelper extends Helper {
 /**
  * Magically set option type and corresponding options
  *
+ * @param string $fieldName the name of the field to generate options for
  * @param array $options
+ * @param boolean $allowOverride whether or not it is allowed for this method to
+ * overwrite the 'type' key in options
  * @return array
  */
-	protected function _magicOptions($options) {
-		$modelKey = $this->model();
-		$fieldKey = $this->field();
-		$options['type'] = 'text';
-		if (isset($options['options'])) {
-			$options['type'] = 'select';
-		} elseif (in_array($fieldKey, array('psword', 'passwd', 'password'))) {
-			$options['type'] = 'password';
-		} elseif (in_array($fieldKey, array('tel', 'telephone', 'phone'))) {
-			$options['type'] = 'tel';
-		} elseif ($fieldKey === 'email') {
-			$options['type'] = 'email';
-		} elseif (isset($options['checked'])) {
-			$options['type'] = 'checkbox';
-		} elseif ($fieldDef = $this->_introspectModel($modelKey, 'fields', $fieldKey)) {
-			$type = $fieldDef['type'];
-			$primaryKey = $this->fieldset[$modelKey]['key'];
-			$map = array(
-				'string' => 'text', 'datetime' => 'datetime',
-				'boolean' => 'checkbox', 'timestamp' => 'datetime',
-				'text' => 'textarea', 'time' => 'time',
-				'date' => 'date', 'float' => 'number',
-				'integer' => 'number', 'decimal' => 'number',
-				'binary' => 'file'
-			);
+	protected function _magicOptions($fieldName, $options, $allowOverride) {
+		$context = $this->_getContext();
+		$type = $context->type($fieldName);
+		$fieldDef = $context->attributes($fieldName);
 
-			if (isset($this->map[$type])) {
-				$options['type'] = $this->map[$type];
-			} elseif (isset($map[$type])) {
-				$options['type'] = $map[$type];
-			}
-			if ($fieldKey == $primaryKey) {
-				$options['type'] = 'hidden';
-			}
-			if (
-				$options['type'] === 'number' &&
-				!isset($options['step'])
-			) {
-				if ($type === 'decimal') {
-					$decimalPlaces = substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1);
-					$options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
-				} elseif ($type === 'float') {
-					$options['step'] = 'any';
-				}
+		if ($options['type'] === 'number' && !isset($options['step'])) {
+			if ($type === 'decimal') {
+				$decimalPlaces = substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1);
+				$options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
+			} elseif ($type === 'float') {
+				$options['step'] = 'any';
 			}
 		}
 
-		if (preg_match('/_id$/', $fieldKey) && $options['type'] !== 'hidden') {
-			$options['type'] = 'select';
+		// Missing HABTM
+		//...
+
+		$typesWithOptions = ['text', 'number', 'radio', 'select'];
+		if ($allowOverride && in_array($options['type'], $typesWithOptions)) {
+			$options = $this->_optionsOptions($fieldName, $options);
 		}
 
-		if ($modelKey === $fieldKey) {
-			$options['type'] = 'select';
-			if (!isset($options['multiple'])) {
-				$options['multiple'] = 'multiple';
-			}
-		}
-		if (in_array($options['type'], array('text', 'number'))) {
-			$options = $this->_optionsOptions($options);
-		}
 		if ($options['type'] === 'select' && array_key_exists('step', $options)) {
 			unset($options['step']);
 		}
-		$options = $this->_maxLength($options);
-		return $options;
-	}
 
-/**
- * Generate format options
- *
- * @param array $options
- * @return array
- */
-	protected function _getFormat($options) {
-		if ($options['type'] === 'hidden') {
-			return array('input');
+		$autoLength = !array_key_exists('maxlength', $options)
+			&& !empty($fieldDef['length'])
+			&& $options['type'] !== 'select';
+
+		$allowedTypes = ['text', 'email', 'tel', 'url', 'search'];
+		if ($autoLength && in_array($options['type'], $allowedTypes)) {
+			$options['maxlength'] = $fieldDef['length'];
 		}
-		if (is_array($options['format']) && in_array('input', $options['format'])) {
-			return $options['format'];
+
+		if (in_array($options['type'], ['datetime', 'date', 'time', 'select'])) {
+			$options += ['empty' => false];
 		}
-		if ($options['type'] === 'checkbox') {
-			return array('before', 'input', 'between', 'label', 'after', 'error');
-		}
-		return array('before', 'label', 'between', 'input', 'after', 'error');
+
+		return $options;
 	}
 
 /**
@@ -1116,62 +1070,6 @@ class FormHelper extends Helper {
 			return false;
 		}
 		return $this->_inputLabel($fieldName, $label, $options);
-	}
-
-/**
- * Calculates maxlength option
- *
- * @param array $options
- * @return array
- */
-	protected function _maxLength($options) {
-		$fieldDef = $this->_introspectModel($this->model(), 'fields', $this->field());
-		$autoLength = (
-			!array_key_exists('maxlength', $options) &&
-			isset($fieldDef['length']) &&
-			is_scalar($fieldDef['length']) &&
-			$options['type'] !== 'select'
-		);
-		if ($autoLength &&
-			in_array($options['type'], array('text', 'email', 'tel', 'url', 'search'))
-		) {
-			$options['maxlength'] = $fieldDef['length'];
-		}
-		return $options;
-	}
-
-/**
- * Generate div options for input
- *
- * @param array $options
- * @return array
- */
-	protected function _divOptions($options) {
-		if ($options['type'] === 'hidden') {
-			return array();
-		}
-		$div = $this->_extractOption('div', $options, true);
-		if (!$div) {
-			return array();
-		}
-
-		$divOptions = array('class' => 'input');
-		$divOptions = $this->addClass($divOptions, $options['type']);
-		if (is_string($div)) {
-			$divOptions['class'] = $div;
-		} elseif (is_array($div)) {
-			$divOptions = array_merge($divOptions, $div);
-		}
-		if (
-			$this->_extractOption('required', $options) !== false &&
-			$this->_introspectModel($this->model(), 'validates', $this->field())
-		) {
-			$divOptions = $this->addClass($divOptions, 'required');
-		}
-		if (!isset($divOptions['tag'])) {
-			$divOptions['tag'] = 'div';
-		}
-		return $divOptions;
 	}
 
 /**
@@ -1201,7 +1099,7 @@ class FormHelper extends Helper {
  * @return string Generated label element
  */
 	protected function _inputLabel($fieldName, $label, $options) {
-		$labelAttributes = $this->domId(array(), 'for');
+		$labelAttributes = [];
 		$idKey = null;
 		if ($options['type'] === 'date' || $options['type'] === 'datetime') {
 			$firstInput = 'M';
@@ -1296,7 +1194,7 @@ class FormHelper extends Helper {
 			}
 			$output = $this->hidden($fieldName, $hiddenOptions);
 		}
-		unset($options['hiddenField']);
+		unset($options['hiddenField'], $options['type']);
 		return $output . $this->widget('checkbox', $options);
 	}
 
@@ -1440,6 +1338,7 @@ class FormHelper extends Helper {
 			);
 		}
 
+		unset($options['type']);
 		return $this->widget('file', $options);
 	}
 
@@ -1785,7 +1684,7 @@ class FormHelper extends Helper {
 			);
 			$hidden = $this->hidden($fieldName, $hiddenAttributes);
 		}
-		unset($attributes['hiddenField']);
+		unset($attributes['hiddenField'], $attributes['type']);
 		return $hidden . $this->widget('select', $attributes);
 	}
 
@@ -2236,24 +2135,6 @@ class FormHelper extends Helper {
 			return trim($el, ']');
 		}, $parts);
 		return $parts;
-	}
-
-/**
- * Set/Get inputDefaults for form elements
- *
- * @param array $defaults New default values
- * @param boolean Merge with current defaults
- * @return array inputDefaults
- */
-	public function inputDefaults($defaults = null, $merge = false) {
-		if ($defaults !== null) {
-			if ($merge) {
-				$this->_inputDefaults = array_merge($this->_inputDefaults, (array)$defaults);
-			} else {
-				$this->_inputDefaults = (array)$defaults;
-			}
-		}
-		return $this->_inputDefaults;
 	}
 
 /**

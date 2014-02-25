@@ -71,7 +71,8 @@ class ContactsTable extends Table {
 		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null),
-		'age' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => null)
+		'age' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => null),
+		'_constraints' => array('primary' => ['type' => 'primary', 'columns' => ['id']])
 	);
 
 /**
@@ -114,15 +115,6 @@ class ContactsTable extends Table {
 	);
 
 /**
- * schema method
- *
- * @return void
- */
-	public function setSchema($schema) {
-		$this->_schema = $schema;
-	}
-
-/**
  * hasAndBelongsToMany property
  *
  * @var array
@@ -142,6 +134,16 @@ class ContactsTable extends Table {
 	public $belongsTo = array(
 		'User' => array('className' => 'UserForm'
 	));
+
+/**
+ * Initializes the schema and validation rules.
+ *
+ * @return void
+ */
+	public function initialize(array $config) {
+		$this->schema($this->_schema);
+	}
+
 }
 
 /**
@@ -327,8 +329,18 @@ class ValidateUsersTable extends Table {
 		'ratio' => array('type' => 'decimal', 'null' => false, 'length' => '10,6'),
 		'population' => array('type' => 'decimal', 'null' => false, 'length' => '15,0'),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
+		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null),
+		'_constraints' => array('primary' => ['type' => 'primary', 'columns' => ['id']])
 	);
+
+/**
+ * Initializes the schema
+ *
+ * @return void
+ */
+	public function initialize(array $config) {
+		$this->schema($this->_schema);
+	}
 
 /**
  * beforeValidate method
@@ -531,6 +543,7 @@ class FormHelperTest extends TestCase {
 	public function tearDown() {
 		parent::tearDown();
 		unset($this->Form->Html, $this->Form, $this->Controller, $this->View);
+		TableRegistry::clear();
 	}
 
 /**
@@ -863,59 +876,6 @@ class FormHelperTest extends TestCase {
 			),
 			'div' => array('style' => 'display:none;'),
 			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * test that inputDefaults are stored and used.
- *
- * @return void
- */
-	public function testCreateWithInputDefaults() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('User', array(
-			'inputDefaults' => array(
-				'div' => false,
-				'label' => false,
-				'error' => array('attributes' => array('wrap' => 'small', 'class' => 'error')),
-				'format' => array('before', 'label', 'between', 'input', 'after', 'error')
-			)
-		));
-		$result = $this->Form->input('username');
-		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername')
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('username', array('div' => true, 'label' => 'username'));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserUsername'), 'username', '/label',
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('username', array('label' => 'Username', 'format' => array('input', 'label')));
-		$expected = array(
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
-			'label' => array('for' => 'UserUsername'), 'Username', '/label',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->create('User', array(
-			'inputDefaults' => array(
-				'div' => false,
-				'label' => array('class' => 'nice', 'for' => 'changed'),
-			)
-		));
-		$result = $this->Form->input('username', array('div' => true));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'changed', 'class' => 'nice'), 'Username', '/label',
-			'input' => array('type' => 'text', 'name' => 'User[username]', 'id' => 'UserUsername'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -1311,24 +1271,19 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testTextFieldTypeNumberGenerationForIntegers() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$model->setSchema(array('foo' => array(
-			'type' => 'integer',
-			'null' => false,
-			'default' => null,
-			'length' => null
-		)));
-
-		$this->Form->create('Contact');
-		$result = $this->Form->input('foo');
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
+		$result = $this->Form->input('age');
 		$expected = array(
 			'div' => array('class' => 'input number'),
-			'label' => array('for' => 'ContactFoo'),
-			'Foo',
+			'label' => array('for' => 'age'),
+			'Age',
 			'/label',
 			array('input' => array(
-				'type' => 'number', 'name' => 'Contact[foo]',
-				'id' => 'ContactFoo'
+				'type' => 'number', 'name' => 'age',
+				'id' => 'age'
 			)),
 			'/div'
 		);
@@ -1341,24 +1296,26 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFileUploadFieldTypeGenerationForBinaries() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$model->setSchema(array('foo' => array(
+		$table = TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$table->schema(array('foo' => array(
 			'type' => 'binary',
 			'null' => false,
 			'default' => null,
 			'length' => 1024
 		)));
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
 
-		$this->Form->create('Contact');
 		$result = $this->Form->input('foo');
 		$expected = array(
 			'div' => array('class' => 'input file'),
-			'label' => array('for' => 'ContactFoo'),
+			'label' => array('for' => 'foo'),
 			'Foo',
 			'/label',
 			array('input' => array(
-				'type' => 'file', 'name' => 'data[Contact][foo]',
-				'id' => 'ContactFoo'
+				'type' => 'file', 'name' => 'foo',
+				'id' => 'foo'
 			)),
 			'/div'
 		);
@@ -2404,14 +2361,17 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('ValidateUser.balance');
+		TableRegistry::get('ValidateUsers', [
+			'className' => __NAMESPACE__ . '\ValidateUsersTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'ValidateUsers']]);
+		$result = $this->Form->input('ValidateUsers.balance');
 		$expected = array(
 			'div' => array('class'),
 			'label' => array('for'),
 			'Balance',
 			'/label',
-			'input' => array('name', 'type' => 'number', 'id'),
+			'input' => array('name', 'type' => 'number', 'id', 'step'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
@@ -2426,7 +2386,18 @@ class FormHelperTest extends TestCase {
 			'/div',
 		);
 		$this->assertTags($result, $expected);
+	}
 
+/**
+ * Tests the input method and passing custom options
+ *
+ * @return void
+ */
+	public function testInputCustomization() {
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('Contact.email', array('id' => 'custom'));
 		$expected = array(
 			'div' => array('class' => 'input email'),
@@ -2441,36 +2412,31 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.email', array('div' => array('class' => false)));
+		$result = $this->Form->input('Contact.email', array(
+			'templates' => ['groupContainer' => '<div>{{content}}</div>']
+		));
 		$expected = array(
 			'<div',
-			'label' => array('for' => 'ContactEmail'),
+			'label' => array('for' => 'contact-email'),
 			'Email',
 			'/label',
 			array('input' => array(
 				'type' => 'email', 'name' => 'Contact[email]',
-				'id' => 'ContactEmail', 'maxlength' => 255
+				'id' => 'contact-email', 'maxlength' => 255
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->hidden('Contact.idontexist');
-		$expected = array('input' => array(
-				'type' => 'hidden', 'name' => 'Contact[idontexist]',
-				'id' => 'ContactIdontexist'
-		));
-		$this->assertTags($result, $expected);
-
 		$result = $this->Form->input('Contact.email', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactEmail'),
+			'label' => array('for' => 'contact-email'),
 			'Email',
 			'/label',
 			array('input' => array(
 				'type' => 'text', 'name' => 'Contact[email]',
-				'id' => 'ContactEmail'
+				'id' => 'contact-email', 'maxlength' => '255'
 			)),
 			'/div'
 		);
@@ -2479,12 +2445,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Contact.5.email', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'Contact5Email'),
+			'label' => array('for' => 'contact-5-email'),
 			'Email',
 			'/label',
 			array('input' => array(
 				'type' => 'text', 'name' => 'Contact[5][email]',
-				'id' => 'Contact5Email'
+				'id' => 'contact-5-email', 'maxlength' => '255'
 			)),
 			'/div'
 		);
@@ -2493,12 +2459,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Contact.password');
 		$expected = array(
 			'div' => array('class' => 'input password'),
-			'label' => array('for' => 'ContactPassword'),
+			'label' => array('for' => 'contact-password'),
 			'Password',
 			'/label',
 			array('input' => array(
 				'type' => 'password', 'name' => 'Contact[password]',
-				'id' => 'ContactPassword'
+				'id' => 'contact-password'
 			)),
 			'/div'
 		);
@@ -2509,34 +2475,36 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input file'),
-			'label' => array('for' => 'ContactEmail'),
+			'label' => array('for' => 'contact-email'),
 			'Email',
 			'/label',
 			array('input' => array(
 				'type' => 'file', 'name' => 'Contact[email]', 'class' => 'textbox',
-				'id' => 'ContactEmail'
+				'id' => 'contact-email'
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data = array('Contact' => array('phone' => 'Hello & World > weird chars'));
+		$entity = new Entity(['phone' => 'Hello & World > weird chars']);
+		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('Contact.phone');
 		$expected = array(
 			'div' => array('class' => 'input tel'),
-			'label' => array('for' => 'ContactPhone'),
+			'label' => array('for' => 'contact-phone'),
 			'Phone',
 			'/label',
 			array('input' => array(
 				'type' => 'tel', 'name' => 'Contact[phone]',
 				'value' => 'Hello &amp; World &gt; weird chars',
-				'id' => 'ContactPhone', 'maxlength' => 255
+				'id' => 'contact-phone', 'maxlength' => 255
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
 		$this->Form->request->data['Model']['0']['OtherModel']['field'] = 'My value';
+		$this->Form->create();
 		$result = $this->Form->input('Model.0.OtherModel.field', array('id' => 'myId'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
@@ -2553,16 +2521,17 @@ class FormHelperTest extends TestCase {
 
 		unset($this->Form->request->data);
 
-		$Contact->validationErrors['field'] = array('Badness!');
+		$entity->errors('field', 'Badness!');
+		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('Contact.field');
 		$expected = array(
 			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
+			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
+				'id' => 'contact-field', 'class' => 'form-error'
 			),
 			array('div' => array('class' => 'error-message')),
 			'Badness!',
@@ -2572,15 +2541,18 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->input('Contact.field', array(
-			'div' => false, 'error' => array('attributes' => array('wrap' => 'span'))
+			'templates' => [
+				'groupContainerError' => '{{content}}{{error}}',
+				'error' => '<span class="error-message">{{content}}</span>'
+			]
 		));
 		$expected = array(
-			'label' => array('for' => 'ContactField'),
+			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
 			'input' => array(
 				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
+				'id' => 'contact-field', 'class' => 'form-error'
 			),
 			array('span' => array('class' => 'error-message')),
 			'Badness!',
@@ -2588,88 +2560,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.field', array(
-			'type' => 'text', 'error' => array('attributes' => array('class' => 'error'))
-		));
-		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
-			'Field',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
-			),
-			array('div' => array('class' => 'error')),
-			'Badness!',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.field', array(
-			'div' => array('tag' => 'span'), 'error' => array('attributes' => array('wrap' => false))
-		));
-		$expected = array(
-			'span' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
-			'Field',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
-			),
-			'Badness!',
-			'/span'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.field', array('after' => 'A message to you, Rudy'));
-		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
-			'Field',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field]',
-				'id' => 'ContactField', 'class' => 'form-error'
-			),
-			'A message to you, Rudy',
-			array('div' => array('class' => 'error-message')),
-			'Badness!',
-			'/div',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->setEntity(null);
-		$this->Form->setEntity('Contact.field');
-		$result = $this->Form->input('Contact.field', array(
-			'after' => 'A message to you, Rudy', 'error' => false
-		));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactField'),
-			'Field',
-			'/label',
-			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'ContactField', 'class' => 'form-error'),
-			'A message to you, Rudy',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Object.field', array('after' => 'A message to you, Rudy'));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ObjectField'),
-			'Field',
-			'/label',
-			'input' => array('type' => 'text', 'name' => 'Object[field]', 'id' => 'ObjectField'),
-			'A message to you, Rudy',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$Contact->validationErrors['field'] = array('minLength');
+		$entity->errors('field', ['minLength']);
 		$result = $this->Form->input('Contact.field', array(
 			'error' => array(
 				'minLength' => 'Le login doit contenir au moins 2 caractères',
@@ -2678,10 +2569,10 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
+			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'ContactField', 'class' => 'form-error'),
+			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'contact-field', 'class' => 'form-error'),
 			array('div' => array('class' => 'error-message')),
 			'Le login doit contenir au moins 2 caractères',
 			'/div',
@@ -2689,23 +2580,22 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$Contact->validationErrors['field'] = array('maxLength');
+		$entity->errors('field', ['maxLength']);
 		$result = $this->Form->input('Contact.field', array(
 			'error' => array(
-				'attributes' => array('wrap' => 'span', 'rel' => 'fake'),
 				'minLength' => 'Le login doit contenir au moins 2 caractères',
 				'maxLength' => 'login too large',
 			)
 		));
 		$expected = array(
 			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'ContactField'),
+			'label' => array('for' => 'contact-field'),
 			'Field',
 			'/label',
-			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'ContactField', 'class' => 'form-error'),
-			array('span' => array('class' => 'error-message', 'rel' => 'fake')),
+			'input' => array('type' => 'text', 'name' => 'Contact[field]', 'id' => 'contact-field', 'class' => 'form-error'),
+			array('div' => array('class' => 'error-message')),
 			'login too large',
-			'/span',
+			'/div',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2717,13 +2607,15 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputZero() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('User');
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
 		$result = $this->Form->input('0');
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'User0'), '/label',
-			'input' => array('type' => 'text', 'name' => 'User[0]', 'id' => 'User0'),
+			'label' => array('for' => '0'), '/label',
+			'input' => array('type' => 'text', 'name' => '0', 'id' => '0'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2735,12 +2627,11 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputCheckbox() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => true));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0', 'id' => 'UserActive_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
+			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0'),
+			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked')),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2748,8 +2639,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => 1));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0', 'id' => 'UserActive_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
+			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0'),
+			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked')),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2757,8 +2648,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('User.active', array('label' => false, 'checked' => '1'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0', 'id' => 'UserActive_'),
-			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'UserActive', 'checked' => 'checked')),
+			'input' => array('type' => 'hidden', 'name' => 'User[active]', 'value' => '0'),
+			array('input' => array('type' => 'checkbox', 'name' => 'User[active]', 'value' => '1', 'id' => 'user-active', 'checked' => 'checked')),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -2770,15 +2661,15 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
-			'input' => array('type' => 'hidden', 'name' => 'data[User][disabled]', 'value' => '0', 'id' => 'UserDisabled_'),
+			'input' => array('type' => 'hidden', 'name' => 'User[disabled]', 'value' => '0'),
 			array('input' => array(
 				'type' => 'checkbox',
-				'name' => 'data[User][disabled]',
+				'name' => 'User[disabled]',
 				'value' => '1',
-				'id' => 'UserDisabled',
+				'id' => 'user-disabled',
 				'data-foo' => 'disabled'
 			)),
-			'label' => array('for' => 'UserDisabled'),
+			'label' => array('for' => 'user-disabled'),
 			'Disabled',
 			'/label',
 			'/div'
@@ -3214,7 +3105,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputSelectType() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+		$this->markTestIncomplete('A test here is throwing fatal error, fix later');
 		$result = $this->Form->input('email', array(
 			'options' => array('è' => 'Firést', 'é' => 'Secoènd'), 'empty' => true)
 		);
@@ -3411,13 +3302,12 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputOverridingMagicSelectType() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ModelUserId'), 'User', '/label',
-			'input' => array('name' => 'Model[user_id]', 'type' => 'text', 'id' => 'ModelUserId'),
+			'label' => array('for' => 'model-user-id'), 'User', '/label',
+			'input' => array('name' => 'Model[user_id]', 'type' => 'text', 'id' => 'model-user-id'),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -3427,8 +3317,8 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Model.type');
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ModelType'), 'Type', '/label',
-			'select' => array('name' => 'Model[type]', 'id' => 'ModelType'),
+			'label' => array('for' => 'model-type'), 'Type', '/label',
+			'select' => array('name' => 'Model[type]', 'id' => 'model-type'),
 			array('option' => array('value' => 'value')), 'good', '/option',
 			array('option' => array('value' => 'other')), 'bad', '/option',
 			'/select',
@@ -3443,24 +3333,22 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMagicTypeDoesNotOverride() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user', array('type' => 'checkbox'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
 				'type' => 'hidden',
-				'name' => 'data[Model][user]',
-				'id' => 'ModelUser_',
+				'name' => 'Model[user]',
 				'value' => 0,
 			)),
 			array('input' => array(
-				'name' => 'data[Model][user]',
+				'name' => 'Model[user]',
 				'type' => 'checkbox',
-				'id' => 'ModelUser',
+				'id' => 'model-user',
 				'value' => 1
 			)),
-			'label' => array('for' => 'ModelUser'), 'User', '/label',
+			'label' => array('for' => 'model-user'), 'User', '/label',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -3472,16 +3360,19 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMagicSelectForTypeNumber() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+		TableRegistry::get('ValidateUsers', [
+			'className' => __NAMESPACE__ . '\ValidateUsersTable'
+		]);
+		$entity = new Entity(['balance' => 1]);
+		$this->Form->create($entity, ['context' => ['table' => 'ValidateUsers']]);
 		$this->View->viewVars['balances'] = array(0 => 'nothing', 1 => 'some', 100 => 'a lot');
-		$this->Form->request->data = array('ValidateUser' => array('balance' => 1));
 		$result = $this->Form->input('ValidateUser.balance');
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ValidateUserBalance'),
+			'label' => array('for' => 'validateuser-balance'),
 			'Balance',
 			'/label',
-			'select' => array('name' => 'ValidateUser[balance]', 'id' => 'ValidateUserBalance'),
+			'select' => array('name' => 'ValidateUser[balance]', 'id' => 'validateuser-balance'),
 			array('option' => array('value' => '0')),
 			'nothing',
 			'/option',
@@ -3503,7 +3394,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMagicSelectChangeToRadio() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'radio'));
 		$this->assertRegExp('/input type="radio"/', $result);
@@ -6974,10 +6864,13 @@ class FormHelperTest extends TestCase {
 	public function testFormMagicInput() {
 		$this->markTestIncomplete('Need to revisit once models work again.');
 		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact');
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$result = $this->Form->create([], ['context' => ['table' => 'Contacts']]);
 		$expected = array(
 			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
+				'method' => 'post', 'action' => '/articles/add',
 				'accept-charset' => $encoding
 			),
 			'div' => array('style' => 'display:none;'),
@@ -6989,12 +6882,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('name');
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactName'),
+			'label' => array('for' => 'name'),
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
+				'type' => 'text', 'name' => 'name',
+				'id' => 'name', 'maxlength' => '255'
 			),
 			'/div'
 		);
@@ -7003,61 +6896,23 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('non_existing_field_in_contact_model');
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactNonExistingFieldInContactModel'),
+			'label' => array('for' => 'non-existing-field-in-contact-model'),
 			'Non Existing Field In Contact Model',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[non_existing_field_in_contact_model]',
-				'id' => 'ContactNonExistingFieldInContactModel'
+				'type' => 'text', 'name' => 'non_existing_field_in_contact_model',
+				'id' => 'non-existing-field-in-contact-model'
 			),
 			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.street');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'AddressStreet'),
-			'Street',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Address[street]',
-				'id' => 'AddressStreet'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.non_existing_field_in_model');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'AddressNonExistingFieldInModel'),
-			'Non Existing Field In Model',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Address[non_existing_field_in_model]',
-				'id' => 'AddressNonExistingFieldInModel'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('name', array('div' => false));
-		$expected = array(
-			'label' => array('for' => 'ContactName'),
-			'Name',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
-			)
 		);
 		$this->assertTags($result, $expected);
 
 		extract($this->dateRegex);
 		$now = strtotime('now');
 
-		$result = $this->Form->input('Contact.published', array('div' => false));
+		$result = $this->Form->input('Contact.published', array(
+			'templates' => ['groupContainer' => '{{label}}{{input}}']
+		));
 		$expected = array(
 			'label' => array('for' => 'ContactPublishedMonth'),
 			'Published',
@@ -7207,61 +7062,48 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormMagicInputLabel() {
 		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact');
-		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$this->Form->create([], ['context' => ['table' => 'Contacts']]);
+		$this->Form->templates(['groupContainer' => '{{content}}']);
 
-		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => false));
-		$this->assertTags($result, array('input' => array(
-			'name' => 'Contact[name]', 'type' => 'text',
-			'id' => 'ContactName', 'maxlength' => '255')
-		));
-
-		$result = $this->Form->input('Contact.name', array('div' => false, 'label' => 'My label'));
+		$result = $this->Form->input('Contacts.name', array('label' => 'My label'));
 		$expected = array(
-			'label' => array('for' => 'ContactName'),
+			'label' => array('for' => 'contacts-name'),
 			'My label',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
+				'type' => 'text', 'name' => 'Contacts[name]',
+				'id' => 'contacts-name', 'maxlength' => '255'
 			)
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.name', array(
-			'div' => false, 'label' => array('class' => 'mandatory')
+		$result = $this->Form->input('name', array(
+			'label' => array('class' => 'mandatory')
 		));
 		$expected = array(
-			'label' => array('for' => 'ContactName', 'class' => 'mandatory'),
+			'label' => array('for' => 'name', 'class' => 'mandatory'),
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
+				'type' => 'text', 'name' => 'name',
+				'id' => 'name', 'maxlength' => '255'
 			)
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.name', array(
+		$result = $this->Form->input('name', array(
 			'div' => false, 'label' => array('class' => 'mandatory', 'text' => 'My label')
 		));
 		$expected = array(
-			'label' => array('for' => 'ContactName', 'class' => 'mandatory'),
+			'label' => array('for' => 'name', 'class' => 'mandatory'),
 			'My label',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[name]',
-				'id' => 'ContactName', 'maxlength' => '255'
+				'type' => 'text', 'name' => 'name',
+				'id' => 'name', 'maxlength' => '255'
 			)
 		);
 		$this->assertTags($result, $expected);
@@ -7607,105 +7449,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * tests the ability to change the order of the form input placeholder "input", "label", "before", "between", "after", "error"
- *
- * @return void
- */
-	public function testInputTemplate() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('Contact.email', array(
-			'type' => 'text', 'format' => array('input')
-		));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[email]',
-				'id' => 'ContactEmail'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.email', array(
-			'type' => 'text', 'format' => array('input', 'label'),
-			'label' => '<em>Email (required)</em>'
-		));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			array('input' => array(
-				'type' => 'text', 'name' => 'Contact[email]',
-				'id' => 'ContactEmail'
-			)),
-			'label' => array('for' => 'ContactEmail'),
-			'em' => array(),
-			'Email (required)',
-			'/em',
-			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.email', array(
-			'type' => 'text', 'format' => array('input', 'between', 'label', 'after'),
-			'between' => '<div>Something in the middle</div>',
-			'after' => '<span>Some text at the end</span>'
-		));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			array('input' => array(
-				'type' => 'text', 'name' => 'Contact[email]',
-				'id' => 'ContactEmail'
-			)),
-			array('div' => array()),
-			'Something in the middle',
-			'/div',
-			'label' => array('for' => 'ContactEmail'),
-			'Email',
-			'/label',
-			'span' => array(),
-			'Some text at the end',
-			'/span',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.method', array(
-			'type' => 'radio',
-			'options' => array('email' => 'Email', 'pigeon' => 'Pigeon'),
-			'between' => 'I am between',
-		));
-		$expected = array(
-			'div' => array('class' => 'input radio'),
-			'fieldset' => array(),
-			'legend' => array(),
-			'Method',
-			'/legend',
-			'I am between',
-			'input' => array(
-				'type' => 'hidden', 'name' => 'Contact[method]',
-				'value' => '', 'id' => 'ContactMethod_'
-			),
-			array('input' => array(
-				'type' => 'radio', 'name' => 'Contact[method]',
-				'value' => 'email', 'id' => 'ContactMethodEmail'
-			)),
-			array('label' => array('for' => 'ContactMethodEmail')),
-			'Email',
-			'/label',
-			array('input' => array(
-				'type' => 'radio', 'name' => 'Contact[method]',
-				'value' => 'pigeon', 'id' => 'ContactMethodPigeon'
-			)),
-			array('label' => array('for' => 'ContactMethodPigeon')),
-			'Pigeon',
-			'/label',
-			'/fieldset',
-			'/div',
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * test that some html5 inputs + FormHelper::__call() work
  *
  * @return void
@@ -7742,14 +7485,15 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHtml5InputWithInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('User.website', array(
+		$this->Form->create();
+		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$result = $this->Form->input('website', array(
 			'type' => 'url',
-			'value' => 'http://domain.tld',
-			'div' => false,
-			'label' => false));
+			'val' => 'http://domain.tld',
+			'label' => false
+		));
 		$expected = array(
-			'input' => array('type' => 'url', 'name' => 'User[website]', 'id' => 'UserWebsite', 'value' => 'http://domain.tld')
+			'input' => array('type' => 'url', 'name' => 'website', 'id' => 'website', 'value' => 'http://domain.tld')
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -7762,42 +7506,6 @@ class FormHelperTest extends TestCase {
  */
 	public function testHtml5InputException() {
 		$this->Form->email();
-	}
-
-/**
- * Tests that a model can be loaded from the model names passed in the request object
- *
- * @return void
- */
-	public function testIntrospectModelFromRequest() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->loadFixtures('Post');
-		App::build(array(
-			'Plugin' => array(CAKE . 'Test/TestApp/Plugin/')
-		));
-		Plugin::load('TestPlugin');
-		$this->Form->request['models'] = array(
-			'TestPluginPost' => array(
-				'plugin' => 'TestPlugin',
-				'className' => 'TestPluginPost'
-			)
-		);
-
-		$this->Form->create('TestPluginPost');
-
-		Plugin::unload();
-	}
-
-/**
- * Tests that it is possible to set the validation errors directly in the helper for a field
- *
- * @return void
- */
-	public function testCustomValidationErrors() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->validationErrors['Thing']['field'] = 'Badness!';
-		$result = $this->Form->error('Thing.field', null, array('wrap' => false));
-		$this->assertEquals('Badness!', $result);
 	}
 
 /**
@@ -7956,68 +7664,6 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-	}
-
-/**
- * Test inputDefaults setter and getter
- *
- * @return void
- */
-	public function testInputDefaults() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('Contact');
-
-		$this->Form->inputDefaults(array(
-			'label' => false,
-			'div' => array(
-				'style' => 'color: #000;'
-			)
-		));
-		$result = $this->Form->input('Contact.field1');
-		$expected = array(
-			'div' => array('class' => 'input text', 'style' => 'color: #000;'),
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field1]',
-				'id' => 'ContactField1'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->inputDefaults(array(
-			'div' => false,
-			'label' => 'Label',
-		));
-		$result = $this->Form->input('Contact.field1');
-		$expected = array(
-			'label' => array('for' => 'ContactField1'),
-			'Label',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field1]',
-				'id' => 'ContactField1'
-			),
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->inputDefaults(array(
-			'label' => false,
-		), true);
-		$result = $this->Form->input('Contact.field1');
-		$expected = array(
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[field1]',
-				'id' => 'ContactField1'
-			),
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->inputDefaults();
-		$expected = array(
-			'div' => false,
-			'label' => false,
-		);
-		$this->assertEquals($expected, $result);
 	}
 
 }
