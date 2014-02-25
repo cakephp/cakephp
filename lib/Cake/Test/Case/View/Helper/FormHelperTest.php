@@ -6604,6 +6604,22 @@ class FormHelperTest extends CakeTestCase {
 			'*/select',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Model']['field'] = '12a';
+		$result = $this->Form->month('Model.field');
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][month]', 'id' => 'ModelFieldMonth')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '01')),
+			date('F', strtotime('2008-01-01 00:00:00')),
+			'/option',
+			array('option' => array('value' => '02')),
+			date('F', strtotime('2008-02-01 00:00:00')),
+			'/option',
+			'*/select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -6714,6 +6730,23 @@ class FormHelperTest extends CakeTestCase {
 			'/select',
 		);
 		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Model']['field'] = '12e';
+		$result = $this->Form->day('Model.field');
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][day]', 'id' => 'ModelFieldDay')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '01')),
+			'1',
+			'/option',
+			array('option' => array('value' => '02')),
+			'2',
+			'/option',
+			$daysRegex,
+			'/select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -6801,6 +6834,25 @@ class FormHelperTest extends CakeTestCase {
 			'/option',
 			array('option' => array('value' => '10', 'selected' => 'selected')),
 			'10',
+			'/option',
+			$minutesRegex,
+			'/select',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->minute('Model.field', array('value' => '#invalid#'));
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][min]', 'id' => 'ModelFieldMin')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '00')),
+			'00',
+			'/option',
+			array('option' => array('value' => '01')),
+			'01',
+			'/option',
+			array('option' => array('value' => '02')),
+			'02',
 			'/option',
 			$minutesRegex,
 			'/select',
@@ -6895,6 +6947,23 @@ class FormHelperTest extends CakeTestCase {
 			'0',
 			'/option',
 			array('option' => array('value' => '01', 'selected' => 'selected')),
+			'1',
+			'/option',
+			array('option' => array('value' => '02')),
+			'2',
+			'/option',
+			$hoursRegex,
+			'/select',
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->request->data['Model']['field'] = '18a';
+		$result = $this->Form->hour('Model.field', false);
+		$expected = array(
+			array('select' => array('name' => 'data[Model][field][hour]', 'id' => 'ModelFieldHour')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '01')),
 			'1',
 			'/option',
 			array('option' => array('value' => '02')),
@@ -7086,6 +7155,22 @@ class FormHelperTest extends CakeTestCase {
 
 		$result = $this->Form->year('published', array(), array(), array('empty' => false));
 		$this->assertContains('data[Contact][published][year]', $result);
+
+		$this->Form->request->data['Contact']['published'] = '2014ee';
+		$result = $this->Form->year('Contact.published', 2010, 2011);
+		$expected = array(
+			array('select' => array('name' => 'data[Contact][published][year]', 'id' => 'ContactPublishedYear')),
+			array('option' => array('value' => '')),
+			'/option',
+			array('option' => array('value' => '2011')),
+			'2011',
+			'/option',
+			array('option' => array('value' => '2010')),
+			'2010',
+			'/option',
+			'/select',
+		);
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -7398,6 +7483,25 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * Test using postButton with N dimensional data.
+ *
+ * @return void
+ */
+	public function testPostButtonNestedData() {
+		$data = array(
+			'one' => array(
+				'two' => array(
+					3, 4, 5
+				)
+			)
+		);
+		$result = $this->Form->postButton('Send', '/', array('data' => $data));
+		$this->assertContains('<input type="hidden" name="data[one][two][0]" value="3"', $result);
+		$this->assertContains('<input type="hidden" name="data[one][two][1]" value="4"', $result);
+		$this->assertContains('<input type="hidden" name="data[one][two][2]" value="5"', $result);
+	}
+
+/**
  * Test that postButton adds _Token fields.
  *
  * @return void
@@ -7516,6 +7620,25 @@ class FormHelperTest extends CakeTestCase {
 			'a' => array('class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/if \(confirm\(\&quot\;Confirm thing\&quot\;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
 			'/a'
 		));
+	}
+
+/**
+ * Test using postLink with N dimensional data.
+ *
+ * @return void
+ */
+	public function testPostLinkNestedData() {
+		$data = array(
+			'one' => array(
+				'two' => array(
+					3, 4, 5
+				)
+			)
+		);
+		$result = $this->Form->postLink('Send', '/', array('data' => $data));
+		$this->assertContains('<input type="hidden" name="data[one][two][0]" value="3"', $result);
+		$this->assertContains('<input type="hidden" name="data[one][two][1]" value="4"', $result);
+		$this->assertContains('<input type="hidden" name="data[one][two][2]" value="5"', $result);
 	}
 
 /**

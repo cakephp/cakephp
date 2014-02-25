@@ -684,7 +684,7 @@ class HttpSocket extends CakeSocket {
 			}
 			unset($this->config[$key]);
 		}
-		if (empty($this->_context['ssl']['cafile'])) {
+		if (empty($this->config['context']['ssl']['cafile'])) {
 			$this->config['context']['ssl']['cafile'] = CAKE . 'Config' . DS . 'cacert.pem';
 		}
 		if (!empty($this->config['context']['ssl']['verify_host'])) {
