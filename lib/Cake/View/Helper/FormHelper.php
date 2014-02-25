@@ -1779,14 +1779,21 @@ class FormHelper extends AppHelper {
 
 		$fields = array();
 		if (isset($options['data']) && is_array($options['data'])) {
-			foreach ($options['data'] as $key => $value) {
-				$fields[$key] = $value;
-				$out .= $this->hidden($key, array('value' => $value, 'id' => false));
-			}
-			unset($options['data']);
-		}
-		$out .= $this->secure($fields);
-		$out .= $this->Html->useTag('formend');
+            foreach ($options['data'] as $key => $value) {
+                if( is_array( $value ) ) {
+                    foreach( $value as $key2 => $value ) {
+                        $fields[$key.$key2] = $value;
+                        $out .= $this->hidden($key.".".$key2, array('value' => $value, 'id' => false));
+                    }
+                } else {
+                    $fields[$key] = $value;
+                    $out .= $this->hidden($key, array('value' => $value, 'id' => false));
+                }
+            }
+            unset($options['data']);
+        }
+        $out .= $this->secure($fields);
+        $out .= $this->Html->useTag('formend');
 
 		$url = '#';
 		$onClick = 'document.' . $formName . '.submit();';
