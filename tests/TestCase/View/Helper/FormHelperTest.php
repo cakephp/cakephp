@@ -6308,6 +6308,25 @@ class FormHelperTest extends TestCase {
 		$this->assertTrue(strpos($result, '<input type="hidden" name="extra" value="value"') !== false);
 	}
 
+ /**
+ * Test using postButton with N dimensional data.
+ *
+ * @return void
+ */
+	public function testPostButtonNestedData() {
+		$data = array(
+			'one' => array(
+				'two' => array(
+					3, 4, 5
+				)
+			)
+		);
+		$result = $this->Form->postButton('Send', '/', array('data' => $data));
+		$this->assertContains('<input type="hidden" name="one[two][0]" value="3"', $result);
+		$this->assertContains('<input type="hidden" name="one[two][1]" value="4"', $result);
+		$this->assertContains('<input type="hidden" name="one[two][2]" value="5"', $result);
+	}
+
 /**
  * Test that postButton adds _Token fields.
  *
@@ -6428,6 +6447,25 @@ class FormHelperTest extends TestCase {
 			'a' => array('class' => 'btn btn-danger', 'href' => '#', 'onclick' => 'preg:/if \(confirm\(\&quot\;Confirm thing\&quot\;\)\) \{ document\.post_\w+\.submit\(\); \} event\.returnValue = false; return false;/'),
 			'/a'
 		));
+	}
+
+ /**
+ * Test using postLink with N dimensional data.
+ *
+ * @return void
+ */
+	public function testPostLinkNestedData() {
+		$data = array(
+			'one' => array(
+				'two' => array(
+					3, 4, 5
+				)
+				)
+		);
+		$result = $this->Form->postLink('Send', '/', array('data' => $data));
+		$this->assertContains('<input type="hidden" name="one[two][0]" value="3"', $result);
+		$this->assertContains('<input type="hidden" name="one[two][1]" value="4"', $result);
+		$this->assertContains('<input type="hidden" name="one[two][2]" value="5"', $result);
 	}
 
 /**
