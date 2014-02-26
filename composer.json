@@ -18,14 +18,20 @@
         "source": "https://github.com/cakephp/cakephp"
     },
     "require": {
-        "php": ">=5.2.8",
-        "ext-mcrypt": "*"
+        "php": ">=5.4",
+        "ext-mcrypt": "*",
+        "ext-mbstring": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "3.7.*",
-        "cakephp/debug_kit" : "2.2.*"
+        "phpunit/phpunit": "3.7.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\": "src",
+            "Cake\\Test\\": "tests"
+        }
     },
     "bin": [
-        "lib/Cake/Console/cake"
+        "src/Console/cake"
     ]
 }
