@@ -1937,7 +1937,6 @@ class FormHelper extends Helper {
  * - `minYear` The lowest year to use in the year select
  * - `maxYear` The maximum year to use in the year select
  * - `interval` The interval for the minutes select. Defaults to 1
- * - `separator` The contents of the string between select elements. Defaults to '-'
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
  * - `round` - Set to `up` or `down` if you want to force rounding in either direction. Defaults to null.
