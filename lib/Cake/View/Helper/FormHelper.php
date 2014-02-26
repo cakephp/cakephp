@@ -561,7 +561,7 @@ class FormHelper extends AppHelper {
 		}
 		$locked = array();
 		$unlockedFields = $this->_unlockedFields;
-		
+
 		foreach ($fields as $key => $value) {
 			if (!is_int($key)) {
 				$locked[$key] = $value;
