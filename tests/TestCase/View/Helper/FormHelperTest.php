@@ -7052,33 +7052,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testMultipleFormWithIdFields method
- *
- * @return void
- */
-	public function testMultipleFormWithIdFields() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('UserForm');
-
-		$result = $this->Form->input('id');
-		$this->assertTags($result, array('input' => array(
-			'type' => 'hidden', 'name' => 'UserForm[id]', 'id' => 'UserFormId'
-		)));
-
-		$result = $this->Form->input('ValidateItem.id');
-		$this->assertTags($result, array('input' => array(
-			'type' => 'hidden', 'name' => 'ValidateItem[id]',
-			'id' => 'ValidateItemId'
-		)));
-
-		$result = $this->Form->input('ValidateUser.id');
-		$this->assertTags($result, array('input' => array(
-			'type' => 'hidden', 'name' => 'ValidateUser[id]',
-			'id' => 'ValidateUserId'
-		)));
-	}
-
-/**
  * testDbLessModel method
  *
  * @return void
