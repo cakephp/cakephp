@@ -7299,92 +7299,53 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Tests that the 'on' key validates as expected on create
+ * Tests that formhelper sets required attributes.
  *
  * @return void
  */
-	public function testRequiredOnCreate() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('Contact');
+	public function testRequiredAttribute() {
+		$this->article['required'] = [
+			'title' => true,
+			'body' => false,
+		];
+		$this->Form->create($this->article);
 
-		$result = $this->Form->input('Contact.imrequiredonupdate');
+		$result = $this->Form->input('title');
+		$expected = array(
+			'div' => array('class' => 'input text required'),
+			'label' => array('for' => 'title'),
+			'Title',
+			'/label',
+			'input' => array(
+				'type' => 'text',
+				'name' => 'title',
+				'id' => 'title',
+				'required' => 'required',
+			),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('title', ['required' => false]);
+		$this->assertNotContains('required', $result);
+
+		$result = $this->Form->input('body');
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactImrequiredonupdate'),
-			'Imrequiredonupdate',
+			'label' => array('for' => 'body'),
+			'Body',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[imrequiredonupdate]',
-				'id' => 'ContactImrequiredonupdate'
+				'type' => 'text',
+				'name' => 'body',
+				'id' => 'body',
 			),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.imrequiredoncreate');
-		$expected = array(
-			'div' => array('class' => 'input text required'),
-			'label' => array('for' => 'ContactImrequiredoncreate'),
-			'Imrequiredoncreate',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[imrequiredoncreate]',
-				'id' => 'ContactImrequiredoncreate',
-				'required' => 'required'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.imrequiredonboth');
-		$expected = array(
-			'div' => array('class' => 'input text required'),
-			'label' => array('for' => 'ContactImrequiredonboth'),
-			'Imrequiredonboth',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[imrequiredonboth]',
-				'id' => 'ContactImrequiredonboth',
-				'required' => 'required'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->inputDefaults(array('required' => false));
-		$result = $this->Form->input('Contact.imrequired');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'ContactImrequired'),
-			'Imrequired',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Contact[imrequired]',
-				'id' => 'ContactImrequired'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.imrequired', array('required' => false));
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.imrequired', array('required' => true));
-		$expected = array(
-			'div' => array('class' => 'input text required'),
-			'label' => array('for' => 'ContactImrequired'),
-			'Imrequired',
-			'/label',
-			'input' => array(
-				'required' => 'required', 'type' => 'text', 'name' => 'data[Contact][imrequired]',
-				'id' => 'ContactImrequired'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.imrequired', array('required' => null));
-		$this->assertTags($result, $expected);
+		$result = $this->Form->input('body', ['required' => true]);
+		$this->assertContains('required', $result);
 	}
 
 /**

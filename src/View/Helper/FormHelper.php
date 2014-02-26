@@ -823,31 +823,23 @@ class FormHelper extends Helper {
  * - `type` - Force the type of widget you want. e.g. `type => 'select'`
  * - `label` - Either a string label, or an array of options for the label. See FormHelper::label().
  * - `div` - Either `false` to disable the div, or an array of options for the div.
- *	See HtmlHelper::div() for more options.
  * - `options` - For widgets that take options e.g. radio, select.
  * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting (field
  *    error and error messages).
  * - `empty` - String or boolean to enable empty select box options.
- * - `before` - Content to place before the label + input.
- * - `after` - Content to place after the label + input.
- * - `between` - Content to place between the label + input.
- * - `format` - Format template for element order. Any element that is not in the array, will not be in the output.
- *	- Default input format order: array('before', 'label', 'between', 'input', 'after', 'error')
- *	- Default checkbox format order: array('before', 'input', 'between', 'label', 'after', 'error')
- *	- Hidden input will not be formatted
- *	- Radio buttons cannot have the order of input and label elements controlled with these settings.
  *
  * @param string $fieldName This should be "Modelname.fieldname"
  * @param array $options Each type of input takes different options.
  * @return string Completed form widget.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#creating-form-elements
  */
-	public function input($fieldName, $options = array()) {
+	public function input($fieldName, $options = []) {
 		$options += [
 			'type' => null,
 			'label' => null,
 			'error' => null,
 			'options' => null,
+			'required' => null,
 			'templates' => []
 		];
 		$options = $this->_parseOptions($fieldName, $options);
@@ -856,6 +848,7 @@ class FormHelper extends Helper {
 		$originalTemplates = $this->templates();
 		$this->templates($options['templates']);
 		unset($options['templates']);
+
 		$label = $this->_getLabel($fieldName, $options);
 		if ($options['type'] !== 'radio') {
 			unset($options['label']);
@@ -877,7 +870,7 @@ class FormHelper extends Helper {
 			$result = $this->formatTemplate($template, [
 				'content' => $result,
 				'error' => $error,
-				'required' => null,
+				'required' => $options['required'] ? ' required' : '',
 				'type' => $options['type'],
 			]);
 		}
@@ -1008,6 +1001,11 @@ class FormHelper extends Helper {
  */
 	protected function _magicOptions($fieldName, $options, $allowOverride) {
 		$context = $this->_getContext();
+
+		if (!isset($options['required'])) {
+			$options['required'] = $context->isRequired($fieldName);
+		}
+
 		$type = $context->type($fieldName);
 		$fieldDef = $context->attributes($fieldName);
 
