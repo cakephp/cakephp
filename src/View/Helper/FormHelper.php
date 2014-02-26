@@ -822,7 +822,6 @@ class FormHelper extends Helper {
  *
  * - `type` - Force the type of widget you want. e.g. `type => 'select'`
  * - `label` - Either a string label, or an array of options for the label. See FormHelper::label().
- * - `div` - Either `false` to disable the div, or an array of options for the div.
  * - `options` - For widgets that take options e.g. radio, select.
  * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting (field
  *    error and error messages).
