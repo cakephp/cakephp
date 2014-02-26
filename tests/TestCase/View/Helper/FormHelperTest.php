@@ -6426,17 +6426,16 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDateTimeWithGetForms() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		extract($this->dateRegex);
-		$this->Form->create('Contact', array('type' => 'get'));
+		$this->Form->create($this->article, array('type' => 'get'));
 		$result = $this->Form->datetime('created');
 
-		$this->assertRegExp('/name="created\[year\]"/', $result, 'year name attribute is wrong.');
-		$this->assertRegExp('/name="created\[month\]"/', $result, 'month name attribute is wrong.');
-		$this->assertRegExp('/name="created\[day\]"/', $result, 'day name attribute is wrong.');
-		$this->assertRegExp('/name="created\[hour\]"/', $result, 'hour name attribute is wrong.');
-		$this->assertRegExp('/name="created\[min\]"/', $result, 'min name attribute is wrong.');
-		$this->assertRegExp('/name="created\[meridian\]"/', $result, 'meridian name attribute is wrong.');
+		$this->assertContains('name="created[year]"', $result, 'year name attribute is wrong.');
+		$this->assertContains('name="created[month]"', $result, 'month name attribute is wrong.');
+		$this->assertContains('name="created[day]"', $result, 'day name attribute is wrong.');
+		$this->assertContains('name="created[hour]"', $result, 'hour name attribute is wrong.');
+		$this->assertContains('name="created[minute]"', $result, 'min name attribute is wrong.');
+		$this->assertContains('name="created[meridian]"', $result, 'meridian name attribute is wrong.');
 	}
 
 /**
