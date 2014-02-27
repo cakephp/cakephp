@@ -3530,22 +3530,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * test error options when using form->input();
- *
- * @return void
- */
-	public function testInputErrorEscape() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('ValidateProfile');
-		$ValidateProfile->validationErrors['city'] = array('required<br>');
-		$result = $this->Form->input('city', array('error' => array('attributes' => array('escape' => true))));
-		$this->assertRegExp('/required&lt;br&gt;/', $result);
-
-		$result = $this->Form->input('city', array('error' => array('attributes' => array('escape' => false))));
-		$this->assertRegExp('/required<br>/', $result);
-	}
-
-/**
  * testPassword method
  *
  * Test password element generation
