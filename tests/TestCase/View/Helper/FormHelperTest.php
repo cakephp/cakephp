@@ -6018,45 +6018,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testDbLessModel method
- *
- * @return void
- */
-	public function testDbLessModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('TestMail');
-
-		$result = $this->Form->input('name');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'TestMailName'),
-			'Name',
-			'/label',
-			'input' => array(
-				'name' => 'TestMail[name]', 'type' => 'text',
-				'id' => 'TestMailName'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->create('TestMail');
-		$result = $this->Form->input('name');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'TestMailName'),
-			'Name',
-			'/label',
-			'input' => array(
-				'name' => 'TestMail[name]', 'type' => 'text',
-				'id' => 'TestMailName'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * Test the generation of fields for a multi record form.
  *
  * @return void
