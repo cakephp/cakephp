@@ -1482,7 +1482,7 @@ class FormHelperTest extends TestCase {
 	public function testFormSecurityArrayFields() {
 		$this->Form->request->params['_Token'] = 'testKey';
 
-		$this->Form->create('Address');
+		$this->Form->create();
 		$this->Form->text('Address.primary.1');
 		$this->assertEquals('Address.primary', $this->Form->fields[0]);
 
@@ -2601,305 +2601,41 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * test form->input() with time types.
- *
- */
-	public function testInputTime() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		extract($this->dateRegex);
-		$result = $this->Form->input('Contact.created', array('type' => 'time', 'timeFormat' => 24));
-		$result = explode(':', $result);
-		$this->assertRegExp('/option value="23"/', $result[0]);
-		$this->assertNotRegExp('/option value="24"/', $result[0]);
-
-		$result = $this->Form->input('Contact.created', array('type' => 'time', 'timeFormat' => 24));
-		$result = explode(':', $result);
-		$this->assertRegExp('/option value="23"/', $result[0]);
-		$this->assertNotRegExp('/option value="24"/', $result[0]);
-
-		$result = $this->Form->input('Model.field', array(
-			'type' => 'time', 'timeFormat' => 24, 'interval' => 15
-		));
-		$result = explode(':', $result);
-		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
-		$this->assertNotRegExp('#<option value="50"[^>]*>50</option>#', $result[1]);
-		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result[1]);
-
-		$result = $this->Form->input('Model.field', array(
-			'type' => 'time', 'timeFormat' => 12, 'interval' => 15
-		));
-		$result = explode(':', $result);
-		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
-		$this->assertNotRegExp('#<option value="50"[^>]*>50</option>#', $result[1]);
-		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result[1]);
-
-		$result = $this->Form->input('prueba', array(
-			'type' => 'time', 'timeFormat' => 24, 'dateFormat' => 'DMY', 'minYear' => 2008,
-			'maxYear' => date('Y') + 1, 'interval' => 15
-		));
-		$result = explode(':', $result);
-		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
-		$this->assertNotRegExp('#<option value="50"[^>]*>50</option>#', $result[1]);
-		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result[1]);
-		$this->assertRegExp('#<option value="30"[^>]*>30</option>#', $result[1]);
-
-		$result = $this->Form->input('Random.start_time', array(
-			'type' => 'time',
-			'selected' => '18:15'
-		));
-		$this->assertContains('<option value="06" selected="selected">6</option>', $result);
-		$this->assertContains('<option value="15" selected="selected">15</option>', $result);
-		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
-
-		$result = $this->Form->input('published', array('type' => 'time'));
-		$now = strtotime('now');
-		$this->assertContains('<option value="' . date('h', $now) . '" selected="selected">' . date('g', $now) . '</option>', $result);
-
-		$now = strtotime('2013-03-09 00:42:21');
-		$result = $this->Form->input('published', array('type' => 'time', 'selected' => $now));
-		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
-		$this->assertContains('<option value="42" selected="selected">42</option>', $result);
-	}
-
-/**
- * Test interval + selected near the hour roll over.
- *
- * @return void
- */
-	public function testTimeSelectedWithInterval() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'interval' => 15,
-			'selected' => array('hour' => '3', 'min' => '57', 'meridian' => 'pm')
-		));
-		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
-		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
-		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
-
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'interval' => 15,
-			'selected' => '2012-10-23 15:57:00'
-		));
-		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
-		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
-		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
-
-		$result = $this->Form->input('Model.start_time', array(
-			'timeFormat' => 24,
-			'type' => 'time',
-			'interval' => 15,
-			'selected' => '15:57'
-		));
-		$this->assertContains('<option value="16" selected="selected">16</option>', $result);
-		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
-
-		$result = $this->Form->input('Model.start_time', array(
-			'timeFormat' => 24,
-			'type' => 'time',
-			'interval' => 15,
-			'selected' => '23:57'
-		));
-		$this->assertContains('<option value="00" selected="selected">0</option>', $result);
-		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
-
-		$result = $this->Form->input('Model.created', array(
-			'timeFormat' => 24,
-			'type' => 'datetime',
-			'interval' => 15,
-			'selected' => '2012-09-30 23:56'
-		));
-		$this->assertContains('<option value="2012" selected="selected">2012</option>', $result);
-		$this->assertContains('<option value="10" selected="selected">October</option>', $result);
-		$this->assertContains('<option value="01" selected="selected">1</option>', $result);
-		$this->assertContains('<option value="00" selected="selected">0</option>', $result);
-		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
-	}
-
-/**
- * Test time with selected values around 12:xx:xx
- *
- * @return void
- */
-	public function testTimeSelectedWithIntervalTwelve() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'timeFormat' => 12,
-			'interval' => 15,
-			'selected' => '00:00:00'
-		));
-		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
-		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
-		$this->assertContains('<option value="am" selected="selected">am</option>', $result);
-
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'timeFormat' => 12,
-			'interval' => 15,
-			'selected' => '12:00:00'
-		));
-		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
-		$this->assertContains('<option value="00" selected="selected">00</option>', $result);
-		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
-
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'timeFormat' => 12,
-			'interval' => 15,
-			'selected' => '12:15:00'
-		));
-		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
-		$this->assertContains('<option value="15" selected="selected">15</option>', $result);
-		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
-	}
-
-/**
- * Test interval & timeFormat = 12
- *
- * @return void
- */
-	public function testInputTimeWithIntervalAnd12HourFormat() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'timeFormat' => 12,
-			'interval' => 5,
-			'selected' => array('hour' => '4', 'min' => '30', 'meridian' => 'pm')
-		));
-		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
-		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
-		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
-
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'timeFormat' => '12',
-			'interval' => 5,
-			'selected' => '2013-04-19 16:30:00'
-		));
-		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
-		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
-		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
-
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'timeFormat' => '12',
-			'interval' => 10,
-			'selected' => '2013-05-19 00:33:00'
-		));
-		$this->assertContains('<option value="12" selected="selected">12</option>', $result);
-		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
-		$this->assertContains('<option value="am" selected="selected">am</option>', $result);
-
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'timeFormat' => '12',
-			'interval' => 10,
-			'selected' => '2013-05-19 13:33:00'
-		));
-		$this->assertContains('<option value="01" selected="selected">1</option>', $result);
-		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
-		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
-
-		$result = $this->Form->input('Model.start_time', array(
-			'type' => 'time',
-			'timeFormat' => '12',
-			'interval' => 10,
-			'selected' => '2013-05-19 01:33:00'
-		));
-		$this->assertContains('<option value="01" selected="selected">1</option>', $result);
-		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
-		$this->assertContains('<option value="am" selected="selected">am</option>', $result);
-	}
-
-/**
- * test form->input() with datetime, date and time types
+ * test form->input() with datetime
  *
  * @return void
  */
 	public function testInputDatetime() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		extract($this->dateRegex);
+		$this->Form = $this->getMock(
+			'Cake\View\Helper\FormHelper',
+			['datetime'],
+			[new View(null)]
+		);
+		$this->Form->expects($this->once())->method('datetime')
+			->with('prueba', [
+				'type' => 'datetime',
+				'timeFormat' => 24,
+				'minYear' => 2008,
+				'maxYear' => 2011,
+				'interval' => 15,
+				'options' => null,
+				'empty' => false,
+				'id' => 'prueba'
+			])
+			->will($this->returnValue('This is it!'));
 		$result = $this->Form->input('prueba', array(
-			'type' => 'datetime', 'timeFormat' => 24, 'dateFormat' => 'DMY', 'minYear' => 2008,
-			'maxYear' => date('Y') + 1, 'interval' => 15
+			'type' => 'datetime', 'timeFormat' => 24, 'minYear' => 2008,
+			'maxYear' => 2011, 'interval' => 15
 		));
-		$result = explode(':', $result);
-		$this->assertNotRegExp('#<option value="12"[^>]*>12</option>#', $result[1]);
-		$this->assertNotRegExp('#<option value="50"[^>]*>50</option>#', $result[1]);
-		$this->assertRegExp('#<option value="15"[^>]*>15</option>#', $result[1]);
-		$this->assertRegExp('#<option value="30"[^>]*>30</option>#', $result[1]);
-
-		//related to ticket #5013
-		$result = $this->Form->input('Contact.date', array(
-			'type' => 'date', 'class' => 'customClass', 'onChange' => 'function(){}'
-		));
-		$this->assertRegExp('/class="customClass"/', $result);
-		$this->assertRegExp('/onChange="function\(\)\{\}"/', $result);
-
-		$result = $this->Form->input('Contact.date', array(
-			'type' => 'date', 'id' => 'customId', 'onChange' => 'function(){}'
-		));
-		$this->assertRegExp('/id="customIdDay"/', $result);
-		$this->assertRegExp('/id="customIdMonth"/', $result);
-		$this->assertRegExp('/onChange="function\(\)\{\}"/', $result);
-
-		$result = $this->Form->input('Model.field', array(
-			'type' => 'datetime', 'timeFormat' => 24, 'id' => 'customID'
-		));
-		$this->assertRegExp('/id="customIDDay"/', $result);
-		$this->assertRegExp('/id="customIDHour"/', $result);
-		$result = explode('</select><select', $result);
-		$result = explode(':', $result[1]);
-		$this->assertRegExp('/option value="23"/', $result[0]);
-		$this->assertNotRegExp('/option value="24"/', $result[0]);
-
-		$result = $this->Form->input('Model.field', array(
-			'type' => 'datetime', 'timeFormat' => 12
-		));
-		$result = explode('</select><select', $result);
-		$result = explode(':', $result[1]);
-		$this->assertRegExp('/option value="12"/', $result[0]);
-		$this->assertNotRegExp('/option value="13"/', $result[0]);
-
-		$this->Form->request->data = array('Contact' => array('created' => null));
-		$result = $this->Form->input('Contact.created', array('empty' => 'Date Unknown'));
 		$expected = array(
-			'div' => array('class' => 'input date'),
-			'label' => array('for' => 'ContactCreatedMonth'),
-			'Created',
+			'div' => array('class' => 'input datetime'),
+			'label' => array('for' => 'prueba'),
+			'Prueba',
 			'/label',
-			array('select' => array('name' => 'Contact[created][month]', 'id' => 'ContactCreatedMonth')),
-			array('option' => array('value' => '')), 'Date Unknown', '/option',
-			$monthsRegex,
-			'/select', '-',
-			array('select' => array('name' => 'Contact[created][day]', 'id' => 'ContactCreatedDay')),
-			array('option' => array('value' => '')), 'Date Unknown', '/option',
-			$daysRegex,
-			'/select', '-',
-			array('select' => array('name' => 'Contact[created][year]', 'id' => 'ContactCreatedYear')),
-			array('option' => array('value' => '')), 'Date Unknown', '/option',
-			$yearsRegex,
-			'/select',
+			'This is it!',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-
-		$this->Form->request->data = array('Contact' => array('created' => null));
-		$result = $this->Form->input('Contact.created', array('type' => 'datetime', 'dateFormat' => 'NONE'));
-		$this->assertRegExp('/for\="ContactCreatedHour"/', $result);
-
-		$this->Form->request->data = array('Contact' => array('created' => null));
-		$result = $this->Form->input('Contact.created', array('type' => 'datetime', 'timeFormat' => 'NONE'));
-		$this->assertRegExp('/for\="ContactCreatedMonth"/', $result);
-
-		$result = $this->Form->input('Contact.created', array(
-			'type' => 'date',
-			'id' => array('day' => 'created-day', 'month' => 'created-month', 'year' => 'created-year'),
-			'timeFormat' => 'NONE'
-		));
-		$this->assertRegExp('/for\="created-month"/', $result);
 	}
 
 /**
