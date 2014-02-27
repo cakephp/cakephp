@@ -2043,55 +2043,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testFormValidationAssociatedFirstLevel method
- *
- * test form error display with associated model.
- *
- * @return void
- */
-	public function testFormValidationAssociatedFirstLevel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-
-		$data = array(
-			'ValidateUser' => array('name' => 'mariano'),
-			'ValidateProfile' => array('full_name' => 'Mariano Iglesias')
-		);
-
-		$result = $this->ValidateUser->create($data);
-		$this->assertFalse(empty($result));
-		$this->assertFalse($this->ValidateUser->validates());
-		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
-
-		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->error(
-			'ValidateUser.email', 'Invalid email', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid email', $result);
-
-		$result = $this->Form->error(
-			'ValidateProfile.full_name', 'Invalid name', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid name', $result);
-
-		$result = $this->Form->error(
-			'ValidateProfile.city', 'Invalid city', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid city', $result);
-
-		unset($this->ValidateUser->ValidateProfile);
-		unset($this->ValidateUser);
-	}
-
-/**
  * testFormValidationAssociatedSecondLevel method
  *
  * test form error display with associated model.
