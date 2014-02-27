@@ -231,6 +231,34 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test operations on a collection of entities when prefixing with the
+ * table name
+ *
+ * @dataProvider collectionProvider
+ * @return void
+ */
+	public function testValOnCollectionsWithRootName($collection) {
+		$context = new EntityContext($this->request, [
+			'entity' => $collection,
+			'table' => 'Articles',
+		]);
+
+		$result = $context->val('Articles.0.title');
+		$this->assertEquals('First post', $result);
+
+		$result = $context->val('Articles.0.user.username');
+		$this->assertEquals('mark', $result);
+
+		$result = $context->val('Articles.1.title');
+		$this->assertEquals('Second post', $result);
+
+		$result = $context->val('Articles.1.user.username');
+		$this->assertEquals('jose', $result);
+
+		$this->assertNull($context->val('Articles.99.title'));
+	}
+
+/**
  * Test error operations on a collection of entities.
  *
  * @dataProvider collectionProvider

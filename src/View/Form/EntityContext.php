@@ -217,6 +217,11 @@ class EntityContext implements ContextInterface {
 		}
 
 		$lastProp = $this->_rootName;
+
+		if ($path[0] === $this->_rootName) {
+			$path = array_slice($path, 1);
+		}
+
 		foreach ($path as $prop) {
 			$next = $this->_getProp($entity, $prop);
 			if (

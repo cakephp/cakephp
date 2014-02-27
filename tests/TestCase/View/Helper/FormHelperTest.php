@@ -2030,13 +2030,10 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationAssociated() {
-		TableRegistry::get('Contacts', [
-			'className' => __NAMESPACE__ . '\ContactsTable'
-		]);
 		$nested = new Entity(['foo' => 'bar']);
 		$nested->errors('foo', ['not a valid bar']);
 		$entity = new Entity(['nested' => $nested]);
-		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
+		$this->Form->create($entity);
 
 		$result = $this->Form->error('nested.foo');
 		$this->assertEquals('<div class="error-message">not a valid bar</div>', $result);
@@ -2050,14 +2047,11 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationAssociatedSecondLevel() {
-		TableRegistry::get('Contacts', [
-			'className' => __NAMESPACE__ . '\ContactsTable'
-		]);
 		$inner = new Entity(['bar' => 'baz']);
 		$nested = new Entity(['foo' => $inner]);
 		$entity = new Entity(['nested' => $nested]);
 		$inner->errors('bar', ['not a valid one']);
-		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
+		$this->Form->create($entity);
 		$result = $this->Form->error('nested.foo.bar');
 		$this->assertEquals('<div class="error-message">not a valid one</div>', $result);
 	}
@@ -2070,22 +2064,25 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationMultiRecord() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors[2] = array(
-			'name' => array('The provided value is invalid')
-		);
-		$result = $this->Form->input('Contact.2.name');
+		$one = new Entity;
+		$two = new Entity;
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$two->errors('name', ['This is wrong']);
+		$this->Form->create([$one, $two], ['context' => ['table' => 'Contacts']]);
+		$result = $this->Form->input('Contacts.1.name');
 		$expected = array(
 			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'Contact2Name'),
+			'label' => array('for' => 'contacts-1-name'),
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[2][name]', 'id' => 'Contact2Name',
+				'type' => 'text', 'name' => 'Contacts[1][name]', 'id' => 'contacts-1-name',
 				'class' => 'form-error', 'maxlength' => 255
 			),
 			array('div' => array('class' => 'error-message')),
-			'The provided value is invalid',
+			'This is wrong',
 			'/div',
 			'/div'
 		);
