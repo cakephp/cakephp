@@ -2620,7 +2620,8 @@ class FormHelperTest extends TestCase {
 				'interval' => 15,
 				'options' => null,
 				'empty' => false,
-				'id' => 'prueba'
+				'id' => 'prueba',
+				'required' => false,
 			])
 			->will($this->returnValue('This is it!'));
 		$result = $this->Form->input('prueba', array(
