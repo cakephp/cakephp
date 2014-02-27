@@ -2069,8 +2069,26 @@ class FormHelperTest extends TestCase {
 		TableRegistry::get('Contacts', [
 			'className' => __NAMESPACE__ . '\ContactsTable'
 		]);
+		$one->errors('email', ['invalid email']);
 		$two->errors('name', ['This is wrong']);
 		$this->Form->create([$one, $two], ['context' => ['table' => 'Contacts']]);
+
+		$result = $this->Form->input('Contacts.0.email');
+		$expected = array(
+			'div' => array('class' => 'input email error'),
+			'label' => array('for' => 'contacts-0-email'),
+			'Email',
+			'/label',
+			'input' => array(
+				'type' => 'text', 'name' => 'Contacts[0][email]', 'id' => 'contacts-0-email',
+				'class' => 'form-error', 'maxlength' => 255
+			),
+			array('div' => array('class' => 'error-message')),
+			'invalid email',
+			'/div',
+			'/div'
+		);
+
 		$result = $this->Form->input('Contacts.1.name');
 		$expected = array(
 			'div' => array('class' => 'input text error'),
@@ -2083,83 +2101,6 @@ class FormHelperTest extends TestCase {
 			),
 			array('div' => array('class' => 'error-message')),
 			'This is wrong',
-			'/div',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
- * testMultipleInputValidation method
- *
- * test multiple record form validation error display.
- *
- * @return void
- */
-	public function testMultipleInputValidation() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Address->validationErrors[0] = array(
-			'title' => array('This field cannot be empty'),
-			'first_name' => array('This field cannot be empty')
-		);
-		$Address->validationErrors[1] = array(
-			'last_name' => array('You must have a last name')
-		);
-		$this->Form->create();
-
-		$result = $this->Form->input('Address.0.title');
-		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name', 'id', 'class' => 'form-error'
-			),
-			array('div' => array('class' => 'error-message')),
-			'This field cannot be empty',
-			'/div',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.0.first_name');
-		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
-			'/label',
-			'input' => array('type' => 'text', 'name', 'id', 'class' => 'form-error'),
-			array('div' => array('class' => 'error-message')),
-			'This field cannot be empty',
-			'/div',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.0.last_name');
-		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
-			'/label',
-			'input' => array('type' => 'text', 'name', 'id'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.1.last_name');
-		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'preg:/[^<]+/',
-				'id' => 'preg:/[^<]+/', 'class' => 'form-error'
-			),
-			array('div' => array('class' => 'error-message')),
-			'You must have a last name',
 			'/div',
 			'/div'
 		);
