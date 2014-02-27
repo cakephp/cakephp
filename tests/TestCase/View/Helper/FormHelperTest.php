@@ -4821,7 +4821,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDatetimeWithDefault() {
-		$this->markTestIncomplete('Need to revisit soon.');
 		$result = $this->Form->dateTime('Contact.updated', array('value' => '2009-06-01 11:15:30'));
 		$this->assertRegExp('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="01"[^<>]+selected="selected"[^>]*>1<\/option>/', $result);
@@ -5406,68 +5405,23 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testInputDate method
- *
- * Test various inputs with type date and different dateFormat values.
- * Failing to provide a dateFormat key should not error.
- * It should simply not pre-select any value then.
+ * Test that input() accepts the type of date and passes options in.
  *
  * @return void
  */
 	public function testInputDate() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->data = array(
-			'User' => array(
-				'month_year' => array('month' => date('m')),
-				'just_year' => array('month' => date('m')),
-				'just_month' => array('year' => date('Y')),
-				'just_day' => array('month' => date('m')),
-			)
+			'month_year' => array('month' => date('m')),
 		);
-		$this->Form->create('User');
-		$result = $this->Form->input('month_year',
-				array(
-					'label' => false,
-					'div' => false,
-					'type' => 'date',
-					'dateFormat' => 'MY',
-					'minYear' => 2006,
-					'maxYear' => 2008
-				)
-		);
+		$this->Form->create($this->article);
+		$result = $this->Form->input('month_year', array(
+				'label' => false,
+				'type' => 'date',
+				'minYear' => 2006,
+				'maxYear' => 2008
+		));
 		$this->assertContains('value="' . date('m') . '" selected="selected"', $result);
 		$this->assertNotContains('value="2008" selected="selected"', $result);
-
-		$result = $this->Form->input('just_year',
-			array(
-				'type' => 'date',
-				'label' => false,
-				'dateFormat' => 'Y',
-				'minYear' => date('Y'),
-				'maxYear' => date('Y', strtotime('+20 years'))
-			)
-		);
-		$this->assertNotContains('value="' . date('Y') . '" selected="selected"', $result);
-
-		$result = $this->Form->input('just_month',
-			array(
-				'type' => 'date',
-				'label' => false,
-				'dateFormat' => 'M',
-				'empty' => false,
-			)
-		);
-		$this->assertNotContains('value="' . date('m') . '" selected="selected"', $result);
-
-		$result = $this->Form->input('just_day',
-			array(
-				'type' => 'date',
-				'label' => false,
-				'dateFormat' => 'D',
-				'empty' => false,
-			)
-		);
-		$this->assertNotContains('value="' . date('d') . '" selected="selected"', $result);
 	}
 
 /**
@@ -5479,19 +5433,14 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputDateMaxYear() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->request->data = array();
-		$this->Form->create('User');
-		$result = $this->Form->input('birthday',
-				array(
-					'label' => false,
-					'div' => false,
-					'type' => 'date',
-					'dateFormat' => 'DMY',
-					'minYear' => 2006,
-					'maxYear' => 2008
-				)
-		);
+		$this->Form->request->data = [];
+		$this->Form->create($this->article);
+		$result = $this->Form->input('birthday', array(
+			'label' => false,
+			'type' => 'date',
+			'minYear' => 2006,
+			'maxYear' => 2008
+		));
 		$this->assertContains('value="2008" selected="selected"', $result);
 	}
 
