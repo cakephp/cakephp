@@ -2765,7 +2765,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputSelectType() {
-		$this->markTestIncomplete('A test here is throwing fatal error, fix later');
 		$result = $this->Form->input('email', array(
 			'options' => array('è' => 'Firést', 'é' => 'Secoènd'), 'empty' => true)
 		);
@@ -2816,10 +2815,10 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Model.user_id', array('empty' => true));
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ModelUserId'),
+			'label' => array('for' => 'model-user-id'),
 			'User',
 			'/label',
-			'select' => array('name' => 'Model[user_id]', 'id' => 'ModelUserId'),
+			'select' => array('name' => 'Model[user_id]', 'id' => 'model-user-id'),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value', 'selected' => 'selected')),
@@ -2838,10 +2837,10 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Thing.user_id', array('empty' => 'Some Empty'));
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ThingUserId'),
+			'label' => array('for' => 'thing-user-id'),
 			'User',
 			'/label',
-			'select' => array('name' => 'Thing[user_id]', 'id' => 'ThingUserId'),
+			'select' => array('name' => 'Thing[user_id]', 'id' => 'thing-user-id'),
 			array('option' => array('value' => '')),
 			'Some Empty',
 			'/option',
@@ -2861,35 +2860,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Thing.user_id', array('empty' => 'Some Empty'));
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ThingUserId'),
+			'label' => array('for' => 'thing-user-id'),
 			'User',
 			'/label',
-			'select' => array('name' => 'Thing[user_id]', 'id' => 'ThingUserId'),
+			'select' => array('name' => 'Thing[user_id]', 'id' => 'thing-user-id'),
 			array('option' => array('value' => '')),
 			'Some Empty',
-			'/option',
-			array('option' => array('value' => 'value', 'selected' => 'selected')),
-			'good',
-			'/option',
-			array('option' => array('value' => 'other')),
-			'bad',
-			'/option',
-			'/select',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
-		$this->Form->request->data = array('User' => array('User' => array('value')));
-		$result = $this->Form->input('User.User', array('empty' => true));
-		$expected = array(
-			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'UserUser'),
-			'User',
-			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'User[User]', 'value' => '', 'id' => 'UserUser_'),
-			'select' => array('name' => 'User[User][]', 'id' => 'UserUser', 'multiple' => 'multiple'),
-			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value', 'selected' => 'selected')),
 			'good',
@@ -2911,19 +2887,19 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-				array('label' => array('for' => 'PublisherId')),
+				array('label' => array('for' => 'publisher-id')),
 				'Publisher',
 				'/label',
-				'input' => array('type' => 'hidden', 'name' => 'Publisher[id]', 'value' => '', 'id' => 'PublisherId'),
+				'input' => array('type' => 'hidden', 'name' => 'Publisher[id]', 'value' => ''),
 				array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 1', 'id' => 'PublisherIdValue1')),
-				array('label' => array('for' => 'PublisherIdValue1')),
+				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 1', 'id' => 'publisher-id-value-1')),
+				array('label' => array('for' => 'publisher-id-value-1')),
 				'Label 1',
 				'/label',
 				'/div',
 				array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 2', 'id' => 'PublisherIdValue2')),
-				array('label' => array('for' => 'PublisherIdValue2')),
+				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 2', 'id' => 'publisher-id-value-2')),
+				array('label' => array('for' => 'publisher-id-value-2')),
 				'Label 2',
 				'/label',
 				'/div',
