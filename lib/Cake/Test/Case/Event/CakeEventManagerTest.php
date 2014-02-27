@@ -1,9 +1,5 @@
 <?php
 /**
- * ControllerTestCaseTest file
- *
- * Test Case for ControllerTestCase class
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -502,6 +498,24 @@ class CakeEventManagerTest extends CakeTestCase {
 		$event = new CakeEvent('my_event', $manager);
 		$manager->dispatch($event);
 		$this->assertEquals('ok', $event->data['callback']);
+	}
+
+/**
+ * Test that events are dispatched properly when there are global and local 
+ * listeners at the same priority.
+ *
+ * @return void
+ */
+	public function testDispatchWithGlobalAndLocalEvents() {
+		$listener = new CustomTestEventListener();
+		CakeEventManager::instance()->attach($listener);
+		$listener2 = new CakeEventTestListener();
+		$manager = new CakeEventManager();
+		$manager->attach([$listener2, 'listenerFunction'], 'fake.event');
+
+		$manager->dispatch(new CakeEvent('fake.event', $this));
+		$this->assertEquals(array('listenerFunction'), $listener->callStack);
+		$this->assertEquals(array('listenerFunction'), $listener2->callStack);
 	}
 
 }
