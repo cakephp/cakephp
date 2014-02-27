@@ -2025,46 +2025,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testFormValidationAssociated method
- *
- * test display of form errors in conjunction with model::validates.
- *
- * @return void
- */
-	public function testFormValidationAssociated() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-
-		$data = array(
-			'UserForm' => array('name' => 'user'),
-			'OpenidUrl' => array('url' => 'http://www.cakephp.org')
-		);
-
-		$result = $this->UserForm->OpenidUrl->create($data);
-		$this->assertFalse(empty($result));
-		$this->assertFalse($this->UserForm->OpenidUrl->validates());
-
-		$result = $this->Form->create('UserForm', array('type' => 'post', 'action' => 'login'));
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$expected = array(
-			'form' => array(
-				'method' => 'post', 'action' => '/user_forms/login', 'id' => 'UserFormLoginForm',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->error(
-			'OpenidUrl.openid_not_registered', 'Error, not registered', array('wrap' => false)
-		);
-		$this->assertEquals('Error, not registered', $result);
-
-		unset($this->UserForm->OpenidUrl, $this->UserForm);
-	}
-
-/**
  * testFormValidationAssociatedFirstLevel method
  *
  * test form error display with associated model.
