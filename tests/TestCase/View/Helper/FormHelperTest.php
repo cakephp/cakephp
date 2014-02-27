@@ -3041,34 +3041,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * fields with the same name as the model should work.
- *
- * @return void
- */
-	public function testInputWithMatchingFieldAndModelName() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('User');
-		$this->Form->fieldset = array(
-			'User' => array(
-				'fields' => array(
-					'User' => array('type' => 'text')
-				),
-				'validates' => array(),
-				'key' => 'id'
-			)
-		);
-		$this->Form->request->data['User']['User'] = 'ABC, Inc.';
-		$result = $this->Form->input('User', array('type' => 'text'));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserUser'), 'User', '/label',
-			'input' => array('name' => 'User[User]', 'type' => 'text', 'id' => 'UserUser', 'value' => 'ABC, Inc.'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * testFormInputs method
  *
  * test correct results from form::inputs().
