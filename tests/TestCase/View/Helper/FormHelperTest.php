@@ -4259,32 +4259,31 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMultipleCheckboxes() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.multi_field', array(
 			'options' => array('first', 'second', 'third'),
 			'multiple' => 'checkbox'
 		));
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => 'ModelMultiField')),
+			array('label' => array('for' => 'model-multi-field')),
 			'Multi Field',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
-			array('label' => array('for' => 'ModelMultiField0')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '0', 'id' => 'model-multi-field-0')),
+			array('label' => array('for' => 'model-multi-field-0')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
-			array('label' => array('for' => 'ModelMultiField1')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'model-multi-field-1')),
+			array('label' => array('for' => 'model-multi-field-1')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
-			array('label' => array('for' => 'ModelMultiField2')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'model-multi-field-2')),
+			array('label' => array('for' => 'model-multi-field-2')),
 			'third',
 			'/label',
 			'/div',
@@ -4298,62 +4297,28 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => 'ModelMultiField')),
+			array('label' => array('for' => 'model-multi-field')),
 			'Multi Field',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'a', 'id' => 'ModelMultiFieldA')),
-			array('label' => array('for' => 'ModelMultiFieldA')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'a', 'id' => 'model-multi-field-a')),
+			array('label' => array('for' => 'model-multi-field-a')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'b', 'id' => 'ModelMultiFieldB')),
-			array('label' => array('for' => 'ModelMultiFieldB')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'b', 'id' => 'model-multi-field-b')),
+			array('label' => array('for' => 'model-multi-field-b')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'c', 'id' => 'ModelMultiFieldC')),
-			array('label' => array('for' => 'ModelMultiFieldC')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'c', 'id' => 'model-multi-field-c')),
+			array('label' => array('for' => 'model-multi-field-c')),
 			'third',
 			'/label',
 			'/div',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Model.multi_field', array(
-			'options' => array('1' => 'first'),
-			'multiple' => 'checkbox',
-			'label' => false,
-			'div' => false
-		));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
-			array('label' => array('for' => 'ModelMultiField1')),
-			'first',
-			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Model.multi_field', array(
-			'options' => array('2' => 'second'),
-			'multiple' => 'checkbox',
-			'label' => false,
-			'div' => false
-		));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
-			array('label' => array('for' => 'ModelMultiField2')),
-			'second',
-			'/label',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
