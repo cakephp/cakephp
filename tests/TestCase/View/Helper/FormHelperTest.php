@@ -2025,6 +2025,24 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Tests displaying errors for nested entities
+ *
+ * @return void
+ */
+	public function testFormValidationAssociated() {
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$nested = new Entity(['foo' => 'bar']);
+		$nested->errors('foo', ['not a valid bar']);
+		$entity = new Entity(['nested' => $nested]);
+		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
+
+		$result = $this->Form->error('nested.foo');
+		$this->assertEquals('<div class="error-message">not a valid bar</div>', $result);
+	}
+
+/**
  * testFormValidationAssociatedFirstLevel method
  *
  * test form error display with associated model.
