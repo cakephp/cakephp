@@ -848,7 +848,9 @@ class FormHelper extends Helper {
 		$this->templates($options['templates']);
 		unset($options['templates']);
 
+		$input = $this->_getInput($fieldName, $options);
 		$label = $this->_getLabel($fieldName, $options);
+
 		if ($options['type'] !== 'radio') {
 			unset($options['label']);
 		}
@@ -862,7 +864,6 @@ class FormHelper extends Helper {
 		}
 
 		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
-		$input = $this->_getInput($fieldName, $options);
 		$result = $this->formatTemplate($groupTemplate, compact('input', 'label'));
 
 		if ($options['type'] !== 'hidden') {
@@ -1003,7 +1004,7 @@ class FormHelper extends Helper {
 	protected function _magicOptions($fieldName, $options, $allowOverride) {
 		$context = $this->_getContext();
 
-		if (!isset($options['required'])) {
+		if (!isset($options['required']) && $options['type'] !== 'hidden') {
 			$options['required'] = $context->isRequired($fieldName);
 		}
 
@@ -1055,7 +1056,7 @@ class FormHelper extends Helper {
  * @return boolean|string false or Generated label element
  */
 	protected function _getLabel($fieldName, $options) {
-		if ($options['type'] === 'radio') {
+		if (in_array($options['type'], ['radio', 'hidden'])) {
 			return false;
 		}
 

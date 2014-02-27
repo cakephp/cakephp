@@ -2914,20 +2914,25 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputWithNonStandardPrimaryKeyMakesHidden() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('User');
-		$this->Form->fieldset = array(
-			'User' => array(
-				'fields' => array(
-					'model_id' => array('type' => 'integer')
-				),
-				'validates' => array(),
-				'key' => 'model_id'
-			)
-		);
-		$result = $this->Form->input('model_id');
+		$this->article['schema']['_constraints']['primary']['columns'] = ['title'];
+		$this->Form->create($this->article);
+		$result = $this->Form->input('title');
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'User[model_id]', 'id' => 'UserModelId'),
+			'input' => array('type' => 'hidden', 'name' => 'title', 'id' => 'title'),
+		);
+		$this->assertTags($result, $expected);
+
+		$this->article['schema']['_constraints']['primary']['columns'] = ['title', 'body'];
+		$this->Form->create($this->article);
+		$result = $this->Form->input('title');
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'title', 'id' => 'title'),
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('body');
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'body', 'id' => 'body'),
 		);
 		$this->assertTags($result, $expected);
 	}
