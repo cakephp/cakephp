@@ -3284,27 +3284,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Tests inputs() works with plugin models
- *
- * @return void
- */
-	public function testInputsPluginModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->loadFixtures('Post');
-		Plugin::load('TestPlugin');
-		$this->Form->request['models'] = array(
-			'TestPluginPost' => array('plugin' => 'TestPlugin', 'className' => 'TestPluginPost')
-		);
-		$this->Form->create('TestPlugin.TestPluginPost');
-		$result = $this->Form->inputs();
-
-		$this->assertContains('TestPluginPost[id]', $result);
-		$this->assertContains('TestPluginPost[author_id]', $result);
-		$this->assertContains('TestPluginPost[title]', $result);
-		$this->assertEquals('TestPluginPost', $this->Form->model());
-	}
-
-/**
  * testSelectAsCheckbox method
  *
  * test multi-select widget with checkbox formatting.
