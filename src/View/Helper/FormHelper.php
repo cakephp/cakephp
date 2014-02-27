@@ -894,6 +894,8 @@ class FormHelper extends Helper {
 			case 'url':
 				$options = $this->_initInputField($fieldName, $options);
 				return $this->widget($options['type'], $options);
+			case 'date':
+				return $this->dateTime($fieldName, $options);
 			default:
 				return $this->{$options['type']}($fieldName, $options);
 		}
@@ -1991,8 +1993,14 @@ class FormHelper extends Helper {
 		unset($options['interval'], $options['round']);
 
 		if (!isset($options['val'])) {
-			$options['val'] = new \DateTime();
+			$val = new \DateTime();
+			$currentYear = $val->format('Y');
+			if (isset($options['year']['end']) && $options['year']['end'] < $currentYear) {
+				$val->setDate($options['year']['end'], $val->format('n'), $val->format('j'));
+			}
+			$options['val'] = $val;
 		}
+
 		return $options;
 	}
 
