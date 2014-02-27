@@ -3914,7 +3914,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxZeroValue() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('User.get_spam', array(
 			'type' => 'checkbox',
 			'value' => '0',
@@ -3923,14 +3922,14 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[User][get_spam]',
-				'value' => '1', 'id' => 'UserGetSpam_'
+				'type' => 'hidden', 'name' => 'User[get_spam]',
+				'value' => '1'
 			)),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[User][get_spam]',
-				'value' => '0', 'id' => 'UserGetSpam'
+				'type' => 'checkbox', 'name' => 'User[get_spam]',
+				'value' => '0', 'id' => 'user-get-spam'
 			)),
-			'label' => array('for' => 'UserGetSpam'),
+			'label' => array('for' => 'user-get-spam'),
 			'Get Spam',
 			'/label',
 			'/div'
