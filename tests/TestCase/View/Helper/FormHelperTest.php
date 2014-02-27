@@ -2050,52 +2050,16 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationAssociatedSecondLevel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-
-		$data = array(
-			'ValidateUser' => array('name' => 'mariano'),
-			'ValidateProfile' => array('full_name' => 'Mariano Iglesias'),
-			'ValidateItem' => array('name' => 'Item')
-		);
-
-		$result = $this->ValidateUser->create($data);
-		$this->assertFalse(empty($result));
-		$this->assertFalse($this->ValidateUser->validates());
-		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
-		$this->assertFalse($this->ValidateUser->ValidateProfile->ValidateItem->validates());
-
-		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->error(
-			'ValidateUser.email', 'Invalid email', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid email', $result);
-
-		$result = $this->Form->error(
-			'ValidateProfile.full_name', 'Invalid name', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid name', $result);
-
-		$result = $this->Form->error(
-			'ValidateProfile.city', 'Invalid city', array('wrap' => false)
-		);
-
-		$result = $this->Form->error(
-			'ValidateItem.description', 'Invalid description', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid description', $result);
-
-		unset($this->ValidateUser->ValidateProfile->ValidateItem);
-		unset($this->ValidateUser->ValidateProfile);
-		unset($this->ValidateUser);
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$inner = new Entity(['bar' => 'baz']);
+		$nested = new Entity(['foo' => $inner]);
+		$entity = new Entity(['nested' => $nested]);
+		$inner->errors('bar', ['not a valid one']);
+		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);
+		$result = $this->Form->error('nested.foo.bar');
+		$this->assertEquals('<div class="error-message">not a valid one</div>', $result);
 	}
 
 /**
