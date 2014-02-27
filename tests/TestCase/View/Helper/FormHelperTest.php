@@ -5416,7 +5416,6 @@ class FormHelperTest extends TestCase {
 		$this->Form->create($this->article);
 		$result = $this->Form->input('month_year', array(
 				'label' => false,
-				'div' => false,
 				'type' => 'date',
 				'minYear' => 2006,
 				'maxYear' => 2008
@@ -5438,7 +5437,6 @@ class FormHelperTest extends TestCase {
 		$this->Form->create($this->article);
 		$result = $this->Form->input('birthday', array(
 			'label' => false,
-			'div' => false,
 			'type' => 'date',
 			'minYear' => 2006,
 			'maxYear' => 2008
