@@ -6101,44 +6101,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * test the correct display of multi-record form validation errors.
- *
- * @return void
- */
-	public function testMultiRecordFormValidationErrors() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('ValidateProfile');
-		$ValidateProfile->validationErrors[2]['ValidateItem'][1]['name'] = array('Error in field name');
-		$result = $this->Form->error('ValidateProfile.2.ValidateItem.1.name');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
-
-		$ValidateProfile->validationErrors[2]['city'] = array('Error in field city');
-		$result = $this->Form->error('ValidateProfile.2.city');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
-
-		$result = $this->Form->error('2.city');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
-	}
-
-/**
- * test the correct display of multi-record form validation errors.
- *
- * @return void
- */
-	public function testSaveManyRecordFormValidationErrors() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('ValidateUser');
-		$ValidateUser->validationErrors[0]['ValidateItem']['name'] = array('Error in field name');
-
-		$result = $this->Form->error('0.ValidateUser.ValidateItem.name');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
-
-		$ValidateUser->validationErrors[0]['city'] = array('Error in field city');
-		$result = $this->Form->error('ValidateUser.0.city');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
-	}
-
-/**
  * test that some html5 inputs + FormHelper::__call() work
  *
  * @return void
