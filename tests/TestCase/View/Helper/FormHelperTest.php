@@ -4821,7 +4821,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testDatetimeWithDefault() {
-		$this->markTestIncomplete('Need to revisit soon.');
 		$result = $this->Form->dateTime('Contact.updated', array('value' => '2009-06-01 11:15:30'));
 		$this->assertRegExp('/<option[^<>]+value="2009"[^<>]+selected="selected"[^>]*>2009<\/option>/', $result);
 		$this->assertRegExp('/<option[^<>]+value="01"[^<>]+selected="selected"[^>]*>1<\/option>/', $result);
