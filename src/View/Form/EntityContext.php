@@ -326,14 +326,25 @@ class EntityContext implements ContextInterface {
  * property name in the second position
  */
 	protected function _getTable($parts) {
-		if ($parts[0] === $this->_rootName) {
-			$parts = array_slice($parts, 1);
+		if (count($parts) === 1) {
+			return $this->_tables[$this->_rootName];
+		}
+
+		$normalized = array_slice(array_filter($parts, function($part) {
+			return !is_numeric($part);
+		}), 0, -1);
+
+		$path = implode('.', $normalized);
+		if (isset($this->_tables[$path])) {
+			return $this->_tables[$path];
+		}
+
+		if (current($normalized) === $this->_rootName) {
+			$normalized = array_slice($normalized, 1);
 		}
 
 		$table = $this->_tables[$this->_rootName];
-
-		$normalized = array_filter()
-		foreach ($parts as $part) {
+		foreach ($normalized as $part) {
 			if (is_numeric($part)) {
 				continue;
 			}
@@ -346,7 +357,7 @@ class EntityContext implements ContextInterface {
 			$table = $assoc->target();
 		}
 
-		return $table;
+		return $this->_tables[$path] = $table;
 	}
 
 /**
