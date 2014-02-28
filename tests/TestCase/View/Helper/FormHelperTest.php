@@ -324,10 +324,10 @@ class ValidateUsersTable extends Table {
 		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
 		'name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
 		'email' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-		'balance' => array('type' => 'float', 'null' => false, 'length' => '5,2'),
-		'cost_decimal' => array('type' => 'decimal', 'null' => false, 'length' => '6,3'),
-		'ratio' => array('type' => 'decimal', 'null' => false, 'length' => '10,6'),
-		'population' => array('type' => 'decimal', 'null' => false, 'length' => '15,0'),
+		'balance' => array('type' => 'float', 'null' => false, 'length' => 5, 'precision' => 2),
+		'cost_decimal' => array('type' => 'decimal', 'null' => false, 'length' => 6, 'precision' => 3),
+		'ratio' => array('type' => 'decimal', 'null' => false, 'length' => 10, 'precision' => 6),
+		'population' => array('type' => 'decimal', 'null' => false, 'length' => 15, 'precision' => 0),
 		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
 		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null),
 		'_constraints' => array('primary' => ['type' => 'primary', 'columns' => ['id']])
@@ -1610,24 +1610,29 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
+		$this->Form->request->params['_Token'] = 'stuff';
+		$this->article['schema'] = [
+			'ratio' => ['type' => 'decimal', 'length' => 5, 'precision' => 6],
+			'population' => ['type' => 'decimal', 'length' => 15, 'precision' => 0],
+		];
 
-		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
+		$result = $this->Form->create($this->article, array('url' => '/articles/add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding, 'id' => 'ContactAddForm'),
+			'form' => array('method' => 'post', 'action' => '/articles/add', 'accept-charset' => $encoding),
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_csrfToken',
-				'value' => 'testKey', 'id' => 'preg:/Token\d+/'
+				'type' => 'hidden',
+				'name' => '_csrfToken',
+				'value' => 'testKey'
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('ValidateUser.ratio');
+		$result = $this->Form->input('ratio');
 		$expected = array(
 			'div' => array('class'),
 			'label' => array('for'),
@@ -1638,7 +1643,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('ValidateUser.population');
+		$result = $this->Form->input('population');
 		$expected = array(
 			'div' => array('class'),
 			'label' => array('for'),
@@ -1649,61 +1654,67 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('UserForm.published', array('type' => 'text'));
+		$result = $this->Form->input('published', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserFormPublished'),
+			'label' => array('for' => 'published'),
 			'Published',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'UserForm[published]',
-				'id' => 'UserFormPublished'
+				'type' => 'text',
+				'name' => 'published',
+				'id' => 'published'
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('UserForm.other', array('type' => 'text'));
+		$result = $this->Form->input('other', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserFormOther'),
+			'label' => array('for' => 'other'),
 			'Other',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'UserForm[other]',
-				'id' => 'UserFormOther'
+				'type' => 'text',
+				'name' => 'other',
+				'id',
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->hidden('UserForm.stuff');
+		$result = $this->Form->hidden('stuff');
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'UserForm[stuff]',
-				'id' => 'UserFormStuff'
+				'type' => 'hidden',
+				'name' => 'stuff',
 		));
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->hidden('UserForm.hidden', array('value' => '0'));
+		$result = $this->Form->hidden('hidden', array('value' => '0'));
 		$expected = array('input' => array(
-			'type' => 'hidden', 'name' => 'UserForm[hidden]',
-			'value' => '0', 'id' => 'UserFormHidden'
+			'type' => 'hidden',
+			'name' => 'hidden',
+			'value' => '0'
 		));
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('UserForm.something', array('type' => 'checkbox'));
+		$result = $this->Form->input('something', array('type' => 'checkbox'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'UserForm[something]',
-				'value' => '0', 'id' => 'UserFormSomething_'
+				'type' => 'hidden',
+				'name' => 'something',
+				'value' => '0'
 			)),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'UserForm[something]',
-				'value' => '1', 'id' => 'UserFormSomething'
+				'type' => 'checkbox',
+				'name' => 'something',
+				'value' => '1',
+				'id' => 'something'
 			)),
-			'label' => array('for' => 'UserFormSomething'),
+			'label' => array('for' => 'something'),
 			'Something',
 			'/label',
 			'/div'
@@ -1712,23 +1723,25 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->fields;
 		$expected = array(
-			'UserForm.published', 'UserForm.other', 'UserForm.stuff' => '',
-			'UserForm.hidden' => '0', 'UserForm.something'
+			'ratio', 'population', 'published', 'other',
+			'stuff' => '',
+			'hidden' => '0',
+			'something'
 		);
 		$this->assertEquals($expected, $result);
-
-		$hash = 'bd7c4a654e5361f9a433a43f488ff9a1065d0aaf%3AUserForm.hidden%7CUserForm.stuff';
 
 		$result = $this->Form->secure($this->Form->fields);
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash
+				'type' => 'hidden',
+				'name' => '_Token[fields]',
+				'value'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[unlocked]',
-				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+				'type' => 'hidden',
+				'name' => '_Token[unlocked]',
+				'value' => ''
 			)),
 			'/div'
 		);
@@ -2476,77 +2489,39 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputCheckboxWithDisabledElements() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three');
-		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => 'disabled', 'options' => $options));
+		$result = $this->Form->input('Contact.multiple', array(
+			'multiple' => 'checkbox',
+			'disabled' => 'disabled',
+			'options' => $options
+		));
 
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => "ContactMultiple")),
+			array('label' => array('for' => "contact-multiple")),
 			'Multiple',
 			'/label',
-			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '', 'id' => "ContactMultiple")),
+			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '')),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 1, 'disabled' => 'disabled', 'id' => "ContactMultiple1")),
-			array('label' => array('for' => "ContactMultiple1")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 1, 'disabled' => 'disabled', 'id' => "contact-multiple-1")),
+			array('label' => array('for' => "contact-multiple-1")),
 			'One',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 2, 'disabled' => 'disabled', 'id' => "ContactMultiple2")),
-			array('label' => array('for' => "ContactMultiple2")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 2, 'disabled' => 'disabled', 'id' => "contact-multiple-2")),
+			array('label' => array('for' => "contact-multiple-2")),
 			'Two',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 3, 'disabled' => 'disabled', 'id' => "ContactMultiple3")),
-			array('label' => array('for' => "ContactMultiple3")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 3, 'disabled' => 'disabled', 'id' => "contact-multiple-3")),
+			array('label' => array('for' => "contact-multiple-3")),
 			'Three',
 			'/label',
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->radio('Model.field', array('1/2' => 'half'));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1/2', 'id' => 'ModelField12')),
-			'label' => array('for' => 'ModelField12'),
-			'half',
-			'/label'
-		);
-		$this->assertTags($result, $expected);
-
-		$disabled = array('2', 3);
-
-		$expected = array(
-			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => "ContactMultiple")),
-			'Multiple',
-			'/label',
-			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '', 'id' => "ContactMultiple")),
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 1, 'id' => "ContactMultiple1")),
-			array('label' => array('for' => "ContactMultiple1")),
-			'One',
-			'/label',
-			'/div',
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 2, 'disabled' => 'disabled', 'id' => "ContactMultiple2")),
-			array('label' => array('for' => "ContactMultiple2")),
-			'Two',
-			'/label',
-			'/div',
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 3, 'disabled' => 'disabled', 'id' => "ContactMultiple3")),
-			array('label' => array('for' => "ContactMultiple3")),
-			'Three',
-			'/label',
-			'/div',
-			'/div'
-		);
-		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => $disabled, 'options' => $options));
 		$this->assertTags($result, $expected);
 
 		// make sure 50 does only disable 50, and not 50f5c0cf
@@ -2555,19 +2530,19 @@ class FormHelperTest extends TestCase {
 
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => "ContactMultiple")),
+			array('label' => array('for' => "contact-multiple")),
 			'Multiple',
 			'/label',
-			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '', 'id' => "ContactMultiple")),
+			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '')),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 50, 'disabled' => 'disabled', 'id' => "ContactMultiple50")),
-			array('label' => array('for' => "ContactMultiple50")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 50, 'disabled' => 'disabled', 'id' => "contact-multiple-50")),
+			array('label' => array('for' => "contact-multiple-50")),
 			'Fifty',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => '50f5c0cf', 'id' => "ContactMultiple50f5c0cf")),
-			array('label' => array('for' => "ContactMultiple50f5c0cf")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => '50f5c0cf', 'id' => "contact-multiple-50f5c0cf")),
+			array('label' => array('for' => "contact-multiple-50f5c0cf")),
 			'Stringy',
 			'/label',
 			'/div',

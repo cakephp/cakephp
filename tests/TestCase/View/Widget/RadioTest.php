@@ -446,6 +446,10 @@ class RadioTest extends TestCase {
 		];
 		$this->assertTags($result, $expected);
 
+		$data['disabled'] = 'a string';
+		$result = $radio->render($data);
+		$this->assertTags($result, $expected);
+
 		$data['disabled'] = ['1'];
 		$result = $radio->render($data);
 		$expected = [
