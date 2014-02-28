@@ -67,6 +67,26 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test isPrimaryKey
+ *
+ * @return void
+ */
+	public function testIsPrimaryKey() {
+		$row = new Article();
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+		]);
+		$this->assertTrue($context->isPrimaryKey('id'));
+		$this->assertFalse($context->isPrimaryKey('title'));
+		$this->assertTrue($context->isPrimaryKey('1.id'));
+		$this->assertTrue($context->isPrimaryKey('Articles.1.id'));
+		$this->assertTrue($context->isPrimaryKey('comments.0.id'));
+		$this->assertTrue($context->isPrimaryKey('1.comments.0.id'));
+		$this->assertFalse($context->isPrimaryKey('1.comments.0.comment'));
+		$this->assertFalse($context->isPrimaryKey('Articles.1.comments.0.comment'));
+	}
+
+/**
  * Test isCreate on a single entity.
  *
  * @return void

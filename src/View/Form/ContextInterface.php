@@ -27,6 +27,15 @@ interface ContextInterface {
 	public function primaryKey();
 
 /**
+ * Returns true if the passed field name is part of the primary key for this context
+ *
+ * @param string $field A dot separated path to the field a value
+ *   is needed for.
+ * @return boolean
+ */
+	public function isPrimaryKey($field);
+
+/**
  * Returns whether or not this form is for a create operation.
  *
  * @return boolean

@@ -38,20 +38,6 @@ class Article extends Entity {
 }
 
 /**
- * ContactTestController class
- *
- */
-class ContactTestController extends Controller {
-
-/**
- * uses property
- *
- * @var mixed null
- */
-	public $uses = null;
-}
-
-/**
  * Contact class
  *
  */
@@ -76,67 +62,7 @@ class ContactsTable extends Table {
 	);
 
 /**
- * validate property
- *
- * @var array
- */
-	public $validate = array(
-		'non_existing' => array(),
-		'idontexist' => array(),
-		'imrequired' => array('_allowEmpty' => false, array('rule' => array('between', 5, 30))),
-		'imrequiredonupdate' => array('notEmpty' => array('rule' => 'alphaNumeric', 'on' => 'update')),
-		'imrequiredoncreate' => array('required' => array('rule' => 'alphaNumeric', 'on' => 'create')),
-		'imrequiredonboth' => array(
-			'required' => array('rule' => 'alphaNumeric'),
-		),
-		'string_required' => 'notEmpty',
-		'imalsorequired' => array('_allowEmpty' => false, array('rule' => 'alphaNumeric')),
-		'imrequiredtoo' => array('rule' => 'notEmpty'),
-		'required_one' => array('required' => array('rule' => array('notEmpty'))),
-		'imnotrequired' => array(
-			'_allowEmpty' => true,
-			array('rule' => 'alphaNumeric')
-		),
-		'imalsonotrequired' => array(
-			'_allowEmpty' => true,
-			'alpha' => array('rule' => 'alphaNumeric'),
-			'between' => array('rule' => array('between', 5, 30)),
-		),
-		'imnotrequiredeither' => array(
-			'_allowEmpty' => true,
-			array('rule' => array('between', 5, 30))
-		),
-		'iamrequiredalways' => array(
-			'email' => array('rule' => 'email'),
-			'rule_on_create' => array('rule' => array('maxLength', 50), 'on' => 'create'),
-			'rule_on_update' => array('rule' => array('between', 1, 50), 'on' => 'update'),
-		),
-		'boolean_field' => array('rule' => 'boolean')
-	);
-
-/**
- * hasAndBelongsToMany property
- *
- * @var array
- */
-	public $hasAndBelongsToMany = array(
-		'ContactTag' => array(
-			'className' => 'Cake\Test\TestCase\View\Helper\ContactTag',
-			'with' => 'Cake\Test\TestCase\View\Helper\ContactTagsContact'
-		)
-	);
-
-/**
- * hasAndBelongsToMany property
- *
- * @var array
- */
-	public $belongsTo = array(
-		'User' => array('className' => 'UserForm'
-	));
-
-/**
- * Initializes the schema and validation rules.
+ * Initializes the schema
  *
  * @return void
  */
@@ -147,173 +73,10 @@ class ContactsTable extends Table {
 }
 
 /**
- * ContactTagsContact class
- *
- */
-class ContactTagsContactsTable extends Table {
-
-/**
- * Default schema
- *
- * @var array
- */
-	protected $_schema = array(
-		'contact_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-		'contact_tag_id' => array(
-			'type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'
-		)
-	);
-
-/**
- * schema method
- *
- * @return void
- */
-	public function setSchema($schema) {
-		$this->_schema = $schema;
-	}
-
-}
-
-/**
- * ContactNonStandardPk class
- *
- */
-class ContactNonStandardPk extends ContactsTable {
-
-/**
- * primaryKey property
- *
- * @var string
- */
-	public $primaryKey = 'pk';
-
-/**
- * schema method
- *
- * @return void
- */
-	public function schema($field = false) {
-		$this->_schema = parent::schema();
-		$this->_schema['pk'] = $this->_schema['id'];
-		unset($this->_schema['id']);
-		return $this->_schema;
-	}
-
-}
-
-/**
- * ContactTag class
- *
- */
-class ContactTagsTable extends Table {
-
-/**
- * schema definition
- *
- * @var array
- */
-	protected $_schema = array(
-		'id' => array('type' => 'integer', 'null' => false, 'default' => '', 'length' => '8'),
-		'name' => array('type' => 'string', 'null' => false, 'default' => '', 'length' => '255'),
-		'created' => array('type' => 'date', 'null' => true, 'default' => '', 'length' => ''),
-		'modified' => array('type' => 'datetime', 'null' => true, 'default' => '', 'length' => null)
-	);
-}
-
-/**
- * UserForm class
- *
- */
-class UserFormsTable extends Table {
-
-/**
- * hasMany property
- *
- * @var array
- */
-	public $hasMany = array(
-		'OpenidUrl' => array('className' => 'OpenidUrl', 'foreignKey' => 'user_form_id'
-	));
-
-/**
- * schema definition
- *
- * @var array
- */
-	protected $_schema = array(
-		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-		'published' => array('type' => 'date', 'null' => true, 'default' => null, 'length' => null),
-		'other' => array('type' => 'text', 'null' => true, 'default' => null, 'length' => null),
-		'stuff' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 10),
-		'something' => array('type' => 'string', 'null' => true, 'default' => null, 'length' => 255),
-		'active' => array('type' => 'boolean', 'null' => false, 'default' => false),
-		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-	);
-}
-
-/**
- * OpenidUrl class
- *
- */
-class OpenidUrlsTable extends Table {
-
-/**
- * belongsTo property
- *
- * @var array
- */
-	public $belongsTo = array('UserForm' => array(
-		'className' => 'UserForm', 'foreignKey' => 'user_form_id'
-	));
-
-/**
- * validate property
- *
- * @var array
- */
-	public $validate = array('openid_not_registered' => array());
-
-/**
- * schema method
- *
- * @var array
- */
-	protected $_schema = array(
-		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-		'user_form_id' => array(
-			'type' => 'user_form_id', 'null' => '', 'default' => '', 'length' => '8'
-		),
-		'url' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-	);
-
-/**
- * beforeValidate method
- *
- * @return void
- */
-	public function beforeValidate($options = array()) {
-		$this->invalidate('openid_not_registered');
-		return true;
-	}
-
-}
-
-/**
  * ValidateUser class
  *
  */
 class ValidateUsersTable extends Table {
-
-/**
- * hasOne property
- *
- * @var array
- */
-	public $hasOne = array('ValidateProfile' => array(
-		'className' => 'ValidateProfile', 'foreignKey' => 'user_id'
-	));
 
 /**
  * schema method
@@ -341,124 +104,6 @@ class ValidateUsersTable extends Table {
 	public function initialize(array $config) {
 		$this->schema($this->_schema);
 	}
-
-/**
- * beforeValidate method
- *
- * @param array $options
- * @return void
- */
-	public function beforeValidate($options = array()) {
-		$this->invalidate('email');
-		return false;
-	}
-
-}
-
-/**
- * ValidateProfile class
- *
- */
-class ValidateProfilesTable extends Table {
-
-/**
- * useTable property
- *
- * @var boolean
- */
-	public $useTable = false;
-
-/**
- * schema property
- *
- * @var array
- */
-	protected $_schema = array(
-		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-		'user_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-		'full_name' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-		'city' => array('type' => 'string', 'null' => '', 'default' => '', 'length' => '255'),
-		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-	);
-
-/**
- * hasOne property
- *
- * @var array
- */
-	public $hasOne = array('ValidateItem' => array(
-		'className' => 'ValidateItem', 'foreignKey' => 'profile_id'
-	));
-
-/**
- * belongsTo property
- *
- * @var array
- */
-	public $belongsTo = array('ValidateUser' => array(
-		'className' => 'ValidateUser', 'foreignKey' => 'user_id'
-	));
-
-/**
- * beforeValidate method
- *
- * @return void
- */
-	public function beforeValidate($options = array()) {
-		$this->invalidate('full_name');
-		$this->invalidate('city');
-		return false;
-	}
-
-}
-
-/**
- * ValidateItem class
- *
- */
-class ValidateItemsTable extends Table {
-
-/**
- * schema property
- *
- * @var array
- */
-	protected $_schema = array(
-		'id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-		'profile_id' => array('type' => 'integer', 'null' => '', 'default' => '', 'length' => '8'),
-		'name' => array('type' => 'text', 'null' => '', 'default' => '', 'length' => '255'),
-		'description' => array(
-			'type' => 'string', 'null' => '', 'default' => '', 'length' => '255'
-		),
-		'created' => array('type' => 'date', 'null' => '1', 'default' => '', 'length' => ''),
-		'updated' => array('type' => 'datetime', 'null' => '1', 'default' => '', 'length' => null)
-	);
-
-/**
- * belongsTo property
- *
- * @var array
- */
-	public $belongsTo = array('ValidateProfile' => array('foreignKey' => 'profile_id'));
-
-/**
- * beforeValidate method
- *
- * @return void
- */
-	public function beforeValidate($options = array()) {
-		$this->invalidate('description');
-		return false;
-	}
-
-}
-
-/**
- * TestMail class
- *
- */
-class TestMailsTable extends Table {
 
 }
 
@@ -5816,57 +5461,43 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testForMagicInputNonExistingNorValidated() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact');
+		$result = $this->Form->create($this->article);
+		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$result = $this->Form->input('non_existing_nor_validated');
 		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false));
-		$expected = array(
-			'label' => array('for' => 'ContactNonExistingNorValidated'),
+			'label' => array('for' => 'non-existing-nor-validated'),
 			'Non Existing Nor Validated',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[non_existing_nor_validated]',
-				'id' => 'ContactNonExistingNorValidated'
+				'type' => 'text', 'name' => 'non_existing_nor_validated',
+				'id' => 'non-existing-nor-validated'
 			)
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.non_existing_nor_validated', array(
-			'div' => false, 'value' => 'my value'
+		$result = $this->Form->input('non_existing_nor_validated', array(
+			'val' => 'my value'
 		));
 		$expected = array(
-			'label' => array('for' => 'ContactNonExistingNorValidated'),
+			'label' => array('for' => 'non-existing-nor-validated'),
 			'Non Existing Nor Validated',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[non_existing_nor_validated]',
-				'value' => 'my value', 'id' => 'ContactNonExistingNorValidated'
+				'type' => 'text', 'name' => 'non_existing_nor_validated',
+				'value' => 'my value', 'id' => 'non-existing-nor-validated'
 			)
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data = array(
-			'Contact' => array('non_existing_nor_validated' => 'CakePHP magic'
-		));
-		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false));
+		$this->Form->request->data = array('non_existing_nor_validated' => 'CakePHP magic');
+		$result = $this->Form->input('non_existing_nor_validated');
 		$expected = array(
-			'label' => array('for' => 'ContactNonExistingNorValidated'),
+			'label' => array('for' => 'non-existing-nor-validated'),
 			'Non Existing Nor Validated',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[non_existing_nor_validated]',
-				'value' => 'CakePHP magic', 'id' => 'ContactNonExistingNorValidated'
+				'type' => 'text', 'name' => 'non_existing_nor_validated',
+				'value' => 'CakePHP magic', 'id' => 'non-existing-nor-validated'
 			)
 		);
 		$this->assertTags($result, $expected);
@@ -5878,7 +5509,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormMagicInputLabel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		TableRegistry::get('Contacts', [
 			'className' => __NAMESPACE__ . '\ContactsTable'
 		]);
@@ -5942,43 +5572,19 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('1.id');
 		$this->assertTags($result, array('input' => array(
-			'type' => 'hidden', 'name' => 'Contact[1][id]',
-			'id' => 'Contact1Id'
+			'type' => 'hidden', 'name' => '1[id]',
+			'id' => '1-id'
 		)));
 
 		$result = $this->Form->input("1.name");
 		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'Contact1Name'),
+			'label' => array('for' => '1-name'),
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[1][name]',
-				'id' => 'Contact1Name', 'maxlength' => '255'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.1.id');
-		$this->assertTags($result, array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'Contact[1][id]',
-				'id' => 'Contact1Id'
+				'type' => 'text', 'name' => '1[name]',
+				'id' => '1-name', 'maxlength' => '255'
 			)
-		));
-
-		$result = $this->Form->input("Model.1.name");
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'Model1Name'),
-			'Name',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Model[1][name]',
-				'id' => 'Model1Name'
-			),
-			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}
