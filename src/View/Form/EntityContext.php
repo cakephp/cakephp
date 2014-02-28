@@ -278,9 +278,6 @@ class EntityContext implements ContextInterface {
  * @return boolean
  */
 	public function isRequired($field) {
-		if (empty($this->_context['validator'])) {
-			return false;
-		}
 		$parts = explode('.', $field);
 		$entity = $this->_getEntity($parts);
 
@@ -405,7 +402,7 @@ class EntityContext implements ContextInterface {
  */
 	public function error($field) {
 		$parts = explode('.', $field);
-		$entity= $this->_getEntity($parts);
+		$entity = $this->_getEntity($parts);
 
 		if ($entity instanceof Entity) {
 			return $entity->errors(array_pop($parts));
