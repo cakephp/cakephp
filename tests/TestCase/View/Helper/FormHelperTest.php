@@ -2025,92 +2025,18 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testFormValidationAssociated method
- *
- * test display of form errors in conjunction with model::validates.
+ * Tests displaying errors for nested entities
  *
  * @return void
  */
 	public function testFormValidationAssociated() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
+		$nested = new Entity(['foo' => 'bar']);
+		$nested->errors('foo', ['not a valid bar']);
+		$entity = new Entity(['nested' => $nested]);
+		$this->Form->create($entity);
 
-		$data = array(
-			'UserForm' => array('name' => 'user'),
-			'OpenidUrl' => array('url' => 'http://www.cakephp.org')
-		);
-
-		$result = $this->UserForm->OpenidUrl->create($data);
-		$this->assertFalse(empty($result));
-		$this->assertFalse($this->UserForm->OpenidUrl->validates());
-
-		$result = $this->Form->create('UserForm', array('type' => 'post', 'action' => 'login'));
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$expected = array(
-			'form' => array(
-				'method' => 'post', 'action' => '/user_forms/login', 'id' => 'UserFormLoginForm',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->error(
-			'OpenidUrl.openid_not_registered', 'Error, not registered', array('wrap' => false)
-		);
-		$this->assertEquals('Error, not registered', $result);
-
-		unset($this->UserForm->OpenidUrl, $this->UserForm);
-	}
-
-/**
- * testFormValidationAssociatedFirstLevel method
- *
- * test form error display with associated model.
- *
- * @return void
- */
-	public function testFormValidationAssociatedFirstLevel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-
-		$data = array(
-			'ValidateUser' => array('name' => 'mariano'),
-			'ValidateProfile' => array('full_name' => 'Mariano Iglesias')
-		);
-
-		$result = $this->ValidateUser->create($data);
-		$this->assertFalse(empty($result));
-		$this->assertFalse($this->ValidateUser->validates());
-		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
-
-		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->error(
-			'ValidateUser.email', 'Invalid email', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid email', $result);
-
-		$result = $this->Form->error(
-			'ValidateProfile.full_name', 'Invalid name', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid name', $result);
-
-		$result = $this->Form->error(
-			'ValidateProfile.city', 'Invalid city', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid city', $result);
-
-		unset($this->ValidateUser->ValidateProfile);
-		unset($this->ValidateUser);
+		$result = $this->Form->error('nested.foo');
+		$this->assertEquals('<div class="error-message">not a valid bar</div>', $result);
 	}
 
 /**
@@ -2121,52 +2047,13 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationAssociatedSecondLevel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-
-		$data = array(
-			'ValidateUser' => array('name' => 'mariano'),
-			'ValidateProfile' => array('full_name' => 'Mariano Iglesias'),
-			'ValidateItem' => array('name' => 'Item')
-		);
-
-		$result = $this->ValidateUser->create($data);
-		$this->assertFalse(empty($result));
-		$this->assertFalse($this->ValidateUser->validates());
-		$this->assertFalse($this->ValidateUser->ValidateProfile->validates());
-		$this->assertFalse($this->ValidateUser->ValidateProfile->ValidateItem->validates());
-
-		$result = $this->Form->create('ValidateUser', array('type' => 'post', 'action' => 'add'));
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/validate_users/add', 'id', 'accept-charset' => $encoding),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->error(
-			'ValidateUser.email', 'Invalid email', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid email', $result);
-
-		$result = $this->Form->error(
-			'ValidateProfile.full_name', 'Invalid name', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid name', $result);
-
-		$result = $this->Form->error(
-			'ValidateProfile.city', 'Invalid city', array('wrap' => false)
-		);
-
-		$result = $this->Form->error(
-			'ValidateItem.description', 'Invalid description', array('wrap' => false)
-		);
-		$this->assertEquals('Invalid description', $result);
-
-		unset($this->ValidateUser->ValidateProfile->ValidateItem);
-		unset($this->ValidateUser->ValidateProfile);
-		unset($this->ValidateUser);
+		$inner = new Entity(['bar' => 'baz']);
+		$nested = new Entity(['foo' => $inner]);
+		$entity = new Entity(['nested' => $nested]);
+		$inner->errors('bar', ['not a valid one']);
+		$this->Form->create($entity);
+		$result = $this->Form->error('nested.foo.bar');
+		$this->assertEquals('<div class="error-message">not a valid one</div>', $result);
 	}
 
 /**
@@ -2177,99 +2064,43 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormValidationMultiRecord() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Contact->validationErrors[2] = array(
-			'name' => array('The provided value is invalid')
-		);
-		$result = $this->Form->input('Contact.2.name');
+		$one = new Entity;
+		$two = new Entity;
+		TableRegistry::get('Contacts', [
+			'className' => __NAMESPACE__ . '\ContactsTable'
+		]);
+		$one->errors('email', ['invalid email']);
+		$two->errors('name', ['This is wrong']);
+		$this->Form->create([$one, $two], ['context' => ['table' => 'Contacts']]);
+
+		$result = $this->Form->input('Contacts.0.email');
 		$expected = array(
-			'div' => array('class' => 'input text error'),
-			'label' => array('for' => 'Contact2Name'),
-			'Name',
+			'div' => array('class' => 'input email error'),
+			'label' => array('for' => 'contacts-0-email'),
+			'Email',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[2][name]', 'id' => 'Contact2Name',
+				'type' => 'text', 'name' => 'Contacts[0][email]', 'id' => 'contacts-0-email',
 				'class' => 'form-error', 'maxlength' => 255
 			),
 			array('div' => array('class' => 'error-message')),
-			'The provided value is invalid',
+			'invalid email',
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
-	}
 
-/**
- * testMultipleInputValidation method
- *
- * test multiple record form validation error display.
- *
- * @return void
- */
-	public function testMultipleInputValidation() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$Address->validationErrors[0] = array(
-			'title' => array('This field cannot be empty'),
-			'first_name' => array('This field cannot be empty')
-		);
-		$Address->validationErrors[1] = array(
-			'last_name' => array('You must have a last name')
-		);
-		$this->Form->create();
-
-		$result = $this->Form->input('Address.0.title');
+		$result = $this->Form->input('Contacts.1.name');
 		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
+			'div' => array('class' => 'input text error'),
+			'label' => array('for' => 'contacts-1-name'),
+			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name', 'id', 'class' => 'form-error'
+				'type' => 'text', 'name' => 'Contacts[1][name]', 'id' => 'contacts-1-name',
+				'class' => 'form-error', 'maxlength' => 255
 			),
 			array('div' => array('class' => 'error-message')),
-			'This field cannot be empty',
-			'/div',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.0.first_name');
-		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
-			'/label',
-			'input' => array('type' => 'text', 'name', 'id', 'class' => 'form-error'),
-			array('div' => array('class' => 'error-message')),
-			'This field cannot be empty',
-			'/div',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.0.last_name');
-		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
-			'/label',
-			'input' => array('type' => 'text', 'name', 'id'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Address.1.last_name');
-		$expected = array(
-			'div' => array('class'),
-			'label' => array('for'),
-			'preg:/[^<]+/',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'preg:/[^<]+/',
-				'id' => 'preg:/[^<]+/', 'class' => 'form-error'
-			),
-			array('div' => array('class' => 'error-message')),
-			'You must have a last name',
+			'This is wrong',
 			'/div',
 			'/div'
 		);
@@ -2765,7 +2596,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputSelectType() {
-		$this->markTestIncomplete('A test here is throwing fatal error, fix later');
 		$result = $this->Form->input('email', array(
 			'options' => array('è' => 'Firést', 'é' => 'Secoènd'), 'empty' => true)
 		);
@@ -2816,10 +2646,10 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Model.user_id', array('empty' => true));
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ModelUserId'),
+			'label' => array('for' => 'model-user-id'),
 			'User',
 			'/label',
-			'select' => array('name' => 'Model[user_id]', 'id' => 'ModelUserId'),
+			'select' => array('name' => 'Model[user_id]', 'id' => 'model-user-id'),
 			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value', 'selected' => 'selected')),
@@ -2838,10 +2668,10 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Thing.user_id', array('empty' => 'Some Empty'));
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ThingUserId'),
+			'label' => array('for' => 'thing-user-id'),
 			'User',
 			'/label',
-			'select' => array('name' => 'Thing[user_id]', 'id' => 'ThingUserId'),
+			'select' => array('name' => 'Thing[user_id]', 'id' => 'thing-user-id'),
 			array('option' => array('value' => '')),
 			'Some Empty',
 			'/option',
@@ -2861,35 +2691,12 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->input('Thing.user_id', array('empty' => 'Some Empty'));
 		$expected = array(
 			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'ThingUserId'),
+			'label' => array('for' => 'thing-user-id'),
 			'User',
 			'/label',
-			'select' => array('name' => 'Thing[user_id]', 'id' => 'ThingUserId'),
+			'select' => array('name' => 'Thing[user_id]', 'id' => 'thing-user-id'),
 			array('option' => array('value' => '')),
 			'Some Empty',
-			'/option',
-			array('option' => array('value' => 'value', 'selected' => 'selected')),
-			'good',
-			'/option',
-			array('option' => array('value' => 'other')),
-			'bad',
-			'/option',
-			'/select',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
-		$this->Form->request->data = array('User' => array('User' => array('value')));
-		$result = $this->Form->input('User.User', array('empty' => true));
-		$expected = array(
-			'div' => array('class' => 'input select'),
-			'label' => array('for' => 'UserUser'),
-			'User',
-			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'User[User]', 'value' => '', 'id' => 'UserUser_'),
-			'select' => array('name' => 'User[User][]', 'id' => 'UserUser', 'multiple' => 'multiple'),
-			array('option' => array('value' => '')),
 			'/option',
 			array('option' => array('value' => 'value', 'selected' => 'selected')),
 			'good',
@@ -2911,19 +2718,19 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-				array('label' => array('for' => 'PublisherId')),
+				array('label' => array('for' => 'publisher-id')),
 				'Publisher',
 				'/label',
-				'input' => array('type' => 'hidden', 'name' => 'Publisher[id]', 'value' => '', 'id' => 'PublisherId'),
+				'input' => array('type' => 'hidden', 'name' => 'Publisher[id]', 'value' => ''),
 				array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 1', 'id' => 'PublisherIdValue1')),
-				array('label' => array('for' => 'PublisherIdValue1')),
+				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 1', 'id' => 'publisher-id-value-1')),
+				array('label' => array('for' => 'publisher-id-value-1')),
 				'Label 1',
 				'/label',
 				'/div',
 				array('div' => array('class' => 'checkbox')),
-				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 2', 'id' => 'PublisherIdValue2')),
-				array('label' => array('for' => 'PublisherIdValue2')),
+				array('input' => array('type' => 'checkbox', 'name' => 'Publisher[id][]', 'value' => 'Value 2', 'id' => 'publisher-id-value-2')),
+				array('label' => array('for' => 'publisher-id-value-2')),
 				'Label 2',
 				'/label',
 				'/div',
@@ -2938,20 +2745,25 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputWithNonStandardPrimaryKeyMakesHidden() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('User');
-		$this->Form->fieldset = array(
-			'User' => array(
-				'fields' => array(
-					'model_id' => array('type' => 'integer')
-				),
-				'validates' => array(),
-				'key' => 'model_id'
-			)
-		);
-		$result = $this->Form->input('model_id');
+		$this->article['schema']['_constraints']['primary']['columns'] = ['title'];
+		$this->Form->create($this->article);
+		$result = $this->Form->input('title');
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'User[model_id]', 'id' => 'UserModelId'),
+			'input' => array('type' => 'hidden', 'name' => 'title', 'id' => 'title'),
+		);
+		$this->assertTags($result, $expected);
+
+		$this->article['schema']['_constraints']['primary']['columns'] = ['title', 'body'];
+		$this->Form->create($this->article);
+		$result = $this->Form->input('title');
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'title', 'id' => 'title'),
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('body');
+		$expected = array(
+			'input' => array('type' => 'hidden', 'name' => 'body', 'id' => 'body'),
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -3057,34 +2869,6 @@ class FormHelperTest extends TestCase {
 		$this->View->viewVars['users'] = array('value' => 'good', 'other' => 'bad');
 		$result = $this->Form->input('Model.user_id', array('type' => 'radio'));
 		$this->assertRegExp('/input type="radio"/', $result);
-	}
-
-/**
- * fields with the same name as the model should work.
- *
- * @return void
- */
-	public function testInputWithMatchingFieldAndModelName() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('User');
-		$this->Form->fieldset = array(
-			'User' => array(
-				'fields' => array(
-					'User' => array('type' => 'text')
-				),
-				'validates' => array(),
-				'key' => 'id'
-			)
-		);
-		$this->Form->request->data['User']['User'] = 'ABC, Inc.';
-		$result = $this->Form->input('User', array('type' => 'text'));
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserUser'), 'User', '/label',
-			'input' => array('name' => 'User[User]', 'type' => 'text', 'id' => 'UserUser', 'value' => 'ABC, Inc.'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -3331,27 +3115,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Tests inputs() works with plugin models
- *
- * @return void
- */
-	public function testInputsPluginModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->loadFixtures('Post');
-		Plugin::load('TestPlugin');
-		$this->Form->request['models'] = array(
-			'TestPluginPost' => array('plugin' => 'TestPlugin', 'className' => 'TestPluginPost')
-		);
-		$this->Form->create('TestPlugin.TestPluginPost');
-		$result = $this->Form->inputs();
-
-		$this->assertContains('TestPluginPost[id]', $result);
-		$this->assertContains('TestPluginPost[author_id]', $result);
-		$this->assertContains('TestPluginPost[title]', $result);
-		$this->assertEquals('TestPluginPost', $this->Form->model());
-	}
-
-/**
  * testSelectAsCheckbox method
  *
  * test multi-select widget with checkbox formatting.
@@ -3595,22 +3358,6 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-	}
-
-/**
- * test error options when using form->input();
- *
- * @return void
- */
-	public function testInputErrorEscape() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('ValidateProfile');
-		$ValidateProfile->validationErrors['city'] = array('required<br>');
-		$result = $this->Form->input('city', array('error' => array('attributes' => array('escape' => true))));
-		$this->assertRegExp('/required&lt;br&gt;/', $result);
-
-		$result = $this->Form->input('city', array('error' => array('attributes' => array('escape' => false))));
-		$this->assertRegExp('/required<br>/', $result);
 	}
 
 /**
@@ -3998,7 +3745,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testCheckboxZeroValue() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('User.get_spam', array(
 			'type' => 'checkbox',
 			'value' => '0',
@@ -4007,14 +3753,14 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'data[User][get_spam]',
-				'value' => '1', 'id' => 'UserGetSpam_'
+				'type' => 'hidden', 'name' => 'User[get_spam]',
+				'value' => '1'
 			)),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'data[User][get_spam]',
-				'value' => '0', 'id' => 'UserGetSpam'
+				'type' => 'checkbox', 'name' => 'User[get_spam]',
+				'value' => '0', 'id' => 'user-get-spam'
 			)),
-			'label' => array('for' => 'UserGetSpam'),
+			'label' => array('for' => 'user-get-spam'),
 			'Get Spam',
 			'/label',
 			'/div'
@@ -4344,32 +4090,31 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputMultipleCheckboxes() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$result = $this->Form->input('Model.multi_field', array(
 			'options' => array('first', 'second', 'third'),
 			'multiple' => 'checkbox'
 		));
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => 'ModelMultiField')),
+			array('label' => array('for' => 'model-multi-field')),
 			'Multi Field',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '0', 'id' => 'ModelMultiField0')),
-			array('label' => array('for' => 'ModelMultiField0')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '0', 'id' => 'model-multi-field-0')),
+			array('label' => array('for' => 'model-multi-field-0')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
-			array('label' => array('for' => 'ModelMultiField1')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'model-multi-field-1')),
+			array('label' => array('for' => 'model-multi-field-1')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
-			array('label' => array('for' => 'ModelMultiField2')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'model-multi-field-2')),
+			array('label' => array('for' => 'model-multi-field-2')),
 			'third',
 			'/label',
 			'/div',
@@ -4383,62 +4128,28 @@ class FormHelperTest extends TestCase {
 		));
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => 'ModelMultiField')),
+			array('label' => array('for' => 'model-multi-field')),
 			'Multi Field',
 			'/label',
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
+			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'a', 'id' => 'ModelMultiFieldA')),
-			array('label' => array('for' => 'ModelMultiFieldA')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'a', 'id' => 'model-multi-field-a')),
+			array('label' => array('for' => 'model-multi-field-a')),
 			'first',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'b', 'id' => 'ModelMultiFieldB')),
-			array('label' => array('for' => 'ModelMultiFieldB')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'b', 'id' => 'model-multi-field-b')),
+			array('label' => array('for' => 'model-multi-field-b')),
 			'second',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'c', 'id' => 'ModelMultiFieldC')),
-			array('label' => array('for' => 'ModelMultiFieldC')),
+			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => 'c', 'id' => 'model-multi-field-c')),
+			array('label' => array('for' => 'model-multi-field-c')),
 			'third',
 			'/label',
 			'/div',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Model.multi_field', array(
-			'options' => array('1' => 'first'),
-			'multiple' => 'checkbox',
-			'label' => false,
-			'div' => false
-		));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '1', 'id' => 'ModelMultiField1')),
-			array('label' => array('for' => 'ModelMultiField1')),
-			'first',
-			'/label',
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Model.multi_field', array(
-			'options' => array('2' => 'second'),
-			'multiple' => 'checkbox',
-			'label' => false,
-			'div' => false
-		));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => '', 'id' => 'ModelMultiField'),
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[multi_field][]', 'value' => '2', 'id' => 'ModelMultiField2')),
-			array('label' => array('for' => 'ModelMultiField2')),
-			'second',
-			'/label',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
@@ -6125,143 +5836,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testFormMagicInput method
- *
- * @return void
- */
-	public function testFormMagicInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		TableRegistry::get('Contacts', [
-			'className' => __NAMESPACE__ . '\ContactsTable'
-		]);
-		$result = $this->Form->create([], ['context' => ['table' => 'Contacts']]);
-		$expected = array(
-			'form' => array(
-				'method' => 'post', 'action' => '/articles/add',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('name');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'name'),
-			'Name',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'name',
-				'id' => 'name', 'maxlength' => '255'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('non_existing_field_in_contact_model');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'non-existing-field-in-contact-model'),
-			'Non Existing Field In Contact Model',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'non_existing_field_in_contact_model',
-				'id' => 'non-existing-field-in-contact-model'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		extract($this->dateRegex);
-		$now = strtotime('now');
-
-		$result = $this->Form->input('Contact.published', array(
-			'templates' => ['groupContainer' => '{{label}}{{input}}']
-		));
-		$expected = array(
-			'label' => array('for' => 'ContactPublishedMonth'),
-			'Published',
-			'/label',
-			array('select' => array(
-				'name' => 'Contact[published][month]', 'id' => 'ContactPublishedMonth'
-			)),
-			$monthsRegex,
-			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
-			date('F', $now),
-			'/option',
-			'*/select',
-			'-',
-			array('select' => array(
-				'name' => 'Contact[published][day]', 'id' => 'ContactPublishedDay'
-			)),
-			$daysRegex,
-			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
-			date('j', $now),
-			'/option',
-			'*/select',
-			'-',
-			array('select' => array(
-				'name' => 'Contact[published][year]', 'id' => 'ContactPublishedYear'
-			)),
-			$yearsRegex,
-			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
-			date('Y', $now),
-			'*/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.updated', array('div' => false));
-		$expected = array(
-			'label' => array('for' => 'ContactUpdatedMonth'),
-			'Updated',
-			'/label',
-			array('select' => array(
-				'name' => 'Contact[updated][month]', 'id' => 'ContactUpdatedMonth'
-			)),
-			$monthsRegex,
-			array('option' => array('value' => date('m', $now), 'selected' => 'selected')),
-			date('F', $now),
-			'/option',
-			'*/select',
-			'-',
-			array('select' => array(
-				'name' => 'Contact[updated][day]', 'id' => 'ContactUpdatedDay'
-			)),
-			$daysRegex,
-			array('option' => array('value' => date('d', $now), 'selected' => 'selected')),
-			date('j', $now),
-			'/option',
-			'*/select',
-			'-',
-			array('select' => array(
-				'name' => 'Contact[updated][year]', 'id' => 'ContactUpdatedYear'
-			)),
-			$yearsRegex,
-			array('option' => array('value' => date('Y', $now), 'selected' => 'selected')),
-			date('Y', $now),
-			'*/select'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('UserForm.stuff');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserFormStuff'),
-			'Stuff',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'UserForm[stuff]',
-				'id' => 'UserFormStuff', 'maxlength' => 10
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * testForMagicInputNonExistingNorValidated method
  *
  * @return void
@@ -6444,45 +6018,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * testDbLessModel method
- *
- * @return void
- */
-	public function testDbLessModel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('TestMail');
-
-		$result = $this->Form->input('name');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'TestMailName'),
-			'Name',
-			'/label',
-			'input' => array(
-				'name' => 'TestMail[name]', 'type' => 'text',
-				'id' => 'TestMailName'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->create('TestMail');
-		$result = $this->Form->input('name');
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'TestMailName'),
-			'Name',
-			'/label',
-			'input' => array(
-				'name' => 'TestMail[name]', 'type' => 'text',
-				'id' => 'TestMailName'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * Test the generation of fields for a multi record form.
  *
  * @return void
@@ -6563,44 +6098,6 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
-	}
-
-/**
- * test the correct display of multi-record form validation errors.
- *
- * @return void
- */
-	public function testMultiRecordFormValidationErrors() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('ValidateProfile');
-		$ValidateProfile->validationErrors[2]['ValidateItem'][1]['name'] = array('Error in field name');
-		$result = $this->Form->error('ValidateProfile.2.ValidateItem.1.name');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
-
-		$ValidateProfile->validationErrors[2]['city'] = array('Error in field city');
-		$result = $this->Form->error('ValidateProfile.2.city');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
-
-		$result = $this->Form->error('2.city');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
-	}
-
-/**
- * test the correct display of multi-record form validation errors.
- *
- * @return void
- */
-	public function testSaveManyRecordFormValidationErrors() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('ValidateUser');
-		$ValidateUser->validationErrors[0]['ValidateItem']['name'] = array('Error in field name');
-
-		$result = $this->Form->error('0.ValidateUser.ValidateItem.name');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field name', '/div'));
-
-		$ValidateUser->validationErrors[0]['city'] = array('Error in field city');
-		$result = $this->Form->error('ValidateUser.0.city');
-		$this->assertTags($result, array('div' => array('class' => 'error-message'), 'Error in field city', '/div'));
 	}
 
 /**
