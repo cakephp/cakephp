@@ -5461,57 +5461,43 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testForMagicInputNonExistingNorValidated() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$encoding = strtolower(Configure::read('App.encoding'));
-		$result = $this->Form->create('Contact');
+		$result = $this->Form->create($this->article);
+		$this->Form->templates(['groupContainer' => '{{content}}']);
+		$result = $this->Form->input('non_existing_nor_validated');
 		$expected = array(
-			'form' => array(
-				'id' => 'ContactAddForm', 'method' => 'post', 'action' => '/contacts/add',
-				'accept-charset' => $encoding
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false));
-		$expected = array(
-			'label' => array('for' => 'ContactNonExistingNorValidated'),
+			'label' => array('for' => 'non-existing-nor-validated'),
 			'Non Existing Nor Validated',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[non_existing_nor_validated]',
-				'id' => 'ContactNonExistingNorValidated'
+				'type' => 'text', 'name' => 'non_existing_nor_validated',
+				'id' => 'non-existing-nor-validated'
 			)
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('Contact.non_existing_nor_validated', array(
-			'div' => false, 'value' => 'my value'
+		$result = $this->Form->input('non_existing_nor_validated', array(
+			'val' => 'my value'
 		));
 		$expected = array(
-			'label' => array('for' => 'ContactNonExistingNorValidated'),
+			'label' => array('for' => 'non-existing-nor-validated'),
 			'Non Existing Nor Validated',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[non_existing_nor_validated]',
-				'value' => 'my value', 'id' => 'ContactNonExistingNorValidated'
+				'type' => 'text', 'name' => 'non_existing_nor_validated',
+				'value' => 'my value', 'id' => 'non-existing-nor-validated'
 			)
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->request->data = array(
-			'Contact' => array('non_existing_nor_validated' => 'CakePHP magic'
-		));
-		$result = $this->Form->input('Contact.non_existing_nor_validated', array('div' => false));
+		$this->Form->request->data = array('non_existing_nor_validated' => 'CakePHP magic');
+		$result = $this->Form->input('non_existing_nor_validated');
 		$expected = array(
-			'label' => array('for' => 'ContactNonExistingNorValidated'),
+			'label' => array('for' => 'non-existing-nor-validated'),
 			'Non Existing Nor Validated',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[non_existing_nor_validated]',
-				'value' => 'CakePHP magic', 'id' => 'ContactNonExistingNorValidated'
+				'type' => 'text', 'name' => 'non_existing_nor_validated',
+				'value' => 'CakePHP magic', 'id' => 'non-existing-nor-validated'
 			)
 		);
 		$this->assertTags($result, $expected);
