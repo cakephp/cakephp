@@ -83,7 +83,7 @@ class EntityContextTest extends TestCase {
 		$this->assertTrue($context->isPrimaryKey('comments.0.id'));
 		$this->assertTrue($context->isPrimaryKey('1.comments.0.id'));
 		$this->assertFalse($context->isPrimaryKey('1.comments.0.comment'));
-		$this->assertFalse($context->isPrimaryKey('1.comments.0.comment'));
+		$this->assertFalse($context->isPrimaryKey('Articles.1.comments.0.comment'));
 	}
 
 /**
