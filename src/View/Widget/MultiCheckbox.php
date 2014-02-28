@@ -197,7 +197,7 @@ class MultiCheckbox implements WidgetInterface {
 		if ($disabled === null || $disabled === false) {
 			return false;
 		}
-		if ($disabled === true) {
+		if ($disabled === true || is_string($disabled)) {
 			return true;
 		}
 		$strict = !is_numeric($key);

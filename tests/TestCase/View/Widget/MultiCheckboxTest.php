@@ -257,6 +257,10 @@ class MultiCheckboxTest extends TestCase {
 		];
 		$this->assertTags($result, $expected);
 
+		$data['disabled'] = 'a string';
+		$result = $input->render($data);
+		$this->assertTags($result, $expected);
+
 		$data['disabled'] = ['1', '1x'];
 		$this->assertTags($result, $expected);
 
