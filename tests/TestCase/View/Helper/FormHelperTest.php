@@ -2476,77 +2476,39 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testInputCheckboxWithDisabledElements() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$options = array(1 => 'One', 2 => 'Two', '3' => 'Three');
-		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => 'disabled', 'options' => $options));
+		$result = $this->Form->input('Contact.multiple', array(
+			'multiple' => 'checkbox',
+			'disabled' => 'disabled',
+			'options' => $options
+		));
 
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => "ContactMultiple")),
+			array('label' => array('for' => "contact-multiple")),
 			'Multiple',
 			'/label',
-			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '', 'id' => "ContactMultiple")),
+			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '')),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 1, 'disabled' => 'disabled', 'id' => "ContactMultiple1")),
-			array('label' => array('for' => "ContactMultiple1")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 1, 'disabled' => 'disabled', 'id' => "contact-multiple-1")),
+			array('label' => array('for' => "contact-multiple-1")),
 			'One',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 2, 'disabled' => 'disabled', 'id' => "ContactMultiple2")),
-			array('label' => array('for' => "ContactMultiple2")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 2, 'disabled' => 'disabled', 'id' => "contact-multiple-2")),
+			array('label' => array('for' => "contact-multiple-2")),
 			'Two',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 3, 'disabled' => 'disabled', 'id' => "ContactMultiple3")),
-			array('label' => array('for' => "ContactMultiple3")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 3, 'disabled' => 'disabled', 'id' => "contact-multiple-3")),
+			array('label' => array('for' => "contact-multiple-3")),
 			'Three',
 			'/label',
 			'/div',
 			'/div'
 		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->radio('Model.field', array('1/2' => 'half'));
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '', 'id' => 'ModelField_'),
-			array('input' => array('type' => 'radio', 'name' => 'Model[field]', 'value' => '1/2', 'id' => 'ModelField12')),
-			'label' => array('for' => 'ModelField12'),
-			'half',
-			'/label'
-		);
-		$this->assertTags($result, $expected);
-
-		$disabled = array('2', 3);
-
-		$expected = array(
-			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => "ContactMultiple")),
-			'Multiple',
-			'/label',
-			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '', 'id' => "ContactMultiple")),
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 1, 'id' => "ContactMultiple1")),
-			array('label' => array('for' => "ContactMultiple1")),
-			'One',
-			'/label',
-			'/div',
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 2, 'disabled' => 'disabled', 'id' => "ContactMultiple2")),
-			array('label' => array('for' => "ContactMultiple2")),
-			'Two',
-			'/label',
-			'/div',
-			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 3, 'disabled' => 'disabled', 'id' => "ContactMultiple3")),
-			array('label' => array('for' => "ContactMultiple3")),
-			'Three',
-			'/label',
-			'/div',
-			'/div'
-		);
-		$result = $this->Form->input('Contact.multiple', array('multiple' => 'checkbox', 'disabled' => $disabled, 'options' => $options));
 		$this->assertTags($result, $expected);
 
 		// make sure 50 does only disable 50, and not 50f5c0cf
@@ -2555,19 +2517,19 @@ class FormHelperTest extends TestCase {
 
 		$expected = array(
 			array('div' => array('class' => 'input select')),
-			array('label' => array('for' => "ContactMultiple")),
+			array('label' => array('for' => "contact-multiple")),
 			'Multiple',
 			'/label',
-			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '', 'id' => "ContactMultiple")),
+			array('input' => array('type' => 'hidden', 'name' => "Contact[multiple]", 'value' => '')),
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 50, 'disabled' => 'disabled', 'id' => "ContactMultiple50")),
-			array('label' => array('for' => "ContactMultiple50")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => 50, 'disabled' => 'disabled', 'id' => "contact-multiple-50")),
+			array('label' => array('for' => "contact-multiple-50")),
 			'Fifty',
 			'/label',
 			'/div',
 			array('div' => array('class' => 'checkbox')),
-			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => '50f5c0cf', 'id' => "ContactMultiple50f5c0cf")),
-			array('label' => array('for' => "ContactMultiple50f5c0cf")),
+			array('input' => array('type' => 'checkbox', 'name' => "Contact[multiple][]", 'value' => '50f5c0cf', 'id' => "contact-multiple-50f5c0cf")),
+			array('label' => array('for' => "contact-multiple-50f5c0cf")),
 			'Stringy',
 			'/label',
 			'/div',
