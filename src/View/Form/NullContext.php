@@ -52,7 +52,7 @@ class NullContext implements ContextInterface {
 /**
  * {@inheritDoc}
  */
-	public function isPrimaryKey() {
+	public function isPrimaryKey($field) {
 		return false;
 	}
 
