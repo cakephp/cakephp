@@ -19,7 +19,7 @@ use Cake\Core\Plugin;
 use Cake\Error;
 
 /**
- * Provides a interface for registering and inserting
+ * Provides an interface for registering and inserting
  * content into simple logic-less string templates.
  *
  * Used by several helpers to provide simple flexible templates
