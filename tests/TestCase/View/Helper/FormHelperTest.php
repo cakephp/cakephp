@@ -5509,7 +5509,6 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormMagicInputLabel() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		TableRegistry::get('Contacts', [
 			'className' => __NAMESPACE__ . '\ContactsTable'
 		]);
@@ -5573,43 +5572,19 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->input('1.id');
 		$this->assertTags($result, array('input' => array(
-			'type' => 'hidden', 'name' => 'Contact[1][id]',
-			'id' => 'Contact1Id'
+			'type' => 'hidden', 'name' => '1[id]',
+			'id' => '1-id'
 		)));
 
 		$result = $this->Form->input("1.name");
 		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'Contact1Name'),
+			'label' => array('for' => '1-name'),
 			'Name',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'Contact[1][name]',
-				'id' => 'Contact1Name', 'maxlength' => '255'
-			),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->input('Contact.1.id');
-		$this->assertTags($result, array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'Contact[1][id]',
-				'id' => 'Contact1Id'
+				'type' => 'text', 'name' => '1[name]',
+				'id' => '1-name', 'maxlength' => '255'
 			)
-		));
-
-		$result = $this->Form->input("Model.1.name");
-		$expected = array(
-			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'Model1Name'),
-			'Name',
-			'/label',
-			'input' => array(
-				'type' => 'text', 'name' => 'Model[1][name]',
-				'id' => 'Model1Name'
-			),
-			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}

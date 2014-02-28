@@ -931,9 +931,8 @@ class FormHelper extends Helper {
  */
 	protected function _inputType($fieldName, $options) {
 		$context = $this->_getContext();
-		$primaryKey = (array)$context->primaryKey();
 
-		if (in_array($fieldName, $primaryKey)) {
+		if ($context->isPrimaryKey($fieldName)) {
 			return 'hidden';
 		}
 

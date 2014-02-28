@@ -52,6 +52,13 @@ class NullContext implements ContextInterface {
 /**
  * {@inheritDoc}
  */
+	public function isPrimaryKey() {
+		return false;
+	}
+
+/**
+ * {@inheritDoc}
+ */
 	public function isCreate() {
 		return true;
 	}

@@ -111,6 +111,14 @@ class ArrayContext implements ContextInterface {
 	}
 
 /**
+ * {@inheritDoc}
+ */
+	public function isPrimaryKey($field) {
+		$primaryKey = $this->primaryKey();
+		return in_array($field, $primaryKey);
+	}
+
+/**
  * Returns whether or not this form is for a create operation.
  *
  * For this method to return true, both the primary key constraint

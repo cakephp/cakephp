@@ -154,6 +154,23 @@ class EntityContext implements ContextInterface {
 	}
 
 /**
+ * {@inheritDoc}
+ */
+	public function isPrimaryKey($field) {
+		$parts = explode('.', $field);
+
+		if ($parts['0'] === $this->_rootName) {
+			$parts = array_slice($parts, 1);
+		}
+
+		list(, $prop) = $this->_getEntity($parts);
+		$table = $this->_getTable($prop);
+
+		$primaryKey = (array)$table->primaryKey();
+		return in_array(array_pop($parts), $primaryKey);
+	}
+
+/**
  * Check whether or not this form is a create or update.
  *
  * If the context is for a single entity, the entity's isNew() method will
