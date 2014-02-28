@@ -63,6 +63,45 @@ class ArrayContextTest extends TestCase {
 	}
 
 /**
+ * Test isPrimaryKey.
+ *
+ * @return void
+ */
+	public function testIsPrimaryKey() {
+		$context = new ArrayContext($this->request, []);
+		$this->assertFalse($context->isPrimaryKey('id'));
+
+		$context = new ArrayContext($this->request, [
+			'schema' => [
+				'_constraints' => 'mistake',
+			]
+		]);
+		$this->assertFalse($context->isPrimaryKey('mistake'));
+
+		$data = [
+			'schema' => [
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id']]
+				]
+			],
+		];
+		$context = new ArrayContext($this->request, $data);
+		$this->assertTrue($context->isPrimaryKey('id'));
+		$this->assertFalse($context->isPrimaryKey('name'));
+
+		$data = [
+			'schema' => [
+				'_constraints' => [
+					'primary' => ['type' => 'primary', 'columns' => ['id', 'name']]
+				]
+			],
+		];
+		$context = new ArrayContext($this->request, $data);
+		$this->assertTrue($context->isPrimaryKey('id'));
+		$this->assertTrue($context->isPrimaryKey('name'));
+	}
+
+/**
  * Test the isCreate method.
  *
  * @return void
