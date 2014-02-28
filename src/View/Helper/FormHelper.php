@@ -1012,8 +1012,8 @@ class FormHelper extends Helper {
 		$fieldDef = $context->attributes($fieldName);
 
 		if ($options['type'] === 'number' && !isset($options['step'])) {
-			if ($type === 'decimal') {
-				$decimalPlaces = substr($fieldDef['length'], strpos($fieldDef['length'], ',') + 1);
+			if ($type === 'decimal' && isset($fieldDef['precision'])) {
+				$decimalPlaces = $fieldDef['precision'];
 				$options['step'] = sprintf('%.' . $decimalPlaces . 'F', pow(10, -1 * $decimalPlaces));
 			} elseif ($type === 'float') {
 				$options['step'] = 'any';
@@ -1271,7 +1271,7 @@ class FormHelper extends Helper {
 		));
 
 		if ($secure === true) {
-			$this->_secure(true, $this->_secureFieldName($options), $options['val']);
+			$this->_secure(true, $this->_secureFieldName($options), (string)$options['val']);
 		}
 
 		$options['type'] = 'hidden';

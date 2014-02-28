@@ -1610,24 +1610,29 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testFormSecuredInput() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
 		$this->Form->request->params['_csrfToken'] = 'testKey';
+		$this->Form->request->params['_Token'] = 'stuff';
+		$this->article['schema'] = [
+			'ratio' => ['type' => 'decimal', 'length' => 5, 'precision' => 6],
+			'population' => ['type' => 'decimal', 'length' => 15, 'precision' => 0],
+		];
 
-		$result = $this->Form->create('Contact', array('url' => '/contacts/add'));
+		$result = $this->Form->create($this->article, array('url' => '/articles/add'));
 		$encoding = strtolower(Configure::read('App.encoding'));
 		$expected = array(
-			'form' => array('method' => 'post', 'action' => '/contacts/add', 'accept-charset' => $encoding, 'id' => 'ContactAddForm'),
+			'form' => array('method' => 'post', 'action' => '/articles/add', 'accept-charset' => $encoding),
 			'div' => array('style' => 'display:none;'),
 			array('input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST')),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_csrfToken',
-				'value' => 'testKey', 'id' => 'preg:/Token\d+/'
+				'type' => 'hidden',
+				'name' => '_csrfToken',
+				'value' => 'testKey'
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('ValidateUser.ratio');
+		$result = $this->Form->input('ratio');
 		$expected = array(
 			'div' => array('class'),
 			'label' => array('for'),
@@ -1638,7 +1643,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('ValidateUser.population');
+		$result = $this->Form->input('population');
 		$expected = array(
 			'div' => array('class'),
 			'label' => array('for'),
@@ -1649,61 +1654,67 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('UserForm.published', array('type' => 'text'));
+		$result = $this->Form->input('published', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserFormPublished'),
+			'label' => array('for' => 'published'),
 			'Published',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'UserForm[published]',
-				'id' => 'UserFormPublished'
+				'type' => 'text',
+				'name' => 'published',
+				'id' => 'published'
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('UserForm.other', array('type' => 'text'));
+		$result = $this->Form->input('other', array('type' => 'text'));
 		$expected = array(
 			'div' => array('class' => 'input text'),
-			'label' => array('for' => 'UserFormOther'),
+			'label' => array('for' => 'other'),
 			'Other',
 			'/label',
 			array('input' => array(
-				'type' => 'text', 'name' => 'UserForm[other]',
-				'id' => 'UserFormOther'
+				'type' => 'text',
+				'name' => 'other',
+				'id',
 			)),
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->hidden('UserForm.stuff');
+		$result = $this->Form->hidden('stuff');
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'UserForm[stuff]',
-				'id' => 'UserFormStuff'
+				'type' => 'hidden',
+				'name' => 'stuff',
 		));
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->hidden('UserForm.hidden', array('value' => '0'));
+		$result = $this->Form->hidden('hidden', array('value' => '0'));
 		$expected = array('input' => array(
-			'type' => 'hidden', 'name' => 'UserForm[hidden]',
-			'value' => '0', 'id' => 'UserFormHidden'
+			'type' => 'hidden',
+			'name' => 'hidden',
+			'value' => '0'
 		));
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('UserForm.something', array('type' => 'checkbox'));
+		$result = $this->Form->input('something', array('type' => 'checkbox'));
 		$expected = array(
 			'div' => array('class' => 'input checkbox'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => 'UserForm[something]',
-				'value' => '0', 'id' => 'UserFormSomething_'
+				'type' => 'hidden',
+				'name' => 'something',
+				'value' => '0'
 			)),
 			array('input' => array(
-				'type' => 'checkbox', 'name' => 'UserForm[something]',
-				'value' => '1', 'id' => 'UserFormSomething'
+				'type' => 'checkbox',
+				'name' => 'something',
+				'value' => '1',
+				'id' => 'something'
 			)),
-			'label' => array('for' => 'UserFormSomething'),
+			'label' => array('for' => 'something'),
 			'Something',
 			'/label',
 			'/div'
@@ -1712,23 +1723,25 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->fields;
 		$expected = array(
-			'UserForm.published', 'UserForm.other', 'UserForm.stuff' => '',
-			'UserForm.hidden' => '0', 'UserForm.something'
+			'ratio', 'population', 'published', 'other',
+			'stuff' => '',
+			'hidden' => '0',
+			'something'
 		);
 		$this->assertEquals($expected, $result);
-
-		$hash = 'bd7c4a654e5361f9a433a43f488ff9a1065d0aaf%3AUserForm.hidden%7CUserForm.stuff';
 
 		$result = $this->Form->secure($this->Form->fields);
 		$expected = array(
 			'div' => array('style' => 'display:none;'),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[fields]',
-				'value' => $hash
+				'type' => 'hidden',
+				'name' => '_Token[fields]',
+				'value'
 			)),
 			array('input' => array(
-				'type' => 'hidden', 'name' => '_Token[unlocked]',
-				'value' => '', 'id' => 'preg:/TokenUnlocked\d+/'
+				'type' => 'hidden',
+				'name' => '_Token[unlocked]',
+				'value' => ''
 			)),
 			'/div'
 		);
