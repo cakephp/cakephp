@@ -50,6 +50,10 @@
  * For MySQL, Postgres specifies the character encoding to use when connecting to the
  * database. Uses database default not specified.
  *
+ * language =>
+ * For MySQL, specifies the language to use when connecting to the database.
+ * The set of locales supported by MySQL can be found on 					  https://dev.mysql.com/doc/refman/5.0/en/locale-support.html
+ *
  * unix_socket =>
  * For MySQL to connect via socket specify the `unix_socket` parameter instead of `host` and `port`
  *
@@ -69,6 +73,7 @@ class DATABASE_CONFIG {
 		'password' => 'password',
 		'database' => 'database_name',
 		'prefix' => '',
+		//'language' => 'fr_FR',
 		//'encoding' => 'utf8',
 	);
 
