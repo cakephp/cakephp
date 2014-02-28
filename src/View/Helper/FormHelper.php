@@ -1182,7 +1182,6 @@ class FormHelper extends Helper {
 	public function radio($fieldName, $options = [], $attributes = []) {
 		$attributes = $this->_initInputField($fieldName, $attributes);
 
-		$out = [];
 		$hiddenField = isset($attributes['hiddenField']) ? $attributes['hiddenField'] : true;
 		unset($attributes['hiddenField']);
 
@@ -1484,7 +1483,6 @@ class FormHelper extends Helper {
 		if (!is_string($caption) && empty($caption)) {
 			$caption = __d('cake', 'Submit');
 		}
-		$out = null;
 		$div = true;
 
 		if (isset($options['div'])) {
