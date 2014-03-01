@@ -119,7 +119,7 @@ class FormHelperTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.article');
+	public $fixtures = array('core.article', 'core.comment');
 
 /**
  * Do not load the fixtures by default
@@ -5604,20 +5604,37 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testMultiRecordForm() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('ValidateProfile');
-		$this->Form->request->data['ValidateProfile'][1]['ValidateItem'][2]['name'] = 'Value';
-		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.name');
+		$this->loadFixtures('Article', 'Comment');
+		$articles = TableRegistry::get('Articles');
+		$articles->hasMany('Comments');
+
+		$comment = new Entity(['comment' => 'Value']);
+		$article = new Article(['comments' => [$comment]]);
+		$this->Form->create([$article]);
+		$result = $this->Form->input('0.comments.1.comment');
 		$expected = array(
 			'div' => array('class' => 'input textarea'),
-				'label' => array('for' => 'ValidateProfile1ValidateItem2Name'),
-					'Name',
+				'label' => array('for' => '0-comments-1-comment'),
+					'Comment',
 				'/label',
 				'textarea' => array(
-					'id' => 'ValidateProfile1ValidateItem2Name',
-					'name' => 'ValidateProfile[1][ValidateItem][2][name]',
-					'cols' => 30,
-					'rows' => 6
+					'name',
+					'id' => '0-comments-1-comment'
+				),
+				'/textarea',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('0.comments.0.comment');
+		$expected = array(
+			'div' => array('class' => 'input textarea'),
+				'label' => array('for' => '0-comments-0-comment'),
+					'Comment',
+				'/label',
+				'textarea' => array(
+					'name',
+					'id' => '0-comments-0-comment'
 				),
 				'Value',
 				'/textarea',
@@ -5625,57 +5642,41 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.created', array('empty' => true));
+		$comment->errors('comment', ['Not valid']);
+		$result = $this->Form->input('0.comments.0.comment');
 		$expected = array(
-			'div' => array('class' => 'input date'),
-			'label' => array('for' => 'ValidateProfile1ValidateItem2CreatedMonth'),
-			'Created',
-			'/label',
-			array('select' => array(
-				'name' => 'ValidateProfile[1][ValidateItem][2][created][month]',
-				'id' => 'ValidateProfile1ValidateItem2CreatedMonth'
-				)
-			),
-			array('option' => array('value' => '')), '/option',
-			$this->dateRegex['monthsRegex'],
-			'/select', '-',
-			array('select' => array(
-				'name' => 'ValidateProfile[1][ValidateItem][2][created][day]',
-				'id' => 'ValidateProfile1ValidateItem2CreatedDay'
-				)
-			),
-			array('option' => array('value' => '')), '/option',
-			$this->dateRegex['daysRegex'],
-			'/select', '-',
-			array('select' => array(
-				'name' => 'ValidateProfile[1][ValidateItem][2][created][year]',
-				'id' => 'ValidateProfile1ValidateItem2CreatedYear'
-				)
-			),
-			array('option' => array('value' => '')), '/option',
-			$this->dateRegex['yearsRegex'],
-			'/select',
+			'div' => array('class' => 'input textarea error'),
+				'label' => array('for' => '0-comments-0-comment'),
+					'Comment',
+				'/label',
+				'textarea' => array(
+					'name',
+					'class' => 'form-error',
+					'id' => '0-comments-0-comment'
+				),
+				'Value',
+				'/textarea',
+				array('div' => array('class' => 'error-message')),
+				'Not valid',
+				'/div',
 			'/div'
 		);
 		$this->assertTags($result, $expected);
 
-		$ValidateProfile->validationErrors[1]['ValidateItem'][2]['profile_id'] = 'Error';
-		$this->Form->request->data['ValidateProfile'][1]['ValidateItem'][2]['profile_id'] = '1';
-		$result = $this->Form->input('ValidateProfile.1.ValidateItem.2.profile_id');
+		TableRegistry::get('Comments')
+			->validator('default')
+			->allowEmpty('comment', false);
+		$result = $this->Form->input('0.comments.1.comment');
 		$expected = array(
-			'div' => array('class' => 'input select error'),
-			'label' => array('for' => 'ValidateProfile1ValidateItem2ProfileId'),
-			'Profile',
-			'/label',
-			'select' => array(
-				'name' => 'ValidateProfile[1][ValidateItem][2][profile_id]',
-				'id' => 'ValidateProfile1ValidateItem2ProfileId',
-				'class' => 'form-error'
-			),
-			'/select',
-			array('div' => array('class' => 'error-message')),
-			'Error',
-			'/div',
+			'div' => array('class' => 'input textarea required'),
+				'label' => array('for' => '0-comments-1-comment'),
+					'Comment',
+				'/label',
+				'textarea' => array(
+					'name',
+					'id' => '0-comments-1-comment'
+				),
+				'/textarea',
 			'/div'
 		);
 		$this->assertTags($result, $expected);

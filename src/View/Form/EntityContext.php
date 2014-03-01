@@ -158,14 +158,7 @@ class EntityContext implements ContextInterface {
  */
 	public function isPrimaryKey($field) {
 		$parts = explode('.', $field);
-
-		if ($parts['0'] === $this->_rootName) {
-			$parts = array_slice($parts, 1);
-		}
-
-		list(, $prop) = $this->_getEntity($parts);
-		$table = $this->_getTable($prop);
-
+		$table = $this->_getTable($parts);
 		$primaryKey = (array)$table->primaryKey();
 		return in_array(array_pop($parts), $primaryKey);
 	}
@@ -205,7 +198,7 @@ class EntityContext implements ContextInterface {
 			return null;
 		}
 		$parts = explode('.', $field);
-		list($entity) = $this->_getEntity($parts);
+		$entity = $this->_getEntity($parts);
 		if ($entity instanceof Entity) {
 			return $entity->get(array_pop($parts));
 		}
@@ -219,21 +212,19 @@ class EntityContext implements ContextInterface {
  * entity. If the path does not contain a leaf entity false
  * will be returned.
  *
- * @param array $path The path to traverse to find the leaf entity.
- * @return array
+ * @param array $path Each one of the parts in a path for a field name
+ * @return \Cake\DataSource\EntityInterface|boolean
  * @throws \RuntimeException When properties cannot be read.
  */
 	protected function _getEntity($path) {
 		$oneElement = count($path) === 1;
 		if ($oneElement && $this->_isCollection) {
-			return [false, false];
+			return false;
 		}
 		$entity = $this->_context['entity'];
 		if ($oneElement) {
-			return [$entity, $this->_rootName];
+			return $entity;
 		}
-
-		$lastProp = $this->_rootName;
 
 		if ($path[0] === $this->_rootName) {
 			$path = array_slice($path, 1);
@@ -246,10 +237,7 @@ class EntityContext implements ContextInterface {
 				!($next instanceof Traversable) &&
 				!($next instanceof Entity)
 			) {
-				return [$entity, $lastProp];
-			}
-			if (!is_numeric($prop)) {
-				$lastProp = $prop;
+				return $entity;
 			}
 			$entity = $next;
 		}
@@ -290,18 +278,15 @@ class EntityContext implements ContextInterface {
  * @return boolean
  */
 	public function isRequired($field) {
-		if (empty($this->_context['validator'])) {
-			return false;
-		}
 		$parts = explode('.', $field);
-		list($entity, $prop) = $this->_getEntity($parts);
+		$entity = $this->_getEntity($parts);
 
 		$isNew = true;
 		if ($entity instanceof Entity) {
 			$isNew = $entity->isNew();
 		}
 
-		$validator = $this->_getValidator($prop);
+		$validator = $this->_getValidator($parts);
 		$field = array_pop($parts);
 		if (!$validator->hasField($field)) {
 			return false;
@@ -314,11 +299,11 @@ class EntityContext implements ContextInterface {
  * Get the validator associated to an entity based on naming
  * conventions.
  *
- * @param string $entity The entity name to get a validator for.
+ * @param array $parts Each one of the parts in a path for a field name
  * @return Validator
  */
-	protected function _getValidator($entity) {
-		$table = $this->_getTable($entity);
+	protected function _getValidator($parts) {
+		$table = $this->_getTable($parts);
 		$alias = $table->alias();
 
 		$method = 'default';
@@ -331,27 +316,41 @@ class EntityContext implements ContextInterface {
 	}
 
 /**
- * Get the table instance
+ * Get the table instance from a property path
  *
- * @param string $prop The property name to get a table for.
- * @return \Cake\ORM\Table The table instance.
+ * @param array $parts Each one of the parts in a path for a field name
+ * @return array containing the table instance in the first position and the
+ * property name in the second position
  */
-	protected function _getTable($prop) {
-		if (isset($this->_tables[$prop])) {
-			return $this->_tables[$prop];
-		}
-		$root = $this->_tables[$this->_rootName];
-		$assoc = $root->associations()->getByProperty($prop);
-
-		// No assoc, use the default table to prevent
-		// downstream failures.
-		if (!$assoc) {
-			return $root;
+	protected function _getTable($parts) {
+		if (count($parts) === 1) {
+			return $this->_tables[$this->_rootName];
 		}
 
-		$target = $assoc->target();
-		$this->_tables[$prop] = $target;
-		return $target;
+		$normalized = array_slice(array_filter($parts, function($part) {
+			return !is_numeric($part);
+		}), 0, -1);
+
+		$path = implode('.', $normalized);
+		if (isset($this->_tables[$path])) {
+			return $this->_tables[$path];
+		}
+
+		if (current($normalized) === $this->_rootName) {
+			$normalized = array_slice($normalized, 1);
+		}
+
+		$table = $this->_tables[$this->_rootName];
+		foreach ($normalized as $part) {
+			$assoc = $table->associations()->getByProperty($part);
+			if (!$assoc) {
+				break;
+			}
+
+			$table = $assoc->target();
+		}
+
+		return $this->_tables[$path] = $table;
 	}
 
 /**
@@ -363,10 +362,8 @@ class EntityContext implements ContextInterface {
  */
 	public function type($field) {
 		$parts = explode('.', $field);
-		list($entity, $prop) = $this->_getEntity($parts);
-		$table = $this->_getTable($prop);
-		$column = array_pop($parts);
-		return $table->schema()->columnType($column);
+		$table = $this->_getTable($parts);
+		return $table->schema()->columnType(array_pop($parts));
 	}
 
 /**
@@ -377,8 +374,7 @@ class EntityContext implements ContextInterface {
  */
 	public function attributes($field) {
 		$parts = explode('.', $field);
-		list($entity, $prop) = $this->_getEntity($parts);
-		$table = $this->_getTable($prop);
+		$table = $this->_getTable($parts);
 		$column = (array)$table->schema()->column(array_pop($parts));
 		$whitelist = ['length' => null, 'precision' => null];
 		return array_intersect_key($column, $whitelist);
@@ -402,7 +398,7 @@ class EntityContext implements ContextInterface {
  */
 	public function error($field) {
 		$parts = explode('.', $field);
-		list($entity, $prop) = $this->_getEntity($parts);
+		$entity = $this->_getEntity($parts);
 
 		if ($entity instanceof Entity) {
 			return $entity->errors(array_pop($parts));
