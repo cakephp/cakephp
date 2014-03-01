@@ -2,7 +2,7 @@
 use Cake\Cache\Cache;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Error;
 use Cake\Utility\Debugger;
 use Cake\Validation\Validation;

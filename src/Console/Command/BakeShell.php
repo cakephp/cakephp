@@ -24,7 +24,7 @@ use Cake\Cache\Cache;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Model\Model;
 use Cake\Utility\Inflector;
 

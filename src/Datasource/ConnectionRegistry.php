@@ -23,7 +23,7 @@ use Cake\Utility\ObjectRegistry;
 /**
  * A registry object for connection instances.
  *
- * @see \Cake\Database\ConnectionManager
+ * @see \Cake\Datasource\ConnectionManager
  */
 class ConnectionRegistry extends ObjectRegistry {
 
