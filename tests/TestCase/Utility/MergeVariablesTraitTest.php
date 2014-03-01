@@ -66,7 +66,6 @@ class Grandchild extends Child {
 
 	public $nestedProperty = [
 		'Red' => [
-			'apple' => 'mcintosh',
 			'citrus' => 'blood orange',
 		],
 		'Green' => [
@@ -105,7 +104,7 @@ class MergeVariablesTraitTest extends TestCase {
 		$expected = [
 			'Red' => null,
 			'Orange' => null,
-			'Green' => ['lime', 'apple'],
+			'Green' => ['apple'],
 			'Yellow' => ['banana'],
 		];
 		$this->assertEquals($expected, $object->assocProperty);
@@ -123,7 +122,6 @@ class MergeVariablesTraitTest extends TestCase {
 
 		$expected = [
 			'Red' => [
-				'apple' => 'mcintosh',
 				'citrus' => 'blood orange',
 			],
 			'Green' => [
@@ -144,7 +142,7 @@ class MergeVariablesTraitTest extends TestCase {
 		$expected = [
 			'Red' => null,
 			'Orange' => null,
-			'Green' => ['lime', 'apple'],
+			'Green' => ['apple'],
 			'Yellow' => ['banana'],
 		];
 		$this->assertEquals($expected, $object->assocProperty);
