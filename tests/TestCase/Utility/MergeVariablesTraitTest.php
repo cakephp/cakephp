@@ -44,6 +44,15 @@ class Child extends Base {
 		'Orange'
 	];
 
+	public $nestedProperty = [
+		'Red' => [
+			'apple' => 'gala',
+		],
+		'Green' => [
+			'citrus' => 'lime'
+		],
+	];
+
 }
 
 class Grandchild extends Child {
@@ -53,6 +62,15 @@ class Grandchild extends Child {
 	public $assocProperty = [
 		'Green' => ['apple'],
 		'Yellow' => ['banana']
+	];
+
+	public $nestedProperty = [
+		'Red' => [
+			'citrus' => 'blood orange',
+		],
+		'Green' => [
+			'citrus' => 'key lime'
+		],
 	];
 }
 
@@ -76,7 +94,7 @@ class MergeVariablesTraitTest extends TestCase {
 	}
 
 /**
- * Test merging vars as an assoc list.
+ * Test merging vars as an associative list.
  *
  * @return void
  */
@@ -86,14 +104,37 @@ class MergeVariablesTraitTest extends TestCase {
 		$expected = [
 			'Red' => null,
 			'Orange' => null,
-			'Green' => ['lime', 'apple'],
+			'Green' => ['apple'],
 			'Yellow' => ['banana'],
 		];
 		$this->assertEquals($expected, $object->assocProperty);
 	}
 
 /**
+ * Test merging variable in associated properties that contain
+ * additional keys.
+ *
+ * @return void
+ */
+	public function testMergeVarsAsAssocWithKeyValues() {
+		$object = new Grandchild();
+		$object->mergeVars(['nestedProperty'], ['associative' => ['nestedProperty']]);
+
+		$expected = [
+			'Red' => [
+				'citrus' => 'blood orange',
+			],
+			'Green' => [
+				'citrus' => 'key lime',
+			],
+		];
+		$this->assertEquals($expected, $object->nestedProperty);
+	}
+
+/**
  * Test merging vars with mixed modes.
+ *
+ * @return void
  */
 	public function testMergeVarsMixedModes() {
 		$object = new Grandchild();
@@ -101,7 +142,7 @@ class MergeVariablesTraitTest extends TestCase {
 		$expected = [
 			'Red' => null,
 			'Orange' => null,
-			'Green' => ['lime', 'apple'],
+			'Green' => ['apple'],
 			'Yellow' => ['banana'],
 		];
 		$this->assertEquals($expected, $object->assocProperty);
