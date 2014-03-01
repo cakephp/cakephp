@@ -33,9 +33,7 @@ class AclComponentTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		if (!class_exists('MockAclImplementation', false)) {
-			$this->getMock('AclInterface', array(), array(), 'MockAclImplementation');
-		}
+		$this->MockAclImplementation = $this->getMock('AclInterface', array(), array(), 'MockAclImplementation');
 		Configure::write('Acl.classname', 'MockAclImplementation');
 		$Collection = new ComponentCollection();
 		$this->Acl = new AclComponent($Collection);
@@ -70,11 +68,10 @@ class AclComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testAdapter() {
-		$implementation = new MockAclImplementation();
-		$implementation->expects($this->once())->method('initialize')->with($this->Acl);
-		$this->assertNull($this->Acl->adapter($implementation));
+		$this->MockAclImplementation->expects($this->once())->method('initialize')->with($this->Acl);
+		$this->assertNull($this->Acl->adapter($this->MockAclImplementation));
 
-		$this->assertEquals($this->Acl->adapter(), $implementation, 'Returned object is different %s');
+		$this->assertEquals($this->Acl->adapter(), $this->MockAclImplementation, 'Returned object is different %s');
 	}
 
 /**

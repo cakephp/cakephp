@@ -192,13 +192,8 @@ class HttpSocketTest extends CakeTestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		if (!class_exists('MockHttpSocket')) {
-			$this->getMock('TestHttpSocket', array('read', 'write', 'connect'), array(), 'MockHttpSocket');
-			$this->getMock('TestHttpSocket', array('read', 'write', 'connect', 'request'), array(), 'MockHttpSocketRequests');
-		}
-
-		$this->Socket = new MockHttpSocket();
-		$this->RequestSocket = new MockHttpSocketRequests();
+		$this->Socket = $this->getMock('TestHttpSocket', array('read', 'write', 'connect'));
+		$this->RequestSocket = $this->getMock('TestHttpSocket', array('read', 'write', 'connect', 'request'));
 	}
 
 /**
@@ -635,12 +630,12 @@ class HttpSocketTest extends CakeTestCase {
 		$this->Socket->reset();
 		$request = array('uri' => 'htpp://www.cakephp.org/');
 		$number = mt_rand(0, 9999999);
-		$this->Socket->expects($this->once())->method('connect')->will($this->returnValue(true));
+		$this->Socket->expects($this->any())->method('connect')->will($this->returnValue(true));
 		$serverResponse = "HTTP/1.x 200 OK\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\nContent-Type: text/html\r\n\r\n<h1>Hello, your lucky number is " . $number . "</h1>";
+		$this->Socket->expects($this->at(0))->method('write')
+			->with("GET / HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n\r\n");
 		$this->Socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
 		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
-		$this->Socket->expects($this->once())->method('write')
-			->with("GET / HTTP/1.1\r\nHost: www.cakephp.org\r\nConnection: close\r\nUser-Agent: CakePHP\r\n\r\n");
 		$response = (string)$this->Socket->request($request);
 		$this->assertEquals($response, "<h1>Hello, your lucky number is " . $number . "</h1>");
 	}
@@ -684,7 +679,7 @@ class HttpSocketTest extends CakeTestCase {
 				)
 			)
 		);
-		$http = new MockHttpSocketRequests($request);
+		$http = $this->getMock('TestHttpSocket', array('read', 'write', 'connect', 'request'), array($request));
 
 		$expected = array('method' => 'GET', 'uri' => '/_test');
 		$http->expects($this->at(0))->method('request')->with($expected);
@@ -1056,20 +1051,19 @@ class HttpSocketTest extends CakeTestCase {
  * @return void
  */
 	public function testAuth() {
-		$socket = new MockHttpSocket();
-		$socket->get('http://mark:secret@example.com/test');
-		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
+		$this->Socket->get('http://mark:secret@example.com/test');
+		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 
-		$socket->configAuth(false);
-		$socket->get('http://example.com/test');
-		$this->assertFalse(strpos($socket->request['header'], 'Authorization:'));
+		$this->Socket->configAuth(false);
+		$this->Socket->get('http://example.com/test');
+		$this->assertFalse(strpos($this->Socket->request['header'], 'Authorization:'));
 
-		$socket->configAuth('Test', 'mark', 'passwd');
-		$socket->get('http://example.com/test');
-		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Test mark.passwd') !== false);
+		$this->Socket->configAuth('Test', 'mark', 'passwd');
+		$this->Socket->get('http://example.com/test');
+		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Test mark.passwd') !== false);
 
-		$socket->configAuth(false);
-		$socket->request(array(
+		$this->Socket->configAuth(false);
+		$this->Socket->request(array(
 			'method' => 'GET',
 			'uri' => 'http://example.com/test',
 			'auth' => array(
@@ -1078,8 +1072,8 @@ class HttpSocketTest extends CakeTestCase {
 				'pass' => 'hunter2'
 			)
 		));
-		$this->assertEquals($socket->request['auth'], array('Basic' => array('user' => 'joel', 'pass' => 'hunter2')));
-		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic am9lbDpodW50ZXIy') !== false);
+		$this->assertEquals($this->Socket->request['auth'], array('Basic' => array('user' => 'joel', 'pass' => 'hunter2')));
+		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Basic am9lbDpodW50ZXIy') !== false);
 	}
 
 /**
@@ -1088,17 +1082,16 @@ class HttpSocketTest extends CakeTestCase {
  * @return void
  */
 	public function testConsecutiveGetResetsAuthCredentials() {
-		$socket = new MockHttpSocket();
-		$socket->get('http://mark:secret@example.com/test');
-		$this->assertEquals('mark', $socket->request['uri']['user']);
-		$this->assertEquals('secret', $socket->request['uri']['pass']);
-		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
+		$this->Socket->get('http://mark:secret@example.com/test');
+		$this->assertEquals('mark', $this->Socket->request['uri']['user']);
+		$this->assertEquals('secret', $this->Socket->request['uri']['pass']);
+		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 
-		$socket->get('/test2');
-		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
+		$this->Socket->get('/test2');
+		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 
-		$socket->get('/test3');
-		$this->assertTrue(strpos($socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
+		$this->Socket->get('/test3');
+		$this->assertTrue(strpos($this->Socket->request['header'], 'Authorization: Basic bWFyazpzZWNyZXQ=') !== false);
 	}
 
 /**
