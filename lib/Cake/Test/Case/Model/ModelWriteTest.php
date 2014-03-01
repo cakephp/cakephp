@@ -30,7 +30,7 @@ class TestAuthor extends Author {
 
 	public $hasMany = array(
 		'Post' => array(
-			'className' => 'Recipe'
+			'className' => 'TestPost'
 		)
 	);
 
