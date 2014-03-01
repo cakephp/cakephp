@@ -342,10 +342,6 @@ class EntityContext implements ContextInterface {
 
 		$table = $this->_tables[$this->_rootName];
 		foreach ($normalized as $part) {
-			if (is_numeric($part)) {
-				continue;
-			}
-
 			$assoc = $table->associations()->getByProperty($part);
 			if (!$assoc) {
 				break;
