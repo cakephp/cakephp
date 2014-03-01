@@ -199,10 +199,24 @@ class EntityContext implements ContextInterface {
 		}
 		$parts = explode('.', $field);
 		$entity = $this->_getEntity($parts);
+
+		if (end($parts) === '_ids' && !empty($entity)) {
+			return $this->_extractMultiple($entity, $parts);
+		}
+
 		if ($entity instanceof Entity) {
 			return $entity->get(array_pop($parts));
 		}
 		return null;
+	}
+
+	protected function _extractMultiple($values, $path) {
+		if (!(is_array($values) || $values instanceof \Traversable)) {
+			return null;
+		}
+		$table = $this->_getTable($path);
+		$primary = (array)$table->primaryKey();
+		return (new Collection($values))->extract($primary[0])->toArray();
 	}
 
 /**
