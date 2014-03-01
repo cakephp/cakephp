@@ -445,6 +445,32 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test reading values for magic _ids input
+ *
+ * @return void
+ */
+	public function testValAssociatedIds() {
+		$row = new Entity([
+			'title' => 'First post',
+			'user' => new Entity([
+				'username' => 'mark',
+				'fname' => 'Mark',
+				'groups' => [
+					new Entity(['title' => 'PHP', 'id' => 1]),
+					new Entity(['title' => 'Javascript', 'id' => 2]),
+				]
+			]),
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$result = $context->val('user.groups._ids');
+		$this->assertEquals([1, 2], $result);
+	}
+
+/**
  * Test validator as a string.
  *
  * @return void
