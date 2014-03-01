@@ -1,5 +1,5 @@
 <?php
-use Cake\Database\ConnectionManager;
+use Cake\Datasource\ConnectionManager;
 use Cake\Core\Configure;
 ?>
 <p>
