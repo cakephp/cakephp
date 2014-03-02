@@ -848,4 +848,33 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals('ber', $entity->tags[1]->_joinData->user->username);
 	}
 
+/**
+ * Test mergeMany() with a simple set of data.
+ *
+ * @return void
+ */
+	public function testMergeManySimple() {
+		$entities = [
+			new OpenEntity(['id' => 1, 'comment' => 'First post', 'user_id' => 2]),
+			new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2])
+		];
+		$entities[0]->clean();
+		$entities[1]->clean();
+
+		$data = [
+			['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+			['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1]
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->mergeMany($entities, $data);
+
+		$this->assertSame($entities[0], $result[0]);
+		$this->assertSame($entities[1], $result[1]);
+		$this->assertEquals('Changed 1', $result[0]->comment);
+		$this->assertEquals(1, $result[0]->user_id);
+		$this->assertEquals('Changed 2', $result[1]->comment);
+		$this->assertTrue($result[0]->dirty('user_id'));
+		$this->assertFalse($result[1]->dirty('user_id'));
+	}
+
 }
