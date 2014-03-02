@@ -14,8 +14,10 @@
  */
 namespace Cake\ORM;
 
+use Cake\Collection\Collection;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\Type;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 
@@ -47,7 +49,7 @@ class Marshaller {
  * Constructor.
  *
  * @param \Cake\ORM\Table $table
- * @param boolean Whether or not this masrhaller is in safe mode
+ * @param boolean Whether or not this marshaller is in safe mode
  */
 	public function __construct(Table $table, $safe = false) {
 		$this->_table = $table;
@@ -212,6 +214,67 @@ class Marshaller {
 		}
 
 		return $assoc->find()->where($filter)->toArray();
+	}
+
+	public function merge(EntityInterface $entity, array $data, $include = []) {
+		$propertyMap = $this->_buildPropertyMap($include);
+		$tableName = $this->_table->alias();
+
+		if (isset($data[$tableName])) {
+			$data = $data[$tableName];
+		}
+
+		$properties = [];
+		foreach ($data as $key => $value) {
+			$original = $entity->get($key);
+			if (isset($propertyMap[$key])) {
+				$assoc = $propertyMap[$key]['association'];
+				$nested = $propertyMap[$key]['nested'];
+				$value = $this->_mergeAssociation($original, $assoc, $value, $nested);
+			} elseif ($original == $value) {
+				continue;
+			}
+			$properties[$key] = $value;
+		}
+
+		$entity->set($properties);
+		return $entity;
+	}
+
+	public function mergeMany($entities, array $data, $include = []) {
+		$primary = (array)$this->_table->primaryKey();
+		$indexed = (new Collection($data))->indexBy($primary[0]);
+		$output = [];
+
+		foreach ($entities as $entity) {
+			$key = $entity->get($primary[0]);
+			if ($key === null || !isset($indexed[$key])) {
+				continue;
+			}
+			$output[] = $this->merge($entity, $indexed[$key], $include);
+			unset($indexed[$key]);
+		}
+
+		foreach ($indexed as $record) {
+			$output[] = $this->one($record, $include);
+		}
+		return $output;
+	}
+
+	protected function _mergeAssociation($original, $assoc, $value, $include) {
+		if (!$original) {
+			return $this->_marshalAssociation($assoc, $value, $include);
+		}
+
+		$targetTable = $assoc->target();
+		$marshaller = $targetTable->marshaller();
+		if ($assoc->type() === Association::ONE_TO_ONE) {
+			return $marshaller->merge($original, $value, (array)$include);
+		}
+		if ($assoc->type() === Association::MANY_TO_MANY) {
+			return $marshaller->_belongsToMany($assoc, $value, (array)$include);
+		}
+		return $marshaller->mergeMany($original, $value, (array)$include);
 	}
 
 }
