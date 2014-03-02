@@ -55,4 +55,42 @@ class DateTimeType extends \Cake\Database\Type {
 		return $value;
 	}
 
+/**
+ * Convert request data into a datetime object.
+ *
+ * @param mixed $value Request data
+ * @return \DateTime
+ */
+	public function marshall($value) {
+		try {
+			if ($value === '' || $value === null || $value === false || $value === true) {
+				return $value;
+			} elseif (is_numeric($value)) {
+				$date = new DateTime('@' . $value);
+			} elseif (is_string($value)) {
+				$date = new DateTime($value);
+			}
+			if (isset($date)) {
+				return $date;
+			}
+		} catch (\Exception $e) {
+			return $value;
+		}
+
+		$value += ['second' => 0];
+
+		$date = new DateTime();
+		$date->setTime(0, 0, 0);
+		if (isset($value['year'], $value['month'], $value['day'])) {
+			$date->setDate($value['year'], $value['month'], $value['day']);
+		}
+		if (isset($value['hour'], $value['minute'])) {
+			if (isset($value['meridian'])) {
+				$value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
+			}
+			$date->setTime($value['hour'], $value['minute'], $value['second']);
+		}
+		return $date;
+	}
+
 }
