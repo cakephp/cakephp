@@ -74,7 +74,7 @@ class DateTimeTypeTest extends TestCase {
  *
  * @return array
  */
-	public static function marshallProvider() {
+	public function marshallProvider() {
 		return [
 			// invalid types.
 			[null, null],

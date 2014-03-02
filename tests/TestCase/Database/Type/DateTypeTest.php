@@ -78,7 +78,7 @@ class DateTypeTest extends TestCase {
  *
  * @return array
  */
-	public static function marshallProvider() {
+	public function marshallProvider() {
 		$date = new \DateTime('@1392387900');
 		$date->setTime(0, 0, 0);
 
