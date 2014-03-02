@@ -482,4 +482,90 @@ class MarshallerTest extends TestCase {
 		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
 	}
 
+/**
+ * Test merge() in a simple use.
+ *
+ * @return void
+ */
+	public function testMergeSimple() {
+		$data = [
+			'title' => 'My title',
+			'author_id' => 1,
+			'not_in_schema' => true
+		];
+		$marshall = new Marshaller($this->articles);
+		$entity = new Entity([
+			'title' => 'Foo',
+			'body' => 'My Content'
+		]);
+		$entity->accessible('*', true);
+		$entity->isNew(false);
+		$entity->clean();
+		$result = $marshall->merge($entity, $data, []);
+
+		$this->assertSame($entity, $result);
+		$this->assertEquals($data + ['body' => 'My Content'], $result->toArray());
+		$this->assertTrue($result->dirty(), 'Should be a dirty entity.');
+		$this->assertFalse($result->isNew(), 'Should not change the entity state');
+	}
+
+/**
+ * Tests that merge respects the entity accessible methods
+ *
+ * @return void
+ */
+	public function testMergeWhitelist() {
+		$data = [
+			'title' => 'My title',
+			'author_id' => 1,
+			'not_in_schema' => true
+		];
+		$marshall = new Marshaller($this->articles);
+		$entity = new Entity([
+			'title' => 'Foo',
+			'body' => 'My Content'
+		]);
+		$entity->accessible('author_id', true);
+		$entity->isNew(false);
+		$result = $marshall->merge($entity, $data, []);
+
+		$expected = [
+			'title' => 'Foo',
+			'body' => 'My Content',
+			'author_id' => 1
+		];
+		$this->assertEquals($expected, $result->toArray());
+	}
+
+/**
+ * Tests that fields with the same value are not marked as dirty
+ *
+ * @return void
+ */
+	public function testMergeDirty() {
+		$marshall = new Marshaller($this->articles);
+		$entity = new Entity([
+			'title' => 'Foo',
+			'author_id' => 1
+		]);
+		$data = [
+			'title' => 'Foo',
+			'author_id' => 1,
+			'crazy' => true
+		];
+		$entity->accessible('*', true);
+		$entity->clean();
+		$result = $marshall->merge($entity, $data, []);
+
+		$expected = [
+			'title' => 'Foo',
+			'author_id' => 1,
+			'crazy' => true
+		];
+		$this->assertEquals($expected, $result->toArray());
+		$this->assertFalse($entity->dirty('title'));
+		$this->assertFalse($entity->dirty('author_id'));
+		$this->assertTrue($entity->dirty('crazy'));
+	}
+
 }
