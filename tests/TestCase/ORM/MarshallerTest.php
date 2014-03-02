@@ -568,4 +568,118 @@ class MarshallerTest extends TestCase {
 		$this->assertTrue($entity->dirty('crazy'));
 	}
 
+/**
+ * Tests merging data into an associated entity
+ *
+ * @return void
+ */
+	public function testMergeWithSingleAssociation() {
+		$user = new Entity([
+			'username' => 'mark',
+			'password' => 'secret'
+		]);
+		$entity = new Entity([
+			'tile' => 'My Title',
+			'user' => $user
+		]);
+		$user->accessible('*', true);
+		$entity->accessible('*', true);
+
+		$data = [
+			'body' => 'My Content',
+			'user' => [
+				'password' => 'not a secret'
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->merge($entity, $data, ['Users']);
+		$this->assertEquals('My Content', $entity->body);
+		$this->assertSame($user, $entity->user);
+		$this->assertEquals('mark', $entity->user->username);
+		$this->assertEquals('not a secret', $entity->user->password);
+		$this->assertTrue($entity->dirty('user'));
+	}
+
+/**
+ * Tests that new associated entities can be created when merging data into
+ * a parent entity
+ *
+ * @return void
+ */
+	public function testMergeCreateAssociation() {
+		$entity = new Entity([
+			'tile' => 'My Title'
+		]);
+		$entity->accessible('*', true);
+		$data = [
+			'body' => 'My Content',
+			'user' => [
+				'username' => 'mark',
+				'password' => 'not a secret'
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->merge($entity, $data, ['Users']);
+		$this->assertEquals('My Content', $entity->body);
+		$this->assertInstanceOf('Cake\ORM\Entity', $entity->user);
+		$this->assertEquals('mark', $entity->user->username);
+		$this->assertEquals('not a secret', $entity->user->password);
+		$this->assertTrue($entity->dirty('user'));
+		$this->assertNull($entity->user->isNew());
+	}
+
+/**
+ * Tests merging one to many associations
+ *
+ * @return void
+ */
+	public function testMergeMultipleAssociations() {
+		$user = new Entity(['username' => 'mark', 'password' => 'secret']);
+		$comment1 = new Entity(['id' => 1, 'comment' => 'A comment']);
+		$comment2 = new Entity(['id' => 2, 'comment' => 'Another comment']);
+		$entity = new Entity([
+			'title' => 'My Title',
+			'user' => $user,
+			'comments' => [$comment1, $comment2]
+		]);
+
+		$user->accessible('*', true);
+		$comment1->accessible('*', true);
+		$comment2->accessible('*', true);
+		$entity->accessible('*', true);
+
+		$data = [
+			'title' => 'Another title',
+			'user' => ['password' => 'not so secret'],
+			'comments' => [
+				['comment' => 'Extra comment 1'],
+				['id' => 2, 'comment' => 'Altered comment 2'],
+				['id' => 1, 'comment' => 'Altered comment 1'],
+				['id' => 3, 'comment' => 'Extra comment 3'],
+				['comment' => 'Extra comment 2']
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->merge($entity, $data, ['Users', 'Comments']);
+		$this->assertSame($entity, $result);
+		$this->assertSame($user, $result->user);
+		$this->assertEquals('not so secret', $entity->user->password);
+		$this->assertSame($comment1, $entity->comments[0]);
+		$this->assertSame($comment2, $entity->comments[1]);
+		$this->assertEquals('Altered comment 1', $entity->comments[0]->comment);
+		$this->assertEquals('Altered comment 2', $entity->comments[1]->comment);
+		$this->assertEquals(
+			['comment' => 'Extra comment 3', 'id' => 3],
+			$entity->comments[2]->toArray()
+		);
+		$this->assertEquals(
+			['comment' => 'Extra comment 1'],
+			$entity->comments[3]->toArray()
+		);
+		$this->assertEquals(
+			['comment' => 'Extra comment 2'],
+			$entity->comments[4]->toArray()
+		);
+	}
+
 }

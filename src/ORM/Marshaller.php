@@ -243,7 +243,9 @@ class Marshaller {
 
 	public function mergeMany($entities, array $data, $include = []) {
 		$primary = (array)$this->_table->primaryKey();
-		$indexed = (new Collection($data))->indexBy($primary[0]);
+		$indexed = (new Collection($data))->groupBy($primary[0])->toArray();
+		$new = [$indexed[null]];
+		unset($indexed[null]);
 		$output = [];
 
 		foreach ($entities as $entity) {
@@ -251,12 +253,14 @@ class Marshaller {
 			if ($key === null || !isset($indexed[$key])) {
 				continue;
 			}
-			$output[] = $this->merge($entity, $indexed[$key], $include);
+			$output[] = $this->merge($entity, $indexed[$key][0], $include);
 			unset($indexed[$key]);
 		}
 
-		foreach ($indexed as $record) {
-			$output[] = $this->one($record, $include);
+		foreach (array_merge($indexed, $new) as $record) {
+			foreach ($record as $value) {
+				$output[] = $this->one($value, $include);
+			}
 		}
 		return $output;
 	}
