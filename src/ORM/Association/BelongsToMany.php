@@ -116,6 +116,13 @@ class BelongsToMany extends Association {
 	protected $_targetForeignKey;
 
 /**
+ * The table instance for the junction relation.
+ *
+ * @var string|\Cake\ORM\Table $table Name or instance for the join table
+ */
+	protected $_through;
+
+/**
  * Sets the name of the field representing the foreign key to the target table.
  * If no parameters are passed current field is returned
  *
@@ -148,14 +155,18 @@ class BelongsToMany extends Association {
 
 		if ($table === null) {
 			if (empty($this->_junctionTable)) {
-				$tableName = $this->_junctionTableName();
-				$tableAlias = Inflector::camelize($tableName);
+				if (!empty($this->_through)) {
+					$table = $this->_through;
+				} else {
+					$tableName = $this->_junctionTableName();
+					$tableAlias = Inflector::camelize($tableName);
 
-				$config = [];
-				if (!TableRegistry::exists($tableAlias)) {
-					$config = ['table' => $tableName];
+					$config = [];
+					if (!TableRegistry::exists($tableAlias)) {
+						$config = ['table' => $tableName];
+					}
+					$table = TableRegistry::get($tableAlias, $config);
 				}
-				$table = TableRegistry::get($tableAlias, $config);
 			} else {
 				return $this->_junctionTable;
 			}
@@ -944,8 +955,8 @@ class BelongsToMany extends Association {
 
 /**
  * Parse extra options passed in the constructor.
- * @param array $opts original list of options passed in constructor
  *
+ * @param array $opts original list of options passed in constructor
  * @return void
  */
 	protected function _options(array $opts) {
@@ -957,7 +968,7 @@ class BelongsToMany extends Association {
 			$this->_junctionTableName($opts['joinTable']);
 		}
 		if (!empty($opts['through'])) {
-			$this->junction($opts['through']);
+			$this->_through = $opts['through'];
 		}
 		if (!empty($opts['saveStrategy'])) {
 			$this->saveStrategy($opts['saveStrategy']);
