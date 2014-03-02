@@ -877,4 +877,33 @@ class MarshallerTest extends TestCase {
 		$this->assertFalse($result[1]->dirty('user_id'));
 	}
 
+/**
+ * Tests that only records found in the data array are returned, those that cannot
+ * be matched are discarded
+ *
+ * @return void
+ */
+	public function testMergeManyWithAppend() {
+		$entities = [
+			new OpenEntity(['comment' => 'First post', 'user_id' => 2]),
+			new OpenEntity(['id' => 2, 'comment' => 'Second post', 'user_id' => 2])
+		];
+		$entities[0]->clean();
+		$entities[1]->clean();
+
+		$data = [
+			['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
+			['id' => 1, 'comment' => 'Comment 1', 'user_id' => 1]
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->mergeMany($entities, $data);
+
+		$this->assertCount(2, $result);
+		$this->assertNotSame($entities[0], $result[0]);
+		$this->assertSame($entities[1], $result[0]);
+		$this->assertEquals('Changed 2', $result[0]->comment);
+
+	}
+
+
 }
