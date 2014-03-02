@@ -249,10 +249,16 @@ class Marshaller {
 		$output = [];
 
 		foreach ($entities as $entity) {
+			if (!($entity instanceof EntityInterface)) {
+				continue;
+			}
+
 			$key = $entity->get($primary[0]);
+
 			if ($key === null || !isset($indexed[$key])) {
 				continue;
 			}
+
 			$output[] = $this->merge($entity, $indexed[$key][0], $include);
 			unset($indexed[$key]);
 		}
@@ -276,9 +282,49 @@ class Marshaller {
 			return $marshaller->merge($original, $value, (array)$include);
 		}
 		if ($assoc->type() === Association::MANY_TO_MANY) {
-			return $marshaller->_belongsToMany($assoc, $value, (array)$include);
+			return $marshaller->_mergeBelongsToMany($original, $assoc, $value, (array)$include);
 		}
 		return $marshaller->mergeMany($original, $value, (array)$include);
+	}
+
+	protected function _mergeBelongsToMany($original, $assoc, $data, $include) {
+		if (isset($data['_ids']) && is_array($data['_ids'])) {
+			return $this->_loadBelongsToMany($assoc, $data['_ids']);
+		}
+
+		if (!in_array('_joinData', $include) && !isset($include['_joinData'])) {
+			return $this->mergeMany($original, $data, $include);
+		}
+
+		$extra = [];
+		foreach ($original as $entity) {
+			$joinData = $entity->get('_joinData');
+			if ($joinData) {
+				$extra[spl_object_hash($entity)] = $joinData;
+			}
+		}
+
+		$joint = $assoc->junction();
+		$marshaller = $joint->marshaller();
+
+		$nested = [];
+		if (isset($include['_joinData']['associated'])) {
+			$nested = (array)$include['_joinData']['associated'];
+		}
+
+		$records = $this->mergeMany($original, $data, $include);
+		foreach ($records as $record) {
+			$hash = spl_object_hash($record);
+			$data = $record->get('_joinData');
+			if (isset($extra[$hash])) {
+				$record->set('_joinData', $marshaller->merge($extra[$hash], (array)$data));
+			} else {
+				$joinData = $marshaller->one($data, $nested);
+				$record->set('_joinData', $joinData);
+			}
+		}
+
+		return $records;
 	}
 
 }
