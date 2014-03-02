@@ -37,7 +37,6 @@ class Type {
 		'date' => 'Cake\Database\Type\DateType',
 		'datetime' => 'Cake\Database\Type\DateTimeType',
 		'timestamp' => 'Cake\Database\Type\DateTimeType',
-		'time' => 'Cake\Database\Type\TimeType',
 		'uuid' => 'Cake\Database\Type\UuidType',
 	];
 
@@ -236,6 +235,19 @@ class Type {
  */
 	public function newId() {
 		return null;
+	}
+
+/**
+ * Marshalls flat data into PHP objects.
+ *
+ * Most useful for converting request data into PHP objects
+ * that make sense for the rest of the ORM/Database layers.
+ *
+ * @param mixed $value The value to convert.
+ * @return mixed Converted value.
+ */
+	public function marshall($value) {
+		return $value;
 	}
 
 }

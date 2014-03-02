@@ -48,7 +48,7 @@ class ProtectedArticle extends Entity {
  */
 class MarshallerTest extends TestCase {
 
-	public $fixtures = ['core.tag', 'core.article', 'core.user', 'core.comment'];
+	public $fixtures = ['core.tag', 'core.articles_tag', 'core.article', 'core.user', 'core.comment'];
 
 /**
  * setup
@@ -110,6 +110,55 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($data, $result->toArray());
 		$this->assertTrue($result->dirty(), 'Should be a dirty entity.');
 		$this->assertNull($result->isNew(), 'Should be detached');
+	}
+
+/**
+ * Test marshalling datetime/date field.
+ *
+ * @return void
+ */
+	public function testOneWithDatetimeField() {
+		$data = [
+			'comment' => 'My Comment text',
+			'created' => [
+				'year' => '2014',
+				'month' => '2',
+				'day' => 14
+			]
+		];
+		$marshall = new Marshaller($this->comments);
+		$result = $marshall->one($data, []);
+
+		$this->assertEquals(new \DateTime('2014-02-14 00:00:00'), $result->created);
+
+		$data['created'] = [
+			'year' => '2014',
+			'month' => '2',
+			'day' => 14,
+			'hour' => 9,
+			'minute' => 25,
+			'meridian' => 'pm'
+		];
+		$result = $marshall->one($data, []);
+		$this->assertEquals(new \DateTime('2014-02-14 21:25:00'), $result->created);
+
+		$data['created'] = [
+			'year' => '2014',
+			'month' => '2',
+			'day' => 14,
+			'hour' => 9,
+			'minute' => 25,
+		];
+		$result = $marshall->one($data, []);
+		$this->assertEquals(new \DateTime('2014-02-14 09:25:00'), $result->created);
+
+		$data['created'] = '2014-02-14 09:25:00';
+		$result = $marshall->one($data, []);
+		$this->assertEquals(new \DateTime('2014-02-14 09:25:00'), $result->created);
+
+		$data['created'] = 1392387900;
+		$result = $marshall->one($data, []);
+		$this->assertEquals($data['created'], $result->created->getTimestamp());
 	}
 
 /**

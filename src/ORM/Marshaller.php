@@ -15,6 +15,7 @@
 namespace Cake\ORM;
 
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\Type;
 use Cake\ORM\Association;
 use Cake\ORM\Table;
 
@@ -89,6 +90,7 @@ class Marshaller {
 	public function one(array $data, $include = []) {
 		$propertyMap = $this->_buildPropertyMap($include);
 
+		$schema = $this->_table->schema();
 		$tableName = $this->_table->alias();
 		$entityClass = $this->_table->entityClass();
 		$entity = new $entityClass();
@@ -99,10 +101,14 @@ class Marshaller {
 
 		$properties = [];
 		foreach ($data as $key => $value) {
+			$columnType = $schema->columnType($key);
 			if (isset($propertyMap[$key])) {
 				$assoc = $propertyMap[$key]['association'];
 				$nested = $propertyMap[$key]['nested'];
 				$value = $this->_marshalAssociation($assoc, $value, $nested);
+			} elseif ($columnType) {
+				$converter = Type::build($columnType);
+				$value = $converter->marshall($value);
 			}
 			$properties[$key] = $value;
 		}

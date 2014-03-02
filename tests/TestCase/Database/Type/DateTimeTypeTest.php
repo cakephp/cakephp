@@ -69,4 +69,83 @@ class DateTimeTypeTest extends TestCase {
 		$this->assertEquals('2013-08-12 15:16:17', $result);
 	}
 
+/**
+ * Data provider for marshall()
+ *
+ * @return array
+ */
+	public function marshallProvider() {
+		return [
+			// invalid types.
+			[null, null],
+			[false, false],
+			[true, true],
+			['', ''],
+			['derpy', 'derpy'],
+			['2013-nope!', '2013-nope!'],
+
+			// valid string types
+			['1392387900', new \DateTime('@1392387900')],
+			[1392387900, new \DateTime('@1392387900')],
+			['2014-02-14', new \DateTime('2014-02-14')],
+			['2014-02-14 13:14:15', new \DateTime('2014-02-14 13:14:15')],
+
+			// valid array types
+			[
+				['year' => 2014, 'month' => 2, 'day' => 14, 'hour' => 13, 'minute' => 14, 'second' => 15],
+				new \DateTime('2014-02-14 13:14:15')
+			],
+			[
+				[
+					'year' => 2014, 'month' => 2, 'day' => 14,
+					'hour' => 1, 'minute' => 14, 'second' => 15,
+					'meridian' => 'am'
+				],
+				new \DateTime('2014-02-14 01:14:15')
+			],
+			[
+				[
+					'year' => 2014, 'month' => 2, 'day' => 14,
+					'hour' => 1, 'minute' => 14, 'second' => 15,
+					'meridian' => 'pm'
+				],
+				new \DateTime('2014-02-14 13:14:15')
+			],
+			[
+				[
+					'year' => 2014, 'month' => 2, 'day' => 14,
+				],
+				new \DateTime('2014-02-14 00:00:00')
+			],
+
+			// Invalid array types
+			[
+				['year' => 'farts', 'month' => 'derp'],
+				new \DateTime(date('Y-m-d 00:00:00'))
+			],
+			[
+				['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
+				new \DateTime(date('Y-m-d 00:00:00'))
+			],
+			[
+				[
+					'year' => '2014', 'month' => '02', 'day' => '14',
+					'hour' => 'farts', 'minute' => 'farts'
+				],
+				new \DateTime('2014-02-14 00:00:00')
+			],
+		];
+	}
+
+/**
+ * test marshalling data.
+ *
+ * @dataProvider marshallProvider
+ * @return void
+ */
+	public function testMarshall($value, $expected) {
+		$result = $this->type->marshall($value);
+		$this->assertEquals($expected, $result);
+	}
+
 }
