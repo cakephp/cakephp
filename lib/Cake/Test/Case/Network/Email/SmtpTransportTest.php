@@ -229,7 +229,7 @@ class SmtpTransportTest extends CakeTestCase {
  * @return void
  */
 	public function testAuthNoAuth() {
-		$this->socket->expects($this->any())->method('write')->with(new PHPUnit_Framework_Constraint_Not("AUTH LOGIN\r\n"));
+		$this->socket->expects($this->any())->method('write')->with($this->logicalNot($this->stringContains('AUTH LOGIN')));
 
 		$this->SmtpTransport->config(array('username' => null, 'password' => null));
 		$this->SmtpTransport->auth();
