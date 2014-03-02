@@ -682,4 +682,34 @@ class MarshallerTest extends TestCase {
 		);
 	}
 
+/**
+ * Tests that merging data to an entity containing belongsToMany and _ids
+ * will just overwrite the data
+ *
+ * @return void
+ */
+	public function testMergeBelongsToManyEntitiesFromIds() {
+		$entity = new Entity([
+			'title' => 'Haz tags',
+			'body' => 'Some content here',
+			'tags' => [
+				new Entity(['id' => 1, 'name' => 'Cake']),
+				new Entity(['id' => 2, 'name' => 'PHP'])
+			]
+		]);
+
+		$data = [
+			'title' => 'Haz moar tags',
+			'tags' => ['_ids' => [1, 2, 3]]
+		];
+		$entity->accessible('*', true);
+		$marshall = new Marshaller($this->articles);
+		$result = $marshall->merge($entity, $data, ['Tags']);
+
+		$this->assertCount(3, $result->tags);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
+		$this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
+	}
+
 }
