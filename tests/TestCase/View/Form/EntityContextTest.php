@@ -445,6 +445,61 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test reading values for magic _ids input
+ *
+ * @return void
+ */
+	public function testValAssociatedDefaultIds() {
+		$row = new Entity([
+			'title' => 'First post',
+			'user' => new Entity([
+				'username' => 'mark',
+				'fname' => 'Mark',
+				'groups' => [
+					new Entity(['title' => 'PHP', 'id' => 1]),
+					new Entity(['title' => 'Javascript', 'id' => 2]),
+				]
+			]),
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		$result = $context->val('user.groups._ids');
+		$this->assertEquals([1, 2], $result);
+	}
+
+/**
+ * Test reading values for magic _ids input
+ *
+ * @return void
+ */
+	public function testValAssociatedCustomIds() {
+		$row = new Entity([
+			'title' => 'First post',
+			'user' => new Entity([
+				'username' => 'mark',
+				'fname' => 'Mark',
+				'groups' => [
+					new Entity(['title' => 'PHP', 'thing' => 1]),
+					new Entity(['title' => 'Javascript', 'thing' => 4]),
+				]
+			]),
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+
+		TableRegistry::get('Users')->belongsToMany('Groups');
+		TableRegistry::get('Groups')->primaryKey('thing');
+
+		$result = $context->val('user.groups._ids');
+		$this->assertEquals([1, 4], $result);
+	}
+
+/**
  * Test validator as a string.
  *
  * @return void

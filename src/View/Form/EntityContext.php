@@ -199,10 +199,32 @@ class EntityContext implements ContextInterface {
 		}
 		$parts = explode('.', $field);
 		$entity = $this->_getEntity($parts);
+
+		if (end($parts) === '_ids' && !empty($entity)) {
+			return $this->_extractMultiple($entity, $parts);
+		}
+
 		if ($entity instanceof Entity) {
 			return $entity->get(array_pop($parts));
 		}
 		return null;
+	}
+
+/**
+ * Helper method used to extract all the primary key values out of an array, The
+ * primary key column is guessed out of the provided $path array
+ *
+ * @param array|\Traversable $values The list from which to extract primary keys from
+ * @param array $path Each one of the parts in a path for a field name
+ * @return array
+ */
+	protected function _extractMultiple($values, $path) {
+		if (!(is_array($values) || $values instanceof \Traversable)) {
+			return null;
+		}
+		$table = $this->_getTable($path, false);
+		$primary = $table ? (array)$table->primaryKey() : ['id'];
+		return (new Collection($values))->extract($primary[0])->toArray();
 	}
 
 /**
@@ -322,7 +344,7 @@ class EntityContext implements ContextInterface {
  * @return array containing the table instance in the first position and the
  * property name in the second position
  */
-	protected function _getTable($parts) {
+	protected function _getTable($parts, $rootFallback = true) {
 		if (count($parts) === 1) {
 			return $this->_tables[$this->_rootName];
 		}
@@ -343,8 +365,11 @@ class EntityContext implements ContextInterface {
 		$table = $this->_tables[$this->_rootName];
 		foreach ($normalized as $part) {
 			$assoc = $table->associations()->getByProperty($part);
-			if (!$assoc) {
+			if (!$assoc && $rootFallback) {
 				break;
+			}
+			if (!$assoc && !$rootFallback) {
+				return false;
 			}
 
 			$table = $assoc->target();

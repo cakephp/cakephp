@@ -3394,33 +3394,27 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testHabtmSelectBox() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->View->viewVars['contactTags'] = array(
+		$this->loadFixtures('Article');
+		$options = array(
 			1 => 'blue',
 			2 => 'red',
 			3 => 'green'
 		);
-		$this->Form->request->data = array(
-			'Contact' => array(),
-			'ContactTag' => array(
-				array(
-					'id' => '1',
-					'name' => 'blue'
-				),
-				array(
-					'id' => 3,
-					'name' => 'green'
-				)
-			)
-		);
-		$this->Form->create('Contact');
-		$result = $this->Form->input('ContactTag', array('div' => false, 'label' => false));
+		$tags = [
+			new Entity(['id' => 1, 'name' => 'blue']),
+			new Entity(['id' => 3, 'name' => 'green'])
+		];
+		$article = new Article(['tags' => $tags]);
+		$this->Form->create($article);
+		$result = $this->Form->input('tags._ids', ['options' => $options]);
 		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'ContactTag[ContactTag]', 'value' => '', 'id' => 'ContactTagContactTag_'
-			),
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'tags-ids'),
+			'Tags',
+			'/label',
+			'input' => array('type' => 'hidden', 'name' => 'tags[_ids]', 'value' => ''),
 			'select' => array(
-				'name' => 'ContactTag[ContactTag][]', 'id' => 'ContactTagContactTag',
+				'name' => 'tags[_ids][]', 'id' => 'tags-ids',
 				'multiple' => 'multiple'
 			),
 			array('option' => array('value' => '1', 'selected' => 'selected')),
@@ -3432,37 +3426,32 @@ class FormHelperTest extends TestCase {
 			array('option' => array('value' => '3', 'selected' => 'selected')),
 			'green',
 			'/option',
-			'/select'
+			'/select',
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 
 		// make sure only 50 is selected, and not 50f5c0cf
-		$this->View->viewVars['contactTags'] = array(
+		$options = array(
 			'1' => 'blue',
 			'50f5c0cf' => 'red',
 			'50' => 'green'
 		);
-		$this->Form->request->data = array(
-			'Contact' => array(),
-			'ContactTag' => array(
-				array(
-					'id' => 1,
-					'name' => 'blue'
-				),
-				array(
-					'id' => 50,
-					'name' => 'green'
-				)
-			)
-		);
-		$this->Form->create('Contact');
-		$result = $this->Form->input('ContactTag', array('div' => false, 'label' => false));
+		$tags = [
+			new Entity(['id' => 1, 'name' => 'blue']),
+			new Entity(['id' => 50, 'name' => 'green'])
+		];
+		$article = new Article(['tags' => $tags]);
+		$this->Form->create($article);
+		$result = $this->Form->input('tags._ids', ['options' => $options]);
 		$expected = array(
-			'input' => array(
-				'type' => 'hidden', 'name' => 'ContactTag[ContactTag]', 'value' => '', 'id' => 'ContactTagContactTag_'
-			),
+			'div' => array('class' => 'input select'),
+			'label' => array('for' => 'tags-ids'),
+			'Tags',
+			'/label',
+			'input' => array('type' => 'hidden', 'name' => 'tags[_ids]', 'value' => ''),
 			'select' => array(
-				'name' => 'ContactTag[ContactTag][]', 'id' => 'ContactTagContactTag',
+				'name' => 'tags[_ids][]', 'id' => 'tags-ids',
 				'multiple' => 'multiple'
 			),
 			array('option' => array('value' => '1', 'selected' => 'selected')),
@@ -3474,7 +3463,8 @@ class FormHelperTest extends TestCase {
 			array('option' => array('value' => '50', 'selected' => 'selected')),
 			'green',
 			'/option',
-			'/select'
+			'/select',
+			'/div'
 		);
 		$this->assertTags($result, $expected);
 	}

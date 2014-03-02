@@ -663,11 +663,13 @@ class FormHelper extends Helper {
  */
 	public function label($fieldName, $text = null, $options = array()) {
 		if ($text === null) {
-			if (strpos($fieldName, '.') !== false) {
-				$fieldElements = explode('.', $fieldName);
+			$text = $fieldName;
+			if (substr($text, -5) === '._ids') {
+				$text = substr($text, 0, -5);
+			}
+			if (strpos($text, '.') !== false) {
+				$fieldElements = explode('.', $text);
 				$text = array_pop($fieldElements);
-			} else {
-				$text = $fieldName;
 			}
 			if (substr($text, -3) === '_id') {
 				$text = substr($text, 0, -3);
@@ -1019,12 +1021,14 @@ class FormHelper extends Helper {
 			}
 		}
 
-		// Missing HABTM
-		//...
-
 		$typesWithOptions = ['text', 'number', 'radio', 'select'];
 		if ($allowOverride && in_array($options['type'], $typesWithOptions)) {
 			$options = $this->_optionsOptions($fieldName, $options);
+		}
+
+		if ($allowOverride && substr($fieldName, -5) === '._ids') {
+			$options['type'] = 'select';
+			$options['multiple'] = true;
 		}
 
 		if ($options['type'] === 'select' && array_key_exists('step', $options)) {
