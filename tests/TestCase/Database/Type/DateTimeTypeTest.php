@@ -111,6 +111,29 @@ class DateTimeTypeTest extends TestCase {
 				],
 				new \DateTime('2014-02-14 13:14:15')
 			],
+			[
+				[
+					'year' => 2014, 'month' => 2, 'day' => 14,
+				],
+				new \DateTime('2014-02-14 00:00:00')
+			],
+
+			// Invalid array types
+			[
+				['year' => 'farts', 'month' => 'derp'],
+				new \DateTime(date('Y-m-d 00:00:00'))
+			],
+			[
+				['year' => 'farts', 'month' => 'derp', 'day' => 'farts'],
+				new \DateTime(date('Y-m-d 00:00:00'))
+			],
+			[
+				[
+					'year' => '2014', 'month' => '02', 'day' => '14',
+					'hour' => 'farts', 'minute' => 'farts'
+				],
+				new \DateTime('2014-02-14 00:00:00')
+			],
 		];
 	}
 

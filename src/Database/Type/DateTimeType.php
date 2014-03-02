@@ -81,14 +81,17 @@ class DateTimeType extends \Cake\Database\Type {
 
 		$date = new DateTime();
 		$date->setTime(0, 0, 0);
-		if (isset($value['year'], $value['month'], $value['day'])) {
+		if (
+			isset($value['year'], $value['month'], $value['day']) &&
+			(is_numeric($value['year']) & is_numeric($value['month']) && is_numeric($value['day']))
+		) {
 			$date->setDate($value['year'], $value['month'], $value['day']);
 		}
 		if (isset($value['hour'], $value['minute'])) {
 			if (isset($value['meridian'])) {
 				$value['hour'] = strtolower($value['meridian']) === 'am' ? $value['hour'] : $value['hour'] + 12;
 			}
-			$date->setTime($value['hour'], $value['minute'], $value['second']);
+			$date->setTime((int)$value['hour'], (int)$value['minute'], (int)$value['second']);
 		}
 		return $date;
 	}
