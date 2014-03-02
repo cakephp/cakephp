@@ -37,7 +37,6 @@ class Type {
 		'date' => 'Cake\Database\Type\DateType',
 		'datetime' => 'Cake\Database\Type\DateTimeType',
 		'timestamp' => 'Cake\Database\Type\DateTimeType',
-		'time' => 'Cake\Database\Type\TimeType',
 		'uuid' => 'Cake\Database\Type\UuidType',
 	];
 
