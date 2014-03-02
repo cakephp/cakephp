@@ -1085,6 +1085,7 @@ class BelongsToManyTest extends TestCase {
 			'joinTable' => 'tags_articles'
 		];
 		$assoc = $this->article->belongsToMany('Test', $config);
+		$assoc->junction();
 		$this->article->association('ArticlesTags')
 			->conditions(['foo' => 1]);
 
@@ -1248,6 +1249,7 @@ class BelongsToManyTest extends TestCase {
 			['_collectJointEntities', '_saveTarget'],
 			['tags', $config]
 		);
+		$assoc->junction();
 
 		$this->article
 			->association('ArticlesTags')
