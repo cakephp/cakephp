@@ -3117,6 +3117,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
 		$table->belongsTo('users');
 		$table->hasMany('articles');
+		$table->schema([]);
+
 		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
 		$entity = $table->newEntity([]);
 
@@ -3136,6 +3138,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testValidateWithCustomOptions() {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$table->schema([]);
+
 		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
 		$entity = $table->newEntity([]);
 		$options = ['associated' => ['users'], 'validate' => 'foo'];
@@ -3158,6 +3162,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
 		$table->belongsTo('users');
 		$table->hasMany('articles');
+		$table->schema([]);
+
 		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
 		$entities = ['a', 'b'];
 
@@ -3177,6 +3183,8 @@ class TableTest extends \Cake\TestSuite\TestCase {
  */
 	public function testValidateManyWithCustomOptions() {
 		$table = $this->getMock('\Cake\ORM\Table', ['entityValidator']);
+		$table->schema([]);
+
 		$entityValidator = $this->getMock('\Cake\ORM\EntityValidator', [], [$table]);
 		$entities = ['a', 'b', 'c'];
 		$options = ['associated' => ['users'], 'validate' => 'foo'];
