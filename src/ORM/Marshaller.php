@@ -244,7 +244,7 @@ class Marshaller {
 	public function mergeMany($entities, array $data, $include = []) {
 		$primary = (array)$this->_table->primaryKey();
 		$indexed = (new Collection($data))->groupBy($primary[0])->toArray();
-		$new = [$indexed[null]];
+		$new = isset($indexed[null]) ? [$indexed[null]] : [];
 		unset($indexed[null]);
 		$output = [];
 
@@ -317,7 +317,7 @@ class Marshaller {
 			$hash = spl_object_hash($record);
 			$data = $record->get('_joinData');
 			if (isset($extra[$hash])) {
-				$record->set('_joinData', $marshaller->merge($extra[$hash], (array)$data));
+				$record->set('_joinData', $marshaller->merge($extra[$hash], (array)$data, $nested));
 			} else {
 				$joinData = $marshaller->one($data, $nested);
 				$record->set('_joinData', $joinData);

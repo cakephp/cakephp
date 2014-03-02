@@ -772,4 +772,80 @@ class MarshallerTest extends TestCase {
 		$this->assertTrue($entity->tags[1]->dirty('_joinData'));
 	}
 
+/**
+ * Test merging associations inside _joinData
+ *
+ * @return void
+ */
+	public function testMergeJoinDataAssociations() {
+		$data = [
+			'title' => 'My title',
+			'body' => 'My content',
+			'author_id' => 1,
+			'tags' => [
+				[
+					'id' => 1,
+					'tag' => 'news',
+					'_joinData' => [
+						'active' => 0,
+						'user' => ['username' => 'Bill']
+					]
+				],
+				[
+					'id' => 2,
+					'tag' => 'cakephp',
+					'_joinData' => [
+						'active' => 0
+					]
+				],
+			]
+		];
+
+		$articlesTags = TableRegistry::get('ArticlesTags');
+		$articlesTags->belongsTo('Users');
+
+		$options = [
+			'Tags' => [
+				'associated' => [
+					'_joinData' => ['associated' => ['Users']]
+				]
+			]
+		];
+		$marshall = new Marshaller($this->articles);
+		$entity = $marshall->one($data, $options);
+		$entity->accessible('*', true);
+
+		$data = [
+			'title' => 'Haz data',
+			'tags' => [
+				[
+					'id' => 1,
+					'tag' => 'news',
+					'_joinData' => [
+						'foo' => 'bar',
+						'user' => ['password' => 'secret']
+					]
+				],
+				[
+					'id' => 2,
+					'_joinData' => [
+						'active' => 1,
+						'foo' => 'baz',
+						'user' => ['username' => 'ber']
+					]
+				]
+			]
+		];
+
+		$tag1 = $entity->tags[0];
+		$result = $marshall->merge($entity, $data, $options);
+		$this->assertEquals($data['title'], $result->title);
+		$this->assertEquals('My content', $result->body);
+		$this->assertSame($tag1, $entity->tags[0]);
+		$this->assertSame($tag1->_joinData, $entity->tags[0]->_joinData);
+		$this->assertEquals('Bill', $entity->tags[0]->_joinData->user->username);
+		$this->assertEquals('secret', $entity->tags[0]->_joinData->user->password);
+		$this->assertEquals('ber', $entity->tags[1]->_joinData->user->username);
+	}
+
 }
