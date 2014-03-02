@@ -29,7 +29,9 @@
 		<exclude name="Console/cake.bat" />
 		<exclude name="Console/cake.php" />
 		<exclude name="Console/cake" />
-		<exclude name="Test/**" />
+		<exclude name="Test/bake_compare/**" />
+		<exclude name="Test/Case/**" />
+		<exclude name="Test/test_app/**" />
 	</fileset>
 
 	<!--
