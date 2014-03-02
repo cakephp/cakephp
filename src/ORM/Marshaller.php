@@ -216,6 +216,22 @@ class Marshaller {
 		return $assoc->find()->where($filter)->toArray();
 	}
 
+/**
+ * Merges `$data` into `$entity` and recursively does the same for each one of
+ * the association names passed in `$include`. When merging association, if an
+ * entity is not present in the parent entity for such association, a new one
+ * will be created.
+ *
+ * When merging HasMany or BelongsToMany associations, all the entities in the
+ * `$data` array will appear, those that can be matched by primary key will get
+ * the data merged, but those that cannot,  will be discarded.
+ *
+ * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
+ * data merged in
+ * @param array $data key value list of fields to be merged into the entity
+ * @param array $include The list of associations to be merged
+ * @return \Cake\Datasource\EntityInterface
+ */
 	public function merge(EntityInterface $entity, array $data, $include = []) {
 		$propertyMap = $this->_buildPropertyMap($include);
 		$tableName = $this->_table->alias();
@@ -241,6 +257,27 @@ class Marshaller {
 		return $entity;
 	}
 
+/**
+ * Merges each of the elements from `$data` into each of the entities in `$entities
+ * and recursively does the same for each one of the association names passed in
+ * `$include`. When merging association, if an entity is not present in the parent
+ * entity for such association, a new one will be created.
+ *
+ * Records in `$data` are matched against the entities by using the primary key
+ * column. Those entries in `$entities` that cannot be matched to any record in
+ * `$data` will be discarded. Records in `$data` that could not be matched will
+ * be marshaled as a new entity.
+ *
+ * When merging HasMany or BelongsToMany associations, all the entities in the
+ * `$data` array will appear, those that can be matched by primary key will get
+ * the data merged, but those that cannot,  will be discarded.
+ *
+ * @param array|\Traversable $entities the entities that will get the
+ * data merged in
+ * @param array $data list of arrays to be merged into the entities
+ * @param array $include The list of associations to be merged
+ * @return array
+ */
 	public function mergeMany($entities, array $data, $include = []) {
 		$primary = (array)$this->_table->primaryKey();
 		$indexed = (new Collection($data))->groupBy($primary[0])->toArray();
@@ -271,6 +308,15 @@ class Marshaller {
 		return $output;
 	}
 
+/**
+ * Creates a new sub-marshaller and merges the associated data.
+ *
+ * @param \Cake\Datasource\EntityInterface $original
+ * @param \Cake\ORM\Association $assoc
+ * @param array $value The data to hydrate
+ * @param array $include The associations to include.
+ * @return mixed
+ */
 	protected function _mergeAssociation($original, $assoc, $value, $include) {
 		if (!$original) {
 			return $this->_marshalAssociation($assoc, $value, $include);
@@ -287,6 +333,16 @@ class Marshaller {
 		return $marshaller->mergeMany($original, $value, (array)$include);
 	}
 
+/**
+ * Creates a new sub-marshaller and merges the associated data for a BelongstoMany
+ * association.
+ *
+ * @param \Cake\Datasource\EntityInterface $original
+ * @param \Cake\ORM\Association $assoc
+ * @param array $value The data to hydrate
+ * @param array $include The associations to include.
+ * @return mixed
+ */
 	protected function _mergeBelongsToMany($original, $assoc, $data, $include) {
 		if (isset($data['_ids']) && is_array($data['_ids'])) {
 			return $this->_loadBelongsToMany($assoc, $data['_ids']);

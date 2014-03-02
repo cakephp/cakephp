@@ -592,7 +592,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->merge($entity, $data, ['Users']);
+		$marshall->merge($entity, $data, ['Users']);
 		$this->assertEquals('My Content', $entity->body);
 		$this->assertSame($user, $entity->user);
 		$this->assertEquals('mark', $entity->user->username);
@@ -619,7 +619,7 @@ class MarshallerTest extends TestCase {
 			]
 		];
 		$marshall = new Marshaller($this->articles);
-		$result = $marshall->merge($entity, $data, ['Users']);
+		$marshall->merge($entity, $data, ['Users']);
 		$this->assertEquals('My Content', $entity->body);
 		$this->assertInstanceOf('Cake\ORM\Entity', $entity->user);
 		$this->assertEquals('mark', $entity->user->username);
@@ -902,8 +902,6 @@ class MarshallerTest extends TestCase {
 		$this->assertNotSame($entities[0], $result[0]);
 		$this->assertSame($entities[1], $result[0]);
 		$this->assertEquals('Changed 2', $result[0]->comment);
-
 	}
-
 
 }
