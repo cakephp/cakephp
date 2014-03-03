@@ -1572,6 +1572,40 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
+ * {@inheritdoc}
+ *
+ * When merging HasMany or BelongsToMany associations, all the entities in the
+ * `$data` array will appear, those that can be matched by primary key will get
+ * the data merged, but those that cannot, will be discarded.
+ */
+	public function patchEntity(EntityInterface $entity, array $data, $associations = null) {
+		if ($associations === null) {
+			$associations = $this->_associated->keys();
+		}
+		$marshaller = $this->marshaller();
+		return $marshaller->merge($entity, $data, $associations);
+	}
+
+/**
+ * {@inheritdoc}
+ *
+ * Those entries in `$entities` that cannot be matched to any record in
+ * `$data` will be discarded. Records in `$data` that could not be matched will
+ * be marshalled as a new entity.
+ *
+ * When merging HasMany or BelongsToMany associations, all the entities in the
+ * `$data` array will appear, those that can be matched by primary key will get
+ * the data merged, but those that cannot, will be discarded.
+ */
+	public function patchEntities($entities, array $data, $associations = null) {
+		if ($associations === null) {
+			$associations = $this->_associated->keys();
+		}
+		$marshaller = $this->marshaller();
+		return $marshaller->mergeMany($entities, $data, $associations);
+	}
+
+/**
  * Validates a single entity based on the passed options and validates
  * any nested entity for this table associations as requested in the
  * options array.
