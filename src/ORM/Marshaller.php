@@ -28,6 +28,8 @@ use Cake\ORM\Table;
  *
  * @see \Cake\ORM\Table::newEntity()
  * @see \Cake\ORM\Table::newEntities()
+ * @see \Cake\ORM\Table::patchEntity()
+ * @see \Cake\ORM\Table::patchEntities()
  */
 class Marshaller {
 
