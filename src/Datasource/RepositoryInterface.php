@@ -186,7 +186,7 @@ interface RepositoryInterface {
  * @param array $include The list of associations to be merged
  * @return \Cake\Datasource\EntityInterface
  */
-	public function  patchEntity(EntityInterface $entity, array $data, $associations = null);
+	public function patchEntity(EntityInterface $entity, array $data, $associations = null);
 
 /**
  * Merges each of the elements passed in `$data` into the entities
@@ -206,6 +206,6 @@ interface RepositoryInterface {
  * @param array $include The list of associations to be merged
  * @return array
  */
-	public function  patchEntities($entities, array $data, $associations = null);
+	public function patchEntities($entities, array $data, $associations = null);
 
 }
