@@ -713,14 +713,15 @@ class HtmlHelper extends AppHelper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#creating-breadcrumb-trails-with-htmlhelper
  */
 	public function getCrumbList($options = array(), $startText = false) {
-		$defaults = array('firstClass' => 'first', 'lastClass' => 'last', 'separator' => '');
+		$defaults = array('firstClass' => 'first', 'lastClass' => 'last', 'separator' => '', 'escape' => true);
 		$options = array_merge($defaults, (array)$options);
 		$firstClass = $options['firstClass'];
 		$lastClass = $options['lastClass'];
 		$separator = $options['separator'];
+		$escape = $options['escape'];
 		unset($options['firstClass'], $options['lastClass'], $options['separator']);
 
-		$crumbs = $this->_prepareCrumbs($startText);
+		$crumbs = $this->_prepareCrumbs($startText, $escape);
 		if (empty($crumbs)) {
 			return null;
 		}
@@ -754,7 +755,7 @@ class HtmlHelper extends AppHelper {
  * @param string $startText Text to prepend
  * @return array Crumb list including startText (if provided)
  */
-	protected function _prepareCrumbs($startText) {
+	protected function _prepareCrumbs($startText, $escape = true) {
 		$crumbs = $this->_crumbs;
 		if ($startText) {
 			if (!is_array($startText)) {
@@ -766,7 +767,7 @@ class HtmlHelper extends AppHelper {
 			$startText += array('url' => '/', 'text' => __d('cake', 'Home'));
 			list($url, $text) = array($startText['url'], $startText['text']);
 			unset($startText['url'], $startText['text']);
-			array_unshift($crumbs, array($text, $url, $startText));
+			array_unshift($crumbs, array($text, $url, $startText + array('escape' => $escape));
 		}
 		return $crumbs;
 	}
