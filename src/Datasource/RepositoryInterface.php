@@ -171,7 +171,7 @@ interface RepositoryInterface {
 
 /**
  * Merges the passed `$data` into `$entity` respecting the accessible
- * fields as configured for it. Returns the same entity after being
+ * fields configured on the entity. Returns the same entity after being
  * altered.
  *
  * This is most useful when editing an existing entity using request data:
@@ -189,8 +189,8 @@ interface RepositoryInterface {
 	public function  patchEntity(EntityInterface $entity, array $data, $associations = null);
 
 /**
- * Merges the each for the elements passed in `$data` into each of the entities
- * found in `$entities` respecting the accessible fields as configured for it.
+ * Merges each of the elements passed in `$data` into the entities
+ * found in `$entities` respecting the accessible fields configured on the entities.
  * Merging is done by matching the primary key in each of the elements in `$data`
  * and `$entities`.
  *

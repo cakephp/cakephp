@@ -220,8 +220,8 @@ class Marshaller {
 
 /**
  * Merges `$data` into `$entity` and recursively does the same for each one of
- * the association names passed in `$include`. When merging association, if an
- * entity is not present in the parent entity for such association, a new one
+ * the association names passed in `$include`. When merging associations, if an
+ * entity is not present in the parent entity for a given association, a new one
  * will be created.
  *
  * When merging HasMany or BelongsToMany associations, all the entities in the
@@ -262,11 +262,11 @@ class Marshaller {
 /**
  * Merges each of the elements from `$data` into each of the entities in `$entities
  * and recursively does the same for each one of the association names passed in
- * `$include`. When merging association, if an entity is not present in the parent
+ * `$include`. When merging associations, if an entity is not present in the parent
  * entity for such association, a new one will be created.
  *
  * Records in `$data` are matched against the entities by using the primary key
- * column. Those entries in `$entities` that cannot be matched to any record in
+ * column. Entries in `$entities` that cannot be matched to any record in
  * `$data` will be discarded. Records in `$data` that could not be matched will
  * be marshalled as a new entity.
  *
