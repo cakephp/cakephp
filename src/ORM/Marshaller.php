@@ -355,7 +355,7 @@ class Marshaller {
 		$extra = [];
 		foreach ($original as $entity) {
 			$joinData = $entity->get('_joinData');
-			if ($joinData) {
+			if ($joinData && $joinData instanceof EntityInterface) {
 				$extra[spl_object_hash($entity)] = $joinData;
 			}
 		}
