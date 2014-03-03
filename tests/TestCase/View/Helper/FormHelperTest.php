@@ -5241,18 +5241,6 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->submit('Test Submit', array('div' => array('tag' => 'span')));
-		$expected = array(
-			'span' => array('class' => 'submit'),
-			'input' => array('type' => 'submit', 'value' => 'Test Submit'),
-			'/span'
-		);
-		$this->assertTags($result, $expected);
-
-		$result = $this->Form->submit('Test Submit', array('class' => 'save', 'div' => false));
-		$expected = array('input' => array('type' => 'submit', 'value' => 'Test Submit', 'class' => 'save'));
-		$this->assertTags($result, $expected);
-
 		$result = $this->Form->submit('Next >');
 		$expected = array(
 			'div' => array('class' => 'submit'),

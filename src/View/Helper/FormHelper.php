@@ -157,7 +157,8 @@ class FormHelper extends Helper {
 		'formGroup' => '{{label}}{{input}}',
 		'checkboxFormGroup' => '{{input}}{{label}}',
 		'groupContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
-		'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>'
+		'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
+		'submitContainer' => '<div class="submit">{{content}}</div>',
 	];
 
 /**
@@ -1466,12 +1467,6 @@ class FormHelper extends Helper {
  * - `type` - Set to 'reset' for reset inputs. Defaults to 'submit'
  * - Other attributes will be assigned to the input element.
  *
- * ### Options
- *
- * - `div` - Include a wrapping div?  Defaults to true. Accepts sub options similar to
- *   FormHelper::input().
- * - Other attributes will be assigned to the input element.
- *
  * @param string $caption The label appearing on the button OR if string contains :// or the
  *  extension .jpg, .jpe, .jpeg, .gif, .png use an image if the extension
  *  exists, AND the first character is /, image is relative to webroot,
@@ -1484,24 +1479,7 @@ class FormHelper extends Helper {
 		if (!is_string($caption) && empty($caption)) {
 			$caption = __d('cake', 'Submit');
 		}
-		$div = true;
-
-		if (isset($options['div'])) {
-			$div = $options['div'];
-			unset($options['div']);
-		}
-		$options += array('type' => 'submit', 'before' => null, 'after' => null, 'secure' => false);
-		$divOptions = array('tag' => 'div');
-
-		if ($div === true) {
-			$divOptions['class'] = 'submit';
-		} elseif ($div === false) {
-			unset($divOptions);
-		} elseif (is_string($div)) {
-			$divOptions['class'] = $div;
-		} elseif (is_array($div)) {
-			$divOptions = array_merge(array('class' => 'submit', 'tag' => 'div'), $div);
-		}
+		$options += array('type' => 'submit', 'secure' => false);
 
 		if (isset($options['name'])) {
 			$this->_secure($options['secure'], $this->_secureFieldName($options));
@@ -1541,12 +1519,9 @@ class FormHelper extends Helper {
 		}
 		$out = $tag;
 
-		if (isset($divOptions)) {
-			$tag = $divOptions['tag'];
-			unset($divOptions['tag']);
-			$out = $this->Html->tag($tag, $out, $divOptions);
-		}
-		return $out;
+		return $this->formatTemplate('submitContainer', [
+			'content' => $tag
+		]);
 	}
 
 /**
