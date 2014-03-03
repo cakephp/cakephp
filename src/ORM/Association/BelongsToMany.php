@@ -154,21 +154,21 @@ class BelongsToMany extends Association {
 		$tAlias = $target->alias();
 
 		if ($table === null) {
-			if (empty($this->_junctionTable)) {
-				if (!empty($this->_through)) {
-					$table = $this->_through;
-				} else {
-					$tableName = $this->_junctionTableName();
-					$tableAlias = Inflector::camelize($tableName);
-
-					$config = [];
-					if (!TableRegistry::exists($tableAlias)) {
-						$config = ['table' => $tableName];
-					}
-					$table = TableRegistry::get($tableAlias, $config);
-				}
-			} else {
+			if (!empty($this->_junctionTable)) {
 				return $this->_junctionTable;
+			}
+
+			if (!empty($this->_through)) {
+				$table = $this->_through;
+			} else {
+				$tableName = $this->_junctionTableName();
+				$tableAlias = Inflector::camelize($tableName);
+
+				$config = [];
+				if (!TableRegistry::exists($tableAlias)) {
+					$config = ['table' => $tableName];
+				}
+				$table = TableRegistry::get($tableAlias, $config);
 			}
 		}
 
