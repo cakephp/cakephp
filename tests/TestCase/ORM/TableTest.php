@@ -3197,4 +3197,50 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertFalse($table->validateMany($entities, $options));
 	}
 
+/**
+ * Tests that patchEntity delegates the task to the marshaller and passed
+ * all associations
+ *
+ * @return void
+ */
+	public function testPatchEntity() {
+		$table = $this->getMock('Cake\ORM\Table', ['marshaller']);
+		$marshaller = $this->getMock('Cake\ORM\Marshaller', [], [$table]);
+		$table->belongsTo('users');
+		$table->hasMany('articles');
+		$table->expects($this->once())->method('marshaller')
+			->will($this->returnValue($marshaller));
+
+		$entity = new \Cake\ORM\Entity;
+		$data = ['foo' => 'bar'];
+		$marshaller->expects($this->once())
+			->method('merge')
+			->with($entity, $data, ['users', 'articles'])
+			->will($this->returnValue($entity));
+		$table->patchEntity($entity, $data);
+	}
+
+/**
+ * Tests that patchEntities delegates the task to the marshaller and passed
+ * all associations
+ *
+ * @return void
+ */
+	public function testPatchEntities() {
+		$table = $this->getMock('Cake\ORM\Table', ['marshaller']);
+		$marshaller = $this->getMock('Cake\ORM\Marshaller', [], [$table]);
+		$table->belongsTo('users');
+		$table->hasMany('articles');
+		$table->expects($this->once())->method('marshaller')
+			->will($this->returnValue($marshaller));
+
+		$entities = [new \Cake\ORM\Entity];
+		$data = [['foo' => 'bar']];
+		$marshaller->expects($this->once())
+			->method('mergeMany')
+			->with($entities, $data, ['users', 'articles'])
+			->will($this->returnValue($entities));
+		$table->patchEntities($entities, $data);
+	}
+
 }

@@ -169,4 +169,43 @@ interface RepositoryInterface {
  */
 	public function newEntities(array $data, $associations = null);
 
+/**
+ * Merges the passed `$data` into `$entity` respecting the accessible
+ * fields configured on the entity. Returns the same entity after being
+ * altered.
+ *
+ * This is most useful when editing an existing entity using request data:
+ *
+ * {{{
+ * $article = $this->Articles->patchEntity($article, $this->request->data());
+ * }}}
+ *
+ * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
+ * data merged in
+ * @param array $data key value list of fields to be merged into the entity
+ * @param array $include The list of associations to be merged
+ * @return \Cake\Datasource\EntityInterface
+ */
+	public function patchEntity(EntityInterface $entity, array $data, $associations = null);
+
+/**
+ * Merges each of the elements passed in `$data` into the entities
+ * found in `$entities` respecting the accessible fields configured on the entities.
+ * Merging is done by matching the primary key in each of the elements in `$data`
+ * and `$entities`.
+ *
+ * This is most useful when editing a list of existing entities using request data:
+ *
+ * {{{
+ * $article = $this->Articles->patchEntities($articles, $this->request->data());
+ * }}}
+ *
+ * @param array|\Traversable $entities the entities that will get the
+ * data merged in
+ * @param array $data list of arrays to be merged into the entities
+ * @param array $include The list of associations to be merged
+ * @return array
+ */
+	public function patchEntities($entities, array $data, $associations = null);
+
 }
