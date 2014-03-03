@@ -1463,8 +1463,6 @@ class FormHelper extends Helper {
  *
  * - `div` - Include a wrapping div?  Defaults to true. Accepts sub options similar to
  *   FormHelper::input().
- * - `before` - Content to include before the input.
- * - `after` - Content to include after the input.
  * - `type` - Set to 'reset' for reset inputs. Defaults to 'submit'
  * - Other attributes will be assigned to the input element.
  *
@@ -1506,14 +1504,9 @@ class FormHelper extends Helper {
 		}
 
 		if (isset($options['name'])) {
-			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
 			$this->_secure($options['secure'], $this->_secureFieldName($options));
 		}
 		unset($options['secure']);
-
-		$before = $options['before'];
-		$after = $options['after'];
-		unset($options['before'], $options['after']);
 
 		$isUrl = strpos($caption, '://') !== false;
 		$isImage = preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption);
@@ -1546,7 +1539,7 @@ class FormHelper extends Helper {
 			$options['value'] = $caption;
 			$tag = $this->Html->useTag('submit', $options);
 		}
-		$out = $before . $tag . $after;
+		$out = $tag;
 
 		if (isset($divOptions)) {
 			$tag = $divOptions['tag'];
