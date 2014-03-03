@@ -146,6 +146,7 @@ class FormHelper extends Helper {
 		'formend' => '</form>',
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
 		'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
+		'inputsubmit' => '<input type="{{type}}"{{attrs}}>',
 		'label' => '<label{{attrs}}>{{text}}</label>',
 		'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 		'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
@@ -1489,6 +1490,9 @@ class FormHelper extends Helper {
 		$isUrl = strpos($caption, '://') !== false;
 		$isImage = preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption);
 
+		$type = $options['type'];
+		unset($options['type']);
+
 		if ($isUrl || $isImage) {
 			$unlockFields = array('x', 'y');
 			if (isset($options['name'])) {
@@ -1499,28 +1503,30 @@ class FormHelper extends Helper {
 			foreach ($unlockFields as $ignore) {
 				$this->unlockField($ignore);
 			}
+			$type = 'image';
 		}
 
 		if ($isUrl) {
-			unset($options['type']);
-			$tag = $this->Html->useTag('submitimage', $caption, $options);
+			$options['src'] = $caption;
 		} elseif ($isImage) {
-			unset($options['type']);
 			if ($caption{0} !== '/') {
 				$url = $this->webroot(Configure::read('App.imageBaseUrl') . $caption);
 			} else {
 				$url = $this->webroot(trim($caption, '/'));
 			}
 			$url = $this->assetTimestamp($url);
-			$tag = $this->Html->useTag('submitimage', $url, $options);
+			$options['src'] = $url;
 		} else {
 			$options['value'] = $caption;
-			$tag = $this->Html->useTag('submit', $options);
 		}
-		$out = $tag;
+
+		$input = $this->formatTemplate('inputsubmit', [
+			'type' => $type,
+			'attrs' => $this->_templater->formatAttributes($options),
+		]);
 
 		return $this->formatTemplate('submitContainer', [
-			'content' => $tag
+			'content' => $input
 		]);
 	}
 
