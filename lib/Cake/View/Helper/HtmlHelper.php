@@ -753,6 +753,7 @@ class HtmlHelper extends AppHelper {
  * Prepends startText to crumbs array if set
  *
  * @param string $startText Text to prepend
+ * @param boolean $escape If the output should be escaped or not
  * @return array Crumb list including startText (if provided)
  */
 	protected function _prepareCrumbs($startText, $escape = true) {
@@ -767,7 +768,7 @@ class HtmlHelper extends AppHelper {
 			$startText += array('url' => '/', 'text' => __d('cake', 'Home'));
 			list($url, $text) = array($startText['url'], $startText['text']);
 			unset($startText['url'], $startText['text']);
-			array_unshift($crumbs, array($text, $url, $startText + array('escape' => $escape));
+            array_unshift($crumbs, array($text, $url, $startText + array('escape' => $escape)));
 		}
 		return $crumbs;
 	}
