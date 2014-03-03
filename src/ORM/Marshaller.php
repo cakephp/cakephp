@@ -224,7 +224,7 @@ class Marshaller {
  *
  * When merging HasMany or BelongsToMany associations, all the entities in the
  * `$data` array will appear, those that can be matched by primary key will get
- * the data merged, but those that cannot,  will be discarded.
+ * the data merged, but those that cannot, will be discarded.
  *
  * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
  * data merged in
@@ -266,11 +266,11 @@ class Marshaller {
  * Records in `$data` are matched against the entities by using the primary key
  * column. Those entries in `$entities` that cannot be matched to any record in
  * `$data` will be discarded. Records in `$data` that could not be matched will
- * be marshaled as a new entity.
+ * be marshalled as a new entity.
  *
  * When merging HasMany or BelongsToMany associations, all the entities in the
  * `$data` array will appear, those that can be matched by primary key will get
- * the data merged, but those that cannot,  will be discarded.
+ * the data merged, but those that cannot, will be discarded.
  *
  * @param array|\Traversable $entities the entities that will get the
  * data merged in
