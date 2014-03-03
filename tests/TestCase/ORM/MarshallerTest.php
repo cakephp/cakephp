@@ -752,7 +752,7 @@ class MarshallerTest extends TestCase {
 				['tag' => 'new tag', '_joinData' => ['active' => 1, 'foo' => 'baz']]
 			]
 		];
-		
+
 		$tag1 = $entity->tags[0];
 		$result = $marshall->merge($entity, $data, $options);
 		$this->assertEquals($data['title'], $result->title);
