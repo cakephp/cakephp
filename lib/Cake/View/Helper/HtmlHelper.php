@@ -719,7 +719,7 @@ class HtmlHelper extends AppHelper {
 		$lastClass = $options['lastClass'];
 		$separator = $options['separator'];
 		$escape = $options['escape'];
-		unset($options['firstClass'], $options['lastClass'], $options['separator']);
+		unset($options['firstClass'], $options['lastClass'], $options['separator'], $options['escape']);
 
 		$crumbs = $this->_prepareCrumbs($startText, $escape);
 		if (empty($crumbs)) {
@@ -764,11 +764,11 @@ class HtmlHelper extends AppHelper {
 					'url' => '/',
 					'text' => $startText
 				);
-			}
+	}
 			$startText += array('url' => '/', 'text' => __d('cake', 'Home'));
 			list($url, $text) = array($startText['url'], $startText['text']);
 			unset($startText['url'], $startText['text']);
-            array_unshift($crumbs, array($text, $url, $startText + array('escape' => $escape)));
+			array_unshift($crumbs, array($text, $url, $startText + array('escape' => $escape)));
 		}
 		return $crumbs;
 	}
