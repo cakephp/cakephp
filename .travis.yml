@@ -36,7 +36,6 @@ before_script:
   - sh -c "if [ '$PHPCS' = '1' ]; then pear channel-discover pear.cakephp.org; fi"
   - sh -c "if [ '$PHPCS' = '1' ]; then pear install --alldeps cakephp/CakePHP_CodeSniffer; fi"
   - sh -c "if [ '$HHVM' != '1' ]; then echo 'extension = memcached.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini; fi"
-  - sh -c "if [ '$HHVM' = '1' ]; then sudo apt-get update; sudo apt-get install hhvm-nightly; fi"
   - phpenv rehash
   - set +H
 
