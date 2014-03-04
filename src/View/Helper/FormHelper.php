@@ -146,6 +146,7 @@ class FormHelper extends Helper {
 		'formend' => '</form>',
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
 		'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
+		'inputsubmit' => '<input type="{{type}}"{{attrs}}>',
 		'label' => '<label{{attrs}}>{{text}}</label>',
 		'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 		'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
@@ -157,7 +158,8 @@ class FormHelper extends Helper {
 		'formGroup' => '{{label}}{{input}}',
 		'checkboxFormGroup' => '{{input}}{{label}}',
 		'groupContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
-		'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>'
+		'groupContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
+		'submitContainer' => '<div class="submit">{{content}}</div>',
 	];
 
 /**
@@ -1461,17 +1463,7 @@ class FormHelper extends Helper {
  *
  * ### Options
  *
- * - `div` - Include a wrapping div?  Defaults to true. Accepts sub options similar to
- *   FormHelper::input().
- * - `before` - Content to include before the input.
- * - `after` - Content to include after the input.
  * - `type` - Set to 'reset' for reset inputs. Defaults to 'submit'
- * - Other attributes will be assigned to the input element.
- *
- * ### Options
- *
- * - `div` - Include a wrapping div?  Defaults to true. Accepts sub options similar to
- *   FormHelper::input().
  * - Other attributes will be assigned to the input element.
  *
  * @param string $caption The label appearing on the button OR if string contains :// or the
@@ -1482,78 +1474,59 @@ class FormHelper extends Helper {
  * @return string A HTML submit button
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::submit
  */
-	public function submit($caption = null, $options = array()) {
+	public function submit($caption = null, $options = []) {
 		if (!is_string($caption) && empty($caption)) {
 			$caption = __d('cake', 'Submit');
 		}
-		$div = true;
-
-		if (isset($options['div'])) {
-			$div = $options['div'];
-			unset($options['div']);
-		}
-		$options += array('type' => 'submit', 'before' => null, 'after' => null, 'secure' => false);
-		$divOptions = array('tag' => 'div');
-
-		if ($div === true) {
-			$divOptions['class'] = 'submit';
-		} elseif ($div === false) {
-			unset($divOptions);
-		} elseif (is_string($div)) {
-			$divOptions['class'] = $div;
-		} elseif (is_array($div)) {
-			$divOptions = array_merge(array('class' => 'submit', 'tag' => 'div'), $div);
-		}
+		$options += ['type' => 'submit', 'secure' => false];
 
 		if (isset($options['name'])) {
-			$name = str_replace(array('[', ']'), array('.', ''), $options['name']);
 			$this->_secure($options['secure'], $this->_secureFieldName($options));
 		}
 		unset($options['secure']);
 
-		$before = $options['before'];
-		$after = $options['after'];
-		unset($options['before'], $options['after']);
-
 		$isUrl = strpos($caption, '://') !== false;
 		$isImage = preg_match('/\.(jpg|jpe|jpeg|gif|png|ico)$/', $caption);
+
+		$type = $options['type'];
+		unset($options['type']);
 
 		if ($isUrl || $isImage) {
 			$unlockFields = array('x', 'y');
 			if (isset($options['name'])) {
-				$unlockFields = array(
-					$options['name'] . '_x', $options['name'] . '_y'
-				);
+				$unlockFields = [
+					$options['name'] . '_x',
+					$options['name'] . '_y'
+				];
 			}
 			foreach ($unlockFields as $ignore) {
 				$this->unlockField($ignore);
 			}
+			$type = 'image';
 		}
 
 		if ($isUrl) {
-			unset($options['type']);
-			$tag = $this->Html->useTag('submitimage', $caption, $options);
+			$options['src'] = $caption;
 		} elseif ($isImage) {
-			unset($options['type']);
 			if ($caption{0} !== '/') {
 				$url = $this->webroot(Configure::read('App.imageBaseUrl') . $caption);
 			} else {
 				$url = $this->webroot(trim($caption, '/'));
 			}
 			$url = $this->assetTimestamp($url);
-			$tag = $this->Html->useTag('submitimage', $url, $options);
+			$options['src'] = $url;
 		} else {
 			$options['value'] = $caption;
-			$tag = $this->Html->useTag('submit', $options);
 		}
-		$out = $before . $tag . $after;
 
-		if (isset($divOptions)) {
-			$tag = $divOptions['tag'];
-			unset($divOptions['tag']);
-			$out = $this->Html->tag($tag, $out, $divOptions);
-		}
-		return $out;
+		$input = $this->formatTemplate('inputsubmit', [
+			'type' => $type,
+			'attrs' => $this->_templater->formatAttributes($options),
+		]);
+
+		return $this->formatTemplate('submitContainer', [
+			'content' => $input
+		]);
 	}
 
 /**
