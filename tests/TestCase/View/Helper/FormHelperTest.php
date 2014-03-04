@@ -2573,10 +2573,6 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 
 		$this->Form->create($this->article);
-		$result = $this->Form->inputs(null, null, array('fieldset' => false));
-		$this->assertTags($result, $expected);
-
-		$this->Form->create($this->article);
 		$result = $this->Form->inputs(array('fieldset' => true, 'legend' => false));
 		$expected = array(
 			'fieldset' => array(),

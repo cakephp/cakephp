@@ -736,7 +736,9 @@ class FormHelper extends Helper {
 		$model = false;
 		$fieldset = $legend = true;
 		$context = $this->_getContext();
-		// TODO add context->fields()
+
+		$modelFields = $context->fieldNames();
+
 		if (is_array($fields)) {
 			if (array_key_exists('legend', $fields) && !in_array('legend', $modelFields)) {
 				$legend = $fields['legend'];
@@ -755,15 +757,14 @@ class FormHelper extends Helper {
 			$fields = array();
 		}
 
+		if (empty($fields)) {
+			$fields = $modelFields;
+		}
 		if (isset($options['legend'])) {
 			$legend = $options['legend'];
 		}
 		if (isset($options['fieldset'])) {
 			$fieldset = $options['fieldset'];
-		}
-
-		if (empty($fields)) {
-			$fields = $modelFields;
 		}
 
 		if ($legend === true) {
@@ -799,6 +800,7 @@ class FormHelper extends Helper {
 			$fieldsetClass = '';
 		}
 
+		// TODO cleanup HTML helper usage.
 		if ($fieldset) {
 			if ($legend) {
 				$out = $this->Html->useTag('legend', $legend) . $out;
