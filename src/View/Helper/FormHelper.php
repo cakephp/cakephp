@@ -732,12 +732,11 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::inputs
  */
 	public function inputs($fields = null, $blacklist = null, $options = array()) {
+		$modelFields = [];
+		$model = false;
 		$fieldset = $legend = true;
-		$modelFields = array();
-		$model = $this->model();
-		if ($model) {
-			$modelFields = array_keys((array)$this->_introspectModel($model, 'fields'));
-		}
+		$context = $this->_getContext();
+		// TODO add context->fields()
 		if (is_array($fields)) {
 			if (array_key_exists('legend', $fields) && !in_array('legend', $modelFields)) {
 				$legend = $fields['legend'];
@@ -769,6 +768,7 @@ class FormHelper extends Helper {
 
 		if ($legend === true) {
 			$actionName = __d('cake', 'New %s');
+			$isCreate = $context->isCreate();
 			$isEdit = (
 				strpos($this->request->params['action'], 'update') !== false ||
 				strpos($this->request->params['action'], 'edit') !== false

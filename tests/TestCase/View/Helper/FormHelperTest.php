@@ -2525,6 +2525,20 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->inputs('Field of Dreams', null, array('fieldset' => 'classy-stuff'));
 		$this->assertTags($result, $expected);
+
+		$this->Form->create($this->article);
+		$this->Form->request->params['prefix'] = 'admin';
+		$this->Form->request->params['action'] = 'admin_edit';
+		$this->Form->request->params['controller'] = 'articles';
+		$result = $this->Form->inputs();
+		$expected = [
+			'<fieldset',
+			'<legend',
+			'Edit Article',
+			'/legend',
+			'*/fieldset',
+		];
+		$this->assertTags($result, $expected);
 	}
 
 /**
@@ -2534,39 +2548,14 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormInputs() {
 		$this->Form->create($this->article);
-		$this->Form->request['prefix'] = 'admin';
-		$this->Form->request['action'] = 'admin_edit';
-		$result = $this->Form->inputs();
+		$result = $this->Form->inputs(['id', 'title', 'body']);
 		$expected = array(
-			'<fieldset',
-			'<legend',
-			'Edit Article',
-			'/legend',
-			'*/fieldset',
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->create('Contact');
-		$result = $this->Form->inputs(false);
-		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input email')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input tel')),
-			'*/div',
-			array('div' => array('class' => 'input password')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input datetime')),
-			'*/div',
-			array('div' => array('class' => 'input number')),
-			'*/div',
-			array('div' => array('class' => 'input select')),
+			array('div' => array('class' => 'input textarea')),
 			'*/div',
 		);
 		$this->assertTags($result, $expected);
