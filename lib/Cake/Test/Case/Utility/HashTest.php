@@ -360,6 +360,73 @@ class HashTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 	}
+	
+/**
+ * Test flatten() with the maxDepth set
+ * 
+ * @return void
+ */
+	public function testFlattenWithMaxDepth() {
+		$data = array(
+			array(
+				'Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post'),
+				'Author' => array('id' => '1', 'user' => 'nate', 'password' => 'foo'),
+			),
+			array(
+				'Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body'),
+				'Author' => array('id' => '3', 'user' => array('larry', 'jim'), 'password' => null),
+			)
+		);
+		
+		$result = Hash::flatten($data, '.', 1);
+		$this->assertEquals($data, $result);
+		
+		$result = Hash::flatten($data, '.', 4);
+		$expected = array(
+			'0.Post.id' => '1',
+			'0.Post.author_id' => '1',
+			'0.Post.title' => 'First Post',
+			'0.Author.id' => '1',
+			'0.Author.user' => 'nate',
+			'0.Author.password' => 'foo',
+			'1.Post.id' => '2',
+			'1.Post.author_id' => '3',
+			'1.Post.title' => 'Second Post',
+			'1.Post.body' => 'Second Post Body',
+			'1.Author.id' => '3',
+			'1.Author.user.0' => 'larry',
+			'1.Author.user.1' => 'jim',
+			'1.Author.password' => null
+		);
+		$this->assertEquals($expected, $result);
+
+		$result = Hash::flatten($data, '.', 2);
+		$expected = array(
+			'0.Post' => array('id' => '1', 'author_id' => '1', 'title' => 'First Post'),
+			'0.Author' => array('id' => '1', 'user' => 'nate', 'password' => 'foo'),
+			'1.Post' => array('id' => '2', 'author_id' => '3', 'title' => 'Second Post', 'body' => 'Second Post Body'),
+			'1.Author' => array('id' => '3', 'user' => array('larry','jim'), 'password' => null)
+		);
+		$this->assertEquals($expected, $result);
+		
+		$result = Hash::flatten($data, '.', 3);
+		$expected = array(
+			'0.Post.id' => '1',
+			'0.Post.author_id' => '1',
+			'0.Post.title' => 'First Post',
+			'0.Author.id' => '1',
+			'0.Author.user' => 'nate',
+			'0.Author.password' => 'foo',
+			'1.Post.id' => '2',
+			'1.Post.author_id' => '3',
+			'1.Post.title' => 'Second Post',
+			'1.Post.body' => 'Second Post Body',
+			'1.Author.id' => '3',
+			'1.Author.user' => array('larry', 'jim'),
+			'1.Author.password' => null
+		);
+		$this->assertEquals($expected, $result);
+	}
 
 /**
  * Test diff();

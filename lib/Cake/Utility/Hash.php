@@ -525,13 +525,15 @@ class Hash {
  *
  * @param array $data Array to flatten
  * @param string $separator String used to separate array key elements in a path, defaults to '.'
+ * @param int $maxDepth The max depth the function will go into the array
  * @return array
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::flatten
  */
-	public static function flatten(array $data, $separator = '.') {
+	public static function flatten(array $data, $separator = '.', $maxDepth = 20) {
 		$result = array();
 		$stack = array();
 		$path = null;
+		$depth = 1;
 
 		reset($data);
 		while (!empty($data)) {
@@ -539,10 +541,11 @@ class Hash {
 			$element = $data[$key];
 			unset($data[$key]);
 
-			if (is_array($element) && !empty($element)) {
+			if (is_array($element) && !empty($element) && $depth < $maxDepth) {
 				if (!empty($data)) {
-					$stack[] = array($data, $path);
+					$stack[] = array($data, $path, $depth);
 				}
+				$depth += 1;
 				$data = $element;
 				reset($data);
 				$path .= $key . $separator;
@@ -551,7 +554,7 @@ class Hash {
 			}
 
 			if (empty($data) && !empty($stack)) {
-				list($data, $path) = array_pop($stack);
+				list($data, $path, $depth) = array_pop($stack);
 				reset($data);
 			}
 		}
