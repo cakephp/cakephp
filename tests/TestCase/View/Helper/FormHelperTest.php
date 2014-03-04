@@ -2510,9 +2510,9 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->inputs(array('legend' => 'Field of Dreams', 'fieldset' => 'classy-stuff'));
+		$result = $this->Form->inputs(array('legend' => 'Field of Dreams', 'fieldset' => true));
 		$expected = array(
-			'fieldset' => array('class' => 'classy-stuff'),
+			'<fieldset',
 			'<legend',
 			'Field of Dreams',
 			'/legend',
@@ -2520,10 +2520,10 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->inputs(null, null, array('legend' => 'Field of Dreams', 'fieldset' => 'classy-stuff'));
+		$result = $this->Form->inputs(null, null, array('legend' => 'Field of Dreams', 'fieldset' => true));
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->inputs('Field of Dreams', null, array('fieldset' => 'classy-stuff'));
+		$result = $this->Form->inputs('Field of Dreams', null, array('fieldset' => true));
 		$this->assertTags($result, $expected);
 
 		$this->Form->create($this->article);

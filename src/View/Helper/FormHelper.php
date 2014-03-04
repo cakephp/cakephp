@@ -142,11 +142,13 @@ class FormHelper extends Helper {
 		'errorList' => '<ul>{{content}}</ul>',
 		'errorItem' => '<li>{{text}}</li>',
 		'file' => '<input type="file" name="{{name}}"{{attrs}}>',
+		'fieldset' => '<fieldset>{{content}}</fieldset>',
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
 		'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
 		'label' => '<label{{attrs}}>{{text}}</label>',
+		'legend' => '<legend>{{text}}</legend>',
 		'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 		'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 		'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
@@ -724,8 +726,7 @@ class FormHelper extends Helper {
  * @param array $fields An array of fields to generate inputs for, or null.
  * @param array $blacklist A simple array of fields to not create inputs for.
  * @param array $options Options array. Valid keys are:
- * - `fieldset` Set to false to disable the fieldset. If a string is supplied it will be used as
- *    the class name for the fieldset element.
+ * - `fieldset` Set to false to disable the fieldset.
  * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
  *    to customize the legend text.
  * @return string Completed form inputs.
@@ -794,18 +795,11 @@ class FormHelper extends Helper {
 			$out .= $this->input($name, $options);
 		}
 
-		if (is_string($fieldset)) {
-			$fieldsetClass = sprintf(' class="%s"', $fieldset);
-		} else {
-			$fieldsetClass = '';
-		}
-
-		// TODO cleanup HTML helper usage.
 		if ($fieldset) {
 			if ($legend) {
-				$out = $this->Html->useTag('legend', $legend) . $out;
+				$out = $this->formatTemplate('legend', ['text' => $legend]) . $out;
 			}
-			$out = $this->Html->useTag('fieldset', $fieldsetClass, $out);
+			$out = $this->formatTemplate('fieldset', ['content' => $out]);
 		}
 		return $out;
 	}
