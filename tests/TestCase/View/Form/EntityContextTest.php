@@ -819,4 +819,18 @@ class EntityContextTest extends TestCase {
 		$comments->validator('custom', $validator);
 	}
 
+/**
+ * Test the fieldnames method.
+ *
+ * @return void
+ */
+	public function testFieldNames() {
+		$context = new EntityContext($this->request, [
+			'entity' => new Entity(),
+			'table' => 'Articles',
+		]);
+		$articles = TableRegistry::get('Articles');
+		$this->assertEquals($articles->schema()->columns(), $context->fieldNames());
+	}
+
 }

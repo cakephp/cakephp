@@ -175,6 +175,15 @@ class ArrayContext implements ContextInterface {
 	}
 
 /**
+ * {@inheritDoc}
+ */
+	public function fieldNames() {
+		$schema = $this->_context['schema'];
+		unset($schema['_constraints'], $schema['_indexes']);
+		return array_keys($schema);
+	}
+
+/**
  * Get the abstract field type for a given field name.
  *
  * @param string $field A dot separated path to get a schema type for.

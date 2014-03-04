@@ -62,6 +62,13 @@ interface ContextInterface {
 	public function isRequired($field);
 
 /**
+ * Get the fieldnames of the top level object in this context.
+ *
+ * @return array A list of the field names in the context.
+ */
+	public function fieldNames();
+
+/**
  * Get the abstract field type for a given field name.
  *
  * @param string $field A dot separated path to get a schema type for.
