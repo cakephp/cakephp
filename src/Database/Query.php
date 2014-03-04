@@ -1693,8 +1693,8 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * statement object.
  *
  * @param ValueBinder $binder new instance to be set. If no value is passed the
- * default one will be returned
- * @return Query|\Cake\Database\ValueBinder
+ * default one will be used
+ * @return Query
  */
 	public function valueBinder($binder = null) {
 		if ($binder === null) {
