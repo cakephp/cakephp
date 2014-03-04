@@ -2550,165 +2550,93 @@ class FormHelperTest extends TestCase {
 		$this->Form->create($this->article);
 		$result = $this->Form->inputs(['id', 'title', 'body']);
 		$expected = array(
+			'<fieldset',
+			'<legend', 'New Article', '/legend',
 			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
-			array('div' => array('class' => 'input text')),
+			array('div' => array('class' => 'input text required')),
 			'*/div',
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input textarea')),
-			'*/div',
+			'/fieldset',
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->create('Contact');
-		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => false));
+		$this->Form->create($this->article);
+		$result = $this->Form->inputs(['id', 'title', 'body'], null, array('fieldset' => false, 'legend' => false));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
+			array('div' => array('class' => 'input text required')),
+			'*/div',
 			array('div' => array('class' => 'input text')),
-			'*/div',
-			array('div' => array('class' => 'input email')),
-			'*/div',
-			array('div' => array('class' => 'input tel')),
-			'*/div',
-			array('div' => array('class' => 'input password')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input datetime')),
-			'*/div',
-			array('div' => array('class' => 'input number')),
-			'*/div',
-			array('div' => array('class' => 'input select')),
 			'*/div',
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->create('Contact');
+		$this->Form->create($this->article);
 		$result = $this->Form->inputs(null, null, array('fieldset' => false));
 		$this->assertTags($result, $expected);
 
-		$this->Form->create('Contact');
+		$this->Form->create($this->article);
 		$result = $this->Form->inputs(array('fieldset' => true, 'legend' => false));
 		$expected = array(
 			'fieldset' => array(),
-			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
+			array('div' => array('class' => 'input select required')),
+			'*/div',
+			array('div' => array('class' => 'input text required')),
+			'*/div',
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input email')),
-			'*/div',
-			array('div' => array('class' => 'input tel')),
-			'*/div',
-			array('div' => array('class' => 'input password')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input datetime')),
-			'*/div',
-			array('div' => array('class' => 'input number')),
-			'*/div',
-			array('div' => array('class' => 'input select')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->create('Contact');
+		$this->Form->create($this->article);
 		$result = $this->Form->inputs(array('fieldset' => false, 'legend' => 'Hello'));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
+			array('div' => array('class' => 'input select required')),
+			'*/div',
+			array('div' => array('class' => 'input text required')),
+			'*/div',
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input email')),
-			'*/div',
-			array('div' => array('class' => 'input tel')),
-			'*/div',
-			array('div' => array('class' => 'input password')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input datetime')),
-			'*/div',
-			array('div' => array('class' => 'input number')),
-			'*/div',
-			array('div' => array('class' => 'input select')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->create('Contact');
+		$this->Form->create($this->article);
 		$result = $this->Form->inputs(null, null, array('fieldset' => false, 'legend' => 'Hello'));
 		$this->assertTags($result, $expected);
 
-		$this->Form->create('Contact');
+		$this->Form->create($this->article);
 		$result = $this->Form->inputs('Hello');
 		$expected = array(
 			'fieldset' => array(),
 			'legend' => array(),
 			'Hello',
 			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
+			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
+			array('div' => array('class' => 'input select required')),
+			'*/div',
+			array('div' => array('class' => 'input text required')),
+			'*/div',
 			array('div' => array('class' => 'input text')),
 			'*/div',
-			array('div' => array('class' => 'input email')),
-			'*/div',
-			array('div' => array('class' => 'input tel')),
-			'*/div',
-			array('div' => array('class' => 'input password')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input datetime')),
-			'*/div',
-			array('div' => array('class' => 'input number')),
-			'*/div',
-			array('div' => array('class' => 'input select')),
+			array('div' => array('class' => 'input text')),
 			'*/div',
 			'/fieldset'
 		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->create('Contact');
 		$result = $this->Form->inputs(array('legend' => 'Hello'));
-		$expected = array(
-			'fieldset' => array(),
-			'legend' => array(),
-			'Hello',
-			'/legend',
-			'input' => array('type' => 'hidden', 'name' => 'Contact[id]', 'id' => 'ContactId'),
-			array('div' => array('class' => 'input text')),
-			'*/div',
-			array('div' => array('class' => 'input email')),
-			'*/div',
-			array('div' => array('class' => 'input tel')),
-			'*/div',
-			array('div' => array('class' => 'input password')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input date')),
-			'*/div',
-			array('div' => array('class' => 'input datetime')),
-			'*/div',
-			array('div' => array('class' => 'input number')),
-			'*/div',
-			array('div' => array('class' => 'input select')),
-			'*/div',
-			'/fieldset'
-		);
 		$this->assertTags($result, $expected);
 
-		$this->Form->create('Contact');
 		$result = $this->Form->inputs(null, null, array('legend' => 'Hello'));
 		$this->assertTags($result, $expected);
-		$this->Form->end();
 
 		$this->Form->create(false);
 		$expected = array(
