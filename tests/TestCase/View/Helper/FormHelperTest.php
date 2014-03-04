@@ -2498,9 +2498,8 @@ class FormHelperTest extends TestCase {
  *
  * @return void
  */
-	public function testFormInputs() {
-		$this->markTestIncomplete('Need to revisit once models work again.');
-		$this->Form->create('Cake\Test\TestCase\View\Helper\Contact');
+	public function testFormInputsLegendFieldset() {
+		$this->Form->create($this->article);
 		$result = $this->Form->inputs('The Legend');
 		$expected = array(
 			'<fieldset',
@@ -2526,15 +2525,22 @@ class FormHelperTest extends TestCase {
 
 		$result = $this->Form->inputs('Field of Dreams', null, array('fieldset' => 'classy-stuff'));
 		$this->assertTags($result, $expected);
+	}
 
-		$this->Form->create('Contact');
+/**
+ * Test the inputs() method.
+ *
+ * @return void
+ */
+	public function testFormInputs() {
+		$this->Form->create($this->article);
 		$this->Form->request['prefix'] = 'admin';
 		$this->Form->request['action'] = 'admin_edit';
 		$result = $this->Form->inputs();
 		$expected = array(
 			'<fieldset',
 			'<legend',
-			'Edit Contact',
+			'Edit Article',
 			'/legend',
 			'*/fieldset',
 		);
