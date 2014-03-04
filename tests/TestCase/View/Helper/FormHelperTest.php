@@ -2534,7 +2534,7 @@ class FormHelperTest extends TestCase {
 		$expected = [
 			'<fieldset',
 			'<legend',
-			'Edit Article',
+			'New Article',
 			'/legend',
 			'*/fieldset',
 		];

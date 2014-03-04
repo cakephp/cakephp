@@ -769,15 +769,11 @@ class FormHelper extends Helper {
 		if ($legend === true) {
 			$actionName = __d('cake', 'New %s');
 			$isCreate = $context->isCreate();
-			$isEdit = (
-				strpos($this->request->params['action'], 'update') !== false ||
-				strpos($this->request->params['action'], 'edit') !== false
-			);
-			if ($isEdit) {
+			if (!$isCreate) {
 				$actionName = __d('cake', 'Edit %s');
 			}
-			$modelName = Inflector::humanize(Inflector::underscore($model));
-			$legend = sprintf($actionName, __($modelName));
+			$modelName = Inflector::humanize(Inflector::singularize($this->request->params['controller']));
+			$legend = sprintf($actionName, $modelName);
 		}
 
 		$out = null;
