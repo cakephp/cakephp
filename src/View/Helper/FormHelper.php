@@ -1463,8 +1463,6 @@ class FormHelper extends Helper {
  *
  * ### Options
  *
- * - `div` - Include a wrapping div?  Defaults to true. Accepts sub options similar to
- *   FormHelper::input().
  * - `type` - Set to 'reset' for reset inputs. Defaults to 'submit'
  * - Other attributes will be assigned to the input element.
  *
@@ -1476,11 +1474,11 @@ class FormHelper extends Helper {
  * @return string A HTML submit button
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::submit
  */
-	public function submit($caption = null, $options = array()) {
+	public function submit($caption = null, $options = []) {
 		if (!is_string($caption) && empty($caption)) {
 			$caption = __d('cake', 'Submit');
 		}
-		$options += array('type' => 'submit', 'secure' => false);
+		$options += ['type' => 'submit', 'secure' => false];
 
 		if (isset($options['name'])) {
 			$this->_secure($options['secure'], $this->_secureFieldName($options));
@@ -1496,9 +1494,10 @@ class FormHelper extends Helper {
 		if ($isUrl || $isImage) {
 			$unlockFields = array('x', 'y');
 			if (isset($options['name'])) {
-				$unlockFields = array(
-					$options['name'] . '_x', $options['name'] . '_y'
-				);
+				$unlockFields = [
+					$options['name'] . '_x',
+					$options['name'] . '_y'
+				];
 			}
 			foreach ($unlockFields as $ignore) {
 				$this->unlockField($ignore);
