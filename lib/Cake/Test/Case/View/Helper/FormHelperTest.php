@@ -3783,6 +3783,39 @@ class FormHelperTest extends CakeTestCase {
 	}
 
 /**
+ * testRadioDifferentModel
+ * Refs #2911
+ *
+ * @return void
+ */
+	public function testRadioDifferentModel() {
+		$this->Form->create('User');
+
+		$result = $this->Form->radio(
+			'Model.field',
+			array('v1' => 'option A', 'v2' => 'option B'),
+			array('label' => true, 'legend' => false, 'value' => false)
+		);
+		$expected = array(
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][field]',
+				'value' => 'v1', 'id' => 'ModelFieldV1'
+			)),
+			array('label' => array('for' => 'ModelFieldV1')),
+			'option A',
+			'/label',
+			array('input' => array(
+				'type' => 'radio', 'name' => 'data[Model][field]',
+				'value' => 'v2', 'id' => 'ModelFieldV2'
+			)),
+			array('label' => array('for' => 'ModelFieldV2')),
+			'option B',
+			'/label'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test radio inputs with between as string or array. Also ensure
  * that an array with less between elements works.
  *
