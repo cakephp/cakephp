@@ -720,8 +720,6 @@ class FormHelper extends Helper {
  * In addition to controller fields output, `$fields` can be used to control legend
  * and fieldset rendering.
  * `$this->Form->inputs('My legend');` Would generate an input set with a custom legend.
- * Passing `fieldset` and `legend` key in `$fields` array has been deprecated since 2.3,
- * for more fine grained control use the `fieldset` and `legend` keys in `$options` param.
  *
  * @param array $fields An array of fields to generate inputs for, or null.
  * @param array $blacklist A simple array of fields to not create inputs for.
@@ -740,22 +738,12 @@ class FormHelper extends Helper {
 
 		$modelFields = $context->fieldNames();
 
-		if (is_array($fields)) {
-			if (array_key_exists('legend', $fields) && !in_array('legend', $modelFields)) {
-				$legend = $fields['legend'];
-				unset($fields['legend']);
-			}
-
-			if (isset($fields['fieldset']) && !in_array('fieldset', $modelFields)) {
-				$fieldset = $fields['fieldset'];
-				unset($fields['fieldset']);
-			}
-		} elseif ($fields !== null) {
+		if (is_string($fields)) {
+			$legend = $fields;
+			$fields = [];
+		} elseif (is_bool($fields)) {
 			$fieldset = $legend = $fields;
-			if (!is_bool($fieldset)) {
-				$fieldset = true;
-			}
-			$fields = array();
+			$fields = [];
 		}
 
 		if (empty($fields)) {
@@ -782,7 +770,7 @@ class FormHelper extends Helper {
 		foreach ($fields as $name => $options) {
 			if (is_numeric($name) && !is_array($options)) {
 				$name = $options;
-				$options = array();
+				$options = [];
 			}
 			$entity = explode('.', $name);
 			$blacklisted = (
@@ -792,7 +780,7 @@ class FormHelper extends Helper {
 			if ($blacklisted) {
 				continue;
 			}
-			$out .= $this->input($name, $options);
+			$out .= $this->input($name, (array)$options);
 		}
 
 		if ($fieldset) {
