@@ -2548,14 +2548,37 @@ class FormHelperTest extends TestCase {
  */
 	public function testFormInputs() {
 		$this->Form->create($this->article);
-		$result = $this->Form->inputs(['id', 'title', 'body']);
+		$result = $this->Form->inputs();
 		$expected = array(
 			'<fieldset',
 			'<legend', 'New Article', '/legend',
 			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
+			array('div' => array('class' => 'input select required')),
+			'*/div',
 			array('div' => array('class' => 'input text required')),
 			'*/div',
 			array('div' => array('class' => 'input text')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			'/fieldset',
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->inputs([
+			'published' => ['type' => 'boolean']
+		]);
+		$expected = array(
+			'<fieldset',
+			'<legend', 'New Article', '/legend',
+			'input' => array('type' => 'hidden', 'name' => 'id', 'id' => 'id'),
+			array('div' => array('class' => 'input select required')),
+			'*/div',
+			array('div' => array('class' => 'input text required')),
+			'*/div',
+			array('div' => array('class' => 'input text')),
+			'*/div',
+			array('div' => array('class' => 'input boolean')),
 			'*/div',
 			'/fieldset',
 		);

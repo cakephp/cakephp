@@ -712,17 +712,26 @@ class FormHelper extends Helper {
  *
  * You can customize individual inputs through `$fields`.
  * {{{
- *	$this->Form->inputs(array(
- *		'name' => array('label' => 'custom label')
- *	));
+ * $this->Form->inputs([
+ *   'name' => ['label' => 'custom label']
+ * ]);
  * }}}
+ *
+ * You can exclude fields using the `$blacklist` parameter:
+ *
+ * {{{
+ * $this->Form->inputs(null, ['title']);
+ * }}}
+ *
+ * In the above example, no field would be generated for the title field.
  *
  * In addition to controller fields output, `$fields` can be used to control legend
  * and fieldset rendering.
  * `$this->Form->inputs('My legend');` Would generate an input set with a custom legend.
  *
- * @param array $fields An array of fields to generate inputs for, or null.
- * @param array $blacklist A simple array of fields to not create inputs for.
+ * @param array $fields An array of customizations for the fields that will be
+ *   generated. This array allows you to set custom types, labels, or other options.
+ * @param array $blacklist A list of fields to not create inputs for.
  * @param array $options Options array. Valid keys are:
  * - `fieldset` Set to false to disable the fieldset.
  * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
@@ -731,8 +740,6 @@ class FormHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::inputs
  */
 	public function inputs($fields = null, $blacklist = null, $options = array()) {
-		$modelFields = [];
-		$model = false;
 		$fieldset = $legend = true;
 		$context = $this->_getContext();
 
@@ -746,9 +753,11 @@ class FormHelper extends Helper {
 			$fields = [];
 		}
 
-		if (empty($fields)) {
-			$fields = $modelFields;
-		}
+		$fields = array_merge(
+			Hash::normalize($modelFields),
+			Hash::normalize((array)$fields)
+		);
+
 		if (isset($options['legend'])) {
 			$legend = $options['legend'];
 		}
