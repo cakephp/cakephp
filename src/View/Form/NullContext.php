@@ -80,6 +80,13 @@ class NullContext implements ContextInterface {
 /**
  * {@inheritDoc}
  */
+	public function fieldNames() {
+		return [];
+	}
+
+/**
+ * {@inheritDoc}
+ */
 	public function type($field) {
 		return null;
 	}

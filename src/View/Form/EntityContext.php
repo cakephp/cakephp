@@ -318,6 +318,18 @@ class EntityContext implements ContextInterface {
 	}
 
 /**
+ * Get the field names from the top level entity.
+ *
+ * If the context is for an array of entities, the 0th index will be used.
+ *
+ * @return array Array of fieldnames in the table/entity.
+ */
+	public function fieldNames() {
+		$table = $this->_getTable('0');
+		return $table->schema()->columns();
+	}
+
+/**
  * Get the validator associated to an entity based on naming
  * conventions.
  *

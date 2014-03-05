@@ -142,12 +142,14 @@ class FormHelper extends Helper {
 		'errorList' => '<ul>{{content}}</ul>',
 		'errorItem' => '<li>{{text}}</li>',
 		'file' => '<input type="file" name="{{name}}"{{attrs}}>',
+		'fieldset' => '<fieldset>{{content}}</fieldset>',
 		'formstart' => '<form{{attrs}}>',
 		'formend' => '</form>',
 		'hiddenblock' => '<div style="display:none;">{{content}}</div>',
 		'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
 		'inputsubmit' => '<input type="{{type}}"{{attrs}}>',
 		'label' => '<label{{attrs}}>{{text}}</label>',
+		'legend' => '<legend>{{text}}</legend>',
 		'option' => '<option value="{{value}}"{{attrs}}>{{text}}</option>',
 		'optgroup' => '<optgroup label="{{label}}"{{attrs}}>{{content}}</optgroup>',
 		'select' => '<select name="{{name}}"{{attrs}}>{{content}}</select>',
@@ -712,22 +714,28 @@ class FormHelper extends Helper {
  *
  * You can customize individual inputs through `$fields`.
  * {{{
- *	$this->Form->inputs(array(
- *		'name' => array('label' => 'custom label')
- *	));
+ * $this->Form->inputs([
+ *   'name' => ['label' => 'custom label']
+ * ]);
  * }}}
+ *
+ * You can exclude fields using the `$blacklist` parameter:
+ *
+ * {{{
+ * $this->Form->inputs(null, ['title']);
+ * }}}
+ *
+ * In the above example, no field would be generated for the title field.
  *
  * In addition to controller fields output, `$fields` can be used to control legend
  * and fieldset rendering.
  * `$this->Form->inputs('My legend');` Would generate an input set with a custom legend.
- * Passing `fieldset` and `legend` key in `$fields` array has been deprecated since 2.3,
- * for more fine grained control use the `fieldset` and `legend` keys in `$options` param.
  *
- * @param array $fields An array of fields to generate inputs for, or null.
- * @param array $blacklist A simple array of fields to not create inputs for.
+ * @param array $fields An array of customizations for the fields that will be
+ *   generated. This array allows you to set custom types, labels, or other options.
+ * @param array $blacklist A list of fields to not create inputs for.
  * @param array $options Options array. Valid keys are:
- * - `fieldset` Set to false to disable the fieldset. If a string is supplied it will be used as
- *    the class name for the fieldset element.
+ * - `fieldset` Set to false to disable the fieldset.
  * - `legend` Set to false to disable the legend for the generated input set. Or supply a string
  *    to customize the legend text.
  * @return string Completed form inputs.
@@ -735,28 +743,22 @@ class FormHelper extends Helper {
  */
 	public function inputs($fields = null, $blacklist = null, $options = array()) {
 		$fieldset = $legend = true;
-		$modelFields = array();
-		$model = $this->model();
-		if ($model) {
-			$modelFields = array_keys((array)$this->_introspectModel($model, 'fields'));
-		}
-		if (is_array($fields)) {
-			if (array_key_exists('legend', $fields) && !in_array('legend', $modelFields)) {
-				$legend = $fields['legend'];
-				unset($fields['legend']);
-			}
+		$context = $this->_getContext();
 
-			if (isset($fields['fieldset']) && !in_array('fieldset', $modelFields)) {
-				$fieldset = $fields['fieldset'];
-				unset($fields['fieldset']);
-			}
-		} elseif ($fields !== null) {
+		$modelFields = $context->fieldNames();
+
+		if (is_string($fields)) {
+			$legend = $fields;
+			$fields = [];
+		} elseif (is_bool($fields)) {
 			$fieldset = $legend = $fields;
-			if (!is_bool($fieldset)) {
-				$fieldset = true;
-			}
-			$fields = array();
+			$fields = [];
 		}
+
+		$fields = array_merge(
+			Hash::normalize($modelFields),
+			Hash::normalize((array)$fields)
+		);
 
 		if (isset($options['legend'])) {
 			$legend = $options['legend'];
@@ -765,28 +767,21 @@ class FormHelper extends Helper {
 			$fieldset = $options['fieldset'];
 		}
 
-		if (empty($fields)) {
-			$fields = $modelFields;
-		}
-
 		if ($legend === true) {
 			$actionName = __d('cake', 'New %s');
-			$isEdit = (
-				strpos($this->request->params['action'], 'update') !== false ||
-				strpos($this->request->params['action'], 'edit') !== false
-			);
-			if ($isEdit) {
+			$isCreate = $context->isCreate();
+			if (!$isCreate) {
 				$actionName = __d('cake', 'Edit %s');
 			}
-			$modelName = Inflector::humanize(Inflector::underscore($model));
-			$legend = sprintf($actionName, __($modelName));
+			$modelName = Inflector::humanize(Inflector::singularize($this->request->params['controller']));
+			$legend = sprintf($actionName, $modelName);
 		}
 
 		$out = null;
 		foreach ($fields as $name => $options) {
 			if (is_numeric($name) && !is_array($options)) {
 				$name = $options;
-				$options = array();
+				$options = [];
 			}
 			$entity = explode('.', $name);
 			$blacklisted = (
@@ -796,20 +791,14 @@ class FormHelper extends Helper {
 			if ($blacklisted) {
 				continue;
 			}
-			$out .= $this->input($name, $options);
-		}
-
-		if (is_string($fieldset)) {
-			$fieldsetClass = sprintf(' class="%s"', $fieldset);
-		} else {
-			$fieldsetClass = '';
+			$out .= $this->input($name, (array)$options);
 		}
 
 		if ($fieldset) {
 			if ($legend) {
-				$out = $this->Html->useTag('legend', $legend) . $out;
+				$out = $this->formatTemplate('legend', ['text' => $legend]) . $out;
 			}
-			$out = $this->Html->useTag('fieldset', $fieldsetClass, $out);
+			$out = $this->formatTemplate('fieldset', ['content' => $out]);
 		}
 		return $out;
 	}
