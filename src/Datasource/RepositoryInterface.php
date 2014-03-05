@@ -32,7 +32,7 @@ interface RepositoryInterface {
  * listeners. Any listener can set a valid result set using $query
  *
  * @param string $type the type of query to perform
- * @param array $options An array that will be passed to Query::applyOptions
+ * @param array $options An array that will be passed to Query::applyOptions()
  * @return \Cake\ORM\Query
  */
 	public function find($type = 'all', $options = []);
