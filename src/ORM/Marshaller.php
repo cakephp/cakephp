@@ -157,12 +157,12 @@ class Marshaller {
 	}
 
 /**
- * Marshalls data for belongsToMany associations.
+ * Marshals data for belongsToMany associations.
  *
  * Builds the related entities and handles the special casing
  * for junction table entities.
  *
- * @param Association $assoc The association to marshall.
+ * @param Association $assoc The association to marshal.
  * @param array $data The data to convert into entities.
  * @param array $include The nested associations to convert.
  * @return array An array of built entities.
