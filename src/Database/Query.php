@@ -34,21 +34,21 @@ use IteratorAggregate;
 class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
- * Connection instance to be used to execute this query
+ * Connection instance to be used to execute this query.
  *
  * @var \Cake\Database\Connection
  */
 	protected $_connection;
 
 /**
- * Type of this query (select, insert, update, delete)
+ * Type of this query (select, insert, update, delete).
  *
  * @var string
  */
 	protected $_type;
 
 /**
- * List of SQL parts that will be used to build this query
+ * List of SQL parts that will be used to build this query.
  *
  * @var array
  */
@@ -106,7 +106,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Indicates whether internal state of this query was changed, this is used to
  * discard internal cached objects such as the transformed query or the reference
- * to the executed statement
+ * to the executed statement.
  *
  * @var boolean
  */
@@ -115,14 +115,14 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * A list of callback functions to be called to alter each row from resulting
  * statement upon retrieval. Each one of the callback function will receive
- * the row array as first argument
+ * the row array as first argument.
  *
  * @var array
  */
 	protected $_resultDecorators = [];
 
 /**
- * Statement object resulting from executing this query
+ * Statement object resulting from executing this query.
  *
  * @var Statement
  */
@@ -131,7 +131,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Associative array with the default fields and their types this query might contain
  * used to avoid repetition when calling multiple times functions inside this class that
- * may require a custom type for a specific field
+ * may require a custom type for a specific field.
  *
  * @var array
  */
@@ -146,14 +146,14 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	protected $_valueBinder;
 
 /**
- * Instance of functions builder object used for generating arbitrary SQL functions
+ * Instance of functions builder object used for generating arbitrary SQL functions.
  *
  * @var FunctionsBuilder
  */
 	protected $_functionsBuilder;
 
 /**
- * Constructor
+ * Constructor.
  *
  * @param \Cake\Database\Connection $connection The connection
  * object to be used for transforming and executing this query
@@ -164,7 +164,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
  * Sets the connection instance to be used for executing and transforming this query
- * When called with a null argument, it will return the current connection instance
+ * When called with a null argument, it will return the current connection instance.
  *
  * @param \Cake\Database\Connection $connection instance
  * @return Query|\Cake\Database\Connection
@@ -180,7 +180,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
  * Compiles the SQL representation of this query and executes it using the
- * configured connection object. Returns the resulting statement object
+ * configured connection object. Returns the resulting statement object.
  *
  * Executing a query internally executes several steps, the first one is
  * letting the connection transform this object to fit its particular dialect,
@@ -237,7 +237,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
  * Returns a callable object that can be used to compile a SQL string representtion
- * of this query
+ * of this query.
  *
  * @param string $sql initial sql string to append to
  * @param \Cake\Database\ValueBinder The placeholder and value binder object
@@ -642,7 +642,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * When creating aliased joins using the array notation, you can override
  * previous join definitions by using the same alias in consequent
  * calls to this function or you can replace all previously defined joins
- * with another list if the third parameter for this function is set to true
+ * with another list if the third parameter for this function is set to true.
  *
  * {{{
  *	$query->join(['alias' => 'table']); // joins table with as alias
@@ -693,7 +693,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Helper function used to build the string representation of multiple JOIN clauses,
  * it constructs the joins list taking care of aliasing and converting
  * expression objects to string in both the table to be joined and the conditions
- * to be used
+ * to be used.
  *
  * @param array $parts list of joins to be transformed to string
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
@@ -811,7 +811,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * You can use callable functions to construct complex expressions, functions
  * receive as first argument a new QueryExpression object and this query instance
  * as second argument. Functions must return an expression object, that will be
- * added the list of conditions for the query using th AND operator
+ * added the list of conditions for the query using th AND operator.
  *
  * {{{
  *	$query
@@ -1196,7 +1196,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * required by calling multiple times this method with different queries.
  *
  * By default, the UNION operator will remove duplicate rows, if you wish to include
- * every row for all queries, use unionAll()
+ * every row for all queries, use unionAll().
  *
  * ## Examples
  *
@@ -1302,7 +1302,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
  * Helper function used to covert ExpressionInterface objects inside an array
- * into their string representation
+ * into their string representation.
  *
  * @param array $expressions list of strings and ExpressionInterface objects
  * @param \Cake\Database\ValueBinder $generator the placeholder generator to be used in expressions
@@ -1323,7 +1323,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Create an insert query.
  *
  * Note calling this method will reset any data previously set
- * with Query::values()
+ * with Query::values().
  *
  * @param array $columns The columns to insert into.
  * @param array $types A map between columns & their datatypes.
@@ -1541,7 +1541,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *
  * The return value for each of those parts may vary. Some clauses use QueryExpression
  * to internally store their state, some use arrays and others may use booleans or
- * integers. This is summary of the return types for each clause
+ * integers. This is summary of the return types for each clause.
  *
  * - update: string The name of the table to update
  * - set: QueryExpression
@@ -1688,6 +1688,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Returns the currently used ValueBinder instance. If a value is passed,
  * it will be set as the new instance to be used.
+ *
  * A ValueBinder is responsible for generating query placeholders and temporarily
  * associate values to those placeholders so that they can be passed correctly
  * statement object.
@@ -1722,7 +1723,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
- * Helper function used to build conditions by composing QueryExpression objects
+ * Helper function used to build conditions by composing QueryExpression objects.
  *
  * @param string name of the query part to append the new part to
  * @param string|array|Expression|callback $append
@@ -1771,7 +1772,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
  * Returns a query object as returned by the connection object as a result of
- * transforming this query instance to conform to any dialect specifics
+ * transforming this query instance to conform to any dialect specifics.
  *
  * @return Query
  */
@@ -1798,7 +1799,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 
 /**
  * Marks a query as dirty, removing any preprocessed information
- * from in memory caching
+ * from in memory caching.
  *
  * @return void
  */
@@ -1812,7 +1813,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
- * Returns string representation of this query (complete SQL statement)
+ * Returns string representation of this query (complete SQL statement).
  *
  * @return string
  */
