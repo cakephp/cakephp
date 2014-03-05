@@ -351,4 +351,13 @@ class RssHelper extends Helper {
 		return $xml;
 	}
 
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
+	}
+
 }

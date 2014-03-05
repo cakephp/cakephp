@@ -1237,4 +1237,13 @@ class HtmlHelper extends Helper {
 		return $configs;
 	}
 
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
+	}
+
 }

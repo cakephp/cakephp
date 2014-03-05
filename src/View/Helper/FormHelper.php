@@ -2171,4 +2171,13 @@ class FormHelper extends Helper {
 		return $this->_registry->get($name)->render($data);
 	}
 
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
+	}
+
 }
