@@ -188,7 +188,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * to actually be executed. Immediately after, literal values are passed to the
  * connection so they are bound to the query in a safe way. Finally, the resulting
  * statement is decorated with custom objects to execute callbacks for each row
- * is retrieved if necessary.
+ * retrieved if necessary.
  *
  * Resulting statement is traversable, so it can be used in any loop as you would
  * with an array.
@@ -219,7 +219,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * values when the query is executed, hence it is most suitable to use with
  * prepared statements.
  *
- * @param ValueBinder $generator A placeholder a value binder object that will hold
+ * @param ValueBinder $generator A placeholder object that will hold
  * associated values for expressions
  * @return string
  */

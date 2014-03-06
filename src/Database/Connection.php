@@ -25,14 +25,14 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
 
 /**
- * Represents a connection with a database server
+ * Represents a connection with a database server.
  */
 class Connection {
 
 	use TypeConverterTrait;
 
 /**
- * Contains the configuration params for this connection
+ * Contains the configuration params for this connection.
  *
  * @var array
  */
@@ -40,21 +40,21 @@ class Connection {
 
 /**
  * Driver object, responsible for creating the real connection
- * and provide specific SQL dialect
+ * and provide specific SQL dialect.
  *
  * @var \Cake\Database\Driver
  */
 	protected $_driver;
 
 /**
- * Contains how many nested transactions have been started
+ * Contains how many nested transactions have been started.
  *
  * @var int
  */
 	protected $_transactionLevel = 0;
 
 /**
- * Whether a transaction is active in this connection
+ * Whether a transaction is active in this connection.
  *
  * @var int
  */
@@ -62,28 +62,28 @@ class Connection {
 
 /**
  * Whether this connection can and should use savepoints for nested
- * transactions
+ * transactions.
  *
  * @var boolean
  */
 	protected $_useSavePoints = false;
 
 /**
- * Whether to log queries generated during this connection
+ * Whether to log queries generated during this connection.
  *
  * @var boolean
  */
 	protected $_logQueries = false;
 
 /**
- * Logger object instance
+ * Logger object instance.
  *
  * @var QueryLogger
  */
 	protected $_logger = null;
 
 /**
- * Constructor
+ * Constructor.
  *
  * @param array $config configuration for connecting to database
  */
@@ -133,7 +133,7 @@ class Connection {
  * Sets the driver instance. If an string is passed it will be treated
  * as a class name and will be instantiated.
  *
- * If no params are passed it will return the current driver instance
+ * If no params are passed it will return the current driver instance.
  *
  * @param string|Driver $driver
  * @param array|null $config Either config for a new driver or null.
@@ -158,7 +158,7 @@ class Connection {
 	}
 
 /**
- * Connects to the configured database
+ * Connects to the configured database.
  *
  * @throws \Cake\Database\Exception\MissingConnectionException if credentials are invalid
  * @return boolean true on success or false if already connected.
@@ -173,7 +173,7 @@ class Connection {
 	}
 
 /**
- * Disconnects from database server
+ * Disconnects from database server.
  *
  * @return void
  */
@@ -182,7 +182,7 @@ class Connection {
 	}
 
 /**
- * Returns whether connection to database server was already stablished
+ * Returns whether connection to database server was already established.
  *
  * @return boolean
  */
@@ -191,7 +191,7 @@ class Connection {
 	}
 
 /**
- * Prepares a sql statement to be executed
+ * Prepares a SQL statement to be executed.
  *
  * @param string|\Cake\Database\Query $sql
  * @return \Cake\Database\Statement
@@ -208,7 +208,7 @@ class Connection {
 
 /**
  * Executes a query using $params for interpolating values and $types as a hint for each
- * those params
+ * those params.
  *
  * @param string $query SQL to be executed and interpolated with $params
  * @param array $params list or associative array of params to be interpolated in $query as values
@@ -227,7 +227,7 @@ class Connection {
 	}
 
 /**
- * Executes a SQL statement and returns the Statement object as result
+ * Executes a SQL statement and returns the Statement object as result.
  *
  * @param string $sql
  * @return \Cake\Database\Statement
@@ -257,7 +257,7 @@ class Connection {
 	}
 
 /**
- * Executes an INSERT query on the specified table
+ * Executes an INSERT query on the specified table.
  *
  * @param string $table the table to update values in
  * @param array $data values to be inserted
@@ -273,7 +273,7 @@ class Connection {
 	}
 
 /**
- * Executes an UPDATE statement on the specified table
+ * Executes an UPDATE statement on the specified table.
  *
  * @param string $table the table to delete rows from
  * @param array $data values to be updated
@@ -291,7 +291,7 @@ class Connection {
 	}
 
 /**
- * Executes a DELETE  statement on the specified table
+ * Executes a DELETE statement on the specified table.
  *
  * @param string $table the table to delete rows from
  * @param array $conditions conditions to be set for delete statement
@@ -305,7 +305,7 @@ class Connection {
 	}
 
 /**
- * Starts a new transaction
+ * Starts a new transaction.
  *
  * @return void
  */
@@ -327,7 +327,7 @@ class Connection {
 	}
 
 /**
- * Commits current transaction
+ * Commits current transaction.
  *
  * @return boolean true on success, false otherwise
  */
@@ -352,7 +352,7 @@ class Connection {
 	}
 
 /**
- * Rollback current transaction
+ * Rollback current transaction.
  *
  * @return boolean
  */
@@ -384,7 +384,7 @@ class Connection {
  * only if driver the allows it.
  *
  * If you are trying to enable this feature, make sure you check the return value of this
- * function to verify it was enabled successfully
+ * function to verify it was enabled successfully.
  *
  * ## Example:
  *
@@ -408,7 +408,7 @@ class Connection {
 	}
 
 /**
- * Creates a new save point for nested transactions
+ * Creates a new save point for nested transactions.
  *
  * @param string $name
  * @return void
@@ -418,7 +418,7 @@ class Connection {
 	}
 
 /**
- * Releases a save point by its name
+ * Releases a save point by its name.
  *
  * @param string $name
  * @return void
@@ -428,7 +428,7 @@ class Connection {
 	}
 
 /**
- * Rollback a save point by its name
+ * Rollback a save point by its name.
  *
  * @param string $name
  * @return void
@@ -442,9 +442,9 @@ class Connection {
  * while executing the passed callable, the transaction will be rolled back
  * If the result of the callable function is ``false``, the transaction will
  * also be rolled back. Otherwise the transaction is committed after executing
- * the callback
+ * the callback.
  *
- * The callback will receive the connection instance as its first argument..
+ * The callback will receive the connection instance as its first argument.
  *
  * ### Example:
  *
@@ -479,7 +479,7 @@ class Connection {
 	}
 
 /**
- * Quotes value to be used safely in database query
+ * Quotes value to be used safely in database query.
  *
  * @param mixed $value
  * @param string $type Type to be used for determining kind of quoting to perform
@@ -491,7 +491,7 @@ class Connection {
 	}
 
 /**
- * Checks if the driver supports quoting
+ * Checks if the driver supports quoting.
  *
  * @return boolean
  */
@@ -501,7 +501,7 @@ class Connection {
 
 /**
  * Quotes a database identifier (a column name, table name, etc..) to
- * be used safely in queries without the risk of using reserved words
+ * be used safely in queries without the risk of using reserved words.
  *
  * @param string $identifier
  * @return string
@@ -522,7 +522,7 @@ class Connection {
 
 /**
  * Sets the logger object instance. When called with no arguments
- * it returns the currently setup logger instance
+ * it returns the currently setup logger instance.
  *
  * @param object $instance logger object instance
  * @return object logger instance
@@ -538,7 +538,7 @@ class Connection {
 	}
 
 /**
- * Logs a Query string using the configured logger object
+ * Logs a Query string using the configured logger object.
  *
  * @param string $sql string to be logged
  * @return void
