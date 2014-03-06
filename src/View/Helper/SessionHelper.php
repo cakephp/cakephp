@@ -141,40 +141,41 @@ class SessionHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
  */
 	public function flash($key = 'flash', $attrs = array()) {
-		$out = false;
 
-		if (Session::check('Message.' . $key)) {
-			$flash = Session::read('Message.' . $key);
-			$message = $flash['message'];
-			unset($flash['message']);
-
-			if (!empty($attrs)) {
-				$flash = array_merge($flash, $attrs);
-			}
-
-			if ($flash['element'] === 'default') {
-				$class = 'message';
-				if (!empty($flash['params']['class'])) {
-					$class = $flash['params']['class'];
-				}
-				$out = $this->formatTemplate('flash', [
-					'class' => $class,
-					'key' => $key,
-					'message' => $message
-				]);
-			} elseif (!$flash['element']) {
-				$out = $message;
-			} else {
-				$options = array();
-				if (isset($flash['params']['plugin'])) {
-					$options['plugin'] = $flash['params']['plugin'];
-				}
-				$tmpVars = $flash['params'];
-				$tmpVars['message'] = $message;
-				$out = $this->_View->element($flash['element'], $tmpVars, $options);
-			}
-			Session::delete('Message.' . $key);
+		if (!Session::check('Message.' . $key)) {
+			return '';
 		}
+
+		$flash = Session::read('Message.' . $key);
+		$message = $flash['message'];
+		unset($flash['message']);
+
+		if (!empty($attrs)) {
+			$flash = array_merge($flash, $attrs);
+		}
+
+		if ($flash['element'] === 'default') {
+			$class = 'message';
+			if (!empty($flash['params']['class'])) {
+				$class = $flash['params']['class'];
+			}
+			$out = $this->formatTemplate('flash', [
+				'class' => $class,
+				'key' => $key,
+				'message' => $message
+			]);
+		} elseif (!$flash['element']) {
+			$out = $message;
+		} else {
+			$options = array();
+			if (isset($flash['params']['plugin'])) {
+				$options['plugin'] = $flash['params']['plugin'];
+			}
+			$tmpVars = $flash['params'];
+			$tmpVars['message'] = $message;
+			$out = $this->_View->element($flash['element'], $tmpVars, $options);
+		}
+		Session::delete('Message.' . $key);
 		return $out;
 	}
 
