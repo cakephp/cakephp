@@ -140,8 +140,7 @@ class SessionHelper extends Helper {
  * @return string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
  */
-	public function flash($key = 'flash', $attrs = array()) {
-
+	public function flash($key = 'flash', $attrs = []) {
 		if (!Session::check('Message.' . $key)) {
 			return '';
 		}
