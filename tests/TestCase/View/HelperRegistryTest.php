@@ -18,13 +18,13 @@ use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use Cake\View\HelperRegistry;
-use Cake\View\Helper\HtmlHelper;
+use Cake\View\Helper;
 use Cake\View\View;
 
 /**
  * Extended HtmlHelper
  */
-class HtmlAliasHelper extends HtmlHelper {
+class HtmlAliasHelper extends Helper {
 
 	public function afterRender($viewFile) {
 	}
