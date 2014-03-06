@@ -1106,11 +1106,13 @@ class AuthComponentTest extends CakeTestCase {
 
 		App::uses('Dispatcher', 'Routing');
 
+		$Response = new CakeResponse();
 		ob_start();
 		$Dispatcher = new Dispatcher();
-		$Dispatcher->dispatch(new CakeRequest('/ajax_auth/add'), new CakeResponse(), array('return' => 1));
+		$Dispatcher->dispatch(new CakeRequest('/ajax_auth/add'), $Response, array('return' => 1));
 		$result = ob_get_clean();
 
+		$this->assertEquals(403, $Response->statusCode());
 		$this->assertEquals("Ajax!\nthis is the test element", str_replace("\r\n", "\n", $result));
 		unset($_SERVER['HTTP_X_REQUESTED_WITH']);
 	}

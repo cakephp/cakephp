@@ -365,6 +365,7 @@ class AuthComponent extends Component {
 			return false;
 		}
 		if (!empty($this->ajaxLogin)) {
+			$controller->response->statusCode(403);
 			$controller->viewPath = 'Elements';
 			echo $controller->render($this->ajaxLogin, $this->RequestHandler->ajaxLayout);
 			$this->_stop();
