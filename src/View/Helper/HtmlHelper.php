@@ -1,9 +1,5 @@
 <?php
 /**
- * Html Helper class file.
- *
- * Simplifies the construction of HTML elements.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
