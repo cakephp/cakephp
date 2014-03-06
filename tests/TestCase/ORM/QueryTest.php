@@ -173,7 +173,7 @@ class QueryTest extends TestCase {
 		$table = TableRegistry::get('authors');
 		TableRegistry::get('articles');
 		$table->hasMany('articles', [
-			'property' => 'articles',
+			'propertyName' => 'articles',
 			'strategy' => $strategy,
 			'sort' => ['articles.id' => 'asc']
 		]);
@@ -247,7 +247,7 @@ class QueryTest extends TestCase {
 	public function testHasManyEagerLoadingFieldsAndOrderNoHydration($strategy) {
 		$table = TableRegistry::get('authors');
 		TableRegistry::get('articles');
-		$table->hasMany('articles', ['property' => 'articles'] + compact('strategy'));
+		$table->hasMany('articles', ['propertyName' => 'articles'] + compact('strategy'));
 
 		$query = new Query($this->connection, $table);
 		$results = $query->select()
@@ -297,7 +297,7 @@ class QueryTest extends TestCase {
 		$table = TableRegistry::get('authors');
 		$article = TableRegistry::get('articles');
 		$table->hasMany('articles', [
-			'property' => 'articles',
+			'propertyName' => 'articles',
 			'strategy' => $strategy,
 			'sort' => ['articles.id' => 'asc']
 		]);
@@ -1013,7 +1013,7 @@ class QueryTest extends TestCase {
 		$table = TableRegistry::get('authors');
 		TableRegistry::get('articles');
 		$table->hasMany('articles', [
-			'property' => 'articles',
+			'propertyName' => 'articles',
 			'sort' => ['articles.id' => 'asc']
 		]);
 		$query = new Query($this->connection, $table);
@@ -1117,7 +1117,7 @@ class QueryTest extends TestCase {
 		$table = TableRegistry::get('authors');
 		$article = TableRegistry::get('articles');
 		$table->hasMany('articles', [
-			'property' => 'articles',
+			'propertyName' => 'articles',
 			'sort' => ['articles.id' => 'asc']
 		]);
 		$article->belongsTo('authors');
@@ -1178,7 +1178,7 @@ class QueryTest extends TestCase {
 			'entityClass' => '\\' . $articleEntity
 		]);
 		$table->hasMany('articles', [
-			'property' => 'articles',
+			'propertyName' => 'articles',
 			'sort' => ['articles.id' => 'asc']
 		]);
 		$query = new Query($this->connection, $table);
