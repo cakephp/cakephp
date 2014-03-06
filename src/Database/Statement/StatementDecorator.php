@@ -34,14 +34,14 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 
 /**
  * Statement instance implementation, such as PDOStatement
- * or any other custom implementation
+ * or any other custom implementation.
  *
  * @var mixed
  */
 	protected $_statement;
 
 /**
- * Reference to the driver object associated to this statement
+ * Reference to the driver object associated to this statement.
  *
  * @var \Cake\Database\Driver
  */
@@ -59,7 +59,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Magic getter to return $queryString as read-only
+ * Magic getter to return $queryString as read-only.
  *
  * @param string $property internal property to get
  * @return mixed
@@ -75,7 +75,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  * positional variables you need to start with index one, if using named params then
  * just use the name in any order.
  *
- * It is not allowed to combine positional and named variables in the same statement
+ * It is not allowed to combine positional and named variables in the same statement.
  *
  * ## Examples:
  *
@@ -106,7 +106,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Returns the number of columns this statement's results will contain
+ * Returns the number of columns this statement's results will contain.
  *
  * ## Example:
  *
@@ -123,7 +123,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Returns the error code for the last error that occurred when executing this statement
+ * Returns the error code for the last error that occurred when executing this statement.
  *
  * @return integer|string
  */
@@ -133,7 +133,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 
 /**
  * Returns the error information for the last error that occurred when executing
- * this statement
+ * this statement.
  *
  * @return array
  */
@@ -145,7 +145,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  * Executes the statement by sending the SQL query to the database. It can optionally
  * take an array or arguments to be bound to the query variables. Please note
  * that binding parameters from this method will not perform any custom type conversion
- * as it would normally happen when calling `bindValue`
+ * as it would normally happen when calling `bindValue`.
  *
  * @param array $params list of values to be bound to query
  * @return boolean true on success, false otherwise
@@ -157,7 +157,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 /**
  * Returns the next row for the result set after executing this statement.
  * Rows can be fetched to contain columns as names or positions. If no
- * rows are left in result set, this method will return false
+ * rows are left in result set, this method will return false.
  *
  * ## Example:
  *
@@ -176,7 +176,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Returns an array with all rows resulting from executing this statement
+ * Returns an array with all rows resulting from executing this statement.
  *
  * ## Example:
  *
@@ -194,7 +194,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Returns the number of rows affected by this SQL statement
+ * Returns the number of rows affected by this SQL statement.
  *
  * ## Example:
  *
@@ -231,8 +231,8 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Statements can be passed as argument for count()
- * to return the number for affected rows from last execution
+ * Statements can be passed as argument for count() to return the number
+ * for affected rows from last execution.
  *
  * @return integer
  */
@@ -241,7 +241,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Binds a set of values to statement object with corresponding type
+ * Binds a set of values to statement object with corresponding type.
  *
  * @param array $params list of values to be bound
  * @param array $types list of types to be used, keys should match those in $params
@@ -267,7 +267,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 	}
 
 /**
- * Returns the latest primary inserted using this statement
+ * Returns the latest primary inserted using this statement.
  *
  * @param string $table table name or sequence to get last insert value from
  * @param string column the name of the column representing the primary key
