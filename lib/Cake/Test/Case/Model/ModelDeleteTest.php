@@ -443,9 +443,7 @@ class ModelDeleteTest extends BaseModelTest {
  */
 	public function testDeleteAllFailedFind() {
 		$this->loadFixtures('Article');
-		$this->getMock('Article', array('find'), array(), 'ArticleDeleteAll');
-
-		$TestModel = new ArticleDeleteAll();
+		$TestModel = $this->getMock('Article', array('find'));
 		$TestModel->expects($this->once())
 			->method('find')
 			->will($this->returnValue(null));
