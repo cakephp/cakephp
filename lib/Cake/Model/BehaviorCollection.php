@@ -157,7 +157,7 @@ class BehaviorCollection extends ObjectCollection implements CakeEventListener {
 		foreach ($methods as $m) {
 			if (!isset($parentMethods[$m])) {
 				$methodAllowed = (
-					$m[0] !== '_' && !array_key_exists($m, $this->_methods) &&
+					!array_key_exists($m, $this->_methods) &&
 					!in_array($m, $callbacks)
 				);
 				if ($methodAllowed) {
