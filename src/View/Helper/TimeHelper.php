@@ -446,4 +446,13 @@ class TimeHelper extends Helper {
 		return $this->_engine->i18nFormat($date, $format, $invalid, $timezone);
 	}
 
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
+	}
+
 }

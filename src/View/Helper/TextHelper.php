@@ -325,4 +325,13 @@ class TextHelper extends Helper {
 		return $this->_engine->toList($list, $and, $separator);
 	}
 
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
+	}
+
 }

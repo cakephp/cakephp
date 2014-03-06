@@ -158,4 +158,13 @@ class SessionHelper extends Helper {
 		return Session::valid();
 	}
 
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
+	}
+
 }

@@ -1931,7 +1931,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		unset($this->Form->request->data);
+		$this->Form->request->data = [];
 
 		$entity->errors('field', 'Badness!');
 		$this->Form->create($entity, ['context' => ['table' => 'Contacts']]);

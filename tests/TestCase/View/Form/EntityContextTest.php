@@ -378,6 +378,29 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Test that val() reads from the request.
+ *
+ * @return void
+ */
+	public function testValReadsRequest() {
+		$this->request->data = [
+			'title' => 'New title',
+			'notInEntity' => 'yes',
+		];
+		$row = new Entity([
+			'title' => 'Test entity',
+			'body' => 'Something new'
+		]);
+		$context = new EntityContext($this->request, [
+			'entity' => $row,
+			'table' => 'Articles',
+		]);
+		$this->assertEquals('New title', $context->val('title'));
+		$this->assertEquals('yes', $context->val('notInEntity'));
+		$this->assertEquals($row->body, $context->val('body'));
+	}
+
+/**
  * Test reading values from associated entities.
  *
  * @return void

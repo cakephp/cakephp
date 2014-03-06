@@ -194,6 +194,10 @@ class EntityContext implements ContextInterface {
  * @return mixed The value of the field or null on a miss.
  */
 	public function val($field) {
+		$val = $this->_request->data($field);
+		if ($val !== null) {
+			return $val;
+		}
 		if (empty($this->_context['entity'])) {
 			return null;
 		}

@@ -808,4 +808,13 @@ class PaginatorHelper extends Helper {
 		return $out;
 	}
 
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return ['View.beforeRender' => 'beforeRender'];
+	}
+
 }

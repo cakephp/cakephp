@@ -218,4 +218,13 @@ class NumberHelper extends Helper {
 		return $this->_engine->defaultCurrency($currency);
 	}
 
+/**
+ * Event listeners.
+ *
+ * @return array
+ */
+	public function implementedEvents() {
+		return [];
+	}
+
 }
