@@ -298,7 +298,7 @@ class QueryTest extends TestCase {
 		$article = TableRegistry::get('articles');
 		$table->hasMany('articles', [
 			'property' => 'articles',
-			'stratgey' => $strategy,
+			'strategy' => $strategy,
 			'sort' => ['articles.id' => 'asc']
 		]);
 		$article->belongsTo('authors');
