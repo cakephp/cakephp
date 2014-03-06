@@ -758,6 +758,17 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests that property is being set using the constructor options.
+ *
+ * @return void
+ */
+	public function testPropertyOption() {
+		$config = ['propertyName' => 'thing_placeholder'];
+		$association = new hasMany('Thing', $config);
+		$this->assertEquals('thing_placeholder', $association->property());
+	}
+
+/**
  * Test that plugin names are omitted from property()
  *
  * @return void
