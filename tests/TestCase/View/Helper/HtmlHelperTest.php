@@ -1819,14 +1819,14 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->useTag('unknowntag');
 		$this->assertEquals('', $result);
 
-		$result = $this->Html->useTag('formend');
-		$this->assertTags($result, '/form');
+		$result = $this->Html->useTag('blockend');
+		$this->assertEquals('</div>', $result);
 
-		$result = $this->Html->useTag('form', 'url', ' test');
-		$this->assertEquals('<form action="url" test>', $result);
+		$result = $this->Html->useTag('image', 'url', 'test');
+		$this->assertEquals('<img src="url" test/>', $result);
 
-		$result = $this->Html->useTag('form', 'example.com', array('test' => 'ok'));
-		$this->assertTags($result, array('form' => array('test' => 'ok', 'action' => 'example.com')));
+		$result = $this->Html->useTag('image', 'example.com', array('test' => 'ok'));
+		$this->assertEquals('<img src="example.com"  test="ok"/>', $result);
 	}
 
 /**
@@ -2093,7 +2093,7 @@ class HtmlHelperTest extends TestCase {
 		$tags = $this->Html->getAttribute('_tags');
 		$this->assertEquals('start form', $tags['form']);
 		$this->assertEquals('finish form', $tags['formend']);
-		$this->assertEquals('</select>', $tags['selectend']);
+		$this->assertEquals('</div>', $tags['blockend']);
 
 		$result = $this->Html->loadConfig(array('htmlhelper_minimized.ini', 'ini'), $path);
 		$expected = array(
