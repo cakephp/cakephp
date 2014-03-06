@@ -40,7 +40,7 @@ class ResultSetDecorator extends Collection implements Countable, Serializable, 
  * @return integer
  */
 	public function count() {
-		return count(iterator_to_array($this));
+		return count($this->toArray());
 	}
 
 /**
