@@ -17,8 +17,8 @@ namespace Cake\Test\TestCase\View;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
-use Cake\View\HelperRegistry;
 use Cake\View\Helper;
+use Cake\View\HelperRegistry;
 use Cake\View\View;
 
 /**
