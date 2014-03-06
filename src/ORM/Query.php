@@ -559,25 +559,15 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Executes this query and returns a ResultSet object containing the results
+ * Executes this query and returns a ResultSet object containing the results.
+ * This will also setup the correct statement class in order to eager load deep
+ * associations.
  *
  * @return \Cake\ORM\ResultSet
  */
 	protected function _execute() {
-		return new ResultSet($this, $this->execute());
-	}
-
-/**
- * Auxiliary function used to wrap the original statement from the driver with
- * any registered callbacks. This will also setup the correct statement class
- * in order to eager load deep associations.
- *
- * @param \Cake\Database\Statement $statement to be decorated
- * @return \Cake\Database\Statement
- */
-	protected function _decorateStatement($statement) {
-		$statement = parent::_decorateStatement($statement);
-		return $this->eagerLoader()->loadExternal($this, $statement);
+		$statement = $this->eagerLoader()->loadExternal($this, $this->execute());
+		return new ResultSet($this, $statement);
 	}
 
 /**

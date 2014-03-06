@@ -239,6 +239,37 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to count results containing hasMany associations
+ * both hydrating and not hydrating the results.
+ *
+ * @dataProvider strategiesProvider
+ * @return void
+ */
+	public function testHasManyEagerLoadingCount($strategy) {
+		$table = TableRegistry::get('authors');
+		TableRegistry::get('articles');
+		$table->hasMany('articles', [
+			'property' => 'articles',
+			'strategy' => $strategy,
+			'sort' => ['articles.id' => 'asc']
+		]);
+		$query = new Query($this->connection, $table);
+
+		$query = $query->select()
+			->contain('articles');
+
+		$expected = 4;
+
+		$results = $query->hydrate(false)
+			->count();
+		$this->assertEquals($expected, $results);
+
+		$results = $query->hydrate(true)
+			->count();
+		$this->assertEquals($expected, $results);
+	}
+
+/**
  * Tests that it is possible to set fields & order in a hasMany result set
  *
  * @dataProvider strategiesProvider
