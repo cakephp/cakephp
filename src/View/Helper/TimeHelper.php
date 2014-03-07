@@ -19,6 +19,7 @@ use Cake\Core\Configure;
 use Cake\Error;
 use Cake\Utility\Hash;
 use Cake\View\Helper;
+use Cake\View\Helper\StringTemplateTrait;
 use Cake\View\View;
 
 /**
@@ -30,6 +31,8 @@ use Cake\View\View;
  * @see \Cake\Utility\Time
  */
 class TimeHelper extends Helper {
+
+	use StringTemplateTrait;
 
 /**
  * Cake\Utility\Time instance
@@ -59,6 +62,7 @@ class TimeHelper extends Helper {
 		} else {
 			throw new Error\Exception(sprintf('Class for %s could not be found', $settings['engine']));
 		}
+		$this->initStringTemplates();
 	}
 
 /**
@@ -345,7 +349,7 @@ class TimeHelper extends Helper {
 			$relativeDate = sprintf(
 				'<%s%s>%s</%s>',
 				$element['tag'],
-				$this->_parseAttributes($element, array('tag')),
+				$this->_templater->formatAttributes($element, array('tag')),
 				$relativeDate,
 				$element['tag']
 			);

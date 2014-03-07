@@ -984,7 +984,7 @@ class HtmlHelper extends Helper {
 		array_shift($args);
 		foreach ($args as &$arg) {
 			if (is_array($arg)) {
-				$arg = $this->_parseAttributes($arg, null, ' ', '');
+				$arg = $this->_templater->formatAttributes($arg);
 			}
 		}
 		return vsprintf($this->_tags[$tag], $args);
