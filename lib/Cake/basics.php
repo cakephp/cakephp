@@ -560,7 +560,7 @@ if (!function_exists('__')) {
 			$args = array_slice(func_get_args(), 1);
 		}
 
-		$translated = preg_replace('/(?<!%)%(?![%bcdeEfFgGosuxX\d\.])/', '%%', $translated);
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -592,7 +592,7 @@ if (!function_exists('__n')) {
 			$args = array_slice(func_get_args(), 3);
 		}
 
-		$translated = preg_replace('/(?<!%)%(?![%bcdeEfFgGosuxX\d\.])/', '%%', $translated);
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -621,7 +621,7 @@ if (!function_exists('__d')) {
 			$args = array_slice(func_get_args(), 2);
 		}
 
-		$translated = preg_replace('/(?<!%)%(?![%bcdeEfFgGosuxX\d\.])/', '%%', $translated);
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -654,7 +654,7 @@ if (!function_exists('__dn')) {
 			$args = array_slice(func_get_args(), 4);
 		}
 
-		$translated = preg_replace('/(?<!%)%(?![%bcdeEfFgGosuxX\d\.])/', '%%', $translated);
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -698,7 +698,7 @@ if (!function_exists('__dc')) {
 			$args = array_slice(func_get_args(), 3);
 		}
 
-		$translated = preg_replace('/(?<!%)%(?![%bcdeEfFgGosuxX\d\.])/', '%%', $translated);
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -746,7 +746,7 @@ if (!function_exists('__dcn')) {
 			$args = array_slice(func_get_args(), 5);
 		}
 
-		$translated = preg_replace('/(?<!%)%(?![%bcdeEfFgGosuxX\d\.])/', '%%', $translated);
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
@@ -786,7 +786,7 @@ if (!function_exists('__c')) {
 			$args = array_slice(func_get_args(), 2);
 		}
 
-		$translated = preg_replace('/(?<!%)%(?![%bcdeEfFgGosuxX\d\.])/', '%%', $translated);
+		$translated = preg_replace('/(?<!%)%(?![%\'\-+bcdeEfFgGosuxX\d\.])/', '%%', $translated);
 		return vsprintf($translated, $args);
 	}
 
