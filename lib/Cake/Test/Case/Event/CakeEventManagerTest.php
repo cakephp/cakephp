@@ -501,7 +501,7 @@ class CakeEventManagerTest extends CakeTestCase {
 	}
 
 /**
- * Test that events are dispatched properly when there are global and local 
+ * Test that events are dispatched properly when there are global and local
  * listeners at the same priority.
  *
  * @return void
@@ -511,7 +511,7 @@ class CakeEventManagerTest extends CakeTestCase {
 		CakeEventManager::instance()->attach($listener);
 		$listener2 = new CakeEventTestListener();
 		$manager = new CakeEventManager();
-		$manager->attach([$listener2, 'listenerFunction'], 'fake.event');
+		$manager->attach(array($listener2, 'listenerFunction'), 'fake.event');
 
 		$manager->dispatch(new CakeEvent('fake.event', $this));
 		$this->assertEquals(array('listenerFunction'), $listener->callStack);
