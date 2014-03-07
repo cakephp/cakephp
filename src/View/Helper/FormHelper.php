@@ -1105,9 +1105,10 @@ class FormHelper extends Helper {
 			$labelText = $label;
 		}
 
-		if (isset($options['id']) && is_string($options['id'])) {
-			$labelAttributes = array_merge($labelAttributes, array('for' => $options['id']));
-		}
+		$labelAttributes = array_merge($labelAttributes, [
+			'for' => isset($options['id']) ? $options['id'] : null,
+			'input' => isset($options['input']) ? $options['input'] : null
+		]);
 		return $this->label($fieldName, $labelText, $labelAttributes);
 	}
 

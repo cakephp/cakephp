@@ -5581,4 +5581,26 @@ class FormHelperTest extends TestCase {
 		$this->assertContains('required', $result);
 	}
 
+/**
+ * Tests that it is possible to nest inputs inside labels
+ *
+ * @return void
+ */
+	public function testNestInputInLabel() {
+		$this->Form->templates([
+			'label' => '<label{{attrs}}>{{text}}{{input}}</label>',
+			'formGroup' => '{{label}}'
+		]);
+		$result = $this->Form->input('foo');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'foo'),
+				'Foo',
+				'input' => array('type' => 'text', 'name' => 'foo', 'id' => 'foo'),
+			'/label',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
 }
