@@ -20,6 +20,7 @@ use Cake\Error;
 use Cake\Network\Response;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
+use Cake\View\Helper\StringTemplateTrait;
 use Cake\View\View;
 
 /**
@@ -30,6 +31,8 @@ use Cake\View\View;
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html
  */
 class HtmlHelper extends Helper {
+
+	use StringTemplateTrait;
 
 /**
  * Reference to the Response object
@@ -75,6 +78,42 @@ class HtmlHelper extends Helper {
 	);
 
 /**
+ * Default templates the helper users.
+ *
+ * @var array
+ */
+	protected $_defaultTemplates = [
+		'meta' => '<meta{{attrs}}/>',
+		'metalink' => '<link href="{{url}}"{{attrs}}/>',
+		'link' => '<a href="{{url}}"{{attrs}}>{{content}}</a>',
+		'mailto' => '<a href="mailto:{{url}}"{{attrs}}>{{content}}</a>',
+		'image' => '<img src="{{url}}"{{attrs}}/>',
+		'tableheader' => '<th{{attrs}}>{{content}}</th>',
+		'tableheaderrow' => '<tr{{attrs}}>{{content}}</tr>',
+		'tablecell' => '<td{{attrs}}>{{content}}</td>',
+		'tablerow' => '<tr{{attrs}}>{{content}}</tr>',
+		'block' => '<div{{attrs}}>{{content}}</div>',
+		'blockstart' => '<div{{attrs}}>',
+		'blockend' => '</div>',
+		'tag' => '<{{tag}}{{attrs}}>{{content}}</{{tag}}>',
+		'tagstart' => '<{{tag}}{{attrs}}>',
+		'tagend' => '</{{tag}}>',
+		'tagselfclosing' => '<{{tag}}{{attrs}}/>',
+		'para' => '<p{{attrs}}>{{content}}</p>',
+		'parastart' => '<p{{attrs}}>',
+		'css' => '<link rel="{{rel}}" type="text/css" href="{{url}}"{{attrs}}/>',
+		'style' => '<style type="text/css"{{attrs}}>{{content}}</style>',
+		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset={{charset}}" />',
+		'ul' => '<ul{{attrs}}>{{content}}</ul>',
+		'ol' => '<ol{{attrs}}>{{content}}</ol>',
+		'li' => '<li{{attrs}}>{{content}}</li>',
+		'javascriptblock' => '<script{{attrs}}>{{content}}</script>',
+		'javascriptstart' => '<script>',
+		'javascriptlink' => '<script type="text/javascript" src="{{url}}"{{attrs}}></script>',
+		'javascriptend' => '</script>'
+	];
+
+/**
  * Breadcrumbs.
  *
  * @var array
@@ -116,26 +155,22 @@ class HtmlHelper extends Helper {
  *
  * ### Settings
  *
- * - `configFile` A file containing an array of tags you wish to redefine.
+ * - `templates` Either a filename to a config containing templates.
+ *   Or an array of templates to load. See Cake\View\StringTemplate for
+ *   template formatting.
  *
  * ### Customizing tag sets
  *
- * Using the `configFile` option you can redefine the tag HtmlHelper will use.
- * The file named should be compatible with HtmlHelper::loadConfig().
+ * Using the `templates` option you can redefine the tag HtmlHelper will use.
  *
  * @param View $View The View this helper is being attached to.
  * @param array $settings Configuration settings for the helper.
  */
 	public function __construct(View $View, $settings = array()) {
 		parent::__construct($View, $settings);
-		if (is_object($this->_View->response)) {
-			$this->response = $this->_View->response;
-		} else {
-			$this->response = new Response();
-		}
-		if (!empty($settings['configFile'])) {
-			$this->loadConfig($settings['configFile']);
-		}
+		$this->response = $this->_View->response ?: new Response();
+
+		$this->initStringTemplates($this->_defaultTemplates);
 	}
 
 /**
@@ -248,12 +283,20 @@ class HtmlHelper extends Helper {
 		if (isset($options['link'])) {
 			$options['link'] = $this->assetUrl($options['link']);
 			if (isset($options['rel']) && $options['rel'] === 'icon') {
-				$out = sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('block', 'link'), ' ', ' '));
+				$out = $this->formatTemplate('metalink', [
+					'url' => $options['link'],
+					'attrs' => $this->_templater->formatAttributes($options, ['block', 'link'])
+				]);
 				$options['rel'] = 'shortcut icon';
 			}
-			$out .= sprintf($this->_tags['metalink'], $options['link'], $this->_parseAttributes($options, array('block', 'link'), ' ', ' '));
+			$out .= $this->formatTemplate('metalink', [
+				'url' => $options['link'],
+				'attrs' => $this->_templater->formatAttributes($options, ['block', 'link'])
+			]);
 		} else {
-			$out = sprintf($this->_tags['meta'], $this->_parseAttributes($options, array('block', 'type'), ' ', ' '));
+			$out = $this->formatTemplate('meta', [
+				'attrs' => $this->_templater->formatAttributes($options, ['block', 'type'])
+			]);
 		}
 
 		if (empty($options['block'])) {
@@ -274,7 +317,9 @@ class HtmlHelper extends Helper {
 		if (empty($charset)) {
 			$charset = strtolower(Configure::read('App.encoding'));
 		}
-		return sprintf($this->_tags['charset'], (!empty($charset) ? $charset : 'utf-8'));
+		return $this->formatTemplate('charset', [
+			'charset' => (!empty($charset) ? $charset : 'utf-8')
+		]);
 	}
 
 /**
@@ -338,7 +383,11 @@ class HtmlHelper extends Helper {
 			$options['onclick'] .= 'event.returnValue = false; return false;';
 			unset($options['default']);
 		}
-		return sprintf($this->_tags['link'], $url, $this->_parseAttributes($options), $title);
+		return $this->formatTemplate('link', [
+			'url' => $url,
+			'attrs' => $this->_templater->formatAttributes($options),
+			'content' => $title
+		]);
 	}
 
 /**
@@ -417,18 +466,16 @@ class HtmlHelper extends Helper {
 		}
 
 		if ($options['rel'] == 'import') {
-			$out = sprintf(
-				$this->_tags['style'],
-				$this->_parseAttributes($options, array('rel', 'block'), '', ' '),
-				'@import url(' . $url . ');'
-			);
+			$out = $this->formatTemplate('style', [
+				'attrs' => $this->_templater->formatAttributes($options, ['rel', 'block']),
+				'content' => '@import url(' . $url . ');',
+			]);
 		} else {
-			$out = sprintf(
-				$this->_tags['css'],
-				$options['rel'],
-				$url,
-				$this->_parseAttributes($options, array('rel', 'block'), '', ' ')
-			);
+			$out = $this->formatTemplate('css', [
+				'rel' => $options['rel'],
+				'url' => $url,
+				'attrs' => $this->_templater->formatAttributes($options, ['rel', 'block']),
+			]);
 		}
 
 		if (empty($options['block'])) {
@@ -509,8 +556,10 @@ class HtmlHelper extends Helper {
 			$url = $this->assetUrl($url, $options + array('pathPrefix' => Configure::read('App.jsBaseUrl'), 'ext' => '.js'));
 			$options = array_diff_key($options, array('fullBase' => null, 'pathPrefix' => null));
 		}
-		$attributes = $this->_parseAttributes($options, array('block', 'once'), ' ');
-		$out = sprintf($this->_tags['javascriptlink'], $url, $attributes);
+		$out = $this->formatTemplate('javascriptlink', [
+			'url' => $url,
+			'attrs' => $this->_templater->formatAttributes($options, ['block', 'once']),
+		]);
 
 		if (empty($options['block'])) {
 			return $out;
@@ -545,8 +594,10 @@ class HtmlHelper extends Helper {
 		}
 		unset($options['inline'], $options['safe']);
 
-		$attributes = $this->_parseAttributes($options, array('block'), ' ');
-		$out = sprintf($this->_tags['javascriptblock'], $attributes, $script);
+		$out = $this->formatTemplate('javascriptblock', [
+			'attrs' => $this->_templater->formatAttributes($options, ['block']),
+			'content' => $script
+		]);
 
 		if (empty($options['block'])) {
 			return $out;
@@ -661,6 +712,7 @@ class HtmlHelper extends Helper {
  * crumb was added with.
  *
  * ### Options
+ *
  * - `separator` Separator content to insert in between breadcrumbs, defaults to ''
  * - `firstClass` Class for wrapper tag on the first breadcrumb, defaults to 'first'
  * - `lastClass` Class for wrapper tag on current active page, defaults to 'last'
@@ -702,9 +754,15 @@ class HtmlHelper extends Helper {
 			if (!empty($separator) && ($crumbCount - $which >= 2)) {
 				$elementContent .= $separator;
 			}
-			$result .= $this->tag('li', $elementContent, $options);
+			$result .= $this->formatTemplate('li', [
+				'content' => $elementContent,
+				'attrs' => $this->_templater->formatAttributes($options)
+			]);
 		}
-		return $this->tag('ul', $result, $ulOptions);
+		return $this->formatTemplate('ul', [
+			'content' => $result,
+			'attrs' => $this->_templater->formatAttributes($ulOptions)
+		]);
 	}
 
 /**
@@ -771,10 +829,17 @@ class HtmlHelper extends Helper {
 			unset($options['url']);
 		}
 
-		$image = sprintf($this->_tags['image'], $path, $this->_parseAttributes($options, null, '', ' '));
+		$image = $this->formatTemplate('image', [
+			'url' => $path,
+			'attrs' => $this->_templater->formatAttributes($options),
+		]);
 
 		if ($url) {
-			return sprintf($this->_tags['link'], $this->url($url), null, $image);
+			return $this->formatTemplate('link', [
+				'url' => $this->url($url),
+				'attrs' => null,
+				'content' => $image
+			]);
 		}
 		return $image;
 	}
