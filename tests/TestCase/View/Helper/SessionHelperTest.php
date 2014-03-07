@@ -121,11 +121,11 @@ class SessionHelperTest extends TestCase {
  */
 	public function testFlash() {
 		$result = $this->Session->flash('flash');
-		$expected = '<div id="flashMessage" class="message">This is a calling</div>';
+		$expected = '<div id="flash-message" class="message">This is a calling</div>';
 		$this->assertEquals($expected, $result);
 		$this->assertFalse($this->Session->check('Message.flash'));
 
-		$expected = '<div id="classyMessage" class="positive">Recorded</div>';
+		$expected = '<div id="classy-message" class="positive">Recorded</div>';
 		$result = $this->Session->flash('classy');
 		$this->assertEquals($expected, $result);
 
@@ -148,7 +148,7 @@ class SessionHelperTest extends TestCase {
  */
 	public function testFlashAttributes() {
 		$result = $this->Session->flash('flash', array('params' => array('class' => 'test-message')));
-		$expected = '<div id="flashMessage" class="test-message">This is a calling</div>';
+		$expected = '<div id="flash-message" class="test-message">This is a calling</div>';
 		$this->assertEquals($expected, $result);
 		$this->assertFalse($this->Session->check('Message.flash'));
 	}
