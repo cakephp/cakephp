@@ -858,12 +858,21 @@ class HtmlHelper extends Helper {
 		$out = array();
 		foreach ($names as $arg) {
 			if (!is_array($arg)) {
-				$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes($thOptions), $arg);
+				$out[] = $this->formatTemplate('tableheader', [
+					'attrs' => $this->_templater->formatAttributes($thOptions),
+					'content' => $arg
+				]);
 			} else {
-				$out[] = sprintf($this->_tags['tableheader'], $this->_parseAttributes(current($arg)), key($arg));
+				$out[] = $this->formatTemplate('tableheader', [
+					'attrs' => $this->_templater->formatAttributes(current($arg)),
+					'content' => key($arg)
+				]);
 			}
 		}
-		return sprintf($this->_tags['tablerow'], $this->_parseAttributes($trOptions), implode(' ', $out));
+		return $this->formatTemplate('tablerow', [
+			'attrs' => $this->_templater->formatAttributes($trOptions),
+			'content' => implode(' ', $out)
+		]);
 	}
 
 /**
@@ -912,10 +921,16 @@ class HtmlHelper extends Helper {
 				} elseif ($useCount) {
 					$cellOptions['class'] = 'column-' . ++$i;
 				}
-				$cellsOut[] = sprintf($this->_tags['tablecell'], $this->_parseAttributes($cellOptions), $cell);
+				$cellsOut[] = $this->formatTemplate('tablecell', [
+					'attrs' => $this->_templater->formatAttributes($cellOptions),
+					'content' => $cell
+				]);
 			}
-			$options = $this->_parseAttributes($count % 2 ? $oddTrOptions : $evenTrOptions);
-			$out[] = sprintf($this->_tags['tablerow'], $options, implode(' ', $cellsOut));
+			$opts = $count % 2 ? $oddTrOptions : $evenTrOptions;
+			$out[] = $this->formatTemplate('tablerow', [
+				'attrs' => $this->_templater->formatAttributes($opts),
+				'content' => implode(' ', $cellsOut),
+			]);
 		}
 		return implode("\n", $out);
 	}
@@ -947,7 +962,11 @@ class HtmlHelper extends Helper {
 		} else {
 			$tag = 'tag';
 		}
-		return sprintf($this->_tags[$tag], $name, $this->_parseAttributes($options, null, ' ', ''), $text, $name);
+		return $this->formatTemplate($tag, [
+			'attrs' => $this->_templater->formatAttributes($options),
+			'tag' => $name,
+			'content' => $text,
+		]);
 	}
 
 /**
@@ -1016,7 +1035,10 @@ class HtmlHelper extends Helper {
 		if ($text === null) {
 			$tag = 'parastart';
 		}
-		return sprintf($this->_tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $text);
+		return $this->formatTemplate($tag, [
+			'attrs' => $this->_templater->formatAttributes($options),
+			'content' => $text,
+		]);
 	}
 
 /**
@@ -1097,7 +1119,10 @@ class HtmlHelper extends Helper {
 					$source['type'] = $this->response->getMimeType($ext);
 				}
 				$source['src'] = $this->assetUrl($source['src'], $options);
-				$sourceTags .= $this->useTag('tagselfclosing', 'source', $source);
+				$sourceTags .= $this->formatTemplate('tagselfclosing', [
+					'tag' => 'source',
+					'attrs' => $this->_templater->formatAttributes($source)
+				]);
 			}
 			unset($source);
 			$options['text'] = $sourceTags . $options['text'];
@@ -1152,7 +1177,10 @@ class HtmlHelper extends Helper {
 			$options = array();
 		}
 		$items = $this->_nestedListItem($list, $options, $itemOptions, $tag);
-		return sprintf($this->_tags[$tag], $this->_parseAttributes($options, null, ' ', ''), $items);
+		return $this->formatTemplate($tag, [
+			'attrs' => $this->_templater->formatAttributes($options),
+			'content' => $items
+		]);
 	}
 
 /**
@@ -1178,94 +1206,13 @@ class HtmlHelper extends Helper {
 			} elseif (isset($itemOptions['odd']) && $index % 2 !== 0) {
 				$itemOptions['class'] = $itemOptions['odd'];
 			}
-			$out .= sprintf($this->_tags['li'], $this->_parseAttributes($itemOptions, array('even', 'odd'), ' ', ''), $item);
+			$out .= $this->formatTemplate('li', [
+				'attrs' => $this->_templater->formatAttributes($itemOptions, ['even', 'odd']),
+				'content' => $item
+			]);
 			$index++;
 		}
 		return $out;
-	}
-
-/**
- * Load Html tag configuration.
- *
- * Loads a file from APP/Config that contains tag data. By default the file is expected
- * to be compatible with PhpConfig:
- *
- * `$this->Html->loadConfig('tags.php');`
- *
- * tags.php could look like:
- *
- * {{{
- * $tags = array(
- *		'meta' => '<meta %s>'
- * );
- * }}}
- *
- * If you wish to store tag definitions in another format you can give an array
- * containing the file name, and Engine class name:
- *
- * `$this->Html->loadConfig(array('tags.ini', 'ini'));`
- *
- * Its expected that the `tags` index will exist from any configuration file that is read.
- * You can also specify the path to read the configuration file from, if APP/Config is not
- * where the file is.
- *
- * `$this->Html->loadConfig('tags.php', APP . 'Lib/');`
- *
- * Configuration files can define the following sections:
- *
- * - `tags` The tags to replace.
- * - `minimizedAttributes` The attributes that are represented like `disabled="disabled"`
- * - `docTypes` Additional doctypes to use.
- * - `attributeFormat` Format for long attributes e.g. `'%s="%s"'`
- * - `minimizedAttributeFormat` Format for minimized attributes e.g. `'%s="%s"'`
- *
- * @param string|array $configFile String with the config file (load using PhpConfig) or an array with file and engine name
- * @param string $path Path with config file
- * @return mixed False to error or loaded configs
- * @throws \Cake\Error\ConfigureException
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#changing-the-tags-output-by-htmlhelper
- */
-	public function loadConfig($configFile, $path = null) {
-		if (!$path) {
-			$path = APP . 'Config/';
-		}
-		$file = null;
-		$engine = 'php';
-
-		if (!is_array($configFile)) {
-			$file = $configFile;
-		} elseif (isset($configFile[0])) {
-			$file = $configFile[0];
-			if (isset($configFile[1])) {
-				$engine = $configFile[1];
-			}
-		} else {
-			throw new Error\ConfigureException('Cannot load the configuration file. Wrong "configFile" configuration.');
-		}
-
-		$engineClass = App::classname(Inflector::camelize($engine), 'Configure/Engine', 'Config');
-		if (!$engineClass) {
-			throw new Error\ConfigureException('Cannot load the configuration file. Unknown engine.');
-		}
-
-		$engineObj = new $engineClass($path);
-		$configs = $engineObj->read($file);
-		if (isset($configs['tags']) && is_array($configs['tags'])) {
-			$this->_tags = array_merge($this->_tags, $configs['tags']);
-		}
-		if (isset($configs['minimizedAttributes']) && is_array($configs['minimizedAttributes'])) {
-			$this->_minimizedAttributes = array_merge($this->_minimizedAttributes, $configs['minimizedAttributes']);
-		}
-		if (isset($configs['docTypes']) && is_array($configs['docTypes'])) {
-			$this->_docTypes = array_merge($this->_docTypes, $configs['docTypes']);
-		}
-		if (isset($configs['attributeFormat'])) {
-			$this->_attributeFormat = $configs['attributeFormat'];
-		}
-		if (isset($configs['minimizedAttributeFormat'])) {
-			$this->_minimizedAttributeFormat = $configs['minimizedAttributeFormat'];
-		}
-		return $configs;
 	}
 
 /**
