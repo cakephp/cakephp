@@ -841,12 +841,6 @@ class FormHelper extends Helper {
 		$this->templates($options['templates']);
 		unset($options['templates']);
 
-		$label = $this->_getLabel($fieldName, $options);
-
-		if ($options['type'] !== 'radio') {
-			unset($options['label']);
-		}
-
 		$template = 'groupContainer';
 		$error = null;
 		if ($options['type'] !== 'hidden' && $options['error'] !== false) {
@@ -855,8 +849,15 @@ class FormHelper extends Helper {
 			unset($options['error']);
 		}
 
-		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
+		$label = $options['label'];
+		if ($options['type'] !== 'radio') {
+			unset($options['label']);
+		}
+
 		$input = $this->_getInput($fieldName, $options);
+		$label = $this->_getLabel($fieldName, compact('input', 'label') + $options);
+
+		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
 		$result = $this->formatTemplate($groupTemplate, compact('input', 'label'));
 
 		if ($options['type'] !== 'hidden') {
