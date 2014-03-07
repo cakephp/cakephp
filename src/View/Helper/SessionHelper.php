@@ -1,7 +1,5 @@
 <?php
 /**
- * Session Helper provides access to the Session in the Views.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,6 +16,8 @@ namespace Cake\View\Helper;
 
 use Cake\Network\Session;
 use Cake\View\Helper;
+use Cake\View\Helper\StringTemplateTrait;
+use Cake\View\View;
 
 /**
  * Session Helper.
@@ -27,6 +27,30 @@ use Cake\View\Helper;
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html
  */
 class SessionHelper extends Helper {
+
+	use StringTemplateTrait;
+
+/**
+ * Default templates to use.
+ *
+ * @var array
+ */
+	protected $_defaultTemplates = [
+		'flash' => '<div id="{{key}}Message" class="{{class}}">{{message}}</div>'
+	];
+
+/**
+ * Construct the helper and sets up templates
+ *
+ * @param \Cake\View\View $view The View this helper is being attached to.
+ * @param array $settings Configuration settings for the helper.
+ */
+	public function __construct(View $view, $settings = []) {
+		$settings += ['templates' => null];
+		parent::__construct($view, $settings);
+
+		$this->initStringTemplates($this->_defaultTemplates);
+	}
 
 /**
  * Used to read a session values set in a controller for a key or return values for all keys.
@@ -103,8 +127,8 @@ class SessionHelper extends Helper {
  *
  * {{{
  * echo $this->Session->flash('flash', array(
- *		'element' => 'my_custom_element',
- *		'params' => array('plugin' => 'my_plugin')
+ *   'element' => 'my_custom_element',
+ *   'params' => array('plugin' => 'my_plugin')
  * ));
  * }}}
  *
@@ -114,37 +138,41 @@ class SessionHelper extends Helper {
  * @return string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/session.html#SessionHelper::flash
  */
-	public function flash($key = 'flash', $attrs = array()) {
-		$out = false;
-
-		if (Session::check('Message.' . $key)) {
-			$flash = Session::read('Message.' . $key);
-			$message = $flash['message'];
-			unset($flash['message']);
-
-			if (!empty($attrs)) {
-				$flash = array_merge($flash, $attrs);
-			}
-
-			if ($flash['element'] === 'default') {
-				$class = 'message';
-				if (!empty($flash['params']['class'])) {
-					$class = $flash['params']['class'];
-				}
-				$out = '<div id="' . $key . 'Message" class="' . $class . '">' . $message . '</div>';
-			} elseif (!$flash['element']) {
-				$out = $message;
-			} else {
-				$options = array();
-				if (isset($flash['params']['plugin'])) {
-					$options['plugin'] = $flash['params']['plugin'];
-				}
-				$tmpVars = $flash['params'];
-				$tmpVars['message'] = $message;
-				$out = $this->_View->element($flash['element'], $tmpVars, $options);
-			}
-			Session::delete('Message.' . $key);
+	public function flash($key = 'flash', $attrs = []) {
+		if (!Session::check('Message.' . $key)) {
+			return '';
 		}
+
+		$flash = Session::read('Message.' . $key);
+		$message = $flash['message'];
+		unset($flash['message']);
+
+		if (!empty($attrs)) {
+			$flash = array_merge($flash, $attrs);
+		}
+
+		if ($flash['element'] === 'default') {
+			$class = 'message';
+			if (!empty($flash['params']['class'])) {
+				$class = $flash['params']['class'];
+			}
+			$out = $this->formatTemplate('flash', [
+				'class' => $class,
+				'key' => $key,
+				'message' => $message
+			]);
+		} elseif (!$flash['element']) {
+			$out = $message;
+		} else {
+			$options = array();
+			if (isset($flash['params']['plugin'])) {
+				$options['plugin'] = $flash['params']['plugin'];
+			}
+			$tmpVars = $flash['params'];
+			$tmpVars['message'] = $message;
+			$out = $this->_View->element($flash['element'], $tmpVars, $options);
+		}
+		Session::delete('Message.' . $key);
 		return $out;
 	}
 
