@@ -1506,7 +1506,7 @@ class EmailTest extends TestCase {
 			$server .= ':' . env('SERVER_PORT');
 		}
 
-		$expected = '<img src="http://' . $server . '/img/image.gif" alt="cool image" width="100" height="100" />';
+		$expected = '<img src="http://' . $server . '/img/image.gif" alt="cool image" width="100" height="100"';
 		$result = $this->CakeEmail->send();
 		$this->assertContains($expected, $result['message']);
 	}
