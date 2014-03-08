@@ -101,7 +101,7 @@ class HtmlHelper extends Helper {
 		'tagselfclosing' => '<{{tag}}{{attrs}}/>',
 		'para' => '<p{{attrs}}>{{content}}</p>',
 		'parastart' => '<p{{attrs}}>',
-		'css' => '<link rel="{{rel}}" type="text/css" href="{{url}}"{{attrs}}/>',
+		'css' => '<link rel="{{rel}}" href="{{url}}"{{attrs}}/>',
 		'style' => '<style type="text/css"{{attrs}}>{{content}}</style>',
 		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset={{charset}}" />',
 		'ul' => '<ul{{attrs}}>{{content}}</ul>',
@@ -109,7 +109,7 @@ class HtmlHelper extends Helper {
 		'li' => '<li{{attrs}}>{{content}}</li>',
 		'javascriptblock' => '<script{{attrs}}>{{content}}</script>',
 		'javascriptstart' => '<script>',
-		'javascriptlink' => '<script type="text/javascript" src="{{url}}"{{attrs}}></script>',
+		'javascriptlink' => '<script src="{{url}}"{{attrs}}></script>',
 		'javascriptend' => '</script>'
 	];
 
@@ -585,7 +585,7 @@ class HtmlHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::scriptBlock
  */
 	public function scriptBlock($script, $options = array()) {
-		$options += array('type' => 'text/javascript', 'safe' => true, 'inline' => true);
+		$options += array('safe' => true, 'inline' => true);
 		if ($options['safe']) {
 			$script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
