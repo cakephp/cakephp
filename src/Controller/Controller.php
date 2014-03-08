@@ -226,13 +226,6 @@ class Controller extends Object implements EventListener {
 	public $View;
 
 /**
- * File extension for view templates. Defaults to CakePHP's conventional ".ctp".
- *
- * @var string
- */
-	public $ext = '.ctp';
-
-/**
  * Automatically set to the name of a plugin.
  *
  * @var string
