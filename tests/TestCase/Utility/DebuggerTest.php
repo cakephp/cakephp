@@ -28,6 +28,14 @@ use Cake\View\View;
 class DebuggerTestCaseDebugger extends Debugger {
 }
 
+class DebuggableThing {
+
+	public function __debugInfo() {
+		return ['foo' => 'bar', 'inner' => new self()];
+	}
+
+}
+
 /**
  * DebuggerTest class
  *
@@ -623,4 +631,28 @@ TEXT;
 		));
 		$this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Utility\\\DebuggerTest::testTraceExclude/', $result);
 	}
+
+/**
+ * Tests that __debugInfo is used when available
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$object = new DebuggableThing();
+		$result = Debugger::exportVar($object, 2);
+		$expected =<<<eos
+object(Cake\Test\TestCase\Utility\DebuggableThing) {
+
+	'foo' => 'bar',
+	'inner' => object(Cake\Test\TestCase\Utility\DebuggableThing) {
+
+		[maximum depth reached]
+	
+	}
+
+}
+eos;
+		$this->assertEquals($expected, $result);
+	}
+
 }
