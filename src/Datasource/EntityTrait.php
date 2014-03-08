@@ -671,4 +671,21 @@ trait EntityTrait {
 		return json_encode($this, JSON_PRETTY_PRINT);
 	}
 
+/**
+ * Returns an array that can be used to describe the internal estate of this
+ * object.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		return [
+			'new' => $this->isNew(),
+			'accessible' => array_filter($this->_accessible),
+			'properties' => $this->_properties,
+			'dirty' => $this->_dirty,
+			'virtual' => $this->_virtual,
+			'errors' => $this->_errors
+		];
+	}
+
 }

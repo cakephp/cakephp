@@ -996,4 +996,25 @@ class EntityTest extends TestCase {
 		$this->assertEquals(json_encode($entity, JSON_PRETTY_PRINT), (string)$entity);
 	}
 
+/**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$entity = new Entity(['foo' => 'bar'], ['markClean' => true]);
+		$entity->accessible('name', true);
+		$entity->virtualProperties(['baz']);
+		$entity->errors('foo', ['An error']);
+		$result = $entity->__debugInfo();
+		$expected = [
+			'new' => true,
+			'accessible' => ['name'],
+			'properties' => ['foo' => 'bar'],
+			'dirty' => ['foo' => true],
+			'virtual' => ['baz'],
+			'errors' => ['foo' => ['An error']]
+		];
+	}
+
 }
