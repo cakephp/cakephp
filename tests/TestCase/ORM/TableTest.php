@@ -3243,4 +3243,25 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table->patchEntities($entities, $data);
 	}
 
+/**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$articles = TableRegistry::get('articles');
+		$articles->addBehavior('Timestamp');
+		$result = $articles->__debugInfo();
+		$expected = [
+			'table' => 'articles',
+			'alias' => 'articles',
+			'entityClass' => 'TestApp\Model\Entity\Article',
+			'associated' => ['authors', 'tags', 'articlestags'],
+			'behaviors' => ['Timestamp'],
+			'defaultConnection' => 'default',
+			'connectionName' => 'test'
+		];
+		$this->assertEquals($expected, $result);
+	}
+
 }
