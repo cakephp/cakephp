@@ -630,31 +630,41 @@ class FormHelper extends Helper {
  * The text and for attribute are generated off of the fieldname
  *
  * {{{
- * echo $this->Form->label('Post.published');
+ * echo $this->Form->label('published');
  * <label for="PostPublished">Published</label>
  * }}}
  *
  * Custom text:
  *
  * {{{
- * echo $this->Form->label('Post.published', 'Publish');
- * <label for="PostPublished">Publish</label>
+ * echo $this->Form->label('published', 'Publish');
+ * <label for="published">Publish</label>
  * }}}
  *
  * Custom class name:
  *
  * {{{
- * echo $this->Form->label('Post.published', 'Publish', 'required');
- * <label for="PostPublished" class="required">Publish</label>
+ * echo $this->Form->label('published', 'Publish', 'required');
+ * <label for="published" class="required">Publish</label>
  * }}}
  *
  * Custom attributes:
  *
  * {{{
- * echo $this->Form->label('Post.published', 'Publish', array(
+ * echo $this->Form->label('published', 'Publish', array(
  *   'for' => 'post-publish'
  * ));
  * <label for="post-publish">Publish</label>
+ * }}}
+ *
+ * Nesting an input tag:
+ *
+ * {{{
+ * echo $this->Form->label('published', 'Publish', array(
+ *   'for' => 'published',
+ *   'input' => $this->text('published')
+ * ));
+ * <label for="post-publish">Publish <input type="text" name="published"></label>
  * }}}
  *
  * @param string $fieldName This should be "Modelname.fieldname"
@@ -841,12 +851,6 @@ class FormHelper extends Helper {
 		$this->templates($options['templates']);
 		unset($options['templates']);
 
-		$label = $this->_getLabel($fieldName, $options);
-
-		if ($options['type'] !== 'radio') {
-			unset($options['label']);
-		}
-
 		$template = 'groupContainer';
 		$error = null;
 		if ($options['type'] !== 'hidden' && $options['error'] !== false) {
@@ -855,8 +859,15 @@ class FormHelper extends Helper {
 			unset($options['error']);
 		}
 
-		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
+		$label = $options['label'];
+		if ($options['type'] !== 'radio') {
+			unset($options['label']);
+		}
+
 		$input = $this->_getInput($fieldName, $options);
+		$label = $this->_getLabel($fieldName, compact('input', 'label') + $options);
+
+		$groupTemplate = $options['type'] === 'checkbox' ? 'checkboxFormGroup' : 'formGroup';
 		$result = $this->formatTemplate($groupTemplate, compact('input', 'label'));
 
 		if ($options['type'] !== 'hidden') {
@@ -1104,9 +1115,10 @@ class FormHelper extends Helper {
 			$labelText = $label;
 		}
 
-		if (isset($options['id']) && is_string($options['id'])) {
-			$labelAttributes = array_merge($labelAttributes, array('for' => $options['id']));
-		}
+		$labelAttributes = array_merge($labelAttributes, [
+			'for' => isset($options['id']) ? $options['id'] : null,
+			'input' => isset($options['input']) ? $options['input'] : null
+		]);
 		return $this->label($fieldName, $labelText, $labelAttributes);
 	}
 
