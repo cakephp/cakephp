@@ -672,7 +672,7 @@ trait EntityTrait {
 	}
 
 /**
- * Returns an array that can be used to describe the internal estate of this
+ * Returns an array that can be used to describe the internal state of this
  * object.
  *
  * @return array
