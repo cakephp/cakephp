@@ -794,21 +794,6 @@ class ViewTest extends TestCase {
 	}
 
 /**
- * Test that ctp is used as a fallback file extension for elements
- *
- * @return void
- */
-	public function testElementCtpFallback() {
-		$View = new TestView($this->PostsController);
-		$View->ext = '.missing';
-		$element = 'test_element';
-		$expected = 'this is the test element';
-		$result = $View->element($element);
-
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * Test loadHelpers method
  *
  * @return void
@@ -1162,43 +1147,6 @@ class ViewTest extends TestCase {
 		$View->layout = 'cache_layout';
 		$result = $View->render('index');
 		$this->assertNotRegExp('/cake:nocache/', $result);
-	}
-
-/**
- * testBadExt method
- *
- * @expectedException \Cake\Error\MissingViewException
- * @return void
- */
-	public function testBadExt() {
-		$this->PostsController->action = 'something';
-		$this->PostsController->ext = '.whatever';
-
-		$View = new TestView($this->PostsController);
-		$View->render('this_is_missing');
-	}
-
-/**
- * testAltExt method
- *
- * @return void
- */
-	public function testAltExt() {
-		$this->PostsController->ext = '.alt';
-		$View = new TestView($this->PostsController);
-		$result = $View->render('alt_ext', false);
-		$this->assertEquals('alt ext', $result);
-	}
-
-/**
- * testAltBadExt method
- *
- * @expectedException \Cake\Error\MissingViewException
- * @return void
- */
-	public function testAltBadExt() {
-		$View = new TestView($this->PostsController);
-		$View->render('alt_ext');
 	}
 
 /**

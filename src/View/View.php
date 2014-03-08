@@ -148,7 +148,7 @@ class View extends Object {
  *
  * @var string
  */
-	public $ext = '.ctp';
+	protected $_ext = '.ctp';
 
 /**
  * Sub-directory for this view file. This is often used for extension based routing.
@@ -235,7 +235,7 @@ class View extends Object {
  * @var array
  */
 	protected $_passedVars = array(
-		'viewVars', 'autoLayout', 'ext', 'helpers', 'view', 'layout', 'name', 'theme',
+		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme',
 		'layoutPath', 'viewPath', 'request', 'plugin', 'passedArgs', 'cacheAction'
 	);
 
@@ -411,7 +411,7 @@ class View extends Object {
 		if (empty($options['ignoreMissing'])) {
 			list ($plugin, $name) = pluginSplit($name, true);
 			$name = str_replace('/', DS, $name);
-			$file = $plugin . 'Element' . DS . $name . $this->ext;
+			$file = $plugin . 'Element' . DS . $name . $this->_ext;
 			trigger_error(sprintf('Element Not Found: %s', $file), E_USER_NOTICE);
 		}
 	}
@@ -706,7 +706,7 @@ class View extends Object {
 						$defaultPath = $paths[0] . 'Element' . DS;
 						throw new \LogicException(sprintf(
 							'You cannot extend an element which does not exist (%s).',
-							$defaultPath . $name . $this->ext
+							$defaultPath . $name . $this->_ext
 						));
 					}
 					break;
@@ -949,7 +949,7 @@ class View extends Object {
 				}
 			}
 		}
-		throw new Error\MissingViewException(array('file' => $defaultPath . $name . $this->ext));
+		throw new Error\MissingViewException(array('file' => $defaultPath . $name . $this->_ext));
 	}
 
 /**
@@ -1002,7 +1002,7 @@ class View extends Object {
 				}
 			}
 		}
-		throw new Error\MissingLayoutException(array('file' => $paths[0] . $file . $this->ext));
+		throw new Error\MissingLayoutException(array('file' => $paths[0] . $file . $this->_ext));
 	}
 
 /**
@@ -1011,8 +1011,8 @@ class View extends Object {
  * @return array Array of extensions view files use.
  */
 	protected function _getExtensions() {
-		$exts = array($this->ext);
-		if ($this->ext !== '.ctp') {
+		$exts = array($this->_ext);
+		if ($this->_ext !== '.ctp') {
 			$exts[] = '.ctp';
 		}
 		return $exts;
