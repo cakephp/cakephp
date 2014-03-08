@@ -640,7 +640,7 @@ TEXT;
 	public function testDebugInfo() {
 		$object = new DebuggableThing();
 		$result = Debugger::exportVar($object, 2);
-		$expected =<<<eos
+		$expected = <<<eos
 object(Cake\Test\TestCase\Utility\DebuggableThing) {
 
 	'foo' => 'bar',
