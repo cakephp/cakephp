@@ -42,42 +42,6 @@ class HtmlHelper extends Helper {
 	public $response;
 
 /**
- * html tags used by this helper.
- *
- * @var array
- */
-	protected $_tags = array(
-		'meta' => '<meta%s/>',
-		'metalink' => '<link href="%s"%s/>',
-		'link' => '<a href="%s"%s>%s</a>',
-		'mailto' => '<a href="mailto:%s" %s>%s</a>',
-		'image' => '<img src="%s" %s/>',
-		'tableheader' => '<th%s>%s</th>',
-		'tableheaderrow' => '<tr%s>%s</tr>',
-		'tablecell' => '<td%s>%s</td>',
-		'tablerow' => '<tr%s>%s</tr>',
-		'block' => '<div%s>%s</div>',
-		'blockstart' => '<div%s>',
-		'blockend' => '</div>',
-		'tag' => '<%s%s>%s</%s>',
-		'tagstart' => '<%s%s>',
-		'tagend' => '</%s>',
-		'tagselfclosing' => '<%s%s/>',
-		'para' => '<p%s>%s</p>',
-		'parastart' => '<p%s>',
-		'css' => '<link rel="%s" type="text/css" href="%s" %s/>',
-		'style' => '<style type="text/css"%s>%s</style>',
-		'charset' => '<meta http-equiv="Content-Type" content="text/html; charset=%s" />',
-		'ul' => '<ul%s>%s</ul>',
-		'ol' => '<ol%s>%s</ol>',
-		'li' => '<li%s>%s</li>',
-		'javascriptblock' => '<script%s>%s</script>',
-		'javascriptstart' => '<script>',
-		'javascriptlink' => '<script type="text/javascript" src="%s"%s></script>',
-		'javascriptend' => '</script>'
-	);
-
-/**
  * Default templates the helper users.
  *
  * @var array
@@ -967,27 +931,6 @@ class HtmlHelper extends Helper {
 			'tag' => $name,
 			'content' => $text,
 		]);
-	}
-
-/**
- * Returns a formatted existent block of $tags
- *
- * @param string $tag Tag name
- * @return string Formatted block
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::useTag
- */
-	public function useTag($tag) {
-		if (!isset($this->_tags[$tag])) {
-			return '';
-		}
-		$args = func_get_args();
-		array_shift($args);
-		foreach ($args as &$arg) {
-			if (is_array($arg)) {
-				$arg = $this->_templater->formatAttributes($arg);
-			}
-		}
-		return vsprintf($this->_tags[$tag], $args);
 	}
 
 /**

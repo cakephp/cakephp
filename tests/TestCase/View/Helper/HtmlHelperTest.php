@@ -1751,25 +1751,6 @@ class HtmlHelperTest extends TestCase {
 	}
 
 /**
- * testUseTag method
- *
- * @return void
- */
-	public function testUseTag() {
-		$result = $this->Html->useTag('unknowntag');
-		$this->assertEquals('', $result);
-
-		$result = $this->Html->useTag('blockend');
-		$this->assertEquals('</div>', $result);
-
-		$result = $this->Html->useTag('image', 'url', 'test');
-		$this->assertEquals('<img src="url" test/>', $result);
-
-		$result = $this->Html->useTag('image', 'example.com', array('test' => 'ok'));
-		$this->assertEquals('<img src="example.com"  test="ok"/>', $result);
-	}
-
-/**
  * testDiv method
  *
  * @return void
