@@ -887,8 +887,6 @@ class FormHelper extends Helper {
 			case 'url':
 				$options = $this->_initInputField($fieldName, $options);
 				return $this->widget($options['type'], $options);
-			case 'date':
-				return $this->dateTime($fieldName, $options);
 			default:
 				return $this->{$options['type']}($fieldName, $options);
 		}
@@ -1986,14 +1984,10 @@ class FormHelper extends Helper {
  * - `timeFormat` The time format to use, either 12 or 24.
  * - `second` Set to true to enable seconds drop down.
  *
- * To control the order of inputs, and any elements/content between the inputs you
- * can override the `dateWidget` template. By default the `dateWidget` template is:
- *
- * `{{month}}{{day}}{{year}}{{hour}}{{minute}}{{second}}{{meridian}}`
- *
  * @param string $fieldName Prefix name for the SELECT element
  * @param array $options Array of Options
  * @return string Generated set of select boxes for time formats chosen.
+ * @see Cake\View\Helper\FormHelper::dateTime() for templating options.
  */
 	public function time($fieldName, $options = []) {
 		$options += [
@@ -2005,6 +1999,44 @@ class FormHelper extends Helper {
 			'second' => false,
 		];
 		$options['year'] = $options['month'] = $options['day'] = false;
+		$options = $this->_initInputField($fieldName, $options);
+		$options = $this->_datetimeOptions($options);
+
+		return $this->widget('datetime', $options);
+	}
+
+/**
+ * Generate date inputs.
+ *
+ * ### Options:
+ *
+ * ### Options:
+ *
+ * - `monthNames` If false, 2 digit numbers will be used instead of text.
+ *   If a array, the given array will be used.
+ * - `minYear` The lowest year to use in the year select
+ * - `maxYear` The maximum year to use in the year select
+ * - `empty` - If true, the empty select option is shown. If a string,
+ *   that string is displayed as the empty element.
+ * - `value` | `default` The default value to be used by the input. A value in `$this->data`
+ *   matching the field name will override this value. If no default is provided `time()` will be used.
+ *
+ * @param string $fieldName Prefix name for the SELECT element
+ * @param array $options Array of Options
+ * @return string Generated set of select boxes for time formats chosen.
+ * @see Cake\View\Helper\FormHelper::dateTime() for templating options.
+ */
+	public function date($fieldName, $options = []) {
+		$options += [
+			'empty' => true,
+			'value' => null,
+			'monthNames' => true,
+			'minYear' => null,
+			'maxYear' => null,
+			'orderYear' => 'desc',
+		];
+		$options['hour'] = $options['minute'] = false;
+		$options['meridian'] = $options['second'] = false;
 		$options = $this->_initInputField($fieldName, $options);
 		$options = $this->_datetimeOptions($options);
 

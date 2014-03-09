@@ -3821,6 +3821,24 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test the date type.
+ *
+ * @return void
+ */
+	public function testDate() {
+		$result = $this->Form->date('start_day', array(
+			'value' => array('year' => '2014', 'month' => '03', 'day' => '08')
+		));
+		$this->assertContains('<option value="2014" selected="selected">2014</option>', $result);
+		$this->assertContains('<option value="03" selected="selected">March</option>', $result);
+		$this->assertContains('<option value="08" selected="selected">8</option>', $result);
+		$this->assertNotContains('hour', $result);
+		$this->assertNotContains('minute', $result);
+		$this->assertNotContains('second', $result);
+		$this->assertNotContains('meridian', $result);
+	}
+
+/**
  * testDateTime method
  *
  * Test generation of date/time select elements
