@@ -170,7 +170,7 @@ class StringTemplate {
 			$exclude = [];
 		}
 
-		$exclude = ['escape' => true] + array_flip($exclude);
+		$exclude = ['escape' => true, 'idPrefix' => true] + array_flip($exclude);
 		$escape = $options['escape'];
 		$attributes = [];
 

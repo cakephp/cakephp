@@ -75,6 +75,7 @@ class Radio implements WidgetInterface {
  *   an array of attributes for all labels.
  * - `required` - Set to true to add the required attribute
  *   on all generated radios.
+ * - `idPrefix` Prefix for generated ID attributes.
  *
  * @param array $data The data to build radio buttons with.
  * @return string
@@ -88,6 +89,7 @@ class Radio implements WidgetInterface {
 			'escape' => true,
 			'label' => true,
 			'empty' => false,
+			'idPrefix' => null
 		];
 		if ($data['options'] instanceof Traversable) {
 			$options = iterator_to_array($data['options']);
@@ -101,6 +103,7 @@ class Radio implements WidgetInterface {
 		}
 		unset($data['empty']);
 
+		$this->_idPrefix = $data['idPrefix'];
 		$this->_clearIds();
 		$opts = [];
 		foreach ($options as $val => $text) {

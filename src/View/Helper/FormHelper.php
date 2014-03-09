@@ -1197,6 +1197,7 @@ class FormHelper extends Helper {
 			]);
 		}
 		$attributes['options'] = $options;
+		$attributes['idPrefix'] = $this->_idPrefix;
 
 		return $hidden . $this->widget('radio', $attributes);
 	}
@@ -1653,6 +1654,7 @@ class FormHelper extends Helper {
 		];
 		$attributes = $this->_initInputField($fieldName, $attributes);
 		$attributes['options'] = $options;
+		$attributes['idPrefix'] = $this->_idPrefix;
 
 		$hidden = '';
 		if ($attributes['hiddenField']) {
