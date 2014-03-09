@@ -28,6 +28,14 @@ use Cake\View\View;
 class DebuggerTestCaseDebugger extends Debugger {
 }
 
+class DebuggableThing {
+
+	public function __debugInfo() {
+		return ['foo' => 'bar', 'inner' => new self()];
+	}
+
+}
+
 /**
  * DebuggerTest class
  *
@@ -313,11 +321,11 @@ object(Cake\View\View) {
 	Blocks => object(Cake\View\ViewBlock) {}
 	plugin => null
 	name => ''
-	passedArgs => array()
-	helpers => array(
+	passedArgs => []
+	helpers => [
 		(int) 0 => 'Html',
 		(int) 1 => 'Form'
-	)
+	]
 	viewPath => ''
 	view => null
 	layout => 'default'
@@ -326,20 +334,20 @@ object(Cake\View\View) {
 	subDir => null
 	theme => null
 	cacheAction => false
-	validationErrors => array()
+	validationErrors => []
 	hasRendered => false
-	uuids => array()
+	uuids => []
 	request => object(Cake\Network\Request) {}
 	response => object(Cake\Network\Response) {}
 	elementCache => 'default'
-	elementCacheSettings => array()
-	viewVars => array()
+	elementCacheSettings => []
+	viewVars => []
 	Html => object(Cake\View\Helper\HtmlHelper) {}
 	Form => object(Cake\View\Helper\FormHelper) {}
 	int => (int) 2
 	float => (float) 1.333
 	[protected] _ext => '.ctp'
-	[protected] _passedVars => array(
+	[protected] _passedVars => [
 		(int) 0 => 'viewVars',
 		(int) 1 => 'autoLayout',
 		(int) 2 => 'helpers',
@@ -353,13 +361,13 @@ object(Cake\View\View) {
 		(int) 10 => 'plugin',
 		(int) 11 => 'passedArgs',
 		(int) 12 => 'cacheAction'
-	)
-	[protected] _scripts => array()
-	[protected] _paths => array()
-	[protected] _parents => array()
+	]
+	[protected] _scripts => []
+	[protected] _paths => []
+	[protected] _parents => []
 	[protected] _current => null
 	[protected] _currentType => ''
-	[protected] _stack => array()
+	[protected] _stack => []
 	[protected] _eventManager => object(Cake\Event\EventManager) {}
 }
 TEXT;
@@ -372,10 +380,10 @@ TEXT;
 		);
 		$result = Debugger::exportVar($data);
 		$expected = <<<TEXT
-array(
+[
 	(int) 1 => 'Index one',
 	(int) 5 => 'Index five'
-)
+]
 TEXT;
 		$this->assertTextEquals($expected, $result);
 
@@ -386,11 +394,11 @@ TEXT;
 		);
 		$result = Debugger::exportVar($data, 1);
 		$expected = <<<TEXT
-array(
-	'key' => array(
+[
+	'key' => [
 		[maximum depth reached]
-	)
-)
+	]
+]
 TEXT;
 		$this->assertTextEquals($expected, $result);
 
@@ -422,13 +430,13 @@ TEXT;
 		);
 		$result = Debugger::exportVar($data);
 		$expected = <<<TEXT
-array(
+[
 	'nothing' => '',
 	'null' => null,
 	'false' => false,
 	'szero' => '0',
 	'zero' => (int) 0
-)
+]
 TEXT;
 		$this->assertTextEquals($expected, $result);
 	}
@@ -454,7 +462,6 @@ TEXT;
 			->with('debug', $this->logicalAnd(
 				$this->stringContains('DebuggerTest::testLog'),
 				$this->stringContains('[main]'),
-				$this->stringContains('array'),
 				$this->stringContains("'whatever',"),
 				$this->stringContains("'here'")
 			));
@@ -513,20 +520,20 @@ TEXT;
 		$open = php_sapi_name() == 'cli' ? "\n" : '<pre>';
 		$close = php_sapi_name() == 'cli' ? "\n" : '</pre>';
 		$expected = <<<TEXT
-{$open}array(
-	'People' => array(
-		(int) 0 => array(
+{$open}[
+	'People' => [
+		(int) 0 => [
 			'name' => 'joeseph',
 			'coat' => 'technicolor',
 			'hair_color' => 'brown'
-		),
-		(int) 1 => array(
+		],
+		(int) 1 => [
 			'name' => 'Shaft',
 			'coat' => 'black',
 			'hair' => 'black'
-		)
-	)
-){$close}
+		]
+	]
+]{$close}
 TEXT;
 		$this->assertTextEquals($expected, $result);
 
@@ -537,11 +544,11 @@ TEXT;
 		$open = php_sapi_name() == 'cli' ? "\n" : '<pre>';
 		$close = php_sapi_name() == 'cli' ? "\n" : '</pre>';
 		$expected = <<<TEXT
-{$open}array(
-	'People' => array(
+{$open}[
+	'People' => [
 		[maximum depth reached]
-	)
-){$close}
+	]
+]{$close}
 TEXT;
 		$this->assertTextEquals($expected, $result);
 	}
@@ -624,4 +631,28 @@ TEXT;
 		));
 		$this->assertNotRegExp('/^Cake\\\Test\\\TestCase\\\Utility\\\DebuggerTest::testTraceExclude/', $result);
 	}
+
+/**
+ * Tests that __debugInfo is used when available
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$object = new DebuggableThing();
+		$result = Debugger::exportVar($object, 2);
+		$expected = <<<eos
+object(Cake\Test\TestCase\Utility\DebuggableThing) {
+
+	'foo' => 'bar',
+	'inner' => object(Cake\Test\TestCase\Utility\DebuggableThing) {
+
+		[maximum depth reached]
+	
+	}
+
+}
+eos;
+		$this->assertEquals($expected, $result);
+	}
+
 }

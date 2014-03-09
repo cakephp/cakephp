@@ -537,7 +537,7 @@ class Debugger {
 		$replace = array_intersect_key($secrets, $var);
 		$var = $replace + $var;
 
-		$out = "array(";
+		$out = "[";
 		$break = $end = null;
 		if (!empty($var)) {
 			$break = "\n" . str_repeat("\t", $indent);
@@ -560,7 +560,7 @@ class Debugger {
 		} else {
 			$vars[] = $break . '[maximum depth reached]';
 		}
-		return $out . implode(',', $vars) . $end . ')';
+		return $out . implode(',', $vars) . $end . ']';
 	}
 
 /**
@@ -578,10 +578,16 @@ class Debugger {
 
 		$className = get_class($var);
 		$out .= 'object(' . $className . ') {';
+		$break = "\n" . str_repeat("\t", $indent);
+		$end = "\n" . str_repeat("\t", $indent - 1);
+
+		if (method_exists($var, '__debugInfo')) {
+			return $out . "\n" .
+				substr(static::_array($var->__debugInfo(), $depth - 1, $indent), 1, -1) .
+				$end . '}';
+		}
 
 		if ($depth > 0) {
-			$end = "\n" . str_repeat("\t", $indent - 1);
-			$break = "\n" . str_repeat("\t", $indent);
 			$objectVars = get_object_vars($var);
 			foreach ($objectVars as $key => $value) {
 				$value = static::_export($value, $depth - 1, $indent);
