@@ -3790,6 +3790,37 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test the time type.
+ *
+ * @return void
+ */
+	public function testTime() {
+		$result = $this->Form->time('start_time', array(
+			'timeFormat' => 12,
+			'interval' => 5,
+			'value' => array('hour' => '4', 'minute' => '30', 'meridian' => 'pm')
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+		$this->assertNotContains('year', $result);
+		$this->assertNotContains('month', $result);
+		$this->assertNotContains('day', $result);
+
+		$result = $this->Form->time('start_time', array(
+			'timeFormat' => 12,
+			'interval' => 5,
+			'value' => '2014-03-08 16:30:00'
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+		$this->assertNotContains('year', $result);
+		$this->assertNotContains('month', $result);
+		$this->assertNotContains('day', $result);
+	}
+
+/**
  * testDateTime method
  *
  * Test generation of date/time select elements

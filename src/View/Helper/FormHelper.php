@@ -1973,6 +1973,45 @@ class FormHelper extends Helper {
 	}
 
 /**
+ * Generate time inputs.
+ *
+ * ### Options:
+ *
+ * - `interval` The interval for the minutes select. Defaults to 1
+ * - `empty` - If true, the empty select option is shown. If a string,
+ *   that string is displayed as the empty element.
+ * - `round` - Set to `up` or `down` if you want to force rounding in either direction. Defaults to null.
+ * - `value` | `default` The default value to be used by the input. A value in `$this->data`
+ *   matching the field name will override this value. If no default is provided `time()` will be used.
+ * - `timeFormat` The time format to use, either 12 or 24.
+ * - `second` Set to true to enable seconds drop down.
+ *
+ * To control the order of inputs, and any elements/content between the inputs you
+ * can override the `dateWidget` template. By default the `dateWidget` template is:
+ *
+ * `{{month}}{{day}}{{year}}{{hour}}{{minute}}{{second}}{{meridian}}`
+ *
+ * @param string $fieldName Prefix name for the SELECT element
+ * @param array $options Array of Options
+ * @return string Generated set of select boxes for time formats chosen.
+ */
+	public function time($fieldName, $options = []) {
+		$options += [
+			'empty' => true,
+			'value' => null,
+			'interval' => 1,
+			'round' => null,
+			'timeFormat' => 12,
+			'second' => false,
+		];
+		$options['year'] = $options['month'] = $options['day'] = false;
+		$options = $this->_initInputField($fieldName, $options);
+		$options = $this->_datetimeOptions($options);
+
+		return $this->widget('datetime', $options);
+	}
+
+/**
  * Sets field defaults and adds field to form security input hash.
  * Will also add the error class if the field contains validation errors.
  *
