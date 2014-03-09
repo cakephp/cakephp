@@ -45,7 +45,6 @@ use Traversable;
 class FormHelper extends Helper {
 
 	use IdGeneratorTrait;
-
 	use StringTemplateTrait;
 
 /**
