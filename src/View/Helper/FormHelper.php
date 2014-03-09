@@ -1870,19 +1870,22 @@ class FormHelper extends Helper {
  *
  * ### Options:
  *
- * - `monthNames` If false, 2 digit numbers will be used instead of text.
- *   If a array, the given array will be used.
- * - `minYear` The lowest year to use in the year select
- * - `maxYear` The maximum year to use in the year select
- * - `interval` The interval for the minutes select. Defaults to 1
  * - `empty` - If true, the empty select option is shown. If a string,
  *   that string is displayed as the empty element.
- * - `round` - Set to `up` or `down` if you want to force rounding in either direction. Defaults to null.
- * - `value` | `default` The default value to be used by the input. A value in `$this->data`
- *   matching the field name will override this value. If no default is provided `time()` will be used.
- * - `timeFormat` The time format to use, either 12 or 24.
- * - `second` Set to true to enable seconds drop down.
- * - `orderYear` The order you want year optiosn to be generated.
+ * - `monthNames` If false, 2 digit numbers will be used instead of text.
+ *   If a array, the given array will be used.
+ * - `minYear` - The lowest year to use in the year select
+ * - `maxYear` - The maximum year to use in the year select
+ * - `orderYear` - Order of year values in select options.
+ *   Possible values 'asc', 'desc'. Default 'desc'.
+ * - `interval` - The interval for the minutes select. Defaults to 1
+ * - `round` - Set to `up` or `down` if you want to force rounding in either
+ *   direction. Defaults to null.
+ * - `value` | `default` - The default value to be used by the input.
+ *   A value in `$this->data` matching the field name will override this value.
+ *   If no default is provided `time()` will be used.
+ * - `timeFormat` - The time format to use, either 12 or 24.
+ * - `second` - Set to true to enable seconds drop down.
  *
  * To control the order of inputs, and any elements/content between the inputs you
  * can override the `dateWidget` template. By default the `dateWidget` template is:
