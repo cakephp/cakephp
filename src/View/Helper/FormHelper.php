@@ -1882,6 +1882,7 @@ class FormHelper extends Helper {
  *   matching the field name will override this value. If no default is provided `time()` will be used.
  * - `timeFormat` The time format to use, either 12 or 24.
  * - `second` Set to true to enable seconds drop down.
+ * - `orderYear` The order you want year optiosn to be generated.
  *
  * To control the order of inputs, and any elements/content between the inputs you
  * can override the `dateWidget` template. By default the `dateWidget` template is:
