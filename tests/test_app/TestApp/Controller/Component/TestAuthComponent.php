@@ -33,6 +33,28 @@ class TestAuthComponent extends AuthComponent {
 	public $testStop = false;
 
 /**
+ * Helper method to add/set an authenticate object instance
+ *
+ * @param integer $index The index at which to add/set the object
+ * @param Object $object The object to add/set
+ * @return void
+ */
+	public function setAuthenticateObject($index, $object) {
+		$this->_authenticateObjects[$index] = $object;
+	}
+
+/**
+ * Helper method to add/set an authorize object instance
+ *
+ * @param integer $index The index at which to add/set the object
+ * @param Object $object The object to add/set
+ * @return void
+ */
+	public function setAuthorizeObject($index, $object) {
+		$this->_authorizeObjects[$index] = $object;
+	}
+
+/**
  * stop method
  *
  * @return void

@@ -22,3 +22,5 @@ msgstr[1] "%d is 0 or ends in 01-10 (from core translated)"
 msgstr[2] "%d ends in 11-20 (from core translated)"
 msgstr[3] "%d everything else (from core translated)"
 
+msgid "%+5d = 1 (from core)"
+msgid_plural "%+5d = 0 or > 1 (from core)"
