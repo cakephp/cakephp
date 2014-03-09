@@ -29,6 +29,7 @@ use Cake\View\Helper;
 use Cake\View\Helper\StringTemplateTrait;
 use Cake\View\StringTemplate;
 use Cake\View\View;
+use Cake\View\Widget\IdGeneratorTrait;
 use Cake\View\Widget\WidgetRegistry;
 use DateTime;
 use Traversable;
@@ -42,6 +43,8 @@ use Traversable;
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html
  */
 class FormHelper extends Helper {
+
+	use IdGeneratorTrait;
 
 	use StringTemplateTrait;
 
@@ -706,16 +709,6 @@ class FormHelper extends Helper {
 			'text' => $text,
 		];
 		return $this->widget('label', $attrs);
-	}
-
-/**
- * Generate an ID suitable for use in an ID attribute.
- *
- * @param string $value The value to convert into an ID.
- * @return string The generated id.
- */
-	protected function _domId($value) {
-		return mb_strtolower(Inflector::slug($value, '-'));
 	}
 
 /**

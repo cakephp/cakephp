@@ -39,7 +39,7 @@ trait IdGeneratorTrait {
 	}
 
 /**
- * Generate an ID attribute for a radio button.
+ * Generate an ID attribute for an element.
  *
  * Ensures that id's for a given set of fields are unique.
  *
@@ -48,7 +48,8 @@ trait IdGeneratorTrait {
  * @return string Generated id.
  */
 	protected function _id($name, $val) {
-		$name = mb_strtolower(Inflector::slug($name, '-'));
+		$name = $this->_domId($name);
+
 		$idSuffix = mb_strtolower(str_replace(array('/', '@', '<', '>', ' ', '"', '\''), '-', $val));
 		$count = 1;
 		$check = $idSuffix;
@@ -58,4 +59,15 @@ trait IdGeneratorTrait {
 		$this->_idSuffixes[] = $check;
 		return trim($name . '-' . $check, '-');
 	}
+
+/**
+ * Generate an ID suitable for use in an ID attribute.
+ *
+ * @param string $value The value to convert into an ID.
+ * @return string The generated id.
+ */
+	protected function _domId($value) {
+		return mb_strtolower(Inflector::slug($value, '-'));
+	}
+
 }
