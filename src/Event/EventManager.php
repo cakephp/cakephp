@@ -282,30 +282,27 @@ class EventManager {
  * @return array
  */
 	public function listeners($eventKey) {
+		$localListeners = array();
+		$priorities = array();
 		if (!$this->_isGlobal) {
-			$globalListeners = static::instance()->prioritisedListeners($eventKey);
-		} else {
-			$globalListeners = $this->prioritisedListeners($eventKey);
+			$localListeners = $this->prioritisedListeners($eventKey);
+			$localListeners = empty($localListeners) ? array() : $localListeners;
 		}
-		$listeners = array_merge($this->_listeners, self::instance()->_listeners);
+		$globalListeners = static::instance()->prioritisedListeners($eventKey);
+		$globalListeners = empty($globalListeners) ? array() : $globalListeners;
 
-		if (empty($listeners[$eventKey]) && empty($globalListeners)) {
-			return [];
-		}
+		$priorities = array_merge(array_keys($globalListeners), array_keys($localListeners));
+		$priorities = array_unique($priorities);
+		asort($priorities);
 
-		$listeners = $listeners[$eventKey];
-		foreach ($globalListeners as $priority => $priorityQ) {
-			if (!empty($listeners[$priority])) {
-				$listeners[$priority] = array_merge($priorityQ, $listeners[$priority]);
-				unset($globalListeners[$priority]);
-			}
-		}
-		$listeners = $listeners + $globalListeners;
-
-		ksort($listeners);
 		$result = array();
-		foreach ($listeners as $priorityQ) {
-			$result = array_merge($result, $priorityQ);
+		foreach ($priorities as $priority) {
+			if (isset($globalListeners[$priority])) {
+				$result = array_merge($result, $globalListeners[$priority]);
+			}
+			if (isset($localListeners[$priority])) {
+				$result = array_merge($result, $localListeners[$priority]);
+			}
 		}
 		return $result;
 	}

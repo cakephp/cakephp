@@ -67,8 +67,11 @@ class MailTransport extends AbstractTransport {
 	protected function _mail($to, $subject, $message, $headers, $params = null) {
 		//@codingStandardsIgnoreStart
 		if (!@mail($to, $subject, $message, $headers, $params)) {
-			throw new Error\SocketException('Could not send email.');
+			$error = error_get_last();
+			$msg = 'Could not send email: ' . isset($error['message']) ? $error['message'] : 'unknown';
+			throw new SocketException($msg);
 		}
+		//@codingStandardsIgnoreEnd
 	}
 
 }

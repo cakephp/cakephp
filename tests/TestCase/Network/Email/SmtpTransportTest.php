@@ -82,10 +82,10 @@ class SmtpTransportTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		if (!class_exists('MockSocket')) {
-			$this->getMock('Cake\Network\Socket', array('read', 'write', 'connect', 'enableCrypto'), array(), 'MockSocket');
-		}
-		$this->socket = new \MockSocket();
+		$this->socket = $this->getMock(
+			'Cake\Network\Socket',
+			array('read', 'write', 'connect', 'enableCrypto')
+		);
 
 		$this->SmtpTransport = new SmtpTestTransport();
 		$this->SmtpTransport->setSocket($this->socket);
@@ -123,7 +123,7 @@ class SmtpTransportTest extends TestCase {
 		$this->socket->expects($this->at(5))->method('write')->with("STARTTLS\r\n");
 		$this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("220 Server ready\r\n"));
-		$this->socket->expects($this->at(8))->method('other')->with('tls')->will($this->returnValue(true));
+		$this->socket->expects($this->at(8))->method('enableCrypto')->with('tls')->will($this->returnValue(true));
 		$this->socket->expects($this->at(9))->method('write')->with("EHLO localhost\r\n");
 		$this->socket->expects($this->at(10))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250 Accepted\r\n"));
@@ -164,7 +164,7 @@ class SmtpTransportTest extends TestCase {
 		$this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
 		$this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue("250 Accepted\r\n"));
-		$this->socket->expects($this->at(5))->method('read')->with("AUTH LOGIN\r\n");
+		$this->socket->expects($this->at(5))->method('write')->with("AUTH LOGIN\r\n");
 		$this->socket->expects($this->at(6))->method('read')->will($this->returnValue(false));
 		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("504 5.7.4 Unrecognized authentication type\r\n"));
 		$this->SmtpTransport->connect();
@@ -233,7 +233,8 @@ class SmtpTransportTest extends TestCase {
  * @return void
  */
 	public function testAuthNoAuth() {
-		$this->socket->expects($this->never())->method('write')->with("AUTH LOGIN\r\n");
+		$this->socket->expects($this->any())->method('write')->with($this->logicalNot($this->stringContains('AUTH LOGIN')));
+
 		$this->SmtpTransport->config(array('username' => null, 'password' => null));
 		$this->SmtpTransport->auth();
 	}
@@ -308,7 +309,7 @@ class SmtpTransportTest extends TestCase {
 		$email->subject('Testing SMTP');
 		$date = date(DATE_RFC2822);
 		$email->setHeaders(array('X-Mailer' => Email::EMAIL_CLIENT, 'Date' => $date));
-		$email->expects($this->any())
+		$email->expects($this->once())
 			->method('message')
 			->will($this->returnValue(array('First Line', 'Second Line', '.Third Line', '')));
 
