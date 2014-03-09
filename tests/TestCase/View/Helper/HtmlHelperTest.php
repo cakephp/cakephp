@@ -574,7 +574,7 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->css('screen', array('rel' => 'import'));
 		$expected = array(
-			'style' => array('type' => 'text/css'),
+			'<style',
 			'preg:/@import url\(.*css\/screen\.css\);/',
 			'/style'
 		);
@@ -602,7 +602,7 @@ class HtmlHelperTest extends TestCase {
 
 		$result = $this->Html->css('screen', 'import');
 		$expected = array(
-			'style' => array('type' => 'text/css'),
+			'<style',
 			'preg:/@import url\(.*css\/screen\.css\);/',
 			'/style'
 		);
