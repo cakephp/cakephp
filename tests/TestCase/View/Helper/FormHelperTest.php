@@ -385,48 +385,6 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
- * Test the onsubmit option for create()
- *
- * @return void
- */
-	public function testCreateOnSubmit() {
-		$this->Form->request->data = [];
-		$this->Form->request['controller'] = 'articles';
-		$result = $this->Form->create($this->article, ['url' => ['action' => 'index', 'param'], 'default' => false]);
-		$expected = array(
-			'form' => array(
-				'method' => 'post', 'onsubmit' => 'event.returnValue = false; return false;', 'action' => '/articles/index/param',
-				'accept-charset' => 'utf-8'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-
-		$this->Form->request->data = [];
-		$this->Form->request['controller'] = 'articles';
-		$result = $this->Form->create($this->article, array(
-			'url' => array('action' => 'index', 'param'),
-			'default' => false,
-			'onsubmit' => 'someFunction();'
-		));
-
-		$expected = array(
-			'form' => array(
-				'method' => 'post',
-				'onsubmit' => 'someFunction();event.returnValue = false; return false;',
-				'action' => '/articles/index/param',
-				'accept-charset' => 'utf-8'
-			),
-			'div' => array('style' => 'display:none;'),
-			'input' => array('type' => 'hidden', 'name' => '_method', 'value' => 'POST'),
-			'/div'
-		);
-		$this->assertTags($result, $expected);
-	}
-
-/**
  * test create() with automatic url generation
  *
  * @return void

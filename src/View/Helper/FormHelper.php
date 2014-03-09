@@ -253,10 +253,6 @@ class FormHelper extends Helper {
  *   don't need to change the controller from the current request's controller.
  * - `url` The URL the form submits to. Can be a string or a URL array. If you use 'url'
  *    you should leave 'action' undefined.
- * - `default` Allows for the creation of Ajax forms. Set this to false to prevent the default event handler.
- *   Will create an onsubmit attribute if it doesn't not exist. If it does, default action suppression
- *   will be appended.
- * - `onsubmit` Used in conjunction with 'default' to create ajax forms.
  * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
  * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
  *   option that allows you to set the specific Table class the form should be based on.
@@ -284,7 +280,6 @@ class FormHelper extends Helper {
 			'type' => $isCreate ? 'post' : 'put',
 			'action' => null,
 			'url' => null,
-			'default' => true,
 			'encoding' => strtolower(Configure::read('App.encoding')),
 		];
 
@@ -313,17 +308,10 @@ class FormHelper extends Helper {
 		}
 		$this->requestType = strtolower($options['type']);
 
-		if (!$options['default']) {
-			if (!isset($options['onsubmit'])) {
-				$options['onsubmit'] = '';
-			}
-			$htmlAttributes['onsubmit'] = $options['onsubmit'] . 'event.returnValue = false; return false;';
-		}
-
 		if (!empty($options['encoding'])) {
 			$htmlAttributes['accept-charset'] = $options['encoding'];
 		}
-		unset($options['type'], $options['encoding'], $options['default']);
+		unset($options['type'], $options['encoding']);
 
 		$htmlAttributes = array_merge($options, $htmlAttributes);
 
