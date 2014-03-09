@@ -23,6 +23,13 @@ use Cake\Utility\Inflector;
 trait IdGeneratorTrait {
 
 /**
+ * Prefix for id attribute.
+ *
+ * @var string
+ */
+	protected $_idPrefix = null;
+
+/**
  * A list of id suffixes used in the current rendering.
  *
  * @var array
@@ -67,7 +74,11 @@ trait IdGeneratorTrait {
  * @return string The generated id.
  */
 	protected function _domId($value) {
-		return mb_strtolower(Inflector::slug($value, '-'));
+		$domId = mb_strtolower(Inflector::slug($value, '-'));
+		if (!empty($this->_idPrefix)) {
+			$domId = $this->_idPrefix . '-' . $domId;
+		}
+		return $domId;
 	}
 
 }

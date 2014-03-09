@@ -2014,6 +2014,49 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test id prefix
+ *
+ * @return void
+ */
+	public function testCreateIdPrefix() {
+		$this->Form->create(false, array('idPrefix' => 'prefix'));
+
+		$result = $this->Form->input('field');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'prefix-field'),
+			'Field',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'field', 'id' => 'prefix-field'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('field', ['id' => 'custom-id']);
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'custom-id'),
+			'Field',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'field', 'id' => 'custom-id'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+
+		$this->Form->end();
+		$result = $this->Form->input('field');
+		$expected = array(
+			'div' => array('class' => 'input text'),
+			'label' => array('for' => 'field'),
+			'Field',
+			'/label',
+			'input' => array('type' => 'text', 'name' => 'field', 'id' => 'field'),
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test that inputs with 0 can be created.
  *
  * @return void

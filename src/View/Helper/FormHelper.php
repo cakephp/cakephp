@@ -263,6 +263,7 @@ class FormHelper extends Helper {
  * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
  * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
  *   option that allows you to set the specific Table class the form should be based on.
+ * - `idPrefix` Prefix for generated ID attributes.
  *
  * @param mixed $model The context for which the form is being defined. Can
  *   be an ORM entity, ORM resultset, or an array of meta data. You can use false or null
@@ -289,10 +290,12 @@ class FormHelper extends Helper {
 			'url' => null,
 			'default' => true,
 			'encoding' => strtolower(Configure::read('App.encoding')),
+			'idPrefix' => null
 		];
 
+		$this->_idPrefix = $options['idPrefix'];
 		$action = $this->url($this->_formUrl($context, $options));
-		unset($options['url'], $options['action']);
+		unset($options['url'], $options['action'], $options['idPrefix']);
 
 		$htmlAttributes = [];
 		switch (strtolower($options['type'])) {
@@ -429,6 +432,7 @@ class FormHelper extends Helper {
 
 		$this->requestType = null;
 		$this->_context = null;
+		$this->_idPrefix = null;
 		return $out;
 	}
 
