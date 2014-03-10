@@ -160,7 +160,11 @@ class CakeRoute {
 			}
 			$names[$i] = $name;
 		}
+
+		// Put names back in their correct order
 		ksort($names);
+		$names = array_values($names);
+
 		if (preg_match('#\/\*\*$#', $route)) {
 			$parsed = preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
 			$this->_greedy = true;
