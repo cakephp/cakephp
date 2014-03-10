@@ -67,14 +67,14 @@ class Router {
  *
  * @var array
  */
-	protected static $_prefixes = array();
+	protected static $_prefixes = [];
 
 /**
  * List of valid extensions to parse from a URL. If null, any extension is allowed.
  *
  * @var array
  */
-	protected static $_validExtensions = array();
+	protected static $_validExtensions = [];
 
 /**
  * Regular expression for action names
@@ -151,7 +151,7 @@ class Router {
  *
  * @var array
  */
-	protected static $_resourceMapped = array();
+	protected static $_resourceMapped = [];
 
 /**
  * Maintains the request object stack for the current request.
@@ -159,7 +159,7 @@ class Router {
  *
  * @var array
  */
-	protected static $_requests = array();
+	protected static $_requests = [];
 
 /**
  * Initial state is populated the first time reload() is called which is at the bottom
@@ -168,7 +168,7 @@ class Router {
  *
  * @var array
  */
-	protected static $_initialState = array();
+	protected static $_initialState = [];
 
 /**
  * The stack of URL filters to apply against routing URLs before passing the
@@ -176,7 +176,7 @@ class Router {
  *
  * @var array
  */
-	protected static $_urlFilters = array();
+	protected static $_urlFilters = [];
 
 /**
  * Default route class to use
@@ -450,9 +450,13 @@ class Router {
 			if ($plugin) {
 				$plugin = Inflector::underscore($plugin);
 			}
-			$prefix = '';
+
+			$prefix = $ext = null;
 			if (!empty($options['prefix'])) {
 				$prefix = $options['prefix'];
+			}
+			if (!empty($options['_ext'])) {
+				$ext = $options['_ext'];
 			}
 
 			foreach (static::$_resourceMap as $params) {
@@ -463,6 +467,7 @@ class Router {
 					'controller' => $urlName,
 					'action' => $params['action'],
 					'[method]' => $params['method'],
+					'_ext' => $ext
 				);
 				if ($prefix) {
 					$params['prefix'] = $prefix;

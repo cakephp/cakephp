@@ -320,7 +320,7 @@ class Route {
 			unset($route['_trailing_']);
 		}
 
-		if ($ext && empty($route['_ext'])) {
+		if (!empty($ext)) {
 			$route['_ext'] = $ext;
 		}
 
