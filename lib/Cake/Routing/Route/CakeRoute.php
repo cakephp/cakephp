@@ -519,10 +519,14 @@ class CakeRoute {
 
 		$search = $replace = array();
 
-		$lengths = array_map('strlen', $this->keys);
-		$flipped = array_combine($this->keys, $lengths);
-		arsort($flipped);
-		$keys = array_keys($flipped);
+		if(empty($this->keys)) {
+			$keys = array();
+		} else {
+			$lengths = array_map('strlen', $this->keys);
+			$flipped = array_combine($this->keys, $lengths);
+			arsort($flipped);
+			$keys = array_keys($flipped);
+		}
 
 		foreach ($keys as $key) {
 			$string = null;
