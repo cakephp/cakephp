@@ -522,7 +522,7 @@ class CakeRoute {
 		$lengths = array_map('strlen', $this->keys);
 		$flipped = array_combine($this->keys, $lengths);
 		arsort($flipped);
-		$keys = array_flip($flipped);
+		$keys = array_keys($flipped);
 
 		foreach ($keys as $key) {
 			$string = null;
