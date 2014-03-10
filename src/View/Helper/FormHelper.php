@@ -2233,6 +2233,19 @@ class FormHelper extends Helper {
 	}
 
 /**
+ * Restores the default values built into FormHelper.
+ *
+ * This method will not reset any templates set in custom widgets.
+ *
+ * @return void
+ */
+	public function resetTemplates() {
+		$reflection = new \ReflectionClass($this);
+		$properties = $reflection->getDefaultProperties();
+		$this->templates($properties['_defaultTemplates']);
+	}
+
+/**
  * Event listeners.
  *
  * @return array

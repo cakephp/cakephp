@@ -5770,4 +5770,17 @@ class FormHelperTest extends TestCase {
 		$this->assertTags($result, $expected);
 	}
 
+/**
+ * Test resetting templates.
+ *
+ * @return void
+ */
+	public function testResetTemplates() {
+		$this->Form->templates(['input' => '<input>']);
+		$this->assertEquals('<input>', $this->Form->getTemplater()->get('input'));
+
+		$this->assertNull($this->Form->resetTemplates());
+		$this->assertNotEquals('<input>', $this->Form->getTemplater()->get('input'));
+	}
+
 }
