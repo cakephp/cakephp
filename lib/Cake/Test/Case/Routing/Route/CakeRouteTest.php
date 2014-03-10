@@ -856,6 +856,24 @@ class CakeRouteTest extends CakeTestCase {
 	}
 
 /**
+ * Test matching of parameters where one parameter name starts with another parameter name
+ *
+ * @return void
+ */
+	public function testMatchSimilarParameters() {
+		$route = new CakeRoute('/:thisParam/:thisParamIsLonger');
+
+		$url = array(
+			'thisParam' => 'foo',
+			'thisParamIsLonger' => 'bar'
+		);
+
+		$result = $route->match($url);
+		$expected = '/foo/bar';
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test restructuring args with pass key
  *
  * @return void
@@ -941,4 +959,5 @@ class CakeRouteTest extends CakeTestCase {
 		$expected = array('section' => 'weblog', 'plugin' => 'blogs', 'controller' => 'posts', 'action' => 'index', 'pass' => array(), 'named' => array());
 		$this->assertEquals($expected, $result);
 	}
+
 }
