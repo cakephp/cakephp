@@ -640,9 +640,10 @@ class Table implements RepositoryInterface, EventListener {
  *
  * The options array accept the following keys:
  *
- * - className: The class name of the target table object
- * - targetTable: An instance of a table object to be used as the target table
- * - foreignKey: The name of the field to use as foreign key
+ * - className: The class name of the target table object.
+ * - targetTable: An instance of a table object to be used as the target table.
+ * - foreignKey: The name of the field to use as foreign key.
+ * - targetForeignKey: The name of the field to use as the target foreign key.
  * - joinTable: The name of the table representing the link between the two
  * - through: If you choose to use an already instantiated link table, set this
  *   key to a configured Table instance containing associations to both the source
@@ -650,8 +651,8 @@ class Table implements RepositoryInterface, EventListener {
  * - cascadeCallbacks: Set to true if you want CakePHP to fire callbacks on
  *   cascaded deletes. If false the ORM will use deleteAll() to remove data.
  *   When true join/junction table records will be loaded and then deleted.
- * - conditions: array with a list of conditions to filter the join with
- * - sort: The order in which results for this association should be returned
+ * - conditions: array with a list of conditions to filter the join with.
+ * - sort: The order in which results for this association should be returned.
  * - strategy: The strategy to be used for selecting results Either 'select'
  *   or 'subquery'. If subquery is selected the query used to return results
  *   in the source table will be used as conditions for getting rows in the
