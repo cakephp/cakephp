@@ -1,7 +1,5 @@
 <?php
 /**
- * The Plugin Task handles creating an empty plugin, ready to be used
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -42,6 +40,13 @@ class PluginTask extends Shell {
  * @var string
  */
 	public $bootstrap = null;
+
+/**
+ * Tasks this task uses.
+ *
+ * @var array
+ */
+	public $tasks = ['Template'];
 
 /**
  * initialize
@@ -112,16 +117,17 @@ class PluginTask extends Shell {
 			$directories = [
 				'Config/Schema',
 				'Model/Behavior',
-				'Model/Datasource',
+				'Model/Table',
+				'Model/Entity',
 				'Console/Command/Task',
 				'Controller/Component',
 				'Lib',
 				'View/Helper',
-				'Test/Case/Controller/Component',
-				'Test/Case/View/Helper',
-				'Test/Case/Model/Behavior',
+				'Template',
+				'Test/TestCase/Controller/Component',
+				'Test/TestCase/View/Helper',
+				'Test/TestCase/Model/Behavior',
 				'Test/Fixture',
-				'vendor',
 				'webroot'
 			];
 
@@ -146,20 +152,15 @@ class PluginTask extends Shell {
 			$controllerFileName = $plugin . 'AppController.php';
 
 			$out = "<?php\n\n";
-			$out .= "App::uses('AppController', 'Controller');\n\n";
+			$out .= "namespace {$plugin}\\Controller;\n\n";
+			$out .= "use App\\Controller\\AppController;\n\n";
 			$out .= "class {$plugin}AppController extends AppController {\n\n";
 			$out .= "}\n";
 			$this->createFile($this->path . $plugin . DS . 'Controller/' . $controllerFileName, $out);
 
-			$modelFileName = $plugin . 'AppModel.php';
-
-			$out = "<?php\n\n";
-			$out .= "App::uses('AppModel', 'Model');\n\n";
-			$out .= "class {$plugin}AppModel extends AppModel {\n\n";
-			$out .= "}\n";
-			$this->createFile($this->path . $plugin . DS . 'Model/' . $modelFileName, $out);
-
 			$this->_modifyBootstrap($plugin);
+			$this->_generatePhpunitXml($plugin, $this->path);
+			$this->_generateTestBootstrap($plugin, $this->path);
 
 			$this->hr();
 			$this->out(__d('cake_console', '<success>Created:</success> %s in %s', $plugin, $this->path . $plugin), 2);
@@ -182,6 +183,43 @@ class PluginTask extends Shell {
 			$this->out('');
 			$this->out(sprintf('%s modified', $this->bootstrap));
 		}
+	}
+
+/**
+ * Generate a phpunit.xml stub for the plugin.
+ *
+ * @param string $plugin Name of plugin
+ * @param string $path The path to save the phpunit.xml file to.
+ * @return void
+ */
+	protected function _generatePhpunitXml($plugin, $path) {
+		$this->Template->set([
+			'plugin' => $plugin,
+			'path' => $path
+		]);
+		$this->out( __d('cake_console', 'Generating phpunit.xml file...'));
+		$out = $this->Template->generate('test', 'phpunit.xml');
+		$file = $path . $plugin . DS . 'phpunit.xml';
+		$this->createFile($file, $out);
+	}
+
+/**
+ * Generate a Test/bootstrap.php stub for the plugin.
+ *
+ * @param string $plugin Name of plugin
+ * @param string $path The path to save the phpunit.xml file to.
+ * @return void
+ */
+	protected function _generateTestBootstrap($plugin, $path) {
+		$this->Template->set([
+			'plugin' => $plugin,
+			'path' => $path,
+			'root' => ROOT
+		]);
+		$this->out( __d('cake_console', 'Generating Test/bootstrap.php file...'));
+		$out = $this->Template->generate('test', 'bootstrap');
+		$file = $path . $plugin . '/Test/bootstrap.php';
+		$this->createFile($file, $out);
 	}
 
 /**
@@ -221,7 +259,7 @@ class PluginTask extends Shell {
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
 		$parser->description(__d('cake_console',
-			'Create the directory structure, AppModel and AppController classes for a new plugin. ' .
+			'Create the directory structure, AppController class and testing setup for a new plugin. ' .
 			'Can create plugins in any of your bootstrapped plugin paths.'
 		))->addArgument('name', [
 			'help' => __d('cake_console', 'CamelCased name of the plugin to create.')
