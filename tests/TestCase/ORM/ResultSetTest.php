@@ -230,4 +230,19 @@ class ResultSetTest extends TestCase {
 		$this->assertEquals($expected, $results);
 	}
 
+/**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$query = $this->table->find('all');
+		$results = $query->all();
+		$expected = [
+			'query' => $query,
+			'items' => $results->toArray()
+		];
+		$this->assertSame($expected, $results->__debugInfo());
+	}
+
 }
