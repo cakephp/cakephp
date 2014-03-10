@@ -518,10 +518,10 @@ class CakeRoute {
 		$out = $this->template;
 
 		$search = $replace = array();
-		$keys = $this->keys;
 
-		// Sort the keys in reverse order by length to prevent mismatches
-		uasort($keys, array($this, '_sortKeys'));
+		$lengths = array_map('strlen', $this->keys);
+		$keys = array_combine($lengths, $this->keys);
+		krsort($keys);
 
 		foreach ($keys as $key) {
 			$string = null;
@@ -540,17 +540,6 @@ class CakeRoute {
 		}
 		$out = str_replace('//', '/', $out);
 		return $out;
-	}
-
-	/**
-	 * Comparison method for sorting keys in reverse order by length.
-	 *
-	 * @param $a
-	 * @param $b
-	 * @return int
-	 */
-	protected function _sortKeys($a, $b) {
-		return strlen($a) > strlen($b) ? -1 : 1;
 	}
 
 }
