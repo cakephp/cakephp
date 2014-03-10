@@ -138,6 +138,10 @@ class CakeRoute {
 		$parsed = preg_quote($this->template, '#');
 
 		preg_match_all('#:([A-Za-z0-9_-]+[A-Z0-9a-z])#', $route, $namedElements);
+
+		// Sort the named elements in reverse order by length to prevent incorrect matching
+		uasort($namedElements[1], array($this, '_sortNamedElements'));
+
 		foreach ($namedElements[1] as $i => $name) {
 			$search = '\\' . $namedElements[0][$i];
 			if (isset($this->options[$name])) {
@@ -173,6 +177,17 @@ class CakeRoute {
 		foreach ($this->keys as $key) {
 			unset($this->defaults[$key]);
 		}
+	}
+
+/**
+ * Comparison method for sorting named elements in reverse order by length.
+ *
+ * @param $a
+ * @param $b
+ * @return int
+ */
+	protected function _sortNamedElements($a, $b) {
+		return strlen($a) > strlen($b) ? -1 : 1;
 	}
 
 /**
