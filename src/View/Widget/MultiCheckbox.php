@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\View\Widget\IdGeneratorTrait;
+use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\Widget\WidgetInterface;
 
 /**
