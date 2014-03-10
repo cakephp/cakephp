@@ -44,7 +44,7 @@ class AppTest extends TestCase {
  * @dataProvider classnameProvider
  * @return void
  */
-	public function testClassname($class, $type, $suffix = '', $existsInBase = false, $expected = false) {
+	public function _testClassname($class, $type, $suffix = '', $existsInBase = false, $expected = false) {
 		Configure::write('App.namespace', 'TestApp');
 		$mock = $this->getMockClass('Cake\Core\App', ['_classExistsInBase']);
 
