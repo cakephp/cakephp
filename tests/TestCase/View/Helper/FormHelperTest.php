@@ -698,7 +698,7 @@ class FormHelperTest extends TestCase {
 		]);
 		$this->assertNotContains('testKey', $result);
 
-		$result = $this->Form->end('Save');
+		$result = $this->Form->end();
 		$this->assertNotContains('testKey', $result);
 	}
 
