@@ -3256,7 +3256,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			'table' => 'articles',
 			'alias' => 'articles',
 			'entityClass' => 'TestApp\Model\Entity\Article',
-			'associated' => ['authors', 'tags', 'articlestags'],
+			'associations' => ['authors', 'tags', 'articlestags'],
 			'behaviors' => ['Timestamp'],
 			'defaultConnection' => 'default',
 			'connectionName' => 'test'

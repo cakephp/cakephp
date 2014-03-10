@@ -1752,7 +1752,7 @@ class Table implements RepositoryInterface, EventListener {
 			'table' => $this->table(),
 			'alias' => $this->alias(),
 			'entityClass' => $this->entityClass(),
-			'associated' => $this->_associated->keys(),
+			'associations' => $this->_associations->keys(),
 			'behaviors' => $this->_behaviors->loaded(),
 			'defaultConnection' => $this->defaultConnectionName(),
 			'connectionName' => $conn ? $conn->configName() : null
