@@ -520,8 +520,9 @@ class CakeRoute {
 		$search = $replace = array();
 
 		$lengths = array_map('strlen', $this->keys);
-		$keys = array_combine($lengths, $this->keys);
-		krsort($keys);
+		$flipped = array_combine($this->keys, $lengths);
+		arsort($flipped);
+		$keys = array_flip($flipped);
 
 		foreach ($keys as $key) {
 			$string = null;
