@@ -139,7 +139,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * @var \Cake\ORM\Associations
  */
-	protected $_associated;
+	protected $_associations;
 
 /**
  * EventManager for this table.
@@ -185,6 +185,7 @@ class Table implements RepositoryInterface, EventListener {
  *   passed to it.
  * - eventManager: An instance of an event manager to use for internal events
  * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
+ * - associations: An Associations instance.
  *
  * @param array config Lsit of options for this table
  */
@@ -204,20 +205,19 @@ class Table implements RepositoryInterface, EventListener {
 		if (!empty($config['entityClass'])) {
 			$this->entityClass($config['entityClass']);
 		}
-		$eventManager = $behaviors = null;
+		$eventManager = $behaviors = $associations = null;
 		if (!empty($config['eventManager'])) {
 			$eventManager = $config['eventManager'];
 		}
 		if (!empty($config['behaviors'])) {
 			$behaviors = $config['behaviors'];
 		}
-		$associations = null;
 		if (!empty($config['associations'])) {
 			$associations = $config['associations'];
 		}
 		$this->_eventManager = $eventManager ?: new EventManager();
-		$this->_associated = $associations ?: new Associations();
 		$this->_behaviors = $behaviors ?: new BehaviorRegistry($this);
+		$this->_associations = $associations ?: new Associations();
 
 		$this->initialize($config);
 		$this->_eventManager->attach($this);
@@ -508,7 +508,7 @@ class Table implements RepositoryInterface, EventListener {
  * @return \Cake\ORM\Association
  */
 	public function association($name) {
-		return $this->_associated->get($name);
+		return $this->_associations->get($name);
 	}
 
 /**
@@ -517,7 +517,7 @@ class Table implements RepositoryInterface, EventListener {
  * @return \Cake\ORM\Associations
  */
 	public function associations() {
-		return $this->_associated;
+		return $this->_associations;
 	}
 
 /**
@@ -549,7 +549,7 @@ class Table implements RepositoryInterface, EventListener {
 	public function belongsTo($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsTo($associated, $options);
-		return $this->_associated->add($association->name(), $association);
+		return $this->_associations->add($association->name(), $association);
 	}
 
 /**
@@ -586,7 +586,7 @@ class Table implements RepositoryInterface, EventListener {
 	public function hasOne($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasOne($associated, $options);
-		return $this->_associated->add($association->name(), $association);
+		return $this->_associations->add($association->name(), $association);
 	}
 
 /**
@@ -627,7 +627,7 @@ class Table implements RepositoryInterface, EventListener {
 	public function hasMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new HasMany($associated, $options);
-		return $this->_associated->add($association->name(), $association);
+		return $this->_associations->add($association->name(), $association);
 	}
 
 /**
@@ -672,7 +672,7 @@ class Table implements RepositoryInterface, EventListener {
 	public function belongsToMany($associated, array $options = []) {
 		$options += ['sourceTable' => $this];
 		$association = new BelongsToMany($associated, $options);
-		return $this->_associated->add($association->name(), $association);
+		return $this->_associations->add($association->name(), $association);
 	}
 
 /**
@@ -1129,7 +1129,7 @@ class Table implements RepositoryInterface, EventListener {
 			return false;
 		}
 
-		$options['associated'] = $this->_associated->normalizeKeys($associated);
+		$options['associated'] = $this->_associations->normalizeKeys($associated);
 		$event = new Event('Model.beforeSave', $this, compact('entity', 'options'));
 		$this->getEventManager()->dispatch($event);
 
@@ -1137,7 +1137,7 @@ class Table implements RepositoryInterface, EventListener {
 			return $event->result;
 		}
 
-		$saved = $this->_associated->saveParents(
+		$saved = $this->_associations->saveParents(
 			$this,
 			$entity,
 			$options['associated'],
@@ -1159,7 +1159,7 @@ class Table implements RepositoryInterface, EventListener {
 		}
 
 		if ($success) {
-			$success = $this->_associated->saveChildren(
+			$success = $this->_associations->saveChildren(
 				$this,
 				$entity,
 				$options['associated'],
@@ -1365,7 +1365,7 @@ class Table implements RepositoryInterface, EventListener {
 			throw new \InvalidArgumentException($msg);
 		}
 
-		$this->_associated->cascadeDelete($entity, $options->getArrayCopy());
+		$this->_associations->cascadeDelete($entity, $options->getArrayCopy());
 
 		$query = $this->query();
 		$statement = $query->delete()
@@ -1543,7 +1543,7 @@ class Table implements RepositoryInterface, EventListener {
  */
 	public function newEntity(array $data = [], $associations = null) {
 		if ($associations === null) {
-			$associations = $this->_associated->keys();
+			$associations = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->one($data, $associations);
@@ -1566,7 +1566,7 @@ class Table implements RepositoryInterface, EventListener {
  */
 	public function newEntities(array $data, $associations = null) {
 		if ($associations === null) {
-			$associations = $this->_associated->keys();
+			$associations = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->many($data, $associations);
@@ -1581,7 +1581,7 @@ class Table implements RepositoryInterface, EventListener {
  */
 	public function patchEntity(EntityInterface $entity, array $data, $associations = null) {
 		if ($associations === null) {
-			$associations = $this->_associated->keys();
+			$associations = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->merge($entity, $data, $associations);
@@ -1600,7 +1600,7 @@ class Table implements RepositoryInterface, EventListener {
  */
 	public function patchEntities($entities, array $data, $associations = null) {
 		if ($associations === null) {
-			$associations = $this->_associated->keys();
+			$associations = $this->_associations->keys();
 		}
 		$marshaller = $this->marshaller();
 		return $marshaller->mergeMany($entities, $data, $associations);
@@ -1650,7 +1650,7 @@ class Table implements RepositoryInterface, EventListener {
  */
 	public function validate($entity, $options = []) {
 		if (!isset($options['associated'])) {
-			$options['associated'] = $this->_associated->keys();
+			$options['associated'] = $this->_associations->keys();
 		}
 
 		$entityValidator = $this->entityValidator();
@@ -1701,7 +1701,7 @@ class Table implements RepositoryInterface, EventListener {
  */
 	public function validateMany($entities, $options = []) {
 		if (!isset($options['associated'])) {
-			$options['associated'] = $this->_associated->keys();
+			$options['associated'] = $this->_associations->keys();
 		}
 
 		$entityValidator = $this->entityValidator();
