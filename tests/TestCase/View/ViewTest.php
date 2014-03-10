@@ -258,7 +258,7 @@ class ViewTest extends TestCase {
 	public function setUp() {
 		parent::setUp();
 
-		$request = $this->getMock('Cake\Network\Request');
+		$request = new Request();
 		$this->Controller = new Controller($request);
 		$this->PostsController = new ViewPostsController($request);
 		$this->PostsController->viewPath = 'Posts';

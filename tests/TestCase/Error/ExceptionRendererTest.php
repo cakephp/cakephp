@@ -643,7 +643,7 @@ class ExceptionRendererTest extends TestCase {
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('render'));
 		$ExceptionRenderer->controller->helpers = array('Fail', 'Boom');
-		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+		$ExceptionRenderer->controller->request = new Request;
 		$ExceptionRenderer->controller->expects($this->at(0))
 			->method('render')
 			->with('missingHelper')
@@ -670,7 +670,7 @@ class ExceptionRendererTest extends TestCase {
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
 		$ExceptionRenderer->controller = $this->getMock('Cake\Controller\Controller', array('beforeRender'));
-		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+		$ExceptionRenderer->controller->request = new Request;
 		$ExceptionRenderer->controller->expects($this->any())
 			->method('beforeRender')
 			->will($this->throwException($exception));
@@ -698,7 +698,7 @@ class ExceptionRendererTest extends TestCase {
 		$ExceptionRenderer->controller->layoutPath = 'json';
 		$ExceptionRenderer->controller->subDir = 'json';
 		$ExceptionRenderer->controller->viewClass = 'Json';
-		$ExceptionRenderer->controller->request = $this->getMock('Cake\Network\Request');
+		$ExceptionRenderer->controller->request = new Request;
 
 		$ExceptionRenderer->controller->expects($this->once())
 			->method('render')
