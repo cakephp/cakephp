@@ -1170,7 +1170,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Form->secure($expected);
+		$result = $this->Form->secure($expected, ['data-foo' => 'bar']);
 
 		$hash = '2981c38990f3f6ba935e6561dc77277966fabd6d%3AAddresses.id';
 		$expected = array(
@@ -1178,12 +1178,14 @@ class FormHelperTest extends TestCase {
 			array('input' => array(
 				'type' => 'hidden',
 				'name' => '_Token[fields]',
-				'value' => $hash
+				'value' => $hash,
+				'data-foo' => 'bar',
 			)),
 			array('input' => array(
 				'type' => 'hidden',
 				'name' => '_Token[unlocked]',
 				'value' => 'address%7Cfirst_name',
+				'data-foo' => 'bar',
 			)),
 			'/div'
 		);
