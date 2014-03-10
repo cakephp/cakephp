@@ -83,7 +83,7 @@ class CacheHelperTest extends TestCase {
 		$_GET = [];
 		$request = new Request();
 		$this->Controller = new CacheTestController($request);
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$this->Cache = new CacheHelper($View);
 		Configure::write('Cache.check', true);
 		Cache::enable();
@@ -116,7 +116,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->request->action = 'cache_parsing';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('index');
 		$this->assertNotContains('cake:nocache', $result);
 		$this->assertNotContains('<?php echo', $result);
@@ -148,7 +148,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->request->here = '/posts/view/風街ろまん';
 		$this->Controller->action = 'view';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$View->render('index');
 
 		$filename = CACHE . 'views/posts_view_風街ろまん.php';
@@ -173,7 +173,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('test_nocache_tags');
 		$this->assertNotRegExp('/cake:nocache/', $result);
 		$this->assertNotRegExp('/php echo/', $result);
@@ -206,7 +206,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('multiple_nocache');
 
 		$this->assertNotRegExp('/cake:nocache/', $result);
@@ -232,13 +232,13 @@ class CacheHelperTest extends TestCase {
 			'action' => 'cache_complex',
 			'pass' => array(),
 		));
-		$this->Controller->cacheAction = array('cache_complex' => 21600);
-		$this->Controller->request->here = '/cacheTest/cache_complex';
 		$this->Controller->action = 'cache_complex';
+		$this->Controller->request->here = '/cacheTest/cache_complex';
+		$this->Controller->cacheAction = array('cache_complex' => 21600);
 		$this->Controller->layout = 'multi_cache';
 		$this->Controller->viewPath = 'Posts';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('sequencial_nocache');
 
 		$this->assertNotRegExp('/cake:nocache/', $result);
@@ -294,7 +294,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->cacheAction = 21600;
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('index');
 		$this->assertNotRegExp('/cake:nocache/', $result);
 		$this->assertNotRegExp('/php echo/', $result);
@@ -324,13 +324,12 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => array(
 				'duration' => 21600,
-				'callbacks' => true
-			)
+				'callbacks' => true)
 		);
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->cache_parsing();
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$View->render('index');
 
 		$filename = CACHE . 'views/cachetest_cache_parsing.php';
@@ -361,7 +360,7 @@ class CacheHelperTest extends TestCase {
 
 		$this->Controller->cache_parsing();
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('index');
 
 		$this->assertNotRegExp('/cake:nocache/', $result);
@@ -389,7 +388,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->request->here = '/cacheTest/cache_parsing';
 		$this->Controller->cache_parsing();
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('index');
 
 		$this->assertNotRegExp('/cake:nocache/', $result);
@@ -419,7 +418,7 @@ class CacheHelperTest extends TestCase {
 		);
 		$this->Controller->request->here = '/cache_test/cache_parsing/1/2/name:mark/ice:cream';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('index');
 
 		$this->assertNotRegExp('/cake:nocache/', $result);
@@ -445,12 +444,12 @@ class CacheHelperTest extends TestCase {
 			'pass' => array(),
 		));
 		$this->Controller->request->query = array('q' => 'cakephp');
+		$this->Controller->request->here = '/cache_test/cache_parsing';
 		$this->Controller->cacheAction = array(
 			'cache_parsing' => 21600
 		);
-		$this->Controller->request->here = '/cache_test/cache_parsing';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('index');
 
 		$this->assertNotRegExp('/cake:nocache/', $result);
@@ -483,7 +482,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->request->here = '/en/cache_test/cache_parsing';
 		$this->Controller->action = 'cache_parsing';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('index');
 
 		$this->assertNotRegExp('/cake:nocache/', $result);
@@ -517,7 +516,7 @@ class CacheHelperTest extends TestCase {
 		$request->here = '/cache/cacheTest/cache_name';
 		$request->base = '/cache';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('index');
 
 		$this->assertNotRegExp('/cake:nocache/', $result);
@@ -535,7 +534,7 @@ class CacheHelperTest extends TestCase {
  */
 	public function testAfterRenderConditions() {
 		Configure::write('Cache.check', true);
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$View->cacheAction = '+1 day';
 		$View->assign('content', 'test');
 
@@ -556,7 +555,7 @@ class CacheHelperTest extends TestCase {
  */
 	public function testAfterLayoutConditions() {
 		Configure::write('Cache.check', true);
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$View->cacheAction = '+1 day';
 		$View->set('content', 'test');
 
@@ -597,7 +596,7 @@ class CacheHelperTest extends TestCase {
 		$this->Controller->layout = 'cache_empty_sections';
 		$this->Controller->viewPath = 'Posts';
 
-		$View = new View($this->Controller);
+		$View = $this->Controller->createView();
 		$result = $View->render('cache_empty_sections');
 		$this->assertNotContains('nocache', $result);
 		$this->assertNotContains('<?php echo', $result);

@@ -212,7 +212,8 @@ class JsonViewTest extends TestCase {
 		$Controller->set($data);
 		$Controller->set('_serialize', $serialize);
 		$Controller->set('_jsonOptions', $jsonOptions);
-		$View = new JsonView($Controller);
+		$Controller->viewClass = 'Json';
+		$View = $Controller->createView();
 		$output = $View->render(false);
 
 		$this->assertSame($expected, $output);
@@ -233,7 +234,8 @@ class JsonViewTest extends TestCase {
 			'tags' => array('cakephp', 'framework'),
 			'_serialize' => 'tags'
 		));
-		$View = new JsonView($Controller);
+		$Controller->viewClass = 'Json';
+		$View = $Controller->createView();
 		$View->render();
 
 		$this->assertFalse(isset($View->Html), 'No helper loaded.');
@@ -255,7 +257,8 @@ class JsonViewTest extends TestCase {
 			'_serialize' => 'data',
 			'_jsonp' => true
 		));
-		$View = new JsonView($Controller);
+		$Controller->viewClass = 'Json';
+		$View = $Controller->createView();
 		$output = $View->render(false);
 
 		$this->assertSame(json_encode($data), $output);
@@ -283,7 +286,8 @@ class JsonViewTest extends TestCase {
 		$Request = new Request();
 		$Response = new Response();
 		$Controller = new Controller($Request, $Response);
-		$Controller->name = $Controller->viewPath = 'Posts';
+		$Controller->name = 'Posts';
+		$Controller->viewPath = 'Posts';
 
 		$data = array(
 			'User' => array(
@@ -295,7 +299,8 @@ class JsonViewTest extends TestCase {
 			)
 		);
 		$Controller->set('user', $data);
-		$View = new JsonView($Controller);
+		$Controller->viewClass = 'Json';
+		$View = $Controller->createView();
 		$output = $View->render('index');
 
 		$expected = json_encode(array('user' => 'fake', 'list' => array('item1', 'item2'), 'paging' => null));

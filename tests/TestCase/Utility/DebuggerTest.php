@@ -310,7 +310,7 @@ class DebuggerTest extends TestCase {
 	public function testExportVar() {
 		$Controller = new Controller();
 		$Controller->helpers = array('Html', 'Form');
-		$View = new View($Controller);
+		$View = $Controller->createView();
 		$View->int = 2;
 		$View->float = 1.333;
 
@@ -357,10 +357,9 @@ object(Cake\View\View) {
 		(int) 6 => 'theme',
 		(int) 7 => 'layoutPath',
 		(int) 8 => 'viewPath',
-		(int) 9 => 'request',
-		(int) 10 => 'plugin',
-		(int) 11 => 'passedArgs',
-		(int) 12 => 'cacheAction'
+		(int) 9 => 'plugin',
+		(int) 10 => 'passedArgs',
+		(int) 11 => 'cacheAction'
 	]
 	[protected] _scripts => []
 	[protected] _paths => []

@@ -37,8 +37,7 @@ class SessionHelperTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$controller = null;
-		$this->View = new View($controller);
+		$this->View = new View();
 		$this->Session = new SessionHelper($this->View);
 		Session::start();
 

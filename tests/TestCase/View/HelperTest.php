@@ -177,8 +177,7 @@ class HelperTest extends TestCase {
 		parent::setUp();
 
 		Router::reload();
-		$null = null;
-		$this->View = new View($null);
+		$this->View = new View();
 		$this->Helper = new Helper($this->View);
 		$this->Helper->request = new Request();
 	}

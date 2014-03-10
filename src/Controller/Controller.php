@@ -139,58 +139,12 @@ class Controller extends Object implements EventListener {
 	public $paginate = [];
 
 /**
- * The name of the views subfolder containing views for this controller.
- *
- * @var string
- */
-	public $viewPath = null;
-
-/**
- * The name of the layouts subfolder containing layouts for this controller.
- *
- * @var string
- */
-	public $layoutPath = null;
-
-/**
- * The name of the view file to render. The name specified
- * is the filename in /app/View/<SubFolder> without the .ctp extension.
- *
- * @var string
- */
-	public $view = null;
-
-/**
- * The name of the layout file to render the view inside of. The name specified
- * is the filename of the layout in /app/View/Layout without the .ctp
- * extension.
- *
- * @var string
- */
-	public $layout = 'default';
-
-/**
- * The view theme to use.
- *
- * @see \Cake\View\View::$theme
- * @var string
- */
-	public $theme = null;
-
-/**
  * Set to true to automatically render the view
  * after action logic.
  *
  * @var boolean
  */
 	public $autoRender = true;
-
-/**
- * Set to true to automatically render the layout around views.
- *
- * @var boolean
- */
-	public $autoLayout = true;
 
 /**
  * Instance of ComponentRegistry used to create Components
@@ -226,33 +180,22 @@ class Controller extends Object implements EventListener {
 	public $View;
 
 /**
+ * These properties are settable directly on Controller and passed to the View as options.
+ *
+ * @var array
+ * @see \Cake\View\View
+ */
+	protected $_validViewOptions = [
+		'viewVars', 'autoLayout', 'helpers', 'view', 'layout', 'name', 'theme', 'layoutPath',
+		'viewPath', 'plugin', 'passedArgs', 'cacheAction'
+	];
+
+/**
  * Automatically set to the name of a plugin.
  *
  * @var string
  */
 	public $plugin = null;
-
-/**
- * Used to define methods a controller that will be cached. To cache a
- * single action, the value is set to an array containing keys that match
- * action names and values that denote cache expiration times (in seconds).
- *
- * Example:
- *
- * {{{
- * public $cacheAction = array(
- *		'view/23/' => 21600,
- *		'recalled/' => 86400
- *	);
- * }}}
- *
- * $cacheAction can also be set to a strtotime() compatible string. This
- * marks all the actions in the controller for view caching.
- *
- * @var mixed
- * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/cache.html#additional-configuration-options
- */
-	public $cacheAction = false;
 
 /**
  * Holds all passed params.
@@ -373,14 +316,17 @@ class Controller extends Object implements EventListener {
 
 /**
  * Sets the request objects and configures a number of controller properties
- * based on the contents of the request. The properties that get set are
+ * based on the contents of the request. Controller acts as a proxy for certain View variables
+ * which must also be updated here. The properties that get set are:
  *
  * - $this->request - To the $request parameter
  * - $this->plugin - To the $request->params['plugin']
- * - $this->view - To the $request->params['action']
- * - $this->autoLayout - To the false if $request->params['bare']; is set.
  * - $this->autoRender - To false if $request->params['return'] == 1
  * - $this->passedArgs - The the combined results of params['named'] and params['pass]
+ * - View::$passedArgs - $this->passedArgs
+ * - View::$plugin - $this->plugin
+ * - View::$view - To the $request->params['action']
+ * - View::$autoLayout - To the false if $request->params['bare']; is set.
  *
  * @param \Cake\Network\Request $request
  * @return void
@@ -389,10 +335,10 @@ class Controller extends Object implements EventListener {
 		$this->request = $request;
 		$this->plugin = isset($request->params['plugin']) ? Inflector::camelize($request->params['plugin']) : null;
 		$this->view = isset($request->params['action']) ? $request->params['action'] : null;
+
 		if (isset($request->params['pass'])) {
 			$this->passedArgs = $request->params['pass'];
 		}
-
 		if (!empty($request->params['return']) && $request->params['return'] == 1) {
 			$this->autoRender = false;
 		}
@@ -656,7 +602,7 @@ class Controller extends Object implements EventListener {
 			return $this->response;
 		}
 
-		$this->View = $this->_getViewObject();
+		$this->View = $this->createView();
 
 		$this->autoRender = false;
 		$this->response->body($this->View->render($view, $layout));
@@ -778,17 +724,22 @@ class Controller extends Object implements EventListener {
 	}
 
 /**
- * Constructs the view class instance based on the controller property
+ * Constructs the view class instance based on controller properties.
+ * Controller stashes view variables and view configuration options in the absence of an
+ * instantiated view to set them on, and passes them to the View constructor here.
  *
+ * @param string $viewClass Optional namespaced class name of the View class to instantiate.
  * @return View
  */
-	protected function _getViewObject() {
-		$viewClass = $this->viewClass;
-		if ($this->viewClass !== 'View') {
-			list($plugin, $viewClass) = pluginSplit($viewClass, true);
-			$viewClass = App::classname($viewClass, 'View', 'View');
+	public function createView($viewClass = null) {
+		if ($viewClass === null) {
+			$viewClass = $this->viewClass;
+			if ($this->viewClass !== 'View') {
+				list($plugin, $viewClass) = pluginSplit($viewClass, true);
+				$viewClass = App::classname($viewClass, 'View', 'View');
+			}
 		}
-		return new $viewClass($this);
+		$viewOptions = array_intersect_key(get_object_vars($this), array_flip($this->_validViewOptions));
+		return new $viewClass($this->request, $this->response, $this->getEventManager(), $viewOptions);
 	}
-
 }
