@@ -517,7 +517,7 @@ class CakeRoute {
 		}
 		$out = $this->template;
 
-		if(!empty($this->keys)) {
+		if (!empty($this->keys)) {
 
 			$search = $replace = array();
 
