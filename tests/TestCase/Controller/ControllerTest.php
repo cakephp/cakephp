@@ -368,7 +368,7 @@ class ControllerTest extends TestCase {
  */
 	public function testBeforeRenderCallbackChangingViewClass() {
 		Configure::write('App.namespace', 'TestApp');
-		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());
+		$Controller = new Controller(new Request, new Response());
 
 		$Controller->getEventManager()->attach(function ($event) {
 			$controller = $event->subject();
@@ -392,7 +392,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testBeforeRenderEventCancelsRender() {
-		$Controller = new Controller($this->getMock('Cake\Network\Request'), new Response());
+		$Controller = new Controller(new Request, new Response());
 
 		$Controller->getEventManager()->attach(function ($event) {
 			return false;
@@ -567,8 +567,7 @@ class ControllerTest extends TestCase {
  * @return void
  */
 	public function testReferer() {
-		$request = $this->getMock('Cake\Network\Request');
-
+		$request = $this->getMock('Cake\Network\Request', ['referer']);
 		$request->expects($this->any())->method('referer')
 			->with(true)
 			->will($this->returnValue('/posts/index'));
@@ -577,12 +576,15 @@ class ControllerTest extends TestCase {
 		$result = $Controller->referer(null, true);
 		$this->assertEquals('/posts/index', $result);
 
+		$request = $this->getMock('Cake\Network\Request', ['referer']);
+		$request->expects($this->any())->method('referer')
+			->with(true)
+			->will($this->returnValue('/'));
 		$Controller = new Controller($request);
-		$request->setReturnValue('referer', '/', array(true));
 		$result = $Controller->referer(array('controller' => 'posts', 'action' => 'index'), true);
 		$this->assertEquals('/posts/index', $result);
 
-		$request = $this->getMock('Cake\Network\Request');
+		$request = $this->getMock('Cake\Network\Request', ['referer']);
 
 		$request->expects($this->any())->method('referer')
 			->with(false)
