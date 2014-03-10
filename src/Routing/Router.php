@@ -467,12 +467,11 @@ class Router {
 				if ($prefix) {
 					$params['prefix'] = $prefix;
 				}
-				$options = array(
+				$routeOptions = array_merge(array(
 					'id' => $options['id'],
 					'pass' => array('id')
-				);
-				$options = array_merge($options, $connectOptions);
-				Router::connect($url, $params, $options);
+				), $connectOptions);
+				Router::connect($url, $params, $routeOptions);
 			}
 			static::$_resourceMapped[] = $urlName;
 		}
