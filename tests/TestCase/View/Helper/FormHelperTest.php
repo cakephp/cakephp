@@ -698,7 +698,7 @@ class FormHelperTest extends TestCase {
 		]);
 		$this->assertNotContains('testKey', $result);
 
-		$result = $this->Form->end('Save');
+		$result = $this->Form->end();
 		$this->assertNotContains('testKey', $result);
 	}
 
@@ -1170,7 +1170,7 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertEquals($expected, $result);
 
-		$result = $this->Form->secure($expected);
+		$result = $this->Form->secure($expected, ['data-foo' => 'bar']);
 
 		$hash = '2981c38990f3f6ba935e6561dc77277966fabd6d%3AAddresses.id';
 		$expected = array(
@@ -1178,12 +1178,14 @@ class FormHelperTest extends TestCase {
 			array('input' => array(
 				'type' => 'hidden',
 				'name' => '_Token[fields]',
-				'value' => $hash
+				'value' => $hash,
+				'data-foo' => 'bar',
 			)),
 			array('input' => array(
 				'type' => 'hidden',
 				'name' => '_Token[unlocked]',
 				'value' => 'address%7Cfirst_name',
+				'data-foo' => 'bar',
 			)),
 			'/div'
 		);
@@ -3787,6 +3789,55 @@ class FormHelperTest extends TestCase {
 			)),
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test the time type.
+ *
+ * @return void
+ */
+	public function testTime() {
+		$result = $this->Form->time('start_time', array(
+			'timeFormat' => 12,
+			'interval' => 5,
+			'value' => array('hour' => '4', 'minute' => '30', 'meridian' => 'pm')
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+		$this->assertNotContains('year', $result);
+		$this->assertNotContains('month', $result);
+		$this->assertNotContains('day', $result);
+
+		$result = $this->Form->time('start_time', array(
+			'timeFormat' => 12,
+			'interval' => 5,
+			'value' => '2014-03-08 16:30:00'
+		));
+		$this->assertContains('<option value="04" selected="selected">4</option>', $result);
+		$this->assertContains('<option value="30" selected="selected">30</option>', $result);
+		$this->assertContains('<option value="pm" selected="selected">pm</option>', $result);
+		$this->assertNotContains('year', $result);
+		$this->assertNotContains('month', $result);
+		$this->assertNotContains('day', $result);
+	}
+
+/**
+ * Test the date type.
+ *
+ * @return void
+ */
+	public function testDate() {
+		$result = $this->Form->date('start_day', array(
+			'value' => array('year' => '2014', 'month' => '03', 'day' => '08')
+		));
+		$this->assertContains('<option value="2014" selected="selected">2014</option>', $result);
+		$this->assertContains('<option value="03" selected="selected">March</option>', $result);
+		$this->assertContains('<option value="08" selected="selected">8</option>', $result);
+		$this->assertNotContains('hour', $result);
+		$this->assertNotContains('minute', $result);
+		$this->assertNotContains('second', $result);
+		$this->assertNotContains('meridian', $result);
 	}
 
 /**
