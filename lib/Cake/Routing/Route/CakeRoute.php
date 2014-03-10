@@ -158,8 +158,9 @@ class CakeRoute {
 			} else {
 				$routeParams[$search] = '(?:(?P<' . $name . '>[^/]+))';
 			}
-			$names[] = $name;
+			$names[$i] = $name;
 		}
+		ksort($names);
 		if (preg_match('#\/\*\*$#', $route)) {
 			$parsed = preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
 			$this->_greedy = true;
