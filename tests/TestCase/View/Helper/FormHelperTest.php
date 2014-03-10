@@ -338,6 +338,28 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test create() with the templates option.
+ *
+ * @return void
+ */
+	public function testCreateTemplates() {
+		$result = $this->Form->create($this->article, [
+			'templates' => [
+				'formstart' => '<form class="form-horizontal"{{attrs}}>',
+			]
+		]);
+		$expected = [
+			'form' => [
+				'class' => 'form-horizontal',
+				'method' => 'post',
+				'action' => '/articles/add',
+				'accept-charset' => 'utf-8'
+			]
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test the create() method
  *
  * @dataProvider requestTypeProvider

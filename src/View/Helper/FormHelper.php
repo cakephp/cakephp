@@ -256,6 +256,10 @@ class FormHelper extends Helper {
  * - `url` The URL the form submits to. Can be a string or a URL array. If you use 'url'
  *    you should leave 'action' undefined.
  * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
+ * - `templates` The templates you want to use for this form. Any templates will be merged on top of
+ *   the already loaded templates. This option can either be a filename in App/Config that contains
+ *   the templates you want to load, or an array of templates to use. You can use
+ *   resetTemplates() to restore the original templates.
  * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
  *   option that allows you to set the specific Table class the form should be based on.
  * - `idPrefix` Prefix for generated ID attributes.
@@ -284,10 +288,17 @@ class FormHelper extends Helper {
 			'action' => null,
 			'url' => null,
 			'encoding' => strtolower(Configure::read('App.encoding')),
-			'idPrefix' => null
+			'templates' => null,
+			'idPrefix' => null,
 		];
 
 		$this->_idPrefix = $options['idPrefix'];
+
+		if (!empty($options['templates'])) {
+			$this->templates($options['templates']);
+		}
+		unset($options['templates']);
+
 		$action = $this->url($this->_formUrl($context, $options));
 		unset($options['url'], $options['action'], $options['idPrefix']);
 
