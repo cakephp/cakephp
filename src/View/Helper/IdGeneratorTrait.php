@@ -12,7 +12,7 @@
  * @since         CakePHP(tm) v3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\View\Widget;
+namespace Cake\View\Helper;
 
 use Cake\Utility\Inflector;
 
@@ -21,6 +21,13 @@ use Cake\Utility\Inflector;
  * used in various widget classes.
  */
 trait IdGeneratorTrait {
+
+/**
+ * Prefix for id attribute.
+ *
+ * @var string
+ */
+	protected $_idPrefix = null;
 
 /**
  * A list of id suffixes used in the current rendering.
@@ -39,7 +46,7 @@ trait IdGeneratorTrait {
 	}
 
 /**
- * Generate an ID attribute for a radio button.
+ * Generate an ID attribute for an element.
  *
  * Ensures that id's for a given set of fields are unique.
  *
@@ -48,7 +55,8 @@ trait IdGeneratorTrait {
  * @return string Generated id.
  */
 	protected function _id($name, $val) {
-		$name = mb_strtolower(Inflector::slug($name, '-'));
+		$name = $this->_domId($name);
+
 		$idSuffix = mb_strtolower(str_replace(array('/', '@', '<', '>', ' ', '"', '\''), '-', $val));
 		$count = 1;
 		$check = $idSuffix;
@@ -58,4 +66,19 @@ trait IdGeneratorTrait {
 		$this->_idSuffixes[] = $check;
 		return trim($name . '-' . $check, '-');
 	}
+
+/**
+ * Generate an ID suitable for use in an ID attribute.
+ *
+ * @param string $value The value to convert into an ID.
+ * @return string The generated id.
+ */
+	protected function _domId($value) {
+		$domId = mb_strtolower(Inflector::slug($value, '-'));
+		if (!empty($this->_idPrefix)) {
+			$domId = $this->_idPrefix . '-' . $domId;
+		}
+		return $domId;
+	}
+
 }

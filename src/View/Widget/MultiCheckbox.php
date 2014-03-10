@@ -14,7 +14,7 @@
  */
 namespace Cake\View\Widget;
 
-use Cake\View\Widget\IdGeneratorTrait;
+use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\Widget\WidgetInterface;
 
 /**
@@ -71,6 +71,7 @@ class MultiCheckbox implements WidgetInterface {
  * - `disabled` Either a boolean or an array of checkboxes to disable.
  * - `escape` Set to false to disable HTML escaping.
  * - `options` An associative array of value=>labels to generate options for.
+ * - `idPrefix` Prefix for generated ID attributes.
  *
  * ### Options format
  *
@@ -105,8 +106,10 @@ class MultiCheckbox implements WidgetInterface {
 			'options' => [],
 			'disabled' => null,
 			'val' => null,
+			'idPrefix' => null
 		];
 		$out = [];
+		$this->_idPrefix = $data['idPrefix'];
 		$this->_clearIds();
 		foreach ($data['options'] as $key => $val) {
 			$checkbox = [

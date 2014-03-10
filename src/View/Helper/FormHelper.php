@@ -26,6 +26,7 @@ use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
 use Cake\View\Form\NullContext;
 use Cake\View\Helper;
+use Cake\View\Helper\IdGeneratorTrait;
 use Cake\View\Helper\StringTemplateTrait;
 use Cake\View\StringTemplate;
 use Cake\View\View;
@@ -43,6 +44,7 @@ use Traversable;
  */
 class FormHelper extends Helper {
 
+	use IdGeneratorTrait;
 	use StringTemplateTrait;
 
 /**
@@ -256,6 +258,7 @@ class FormHelper extends Helper {
  * - `encoding` Set the accept-charset encoding for the form. Defaults to `Configure::read('App.encoding')`
  * - `context` Additional options for the context class. For example the EntityContext accepts a 'table'
  *   option that allows you to set the specific Table class the form should be based on.
+ * - `idPrefix` Prefix for generated ID attributes.
  *
  * @param mixed $model The context for which the form is being defined. Can
  *   be an ORM entity, ORM resultset, or an array of meta data. You can use false or null
@@ -281,10 +284,12 @@ class FormHelper extends Helper {
 			'action' => null,
 			'url' => null,
 			'encoding' => strtolower(Configure::read('App.encoding')),
+			'idPrefix' => null
 		];
 
+		$this->_idPrefix = $options['idPrefix'];
 		$action = $this->url($this->_formUrl($context, $options));
-		unset($options['url'], $options['action']);
+		unset($options['url'], $options['action'], $options['idPrefix']);
 
 		$htmlAttributes = [];
 		switch (strtolower($options['type'])) {
@@ -414,6 +419,7 @@ class FormHelper extends Helper {
 
 		$this->requestType = null;
 		$this->_context = null;
+		$this->_idPrefix = null;
 		return $out;
 	}
 
@@ -694,16 +700,6 @@ class FormHelper extends Helper {
 			'text' => $text,
 		];
 		return $this->widget('label', $attrs);
-	}
-
-/**
- * Generate an ID suitable for use in an ID attribute.
- *
- * @param string $value The value to convert into an ID.
- * @return string The generated id.
- */
-	protected function _domId($value) {
-		return mb_strtolower(Inflector::slug($value, '-'));
 	}
 
 /**
@@ -1186,6 +1182,7 @@ class FormHelper extends Helper {
 			]);
 		}
 		$attributes['options'] = $options;
+		$attributes['idPrefix'] = $this->_idPrefix;
 
 		return $hidden . $this->widget('radio', $attributes);
 	}
@@ -1642,6 +1639,7 @@ class FormHelper extends Helper {
 		];
 		$attributes = $this->_initInputField($fieldName, $attributes);
 		$attributes['options'] = $options;
+		$attributes['idPrefix'] = $this->_idPrefix;
 
 		$hidden = '';
 		if ($attributes['hiddenField']) {

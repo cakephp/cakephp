@@ -1974,6 +1974,100 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test id prefix
+ *
+ * @return void
+ */
+	public function testCreateIdPrefix() {
+		$this->Form->create(false, ['idPrefix' => 'prefix']);
+
+		$result = $this->Form->input('field');
+		$expected = [
+			'div' => ['class' => 'input text'],
+			'label' => ['for' => 'prefix-field'],
+			'Field',
+			'/label',
+			'input' => ['type' => 'text', 'name' => 'field', 'id' => 'prefix-field'],
+			'/div'
+		];
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->input('field', ['id' => 'custom-id']);
+		$expected = [
+			'div' => ['class' => 'input text'],
+			'label' => ['for' => 'custom-id'],
+			'Field',
+			'/label',
+			'input' => ['type' => 'text', 'name' => 'field', 'id' => 'custom-id'],
+			'/div'
+		];
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.field', ['option A']);
+		$expected = [
+			'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Model[field]',
+				'value' => '0',
+				'id' => 'prefix-model-field-0'
+			]],
+			'label' => ['for' => 'prefix-model-field-0'],
+			'option A',
+			'/label'
+		];
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->radio('Model.field', ['option A', 'option']);
+		$expected = [
+			'input' => ['type' => 'hidden', 'name' => 'Model[field]', 'value' => ''],
+			['input' => [
+				'type' => 'radio',
+				'name' => 'Model[field]',
+				'value' => '0',
+				'id' => 'prefix-model-field-0'
+			]],
+			'label' => ['for' => 'prefix-model-field-0'],
+			'option A',
+			'/label'
+		];
+		$this->assertTags($result, $expected);
+
+		$result = $this->Form->select(
+			'Model.multi_field',
+			['first'],
+			['multiple' => 'checkbox']
+		);
+		$expected = [
+			'input' => [
+				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''
+			],
+			['div' => ['class' => 'checkbox']],
+			['input' => [
+				'type' => 'checkbox', 'name' => 'Model[multi_field][]',
+				'value' => '0', 'id' => 'prefix-model-multi-field-0'
+			]],
+			['label' => ['for' => 'prefix-model-multi-field-0']],
+			'first',
+			'/label',
+			'/div',
+		];
+		$this->assertTags($result, $expected);
+
+		$this->Form->end();
+		$result = $this->Form->input('field');
+		$expected = [
+			'div' => ['class' => 'input text'],
+			'label' => ['for' => 'field'],
+			'Field',
+			'/label',
+			'input' => ['type' => 'text', 'name' => 'field', 'id' => 'field'],
+			'/div'
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * Test that inputs with 0 can be created.
  *
  * @return void
@@ -2080,6 +2174,48 @@ class FormHelperTest extends TestCase {
 		$expected = array(
 			'div' => array('class' => 'input datetime'),
 			'label' => array('for' => 'prueba'),
+			'Prueba',
+			'/label',
+			'This is it!',
+			'/div'
+		);
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * test form->input() with datetime with id prefix
+ *
+ * @return void
+ */
+	public function testInputDatetimeIdPrefix() {
+		$this->Form = $this->getMock(
+			'Cake\View\Helper\FormHelper',
+			['datetime'],
+			[new View(null)]
+		);
+
+		$this->Form->create(false, ['idPrefix' => 'prefix']);
+
+		$this->Form->expects($this->once())->method('datetime')
+			->with('prueba', [
+				'type' => 'datetime',
+				'timeFormat' => 24,
+				'minYear' => 2008,
+				'maxYear' => 2011,
+				'interval' => 15,
+				'options' => null,
+				'empty' => false,
+				'id' => 'prefix-prueba',
+				'required' => false,
+			])
+			->will($this->returnValue('This is it!'));
+		$result = $this->Form->input('prueba', array(
+			'type' => 'datetime', 'timeFormat' => 24, 'minYear' => 2008,
+			'maxYear' => 2011, 'interval' => 15
+		));
+		$expected = array(
+			'div' => array('class' => 'input datetime'),
+			'label' => array('for' => 'prefix-prueba'),
 			'Prueba',
 			'/label',
 			'This is it!',
