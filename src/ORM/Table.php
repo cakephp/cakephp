@@ -1740,4 +1740,23 @@ class Table implements RepositoryInterface, EventListener {
 		return $events;
 	}
 
+/**
+ * Returns an array that can be used to describe the internal state of this
+ * object.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		$conn = $this->connection();
+		return [
+			'table' => $this->table(),
+			'alias' => $this->alias(),
+			'entityClass' => $this->entityClass(),
+			'associated' => $this->_associated->keys(),
+			'behaviors' => $this->_behaviors->loaded(),
+			'defaultConnection' => $this->defaultConnectionName(),
+			'connectionName' => $conn ? $conn->configName() : null
+		];
+	}
+
 }
