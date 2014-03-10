@@ -1,9 +1,5 @@
 <?php
 /**
- * PluginTask Test file
- *
- * Test Case for plugin generation shell task
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -28,7 +24,6 @@ use Cake\Utility\Folder;
 
 /**
  * PluginTaskPlugin class
- *
  */
 class PluginTaskTest extends TestCase {
 
