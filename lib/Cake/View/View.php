@@ -458,7 +458,6 @@ class View extends Object {
 		if ($this->hasRendered) {
 			return;
 		}
-		$this->Blocks->set('content', '');
 
 		if ($view !== false && $viewFileName = $this->_getViewFileName($view)) {
 			$this->_currentType = self::TYPE_VIEW;
@@ -491,7 +490,8 @@ class View extends Object {
  * - `$scripts_for_layout` is deprecated and will be removed in CakePHP 3.0.
  *   Use the block features instead. `meta`, `css` and `script` will be populated
  *   by the matching methods on HtmlHelper.
- * - `$title_for_layout` is deprecated and will be removed in CakePHP 3.0
+ * - `$title_for_layout` is deprecated and will be removed in CakePHP 3.0.
+ *   Use the `title` block instead.
  * - `$content_for_layout` is deprecated and will be removed in CakePHP 3.0.
  *   Use the `content` block instead.
  *
@@ -521,9 +521,16 @@ class View extends Object {
 			'scripts_for_layout' => $scripts,
 		));
 
-		if (!isset($this->viewVars['title_for_layout'])) {
-			$this->viewVars['title_for_layout'] = Inflector::humanize($this->viewPath);
+		$title = $this->Blocks->get('title');
+		if ($title === '') {
+			if (isset($this->viewVars['title_for_layout'])) {
+				$title = $this->viewVars['title_for_layout'];
+			} else {
+				$title = Inflector::humanize($this->viewPath);
+			}
 		}
+		$this->viewVars['title_for_layout'] = $title;
+		$this->Blocks->set('title', $title);
 
 		$this->_currentType = self::TYPE_LAYOUT;
 		$this->Blocks->set('content', $this->_render($layoutFileName));
@@ -588,11 +595,12 @@ class View extends Object {
  * Blocks are checked before view variables.
  *
  * @param string $var The view var you want the contents of.
- * @return mixed The content of the named var if its set, otherwise null.
+ * @param mixed $default The default/fallback content of $var.
+ * @return mixed The content of the named var if its set, otherwise $default.
  */
-	public function get($var) {
+	public function get($var, $default = null) {
 		if (!isset($this->viewVars[$var])) {
-			return null;
+			return $default;
 		}
 		return $this->viewVars[$var];
 	}

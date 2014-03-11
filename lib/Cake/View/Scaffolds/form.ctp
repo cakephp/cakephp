@@ -30,7 +30,7 @@
 		<li><?php echo $this->Form->postLink(
 			__d('cake', 'Delete'),
 			array('action' => 'delete', $this->Form->value($modelClass . '.' . $primaryKey)),
-			null,
+			array(),
 			__d('cake', 'Are you sure you want to delete # %s?', $this->Form->value($modelClass . '.' . $primaryKey)));
 		?></li>
 <?php endif; ?>
