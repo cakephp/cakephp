@@ -96,6 +96,24 @@ class CakeFixtureManager {
 	}
 
 /**
+ * Parse the fixture path included in test cases, to get the fixture class name, and the
+ * real fixture path including sub-directories
+ * 
+ * @param string $fixturePath the fixture path to parse
+ * @return array containing fixture class name and optional additional path
+ */	
+ 	protected function _parseFixturePath($fixturePath) {
+		$pathTokenArray = explode('/', $fixturePath);
+		$fixture = array_pop($pathTokenArray);
+		$additionalPath = '';
+		foreach ($pathTokenArray as $pathToken) {
+			$additionalPath .= DS . $pathToken;
+		}
+		
+		return array('fixture' => $fixture, 'additionalPath' => $additionalPath);
+	}
+
+/**
  * Looks for fixture files and instantiates the classes accordingly
  *
  * @param array $fixtures the fixture names to load using the notation {type}.{name}
@@ -115,27 +133,19 @@ class CakeFixtureManager {
 				$fixturePaths[] = CAKE . 'Test' . DS . 'Fixture';
 			} elseif (strpos($fixture, 'app.') === 0) {
 				$fixturePrefixLess = substr($fixture, strlen('app.'));
-				$pathTokenArray = explode('/', $fixturePrefixLess);
-				$fixture = array_pop($pathTokenArray);
-				$additionalPath = '';
-				foreach ($pathTokenArray as $pathToken) {
-					$additionalPath .= DS . $pathToken;
-				}
+				$fixtureParsedPath = $this->_parseFixturePath($fixturePrefixLess);
+				$fixture = $fixtureParsedPath['fixture'];
 				$fixturePaths = array(
-					TESTS . 'Fixture' . $additionalPath
+					TESTS . 'Fixture' . $fixtureParsedPath['additionalPath']
 				);
 			} elseif (strpos($fixture, 'plugin.') === 0) {
-				$explodedFixture = explode('.', $fixturePrefixLess,3);
+				$explodedFixture = explode('.', $fixture, 3);
 				$pluginName = $explodedFixture[1];
-				$pathTokenArray = explode('/', $explodedFixture[2]);
-				$fixture = array_pop($pathTokenArray);
-				$additionalPath = '';
-				foreach ($pathTokenArray as $pathToken) {
-					$additionalPath .= DS . $pathToken;
-				}
+				$fixtureParsedPath = $this->_parseFixturePath($explodedFixture[2]);
+				$fixture = $fixtureParsedPath['fixture'];
 				$fixturePaths = array(
-					CakePlugin::path(Inflector::camelize($pluginName)) . 'Test' . DS . 'Fixture' . $additionalPath,
-					TESTS . 'Fixture' . $additionalPath
+					CakePlugin::path(Inflector::camelize($pluginName)) . 'Test' . DS . 'Fixture' . $fixtureParsedPath['additionalPath'],
+					TESTS . 'Fixture' . $fixtureParsedPath['additionalPath']
 				);
 			} else {
 				$fixturePaths = array(
