@@ -115,8 +115,13 @@ class CakeFixtureManager {
 				$fixturePaths[] = CAKE . 'Test' . DS . 'Fixture';
 			} elseif (strpos($fixture, 'app.') === 0) {
 				$fixture = substr($fixture, strlen('app.'));
+				$additionalPath = '';
+				$pathTokenArray = explode('.', $fixture);
+				foreach($pathTokenArray as $pathToken) {
+					$additionalPath .= DS . $pathToken;
+				}
 				$fixturePaths = array(
-					TESTS . 'Fixture'
+					TESTS . 'Fixture' . $additionalPath,
 				);
 			} elseif (strpos($fixture, 'plugin.') === 0) {
 				$parts = explode('.', $fixture, 3);
