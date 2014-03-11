@@ -180,6 +180,7 @@ class HtmlHelper extends AppHelper {
  */
 	public function addCrumb($name, $link = null, $options = null) {
 		$this->_crumbs[] = array($name, $link, $options);
+		return $this;
 	}
 
 /**
