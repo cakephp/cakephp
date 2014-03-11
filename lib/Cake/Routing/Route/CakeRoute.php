@@ -173,6 +173,10 @@ class CakeRoute {
 		foreach ($this->keys as $key) {
 			unset($this->defaults[$key]);
 		}
+
+		$keys = $this->keys;
+		sort($keys);
+		$this->keys = array_reverse($keys);
 	}
 
 /**
@@ -420,7 +424,6 @@ class CakeRoute {
 		$named = $pass = array();
 
 		foreach ($url as $key => $value) {
-
 			// keys that exist in the defaults and have different values is a match failure.
 			$defaultExists = array_key_exists($key, $defaults);
 			if ($defaultExists && $defaults[$key] != $value) {
@@ -517,16 +520,10 @@ class CakeRoute {
 		}
 		$out = $this->template;
 
-		if ($this->keys !== array()) {
-
+		if (!empty($this->keys)) {
 			$search = $replace = array();
 
-			$lengths = array_map('strlen', $this->keys);
-			$flipped = array_combine($this->keys, $lengths);
-			arsort($flipped);
-			$keys = array_keys($flipped);
-
-			foreach ($keys as $key) {
+			foreach ($this->keys as $key) {
 				$string = null;
 				if (isset($params[$key])) {
 					$string = $params[$key];
@@ -537,7 +534,6 @@ class CakeRoute {
 				$replace[] = $string;
 			}
 			$out = str_replace($search, $replace, $out);
-
 		}
 
 		if (strpos($this->template, '*')) {
