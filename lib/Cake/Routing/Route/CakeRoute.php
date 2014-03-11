@@ -517,18 +517,28 @@ class CakeRoute {
 		}
 		$out = $this->template;
 
-		$search = $replace = array();
-		foreach ($this->keys as $key) {
-			$string = null;
-			if (isset($params[$key])) {
-				$string = $params[$key];
-			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
-				$key .= '/';
+		if ($this->keys !== array()) {
+
+			$search = $replace = array();
+
+			$lengths = array_map('strlen', $this->keys);
+			$flipped = array_combine($this->keys, $lengths);
+			arsort($flipped);
+			$keys = array_keys($flipped);
+
+			foreach ($keys as $key) {
+				$string = null;
+				if (isset($params[$key])) {
+					$string = $params[$key];
+				} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
+					$key .= '/';
+				}
+				$search[] = ':' . $key;
+				$replace[] = $string;
 			}
-			$search[] = ':' . $key;
-			$replace[] = $string;
+			$out = str_replace($search, $replace, $out);
+
 		}
-		$out = str_replace($search, $replace, $out);
 
 		if (strpos($this->template, '*')) {
 			$out = str_replace('*', $params['pass'], $out);
