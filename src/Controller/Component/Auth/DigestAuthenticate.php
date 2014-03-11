@@ -64,7 +64,7 @@ class DigestAuthenticate extends BasicAuthenticate {
  * Settings for this object.
  *
  * - `fields` The fields to use to identify a user by.
- * - `userModel` The model name of the User, defaults to User.
+ * - `userModel` The model name of the User, defaults to Users.
  * - `scope` Additional conditions to use when looking up and authenticating users,
  *    i.e. `array('User.is_active' => 1).`
  * - `recursive` The value of the recursive key passed to find(). Defaults to 0.
@@ -82,7 +82,7 @@ class DigestAuthenticate extends BasicAuthenticate {
 			'username' => 'username',
 			'password' => 'password'
 		),
-		'userModel' => 'User',
+		'userModel' => 'Users',
 		'scope' => array(),
 		'recursive' => 0,
 		'contain' => null,

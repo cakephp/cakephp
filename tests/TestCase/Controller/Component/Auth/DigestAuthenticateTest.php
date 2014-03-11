@@ -46,8 +46,6 @@ class DigestAuthenticateTest extends TestCase {
 
 		$this->Collection = $this->getMock('Cake\Controller\ComponentRegistry');
 		$this->auth = new DigestAuthenticate($this->Collection, array(
-			'fields' => array('username' => 'username', 'password' => 'password'),
-			'userModel' => 'Users',
 			'realm' => 'localhost',
 			'nonce' => 123,
 			'opaque' => '123abc'
@@ -68,11 +66,11 @@ class DigestAuthenticateTest extends TestCase {
 	public function testConstructor() {
 		$object = new DigestAuthenticate($this->Collection, array(
 			'userModel' => 'AuthUser',
-			'fields' => array('username' => 'user', 'password' => 'password'),
+			'fields' => array('username' => 'user', 'password' => 'pass'),
 			'nonce' => 123456
 		));
 		$this->assertEquals('AuthUser', $object->settings['userModel']);
-		$this->assertEquals(array('username' => 'user', 'password' => 'password'), $object->settings['fields']);
+		$this->assertEquals(array('username' => 'user', 'password' => 'pass'), $object->settings['fields']);
 		$this->assertEquals(123456, $object->settings['nonce']);
 		$this->assertEquals(env('SERVER_NAME'), $object->settings['realm']);
 	}
