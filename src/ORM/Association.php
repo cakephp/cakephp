@@ -418,7 +418,7 @@ abstract class Association {
 		}
 
 		$options['conditions'] = $query->newExpr()->add($options['conditions']);
-		$dummy = $target->query();
+		$dummy = $target->query()->primary(false);
 
 		if (!empty($options['queryBuilder'])) {
 			$dummy = $options['queryBuilder']($dummy);
