@@ -114,17 +114,28 @@ class CakeFixtureManager {
 				$fixture = substr($fixture, strlen('core.'));
 				$fixturePaths[] = CAKE . 'Test' . DS . 'Fixture';
 			} elseif (strpos($fixture, 'app.') === 0) {
-				$fixture = substr($fixture, strlen('app.'));
+				$fixturePrefixLess = substr($fixture, strlen('app.'));
+				$pathTokenArray = explode('/', $fixturePrefixLess);
+				$fixture = array_pop($pathTokenArray);
+				$additionalPath = '';
+				foreach ($pathTokenArray as $pathToken) {
+					$additionalPath .= DS . $pathToken;
+				}
 				$fixturePaths = array(
-					TESTS . 'Fixture'
+					TESTS . 'Fixture' . $additionalPath
 				);
 			} elseif (strpos($fixture, 'plugin.') === 0) {
-				$parts = explode('.', $fixture, 3);
-				$pluginName = $parts[1];
-				$fixture = $parts[2];
+				$explodedFixture = explode('.', $fixturePrefixLess,3);
+				$pluginName = $explodedFixture[1];
+				$pathTokenArray = explode('/', $explodedFixture[2]);
+				$fixture = array_pop($pathTokenArray);
+				$additionalPath = '';
+				foreach ($pathTokenArray as $pathToken) {
+					$additionalPath .= DS . $pathToken;
+				}
 				$fixturePaths = array(
-					CakePlugin::path(Inflector::camelize($pluginName)) . 'Test' . DS . 'Fixture',
-					TESTS . 'Fixture'
+					CakePlugin::path(Inflector::camelize($pluginName)) . 'Test' . DS . 'Fixture' . $additionalPath,
+					TESTS . 'Fixture' . $additionalPath
 				);
 			} else {
 				$fixturePaths = array(
