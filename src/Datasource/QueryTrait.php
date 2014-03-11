@@ -245,7 +245,7 @@ trait QueryTrait {
 	}
 
 /**
- * Registers a new formatter callback function that is to be executed when trying 
+ * Registers a new formatter callback function that is to be executed when trying
  * to fetch the results from the database.
  *
  * Formatting callbacks will get a first parameter, a `ResultSetDecorator`, that
