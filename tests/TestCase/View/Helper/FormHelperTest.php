@@ -338,6 +338,46 @@ class FormHelperTest extends TestCase {
 	}
 
 /**
+ * Test create() with the templates option.
+ *
+ * @return void
+ */
+	public function testCreateTemplatesArray() {
+		$result = $this->Form->create($this->article, [
+			'templates' => [
+				'formstart' => '<form class="form-horizontal"{{attrs}}>',
+			]
+		]);
+		$expected = [
+			'form' => [
+				'class' => 'form-horizontal',
+				'method' => 'post',
+				'action' => '/articles/add',
+				'accept-charset' => 'utf-8'
+			]
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test create() with the templates option.
+ *
+ * @return void
+ */
+	public function testCreateTemplatesFile() {
+		$result = $this->Form->create($this->article, [
+			'templates' => 'htmlhelper_tags.php',
+		]);
+		$expected = [
+			'start form',
+			'div' => ['class' => 'hidden'],
+			'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+			'/div'
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
  * test the create() method
  *
  * @dataProvider requestTypeProvider
@@ -5746,6 +5786,19 @@ class FormHelperTest extends TestCase {
 			'/div'
 		);
 		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test resetting templates.
+ *
+ * @return void
+ */
+	public function testResetTemplates() {
+		$this->Form->templates(['input' => '<input>']);
+		$this->assertEquals('<input>', $this->Form->getTemplater()->get('input'));
+
+		$this->assertNull($this->Form->resetTemplates());
+		$this->assertNotEquals('<input>', $this->Form->getTemplater()->get('input'));
 	}
 
 }
