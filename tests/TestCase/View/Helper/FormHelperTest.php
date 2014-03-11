@@ -5191,7 +5191,7 @@ class FormHelperTest extends TestCase {
  * @return void
  */
 	public function testPostLinkFormBuffer() {
-		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('inline' => false));
+		$result = $this->Form->postLink('Delete', '/posts/delete/1', array('block' => true));
 		$this->assertTags($result, array(
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),
 			'Delete',
@@ -5209,7 +5209,7 @@ class FormHelperTest extends TestCase {
 		));
 
 		$result = $this->Form->postLink('Delete', '/posts/delete/2',
-			array('inline' => false, 'method' => 'DELETE')
+			array('block' => true, 'method' => 'DELETE')
 		);
 		$this->assertTags($result, array(
 			'a' => array('href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'),

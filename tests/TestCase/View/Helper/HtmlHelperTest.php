@@ -566,10 +566,10 @@ class HtmlHelperTest extends TestCase {
 			->method('append')
 			->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'));
 
-		$result = $this->Html->css('css_in_head', array('inline' => false));
+		$result = $this->Html->css('css_in_head', array('block' => true));
 		$this->assertNull($result);
 
-		$result = $this->Html->css('more_css_in_head', array('inline' => false));
+		$result = $this->Html->css('more_css_in_head', array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->css('screen', array('rel' => 'import'));
@@ -608,10 +608,10 @@ class HtmlHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Html->css('css_in_head', null, array('inline' => false));
+		$result = $this->Html->css('css_in_head', null, array('block' => true));
 		$this->assertNull($result);
 
-		$result = $this->Html->css('more_css_in_head', null, array('inline' => false));
+		$result = $this->Html->css('more_css_in_head', null, array('block' => true));
 		$this->assertNull($result);
 	}
 
@@ -764,12 +764,12 @@ class HtmlHelperTest extends TestCase {
 		touch(WWW_ROOT . 'js/__cake_js_test.js');
 		$timestamp = substr(strtotime('now'), 0, 8);
 
-		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('__cake_js_test', array('once' => false));
 		$this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
 		Configure::write('debug', 0);
 		Configure::write('Asset.timestamp', 'force');
-		$result = $this->Html->script('__cake_js_test', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('__cake_js_test', array('once' => false));
 		$this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 		unlink(WWW_ROOT . 'js/__cake_js_test.js');
 		Configure::write('Asset.timestamp', false);
@@ -793,12 +793,12 @@ class HtmlHelperTest extends TestCase {
 		touch($pluginJsPath . DS . '__cake_js_test.js');
 		$timestamp = substr(strtotime('now'), 0, 8);
 
-		$result = $this->Html->script('TestPlugin.__cake_js_test', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('TestPlugin.__cake_js_test', array('once' => false));
 		$this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
 		Configure::write('debug', 0);
 		Configure::write('Asset.timestamp', 'force');
-		$result = $this->Html->script('TestPlugin.__cake_js_test', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('TestPlugin.__cake_js_test', array('once' => false));
 		$this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 		unlink($pluginJsPath . DS . '__cake_js_test.js');
 		Configure::write('Asset.timestamp', false);
@@ -891,7 +891,7 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->script(array('foo', 'bar', 'baz'));
 		$this->assertNotRegExp('/foo.js/', $result);
 
-		$result = $this->Html->script('foo', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('foo', array('once' => false));
 		$this->assertNotNull($result);
 
 		$result = $this->Html->script('jquery-1.3.2', array('defer' => true, 'encoding' => 'utf-8'));
@@ -955,7 +955,7 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->script(array('TestPlugin.foo', 'TestPlugin.bar', 'TestPlugin.baz'));
 		$this->assertNotRegExp('/test_plugin\/js\/foo.js/', $result);
 
-		$result = $this->Html->script('TestPlugin.foo', array('inline' => true, 'once' => false));
+		$result = $this->Html->script('TestPlugin.foo', array('once' => false));
 		$this->assertNotNull($result);
 
 		$result = $this->Html->script('TestPlugin.jquery-1.3.2', array('defer' => true, 'encoding' => 'utf-8'));
@@ -979,16 +979,9 @@ class HtmlHelperTest extends TestCase {
 
 		$this->View->expects($this->at(1))
 			->method('append')
-			->with('script', $this->matchesRegularExpression('/bool_false.js/'));
-
-		$this->View->expects($this->at(2))
-			->method('append')
 			->with('headScripts', $this->matchesRegularExpression('/second_script.js/'));
 
-		$result = $this->Html->script('script_in_head', array('inline' => false));
-		$this->assertNull($result);
-
-		$result = $this->Html->script('bool_false', false);
+		$result = $this->Html->script('script_in_head', array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->script('second_script', array('block' => 'headScripts'));
@@ -1092,7 +1085,7 @@ class HtmlHelperTest extends TestCase {
 			->method('append')
 			->with('scriptTop', $this->stringContains('alert('));
 
-		$result = $this->Html->scriptBlock('window.foo = 2;', array('inline' => false));
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->scriptBlock('alert("hi")', array('block' => 'scriptTop'));
@@ -1155,7 +1148,7 @@ class HtmlHelperTest extends TestCase {
 
 		$this->View->expects($this->once())
 			->method('append');
-		$result = $this->Html->scriptStart(array('safe' => false, 'inline' => false));
+		$result = $this->Html->scriptStart(array('safe' => false, 'block' => true));
 		$this->assertNull($result);
 		echo 'this is some javascript';
 
@@ -1622,7 +1615,7 @@ class HtmlHelperTest extends TestCase {
 			->method('append')
 			->with('metaTags', $this->stringContains('favicon.ico'));
 
-		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('inline' => false));
+		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->meta('icon', 'favicon.ico', array('block' => 'metaTags'));

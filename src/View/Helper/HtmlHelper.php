@@ -183,9 +183,9 @@ class HtmlHelper extends Helper {
  *
  * `$this->Html->meta('icon', 'favicon.ico');
  *
- * Append the meta tag to `$scripts_for_layout`:
+ * Append the meta tag to custom view block "meta":
  *
- * `$this->Html->meta('description', 'A great page', array('inline' => false));`
+ * `$this->Html->meta('description', 'A great page', array('block' => true));`
  *
  * Append the meta tag to custom view block:
  *
@@ -193,10 +193,8 @@ class HtmlHelper extends Helper {
  *
  * ### Options
  *
- * - `inline` Whether or not the link element should be output inline. Set to false to
- *   have the meta tag included in `$scripts_for_layout`, and appended to the 'meta' view block.
- * - `block` Choose a custom block to append the meta tag to. Using this option
- *   will override the inline option.
+ * - `block` - Set to true to append output to view block "meta" or provide
+ *   custom block name.
  *
  * @param string $type The title of the external resource
  * @param string|array $url The address of the external resource or string for content attribute
@@ -206,11 +204,7 @@ class HtmlHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::meta
  */
 	public function meta($type, $url = null, $options = array()) {
-		$options += array('inline' => true, 'block' => null);
-		if (!$options['inline'] && empty($options['block'])) {
-			$options['block'] = __FUNCTION__;
-		}
-		unset($options['inline']);
+		$options += array('block' => null);
 
 		if (!is_array($type)) {
 			$types = array(
@@ -265,6 +259,9 @@ class HtmlHelper extends Helper {
 
 		if (empty($options['block'])) {
 			return $out;
+		}
+		if ($options['block'] === true) {
+			$options['block'] = __FUNCTION__;
 		}
 		$this->_View->append($options['block'], $out);
 	}
@@ -367,9 +364,9 @@ class HtmlHelper extends Helper {
  *
  * `echo $this->Html->css(array('one.css', 'two.css'));`
  *
- * Add the stylesheet to the `$scripts_for_layout` layout var:
+ * Add the stylesheet to view block "css":
  *
- * `$this->Html->css('styles.css', array('inline' => false));`
+ * `$this->Html->css('styles.css', array('block' => true));`
  *
  * Add the stylesheet to a custom block:
  *
@@ -377,10 +374,8 @@ class HtmlHelper extends Helper {
  *
  * ### Options
  *
- * - `inline` If set to false, the generated tag will be appended to the 'css' block,
- *   and included in the `$scripts_for_layout` layout variable. Defaults to true.
- * - `block` Set the name of the block link/style tag will be appended to.
- *   This overrides the `inline` option.
+ * - `block` Set to true to append output to view block "css" or provide
+ *   custom block name.
  * - `plugin` False value will prevent parsing path as a plugin
  * - `rel` Defaults to 'stylesheet'. If equal to 'import' the stylesheet will be imported.
  * - `fullBase` If true the URL will get a full address for the css file.
@@ -405,11 +400,7 @@ class HtmlHelper extends Helper {
 			unset($rel);
 		}
 
-		$options += array('block' => null, 'inline' => true, 'rel' => 'stylesheet');
-		if (!$options['inline'] && empty($options['block'])) {
-			$options['block'] = __FUNCTION__;
-		}
-		unset($options['inline']);
+		$options += array('block' => null, 'rel' => 'stylesheet');
 
 		if (is_array($path)) {
 			$out = '';
@@ -445,6 +436,9 @@ class HtmlHelper extends Helper {
 		if (empty($options['block'])) {
 			return $out;
 		}
+		if ($options['block'] === true) {
+			$options['block'] = __FUNCTION__;
+		}
 		$this->_View->append($options['block'], $out);
 	}
 
@@ -465,41 +459,27 @@ class HtmlHelper extends Helper {
  *
  * `echo $this->Html->script(array('one.js', 'two.js'));`
  *
- * Add the script file to the `$scripts_for_layout` layout var:
- *
- * `$this->Html->script('styles.js', array('inline' => false));`
- *
  * Add the script file to a custom block:
  *
  * `$this->Html->script('styles.js', null, array('block' => 'bodyScript'));`
  *
  * ### Options
  *
- * - `inline` Whether script should be output inline or into `$scripts_for_layout`. When set to false,
- *   the script tag will be appended to the 'script' view block as well as `$scripts_for_layout`.
- * - `block` The name of the block you want the script appended to. Leave undefined to output inline.
- *   Using this option will override the inline option.
+ * - `block` Set to true to append output to view block "script" or provide
+ *   custom block name.
  * - `once` Whether or not the script should be checked for uniqueness. If true scripts will only be
  *   included once, use false to allow the same script to be included more than once per request.
  * - `plugin` False value will prevent parsing path as a plugin
  * - `fullBase` If true the url will get a full address for the script file.
  *
  * @param string|array $url String or array of javascript files to include
- * @param array|boolean $options Array of options, and html attributes see above. If boolean sets $options['inline'] = value
- * @return mixed String of `<script />` tags or null if $inline is false or if $once is true and the file has been
- *   included before.
+ * @param array $options Array of options, and html attributes see above.
+ * @return mixed String of `<script />` tags or null if block is specified in options
+ *   or if $once is true and the file has been included before.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::script
  */
 	public function script($url, $options = array()) {
-		if (is_bool($options)) {
-			list($inline, $options) = array($options, array());
-			$options['inline'] = $inline;
-		}
-		$options = array_merge(array('block' => null, 'inline' => true, 'once' => true), $options);
-		if (!$options['inline'] && empty($options['block'])) {
-			$options['block'] = __FUNCTION__;
-		}
-		unset($options['inline']);
+		$options = array_merge(array('block' => null, 'once' => true), $options);
 
 		if (is_array($url)) {
 			$out = '';
@@ -528,6 +508,9 @@ class HtmlHelper extends Helper {
 		if (empty($options['block'])) {
 			return $out;
 		}
+		if ($options['block'] === true) {
+			$options['block'] = __FUNCTION__;
+		}
 		$this->_View->append($options['block'], $out);
 	}
 
@@ -537,10 +520,8 @@ class HtmlHelper extends Helper {
  * ### Options
  *
  * - `safe` (boolean) Whether or not the $script should be wrapped in <![CDATA[ ]]>
- * - `inline` (boolean) Whether or not the $script should be added to
- *   `$scripts_for_layout` / `script` block, or output inline. (Deprecated, use `block` instead)
- * - `block` Which block you want this script block appended to.
- *   Defaults to `script`.
+ * - `block` Set to true to append output to view block "script" or provide
+ *   custom block name.
  *
  * @param string $script The script to wrap
  * @param array $options The options to use. Options not listed above will be
@@ -549,14 +530,11 @@ class HtmlHelper extends Helper {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::scriptBlock
  */
 	public function scriptBlock($script, $options = array()) {
-		$options += array('safe' => true, 'inline' => true);
+		$options += array('safe' => true, 'block' => null);
 		if ($options['safe']) {
 			$script = "\n" . '//<![CDATA[' . "\n" . $script . "\n" . '//]]>' . "\n";
 		}
-		if (!$options['inline'] && empty($options['block'])) {
-			$options['block'] = 'script';
-		}
-		unset($options['inline'], $options['safe']);
+		unset($options['safe']);
 
 		$out = $this->formatTemplate('javascriptblock', [
 			'attrs' => $this->_templater->formatAttributes($options, ['block']),
@@ -565,6 +543,9 @@ class HtmlHelper extends Helper {
 
 		if (empty($options['block'])) {
 			return $out;
+		}
+		if ($options['block'] === true) {
+			$options['block'] = 'script';
 		}
 		$this->_View->append($options['block'], $out);
 	}
@@ -577,14 +558,15 @@ class HtmlHelper extends Helper {
  * ### Options
  *
  * - `safe` Whether the code block should contain a CDATA
- * - `inline` Should the generated script tag be output inline or in `$scripts_for_layout`
+ * - `block` Set to true to append output to view block "script" or provide
+ *   custom block name.
  *
  * @param array $options Options for the code block.
  * @return void
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::scriptStart
  */
 	public function scriptStart($options = array()) {
-		$options += array('safe' => true, 'inline' => true);
+		$options += array('safe' => true, 'block' => null);
 		$this->_scriptBlockOptions = $options;
 		ob_start();
 		return null;
@@ -592,8 +574,8 @@ class HtmlHelper extends Helper {
 
 /**
  * End a Buffered section of JavaScript capturing.
- * Generates a script tag inline or in `$scripts_for_layout` depending on the settings
- * used when the scriptBlock was started
+ * Generates a script tag inline or appends to specified view block depending on
+ * the settings used when the scriptBlock was started
  *
  * @return mixed depending on the settings of scriptStart() either a script tag or null
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/html.html#HtmlHelper::scriptEnd
