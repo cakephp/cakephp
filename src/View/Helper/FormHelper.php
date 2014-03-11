@@ -1377,7 +1377,8 @@ class FormHelper extends Helper {
  * - `data` - Array with key/value to pass in input hidden
  * - `method` - Request method to use. Set to 'delete' to simulate HTTP/1.1 DELETE request. Defaults to 'post'.
  * - `confirm` - Can be used instead of $confirmMessage.
- * - `block` - Choose a custom block to append the form tag to.
+ * - `block` - Set to true to append form to view block "postLink" or provide
+ *   custom block name.
  * - Other options are the same of HtmlHelper::link() method.
  * - The option `onclick` will be replaced.
  *
@@ -1431,6 +1432,9 @@ class FormHelper extends Helper {
 		$out .= $this->formatTemplate('formend', []);
 
 		if ($options['block']) {
+			if ($options['block'] === true) {
+				$options['block'] = __FUNCTION__;
+			}
 			$this->_View->append($options['block'], $out);
 			$out = '';
 		}

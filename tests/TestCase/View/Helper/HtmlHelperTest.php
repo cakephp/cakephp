@@ -560,8 +560,17 @@ class HtmlHelperTest extends TestCase {
 
 		$this->View->expects($this->at(0))
 			->method('append')
+			->with('css', $this->matchesRegularExpression('/css_in_head.css/'));
+
+		$this->View->expects($this->at(1))
+			->method('append')
 			->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'));
-		$this->Html->css('more_css_in_head.css', array('block' => 'css'));
+
+		$result = $this->Html->css('css_in_head', array('block' => true));
+		$this->assertNull($result);
+
+		$result = $this->Html->css('more_css_in_head', array('block' => true));
+		$this->assertNull($result);
 
 		$result = $this->Html->css('screen', array('rel' => 'import'));
 		$expected = array(
@@ -598,6 +607,12 @@ class HtmlHelperTest extends TestCase {
 			'/style'
 		);
 		$this->assertTags($result, $expected);
+
+		$result = $this->Html->css('css_in_head', null, array('block' => true));
+		$this->assertNull($result);
+
+		$result = $this->Html->css('more_css_in_head', null, array('block' => true));
+		$this->assertNull($result);
 	}
 
 /**
@@ -960,7 +975,14 @@ class HtmlHelperTest extends TestCase {
 	public function testScriptWithBlocks() {
 		$this->View->expects($this->at(0))
 			->method('append')
+			->with('script', $this->matchesRegularExpression('/script_in_head.js/'));
+
+		$this->View->expects($this->at(1))
+			->method('append')
 			->with('headScripts', $this->matchesRegularExpression('/second_script.js/'));
+
+		$result = $this->Html->script('script_in_head', array('block' => true));
+		$this->assertNull($result);
 
 		$result = $this->Html->script('second_script', array('block' => 'headScripts'));
 		$this->assertNull($result);
@@ -1057,7 +1079,14 @@ class HtmlHelperTest extends TestCase {
 
 		$this->View->expects($this->at(0))
 			->method('append')
+			->with('script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/'));
+
+		$this->View->expects($this->at(1))
+			->method('append')
 			->with('scriptTop', $this->stringContains('alert('));
+
+		$result = $this->Html->scriptBlock('window.foo = 2;', array('block' => true));
+		$this->assertNull($result);
 
 		$result = $this->Html->scriptBlock('alert("hi")', array('block' => 'scriptTop'));
 		$this->assertNull($result);
@@ -1119,8 +1148,7 @@ class HtmlHelperTest extends TestCase {
 
 		$this->View->expects($this->once())
 			->method('append');
-
-		$result = $this->Html->scriptStart(array('safe' => false, 'block' => 'scripts'));
+		$result = $this->Html->scriptStart(array('safe' => false, 'block' => true));
 		$this->assertNull($result);
 		echo 'this is some javascript';
 
@@ -1581,13 +1609,13 @@ class HtmlHelperTest extends TestCase {
 	public function testMetaWithBlocks() {
 		$this->View->expects($this->at(0))
 			->method('append')
-			->with('metas', $this->stringContains('ROBOTS'));
+			->with('meta', $this->stringContains('ROBOTS'));
 
 		$this->View->expects($this->at(1))
 			->method('append')
 			->with('metaTags', $this->stringContains('favicon.ico'));
 
-		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('block' => 'metas'));
+		$result = $this->Html->meta(array('name' => 'ROBOTS', 'content' => 'ALL'), null, array('block' => true));
 		$this->assertNull($result);
 
 		$result = $this->Html->meta('icon', 'favicon.ico', array('block' => 'metaTags'));

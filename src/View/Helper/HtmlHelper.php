@@ -183,13 +183,18 @@ class HtmlHelper extends Helper {
  *
  * `$this->Html->meta('icon', 'favicon.ico');
  *
+ * Append the meta tag to custom view block "meta":
+ *
+ * `$this->Html->meta('description', 'A great page', array('block' => true));`
+ *
  * Append the meta tag to custom view block:
  *
  * `$this->Html->meta('description', 'A great page', array('block' => 'metaTags'));`
  *
  * ### Options
  *
- * - `block` Choose a block to append the meta tag to.
+ * - `block` - Set to true to append output to view block "meta" or provide
+ *   custom block name.
  *
  * @param string $type The title of the external resource
  * @param string|array $url The address of the external resource or string for content attribute
@@ -254,6 +259,9 @@ class HtmlHelper extends Helper {
 
 		if (empty($options['block'])) {
 			return $out;
+		}
+		if ($options['block'] === true) {
+			$options['block'] = __FUNCTION__;
 		}
 		$this->_View->append($options['block'], $out);
 	}
@@ -356,13 +364,18 @@ class HtmlHelper extends Helper {
  *
  * `echo $this->Html->css(array('one.css', 'two.css'));`
  *
+ * Add the stylesheet to view block "css":
+ *
+ * `$this->Html->css('styles.css', array('block' => true));`
+ *
  * Add the stylesheet to a custom block:
  *
  * `$this->Html->css('styles.css', array('block' => 'layoutCss'));`
  *
  * ### Options
  *
- * - `block` Set the name of the block link/style tag will be appended to.
+ * - `block` Set to true to append output to view block "css" or provide
+ *   custom block name.
  * - `plugin` False value will prevent parsing path as a plugin
  * - `rel` Defaults to 'stylesheet'. If equal to 'import' the stylesheet will be imported.
  * - `fullBase` If true the URL will get a full address for the css file.
@@ -423,6 +436,9 @@ class HtmlHelper extends Helper {
 		if (empty($options['block'])) {
 			return $out;
 		}
+		if ($options['block'] === true) {
+			$options['block'] = __FUNCTION__;
+		}
 		$this->_View->append($options['block'], $out);
 	}
 
@@ -449,7 +465,8 @@ class HtmlHelper extends Helper {
  *
  * ### Options
  *
- * - `block` The name of the block you want the script appended to. Leave undefined to output inline.
+ * - `block` Set to true to append output to view block "script" or provide
+ *   custom block name.
  * - `once` Whether or not the script should be checked for uniqueness. If true scripts will only be
  *   included once, use false to allow the same script to be included more than once per request.
  * - `plugin` False value will prevent parsing path as a plugin
@@ -491,6 +508,9 @@ class HtmlHelper extends Helper {
 		if (empty($options['block'])) {
 			return $out;
 		}
+		if ($options['block'] === true) {
+			$options['block'] = __FUNCTION__;
+		}
 		$this->_View->append($options['block'], $out);
 	}
 
@@ -500,7 +520,8 @@ class HtmlHelper extends Helper {
  * ### Options
  *
  * - `safe` (boolean) Whether or not the $script should be wrapped in <![CDATA[ ]]>
- * - `block` Which block you want this script block appended to.
+ * - `block` Set to true to append output to view block "script" or provide
+ *   custom block name.
  *
  * @param string $script The script to wrap
  * @param array $options The options to use. Options not listed above will be
@@ -523,6 +544,9 @@ class HtmlHelper extends Helper {
 		if (empty($options['block'])) {
 			return $out;
 		}
+		if ($options['block'] === true) {
+			$options['block'] = 'script';
+		}
 		$this->_View->append($options['block'], $out);
 	}
 
@@ -534,7 +558,8 @@ class HtmlHelper extends Helper {
  * ### Options
  *
  * - `safe` Whether the code block should contain a CDATA
- * - `block` View block the output should be appended to
+ * - `block` Set to true to append output to view block "script" or provide
+ *   custom block name.
  *
  * @param array $options Options for the code block.
  * @return void
