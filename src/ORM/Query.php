@@ -96,6 +96,13 @@ class Query extends DatabaseQuery {
 	protected $_eagerLoader;
 
 /**
+ * Whether the query is the primary query or a byproduct.
+ *
+ * @var boolean
+ */
+	protected $_primary = true;
+
+/**
  * Constuctor
  *
  * @param \Cake\Database\Connection $connection
@@ -644,6 +651,21 @@ class Query extends DatabaseQuery {
 	protected function _dirty() {
 		$this->_results = null;
 		parent::_dirty();
+	}
+
+/**
+ * Sets the query instance to be the primary query. If no argument is passed,
+ * the current configured query `_primary` value is returned.
+ *
+ * @param boolean $value
+ * @return \Cake\ORM\Query
+ */
+	public function primary($value = null) {
+		if ($value === null) {
+			return $this->_primary;
+		}
+		$this->_primary = $value;
+		return $this;
 	}
 
 /**

@@ -185,7 +185,7 @@ trait QueryTrait {
 		}
 
 		$table = $this->repository();
-		$event = new Event('Model.beforeFind', $table, [$this, $this->_options, true]);
+		$event = new Event('Model.beforeFind', $table, [$this, $this->_options, $this->primary()]);
 		$table->getEventManager()->dispatch($event);
 
 		if (isset($this->_results)) {
