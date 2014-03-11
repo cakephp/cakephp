@@ -20,7 +20,6 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\ORM\Association;
 use Cake\ORM\Association\DependentDeleteTrait;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\Utility\Inflector;
 
