@@ -293,9 +293,12 @@ class FormHelper extends Helper {
 		];
 
 		$this->_idPrefix = $options['idPrefix'];
+		$templater = $this->getTemplater();
 
-		if (!empty($options['templates'])) {
-			$this->templates($options['templates']);
+		if (!empty($options['templates']) && is_array($options['templates'])) {
+			$templater->add($options['templates']);
+		} elseif (!empty($options['templates']) && is_string($options['templates'])) {
+			$templater->load($options['templates']);
 		}
 		unset($options['templates']);
 
@@ -337,11 +340,11 @@ class FormHelper extends Helper {
 		}
 
 		if (!empty($append)) {
-			$append = $this->formatTemplate('hiddenblock', ['content' => $append]);
+			$append = $templater->format('hiddenblock', ['content' => $append]);
 		}
-		$actionAttr = $this->_templater->formatAttributes(['action' => $action, 'escape' => false]);
-		return $this->formatTemplate('formstart', [
-			'attrs' => $this->_templater->formatAttributes($htmlAttributes) . $actionAttr
+		$actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
+		return $templater->format('formstart', [
+			'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr
 		]) . $append;
 	}
 

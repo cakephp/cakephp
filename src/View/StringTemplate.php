@@ -70,12 +70,7 @@ class StringTemplate {
  * @return void
  */
 	public function load($file) {
-		list($plugin, $file) = pluginSplit($file);
-		$path = APP . 'Config/';
-		if ($plugin !== null) {
-			$path = Plugin::path($plugin) . 'Config/';
-		}
-		$loader = new PhpConfig($path);
+		$loader = new PhpConfig(APP . 'Config/');
 		$templates = $loader->read($file);
 		$this->add($templates);
 	}

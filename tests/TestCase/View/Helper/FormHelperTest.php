@@ -342,7 +342,7 @@ class FormHelperTest extends TestCase {
  *
  * @return void
  */
-	public function testCreateTemplates() {
+	public function testCreateTemplatesArray() {
 		$result = $this->Form->create($this->article, [
 			'templates' => [
 				'formstart' => '<form class="form-horizontal"{{attrs}}>',
@@ -355,6 +355,24 @@ class FormHelperTest extends TestCase {
 				'action' => '/articles/add',
 				'accept-charset' => 'utf-8'
 			]
+		];
+		$this->assertTags($result, $expected);
+	}
+
+/**
+ * Test create() with the templates option.
+ *
+ * @return void
+ */
+	public function testCreateTemplatesFile() {
+		$result = $this->Form->create($this->article, [
+			'templates' => 'htmlhelper_tags.php',
+		]);
+		$expected = [
+			'start form',
+			'div' => ['class' => 'hidden'],
+			'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+			'/div'
 		];
 		$this->assertTags($result, $expected);
 	}
