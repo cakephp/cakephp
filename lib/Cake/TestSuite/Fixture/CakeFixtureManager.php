@@ -101,15 +101,14 @@ class CakeFixtureManager {
  * 
  * @param string $fixturePath the fixture path to parse
  * @return array containing fixture class name and optional additional path
- */	
- 	protected function _parseFixturePath($fixturePath) {
+ */
+	protected function _parseFixturePath($fixturePath) {
 		$pathTokenArray = explode('/', $fixturePath);
 		$fixture = array_pop($pathTokenArray);
 		$additionalPath = '';
 		foreach ($pathTokenArray as $pathToken) {
 			$additionalPath .= DS . $pathToken;
 		}
-		
 		return array('fixture' => $fixture, 'additionalPath' => $additionalPath);
 	}
 
