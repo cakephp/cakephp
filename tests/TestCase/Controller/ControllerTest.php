@@ -579,7 +579,7 @@ class ControllerTest extends TestCase {
 		$request = $this->getMock('Cake\Network\Request', ['referer']);
 		$request->expects($this->any())->method('referer')
 			->with(true)
-			->will($this->returnValue('/'));
+			->will($this->returnValue('/posts/index'));
 		$Controller = new Controller($request);
 		$result = $Controller->referer(array('controller' => 'posts', 'action' => 'index'), true);
 		$this->assertEquals('/posts/index', $result);
