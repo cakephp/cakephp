@@ -2397,6 +2397,42 @@ class QueryTest extends TestCase {
 	}
 
 /**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$query = (new Query($this->connection))->select('*')
+			->from('articles')
+			->defaultTypes(['id' => 'integer'])
+			->where(['id' => '1']);
+
+		$expected = [
+			'sql' => $query->sql(),
+			'params' => [
+				':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0']
+			],
+			'defaultTypes' => ['id' => 'integer'],
+			'decorators' => 0,
+			'executed' => false
+		];
+		$result = $query->__debugInfo();
+		$this->assertEquals($expected, $result);
+
+		$query->execute();
+		$expected = [
+			'sql' => $query->sql(),
+			'params' => [
+				':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0']
+			],
+			'defaultTypes' => ['id' => 'integer'],
+			'decorators' => 0,
+			'executed' => true
+		];
+		$result = $query->__debugInfo();
+	}
+
+/**
  * Assertion for comparing a table's contents with what is in it.
  *
  * @param string $table

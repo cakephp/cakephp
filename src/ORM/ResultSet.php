@@ -439,4 +439,17 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		}
 	}
 
+/**
+ * Returns an array that can be used to describe the internal state of this
+ * object.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		return [
+			'query' => $this->_query,
+			'items' => $this->toArray(),
+		];
+	}
+
 }

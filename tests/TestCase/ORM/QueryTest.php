@@ -1767,4 +1767,52 @@ class QueryTest extends TestCase {
 		$this->assertEquals('tag3', $results[0]->articles->articles_tags->tag->name);
 	}
 
+/**
+ * Tests __debugInfo
+ *
+ * @return void
+ */
+	public function testDebugInfo() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$query = $table->find()
+			->where(['id > ' => 1])
+			->bufferResults(false)
+			->hydrate(false)
+			->matching('articles')
+			->applyOptions(['foo' => 'bar'])
+			->formatResults(function($results) {
+				return $results;
+			})
+			->mapReduce(function($item, $key, $mr) {
+				$mr->emit($item);
+			});
+
+		$expected = [
+			'sql' => $query->sql(),
+			'params' => $query->valueBinder()->bindings(),
+			'defaultTypes' => [
+				'authors.id' => 'integer',
+				'id' => 'integer',
+				'authors.name' => 'string',
+				'name' => 'string'
+			],
+			'decorators' => 0,
+			'executed' => false,
+			'hydrate' => false,
+			'buffered' => false,
+			'formatters' => 1,
+			'mapReducers' => 1,
+			'contain' => [
+				'articles' => [
+					'queryBuilder' => null,
+					'matching' => true
+				]
+			],
+			'extraOptions' => ['foo' => 'bar'],
+			'repository' => $table
+		];
+		$this->assertSame($expected, $query->__debugInfo());
+	}
+
 }
