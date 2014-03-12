@@ -1410,7 +1410,7 @@ class Model extends Object implements CakeEventListener {
 			list($model, $column) = explode('.', $column);
 		}
 
-		if ($model != $this->alias && isset($this->{$model})) {
+		if (isset($model) && $model != $this->alias && isset($this->{$model})) {
 			return $this->{$model}->getColumnType($column);
 		}
 

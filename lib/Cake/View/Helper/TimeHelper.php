@@ -184,7 +184,7 @@ class TimeHelper extends AppHelper {
  *
  * @param integer|string|DateTime $dateString UNIX timestamp, strtotime() valid string or DateTime object
  * @param string|DateTimeZone $timezone User's timezone string or DateTimeZone object
- * @param string $format The format to use. If null, `TimeHelper::$niceFormat` is used
+ * @param string $format The format to use. If null, `CakeTime::$niceFormat` is used
  * @return string Formatted date string
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#formatting
  */
