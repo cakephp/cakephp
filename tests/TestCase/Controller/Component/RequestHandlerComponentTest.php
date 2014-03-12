@@ -625,7 +625,7 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testMobileDeviceDetection() {
-		$request = $this->getMock('Cake\Network\Request', ['mobile']);
+		$request = $this->getMock('Cake\Network\Request', ['is']);
 		$request->expects($this->once())->method('is')
 			->with('mobile')
 			->will($this->returnValue(true));
