@@ -33,11 +33,19 @@ class DatabaseSuite extends TestSuite {
  * @return void
  */
 	public static function suite() {
-		$suite = new TestSuite('Database related tests');
+		$suite = new self('Database related tests');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'Database');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'ORM');
 		$suite->addTestDirectoryRecursive(__DIR__ . DS . 'Model');
+		return $suite;
+	}
 
+/**
+ * Returns an iterator for this test suite.
+ *
+ * @return ArrayIterator
+ */
+	public function getIterator() {
 		$permutations = [
 			'Identifier Quoting' => function() {
 				ConnectionManager::get('test')->driver()->autoQuoting(true);
@@ -47,8 +55,12 @@ class DatabaseSuite extends TestSuite {
 			}
 		];
 
-		$suite = new TestPermutationDecorator($suite, $permutations);
-		return $suite;
+		$tests = [];
+		foreach (parent::getIterator() as $test) {
+			$tests[] = new TestPermutationDecorator($test, $permutations);
+		}
+
+		return new \ArrayIterator($tests);
 	}
 
 }

@@ -19,6 +19,7 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use TestApp\Core\TestApp;
 
 /**
  * AppTest class
@@ -46,21 +47,18 @@ class AppTest extends TestCase {
  */
 	public function testClassname($class, $type, $suffix = '', $existsInBase = false, $expected = false) {
 		Configure::write('App.namespace', 'TestApp');
-		$mock = $this->getMockClass('Cake\Core\App', ['_classExistsInBase']);
-
-		$mock::staticExpects($this->at(0))
-			->method('_classExistsInBase')
-			->will($this->returnValue($existsInBase));
-
-		$checkCake = (!$existsInBase || strpos('.', $class));
-		if ($checkCake) {
-			$existsInCake = (bool)$expected;
-			$mock::staticExpects($this->at(1))
-				->method('_classExistsInBase')
-				->will($this->returnValue($existsInCake));
-		}
-
-		$return = $mock::classname($class, $type, $suffix);
+		$i = 0;
+		TestApp::$existsInBaseCallback = function($name, $namespace) use ($existsInBase, $class, $expected, &$i) {
+			if ($i++ === 0) {
+				return $existsInBase;
+			}
+			$checkCake = (!$existsInBase || strpos('.', $class));
+			if ($checkCake) {
+				return (bool)$expected;
+			}
+			return false;
+		};
+		$return = TestApp::classname($class, $type, $suffix);
 		$this->assertSame($expected, $return);
 	}
 

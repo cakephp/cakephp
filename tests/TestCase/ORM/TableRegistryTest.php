@@ -169,15 +169,12 @@ class TableRegistryTest extends TestCase {
 		$this->assertInstanceOf('\TestApp\Model\Table\AuthorsTable', $table);
 
 		$class = $this->getMockClass('\Cake\ORM\Table');
-		$class::staticExpects($this->once())
-			->method('defaultConnectionName')
-			->will($this->returnValue('test'));
 
 		if (!class_exists('MyPlugin\Model\Table\SuperTestsTable')) {
 			class_alias($class, 'MyPlugin\Model\Table\SuperTestsTable');
 		}
 
-		$table = TableRegistry::get('MyPlugin.SuperTests');
+		$table = TableRegistry::get('MyPlugin.SuperTests', ['connection' => 'test']);
 		$this->assertInstanceOf($class, $table);
 	}
 

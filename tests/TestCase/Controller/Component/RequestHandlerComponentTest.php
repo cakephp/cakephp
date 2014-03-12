@@ -272,7 +272,7 @@ class RequestHandlerComponentTest extends TestCase {
 		$extensions = Router::extensions();
 		Router::parseExtensions('xml');
 
-		$this->Controller->request = $this->getMock('Cake\Network\Request');
+		$this->Controller->request = $this->getMock('Cake\Network\Request', ['accepts']);
 		$this->Controller->request->expects($this->any())
 			->method('accepts')
 			->will($this->returnValue(array('application/json')));
@@ -465,7 +465,7 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testRenderAsWithAttachment() {
-		$this->RequestHandler->request = $this->getMock('Cake\Network\Request');
+		$this->RequestHandler->request = $this->getMock('Cake\Network\Request', ['parseAccept']);
 		$this->RequestHandler->request->expects($this->any())
 			->method('parseAccept')
 			->will($this->returnValue(array('1.0' => array('application/xml'))));
@@ -516,7 +516,7 @@ class RequestHandlerComponentTest extends TestCase {
 			array(&$this->Controller->Components)
 		);
 		$this->RequestHandler->response = $this->getMock('Cake\Network\Response', array('type', 'download'));
-		$this->RequestHandler->request = $this->getMock('Cake\Network\Request');
+		$this->RequestHandler->request = $this->getMock('Cake\Network\Request', ['parseAccept']);
 
 		$this->RequestHandler->request->expects($this->once())
 			->method('parseAccept')
@@ -625,7 +625,7 @@ class RequestHandlerComponentTest extends TestCase {
  * @return void
  */
 	public function testMobileDeviceDetection() {
-		$request = $this->getMock('Cake\Network\Request');
+		$request = $this->getMock('Cake\Network\Request', ['is']);
 		$request->expects($this->once())->method('is')
 			->with('mobile')
 			->will($this->returnValue(true));
@@ -715,7 +715,7 @@ class RequestHandlerComponentTest extends TestCase {
 			array('_stop'),
 			array(&$this->Controller->Components)
 		);
-		$this->Controller->request = $this->getMock('Cake\Network\Request');
+		$this->Controller->request = $this->getMock('Cake\Network\Request', ['is']);
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$this->Controller->RequestHandler->request = $this->Controller->request;
 		$this->Controller->RequestHandler->response = $this->Controller->response;
@@ -748,7 +748,7 @@ class RequestHandlerComponentTest extends TestCase {
 			array('_stop'),
 			array(&$this->Controller->Components)
 		);
-		$this->Controller->request = $this->getMock('Cake\Network\Request');
+		$this->Controller->request = $this->getMock('Cake\Network\Request', ['is']);
 		$this->Controller->response = $this->getMock('Cake\Network\Response', array('_sendHeader'));
 		$this->Controller->RequestHandler->request = $this->Controller->request;
 		$this->Controller->RequestHandler->response = $this->Controller->response;
