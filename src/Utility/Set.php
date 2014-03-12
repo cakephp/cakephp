@@ -306,7 +306,7 @@ class Set {
  * @param string $path An absolute XPath 2.0 path
  * @param array $data An array of data to extract from
  * @param array $options Currently only supports 'flatten' which can be disabled for higher XPath-ness
- * @return array An array of matched items
+ * @return mixed An array of matched items or the content of a single selected item or null in any of these cases: $path or $data are null, no items found.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::extract
  */
 	public static function extract($path, $data = null, $options = array()) {
@@ -531,7 +531,7 @@ class Set {
  *
  * @param array $data Array from where to extract
  * @param string|array $path As an array, or as a dot-separated string.
- * @return array|null Extracted data or null when $data or $path are empty.
+ * @return mixed An array of matched items or the content of a single selected item or null in any of these cases: $path or $data are null, no items found.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/set.html#Set::classicExtract
  */
 	public static function classicExtract($data, $path = null) {

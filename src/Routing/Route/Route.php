@@ -211,6 +211,10 @@ class Route {
 		foreach ($this->keys as $key) {
 			unset($this->defaults[$key]);
 		}
+
+		$keys = $this->keys;
+		sort($keys);
+		$this->keys = array_reverse($keys);
 	}
 
 /**
@@ -506,18 +510,21 @@ class Route {
 		$pass = implode('/', array_map('rawurlencode', $pass));
 		$out = $this->template;
 
-		$search = $replace = array();
-		foreach ($this->keys as $key) {
-			$string = null;
-			if (isset($params[$key])) {
-				$string = $params[$key];
-			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
-				$key .= '/';
+		if (!empty($this->keys)) {
+			$search = $replace = array();
+
+			foreach ($this->keys as $key) {
+				$string = null;
+				if (isset($params[$key])) {
+					$string = $params[$key];
+				} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
+					$key .= '/';
+				}
+				$search[] = ':' . $key;
+				$replace[] = $string;
 			}
-			$search[] = ':' . $key;
-			$replace[] = $string;
+			$out = str_replace($search, $replace, $out);
 		}
-		$out = str_replace($search, $replace, $out);
 
 		if (strpos($this->template, '*')) {
 			$out = str_replace('*', $pass, $out);

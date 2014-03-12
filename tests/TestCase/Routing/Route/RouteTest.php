@@ -1,7 +1,5 @@
 <?php
 /**
- * Route Test case file.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -149,7 +147,7 @@ class RouteTest extends TestCase {
 		$this->assertRegExp($result, '/posts/view/518098');
 		$this->assertNotRegExp($result, '/posts/edit/name-of-post');
 		$this->assertNotRegExp($result, '/posts/edit/4/other:param');
-		$this->assertEquals(array('controller', 'action', 'id'), $route->keys);
+		$this->assertEquals(array('id', 'controller', 'action'), $route->keys);
 
 		$route = new Route(
 			'/:lang/:controller/:action/:id',
@@ -161,7 +159,7 @@ class RouteTest extends TestCase {
 		$this->assertRegExp($result, '/cze/articles/view/1');
 		$this->assertNotRegExp($result, '/language/articles/view/2');
 		$this->assertNotRegExp($result, '/eng/articles/view/name-of-article');
-		$this->assertEquals(array('lang', 'controller', 'action', 'id'), $route->keys);
+		$this->assertEquals(array('lang', 'id', 'controller', 'action'), $route->keys);
 
 		foreach (array(':', '@', ';', '$', '-') as $delim) {
 			$route = new Route('/posts/:id' . $delim . ':title');
@@ -172,7 +170,7 @@ class RouteTest extends TestCase {
 			$this->assertNotRegExp($result, '/posts/11!nameofarticle');
 			$this->assertNotRegExp($result, '/posts/11');
 
-			$this->assertEquals(array('id', 'title'), $route->keys);
+			$this->assertEquals(array('title', 'id'), $route->keys);
 		}
 
 		$route = new Route(
@@ -186,7 +184,7 @@ class RouteTest extends TestCase {
 		$this->assertNotRegExp($result, '/posts/hey_now:nameofarticle');
 		$this->assertNotRegExp($result, '/posts/:nameofarticle/2009');
 		$this->assertNotRegExp($result, '/posts/:nameofarticle/01');
-		$this->assertEquals(array('id', 'title', 'year'), $route->keys);
+		$this->assertEquals(array('year', 'title', 'id'), $route->keys);
 
 		$route = new Route(
 			'/posts/:url_title-(uuid::id)',
@@ -235,7 +233,7 @@ class RouteTest extends TestCase {
 
 		$this->assertRegExp($result, '/some_extra/page/this_is_the_slug');
 		$this->assertRegExp($result, '/page/this_is_the_slug');
-		$this->assertEquals(array('extra', 'slug'), $route->keys);
+		$this->assertEquals(array('slug', 'extra'), $route->keys);
 		$this->assertEquals(array('extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'), $route->options);
 		$expected = array(
 			'controller' => 'pages',
@@ -738,6 +736,24 @@ class RouteTest extends TestCase {
 			'action' => 'edit',
 			'pass' => array('1', '2', '0'),
 		);
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test matching of parameters where one parameter name starts with another parameter name
+ *
+ * @return void
+ */
+	public function testMatchSimilarParameters() {
+		$route = new Route('/:thisParam/:thisParamIsLonger');
+
+		$url = array(
+			'thisParamIsLonger' => 'bar',
+			'thisParam' => 'foo',
+		);
+
+		$result = $route->match($url);
+		$expected = '/foo/bar';
 		$this->assertEquals($expected, $result);
 	}
 
