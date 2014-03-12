@@ -204,7 +204,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 		$query->_bindStatement($statement);
 		$statement->execute();
 
-		return $query->_decorateStatement($statement);
+		return $this->_iterator = $query->_decorateStatement($statement);
 	}
 
 /**
@@ -1819,6 +1819,22 @@ class Query implements ExpressionInterface, IteratorAggregate {
  */
 	public function __toString() {
 		return sprintf('(%s)', $this->sql());
+	}
+
+/**
+ * Returns an array that can be used to describe the internal state of this
+ * object.
+ *
+ * @return array
+ */
+	public function __debugInfo() {
+		return [
+			'sql' => $this->sql(),
+			'params' => $this->valueBinder()->bindings(),
+			'defaultTypes' => $this->_defaultTypes,
+			'decorators' => count($this->_resultDecorators),
+			'executed' => $this->_iterator ? true : false
+		];
 	}
 
 }

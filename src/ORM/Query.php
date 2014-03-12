@@ -708,4 +708,19 @@ class Query extends DatabaseQuery {
 		);
 	}
 
+/**
+ * {@inheritdoc}
+ */
+	public function __debugInfo() {
+		return parent::__debugInfo() + [
+			'hydrate' => $this->_hydrate,
+			'buffered' => $this->_useBufferedResults,
+			'formatters' => count($this->_formatters),
+			'mapReducers' => count($this->_mapReduce),
+			'contain' => $this->contain(),
+			'extraOptions' => $this->_options,
+			'repository' => $this->_repository
+		];
+	}
+
 }
