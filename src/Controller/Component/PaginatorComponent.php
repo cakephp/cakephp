@@ -16,6 +16,7 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Error;
 use Cake\ORM\Table;
 
@@ -132,37 +133,23 @@ class PaginatorComponent extends Component {
  * @throws \Cake\Error\NotFoundException
  */
 	public function paginate($object, array $settings = []) {
-		$alias = $object->alias();
+		$query = $object;
+		$type = 'all';
 
+		if ($object instanceof RepositoryInterface) {
+			$type = !empty($settings['findType']) ? $settings['findType'] : $type;
+			$query = $object->find();
+		}
+
+		$alias = $object->alias();
 		$options = $this->mergeOptions($alias, $settings);
 		$options = $this->validateSort($object, $options);
 		$options = $this->checkLimit($options);
+		$options += ['page' => 1];
+		$options['page'] = intval($options['page']) < 1 ? 1 : (int)$options['page'];
+		unset($options['findType'], $options['maxLimit']);
 
-		$conditions = $fields = $limit = $page = null;
-		$order = [];
-
-		if (!isset($options['conditions'])) {
-			$options['conditions'] = [];
-		}
-
-		extract($options);
-		$extra = array_diff_key($options, compact(
-			'conditions', 'fields', 'order', 'limit', 'page'
-		));
-
-		$type = 'all';
-		if (!empty($extra['findType'])) {
-			$type = $extra['findType'];
-		}
-		unset($extra['findType'], $extra['maxLimit']);
-
-		if (intval($page) < 1) {
-			$page = 1;
-		}
-		$page = $options['page'] = (int)$page;
-
-		$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
-		$query = $object->find($type, array_merge($parameters, $extra));
+		$query->applyOptions($options);
 
 		$results = $query->all();
 		$numResults = count($results);
@@ -175,12 +162,15 @@ class PaginatorComponent extends Component {
 			$count = $query->count();
 		}
 
+		$page = $options['page'];
+		$limit = $options['limit'];
 		$pageCount = intval(ceil($count / $limit));
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
 		$request = $this->_registry->getController()->request;
 
-		if (!is_array($order)) {
+		$order = $options['order'];
+		if (!is_array($options)) {
 			$order = (array)$order;
 		}
 
