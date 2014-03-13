@@ -64,7 +64,7 @@ class SmtpTestTransport extends SmtpTransport {
  */
 	public function __call($method, $args) {
 		$method = '_' . $method;
-		return $this->$method();
+		return call_user_func_array(array($this, $method), $args);
 	}
 
 }
@@ -365,6 +365,84 @@ class SmtpTransportTest extends TestCase {
 		$this->assertEquals(666, $expected['port']);
 
 		$result = $this->SmtpTransport->config(array());
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testGetLastResponse() {
+		$this->assertEmpty($this->SmtpTransport->getLastResponse());
+
+		$this->socket->expects($this->any())->method('connect')->will($this->returnValue(true));
+		$this->socket->expects($this->at(0))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue("220 Welcome message\r\n"));
+		$this->socket->expects($this->at(2))->method('write')->with("EHLO localhost\r\n");
+		$this->socket->expects($this->at(3))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue("250-PIPELINING\r\n"));
+		$this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250-SIZE 102400000\r\n"));
+		$this->socket->expects($this->at(6))->method('read')->will($this->returnValue("250-VRFY\r\n"));
+		$this->socket->expects($this->at(7))->method('read')->will($this->returnValue("250-ETRN\r\n"));
+		$this->socket->expects($this->at(8))->method('read')->will($this->returnValue("250-STARTTLS\r\n"));
+		$this->socket->expects($this->at(9))->method('read')->will($this->returnValue("250-AUTH PLAIN LOGIN\r\n"));
+		$this->socket->expects($this->at(10))->method('read')->will($this->returnValue("250-AUTH=PLAIN LOGIN\r\n"));
+		$this->socket->expects($this->at(11))->method('read')->will($this->returnValue("250-ENHANCEDSTATUSCODES\r\n"));
+		$this->socket->expects($this->at(12))->method('read')->will($this->returnValue("250-8BITMIME\r\n"));
+		$this->socket->expects($this->at(13))->method('read')->will($this->returnValue("250 DSN\r\n"));
+		$this->SmtpTransport->connect();
+
+		$expected = [
+			['code' => '250', 'message' => 'PIPELINING'],
+			['code' => '250', 'message' => 'SIZE 102400000'],
+			['code' => '250', 'message' => 'VRFY'],
+			['code' => '250', 'message' => 'ETRN'],
+			['code' => '250', 'message' => 'STARTTLS'],
+			['code' => '250', 'message' => 'AUTH PLAIN LOGIN'],
+			['code' => '250', 'message' => 'AUTH=PLAIN LOGIN'],
+			['code' => '250', 'message' => 'ENHANCEDSTATUSCODES'],
+			['code' => '250', 'message' => '8BITMIME'],
+			['code' => '250', 'message' => 'DSN']
+		];
+		$result = $this->SmtpTransport->getLastResponse();
+		$this->assertEquals($expected, $result);
+
+		$email = new Email();
+		$email->from('noreply@cakephp.org', 'CakePHP Test');
+		$email->to('cake@cakephp.org', 'CakePHP');
+
+		$this->socket->expects($this->at(0))->method('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n");
+		$this->socket->expects($this->at(1))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(2))->method('read')->will($this->returnValue("250 OK\r\n"));
+		$this->socket->expects($this->at(3))->method('write')->with("RCPT TO:<cake@cakephp.org>\r\n");
+		$this->socket->expects($this->at(4))->method('read')->will($this->returnValue(false));
+		$this->socket->expects($this->at(5))->method('read')->will($this->returnValue("250 OK\r\n"));
+
+		$this->SmtpTransport->setCakeEmail($email);
+		$this->SmtpTransport->sendRcpt();
+
+		$expected = [
+			['code' => '250', 'message' => 'OK'],
+		];
+		$result = $this->SmtpTransport->getLastResponse();
+		$this->assertEquals($expected, $result);
+	}
+
+	public function testBufferResponseLines() {
+		$reponseLines = [
+			'123',
+			'FOOBAR',
+			'250-PIPELINING',
+			'250-ENHANCEDSTATUSCODES',
+			'250-8BITMIME',
+			'250 DSN',
+		];
+		$this->SmtpTransport->bufferResponseLines($reponseLines);
+
+		$expected = [
+			['code' => '123', 'message' => null],
+			['code' => '250', 'message' => 'PIPELINING'],
+			['code' => '250', 'message' => 'ENHANCEDSTATUSCODES'],
+			['code' => '250', 'message' => '8BITMIME'],
+			['code' => '250', 'message' => 'DSN']
+		];
+		$result = $this->SmtpTransport->getLastResponse();
 		$this->assertEquals($expected, $result);
 	}
 
