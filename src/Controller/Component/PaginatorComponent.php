@@ -128,6 +128,15 @@ class PaginatorComponent extends Component {
  *
  * Would paginate using the `find('popular')` method.
  *
+ * You can also pass an already created instance of a query to this method:
+ *
+ * {{{
+ * $query = $this->Articles->find('popular')->matching('Tags', function($q) {
+ *	return $q->where(['name' => 'CakePHP'])
+ * });
+ * $results = $paginator->paginate($query);
+ * }}}
+ *
  * @param Cake\Datasource\RepositoryInterface|Cake\ORM\Query $object The table or query to paginate.
  * @param array $settings The settings/configuration used for pagination.
  * @return array Query results
