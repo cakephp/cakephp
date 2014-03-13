@@ -730,6 +730,37 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * Tests that it is possible to pass an already made query object to
+ * paginate()
+ *
+ * @return void
+ */
+	public function testPaginateQuery() {
+		$this->request->query = array('page' => '-1');
+		$settings = array(
+			'PaginatorPosts' => array(
+				'contain' => array('PaginatorAuthor'),
+				'maxLimit' => 10,
+				'group' => 'PaginatorPosts.published',
+				'order' => array('PaginatorPosts.id' => 'ASC')
+			)
+		);
+		$table = $this->_getMockPosts(['find']);
+		$query = $this->_getMockFindQuery($table);
+		$table->expects($this->never())->method('find');
+		$query->expects($this->once())
+			->method('applyOptions')
+			->with([
+				'contain' => ['PaginatorAuthor'],
+				'group' => 'PaginatorPosts.published',
+				'limit' => 10,
+				'order' => ['PaginatorPosts.id' => 'ASC'],
+				'page' => 1,
+			]);
+		$this->Paginator->paginate($query, $settings);
+	}
+
+/**
  * Helper method for making mocks.
  *
  * @param array $methods
@@ -748,7 +779,7 @@ class PaginatorComponentTest extends TestCase {
  *
  * @return Query
  */
-	protected function _getMockFindQuery() {
+	protected function _getMockFindQuery($table = null) {
 		$query = $this->getMockBuilder('Cake\ORM\Query')
 			->setMethods(['total', 'all', 'count', 'applyOptions'])
 			->disableOriginalConstructor()
@@ -767,6 +798,7 @@ class PaginatorComponentTest extends TestCase {
 			->method('count')
 			->will($this->returnValue(2));
 
+		$query->repository($table);
 		return $query;
 	}
 

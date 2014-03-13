@@ -18,6 +18,7 @@ use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Error;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -133,6 +134,11 @@ class PaginatorComponent extends Component {
  * @throws \Cake\Error\NotFoundException
  */
 	public function paginate($object, array $settings = []) {
+		if ($object instanceof Query) {
+			$query = $object;
+			$object = $query->repository();
+		}
+
 		$alias = $object->alias();
 		$options = $this->mergeOptions($alias, $settings);
 		$options = $this->validateSort($object, $options);
@@ -144,21 +150,17 @@ class PaginatorComponent extends Component {
 		$type = !empty($options['findType']) ? $options['findType'] : 'all';
 		unset($options['findType'], $options['maxLimit']);
 
-		if ($object instanceof RepositoryInterface) {
+		if (empty($query)) {
 			$query = $object->find($type);
 		}
 
 		$query->applyOptions($options);
 		$results = $query->all();
 		$numResults = count($results);
+		$count = $numResults ? $query->count() : 0;
 
 		$defaults = $this->getDefaults($alias, $settings);
 		unset($defaults[0]);
-		$count = 0;
-
-		if ($numResults) {
-			$count = $query->count();
-		}
 
 		$page = $options['page'];
 		$limit = $options['limit'];
