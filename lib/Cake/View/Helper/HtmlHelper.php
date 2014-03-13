@@ -764,7 +764,7 @@ class HtmlHelper extends AppHelper {
 					'url' => '/',
 					'text' => $startText
 				);
-	}
+			}
 			$startText += array('url' => '/', 'text' => __d('cake', 'Home'));
 			list($url, $text) = array($startText['url'], $startText['text']);
 			unset($startText['url'], $startText['text']);
