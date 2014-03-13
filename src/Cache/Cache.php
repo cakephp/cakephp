@@ -33,7 +33,7 @@ use Cake\Utility\Inflector;
  *
  * {{{
  * Cache::config('shared', [
- *    'engine' => 'Cake\Cache\Engine\ApcEngine',
+ *    'className' => 'Cake\Cache\Engine\ApcEngine',
  *    'prefix' => 'my_app_'
  * ]);
  * }}}
