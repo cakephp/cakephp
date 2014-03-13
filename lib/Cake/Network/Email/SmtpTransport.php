@@ -153,24 +153,90 @@ class SmtpTransport extends AbstractTransport {
 	}
 
 /**
+ * Prepares the `MAIL FROM` SMTP command.
+ *
+ * @param string $email The email address to send with the command.
+ * @return string
+ */
+	protected function _prepareFromCmd($email) {
+		return 'MAIL FROM:<' . $email . '>';
+	}
+
+/**
+ * Prepares the `RCPT TO` SMTP command.
+ *
+ * @param string $email The email address to send with the command.
+ * @return string
+ */
+	protected function _prepareRcptCmd($email) {
+		return 'RCPT TO:<' . $email . '>';
+	}
+
+/**
+ * Prepares the `from` email address.
+ *
+ * @return array
+ */
+	protected function _prepareFromAddress() {
+		$from = $this->_cakeEmail->returnPath();
+		if (empty($from)) {
+			$from = $this->_cakeEmail->from();
+		}
+		return $from;
+	}
+
+/**
+ * Prepares the recipient email addresses.
+ *
+ * @return array
+ */
+	protected function _prepareRecipientAddresses() {
+		$to = $this->_cakeEmail->to();
+		$cc = $this->_cakeEmail->cc();
+		$bcc = $this->_cakeEmail->bcc();
+		return array_merge(array_keys($to), array_keys($cc), array_keys($bcc));
+	}
+
+/**
+ * Prepares the message headers.
+ *
+ * @return array
+ */
+	protected function _prepareMessageHeaders() {
+		return $this->_cakeEmail->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject'));
+	}
+
+/**
+ * Prepares the message body.
+ *
+ * @return string
+ */
+	protected function _prepareMessage() {
+		$lines = $this->_cakeEmail->message();
+		$messages = array();
+		foreach ($lines as $line) {
+			if ((!empty($line)) && ($line[0] === '.')) {
+				$messages[] = '.' . $line;
+			} else {
+				$messages[] = $line;
+			}
+		}
+		return implode("\r\n", $messages);
+	}
+
+/**
  * Send emails
  *
  * @return void
  * @throws SocketException
  */
 	protected function _sendRcpt() {
-		$from = $this->_cakeEmail->returnPath();
-		if (empty($from)) {
-			$from = $this->_cakeEmail->from();
-		}
-		$this->_smtpSend('MAIL FROM:<' . key($from) . '>');
+		$from = $this->_prepareFromAddress();
+		$this->_smtpSend($this->_prepareFromCmd(key($from)));
 
-		$to = $this->_cakeEmail->to();
-		$cc = $this->_cakeEmail->cc();
-		$bcc = $this->_cakeEmail->bcc();
-		$emails = array_merge(array_keys($to), array_keys($cc), array_keys($bcc));
+		$emails = $this->_prepareRecipientAddresses();
 		foreach ($emails as $email) {
-			$this->_smtpSend('RCPT TO:<' . $email . '>');
+			$this->_smtpSend($this->_prepareRcptCmd($email));
 		}
 	}
 
@@ -183,18 +249,9 @@ class SmtpTransport extends AbstractTransport {
 	protected function _sendData() {
 		$this->_smtpSend('DATA', '354');
 
-		$headers = $this->_cakeEmail->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'to', 'cc', 'subject'));
-		$headers = $this->_headersToString($headers);
-		$lines = $this->_cakeEmail->message();
-		$messages = array();
-		foreach ($lines as $line) {
-			if ((!empty($line)) && ($line[0] === '.')) {
-				$messages[] = '.' . $line;
-			} else {
-				$messages[] = $line;
-			}
-		}
-		$message = implode("\r\n", $messages);
+		$headers = $this->_headersToString($this->_prepareMessageHeaders());
+		$message = $this->_prepareMessage();
+
 		$this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
 		$this->_content = array('headers' => $headers, 'message' => $message);
 	}
