@@ -761,6 +761,39 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
+ * Tests that passing a query object with a limit clause set will not
+ * overwrite it with the passed defaults.
+ *
+ * @return void
+ */
+	public function testPaginateQueryWithLimit() {
+		$this->request->query = array('page' => '-1');
+		$settings = array(
+			'PaginatorPosts' => array(
+				'contain' => array('PaginatorAuthor'),
+				'maxLimit' => 10,
+				'limit' => 5,
+				'group' => 'PaginatorPosts.published',
+				'order' => array('PaginatorPosts.id' => 'ASC')
+			)
+		);
+		$table = $this->_getMockPosts(['find']);
+		$query = $this->_getMockFindQuery($table);
+		$query->limit(2);
+		$table->expects($this->never())->method('find');
+		$query->expects($this->once())
+			->method('applyOptions')
+			->with([
+				'contain' => ['PaginatorAuthor'],
+				'group' => 'PaginatorPosts.published',
+				'limit' => 2,
+				'order' => ['PaginatorPosts.id' => 'ASC'],
+				'page' => 1,
+			]);
+		$this->Paginator->paginate($query, $settings);
+	}
+
+/**
  * Helper method for making mocks.
  *
  * @param array $methods

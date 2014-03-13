@@ -128,7 +128,7 @@ class PaginatorComponent extends Component {
  *
  * Would paginate using the `find('popular')` method.
  *
- * @param Table $object The table to paginate.
+ * @param Cake\Datasource\RepositoryInterface|Cake\ORM\Query $object The table or query to paginate.
  * @param array $settings The settings/configuration used for pagination.
  * @return array Query results
  * @throws \Cake\Error\NotFoundException
@@ -154,7 +154,8 @@ class PaginatorComponent extends Component {
 			$query = $object->find($type);
 		}
 
-		$query->applyOptions($options);
+		$limit = $query->clause('limit');
+		$query->applyOptions(array_filter(compact('limit')) + $options);
 		$results = $query->all();
 		$numResults = count($results);
 		$count = $numResults ? $query->count() : 0;
@@ -169,12 +170,7 @@ class PaginatorComponent extends Component {
 		$page = max(min($page, $pageCount), 1);
 		$request = $this->_registry->getController()->request;
 
-		$order = $options['order'];
-		if (!is_array($options)) {
-			$order = (array)$order;
-		}
-
-		reset($order);
+		$order = (array)$options['order'];
 		$sortDefault = $directionDefault = false;
 		if (!empty($defaults['order']) && count($defaults['order']) == 1) {
 			$sortDefault = key($defaults['order']);
@@ -197,7 +193,7 @@ class PaginatorComponent extends Component {
 		);
 
 		if (!isset($request['paging'])) {
-			$request['paging'] = array();
+			$request['paging'] = [];
 		}
 		$request['paging'] = array_merge(
 			(array)$request['paging'],
