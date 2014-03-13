@@ -1644,6 +1644,10 @@ class DboSource extends DataSource {
 	public function generateAssociationQuery(Model $Model, $LinkModel, $type, $association, $assocData, &$queryData, $external) {
 		$assocData = $this->_scrubQueryData($assocData);
 
+		if ($LinkModel === null) {
+			return '';
+		}
+
 		if ($external && !empty($assocData['finderQuery'])) {
 			return $assocData['finderQuery'];
 		}
