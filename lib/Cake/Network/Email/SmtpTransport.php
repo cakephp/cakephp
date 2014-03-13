@@ -47,6 +47,42 @@ class SmtpTransport extends AbstractTransport {
 	protected $_content;
 
 /**
+ * The response of the last sent SMTP command.
+ *
+ * @var array
+ */
+	protected $_lastResponse = array();
+
+/**
+ * Returns the response of the last sent SMTP command.
+ *
+ * A response consists of one or more lines containing a response
+ * code and an optional response message text:
+ * {{{
+ * array(
+ *     array(
+ *         'code' => '250',
+ *         'message' => 'mail.example.com'
+ *     ),
+ *     array(
+ *         'code' => '250',
+ *         'message' => 'PIPELINING'
+ *     ),
+ *     array(
+ *         'code' => '250',
+ *         'message' => '8BITMIME'
+ *     ),
+ *     // etc...
+ * )
+ * }}}
+ *
+ * @return array
+ */
+	public function getLastResponse() {
+		return $this->_lastResponse;
+	}
+
+/**
  * Send mail
  *
  * @param CakeEmail $email CakeEmail
@@ -86,6 +122,25 @@ class SmtpTransport extends AbstractTransport {
 		);
 		$this->_config = array_merge($default, $this->_config, $config);
 		return $this->_config;
+	}
+
+/**
+ * Parses and stores the reponse lines in `'code' => 'message'` format.
+ *
+ * @param array $responseLines
+ * @return void
+ */
+	protected function _bufferResponseLines(array $responseLines) {
+		$response = array();
+		foreach ($responseLines as $responseLine) {
+			if (preg_match('/^(\d{3})(?:[\s\-]+(.*))?$/', $responseLine, $match)) {
+				$response[] = array(
+					'code' => $match[1],
+					'message' => isset($match[2]) ? $match[2] : null
+				);
+			}
+		}
+		$this->_lastResponse = array_merge($this->_lastResponse, $response);
 	}
 
 /**
@@ -286,6 +341,8 @@ class SmtpTransport extends AbstractTransport {
  * @throws SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {
+		$this->_lastResponse = array();
+
 		if ($data !== null) {
 			$this->_socket->write($data . "\r\n");
 		}
@@ -300,6 +357,8 @@ class SmtpTransport extends AbstractTransport {
 			}
 			$responseLines = explode("\r\n", rtrim($response, "\r\n"));
 			$response = end($responseLines);
+
+			$this->_bufferResponseLines($responseLines);
 
 			if (preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
 				if ($code[2] === '-') {
