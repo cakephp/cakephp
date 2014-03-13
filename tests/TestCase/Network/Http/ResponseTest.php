@@ -50,6 +50,14 @@ class ResponseTest extends TestCase {
 			$response->headers['Content-Type']
 		);
 		$this->assertTrue(isset($response->headers));
+
+		$headers = [
+			'HTTP/1.0 200',
+		];
+		$response = new Response($headers, 'ok');
+
+		$this->assertEquals('1.0', $response->version());
+		$this->assertEquals(200, $response->statusCode());
 	}
 
 /**
