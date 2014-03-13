@@ -133,24 +133,22 @@ class PaginatorComponent extends Component {
  * @throws \Cake\Error\NotFoundException
  */
 	public function paginate($object, array $settings = []) {
-		$query = $object;
-		$type = 'all';
-
-		if ($object instanceof RepositoryInterface) {
-			$type = !empty($settings['findType']) ? $settings['findType'] : $type;
-			$query = $object->find();
-		}
-
 		$alias = $object->alias();
 		$options = $this->mergeOptions($alias, $settings);
 		$options = $this->validateSort($object, $options);
 		$options = $this->checkLimit($options);
+
 		$options += ['page' => 1];
 		$options['page'] = intval($options['page']) < 1 ? 1 : (int)$options['page'];
+
+		$type = !empty($options['findType']) ? $options['findType'] : 'all';
 		unset($options['findType'], $options['maxLimit']);
 
-		$query->applyOptions($options);
+		if ($object instanceof RepositoryInterface) {
+			$query = $object->find($type);
+		}
 
+		$query->applyOptions($options);
 		$results = $query->all();
 		$numResults = count($results);
 
