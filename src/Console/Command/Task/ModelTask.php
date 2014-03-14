@@ -111,6 +111,8 @@ class ModelTask extends BakeTask {
 
 		$object = $this->getTableObject($model, $table);
 		$associations = $this->getAssociations($object);
+		$primaryKey = $this->getPrimaryKey($model);
+		$displayField = $this->getDisplayField($model);
 
 		if ($this->bake($object, false)) {
 			if ($this->_checkUnitTest()) {
@@ -302,6 +304,32 @@ class ModelTask extends BakeTask {
 	}
 
 /**
+ * Get the display field from the model or parameters
+ *
+ * @param Cake\ORM\Table $model The model to introspect.
+ * @return string
+ */
+	public function getDisplayField($model) {
+		if (!empty($this->params['display-field'])) {
+			return $this->params['display-field'];
+		}
+		return $model->displayField();
+	}
+
+/**
+ * Get the primary key field from the model or parameters
+ *
+ * @param Cake\ORM\Table $model The model to introspect.
+ * @return array The columns in the primary key
+ */
+	public function getPrimaryKey($model) {
+		if (!empty($this->params['primary-key'])) {
+			return (array)$this->params['primary-key'];
+		}
+		return (array)$model->primaryKey();
+	}
+
+/**
  * Generate a key value list of options and a prompt.
  *
  * @param array $options Array of options to use for the selections. indexes must start at 0
@@ -450,40 +478,6 @@ class ModelTask extends BakeTask {
 				$this->out($out);
 			}
 		}
-	}
-
-/**
- * Finds a primary Key in a list of fields.
- *
- * @param array $fields Array of fields that might have a primary key.
- * @return string Name of field that is a primary key.
- */
-	public function findPrimaryKey($fields) {
-		$name = 'id';
-		foreach ($fields as $name => $field) {
-			if (isset($field['key']) && $field['key'] === 'primary') {
-				break;
-			}
-		}
-		return $this->in(__d('cake_console', 'What is the primaryKey?'), null, $name);
-	}
-
-/**
- * interact with the user to find the displayField value for a model.
- *
- * @param array $fields Array of fields to look for and choose as a displayField
- * @return mixed Name of field to use for displayField or false if the user declines to choose
- */
-	public function findDisplayField($fields) {
-		$fieldNames = array_keys($fields);
-		$prompt = __d('cake_console', "A displayField could not be automatically detected\nwould you like to choose one?");
-		$continue = $this->in($prompt, ['y', 'n']);
-		if (strtolower($continue) === 'n') {
-			return false;
-		}
-		$prompt = __d('cake_console', 'Choose a field from the options above:');
-		$choice = $this->inOptions($fieldNames, $prompt);
-		return $fieldNames[$choice];
 	}
 
 /**
@@ -971,6 +965,10 @@ class ModelTask extends BakeTask {
 			'help' => __d('cake_console', 'Disable generating accessible fields in the entity.')
 		])->addOption('fields', [
 			'help' => __d('cake_console', 'A comma separated list of fields to make accessible.')
+		])->addOption('primary-key', [
+			'help' => __d('cake_console', 'The primary key if you would like to manually set one.')
+		])->addOption('display-field', [
+			'help' => __d('cake_console', 'The displayField if you would like to choose one.')
 		])->epilog(
 			__d('cake_console', 'Omitting all arguments and options will list ' .
 				'the table names you can generate models for')

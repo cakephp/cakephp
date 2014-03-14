@@ -556,62 +556,6 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * test that finding primary key works
- *
- * @return void
- */
-	public function testFindPrimaryKey() {
-		$this->markTestIncomplete('Not done here yet');
-		$fields = array(
-			'one' => array(),
-			'two' => array(),
-			'key' => array('key' => 'primary')
-		);
-		$anything = new \PHPUnit_Framework_Constraint_IsAnything();
-		$this->Task->expects($this->once())->method('in')
-			->with($anything, null, 'key')
-			->will($this->returnValue('my_field'));
-
-		$result = $this->Task->findPrimaryKey($fields);
-		$expected = 'my_field';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test finding Display field
- *
- * @return void
- */
-	public function testFindDisplayFieldNone() {
-		$this->markTestIncomplete('Not done here yet');
-		$fields = array(
-			'id' => array(), 'tagname' => array(), 'body' => array(),
-			'created' => array(), 'modified' => array()
-		);
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
-		$result = $this->Task->findDisplayField($fields);
-		$this->assertFalse($result);
-	}
-
-/**
- * Test finding a displayname from user input
- *
- * @return void
- */
-	public function testFindDisplayName() {
-		$this->markTestIncomplete('Not done here yet');
-		$fields = array(
-			'id' => array(), 'tagname' => array(), 'body' => array(),
-			'created' => array(), 'modified' => array()
-		);
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('y', 2));
-
-		$result = $this->Task->findDisplayField($fields);
-		$this->assertEquals('tagname', $result);
-	}
-
-/**
  * test non interactive doAssociations
  *
  * @return void
