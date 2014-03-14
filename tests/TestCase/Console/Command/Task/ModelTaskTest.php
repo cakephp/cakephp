@@ -18,6 +18,7 @@ use Cake\Console\Command\Task\ModelTask;
 use Cake\Console\Command\Task\TemplateTask;
 use Cake\Core\Plugin;
 use Cake\Model\Model;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
@@ -145,6 +146,148 @@ class ModelTaskTest extends TestCase {
 		$this->assertInstanceOf('Cake\ORM\Table', $result);
 		$this->assertEquals('bake_articles', $result->table());
 		$this->assertEquals('Article', $result->alias());
+	}
+
+/**
+ * Test getAssociations with off flag.
+ *
+ * @return void
+ */
+	public function testGetAssociationsNoFlag() {
+		$this->Task->params['no-associations'] = true;
+		$articles = TableRegistry::get('BakeArticle');
+		$this->assertEquals([], $this->Task->getAssociations($articles));
+	}
+
+/**
+ * Test getAssociations
+ *
+ * @return void
+ */
+	public function testGetAssociations() {
+		$articles = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getAssociations($articles);
+		$expected = [
+			'belongsTo' => [
+				[
+					'alias' => 'BakeUsers',
+					'className' => 'BakeUsers',
+					'foreignKey' => 'bake_user_id',
+				],
+			],
+			'hasMany' => [
+				[
+					'alias' => 'BakeComments',
+					'className' => 'BakeComments',
+					'foreignKey' => 'bake_article_id',
+				],
+			],
+			'belongsToMany' => [
+				[
+					'alias' => 'BakeTags',
+					'className' => 'BakeTags',
+					'foreignKey' => 'bake_article_id',
+					'joinTable' => 'bake_articles_bake_tags',
+					'targetForeignKey' => 'bake_tag_id',
+				],
+			],
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test that belongsTo generation works.
+ *
+ * @return void
+ */
+	public function testBelongsToGeneration() {
+		$model = TableRegistry::get('BakeComments');
+		$result = $this->Task->findBelongsTo($model, []);
+		$expected = [
+			'belongsTo' => [
+				[
+					'alias' => 'BakeArticles',
+					'className' => 'BakeArticles',
+					'foreignKey' => 'bake_article_id',
+				],
+				[
+					'alias' => 'BakeUsers',
+					'className' => 'BakeUsers',
+					'foreignKey' => 'bake_user_id',
+				],
+			]
+		];
+		$this->assertEquals($expected, $result);
+
+		$model = TableRegistry::get('CategoryThreads');
+		$result = $this->Task->findBelongsTo($model, array());
+		$expected = [
+			'belongsTo' => [
+				[
+					'alias' => 'ParentCategoryThreads',
+					'className' => 'CategoryThreads',
+					'foreignKey' => 'parent_id',
+				],
+			]
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test that hasOne and/or hasMany relations are generated properly.
+ *
+ * @return void
+ */
+	public function testHasManyGeneration() {
+		$this->Task->connection = 'test';
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->findHasMany($model, []);
+		$expected = [
+			'hasMany' => [
+				[
+					'alias' => 'BakeComments',
+					'className' => 'BakeComments',
+					'foreignKey' => 'bake_article_id',
+				],
+			],
+		];
+		$this->assertEquals($expected, $result);
+
+		$model = TableRegistry::get('CategoryThreads');
+		$result = $this->Task->findHasMany($model, []);
+		$expected = [
+			'hasMany' => [
+				[
+					'alias' => 'ChildCategoryThreads',
+					'className' => 'CategoryThreads',
+					'foreignKey' => 'parent_id',
+				],
+			]
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test that HABTM generation works
+ *
+ * @return void
+ */
+	public function testHasAndBelongsToManyGeneration() {
+		$this->Task->connection = 'test';
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->findBelongsToMany($model, []);
+		$expected = [
+			'belongsToMany' => [
+				[
+					'alias' => 'BakeTags',
+					'className' => 'BakeTags',
+					'foreignKey' => 'bake_article_id',
+					'joinTable' => 'bake_articles_bake_tags',
+					'targetForeignKey' => 'bake_tag_id',
+				],
+			],
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -466,120 +609,6 @@ class ModelTaskTest extends TestCase {
 
 		$result = $this->Task->findDisplayField($fields);
 		$this->assertEquals('tagname', $result);
-	}
-
-/**
- * test that belongsTo generation works.
- *
- * @return void
- */
-	public function testBelongsToGeneration() {
-		$this->markTestIncomplete('Not done here yet');
-		$model = new Model(array('ds' => 'test', 'name' => 'BakeComment'));
-		$result = $this->Task->findBelongsTo($model, array());
-		$expected = array(
-			'belongsTo' => array(
-				array(
-					'alias' => 'BakeArticle',
-					'className' => 'BakeArticle',
-					'foreignKey' => 'bake_article_id',
-				),
-				array(
-					'alias' => 'BakeUser',
-					'className' => 'BakeUser',
-					'foreignKey' => 'bake_user_id',
-				),
-			)
-		);
-		$this->assertEquals($expected, $result);
-
-		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
-		$result = $this->Task->findBelongsTo($model, array());
-		$expected = array(
-			'belongsTo' => array(
-				array(
-					'alias' => 'ParentCategoryThread',
-					'className' => 'CategoryThread',
-					'foreignKey' => 'parent_id',
-				),
-			)
-		);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test that hasOne and/or hasMany relations are generated properly.
- *
- * @return void
- */
-	public function testHasManyHasOneGeneration() {
-		$this->markTestIncomplete('Not done here yet');
-		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
-		$this->Task->connection = 'test';
-		$this->Task->listAll();
-		$result = $this->Task->findHasOneAndMany($model, array());
-		$expected = array(
-			'hasMany' => array(
-				array(
-					'alias' => 'BakeComment',
-					'className' => 'BakeComment',
-					'foreignKey' => 'bake_article_id',
-				),
-			),
-			'hasOne' => array(
-				array(
-					'alias' => 'BakeComment',
-					'className' => 'BakeComment',
-					'foreignKey' => 'bake_article_id',
-				),
-			),
-		);
-		$this->assertEquals($expected, $result);
-
-		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
-		$result = $this->Task->findHasOneAndMany($model, array());
-		$expected = array(
-			'hasOne' => array(
-				array(
-					'alias' => 'ChildCategoryThread',
-					'className' => 'CategoryThread',
-					'foreignKey' => 'parent_id',
-				),
-			),
-			'hasMany' => array(
-				array(
-					'alias' => 'ChildCategoryThread',
-					'className' => 'CategoryThread',
-					'foreignKey' => 'parent_id',
-				),
-			)
-		);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * Test that HABTM generation works
- *
- * @return void
- */
-	public function testHasAndBelongsToManyGeneration() {
-		$this->markTestIncomplete('Not done here yet');
-		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
-		$this->Task->connection = 'test';
-		$this->Task->listAll();
-		$result = $this->Task->findHasAndBelongsToMany($model, array());
-		$expected = array(
-			'hasAndBelongsToMany' => array(
-				array(
-					'alias' => 'BakeTag',
-					'className' => 'BakeTag',
-					'foreignKey' => 'bake_article_id',
-					'joinTable' => 'bake_articles_bake_tags',
-					'associationForeignKey' => 'bake_tag_id',
-				),
-			),
-		);
-		$this->assertEquals($expected, $result);
 	}
 
 /**

@@ -19,6 +19,7 @@ namespace Cake\Console\Command\Task;
 use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
@@ -109,6 +110,7 @@ class ModelTask extends BakeTask {
 		$table = $this->getTable();
 
 		$object = $this->getTableObject($model, $table);
+		$associations = $this->getAssociations($object);
 
 		if ($this->bake($object, false)) {
 			if ($this->_checkUnitTest()) {
@@ -148,12 +150,155 @@ class ModelTask extends BakeTask {
  * @return Cake\ORM\Table Table instance
  */
 	public function getTableObject($className, $table) {
-		$object = TableRegistry::get($className, [
+		if (TableRegistry::exists($className)) {
+			return TableRegistry::get($className);
+		}
+		return TableRegistry::get($className, [
 			'name' => $className,
 			'table' => $table,
-			'connection' => $this->connection
+			'connection' => ConnectionManager::get($this->connection)
 		]);
-		return $object;
+	}
+
+/**
+ * Get the array of associations to generate.
+ *
+ * @return array
+ */
+	public function getAssociations(Table $table) {
+		if (!empty($this->params['no-associations'])) {
+			return [];
+		}
+		$assocs = [];
+		$this->out(__d('cake_console', 'One moment while associations are detected.'));
+
+		$this->listAll();
+
+		$associations = [
+			'belongsTo' => [],
+			'hasMany' => [],
+			'belongsToMany' => []
+		];
+
+		$associations = $this->findBelongsTo($table, $associations);
+		$associations = $this->findHasMany($table, $associations);
+		$associations = $this->findBelongsToMany($table, $associations);
+		return $associations;
+	}
+
+/**
+ * Find belongsTo relations and add them to the associations list.
+ *
+ * @param ORM\Table $table Database\Table instance of table being generated.
+ * @param array $associations Array of in progress associations
+ * @return array Associations with belongsTo added in.
+ */
+	public function findBelongsTo($model, $associations) {
+		$schema = $model->schema();
+		$primary = $schema->primaryKey();
+		foreach ($schema->columns() as $fieldName) {
+			$offset = strpos($fieldName, '_id');
+			if (!in_array($fieldName, $primary) && $fieldName !== 'parent_id' && $offset !== false) {
+				$tmpModelName = $this->_modelNameFromKey($fieldName);
+				$associations['belongsTo'][] = [
+					'alias' => $tmpModelName,
+					'className' => $tmpModelName,
+					'foreignKey' => $fieldName,
+				];
+			} elseif ($fieldName === 'parent_id') {
+				$associations['belongsTo'][] = [
+					'alias' => 'Parent' . $model->alias(),
+					'className' => $model->alias(),
+					'foreignKey' => $fieldName,
+				];
+			}
+		}
+		return $associations;
+	}
+
+/**
+ * Find the hasMany relations and add them to associations list
+ *
+ * @param Model $model Model instance being generated
+ * @param array $associations Array of in progress associations
+ * @return array Associations with hasMany added in.
+ */
+	public function findHasMany($model, $associations) {
+		$schema = $model->schema();
+		$primaryKey = (array)$schema->primaryKey();
+		$tableName = $schema->name();
+		$foreignKey = $this->_modelKey($tableName);
+
+		foreach ($this->listAll() as $otherTable) {
+			$otherModel = $this->getTableObject($this->_modelName($otherTable), $otherTable);
+			$otherSchema = $otherModel->schema();
+
+			// Exclude habtm join tables.
+			$pattern = '/_' . preg_quote($tableName, '/') . '|' . preg_quote($tableName, '/') . '_/';
+			$possibleJoinTable = preg_match($pattern, $otherTable);
+			if ($possibleJoinTable) {
+				continue;
+			}
+
+			foreach ($otherSchema->columns() as $fieldName) {
+				$assoc = false;
+				if (!in_array($fieldName, $primaryKey) && $fieldName == $foreignKey) {
+					$assoc = [
+						'alias' => $otherModel->alias(),
+						'className' => $otherModel->alias(),
+						'foreignKey' => $fieldName
+					];
+				} elseif ($otherTable == $tableName && $fieldName === 'parent_id') {
+					$assoc = [
+						'alias' => 'Child' . $model->alias(),
+						'className' => $model->alias(),
+						'foreignKey' => $fieldName
+					];
+				}
+				if ($assoc) {
+					$associations['hasMany'][] = $assoc;
+				}
+			}
+		}
+		return $associations;
+	}
+
+/**
+ * Find the BelongsToMany relations and add them to associations list
+ *
+ * @param Model $model Model instance being generated
+ * @param array $associations Array of in-progress associations
+ * @return array Associations with belongsToMany added in.
+ */
+	public function findBelongsToMany($model, $associations) {
+		$schema = $model->schema();
+		$primaryKey = (array)$schema->primaryKey();
+		$tableName = $schema->name();
+		$foreignKey = $this->_modelKey($tableName);
+
+		$tables = $this->listAll();
+		foreach ($tables as $otherTable) {
+			$assocTable = null;
+			$offset = strpos($otherTable, $tableName . '_');
+			$otherOffset = strpos($otherTable, '_' . $tableName);
+
+			if ($offset !== false) {
+				$assocTable = substr($otherTable, strlen($tableName . '_'));
+			} elseif ($otherOffset !== false) {
+				$assocTable = substr($otherTable, 0, $otherOffset);
+			}
+			if ($assocTable && in_array($assocTable, $tables)) {
+				$habtmName = $this->_modelName($assocTable);
+				$associations['belongsToMany'][] = [
+					'alias' => $habtmName,
+					'className' => $habtmName,
+					'foreignKey' => $foreignKey,
+					'targetForeignKey' => $this->_modelKey($habtmName),
+					'joinTable' => $otherTable
+				];
+			}
+		}
+		return $associations;
 	}
 
 /**
@@ -511,58 +656,6 @@ class ModelTask extends BakeTask {
 	}
 
 /**
- * Handles associations
- *
- * @param Model $model
- * @return array Associations
- */
-	public function doAssociations($model) {
-		if (!$model instanceof Model) {
-			return false;
-		}
-		if ($this->interactive === true) {
-			$this->out(__d('cake_console', 'One moment while the associations are detected.'));
-		}
-
-		$fields = $model->schema(true);
-		if (empty($fields)) {
-			return [];
-		}
-
-		if (empty($this->_tables)) {
-			$this->_tables = (array)$this->getAllTables();
-		}
-
-		$associations = [
-			'belongsTo' => [],
-			'hasMany' => [],
-			'hasOne' => [],
-			'hasAndBelongsToMany' => []
-		];
-
-		$associations = $this->findBelongsTo($model, $associations);
-		$associations = $this->findHasOneAndMany($model, $associations);
-		$associations = $this->findHasAndBelongsToMany($model, $associations);
-
-		if ($this->interactive !== true) {
-			unset($associations['hasOne']);
-		}
-
-		if ($this->interactive === true) {
-			$this->hr();
-			if (empty($associations)) {
-				$this->out(__d('cake_console', 'None found.'));
-			} else {
-				$this->out(__d('cake_console', 'Please confirm the following associations:'));
-				$this->hr();
-				$associations = $this->confirmAssociations($model, $associations);
-			}
-			$associations = $this->doMoreAssociations($model, $associations);
-		}
-		return $associations;
-	}
-
-/**
  * Handles behaviors
  *
  * @param Model $model
@@ -584,111 +677,6 @@ class ModelTask extends BakeTask {
 			$behaviors[] = 'Tree';
 		}
 		return $behaviors;
-	}
-
-/**
- * Find belongsTo relations and add them to the associations list.
- *
- * @param Model $model Model instance of model being generated.
- * @param array $associations Array of in progress associations
- * @return array Associations with belongsTo added in.
- */
-	public function findBelongsTo($model, $associations) {
-		$fieldNames = array_keys($model->schema(true));
-		foreach ($fieldNames as $fieldName) {
-			$offset = strpos($fieldName, '_id');
-			if ($fieldName != $model->primaryKey && $fieldName !== 'parent_id' && $offset !== false) {
-				$tmpModelName = $this->_modelNameFromKey($fieldName);
-				$associations['belongsTo'][] = [
-					'alias' => $tmpModelName,
-					'className' => $tmpModelName,
-					'foreignKey' => $fieldName,
-				];
-			} elseif ($fieldName === 'parent_id') {
-				$associations['belongsTo'][] = [
-					'alias' => 'Parent' . $model->name,
-					'className' => $model->name,
-					'foreignKey' => $fieldName,
-				];
-			}
-		}
-		return $associations;
-	}
-
-/**
- * Find the hasOne and hasMany relations and add them to associations list
- *
- * @param Model $model Model instance being generated
- * @param array $associations Array of in progress associations
- * @return array Associations with hasOne and hasMany added in.
- */
-	public function findHasOneAndMany($model, $associations) {
-		$foreignKey = $this->_modelKey($model->name);
-		foreach ($this->_tables as $otherTable) {
-			$tempOtherModel = $this->_getModelObject($this->_modelName($otherTable), $otherTable);
-			$tempFieldNames = array_keys($tempOtherModel->schema(true));
-
-			$pattern = '/_' . preg_quote($model->table, '/') . '|' . preg_quote($model->table, '/') . '_/';
-			$possibleJoinTable = preg_match($pattern, $otherTable);
-			if ($possibleJoinTable) {
-				continue;
-			}
-			foreach ($tempFieldNames as $fieldName) {
-				$assoc = false;
-				if ($fieldName != $model->primaryKey && $fieldName == $foreignKey) {
-					$assoc = [
-						'alias' => $tempOtherModel->name,
-						'className' => $tempOtherModel->name,
-						'foreignKey' => $fieldName
-					];
-				} elseif ($otherTable == $model->table && $fieldName === 'parent_id') {
-					$assoc = [
-						'alias' => 'Child' . $model->name,
-						'className' => $model->name,
-						'foreignKey' => $fieldName
-					];
-				}
-				if ($assoc) {
-					$associations['hasOne'][] = $assoc;
-					$associations['hasMany'][] = $assoc;
-				}
-
-			}
-		}
-		return $associations;
-	}
-
-/**
- * Find the hasAndBelongsToMany relations and add them to associations list
- *
- * @param Model $model Model instance being generated
- * @param array $associations Array of in-progress associations
- * @return array Associations with hasAndBelongsToMany added in.
- */
-	public function findHasAndBelongsToMany($model, $associations) {
-		$foreignKey = $this->_modelKey($model->name);
-		foreach ($this->_tables as $otherTable) {
-			$tableName = null;
-			$offset = strpos($otherTable, $model->table . '_');
-			$otherOffset = strpos($otherTable, '_' . $model->table);
-
-			if ($offset !== false) {
-				$tableName = substr($otherTable, strlen($model->table . '_'));
-			} elseif ($otherOffset !== false) {
-				$tableName = substr($otherTable, 0, $otherOffset);
-			}
-			if ($tableName && in_array($tableName, $this->_tables)) {
-				$habtmName = $this->_modelName($tableName);
-				$associations['hasAndBelongsToMany'][] = [
-					'alias' => $habtmName,
-					'className' => $habtmName,
-					'foreignKey' => $foreignKey,
-					'associationForeignKey' => $this->_modelKey($habtmName),
-					'joinTable' => $otherTable
-				];
-			}
-		}
-		return $associations;
 	}
 
 /**
@@ -884,12 +872,14 @@ class ModelTask extends BakeTask {
  * @return array
  */
 	public function listAll() {
-		$this->_tables = $this->_getAllTables();
+		if (!empty($this->_tables)) {
+			return $this->_tables;
+		}
 
 		$this->_modelNames = [];
-		$count = count($this->_tables);
-		for ($i = 0; $i < $count; $i++) {
-			$this->_modelNames[] = $this->_modelName($this->_tables[$i]);
+		$this->_tables = $this->_getAllTables();
+		foreach ($this->_tables as $table) {
+			$this->_modelNames[] = $this->_modelName($table);
 		}
 		return $this->_tables;
 	}
