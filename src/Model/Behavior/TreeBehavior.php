@@ -39,6 +39,7 @@ class TreeBehavior extends Behavior {
  * @var array
  */
 	protected static $_defaultConfig = [
+		'implementedFinders' => ['path' => 'findPath'],
 		'parent' => 'parent_id',
 		'left' => 'lft',
 		'right' => 'rght',
@@ -56,9 +57,39 @@ class TreeBehavior extends Behavior {
 		$this->_table = $table;
 	}
 
-	public function beforeSave(Event $event, $entity) {
+	public function findPath($query, $options) {
+		if (empty($options['for'])) {
+			throw new \InvalidArgumentException("The 'for' key is required for find('path')");
+		}
+
+		$config = $this->config();
+		list($left, $right) = [$config['left'], $config['right']];
+		$node = $this->_table->get($options['for'], ['fields' => [$left, $right]]);
+
+		return $this->_scope($query)
+			->where([
+				"$left <=" => $entity->get($left),
+				"$right >=" => $entity->get($right)
+			]);
+	}
+
+	protected function _scope($query) {
 		$config = $this->config();
 
+		if (empty($config['scope'])) {
+			return $query;
+		}
+
+		if (!is_string($config['scope'])) {
+			return $query->where($config['scope']);
+		}
+
+		$association = $this->_table->association($query['scope']);
+		if (!$association) {
+			throw new \InvalidArgumentException("Invalid association name for 'scope'");
+		}
+
+		return $query->matching($association->name());
 	}
 
 }
