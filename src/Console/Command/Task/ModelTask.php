@@ -528,8 +528,8 @@ class ModelTask extends BakeTask {
  */
 	public function initValidations() {
 		$options = $choices = [];
-		if (class_exists('Validation')) {
-			$options = get_class_methods('Validation');
+		if (class_exists('Cake\Validation\Validation')) {
+			$options = get_class_methods('Cake\Validation\Validation');
 		}
 		sort($options);
 		$default = 1;

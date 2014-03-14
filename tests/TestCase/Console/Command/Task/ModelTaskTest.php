@@ -296,7 +296,6 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testInitValidations() {
-		$this->markTestIncomplete('Not done here yet');
 		$result = $this->Task->initValidations();
 		$this->assertTrue(in_array('notEmpty', $result));
 	}
