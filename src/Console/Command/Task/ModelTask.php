@@ -89,15 +89,20 @@ class ModelTask extends BakeTask {
 	public function execute() {
 		parent::execute();
 
+		if (!isset($this->connection)) {
+			$this->connection = 'default';
+		}
+
 		if (empty($this->args)) {
-			$this->_interactive();
+			$tables = $this->listAll();
+			$this->out(__d('cake_console', 'Choose a model to bake from the following:'));
+			foreach ($tables as $table) {
+				$this->out('- ' . $table);
+			}
+			return true;
 		}
 
 		if (!empty($this->args[0])) {
-			$this->interactive = false;
-			if (!isset($this->connection)) {
-				$this->connection = 'default';
-			}
 			if (strtolower($this->args[0]) === 'all') {
 				return $this->all();
 			}
@@ -881,34 +886,54 @@ class ModelTask extends BakeTask {
  * @return string
  */
 	public function bakeTest($className) {
-		$this->Test->interactive = $this->interactive;
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
 		return $this->Test->bake('Model', $className);
 	}
 
 /**
- * outputs the a list of possible models or controllers from database
+ * Outputs the a list of possible models or controllers from database
  *
  * @param string $useDbConfig Database configuration name
  * @return array
  */
-	public function listAll($useDbConfig = null) {
-		$this->_tables = $this->getAllTables($useDbConfig);
+	public function listAll() {
+		$this->_tables = $this->_getAllTables();
 
 		$this->_modelNames = [];
 		$count = count($this->_tables);
 		for ($i = 0; $i < $count; $i++) {
 			$this->_modelNames[] = $this->_modelName($this->_tables[$i]);
 		}
-		if ($this->interactive === true) {
-			$this->out(__d('cake_console', 'Possible Models based on your current database:'));
-			$len = strlen($count + 1);
-			for ($i = 0; $i < $count; $i++) {
-				$this->out(sprintf("%${len}d. %s", $i + 1, $this->_modelNames[$i]));
-			}
-		}
 		return $this->_tables;
+	}
+
+/**
+ * Get an Array of all the tables in the supplied connection
+ * will halt the script if no tables are found.
+ *
+ * @return array Array of tables in the database.
+ * @throws InvalidArgumentException When connection class
+ *   has a schemaCollection method.
+ */
+	protected function _getAllTables() {
+		$tables = [];
+		$db = ConnectionManager::get($this->connection);
+		if (!method_exists($db, 'schemaCollection')) {
+			$this->err(__d(
+				'cake_console',
+				'Connections need to implement schemaCollection() to be used with bake.'
+			));
+			return $this->_stop();
+		}
+		$schema = $db->schemaCollection();
+		$tables = $schema->listTables();
+		if (empty($tables)) {
+			$this->err(__d('cake_console', 'Your database does not have any tables.'));
+			return $this->_stop();
+		}
+		sort($tables);
+		return $tables;
 	}
 
 /**
@@ -924,90 +949,7 @@ class ModelTask extends BakeTask {
 			$modelNames = array_flip($this->_modelNames);
 			$useTable = $this->_tables[$modelNames[$modelName]];
 		}
-
-		if ($this->interactive === true) {
-			if (!isset($useDbConfig)) {
-				$useDbConfig = $this->connection;
-			}
-			$db = ConnectionManager::getDataSource($useDbConfig);
-			$fullTableName = $db->fullTableName($useTable, false);
-			$tableIsGood = false;
-			if (array_search($useTable, $this->_tables) === false) {
-				$this->out();
-				$this->out(__d('cake_console', "Given your model named '%s',\nCake would expect a database table named '%s'", $modelName, $fullTableName));
-				$tableIsGood = $this->in(__d('cake_console', 'Do you want to use this table?'), ['y', 'n'], 'y');
-			}
-			if (strtolower($tableIsGood) === 'n') {
-				$useTable = $this->in(__d('cake_console', 'What is the name of the table?'));
-			}
-		}
 		return $useTable;
-	}
-
-/**
- * Get an Array of all the tables in the supplied connection
- * will halt the script if no tables are found.
- *
- * @param string $useDbConfig Connection name to scan.
- * @return array Array of tables in the database.
- */
-	public function getAllTables($useDbConfig = null) {
-		if (!isset($useDbConfig)) {
-			$useDbConfig = $this->connection;
-		}
-
-		$tables = [];
-		$db = ConnectionManager::getDataSource($useDbConfig);
-		$db->cacheSources = false;
-		$usePrefix = empty($db->config['prefix']) ? '' : $db->config['prefix'];
-		if ($usePrefix) {
-			foreach ($db->listSources() as $table) {
-				if (!strncmp($table, $usePrefix, strlen($usePrefix))) {
-					$tables[] = substr($table, strlen($usePrefix));
-				}
-			}
-		} else {
-			$tables = $db->listSources();
-		}
-		if (empty($tables)) {
-			$this->err(__d('cake_console', 'Your database does not have any tables.'));
-			return $this->_stop();
-		}
-		sort($tables);
-		return $tables;
-	}
-
-/**
- * Forces the user to specify the model he wants to bake, and returns the selected model name.
- *
- * @param string $useDbConfig Database config name
- * @return string The model name
- */
-	public function getName($useDbConfig = null) {
-		$this->listAll($useDbConfig);
-
-		$enteredModel = '';
-
-		while (!$enteredModel) {
-			$enteredModel = $this->in(__d('cake_console', "Enter a number from the list above,\n" .
-				"type in the name of another model, or 'q' to exit"), null, 'q');
-
-			if ($enteredModel === 'q') {
-				$this->out(__d('cake_console', 'Exit'));
-				return $this->_stop();
-			}
-
-			if (!$enteredModel || intval($enteredModel) > count($this->_modelNames)) {
-				$this->err(__d('cake_console', "The model name you supplied was empty,\n" .
-					"or the number you selected was not an option. Please try again."));
-				$enteredModel = '';
-			}
-		}
-		if (intval($enteredModel) > 0 && intval($enteredModel) <= count($this->_modelNames)) {
-			return $this->_modelNames[intval($enteredModel) - 1];
-		}
-
-		return $enteredModel;
 	}
 
 /**
@@ -1036,8 +978,28 @@ class ModelTask extends BakeTask {
 		])->addOption('force', [
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
+		])->addOption('table', [
+			'help' => __d('cake_console', 'The table name to use if you have non-conventional table names.')
+		])->addOption('no-entity', [
+			'boolean' => true,
+			'help' => __d('cake_console', 'Disable generating an entity class.')
+		])->addOption('no-table', [
+			'boolean' => true,
+			'help' => __d('cake_console', 'Disable generating a table class.')
+		])->addOption('no-validation', [
+			'boolean' => true,
+			'help' => __d('cake_console', 'Disable generating validation rules.')
+		])->addOption('no-associations', [
+			'boolean' => true,
+			'help' => __d('cake_console', 'Disable generating associations.')
+		])->addOption('no-fields', [
+			'boolean' => true,
+			'help' => __d('cake_console', 'Disable generating accessible fields in the entity.')
+		])->addOption('fields', [
+			'help' => __d('cake_console', 'A comma separated list of fields to make accessible.')
 		])->epilog(
-			__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.')
+			__d('cake_console', 'Omitting all arguments and options will list ' .
+				'the table names you can generate models for')
 		);
 
 		return $parser;
@@ -1052,7 +1014,6 @@ class ModelTask extends BakeTask {
  * @see FixtureTask::bake
  */
 	public function bakeFixture($className, $useTable = null) {
-		$this->Fixture->interactive = $this->interactive;
 		$this->Fixture->connection = $this->connection;
 		$this->Fixture->plugin = $this->plugin;
 		$this->Fixture->bake($className, $useTable);

@@ -1,9 +1,5 @@
 <?php
 /**
- * ModelTaskTest file
- *
- * Test Case for test generation shell task
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -48,16 +44,15 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function setUp() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', 'createFile', '_stop', '_checkUnitTest'),
 			array($out, $out, $in)
 		);
+		$this->Task->connection = 'test';
 		$this->_setupOtherMocks();
 	}
 
@@ -67,8 +62,8 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	protected function _useMockedOut() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
@@ -83,15 +78,14 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	protected function _setupOtherMocks() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
-		$this->Task->Fixture = $this->getMock('Cake\Console\Command\Task\FixtureTask', array(), array($out, $out, $in));
-		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\FixtureTask', array(), array($out, $out, $in));
+		$this->Task->Fixture = $this->getMock('Cake\Console\Command\Task\FixtureTask', [], [$out, $out, $in]);
+		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\FixtureTask', [], [$out, $out, $in]);
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 
 		$this->Task->name = 'Model';
-		$this->Task->interactive = true;
 	}
 
 /**
@@ -105,30 +99,14 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * Test that listAll scans the database connection and lists all the tables in it.s
- *
- * @return void
- */
-	public function testListAllArgument() {
-		$this->_useMockedOut();
-
-		$result = $this->Task->listAll('test');
-		$this->assertContains('bake_articles', $result);
-		$this->assertContains('bake_articles_bake_tags', $result);
-		$this->assertContains('bake_tags', $result);
-		$this->assertContains('bake_comments', $result);
-		$this->assertContains('category_threads', $result);
-	}
-
-/**
  * Test that listAll uses the connection property
  *
  * @return void
  */
 	public function testListAllConnection() {
 		$this->_useMockedOut();
-
 		$this->Task->connection = 'test';
+
 		$result = $this->Task->listAll();
 		$this->assertContains('bake_articles', $result);
 		$this->assertContains('bake_articles_bake_tags', $result);
@@ -138,135 +116,12 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * Test that getName interacts with the user and returns the model name.
- *
- * @return void
- */
-	public function testGetNameQuit() {
-		$this->Task->expects($this->once())->method('in')->will($this->returnValue('q'));
-		$this->Task->expects($this->once())->method('_stop');
-		$this->Task->getName('test');
-	}
-
-/**
- * test getName with a valid option.
- *
- * @return void
- */
-	public function testGetNameValidOption() {
-		$listing = $this->Task->listAll('test');
-		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(1, 4));
-
-		$result = $this->Task->getName('test');
-		$this->assertEquals(Inflector::classify($listing[0]), $result);
-
-		$result = $this->Task->getName('test');
-		$this->assertEquals(Inflector::classify($listing[3]), $result);
-	}
-
-/**
- * test that an out of bounds option causes an error.
- *
- * @return void
- */
-	public function testGetNameWithOutOfBoundsOption() {
-		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(99, 1));
-		$this->Task->expects($this->once())->method('err');
-
-		$this->Task->getName('test');
-	}
-
-/**
- * Test table name interactions
- *
- * @return void
- */
-	public function testGetTableName() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$result = $this->Task->getTable('BakeArticle', 'test');
-		$expected = 'bake_articles';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test getting a custom table name.
- *
- * @return void
- */
-	public function testGetTableNameCustom() {
-		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls('n', 'my_table'));
-		$result = $this->Task->getTable('BakeArticle', 'test');
-		$expected = 'my_table';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test getTable with non-conventional tablenames
- *
- * @return void
- */
-	public function testGetTableOddTableInteractive() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->interactive = true;
-
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('articles', 'bake_odd')));
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				2 // bake_odd
-			));
-
-		$result = $this->Task->getName();
-		$expected = 'BakeOdd';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->getTable($result);
-		$expected = 'bake_odd';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test getTable with non-conventional tablenames
- *
- * @return void
- */
-	public function testGetTableOddTable() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->interactive = false;
-		$this->Task->args = array('BakeOdd');
-
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('articles', 'bake_odd')));
-
-		$this->Task->listAll();
-
-		$result = $this->Task->getTable('BakeOdd');
-		$expected = 'bake_odd';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * test that initializing the validations works.
  *
  * @return void
  */
 	public function testInitValidations() {
+		$this->markTestIncomplete('Not done here yet');
 		$result = $this->Task->initValidations();
 		$this->assertTrue(in_array('notEmpty', $result));
 	}
@@ -278,6 +133,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testFieldValidationGuessing() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->interactive = false;
 		$this->Task->initValidations();
 
@@ -312,6 +168,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testInteractiveFieldValidation() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
 		$this->Task->expects($this->any())->method('in')
@@ -328,6 +185,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testInteractiveFieldValidationWithBogusResponse() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->_useMockedOut();
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
@@ -349,6 +207,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testInteractiveFieldValidationWithRegexp() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
 		$this->Task->expects($this->any())->method('in')
@@ -365,6 +224,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testSkippingChoiceInteractiveFieldValidation() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
 		$this->Task->expects($this->any())->method('in')
@@ -381,6 +241,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testSkippingAnotherInteractiveFieldValidation() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->initValidations();
 		$this->Task->interactive = true;
 		$this->Task->expects($this->any())->method('in')
@@ -398,6 +259,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testInteractiveDoValidationWithSkipping() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->expects($this->any())
 			->method('in')
 			->will($this->onConsecutiveCalls('35', '24', 'n', '11', 's'));
@@ -459,6 +321,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testNonInteractiveDoValidation() {
+		$this->markTestIncomplete('Not done here yet');
 		$Model = $this->getMock('Model');
 		$Model->primaryKey = 'id';
 		$Model->expects($this->any())
@@ -523,6 +386,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testFindPrimaryKey() {
+		$this->markTestIncomplete('Not done here yet');
 		$fields = array(
 			'one' => array(),
 			'two' => array(),
@@ -544,6 +408,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testFindDisplayFieldNone() {
+		$this->markTestIncomplete('Not done here yet');
 		$fields = array(
 			'id' => array(), 'tagname' => array(), 'body' => array(),
 			'created' => array(), 'modified' => array()
@@ -559,6 +424,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testFindDisplayName() {
+		$this->markTestIncomplete('Not done here yet');
 		$fields = array(
 			'id' => array(), 'tagname' => array(), 'body' => array(),
 			'created' => array(), 'modified' => array()
@@ -576,6 +442,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testBelongsToGeneration() {
+		$this->markTestIncomplete('Not done here yet');
 		$model = new Model(array('ds' => 'test', 'name' => 'BakeComment'));
 		$result = $this->Task->findBelongsTo($model, array());
 		$expected = array(
@@ -614,6 +481,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testHasManyHasOneGeneration() {
+		$this->markTestIncomplete('Not done here yet');
 		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
 		$this->Task->connection = 'test';
 		$this->Task->listAll();
@@ -663,6 +531,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testHasAndBelongsToManyGeneration() {
+		$this->markTestIncomplete('Not done here yet');
 		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
 		$this->Task->connection = 'test';
 		$this->Task->listAll();
@@ -687,6 +556,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testDoAssociationsNonInteractive() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->connection = 'test';
 		$this->Task->interactive = false;
 		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
@@ -725,6 +595,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testDoActsAs() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->connection = 'test';
 		$this->Task->interactive = false;
 		$model = new Model(array('ds' => 'test', 'name' => 'NumberTree'));
@@ -739,6 +610,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeFixture() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->plugin = 'TestPlugin';
 		$this->Task->interactive = true;
 		$this->Task->Fixture->expects($this->at(0))->method('bake')->with('BakeArticle', 'bake_articles');
@@ -755,6 +627,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeTest() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->plugin = 'TestPlugin';
 		$this->Task->interactive = true;
 		$this->Task->Test->expects($this->at(0))->method('bake')->with('Model', 'BakeArticle');
@@ -772,6 +645,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testConfirmAssociations() {
+		$this->markTestIncomplete('Not done here yet');
 		$associations = array(
 			'hasOne' => array(
 				array(
@@ -814,6 +688,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testInOptions() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->_useMockedOut();
 
 		$options = array('one', 'two', 'three');
@@ -836,6 +711,7 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeValidation() {
+		$this->markTestIncomplete('Not done here yet');
 		$validate = array(
 			'name' => array(
 				'notempty' => 'notEmpty'
@@ -873,6 +749,7 @@ STRINGEND;
  * @return void
  */
 	public function testBakeRelations() {
+		$this->markTestIncomplete('Not done here yet');
 		$associations = array(
 			'belongsTo' => array(
 				array(
@@ -931,6 +808,7 @@ STRINGEND;
  * @return void
  */
 	public function testBakeWithPlugin() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->plugin = 'ControllerTest';
 
 		//fake plugin path
@@ -952,6 +830,7 @@ STRINGEND;
  * @return void
  */
 	public function testBakeWithBehaviors() {
+		$this->markTestIncomplete('Not done here yet');
 		$result = $this->Task->bake('NumberTree', array('actsAs' => array('Tree', 'PluginName.Sluggable')));
 		$expected = <<<TEXT
 /**
@@ -973,6 +852,7 @@ TEXT;
  * @return void
  */
 	public function testExecuteWithNamedModel() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticle');
@@ -1006,6 +886,7 @@ TEXT;
  * @return void
  */
 	public function testExecuteWithNamedModelVariations($name) {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
@@ -1024,6 +905,7 @@ TEXT;
  * @return void
  */
 	public function testExecuteWithNamedModelHasManyCreated() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticle');
@@ -1042,6 +924,7 @@ TEXT;
  * @return void
  */
 	public function testExecuteIntoAll() {
+		$this->markTestIncomplete('Not done here yet');
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
@@ -1095,6 +978,7 @@ TEXT;
  * @return void
  */
 	public function testExecuteIntoAllOddTables() {
+		$this->markTestIncomplete('Not done here yet');
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
@@ -1151,6 +1035,7 @@ TEXT;
  * @return void
  */
 	public function testExecuteIntoBakeOddTables() {
+		$this->markTestIncomplete('Not done here yet');
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
@@ -1207,6 +1092,7 @@ TEXT;
  * @return void
  */
 	public function testSkipTablesAndAll() {
+		$this->markTestIncomplete('Not done here yet');
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
@@ -1246,6 +1132,7 @@ TEXT;
  * @return void
  */
 	public function testExecuteIntoInteractive() {
+		$this->markTestIncomplete('Not done here yet');
 		$tables = $this->Task->listAll('test');
 		$article = array_search('bake_articles', $tables) + 1;
 
@@ -1286,6 +1173,7 @@ TEXT;
  * @return void
  */
 	public function testExecuteWithNonExistantTableName() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
@@ -1305,6 +1193,7 @@ TEXT;
  * @return void
  */
 	public function testForcedExecuteWithNonExistantTableName() {
+		$this->markTestIncomplete('Not done here yet');
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
