@@ -94,27 +94,26 @@ class ModelTask extends BakeTask {
 		}
 
 		if (empty($this->args)) {
-			$tables = $this->listAll();
 			$this->out(__d('cake_console', 'Choose a model to bake from the following:'));
-			foreach ($tables as $table) {
+			foreach ($this->listAll() as $table) {
 				$this->out('- ' . $table);
 			}
 			return true;
 		}
 
-		if (!empty($this->args[0])) {
-			if (strtolower($this->args[0]) === 'all') {
-				return $this->all();
-			}
-			$model = $this->_modelName($this->args[0]);
-			$this->listAll($this->connection);
-			$useTable = $this->getTable($model);
-			$object = $this->_getModelObject($model, $useTable);
-			if ($this->bake($object, false)) {
-				if ($this->_checkUnitTest()) {
-					$this->bakeFixture($model, $useTable);
-					$this->bakeTest($model);
-				}
+		if (strtolower($this->args[0]) === 'all') {
+			return $this->all();
+		}
+
+		$model = $this->args[0];
+		$table = $this->getTable();
+
+		$object = $this->getTableObject($model, $table);
+
+		if ($this->bake($object, false)) {
+			if ($this->_checkUnitTest()) {
+				$this->bakeFixture($model, $useTable);
+				$this->bakeTest($model);
 			}
 		}
 	}
@@ -146,27 +145,14 @@ class ModelTask extends BakeTask {
  *
  * @param string $className Name of class you want model to be.
  * @param string $table Table name
- * @return Model Model instance
- * @throws \Exception Will throw this until baking models works
+ * @return Cake\ORM\Table Table instance
  */
-	protected function _getModelObject($className, $table = null) {
-		if (!$table) {
-			$table = Inflector::tableize($className);
-		}
-		throw new \Exception('Baking models does not work currently.');
-
+	public function getTableObject($className, $table) {
 		$object = TableRegistry::get($className, [
 			'name' => $className,
 			'table' => $table,
-			'ds' => $this->connection
+			'connection' => $this->connection
 		]);
-		$fields = $object->schema();
-		foreach ($fields as $name => $field) {
-			if (isset($field['key']) && $field['key'] === 'primary') {
-				$object->primaryKey = $name;
-				break;
-			}
-		}
 		return $object;
 	}
 
@@ -937,19 +923,17 @@ class ModelTask extends BakeTask {
 	}
 
 /**
- * Interact with the user to determine the table name of a particular model
+ * Get the table name for the model being baked.
  *
- * @param string $modelName Name of the model you want a table for.
- * @param string $useDbConfig Name of the database config you want to get tables from.
- * @return string Table name
+ * Uses the `table` option if it is set.
+ *
+ * @return string.
  */
-	public function getTable($modelName, $useDbConfig = null) {
-		$useTable = Inflector::tableize($modelName);
-		if (in_array($modelName, $this->_modelNames)) {
-			$modelNames = array_flip($this->_modelNames);
-			$useTable = $this->_tables[$modelNames[$modelName]];
+	public function getTable() {
+		if (isset($this->params['table'])) {
+			return $this->params['table'];
 		}
-		return $useTable;
+		return Inflector::tableize($this->args[0]);
 	}
 
 /**

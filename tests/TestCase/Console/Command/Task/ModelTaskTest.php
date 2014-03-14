@@ -116,6 +116,38 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * Test getName() method.
+ *
+ * @return void
+ */
+	public function testGetTable() {
+		$this->Task->args[0] = 'BakeArticle';
+		$result = $this->Task->getTable();
+		$this->assertEquals('bake_articles', $result);
+
+		$this->Task->args[0] = 'BakeArticles';
+		$result = $this->Task->getTable();
+		$this->assertEquals('bake_articles', $result);
+
+		$this->Task->args[0] = 'Article';
+		$this->Task->params['table'] = 'bake_articles';
+		$result = $this->Task->getTable();
+		$this->assertEquals('bake_articles', $result);
+	}
+
+/**
+ * Test getting the a table class.
+ *
+ * @return void
+ */
+	public function testGetTableObject() {
+		$result = $this->Task->getTableObject('Article', 'bake_articles');
+		$this->assertInstanceOf('Cake\ORM\Table', $result);
+		$this->assertEquals('bake_articles', $result->table());
+		$this->assertEquals('Article', $result->alias());
+	}
+
+/**
  * test that initializing the validations works.
  *
  * @return void
