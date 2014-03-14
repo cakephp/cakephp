@@ -327,20 +327,6 @@ class RequestHandlerComponentTest extends TestCase {
 	}
 
 /**
- * testAutoResponseType method
- *
- * @return void
- */
-	public function testAutoResponseType() {
-		$event = new Event('Controller.startup', $this->Controller);
-		$this->Controller->ext = '.thtml';
-		$this->Controller->request->params['_ext'] = 'rss';
-		$this->RequestHandler->initialize($event);
-		$this->RequestHandler->startup($event);
-		$this->assertEquals('.ctp', $this->Controller->ext);
-	}
-
-/**
  * testAutoAjaxLayout method
  *
  * @return void
