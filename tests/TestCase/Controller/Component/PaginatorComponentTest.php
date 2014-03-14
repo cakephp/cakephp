@@ -46,7 +46,14 @@ class PaginatorComponentTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.post', 'core.author');
+	public $fixtures = array('core.post');
+
+/**
+ * Don't load data for fixtures for all tests
+ *
+ * @var boolean
+ */
+	public $autoFixtures = false;
 
 /**
  * setup
@@ -418,6 +425,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testOutOfRangePageNumberGetsClamped() {
+		$this->loadFixtures('Post');
 		$this->request->query['page'] = 3000;
 
 		$table = TableRegistry::get('PaginatorPosts');
@@ -631,6 +639,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFind() {
+		$this->loadFixtures('Post');
 		$idExtractor = function ($result) {
 			$ids = [];
 			foreach ($result as $record) {
@@ -680,6 +689,7 @@ class PaginatorComponentTest extends TestCase {
  * @return void
  */
 	public function testPaginateCustomFindFieldsArray() {
+		$this->loadFixtures('Post');
 		$table = TableRegistry::get('PaginatorPosts');
 		$data = array('author_id' => 3, 'title' => 'Fourth Article', 'body' => 'Article Body, unpublished', 'published' => 'N');
 		$table->save(new \Cake\ORM\Entity($data));
@@ -803,7 +813,18 @@ class PaginatorComponentTest extends TestCase {
 		return $this->getMock(
 			'TestApp\Model\Table\PaginatorPostsTable',
 			$methods,
-			[['connection' => ConnectionManager::get('test'), 'alias' => 'PaginatorPosts']]
+			[[
+				'connection' => ConnectionManager::get('test'),
+				'alias' => 'PaginatorPosts',
+				'schema' => [
+					'id' => ['type' => 'integer'],
+					'author_id' => ['type' => 'integer', 'null' => false],
+					'title' => ['type' => 'string', 'null' => false],
+					'body' => 'text',
+					'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
+					'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
+				]
+			]]
 		);
 	}
 
