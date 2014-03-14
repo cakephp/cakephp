@@ -735,7 +735,7 @@ class Shell extends Object {
  * @return string Camelized and singularized model name
  */
 	protected function _modelName($name) {
-		return Inflector::camelize(Inflector::singularize($name));
+		return Inflector::camelize($name);
 	}
 
 /**
@@ -745,7 +745,7 @@ class Shell extends Object {
  * @return string Singular model key
  */
 	protected function _modelKey($name) {
-		return Inflector::underscore($name) . '_id';
+		return Inflector::underscore(Inflector::singularize($name)) . '_id';
 	}
 
 /**
@@ -755,7 +755,8 @@ class Shell extends Object {
  * @return string Model name
  */
 	protected function _modelNameFromKey($key) {
-		return Inflector::camelize(str_replace('_id', '', $key));
+		$class = Inflector::camelize(str_replace('_id', '', $key));
+		return Inflector::pluralize($class);
 	}
 
 /**
