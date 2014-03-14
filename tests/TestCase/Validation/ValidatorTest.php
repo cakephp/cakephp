@@ -155,6 +155,19 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Tests custom error messages generated when a field presence is required
+ *
+ * @return void
+ */
+	public function testCustomErrorsWithPresenceRequired() {
+		$validator = new Validator;
+		$validator->validatePresence('title', true, 'Custom message');
+		$errors = $validator->errors(['foo' => 'something']);
+		$expected = ['title' => ['Custom message']];
+		$this->assertEquals($expected, $errors);
+	}
+
+/**
  * Tests the allowEmpty method
  *
  * @return void
@@ -226,6 +239,19 @@ class ValidatorTest extends \Cake\TestSuite\TestCase {
 
 		$errors = $validator->errors(['title' => false]);
 		$this->assertEmpty($errors);
+	}
+
+/**
+ * Tests custom error mesages generated when a field is not allowed to be empty
+ *
+ * @return void
+ */
+	public function testCustomErrorsWithEmptyNotAllowed() {
+		$validator = new Validator;
+		$validator->allowEmpty('title', false, 'Custom message');
+		$errors = $validator->errors(['title' => '']);
+		$expected = ['title' => ['Custom message']];
+		$this->assertEquals($expected, $errors);
 	}
 
 /**
