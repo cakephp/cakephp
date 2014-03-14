@@ -163,8 +163,7 @@ class PaginatorComponent extends Component {
 			$query = $object->find($type);
 		}
 
-		$limit = $query->clause('limit');
-		$query->applyOptions(array_filter(compact('limit')) + $options);
+		$query->applyOptions($options);
 		$results = $query->all();
 		$numResults = count($results);
 		$count = $numResults ? $query->count() : 0;

@@ -761,7 +761,7 @@ class PaginatorComponentTest extends TestCase {
 	}
 
 /**
- * Tests that passing a query object with a limit clause set will not
+ * Tests that passing a query object with a limit clause set will
  * overwrite it with the passed defaults.
  *
  * @return void
@@ -786,7 +786,7 @@ class PaginatorComponentTest extends TestCase {
 			->with([
 				'contain' => ['PaginatorAuthor'],
 				'group' => 'PaginatorPosts.published',
-				'limit' => 2,
+				'limit' => 5,
 				'order' => ['PaginatorPosts.id' => 'ASC'],
 				'page' => 1,
 			]);
