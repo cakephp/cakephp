@@ -615,10 +615,10 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeFixture() {
-		$this->markTestIncomplete('Not done here yet');
 		$this->Task->plugin = 'TestPlugin';
-		$this->Task->interactive = true;
-		$this->Task->Fixture->expects($this->at(0))->method('bake')->with('BakeArticle', 'bake_articles');
+		$this->Task->Fixture->expects($this->at(0))
+			->method('bake')
+			->with('BakeArticle', 'bake_articles');
 		$this->Task->bakeFixture('BakeArticle', 'bake_articles');
 
 		$this->assertEquals($this->Task->plugin, $this->Task->Fixture->plugin);
@@ -627,20 +627,46 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * Ensure that the fixture baking can be disabled
+ *
+ * @return void
+ */
+	public function testBakeFixtureDisabled() {
+		$this->Task->params['no-fixture'] = true;
+		$this->Task->plugin = 'TestPlugin';
+		$this->Task->Fixture->expects($this->never())
+			->method('bake');
+		$this->Task->bakeFixture('BakeArticle', 'bake_articles');
+	}
+
+/**
  * Ensure that the test object is correctly called.
  *
  * @return void
  */
 	public function testBakeTest() {
-		$this->markTestIncomplete('Not done here yet');
 		$this->Task->plugin = 'TestPlugin';
-		$this->Task->interactive = true;
-		$this->Task->Test->expects($this->at(0))->method('bake')->with('Model', 'BakeArticle');
+		$this->Task->Test->expects($this->at(0))
+			->method('bake')
+			->with('Model', 'BakeArticle');
 		$this->Task->bakeTest('BakeArticle');
 
 		$this->assertEquals($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEquals($this->Task->connection, $this->Task->Test->connection);
 		$this->assertEquals($this->Task->interactive, $this->Task->Test->interactive);
+	}
+
+/**
+ * Ensure that test baking can be disabled.
+ *
+ * @return void
+ */
+	public function testBakeTestDisabled() {
+		$this->Task->params['no-test'] = true;
+		$this->Task->plugin = 'TestPlugin';
+		$this->Task->Test->expects($this->never())
+			->method('bake');
+		$this->Task->bakeTest('BakeArticle');
 	}
 
 /**

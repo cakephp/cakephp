@@ -106,20 +106,26 @@ class ModelTask extends BakeTask {
 			return $this->all();
 		}
 
-		$model = $this->args[0];
+		$this->generate($this->args[0]);
+	}
+
+/**
+ * Generate code for the given model name.
+ *
+ * @param string $name The model name to generate.
+ * @return void
+ */
+	public function generate($name) {
 		$table = $this->getTable();
 
-		$object = $this->getTableObject($model, $table);
+		$object = $this->getTableObject($name, $table);
 		$associations = $this->getAssociations($object);
 		$primaryKey = $this->getPrimaryKey($model);
 		$displayField = $this->getDisplayField($model);
 
-		if ($this->bake($object, false)) {
-			if ($this->_checkUnitTest()) {
-				$this->bakeFixture($model, $useTable);
-				$this->bakeTest($model);
-			}
-		}
+		$this->bake($object, false);
+		$this->bakeFixture($model, $useTable);
+		$this->bakeTest($model);
 	}
 
 /**
@@ -848,18 +854,6 @@ class ModelTask extends BakeTask {
 	}
 
 /**
- * Assembles and writes a unit test file
- *
- * @param string $className Model class name
- * @return string
- */
-	public function bakeTest($className) {
-		$this->Test->plugin = $this->plugin;
-		$this->Test->connection = $this->connection;
-		return $this->Test->bake('Model', $className);
-	}
-
-/**
  * Outputs the a list of possible models or controllers from database
  *
  * @param string $useDbConfig Database configuration name
@@ -969,6 +963,10 @@ class ModelTask extends BakeTask {
 			'help' => __d('cake_console', 'The primary key if you would like to manually set one.')
 		])->addOption('display-field', [
 			'help' => __d('cake_console', 'The displayField if you would like to choose one.')
+		])->addOption('no-test', [
+			'help' => __d('cake_console', 'Do not generate a test case skeleton.')
+		])->addOption('no-fixture', [
+			'help' => __d('cake_console', 'Do not generate a test fixture skeleton.')
 		])->epilog(
 			__d('cake_console', 'Omitting all arguments and options will list ' .
 				'the table names you can generate models for')
@@ -986,9 +984,28 @@ class ModelTask extends BakeTask {
  * @see FixtureTask::bake
  */
 	public function bakeFixture($className, $useTable = null) {
+		if (!empty($this->params['no-fixture'])) {
+			return;
+		}
 		$this->Fixture->connection = $this->connection;
 		$this->Fixture->plugin = $this->plugin;
 		$this->Fixture->bake($className, $useTable);
 	}
+
+/**
+ * Assembles and writes a unit test file
+ *
+ * @param string $className Model class name
+ * @return string
+ */
+	public function bakeTest($className) {
+		if (!empty($this->params['no-test'])) {
+			return;
+		}
+		$this->Test->plugin = $this->plugin;
+		$this->Test->connection = $this->connection;
+		return $this->Test->bake('Model', $className);
+	}
+
 
 }
