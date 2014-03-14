@@ -1641,8 +1641,12 @@ class DboSource extends DataSource {
  *   String representing a query.
  *   True, when $external is false and association $type is 'hasOne' or 'belongsTo'.
  */
-	public function generateAssociationQuery(Model $Model, Model $LinkModel, $type, $association, $assocData, &$queryData, $external) {
+	public function generateAssociationQuery(Model $Model, $LinkModel, $type, $association, $assocData, &$queryData, $external) {
 		$assocData = $this->_scrubQueryData($assocData);
+
+		if ($LinkModel === null) {
+			return '';
+		}
 
 		if ($external && !empty($assocData['finderQuery'])) {
 			return $assocData['finderQuery'];
