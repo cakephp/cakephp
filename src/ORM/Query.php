@@ -426,7 +426,7 @@ class Query extends DatabaseQuery {
  * - having: Maps to the having method
  * - contain: Maps to the contain options for eager loading
  * - join: Maps to the join method
- * - join: Maps to the page method
+ * - page: Maps to the page method
  *
  * @return \Cake\ORM\Query
  */

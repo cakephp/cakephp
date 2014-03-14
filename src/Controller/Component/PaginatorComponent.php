@@ -16,7 +16,9 @@ namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
 use Cake\Controller\ComponentRegistry;
+use Cake\Datasource\RepositoryInterface;
 use Cake\Error;
+use Cake\ORM\Query;
 use Cake\ORM\Table;
 
 /**
@@ -126,65 +128,57 @@ class PaginatorComponent extends Component {
  *
  * Would paginate using the `find('popular')` method.
  *
- * @param Table $object The table to paginate.
+ * You can also pass an already created instance of a query to this method:
+ *
+ * {{{
+ * $query = $this->Articles->find('popular')->matching('Tags', function($q) {
+ *	return $q->where(['name' => 'CakePHP'])
+ * });
+ * $results = $paginator->paginate($query);
+ * }}}
+ *
+ * @param Cake\Datasource\RepositoryInterface|Cake\ORM\Query $object The table or query to paginate.
  * @param array $settings The settings/configuration used for pagination.
  * @return array Query results
  * @throws \Cake\Error\NotFoundException
  */
 	public function paginate($object, array $settings = []) {
-		$alias = $object->alias();
+		if ($object instanceof Query) {
+			$query = $object;
+			$object = $query->repository();
+		}
 
+		$alias = $object->alias();
 		$options = $this->mergeOptions($alias, $settings);
 		$options = $this->validateSort($object, $options);
 		$options = $this->checkLimit($options);
 
-		$conditions = $fields = $limit = $page = null;
-		$order = [];
+		$options += ['page' => 1];
+		$options['page'] = intval($options['page']) < 1 ? 1 : (int)$options['page'];
 
-		if (!isset($options['conditions'])) {
-			$options['conditions'] = [];
+		$type = !empty($options['findType']) ? $options['findType'] : 'all';
+		unset($options['findType'], $options['maxLimit']);
+
+		if (empty($query)) {
+			$query = $object->find($type);
 		}
 
-		extract($options);
-		$extra = array_diff_key($options, compact(
-			'conditions', 'fields', 'order', 'limit', 'page'
-		));
-
-		$type = 'all';
-		if (!empty($extra['findType'])) {
-			$type = $extra['findType'];
-		}
-		unset($extra['findType'], $extra['maxLimit']);
-
-		if (intval($page) < 1) {
-			$page = 1;
-		}
-		$page = $options['page'] = (int)$page;
-
-		$parameters = compact('conditions', 'fields', 'order', 'limit', 'page');
-		$query = $object->find($type, array_merge($parameters, $extra));
-
+		$query->applyOptions($options);
 		$results = $query->all();
 		$numResults = count($results);
+		$count = $numResults ? $query->count() : 0;
 
 		$defaults = $this->getDefaults($alias, $settings);
 		unset($defaults[0]);
-		$count = 0;
 
-		if ($numResults) {
-			$count = $query->count();
-		}
-
+		$page = $options['page'];
+		$limit = $options['limit'];
 		$pageCount = intval(ceil($count / $limit));
 		$requestedPage = $page;
 		$page = max(min($page, $pageCount), 1);
 		$request = $this->_registry->getController()->request;
 
-		if (!is_array($order)) {
-			$order = (array)$order;
-		}
-
-		reset($order);
+		$order = (array)$options['order'];
 		$sortDefault = $directionDefault = false;
 		if (!empty($defaults['order']) && count($defaults['order']) == 1) {
 			$sortDefault = key($defaults['order']);
@@ -207,7 +201,7 @@ class PaginatorComponent extends Component {
 		);
 
 		if (!isset($request['paging'])) {
-			$request['paging'] = array();
+			$request['paging'] = [];
 		}
 		$request['paging'] = array_merge(
 			(array)$request['paging'],

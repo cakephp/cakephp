@@ -656,7 +656,8 @@ class Controller extends Object implements EventListener {
  *
  * This method will also make the PaginatorHelper available in the view.
  *
- * @param Table|string $object Table to paginate (e.g: Table instance, or 'Model')
+ * @param Table|string|Query $object Table to paginate
+ * (e.g: Table instance, 'TableName' or a Query object)
  * @return ORM\ResultSet Query results
  * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::paginate
  */
