@@ -67,7 +67,6 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	protected $_allowEmptyMessages= [];
 
-
 /**
  * Returns an array of fields that have failed validation. On the current model. This method will
  * actually run validation rules over data, not just return the messages.
@@ -86,10 +85,9 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			$keyPresent = array_key_exists($name, $data);
 
 			if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
-				$message = isset($this->_presenceMessages[$name])
+				$errors[$name][] = isset($this->_presenceMessages[$name])
 					? __d($this->_validationDomain, $this->_presenceMessages[$name])
 					: $requiredMessage;
-				$errors[$name][] = $message;
 				continue;
 			}
 
@@ -101,10 +99,9 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			$isEmpty = $this->_fieldIsEmpty($data[$name]);
 
 			if (!$canBeEmpty && $isEmpty) {
-				$message = isset($this->_allowEmptyMessages[$name])
+				$errors[$name][] = isset($this->_allowEmptyMessages[$name])
 					? __d($this->_validationDomain, $this->_allowEmptyMessages[$name])
 					: $emptyMessage;
-				$errors[$name][] = $message;
 				continue;
 			}
 
