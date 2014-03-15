@@ -123,6 +123,7 @@ class ModelTask extends BakeTask {
 		$primaryKey = $this->getPrimaryKey($model);
 		$displayField = $this->getDisplayField($model);
 		$fields = $this->getFields($model);
+		$validation = $this->getValidation($model);
 
 		$this->bake($object, false);
 		$this->bakeFixture($model, $useTable);
@@ -359,6 +360,88 @@ class ModelTask extends BakeTask {
 	}
 
 /**
+ * Generate default validation rules.
+ *
+ * @param Cake\ORM\Table $model The model to introspect.
+ * @return array The validation rules.
+ */
+	public function getValidation($model) {
+		if (!empty($this->params['no-validation'])) {
+			return [];
+		}
+		$schema = $model->schema();
+		$fields = $schema->columns();
+		if (empty($fields)) {
+			return false;
+		}
+
+		$skipFields = false;
+		$validate = [];
+		$primaryKey = (array)$schema->primaryKey();
+
+		foreach ($fields as $fieldName) {
+			$field = $schema->column($fieldName);
+			$validation = $this->fieldValidation($fieldName, $field, $primaryKey);
+			if (!empty($validation)) {
+				$validate[$fieldName] = $validation;
+			}
+		}
+		return $validate;
+	}
+
+/**
+ * Does individual field validation handling.
+ *
+ * @param string $fieldName Name of field to be validated.
+ * @param array $metaData metadata for field
+ * @param string $primaryKey
+ * @return array Array of validation for the field.
+ */
+	public function fieldValidation($fieldName, $metaData, $primaryKey) {
+		$ignoreFields = array_merge($primaryKey, ['created', 'modified', 'updated']);
+		if ($metaData['null'] == true && in_array($fieldName, $ignoreFields)) {
+			return false;
+		}
+
+		if ($fieldName === 'email') {
+			$rule = 'email';
+		} elseif ($metaData['type'] === 'uuid') {
+			$rule = 'uuid';
+		} elseif ($metaData['type'] === 'string') {
+			$rule = 'notEmpty';
+		} elseif ($metaData['type'] === 'text') {
+			$rule = 'notEmpty';
+		} elseif ($metaData['type'] === 'integer') {
+			$rule = 'numeric';
+		} elseif ($metaData['type'] === 'float') {
+			$rule = 'numeric';
+		} elseif ($metaData['type'] === 'decimal') {
+			$rule = 'decimal';
+		} elseif ($metaData['type'] === 'boolean') {
+			$rule = 'boolean';
+		} elseif ($metaData['type'] === 'date') {
+			$rule = 'date';
+		} elseif ($metaData['type'] === 'time') {
+			$rule = 'time';
+		} elseif ($metaData['type'] === 'datetime') {
+			$rule = 'datetime';
+		} elseif ($metaData['type'] === 'inet') {
+			$rule = 'ip';
+		}
+
+		$allowEmpty = false;
+		if ($rule !== 'notEmpty' && $metaData['null'] === false) {
+			$allowEmpty = true;
+		}
+
+		return [
+			'rule' => $rule,
+			'allowEmpty' => $allowEmpty,
+		];
+	}
+
+
+/**
  * Generate a key value list of options and a prompt.
  *
  * @param array $options Array of options to use for the selections. indexes must start at 0
@@ -490,192 +573,6 @@ class ModelTask extends BakeTask {
 		} else {
 			return false;
 		}
-	}
-
-/**
- * Print out all the associations of a particular type
- *
- * @param string $modelName Name of the model relations belong to.
- * @param string $type Name of association you want to see. i.e. 'belongsTo'
- * @param string $associations Collection of associations.
- * @return void
- */
-	protected function _printAssociation($modelName, $type, $associations) {
-		if (!empty($associations[$type])) {
-			for ($i = 0, $len = count($associations[$type]); $i < $len; $i++) {
-				$out = "\t" . $modelName . ' ' . $type . ' ' . $associations[$type][$i]['alias'];
-				$this->out($out);
-			}
-		}
-	}
-
-/**
- * Handles Generation and user interaction for creating validation.
- *
- * @param Model $model Model to have validations generated for.
- * @return array $validate Array of user selected validations.
- */
-	public function doValidation($model) {
-		if (!$model instanceof Model) {
-			return false;
-		}
-
-		$fields = $model->schema();
-		if (empty($fields)) {
-			return false;
-		}
-
-		$skipFields = false;
-		$validate = array();
-		$this->initValidations();
-		foreach ($fields as $fieldName => $field) {
-			$validation = $this->fieldValidation($fieldName, $field, $model->primaryKey);
-			if (isset($validation['_skipFields'])) {
-				unset($validation['_skipFields']);
-				$skipFields = true;
-			}
-			if (!empty($validation)) {
-				$validate[$fieldName] = $validation;
-			}
-			if ($skipFields) {
-				return $validate;
-			}
-		}
-		return $validate;
-	}
-
-/**
- * Populate the _validations array
- *
- * @return void
- */
-	public function initValidations() {
-		$options = $choices = [];
-		if (class_exists('Cake\Validation\Validation')) {
-			$options = get_class_methods('Cake\Validation\Validation');
-		}
-		sort($options);
-		$default = 1;
-		foreach ($options as $option) {
-			if ($option{0} !== '_') {
-				$choices[$default] = $option;
-				$default++;
-			}
-		}
-		$choices[$default] = 'none'; // Needed since index starts at 1
-		$this->_validations = $choices;
-		return $choices;
-	}
-
-/**
- * Does individual field validation handling.
- *
- * @param string $fieldName Name of field to be validated.
- * @param array $metaData metadata for field
- * @param string $primaryKey
- * @return array Array of validation for the field.
- */
-	public function fieldValidation($fieldName, $metaData, $primaryKey = 'id') {
-		$defaultChoice = count($this->_validations);
-		$validate = $alreadyChosen = [];
-
-		$prompt = __d('cake_console',
-			"or enter in a valid regex validation string.\nAlternatively [s] skip the rest of the fields.\n"
-		);
-		$methods = array_flip($this->_validations);
-
-		$anotherValidator = 'y';
-		while ($anotherValidator === 'y') {
-			if ($this->interactive) {
-				$this->out();
-				$this->out(__d('cake_console', 'Field: <info>%s</info>', $fieldName));
-				$this->out(__d('cake_console', 'Type: <info>%s</info>', $metaData['type']));
-				$this->hr();
-				$this->out(__d('cake_console', 'Please select one of the following validation options:'));
-				$this->hr();
-
-				$optionText = '';
-				for ($i = 1, $m = $defaultChoice / 2; $i <= $m; $i++) {
-					$line = sprintf("%2d. %s", $i, $this->_validations[$i]);
-					$optionText .= $line . str_repeat(" ", 31 - strlen($line));
-					if ($m + $i !== $defaultChoice) {
-						$optionText .= sprintf("%2d. %s\n", $m + $i, $this->_validations[$m + $i]);
-					}
-				}
-				$this->out($optionText);
-				$this->out(__d('cake_console', "%s - Do not do any validation on this field.", $defaultChoice));
-				$this->hr();
-			}
-
-			$guess = $defaultChoice;
-			if ($metaData['null'] != 1 && !in_array($fieldName, [$primaryKey, 'created', 'modified', 'updated'])) {
-				if ($fieldName === 'email') {
-					$guess = $methods['email'];
-				} elseif ($metaData['type'] === 'string' && $metaData['length'] == 36) {
-					$guess = $methods['uuid'];
-				} elseif ($metaData['type'] === 'string') {
-					$guess = $methods['notEmpty'];
-				} elseif ($metaData['type'] === 'text') {
-					$guess = $methods['notEmpty'];
-				} elseif ($metaData['type'] === 'integer') {
-					$guess = $methods['numeric'];
-				} elseif ($metaData['type'] === 'float') {
-					$guess = $methods['numeric'];
-				} elseif ($metaData['type'] === 'boolean') {
-					$guess = $methods['boolean'];
-				} elseif ($metaData['type'] === 'date') {
-					$guess = $methods['date'];
-				} elseif ($metaData['type'] === 'time') {
-					$guess = $methods['time'];
-				} elseif ($metaData['type'] === 'datetime') {
-					$guess = $methods['datetime'];
-				} elseif ($metaData['type'] === 'inet') {
-					$guess = $methods['ip'];
-				}
-			}
-
-			if ($this->interactive === true) {
-				$choice = $this->in($prompt, null, $guess);
-				if ($choice === 's') {
-					$validate['_skipFields'] = true;
-					return $validate;
-				}
-				if (in_array($choice, $alreadyChosen)) {
-					$this->out(__d('cake_console', "You have already chosen that validation rule,\nplease choose again"));
-					continue;
-				}
-				if (!isset($this->_validations[$choice]) && is_numeric($choice)) {
-					$this->out(__d('cake_console', 'Please make a valid selection.'));
-					continue;
-				}
-				$alreadyChosen[] = $choice;
-			} else {
-				$choice = $guess;
-			}
-
-			if (isset($this->_validations[$choice])) {
-				$validatorName = $this->_validations[$choice];
-			} else {
-				$validatorName = Inflector::slug($choice);
-			}
-
-			if ($choice != $defaultChoice) {
-				$validate[$validatorName] = $choice;
-				if (is_numeric($choice) && isset($this->_validations[$choice])) {
-					$validate[$validatorName] = $this->_validations[$choice];
-				}
-			}
-			$anotherValidator = 'n';
-			if ($this->interactive && $choice != $defaultChoice) {
-				$anotherValidator = $this->in(__d('cake_console', "Would you like to add another validation rule\n" .
-					"or skip the rest of the fields?"), array('y', 'n', 's'), 'n');
-				if ($anotherValidator === 's') {
-					$validate['_skipFields'] = true;
-					return $validate;
-				}
-			}
-		}
-		return $validate;
 	}
 
 /**

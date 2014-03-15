@@ -339,13 +339,33 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * test that initializing the validations works.
+ * test getting validation rules with the no-validation rule.
  *
  * @return void
  */
-	public function testInitValidations() {
-		$result = $this->Task->initValidations();
-		$this->assertTrue(in_array('notEmpty', $result));
+	public function testGetValidationDisabled() {
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->params['no-validation'] = true;
+		$result = $this->Task->getValidation($model);
+		$this->assertEquals([], $result);
+	}
+
+/**
+ * test getting validation rules.
+ *
+ * @return void
+ */
+	public function testGetValidation() {
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getValidation($model);
+		$expected = [
+			'id' => ['rule' => 'numeric', 'allowEmpty' => true],
+			'bake_user_id' => ['rule' => 'numeric', 'allowEmpty' => true],
+			'title' => ['rule' => 'notEmpty', 'allowEmpty' => false],
+			'body' => ['rule' => 'notEmpty', 'allowEmpty' => false],
+			'published' => ['rule' => 'boolean', 'allowEmpty' => false],
+		];
+		$this->assertEquals($expected, $result);
 	}
 
 /**

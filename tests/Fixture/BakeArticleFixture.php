@@ -34,7 +34,7 @@ class BakeArticleFixture extends TestFixture {
 		'bake_user_id' => ['type' => 'integer', 'null' => false],
 		'title' => ['type' => 'string', 'null' => false],
 		'body' => 'text',
-		'published' => ['type' => 'string', 'length' => 1, 'default' => 'N'],
+		'published' => ['type' => 'boolean', 'length' => 1, 'default' => 0],
 		'created' => 'datetime',
 		'updated' => 'datetime',
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
