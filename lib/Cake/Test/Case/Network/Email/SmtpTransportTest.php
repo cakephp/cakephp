@@ -431,6 +431,7 @@ class SmtpTransportTest extends CakeTestCase {
 	public function testBufferResponseLines() {
 		$reponseLines = array(
 			'123',
+			"456\tFOO",
 			'FOOBAR',
 			'250-PIPELINING',
 			'250-ENHANCEDSTATUSCODES',
