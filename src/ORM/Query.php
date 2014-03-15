@@ -100,7 +100,7 @@ class Query extends DatabaseQuery {
  *
  * @var boolean
  */
-	protected $_primary = true;
+	protected $_eagerLoaded = true;
 
 /**
  * Constuctor
@@ -654,17 +654,17 @@ class Query extends DatabaseQuery {
 	}
 
 /**
- * Sets the query instance to be the primary query. If no argument is passed,
- * the current configured query `_primary` value is returned.
+ * Sets the query instance to be the eager loaded query. If no argument is
+ * passed, the current configured query `_eagerLoaded` value is returned.
  *
  * @param boolean $value
  * @return \Cake\ORM\Query
  */
-	public function primary($value = null) {
+	public function eagerLoaded($value = null) {
 		if ($value === null) {
-			return $this->_primary;
+			return $this->_eagerLoaded;
 		}
-		$this->_primary = $value;
+		$this->_eagerLoaded = $value;
 		return $this;
 	}
 

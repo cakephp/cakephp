@@ -73,7 +73,7 @@ use Cake\Validation\Validator;
  * Table objects provide a few callbacks/events you can hook into to augment/replace
  * find operations. Each event uses the standard event subsystem in CakePHP
  *
- * - `beforeFind($event, $query, $options, $primary)` - Fired before each find operation.
+ * - `beforeFind($event, $query, $options, $eagerLoaded)` - Fired before each find operation.
  *   By stopping the event and supplying a return value you can bypass the find operation
  *   entirely. Any changes done to the $query instance will be retained for the rest of the find.
  * - `beforeValidate($event, $entity, $options, $validator)` - Fired before an entity is validated.
