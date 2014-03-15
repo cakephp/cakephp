@@ -346,6 +346,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  */
 	protected function _groupResult($row) {
 		$defaultAlias = $this->_defaultTable->alias();
+		$defaultClass = get_class($this->_defaultTable);
 		$results = [];
 		foreach ($row as $key => $value) {
 			$table = $defaultAlias;
@@ -380,8 +381,13 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			if (!isset($results[$alias])) {
 				continue;
 			}
+			$target = $instance->target();
 			$instance = $assoc['instance'];
-			$results[$alias] = $this->_castValues($instance->target(), $results[$alias]);
+			$results[$alias] = $this->_castValues($target, $results[$alias]);
+			$options['source'] = [
+				'alias' => $instance->alias(),
+				'className' => get_class($target)
+			];
 
 			if ($this->_hydrate && $assoc['canBeJoined']) {
 				$entity = new $assoc['entityClass']($results[$alias], $options);
@@ -391,6 +397,10 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$results = $instance->transformRow($results);
 		}
 
+		$options['source'] = [
+			'alias' => $defaultAlias,
+			'className' => $defaultClass
+		];
 		$results = $results[$defaultAlias];
 		if ($this->_hydrate && !($results instanceof Entity)) {
 			$results = new $this->_entityClass($results, $options);

@@ -98,6 +98,10 @@ class Marshaller {
 		$tableName = $this->_table->alias();
 		$entityClass = $this->_table->entityClass();
 		$entity = new $entityClass();
+		$entity->source([
+			'alias' => $this->_table->alias(),
+			'className' => get_class($this->_table)
+		]);
 
 		if (isset($data[$tableName])) {
 			$data = $data[$tableName];
