@@ -373,14 +373,14 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testDoActsAs() {
-		$this->markTestIncomplete('Not done here yet');
-		$this->Task->connection = 'test';
-		$this->Task->interactive = false;
-		$model = new Model(array('ds' => 'test', 'name' => 'NumberTree'));
-		$result = $this->Task->doActsAs($model);
+	public function testGetBehaviors() {
+		$model = TableRegistry::get('NumberTrees');
+		$result = $this->Task->getBehaviors($model);
+		$this->assertEquals(['Tree'], $result);
 
-		$this->assertEquals(array('Tree'), $result);
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getBehaviors($model);
+		$this->assertEquals(['Timestamp'], $result);
 	}
 
 /**

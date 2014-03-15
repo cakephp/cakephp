@@ -124,9 +124,13 @@ class ModelTask extends BakeTask {
 		$displayField = $this->getDisplayField($model);
 		$fields = $this->getFields($model);
 		$validation = $this->getValidation($model);
+		$behaviors = $this->getBehaviors($model);
 
-		$this->bake($object, false);
-		$this->bakeFixture($model, $useTable);
+		$data = compact('associations', 'primaryKey', 'displayField',
+			'fields', 'validation', 'behaviors');
+		$this->bakeEntity($object);
+		$this->bakeTable($object);
+		$this->bakeFixture($model, $table);
 		$this->bakeTest($model);
 	}
 
@@ -144,11 +148,7 @@ class ModelTask extends BakeTask {
 			}
 			$modelClass = Inflector::classify($table);
 			$this->out(__d('cake_console', 'Baking %s', $modelClass));
-			$object = $this->_getModelObject($modelClass, $table);
-			if ($this->bake($object, false) && $unitTestExists) {
-				$this->bakeFixture($modelClass, $table);
-				$this->bakeTest($modelClass);
-			}
+			$this->generate($table);
 		}
 	}
 
@@ -440,6 +440,31 @@ class ModelTask extends BakeTask {
 		];
 	}
 
+/**
+ * Get behaviors
+ *
+ * @param Cake\ORM\Table $model
+ * @return array Behaviors
+ */
+	public function getBehaviors($model) {
+		$behaviors = [];
+		$schema = $model->schema();
+		$fields = $schema->columns();
+		if (empty($fields)) {
+			return [];
+		}
+		if (in_array('created', $fields) || in_array('modified', $fields)) {
+			$behaviors[] = 'Timestamp';
+		}
+
+		if (in_array('lft', $fields) && $schema->columnType('lft') === 'integer' &&
+			in_array('rght', $fields) && $schema->columnType('rght') === 'integer' &&
+			in_array('parent_id', $fields)
+		) {
+			$behaviors[] = 'Tree';
+		}
+		return $behaviors;
+	}
 
 /**
  * Generate a key value list of options and a prompt.
@@ -573,30 +598,6 @@ class ModelTask extends BakeTask {
 		} else {
 			return false;
 		}
-	}
-
-/**
- * Handles behaviors
- *
- * @param Model $model
- * @return array Behaviors
- */
-	public function doActsAs($model) {
-		if (!$model instanceof Model) {
-			return false;
-		}
-		$behaviors = [];
-		$fields = $model->schema(true);
-		if (empty($fields)) {
-			return [];
-		}
-
-		if (isset($fields['lft']) && $fields['lft']['type'] === 'integer' &&
-			isset($fields['rght']) && $fields['rght']['type'] === 'integer' &&
-			isset($fields['parent_id'])) {
-			$behaviors[] = 'Tree';
-		}
-		return $behaviors;
 	}
 
 /**
