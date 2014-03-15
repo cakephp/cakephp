@@ -291,6 +291,54 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * Test getting accessible fields.
+ *
+ * @return void
+ */
+	public function testFields() {
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getFields($model);
+		$expected = [
+			'id',
+			'bake_user_id',
+			'title',
+			'body',
+			'published',
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test getting field with the no- option
+ *
+ * @return void
+ */
+	public function testFieldsDisabled() {
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->params['no-fields'] = true;
+		$result = $this->Task->getFields($model);
+		$this->assertEquals([], $result);
+	}
+
+/**
+ * Test getting field with a whitelist
+ *
+ * @return void
+ */
+	public function testFieldsWhiteList() {
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->params['fields'] = 'id, title  , , body ,  created';
+		$result = $this->Task->getFields($model);
+		$expected = [
+			'id',
+			'title',
+			'body',
+			'created',
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
  * test that initializing the validations works.
  *
  * @return void

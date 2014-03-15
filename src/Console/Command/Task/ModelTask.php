@@ -122,6 +122,7 @@ class ModelTask extends BakeTask {
 		$associations = $this->getAssociations($object);
 		$primaryKey = $this->getPrimaryKey($model);
 		$displayField = $this->getDisplayField($model);
+		$fields = $this->getFields($model);
 
 		$this->bake($object, false);
 		$this->bakeFixture($model, $useTable);
@@ -333,6 +334,28 @@ class ModelTask extends BakeTask {
 			return (array)$this->params['primary-key'];
 		}
 		return (array)$model->primaryKey();
+	}
+
+/**
+ * Get the fields from a model.
+ *
+ * Uses the fields and no-fields options.
+ *
+ * @param Cake\ORM\Table $model The model to introspect.
+ * @return array The columns to make accessible
+ */
+	public function getFields($model) {
+		if (!empty($this->params['no-fields'])) {
+			return [];
+		}
+		if (!empty($this->params['fields'])) {
+			$fields = explode(',', $this->params['fields']);
+			return array_values(array_filter(array_map('trim', $fields)));
+		}
+		$schema = $model->schema();
+		$columns = $schema->columns();
+		$exclude = ['created', 'modified', 'updated', 'password', 'passwd'];
+		return array_diff($columns, $exclude);
 	}
 
 /**
@@ -677,126 +700,6 @@ class ModelTask extends BakeTask {
 			$behaviors[] = 'Tree';
 		}
 		return $behaviors;
-	}
-
-/**
- * Interact with the user and confirm associations.
- *
- * @param array $model Temporary Model instance.
- * @param array $associations Array of associations to be confirmed.
- * @return array Array of confirmed associations
- */
-	public function confirmAssociations($model, $associations) {
-		foreach ($associations as $type => $settings) {
-			if (!empty($associations[$type])) {
-				foreach ($associations[$type] as $i => $assoc) {
-					$prompt = "{$model->name} {$type} {$assoc['alias']}?";
-					$response = $this->in($prompt, ['y', 'n'], 'y');
-
-					if (strtolower($response) === 'n') {
-						unset($associations[$type][$i]);
-					} elseif ($type === 'hasMany') {
-						unset($associations['hasOne'][$i]);
-					}
-				}
-				$associations[$type] = array_merge($associations[$type]);
-			}
-		}
-		return $associations;
-	}
-
-/**
- * Interact with the user and generate additional non-conventional associations
- *
- * @param Model $model Temporary model instance
- * @param array $associations Array of associations.
- * @return array Array of associations.
- */
-	public function doMoreAssociations($model, $associations) {
-		$prompt = __d('cake_console', 'Would you like to define some additional model associations?');
-		$wannaDoMoreAssoc = $this->in($prompt, ['y', 'n'], 'n');
-		$possibleKeys = $this->_generatePossibleKeys();
-		while (strtolower($wannaDoMoreAssoc) === 'y') {
-			$assocs = ['belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'];
-			$this->out(__d('cake_console', 'What is the association type?'));
-			$assocType = intval($this->inOptions($assocs, __d('cake_console', 'Enter a number')));
-
-			$this->out(__d('cake_console', "For the following options be very careful to match your setup exactly.\n" .
-				"Any spelling mistakes will cause errors."));
-			$this->hr();
-
-			$alias = $this->in(__d('cake_console', 'What is the alias for this association?'));
-			$className = $this->in(__d('cake_console', 'What className will %s use?', $alias), null, $alias);
-
-			if ($assocType === 0) {
-				if (!empty($possibleKeys[$model->table])) {
-					$showKeys = $possibleKeys[$model->table];
-				} else {
-					$showKeys = null;
-				}
-				$suggestedForeignKey = $this->_modelKey($alias);
-			} else {
-				$otherTable = Inflector::tableize($className);
-				if (in_array($otherTable, $this->_tables)) {
-					if ($assocType < 3) {
-						if (!empty($possibleKeys[$otherTable])) {
-							$showKeys = $possibleKeys[$otherTable];
-						} else {
-							$showKeys = null;
-						}
-					} else {
-						$showKeys = null;
-					}
-				} else {
-					$otherTable = $this->in(__d('cake_console', 'What is the table for this model?'));
-					$showKeys = $possibleKeys[$otherTable];
-				}
-				$suggestedForeignKey = $this->_modelKey($model->name);
-			}
-			if (!empty($showKeys)) {
-				$this->out(__d('cake_console', 'A helpful List of possible keys'));
-				$foreignKey = $this->inOptions($showKeys, __d('cake_console', 'What is the foreignKey?'));
-				$foreignKey = $showKeys[intval($foreignKey)];
-			}
-			if (!isset($foreignKey)) {
-				$foreignKey = $this->in(__d('cake_console', 'What is the foreignKey? Specify your own.'), null, $suggestedForeignKey);
-			}
-			if ($assocType === 3) {
-				$associationForeignKey = $this->in(__d('cake_console', 'What is the associationForeignKey?'), null, $this->_modelKey($model->name));
-				$joinTable = $this->in(__d('cake_console', 'What is the joinTable?'));
-			}
-			$associations[$assocs[$assocType]] = array_values((array)$associations[$assocs[$assocType]]);
-			$count = count($associations[$assocs[$assocType]]);
-			$i = ($count > 0) ? $count : 0;
-			$associations[$assocs[$assocType]][$i]['alias'] = $alias;
-			$associations[$assocs[$assocType]][$i]['className'] = $className;
-			$associations[$assocs[$assocType]][$i]['foreignKey'] = $foreignKey;
-			if ($assocType === 3) {
-				$associations[$assocs[$assocType]][$i]['associationForeignKey'] = $associationForeignKey;
-				$associations[$assocs[$assocType]][$i]['joinTable'] = $joinTable;
-			}
-			$wannaDoMoreAssoc = $this->in(__d('cake_console', 'Define another association?'), ['y', 'n'], 'y');
-		}
-		return $associations;
-	}
-
-/**
- * Finds all possible keys to use on custom associations.
- *
- * @return array Array of tables and possible keys
- */
-	protected function _generatePossibleKeys() {
-		$possible = [];
-		foreach ($this->_tables as $otherTable) {
-			$tempOtherModel = new Model(['table' => $otherTable, 'ds' => $this->connection]);
-			$modelFieldsTemp = $tempOtherModel->schema(true);
-			foreach ($modelFieldsTemp as $fieldName => $field) {
-				if ($field['type'] === 'integer' || $field['type'] === 'string') {
-					$possible[$otherTable][] = $fieldName;
-				}
-			}
-		}
-		return $possible;
 	}
 
 /**
