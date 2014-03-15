@@ -52,7 +52,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_validationDomain = 'default';
 
 /**
- * Contains the validation messages associated to checking the presence
+ * Contains the validation messages associated with checking the presence
  * for each corresponding field.
  *
  * @var array
@@ -60,12 +60,12 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_presenceMessages = [];
 
 /**
- * Contains the validation messages associated to checking the emptiness
+ * Contains the validation messages associated with checking the emptiness
  * for each corresponding field.
  *
  * @var array
  */
-	protected $_allowEmptyMessages= [];
+	protected $_allowEmptyMessages = [];
 
 /**
  * Returns an array of fields that have failed validation. On the current model. This method will
@@ -316,7 +316,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field the name of the field
  * @param boolean|string $mode Valid values are true, false, 'create', 'update'
- * @param string $message The validation message to show when if the field presence
+ * @param string $message The validation message to show if the field presence
  * is required.
  * @return Validator this instance
  */
@@ -334,7 +334,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field the name of the field
  * @param boolean|string $mode Valid values are true, false, 'create', 'update'
- * @param string $message The validation message to show when if the field is not
+ * @param string $message The validation message to show if the field is not
  * allowed to be empty.
  * @return Validator this instance
  */
