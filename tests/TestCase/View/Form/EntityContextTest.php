@@ -146,10 +146,10 @@ class EntityContextTest extends TestCase {
 		$this->assertFalse($context->hasError('title'));
 		$this->assertEquals('string', $context->type('title'));
 		$this->assertEquals([], $context->error('title'));
-		$this->assertEquals(
-			['length' => null, 'precision' => null],
-			$context->attributes('title')
-		);
+
+		$attrs = $context->attributes('title');
+		$this->assertArrayHasKey('length', $attrs);
+		$this->assertArrayHasKey('precision', $attrs);
 	}
 
 /**
