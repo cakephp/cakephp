@@ -25,7 +25,6 @@ use Cake\Utility\Inflector;
 
 /**
  * ModelTaskTest class
- *
  */
 class ModelTaskTest extends TestCase {
 
@@ -444,108 +443,29 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * test confirming of associations, and that when an association is hasMany
- * a question for the hasOne is also not asked.
- *
- * @return void
- */
-	public function testConfirmAssociations() {
-		$this->markTestIncomplete('Not done here yet');
-		$associations = array(
-			'hasOne' => array(
-				array(
-					'alias' => 'ChildCategoryThread',
-					'className' => 'CategoryThread',
-					'foreignKey' => 'parent_id',
-				),
-			),
-			'hasMany' => array(
-				array(
-					'alias' => 'ChildCategoryThread',
-					'className' => 'CategoryThread',
-					'foreignKey' => 'parent_id',
-				),
-			),
-			'belongsTo' => array(
-				array(
-					'alias' => 'User',
-					'className' => 'User',
-					'foreignKey' => 'user_id',
-				),
-			)
-		);
-		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('n', 'y', 'n', 'n', 'n'));
-
-		$result = $this->Task->confirmAssociations($model, $associations);
-		$this->assertTrue(empty($result['hasOne']));
-
-		$result = $this->Task->confirmAssociations($model, $associations);
-		$this->assertTrue(empty($result['hasMany']));
-		$this->assertTrue(empty($result['hasOne']));
-	}
-
-/**
- * test that inOptions generates questions and only accepts a valid answer
- *
- * @return void
- */
-	public function testInOptions() {
-		$this->markTestIncomplete('Not done here yet');
-		$this->_useMockedOut();
-
-		$options = array('one', 'two', 'three');
-		$this->Task->expects($this->at(0))->method('out')->with('1. one');
-		$this->Task->expects($this->at(1))->method('out')->with('2. two');
-		$this->Task->expects($this->at(2))->method('out')->with('3. three');
-		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue(10));
-
-		$this->Task->expects($this->at(4))->method('out')->with('1. one');
-		$this->Task->expects($this->at(5))->method('out')->with('2. two');
-		$this->Task->expects($this->at(6))->method('out')->with('3. three');
-		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue(2));
-		$result = $this->Task->inOptions($options, 'Pick a number');
-		$this->assertEquals(1, $result);
-	}
-
-/**
  * test baking validation
  *
  * @return void
  */
-	public function testBakeValidation() {
-		$this->markTestIncomplete('Not done here yet');
-		$validate = array(
+	public function testBakeTableValidation() {
+		$validation = array(
 			'name' => array(
-				'notempty' => 'notEmpty'
+				'allowEmpty' => false,
+				'rule' => 'notEmpty'
 			),
 			'email' => array(
-				'email' => 'email',
+				'allowEmpty' => true,
+				'rule' => 'email',
 			),
-			'some_date' => array(
-				'date' => 'date'
-			),
-			'some_time' => array(
-				'time' => 'time'
-			)
 		);
-		$result = $this->Task->bake('BakeArticle', compact('validate'));
-		$this->assertRegExp('/class BakeArticle extends AppModel \{/', $result);
-		$this->assertRegExp('/\$validate \= array\(/', $result);
-		$expected = <<< STRINGEND
-array(
-			'notempty' => array(
-				'rule' => array('notEmpty'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-STRINGEND;
-		$this->assertRegExp('/' . preg_quote(str_replace("\r\n", "\n", $expected), '/') . '/', $result);
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeTable($model, compact('validation'));
+
+		$this->assertContains('class BakeArticlesTable extends Table {', $result);
+		$this->assertContains('public function validationDefault(Validator $validator) {', $result);
+		$this->assertContains("->add('name', 'valid', ['rule' => 'notEmpty'])", $result);
+		$this->assertContains("->add('email', 'valid', ['rule' => 'email'])", $result);
+		$this->assertContains("->allowEmpty('email')", $result);
 	}
 
 /**

@@ -1,7 +1,5 @@
 <?php
 /**
- * The ModelTask handles creating and updating models files.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -18,6 +16,7 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
@@ -25,7 +24,7 @@ use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
 /**
- * Task class for creating and updating model files.
+ * Task class for generating model files.
  *
  * @codingStandardsIgnoreFile
  */
@@ -79,7 +78,7 @@ class ModelTask extends BakeTask {
  * @return void
  */
 	public function initialize() {
-		$this->path = current(App::path('Model'));
+		$this->path = APP . '/Model/';
 	}
 
 /**
@@ -126,10 +125,11 @@ class ModelTask extends BakeTask {
 		$validation = $this->getValidation($model);
 		$behaviors = $this->getBehaviors($model);
 
-		$data = compact('associations', 'primaryKey', 'displayField',
-			'fields', 'validation', 'behaviors');
-		$this->bakeEntity($object);
-		$this->bakeTable($object);
+		$data = compact(
+			'associations', 'primaryKey', 'displayField',
+			'table', 'fields', 'validation', 'behaviors');
+		$this->bakeEntity($object, $data);
+		$this->bakeTable($object, $data);
 		$this->bakeFixture($model, $table);
 		$this->bakeTest($model);
 	}
@@ -494,145 +494,60 @@ class ModelTask extends BakeTask {
 	}
 
 /**
- * Handles interactive baking
+ * Bake an entity class.
  *
- * @return boolean
- * @throws \Exception Will throw this until baking models works
+ * @param Cake\ORM\Table $model Model name or object
+ * @param array $data An array to use to generate the Table
+ * @return string
  */
-	protected function _interactive() {
-		$this->hr();
-		$this->out(__d('cake_console', "Bake Model\nPath: %s", $this->getPath()));
-		$this->hr();
-		$this->interactive = true;
-
-		$primaryKey = 'id';
-		$validate = $associations = [];
-
-		if (empty($this->connection)) {
-			$this->connection = $this->DbConfig->getConfig();
+	public function bakeEntity($model, $data = []) {
+		if (!empty($this->params['no-entity'])) {
+			return;
 		}
-		throw new \Exception('Baking models does not work yet.');
-
-		$currentModelName = $this->getName();
-		$useTable = $this->getTable($currentModelName);
-		$db = ConnectionManager::getDataSource($this->connection);
-		$fullTableName = $db->fullTableName($useTable);
-		if (!in_array($useTable, $this->_tables)) {
-			$prompt = __d('cake_console', "The table %s doesn't exist or could not be automatically detected\ncontinue anyway?", $useTable);
-			$continue = $this->in($prompt, ['y', 'n']);
-			if (strtolower($continue) === 'n') {
-				return false;
-			}
+		$data += [
+			'fields' => [],
+		];
+		$pluginPath = '';
+		if ($this->plugin) {
+			$pluginPath = $this->plugin . '.';
 		}
 
-		$tempModel = new Model(['name' => $currentModelName, 'table' => $useTable, 'ds' => $this->connection]);
+		$this->Template->set($data);
+		$this->Template->set([
+			'appNamespace' => Configure::read('App.namespace'),
+			'plugin' => $this->plugin,
+			'pluginPath' => $pluginPath
+		]);
+		$out = $this->Template->generate('classes', 'entity');
 
-		$knownToExist = false;
-		try {
-			$fields = $tempModel->schema(true);
-			$knownToExist = true;
-		} catch (\Exception $e) {
-			$fields = [$tempModel->primaryKey];
-		}
-		if (!array_key_exists('id', $fields)) {
-			$primaryKey = $this->findPrimaryKey($fields);
-		}
-
-		if ($knownToExist) {
-			$displayField = $tempModel->hasField(['name', 'title']);
-			if (!$displayField) {
-				$displayField = $this->findDisplayField($tempModel->schema());
-			}
-
-			$prompt = __d('cake_console', "Would you like to supply validation criteria \nfor the fields in your model?");
-			$wannaDoValidation = $this->in($prompt, ['y', 'n'], 'y');
-			if (array_search($useTable, $this->_tables) !== false && strtolower($wannaDoValidation) === 'y') {
-				$validate = $this->doValidation($tempModel);
-			}
-
-			$prompt = __d('cake_console', "Would you like to define model associations\n(hasMany, hasOne, belongsTo, etc.)?");
-			$wannaDoAssoc = $this->in($prompt, ['y', 'n'], 'y');
-			if (strtolower($wannaDoAssoc) === 'y') {
-				$associations = $this->doAssociations($tempModel);
-			}
-		}
-
-		$this->out();
-		$this->hr();
-		$this->out(__d('cake_console', 'The following Model will be created:'));
-		$this->hr();
-		$this->out(__d('cake_console', "Name:       %s", $currentModelName));
-
-		if ($this->connection !== 'default') {
-			$this->out(__d('cake_console', "DB Config:  %s", $this->connection));
-		}
-		if ($fullTableName !== Inflector::tableize($currentModelName)) {
-			$this->out(__d('cake_console', 'DB Table:   %s', $fullTableName));
-		}
-		if ($primaryKey !== 'id') {
-			$this->out(__d('cake_console', 'Primary Key: %s', $primaryKey));
-		}
-		if (!empty($validate)) {
-			$this->out(__d('cake_console', 'Validation: %s', print_r($validate, true)));
-		}
-		if (!empty($associations)) {
-			$this->out(__d('cake_console', 'Associations:'));
-			$assocKeys = ['belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'];
-			foreach ($assocKeys as $assocKey) {
-				$this->_printAssociation($currentModelName, $assocKey, $associations);
-			}
-		}
-
-		$this->hr();
-		$looksGood = $this->in(__d('cake_console', 'Look okay?'), ['y', 'n'], 'y');
-
-		if (strtolower($looksGood) === 'y') {
-			$vars = compact('associations', 'validate', 'primaryKey', 'useTable', 'displayField');
-			$vars['useDbConfig'] = $this->connection;
-			if ($this->bake($currentModelName, $vars)) {
-				if ($this->_checkUnitTest()) {
-					$this->bakeFixture($currentModelName, $useTable);
-					$this->bakeTest($currentModelName, $useTable, $associations);
-				}
-			}
-		} else {
-			return false;
-		}
+		$path = $this->getPath();
+		$filename = $path . 'Entity/' . $name . '.php';
+		$this->out("\n" . __d('cake_console', 'Baking entity class for %s...', $name), 1, Shell::QUIET);
+		$this->createFile($filename, $out);
 	}
 
 /**
- * Assembles and writes a Model file.
+ * Bake a table class.
  *
- * @param string|object $name Model name or object
- * @param array|boolean $data if array and $name is not an object assume bake data, otherwise boolean.
+ * @param Cake\ORM\Table $model Model name or object
+ * @param array $data An array to use to generate the Table
  * @return string
  */
-	public function bake($name, $data = []) {
-		if ($name instanceof Model) {
-			if (!$data) {
-				$data = [];
-				$data['associations'] = $this->doAssociations($name);
-				$data['validate'] = $this->doValidation($name);
-				$data['actsAs'] = $this->doActsAs($name);
-			}
-			$data['primaryKey'] = $name->primaryKey;
-			$data['useTable'] = $name->table;
-			$data['useDbConfig'] = $name->useDbConfig;
-			$data['name'] = $name = $name->name;
-		} else {
-			$data['name'] = $name;
+	public function bakeTable($model, $data = []) {
+		if (!empty($this->params['no-table'])) {
+			return;
 		}
 
-		$defaults = [
+		$name = $model->alias();
+		$data += [
+			'name' => $name,
 			'associations' => [],
-			'actsAs' => [],
-			'validate' => [],
 			'primaryKey' => 'id',
-			'useTable' => null,
-			'useDbConfig' => 'default',
-			'displayField' => null
+			'displayField' => null,
+			'table' => null,
+			'validation' => [],
+			'behaviors' => [],
 		];
-		$data = array_merge($defaults, $data);
 
 		$pluginPath = '';
 		if ($this->plugin) {
@@ -641,16 +556,17 @@ class ModelTask extends BakeTask {
 
 		$this->Template->set($data);
 		$this->Template->set([
+			'appNamespace' => Configure::read('App.namespace'),
 			'plugin' => $this->plugin,
 			'pluginPath' => $pluginPath
 		]);
-		$out = $this->Template->generate('classes', 'model');
+		$out = $this->Template->generate('classes', 'table');
 
 		$path = $this->getPath();
-		$filename = $path . $name . '.php';
-		$this->out("\n" . __d('cake_console', 'Baking model class for %s...', $name), 1, Shell::QUIET);
+		$filename = $path . 'Table/' . $name . '.php';
+		$this->out("\n" . __d('cake_console', 'Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
-		ClassRegistry::flush();
+		TableRegistry::clear();
 		return $out;
 	}
 
