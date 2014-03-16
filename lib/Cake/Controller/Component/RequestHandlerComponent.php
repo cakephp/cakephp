@@ -609,7 +609,6 @@ class RequestHandlerComponent extends Component {
 			$controller->layout = $this->ajaxLayout;
 			return $this->respondAs('html', $options);
 		}
-		$controller->ext = '.ctp';
 
 		$pluginDot = null;
 		$viewClassMap = $this->viewClassMap();
