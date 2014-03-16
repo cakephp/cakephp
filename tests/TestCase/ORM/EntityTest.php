@@ -860,6 +860,7 @@ class EntityTest extends TestCase {
  */
 	public function testAccessible() {
 		$entity = new Entity;
+		$entity->accessible('*', false);
 		$this->assertFalse($entity->accessible('foo'));
 		$this->assertFalse($entity->accessible('bar'));
 
