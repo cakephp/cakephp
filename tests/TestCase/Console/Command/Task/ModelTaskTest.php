@@ -570,28 +570,48 @@ class ModelTaskTest extends TestCase {
 		$this->assertContains("protected \$_accessible = ['title', 'body', 'published']", $result);
 	}
 
+/**
+ * test bake() with a -plugin param
+ *
+ * @return void
+ */
+	public function testBakeTableWithPlugin() {
+		$this->Task->plugin = 'ControllerTest';
 
+		// fake plugin path
+		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
+		$path = APP . 'Plugin/ControllerTest/Model/Table/BakeArticlesTable.php';
+		$this->Task->expects($this->once())->method('createFile')
+			->with($path, $this->logicalAnd(
+				$this->stringContains('namespace ControllerTest\\Model\\Table;'),
+				$this->stringContains('use Cake\\ORM\\Table;'),
+				$this->stringContains('class BakeArticlesTable extends Table {')
+			));
+
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->bakeTable($model);
+	}
 
 /**
  * test bake() with a -plugin param
  *
  * @return void
  */
-	public function testBakeWithPlugin() {
-		$this->markTestIncomplete('Not done here yet');
+	public function testBakeEntityWithPlugin() {
 		$this->Task->plugin = 'ControllerTest';
 
-		//fake plugin path
+		// fake plugin path
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
-		$path = APP . 'Plugin/ControllerTest/Model/BakeArticle.php';
+		$path = APP . 'Plugin/ControllerTest/Model/Entity/BakeArticle.php';
 		$this->Task->expects($this->once())->method('createFile')
-			->with($path, $this->stringContains('BakeArticle extends ControllerTestAppModel'));
+			->with($path, $this->logicalAnd(
+				$this->stringContains('namespace ControllerTest\\Model\\Entity;'),
+				$this->stringContains('use Cake\\ORM\\Entity;'),
+				$this->stringContains('class BakeArticle extends Entity {')
+			));
 
-		$result = $this->Task->bake('BakeArticle', array(), array());
-		$this->assertContains("App::uses('ControllerTestAppModel', 'ControllerTest.Model');", $result);
-
-		$this->assertEquals(count(ClassRegistry::keys()), 0);
-		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->bakeEntity($model);
 	}
 
 /**

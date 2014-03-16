@@ -504,7 +504,7 @@ class ModelTask extends BakeTask {
 		if (!empty($this->params['no-entity'])) {
 			return;
 		}
-		$name = $model->alias();
+		$name = Inflector::singularize($model->alias());
 
 		$ns = Configure::read('App.namespace');
 		$pluginPath = '';
@@ -514,7 +514,7 @@ class ModelTask extends BakeTask {
 		}
 
 		$data += [
-			'name' => Inflector::singularize($name),
+			'name' => $name,
 			'namespace' => $ns,
 			'plugin' => $this->plugin,
 			'pluginPath' => $pluginPath,
@@ -568,7 +568,7 @@ class ModelTask extends BakeTask {
 		$out = $this->Template->generate('classes', 'table');
 
 		$path = $this->getPath();
-		$filename = $path . 'Table/' . $name . '.php';
+		$filename = $path . 'Table/' . $name . 'Table.php';
 		$this->out("\n" . __d('cake_console', 'Baking table class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
 		TableRegistry::clear();
