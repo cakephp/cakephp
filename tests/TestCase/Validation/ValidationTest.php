@@ -1663,6 +1663,7 @@ class ValidationTest extends TestCase {
 		$this->skipIf(DS === '\\', 'The locale is not supported in Windows and affects other tests.');
 		$restore = setlocale(LC_NUMERIC, 0);
 		$this->skipIf(setlocale(LC_NUMERIC, 'de_DE') === false, "The German locale isn't available.");
+		$this->skipIf(strpos(',', (string)12345.67) === false, "The German locale does not include , for numbers.");
 
 		$this->assertTrue(Validation::decimal(1.54), '1.54 should be considered a valid float');
 		$this->assertTrue(Validation::decimal('1.54'), '"1.54" should be considered a valid float');
