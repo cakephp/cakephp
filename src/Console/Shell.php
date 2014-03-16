@@ -729,13 +729,13 @@ class Shell extends Object {
 	}
 
 /**
- * Creates the proper model camelized name (singularized) for the specified name
+ * Creates the proper model camelized name (plural) for the specified name
  *
  * @param string $name Name
- * @return string Camelized and singularized model name
+ * @return string Camelized and plural model name
  */
 	protected function _modelName($name) {
-		return Inflector::camelize($name);
+		return Inflector::pluralize(Inflector::camelize($name));
 	}
 
 /**
@@ -755,8 +755,8 @@ class Shell extends Object {
  * @return string Model name
  */
 	protected function _modelNameFromKey($key) {
-		$class = Inflector::camelize(str_replace('_id', '', $key));
-		return Inflector::pluralize($class);
+		$key = str_replace('_id', '', $key);
+		return $this->_modelName($key);
 	}
 
 /**

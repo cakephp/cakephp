@@ -105,7 +105,7 @@ class ModelTask extends BakeTask {
 			return $this->all();
 		}
 
-		$this->generate($this->args[0]);
+		$this->generate($this->_modelName($this->args[0]));
 	}
 
 /**
@@ -128,8 +128,8 @@ class ModelTask extends BakeTask {
 		$data = compact(
 			'associations', 'primaryKey', 'displayField',
 			'table', 'fields', 'validation', 'behaviors');
-		$this->bakeEntity($model, $data);
 		$this->bakeTable($model, $data);
+		$this->bakeEntity($model, $data);
 		$this->bakeFixture($model, $table);
 		$this->bakeTest($model);
 	}

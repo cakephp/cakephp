@@ -620,20 +620,21 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithNamedModel() {
-		$this->markTestIncomplete('Not done here yet');
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticle');
-		$filename = '/my/path/BakeArticle.php';
+		$this->Task->args = ['BakeArticles'];
 
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle extends AppModel'));
+		$tableFile = '/my/path/Table/BakeArticlesTable.php';
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($tableFile, $this->stringContains('class BakeArticlesTable extends Table'));
+
+		$entityFile = '/my/path/Entity/BakeArticle.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($entityFile, $this->stringContains('class BakeArticle extends Entity'));
 
 		$this->Task->execute();
-
-		$this->assertEquals(count(ClassRegistry::keys()), 0);
-		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
 	}
 
 /**
@@ -654,35 +655,15 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithNamedModelVariations($name) {
-		$this->markTestIncomplete('Not done here yet');
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 
 		$this->Task->args = array($name);
-		$filename = '/my/path/BakeArticle.php';
+		$filename = '/my/path/Table/BakeArticlesTable.php';
 
-		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle extends AppModel'));
-		$this->Task->execute();
-	}
-
-/**
- * test that execute with a model name picks up hasMany associations.
- *
- * @return void
- */
-	public function testExecuteWithNamedModelHasManyCreated() {
-		$this->markTestIncomplete('Not done here yet');
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticle');
-		$filename = '/my/path/BakeArticle.php';
-
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
-		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, $this->stringContains("'BakeComment' => array("));
-
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticlesTable extends Table {'));
 		$this->Task->execute();
 	}
 
@@ -890,26 +871,6 @@ class ModelTaskTest extends TestCase {
 		$filename = '/my/path/CategoryThread.php';
 		$this->Task->expects($this->at(4))->method('createFile')
 			->with($filename, $this->stringContains('class CategoryThread'));
-
-		$this->Task->execute();
-	}
-
-/**
- * test using bake interactively with a table that does not exist.
- *
- * @return void
- */
-	public function testExecuteWithNonExistantTableName() {
-		$this->markTestIncomplete('Not done here yet');
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				'Foobar', // Or type in the name of the model
-				'y', // Do you want to use this table
-				'n' // Doesn't exist, continue anyway?
-			));
 
 		$this->Task->execute();
 	}
