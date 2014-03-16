@@ -133,6 +133,11 @@ class ResultSetTest extends TestCase {
 		// Use a loop to test Iterator implementation
 		foreach ($results as $i => $row) {
 			$expected = new \Cake\ORM\Entity($this->fixtureData[$i]);
+			$expected->isNew(false);
+			$expected->source([
+				'alias' => $this->table->alias(),
+				'className' => get_class($this->table)
+			]);
 			$expected->clean();
 			$this->assertEquals($expected, $row, "Row $i does not match");
 		}
@@ -217,7 +222,14 @@ class ResultSetTest extends TestCase {
 	public function testGroupBy() {
 		$query = $this->table->find('all');
 		$results = $query->all()->groupBy('author_id')->toArray();
-		$options = ['markNew' => false, 'markClean' => true];
+		$options = [
+			'markNew' => false,
+			'markClean' => true,
+			'source' => [
+				'alias' => $this->table->alias(),
+				'className' => get_class($this->table)
+			]
+		];
 		$expected = [
 			1 => [
 				new Entity($this->fixtureData[0], $options),
