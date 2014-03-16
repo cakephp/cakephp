@@ -117,8 +117,8 @@ class ModelTask extends BakeTask {
 	public function generate($name) {
 		$table = $this->getTable();
 
-		$object = $this->getTableObject($name, $table);
-		$associations = $this->getAssociations($object);
+		$model = $this->getTableObject($name, $table);
+		$associations = $this->getAssociations($model);
 		$primaryKey = $this->getPrimaryKey($model);
 		$displayField = $this->getDisplayField($model);
 		$fields = $this->getFields($model);
@@ -128,8 +128,8 @@ class ModelTask extends BakeTask {
 		$data = compact(
 			'associations', 'primaryKey', 'displayField',
 			'table', 'fields', 'validation', 'behaviors');
-		$this->bakeEntity($object, $data);
-		$this->bakeTable($object, $data);
+		$this->bakeEntity($model, $data);
+		$this->bakeTable($model, $data);
 		$this->bakeFixture($model, $table);
 		$this->bakeTest($model);
 	}
@@ -686,8 +686,10 @@ class ModelTask extends BakeTask {
 		])->addOption('display-field', [
 			'help' => __d('cake_console', 'The displayField if you would like to choose one.')
 		])->addOption('no-test', [
+			'boolean' => true,
 			'help' => __d('cake_console', 'Do not generate a test case skeleton.')
 		])->addOption('no-fixture', [
+			'boolean' => true,
 			'help' => __d('cake_console', 'Do not generate a test fixture skeleton.')
 		])->epilog(
 			__d('cake_console', 'Omitting all arguments and options will list ' .
