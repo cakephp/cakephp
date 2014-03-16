@@ -1843,7 +1843,7 @@ class QueryTest extends TestCase {
 		$query = new Query($this->connection);
 		$result = $query->select('created')->from('comments')->where(['id' => 1])->execute();
 		$result = $result->fetchAll('assoc')[0]['created'];
-		$this->assertEquals($date->format('Y-m-d'), $result);
+		$this->assertStringStartsWith($date->format('Y-m-d'), $result);
 	}
 
 /**
