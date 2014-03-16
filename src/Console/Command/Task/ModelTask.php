@@ -504,26 +504,31 @@ class ModelTask extends BakeTask {
 		if (!empty($this->params['no-entity'])) {
 			return;
 		}
-		$data += [
-			'fields' => [],
-		];
+		$name = $model->alias();
+
+		$ns = Configure::read('App.namespace');
 		$pluginPath = '';
 		if ($this->plugin) {
+			$ns = $this->plugin;
 			$pluginPath = $this->plugin . '.';
 		}
 
-		$this->Template->set($data);
-		$this->Template->set([
-			'appNamespace' => Configure::read('App.namespace'),
+		$data += [
+			'name' => Inflector::singularize($name),
+			'namespace' => $ns,
 			'plugin' => $this->plugin,
-			'pluginPath' => $pluginPath
-		]);
+			'pluginPath' => $pluginPath,
+			'fields' => [],
+		];
+
+		$this->Template->set($data);
 		$out = $this->Template->generate('classes', 'entity');
 
 		$path = $this->getPath();
 		$filename = $path . 'Entity/' . $name . '.php';
 		$this->out("\n" . __d('cake_console', 'Baking entity class for %s...', $name), 1, Shell::QUIET);
 		$this->createFile($filename, $out);
+		return $out;
 	}
 
 /**
@@ -538,8 +543,18 @@ class ModelTask extends BakeTask {
 			return;
 		}
 
+		$ns = Configure::read('App.namespace');
+		$pluginPath = '';
+		if ($this->plugin) {
+			$ns = $this->plugin;
+			$pluginPath = $this->plugin . '.';
+		}
+
 		$name = $model->alias();
 		$data += [
+			'plugin' => $this->plugin,
+			'pluginPath' => $pluginPath,
+			'namespace' => $ns,
 			'name' => $name,
 			'associations' => [],
 			'primaryKey' => 'id',
@@ -549,17 +564,7 @@ class ModelTask extends BakeTask {
 			'behaviors' => [],
 		];
 
-		$pluginPath = '';
-		if ($this->plugin) {
-			$pluginPath = $this->plugin . '.';
-		}
-
 		$this->Template->set($data);
-		$this->Template->set([
-			'appNamespace' => Configure::read('App.namespace'),
-			'plugin' => $this->plugin,
-			'pluginPath' => $pluginPath
-		]);
 		$out = $this->Template->generate('classes', 'table');
 
 		$path = $this->getPath();

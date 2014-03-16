@@ -20,7 +20,7 @@ use Cake\Utility\Inflector;
 
 echo "<?php\n";
 ?>
-namespace <?= $appNamespace ?>\Model\Table;
+namespace <?= $namespace ?>\Model\Table;
 
 use Cake\ORM\Table;
 <?php if (!empty($validation)): ?>

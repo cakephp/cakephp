@@ -461,6 +461,9 @@ class ModelTaskTest extends TestCase {
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeTable($model, compact('validation'));
 
+		$this->assertContains('namespace App\Model\Table;', $result);
+		$this->assertContains('use Cake\ORM\Table;', $result);
+		$this->assertContains('use Cake\Validation\Validator;', $result);
 		$this->assertContains('class BakeArticlesTable extends Table {', $result);
 		$this->assertContains('public function validationDefault(Validator $validator) {', $result);
 		$this->assertContains("->add('name', 'valid', ['rule' => 'notEmpty'])", $result);
@@ -488,6 +491,7 @@ class ModelTaskTest extends TestCase {
 		$this->assertContains("this->displayField('title');\n", $result);
 		$this->assertContains("this->addBehavior('Timestamp');\n", $result);
 		$this->assertContains("this->table('articles');\n", $result);
+		$this->assertNotContains('use Cake\Validation\Validator;', $result);
 	}
 
 /**
@@ -534,6 +538,39 @@ class ModelTaskTest extends TestCase {
 		$this->assertContains("this->belongsToMany('BakeTag', [", $result);
 		$this->assertContains("'joinTable' => 'bake_articles_bake_tags',", $result);
 	}
+
+/**
+ * test baking an entity class
+ *
+ * @return void
+ */
+	public function testBakeEntity() {
+		$config = [
+			'fields' => []
+		];
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeEntity($model, $config);
+		$this->assertContains('namespace App\Model\Entity;', $result);
+		$this->assertContains('use Cake\ORM\Entity;', $result);
+		$this->assertContains('class BakeArticle extends Entity {', $result);
+		$this->assertNotContains('$_accessible', $result);
+	}
+
+/**
+ * test baking an entity class
+ *
+ * @return void
+ */
+	public function testBakeEntityFields() {
+		$config = [
+			'fields' => ['title', 'body', 'published']
+		];
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeEntity($model, $config);
+		$this->assertContains("protected \$_accessible = ['title', 'body', 'published']", $result);
+	}
+
+
 
 /**
  * test bake() with a -plugin param
