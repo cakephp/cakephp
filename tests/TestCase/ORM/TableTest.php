@@ -2692,9 +2692,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$article = $table->find('all')->where(['id' => 1])->contain(['tags'])->first();
 		$tags = $article->tags;
 		$this->assertNotEmpty($tags);
-		$tags[] = new \TestApp\Model\Entity\Tag([
-			'name' => 'Something New'
-		]);
+		$tags[] = new \TestApp\Model\Entity\Tag(['name' => 'Something New']);
 		$article->tags = $tags;
 		$this->assertSame($article, $table->save($article));
 		$tags = $article->tags;
@@ -2817,6 +2815,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('articles');
 		$table->belongsToMany('tags');
 		$tagsTable = TableRegistry::get('tags');
+		$source = [
+			'source' => [
+				'alias' => 'tags',
+				'className' => 'TestApp\Model\Table\TagsTable'
+			]
+		];
 		$options = ['markNew' => false];
 
 		$article = new \Cake\ORM\Entity([
@@ -2825,10 +2829,10 @@ class TableTest extends \Cake\TestSuite\TestCase {
 
 		$newTag = new \TestApp\Model\Entity\Tag([
 			'name' => 'Foo'
-		]);
+		], $source);
 		$tags[] = new \TestApp\Model\Entity\Tag([
 			'id' => 3
-		], $options);
+		], $options + $source);
 		$tags[] = $newTag;
 
 		$tagsTable->save($newTag);

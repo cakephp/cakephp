@@ -22,7 +22,7 @@ class ArticlesTable extends Table {
 	public function initialize(array $config) {
 		$this->belongsTo('authors');
 		$this->belongsToMany('tags');
-		$this->hasMany('articlesTags');
+		$this->hasMany('ArticlesTags');
 	}
 
 }
