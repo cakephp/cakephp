@@ -1007,10 +1007,7 @@ class EntityTest extends TestCase {
 		$entity->virtualProperties(['baz']);
 		$entity->dirty('foo', true);
 		$entity->errors('foo', ['An error']);
-		$entity->source([
-			'alias' => 'foos',
-			'className' => 'Something'
-		]);
+		$entity->source('foos');
 		$result = $entity->__debugInfo();
 		$expected = [
 			'new' => null,
@@ -1019,10 +1016,7 @@ class EntityTest extends TestCase {
 			'dirty' => ['foo' => true],
 			'virtual' => ['baz'],
 			'errors' => ['foo' => ['An error']],
-			'repository' => [
-				'alias' => 'foos',
-				'className' => 'Something'
-			]
+			'repository' => 'foos'
 		];
 		$this->assertSame($expected, $result);
 	}
@@ -1034,10 +1028,9 @@ class EntityTest extends TestCase {
  */
 	public function testSource() {
 		$entity = new Entity;
-		$this->assertEquals([], $entity->source());
-		$source = ['alias' => 'foo', 'className' => 'bar'];
-		$entity->source($source);
-		$this->assertEquals($source, $entity->source());
+		$this->assertNull($entity->source());
+		$entity->source('foos');
+		$this->assertEquals('foos', $entity->source());
 	}
 
 }

@@ -123,8 +123,7 @@ class EntityContext implements ContextInterface {
 			$isEntity = $entity instanceof Entity;
 
 			if ($isEntity) {
-				$source = $entity->source();
-				$table = isset($source['alias']) ? $source['alias'] : null;
+				$table = $entity->source();
 			}
 			if (!$table && $isEntity && get_class($entity) !== 'Cake\ORM\Entity') {
 				list($ns, $entityClass) = namespaceSplit(get_class($entity));

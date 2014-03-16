@@ -98,12 +98,11 @@ trait EntityTrait {
 	protected $_accessible = [];
 
 /**
- * An array containing the alias and full table classname from which
- * this entity comes.
+ * The alias of the repository this entity came from
  *
- * @var array
+ * @var string
  */
-	protected $_repositoryInfo = [];
+	protected $_repositoryAlias;
 
 /**
  * Magic getter to access properties that has be set in this entity
@@ -671,19 +670,19 @@ trait EntityTrait {
 	}
 
 /**
- * Returns an array containing the alias and classname of the repository
- * this entity came from, if it is known.
+ * Returns the alias of the repository from wich this entity came from.
  *
- * If an array is passed, the repository info will be set to it.
+ * If called with no arguments, it returns the alias of the repository
+ * this entity came from if it is known.
  *
- * @param array $info the repository info to store
- * @return array
+ * @param string the alias of the repository
+ * @return string
  */
-	public function source(array $info = null) {
-		if ($info === null) {
-			return $this->_repositoryInfo;
+	public function source($alias = null) {
+		if ($alias === null) {
+			return $this->_repositoryAlias;
 		}
-		$this->_repositoryInfo = $info;
+		$this->_repositoryAlias = $alias;
 	}
 
 /**
@@ -709,7 +708,7 @@ trait EntityTrait {
 			'dirty' => $this->_dirty,
 			'virtual' => $this->_virtual,
 			'errors' => $this->_errors,
-			'repository' => $this->_repositoryInfo
+			'repository' => $this->_repositoryAlias
 		];
 	}
 

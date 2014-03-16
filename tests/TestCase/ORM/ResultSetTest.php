@@ -134,10 +134,7 @@ class ResultSetTest extends TestCase {
 		foreach ($results as $i => $row) {
 			$expected = new \Cake\ORM\Entity($this->fixtureData[$i]);
 			$expected->isNew(false);
-			$expected->source([
-				'alias' => $this->table->alias(),
-				'className' => get_class($this->table)
-			]);
+			$expected->source($this->table->alias());
 			$expected->clean();
 			$this->assertEquals($expected, $row, "Row $i does not match");
 		}
@@ -225,10 +222,7 @@ class ResultSetTest extends TestCase {
 		$options = [
 			'markNew' => false,
 			'markClean' => true,
-			'source' => [
-				'alias' => $this->table->alias(),
-				'className' => get_class($this->table)
-			]
+			'source' => $this->table->alias()
 		];
 		$expected = [
 			1 => [

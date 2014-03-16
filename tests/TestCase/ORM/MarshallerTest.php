@@ -110,8 +110,7 @@ class MarshallerTest extends TestCase {
 		$this->assertEquals($data, $result->toArray());
 		$this->assertTrue($result->dirty(), 'Should be a dirty entity.');
 		$this->assertNull($result->isNew(), 'Should be detached');
-		$source = ['alias' => 'Articles', 'className' => get_class($this->articles)];
-		$this->assertEquals($source, $result->source());
+		$this->assertEquals('Articles', $result->source());
 	}
 
 /**

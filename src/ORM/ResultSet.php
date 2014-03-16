@@ -121,13 +121,6 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 	protected $_count;
 
 /**
- * Contains information about the default table that is used for hydrating
- *
- * @var array
- */
-	protected $_sourceInfo = [];
-
-/**
  * Constructor
  *
  * @param Query from where results come
@@ -142,10 +135,6 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		$this->_hydrate = $this->_query->hydrate();
 		$this->_entityClass = $repository->entityClass();
 		$this->_useBuffering = $query->bufferResults();
-		$this->_sourceInfo = [
-			'alias' => $repository->alias(),
-			'className' => get_class($repository)
-		];
 
 		if ($statement) {
 			$this->count();
@@ -358,7 +347,6 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  */
 	protected function _groupResult($row) {
 		$defaultAlias = $this->_defaultTable->alias();
-		$defaultClass = get_class($this->_defaultTable);
 		$results = [];
 		foreach ($row as $key => $value) {
 			$table = $defaultAlias;
@@ -396,10 +384,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$instance = $assoc['instance'];
 			$target = $instance->target();
 			$results[$alias] = $this->_castValues($target, $results[$alias]);
-			$options['source'] = [
-				'alias' => $target->alias(),
-				'className' => get_class($target)
-			];
+			$options['source'] = $target->alias();
 
 			if ($this->_hydrate && $assoc['canBeJoined']) {
 				$entity = new $assoc['entityClass']($results[$alias], $options);
@@ -409,7 +394,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$results = $instance->transformRow($results);
 		}
 
-		$options['source'] = $this->_sourceInfo;
+		$options['source'] = $defaultAlias;
 		$results = $results[$defaultAlias];
 		if ($this->_hydrate && !($results instanceof Entity)) {
 			$results = new $this->_entityClass($results, $options);
