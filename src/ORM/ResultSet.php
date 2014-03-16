@@ -381,11 +381,11 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			if (!isset($results[$alias])) {
 				continue;
 			}
-			$target = $instance->target();
 			$instance = $assoc['instance'];
+			$target = $instance->target();
 			$results[$alias] = $this->_castValues($target, $results[$alias]);
 			$options['source'] = [
-				'alias' => $instance->alias(),
+				'alias' => $target->alias(),
 				'className' => get_class($target)
 			];
 

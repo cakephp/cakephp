@@ -1691,7 +1691,7 @@ class FormHelperTest extends TestCase {
 		$nested = new Entity(['foo' => 'bar']);
 		$nested->errors('foo', ['not a valid bar']);
 		$entity = new Entity(['nested' => $nested]);
-		$this->Form->create($entity);
+		$this->Form->create($entity, ['context' => ['table' => 'Articles']]);
 
 		$result = $this->Form->error('nested.foo');
 		$this->assertEquals('<div class="error-message">not a valid bar</div>', $result);
@@ -1709,7 +1709,7 @@ class FormHelperTest extends TestCase {
 		$nested = new Entity(['foo' => $inner]);
 		$entity = new Entity(['nested' => $nested]);
 		$inner->errors('bar', ['not a valid one']);
-		$this->Form->create($entity);
+		$this->Form->create($entity, ['context' => ['table' => 'Articles']]);
 		$result = $this->Form->error('nested.foo.bar');
 		$this->assertEquals('<div class="error-message">not a valid one</div>', $result);
 	}
