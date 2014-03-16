@@ -120,7 +120,13 @@ class EntityContext implements ContextInterface {
 			if (is_array($entity) || $entity instanceof Traversable) {
 				$entity = (new Collection($entity))->first();
 			}
-			if ($entity instanceof Entity && get_class($entity) !== 'Cake\ORM\Entity') {
+			$isEntity = $entity instanceof Entity;
+
+			if ($isEntity) {
+				$source = $entity->source();
+				$table = isset($source['alias']) ? $source['alias'] : null;
+			}
+			if (!$table && $isEntity && get_class($entity) !== 'Cake\ORM\Entity') {
 				list($ns, $entityClass) = namespaceSplit(get_class($entity));
 				$table = Inflector::pluralize($entityClass);
 			}

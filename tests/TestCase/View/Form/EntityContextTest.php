@@ -144,6 +144,21 @@ class EntityContextTest extends TestCase {
 	}
 
 /**
+ * Tests that the table can be derived from the entity source if it is present
+ *
+ * @return void
+ */
+	public function testTableFromEntitySource() {
+		$entity = new Entity;
+		$entity->source(['alias' => 'Articles']);
+		$context = new EntityContext($this->request, [
+			'entity' => $entity,
+		]);
+		$expected = ['id', 'author_id', 'title', 'body', 'published'];
+		$this->assertEquals($expected, $context->fieldNames());
+	}
+
+/**
  * Test operations with no entity.
  *
  * @return void
