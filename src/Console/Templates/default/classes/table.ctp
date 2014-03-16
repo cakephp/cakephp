@@ -39,6 +39,33 @@ class <?= $name ?>Table extends Table {
  * @return void
  */
 	public function initialize(array $config) {
+<?php if (!empty($table)): ?>
+		$this->table('<?= $table ?>');
+<?php endif ?>
+<?php if (!empty($displayField)): ?>
+		$this->displayField('<?= $displayField ?>');
+<?php endif ?>
+<?php if (!empty($primaryKey)): ?>
+<?php
+$key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
+?>
+		$this->primaryKey([<?= implode(', ', $key) ?>]);
+<?php endif ?>
+<?php foreach ($behaviors as $behavior): ?>
+		$this->addBehavior('<?= $behavior ?>');
+<?php endforeach ?>
+
+<?php foreach ($associations as $type => $assocs): ?>
+<?php foreach ($assocs as $assoc): ?>
+		$this-><?= $type ?>('<?= $assoc['alias'] ?>', [
+<?php foreach ($assoc as $key => $val): ?>
+<?php if ($key !== 'alias'): ?>
+			<?= "'$key' => '$val',\n" ?>
+<?php endif ?>
+<?php endforeach ?>
+		]);
+<?php endforeach ?>
+<?php endforeach ?>
 	}
 
 <?php if (!empty($validation)): ?>
@@ -50,12 +77,12 @@ class <?= $name ?>Table extends Table {
  */
 	public function validationDefault(Validator $validator) {
 		$validator
-	<?php foreach ($validation as $field => $rule): ?>
+<?php foreach ($validation as $field => $rule): ?>
 		->add('<?= $field ?>', 'valid', ['rule' => '<?= $rule['rule'] ?>'])
-		<?php if ($rule['allowEmpty']): ?>
+<?php if ($rule['allowEmpty']): ?>
 		->allowEmpty('<?= $field ?>')
-		<?php endif ?>
-	<?php endforeach ?>;
+<?php endif ?>
+<?php endforeach ?>;
 	}
 <?php endif ?>
 

@@ -469,62 +469,70 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * test baking 
+ *
+ * @return void
+ */
+	public function testBakeTableConfig() {
+		$config = [
+			'table' => 'articles',
+			'primaryKey' => ['id'],
+			'displayField' => 'title',
+			'behaviors' => ['Timestamp'],
+		];
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeTable($model, $config);
+
+		$this->assertContains('public function initialize(array $config) {', $result);
+		$this->assertContains("this->primaryKey(['id']);\n", $result);
+		$this->assertContains("this->displayField('title');\n", $result);
+		$this->assertContains("this->addBehavior('Timestamp');\n", $result);
+		$this->assertContains("this->table('articles');\n", $result);
+	}
+
+/**
  * test baking relations
  *
  * @return void
  */
-	public function testBakeRelations() {
-		$this->markTestIncomplete('Not done here yet');
-		$associations = array(
-			'belongsTo' => array(
-				array(
+	public function testBakeTableRelations() {
+		$associations = [
+			'belongsTo' => [
+				[
 					'alias' => 'SomethingElse',
 					'className' => 'SomethingElse',
 					'foreignKey' => 'something_else_id',
-				),
-				array(
+				],
+				[
 					'alias' => 'BakeUser',
 					'className' => 'BakeUser',
 					'foreignKey' => 'bake_user_id',
-				),
-			),
-			'hasOne' => array(
-				array(
-					'alias' => 'OtherModel',
-					'className' => 'OtherModel',
-					'foreignKey' => 'other_model_id',
-				),
-			),
-			'hasMany' => array(
-				array(
+				],
+			],
+			'hasMany' => [
+				[
 					'alias' => 'BakeComment',
 					'className' => 'BakeComment',
 					'foreignKey' => 'parent_id',
-				),
-			),
-			'hasAndBelongsToMany' => array(
-				array(
+				],
+			],
+			'belongsToMany' => [
+				[
 					'alias' => 'BakeTag',
 					'className' => 'BakeTag',
 					'foreignKey' => 'bake_article_id',
 					'joinTable' => 'bake_articles_bake_tags',
-					'associationForeignKey' => 'bake_tag_id',
-				),
-			)
-		);
-		$result = $this->Task->bake('BakeArticle', compact('associations'));
-		$this->assertContains(' * @property BakeUser $BakeUser', $result);
-		$this->assertContains(' * @property OtherModel $OtherModel', $result);
-		$this->assertContains(' * @property BakeComment $BakeComment', $result);
-		$this->assertContains(' * @property BakeTag $BakeTag', $result);
-		$this->assertRegExp('/\$hasAndBelongsToMany \= array\(/', $result);
-		$this->assertRegExp('/\$hasMany \= array\(/', $result);
-		$this->assertRegExp('/\$belongsTo \= array\(/', $result);
-		$this->assertRegExp('/\$hasOne \= array\(/', $result);
-		$this->assertRegExp('/BakeTag/', $result);
-		$this->assertRegExp('/OtherModel/', $result);
-		$this->assertRegExp('/SomethingElse/', $result);
-		$this->assertRegExp('/BakeComment/', $result);
+					'targetForeignKey' => 'bake_tag_id',
+				],
+			]
+		];
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeTable($model, compact('associations'));
+		$this->assertContains("this->hasMany('BakeComment', [", $result);
+		$this->assertContains("this->belongsTo('SomethingElse', [", $result);
+		$this->assertContains("this->belongsTo('BakeUser', [", $result);
+		$this->assertContains("this->belongsToMany('BakeTag', [", $result);
+		$this->assertContains("'joinTable' => 'bake_articles_bake_tags',", $result);
 	}
 
 /**
@@ -547,28 +555,6 @@ class ModelTaskTest extends TestCase {
 
 		$this->assertEquals(count(ClassRegistry::keys()), 0);
 		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
-	}
-
-/**
- * test bake() for models with behaviors
- *
- * @return void
- */
-	public function testBakeWithBehaviors() {
-		$this->markTestIncomplete('Not done here yet');
-		$result = $this->Task->bake('NumberTree', array('actsAs' => array('Tree', 'PluginName.Sluggable')));
-		$expected = <<<TEXT
-/**
- * Behaviors
- *
- * @var array
- */
-	public \$actsAs = array(
-		'Tree',
-		'PluginName.Sluggable',
-	);
-TEXT;
-		$this->assertTextContains($expected, $result);
 	}
 
 /**
@@ -849,47 +835,6 @@ TEXT;
 			->with($filename, $this->stringContains('class CategoryThread'));
 
 		$this->Task->execute();
-	}
-
-/**
- * test the interactive side of bake.
- *
- * @return void
- */
-	public function testExecuteIntoInteractive() {
-		$this->markTestIncomplete('Not done here yet');
-		$tables = $this->Task->listAll('test');
-		$article = array_search('bake_articles', $tables) + 1;
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->interactive = true;
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				$article, // article
-				'n', // no validation
-				'y', // associations
-				'y', // comment relation
-				'y', // user relation
-				'y', // tag relation
-				'n', // additional assocs
-				'y' // looks good?
-			));
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-
-		$this->Task->Test->expects($this->once())->method('bake');
-		$this->Task->Fixture->expects($this->once())->method('bake');
-
-		$filename = '/my/path/BakeArticle.php';
-
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle'));
-
-		$this->Task->execute();
-
-		$this->assertEquals(count(ClassRegistry::keys()), 0);
-		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
 	}
 
 /**
