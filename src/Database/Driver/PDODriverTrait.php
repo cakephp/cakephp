@@ -93,6 +93,9 @@ trait PDODriverTrait {
  */
 	public function beginTransaction() {
 		$this->connect();
+		if ($this->_connection->inTransaction()) {
+			return true;
+		}
 		return $this->_connection->beginTransaction();
 	}
 
@@ -102,6 +105,9 @@ trait PDODriverTrait {
  * @return boolean true on success, false otherwise
  */
 	public function commitTransaction() {
+		if ($this->_connection->inTransaction()) {
+			return false;
+		}
 		$this->connect();
 		return $this->_connection->commit();
 	}
@@ -112,6 +118,9 @@ trait PDODriverTrait {
  * @return boolean true on success, false otherwise
  */
 	public function rollbackTransaction() {
+		if ($this->_connection->inTransaction()) {
+			return false;
+		}
 		return $this->_connection->rollback();
 	}
 
