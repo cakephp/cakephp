@@ -117,7 +117,7 @@ class Request implements \ArrayAccess {
  *
  * @var array
  */
-	protected $_detectors = array(
+	protected static $_detectors = array(
 		'get' => array('env' => 'REQUEST_METHOD', 'value' => 'GET'),
 		'post' => array('env' => 'REQUEST_METHOD', 'value' => 'POST'),
 		'put' => array('env' => 'REQUEST_METHOD', 'value' => 'PUT'),
@@ -538,10 +538,10 @@ class Request implements \ArrayAccess {
 			return count(array_filter($result)) > 0;
 		}
 		$type = strtolower($type);
-		if (!isset($this->_detectors[$type])) {
+		if (!isset(static::$_detectors[$type])) {
 			return false;
 		}
-		$detect = $this->_detectors[$type];
+		$detect = static::$_detectors[$type];
 		if (isset($detect['env'])) {
 			if (isset($detect['value'])) {
 				return $this->env($detect['env']) == $detect['value'];
@@ -633,12 +633,12 @@ class Request implements \ArrayAccess {
  * @param array $options The options for the detector definition. See above.
  * @return void
  */
-	public function addDetector($name, $options) {
+	public static function addDetector($name, $options) {
 		$name = strtolower($name);
-		if (isset($this->_detectors[$name]) && isset($options['options'])) {
-			$options = Hash::merge($this->_detectors[$name], $options);
+		if (isset(static::$_detectors[$name]) && isset($options['options'])) {
+			$options = Hash::merge(static::$_detectors[$name], $options);
 		}
-		$this->_detectors[$name] = $options;
+		static::$_detectors[$name] = $options;
 	}
 
 /**
