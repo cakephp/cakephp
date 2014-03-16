@@ -78,11 +78,12 @@ $key = array_map(function($el) { return "'$el'"; }, (array)$primaryKey);
 	public function validationDefault(Validator $validator) {
 		$validator
 <?php foreach ($validation as $field => $rule): ?>
-		->add('<?= $field ?>', 'valid', ['rule' => '<?= $rule['rule'] ?>'])
+			->add('<?= $field ?>', 'valid', ['rule' => '<?= $rule['rule'] ?>'])
 <?php if ($rule['allowEmpty']): ?>
-		->allowEmpty('<?= $field ?>')
+			->allowEmpty('<?= $field ?>')
 <?php endif ?>
 <?php endforeach ?>;
+		return $validator;
 	}
 <?php endif ?>
 

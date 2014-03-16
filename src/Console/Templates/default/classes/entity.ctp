@@ -7,6 +7,7 @@ use Cake\ORM\Entity;
  * <?= $name ?> Entity.
  */
 class <?= $name ?> extends Entity {
+
 <?php if (!empty($fields)): ?>
 <?php
 $fields = array_map(function($el) { return "'$el'"; }, $fields);
