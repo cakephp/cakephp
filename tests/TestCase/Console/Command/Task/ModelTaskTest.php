@@ -335,6 +335,22 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
+ * Test getting primary key
+ *
+ * @return void
+ */
+	public function testGetPrimaryKey() {
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getPrimaryKey($model);
+		$expected = ['id'];
+		$this->assertEquals($expected, $result);
+
+		$this->Task->params['primary-key'] = 'id, , account_id';
+		$result = $this->Task->getPrimaryKey($model);
+		$expected = ['id', 'account_id'];
+		$this->assertEquals($expected, $result);
+	}
+/**
  * test getting validation rules with the no-validation rule.
  *
  * @return void
@@ -377,6 +393,21 @@ class ModelTaskTest extends TestCase {
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->getBehaviors($model);
 		$this->assertEquals(['Timestamp'], $result);
+	}
+
+/**
+ * Test getDisplayField() method.
+ *
+ * @return void
+ */
+	public function testGetDisplayField() {
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getDisplayField($model);
+		$this->assertEquals('title', $result);
+
+		$this->Task->params['display-field'] = 'custom';
+		$result = $this->Task->getDisplayField($model);
+		$this->assertEquals('custom', $result);
 	}
 
 /**
@@ -609,6 +640,25 @@ class ModelTaskTest extends TestCase {
 
 		$model = TableRegistry::get('BakeArticles');
 		$this->Task->bakeEntity($model);
+	}
+
+/**
+ * test that execute with no args
+ *
+ * @return void
+ */
+	public function testExecuteNoArgs() {
+		$this->_useMockedOut();
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+
+		$this->Task->expects($this->at(0))
+			->method('out')
+			->with($this->stringContains('Choose a model to bake from the following:'));
+		$this->Task->expects($this->at(1))
+			->method('out')
+			->with('- BakeArticles');
+		$this->Task->execute();
 	}
 
 /**

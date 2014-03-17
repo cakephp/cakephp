@@ -96,7 +96,7 @@ class ModelTask extends BakeTask {
 		if (empty($this->args)) {
 			$this->out(__d('cake_console', 'Choose a model to bake from the following:'));
 			foreach ($this->listAll() as $table) {
-				$this->out('- ' . $table);
+				$this->out('- ' . $this->_modelName($table));
 			}
 			return true;
 		}
@@ -330,7 +330,8 @@ class ModelTask extends BakeTask {
  */
 	public function getPrimaryKey($model) {
 		if (!empty($this->params['primary-key'])) {
-			return (array)$this->params['primary-key'];
+			$fields = explode(',', $this->params['primary-key']);
+			return array_values(array_filter(array_map('trim', $fields)));
 		}
 		return (array)$model->primaryKey();
 	}
@@ -462,33 +463,6 @@ class ModelTask extends BakeTask {
 			$behaviors[] = 'Tree';
 		}
 		return $behaviors;
-	}
-
-/**
- * Generate a key value list of options and a prompt.
- *
- * @param array $options Array of options to use for the selections. indexes must start at 0
- * @param string $prompt Prompt to use for options list.
- * @param integer $default The default option for the given prompt.
- * @return integer Result of user choice.
- */
-	public function inOptions($options, $prompt = null, $default = null) {
-		$valid = false;
-		$max = count($options);
-		while (!$valid) {
-			$len = strlen(count($options) + 1);
-			foreach ($options as $i => $option) {
-				$this->out(sprintf("%${len}d. %s", $i + 1, $option));
-			}
-			if (empty($prompt)) {
-				$prompt = __d('cake_console', 'Make a selection from the choices above');
-			}
-			$choice = $this->in($prompt, null, $default);
-			if (intval($choice) > 0 && intval($choice) <= $max) {
-				$valid = true;
-			}
-		}
-		return $choice - 1;
 	}
 
 /**
