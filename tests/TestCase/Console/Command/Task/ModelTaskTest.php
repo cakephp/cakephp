@@ -519,7 +519,7 @@ class ModelTaskTest extends TestCase {
 		$this->assertContains("this->displayField('title');\n", $result);
 		$this->assertContains("this->addBehavior('Timestamp');\n", $result);
 		$this->assertContains("this->table('articles');\n", $result);
-		$this->assertNotContains('use Cake\Validation\Validator;', $result);
+		$this->assertContains('use Cake\Validation\Validator;', $result);
 	}
 
 /**
@@ -595,7 +595,10 @@ class ModelTaskTest extends TestCase {
 		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeEntity($model, $config);
-		$this->assertContains("protected \$_accessible = ['title', 'body', 'published']", $result);
+		$this->assertContains("protected \$_accessible = [", $result);
+		$this->assertContains("'title',", $result);
+		$this->assertContains("'body',", $result);
+		$this->assertContains("'published'", $result);
 	}
 
 /**

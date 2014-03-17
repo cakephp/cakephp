@@ -32,7 +32,10 @@ $fields = array_map(function($el) { return "'$el'"; }, $fields);
  *
  * @var array
  */
-	protected $_accessible = [<?= implode(', ', $fields) ?>];
+	protected $_accessible = [
+		<?= implode(",\n\t\t", $fields) ?>
+
+	];
 
 <?php endif ?>
 }
