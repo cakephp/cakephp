@@ -401,7 +401,7 @@ class FileEngineTest extends TestCase {
  */
 	public function testPathDoesNotExist() {
 		$this->skipIf(is_dir(TMP . 'tests' . DS . 'autocreate'), 'Cannot run if test directory exists.');
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 
 		Cache::drop('file_test');
 		Cache::config('file_test', array(
@@ -424,7 +424,7 @@ class FileEngineTest extends TestCase {
  */
 	public function testPathDoesNotExistDebugOff() {
 		$this->skipIf(is_dir(TMP . 'tests/autocreate'), 'Cannot run if test directory exists.');
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		Cache::drop('file_groups');
 		Cache::config('file_groups', array(

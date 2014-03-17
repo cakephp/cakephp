@@ -32,7 +32,7 @@ class JsonViewTest extends TestCase {
 
 	public function setUp() {
 		parent::setUp();
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 	}
 
 /**

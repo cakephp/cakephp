@@ -57,7 +57,7 @@ class PagesControllerTest extends TestCase {
  * @return void
  */
 	public function testMissingView() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$Pages = new PagesController(new Request(), new Response());
 		$Pages->display('non_existing_page');
 	}
@@ -70,7 +70,7 @@ class PagesControllerTest extends TestCase {
  * @return void
  */
 	public function testMissingViewInDebug() {
-		Configure::write('debug', 1);
+		Configure::write('debug', true);
 		$Pages = new PagesController(new Request(), new Response());
 		$Pages->display('non_existing_page');
 	}

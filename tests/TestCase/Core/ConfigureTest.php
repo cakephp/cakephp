@@ -140,11 +140,11 @@ class ConfigureTest extends TestCase {
  * @return void
  */
 	public function testDebugSettingDisplayErrors() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$result = ini_get('display_errors');
 		$this->assertEquals(0, $result);
 
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		$result = ini_get('display_errors');
 		$this->assertEquals(1, $result);
 	}

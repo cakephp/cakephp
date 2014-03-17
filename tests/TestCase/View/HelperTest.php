@@ -264,7 +264,7 @@ class HelperTest extends TestCase {
 		$this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
 
 		Configure::write('Asset.timestamp', true);
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$result = $this->Helper->assetTimestamp('/%3Cb%3E/cake.generic.css');
 		$this->assertEquals('/%3Cb%3E/cake.generic.css', $result);
@@ -273,12 +273,12 @@ class HelperTest extends TestCase {
 		$this->assertEquals(Configure::read('App.cssBaseUrl') . 'cake.generic.css', $result);
 
 		Configure::write('Asset.timestamp', true);
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		$result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
 		$this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
 
 		Configure::write('Asset.timestamp', 'force');
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$result = $this->Helper->assetTimestamp(Configure::read('App.cssBaseUrl') . 'cake.generic.css');
 		$this->assertRegExp('/' . preg_quote(Configure::read('App.cssBaseUrl') . 'cake.generic.css?', '/') . '[0-9]+/', $result);
 

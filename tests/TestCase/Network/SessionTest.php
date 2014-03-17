@@ -695,7 +695,7 @@ class SessionTest extends TestCase {
  * @return void
  */
 	public function testSessionTimeout() {
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('Session.defaults', 'cake');
 		Configure::write('Session.autoRegenerate', false);
 

@@ -275,7 +275,7 @@ class ViewTest extends TestCase {
 		App::objects('Plugin', null, false);
 
 		Plugin::load(array('TestPlugin', 'TestPlugin', 'PluginJs'));
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 	}
 
 /**

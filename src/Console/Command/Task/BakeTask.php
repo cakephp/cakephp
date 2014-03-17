@@ -54,7 +54,7 @@ class BakeTask extends Shell {
  * @return void
  */
 	public function startup() {
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Cache::disable();
 		parent::startup();
 	}

@@ -46,7 +46,7 @@ class ErrorHandlerTest extends TestCase {
 		$request = new Request();
 		$request->base = '';
 		Router::setRequestInfo($request);
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 
 		$this->_logger = $this->getMock('Cake\Log\LogInterface');
 		Log::config('error_test', [
@@ -141,7 +141,7 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleErrorDebugOff() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$errorHandler = new ErrorHandler();
 		$errorHandler->register();
 		$this->_restoreError = true;
@@ -159,7 +159,7 @@ class ErrorHandlerTest extends TestCase {
  * @return void
  */
 	public function testHandleErrorLoggingTrace() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$errorHandler = new ErrorHandler(['trace' => true]);
 		$errorHandler->register();
 		$this->_restoreError = true;
@@ -274,7 +274,7 @@ class ErrorHandlerTest extends TestCase {
 	public function testHandleFatalErrorPage() {
 		$line = __LINE__;
 		$errorHandler = new ErrorHandler();
-		Configure::write('debug', 1);
+		Configure::write('debug', true);
 		ob_start();
 		ob_start();
 		$errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
@@ -285,7 +285,7 @@ class ErrorHandlerTest extends TestCase {
 
 		ob_start();
 		ob_start();
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$errorHandler->handleFatalError(E_ERROR, 'Something wrong', __FILE__, $line);
 		$result = ob_get_clean();
 		$this->assertNotContains('Something wrong', $result, 'message must not appear.');

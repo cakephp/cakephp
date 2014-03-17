@@ -549,7 +549,7 @@ class View extends Object {
 		include $filename;
 
 		$type = $response->mapType($response->type());
-		if (Configure::read('debug') > 0 && $type === 'html') {
+		if (Configure::read('debug') && $type === 'html') {
 			echo "<!-- Cached Render Time: " . round(microtime(true) - $timeStart, 4) . "s -->";
 		}
 		$out = ob_get_clean();

@@ -415,7 +415,7 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->image('cake.icon.png');
 		$this->assertTags($result, array('img' => array('src' => 'preg:/\/img\/cake\.icon\.png\?\d+/', 'alt' => '')));
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		Configure::write('Asset.timestamp', 'force');
 
 		$result = $this->Html->image('cake.icon.png');
@@ -441,7 +441,7 @@ class HtmlHelperTest extends TestCase {
 		new File($testfile, true);
 
 		Configure::write('Asset.timestamp', true);
-		Configure::write('debug', 1);
+		Configure::write('debug', true);
 
 		$this->Html->request->webroot = '/';
 		$this->Html->theme = 'test_theme';
@@ -672,7 +672,7 @@ class HtmlHelperTest extends TestCase {
  * @return void
  */
 	public function testCssTimestamping() {
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('Asset.timestamp', true);
 
 		$expected = array(
@@ -683,7 +683,7 @@ class HtmlHelperTest extends TestCase {
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$result = $this->Html->css('cake.generic');
 		$expected['link']['href'] = 'preg:/.*css\/cake\.generic\.css/';
@@ -714,7 +714,7 @@ class HtmlHelperTest extends TestCase {
 	public function testPluginCssTimestamping() {
 		Plugin::load('TestPlugin');
 
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('Asset.timestamp', true);
 
 		$expected = array(
@@ -725,7 +725,7 @@ class HtmlHelperTest extends TestCase {
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css\?[0-9]+/';
 		$this->assertTags($result, $expected);
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$result = $this->Html->css('TestPlugin.test_plugin_asset');
 		$expected['link']['href'] = 'preg:/.*test_plugin\/css\/test_plugin_asset\.css/';
@@ -758,7 +758,7 @@ class HtmlHelperTest extends TestCase {
 	public function testScriptTimestamping() {
 		$this->skipIf(!is_writable(WWW_ROOT . 'js'), 'webroot/js is not Writable, timestamp testing has been skipped.');
 
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('Asset.timestamp', true);
 
 		touch(WWW_ROOT . 'js/__cake_js_test.js');
@@ -767,7 +767,7 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->script('__cake_js_test', array('once' => false));
 		$this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		Configure::write('Asset.timestamp', 'force');
 		$result = $this->Html->script('__cake_js_test', array('once' => false));
 		$this->assertRegExp('/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
@@ -787,7 +787,7 @@ class HtmlHelperTest extends TestCase {
 		$pluginJsPath = $pluginPath . 'webroot/js';
 		$this->skipIf(!is_writable($pluginJsPath), $pluginJsPath . ' is not Writable, timestamp testing has been skipped.');
 
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('Asset.timestamp', true);
 
 		touch($pluginJsPath . DS . '__cake_js_test.js');
@@ -796,7 +796,7 @@ class HtmlHelperTest extends TestCase {
 		$result = $this->Html->script('TestPlugin.__cake_js_test', array('once' => false));
 		$this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');
 
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		Configure::write('Asset.timestamp', 'force');
 		$result = $this->Html->script('TestPlugin.__cake_js_test', array('once' => false));
 		$this->assertRegExp('/test_plugin\/js\/__cake_js_test.js\?' . $timestamp . '[0-9]{2}"/', $result, 'Timestamp value not found %s');

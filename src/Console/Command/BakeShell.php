@@ -60,7 +60,7 @@ class BakeShell extends Shell {
  */
 	public function startup() {
 		parent::startup();
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Cache::disable();
 
 		$task = Inflector::classify($this->command);

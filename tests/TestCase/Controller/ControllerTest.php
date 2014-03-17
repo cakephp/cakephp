@@ -380,7 +380,7 @@ class ControllerTest extends TestCase {
 			'_serialize' => ['test']
 		]);
 		$debug = Configure::read('debug');
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$result = $Controller->render('index');
 		$this->assertEquals('{"test":"value"}', $result->body());
 		Configure::write('debug', $debug);

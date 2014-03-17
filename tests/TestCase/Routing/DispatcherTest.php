@@ -888,7 +888,7 @@ class DispatcherTest extends TestCase {
 		Cache::enable();
 		Configure::write('Cache.disable', false);
 		Configure::write('Cache.check', true);
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 
 		Router::reload();
 		Router::connect('/', array('controller' => 'test_cached_pages', 'action' => 'index'));
