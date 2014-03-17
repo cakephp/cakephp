@@ -439,10 +439,10 @@ class CakeTime {
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/time.html#TimeHelper::daysAsSql
  */
 	public static function daysAsSql($begin, $end, $fieldName, $timezone = null) {
-		$begin = self::fromString($begin, $timezone);
-		$end = self::fromString($end, $timezone);
-		$begin = date('Y-m-d', $begin) . ' 00:00:00';
-		$end = date('Y-m-d', $end) . ' 23:59:59';
+		$begin = self::fromString($begin . ' 00:00:00', $timezone);
+		$end = self::fromString($end . ' 23:59:59', $timezone);
+		$begin = date('Y-m-d H:i:s', $begin);
+		$end = date('Y-m-d H:i:s', $end);
 
 		return "($fieldName >= '$begin') AND ($fieldName <= '$end')";
 	}
