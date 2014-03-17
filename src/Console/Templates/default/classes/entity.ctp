@@ -38,4 +38,20 @@ $fields = array_map(function($el) { return "'$el'"; }, $fields);
 	];
 
 <?php endif ?>
+
+<?php if (!empty($hidden)): ?>
+<?php
+$hidden = array_map(function($el) { return "'$el'"; }, $hidden);
+?>
+/**
+ * Fields that are excluded from JSON an array versions of the entity.
+ *
+ * @var array
+ */
+	protected $_hidden = [
+		<?= implode(",\n\t\t", $hidden) ?>
+
+	];
+
+<?php endif ?>
 }

@@ -35,7 +35,7 @@ class ModelTaskTest extends TestCase {
  */
 	public $fixtures = array(
 		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',
-		'core.bake_tag', 'core.category_thread', 'core.number_tree'
+		'core.bake_tag', 'core.user', 'core.category_thread', 'core.number_tree'
 	);
 
 /**
@@ -291,7 +291,7 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testFields() {
+	public function testGetFields() {
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->getFields($model);
 		$expected = [
@@ -309,7 +309,7 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testFieldsDisabled() {
+	public function testGetFieldsDisabled() {
 		$model = TableRegistry::get('BakeArticles');
 		$this->Task->params['no-fields'] = true;
 		$result = $this->Task->getFields($model);
@@ -321,10 +321,54 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testFieldsWhiteList() {
+	public function testGetFieldsWhiteList() {
 		$model = TableRegistry::get('BakeArticles');
 		$this->Task->params['fields'] = 'id, title  , , body ,  created';
 		$result = $this->Task->getFields($model);
+		$expected = [
+			'id',
+			'title',
+			'body',
+			'created',
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test getting hidden fields.
+ *
+ * @return void
+ */
+	public function testGetHiddenFields() {
+		$model = TableRegistry::get('Users');
+		$result = $this->Task->getHiddenFields($model);
+		$expected = [
+			'password',
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test getting hidden field with the no- option
+ *
+ * @return void
+ */
+	public function testGetHiddenFieldsDisabled() {
+		$model = TableRegistry::get('Users');
+		$this->Task->params['no-hidden'] = true;
+		$result = $this->Task->getHiddenFields($model);
+		$this->assertEquals([], $result);
+	}
+
+/**
+ * Test getting hidden field with a whitelist
+ *
+ * @return void
+ */
+	public function testGetHiddenFieldsWhiteList() {
+		$model = TableRegistry::get('Users');
+		$this->Task->params['hidden'] = 'id, title  , , body ,  created';
+		$result = $this->Task->getHiddenFields($model);
 		$expected = [
 			'id',
 			'title',
@@ -578,6 +622,7 @@ class ModelTaskTest extends TestCase {
 		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeEntity($model, $config);
+
 		$this->assertContains('namespace App\Model\Entity;', $result);
 		$this->assertContains('use Cake\ORM\Entity;', $result);
 		$this->assertContains('class BakeArticle extends Entity {', $result);
@@ -595,10 +640,29 @@ class ModelTaskTest extends TestCase {
 		];
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->bakeEntity($model, $config);
+
 		$this->assertContains("protected \$_accessible = [", $result);
 		$this->assertContains("'title',", $result);
 		$this->assertContains("'body',", $result);
 		$this->assertContains("'published'", $result);
+		$this->assertNotContains("protected \$_hidden", $result);
+	}
+
+/**
+ * test baking an entity class sets hidden fields.
+ *
+ * @return void
+ */
+	public function testBakeEntityHidden() {
+		$model = TableRegistry::get('BakeUsers');
+		$config = [
+			'hidden' => ['password'],
+		];
+		$result = $this->Task->bakeEntity($model, $config);
+
+		$this->assertContains("protected \$_hidden = [", $result);
+		$this->assertContains("'password'", $result);
+		$this->assertNotContains("protected \$_accessible", $result);
 	}
 
 /**
@@ -732,9 +796,9 @@ class ModelTaskTest extends TestCase {
 		$this->Task->path = '/my/path/';
 		$this->Task->args = ['all'];
 
-		$this->Task->Fixture->expects($this->exactly(6))
+		$this->Task->Fixture->expects($this->exactly($count))
 			->method('bake');
-		$this->Task->Test->expects($this->exactly(6))
+		$this->Task->Test->expects($this->exactly($count))
 			->method('bake');
 
 		$filename = '/my/path/Table/BakeArticlesTable.php';
@@ -806,9 +870,9 @@ class ModelTaskTest extends TestCase {
 		$this->Task->args = ['all'];
 		$this->Task->skipTables = ['bake_tags'];
 
-		$this->Task->Fixture->expects($this->exactly(5))
+		$this->Task->Fixture->expects($this->exactly(6))
 			->method('bake');
-		$this->Task->Test->expects($this->exactly(5))
+		$this->Task->Test->expects($this->exactly(6))
 			->method('bake');
 
 		$filename = '/my/path/Entity/BakeArticle.php';

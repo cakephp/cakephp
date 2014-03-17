@@ -363,8 +363,30 @@ class ModelTask extends BakeTask {
 		}
 		$schema = $model->schema();
 		$columns = $schema->columns();
-		$exclude = ['created', 'modified', 'updated', 'password', 'passwd'];
+		$exclude = ['created', 'modified', 'updated'];
 		return array_diff($columns, $exclude);
+	}
+
+/**
+ * Get the hidden fields from a model.
+ *
+ * Uses the hidden and no-hidden options.
+ *
+ * @param Cake\ORM\Table $model The model to introspect.
+ * @return array The columns to make accessible
+ */
+	public function getHiddenFields($model) {
+		if (!empty($this->params['no-hidden'])) {
+			return [];
+		}
+		if (!empty($this->params['hidden'])) {
+			$fields = explode(',', $this->params['hidden']);
+			return array_values(array_filter(array_map('trim', $fields)));
+		}
+		$schema = $model->schema();
+		$columns = $schema->columns();
+		$whitelist = ['token', 'password', 'passwd'];
+		return array_values(array_intersect($columns, $whitelist));
 	}
 
 /**
@@ -662,6 +684,11 @@ class ModelTask extends BakeTask {
 			'help' => __d('cake_console', 'Disable generating accessible fields in the entity.')
 		])->addOption('fields', [
 			'help' => __d('cake_console', 'A comma separated list of fields to make accessible.')
+		])->addOption('no-hidden', [
+			'boolean' => true,
+			'help' => __d('cake_console', 'Disable generating hidden fields in the entity.')
+		])->addOption('hidden', [
+			'help' => __d('cake_console', 'A comma separated list of fields to hide.')
 		])->addOption('primary-key', [
 			'help' => __d('cake_console', 'The primary key if you would like to manually set one. Can be a comma separated list if you are using a composite primary key.')
 		])->addOption('display-field', [
