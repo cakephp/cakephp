@@ -131,20 +131,29 @@ class FixtureManager {
 				continue;
 			}
 
-			if (strpos($fixture, 'core.') === 0) {
-				list($core, $base) = explode('.', $fixture, 2);
+			list($type, $name) = explode('.', $fixture, 2);
+			$path = explode('/', $name);
+			$base = array_pop($path);
+			$additionalPath = implode('\\', $path);
+
+			if ($type === 'core') {
 				$baseNamespace = 'Cake';
-			} elseif (strpos($fixture, 'app.') === 0) {
-				list($app, $base) = explode('.', $fixture, 2);
+			} elseif ($type === 'app') {
 				$baseNamespace = Configure::read('App.namespace');
-			} elseif (strpos($fixture, 'plugin.') === 0) {
-				list($p, $plugin, $base) = explode('.', $fixture);
+			} elseif ($type === 'plugin') {
+				list($plugin, $additionalPath) = explode('.', $additionalPath);
 				$baseNamespace = Plugin::getNamespace($plugin);
 			} else {
 				$base = $fixture;
 			}
 			$base = Inflector::camelize($base);
-			$className = implode('\\', array($baseNamespace, 'Test\Fixture', $base . 'Fixture'));
+			$nameSegments = [
+				$baseNamespace,
+				'Test\Fixture',
+				$additionalPath,
+				$base . 'Fixture'
+			];
+			$className = implode('\\', array_filter($nameSegments));
 
 			if (class_exists($className)) {
 				$this->_loaded[$fixture] = new $className();
