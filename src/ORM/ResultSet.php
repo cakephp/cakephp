@@ -127,12 +127,13 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  * @param \Cake\Database\StatementInterface $statement
  */
 	public function __construct($query, $statement) {
+		$repository = $query->repository();
 		$this->_query = $query;
 		$this->_statement = $statement;
 		$this->_defaultTable = $this->_query->repository();
 		$this->_calculateAssociationMap();
 		$this->_hydrate = $this->_query->hydrate();
-		$this->_entityClass = $query->repository()->entityClass();
+		$this->_entityClass = $repository->entityClass();
 		$this->_useBuffering = $query->bufferResults();
 
 		if ($statement) {
@@ -381,7 +382,9 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 				continue;
 			}
 			$instance = $assoc['instance'];
-			$results[$alias] = $this->_castValues($instance->target(), $results[$alias]);
+			$target = $instance->target();
+			$results[$alias] = $this->_castValues($target, $results[$alias]);
+			$options['source'] = $target->alias();
 
 			if ($this->_hydrate && $assoc['canBeJoined']) {
 				$entity = new $assoc['entityClass']($results[$alias], $options);
@@ -391,6 +394,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$results = $instance->transformRow($results);
 		}
 
+		$options['source'] = $defaultAlias;
 		$results = $results[$defaultAlias];
 		if ($this->_hydrate && !($results instanceof Entity)) {
 			$results = new $this->_entityClass($results, $options);

@@ -92,7 +92,7 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testIsCreateSingle() {
-		$row = new Entity();
+		$row = new Article();
 		$context = new EntityContext($this->request, [
 			'entity' => $row,
 		]);
@@ -129,6 +129,33 @@ class EntityContextTest extends TestCase {
 		$context = new EntityContext($this->request, [
 			'entity' => $row,
 		]);
+	}
+
+/**
+ * Tests that passing a plain entity will give an error as it cannot be matched
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Unable to find table class for current entity
+ */
+	public function testDefaultEntityError() {
+		$context = new EntityContext($this->request, [
+			'entity' => new \Cake\ORM\Entity,
+		]);
+	}
+
+/**
+ * Tests that the table can be derived from the entity source if it is present
+ *
+ * @return void
+ */
+	public function testTableFromEntitySource() {
+		$entity = new Entity;
+		$entity->source('Articles');
+		$context = new EntityContext($this->request, [
+			'entity' => $entity,
+		]);
+		$expected = ['id', 'author_id', 'title', 'body', 'published'];
+		$this->assertEquals($expected, $context->fieldNames());
 	}
 
 /**
@@ -200,14 +227,14 @@ class EntityContextTest extends TestCase {
  * @return array
  */
 	public static function collectionProvider() {
-		$one = new Entity([
+		$one = new Article([
 			'title' => 'First post',
 			'body' => 'Stuff',
 			'user' => new Entity(['username' => 'mark'])
 		]);
 		$one->errors('title', 'Required field');
 
-		$two = new Entity([
+		$two = new Article([
 			'title' => 'Second post',
 			'body' => 'Some text',
 			'user' => new Entity(['username' => 'jose'])
@@ -359,7 +386,7 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testValBasic() {
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'Test entity',
 			'body' => 'Something new'
 		]);
@@ -387,7 +414,7 @@ class EntityContextTest extends TestCase {
 			'title' => 'New title',
 			'notInEntity' => 'yes',
 		];
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'Test entity',
 			'body' => 'Something new'
 		]);
@@ -406,7 +433,7 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testValAssociated() {
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'Test entity',
 			'user' => new Entity([
 				'username' => 'mark',
@@ -444,14 +471,14 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testValAssociatedHasMany() {
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'First post',
 			'user' => new Entity([
 				'username' => 'mark',
 				'fname' => 'Mark',
 				'articles' => [
-					new Entity(['title' => 'First post']),
-					new Entity(['title' => 'Second post']),
+					new Article(['title' => 'First post']),
+					new Article(['title' => 'Second post']),
 				]
 			]),
 		]);
@@ -473,7 +500,7 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testValAssociatedDefaultIds() {
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'First post',
 			'user' => new Entity([
 				'username' => 'mark',
@@ -499,7 +526,7 @@ class EntityContextTest extends TestCase {
  * @return void
  */
 	public function testValAssociatedCustomIds() {
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'First post',
 			'user' => new Entity([
 				'username' => 'mark',
@@ -558,7 +585,7 @@ class EntityContextTest extends TestCase {
 			'rule' => 'numeric',
 		]);
 
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'My title',
 			'comments' => [
 				new Entity(['comment' => 'First comment']),
@@ -585,7 +612,7 @@ class EntityContextTest extends TestCase {
 	public function testIsRequiredAssociatedValidator() {
 		$this->_setupTables();
 
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'My title',
 			'comments' => [
 				new Entity(['comment' => 'First comment']),
@@ -615,7 +642,7 @@ class EntityContextTest extends TestCase {
 	public function testIsRequiredAssociatedBelongsTo() {
 		$this->_setupTables();
 
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'My title',
 			'user' => new Entity(['username' => 'Mark']),
 		]);
@@ -640,7 +667,7 @@ class EntityContextTest extends TestCase {
 	public function testType() {
 		$this->_setupTables();
 
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'My title',
 			'body' => 'Some content',
 		]);
@@ -663,7 +690,7 @@ class EntityContextTest extends TestCase {
 	public function testTypeAssociated() {
 		$this->_setupTables();
 
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'My title',
 			'user' => new Entity(['username' => 'Mark']),
 		]);
@@ -685,7 +712,7 @@ class EntityContextTest extends TestCase {
 	public function testAttributes() {
 		$this->_setupTables();
 
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'My title',
 			'user' => new Entity(['username' => 'Mark']),
 		]);
@@ -718,7 +745,7 @@ class EntityContextTest extends TestCase {
 	public function testHasError() {
 		$this->_setupTables();
 
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'My title',
 			'user' => new Entity(['username' => 'Mark']),
 		]);
@@ -744,7 +771,7 @@ class EntityContextTest extends TestCase {
 	public function testHasErrorAssociated() {
 		$this->_setupTables();
 
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'My title',
 			'user' => new Entity(['username' => 'Mark']),
 		]);
@@ -769,7 +796,7 @@ class EntityContextTest extends TestCase {
 	public function testError() {
 		$this->_setupTables();
 
-		$row = new Entity([
+		$row = new Article([
 			'title' => 'My title',
 			'user' => new Entity(['username' => 'Mark']),
 		]);

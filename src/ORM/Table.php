@@ -1170,6 +1170,7 @@ class Table implements RepositoryInterface, EventListener {
 				$event = new Event('Model.afterSave', $this, compact('entity', 'options'));
 				$this->getEventManager()->dispatch($event);
 				$entity->isNew(false);
+				$entity->source($this->alias());
 				$success = true;
 			}
 		}

@@ -1135,7 +1135,11 @@ class Query implements ExpressionInterface, IteratorAggregate {
 			$limit = 25;
 			$this->limit($limit);
 		}
-		$this->offset(($num - 1) * $limit);
+		$offset = ($num - 1) * $limit;
+		if (PHP_INT_MAX <= $offset) {
+			$offset = PHP_INT_MAX;
+		}
+		$this->offset((int)$offset);
 		return $this;
 	}
 

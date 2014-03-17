@@ -1010,19 +1010,23 @@ class BelongsToManyTest extends TestCase {
 
 		$joint->expects($this->at(0))
 			->method('save')
-			->with(
-				new Entity(['article_id' => 1, 'tag_id' => 2], ['markNew' => true]),
-				$saveOptions
-			)
-			->will($this->returnValue($entity));
+			->will($this->returnCallback(function($e, $opts) use ($entity) {
+				$expected = ['article_id' => 1, 'tag_id' => 2];
+				$this->assertEquals($expected, $e->toArray());
+				$this->assertEquals(['foo' => 'bar'], $opts);
+				$this->assertTrue($e->isNew());
+				return $entity;
+			}));
 
 		$joint->expects($this->at(1))
 			->method('save')
-			->with(
-				new Entity(['article_id' => 1, 'tag_id' => 3], ['markNew' => true]),
-				$saveOptions
-			)
-			->will($this->returnValue($entity));
+			->will($this->returnCallback(function($e, $opts) use ($entity) {
+				$expected = ['article_id' => 1, 'tag_id' => 3];
+				$this->assertEquals($expected, $e->toArray());
+				$this->assertEquals(['foo' => 'bar'], $opts);
+				$this->assertTrue($e->isNew());
+				return $entity;
+			}));
 
 		$this->assertTrue($assoc->link($entity, $tags, $saveOptions));
 		$this->assertSame($entity->test, $tags);

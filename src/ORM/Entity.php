@@ -43,13 +43,15 @@ class Entity implements EntityInterface {
  * - markClean: whether to mark all properties as clean after setting them
  * - markNew: whether this instance has not yet been persisted
  * - guard: whether to prevent inaccessible properties from being set (default: false)
+ * - source: A string representing the alias of the repository this entity came from
  */
 	public function __construct(array $properties = [], array $options = []) {
 		$options += [
 			'useSetters' => true,
 			'markClean' => false,
 			'markNew' => null,
-			'guard' => false
+			'guard' => false,
+			'source' => null
 		];
 		$this->_className = get_class($this);
 		$this->set($properties, [
@@ -63,6 +65,10 @@ class Entity implements EntityInterface {
 
 		if ($options['markNew'] !== null) {
 			$this->isNew($options['markNew']);
+		}
+
+		if (!empty($options['source'])) {
+			$this->source($options['source']);
 		}
 	}
 

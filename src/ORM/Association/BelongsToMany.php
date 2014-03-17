@@ -514,6 +514,7 @@ class BelongsToMany extends Association {
 		$targetPrimaryKey = (array)$target->primaryKey();
 		$sourcePrimaryKey = (array)$source->primaryKey();
 		$jointProperty = $this->_junctionProperty;
+		$junctionAlias = $junction->alias();
 
 		foreach ($targetEntities as $k => $e) {
 			$joint = $e->get($jointProperty);
@@ -535,6 +536,7 @@ class BelongsToMany extends Association {
 
 			$e->set($jointProperty, $joint);
 			$e->dirty($jointProperty, false);
+			$joint->source($junctionAlias);
 		}
 
 		return true;

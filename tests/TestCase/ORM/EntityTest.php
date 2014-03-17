@@ -1009,16 +1009,32 @@ class EntityTest extends TestCase {
 		$entity = new Entity(['foo' => 'bar'], ['markClean' => true]);
 		$entity->accessible('name', true);
 		$entity->virtualProperties(['baz']);
+		$entity->dirty('foo', true);
 		$entity->errors('foo', ['An error']);
+		$entity->source('foos');
 		$result = $entity->__debugInfo();
 		$expected = [
-			'new' => true,
-			'accessible' => ['name'],
+			'new' => null,
+			'accessible' => ['name' => true],
 			'properties' => ['foo' => 'bar'],
 			'dirty' => ['foo' => true],
 			'virtual' => ['baz'],
-			'errors' => ['foo' => ['An error']]
+			'errors' => ['foo' => ['An error']],
+			'repository' => 'foos'
 		];
+		$this->assertSame($expected, $result);
+	}
+
+/**
+ * Tests the source method
+ *
+ * @return void
+ */
+	public function testSource() {
+		$entity = new Entity;
+		$this->assertNull($entity->source());
+		$entity->source('foos');
+		$this->assertEquals('foos', $entity->source());
 	}
 
 }
