@@ -1125,7 +1125,7 @@ class Table implements RepositoryInterface, EventListener {
 		$associated = $options['associated'];
 		$options['associated'] = [];
 
-		if (!$this->validate($entity, $options)) {
+		if ($options['validate'] && !$this->validate($entity, $options)) {
 			return false;
 		}
 
