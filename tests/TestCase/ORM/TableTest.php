@@ -2815,12 +2815,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$table = TableRegistry::get('articles');
 		$table->belongsToMany('tags');
 		$tagsTable = TableRegistry::get('tags');
-		$source = [
-			'source' => [
-				'alias' => 'tags',
-				'className' => 'TestApp\Model\Table\TagsTable'
-			]
-		];
+		$source = ['source' => 'tags'];
 		$options = ['markNew' => false];
 
 		$article = new \Cake\ORM\Entity([
