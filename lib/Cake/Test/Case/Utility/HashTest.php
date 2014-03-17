@@ -593,6 +593,12 @@ class HashTest extends CakeTestCase {
 		);
 		$this->assertTrue(Hash::contains($b, $a));
 		$this->assertFalse(Hash::contains($a, $b));
+
+		$a = array(0 => 'test', 'string' => null);
+		$this->assertTrue(Hash::contains($a, array('string' => null)));
+
+		$a = array(0 => 'test', 'string' => null);
+		$this->assertTrue(Hash::contains($a, array('test')));
 	}
 
 /**
@@ -659,6 +665,9 @@ class HashTest extends CakeTestCase {
 
 		$data = array('one', 2 => 'two', 3 => 'three', 4 => 'four', 'a' => 'five');
 		$this->assertFalse(Hash::numeric(array_keys($data)));
+
+		$data = array(2.4, 1, 0, -1, -2);
+		$this->assertTrue(Hash::numeric($data));
 	}
 
 /**
@@ -820,6 +829,26 @@ class HashTest extends CakeTestCase {
 		$this->assertEquals(2, $result[1]['id']);
 		$this->assertEquals(4, $result[2]['id']);
 		$this->assertEquals(5, $result[3]['id']);
+	}
+
+/**
+ * Test that attribute matchers don't cause errors on scalar data.
+ *
+ * @return void
+ */
+	public function testExtractAttributeEqualityOnScalarValue() {
+		$data = array(
+			'Entity' => array(
+				'id' => 1,
+				'data1' => 'value',
+			)
+		);
+		$result = Hash::extract($data, 'Entity[id=1].data1');
+		$this->assertEquals(array('value'), $result);
+
+		$data = array('Entity' => false );
+		$result = Hash::extract($data, 'Entity[id=1].data1');
+		$this->assertEquals(array(), $result);
 	}
 
 /**
@@ -1042,7 +1071,7 @@ class HashTest extends CakeTestCase {
 			1 => array('Person' => array('name' => 'Jeff')),
 		);
 		$a = Hash::sort($a, '{n}.Person.name', 'ASC', 'STRING');
-		$this->assertEquals($a, $b);
+		$this->assertSame($a, $b);
 
 		$names = array(
 			array('employees' => array(
@@ -1065,7 +1094,38 @@ class HashTest extends CakeTestCase {
 			array('employees' => array(array('name' => array()))),
 			array('employees' => array(array('name' => array())))
 		);
-		$this->assertEquals($expected, $result);
+		$this->assertSame($expected, $result);
+
+		$a = array(
+			'SU' => array(
+				'total_fulfillable' => 2
+			),
+			'AA' => array(
+				'total_fulfillable' => 1
+			),
+			'LX' => array(
+				'total_fulfillable' => 0
+			),
+			'BL' => array(
+				'total_fulfillable' => 3
+			),
+		);
+		$expected = array(
+			'LX' => array(
+				'total_fulfillable' => 0
+			),
+			'AA' => array(
+				'total_fulfillable' => 1
+			),
+			'SU' => array(
+				'total_fulfillable' => 2
+			),
+			'BL' => array(
+				'total_fulfillable' => 3
+			),
+		);
+		$result = Hash::sort($a, '{s}.total_fulfillable', 'asc');
+		$this->assertSame($expected, $result);
 	}
 
 /**
@@ -1411,6 +1471,34 @@ class HashTest extends CakeTestCase {
 			14 => 'Larry E. Masters',
 			25 => 'The Gwoo');
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * test combine() giving errors on key/value length mismatches.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testCombineErrorMissingValue() {
+		$data = array(
+			array('User' => array('id' => 1, 'name' => 'mark')),
+			array('User' => array('name' => 'jose')),
+		);
+		Hash::combine($data, '{n}.User.id', '{n}.User.name');
+	}
+
+/**
+ * test combine() giving errors on key/value length mismatches.
+ *
+ * @expectedException CakeException
+ * @return void
+ */
+	public function testCombineErrorMissingKey() {
+		$data = array(
+			array('User' => array('id' => 1, 'name' => 'mark')),
+			array('User' => array('id' => 2)),
+		);
+		Hash::combine($data, '{n}.User.id', '{n}.User.name');
 	}
 
 /**
@@ -2209,7 +2297,7 @@ class HashTest extends CakeTestCase {
 				)
 			)
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 
 		$data = array('a.b.100.a' => null, 'a.b.200.a' => null);
 		$expected = array(

@@ -1,7 +1,6 @@
 <?php
 /**
  *
- * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -121,7 +120,7 @@ class AclNode extends Model {
 			) {
 				return false;
 			}
-		} elseif (is_object($ref) && is_a($ref, 'Model')) {
+		} elseif (is_object($ref) && $ref instanceof Model) {
 			$ref = array('model' => $ref->name, 'foreign_key' => $ref->id);
 		} elseif (is_array($ref) && !(isset($ref['model']) && isset($ref['foreign_key']))) {
 			$name = key($ref);

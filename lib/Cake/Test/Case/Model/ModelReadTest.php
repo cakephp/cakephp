@@ -2,8 +2,6 @@
 /**
  * ModelReadTest file
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -7947,6 +7945,27 @@ class ModelReadTest extends BaseModelTest {
 			array(
 				'conditions' => array(
 					'Article.id NOT' => array(1)
+				)
+			)
+		);
+		$this->assertTrue(is_array($result) && !empty($result));
+	}
+
+/**
+ * test to assert that != in key together with a single element array will work
+ *
+ * @return void
+ */
+	public function testNotEqualsInArrayWithOneValue() {
+		$this->loadFixtures('Article');
+		$Article = new Article();
+		$Article->recursive = -1;
+
+		$result = $Article->find(
+			'all',
+			array(
+				'conditions' => array(
+					'Article.id !=' => array(1)
 				)
 			)
 		);

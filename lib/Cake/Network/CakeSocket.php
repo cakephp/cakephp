@@ -1,8 +1,6 @@
 <?php
 /**
- * Cake Socket connection class.
- *
- * PHP 5
+ * CakePHP Socket connection class.
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -21,7 +19,7 @@
 App::uses('Validation', 'Utility');
 
 /**
- * Cake network socket connection class.
+ * CakePHP network socket connection class.
  *
  * Core base class for network communication.
  *
@@ -184,7 +182,7 @@ class CakeSocket {
  *
  * Instead we need to handle those errors manually.
  *
- * @param int $code
+ * @param integer $code
  * @param string $message
  * @return void
  */
@@ -331,7 +329,6 @@ class CakeSocket {
 
 /**
  * Destructor, used to disconnect from current connection.
- *
  */
 	public function __destruct() {
 		$this->disconnect();

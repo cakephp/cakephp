@@ -2,8 +2,6 @@
 /**
  * TestRunner for CakePHP Test suite.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -55,7 +53,7 @@ class CakeTestSuiteCommand extends PHPUnit_TextUI_Command {
 	}
 
 /**
- * Ugly hack to get around PHPUnit having a hard coded classname for the Runner. :(
+ * Ugly hack to get around PHPUnit having a hard coded class name for the Runner. :(
  *
  * @param array   $argv
  * @param boolean $exit

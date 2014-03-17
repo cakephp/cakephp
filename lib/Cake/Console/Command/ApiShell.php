@@ -4,8 +4,6 @@
  *
  * Implementation of a Cake Shell to show CakePHP core method signatures.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

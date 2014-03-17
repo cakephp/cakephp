@@ -73,6 +73,18 @@ class XmlView extends View {
 	}
 
 /**
+ * Skip loading helpers if this is a _serialize based view.
+ *
+ * @return void
+ */
+	public function loadHelpers() {
+		if (isset($this->viewVars['_serialize'])) {
+			return;
+		}
+		parent::loadHelpers();
+	}
+
+/**
  * Render a XML view.
  *
  * Uses the special '_serialize' parameter to convert a set of
@@ -104,8 +116,11 @@ class XmlView extends View {
 
 		if (is_array($serialize)) {
 			$data = array($rootNode => array());
-			foreach ($serialize as $key) {
-				$data[$rootNode][$key] = $this->viewVars[$key];
+			foreach ($serialize as $alias => $key) {
+				if (is_numeric($alias)) {
+					$alias = $key;
+				}
+				$data[$rootNode][$alias] = $this->viewVars[$key];
 			}
 		} else {
 			$data = isset($this->viewVars[$serialize]) ? $this->viewVars[$serialize] : null;
@@ -113,7 +128,13 @@ class XmlView extends View {
 				$data = array($rootNode => array($serialize => $data));
 			}
 		}
-		return Xml::fromArray($data)->asXML();
+
+		$options = array();
+		if (Configure::read('debug')) {
+			$options['pretty'] = true;
+		}
+
+		return Xml::fromArray($data, $options)->asXML();
 	}
 
 }

@@ -139,6 +139,8 @@ class TranslateBehavior extends ModelBehavior {
 			}
 			unset($this->_joinTable, $this->_runtimeModel);
 			return $query;
+		} elseif (is_string($query['fields'])) {
+			$query['fields'] = String::tokenize($query['fields']);
 		}
 
 		$fields = array_merge(
@@ -275,9 +277,15 @@ class TranslateBehavior extends ModelBehavior {
  * @param boolean $primary Did the find originate on $model.
  * @return array Modified results
  */
-	public function afterFind(Model $Model, $results, $primary) {
+	public function afterFind(Model $Model, $results, $primary = false) {
 		$Model->virtualFields = $this->runtime[$Model->alias]['virtualFields'];
+
 		$this->runtime[$Model->alias]['virtualFields'] = $this->runtime[$Model->alias]['fields'] = array();
+		if (!empty($this->runtime[$Model->alias]['restoreFields'])) {
+			$this->runtime[$Model->alias]['fields'] = $this->runtime[$Model->alias]['restoreFields'];
+			unset($this->runtime[$Model->alias]['restoreFields']);
+		}
+
 		$locale = $this->_getLocale($Model);
 
 		if (empty($locale) || empty($results) || empty($this->runtime[$Model->alias]['beforeFind'])) {
@@ -305,7 +313,7 @@ class TranslateBehavior extends ModelBehavior {
 					}
 				} else {
 					$value = '';
-					if (!empty($row[$Model->alias][$aliasVirtual])) {
+					if (isset($row[$Model->alias][$aliasVirtual])) {
 						$value = $row[$Model->alias][$aliasVirtual];
 					}
 					$row[$Model->alias][$aliasField] = $value;
@@ -320,9 +328,11 @@ class TranslateBehavior extends ModelBehavior {
  * beforeValidate Callback
  *
  * @param Model $Model Model invalidFields was called on.
+ * @param array $options Options passed from Model::save().
  * @return boolean
+ * @see Model::save()
  */
-	public function beforeValidate(Model $Model) {
+	public function beforeValidate(Model $Model, $options = array()) {
 		unset($this->runtime[$Model->alias]['beforeSave']);
 		$this->_setRuntimeData($Model);
 		return true;
@@ -335,7 +345,9 @@ class TranslateBehavior extends ModelBehavior {
  * disabled. Or the runtime data hasn't been set yet.
  *
  * @param Model $Model Model save was called on.
+ * @param array $options Options passed from Model::save().
  * @return boolean true.
+ * @see Model::save()
  */
 	public function beforeSave(Model $Model, $options = array()) {
 		if (isset($options['validate']) && !$options['validate']) {
@@ -404,9 +416,10 @@ class TranslateBehavior extends ModelBehavior {
  *
  * @param Model $Model Model the callback is called on
  * @param boolean $created Whether or not the save created a record.
+ * @param array $options Options passed from Model::save().
  * @return void
  */
-	public function afterSave(Model $Model, $created) {
+	public function afterSave(Model $Model, $created, $options = array()) {
 		if (!isset($this->runtime[$Model->alias]['beforeValidate']) && !isset($this->runtime[$Model->alias]['beforeSave'])) {
 			return true;
 		}
@@ -513,7 +526,7 @@ class TranslateBehavior extends ModelBehavior {
  * @return mixed string or false
  */
 	protected function _getLocale(Model $Model) {
-		if (!isset($Model->locale) || is_null($Model->locale)) {
+		if (!isset($Model->locale) || $Model->locale === null) {
 			$I18n = I18n::getInstance();
 			$I18n->l10n->get(Configure::read('Config.language'));
 			$Model->locale = $I18n->l10n->locale;
@@ -570,7 +583,10 @@ class TranslateBehavior extends ModelBehavior {
 		}
 		$associations = array();
 		$RuntimeModel = $this->translateModel($Model);
-		$default = array('className' => $RuntimeModel->alias, 'foreignKey' => 'foreign_key');
+		$default = array(
+			'className' => $RuntimeModel->alias,
+			'foreignKey' => 'foreign_key'
+		);
 
 		foreach ($fields as $key => $value) {
 			if (is_numeric($key)) {
@@ -585,10 +601,9 @@ class TranslateBehavior extends ModelBehavior {
 					__d('cake_dev', 'You cannot bind a translation named "name".')
 				);
 			}
-
 			$this->_removeField($Model, $field);
 
-			if (is_null($association)) {
+			if ($association === null) {
 				if ($reset) {
 					$this->runtime[$Model->alias]['fields'][] = $field;
 				} else {
@@ -597,6 +612,7 @@ class TranslateBehavior extends ModelBehavior {
 			} else {
 				if ($reset) {
 					$this->runtime[$Model->alias]['fields'][$field] = $association;
+					$this->runtime[$Model->alias]['restoreFields'][] = $field;
 				} else {
 					$this->settings[$Model->alias][$field] = $association;
 				}
@@ -677,7 +693,7 @@ class TranslateBehavior extends ModelBehavior {
 
 			$this->_removeField($Model, $field);
 
-			if (!is_null($association) && (isset($Model->hasMany[$association]) || isset($Model->__backAssociation['hasMany'][$association]))) {
+			if ($association !== null && (isset($Model->hasMany[$association]) || isset($Model->__backAssociation['hasMany'][$association]))) {
 				$associations[] = $association;
 			}
 		}

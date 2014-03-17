@@ -5,8 +5,6 @@
  * Provides Exception rendering features. Which allow exceptions to be rendered
  * as HTML pages.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -89,12 +87,11 @@ class ExceptionRenderer {
  * code error depending on the code used to construct the error.
  *
  * @param Exception $exception Exception
- * @return mixed Return void or value returned by controller's `appError()` function
  */
 	public function __construct(Exception $exception) {
 		$this->controller = $this->_getController($exception);
 
-		if (method_exists($this->controller, 'apperror')) {
+		if (method_exists($this->controller, 'appError')) {
 			return $this->controller->appError($exception);
 		}
 		$method = $template = Inflector::variable(str_replace('Exception', '', get_class($exception)));
@@ -298,7 +295,7 @@ class ExceptionRenderer {
 	protected function _outputMessageSafe($template) {
 		$this->controller->layoutPath = null;
 		$this->controller->subDir = null;
-		$this->controller->viewPath = 'Errors/';
+		$this->controller->viewPath = 'Errors';
 		$this->controller->layout = 'error';
 		$this->controller->helpers = array('Form', 'Html', 'Session');
 

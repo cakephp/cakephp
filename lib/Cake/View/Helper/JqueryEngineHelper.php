@@ -2,13 +2,11 @@
 /**
  * jQuery Engine Helper for JsHelper
  *
- * Provides jQuery specific Javascript for JsHelper.
+ * Provides jQuery specific JavaScript for JsHelper.
  *
  * Implements the JsHelper interface for jQuery. All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
  * documentation.
- *
- * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -30,7 +28,7 @@ App::uses('JsBaseEngineHelper', 'View/Helper');
 /**
  * jQuery Engine Helper for JsHelper
  *
- * Provides jQuery specific Javascript for JsHelper.
+ * Provides jQuery specific JavaScript for JsHelper.
  *
  * Implements the JsHelper interface for jQuery. All $options arrays
  * support all options found in the JsHelper, as well as those in the jQuery
@@ -167,7 +165,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
  * - 'stop' - Whether you want the event to stopped. (defaults true)
  *
  * @param string $type Type of event to bind to the current dom id
- * @param string $callback The Javascript function you wish to trigger or the function literal
+ * @param string $callback The JavaScript function you wish to trigger or the function literal
  * @param array $options Options for the event.
  * @return string completed event handler
  */
@@ -271,7 +269,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 			$options['success'] = $success;
 			unset($options['update']);
 		}
-		$callbacks = array('success', 'error', 'beforeSend', 'complete');
+		$callbacks = array('success', 'error', 'beforeSend', 'complete', 'xhr');
 		if (!empty($options['dataExpression'])) {
 			$callbacks[] = 'data';
 			unset($options['dataExpression']);
@@ -340,7 +338,7 @@ class JqueryEngineHelper extends JsBaseEngineHelper {
 
 /**
  * Serialize a form attached to $selector. If the current selection is not an input or
- * form, errors will be created in the Javascript.
+ * form, errors will be created in the JavaScript.
  *
  * @param array $options Options for the serialization
  * @return string completed form serialization script.

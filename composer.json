@@ -1,0 +1,31 @@
+{
+    "name": "cakephp/cakephp",
+    "description": "The CakePHP framework",
+    "type": "library",
+    "keywords": ["framework"],
+    "homepage": "http://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/cakephp/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "http://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/cakephp"
+    },
+    "require": {
+        "php": ">=5.2.8",
+        "ext-mcrypt": "*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*",
+        "cakephp/debug_kit" : "2.2.*"
+    },
+    "bin": [
+        "lib/Cake/Console/cake"
+    ]
+}

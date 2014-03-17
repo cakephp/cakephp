@@ -2,8 +2,6 @@
 /**
  * HTTP Response from HttpSocket.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -138,7 +136,7 @@ class HttpSocketResponse implements ArrayAccess {
  * @return boolean
  */
 	public function isRedirect() {
-		return in_array($this->code, array(301, 302, 303, 307)) && !is_null($this->getHeader('Location'));
+		return in_array($this->code, array(301, 302, 303, 307)) && $this->getHeader('Location') !== null;
 	}
 
 /**

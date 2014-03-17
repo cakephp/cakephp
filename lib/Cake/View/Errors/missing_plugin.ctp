@@ -1,7 +1,6 @@
 <?php
 /**
  *
- * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -24,7 +23,7 @@
 </p>
 <p class="error">
 	<strong><?php echo __d('cake_dev', 'Error'); ?>: </strong>
-	<?php echo __d('cake_dev', 'Make sure your plugin %s is in the ' . APP_DIR . DS . 'Plugin directory and was loaded', $plugin); ?>
+	<?php echo __d('cake_dev', 'Make sure your plugin %s is in the %s directory and was loaded', $plugin, APP_DIR . DS . 'Plugin'); ?>
 </p>
 <pre>
 &lt;?php
@@ -33,7 +32,7 @@ CakePlugin::load('<?php echo h($plugin); ?>');
 </pre>
 <p class="notice">
 	<strong><?php echo __d('cake_dev', 'Loading all plugins'); ?>: </strong>
-	<?php echo __d('cake_dev', 'If you wish to load all plugins at once, use the following line in your ' . APP_DIR . DS . 'Config' . DS . 'bootstrap.php file'); ?>
+	<?php echo __d('cake_dev', 'If you wish to load all plugins at once, use the following line in your %s file', APP_DIR . DS . 'Config' . DS . 'bootstrap.php'); ?>
 </p>
 <pre>
 CakePlugin::loadAll();

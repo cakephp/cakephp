@@ -2,8 +2,6 @@
 /**
  * MS SQL Server layer for DBO
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -105,6 +103,8 @@ class Sqlserver extends DboSource {
 /**
  * Magic column name used to provide pagination support for SQLServer 2008
  * which lacks proper limit/offset support.
+ *
+ * @var string
  */
 	const ROW_COUNTER = '_cake_page_rownum_';
 
@@ -135,6 +135,11 @@ class Sqlserver extends DboSource {
 				$flags
 			);
 			$this->connected = true;
+			if (!empty($config['settings'])) {
+				foreach ($config['settings'] as $key => $value) {
+					$this->_execute("SET $key $value");
+				}
+			}
 		} catch (PDOException $e) {
 			throw new MissingConnectionException(array(
 				'class' => get_class($this),
@@ -196,7 +201,8 @@ class Sqlserver extends DboSource {
 			return $cache;
 		}
 		$fields = array();
-		$table = $this->fullTableName($model, false);
+		$table = $this->fullTableName($model, false, false);
+		$schema = $model->schemaName;
 		$cols = $this->_execute(
 			"SELECT
 				COLUMN_NAME as Field,
@@ -207,7 +213,7 @@ class Sqlserver extends DboSource {
 				COLUMNPROPERTY(OBJECT_ID('" . $table . "'), COLUMN_NAME, 'IsIdentity') as [Key],
 				NUMERIC_SCALE as Size
 			FROM INFORMATION_SCHEMA.COLUMNS
-			WHERE TABLE_NAME = '" . $table . "'"
+			WHERE TABLE_NAME = '" . $table . "'" . ($schema ? " AND TABLE_SCHEMA = '" . $schema . "'" : '')
 		);
 		if (!$cols) {
 			throw new CakeException(__d('cake_dev', 'Could not describe table for %s', $table));
@@ -273,7 +279,7 @@ class Sqlserver extends DboSource {
 			for ($i = 0; $i < $count; $i++) {
 				$prepend = '';
 
-				if (strpos($fields[$i], 'DISTINCT') !== false) {
+				if (strpos($fields[$i], 'DISTINCT') !== false && strpos($fields[$i], 'COUNT') === false) {
 					$prepend = 'DISTINCT ';
 					$fields[$i] = trim(str_replace('DISTINCT', '', $fields[$i]));
 				}
@@ -525,18 +531,19 @@ class Sqlserver extends DboSource {
 					$offset = intval($limitOffset[2] * $page);
 
 					$rowCounter = self::ROW_COUNTER;
-					return "
-						SELECT {$limit} * FROM (
+					$sql = "SELECT {$limit} * FROM (
 							SELECT {$fields}, ROW_NUMBER() OVER ({$order}) AS {$rowCounter}
 							FROM {$table} {$alias} {$joins} {$conditions} {$group}
 						) AS _cake_paging_
 						WHERE _cake_paging_.{$rowCounter} > {$offset}
 						ORDER BY _cake_paging_.{$rowCounter}
 					";
-				} elseif (strpos($limit, 'FETCH') !== false) {
-					return "SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}";
+					return trim($sql);
 				}
-				return "SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order}";
+				if (strpos($limit, 'FETCH') !== false) {
+					return trim("SELECT {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order} {$limit}");
+				}
+				return trim("SELECT {$limit} {$fields} FROM {$table} {$alias} {$joins} {$conditions} {$group} {$order}");
 			case "schema":
 				extract($data);
 
@@ -552,7 +559,7 @@ class Sqlserver extends DboSource {
 						${$var} = "\t" . implode(",\n\t", array_filter(${$var}));
 					}
 				}
-				return "CREATE TABLE {$table} (\n{$columns});\n{$indexes}";
+				return trim("CREATE TABLE {$table} (\n{$columns});\n{$indexes}");
 			default:
 				return parent::renderStatement($type, $data);
 		}
@@ -566,9 +573,10 @@ class Sqlserver extends DboSource {
  * @return string Quoted and escaped data
  */
 	public function value($data, $column = null) {
-		if (is_array($data) || is_object($data)) {
+		if ($data === null || is_array($data) || is_object($data)) {
 			return parent::value($data, $column);
-		} elseif (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
+		}
+		if (in_array($data, array('{$__cakeID__$}', '{$__cakeForeignKey__$}'), true)) {
 			return $data;
 		}
 
@@ -592,7 +600,7 @@ class Sqlserver extends DboSource {
  * @param Model $model
  * @param array $queryData
  * @param integer $recursive
- * @return array Array of resultset rows, or false if no rows matched
+ * @return array|false Array of resultset rows, or false if no rows matched
  */
 	public function read(Model $model, $queryData = array(), $recursive = null) {
 		$results = parent::read($model, $queryData, $recursive);
@@ -615,7 +623,7 @@ class Sqlserver extends DboSource {
 					continue;
 				}
 				$resultRow[$table][$column] = $row[$col];
-				if ($type === 'boolean' && !is_null($row[$col])) {
+				if ($type === 'boolean' && $row[$col] !== null) {
 					$resultRow[$table][$column] = $this->boolean($resultRow[$table][$column]);
 				}
 			}

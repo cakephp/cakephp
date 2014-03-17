@@ -44,7 +44,7 @@ abstract class ObjectCollection {
 /**
  * Default object priority. A non zero integer.
  *
- * @var int
+ * @var integer
  */
 	public $defaultPriority = 10;
 
@@ -225,7 +225,7 @@ abstract class ObjectCollection {
 		}
 		foreach ($name as $object => $objectPriority) {
 			if (isset($this->_loaded[$object])) {
-				if (is_null($objectPriority)) {
+				if ($objectPriority === null) {
 					$objectPriority = $this->defaultPriority;
 				}
 				$this->_loaded[$object]->settings['priority'] = $objectPriority;
@@ -272,7 +272,7 @@ abstract class ObjectCollection {
  *   returns an array of currently-attached objects
  * @return mixed If $name is specified, returns the boolean status of the corresponding object.
  *    Otherwise, returns an array of all attached objects.
- * @deprecated Use loaded instead.
+ * @deprecated Will be removed in 3.0. Use loaded instead.
  */
 	public function attached($name = null) {
 		return $this->loaded($name);

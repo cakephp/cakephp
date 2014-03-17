@@ -2,8 +2,6 @@
 /**
  * Web Access Frontend for TestSuite
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -79,11 +77,11 @@ if (!defined('CAKE_CORE_INCLUDE_PATH')) {
 	if (function_exists('ini_set')) {
 		ini_set('include_path', ROOT . DS . 'lib' . PATH_SEPARATOR . ini_get('include_path'));
 	}
-	if (!include ('Cake' . DS . 'bootstrap.php')) {
+	if (!include 'Cake' . DS . 'bootstrap.php') {
 		$failed = true;
 	}
 } else {
-	if (!include (CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'bootstrap.php')) {
+	if (!include CAKE_CORE_INCLUDE_PATH . DS . 'Cake' . DS . 'bootstrap.php') {
 		$failed = true;
 	}
 }

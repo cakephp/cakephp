@@ -4,8 +4,6 @@
  *
  * Tree test using UUIDs
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -23,6 +21,7 @@
 App::uses('Model', 'Model');
 App::uses('AppModel', 'Model');
 App::uses('String', 'Utility');
+
 require_once dirname(dirname(__FILE__)) . DS . 'models.php';
 
 /**
@@ -35,7 +34,7 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 /**
  * Whether backup global state for each test method or not
  *
- * @var bool false
+ * @var boolean
  */
 	public $backupGlobals = false;
 
@@ -114,7 +113,7 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 			array($modelClass => array('name' => '1.1.1', $leftField => 12, $rightField => 13)));
 		$this->assertEquals($direct, $expects);
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -177,7 +176,7 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 		$this->assertEquals(array_values($nodes), $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**
@@ -210,7 +209,7 @@ class TreeBehaviorUuidTest extends CakeTestCase {
 		$this->assertEquals(array_values($nodes), $expects);
 
 		$validTree = $this->Tree->verify();
-		$this->assertSame($validTree, true);
+		$this->assertTrue($validTree);
 	}
 
 /**

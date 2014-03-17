@@ -1,6 +1,6 @@
 <?php
 /**
- * PHP 5
+ *
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -34,46 +34,22 @@ App::uses('FormAuthenticate', 'Controller/Component/Auth');
  * For initial password hashing/creation see Security::hash(). Other than how the password is initially hashed,
  * BlowfishAuthenticate works exactly the same way as FormAuthenticate.
  *
- * @package Cake.Controller.Component.Auth
+ * @package	Cake.Controller.Component.Auth
  * @since CakePHP(tm) v 2.3
- * @see AuthComponent::$authenticate
+ * @see	AuthComponent::$authenticate
+ * @deprecated Since 2.4. Just use FormAuthenticate with 'passwordHasher' setting set to 'Blowfish'
  */
 class BlowfishAuthenticate extends FormAuthenticate {
 
 /**
- * Authenticates the identity contained in a request. Will use the `settings.userModel`, and `settings.fields`
- * to find POST data that is used to find a matching record in the`settings.userModel`. Will return false if
- * there is no post data, either username or password is missing, or if the scope conditions have not been met.
+ * Constructor. Sets default passwordHasher to Blowfish
  *
- * @param CakeRequest $request The request that contains login information.
- * @param CakeResponse $response Unused response object.
- * @return mixed False on login failure. An array of User data on success.
+ * @param ComponentCollection $collection The Component collection used on this request.
+ * @param array $settings Array of settings to use.
  */
-	public function authenticate(CakeRequest $request, CakeResponse $response) {
-		$userModel = $this->settings['userModel'];
-		list(, $model) = pluginSplit($userModel);
-
-		$fields = $this->settings['fields'];
-		if (!$this->_checkFields($request, $model, $fields)) {
-			return false;
-		}
-		$user = $this->_findUser(
-			array(
-				$model . '.' . $fields['username'] => $request->data[$model][$fields['username']],
-			)
-		);
-		if (!$user) {
-			return false;
-		}
-		$password = Security::hash(
-			$request->data[$model][$fields['password']],
-			'blowfish',
-			$user[$fields['password']]
-		);
-		if ($password === $user[$fields['password']]) {
-			unset($user[$fields['password']]);
-			return $user;
-		}
-		return false;
+	public function __construct(ComponentCollection $collection, $settings) {
+		$this->settings['passwordHasher'] = 'Blowfish';
+		parent::__construct($collection, $settings);
 	}
+
 }

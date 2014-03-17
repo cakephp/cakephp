@@ -2,9 +2,7 @@
 /**
  * This is the PHP base ACL configuration file.
  *
- * Use it to configure access control of your Cake application.
- *
- * PHP 5
+ * Use it to configure access control of your CakePHP application.
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)

@@ -67,16 +67,14 @@ class Configure {
  */
 	public static function bootstrap($boot = true) {
 		if ($boot) {
-			self::write('App', array(
-				'base' => false,
-				'baseUrl' => false,
-				'dir' => APP_DIR,
-				'webroot' => WEBROOT_DIR,
-				'www_root' => WWW_ROOT
-			));
+			self::_appDefaults();
 
 			if (!include APP . 'Config' . DS . 'core.php') {
-				trigger_error(__d('cake_dev', "Can't find application core file. Please create %score.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
+				trigger_error(__d('cake_dev',
+						"Can't find application core file. Please create %s, and make sure it is readable by PHP.",
+						APP . 'Config' . DS . 'core.php'),
+					E_USER_ERROR
+				);
 			}
 			App::init();
 			App::$bootstrapping = false;
@@ -92,7 +90,11 @@ class Configure {
 			self::_setErrorHandlers($error, $exception);
 
 			if (!include APP . 'Config' . DS . 'bootstrap.php') {
-				trigger_error(__d('cake_dev', "Can't find application bootstrap file. Please create %sbootstrap.php, and make sure it is readable by PHP.", APP . 'Config' . DS), E_USER_ERROR);
+				trigger_error(__d('cake_dev',
+						"Can't find application bootstrap file. Please create %s, and make sure it is readable by PHP.",
+						APP . 'Config' . DS . 'bootstrap.php'),
+					E_USER_ERROR
+				);
 			}
 			restore_error_handler();
 
@@ -107,6 +109,20 @@ class Configure {
 				class_exists('String');
 			}
 		}
+	}
+
+/**
+ * Set app's default configs
+ * @return void
+ */
+	protected static function _appDefaults() {
+		self::write('App', (array)self::read('App') + array(
+			'base' => false,
+			'baseUrl' => false,
+			'dir' => APP_DIR,
+			'webroot' => WEBROOT_DIR,
+			'www_root' => WWW_ROOT
+		));
 	}
 
 /**
@@ -128,7 +144,8 @@ class Configure {
  * }}}
  *
  * @link http://book.cakephp.org/2.0/en/development/configuration.html#Configure::write
- * @param array $config Name of var to write
+ * @param string|array $config The key to write, can be a dot notation value.
+ * Alternatively can be an array containing key(s) and value(s).
  * @param mixed $value Value to set for var
  * @return boolean True if write was successful
  */
@@ -152,7 +169,7 @@ class Configure {
 	}
 
 /**
- * Used to read information stored in Configure. Its not
+ * Used to read information stored in Configure. It's not
  * possible to store `null` values in Configure.
  *
  * Usage:
@@ -323,7 +340,7 @@ class Configure {
 			throw new ConfigureException(__d('cake_dev', 'There is no "%s" adapter.', $config));
 		}
 		if (!method_exists($reader, 'dump')) {
-			throw new ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a dump() method.', $config));
+			throw new ConfigureException(__d('cake_dev', 'The "%s" adapter, does not have a %s method.', $config, 'dump()'));
 		}
 		$values = self::$_values;
 		if (!empty($keys) && is_array($keys)) {

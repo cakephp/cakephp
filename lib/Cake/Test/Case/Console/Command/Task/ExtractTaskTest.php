@@ -4,8 +4,6 @@
  *
  * Test Case for i18n extraction shell task
  *
- * PHP 5
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -149,7 +147,7 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertRegExp($pattern, $result);
 
 		$pattern = '/\#: (\\\\|\/)extract\.ctp:14\n';
-		$pattern .= '\#: (\\\\|\/)home\.ctp:83\n';
+		$pattern .= '\#: (\\\\|\/)home\.ctp:68\n';
 		$pattern .= 'msgid "Editing this Page"\nmsgstr ""/';
 		$this->assertRegExp($pattern, $result);
 
@@ -176,6 +174,32 @@ class ExtractTaskTest extends CakeTestCase {
 		$this->assertRegExp($pattern, $result);
 		$pattern = '/msgid "You deleted %d message \(domain\)."\nmsgid_plural "You deleted %d messages \(domain\)."/';
 		$this->assertRegExp($pattern, $result);
+	}
+
+/**
+ * testExtractCategory method
+ *
+ * @return void
+ */
+	public function testExtractCategory() {
+		$this->Task->interactive = false;
+
+		$this->Task->params['paths'] = CAKE . 'Test' . DS . 'test_app' . DS . 'View' . DS . 'Pages';
+		$this->Task->params['output'] = $this->path . DS;
+		$this->Task->params['extract-core'] = 'no';
+		$this->Task->params['merge'] = 'no';
+		$this->Task->expects($this->never())->method('err');
+		$this->Task->expects($this->any())->method('in')
+			->will($this->returnValue('y'));
+		$this->Task->expects($this->never())->method('_stop');
+
+		$this->Task->execute();
+		$this->assertTrue(file_exists($this->path . DS . 'LC_TIME' . DS . 'default.pot'));
+
+		$result = file_get_contents($this->path . DS . 'default.pot');
+
+		$pattern = '/\#: .*extract\.ctp:31\n/';
+		$this->assertNotRegExp($pattern, $result);
 	}
 
 /**
@@ -327,6 +351,9 @@ class ExtractTaskTest extends CakeTestCase {
 
 		$pattern = '#msgid "Post body is super required"#';
 		$this->assertRegExp($pattern, $result);
+
+		$this->assertContains('msgid "double \\"quoted\\" validation"', $result, 'Strings with quotes not handled correctly');
+		$this->assertContains("msgid \"single 'quoted' validation\"", $result, 'Strings with quotes not handled correctly');
 	}
 
 /**

@@ -4,8 +4,6 @@
  *
  * Test Case for test generation shell task
  *
- * PHP 5
- *
  * CakePHP :  Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -324,7 +322,7 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
- * test that getClassName returns the user choice as a classname.
+ * test that getClassName returns the user choice as a class name.
  *
  * @return void
  */
@@ -359,7 +357,7 @@ class TestTaskTest extends CakeTestCase {
 	}
 
 /**
- * test that resolving classnames works
+ * test that resolving class names works
  *
  * @return void
  */
@@ -394,7 +392,7 @@ class TestTaskTest extends CakeTestCase {
 
 /**
  * test baking files. The conditionally run tests are known to fail in PHP4
- * as PHP4 classnames are all lower case, breaking the plugin path inflection.
+ * as PHP4 class names are all lower case, breaking the plugin path inflection.
  *
  * @return void
  */

@@ -4,8 +4,6 @@
  *
  * Provides an interface for loading and enumerating connections defined in app/Config/database.php
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *

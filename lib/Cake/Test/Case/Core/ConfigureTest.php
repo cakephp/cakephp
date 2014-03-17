@@ -4,8 +4,6 @@
  *
  * Holds several tests
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -67,6 +65,23 @@ class ConfigureTest extends CakeTestCase {
 			unlink(TMP . 'cache' . DS . 'persistent' . DS . 'test.php');
 		}
 		Configure::drop('test');
+	}
+
+/**
+ * Test to ensure bootrapping doesn't overwrite prior configs set under 'App' key
+ * @return void
+ */
+	public function testBootstrap() {
+		$expected = array(
+			'foo' => 'bar'
+		);
+		Configure::write('App', $expected);
+
+		Configure::bootstrap(true);
+		$result = Configure::read('App');
+
+		$this->assertEquals($expected['foo'], $result['foo']);
+		$this->assertFalse($result['base']);
 	}
 
 /**

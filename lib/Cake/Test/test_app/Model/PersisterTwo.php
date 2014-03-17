@@ -2,10 +2,6 @@
 /**
  * Test App Comment Model
  *
- *
- *
- * PHP 5
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -28,8 +24,6 @@
 class PersisterTwo extends AppModel {
 
 	public $useTable = 'posts';
-
-	public $name = 'PersisterTwo';
 
 	public $actsAs = array('PersisterOneBehavior', 'TestPlugin.TestPluginPersisterOne');
 

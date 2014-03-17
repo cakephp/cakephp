@@ -1,9 +1,9 @@
 # How to contribute
 
 CakePHP loves to welcome your contributions. There are several ways to help out:
-* Create a ticket in Lighthouse, if you have found a bug
-* Write testcases for open bug tickets
-* Write patches for open bug/feature tickets, preferably with testcases included
+* Create an [issue](https://github.com/cakephp/cakephp/issues) on GitHub, if you have found a bug
+* Write testcases for open bug issues
+* Write patches for open bug/feature issues, preferably with testcases included
 * Contribute to the [documentation](https://github.com/cakephp/docs)
 
 There are a few guidelines that we need contributors to follow so that we have a
@@ -11,8 +11,8 @@ chance of keeping on top of things.
 
 ## Getting Started
 
-* Make sure you have a [GitHub account](https://github.com/signup/free)
-* Submit a ticket for your issue, assuming one does not already exist.
+* Make sure you have a [GitHub account](https://github.com/signup/free).
+* Submit an [issue](https://github.com/cakephp/cakephp/issues), assuming one does not already exist.
   * Clearly describe the issue including steps to reproduce when it is a bug.
   * Make sure you fill in the earliest version that you know has the issue.
 * Fork the repository on GitHub.
@@ -20,16 +20,16 @@ chance of keeping on top of things.
 ## Making Changes
 
 * Create a topic branch from where you want to base your work.
-  * This is usually the master branch
+  * This is usually the master branch.
   * Only target release branches if you are certain your fix must be on that
-    branch
+    branch.
   * To quickly create a topic branch based on master; `git branch
     master/my_contribution master` then checkout the new branch with `git
     checkout master/my_contribution`. Better avoid working directly on the
     `master` branch, to avoid conflicts if you pull in updates from origin.
 * Make commits of logical units.
 * Check for unnecessary whitespace with `git diff --check` before committing.
-* Use descriptive commit messages and reference the #ticket number
+* Use descriptive commit messages and reference the #issue number.
 * Core testcases should continue to pass. You can run tests locally or enable
   [travis-ci](https://travis-ci.org/) for your fork, so all tests and codesniffs
   will be executed.
@@ -55,7 +55,7 @@ CakePHP tests requires [PHPUnit](http://www.phpunit.de/manual/current/en/install
 
     ./lib/Cake/Console/cake test core AllTests --stderr
 
-To run the sniffs for CakePHP coding standards
+To run the sniffs for CakePHP coding standards:
 
     phpcs -p --extensions=php --standard=CakePHP ./lib/Cake
 
@@ -63,11 +63,11 @@ Check the [cakephp-codesniffer](https://github.com/cakephp/cakephp-codesniffer)
 repository to setup the CakePHP standard. The README contains installation info
 for the sniff and phpcs.
 
-
 # Additional Resources
 
 * [CakePHP coding standards](http://book.cakephp.org/2.0/en/contributing/cakephp-coding-conventions.html)
-* [Bug tracker](https://cakephp.lighthouseapp.com/projects/42648-cakephp)
+* [Existing issues](https://github.com/cakephp/cakephp/issues)
+* [Development Roadmaps](https://github.com/cakephp/cakephp/wiki#roadmaps)
 * [General GitHub documentation](https://help.github.com/)
 * [GitHub pull request documentation](https://help.github.com/send-pull-requests/)
 * #cakephp IRC channel on freenode.org

@@ -4,8 +4,6 @@
  *
  * Automatic forms and actions generation for rapid web application development.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -58,7 +56,7 @@ class ScaffoldView extends View {
 
 		$scaffoldAction = 'scaffold.' . $name;
 
-		if (!is_null($this->subDir)) {
+		if ($this->subDir !== null) {
 			$subDir = strtolower($this->subDir) . DS;
 		} else {
 			$subDir = null;

@@ -2,8 +2,6 @@
 /**
  * FileEngineTest file
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -198,9 +196,9 @@ class FileEngineTest extends CakeTestCase {
 		Cache::config('file_test', array('engine' => 'File', 'duration' => 1));
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$write = Cache::write('serialize_test1', $data, 'file_test');
-		$write = Cache::write('serialize_test2', $data, 'file_test');
-		$write = Cache::write('serialize_test3', $data, 'file_test');
+		Cache::write('serialize_test1', $data, 'file_test');
+		Cache::write('serialize_test2', $data, 'file_test');
+		Cache::write('serialize_test3', $data, 'file_test');
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test1'));
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test2'));
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test3'));
@@ -212,9 +210,9 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertFalse(file_exists(CACHE . 'cake_serialize_test3'));
 
 		$data = 'this is a test of the emergency broadcasting system';
-		$write = Cache::write('serialize_test1', $data, 'file_test');
-		$write = Cache::write('serialize_test2', $data, 'file_test');
-		$write = Cache::write('serialize_test3', $data, 'file_test');
+		Cache::write('serialize_test1', $data, 'file_test');
+		Cache::write('serialize_test2', $data, 'file_test');
+		Cache::write('serialize_test3', $data, 'file_test');
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test1'));
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test2'));
 		$this->assertTrue(file_exists(CACHE . 'cake_serialize_test3'));
@@ -305,6 +303,14 @@ class FileEngineTest extends CakeTestCase {
 
 		$result = Cache::clear(false, 'file_test');
 		$this->assertTrue($result);
+
+		$result = Cache::write('domain.test.com:8080', 'here', 'file_test');
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'cake_domain_test_com_8080'));
+
+		$result = Cache::write('command>dir|more', 'here', 'file_test');
+		$this->assertTrue($result);
+		$this->assertTrue(file_exists(CACHE . 'cake_command_dir_more'));
 	}
 
 /**
@@ -373,20 +379,19 @@ class FileEngineTest extends CakeTestCase {
 	}
 
 /**
- * check that FileEngine generates an error when a configured Path does not exist.
+ * check that FileEngine does not generate an error when a configured Path does not exist in debug mode.
  *
- * @expectedException PHPUnit_Framework_Error_Warning
  * @return void
  */
-	public function testErrorWhenPathDoesNotExist() {
-		$this->skipIf(is_dir(TMP . 'tests' . DS . 'file_failure'), 'Cannot run test directory exists.');
+	public function testPathDoesNotExist() {
+		$this->skipIf(is_dir(TMP . 'tests' . DS . 'autocreate'), 'Cannot run if test directory exists.');
 
-		Cache::config('failure', array(
+		Cache::config('autocreate', array(
 			'engine' => 'File',
-			'path' => TMP . 'tests' . DS . 'file_failure'
+			'path' => TMP . 'tests' . DS . 'autocreate'
 		));
 
-		Cache::drop('failure');
+		Cache::drop('autocreate');
 	}
 
 /**
@@ -408,7 +413,7 @@ class FileEngineTest extends CakeTestCase {
 		Cache::drop('mask_test');
 
 		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0666, 'path' => TMP . 'tests'));
-		$write = Cache::write('masking_test', $data, 'mask_test');
+		Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
 		$expected = '0666';
 		$this->assertEquals($expected, $result);
@@ -416,7 +421,7 @@ class FileEngineTest extends CakeTestCase {
 		Cache::drop('mask_test');
 
 		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0644, 'path' => TMP . 'tests'));
-		$write = Cache::write('masking_test', $data, 'mask_test');
+		Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
 		$expected = '0644';
 		$this->assertEquals($expected, $result);
@@ -424,7 +429,7 @@ class FileEngineTest extends CakeTestCase {
 		Cache::drop('mask_test');
 
 		Cache::config('mask_test', array('engine' => 'File', 'mask' => 0640, 'path' => TMP . 'tests'));
-		$write = Cache::write('masking_test', $data, 'mask_test');
+		Cache::write('masking_test', $data, 'mask_test');
 		$result = substr(sprintf('%o', fileperms(TMP . 'tests' . DS . 'cake_masking_test')), -4);
 		$expected = '0640';
 		$this->assertEquals($expected, $result);
@@ -523,4 +528,24 @@ class FileEngineTest extends CakeTestCase {
 		$this->assertFalse(Cache::read('test_groups5', 'file_groups2'));
 		$this->assertEquals('value 3', Cache::read('test_groups6', 'file_groups3'));
 	}
+
+/**
+ * Test that clearGroup works with no prefix.
+ *
+ * @return void
+ */
+	public function testGroupClearNoPrefix() {
+		Cache::config('file_groups', array(
+			'engine' => 'File',
+			'duration' => 3600,
+			'prefix' => '',
+			'groups' => array('group_a', 'group_b')
+		));
+		Cache::write('key_1', 'value', 'file_groups');
+		Cache::write('key_2', 'value', 'file_groups');
+		Cache::clearGroup('group_a', 'file_groups');
+		$this->assertFalse(Cache::read('key_1', 'file_groups'), 'Did not delete');
+		$this->assertFalse(Cache::read('key_2', 'file_groups'), 'Did not delete');
+	}
+
 }

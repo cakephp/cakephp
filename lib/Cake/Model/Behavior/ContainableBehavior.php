@@ -4,8 +4,6 @@
  *
  * Behavior to simplify manipulating a model's bindings when doing a find operation
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -269,7 +267,7 @@ class ContainableBehavior extends ModelBehavior {
  * @return array Containments
  */
 	public function containments(Model $Model, $contain, $containments = array(), $throwErrors = null) {
-		$options = array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery', 'deleteQuery', 'insertQuery');
+		$options = array('className', 'joinTable', 'with', 'foreignKey', 'associationForeignKey', 'conditions', 'fields', 'order', 'limit', 'offset', 'unique', 'finderQuery');
 		$keep = array();
 		if ($throwErrors === null) {
 			$throwErrors = (empty($this->settings[$Model->alias]) ? true : $this->settings[$Model->alias]['notices']);

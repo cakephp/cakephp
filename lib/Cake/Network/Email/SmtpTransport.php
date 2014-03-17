@@ -2,8 +2,6 @@
 /**
  * Send mail using SMTP protocol
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -231,7 +229,7 @@ class SmtpTransport extends AbstractTransport {
  * @throws SocketException
  */
 	protected function _smtpSend($data, $checkCode = '250') {
-		if (!is_null($data)) {
+		if ($data !== null) {
 			$this->_socket->write($data . "\r\n");
 		}
 		while ($checkCode !== false) {

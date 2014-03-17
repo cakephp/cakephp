@@ -1,10 +1,6 @@
 <?php
 /**
- * This is email configuration file.
  *
- * Use it to configure email transports of Cake.
- *
- * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -18,14 +14,20 @@
  * @package       app.Config
  * @since         CakePHP(tm) v 2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
+ */
+
+/**
+ * This is email configuration file.
+ *
+ * Use it to configure email transports of CakePHP.
  *
  * Email configuration class.
  * You can specify multiple configurations for production, development and testing.
  *
  * transport => The name of a supported transport; valid options are as follows:
- *		Mail 		- Send using PHP mail function
- *		Smtp		- Send using SMTP
- *		Debug		- Do not send the email, just return the result
+ *  Mail - Send using PHP mail function
+ *  Smtp - Send using SMTP
+ *  Debug - Do not send the email, just return the result
  *
  * You can add custom transports (or override existing transports) by adding the
  * appropriate file to app/Network/Email. Transports should be named 'YourTransport.php',

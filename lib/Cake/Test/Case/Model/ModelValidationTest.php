@@ -2,8 +2,6 @@
 /**
  * ModelValidationTest file
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -588,7 +586,7 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertFalse($result, 'Save occurred even when with models failed. %s');
 		$this->assertEquals($expectedError, $JoinThing->validationErrors);
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
-		$this->assertSame($count, 0);
+		$this->assertSame(0, $count);
 
 		$data = array(
 			'Something' => array(
@@ -651,7 +649,7 @@ class ModelValidationTest extends BaseModelTest {
 		$this->assertEquals($expectedError, $JoinThing->validationErrors);
 
 		$count = $Something->find('count', array('conditions' => array('Something.id' => $data['Something']['id'])));
-		$this->assertSame($count, 0);
+		$this->assertSame(0, $count);
 
 		$joinRecords = $JoinThing->find('count', array(
 			'conditions' => array('JoinThing.something_id' => $data['Something']['id'])
@@ -692,11 +690,11 @@ class ModelValidationTest extends BaseModelTest {
 		$Author->create();
 		$result = $Author->saveAll($data, array('validate' => 'first'));
 		$this->assertTrue($result);
-		$this->assertFalse(is_null($Author->id));
+		$this->assertNotNull($Author->id);
 
 		$id = $Author->id;
 		$count = $Author->find('count', array('conditions' => array('Author.id' => $id)));
-		$this->assertSame($count, 1);
+		$this->assertSame(1, $count);
 
 		$count = $Post->find('count', array(
 			'conditions' => array('Post.author_id' => $id)
@@ -1720,7 +1718,7 @@ class ModelValidationTest extends BaseModelTest {
 		$expected = array_map('strtolower', get_class_methods('Article'));
 		$this->assertEquals($expected, array_keys($result));
 
-		$TestModel->Behaviors->attach('Containable');
+		$TestModel->Behaviors->load('Containable');
 		$newList = array(
 			'contain',
 			'resetbindings',
@@ -1730,7 +1728,7 @@ class ModelValidationTest extends BaseModelTest {
 		);
 		$this->assertEquals(array_merge($expected, $newList), array_keys($Validator->getMethods()));
 
-		$TestModel->Behaviors->detach('Containable');
+		$TestModel->Behaviors->unload('Containable');
 		$this->assertEquals($expected, array_keys($Validator->getMethods()));
 	}
 
@@ -2315,7 +2313,7 @@ class ModelValidationTest extends BaseModelTest {
 				),
 			),
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -2376,7 +2374,7 @@ class ModelValidationTest extends BaseModelTest {
 				),
 			),
 		);
-		$this->assertEquals($result, $expected);
+		$this->assertEquals($expected, $result);
 	}
 
 }

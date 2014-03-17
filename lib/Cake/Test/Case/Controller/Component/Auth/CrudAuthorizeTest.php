@@ -2,8 +2,6 @@
 /**
  * CrudAuthorizeTest file
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -39,6 +37,7 @@ class CrudAuthorizeTest extends CakeTestCase {
 	public function setUp() {
 		parent::setUp();
 		Configure::write('Routing.prefixes', array());
+		Router::reload();
 
 		$this->Acl = $this->getMock('AclComponent', array(), array(), '', false);
 		$this->Components = $this->getMock('ComponentCollection');

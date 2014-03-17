@@ -2,8 +2,6 @@
 /**
  * CakeBaseReporter contains common functionality to all cake test suite reporters.
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -111,7 +109,7 @@ class CakeBaseReporter extends PHPUnit_TextUI_ResultPrinter {
 /**
  * Get the baseUrl if one is available.
  *
- * @return string The base url for the request.
+ * @return string The base URL for the request.
  */
 	public function baseUrl() {
 		if (!empty($_SERVER['PHP_SELF'])) {

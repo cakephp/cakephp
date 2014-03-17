@@ -2,8 +2,6 @@
 /**
  * JqueryEngineTestCase
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -218,6 +216,17 @@ class JqueryEngineHelperTest extends CakeTestCase {
 			'data' => '$("#someId").serialize()',
 		));
 		$expected = '$.ajax({beforeSend:function (XMLHttpRequest) {doBefore}, data:$("#someId").serialize(), success:function (data, textStatus) {doFoo}, type:"post", url:"\\/people\\/edit\\/1"});';
+		$this->assertEquals($expected, $result);
+
+		$result = $this->Jquery->request('/people/edit/1', array(
+			'success' => 'doFoo',
+			'xhr' => 'return jQuery.ajaxSettings.xhr();',
+			'async' => true,
+			'method' => 'post',
+			'dataExpression' => true,
+			'data' => '$("#someId").serialize()',
+		));
+		$expected = '$.ajax({async:true, data:$("#someId").serialize(), success:function (data, textStatus) {doFoo}, type:"post", url:"\/people\/edit\/1", xhr:function () {return jQuery.ajaxSettings.xhr();}});';
 		$this->assertEquals($expected, $result);
 	}
 

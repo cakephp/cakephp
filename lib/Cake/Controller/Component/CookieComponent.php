@@ -2,8 +2,6 @@
 /**
  * Cookie Component
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -112,7 +110,7 @@ class CookieComponent extends Component {
  * HTTP only cookie
  *
  * Set to true to make HTTP only cookies. Cookies that are HTTP only
- * are not accessible in Javascript.
+ * are not accessible in JavaScript.
  *
  * @var boolean
  */
@@ -219,7 +217,7 @@ class CookieComponent extends Component {
 			$this->read();
 		}
 
-		if (is_null($encrypt)) {
+		if ($encrypt === null) {
 			$encrypt = true;
 		}
 		$this->_encrypted = $encrypt;
@@ -230,17 +228,27 @@ class CookieComponent extends Component {
 		}
 
 		foreach ($key as $name => $value) {
-			if (strpos($name, '.') === false) {
-				$this->_values[$this->name][$name] = $value;
-				$this->_write("[$name]", $value);
-			} else {
+			$names = array($name);
+			if (strpos($name, '.') !== false) {
 				$names = explode('.', $name, 2);
-				if (!isset($this->_values[$this->name][$names[0]])) {
-					$this->_values[$this->name][$names[0]] = array();
-				}
-				$this->_values[$this->name][$names[0]] = Hash::insert($this->_values[$this->name][$names[0]], $names[1], $value);
-				$this->_write('[' . implode('][', $names) . ']', $value);
 			}
+			$firstName = $names[0];
+			$isMultiValue = (is_array($value) || count($names) > 1);
+
+			if (!isset($this->_values[$this->name][$firstName]) && $isMultiValue) {
+				$this->_values[$this->name][$firstName] = array();
+			}
+
+			if (count($names) > 1) {
+				$this->_values[$this->name][$firstName] = Hash::insert(
+					$this->_values[$this->name][$firstName],
+					$names[1],
+					$value
+				);
+			} else {
+				$this->_values[$this->name][$firstName] = $value;
+			}
+			$this->_write('[' . $firstName . ']', $this->_values[$this->name][$firstName]);
 		}
 		$this->_encrypted = true;
 	}
@@ -262,7 +270,7 @@ class CookieComponent extends Component {
 		if (empty($this->_values[$this->name])) {
 			$this->_values[$this->name] = array();
 		}
-		if (is_null($key)) {
+		if ($key === null) {
 			return $this->_values[$this->name];
 		}
 
@@ -297,10 +305,16 @@ class CookieComponent extends Component {
  * Delete a cookie value
  *
  * Optional [Name.], required key
- * $this->Cookie->read('Name.key);
+ * $this->Cookie->delete('Name.key);
  *
  * You must use this method before any output is sent to the browser.
  * Failure to do so will result in header already sent errors.
+ *
+ * This method will delete both the top level and 2nd level cookies set.
+ * For example assuming that $name = App, deleting `User` will delete
+ * both `App[User]` and any other cookie values like `App[User][email]`
+ * This is done to clean up cookie storage from before 2.4.3, where cookies
+ * were stored inconsistently.
  *
  * @param string $key Key of the value to be deleted
  * @return void
@@ -387,7 +401,7 @@ class CookieComponent extends Component {
  * @return integer Unix timestamp
  */
 	protected function _expire($expires = null) {
-		if (is_null($expires)) {
+		if ($expires === null) {
 			return $this->_expires;
 		}
 		$this->_reset = $this->_expires;
@@ -518,7 +532,7 @@ class CookieComponent extends Component {
 		$first = substr($string, 0, 1);
 		if ($first === '{' || $first === '[') {
 			$ret = json_decode($string, true);
-			return ($ret) ? $ret : $string;
+			return ($ret !== null) ? $ret : $string;
 		}
 		$array = array();
 		foreach (explode(',', $string) as $pair) {

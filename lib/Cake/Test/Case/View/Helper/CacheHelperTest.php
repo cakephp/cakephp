@@ -2,8 +2,6 @@
 /**
  * CacheHelperTest file
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -515,7 +513,7 @@ class CacheHelperTest extends CakeTestCase {
  *
  * This test verifies view cache is created correctly when the app name is contained in part of the controller name.
  * (webapp Name) base name is 'cache' controller is 'cacheTest' action is 'cache_name'
- * apps url would look something like http://localhost/cache/cacheTest/cache_name
+ * apps URL would look something like http://localhost/cache/cacheTest/cache_name
  *
  * @return void
  */

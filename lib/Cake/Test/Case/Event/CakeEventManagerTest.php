@@ -4,8 +4,6 @@
  *
  * Test Case for ControllerTestCase class
  *
- * PHP 5
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -68,7 +66,7 @@ class CakeEventTestListener {
  *
  * @package Cake.Test.Case.Event
  */
-class CustomTestEventListerner extends CakeEventTestListener implements CakeEventListener {
+class CustomTestEventListener extends CakeEventTestListener implements CakeEventListener {
 
 	public function implementedEvents() {
 		return array(
@@ -325,7 +323,7 @@ class CakeEventManagerTest extends CakeTestCase {
  */
 	public function testAttachSubscriber() {
 		$manager = new CakeEventManager;
-		$listener = $this->getMock('CustomTestEventListerner', array('secondListenerFunction'));
+		$listener = $this->getMock('CustomTestEventListener', array('secondListenerFunction'));
 		$manager->attach($listener);
 		$event = new CakeEvent('fake.event');
 
@@ -339,7 +337,7 @@ class CakeEventManagerTest extends CakeTestCase {
 		$manager->dispatch($event);
 
 		$manager = new CakeEventManager;
-		$listener = $this->getMock('CustomTestEventListerner', array('listenerFunction', 'thirdListenerFunction'));
+		$listener = $this->getMock('CustomTestEventListener', array('listenerFunction', 'thirdListenerFunction'));
 		$manager->attach($listener);
 		$event = new CakeEvent('multiple.handlers');
 		$listener->expects($this->once())->method('listenerFunction')->with($event);
@@ -354,7 +352,7 @@ class CakeEventManagerTest extends CakeTestCase {
  */
 	public function testDetachSubscriber() {
 		$manager = new CakeEventManager;
-		$listener = $this->getMock('CustomTestEventListerner', array('secondListenerFunction'));
+		$listener = $this->getMock('CustomTestEventListener', array('secondListenerFunction'));
 		$manager->attach($listener);
 		$expected = array(
 			array('callable' => array($listener, 'secondListenerFunction'), 'passParams' => true)

@@ -4,8 +4,6 @@
  *
  * Allows templating of Controllers generated from bake.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -76,7 +74,7 @@ class <?php echo $controllerName; ?>Controller extends <?php echo $plugin; ?>App
 		echo ");\n\n";
 	endif;
 
-	echo trim($actions) . "\n";
+	echo trim($actions);
 
 endif; ?>
 }

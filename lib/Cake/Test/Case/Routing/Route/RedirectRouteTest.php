@@ -2,8 +2,6 @@
 /**
  * CakeRequest Test case file.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -103,6 +101,22 @@ class RedirectRouteTest extends CakeTestCase {
 		$result = $route->parse('/my_controllers/do_something/passme/named:param');
 		$header = $route->response->header();
 		$this->assertEquals(Router::url('/tags/add', true), $header['Location']);
+
+		$route = new RedirectRoute('/:lang/my_controllers', array('controller' => 'tags', 'action' => 'add'), array('lang' => '(nl|en)', 'persist' => array('lang')));
+		$route->stop = false;
+		$route->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$result = $route->parse('/nl/my_controllers/');
+		$header = $route->response->header();
+		$this->assertEquals(Router::url('/tags/add/lang:nl', true), $header['Location']);
+
+		Router::$routes = array(); // reset default routes
+		Router::connect('/:lang/preferred_controllers', array('controller' => 'tags', 'action' => 'add'), array('lang' => '(nl|en)', 'persist' => array('lang')));
+		$route = new RedirectRoute('/:lang/my_controllers', array('controller' => 'tags', 'action' => 'add'), array('lang' => '(nl|en)', 'persist' => array('lang')));
+		$route->stop = false;
+		$route->response = $this->getMock('CakeResponse', array('_sendHeader'));
+		$result = $route->parse('/nl/my_controllers/');
+		$header = $route->response->header();
+		$this->assertEquals(Router::url('/nl/preferred_controllers', true), $header['Location']);
 	}
 
 }

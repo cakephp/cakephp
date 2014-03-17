@@ -2,8 +2,6 @@
 /**
  * Core Security
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -87,7 +85,7 @@ class Security {
  * you ensuring that each hashed password will have a *unique* salt.
  * - Comparing Hashes: Simply pass the originally hashed password as the salt.
  * The salt is prepended to the hash and php handles the parsing automagically.
- * For convenience the BlowfishAuthenticate adapter is available for use with
+ * For convenience the `BlowfishPasswordHasher` class is available for use with
  * the AuthComponent.
  * - Do NOT use a constant salt for blowfish!
  *
@@ -103,6 +101,7 @@ class Security {
  *     value to $string (Security.salt). If you are using blowfish the salt
  *     must be false or a previously generated salt.
  * @return string Hash
+ * @link http://book.cakephp.org/2.0/en/core-utility-libraries/security.html#Security::hash
  */
 	public static function hash($string, $type = null, $salt = false) {
 		if (empty($type)) {
@@ -180,11 +179,11 @@ class Security {
  * @param string $text Encrypted string to decrypt, normal string to encrypt
  * @param string $key Key to use
  * @return string Encrypted/Decrypted string
- * @deprecated This method will be removed in 3.x
+ * @deprecated Will be removed in 3.0.
  */
 	public static function cipher($text, $key) {
 		if (empty($key)) {
-			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::cipher()'), E_USER_WARNING);
+			trigger_error(__d('cake_dev', 'You cannot use an empty key for %s', 'Security::cipher()'), E_USER_WARNING);
 			return '';
 		}
 
@@ -217,7 +216,7 @@ class Security {
  */
 	public static function rijndael($text, $key, $operation) {
 		if (empty($key)) {
-			trigger_error(__d('cake_dev', 'You cannot use an empty key for Security::rijndael()'), E_USER_WARNING);
+			trigger_error(__d('cake_dev', 'You cannot use an empty key for %s', 'Security::rijndael()'), E_USER_WARNING);
 			return '';
 		}
 		if (empty($operation) || !in_array($operation, array('encrypt', 'decrypt'))) {

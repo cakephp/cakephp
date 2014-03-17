@@ -2,8 +2,6 @@
 /**
  * The ControllerTask handles creating and updating controller files.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -112,6 +110,7 @@ class ControllerTask extends BakeTask {
 			$admin = $this->Project->getPrefix();
 		}
 
+		$controllersCreated = 0;
 		foreach ($this->__tables as $table) {
 			$model = $this->_modelName($table);
 			$controller = $this->_controllerName($model);
@@ -125,7 +124,12 @@ class ControllerTask extends BakeTask {
 				if ($this->bake($controller, $actions) && $unitTestExists) {
 					$this->bakeTest($controller);
 				}
+				$controllersCreated++;
 			}
+		}
+
+		if (!$controllersCreated) {
+			$this->out(__d('cake_console', 'No Controllers were baked, Models need to exist before Controllers can be baked.'));
 		}
 	}
 
@@ -180,6 +184,10 @@ class ControllerTask extends BakeTask {
 				$wannaUseSession = $this->in(
 					__d('cake_console', "Would you like to use Session flash messages?"), array('y', 'n'), 'y'
 				);
+
+				if (strtolower($wannaUseSession) === 'y') {
+					array_push($components, 'Session');
+				}
 			}
 		} else {
 			list($wannaBakeCrud, $wannaBakeAdminCrud) = $this->_askAboutMethods();
@@ -407,7 +415,7 @@ class ControllerTask extends BakeTask {
  * @return array Set of controllers
  */
 	public function listAll($useDbConfig = null) {
-		if (is_null($useDbConfig)) {
+		if ($useDbConfig === null) {
 			$useDbConfig = $this->connection;
 		}
 		$this->__tables = $this->Model->getAllTables($useDbConfig);
@@ -480,6 +488,12 @@ class ControllerTask extends BakeTask {
 			))->addOption('connection', array(
 				'short' => 'c',
 				'help' => __d('cake_console', 'The connection the controller\'s model is on.')
+			))->addOption('theme', array(
+				'short' => 't',
+				'help' => __d('cake_console', 'Theme to use when baking code.')
+			))->addOption('force', array(
+				'short' => 'f',
+				'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 			))->addSubcommand('all', array(
 				'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
 			))->epilog(__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.'));

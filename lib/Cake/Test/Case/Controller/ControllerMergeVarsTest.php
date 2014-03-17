@@ -4,8 +4,6 @@
  *
  * Isolated from the Controller and Component test as to not pollute their AppController class
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -94,7 +92,7 @@ class MergeVarPluginAppController extends MergeVarsAppController {
  *
  * @var array
  */
-	public $helpers = array('Javascript');
+	public $helpers = array('Js');
 
 /**
  * parent for mergeVars
@@ -118,7 +116,6 @@ class MergePostsController extends MergeVarPluginAppController {
  */
 	public $uses = array();
 }
-
 
 /**
  * Test Case for Controller Merging of Vars.
@@ -206,7 +203,7 @@ class ControllerMergeVarsTest extends CakeTestCase {
 
 		$expected = array(
 			'MergeVar' => array('format' => 'html', 'terse'),
-			'Javascript' => null
+			'Js' => null
 		);
 		$this->assertEquals($expected, $Controller->helpers, 'Helpers are unexpected.');
 
@@ -240,11 +237,12 @@ class ControllerMergeVarsTest extends CakeTestCase {
 /**
  * Ensure that $modelClass is correct even when Controller::$uses
  * has been iterated, eg: by a Component, or event handlers.
+ *
+ * @return void
  */
 	public function testMergeVarsModelClass() {
 		$Controller = new MergeVariablescontroller();
 		$Controller->uses = array('Test', 'TestAlias');
-		$lastModel = end($Controller->uses);
 		$Controller->constructClasses();
 		$this->assertEquals($Controller->uses[0], $Controller->modelClass);
 	}

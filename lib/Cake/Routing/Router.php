@@ -2,8 +2,6 @@
 /**
  * Parses the request URL into controller, action, and parameters.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -57,6 +55,14 @@ class Router {
 	public static $initialized = false;
 
 /**
+ * Contains the base string that will be applied to all generated URLs
+ * For example `https://example.com`
+ *
+ * @var string
+ */
+	protected static $_fullBaseUrl;
+
+/**
  * List of action prefixes used in connected routes.
  * Includes admin prefix
  *
@@ -72,21 +78,52 @@ class Router {
 	protected static $_parseExtensions = false;
 
 /**
- * List of valid extensions to parse from an URL. If null, any extension is allowed.
+ * List of valid extensions to parse from a URL. If null, any extension is allowed.
  *
  * @var array
  */
 	protected static $_validExtensions = array();
 
 /**
- * 'Constant' regular expression definitions for named route elements
+ * Regular expression for action names
  *
+ * @var string
  */
 	const ACTION = 'index|show|add|create|edit|update|remove|del|delete|view|item';
+
+/**
+ * Regular expression for years
+ *
+ * @var string
+ */
 	const YEAR = '[12][0-9]{3}';
+
+/**
+ * Regular expression for months
+ *
+ * @var string
+ */
 	const MONTH = '0[1-9]|1[012]';
+
+/**
+ * Regular expression for days
+ *
+ * @var string
+ */
 	const DAY = '0[1-9]|[12][0-9]|3[01]';
+
+/**
+ * Regular expression for auto increment IDs
+ *
+ * @var string
+ */
 	const ID = '[0-9]+';
+
+/**
+ * Regular expression for UUIDs
+ *
+ * @var string
+ */
 	const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
 /**
@@ -175,7 +212,7 @@ class Router {
  * @throws RouterException
  */
 	public static function defaultRouteClass($routeClass = null) {
-		if (is_null($routeClass)) {
+		if ($routeClass === null) {
 			return self::$_routeClass;
 		}
 
@@ -239,19 +276,19 @@ class Router {
  * Connects a new Route in the router.
  *
  * Routes are a way of connecting request URLs to objects in your application. At their core routes
- * are a set or regular expressions that are used to match requests to destinations.
+ * are a set of regular expressions that are used to match requests to destinations.
  *
  * Examples:
  *
  * `Router::connect('/:controller/:action/*');`
  *
- * The first parameter will be used as a controller name while the second is used as the action name.
+ * The first token ':controller' will be used as a controller name while the second is used as the action name.
  * the '/*' syntax makes this route greedy in that it will match requests like `/posts/index` as well as requests
  * like `/posts/edit/1/foo/bar`.
  *
  * `Router::connect('/home-page', array('controller' => 'pages', 'action' => 'display', 'home'));`
  *
- * The above shows the use of route parameter defaults. And providing routing parameters for a static route.
+ * The above shows the use of route parameter defaults, and providing routing parameters for a static route.
  *
  * {{{
  * Router::connect(
@@ -264,13 +301,16 @@ class Router {
  * Shows connecting a route with custom route parameters as well as providing patterns for those parameters.
  * Patterns for routing parameters do not need capturing groups, as one will be added for each route params.
  *
+ * $defaults is merged with the results of parsing the request URL to form the final routing destination and its
+ * parameters. This destination is expressed as an associative array by Router. See the output of {@link parse()}.
+ *
  * $options offers four 'special' keys. `pass`, `named`, `persist` and `routeClass`
  * have special meaning in the $options array.
  *
  * - `pass` is used to define which of the routed parameters should be shifted into the pass array. Adding a
  *   parameter to pass will remove it from the regular route array. Ex. `'pass' => array('slug')`
  * - `persist` is used to define which route parameters should be automatically included when generating
- *   new URLs. You can override persistent parameters by redefining them in an URL or remove them by
+ *   new URLs. You can override persistent parameters by redefining them in a URL or remove them by
  *   setting the parameter to `false`. Ex. `'persist' => array('lang')`
  * - `routeClass` is used to extend and change how individual routes parse requests and handle reverse routing,
  *   via a custom routing class. Ex. `'routeClass' => 'SlugRoute'`
@@ -298,6 +338,7 @@ class Router {
  *   shifted into the passed arguments, supplying patterns for routing parameters and supplying the name of a
  *   custom routing class.
  * @see routes
+ * @see parse().
  * @return array Array of routes
  * @throws RouterException
  */
@@ -351,7 +392,7 @@ class Router {
  * `Router::redirect('/home/*', array('controller' => 'posts', 'action' => 'view'), array('persist' => true));`
  *
  * Redirects /home/* to /posts/view and passes the parameters to /posts/view. Using an array as the
- * redirect destination allows you to use other routes to define where an URL string should be redirected to.
+ * redirect destination allows you to use other routes to define where a URL string should be redirected to.
  *
  * `Router::redirect('/posts/*', 'http://google.com', array('status' => 302));`
  *
@@ -364,7 +405,7 @@ class Router {
  *   routes that end in `*` are greedy. As you can remap URLs and not loose any passed/named args.
  *
  * @param string $route A string describing the template of the route
- * @param array $url An URL to redirect to. Can be a string or a Cake array-based URL
+ * @param array $url A URL to redirect to. Can be a string or a CakePHP array-based URL
  * @param array $options An array matching the named elements in the route to regular expressions which that
  *   element should match. Also contains additional parameters such as which routed parameters should be
  *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
@@ -497,6 +538,12 @@ class Router {
 		), $options);
 
 		$prefix = $options['prefix'];
+		if (strpos($prefix, '/') !== 0) {
+			$prefix = '/' . $prefix;
+		}
+		if (substr($prefix, -1) !== '/') {
+			$prefix .= '/';
+		}
 
 		foreach ((array)$controller as $name) {
 			list($plugin, $name) = pluginSplit($name);
@@ -534,7 +581,7 @@ class Router {
 	}
 
 /**
- * Parses given URL string. Returns 'routing' parameters for that url.
+ * Parses given URL string. Returns 'routing' parameters for that URL.
  *
  * @param string $url URL to be parsed
  * @return array Parsed elements from URL
@@ -551,7 +598,8 @@ class Router {
 			$url = '/' . $url;
 		}
 		if (strpos($url, '?') !== false) {
-			$url = substr($url, 0, strpos($url, '?'));
+			list($url, $queryParameters) = explode('?', $url, 2);
+			parse_str($queryParameters, $queryParameters);
 		}
 
 		extract(self::_parseExtension($url));
@@ -572,11 +620,15 @@ class Router {
 		if (!empty($ext) && !isset($out['ext'])) {
 			$out['ext'] = $ext;
 		}
+
+		if (!empty($queryParameters) && !isset($out['?'])) {
+			$out['?'] = $queryParameters;
+		}
 		return $out;
 	}
 
 /**
- * Parses a file extension out of an URL, if Router::parseExtensions() is enabled.
+ * Parses a file extension out of a URL, if Router::parseExtensions() is enabled.
  *
  * @param string $url
  * @return array Returns an array containing the altered URL and the parsed extension.
@@ -606,7 +658,7 @@ class Router {
 
 /**
  * Takes parameter and path information back from the Dispatcher, sets these
- * parameters as the current request parameters that are merged with url arrays
+ * parameters as the current request parameters that are merged with URL arrays
  * created later in the request.
  *
  * Nested requests will create a stack of requests. You can remove requests using
@@ -745,7 +797,7 @@ class Router {
 /**
  * Finds URL for specified action.
  *
- * Returns an URL pointing to a combination of controller and action. Param
+ * Returns a URL pointing to a combination of controller and action. Param
  * $url can be:
  *
  * - Empty - the method will find address to actual controller/action.
@@ -754,18 +806,18 @@ class Router {
  *
  * There are a few 'special' parameters that can change the final URL string that is generated
  *
- * - `base` - Set to false to remove the base path from the generated url. If your application
+ * - `base` - Set to false to remove the base path from the generated URL. If your application
  *   is not in the root directory, this can be used to generate URLs that are 'cake relative'.
  *   cake relative URLs are required when using requestAction.
  * - `?` - Takes an array of query string parameters
  * - `#` - Allows you to set URL hash fragments.
- * - `full_base` - If true the `FULL_BASE_URL` constant will be prepended to generated URLs.
+ * - `full_base` - If true the `Router::fullBaseUrl()` value will be prepended to generated URLs.
  *
  * @param string|array $url Cake-relative URL, like "/products/edit/92" or "/presidents/elect/4"
  *   or an array specifying any of the following: 'controller', 'action',
  *   and/or 'plugin', in addition to named arguments (keyed array elements),
  *   and standard URL arguments (indexed array elements)
- * @param bool|array $full If (bool) true, the full base URL will be prepended to the result.
+ * @param boolean|array $full If (bool) true, the full base URL will be prepended to the result.
  *   If an array accepts the following keys
  *    - escape - used when making URLs embedded in html escapes query string '&'
  *    - full - if true the full base URL will be prepended.
@@ -790,14 +842,17 @@ class Router {
 			$params = $request->params;
 			$path = array('base' => $request->base, 'here' => $request->here);
 		}
+		if (empty($path['base'])) {
+			$path['base'] = Configure::read('App.base');
+		}
 
 		$base = $path['base'];
 		$extension = $output = $q = $frag = null;
 
 		if (empty($url)) {
 			$output = isset($path['here']) ? $path['here'] : '/';
-			if ($full && defined('FULL_BASE_URL')) {
-				$output = FULL_BASE_URL . $output;
+			if ($full) {
+				$output = self::fullBaseUrl() . $output;
 			}
 			return $output;
 		} elseif (is_array($url)) {
@@ -860,7 +915,7 @@ class Router {
 				$output = self::_handleNoRoute($url);
 			}
 		} else {
-			if (preg_match('/:\/\/|^(javascript|mailto|tel|sms):|^\#/i', $url)) {
+			if (preg_match('/^([a-z][a-z0-9.+\-]+:|:?\/\/|[#?])/i', $url)) {
 				return $url;
 			}
 			if (substr($url, 0, 1) === '/') {
@@ -878,12 +933,12 @@ class Router {
 				$output .= Inflector::underscore($params['controller']) . '/' . $url;
 			}
 		}
-		$protocol = preg_match('#^[a-z][a-z0-9+-.]*\://#i', $output);
+		$protocol = preg_match('#^[a-z][a-z0-9+\-.]*\://#i', $output);
 		if ($protocol === 0) {
 			$output = str_replace('//', '/', $base . '/' . $output);
 
-			if ($full && defined('FULL_BASE_URL')) {
-				$output = FULL_BASE_URL . $output;
+			if ($full) {
+				$output = self::fullBaseUrl() . $output;
 			}
 			if (!empty($extension)) {
 				$output = rtrim($output, '/');
@@ -893,10 +948,36 @@ class Router {
 	}
 
 /**
+ * Sets the full base URL that will be used as a prefix for generating
+ * fully qualified URLs for this application. If no parameters are passed,
+ * the currently configured value is returned.
+ *
+ * ## Note:
+ *
+ * If you change the configuration value ``App.fullBaseUrl`` during runtime
+ * and expect the router to produce links using the new setting, you are
+ * required to call this method passing such value again.
+ *
+ * @param string $base the prefix for URLs generated containing the domain.
+ * For example: ``http://example.com``
+ * @return string
+ */
+	public static function fullBaseUrl($base = null) {
+		if ($base !== null) {
+			self::$_fullBaseUrl = $base;
+			Configure::write('App.fullBaseUrl', $base);
+		}
+		if (empty(self::$_fullBaseUrl)) {
+			self::$_fullBaseUrl = Configure::read('App.fullBaseUrl');
+		}
+		return self::$_fullBaseUrl;
+	}
+
+/**
  * A special fallback method that handles URL arrays that cannot match
  * any defined routes.
  *
- * @param array $url An URL that didn't match any routes
+ * @param array $url A URL that didn't match any routes
  * @return string A generated URL for the array
  * @see Router::url()
  */
@@ -1043,7 +1124,7 @@ class Router {
 	}
 
 /**
- * Normalizes an URL for purposes of comparison.
+ * Normalizes a URL for purposes of comparison.
  *
  * Will strip the base path off and replace any double /'s.
  * It will not unify the casing and underscoring of the input value.
@@ -1100,7 +1181,7 @@ class Router {
  *
  * @param string $base Base URL
  * @param string $plugin Plugin name
- * @return string base url with plugin name removed if present
+ * @return string base URL with plugin name removed if present
  */
 	public static function stripPlugin($base, $plugin = null) {
 		if ($plugin) {

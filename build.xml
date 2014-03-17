@@ -29,6 +29,9 @@
 		<exclude name="Console/cake.bat" />
 		<exclude name="Console/cake.php" />
 		<exclude name="Console/cake" />
+		<exclude name="Test/bake_compare/**" />
+		<exclude name="Test/Case/**" />
+		<exclude name="Test/test_app/**" />
 	</fileset>
 
 	<!--
@@ -38,10 +41,6 @@
 		<include name="cake.bat" />
 		<include name="cake.php" />
 		<include name="cake" />
-	</fileset>
-
-	<fileset id="non-tests" dir="./lib/Cake">
-		<exclude name=".lib/Cake/Test" />
 	</fileset>
 
 	<!-- start fresh each time.  Remove the dist and build dirs -->
@@ -140,14 +139,13 @@
 				<package name="PHPUnit" channel="pear.phpunit.de" minimum_version="3.5.0" type="optional" />
 			</dependencies>
 			<dirroles key="bin">script</dirroles>
-			<dirroles key="Cake/Test">php</dirroles>
 			<dirroles key="Cake/Console/Templates/skel">php</dirroles>
 			<dirroles key="Cake/Console/Templates/default">php</dirroles>
 			<dirroles key="Cake/View">php</dirroles>
 			<release>
-				<install as="cake" name="bin/cake" />
-				<install as="cake.php" name="bin/cake.php" />
 				<install as="cake.bat" name="bin/cake.bat" />
+				<install as="cake.php" name="bin/cake.php" />
+				<install as="cake" name="bin/cake" />
 			</release>
 			<exceptions key="Cake/VERSION.txt">php</exceptions>
 			<exceptions key="Cake/LICENSE.txt">php</exceptions>
@@ -244,11 +242,11 @@
 			<formatter type="pmd" outfile="pmd-cpd.xml"/>
 		</phpcpd>
 		<phpdepend>
-			<fileset refid="non-tests" />
+			<fileset refid="libs" />
 			<logger type="jdepend-xml" outfile="jdepend.xml"/>
 		</phpdepend>
 		<phpmd rulesets="codesize,unusedcode,design">
-			<fileset refid="non-tests" />
+			<fileset refid="libs" />
 			<formatter type="xml" outfile="reports/pmd.html"/>
 		</phpmd>
 	</target>

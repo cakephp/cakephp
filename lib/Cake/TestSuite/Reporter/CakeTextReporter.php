@@ -2,8 +2,6 @@
 /**
  * CakeTextReporter contains reporting features used for plain text based output
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -141,7 +139,7 @@ class CakeTextReporter extends CakeBaseReporter {
 
 /**
  * Generate a test case list in plain text.
- * Creates as series of url's for tests that can be run.
+ * Creates as series of URLs for tests that can be run.
  * One case per line.
  *
  * @return void
@@ -152,16 +150,13 @@ class CakeTextReporter extends CakeBaseReporter {
 		$plugin = $this->params['plugin'];
 
 		$buffer = "Core Test Cases:\n";
-		$urlExtra = '';
 		if ($app) {
 			$buffer = "App Test Cases:\n";
-			$urlExtra = '&app=true';
 		} elseif ($plugin) {
 			$buffer = Inflector::humanize($plugin) . " Test Cases:\n";
-			$urlExtra = '&plugin=' . $plugin;
 		}
 
-		if (1 > count($testCases)) {
+		if (count($testCases) < 1) {
 			$buffer .= 'EMPTY';
 			echo $buffer;
 		}

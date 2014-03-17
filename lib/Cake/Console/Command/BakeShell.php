@@ -6,8 +6,6 @@
  * application development by writing fully functional skeleton controllers,
  * models, and views. Going further, Bake can also write Unit Tests for you.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -245,6 +243,9 @@ class BakeShell extends AppShell {
 			'help' => __d('cake_console', 'Database connection to use in conjunction with `bake all`.'),
 			'short' => 'c',
 			'default' => 'default'
+		))->addOption('theme', array(
+			'short' => 't',
+			'help' => __d('cake_console', 'Theme to use when baking code.')
 		));
 	}
 

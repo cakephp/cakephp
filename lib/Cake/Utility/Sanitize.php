@@ -4,8 +4,6 @@
  *
  * Helpful methods to make unsafe strings usable.
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -20,7 +18,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-App::import('Model', 'ConnectionManager');
+App::uses('ConnectionManager', 'Model');
 
 /**
  * Data Sanitization.
@@ -29,6 +27,7 @@ App::import('Model', 'ConnectionManager');
  * and all of the above on arrays.
  *
  * @package       Cake.Utility
+ * @deprecated    Deprecated since version 2.4
  */
 class Sanitize {
 

@@ -2,8 +2,6 @@
 /**
  * ErrorHandlerTest file
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -195,8 +193,6 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	public function testHandleException() {
-		$this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.');
-
 		$error = new NotFoundException('Kaboom!');
 		ob_start();
 		ErrorHandler::handleException($error);
@@ -210,8 +206,6 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	public function testHandleExceptionLog() {
-		$this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.');
-
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}
@@ -224,8 +218,37 @@ class ErrorHandlerTest extends CakeTestCase {
 		$this->assertRegExp('/Kaboom!/', $result, 'message missing.');
 
 		$log = file(LOGS . 'error.log');
-		$this->assertRegExp('/\[NotFoundException\] Kaboom!/', $log[0], 'message missing.');
-		$this->assertRegExp('/\#0.*ErrorHandlerTest->testHandleExceptionLog/', $log[2], 'Stack trace missing.');
+		$this->assertContains('[NotFoundException] Kaboom!', $log[0], 'message missing.');
+		$this->assertContains('ErrorHandlerTest->testHandleExceptionLog', $log[2], 'Stack trace missing.');
+	}
+
+/**
+ * test handleException generating log.
+ *
+ * @return void
+ */
+	public function testHandleExceptionLogSkipping() {
+		if (file_exists(LOGS . 'error.log')) {
+			unlink(LOGS . 'error.log');
+		}
+		Configure::write('Exception.log', true);
+		Configure::write('Exception.skipLog', array('NotFoundException'));
+		$notFound = new NotFoundException('Kaboom!');
+		$forbidden = new ForbiddenException('Fooled you!');
+
+		ob_start();
+		ErrorHandler::handleException($notFound);
+		$result = ob_get_clean();
+		$this->assertRegExp('/Kaboom!/', $result, 'message missing.');
+
+		ob_start();
+		ErrorHandler::handleException($forbidden);
+		$result = ob_get_clean();
+		$this->assertRegExp('/Fooled you!/', $result, 'message missing.');
+
+		$log = file(LOGS . 'error.log');
+		$this->assertNotContains('[NotFoundException] Kaboom!', $log[0], 'message should not be logged.');
+		$this->assertContains('[ForbiddenException] Fooled you!', $log[0], 'message missing.');
 	}
 
 /**
@@ -257,8 +280,6 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	public function testHandleFatalErrorPage() {
-		$this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.');
-
 		$line = __LINE__;
 
 		ob_start();
@@ -286,8 +307,6 @@ class ErrorHandlerTest extends CakeTestCase {
  * @return void
  */
 	public function testHandleFatalErrorLog() {
-		$this->skipIf(file_exists(APP . 'app_error.php'), 'App error exists cannot run.');
-
 		if (file_exists(LOGS . 'error.log')) {
 			unlink(LOGS . 'error.log');
 		}

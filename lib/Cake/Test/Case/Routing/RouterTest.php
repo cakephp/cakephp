@@ -2,13 +2,12 @@
 /**
  * RouterTest file
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
- *	Licensed under The Open Group Test Suite License
- *	Redistributions of files must retain the above copyright notice.
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://book.cakephp.org/2.0/en/development/testing.html CakePHP(tm) Tests
@@ -49,22 +48,47 @@ class RouterTest extends CakeTestCase {
 	public function tearDown() {
 		parent::tearDown();
 		CakePlugin::unload();
+		Router::fullBaseUrl('');
+		Configure::write('App.fullBaseUrl', 'http://localhost');
 	}
 
 /**
- * testFullBaseURL method
+ * testFullBaseUrl method
  *
  * @return void
  */
-	public function testFullBaseURL() {
-		$skip = PHP_SAPI === 'cli';
-		if ($skip) {
-			$this->markTestSkipped('Cannot validate base URLs in CLI');
-		}
+	public function testFullBaseUrl() {
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url('/', true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(null, true));
 		$this->assertRegExp('/^http(s)?:\/\//', Router::url(array('full_base' => true)));
 		$this->assertSame(FULL_BASE_URL . '/', Router::url(array('full_base' => true)));
+	}
+
+/**
+ * Tests that the base URL can be changed at runtime.
+ *
+ * @return void
+ */
+	public function testBaseUrl() {
+		$this->assertEquals(FULL_BASE_URL, Router::fullBaseUrl());
+		Router::fullBaseUrl('http://example.com');
+		$this->assertEquals('http://example.com/', Router::url('/', true));
+		$this->assertEquals('http://example.com', Configure::read('App.fullBaseUrl'));
+		Router::fullBaseUrl('https://example.com');
+		$this->assertEquals('https://example.com/', Router::url('/', true));
+		$this->assertEquals('https://example.com', Configure::read('App.fullBaseUrl'));
+	}
+
+/**
+ * Test that Router uses App.base to build URL's when there are no stored
+ * request objects.
+ *
+ * @return void
+ */
+	public function testBaseUrlWithBasePath() {
+		Configure::write('App.base', '/cakephp');
+		Router::fullBaseUrl('http://example.com');
+		$this->assertEquals('http://example.com/cakephp/tasks', Router::url('/tasks', true));
 	}
 
 /**
@@ -191,6 +215,20 @@ class RouterTest extends CakeTestCase {
 		);
 		$this->assertEquals($expected, $result);
 		$this->assertEquals(array('test_plugin'), $resources);
+
+		$resources = Router::mapResources('Posts', array('prefix' => 'api'));
+
+		$_SERVER['REQUEST_METHOD'] = 'GET';
+		$result = Router::parse('/api/posts');
+		$expected = array(
+			'pass' => array(),
+			'named' => array(),
+			'plugin' => null,
+			'controller' => 'posts',
+			'action' => 'index',
+			'[method]' => 'GET'
+		);
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -639,7 +677,7 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * Test url generation with an admin prefix
+ * Test URL generation with an admin prefix
  *
  * @return void
  */
@@ -1053,6 +1091,12 @@ class RouterTest extends CakeTestCase {
 		$result = Router::parse('/posts/view/foo:bar/routing:fun/answer:42');
 		$expected = array('pass' => array(), 'named' => array('foo' => 'bar', 'routing' => 'fun', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view');
 		$this->assertEquals($expected, $result);
+
+		Router::reload();
+		Router::connect('/posts/view/*', array('controller' => 'posts', 'action' => 'view'), array('named' => array('foo', 'answer'), 'greedyNamed' => true));
+		$result = Router::parse('/posts/view/foo:bar/routing:fun/answer:42?id=123&tab=abc');
+		$expected = array('pass' => array(), 'named' => array('foo' => 'bar', 'routing' => 'fun', 'answer' => '42'), 'plugin' => null, 'controller' => 'posts', 'action' => 'view', '?' => array('id' => '123', 'tab' => 'abc'));
+		$this->assertEquals($expected, $result);
 	}
 
 /**
@@ -1167,6 +1211,33 @@ class RouterTest extends CakeTestCase {
 		$result = Router::url(array('admin' => null, 'plugin' => null, 'controller' => 'pages', 'action' => 'view', 'slug' => 'this_is_the_slug', 'extra' => 'some_extra'));
 		$expected = '/some_extra/page/this_is_the_slug';
 		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test parse and reverse symmetry
+ *
+ * @return void
+ * @dataProvider parseReverseSymmetryData
+ */
+	public function testParseReverseSymmetry($url) {
+		$this->assertSame($url, Router::reverse(Router::parse($url) + array('url' => array())));
+	}
+
+/**
+ * Data for parse and reverse test
+ *
+ * @return array
+ */
+	public function parseReverseSymmetryData() {
+		return array(
+			array('/'),
+			array('/controller/action'),
+			array('/controller/action/param'),
+			array('/controller/action?param1=value1&param2=value2'),
+			array('/controller/action/param?param1=value1'),
+			array('/controller/action/named1:nv1'),
+			array('/controller/action/named1:nv1?param1=value1')
+		);
 	}
 
 /**
@@ -1319,9 +1390,11 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/posts/view/1.rss?query=test');
+		$expected['?'] = array('query' => 'test');
 		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/posts/view/1.atom');
+		unset($expected['?']);
 		$expected['ext'] = 'atom';
 		$this->assertEquals($expected, $result);
 
@@ -1335,7 +1408,7 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals($expected, $result);
 
 		$result = Router::parse('/posts.atom?hello=goodbye');
-		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array(), 'named' => array());
+		$expected = array('plugin' => null, 'controller' => 'posts.atom', 'action' => 'index', 'pass' => array(), 'named' => array(), '?' => array('hello' => 'goodbye'));
 		$this->assertEquals($expected, $result);
 
 		Router::reload();
@@ -1535,7 +1608,7 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * test url generation with legacy (1.2) style prefix routes.
+ * Test URL generation with legacy (1.2) style prefix routes.
  *
  * @return void
  * @see testUrlGenerationWithAutoPrefixes
@@ -2199,14 +2272,12 @@ class RouterTest extends CakeTestCase {
 		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
 
 		// test that the first route is matched
-		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
 		Router::connect('/government', $url);
 		Router::parse('/government');
 		$route = Router::requestRoute();
 		$this->assertEquals(array_merge($url, array('plugin' => null)), $route->defaults);
 
 		// test that an unmatched route does not change the current route
-		$newUrl = array('controller' => 'products', 'action' => 'display', 6);
 		Router::connect('/actor', $url);
 		Router::parse('/government');
 		$route = Router::requestRoute();
@@ -2306,7 +2377,7 @@ class RouterTest extends CakeTestCase {
 			array('controller' => 'posts', 'action' => 'view'),
 			array('routeClass' => 'MockConnectedRoute', 'slug' => '[a-z_-]+')
 		);
-		$this->assertTrue(is_a($routes[0], 'MockConnectedRoute'), 'Incorrect class used. %s');
+		$this->assertInstanceOf('MockConnectedRoute', $routes[0], 'Incorrect class used. %s');
 		$expected = array('controller' => 'posts', 'action' => 'view', 'slug' => 'test');
 		$routes[0]->expects($this->any())
 			->method('parse')
@@ -2508,7 +2579,7 @@ class RouterTest extends CakeTestCase {
 	}
 
 /**
- * test that a route object returning a full url is not modified.
+ * test that a route object returning a full URL is not modified.
  *
  * @return void
  */
@@ -2542,6 +2613,9 @@ class RouterTest extends CakeTestCase {
 		$url = '://example.com';
 		$this->assertEquals($url, Router::url($url));
 
+		$url = '//example.com';
+		$this->assertEquals($url, Router::url($url));
+
 		$url = 'javascript:void(0)';
 		$this->assertEquals($url, Router::url($url));
 
@@ -2553,6 +2627,10 @@ class RouterTest extends CakeTestCase {
 
 		$url = '#here';
 		$this->assertEquals($url, Router::url($url));
+
+		$url = '?param=0';
+		$this->assertEquals($url, Router::url($url));
+
 		$url = 'posts/index#here';
 		$expected = FULL_BASE_URL . '/posts/index#here';
 		$this->assertEquals($expected, Router::url($url, true));
@@ -2598,7 +2676,7 @@ class RouterTest extends CakeTestCase {
 			array('action' => 'delete', 'method' => 'DELETE', 'id' => true),
 			array('action' => 'edit', 'method' => 'POST', 'id' => true)
 		);
-		$this->assertEquals($default, $expected);
+		$this->assertEquals($expected, $default);
 
 		$custom = array(
 			array('action' => 'index', 'method' => 'GET', 'id' => false),

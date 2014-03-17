@@ -2,8 +2,6 @@
 /**
  * Send mail using mail() function
  *
- * PHP 5
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -40,11 +38,17 @@ class MailTransport extends AbstractTransport {
 		$headers = $email->getHeaders(array('from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'bcc'));
 		$to = $headers['To'];
 		unset($headers['To']);
+		foreach ($headers as $key => $header) {
+			$headers[$key] = str_replace(array("\r", "\n"), '', $header);
+		}
 		$headers = $this->_headersToString($headers, $eol);
+		$subject = str_replace(array("\r", "\n"), '', $email->subject());
+		$to = str_replace(array("\r", "\n"), '', $to);
+
 		$message = implode($eol, $email->message());
 
 		$params = isset($this->_config['additionalParameters']) ? $this->_config['additionalParameters'] : null;
-		$this->_mail($to, $email->subject(), $message, $headers, $params);
+		$this->_mail($to, $subject, $message, $headers, $params);
 		return array('headers' => $headers, 'message' => $message);
 	}
 
@@ -63,11 +67,15 @@ class MailTransport extends AbstractTransport {
 		if (ini_get('safe_mode')) {
 			//@codingStandardsIgnoreStart
 			if (!@mail($to, $subject, $message, $headers)) {
-				throw new SocketException(__d('cake_dev', 'Could not send email.'));
+				$error = error_get_last();
+				$msg = 'Could not send email: ' . isset($error['message']) ? $error['message'] : 'unknown';
+				throw new SocketException($msg);
 			}
 		} elseif (!@mail($to, $subject, $message, $headers, $params)) {
+			$error = error_get_last();
+			$msg = 'Could not send email: ' . isset($error['message']) ? $error['message'] : 'unknown';
 			//@codingStandardsIgnoreEnd
-			throw new SocketException(__d('cake_dev', 'Could not send email.'));
+			throw new SocketException($msg);
 		}
 	}
 

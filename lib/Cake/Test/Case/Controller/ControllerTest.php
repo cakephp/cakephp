@@ -50,7 +50,6 @@ class ControllerTestAppController extends Controller {
 	public $components = array('Cookie');
 }
 
-
 /**
  * ControllerPost class
  *
@@ -483,8 +482,8 @@ class ControllerTest extends CakeTestCase {
 		$Controller = new Controller($request);
 		$Controller->uses = array('ControllerPost', 'ControllerComment');
 		$Controller->constructClasses();
-		$this->assertTrue(is_a($Controller->ControllerPost, 'ControllerPost'));
-		$this->assertTrue(is_a($Controller->ControllerComment, 'ControllerComment'));
+		$this->assertInstanceOf('ControllerPost', $Controller->ControllerPost);
+		$this->assertInstanceOf('ControllerComment', $Controller->ControllerComment);
 
 		$this->assertEquals('Comment', $Controller->ControllerComment->name);
 
@@ -498,7 +497,7 @@ class ControllerTest extends CakeTestCase {
 		$Controller->constructClasses();
 
 		$this->assertTrue(isset($Controller->TestPluginPost));
-		$this->assertTrue(is_a($Controller->TestPluginPost, 'TestPluginPost'));
+		$this->assertInstanceOf('TestPluginPost', $Controller->TestPluginPost);
 	}
 
 /**
@@ -1322,8 +1321,8 @@ class ControllerTest extends CakeTestCase {
 		$Controller->paginate('ControllerPost');
 		$this->assertSame($Controller->params['paging']['ControllerPost']['page'], 1);
 		$this->assertSame($Controller->params['paging']['ControllerPost']['pageCount'], 3);
-		$this->assertSame($Controller->params['paging']['ControllerPost']['prevPage'], false);
-		$this->assertSame($Controller->params['paging']['ControllerPost']['nextPage'], true);
+		$this->assertFalse($Controller->params['paging']['ControllerPost']['prevPage']);
+		$this->assertTrue($Controller->params['paging']['ControllerPost']['nextPage']);
 	}
 
 /**

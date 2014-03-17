@@ -173,6 +173,10 @@ class CakeRoute {
 		foreach ($this->keys as $key) {
 			unset($this->defaults[$key]);
 		}
+
+		$keys = $this->keys;
+		sort($keys);
+		$this->keys = array_reverse($keys);
 	}
 
 /**
@@ -233,12 +237,6 @@ class CakeRoute {
 			$route[$key] = $value;
 		}
 
-		foreach ($this->keys as $key) {
-			if (isset($route[$key])) {
-				$route[$key] = rawurldecode($route[$key]);
-			}
-		}
-
 		if (isset($route['_args_'])) {
 			list($pass, $named) = $this->_parseArgs($route['_args_'], $route);
 			$route['pass'] = array_merge($route['pass'], $pass);
@@ -247,7 +245,7 @@ class CakeRoute {
 		}
 
 		if (isset($route['_trailing_'])) {
-			$route['pass'][] = rawurldecode($route['_trailing_']);
+			$route['pass'][] = $route['_trailing_'];
 			unset($route['_trailing_']);
 		}
 
@@ -297,12 +295,10 @@ class CakeRoute {
 			$separatorIsPresent = strpos($param, $namedConfig['separator']) !== false;
 			if ((!isset($this->options['named']) || !empty($this->options['named'])) && $separatorIsPresent) {
 				list($key, $val) = explode($namedConfig['separator'], $param, 2);
-				$key = rawurldecode($key);
-				$val = rawurldecode($val);
 				$hasRule = isset($rules[$key]);
 				$passIt = (!$hasRule && !$greedy) || ($hasRule && !$this->_matchNamed($val, $rules[$key], $context));
 				if ($passIt) {
-					$pass[] = rawurldecode($param);
+					$pass[] = $param;
 				} else {
 					if (preg_match_all('/\[([A-Za-z0-9_-]+)?\]/', $key, $matches, PREG_SET_ORDER)) {
 						$matches = array_reverse($matches);
@@ -323,7 +319,7 @@ class CakeRoute {
 					$named = array_merge_recursive($named, array($key => $val));
 				}
 			} else {
-				$pass[] = rawurldecode($param);
+				$pass[] = $param;
 			}
 		}
 		return array($pass, $named);
@@ -369,9 +365,9 @@ class CakeRoute {
 	}
 
 /**
- * Apply persistent parameters to an URL array. Persistent parameters are a special
+ * Apply persistent parameters to a URL array. Persistent parameters are a special
  * key used during route creation to force route parameters to persist when omitted from
- * an URL array.
+ * a URL array.
  *
  * @param array $url The array to apply persistent parameters to.
  * @param array $params An array of persistent values to replace persistent ones.
@@ -390,7 +386,7 @@ class CakeRoute {
 	}
 
 /**
- * Check if an URL array matches this route instance.
+ * Check if a URL array matches this route instance.
  *
  * If the URL matches the route parameters and settings, then
  * return a generated string URL. If the URL doesn't match the route parameters, false will be returned.
@@ -428,7 +424,6 @@ class CakeRoute {
 		$named = $pass = array();
 
 		foreach ($url as $key => $value) {
-
 			// keys that exist in the defaults and have different values is a match failure.
 			$defaultExists = array_key_exists($key, $defaults);
 			if ($defaultExists && $defaults[$key] != $value) {
@@ -485,7 +480,7 @@ class CakeRoute {
 	}
 
 /**
- * Converts a matching route array into an URL string.
+ * Converts a matching route array into a URL string.
  *
  * Composes the string URL using the template
  * used to create the route.
@@ -498,7 +493,7 @@ class CakeRoute {
 			$prefixed = $params['prefix'] . '_';
 		}
 		if (isset($prefixed, $params['action']) && strpos($params['action'], $prefixed) === 0) {
-			$params['action'] = substr($params['action'], strlen($prefixed) * -1);
+			$params['action'] = substr($params['action'], strlen($prefixed));
 			unset($params['prefix']);
 		}
 
@@ -525,18 +520,21 @@ class CakeRoute {
 		}
 		$out = $this->template;
 
-		$search = $replace = array();
-		foreach ($this->keys as $key) {
-			$string = null;
-			if (isset($params[$key])) {
-				$string = $params[$key];
-			} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
-				$key .= '/';
+		if (!empty($this->keys)) {
+			$search = $replace = array();
+
+			foreach ($this->keys as $key) {
+				$string = null;
+				if (isset($params[$key])) {
+					$string = $params[$key];
+				} elseif (strpos($out, $key) != strlen($out) - strlen($key)) {
+					$key .= '/';
+				}
+				$search[] = ':' . $key;
+				$replace[] = $string;
 			}
-			$search[] = ':' . $key;
-			$replace[] = $string;
+			$out = str_replace($search, $replace, $out);
 		}
-		$out = str_replace($search, $replace, $out);
 
 		if (strpos($this->template, '*')) {
 			$out = str_replace('*', $params['pass'], $out);

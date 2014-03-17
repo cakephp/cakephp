@@ -2,8 +2,6 @@
 /**
  * AclComponentTest file
  *
- * PHP 5
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -72,11 +70,11 @@ class AclComponentTest extends CakeTestCase {
  * @return void
  */
 	public function testAdapter() {
-		$implementation = new MockAclImplementation();
-		$implementation->expects($this->once())->method('initialize')->with($this->Acl);
-		$this->assertNull($this->Acl->adapter($implementation));
+		$Adapter = $this->getMock('AclInterface');
+		$Adapter->expects($this->once())->method('initialize')->with($this->Acl);
 
-		$this->assertEquals($this->Acl->adapter(), $implementation, 'Returned object is different %s');
+		$this->assertNull($this->Acl->adapter($Adapter));
+		$this->assertEquals($this->Acl->adapter(), $Adapter, 'Returned object is different %s');
 	}
 
 /**

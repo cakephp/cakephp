@@ -1,10 +1,8 @@
 <?php
 /**
- * Error handler
+ * ErrorHandler class
  *
  * Provides Error Capturing for Framework errors.
- *
- * PHP 5
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
@@ -110,9 +108,8 @@ class ErrorHandler {
  */
 	public static function handleException(Exception $exception) {
 		$config = Configure::read('Exception');
-		if (!empty($config['log'])) {
-			CakeLog::write(LOG_ERR, self::_getMessage($exception));
-		}
+		self::_log($exception, $config);
+
 		$renderer = isset($config['renderer']) ? $config['renderer'] : 'ExceptionRenderer';
 		if ($renderer !== 'ExceptionRenderer') {
 			list($plugin, $renderer) = pluginSplit($renderer, true);
@@ -157,6 +154,28 @@ class ErrorHandler {
 		}
 		$message .= "\nStack Trace:\n" . $exception->getTraceAsString();
 		return $message;
+	}
+
+/**
+ * Handles exception logging
+ *
+ * @param Exception $exception
+ * @param array $config
+ * @return boolean
+ */
+	protected static function _log(Exception $exception, $config) {
+		if (empty($config['log'])) {
+			return false;
+		}
+
+		if (!empty($config['skipLog'])) {
+			foreach ((array)$config['skipLog'] as $class) {
+				if ($exception instanceof $class) {
+					return false;
+				}
+			}
+		}
+		return CakeLog::write(LOG_ERR, self::_getMessage($exception));
 	}
 
 /**

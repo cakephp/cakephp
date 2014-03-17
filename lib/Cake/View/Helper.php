@@ -16,6 +16,7 @@
 
 App::uses('Router', 'Routing');
 App::uses('Hash', 'Utility');
+App::uses('Inflector', 'Utility');
 
 /**
  * Abstract base class for all other Helpers in CakePHP.
@@ -196,6 +197,7 @@ class Helper extends Object {
  *
  * @param string $name Name of the property being accessed.
  * @return mixed Helper or property found at $name
+ * @deprecated Accessing request properties through this method is deprecated and will be removed in 3.0.
  */
 	public function __get($name) {
 		if (isset($this->_helperMap[$name]) && !isset($this->{$name})) {
@@ -224,6 +226,7 @@ class Helper extends Object {
  * @param string $name Name of the property being accessed.
  * @param mixed $value
  * @return void
+ * @deprecated This method will be removed in 3.0
  */
 	public function __set($name, $value) {
 		switch ($name) {
@@ -243,10 +246,10 @@ class Helper extends Object {
 /**
  * Finds URL for specified action.
  *
- * Returns an URL pointing at the provided parameters.
+ * Returns a URL pointing at the provided parameters.
  *
  * @param string|array $url Either a relative string url like `/products/view/23` or
- *    an array of url parameters. Using an array for URLs will allow you to leverage
+ *    an array of URL parameters. Using an array for URLs will allow you to leverage
  *    the reverse routing features of CakePHP.
  * @param boolean $full If true, the full base URL will be prepended to the result
  * @return string Full translated URL with base path.
@@ -293,16 +296,16 @@ class Helper extends Object {
 	}
 
 /**
- * Generate url for given asset file. Depending on options passed provides full url with domain name.
+ * Generate URL for given asset file. Depending on options passed provides full URL with domain name.
  * Also calls Helper::assetTimestamp() to add timestamp to local files
  *
- * @param string|array Path string or url array
+ * @param string|array Path string or URL array
  * @param array $options Options array. Possible keys:
- *   `fullBase` Return full url with domain name
+ *   `fullBase` Return full URL with domain name
  *   `pathPrefix` Path prefix for relative URLs
  *   `ext` Asset extension to append
  *   `plugin` False value will prevent parsing path as a plugin
- * @return string Generated url
+ * @return string Generated URL
  */
 	public function assetUrl($path, $options = array()) {
 		if (is_array($path)) {
@@ -324,26 +327,29 @@ class Helper extends Object {
 		) {
 			$path .= $options['ext'];
 		}
+		if (preg_match('|^([a-z0-9]+:)?//|', $path)) {
+			return $path;
+		}
 		if (isset($plugin)) {
 			$path = Inflector::underscore($plugin) . '/' . $path;
 		}
 		$path = $this->_encodeUrl($this->assetTimestamp($this->webroot($path)));
 
 		if (!empty($options['fullBase'])) {
-			$path = rtrim(FULL_BASE_URL, '/') . '/' . ltrim($path, '/');
+			$path = rtrim(Router::fullBaseUrl(), '/') . '/' . ltrim($path, '/');
 		}
 		return $path;
 	}
 
 /**
- * Encodes an URL for use in HTML attributes.
+ * Encodes a URL for use in HTML attributes.
  *
- * @param string $url The url to encode.
- * @return string The url encoded for both URL & HTML contexts.
+ * @param string $url The URL to encode.
+ * @return string The URL encoded for both URL & HTML contexts.
  */
 	protected function _encodeUrl($url) {
 		$path = parse_url($url, PHP_URL_PATH);
-		$parts = array_map('urldecode', explode('/', $path));
+		$parts = array_map('rawurldecode', explode('/', $path));
 		$parts = array_map('rawurlencode', $parts);
 		$encoded = implode('/', $parts);
 		return h(str_replace($path, $encoded, $url));
@@ -401,6 +407,7 @@ class Helper extends Object {
  *
  * @param string|array $output Either an array of strings to clean or a single string to clean.
  * @return string|array cleaned content for output
+ * @deprecated This method will be removed in 3.0
  */
 	public function clean($output) {
 		$this->_reset();
@@ -494,6 +501,24 @@ class Helper extends Object {
 			return '';
 		}
 		return sprintf($this->_attributeFormat, $key, ($escape ? h($value) : $value));
+	}
+
+/**
+ * Returns a string to be used as onclick handler for confirm dialogs.
+ *
+ * @param string $message Message to be displayed
+ * @param string $okCode Code to be executed after user chose 'OK'
+ * @param string $cancelCode Code to be executed after user chose 'Cancel'
+ * @param array $options Array of options
+ * @return string onclick JS code
+ */
+	protected function _confirm($message, $okCode, $cancelCode = '', $options = array()) {
+		$message = json_encode($message);
+		$confirm = "if (confirm({$message})) { {$okCode} } {$cancelCode}";
+		if (isset($options['escape']) && $options['escape'] === false) {
+			$confirm = h($confirm);
+		}
+		return $confirm;
 	}
 
 /**
@@ -756,7 +781,7 @@ class Helper extends Object {
  * Adds the given class to the element options
  *
  * @param array $options Array options/attributes to add a class to
- * @param string $class The classname being added.
+ * @param string $class The class name being added.
  * @param string $key the key to use for class.
  * @return array Array of options with $key set.
  */
