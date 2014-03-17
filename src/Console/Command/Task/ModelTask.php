@@ -437,7 +437,7 @@ class ModelTask extends BakeTask {
 		}
 
 		$allowEmpty = false;
-		if ($rule !== 'notEmpty' && $metaData['null'] === false) {
+		if ($rule !== 'notEmpty' && $metaData['null'] === true) {
 			$allowEmpty = true;
 		}
 
