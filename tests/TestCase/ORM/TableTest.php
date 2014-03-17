@@ -2780,15 +2780,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->with($entity->author->supervisor, ['name' => 'Marc'])
 			->will($this->returnValue($entity->author->supervisor));
 
-		$options = new \ArrayObject([
-			'validate' => false,
-			'atomic' => false,
-			'associated' => []
-		]);
-		$supervisors->expects($this->once())
-			->method('validate')
-			->with($entity->author->supervisor, $options)
-			->will($this->returnValue(true));
+		$supervisors->expects($this->never())->method('validate');
 
 		$tags->expects($this->never())->method('_insert');
 
