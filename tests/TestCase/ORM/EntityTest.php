@@ -1015,7 +1015,7 @@ class EntityTest extends TestCase {
 		$result = $entity->__debugInfo();
 		$expected = [
 			'new' => null,
-			'accessible' => ['name' => true],
+			'accessible' => ['*' => true, 'name' => true],
 			'properties' => ['foo' => 'bar'],
 			'dirty' => ['foo' => true],
 			'virtual' => ['baz'],
