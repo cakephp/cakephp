@@ -19,9 +19,7 @@ echo "<?php\n";
 namespace <?= $namespace ?>\Model\Table;
 
 use Cake\ORM\Table;
-<?php if (!empty($validation)): ?>
 use Cake\Validation\Validator;
-<?php endif ?>
 
 /**
  * <?= $name ?> Model
