@@ -177,7 +177,6 @@ class ModelTask extends BakeTask {
 		if (!empty($this->params['no-associations'])) {
 			return [];
 		}
-		$assocs = [];
 		$this->out(__d('cake_console', 'One moment while associations are detected.'));
 
 		$this->listAll();
@@ -187,6 +186,15 @@ class ModelTask extends BakeTask {
 			'hasMany' => [],
 			'belongsToMany' => []
 		];
+
+		$primary = $table->primaryKey();
+		if (is_array($primary) && count($primary) > 1) {
+			$this->err(__d(
+				'cake_console',
+				'<warning>Bake cannot generate associations for composite primary keys at this time</warning>.'
+			));
+			return $associations;
+		}
 
 		$associations = $this->findBelongsTo($table, $associations);
 		$associations = $this->findHasMany($table, $associations);
@@ -654,7 +662,7 @@ class ModelTask extends BakeTask {
 		])->addOption('fields', [
 			'help' => __d('cake_console', 'A comma separated list of fields to make accessible.')
 		])->addOption('primary-key', [
-			'help' => __d('cake_console', 'The primary key if you would like to manually set one.')
+			'help' => __d('cake_console', 'The primary key if you would like to manually set one. Can be a comma separated list if you are using a composite primary key.')
 		])->addOption('display-field', [
 			'help' => __d('cake_console', 'The displayField if you would like to choose one.')
 		])->addOption('no-test', [
