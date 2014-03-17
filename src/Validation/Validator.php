@@ -52,6 +52,22 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 	protected $_validationDomain = 'default';
 
 /**
+ * Contains the validation messages associated with checking the presence
+ * for each corresponding field.
+ *
+ * @var array
+ */
+	protected $_presenceMessages = [];
+
+/**
+ * Contains the validation messages associated with checking the emptiness
+ * for each corresponding field.
+ *
+ * @var array
+ */
+	protected $_allowEmptyMessages = [];
+
+/**
  * Returns an array of fields that have failed validation. On the current model. This method will
  * actually run validation rules over data, not just return the messages.
  *
@@ -62,11 +78,16 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  */
 	public function errors(array $data, $newRecord = true) {
 		$errors = [];
+		$requiredMessage = __d('cake', 'This field is required');
+		$emptyMessage = __d('cake', 'This field cannot be left empty');
+
 		foreach ($this->_fields as $name => $field) {
 			$keyPresent = array_key_exists($name, $data);
 
 			if (!$keyPresent && !$this->_checkPresence($field, $newRecord)) {
-				$errors[$name][] = __d('cake', 'This field is required');
+				$errors[$name][] = isset($this->_presenceMessages[$name])
+					? __d($this->_validationDomain, $this->_presenceMessages[$name])
+					: $requiredMessage;
 				continue;
 			}
 
@@ -78,7 +99,9 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 			$isEmpty = $this->_fieldIsEmpty($data[$name]);
 
 			if (!$canBeEmpty && $isEmpty) {
-				$errors[$name][] = __d('cake', 'This field cannot be left empty');
+				$errors[$name][] = isset($this->_allowEmptyMessages[$name])
+					? __d($this->_validationDomain, $this->_allowEmptyMessages[$name])
+					: $emptyMessage;
 				continue;
 			}
 
@@ -293,10 +316,15 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field the name of the field
  * @param boolean|string $mode Valid values are true, false, 'create', 'update'
+ * @param string $message The validation message to show if the field presence
+ * is required.
  * @return Validator this instance
  */
-	public function validatePresence($field, $mode = true) {
+	public function validatePresence($field, $mode = true, $message = null) {
 		$this->field($field)->isPresenceRequired($mode);
+		if ($message) {
+			$this->_presenceMessages[$field] = $message;
+		}
 		return $this;
 	}
 
@@ -306,10 +334,15 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  *
  * @param string $field the name of the field
  * @param boolean|string $mode Valid values are true, false, 'create', 'update'
+ * @param string $message The validation message to show if the field is not
+ * allowed to be empty.
  * @return Validator this instance
  */
-	public function allowEmpty($field, $mode = true) {
+	public function allowEmpty($field, $mode = true, $message = null) {
 		$this->field($field)->isEmptyAllowed($mode);
+		if ($message) {
+			$this->_allowEmptyMessages[$field] = $message;
+		}
 		return $this;
 	}
 
