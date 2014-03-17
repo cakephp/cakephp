@@ -95,7 +95,7 @@ trait EntityTrait {
  *
  * @var array
  */
-	protected $_accessible = [];
+	protected $_accessible = ['*' => true];
 
 /**
  * Magic getter to access properties that has be set in this entity
@@ -644,7 +644,11 @@ trait EntityTrait {
  */
 	public function accessible($property, $set = null) {
 		if ($set === null) {
-			return !empty($this->_accessible[$property]) || !empty($this->_accessible['*']);
+			$value = isset($this->_accessible[$property]) ?
+				$this->_accessible[$property] :
+				null;
+
+			return ($value === null && !empty($this->_accessible['*'])) || $value;
 		}
 
 		if ($property === '*') {

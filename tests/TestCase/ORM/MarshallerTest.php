@@ -525,6 +525,7 @@ class MarshallerTest extends TestCase {
 			'title' => 'Foo',
 			'body' => 'My Content'
 		]);
+		$entity->accessible('*', false);
 		$entity->accessible('author_id', true);
 		$entity->isNew(false);
 		$result = $marshall->merge($entity, $data, []);
