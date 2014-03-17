@@ -126,7 +126,8 @@ class ModelTask extends BakeTask {
 
 		$data = compact(
 			'associations', 'primaryKey', 'displayField',
-			'table', 'fields', 'validation', 'behaviors');
+			'table', 'fields', 'validation', 'behaviors'
+		);
 		$this->bakeTable($model, $data);
 		$this->bakeEntity($model, $data);
 		$this->bakeFixture($model, $table);
@@ -205,7 +206,7 @@ class ModelTask extends BakeTask {
 /**
  * Find belongsTo relations and add them to the associations list.
  *
- * @param ORM\Table $table Database\Table instance of table being generated.
+ * @param ORM\Table $model Database\Table instance of table being generated.
  * @param array $associations Array of in progress associations
  * @return array Associations with belongsTo added in.
  */
@@ -580,7 +581,7 @@ class ModelTask extends BakeTask {
  *
  * @return array Array of tables in the database.
  * @throws InvalidArgumentException When connection class
- *   has a schemaCollection method.
+ *   does not have a schemaCollection method.
  */
 	protected function _getAllTables() {
 		$tables = [];
