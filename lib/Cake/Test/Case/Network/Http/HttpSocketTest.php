@@ -1754,4 +1754,41 @@ class HttpSocketTest extends CakeTestCase {
 			$this->assertContains('Failed to enable crypto', $message);
 		}
 	}
+
+/**
+ * Data provider for status codes.
+ *
+ * @return array
+ */
+	public function statusProvider() {
+		return array(
+			array('HTTP/1.1 200 '),
+			array('HTTP/1.1 200    '),
+			array('HTTP/1.1 200'),
+			array('HTTP/1.1 200  OK', 'OK'),
+		);
+	}
+
+/**
+ * test response status parsing
+ *
+ * @dataProvider statusProvider
+ * @return void
+ */
+	public function testResponseStatusParsing($status, $msg = '') {
+		$this->Socket->connected = true;
+		$serverResponse = $status . "\r\nDate: Mon, 16 Apr 2007 04:14:16 GMT\r\nServer: CakeHttp Server\r\n\r\n<h1>This is a test!</h1>";
+		$this->Socket->expects($this->at(1))->method('read')->will($this->returnValue($serverResponse));
+		$this->Socket->expects($this->at(2))->method('read')->will($this->returnValue(false));
+
+		$response = $this->Socket->request('http://www.cakephp.org/');
+		$this->assertInstanceOf('HttpSocketResponse', $response);
+		$expected = array(
+			'http-version' => 'HTTP/1.1',
+			'code' => '200',
+			'reason-phrase' => $msg
+		);
+		$this->assertEquals($expected, $response['status']);
+	}
+
 }
