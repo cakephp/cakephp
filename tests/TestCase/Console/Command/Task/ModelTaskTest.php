@@ -121,17 +121,14 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testGetTable() {
-		$this->Task->args[0] = 'BakeArticle';
-		$result = $this->Task->getTable();
+		$result = $this->Task->getTable('BakeArticle');
 		$this->assertEquals('bake_articles', $result);
 
-		$this->Task->args[0] = 'BakeArticles';
-		$result = $this->Task->getTable();
+		$result = $this->Task->getTable('BakeArticles');
 		$this->assertEquals('bake_articles', $result);
 
-		$this->Task->args[0] = 'Article';
 		$this->Task->params['table'] = 'bake_articles';
-		$result = $this->Task->getTable();
+		$result = $this->Task->getTable('Article');
 		$this->assertEquals('bake_articles', $result);
 	}
 
@@ -673,164 +670,69 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteIntoAll() {
-		$this->markTestIncomplete('Not done here yet');
-		$count = count($this->Task->listAll('test'));
+		$count = count($this->Task->listAll());
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
+		$this->Task->args = ['all'];
 
-		$this->Task->Fixture->expects($this->exactly(5))->method('bake');
-		$this->Task->Test->expects($this->exactly(5))->method('bake');
+		$this->Task->Fixture->expects($this->exactly(6))
+			->method('bake');
+		$this->Task->Test->expects($this->exactly(6))
+			->method('bake');
 
-		$filename = '/my/path/BakeArticle.php';
-		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle'));
+		$filename = '/my/path/Table/BakeArticlesTable.php';
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticlesTable extends'));
 
-		$filename = '/my/path/BakeArticlesBakeTag.php';
-		$this->Task->expects($this->at(2))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticlesBakeTag'));
+		$filename = '/my/path/Entity/BakeArticle.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticle extends'));
 
-		$filename = '/my/path/BakeComment.php';
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with($filename, $this->stringContains('class BakeComment'));
+		$filename = '/my/path/Table/BakeArticlesBakeTagsTable.php';
+		$this->Task->expects($this->at(2))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticlesBakeTagsTable extends'));
 
-		$filename = '/my/path/BakeComment.php';
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with($filename, $this->stringContains('public $primaryKey = \'otherid\';'));
+		$filename = '/my/path/Entity/BakeArticlesBakeTag.php';
+		$this->Task->expects($this->at(3))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticlesBakeTag extends'));
 
-		$filename = '/my/path/BakeTag.php';
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with($filename, $this->stringContains('class BakeTag'));
+		$filename = '/my/path/Table/BakeCommentsTable.php';
+		$this->Task->expects($this->at(4))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeCommentsTable extends'));
 
-		$filename = '/my/path/BakeTag.php';
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with($filename, $this->logicalNot($this->stringContains('public $primaryKey')));
+		$filename = '/my/path/Entity/BakeComment.php';
+		$this->Task->expects($this->at(5))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeComment extends'));
 
-		$filename = '/my/path/CategoryThread.php';
-		$this->Task->expects($this->at(5))->method('createFile')
-			->with($filename, $this->stringContains('class CategoryThread'));
+		$filename = '/my/path/Table/BakeTagsTable.php';
+		$this->Task->expects($this->at(6))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeTagsTable extends'));
 
-		$this->Task->execute();
+		$filename = '/my/path/Entity/BakeTag.php';
+		$this->Task->expects($this->at(7))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeTag extends'));
 
-		$this->assertEquals(count(ClassRegistry::keys()), 0);
-		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
-	}
+		$filename = '/my/path/Table/CategoryThreadsTable.php';
+		$this->Task->expects($this->at(8))
+			->method('createFile')
+			->with($filename, $this->stringContains('class CategoryThreadsTable extends'));
 
-/**
- * test that odd tablenames aren't inflected back from modelname
- *
- * @return void
- */
-	public function testExecuteIntoAllOddTables() {
-		$this->markTestIncomplete('Not done here yet');
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'bake', 'bakeFixture'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('bake_odd')));
-		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
-		$this->Task->expects($this->once())->method('_getModelObject')->with('BakeOdd', 'bake_odd')->will($this->returnValue($object));
-		$this->Task->expects($this->at(3))->method('bake')->with($object, false)->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('bakeFixture')->with('BakeOdd', 'bake_odd');
-
-		$this->Task->execute();
-
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'doActsAs', 'createFile'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('bake_odd')));
-		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
-		$this->Task->expects($this->once())->method('_getModelObject')->will($this->returnValue($object));
-		$this->Task->expects($this->once())->method('doAssociations')->will($this->returnValue(array()));
-		$this->Task->expects($this->once())->method('doValidation')->will($this->returnValue(array()));
-		$this->Task->expects($this->once())->method('doActsAs')->will($this->returnValue(array()));
-
-		$filename = '/my/path/BakeOdd.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('class BakeOdd'));
-
-		$filename = '/my/path/BakeOdd.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('public $useTable = \'bake_odd\''));
-
-		$this->Task->execute();
-	}
-
-/**
- * test that odd tablenames aren't inflected back from modelname
- *
- * @return void
- */
-	public function testExecuteIntoBakeOddTables() {
-		$this->markTestIncomplete('Not done here yet');
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'bake', 'bakeFixture'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeOdd');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('articles', 'bake_odd')));
-		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
-		$this->Task->expects($this->once())->method('_getModelObject')->with('BakeOdd', 'bake_odd')->will($this->returnValue($object));
-		$this->Task->expects($this->once())->method('bake')->with($object, false)->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('bakeFixture')->with('BakeOdd', 'bake_odd');
-
-		$this->Task->execute();
-
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'doActsAs', 'createFile'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeOdd');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('articles', 'bake_odd')));
-		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
-		$this->Task->expects($this->once())->method('_getModelObject')->will($this->returnValue($object));
-		$this->Task->expects($this->once())->method('doAssociations')->will($this->returnValue(array()));
-		$this->Task->expects($this->once())->method('doValidation')->will($this->returnValue(array()));
-		$this->Task->expects($this->once())->method('doActsAs')->will($this->returnValue(array()));
-
-		$filename = '/my/path/BakeOdd.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('class BakeOdd'));
-
-		$filename = '/my/path/BakeOdd.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('public $useTable = \'bake_odd\''));
+		$filename = '/my/path/Entity/CategoryThread.php';
+		$this->Task->expects($this->at(9))
+			->method('createFile')
+			->with($filename, $this->stringContains('class CategoryThread extends'));
 
 		$this->Task->execute();
 	}
@@ -841,7 +743,6 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testSkipTablesAndAll() {
-		$this->markTestIncomplete('Not done here yet');
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
@@ -849,50 +750,38 @@ class ModelTaskTest extends TestCase {
 
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->skipTables = array('bake_tags');
+		$this->Task->args = ['all'];
+		$this->Task->skipTables = ['bake_tags'];
 
-		$this->Task->Fixture->expects($this->exactly(4))->method('bake');
-		$this->Task->Test->expects($this->exactly(4))->method('bake');
+		$this->Task->Fixture->expects($this->exactly(5))
+			->method('bake');
+		$this->Task->Test->expects($this->exactly(5))
+			->method('bake');
 
-		$filename = '/my/path/BakeArticle.php';
-		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle'));
+		$filename = '/my/path/Entity/BakeArticle.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($filename);
 
-		$filename = '/my/path/BakeArticlesBakeTag.php';
-		$this->Task->expects($this->at(2))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticlesBakeTag'));
+		$filename = '/my/path/Entity/BakeArticlesBakeTag.php';
+		$this->Task->expects($this->at(3))
+			->method('createFile')
+			->with($filename);
 
-		$filename = '/my/path/BakeComment.php';
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with($filename, $this->stringContains('class BakeComment'));
+		$filename = '/my/path/Entity/BakeComment.php';
+		$this->Task->expects($this->at(5))
+			->method('createFile')
+			->with($filename);
 
-		$filename = '/my/path/CategoryThread.php';
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with($filename, $this->stringContains('class CategoryThread'));
+		$filename = '/my/path/Entity/CategoryThread.php';
+		$this->Task->expects($this->at(7))
+			->method('createFile')
+			->with($filename);
 
-		$this->Task->execute();
-	}
-
-/**
- * test using bake interactively with a table that does not exist.
- *
- * @return void
- */
-	public function testForcedExecuteWithNonExistantTableName() {
-		$this->markTestIncomplete('Not done here yet');
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				'Foobar', // Or type in the name of the model
-				'y', // Do you want to use this table
-				'y', // Doesn't exist, continue anyway?
-				'id', // Primary key
-				'y' // Looks good?
-			));
+		$filename = '/my/path/Entity/NumberTree.php';
+		$this->Task->expects($this->at(9))
+			->method('createFile')
+			->with($filename);
 
 		$this->Task->execute();
 	}

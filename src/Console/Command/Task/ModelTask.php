@@ -115,8 +115,7 @@ class ModelTask extends BakeTask {
  * @return void
  */
 	public function generate($name) {
-		$table = $this->getTable();
-
+		$table = $this->getTable($name);
 		$model = $this->getTableObject($name, $table);
 		$associations = $this->getAssociations($model);
 		$primaryKey = $this->getPrimaryKey($model);
@@ -141,14 +140,13 @@ class ModelTask extends BakeTask {
  */
 	public function all() {
 		$this->listAll($this->connection, false);
-		$unitTestExists = $this->_checkUnitTest();
 		foreach ($this->_tables as $table) {
 			if (in_array($table, $this->skipTables)) {
 				continue;
 			}
-			$modelClass = Inflector::classify($table);
+			$modelClass = $this->_modelName($table);
 			$this->out(__d('cake_console', 'Baking %s', $modelClass));
-			$this->generate($table);
+			$this->generate($modelClass);
 		}
 	}
 
@@ -205,7 +203,7 @@ class ModelTask extends BakeTask {
  */
 	public function findBelongsTo($model, $associations) {
 		$schema = $model->schema();
-		$primary = $schema->primaryKey();
+		$primary = (array)$schema->primaryKey();
 		foreach ($schema->columns() as $fieldName) {
 			$offset = strpos($fieldName, '_id');
 			if (!in_array($fieldName, $primary) && $fieldName !== 'parent_id' && $offset !== false) {
@@ -629,11 +627,11 @@ class ModelTask extends BakeTask {
  *
  * @return string.
  */
-	public function getTable() {
+	public function getTable($name) {
 		if (isset($this->params['table'])) {
 			return $this->params['table'];
 		}
-		return Inflector::tableize($this->args[0]);
+		return Inflector::tableize($name);
 	}
 
 /**
