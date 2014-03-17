@@ -37,12 +37,13 @@ class Hash {
  * @param array $data Array of data to operate on.
  * @param string|array $path The path being searched for. Either a dot
  *   separated string, or an array of path segments.
+ * @param mixed $default The return value when the path does not exist
  * @return mixed The value fetched from the array, or null.
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::get
  */
-	public static function get(array $data, $path) {
+	public static function get(array $data, $path, $default = null) {
 		if (empty($data)) {
-			return null;
+			return $default;
 		}
 		if (is_string($path) || is_numeric($path)) {
 			$parts = explode('.', $path);
@@ -53,7 +54,7 @@ class Hash {
 			if (is_array($data) && isset($data[$key])) {
 				$data =& $data[$key];
 			} else {
-				return null;
+				return $default;
 			}
 		}
 		return $data;
@@ -111,12 +112,7 @@ class Hash {
 		foreach ($tokens as $token) {
 			$next = array();
 
-			$conditions = false;
-			$position = strpos($token, '[');
-			if ($position !== false) {
-				$conditions = substr($token, $position);
-				$token = substr($token, 0, $position);
-			}
+			list($token, $conditions) = self::_splitConditions($token);
 
 			foreach ($context[$_key] as $item) {
 				foreach ((array)$item as $k => $v) {
@@ -140,6 +136,22 @@ class Hash {
 
 		}
 		return $context[$_key];
+	}
+/**
+ * Split token conditions
+ *
+ * @param string $token the token being splitted.
+ * @return array array(token, conditions) with token splitted
+ */
+	protected static function _splitConditions($token) {
+		$conditions = false;
+		$position = strpos($token, '[');
+		if ($position !== false) {
+			$conditions = substr($token, $position);
+			$token = substr($token, 0, $position);
+		}
+
+		return array($token, $conditions);
 	}
 
 /**
@@ -225,16 +237,30 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::insert
  */
 	public static function insert(array $data, $path, $values = null) {
-		$tokens = explode('.', $path);
-		if (strpos($path, '{') === false) {
+		if (strpos($path, '[') === false) {
+			$tokens = explode('.', $path);
+		} else {
+			$tokens = String::tokenize($path, '.', '[', ']');
+		}
+
+		if (strpos($path, '{') === false && strpos($path, '[') === false) {
 			return self::_simpleOp('insert', $data, $tokens, $values);
 		}
 
 		$token = array_shift($tokens);
 		$nextPath = implode('.', $tokens);
+
+		list($token, $conditions) = self::_splitConditions($token);
+
 		foreach ($data as $k => $v) {
 			if (self::_matchToken($k, $token)) {
-				$data[$k] = self::insert($v, $nextPath, $values);
+				if ($conditions && self::_matches($v, $conditions)) {
+					$data[$k] = array_merge($v, $values);
+					continue;
+				}
+				if (!$conditions) {
+					$data[$k] = self::insert($v, $nextPath, $values);
+				}
 			}
 		}
 		return $data;
@@ -294,17 +320,32 @@ class Hash {
  * @link http://book.cakephp.org/2.0/en/core-utility-libraries/hash.html#Hash::remove
  */
 	public static function remove(array $data, $path) {
-		$tokens = explode('.', $path);
-		if (strpos($path, '{') === false) {
+		if (strpos($path, '[') === false) {
+			$tokens = explode('.', $path);
+		} else {
+			$tokens = String::tokenize($path, '.', '[', ']');
+		}
+
+		if (strpos($path, '{') === false && strpos($path, '[') === false) {
 			return self::_simpleOp('remove', $data, $tokens);
 		}
 
 		$token = array_shift($tokens);
 		$nextPath = implode('.', $tokens);
+
+		list($token, $conditions) = self::_splitConditions($token);
+
 		foreach ($data as $k => $v) {
 			$match = self::_matchToken($k, $token);
 			if ($match && is_array($v)) {
+				if ($conditions && self::_matches($v, $conditions)) {
+					unset($data[$k]);
+					continue;
+				}
 				$data[$k] = self::remove($v, $nextPath);
+				if (empty($data[$k])) {
+					unset($data[$k]);
+				}
 			} elseif ($match) {
 				unset($data[$k]);
 			}

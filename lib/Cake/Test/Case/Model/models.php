@@ -1499,6 +1499,23 @@ class SomethingElse extends CakeTestModel {
  * @var array
  */
 	public $hasAndBelongsToMany = array('Something' => array('with' => 'JoinThing'));
+
+/**
+ * afterFind callBack
+ * 
+ * @param array $results 
+ * @param bool $primary
+ * @return array
+ */
+	public function afterFind($results, $primary = false) {
+		foreach ($results as $key => $result) {
+			if (!empty($result[$this->alias]) && is_array($result[$this->alias])) {
+				$results[$key][$this->alias]['afterFind'] = 'Successfully added by AfterFind';
+			}
+		}
+		return $results;
+	}
+
 }
 
 /**
@@ -1521,6 +1538,23 @@ class JoinThing extends CakeTestModel {
  * @var array
  */
 	public $belongsTo = array('Something', 'SomethingElse');
+
+/**
+ * afterFind callBack
+ * 
+ * @param array $results 
+ * @param bool $primary
+ * @return array
+ */
+	public function afterFind($results, $primary = false) {
+		foreach ($results as $key => $result) {
+			if (!empty($result[$this->alias]) && is_array($result[$this->alias])) {
+				$results[$key][$this->alias]['afterFind'] = 'Successfully added by AfterFind';
+			}
+		}
+		return $results;
+	}
+
 }
 
 /**

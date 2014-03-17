@@ -20,6 +20,11 @@ msgid_plural "%d = 0 or > 1"
 msgstr[0] "%d = 1 (translated)"
 msgstr[1] "%d = 0 or > 1 (translated)"
 
+msgid "%-5d = 1"
+msgid_plural "%-5d = 0 or > 1"
+msgstr[0] "%-5d = 1 (translated)"
+msgstr[1] "%-5d = 0 or > 1 (translated)"
+
 #~ msgid "Plural-Forms 1"
 #~ msgstr "Plural-Forms 1 (translated)"
 

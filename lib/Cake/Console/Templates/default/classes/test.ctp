@@ -75,6 +75,7 @@ class <?php echo $fullClassName; ?>Test extends CakeTestCase {
  * @return void
  */
 	public function test<?php echo Inflector::camelize($method); ?>() {
+		$this->markTestIncomplete('test<?php echo Inflector::camelize($method); ?> not implemented.');
 	}
 
 <?php endforeach; ?>

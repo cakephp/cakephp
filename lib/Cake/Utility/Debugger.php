@@ -169,12 +169,13 @@ class Debugger {
  *
  *
  * @param mixed $var the variable to dump
+ * @param int $depth The depth to output to. Defaults to 3.
  * @return void
  * @see Debugger::exportVar()
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::dump
  */
-	public static function dump($var) {
-		pr(self::exportVar($var));
+	public static function dump($var, $depth = 3) {
+		pr(self::exportVar($var, $depth));
 	}
 
 /**
@@ -183,12 +184,13 @@ class Debugger {
  *
  * @param mixed $var Variable or content to log
  * @param integer $level type of log to use. Defaults to LOG_DEBUG
+ * @param int $depth The depth to output to. Defaults to 3.
  * @return void
  * @link http://book.cakephp.org/2.0/en/development/debugging.html#Debugger::log
  */
-	public static function log($var, $level = LOG_DEBUG) {
+	public static function log($var, $level = LOG_DEBUG, $depth = 3) {
 		$source = self::trace(array('start' => 1)) . "\n";
-		CakeLog::write($level, "\n" . $source . self::exportVar($var));
+		CakeLog::write($level, "\n" . $source . self::exportVar($var, $depth));
 	}
 
 /**
