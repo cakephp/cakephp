@@ -65,6 +65,9 @@ abstract class BaseErrorHandler {
 		set_error_handler([$this, 'handleError'], $level);
 		set_exception_handler([$this, 'handleException']);
 		register_shutdown_function(function () {
+			if (php_sapi_name() === 'cli') {
+				return;
+			}
 			$error = error_get_last();
 			if (!is_array($error)) {
 				return;
