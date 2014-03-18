@@ -641,9 +641,9 @@ class ModelTaskTest extends TestCase {
 		$result = $this->Task->bakeEntity($model, $config);
 
 		$this->assertContains("protected \$_accessible = [", $result);
-		$this->assertContains("'title',", $result);
-		$this->assertContains("'body',", $result);
-		$this->assertContains("'published'", $result);
+		$this->assertContains("'title' => false,", $result);
+		$this->assertContains("'body' => false,", $result);
+		$this->assertContains("'published' => false", $result);
 		$this->assertNotContains("protected \$_hidden", $result);
 	}
 

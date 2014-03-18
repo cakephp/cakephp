@@ -24,17 +24,15 @@ use Cake\ORM\Entity;
 class <?= $name ?> extends Entity {
 
 <?php if (!empty($fields)): ?>
-<?php
-$fields = array_map(function($el) { return "'$el'"; }, $fields);
-?>
 /**
  * Fields that can be mass assigned using newEntity() or patchEntity().
  *
  * @var array
  */
 	protected $_accessible = [
-		<?= implode(",\n\t\t", $fields) ?>
-
+<?php foreach ($fields as $field): ?>
+		'<?= $field ?>' => false,
+<?php endforeach; ?>
 	];
 
 <?php endif ?>
