@@ -804,24 +804,6 @@ class RequestTest extends TestCase {
 		$request->env('HTTP_X_REQUESTED_WITH', 'XMLHTTPREQUEST');
 		$this->assertFalse($request->is('ajax'));
 		$this->assertFalse($request->isAjax());
-
-		$request->env('HTTP_USER_AGENT', 'Android 2.0');
-		$this->assertTrue($request->is('mobile'));
-		$this->assertTrue($request->isMobile());
-
-		$request->env(
-			'HTTP_USER_AGENT',
-			'Mozilla/5.0 (Windows NT 5.1; rv:2.0b6pre) Gecko/20100902 Firefox/4.0b6pre Fennec/2.0b1pre'
-		);
-		$this->assertTrue($request->is('mobile'));
-		$this->assertTrue($request->isMobile());
-
-		$request->env(
-			'HTTP_USER_AGENT',
-			'Mozilla/5.0 (compatible; MSIE 9.0; Windows Phone OS 7.5; Trident/5.0; IEMobile/9.0; SAMSUNG; OMNIA7)'
-		);
-		$this->assertTrue($request->is('mobile'));
-		$this->assertTrue($request->isMobile());
 	}
 
 /**
@@ -945,7 +927,7 @@ class RequestTest extends TestCase {
  */
 	public function testAddDetector() {
 		$request = new Request();
-		$request->addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
+		Request::addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
 
 		$request->env('TEST_VAR', 'something');
 		$this->assertTrue($request->is('compare'), 'Value match failed.');
@@ -953,7 +935,7 @@ class RequestTest extends TestCase {
 		$request->env('TEST_VAR', 'wrong');
 		$this->assertFalse($request->is('compare'), 'Value mis-match failed.');
 
-		$request->addDetector('compareCamelCase', array('env' => 'TEST_VAR', 'value' => 'foo'));
+		Request::addDetector('compareCamelCase', array('env' => 'TEST_VAR', 'value' => 'foo'));
 
 		$request->env('TEST_VAR', 'foo');
 		$this->assertTrue($request->is('compareCamelCase'), 'Value match failed.');
@@ -965,23 +947,20 @@ class RequestTest extends TestCase {
 		$this->assertFalse($request->is('comparecamelcase'), 'detectors should be case insensitive');
 		$this->assertFalse($request->is('COMPARECAMELCASE'), 'detectors should be case insensitive');
 
-		$request->addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
+		Request::addDetector('banana', array('env' => 'TEST_VAR', 'pattern' => '/^ban.*$/'));
 		$request->env('TEST_VAR', 'banana');
 		$this->assertTrue($request->isBanana());
 
 		$request->env('TEST_VAR', 'wrong value');
 		$this->assertFalse($request->isBanana());
 
-		$request->addDetector('mobile', array('options' => array('Imagination')));
+		Request::addDetector('mobile', array('env' => 'HTTP_USER_AGENT', 'options' => array('Imagination')));
 		$request->env('HTTP_USER_AGENT', 'Imagination land');
 		$this->assertTrue($request->isMobile());
 
-		$request->env('HTTP_USER_AGENT', 'iPhone 3.0');
-		$this->assertTrue($request->isMobile());
+		Request::addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, 'detectCallback')));
 
-		$request->addDetector('callme', array('env' => 'TEST_VAR', 'callback' => array($this, 'detectCallback')));
-
-		$request->addDetector('index', array('param' => 'action', 'value' => 'index'));
+		Request::addDetector('index', array('param' => 'action', 'value' => 'index'));
 		$request->params['action'] = 'index';
 		$this->assertTrue($request->isIndex());
 
@@ -994,7 +973,7 @@ class RequestTest extends TestCase {
 		$request->return = false;
 		$this->assertFalse($request->isCallMe());
 
-		$request->addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'png', 'txt')));
+		Request::addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'png', 'txt')));
 		$request->params['ext'] = 'pdf';
 		$this->assertTrue($request->is('extension'));
 
