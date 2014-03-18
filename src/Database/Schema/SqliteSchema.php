@@ -91,7 +91,11 @@ class SqliteSchema extends BaseSchema {
  *
  */
 	public function listTablesSql($config) {
-		return ['SELECT name FROM sqlite_master WHERE type="table" ORDER BY name', []];
+		return [
+			'SELECT name FROM sqlite_master WHERE type="table" ' .
+			'AND name != "sqlite_sequence" ORDER BY name',
+			[]
+		];
 	}
 
 /**

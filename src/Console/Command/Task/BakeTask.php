@@ -41,13 +41,6 @@ class BakeTask extends Shell {
 	public $connection = null;
 
 /**
- * Flag for interactive mode
- *
- * @var boolean
- */
-	public $interactive = false;
-
-/**
  * Disable caching and enable debug for baking.
  * This forces the most current database schema to be used.
  *
@@ -88,6 +81,9 @@ class BakeTask extends Shell {
 		}
 		if (isset($this->params['plugin'])) {
 			$this->plugin = $this->params['plugin'];
+		}
+		if (isset($this->params['connection'])) {
+			$this->connection = $this->params['connection'];
 		}
 	}
 

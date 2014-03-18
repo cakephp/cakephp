@@ -1,9 +1,5 @@
 <?php
 /**
- * ModelTaskTest file
- *
- * Test Case for test generation shell task
- *
  * CakePHP : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -22,13 +18,13 @@ use Cake\Console\Command\Task\ModelTask;
 use Cake\Console\Command\Task\TemplateTask;
 use Cake\Core\Plugin;
 use Cake\Model\Model;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
 
 /**
  * ModelTaskTest class
- *
  */
 class ModelTaskTest extends TestCase {
 
@@ -39,7 +35,7 @@ class ModelTaskTest extends TestCase {
  */
 	public $fixtures = array(
 		'core.bake_article', 'core.bake_comment', 'core.bake_articles_bake_tag',
-		'core.bake_tag', 'core.category_thread', 'core.number_tree'
+		'core.bake_tag', 'core.user', 'core.category_thread', 'core.number_tree'
 	);
 
 /**
@@ -48,16 +44,15 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function setUp() {
-		$this->markTestIncomplete('Model baking will not work as models do not work.');
-
 		parent::setUp();
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'err', 'createFile', '_stop', '_checkUnitTest'),
 			array($out, $out, $in)
 		);
+		$this->Task->connection = 'test';
 		$this->_setupOtherMocks();
 	}
 
@@ -67,8 +62,8 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	protected function _useMockedOut() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
 			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
@@ -83,15 +78,14 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	protected function _setupOtherMocks() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
+		$out = $this->getMock('Cake\Console\ConsoleOutput', [], [], '', false);
+		$in = $this->getMock('Cake\Console\ConsoleInput', [], [], '', false);
 
-		$this->Task->Fixture = $this->getMock('Cake\Console\Command\Task\FixtureTask', array(), array($out, $out, $in));
-		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\FixtureTask', array(), array($out, $out, $in));
+		$this->Task->Fixture = $this->getMock('Cake\Console\Command\Task\FixtureTask', [], [$out, $out, $in]);
+		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\FixtureTask', [], [$out, $out, $in]);
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 
 		$this->Task->name = 'Model';
-		$this->Task->interactive = true;
 	}
 
 /**
@@ -105,30 +99,14 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * Test that listAll scans the database connection and lists all the tables in it.s
- *
- * @return void
- */
-	public function testListAllArgument() {
-		$this->_useMockedOut();
-
-		$result = $this->Task->listAll('test');
-		$this->assertContains('bake_articles', $result);
-		$this->assertContains('bake_articles_bake_tags', $result);
-		$this->assertContains('bake_tags', $result);
-		$this->assertContains('bake_comments', $result);
-		$this->assertContains('category_threads', $result);
-	}
-
-/**
  * Test that listAll uses the connection property
  *
  * @return void
  */
 	public function testListAllConnection() {
 		$this->_useMockedOut();
-
 		$this->Task->connection = 'test';
+
 		$result = $this->Task->listAll();
 		$this->assertContains('bake_articles', $result);
 		$this->assertContains('bake_articles_bake_tags', $result);
@@ -138,436 +116,79 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * Test that getName interacts with the user and returns the model name.
+ * Test getName() method.
  *
  * @return void
  */
-	public function testGetNameQuit() {
-		$this->Task->expects($this->once())->method('in')->will($this->returnValue('q'));
-		$this->Task->expects($this->once())->method('_stop');
-		$this->Task->getName('test');
+	public function testGetTable() {
+		$result = $this->Task->getTable('BakeArticle');
+		$this->assertEquals('bake_articles', $result);
+
+		$result = $this->Task->getTable('BakeArticles');
+		$this->assertEquals('bake_articles', $result);
+
+		$this->Task->params['table'] = 'bake_articles';
+		$result = $this->Task->getTable('Article');
+		$this->assertEquals('bake_articles', $result);
 	}
 
 /**
- * test getName with a valid option.
+ * Test getting the a table class.
  *
  * @return void
  */
-	public function testGetNameValidOption() {
-		$listing = $this->Task->listAll('test');
-		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(1, 4));
-
-		$result = $this->Task->getName('test');
-		$this->assertEquals(Inflector::classify($listing[0]), $result);
-
-		$result = $this->Task->getName('test');
-		$this->assertEquals(Inflector::classify($listing[3]), $result);
+	public function testGetTableObject() {
+		$result = $this->Task->getTableObject('Article', 'bake_articles');
+		$this->assertInstanceOf('Cake\ORM\Table', $result);
+		$this->assertEquals('bake_articles', $result->table());
+		$this->assertEquals('Article', $result->alias());
 	}
 
 /**
- * test that an out of bounds option causes an error.
+ * Test getAssociations with off flag.
  *
  * @return void
  */
-	public function testGetNameWithOutOfBoundsOption() {
-		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls(99, 1));
-		$this->Task->expects($this->once())->method('err');
-
-		$this->Task->getName('test');
+	public function testGetAssociationsNoFlag() {
+		$this->Task->params['no-associations'] = true;
+		$articles = TableRegistry::get('BakeArticle');
+		$this->assertEquals([], $this->Task->getAssociations($articles));
 	}
 
 /**
- * Test table name interactions
+ * Test getAssociations
  *
  * @return void
  */
-	public function testGetTableName() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$result = $this->Task->getTable('BakeArticle', 'test');
-		$expected = 'bake_articles';
+	public function testGetAssociations() {
+		$articles = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getAssociations($articles);
+		$expected = [
+			'belongsTo' => [
+				[
+					'alias' => 'BakeUsers',
+					'className' => 'BakeUsers',
+					'foreignKey' => 'bake_user_id',
+				],
+			],
+			'hasMany' => [
+				[
+					'alias' => 'BakeComments',
+					'className' => 'BakeComments',
+					'foreignKey' => 'bake_article_id',
+				],
+			],
+			'belongsToMany' => [
+				[
+					'alias' => 'BakeTags',
+					'className' => 'BakeTags',
+					'foreignKey' => 'bake_article_id',
+					'joinTable' => 'bake_articles_bake_tags',
+					'targetForeignKey' => 'bake_tag_id',
+				],
+			],
+		];
 		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test getting a custom table name.
- *
- * @return void
- */
-	public function testGetTableNameCustom() {
-		$this->Task->expects($this->any())->method('in')->will($this->onConsecutiveCalls('n', 'my_table'));
-		$result = $this->Task->getTable('BakeArticle', 'test');
-		$expected = 'my_table';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test getTable with non-conventional tablenames
- *
- * @return void
- */
-	public function testGetTableOddTableInteractive() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->interactive = true;
-
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('articles', 'bake_odd')));
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				2 // bake_odd
-			));
-
-		$result = $this->Task->getName();
-		$expected = 'BakeOdd';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->getTable($result);
-		$expected = 'bake_odd';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test getTable with non-conventional tablenames
- *
- * @return void
- */
-	public function testGetTableOddTable() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->interactive = false;
-		$this->Task->args = array('BakeOdd');
-
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('articles', 'bake_odd')));
-
-		$this->Task->listAll();
-
-		$result = $this->Task->getTable('BakeOdd');
-		$expected = 'bake_odd';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test that initializing the validations works.
- *
- * @return void
- */
-	public function testInitValidations() {
-		$result = $this->Task->initValidations();
-		$this->assertTrue(in_array('notEmpty', $result));
-	}
-
-/**
- * test that individual field validation works, with interactive = false
- * tests the guessing features of validation
- *
- * @return void
- */
-	public function testFieldValidationGuessing() {
-		$this->Task->interactive = false;
-		$this->Task->initValidations();
-
-		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('notEmpty' => 'notEmpty');
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->fieldValidation('text', array('type' => 'date', 'length' => 10, 'null' => false));
-		$expected = array('date' => 'date');
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->fieldValidation('text', array('type' => 'time', 'length' => 10, 'null' => false));
-		$expected = array('time' => 'time');
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->fieldValidation('email', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('email' => 'email');
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->fieldValidation('test', array('type' => 'integer', 'length' => 10, 'null' => false));
-		$expected = array('numeric' => 'numeric');
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->fieldValidation('test', array('type' => 'boolean', 'length' => 10, 'null' => false));
-		$expected = array('boolean' => 'boolean');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test that interactive field validation works and returns multiple validators.
- *
- * @return void
- */
-	public function testInteractiveFieldValidation() {
-		$this->Task->initValidations();
-		$this->Task->interactive = true;
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('24', 'y', '18', 'n'));
-
-		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('notEmpty' => 'notEmpty', 'maxLength' => 'maxLength');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test that a bogus response doesn't cause errors to bubble up.
- *
- * @return void
- */
-	public function testInteractiveFieldValidationWithBogusResponse() {
-		$this->_useMockedOut();
-		$this->Task->initValidations();
-		$this->Task->interactive = true;
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('999999', '24', 'n'));
-
-		$this->Task->expects($this->at(10))->method('out')
-			->with($this->stringContains('make a valid'));
-
-		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('notEmpty' => 'notEmpty');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test that a regular expression can be used for validation.
- *
- * @return void
- */
-	public function testInteractiveFieldValidationWithRegexp() {
-		$this->Task->initValidations();
-		$this->Task->interactive = true;
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('/^[a-z]{0,9}$/', 'n'));
-
-		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('a_z_0_9' => '/^[a-z]{0,9}$/');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * Test that skipping fields during rule choice works when doing interactive field validation.
- *
- * @return void
- */
-	public function testSkippingChoiceInteractiveFieldValidation() {
-		$this->Task->initValidations();
-		$this->Task->interactive = true;
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('24', 'y', 's'));
-
-		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('notEmpty' => 'notEmpty', '_skipFields' => true);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * Test that skipping fields after rule choice works when doing interactive field validation.
- *
- * @return void
- */
-	public function testSkippingAnotherInteractiveFieldValidation() {
-		$this->Task->initValidations();
-		$this->Task->interactive = true;
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('24', 's'));
-
-		$result = $this->Task->fieldValidation('text', array('type' => 'string', 'length' => 10, 'null' => false));
-		$expected = array('notEmpty' => 'notEmpty', '_skipFields' => true);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * Test the validation generation routine with skipping the rest of the fields
- * when doing interactive field validation.
- *
- * @return void
- */
-	public function testInteractiveDoValidationWithSkipping() {
-		$this->Task->expects($this->any())
-			->method('in')
-			->will($this->onConsecutiveCalls('35', '24', 'n', '11', 's'));
-		$this->Task->interactive = true;
-		$Model = $this->getMock('Model');
-		$Model->primaryKey = 'id';
-		$Model->expects($this->any())
-			->method('schema')
-			->will($this->returnValue(array(
-					'id' => array(
-						'type' => 'integer',
-						'length' => 11,
-						'null' => false,
-						'key' => 'primary',
-					),
-					'name' => array(
-						'type' => 'string',
-						'length' => 20,
-						'null' => false,
-					),
-					'email' => array(
-						'type' => 'string',
-						'length' => 255,
-						'null' => false,
-					),
-					'some_date' => array(
-						'type' => 'date',
-						'length' => '',
-						'null' => false,
-					),
-					'some_time' => array(
-						'type' => 'time',
-						'length' => '',
-						'null' => false,
-					),
-					'created' => array(
-						'type' => 'datetime',
-						'length' => '',
-						'null' => false,
-					)
-				)
-			));
-
-		$result = $this->Task->doValidation($Model);
-		$expected = array(
-			'name' => array(
-				'notEmpty' => 'notEmpty'
-			),
-			'email' => array(
-				'email' => 'email',
-			),
-		);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test the validation Generation routine
- *
- * @return void
- */
-	public function testNonInteractiveDoValidation() {
-		$Model = $this->getMock('Model');
-		$Model->primaryKey = 'id';
-		$Model->expects($this->any())
-			->method('schema')
-			->will($this->returnValue(array(
-				'id' => array(
-					'type' => 'integer',
-					'length' => 11,
-					'null' => false,
-					'key' => 'primary',
-				),
-				'name' => array(
-					'type' => 'string',
-					'length' => 20,
-					'null' => false,
-				),
-				'email' => array(
-					'type' => 'string',
-					'length' => 255,
-					'null' => false,
-				),
-				'some_date' => array(
-					'type' => 'date',
-					'length' => '',
-					'null' => false,
-				),
-				'some_time' => array(
-					'type' => 'time',
-					'length' => '',
-					'null' => false,
-				),
-				'created' => array(
-					'type' => 'datetime',
-					'length' => '',
-					'null' => false,
-				)
-			)
-		));
-		$this->Task->interactive = false;
-
-		$result = $this->Task->doValidation($Model);
-		$expected = array(
-			'name' => array(
-				'notEmpty' => 'notEmpty'
-			),
-			'email' => array(
-				'email' => 'email',
-			),
-			'some_date' => array(
-				'date' => 'date'
-			),
-			'some_time' => array(
-				'time' => 'time'
-			),
-		);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test that finding primary key works
- *
- * @return void
- */
-	public function testFindPrimaryKey() {
-		$fields = array(
-			'one' => array(),
-			'two' => array(),
-			'key' => array('key' => 'primary')
-		);
-		$anything = new \PHPUnit_Framework_Constraint_IsAnything();
-		$this->Task->expects($this->once())->method('in')
-			->with($anything, null, 'key')
-			->will($this->returnValue('my_field'));
-
-		$result = $this->Task->findPrimaryKey($fields);
-		$expected = 'my_field';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test finding Display field
- *
- * @return void
- */
-	public function testFindDisplayFieldNone() {
-		$fields = array(
-			'id' => array(), 'tagname' => array(), 'body' => array(),
-			'created' => array(), 'modified' => array()
-		);
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
-		$result = $this->Task->findDisplayField($fields);
-		$this->assertFalse($result);
-	}
-
-/**
- * Test finding a displayname from user input
- *
- * @return void
- */
-	public function testFindDisplayName() {
-		$fields = array(
-			'id' => array(), 'tagname' => array(), 'body' => array(),
-			'created' => array(), 'modified' => array()
-		);
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('y', 2));
-
-		$result = $this->Task->findDisplayField($fields);
-		$this->assertEquals('tagname', $result);
 	}
 
 /**
@@ -576,35 +197,35 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testBelongsToGeneration() {
-		$model = new Model(array('ds' => 'test', 'name' => 'BakeComment'));
-		$result = $this->Task->findBelongsTo($model, array());
-		$expected = array(
-			'belongsTo' => array(
-				array(
-					'alias' => 'BakeArticle',
-					'className' => 'BakeArticle',
+		$model = TableRegistry::get('BakeComments');
+		$result = $this->Task->findBelongsTo($model, []);
+		$expected = [
+			'belongsTo' => [
+				[
+					'alias' => 'BakeArticles',
+					'className' => 'BakeArticles',
 					'foreignKey' => 'bake_article_id',
-				),
-				array(
-					'alias' => 'BakeUser',
-					'className' => 'BakeUser',
+				],
+				[
+					'alias' => 'BakeUsers',
+					'className' => 'BakeUsers',
 					'foreignKey' => 'bake_user_id',
-				),
-			)
-		);
+				],
+			]
+		];
 		$this->assertEquals($expected, $result);
 
-		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
+		$model = TableRegistry::get('CategoryThreads');
 		$result = $this->Task->findBelongsTo($model, array());
-		$expected = array(
-			'belongsTo' => array(
-				array(
-					'alias' => 'ParentCategoryThread',
-					'className' => 'CategoryThread',
+		$expected = [
+			'belongsTo' => [
+				[
+					'alias' => 'ParentCategoryThreads',
+					'className' => 'CategoryThreads',
 					'foreignKey' => 'parent_id',
-				),
-			)
-		);
+				],
+			]
+		];
 		$this->assertEquals($expected, $result);
 	}
 
@@ -613,47 +234,32 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testHasManyHasOneGeneration() {
-		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
+	public function testHasManyGeneration() {
 		$this->Task->connection = 'test';
-		$this->Task->listAll();
-		$result = $this->Task->findHasOneAndMany($model, array());
-		$expected = array(
-			'hasMany' => array(
-				array(
-					'alias' => 'BakeComment',
-					'className' => 'BakeComment',
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->findHasMany($model, []);
+		$expected = [
+			'hasMany' => [
+				[
+					'alias' => 'BakeComments',
+					'className' => 'BakeComments',
 					'foreignKey' => 'bake_article_id',
-				),
-			),
-			'hasOne' => array(
-				array(
-					'alias' => 'BakeComment',
-					'className' => 'BakeComment',
-					'foreignKey' => 'bake_article_id',
-				),
-			),
-		);
+				],
+			],
+		];
 		$this->assertEquals($expected, $result);
 
-		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
-		$result = $this->Task->findHasOneAndMany($model, array());
-		$expected = array(
-			'hasOne' => array(
-				array(
-					'alias' => 'ChildCategoryThread',
-					'className' => 'CategoryThread',
+		$model = TableRegistry::get('CategoryThreads');
+		$result = $this->Task->findHasMany($model, []);
+		$expected = [
+			'hasMany' => [
+				[
+					'alias' => 'ChildCategoryThreads',
+					'className' => 'CategoryThreads',
 					'foreignKey' => 'parent_id',
-				),
-			),
-			'hasMany' => array(
-				array(
-					'alias' => 'ChildCategoryThread',
-					'className' => 'CategoryThread',
-					'foreignKey' => 'parent_id',
-				),
-			)
-		);
+				],
+			]
+		];
 		$this->assertEquals($expected, $result);
 	}
 
@@ -663,59 +269,157 @@ class ModelTaskTest extends TestCase {
  * @return void
  */
 	public function testHasAndBelongsToManyGeneration() {
-		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
 		$this->Task->connection = 'test';
-		$this->Task->listAll();
-		$result = $this->Task->findHasAndBelongsToMany($model, array());
-		$expected = array(
-			'hasAndBelongsToMany' => array(
-				array(
-					'alias' => 'BakeTag',
-					'className' => 'BakeTag',
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->findBelongsToMany($model, []);
+		$expected = [
+			'belongsToMany' => [
+				[
+					'alias' => 'BakeTags',
+					'className' => 'BakeTags',
 					'foreignKey' => 'bake_article_id',
 					'joinTable' => 'bake_articles_bake_tags',
-					'associationForeignKey' => 'bake_tag_id',
-				),
-			),
-		);
+					'targetForeignKey' => 'bake_tag_id',
+				],
+			],
+		];
 		$this->assertEquals($expected, $result);
 	}
 
 /**
- * test non interactive doAssociations
+ * Test getting accessible fields.
  *
  * @return void
  */
-	public function testDoAssociationsNonInteractive() {
-		$this->Task->connection = 'test';
-		$this->Task->interactive = false;
-		$model = new Model(array('ds' => 'test', 'name' => 'BakeArticle'));
-		$result = $this->Task->doAssociations($model);
-		$expected = array(
-			'belongsTo' => array(
-				array(
-					'alias' => 'BakeUser',
-					'className' => 'BakeUser',
-					'foreignKey' => 'bake_user_id',
-				),
-			),
-			'hasMany' => array(
-				array(
-					'alias' => 'BakeComment',
-					'className' => 'BakeComment',
-					'foreignKey' => 'bake_article_id',
-				),
-			),
-			'hasAndBelongsToMany' => array(
-				array(
-					'alias' => 'BakeTag',
-					'className' => 'BakeTag',
-					'foreignKey' => 'bake_article_id',
-					'joinTable' => 'bake_articles_bake_tags',
-					'associationForeignKey' => 'bake_tag_id',
-				),
-			),
-		);
+	public function testGetFields() {
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getFields($model);
+		$expected = [
+			'bake_user_id',
+			'title',
+			'body',
+			'published',
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test getting field with the no- option
+ *
+ * @return void
+ */
+	public function testGetFieldsDisabled() {
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->params['no-fields'] = true;
+		$result = $this->Task->getFields($model);
+		$this->assertEquals([], $result);
+	}
+
+/**
+ * Test getting field with a whitelist
+ *
+ * @return void
+ */
+	public function testGetFieldsWhiteList() {
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->params['fields'] = 'id, title  , , body ,  created';
+		$result = $this->Task->getFields($model);
+		$expected = [
+			'id',
+			'title',
+			'body',
+			'created',
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test getting hidden fields.
+ *
+ * @return void
+ */
+	public function testGetHiddenFields() {
+		$model = TableRegistry::get('Users');
+		$result = $this->Task->getHiddenFields($model);
+		$expected = [
+			'password',
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test getting hidden field with the no- option
+ *
+ * @return void
+ */
+	public function testGetHiddenFieldsDisabled() {
+		$model = TableRegistry::get('Users');
+		$this->Task->params['no-hidden'] = true;
+		$result = $this->Task->getHiddenFields($model);
+		$this->assertEquals([], $result);
+	}
+
+/**
+ * Test getting hidden field with a whitelist
+ *
+ * @return void
+ */
+	public function testGetHiddenFieldsWhiteList() {
+		$model = TableRegistry::get('Users');
+		$this->Task->params['hidden'] = 'id, title  , , body ,  created';
+		$result = $this->Task->getHiddenFields($model);
+		$expected = [
+			'id',
+			'title',
+			'body',
+			'created',
+		];
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Test getting primary key
+ *
+ * @return void
+ */
+	public function testGetPrimaryKey() {
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getPrimaryKey($model);
+		$expected = ['id'];
+		$this->assertEquals($expected, $result);
+
+		$this->Task->params['primary-key'] = 'id, , account_id';
+		$result = $this->Task->getPrimaryKey($model);
+		$expected = ['id', 'account_id'];
+		$this->assertEquals($expected, $result);
+	}
+/**
+ * test getting validation rules with the no-validation rule.
+ *
+ * @return void
+ */
+	public function testGetValidationDisabled() {
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->params['no-validation'] = true;
+		$result = $this->Task->getValidation($model);
+		$this->assertEquals([], $result);
+	}
+
+/**
+ * test getting validation rules.
+ *
+ * @return void
+ */
+	public function testGetValidation() {
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getValidation($model);
+		$expected = [
+			'id' => ['rule' => 'numeric', 'allowEmpty' => false],
+			'bake_user_id' => ['rule' => 'numeric', 'allowEmpty' => false],
+			'title' => ['rule' => false, 'allowEmpty' => false],
+			'body' => ['rule' => false, 'allowEmpty' => true],
+			'published' => ['rule' => 'boolean', 'allowEmpty' => true],
+		];
 		$this->assertEquals($expected, $result);
 	}
 
@@ -724,13 +428,29 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testDoActsAs() {
-		$this->Task->connection = 'test';
-		$this->Task->interactive = false;
-		$model = new Model(array('ds' => 'test', 'name' => 'NumberTree'));
-		$result = $this->Task->doActsAs($model);
+	public function testGetBehaviors() {
+		$model = TableRegistry::get('NumberTrees');
+		$result = $this->Task->getBehaviors($model);
+		$this->assertEquals(['Tree'], $result);
 
-		$this->assertEquals(array('Tree'), $result);
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getBehaviors($model);
+		$this->assertEquals(['Timestamp'], $result);
+	}
+
+/**
+ * Test getDisplayField() method.
+ *
+ * @return void
+ */
+	public function testGetDisplayField() {
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->getDisplayField($model);
+		$this->assertEquals('title', $result);
+
+		$this->Task->params['display-field'] = 'custom';
+		$result = $this->Task->getDisplayField($model);
+		$this->assertEquals('custom', $result);
 	}
 
 /**
@@ -740,13 +460,27 @@ class ModelTaskTest extends TestCase {
  */
 	public function testBakeFixture() {
 		$this->Task->plugin = 'TestPlugin';
-		$this->Task->interactive = true;
-		$this->Task->Fixture->expects($this->at(0))->method('bake')->with('BakeArticle', 'bake_articles');
+		$this->Task->Fixture->expects($this->at(0))
+			->method('bake')
+			->with('BakeArticle', 'bake_articles');
 		$this->Task->bakeFixture('BakeArticle', 'bake_articles');
 
 		$this->assertEquals($this->Task->plugin, $this->Task->Fixture->plugin);
 		$this->assertEquals($this->Task->connection, $this->Task->Fixture->connection);
 		$this->assertEquals($this->Task->interactive, $this->Task->Fixture->interactive);
+	}
+
+/**
+ * Ensure that the fixture baking can be disabled
+ *
+ * @return void
+ */
+	public function testBakeFixtureDisabled() {
+		$this->Task->params['no-fixture'] = true;
+		$this->Task->plugin = 'TestPlugin';
+		$this->Task->Fixture->expects($this->never())
+			->method('bake');
+		$this->Task->bakeFixture('BakeArticle', 'bake_articles');
 	}
 
 /**
@@ -756,8 +490,9 @@ class ModelTaskTest extends TestCase {
  */
 	public function testBakeTest() {
 		$this->Task->plugin = 'TestPlugin';
-		$this->Task->interactive = true;
-		$this->Task->Test->expects($this->at(0))->method('bake')->with('Model', 'BakeArticle');
+		$this->Task->Test->expects($this->at(0))
+			->method('bake')
+			->with('Model', 'BakeArticle');
 		$this->Task->bakeTest('BakeArticle');
 
 		$this->assertEquals($this->Task->plugin, $this->Task->Test->plugin);
@@ -766,68 +501,16 @@ class ModelTaskTest extends TestCase {
 	}
 
 /**
- * test confirming of associations, and that when an association is hasMany
- * a question for the hasOne is also not asked.
+ * Ensure that test baking can be disabled.
  *
  * @return void
  */
-	public function testConfirmAssociations() {
-		$associations = array(
-			'hasOne' => array(
-				array(
-					'alias' => 'ChildCategoryThread',
-					'className' => 'CategoryThread',
-					'foreignKey' => 'parent_id',
-				),
-			),
-			'hasMany' => array(
-				array(
-					'alias' => 'ChildCategoryThread',
-					'className' => 'CategoryThread',
-					'foreignKey' => 'parent_id',
-				),
-			),
-			'belongsTo' => array(
-				array(
-					'alias' => 'User',
-					'className' => 'User',
-					'foreignKey' => 'user_id',
-				),
-			)
-		);
-		$model = new Model(array('ds' => 'test', 'name' => 'CategoryThread'));
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls('n', 'y', 'n', 'n', 'n'));
-
-		$result = $this->Task->confirmAssociations($model, $associations);
-		$this->assertTrue(empty($result['hasOne']));
-
-		$result = $this->Task->confirmAssociations($model, $associations);
-		$this->assertTrue(empty($result['hasMany']));
-		$this->assertTrue(empty($result['hasOne']));
-	}
-
-/**
- * test that inOptions generates questions and only accepts a valid answer
- *
- * @return void
- */
-	public function testInOptions() {
-		$this->_useMockedOut();
-
-		$options = array('one', 'two', 'three');
-		$this->Task->expects($this->at(0))->method('out')->with('1. one');
-		$this->Task->expects($this->at(1))->method('out')->with('2. two');
-		$this->Task->expects($this->at(2))->method('out')->with('3. three');
-		$this->Task->expects($this->at(3))->method('in')->will($this->returnValue(10));
-
-		$this->Task->expects($this->at(4))->method('out')->with('1. one');
-		$this->Task->expects($this->at(5))->method('out')->with('2. two');
-		$this->Task->expects($this->at(6))->method('out')->with('3. three');
-		$this->Task->expects($this->at(7))->method('in')->will($this->returnValue(2));
-		$result = $this->Task->inOptions($options, 'Pick a number');
-		$this->assertEquals(1, $result);
+	public function testBakeTestDisabled() {
+		$this->Task->params['no-test'] = true;
+		$this->Task->plugin = 'TestPlugin';
+		$this->Task->Test->expects($this->never())
+			->method('bake');
+		$this->Task->bakeTest('BakeArticle');
 	}
 
 /**
@@ -835,36 +518,51 @@ class ModelTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testBakeValidation() {
-		$validate = array(
+	public function testBakeTableValidation() {
+		$validation = array(
 			'name' => array(
-				'notempty' => 'notEmpty'
+				'allowEmpty' => false,
+				'rule' => false,
 			),
 			'email' => array(
-				'email' => 'email',
+				'allowEmpty' => true,
+				'rule' => 'email',
 			),
-			'some_date' => array(
-				'date' => 'date'
-			),
-			'some_time' => array(
-				'time' => 'time'
-			)
 		);
-		$result = $this->Task->bake('BakeArticle', compact('validate'));
-		$this->assertRegExp('/class BakeArticle extends AppModel \{/', $result);
-		$this->assertRegExp('/\$validate \= array\(/', $result);
-		$expected = <<< STRINGEND
-array(
-			'notempty' => array(
-				'rule' => array('notEmpty'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
-			),
-STRINGEND;
-		$this->assertRegExp('/' . preg_quote(str_replace("\r\n", "\n", $expected), '/') . '/', $result);
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeTable($model, compact('validation'));
+
+		$this->assertContains('namespace App\Model\Table;', $result);
+		$this->assertContains('use Cake\ORM\Table;', $result);
+		$this->assertContains('use Cake\Validation\Validator;', $result);
+		$this->assertContains('class BakeArticlesTable extends Table {', $result);
+		$this->assertContains('public function validationDefault(Validator $validator) {', $result);
+		$this->assertContains("->add('email', 'valid', ['rule' => 'email'])", $result);
+		$this->assertContains("->allowEmpty('email')", $result);
+		$this->assertContains("->validatePresence('name', 'create')", $result);
+	}
+
+/**
+ * test baking 
+ *
+ * @return void
+ */
+	public function testBakeTableConfig() {
+		$config = [
+			'table' => 'articles',
+			'primaryKey' => ['id'],
+			'displayField' => 'title',
+			'behaviors' => ['Timestamp'],
+		];
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeTable($model, $config);
+
+		$this->assertContains('public function initialize(array $config) {', $result);
+		$this->assertContains("this->primaryKey(['id']);\n", $result);
+		$this->assertContains("this->displayField('title');\n", $result);
+		$this->assertContains("this->addBehavior('Timestamp');\n", $result);
+		$this->assertContains("this->table('articles');\n", $result);
+		$this->assertContains('use Cake\Validation\Validator;', $result);
 	}
 
 /**
@@ -872,57 +570,98 @@ STRINGEND;
  *
  * @return void
  */
-	public function testBakeRelations() {
-		$associations = array(
-			'belongsTo' => array(
-				array(
+	public function testBakeTableRelations() {
+		$associations = [
+			'belongsTo' => [
+				[
 					'alias' => 'SomethingElse',
 					'className' => 'SomethingElse',
 					'foreignKey' => 'something_else_id',
-				),
-				array(
+				],
+				[
 					'alias' => 'BakeUser',
 					'className' => 'BakeUser',
 					'foreignKey' => 'bake_user_id',
-				),
-			),
-			'hasOne' => array(
-				array(
-					'alias' => 'OtherModel',
-					'className' => 'OtherModel',
-					'foreignKey' => 'other_model_id',
-				),
-			),
-			'hasMany' => array(
-				array(
+				],
+			],
+			'hasMany' => [
+				[
 					'alias' => 'BakeComment',
 					'className' => 'BakeComment',
 					'foreignKey' => 'parent_id',
-				),
-			),
-			'hasAndBelongsToMany' => array(
-				array(
+				],
+			],
+			'belongsToMany' => [
+				[
 					'alias' => 'BakeTag',
 					'className' => 'BakeTag',
 					'foreignKey' => 'bake_article_id',
 					'joinTable' => 'bake_articles_bake_tags',
-					'associationForeignKey' => 'bake_tag_id',
-				),
-			)
-		);
-		$result = $this->Task->bake('BakeArticle', compact('associations'));
-		$this->assertContains(' * @property BakeUser $BakeUser', $result);
-		$this->assertContains(' * @property OtherModel $OtherModel', $result);
-		$this->assertContains(' * @property BakeComment $BakeComment', $result);
-		$this->assertContains(' * @property BakeTag $BakeTag', $result);
-		$this->assertRegExp('/\$hasAndBelongsToMany \= array\(/', $result);
-		$this->assertRegExp('/\$hasMany \= array\(/', $result);
-		$this->assertRegExp('/\$belongsTo \= array\(/', $result);
-		$this->assertRegExp('/\$hasOne \= array\(/', $result);
-		$this->assertRegExp('/BakeTag/', $result);
-		$this->assertRegExp('/OtherModel/', $result);
-		$this->assertRegExp('/SomethingElse/', $result);
-		$this->assertRegExp('/BakeComment/', $result);
+					'targetForeignKey' => 'bake_tag_id',
+				],
+			]
+		];
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeTable($model, compact('associations'));
+		$this->assertContains("this->hasMany('BakeComment', [", $result);
+		$this->assertContains("this->belongsTo('SomethingElse', [", $result);
+		$this->assertContains("this->belongsTo('BakeUser', [", $result);
+		$this->assertContains("this->belongsToMany('BakeTag', [", $result);
+		$this->assertContains("'joinTable' => 'bake_articles_bake_tags',", $result);
+	}
+
+/**
+ * test baking an entity class
+ *
+ * @return void
+ */
+	public function testBakeEntity() {
+		$config = [
+			'fields' => []
+		];
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeEntity($model, $config);
+
+		$this->assertContains('namespace App\Model\Entity;', $result);
+		$this->assertContains('use Cake\ORM\Entity;', $result);
+		$this->assertContains('class BakeArticle extends Entity {', $result);
+		$this->assertNotContains('$_accessible', $result);
+	}
+
+/**
+ * test baking an entity class
+ *
+ * @return void
+ */
+	public function testBakeEntityFields() {
+		$config = [
+			'fields' => ['title', 'body', 'published']
+		];
+		$model = TableRegistry::get('BakeArticles');
+		$result = $this->Task->bakeEntity($model, $config);
+
+		$this->assertContains("protected \$_accessible = [", $result);
+		$this->assertContains("'title' => false,", $result);
+		$this->assertContains("'body' => false,", $result);
+		$this->assertContains("'published' => false", $result);
+		$this->assertNotContains("protected \$_hidden", $result);
+	}
+
+/**
+ * test baking an entity class sets hidden fields.
+ *
+ * @return void
+ */
+	public function testBakeEntityHidden() {
+		$model = TableRegistry::get('BakeUsers');
+		$config = [
+			'hidden' => ['password'],
+		];
+		$result = $this->Task->bakeEntity($model, $config);
+
+		$this->assertContains("protected \$_hidden = [", $result);
+		$this->assertContains("'password'", $result);
+		$this->assertNotContains("protected \$_accessible", $result);
 	}
 
 /**
@@ -930,41 +669,62 @@ STRINGEND;
  *
  * @return void
  */
-	public function testBakeWithPlugin() {
+	public function testBakeTableWithPlugin() {
 		$this->Task->plugin = 'ControllerTest';
 
-		//fake plugin path
+		// fake plugin path
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
-		$path = APP . 'Plugin/ControllerTest/Model/BakeArticle.php';
+		$path = APP . 'Plugin/ControllerTest/Model/Table/BakeArticlesTable.php';
 		$this->Task->expects($this->once())->method('createFile')
-			->with($path, $this->stringContains('BakeArticle extends ControllerTestAppModel'));
+			->with($path, $this->logicalAnd(
+				$this->stringContains('namespace ControllerTest\\Model\\Table;'),
+				$this->stringContains('use Cake\\ORM\\Table;'),
+				$this->stringContains('class BakeArticlesTable extends Table {')
+			));
 
-		$result = $this->Task->bake('BakeArticle', array(), array());
-		$this->assertContains("App::uses('ControllerTestAppModel', 'ControllerTest.Model');", $result);
-
-		$this->assertEquals(count(ClassRegistry::keys()), 0);
-		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->bakeTable($model);
 	}
 
 /**
- * test bake() for models with behaviors
+ * test bake() with a -plugin param
  *
  * @return void
  */
-	public function testBakeWithBehaviors() {
-		$result = $this->Task->bake('NumberTree', array('actsAs' => array('Tree', 'PluginName.Sluggable')));
-		$expected = <<<TEXT
+	public function testBakeEntityWithPlugin() {
+		$this->Task->plugin = 'ControllerTest';
+
+		// fake plugin path
+		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
+		$path = APP . 'Plugin/ControllerTest/Model/Entity/BakeArticle.php';
+		$this->Task->expects($this->once())->method('createFile')
+			->with($path, $this->logicalAnd(
+				$this->stringContains('namespace ControllerTest\\Model\\Entity;'),
+				$this->stringContains('use Cake\\ORM\\Entity;'),
+				$this->stringContains('class BakeArticle extends Entity {')
+			));
+
+		$model = TableRegistry::get('BakeArticles');
+		$this->Task->bakeEntity($model);
+	}
+
 /**
- * Behaviors
+ * test that execute with no args
  *
- * @var array
+ * @return void
  */
-	public \$actsAs = array(
-		'Tree',
-		'PluginName.Sluggable',
-	);
-TEXT;
-		$this->assertTextContains($expected, $result);
+	public function testExecuteNoArgs() {
+		$this->_useMockedOut();
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+
+		$this->Task->expects($this->at(0))
+			->method('out')
+			->with($this->stringContains('Choose a model to bake from the following:'));
+		$this->Task->expects($this->at(1))
+			->method('out')
+			->with('- BakeArticles');
+		$this->Task->execute();
 	}
 
 /**
@@ -975,17 +735,19 @@ TEXT;
 	public function testExecuteWithNamedModel() {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticle');
-		$filename = '/my/path/BakeArticle.php';
+		$this->Task->args = ['BakeArticles'];
 
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle extends AppModel'));
+		$tableFile = '/my/path/Table/BakeArticlesTable.php';
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($tableFile, $this->stringContains('class BakeArticlesTable extends Table'));
+
+		$entityFile = '/my/path/Entity/BakeArticle.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($entityFile, $this->stringContains('class BakeArticle extends Entity'));
 
 		$this->Task->execute();
-
-		$this->assertEquals(count(ClassRegistry::keys()), 0);
-		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
 	}
 
 /**
@@ -1008,31 +770,13 @@ TEXT;
 	public function testExecuteWithNamedModelVariations($name) {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
 
 		$this->Task->args = array($name);
-		$filename = '/my/path/BakeArticle.php';
+		$filename = '/my/path/Table/BakeArticlesTable.php';
 
-		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle extends AppModel'));
-		$this->Task->execute();
-	}
-
-/**
- * test that execute with a model name picks up hasMany associations.
- *
- * @return void
- */
-	public function testExecuteWithNamedModelHasManyCreated() {
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticle');
-		$filename = '/my/path/BakeArticle.php';
-
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(1));
-		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, $this->stringContains("'BakeComment' => array("));
-
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticlesTable extends Table {'));
 		$this->Task->execute();
 	}
 
@@ -1042,161 +786,69 @@ TEXT;
  * @return void
  */
 	public function testExecuteIntoAll() {
-		$count = count($this->Task->listAll('test'));
+		$count = count($this->Task->listAll());
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
+		$this->Task->args = ['all'];
 
-		$this->Task->Fixture->expects($this->exactly(5))->method('bake');
-		$this->Task->Test->expects($this->exactly(5))->method('bake');
+		$this->Task->Fixture->expects($this->exactly($count))
+			->method('bake');
+		$this->Task->Test->expects($this->exactly($count))
+			->method('bake');
 
-		$filename = '/my/path/BakeArticle.php';
-		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle'));
+		$filename = '/my/path/Table/BakeArticlesTable.php';
+		$this->Task->expects($this->at(0))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticlesTable extends'));
 
-		$filename = '/my/path/BakeArticlesBakeTag.php';
-		$this->Task->expects($this->at(2))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticlesBakeTag'));
+		$filename = '/my/path/Entity/BakeArticle.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticle extends'));
 
-		$filename = '/my/path/BakeComment.php';
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with($filename, $this->stringContains('class BakeComment'));
+		$filename = '/my/path/Table/BakeArticlesBakeTagsTable.php';
+		$this->Task->expects($this->at(2))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticlesBakeTagsTable extends'));
 
-		$filename = '/my/path/BakeComment.php';
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with($filename, $this->stringContains('public $primaryKey = \'otherid\';'));
+		$filename = '/my/path/Entity/BakeArticlesBakeTag.php';
+		$this->Task->expects($this->at(3))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeArticlesBakeTag extends'));
 
-		$filename = '/my/path/BakeTag.php';
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with($filename, $this->stringContains('class BakeTag'));
+		$filename = '/my/path/Table/BakeCommentsTable.php';
+		$this->Task->expects($this->at(4))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeCommentsTable extends'));
 
-		$filename = '/my/path/BakeTag.php';
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with($filename, $this->logicalNot($this->stringContains('public $primaryKey')));
+		$filename = '/my/path/Entity/BakeComment.php';
+		$this->Task->expects($this->at(5))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeComment extends'));
 
-		$filename = '/my/path/CategoryThread.php';
-		$this->Task->expects($this->at(5))->method('createFile')
-			->with($filename, $this->stringContains('class CategoryThread'));
+		$filename = '/my/path/Table/BakeTagsTable.php';
+		$this->Task->expects($this->at(6))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeTagsTable extends'));
 
-		$this->Task->execute();
+		$filename = '/my/path/Entity/BakeTag.php';
+		$this->Task->expects($this->at(7))
+			->method('createFile')
+			->with($filename, $this->stringContains('class BakeTag extends'));
 
-		$this->assertEquals(count(ClassRegistry::keys()), 0);
-		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
-	}
+		$filename = '/my/path/Table/CategoryThreadsTable.php';
+		$this->Task->expects($this->at(8))
+			->method('createFile')
+			->with($filename, $this->stringContains('class CategoryThreadsTable extends'));
 
-/**
- * test that odd tablenames aren't inflected back from modelname
- *
- * @return void
- */
-	public function testExecuteIntoAllOddTables() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'bake', 'bakeFixture'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('bake_odd')));
-		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
-		$this->Task->expects($this->once())->method('_getModelObject')->with('BakeOdd', 'bake_odd')->will($this->returnValue($object));
-		$this->Task->expects($this->at(3))->method('bake')->with($object, false)->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('bakeFixture')->with('BakeOdd', 'bake_odd');
-
-		$this->Task->execute();
-
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'doActsAs', 'createFile'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('bake_odd')));
-		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
-		$this->Task->expects($this->once())->method('_getModelObject')->will($this->returnValue($object));
-		$this->Task->expects($this->once())->method('doAssociations')->will($this->returnValue(array()));
-		$this->Task->expects($this->once())->method('doValidation')->will($this->returnValue(array()));
-		$this->Task->expects($this->once())->method('doActsAs')->will($this->returnValue(array()));
-
-		$filename = '/my/path/BakeOdd.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('class BakeOdd'));
-
-		$filename = '/my/path/BakeOdd.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('public $useTable = \'bake_odd\''));
-
-		$this->Task->execute();
-	}
-
-/**
- * test that odd tablenames aren't inflected back from modelname
- *
- * @return void
- */
-	public function testExecuteIntoBakeOddTables() {
-		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'bake', 'bakeFixture'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeOdd');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('articles', 'bake_odd')));
-		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
-		$this->Task->expects($this->once())->method('_getModelObject')->with('BakeOdd', 'bake_odd')->will($this->returnValue($object));
-		$this->Task->expects($this->once())->method('bake')->with($object, false)->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('bakeFixture')->with('BakeOdd', 'bake_odd');
-
-		$this->Task->execute();
-
-		$out = $this->getMock('ConsoleOutput', array(), array(), '', false);
-		$in = $this->getMock('ConsoleInput', array(), array(), '', false);
-		$this->Task = $this->getMock('ModelTask',
-			array('in', 'err', '_stop', '_checkUnitTest', 'getAllTables', '_getModelObject', 'doAssociations', 'doValidation', 'doActsAs', 'createFile'),
-			array($out, $out, $in)
-		);
-		$this->_setupOtherMocks();
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeOdd');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->expects($this->once())->method('getAllTables')->will($this->returnValue(array('articles', 'bake_odd')));
-		$object = new Model(array('name' => 'BakeOdd', 'table' => 'bake_odd', 'ds' => 'test'));
-		$this->Task->expects($this->once())->method('_getModelObject')->will($this->returnValue($object));
-		$this->Task->expects($this->once())->method('doAssociations')->will($this->returnValue(array()));
-		$this->Task->expects($this->once())->method('doValidation')->will($this->returnValue(array()));
-		$this->Task->expects($this->once())->method('doActsAs')->will($this->returnValue(array()));
-
-		$filename = '/my/path/BakeOdd.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('class BakeOdd'));
-
-		$filename = '/my/path/BakeOdd.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('public $useTable = \'bake_odd\''));
+		$filename = '/my/path/Entity/CategoryThread.php';
+		$this->Task->expects($this->at(9))
+			->method('createFile')
+			->with($filename, $this->stringContains('class CategoryThread extends'));
 
 		$this->Task->execute();
 	}
@@ -1214,108 +866,38 @@ TEXT;
 
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->skipTables = array('bake_tags');
+		$this->Task->args = ['all'];
+		$this->Task->skipTables = ['bake_tags'];
 
-		$this->Task->Fixture->expects($this->exactly(4))->method('bake');
-		$this->Task->Test->expects($this->exactly(4))->method('bake');
+		$this->Task->Fixture->expects($this->exactly(6))
+			->method('bake');
+		$this->Task->Test->expects($this->exactly(6))
+			->method('bake');
 
-		$filename = '/my/path/BakeArticle.php';
-		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle'));
+		$filename = '/my/path/Entity/BakeArticle.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($filename);
 
-		$filename = '/my/path/BakeArticlesBakeTag.php';
-		$this->Task->expects($this->at(2))->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticlesBakeTag'));
+		$filename = '/my/path/Entity/BakeArticlesBakeTag.php';
+		$this->Task->expects($this->at(3))
+			->method('createFile')
+			->with($filename);
 
-		$filename = '/my/path/BakeComment.php';
-		$this->Task->expects($this->at(3))->method('createFile')
-			->with($filename, $this->stringContains('class BakeComment'));
+		$filename = '/my/path/Entity/BakeComment.php';
+		$this->Task->expects($this->at(5))
+			->method('createFile')
+			->with($filename);
 
-		$filename = '/my/path/CategoryThread.php';
-		$this->Task->expects($this->at(4))->method('createFile')
-			->with($filename, $this->stringContains('class CategoryThread'));
+		$filename = '/my/path/Entity/CategoryThread.php';
+		$this->Task->expects($this->at(7))
+			->method('createFile')
+			->with($filename);
 
-		$this->Task->execute();
-	}
-
-/**
- * test the interactive side of bake.
- *
- * @return void
- */
-	public function testExecuteIntoInteractive() {
-		$tables = $this->Task->listAll('test');
-		$article = array_search('bake_articles', $tables) + 1;
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->interactive = true;
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				$article, // article
-				'n', // no validation
-				'y', // associations
-				'y', // comment relation
-				'y', // user relation
-				'y', // tag relation
-				'n', // additional assocs
-				'y' // looks good?
-			));
-		$this->Task->expects($this->once())->method('_checkUnitTest')->will($this->returnValue(true));
-
-		$this->Task->Test->expects($this->once())->method('bake');
-		$this->Task->Fixture->expects($this->once())->method('bake');
-
-		$filename = '/my/path/BakeArticle.php';
-
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('class BakeArticle'));
-
-		$this->Task->execute();
-
-		$this->assertEquals(count(ClassRegistry::keys()), 0);
-		$this->assertEquals(count(ClassRegistry::mapKeys()), 0);
-	}
-
-/**
- * test using bake interactively with a table that does not exist.
- *
- * @return void
- */
-	public function testExecuteWithNonExistantTableName() {
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				'Foobar', // Or type in the name of the model
-				'y', // Do you want to use this table
-				'n' // Doesn't exist, continue anyway?
-			));
-
-		$this->Task->execute();
-	}
-
-/**
- * test using bake interactively with a table that does not exist.
- *
- * @return void
- */
-	public function testForcedExecuteWithNonExistantTableName() {
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				'Foobar', // Or type in the name of the model
-				'y', // Do you want to use this table
-				'y', // Doesn't exist, continue anyway?
-				'id', // Primary key
-				'y' // Looks good?
-			));
+		$filename = '/my/path/Entity/NumberTree.php';
+		$this->Task->expects($this->at(9))
+			->method('createFile')
+			->with($filename);
 
 		$this->Task->execute();
 	}
