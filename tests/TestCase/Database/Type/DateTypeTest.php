@@ -74,11 +74,11 @@ class DateTypeTest extends TestCase {
 	}
 
 /**
- * Data provider for marshall()
+ * Data provider for marshal()
  *
  * @return array
  */
-	public function marshallProvider() {
+	public function marshalProvider() {
 		$date = new \DateTime('@1392387900');
 		$date->setTime(0, 0, 0);
 
@@ -145,13 +145,13 @@ class DateTypeTest extends TestCase {
 	}
 
 /**
- * test marshalling data.
+ * test marshaling data.
  *
- * @dataProvider marshallProvider
+ * @dataProvider marshalProvider
  * @return void
  */
-	public function testMarshall($value, $expected) {
-		$result = $this->type->marshall($value);
+	public function testMarshal($value, $expected) {
+		$result = $this->type->marshal($value);
 		$this->assertEquals($expected, $result);
 	}
 
