@@ -1,9 +1,5 @@
 <?php
 /**
- * TemplateTask file
- *
- * Test Case for TemplateTask generation shell task
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -24,7 +20,6 @@ use Cake\TestSuite\TestCase;
 
 /**
  * TemplateTaskTest class
- *
  */
 class TemplateTaskTest extends TestCase {
 
@@ -115,6 +110,7 @@ class TemplateTaskTest extends TestCase {
 		$this->Task->initialize();
 		$this->Task->params['theme'] = 'test';
 		$this->Task->set(array(
+			'name' => 'Article',
 			'model' => 'Article',
 			'table' => 'articles',
 			'import' => false,

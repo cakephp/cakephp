@@ -30,7 +30,7 @@ class FixtureTask extends BakeTask {
  *
  * @var array
  */
-	public $tasks = ['DbConfig', 'Model', 'Template'];
+	public $tasks = ['Model', 'Template'];
 
 /**
  * path to fixtures directory
@@ -48,7 +48,7 @@ class FixtureTask extends BakeTask {
  */
 	public function __construct($stdout = null, $stderr = null, $stdin = null) {
 		parent::__construct($stdout, $stderr, $stdin);
-		$this->path = APP . 'Test/Fixture/';
+		$this->path = ROOT . '/Test/Fixture/';
 	}
 
 /**
@@ -90,6 +90,9 @@ class FixtureTask extends BakeTask {
 			'help' => __d('cake_console', 'Used with --count and <name>/all commands to pull [n] records from the live tables, where [n] is either --count or the default of 10.'),
 			'short' => 'r',
 			'boolean' => true
+		])->addOption('conditions', [
+			'help' => __d('cake_console', 'The SQL snippet to use when importing records.'),
+			'default' => '1=1',
 		]);
 
 		return $parser;
@@ -430,14 +433,18 @@ class FixtureTask extends BakeTask {
  * @return array Array of records.
  */
 	protected function _getRecordsFromTable($modelName, $useTable = null) {
-		$condition = 'WHERE 1=1';
 		$recordCount = (isset($this->params['count']) ? $this->params['count'] : 10);
-		$model = TableRegistry::get($modelName, [
-			'table' => $useTable,
-			'connection' => ConnectionManager::get($this->connection)
-		]);
+		$conditions = (isset($this->params['conditions']) ? $this->params['conditions'] : '1=1');
+		if (TableRegistry::exists($modelName)) {
+			$model = TableRegistry::get($modelName);
+		} else {
+			$model = TableRegistry::get($modelName, [
+				'table' => $useTable,
+				'connection' => ConnectionManager::get($this->connection)
+			]);
+		}
 		$records = $model->find('all', [
-			'conditions' => $condition,
+			'conditions' => $conditions,
 			'recursive' => -1,
 			'limit' => $recordCount
 		]);
@@ -446,14 +453,7 @@ class FixtureTask extends BakeTask {
 		$alias = $model->alias();
 		$out = [];
 		foreach ($records as $record) {
-			$row = [];
-			foreach ($record[$model->alias] as $field => $value) {
-				if ($schema->columnType($field) === 'boolean') {
-					$value = (int)(bool)$value;
-				}
-				$row[$field] = $value;
-			}
-			$out[] = $row;
+			$out[] = $record->toArray();
 		}
 		return $out;
 	}

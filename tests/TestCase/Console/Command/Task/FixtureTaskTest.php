@@ -78,7 +78,7 @@ class FixtureTaskTest extends TestCase {
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$Task = new FixtureTask($out, $out, $in);
-		$this->assertEquals(APP . 'Test/Fixture/', $Task->path);
+		$this->assertEquals(ROOT . '/Test/Fixture/', $Task->path);
 	}
 
 /**
@@ -126,16 +126,13 @@ class FixtureTaskTest extends TestCase {
  * @return void
  */
 	public function testImportRecordsFromDatabaseWithConditionsPoo() {
-		$this->markTestIncomplete('not done');
-		$this->Task->interactive = true;
-		$this->Task->expects($this->at(0))->method('in')
-			->will($this->returnValue('WHERE 1=1'));
-
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
-		$result = $this->Task->bake('Article', false, array(
-			'fromTable' => true, 'schema' => 'Article', 'records' => false
+		$result = $this->Task->bake('Articles', false, array(
+			'fromTable' => true,
+			'schema' => 'Articles',
+			'records' => false
 		));
 
 		$this->assertContains('namespace App\Test\Fixture;', $result);
@@ -165,19 +162,13 @@ class FixtureTaskTest extends TestCase {
  * @return void
  */
 	public function testImportRecordsNoEscaping() {
-		$this->markTestIncomplete('not done');
 		$db = ConnectionManager::get('test');
 		if ($db instanceof Sqlserver) {
 			$this->markTestSkipped('This test does not run on SQLServer');
 		}
 
 		$articles = TableRegistry::get('Articles');
-		$articles->updateAll(['body' => "'Body \"value\"'"]);
-
-		$this->Task->interactive = true;
-		$this->Task->expects($this->at(0))
-			->method('in')
-			->will($this->returnValue('WHERE 1=1 LIMIT 10'));
+		$articles->updateAll(['body' => "Body \"value\""], []);
 
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
@@ -239,21 +230,22 @@ class FixtureTaskTest extends TestCase {
  * @return void
  */
 	public function testAllWithCountAndRecordsFlags() {
-		$this->markTestIncomplete('not done');
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->params = array('count' => 10, 'records' => true);
+		$this->Task->args = ['all'];
+		$this->Task->params = ['count' => 10, 'records' => true];
 
 		$this->Task->Model->expects($this->any())->method('listAll')
 			->will($this->returnValue(array('Articles', 'comments')));
 
 		$filename = '/my/path/ArticleFixture.php';
-		$this->Task->expects($this->at(0))->method('createFile')
+		$this->Task->expects($this->at(0))
+			->method('createFile')
 			->with($filename, $this->stringContains("'title' => 'Third Article'"));
 
 		$filename = '/my/path/CommentFixture.php';
-		$this->Task->expects($this->at(1))->method('createFile')
+		$this->Task->expects($this->at(1))
+			->method('createFile')
 			->with($filename, $this->stringContains("'comment' => 'First Comment for First Article'"));
 		$this->Task->expects($this->exactly(2))->method('createFile');
 
