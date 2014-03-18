@@ -290,13 +290,16 @@ class Validation {
  * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
  * - `y` 2006 just the year without any separators
  *
- * @param string $check a valid date string
+ * @param string|DateTime $check a valid date string/object
  * @param string|array $format Use a string or an array of the keys above.
  *    Arrays should be passed as array('dmy', 'mdy', etc)
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
  * @return boolean Success
  */
 	public static function date($check, $format = 'ymd', $regex = null) {
+		if ($check instanceof \DateTime) {
+			return true;
+		}
 		if ($regex !== null) {
 			return static::_check($check, $regex);
 		}
@@ -344,7 +347,7 @@ class Validation {
  *
  * All values matching the "date" core validation rule, and the "time" one will be valid
  *
- * @param string $check Value to check
+ * @param string|DateTime $check Value to check
  * @param string|array $dateFormat Format of the date part. See Validation::date for more information.
  * @param string $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
  * @return boolean True if the value is valid, false otherwise
@@ -352,6 +355,9 @@ class Validation {
  * @see Validation::time
  */
 	public static function datetime($check, $dateFormat = 'ymd', $regex = null) {
+		if ($check instanceof \DateTime) {
+			return true;
+		}
 		$valid = false;
 		$parts = explode(' ', $check);
 		if (!empty($parts) && count($parts) > 1) {
@@ -367,10 +373,13 @@ class Validation {
  * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
  * Does not allow/validate seconds.
  *
- * @param string $check a valid time string
+ * @param string|DateTime $check a valid time string/object
  * @return boolean Success
  */
 	public static function time($check) {
+		if ($check instanceof \DateTime) {
+			return true;
+		}
 		return static::_check($check, '%^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$|^([01]\d|2[0-3])(:[0-5]\d){0,2}$%');
 	}
 
