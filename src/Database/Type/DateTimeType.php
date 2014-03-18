@@ -1,7 +1,5 @@
 <?php
 /**
- * PHP Version 5.4
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -27,9 +25,16 @@ use \DateTime;
 class DateTimeType extends \Cake\Database\Type {
 
 /**
+ * String format to use for DateTime parsing
+ *
+ * @var string
+ */
+	protected $_format = 'Y-m-d H:i:s';
+
+/**
  * Convert DateTime instance into strings.
  *
- * @param string|Datetime $value The value to convert.
+ * @param string|DateTime $value The value to convert.
  * @param Driver $driver The driver instance to convert with.
  * @return string
  */
@@ -37,7 +42,7 @@ class DateTimeType extends \Cake\Database\Type {
 		if (is_string($value)) {
 			return $value;
 		}
-		return $value->format('Y-m-d H:i:s');
+		return $value->format($this->_format);
 	}
 
 /**
@@ -51,7 +56,7 @@ class DateTimeType extends \Cake\Database\Type {
 		if ($value === null) {
 			return null;
 		}
-		$value = DateTime::createFromFormat('Y-m-d H:i:s', $value);
+		$value = DateTime::createFromFormat($this->_format, $value);
 		return $value;
 	}
 

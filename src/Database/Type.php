@@ -35,6 +35,7 @@ class Type {
 	protected static $_types = [
 		'binary' => 'Cake\Database\Type\BinaryType',
 		'date' => 'Cake\Database\Type\DateType',
+		'time' => 'Cake\Database\Type\TimeType',
 		'datetime' => 'Cake\Database\Type\DateTimeType',
 		'timestamp' => 'Cake\Database\Type\DateTimeType',
 		'uuid' => 'Cake\Database\Type\UuidType',
