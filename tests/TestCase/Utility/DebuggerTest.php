@@ -54,7 +54,7 @@ class DebuggerTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 		Configure::write('log', false);
 	}
 

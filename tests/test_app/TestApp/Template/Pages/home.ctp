@@ -7,7 +7,7 @@ use Cake\Error;
 use Cake\Utility\Debugger;
 use Cake\Validation\Validation;
 
-if (Configure::read('debug') == 0):
+if (!Configure::read('debug')):
 	throw new Error\NotFoundException();
 endif;
 ?>

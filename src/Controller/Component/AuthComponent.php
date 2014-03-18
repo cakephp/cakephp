@@ -273,7 +273,7 @@ class AuthComponent extends Component {
 		$this->response = $controller->response;
 		$this->_methods = $controller->methods;
 
-		if (Configure::read('debug') > 0) {
+		if (Configure::read('debug')) {
 			Debugger::checkSecurityKeys();
 		}
 	}

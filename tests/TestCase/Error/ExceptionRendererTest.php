@@ -138,7 +138,7 @@ class ExceptionRendererTest extends TestCase {
 		$request = new Request();
 		$request->base = '';
 		Router::setRequestInfo($request);
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 	}
 
 /**
@@ -170,7 +170,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testSubclassMethodsNotBeingConvertedToError() {
-		Configure::write('debug', 2);
+		Configure::write('debug', true);
 
 		$exception = new MissingWidgetThingException('Widget not found');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
@@ -188,7 +188,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testSubclassMethodsNotBeingConvertedDebug0() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$exception = new MissingWidgetThingException('Widget not found');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
 
@@ -207,7 +207,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testSubclassConvertingFrameworkErrors() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$exception = new Error\MissingControllerException('PostsController');
 		$ExceptionRenderer = $this->_mockResponse(new MyCustomExceptionRenderer($exception));
@@ -241,7 +241,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testErrorMethodCoercion() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 		$exception = new Error\MissingActionException('Page not found');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
 
@@ -311,7 +311,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testUnknownExceptionInProduction() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$exception = new \OutOfBoundsException('foul ball.');
 		$ExceptionRenderer = new ExceptionRenderer($exception);
@@ -378,7 +378,7 @@ class ExceptionRendererTest extends TestCase {
  * @return void
  */
 	public function testerror400OnlyChangingCakeException() {
-		Configure::write('debug', 0);
+		Configure::write('debug', false);
 
 		$exception = new Error\NotFoundException('Custom message');
 		$ExceptionRenderer = $this->_mockResponse(new ExceptionRenderer($exception));

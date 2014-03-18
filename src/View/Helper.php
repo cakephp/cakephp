@@ -304,7 +304,7 @@ class Helper extends Object implements EventListener {
  */
 	public function assetTimestamp($path) {
 		$stamp = Configure::read('Asset.timestamp');
-		$timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug') > 0);
+		$timestampEnabled = $stamp === 'force' || ($stamp === true && Configure::read('debug'));
 		if ($timestampEnabled && strpos($path, '?') === false) {
 			$filepath = preg_replace(
 				'/^' . preg_quote($this->request->webroot, '/') . '/',
