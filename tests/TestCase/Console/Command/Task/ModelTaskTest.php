@@ -416,8 +416,8 @@ class ModelTaskTest extends TestCase {
 		$expected = [
 			'id' => ['rule' => 'numeric', 'allowEmpty' => false],
 			'bake_user_id' => ['rule' => 'numeric', 'allowEmpty' => false],
-			'title' => ['rule' => 'notEmpty', 'allowEmpty' => false],
-			'body' => ['rule' => 'notEmpty', 'allowEmpty' => false],
+			'title' => ['rule' => false, 'allowEmpty' => false],
+			'body' => ['rule' => false, 'allowEmpty' => true],
 			'published' => ['rule' => 'boolean', 'allowEmpty' => true],
 		];
 		$this->assertEquals($expected, $result);
@@ -522,7 +522,7 @@ class ModelTaskTest extends TestCase {
 		$validation = array(
 			'name' => array(
 				'allowEmpty' => false,
-				'rule' => 'notEmpty'
+				'rule' => false,
 			),
 			'email' => array(
 				'allowEmpty' => true,
@@ -537,9 +537,9 @@ class ModelTaskTest extends TestCase {
 		$this->assertContains('use Cake\Validation\Validator;', $result);
 		$this->assertContains('class BakeArticlesTable extends Table {', $result);
 		$this->assertContains('public function validationDefault(Validator $validator) {', $result);
-		$this->assertContains("->add('name', 'valid', ['rule' => 'notEmpty'])", $result);
 		$this->assertContains("->add('email', 'valid', ['rule' => 'email'])", $result);
 		$this->assertContains("->allowEmpty('email')", $result);
+		$this->assertContains("->validatePresence('name', 'create')", $result);
 	}
 
 /**

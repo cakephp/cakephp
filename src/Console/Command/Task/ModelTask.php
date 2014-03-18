@@ -434,14 +434,11 @@ class ModelTask extends BakeTask {
 			return false;
 		}
 
+		$rule = false;
 		if ($fieldName === 'email') {
 			$rule = 'email';
 		} elseif ($metaData['type'] === 'uuid') {
 			$rule = 'uuid';
-		} elseif ($metaData['type'] === 'string') {
-			$rule = 'notEmpty';
-		} elseif ($metaData['type'] === 'text') {
-			$rule = 'notEmpty';
 		} elseif ($metaData['type'] === 'integer') {
 			$rule = 'numeric';
 		} elseif ($metaData['type'] === 'float') {
@@ -461,7 +458,7 @@ class ModelTask extends BakeTask {
 		}
 
 		$allowEmpty = false;
-		if ($rule !== 'notEmpty' && $metaData['null'] === true) {
+		if ($metaData['null'] === true) {
 			$allowEmpty = true;
 		}
 
