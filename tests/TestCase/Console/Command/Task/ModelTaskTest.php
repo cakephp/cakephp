@@ -295,7 +295,6 @@ class ModelTaskTest extends TestCase {
 		$model = TableRegistry::get('BakeArticles');
 		$result = $this->Task->getFields($model);
 		$expected = [
-			'id',
 			'bake_user_id',
 			'title',
 			'body',

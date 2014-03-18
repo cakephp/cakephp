@@ -363,8 +363,9 @@ class ModelTask extends BakeTask {
 		}
 		$schema = $model->schema();
 		$columns = $schema->columns();
-		$exclude = ['created', 'modified', 'updated'];
-		return array_diff($columns, $exclude);
+		$primary = $this->getPrimaryKey($model);
+		$exclude = array_merge($primary, ['created', 'modified', 'updated']);
+		return array_values(array_diff($columns, $exclude));
 	}
 
 /**
