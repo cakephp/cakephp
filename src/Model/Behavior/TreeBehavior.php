@@ -68,8 +68,8 @@ class TreeBehavior extends Behavior {
 
 		return $this->_scope($query)
 			->where([
-				"$left <=" => $entity->get($left),
-				"$right >=" => $entity->get($right)
+				"$left <=" => $node->get($left),
+				"$right >=" => $node->get($right)
 			]);
 	}
 
