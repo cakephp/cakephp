@@ -9,6 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.1.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\View;
@@ -50,8 +51,6 @@ use Cake\Utility\Xml;
  *
  * If you don't use the `_serialize` key, you will need a view. You can use extended
  * views to provide layout like functionality.
- *
- * @since         CakePHP(tm) v 2.1.0
  */
 class XmlView extends View {
 

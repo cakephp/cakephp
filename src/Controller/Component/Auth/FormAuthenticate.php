@@ -11,6 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -34,7 +35,6 @@ use Cake\Network\Response;
  * When configuring FormAuthenticate you can pass in settings to which fields, model and additional conditions
  * are used. See FormAuthenticate::$settings for more information.
  *
- * @since 2.0
  * @see AuthComponent::$authenticate
  */
 class FormAuthenticate extends BaseAuthenticate {

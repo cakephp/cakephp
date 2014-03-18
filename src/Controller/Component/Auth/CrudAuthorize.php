@@ -11,6 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -29,7 +30,6 @@ use Cake\Routing\Router;
  * to create permission systems that focus more on what is being done to resources, rather than the specific actions
  * being visited.
  *
- * @since 2.0
  * @see AuthComponent::$authenticate
  * @see AclComponent::check()
  */

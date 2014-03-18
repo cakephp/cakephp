@@ -11,6 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -41,8 +42,6 @@ use Cake\Network\Response;
  *
  * In your login function just call `$this->Auth->login()` without any checks for POST data. This
  * will send the authentication headers, and trigger the login dialog in the browser/client.
- *
- * @since 2.0
  */
 class BasicAuthenticate extends BaseAuthenticate {
 

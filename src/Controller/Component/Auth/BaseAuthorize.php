@@ -11,6 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -26,7 +27,6 @@ use Cake\Utility\Inflector;
 /**
  * Abstract base authorization adapter for AuthComponent.
  *
- * @since 2.0
  * @see AuthComponent::$authenticate
  */
 abstract class BaseAuthorize {
