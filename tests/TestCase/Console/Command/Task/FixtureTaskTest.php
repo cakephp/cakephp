@@ -1,7 +1,5 @@
 <?php
 /**
- * FixtureTask Test case
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -20,6 +18,7 @@ use Cake\Console\Command\Task\FixtureTask;
 use Cake\Console\Command\Task\TemplateTask;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 
@@ -43,8 +42,6 @@ class FixtureTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Baking will not work as models do not work.');
-
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
@@ -85,44 +82,15 @@ class FixtureTaskTest extends TestCase {
 	}
 
 /**
- * test import option array generation
- *
- * @return void
- */
-	public function testImportOptionsSchemaRecords() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
-
-		$result = $this->Task->importOptions('Article');
-		$expected = array('schema' => 'Article', 'records' => true);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test importOptions choosing nothing.
- *
- * @return void
- */
-	public function testImportOptionsNothing() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('n'));
-
-		$result = $this->Task->importOptions('Article');
-		$expected = array();
-		$this->assertEquals($expected, $result);
-	}
-
-/**
  * test importOptions with overwriting command line options.
  *
  * @return void
  */
 	public function testImportOptionsWithCommandLineOptions() {
-		$this->Task->params = array('schema' => true, 'records' => true);
+		$this->Task->params = ['schema' => true, 'records' => true];
 
 		$result = $this->Task->importOptions('Article');
-		$expected = array('schema' => 'Article', 'records' => true);
+		$expected = ['fromTable' => true, 'schema' => 'Article', 'records' => true];
 		$this->assertEquals($expected, $result);
 	}
 
@@ -148,24 +116,9 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testImportOptionsWithRecords() {
 		$this->Task->params = array('records' => true);
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 
 		$result = $this->Task->importOptions('Article');
-		$expected = array('records' => true);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test importOptions choosing from Table.
- *
- * @return void
- */
-	public function testImportOptionsTable() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
-		$result = $this->Task->importOptions('Article');
-		$expected = array('fromTable' => true);
+		$expected = array('fromTable' => true, 'records' => true);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -213,13 +166,13 @@ class FixtureTaskTest extends TestCase {
  * @return void
  */
 	public function testImportRecordsNoEscaping() {
-		$db = ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::get('test');
 		if ($db instanceof Sqlserver) {
 			$this->markTestSkipped('This test does not run on SQLServer');
 		}
 
-		$Article = ClassRegistry::init('Article');
-		$Article->updateAll(array('body' => "'Body \"value\"'"));
+		$articles = TableRegistry::get('Articles');
+		$articles->updateAll(['body' => "'Body \"value\"'"]);
 
 		$this->Task->interactive = true;
 		$this->Task->expects($this->at(0))
@@ -322,11 +275,11 @@ class FixtureTaskTest extends TestCase {
 
 		$filename = '/my/path/ArticleFixture.php';
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, $this->stringContains('public $import = array(\'model\' => \'Article\''));
+			->with($filename, $this->stringContains("public \$import = ['model' => 'Articles']"));
 
 		$filename = '/my/path/CommentFixture.php';
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, $this->stringContains('public $import = array(\'model\' => \'Comment\''));
+			->with($filename, $this->stringContains("public \$import = ['model' => 'Comments']"));
 		$this->Task->expects($this->exactly(2))->method('createFile');
 
 		$this->Task->all();
@@ -372,18 +325,18 @@ class FixtureTaskTest extends TestCase {
 		$result = $this->Task->bake('Article', 'comments');
 		$this->assertContains('class ArticleFixture extends TestFixture', $result);
 		$this->assertContains('public $table = \'comments\';', $result);
-		$this->assertContains('public $fields = array(', $result);
+		$this->assertContains('public $fields = [', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('records' => true));
-		$this->assertContains("public \$import = array('records' => true, 'connection' => 'test');", $result);
+		$this->assertContains("public \$import = ['records' => true, 'connection' => 'test'];", $result);
 		$this->assertNotContains('public $records', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article'));
-		$this->assertContains("public \$import = array('model' => 'Article', 'connection' => 'test');", $result);
+		$this->assertContains("public \$import = ['model' => 'Article', 'connection' => 'test'];", $result);
 		$this->assertNotContains('public $fields', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article', 'records' => true));
-		$this->assertContains("public \$import = array('model' => 'Article', 'records' => true, 'connection' => 'test');", $result);
+		$this->assertContains("public \$import = ['model' => 'Article', 'records' => true, 'connection' => 'test'];", $result);
 		$this->assertNotContains('public $fields', $result);
 		$this->assertNotContains('public $records', $result);
 	}

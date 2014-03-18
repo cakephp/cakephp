@@ -16,8 +16,8 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\Configure;
-use Cake\Model\Model;
-use Cake\Model\Schema;
+use Cake\Datasource\ConnectionManager;
+use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
 
 /**
@@ -67,6 +67,8 @@ class FixtureTask extends BakeTask {
 			'help' => __d('cake_console', 'Which database configuration to use for baking.'),
 			'short' => 'c',
 			'default' => 'default'
+		])->addOption('table', [
+			'help' => __d('cake_console', 'The table name if it does not follow conventions.'),
 		])->addOption('plugin', [
 			'help' => __d('cake_console', 'CamelCased name of the plugin to bake fixtures for.'),
 			'short' => 'p',
@@ -124,8 +126,6 @@ class FixtureTask extends BakeTask {
  * @return void
  */
 	public function all() {
-		$this->interactive = false;
-		$this->Model->interactive = false;
 		$tables = $this->Model->listAll($this->connection, false);
 
 		foreach ($tables as $table) {
@@ -169,26 +169,10 @@ class FixtureTask extends BakeTask {
 
 		if (!empty($this->params['schema'])) {
 			$options['schema'] = $modelName;
-		} else {
-			$doSchema = $this->in(__d('cake_console', 'Would you like to import schema for this fixture?'), ['y', 'n'], 'n');
-			if ($doSchema === 'y') {
-				$options['schema'] = $modelName;
-			}
 		}
 		if (!empty($this->params['records'])) {
-			$doRecords = 'y';
-		} else {
-			$doRecords = $this->in(__d('cake_console', 'Would you like to use record importing for this fixture?'), ['y', 'n'], 'n');
-		}
-		if ($doRecords === 'y') {
 			$options['records'] = true;
-		}
-		if ($doRecords === 'n') {
-			$prompt = __d('cake_console', "Would you like to build this fixture with data from %s's table?", $modelName);
-			$fromTable = $this->in($prompt, ['y', 'n'], 'n');
-			if (strtolower($fromTable) === 'y') {
-				$options['fromTable'] = true;
-			}
+			$options['fromTable'] = true;
 		}
 		return $options;
 	}
@@ -200,6 +184,7 @@ class FixtureTask extends BakeTask {
  * @param string $useTable Name of table to use.
  * @param array $importOptions Options for public $import
  * @return string Baked fixture content
+ * @throws RuntimeException
  */
 	public function bake($model, $useTable = false, $importOptions = []) {
 		$table = $schema = $records = $import = $modelImport = null;
@@ -227,16 +212,17 @@ class FixtureTask extends BakeTask {
 			}
 		}
 
-		$this->_Schema = new Schema();
-		$data = $this->_Schema->read(['models' => false, 'connection' => $this->connection]);
-		if (!isset($data['tables'][$useTable])) {
-			$this->error('Could not find your selected table ' . $useTable);
-			return false;
+		$connection = ConnectionManager::get($this->connection);
+		if (!method_exists($connection, 'schemaCollection')) {
+			throw new \RuntimeException(
+				'Cannot generate fixtures for connections that do not implement schemaCollection()'
+			);
 		}
+		$schemaCollection = $connection->schemaCollection();
+		$data = $schemaCollection->describe($useTable);
 
-		$tableInfo = $data['tables'][$useTable];
 		if ($modelImport === null) {
-			$schema = $this->_generateSchema($tableInfo);
+			$schema = $this->_generateSchema($data);
 		}
 
 		if (empty($importOptions['records']) && !isset($importOptions['fromTable'])) {
@@ -244,7 +230,7 @@ class FixtureTask extends BakeTask {
 			if (isset($this->params['count'])) {
 				$recordCount = $this->params['count'];
 			}
-			$records = $this->_makeRecordString($this->_generateRecords($tableInfo, $recordCount));
+			$records = $this->_makeRecordString($this->_generateRecords($data, $recordCount));
 		}
 		if (!empty($this->params['records']) || isset($importOptions['fromTable'])) {
 			$records = $this->_makeRecordString($this->_getRecordsFromTable($model, $useTable));
@@ -305,9 +291,64 @@ class FixtureTask extends BakeTask {
  * @param array $tableInfo Table schema array
  * @return string fields definitions
  */
-	protected function _generateSchema($tableInfo) {
-		$schema = trim($this->_Schema->generateTable('f', $tableInfo), "\n");
-		return substr($schema, 13, -1);
+	protected function _generateSchema($table) {
+		$cols = $indexes = $constraints = [];
+		foreach ($table->columns() as $field) {
+			$fieldData = $table->column($field);
+			$properties = implode(', ', $this->_values($fieldData));
+			$cols[] = "\t\t'$field' => [$properties],";
+		}
+		foreach ($table->indexes() as $index) {
+			$fieldData = $table->index($index);
+			$properties = implode(', ', $this->_values($fieldData));
+			$indexes[] = "\t\t\t'$index' => [$properties],";
+		}
+		foreach ($table->constraints() as $index) {
+			$fieldData = $table->constraint($index);
+			$properties = implode(', ', $this->_values($fieldData));
+			$contraints[] = "\t\t\t'$index' => [$properties],";
+		}
+		$options = $this->_values($table->options());
+
+		$content = implode("\n", $cols) . "\n";
+		if (!empty($indexes)) {
+			$content .= "\t\t'_indexes' => [" . implode("\n", $indexes) . "],\n";
+		}
+		if (!empty($constraints)) {
+			$content .= "\t\t'_constraints' => [" . implode("\n", $constraints) . "],\n";
+		}
+		if (!empty($options)) {
+			$content .= "\t\t'_options' => [" . implode(', ', $options) . "],\n";
+		}
+		return "[\n$content]";
+	}
+
+/**
+ * Formats Schema columns from Model Object
+ *
+ * @param array $values options keys(type, null, default, key, length, extra)
+ * @return array Formatted values
+ */
+	protected function _values($values) {
+		$vals = array();
+		if (is_array($values)) {
+			foreach ($values as $key => $val) {
+				if (is_array($val)) {
+					$vals[] = "'{$key}' => array(" . implode(", ", $this->_values($val)) . ")";
+				} else {
+					$val = var_export($val, true);
+					if ($val === 'NULL') {
+						$val = 'null';
+					}
+					if (!is_numeric($key)) {
+						$vals[] = "'{$key}' => {$val}";
+					} else {
+						$vals[] = "{$val}";
+					}
+				}
+			}
+		}
+		return $vals;
 	}
 
 /**
@@ -317,14 +358,12 @@ class FixtureTask extends BakeTask {
  * @param integer $recordCount
  * @return array Array of records to use in the fixture.
  */
-	protected function _generateRecords($tableInfo, $recordCount = 1) {
+	protected function _generateRecords($table, $recordCount = 1) {
 		$records = [];
 		for ($i = 0; $i < $recordCount; $i++) {
 			$record = [];
-			foreach ($tableInfo as $field => $fieldInfo) {
-				if (empty($fieldInfo['type'])) {
-					continue;
-				}
+			foreach ($table->columns() as $field) {
+				$fieldInfo = $table->column($field);
 				$insert = '';
 				switch ($fieldInfo['type']) {
 					case 'integer':
@@ -333,11 +372,8 @@ class FixtureTask extends BakeTask {
 						break;
 					case 'string':
 					case 'binary':
-						$isPrimaryUuid = (
-							isset($fieldInfo['key']) && strtolower($fieldInfo['key']) === 'primary' &&
-							isset($fieldInfo['length']) && $fieldInfo['length'] == 36
-						);
-						if ($isPrimaryUuid) {
+						$isPrimary = in_array($field, $table->primaryKey());
+						if ($isPrimary) {
 							$insert = String::uuid();
 						} else {
 							$insert = "Lorem ipsum dolor sit amet";
@@ -424,19 +460,23 @@ class FixtureTask extends BakeTask {
 			$condition = 'WHERE 1=1';
 			$recordCount = (isset($this->params['count']) ? $this->params['count'] : 10);
 		}
-		$modelObject = new Model(['name' => $modelName, 'table' => $useTable, 'ds' => $this->connection]);
-		$records = $modelObject->find('all', [
+		$model = TableRegistry::get($modelName, [
+			'table' => $useTable,
+			'connection' => ConnectionManager::get($this->connection)
+		]);
+		$records = $model->find('all', [
 			'conditions' => $condition,
 			'recursive' => -1,
 			'limit' => $recordCount
 		]);
 
-		$schema = $modelObject->schema(true);
+		$schema = $model->schema();
+		$alias = $model->alias();
 		$out = [];
 		foreach ($records as $record) {
 			$row = [];
-			foreach ($record[$modelObject->alias] as $field => $value) {
-				if ($schema[$field]['type'] === 'boolean') {
+			foreach ($record[$model->alias] as $field => $value) {
+				if ($schema->columnType($field) === 'boolean') {
 					$value = (int)(bool)$value;
 				}
 				$row[$field] = $value;
