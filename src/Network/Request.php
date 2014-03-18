@@ -536,6 +536,9 @@ class Request implements \ArrayAccess {
 			return false;
 		}
 		$detect = static::$_detectors[$type];
+		if (is_callable($detect)) {
+			return call_user_func($detect, $this);
+		}
 		if (isset($detect['env'])) {
 			if (isset($detect['value'])) {
 				return $this->env($detect['env']) == $detect['value'];
@@ -584,6 +587,14 @@ class Request implements \ArrayAccess {
  * Add a new detector to the list of detectors that a request can use.
  * There are several different formats and types of detectors that can be set.
  *
+ * ### Callback detectors
+ *
+ * Callback detectors allow you to provide a callable to handle the check.
+ * The callback will receive the request object as its only parameter.
+ *
+ * e.g `addDetector('custom', function($request) { //Return a booolean });`
+ * e.g `addDetector('custom', array('SomeClass', 'somemethod'));`
+ *
  * ### Environment value comparison
  *
  * An environment value comparison, compares a value fetched from `env()` to a known value
@@ -604,13 +615,6 @@ class Request implements \ArrayAccess {
  *
  * e.g `addDetector('mobile', array('env' => 'HTTP_USER_AGENT', 'options' => array('Fennec')));`
  *
- * ### Callback detectors
- *
- * Callback detectors allow you to provide a 'callback' type to handle the check. The callback will
- * receive the request object as its only parameter.
- *
- * e.g `addDetector('custom', array('callback' => array('SomeClass', 'somemethod')));`
- *
  * ### Request parameter detectors
  *
  * Allows for custom detectors on the request parameters.
@@ -624,15 +628,19 @@ class Request implements \ArrayAccess {
  * `addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'csv'))`
  *
  * @param string $name The name of the detector.
- * @param array $options The options for the detector definition. See above.
+ * @param callable|array $callable A callable or options array for the detector definition.
  * @return void
  */
-	public static function addDetector($name, $options) {
+	public static function addDetector($name, $callable) {
 		$name = strtolower($name);
-		if (isset(static::$_detectors[$name]) && isset($options['options'])) {
-			$options = Hash::merge(static::$_detectors[$name], $options);
+		if (is_callable($callable)) {
+			static::$_detectors[$name] = $callable;
+			return;
 		}
-		static::$_detectors[$name] = $options;
+		if (isset(static::$_detectors[$name]) && isset($callable['options'])) {
+			$callable = Hash::merge(static::$_detectors[$name], $callable);
+		}
+		static::$_detectors[$name] = $callable;
 	}
 
 /**
