@@ -112,7 +112,7 @@ class ValidationRule {
 			return true;
 		}
 
-		if (is_callable($this->_rule)) {
+		if (!is_string($this->_rule) && is_callable($this->_rule)) {
 			$callable = $this->_rule;
 			$isCallable = true;
 		} else {
