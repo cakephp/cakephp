@@ -1702,6 +1702,11 @@ class Email {
 		$View = new $viewClass(null);
 		$View->viewVars = $this->_viewVars;
 		$View->helpers = $this->_helpers;
+
+		if ($this->_theme) {
+			$View->theme = $this->_theme;
+		}
+
 		$View->loadHelpers();
 
 		list($templatePlugin, $template) = pluginSplit($this->_template);
@@ -1711,9 +1716,7 @@ class Email {
 		} elseif ($layoutPlugin) {
 			$View->plugin = $layoutPlugin;
 		}
-		if ($this->_theme) {
-			$View->theme = $this->_theme;
-		}
+
 		// Convert null to false, as View needs false to disable
 		// the layout.
 		if ($layout === null) {
