@@ -14,27 +14,18 @@
  */
 namespace Cake\Database\Type;
 
-class DateType extends \Cake\Database\Type\DateTimeType {
+/**
+ * Time type converter.
+ *
+ * Use to convert time instances to strings & back.
+ */
+class TimeType extends \Cake\Database\Type\DateTimeType {
 
 /**
- * Date format for DateTime object
+ * Time format for DateTime object
  *
  * @var string
  */
-	protected $_format = 'Y-m-d';
-
-/**
- * Convert request data into a datetime object.
- *
- * @param mixed $value Request data
- * @return \DateTime
- */
-	public function marshal($value) {
-		$date = parent::marshal($value);
-		if ($date instanceof \DateTime) {
-			$date->setTime(0, 0, 0);
-		}
-		return $date;
-	}
+	protected $_format = 'H:i:s';
 
 }
