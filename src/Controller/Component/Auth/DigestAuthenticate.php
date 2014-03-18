@@ -11,6 +11,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Controller\Component\Auth;
@@ -55,8 +56,6 @@ use Cake\Network\Response;
  * Its recommended that you store this digest auth only password separate from password hashes used for other
  * login methods. For example `User.digest_pass` could be used for a digest password, while `User.password` would
  * store the password hash for use with other methods like Basic or Form.
- *
- * @since 2.0
  */
 class DigestAuthenticate extends BasicAuthenticate {
 

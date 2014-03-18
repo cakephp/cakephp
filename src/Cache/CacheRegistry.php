@@ -9,6 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         3.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Cache;
@@ -21,8 +22,6 @@ use Cake\Utility\ObjectRegistry;
  * An object registry for cache engines.
  *
  * Used by Cake\Cache\Cache to load and manage cache engines.
- *
- * @since CakePHP 3.0
  */
 class CacheRegistry extends ObjectRegistry {
 

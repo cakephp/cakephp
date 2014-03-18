@@ -9,6 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         CakePHP 3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -23,7 +24,6 @@ namespace Cake\Utility;
  * the template method load(). This class replaces ObjectCollection
  * from previous versions of CakePHP.
  *
- * @since CakePHP 3.0
  * @see \Cake\Controller\ComponentRegistry
  * @see \Cake\View\HelperRegistry
  * @see \Cake\Console\TaskRegistry

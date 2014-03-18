@@ -9,6 +9,7 @@
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  * @link          http://cakephp.org CakePHP(tm) Project
+ * @since         2.0.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Utility;
@@ -25,8 +26,6 @@ use Cake\Event\Event;
  * in `$this->_loaded`. Enabled objects are stored in `$this->_enabled`. In addition,
  * they all support an `enabled` option that controls the enabled/disabled state of the object
  * when loaded.
- *
- * @since CakePHP(tm) v 2.0
  */
 abstract class ObjectCollection {
 
