@@ -25,10 +25,10 @@ namespace <?= $namespace; ?>\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * <?= $model; ?>Fixture
+ * <?= $name; ?>Fixture
  *
  */
-class <?= $model; ?>Fixture extends TestFixture {
+class <?= $name; ?>Fixture extends TestFixture {
 
 <?php if ($table): ?>
 /**

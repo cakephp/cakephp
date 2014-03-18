@@ -103,21 +103,23 @@ class FixtureTask extends BakeTask {
  */
 	public function execute() {
 		parent::execute();
-		if (empty($this->args)) {
-			$this->_interactive();
+		if (!isset($this->connection)) {
+			$this->connection = 'default';
 		}
 
-		if (isset($this->args[0])) {
-			$this->interactive = false;
-			if (!isset($this->connection)) {
-				$this->connection = 'default';
+		if (empty($this->args)) {
+			$this->out(__d('cake_console', 'Choose a fixture to bake from the following:'));
+			foreach ($this->Model->listAll() as $table) {
+				$this->out('- ' . $this->_modelName($table));
 			}
-			if (strtolower($this->args[0]) === 'all') {
-				return $this->all();
-			}
-			$model = $this->_modelName($this->args[0]);
-			$this->bake($model);
+			return true;
 		}
+
+		if (strtolower($this->args[0]) === 'all') {
+			return $this->all();
+		}
+		$model = $this->_modelName($this->args[0]);
+		$this->bake($model);
 	}
 
 /**
@@ -137,27 +139,6 @@ class FixtureTask extends BakeTask {
 			$this->bake($model, false, $importOptions);
 		}
 	}
-
-/**
- * Interactive baking function
- *
- * @return void
- */
-	protected function _interactive() {
-		$this->DbConfig->interactive = $this->Model->interactive = $this->interactive = true;
-		$this->hr();
-		$this->out(__d('cake_console', "Bake Fixture\nPath: %s", $this->getPath()));
-		$this->hr();
-
-		if (!isset($this->connection)) {
-			$this->connection = $this->DbConfig->getConfig();
-		}
-		$modelName = $this->Model->getName($this->connection);
-		$useTable = $this->Model->getTable($modelName, $this->connection);
-		$importOptions = $this->importOptions($modelName);
-		$this->bake($modelName, $useTable, $importOptions);
-	}
-
 /**
  * Interacts with the User to setup an array of import options. For a fixture.
  *
@@ -248,6 +229,7 @@ class FixtureTask extends BakeTask {
  */
 	public function generateFixtureFile($model, $otherVars) {
 		$defaults = [
+			'name' => Inflector::singularize($model),
 			'table' => null,
 			'schema' => null,
 			'records' => null,
@@ -261,7 +243,7 @@ class FixtureTask extends BakeTask {
 		$vars = array_merge($defaults, $otherVars);
 
 		$path = $this->getPath();
-		$filename = Inflector::camelize($model) . 'Fixture.php';
+		$filename = $vars['name'] . 'Fixture.php';
 
 		$this->Template->set('model', $model);
 		$this->Template->set($vars);
@@ -448,18 +430,8 @@ class FixtureTask extends BakeTask {
  * @return array Array of records.
  */
 	protected function _getRecordsFromTable($modelName, $useTable = null) {
-		if ($this->interactive) {
-			$condition = null;
-			$prompt = __d('cake_console', "Please provide a SQL fragment to use as conditions\nExample: WHERE 1=1");
-			while (!$condition) {
-				$condition = $this->in($prompt, null, 'WHERE 1=1');
-			}
-			$prompt = __d('cake_console', "How many records do you want to import?");
-			$recordCount = $this->in($prompt, null, 10);
-		} else {
-			$condition = 'WHERE 1=1';
-			$recordCount = (isset($this->params['count']) ? $this->params['count'] : 10);
-		}
+		$condition = 'WHERE 1=1';
+		$recordCount = (isset($this->params['count']) ? $this->params['count'] : 10);
 		$model = TableRegistry::get($modelName, [
 			'table' => $useTable,
 			'connection' => ConnectionManager::get($this->connection)
