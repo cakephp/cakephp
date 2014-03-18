@@ -70,11 +70,11 @@ class DateTimeTypeTest extends TestCase {
 	}
 
 /**
- * Data provider for marshall()
+ * Data provider for marshal()
  *
  * @return array
  */
-	public function marshallProvider() {
+	public function marshalProvider() {
 		return [
 			// invalid types.
 			[null, null],
@@ -140,11 +140,11 @@ class DateTimeTypeTest extends TestCase {
 /**
  * test marshalling data.
  *
- * @dataProvider marshallProvider
+ * @dataProvider marshalProvider
  * @return void
  */
-	public function testMarshall($value, $expected) {
-		$result = $this->type->marshall($value);
+	public function testMarshal($value, $expected) {
+		$result = $this->type->marshal($value);
 		$this->assertEquals($expected, $result);
 	}
 

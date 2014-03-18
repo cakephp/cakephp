@@ -55,7 +55,7 @@ class DateType extends \Cake\Database\Type {
  * @param mixed $value Request data
  * @return \DateTime
  */
-	public function marshall($value) {
+	public function marshal($value) {
 		try {
 			if ($value === '' || $value === null || $value === false || $value === true) {
 				return $value;

@@ -246,7 +246,7 @@ class Type {
  * @param mixed $value The value to convert.
  * @return mixed Converted value.
  */
-	public function marshall($value) {
+	public function marshal($value) {
 		return $value;
 	}
 

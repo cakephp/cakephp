@@ -113,7 +113,7 @@ class Marshaller {
 				$value = $this->_marshalAssociation($assoc, $value, $nested);
 			} elseif ($columnType) {
 				$converter = Type::build($columnType);
-				$value = $converter->marshall($value);
+				$value = $converter->marshal($value);
 			}
 			$properties[$key] = $value;
 		}
