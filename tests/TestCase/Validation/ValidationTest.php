@@ -992,6 +992,18 @@ class ValidationTest extends TestCase {
 	}
 
 /**
+ * testDateTimeObject
+ *
+ * @return void
+ */
+	public function testDateTimeObject() {
+		$dateTime = new \DateTime();
+		$this->assertTrue(Validation::date($dateTime));
+		$this->assertTrue(Validation::time($dateTime));
+		$this->assertTrue(Validation::dateTime($dateTime));
+	}
+
+/**
  * testDateDdmmyyyy method
  *
  * @return void
