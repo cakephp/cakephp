@@ -59,6 +59,9 @@ class TreeBehaviorTest extends TestCase {
 
 		$nodes = $this->table->find('path', ['for' => 5]);
 		$this->assertEquals([1, 2, 5], $nodes->extract('id')->toArray());
+
+		$nodes = $this->table->find('path', ['for' => 1]);
+		$this->assertEquals([1], $nodes->extract('id')->toArray());
 	}
 
 }
