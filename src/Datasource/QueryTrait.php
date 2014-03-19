@@ -76,6 +76,13 @@ trait QueryTrait {
 	protected $_options = [];
 
 /**
+ * Whether the query is standalone or the product of an eager load operation.
+ *
+ * @var boolean
+ */
+	protected $_eagerLoaded = false;
+
+/**
  * Returns the default table object that will be used by this query,
  * that is, the table that will appear in the from clause.
  *
@@ -169,6 +176,21 @@ trait QueryTrait {
 	}
 
 /**
+ * Sets the query instance to be the eager loaded query. If no argument is
+ * passed, the current configured query `_eagerLoaded` value is returned.
+ *
+ * @param boolean $value
+ * @return \Cake\ORM\Query
+ */
+	public function eagerLoaded($value = null) {
+		if ($value === null) {
+			return $this->_eagerLoaded;
+		}
+		$this->_eagerLoaded = $value;
+		return $this;
+	}
+
+/**
  * Fetch the results for this query.
  *
  * Will return either the results set through setResult(), or execute this query
@@ -185,7 +207,7 @@ trait QueryTrait {
 		}
 
 		$table = $this->repository();
-		$event = new Event('Model.beforeFind', $table, [$this, $this->_options, $this->eagerLoaded()]);
+		$event = new Event('Model.beforeFind', $table, [$this, $this->_options, !$this->eagerLoaded()]);
 		$table->getEventManager()->dispatch($event);
 
 		if (isset($this->_results)) {

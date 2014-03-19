@@ -1815,4 +1815,30 @@ class QueryTest extends TestCase {
 		$this->assertSame($expected, $query->__debugInfo());
 	}
 
+/**
+ * Tests that the eagerLoaded function works and is trnasmitted correctly to eagerly
+ * loaded associations
+ *
+ * @return void
+ */
+	public function testEagerLoaded() {
+		$table = TableRegistry::get('authors');
+		$table->hasMany('articles');
+		$query = $table->find()->contain(['articles' => function($q) {
+			$this->assertTrue($q->eagerLoaded());
+			return $q;
+		}]);
+		$this->assertFalse($query->eagerLoaded());
+
+		$table->getEventManager()->attach(function($e, $q, $o, $primary) {
+			$this->assertTrue($primary);
+		}, 'Model.beforeFind');
+
+		TableRegistry::get('articles')
+			->getEventManager()->attach(function($e, $q, $o, $primary) {
+				$this->assertFalse($primary);
+			}, 'Model.beforeFind');
+		$query->all();
+	}
+
 }

@@ -96,13 +96,6 @@ class Query extends DatabaseQuery {
 	protected $_eagerLoader;
 
 /**
- * Whether the query is the primary query or a byproduct.
- *
- * @var boolean
- */
-	protected $_eagerLoaded = true;
-
-/**
  * Constuctor
  *
  * @param \Cake\Database\Connection $connection
@@ -651,21 +644,6 @@ class Query extends DatabaseQuery {
 	protected function _dirty() {
 		$this->_results = null;
 		parent::_dirty();
-	}
-
-/**
- * Sets the query instance to be the eager loaded query. If no argument is
- * passed, the current configured query `_eagerLoaded` value is returned.
- *
- * @param boolean $value
- * @return \Cake\ORM\Query
- */
-	public function eagerLoaded($value = null) {
-		if ($value === null) {
-			return $this->_eagerLoaded;
-		}
-		$this->_eagerLoaded = $value;
-		return $this;
 	}
 
 /**
