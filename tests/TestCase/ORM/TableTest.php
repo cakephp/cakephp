@@ -1103,6 +1103,25 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	}
 
 /**
+ * Test that a `0 rows affected` response after update is treated as successful.
+ *
+ * @group save
+ * @return void
+ */
+	public function testUpdateZeroRowsAffected() {
+		$table = TableRegistry::get('users');
+		$entity = $table->get(1);
+		$fakeNewValues = [
+			'username' => $entity->username,
+			'password' => $entity->password
+		];
+		$entity->accessible('*', true);
+		$entity->set($fakeNewValues);
+		$save = $table->save($entity);
+		$this->assertNotEquals(false, $save);
+	}
+
+/**
  * Test that saving a new empty entity does nothing.
  *
  * @group save
@@ -2716,7 +2735,7 @@ class TableTest extends \Cake\TestSuite\TestCase {
 	public function testSaveDeepAssociationOptions() {
 		$articles = $this->getMock(
 			'\Cake\ORM\Table',
-			['_insert'],
+			['_tes'],
 			[['table' => 'articles', 'connection' => $this->connection]]
 		);
 		$authors = $this->getMock(
