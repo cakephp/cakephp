@@ -117,6 +117,13 @@ class NumberTreeFixture extends TestFixture {
 			'parent_id' => '6',
 			'lft' => '17',
 			'rght' => '18'
+		),
+		array(
+			'id' => '11',
+			'name' => 'alien hardware',
+			'parent_id' => null,
+			'lft' => '21',
+			'rght' => '21'
 		)
 	);
 
