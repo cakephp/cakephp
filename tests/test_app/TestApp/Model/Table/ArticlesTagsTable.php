@@ -6,7 +6,7 @@
  * Licensed under The MIT License
  * Redistributions of files must retain the above copyright notice
  *
- * @since         CakePHP(tm) v 3.0
+ * @since         3.0.0
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 namespace TestApp\Model\Table;
