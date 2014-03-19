@@ -73,11 +73,8 @@ class ControllerTask extends BakeTask {
 		}
 
 		$controller = $this->_controllerName($this->args[0]);
-		$this->out(__d('cake_console', 'Baking basic crud methods for ') . $controller);
-		$actions = $this->bakeActions($controller);
 
-		$this->bake($controller, $actions);
-		$this->bakeTest($controller);
+		$this->bake($controller);
 	}
 
 /**
@@ -303,26 +300,45 @@ class ControllerTask extends BakeTask {
  * Assembles and writes a Controller file
  *
  * @param string $controllerName Controller name already pluralized and correctly cased.
- * @param string $actions Actions to add, or set the whole controller to use $scaffold (set $actions to 'scaffold')
- * @param array $helpers Helpers to use in controller
- * @param array $components Components to use in controller
  * @return string Baked controller
  */
-	public function bake($controllerName, $actions = '', $helpers = null, $components = null) {
+	public function bake($controllerName) {
 		$this->out("\n" . __d('cake_console', 'Baking controller class for %s...', $controllerName), 1, Shell::QUIET);
 
-		$isScaffold = ($actions === 'scaffold') ? true : false;
+		$actions = $this->bakeActions($controllerName);
+		$helpers = $this->getHelpers();
+		$components = $this->getComponents();
+		$prefix = $this->params['prefix'];
 
-		$this->Template->set([
-			'plugin' => $this->plugin,
-			'pluginPath' => empty($this->plugin) ? '' : $this->plugin . '.'
-		]);
-
-		if (!in_array('Paginator', (array)$components)) {
-			$components[] = 'Paginator';
+		$namespace = Configure::read('App.namespace');
+		$pluginPath = '';
+		if ($this->plugin) {
+			$namespace = $this->plugin;
+			$pluginPath = $this->plugin . '.';
 		}
+		$data = compact(
+			'actions', 'helpers', 'components',
+			'prefix', 'namespace', 'pluginPath'
+		);
+		$data['name'] = $controllerName;
 
-		$this->Template->set(compact('controllerName', 'actions', 'helpers', 'components', 'isScaffold'));
+		$this->bakeController($controllerName, $data);
+		$this->bakeTest($controllerName);
+	}
+
+	public function bakeController($controllerName, $data) {
+		$data += [
+			'name' => null,
+			'namespace' => null,
+			'prefix' => null,
+			'actions' => null,
+			'helpers' => null,
+			'components' => null,
+			'plugin' => null,
+			'pluginPath' => null,
+		];
+		$this->Template->set($data);
+
 		$contents = $this->Template->generate('classes', 'controller');
 
 		$path = $this->getPath();
@@ -350,15 +366,37 @@ class ControllerTask extends BakeTask {
 	}
 
 /**
- * Interact with the user and get a list of additional helpers
+ * Get the list of components for the controller.
  *
- * @return array Helpers that the user wants to use.
+ * @return array
  */
-	public function doHelpers() {
-		return $this->_doPropertyChoices(
-			__d('cake_console', "Would you like this controller to use other helpers\nbesides HtmlHelper and FormHelper?"),
-			__d('cake_console', "Please provide a comma separated list of the other\nhelper names you'd like to use.\nExample: 'Text, Js, Time'")
-		);
+	public function getComponents() {
+		$components = [];
+		if (!empty($this->params['components'])) {
+			$components = explode(',', $this->params['components']);
+			$components = array_values(array_filter(array_map('trim', $components)));
+		}
+		if (!in_array('Paginator', $components)) {
+			$components[] = 'Paginator';
+		}
+		return $components;
+	}
+
+/**
+ * Get the list of helpers for the controller.
+ *
+ * @return array
+ */
+	public function getHelpers() {
+		$helpers = [];
+		if (!empty($this->params['helpers'])) {
+			$helpers = explode(',', $this->params['helpers']);
+			$helpers = array_values(array_filter(array_map('trim', $helpers)));
+		}
+		if (count($helpers) && !in_array('Form', $helpers)) {
+			$helpers[] = 'Form';
+		}
+		return $helpers;
 	}
 
 /**

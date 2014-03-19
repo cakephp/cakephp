@@ -112,15 +112,39 @@ class ControllerTaskTest extends TestCase {
 	}
 
 /**
- * test helper interactions
+ * test component generation
  *
  * @return void
  */
-	public function testDoHelpersNo() {
-		$this->markTestIncomplete();
-		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
-		$result = $this->Task->doHelpers();
-		$this->assertSame(array(), $result);
+	public function testGetComponents() {
+		$result = $this->Task->getComponents();
+		$this->assertSame(['Paginator'], $result);
+
+		$this->Task->params['components'] = '  , Security, ,  Csrf';
+		$result = $this->Task->getComponents();
+		$this->assertSame(['Security', 'Csrf', 'Paginator'], $result);
+
+		$this->Task->params['components'] = '  Paginator , Security, ,  Csrf';
+		$result = $this->Task->getComponents();
+		$this->assertSame(['Paginator', 'Security', 'Csrf'], $result);
+	}
+
+/**
+ * test helper generation
+ *
+ * @return void
+ */
+	public function testGetHelpers() {
+		$result = $this->Task->getHelpers();
+		$this->assertSame([], $result);
+
+		$this->Task->params['helpers'] = '  , Session , ,  Number';
+		$result = $this->Task->getHelpers();
+		$this->assertSame(['Session', 'Number', 'Form'], $result);
+
+		$this->Task->params['helpers'] = '  Session , Number , ,  Form';
+		$result = $this->Task->getHelpers();
+		$this->assertSame(['Session', 'Number', 'Form'], $result);
 	}
 
 /**
