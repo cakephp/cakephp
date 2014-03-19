@@ -1816,7 +1816,7 @@ class QueryTest extends TestCase {
 	}
 
 /**
- * Tests that the eagerLoaded function works and is trnasmitted correctly to eagerly
+ * Tests that the eagerLoaded function works and is transmitted correctly to eagerly
  * loaded associations
  *
  * @return void
