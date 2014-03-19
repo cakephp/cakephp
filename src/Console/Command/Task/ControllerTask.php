@@ -56,42 +56,28 @@ class ControllerTask extends BakeTask {
 	public function execute() {
 		parent::execute();
 
+		if (!isset($this->connection)) {
+			$this->connection = 'default';
+		}
+
 		if (empty($this->args)) {
-			return $this->_interactive();
+			$this->out(__d('cake_console', 'Possible Controllers based on your current database:'));
+			foreach ($this->listAll() as $table) {
+				$this->out('- ' . $this->_controllerName($table));
+			}
+			return true;
 		}
 
-		if (isset($this->args[0])) {
-			if (!isset($this->connection)) {
-				$this->connection = 'default';
-			}
-			if (strtolower($this->args[0]) === 'all') {
-				return $this->all();
-			}
-
-			$controller = $this->_controllerName($this->args[0]);
-			$actions = '';
-
-			if (!empty($this->params['public'])) {
-				$this->out(__d('cake_console', 'Baking basic crud methods for ') . $controller);
-				$actions .= $this->bakeActions($controller);
-			}
-			if (!empty($this->params['admin'])) {
-				$admin = $this->Project->getPrefix();
-				if ($admin) {
-					$this->out(__d('cake_console', 'Adding %s methods', $admin));
-					$actions .= "\n" . $this->bakeActions($controller, $admin);
-				}
-			}
-			if (empty($actions)) {
-				$actions = 'scaffold';
-			}
-
-			if ($this->bake($controller, $actions)) {
-				if ($this->_checkUnitTest()) {
-					$this->bakeTest($controller);
-				}
-			}
+		if (strtolower($this->args[0]) === 'all') {
+			return $this->all();
 		}
+
+		$controller = $this->_controllerName($this->args[0]);
+		$this->out(__d('cake_console', 'Baking basic crud methods for ') . $controller);
+		$actions = $this->bakeActions($controller);
+
+		$this->bake($controller, $actions);
+		$this->bakeTest($controller);
 	}
 
 /**
@@ -100,10 +86,8 @@ class ControllerTask extends BakeTask {
  * @return void
  */
 	public function all() {
-		$this->interactive = false;
-		$this->listAll($this->connection, false);
+		$this->listAll();
 		ClassRegistry::config('Model', ['ds' => $this->connection]);
-		$unitTestExists = $this->_checkUnitTest();
 
 		$admin = false;
 		if (!empty($this->params['admin'])) {
@@ -121,9 +105,8 @@ class ControllerTask extends BakeTask {
 					$this->out(__d('cake_console', 'Adding %s methods', $admin));
 					$actions .= "\n" . $this->bakeActions($controller, $admin);
 				}
-				if ($this->bake($controller, $actions) && $unitTestExists) {
-					$this->bakeTest($controller);
-				}
+				$this->bake($controller, $actions);
+				$this->bakeTest($controller);
 				$controllersCreated++;
 			}
 		}
@@ -357,6 +340,9 @@ class ControllerTask extends BakeTask {
  * @return string Baked test
  */
 	public function bakeTest($className) {
+		if (!empty($this->params['no-test'])) {
+			return;
+		}
 		$this->Test->plugin = $this->plugin;
 		$this->Test->connection = $this->connection;
 		$this->Test->interactive = $this->interactive;
@@ -412,55 +398,9 @@ class ControllerTask extends BakeTask {
  * @param string $useDbConfig Database configuration name
  * @return array Set of controllers
  */
-	public function listAll($useDbConfig = null) {
-		if ($useDbConfig === null) {
-			$useDbConfig = $this->connection;
-		}
-		$this->__tables = $this->Model->getAllTables($useDbConfig);
-
-		if ($this->interactive) {
-			$this->out(__d('cake_console', 'Possible Controllers based on your current database:'));
-			$this->hr();
-			$this->_controllerNames = [];
-			$count = count($this->__tables);
-			for ($i = 0; $i < $count; $i++) {
-				$this->_controllerNames[] = $this->_controllerName($this->_modelName($this->__tables[$i]));
-				$this->out(sprintf("%2d. %s", $i + 1, $this->_controllerNames[$i]));
-			}
-			return $this->_controllerNames;
-		}
-		return $this->__tables;
-	}
-
-/**
- * Forces the user to specify the controller he wants to bake, and returns the selected controller name.
- *
- * @param string $useDbConfig Connection name to get a controller name for.
- * @return string Controller name
- */
-	public function getName($useDbConfig = null) {
-		$controllers = $this->listAll($useDbConfig);
-		$enteredController = '';
-
-		while (!$enteredController) {
-			$enteredController = $this->in(__d('cake_console', "Enter a number from the list above,\ntype in the name of another controller, or 'q' to exit"), null, 'q');
-			if ($enteredController === 'q') {
-				$this->out(__d('cake_console', 'Exit'));
-				return $this->_stop();
-			}
-
-			if (!$enteredController || intval($enteredController) > count($controllers)) {
-				$this->err(__d('cake_console', "The Controller name you supplied was empty,\nor the number you selected was not an option. Please try again."));
-				$enteredController = '';
-			}
-		}
-
-		if (intval($enteredController) > 0 && intval($enteredController) <= count($controllers)) {
-			$controllerName = $controllers[intval($enteredController) - 1];
-		} else {
-			$controllerName = Inflector::camelize($enteredController);
-		}
-		return $controllerName;
+	public function listAll() {
+		$this->Model->connection = $this->connection;
+		return $this->Model->listAll();
 	}
 
 /**
@@ -489,6 +429,9 @@ class ControllerTask extends BakeTask {
 			'help' => __d('cake_console', 'The comma separated list of helpers to use.')
 		])->addOption('prefix', [
 			'help' => __d('cake_console', 'The namespace/routing prefix to use.')
+		])->addOption('no-test', [
+			'boolean' => true,
+			'help' => __d('cake_console', 'Do not generate a test skeleton.')
 		])->addOption('force', [
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')

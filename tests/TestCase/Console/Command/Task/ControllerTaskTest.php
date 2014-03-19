@@ -26,19 +26,19 @@ use Cake\View\Helper;
 
 /**
  * Class BakeArticle
- *
  */
 class BakeArticlesTable extends Table {
 
-	public $hasMany = array('BakeComment');
-
-	public $hasAndBelongsToMany = array('BakeTag');
+	public function initialize(array $config) {
+		$this->hasMany('BakeComments');
+		$this->belongsToMany('BakeTags');
+	}
 
 }
 
 class_alias(
 	'Cake\Test\TestCase\Console\Command\Task\BakeArticlesTable',
-	'Cake\Model\Repository\BakeArticlesTable'
+	'TestApp\Model\Table\BakeArticlesTable'
 );
 
 /**
@@ -52,7 +52,7 @@ class ControllerTaskTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.bake_article', 'core.bake_articles_bake_tag', 'core.bake_comment', 'core.bake_tag');
+	public $fixtures = ['core.bake_article', 'core.bake_articles_bake_tag', 'core.bake_comment', 'core.bake_tag'];
 
 /**
  * setUp method
@@ -61,24 +61,25 @@ class ControllerTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Baking will not work as models do not work.');
 
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ControllerTask',
-			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
+			array('in', 'out', 'err', 'hr', 'createFile', '_stop'),
 			array($out, $out, $in)
 		);
 		$this->Task->name = 'Controller';
+		$this->Task->connection = 'test';
+
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 		$this->Task->Template->params['theme'] = 'default';
 
 		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest'),
+			array('in', 'out', 'err', 'createFile', '_stop'),
 			array($out, $out, $in)
 		);
 		$this->Task->Project = $this->getMock('Cake\Console\Command\Task\ProjectTask',
-			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest', 'getPrefix'),
+			array('in', 'out', 'err', 'createFile', '_stop', 'getPrefix'),
 			array($out, $out, $in)
 		);
 		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\TestTask', array(), array($out, $out, $in));
@@ -105,62 +106,9 @@ class ControllerTaskTest extends TestCase {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
-		$this->Task->connection = 'test';
-		$this->Task->interactive = true;
-		$this->Task->expects($this->at(2))->method('out')->with(' 1. BakeArticles');
-		$this->Task->expects($this->at(3))->method('out')->with(' 2. BakeArticlesBakeTags');
-		$this->Task->expects($this->at(4))->method('out')->with(' 3. BakeComments');
-		$this->Task->expects($this->at(5))->method('out')->with(' 4. BakeTags');
-
-		$expected = array('BakeArticles', 'BakeArticlesBakeTags', 'BakeComments', 'BakeTags');
-		$result = $this->Task->listAll('test');
-		$this->assertEquals($expected, $result);
-
-		$this->Task->interactive = false;
 		$result = $this->Task->listAll();
-
 		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags');
 		$this->assertEquals($expected, $result);
-	}
-
-/**
- * Test that getName interacts with the user and returns the controller name.
- *
- * @return void
- */
-	public function testGetNameValidIndex() {
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-		$this->Task->interactive = true;
-		$this->Task->expects($this->any())->method('in')->will(
-			$this->onConsecutiveCalls(3, 1)
-		);
-
-		$result = $this->Task->getName('test');
-		$expected = 'BakeComments';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->getName('test');
-		$expected = 'BakeArticles';
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test getting invalid indexes.
- *
- * @return void
- */
-	public function testGetNameInvalidIndex() {
-		$this->Task->interactive = true;
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(50, 'q'));
-
-		$this->Task->expects($this->once())->method('err');
-		$this->Task->expects($this->once())->method('_stop');
-
-		$this->Task->getName('test');
 	}
 
 /**
@@ -169,6 +117,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testDoHelpersNo() {
+		$this->markTestIncomplete();
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->doHelpers();
 		$this->assertSame(array(), $result);
@@ -180,6 +129,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testDoHelpersTrailingSpace() {
+		$this->markTestIncomplete();
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Text, Number, CustomOne  '));
 		$result = $this->Task->doHelpers();
@@ -193,6 +143,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testDoHelpersTrailingCommas() {
+		$this->markTestIncomplete();
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Text, Number, CustomOne, , '));
 		$result = $this->Task->doHelpers();
@@ -206,6 +157,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testDoComponentsNo() {
+		$this->markTestIncomplete();
 		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
 		$result = $this->Task->doComponents();
 		$this->assertSame(array('Paginator'), $result);
@@ -217,6 +169,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testDoComponentsTrailingSpaces() {
+		$this->markTestIncomplete();
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security  '));
 
@@ -231,6 +184,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testDoComponentsTrailingCommas() {
+		$this->markTestIncomplete();
 		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
 		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security, , '));
 
@@ -245,6 +199,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testConfirmController() {
+		$this->markTestIncomplete();
 		$controller = 'Posts';
 		$scaffold = false;
 		$helpers = array('Js', 'Time');
@@ -262,6 +217,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testBake() {
+		$this->markTestIncomplete();
 		$helpers = array('Js', 'Time');
 		$components = array('Acl', 'Auth');
 		$this->Task->expects($this->any())->method('createFile')->will($this->returnValue(true));
@@ -285,6 +241,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeWithPlugin() {
+		$this->markTestIncomplete();
 		$this->Task->plugin = 'ControllerTest';
 
 		//fake plugin path
@@ -319,6 +276,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeActionsUsingSessions() {
+		$this->markTestIncomplete();
 		$result = $this->Task->bakeActions('BakeArticles', null, true);
 		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'ActionsUsingSessions.ctp');
 		$this->assertTextEquals($expected, $result);
@@ -339,14 +297,29 @@ class ControllerTaskTest extends TestCase {
 	public function testBakeTest() {
 		$this->Task->plugin = 'ControllerTest';
 		$this->Task->connection = 'test';
-		$this->Task->interactive = false;
 
-		$this->Task->Test->expects($this->once())->method('bake')->with('Controller', 'BakeArticles');
+		$this->Task->Test->expects($this->once())
+			->method('bake')
+			->with('Controller', 'BakeArticles');
 		$this->Task->bakeTest('BakeArticles');
 
 		$this->assertEquals($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEquals($this->Task->connection, $this->Task->Test->connection);
-		$this->assertEquals($this->Task->interactive, $this->Task->Test->interactive);
+	}
+
+/**
+ * test baking a test
+ *
+ * @return void
+ */
+	public function testBakeTestDisabled() {
+		$this->Task->plugin = 'ControllerTest';
+		$this->Task->connection = 'test';
+		$this->Task->params['no-test'] = true;
+
+		$this->Task->Test->expects($this->never())
+			->method('bake');
+		$this->Task->bakeTest('BakeArticles');
 	}
 
 /**
@@ -355,6 +328,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testInteractive() {
+		$this->markTestIncomplete();
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
@@ -390,6 +364,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testInteractiveAdminMethodsNotInteractive() {
+		$this->markTestIncomplete();
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
@@ -432,6 +407,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteIntoAll() {
+		$this->markTestIncomplete();
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
@@ -458,6 +434,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteIntoAllAdmin() {
+		$this->markTestIncomplete();
 		$count = count($this->Task->listAll('test'));
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
@@ -491,6 +468,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithController() {
+		$this->markTestIncomplete();
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticles');
@@ -522,6 +500,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithControllerNameVariations($name) {
+		$this->markTestIncomplete();
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array($name);
@@ -539,6 +518,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithPublicParam() {
+		$this->markTestIncomplete();
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 		$this->Task->args = array('BakeArticles');
@@ -558,6 +538,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithControllerAndBoth() {
+		$this->markTestIncomplete();
 		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
@@ -577,6 +558,7 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithControllerAndAdmin() {
+		$this->markTestIncomplete();
 		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
@@ -589,4 +571,5 @@ class ControllerTaskTest extends TestCase {
 		);
 		$this->Task->execute();
 	}
+
 }
