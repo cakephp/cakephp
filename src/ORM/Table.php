@@ -1288,7 +1288,7 @@ class Table implements RepositoryInterface, EventListener {
 			->execute();
 
 		$success = false;
-		if ($statement->rowCount() > 0) {
+		if ($statement->errorCode() === '00000') {
 			$success = $entity;
 		}
 		$statement->closeCursor();
