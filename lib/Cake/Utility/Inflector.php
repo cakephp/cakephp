@@ -130,7 +130,7 @@ class Inflector {
 			'/(hive)s$/i' => '\1',
 			'/(drive)s$/i' => '\1',
 			'/([le])ves$/i' => '\1f',
-			'/([^rfo])ves$/i' => '\1fe',
+			'/([^rfoa])ves$/i' => '\1fe',
 			'/(^analy)ses$/i' => '\1sis',
 			'/(analy|diagno|^ba|(p)arenthe|(p)rogno|(s)ynop|(t)he)ses$/i' => '\1\2sis',
 			'/([ti])a$/i' => '\1um',
