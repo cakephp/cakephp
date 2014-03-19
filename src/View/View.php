@@ -48,16 +48,16 @@ use Cake\Utility\ViewVarsTrait;
  *
  * Example of theme path with `$this->theme = 'SuperHot';` Would be `app/View/Themed/SuperHot/Posts`
  *
- * @property      CacheHelper $Cache
- * @property      FormHelper $Form
- * @property      HtmlHelper $Html
- * @property      NumberHelper $Number
- * @property      PaginatorHelper $Paginator
- * @property      RssHelper $Rss
- * @property      SessionHelper $Session
- * @property      TextHelper $Text
- * @property      TimeHelper $Time
- * @property      ViewBlock $Blocks
+ * @property      \Cake\View\Helper\CacheHelper $Cache
+ * @property      \Cake\View\Helper\FormHelper $Form
+ * @property      \Cake\View\Helper\HtmlHelper $Html
+ * @property      \Cake\View\Helper\NumberHelper $Number
+ * @property      \Cake\View\Helper\PaginatorHelper $Paginator
+ * @property      \Cake\View\Helper\RssHelper $Rss
+ * @property      \Cake\View\Helper\SessionHelper $Session
+ * @property      \Cake\View\Helper\TextHelper $Text
+ * @property      \Cake\View\Helper\TimeHelper $Time
+ * @property      \Cake\View\ViewBlock $Blocks
  */
 class View extends Object {
 
