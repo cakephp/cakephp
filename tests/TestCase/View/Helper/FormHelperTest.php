@@ -3060,14 +3060,18 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->radio('Employee.gender', array('male' => 'Male', 'female' => 'Female'));
+		$result = $this->Form->radio(
+			'Employee.gender',
+			array('male' => 'Male', 'female' => 'Female'),
+			['form' => 'my-form']
+		);
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Employee[gender]', 'value' => ''),
-			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male', 'id' => 'employee-gender-male')),
+			'input' => array('type' => 'hidden', 'name' => 'Employee[gender]', 'value' => '', 'form' => 'my-form'),
+			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'male', 'id' => 'employee-gender-male', 'form' => 'my-form')),
 			array('label' => array('for' => 'employee-gender-male')),
 			'Male',
 			'/label',
-			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female', 'id' => 'employee-gender-female')),
+			array('input' => array('type' => 'radio', 'name' => 'Employee[gender]', 'value' => 'female', 'id' => 'employee-gender-female', 'form' => 'my-form')),
 			array('label' => array('for' => 'employee-gender-female')),
 			'Female',
 			'/label',
@@ -3353,15 +3357,19 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->select(
 			'Model.multi_field',
 			$options,
-			array('multiple' => true)
+			['form' => 'my-form', 'multiple' => true]
 		);
 		$expected = array(
 			'input' => array(
-				'type' => 'hidden', 'name' => 'Model[multi_field]', 'value' => ''
+				'type' => 'hidden',
+				'name' => 'Model[multi_field]',
+				'value' => '',
+				'form' => 'my-form',
 			),
 			'select' => array(
 				'name' => 'Model[multi_field][]',
-				'multiple' => 'multiple'
+				'multiple' => 'multiple',
+				'form' => 'my-form',
 			),
 			array('option' => array('value' => '0')),
 			'first',
@@ -3379,7 +3387,7 @@ class FormHelperTest extends TestCase {
 		$result = $this->Form->select(
 			'Model.multi_field',
 			$options,
-			array('multiple' => 'multiple')
+			['multiple' => 'multiple', 'form' => 'my-form']
 		);
 		$this->assertTags($result, $expected);
 	}
@@ -3849,10 +3857,18 @@ class FormHelperTest extends TestCase {
 		);
 		$this->assertTags($result, $expected);
 
-		$result = $this->Form->checkbox('Model.field', array('id' => 'theID', 'value' => 'myvalue'));
+		$result = $this->Form->checkbox('Model.field', array(
+			'id' => 'theID',
+			'value' => 'myvalue',
+			'form' => 'my-form',
+		));
 		$expected = array(
-			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0'),
-			array('input' => array('type' => 'checkbox', 'name' => 'Model[field]', 'value' => 'myvalue', 'id' => 'theID'))
+			'input' => array('type' => 'hidden', 'name' => 'Model[field]', 'value' => '0', 'form' => 'my-form'),
+			array('input' => array(
+				'type' => 'checkbox', 'name' => 'Model[field]',
+				'value' => 'myvalue', 'id' => 'theID',
+				'form' => 'my-form',
+			))
 		);
 		$this->assertTags($result, $expected);
 	}

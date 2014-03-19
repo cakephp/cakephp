@@ -1151,6 +1151,7 @@ class FormHelper extends Helper {
 			$hiddenOptions = array(
 				'name' => $options['name'],
 				'value' => ($options['hiddenField'] !== true ? $options['hiddenField'] : '0'),
+				'form' => isset($options['form']) ? $options['form'] : null,
 				'secure' => false
 			);
 			if (isset($options['disabled']) && $options['disabled']) {
@@ -1192,6 +1193,7 @@ class FormHelper extends Helper {
 		if ($hiddenField && (!isset($value) || $value === '')) {
 			$hidden = $this->hidden($fieldName, [
 				'value' => '',
+				'form' => isset($attributes['form']) ? $attributes['form'] : null,
 				'name' => $attributes['name']
 			]);
 		}
@@ -1610,6 +1612,7 @@ class FormHelper extends Helper {
 			$hiddenAttributes = array(
 				'name' => $attributes['name'],
 				'value' => '',
+				'form' => isset($attributes['form']) ? $attributes['form'] : null,
 				'secure' => false,
 			);
 			$hidden = $this->hidden($fieldName, $hiddenAttributes);

@@ -1392,6 +1392,7 @@ class EmailTest extends TestCase {
 		$this->assertContains('/theme/TestTheme/img/test.jpg', $result['message']);
 		$this->assertContains('Message-ID: ', $result['headers']);
 		$this->assertContains('To: ', $result['headers']);
+		$this->assertContains('/theme/TestTheme/img/test.jpg', $result['message']);
 	}
 
 /**

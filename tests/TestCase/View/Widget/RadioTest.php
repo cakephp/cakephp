@@ -239,21 +239,24 @@ class RadioTest extends TestCase {
  *
  * @return void
  */
-	public function testRenderRequired() {
+	public function testRenderRequiredAndFormAttribute() {
 		$label = new Label($this->templates);
 		$radio = new Radio($this->templates, $label);
 		$data = [
 			'name' => 'published',
 			'options' => ['option A', 'option B'],
-			'required' => true
+			'required' => true,
+			'form' => 'my-form',
 		];
 		$result = $radio->render($data);
 		$expected = [
-			['input' => ['type' => 'radio', 'name' => 'published', 'value' => '0', 'id' => 'published-0', 'required' => 'required']],
+			['input' => ['type' => 'radio', 'name' => 'published', 'value' => '0',
+				'id' => 'published-0', 'required' => 'required', 'form' => 'my-form']],
 			['label' => ['for' => 'published-0']],
 			'option A',
 			'/label',
-			['input' => ['type' => 'radio', 'name' => 'published', 'value' => '1', 'id' => 'published-1', 'required' => 'required']],
+			['input' => ['type' => 'radio', 'name' => 'published', 'value' => '1',
+				'id' => 'published-1', 'required' => 'required', 'form' => 'my-form']],
 			['label' => ['for' => 'published-1']],
 			'option B',
 			'/label',

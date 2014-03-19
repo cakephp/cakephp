@@ -166,6 +166,9 @@ class Radio implements WidgetInterface {
 		if (!empty($data['required'])) {
 			$radio['required'] = true;
 		}
+		if (!empty($data['form'])) {
+			$radio['form'] = $data['form'];
+		}
 
 		$input = $this->_templates->format('radio', [
 			'name' => $radio['name'],
