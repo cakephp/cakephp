@@ -315,21 +315,22 @@ class FixtureTask extends BakeTask {
  * @return array Formatted values
  */
 	protected function _values($values) {
-		$vals = array();
-		if (is_array($values)) {
-			foreach ($values as $key => $val) {
-				if (is_array($val)) {
-					$vals[] = "'{$key}' => array(" . implode(", ", $this->_values($val)) . ")";
+		$vals = [];
+		if (!is_array($values)) {
+			return $vals;
+		}
+		foreach ($values as $key => $val) {
+			if (is_array($val)) {
+				$vals[] = "'{$key}' => array(" . implode(", ", $this->_values($val)) . ")";
+			} else {
+				$val = var_export($val, true);
+				if ($val === 'NULL') {
+					$val = 'null';
+				}
+				if (!is_numeric($key)) {
+					$vals[] = "'{$key}' => {$val}";
 				} else {
-					$val = var_export($val, true);
-					if ($val === 'NULL') {
-						$val = 'null';
-					}
-					if (!is_numeric($key)) {
-						$vals[] = "'{$key}' => {$val}";
-					} else {
-						$vals[] = "{$val}";
-					}
+					$vals[] = "{$val}";
 				}
 			}
 		}
@@ -445,7 +446,6 @@ class FixtureTask extends BakeTask {
 		}
 		$records = $model->find('all', [
 			'conditions' => $conditions,
-			'recursive' => -1,
 			'limit' => $recordCount
 		]);
 
