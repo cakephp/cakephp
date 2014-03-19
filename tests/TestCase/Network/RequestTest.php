@@ -927,6 +927,18 @@ class RequestTest extends TestCase {
  */
 	public function testAddDetector() {
 		$request = new Request();
+
+		Request::addDetector('closure', function ($request) {
+			return true;
+		});
+		$this->assertTrue($request->is('closure'));
+
+		Request::addDetector('get', function ($request) {
+			return $request->env('REQUEST_METHOD') == 'GET';
+		});
+		$request->env('REQUEST_METHOD', 'GET');
+		$this->assertTrue($request->is('get'));
+
 		Request::addDetector('compare', array('env' => 'TEST_VAR', 'value' => 'something'));
 
 		$request->env('TEST_VAR', 'something');
@@ -972,6 +984,10 @@ class RequestTest extends TestCase {
 
 		$request->return = false;
 		$this->assertFalse($request->isCallMe());
+
+		Request::addDetector('callme', array($this, 'detectCallback'));
+		$request->return = true;
+		$this->assertTrue($request->isCallMe());
 
 		Request::addDetector('extension', array('param' => 'ext', 'options' => array('pdf', 'png', 'txt')));
 		$request->params['ext'] = 'pdf';
