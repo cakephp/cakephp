@@ -1,7 +1,5 @@
 <?php
 /**
- * The ControllerTask handles creating and updating controller files.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -57,6 +55,7 @@ class ControllerTask extends BakeTask {
  */
 	public function execute() {
 		parent::execute();
+
 		if (empty($this->args)) {
 			return $this->_interactive();
 		}
@@ -475,12 +474,6 @@ class ControllerTask extends BakeTask {
 			__d('cake_console', 'Bake a controller for a model. Using options you can bake public, admin or both.')
 		)->addArgument('name', [
 			'help' => __d('cake_console', 'Name of the controller to bake. Can use Plugin.name to bake controllers into plugins.')
-		])->addOption('public', [
-			'help' => __d('cake_console', 'Bake a controller with basic crud actions (index, view, add, edit, delete).'),
-			'boolean' => true
-		])->addOption('admin', [
-			'help' => __d('cake_console', 'Bake a controller with crud actions for one of the Routing.prefixes.'),
-			'boolean' => true
 		])->addOption('plugin', [
 			'short' => 'p',
 			'help' => __d('cake_console', 'Plugin to bake the controller into.')
@@ -490,14 +483,18 @@ class ControllerTask extends BakeTask {
 		])->addOption('theme', [
 			'short' => 't',
 			'help' => __d('cake_console', 'Theme to use when baking code.')
+		])->addOption('components', [
+			'help' => __d('cake_console', 'The comma separated list of components to use.')
+		])->addOption('helpers', [
+			'help' => __d('cake_console', 'The comma separated list of helpers to use.')
+		])->addOption('prefix', [
+			'help' => __d('cake_console', 'The namespace/routing prefix to use.')
 		])->addOption('force', [
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addSubcommand('all', [
 			'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
-		])->epilog(
-			__d('cake_console', 'Omitting all arguments and options will enter into an interactive mode.')
-		);
+		]);
 
 		return $parser;
 	}
