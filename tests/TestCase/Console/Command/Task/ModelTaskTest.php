@@ -54,6 +54,7 @@ class ModelTaskTest extends TestCase {
 		);
 		$this->Task->connection = 'test';
 		$this->_setupOtherMocks();
+		TableRegistry::clear();
 	}
 
 /**

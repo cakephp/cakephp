@@ -1,7 +1,5 @@
 <?php
 /**
- * FixtureTask Test case
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -20,6 +18,7 @@ use Cake\Console\Command\Task\FixtureTask;
 use Cake\Console\Command\Task\TemplateTask;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\ClassRegistry;
 
@@ -43,8 +42,6 @@ class FixtureTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Baking will not work as models do not work.');
-
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
@@ -81,36 +78,7 @@ class FixtureTaskTest extends TestCase {
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 
 		$Task = new FixtureTask($out, $out, $in);
-		$this->assertEquals(APP . 'Test/Fixture/', $Task->path);
-	}
-
-/**
- * test import option array generation
- *
- * @return void
- */
-	public function testImportOptionsSchemaRecords() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('y'));
-
-		$result = $this->Task->importOptions('Article');
-		$expected = array('schema' => 'Article', 'records' => true);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test importOptions choosing nothing.
- *
- * @return void
- */
-	public function testImportOptionsNothing() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('n'));
-
-		$result = $this->Task->importOptions('Article');
-		$expected = array();
-		$this->assertEquals($expected, $result);
+		$this->assertEquals(ROOT . '/Test/Fixture/', $Task->path);
 	}
 
 /**
@@ -119,10 +87,10 @@ class FixtureTaskTest extends TestCase {
  * @return void
  */
 	public function testImportOptionsWithCommandLineOptions() {
-		$this->Task->params = array('schema' => true, 'records' => true);
+		$this->Task->params = ['schema' => true, 'records' => true];
 
 		$result = $this->Task->importOptions('Article');
-		$expected = array('schema' => 'Article', 'records' => true);
+		$expected = ['fromTable' => true, 'schema' => 'Article', 'records' => true];
 		$this->assertEquals($expected, $result);
 	}
 
@@ -132,12 +100,10 @@ class FixtureTaskTest extends TestCase {
  * @return void
  */
 	public function testImportOptionsWithSchema() {
-		$this->Task->params = array('schema' => true);
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
+		$this->Task->params = ['schema' => true];
 
-		$result = $this->Task->importOptions('Article');
-		$expected = array('schema' => 'Article');
+		$result = $this->Task->importOptions('Articles');
+		$expected = ['schema' => 'Articles'];
 		$this->assertEquals($expected, $result);
 	}
 
@@ -148,24 +114,9 @@ class FixtureTaskTest extends TestCase {
  */
 	public function testImportOptionsWithRecords() {
 		$this->Task->params = array('records' => true);
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
 
 		$result = $this->Task->importOptions('Article');
-		$expected = array('records' => true);
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test importOptions choosing from Table.
- *
- * @return void
- */
-	public function testImportOptionsTable() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue('n'));
-		$this->Task->expects($this->at(2))->method('in')->will($this->returnValue('y'));
-		$result = $this->Task->importOptions('Article');
-		$expected = array('fromTable' => true);
+		$expected = array('fromTable' => true, 'records' => true);
 		$this->assertEquals($expected, $result);
 	}
 
@@ -175,15 +126,13 @@ class FixtureTaskTest extends TestCase {
  * @return void
  */
 	public function testImportRecordsFromDatabaseWithConditionsPoo() {
-		$this->Task->interactive = true;
-		$this->Task->expects($this->at(0))->method('in')
-			->will($this->returnValue('WHERE 1=1'));
-
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
-		$result = $this->Task->bake('Article', false, array(
-			'fromTable' => true, 'schema' => 'Article', 'records' => false
+		$result = $this->Task->bake('Articles', false, array(
+			'fromTable' => true,
+			'schema' => 'Articles',
+			'records' => false
 		));
 
 		$this->assertContains('namespace App\Test\Fixture;', $result);
@@ -213,18 +162,13 @@ class FixtureTaskTest extends TestCase {
  * @return void
  */
 	public function testImportRecordsNoEscaping() {
-		$db = ConnectionManager::getDataSource('test');
+		$db = ConnectionManager::get('test');
 		if ($db instanceof Sqlserver) {
 			$this->markTestSkipped('This test does not run on SQLServer');
 		}
 
-		$Article = ClassRegistry::init('Article');
-		$Article->updateAll(array('body' => "'Body \"value\"'"));
-
-		$this->Task->interactive = true;
-		$this->Task->expects($this->at(0))
-			->method('in')
-			->will($this->returnValue('WHERE 1=1 LIMIT 10'));
+		$articles = TableRegistry::get('Articles');
+		$articles->updateAll(['body' => "Body \"value\""], []);
 
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
@@ -288,18 +232,20 @@ class FixtureTaskTest extends TestCase {
 	public function testAllWithCountAndRecordsFlags() {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->params = array('count' => 10, 'records' => true);
+		$this->Task->args = ['all'];
+		$this->Task->params = ['count' => 10, 'records' => true];
 
 		$this->Task->Model->expects($this->any())->method('listAll')
 			->will($this->returnValue(array('Articles', 'comments')));
 
 		$filename = '/my/path/ArticleFixture.php';
-		$this->Task->expects($this->at(0))->method('createFile')
+		$this->Task->expects($this->at(0))
+			->method('createFile')
 			->with($filename, $this->stringContains("'title' => 'Third Article'"));
 
 		$filename = '/my/path/CommentFixture.php';
-		$this->Task->expects($this->at(1))->method('createFile')
+		$this->Task->expects($this->at(1))
+			->method('createFile')
 			->with($filename, $this->stringContains("'comment' => 'First Comment for First Article'"));
 		$this->Task->expects($this->exactly(2))->method('createFile');
 
@@ -322,11 +268,11 @@ class FixtureTaskTest extends TestCase {
 
 		$filename = '/my/path/ArticleFixture.php';
 		$this->Task->expects($this->at(0))->method('createFile')
-			->with($filename, $this->stringContains('public $import = array(\'model\' => \'Article\''));
+			->with($filename, $this->stringContains("public \$import = ['model' => 'Articles'"));
 
 		$filename = '/my/path/CommentFixture.php';
 		$this->Task->expects($this->at(1))->method('createFile')
-			->with($filename, $this->stringContains('public $import = array(\'model\' => \'Comment\''));
+			->with($filename, $this->stringContains("public \$import = ['model' => 'Comments'"));
 		$this->Task->expects($this->exactly(2))->method('createFile');
 
 		$this->Task->all();
@@ -337,19 +283,17 @@ class FixtureTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testExecuteInteractive() {
+	public function testExecuteNoArgs() {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
 
-		$this->Task->expects($this->any())->method('in')->will($this->returnValue('y'));
-		$this->Task->Model->expects($this->any())->method('getName')->will($this->returnValue('Article'));
-		$this->Task->Model->expects($this->any())->method('getTable')
-			->with('Article')
-			->will($this->returnValue('articles'));
+		$this->Task->Model->expects($this->any())
+			->method('listAll')
+			->will($this->returnValue(['articles', 'comments']));
 
 		$filename = '/my/path/ArticleFixture.php';
-		$this->Task->expects($this->once())->method('createFile')
-			->with($filename, $this->stringContains('class ArticleFixture'));
+		$this->Task->expects($this->never())
+			->method('createFile');
 
 		$this->Task->execute();
 	}
@@ -372,18 +316,18 @@ class FixtureTaskTest extends TestCase {
 		$result = $this->Task->bake('Article', 'comments');
 		$this->assertContains('class ArticleFixture extends TestFixture', $result);
 		$this->assertContains('public $table = \'comments\';', $result);
-		$this->assertContains('public $fields = array(', $result);
+		$this->assertContains('public $fields = [', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('records' => true));
-		$this->assertContains("public \$import = array('records' => true, 'connection' => 'test');", $result);
+		$this->assertContains("public \$import = ['records' => true, 'connection' => 'test'];", $result);
 		$this->assertNotContains('public $records', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article'));
-		$this->assertContains("public \$import = array('model' => 'Article', 'connection' => 'test');", $result);
+		$this->assertContains("public \$import = ['model' => 'Article', 'connection' => 'test'];", $result);
 		$this->assertNotContains('public $fields', $result);
 
 		$result = $this->Task->bake('Article', 'comments', array('schema' => 'Article', 'records' => true));
-		$this->assertContains("public \$import = array('model' => 'Article', 'records' => true, 'connection' => 'test');", $result);
+		$this->assertContains("public \$import = ['model' => 'Article', 'records' => true, 'connection' => 'test'];", $result);
 		$this->assertNotContains('public $fields', $result);
 		$this->assertNotContains('public $records', $result);
 	}
