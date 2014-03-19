@@ -1573,10 +1573,12 @@ class TableTest extends \Cake\TestSuite\TestCase {
 			->will($this->returnValue($query));
 
 		$statement = $this->getMock('\Cake\Database\Statement\StatementDecorator');
-		$statement->expects($this->once())->method('rowCount')
-			->will($this->returnValue(1));
+		$statement->expects($this->once())
+			->method('errorCode')
+			->will($this->returnValue('00000'));
 
-		$query->expects($this->once())->method('execute')
+		$query->expects($this->once())
+			->method('execute')
 			->will($this->returnValue($statement));
 
 		$query->expects($this->once())->method('set')
@@ -1607,6 +1609,23 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$entity = new \Cake\ORM\Entity([
 			'id' => 2,
 		], ['markNew' => false]);
+		$this->assertSame($entity, $table->save($entity));
+	}
+
+/**
+ * Tests that passing only the primary key to save will not execute any queries
+ * but still return success
+ *
+ * @group save
+ * @group integration
+ * @return void
+ */
+	public function testUpdateDirtyNoActualChanges() {
+		$table = TableRegistry::get('Articles');
+		$entity = $table->get(1);
+
+		$entity->accessible('*', true);
+		$entity->set($entity->toArray());
 		$this->assertSame($entity, $table->save($entity));
 	}
 
