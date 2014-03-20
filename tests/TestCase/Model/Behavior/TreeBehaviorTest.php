@@ -32,7 +32,8 @@ class TreeBehaviorTest extends TestCase {
  * @var array
  */
 	public $fixtures = [
-		'core.number_tree'
+		'core.number_tree',
+		'core.menu_link_tree'
 	];
 
 	public function setUp() {
@@ -62,6 +63,60 @@ class TreeBehaviorTest extends TestCase {
 
 		$nodes = $this->table->find('path', ['for' => 1]);
 		$this->assertEquals([1], $nodes->extract('id')->toArray());
+		
+		// find path with scope
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$nodes = $table->find('path', ['for' => 5]);
+		$this->assertEquals([1, 3, 4, 5], $nodes->extract('id')->toArray());
 	}
 
+/**
+ * Tests the childCount() method
+ *
+ * @return void
+ */
+	public function testChildCount() {
+		// direct children for the root node
+		$countDirect = $this->table->childCount(1, true);
+		$this->assertEquals(2, $countDirect);
+
+		// counts all the children of root
+		$count = $this->table->childCount(1, false);
+		$this->assertEquals(9, $count);
+
+		// counts direct children
+		$count = $this->table->childCount(2, false);
+		$this->assertEquals(3, $count);
+
+		// count children for a middle-node
+		$count = $this->table->childCount(6, false);
+		$this->assertEquals(4, $count);
+
+		// count leaf children
+		$count = $this->table->childCount(10, false);
+		$this->assertEquals(0, $count);
+
+		// test scoping
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$count = $table->childCount(3, false);
+		$this->assertEquals(2, $count);
+	}
+
+/**
+ * Tests the childCount() plus callable scoping
+ *
+ * @return void
+ */
+	public function testCallableScoping() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', [
+			'scope' => function ($query) {
+				return $query->where(['menu' => 'main-menu']);
+			}
+		]);
+		$count = $table->childCount(1, false);
+		$this->assertEquals(4, $count);
+	}
 }
