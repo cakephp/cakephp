@@ -99,8 +99,8 @@ class Associations {
 /**
  * Get an array of associations matching a specific type.
  *
- * @param string $class
- * @return array
+ * @param string $class The type of associations you want. For example 'BelongsTo'
+ * @return array An array of Association objects.
  */
 	public function type($class) {
 		$out = array_filter($this->_items, function ($assoc) use ($class) {
