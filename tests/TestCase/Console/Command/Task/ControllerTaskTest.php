@@ -78,6 +78,11 @@ class ControllerTaskTest extends TestCase {
 			array($out, $out, $in)
 		);
 		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\TestTask', array(), array($out, $out, $in));
+
+		TableRegistry::get('BakeArticles', [
+			'className' => __NAMESPACE__ . '\BakeArticlesTable'
+		]);
+
 	}
 
 /**
@@ -87,6 +92,7 @@ class ControllerTaskTest extends TestCase {
  */
 	public function tearDown() {
 		unset($this->Task);
+		TableRegistry::clear();
 		parent::tearDown();
 	}
 
@@ -147,23 +153,47 @@ class ControllerTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testBake() {
-		$this->markTestIncomplete();
-		$helpers = array('Js', 'Time');
-		$components = array('Acl', 'Auth');
-		$this->Task->expects($this->any())->method('createFile')->will($this->returnValue(true));
+	public function testBakeNoActions() {
+		$this->Task->expects($this->any())
+			->method('createFile')
+			->will($this->returnValue(true));
 
-		$result = $this->Task->bake('Articles', null, $helpers, $components);
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'NoActions.ctp');
-		$this->assertTextEquals($expected, $result);
+		$this->Task->params['no-actions'] = true;
+		$this->Task->params['helpers'] = 'Html,Time';
+		$this->Task->params['components'] = 'Csrf, Auth';
 
-		$result = $this->Task->bake('Articles', null, array(), array());
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'NoHelpersOrComponents.ctp');
+		$result = $this->Task->bake('BakeArticles');
+		$expected = file_get_contents(CORE_TESTS . '/bake_compare/Controller/NoActions.ctp');
 		$this->assertTextEquals($expected, $result);
+	}
 
-		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'Scaffold.ctp');
-		$this->assertTextEquals($expected, $result);
+/**
+ * test bake with actions.
+ *
+ * @return void
+ */
+	public function testBakeActions() {
+		$this->Task->params['helpers'] = 'Html,Time';
+		$this->Task->params['components'] = 'Csrf, Auth';
+
+		$result = $this->Task->bake('BakeArticles');
+		$this->assertTextContains('public function add(', $result);
+		$this->assertTextContains('public function index(', $result);
+		$this->assertTextContains('public function view(', $result);
+		$this->assertTextContains('public function edit(', $result);
+		$this->assertTextContains('public function delete(', $result);
+	}
+
+/**
+ * test bake actions prefixed.
+ *
+ * @return void
+ */
+	public function testBakePrefixed() {
+		$this->Task->params['prefix'] = 'Admin';
+
+		$result = $this->Task->bake('BakeArticles');
+		$this->assertTextContains('App\Controller\Admin', $result);
 	}
 
 /**
@@ -206,11 +236,7 @@ class ControllerTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testBakeActions() {
-		TableRegistry::get('BakeArticles', [
-			'className' => __NAMESPACE__ . '\BakeArticlesTable'
-		]);
-
+	public function testBakeActionsContent() {
 		$result = $this->Task->bakeActions('BakeArticles');
 		$expected = file_get_contents(CORE_TESTS . 'bake_compare/Controller/Actions.ctp');
 		$this->assertTextEquals($expected, $result);

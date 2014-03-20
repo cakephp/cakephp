@@ -16,6 +16,7 @@ namespace Cake\Console\Command\Task;
 
 use Cake\Console\Shell;
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\ClassRegistry;
 use Cake\Utility\Inflector;
@@ -110,6 +111,9 @@ class ControllerTask extends BakeTask {
  * @return string Baked actions
  */
 	public function bakeActions($controllerName) {
+		if (!empty($this->params['no-actions'])) {
+			return '';
+		}
 		$currentModelName = $controllerName;
 		$plugin = $this->plugin;
 		if ($plugin) {
@@ -144,22 +148,30 @@ class ControllerTask extends BakeTask {
 		$actions = $this->bakeActions($controllerName);
 		$helpers = $this->getHelpers();
 		$components = $this->getComponents();
-		$prefix = $this->params['prefix'];
+
+		$prefix = '';
+		if (isset($this->params['prefix'])) {
+			$prefix = '\\' . $this->params['prefix'];
+		}
 
 		$namespace = Configure::read('App.namespace');
-		$pluginPath = '';
 		if ($this->plugin) {
 			$namespace = $this->plugin;
-			$pluginPath = $this->plugin . '.';
 		}
+
 		$data = compact(
-			'actions', 'helpers', 'components',
-			'prefix', 'namespace', 'pluginPath'
+			'prefix',
+			'actions',
+			'helpers',
+			'components',
+			'prefix',
+			'namespace'
 		);
 		$data['name'] = $controllerName;
 
-		$this->bakeController($controllerName, $data);
+		$out = $this->bakeController($controllerName, $data);
 		$this->bakeTest($controllerName);
+		return $out;
 	}
 
 /**
@@ -185,10 +197,8 @@ class ControllerTask extends BakeTask {
 
 		$path = $this->getPath();
 		$filename = $path . $controllerName . 'Controller.php';
-		if ($this->createFile($filename, $contents)) {
-			return $contents;
-		}
-		return false;
+		$this->createFile($filename, $contents);
+		return $contents;
 	}
 
 /**
@@ -312,6 +322,9 @@ class ControllerTask extends BakeTask {
 		])->addOption('no-test', [
 			'boolean' => true,
 			'help' => __d('cake_console', 'Do not generate a test skeleton.')
+		])->addOption('no-actions', [
+			'boolean' => true,
+			'help' => __d('cake_console', 'Do not generate skeleton actions methods.')
 		])->addOption('force', [
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
