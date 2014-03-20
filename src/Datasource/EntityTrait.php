@@ -199,7 +199,8 @@ trait EntityTrait {
  * @return \Cake\Datasource\EntityInterface this object
  */
 	public function set($property, $value = null, $options = []) {
-		if (is_string($property)) {
+		$isString = is_string($property);
+		if ($isString && $property !== '') {
 			$guard = false;
 			$property = [$property => $value];
 		} else {
@@ -207,10 +208,10 @@ trait EntityTrait {
 			$options = (array)$value;
 		}
 
-		$options += ['setter' => true, 'guard' => $guard];
 		if (!is_array($property)) {
 			throw new \InvalidArgumentException('Cannot set an empty property');
 		}
+		$options += ['setter' => true, 'guard' => $guard];
 
 		foreach ($property as $p => $value) {
 			if ($options['guard'] === true && !$this->accessible($p)) {

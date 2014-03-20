@@ -1066,7 +1066,7 @@ class EntityTest extends TestCase {
  */
 	public function testSetEmptyPropertyName($property) {
 		$entity = new Entity();
-		$entity->set($property, 'foo');
+		$entity->set($property, 'bar');
 	}
 
 }

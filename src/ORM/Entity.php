@@ -54,10 +54,13 @@ class Entity implements EntityInterface {
 			'source' => null
 		];
 		$this->_className = get_class($this);
-		$this->set($properties, [
-			'setter' => $options['useSetters'],
-			'guard' => $options['guard']
-		]);
+
+		if (!empty($properties)) {
+			$this->set($properties, [
+				'setter' => $options['useSetters'],
+				'guard' => $options['guard']
+			]);
+		}
 
 		if ($options['markClean']) {
 			$this->clean();
