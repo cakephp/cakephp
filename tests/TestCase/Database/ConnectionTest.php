@@ -723,6 +723,7 @@ class ConnectionTest extends TestCase {
 			->setMethods(['connect'])
 			->disableOriginalConstructor()
 			->getMock();
+		$connection->logQueries(true);
 
 		$driver = $this->getMockFormDriver();
 		$connection->driver($driver);
