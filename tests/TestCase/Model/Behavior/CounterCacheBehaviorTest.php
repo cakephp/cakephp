@@ -58,7 +58,7 @@ class CounterCacheBehaviorTest extends TestCase {
 		parent::setUp();
 		$this->connection = ConnectionManager::get('test');
 
-		$this->user = TableRegistry::get('User', [
+		$this->user = TableRegistry::get('Users', [
 			'table' => 'counter_cache_users',
 			'connection' => $this->connection
 		]);
@@ -86,10 +86,10 @@ class CounterCacheBehaviorTest extends TestCase {
  * @return void
  */
 	public function testAdd() {
-		$this->post->belongsTo('User');
+		$this->post->belongsTo('Users');
 
 		$this->post->addBehavior('CounterCache', [
-			'User' => [
+			'Users' => [
 				'post_count'
 			]
 		]);
@@ -109,10 +109,10 @@ class CounterCacheBehaviorTest extends TestCase {
  * @return void
  */
 	public function testAddScope() {
-		$this->post->belongsTo('User');
+		$this->post->belongsTo('Users');
 
 		$this->post->addBehavior('CounterCache', [
-			'User' => [
+			'Users' => [
 				'posts_published' => [
 					'conditions' => [
 						'published' => true
@@ -136,10 +136,10 @@ class CounterCacheBehaviorTest extends TestCase {
  * @return void
  */
 	public function testDelete() {
-		$this->post->belongsTo('User');
+		$this->post->belongsTo('Users');
 
 		$this->post->addBehavior('CounterCache', [
-			'User' => [
+			'Users' => [
 				'post_count'
 			]
 		]);
@@ -159,10 +159,10 @@ class CounterCacheBehaviorTest extends TestCase {
  * @return void
  */
 	public function testCustomFind() {
-		$this->post->belongsTo('User');
+		$this->post->belongsTo('Users');
 
 		$this->post->addBehavior('CounterCache', [
-			'User' => [
+			'Users' => [
 				'posts_published' => [
 					'findType' => 'published'
 				]
@@ -184,13 +184,13 @@ class CounterCacheBehaviorTest extends TestCase {
  * @return void
  */
 	public function testLambdaNumber() {
-		$this->post->belongsTo('User');
+		$this->post->belongsTo('Users');
 
 		$table = $this->post;
 		$entity = $this->_getEntity();
 
 		$this->post->addBehavior('CounterCache', [
-			'User' => [
+			'Users' => [
 				'posts_published' => function (Event $orgEvent, Entity $orgEntity, Table $orgTable) use ($entity, $table) {
 					$this->assertSame($orgTable, $table);
 					$this->assertSame($orgEntity, $entity);
@@ -214,10 +214,10 @@ class CounterCacheBehaviorTest extends TestCase {
  * @return void
  */
 	public function testLambdaSubquery() {
-		$this->post->belongsTo('User');
+		$this->post->belongsTo('Users');
 
 		$this->post->addBehavior('CounterCache', [
-			'User' => [
+			'Users' => [
 				'posts_published' => function (Event $event, Entity $entity, Table $table) {
 					$query = new Query($this->connection);
 					return $query->select(4);
@@ -240,10 +240,10 @@ class CounterCacheBehaviorTest extends TestCase {
  * @return void
  */
 	public function testMultiple() {
-		$this->post->belongsTo('User');
+		$this->post->belongsTo('Users');
 
 		$this->post->addBehavior('CounterCache', [
-			'User' => [
+			'Users' => [
 				'post_count',
 				'posts_published' => [
 					'conditions' => [
