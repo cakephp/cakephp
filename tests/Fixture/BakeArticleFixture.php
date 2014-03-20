@@ -1,7 +1,5 @@
 <?php
 /**
- * BakeArticleFixture
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -19,7 +17,7 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * BakeArticleFixture
  *
  */
 class BakeArticleFixture extends TestFixture {
@@ -34,7 +32,7 @@ class BakeArticleFixture extends TestFixture {
 		'bake_user_id' => ['type' => 'integer', 'null' => false],
 		'title' => ['type' => 'string', 'null' => false],
 		'body' => 'text',
-		'published' => ['type' => 'boolean', 'length' => 1, 'default' => 0],
+		'published' => ['type' => 'boolean', 'length' => 1, 'default' => false],
 		'created' => 'datetime',
 		'updated' => 'datetime',
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]

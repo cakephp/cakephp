@@ -1,7 +1,5 @@
 <?php
 /**
- * Counter Cache Test Fixtures
- *
  * CakePHP(tm) Tests <http://book.cakephp.org/2.0/en/development/testing.html>
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -19,7 +17,7 @@ namespace Cake\Test\Fixture;
 use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Short description for class.
+ * Counter Cache Test Fixtures
  *
  */
 class CounterCachePostFixture extends TestFixture {
@@ -28,7 +26,7 @@ class CounterCachePostFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'title' => ['type' => 'string', 'length' => 255],
 		'user_id' => ['type' => 'integer', 'null' => true],
-		'published' => ['type' => 'boolean', 'null' => false, 'default' => 0],
+		'published' => ['type' => 'boolean', 'null' => false, 'default' => false],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
