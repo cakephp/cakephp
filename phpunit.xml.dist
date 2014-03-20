@@ -32,9 +32,10 @@
 		</listener>
 	</listeners>
 	<php>
-		<!-- SQLite -->
+		<!-- SQLite
 		<env name="db_class" value="Cake\Database\Driver\Sqlite"/>
 		<env name="db_dsn" value="sqlite::memory:"/>
+		-->
 		<!-- Postgres
 		<env name="db_class" value="Cake\Database\Driver\Postgres"/>
 		<env name="db_database" value="cake_test"/>
