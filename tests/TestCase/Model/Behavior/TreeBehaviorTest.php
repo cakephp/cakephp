@@ -32,7 +32,8 @@ class TreeBehaviorTest extends TestCase {
  * @var array
  */
 	public $fixtures = [
-		'core.number_tree'
+		'core.number_tree',
+		'core.menu_link_tree'
 	];
 
 	public function setUp() {
@@ -62,6 +63,12 @@ class TreeBehaviorTest extends TestCase {
 
 		$nodes = $this->table->find('path', ['for' => 1]);
 		$this->assertEquals([1], $nodes->extract('id')->toArray());
+		
+		// find path with scope
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$nodes = $table->find('path', ['for' => 5]);
+		$this->assertEquals([1, 3, 4, 5], $nodes->extract('id')->toArray());
 	}
 
 /**
@@ -89,5 +96,27 @@ class TreeBehaviorTest extends TestCase {
 		// count leaf children
 		$count = $this->table->childCount(10, false);
 		$this->assertEquals($count, 0);
+
+		// test scoping
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$count = $table->childCount(3, false);
+		$this->assertEquals($count, 2);
+	}
+
+/**
+ * Tests the childCount() plus callable scoping
+ *
+ * @return void
+ */
+	public function testCallableScoping() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', [
+			'scope' => function ($query) {
+				return $query->where(['url LIKE' => '/what%']);
+			}
+		]);
+		$count = $table->childCount(2, false);
+		$this->assertEquals($count, 2);
 	}
 }
