@@ -718,11 +718,12 @@ class ConnectionTest extends TestCase {
  * @return void
  */
 	public function testLogBeginRollbackTransaction() {
-		$connection = $this->getMock(
-			'\Cake\Database\Connection',
-			['connect'],
-			[['log' => true]]
-		);
+		$connection = $this
+			->getMockBuilder('\Cake\Database\Connection')
+			->setMethods(['connect'])
+			->disableOriginalConstructor()
+			->getMock();
+
 		$driver = $this->getMockFormDriver();
 		$connection->driver($driver);
 
