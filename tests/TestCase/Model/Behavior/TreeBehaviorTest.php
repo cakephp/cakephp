@@ -73,23 +73,23 @@ class TreeBehaviorTest extends TestCase {
  * @return void
  */
 	public function testChildCount() {
-		// direct childs for the root node
+		// direct children for the root node
 		$countDirect = $this->table->childCount(1, true);
 		$this->assertEquals($countDirect, 2);
 
-		// counts all the childs of root
+		// counts all the children of root
 		$count = $this->table->childCount(1, false);
 		$this->assertEquals($count, 9);
 
-		// counts direct childs
+		// counts direct children
 		$count = $this->table->childCount(2, false);
 		$this->assertEquals($count, 3);
 
-		// count childs for a middle-node
+		// count children for a middle-node
 		$count = $this->table->childCount(6, false);
 		$this->assertEquals($count, 4);
 
-		// count leaf childs
+		// count leaf children
 		$count = $this->table->childCount(10, false);
 		$this->assertEquals($count, 0);
 	}

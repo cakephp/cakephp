@@ -85,16 +85,15 @@ class TreeBehavior extends Behavior {
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
 
 		if ($direct) {
-			return $this->_table->find()
-				->where([$parent => $id])
-				->count();
+			$query = $this->_table->find()
+				->where([$parent => $id]);
+			return $this->_scope($query)->count();
 		}
 
 		$node = $this->_table->find()
 			->select([$parent, $left, $right])
-			->where([$this->_table->primaryKey() => $id])
-			->first();
-		$node = $this->_scope($node);
+			->where([$this->_table->primaryKey() => $id]);
+		$node = $this->_scope($node)->first();
 
 		return ($node->{$right} - $node->{$left} - 1) / 2;
 	}
@@ -117,5 +116,4 @@ class TreeBehavior extends Behavior {
 
 		return $query->matching($association->name());
 	}
-
 }
