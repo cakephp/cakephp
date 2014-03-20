@@ -193,7 +193,8 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->params['prefix'] = 'Admin';
 
 		$result = $this->Task->bake('BakeArticles');
-		$this->assertTextContains('App\Controller\Admin', $result);
+		$this->assertTextContains('namespace App\Controller\Admin;', $result);
+		$this->assertTextContains('use App\Controller\AppController;', $result);
 	}
 
 /**
@@ -202,31 +203,22 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testBakeWithPlugin() {
-		$this->markTestIncomplete();
 		$this->Task->plugin = 'ControllerTest';
 
 		//fake plugin path
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
-		$path = APP . 'Plugin/ControllerTest/Controller/ArticlesController.php';
+		$path = APP . 'Plugin/ControllerTest/Controller/BakeArticlesController.php';
 
-		$this->Task->expects($this->at(1))->method('createFile')->with(
-			$path,
-			$this->anything()
-		);
-		$this->Task->expects($this->at(3))->method('createFile')->with(
-			$path,
-			$this->stringContains('ArticlesController extends ControllerTestAppController')
-		)->will($this->returnValue(true));
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with(
+				$path,
+				$this->stringContains('BakeArticlesController extends AppController')
+			)->will($this->returnValue(true));
 
-		$this->Task->bake('Articles', '--actions--', array(), array(), array());
-
-		$this->Task->plugin = 'ControllerTest';
-		$path = APP . 'Plugin/ControllerTest/Controller/ArticlesController.php';
-		$result = $this->Task->bake('Articles', '--actions--', array(), array(), array());
-
-		$this->assertContains("App::uses('ControllerTestAppController', 'ControllerTest.Controller');", $result);
-		$this->assertEquals('ControllerTest', $this->Task->Template->viewVars['plugin']);
-		$this->assertEquals('ControllerTest.', $this->Task->Template->viewVars['pluginPath']);
+		$result = $this->Task->bake('BakeArticles');
+		$this->assertContains('namespace ControllerTest\Controller;', $result);
+		$this->assertContains('use ControllerTest\Controller\AppController;', $result);
 
 		Plugin::unload();
 	}
@@ -281,77 +273,26 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteIntoAll() {
-		$this->markTestIncomplete();
-		$count = count($this->Task->listAll('test'));
+		$count = count($this->Task->listAll());
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
+		$this->Task->args = ['all'];
+		$this->Task->params = ['helpers' => 'Time,Text'];
 
-		$this->Task->expects($this->any())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->Test->expects($this->once())->method('bake');
+		$this->Task->Test->expects($this->atLeastOnce())
+			->method('bake');
 
 		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('class BakeArticlesController')
-		)->will($this->returnValue(true));
-
-		$this->Task->execute();
-	}
-
-/**
- * Test execute() with all and --admin
- *
- * @return void
- */
-	public function testExecuteIntoAllAdmin() {
-		$this->markTestIncomplete();
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->params['admin'] = true;
-
-		$this->Task->Project->expects($this->any())
-			->method('getPrefix')
-			->will($this->returnValue('admin_'));
-		$this->Task->expects($this->any())
-			->method('_checkUnitTest')
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($filename, $this->logicalAnd(
+				$this->stringContains('class BakeArticlesController'),
+				$this->stringContains("\$helpers = ['Time', 'Text', 'Form']")
+			))
 			->will($this->returnValue(true));
-		$this->Task->Test->expects($this->once())->method('bake');
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('function admin_index')
-		)->will($this->returnValue(true));
-
-		$this->Task->execute();
-	}
-
-/**
- * test that `cake bake controller foos` works.
- *
- * @return void
- */
-	public function testExecuteWithController() {
-		$this->markTestIncomplete();
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticles');
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('$scaffold')
-		);
 
 		$this->Task->execute();
 	}
@@ -374,75 +315,14 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteWithControllerNameVariations($name) {
-		$this->markTestIncomplete();
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array($name);
+		$this->Task->args = [$name];
 
 		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, $this->stringContains('$scaffold')
-		);
-		$this->Task->execute();
-	}
-
-/**
- * test that `cake bake controller foo scaffold` works.
- *
- * @return void
- */
-	public function testExecuteWithPublicParam() {
-		$this->markTestIncomplete();
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticles');
-		$this->Task->params = array('public' => true);
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$expected = new \PHPUnit_Framework_Constraint_Not($this->stringContains('$scaffold'));
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, $expected
-		);
-		$this->Task->execute();
-	}
-
-/**
- * test that `cake bake controller foos both` works.
- *
- * @return void
- */
-	public function testExecuteWithControllerAndBoth() {
-		$this->markTestIncomplete();
-		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticles');
-		$this->Task->params = array('public' => true, 'admin' => true);
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, $this->stringContains('admin_index')
-		);
-		$this->Task->execute();
-	}
-
-/**
- * test that `cake bake controller foos admin` works.
- *
- * @return void
- */
-	public function testExecuteWithControllerAndAdmin() {
-		$this->markTestIncomplete();
-		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticles');
-		$this->Task->params = array('admin' => true);
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, $this->stringContains('admin_index')
-		);
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->with($filename, $this->stringContains('public function index()'));
 		$this->Task->execute();
 	}
 

@@ -85,22 +85,12 @@ class ControllerTask extends BakeTask {
  * @return void
  */
 	public function all() {
-		$this->listAll();
-
 		$controllersCreated = 0;
-		foreach ($this->__tables as $table) {
-			$model = $this->_modelName($table);
-			$controller = $this->_controllerName($model);
-			$classname = App::classname($model, 'Model');
-			if ($classname) {
-				$this->bake($controller);
-				$this->bakeTest($controller);
-				$controllersCreated++;
-			}
-		}
-
-		if (!$controllersCreated) {
-			$this->out(__d('cake_console', 'No Controllers were baked, Models need to exist before Controllers can be baked.'));
+		foreach ($this->listAll() as $table) {
+			$controller = $this->_controllerName($table);
+			$this->bake($controller);
+			$this->bakeTest($controller);
+			$controllersCreated++;
 		}
 	}
 
