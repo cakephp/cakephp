@@ -90,9 +90,11 @@ class Connection {
 	public function __construct($config) {
 		$this->_config = $config;
 
+		$driver = '';
 		if (!empty($config['driver'])) {
-			$this->driver($config['driver'], $config);
+			$driver = $config['driver'];
 		}
+		$this->driver($driver, $config);
 
 		if (!empty($config['log'])) {
 			$this->logQueries($config['log']);

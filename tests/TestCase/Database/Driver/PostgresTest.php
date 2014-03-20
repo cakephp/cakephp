@@ -142,11 +142,12 @@ class PostgresTest extends \Cake\TestSuite\TestCase {
 			['_connect', 'connection'],
 			[['dsn' => 'foo']]
 		);
-		$connection = $this->getMock(
-			'\Cake\Database\Connection',
-			['connect'],
-			[['log' => false]]
-		);
+		$connection = $this
+			->getMockBuilder('\Cake\Database\Connection')
+			->setMethods(['connect'])
+			->disableOriginalConstructor()
+			->getMock();
+
 		$query = new \Cake\Database\Query($connection);
 		$query->insert(['id', 'title'])
 			->into('articles')
