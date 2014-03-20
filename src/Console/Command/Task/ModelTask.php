@@ -130,8 +130,8 @@ class ModelTask extends BakeTask {
 		);
 		$this->bakeTable($model, $data);
 		$this->bakeEntity($model, $data);
-		$this->bakeFixture($model, $table);
-		$this->bakeTest($model);
+		$this->bakeFixture($model->alias(), $table);
+		$this->bakeTest($model->alias());
 	}
 
 /**
@@ -219,13 +219,11 @@ class ModelTask extends BakeTask {
 				$tmpModelName = $this->_modelNameFromKey($fieldName);
 				$associations['belongsTo'][] = [
 					'alias' => $tmpModelName,
-					'className' => $tmpModelName,
 					'foreignKey' => $fieldName,
 				];
 			} elseif ($fieldName === 'parent_id') {
 				$associations['belongsTo'][] = [
 					'alias' => 'Parent' . $model->alias(),
-					'className' => $model->alias(),
 					'foreignKey' => $fieldName,
 				];
 			}
@@ -262,13 +260,11 @@ class ModelTask extends BakeTask {
 				if (!in_array($fieldName, $primaryKey) && $fieldName == $foreignKey) {
 					$assoc = [
 						'alias' => $otherModel->alias(),
-						'className' => $otherModel->alias(),
 						'foreignKey' => $fieldName
 					];
 				} elseif ($otherTable == $tableName && $fieldName === 'parent_id') {
 					$assoc = [
 						'alias' => 'Child' . $model->alias(),
-						'className' => $model->alias(),
 						'foreignKey' => $fieldName
 					];
 				}
@@ -308,7 +304,6 @@ class ModelTask extends BakeTask {
 				$habtmName = $this->_modelName($assocTable);
 				$associations['belongsToMany'][] = [
 					'alias' => $habtmName,
-					'className' => $habtmName,
 					'foreignKey' => $foreignKey,
 					'targetForeignKey' => $this->_modelKey($habtmName),
 					'joinTable' => $otherTable

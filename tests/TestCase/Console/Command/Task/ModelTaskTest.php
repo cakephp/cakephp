@@ -168,21 +168,18 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'BakeUsers',
-					'className' => 'BakeUsers',
 					'foreignKey' => 'bake_user_id',
 				],
 			],
 			'hasMany' => [
 				[
 					'alias' => 'BakeComments',
-					'className' => 'BakeComments',
 					'foreignKey' => 'bake_article_id',
 				],
 			],
 			'belongsToMany' => [
 				[
 					'alias' => 'BakeTags',
-					'className' => 'BakeTags',
 					'foreignKey' => 'bake_article_id',
 					'joinTable' => 'bake_articles_bake_tags',
 					'targetForeignKey' => 'bake_tag_id',
@@ -204,12 +201,10 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'BakeArticles',
-					'className' => 'BakeArticles',
 					'foreignKey' => 'bake_article_id',
 				],
 				[
 					'alias' => 'BakeUsers',
-					'className' => 'BakeUsers',
 					'foreignKey' => 'bake_user_id',
 				],
 			]
@@ -222,7 +217,6 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'ParentCategoryThreads',
-					'className' => 'CategoryThreads',
 					'foreignKey' => 'parent_id',
 				],
 			]
@@ -243,7 +237,6 @@ class ModelTaskTest extends TestCase {
 			'hasMany' => [
 				[
 					'alias' => 'BakeComments',
-					'className' => 'BakeComments',
 					'foreignKey' => 'bake_article_id',
 				],
 			],
@@ -256,7 +249,6 @@ class ModelTaskTest extends TestCase {
 			'hasMany' => [
 				[
 					'alias' => 'ChildCategoryThreads',
-					'className' => 'CategoryThreads',
 					'foreignKey' => 'parent_id',
 				],
 			]
@@ -277,7 +269,6 @@ class ModelTaskTest extends TestCase {
 			'belongsToMany' => [
 				[
 					'alias' => 'BakeTags',
-					'className' => 'BakeTags',
 					'foreignKey' => 'bake_article_id',
 					'joinTable' => 'bake_articles_bake_tags',
 					'targetForeignKey' => 'bake_tag_id',
@@ -576,26 +567,22 @@ class ModelTaskTest extends TestCase {
 			'belongsTo' => [
 				[
 					'alias' => 'SomethingElse',
-					'className' => 'SomethingElse',
 					'foreignKey' => 'something_else_id',
 				],
 				[
 					'alias' => 'BakeUser',
-					'className' => 'BakeUser',
 					'foreignKey' => 'bake_user_id',
 				],
 			],
 			'hasMany' => [
 				[
 					'alias' => 'BakeComment',
-					'className' => 'BakeComment',
 					'foreignKey' => 'parent_id',
 				],
 			],
 			'belongsToMany' => [
 				[
 					'alias' => 'BakeTag',
-					'className' => 'BakeTag',
 					'foreignKey' => 'bake_article_id',
 					'joinTable' => 'bake_articles_bake_tags',
 					'targetForeignKey' => 'bake_tag_id',
