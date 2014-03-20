@@ -1040,7 +1040,7 @@ class QueryTest extends TestCase {
  *
  * @return void
  */
-	public function testHydrateWithHasMany() {
+	public function testHydrateHasMany() {
 		$table = TableRegistry::get('authors');
 		TableRegistry::get('articles');
 		$table->hasMany('articles', [
@@ -1199,7 +1199,7 @@ class QueryTest extends TestCase {
  *
  * @return void
  */
-	public function testHydrateWithHasManyCustomEntity() {
+	public function testHydrateHasManyCustomEntity() {
 		$authorEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
 		$articleEntity = $this->getMockClass('\Cake\ORM\Entity', ['foo']);
 		$table = TableRegistry::get('authors', [
