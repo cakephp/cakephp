@@ -20,8 +20,8 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\View\Helper;
 
 /**
@@ -35,11 +35,6 @@ class BakeArticlesTable extends Table {
 	}
 
 }
-
-class_alias(
-	'Cake\Test\TestCase\Console\Command\Task\BakeArticlesTable',
-	'TestApp\Model\Table\BakeArticlesTable'
-);
 
 /**
  * ControllerTaskTest class
@@ -148,94 +143,6 @@ class ControllerTaskTest extends TestCase {
 	}
 
 /**
- * test getting helper values
- *
- * @return void
- */
-	public function testDoHelpersTrailingSpace() {
-		$this->markTestIncomplete();
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Text, Number, CustomOne  '));
-		$result = $this->Task->doHelpers();
-		$expected = array('Text', 'Number', 'CustomOne');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test doHelpers with extra commas
- *
- * @return void
- */
-	public function testDoHelpersTrailingCommas() {
-		$this->markTestIncomplete();
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Text, Number, CustomOne, , '));
-		$result = $this->Task->doHelpers();
-		$expected = array('Text', 'Number', 'CustomOne');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test component interactions
- *
- * @return void
- */
-	public function testDoComponentsNo() {
-		$this->markTestIncomplete();
-		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
-		$result = $this->Task->doComponents();
-		$this->assertSame(array('Paginator'), $result);
-	}
-
-/**
- * test components with spaces
- *
- * @return void
- */
-	public function testDoComponentsTrailingSpaces() {
-		$this->markTestIncomplete();
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security  '));
-
-		$result = $this->Task->doComponents();
-		$expected = array('Paginator', 'RequestHandler', 'Security');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test components with commas
- *
- * @return void
- */
-	public function testDoComponentsTrailingCommas() {
-		$this->markTestIncomplete();
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security, , '));
-
-		$result = $this->Task->doComponents();
-		$expected = array('Paginator', 'RequestHandler', 'Security');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test Confirming controller user interaction
- *
- * @return void
- */
-	public function testConfirmController() {
-		$this->markTestIncomplete();
-		$controller = 'Posts';
-		$scaffold = false;
-		$helpers = array('Js', 'Time');
-		$components = array('Acl', 'Auth');
-
-		$this->Task->expects($this->at(4))->method('out')->with("Controller Name:\n\t$controller");
-		$this->Task->expects($this->at(5))->method('out')->with("Helpers:\n\tJs, Time");
-		$this->Task->expects($this->at(6))->method('out')->with("Components:\n\tAcl, Auth");
-		$this->Task->confirmController($controller, $scaffold, $helpers, $components);
-	}
-
-/**
  * test the bake method
  *
  * @return void
@@ -299,10 +206,13 @@ class ControllerTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testBakeActionsUsingSessions() {
-		$this->markTestIncomplete();
-		$result = $this->Task->bakeActions('BakeArticles', null, true);
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'ActionsUsingSessions.ctp');
+	public function testBakeActions() {
+		TableRegistry::get('BakeArticles', [
+			'className' => __NAMESPACE__ . '\BakeArticlesTable'
+		]);
+
+		$result = $this->Task->bakeActions('BakeArticles');
+		$expected = file_get_contents(CORE_TESTS . 'bake_compare/Controller/Actions.ctp');
 		$this->assertTextEquals($expected, $result);
 
 		$result = $this->Task->bakeActions('BakeArticles', 'admin_', true);
@@ -344,85 +254,6 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->Test->expects($this->never())
 			->method('bake');
 		$this->Task->bakeTest('BakeArticles');
-	}
-
-/**
- * test Interactive mode.
- *
- * @return void
- */
-	public function testInteractive() {
-		$this->markTestIncomplete();
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				'1',
-				'y', // build interactive
-				'n', // build no scaffolds
-				'y', // build normal methods
-				'n', // build admin methods
-				'n', // helpers?
-				'n', // components?
-				'y', // sessions ?
-				'y' // looks good?
-			));
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('class BakeArticlesController')
-		);
-		$this->Task->execute();
-	}
-
-/**
- * test Interactive mode.
- *
- * @return void
- */
-	public function testInteractiveAdminMethodsNotInteractive() {
-		$this->markTestIncomplete();
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-
-		$this->Task->connection = 'test';
-		$this->Task->interactive = true;
-		$this->Task->path = '/my/path/';
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				'1',
-				'y', // build interactive
-				'n', // build no scaffolds
-				'y', // build normal methods
-				'y', // build admin methods
-				'n', // helpers?
-				'n', // components?
-				'y', // sessions ?
-				'y' // looks good?
-			));
-
-		$this->Task->Project->expects($this->any())
-			->method('getPrefix')
-			->will($this->returnValue('admin_'));
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('class BakeArticlesController')
-		)->will($this->returnValue(true));
-
-		$result = $this->Task->execute();
-		$this->assertRegExp('/admin_index/', $result);
 	}
 
 /**
