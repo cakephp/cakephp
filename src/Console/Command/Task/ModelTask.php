@@ -25,8 +25,6 @@ use Cake\Utility\Inflector;
 
 /**
  * Task class for generating model files.
- *
- * @codingStandardsIgnoreFile
  */
 class ModelTask extends BakeTask {
 
@@ -156,7 +154,7 @@ class ModelTask extends BakeTask {
  *
  * @param string $className Name of class you want model to be.
  * @param string $table Table name
- * @return Cake\ORM\Table Table instance
+ * @return \Cake\ORM\Table Table instance
  */
 	public function getTableObject($className, $table) {
 		if (TableRegistry::exists($className)) {
@@ -172,6 +170,7 @@ class ModelTask extends BakeTask {
 /**
  * Get the array of associations to generate.
  *
+ * @param \Cake\ORM\Table $table
  * @return array
  */
 	public function getAssociations(Table $table) {
@@ -206,7 +205,7 @@ class ModelTask extends BakeTask {
 /**
  * Find belongsTo relations and add them to the associations list.
  *
- * @param ORM\Table $model Database\Table instance of table being generated.
+ * @param \Cake\ORM\Table $model Database\Table instance of table being generated.
  * @param array $associations Array of in progress associations
  * @return array Associations with belongsTo added in.
  */
@@ -234,7 +233,7 @@ class ModelTask extends BakeTask {
 /**
  * Find the hasMany relations and add them to associations list
  *
- * @param Model $model Model instance being generated
+ * @param \Cake\ORM\Table $model Model instance being generated
  * @param array $associations Array of in progress associations
  * @return array Associations with hasMany added in.
  */
@@ -279,7 +278,7 @@ class ModelTask extends BakeTask {
 /**
  * Find the BelongsToMany relations and add them to associations list
  *
- * @param Model $model Model instance being generated
+ * @param \Cake\ORM\Table $model Model instance being generated
  * @param array $associations Array of in-progress associations
  * @return array Associations with belongsToMany added in.
  */
@@ -316,7 +315,7 @@ class ModelTask extends BakeTask {
 /**
  * Get the display field from the model or parameters
  *
- * @param Cake\ORM\Table $model The model to introspect.
+ * @param \Cake\ORM\Table $model The model to introspect.
  * @return string
  */
 	public function getDisplayField($model) {
@@ -492,7 +491,7 @@ class ModelTask extends BakeTask {
 /**
  * Bake an entity class.
  *
- * @param Cake\ORM\Table $model Model name or object
+ * @param \Cake\ORM\Table $model Model name or object
  * @param array $data An array to use to generate the Table
  * @return string
  */
@@ -530,7 +529,7 @@ class ModelTask extends BakeTask {
 /**
  * Bake a table class.
  *
- * @param Cake\ORM\Table $model Model name or object
+ * @param \Cake\ORM\Table $model Model name or object
  * @param array $data An array to use to generate the Table
  * @return string
  */
@@ -574,7 +573,6 @@ class ModelTask extends BakeTask {
 /**
  * Outputs the a list of possible models or controllers from database
  *
- * @param string $useDbConfig Database configuration name
  * @return array
  */
 	public function listAll() {
@@ -623,7 +621,8 @@ class ModelTask extends BakeTask {
  *
  * Uses the `table` option if it is set.
  *
- * @return string.
+ * @param string $name Table name
+ * @return string
  */
 	public function getTable($name) {
 		if (isset($this->params['table'])) {
@@ -731,6 +730,5 @@ class ModelTask extends BakeTask {
 		$this->Test->connection = $this->connection;
 		return $this->Test->bake('Model', $className);
 	}
-
 
 }
