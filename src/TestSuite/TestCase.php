@@ -70,43 +70,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	protected $_pathRestore = array();
 
 /**
- * Runs the test case and collects the results in a TestResult object.
- * If no TestResult object is passed a new one will be created.
- * This method is run for each test method in this class
- *
- * @param \PHPUnit_Framework_TestResult $result
- * @return \PHPUnit_Framework_TestResult
- */
-	public function run(\PHPUnit_Framework_TestResult $result = null) {
-		if (!empty($this->fixtureManager)) {
-			$this->fixtureManager->load($this);
-		}
-		$result = parent::run($result);
-		if (!empty($this->fixtureManager)) {
-			$this->fixtureManager->unload($this);
-		}
-		return $result;
-	}
-
-/**
- * Called when a test case method is about to start (to be overridden when needed.)
- *
- * @param string $method Test method about to get executed.
- * @return void
- */
-	public function startTest($method) {
-	}
-
-/**
- * Called when a test case method has been executed (to be overridden when needed.)
- *
- * @param string $method Test method about that was executed.
- * @return void
- */
-	public function endTest($method) {
-	}
-
-/**
  * Overrides SimpleTestCase::skipIf to provide a boolean return value
  *
  * @param boolean $shouldSkip
@@ -163,30 +126,6 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	public static function date($format = 'Y-m-d H:i:s') {
 		return TestSuiteDispatcher::date($format);
 	}
-
-// @codingStandardsIgnoreStart PHPUnit overrides don't match CakePHP
-
-/**
- * Announces the start of a test.
- *
- * @return void
- */
-	protected function assertPreConditions() {
-		parent::assertPreConditions();
-		$this->startTest($this->getName());
-	}
-
-/**
- * Announces the end of a test.
- *
- * @return void
- */
-	protected function assertPostConditions() {
-		parent::assertPostConditions();
-		$this->endTest($this->getName());
-	}
-
-// @codingStandardsIgnoreEnd
 
 /**
  * Chooses which fixtures to load for a given test
