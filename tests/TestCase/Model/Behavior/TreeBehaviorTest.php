@@ -68,7 +68,7 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
- * Tests the childCount()
+ * Tests the childCount() method
  *
  * @return void
  */
