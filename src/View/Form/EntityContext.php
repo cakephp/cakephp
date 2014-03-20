@@ -343,7 +343,7 @@ class EntityContext implements ContextInterface {
  * conventions.
  *
  * @param array $parts Each one of the parts in a path for a field name
- * @return Validator
+ * @return \Cake\Validation\Validator
  */
 	protected function _getValidator($parts) {
 		$table = $this->_getTable($parts);
@@ -362,8 +362,8 @@ class EntityContext implements ContextInterface {
  * Get the table instance from a property path
  *
  * @param array $parts Each one of the parts in a path for a field name
- * @return array containing the table instance in the first position and the
- * property name in the second position
+ * @param boolean $rootFallback
+ * @return \Cake\ORM\Table|boolean Table instance or false
  */
 	protected function _getTable($parts, $rootFallback = true) {
 		if (count($parts) === 1) {

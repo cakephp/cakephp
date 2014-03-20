@@ -28,7 +28,8 @@ trait TranslateTrait {
  * present, a new empty entity will be created so that values can be added to
  * it.
  *
- * @return void
+ * @param string $language Language to return entity for.
+ * @return \Cake\ORM\Entity
  */
 	public function translation($language) {
 		if ($language === $this->get('_locale')) {

@@ -52,6 +52,11 @@ class TestShell extends Shell {
 		return 255;
 	}
 
+/**
+ * Warning that test shell is defunct
+ *
+ * @return void
+ */
 	public function outputWarning() {
 		$this->err('<error>Test Shell has been removed.</error>');
 		$this->err('');
