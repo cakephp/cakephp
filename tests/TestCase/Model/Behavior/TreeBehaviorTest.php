@@ -79,29 +79,29 @@ class TreeBehaviorTest extends TestCase {
 	public function testChildCount() {
 		// direct children for the root node
 		$countDirect = $this->table->childCount(1, true);
-		$this->assertEquals($countDirect, 2);
+		$this->assertEquals(2, $countDirect);
 
 		// counts all the children of root
 		$count = $this->table->childCount(1, false);
-		$this->assertEquals($count, 9);
+		$this->assertEquals(9, $count);
 
 		// counts direct children
 		$count = $this->table->childCount(2, false);
-		$this->assertEquals($count, 3);
+		$this->assertEquals(3, $count);
 
 		// count children for a middle-node
 		$count = $this->table->childCount(6, false);
-		$this->assertEquals($count, 4);
+		$this->assertEquals(4, $count);
 
 		// count leaf children
 		$count = $this->table->childCount(10, false);
-		$this->assertEquals($count, 0);
+		$this->assertEquals(0, $count);
 
 		// test scoping
 		$table = TableRegistry::get('MenuLinkTrees');
 		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 		$count = $table->childCount(3, false);
-		$this->assertEquals($count, 2);
+		$this->assertEquals(2, $count);
 	}
 
 /**
@@ -113,10 +113,10 @@ class TreeBehaviorTest extends TestCase {
 		$table = TableRegistry::get('MenuLinkTrees');
 		$table->addBehavior('Tree', [
 			'scope' => function ($query) {
-				return $query->where(['url LIKE' => '/what%']);
+				return $query->where(['menu' => 'main-menu']);
 			}
 		]);
-		$count = $table->childCount(2, false);
-		$this->assertEquals($count, 2);
+		$count = $table->childCount(1, false);
+		$this->assertEquals(4, $count);
 	}
 }
