@@ -275,7 +275,7 @@ class CacheTest extends TestCase {
 
 /**
  * test that configured returns an array of the currently configured cache
- * settings
+ * config
  *
  * @return void
  */

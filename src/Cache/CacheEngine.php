@@ -169,10 +169,24 @@ abstract class CacheEngine {
 /**
  * Cache Engine config
  *
- * @return array config
+ * If called with no arguments, returns the full config array
+ * Otherwise returns the config for the specified key
+ *
+ * Usage:
+ * {{{
+ * $instance->config(); will return full config
+ * $instance->config('duration'); will return configured duration
+ * $instance->config('notset'); will return null
+ * }}}
+ *
+ * @param string|null $key to return
+ * @return mixed array or config value
  */
-	public function config() {
-		return $this->_config;
+	public function config($key = null) {
+		if ($key === null) {
+			return $this->_config;
+		}
+		return isset($this->_config[$key]) ? $this->_config[$key] : null;
 	}
 
 /**
