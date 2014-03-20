@@ -73,6 +73,32 @@ class TreeBehavior extends Behavior {
 			]);
 	}
 
+/**
+ * Get the number of child nodes.
+ *
+ * @param integer|string $id The ID of the record to read
+ * @param boolean $direct whether to count direct, or all, children
+ * @return integer Number of child nodes.
+ */
+	public function childCount($id, $direct = false) {
+		$config = $this->config();
+		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
+
+		if ($direct) {
+			return $this->_table->find()
+				->where([$parent => $id])
+				->count();
+		}
+
+		$node = $this->_table->find()
+			->select([$parent, $left, $right])
+			->where([$this->_table->primaryKey() => $id])
+			->first();
+		$node = $this->_scope($node);
+
+		return ($node->{$right} - $node->{$left} - 1) / 2;
+	}
+
 	protected function _scope($query) {
 		$config = $this->config();
 
