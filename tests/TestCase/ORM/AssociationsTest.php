@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Associations;
 use Cake\ORM\Association\BelongsTo;
+use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
@@ -108,12 +109,18 @@ class AssociationsTest extends TestCase {
 
 /**
  * Test getting association names by type.
+ *
+ * @return void
  */
 	public function testType() {
 		$belongsTo = new BelongsTo([]);
 		$this->associations->add('Users', $belongsTo);
 
+		$belongsToMany = new BelongsToMany([]);
+		$this->associations->add('Tags', $belongsToMany);
+
 		$this->assertSame([$belongsTo], $this->associations->type('BelongsTo'));
+		$this->assertSame([$belongsToMany], $this->associations->type('BelongsToMany'));
 		$this->assertSame([], $this->associations->type('HasMany'));
 	}
 

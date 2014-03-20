@@ -104,7 +104,8 @@ class Associations {
  */
 	public function type($class) {
 		$out = array_filter($this->_items, function ($assoc) use ($class) {
-			return strpos(get_class($assoc), $class) !== false;
+			list($ns, $name) = namespaceSplit(get_class($assoc));
+			return $class === $name;
 		});
 		return array_values($out);
 	}
