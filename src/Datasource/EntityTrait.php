@@ -208,6 +208,9 @@ trait EntityTrait {
 		}
 
 		$options += ['setter' => true, 'guard' => $guard];
+		if (!is_array($property)) {
+			throw new \InvalidArgumentException('Cannot set an empty property');
+		}
 
 		foreach ($property as $p => $value) {
 			if ($options['guard'] === true && !$this->accessible($p)) {
@@ -235,10 +238,15 @@ trait EntityTrait {
  *
  * @param string $property the name of the property to retrieve
  * @return mixed
+ * @throws \InvalidArgumentException if an empty property name is passed
  */
 	public function &get($property) {
-		$method = 'get' . Inflector::camelize($property);
+		if (!strlen((string)$property)) {
+			throw new \InvalidArgumentException('Cannot get an empty property');
+		}
+
 		$value = null;
+		$method = 'get' . Inflector::camelize($property);
 
 		if (isset($this->_properties[$property])) {
 			$value =& $this->_properties[$property];

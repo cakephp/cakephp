@@ -1037,4 +1037,36 @@ class EntityTest extends TestCase {
 		$this->assertEquals('foos', $entity->source());
 	}
 
+/**
+ * Provides empty values
+ *
+ * @return void
+ */
+	public function emptyNamesProvider() {
+		return [[''], [null], [false]];
+	}
+/**
+ * Tests that trying to get an empty propery name throws exception
+ *
+ * @dataProvider emptyNamesProvider
+ * @expectedException \InvalidArgumentException
+ * @return void
+ */
+	public function testEmptyProperties($property) {
+		$entity = new Entity();
+		$entity->get($property);
+	}
+
+/**
+ * Tests that setitng an empty property name does nothing
+ *
+ * @expectedException \InvalidArgumentException
+ * @dataProvider emptyNamesProvider
+ * @return void
+ */
+	public function testSetEmptyPropertyName($property) {
+		$entity = new Entity();
+		$entity->set($property, 'foo');
+	}
+
 }
