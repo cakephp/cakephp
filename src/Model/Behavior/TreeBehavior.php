@@ -103,17 +103,12 @@ class TreeBehavior extends Behavior {
 
 		if (empty($config['scope'])) {
 			return $query;
-		}
-
-		if (!is_string($config['scope'])) {
+		} elseif (is_array($config['scope'])) {
 			return $query->where($config['scope']);
+		} elseif (is_callable($config['scope'])) {
+			return $config['scope']($query);
 		}
 
-		$association = $this->_table->association($query['scope']);
-		if (!$association) {
-			throw new \InvalidArgumentException("Invalid association name for 'scope'");
-		}
-
-		return $query->matching($association->name());
+		return $query;
 	}
 }
