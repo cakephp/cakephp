@@ -144,24 +144,6 @@ class TestCaseTest extends TestCase {
 	}
 
 /**
- * testLoadFixtures
- *
- * @return void
- */
-	public function testLoadFixtures() {
-		$test = new FixturizedTestCase('testFixturePresent');
-		$manager = $this->getMock('Cake\TestSuite\Fixture\FixtureManager');
-		$manager->fixturize($test);
-		$test->fixtureManager = $manager;
-		$manager->expects($this->once())->method('load');
-		$manager->expects($this->once())->method('unload');
-		$result = $test->run();
-		$this->assertEquals(0, $result->errorCount());
-		$this->assertTrue($result->wasSuccessful());
-		$this->assertEquals(0, $result->failureCount());
-	}
-
-/**
  * testLoadFixturesOnDemand
  *
  * @return void

@@ -300,9 +300,6 @@ class FixtureManager {
  * @return void
  */
 	public function shutDown() {
-		if (session_id()) {
-			session_write_close();
-		}
 		foreach ($this->_loaded as $fixture) {
 			if (!empty($fixture->created)) {
 				foreach ($fixture->created as $ds) {
