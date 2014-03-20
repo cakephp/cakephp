@@ -95,7 +95,7 @@ class TreeBehavior extends Behavior {
 			->where([$this->_table->primaryKey() => $id]);
 		$node = $this->_scope($node)->first();
 
-		return ($node->{$right} - $node->{$left} - 1) / 2;
+		return $node->{$right} - $node->{$left} - 1;
 	}
 
 	protected function _scope($query) {
