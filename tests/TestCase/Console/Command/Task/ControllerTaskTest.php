@@ -214,13 +214,6 @@ class ControllerTaskTest extends TestCase {
 		$result = $this->Task->bakeActions('BakeArticles');
 		$expected = file_get_contents(CORE_TESTS . 'bake_compare/Controller/Actions.ctp');
 		$this->assertTextEquals($expected, $result);
-
-		$result = $this->Task->bakeActions('BakeArticles', 'admin_', true);
-		$this->assertContains('function admin_index() {', $result);
-		$this->assertContains('function admin_add()', $result);
-		$this->assertContains('function admin_view($id = null)', $result);
-		$this->assertContains('function admin_edit($id = null)', $result);
-		$this->assertContains('function admin_delete($id = null)', $result);
 	}
 
 /**
