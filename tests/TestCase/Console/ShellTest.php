@@ -553,49 +553,6 @@ class ShellTest extends TestCase {
 	}
 
 /**
- * test createFile when the shell is interactive.
- *
- * @return void
- */
-	public function testCreateFileInteractive() {
-		$eol = PHP_EOL;
-
-		$path = TMP . 'shell_test';
-		$file = $path . DS . 'file1.php';
-		new Folder($path, true);
-
-		$this->Shell->interactive = true;
-
-		$this->Shell->stdin->expects($this->at(0))
-			->method('read')
-			->will($this->returnValue('n'));
-
-		$this->Shell->stdin->expects($this->at(1))
-			->method('read')
-			->will($this->returnValue('y'));
-
-		$contents = "<?php{$eol}echo 'yet another test';{$eol}\$te = 'st';{$eol}";
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertEquals(file_get_contents($file), $contents);
-
-		// no overwrite
-		$contents = 'new contents';
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertFalse($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertNotEquals($contents, file_get_contents($file));
-
-		// overwrite
-		$contents = 'more new contents';
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
-		$this->assertTrue(file_exists($file));
-		$this->assertEquals($contents, file_get_contents($file));
-	}
-
-/**
  * Test that you can't create files that aren't writable.
  *
  * @return void

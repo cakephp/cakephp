@@ -643,7 +643,7 @@ class Shell extends Object {
 
 		$this->out();
 
-		if (is_file($path) && empty($this->params['force']) && $this->interactive === true) {
+		if (is_file($path) && empty($this->params['force'])) {
 			$this->out(__d('cake_console', '<warning>File `%s` exists</warning>', $path));
 			$key = $this->in(__d('cake_console', 'Do you want to overwrite?'), ['y', 'n', 'q'], 'n');
 
