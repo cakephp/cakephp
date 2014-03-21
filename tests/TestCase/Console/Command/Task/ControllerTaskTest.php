@@ -66,6 +66,7 @@ class ControllerTaskTest extends TestCase {
 		);
 		$this->Task->name = 'Controller';
 		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
 
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 		$this->Task->Template->params['theme'] = 'default';
@@ -177,7 +178,15 @@ class ControllerTaskTest extends TestCase {
 		$this->Task->params['helpers'] = 'Html,Time';
 		$this->Task->params['components'] = 'Csrf, Auth';
 
+		$filename = '/my/path/BakeArticlesController.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with(
+				$filename,
+				$this->stringContains('class BakeArticlesController')
+			);
 		$result = $this->Task->bake('BakeArticles');
+
 		$this->assertTextContains('public function add(', $result);
 		$this->assertTextContains('public function index(', $result);
 		$this->assertTextContains('public function view(', $result);
@@ -193,7 +202,12 @@ class ControllerTaskTest extends TestCase {
 	public function testBakePrefixed() {
 		$this->Task->params['prefix'] = 'Admin';
 
+		$filename = '/my/path/Admin/BakeArticlesController.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($filename, $this->anything());
 		$result = $this->Task->bake('BakeArticles');
+		
 		$this->assertTextContains('namespace App\Controller\Admin;', $result);
 		$this->assertTextContains('use App\Controller\AppController;', $result);
 	}

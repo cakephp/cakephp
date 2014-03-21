@@ -192,6 +192,20 @@ class ControllerTask extends BakeTask {
 	}
 
 /**
+ * Gets the path for output. Checks the plugin property
+ * and returns the correct path.
+ *
+ * @return string Path to output.
+ */
+	public function getPath() {
+		$path = parent::getPath();
+		if (!empty($this->params['prefix'])) {
+			$path .= Inflector::camelize($this->params['prefix']) . DS;
+		}
+		return $path;
+	}
+
+/**
  * Assembles and writes a unit test file
  *
  * @param string $className Controller class name
