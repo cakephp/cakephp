@@ -14,8 +14,8 @@
  */
 namespace Cake\Console\Command\Task;
 
-use Cake\Console\ConsoleOutput;
 use Cake\Console\ConsoleInput;
+use Cake\Console\ConsoleOutput;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
 use Cake\Database\Schema\Table;
