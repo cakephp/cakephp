@@ -55,9 +55,8 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
  * @return void
  */
 	public function add() {
-		$<?= $singularName ?> = $this-><?= $currentModelName ?>->newEntity();
+		$<?= $singularName ?> = $this-><?= $currentModelName ?>->newEntity($this->request->data);
 		if ($this->request->is('post')) {
-			$<?= $singularName ?> = $this-><?= $currentModelName ?>->patchEntity($<?= $singularName ?>, $this->request->data);
 			if ($this-><?= $currentModelName; ?>->save($<?= $singularName ?>)) {
 				$this->Session->setFlash(__('The <?= strtolower($singularHumanName); ?> has been saved.'));
 				return $this->redirect(['action' => 'index']);

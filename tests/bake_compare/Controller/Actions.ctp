@@ -31,9 +31,8 @@
  * @return void
  */
 	public function add() {
-		$bakeArticle = $this->BakeArticles->newEntity();
+		$bakeArticle = $this->BakeArticles->newEntity($this->request->data);
 		if ($this->request->is('post')) {
-			$bakeArticle = $this->BakeArticles->patchEntity($bakeArticle, $this->request->data);
 			if ($this->BakeArticles->save($bakeArticle)) {
 				$this->Session->setFlash(__('The bake article has been saved.'));
 				return $this->redirect(['action' => 'index']);
