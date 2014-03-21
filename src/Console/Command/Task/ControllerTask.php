@@ -232,9 +232,6 @@ class ControllerTask extends BakeTask {
 			$components = explode(',', $this->params['components']);
 			$components = array_values(array_filter(array_map('trim', $components)));
 		}
-		if (!in_array('Paginator', $components)) {
-			$components[] = 'Paginator';
-		}
 		return $components;
 	}
 
@@ -248,9 +245,6 @@ class ControllerTask extends BakeTask {
 		if (!empty($this->params['helpers'])) {
 			$helpers = explode(',', $this->params['helpers']);
 			$helpers = array_values(array_filter(array_map('trim', $helpers)));
-		}
-		if (count($helpers) && !in_array('Form', $helpers)) {
-			$helpers[] = 'Form';
 		}
 		return $helpers;
 	}

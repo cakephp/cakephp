@@ -121,15 +121,11 @@ class ControllerTaskTest extends TestCase {
  */
 	public function testGetComponents() {
 		$result = $this->Task->getComponents();
-		$this->assertSame(['Paginator'], $result);
+		$this->assertSame([], $result);
 
 		$this->Task->params['components'] = '  , Security, ,  Csrf';
 		$result = $this->Task->getComponents();
-		$this->assertSame(['Security', 'Csrf', 'Paginator'], $result);
-
-		$this->Task->params['components'] = '  Paginator , Security, ,  Csrf';
-		$result = $this->Task->getComponents();
-		$this->assertSame(['Paginator', 'Security', 'Csrf'], $result);
+		$this->assertSame(['Security', 'Csrf'], $result);
 	}
 
 /**
@@ -143,11 +139,7 @@ class ControllerTaskTest extends TestCase {
 
 		$this->Task->params['helpers'] = '  , Session , ,  Number';
 		$result = $this->Task->getHelpers();
-		$this->assertSame(['Session', 'Number', 'Form'], $result);
-
-		$this->Task->params['helpers'] = '  Session , Number , ,  Form';
-		$result = $this->Task->getHelpers();
-		$this->assertSame(['Session', 'Number', 'Form'], $result);
+		$this->assertSame(['Session', 'Number'], $result);
 	}
 
 /**
@@ -305,7 +297,7 @@ class ControllerTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->logicalAnd(
 				$this->stringContains('class BakeArticlesController'),
-				$this->stringContains("\$helpers = ['Time', 'Text', 'Form']")
+				$this->stringContains("\$helpers = ['Time', 'Text']")
 			))
 			->will($this->returnValue(true));
 

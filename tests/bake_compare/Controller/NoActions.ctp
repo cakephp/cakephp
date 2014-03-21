@@ -9,7 +9,6 @@ use App\Controller\AppController;
  * @property App\Model\Table\BakeArticlesTable $BakeArticles
  * @property CsrfComponent $Csrf
  * @property AuthComponent $Auth
- * @property PaginatorComponent $Paginator
  */
 class BakeArticlesController extends AppController {
 
@@ -18,13 +17,13 @@ class BakeArticlesController extends AppController {
  *
  * @var array
  */
-	public $helpers = ['Html', 'Time', 'Form'];
+	public $helpers = ['Html', 'Time'];
 
 /**
  * Components
  *
  * @var array
  */
-	public $components = ['Csrf', 'Auth', 'Paginator'];
+	public $components = ['Csrf', 'Auth'];
 
 }
