@@ -555,7 +555,7 @@ class Email {
  * EmailPattern setter/getter
  *
  * @param string $regex for email address validation
- * @return string|Email
+ * @return string|\Cake\Network\Email\Email
  */
 	public function emailPattern($regex = null) {
 		if ($regex === null) {
