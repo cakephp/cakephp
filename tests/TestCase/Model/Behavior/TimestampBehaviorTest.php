@@ -44,13 +44,23 @@ class TimestampBehaviorTest extends TestCase {
 	];
 
 /**
+ * Set up the table to be used for the behavior
+ *
+ * @return void
+ */
+	public function setUp() {
+		$this->loadFixtures('User');
+		$this->table = TableRegistry::get('users');
+		parent::setUp();
+	}
+
+/**
  * Sanity check Implemented events
  *
  * @return void
  */
 	public function testImplementedEventsDefault() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
+		$this->Behavior = new TimestampBehavior($this->table);
 
 		$expected = [
 			'Model.beforeSave' => 'handleEvent'
@@ -66,9 +76,8 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testImplementedEventsCustom() {
-		$table = $this->getMock('Cake\ORM\Table');
 		$settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
-		$this->Behavior = new TimestampBehavior($table, $settings);
+		$this->Behavior = new TimestampBehavior($this->table, $settings);
 
 		$expected = [
 			'Something.special' => 'handleEvent'
@@ -82,8 +91,7 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testCreatedAbsent() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
+		$this->Behavior = new TimestampBehavior($this->table);
 		$ts = new \DateTime('2000-01-01');
 		$this->Behavior->timestamp($ts);
 
@@ -92,7 +100,7 @@ class TimestampBehaviorTest extends TestCase {
 
 		$return = $this->Behavior->handleEvent($event, $entity);
 		$this->assertTrue($return, 'Handle Event is expected to always return true');
-		$this->assertSame($ts, $entity->created, 'Created timestamp is expected to be the mocked value');
+		$this->assertSame($ts->format('U'), $entity->created, 'Created timestamp is expected to be the mocked value');
 	}
 
 /**
@@ -101,8 +109,7 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testCreatedPresent() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
+		$this->Behavior = new TimestampBehavior($this->table);
 		$ts = new \DateTime('2000-01-01');
 		$this->Behavior->timestamp($ts);
 
@@ -121,8 +128,7 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testCreatedNotNew() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
+		$this->Behavior = new TimestampBehavior($this->table);
 		$ts = new \DateTime('2000-01-01');
 		$this->Behavior->timestamp($ts);
 
@@ -141,8 +147,7 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testModifiedAbsent() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
+		$this->Behavior = new TimestampBehavior($this->table);
 		$ts = new \DateTime('2000-01-01');
 		$this->Behavior->timestamp($ts);
 
@@ -161,8 +166,7 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testModifiedPresent() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
+		$this->Behavior = new TimestampBehavior($this->table);
 		$ts = new \DateTime('2000-01-01');
 		$this->Behavior->timestamp($ts);
 
@@ -185,9 +189,8 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testInvalidEventConfig() {
-		$table = $this->getMock('Cake\ORM\Table');
 		$settings = ['events' => ['Model.beforeSave' => ['created' => 'fat fingers']]];
-		$this->Behavior = new TimestampBehavior($table, $settings);
+		$this->Behavior = new TimestampBehavior($this->table, $settings);
 
 		$event = new Event('Model.beforeSave');
 		$entity = new Entity(['name' => 'Foo']);
@@ -200,8 +203,7 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testGetTimestamp() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
+		$this->Behavior = new TimestampBehavior($this->table);
 
 		$return = $this->Behavior->timestamp();
 		$this->assertInstanceOf(
@@ -262,8 +264,7 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testSetTimestampExplicit() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
+		$this->Behavior = new TimestampBehavior($this->table);
 
 		$ts = new \DateTime();
 		$this->Behavior->timestamp($ts);
@@ -282,8 +283,7 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testTouch() {
-		$table = $this->getMock('Cake\ORM\Table');
-		$this->Behavior = new TimestampBehavior($table);
+		$this->Behavior = new TimestampBehavior($this->table);
 		$ts = new \DateTime('2000-01-01');
 		$this->Behavior->timestamp($ts);
 
@@ -304,7 +304,6 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testTouchNoop() {
-		$table = $this->getMock('Cake\ORM\Table');
 		$config = [
 			'events' => [
 				'Model.beforeSave' => [
@@ -313,7 +312,7 @@ class TimestampBehaviorTest extends TestCase {
 			]
 		];
 
-		$this->Behavior = new TimestampBehavior($table, $config);
+		$this->Behavior = new TimestampBehavior($this->table, $config);
 		$ts = new \DateTime('2000-01-01');
 		$this->Behavior->timestamp($ts);
 
@@ -330,9 +329,8 @@ class TimestampBehaviorTest extends TestCase {
  * @return void
  */
 	public function testTouchCustomEvent() {
-		$table = $this->getMock('Cake\ORM\Table');
 		$settings = ['events' => ['Something.special' => ['date_specialed' => 'always']]];
-		$this->Behavior = new TimestampBehavior($table, $settings);
+		$this->Behavior = new TimestampBehavior($this->table, $settings);
 		$ts = new \DateTime('2000-01-01');
 		$this->Behavior->timestamp($ts);
 
@@ -373,7 +371,7 @@ class TimestampBehaviorTest extends TestCase {
 
 		$now = time();
 
-		$storedValue = $row->created->getTimestamp();
+		$storedValue = $row->created;
 		$this->assertLessThan(3, abs($storedValue - $now), "The stored created timestamp is expected to within 3 seconds of the current timestamp");
 
 		$storedValue = $row->updated->getTimestamp();

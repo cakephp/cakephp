@@ -136,6 +136,7 @@ class BehaviorTest extends TestCase {
 		$config = ['key' => 'value'];
 		$behavior = new TestBehavior($table, $config);
 		$this->assertEquals($config, $behavior->config());
+		$this->assertEquals($table, $behavior->table());
 	}
 
 	public function testReflectionCache() {

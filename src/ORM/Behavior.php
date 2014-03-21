@@ -119,6 +119,13 @@ class Behavior implements EventListener {
 	protected $_config = [];
 
 /**
+ * Table the behavior is attached to.
+ *
+ * @var Cake\ORM\Table
+ */
+	protected $_table;
+
+/**
  * Constructor
  *
  * Merge config with the default and store in the config property
@@ -131,6 +138,7 @@ class Behavior implements EventListener {
  */
 	public function __construct(Table $table, array $config = []) {
 		$this->_config = $config + static::$_defaultConfig;
+		$this->_table = $table;
 	}
 
 /**
@@ -140,6 +148,15 @@ class Behavior implements EventListener {
  */
 	public function config() {
 		return $this->_config;
+	}
+
+/**
+ * Get the table the behavior is attached to.
+ *
+ * @return Cake\ORM\Table
+ */
+	public function table() {
+		return $this->_table;
 	}
 
 /**
