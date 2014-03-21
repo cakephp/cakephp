@@ -314,7 +314,7 @@ class ControllerTask extends BakeTask {
 			'help' => __d('cake_console', 'Do not generate a test skeleton.')
 		])->addOption('no-actions', [
 			'boolean' => true,
-			'help' => __d('cake_console', 'Do not generate skeleton actions methods.')
+			'help' => __d('cake_console', 'Do not generate basic CRUD action methods.')
 		])->addOption('force', [
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
