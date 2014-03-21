@@ -165,7 +165,7 @@ trait SqlDialectTrait {
 /**
  * Returns a SQL snippet for creating a new transaction savepoint
  *
- * @param string save point name
+ * @param string $name save point name
  * @return string
  */
 	public function savePointSQL($name) {
@@ -175,7 +175,7 @@ trait SqlDialectTrait {
 /**
  * Returns a SQL snippet for releasing a previously created save point
  *
- * @param string save point name
+ * @param string $name save point name
  * @return string
  */
 	public function releaseSavePointSQL($name) {
@@ -185,7 +185,7 @@ trait SqlDialectTrait {
 /**
  * Returns a SQL snippet for rollbacking a previously created save point
  *
- * @param string save point name
+ * @param string $name save point name
  * @return string
  */
 	public function rollbackSavePointSQL($name) {

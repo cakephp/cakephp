@@ -29,7 +29,7 @@ class MailTransport extends AbstractTransport {
  *
  * @param \Cake\Network\Email\Email $email Cake Email
  * @return array
- * @throws SocketException When mail cannot be sent.
+ * @throws \Cake\Error\SocketException When mail cannot be sent.
  */
 	public function send(Email $email) {
 		$eol = PHP_EOL;
@@ -69,7 +69,7 @@ class MailTransport extends AbstractTransport {
 		if (!@mail($to, $subject, $message, $headers, $params)) {
 			$error = error_get_last();
 			$msg = 'Could not send email: ' . isset($error['message']) ? $error['message'] : 'unknown';
-			throw new SocketException($msg);
+			throw new Error\SocketException($msg);
 		}
 		//@codingStandardsIgnoreEnd
 	}

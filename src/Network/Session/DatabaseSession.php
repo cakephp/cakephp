@@ -31,7 +31,7 @@ class DatabaseSession implements SessionHandlerInterface {
 /**
  * Reference to the table handling the session data
  *
- * @var Model
+ * @var \Cake\ORM\Table
  */
 	protected $_table;
 

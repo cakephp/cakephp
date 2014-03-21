@@ -118,7 +118,7 @@ class FormHelper extends Helper {
 /**
  * Context for the current form.
  *
- * @var \Cake\View\Form\Context
+ * @var \Cake\View\Form\ContextInterface
  */
 	protected $_context;
 
@@ -1697,7 +1697,7 @@ class FormHelper extends Helper {
  * - `value` The selected value of the input.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $option Options & HTML attributes for the select element
+ * @param array $options Options & HTML attributes for the select element
  * @return string A generated day select box.
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::day
  */
@@ -1787,7 +1787,7 @@ class FormHelper extends Helper {
  * - `format` Set to 12 or 24 to use 12 or 24 hour formatting. Defaults to 12.
  *
  * @param string $fieldName Prefix name for the SELECT element
- * @param array $attributes List of HTML attributes
+ * @param array $options List of HTML attributes
  * @return string Completed hour select input
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/form.html#FormHelper::hour
  */
@@ -2156,8 +2156,8 @@ class FormHelper extends Helper {
  *   when the form context is the correct type.
  * @return void
  */
-	public function addContextProvider($name, callable $check) {
-		$this->_contextProviders[$name] = $check;
+	public function addContextProvider($type, callable $check) {
+		$this->_contextProviders[$type] = $check;
 	}
 
 /**
@@ -2210,7 +2210,7 @@ class FormHelper extends Helper {
  * Allows you to add or replace widget instances with custom code.
  *
  * @param string $name The name of the widget. e.g. 'text'.
- * @param array|WidgetInterface Either a string class name or an object
+ * @param array|\Cake\View\Widget\WidgetInterface Either a string class name or an object
  *    implementing the WidgetInterface.
  * @return void
  */
@@ -2227,8 +2227,8 @@ class FormHelper extends Helper {
  * or wrapping div.
  *
  * @param string $name The name of the widget. e.g. 'text'.
- * @param array $attrs The attributes for rendering the input.
- * @return void
+ * @param array $data The data to render.
+ * @return string
  */
 	public function widget($name, array $data = []) {
 		return $this->_registry->get($name)->render($data);

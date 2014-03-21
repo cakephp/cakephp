@@ -66,14 +66,14 @@ use Cake\View\View;
  *   a redirect is done.
  * - `afterFilter(Event $event)` - Called after each action is complete and after the view is rendered.
  *
- * @property      AclComponent $Acl
- * @property      AuthComponent $Auth
- * @property      CookieComponent $Cookie
- * @property      EmailComponent $Email
- * @property      PaginatorComponent $Paginator
- * @property      RequestHandlerComponent $RequestHandler
- * @property      SecurityComponent $Security
- * @property      SessionComponent $Session
+ * @property      \Cake\Controller\Component\AclComponent $Acl
+ * @property      \Cake\Controller\Component\AuthComponent $Auth
+ * @property      \Cake\Controller\Component\CookieComponent $Cookie
+ * @property      \Cake\Controller\Component\CsrfComponent $Csrf
+ * @property      \Cake\Controller\Component\PaginatorComponent $Paginator
+ * @property      \Cake\Controller\Component\RequestHandlerComponent $RequestHandler
+ * @property      \Cake\Controller\Component\SecurityComponent $Security
+ * @property      \Cake\Controller\Component\SessionComponent $Session
  * @link          http://book.cakephp.org/2.0/en/controllers.html
  */
 class Controller extends Object implements EventListener {
@@ -656,9 +656,9 @@ class Controller extends Object implements EventListener {
  *
  * This method will also make the PaginatorHelper available in the view.
  *
- * @param Table|string|Query $object Table to paginate
+ * @param \Cake\ORM\Table|string|\Cake\ORM\Query $object Table to paginate
  * (e.g: Table instance, 'TableName' or a Query object)
- * @return ORM\ResultSet Query results
+ * @return \Cake\ORM\ResultSet Query results
  * @link http://book.cakephp.org/3.0/en/controllers.html#Controller::paginate
  */
 	public function paginate($object = null) {

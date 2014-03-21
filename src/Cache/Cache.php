@@ -140,7 +140,7 @@ class Cache {
  * triggered.
  *
  * @param string $config The configuration name you want an engine for.
- * @return \Cake\Cache\Engine
+ * @return \Cake\Cache\CacheEngine
  */
 	public static function engine($config) {
 		if (!static::$_enabled) {

@@ -674,7 +674,7 @@ class Debugger {
  * @param string $format Format to use, including 'js' for JavaScript-enhanced HTML, 'html' for
  *    straight HTML output, or 'txt' for unformatted text.
  * @param array $strings Template strings, or a callback to be used for the output format.
- * @return The resulting format string set.
+ * @return array The resulting format string set.
  */
 	public static function addFormat($format, array $strings) {
 		$self = Debugger::getInstance();

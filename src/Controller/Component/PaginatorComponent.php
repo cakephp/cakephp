@@ -137,7 +137,7 @@ class PaginatorComponent extends Component {
  * $results = $paginator->paginate($query);
  * }}}
  *
- * @param Cake\Datasource\RepositoryInterface|Cake\ORM\Query $object The table or query to paginate.
+ * @param \Cake\Datasource\RepositoryInterface|\Cake\ORM\Query $object The table or query to paginate.
  * @param array $settings The settings/configuration used for pagination.
  * @return array Query results
  * @throws \Cake\Error\NotFoundException

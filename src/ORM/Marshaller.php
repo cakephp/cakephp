@@ -51,7 +51,7 @@ class Marshaller {
  * Constructor.
  *
  * @param \Cake\ORM\Table $table
- * @param boolean Whether or not this marshaller is in safe mode
+ * @param boolean $safe Whether or not this marshaller is in safe mode
  */
 	public function __construct(Table $table, $safe = false) {
 		$this->_table = $table;
@@ -346,13 +346,13 @@ class Marshaller {
  * @param array $include The associations to include.
  * @return mixed
  */
-	protected function _mergeBelongsToMany($original, $assoc, $data, $include) {
-		if (isset($data['_ids']) && is_array($data['_ids'])) {
-			return $this->_loadBelongsToMany($assoc, $data['_ids']);
+	protected function _mergeBelongsToMany($original, $assoc, $value, $include) {
+		if (isset($value['_ids']) && is_array($value['_ids'])) {
+			return $this->_loadBelongsToMany($assoc, $value['_ids']);
 		}
 
 		if (!in_array('_joinData', $include) && !isset($include['_joinData'])) {
-			return $this->mergeMany($original, $data, $include);
+			return $this->mergeMany($original, $value, $include);
 		}
 
 		$extra = [];
@@ -371,14 +371,14 @@ class Marshaller {
 			$nested = (array)$include['_joinData']['associated'];
 		}
 
-		$records = $this->mergeMany($original, $data, $include);
+		$records = $this->mergeMany($original, $value, $include);
 		foreach ($records as $record) {
 			$hash = spl_object_hash($record);
-			$data = $record->get('_joinData');
+			$value = $record->get('_joinData');
 			if (isset($extra[$hash])) {
-				$record->set('_joinData', $marshaller->merge($extra[$hash], (array)$data, $nested));
+				$record->set('_joinData', $marshaller->merge($extra[$hash], (array)$value, $nested));
 			} else {
-				$joinData = $marshaller->one($data, $nested);
+				$joinData = $marshaller->one($value, $nested);
 				$record->set('_joinData', $joinData);
 			}
 		}

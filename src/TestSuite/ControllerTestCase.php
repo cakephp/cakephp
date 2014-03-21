@@ -33,7 +33,7 @@ class ControllerTestDispatcher extends Dispatcher {
 /**
  * The controller to use in the dispatch process
  *
- * @var Controller
+ * @var \Cake\Controller\Controller
  */
 	public $testController = null;
 
@@ -49,7 +49,7 @@ class ControllerTestDispatcher extends Dispatcher {
  *
  * @param \Cake\Network\Request $request Request object
  * @param \Cake\Network\Response $response Response for the controller.
- * @return Controller
+ * @return \Cake\Controller\Controller
  */
 	protected function _getController($request, $response) {
 		if ($this->testController === null) {
@@ -112,7 +112,7 @@ abstract class ControllerTestCase extends TestCase {
 /**
  * The controller to test in testAction
  *
- * @var Controller
+ * @var \Cake\Controller\Controller
  */
 	public $controller = null;
 
@@ -305,7 +305,7 @@ abstract class ControllerTestCase extends TestCase {
  *
  * @param string $controller Controller name
  * @param array $mocks List of classes and methods to mock
- * @return Controller Mocked controller
+ * @return \Cake\Controller\Controller Mocked controller
  * @throws \Cake\Error\MissingControllerException When controllers could not be created.
  * @throws \Cake\Error\MissingComponentException When components could not be created.
  */

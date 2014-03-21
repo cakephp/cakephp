@@ -35,7 +35,7 @@ class Basic implements WidgetInterface {
 /**
  * Constructor.
  *
- * @param StringTemplate $templates
+ * @param \Cake\View\StringTemplate $templates
  */
 	public function __construct($templates) {
 		$this->_templates = $templates;

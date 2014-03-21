@@ -172,7 +172,7 @@ class FunctionsBuilder {
  * @param array $args list with up to 2 arguments, first one being an array with
  * parameters for the SQL function and second one a list of types to bind to those
  * params
- * @return \Cake\Database\FunctionExpression
+ * @return \Cake\Database\Expression\FunctionExpression
  */
 	public function __call($name, $args) {
 		switch (count($args)) {

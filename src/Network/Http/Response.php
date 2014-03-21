@@ -92,14 +92,14 @@ class Response extends Message {
 /**
  * Cached decoded XML data.
  *
- * @var SimpleXMLElement
+ * @var \SimpleXMLElement
  */
 	protected $_xml;
 
 /**
  * Cached decoded JSON data.
  *
- * @var SimpleXMLElement
+ * @var \SimpleXMLElement
  */
 	protected $_json;
 
@@ -340,7 +340,7 @@ class Response extends Message {
 /**
  * Get the response body as XML decoded data.
  *
- * @return null|SimpleXML
+ * @return null|\SimpleXMLElement
  */
 	protected function _getXml() {
 		if (!empty($this->_xml)) {

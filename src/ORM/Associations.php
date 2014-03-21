@@ -40,7 +40,7 @@ class Associations {
  * This makes using plugins simpler as the Plugin.Class syntax is frequently used.
  *
  * @param string $alias The association alias
- * @param Association The association to add.
+ * @param Association $association The association to add.
  * @return Association The association object being added.
  */
 	public function add($alias, Association $association) {
@@ -114,7 +114,7 @@ class Associations {
  *
  * Once removed the association will not longer be reachable
  *
- * @param string The alias name.
+ * @param string $alias The alias name.
  * @return void
  */
 	public function remove($alias) {

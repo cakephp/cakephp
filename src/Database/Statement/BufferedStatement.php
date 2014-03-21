@@ -53,8 +53,8 @@ class BufferedStatement extends StatementDecorator {
 /**
  * Constructor
  *
- * @param \Cake\Database\Driver instance $driver
- * @param Statement implementation such as PDOStatement
+ * @param \Cake\Database\StatementInterface $statement Statement implementation such as PDOStatement
+ * @param \Cake\Database\Driver $driver Driver instance
  */
 	public function __construct($statement = null, $driver = null) {
 		parent::__construct($statement, $driver);
@@ -65,6 +65,7 @@ class BufferedStatement extends StatementDecorator {
  * Execute the statement and return the results.
  *
  * @param array $params list of values to be bound to query
+ * @return boolean true on success, false otherwise
  */
 	public function execute($params = null) {
 		$this->_reset();

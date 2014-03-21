@@ -1006,7 +1006,7 @@ class Router {
  *
  * @param Request $request The request object to modify.
  * @param array $options The array of options.
- * @return The modified request
+ * @return \Cake\Network\Request The modified request
  */
 	public static function parseNamedParams(Request $request, $options = array()) {
 		$options += array('separator' => ':');

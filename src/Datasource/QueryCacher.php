@@ -31,7 +31,7 @@ class QueryCacher {
 /**
  * Constructor.
  *
- * @param string|Closure $key
+ * @param string|\Closure $key
  * @param string|CacheEngine $config
  * @throws RuntimeException
  */
@@ -51,7 +51,7 @@ class QueryCacher {
  * Load the cached results from the cache or run the query.
  *
  * @param object $query The query the cache read is for.
- * @return ResultSet|null Either the cached results or null.
+ * @return \Cake\ORM\ResultSet|null Either the cached results or null.
  */
 	public function fetch($query) {
 		$key = $this->_resolveKey($query);
@@ -79,7 +79,7 @@ class QueryCacher {
 /**
  * Get/generate the cache key.
  *
- * @param Query $query
+ * @param object $query
  * @return string
  * @throws RuntimeException
  */

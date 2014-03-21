@@ -136,7 +136,7 @@ class HelperRegistry extends ObjectRegistry {
  * @param string $class The class to create.
  * @param string $alias The alias of the loaded helper.
  * @param array $settings An array of settings to use for the helper.
- * @return Component The constructed helper class.
+ * @return \Cake\Controller\Component The constructed helper class.
  */
 	protected function _create($class, $alias, $settings) {
 		$instance = new $class($this->_View, $settings);

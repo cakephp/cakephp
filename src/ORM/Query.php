@@ -139,7 +139,7 @@ class Query extends DatabaseQuery {
  * currently configured instance.
  *
  * @param \Cake\ORM\EagerLoader $instance
- * @return \Cake\ORM\Eager|\Cake\ORM\Query
+ * @return \Cake\ORM\EagerLoader|\Cake\ORM\Query
  */
 	public function eagerLoader(EagerLoader $instance = null) {
 		if ($instance === null) {
@@ -547,7 +547,7 @@ class Query extends DatabaseQuery {
 /**
  * {@inheritdoc}
  *
- * @throws RuntimeException if this method is called on a non-select Query.
+ * @throws \RuntimeException if this method is called on a non-select Query.
  */
 	public function all() {
 		if ($this->_type !== 'select' && $this->_type !== null) {

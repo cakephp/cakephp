@@ -50,8 +50,8 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
 /**
  * Constructor
  *
- * @param Statement implementation such as PDOStatement
- * @param \Cake\Database\Driver instance $driver
+ * @param \Cake\Database\StatementInterface $statement Statement implementation such as PDOStatement
+ * @param \Cake\Database\Driver $driver Driver instance
  */
 	public function __construct($statement = null, $driver = null) {
 		$this->_statement = $statement;
@@ -224,7 +224,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  * }
  * }}}
  *
- * @return Iterator
+ * @return \Iterator
  */
 	public function getIterator() {
 		return $this->_statement;
@@ -270,7 +270,7 @@ class StatementDecorator implements StatementInterface, \Countable, \IteratorAgg
  * Returns the latest primary inserted using this statement.
  *
  * @param string $table table name or sequence to get last insert value from
- * @param string column the name of the column representing the primary key
+ * @param string $column the name of the column representing the primary key
  * @return string
  */
 	public function lastInsertId($table = null, $column = null) {

@@ -1091,7 +1091,7 @@ class Set {
  *
  * @param array $input an array
  * @param string|array $path string or array of array keys
- * @return the value at the specified position or null if it doesn't exist
+ * @return mixed the value at the specified position or null if it doesn't exist
  */
 	public static function get($input, $path = null) {
 		if (is_string($path)) {

@@ -49,7 +49,7 @@ class TextHelper extends Helper {
 /**
  * String utility instance
  *
- * @var stdClass
+ * @var \stdClass
  */
 	protected $_engine;
 

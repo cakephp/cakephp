@@ -435,7 +435,7 @@ class TestTask extends BakeTask {
  * Process all the models attached to a controller
  * and generate a fixture list.
  *
- * @param Controller $subject A controller to pull model names off of.
+ * @param \Cake\Controller\Controller $subject A controller to pull model names off of.
  * @return void
  */
 	protected function _processController($subject) {
@@ -567,7 +567,7 @@ class TestTask extends BakeTask {
 /**
  * Gets the option parser instance and configures it.
  *
- * @return ConsoleOptionParser
+ * @return \Cake\Console\ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();

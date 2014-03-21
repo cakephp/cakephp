@@ -50,7 +50,7 @@ interface RepositoryInterface {
  * $article = $articles->get($id, ['contain' => ['Comments]]);
  * }}}
  *
- * @param mixed primary key value to find
+ * @param mixed $primaryKey primary key value to find
  * @param array $options options accepted by `Table::find()`
  * @throws \Cake\ORM\Error\RecordNotFoundException if the record with such id
  * could not be found
@@ -183,7 +183,7 @@ interface RepositoryInterface {
  * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
  * data merged in
  * @param array $data key value list of fields to be merged into the entity
- * @param array $include The list of associations to be merged
+ * @param array $associations The list of associations to be merged
  * @return \Cake\Datasource\EntityInterface
  */
 	public function patchEntity(EntityInterface $entity, array $data, $associations = null);
@@ -203,7 +203,7 @@ interface RepositoryInterface {
  * @param array|\Traversable $entities the entities that will get the
  * data merged in
  * @param array $data list of arrays to be merged into the entities
- * @param array $include The list of associations to be merged
+ * @param array $associations The list of associations to be merged
  * @return array
  */
 	public function patchEntities($entities, array $data, $associations = null);

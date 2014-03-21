@@ -498,7 +498,7 @@ class BelongsToMany extends Association {
  *
  * @param \Cake\ORM\Entity $sourceEntity the entity from source table in this
  * association
- * @param array list of entities to link to link to the source entity using the
+ * @param array $targetEntities list of entities to link to link to the source entity using the
  * junction table
  * @param array $options list of options accepted by Table::save()
  * @return boolean success

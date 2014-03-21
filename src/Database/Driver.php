@@ -77,7 +77,7 @@ abstract class Driver {
  * Returns correct connection resource or object that is internally used
  * If first argument is passed,
  *
- * @param null|PDO instance $connection
+ * @param null|\PDO instance $connection
  * @return void
  */
 	public abstract function connection($connection = null);
@@ -93,7 +93,7 @@ abstract class Driver {
  * Prepares a sql statement to be executed
  *
  * @param string|\Cake\Database\Query $query
- * @return \Cake\Database\Statement
+ * @return \Cake\Database\StatementInterface
  */
 	public abstract function prepare($query);
 

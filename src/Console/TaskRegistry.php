@@ -76,7 +76,7 @@ class TaskRegistry extends ObjectRegistry {
  * @param string $class The classname to create.
  * @param string $alias The alias of the task.
  * @param array $settings An array of settings to use for the task.
- * @return Component The constructed task class.
+ * @return \Cake\Console\Shell The constructed task class.
  */
 	protected function _create($class, $alias, $settings) {
 		return new $class(

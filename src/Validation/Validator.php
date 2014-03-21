@@ -176,7 +176,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Sets the I18n domain for validation messages. This method is chainable.
  *
  * @param string $validationDomain The validation domain to be used.
- * @return \Cake\Validation
+ * @return \Cake\Validation\Validation
  */
 	public function setValidationDomain($validationDomain) {
 		$this->_validationDomain = $validationDomain;
@@ -233,7 +233,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Returns an iterator for each of the fields to be validated
  *
- * @return ArrayIterator
+ * @return \ArrayIterator
  */
 	public function getIterator() {
 		return new \ArrayIterator($this->_fields);
@@ -350,7 +350,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether or not a field can be left empty for a new or already existing
  * record.
  *
- * @param string field
+ * @param string $field
  * @param boolean $newRecord whether the data to be validated is new or to be updated.
  * @return boolean
  */
@@ -362,7 +362,7 @@ class Validator implements \ArrayAccess, \IteratorAggregate, \Countable {
  * Returns whether or not a field can be left out for a new or already existing
  * record.
  *
- * @param string field
+ * @param string $field
  * @param boolean $newRecord whether the data to be validated is new or to be updated.
  * @return boolean
  */

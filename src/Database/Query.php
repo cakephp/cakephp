@@ -124,7 +124,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Statement object resulting from executing this query.
  *
- * @var Statement
+ * @var \Cake\Database\StatementInterface
  */
 	protected $_iterator;
 
@@ -236,7 +236,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
 	}
 
 /**
- * Returns a callable object that can be used to compile a SQL string representtion
+ * Returns a callable object that can be used to compile a SQL string representation
  * of this query.
  *
  * @param string $sql initial sql string to append to
@@ -366,7 +366,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  *	$query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
  * }}}
  *
- * @param array|Expression|string $fields fields to be added to the list
+ * @param array|ExpressionInterface|string $fields fields to be added to the list
  * @param boolean $overwrite whether to reset fields with passed list or not
  * @return Query
  */
@@ -1527,7 +1527,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * iterated without having to call execute() manually, thus making it look like
  * a result set instead of the query itself.
  *
- * @return Iterator
+ * @return \Iterator
  */
 	public function getIterator() {
 		if (empty($this->_iterator) || $this->_dirty) {
@@ -1716,7 +1716,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Auxiliary function used to wrap the original statement from the driver with
  * any registered callbacks.
  *
- * @param \Cake\Database\Statement $statement to be decorated
+ * @param \Cake\Database\StatementInterface $statement to be decorated
  * @return \Cake\Database\Statement\CallbackStatement
  */
 	protected function _decorateStatement($statement) {
@@ -1729,9 +1729,9 @@ class Query implements ExpressionInterface, IteratorAggregate {
 /**
  * Helper function used to build conditions by composing QueryExpression objects.
  *
- * @param string name of the query part to append the new part to
- * @param string|array|Expression|callback $append
- * @param sttring $conjunction type of conjunction to be used to operate part
+ * @param string $part Name of the query part to append the new part to
+ * @param string|array|ExpressionInterface|callback $append
+ * @param string $conjunction type of conjunction to be used to operate part
  * @param array $types associative array of type names used to bind values to query
  * @return void
  */
@@ -1758,7 +1758,7 @@ class Query implements ExpressionInterface, IteratorAggregate {
  * Traverses all QueryExpression objects stored in every relevant for this type
  * of query and binds every value to the statement object for each placeholder.
  *
- * @param \Cake\Database\Statement $statement
+ * @param \Cake\Database\StatementInterface $statement
  * @return void
  */
 	protected function _bindStatement($statement) {

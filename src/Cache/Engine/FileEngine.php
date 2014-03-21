@@ -38,7 +38,7 @@ class FileEngine extends CacheEngine {
 /**
  * Instance of SplFileObject class
  *
- * @var File
+ * @var \SplFileObject
  */
 	protected $_File = null;
 

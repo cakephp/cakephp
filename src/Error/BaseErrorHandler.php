@@ -46,7 +46,7 @@ abstract class BaseErrorHandler {
  * Subclasses should implement this method to display an uncaught exception as
  * desired for the runtime they operate in.
  *
- * @param \Exceptino $exception The uncaught exception.
+ * @param \Exception $exception The uncaught exception.
  * @return void
  */
 	abstract protected function _displayException($exception);

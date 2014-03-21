@@ -96,7 +96,7 @@ class RedisEngine extends CacheEngine {
 				$persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
 				$return = $this->_Redis->pconnect($this->_config['server'], $this->_config['port'], $this->_config['timeout'], $persistentId);
 			}
-		} catch (RedisException $e) {
+		} catch (\RedisException $e) {
 			return false;
 		}
 		if ($return && $this->_config['password']) {
@@ -154,7 +154,7 @@ class RedisEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
- * @return New incremented value, false otherwise
+ * @return bool|int New incremented value, false otherwise
  */
 	public function increment($key, $offset = 1) {
 		$key = $this->_key($key);
@@ -167,7 +167,7 @@ class RedisEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
- * @return New decremented value, false otherwise
+ * @return bool|int New decremented value, false otherwise
  */
 	public function decrement($key, $offset = 1) {
 		$key = $this->_key($key);
