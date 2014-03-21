@@ -48,7 +48,7 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
 		$this->set('<?= $singularName; ?>', $<?= $singularName; ?>);
 	}
 
-<?php $compact = []; ?>
+<?php $compact = ["'" . $singularName . "'"]; ?>
 /**
  * Add method
  *
@@ -74,13 +74,11 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
 			$compact[] = "'{$otherPlural}'";
 		endforeach;
 	endforeach;
-	if (!empty($compact)):
-		echo "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
-	endif;
+	echo "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
 ?>
 	}
 
-<?php $compact = []; ?>
+<?php $compact = ["'" . $singularName . "'"]; ?>
 /**
  * Edit method
  *
@@ -108,9 +106,7 @@ foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
 				$compact[] = "'{$otherPlural}'";
 			endforeach;
 		endforeach;
-		if (!empty($compact)):
-			echo "\t\t\$this->set(compact(".join(', ', $compact)."));\n";
-		endif;
+		echo "\t\t\$this->set(compact(" . join(', ', $compact) . "));\n";
 	?>
 	}
 

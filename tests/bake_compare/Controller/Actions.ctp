@@ -43,7 +43,7 @@
 		}
 		$bakeUsers = $this->BakeArticles->association('BakeUsers')->find('list');
 		$bakeTags = $this->BakeArticles->association('BakeTags')->find('list');
-		$this->set(compact('bakeUsers', 'bakeTags'));
+		$this->set(compact('bakeArticle', 'bakeUsers', 'bakeTags'));
 	}
 
 /**
@@ -66,7 +66,7 @@
 		}
 		$bakeUsers = $this->BakeArticles->association('BakeUsers')->find('list');
 		$bakeTags = $this->BakeArticles->association('BakeTags')->find('list');
-		$this->set(compact('bakeUsers', 'bakeTags'));
+		$this->set(compact('bakeArticle', 'bakeUsers', 'bakeTags'));
 	}
 
 /**
