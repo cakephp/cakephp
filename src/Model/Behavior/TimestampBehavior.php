@@ -39,6 +39,7 @@ class TimestampBehavior extends Behavior {
 	protected static $_defaultConfig = [
 		'implementedFinders' => [],
 		'implementedMethods' => [
+			'colTypeTimestamp' => 'colTypeTimestamp',
 			'timestamp' => 'timestamp',
 			'touch' => 'touch'
 		],
@@ -129,6 +130,25 @@ class TimestampBehavior extends Behavior {
 	}
 
 /**
+ * Gets the timestamp to be used of the passed column type
+ *
+ * @param \DateTime $ts
+ * @param bool $refreshTimestamp
+ * @param string $colType
+ * @return \DateTime|integer Depends on the column type passed
+ */
+	public function colTypeTimestamp(\DateTime $ts = null, $refreshTimestamp = false, $colType = 'datetime') {
+		$ts = $this->timestamp($ts, $refreshTimestamp);
+		switch ($colType) {
+			case 'integer':
+				return $ts->format('U');
+			case 'datetime':
+			default:
+				return $ts;
+		}
+	}
+
+/**
  * Touch an entity
  *
  * Bumps timestamp fields for an entity. For any fields configured to be updated
@@ -170,6 +190,7 @@ class TimestampBehavior extends Behavior {
 		if ($entity->dirty($field)) {
 			return;
 		}
-		$entity->set($field, $this->timestamp(null, $refreshTimestamp));
+		$colType = $this->_table->schema()->columnType($field);
+		$entity->set($field, $this->colTypeTimestamp(null, $refreshTimestamp, $colType));
 	}
 }
