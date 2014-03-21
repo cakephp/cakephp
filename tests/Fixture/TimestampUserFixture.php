@@ -24,7 +24,14 @@ use Cake\TestSuite\Fixture\TestFixture;
  * Class UserFixture
  *
  */
-class UserFixture extends TestFixture {
+class TimestampUserFixture extends TestFixture {
+
+/**
+ * table property
+ *
+ * @var string
+ */
+	public $table = 'users';
 
 /**
  * fields property
@@ -35,7 +42,7 @@ class UserFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'username' => ['type' => 'string', 'null' => true],
 		'password' => ['type' => 'string', 'null' => true],
-		'created' => 'datetime',
+		'created' => ['type' => 'integer'],
 		'updated' => 'datetime',
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
@@ -46,9 +53,9 @@ class UserFixture extends TestFixture {
  * @var array
  */
 	public $records = array(
-		array('username' => 'mariano', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO', 'created' => '2007-03-17 01:16:23', 'updated' => '2007-03-17 01:18:31'),
-		array('username' => 'nate', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO', 'created' => '2008-03-17 01:18:23', 'updated' => '2008-03-17 01:20:31'),
-		array('username' => 'larry', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO', 'created' => '2010-05-10 01:20:23', 'updated' => '2010-05-10 01:22:31'),
-		array('username' => 'garrett', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO', 'created' => '2012-06-10 01:22:23', 'updated' => '2012-06-12 01:24:31'),
+		array('username' => 'mariano', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO', 'created' => 1174094183, 'updated' => '2007-03-17 01:18:31'),
+		array('username' => 'nate', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO', 'created' => 1205716703, 'updated' => '2008-03-17 01:20:31'),
+		array('username' => 'larry', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO', 'created' => 1273454423, 'updated' => '2010-05-10 01:22:31'),
+		array('username' => 'garrett', 'password' => '$2a$10$u05j8FjsvLBNdfhBhc21LOuVMpzpabVXQ9OpC2wO3pSO0q6t7HHMO', 'created' => 1339291343, 'updated' => '2012-06-12 01:24:31'),
 	);
 }
