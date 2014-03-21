@@ -410,6 +410,8 @@ class PaginatorHelper extends Helper {
  */
 	public function url($options = array(), $model = null) {
 		$paging = $this->params($model);
+        	if (!is_array($paging))
+	            $paging = [$paging];		
 		$paging += ['page' => null, 'sort' => null, 'direction' => null, 'limit' => null];
 		$url = [
 			'page' => $paging['page'],
