@@ -96,6 +96,151 @@ class TreeBehavior extends Behavior {
 		return ($node->{$right} - $node->{$left} - 1) / 2;
 	}
 
+	public function children($id, $direct = false, $fields = [], $order = null, $limit = null, $page = 1) {
+		extract($this->config());
+		$primaryKey = $this->_table->primaryKey();
+
+		if ($direct) {
+			return $this->_scope($this->_table->find())
+				->where([$parent => $id])
+				->all();
+		}
+
+		$node = $this->_scope($this->_table->find())
+			->select([$right, $left])
+			->where([$primaryKey => $id])
+			->first();
+
+		if (!$node) {
+			return false;
+		}
+
+		$order = !$order ? [$left => 'ASC'] : $order;
+		$query = $this->_scope($this->_table->find());
+
+		if ($fields) {
+			$query->select($fields);
+		}
+
+		$query->where([
+			"{$right} <" => $node->{$right},
+			"{$left} >" => $node->{$left}
+		]);
+
+		if ($limit) {
+			$query->limit($limit);
+		}
+
+		if ($page) {
+			$query->page($page);
+		}
+
+		return $query->order($order)->all();
+	}
+
+	public function moveUp($id, $number = 1) {
+		$primaryKey = $this->_table->primaryKey();
+		$config = $this->config();
+		extract($config);
+
+		if (!$number) {
+			return false;
+		}
+
+		$node = $this->_scope($this->_table->find())
+			->select([$primaryKey, $parent, $left, $right])
+			->where([$primaryKey => $id])
+			->first();
+
+		if ($node->{$parent}) {
+			$parentNode = $this->_scope($this->_table->find())
+				->select([$primaryKey, $left, $right])
+				->where([$primaryKey => $node->{$parent}])
+				->first();
+
+			if (($node->{$left} - 1) == $parentNode->{$left}) {
+				return false;
+			}
+		}
+
+		$previousNode = $this->_scope($this->_table->find())
+			->select([$primaryKey, $left, $right])
+			->where([$right => ($node->{$left} - 1)]);
+
+		$previousNode = $previousNode->first();
+
+		if (!$previousNode) {
+			return false;
+		}
+
+		$edge = $this->_getMax();
+		$this->_sync($edge - $previousNode->{$left} + 1, '+', "BETWEEN {$previousNode->{$left}} AND {$previousNode->{$right}}");
+		$this->_sync($node->{$left} - $previousNode->{$left}, '-', "BETWEEN {$node->{$left}} AND {$node->{$right}}");
+		$this->_sync($edge - $previousNode->{$left} - ($node->{$right} - $node->{$left}), '-', "> {$edge}");
+
+		$number--;
+
+		if ($number) {
+			$this->moveUp($id, $number);
+		}
+
+		return true;
+	}
+
+	protected function _getMax() {
+		return $this->__getMaxOrMin('max');
+	}
+
+	protected function _getMin() {
+		return $this->__getMaxOrMin('min');
+	}
+
+/**
+ * Get the maximum index value in the table.
+ *
+ * @return integer
+ */
+	private function __getMaxOrMin($maxOrMin = 'max') {
+		extract($this->config());
+		$LorR = $maxOrMin == 'max' ? $right : $left;
+		$DorA = $maxOrMin == 'max' ? 'DESC' : 'ASC';
+
+		$edge = $this->_scope($this->_table->find())
+			->select([$LorR])
+			->order([$LorR => $DorA])
+			->first();
+
+		if (empty($edge->{$LorR})) {
+			return 0;
+		}
+
+		return $edge->{$LorR};
+	}
+
+	protected function _sync($shift, $dir = '+', $conditions = null, $field = 'both') {
+		extract($this->config());
+
+		if ($field === 'both') {
+			$this->_sync($shift, $dir, $conditions, $left);
+			$field = $right;
+		}
+
+		// updateAll + scope
+		$query = $this->_scope($this->_table->query());
+		$query->update()
+			->set([$field => "{$field} {$dir} {$shift}"]);
+
+		if ($conditions) {
+			$conditions = "{$field} {$conditions}";
+			$query->where($conditions);
+		}
+
+		$statement = $query->execute();
+		$success = $statement->rowCount() > 0;
+
+		return $success;
+	}
+
 	protected function _scope($query) {
 		$config = $this->config();
 
