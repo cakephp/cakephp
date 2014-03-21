@@ -657,6 +657,7 @@ class ModelTask extends BakeTask {
 			'help' => __d('cake_console', 'The connection the model table is on.')
 		])->addOption('force', [
 			'short' => 'f',
+			'boolean' => true,
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addOption('table', [
 			'help' => __d('cake_console', 'The table name to use if you have non-conventional table names.')

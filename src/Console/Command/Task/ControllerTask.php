@@ -317,6 +317,7 @@ class ControllerTask extends BakeTask {
 			'help' => __d('cake_console', 'Do not generate basic CRUD action methods.')
 		])->addOption('force', [
 			'short' => 'f',
+			'boolean' => true,
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addSubcommand('all', [
 			'help' => __d('cake_console', 'Bake all controllers with CRUD methods.')
