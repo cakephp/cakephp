@@ -177,6 +177,13 @@ class IdentifierQuoter {
 		if (is_string($field)) {
 			$expression->field($this->_driver->quoteIdentifier($field));
 		}
+		if (is_array($field)) {
+			$quoted = [];
+			foreach ($field as $f) {
+				$quoted[] = $this->_driver->quoteIdentifier($f);
+			}
+			$expression->field($quoted);
+		}
 	}
 
 /**
