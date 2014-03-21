@@ -184,7 +184,7 @@ class ValidationSet implements \ArrayAccess, \IteratorAggregate, \Countable {
 /**
  * Returns an iterator for each of the rules to be applied
  *
- * @return ArrayIterator
+ * @return \ArrayIterator
  */
 	public function getIterator() {
 		return new \ArrayIterator($this->_rules);

@@ -196,7 +196,7 @@ class Connection {
  * Prepares a SQL statement to be executed.
  *
  * @param string|\Cake\Database\Query $sql
- * @return \Cake\Database\Statement
+ * @return \Cake\Database\StatementInterface
  */
 	public function prepare($sql) {
 		$statement = $this->_driver->prepare($sql);
@@ -215,7 +215,7 @@ class Connection {
  * @param string $query SQL to be executed and interpolated with $params
  * @param array $params list or associative array of params to be interpolated in $query as values
  * @param array $types list or associative array of types to be used for casting values in query
- * @return \Cake\Database\Statement executed statement
+ * @return \Cake\Database\StatementInterface executed statement
  */
 	public function execute($query, array $params = [], array $types = []) {
 		if ($params) {
@@ -232,7 +232,7 @@ class Connection {
  * Executes a SQL statement and returns the Statement object as result.
  *
  * @param string $sql
- * @return \Cake\Database\Statement
+ * @return \Cake\Database\StatementInterface
  */
 	public function query($sql) {
 		$statement = $this->prepare($sql);
@@ -264,7 +264,7 @@ class Connection {
  * @param string $table the table to update values in
  * @param array $data values to be inserted
  * @param array $types list of associative array containing the types to be used for casting
- * @return \Cake\Database\Statement
+ * @return \Cake\Database\StatementInterface
  */
 	public function insert($table, array $data, array $types = []) {
 		$columns = array_keys($data);
@@ -281,7 +281,7 @@ class Connection {
  * @param array $data values to be updated
  * @param array $conditions conditions to be set for update statement
  * @param array $types list of associative array containing the types to be used for casting
- * @return \Cake\Database\Statement
+ * @return \Cake\Database\StatementInterface
  */
 	public function update($table, array $data, array $conditions = [], $types = []) {
 		$columns = array_keys($data);
@@ -298,7 +298,7 @@ class Connection {
  * @param string $table the table to delete rows from
  * @param array $conditions conditions to be set for delete statement
  * @param array $types list of associative array containing the types to be used for casting
- * @return \Cake\Database\Statement
+ * @return \Cake\Database\StatementInterface
  */
 	public function delete($table, $conditions = [], $types = []) {
 		return $this->newQuery()->delete($table)
@@ -555,10 +555,10 @@ class Connection {
  * Returns a new statement object that will log the activity
  * for the passed original statement instance.
  *
- * @param Statement $statement the instance to be decorated
- * @return Statement
+ * @param \Cake\Database\StatementInterface $statement the instance to be decorated
+ * @return \Cake\Database\StatementInterface
  */
-	protected function _newLogger($statement) {
+	protected function _newLogger(StatementInterface $statement) {
 		$log = new LoggingStatement($statement, $this->driver());
 		$log->logger($this->logger());
 		return $log;

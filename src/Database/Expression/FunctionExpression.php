@@ -55,7 +55,7 @@ class FunctionExpression extends QueryExpression {
  * @param string $name the name of the function to be constructed
  * @param array $params list of arguments to be passed to the function
  * If associative the key would be used as argument when value is 'literal'
- * @param array types associative array of types to be associated with the
+ * @param array $types associative array of types to be associated with the
  * passed arguments
  */
 	public function __construct($name, $params = [], $types = []) {
@@ -83,7 +83,7 @@ class FunctionExpression extends QueryExpression {
  *
  * @param array $params list of arguments to be passed to the function
  * If associative the key would be used as argument when value is 'literal'
- * @param array types associative array of types to be associated with the
+ * @param array $types associative array of types to be associated with the
  * passed arguments
  * @see FunctionExpression::__construct() for more details.
  * @return FunctionExpression

@@ -273,7 +273,7 @@ class RssHelper extends Helper {
 /**
  * Converts a time in any format to an RSS time
  *
- * @param integer|string|DateTime $time
+ * @param integer|string|\DateTime $time
  * @return string An RSS-formatted timestamp
  * @see TimeHelper::toRSS
  * @link http://book.cakephp.org/2.0/en/core-libraries/helpers/rss.html#RssHelper::time

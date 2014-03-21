@@ -29,7 +29,7 @@ class DateTime implements WidgetInterface {
 /**
  * Select box widget.
  *
- * @var \Cake\View\Widget\Select
+ * @var \Cake\View\Widget\SelectBox
  */
 	protected $_select;
 
@@ -235,7 +235,7 @@ class DateTime implements WidgetInterface {
  * Adjust $value based on rounding settings.
  *
  * @param int $value The value to adjust.
- * @param array The options containing interval and possibly round.
+ * @param array $options The options containing interval and possibly round.
  * @return integer The amount to adjust $value by.
  */
 	protected function _adjustValue($value, $options) {

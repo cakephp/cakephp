@@ -50,7 +50,7 @@ class ConnectionManager {
 /**
  * The ConnectionRegistry used by the manager.
  *
- * @var \Cake\Database\ConnectionRegistry
+ * @var \Cake\Datasource\ConnectionRegistry
  */
 	protected static $_registry = null;
 
@@ -123,7 +123,7 @@ class ConnectionManager {
  *
  * @param string $name The connection name.
  * @param boolean $useAliases Set to false to not use aliased connections.
- * @return Connection A connection object.
+ * @return \Cake\Database\Connection A connection object.
  * @throws \Cake\Datasource\Error\MissingDatasourceConfigException When config
  * data is missing.
  */

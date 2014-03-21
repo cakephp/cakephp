@@ -309,7 +309,7 @@ trait ExternalAssociationTrait {
  * to load records in the source table.
  *
  * @param \Cake\ORM\Query $query the original query used to load source records
- * @param strong $foreignKey the field to be selected in the query
+ * @param string $foreignKey the field to be selected in the query
  * @return \Cake\ORM\Query
  */
 	protected function _buildSubquery($query, $foreignKey) {

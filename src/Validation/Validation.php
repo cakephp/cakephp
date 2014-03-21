@@ -290,7 +290,7 @@ class Validation {
  * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
  * - `y` 2006 just the year without any separators
  *
- * @param string|DateTime $check a valid date string/object
+ * @param string|\DateTime $check a valid date string/object
  * @param string|array $format Use a string or an array of the keys above.
  *    Arrays should be passed as array('dmy', 'mdy', etc)
  * @param string $regex If a custom regular expression is used this is the only validation that will occur.
@@ -347,7 +347,7 @@ class Validation {
  *
  * All values matching the "date" core validation rule, and the "time" one will be valid
  *
- * @param string|DateTime $check Value to check
+ * @param string|\DateTime $check Value to check
  * @param string|array $dateFormat Format of the date part. See Validation::date for more information.
  * @param string $regex Regex for the date part. If a custom regular expression is used this is the only validation that will occur.
  * @return boolean True if the value is valid, false otherwise
@@ -373,7 +373,7 @@ class Validation {
  * Validates time as 24hr (HH:MM) or am/pm ([H]H:MM[a|p]m)
  * Does not allow/validate seconds.
  *
- * @param string|DateTime $check a valid time string/object
+ * @param string|\DateTime $check a valid time string/object
  * @return boolean Success
  */
 	public static function time($check) {

@@ -69,7 +69,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * will be returned. Otherwise the hidden properties will be set.
  *
  * @param null|array Either an array of properties to hide or null to get properties
- * @return array|Entity
+ * @return array|\Cake\DataSource\EntityInterface
  */
 	public function hiddenProperties($properties = null);
 
@@ -80,7 +80,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable {
  * will be returned. Otherwise the virtual properties will be set.
  *
  * @param null|array Either an array of properties to treat as virtual or null to get properties
- * @return array|Entity
+ * @return array|\Cake\DataSource\EntityInterface
  */
 	public function virtualProperties($properties = null);
 

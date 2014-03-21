@@ -53,7 +53,7 @@ class ConsoleErrorHandler extends BaseErrorHandler {
 /**
  * Prints an exception to stderr.
  *
- * @param Exception $exception The exception to handle
+ * @param \Exception $exception The exception to handle
  * @return void
  */
 	protected function _displayException($exception) {

@@ -168,7 +168,7 @@ class Shell extends Object {
  * @param ConsoleInput $stdin A ConsoleInput object for stdin.
  * @link http://book.cakephp.org/2.0/en/console-and-shells.html#Shell
  */
-	public function __construct($stdout = null, $stderr = null, $stdin = null) {
+	public function __construct(ConsoleOutput $stdout = null, ConsoleOutput $stderr = null, ConsoleInput $stdin = null) {
 		if (!$this->name) {
 			list(, $class) = namespaceSplit(get_class($this));
 			$this->name = str_replace(['Shell', 'Task'], '', $class);
@@ -480,7 +480,7 @@ class Shell extends Object {
  * @param string $prompt Prompt text.
  * @param string|array $options Array or string of options.
  * @param string $default Default input value.
- * @return Either the default value, or the user-provided input.
+ * @return string Either the default value, or the user-provided input.
  */
 	protected function _getInput($prompt, $options, $default) {
 		if (!is_array($options)) {

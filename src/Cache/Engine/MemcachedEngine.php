@@ -245,7 +245,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to increment
- * @return New incremented value, false otherwise
+ * @return bool|int New incremented value, false otherwise
  * @throws \Cake\Error\Exception when you try to increment with compress = true
  */
 	public function increment($key, $offset = 1) {
@@ -259,7 +259,7 @@ class MemcachedEngine extends CacheEngine {
  *
  * @param string $key Identifier for the data
  * @param integer $offset How much to subtract
- * @return New decremented value, false otherwise
+ * @return bool|int New decremented value, false otherwise
  * @throws \Cake\Error\Exception when you try to decrement with compress = true
  */
 	public function decrement($key, $offset = 1) {

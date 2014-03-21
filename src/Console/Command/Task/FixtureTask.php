@@ -14,11 +14,15 @@
  */
 namespace Cake\Console\Command\Task;
 
+use Cake\Console\ConsoleOutput;
+use Cake\Console\ConsoleInput;
 use Cake\Console\Shell;
 use Cake\Core\Configure;
+use Cake\Database\Schema\Table;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\TableRegistry;
 use Cake\Utility\Inflector;
+use Cake\Utility\String;
 
 /**
  * Task class for creating and updating fixtures files.
@@ -42,11 +46,11 @@ class FixtureTask extends BakeTask {
 /**
  * Override initialize
  *
- * @param ConsoleOutput $stdout A ConsoleOutput object for stdout.
- * @param ConsoleOutput $stderr A ConsoleOutput object for stderr.
- * @param ConsoleInput $stdin A ConsoleInput object for stdin.
+ * @param \Cake\Console\ConsoleOutput $stdout A ConsoleOutput object for stdout.
+ * @param \Cake\Console\ConsoleOutput $stderr A ConsoleOutput object for stderr.
+ * @param \Cake\Console\ConsoleInput $stdin A ConsoleInput object for stdin.
  */
-	public function __construct($stdout = null, $stderr = null, $stdin = null) {
+	public function __construct(ConsoleOutput $stdout = null, ConsoleOutput $stderr = null, ConsoleInput $stdin = null) {
 		parent::__construct($stdout, $stderr, $stdin);
 		$this->path = ROOT . '/Test/Fixture/';
 	}
@@ -54,7 +58,7 @@ class FixtureTask extends BakeTask {
 /**
  * Gets the option parser instance and configures it.
  *
- * @return ConsoleOptionParser
+ * @return \Cake\Console\ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();
@@ -168,7 +172,7 @@ class FixtureTask extends BakeTask {
  * @param string $useTable Name of table to use.
  * @param array $importOptions Options for public $import
  * @return string Baked fixture content
- * @throws RuntimeException
+ * @throws \RuntimeException
  */
 	public function bake($model, $useTable = false, $importOptions = []) {
 		$table = $schema = $records = $import = $modelImport = null;
@@ -273,10 +277,10 @@ class FixtureTask extends BakeTask {
 /**
  * Generates a string representation of a schema.
  *
- * @param array $tableInfo Table schema array
+ * @param \Cake\Database\Schema\Table $table Table schema
  * @return string fields definitions
  */
-	protected function _generateSchema($table) {
+	protected function _generateSchema(Table $table) {
 		$cols = $indexes = $constraints = [];
 		foreach ($table->columns() as $field) {
 			$fieldData = $table->column($field);
@@ -340,11 +344,11 @@ class FixtureTask extends BakeTask {
 /**
  * Generate String representation of Records
  *
- * @param array $tableInfo Table schema array
+ * @param \Cake\Database\Schema\Table $table Table schema
  * @param integer $recordCount
  * @return array Array of records to use in the fixture.
  */
-	protected function _generateRecords($table, $recordCount = 1) {
+	protected function _generateRecords(Table $table, $recordCount = 1) {
 		$records = [];
 		for ($i = 0; $i < $recordCount; $i++) {
 			$record = [];

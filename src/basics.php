@@ -601,7 +601,7 @@ if (!function_exists('__d')) {
  * @param string $domain Domain
  * @param string $msg String to translate
  * @param mixed $args Array with arguments or multiple arguments in function
- * @return translated string
+ * @return string translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__d
  */
 	function __d($domain, $msg, $args = null) {
@@ -633,7 +633,7 @@ if (!function_exists('__dn')) {
  * @param string $plural Plural
  * @param integer $count Count
  * @param mixed $args Array with arguments or multiple arguments in function
- * @return plural form of translated string
+ * @return string plural form of translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dn
  */
 	function __dn($domain, $singular, $plural, $count, $args = null) {
@@ -676,7 +676,7 @@ if (!function_exists('__dc')) {
  * @param string $msg Message to translate
  * @param integer $category Category
  * @param mixed $args Array with arguments or multiple arguments in function
- * @return translated string
+ * @return string translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dc
  */
 	function __dc($domain, $msg, $category, $args = null) {
@@ -723,7 +723,7 @@ if (!function_exists('__dcn')) {
  * @param integer $count Count
  * @param integer $category Category
  * @param mixed $args Array with arguments or multiple arguments in function
- * @return plural form of translated string
+ * @return string plural form of translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__dcn
  */
 	function __dcn($domain, $singular, $plural, $count, $category, $args = null) {
@@ -762,7 +762,7 @@ if (!function_exists('__c')) {
  * @param string $msg String to translate
  * @param integer $category Category
  * @param mixed $args Array with arguments or multiple arguments in function
- * @return translated string
+ * @return string translated string
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#__c
  */
 	function __c($msg, $category, $args = null) {
@@ -788,7 +788,7 @@ if (!function_exists('fileExistsInPath')) {
  * Searches include path for files.
  *
  * @param string $file File to look for
- * @return Full path to file if exists, otherwise false
+ * @return bool|string Full path to file if exists, otherwise false
  * @link http://book.cakephp.org/2.0/en/core-libraries/global-constants-and-functions.html#fileExistsInPath
  */
 	function fileExistsInPath($file) {

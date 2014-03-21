@@ -150,13 +150,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $expected The expected value.
  * @param string $result The actual value.
- * @param string message The message to use for failure.
- * @return boolean
+ * @param string $message The message to use for failure.
+ * @return void
  */
 	public function assertTextNotEquals($expected, $result, $message = '') {
 		$expected = str_replace(array("\r\n", "\r"), "\n", $expected);
 		$result = str_replace(array("\r\n", "\r"), "\n", $result);
-		return $this->assertNotEquals($expected, $result, $message);
+		$this->assertNotEquals($expected, $result, $message);
 	}
 
 /**
@@ -165,13 +165,13 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $expected The expected value.
  * @param string $result The actual value.
- * @param string message The message to use for failure.
- * @return boolean
+ * @param string $message The message to use for failure.
+ * @return void
  */
 	public function assertTextEquals($expected, $result, $message = '') {
 		$expected = str_replace(array("\r\n", "\r"), "\n", $expected);
 		$result = str_replace(array("\r\n", "\r"), "\n", $result);
-		return $this->assertEquals($expected, $result, $message);
+		$this->assertEquals($expected, $result, $message);
 	}
 
 /**
@@ -181,12 +181,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $prefix
  * @param string $string
  * @param string $message
- * @return boolean
+ * @return void
  */
 	public function assertTextStartsWith($prefix, $string, $message = '') {
 		$prefix = str_replace(array("\r\n", "\r"), "\n", $prefix);
 		$string = str_replace(array("\r\n", "\r"), "\n", $string);
-		return $this->assertStringStartsWith($prefix, $string, $message);
+		$this->assertStringStartsWith($prefix, $string, $message);
 	}
 
 /**
@@ -196,12 +196,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $prefix
  * @param string $string
  * @param string $message
- * @return boolean
+ * @return void
  */
 	public function assertTextStartsNotWith($prefix, $string, $message = '') {
 		$prefix = str_replace(array("\r\n", "\r"), "\n", $prefix);
 		$string = str_replace(array("\r\n", "\r"), "\n", $string);
-		return $this->assertStringStartsNotWith($prefix, $string, $message);
+		$this->assertStringStartsNotWith($prefix, $string, $message);
 	}
 
 /**
@@ -211,12 +211,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $suffix
  * @param string $string
  * @param string $message
- * @return boolean
+ * @return void
  */
 	public function assertTextEndsWith($suffix, $string, $message = '') {
 		$suffix = str_replace(array("\r\n", "\r"), "\n", $suffix);
 		$string = str_replace(array("\r\n", "\r"), "\n", $string);
-		return $this->assertStringEndsWith($suffix, $string, $message);
+		$this->assertStringEndsWith($suffix, $string, $message);
 	}
 
 /**
@@ -226,12 +226,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $suffix
  * @param string $string
  * @param string $message
- * @return boolean
+ * @return void
  */
 	public function assertTextEndsNotWith($suffix, $string, $message = '') {
 		$suffix = str_replace(array("\r\n", "\r"), "\n", $suffix);
 		$string = str_replace(array("\r\n", "\r"), "\n", $string);
-		return $this->assertStringEndsNotWith($suffix, $string, $message);
+		$this->assertStringEndsNotWith($suffix, $string, $message);
 	}
 
 /**
@@ -242,12 +242,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $haystack
  * @param string $message
  * @param boolean $ignoreCase
- * @return boolean
+ * @return void
  */
 	public function assertTextContains($needle, $haystack, $message = '', $ignoreCase = false) {
 		$needle = str_replace(array("\r\n", "\r"), "\n", $needle);
 		$haystack = str_replace(array("\r\n", "\r"), "\n", $haystack);
-		return $this->assertContains($needle, $haystack, $message, $ignoreCase);
+		$this->assertContains($needle, $haystack, $message, $ignoreCase);
 	}
 
 /**
@@ -258,12 +258,12 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  * @param string $haystack
  * @param string $message
  * @param boolean $ignoreCase
- * @return boolean
+ * @return void
  */
 	public function assertTextNotContains($needle, $haystack, $message = '', $ignoreCase = false) {
 		$needle = str_replace(array("\r\n", "\r"), "\n", $needle);
 		$haystack = str_replace(array("\r\n", "\r"), "\n", $haystack);
-		return $this->assertNotContains($needle, $haystack, $message, $ignoreCase);
+		$this->assertNotContains($needle, $haystack, $message, $ignoreCase);
 	}
 
 /**
@@ -296,7 +296,8 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
  *
  * @param string $string An HTML/XHTML/XML string
  * @param array $expected An array, see above
- * @param string $message SimpleTest failure output string
+ * @param boolean $fullDebug Whether to debug the generated regex and subject in case of a
+ *  matching failure.
  * @return boolean
  */
 	public function assertTags($string, $expected, $fullDebug = false) {
@@ -505,7 +506,7 @@ abstract class TestCase extends \PHPUnit_Framework_TestCase {
 	protected static function assertWithinMargin($result, $expected, $margin, $message = '') {
 		$upper = $result + $margin;
 		$lower = $result - $margin;
-		return static::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
+		static::assertTrue((($expected <= $upper) && ($expected >= $lower)), $message);
 	}
 
 /**

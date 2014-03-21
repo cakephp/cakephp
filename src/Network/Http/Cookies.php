@@ -77,7 +77,7 @@ class Cookies {
  * of name => value
  *
  * @param string $url The url to find cookies for.
- * @return arraty
+ * @return array
  */
 	public function get($url) {
 		$path = parse_url($url, PHP_URL_PATH) ?: '/';

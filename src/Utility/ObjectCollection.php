@@ -176,7 +176,7 @@ abstract class ObjectCollection {
  * Enables callbacks on an object or array of objects
  *
  * @param string|array $name CamelCased name of the object(s) to enable (string or array)
- * @param boolean Prioritize enabled list after enabling object(s)
+ * @param boolean $prioritize Prioritize enabled list after enabling object(s)
  * @return void
  */
 	public function enable($name, $prioritize = true) {

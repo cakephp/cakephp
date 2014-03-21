@@ -328,7 +328,7 @@ class ModelTask extends BakeTask {
 /**
  * Get the primary key field from the model or parameters
  *
- * @param Cake\ORM\Table $model The model to introspect.
+ * @param \Cake\ORM\Table $model The model to introspect.
  * @return array The columns in the primary key
  */
 	public function getPrimaryKey($model) {
@@ -344,7 +344,7 @@ class ModelTask extends BakeTask {
  *
  * Uses the fields and no-fields options.
  *
- * @param Cake\ORM\Table $model The model to introspect.
+ * @param \Cake\ORM\Table $model The model to introspect.
  * @return array The columns to make accessible
  */
 	public function getFields($model) {
@@ -367,7 +367,7 @@ class ModelTask extends BakeTask {
  *
  * Uses the hidden and no-hidden options.
  *
- * @param Cake\ORM\Table $model The model to introspect.
+ * @param \Cake\ORM\Table $model The model to introspect.
  * @return array The columns to make accessible
  */
 	public function getHiddenFields($model) {
@@ -387,7 +387,7 @@ class ModelTask extends BakeTask {
 /**
  * Generate default validation rules.
  *
- * @param Cake\ORM\Table $model The model to introspect.
+ * @param \Cake\ORM\Table $model The model to introspect.
  * @return array The validation rules.
  */
 	public function getValidation($model) {
@@ -465,7 +465,7 @@ class ModelTask extends BakeTask {
 /**
  * Get behaviors
  *
- * @param Cake\ORM\Table $model
+ * @param \Cake\ORM\Table $model
  * @return array Behaviors
  */
 	public function getBehaviors($model) {
@@ -593,7 +593,7 @@ class ModelTask extends BakeTask {
  * will halt the script if no tables are found.
  *
  * @return array Array of tables in the database.
- * @throws InvalidArgumentException When connection class
+ * @throws \InvalidArgumentException When connection class
  *   does not have a schemaCollection method.
  */
 	protected function _getAllTables() {
@@ -634,7 +634,7 @@ class ModelTask extends BakeTask {
 /**
  * Gets the option parser instance and configures it.
  *
- * @return ConsoleOptionParser
+ * @return \Cake\Console\ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();

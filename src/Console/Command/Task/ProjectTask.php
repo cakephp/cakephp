@@ -210,7 +210,7 @@ class ProjectTask extends Shell {
 /**
  * get the option parser.
  *
- * @return ConsoleOptionParser
+ * @return \Cake\Console\ConsoleOptionParser
  */
 	public function getOptionParser() {
 		$parser = parent::getOptionParser();

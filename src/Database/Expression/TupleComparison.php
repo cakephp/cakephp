@@ -67,7 +67,7 @@ class TupleComparison extends Comparison {
  * Returns a string with the values as placeholders in a string to be used
  * for the SQL version of this expression
  *
- * @param \Cake\Database\ValueBiender $generator
+ * @param \Cake\Database\ValueBinder $generator
  * @return string
  */
 	protected function _stringifyValues($generator) {

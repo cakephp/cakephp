@@ -273,7 +273,7 @@ class TranslateBehavior extends Behavior {
  * Modifies the results from a table find in order to merge the translated fields
  * into each entity for a given locale.
  *
- * @param \Cake\ORM\ResultSetDecorator $results
+ * @param \Cake\DataSource\ResultSetDecorator $results
  * @param string $locale
  * @return \Cake\Collection\Collection
  */
@@ -307,7 +307,7 @@ class TranslateBehavior extends Behavior {
  * Modifies the results from a table find in order to merge full translation records
  * into each entity under the `_translations` key
  *
- * @param \Cake\ORM\ResultSetDecorator $results
+ * @param \Cake\Datasource\ResultSetDecorator $results
  * @return \Cake\Collection\Collection
  */
 	public function groupTranslations($results) {

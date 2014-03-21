@@ -893,7 +893,7 @@ class Response {
  * with the origin.
  * If called with no parameters, this function will return whether must-revalidate is present.
  *
- * @param integer $seconds if null, the method will return the current
+ * @param boolean $enable if null, the method will return the current
  *   must-revalidate value
  * @return boolean
  */
@@ -935,7 +935,7 @@ class Response {
  * `$response->expires(new DateTime('+1 day'))` Will set the expiration in next 24 hours
  * `$response->expires()` Will return the current expiration header value
  *
- * @param string|DateTime $time
+ * @param string|\DateTime $time
  * @return string
  */
 	public function expires($time = null) {
@@ -959,7 +959,7 @@ class Response {
  * `$response->modified(new DateTime('+1 day'))` Will set the modification date in the past 24 hours
  * `$response->modified()` Will return the current Last-Modified header value
  *
- * @param string|DateTime $time
+ * @param string|\DateTime $time
  * @return string
  */
 	public function modified($time = null) {
@@ -1053,8 +1053,8 @@ class Response {
  * Returns a DateTime object initialized at the $time param and using UTC
  * as timezone
  *
- * @param string|integer|DateTime $time
- * @return DateTime
+ * @param string|integer|\DateTime $time
+ * @return \DateTime
  */
 	protected function _getUTCDate($time = null) {
 		if ($time instanceof \DateTime) {
@@ -1105,7 +1105,7 @@ class Response {
  * Sets the protocol to be used when sending the response. Defaults to HTTP/1.1
  * If called with no arguments, it will return the current configured protocol
  *
- * @param string protocol to be used for sending response
+ * @param string $protocol protocol to be used for sending response
  * @return string protocol currently set
  */
 	public function protocol($protocol = null) {

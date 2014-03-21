@@ -187,7 +187,7 @@ class Table implements RepositoryInterface, EventListener {
  * - behaviors: A BehaviorRegistry. Generally not used outside of tests.
  * - associations: An Associations instance.
  *
- * @param array config Lsit of options for this table
+ * @param array $config List of options for this table
  */
 	public function __construct(array $config = []) {
 		if (!empty($config['table'])) {
@@ -1338,8 +1338,8 @@ class Table implements RepositoryInterface, EventListener {
  * Will delete the entity provided. Will remove rows from any
  * dependent associations, and clear out join tables for BelongsToMany associations.
  *
- * @param \Cake\ORM\EntityInterface $entity The entity to delete.
- * @param ArrayObject $options The options for the delete.
+ * @param \Cake\DataSource\EntityInterface $entity The entity to delete.
+ * @param \ArrayObject $options The options for the delete.
  * @throws \InvalidArgumentException if there are no primary key values of the
  * passed entity
  * @return boolean success
@@ -1508,7 +1508,7 @@ class Table implements RepositoryInterface, EventListener {
  *
  * @param boolean $safe Whether or not this marshaller
  *   should be in safe mode.
- * @return \Cake\ORM\Marhsaller
+ * @return \Cake\ORM\Marshaller
  * @see \Cake\ORM\Marshaller
  */
 	public function marshaller($safe = false) {

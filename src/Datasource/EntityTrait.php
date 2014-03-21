@@ -197,6 +197,7 @@ trait EntityTrait {
  * @param array $options options to be used for setting the property. Allowed option
  * keys are `setter` and `guard`
  * @return \Cake\Datasource\EntityInterface this object
+ * @throws \InvalidArgumentException
  */
 	public function set($property, $value = null, $options = []) {
 		$isString = is_string($property);
@@ -307,7 +308,7 @@ trait EntityTrait {
  * will be returned. Otherwise the hidden properties will be set.
  *
  * @param null|array Either an array of properties to hide or null to get properties
- * @return array|Entity
+ * @return array|\Cake\DataSource\EntityInterface
  */
 	public function hiddenProperties($properties = null) {
 		if ($properties === null) {
@@ -324,7 +325,7 @@ trait EntityTrait {
  * will be returned. Otherwise the virtual properties will be set.
  *
  * @param null|array Either an array of properties to treat as virtual or null to get properties
- * @return array|Entity
+ * @return array|\Cake\DataSource\EntityInterface
  */
 	public function virtualProperties($properties = null) {
 		if ($properties === null) {
@@ -569,7 +570,7 @@ trait EntityTrait {
  *
  * @param string|array $field
  * @param string|array $errors The errors to be set for $field
- * @return array|Entity
+ * @return array|\Cake\Datasource\EntityInterface
  */
 	public function errors($field = null, $errors = null) {
 		if ($field === null) {
@@ -598,7 +599,7 @@ trait EntityTrait {
 /**
  * Auxiliary method for getting errors in nested entities
  *
- * @param string field the field in this entity to check for errors
+ * @param string $field the field in this entity to check for errors
  * @return array errors in nested entity if any
  */
 	protected function _nestedErrors($field) {
@@ -656,7 +657,7 @@ trait EntityTrait {
  * @param string|array single or list of properties to change its accessibility
  * @param boolean $set true marks the property as accessible, false will
  * mark it as protected.
- * @return Entity|boolean
+ * @return \Cake\Datasource\EntityInterface|boolean
  */
 	public function accessible($property, $set = null) {
 		if ($set === null) {
@@ -688,7 +689,7 @@ trait EntityTrait {
  * If called with no arguments, it returns the alias of the repository
  * this entity came from if it is known.
  *
- * @param string the alias of the repository
+ * @param string $alias the alias of the repository
  * @return string
  */
 	public function source($alias = null) {

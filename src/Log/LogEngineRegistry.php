@@ -60,7 +60,7 @@ class LogEngineRegistry extends ObjectRegistry {
  * @param string|LogInterface $class The classname or object to make.
  * @param string $alias The alias of the object.
  * @param array $settings An array of settings to use for the logger.
- * @return LogEngine The constructed logger class.
+ * @return \Cake\Log\LogInterface The constructed logger class.
  * @throws \Cake\Error\Exception when an object doesn't implement
  *    the correct interface.
  */

@@ -40,7 +40,7 @@ class BlowfishPasswordHasher extends AbstractPasswordHasher {
  * Check hash. Generate hash for user provided password and check against existing hash.
  *
  * @param string $password Plain text password to hash.
- * @param string Existing hashed password.
+ * @param string $hashedPassword Existing hashed password.
  * @return boolean True if hashes match else false.
  */
 	public function check($password, $hashedPassword) {

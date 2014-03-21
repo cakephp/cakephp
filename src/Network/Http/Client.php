@@ -115,9 +115,9 @@ class Client {
 
 /**
  * Adapter for sending requests. Defaults to
- * Cake\Network\Http\Stream
+ * Cake\Network\Http\Adapter\Stream
  *
- * @var \Cake\Network\Http\Stream
+ * @var \Cake\Network\Http\Adapter\Stream
  */
 	protected $_adapter;
 

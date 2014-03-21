@@ -30,7 +30,7 @@ trait QueryTrait {
 /**
  * Instance of a table object this query is bound to
  *
- * @var \Cake\Datasource\Repository
+ * @var \Cake\Datasource\RepositoryInterface
  */
 	protected $_repository;
 
@@ -90,7 +90,7 @@ trait QueryTrait {
  * and this query object will be returned for chaining.
  *
  * @param \Cake\Datasource\RepositoryInterface $table The default table object to use
- * @return \Cake\Datasource\RepositoryInterface|Query
+ * @return \Cake\Datasource\RepositoryInterface|\Cake\ORM\Query
  */
 	public function repository(RepositoryInterface $table = null) {
 		if ($table === null) {
@@ -160,9 +160,9 @@ trait QueryTrait {
  * $query->cache(false);
  * }}}
  *
- * @param false|string|Closure $key Either the cache key or a function to generate the cache key.
+ * @param false|string|\Closure $key Either the cache key or a function to generate the cache key.
  *   When using a function, this query instance will be supplied as an argument.
- * @param string|CacheEngine $config Either the name of the cache config to use, or
+ * @param string|\Cake\Cache\CacheEngine $config Either the name of the cache config to use, or
  *   a cache config instance.
  * @return \Cake\Datasource\QueryTrait This same object
  */
@@ -199,7 +199,7 @@ trait QueryTrait {
  * ResultSetDecorator is a travesable object that implements the methods found
  * on Cake\Collection\Collection.
  *
- * @return \Cake\ORM\ResultSetDecorator
+ * @return \Cake\DataSource\ResultSetDecorator
  */
 	public function all() {
 		if (isset($this->_results)) {
@@ -397,7 +397,7 @@ trait QueryTrait {
  * Decorates the results iterator with MapReduce routines and formatters
  *
  * @param \Traversable $result Original results
- * @return \Cake\Datasoruce\ResultSetDecorator
+ * @return \Cake\Datasource\ResultSetDecorator
  */
 	protected function _decorateResults($result) {
 		$decorator = $this->_decoratorClass();

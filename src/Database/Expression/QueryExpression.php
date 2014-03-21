@@ -52,7 +52,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  *
  * @param array $conditions tree-like array structure containing all the conditions
  * to be added or nested inside this expression object.
- * @param array types associative array of types to be associated with the values
+ * @param array $types associative array of types to be associated with the values
  * passed in $conditions.
  * @param string $conjunction the glue that will join all the string conditions at this
  * level of the expression tree. For example "AND", "OR", "XOR"...
@@ -71,7 +71,7 @@ class QueryExpression implements ExpressionInterface, Countable {
  *
  * @param string $conjunction value to be used for joining conditions. If null it
  * will not set any value, but return the currently stored one
- * @return string
+ * @return string|QueryExpression
  */
 	public function type($conjunction = null) {
 		if ($conjunction === null) {

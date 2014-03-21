@@ -123,7 +123,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 /**
  * Constructor
  *
- * @param Query from where results come
+ * @param \Cake\ORM\Query $query Query from where results come
  * @param \Cake\Database\StatementInterface $statement
  */
 	public function __construct($query, $statement) {
@@ -242,7 +242,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  *
  * Part of Serializable interface.
  *
- * @param string Serialized object
+ * @param string $serialized Serialized object
  */
 	public function unserialize($serialized) {
 		$this->_results = unserialize($serialized);

@@ -156,7 +156,7 @@ class Collection {
  *
  * @param string $sql The sql to run.
  * @param array $params Parameters for the statement.
- * @return \Cake\Database\Statement Prepared statement
+ * @return \Cake\Database\StatementInterface Prepared statement
  * @throws \Cake\Database\Exception on query failure.
  */
 	protected function _executeSql($sql, $params) {
