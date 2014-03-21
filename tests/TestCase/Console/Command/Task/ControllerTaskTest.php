@@ -30,6 +30,7 @@ use Cake\View\Helper;
 class BakeArticlesTable extends Table {
 
 	public function initialize(array $config) {
+		$this->belongsTo('BakeUsers');
 		$this->hasMany('BakeComments');
 		$this->belongsToMany('BakeTags');
 	}

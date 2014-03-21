@@ -14,6 +14,10 @@
  * @since         1.3.0
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
+$associations = [];
+foreach ($modelObj->associations()->type('BelongsTo') as $assoc) {
+	$associations[] = "'" . $assoc->target()->alias() . "'";
+}
 ?>
 
 /**
@@ -22,6 +26,11 @@
  * @return void
  */
 	public function index() {
+<?php if ($associations): ?>
+		$this->paginate = [
+			'contain' => [<?= implode(', ', $associations) ?>]
+		];
+<?php endif; ?>
 		$this->set('<?= $pluralName ?>', $this->paginate($this-><?= $currentModelName ?>));
 	}
 
@@ -33,7 +42,9 @@
  * @return void
  */
 	public function view($id = null) {
-		$<?= $singularName?> = $this-><?= $currentModelName ?>->get($id);
+		$<?= $singularName?> = $this-><?= $currentModelName ?>->get($id, [
+			'contain' => [<?= implode(', ', $associations) ?>]
+		]);
 		$this->set('<?= $singularName; ?>', $<?= $singularName; ?>);
 	}
 

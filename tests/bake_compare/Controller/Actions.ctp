@@ -5,6 +5,9 @@
  * @return void
  */
 	public function index() {
+		$this->paginate = [
+			'contain' => ['BakeUsers']
+		];
 		$this->set('bakeArticles', $this->paginate($this->BakeArticles));
 	}
 
@@ -16,7 +19,9 @@
  * @return void
  */
 	public function view($id = null) {
-		$bakeArticle = $this->BakeArticles->get($id);
+		$bakeArticle = $this->BakeArticles->get($id, [
+			'contain' => ['BakeUsers']
+		]);
 		$this->set('bakeArticle', $bakeArticle);
 	}
 
@@ -36,8 +41,9 @@
 				$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));
 			}
 		}
+		$bakeUsers = $this->BakeArticles->association('BakeUsers')->find('list');
 		$bakeTags = $this->BakeArticles->association('BakeTags')->find('list');
-		$this->set(compact('bakeTags'));
+		$this->set(compact('bakeUsers', 'bakeTags'));
 	}
 
 /**
@@ -58,8 +64,9 @@
 				$this->Session->setFlash(__('The bake article could not be saved. Please, try again.'));
 			}
 		}
+		$bakeUsers = $this->BakeArticles->association('BakeUsers')->find('list');
 		$bakeTags = $this->BakeArticles->association('BakeTags')->find('list');
-		$this->set(compact('bakeTags'));
+		$this->set(compact('bakeUsers', 'bakeTags'));
 	}
 
 /**
