@@ -151,15 +151,6 @@ class Behavior implements EventListener {
 	}
 
 /**
- * Get the table the behavior is attached to.
- *
- * @return Cake\ORM\Table
- */
-	public function table() {
-		return $this->_table;
-	}
-
-/**
  * verifyConfig
  *
  * Check that implemented* keys contain values pointing at callable

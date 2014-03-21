@@ -148,7 +148,6 @@ class TimestampBehavior extends Behavior {
 		}
 	}
 
-
 /**
  * Touch an entity
  *
@@ -191,7 +190,7 @@ class TimestampBehavior extends Behavior {
 		if ($entity->dirty($field)) {
 			return;
 		}
-		$colType = $this->table()->schema()->columnType($field);
+		$colType = $this->_table->schema()->columnType($field);
 		$entity->set($field, $this->colTypeTimestamp(null, $refreshTimestamp, $colType));
 	}
 }
