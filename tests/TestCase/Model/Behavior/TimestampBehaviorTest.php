@@ -50,7 +50,7 @@ class TimestampBehaviorTest extends TestCase {
  */
 	public function setUp() {
 		$this->loadFixtures('TimestampUser');
-		$this->table = TableRegistry::get('users');
+		$this->table = TableRegistry::get('timestamp_users');
 		parent::setUp();
 	}
 
@@ -353,7 +353,7 @@ class TimestampBehaviorTest extends TestCase {
 	public function testSaveTriggersInsert() {
 		$this->loadFixtures('TimestampUser');
 
-		$table = TableRegistry::get('users');
+		$table = TableRegistry::get('timestamp_users');
 		$table->addBehavior('Timestamp', [
 			'events' => [
 				'Model.beforeSave' => [

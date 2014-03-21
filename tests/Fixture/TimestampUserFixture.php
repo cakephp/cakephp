@@ -27,7 +27,7 @@ class TimestampUserFixture extends TestFixture {
  *
  * @var string
  */
-	public $table = 'users';
+	public $table = 'timestamp_users';
 
 /**
  * fields property
