@@ -531,25 +531,68 @@ class ShellTest extends TestCase {
  */
 	public function testCreateFileNonInteractive() {
 		$eol = PHP_EOL;
-
 		$path = TMP . 'shell_test';
 		$file = $path . DS . 'file1.php';
 
 		new Folder($path, true);
-
-		$this->Shell->interactive = false;
 
 		$contents = "<?php{$eol}echo 'test';${eol}\$te = 'st';{$eol}";
 		$result = $this->Shell->createFile($file, $contents);
 		$this->assertTrue($result);
 		$this->assertTrue(file_exists($file));
 		$this->assertEquals(file_get_contents($file), $contents);
+	}
 
-		$contents = "<?php\necho 'another test';\n\$te = 'st';\n";
-		$result = $this->Shell->createFile($file, $contents);
-		$this->assertTrue($result);
+/**
+ * Test that files are not changed with a 'n' reply.
+ *
+ * @return void
+ */
+	public function testCreateFileNoReply() {
+		$eol = PHP_EOL;
+		$path = TMP . 'shell_test';
+		$file = $path . DS . 'file1.php';
+
+		new Folder($path, true);
+
+		$this->Shell->stdin->expects($this->once())
+			->method('read')
+			->will($this->returnValue('n'));
+
+		touch($file);
 		$this->assertTrue(file_exists($file));
-		$this->assertTextEquals(file_get_contents($file), $contents);
+
+		$contents = "My content";
+		$result = $this->Shell->createFile($file, $contents);
+		$this->assertTrue(file_exists($file));
+		$this->assertTextEquals('', file_get_contents($file));
+		$this->assertFalse($result, 'Did not create file.');
+	}
+
+/**
+ * Test that files are changed with a 'y' reply.
+ *
+ * @return void
+ */
+	public function testCreateFileOverwrite() {
+		$eol = PHP_EOL;
+		$path = TMP . 'shell_test';
+		$file = $path . DS . 'file1.php';
+
+		new Folder($path, true);
+
+		$this->Shell->stdin->expects($this->once())
+			->method('read')
+			->will($this->returnValue('y'));
+
+		touch($file);
+		$this->assertTrue(file_exists($file));
+
+		$contents = "My content";
+		$result = $this->Shell->createFile($file, $contents);
+		$this->assertTrue(file_exists($file));
+		$this->assertTextEquals($contents, file_get_contents($file));
+		$this->assertTrue($result, 'Did create file.');
 	}
 
 /**
