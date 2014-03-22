@@ -417,9 +417,8 @@ abstract class Association {
 			}
 		}
 
-		$options['conditions'] = $query->newExpr()->add($options['conditions']);
+		
 		$dummy = $target->query()->eagerLoaded(true);
-
 		if (!empty($options['queryBuilder'])) {
 			$dummy = $options['queryBuilder']($dummy);
 			if (!($dummy instanceof Query)) {
@@ -433,7 +432,8 @@ abstract class Association {
 		$this->_dispatchBeforeFind($dummy);
 
 		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$options['conditions']->add($dummy->clause('where') ?: []);
+		$dummy->where($options['conditions']);
+		$options['conditions'] = $dummy->clause('where');
 		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
 
 		$this->_appendFields($query, $dummy, $options);
