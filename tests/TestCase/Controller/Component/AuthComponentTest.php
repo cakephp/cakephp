@@ -139,7 +139,7 @@ class AuthComponentTest extends TestCase {
  */
 	public function testLogin() {
 		$AuthLoginFormAuthenticate = $this->getMock(
-			'Cake\Controller\Componenent\Auth\FormAuthenticate',
+			'Cake\Controller\Component\Auth\FormAuthenticate',
 			array('authenticate'), array(), '', false
 		);
 		$this->Auth->authenticate = array(
@@ -1066,7 +1066,7 @@ class AuthComponentTest extends TestCase {
  */
 	public function testLoginWithRequestData() {
 		$RequestLoginMockAuthenticate = $this->getMock(
-			'Cake\Controller\Componenent\Auth\FormAuthenticate',
+			'Cake\Controller\Component\Auth\FormAuthenticate',
 			array('authenticate'), array(), '', false
 		);
 		$request = new Request('users/login');
