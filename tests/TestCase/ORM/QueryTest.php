@@ -1856,6 +1856,7 @@ class QueryTest extends TestCase {
 					'conditions' => ['person.id = articles.author_id']
 				]
 			])
+			->order(['articles.id' => 'ASC'])
 			->hydrate(false)
 			->toArray();
 		$expected = [
