@@ -193,9 +193,9 @@ class HasOneTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('join')->with([
 			'Profiles' => [
 				'conditions' => new QueryExpression([
+					'a' => 1,
 					'Profiles.is_active' => true,
 					['Users.id' => $field],
-					new QueryExpression(['a' => 1])
 				]),
 				'type' => 'INNER',
 				'table' => 'profiles'
