@@ -398,6 +398,9 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 		}
 
 		foreach($presentAliases as $alias => $present) {
+			if (!isset($results[$alias])) {
+				continue;
+			}
 			$results[$defaultAlias][$alias] = $results[$alias];
 		}
 
