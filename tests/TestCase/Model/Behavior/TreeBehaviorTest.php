@@ -131,12 +131,8 @@ class TreeBehaviorTest extends TestCase {
 
 		// root
 		$nodeIds = [];
-		$nodes = $table->find('children', ['for' => 1])
-			->all();
-		foreach ($nodes as $node) {
-			$nodeIds[] = $node->id;
-		}
-		$this->assertEquals([2, 3, 4, 5], $nodeIds);
+		$nodes = $table->find('children', ['for' => 1])->all();
+		$this->assertEquals([2, 3, 4, 5], $nodes->extract('id')->toArray());
 
 		// unexisting node
 		$query = $table->find('children', ['for' => 500]);
@@ -145,17 +141,11 @@ class TreeBehaviorTest extends TestCase {
 		// leaf
 		$nodeIds = [];
 		$nodes = $table->find('children', ['for' => 5])->all();
-		foreach ($nodes as $node) {
-			$nodeIds[] = $node->id;
-		}
-		$this->assertEquals(0, count($nodeIds));
+		$this->assertEquals(0, count($nodes->extract('id')->toArray()));
 
 		// direct children
 		$nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
-		foreach ($nodes as $node) {
-			$nodeIds[] = $node->id;
-		}
-		$this->assertEquals([2, 3], $nodeIds);
+		$this->assertEquals([2, 3], $nodes->extract('id')->toArray());
 	}
 
 /**
@@ -178,10 +168,7 @@ class TreeBehaviorTest extends TestCase {
 		$nodeIds = [];
 		$result = $table->moveUp(3, 1);
 		$nodes = $table->find('children', ['for' => 1])->all();
-		foreach ($nodes as $node) {
-			$nodeIds[] = $node->id;
-		}
-		$this->assertEquals([3, 4, 5, 2], $nodeIds);
+		$this->assertEquals([3, 4, 5, 2], $nodes->extract('id')->toArray());
 		$this->assertEquals(true, $result);
 
 		// move leaf
@@ -189,16 +176,12 @@ class TreeBehaviorTest extends TestCase {
 
 		// move to first position
 		$table->moveUp(8, true);
-		$nodeIds = [];
-		$results = $table->find()
+		$nodes = $table->find()
 			->select(['id'])
 			->where(['parent_id' => 0, 'menu' => 'main-menu'])
 			->order(['lft' => 'ASC'])
 			->all();
-		foreach ($results as $node) {
-			$nodeIds[] = $node->id;
-		}
-		$this->assertEquals([8, 1, 6], $nodeIds);
+		$this->assertEquals([8, 1, 6], $nodes->extract('id')->toArray());
 	}
 
 /**
@@ -221,10 +204,7 @@ class TreeBehaviorTest extends TestCase {
 		$nodeIds = [];
 		$result = $table->moveDown(2, 1);
 		$nodes = $table->find('children', ['for' => 1])->all();
-		foreach ($nodes as $node) {
-			$nodeIds[] = $node->id;
-		}
-		$this->assertEquals([3, 4, 5, 2], $nodeIds);
+		$this->assertEquals([3, 4, 5, 2], $nodes->extract('id')->toArray());
 		$this->assertEquals(true, $result);
 
 		// move leaf
@@ -232,15 +212,11 @@ class TreeBehaviorTest extends TestCase {
 
 		// move to last position
 		$table->moveDown(1, true);
-		$nodeIds = [];
-		$results = $table->find()
+		$nodes = $table->find()
 			->select(['id'])
 			->where(['parent_id' => 0, 'menu' => 'main-menu'])
 			->order(['lft' => 'ASC'])
 			->all();
-		foreach ($results as $node) {
-			$nodeIds[] = $node->id;
-		}
-		$this->assertEquals([6, 8, 1], $nodeIds);
+		$this->assertEquals([6, 8, 1], $nodes->extract('id')->toArray());
 	}
 }
