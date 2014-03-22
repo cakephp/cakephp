@@ -20,26 +20,22 @@ use Cake\Console\Shell;
 use Cake\Core\App;
 use Cake\Core\Plugin;
 use Cake\ORM\Table;
+use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use Cake\Utility\ClassRegistry;
 use Cake\View\Helper;
 
 /**
  * Class BakeArticle
- *
  */
 class BakeArticlesTable extends Table {
 
-	public $hasMany = array('BakeComment');
-
-	public $hasAndBelongsToMany = array('BakeTag');
+	public function initialize(array $config) {
+		$this->belongsTo('BakeUsers');
+		$this->hasMany('BakeComments');
+		$this->belongsToMany('BakeTags');
+	}
 
 }
-
-class_alias(
-	'Cake\Test\TestCase\Console\Command\Task\BakeArticlesTable',
-	'Cake\Model\Repository\BakeArticlesTable'
-);
 
 /**
  * ControllerTaskTest class
@@ -52,7 +48,7 @@ class ControllerTaskTest extends TestCase {
  *
  * @var array
  */
-	public $fixtures = array('core.bake_article', 'core.bake_articles_bake_tag', 'core.bake_comment', 'core.bake_tag');
+	public $fixtures = ['core.bake_article', 'core.bake_articles_bake_tag', 'core.bake_comment', 'core.bake_tag'];
 
 /**
  * setUp method
@@ -61,27 +57,33 @@ class ControllerTaskTest extends TestCase {
  */
 	public function setUp() {
 		parent::setUp();
-		$this->markTestIncomplete('Baking will not work as models do not work.');
 
 		$out = $this->getMock('Cake\Console\ConsoleOutput', array(), array(), '', false);
 		$in = $this->getMock('Cake\Console\ConsoleInput', array(), array(), '', false);
 		$this->Task = $this->getMock('Cake\Console\Command\Task\ControllerTask',
-			array('in', 'out', 'err', 'hr', 'createFile', '_stop', '_checkUnitTest'),
+			array('in', 'out', 'err', 'hr', 'createFile', '_stop'),
 			array($out, $out, $in)
 		);
 		$this->Task->name = 'Controller';
+		$this->Task->connection = 'test';
+		$this->Task->path = '/my/path/';
+
 		$this->Task->Template = new TemplateTask($out, $out, $in);
 		$this->Task->Template->params['theme'] = 'default';
 
 		$this->Task->Model = $this->getMock('Cake\Console\Command\Task\ModelTask',
-			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest'),
+			array('in', 'out', 'err', 'createFile', '_stop'),
 			array($out, $out, $in)
 		);
 		$this->Task->Project = $this->getMock('Cake\Console\Command\Task\ProjectTask',
-			array('in', 'out', 'err', 'createFile', '_stop', '_checkUnitTest', 'getPrefix'),
+			array('in', 'out', 'err', 'createFile', '_stop', 'getPrefix'),
 			array($out, $out, $in)
 		);
 		$this->Task->Test = $this->getMock('Cake\Console\Command\Task\TestTask', array(), array($out, $out, $in));
+
+		TableRegistry::get('BakeArticles', [
+			'className' => __NAMESPACE__ . '\BakeArticlesTable'
+		]);
 	}
 
 /**
@@ -91,6 +93,7 @@ class ControllerTaskTest extends TestCase {
  */
 	public function tearDown() {
 		unset($this->Task);
+		TableRegistry::clear();
 		parent::tearDown();
 	}
 
@@ -105,155 +108,37 @@ class ControllerTaskTest extends TestCase {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 
-		$this->Task->connection = 'test';
-		$this->Task->interactive = true;
-		$this->Task->expects($this->at(2))->method('out')->with(' 1. BakeArticles');
-		$this->Task->expects($this->at(3))->method('out')->with(' 2. BakeArticlesBakeTags');
-		$this->Task->expects($this->at(4))->method('out')->with(' 3. BakeComments');
-		$this->Task->expects($this->at(5))->method('out')->with(' 4. BakeTags');
-
-		$expected = array('BakeArticles', 'BakeArticlesBakeTags', 'BakeComments', 'BakeTags');
-		$result = $this->Task->listAll('test');
-		$this->assertEquals($expected, $result);
-
-		$this->Task->interactive = false;
 		$result = $this->Task->listAll();
-
 		$expected = array('bake_articles', 'bake_articles_bake_tags', 'bake_comments', 'bake_tags');
 		$this->assertEquals($expected, $result);
 	}
 
 /**
- * Test that getName interacts with the user and returns the controller name.
+ * test component generation
  *
  * @return void
  */
-	public function testGetNameValidIndex() {
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-		$this->Task->interactive = true;
-		$this->Task->expects($this->any())->method('in')->will(
-			$this->onConsecutiveCalls(3, 1)
-		);
+	public function testGetComponents() {
+		$result = $this->Task->getComponents();
+		$this->assertSame([], $result);
 
-		$result = $this->Task->getName('test');
-		$expected = 'BakeComments';
-		$this->assertEquals($expected, $result);
-
-		$result = $this->Task->getName('test');
-		$expected = 'BakeArticles';
-		$this->assertEquals($expected, $result);
+		$this->Task->params['components'] = '  , Security, ,  Csrf';
+		$result = $this->Task->getComponents();
+		$this->assertSame(['Security', 'Csrf'], $result);
 	}
 
 /**
- * test getting invalid indexes.
+ * test helper generation
  *
  * @return void
  */
-	public function testGetNameInvalidIndex() {
-		$this->Task->interactive = true;
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(50, 'q'));
+	public function testGetHelpers() {
+		$result = $this->Task->getHelpers();
+		$this->assertSame([], $result);
 
-		$this->Task->expects($this->once())->method('err');
-		$this->Task->expects($this->once())->method('_stop');
-
-		$this->Task->getName('test');
-	}
-
-/**
- * test helper interactions
- *
- * @return void
- */
-	public function testDoHelpersNo() {
-		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
-		$result = $this->Task->doHelpers();
-		$this->assertSame(array(), $result);
-	}
-
-/**
- * test getting helper values
- *
- * @return void
- */
-	public function testDoHelpersTrailingSpace() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Text, Number, CustomOne  '));
-		$result = $this->Task->doHelpers();
-		$expected = array('Text', 'Number', 'CustomOne');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test doHelpers with extra commas
- *
- * @return void
- */
-	public function testDoHelpersTrailingCommas() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' Text, Number, CustomOne, , '));
-		$result = $this->Task->doHelpers();
-		$expected = array('Text', 'Number', 'CustomOne');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test component interactions
- *
- * @return void
- */
-	public function testDoComponentsNo() {
-		$this->Task->expects($this->any())->method('in')->will($this->returnValue('n'));
-		$result = $this->Task->doComponents();
-		$this->assertSame(array('Paginator'), $result);
-	}
-
-/**
- * test components with spaces
- *
- * @return void
- */
-	public function testDoComponentsTrailingSpaces() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security  '));
-
-		$result = $this->Task->doComponents();
-		$expected = array('Paginator', 'RequestHandler', 'Security');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test components with commas
- *
- * @return void
- */
-	public function testDoComponentsTrailingCommas() {
-		$this->Task->expects($this->at(0))->method('in')->will($this->returnValue('y'));
-		$this->Task->expects($this->at(1))->method('in')->will($this->returnValue(' RequestHandler, Security, , '));
-
-		$result = $this->Task->doComponents();
-		$expected = array('Paginator', 'RequestHandler', 'Security');
-		$this->assertEquals($expected, $result);
-	}
-
-/**
- * test Confirming controller user interaction
- *
- * @return void
- */
-	public function testConfirmController() {
-		$controller = 'Posts';
-		$scaffold = false;
-		$helpers = array('Js', 'Time');
-		$components = array('Acl', 'Auth');
-
-		$this->Task->expects($this->at(4))->method('out')->with("Controller Name:\n\t$controller");
-		$this->Task->expects($this->at(5))->method('out')->with("Helpers:\n\tJs, Time");
-		$this->Task->expects($this->at(6))->method('out')->with("Components:\n\tAcl, Auth");
-		$this->Task->confirmController($controller, $scaffold, $helpers, $components);
+		$this->Task->params['helpers'] = '  , Session , ,  Number';
+		$result = $this->Task->getHelpers();
+		$this->assertSame(['Session', 'Number'], $result);
 	}
 
 /**
@@ -261,22 +146,61 @@ class ControllerTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testBake() {
-		$helpers = array('Js', 'Time');
-		$components = array('Acl', 'Auth');
-		$this->Task->expects($this->any())->method('createFile')->will($this->returnValue(true));
+	public function testBakeNoActions() {
+		$this->Task->expects($this->any())
+			->method('createFile')
+			->will($this->returnValue(true));
 
-		$result = $this->Task->bake('Articles', null, $helpers, $components);
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'NoActions.ctp');
-		$this->assertTextEquals($expected, $result);
+		$this->Task->params['no-actions'] = true;
+		$this->Task->params['helpers'] = 'Html,Time';
+		$this->Task->params['components'] = 'Csrf, Auth';
 
-		$result = $this->Task->bake('Articles', null, array(), array());
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'NoHelpersOrComponents.ctp');
+		$result = $this->Task->bake('BakeArticles');
+		$expected = file_get_contents(CORE_TESTS . '/bake_compare/Controller/NoActions.ctp');
 		$this->assertTextEquals($expected, $result);
+	}
 
-		$result = $this->Task->bake('Articles', 'scaffold', $helpers, $components);
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'Scaffold.ctp');
-		$this->assertTextEquals($expected, $result);
+/**
+ * test bake with actions.
+ *
+ * @return void
+ */
+	public function testBakeActions() {
+		$this->Task->params['helpers'] = 'Html,Time';
+		$this->Task->params['components'] = 'Csrf, Auth';
+
+		$filename = '/my/path/BakeArticlesController.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with(
+				$filename,
+				$this->stringContains('class BakeArticlesController')
+			);
+		$result = $this->Task->bake('BakeArticles');
+
+		$this->assertTextContains('public function add(', $result);
+		$this->assertTextContains('public function index(', $result);
+		$this->assertTextContains('public function view(', $result);
+		$this->assertTextContains('public function edit(', $result);
+		$this->assertTextContains('public function delete(', $result);
+	}
+
+/**
+ * test bake actions prefixed.
+ *
+ * @return void
+ */
+	public function testBakePrefixed() {
+		$this->Task->params['prefix'] = 'Admin';
+
+		$filename = '/my/path/Admin/BakeArticlesController.php';
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($filename, $this->anything());
+		$result = $this->Task->bake('BakeArticles');
+
+		$this->assertTextContains('namespace App\Controller\Admin;', $result);
+		$this->assertTextContains('use App\Controller\AppController;', $result);
 	}
 
 /**
@@ -289,26 +213,18 @@ class ControllerTaskTest extends TestCase {
 
 		//fake plugin path
 		Plugin::load('ControllerTest', array('path' => APP . 'Plugin/ControllerTest/'));
-		$path = APP . 'Plugin/ControllerTest/Controller/ArticlesController.php';
+		$path = APP . 'Plugin/ControllerTest/Controller/BakeArticlesController.php';
 
-		$this->Task->expects($this->at(1))->method('createFile')->with(
-			$path,
-			$this->anything()
-		);
-		$this->Task->expects($this->at(3))->method('createFile')->with(
-			$path,
-			$this->stringContains('ArticlesController extends ControllerTestAppController')
-		)->will($this->returnValue(true));
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with(
+				$path,
+				$this->stringContains('BakeArticlesController extends AppController')
+			)->will($this->returnValue(true));
 
-		$this->Task->bake('Articles', '--actions--', array(), array(), array());
-
-		$this->Task->plugin = 'ControllerTest';
-		$path = APP . 'Plugin/ControllerTest/Controller/ArticlesController.php';
-		$result = $this->Task->bake('Articles', '--actions--', array(), array(), array());
-
-		$this->assertContains("App::uses('ControllerTestAppController', 'ControllerTest.Controller');", $result);
-		$this->assertEquals('ControllerTest', $this->Task->Template->viewVars['plugin']);
-		$this->assertEquals('ControllerTest.', $this->Task->Template->viewVars['pluginPath']);
+		$result = $this->Task->bake('BakeArticles');
+		$this->assertContains('namespace ControllerTest\Controller;', $result);
+		$this->assertContains('use ControllerTest\Controller\AppController;', $result);
 
 		Plugin::unload();
 	}
@@ -318,17 +234,10 @@ class ControllerTaskTest extends TestCase {
  *
  * @return void
  */
-	public function testBakeActionsUsingSessions() {
-		$result = $this->Task->bakeActions('BakeArticles', null, true);
-		$expected = file_get_contents(CAKE . 'Test' . DS . 'bake_compare' . DS . 'Controller' . DS . 'ActionsUsingSessions.ctp');
+	public function testBakeActionsContent() {
+		$result = $this->Task->bakeActions('BakeArticles');
+		$expected = file_get_contents(CORE_TESTS . 'bake_compare/Controller/Actions.ctp');
 		$this->assertTextEquals($expected, $result);
-
-		$result = $this->Task->bakeActions('BakeArticles', 'admin_', true);
-		$this->assertContains('function admin_index() {', $result);
-		$this->assertContains('function admin_add()', $result);
-		$this->assertContains('function admin_view($id = null)', $result);
-		$this->assertContains('function admin_edit($id = null)', $result);
-		$this->assertContains('function admin_delete($id = null)', $result);
 	}
 
 /**
@@ -339,91 +248,29 @@ class ControllerTaskTest extends TestCase {
 	public function testBakeTest() {
 		$this->Task->plugin = 'ControllerTest';
 		$this->Task->connection = 'test';
-		$this->Task->interactive = false;
 
-		$this->Task->Test->expects($this->once())->method('bake')->with('Controller', 'BakeArticles');
+		$this->Task->Test->expects($this->once())
+			->method('bake')
+			->with('Controller', 'BakeArticles');
 		$this->Task->bakeTest('BakeArticles');
 
 		$this->assertEquals($this->Task->plugin, $this->Task->Test->plugin);
 		$this->assertEquals($this->Task->connection, $this->Task->Test->connection);
-		$this->assertEquals($this->Task->interactive, $this->Task->Test->interactive);
 	}
 
 /**
- * test Interactive mode.
+ * test baking a test
  *
  * @return void
  */
-	public function testInteractive() {
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-
+	public function testBakeTestDisabled() {
+		$this->Task->plugin = 'ControllerTest';
 		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
+		$this->Task->params['no-test'] = true;
 
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				'1',
-				'y', // build interactive
-				'n', // build no scaffolds
-				'y', // build normal methods
-				'n', // build admin methods
-				'n', // helpers?
-				'n', // components?
-				'y', // sessions ?
-				'y' // looks good?
-			));
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('class BakeArticlesController')
-		);
-		$this->Task->execute();
-	}
-
-/**
- * test Interactive mode.
- *
- * @return void
- */
-	public function testInteractiveAdminMethodsNotInteractive() {
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-
-		$this->Task->connection = 'test';
-		$this->Task->interactive = true;
-		$this->Task->path = '/my/path/';
-
-		$this->Task->expects($this->any())->method('in')
-			->will($this->onConsecutiveCalls(
-				'1',
-				'y', // build interactive
-				'n', // build no scaffolds
-				'y', // build normal methods
-				'y', // build admin methods
-				'n', // helpers?
-				'n', // components?
-				'y', // sessions ?
-				'y' // looks good?
-			));
-
-		$this->Task->Project->expects($this->any())
-			->method('getPrefix')
-			->will($this->returnValue('admin_'));
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('class BakeArticlesController')
-		)->will($this->returnValue(true));
-
-		$result = $this->Task->execute();
-		$this->assertRegExp('/admin_index/', $result);
+		$this->Task->Test->expects($this->never())
+			->method('bake');
+		$this->Task->bakeTest('BakeArticles');
 	}
 
 /**
@@ -432,74 +279,26 @@ class ControllerTaskTest extends TestCase {
  * @return void
  */
 	public function testExecuteIntoAll() {
-		$count = count($this->Task->listAll('test'));
+		$count = count($this->Task->listAll());
 		if ($count != count($this->fixtures)) {
 			$this->markTestSkipped('Additional tables detected.');
 		}
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
+		$this->Task->args = ['all'];
+		$this->Task->params = ['helpers' => 'Time,Text'];
 
-		$this->Task->expects($this->any())->method('_checkUnitTest')->will($this->returnValue(true));
-		$this->Task->Test->expects($this->once())->method('bake');
+		$this->Task->Test->expects($this->atLeastOnce())
+			->method('bake');
 
 		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('class BakeArticlesController')
-		)->will($this->returnValue(true));
-
-		$this->Task->execute();
-	}
-
-/**
- * Test execute() with all and --admin
- *
- * @return void
- */
-	public function testExecuteIntoAllAdmin() {
-		$count = count($this->Task->listAll('test'));
-		if ($count != count($this->fixtures)) {
-			$this->markTestSkipped('Additional tables detected.');
-		}
-
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('all');
-		$this->Task->params['admin'] = true;
-
-		$this->Task->Project->expects($this->any())
-			->method('getPrefix')
-			->will($this->returnValue('admin_'));
-		$this->Task->expects($this->any())
-			->method('_checkUnitTest')
+		$this->Task->expects($this->at(1))
+			->method('createFile')
+			->with($filename, $this->logicalAnd(
+				$this->stringContains('class BakeArticlesController'),
+				$this->stringContains("\$helpers = ['Time', 'Text']")
+			))
 			->will($this->returnValue(true));
-		$this->Task->Test->expects($this->once())->method('bake');
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('function admin_index')
-		)->will($this->returnValue(true));
-
-		$this->Task->execute();
-	}
-
-/**
- * test that `cake bake controller foos` works.
- *
- * @return void
- */
-	public function testExecuteWithController() {
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticles');
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename,
-			$this->stringContains('$scaffold')
-		);
 
 		$this->Task->execute();
 	}
@@ -524,69 +323,13 @@ class ControllerTaskTest extends TestCase {
 	public function testExecuteWithControllerNameVariations($name) {
 		$this->Task->connection = 'test';
 		$this->Task->path = '/my/path/';
-		$this->Task->args = array($name);
+		$this->Task->args = [$name];
 
 		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, $this->stringContains('$scaffold')
-		);
+		$this->Task->expects($this->once())
+			->method('createFile')
+			->with($filename, $this->stringContains('public function index()'));
 		$this->Task->execute();
 	}
 
-/**
- * test that `cake bake controller foo scaffold` works.
- *
- * @return void
- */
-	public function testExecuteWithPublicParam() {
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticles');
-		$this->Task->params = array('public' => true);
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$expected = new \PHPUnit_Framework_Constraint_Not($this->stringContains('$scaffold'));
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, $expected
-		);
-		$this->Task->execute();
-	}
-
-/**
- * test that `cake bake controller foos both` works.
- *
- * @return void
- */
-	public function testExecuteWithControllerAndBoth() {
-		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticles');
-		$this->Task->params = array('public' => true, 'admin' => true);
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, $this->stringContains('admin_index')
-		);
-		$this->Task->execute();
-	}
-
-/**
- * test that `cake bake controller foos admin` works.
- *
- * @return void
- */
-	public function testExecuteWithControllerAndAdmin() {
-		$this->Task->Project->expects($this->any())->method('getPrefix')->will($this->returnValue('admin_'));
-		$this->Task->connection = 'test';
-		$this->Task->path = '/my/path/';
-		$this->Task->args = array('BakeArticles');
-		$this->Task->params = array('admin' => true);
-
-		$filename = '/my/path/BakeArticlesController.php';
-		$this->Task->expects($this->once())->method('createFile')->with(
-			$filename, $this->stringContains('admin_index')
-		);
-		$this->Task->execute();
-	}
 }

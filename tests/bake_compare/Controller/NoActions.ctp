@@ -1,27 +1,29 @@
 <?php
-App::uses('AppController', 'Controller');
+namespace App\Controller;
+
+use App\Controller\AppController;
+
 /**
- * Articles Controller
+ * BakeArticles Controller
  *
- * @property Article $Article
- * @property AclComponent $Acl
+ * @property App\Model\Table\BakeArticlesTable $BakeArticles
+ * @property CsrfComponent $Csrf
  * @property AuthComponent $Auth
- * @property PaginatorComponent $Paginator
  */
-class ArticlesController extends AppController {
+class BakeArticlesController extends AppController {
 
 /**
  * Helpers
  *
  * @var array
  */
-	public $helpers = array('Js', 'Time');
+	public $helpers = ['Html', 'Time'];
 
 /**
  * Components
  *
  * @var array
  */
-	public $components = array('Acl', 'Auth', 'Paginator');
+	public $components = ['Csrf', 'Auth'];
 
 }

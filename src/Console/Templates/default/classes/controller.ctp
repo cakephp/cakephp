@@ -18,35 +18,27 @@
  */
 use Cake\Utility\Inflector;
 
-echo "<?php\n";
-echo "App::uses('{$plugin}AppController', '{$pluginPath}Controller');\n";
-?>
+echo "<?php\n"; ?>
+namespace <?= $namespace ?>\Controller<?= $prefix ?>;
+
+use <?= $namespace ?>\Controller\AppController;
+
 /**
- * <?= $controllerName; ?> Controller
+ * <?= $name; ?> Controller
  *
 <?php
-if (!$isScaffold) {
-	$defaultModel = Inflector::singularize($controllerName);
-	echo " * @property {$defaultModel} \${$defaultModel}\n";
-	if (!empty($components)) {
-		foreach ($components as $component) {
-			echo " * @property {$component}Component \${$component}\n";
-		}
+$defaultModel = $name;
+echo " * @property {$namespace}\Model\\Table\\{$defaultModel}Table \${$defaultModel}\n";
+if (!empty($components)) {
+	foreach ($components as $component) {
+		echo " * @property {$component}Component \${$component}\n";
 	}
 }
 ?>
  */
-class <?= $controllerName; ?>Controller extends <?= $plugin; ?>AppController {
+class <?= $name; ?>Controller extends AppController {
 
-<?php if ($isScaffold): ?>
-/**
- * Scaffold
- *
- * @var mixed
- */
-	public $scaffold;
-
-<?php else:
+<?php
 
 	if (count($helpers)):
 		echo "/**\n * Helpers\n *\n * @var array\n */\n";
@@ -76,5 +68,5 @@ class <?= $controllerName; ?>Controller extends <?= $plugin; ?>AppController {
 
 	echo trim($actions);
 
-endif; ?>
+?>
 }

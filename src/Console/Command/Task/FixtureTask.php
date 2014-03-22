@@ -81,6 +81,7 @@ class FixtureTask extends BakeTask {
 			'help' => __d('cake_console', 'Theme to use when baking code.')
 		])->addOption('force', [
 			'short' => 'f',
+			'boolean' => true,
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
 		])->addOption('count', [
 			'help' => __d('cake_console', 'When using generated data, the number of records to include in the fixture(s).'),
