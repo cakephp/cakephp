@@ -16,10 +16,10 @@
  */
 namespace Cake\Database;
 
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Expression\Comparison;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
-use Cake\Database\ExpressionInterface;
 
 /**
  * Contains all the logic related to quoting identifiers in a Query object
