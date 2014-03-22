@@ -169,8 +169,23 @@ class TreeBehaviorTest extends TestCase {
 		foreach ($table->children(1) as $node) {
 			$nodeIds[] = $node->id;
 		}
-
 		$this->assertEquals([3, 4, 5, 2], $nodeIds);
 		$this->assertEquals(true, $result);
+
+		// move leaf
+		$this->assertEquals(false, $table->moveUp(5, 1));
+
+		// move to first position
+		$table->moveUp(8, true);
+		$nodeIds = [];
+		$results = $table->find()
+			->select(['id'])
+			->where(['parent_id' => 0, 'menu' => 'main-menu'])
+			->order(['lft' => 'ASC'])
+			->all();
+		foreach ($results as $node) {
+			$nodeIds[] = $node->id;
+		}
+		$this->assertEquals([8, 1, 6], $nodeIds);
 	}
 }
