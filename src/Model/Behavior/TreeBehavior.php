@@ -219,7 +219,7 @@ class TreeBehavior extends Behavior {
  * @return integer
  */
 	protected function _getMax() {
-		return $this->__getMaxOrMin('max');
+		return $this->_getMaxOrMin('max');
 	}
 
 /**
@@ -228,7 +228,7 @@ class TreeBehavior extends Behavior {
  * @return integer
  */
 	protected function _getMin() {
-		return $this->__getMaxOrMin('min');
+		return $this->_getMaxOrMin('min');
 	}
 
 /**
@@ -237,10 +237,10 @@ class TreeBehavior extends Behavior {
  * @param string $maxOrMin Either 'max' or 'min'
  * @return integer
  */
-	private function __getMaxOrMin($maxOrMin = 'max') {
+	protected function _getMaxOrMin($maxOrMin = 'max') {
 		extract($this->config());
-		$LorR = $maxOrMin == 'max' ? $right : $left;
-		$DorA = $maxOrMin == 'max' ? 'DESC' : 'ASC';
+		$LorR = $maxOrMin === 'max' ? $right : $left;
+		$DorA = $maxOrMin === 'max' ? 'DESC' : 'ASC';
 
 		$edge = $this->_scope($this->_table->find())
 			->select([$LorR])
