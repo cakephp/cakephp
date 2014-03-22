@@ -448,12 +448,13 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 							$val = '.+?';
 							$explanations[] = sprintf('Attribute "%s" present', $attr);
 						} elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
-							$quotes = '["\']';
 							$val = str_replace(
 								array('.*', '.+'),
 								array('.*?', '.+?'),
 								$matches[1]
 							);
+							$quotes = $val !== $matches[1] ? '["\']' : '["\']?';
+
 							$explanations[] = sprintf('Attribute "%s" matches "%s"', $attr, $val);
 						} else {
 							$explanations[] = sprintf('Attribute "%s" == "%s"', $attr, $val);
