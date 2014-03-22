@@ -417,7 +417,6 @@ abstract class Association {
 			}
 		}
 
-		
 		$dummy = $target->query()->eagerLoaded(true);
 		if (!empty($options['queryBuilder'])) {
 			$dummy = $options['queryBuilder']($dummy);
