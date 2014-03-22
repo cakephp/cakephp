@@ -40,7 +40,10 @@ class TreeBehavior extends Behavior {
  * @var array
  */
 	protected static $_defaultConfig = [
-		'implementedFinders' => ['path' => 'findPath'],
+		'implementedFinders' => [
+			'path' => 'findPath',
+			'children' => 'findChildren',
+		],
 		'parent' => 'parent_id',
 		'left' => 'lft',
 		'right' => 'rght',
@@ -100,57 +103,50 @@ class TreeBehavior extends Behavior {
 /**
  * Get the child nodes of the current model
  *
- * If the direct parameter is set to true, only the direct children are returned (based upon the parent_id field)
+ * Available options are:
+ *
+ * - direct: Whether to return only the direct, or all, children
+ * - order: SQL ORDER BY conditions (e.g. ['price' => 'DESC']) defaults to the tree order
+ *
+ * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
  * If false is passed for the id parameter, top level, or all (depending on direct parameter appropriate) are counted.
  *
  * @param integer|string $id The ID of the record to read
- * @param boolean $direct whether to return only the direct, or all, children
- * @param string|array $fields Either a single string of a field name, or an array of field names
- * @param array $order SQL ORDER BY conditions (e.g. ['price' => 'DESC']) defaults to the tree order
- * @param integer $limit SQL LIMIT clause, for calculating items per page.
- * @param integer $page Page number, for accessing paged data
- * @return array Array of child nodes
+ * @param array $options Array of options as described above
+ * @return \Cake\ORM\Query
  */
-	public function children($id, $direct = false, $fields = [], $order = [], $limit = null, $page = 1) {
+	public function findChildren($query, $options) {
 		extract($this->config());
+		extract($options);
 		$primaryKey = $this->_table->primaryKey();
+		$direct = !isset($direct) ? false : $direct;
+		$order = !isset($order) ? [$left => 'ASC'] : $order;
+
+		if (!isset($for) || empty($for)) {
+			throw new \InvalidArgumentException("The 'for' key is required for find('children')");
+		}
 
 		if ($direct) {
-			return $this->_scope($this->_table->find())
-				->where([$parent => $id])
-				->all();
+			return $this->_scope($query)
+				->where([$parent => $for])
+				->order($order);
 		}
 
 		$node = $this->_scope($this->_table->find())
 			->select([$right, $left])
-			->where([$primaryKey => $id])
+			->where([$primaryKey => $for])
 			->first();
 
 		if (!$node) {
-			return false;
+			return $query;
 		}
 
-		$order = !$order ? [$left => 'ASC'] : $order;
-		$query = $this->_scope($this->_table->find());
-
-		if ($fields) {
-			$query->select($fields);
-		}
-
-		$query->where([
-			"{$right} <" => $node->{$right},
-			"{$left} >" => $node->{$left}
-		]);
-
-		if ($limit) {
-			$query->limit($limit);
-		}
-
-		if ($page) {
-			$query->page($page);
-		}
-
-		return $query->order($order)->all();
+		return $this->_scope($query)
+			->where([
+				"{$right} <" => $node->{$right},
+				"{$left} >" => $node->{$left}
+			])
+			->order($order);
 	}
 
 /**

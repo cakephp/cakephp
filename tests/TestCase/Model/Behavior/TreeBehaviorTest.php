@@ -125,26 +125,37 @@ class TreeBehaviorTest extends TestCase {
  *
  * @return void
  */
-	public function testChildren() {
+	public function testFindChildren() {
 		$table = TableRegistry::get('MenuLinkTrees');
 		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 
 		// root
 		$nodeIds = [];
-		foreach ($table->children(1) as $node) {
+		$nodes = $table->find('children', ['for' => 1])
+			->all();
+		foreach ($nodes as $node) {
 			$nodeIds[] = $node->id;
 		}
 		$this->assertEquals([2, 3, 4, 5], $nodeIds);
 
 		// unexisting node
-		$this->assertEquals(false, $table->children(500));
+		$query = $table->find('children', ['for' => 500]);
+		$this->assertEquals($query, $table->find('children', ['for' => 500]));
 
 		// leaf
 		$nodeIds = [];
-		foreach ($table->children(5) as $node) {
+		$nodes = $table->find('children', ['for' => 5])->all();
+		foreach ($nodes as $node) {
 			$nodeIds[] = $node->id;
 		}
 		$this->assertEquals(0, count($nodeIds));
+
+		// direct children
+		$nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
+		foreach ($nodes as $node) {
+			$nodeIds[] = $node->id;
+		}
+		$this->assertEquals([2, 3], $nodeIds);
 	}
 
 /**
@@ -166,7 +177,8 @@ class TreeBehaviorTest extends TestCase {
 		// move inner node
 		$nodeIds = [];
 		$result = $table->moveUp(3, 1);
-		foreach ($table->children(1) as $node) {
+		$nodes = $table->find('children', ['for' => 1])->all();
+		foreach ($nodes as $node) {
 			$nodeIds[] = $node->id;
 		}
 		$this->assertEquals([3, 4, 5, 2], $nodeIds);
