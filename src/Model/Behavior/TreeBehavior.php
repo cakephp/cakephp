@@ -105,8 +105,8 @@ class TreeBehavior extends Behavior {
  *
  * Available options are:
  *
- * - for: The ID of the record to read
- * - direct: Whether to return only the direct, or all, children
+ * - for: The ID of the record to read.
+ * - direct: Boolean, whether to return only the direct (true), or all (false), children. default to false (all children).
  *
  * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
  * If false is passed for the id parameter, top level, or all (depending on direct parameter appropriate) are counted.
