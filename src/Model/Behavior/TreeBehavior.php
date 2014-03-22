@@ -185,9 +185,8 @@ class TreeBehavior extends Behavior {
 
 		$previousNode = $this->_scope($this->_table->find())
 			->select([$primaryKey, $left, $right])
-			->where([$right => ($node->{$left} - 1)]);
-
-		$previousNode = $previousNode->first();
+			->where([$right => ($node->{$left} - 1)])
+			->first();
 
 		if (!$previousNode) {
 			return false;
@@ -204,6 +203,65 @@ class TreeBehavior extends Behavior {
 
 		if ($number) {
 			$this->moveUp($id, $number);
+		}
+
+		return true;
+	}
+
+/**
+ * Reorder the node without changing the parent.
+ *
+ * If the node is the last child, or is a top level node with no subsequent node this method will return false
+ *
+ * @param integer|string $id The ID of the record to move
+ * @param integer|boolean $number how many places to move the node or true to move to last position
+ * @return boolean true on success, false on failure
+ */
+	public function moveDown($id, $number = 1) {
+		$primaryKey = $this->_table->primaryKey();
+		$config = $this->config();
+		extract($config);
+
+		if (!$number) {
+			return false;
+		}
+
+		$node = $this->_scope($this->_table->find())
+			->select([$primaryKey, $parent, $left, $right])
+			->where([$primaryKey => $id])
+			->first();
+
+		if ($node->{$parent}) {
+			$parentNode = $this->_scope($this->_table->find())
+				->select([$primaryKey, $left, $right])
+				->where([$primaryKey => $node->{$parent}])
+				->first();
+
+			if (($node->{$right} + 1) == $parentNode->{$right}) {
+				return false;
+			}
+		}
+
+		$nextNode = $this->_scope($this->_table->find())
+			->select([$primaryKey, $left, $right])
+			->where([$left => $node->{$right} + 1])
+			->first();
+
+		if (!$nextNode) {
+			return false;
+		}
+
+		$edge = $this->_getMax();
+		$this->_sync($edge - $node->{$left} + 1, '+', "BETWEEN {$node->{$left}} AND {$node->{$right}}");
+		$this->_sync($nextNode->{$left} - $node->{$left}, '-', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
+		$this->_sync($edge - $node->{$left} - ($nextNode->{$right} - $nextNode->{$left}), '-', "> {$edge}");
+
+		if (is_int($number)) {
+			$number--;
+		}
+
+		if ($number) {
+			$this->moveDown($id, $number);
 		}
 
 		return true;

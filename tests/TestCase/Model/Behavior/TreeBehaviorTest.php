@@ -200,4 +200,47 @@ class TreeBehaviorTest extends TestCase {
 		}
 		$this->assertEquals([8, 1, 6], $nodeIds);
 	}
+
+/**
+ * Tests the moveDown() method
+ *
+ * @return void
+ */
+	public function testMoveDown() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+
+		// latest node, wont move
+		$this->assertEquals(false, $this->table->moveDown(8, 10));
+
+		// edge cases
+		$this->assertEquals(false, $this->table->moveDown(8, 0));
+		$this->assertEquals(false, $this->table->moveUp(8, -10));
+
+		// move inner node
+		$nodeIds = [];
+		$result = $table->moveDown(2, 1);
+		$nodes = $table->find('children', ['for' => 1])->all();
+		foreach ($nodes as $node) {
+			$nodeIds[] = $node->id;
+		}
+		$this->assertEquals([3, 4, 5, 2], $nodeIds);
+		$this->assertEquals(true, $result);
+
+		// move leaf
+		$this->assertEquals(false, $table->moveDown(5, 1));
+
+		// move to last position
+		$table->moveDown(1, true);
+		$nodeIds = [];
+		$results = $table->find()
+			->select(['id'])
+			->where(['parent_id' => 0, 'menu' => 'main-menu'])
+			->order(['lft' => 'ASC'])
+			->all();
+		foreach ($results as $node) {
+			$nodeIds[] = $node->id;
+		}
+		$this->assertEquals([6, 8, 1], $nodeIds);
+	}
 }
