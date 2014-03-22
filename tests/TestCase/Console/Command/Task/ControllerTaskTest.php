@@ -84,7 +84,6 @@ class ControllerTaskTest extends TestCase {
 		TableRegistry::get('BakeArticles', [
 			'className' => __NAMESPACE__ . '\BakeArticlesTable'
 		]);
-
 	}
 
 /**
@@ -199,7 +198,7 @@ class ControllerTaskTest extends TestCase {
 			->method('createFile')
 			->with($filename, $this->anything());
 		$result = $this->Task->bake('BakeArticles');
-		
+
 		$this->assertTextContains('namespace App\Controller\Admin;', $result);
 		$this->assertTextContains('use App\Controller\AppController;', $result);
 	}
