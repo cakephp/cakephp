@@ -862,6 +862,7 @@ class FormHelperTest extends CakeTestCase {
 			'/div',
 		);
 		$this->assertTags($result, $expected);
+
 		$result = $this->Form->submit('Cancel', array('name' => 'cancel'));
 		$expected = array(
 			'div' => array('class' => 'submit'),
@@ -1844,8 +1845,8 @@ class FormHelperTest extends CakeTestCase {
 			'preg:/[^<]+/',
 			'/label',
 			'input' => array(
-				'type' => 'text', 'name' => 'preg:/[^<]+/',
-				'id' => 'preg:/[^<]+/', 'class' => 'form-error'
+				'type' => 'text', 'name', 'id',
+				'class' => 'form-error'
 			),
 			array('div' => array('class' => 'error-message')),
 			'You must have a last name',
@@ -1869,7 +1870,7 @@ class FormHelperTest extends CakeTestCase {
 			'label' => array('for'),
 			'Balance',
 			'/label',
-			'input' => array('name', 'type' => 'number', 'id'),
+			'input' => array('name', 'type' => 'number', 'id', 'step'),
 			'/div',
 		);
 		$this->assertTags($result, $expected);
@@ -5698,14 +5699,14 @@ class FormHelperTest extends CakeTestCase {
 		$result = $this->Form->checkbox('Contact.field', array('id' => 'theID', 'value' => 'myvalue'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Contact][field]', 'value' => '0', 'id' => 'theID_'),
-			array('input' => array('preg:/[^<]+/', 'value' => 'myvalue', 'id' => 'theID', 'checked' => 'checked', 'class' => 'form-error'))
+			array('input' => array('type', 'name', 'value' => 'myvalue', 'id' => 'theID', 'checked' => 'checked', 'class' => 'form-error'))
 		);
 		$this->assertTags($result, $expected);
 
 		$result = $this->Form->checkbox('Contact.field', array('value' => 'myvalue'));
 		$expected = array(
 			'input' => array('type' => 'hidden', 'class' => 'form-error', 'name' => 'data[Contact][field]', 'value' => '0', 'id' => 'ContactField_'),
-			array('input' => array('preg:/[^<]+/', 'value' => 'myvalue', 'id' => 'ContactField', 'checked' => 'checked', 'class' => 'form-error'))
+			array('input' => array('type', 'name', 'value' => 'myvalue', 'id' => 'ContactField', 'checked' => 'checked', 'class' => 'form-error'))
 		);
 		$this->assertTags($result, $expected);
 
