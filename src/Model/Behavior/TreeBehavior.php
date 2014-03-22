@@ -16,6 +16,7 @@ namespace Cake\Model\Behavior;
 
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
@@ -94,6 +95,190 @@ class TreeBehavior extends Behavior {
 		$node = $this->_table->get($id, [$this->_table->primaryKey() => $id]);
 
 		return ($node->{$right} - $node->{$left} - 1) / 2;
+	}
+
+/**
+ * Get the child nodes of the current model
+ *
+ * If the direct parameter is set to true, only the direct children are returned (based upon the parent_id field)
+ * If false is passed for the id parameter, top level, or all (depending on direct parameter appropriate) are counted.
+ *
+ * @param integer|string $id The ID of the record to read
+ * @param boolean $direct whether to return only the direct, or all, children
+ * @param string|array $fields Either a single string of a field name, or an array of field names
+ * @param array $order SQL ORDER BY conditions (e.g. ['price' => 'DESC']) defaults to the tree order
+ * @param integer $limit SQL LIMIT clause, for calculating items per page.
+ * @param integer $page Page number, for accessing paged data
+ * @return array Array of child nodes
+ */
+	public function children($id, $direct = false, $fields = [], $order = [], $limit = null, $page = 1) {
+		extract($this->config());
+		$primaryKey = $this->_table->primaryKey();
+
+		if ($direct) {
+			return $this->_scope($this->_table->find())
+				->where([$parent => $id])
+				->all();
+		}
+
+		$node = $this->_scope($this->_table->find())
+			->select([$right, $left])
+			->where([$primaryKey => $id])
+			->first();
+
+		if (!$node) {
+			return false;
+		}
+
+		$order = !$order ? [$left => 'ASC'] : $order;
+		$query = $this->_scope($this->_table->find());
+
+		if ($fields) {
+			$query->select($fields);
+		}
+
+		$query->where([
+			"{$right} <" => $node->{$right},
+			"{$left} >" => $node->{$left}
+		]);
+
+		if ($limit) {
+			$query->limit($limit);
+		}
+
+		if ($page) {
+			$query->page($page);
+		}
+
+		return $query->order($order)->all();
+	}
+
+/**
+ * Reorder the node without changing the parent.
+ *
+ * If the node is the first child, or is a top level node with no previous node this method will return false
+ *
+ * @param integer|string $id The ID of the record to move
+ * @param integer|boolean $number how many places to move the node, or true to move to first position
+ * @return boolean true on success, false on failure
+ */
+	public function moveUp($id, $number = 1) {
+		$primaryKey = $this->_table->primaryKey();
+		$config = $this->config();
+		extract($config);
+
+		if (!$number) {
+			return false;
+		}
+
+		$node = $this->_scope($this->_table->find())
+			->select([$primaryKey, $parent, $left, $right])
+			->where([$primaryKey => $id])
+			->first();
+
+		if ($node->{$parent}) {
+			$parentNode = $this->_scope($this->_table->find())
+				->select([$primaryKey, $left, $right])
+				->where([$primaryKey => $node->{$parent}])
+				->first();
+
+			if (($node->{$left} - 1) == $parentNode->{$left}) {
+				return false;
+			}
+		}
+
+		$previousNode = $this->_scope($this->_table->find())
+			->select([$primaryKey, $left, $right])
+			->where([$right => ($node->{$left} - 1)]);
+
+		$previousNode = $previousNode->first();
+
+		if (!$previousNode) {
+			return false;
+		}
+
+		$edge = $this->_getMax();
+		$this->_sync($edge - $previousNode->{$left} + 1, '+', "BETWEEN {$previousNode->{$left}} AND {$previousNode->{$right}}");
+		$this->_sync($node->{$left} - $previousNode->{$left}, '-', "BETWEEN {$node->{$left}} AND {$node->{$right}}");
+		$this->_sync($edge - $previousNode->{$left} - ($node->{$right} - $node->{$left}), '-', "> {$edge}");
+
+		if (is_int($number)) {
+			$number--;
+		}
+
+		if ($number) {
+			$this->moveUp($id, $number);
+		}
+
+		return true;
+	}
+
+/**
+ * Get the maximum index value in the table.
+ *
+ * @return integer
+ */
+	protected function _getMax() {
+		return $this->_getMaxOrMin('max');
+	}
+
+/**
+ * Get the minimum index value in the table.
+ *
+ * @return integer
+ */
+	protected function _getMin() {
+		return $this->_getMaxOrMin('min');
+	}
+
+/**
+ * Get the maximum|minimum index value in the table.
+ *
+ * @param string $maxOrMin Either 'max' or 'min'
+ * @return integer
+ */
+	protected function _getMaxOrMin($maxOrMin = 'max') {
+		extract($this->config());
+		$LorR = $maxOrMin === 'max' ? $right : $left;
+		$DorA = $maxOrMin === 'max' ? 'DESC' : 'ASC';
+
+		$edge = $this->_scope($this->_table->find())
+			->select([$LorR])
+			->order([$LorR => $DorA])
+			->first();
+
+		if (empty($edge->{$LorR})) {
+			return 0;
+		}
+
+		return $edge->{$LorR};
+	}
+
+	protected function _sync($shift, $dir = '+', $conditions = null, $field = 'both') {
+		extract($this->config());
+
+		if ($field === 'both') {
+			$this->_sync($shift, $dir, $conditions, $left);
+			$field = $right;
+		}
+
+		// updateAll + scope
+		$exp = new QueryExpression();
+		$exp->add("{$field} = ({$field} {$dir} {$shift})");
+
+		$query = $this->_scope($this->_table->query());
+		$query->update()
+			->set($exp);
+
+		if ($conditions) {
+			$conditions = "{$field} {$conditions}";
+			$query->where($conditions);
+		}
+
+		$statement = $query->execute();
+		$success = $statement->rowCount() > 0;
+
+		return $success;
 	}
 
 	protected function _scope($query) {

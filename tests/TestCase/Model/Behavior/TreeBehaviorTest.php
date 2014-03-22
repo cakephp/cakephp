@@ -63,7 +63,7 @@ class TreeBehaviorTest extends TestCase {
 
 		$nodes = $this->table->find('path', ['for' => 1]);
 		$this->assertEquals([1], $nodes->extract('id')->toArray());
-		
+
 		// find path with scope
 		$table = TableRegistry::get('MenuLinkTrees');
 		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
@@ -118,5 +118,74 @@ class TreeBehaviorTest extends TestCase {
 		]);
 		$count = $table->childCount(1, false);
 		$this->assertEquals(4, $count);
+	}
+
+/**
+ * Tests the children() method
+ *
+ * @return void
+ */
+	public function testChildren() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+
+		// root
+		$nodeIds = [];
+		foreach ($table->children(1) as $node) {
+			$nodeIds[] = $node->id;
+		}
+		$this->assertEquals([2, 3, 4, 5], $nodeIds);
+
+		// unexisting node
+		$this->assertEquals(false, $table->children(500));
+
+		// leaf
+		$nodeIds = [];
+		foreach ($table->children(5) as $node) {
+			$nodeIds[] = $node->id;
+		}
+		$this->assertEquals(0, count($nodeIds));
+	}
+
+/**
+ * Tests the moveUp() method
+ *
+ * @return void
+ */
+	public function testMoveUp() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+
+		// top level, wont move
+		$this->assertEquals(false, $this->table->moveUp(1, 10));
+
+		// edge cases
+		$this->assertEquals(false, $this->table->moveUp(1, 0));
+		$this->assertEquals(false, $this->table->moveUp(1, -10));
+
+		// move inner node
+		$nodeIds = [];
+		$result = $table->moveUp(3, 1);
+		foreach ($table->children(1) as $node) {
+			$nodeIds[] = $node->id;
+		}
+		$this->assertEquals([3, 4, 5, 2], $nodeIds);
+		$this->assertEquals(true, $result);
+
+		// move leaf
+		$this->assertEquals(false, $table->moveUp(5, 1));
+
+		// move to first position
+		$table->moveUp(8, true);
+		$nodeIds = [];
+		$results = $table->find()
+			->select(['id'])
+			->where(['parent_id' => 0, 'menu' => 'main-menu'])
+			->order(['lft' => 'ASC'])
+			->all();
+		foreach ($results as $node) {
+			$nodeIds[] = $node->id;
+		}
+		$this->assertEquals([8, 1, 6], $nodeIds);
 	}
 }
