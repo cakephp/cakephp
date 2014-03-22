@@ -1704,8 +1704,7 @@ class DboSource extends DataSource {
 					if (!empty($assocData['order'])) {
 						$queryData['order'][] = $assocData['order'];
 					}
-
-					if (!in_array($join, $queryData['joins'])) {
+					if (!in_array($join, $queryData['joins'], true)) {
 						$queryData['joins'][] = $join;
 					}
 

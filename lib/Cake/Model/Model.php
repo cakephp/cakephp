@@ -2705,8 +2705,9 @@ class Model extends Object implements CakeEventListener {
 		}
 
 		$ids = $this->find('all', array_merge(array(
-			'fields' => "DISTINCT {$this->alias}.{$this->primaryKey}",
+			'fields' => "{$this->alias}.{$this->primaryKey}",
 			'order' => false,
+			'group' => "{$this->alias}.{$this->primaryKey}",
 			'recursive' => 0), compact('conditions'))
 		);
 
