@@ -203,7 +203,6 @@ class TreeBehavior extends Behavior {
  * @return boolean true on success, false on failure
  */
 	public function moveDown($id, $number = 1) {
-		$primaryKey = $this->_table->primaryKey();
 		$config = $this->config();
 		extract($config);
 
@@ -222,7 +221,7 @@ class TreeBehavior extends Behavior {
 		}
 
 		$nextNode = $this->_scope($this->_table->find())
-			->select([$primaryKey, $left, $right])
+			->select([$left, $right])
 			->where([$left => $node->{$right} + 1])
 			->first();
 
