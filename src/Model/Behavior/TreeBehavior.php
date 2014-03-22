@@ -151,8 +151,7 @@ class TreeBehavior extends Behavior {
  * @return boolean true on success, false on failure
  */
 	public function moveUp($id, $number = 1) {
-		$config = $this->config();
-		extract($config);
+		extract($this->config());
 
 		if (!$number) {
 			return false;
@@ -203,8 +202,7 @@ class TreeBehavior extends Behavior {
  * @return boolean true on success, false on failure
  */
 	public function moveDown($id, $number = 1) {
-		$config = $this->config();
-		extract($config);
+		extract($this->config());
 
 		if (!$number) {
 			return false;
