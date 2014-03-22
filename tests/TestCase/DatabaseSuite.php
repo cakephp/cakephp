@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestPermutationDecorator;
 use Cake\TestSuite\TestSuite;
+use \PHPUnit_Framework_TestResult;
 
 /**
  * All tests related to database
@@ -40,12 +41,17 @@ class DatabaseSuite extends TestSuite {
 		return $suite;
 	}
 
+	public function count() {
+		return parent::count() * 2;
+	}
+
 /**
- * Returns an iterator for this test suite.
+ * Runs the tests and collects their result in a TestResult.
  *
- * @return ArrayIterator
+ * @param \PHPUnit_Framework_TestResult $result
+ * @return \PHPUnit_Framework_TestResult
  */
-	public function getIterator() {
+	public function run(PHPUnit_Framework_TestResult $result = null, $filter = false, array $groups = [], array $excludeGroups = [], $processIsolation = false) {
 		$permutations = [
 			'Identifier Quoting' => function() {
 				ConnectionManager::get('test')->driver()->autoQuoting(true);
@@ -55,12 +61,11 @@ class DatabaseSuite extends TestSuite {
 			}
 		];
 
-		$tests = [];
-		foreach (parent::getIterator() as $test) {
-			$tests[] = new TestPermutationDecorator($test, $permutations);
+		foreach ($permutations as $permutation) {
+			$permutation();
+			$result = parent::run($result, $filter, $groups, $excludeGroups, $processIsolation);
 		}
-
-		return new \ArrayIterator($tests);
+		return $result;
 	}
 
 }
