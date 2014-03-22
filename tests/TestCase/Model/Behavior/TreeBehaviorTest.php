@@ -121,7 +121,7 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
- * Tests the children() method
+ * Tests the find('children') method
  *
  * @return void
  */
@@ -134,10 +134,6 @@ class TreeBehaviorTest extends TestCase {
 		$nodes = $table->find('children', ['for' => 1])->all();
 		$this->assertEquals([2, 3, 4, 5], $nodes->extract('id')->toArray());
 
-		// unexisting node
-		$query = $table->find('children', ['for' => 500]);
-		$this->assertEquals($query, $table->find('children', ['for' => 500]));
-
 		// leaf
 		$nodeIds = [];
 		$nodes = $table->find('children', ['for' => 5])->all();
@@ -146,6 +142,19 @@ class TreeBehaviorTest extends TestCase {
 		// direct children
 		$nodes = $table->find('children', ['for' => 1, 'direct' => true])->all();
 		$this->assertEquals([2, 3], $nodes->extract('id')->toArray());
+	}
+
+/**
+ * Tests that find('children') will throw an exception if the node was not found
+ *
+ * @expectedException \Cake\ORM\Error\RecordNotFoundException
+ * @expectedExceptionMessage Record "500" not found in table "menu_link_trees"
+ * @return void
+ */
+	public function testFindChildrenException() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$query = $table->find('children', ['for' => 500]);
 	}
 
 /**

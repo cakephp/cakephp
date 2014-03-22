@@ -112,12 +112,12 @@ class TreeBehavior extends Behavior {
  * If false is passed for the id parameter, top level, or all (depending on direct parameter appropriate) are counted.
  *
  * @param array $options Array of options as described above
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return \Cake\ORM\Query
  */
 	public function findChildren($query, $options) {
 		extract($this->config());
 		extract($options);
-		$primaryKey = $this->_table->primaryKey();
 		$direct = !isset($direct) ? false : $direct;
 
 		if (empty($for)) {
@@ -129,18 +129,10 @@ class TreeBehavior extends Behavior {
 		}
 
 		if ($direct) {
-			return $this->_scope($query)
-				->where([$parent => $for]);
+			return $this->_scope($query)->where([$parent => $for]);
 		}
 
-		$node = $this->_scope($this->_table->find())
-			->select([$right, $left])
-			->where([$primaryKey => $for])
-			->first();
-
-		if (!$node) {
-			return $query;
-		}
+		$node = $this->_table->get($for, ['fields' => [$right, $left]]);
 
 		return $this->_scope($query)
 			->where([
@@ -159,7 +151,6 @@ class TreeBehavior extends Behavior {
  * @return boolean true on success, false on failure
  */
 	public function moveUp($id, $number = 1) {
-		$primaryKey = $this->_table->primaryKey();
 		$config = $this->config();
 		extract($config);
 
@@ -167,16 +158,10 @@ class TreeBehavior extends Behavior {
 			return false;
 		}
 
-		$node = $this->_scope($this->_table->find())
-			->select([$primaryKey, $parent, $left, $right])
-			->where([$primaryKey => $id])
-			->first();
+		$node = $this->_table->get($id, ['fields' => [$parent, $left, $right]]);
 
 		if ($node->{$parent}) {
-			$parentNode = $this->_scope($this->_table->find())
-				->select([$primaryKey, $left, $right])
-				->where([$primaryKey => $node->{$parent}])
-				->first();
+			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
 
 			if (($node->{$left} - 1) == $parentNode->{$left}) {
 				return false;
@@ -184,7 +169,7 @@ class TreeBehavior extends Behavior {
 		}
 
 		$previousNode = $this->_scope($this->_table->find())
-			->select([$primaryKey, $left, $right])
+			->select([$left, $right])
 			->where([$right => ($node->{$left} - 1)])
 			->first();
 
@@ -226,16 +211,10 @@ class TreeBehavior extends Behavior {
 			return false;
 		}
 
-		$node = $this->_scope($this->_table->find())
-			->select([$primaryKey, $parent, $left, $right])
-			->where([$primaryKey => $id])
-			->first();
+		$node = $this->_table->get($id, ['fields' => [$left, $right]]);
 
 		if ($node->{$parent}) {
-			$parentNode = $this->_scope($this->_table->find())
-				->select([$primaryKey, $left, $right])
-				->where([$primaryKey => $node->{$parent}])
-				->first();
+			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
 
 			if (($node->{$right} + 1) == $parentNode->{$right}) {
 				return false;
