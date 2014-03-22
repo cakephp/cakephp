@@ -397,7 +397,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$results = $instance->transformRow($results);
 		}
 
-		foreach($presentAliases as $alias => $present) {
+		foreach ($presentAliases as $alias => $present) {
 			if (!isset($results[$alias])) {
 				continue;
 			}
