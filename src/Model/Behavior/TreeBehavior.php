@@ -21,6 +21,7 @@ use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
+use Cake\Database\Expression\QueryExpression;
 
 class TreeBehavior extends Behavior {
 
@@ -96,7 +97,21 @@ class TreeBehavior extends Behavior {
 		return ($node->{$right} - $node->{$left} - 1) / 2;
 	}
 
-	public function children($id, $direct = false, $fields = [], $order = null, $limit = null, $page = 1) {
+/**
+ * Get the child nodes of the current model
+ *
+ * If the direct parameter is set to true, only the direct children are returned (based upon the parent_id field)
+ * If false is passed for the id parameter, top level, or all (depending on direct parameter appropriate) are counted.
+ *
+ * @param integer|string $id The ID of the record to read
+ * @param boolean $direct whether to return only the direct, or all, children
+ * @param string|array $fields Either a single string of a field name, or an array of field names
+ * @param array $order SQL ORDER BY conditions (e.g. ['price' => 'DESC']) defaults to the tree order
+ * @param integer $limit SQL LIMIT clause, for calculating items per page.
+ * @param integer $page Page number, for accessing paged data
+ * @return array Array of child nodes
+ */
+	public function children($id, $direct = false, $fields = [], $order = [], $limit = null, $page = 1) {
 		extract($this->config());
 		$primaryKey = $this->_table->primaryKey();
 
@@ -138,6 +153,15 @@ class TreeBehavior extends Behavior {
 		return $query->order($order)->all();
 	}
 
+/**
+ * Reorder the node without changing the parent.
+ *
+ * If the node is the first child, or is a top level node with no previous node this method will return false
+ *
+ * @param integer|string $id The ID of the record to move
+ * @param integer|boolean $number how many places to move the node, or true to move to first position
+ * @return boolean true on success, false on failure
+ */
 	public function moveUp($id, $number = 1) {
 		$primaryKey = $this->_table->primaryKey();
 		$config = $this->config();
@@ -178,7 +202,9 @@ class TreeBehavior extends Behavior {
 		$this->_sync($node->{$left} - $previousNode->{$left}, '-', "BETWEEN {$node->{$left}} AND {$node->{$right}}");
 		$this->_sync($edge - $previousNode->{$left} - ($node->{$right} - $node->{$left}), '-', "> {$edge}");
 
-		$number--;
+		if (is_int($number)) {
+			$number--;
+		}
 
 		if ($number) {
 			$this->moveUp($id, $number);
@@ -187,17 +213,28 @@ class TreeBehavior extends Behavior {
 		return true;
 	}
 
+/**
+ * Get the maximum index value in the table.
+ *
+ * @return integer
+ */
 	protected function _getMax() {
 		return $this->__getMaxOrMin('max');
 	}
 
+/**
+ * Get the minimum index value in the table.
+ *
+ * @return integer
+ */
 	protected function _getMin() {
 		return $this->__getMaxOrMin('min');
 	}
 
 /**
- * Get the maximum index value in the table.
+ * Get the maximum|minimum index value in the table.
  *
+ * @param string $maxOrMin Either 'max' or 'min'
  * @return integer
  */
 	private function __getMaxOrMin($maxOrMin = 'max') {
@@ -226,9 +263,12 @@ class TreeBehavior extends Behavior {
 		}
 
 		// updateAll + scope
+		$exp = new QueryExpression();
+		$exp->add("{$field} = ({$field} {$dir} {$shift})");
+
 		$query = $this->_scope($this->_table->query());
 		$query->update()
-			->set([$field => "{$field} {$dir} {$shift}"]);
+			->set($exp);
 
 		if ($conditions) {
 			$conditions = "{$field} {$conditions}";
