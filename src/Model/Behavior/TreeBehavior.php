@@ -105,13 +105,12 @@ class TreeBehavior extends Behavior {
  *
  * Available options are:
  *
+ * - for: The ID of the record to read
  * - direct: Whether to return only the direct, or all, children
- * - order: SQL ORDER BY conditions (e.g. ['price' => 'DESC']) defaults to the tree order
  *
  * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
  * If false is passed for the id parameter, top level, or all (depending on direct parameter appropriate) are counted.
  *
- * @param integer|string $id The ID of the record to read
  * @param array $options Array of options as described above
  * @return \Cake\ORM\Query
  */
@@ -120,16 +119,18 @@ class TreeBehavior extends Behavior {
 		extract($options);
 		$primaryKey = $this->_table->primaryKey();
 		$direct = !isset($direct) ? false : $direct;
-		$order = !isset($order) ? [$left => 'ASC'] : $order;
 
-		if (!isset($for) || empty($for)) {
+		if (empty($for)) {
 			throw new \InvalidArgumentException("The 'for' key is required for find('children')");
+		}
+
+		if ($query->clause('order') === null) {
+			$query->order([$left => 'ASC']);
 		}
 
 		if ($direct) {
 			return $this->_scope($query)
-				->where([$parent => $for])
-				->order($order);
+				->where([$parent => $for]);
 		}
 
 		$node = $this->_scope($this->_table->find())
@@ -145,8 +146,7 @@ class TreeBehavior extends Behavior {
 			->where([
 				"{$right} <" => $node->{$right},
 				"{$left} >" => $node->{$left}
-			])
-			->order($order);
+			]);
 	}
 
 /**
