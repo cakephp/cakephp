@@ -1,7 +1,5 @@
 <?php
 /**
- * The View Tasks handles creating and updating view files.
- *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
  *
@@ -32,7 +30,7 @@ class ViewTask extends BakeTask {
  *
  * @var array
  */
-	public $tasks = ['Project', 'Controller', 'DbConfig', 'Template'];
+	public $tasks = ['Project', 'Controller', 'DbConfig', 'Model', 'Template'];
 
 /**
  * path to View directory
@@ -86,15 +84,19 @@ class ViewTask extends BakeTask {
  */
 	public function execute() {
 		parent::execute();
-		if (empty($this->args)) {
-			$this->_interactive();
-		}
-		if (empty($this->args[0])) {
-			return;
-		}
+
 		if (!isset($this->connection)) {
 			$this->connection = 'default';
 		}
+
+		if (empty($this->args)) {
+			$this->out(__d('cake_console', 'Possible tables to bake views for based on your current database:'));
+			foreach ($this->Model->listAll() as $table) {
+				$this->out('- ' . $this->_controllerName($table));
+			}
+			return true;
+		}
+
 		$action = null;
 		$this->controllerName = $this->_controllerName($this->args[0]);
 
@@ -268,6 +270,7 @@ class ViewTask extends BakeTask {
 			$this->err(__d('cake_console', "The file '%s' could not be found.\nIn order to bake a view, you'll need to first create the controller.", $file));
 			return $this->_stop();
 		}
+
 		$controllerObj = new $controllerClassName();
 		$controllerObj->plugin = $this->plugin;
 		$controllerObj->constructClasses();
@@ -279,8 +282,8 @@ class ViewTask extends BakeTask {
 			$displayField = $modelObj->displayField;
 			$singularVar = Inflector::variable($modelClass);
 			$singularHumanName = $this->_singularHumanName($this->controllerName);
-			$schema = $modelObj->schema(true);
-			$fields = array_keys($schema);
+			$schema = $modelObj->schema();
+			$fields = $schema->fields();
 			$associations = $this->_associations($modelObj);
 		} else {
 			$primaryKey = $displayField = null;
@@ -394,22 +397,24 @@ class ViewTask extends BakeTask {
 			return $this->template;
 		}
 		$themePath = $this->Template->getThemePath();
+
+		if (!empty($this->params['prefix'])) {
+			$prefixed = Inflector::underscore($this->params['prefix']) . '_' . $action;
+			if (file_exists($themePath . 'views/' . $prefixed . '.ctp')) {
+				return $prefixed;
+			}
+			$generic = preg_replace('/(.*)(_add|_edit)$/', '\1_form', $prefixed);
+			if (file_exists($themePath . 'views/' . $generic . '.ctp')) {
+				return $generic;
+			}
+		}
 		if (file_exists($themePath . 'views/' . $action . '.ctp')) {
 			return $action;
 		}
-		$template = $action;
-		$prefixes = Configure::read('Routing.prefixes');
-		foreach ((array)$prefixes as $prefix) {
-			if (strpos($template, $prefix) !== false) {
-				$template = str_replace($prefix . '_', '', $template);
-			}
+		if (in_array($action, ['add', 'edit'])) {
+			return 'form';
 		}
-		if (in_array($template, ['add', 'edit'])) {
-			$template = 'form';
-		} elseif (preg_match('@(_add|_edit)$@', $template)) {
-			$template = str_replace(['_add', '_edit'], '_form', $template);
-		}
-		return $template;
+		return $action;
 	}
 
 /**
@@ -431,9 +436,6 @@ class ViewTask extends BakeTask {
 		])->addOption('plugin', [
 			'short' => 'p',
 			'help' => __d('cake_console', 'Plugin to bake the view into.')
-		])->addOption('admin', [
-			'help' => __d('cake_console', 'Set to only bake views for a prefix in Routing.prefixes'),
-			'boolean' => true
 		])->addOption('theme', [
 			'short' => 't',
 			'help' => __d('cake_console', 'Theme to use when baking code.')
@@ -443,6 +445,8 @@ class ViewTask extends BakeTask {
 		])->addOption('force', [
 			'short' => 'f',
 			'help' => __d('cake_console', 'Force overwriting existing files without prompting.')
+		])->addOption('prefix', [
+			'help' => __d('cake_console', 'The routing prefix to generate views for.'),
 		])->addSubcommand('all', [
 			'help' => __d('cake_console', 'Bake all CRUD action views for all controllers. Requires models and controllers to exist.')
 		])->epilog(
@@ -459,17 +463,21 @@ class ViewTask extends BakeTask {
  * @return array $associations
  */
 	protected function _associations(Model $model) {
-		$keys = ['belongsTo', 'hasOne', 'hasMany', 'hasAndBelongsToMany'];
+		$keys = ['BelongsTo', 'HasOne', 'HasMany', 'BelongsToMany'];
 		$associations = [];
 
 		foreach ($keys as $type) {
-			foreach ($model->{$type} as $assocKey => $assocData) {
-				list(, $modelClass) = pluginSplit($assocData['className']);
-				$associations[$type][$assocKey]['primaryKey'] = $model->{$assocKey}->primaryKey;
-				$associations[$type][$assocKey]['displayField'] = $model->{$assocKey}->displayField;
-				$associations[$type][$assocKey]['foreignKey'] = $assocData['foreignKey'];
-				$associations[$type][$assocKey]['controller'] = Inflector::pluralize(Inflector::underscore($modelClass));
-				$associations[$type][$assocKey]['fields'] = array_keys($model->{$assocKey}->schema(true));
+			foreach ($model->associations()->type($type) as $assoc) {
+				$target = $assoc->target();
+				$assocName = $assoc->name();
+				$alias = $target->alias();
+				$assoiations[$type][$assocName] = [
+					'primaryKey' => $target->primaryKey(),
+					'displayField' => $target->displayField(),
+					'foreignKey' => $assoc->foreignKey(),
+					'controller' => Inflector::underscore($alias),
+					'fields' => $target->schema()->columns(),
+				];
 			}
 		}
 		return $associations;
