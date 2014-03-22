@@ -62,24 +62,31 @@ class CakeTestCaseTest extends CakeTestCase {
 	}
 
 /**
- * testAssertGoodTags
+ * testAssertTags
  *
  * @return void
  */
-	public function testAssertTagsQuotes() {
+	public function testAssertTagsBasic() {
 		$test = new AssertTagsTestCase('testAssertTagsQuotes');
 		$result = $test->run();
 		$this->assertEquals(0, $result->errorCount());
 		$this->assertTrue($result->wasSuccessful());
 		$this->assertEquals(0, $result->failureCount());
+	}
 
+/**
+ * test assertTags works with single and double quotes
+ *
+ * @return void
+ */
+	public function testAssertTagsQuoting() {
 		$input = '<a href="/test.html" class="active">My link</a>';
 		$pattern = array(
 			'a' => array('href' => '/test.html', 'class' => 'active'),
 			'My link',
 			'/a'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Double quoted attributes %s');
+		$this->assertTags($input, $pattern);
 
 		$input = "<a href='/test.html' class='active'>My link</a>";
 		$pattern = array(
@@ -87,7 +94,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Single quoted attributes %s');
+		$this->assertTags($input, $pattern);
 
 		$input = "<a href='/test.html' class='active'>My link</a>";
 		$pattern = array(
@@ -95,7 +102,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			'My link',
 			'/a'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Single quoted attributes %s');
+		$this->assertTags($input, $pattern);
 
 		$input = "<span><strong>Text</strong></span>";
 		$pattern = array(
@@ -105,7 +112,7 @@ class CakeTestCaseTest extends CakeTestCase {
 			'/strong',
 			'/span'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Tags with no attributes');
+		$this->assertTags($input, $pattern);
 
 		$input = "<span class='active'><strong>Text</strong></span>";
 		$pattern = array(
@@ -115,7 +122,34 @@ class CakeTestCaseTest extends CakeTestCase {
 			'/strong',
 			'/span'
 		);
-		$this->assertTrue($test->assertTags($input, $pattern), 'Test attribute presence');
+		$this->assertTags($input, $pattern);
+	}
+
+/**
+ * Test that assertTags runs quickly.
+ *
+ * @return void
+ */
+	public function testAssertTagsRuntimeComplexity() {
+		$pattern = array(
+			'div' => array(
+				'attr1' => 'val1',
+				'attr2' => 'val2',
+				'attr3' => 'val3',
+				'attr4' => 'val4',
+				'attr5' => 'val5',
+				'attr6' => 'val6',
+				'attr7' => 'val7',
+				'attr8' => 'val8',
+			),
+			'My div',
+			'/div'
+		);
+		$input = '<div attr8="val8" attr6="val6" attr4="val4" attr2="val2"' .
+			' attr1="val1" attr3="val3" attr5="val5" attr7="val7" />' .
+			'My div' .
+			'</div>';
+		$this->assertTags($input, $pattern);
 	}
 
 /**
