@@ -23,7 +23,6 @@ use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
 
-
 class TreeBehavior extends Behavior {
 
 /**
