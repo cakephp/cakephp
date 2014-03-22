@@ -35,8 +35,8 @@ class UserFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'username' => ['type' => 'string', 'null' => true],
 		'password' => ['type' => 'string', 'null' => true],
-		'created' => 'datetime',
-		'updated' => 'datetime',
+		'created' => ['type' => 'timestamp', 'null' => true],
+		'updated' => ['type' => 'timestamp', 'null' => true],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
