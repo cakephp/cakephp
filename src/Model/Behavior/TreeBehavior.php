@@ -16,12 +16,13 @@ namespace Cake\Model\Behavior;
 
 use ArrayObject;
 use Cake\Collection\Collection;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\ORM\TableRegistry;
-use Cake\Database\Expression\QueryExpression;
+
 
 class TreeBehavior extends Behavior {
 
