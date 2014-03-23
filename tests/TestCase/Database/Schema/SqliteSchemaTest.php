@@ -733,7 +733,6 @@ SQL;
 		$this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
 	}
 
-
 /**
  * Test primary key generation & auto-increment.
  *
