@@ -103,49 +103,49 @@ class I18n {
 /**
  * Constant for LC_ALL.
  *
- * @const int
+ * @var int
  */
 	const LC_ALL = 0;
 
 /**
  * Constant for LC_COLLATE.
  *
- * @const int
+ * @var int
  */
 	const LC_COLLATE = 1;
 
 /**
  * Constant for LC_CTYPE.
  *
- * @const int
+ * @var int
  */
 	const LC_CTYPE = 2;
 
 /**
  * Constant for LC_MONETARY.
  *
- * @const int
+ * @var int
  */
 	const LC_MONETARY = 3;
 
 /**
  * Constant for LC_NUMERIC.
  *
- * @const int
+ * @var int
  */
 	const LC_NUMERIC = 4;
 
 /**
  * Constant for LC_TIME.
  *
- * @const int
+ * @var int
  */
 	const LC_TIME = 5;
 
 /**
  * Constant for LC_MESSAGES.
  *
- * @const int
+ * @var int
  */
 	const LC_MESSAGES = 6;
 
