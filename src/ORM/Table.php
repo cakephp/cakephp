@@ -1501,6 +1501,37 @@ class Table implements RepositoryInterface, EventListener {
 	}
 
 /**
+ * Returns the association named after the passed value if exists, otherwise
+ * throws an exception.
+ *
+ * @param string $property the association name
+ * @return \Cake\ORM\Association
+ * @throws \RuntimeException if no association with such name exists
+ */
+	public function __get($property) {
+		$association = $this->_associations->get($property);
+		if (!$association) {
+			throw new \RuntimeException(sprintf(
+				'Table "%s" is not associated with "%s"',
+				get_class($this),
+				$property
+			));
+		}
+		return $association;
+	}
+
+/**
+ * Returns whether an association named after the passed value
+ * exists for this table.
+ *
+ * @param string $property the association name
+ * @return boolean
+ */
+	public function __isset($property) {
+		return $this->_associations->has($property);
+	}
+
+/**
  * Get the object used to marshal/convert array data into objects.
  *
  * Override this method if you want a table object to use custom

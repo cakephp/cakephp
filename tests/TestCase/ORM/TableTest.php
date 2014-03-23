@@ -3274,4 +3274,31 @@ class TableTest extends \Cake\TestSuite\TestCase {
 		$this->assertEquals($expected, $result);
 	}
 
+/**
+ * Tests that it is possible to get associations as a property
+ *
+ * @return void
+ */
+	public function testAssociationAsProperty() {
+		$articles = TableRegistry::get('articles');
+		$articles->hasMany('comments');
+		$articles->belongsTo('authors');
+		$this->assertTrue(isset($articles->authors));
+		$this->assertTrue(isset($articles->comments));
+		$this->assertFalse(isset($articles->posts));
+		$this->assertSame($articles->association('authors'), $articles->authors);
+		$this->assertSame($articles->association('comments'), $articles->comments);
+	}
+
+/**
+ * Tests that getting a bad property throws exception
+ *
+ * @expectedException \RuntimeException
+ * @expectedExceptionMessage Table "TestApp\Model\Table\ArticlesTable" is not associated with "posts"
+ * @return void
+ */
+	public function testGetBadAssociation() {
+		$articles = TableRegistry::get('articles');
+		$articles->posts;
+	}
 }
