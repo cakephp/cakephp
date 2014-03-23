@@ -40,7 +40,10 @@ class TreeBehavior extends Behavior {
  * @var array
  */
 	protected static $_defaultConfig = [
-		'implementedFinders' => ['path' => 'findPath'],
+		'implementedFinders' => [
+			'path' => 'findPath',
+			'children' => 'findChildren',
+		],
 		'parent' => 'parent_id',
 		'left' => 'lft',
 		'right' => 'rght',
@@ -100,57 +103,50 @@ class TreeBehavior extends Behavior {
 /**
  * Get the child nodes of the current model
  *
- * If the direct parameter is set to true, only the direct children are returned (based upon the parent_id field)
+ * Available options are:
+ *
+ * - for: The ID of the record to read.
+ * - direct: Boolean, whether to return only the direct (true), or all (false), children. default to false (all children).
+ *
+ * If the direct option is set to true, only the direct children are returned (based upon the parent_id field)
  * If false is passed for the id parameter, top level, or all (depending on direct parameter appropriate) are counted.
  *
- * @param integer|string $id The ID of the record to read
- * @param boolean $direct whether to return only the direct, or all, children
- * @param string|array $fields Either a single string of a field name, or an array of field names
- * @param array $order SQL ORDER BY conditions (e.g. ['price' => 'DESC']) defaults to the tree order
- * @param integer $limit SQL LIMIT clause, for calculating items per page.
- * @param integer $page Page number, for accessing paged data
- * @return array Array of child nodes
+ * @param array $options Array of options as described above
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @return \Cake\ORM\Query
  */
-	public function children($id, $direct = false, $fields = [], $order = [], $limit = null, $page = 1) {
+	public function findChildren($query, $options) {
 		extract($this->config());
+		extract($options);
 		$primaryKey = $this->_table->primaryKey();
+		$direct = !isset($direct) ? false : $direct;
+
+		if (empty($for)) {
+			throw new \InvalidArgumentException("The 'for' key is required for find('children')");
+		}
+
+		if ($query->clause('order') === null) {
+			$query->order([$left => 'ASC']);
+		}
 
 		if ($direct) {
-			return $this->_scope($this->_table->find())
-				->where([$parent => $id])
-				->all();
+			return $this->_scope($query)->where([$parent => $for]);
 		}
 
 		$node = $this->_scope($this->_table->find())
 			->select([$right, $left])
-			->where([$primaryKey => $id])
+			->where([$primaryKey => $for])
 			->first();
 
 		if (!$node) {
-			return false;
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$for}\ was not found in the tree.");
 		}
 
-		$order = !$order ? [$left => 'ASC'] : $order;
-		$query = $this->_scope($this->_table->find());
-
-		if ($fields) {
-			$query->select($fields);
-		}
-
-		$query->where([
-			"{$right} <" => $node->{$right},
-			"{$left} >" => $node->{$left}
-		]);
-
-		if ($limit) {
-			$query->limit($limit);
-		}
-
-		if ($page) {
-			$query->page($page);
-		}
-
-		return $query->order($order)->all();
+		return $this->_scope($query)
+			->where([
+				"{$right} <" => $node->{$right},
+				"{$left} >" => $node->{$left}
+			]);
 	}
 
 /**
@@ -159,28 +155,29 @@ class TreeBehavior extends Behavior {
  * If the node is the first child, or is a top level node with no previous node this method will return false
  *
  * @param integer|string $id The ID of the record to move
- * @param integer|boolean $number how many places to move the node, or true to move to first position
+ * @param integer|boolean $number How many places to move the node, or true to move to first position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return boolean true on success, false on failure
  */
 	public function moveUp($id, $number = 1) {
+		extract($this->config());
 		$primaryKey = $this->_table->primaryKey();
-		$config = $this->config();
-		extract($config);
 
 		if (!$number) {
 			return false;
 		}
 
 		$node = $this->_scope($this->_table->find())
-			->select([$primaryKey, $parent, $left, $right])
+			->select([$parent, $left, $right])
 			->where([$primaryKey => $id])
 			->first();
 
+		if (!$node) {
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
+		}
+
 		if ($node->{$parent}) {
-			$parentNode = $this->_scope($this->_table->find())
-				->select([$primaryKey, $left, $right])
-				->where([$primaryKey => $node->{$parent}])
-				->first();
+			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
 
 			if (($node->{$left} - 1) == $parentNode->{$left}) {
 				return false;
@@ -188,10 +185,9 @@ class TreeBehavior extends Behavior {
 		}
 
 		$previousNode = $this->_scope($this->_table->find())
-			->select([$primaryKey, $left, $right])
-			->where([$right => ($node->{$left} - 1)]);
-
-		$previousNode = $previousNode->first();
+			->select([$left, $right])
+			->where([$right => ($node->{$left} - 1)])
+			->first();
 
 		if (!$previousNode) {
 			return false;
@@ -208,6 +204,66 @@ class TreeBehavior extends Behavior {
 
 		if ($number) {
 			$this->moveUp($id, $number);
+		}
+
+		return true;
+	}
+
+/**
+ * Reorder the node without changing the parent.
+ *
+ * If the node is the last child, or is a top level node with no subsequent node this method will return false
+ *
+ * @param integer|string $id The ID of the record to move
+ * @param integer|boolean $number How many places to move the node or true to move to last position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @return boolean true on success, false on failure
+ */
+	public function moveDown($id, $number = 1) {
+		extract($this->config());
+		$primaryKey = $this->_table->primaryKey();
+
+		if (!$number) {
+			return false;
+		}
+
+		$node = $this->_scope($this->_table->find())
+			->select([$parent, $left, $right])
+			->where([$primaryKey => $id])
+			->first();
+
+		if (!$node) {
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
+		}
+
+		if ($node->{$parent}) {
+			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
+
+			if (($node->{$right} + 1) == $parentNode->{$right}) {
+				return false;
+			}
+		}
+
+		$nextNode = $this->_scope($this->_table->find())
+			->select([$left, $right])
+			->where([$left => $node->{$right} + 1])
+			->first();
+
+		if (!$nextNode) {
+			return false;
+		}
+
+		$edge = $this->_getMax();
+		$this->_sync($edge - $node->{$left} + 1, '+', "BETWEEN {$node->{$left}} AND {$node->{$right}}");
+		$this->_sync($nextNode->{$left} - $node->{$left}, '-', "BETWEEN {$nextNode->{$left}} AND {$nextNode->{$right}}");
+		$this->_sync($edge - $node->{$left} - ($nextNode->{$right} - $nextNode->{$left}), '-', "> {$edge}");
+
+		if (is_int($number)) {
+			$number--;
+		}
+
+		if ($number) {
+			$this->moveDown($id, $number);
 		}
 
 		return true;
