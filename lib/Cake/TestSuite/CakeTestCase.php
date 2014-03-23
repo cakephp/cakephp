@@ -516,7 +516,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 	protected function _assertAttributes($assertions, $string) {
 		$asserts = $assertions['attrs'];
 		$explains = $assertions['explains'];
-		while (count($asserts) > 0) {
+		$len = count($asserts);
+		do {
 			$matches = false;
 			foreach ($asserts as $j => $assert) {
 				if (preg_match(sprintf('/^%s/s', $assert), $string, $match)) {
@@ -530,7 +531,8 @@ abstract class CakeTestCase extends PHPUnit_Framework_TestCase {
 			if ($matches === false) {
 				$this->assertTrue(false, 'Attribute did not match. Was expecting ' . $explains[$j]);
 			}
-		}
+			$len = count($asserts);
+		} while ($len > 0);
 		return $string;
 	}
 
