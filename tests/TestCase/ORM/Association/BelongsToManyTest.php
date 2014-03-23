@@ -226,7 +226,7 @@ class BelongsToManyTest extends TestCase {
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				]),
+				], ['Tags.name' => 'string']),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -273,7 +273,7 @@ class BelongsToManyTest extends TestCase {
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				]),
+				], ['Tags.name' => 'string']),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -313,9 +313,9 @@ class BelongsToManyTest extends TestCase {
 		$query->expects($this->at(0))->method('join')->with([
 			'Tags' => [
 				'conditions' => new QueryExpression([
+					'a' => 1,
 					'Tags.name' => 'cake',
-					new QueryExpression(['a' => 1])
-				]),
+				], ['Tags.name' => 'string']),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]
@@ -371,7 +371,7 @@ class BelongsToManyTest extends TestCase {
 			'Tags' => [
 				'conditions' => new QueryExpression([
 					'Tags.name' => 'cake'
-				]),
+				], ['Tags.name' => 'string']),
 				'type' => 'INNER',
 				'table' => 'tags'
 			]

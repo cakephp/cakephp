@@ -115,7 +115,7 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['clients.id' => new IdentifierExpression('foo.client_id')]
-				])
+				], ['clients.id' => 'integer'])
 			]])
 			->will($this->returnValue($query));
 
@@ -135,7 +135,7 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['orderTypes.id' => new IdentifierExpression('orders.order_type_id')]
-				])
+				], ['orderTypes.id' => 'integer'])
 			]])
 			->will($this->returnValue($query));
 
@@ -155,7 +155,7 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')]
-				])
+				], ['stuffTypes.id' => 'integer'])
 			]])
 			->will($this->returnValue($query));
 
@@ -165,7 +165,7 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['companies.id' => new IdentifierExpression('clients.organization_id')]
-				])
+				], ['companies.id' => 'integer'])
 			]])
 			->will($this->returnValue($query));
 
@@ -175,7 +175,7 @@ class EagerLoaderTest extends TestCase {
 				'type' => 'LEFT',
 				'conditions' => new QueryExpression([
 					['categories.id' => new IdentifierExpression('companies.category_id')]
-				])
+				], ['categories.id' => 'integer'])
 			]])
 			->will($this->returnValue($query));
 

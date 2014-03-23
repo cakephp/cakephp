@@ -631,9 +631,9 @@ class HasManyTest extends \Cake\TestSuite\TestCase {
 		$query->expects($this->once())->method('join')->with([
 			'Articles' => [
 				'conditions' => new QueryExpression([
+					'a' => 1,
 					'Articles.is_active' => true,
 					['Authors.id' => $field],
-					new QueryExpression(['a' => 1])
 				]),
 				'type' => 'INNER',
 				'table' => 'articles'
