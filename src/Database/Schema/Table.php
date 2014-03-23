@@ -512,7 +512,7 @@ class Table {
  * @return this|boolean Either the table instance, the current temporary setting
  */
 	public function temporary($set = null) {
-		if ($set == null) {
+		if ($set === null) {
 			return $this->_temporary;
 		}
 		$this->_temporary = (bool)$set;
