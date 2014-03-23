@@ -281,6 +281,12 @@ class TreeBehaviorTest extends TestCase {
 			->hydrate(false)
 			->toArray();
 
+		$expected2 = $table->find()
+			->where(['menu' => 'categories'])
+			->order('lft')
+			->hydrate(false)
+			->toArray();
+
 		$table->updateAll(['lft' => null, 'rght' => null], ['menu' => 'main-menu']);
 		$table->recover();
 		$result = $table->find()
@@ -289,6 +295,13 @@ class TreeBehaviorTest extends TestCase {
 			->hydrate(false)
 			->toArray();
 		$this->assertEquals($expected, $result);
+
+		$result2 = $table->find()
+			->where(['menu' => 'categories'])
+			->order('lft')
+			->hydrate(false)
+			->toArray();
+		$this->assertEquals($expected2, $result2);
 	}
 
 }

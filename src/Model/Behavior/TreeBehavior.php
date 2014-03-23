@@ -112,8 +112,9 @@ class TreeBehavior extends Behavior {
  * If false is passed for the id parameter, top level, or all (depending on direct parameter appropriate) are counted.
  *
  * @param array $options Array of options as described above
- * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return \Cake\ORM\Query
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
+ * @throws \InvalidArgumentException When the 'for' key is not passed in $options
  */
 	public function findChildren($query, $options) {
 		extract($this->config());
@@ -269,12 +270,25 @@ class TreeBehavior extends Behavior {
 		return true;
 	}
 
+/**
+ * Recovers the lft and right column values out of the hirearchy defined by the
+ * parent column.
+ *
+ * @return void
+ */
 	public function recover() {
 		$this->_table->connection()->transactional(function() {
 			$this->_recoverTree();
 		});
 	}
 
+/**
+ * Recursive method used to recover a single level of the tree
+ *
+ * @param integer $counter The Last left column value that was assigned
+ * @param mixed $parentId the parent id of the level to be recovered
+ * @return integer Ne next value to use for the left column
+ */
 	protected function _recoverTree($counter = 0, $parentId = null) {
 		$config = $this->config();
 		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
