@@ -352,4 +352,18 @@ class TableTest extends TestCase {
 			->addConstraint('author_id_idx', $data);
 	}
 
+/**
+ * Tests the temporary() method
+ *
+ * @return void
+ */
+	public function testTemporary() {
+		$table = new Table('articles');
+		$this->assertFalse($table->temporary());
+		$this->assertSame($table, $table->temporary(true));
+		$this->assertTrue($table->temporary());
+		$table->temporary(false);
+		$this->assertFalse($table->temporary());
+	}
+
 }

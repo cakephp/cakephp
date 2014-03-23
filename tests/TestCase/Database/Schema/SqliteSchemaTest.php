@@ -715,6 +715,26 @@ SQL;
 	}
 
 /**
+ * Tests creating temporary tables
+ *
+ * @return void
+ */
+	public function testCreateTemporary() {
+		$driver = $this->_getMockedDriver();
+		$connection = $this->getMock('Cake\Database\Connection', [], [], '', false);
+		$connection->expects($this->any())->method('driver')
+			->will($this->returnValue($driver));
+		$table = (new Table('schema_articles'))->addColumn('id', [
+			'type' => 'integer',
+			'null' => false
+		]);
+		$table->temporary(true);
+		$sql = $table->createSql($connection);
+		$this->assertContains('CREATE TEMPORARY TABLE', $sql[0]);
+	}
+
+
+/**
  * Test primary key generation & auto-increment.
  *
  * @return void
