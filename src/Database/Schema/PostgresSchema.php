@@ -419,8 +419,9 @@ class PostgresSchema extends BaseSchema {
 		$content = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($content));
 		$tableName = $this->_driver->quoteIdentifier($table->name());
+		$temporary = $table->temporary() ? ' TEMPORARY ' : ' ';
 		$out = [];
-		$out[] = sprintf("CREATE TABLE %s (\n%s\n)", $tableName, $content);
+		$out[] = sprintf("CREATE%sTABLE %s (\n%s\n)", $temporary, $tableName, $content);
 		foreach ($indexes as $index) {
 			$out[] = $index;
 		}
