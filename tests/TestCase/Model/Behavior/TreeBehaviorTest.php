@@ -148,7 +148,6 @@ class TreeBehaviorTest extends TestCase {
  * Tests that find('children') will throw an exception if the node was not found
  *
  * @expectedException \Cake\ORM\Error\RecordNotFoundException
- * @expectedExceptionMessage Record "500" not found in table "menu_link_trees"
  * @return void
  */
 	public function testFindChildrenException() {
@@ -194,6 +193,18 @@ class TreeBehaviorTest extends TestCase {
 	}
 
 /**
+ * Tests that moveUp() will throw an exception if the node was not found
+ *
+ * @expectedException \Cake\ORM\Error\RecordNotFoundException
+ * @return void
+ */
+	public function testMoveUpException() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$table->moveUp(500, 1);
+	}
+
+/**
  * Tests the moveDown() method
  *
  * @return void
@@ -227,5 +238,17 @@ class TreeBehaviorTest extends TestCase {
 			->order(['lft' => 'ASC'])
 			->all();
 		$this->assertEquals([6, 8, 1], $nodes->extract('id')->toArray());
+	}
+
+/**
+ * Tests that moveDown() will throw an exception if the node was not found
+ *
+ * @expectedException \Cake\ORM\Error\RecordNotFoundException
+ * @return void
+ */
+	public function testMoveDownException() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$table->moveDown(500, 1);
 	}
 }
