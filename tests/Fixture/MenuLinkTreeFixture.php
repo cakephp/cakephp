@@ -36,8 +36,8 @@ class MenuLinkTreeFixture extends TestFixture {
 	public $fields = array(
 		'id' => ['type' => 'integer'],
 		'menu' => ['type' => 'string', 'null' => false],
-		'lft' => ['type' => 'integer', 'null' => false],
-		'rght' => ['type' => 'integer', 'null' => false],
+		'lft' => ['type' => 'integer'],
+		'rght' => ['type' => 'integer'],
 		'parent_id' => 'integer',
 		'url' => ['type' => 'string', 'null' => false],
 		'title' => ['type' => 'string', 'null' => false],

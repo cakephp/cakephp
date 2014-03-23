@@ -251,4 +251,44 @@ class TreeBehaviorTest extends TestCase {
 		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 		$table->moveDown(500, 1);
 	}
+
+/**
+ * Tests the recover function
+ *
+ * @return void
+ */
+	public function testRecover() {
+		$table = TableRegistry::get('NumberTrees');
+		$table->addBehavior('Tree');
+		$expected = $table->find()->order('lft')->hydrate(false)->toArray();
+		$table->updateAll(['lft' => null, 'rght' => null], []);
+		$table->recover();
+		$result = $table->find()->order('lft')->hydrate(false)->toArray();
+		$this->assertEquals($expected, $result);
+	}
+
+/**
+ * Tests the recover function with a custom scope
+ *
+ * @return void
+ */
+	public function testRecoverScoped() {
+		$table = TableRegistry::get('MenuLinkTrees');
+		$table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
+		$expected = $table->find()
+			->where(['menu' => 'main-menu'])
+			->order('lft')
+			->hydrate(false)
+			->toArray();
+
+		$table->updateAll(['lft' => null, 'rght' => null], ['menu' => 'main-menu']);
+		$table->recover();
+		$result = $table->find()
+			->where(['menu' => 'main-menu'])
+			->order('lft')
+			->hydrate(false)
+			->toArray();
+		$this->assertEquals($expected, $result);
+	}
+
 }

@@ -269,6 +269,40 @@ class TreeBehavior extends Behavior {
 		return true;
 	}
 
+	public function recover() {
+		$this->_table->connection()->transactional(function() {
+			$this->_recoverTree();
+		});
+	}
+
+	protected function _recoverTree($counter = 0, $parentId = null) {
+		$config = $this->config();
+		list($parent, $left, $right) = [$config['parent'], $config['left'], $config['right']];
+		$pk = (array)$this->_table->primaryKey();
+
+		$query = $this->_scope($this->_table->query())
+			->select($pk)
+			->where(function($exp) use ($parentId, $parent) {
+				return $parentId === null ? $exp->isNull($parent) : $exp->eq($parent, $parentId);
+			})
+			->order($pk)
+			->hydrate(false)
+			->bufferResults(false);
+
+		$leftCounter = $counter;
+		foreach ($query as $row) {
+			$counter++;
+			$counter = $this->_recoverTree($counter, $row[$pk[0]]);
+		}
+
+		$this->_table->updateAll(
+			[$left => $leftCounter, $right => $counter + 1],
+			[$pk[0] => $parentId]
+		);
+
+		return $counter + 1;
+	}
+
 /**
  * Get the maximum index value in the table.
  *

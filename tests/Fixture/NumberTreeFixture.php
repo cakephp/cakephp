@@ -37,8 +37,8 @@ class NumberTreeFixture extends TestFixture {
 		'id' => ['type' => 'integer'],
 		'name' => ['type' => 'string', 'null' => false],
 		'parent_id' => 'integer',
-		'lft' => ['type' => 'integer', 'null' => false],
-		'rght' => ['type' => 'integer', 'null' => false],
+		'lft' => ['type' => 'integer'],
+		'rght' => ['type' => 'integer'],
 		'_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['id']]]
 	);
 
@@ -55,6 +55,7 @@ class NumberTreeFixture extends TestFixture {
  *				- flash:8
  *			- cd:9
  *			- radios:10
+ *	- alien ware: 11
  *
  * @var array
  */
@@ -134,7 +135,7 @@ class NumberTreeFixture extends TestFixture {
 			'name' => 'alien hardware',
 			'parent_id' => null,
 			'lft' => '21',
-			'rght' => '21'
+			'rght' => '22'
 		)
 	);
 
