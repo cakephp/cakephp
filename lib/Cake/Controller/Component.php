@@ -163,4 +163,47 @@ class Component extends Object {
 	public function beforeRedirect(Controller $controller, $url, $status = null, $exit = true) {
 	}
 
+/**
+ * Get the Model object the Component would act on.
+ *
+ * @param string|Model $object The object you are looking for.
+ * @return mixed The model object to act on.
+ */
+	protected function _getObject($object) {
+		if (is_string($object)) {
+			$assoc = null;
+			if (strpos($object, '.') !== false) {
+				list($object, $assoc) = pluginSplit($object);
+			}
+			if ($assoc && isset($this->Controller->{$object}->{$assoc})) {
+				return $this->Controller->{$object}->{$assoc};
+			}
+			if ($assoc && isset($this->Controller->{$this->Controller->modelClass}->{$assoc})) {
+				return $this->Controller->{$this->Controller->modelClass}->{$assoc};
+			}
+			if (isset($this->Controller->{$object})) {
+				return $this->Controller->{$object};
+			}
+			if (isset($this->Controller->{$this->Controller->modelClass}->{$object})) {
+				return $this->Controller->{$this->Controller->modelClass}->{$object};
+			}
+		}
+		if (empty($object) || $object === null) {
+			if (isset($this->Controller->{$this->Controller->modelClass})) {
+				return $this->Controller->{$this->Controller->modelClass};
+			}
+
+			$className = null;
+			$name = $this->Controller->uses[0];
+			if (strpos($this->Controller->uses[0], '.') !== false) {
+				list($name, $className) = explode('.', $this->Controller->uses[0]);
+			}
+			if ($className) {
+				return $this->Controller->{$className};
+			}
+
+			return $this->Controller->{$name};
+		}
+		return $object;
+	}
 }
