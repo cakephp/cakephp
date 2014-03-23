@@ -309,6 +309,10 @@ class TreeBehavior extends Behavior {
 			$counter = $this->_recoverTree($counter, $row[$pk[0]]);
 		}
 
+		if ($parentId === null) {
+			return $counter;
+		}
+
 		$this->_table->updateAll(
 			[$left => $leftCounter, $right => $counter + 1],
 			[$pk[0] => $parentId]
