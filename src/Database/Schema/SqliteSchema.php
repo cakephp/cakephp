@@ -342,7 +342,8 @@ class SqliteSchema extends BaseSchema {
 	public function createTableSql(Table $table, $columns, $constraints, $indexes) {
 		$lines = array_merge($columns, $constraints);
 		$content = implode(",\n", array_filter($lines));
-		$table = sprintf("CREATE TABLE \"%s\" (\n%s\n)", $table->name(), $content);
+		$temporary = $table->temporary() ? ' TEMPORARY ' : ' ';
+		$table = sprintf("CREATE%sTABLE \"%s\" (\n%s\n)", $temporary, $table->name(), $content);
 		$out = [$table];
 		foreach ($indexes as $index) {
 			$out[] = $index;
