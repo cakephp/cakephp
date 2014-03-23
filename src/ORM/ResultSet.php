@@ -347,7 +347,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
  */
 	protected function _groupResult($row) {
 		$defaultAlias = $this->_defaultTable->alias();
-		$results = [];
+		$results = $presentAliases = [];
 		foreach ($row as $key => $value) {
 			$table = $defaultAlias;
 			$field = $key;
@@ -363,9 +363,11 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 				list($table, $field) = $this->_map[$key];
 			}
 
+			$presentAliases[$table] = true;
 			$results[$table][$field] = $value;
 		}
 
+		unset($presentAliases[$defaultAlias]);
 		$results[$defaultAlias] = $this->_castValues(
 			$this->_defaultTable,
 			$results[$defaultAlias]
@@ -384,6 +386,7 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 			$instance = $assoc['instance'];
 			$target = $instance->target();
 			$results[$alias] = $this->_castValues($target, $results[$alias]);
+			unset($presentAliases[$alias]);
 			$options['source'] = $target->alias();
 
 			if ($this->_hydrate && $assoc['canBeJoined']) {
@@ -392,6 +395,13 @@ class ResultSet implements Countable, Iterator, Serializable, JsonSerializable {
 				$results[$alias] = $entity;
 			}
 			$results = $instance->transformRow($results);
+		}
+
+		foreach ($presentAliases as $alias => $present) {
+			if (!isset($results[$alias])) {
+				continue;
+			}
+			$results[$defaultAlias][$alias] = $results[$alias];
 		}
 
 		$options['source'] = $defaultAlias;

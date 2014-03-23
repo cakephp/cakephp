@@ -34,6 +34,7 @@ class BelongsToMany extends Association {
 	use ExternalAssociationTrait {
 		_options as _externalOptions;
 		_addFilteringCondition as _addExternalConditions;
+		transformRow as protected _transformRow;
 	}
 
 /**
@@ -241,6 +242,19 @@ class BelongsToMany extends Association {
 		$this->_targetTable
 			->association($junction->alias())
 			->attachTo($query, $options);
+	}
+
+/**
+ * Correctly nests a result row associated values into the correct array keys inside the
+ * source results.
+ *
+ * @param array $row
+ * @return array
+ */
+	public function transformRow($row) {
+		$row = $this->_transformRow($row);
+		unset($row[$this->junction()->alias()]);
+		return $row;
 	}
 
 /**

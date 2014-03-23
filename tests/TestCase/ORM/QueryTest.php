@@ -1841,4 +1841,30 @@ class QueryTest extends TestCase {
 		$query->all();
 	}
 
+/**
+ * Tests that columns from manual joins are also contained in the result set
+ *
+ * @return void
+ */
+	public function testColumnsFromJoin() {
+		$table = TableRegistry::get('articles');
+		$results = $table->find()
+			->select(['title', 'person.name'])
+			->join([
+				'person' => [
+					'table' => 'authors',
+					'conditions' => ['person.id = articles.author_id']
+				]
+			])
+			->order(['articles.id' => 'ASC'])
+			->hydrate(false)
+			->toArray();
+		$expected = [
+			['title' => 'First Article', 'person' => ['name' => 'mariano']],
+			['title' => 'Second Article', 'person' => ['name' => 'larry']],
+			['title' => 'Third Article', 'person' => ['name' => 'mariano']],
+		];
+		$this->assertSame($expected, $results);
+	}
+
 }
