@@ -118,6 +118,7 @@ class TreeBehavior extends Behavior {
 	public function findChildren($query, $options) {
 		extract($this->config());
 		extract($options);
+		$primaryKey = $this->_table->primaryKey();
 		$direct = !isset($direct) ? false : $direct;
 
 		if (empty($for)) {
@@ -132,7 +133,14 @@ class TreeBehavior extends Behavior {
 			return $this->_scope($query)->where([$parent => $for]);
 		}
 
-		$node = $this->_table->get($for, ['fields' => [$right, $left]]);
+		$node = $this->_scope($this->_table->find())
+			->select([$right, $left])
+			->where([$primaryKey => $for])
+			->first();
+
+		if (!$node) {
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$for}\ was not found in the tree.");
+		}
 
 		return $this->_scope($query)
 			->where([
@@ -147,17 +155,26 @@ class TreeBehavior extends Behavior {
  * If the node is the first child, or is a top level node with no previous node this method will return false
  *
  * @param integer|string $id The ID of the record to move
- * @param integer|boolean $number how many places to move the node, or true to move to first position
+ * @param integer|boolean $number How many places to move the node, or true to move to first position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return boolean true on success, false on failure
  */
 	public function moveUp($id, $number = 1) {
 		extract($this->config());
+		$primaryKey = $this->_table->primaryKey();
 
 		if (!$number) {
 			return false;
 		}
 
-		$node = $this->_table->get($id, ['fields' => [$parent, $left, $right]]);
+		$node = $this->_scope($this->_table->find())
+			->select([$parent, $left, $right])
+			->where([$primaryKey => $id])
+			->first();
+
+		if (!$node) {
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
+		}
 
 		if ($node->{$parent}) {
 			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
@@ -198,17 +215,26 @@ class TreeBehavior extends Behavior {
  * If the node is the last child, or is a top level node with no subsequent node this method will return false
  *
  * @param integer|string $id The ID of the record to move
- * @param integer|boolean $number how many places to move the node or true to move to last position
+ * @param integer|boolean $number How many places to move the node or true to move to last position
+ * @throws \Cake\ORM\Error\RecordNotFoundException When node was not found
  * @return boolean true on success, false on failure
  */
 	public function moveDown($id, $number = 1) {
 		extract($this->config());
+		$primaryKey = $this->_table->primaryKey();
 
 		if (!$number) {
 			return false;
 		}
 
-		$node = $this->_table->get($id, ['fields' => [$left, $right]]);
+		$node = $this->_scope($this->_table->find())
+			->select([$parent, $left, $right])
+			->where([$primaryKey => $id])
+			->first();
+
+		if (!$node) {
+			throw new \Cake\ORM\Error\RecordNotFoundException("Node \"{$id}\" was not found in the tree.");
+		}
 
 		if ($node->{$parent}) {
 			$parentNode = $this->_table->get($node->{$parent}, ['fields' => [$left, $right]]);
