@@ -893,23 +893,22 @@ class Controller extends Object implements CakeEventListener {
  * @param mixed A list of models as a variable argument
  * @return array Validation errors, or false if none
  */
-	public function validateErrors() {
+	public function validateErrors(Model $Model) {
 		$objects = func_get_args();
 
-		if (empty($objects)) {
-			return false;
-		}
-
-		$errors = array();
-		foreach ($objects as $object) {
-			if (isset($this->{$object->alias})) {
-				$object = $this->{$object->alias};
+		if (count($objects) > 1) {
+			foreach ($objects as $Model) {
+				$errors = $this->validateErrors($Model);
 			}
-			$object->set($object->data);
-			$errors = array_merge($errors, $object->invalidFields());
+			return $errors;
+		} else {
+			if (isset($this->{$Model->alias})) {
+				$Model = $this->{$Model->alias};
+			}
+			$Model->set($Model->data);
+			$errors = array_merge((array) $this->validationErrors, $Model->invalidFields());
+			return $this->validationErrors = (!empty($errors) ? $errors : false);
 		}
-
-		return $this->validationErrors = (!empty($errors) ? $errors : false);
 	}
 
 /**
