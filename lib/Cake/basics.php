@@ -669,15 +669,15 @@ if (!function_exists('__dc')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value or with a class constant of I18n, instead of the constant name. The values are:
+ * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
  *
- * - LC_ALL       0		I18n::LC_ALL
- * - LC_COLLATE   1		I18n::LC_COLLATE
- * - LC_CTYPE     2		I18n::LC_CTYPE
- * - LC_MONETARY  3		I18n::LC_MONETARY
- * - LC_NUMERIC   4		I18n::LC_NUMERIC
- * - LC_TIME      5		I18n::LC_TIME
- * - LC_MESSAGES  6		I18n::LC_MESSAGES
+ * - LC_ALL       I18n::LC_ALL
+ * - LC_COLLATE   I18n::LC_COLLATE
+ * - LC_CTYPE     I18n::LC_CTYPE
+ * - LC_MONETARY  I18n::LC_MONETARY
+ * - LC_NUMERIC   I18n::LC_NUMERIC
+ * - LC_TIME      I18n::LC_TIME
+ * - LC_MESSAGES  I18n::LC_MESSAGES
  *
  * @param string $domain Domain
  * @param string $msg Message to translate
@@ -715,15 +715,15 @@ if (!function_exists('__dcn')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value or with a class constant of I18n, instead of the constant name. The values are:
+ * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
  *
- * - LC_ALL       0		I18n::LC_ALL
- * - LC_COLLATE   1		I18n::LC_COLLATE
- * - LC_CTYPE     2		I18n::LC_CTYPE
- * - LC_MONETARY  3		I18n::LC_MONETARY
- * - LC_NUMERIC   4		I18n::LC_NUMERIC
- * - LC_TIME      5		I18n::LC_TIME
- * - LC_MESSAGES  6		I18n::LC_MESSAGES
+ * - LC_ALL       I18n::LC_ALL
+ * - LC_COLLATE   I18n::LC_COLLATE
+ * - LC_CTYPE     I18n::LC_CTYPE
+ * - LC_MONETARY  I18n::LC_MONETARY
+ * - LC_NUMERIC   I18n::LC_NUMERIC
+ * - LC_TIME      I18n::LC_TIME
+ * - LC_MESSAGES  I18n::LC_MESSAGES
  *
  * @param string $domain Domain
  * @param string $singular Singular string to translate
@@ -758,15 +758,15 @@ if (!function_exists('__c')) {
  * The category argument allows a specific category of the locale settings to be used for fetching a message.
  * Valid categories are: LC_CTYPE, LC_NUMERIC, LC_TIME, LC_COLLATE, LC_MONETARY, LC_MESSAGES and LC_ALL.
  *
- * Note that the category must be specified with a numeric value or with a class constant of I18n, instead of the constant name. The values are:
+ * Note that the category must be specified with a class constant of I18n, instead of the constant name. The values are:
  *
- * - LC_ALL       0		I18n::LC_ALL
- * - LC_COLLATE   1		I18n::LC_COLLATE
- * - LC_CTYPE     2		I18n::LC_CTYPE
- * - LC_MONETARY  3		I18n::LC_MONETARY
- * - LC_NUMERIC   4		I18n::LC_NUMERIC
- * - LC_TIME      5		I18n::LC_TIME
- * - LC_MESSAGES  6		I18n::LC_MESSAGES
+ * - LC_ALL       I18n::LC_ALL
+ * - LC_COLLATE   I18n::LC_COLLATE
+ * - LC_CTYPE     I18n::LC_CTYPE
+ * - LC_MONETARY  I18n::LC_MONETARY
+ * - LC_NUMERIC   I18n::LC_NUMERIC
+ * - LC_TIME      I18n::LC_TIME
+ * - LC_MESSAGES  I18n::LC_MESSAGES
  *
  * @param string $msg String to translate
  * @param integer $category Category

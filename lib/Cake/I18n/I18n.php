@@ -87,17 +87,15 @@ class I18n {
 		'LC_ALL', 'LC_COLLATE', 'LC_CTYPE', 'LC_MONETARY', 'LC_NUMERIC', 'LC_TIME', 'LC_MESSAGES'
 	);
 
-/**
- * Constants for the translation categories.
- *
- * The constants may be used in translation fetching
- * instead of hardcoded integers.
- * Example:
- * 	I18n::translate('CakePHP is awesome.', null, null, I18n::LC_MESSAGES)
- *
- * To keep the code more readable, I18n constants are preferred over
- * hardcoded integers.
- */
+// Constants for the translation categories.
+//
+// The constants may be used in translation fetching
+// instead of hardcoded integers.
+// Example:
+// 	I18n::translate('CakePHP is awesome.', null, null, I18n::LC_MESSAGES)
+//
+// To keep the code more readable, I18n constants are preferred over
+// hardcoded integers.
 /**
  * Constant for LC_ALL.
  *
