@@ -84,7 +84,7 @@ class ApiShellTest extends CakeTestCase {
 			'26. shutdownProcess()',
 			'27. startupProcess()',
 			'28. validate()',
-			'29. validateErrors()'
+			'29. validateErrors($Model = NULL)'
 		);
 		$this->Shell->expects($this->at(2))->method('out')->with($expected);
 
