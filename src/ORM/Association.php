@@ -428,10 +428,10 @@ abstract class Association {
 			}
 		}
 
+		$dummy->where($options['conditions']);
 		$this->_dispatchBeforeFind($dummy);
 
 		$joinOptions = ['table' => 1, 'conditions' => 1, 'type' => 1];
-		$dummy->where($options['conditions']);
 		$options['conditions'] = $dummy->clause('where');
 		$query->join([$target->alias() => array_intersect_key($options, $joinOptions)]);
 
