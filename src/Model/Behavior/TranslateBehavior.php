@@ -140,7 +140,7 @@ class TranslateBehavior extends Behavior {
 		};
 
 		$contain = [];
-		$fields = $this->config()['fields'];
+		$fields = $this->config('fields');
 		$alias = $this->_table->alias();
 		foreach ($fields as $field) {
 			$contain[$alias . '_' . $field . '_translation'] = $conditions;
@@ -163,7 +163,7 @@ class TranslateBehavior extends Behavior {
  */
 	public function beforeSave(Event $event, Entity $entity, ArrayObject $options) {
 		$locale = $entity->get('_locale') ?: $this->locale();
-		$table = $this->config()['translationTable'];
+		$table = $this->config('translationTable');
 		$newOptions = [$table => ['validate' => false]];
 		$options['associated'] = $newOptions + $options['associated'];
 
@@ -173,7 +173,7 @@ class TranslateBehavior extends Behavior {
 			return;
 		}
 
-		$values = $entity->extract($this->config()['fields'], true);
+		$values = $entity->extract($this->config('fields'), true);
 		$fields = array_keys($values);
 		$primaryKey = (array)$this->_table->primaryKey();
 		$key = $entity->get(current($primaryKey));
@@ -258,7 +258,7 @@ class TranslateBehavior extends Behavior {
  */
 	public function findTranslations($query, $options) {
 		$locales = isset($options['locales']) ? $options['locales'] : [];
-		$table = $this->config()['translationTable'];
+		$table = $this->config('translationTable');
 		return $query
 			->contain([$table => function($q) use ($locales, $table) {
 				if ($locales) {
@@ -281,7 +281,7 @@ class TranslateBehavior extends Behavior {
 		return $results->map(function($row) use ($locale) {
 			$options = ['setter' => false, 'guard' => false];
 
-			foreach ($this->config()['fields'] as $field) {
+			foreach ($this->config('fields') as $field) {
 				$name = $field . '_translation';
 				$translation = $row->get($name);
 
@@ -348,7 +348,7 @@ class TranslateBehavior extends Behavior {
 			return;
 		}
 
-		$fields = $this->config()['fields'];
+		$fields = $this->config('fields');
 		$primaryKey = (array)$this->_table->primaryKey();
 		$key = $entity->get(current($primaryKey));
 		$find = [];
@@ -394,7 +394,7 @@ class TranslateBehavior extends Behavior {
  * @return array
  */
 	protected function _findExistingTranslations($ruleSet) {
-		$association = $this->_table->association($this->config()['translationTable']);
+		$association = $this->_table->association($this->config('translationTable'));
 		$query = $association->find()
 			->select(['id', 'num' => 0])
 			->where(current($ruleSet))

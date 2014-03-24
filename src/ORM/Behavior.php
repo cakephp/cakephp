@@ -14,6 +14,7 @@
  */
 namespace Cake\ORM;
 
+use Cake\Core\InstanceConfigTrait;
 use Cake\Error\Exception;
 use Cake\Event\EventListener;
 
@@ -92,6 +93,8 @@ use Cake\Event\EventListener;
  */
 class Behavior implements EventListener {
 
+	use InstanceConfigTrait;
+
 /**
  * Reflection method cache for behaviors.
  *
@@ -112,13 +115,6 @@ class Behavior implements EventListener {
 	protected $_defaultConfig = [];
 
 /**
- * Contains configuration.
- *
- * @var array
- */
-	protected $_config = [];
-
-/**
  * Constructor
  *
  * Merge config with the default and store in the config property
@@ -130,16 +126,7 @@ class Behavior implements EventListener {
  * @param array $config The config for this behavior.
  */
 	public function __construct(Table $table, array $config = []) {
-		$this->_config = $config + $this->_defaultConfig;
-	}
-
-/**
- * Read the configuration being used.
- *
- * @return array
- */
-	public function config() {
-		return $this->_config;
+		$this->config($config);
 	}
 
 /**
